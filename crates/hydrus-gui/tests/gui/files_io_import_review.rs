@@ -14,6 +14,8 @@ use hydrus_gui::{MainWindow, Pages, ReviewImportsWindow, bind, headless};
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
 
+use crate::common::widgets;
+
 fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();
@@ -84,33 +86,34 @@ fn open(ui: &MainWindow, bound: &hydrus_gui::Bound) -> ReviewImportsWindow {
 // leaf: audit-network-import-remove
 #[test]
 fn rows_are_selected_as_a_list_selects_and_removed_after_asking_then_numbered_again() {
+    // the removal replayed against the reference's
+    // (`oracle/fixtures/import_review_remove.json`, from
+    // `oracle/record_import_review_remove.py`)
+    let recorded = hydrus_testkit::fixture_json("import_review_remove.json");
     let (_dirs, store) = store();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store).unwrap());
     let window = open(&ui, &bound);
     let work = tempfile::tempdir().unwrap();
-    for name in [
-        "bmp_24.bmp",
-        "apng_rgba.png",
-        "gif_static.gif",
-        "png_rgba.png",
-    ] {
-        if hydrus_testkit::fixture_path(format!("media/{name}")).exists() {
-            place(work.path(), name);
-        }
+    // the recorded files, given in the recorded order
+    for name in recorded["files"].as_array().unwrap() {
+        let path = place(work.path(), name.as_str().unwrap());
+        window.invoke_path_entered(path.into());
+        settle(&window);
     }
-    let placed = std::fs::read_dir(work.path()).unwrap().count();
-    assert!(placed >= 3, "{placed}");
-    window.invoke_path_entered(work.path().to_string_lossy().into_owned().into());
-    settle(&window);
-    let listed = rows(&window);
-    assert_eq!(listed.len(), placed);
-    let numbers: Vec<String> = listed.iter().map(|r| r.0.clone()).collect();
-    assert_eq!(
-        numbers,
-        (1..=placed).map(|n| n.to_string()).collect::<Vec<_>>()
-    );
+    let shown = |w: &ReviewImportsWindow| -> serde_json::Value {
+        rows(w)
+            .iter()
+            .map(|r| {
+                let name = Path::new(&r.1).file_name().unwrap().to_string_lossy();
+                serde_json::json!([r.0, name])
+            })
+            .collect()
+    };
+    let steps = recorded["steps"].as_array().unwrap();
+    assert_eq!(shown(&window), steps[0]["rows"]);
+    let placed = rows(&window).len();
     assert!(
         !window.get_any_selected(),
         "nothing selected, nothing to remove"
@@ -141,40 +144,55 @@ fn rows_are_selected_as_a_list_selects_and_removed_after_asking_then_numbered_ag
     window.invoke_row_clicked(0, false, false);
     window.invoke_row_clicked(placed as i32 - 1, false, true);
     assert_eq!(selected(&window), (0..placed).collect::<Vec<_>>());
+    // the recorded selection: the second row
     window.invoke_row_clicked(1, false, false);
     assert_eq!(selected(&window), [1]);
+    assert_eq!(shown(&window)[1], recorded["selected"]);
     assert!(window.get_any_selected());
 
-    // "remove files" asks first; no leaves the list alone
-    assert!(!window.get_asking_remove());
-    // (the list has the keys' focus once a row is clicked: a click is
-    // a pointer press the harness has no layout to aim; Tab moves there)
-    for _ in 0..3 {
-        if window.get_asking_remove() {
-            break;
+    let win = window.window();
+    widgets::lay_out(win, 900.0, 700.0);
+    for step in &steps[1..] {
+        let context = step["do"].to_string();
+        assert!(!window.get_asking_remove());
+        match step["do"].as_str().unwrap() {
+            "delete key" => {
+                // (the list has the keys' focus once a row is clicked: a
+                // click is a pointer press the harness has no layout to
+                // aim; Tab moves there)
+                for _ in 0..3 {
+                    if window.get_asking_remove() {
+                        break;
+                    }
+                    widgets::key(win, slint::platform::Key::Delete);
+                    if !window.get_asking_remove() {
+                        widgets::key(win, "\t");
+                    }
+                }
+            }
+            _ => widgets::click(win, "remove files"),
         }
-        window
-            .window()
-            .dispatch_event(slint::platform::WindowEvent::KeyPressed {
-                text: slint::platform::Key::Delete.into(),
-            });
-        window
-            .window()
-            .dispatch_event(slint::platform::WindowEvent::KeyPressed { text: "\t".into() });
+        // the reference's RemovePaths question, answered with its button
+        let mut asked = Vec::new();
+        for question in ["Remove all selected?"] {
+            if widgets::shows(win, question) {
+                asked.push(question);
+            }
+        }
+        assert!(window.get_asking_remove(), "{context}");
+        widgets::click(
+            win,
+            if step["answer"].as_bool().unwrap() {
+                "yes"
+            } else {
+                "no"
+            },
+        );
+        assert!(!window.get_asking_remove(), "{context}");
+        assert!(!widgets::shows(win, "Remove all selected?"), "{context}");
+        assert_eq!(serde_json::json!(asked), step["asked"], "{context}");
+        assert_eq!(shown(&window), step["rows"], "{context}");
     }
-    assert!(window.get_asking_remove(), "Delete asks");
-    assert_eq!(rows(&window).len(), placed, "nothing removed until yes");
-    window.set_asking_remove(false);
-    let second = rows(&window)[1].1.clone();
-    // yes: the selected row goes, the rest are numbered again
-    window.invoke_remove_files();
-    let left = rows(&window);
-    assert_eq!(left.len(), placed - 1);
-    assert!(left.iter().all(|r| r.1 != second));
-    assert_eq!(
-        left.iter().map(|r| r.0.clone()).collect::<Vec<_>>(),
-        (1..placed).map(|n| n.to_string()).collect::<Vec<_>>()
-    );
     assert!(!window.get_any_selected());
     window.invoke_cancel();
 }

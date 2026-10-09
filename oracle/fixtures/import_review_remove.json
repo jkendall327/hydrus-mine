@@ -1,0 +1,80 @@
+{
+  "files": [
+    "bmp_24.bmp",
+    "apng_rgba.png",
+    "gif_static.gif",
+    "png_rgba.png"
+  ],
+  "selected": [
+    "2",
+    "apng_rgba.png"
+  ],
+  "steps": [
+    {
+      "rows": [
+        [
+          "1",
+          "bmp_24.bmp"
+        ],
+        [
+          "2",
+          "apng_rgba.png"
+        ],
+        [
+          "3",
+          "gif_static.gif"
+        ],
+        [
+          "4",
+          "png_rgba.png"
+        ]
+      ]
+    },
+    {
+      "do": "delete key",
+      "answer": false,
+      "asked": [
+        "Remove all selected?"
+      ],
+      "rows": [
+        [
+          "1",
+          "bmp_24.bmp"
+        ],
+        [
+          "2",
+          "apng_rgba.png"
+        ],
+        [
+          "3",
+          "gif_static.gif"
+        ],
+        [
+          "4",
+          "png_rgba.png"
+        ]
+      ]
+    },
+    {
+      "do": "remove files",
+      "answer": true,
+      "asked": [
+        "Remove all selected?"
+      ],
+      "rows": [
+        [
+          "1",
+          "bmp_24.bmp"
+        ],
+        [
+          "2",
+          "gif_static.gif"
+        ],
+        [
+          "3",
+          "png_rgba.png"
+        ]
+      ]
+    }
+  ]
+}
