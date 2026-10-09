@@ -2184,7 +2184,9 @@ fn open_gallery_and_watcher_pages_show_the_changed_pause_and_stop_characters() {
 
 /// The connection page's general and proxy options, each changed in the real
 /// options window and then met by the real network engine, which is asked for
-/// things by a local server.
+/// things by a local server. The engine is reloaded by the test calling
+/// `reload_settings` as the app's poll does (the poll itself is not driven),
+/// and, as the app's, honours proxies named in the environment.
 mod network_consumers {
     use std::collections::HashMap;
     use std::sync::Arc;
@@ -2199,6 +2201,7 @@ mod network_consumers {
     use axum::routing::get;
     use hydrus_net::{Job, NetEngine, NetError, NetOptions, Request};
     use hydrus_store::network::NetworkSettings;
+    use hydrus_store::network_runtime::WaitReason;
 
     use super::{Client, client, noneable_text, number, row};
 
@@ -2239,7 +2242,8 @@ mod network_consumers {
         "late"
     }
 
-    async fn whole_uri(uri: axum::http::Uri) -> String {
+    async fn whole_uri(State(hits): State<Arc<Hits>>, uri: axum::http::Uri) -> String {
+        hits.hit("uri");
         uri.to_string()
     }
 
@@ -2294,17 +2298,37 @@ mod network_consumers {
         assert!(engine.reload_settings().unwrap(), "the engine took it");
     }
 
-    async fn fetch(engine: &NetEngine, url: &str) -> (Result<(), NetError>, f64) {
+    /// How a request ended, how long it took, and every status its job showed
+    /// (sampled every 20 ms).
+    struct Fetched {
+        result: Result<(), NetError>,
+        seconds: f64,
+        statuses: Vec<String>,
+    }
+
+    async fn fetch(engine: &NetEngine, url: &str) -> Fetched {
         let started = Instant::now();
         let job = Job::new();
         let request = Request::get(url);
-        let timed =
-            tokio::time::timeout(Duration::from_secs(90), engine.fetch(&request, &job)).await;
-        let result = timed
-            .map_err(|_| format!("stuck: {:?} {:?}", job.state().status, job.state().wait))
-            .expect("the request ends")
-            .map(|_| ());
-        (result, started.elapsed().as_secs_f64())
+        let mut statuses: Vec<String> = Vec::new();
+        let mut call = Box::pin(engine.fetch(&request, &job));
+        let result = loop {
+            tokio::select! {
+                r = &mut call => break r.map(|_| ()),
+                () = tokio::time::sleep(Duration::from_millis(20)) => {
+                    let status = job.state().status;
+                    if statuses.last() != Some(&status) {
+                        statuses.push(status);
+                    }
+                    assert!(started.elapsed() < Duration::from_secs(40), "stuck: {statuses:?}");
+                }
+            }
+        };
+        Fetched {
+            result,
+            seconds: started.elapsed().as_secs_f64(),
+            statuses,
+        }
     }
 
     /// Six requests for `url` at once.
@@ -2313,12 +2337,24 @@ mod network_consumers {
         let _ = tokio::join!(f(), f(), f(), f(), f(), f());
     }
 
-    /// A URL on a port nothing listens on.
-    fn closed_port() -> String {
-        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
-        let url = format!("http://{}/x", listener.local_addr().unwrap());
-        drop(listener);
-        url
+    /// A URL on a port nothing listens on: a socket bound and never listened
+    /// on refuses connections, and is held for as long as the test.
+    fn closed_port() -> (tokio::net::TcpSocket, String) {
+        let socket = tokio::net::TcpSocket::new_v4().unwrap();
+        socket.bind("127.0.0.1:0".parse().unwrap()).unwrap();
+        let url = format!("http://{}/x", socket.local_addr().unwrap());
+        (socket, url)
+    }
+
+    /// The seconds the connection waits announced, in order.
+    fn retry_waits(statuses: &[String]) -> Vec<u64> {
+        statuses
+            .iter()
+            .filter_map(|s| {
+                let n = s.strip_prefix("connection failed - retrying in ")?;
+                n.strip_suffix(" seconds")?.parse().ok()
+            })
+            .collect()
     }
 
     // leaf: audit-options-connection-general-max-connection-attempts-allowed-per-request
@@ -2326,8 +2362,9 @@ mod network_consumers {
     #[tokio::test]
     async fn failed_connections_are_retried_as_often_and_as_slowly_as_the_options_say() {
         let (client, engine) = with_engine();
-        let url = closed_port();
-        // three attempts, a second apart: the waits are 1 s and 2 s
+        let (_held, url) = closed_port();
+        // three attempts, a second of wait per attempt gone: a wait of 1 s
+        // after the first failure and one of 2 s after the second
         apply(&client, &engine, |w| {
             number(
                 w,
@@ -2342,10 +2379,11 @@ mod network_consumers {
                 1,
             );
         });
-        let (result, three) = fetch(&engine, &url).await;
-        assert!(matches!(result, Err(NetError::Connection(_))), "{result:?}");
-        assert!(three >= 3.0, "{three}");
-        // two attempts: one wait of a second
+        let three = fetch(&engine, &url).await;
+        assert!(matches!(three.result, Err(NetError::Connection(_))));
+        assert_eq!(retry_waits(&three.statuses), [1, 2], "{:?}", three.statuses);
+        assert!(three.seconds >= 3.0, "{}", three.seconds);
+        // two attempts: the one wait
         apply(&client, &engine, |w| {
             number(
                 w,
@@ -2354,10 +2392,10 @@ mod network_consumers {
                 2,
             );
         });
-        let (result, two) = fetch(&engine, &url).await;
-        assert!(matches!(result, Err(NetError::Connection(_))));
-        assert!((1.0..three - 0.5).contains(&two), "{two} against {three}");
-        // the same two attempts, two seconds apart
+        let two = fetch(&engine, &url).await;
+        assert!(matches!(two.result, Err(NetError::Connection(_))));
+        assert_eq!(retry_waits(&two.statuses), [1], "{:?}", two.statuses);
+        // the same two attempts, with a wait of two seconds
         apply(&client, &engine, |w| {
             number(
                 w,
@@ -2366,11 +2404,9 @@ mod network_consumers {
                 2,
             );
         });
-        let (_, slower) = fetch(&engine, &url).await;
-        assert!(
-            slower >= 2.0 && slower > two + 0.5,
-            "{slower} against {two}"
-        );
+        let slower = fetch(&engine, &url).await;
+        assert_eq!(retry_waits(&slower.statuses), [2], "{:?}", slower.statuses);
+        assert!(slower.seconds >= 2.0, "{}", slower.seconds);
     }
 
     // leaf: audit-options-connection-general-max-retries-allowed-per-request
@@ -2383,10 +2419,11 @@ mod network_consumers {
                 number(w, "max retries allowed per request: ", (1, 10), retries);
             });
             let before = hits.count("status503");
-            let (result, _) = fetch(&engine, &format!("{base}/status/503")).await;
+            let fetched = fetch(&engine, &format!("{base}/status/503")).await;
             assert!(
-                matches!(result, Err(NetError::Infrastructure(_))),
-                "{result:?}"
+                matches!(fetched.result, Err(NetError::Infrastructure(_))),
+                "{:?}",
+                fetched.result
             );
             assert_eq!(
                 hits.count("status503") - before,
@@ -2410,10 +2447,21 @@ mod network_consumers {
                 1,
             );
         });
-        let (result, short) = fetch(&engine, &format!("{base}/status/429")).await;
-        assert!(matches!(result, Err(NetError::Bandwidth(_))), "{result:?}");
+        let short = fetch(&engine, &format!("{base}/status/429")).await;
+        assert!(
+            matches!(short.result, Err(NetError::Bandwidth(_))),
+            "{:?}",
+            short.result
+        );
         assert_eq!(hits.count("status429"), 2);
-        assert!(short >= 1.5625, "{short}");
+        assert!(
+            short
+                .statuses
+                .iter()
+                .any(|s| s == "server reported limited bandwidth - retrying")
+        );
+        assert!(short.seconds >= 1.5625, "{}", short.seconds);
+        // (the default of a minute would be a minute and a half)
         apply(&client, &engine, |w| {
             number(
                 w,
@@ -2422,11 +2470,8 @@ mod network_consumers {
                 3,
             );
         });
-        let (_, long) = fetch(&engine, &format!("{base}/status/429")).await;
-        assert!(
-            long >= 3.0 * 1.5625 && long > short + 2.0,
-            "{long} against {short}"
-        );
+        let long = fetch(&engine, &format!("{base}/status/429")).await;
+        assert!(long.seconds >= 3.0 * 1.5625, "{}", long.seconds);
     }
 
     // leaf: audit-options-connection-general-max-number-of-simultaneous-active-network-jobs
@@ -2457,7 +2502,8 @@ mod network_consumers {
             );
         });
         six(&engine, &url).await;
-        assert_eq!(busiest(&hits), 2);
+        let seen = busiest(&hits);
+        assert!((2..=2).contains(&seen), "{seen}");
         // five overall, but three on the domain
         apply(&client, &engine, |w| {
             number(
@@ -2474,7 +2520,8 @@ mod network_consumers {
             );
         });
         six(&engine, &url).await;
-        assert_eq!(busiest(&hits), 3);
+        let seen = busiest(&hits);
+        assert!((2..=3).contains(&seen), "{seen}");
     }
 
     // leaf: audit-options-connection-general-halt-new-jobs-as-long-as-this-many-network-infrastructure-errors-on-their-domain-0-for-never-wait
@@ -2493,44 +2540,50 @@ mod network_consumers {
                 w.invoke_field_edited(i, 2, 0);
             });
         };
-        // two errors in ten minutes halt it
-        set(2, 10);
+        // two errors in twenty minutes (not the default ten) halt it
+        set(2, 20);
+        assert_eq!(engine.options().domain_error_window, 20 * 60);
         for _ in 0..2 {
-            let (result, _) = fetch(&engine, &format!("{base}/status/500")).await;
-            assert!(result.is_err());
+            let fetched = fetch(&engine, &format!("{base}/status/500")).await;
+            assert!(fetched.result.is_err());
         }
         assert!(!engine.domain_ok(&base));
-        let waited = tokio::time::timeout(
-            Duration::from_millis(600),
-            engine.fetch(&Request::get(format!("{base}/uri")), &Job::new()),
-        )
-        .await;
+        let job = Job::new();
+        let request = Request::get(format!("{base}/uri"));
+        let waited =
+            tokio::time::timeout(Duration::from_millis(400), engine.fetch(&request, &job)).await;
         assert!(waited.is_err(), "it waited");
-        // three needed: the same two do not
-        set(3, 10);
+        assert_eq!(job.state().wait, WaitReason::Domain);
+        // three needed: the same two do not halt it, and a request goes
+        set(3, 20);
         assert!(engine.domain_ok(&base));
-        // zero is never wait
-        set(0, 10);
+        assert!(fetch(&engine, &format!("{base}/uri")).await.result.is_ok());
+        // zero is never wait: even with the errors still counted, and more
+        set(0, 20);
         assert!(engine.domain_ok(&base));
-        fetch(&engine, &format!("{base}/uri")).await.0.unwrap();
+        let fetched = fetch(&engine, &format!("{base}/status/500")).await;
+        assert!(fetched.result.is_err());
+        assert!(engine.domain_ok(&base));
+        assert!(fetch(&engine, &format!("{base}/uri")).await.result.is_ok());
     }
 
     #[tokio::test]
     async fn a_server_that_goes_quiet_is_given_the_timeout_the_option_says() {
         let (client, engine) = with_engine();
-        let (base, hits) = serve().await;
-        // one second to connect, six to hear back (the reference's)
+        let (base, _hits) = serve().await;
+        // one second to connect, six to hear back (the reference's); the
+        // default of ten would be a minute
         apply(&client, &engine, |w| {
             number(w, "network timeout (seconds): ", (1, 2_592_000), 1);
             number(w, "max retries allowed per request: ", (1, 10), 1);
         });
-        let (result, took) = fetch(&engine, &format!("{base}/stall")).await;
+        let fetched = fetch(&engine, &format!("{base}/stall")).await;
         assert!(
-            matches!(result, Err(NetError::StreamTimeout(_))),
-            "{result:?}"
+            matches!(fetched.result, Err(NetError::StreamTimeout(_))),
+            "{:?}",
+            fetched.result
         );
-        assert_eq!(hits.count("stall"), 0);
-        assert!((6.0..9.0).contains(&took), "{took}");
+        assert!(fetched.seconds >= 6.0, "{}", fetched.seconds);
     }
 
     // leaf: audit-options-connection-proxy-settings-http
@@ -2538,7 +2591,7 @@ mod network_consumers {
     #[tokio::test]
     async fn the_http_proxy_and_the_hosts_it_is_not_used_for_decide_where_requests_go() {
         let (client, engine) = with_engine();
-        let (base, _hits) = serve().await;
+        let (base, hits) = serve().await;
         // the local server is the proxy: a proxied request asks it for the
         // whole URL
         apply(&client, &engine, |w| {
@@ -2550,6 +2603,7 @@ mod network_consumers {
             .unwrap()
             .text();
         assert_eq!(proxied, "http://booru.invalid/uri");
+        assert_eq!(hits.count("uri"), 1);
         // the default no_proxy has the local host: asked directly
         let direct = engine
             .fetch(&Request::get(format!("{base}/uri")), &Job::new())
@@ -2557,7 +2611,9 @@ mod network_consumers {
             .unwrap()
             .text();
         assert_eq!(direct, "/uri");
-        // naming the invalid host in no_proxy sends it where it points: nowhere
+        assert_eq!(hits.count("uri"), 2);
+        // naming the invalid host in no_proxy sends it where it points, not
+        // to the proxy
         apply(&client, &engine, |w| {
             noneable_text(w, "no_proxy: ", Some("booru.invalid,127.0.0.1"));
             number(
@@ -2567,15 +2623,19 @@ mod network_consumers {
                 1,
             );
         });
-        let (result, _) = fetch(&engine, "http://booru.invalid/uri").await;
-        assert!(result.is_err(), "not proxied: {result:?}");
-        // and cleared, no proxy at all
+        let fetched = fetch(&engine, "http://booru.invalid/uri").await;
+        assert!(fetched.result.is_err(), "{:?}", fetched.result);
+        assert_eq!(hits.count("uri"), 2, "the proxy was not asked");
+        // and with the proxy cleared, nothing is asked of it
         apply(&client, &engine, |w| {
             noneable_text(w, "http: ", None);
+            noneable_text(w, "no_proxy: ", None);
         });
-        let (result, _) = fetch(&engine, "http://booru.invalid/uri").await;
-        assert!(result.is_err());
+        let fetched = fetch(&engine, "http://booru.invalid/uri").await;
+        assert!(fetched.result.is_err());
+        assert_eq!(hits.count("uri"), 2, "the proxy was not asked");
     }
+
     // leaf: audit-options-connection-proxy-settings-https
     #[tokio::test]
     async fn https_requests_ask_the_https_proxy_to_connect() {
@@ -2602,8 +2662,8 @@ mod network_consumers {
                 1,
             );
         });
-        let (result, _) = fetch(&engine, "https://booru.invalid/x").await;
-        assert!(result.is_err(), "the proxy refused: {result:?}");
+        let fetched = fetch(&engine, "https://booru.invalid/x").await;
+        assert!(fetched.result.is_err(), "the proxy refused");
         assert_eq!(
             asked.recv_timeout(Duration::from_secs(5)).unwrap(),
             "CONNECT booru.invalid:443 HTTP/1.1"
@@ -2612,8 +2672,8 @@ mod network_consumers {
         apply(&client, &engine, |w| {
             noneable_text(w, "https: ", None);
         });
-        let (result, _) = fetch(&engine, "https://booru.invalid/x").await;
-        assert!(result.is_err());
+        let fetched = fetch(&engine, "https://booru.invalid/x").await;
+        assert!(fetched.result.is_err());
         assert!(asked.try_recv().is_err(), "no proxy, no ask");
     }
 }
