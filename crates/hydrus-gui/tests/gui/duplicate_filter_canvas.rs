@@ -61,8 +61,10 @@ fn option_row(options: &hydrus_gui::OptionsWindow, label: &str) -> (i32, hydrus_
 /// pairs to prefetch (speed and memory).
 fn set_options(o: &Opened, options: &Value) {
     let window = options_page(o, "duplicates");
-    let (row, shown) =
-        option_row(&window, "Max size of duplicate filter pair batches (in mixed mode):");
+    let (row, shown) = option_row(
+        &window,
+        "Max size of duplicate filter pair batches (in mixed mode):",
+    );
     assert_eq!((shown.kind, shown.minimum, shown.maximum), (2, 5, 1024));
     let size = options["duplicate_filter_max_batch_size"]
         .as_i64()
@@ -107,10 +109,7 @@ fn set_options(o: &Opened, options: &Value) {
         window.invoke_choice_chosen(row, 3);
         window.invoke_apply();
         assert_eq!(
-            o.store
-                .read(hydrus_store::image_cache::load)
-                .unwrap()
-                .bytes,
+            o.store.read(hydrus_store::image_cache::load).unwrap().bytes,
             4 << 30
         );
     }

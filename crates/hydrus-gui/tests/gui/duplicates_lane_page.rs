@@ -186,7 +186,6 @@ fn the_preparation_cog_regenerates_numbers_and_tree_and_resyncs_pairs() {
     );
 }
 
-
 // leaf: audit-media-filter-decisions
 #[test]
 fn each_filter_decision_writes_its_relationship_when_committed() {

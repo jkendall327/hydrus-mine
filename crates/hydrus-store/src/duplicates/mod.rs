@@ -670,7 +670,8 @@ fn potential_network(rows: &[PairRow], start: [HashId; 2]) -> HashSet<HashId> {
 }
 
 /// Whether the random group is pinned to the one with the lowest pair.
-static PINNED_GROUP_CHOICE: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+static PINNED_GROUP_CHOICE: std::sync::atomic::AtomicBool =
+    std::sync::atomic::AtomicBool::new(false);
 
 /// Pin [`random_potential_group`]'s pick to the group of the lowest pair (by
 /// its files' ids), for tests replaying recordings whose reference picks were
@@ -694,9 +695,7 @@ pub fn random_potential_group(
     let in_scope = pairs_in_scope(conn, snapshot, &search.scope)?;
     let pairs = matching(conn, search, &in_scope)?;
     let chosen = if PINNED_GROUP_CHOICE.load(std::sync::atomic::Ordering::Relaxed) {
-        pairs
-            .iter()
-            .min_by_key(|p| (p.smaller_king, p.larger_king))
+        pairs.iter().min_by_key(|p| (p.smaller_king, p.larger_king))
     } else {
         pairs.choose(&mut rand::rng())
     };

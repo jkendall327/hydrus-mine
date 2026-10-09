@@ -67,7 +67,10 @@ fn the_filtering_tab_chooses_pair_sort_direction_and_group_mode_as_the_reference
         let directions = sort["directions"].as_array().unwrap();
         if sort["direction_shown"] == true {
             assert_eq!(
-                f.directions.iter().map(|s| s.to_string()).collect::<Vec<_>>(),
+                f.directions
+                    .iter()
+                    .map(|s| s.to_string())
+                    .collect::<Vec<_>>(),
                 directions
                     .iter()
                     .map(|d| d["label"].as_str().unwrap().to_owned())
@@ -115,7 +118,10 @@ fn show_random_group_and_the_set_buttons_ask_and_act_as_the_reference_does() {
         .map(|b| b.as_str().unwrap().to_owned())
         .collect();
     assert_eq!(
-        f.set_buttons.iter().map(|s| s.to_string()).collect::<Vec<_>>(),
+        f.set_buttons
+            .iter()
+            .map(|s| s.to_string())
+            .collect::<Vec<_>>(),
         labels[1..],
         "same quality, alternates, false positive"
     );
@@ -159,7 +165,10 @@ fn show_random_group_and_the_set_buttons_ask_and_act_as_the_reference_does() {
             [] => assert!(question_opened().is_none(), "{button}: asks nothing"),
             [question] => {
                 let window = question_opened().unwrap_or_else(|| panic!("{button}: asks"));
-                assert_eq!(window.get_window_title(), question["title"].as_str().unwrap());
+                assert_eq!(
+                    window.get_window_title(),
+                    question["title"].as_str().unwrap()
+                );
                 assert_eq!(
                     window.get_message(),
                     question["yes_no"].as_str().unwrap(),
@@ -179,7 +188,12 @@ fn show_random_group_and_the_set_buttons_ask_and_act_as_the_reference_does() {
             .iter()
             .map(|h| h.as_str().unwrap().to_owned())
             .collect();
-        assert_eq!(shown(&o), recorded_shown, "{button} {}: shown after", step["answer"]);
+        assert_eq!(
+            shown(&o),
+            recorded_shown,
+            "{button} {}: shown after",
+            step["answer"]
+        );
         // the relationships of the files concerned
         for (hash, theirs) in step["relationships"].as_object().unwrap() {
             let hash_id = o.ids[hash];
@@ -201,7 +215,9 @@ fn show_random_group_and_the_set_buttons_ask_and_act_as_the_reference_does() {
                 .id;
             let relationships = o
                 .store
-                .read(move |c| hydrus_store::duplicates::file_relationships(c, &scope, local, hash_id))
+                .read(move |c| {
+                    hydrus_store::duplicates::file_relationships(c, &scope, local, hash_id)
+                })
                 .unwrap();
             let set = |v: &[hydrus_core::HashId]| -> BTreeSet<String> {
                 v.iter().map(|h| o.hex[h].clone()).collect()
@@ -214,11 +230,31 @@ fn show_random_group_and_the_set_buttons_ask_and_act_as_the_reference_does() {
                     .map(|h| h.as_str().unwrap().to_owned())
                     .collect()
             };
-            assert_eq!(o.hex[&relationships.king], theirs["king"].as_str().unwrap(), "{button}: king of {hash}");
-            assert_eq!(set(&relationships.alternates), theirs_set("3"), "{button}: alternates of {hash}");
-            assert_eq!(set(&relationships.false_positives), theirs_set("1"), "{button}: false positives of {hash}");
-            assert_eq!(set(&relationships.potentials), theirs_set("0"), "{button}: potentials of {hash}");
-            assert_eq!(set(&relationships.duplicates), theirs_set("8"), "{button}: members of {hash}");
+            assert_eq!(
+                o.hex[&relationships.king],
+                theirs["king"].as_str().unwrap(),
+                "{button}: king of {hash}"
+            );
+            assert_eq!(
+                set(&relationships.alternates),
+                theirs_set("3"),
+                "{button}: alternates of {hash}"
+            );
+            assert_eq!(
+                set(&relationships.false_positives),
+                theirs_set("1"),
+                "{button}: false positives of {hash}"
+            );
+            assert_eq!(
+                set(&relationships.potentials),
+                theirs_set("0"),
+                "{button}: potentials of {hash}"
+            );
+            assert_eq!(
+                set(&relationships.duplicates),
+                theirs_set("8"),
+                "{button}: members of {hash}"
+            );
         }
     }
 }
