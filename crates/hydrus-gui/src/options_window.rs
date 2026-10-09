@@ -415,6 +415,10 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                 (Kind::RelatedWeights, Value::RelatedWeights(_)) => {
                     out.kind = 29;
                 }
+                (Kind::FetchMpvAudioDevices, _) => {
+                    out.kind = 40;
+                    out.text = hydrus_gui_model::mpv_audio_devices::BUTTON.into();
+                }
                 (Kind::MostUsedTags, Value::MostUsedTags(_)) => {
                     out.kind = 28;
                 }
@@ -950,6 +954,23 @@ pub(crate) fn open(
             ) {
                 eprintln!("could not edit related weights: {error}");
             }
+        }
+    });
+    window.on_fetch_mpv_audio_devices_clicked({
+        let editor = editor.clone();
+        let active = active.clone();
+        let show_page = show_page.clone();
+        move || {
+            if !active.get() {
+                return;
+            }
+            let (editor, active, show_page) = (editor.clone(), active.clone(), show_page.clone());
+            crate::options_mpv_devices::clicked(move |device| {
+                if active.get() {
+                    editor.borrow_mut().set_mpv_audio_device(device);
+                    show_page();
+                }
+            });
         }
     });
     window.on_most_used_tags_clicked({

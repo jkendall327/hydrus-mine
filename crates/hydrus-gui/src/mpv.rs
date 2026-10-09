@@ -63,6 +63,8 @@ struct Api {
     load_config_file: unsafe extern "C" fn(Handle, *const c_char) -> c_int,
     command: unsafe extern "C" fn(Handle, *mut *const c_char) -> c_int,
     get_property: unsafe extern "C" fn(Handle, *const c_char, c_int, *mut c_void) -> c_int,
+    get_property_string: unsafe extern "C" fn(Handle, *const c_char) -> *mut c_char,
+    free: unsafe extern "C" fn(*mut c_void),
     terminate_destroy: unsafe extern "C" fn(Handle),
     render_create: unsafe extern "C" fn(*mut RenderContext, Handle, *mut RenderParam) -> c_int,
     render_set_update_callback: unsafe extern "C" fn(RenderContext, Option<UpdateFn>, *mut c_void),
@@ -103,6 +105,8 @@ impl Api {
                 load_config_file: *library.get(b"mpv_load_config_file\0")?,
                 command: *library.get(b"mpv_command\0")?,
                 get_property: *library.get(b"mpv_get_property\0")?,
+                get_property_string: *library.get(b"mpv_get_property_string\0")?,
+                free: *library.get(b"mpv_free\0")?,
                 terminate_destroy: *library.get(b"mpv_terminate_destroy\0")?,
                 render_create: *library.get(b"mpv_render_context_create\0")?,
                 render_set_update_callback: *library
@@ -125,6 +129,39 @@ fn api() -> Option<&'static Api> {
 /// Whether libmpv is there to play video.
 pub fn available() -> bool {
     api().is_some()
+}
+
+/// The audio devices a new mpv can see (its `audio-device-list`, as the
+/// reference's `GetAudioDeviceTuples` asks); none without libmpv.
+pub fn audio_devices() -> Option<Vec<hydrus_gui_model::mpv_audio_devices::Device>> {
+    let api = api()?;
+    // SAFETY: creating a handle has no preconditions
+    let handle = unsafe { (api.create)() };
+    if handle.is_null() {
+        return None;
+    }
+    // SAFETY: a fresh handle, initialised once; the property name is
+    // NUL-terminated; the string mpv returns is read once and given back to
+    // `mpv_free`; the handle is destroyed last and not used after
+    let list = unsafe {
+        let list = if (api.initialize)(handle) >= 0 {
+            let text = (api.get_property_string)(handle, c"audio-device-list".as_ptr());
+            if text.is_null() {
+                String::new()
+            } else {
+                let list = std::ffi::CStr::from_ptr(text)
+                    .to_string_lossy()
+                    .into_owned();
+                (api.free)(text.cast());
+                list
+            }
+        } else {
+            String::new()
+        };
+        (api.terminate_destroy)(handle);
+        list
+    };
+    Some(hydrus_gui_model::mpv_audio_devices::parse(&list))
 }
 
 enum Wake {

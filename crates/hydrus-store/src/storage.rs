@@ -47,6 +47,12 @@ pub struct FileStorage {
     granularity: usize,
     prefix_to_base: HashMap<String, PathBuf>,
     locations: Vec<StorageLocation>,
+    /// Wait for the computer to settle after waking before handing out a
+    /// path, when the options say so.
+    wake: Option<(
+        std::sync::Arc<crate::wake::WakeGate>,
+        crate::wake::WakeSettings,
+    )>,
 }
 
 impl FileStorage {
@@ -122,6 +128,22 @@ impl FileStorage {
             .collect()
     }
 
+    /// Wait on the wake from system sleep as the options say, from now on.
+    pub fn wait_on_wakeup(
+        &mut self,
+        gate: std::sync::Arc<crate::wake::WakeGate>,
+        settings: crate::wake::WakeSettings,
+    ) {
+        self.wake = Some((gate, settings));
+    }
+
+    /// `_WaitOnWakeup`: one second between looks, as the reference sleeps.
+    fn wait(&self) {
+        if let Some((gate, settings)) = &self.wake {
+            gate.wait_for_file_system(*settings, std::time::Duration::from_secs(1));
+        }
+    }
+
     fn dir_for(&self, kind: char, hash: &Sha256) -> Option<PathBuf> {
         let hex = hash.to_hex();
         let prefix = format!("{kind}{}", &hex[..self.granularity.min(hex.len())]);
@@ -131,6 +153,7 @@ impl FileStorage {
 
     /// The path of a media file.
     pub fn file_path(&self, hash: &Sha256, mime: Mime) -> Option<PathBuf> {
+        self.wait();
         hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::FileReport, || {
             format!("File path request: ('{}', {mime:?})", hash.to_hex())
         });
@@ -143,6 +166,7 @@ impl FileStorage {
 
     /// The path of a thumbnail.
     pub fn thumbnail_path(&self, hash: &Sha256) -> Option<PathBuf> {
+        self.wait();
         hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::FileReport, || {
             format!("Thumbnail path request: ('{}')", hash.to_hex())
         });

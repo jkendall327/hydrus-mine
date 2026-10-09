@@ -402,8 +402,9 @@ fn a_client_starts_hidden_in_the_icon_when_told_to_and_a_tray_is_there() {
     assert!(ui.window().is_visible());
 }
 
-// (not tagged: this drives Slint's own minimised state in the headless
-// platform, not winit's, and has not been run against a real window manager)
+// (this drives Slint's own minimised state in the headless platform, not
+// winit's `is_minimized`, which Wayland does not answer: DIFFERENCES.md)
+// leaf: audit-options-system-tray-minimise-the-main-window-to-system-tray
 #[test]
 fn minimising_hides_the_window_to_the_icon_where_the_window_system_reports_it() {
     let _windows = headless::init();

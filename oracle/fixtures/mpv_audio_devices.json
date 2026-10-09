@@ -1,0 +1,368 @@
+{
+  "device_list_json": "[{\"name\":\"auto\",\"description\":\"Autoselect device\"},{\"name\":\"alsa\",\"description\":\"Default (alsa)\"},{\"name\":\"pulse\",\"description\":\"Default (pulse)\"}]",
+  "button": "fetch mpv audio devices",
+  "runs": [
+    {
+      "available": false,
+      "start": null,
+      "choice": null,
+      "log": [
+        {
+          "information": "Sorry, MPV is not available!"
+        }
+      ],
+      "value": null
+    },
+    {
+      "available": false,
+      "start": "pulse",
+      "choice": null,
+      "log": [
+        {
+          "information": "Sorry, MPV is not available!"
+        }
+      ],
+      "value": "pulse"
+    },
+    {
+      "available": true,
+      "start": null,
+      "choice": null,
+      "log": [
+        {
+          "chooser": "Select mpv audio device",
+          "message": "Populate the option with a value that mpv reports it can see.",
+          "choices": [
+            [
+              "auto - Autoselect device",
+              "auto",
+              "auto"
+            ],
+            [
+              "alsa - Default (alsa)",
+              "alsa",
+              "alsa"
+            ],
+            [
+              "pulse - Default (pulse)",
+              "pulse",
+              "pulse"
+            ],
+            [
+              "null - DEBUG: Do not use any audio output device",
+              "null",
+              "null"
+            ]
+          ]
+        }
+      ],
+      "value": null
+    },
+    {
+      "available": true,
+      "start": null,
+      "choice": 0,
+      "log": [
+        {
+          "chooser": "Select mpv audio device",
+          "message": "Populate the option with a value that mpv reports it can see.",
+          "choices": [
+            [
+              "auto - Autoselect device",
+              "auto",
+              "auto"
+            ],
+            [
+              "alsa - Default (alsa)",
+              "alsa",
+              "alsa"
+            ],
+            [
+              "pulse - Default (pulse)",
+              "pulse",
+              "pulse"
+            ],
+            [
+              "null - DEBUG: Do not use any audio output device",
+              "null",
+              "null"
+            ]
+          ]
+        }
+      ],
+      "value": null
+    },
+    {
+      "available": true,
+      "start": null,
+      "choice": 1,
+      "log": [
+        {
+          "chooser": "Select mpv audio device",
+          "message": "Populate the option with a value that mpv reports it can see.",
+          "choices": [
+            [
+              "auto - Autoselect device",
+              "auto",
+              "auto"
+            ],
+            [
+              "alsa - Default (alsa)",
+              "alsa",
+              "alsa"
+            ],
+            [
+              "pulse - Default (pulse)",
+              "pulse",
+              "pulse"
+            ],
+            [
+              "null - DEBUG: Do not use any audio output device",
+              "null",
+              "null"
+            ]
+          ]
+        }
+      ],
+      "value": "alsa"
+    },
+    {
+      "available": true,
+      "start": null,
+      "choice": 2,
+      "log": [
+        {
+          "chooser": "Select mpv audio device",
+          "message": "Populate the option with a value that mpv reports it can see.",
+          "choices": [
+            [
+              "auto - Autoselect device",
+              "auto",
+              "auto"
+            ],
+            [
+              "alsa - Default (alsa)",
+              "alsa",
+              "alsa"
+            ],
+            [
+              "pulse - Default (pulse)",
+              "pulse",
+              "pulse"
+            ],
+            [
+              "null - DEBUG: Do not use any audio output device",
+              "null",
+              "null"
+            ]
+          ]
+        }
+      ],
+      "value": "pulse"
+    },
+    {
+      "available": true,
+      "start": null,
+      "choice": 3,
+      "log": [
+        {
+          "chooser": "Select mpv audio device",
+          "message": "Populate the option with a value that mpv reports it can see.",
+          "choices": [
+            [
+              "auto - Autoselect device",
+              "auto",
+              "auto"
+            ],
+            [
+              "alsa - Default (alsa)",
+              "alsa",
+              "alsa"
+            ],
+            [
+              "pulse - Default (pulse)",
+              "pulse",
+              "pulse"
+            ],
+            [
+              "null - DEBUG: Do not use any audio output device",
+              "null",
+              "null"
+            ]
+          ]
+        }
+      ],
+      "value": "null"
+    },
+    {
+      "available": true,
+      "start": "pulse",
+      "choice": null,
+      "log": [
+        {
+          "chooser": "Select mpv audio device",
+          "message": "Populate the option with a value that mpv reports it can see.",
+          "choices": [
+            [
+              "auto - Autoselect device",
+              "auto",
+              "auto"
+            ],
+            [
+              "alsa - Default (alsa)",
+              "alsa",
+              "alsa"
+            ],
+            [
+              "pulse - Default (pulse)",
+              "pulse",
+              "pulse"
+            ],
+            [
+              "null - DEBUG: Do not use any audio output device",
+              "null",
+              "null"
+            ]
+          ]
+        }
+      ],
+      "value": "pulse"
+    },
+    {
+      "available": true,
+      "start": "pulse",
+      "choice": 0,
+      "log": [
+        {
+          "chooser": "Select mpv audio device",
+          "message": "Populate the option with a value that mpv reports it can see.",
+          "choices": [
+            [
+              "auto - Autoselect device",
+              "auto",
+              "auto"
+            ],
+            [
+              "alsa - Default (alsa)",
+              "alsa",
+              "alsa"
+            ],
+            [
+              "pulse - Default (pulse)",
+              "pulse",
+              "pulse"
+            ],
+            [
+              "null - DEBUG: Do not use any audio output device",
+              "null",
+              "null"
+            ]
+          ]
+        }
+      ],
+      "value": null
+    },
+    {
+      "available": true,
+      "start": "pulse",
+      "choice": 1,
+      "log": [
+        {
+          "chooser": "Select mpv audio device",
+          "message": "Populate the option with a value that mpv reports it can see.",
+          "choices": [
+            [
+              "auto - Autoselect device",
+              "auto",
+              "auto"
+            ],
+            [
+              "alsa - Default (alsa)",
+              "alsa",
+              "alsa"
+            ],
+            [
+              "pulse - Default (pulse)",
+              "pulse",
+              "pulse"
+            ],
+            [
+              "null - DEBUG: Do not use any audio output device",
+              "null",
+              "null"
+            ]
+          ]
+        }
+      ],
+      "value": "alsa"
+    },
+    {
+      "available": true,
+      "start": "pulse",
+      "choice": 2,
+      "log": [
+        {
+          "chooser": "Select mpv audio device",
+          "message": "Populate the option with a value that mpv reports it can see.",
+          "choices": [
+            [
+              "auto - Autoselect device",
+              "auto",
+              "auto"
+            ],
+            [
+              "alsa - Default (alsa)",
+              "alsa",
+              "alsa"
+            ],
+            [
+              "pulse - Default (pulse)",
+              "pulse",
+              "pulse"
+            ],
+            [
+              "null - DEBUG: Do not use any audio output device",
+              "null",
+              "null"
+            ]
+          ]
+        }
+      ],
+      "value": "pulse"
+    },
+    {
+      "available": true,
+      "start": "pulse",
+      "choice": 3,
+      "log": [
+        {
+          "chooser": "Select mpv audio device",
+          "message": "Populate the option with a value that mpv reports it can see.",
+          "choices": [
+            [
+              "auto - Autoselect device",
+              "auto",
+              "auto"
+            ],
+            [
+              "alsa - Default (alsa)",
+              "alsa",
+              "alsa"
+            ],
+            [
+              "pulse - Default (pulse)",
+              "pulse",
+              "pulse"
+            ],
+            [
+              "null - DEBUG: Do not use any audio output device",
+              "null",
+              "null"
+            ]
+          ]
+        }
+      ],
+      "value": "null"
+    }
+  ]
+}

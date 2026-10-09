@@ -357,6 +357,15 @@ pub(crate) fn shown(store: &Store, id: HashId) -> Shown {
         .unwrap_or_default()
 }
 
+/// Whether a file has an audio track.
+pub(crate) fn has_audio_of(store: &Store, id: HashId) -> bool {
+    store
+        .read(|conn| hydrus_store::media::load_basic(conn, &[id]))
+        .ok()
+        .and_then(|results| results.into_iter().next()?.info)
+        .is_some_and(|info| info.has_audio)
+}
+
 /// A file's duration and frame count, for its scanbar.
 pub(crate) fn timing(store: &Store, id: HashId) -> (Option<u64>, Option<u64>) {
     let info = store

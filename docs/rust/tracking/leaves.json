@@ -150,7 +150,13 @@
     "Truth pass (2026-10-08): partial, small. Playback, hover and space-to-pause wired but untested; scanbar missing. Missing: Scanbar and volume control in the archive/delete window; tests of pause, playback and hover there. Evidence: archive_delete_window.rs:102-103, 278-320, 577-580; archive_delete.slint:44-49, 143-145",
     "Shared viewer zoom/decoding/playback renders the current file, display tags and information line; native pause toggle is wired during archive/delete filtering. Partial: Shared viewer playback source and generic archive decision regression do not establish archive-specific playback/scanbar/audio/hover actions; those remain a source-supported unverified boundary. Existing regression scope: Archive-specific zoom/pan has focused assertions.",
     "Shared viewer playback source and generic archive decision regression do not establish archive-specific playback/scanbar/audio/hover actions; those remain a source-supported unverified boundary."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "Claude, options-shell-leftovers",
+    "note": "GUI test archive_delete_playback.rs drives the real archive/delete window: animation playing, space pause, the frame scanbar with drag-pause, the volume control and mutes, hover frames; the scanbar and volume are compared with the media viewer's for the same file rather than with a recording of the reference's archive/delete canvas (which uses the same player code). mpv itself is not driven."
+   }
   },
   {
    "id": "audit-media-comparator-and",
@@ -8940,7 +8946,13 @@
     "Remote repository/IPFS deletion is excluded from this local native dialog. Simple/nonadvanced service-choice picker, undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
     "Queue uses existing ListTable/SessionDialog geometry. Recorded selection/add/edit/move/delete behavior and Delete-key route are covered; general ListTable keyboard arrow selection is not expanded by this slice.",
     "Rust model/native/store regressions are authored for root hosted CI; no local Cargo build/test or mutation tests were run."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude, options-shell-leftovers",
+    "note": "GUI test undelete_question.rs drives the real main window (thumbnail selection, delete and undelete) and the viewer, replaying oracle/fixtures/files_trash.json (delete question per confirm setting and domain count) and the new undelete_question.json (the single-domain yes/no, the 'Undelete for?' chooser with each choice or a cancel, and what is restored). Remote services are excluded (none exist here)."
+   }
   },
   {
    "id": "audit-options-files-and-trash-confirm-sending-more-than-one-file-to-archive-or-inbox",
@@ -13242,7 +13254,13 @@
     "Truth pass (2026-10-08): missing, small. Doable now. Missing: Read 'audio-device-list' (mpv_get_property_string), an action-button row kind, a choice dialog, the unavailable message; test with a stubbed list. Evidence: mpv.rs dlopens libmpv; reference MediaPlaybackPanel.py:405-436",
     "Reference editor/control '--Fetch list of mpv audio device strings:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable '--Fetch list of mpv audio device strings:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude, options-shell-leftovers",
+    "note": "GUI test options_mpv_devices.rs clicks the real button in the real options window with the device list stubbed (parsed from mpv's JSON as recorded) and replays oracle/fixtures/mpv_audio_devices.json: the unavailable message, the chooser's title, message and labels, each choice (auto sets none) and cancel, the draft, and Apply. libmpv itself is not driven in the test. The preferred device is applied as each file loads (mpv_options Plan); open players are not updated on Apply (DIFFERENCES.md)."
+   }
   },
   {
    "id": "audit-options-media-playback-mpv-linux-debug-do-not-allow-combined-setgeometry-on-mpv-window",
@@ -20613,7 +20631,13 @@
     "Truth pass (2026-10-08): partial, small. Checkbox stored but inert; needs the file-system wait. Missing: A wake-aware wait before file-store access, and a test. Evidence: options.rs:4404-4407 stored only; reference ClientFilesManager._WaitOnWakeup (ClientFilesManager.py:863); hydrus-net has wake detection",
     "Reference editor/control 'Include the file system in this wait:' is recorded on 'system' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Include the file system in this wait:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude, options-shell-leftovers",
+    "note": "hydrus-store tests/wake_wait.rs replays oracle/fixtures/file_system_wake_wait.json (recorded from the reference's files manager with a simulated wake): for each combination of the option and wake detection, the real FileStorage::file_path blocks for the recorded whole seconds and the gate reads just-woken as recorded. The GUI heartbeat and the daemon loop call the sleep check; those are not separately tested."
+   }
   },
   {
    "id": "audit-options-system-tray-always-show-the-hydrus-system-tray-icon",
@@ -20702,7 +20726,13 @@
     "Truth pass (2026-10-08): partial, medium. Depends on the tray; minimise detection impossible on Wayland. Missing: The tray, plus minimise detection (winit is_minimized: polled; not available on Wayland). Evidence: options.rs:4418-4421 row, unread",
     "Reference editor/control 'Minimise the main window to system tray:' is recorded on 'system tray' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Minimise the main window to system tray:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "Claude, options-shell-leftovers",
+    "note": "GUI test system_tray.rs minimising_hides_the_window_to_the_icon_where_the_window_system_reports_it drives the real tray controller (option read, window hidden to the icon, restored with its prior state on show, nothing hidden with no tray) with Slint's own minimised state in the headless platform; winit's is_minimized (X11/Windows/macOS, not Wayland) and a real window manager are not exercised, and the reference's two BUGFIX switches have no counterpart (DIFFERENCES.md, System tray). The expected behaviour follows the reference's source (ClientGUI.changeEvent / _SystemTrayHide); there is no recording of it."
+   }
   },
   {
    "id": "audit-options-system-tray-start-the-client-minimised-to-system-tray",

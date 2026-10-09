@@ -199,6 +199,116 @@ pub fn undelete(store: &Store, files: &[HashId]) -> hydrus_store::Result<()> {
     })
 }
 
+/// The title of the chooser undeleting asks with when the files were
+/// deleted from more than one local domain.
+pub const UNDELETE_CHOOSER_TITLE: &str = "Undelete for?";
+
+/// Where undeleting files can restore them: the local file domains they were
+/// deleted from, sorted by name as the reference sorts its services
+/// (`UndeleteMedia`).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Undeletion {
+    /// The domains, by name.
+    pub domains: Vec<(ServiceId, String)>,
+    /// The umbrella domain "all the above" undeletes to.
+    all: ServiceId,
+}
+
+impl Undeletion {
+    /// The single domain, when there is no choice to make.
+    pub fn only(&self) -> Option<ServiceId> {
+        match self.domains[..] {
+            [(domain, _)] => Some(domain),
+            _ => None,
+        }
+    }
+
+    /// The chooser's buttons when there is a choice: each domain, then
+    /// "all the above".
+    pub fn choices(&self) -> Vec<String> {
+        let mut choices: Vec<String> = self.domains.iter().map(|(_, n)| n.clone()).collect();
+        choices.push("all the above".to_owned());
+        choices
+    }
+
+    /// The domain the chooser's `index`th button undeletes to.
+    pub fn chosen(&self, index: usize) -> Option<ServiceId> {
+        match index.cmp(&self.domains.len()) {
+            std::cmp::Ordering::Less => Some(self.domains[index].0),
+            std::cmp::Ordering::Equal => Some(self.all),
+            std::cmp::Ordering::Greater => None,
+        }
+    }
+
+    /// The yes/no question asked before undeleting to the only domain, when
+    /// "Confirm sending files to trash" is on (the reference words it for one
+    /// file whatever the count).
+    pub fn question(&self, store: &Store) -> Option<String> {
+        let [(_, name)] = &self.domains[..] else {
+            return None;
+        };
+        store
+            .read(hydrus_store::settings::get::<hydrus_store::settings::DeletionPreferences>)
+            .unwrap_or_default()
+            .confirm_trash
+            .then(|| format!("Undelete this file back to {name}?"))
+    }
+}
+
+/// What undeleting `files` can do; `None` when none of them is still stored
+/// locally or none was deleted from a local domain.
+pub fn undeletion(store: &Store, files: &[HashId]) -> Option<Undeletion> {
+    let snapshot = store.snapshot();
+    let roles = DomainRoles::new(&snapshot.services).ok()?;
+    let batch = store
+        .read(|conn| hydrus_store::media::load(conn, &snapshot.services, None, files))
+        .ok()?;
+    let deleted: BTreeSet<ServiceId> = batch
+        .results
+        .iter()
+        .filter(|m| m.is_current_in(roles.local_file_storage))
+        .flat_map(|m| m.deleted.iter().map(|d| d.service))
+        .filter(|service| roles.local.contains(service))
+        .collect();
+    let mut domains: Vec<(ServiceId, String)> = deleted
+        .into_iter()
+        .filter_map(|id| snapshot.services.get(id).ok().map(|s| (id, s.name.clone())))
+        .collect();
+    domains.sort_by_key(|(_, name)| name.to_lowercase());
+    (!domains.is_empty()).then_some(Undeletion {
+        domains,
+        all: roles.combined_local_media,
+    })
+}
+
+/// Restore those of `files` deleted from `domain` (every local domain they
+/// were deleted from, for the umbrella domain; as the reference filters, only
+/// the files that were deleted from it, which for the umbrella is those no
+/// local domain holds now).
+pub fn undelete_to(store: &Store, files: &[HashId], domain: ServiceId) -> hydrus_store::Result<()> {
+    let snapshot = store.snapshot();
+    let roles = DomainRoles::new(&snapshot.services)?;
+    let batch =
+        store.read(|conn| hydrus_store::media::load(conn, &snapshot.services, None, files))?;
+    let wanted: Vec<HashId> = batch
+        .results
+        .iter()
+        .filter(|m| {
+            if domain == roles.combined_local_media {
+                !roles.local.iter().any(|d| m.is_current_in(*d))
+                    && roles.local.iter().any(|d| m.is_deleted_from(*d))
+            } else {
+                m.is_deleted_from(domain)
+            }
+        })
+        .map(|m| m.hash_id)
+        .collect();
+    if wanted.is_empty() {
+        return Ok(());
+    }
+    store.write_content(move |w| w.undelete_files(domain, &wanted))
+}
+
 /// Whether `files` are still somewhere `location` searches (a file
 /// deleted from a page's domain leaves the page, as in the reference).
 pub fn still_in(store: &Store, location: &LocationContext, files: &[HashId]) -> Vec<HashId> {

@@ -5182,3 +5182,58 @@ the reference's choice of volume and mute for every combination of the
 option, the three volumes and the three mutes, what the real preview control
 moves and flips, and the kinds the preview plays; they are replayed in
 `tests/model/preview_audio.rs` and `tests/gui/preview_audio.rs`.
+
+### Undeleting: where to, and the question
+
+Undelete (shift+delete in the viewer, the thumbnail menu's "undelete") asks as
+the reference's `UndeleteMedia` does. Files deleted from one local file
+domain go back to it, asking "Undelete this file back to {domain}?" first
+while Options > files and trash > "Confirm sending files to trash" is on (the
+reference words it for one file whatever the count). Files deleted from
+several local domains open an "Undelete for?" chooser with a button for each
+domain, by name, and "all the above" (every domain they were deleted from); a
+closed chooser undeletes nothing. Files not deleted from a local domain are
+left alone. Proven by `undelete_question.rs`, replaying
+`oracle/fixtures/undelete_question.json` (and `files_trash.json` for the
+delete question) through the main window and the viewer.
+
+### Options > media playback > mpv: fetch audio devices
+
+"--Fetch list of mpv audio device strings:" has a "fetch mpv audio devices"
+button. It asks libmpv (`audio-device-list`) for the devices a fresh mpv sees
+and offers them, with "null" last, in a "Select mpv audio device" chooser
+("auto - Autoselect device", "alsa - Default (alsa)", and so on). The choice
+fills "Preferred audio output device:" (it is saved by Apply, like any other
+edit; "auto" sets it to "use default"); cancelling changes nothing. Without
+libmpv it says "Sorry, MPV is not available!". Proven by
+`options_mpv_devices.rs`, replaying `oracle/fixtures/mpv_audio_devices.json`
+with a stubbed device list.
+
+### Options > system > system sleep: the file system waits too
+
+With "Include the file system in this wait" on (and wake detection on), a
+file or thumbnail path is not handed out until the wake delay after a wake from
+sleep has passed, checking once a second, as the reference's files manager
+does for a NAS that is slow to come back. The wake is noticed from a gap of
+over a minute between the client's (and the daemon's) regular checks.
+`oracle/fixtures/file_system_wake_wait.json` records how long the reference
+blocks for each combination of the two options; `wake_wait.rs` in
+`hydrus-store` replays it against the real path lookup.
+
+### Archive/delete filter: scanbar and volume
+
+A video, animation or audio file in the archive/delete filter has the media
+viewer's scanbar under it (by frame for the client's own animation player;
+dragging pauses until let go) and, with sound, the viewer's volume control at
+its right: the global mute, and with the pointer on it the volume and the
+viewer's own mute. Space pauses and plays, and the tags (pointer at the left)
+and information (top) frames show. `archive_delete_playback.rs` drives these,
+and checks the scanbar against the viewer's.
+
+### Status bar: tooltips and database activity
+
+The idle and "CPU busy" fields of the status bar have the reference's
+tooltips ("client is idle, it can do maintenance work", "this computer has been
+doing work recently, so some hydrus maintenance will not start"), shown after
+half a second under the pointer. A new field at the right of them says "db
+writing" or "db reading" while this window's database connection is busy.
