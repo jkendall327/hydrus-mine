@@ -110,7 +110,10 @@ fn play(ui: &MainWindow, bound: &Bound, file: usize, count: usize, loops: usize)
     // frame: it is counted, but must not be counted in the next file's)
     let started = Instant::now();
     while decoders_running() > 0 {
-        assert!(started.elapsed() < Duration::from_secs(10), "a decoder never ended");
+        assert!(
+            started.elapsed() < Duration::from_secs(10),
+            "a decoder never ended"
+        );
         std::thread::sleep(Duration::from_millis(2));
     }
     frames_decoded() - before

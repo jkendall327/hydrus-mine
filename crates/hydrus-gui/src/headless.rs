@@ -108,6 +108,8 @@ impl Platform for Headless {
 /// any window, on the thread that will use them). Retain the returned collector
 /// until every window in that UI scope has finished; drop it before thread exit.
 pub fn init() -> Windows {
+    // (no sound card to play to, or probe for, in a test)
+    crate::mpv::use_audio_output("null");
     let windows = Windows::default();
     slint::platform::set_platform(Box::new(Headless {
         registry: windows.0.registry.clone(),

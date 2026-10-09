@@ -914,7 +914,10 @@ mod tests {
             .unwrap();
         assert_eq!(status.index as u64, last["index"].as_u64().unwrap());
         assert_eq!(status.paused, last["paused"].as_bool().unwrap());
-        assert_eq!(animator.played_through(), last["played_through"].as_bool().unwrap());
+        assert_eq!(
+            animator.played_through(),
+            last["played_through"].as_bool().unwrap()
+        );
         // a new file plays on, not yet played through
         animator.play(Some(frames()), |_| {});
         assert!(!animator.played_through());

@@ -35,6 +35,7 @@ fn a_video_plays_into_frames_at_the_size_asked() {
         eprintln!("libmpv is not installed here; skipped");
         return;
     }
+    mpv::use_audio_output("null");
     let player = Player::new(None).unwrap();
     player.set_size(320, 240);
     player

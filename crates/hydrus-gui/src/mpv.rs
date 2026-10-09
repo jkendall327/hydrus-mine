@@ -178,6 +178,19 @@ unsafe extern "C" fn on_update(data: *mut c_void) {
     let _ = wake.try_send(Wake::Update);
 }
 
+/// The audio output every player is told to use whatever its conf says
+/// (unset in the client).
+static AUDIO_OUTPUT: std::sync::OnceLock<String> = std::sync::OnceLock::new();
+
+/// Make every player from now on use audio output `name` (`null` plays in
+/// real time with no sound card). For tests: left to itself, mpv probes
+/// PipeWire, ALSA and JACK for each file with sound, which on a machine
+/// without a sound card (CI) is slow, noisy, and crashes when several
+/// players probe at once.
+pub fn use_audio_output(name: &str) {
+    let _ = AUDIO_OUTPUT.set(name.to_owned());
+}
+
 impl Player {
     /// A player, with `conf` (the store's `mpv.conf`) if there is one.
     pub fn new(conf: Option<&Path>) -> Result<Player, String> {
@@ -211,6 +224,9 @@ impl Player {
                     option(name, value);
                 }
             }
+        }
+        if let Some(output) = AUDIO_OUTPUT.get() {
+            option("ao", output);
         }
         // SAFETY: a valid, configured handle
         if unsafe { (api.initialize)(handle) } < 0 {

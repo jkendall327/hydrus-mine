@@ -150,10 +150,18 @@ fn animations_play_in_the_viewer_with_the_client_s_own_player() {
         let mut expected = vec![case["initial"]["text"].as_str().unwrap().to_owned()];
         expected.extend(as_str_vec(&case["timeline"]));
         let mut indexes = vec![0];
-        indexes.extend(timeline.iter().map(|step| step["index"].as_u64().unwrap() as usize));
+        indexes.extend(
+            timeline
+                .iter()
+                .map(|step| step["index"].as_u64().unwrap() as usize),
+        );
         let seen = texts_while_playing(&viewer, expected.len());
         let texts: Vec<&str> = seen.iter().map(|(text, _)| text.as_str()).collect();
-        assert_eq!(texts, expected.iter().map(String::as_str).collect::<Vec<_>>(), "{name}");
+        assert_eq!(
+            texts,
+            expected.iter().map(String::as_str).collect::<Vec<_>>(),
+            "{name}"
+        );
         // (the bar's text lags a frame by a poll, so the time is taken over
         // the whole run, from the second text to the last)
         let durations = case["durations_ms"].as_array().unwrap();
@@ -161,7 +169,11 @@ fn animations_play_in_the_viewer_with_the_client_s_own_player() {
             .iter()
             .map(|&index| durations[index].as_f64().unwrap())
             .sum();
-        let took = seen[seen.len() - 1].1.duration_since(seen[1].1).as_secs_f64() * 1000.0;
+        let took = seen[seen.len() - 1]
+            .1
+            .duration_since(seen[1].1)
+            .as_secs_f64()
+            * 1000.0;
         assert!(took >= due * 0.85, "{name}: {took}ms of {due}");
         // (frames of 60 to 100ms, looping)
         let shown = watch(&viewer, Duration::from_millis(1500));
@@ -205,12 +217,20 @@ fn animations_play_in_the_viewer_with_the_client_s_own_player() {
                 let wanted = scan["pressed"]["text"].as_str().unwrap();
                 viewer.invoke_scan_started();
                 viewer.invoke_scan(x, bar_width);
-                reaches(&viewer, wanted, &format!("{name} scan {x} paused {paused_before}"));
+                reaches(
+                    &viewer,
+                    wanted,
+                    &format!("{name} scan {x} paused {paused_before}"),
+                );
                 // (a drag pauses playing while it lasts)
                 stays(&viewer, wanted, &format!("{name} drag {x}"));
                 viewer.invoke_scan_ended();
                 if paused_before {
-                    stays(&viewer, wanted, &format!("{name} released {x} still paused"));
+                    stays(
+                        &viewer,
+                        wanted,
+                        &format!("{name} released {x} still paused"),
+                    );
                 }
             }
             if !paused_before {
@@ -249,7 +269,11 @@ fn animations_play_in_the_viewer_with_the_client_s_own_player() {
             );
         }
         let last = seeks[0]["steps"].as_array().unwrap().last().unwrap();
-        stays(&viewer, last["text"].as_str().unwrap(), &format!("{name} still paused"));
+        stays(
+            &viewer,
+            last["text"].as_str().unwrap(),
+            &format!("{name} still paused"),
+        );
         // ctrl+b and ctrl+n: a frame back or on, round the ends
         goto(0);
         reaches(&viewer, case["initial"]["text"].as_str().unwrap(), name);
@@ -272,7 +296,12 @@ fn animations_play_in_the_viewer_with_the_client_s_own_player() {
         let shown = viewer.get_scanbar_text().to_string();
         stays(&viewer, &shown, &format!("{name} a frame step pauses"));
         assert!(
-            frames > 1 && case["frame_step"].as_array().unwrap().iter().all(|s| s["paused"].as_bool().unwrap()),
+            frames > 1
+                && case["frame_step"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .all(|s| s["paused"].as_bool().unwrap()),
             "{name}: the reference's frame step pauses"
         );
         viewer.invoke_toggle_pause();
