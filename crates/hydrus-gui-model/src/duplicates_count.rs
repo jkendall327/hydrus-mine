@@ -609,6 +609,8 @@ struct Inner<R> {
     query_generation: u64,
     dirty: bool,
     parked: Parked,
+    /// Whether the worker has reached the [`Gate`] it is parked at.
+    at_gate: bool,
     /// How many fetches and blocks have finished.
     epoch: u64,
 }
@@ -656,6 +658,7 @@ impl<R: Clone + Send + 'static> Handle<R> {
                 query_generation: 0,
                 dirty: true,
                 parked: Parked::No,
+                at_gate: false,
                 epoch: 0,
             }),
             wake: Condvar::new(),
@@ -728,7 +731,7 @@ impl<R: Clone + Send + 'static> Handle<R> {
         match inner.parked {
             Parked::No => false,
             Parked::Idle => !inner.dirty,
-            Parked::Gate => true,
+            Parked::Gate => inner.at_gate,
         }
     }
 
@@ -770,13 +773,17 @@ fn run<R: Clone + Send + 'static>(
                 match inner.counter.pre_work(options, Instant::now()) {
                     PreWork::Fetch => {
                         inner.parked = Parked::Gate;
+                        inner.at_gate = false;
                         drop(inner);
                         if let Some(gate) = gate {
-                            gate.wait(&shared.stop, Waiting::Space);
+                            gate.wait(&shared.stop, Waiting::Space, || {
+                                shared.lock().at_gate = true;
+                            });
                         }
                         let fetched = source.space();
                         inner = shared.lock();
                         inner.parked = Parked::No;
+                        inner.at_gate = false;
                         inner.epoch += 1;
                         match fetched {
                             Ok(rows) => inner.counter.space_fetched(rows, Instant::now()),
@@ -785,6 +792,7 @@ fn run<R: Clone + Send + 'static>(
                     }
                     PreWork::Block => {
                         inner.parked = Parked::Gate;
+                        inner.at_gate = false;
                         break (inner.counter.generation(), inner.query_generation);
                     }
                     PreWork::Idle => {
@@ -800,10 +808,15 @@ fn run<R: Clone + Send + 'static>(
                 }
             }
         };
-        let held = gate.and_then(|g| g.wait(&shared.stop, Waiting::Block));
+        let held = gate.and_then(|g| {
+            g.wait(&shared.stop, Waiting::Block, || {
+                shared.lock().at_gate = true;
+            })
+        });
         let (rows, _) = {
             let mut inner = shared.lock();
             inner.parked = Parked::No;
+            inner.at_gate = false;
             if inner.counter.generation() != generation {
                 // (the search changed while the block waited; it is dropped)
                 inner.epoch += 1;
@@ -951,13 +964,21 @@ impl Gate {
 
     /// Wait for a permit if the gate is held; the seconds a test has the
     /// block count as taking.
-    fn wait(&self, stop: &AtomicBool, kind: Waiting) -> Option<f64> {
+    fn wait(&self, stop: &AtomicBool, kind: Waiting, arrived: impl FnOnce()) -> Option<f64> {
         let mut state = self.state.lock().unwrap_or_else(PoisonError::into_inner);
         if !state.held {
             return None;
         }
         state.waiting = Some(kind);
+        // (a worker waits here, which is what tests look for)
+        let mut arrived = Some(arrived);
         let result = loop {
+            if let Some(arrived) = arrived.take() {
+                drop(state);
+                arrived();
+                state = self.state.lock().unwrap_or_else(PoisonError::into_inner);
+                continue;
+            }
             if let Some(permit) = state.permit.take() {
                 break Some(permit);
             }
