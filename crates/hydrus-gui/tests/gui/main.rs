@@ -167,6 +167,7 @@ mod sidecar_node_window;
 mod string_converter_window;
 mod string_match_window;
 mod string_processor_window;
+mod tab_context_menu;
 mod tag_filter_favourites;
 
 mod downloader_display;
