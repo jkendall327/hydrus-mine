@@ -627,7 +627,8 @@ importing (looking inside .zip files for comics), maintenance and
 processing (file maintenance in normal time and its throttle, the
 potential duplicates search, auto-resolution in normal time and its work
 and rest), media playback (the zoom centre, the zoom steps, the media
-viewer's default zoom, and what counts as transparency), media viewer
+viewer's default zoom, and what counts as transparency, which the next
+import takes, even by an importer already running), media viewer
 (slideshows), media viewer hovers (the top hover's
 file summary), ratings (the media viewer's rating sizes, and the
 thumbnails': their sizes, which go up to the thumbnails' width as the
@@ -1548,7 +1549,10 @@ do, and a frame step pauses afterwards, as the reference's does
 Video, audio and other animations play in mpv: libmpv is loaded when first
 needed, so building needs nothing more, and without it these show their
 thumbnail. A file loops, space pauses it, and the store's `mpv.conf` (else
-hydrus's default one) applies. Frames come from mpv's software renderer, on
+hydrus's default one) applies. Options > media playback's mpv rows (loop
+the playlist instead of the file, the preferred audio device) reach players
+already open on OK as well as new ones, as the reference's do. Frames come
+from mpv's software renderer, on
 a thread of their own (`src/mpv.rs`); that is slower than the reference's
 embedded mpv window for large videos. Other files show their thumbnail.
 A duplicates page (a migrated session's, with its search, pair sort and
@@ -1563,7 +1567,10 @@ custom action asks which decision, then (for "this is better", "same
 quality", or "alternates" in advanced mode) its merge options in the
 merge options editor, for that decision alone, then which files to
 delete ("delete neither", "delete this one", "delete the other", "delete
-both" or "forget it"), as the reference's does. As in the reference, a
+both" or "forget it"), as the reference's does. With the archived-file
+delete lock on, an archived file the filter (or an approved or automatic
+auto-resolution action) deletes is inboxed first, so it can go to the trash,
+when Options > files and trash asks for it. As in the reference, a
 left click on the file is "better, delete the other", a right click
 "alternates", a middle click goes back and up skips; video, audio and
 animations play as in the media viewer, and the next three pairs' files
@@ -4774,8 +4781,10 @@ preview show actions and zoom info as the reference does, sorted by column.
 class's options; "edit" (or double-click) opens "edit media view options
 information" with the filetype's own show-action choices, start paused/embed
 switches, scaling, half/double zooms and interpolation qualities, enabled as
-`_UpdateControls` enables them; "delete" removes specific filetypes but never the
-classes. Edits stay in the Options draft until Apply. Dumped by
+`_UpdateControls` enables them; "delete" asks "Remove all selected?" and then
+removes specific filetypes but never the classes. Once Options is applied, the
+media viewer opens a file of that type at the row's zoom (checked on a jpeg
+against `oracle/record_filetype_handling.py`). Edits stay in the Options draft until Apply. Dumped by
 `oracle/dump_media_view_options.py`; `tests/model/media_view_options.rs`.
 Options Apply waits for its open media editor. Cancelled or replaced children,
 and children whose Options owner is hidden, cannot stage an edit or open a

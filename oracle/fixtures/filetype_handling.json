@@ -1,0 +1,252 @@
+{
+ "canvas": [
+  1000,
+  750
+ ],
+ "files": {
+  "small jpeg": [
+   300,
+   200
+  ],
+  "big jpeg": [
+   4000,
+   3000
+  ]
+ },
+ "phases": [
+  {
+   "do": "add",
+   "scale_up": 0,
+   "asked": [
+    {
+     "select": "select the filetype to add",
+     "choices": [
+      "animation: animated gif",
+      "animation: apng",
+      "animation: avif sequence",
+      "animation: heic sequence",
+      "animation: heif sequence",
+      "application: djvu",
+      "application: doc",
+      "application: docx",
+      "application: epub",
+      "application: flash",
+      "application: pdf",
+      "application: ppt",
+      "application: pptx",
+      "application: rtf",
+      "application: xls",
+      "application: xlsx",
+      "archive: 7z",
+      "archive: cbz",
+      "archive: gzip",
+      "archive: rar",
+      "archive: zip",
+      "audio: flac",
+      "audio: m4a",
+      "audio: matroska audio",
+      "audio: mp3",
+      "audio: mp4 audio",
+      "audio: ogg",
+      "audio: realaudio",
+      "audio: tta",
+      "audio: wave",
+      "audio: wavpack",
+      "audio: wma",
+      "image project file: clip",
+      "image project file: paint.net",
+      "image project file: procreate",
+      "image project file: sai2",
+      "image project file: svg",
+      "image project file: xcf",
+      "image: avif",
+      "image: bitmap",
+      "image: heic",
+      "image: heif",
+      "image: icon",
+      "image: jpeg",
+      "image: jxl",
+      "image: png",
+      "image: qoi",
+      "image: static gif",
+      "image: tiff",
+      "image: webp",
+      "video: avi",
+      "video: flv",
+      "video: matroska",
+      "video: mp4",
+      "video: mpeg",
+      "video: ogv",
+      "video: quicktime",
+      "video: realvideo",
+      "video: webm",
+      "video: wmv"
+     ]
+    },
+    {
+     "dialog": "add media view options information",
+     "media_scale_up_before": 2
+    }
+   ],
+   "row_listed": true,
+   "staged_scale_up": 0,
+   "zooms_before_ok": {
+    "small jpeg": {
+     "0": 3.3333333333333335,
+     "1": 3.3333333333333335,
+     "5": 3.75,
+     "3": 3.3333333333333335,
+     "4": 3.75,
+     "2": 1.0
+    },
+    "big jpeg": {
+     "0": 0.25,
+     "1": 0.25,
+     "5": 0.25,
+     "3": 0.25,
+     "4": 0.25,
+     "2": 1.0
+    }
+   },
+   "zooms": {
+    "small jpeg": {
+     "0": 1.0,
+     "1": 3.3333333333333335,
+     "5": 3.75,
+     "3": 3.3333333333333335,
+     "4": 3.75,
+     "2": 1.0
+    },
+    "big jpeg": {
+     "0": 0.25,
+     "1": 0.25,
+     "5": 0.25,
+     "3": 0.25,
+     "4": 0.25,
+     "2": 1.0
+    }
+   },
+   "saved_scale_up": 0
+  },
+  {
+   "do": "edit",
+   "scale_up": 2,
+   "asked": [
+    {
+     "dialog": "edit media view options information",
+     "media_scale_up_before": 0
+    }
+   ],
+   "row_listed": true,
+   "staged_scale_up": 2,
+   "zooms_before_ok": {
+    "small jpeg": {
+     "0": 1.0,
+     "1": 3.3333333333333335,
+     "5": 3.75,
+     "3": 3.3333333333333335,
+     "4": 3.75,
+     "2": 1.0
+    },
+    "big jpeg": {
+     "0": 0.25,
+     "1": 0.25,
+     "5": 0.25,
+     "3": 0.25,
+     "4": 0.25,
+     "2": 1.0
+    }
+   },
+   "zooms": {
+    "small jpeg": {
+     "0": 3.3333333333333335,
+     "1": 3.3333333333333335,
+     "5": 3.75,
+     "3": 3.3333333333333335,
+     "4": 3.75,
+     "2": 1.0
+    },
+    "big jpeg": {
+     "0": 0.25,
+     "1": 0.25,
+     "5": 0.25,
+     "3": 0.25,
+     "4": 0.25,
+     "2": 1.0
+    }
+   },
+   "saved_scale_up": 2
+  },
+  {
+   "do": "delete",
+   "can_delete": true,
+   "asked": [
+    {
+     "yes_no": "Remove all selected?"
+    }
+   ],
+   "row_listed": false,
+   "zooms_before_ok": {
+    "small jpeg": {
+     "0": 3.3333333333333335,
+     "1": 3.3333333333333335,
+     "5": 3.75,
+     "3": 3.3333333333333335,
+     "4": 3.75,
+     "2": 1.0
+    },
+    "big jpeg": {
+     "0": 0.25,
+     "1": 0.25,
+     "5": 0.25,
+     "3": 0.25,
+     "4": 0.25,
+     "2": 1.0
+    }
+   },
+   "zooms": {
+    "small jpeg": {
+     "0": 3.3333333333333335,
+     "1": 3.3333333333333335,
+     "5": 3.75,
+     "3": 3.3333333333333335,
+     "4": 3.75,
+     "2": 1.0
+    },
+    "big jpeg": {
+     "0": 0.25,
+     "1": 0.25,
+     "5": 0.25,
+     "3": 0.25,
+     "4": 0.25,
+     "2": 1.0
+    }
+   },
+   "show_action": 0
+  }
+ ],
+ "start": {
+  "jpeg_row": false,
+  "addable_includes_jpeg": true,
+  "can_add": true,
+  "zooms": {
+   "small jpeg": {
+    "0": 3.3333333333333335,
+    "1": 3.3333333333333335,
+    "5": 3.75,
+    "3": 3.3333333333333335,
+    "4": 3.75,
+    "2": 1.0
+   },
+   "big jpeg": {
+    "0": 0.25,
+    "1": 0.25,
+    "5": 0.25,
+    "3": 0.25,
+    "4": 0.25,
+    "2": 1.0
+   }
+  },
+  "show_action": 0
+ }
+}

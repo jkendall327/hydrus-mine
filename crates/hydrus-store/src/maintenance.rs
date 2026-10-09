@@ -29,8 +29,48 @@ pub struct PurgeControl(std::sync::Arc<PurgeWait>);
 struct PurgeWait {
     cancelled: std::sync::Mutex<bool>,
     changed: std::sync::Condvar,
+    after_write: std::sync::Mutex<AfterWrite>,
+}
+
+/// What a test runs after each of a pass's writes.
+#[derive(Default)]
+struct AfterWrite(Option<Box<dyn FnMut() + Send>>);
+
+impl std::fmt::Debug for AfterWrite {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(if self.0.is_some() {
+            "AfterWrite(set)"
+        } else {
+            "AfterWrite"
+        })
+    }
 }
 impl PurgeControl {
+    /// Run `f` on the worker's thread after each write a pass makes (a trash
+    /// pass's group of eight), outside the writer: for tests that act between
+    /// a pass's writes.
+    #[doc(hidden)]
+    pub fn after_each_write(&self, f: impl FnMut() + Send + 'static) {
+        self.0
+            .after_write
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .0 = Some(Box::new(f));
+    }
+
+    pub(crate) fn wrote(&self) {
+        if let Some(f) = self
+            .0
+            .after_write
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .0
+            .as_mut()
+        {
+            f();
+        }
+    }
+
     /// Wake a pending wait and prevent later queue admissions for this owner.
     pub fn cancel(&self) {
         *self
