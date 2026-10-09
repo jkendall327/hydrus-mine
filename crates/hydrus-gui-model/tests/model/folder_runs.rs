@@ -3,7 +3,9 @@
 //! the flags the scheduler reads.
 use hydrus_core::import_options::ImportOptionsSlice;
 use hydrus_core::search::context::FileSearchContext;
-use hydrus_gui_model::folder_runs::{check_import_folders, run_export_folders};
+use hydrus_gui_model::folder_runs::{
+    EXPORT_FOLDERS_PAUSED, IMPORT_FOLDERS_PAUSED, check_import_folders, run_export_folders,
+};
 use hydrus_gui_model::folders::new_export_folder;
 use hydrus_parse::folders::ImportFolderSettings;
 use hydrus_store::settings::ExportFolders;
@@ -46,13 +48,67 @@ fn named_then_all_folders_are_flagged_to_run() {
         folders.0.iter().map(|f| f.run_now).collect()
     };
     assert_eq!(checked(), [false, false]);
-    check_import_folders(&store, Some("b".into())).unwrap();
+    assert_eq!(
+        check_import_folders(&store, Some("b".into())).unwrap(),
+        None
+    );
     assert_eq!(checked(), [false, true]);
-    check_import_folders(&store, None).unwrap();
+    assert_eq!(check_import_folders(&store, None).unwrap(), None);
     assert_eq!(checked(), [true, true]);
     assert_eq!(running(), [false, false]);
-    run_export_folders(&store, Some("a".into())).unwrap();
+    assert_eq!(run_export_folders(&store, Some("a".into())).unwrap(), None);
     assert_eq!(running(), [true, false]);
-    run_export_folders(&store, None).unwrap();
+    assert_eq!(run_export_folders(&store, None).unwrap(), None);
     assert_eq!(running(), [true, true]);
+}
+
+#[test]
+fn checking_a_folder_unpauses_it_and_paused_folders_say_so_but_are_still_flagged() {
+    let dir = tempfile::tempdir().unwrap();
+    let store = hydrus_store::Store::open(dir.path()).unwrap();
+    store
+        .write(|ctx| {
+            let conn = ctx.conn();
+            for (name, paused) in [("a", true), ("b", false)] {
+                hydrus_store::import_folders::create_import_folder(
+                    conn,
+                    name,
+                    &ImportFolderSettings::default(),
+                    &ImportOptionsSlice::default(),
+                    paused,
+                    0,
+                )?;
+            }
+            let mut pauses: hydrus_store::settings::FolderSettings =
+                hydrus_store::settings::get(conn)?;
+            pauses.pause_import_folders = true;
+            pauses.pause_export_folders = true;
+            hydrus_store::settings::set(conn, &pauses)
+        })
+        .unwrap();
+    let state = || -> Vec<(String, bool, bool)> {
+        store
+            .read(hydrus_store::import_folders::import_folders)
+            .unwrap()
+            .iter()
+            .map(|f| (f.name().to_owned(), f.paused(), f.settings.check_now))
+            .collect()
+    };
+    assert_eq!(
+        state(),
+        [("a".into(), true, false), ("b".into(), false, false)]
+    );
+    // checking "a" unpauses it, flags it only, and says the folders are paused
+    assert_eq!(
+        check_import_folders(&store, Some("a".into())).unwrap(),
+        Some(IMPORT_FOLDERS_PAUSED)
+    );
+    assert_eq!(
+        state(),
+        [("a".into(), false, true), ("b".into(), false, false)]
+    );
+    assert_eq!(
+        run_export_folders(&store, None).unwrap(),
+        Some(EXPORT_FOLDERS_PAUSED)
+    );
 }

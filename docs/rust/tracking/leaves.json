@@ -14741,7 +14741,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/files_io_file_menu.rs checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_reference_did drives the file menu's check/run entries (one folder, all) on real import and export folders, once with the folders running and once paused under the file menu, and compares the folders' flags (paused, check now / run now) afterwards and the text the client shows with folder_runs.json, recorded from the reference by oracle/record_folder_runs.py (_CheckImportFolder / _RunExportFolder). Checking a folder unpauses it, and a paused menu says the reference's 'currently paused' text while still flagging, as recorded."
+    "note": "gui/files_io_file_menu.rs checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_reference_did drives the file menu's check/run entries (one folder, all) on real import and export folders, once with the folders running and once paused under the file menu, and compares the folders' flags (paused, check now / run now) afterwards and the text the client shows with folder_runs.json, recorded from the reference by oracle/record_folder_runs.py (_CheckImportFolder / _RunExportFolder). Checking a folder unpauses it, and a paused menu says the reference's 'currently paused' text while still flagging, as recorded. The import worker acts on the unpause: the old import test pauses a folder, checks it from the menu, and the worker then checks it."
    }
   },
   {
@@ -14761,7 +14761,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/files_io_file_menu.rs checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_reference_did drives the file menu's check/run entries (one folder, all) on real import and export folders, once with the folders running and once paused under the file menu, and compares the folders' flags (paused, check now / run now) afterwards and the text the client shows with folder_runs.json, recorded from the reference by oracle/record_folder_runs.py (_CheckImportFolder / _RunExportFolder). Checking a folder unpauses it, and a paused menu says the reference's 'currently paused' text while still flagging, as recorded."
+    "note": "gui/files_io_file_menu.rs checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_reference_did drives the file menu's check/run entries (one folder, all) on real import and export folders, once with the folders running and once paused under the file menu, and compares the folders' flags (paused, check now / run now) afterwards and the text the client shows with folder_runs.json, recorded from the reference by oracle/record_folder_runs.py (_CheckImportFolder / _RunExportFolder). Checking a folder unpauses it, and a paused menu says the reference's 'currently paused' text while still flagging, as recorded. The import worker acts on the unpause: the old import test pauses a folder, checks it from the menu, and the worker then checks it."
    }
   },
   {
@@ -15024,7 +15024,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/files_io_file_menu.rs checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_reference_did drives the file menu's check/run entries (one folder, all) on real import and export folders, once with the folders running and once paused under the file menu, and compares the folders' flags (paused, check now / run now) afterwards and the text the client shows with folder_runs.json, recorded from the reference by oracle/record_folder_runs.py (_CheckImportFolder / _RunExportFolder). Checking a folder unpauses it, and a paused menu says the reference's 'currently paused' text while still flagging, as recorded."
+    "note": "gui/files_io_file_menu.rs checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_reference_did drives the file menu's run entries (one export folder, run all) on real export folders, running and paused under the file menu, and compares each folder's run-now flag and the text shown (\"Export folders are currently paused under the 'file' menu...\") with folder_runs.json (oracle/record_folder_runs.py, _RunExportFolder); export_folders_are_paused_and_run_from_the_file_menu_and_the_worker_obeys then runs the export worker on the flagged folders."
    }
   },
   {
@@ -15044,7 +15044,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "gui/files_io_file_menu.rs checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_reference_did drives the file menu's check/run entries (one folder, all) on real import and export folders, once with the folders running and once paused under the file menu, and compares the folders' flags (paused, check now / run now) afterwards and the text the client shows with folder_runs.json, recorded from the reference by oracle/record_folder_runs.py (_CheckImportFolder / _RunExportFolder). Checking a folder unpauses it, and a paused menu says the reference's 'currently paused' text while still flagging, as recorded."
+    "note": "gui/files_io_file_menu.rs checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_reference_did drives the file menu's run entries (one export folder, run all) on real export folders, running and paused under the file menu, and compares each folder's run-now flag and the text shown (\"Export folders are currently paused under the 'file' menu...\") with folder_runs.json (oracle/record_folder_runs.py, _RunExportFolder); export_folders_are_paused_and_run_from_the_file_menu_and_the_worker_obeys then runs the export worker on the flagged folders."
    }
   },
   {
