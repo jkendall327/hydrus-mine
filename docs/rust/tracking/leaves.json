@@ -4695,10 +4695,10 @@
     "Native text parser builds the folder predicate tree, displayed as removable rows."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real editor: two typed predicates ANDed, an unparsable one refused, one removed, and the real worker exports only pngs (then everything after removal), plus reopen. Expected values (counts, png-only) are typed literals; typed-search parsing and the row text are not recorded (GUI asserts only row_count; the model test checks recorded predicate texts). No recording of the typed-entry path. Tests: crates/hydrus-gui/tests/gui/files_io_folder_editors.rs:227 same test; crates/hydrus-gui-model/tests/model/folders.rs:232 (recorded predicate display via predicate_text)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "Real export folder editor: eleven typed entries (system predicates, an unparsable one, tags, a namespace, a wildcard, a negated tag replacing its positive, a repeated predicate removing itself, padded text) and two row removals, rows and leftover text compared with oracle/fixtures/export_folder_predicates.json (the reference's EditExportFolderPanel); then the real export worker runs the two-predicate folder and again with the png predicate removed, and the exported filenames match the reference's ExportFolder.DoWork. Fixed here: typed text is no longer trimmed: the recording shows the reference takes '  system:inbox  ' as a tag (predicate type 0, reading 'inbox'; the system predicate would read 'system:inbox'), and the test checks that. Tests: crates/hydrus-gui/tests/gui/files_io_folder_editors.rs typed_predicates_make_the_export_folders_search_as_the_reference_does."
    }
   },
   {
@@ -4754,10 +4754,10 @@
     "Folder selection changes the preview root; location launches in the platform file browser."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window with stand-in picker and launcher: browse sets destination and moves the preview, open-location launches the folder, a missing folder reports 'That location does not seem to exist!' (native status line, reference uses a ShowCritical dialog titled 'Does not exist!'). All strings are restated from the Python source; no recording, and the launcher is a stand-in. Tests: crates/hydrus-gui/tests/gui/files_io_export_files.rs:96 the_destination_is_browsed_for_and_its_location_opened"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "Real export window: browse with a scripted directory (a trailing slash and '..' tidied, a cancel, a folder that doesn't exist and so doesn't remake names, the rows then shown INVALID) and open location (empty, existing, missing) against oracle/fixtures/export_names.json; the real launcher runs a stub xdg-open, as the recorder put one on the reference's PATH, and its argv is compared. Fixed here: the picked path is now normpath'd and only an existing folder refreshes. Known partial: the reference's missing folder shows a 'Does not exist!' dialog; ours is a status line with the same text, and the picker's starting folder is not passed (both in DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/files_io_export_files.rs the_destination_is_browsed_for_and_its_location_opened_as_the_reference_does."
    }
   },
   {
@@ -4811,10 +4811,10 @@
     "Selected file IDs are snapshotted for confirmation and removal immediately recalculates names."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window: nothing selected asks nothing; shift-click range; No keeps rows; Yes removes and renumbers ('{#}' names). The question text is recorded and checked in the model test, but the renumbering expectations are literals from _DeletePaths and are not recorded. Tests: crates/hydrus-gui/tests/gui/files_io_export_files.rs:48 selected_rows_are_removed_after_asking_and_the_names_are_made_again; crates/hydrus-gui-model/tests/model/export_files.rs:72 (REMOVE_QUESTION vs recording)"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "Real export window over five files, phrases '{#}' and '{#} {file_id}': middle, first-and-last and declined removals and an empty selection, with the question, numbers and names compared with oracle/fixtures/export_names.json (record_export_names.py, the reference's _DeletePaths). Names are remade at once where the reference keeps its stale names until the phrase changes; they are compared with the reference's names only after that refresh; the reference's stale names (which a later export would use) are neither reproduced nor tested (DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/files_io_export_files.rs selected_rows_are_removed_after_asking_and_renumbered_as_the_reference_does."
    }
   },
   {
@@ -7756,10 +7756,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options row to the manual-export preview; defaults and ranges come from the options_dialog recording, but the resulting filenames ('a:b|c' -> 'a_b_c') are typed literals; no recorder runs the reference's export filename generation (no oracle fixture for it). Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:963 export_name_options_shape_the_names_the_export_dialog_previews"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "Sets the NTFS row through the real Options window (16 option sets, NTFS on and off with every limit combination) and replays every name the real manual export window shows for 4 files x 4 destinations x 33 phrases (forbidden characters, reserved names con/CON/Nul./com1, trailing dots and spaces, Unicode and U+001F whitespace, subdirectories) against oracle/fixtures/export_names.json (record_export_names.py drives the reference's ReviewExportFilesPanel). The recording exposed a real difference, fixed here: Python's strip also strips U+001C-U+001F. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs export_name_options_shape_the_names_the_export_dialog_shows_as_the_reference_does."
    }
   },
   {
@@ -7776,10 +7776,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real row and shows dirnames truncated to 20 chars in the export preview; the expected lengths are typed, not recorded from the reference's export-path code. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:965 export_name_options_shape_the_names_the_export_dialog_previews"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "Sets the dirname limit through the real Options window (none, 16, 20, 64, 8192, with and without NTFS rules) and replays the real manual export window's names against oracle/fixtures/export_names.json: deep, many-level and multi-byte subdirectories truncated per directory in characters (NTFS) or bytes, under four destinations including a multi-byte and a 128-character one. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs export_name_options_shape_the_names_the_export_dialog_shows_as_the_reference_does."
    }
   },
   {
@@ -7796,10 +7796,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real row and shows the filename cut to 40 chars including extension; expected values typed, no recording of the reference filename-length logic. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:964 export_name_options_shape_the_names_the_export_dialog_previews"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "Sets the filename limit through the real Options window (16 the minimum, 40, 64, 220, 8192) and replays the real manual export window's names against oracle/fixtures/export_names.json: ASCII, 2-, 3- and 4-byte names cut in characters (NTFS) or bytes including the extension (.png, .flac, .jpg), ' (1)' collision suffixes after the cut, and the 'too long' errors shown per row. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs export_name_options_shape_the_names_the_export_dialog_shows_as_the_reference_does."
    }
   },
   {
@@ -7816,10 +7816,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real row; the path-limit squeeze is checked only by inequalities (len <= 96, < 150+ext, > 40) and a refused case, not against reference-recorded values. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:966 export_name_options_shape_the_names_the_export_dialog_previews"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin E, #97 phase 2)",
+    "note": "Sets the path limit through the real Options window (none, 96 the minimum, 120, 250, 8192) and replays the real manual export window's names against oracle/fixtures/export_names.json for destinations of 7 to 128 characters: filenames squeezed to fit the path, and the reference's 'combined export filename or directory would be too long' error rows where they no longer fit. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs export_name_options_shape_the_names_the_export_dialog_shows_as_the_reference_does."
    }
   },
   {
