@@ -1,0 +1,1871 @@
+{
+  "default_count": 5,
+  "runs": [
+    {
+      "kind": "siblings",
+      "count": 2,
+      "initial": [
+        [
+          "a",
+          "b"
+        ],
+        [
+          "b",
+          "c"
+        ]
+      ],
+      "steps": [
+        {
+          "action": "add",
+          "pair": [
+            "x1",
+            "y1"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx1->y1\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "merging underscores/typos/phrasing/unnamespaced to a single uncontroversial good tag",
+                "rewording/namespacing based on preference"
+              ],
+              "answer": "first typed"
+            }
+          ],
+          "recent_add": [
+            "first typed"
+          ],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ]
+          ]
+        },
+        {
+          "action": "add",
+          "pair": [
+            "x2",
+            "y2"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx2->y2\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "first typed",
+                "merging underscores/typos/phrasing/unnamespaced to a single uncontroversial good tag",
+                "rewording/namespacing based on preference"
+              ],
+              "answer": "second typed"
+            }
+          ],
+          "recent_add": [
+            "second typed",
+            "first typed"
+          ],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ]
+          ]
+        },
+        {
+          "action": "add",
+          "pair": [
+            "x3",
+            "y3"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx3->y3\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "second typed",
+                "first typed",
+                "merging underscores/typos/phrasing/unnamespaced to a single uncontroversial good tag",
+                "rewording/namespacing based on preference"
+              ],
+              "answer": "third typed"
+            }
+          ],
+          "recent_add": [
+            "third typed",
+            "second typed"
+          ],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ]
+          ]
+        },
+        {
+          "action": "add",
+          "pair": [
+            "x4",
+            "y4"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx4->y4\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "third typed",
+                "second typed",
+                "merging underscores/typos/phrasing/unnamespaced to a single uncontroversial good tag",
+                "rewording/namespacing based on preference"
+              ],
+              "answer": -1
+            }
+          ],
+          "recent_add": [
+            "third typed",
+            "second typed"
+          ],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ],
+            [
+              2,
+              [
+                "x4",
+                "y4"
+              ],
+              "rewording/namespacing based on preference"
+            ]
+          ]
+        },
+        {
+          "action": "add",
+          "pair": [
+            "x5",
+            "y5"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx5->y5\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "third typed",
+                "second typed",
+                "merging underscores/typos/phrasing/unnamespaced to a single uncontroversial good tag",
+                "rewording/namespacing based on preference"
+              ],
+              "answer": 1
+            }
+          ],
+          "recent_add": [
+            "second typed",
+            "third typed"
+          ],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ],
+            [
+              2,
+              [
+                "x4",
+                "y4"
+              ],
+              "rewording/namespacing based on preference"
+            ],
+            [
+              2,
+              [
+                "x5",
+                "y5"
+              ],
+              "second typed"
+            ]
+          ]
+        },
+        {
+          "action": "add",
+          "pair": [
+            "x6",
+            "y6"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx6->y6\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "second typed",
+                "third typed",
+                "merging underscores/typos/phrasing/unnamespaced to a single uncontroversial good tag",
+                "rewording/namespacing based on preference"
+              ],
+              "answer": null
+            }
+          ],
+          "recent_add": [
+            "second typed",
+            "third typed"
+          ],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ],
+            [
+              2,
+              [
+                "x4",
+                "y4"
+              ],
+              "rewording/namespacing based on preference"
+            ],
+            [
+              2,
+              [
+                "x5",
+                "y5"
+              ],
+              "second typed"
+            ]
+          ]
+        },
+        {
+          "action": "delete",
+          "pair": [
+            "a",
+            "b"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\na->b\n\nto be removed. You will see the delete as soon as you upload, but a janitor will review your petition to decide if all users should receive it as well.",
+              "suggestions": [
+                "obvious typo/mistake",
+                "disambiguation",
+                "correcting to repository standard"
+              ],
+              "answer": "removal typed"
+            }
+          ],
+          "recent_add": [
+            "second typed",
+            "third typed"
+          ],
+          "recent_delete": [
+            "removal typed"
+          ],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ],
+            [
+              2,
+              [
+                "x4",
+                "y4"
+              ],
+              "rewording/namespacing based on preference"
+            ],
+            [
+              2,
+              [
+                "x5",
+                "y5"
+              ],
+              "second typed"
+            ],
+            [
+              4,
+              [
+                "a",
+                "b"
+              ],
+              "removal typed"
+            ]
+          ]
+        },
+        {
+          "action": "delete",
+          "pair": [
+            "b",
+            "c"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nb->c\n\nto be removed. You will see the delete as soon as you upload, but a janitor will review your petition to decide if all users should receive it as well.",
+              "suggestions": [
+                "removal typed",
+                "obvious typo/mistake",
+                "disambiguation",
+                "correcting to repository standard"
+              ],
+              "answer": -1
+            }
+          ],
+          "recent_add": [
+            "second typed",
+            "third typed"
+          ],
+          "recent_delete": [
+            "removal typed"
+          ],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ],
+            [
+              2,
+              [
+                "x4",
+                "y4"
+              ],
+              "rewording/namespacing based on preference"
+            ],
+            [
+              2,
+              [
+                "x5",
+                "y5"
+              ],
+              "second typed"
+            ],
+            [
+              4,
+              [
+                "a",
+                "b"
+              ],
+              "removal typed"
+            ],
+            [
+              4,
+              [
+                "b",
+                "c"
+              ],
+              "correcting to repository standard"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "parents",
+      "count": 2,
+      "initial": [
+        [
+          "a",
+          "b"
+        ],
+        [
+          "b",
+          "c"
+        ]
+      ],
+      "steps": [
+        {
+          "action": "add",
+          "pair": [
+            "x1",
+            "y1"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx1->y1\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "obvious by definition (a sword is a weapon)",
+                "character/series/studio/etc... belonging (character x belongs to series y)"
+              ],
+              "answer": "first typed"
+            }
+          ],
+          "recent_add": [
+            "first typed"
+          ],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ]
+          ]
+        },
+        {
+          "action": "add",
+          "pair": [
+            "x2",
+            "y2"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx2->y2\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "first typed",
+                "obvious by definition (a sword is a weapon)",
+                "character/series/studio/etc... belonging (character x belongs to series y)"
+              ],
+              "answer": "second typed"
+            }
+          ],
+          "recent_add": [
+            "second typed",
+            "first typed"
+          ],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ]
+          ]
+        },
+        {
+          "action": "add",
+          "pair": [
+            "x3",
+            "y3"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx3->y3\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "second typed",
+                "first typed",
+                "obvious by definition (a sword is a weapon)",
+                "character/series/studio/etc... belonging (character x belongs to series y)"
+              ],
+              "answer": "third typed"
+            }
+          ],
+          "recent_add": [
+            "third typed",
+            "second typed"
+          ],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ]
+          ]
+        },
+        {
+          "action": "add",
+          "pair": [
+            "x4",
+            "y4"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx4->y4\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "third typed",
+                "second typed",
+                "obvious by definition (a sword is a weapon)",
+                "character/series/studio/etc... belonging (character x belongs to series y)"
+              ],
+              "answer": -1
+            }
+          ],
+          "recent_add": [
+            "third typed",
+            "second typed"
+          ],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ],
+            [
+              2,
+              [
+                "x4",
+                "y4"
+              ],
+              "character/series/studio/etc... belonging (character x belongs to series y)"
+            ]
+          ]
+        },
+        {
+          "action": "add",
+          "pair": [
+            "x5",
+            "y5"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx5->y5\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "third typed",
+                "second typed",
+                "obvious by definition (a sword is a weapon)",
+                "character/series/studio/etc... belonging (character x belongs to series y)"
+              ],
+              "answer": 1
+            }
+          ],
+          "recent_add": [
+            "second typed",
+            "third typed"
+          ],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ],
+            [
+              2,
+              [
+                "x4",
+                "y4"
+              ],
+              "character/series/studio/etc... belonging (character x belongs to series y)"
+            ],
+            [
+              2,
+              [
+                "x5",
+                "y5"
+              ],
+              "second typed"
+            ]
+          ]
+        },
+        {
+          "action": "add",
+          "pair": [
+            "x6",
+            "y6"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx6->y6\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "second typed",
+                "third typed",
+                "obvious by definition (a sword is a weapon)",
+                "character/series/studio/etc... belonging (character x belongs to series y)"
+              ],
+              "answer": null
+            }
+          ],
+          "recent_add": [
+            "second typed",
+            "third typed"
+          ],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ],
+            [
+              2,
+              [
+                "x4",
+                "y4"
+              ],
+              "character/series/studio/etc... belonging (character x belongs to series y)"
+            ],
+            [
+              2,
+              [
+                "x5",
+                "y5"
+              ],
+              "second typed"
+            ]
+          ]
+        },
+        {
+          "action": "delete",
+          "pair": [
+            "a",
+            "b"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\na->b\n\nto be removed. You will see the delete as soon as you upload, but a janitor will review your petition to decide if all users should receive it as well.",
+              "suggestions": [
+                "obvious typo/mistake"
+              ],
+              "answer": "removal typed"
+            }
+          ],
+          "recent_add": [
+            "second typed",
+            "third typed"
+          ],
+          "recent_delete": [
+            "removal typed"
+          ],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ],
+            [
+              2,
+              [
+                "x4",
+                "y4"
+              ],
+              "character/series/studio/etc... belonging (character x belongs to series y)"
+            ],
+            [
+              2,
+              [
+                "x5",
+                "y5"
+              ],
+              "second typed"
+            ],
+            [
+              4,
+              [
+                "a",
+                "b"
+              ],
+              "removal typed"
+            ]
+          ]
+        },
+        {
+          "action": "delete",
+          "pair": [
+            "b",
+            "c"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nb->c\n\nto be removed. You will see the delete as soon as you upload, but a janitor will review your petition to decide if all users should receive it as well.",
+              "suggestions": [
+                "removal typed",
+                "obvious typo/mistake"
+              ],
+              "answer": -1
+            }
+          ],
+          "recent_add": [
+            "second typed",
+            "third typed"
+          ],
+          "recent_delete": [
+            "removal typed"
+          ],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ],
+            [
+              2,
+              [
+                "x4",
+                "y4"
+              ],
+              "character/series/studio/etc... belonging (character x belongs to series y)"
+            ],
+            [
+              2,
+              [
+                "x5",
+                "y5"
+              ],
+              "second typed"
+            ],
+            [
+              4,
+              [
+                "a",
+                "b"
+              ],
+              "removal typed"
+            ],
+            [
+              4,
+              [
+                "b",
+                "c"
+              ],
+              "obvious typo/mistake"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "siblings",
+      "count": 0,
+      "initial": [
+        [
+          "a",
+          "b"
+        ],
+        [
+          "b",
+          "c"
+        ]
+      ],
+      "steps": [
+        {
+          "action": "add",
+          "pair": [
+            "x1",
+            "y1"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx1->y1\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "merging underscores/typos/phrasing/unnamespaced to a single uncontroversial good tag",
+                "rewording/namespacing based on preference"
+              ],
+              "answer": "first typed"
+            }
+          ],
+          "recent_add": [],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ]
+          ]
+        },
+        {
+          "action": "add",
+          "pair": [
+            "x2",
+            "y2"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx2->y2\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "merging underscores/typos/phrasing/unnamespaced to a single uncontroversial good tag",
+                "rewording/namespacing based on preference"
+              ],
+              "answer": "second typed"
+            }
+          ],
+          "recent_add": [],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ]
+          ]
+        },
+        {
+          "action": "add",
+          "pair": [
+            "x3",
+            "y3"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx3->y3\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "merging underscores/typos/phrasing/unnamespaced to a single uncontroversial good tag",
+                "rewording/namespacing based on preference"
+              ],
+              "answer": "third typed"
+            }
+          ],
+          "recent_add": [],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ]
+          ]
+        },
+        {
+          "action": "add",
+          "pair": [
+            "x4",
+            "y4"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx4->y4\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "merging underscores/typos/phrasing/unnamespaced to a single uncontroversial good tag",
+                "rewording/namespacing based on preference"
+              ],
+              "answer": -1
+            }
+          ],
+          "recent_add": [],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ],
+            [
+              2,
+              [
+                "x4",
+                "y4"
+              ],
+              "rewording/namespacing based on preference"
+            ]
+          ]
+        },
+        {
+          "action": "add",
+          "pair": [
+            "x5",
+            "y5"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx5->y5\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "merging underscores/typos/phrasing/unnamespaced to a single uncontroversial good tag",
+                "rewording/namespacing based on preference"
+              ],
+              "answer": 1
+            }
+          ],
+          "recent_add": [],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ],
+            [
+              2,
+              [
+                "x4",
+                "y4"
+              ],
+              "rewording/namespacing based on preference"
+            ],
+            [
+              2,
+              [
+                "x5",
+                "y5"
+              ],
+              "rewording/namespacing based on preference"
+            ]
+          ]
+        },
+        {
+          "action": "add",
+          "pair": [
+            "x6",
+            "y6"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx6->y6\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "merging underscores/typos/phrasing/unnamespaced to a single uncontroversial good tag",
+                "rewording/namespacing based on preference"
+              ],
+              "answer": null
+            }
+          ],
+          "recent_add": [],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ],
+            [
+              2,
+              [
+                "x4",
+                "y4"
+              ],
+              "rewording/namespacing based on preference"
+            ],
+            [
+              2,
+              [
+                "x5",
+                "y5"
+              ],
+              "rewording/namespacing based on preference"
+            ]
+          ]
+        },
+        {
+          "action": "delete",
+          "pair": [
+            "a",
+            "b"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\na->b\n\nto be removed. You will see the delete as soon as you upload, but a janitor will review your petition to decide if all users should receive it as well.",
+              "suggestions": [
+                "obvious typo/mistake",
+                "disambiguation",
+                "correcting to repository standard"
+              ],
+              "answer": "removal typed"
+            }
+          ],
+          "recent_add": [],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ],
+            [
+              2,
+              [
+                "x4",
+                "y4"
+              ],
+              "rewording/namespacing based on preference"
+            ],
+            [
+              2,
+              [
+                "x5",
+                "y5"
+              ],
+              "rewording/namespacing based on preference"
+            ],
+            [
+              4,
+              [
+                "a",
+                "b"
+              ],
+              "removal typed"
+            ]
+          ]
+        },
+        {
+          "action": "delete",
+          "pair": [
+            "b",
+            "c"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nb->c\n\nto be removed. You will see the delete as soon as you upload, but a janitor will review your petition to decide if all users should receive it as well.",
+              "suggestions": [
+                "obvious typo/mistake",
+                "disambiguation",
+                "correcting to repository standard"
+              ],
+              "answer": -1
+            }
+          ],
+          "recent_add": [],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ],
+            [
+              2,
+              [
+                "x4",
+                "y4"
+              ],
+              "rewording/namespacing based on preference"
+            ],
+            [
+              2,
+              [
+                "x5",
+                "y5"
+              ],
+              "rewording/namespacing based on preference"
+            ],
+            [
+              4,
+              [
+                "a",
+                "b"
+              ],
+              "removal typed"
+            ],
+            [
+              4,
+              [
+                "b",
+                "c"
+              ],
+              "correcting to repository standard"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "parents",
+      "count": 0,
+      "initial": [
+        [
+          "a",
+          "b"
+        ],
+        [
+          "b",
+          "c"
+        ]
+      ],
+      "steps": [
+        {
+          "action": "add",
+          "pair": [
+            "x1",
+            "y1"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx1->y1\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "obvious by definition (a sword is a weapon)",
+                "character/series/studio/etc... belonging (character x belongs to series y)"
+              ],
+              "answer": "first typed"
+            }
+          ],
+          "recent_add": [],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ]
+          ]
+        },
+        {
+          "action": "add",
+          "pair": [
+            "x2",
+            "y2"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx2->y2\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "obvious by definition (a sword is a weapon)",
+                "character/series/studio/etc... belonging (character x belongs to series y)"
+              ],
+              "answer": "second typed"
+            }
+          ],
+          "recent_add": [],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ]
+          ]
+        },
+        {
+          "action": "add",
+          "pair": [
+            "x3",
+            "y3"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx3->y3\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "obvious by definition (a sword is a weapon)",
+                "character/series/studio/etc... belonging (character x belongs to series y)"
+              ],
+              "answer": "third typed"
+            }
+          ],
+          "recent_add": [],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ]
+          ]
+        },
+        {
+          "action": "add",
+          "pair": [
+            "x4",
+            "y4"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx4->y4\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "obvious by definition (a sword is a weapon)",
+                "character/series/studio/etc... belonging (character x belongs to series y)"
+              ],
+              "answer": -1
+            }
+          ],
+          "recent_add": [],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ],
+            [
+              2,
+              [
+                "x4",
+                "y4"
+              ],
+              "character/series/studio/etc... belonging (character x belongs to series y)"
+            ]
+          ]
+        },
+        {
+          "action": "add",
+          "pair": [
+            "x5",
+            "y5"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx5->y5\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "obvious by definition (a sword is a weapon)",
+                "character/series/studio/etc... belonging (character x belongs to series y)"
+              ],
+              "answer": 1
+            }
+          ],
+          "recent_add": [],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ],
+            [
+              2,
+              [
+                "x4",
+                "y4"
+              ],
+              "character/series/studio/etc... belonging (character x belongs to series y)"
+            ],
+            [
+              2,
+              [
+                "x5",
+                "y5"
+              ],
+              "character/series/studio/etc... belonging (character x belongs to series y)"
+            ]
+          ]
+        },
+        {
+          "action": "add",
+          "pair": [
+            "x6",
+            "y6"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nx6->y6\n\nTo be added. A janitor will review your petition.",
+              "suggestions": [
+                "obvious by definition (a sword is a weapon)",
+                "character/series/studio/etc... belonging (character x belongs to series y)"
+              ],
+              "answer": null
+            }
+          ],
+          "recent_add": [],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ],
+            [
+              2,
+              [
+                "x4",
+                "y4"
+              ],
+              "character/series/studio/etc... belonging (character x belongs to series y)"
+            ],
+            [
+              2,
+              [
+                "x5",
+                "y5"
+              ],
+              "character/series/studio/etc... belonging (character x belongs to series y)"
+            ]
+          ]
+        },
+        {
+          "action": "delete",
+          "pair": [
+            "a",
+            "b"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\na->b\n\nto be removed. You will see the delete as soon as you upload, but a janitor will review your petition to decide if all users should receive it as well.",
+              "suggestions": [
+                "obvious typo/mistake"
+              ],
+              "answer": "removal typed"
+            }
+          ],
+          "recent_add": [],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ],
+            [
+              2,
+              [
+                "x4",
+                "y4"
+              ],
+              "character/series/studio/etc... belonging (character x belongs to series y)"
+            ],
+            [
+              2,
+              [
+                "x5",
+                "y5"
+              ],
+              "character/series/studio/etc... belonging (character x belongs to series y)"
+            ],
+            [
+              4,
+              [
+                "a",
+                "b"
+              ],
+              "removal typed"
+            ]
+          ]
+        },
+        {
+          "action": "delete",
+          "pair": [
+            "b",
+            "c"
+          ],
+          "asked": [
+            {
+              "message": "Enter a reason for:\n\nb->c\n\nto be removed. You will see the delete as soon as you upload, but a janitor will review your petition to decide if all users should receive it as well.",
+              "suggestions": [
+                "obvious typo/mistake"
+              ],
+              "answer": -1
+            }
+          ],
+          "recent_add": [],
+          "recent_delete": [],
+          "updates": [
+            [
+              2,
+              [
+                "x1",
+                "y1"
+              ],
+              "first typed"
+            ],
+            [
+              2,
+              [
+                "x2",
+                "y2"
+              ],
+              "second typed"
+            ],
+            [
+              2,
+              [
+                "x3",
+                "y3"
+              ],
+              "third typed"
+            ],
+            [
+              2,
+              [
+                "x4",
+                "y4"
+              ],
+              "character/series/studio/etc... belonging (character x belongs to series y)"
+            ],
+            [
+              2,
+              [
+                "x5",
+                "y5"
+              ],
+              "character/series/studio/etc... belonging (character x belongs to series y)"
+            ],
+            [
+              4,
+              [
+                "a",
+                "b"
+              ],
+              "removal typed"
+            ],
+            [
+              4,
+              [
+                "b",
+                "c"
+              ],
+              "obvious typo/mistake"
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

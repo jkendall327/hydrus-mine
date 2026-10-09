@@ -467,3 +467,134 @@ fn invalid_batch_graphs_are_reported_and_leave_valid_relationships_untouched() {
             .contains("conflicting sibling")
     );
 }
+
+/// The reason question's recent and fixed suggestions, which of them are
+/// remembered, and the Options count capping them, replayed from the
+/// reference's petition questions on a tag repository.
+// leaf: relationship-reasons
+// leaf: audit-options-tag-editing-tag-dialogs-number-of-recent-petition-reasons-to-remember-in-dialogs
+#[test]
+fn petition_reasons_offer_recent_then_fixed_suggestions_capped_by_the_option() {
+    use hydrus_store::reference_options::{RecentPetitionReasons, ReferenceOptions};
+    let fixture = hydrus_testkit::fixture_json("relationship_reasons.json");
+    assert_eq!(fixture["default_count"], 5);
+    assert_eq!(
+        ReferenceOptions::default().integer("num_recent_petition_reasons"),
+        5
+    );
+    for run in fixture["runs"].as_array().unwrap() {
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::open(dir.path()).unwrap();
+        store
+            .write_and_refresh(|ctx| {
+                hydrus_store::services::insert(
+                    ctx.conn(),
+                    &ServiceKey::new(vec![24; 16]),
+                    "a repository",
+                    &hydrus_store::services::ServiceKind::TagRepository(
+                        hydrus_store::services::RepositoryConfig::default(),
+                    ),
+                )?;
+                Ok(())
+            })
+            .unwrap();
+        let count = run["count"].as_i64().unwrap();
+        store
+            .write(move |ctx| {
+                let mut options: ReferenceOptions = hydrus_store::settings::get(ctx.conn())?;
+                options.set_integer("num_recent_petition_reasons", count);
+                hydrus_store::settings::set(ctx.conn(), &options)?;
+                hydrus_store::settings::set(ctx.conn(), &RecentPetitionReasons::default())
+            })
+            .unwrap();
+        let service = store
+            .snapshot()
+            .services
+            .by_name("a repository")
+            .unwrap()
+            .id;
+        let kind = if run["kind"] == "siblings" {
+            RelationKind::Siblings
+        } else {
+            RelationKind::Parents
+        };
+        let initial = run["initial"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|p| update(service, &pair(p), RelationAction::Add))
+            .collect();
+        tag_relations::apply(&store, kind, initial).unwrap();
+        let mut editor = Relationships::new(store.clone(), kind).unwrap();
+        editor.choose_service(2);
+        for step in run["steps"].as_array().unwrap() {
+            let p = pair(&step["pair"]);
+            let removing = step["action"] == "delete";
+            let mut answers: Vec<Option<String>> = Vec::new();
+            let mut asked = Vec::new();
+            let recorded = &step["asked"][0];
+            let outcome: Result<(), ()> = loop {
+                match editor.enter_pairs(vec![p.clone()], !removing, &answers) {
+                    Ok(()) => break Ok(()),
+                    Err(q) => {
+                        asked.push((q.message.clone(), q.suggestions.clone()));
+                        let answer = &recorded["answer"];
+                        answers.push(if answer.is_null() {
+                            None
+                        } else if let Some(i) = answer.as_i64() {
+                            let n = q.suggestions.len() as i64;
+                            Some(
+                                q.suggestions
+                                    [usize::try_from(if i < 0 { n + i } else { i }).unwrap()]
+                                .clone(),
+                            )
+                        } else {
+                            Some(answer.as_str().unwrap().to_owned())
+                        });
+                    }
+                }
+            };
+            outcome.unwrap();
+            assert_eq!(asked.len(), 1, "{step}");
+            assert_eq!(asked[0].0, recorded["message"].as_str().unwrap(), "{step}");
+            assert_eq!(
+                serde_json::json!(asked[0].1),
+                recorded["suggestions"],
+                "{} {step}",
+                run["kind"]
+            );
+            let recent = |removing| {
+                serde_json::json!(hydrus_gui_model::tag_relationships::recent_reasons(
+                    &store, kind, removing
+                ))
+            };
+            assert_eq!(recent(false), step["recent_add"], "{step}");
+            assert_eq!(recent(true), step["recent_delete"], "{step}");
+            let updates: Vec<Value> = {
+                let mut u: Vec<Value> = editor
+                    .updates()
+                    .iter()
+                    .map(|u| {
+                        serde_json::json!([
+                            match u.action {
+                                RelationAction::Pend(_) => 2,
+                                RelationAction::Petition(_) => 4,
+                                _ => 99,
+                            },
+                            [u.left.as_str(), u.right.as_str()],
+                            match &u.action {
+                                RelationAction::Pend(r) | RelationAction::Petition(r) => r.as_str(),
+                                _ => "",
+                            }
+                        ])
+                    })
+                    .collect();
+                u.sort_by_key(Value::to_string);
+                u
+            };
+            let mut expected = step["updates"].as_array().unwrap().clone();
+            expected.sort_by_key(Value::to_string);
+            assert_eq!(updates, expected, "{step}");
+        }
+    }
+}
