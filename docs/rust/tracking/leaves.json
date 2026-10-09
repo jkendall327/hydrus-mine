@@ -15817,10 +15817,10 @@
     "Asks Clear the N closed pages? and calls Pages::forget_closed only on Yes, deleting closed downloader queues and clearing reopen state."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-09",
     "class": "sound",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real undo menu: 'Clear the 2 closed pages?' (ClientGUI.py:7592), no keeps them, yes forgets them and disables undo; menu shape with a closed page is checked against the recording. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:179 closed_pages_return_where_they_were_and_clear_all_asks_first; model main_menu.rs:251 (closed menu vs main_menu.json)"
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs closed_pages_come_back_and_clear_all_asks_as_the_reference_s_undo_menu_does closes pages, brings back the most recent or a chosen entry of undo > closed pages, and clears all (answering no, then yes) in the real window, and compares the closed pages menu (most recently closed first, with clear all above), the tabs in order, the page shown, and the question 'Clear the 2 closed pages?' after every step with undo_closed_pages.json, recorded from the reference's own undo menu (oracle/record_undo_closed_pages.py). Once none are left the undo menu opens nothing (the reference greys it out). Returning to the tab it left and being shown are the recorded ones."
    }
   },
   {
@@ -15837,10 +15837,10 @@
     "Closed downloader work pauses while closed, unlike the reference continuing in the background."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real menu and checks the closed page returns at its original tab position and is shown; menu layout is recorded but return-in-place and ordering (most recent first, only one page tested) are restated from source. DIFFERENCES note says closed downloaders pause, unlike the reference. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:178 closed_pages_return_where_they_were_and_clear_all_asks_first"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs closed_pages_come_back_and_clear_all_asks_as_the_reference_s_undo_menu_does closes pages, brings back the most recent or a chosen entry of undo > closed pages, and clears all (answering no, then yes) in the real window, and compares the closed pages menu (most recently closed first, with clear all above), the tabs in order, the page shown, and the question 'Clear the 2 closed pages?' after every step with undo_closed_pages.json, recorded from the reference's own undo menu (oracle/record_undo_closed_pages.py). Once none are left the undo menu opens nothing (the reference greys it out). Returning to the tab it left and being shown are the recorded ones."
    }
   },
   {

@@ -516,16 +516,17 @@ fn closed_pages_come_back_and_clear_all_asks_as_the_reference_s_undo_menu_does()
             .unwrap_or_else(|| panic!("{name} open"));
         i32::try_from(at).unwrap()
     };
+    // (the closed pages menu's lines, or None while the undo menu has nothing
+    // to show: the reference greys it out then)
     let open_closed = |ui: &MainWindow| -> Option<Vec<String>> {
         let titles = ui.get_menu_titles();
         let at = (0..titles.row_count())
             .position(|i| titles.row_data(i).unwrap().label == "undo")
             .unwrap();
-        // the undo menu can't be opened once there is nothing to undo
-        if !titles.row_data(at).unwrap().usable {
+        ui.invoke_menu_title_pressed(i32::try_from(at).unwrap(), 80.0, 22.0);
+        if panes(ui).is_empty() {
             return None;
         }
-        ui.invoke_menu_title_pressed(i32::try_from(at).unwrap(), 80.0, 22.0);
         hover(ui, "closed pages");
         Some(panes(ui).last().unwrap().clone())
     };
@@ -538,10 +539,14 @@ fn closed_pages_come_back_and_clear_all_asks_as_the_reference_s_undo_menu_does()
             "undo" | "entry" => {
                 // (the most recent is the top entry of the menu)
                 let wanted = step["step"].get(1).and_then(|n| n.as_u64()).unwrap_or(1) as usize;
-                let shown = open_closed(&ui).expect("a closed page to bring back");
-                let entry = shown[1 + wanted].clone();
-                let (p, i) = line(&ui, &entry);
-                ui.invoke_menu_line_clicked(p, i, 0.0, 0.0, 0.0);
+                if let Some(shown) = open_closed(&ui) {
+                    let entry = shown[1 + wanted].clone();
+                    let (p, i) = line(&ui, &entry);
+                    ui.invoke_menu_line_clicked(p, i, 0.0, 0.0, 0.0);
+                } else {
+                    // (nothing to bring back: the reference's did nothing)
+                    assert_eq!(step["closed_count"], 0, "{}", step["step"]);
+                }
             }
             _ => {
                 let shown = open_closed(&ui).expect("closed pages to clear");
