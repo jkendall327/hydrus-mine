@@ -372,7 +372,7 @@ pub(crate) fn bind(
                     let parent = parent.clone();
                     let question = crate::choice_buttons::open(
                         &crate::choice_buttons::Ask {
-                            title: "Question",
+                            title: "Are you sure?",
                             message: "Remove all selected?",
                             choices: vec!["yes".to_owned()],
                             no_label: "no",

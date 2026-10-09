@@ -14,7 +14,7 @@ use slint::{ComponentHandle as _, Model as _};
 
 use crate::options_gui_support::show_page;
 use crate::options_media_support::Media;
-use crate::options_media_zoom::{rect, small_jpeg_viewer};
+use crate::options_media_zoom::{CANVAS, rect, small_jpeg_viewer};
 
 type Rect = (f32, f32, f32, f32);
 
@@ -43,26 +43,37 @@ fn select_jpeg(options: &hydrus_gui::OptionsWindow) {
     options.invoke_media_view_clicked(i32::try_from(at).unwrap(), false, false);
 }
 
-/// The native zoom the recording's `zoom` stands for: 100% is the file's own
-/// size; the new client's is the canvas fit, as the viewer opened it at the
-/// start.
-fn check(
-    shown: Rect,
-    size: (f32, f32),
-    start: Rect,
-    recorded: f64,
-    recorded_start: f64,
-    what: &str,
-) {
+/// The canvas fit: the largest zoom that keeps the file inside the canvas.
+fn fit(canvas: (f64, f64), file: (f64, f64)) -> f64 {
+    (canvas.0 / file.0).min(canvas.1 / file.1)
+}
+
+/// What the recording's zoom `recorded` for the small jpeg stands for here:
+/// 100% is the file's own size; any other is the canvas fit (the recording's
+/// own numbers say so: its zoom is the fit of its canvas and file), which the
+/// viewer shows as it did at the start.
+fn check(shown: Rect, size: (f32, f32), start: Rect, recording: &Value, recorded: f64, what: &str) {
     if (recorded - 1.0).abs() < 1e-9 {
         assert_eq!((shown.2, shown.3), size, "{what}: at 100%");
-    } else {
-        assert!(
-            (recorded - recorded_start).abs() < 1e-9,
-            "{what}: only 100% and the start's zoom are recorded"
-        );
-        assert_eq!(shown, start, "{what}: as at the start");
+        return;
     }
+    let pair = |v: &Value| (v[0].as_f64().unwrap(), v[1].as_f64().unwrap());
+    let canvas = pair(&recording["canvas"]);
+    let file = pair(&recording["files"]["small jpeg"]);
+    assert!(
+        (recorded - fit(canvas, file)).abs() < 1e-9,
+        "{what}: the recorded zoom {recorded} is the canvas fit"
+    );
+    // (the viewer's canvas here is the window; the fit's size, to a pixel)
+    let ours = fit(
+        (f64::from(CANVAS.0), f64::from(CANVAS.1)),
+        (f64::from(size.0), f64::from(size.1)),
+    );
+    assert!(
+        (f64::from(shown.2) - ours * f64::from(size.0)).abs() <= 1.0,
+        "{what}: {shown:?} for a fit of {ours}"
+    );
+    assert_eq!(shown, start, "{what}: as at the start");
 }
 
 fn default_zoom(zooms: &Value, file: &str) -> f64 {
@@ -144,8 +155,8 @@ fn filetype_handling_is_added_edited_and_deleted_as_the_reference_does() {
         shown,
         size,
         start,
+        &recording,
         default_zoom(&add["zooms"], "small jpeg"),
-        recorded_start,
         "added",
     );
     // (a big jpeg is shrunk to fit either way)
@@ -181,8 +192,8 @@ fn filetype_handling_is_added_edited_and_deleted_as_the_reference_does() {
         shown,
         size,
         start,
+        &recording,
         default_zoom(&edit["zooms"], "small jpeg"),
-        recorded_start,
         "edited",
     );
 
@@ -231,8 +242,8 @@ fn filetype_handling_is_added_edited_and_deleted_as_the_reference_does() {
         shown,
         size,
         start,
+        &recording,
         default_zoom(&delete["zooms"], "small jpeg"),
-        recorded_start,
         "deleted",
     );
 }

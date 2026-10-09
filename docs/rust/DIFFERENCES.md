@@ -4078,6 +4078,18 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   in with the connections closed; the effect on the file is the same.
 - The window opens directly, without the "loading database data" popup.
 
+## Delete lock, importers and the trash worker, as rechecked
+
+- The delete lock's reinbox options are checked for the duplicate filter's
+  "this is better, delete the other" on a first pair and for "approve" in the
+  auto-resolution review window; the custom action's deletes and fully
+  automatic runs use the same code but are not separately replayed.
+- An importer re-reads the file handling settings (transparency level, comic
+  book detection, permissions) at each import; the reference applies them
+  once, on Options OK.
+- A trash pass deletes in groups of eight, oldest first, including files
+  already in the trash when the limit is set.
+
 ## mpv options on open players
 
 - A player already open takes changed mpv options (loop playlist, audio

@@ -13,7 +13,7 @@ use hydrus_gui::{MediaViewerWindow, headless};
 use crate::options_gui_support::{box_of, items, row, show_page};
 use crate::options_media_support::Media;
 
-const CANVAS: (f32, f32) = (800.0, 600.0);
+pub(crate) const CANVAS: (f32, f32) = (800.0, 600.0);
 
 /// Set a dropdown of `page` to the choice named `choice`, apply.
 fn choose(client: &Media, label: &str, choice: &str, box_title: &str) {

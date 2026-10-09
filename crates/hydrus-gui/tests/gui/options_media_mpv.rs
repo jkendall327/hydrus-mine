@@ -27,16 +27,24 @@ fn recorded(player: &serde_json::Value) -> [String; 3] {
     ]
 }
 
-/// The properties of the `n`th player playing (oldest first), once it has
-/// them: they are set as the file loads, and an open player looks at the
-/// options twice a second.
-fn player_has(n: usize, expected: &[String; 3]) -> Option<[String; 3]> {
+/// The numbers of the players now playing a file.
+fn playing() -> Vec<u64> {
+    hydrus_gui::live_mpv_property("loop-file")
+        .into_iter()
+        .map(|(id, _)| id)
+        .collect()
+}
+
+/// The properties of player `id`, once it has `expected` (or what it had when
+/// it gave up): they are set as the file loads, and an open player looks at
+/// the options twice a second.
+fn player_has(id: u64, expected: &[String; 3]) -> Option<[String; 3]> {
     let read = || {
         let get = |name: &str| {
             hydrus_gui::live_mpv_property(name)
-                .get(n)
-                .cloned()
-                .flatten()
+                .into_iter()
+                .find(|(found, _)| *found == id)
+                .and_then(|(_, value)| value)
                 .unwrap_or_default()
         };
         [get("loop-file"), get("loop-playlist"), get("audio-device")]
@@ -113,7 +121,10 @@ fn the_mpv_rows_set_what_a_player_is_told_as_a_file_loads() {
     // the animation in the media viewer: its player as the reference's starts
     let _first = open_viewer();
     let start = recorded(&recording["open_player_at_start"]);
-    assert_eq!(player_has(0, &start), None, "at start");
+    let [first] = playing()[..] else {
+        panic!("one player playing: {:?}", playing());
+    };
+    assert_eq!(player_has(first, &start), None, "at start");
 
     // typed but cancelled: nothing changes
     let options = client.open_options();
@@ -123,7 +134,7 @@ fn the_mpv_rows_set_what_a_player_is_told_as_a_file_loads() {
     options.invoke_check_toggled(row(&options, LOOP_PLAYLIST).0, true);
     options.invoke_cancel();
     std::thread::sleep(std::time::Duration::from_millis(600));
-    assert_eq!(player_has(0, &start), None, "cancelled");
+    assert_eq!(player_has(first, &start), None, "cancelled");
 
     for case in recording["cases"].as_array().unwrap() {
         let device = case["typed"]["device"].as_str();
@@ -150,7 +161,7 @@ fn the_mpv_rows_set_what_a_player_is_told_as_a_file_loads() {
         );
         // the player already open follows, as the reference's on OK
         assert_eq!(
-            player_has(0, &recorded(&case["open_player"])),
+            player_has(first, &recorded(&case["open_player"])),
             None,
             "open player: {case}"
         );
@@ -159,9 +170,12 @@ fn the_mpv_rows_set_what_a_player_is_told_as_a_file_loads() {
     // and a player made now, in another viewer, starts so
     let last = recording["cases"].as_array().unwrap().last().unwrap();
     let _second = open_viewer();
-    assert_eq!(hydrus_gui::live_mpv_property("loop-file").len(), 2);
+    let others: Vec<u64> = playing().into_iter().filter(|id| *id != first).collect();
+    let [second] = others[..] else {
+        panic!("a second player playing: {others:?}");
+    };
     assert_eq!(
-        player_has(1, &recorded(&last["new_player"])),
+        player_has(second, &recorded(&last["new_player"])),
         None,
         "new player"
     );

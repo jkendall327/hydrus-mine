@@ -34,6 +34,8 @@ pub(crate) struct Playback {
     /// options' changes, as the reference's do on Options OK).
     plan: RefCell<Option<hydrus_gui_model::mpv_options::Plan>>,
     plan_checked: Cell<Option<std::time::Instant>>,
+    /// Which player this is among those made on this thread (for tests).
+    id: Cell<u64>,
     /// The last positions seen, with when (ms since the first), for a test
     /// that says why it timed out.
     #[cfg(test)]
@@ -41,22 +43,25 @@ pub(crate) struct Playback {
 }
 
 thread_local! {
+    static NEXT_ID: Cell<u64> = const { Cell::new(0) };
     /// The players made for a store on this thread, for [`live_property`].
     static LIVE: RefCell<Vec<std::rc::Weak<Playback>>> = const { RefCell::new(Vec::new()) };
 }
 
 /// An mpv property (`loop-file`, `audio-device`, ...) of each player made
-/// for a store on this thread and still playing, oldest first: what tests
-/// see of the players inside windows.
+/// for a store on this thread that is playing a file, with the number it was
+/// made as (so a test can follow one player however many others come and go):
+/// what tests see of the players inside windows.
 #[doc(hidden)]
-pub fn live_property(name: &str) -> Vec<Option<String>> {
+pub fn live_property(name: &str) -> Vec<(u64, Option<String>)> {
     LIVE.with(|live| {
         live.borrow()
             .iter()
             .filter_map(std::rc::Weak::upgrade)
+            .filter(|playback| playback.target.borrow().is_some())
             .filter_map(|playback| {
                 let player = playback.player.try_borrow().ok()?;
-                Some(player.as_ref()?.string_property(name))
+                Some((playback.id.get(), player.as_ref()?.string_property(name)))
             })
             .collect()
     })
@@ -106,6 +111,7 @@ impl Playback {
             last_position: Cell::new(None),
             plan: RefCell::new(None),
             plan_checked: Cell::new(None),
+            id: Cell::new(0),
             #[cfg(test)]
             samples: RefCell::default(),
         })
@@ -119,6 +125,10 @@ impl Playback {
         LIVE.with(|live| {
             let mut live = live.borrow_mut();
             live.retain(|p| p.strong_count() > 0);
+            playback.id.set(NEXT_ID.with(|next| {
+                next.set(next.get() + 1);
+                next.get()
+            }));
             live.push(Rc::downgrade(&playback));
         });
         playback
