@@ -276,7 +276,6 @@ fn each_filter_decision_writes_its_relationship_when_committed() {
     assert!(r.false_positives.contains(&b), "false positive");
 }
 
-// leaf: audit-media-review-pending
 #[test]
 fn pending_pairs_are_sampled_refreshed_selected_and_approved() {
     use crate::auto_resolution_review::{listed, opened, review, settle};

@@ -471,7 +471,6 @@ fn a_failed_denial_keeps_pending_pairs_and_reports_the_error() {
     window.invoke_close_window();
 }
 
-// leaf: audit-media-review-progress
 #[test]
 fn approving_and_denying_show_their_progress_on_the_button_and_in_a_popup() {
     use hydrus_gui_model::auto_resolution_review::action_title;
