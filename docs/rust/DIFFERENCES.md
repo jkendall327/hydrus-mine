@@ -4650,3 +4650,7 @@ directory.
   are not updated when Options is applied, though the reference's tooltip
   promises that ("Will update all new existing mpv players immediately on
   dialog ok").
+
+### Command palette: unrecorded cases
+
+The palette's media-menu rows and the effect of activating one are recorded only for a page with no files (`oracle/fixtures/command_palette.json`); rows for selected files are checked against the thumbnail menu's own code, not a recording. Favourite searches opened from the palette are compared for page count and synchronisation, but their sort and collect settings are not recorded. Which of several children a page-of-pages row shows is not recorded either (the recording has one child).

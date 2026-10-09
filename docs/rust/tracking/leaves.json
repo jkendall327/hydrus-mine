@@ -6460,9 +6460,9 @@
    ],
    "recheck": {
     "date": "2026-10-09",
-    "class": "sound",
+    "class": "weak",
     "by": "phase 2 session",
-    "note": "Setting off (no rows) and on (the recorded 'refresh' row and empty 'select' on a page with no files) replayed through the window; selection actions run through the real thumbnail dispatcher (media_provider_uses_the_actual_thumbnail_dispatcher_and_rejects_a_changed_page). Rows for a page with files selected are not recorded. Test: command_palette.rs media_menu_results_follow_the_setting_and_the_page_shown_as_the_reference_did."
+    "note": "Setting off (no rows) and on (the recorded 'refresh' row; empty 'select' on a page with no files) replayed through the window (command_palette.rs media_menu_results_follow_the_setting_and_the_page_shown_as_the_reference_did); media actions run through the real thumbnail dispatcher (media_provider_uses_the_actual_thumbnail_dispatcher_and_rejects_a_changed_page). Missing: rows and an activated entry's effect for a page with files selected are not recorded (DIFFERENCES.md)."
    }
   },
   {
@@ -6482,7 +6482,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "Off: notebook not a result, children named for their parent (recorded); on: one notebook row, and choosing it shows the page the reference showed (recorded selected.notebook_row). Test: command_palette.rs a_page_of_pages_row_shows_when_the_setting_is_on_and_opens_its_remembered_page."
+    "note": "Off: notebook not a result, its child listed as \"child of 'Palette Nested'\"; on: one notebook row (full text pair compared with the recording), and choosing it shows a child page of the notebook (the recording has one child, so which of several is remembered is not shown). Test: command_palette.rs a_page_of_pages_row_shows_when_the_setting_is_on_and_opens_its_remembered_page."
    }
   },
   {
@@ -6620,9 +6620,9 @@
    ],
    "recheck": {
     "date": "2026-10-09",
-    "class": "sound",
+    "class": "weak",
     "by": "phase 2 session",
-    "note": "Both settings drive the real palette: new-page count and name read from the recorded selected.favourite / favourite_current blocks; the 'off' case keeps the shown page. Favourite sort/collect not recorded (favourites there have none). Tests: command_palette.rs ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions; saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palette."
+    "note": "Both settings drive the real palette; the new-page count (selected.favourite) and, for the off case, the new-page count and same_page (selected.favourite_current) are read from the recording. Missing: favourite sort/collect are not recorded and not compared (DIFFERENCES.md); the recorded page's name was already the favourite's, so the off case's name is not comparable. Tests: command_palette.rs ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions; saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palette."
    }
   },
   {

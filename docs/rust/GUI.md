@@ -2982,7 +2982,7 @@ Python power precedence, signed floor division and modulo, large integer results
 and its named math functions. Invalid expressions show no row. Selecting a
 calculator result keeps the palette open; the calculator bypasses the page/menu
 character threshold.
-With an empty query the palette shows all pages, the page history or the favourite searches only under the matching "initially show" option, and choosing a page-of-pages row shows the page that notebook last had shown; the rows, order and subtitles are replayed from `oracle/fixtures/command_palette.json` (`empty_events`, `selected.notebook_row`, `media_events_off`).
+With an empty query the palette shows all pages, the page history or the favourite searches only under the matching "initially show" option, and choosing a page-of-pages row shows a child page of that notebook; with the media menu option off, media actions are not offered; the rows, order and subtitles are replayed from `oracle/fixtures/command_palette.json` (`empty_events`, `selected.notebook_row`, `media_events_off`).
 
 System viewing-time predicates retain the millisecond field, including when
 importing stored Python predicates or reopening recent entries. The labels and

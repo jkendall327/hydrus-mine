@@ -43,7 +43,6 @@ fn activate(window: &CommandPaletteWindow, name: &str) {
     window.invoke_activate(i32::try_from(index).unwrap());
 }
 
-// leaf: audit-options-command-palette-command-palette-open-favourite-searches-in-a-new-page
 #[test]
 fn ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions() {
     let directory = tempfile::tempdir().unwrap();
@@ -381,7 +380,6 @@ fn asynchronous_calculator_ignores_page_threshold_and_activation_keeps_owner_ope
 
 // leaf: audit-options-command-palette-command-palette-max-favourite-searches-to-show
 // leaf: audit-options-command-palette-command-palette-max-page-results-to-show
-// leaf: audit-options-command-palette-command-palette-open-favourite-searches-in-a-new-page
 #[test]
 fn saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palette() {
     let directory = tempfile::tempdir().unwrap();
@@ -438,7 +436,11 @@ fn saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palet
     let recorded = hydrus_testkit::fixture_json("command_palette.json");
     let same_page = &recorded["selected"]["favourite_current"];
     assert!(bound.command_palette.borrow().is_none());
-    assert_eq!(bound.pages.borrow().shown().key, original);
+    assert_eq!(
+        bound.pages.borrow().shown().key == original,
+        same_page["same_page"].as_bool().unwrap()
+    );
+    // (the recorded page already carried the favourite's name; ours keeps its own)
     assert_eq!(bound.pages.borrow().shown().name, "Palette Beta");
     assert_eq!(
         bound.pages.borrow().page_count(),
@@ -634,12 +636,18 @@ fn an_empty_palette_shows_the_results_each_initially_show_option_allows_as_the_r
             }
             std::thread::sleep(Duration::from_millis(2));
         }
+        if expected.is_empty() {
+            // Nothing to wait for: give the worker time to (wrongly) answer.
+            for _ in 0..100 {
+                palette.invoke_poll();
+                std::thread::sleep(Duration::from_millis(2));
+            }
+        }
         assert_eq!(rows_of(&palette), expected, "{option} = {on}");
         palette.invoke_cancel();
     }
 }
 
-// leaf: audit-options-command-palette-command-palette-advanced-search-media-menu
 #[test]
 fn media_menu_results_follow_the_setting_and_the_page_shown_as_the_reference_did() {
     let recorded = hydrus_testkit::fixture_json("command_palette.json");
@@ -701,6 +709,13 @@ fn media_menu_results_follow_the_setting_and_the_page_shown_as_the_reference_did
                 break;
             }
             std::thread::sleep(Duration::from_millis(2));
+        }
+        if expected.is_empty() {
+            // Nothing to wait for: give the worker time to (wrongly) answer.
+            for _ in 0..100 {
+                palette.invoke_poll();
+                std::thread::sleep(Duration::from_millis(2));
+            }
         }
         assert_eq!(rows_of(&palette), expected, "{query:?} with the menu {on}");
         palette.invoke_cancel();
@@ -770,12 +785,14 @@ fn a_page_of_pages_row_shows_when_the_setting_is_on_and_opens_its_remembered_pag
     // Off: the notebook is not a result, its child is (named for its parent).
     let palette = open(false);
     wait(&palette, "Palette Beta");
+    let off = rows_of(&palette);
     assert!(
-        !rows_of(&palette)
-            .iter()
-            .any(|(name, _)| name == "Palette Nested"),
-        "{:?}",
-        rows_of(&palette)
+        !off.iter().any(|(name, _)| name == "Palette Nested"),
+        "{off:?}"
+    );
+    assert!(
+        off.contains(&("Palette Beta".into(), "child of 'Palette Nested'".into())),
+        "{off:?}"
     );
     palette.invoke_cancel();
     // On: one notebook row, and choosing it shows the page the reference showed.
