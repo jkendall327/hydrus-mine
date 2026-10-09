@@ -1,0 +1,764 @@
+{
+  "siblings": [
+    [
+      "my tags",
+      "sibtest:alias",
+      "sibtest:ideal"
+    ],
+    [
+      "my tags",
+      "sibtest:other alias",
+      "sibtest:ideal"
+    ],
+    [
+      "downloader tags",
+      "sibtest:alias",
+      "sibtest:elsewhere"
+    ],
+    [
+      "my tags",
+      "sibling blocked",
+      "sibtest:plain ideal"
+    ]
+  ],
+  "cases": [
+    {
+      "blacklist": [
+        "sibtest:other alias"
+      ],
+      "blacklist_only": true,
+      "tests": [
+        {
+          "text": "sibtest:ideal",
+          "result": "tag blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "sibtest:alias",
+          "result": "tag blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "sibtest:other alias",
+          "result": "tag blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "sibtest:elsewhere",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:plain ideal",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "character:blocked",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "blocked",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "never seen tag",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:ideal\nnever seen tag",
+          "result": "1 pass, 1 blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "sibtest:alias\nsibtest:ideal",
+          "result": "all blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "never seen tag\nNever Seen Tag  ",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:ideal\nsibtest:elsewhere\nnever seen tag",
+          "result": "2 pass, 1 blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "\n\n",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        }
+      ],
+      "empty": "Enter a tag here to test if it passes the blacklist (siblings tested, unnamespaced rules match namespaced tags):"
+    },
+    {
+      "blacklist": [
+        "sibtest:other alias"
+      ],
+      "blacklist_only": false,
+      "tests": [
+        {
+          "text": "sibtest:ideal",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:alias",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:other alias",
+          "result": "tag blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "sibtest:elsewhere",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:plain ideal",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "character:blocked",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "blocked",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "never seen tag",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:ideal\nnever seen tag",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:alias\nsibtest:ideal",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "never seen tag\nNever Seen Tag  ",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:ideal\nsibtest:elsewhere\nnever seen tag",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "\n\n",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        }
+      ],
+      "empty": "Enter a tag here to test if it passes the current filter:"
+    },
+    {
+      "blacklist": [
+        "sibtest:elsewhere"
+      ],
+      "blacklist_only": true,
+      "tests": [
+        {
+          "text": "sibtest:ideal",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:alias",
+          "result": "tag blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "sibtest:other alias",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:elsewhere",
+          "result": "tag blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "sibtest:plain ideal",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "character:blocked",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "blocked",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "never seen tag",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:ideal\nnever seen tag",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:alias\nsibtest:ideal",
+          "result": "1 pass, 1 blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "never seen tag\nNever Seen Tag  ",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:ideal\nsibtest:elsewhere\nnever seen tag",
+          "result": "2 pass, 1 blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "\n\n",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        }
+      ],
+      "empty": "Enter a tag here to test if it passes the blacklist (siblings tested, unnamespaced rules match namespaced tags):"
+    },
+    {
+      "blacklist": [
+        "sibtest:elsewhere"
+      ],
+      "blacklist_only": false,
+      "tests": [
+        {
+          "text": "sibtest:ideal",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:alias",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:other alias",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:elsewhere",
+          "result": "tag blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "sibtest:plain ideal",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "character:blocked",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "blocked",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "never seen tag",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:ideal\nnever seen tag",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:alias\nsibtest:ideal",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "never seen tag\nNever Seen Tag  ",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:ideal\nsibtest:elsewhere\nnever seen tag",
+          "result": "2 pass, 1 blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "\n\n",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        }
+      ],
+      "empty": "Enter a tag here to test if it passes the current filter:"
+    },
+    {
+      "blacklist": [
+        "blocked",
+        "sibling blocked"
+      ],
+      "blacklist_only": true,
+      "tests": [
+        {
+          "text": "sibtest:ideal",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:alias",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:other alias",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:elsewhere",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:plain ideal",
+          "result": "tag blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "character:blocked",
+          "result": "tag blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "blocked",
+          "result": "tag blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "never seen tag",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:ideal\nnever seen tag",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:alias\nsibtest:ideal",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "never seen tag\nNever Seen Tag  ",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:ideal\nsibtest:elsewhere\nnever seen tag",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "\n\n",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        }
+      ],
+      "empty": "Enter a tag here to test if it passes the blacklist (siblings tested, unnamespaced rules match namespaced tags):"
+    },
+    {
+      "blacklist": [
+        "blocked",
+        "sibling blocked"
+      ],
+      "blacklist_only": false,
+      "tests": [
+        {
+          "text": "sibtest:ideal",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:alias",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:other alias",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:elsewhere",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:plain ideal",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "character:blocked",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "blocked",
+          "result": "tag blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "never seen tag",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:ideal\nnever seen tag",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:alias\nsibtest:ideal",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "never seen tag\nNever Seen Tag  ",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:ideal\nsibtest:elsewhere\nnever seen tag",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "\n\n",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        }
+      ],
+      "empty": "Enter a tag here to test if it passes the current filter:"
+    },
+    {
+      "blacklist": [
+        "sibtest:"
+      ],
+      "blacklist_only": true,
+      "tests": [
+        {
+          "text": "sibtest:ideal",
+          "result": "tag blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "sibtest:alias",
+          "result": "tag blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "sibtest:other alias",
+          "result": "tag blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "sibtest:elsewhere",
+          "result": "tag blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "sibtest:plain ideal",
+          "result": "tag blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "character:blocked",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "blocked",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "never seen tag",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:ideal\nnever seen tag",
+          "result": "1 pass, 1 blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "sibtest:alias\nsibtest:ideal",
+          "result": "all blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "never seen tag\nNever Seen Tag  ",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:ideal\nsibtest:elsewhere\nnever seen tag",
+          "result": "1 pass, 2 blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "\n\n",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        }
+      ],
+      "empty": "Enter a tag here to test if it passes the blacklist (siblings tested, unnamespaced rules match namespaced tags):"
+    },
+    {
+      "blacklist": [
+        "sibtest:"
+      ],
+      "blacklist_only": false,
+      "tests": [
+        {
+          "text": "sibtest:ideal",
+          "result": "tag blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "sibtest:alias",
+          "result": "tag blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "sibtest:other alias",
+          "result": "tag blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "sibtest:elsewhere",
+          "result": "tag blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "sibtest:plain ideal",
+          "result": "tag blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "character:blocked",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "blocked",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "never seen tag",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:ideal\nnever seen tag",
+          "result": "1 pass, 1 blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "sibtest:alias\nsibtest:ideal",
+          "result": "all blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "never seen tag\nNever Seen Tag  ",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:ideal\nsibtest:elsewhere\nnever seen tag",
+          "result": "1 pass, 2 blocked!",
+          "style": "HydrusInvalid"
+        },
+        {
+          "text": "\n\n",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        }
+      ],
+      "empty": "Enter a tag here to test if it passes the current filter:"
+    },
+    {
+      "blacklist": [],
+      "blacklist_only": true,
+      "tests": [
+        {
+          "text": "sibtest:ideal",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:alias",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:other alias",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:elsewhere",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:plain ideal",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "character:blocked",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "blocked",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "never seen tag",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:ideal\nnever seen tag",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:alias\nsibtest:ideal",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "never seen tag\nNever Seen Tag  ",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:ideal\nsibtest:elsewhere\nnever seen tag",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "\n\n",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        }
+      ],
+      "empty": "Enter a tag here to test if it passes the blacklist (siblings tested, unnamespaced rules match namespaced tags):"
+    },
+    {
+      "blacklist": [],
+      "blacklist_only": false,
+      "tests": [
+        {
+          "text": "sibtest:ideal",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:alias",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:other alias",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:elsewhere",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:plain ideal",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "character:blocked",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "blocked",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "never seen tag",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:ideal\nnever seen tag",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:alias\nsibtest:ideal",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "never seen tag\nNever Seen Tag  ",
+          "result": "tag passes!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "sibtest:ideal\nsibtest:elsewhere\nnever seen tag",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        },
+        {
+          "text": "\n\n",
+          "result": "all pass!",
+          "style": "HydrusValid"
+        }
+      ],
+      "empty": "Enter a tag here to test if it passes the current filter:"
+    }
+  ]
+}

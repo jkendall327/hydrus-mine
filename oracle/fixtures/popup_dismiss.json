@@ -1,0 +1,88 @@
+{
+  "steps": [
+    {
+      "state": {
+        "cards": [
+          {
+            "text": "working",
+            "done": false,
+            "dismissed": false
+          },
+          {
+            "text": "done",
+            "done": true,
+            "dismissed": false
+          },
+          {
+            "text": "also done",
+            "done": true,
+            "dismissed": false
+          }
+        ],
+        "summary": "3 messages"
+      }
+    },
+    {
+      "do": [
+        "right_click",
+        "working"
+      ],
+      "state": {
+        "cards": [
+          {
+            "text": "working",
+            "done": false,
+            "dismissed": false
+          },
+          {
+            "text": "done",
+            "done": true,
+            "dismissed": false
+          },
+          {
+            "text": "also done",
+            "done": true,
+            "dismissed": false
+          }
+        ],
+        "summary": "3 messages"
+      }
+    },
+    {
+      "do": [
+        "right_click",
+        "done"
+      ],
+      "state": {
+        "cards": [
+          {
+            "text": "working",
+            "done": false,
+            "dismissed": false
+          },
+          {
+            "text": "also done",
+            "done": true,
+            "dismissed": false
+          }
+        ],
+        "summary": "2 messages"
+      }
+    },
+    {
+      "do": [
+        "dismiss_all"
+      ],
+      "state": {
+        "cards": [
+          {
+            "text": "working",
+            "done": false,
+            "dismissed": false
+          }
+        ],
+        "summary": "1 message"
+      }
+    }
+  ]
+}

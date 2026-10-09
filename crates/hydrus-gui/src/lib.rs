@@ -102,7 +102,7 @@ pub mod maintenance_runtime;
 mod manage_notes_window;
 mod manage_ratings_window;
 pub(crate) mod manage_tags_window;
-mod manage_times_window;
+pub mod manage_times_window;
 mod manage_urls_window;
 mod menu_bar;
 mod menu_choice_wheel;
@@ -6089,6 +6089,17 @@ pub(crate) fn pick_debug_response() -> Option<std::path::PathBuf> {
         .save_file()
 }
 
+/// Ask where to save a file named `name` by default, with the public picker boundary.
+pub(crate) fn pick_save(title: &str, name: &str) -> Option<std::path::PathBuf> {
+    if let Some(picker) = PICKER.with(|p| p.borrow().clone()) {
+        return picker(Pick::Files, title).into_iter().next();
+    }
+    rfd::FileDialog::new()
+        .set_title(title)
+        .set_file_name(name)
+        .save_file()
+}
+
 /// Read pasted text from `paster` rather than the clipboard (for tests),
 /// on this thread.
 pub fn set_paster(paster: impl Fn() -> String + 'static) {
@@ -6507,6 +6518,7 @@ fn open_viewer(
             if let Some(window) = weak.upgrade() {
                 let text = zoom.map(viewer_menu::zoom_percentage).unwrap_or_default();
                 window.set_zoom_text(text.into());
+                viewer::refresh_background_info_line(&window);
             }
         }
     });
@@ -6655,6 +6667,7 @@ fn open_viewer(
             viewer_presentation::refresh(&window, model.store(), model.current());
             let shown = viewer::shown(model.store(), model.current());
             window.set_info_line(shown.line.into());
+            viewer::refresh_background_info_line(&window);
             window.set_location_strings(ModelRc::new(VecModel::from(
                 shown
                     .locations

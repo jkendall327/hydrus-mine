@@ -85,6 +85,7 @@ pub mod vacuum;
 pub mod viewing_maintenance;
 pub mod wake;
 pub mod watchers;
+pub mod workers;
 
 pub use conn::{Db, Paused, WriteCtx};
 pub use error::{Result, StoreError};

@@ -205,6 +205,20 @@ search.
 
 ## Pages (`hydrus-gui`)
 
+- **Extended selection in the import review list** (`ListSelection`,
+  shared by every list): a shift-click after a ctrl-click has taken the
+  range's origin out of the selection keeps, in the reference, the other
+  ctrl-selected rows (rows 0, 1, 2 after click 0, ctrl 2, ctrl 0, shift 1);
+  hydrus-rs makes a fresh range (0, 1). Recorded in
+  `oracle/record_import_review_remove.py`; the test pins the difference.
+- **Replayed only by the model, not through the window:** Manage Times'
+  "many files" case (over 100 files asks before applying; the test fixture
+  has 36 files) and whether the date-time editor's value is a change (the
+  window does not show it).
+- **Closing the last page** (Ctrl+W or a middle click on the only tab)
+  leaves the reference's main notebook empty; hydrus-rs's top notebook
+  always holds a page, so a new search page ("files") takes its place
+  (`oracle/record_page_close.py`, the last step).
 - **Active predicate editing remains Partial.** Represented system values and
   simple tags/namespaces/wildcards can now be edited together, with one atomic
   Apply and separate supplied values for repeated system families. Immutable
@@ -1363,20 +1377,21 @@ sidecar routes are not yet mapped; choices for these made in the window persist.
 
 The siblings/parents editors share write-autocomplete, counts, decorated
 suggestions, manual fetch and add-only paste with Manage Tags. The reference's
-tag context menus, favourite/children tabs and default service-tab preference
-are not connected yet. Import/export
-are direct clipboard and .txt buttons rather than two popup menus. Relationship
+tag context menus and favourite/children tabs are not connected yet.
+Import/export are direct clipboard and .txt buttons rather than two popup
+menus; both import add-only, as the reference's only menu entries do. Relationship
 rows are loaded synchronously when the dialog opens, so opening a service with
 very many pairs can pause the UI; reference background fetch/progress states
 remain to be ported. The port commits and recalculates display immediately,
 so it shows that behavior instead of the reference's background-sync status.
-Repository reasons and rescinds are supported, but account/moderator permission
-warnings, moderator reason bypass and recent/fixed reason suggestions are not
-implemented. Pending changes are persisted; uploading still depends on the
+Repository reasons, their recent/fixed suggestions and rescinds are
+supported, but account/moderator permission warnings and the moderator reason
+bypass are not implemented. Pending changes are persisted; uploading still depends on the
 repository uploader's existing capabilities. Self-pairs imported from text are
 reported and rejected rather than stored after the reference's critical loop
-warning (the display graph ignores such pairs anyway). Batches creating loops
-or conflicting sibling ideals are rejected with an explicit message; enter
+warning (the display graph ignores such pairs anyway); a repository still asks
+its reason first, as the reference does, and remembers it. Batches creating loops
+or conflicting sibling ideals are rejected as a whole with an explicit message (so the batch's valid pairs are dropped too, and a repository's reason question is still asked first); enter
 the pairs separately to perform the ordinary automatic repairs. Already corrupt
 reference graph cycles are traversed safely, but do not raise its detailed
 pre-existing-loop warning. Manual background sibling/parent synchronization
@@ -2087,7 +2102,9 @@ service tabs and list rows use Slint geometry. Inherited parent ordering follows
 natural tag order; Qt's inherited-parent collection does not specify relative
 order. Existing Manage Tags differences remain: multiple stored-tag selection and its
 full context menu are not implemented, and remote service petition dialogs are outside this
-local-service slice. The four preference leaves do not claim those parent
+local-service slice. Not covered by a replay: a tag whose mappings were all removed, in the write autocomplete's filter of tags the service has, and the " *" on a tab after a staged tag is undone. Manage Tags has tabs for local tag services only: the
+reference's tag repository tabs are missing, so a default service tab naming a
+repository opens hydrus-rs's first tab. The four preference leaves do not claim those parent
 workflow gaps complete.
 
 The default gallery-source Options control checks the installed URL classes,
@@ -2145,9 +2162,10 @@ execution or canonical inventory promotion is part of this slice.
 Passive tags, file-information, ratings/locations and notes copies now consume
 all four background preferences independently of popup and focus settings.
 They paint before the media, preserving occlusion and the reference's notes
-origin dependency on the top-right copy. Existing native fonts, information-line
-content and rating layout remain in use, so the copies follow the native hover
-presentation rather than reproducing Qt glyph metrics. Preview-window passive
+origin dependency on the top-right copy. Their texts are the reference's
+(the file-information copy puts the zoom second, as `_GetInfoString` does) and
+they land within a few pixels of the reference's; native fonts and rating
+layout remain in use, so glyph metrics differ by a few pixels. Preview-window passive
 copies and hover menu/dominance rules remain separate gaps. The already-supported
 index background preference is unchanged by these four controls.
 
@@ -2891,15 +2909,23 @@ External-call Add/Edit, import/export and nested process/command controls remain
 Partial. Recognized unsupported string-converter steps are preserved in native
 registered definitions but rejected by reference export encoding; mixed valid
 and wrong-class imports are rejected atomically instead of accepting the valid
-prefix, and unusually large imports do not offer the reference override question.
+prefix. An import asks the reference's "seems to be a bit weird" question for
+each unusual call as it is added; a no stops there with the reference's "User
+declined to add--the import looked weird.", shown on the list rather than in a
+"Problem importing!" dialog.
 Per-call PNG batches, drop import, input-rule clipboard controls and timeout
-minutes controls are not implemented. The native process test runs saved argument vectors with a
-single owner-scoped worker, a fallible thread start and bounded wait, discarding
-stdout/stderr. Cancellation owns/reaps the direct child only; descendant process
-groups, full reference output/error presentation and OS default-launch tests are
-not claimed. Ordinary executable arguments use the process API; batch/shell
-interpreters retain their own quoting semantics. Harmless owned Unicode fixtures
-are authored for hosted CI; no local Rust execution is represented as evidence.
+minutes controls are not implemented. The callable editor's test input rows
+are the rule rows (one per parameter the job offers, those in use enabled).
+'test call!' on an OS launch call opens its input at once, without the
+reference's brief "Testing…". Testing turns both test buttons off
+while it runs (the reference turns off only the one clicked). A test call's
+results and errors are the reference's (`Looks good!`, its
+`ExecutableException` and `BadReturnCodeException` texts with Python's list and
+string quoting, and the first 256 characters of the program's output);
+timeouts and cancellation say so in hydrus-rs's words. Cancellation owns/reaps
+the direct child only; descendant process groups are not claimed. Ordinary
+executable arguments use the process API; batch/shell interpreters retain their
+own quoting semantics.
 
 The command-editor checkpoint `6b5ca5ab4` validates only parameter editing and
 full-template Copy/Paste within the finite scope below. Actual Qt recording covers
@@ -4103,9 +4129,21 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   time. Idle time doesn't wait for the reference's two-minute boot delay beyond
   what the GUI's own idle check already applies.
 - CPU use is read from Linux's `/proc/stat`; elsewhere "CPU busy" is never
-  shown. As in the reference v688, CPU busyness only reaches the status bar.
+  shown. A busy system reaches the status bar and, as in the reference's
+  `GoodTimeToStartBackgroundWork`, holds idle-time file maintenance and
+  idle-time auto-resolution (the daemon reads it from the idle marker; they
+  do not fall back to normal time). The potential duplicates search does not
+  wait for it, as the reference's does not. "Just woke from sleep" is not
+  part of that marker: it does not hold them.
 - Similar-files search packets search 16 files at a time until the packet time
   passes, so a packet can run over by one batch.
+- Nothing wakes the daemon's worker loops from the GUI's process, so where the
+  reference sleeps ten minutes until woken by new work, auto-resolution (no
+  rule with work left) and file maintenance (no job due) check every minute.
+  Throttled or held file maintenance asks again every second while a job is
+  due, as the reference does. A rest between packets is never shorter than a
+  tenth of a second (a 0% rest). With no files to search, the search holds 30
+  seconds rather than resting by its percentage.
 - The status bar has no "hydrus busy" or database activity fields yet.
 
 ## Thumbnail manage > maintenance

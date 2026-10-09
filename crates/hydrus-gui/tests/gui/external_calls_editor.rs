@@ -278,7 +278,6 @@ fn executable_path_checks_and_show_path_help_match_the_reference() {
     w.invoke_cancel();
 }
 
-// leaf: audit-options-nested-external-call-test-availability
 #[test]
 fn availability_test_is_a_which_call_with_the_reference_messages() {
     let (_dirs, store) = store();

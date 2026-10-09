@@ -1075,6 +1075,355 @@ fn packet(options: &OptionsWindow, in_box: &str, label: &str, seconds: i32, ms: 
     options.invoke_field_edited(i, 1, ms);
 }
 
+/// The background workers' pace (`oracle/fixtures/maintenance_pace.json`).
+mod pace {
+    use std::collections::BTreeMap;
+    use std::time::Duration;
+
+    use serde_json::Value;
+
+    use hydrus_core::HashId;
+    use hydrus_store::Store;
+    use hydrus_store::duplicates::auto::AutoResolutionSettings;
+    use hydrus_store::file_maintenance::{self, FileMaintenanceSettings, JobType};
+    use hydrus_store::similar::SimilarFilesSettings;
+    use hydrus_store::workers::{self, HeldClock, WorkClock as _};
+
+    pub fn recording() -> Value {
+        let path = concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../oracle/fixtures/maintenance_pace.json"
+        );
+        serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap()
+    }
+
+    pub fn int(saved: &Value, key: &str) -> i32 {
+        i32::try_from(saved[key].as_i64().unwrap_or_else(|| panic!("{key}"))).unwrap()
+    }
+
+    pub fn flag(saved: &Value, key: &str) -> bool {
+        saved[key].as_bool().unwrap_or_else(|| panic!("{key}"))
+    }
+
+    /// The settings the workers read, as the reference saved them.
+    pub fn assert_saved(store: &Store, saved: &Value) {
+        let n = |key| u32::try_from(int(saved, key)).unwrap();
+        let similar: SimilarFilesSettings = store.read(hydrus_store::settings::get).unwrap();
+        assert_eq!(
+            (
+                similar.during_idle,
+                similar.during_active,
+                similar.work_time_ms_idle,
+                similar.rest_percentage_idle,
+                similar.work_time_ms_active,
+                similar.rest_percentage_active
+            ),
+            (
+                flag(saved, "maintain_similar_files_duplicate_pairs_during_idle"),
+                flag(
+                    saved,
+                    "maintain_similar_files_duplicate_pairs_during_active"
+                ),
+                n("potential_duplicates_search_work_time_ms_idle"),
+                n("potential_duplicates_search_rest_percentage_idle"),
+                n("potential_duplicates_search_work_time_ms_active"),
+                n("potential_duplicates_search_rest_percentage_active"),
+            )
+        );
+        let auto: AutoResolutionSettings = store.read(hydrus_store::settings::get).unwrap();
+        assert_eq!(
+            (
+                auto.during_idle,
+                auto.during_active,
+                auto.work_time_ms_idle,
+                auto.rest_percentage_idle,
+                auto.work_time_ms_active,
+                auto.rest_percentage_active
+            ),
+            (
+                flag(saved, "duplicates_auto_resolution_during_idle"),
+                flag(saved, "duplicates_auto_resolution_during_active"),
+                n("duplicates_auto_resolution_work_time_ms_idle"),
+                n("duplicates_auto_resolution_rest_percentage_idle"),
+                n("duplicates_auto_resolution_work_time_ms_active"),
+                n("duplicates_auto_resolution_rest_percentage_active"),
+            )
+        );
+        let files: FileMaintenanceSettings = store.read(hydrus_store::settings::get).unwrap();
+        let n = |key| u64::from(n(key));
+        assert_eq!(
+            files,
+            FileMaintenanceSettings {
+                during_idle: flag(saved, "file_maintenance_during_idle"),
+                during_active: flag(saved, "file_maintenance_during_active"),
+                idle_files: n("file_maintenance_idle_throttle_files"),
+                idle_seconds: n("file_maintenance_idle_throttle_time_delta"),
+                active_files: n("file_maintenance_active_throttle_files"),
+                active_seconds: n("file_maintenance_active_throttle_time_delta"),
+            }
+        );
+    }
+
+    fn seconds(value: &Value) -> Duration {
+        Duration::from_secs_f64(value.as_f64().unwrap())
+    }
+
+    /// Everything a recorded pass waited, in all.
+    fn waited(events: &[Value]) -> Duration {
+        events
+            .iter()
+            .filter_map(|e| match e[0].as_str() {
+                Some("sleep") => Some(seconds(&e[1])),
+                Some("wait") => Some(seconds(&e[2])),
+                _ => None,
+            })
+            .sum()
+    }
+
+    /// The packet a recorded pass was given, if it worked.
+    fn worked(events: &[Value]) -> Option<Duration> {
+        events
+            .iter()
+            .find(|e| e[0] == "work")
+            .map(|e| seconds(&e[1]))
+    }
+
+    fn close(native: Duration, reference: Duration, what: &str) {
+        let gap = native.abs_diff(reference);
+        assert!(
+            gap <= Duration::from_millis(1),
+            "{what}: {native:?}, the reference {reference:?}"
+        );
+    }
+
+    /// The GUI's idle state, published as of the clock: idle or not, and if
+    /// idle whether it is a good time to start background work.
+    fn publish(store: &Store, clock: &HeldClock, idle: bool, good_time: bool) {
+        hydrus_store::idle_state::publish_state(store.dir(), idle, good_time, clock.now_ms())
+            .unwrap();
+    }
+
+    fn good_time(pass: &Value) -> bool {
+        pass["good_time"].as_bool().unwrap()
+    }
+
+    /// A recorded potential duplicates search or auto-resolution pass, run
+    /// through the real step: the work takes the recorded share of its packet.
+    pub fn replay_packet(store: &Store, t0_ms: i64, pass: &Value) {
+        let what = format!("{pass}");
+        let events = pass["events"].as_array().unwrap();
+        let idle = pass["idle"].as_bool().unwrap();
+        let share = pass["packet"][0].as_f64().unwrap();
+        let more = pass["packet"][1].as_bool().unwrap();
+        let files = usize::try_from(pass["packet"][2].as_u64().unwrap()).unwrap();
+        let clock = HeldClock::at(t0_ms);
+        publish(store, &clock, idle, good_time(pass));
+        let reference_packet = worked(events);
+        let reference_wait = waited(events);
+        match pass["worker"].as_str().unwrap() {
+            "similar" => {
+                // one search call a pass, given the packet: it takes the
+                // recorded share of it
+                let calls = std::cell::Cell::new(0);
+                let wait = workers::similar_files_step(store, &clock, |_, budget| {
+                    calls.set(calls.get() + 1);
+                    clock.advance(budget.mul_f64(share));
+                    Ok(files)
+                });
+                if reference_packet.is_none() {
+                    assert_eq!(calls.get(), 0, "held: {what}");
+                    assert_eq!(reference_wait, Duration::from_secs(30), "{what}");
+                    assert_eq!(wait, workers::SIMILAR_FILES_HOLD, "{what}");
+                } else {
+                    assert_eq!(calls.get(), 1, "{what}");
+                    close(wait, reference_wait, &what);
+                }
+            }
+            "auto" => {
+                let given = std::cell::Cell::new(None);
+                let wait = workers::auto_resolution_step(store, &clock, |_, budget| {
+                    given.set(Some(budget));
+                    clock.advance(budget.mul_f64(share));
+                    Ok(more)
+                });
+                match (reference_packet, given.get()) {
+                    (None, None) => {
+                        close(wait, reference_wait, &what);
+                        assert_eq!(wait, workers::AUTO_RESOLUTION_HOLD);
+                    }
+                    (Some(reference), Some(native)) => {
+                        close(native, reference, &format!("packet: {what}"));
+                        if more {
+                            close(wait, reference_wait, &what);
+                        } else {
+                            // the reference rests ten minutes, woken by new
+                            // work; the daemon checks every minute instead
+                            close(reference_wait, Duration::from_secs(600), &what);
+                            assert_eq!(wait, workers::AUTO_RESOLUTION_DONE, "{what}");
+                        }
+                    }
+                    other => panic!("{other:?}: {what}"),
+                }
+            }
+            other => panic!("{other}"),
+        }
+    }
+
+    /// One trace line: a job (seconds from the start, its weight), a run of
+    /// one-second polls, the wait after a batch, or the wait for new jobs.
+    #[derive(Debug, PartialEq)]
+    enum Line {
+        Job(i64, &'static str),
+        Polls(u64),
+        AfterWork,
+        NothingDue,
+        GaveUp,
+    }
+
+    /// How many jobs of each type are queued.
+    fn due_jobs(store: &Store) -> BTreeMap<i64, i64> {
+        store
+            .read(|conn| {
+                let mut q = conn.prepare(
+                    "SELECT job_type, COUNT(*) FROM file_maintenance_jobs GROUP BY job_type",
+                )?;
+                Ok(
+                    q.query_map([], |r| Ok((r.get::<_, i64>(0)?, r.get::<_, i64>(1)?)))?
+                        .collect::<rusqlite::Result<_>>()?,
+                )
+            })
+            .unwrap()
+    }
+
+    fn recorded_trace(events: &[Value]) -> Vec<Line> {
+        let mut out = Vec::new();
+        for e in events {
+            match (e[0].as_str().unwrap(), e[1].as_str()) {
+                ("job", _) => {
+                    let name = match e[2].as_str().unwrap() {
+                        "metadata" => "metadata",
+                        "exif" => "exif",
+                        "presence" => "presence",
+                        other => panic!("{other}"),
+                    };
+                    out.push(Line::Job(e[1].as_i64().unwrap(), name));
+                }
+                ("sleeps", _) if e[1].as_f64() == Some(1.0) => {
+                    out.push(Line::Polls(e[2].as_u64().unwrap()));
+                }
+                // (a tenth of a millisecond's pause after each batch)
+                ("sleeps", _) => {}
+                ("wait", Some("work")) => {
+                    assert_eq!(e[2].as_f64(), Some(0.5));
+                    out.push(Line::AfterWork);
+                }
+                ("wait", Some("idle")) => {
+                    assert_eq!(e[2].as_f64(), Some(600.0));
+                    out.push(Line::NothingDue);
+                }
+                ("stopped", _) => out.push(Line::GaveUp),
+                other => panic!("{other:?}"),
+            }
+        }
+        out
+    }
+
+    /// The recorded queue on the store's first files: one job each.
+    pub fn queue(store: &Store, jobs: &[Value]) {
+        let jobs: Vec<JobType> = jobs
+            .iter()
+            .map(|j| match j.as_str().unwrap() {
+                "metadata" => JobType::FileMetadata,
+                "exif" => JobType::HasExif,
+                "presence" => JobType::IntegrityPresenceLogOnly,
+                other => panic!("{other}"),
+            })
+            .collect();
+        let limit = i64::try_from(jobs.len()).unwrap();
+        store
+            .write(move |ctx| {
+                let files: Vec<HashId> = ctx
+                    .conn()
+                    .prepare("SELECT hash_id FROM files ORDER BY hash_id LIMIT ?1")?
+                    .query_map([limit], |row| row.get(0))?
+                    .collect::<rusqlite::Result<_>>()?;
+                assert_eq!(files.len(), jobs.len());
+                file_maintenance::cancel_jobs(ctx.conn(), &JobType::ALL)?;
+                for (file, job) in files.into_iter().zip(jobs) {
+                    file_maintenance::add_jobs(ctx.conn(), &[file], job, 0)?;
+                }
+                Ok(())
+            })
+            .unwrap();
+    }
+
+    /// A recorded file maintenance run, through the real throttle and the
+    /// real maintenance batches, pass after pass on the held clock.
+    pub fn replay_files(store: &std::sync::Arc<Store>, recording: &Value, pass: &Value) {
+        let what = format!("{pass}");
+        let t0 = recording["t0"].as_i64().unwrap();
+        queue(store, recording["jobs"].as_array().unwrap());
+        let idle = pass["idle"].as_bool().unwrap();
+        let expected = recorded_trace(pass["events"].as_array().unwrap());
+        let importer =
+            hydrus_import::FileImporter::new(store.clone(), hydrus_media::MediaTools::new());
+        let clock = HeldClock::at(t0 * 1000);
+        let throttle = workers::FileMaintenanceThrottle::new(&clock);
+        let mut trace = Vec::new();
+        // as many polls as the reference waited before it was given up on
+        let most_polls: u64 = expected
+            .iter()
+            .map(|l| if let Line::Polls(n) = l { *n } else { 0 })
+            .sum();
+        let mut polls = 0;
+        loop {
+            publish(store, &clock, idle, good_time(pass));
+            let before = due_jobs(store);
+            let wait = importer.file_maintenance_pass(&throttle, &clock, &|_| {});
+            // (the jobs the pass did, in the order the reference ran them)
+            let after = due_jobs(store);
+            for job in JobType::RUN_ORDER {
+                for _ in after.get(&job.code()).copied().unwrap_or(0)
+                    ..before.get(&job.code()).copied().unwrap_or(0)
+                {
+                    trace.push(Line::Job(
+                        clock.now_ms() / 1000 - t0,
+                        match job {
+                            JobType::FileMetadata => "metadata",
+                            JobType::HasExif => "exif",
+                            JobType::IntegrityPresenceLogOnly => "presence",
+                            other => panic!("{other:?}"),
+                        },
+                    ));
+                }
+            }
+            clock.advance(wait);
+            match wait {
+                workers::FILE_MAINTENANCE_POLL => {
+                    polls += 1;
+                    if let Some(Line::Polls(n)) = trace.last_mut() {
+                        *n += 1;
+                    } else {
+                        trace.push(Line::Polls(1));
+                    }
+                    if polls >= most_polls && expected.last() == Some(&Line::GaveUp) {
+                        trace.push(Line::GaveUp);
+                        break;
+                    }
+                }
+                workers::FILE_MAINTENANCE_AFTER_WORK => trace.push(Line::AfterWork),
+                workers::FILE_MAINTENANCE_NOTHING_DUE => {
+                    trace.push(Line::NothingDue);
+                    break;
+                }
+                other => panic!("{other:?}: {what}"),
+            }
+            assert!(trace.len() < 200, "{trace:?}");
+        }
+        assert_eq!(trace, expected, "{what}");
+    }
+}
+
 // leaf: audit-options-maintenance-and-processing-file-maintenance-run-file-maintenance-during-idle-time
 // leaf: audit-options-maintenance-and-processing-file-maintenance-run-file-maintenance-during-normal-time
 // leaf: audit-options-maintenance-and-processing-file-maintenance-idle-throttle
@@ -1093,33 +1442,11 @@ fn packet(options: &OptionsWindow, in_box: &str, label: &str, seconds: i32, ms: 
 // leaf: audit-options-maintenance-and-processing-duplicates-auto-resolution-normal-rest-time-percentage
 #[test]
 fn background_work_options_set_the_pace_the_workers_take_in_idle_and_normal_time() {
-    use std::time::Duration;
+    use pace::{flag, int};
 
-    use hydrus_store::duplicates::auto::AutoResolutionSettings;
-    use hydrus_store::file_maintenance::FileMaintenanceSettings;
-    use hydrus_store::idle_state::Pace;
-    use hydrus_store::similar::SimilarFilesSettings;
-
+    let recording = pace::recording();
     let client = client();
-    let ms = Duration::from_millis;
-    let pace = |allowed, work, rest_percentage| Pace {
-        allowed,
-        work,
-        rest_percentage,
-    };
-    // the reference's defaults to begin with
-    let similar: SimilarFilesSettings = client.get();
-    assert_eq!(similar.pace(true), pace(true, ms(5000), 50));
-    assert_eq!(similar.pace(false), pace(true, ms(100), 1900));
-    let auto: AutoResolutionSettings = client.get();
-    assert_eq!(auto.pace(true), pace(true, ms(1000), 100));
-    assert_eq!(auto.pace(false), pace(true, ms(100), 900));
-    let files: FileMaintenanceSettings = client.get();
-    assert_eq!(files.allowance(true), (true, 1, 2));
-    assert_eq!(files.allowance(false), (true, 1, 20));
-
     let page = "maintenance and processing";
-    let window = client.options(page);
     let (files_box, similar_box, auto_box) = (
         "file maintenance",
         "potential duplicates search",
@@ -1131,107 +1458,102 @@ fn background_work_options_set_the_pace_the_workers_take_in_idle_and_normal_time
         "\"Idle\" rest time percentage: ",
         "\"Normal\" rest time percentage: ",
     );
-    // potential duplicates search
-    packet(&window, similar_box, idle, 7, 500);
-    packet(&window, similar_box, normal, 2, 40);
-    for (label, n) in [(rest_idle, 123), (rest_normal, 456)] {
-        let (i, found) = row_in(&window, similar_box, label);
-        assert_eq!((found.kind, found.minimum, found.maximum), (2, 0, 100_000));
-        window.invoke_number_edited(i, n);
-    }
-    // duplicates auto-resolution
-    packet(&window, auto_box, idle, 3, 250);
-    packet(&window, auto_box, normal, 0, 800);
-    for (label, n) in [(rest_idle, 77), (rest_normal, 88)] {
-        let (i, found) = row_in(&window, auto_box, label);
-        assert_eq!((found.kind, found.minimum, found.maximum), (2, 0, 100_000));
-        window.invoke_number_edited(i, n);
-    }
-    // file maintenance: five jobs every two and a half minutes when idle,
-    // nine every forty-five seconds otherwise
-    for (label, jobs, minutes, seconds) in [
-        ("Idle throttle: ", 5, 2, 30),
-        ("Normal throttle: ", 9, 0, 45),
-    ] {
-        let (i, found) = row_in(&window, files_box, label);
-        assert_eq!(
-            (found.kind, found.minimum, found.maximum, found.per.as_str()),
-            (9, 1, 1000, "heavy work units every"),
-            "{label:?}"
+    let t0_ms = recording["t0"].as_i64().unwrap() * 1000;
+    for case in recording["cases"].as_array().unwrap() {
+        let saved = &case["saved"];
+        // typed into the page, as the reference's were, and applied
+        let window = client.options(page);
+        for (in_box, prefix) in [
+            (similar_box, "potential_duplicates_search"),
+            (auto_box, "duplicates_auto_resolution"),
+        ] {
+            for (label, rest_label, time) in
+                [(idle, rest_idle, "idle"), (normal, rest_normal, "active")]
+            {
+                let ms = int(saved, &format!("{prefix}_work_time_ms_{time}"));
+                packet(&window, in_box, label, ms / 1000, ms % 1000);
+                let (i, found) = row_in(&window, in_box, rest_label);
+                assert_eq!((found.kind, found.minimum, found.maximum), (2, 0, 100_000));
+                window.invoke_number_edited(
+                    i,
+                    int(saved, &format!("{prefix}_rest_percentage_{time}")),
+                );
+            }
+        }
+        for (label, time) in [("Idle throttle: ", "idle"), ("Normal throttle: ", "active")] {
+            let (i, found) = row_in(&window, files_box, label);
+            assert_eq!(
+                (found.kind, found.minimum, found.maximum, found.per.as_str()),
+                (9, 1, 1000, "heavy work units every"),
+                "{label:?}"
+            );
+            let seconds = int(
+                saved,
+                &format!("file_maintenance_{time}_throttle_time_delta"),
+            );
+            window.invoke_number_edited(
+                i,
+                int(saved, &format!("file_maintenance_{time}_throttle_files")),
+            );
+            window.invoke_field_edited(i, 0, seconds / 60);
+            window.invoke_field_edited(i, 1, seconds % 60);
+        }
+        for (in_box, label, key) in [
+            (
+                files_box,
+                "Run file maintenance during idle time: ",
+                "file_maintenance_during_idle",
+            ),
+            (
+                files_box,
+                "Run file maintenance during normal time: ",
+                "file_maintenance_during_active",
+            ),
+            (
+                similar_box,
+                "Search for potential duplicates in \"idle\" time: ",
+                "maintain_similar_files_duplicate_pairs_during_idle",
+            ),
+            (
+                similar_box,
+                "Search for potential duplicates in \"normal\" time: ",
+                "maintain_similar_files_duplicate_pairs_during_active",
+            ),
+            (
+                auto_box,
+                "Work duplicates auto-resolution in \"idle\" time: ",
+                "duplicates_auto_resolution_during_idle",
+            ),
+            (
+                auto_box,
+                "Work duplicates auto-resolution in \"normal\" time: ",
+                "duplicates_auto_resolution_during_active",
+            ),
+        ] {
+            let (i, found) = row_in(&window, in_box, label);
+            assert_eq!(found.kind, 1, "{label:?}");
+            window.invoke_check_toggled(i, flag(saved, key));
+        }
+        window.invoke_apply();
+        pace::assert_saved(&client.store, saved);
+        // reopened, the page shows what was saved
+        let window = client.options(page);
+        let (_, found) = row_in(
+            &window,
+            files_box,
+            "Run file maintenance during idle time: ",
         );
-        window.invoke_number_edited(i, jobs);
-        window.invoke_field_edited(i, 0, minutes);
-        window.invoke_field_edited(i, 1, seconds);
-    }
-    window.invoke_apply();
+        assert_eq!(found.checked, flag(saved, "file_maintenance_during_idle"));
 
-    let similar: SimilarFilesSettings = client.get();
-    assert_eq!(similar.pace(true), pace(true, ms(7500), 123));
-    assert_eq!(similar.pace(false), pace(true, ms(2040), 456));
-    let auto: AutoResolutionSettings = client.get();
-    assert_eq!(auto.pace(true), pace(true, ms(3250), 77));
-    assert_eq!(auto.pace(false), pace(true, ms(800), 88));
-    let files: FileMaintenanceSettings = client.get();
-    assert_eq!(files.allowance(true), (true, 5, 150));
-    assert_eq!(files.allowance(false), (true, 9, 45));
-
-    // each time of day has its own switch, in each worker
-    let window = client.options(page);
-    let switches = [
-        (files_box, "Run file maintenance during idle time: "),
-        (files_box, "Run file maintenance during normal time: "),
-        (
-            similar_box,
-            "Search for potential duplicates in \"idle\" time: ",
-        ),
-        (
-            similar_box,
-            "Search for potential duplicates in \"normal\" time: ",
-        ),
-        (
-            auto_box,
-            "Work duplicates auto-resolution in \"idle\" time: ",
-        ),
-        (
-            auto_box,
-            "Work duplicates auto-resolution in \"normal\" time: ",
-        ),
-    ];
-    for (in_box, label) in switches {
-        let (_, found) = row_in(&window, in_box, label);
-        assert_eq!((found.kind, found.checked), (1, true), "{label:?}");
+        // and the workers take that pace, in idle and normal time
+        for pass in case["passes"].as_array().unwrap() {
+            if pass["worker"] == "files" {
+                pace::replay_files(&client.store, &recording, pass);
+            } else {
+                pace::replay_packet(&client.store, t0_ms, pass);
+            }
+        }
     }
-    for (in_box, label) in [switches[0], switches[2], switches[4]] {
-        let (i, _) = row_in(&window, in_box, label);
-        window.invoke_check_toggled(i, false);
-    }
-    window.invoke_apply();
-    assert!(!client.get::<FileMaintenanceSettings>().allowance(true).0);
-    assert!(client.get::<FileMaintenanceSettings>().allowance(false).0);
-    let similar: SimilarFilesSettings = client.get();
-    assert!(!similar.pace(true).allowed && similar.pace(false).allowed);
-    let auto: AutoResolutionSettings = client.get();
-    assert!(!auto.pace(true).allowed && auto.pace(false).allowed);
-
-    let window = client.options(page);
-    for (in_box, label) in [switches[0], switches[2], switches[4]] {
-        let (i, found) = row_in(&window, in_box, label);
-        assert!(!found.checked, "shown again as saved: {label:?}");
-        window.invoke_check_toggled(i, true);
-    }
-    for (in_box, label) in [switches[1], switches[3], switches[5]] {
-        let (i, _) = row_in(&window, in_box, label);
-        window.invoke_check_toggled(i, false);
-    }
-    window.invoke_apply();
-    assert!(client.get::<FileMaintenanceSettings>().allowance(true).0);
-    assert!(!client.get::<FileMaintenanceSettings>().allowance(false).0);
-    let similar: SimilarFilesSettings = client.get();
-    assert!(similar.pace(true).allowed && !similar.pace(false).allowed);
-    let auto: AutoResolutionSettings = client.get();
-    assert!(auto.pace(true).allowed && !auto.pace(false).allowed);
-    // (the numbers are kept)
-    assert_eq!(auto.pace(true), pace(true, ms(3250), 77));
 }
 
 // leaf: audit-options-importing-filetypes-inspect-for-cbz-properties-when-importing-rescanning-zip-files
@@ -2673,5 +2995,428 @@ mod network_consumers {
         let fetched = fetch(&engine, "https://booru.invalid/x").await;
         assert!(fetched.result.is_err());
         assert!(asked.try_recv().is_err(), "no proxy, no ask");
+    }
+}
+
+/// The downloading page's error delays, each changed in the real options
+/// window and then waited out by the real downloader that makes it: a URL
+/// queue's runner for gallery and watcher network errors, the subscription
+/// runner for a subscription's network and other errors.
+mod error_delays {
+    use std::sync::Arc;
+    use std::time::Duration;
+
+    use hydrus_download::{Downloader, QueueRunner};
+    use hydrus_import::FileImporter;
+    use hydrus_media::MediaTools;
+    use hydrus_net::{Job, NetEngine, NetOptions};
+    use hydrus_store::network::NetworkSettings;
+    use hydrus_store::queues::{self, FileSeedMeta, NewFileSeed, SeedType};
+
+    use super::{Client, client, row};
+
+    const NETWORK_ROW: &str = "Delay time on a gallery/watcher network error:";
+    const SUBSCRIPTION_NETWORK_ROW: &str = "Delay time on a subscription network error:";
+    const SUBSCRIPTION_OTHER_ROW: &str = "Delay time on a subscription other error:";
+
+    /// Seconds from the epoch.
+    fn now() -> i64 {
+        i64::try_from(
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_secs(),
+        )
+        .unwrap()
+    }
+
+    /// A client, its downloader (no retries, no halting, no pauses) and a
+    /// port nothing listens on.
+    fn with_downloader() -> (Client, Arc<Downloader>, tokio::net::TcpSocket, String) {
+        let client = client();
+        client
+            .store
+            .write(|ctx| {
+                let mut pauses: hydrus_store::settings::Pauses =
+                    hydrus_store::settings::get(ctx.conn())?;
+                pauses.network_traffic = false;
+                pauses.subscriptions = false;
+                pauses.paged_importers = false;
+                pauses.file_queues = false;
+                pauses.gallery_searches = false;
+                hydrus_store::settings::set(ctx.conn(), &pauses)?;
+                let mut network: NetworkSettings = hydrus_store::settings::get(ctx.conn())?;
+                network.max_connection_attempts = 1;
+                network.domain_error_number = 0;
+                hydrus_store::settings::set(ctx.conn(), &network)?;
+                hydrus_store::settings::set(ctx.conn(), &hydrus_store::settings::AdvancedMode(true))
+            })
+            .unwrap();
+        let settings: NetworkSettings = client.get();
+        let net = Arc::new(
+            NetEngine::new(
+                client.store.clone(),
+                NetOptions {
+                    obey_bandwidth: false,
+                    ..NetOptions::from_settings(&settings)
+                },
+            )
+            .unwrap(),
+        );
+        let importer = FileImporter::new(client.store.clone(), MediaTools::new());
+        let downloader = Arc::new(Downloader::new(client.store.clone(), net, importer).unwrap());
+        // (a socket bound and never listened on refuses connections)
+        let socket = tokio::net::TcpSocket::new_v4().unwrap();
+        socket.bind("127.0.0.1:0".parse().unwrap()).unwrap();
+        let address = socket.local_addr().unwrap().to_string();
+        (client, downloader, socket, address)
+    }
+
+    /// The example downloader (key "aa") searching `address`, with a URL
+    /// class and a parser for its pages so that it counts as functional.
+    fn functional_downloader(client: &Client, address: &str) {
+        use hydrus_core::url::strings::StringMatch;
+        use hydrus_core::url::{
+            AnyGug, DomainMask, Gug, Gugs, UrlClass, UrlClassSettings, UrlType,
+        };
+        use hydrus_parse::content::{ContentKind, ContentParser, PageParser};
+        use hydrus_parse::formula::{
+            Formula, FormulaKind, HtmlContent, HtmlRule, HtmlWalk, TagSearch,
+        };
+        let search = UrlClass {
+            name: "search".into(),
+            key: vec![0xce],
+            url_type: UrlType::Gallery,
+            preferred_scheme: "http".into(),
+            domain_mask: DomainMask::new(vec![address.to_owned()], vec![], false, false),
+            path_components: [
+                StringMatch::fixed("search"),
+                StringMatch::any(),
+                StringMatch::any(),
+            ]
+            .into_iter()
+            .map(|m| (m, None))
+            .collect(),
+            ..UrlClass::default()
+        };
+        let thread = UrlClass {
+            name: "thread".into(),
+            key: vec![0xcf],
+            url_type: UrlType::Watchable,
+            preferred_scheme: "http".into(),
+            domain_mask: DomainMask::new(vec![address.to_owned()], vec![], false, false),
+            path_components: [StringMatch::fixed("thread"), StringMatch::any()]
+                .into_iter()
+                .map(|m| (m, None))
+                .collect(),
+            ..UrlClass::default()
+        };
+        let classes = UrlClassSettings {
+            parser_links: vec![
+                (hex::encode(&search.key), Some("ac".into())),
+                (hex::encode(&thread.key), Some("ac".into())),
+            ],
+            parser_keys: vec!["ac".into()],
+            url_classes: vec![search, thread],
+            collapse_leading_slashes: false,
+        };
+        let downloaders = hydrus_parse::Downloaders {
+            parsers: vec![PageParser {
+                reference_auxiliary: None,
+                name: "search".into(),
+                key: "ac".into(),
+                converter: hydrus_core::url::StringConverter::default(),
+                subsidiary: Vec::new(),
+                content_parsers: vec![ContentParser {
+                    name: "posts".into(),
+                    kind: ContentKind::Url {
+                        url_type: 7,
+                        priority: 50,
+                    },
+                    formula: Formula {
+                        reference_auxiliary: None,
+                        name: String::new(),
+                        kind: FormulaKind::Html {
+                            rules: vec![HtmlRule {
+                                walk: HtmlWalk::Descendants(TagSearch {
+                                    attrs: [("class".to_owned(), "thumb".to_owned())]
+                                        .into_iter()
+                                        .collect(),
+                                    index: None,
+                                }),
+                                tag_name: Some("a".into()),
+                                text_match: None,
+                            }],
+                            content: HtmlContent::Attribute("href".into()),
+                        },
+                        processor: hydrus_core::url::StringProcessor::default(),
+                    },
+                }],
+                example_urls: Vec::new(),
+            }],
+            gugs: Gugs {
+                gugs: vec![AnyGug::Single(Gug {
+                    name: "example tag search".into(),
+                    key: "aa".into(),
+                    url_template: format!("http://{address}/search/%tags%/1"),
+                    replacement_phrase: "%tags%".into(),
+                    separator: "+".into(),
+                    initial_search_text: "tag".into(),
+                    example_search_text: "blue_eyes".into(),
+                })],
+                keys_to_display: vec!["aa".into()],
+            },
+            ..hydrus_parse::Downloaders::default()
+        };
+        client
+            .store
+            .write_and_refresh(move |ctx| {
+                hydrus_store::settings::set(ctx.conn(), &classes)?;
+                hydrus_store::settings::set(ctx.conn(), &downloaders)?;
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &hydrus_core::subscriptions::GalleryDefaults {
+                        file_limit: Some(2000),
+                        gug: Some(("aa".into(), "example tag search".into())),
+                    },
+                )
+            })
+            .unwrap();
+    }
+
+    /// Set the duration row to `days` days, `hours` hours, `minutes` minutes
+    /// and `seconds` seconds, apply, and return the seconds that make.
+    fn set_delay(
+        client: &Client,
+        row_label: &str,
+        (days, hours, minutes, seconds): (i32, i32, i32, i32),
+    ) -> i64 {
+        let window = client.options("downloading");
+        let (i, found) = row(&window, row_label);
+        assert_eq!(found.kind, 8, "{row_label}");
+        for (field, value) in [days, hours, minutes, seconds].into_iter().enumerate() {
+            window.invoke_field_edited(i, i32::try_from(field).unwrap(), value);
+        }
+        window.invoke_apply();
+        i64::from(days) * 86_400
+            + i64::from(hours) * 3_600
+            + i64::from(minutes) * 60
+            + i64::from(seconds)
+    }
+
+    // leaf: audit-options-downloading-misc-delay-time-on-a-gallery-watcher-network-error
+    #[tokio::test(flavor = "multi_thread")]
+    async fn a_search_or_a_watcher_that_meets_a_network_error_waits_as_long_as_the_option_says() {
+        use super::new_page;
+        let (client, downloader, _held, address) = with_downloader();
+        functional_downloader(&client, &address);
+        downloader.reload_settings().unwrap();
+        let runner = QueueRunner::new(
+            Arc::clone(&downloader),
+            client
+                .get::<NetworkSettings>()
+                .downloader_network_error_delay,
+        );
+        // a gallery page with a search, set going
+        let search = |query: &str| {
+            new_page(&client.ui, true);
+            client.ui.invoke_gallery_queries(query.into());
+            client.bound.downloader_updates.force();
+            (client.bound.sync)();
+            let queue = client
+                .bound
+                .current
+                .borrow()
+                .borrow()
+                .gallery()
+                .unwrap()
+                .queries[0]
+                .queue;
+            client
+                .store
+                .write(move |ctx| queues::set_paused(ctx.conn(), queue, Some(false), Some(false)))
+                .unwrap();
+            runner.start_all().unwrap();
+            queue
+        };
+        let waiting = |queue: i64| {
+            let runner = Arc::clone(&runner);
+            async move {
+                for _ in 0..600 {
+                    if let Some(until) = runner.status(queue).delayed_until {
+                        return until;
+                    }
+                    tokio::time::sleep(Duration::from_millis(50)).await;
+                }
+                panic!("the search never waited: {:?}", runner.status(queue));
+            }
+        };
+        // a watcher page with a thread, set going
+        let watch = |thread: u32| {
+            new_page(&client.ui, false);
+            client
+                .ui
+                .invoke_watcher_urls(format!("http://{address}/thread/{thread}").into());
+            client.bound.downloader_updates.force();
+            (client.bound.sync)();
+            let queue = client
+                .bound
+                .current
+                .borrow()
+                .borrow()
+                .watchers()
+                .unwrap()
+                .watchers[0]
+                .queue;
+            runner.start_all().unwrap();
+            queue
+        };
+        // seconds from now it is told to wait, when it is told
+        let watcher_waits = |queue: i64| {
+            let store = client.store.clone();
+            async move {
+                for _ in 0..600 {
+                    let state = store
+                        .read(move |c| {
+                            Ok(hydrus_store::watchers::watcher_state(
+                                &queues::queue(c, queue)?.unwrap(),
+                            ))
+                        })
+                        .unwrap()
+                        .unwrap();
+                    if state.no_work_until > 0 {
+                        return state.no_work_until - now();
+                    }
+                    tokio::time::sleep(Duration::from_millis(50)).await;
+                }
+                panic!("the watcher never waited");
+            }
+        };
+        // the default: ninety minutes, for a search and for a watcher
+        let first = search("first");
+        let wait = waiting(first).await - now();
+        assert!((5_390..=5_400).contains(&wait), "{wait}");
+        let wait = watcher_waits(watch(1)).await;
+        assert!((5_390..=5_400).contains(&wait), "{wait}");
+        // three hours, twenty minutes and five seconds, once the runner has
+        // reloaded the options as the app's poll does
+        let set = set_delay(&client, NETWORK_ROW, (0, 3, 20, 5));
+        runner.reload_settings().unwrap();
+        let second = search("second");
+        let wait = waiting(second).await - now();
+        assert!((set - 10..=set).contains(&wait), "{wait} against {set}");
+        let wait = watcher_waits(watch(2)).await;
+        assert!((set - 10..=set).contains(&wait), "{wait} against {set}");
+    }
+
+    /// A subscription holding one query: due for a search of the example
+    /// downloader (at `address`) if `searching`, otherwise already synced and
+    /// holding a file to fetch, with no place to import it.
+    fn subscription(client: &Client, name: &str, searching: bool) -> i64 {
+        use hydrus_core::import_options::{ImportOptionsSlice, LocationOptions};
+        use hydrus_core::subscriptions::{QueryState, SubscriptionSettings};
+        let settings = SubscriptionSettings {
+            gug_key: "aa".into(),
+            gug_name: "example tag search".into(),
+            import_options: ImportOptionsSlice {
+                locations: (!searching).then(|| LocationOptions {
+                    destinations: Vec::new(),
+                    ..LocationOptions::default()
+                }),
+                ..ImportOptionsSlice::default()
+            },
+            ..SubscriptionSettings::default()
+        };
+        let name = name.to_owned();
+        client
+            .store
+            .write(move |ctx| {
+                let id =
+                    hydrus_store::subscriptions::create_subscription(ctx.conn(), &name, &settings)?
+                        .unwrap();
+                let at = now();
+                let state = if searching {
+                    QueryState::new("blue_eyes")
+                } else {
+                    QueryState {
+                        last_check_time: at,
+                        next_check_time: at + 86_400,
+                        ..QueryState::new("synced")
+                    }
+                };
+                let queue = hydrus_store::subscriptions::add_query(ctx.conn(), id, &state, 0)?;
+                if !searching {
+                    let url = "http://127.0.0.1:1/file".to_owned();
+                    queues::add_file_seeds(
+                        ctx.conn(),
+                        queue,
+                        &[NewFileSeed {
+                            seed_type: SeedType::Url,
+                            data: url.clone(),
+                            data_for_comparison: url,
+                            source_time: None,
+                            referral_url: None,
+                            meta: FileSeedMeta::default(),
+                        }],
+                        false,
+                        0,
+                    )?;
+                }
+                Ok(id)
+            })
+            .unwrap()
+    }
+
+    /// Run a subscription and how long, from now, it was told to wait, and why.
+    async fn waits(client: &Client, downloader: &Downloader, id: i64) -> (i64, String) {
+        downloader.run_subscription(id, &Job::new()).await.unwrap();
+        let sub = client
+            .store
+            .read(move |c| hydrus_store::subscriptions::subscription(c, id))
+            .unwrap()
+            .unwrap();
+        (
+            sub.settings.no_work_until - now(),
+            sub.settings.no_work_until_reason,
+        )
+    }
+
+    // leaf: audit-options-downloading-misc-delay-time-on-a-subscription-network-error
+    #[tokio::test(flavor = "multi_thread")]
+    async fn a_subscription_that_meets_a_network_error_waits_as_long_as_the_option_says() {
+        let (client, downloader, _held, address) = with_downloader();
+        functional_downloader(&client, &address);
+        downloader.reload_settings().unwrap();
+        let first = subscription(&client, "first", true);
+        // the default: twelve hours
+        let (wait, reason) = waits(&client, &downloader, first).await;
+        assert!((43_190..=43_200).contains(&wait), "{wait}");
+        assert!(reason.starts_with("network error: "), "{reason}");
+        // a day, two hours and a minute, once the downloader has reloaded the
+        // options as the app's poll does
+        let set = set_delay(&client, SUBSCRIPTION_NETWORK_ROW, (1, 2, 1, 0));
+        downloader.reload_settings().unwrap();
+        let second = subscription(&client, "second", true);
+        let (wait, reason) = waits(&client, &downloader, second).await;
+        assert!((set - 10..=set).contains(&wait), "{wait} against {set}");
+        assert!(reason.starts_with("network error: "), "{reason}");
+    }
+
+    // leaf: audit-options-downloading-misc-delay-time-on-a-subscription-other-error
+    #[tokio::test(flavor = "multi_thread")]
+    async fn a_subscription_that_meets_another_error_waits_as_long_as_the_option_says() {
+        let (client, downloader, _held, _address) = with_downloader();
+        let first = subscription(&client, "first", false);
+        // the default: thirty-six hours
+        let (wait, reason) = waits(&client, &downloader, first).await;
+        assert!((129_590..=129_600).contains(&wait), "{wait}");
+        assert!(reason.starts_with("error: "), "{reason}");
+        // two days and an hour
+        let set = set_delay(&client, SUBSCRIPTION_OTHER_ROW, (2, 1, 0, 0));
+        downloader.reload_settings().unwrap();
+        let second = subscription(&client, "second", false);
+        let (wait, reason) = waits(&client, &downloader, second).await;
+        assert!((set - 10..=set).contains(&wait), "{wait} against {set}");
+        assert!(reason.starts_with("error: "), "{reason}");
     }
 }

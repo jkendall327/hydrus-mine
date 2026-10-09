@@ -107,6 +107,9 @@ pub(crate) fn open(
             w.set_any_namespace(s.rules.unnamespaced_search_gives_any_namespace_wildcards);
             w.set_bare_fetch(s.rules.namespace_bare_fetch_all_allowed);
             w.set_namespace_fetch(s.rules.namespace_fetch_all_allowed);
+            let (bare_enabled, star_enabled) = m.namespace_enabled();
+            w.set_bare_fetch_enabled(bare_enabled);
+            w.set_namespace_fetch_enabled(star_enabled);
             w.set_fetch_all(s.rules.fetch_all_allowed);
             w.set_source_services(ModelRc::new(VecModel::from(
                 m.services()

@@ -11,7 +11,7 @@ use hydrus_gui::{MainWindow, OptionsWindow, Pages, bind, headless};
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
 
-fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
+pub(crate) fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();
     import_legacy(
@@ -24,7 +24,7 @@ fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
 }
 
 /// file > options…
-fn open(ui: &MainWindow) {
+pub(crate) fn open(ui: &MainWindow) {
     ui.invoke_menu_title_pressed(0, 20.0, 22.0);
     let lines = ui.get_menu_panes().row_data(0).unwrap().lines;
     let at = (0..lines.row_count())
@@ -40,13 +40,13 @@ fn page_names(options: &OptionsWindow) -> Vec<String> {
         .collect()
 }
 
-fn show_page(options: &OptionsWindow, name: &str) {
+pub(crate) fn show_page(options: &OptionsWindow, name: &str) {
     let i = page_names(options).iter().position(|n| n == name).unwrap() as i32;
     options.set_page(i);
     options.invoke_page_chosen(i);
 }
 
-fn row(options: &OptionsWindow, label: &str) -> (i32, hydrus_gui::OptionRow) {
+pub(crate) fn row(options: &OptionsWindow, label: &str) -> (i32, hydrus_gui::OptionRow) {
     let rows = options.get_rows();
     (0..rows.row_count())
         .map(|i| (i as i32, rows.row_data(i).unwrap()))
