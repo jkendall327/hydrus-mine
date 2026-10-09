@@ -1235,6 +1235,67 @@ fn options_remember_navigation_and_apply_search_placement() {
     assert_eq!(preferences.last_panel, "audio");
 }
 
+// The options window's opening page and search-bar placement, put through the
+// reference's three recorded cases (options_preferences.json `cases`): the
+// saved choices seeded, the window opened, a page visited, the window closed
+// and opened again; the placement drop-down shows the recorded index and the
+// window the recorded side.
+#[test]
+fn options_open_and_place_the_search_bar_as_the_reference_did() {
+    use hydrus_store::settings::OptionsPreferences;
+    let recorded = hydrus_testkit::fixture_json("options_preferences.json");
+    let _windows = headless::init();
+    for (n, case) in recorded["cases"].as_array().unwrap().iter().enumerate() {
+        let (_dirs, store) = store();
+        let top = case["top"].as_bool().unwrap();
+        let seeded = OptionsPreferences {
+            remember_panel: case["remember"].as_bool().unwrap(),
+            last_panel: case["last"].as_str().unwrap().to_owned(),
+            search_at_top: top,
+        };
+        store
+            .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &seeded))
+            .unwrap();
+        let ui = MainWindow::new().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        let context = format!("case {n}: {case}");
+        assert_eq!(
+            page_names(&window)[window.get_page() as usize],
+            case["opened"].as_str().unwrap(),
+            "{context}"
+        );
+        assert_eq!(window.get_search_at_top(), top, "{context}");
+        // (the placement drop-down, on the gui page, shows the recorded index)
+        show_page(&window, "gui");
+        let (_, placement) = row(&window, "Put the options search bar at the: ");
+        assert_eq!(
+            i64::from(placement.index),
+            case["search_index"].as_i64().unwrap(),
+            "{context}"
+        );
+        show_page(&window, "audio");
+        window.invoke_cancel();
+        let kept = store
+            .read(hydrus_store::settings::get::<OptionsPreferences>)
+            .unwrap();
+        assert_eq!(
+            kept.last_panel,
+            case["remembered_after_page_change"].as_str().unwrap(),
+            "{context}"
+        );
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        assert_eq!(
+            page_names(&window)[window.get_page() as usize],
+            case["reopened"].as_str().unwrap(),
+            "{context}"
+        );
+        window.invoke_cancel();
+    }
+}
+
 // leaf: audit-options-gui-main-window-confirm-client-exit
 #[test]
 fn gui_identity_and_exit_confirmation_reach_the_main_window() {
@@ -6815,4 +6876,120 @@ fn file_options_is_where_the_reference_has_it_and_opens_its_options_window_once(
     assert!(bound.options.borrow().is_some());
     options.invoke_cancel();
     assert!(bound.options.borrow().is_none());
+}
+
+// leaf: audit-options-tag-suggestions-suggested-tags-column-layout
+// The suggested tags panels' layout and opening page, put through the
+// reference's eight recorded cases (tag_suggestions.json `cases`): the layout,
+// default page and width chosen in the real Options window and applied, manage
+// tags opened, and what it shows read back: columns or a notebook, its width,
+// which panels there are and, in a notebook, the page selected.
+#[test]
+fn the_suggested_tags_layout_chosen_in_options_reaches_manage_tags_as_the_reference_s_cases() {
+    let f = hydrus_testkit::fixture_json("tag_suggestions.json");
+    let _windows = headless::init();
+    for case in f["cases"].as_array().unwrap() {
+        let (_dirs, store) = store();
+        let key = store
+            .snapshot()
+            .services
+            .by_name("my tags")
+            .unwrap()
+            .key
+            .to_hex();
+        let service = store.snapshot().services.by_name("my tags").unwrap().id;
+        let labels: Vec<&str> = case["labels"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|l| l.as_str().unwrap())
+            .collect();
+        store
+            .write(move |ctx| {
+                let mut tabs: hydrus_store::settings::TagAutocompleteTabs =
+                    hydrus_store::settings::get(ctx.conn())?;
+                tabs.most_used.insert(key, vec!["parity:new2".to_owned()]);
+                hydrus_store::settings::set(ctx.conn(), &tabs)?;
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &hydrus_store::related_tags::Settings {
+                        enabled: false,
+                        ..hydrus_store::related_tags::Settings::default()
+                    },
+                )?;
+                let recent = hydrus_core::Tag::new("parity:recent").unwrap();
+                let tag = hydrus_store::master::intern_tag(ctx.conn(), &recent)?;
+                ctx.conn().execute(
+                    "INSERT INTO recent_tags(service_id,tag_id,used_ms) VALUES(?,?,?) ON CONFLICT(service_id,tag_id) DO UPDATE SET used_ms=excluded.used_ms",
+                    rusqlite::params![service, tag, hydrus_core::time::TimestampMs::now().0],
+                )?;
+                Ok(())
+            })
+            .unwrap();
+        let ui = MainWindow::new().unwrap();
+        ui.show().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        // chosen in the Options window, as a user would
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "tag suggestions");
+        let width = i32::try_from(case["minimum_width"].as_u64().unwrap()).unwrap();
+        options.invoke_number_edited(row(&options, "Width of suggested tags columns: ").0, width);
+        let columns = case["layout"] == "columns";
+        options.invoke_choice_chosen(row(&options, "Column layout: ").0, i32::from(columns));
+        let page = match case["default"].as_str().unwrap() {
+            "favourites" => "most used",
+            other => other,
+        };
+        let (at, default_row) = row(&options, "Default notebook page: ");
+        let page_at = default_row.items.iter().position(|i| i == page).unwrap();
+        options.invoke_choice_chosen(at, i32::try_from(page_at).unwrap());
+        options.invoke_apply();
+        ui.invoke_search_accepted();
+        ui.invoke_select_all();
+        ui.invoke_manage_tags_selected();
+        let manage = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+        let mine = manage
+            .get_service_names()
+            .iter()
+            .position(|s| s == "my tags")
+            .unwrap();
+        manage.invoke_service_chosen(i32::try_from(mine).unwrap());
+        let context = case.to_string();
+        assert_eq!(manage.get_suggested_columns(), columns, "{context}");
+        // the panels the recording had
+        assert_eq!(
+            manage.get_most_used_enabled(),
+            labels.contains(&"most used"),
+            "{context}"
+        );
+        assert_eq!(
+            manage.get_recent_tags_enabled(),
+            labels.contains(&"recent"),
+            "{context}"
+        );
+        assert_eq!(
+            manage.get_related_tags_enabled(),
+            labels.contains(&"related"),
+            "{context}"
+        );
+        #[allow(clippy::float_cmp)] // (whole-pixel authored width)
+        {
+            assert_eq!(manage.get_suggested_width(), width as f32, "{context}");
+        }
+        match case["selected"].as_str() {
+            // in a notebook, the page the default page opens on
+            Some(selected) => {
+                assert!(!columns, "{context}");
+                assert_eq!(
+                    labels[usize::try_from(manage.get_suggested_page()).unwrap()],
+                    selected,
+                    "{context}"
+                );
+            }
+            // side by side, every panel is shown and none is selected
+            None => assert!(columns, "{context}"),
+        }
+        manage.invoke_cancel();
+    }
 }

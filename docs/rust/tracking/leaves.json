@@ -2007,9 +2007,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recording-based model tests run the real store migration for parent pairs with filters and compare destination pairs, plus confirmation text; no GUI test drives the window with parents/siblings content between services, so only model plus worker are covered. Pair mapping-count gates absent as noted. Tests: crates/hydrus-gui-model/tests/model/tag_migration.rs:153 reference_database_pair_filters_and_destinations, :417"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/tag_migration.rs the_window_migrates_pairs_between_services_as_the_reference_did opens the real migration window on the recorded source, chooses the destination and content, blacklists 'excluded:' in the left filter through the real filter window, confirms, waits for the real worker, and compares all four recorded destination statuses (current, and the empty rest) of tag_migration.json `pairs` for tag siblings and tag parents, and that every row the reference's filtered source offered arrived. The recorded pairs do not exercise the min/max pair-count gates."
    }
   },
   {
@@ -2047,9 +2047,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Same as parents: recording replay of the store worker and confirmation summary for sibling pairs, but no GUI test drives the migration window for sibling content. Pair mapping-count gates absent. Tests: crates/hydrus-gui-model/tests/model/tag_migration.rs:153, :417"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/tag_migration.rs the_window_migrates_pairs_between_services_as_the_reference_did opens the real migration window on the recorded source, chooses the destination and content, blacklists 'excluded:' in the left filter through the real filter window, confirms, waits for the real worker, and compares all four recorded destination statuses (current, and the empty rest) of tag_migration.json `pairs` for tag siblings and tag parents, and that every row the reference's filtered source offered arrived. The recorded pairs do not exercise the min/max pair-count gates."
    }
   },
   {
@@ -9763,8 +9763,8 @@
    "recheck": {
     "date": "2026-10-08",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The row and Apply drive only the search-at-top property (true by recording for case 0, false typed after Apply). Recorded search_index per case is never compared, and the actual top/bottom placement of the field and suggestions is not asserted; the model test only searches suggestions. Tests: crates/hydrus-gui/tests/gui/options_window.rs:1194 options_remember_navigation_and_apply_search_placement; crates/hydrus-gui-model/tests/model/options_dialog.rs:724"
+    "by": "phase 2 session",
+    "note": "gui/options_window.rs options_open_and_place_the_search_bar_as_the_reference_did replays the three cases of options_preferences.json (saved remember/last page/side seeded, opened page, placement drop-down index, last panel kept, reopened page) through the real options window. Still weak: the actual top/bottom position of the search field and its suggestions is a Slint layout and is not read back."
    }
   },
   {
@@ -22385,9 +22385,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Options choice is driven/persisted (items 'notebook'/'side-by-side' vs recording) and ManageTags sets the suggested-columns property, but nothing checks the actual notebook-vs-columns arrangement: tests assert the Slint property and save a PNG that is not compared. tag_suggestions.json 'labels'/'selected' per layout are never replayed (model test only round-trips layout/default). Tests: crates/hydrus-gui/tests/gui/manage_tags.rs:34 most_used_panels_filter_only_add_broadcast_and_retire_closed_consumers; crates/hydrus-gui/tests/gui/options_window.rs:63 most_used_child_stages_each_service_cancels_descendants_and_persists_options; crates/hydrus-gui-model/tests/model/tag_suggestions.rs:23"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/options_window.rs the_suggested_tags_layout_chosen_in_options_reaches_manage_tags_as_the_reference_s_cases chooses the width, 'Column layout:' and 'Default notebook page:' in the real Options window for each of the eight cases of tag_suggestions.json, applies, opens the real manage-tags window and compares the layout flag its panels are drawn from, the width, which panels exist (from the recorded labels) and, for notebooks, the selected page; side-by-side cases have none selected. The Slint arrangement itself is read through the flag, not by pixels."
    }
   },
   {
@@ -24269,9 +24269,9 @@
    ],
    "recheck": {
     "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model-only replay of the recorded choice matrix and pending outcomes; the GUI tests never change source/destination/status/content selectors (only checks the first action is 'delete' and the confirmation texts), so the window's normalization is untested. Tests: crates/hydrus-gui-model/tests/model/tag_migration.rs:8 reference_choices_and_second_confirmation; :73 reference_database_pending_outcomes"
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/tag_migration.rs the_windows_selectors_offer_the_reference_s_actions_for_each_choice drives the real migration window's content, source, status and destination selectors in the recorder's order for all 36 cases of tag_migration.json `matrix` and compares the offered actions (changing the content first, which resets the services as the reference does). The window test proves only the offered actions: the recorded pending outcomes are replayed at model level by reference_database_pending_outcomes through tag_migration::run, the same function the window's Go path calls."
    }
   },
   {
