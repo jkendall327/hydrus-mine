@@ -20500,7 +20500,13 @@
     "Truth pass (2026-10-08): partial, small. The native animation player has a hard-coded lookahead where the reference sizes it from this option. Missing: Size the native animation player's lookahead from the option with the reference's formula; model test. Evidence: options.rs:4382-4385 row, unread; animation.rs const AHEAD: usize = 3; reference ClientRendering.py:604-650",
     "Reference editor/control 'Memory for video buffer:' is recorded on 'speed and memory' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Memory for video buffer:' control in this page/box path."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "claude (issue #121)",
+    "note": "The Options row is driven through the window (default 96MB shown as 96 MB with '(about 36 frames of 720p video)', typed amount/unit estimates, cancel, apply, reopen) against oracle/record_video_buffer.py's fixture; the saved size reaches the viewer's real animation player, which keeps frames by the ported RasterContainerVideo formula and buffer logic (model test replays the recorded sizes and each recorded decode step), and a nine-frame loop that fits is decoded once over two loops while a six-frame buffer decodes again. Tests: crates/hydrus-gui/tests/gui/video_buffer.rs; crates/hydrus-gui-model/tests/model/video_buffer.rs. Not covered: the zoomed-size resolution the reference sizes by (see DIFFERENCES.md)."
+   }
   },
   {
    "id": "audit-options-status-activity",

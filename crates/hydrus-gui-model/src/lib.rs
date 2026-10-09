@@ -126,6 +126,7 @@ pub mod thumbnail_ratings;
 pub mod times_editor;
 pub mod urls_editor;
 pub mod vacuum_review;
+pub mod video_buffer;
 pub mod viewer_prefetch;
 pub mod viewer_shortcut_menu;
 

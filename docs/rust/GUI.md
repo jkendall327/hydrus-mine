@@ -1510,7 +1510,11 @@ pending ones marked `(+)` (it doesn't scroll yet); near its top, the
 file's info line, as in the media viewer. Images are shown
 whole. Ugoiras and animated WebP play with the client's own player, as
 the reference's defaults have it: frames are decoded on a thread of their
-own a few ahead of the one shown, each shown for its duration (a ugoira's
+own into a buffer sized from speed and memory's "Memory for video buffer"
+(96MB by default), two thirds of it behind the frame shown and a third
+ahead, so a short loop is decoded once and plays round again without being
+decoded (a changed size applies to the next file opened); each frame is
+shown for its duration (a ugoira's
 from its animation.json, else its timing notes), looping, and space
 pauses them (`src/animation.rs`; animated JPEG XL shows its first frame).
 Video, audio and other animations play in mpv: libmpv is loaded when first
@@ -3891,7 +3895,7 @@ viewer padding; gui pages' forced hide-page signal; importing's "drag and drop"
 page switch; media playback's mpv and QtMediaPlayer boxes and system's system
 FFMPEG, truncated images and PIL switches; hovers' pinned duplicates hover and
 the "preview window hovers" box; popups' other-display freeze; speed and
-memory's "image tile cache" and "video buffer" boxes; system sleep's file system
+memory's "image tile cache" box; system sleep's file system
 wait; and tag editing's petition reason count. An
 imported client brings its values. mpv plays through the preferred audio
 device, and loops the playlist rather than the file when asked.

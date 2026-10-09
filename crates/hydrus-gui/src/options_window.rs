@@ -199,8 +199,12 @@ fn option_row(row: &Row<'_>, store: &Store, sessions: &[(Option<String>, String)
                     if option.label == "Memory reserved for image cache:" {
                         return out;
                     }
-                    let bounds = store.snapshot().thumbnails;
                     let bytes = hydrus_gui_model::thumbnail_cache::combined(*amount, *unit);
+                    if option.label == "Memory for video buffer: " {
+                        out.text = hydrus_gui_model::video_buffer::estimate(bytes).into();
+                        return out;
+                    }
+                    let bounds = store.snapshot().thumbnails;
                     let per =
                         3 * u64::from(bounds.bounding_width) * u64::from(bounds.bounding_height);
                     out.text = format!(

@@ -525,6 +525,25 @@ separator.
   the open menus offer "in file browser" whether or not hydrus's advanced
   mode is on (the reference offers it only in advanced mode). Dragging
   out for real is jkendall327/hydrus-mine#26.
+- **The animation buffer is sized at the file's own resolution.** The
+  client's own player (ugoiras, animated WebP) keeps frames as the
+  reference's `RasterContainerVideo` does, sized from "Memory for video
+  buffer" with its formula (`oracle/record_video_buffer.py`), but it decodes
+  frames at the file's size, not the zoomed size the reference renders at,
+  so a file shown smaller than its size keeps fewer frames than the
+  reference would; its frames are RGBA where they have alpha, where the
+  formula counts three bytes a pixel, as the reference's does. The duration
+  and frame count it sizes by are the decoded frames', not the file's
+  metadata. Where the buffer holds a single frame, the reference's render
+  thread counts a frame behind its decoder and shows each frame's
+  neighbour; hydrus-rs decodes the same frames but keeps each as itself.
+- **Playback is not yet proven against the reference as a whole**
+  (`audit-media-viewer-playback`, untagged). The viewer's animation test
+  (`tests/gui/animation.rs`) plays, pauses and seeks ugoiras and animated
+  WebP with expected scanbar text worked out from the reference's
+  arithmetic rather than recorded from it; the mpv video tests skip where
+  libmpv isn't installed, which includes CI; and no test plays an audio
+  file in the viewer.
 
 ## The duplicate filter (`hydrus-gui`, `hydrus-duplicates::statements`)
 
@@ -3626,7 +3645,7 @@ The cache is owned by one main GUI binding, not a process-global controller; fil
 opened independently by auto-resolution own their own policy-bound cache. Existing
 duplicate pair prefetch warms this cache and retains no separate future raster
 store. The total prefetch percentage, controller-wide sharing, image tiles,
-video buffers and complete Qt scheduling/rendering families remain Partial and
+and complete Qt scheduling/rendering families remain Partial and
 receive no additional credit. Native failed full decodes use an uncached poster
 fallback instead of retaining Qt's synthetic error renderer. Injected public
 preview decoders keep their existing owned test/backend contract independently
@@ -3908,8 +3927,8 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   own way), the other-display popup freeze (hydrus-rs's popups sit inside the
   main window, not in a toaster window of their own that could be frozen from
   another display), the self-sizing media viewer rescue padding (there is no
-  self-sizing viewer), the image tile cache and video buffer (hydrus-rs
-  renders whole images and leaves video to mpv), the file system wake wait,
+  self-sizing viewer), the image tile cache (hydrus-rs renders whole
+  images), the file system wake wait,
   the petition reason count
   (there are no tag repositories to petition), the related-tag search
   durations (hydrus-rs ranks exactly rather than within time slices) and the
