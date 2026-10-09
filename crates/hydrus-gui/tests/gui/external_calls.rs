@@ -81,7 +81,8 @@ fn callable_command_child_apply_cancel_parent_staging_reopen_and_retired_owner()
     ui.show().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let w = open(&ui, &bound);
-    assert_eq!(w.get_rows().row_data(1).unwrap().kind, 30);
+    // (after the reference's paragraph about the system, and the box's title)
+    assert!(w.get_rows().iter().any(|row| row.kind == 30));
     w.invoke_external_call_clicked(named(&w, "synthetic call"), false, false);
     w.invoke_external_call_action("edit".into());
     let child = call(&bound);
@@ -1974,10 +1975,12 @@ fn defaults_popup(
     assert!(!bound.options_external_calls.has_open());
     assert!(!w.get_external_call_child_open());
     assert_eq!(defaults_popup_count(w), 0);
-    // Actual 625a/1943 1100x800, scale-1 PNGs place this Button at
-    // x970..1067,y425..455. This finite hit must open the real two-item menu;
-    // no callback fallback, general geometry or OS transport claim.
-    let position = slint::LogicalPosition::new(1019.0, 440.0);
+    // Actual 625a/1943 1100x800, scale-1 PNGs placed this Button at
+    // x970..1067,y425..455; the reference's paragraph about the system, now
+    // drawn above the box, moves it down to about y530..560. This finite hit
+    // must open the real two-item menu; no callback fallback, general
+    // geometry or OS transport claim.
+    let position = slint::LogicalPosition::new(1019.0, 545.0);
     w.window()
         .dispatch_event(WindowEvent::PointerMoved { position });
     w.window().dispatch_event(WindowEvent::PointerPressed {

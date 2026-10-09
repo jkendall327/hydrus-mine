@@ -11,6 +11,10 @@ const LABEL: &str = "OR connecting string (on one line): ";
 // Fixed 900x900, scale-one diagnostic of the existing one-line field. The
 // physical copy fails closed if this finite coordinate no longer focuses it;
 // fresh images must independently confirm the caption, field and glyphs.
+/// The reference's paragraph about the tag autocomplete, drawn above the
+/// field since this diagnostic was pinned, moves the field down this far.
+const SHIFT: usize = 30;
+
 fn capture_and_copy_reopened(
     native: &slint::platform::software_renderer::MinimalSoftwareWindow,
     window: &OptionsWindow,
@@ -53,7 +57,7 @@ fn capture_and_copy_reopened(
     if raw == " 🦊 " {
         // Inside this supported field's text area, excluding its border and
         // caret. Keep the PNG even if glyph painting regresses to blank again.
-        let ink = (502..524)
+        let ink = (502 + SHIFT..524 + SHIFT)
             .flat_map(|y| (640..690).map(move |x| (y * 900 + x) * 4))
             .filter(|&pixel| {
                 pixels[pixel..pixel + 3]
@@ -72,7 +76,7 @@ fn capture_and_copy_reopened(
     let sentinel = format!("impossible unopened connector clipboard: {filename}");
     assert_ne!(raw, sentinel);
     headless::set_clipboard_text(&sentinel);
-    let position = slint::LogicalPosition::new(750.0, 514.0);
+    let position = slint::LogicalPosition::new(750.0, 514.0 + SHIFT as f32);
     native.dispatch_event(WindowEvent::PointerMoved { position });
     native.dispatch_event(WindowEvent::PointerPressed {
         position,

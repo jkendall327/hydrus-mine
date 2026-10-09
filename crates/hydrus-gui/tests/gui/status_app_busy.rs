@@ -42,6 +42,26 @@ fn the_application_busy_field_says_how_many_jobs_run_as_the_reference_does() {
             )
         })
         .unwrap();
+    // (and any pass admitted as the client opened is done)
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(20);
+    while [
+        hydrus_store::maintenance_gates::Worker::Trash,
+        hydrus_store::maintenance_gates::Worker::Deferred,
+    ]
+    .into_iter()
+    .any(|worker| client.bound.maintenance.running(worker))
+    {
+        assert!(
+            std::time::Instant::now() < deadline,
+            "a pass never finished"
+        );
+        client
+            .bound
+            .maintenance
+            .poll_at(hydrus_core::TimestampMs::now().0)
+            .unwrap();
+        std::thread::sleep(std::time::Duration::from_millis(20));
+    }
     let base = hydrus_core::TimestampMs::now().0 + 10_000_000;
     let at = |seconds: i64| base + seconds * 1000;
     let poll = |seconds: i64| client.bound.maintenance.poll_at(at(seconds)).unwrap();
