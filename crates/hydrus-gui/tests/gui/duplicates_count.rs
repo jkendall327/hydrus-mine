@@ -160,8 +160,11 @@ fn the_pair_count_goes_a_block_at_a_time_and_the_buttons_and_search_changes_driv
     assert!(wider_found >= found);
     let wide = model::count_text(space, wider_found);
     // (the reference keeps the old text until the new count publishes, so the
-    // wider count must differ from it for this wait to prove a recount)
-    assert_ne!(wide, done, "the wider search finds the same pairs");
+    // text alone can't show a recount when the pairs found are the same: the
+    // finished count waits at the gate again once it starts over)
+    spin_until("the changed search was not counted again", || {
+        gate.waiting().is_some()
+    });
     spin_until("the wider search never finished", || {
         gate.release(0.0);
         count_of(ui) == wide

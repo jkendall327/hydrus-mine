@@ -302,10 +302,33 @@ fn a_rules_search_counts_its_pairs_and_counts_again_when_edited() {
     use hydrus_gui_model::duplicates_filtering as model;
     use hydrus_store::settings::{self, PotentialPairsCountOptions};
 
-    let gate = Gate::new(3);
-    gate.install_here();
     let _windows = headless::init();
     let (_dir, store) = store_with_pairs();
+    let (_, key) = my_files(&store);
+    let search = FileSearchContext {
+        location: LocationContext::single(key),
+        ..FileSearchContext::default()
+    };
+    let session = Session {
+        name: LAST_SESSION.into(),
+        pages: vec![Page {
+            key: PageKey::random(),
+            name: "duplicates".into(),
+            content: PageContent::Duplicates {
+                duplicates: DuplicatesPage::new(DuplicatesSearch {
+                    search_1: search.clone(),
+                    search_2: search,
+                    kind: PairSearchKind::OneFileMatchesOneSearch,
+                    pixel_duplicates: PixelDuplicates::Allowed,
+                    max_hamming_distance: 4,
+                }),
+                sort: None,
+            },
+        }],
+    };
+    store
+        .write(move |ctx| sessions::save(ctx.conn(), &session, 0))
+        .unwrap();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(Arc::clone(&store)).unwrap());
     ui.invoke_duplicates_action("edit rules".into(), 0, false, false);
@@ -319,6 +342,10 @@ fn a_rules_search_counts_its_pairs_and_counts_again_when_edited() {
     list.invoke_add_suggested();
     list.invoke_suggested_chosen(0);
     list.invoke_row_clicked(0, false, false);
+    // (the gate is the rule editor's: the page's own count, started when
+    // the window was bound, has run free)
+    let gate = Gate::new(3);
+    gate.install_here();
     list.invoke_edit();
     let rule = bound
         .auto_resolution
@@ -351,10 +378,13 @@ fn a_rules_search_counts_its_pairs_and_counts_again_when_edited() {
         Box::new(|| gate.waiting() == Some(Waiting::Block)),
     );
     rule.invoke_count_action("pause count".into(), 0);
-    assert!(rule.get_count_paused());
+    wait(
+        "the pause was not shown",
+        Box::new(|| rule.get_count_paused()),
+    );
     wait("the block never finished", Box::new(|| gate.release(0.0)));
     wait(
-        "the block was not shown",
+        &format!("the block was not shown: {}", rule.get_count()),
         Box::new(|| rule.get_count().contains("pairs searched")),
     );
     let paused_at = rule.get_count();
@@ -362,7 +392,10 @@ fn a_rules_search_counts_its_pairs_and_counts_again_when_edited() {
     assert!(!gate.release(0.0), "a paused count searched another block");
     assert_eq!(rule.get_count(), paused_at);
     rule.invoke_count_action("pause count".into(), 0);
-    assert!(!rule.get_count_paused());
+    wait(
+        "the play was not shown",
+        Box::new(|| !rule.get_count_paused()),
+    );
 
     // the count goes to the end, then a change of the distance counts again
     wait(
