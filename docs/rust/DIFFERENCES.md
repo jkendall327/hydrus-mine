@@ -1089,11 +1089,13 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   with the reason as the reference does, though not its separate text for a
   payload that decodes but can't be understood (whose `{path}` the reference
   never fills in). A hydrus-rs rules png given to the comparator list is a read error there, where the reference would warn which object types it refused.
-- **The file log window** can't yet import new sources, export them to
-  a png, search for the selected URLs, or do its advanced entries (these
-  are greyed out); its "additional urls" don't show the URL a URL class
-  would actually fetch or refer from; trying a previously deleted file
-  again doesn't offer to clear its deletion record.
+- **The file log window**'s "additional urls" don't show the URL a URL class
+  would actually fetch or refer from; trying selected files again never asks
+  the reference's question about erasing the deletion record of a
+  previously deleted file; "open files' locations" for path sources opens
+  the parent folder rather than selecting the file; and the file log menu
+  of a downloader page's list (not the window) leaves "search for URLs"
+  greyed out.
 - **The import options editor** keeps a typed-line field for the tag filtering
   whitelist, with a detached shared write-tag autocomplete editor for it and
   for each service's additional tags (the reference embeds its tag inputs in

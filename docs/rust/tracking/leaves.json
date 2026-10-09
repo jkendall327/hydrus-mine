@@ -4919,7 +4919,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "phase 2 session",
-    "note": "Delete by status, delete everything and delete-everything-except-unknown, each answered no and yes. Test: crates/hydrus-gui/tests/gui/file_log_actions.rs whole_log_menu_entries_ask_and_change_the_list_as_the_reference_did, replaying every whole-log menu entry of oracle/fixtures/file_log_effects.json (recorded from the reference's own PopulateFileSeedCacheMenu on a list holding every status) with each answer: question text, buttons and the list afterwards."
+    "note": "Delete by status, delete everything and delete-everything-except-unknown, each answered no and yes. Test: crates/hydrus-gui/tests/gui/file_log_actions.rs whole_log_menu_entries_ask_and_change_the_list_as_the_reference_did, replaying every whole-log menu entry of oracle/fixtures/file_log_effects.json (recorded from the reference's own PopulateFileSeedCacheMenu on a list holding every status) with each answer: question text, buttons and the list afterwards. The selected rows' delete asks 'Are you sure you want to delete the N selected entries?' (checked by the reference's string only: crates/hydrus-gui/tests/gui/file_log.rs the_file_log_lists_a_queues_files_and_acts_on_them)."
    }
   },
   {
@@ -5014,10 +5014,10 @@
     "Enabled selected-row search for URLs. Opens a native url search page in combined local file domains containing one OR container of has-url exact-match predicates for selected request URLs beginning http. Existing search engine consumes predicates and reaches files from either OR branch; session save/reopen preserves the page. Opening does not explicitly raise the desktop window."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window opens a 'url search' page over combined local file domains and reaches files; but the expected predicate is the native url_search() output and the model test types the OR-of-exact-match literal from ClientGUIFileSeedCache.py:611 (no recording). Not tagged (carried). Tests: crates/hydrus-gui/tests/gui/file_log.rs:267 selected_url_search_opens_a_local_or_search_and_reaches_matching_files; crates/hydrus-gui-model/tests/model/file_log.rs:155"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "The reference's own EditFileSeedCachePanel menu was driven over URL and path lists with different selections (oracle/record_file_log_search_urls.py): offered only for URLs, one OR of exact 'has url' predicates over the selected URLs, page 'url search' over all local files. Replayed through the real file log window and compared (predicates as sets: the reference sorts them by text). Test: crates/hydrus-gui/tests/gui/file_log.rs search_for_urls_asks_for_the_page_the_reference_asked_for; reaching matching files: selected_url_search_opens_a_local_or_search_and_reaches_matching_files."
    }
   },
   {
