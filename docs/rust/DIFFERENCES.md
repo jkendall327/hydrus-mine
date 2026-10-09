@@ -1371,13 +1371,13 @@ starts, so replacing the files takes effect on the next listener restart (any
 settings change, or a restart of the daemon), not mid-run. The two lines the
 reference's "half a pair" error shows as two popups are one message in the
 Client API status.
-The editor shows each tooltip as a muted caption under its row (Slint has no
-hover tooltips). The three external overrides are shown in advanced mode only;
-in the reference's current source the rows are hidden unconditionally
-(`if False:`), which the owner chose not to follow. As in the reference,
-nothing reads them: no link hydrus-rs copies uses the overrides, and "view in
-a web browser" always opens `127.0.0.1`. The port override is text, as in the
-reference; a number stored by an older import is shown as its digits.
+The three external overrides are shown in advanced mode only. In the
+reference's current source those rows are hidden unconditionally
+(`if False:`); showing them follows the owner's request (2026-10-08) to have
+all three controls. As in the reference, nothing reads them: no link
+hydrus-rs copies uses the overrides, and "view in a web browser" always opens
+`127.0.0.1`. The port override is text, as in the reference; a number stored
+by an older import is shown as its digits.
 The normie page is the reference's HTML verbatim (service name, software
 version 688, API version, and the local/any-host line filled in as the
 reference fills them).

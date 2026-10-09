@@ -76,17 +76,27 @@ pub fn generate_cert_and_key(cert_path: &Path, key_path: &Path) -> io::Result<()
     Ok(())
 }
 
+/// Create `path` read-only (0o400 on unix) from the start, so a private key is
+/// never readable by others, even briefly; an existing file is an error.
 fn write_read_only(path: &Path, bytes: &[u8]) -> io::Result<()> {
-    std::fs::write(path, bytes)?;
-    let mut permissions = std::fs::metadata(path)?.permissions();
+    use std::io::Write as _;
+    let mut options = std::fs::OpenOptions::new();
+    options.write(true).create_new(true);
     #[cfg(unix)]
     {
-        use std::os::unix::fs::PermissionsExt;
-        permissions.set_mode(0o400);
+        use std::os::unix::fs::OpenOptionsExt;
+        options.mode(0o400);
     }
+    let mut file = options.open(path)?;
+    file.write_all(bytes)?;
+    drop(file);
     #[cfg(not(unix))]
-    permissions.set_readonly(true);
-    std::fs::set_permissions(path, permissions)
+    {
+        let mut permissions = std::fs::metadata(path)?.permissions();
+        permissions.set_readonly(true);
+        std::fs::set_permissions(path, permissions)?;
+    }
+    Ok(())
 }
 
 fn pem(label: &str, der: &[u8]) -> String {

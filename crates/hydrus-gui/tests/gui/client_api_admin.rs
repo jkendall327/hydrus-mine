@@ -646,6 +646,17 @@ fn service_editor_https_normie_and_external_override_rows_match_the_reference() 
     advanced(true);
     let (manage, edit) = open_api_editor(&store, &slots);
     assert!(edit.get_api_advanced());
+    // the text each row's hover tooltip shows is the reference's
+    for (name, shown) in [
+        ("non_local", edit.get_api_tooltip_non_local()),
+        ("https", edit.get_api_tooltip_https()),
+        ("cors", edit.get_api_tooltip_cors()),
+        ("logs", edit.get_api_tooltip_logs()),
+        ("normie", edit.get_api_tooltip_normie()),
+        ("external_port", edit.get_api_tooltip_external_port()),
+    ] {
+        assert_eq!(flat(&shown), tips(name), "{name}");
+    }
     assert!(edit.get_api_running() && edit.get_api_https() && edit.get_api_normie());
     assert_eq!(edit.get_api_port(), 45869);
     let expected = |label: &str| {

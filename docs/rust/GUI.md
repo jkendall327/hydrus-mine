@@ -1952,7 +1952,7 @@ GUI regressions render `client_api_keys.png`, `client_api_permissions.png` and
 Manage services edits the built-in API service with the reference's rows and
 labels: "run the client api?:", "local port:", "allow non-local connections:",
 "use https", "support CORS headers", "log requests" and "normie-friendly
-welcome page", each with the reference's tooltip text shown beneath it. All but
+welcome page", each with the reference's tooltip text on hover. All but
 "run" are enabled only while the service runs. In advanced mode three more rows
 appear, each a text box with a "none" box: the scheme, host and port overrides
 "when copying external links" (an empty port text is kept, and means no `:`).
