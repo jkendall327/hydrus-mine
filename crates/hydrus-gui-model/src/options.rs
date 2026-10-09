@@ -5413,7 +5413,9 @@ pub struct Environment {
 /// Entries the reference's search has for widgets hydrus-rs draws elsewhere
 /// (in a child window, or as one control): the page the reference lists them
 /// under, the text, and the option the search goes to instead.
-const SEARCH_ONLY: &[(&str, &str, fn(&Opt) -> bool)] = &[
+type SearchOnly = (&'static str, &'static str, fn(&Opt) -> bool);
+
+const SEARCH_ONLY: &[SearchOnly] = &[
     ("import options", "help for this panel -->", |k| {
         matches!(k.kind, Kind::ImportOptions)
     }),
@@ -5541,10 +5543,9 @@ pub fn suggestions_with_values(pages: &[Page], values: &[Vec<Value>]) -> Vec<Sug
     }
     for (display, text, anchor) in SEARCH_ONLY {
         'pages: for (page_index, page) in pages.iter().enumerate() {
-            let mut row = 0;
             let mut rows = Vec::new();
             walk(&page.items, &mut rows);
-            for item in rows {
+            for (row, item) in rows.into_iter().enumerate() {
                 if let Item::Opt(option) = item
                     && anchor(option)
                 {
@@ -5555,7 +5556,6 @@ pub fn suggestions_with_values(pages: &[Page], values: &[Vec<Value>]) -> Vec<Sug
                     });
                     break 'pages;
                 }
-                row += 1;
             }
         }
     }

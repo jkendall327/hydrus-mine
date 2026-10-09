@@ -37,7 +37,7 @@ pub fn current() -> SharedString {
 }
 
 /// A window with a title suffix.
-pub trait Titled: ComponentHandle + 'static {
+pub trait Titled: ComponentHandle + Sized + 'static {
     /// Make the window.
     fn create() -> Result<Self, slint::PlatformError>;
     /// Set its title suffix.
