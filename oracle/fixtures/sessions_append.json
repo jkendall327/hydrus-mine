@@ -1,0 +1,944 @@
+{
+ "cases": [
+  {
+   "before": [
+    {
+     "name": "outer",
+     "pages": [
+      {
+       "name": "inner"
+      }
+     ]
+    },
+    {
+     "name": "start"
+    }
+   ],
+   "before_current": [
+    0,
+    0
+   ],
+   "inside": false,
+   "mode": 0,
+   "steps": [
+    {
+     "current": [
+      0,
+      0
+     ],
+     "tree": [
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "name": "outer",
+       "pages": [
+        {
+         "name": "inner"
+        }
+       ]
+      },
+      {
+       "name": "start"
+      }
+     ]
+    },
+    {
+     "current": [
+      0,
+      0
+     ],
+     "tree": [
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "name": "outer",
+       "pages": [
+        {
+         "name": "inner"
+        }
+       ]
+      },
+      {
+       "name": "start"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "before": [
+    {
+     "name": "outer",
+     "pages": [
+      {
+       "name": "inner"
+      }
+     ]
+    },
+    {
+     "name": "start"
+    }
+   ],
+   "before_current": [
+    1
+   ],
+   "inside": true,
+   "mode": 0,
+   "steps": [
+    {
+     "current": [
+      0,
+      0
+     ],
+     "tree": [
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "name": "outer",
+       "pages": [
+        {
+         "name": "inner"
+        }
+       ]
+      },
+      {
+       "name": "start"
+      }
+     ]
+    },
+    {
+     "current": [
+      0,
+      0
+     ],
+     "tree": [
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "name": "outer",
+       "pages": [
+        {
+         "name": "inner"
+        }
+       ]
+      },
+      {
+       "name": "start"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "before": [
+    {
+     "name": "outer",
+     "pages": [
+      {
+       "name": "inner"
+      }
+     ]
+    },
+    {
+     "name": "start"
+    }
+   ],
+   "before_current": [
+    0,
+    0
+   ],
+   "inside": false,
+   "mode": 1,
+   "steps": [
+    {
+     "current": [
+      0,
+      0
+     ],
+     "tree": [
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "name": "outer",
+       "pages": [
+        {
+         "name": "inner"
+        }
+       ]
+      },
+      {
+       "name": "start"
+      }
+     ]
+    },
+    {
+     "current": [
+      0,
+      0
+     ],
+     "tree": [
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "name": "outer",
+       "pages": [
+        {
+         "name": "inner"
+        }
+       ]
+      },
+      {
+       "name": "start"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "before": [
+    {
+     "name": "outer",
+     "pages": [
+      {
+       "name": "inner"
+      }
+     ]
+    },
+    {
+     "name": "start"
+    }
+   ],
+   "before_current": [
+    1
+   ],
+   "inside": true,
+   "mode": 1,
+   "steps": [
+    {
+     "current": [
+      1,
+      0
+     ],
+     "tree": [
+      {
+       "name": "outer",
+       "pages": [
+        {
+         "name": "inner"
+        }
+       ]
+      },
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "name": "start"
+      }
+     ]
+    },
+    {
+     "current": [
+      1,
+      0
+     ],
+     "tree": [
+      {
+       "name": "outer",
+       "pages": [
+        {
+         "name": "inner"
+        }
+       ]
+      },
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "name": "start"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "before": [
+    {
+     "name": "start"
+    },
+    {
+     "name": "outer",
+     "pages": [
+      {
+       "name": "inner"
+      }
+     ]
+    }
+   ],
+   "before_current": [
+    0
+   ],
+   "inside": false,
+   "mode": 2,
+   "steps": [
+    {
+     "current": [
+      1,
+      0
+     ],
+     "tree": [
+      {
+       "name": "start"
+      },
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "name": "outer",
+       "pages": [
+        {
+         "name": "inner"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "current": [
+      2,
+      0
+     ],
+     "tree": [
+      {
+       "name": "start"
+      },
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "name": "outer",
+       "pages": [
+        {
+         "name": "inner"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "before": [
+    {
+     "name": "start"
+    },
+    {
+     "name": "outer",
+     "pages": [
+      {
+       "name": "inner"
+      }
+     ]
+    }
+   ],
+   "before_current": [
+    1,
+    0
+   ],
+   "inside": true,
+   "mode": 2,
+   "steps": [
+    {
+     "current": [
+      2,
+      0
+     ],
+     "tree": [
+      {
+       "name": "start"
+      },
+      {
+       "name": "outer",
+       "pages": [
+        {
+         "name": "inner"
+        }
+       ]
+      },
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "current": [
+      3,
+      0
+     ],
+     "tree": [
+      {
+       "name": "start"
+      },
+      {
+       "name": "outer",
+       "pages": [
+        {
+         "name": "inner"
+        }
+       ]
+      },
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "before": [
+    {
+     "name": "start"
+    },
+    {
+     "name": "outer",
+     "pages": [
+      {
+       "name": "inner"
+      }
+     ]
+    }
+   ],
+   "before_current": [
+    0
+   ],
+   "inside": false,
+   "mode": 3,
+   "steps": [
+    {
+     "current": [
+      2,
+      0
+     ],
+     "tree": [
+      {
+       "name": "start"
+      },
+      {
+       "name": "outer",
+       "pages": [
+        {
+         "name": "inner"
+        }
+       ]
+      },
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "current": [
+      3,
+      0
+     ],
+     "tree": [
+      {
+       "name": "start"
+      },
+      {
+       "name": "outer",
+       "pages": [
+        {
+         "name": "inner"
+        }
+       ]
+      },
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "before": [
+    {
+     "name": "start"
+    },
+    {
+     "name": "outer",
+     "pages": [
+      {
+       "name": "inner"
+      }
+     ]
+    }
+   ],
+   "before_current": [
+    1,
+    0
+   ],
+   "inside": true,
+   "mode": 3,
+   "steps": [
+    {
+     "current": [
+      2,
+      0
+     ],
+     "tree": [
+      {
+       "name": "start"
+      },
+      {
+       "name": "outer",
+       "pages": [
+        {
+         "name": "inner"
+        }
+       ]
+      },
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "current": [
+      3,
+      0
+     ],
+     "tree": [
+      {
+       "name": "start"
+      },
+      {
+       "name": "outer",
+       "pages": [
+        {
+         "name": "inner"
+        }
+       ]
+      },
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "name": "work",
+       "pages": [
+        {
+         "name": "a"
+        },
+        {
+         "name": "nested",
+         "pages": [
+          {
+           "name": "b"
+          },
+          {
+           "name": "c"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

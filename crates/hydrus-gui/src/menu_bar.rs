@@ -714,7 +714,10 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::AppendSessionBackup { name, timestamp } => {
             change_pages(&|pages| pages.append_session_backup(&name, timestamp));
         }
-        Command::AppendSession(name) => change_pages(&|pages| pages.append_session(&name)),
+        Command::AppendSession(name) => {
+            // (the menu appends to the top notebook, not the deepest)
+            change_pages(&|pages| pages.append_session_to_notebook(None, &name));
+        }
         // asked first, then (any page objecting) asked again, as the
         // reference's `LoadGUISession` asks
         Command::DebugReloadSession => hooks.debug_session_reload.start(),

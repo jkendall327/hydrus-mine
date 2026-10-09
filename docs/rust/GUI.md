@@ -458,6 +458,8 @@ parse) and the sidecar overwrite options. The rows and the checks are as
 `oracle/record_folders_lists.py` and `oracle/record_folders_dialogs.py`
 recorded the reference's.
 
+Pages > sessions > append adds the saved session as a page of pages named after it to the top notebook (not inside the page of pages that is shown), where "new page goes" puts it, and shows it, as the reference does (`oracle/record_sessions_append.py`).
+
 File > import/export folders > "check import folder now" and "run export folder now" flag a named folder, or all of them with "check all" / "run all", to be checked or run at the scheduler's next pass. Checking a folder also unpauses it, as the reference's `CheckNow` does. While the folders are paused under file > pause, the entries still flag the folders but say that they are paused ("Import folders are currently paused under the 'file' menu. Please unpause them and try this again.", and the export equivalent), as the reference does (`oracle/record_folder_runs.py`).
 
 Both dialogs' sidecars button ("no sidecars", the one router as it

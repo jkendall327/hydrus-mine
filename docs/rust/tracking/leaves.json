@@ -15623,10 +15623,10 @@
     "Invokes SearchPage refresh through the current page callback, then redraws results and synchronizes page state."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real menu item on a paused search page and checks it becomes synchronised and has results; expectations derive from reading RefreshQuery/_RefreshQuery, no recording. Behaviour on non-search pages (no-op) not tested. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:221 new_page_asks_the_chooser_and_refresh_searches_a_paused_page_again"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_refresh.rs refresh_from_the_pages_menu_searches_again_as_the_reference_did chooses pages > refresh in the real window on a search paused with a predicate typed since (refresh searches it, un-pauses it, and shows the 14 inbox files of the 30), a search run and then paused (resumed), a page opened on given files (its locked search is left alone) and a URL downloader page (nothing to search), and compares each page's synchronised state and file count before and after with page_refresh.json, recorded from the reference's _RefreshCurrentPage (oracle/record_page_refresh.py). Refreshing a whole page of pages is tab_refresh.json's, under the tab menu's leaf."
    }
   },
   {
@@ -15715,10 +15715,10 @@
     "No session backups are retained or selectable; reserved names excluded from overwrite/delete entries."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real menu: append makes a page of pages named after the session with independent copies, saved session untouched. Behaviour is restated from AppendGUISessionFreshest; record_sessions_menu.py only describes append and records no append step, and the 'loading session' popup is not checked. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:307 saved_sessions_append_as_a_page_of_pages_and_delete_after_asking"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "phase 2 session",
+    "note": "gui/pages_menu_new_pages.rs appending_a_saved_session_from_the_menu_lands_where_the_reference_put_it chooses pages > sessions > append > work from the real menu, twice in a row, for all four 'new page goes' settings and with the current tab a search page and a page of pages, and compares the whole notebook tree (the session's pages in a page of pages named after it, nested pages inside) and the current tabs with sessions_append.json, recorded from the reference's top notebook AppendGUISessionFreshest (oracle/record_sessions_append.py). The recording showed the reference appends to the top notebook, where hydrus-rs put the page of pages inside the deepest one; the menu entry now appends to the top notebook. The saved session is untouched and the copies are independent (earlier tests); appending into a chosen notebook is notebook_sessions.json's."
    }
   },
   {

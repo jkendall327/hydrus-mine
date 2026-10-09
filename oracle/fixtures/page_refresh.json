@@ -1,0 +1,49 @@
+{
+ "cases": [
+  {
+   "after": {
+    "files": 14,
+    "synchronised": true
+   },
+   "before": {
+    "files": 30,
+    "synchronised": false
+   },
+   "page": "paused with a predicate typed since"
+  },
+  {
+   "after": {
+    "files": 30,
+    "synchronised": true
+   },
+   "before": {
+    "files": 30,
+    "synchronised": false
+   },
+   "page": "searched, then paused"
+  },
+  {
+   "after": {
+    "files": 3,
+    "synchronised": false
+   },
+   "before": {
+    "files": 3,
+    "synchronised": false
+   },
+   "page": "opened on given files"
+  },
+  {
+   "after": {
+    "files": 0,
+    "synchronised": null
+   },
+   "before": {
+    "files": 0,
+    "synchronised": null
+   },
+   "page": "url importer"
+  }
+ ],
+ "given": 3
+}
