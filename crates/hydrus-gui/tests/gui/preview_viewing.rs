@@ -115,6 +115,7 @@ fn wait_image(ui: &MainWindow, preview: &hydrus_gui::preview_window::Monitor) {
     }
 }
 
+// leaf: audit-options-file-viewing-statistics-min-time-to-view-on-preview-viewer-to-count-as-a-view
 #[test]
 fn preview_display_replays_qt_page_splitter_active_clear_close_and_successor_ownership() {
     let fixture = hydrus_testkit::fixture_json("preview_viewing_intervals.json");
@@ -337,6 +338,8 @@ fn capture_preview_options(
     )
     .unwrap();
 }
+// leaf: audit-options-file-viewing-statistics-cap-any-view-on-the-preview-viewer-to-this-maximum-time
+// leaf: audit-options-file-viewing-statistics-min-time-to-view-on-preview-viewer-to-count-as-a-view
 #[test]
 fn saved_preview_options_reach_open_display_duration_cap_cancel_and_confirmed_client_exit() {
     let fixture = hydrus_testkit::fixture_json("preview_viewing_intervals.json");
@@ -495,6 +498,7 @@ fn saved_preview_options_reach_open_display_duration_cap_cancel_and_confirmed_cl
     );
 }
 
+// leaf: audit-options-file-viewing-statistics-min-time-to-view-on-preview-viewer-to-count-as-a-view
 #[test]
 fn native_preview_minimum_cap_before_minimum_none_limits_and_inactive_finish() {
     let fixture = hydrus_testkit::fixture_json("preview_viewing_intervals.json");
@@ -567,6 +571,7 @@ fn native_preview_minimum_cap_before_minimum_none_limits_and_inactive_finish() {
     assert_eq!(views().unwrap().views, 2, "active is consumed at finish");
 }
 
+// leaf: audit-options-file-viewing-statistics-min-time-to-view-on-preview-viewer-to-count-as-a-view
 #[test]
 fn native_page_generation_same_file_restore_and_late_decode_cannot_publish_to_successor() {
     let fixture = hydrus_testkit::fixture_json("preview_viewing_intervals.json");
@@ -844,6 +849,7 @@ fn preview_workers_bound_slow_decodes_and_coalesce_the_latest_owned_target() {
     );
 }
 
+// leaf: audit-options-file-viewing-statistics-min-time-to-view-on-preview-viewer-to-count-as-a-view
 #[test]
 fn rejected_preview_decode_never_counts_a_thumbnail_selection_or_loading_placeholder() {
     let fixture = hydrus_testkit::fixture_json("preview_viewing_intervals.json");
@@ -898,6 +904,7 @@ fn rejected_preview_decode_never_counts_a_thumbnail_selection_or_loading_placeho
     );
 }
 
+// leaf: audit-options-file-viewing-statistics-min-time-to-view-on-preview-viewer-to-count-as-a-view
 #[test]
 fn preview_rejects_actual_reference_nonlocal_invalid_resolution_and_do_not_show_statuses() {
     let fixture = hydrus_testkit::fixture_json("preview_viewing_intervals.json");

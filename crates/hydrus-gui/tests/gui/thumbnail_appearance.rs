@@ -63,6 +63,7 @@ const PATH: &str =
     "EXPERIMENTAL: Image path for thumbnail panel background image (set blank to clear):";
 
 // leaf: audit-options-thumbnails-new-rendering-tech-use-the-new-thumbnail-rendering-tech-only-applies-to-new-pages
+// leaf: audit-options-thumbnails-media-background-experimental-image-path-for-thumbnail-panel-background-image-set-blank-to-clear
 #[test]
 fn staged_browse_cancel_apply_new_page_policy_and_permanent_owner_retirement() {
     let (dirs, store) = store();
@@ -161,6 +162,7 @@ fn staged_browse_cancel_apply_new_page_policy_and_permanent_owner_retirement() {
     hydrus_gui::set_picker(|_, _| Vec::new());
 }
 
+// leaf: audit-options-thumbnails-appearance-use-blurhash-missing-thumbnail-fallback
 #[test]
 fn blurhash_real_metadata_default_invalid_disable_and_owned_cache_policy() {
     let (dirs, store) = store();
@@ -465,6 +467,7 @@ fn whole_cell_snapshots_exact_default_threshold_interruptions_and_cached_revisit
     assert_eq!(thumbnail.fade_opacity, 1.0);
 }
 
+// leaf: audit-options-thumbnails-media-background-experimental-image-path-for-thumbnail-panel-background-image-set-blank-to-clear
 #[test]
 fn unscaled_background_clips_oversized_pixels_and_stays_fixed_on_scroll_and_clear() {
     let (dirs, store) = store();
@@ -543,6 +546,7 @@ fn unscaled_background_clips_oversized_pixels_and_stays_fixed_on_scroll_and_clea
     assert_eq!(ui.get_thumbnail_background().size().width, 0);
 }
 
+// leaf: audit-options-thumbnails-media-background-experimental-image-path-for-thumbnail-panel-background-image-set-blank-to-clear
 #[test]
 fn exit_cancel_preserves_nonempty_background_and_accepted_exit_permanently_clears_it() {
     let (dirs, store) = store();
@@ -797,6 +801,7 @@ fn browse_uses_typed_draft_seed_and_hidden_appearance_controls_cannot_stage() {
     assert_eq!(store.read(settings::get::<Preferences>).unwrap(), before);
 }
 
+// leaf: audit-options-thumbnails-media-background-experimental-image-path-for-thumbnail-panel-background-image-set-blank-to-clear
 #[test]
 fn default_new_page_small_nonuniform_background_has_exact_unscaled_extent_on_resize() {
     let (dirs, store) = store();
@@ -856,6 +861,7 @@ fn default_new_page_small_nonuniform_background_has_exact_unscaled_extent_on_res
     }
 }
 
+// leaf: audit-options-thumbnails-media-background-experimental-image-path-for-thumbnail-panel-background-image-set-blank-to-clear
 #[test]
 fn qt_marker_background_has_exact_extent_in_old_and_default_new_owners() {
     let (dirs, store) = store();
@@ -916,5 +922,49 @@ fn qt_marker_background_has_exact_extent_in_old_and_default_new_owners() {
         .unwrap();
         ui.invoke_retire_external_launches();
         ui.hide().unwrap();
+    }
+}
+
+// Replacing a thumbnail's whole cell fades the old one out over the opacity
+// curve the reference's new renderer was recorded drawing (`new_fade`), with
+// the old paint kept until the fade completes.
+#[test]
+fn new_renderer_fade_follows_the_recorded_opacity_curve() {
+    use hydrus_gui::thumbnail_paint::Paints;
+    let _windows = headless::init();
+    let recorded = hydrus_testkit::fixture_json("thumbnail_appearance.json");
+    let image = slint::Image::from_rgb8(slint::SharedPixelBuffer::<slint::Rgb8Pixel>::new(2, 2));
+    for sample in recorded["new_fade"]["samples"].as_array().unwrap() {
+        let mut paints = Paints::default();
+        let mut thumbnail = Thumbnail::default();
+        let mut paint = ThumbnailPaint {
+            image: image.clone(),
+            top: "old".into(),
+            ..ThumbnailPaint::default()
+        };
+        let start = Duration::from_secs(10);
+        let decorate = |paints: &mut Paints, thumbnail: &mut Thumbnail, paint: &ThumbnailPaint| {
+            paints.decorate(HashId(1), 0, paint.clone(), thumbnail, start, true, false);
+        };
+        decorate(&mut paints, &mut thumbnail, &paint);
+        paints.dirty(HashId(1));
+        paint.top = "new".into();
+        decorate(&mut paints, &mut thumbnail, &paint);
+        assert!(recorded["new_fade"]["old_at_start"].as_bool().unwrap());
+        assert_eq!(thumbnail.previous.top, "old");
+        let elapsed = Duration::from_secs_f64(sample["elapsed"].as_f64().unwrap());
+        paints.tick(start + elapsed, true, true);
+        decorate(&mut paints, &mut thumbnail, &paint);
+        let expected = sample["opacity"].as_f64().unwrap();
+        assert!(
+            (f64::from(thumbnail.fade_opacity) - expected).abs() < 0.01,
+            "at {elapsed:?}: {} vs {expected}",
+            thumbnail.fade_opacity
+        );
+        assert_eq!(
+            thumbnail.previous.image.size().width > 0,
+            sample["old_retained"].as_bool().unwrap(),
+            "at {elapsed:?}"
+        );
     }
 }

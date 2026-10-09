@@ -20,6 +20,7 @@ fn selected(rows: &slint::ModelRc<hydrus_gui::TableRow>) -> Vec<usize> {
         .collect()
 }
 
+// leaf: audit-network-tagging-regex
 #[test]
 fn real_lists_replay_reference_and_save_folder_consumers_without_stale_callbacks() {
     let windows = headless::init();

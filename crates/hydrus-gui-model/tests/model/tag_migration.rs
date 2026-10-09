@@ -5,7 +5,7 @@ use hydrus_store::{
     Store,
     services::{self, RepositoryConfig, ServiceKind},
 };
-// leaf: migration-mappings,audit-media-migration-confirm
+// leaf: audit-media-migration-confirm
 #[test]
 fn reference_choices_and_second_confirmation() {
     let fixture = hydrus_testkit::fixture_json("tag_migration.json");
@@ -150,7 +150,6 @@ fn reference_database_pending_outcomes() {
     }
 }
 
-// leaf: audit-media-migration-parents,audit-media-migration-siblings
 #[test]
 fn reference_database_pair_filters_and_destinations() {
     let fixture = hydrus_testkit::fixture_json("tag_migration.json");

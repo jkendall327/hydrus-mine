@@ -24,6 +24,8 @@ fn press(native: &slint::platform::software_renderer::MinimalSoftwareWindow, key
     native.dispatch_event(WindowEvent::KeyPressed { text: key.into() });
     native.dispatch_event(WindowEvent::KeyReleased { text: key.into() });
 }
+// leaf: audit-options-gui-pages-navigation-and-drag-and-drop-experimental-hide-main-page-navigation-tabs
+// leaf: audit-options-gui-pages-navigation-and-drag-and-drop-experimental-show-tab-tree-view
 #[test]
 fn real_tree_mouse_and_keys_replay_cursor_activation_and_preserved_child_expansion() {
     let windows = headless::init();

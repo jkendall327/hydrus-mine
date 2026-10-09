@@ -37,6 +37,16 @@ fn name(keys: &hydrus_gui::ClientApiKeysWindow, row: usize) -> String {
         .unwrap()
         .to_string()
 }
+/// The three enabled flags the reference recorder reads off its editor
+/// (`oracle/record_client_api_admin.py`): the permission list, "check all" and
+/// the tag-filter button.
+fn enabled_states(edit: &hydrus_gui::EditApiPermissionsWindow) -> serde_json::Value {
+    serde_json::json!({
+        "basic": !edit.get_permits_everything(),
+        "all": edit.get_can_check_all(),
+        "filter": edit.get_can_filter(),
+    })
+}
 fn screenshot(windows: &headless::Windows, index: usize, filename: &str, width: u32, height: u32) {
     let pixels = headless::render(&windows.get(index).unwrap(), width, height);
     headless::save_png(
@@ -59,14 +69,17 @@ fn cancellation_nested_ownership_permissions_and_key_validation() {
     keys.invoke_add_clicked();
     let edit = api::last_edit_opened().unwrap();
     let permission_index = windows.count() - 1;
-    assert!(edit.get_permits_everything());
-    assert!(!edit.get_can_filter());
+    let recorded = hydrus_testkit::fixture_json("client_api_admin.json");
+    assert_eq!(enabled_states(&edit), recorded["full_enabled"]);
     assert_eq!(edit.get_permissions().row_count(), 14);
     edit.set_permits_everything(false);
     edit.invoke_full_toggled();
     assert!(edit.get_can_check_all());
     edit.invoke_permission_toggled(3, true);
-    assert!(edit.get_can_filter());
+    assert_eq!(enabled_states(&edit), recorded["search_enabled"]);
+    edit.invoke_permission_toggled(3, false);
+    assert_eq!(enabled_states(&edit), recorded["none_enabled"]);
+    edit.invoke_permission_toggled(3, true);
     edit.invoke_edit_filter();
     let filter = hydrus_gui::tag_filter_window::last_opened().unwrap();
     assert!(edit.get_filtering());
@@ -320,22 +333,50 @@ fn supported_service_listener_fields_stage_cancel_and_persist() {
     edit.set_api_port(12345);
     edit.set_api_cors(true);
     edit.set_api_logs(true);
-    edit.set_api_disable_https(true);
+    edit.set_api_https(false);
     edit.invoke_apply_clicked();
     manage.invoke_cancel_clicked();
     assert_eq!(
         store.snapshot().services.get(id).unwrap().kind,
         ServiceKind::ClientApi(original.clone())
     );
+    // The reference's service editor (recorded `server` block): the port
+    // spin box runs `port_range`, and the service dictionary has exactly the
+    // fields `ServerConfig` has, with these defaults.
+    let recorded = hydrus_testkit::fixture_json("client_api_admin.json");
+    let fields = recorded["server"]["fields"].as_object().unwrap();
+    let native = serde_json::to_value(ServerConfig::default()).unwrap();
+    assert_eq!(native.as_object().unwrap().len(), fields.len());
+    for (name, value) in fields {
+        if name != "port" {
+            assert_eq!(&native[name], value, "{name}");
+        }
+    }
+    let min = recorded["server"]["port_range"][0].as_i64().unwrap();
+    let max = recorded["server"]["port_range"][1].as_i64().unwrap();
+    for outside in [min - 1, max + 1] {
+        let (manage, edit) = open();
+        edit.set_api_running(true);
+        edit.set_api_port(i32::try_from(outside).unwrap());
+        edit.invoke_apply_clicked();
+        assert!(!edit.get_error().is_empty(), "port {outside}");
+        edit.invoke_cancel_clicked();
+        manage.invoke_cancel_clicked();
+    }
+    for inside in [min, max] {
+        let (manage, edit) = open();
+        edit.set_api_running(true);
+        edit.set_api_port(i32::try_from(inside).unwrap());
+        edit.invoke_apply_clicked();
+        assert!(edit.get_error().is_empty(), "port {inside}");
+        manage.invoke_cancel_clicked();
+    }
     let (manage, edit) = open();
     edit.set_api_running(true);
-    edit.set_api_port(0);
-    edit.invoke_apply_clicked();
-    assert!(!edit.get_error().is_empty());
     edit.set_api_port(12345);
     edit.set_api_cors(true);
     edit.set_api_logs(true);
-    edit.set_api_disable_https(true);
+    edit.set_api_https(false);
     screenshot(
         &windows,
         windows.count() - 1,
@@ -352,6 +393,7 @@ fn supported_service_listener_fields_stage_cancel_and_persist() {
     assert_eq!(config.port, Some(12345));
     assert!(config.support_cors && config.log_requests && !config.use_https);
     assert!(config.use_normie_eris);
+    // untouched in the editor, so kept as it was
     assert_eq!(
         config.external_host_override,
         original.external_host_override
@@ -428,8 +470,23 @@ fn add_from_api_request_waits_for_a_tool_s_request_and_edits_what_it_asked_for()
     keys.invoke_add_from_api_clicked();
     let waiting = api::last_request_opened().expect("the waiting window opens");
     assert_eq!(waiting.get_text(), "waiting for request…");
-    assert!(registration(&store).open_until_ms.is_some());
     assert!(keys.get_editing(), "the list waits");
+    // registration is a short lease the window's timer renews, not a fixed
+    // hour: a crash leaves it open for seconds
+    let now = || hydrus_core::time::TimestampMs::now().millis();
+    let until = registration(&store).open_until_ms.unwrap();
+    assert!(until <= now() + 10_000, "{until}");
+    store
+        .write(|ctx| {
+            let mut registration: Registration = hydrus_store::settings::get(ctx.conn())?;
+            registration.open_until_ms =
+                Some(hydrus_core::time::TimestampMs::now().millis() + 1_000);
+            hydrus_store::settings::set(ctx.conn(), &registration)
+        })
+        .unwrap();
+    spin_until("the lease was not renewed", || {
+        registration(&store).open_until_ms.unwrap() > now() + 4_000
+    });
 
     // closing it stops taking requests
     waiting.invoke_cancel_clicked();
@@ -474,4 +531,248 @@ fn add_from_api_request_waits_for_a_tool_s_request_and_edits_what_it_asked_for()
     assert!(api::last_request_opened().is_none());
     assert_eq!(registration(&store), Registration::default());
     drop(parent);
+}
+
+/// Whitespace as Qt's tooltip wrapping leaves it.
+fn flat(text: &str) -> String {
+    text.split_whitespace().collect::<Vec<_>>().join(" ")
+}
+
+fn open_api_editor(
+    store: &std::sync::Arc<Store>,
+    slots: &hydrus_gui::services_editor_window::Slots,
+) -> (
+    hydrus_gui::ServicesEditorWindow,
+    hydrus_gui::EditServiceWindow,
+) {
+    let window = hydrus_gui::services_editor_window::open(store, slots, Rc::new(|| {})).unwrap();
+    *slots.manage.borrow_mut() = Some(window.clone_strong());
+    let row = window
+        .get_rows()
+        .iter()
+        .position(|r| r.cells.row_data(0).unwrap() == "client api")
+        .unwrap();
+    window.invoke_row_clicked(i32::try_from(row).unwrap(), false, false);
+    window.invoke_edit_clicked();
+    (window, slots.edit.borrow().as_ref().unwrap().clone_strong())
+}
+
+/// What the recorder reads off the reference's editor for one control.
+fn control(enabled: bool, text: Option<(&str, bool, bool)>) -> serde_json::Value {
+    let mut state = serde_json::json!({ "enabled": enabled });
+    if let Some((text, none, text_enabled)) = text {
+        state["text"] = text.into();
+        state["none_checked"] = none.into();
+        state["text_enabled"] = text_enabled.into();
+        state["value"] = if none {
+            serde_json::Value::Null
+        } else {
+            text.into()
+        };
+    }
+    state
+}
+
+fn editor_state(edit: &hydrus_gui::EditServiceWindow) -> serde_json::Value {
+    let run = edit.get_api_controls_enabled();
+    serde_json::json!({
+        "port": control(run, None),
+        "non_local": control(run, None),
+        "https": control(run, None),
+        "cors": control(run, None),
+        "logs": control(run, None),
+        "normie": control(run, None),
+        "scheme": control(run, Some((&edit.get_api_scheme(), edit.get_api_scheme_none(), edit.get_api_scheme_enabled()))),
+        "host": control(run, Some((&edit.get_api_host(), edit.get_api_host_none(), edit.get_api_host_enabled()))),
+        "external_port": control(run, Some((&edit.get_api_external_port(), edit.get_api_external_port_none(), edit.get_api_external_port_enabled()))),
+    })
+}
+
+// leaf: audit-media-services-missing-listener-unsupported
+#[test]
+fn service_editor_https_normie_and_external_override_rows_match_the_reference() {
+    use hydrus_gui_model::client_api_admin::tooltips;
+    let recorded = hydrus_testkit::fixture_json("client_api_https.json");
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let _windows = headless::init();
+    let id = store.snapshot().services.by_name("client api").unwrap().id;
+    let slots = hydrus_gui::services_editor_window::Slots::default();
+    let set = |config: ServerConfig| {
+        store
+            .write_and_refresh(move |ctx| {
+                hydrus_store::services::update_config(
+                    ctx.conn(),
+                    id,
+                    &ServiceKind::ClientApi(config),
+                )
+            })
+            .unwrap();
+    };
+    let stored = || {
+        let ServiceKind::ClientApi(config) =
+            store.snapshot().services.get(id).unwrap().kind.clone()
+        else {
+            panic!("API")
+        };
+        config
+    };
+    let advanced = |on: bool| {
+        store
+            .write(move |ctx| {
+                hydrus_store::settings::set(ctx.conn(), &hydrus_store::settings::AdvancedMode(on))
+            })
+            .unwrap();
+    };
+    // the reference's labels and tooltips (the recorded `controls` tooltips)
+    let on = &recorded["editor"]["on"];
+    let tips = |name: &str| flat(on["controls"][name]["tooltip"].as_str().unwrap());
+    assert_eq!(flat(tooltips::NON_LOCAL), tips("non_local"));
+    assert_eq!(flat(tooltips::HTTPS), tips("https"));
+    assert_eq!(flat(tooltips::CORS), tips("cors"));
+    assert_eq!(flat(tooltips::LOGS), tips("logs"));
+    assert_eq!(flat(tooltips::NORMIE), tips("normie"));
+    assert_eq!(flat(tooltips::EXTERNAL_PORT), tips("external_port"));
+    // the recorded service: running, https, normie page, all three overrides set
+    set(ServerConfig {
+        port: Some(45869),
+        use_https: true,
+        use_normie_eris: true,
+        external_scheme_override: Some("https".into()),
+        external_host_override: Some("example.com".into()),
+        external_port_override: Some(String::new()),
+        ..ServerConfig::default()
+    });
+    advanced(true);
+    let (manage, edit) = open_api_editor(&store, &slots);
+    assert!(edit.get_api_advanced());
+    // the text each row's hover tooltip shows is the reference's
+    for (name, shown) in [
+        ("non_local", edit.get_api_tooltip_non_local()),
+        ("https", edit.get_api_tooltip_https()),
+        ("cors", edit.get_api_tooltip_cors()),
+        ("logs", edit.get_api_tooltip_logs()),
+        ("normie", edit.get_api_tooltip_normie()),
+        ("external_port", edit.get_api_tooltip_external_port()),
+    ] {
+        assert_eq!(flat(&shown), tips(name), "{name}");
+    }
+    assert!(edit.get_api_running() && edit.get_api_https() && edit.get_api_normie());
+    assert_eq!(edit.get_api_port(), 45869);
+    let expected = |label: &str| {
+        let mut controls = serde_json::Map::new();
+        for (name, value) in recorded["editor"][label]["controls"].as_object().unwrap() {
+            let mut kept = serde_json::Map::new();
+            for key in ["enabled", "text", "none_checked", "text_enabled", "value"] {
+                if let Some(v) = value.get(key) {
+                    kept.insert(key.into(), v.clone());
+                }
+            }
+            controls.insert(name.clone(), kept.into());
+        }
+        // the "run" box is always enabled and the port is a number box
+        controls.remove("run");
+        controls.remove("cors");
+        controls.remove("logs");
+        serde_json::Value::from(controls)
+    };
+    let mut shown = editor_state(&edit);
+    shown.as_object_mut().unwrap().remove("cors");
+    shown.as_object_mut().unwrap().remove("logs");
+    shown["port"] = control(true, None);
+    let mut want = expected("on");
+    want["port"] = control(true, None);
+    assert_eq!(shown, want);
+    // "run the client api?:" off disables every row, as `_UpdateControls` does
+    edit.set_api_running(false);
+    let all_off = recorded["editor"]["on"]["enabled_after_toggle"]
+        .as_object()
+        .unwrap();
+    assert!(all_off.iter().all(|(k, v)| k == "run" || v == false));
+    assert!(!edit.get_api_controls_enabled());
+    assert!(
+        !edit.get_api_scheme_enabled()
+            && !edit.get_api_host_enabled()
+            && !edit.get_api_external_port_enabled()
+    );
+    edit.set_api_running(true);
+    // untouched, Apply keeps every value (what the reference's `GetValue` reads)
+    edit.invoke_apply_clicked();
+    manage.invoke_apply_clicked();
+    let value = &recorded["editor"]["on"]["value"];
+    let config = stored();
+    assert_eq!(config.use_https, value["use_https"]);
+    assert_eq!(config.use_normie_eris, value["use_normie_eris"]);
+    assert_eq!(
+        config.external_scheme_override.as_deref(),
+        value["external_scheme_override"].as_str()
+    );
+    assert_eq!(
+        config.external_host_override.as_deref(),
+        value["external_host_override"].as_str()
+    );
+    assert_eq!(
+        config.external_port_override.as_deref(),
+        value["external_port_override"].as_str()
+    );
+    // the "none" boxes, and an empty port text kept as the empty string
+    let (manage, edit) = open_api_editor(&store, &slots);
+    edit.set_api_scheme_none(true);
+    edit.set_api_host(String::new().into());
+    edit.set_api_external_port("8443".into());
+    edit.set_api_https(false);
+    edit.set_api_normie(false);
+    edit.invoke_apply_clicked();
+    manage.invoke_apply_clicked();
+    let config = stored();
+    assert_eq!(config.external_scheme_override, None);
+    assert_eq!(config.external_host_override.as_deref(), Some(""));
+    assert_eq!(config.external_port_override.as_deref(), Some("8443"));
+    assert!(!config.use_https && !config.use_normie_eris);
+    // cancelling stores nothing
+    let (manage, edit) = open_api_editor(&store, &slots);
+    edit.set_api_https(true);
+    edit.set_api_host_none(true);
+    edit.invoke_cancel_clicked();
+    manage.invoke_cancel_clicked();
+    assert_eq!(stored(), config);
+    // the recorded service that isn't running: every row off, all overrides "none"
+    set(ServerConfig {
+        port: None,
+        ..ServerConfig::default()
+    });
+    let (manage, edit) = open_api_editor(&store, &slots);
+    let off = &recorded["editor"]["off"]["controls"];
+    assert!(!edit.get_api_running());
+    assert_eq!(edit.get_api_controls_enabled(), off["non_local"]["enabled"]);
+    for (name, shown) in [
+        (
+            "scheme",
+            (edit.get_api_scheme_none(), edit.get_api_scheme_enabled()),
+        ),
+        (
+            "host",
+            (edit.get_api_host_none(), edit.get_api_host_enabled()),
+        ),
+        (
+            "external_port",
+            (
+                edit.get_api_external_port_none(),
+                edit.get_api_external_port_enabled(),
+            ),
+        ),
+    ] {
+        assert_eq!(shown.0, off[name]["none_checked"], "{name}");
+        assert_eq!(shown.1, off[name]["text_enabled"], "{name}");
+    }
+    // Apply with the service off stores no port, as `GetValue` does
+    edit.invoke_apply_clicked();
+    manage.invoke_apply_clicked();
+    assert_eq!(stored().port, None);
+    // the override rows are for advanced mode only
+    advanced(false);
+    let (manage, edit) = open_api_editor(&store, &slots);
+    assert!(!edit.get_api_advanced());
+    edit.invoke_cancel_clicked();
+    manage.invoke_cancel_clicked();
 }

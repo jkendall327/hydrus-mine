@@ -6,7 +6,6 @@
 //! the duplicate filter's comparison statements ([`statements`]).
 
 pub mod content;
-pub mod daemon;
 pub mod engine;
 pub mod potentials;
 pub mod selector;

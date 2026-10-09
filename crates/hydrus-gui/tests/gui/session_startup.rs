@@ -77,6 +77,7 @@ fn startup_option(ui: &MainWindow, bound: &hydrus_gui::Bound) -> (OptionsWindow,
     (window, i32::try_from(row).unwrap())
 }
 
+// leaf: audit-options-gui-sessions-sessions-default-session-on-startup
 #[test]
 fn startup_replays_real_blank_missing_last_and_named_trees_and_initial_schedule() {
     let _windows = headless::init();
@@ -120,6 +121,7 @@ fn startup_replays_real_blank_missing_last_and_named_trees_and_initial_schedule(
     }
 }
 
+// leaf: audit-options-gui-sessions-sessions-default-session-on-startup
 #[test]
 fn startup_dropdown_cancels_invalid_choice_and_applies_frozen_named_session_selection() {
     let _windows = headless::init();
@@ -188,6 +190,7 @@ fn startup_dropdown_cancels_invalid_choice_and_applies_frozen_named_session_sele
     assert_eq!(tree(&reopened.session().pages), fixture["named_tree"]);
 }
 
+// leaf: audit-options-gui-sessions-sessions-default-session-on-startup
 #[test]
 fn named_startup_restores_ordered_media_selection_and_independent_importer_snapshot() {
     let (_dirs, store) = store();
@@ -299,6 +302,7 @@ fn named_startup_restores_ordered_media_selection_and_independent_importer_snaps
     assert_eq!(reopened.session().pages, boot.session().pages);
 }
 
+// leaf: audit-options-gui-sessions-sessions-default-session-on-startup
 #[test]
 fn bad_shutdown_recovery_replays_real_yes_no_close_timeout_and_blank_bypasses() {
     use std::{cell::RefCell, rc::Rc};
@@ -394,6 +398,7 @@ fn bad_shutdown_recovery_replays_real_yes_no_close_timeout_and_blank_bypasses() 
     }
 }
 
+// leaf: audit-options-gui-sessions-sessions-default-session-on-startup
 #[test]
 fn recovery_keeps_displayed_name_if_preferences_change_and_clean_startup_skips_question() {
     use std::{cell::RefCell, rc::Rc};
@@ -454,6 +459,7 @@ fn recovery_keeps_displayed_name_if_preferences_change_and_clean_startup_skips_q
     assert_eq!(clean.borrow().as_ref().unwrap().shown().name, "files");
 }
 
+// leaf: audit-options-gui-sessions-sessions-default-session-on-startup
 #[test]
 fn running_marker_survives_interrupted_boot_and_clears_only_explicit_clean_finish() {
     use hydrus_gui::session_startup::Run;

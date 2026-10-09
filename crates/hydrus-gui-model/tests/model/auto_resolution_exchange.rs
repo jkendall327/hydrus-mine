@@ -35,12 +35,50 @@ fn the_reference_s_serialised_rules_import() {
     assert!(refused_message(&other.refused).ends_with("DuplicatesAutoResolutionRule"));
 }
 
+/// The serialised types of the reference's `PairComparator` subclasses, read
+/// from its source: each class's `SERIALISABLE_TYPE` constant, looked up in
+/// `HydrusSerialisable.py`.
+fn reference_comparator_types() -> Vec<u16> {
+    let comparators = include_str!(
+        "../../../../hydrus/client/duplicates/ClientDuplicatesAutoResolutionComparators.py"
+    );
+    let constants = include_str!("../../../../hydrus/core/HydrusSerialisable.py");
+    let mut class = "";
+    let mut types = Vec::new();
+    for line in comparators.lines() {
+        if let Some(rest) = line.strip_prefix("class ") {
+            class = rest;
+        } else if class.starts_with("PairComparator")
+            && let Some(name) = line
+                .trim()
+                .strip_prefix("SERIALISABLE_TYPE = HydrusSerialisable.")
+        {
+            let name = name.trim();
+            let value = constants
+                .lines()
+                .find_map(|l| l.strip_prefix(name)?.trim_start().strip_prefix("= "))
+                .unwrap_or_else(|| panic!("{name}"));
+            types.push(value.trim().parse().unwrap());
+        }
+    }
+    types.sort_unstable();
+    types
+}
+
+#[test]
+fn the_comparator_types_are_the_reference_s_pair_comparators() {
+    let mut ours = hydrus_gui_model::auto_resolution_exchange::COMPARATOR_TYPES.to_vec();
+    ours.sort_unstable();
+    assert_eq!(ours, reference_comparator_types());
+    assert_eq!(ours.len(), 7);
+}
+
 fn first_comparators(value: &serde_json::Value, out: &mut Vec<serde_json::Value>) {
     if let Some(array) = value.as_array() {
         if array.len() >= 2
             && array[0]
                 .as_u64()
-                .is_some_and(|t| [130, 131, 137, 138, 140, 141, 152].contains(&t))
+                .is_some_and(|t| reference_comparator_types().contains(&u16::try_from(t).unwrap()))
             && array[1].is_u64()
         {
             out.push(value.clone());

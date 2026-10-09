@@ -1,0 +1,1781 @@
+{
+ "now": "2026-10-04T12:30:00",
+ "timezone": "UTC",
+ "cases": [
+  {
+   "group": "iso",
+   "text": "2024-02-29",
+   "mode": "dateutil",
+   "result": "1709164800",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024-02-29T10:20:30",
+   "mode": "dateutil",
+   "result": "1709202030",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024-02-29T10:20:30Z",
+   "mode": "dateutil",
+   "result": "1709202030",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024-02-29T10:20:30+00:00",
+   "mode": "dateutil",
+   "result": "1709202030",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024-02-29T10:20:30-05:00",
+   "mode": "dateutil",
+   "result": "1709220030",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024-02-29T10:20:30.123Z",
+   "mode": "dateutil",
+   "result": "1709202030",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024-02-29T10:20:30.123456+02:00",
+   "mode": "dateutil",
+   "result": "1709194830",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024-02-29 10:20:30",
+   "mode": "dateutil",
+   "result": "1709202030",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024-02-29 10:20",
+   "mode": "dateutil",
+   "result": "1709202000",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024-02-29 10:20:30 +0200",
+   "mode": "dateutil",
+   "result": "1709194830",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024-02-29 10:20:30+0200",
+   "mode": "dateutil",
+   "result": "1709194830",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024-02-29 10:20:30 UTC",
+   "mode": "dateutil",
+   "result": "1709202030",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024-02-29 10:20:30 GMT",
+   "mode": "dateutil",
+   "result": "1709202030",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024-02-29 10:20:30 EST",
+   "mode": "dateutil",
+   "result": "1709202030",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024-02-29 10:20:30 PST",
+   "mode": "dateutil",
+   "result": "1709202030",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "20240229",
+   "mode": "dateutil",
+   "result": "1709164800",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "20240229T102030",
+   "mode": "dateutil",
+   "result": "1709202030",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024-02",
+   "mode": "dateutil",
+   "result": "1707004800",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024",
+   "mode": "dateutil",
+   "result": "1728000000",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024/02/29",
+   "mode": "dateutil",
+   "result": "1709164800",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024.02.29",
+   "mode": "dateutil",
+   "result": "1709164800",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024-2-9",
+   "mode": "dateutil",
+   "result": "1707436800",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024-W09-4",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"2024-W09-4\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "iso",
+   "text": "2024-02-29T10:20:30+0200",
+   "mode": "dateutil",
+   "result": "1709194830",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024-02-29T10:20:30 +02:00",
+   "mode": "dateutil",
+   "result": "1709194830",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024-02-29 10:20:30.5",
+   "mode": "dateutil",
+   "result": "1709202030",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024-02-29 10:20:30,5",
+   "mode": "dateutil",
+   "result": "1709202030",
+   "error": false
+  },
+  {
+   "group": "iso",
+   "text": "2024-02-29T25:00:00",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"2024-02-29T25:00:00\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "iso",
+   "text": "2024-02-30",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"2024-02-30\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "iso",
+   "text": "2024-060",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"2024-060\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "numeric",
+   "text": "7/18/2023",
+   "mode": "dateutil",
+   "result": "1689638400",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "7/18/2023 8:32:00AM",
+   "mode": "dateutil",
+   "result": "1689669120",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "7/18/2023 8:32:00 AM",
+   "mode": "dateutil",
+   "result": "1689669120",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "7/18/2023 8:32 PM",
+   "mode": "dateutil",
+   "result": "1689712320",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "7/18/2023 20:32",
+   "mode": "dateutil",
+   "result": "1689712320",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "07/18/23",
+   "mode": "dateutil",
+   "result": "1689638400",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "7-18-2023",
+   "mode": "dateutil",
+   "result": "1689638400",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "7.18.2023",
+   "mode": "dateutil",
+   "result": "1689638400",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "18/7/2023",
+   "mode": "dateutil",
+   "result": "1689638400",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "1/2/2023",
+   "mode": "dateutil",
+   "result": "1672617600",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "12/31/1999",
+   "mode": "dateutil",
+   "result": "946598400",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "02/29/2024",
+   "mode": "dateutil",
+   "result": "1709164800",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "02/30/2024",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"02/30/2024\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "numeric",
+   "text": "13/13/2023",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"13/13/2023\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "numeric",
+   "text": "1/2/03",
+   "mode": "dateutil",
+   "result": "1041465600",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "31.12.2023",
+   "mode": "dateutil",
+   "result": "1703980800",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "31-12-2023 23:59",
+   "mode": "dateutil",
+   "result": "1704067140",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "1/2/2023 13:45:00",
+   "mode": "dateutil",
+   "result": "1672667100",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "2023-1-2",
+   "mode": "dateutil",
+   "result": "1672617600",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "12.31.1999",
+   "mode": "dateutil",
+   "result": "946598400",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "31/12/1999",
+   "mode": "dateutil",
+   "result": "946598400",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "010203",
+   "mode": "dateutil",
+   "result": "1041465600",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "1999",
+   "mode": "dateutil",
+   "result": "938995200",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "1",
+   "mode": "dateutil",
+   "result": "1790812800",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "12",
+   "mode": "dateutil",
+   "result": "1791763200",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "31",
+   "mode": "dateutil",
+   "result": "1793404800",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "32",
+   "mode": "dateutil",
+   "result": "1980460800",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "99",
+   "mode": "dateutil",
+   "result": "938995200",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "100",
+   "mode": "dateutil",
+   "result": "-58987612800",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "1234",
+   "mode": "dateutil",
+   "result": "-23202028800",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "12345",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"12345\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "numeric",
+   "text": "123456",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"123456\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "numeric",
+   "text": "991231",
+   "mode": "dateutil",
+   "result": "946598400",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "011203",
+   "mode": "dateutil",
+   "result": "1042329600",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "1 2",
+   "mode": "dateutil",
+   "result": "1767312000",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "12 13 14",
+   "mode": "dateutil",
+   "result": "1418428800",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "1 2 3 4",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"1 2 3 4\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "numeric",
+   "text": "-12",
+   "mode": "dateutil",
+   "result": "1791763200",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "-123",
+   "mode": "dateutil",
+   "result": "-58261852800",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "-2024",
+   "mode": "dateutil",
+   "result": "1728000000",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "5-6",
+   "mode": "dateutil",
+   "result": "1778025600",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "1/2",
+   "mode": "dateutil",
+   "result": "1767312000",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "31 12 99",
+   "mode": "dateutil",
+   "result": "946598400",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "1 13 3",
+   "mode": "dateutil",
+   "result": "1042416000",
+   "error": false
+  },
+  {
+   "group": "numeric",
+   "text": "1 99 1",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"1 99 1\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "numeric",
+   "text": "2 30 3",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"2 30 3\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "numeric",
+   "text": "0",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"0\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "numeric",
+   "text": "000",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"000\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "month_names",
+   "text": "4 March 2020",
+   "mode": "dateutil",
+   "result": "1583280000",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "4 Mar 2020",
+   "mode": "dateutil",
+   "result": "1583280000",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "March 4, 2020",
+   "mode": "dateutil",
+   "result": "1583280000",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "Mar 4, 2020",
+   "mode": "dateutil",
+   "result": "1583280000",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "March 4 2020",
+   "mode": "dateutil",
+   "result": "1583280000",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "March 4th, 2020",
+   "mode": "dateutil",
+   "result": "1583280000",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "1st January 2020",
+   "mode": "dateutil",
+   "result": "1577836800",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "2nd Feb 2021",
+   "mode": "dateutil",
+   "result": "1612224000",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "3rd of March 2022",
+   "mode": "dateutil",
+   "result": "1646265600",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "January 12, 2012 10:00 PM",
+   "mode": "dateutil",
+   "result": "1326405600",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "Jan 12, 2012 10:00 PM",
+   "mode": "dateutil",
+   "result": "1326405600",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "January 12, 2012 22:00",
+   "mode": "dateutil",
+   "result": "1326405600",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "Sept 5 2020",
+   "mode": "dateutil",
+   "result": "1599264000",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "September 5, 2020",
+   "mode": "dateutil",
+   "result": "1599264000",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "sep 5 2020",
+   "mode": "dateutil",
+   "result": "1599264000",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "5 SEPTEMBER 2020",
+   "mode": "dateutil",
+   "result": "1599264000",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "march 2020",
+   "mode": "dateutil",
+   "result": "1583280000",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "March 2020",
+   "mode": "dateutil",
+   "result": "1583280000",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "Mar 2020",
+   "mode": "dateutil",
+   "result": "1583280000",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "March 4",
+   "mode": "dateutil",
+   "result": "1772582400",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "Mar 4",
+   "mode": "dateutil",
+   "result": "1772582400",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "Wednesday, March 4, 2020",
+   "mode": "dateutil",
+   "result": "1583280000",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "Wed Mar 4 2020",
+   "mode": "dateutil",
+   "result": "1583280000",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "Wed, 04 Mar 2020 12:00:00 GMT",
+   "mode": "dateutil",
+   "result": "1583323200",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "Wed, 02 Oct 2002 13:00:00 +0200",
+   "mode": "dateutil",
+   "result": "1033556400",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "Wed, 02 Oct 2002 13:00:00 -0500",
+   "mode": "dateutil",
+   "result": "1033581600",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "Thu Jan  1 00:00:00 1970",
+   "mode": "dateutil",
+   "result": "0",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "Tuesday",
+   "mode": "dateutil",
+   "result": "1791244800",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "monday",
+   "mode": "dateutil",
+   "result": "1791158400",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "Sunday",
+   "mode": "dateutil",
+   "result": "1791072000",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "Saturday",
+   "mode": "dateutil",
+   "result": "1791590400",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "friday",
+   "mode": "dateutil",
+   "result": "1791504000",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "4 Mar 20",
+   "mode": "dateutil",
+   "result": "1583280000",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "March 4, 20",
+   "mode": "dateutil",
+   "result": "1583280000",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "Dec 25",
+   "mode": "dateutil",
+   "result": "1798156800",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "25 December",
+   "mode": "dateutil",
+   "result": "1798156800",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "Fri Jan 5 2024 10:00:00 GMT+0100",
+   "mode": "dateutil",
+   "result": "1704452400",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "January 12, 2012 10:00 PM EST",
+   "mode": "dateutil",
+   "result": "1326405600",
+   "error": false
+  },
+  {
+   "group": "month_names",
+   "text": "1970-01-02 00:00:00 UTC",
+   "mode": "dateutil",
+   "result": "86400",
+   "error": false
+  },
+  {
+   "group": "times",
+   "text": "12:30",
+   "mode": "dateutil",
+   "result": "1791117000",
+   "error": false
+  },
+  {
+   "group": "times",
+   "text": "12:30:45",
+   "mode": "dateutil",
+   "result": "1791117045",
+   "error": false
+  },
+  {
+   "group": "times",
+   "text": "8:32 AM",
+   "mode": "dateutil",
+   "result": "1791102720",
+   "error": false
+  },
+  {
+   "group": "times",
+   "text": "8:32 PM",
+   "mode": "dateutil",
+   "result": "1791145920",
+   "error": false
+  },
+  {
+   "group": "times",
+   "text": "8:32pm",
+   "mode": "dateutil",
+   "result": "1791145920",
+   "error": false
+  },
+  {
+   "group": "times",
+   "text": "12:00 AM",
+   "mode": "dateutil",
+   "result": "1791072000",
+   "error": false
+  },
+  {
+   "group": "times",
+   "text": "12:00 PM",
+   "mode": "dateutil",
+   "result": "1791115200",
+   "error": false
+  },
+  {
+   "group": "times",
+   "text": "00:00",
+   "mode": "dateutil",
+   "result": "1791072000",
+   "error": false
+  },
+  {
+   "group": "times",
+   "text": "23:59:59",
+   "mode": "dateutil",
+   "result": "1791158399",
+   "error": false
+  },
+  {
+   "group": "times",
+   "text": "noon",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"noon\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "times",
+   "text": "midnight",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"midnight\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "times",
+   "text": "5pm",
+   "mode": "dateutil",
+   "result": "1791133200",
+   "error": false
+  },
+  {
+   "group": "times",
+   "text": "5 pm",
+   "mode": "dateutil",
+   "result": "1791133200",
+   "error": false
+  },
+  {
+   "group": "times",
+   "text": "17h",
+   "mode": "dateutil",
+   "result": "1791133200",
+   "error": false
+  },
+  {
+   "group": "times",
+   "text": "10:20:30.123",
+   "mode": "dateutil",
+   "result": "1791109230",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "now",
+   "mode": "dateparser",
+   "result": "1791117000",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "today",
+   "mode": "dateparser",
+   "result": "1791117000",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "yesterday",
+   "mode": "dateparser",
+   "result": "1791030600",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "tomorrow",
+   "mode": "dateparser",
+   "result": "1791203400",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "1 second ago",
+   "mode": "dateparser",
+   "result": "1791116999",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "30 seconds ago",
+   "mode": "dateparser",
+   "result": "1791116970",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "1 minute ago",
+   "mode": "dateparser",
+   "result": "1791116940",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "2 minutes ago",
+   "mode": "dateparser",
+   "result": "1791116880",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "1 hour ago",
+   "mode": "dateparser",
+   "result": "1791113400",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "2 hours ago",
+   "mode": "dateparser",
+   "result": "1791109800",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "3 days ago",
+   "mode": "dateparser",
+   "result": "1790857800",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "1 day ago",
+   "mode": "dateparser",
+   "result": "1791030600",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "1 week ago",
+   "mode": "dateparser",
+   "result": "1790512200",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "2 weeks ago",
+   "mode": "dateparser",
+   "result": "1789907400",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "1 month ago",
+   "mode": "dateparser",
+   "result": "1788525000",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "3 months ago",
+   "mode": "dateparser",
+   "result": "1783168200",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "1 year ago",
+   "mode": "dateparser",
+   "result": "1759581000",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "5 years ago",
+   "mode": "dateparser",
+   "result": "1633350600",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "a day ago",
+   "mode": "dateparser",
+   "result": "1791030600",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "an hour ago",
+   "mode": "dateparser",
+   "result": "1791113400",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "a week ago",
+   "mode": "dateparser",
+   "result": "1790512200",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "a month ago",
+   "mode": "dateparser",
+   "result": "1788525000",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "a year ago",
+   "mode": "dateparser",
+   "result": "1759581000",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "in 2 days",
+   "mode": "dateparser",
+   "result": "1791289800",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "in 1 hour",
+   "mode": "dateparser",
+   "result": "1791120600",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "in 3 weeks",
+   "mode": "dateparser",
+   "result": "1792931400",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "in a day",
+   "mode": "dateparser",
+   "result": "1791203400",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "in an hour",
+   "mode": "dateparser",
+   "result": "1791120600",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "2 hours and 30 minutes ago",
+   "mode": "dateparser",
+   "result": "1791108000",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "1 year, 2 months ago",
+   "mode": "dateparser",
+   "result": "1754310600",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "last week",
+   "mode": "dateparser",
+   "result": "1790512200",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "last month",
+   "mode": "dateparser",
+   "result": "1788525000",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "last year",
+   "mode": "dateparser",
+   "result": "1759581000",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "next week",
+   "mode": "dateparser",
+   "result": "1791721800",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "next month",
+   "mode": "dateparser",
+   "result": "1793795400",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "next year",
+   "mode": "dateparser",
+   "result": "1822653000",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "last monday",
+   "mode": "dateparser",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"last monday\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "relative",
+   "text": "two days ago",
+   "mode": "dateparser",
+   "result": "1790944200",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "one hour ago",
+   "mode": "dateparser",
+   "result": "1791113400",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "2d ago",
+   "mode": "dateparser",
+   "result": "1790944200",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "5 min ago",
+   "mode": "dateparser",
+   "result": "1791116700",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "1h ago",
+   "mode": "dateparser",
+   "result": "1791113400",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "10s ago",
+   "mode": "dateparser",
+   "result": "1791116990",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "1w ago",
+   "mode": "dateparser",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"1w ago\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "relative",
+   "text": "36 hours ago",
+   "mode": "dateparser",
+   "result": "1790987400",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "2 days 3 hours ago",
+   "mode": "dateparser",
+   "result": "1790933400",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "1m ago",
+   "mode": "dateparser",
+   "result": "1791116940",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "3 mins ago",
+   "mode": "dateparser",
+   "result": "1791116820",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "2 hrs ago",
+   "mode": "dateparser",
+   "result": "1791109800",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "1y ago",
+   "mode": "dateparser",
+   "result": "1759581000",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "2 yrs ago",
+   "mode": "dateparser",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"2 yrs ago\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "relative",
+   "text": "4 mo ago",
+   "mode": "dateparser",
+   "result": "1780576200",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "2 secs ago",
+   "mode": "dateparser",
+   "result": "1791116998",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "1 mon ago",
+   "mode": "dateparser",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"1 mon ago\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "relative",
+   "text": "yesterday at 5pm",
+   "mode": "dateparser",
+   "result": "1791046800",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "today at 5pm",
+   "mode": "dateparser",
+   "result": "1791133200",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "tomorrow at noon",
+   "mode": "dateparser",
+   "result": "1791201600",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "yesterday 17:00",
+   "mode": "dateparser",
+   "result": "1791046800",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "1 day 2 hours ago",
+   "mode": "dateparser",
+   "result": "1791023400",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "2 days, 3 hours ago",
+   "mode": "dateparser",
+   "result": "1790933400",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "1 hour 30 minutes ago",
+   "mode": "dateparser",
+   "result": "1791111600",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "90 minutes ago",
+   "mode": "dateparser",
+   "result": "1791111600",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "in 1 day 2 hours",
+   "mode": "dateparser",
+   "result": "1791210600",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "in 2 weeks",
+   "mode": "dateparser",
+   "result": "1792326600",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "in 1 month",
+   "mode": "dateparser",
+   "result": "1793795400",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "in 1 year",
+   "mode": "dateparser",
+   "result": "1822653000",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "2 months ago",
+   "mode": "dateparser",
+   "result": "1785846600",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "11 months ago",
+   "mode": "dateparser",
+   "result": "1762259400",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "13 months ago",
+   "mode": "dateparser",
+   "result": "1756989000",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "1 month 1 day ago",
+   "mode": "dateparser",
+   "result": "1788438600",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "29 days ago",
+   "mode": "dateparser",
+   "result": "1788611400",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "365 days ago",
+   "mode": "dateparser",
+   "result": "1759581000",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "0 seconds ago",
+   "mode": "dateparser",
+   "result": "1791117000",
+   "error": false
+  },
+  {
+   "group": "relative",
+   "text": "1 min ago",
+   "mode": "dateparser",
+   "result": "1791116940",
+   "error": false
+  },
+  {
+   "group": "timestamps",
+   "text": "1700000000",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"1700000000\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "timestamps",
+   "text": "1700000000.5",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"1700000000.5\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "timestamps",
+   "text": "1700000000000",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"1700000000000\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "timestamps",
+   "text": "0",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"0\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "timestamps",
+   "text": "-1",
+   "mode": "dateutil",
+   "result": "1790812800",
+   "error": false
+  },
+  {
+   "group": "timezones",
+   "text": "2024-06-01 12:00 EDT",
+   "mode": "dateutil",
+   "result": "1717243200",
+   "error": false
+  },
+  {
+   "group": "timezones",
+   "text": "2024-06-01 12:00 CEST",
+   "mode": "dateutil",
+   "result": "1717243200",
+   "error": false
+  },
+  {
+   "group": "timezones",
+   "text": "2024-06-01 12:00 JST",
+   "mode": "dateutil",
+   "result": "1717243200",
+   "error": false
+  },
+  {
+   "group": "timezones",
+   "text": "2024-06-01 12:00 +09:00",
+   "mode": "dateutil",
+   "result": "1717210800",
+   "error": false
+  },
+  {
+   "group": "timezones",
+   "text": "2024-06-01 12:00 UTC+9",
+   "mode": "dateutil",
+   "result": "1717275600",
+   "error": false
+  },
+  {
+   "group": "timezones",
+   "text": "2024-06-01 12:00 GMT+2",
+   "mode": "dateutil",
+   "result": "1717250400",
+   "error": false
+  },
+  {
+   "group": "timezones",
+   "text": "2024-06-01 12:00 Europe/Paris",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"2024-06-01 12:00 Europe/Paris\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "other_languages",
+   "text": "hier",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"hier\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "other_languages",
+   "text": "il y a 3 jours",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"il y a 3 jours\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "other_languages",
+   "text": "4 mars 2020",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"4 mars 2020\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "other_languages",
+   "text": "4. März 2020",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"4. März 2020\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "other_languages",
+   "text": "4 de marzo de 2020",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"4 de marzo de 2020\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "other_languages",
+   "text": "2020年3月4日",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"2020年3月4日\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "other_languages",
+   "text": "2020년 3월 4일",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"2020년 3월 4일\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "other_languages",
+   "text": "4 марта 2020",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"4 марта 2020\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "other_languages",
+   "text": "vor 2 Stunden",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"vor 2 Stunden\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "other_languages",
+   "text": "hace 2 horas",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"hace 2 horas\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "junk",
+   "text": "",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "junk",
+   "text": " ",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \" \": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "junk",
+   "text": "not a date",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"not a date\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "junk",
+   "text": "abc",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"abc\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "junk",
+   "text": "2024-13-45",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"2024-13-45\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "junk",
+   "text": "99/99/9999",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"99/99/9999\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "junk",
+   "text": "the 4th of never",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"the 4th of never\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "junk",
+   "text": "1 2 3",
+   "mode": "dateutil",
+   "result": "1041465600",
+   "error": false
+  },
+  {
+   "group": "junk",
+   "text": "posted on March 4, 2020 by someone",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"posted on March 4, 2020 by someone\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "junk",
+   "text": "Uploaded: 2020-03-04 12:00",
+   "mode": "dateutil",
+   "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"Uploaded: 2020-03-04 12:00\": Sorry, could not parse that date!",
+   "error": true
+  },
+  {
+   "group": "http",
+   "text": "Thu, 20 May 2010 07:00:23 GMT",
+   "mode": "dateutil",
+   "result": "1274338823",
+   "error": false
+  },
+  {
+   "group": "http",
+   "text": "Wed, 21 Oct 2015 07:28:00 GMT",
+   "mode": "dateutil",
+   "result": "1445412480",
+   "error": false
+  },
+  {
+   "group": "http",
+   "text": "Sun, 06 Nov 1994 08:49:37 GMT",
+   "mode": "dateutil",
+   "result": "784111777",
+   "error": false
+  },
+  {
+   "group": "http",
+   "text": "Sunday, 06-Nov-94 08:49:37 GMT",
+   "mode": "dateutil",
+   "result": "784111777",
+   "error": false
+  },
+  {
+   "group": "http",
+   "text": "Sun Nov  6 08:49:37 1994",
+   "mode": "dateutil",
+   "result": "784111777",
+   "error": false
+  },
+  {
+   "group": "http",
+   "text": "Fri, 31 Dec 1999 23:59:59 +0000",
+   "mode": "dateutil",
+   "result": "946684799",
+   "error": false
+  },
+  {
+   "group": "http",
+   "text": "Tue, 15 Nov 1994 08:12:31 -0800",
+   "mode": "dateutil",
+   "result": "784915951",
+   "error": false
+  },
+  {
+   "group": "http",
+   "text": "120",
+   "mode": "dateutil",
+   "result": "-58356460800",
+   "error": false
+  },
+  {
+   "group": "http",
+   "text": "Mon, 01 Jan 2024 00:00:00 UTC",
+   "mode": "dateutil",
+   "result": "1704067200",
+   "error": false
+  }
+ ],
+ "last_modified": [
+  {
+   "text": "Thu, 20 May 2010 07:00:23 GMT",
+   "result": 1274338823
+  },
+  {
+   "text": "Wed, 21 Oct 2015 07:28:00 GMT",
+   "result": 1445412480
+  },
+  {
+   "text": "Thu, 01 Jan 1970 00:00:00 GMT",
+   "result": null
+  },
+  {
+   "text": "Fri, 02 Jan 1970 00:00:00 GMT",
+   "result": null
+  },
+  {
+   "text": "Thu, 08 Jan 1970 00:00:01 GMT",
+   "result": 604801
+  },
+  {
+   "text": "Sunday, 06-Nov-94 08:49:37 GMT",
+   "result": null
+  },
+  {
+   "text": "Sun Nov  6 08:49:37 1994",
+   "result": null
+  },
+  {
+   "text": "2010-05-20T07:00:23Z",
+   "result": null
+  },
+  {
+   "text": "Thu, 20 May 2010 07:00:23 +0200",
+   "result": null
+  },
+  {
+   "text": "garbage",
+   "result": null
+  },
+  {
+   "text": "Thu, 20 May 2010 07:00:23",
+   "result": 1274338823
+  }
+ ]
+}

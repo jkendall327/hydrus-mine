@@ -121,6 +121,10 @@ fn icons(bound: &Bound, file: HashId) -> Vec<i32> {
         .map(|icon| icon.kind)
         .collect()
 }
+// leaf: audit-options-files-and-trash-even-skipped-files
+// leaf: audit-options-files-and-trash-remove-files-from-view-when-they-are-archive-delete-filtered
+// leaf: audit-options-files-and-trash-remove-files-from-view-when-they-are-moved-to-another-local-file-domain
+// leaf: audit-options-files-and-trash-remove-files-from-view-when-they-are-sent-to-the-trash
 #[test]
 fn options_match_actual_qt_dependency_apply_cancel_reopen_and_retired_callbacks() {
     let fixture = hydrus_testkit::fixture_json("files_view_removal.json");
@@ -178,6 +182,8 @@ fn options_match_actual_qt_dependency_apply_cancel_reopen_and_retired_callbacks(
     let reopened = Store::open(dir.path()).unwrap();
     assert_eq!(saved(&reopened), saved(&store));
 }
+// leaf: audit-options-files-and-trash-even-skipped-files
+// leaf: audit-options-files-and-trash-remove-files-from-view-when-they-are-archive-delete-filtered
 #[test]
 fn filter_accept_forget_resume_switch_and_closed_source_never_target_successor() {
     let fixture = hydrus_testkit::fixture_json("files_view_removal.json");
@@ -332,6 +338,9 @@ fn filter_accept_forget_resume_switch_and_closed_source_never_target_successor()
     assert_eq!(successor.borrow().files(), before);
     closed.invoke_forget();
 }
+// leaf: audit-options-files-and-trash-remove-files-from-view-when-they-are-archive-delete-filtered
+// leaf: audit-options-files-and-trash-remove-files-from-view-when-they-are-moved-to-another-local-file-domain
+// leaf: audit-options-files-and-trash-remove-files-from-view-when-they-are-sent-to-the-trash
 #[test]
 fn live_trash_policy_uses_actual_membership_and_move_menu_only_removes_source() {
     let (_dir, store) = store();
@@ -527,6 +536,8 @@ fn live_trash_policy_uses_actual_membership_and_move_menu_only_removes_source() 
     assert_eq!(owner.borrow().selected_files(), selected);
     failed.invoke_cancel();
 }
+// leaf: audit-options-files-and-trash-remove-files-from-view-when-they-are-moved-to-another-local-file-domain
+// leaf: audit-options-files-and-trash-remove-files-from-view-when-they-are-sent-to-the-trash
 #[test]
 fn mixed_already_trash_advanced_choice_and_locked_physical_noop_retain_unaffected_rows() {
     let (_dir, store) = store();

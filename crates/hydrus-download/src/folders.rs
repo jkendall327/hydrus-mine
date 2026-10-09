@@ -328,10 +328,9 @@ impl Downloader {
             );
             return Ok(());
         }
-        // (the importer always works from a copy, as the reference does
-        // with copy_import_files_to_temp_dir, its default)
-        let _ = copy_to_temp;
-        let result = self.import_file(seed, &path, options);
+        // (`copy_import_files_to_temp_dir`: imported from a temporary copy,
+        // or, with the TEST option, from the path itself)
+        let result = self.import_file_with(seed, &path, options, copy_to_temp);
         match result {
             Ok(()) => {}
             Err(Stop::Veto(note)) => {

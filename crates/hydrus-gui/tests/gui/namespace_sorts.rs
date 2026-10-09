@@ -73,6 +73,8 @@ fn add(window: &NamespaceSortsWindow, text: &str) {
 }
 
 // leaf: audit-options-nested-namespace-sort-parse
+// leaf: audit-options-file-sort-collect-file-sort-namespace-file-sorting-add
+// leaf: audit-options-file-sort-collect-file-sort-namespace-file-sorting-edit
 #[test]
 fn queue_replays_real_questions_selection_cancel_and_parent_apply_isolation() {
     let windows = headless::init();

@@ -87,15 +87,17 @@ fn the_duplicates_hover_is_pinned_or_pops_in_as_the_option_says() {
     assert_eq!((shown.kind, shown.checked), (1, true));
     options.invoke_cancel();
 
-    // pinned: the comparison is always beside the canvas
+    // pinned: the comparison is always up, floating over the canvas' right
+    // edge (the canvas keeps the whole window)
     settle(&filter);
     headless::render(&native, 1200, 800);
     assert!(filter.get_hover_pinned());
     assert!(!filter.get_hover_popped());
-    let pinned_canvas = filter.get_canvas_width();
+    assert!((filter.get_canvas_width() - 1200.0).abs() < 0.5);
     assert!(
-        pinned_canvas < 1200.0,
-        "the panel takes room: {pinned_canvas}"
+        (filter.get_hover_x() - 870.0).abs() < 0.5,
+        "{}",
+        filter.get_hover_x()
     );
 
     // unpinned: the canvas has the room, and nothing shows until the mouse
@@ -131,5 +133,6 @@ fn the_duplicates_hover_is_pinned_or_pops_in_as_the_option_says() {
     settle(&filter);
     headless::render(&native, 1200, 800);
     assert!(filter.get_hover_pinned());
-    assert!(filter.get_canvas_width() < 1200.0);
+    assert!((filter.get_canvas_width() - 1200.0).abs() < 0.5);
+    assert!((filter.get_hover_x() - 870.0).abs() < 0.5);
 }

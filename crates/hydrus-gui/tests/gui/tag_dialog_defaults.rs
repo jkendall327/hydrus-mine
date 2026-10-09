@@ -23,6 +23,7 @@ fn preferences(store: &Store) -> (bool, String) {
     )
 }
 
+// leaf: audit-options-tag-editing-tag-dialogs-remember-last-used-default-tag-service-in-manage-tag-dialogs
 #[test]
 fn remembered_tag_service_survives_native_cancel_without_saving_staged_tags() {
     let f = hydrus_testkit::fixture_json("tag_dialog_defaults.json");

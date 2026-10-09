@@ -61,6 +61,7 @@ fn tabs(ui: &MainWindow) -> Vec<String> {
         .collect()
 }
 
+// leaf: audit-options-nested-tag-suggestions-favourites
 #[test]
 fn most_used_child_stages_each_service_cancels_descendants_and_persists_options() {
     let (_dirs, store) = store();
@@ -1187,6 +1188,7 @@ fn the_checker_options_buttons_edit_the_default_checker_options() {
     );
 }
 
+// leaf: audit-options-gui-misc-remember-last-open-options-panel-in-this-window
 #[test]
 fn options_remember_navigation_and_apply_search_placement() {
     let (_dirs, store) = store();
@@ -1233,6 +1235,68 @@ fn options_remember_navigation_and_apply_search_placement() {
     assert_eq!(preferences.last_panel, "audio");
 }
 
+// The options window's opening page and search-bar placement, put through the
+// reference's three recorded cases (options_preferences.json `cases`): the
+// saved choices seeded, the window opened, a page visited, the window closed
+// and opened again; the placement drop-down shows the recorded index and the
+// window the recorded side.
+#[test]
+fn options_open_and_place_the_search_bar_as_the_reference_did() {
+    use hydrus_store::settings::OptionsPreferences;
+    let recorded = hydrus_testkit::fixture_json("options_preferences.json");
+    let _windows = headless::init();
+    for (n, case) in recorded["cases"].as_array().unwrap().iter().enumerate() {
+        let (_dirs, store) = store();
+        let top = case["top"].as_bool().unwrap();
+        let seeded = OptionsPreferences {
+            remember_panel: case["remember"].as_bool().unwrap(),
+            last_panel: case["last"].as_str().unwrap().to_owned(),
+            search_at_top: top,
+        };
+        store
+            .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &seeded))
+            .unwrap();
+        let ui = MainWindow::new().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        let context = format!("case {n}: {case}");
+        assert_eq!(
+            page_names(&window)[window.get_page() as usize],
+            case["opened"].as_str().unwrap(),
+            "{context}"
+        );
+        assert_eq!(window.get_search_at_top(), top, "{context}");
+        // (the placement drop-down, on the gui page, shows the recorded index)
+        show_page(&window, "gui");
+        let (_, placement) = row(&window, "Put the options search bar at the: ");
+        assert_eq!(
+            i64::from(placement.index),
+            case["search_index"].as_i64().unwrap(),
+            "{context}"
+        );
+        show_page(&window, "audio");
+        window.invoke_cancel();
+        let kept = store
+            .read(hydrus_store::settings::get::<OptionsPreferences>)
+            .unwrap();
+        assert_eq!(
+            kept.last_panel,
+            case["remembered_after_page_change"].as_str().unwrap(),
+            "{context}"
+        );
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        assert_eq!(
+            page_names(&window)[window.get_page() as usize],
+            case["reopened"].as_str().unwrap(),
+            "{context}"
+        );
+        window.invoke_cancel();
+    }
+}
+
+// leaf: audit-options-gui-main-window-confirm-client-exit
 #[test]
 fn gui_identity_and_exit_confirmation_reach_the_main_window() {
     let (_dirs, store) = store();
@@ -1317,6 +1381,8 @@ fn gui_identity_and_exit_confirmation_reach_the_main_window() {
     }
 }
 
+// leaf: audit-options-gui-pages-page-tab-names-also-automatically-prompt-when-sending-some-pages-to-one
+// leaf: audit-options-gui-sessions-sessions-number-of-session-backups-to-keep
 #[test]
 fn applied_session_backup_count_controls_the_next_save() {
     use hydrus_core::pages::Session;
@@ -1506,6 +1572,9 @@ fn sleep_options_apply_to_the_network_consumer_and_cancel_drafts() {
     window.invoke_cancel();
 }
 
+// leaf: audit-options-files-and-trash-when-copying-file-hashes-prefix-with-booru-friendly-hash-type
+// leaf: audit-options-tag-editing-tag-dialogs-default-tag-service-in-tag-dialogs
+// leaf: audit-options-tag-editing-tag-dialogs-remember-last-used-default-tag-service-in-manage-tag-dialogs
 #[test]
 fn hash_prefix_option_reaches_selected_and_focused_clipboard_hashes() {
     use hydrus_gui::thumbnail_menu::{HashKind, hashes};
@@ -1634,6 +1703,7 @@ fn tag_dialog_service_dropdown_tracks_remember_checkbox_and_parent_transaction()
     assert_eq!(store.read(get::<TagEditingSettings>).unwrap(), before);
 }
 
+// leaf: audit-options-file-search-file-search-autocomplete-default-tag-service-in-search-pages
 #[test]
 fn default_search_service_option_changes_new_pages_and_missing_keys_fall_back() {
     use hydrus_core::service::builtin_keys;
@@ -1730,6 +1800,8 @@ fn removed_default_service_falls_back_in_options_and_waits_for_apply() {
     }
 }
 
+// leaf: audit-options-file-search-file-search-autocomplete-show-system-everything
+// leaf: audit-options-file-search-file-search-autocomplete-start-new-search-pages-in-searching-immediately
 #[test]
 fn search_defaults_apply_to_new_pages_and_the_real_autocomplete() {
     use hydrus_core::ServiceKey;
@@ -1844,6 +1916,7 @@ fn search_defaults_apply_to_new_pages_and_the_real_autocomplete() {
     reopened.invoke_cancel();
 }
 
+// leaf: audit-options-file-search-file-search-autocomplete-default-fallback-local-file-search-location
 #[test]
 fn default_local_location_child_draft_drives_blank_pages_and_tag_fallback() {
     use hydrus_core::ServiceKey;
@@ -1962,6 +2035,7 @@ fn default_local_location_child_draft_drives_blank_pages_and_tag_fallback() {
     );
 }
 
+// leaf: audit-options-file-search-file-search-autocomplete-autocomplete-dropdown-floats-over-file-search-pages
 #[test]
 fn read_list_sizes_and_float_policy_reach_rendered_new_pages() {
     use hydrus_core::ServiceKey;
@@ -2082,6 +2156,8 @@ fn read_list_sizes_and_float_policy_reach_rendered_new_pages() {
     }
 }
 
+// leaf: audit-options-file-search-file-search-if-explicit-system-limit-then-refresh-search-when-file-sort-changes
+// leaf: audit-options-file-search-file-search-implicit-system-limit-for-all-searches
 #[test]
 fn implicit_limit_options_reach_queries_and_limited_sort_refresh() {
     use hydrus_search::{SortBy, SortOrder};
@@ -2172,6 +2248,8 @@ fn implicit_limit_options_reach_queries_and_limited_sort_refresh() {
     );
 }
 
+// leaf: audit-options-media-playback-transparency-draw-image-transparency-as-checkerboard
+// leaf: audit-options-media-playback-transparency-instead-of-checkerboard-use-a-bright-greenscreen
 #[test]
 fn canvas_options_apply_to_the_open_viewer_and_cancel_discards_the_draft() {
     use hydrus_store::media::FileFlags;
@@ -2320,6 +2398,13 @@ fn canvas_options_apply_to_the_open_viewer_and_cancel_discards_the_draft() {
     opaque_viewer.invoke_close_requested();
 }
 
+// leaf: audit-options-media-playback-zoom-and-position-re-center-media-on-window-resize
+// leaf: audit-options-media-viewer-animation-audio-seek-bar-seek-bar-height
+// leaf: audit-options-media-viewer-animation-audio-seek-bar-seek-bar-height-when-mouse-away
+// leaf: audit-options-media-viewer-animation-audio-seek-bar-seek-bar-nub-width
+// leaf: audit-options-media-viewer-hovers-hover-windows-pop-in-notes-right-hover-window-on-mouseover
+// leaf: audit-options-media-viewer-hovers-hover-windows-pop-in-ratings-and-locations-top-right-hover-window-on-mouseover
+// leaf: audit-options-media-viewer-hovers-hover-windows-pop-in-tags-left-hover-window-on-mouseover
 #[test]
 #[allow(clippy::float_cmp)] // logical pixel geometry is exact
 fn resize_and_seek_options_reach_the_native_viewer_geometry() {
@@ -2516,6 +2601,7 @@ fn resize_and_seek_options_reach_the_native_viewer_geometry() {
     viewer.invoke_close_requested();
 }
 
+// leaf: audit-options-media-viewer-hovers-background-draw-index-text-bottom-right-in-the-viewer-background
 #[test]
 fn hover_options_apply_to_actual_mouseover_panels_and_passive_index_text() {
     use hydrus_store::settings::{self, ViewerHoverSettings};
@@ -2707,6 +2793,8 @@ fn hover_options_apply_to_actual_mouseover_panels_and_passive_index_text() {
     viewer.invoke_close_requested();
 }
 
+// leaf: audit-options-media-viewer-mouse-behaviour-do-not-allow-mouse-media-drag-panning-when-the-media-has-duration
+// leaf: audit-options-media-viewer-mouse-behaviour-hide-mouse-cursor-during-media-viewer-drags
 #[test]
 #[allow(clippy::float_cmp)] // exact integer pointer deltas in logical pixels
 fn pointer_options_change_real_drag_acceptance_and_cursor_transitions() {
@@ -2872,6 +2960,7 @@ fn pointer_options_change_real_drag_acceptance_and_cursor_transitions() {
     reopened.invoke_close_requested();
 }
 
+// leaf: audit-options-tag-autocomplete-tabs-favourite-tags-favourite-tag-list-editor
 #[test]
 fn favourite_tags_child_replays_reference_and_waits_for_parent_apply() {
     use hydrus_store::settings::{self, FavouriteTags};
@@ -2992,6 +3081,8 @@ fn favourite_tags_child_replays_reference_and_waits_for_parent_apply() {
     assert_eq!(store.read(settings::get::<FavouriteTags>).unwrap(), saved);
 }
 
+// leaf: audit-options-media-viewer-animation-audio-seek-bar-seek-bar-full-height-pop-in-requires-window-focus
+// leaf: audit-options-media-viewer-hovers-hover-windows-hover-window-pop-in-requires-window-focus
 #[test]
 #[allow(clippy::float_cmp)] // whole logical-pixel bar heights
 fn focus_options_reach_native_activity_and_actual_mouseover_gates() {
@@ -3263,6 +3354,10 @@ fn show_original_key(ui: &MainWindow, bound: &hydrus_gui::Bound, key: hydrus_cor
     assert_eq!(bound.pages.borrow().shown().key, key);
 }
 
+// leaf: audit-options-media-viewer-closing-focus-advanced-when-closing-the-media-viewer-with-the-above-focusing-options-activate-main-gui
+// leaf: audit-options-media-viewer-closing-focus-debug-when-closing-the-media-viewer-at-any-time-activate-main-gui
+// leaf: audit-options-media-viewer-closing-focus-when-closing-the-media-viewer-re-select-original-search-page
+// leaf: audit-options-media-viewer-closing-focus-when-closing-the-media-viewer-tell-original-search-page-to-select-exit-media
 #[test]
 fn closing_preferences_reach_frozen_page_selection_and_native_main_activation() {
     use hydrus_gui::viewer_closing::set_activation_observer;
@@ -3726,6 +3821,7 @@ fn passive_background_options_paint_independent_copies_behind_opaque_media() {
     reopened.invoke_close_requested();
 }
 
+// leaf: audit-options-downloading-subscriptions-if-a-subscription-has-this-many-failed-file-imports-stop-and-continue-later
 #[test]
 fn subscription_failure_limit_options_replay_qt_values_apply_cancel_and_reopen() {
     use hydrus_store::network::NetworkSettings;
@@ -3813,6 +3909,8 @@ fn subscription_failure_limit_options_replay_qt_values_apply_cancel_and_reopen()
     window.invoke_cancel();
 }
 
+// leaf: audit-options-media-viewer-mouse-behaviour-hide-mouse-cursor-during-media-viewer-drags
+// leaf: audit-options-media-viewer-mouse-behaviour-time-until-mouse-cursor-autohides-on-media-viewer
 #[test]
 fn cursor_timeout_reaches_native_motion_timer_focus_and_actual_popup_lifecycle() {
     use hydrus_gui::{session_autosave, viewer_cursor};
@@ -4010,6 +4108,7 @@ fn cursor_timeout_reaches_native_motion_timer_focus_and_actual_popup_lifecycle()
     );
 }
 
+// leaf: audit-options-downloading-subscriptions-maximum-number-of-subscriptions-that-can-sync-simultaneously
 #[test]
 fn subscription_concurrency_options_replay_bounds_parent_apply_cancel_and_reopen() {
     use hydrus_store::network::NetworkSettings;
@@ -4078,6 +4177,8 @@ fn subscription_concurrency_options_replay_bounds_parent_apply_cancel_and_reopen
     window.invoke_cancel();
 }
 
+// leaf: audit-options-media-playback-video-animations-always-loop-animations
+// leaf: audit-options-media-viewer-hovers-top-hover-button-menu-controls-zoom-switch-button-switches-between
 #[test]
 #[allow(clippy::float_cmp)] // recorded whole logical pixels and frame proportions
 fn hover_zoom_and_loop_options_reach_owned_viewers_and_survive_cancel_and_reopen() {
@@ -4285,6 +4386,7 @@ fn hover_zoom_and_loop_options_reach_owned_viewers_and_survive_cancel_and_reopen
     options.invoke_cancel();
 }
 
+// leaf: audit-options-exporting-export-folder-default-export-directory
 #[test]
 fn default_export_directory_browse_apply_cancel_and_manual_open_use_shared_preference() {
     use hydrus_core::HashId;
@@ -4465,6 +4567,11 @@ fn default_export_directory_browse_apply_cancel_and_manual_open_use_shared_prefe
     export.invoke_dismissed();
 }
 
+// leaf: audit-options-command-palette-command-palette-max-favourite-searches-to-show
+// leaf: audit-options-command-palette-command-palette-max-page-history-to-show
+// leaf: audit-options-command-palette-command-palette-max-page-results-to-show
+// leaf: audit-options-command-palette-command-palette-search-provider-order-add
+// leaf: audit-options-command-palette-command-palette-start-searching-when-this-many-characters-have-been-typed
 #[test]
 fn command_palette_options_stage_queue_changes_and_persist_only_on_apply() {
     use hydrus_store::command_palette::{CommandPaletteSettings, Provider};
@@ -4624,6 +4731,8 @@ fn command_palette_options_stage_queue_changes_and_persist_only_on_apply() {
     successor.invoke_cancel();
 }
 
+// leaf: audit-options-file-viewing-statistics-show-viewing-stats-on-media-right-click-menus
+// leaf: audit-options-file-viewing-statistics-which-views-to-show
 #[test]
 fn viewing_menu_preferences_apply_to_real_menu_lines_and_cancel_preserves_them() {
     use hydrus_core::CanvasType;
@@ -4792,6 +4901,10 @@ fn viewing_menu_preferences_apply_to_real_menu_lines_and_cancel_preserves_them()
     }
 }
 
+// leaf: audit-options-file-viewing-statistics-cap-any-view-on-the-media-viewer-to-this-maximum-time
+// leaf: audit-options-file-viewing-statistics-enable-file-viewing-statistics-tracking-in-the-archive-delete-filter
+// leaf: audit-options-file-viewing-statistics-enable-file-viewing-statistics-tracking-in-the-duplicate-filter
+// leaf: audit-options-file-viewing-statistics-min-time-to-view-on-media-viewer-to-count-as-a-view
 #[test]
 fn viewing_timing_options_reach_real_viewer_and_archive_filter_lifetimes() {
     use hydrus_core::{CanvasType, HashId};
@@ -4998,6 +5111,7 @@ fn viewing_timing_options_reach_real_viewer_and_archive_filter_lifetimes() {
     assert_eq!(stats(file).views, once + 1);
 }
 
+// leaf: audit-options-files-and-trash-confirm-sending-more-than-one-file-to-archive-or-inbox
 #[test]
 fn files_trash_confirmations_are_staged_reopened_and_consumed() {
     use hydrus_gui::media_actions;
@@ -5107,6 +5221,9 @@ fn files_trash_confirmations_are_staged_reopened_and_consumed() {
     assert!(windows.get(0).is_some());
 }
 
+// leaf: audit-options-files-and-trash-advanced-file-deletion-and-custom-reasons-add
+// leaf: audit-options-files-and-trash-advanced-file-deletion-and-custom-reasons-remember-the-last-reason
+// leaf: audit-options-files-and-trash-advanced-file-deletion-and-custom-reasons-use-the-advanced-file-deletion-dialog
 #[test]
 fn advanced_deletion_queue_stages_custom_reason_cancel_and_real_consumer() {
     use hydrus_store::settings::DeletionPreferences;
@@ -5403,6 +5520,12 @@ fn replay_banner_events(window: &hydrus_gui::TagBannerWindow, events: &[serde_js
     }
 }
 
+// leaf: audit-options-nested-tag-banner-appearance
+// leaf: audit-options-nested-tag-banner-namespaces
+// leaf: audit-options-nested-tag-banner-preview
+// leaf: audit-options-tag-presentation-tag-banners-on-media-viewer-top
+// leaf: audit-options-tag-presentation-tag-banners-on-thumbnail-bottom-right
+// leaf: audit-options-tag-presentation-tag-banners-on-thumbnail-top
 #[test]
 fn banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer() {
     use hydrus_core::{ContentStatus, ServiceKey, Tag, tag_summary::TagSummaries};
@@ -5721,6 +5844,9 @@ fn banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer(
     assert!(viewer.get_tag_banner().is_empty());
 }
 
+// leaf: audit-options-media-viewer-hovers-top-hover-button-menu-controls-collapse-hovers-submenu-in-view-options-eye-menu
+// leaf: audit-options-media-viewer-hovers-top-hover-button-menu-controls-collapse-rendering-submenu-in-view-options-eye-menu
+// leaf: audit-options-media-viewer-hovers-top-hover-button-menu-controls-collapse-window-submenu-in-view-options-eye-menu
 #[test]
 fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewer() {
     use hydrus_store::settings::{
@@ -6329,6 +6455,7 @@ fn eye_menu_mixed_root_boundaries_match_the_recorded_menu_and_real_declaration_o
     }
 }
 
+// leaf: audit-options-nested-tag-suggestions-weights
 #[test]
 fn related_weight_drafts_cancel_reopen_and_re_rank_an_already_open_service_panel() {
     use hydrus_store::related_tags::{Settings as Related, Weights};
@@ -6676,4 +6803,193 @@ fn related_weight_drafts_cancel_reopen_and_re_rank_an_already_open_service_panel
     );
     options.invoke_cancel();
     assert!(bound.options_suggested_tags_slot.weights.borrow().is_none());
+}
+
+// leaf: audit-options-menu-menu-file-options
+#[test]
+fn file_options_is_where_the_reference_has_it_and_opens_its_options_window_once() {
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let menu = hydrus_testkit::fixture_json("main_menu.json");
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+
+    // the file menu, entry for entry as the reference's
+    // (a separator, a submenu, a tick box or an entry)
+    ui.invoke_menu_title_pressed(0, 20.0, 22.0);
+    let lines = ui.get_menu_panes().row_data(0).unwrap().lines;
+    let ours: Vec<(i32, String)> = (0..lines.row_count())
+        .map(|i| lines.row_data(i).unwrap())
+        .map(|line| (line.kind, line.label.to_string()))
+        .collect();
+    let theirs: Vec<(i32, String)> = menu["default"][0]["entries"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|entry| match entry {
+            serde_json::Value::String(s) if s == "---" => (2, String::new()),
+            serde_json::Value::String(s) => (0, s.clone()),
+            entry => (3, entry["menu"].as_str().unwrap().to_owned()),
+        })
+        .collect();
+    let at = theirs
+        .iter()
+        .position(|(_, label)| label == "options\u{2026}")
+        .unwrap();
+    assert_eq!(
+        ours.iter()
+            .map(|(kind, label)| (*kind, label.as_str()))
+            .skip(at.saturating_sub(2))
+            .take(5)
+            .collect::<Vec<_>>(),
+        theirs[at.saturating_sub(2)..(at + 3).min(theirs.len())]
+            .iter()
+            .map(|(kind, label)| (*kind, label.as_str()))
+            .collect::<Vec<_>>(),
+        "options\u{2026} sits between the same entries"
+    );
+    let line = at as i32;
+    assert_eq!(ours[at].1, "options\u{2026}");
+
+    // choosing it opens the options window on the page the reference opens
+    // on, with the pages the reference lists (but for the Qt style page)
+    assert!(bound.options.borrow().is_none());
+    ui.invoke_menu_line_clicked(0, line, 0.0, 0.0, 0.0);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    let pages: Vec<String> = recorded["pages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|page| page["page"].as_str().unwrap().to_owned())
+        .filter(|page| page != "style")
+        .collect();
+    assert_eq!(page_names(&options), pages);
+    assert_eq!(
+        page_names(&options)[options.get_page() as usize],
+        recorded["opens_on"].as_str().unwrap()
+    );
+    // and asking again brings the same window, not a second
+    let count = windows.count();
+    open(&ui);
+    assert_eq!(windows.count(), count);
+    assert!(bound.options.borrow().is_some());
+    options.invoke_cancel();
+    assert!(bound.options.borrow().is_none());
+}
+
+// leaf: audit-options-tag-suggestions-suggested-tags-column-layout
+// The suggested tags panels' layout and opening page, put through the
+// reference's eight recorded cases (tag_suggestions.json `cases`): the layout,
+// default page and width chosen in the real Options window and applied, manage
+// tags opened, and what it shows read back: columns or a notebook, its width,
+// which panels there are and, in a notebook, the page selected.
+#[test]
+fn the_suggested_tags_layout_chosen_in_options_reaches_manage_tags_as_the_reference_s_cases() {
+    let f = hydrus_testkit::fixture_json("tag_suggestions.json");
+    let _windows = headless::init();
+    for case in f["cases"].as_array().unwrap() {
+        let (_dirs, store) = store();
+        let key = store
+            .snapshot()
+            .services
+            .by_name("my tags")
+            .unwrap()
+            .key
+            .to_hex();
+        let service = store.snapshot().services.by_name("my tags").unwrap().id;
+        let labels: Vec<&str> = case["labels"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|l| l.as_str().unwrap())
+            .collect();
+        store
+            .write(move |ctx| {
+                let mut tabs: hydrus_store::settings::TagAutocompleteTabs =
+                    hydrus_store::settings::get(ctx.conn())?;
+                tabs.most_used.insert(key, vec!["parity:new2".to_owned()]);
+                hydrus_store::settings::set(ctx.conn(), &tabs)?;
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &hydrus_store::related_tags::Settings {
+                        enabled: false,
+                        ..hydrus_store::related_tags::Settings::default()
+                    },
+                )?;
+                let recent = hydrus_core::Tag::new("parity:recent").unwrap();
+                let tag = hydrus_store::master::intern_tag(ctx.conn(), &recent)?;
+                ctx.conn().execute(
+                    "INSERT INTO recent_tags(service_id,tag_id,used_ms) VALUES(?,?,?) ON CONFLICT(service_id,tag_id) DO UPDATE SET used_ms=excluded.used_ms",
+                    rusqlite::params![service, tag, hydrus_core::time::TimestampMs::now().0],
+                )?;
+                Ok(())
+            })
+            .unwrap();
+        let ui = MainWindow::new().unwrap();
+        ui.show().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        // chosen in the Options window, as a user would
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&options, "tag suggestions");
+        let width = i32::try_from(case["minimum_width"].as_u64().unwrap()).unwrap();
+        options.invoke_number_edited(row(&options, "Width of suggested tags columns: ").0, width);
+        let columns = case["layout"] == "columns";
+        options.invoke_choice_chosen(row(&options, "Column layout: ").0, i32::from(columns));
+        let page = match case["default"].as_str().unwrap() {
+            "favourites" => "most used",
+            other => other,
+        };
+        let (at, default_row) = row(&options, "Default notebook page: ");
+        let page_at = default_row.items.iter().position(|i| i == page).unwrap();
+        options.invoke_choice_chosen(at, i32::try_from(page_at).unwrap());
+        options.invoke_apply();
+        ui.invoke_search_accepted();
+        ui.invoke_select_all();
+        ui.invoke_manage_tags_selected();
+        let manage = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+        let mine = manage
+            .get_service_names()
+            .iter()
+            .position(|s| s == "my tags")
+            .unwrap();
+        manage.invoke_service_chosen(i32::try_from(mine).unwrap());
+        let context = case.to_string();
+        assert_eq!(manage.get_suggested_columns(), columns, "{context}");
+        // the panels the recording had
+        assert_eq!(
+            manage.get_most_used_enabled(),
+            labels.contains(&"most used"),
+            "{context}"
+        );
+        assert_eq!(
+            manage.get_recent_tags_enabled(),
+            labels.contains(&"recent"),
+            "{context}"
+        );
+        assert_eq!(
+            manage.get_related_tags_enabled(),
+            labels.contains(&"related"),
+            "{context}"
+        );
+        #[allow(clippy::float_cmp)] // (whole-pixel authored width)
+        {
+            assert_eq!(manage.get_suggested_width(), width as f32, "{context}");
+        }
+        match case["selected"].as_str() {
+            // in a notebook, the page the default page opens on
+            Some(selected) => {
+                assert!(!columns, "{context}");
+                assert_eq!(
+                    labels[usize::try_from(manage.get_suggested_page()).unwrap()],
+                    selected,
+                    "{context}"
+                );
+            }
+            // side by side, every panel is shown and none is selected
+            None => assert!(columns, "{context}"),
+        }
+        manage.invoke_cancel();
+    }
 }

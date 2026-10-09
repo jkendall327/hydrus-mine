@@ -2466,7 +2466,7 @@ fn service_kind(service: &LegacyService) -> Result<ServiceKind> {
             use_https: c.use_https,
             external_scheme_override: c.external_scheme_override.clone(),
             external_host_override: c.external_host_override.clone(),
-            external_port_override: c.external_port_override.and_then(|p| u16::try_from(p).ok()),
+            external_port_override: c.external_port_override.clone(),
         }),
         (_, ServiceType::TagRepository) => ServiceKind::TagRepository(verbatim()),
         (_, ServiceType::FileRepository) => ServiceKind::FileRepository(verbatim()),
@@ -5858,6 +5858,7 @@ mod tests {
 
     /// The legacy YAML preference is a portable path, independent of the
     /// filename/character-limit serialisable options.
+    // leaf: audit-options-exporting-export-folder-default-export-directory
     #[test]
     fn export_default_directory_import_resolves_recorded_portable_paths() {
         let source = hydrus_testkit::legacy_fixture("basic");

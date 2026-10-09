@@ -1,0 +1,1428 @@
+{
+ "advanced": {
+  "destination": {
+   "callers": {
+    "client api": {
+     "primary_urls": false,
+     "source_urls": false
+    },
+    "favourites": {
+     "primary_urls": true,
+     "source_urls": true
+    },
+    "gallery/post urls": {
+     "primary_urls": true,
+     "source_urls": true
+    },
+    "global": {
+     "primary_urls": true,
+     "source_urls": true
+    },
+    "import folder": {
+     "primary_urls": false,
+     "source_urls": false
+    },
+    "local import": {
+     "primary_urls": false,
+     "source_urls": false
+    },
+    "specific importer": {
+     "primary_urls": true,
+     "source_urls": true
+    },
+    "subscription": {
+     "primary_urls": true,
+     "source_urls": true
+    },
+    "url class": {
+     "primary_urls": true,
+     "source_urls": true
+    },
+    "watchable urls": {
+     "primary_urls": true,
+     "source_urls": true
+    }
+   },
+   "chosen": [
+    {
+     "auto_archive": false,
+     "chosen": "art",
+     "current": [
+      "art"
+     ],
+     "deleted": [],
+     "even_if_already": false,
+     "label": "art",
+     "warning": false
+    },
+    {
+     "auto_archive": false,
+     "chosen": "my files",
+     "current": [
+      "my files"
+     ],
+     "deleted": [],
+     "even_if_already": false,
+     "label": "my files",
+     "warning": false
+    }
+   ],
+   "interlock": [
+    {
+     "auto_archive": false,
+     "current": [
+      "my files"
+     ],
+     "deleted": [],
+     "even_if_already": false,
+     "label": "my files",
+     "ticked": false,
+     "warning": false
+    },
+    {
+     "auto_archive": true,
+     "current": [
+      "my files"
+     ],
+     "deleted": [],
+     "even_if_already": true,
+     "label": "my files",
+     "ticked": true,
+     "warning": false
+    }
+   ],
+   "menu": [
+    {
+     "checked": false,
+     "text": "art"
+    },
+    {
+     "checked": true,
+     "text": "my files"
+    },
+    "---",
+    {
+     "checked": false,
+     "text": "multiple/deleted locations"
+    }
+   ],
+   "multiple": [
+    {
+     "auto_archive": false,
+     "chosen": "my files and art",
+     "current": [
+      "art",
+      "my files"
+     ],
+     "deleted": [],
+     "even_if_already": false,
+     "label": "art, my files",
+     "warning": false
+    },
+    {
+     "auto_archive": false,
+     "chosen": "art",
+     "current": [
+      "art"
+     ],
+     "deleted": [],
+     "even_if_already": false,
+     "label": "art",
+     "warning": false
+    },
+    {
+     "auto_archive": false,
+     "chosen": "nothing",
+     "current": [],
+     "deleted": [],
+     "even_if_already": false,
+     "label": "nothing",
+     "warning": true
+    }
+   ],
+   "start": {
+    "auto_archive": false,
+    "current": [
+     "my files"
+    ],
+    "deleted": [],
+    "even_if_already": false,
+    "label": "my files",
+    "warning": false
+   }
+  },
+  "matrix": {
+   "importable": {
+    "menu": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "multiple/deleted locations"
+     }
+    ],
+    "multiple": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     }
+    ]
+   },
+   "no_all_known": {
+    "menu": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "trash"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "all files ever imported or deleted"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "repository updates"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "hydrus local file storage"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "deleted from anywhere"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "multiple/deleted locations"
+     }
+    ],
+    "multiple": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     },
+     {
+      "checked": false,
+      "text": "trash"
+     },
+     {
+      "checked": false,
+      "text": "repository updates"
+     },
+     {
+      "checked": false,
+      "text": "hydrus local file storage"
+     },
+     {
+      "checked": false,
+      "text": "deleted from anywhere"
+     },
+     {
+      "checked": false,
+      "text": "deleted from art"
+     },
+     {
+      "checked": false,
+      "text": "deleted from my files"
+     },
+     {
+      "checked": false,
+      "text": "deleted from combined local file domains"
+     },
+     {
+      "checked": false,
+      "text": "deleted from repository updates"
+     },
+     {
+      "checked": false,
+      "text": "deleted from hydrus local file storage"
+     }
+    ]
+   },
+   "no_multiple": {
+    "menu": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "trash"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "all files ever imported or deleted"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "repository updates"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "hydrus local file storage"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "deleted from anywhere"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "all known files"
+     }
+    ],
+    "multiple": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     },
+     {
+      "checked": false,
+      "text": "trash"
+     },
+     {
+      "checked": false,
+      "text": "repository updates"
+     },
+     {
+      "checked": false,
+      "text": "hydrus local file storage"
+     },
+     {
+      "checked": false,
+      "text": "deleted from anywhere"
+     },
+     {
+      "checked": false,
+      "text": "all known files"
+     },
+     {
+      "checked": false,
+      "text": "deleted from art"
+     },
+     {
+      "checked": false,
+      "text": "deleted from my files"
+     },
+     {
+      "checked": false,
+      "text": "deleted from combined local file domains"
+     },
+     {
+      "checked": false,
+      "text": "deleted from repository updates"
+     },
+     {
+      "checked": false,
+      "text": "deleted from hydrus local file storage"
+     }
+    ]
+   },
+   "only_combined_local": {
+    "menu": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "multiple/deleted locations"
+     }
+    ],
+    "multiple": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     }
+    ]
+   },
+   "only_local": {
+    "menu": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "trash"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "all files ever imported or deleted"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "repository updates"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "hydrus local file storage"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "multiple/deleted locations"
+     }
+    ],
+    "multiple": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     },
+     {
+      "checked": false,
+      "text": "trash"
+     },
+     {
+      "checked": false,
+      "text": "repository updates"
+     },
+     {
+      "checked": false,
+      "text": "hydrus local file storage"
+     }
+    ]
+   },
+   "search": {
+    "menu": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "trash"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "all files ever imported or deleted"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "repository updates"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "hydrus local file storage"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "deleted from anywhere"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "all known files"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "multiple/deleted locations"
+     }
+    ],
+    "multiple": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     },
+     {
+      "checked": false,
+      "text": "trash"
+     },
+     {
+      "checked": false,
+      "text": "repository updates"
+     },
+     {
+      "checked": false,
+      "text": "hydrus local file storage"
+     },
+     {
+      "checked": false,
+      "text": "deleted from anywhere"
+     },
+     {
+      "checked": false,
+      "text": "all known files"
+     },
+     {
+      "checked": false,
+      "text": "deleted from art"
+     },
+     {
+      "checked": false,
+      "text": "deleted from my files"
+     },
+     {
+      "checked": false,
+      "text": "deleted from combined local file domains"
+     },
+     {
+      "checked": false,
+      "text": "deleted from repository updates"
+     },
+     {
+      "checked": false,
+      "text": "deleted from hydrus local file storage"
+     }
+    ]
+   },
+   "search_not_advanced_all_known": {
+    "menu": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "trash"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "all files ever imported or deleted"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "repository updates"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "hydrus local file storage"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "deleted from anywhere"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "all known files"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "multiple/deleted locations"
+     }
+    ],
+    "multiple": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     },
+     {
+      "checked": false,
+      "text": "trash"
+     },
+     {
+      "checked": false,
+      "text": "repository updates"
+     },
+     {
+      "checked": false,
+      "text": "hydrus local file storage"
+     },
+     {
+      "checked": false,
+      "text": "deleted from anywhere"
+     },
+     {
+      "checked": false,
+      "text": "all known files"
+     },
+     {
+      "checked": false,
+      "text": "deleted from art"
+     },
+     {
+      "checked": false,
+      "text": "deleted from my files"
+     },
+     {
+      "checked": false,
+      "text": "deleted from combined local file domains"
+     },
+     {
+      "checked": false,
+      "text": "deleted from repository updates"
+     },
+     {
+      "checked": false,
+      "text": "deleted from hydrus local file storage"
+     }
+    ]
+   }
+  },
+  "presentation": {
+   "label": "combined local file domains",
+   "menu": [
+    {
+     "checked": false,
+     "text": "art"
+    },
+    {
+     "checked": false,
+     "text": "my files"
+    },
+    "---",
+    {
+     "checked": true,
+     "text": "combined local file domains"
+    },
+    "---",
+    {
+     "checked": false,
+     "text": "trash"
+    },
+    "---",
+    {
+     "checked": false,
+     "text": "all files ever imported or deleted"
+    },
+    "---",
+    {
+     "checked": false,
+     "text": "repository updates"
+    },
+    "---",
+    {
+     "checked": false,
+     "text": "hydrus local file storage"
+    },
+    "---",
+    {
+     "checked": false,
+     "text": "deleted from anywhere"
+    },
+    "---",
+    {
+     "checked": false,
+     "text": "all known files"
+    },
+    "---",
+    {
+     "checked": false,
+     "text": "multiple/deleted locations"
+    }
+   ],
+   "multiple": [
+    {
+     "checked": false,
+     "text": "art"
+    },
+    {
+     "checked": false,
+     "text": "my files"
+    },
+    {
+     "checked": true,
+     "text": "combined local file domains"
+    },
+    {
+     "checked": false,
+     "text": "trash"
+    },
+    {
+     "checked": false,
+     "text": "repository updates"
+    },
+    {
+     "checked": false,
+     "text": "hydrus local file storage"
+    },
+    {
+     "checked": false,
+     "text": "deleted from anywhere"
+    },
+    {
+     "checked": false,
+     "text": "all known files"
+    },
+    {
+     "checked": false,
+     "text": "deleted from art"
+    },
+    {
+     "checked": false,
+     "text": "deleted from my files"
+    },
+    {
+     "checked": false,
+     "text": "deleted from combined local file domains"
+    },
+    {
+     "checked": false,
+     "text": "deleted from repository updates"
+    },
+    {
+     "checked": false,
+     "text": "deleted from hydrus local file storage"
+    }
+   ]
+  }
+ },
+ "normal": {
+  "destination": {
+   "callers": {
+    "client api": {
+     "primary_urls": false,
+     "source_urls": false
+    },
+    "favourites": {
+     "primary_urls": true,
+     "source_urls": true
+    },
+    "gallery/post urls": {
+     "primary_urls": true,
+     "source_urls": true
+    },
+    "global": {
+     "primary_urls": true,
+     "source_urls": true
+    },
+    "import folder": {
+     "primary_urls": false,
+     "source_urls": false
+    },
+    "local import": {
+     "primary_urls": false,
+     "source_urls": false
+    },
+    "specific importer": {
+     "primary_urls": true,
+     "source_urls": true
+    },
+    "subscription": {
+     "primary_urls": true,
+     "source_urls": true
+    },
+    "url class": {
+     "primary_urls": true,
+     "source_urls": true
+    },
+    "watchable urls": {
+     "primary_urls": true,
+     "source_urls": true
+    }
+   },
+   "chosen": [
+    {
+     "auto_archive": false,
+     "chosen": "art",
+     "current": [
+      "art"
+     ],
+     "deleted": [],
+     "even_if_already": false,
+     "label": "art",
+     "warning": false
+    },
+    {
+     "auto_archive": false,
+     "chosen": "my files",
+     "current": [
+      "my files"
+     ],
+     "deleted": [],
+     "even_if_already": false,
+     "label": "my files",
+     "warning": false
+    }
+   ],
+   "interlock": [
+    {
+     "auto_archive": false,
+     "current": [
+      "my files"
+     ],
+     "deleted": [],
+     "even_if_already": false,
+     "label": "my files",
+     "ticked": false,
+     "warning": false
+    },
+    {
+     "auto_archive": true,
+     "current": [
+      "my files"
+     ],
+     "deleted": [],
+     "even_if_already": true,
+     "label": "my files",
+     "ticked": true,
+     "warning": false
+    }
+   ],
+   "menu": [
+    {
+     "checked": false,
+     "text": "art"
+    },
+    {
+     "checked": true,
+     "text": "my files"
+    },
+    "---",
+    {
+     "checked": false,
+     "text": "multiple/deleted locations"
+    }
+   ],
+   "multiple": [
+    {
+     "auto_archive": false,
+     "chosen": "my files and art",
+     "current": [
+      "art",
+      "my files"
+     ],
+     "deleted": [],
+     "even_if_already": false,
+     "label": "art, my files",
+     "warning": false
+    },
+    {
+     "auto_archive": false,
+     "chosen": "art",
+     "current": [
+      "art"
+     ],
+     "deleted": [],
+     "even_if_already": false,
+     "label": "art",
+     "warning": false
+    },
+    {
+     "auto_archive": false,
+     "chosen": "nothing",
+     "current": [],
+     "deleted": [],
+     "even_if_already": false,
+     "label": "nothing",
+     "warning": true
+    }
+   ],
+   "start": {
+    "auto_archive": false,
+    "current": [
+     "my files"
+    ],
+    "deleted": [],
+    "even_if_already": false,
+    "label": "my files",
+    "warning": false
+   }
+  },
+  "matrix": {
+   "importable": {
+    "menu": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "multiple/deleted locations"
+     }
+    ],
+    "multiple": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     }
+    ]
+   },
+   "no_all_known": {
+    "menu": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "trash"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "all files ever imported or deleted"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "multiple/deleted locations"
+     }
+    ],
+    "multiple": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     },
+     {
+      "checked": false,
+      "text": "trash"
+     }
+    ]
+   },
+   "no_multiple": {
+    "menu": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "trash"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "all files ever imported or deleted"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "all known files"
+     }
+    ],
+    "multiple": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     },
+     {
+      "checked": false,
+      "text": "trash"
+     },
+     {
+      "checked": false,
+      "text": "all known files"
+     }
+    ]
+   },
+   "only_combined_local": {
+    "menu": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "multiple/deleted locations"
+     }
+    ],
+    "multiple": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     }
+    ]
+   },
+   "only_local": {
+    "menu": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "trash"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "all files ever imported or deleted"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "multiple/deleted locations"
+     }
+    ],
+    "multiple": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     },
+     {
+      "checked": false,
+      "text": "trash"
+     }
+    ]
+   },
+   "search": {
+    "menu": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "trash"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "all files ever imported or deleted"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "multiple/deleted locations"
+     }
+    ],
+    "multiple": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     },
+     {
+      "checked": false,
+      "text": "trash"
+     }
+    ]
+   },
+   "search_not_advanced_all_known": {
+    "menu": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "trash"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "all files ever imported or deleted"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "all known files"
+     },
+     "---",
+     {
+      "checked": false,
+      "text": "multiple/deleted locations"
+     }
+    ],
+    "multiple": [
+     {
+      "checked": false,
+      "text": "art"
+     },
+     {
+      "checked": true,
+      "text": "my files"
+     },
+     {
+      "checked": false,
+      "text": "combined local file domains"
+     },
+     {
+      "checked": false,
+      "text": "trash"
+     },
+     {
+      "checked": false,
+      "text": "all known files"
+     }
+    ]
+   }
+  },
+  "presentation": {
+   "label": "combined local file domains",
+   "menu": [
+    {
+     "checked": false,
+     "text": "art"
+    },
+    {
+     "checked": false,
+     "text": "my files"
+    },
+    "---",
+    {
+     "checked": true,
+     "text": "combined local file domains"
+    },
+    "---",
+    {
+     "checked": false,
+     "text": "trash"
+    },
+    "---",
+    {
+     "checked": false,
+     "text": "all files ever imported or deleted"
+    },
+    "---",
+    {
+     "checked": false,
+     "text": "all known files"
+    },
+    "---",
+    {
+     "checked": false,
+     "text": "multiple/deleted locations"
+    }
+   ],
+   "multiple": [
+    {
+     "checked": false,
+     "text": "art"
+    },
+    {
+     "checked": false,
+     "text": "my files"
+    },
+    {
+     "checked": true,
+     "text": "combined local file domains"
+    },
+    {
+     "checked": false,
+     "text": "trash"
+    },
+    {
+     "checked": false,
+     "text": "all known files"
+    }
+   ]
+  }
+ },
+ "presentation_gates": {
+  "or_in_inbox_then_all_files": {
+   "after": "inbox or archive",
+   "before": "or in inbox"
+  },
+  "status_texts": [
+   "all files",
+   "new files",
+   "do not show anything"
+  ],
+  "statuses": [
+   {
+    "inbox_enabled": true,
+    "inbox_texts": [
+     "inbox or archive",
+     "must be in inbox"
+    ],
+    "location_enabled": true,
+    "status": "all files",
+    "values": [
+     {
+      "inbox": "inbox or archive",
+      "inbox_value": 0,
+      "status": 0
+     },
+     {
+      "inbox": "must be in inbox",
+      "inbox_value": 1,
+      "status": 0
+     }
+    ]
+   },
+   {
+    "inbox_enabled": true,
+    "inbox_texts": [
+     "inbox or archive",
+     "must be in inbox",
+     "or in inbox"
+    ],
+    "location_enabled": true,
+    "status": "new files",
+    "values": [
+     {
+      "inbox": "inbox or archive",
+      "inbox_value": 0,
+      "status": 1
+     },
+     {
+      "inbox": "must be in inbox",
+      "inbox_value": 1,
+      "status": 1
+     },
+     {
+      "inbox": "or in inbox",
+      "inbox_value": 2,
+      "status": 1
+     }
+    ]
+   },
+   {
+    "inbox_enabled": false,
+    "inbox_texts": [
+     "inbox or archive",
+     "must be in inbox"
+    ],
+    "location_enabled": false,
+    "status": "do not show anything",
+    "values": [
+     {
+      "inbox": "inbox or archive",
+      "inbox_value": 0,
+      "status": 2
+     },
+     {
+      "inbox": "must be in inbox",
+      "inbox_value": 1,
+      "status": 2
+     }
+    ]
+   }
+  ]
+ }
+}

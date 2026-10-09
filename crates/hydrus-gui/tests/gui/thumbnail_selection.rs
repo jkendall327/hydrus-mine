@@ -22,6 +22,7 @@ fn inbox(store: &Store, files: &[HashId]) -> Vec<bool> {
         .collect()
 }
 
+// leaf: audit-options-files-and-trash-confirm-sending-more-than-one-file-to-archive-or-inbox
 #[test]
 fn several_thumbnails_are_selected_and_acted_on() {
     let legacy = hydrus_testkit::legacy_fixture("basic");

@@ -55,6 +55,7 @@ const CONFIRM: &str = "Confirm when closing any page: ";
 const FOCUS: &str = "When switching to pages, move keyboard focus to any text input field: ";
 const HISTORY: &str = "Maximum entries to show in page navigation history: ";
 
+// leaf: audit-options-gui-pages-opening-and-closing-confirm-when-closing-any-page
 #[test]
 fn real_close_questions_cancel_and_undo_preserve_nested_trees_and_session_exemption() {
     let _windows = headless::init();
@@ -131,6 +132,7 @@ fn real_close_questions_cancel_and_undo_preserve_nested_trees_and_session_exempt
     }
 }
 
+// leaf: audit-options-gui-pages-navigation-and-drag-and-drop-maximum-entries-to-show-in-page-navigation-history
 #[test]
 fn applied_controls_reopen_and_drive_history_and_search_focus() {
     let windows = headless::init();
@@ -235,6 +237,25 @@ fn applied_controls_reopen_and_drive_history_and_search_focus() {
     reopened.invoke_apply();
     ui.invoke_tab_chosen(0, 1);
     assert_eq!(ui.get_search_focus_requests(), before + 2);
+    // The reference's search page, recorded switching to it with the option
+    // off, on, then off again (`focus`): its autocomplete input is focused
+    // once, only while the option is on.
+    let fixture = hydrus_testkit::fixture_json("page_navigation_options.json");
+    for (n, step) in fixture["focus"].as_array().unwrap().iter().enumerate() {
+        let options = open(&ui, &bound);
+        options.invoke_check_toggled(row(&options, FOCUS), step["enabled"].as_bool().unwrap());
+        options.invoke_apply();
+        let requests = ui.get_search_focus_requests();
+        // (the session's second page, index 1, is the search page; the focus
+        // request is made when it is switched to)
+        ui.invoke_tab_chosen(0, i32::from(n % 2 == 1));
+        headless::render(&windows.get(0).unwrap(), 1100, 700);
+        assert_eq!(
+            usize::try_from(ui.get_search_focus_requests() - requests).unwrap(),
+            step["calls"].as_array().unwrap().len(),
+            "step {n}"
+        );
+    }
 }
 
 #[test]

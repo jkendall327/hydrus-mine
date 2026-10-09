@@ -79,6 +79,9 @@ fn until(operation: &str, mut condition: impl FnMut() -> bool) {
         std::thread::sleep(std::time::Duration::from_millis(10));
     }
 }
+// leaf: audit-network-display-gugs
+// leaf: audit-network-display-unmatched
+// leaf: audit-network-display-url-classes
 #[test]
 fn questions_cancel_apply_reopen_sort_selection_and_render() {
     let h = headless::init();
@@ -190,6 +193,9 @@ fn questions_cancel_apply_reopen_sort_selection_and_render() {
     assert!(!Draft::load(&store).unwrap().show_unmatched);
     assert!(!applied.window().is_visible());
 }
+// leaf: audit-network-display-gugs
+// leaf: audit-network-display-unmatched
+// leaf: audit-network-display-url-classes
 #[test]
 fn saved_choices_reach_existing_gallery_and_open_viewer() {
     let h = headless::init();

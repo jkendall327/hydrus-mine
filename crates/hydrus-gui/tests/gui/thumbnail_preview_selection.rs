@@ -154,6 +154,10 @@ fn preview(ui: &MainWindow, bound: &hydrus_gui::Bound, width: u32) {
         std::thread::sleep(std::time::Duration::from_millis(5));
     }
 }
+// leaf: audit-options-thumbnails-interaction-on-ctrl-selection-focus-thumbnails-in-the-preview-window
+// leaf: audit-options-thumbnails-interaction-on-shift-selection-focus-thumbnails-in-the-preview-window
+// leaf: audit-options-thumbnails-interaction-only-on-files-with-no-duration
+// leaf: audit-options-thumbnails-interaction-only-on-files-with-no-duration-2
 #[test]
 fn staged_controls_reach_pointer_range_key_preview_and_permanent_owner_retirement() {
     let (_directories, store) = crate::subscriptions::store();
@@ -442,6 +446,7 @@ fn staged_controls_reach_pointer_range_key_preview_and_permanent_owner_retiremen
     );
 }
 
+// leaf: audit-options-thumbnails-interaction-only-on-files-with-no-duration
 #[test]
 fn live_store_collection_gate_uses_all_members_and_preserves_zero_duration_distinction() {
     let (_directories, store) = crate::subscriptions::store();

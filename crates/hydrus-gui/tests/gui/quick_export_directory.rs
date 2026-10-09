@@ -67,6 +67,7 @@ fn options(ui: &MainWindow, bound: &hydrus_gui::Bound) -> (OptionsWindow, i32) {
         .unwrap();
     (window, row as i32)
 }
+// leaf: audit-options-menu-menu-file-quick-export-directory
 #[test]
 fn actual_file_menu_replays_saved_paths_fallback_errors_cancel_and_reopen() {
     let fixture = hydrus_testkit::fixture_json("quick_export_directory.json");

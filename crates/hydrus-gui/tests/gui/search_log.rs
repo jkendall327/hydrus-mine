@@ -173,6 +173,7 @@ fn exchange(log: &FileLogWindow, group: &str, action: &str) {
     choose(log, 1, action);
 }
 
+// leaf: audit-network-search-log-exchange
 #[test]
 fn exchange_confirmations_png_objects_and_owner_cancel_reach_the_persisted_queue() {
     use hydrus_gui::{png_export_window, search_log_import_window};

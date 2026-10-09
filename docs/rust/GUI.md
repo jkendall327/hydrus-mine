@@ -340,12 +340,39 @@ prefetch (with its rule that the two checks can't both be dispositive),
 file filtering's allowed filetypes (ticked in the reference's tree of
 filetypes by group, a group's box ticking all of its) and its switches
 and size and resolution limits, tag
-filtering's blacklist and whitelist, locations' destination and
+filtering's blacklist and whitelist, locations' destinations and
 switches, tags (per tag service: getting tags, additional tags, and the
 cog menu's switches; a warning if it gets no tags) and notes are edited
 there. "apply" gives the dialog the
 importer's options. As `oracle/record_import_options_editor.py` recorded
 the reference's.
+
+The locations page's "destination file service(s)" and the presentation
+page's location are the reference's file domain button
+(`LocationSearchContextButton`) under the flags its callers set
+(`hydrus-gui-model/src/domains.rs` `Flags`; recorded in
+`oracle/record_location_selector_flags.py`): the destination offers only the
+domains files can be imported to (the local file domains) and
+"multiple/deleted locations"; the presentation location offers everything,
+including all known files, and in advanced mode "deleted from" boxes. Choosing
+several domains opens the shared "edit multiple location" list; while it is
+open the editor can't be applied; none ticked shows "THIS WILL NOT IMPORT
+ANYWHERE!" and an importer with no destination halts. A caller that isn't a
+downloader (a local import, an import folder, the Client API) doesn't show
+the URL checkboxes; the "even for 'already in db' files" box needs
+auto-archive. The presentation page's status ("all files", "new files", "do
+not show anything"), its inbox choices ("or in inbox" only for new files, and
+becoming "inbox or archive" when the status leaves "new files") and the
+greying of the inbox and location for "do not show anything" are the
+reference panel's. "Show files" on an importer filters by the location: files
+current in a current domain or deleted from a deleted one, and all known files
+doesn't filter.
+
+Each tag service's box has one "N additional tags" button (thousands
+separated, as the reference words it: "1 additional tags"), which opens the
+tag entry dialog on the service's tags with the reference's message; accepting
+replaces the tags, cancelling keeps them. The whitelist dialog says what the
+reference's does. As `oracle/record_additional_tags_button.py` recorded.
 
 The tag filtering blacklist and each tag service's "get tags" filter
 are buttons saying what the filter does ("blacklisting on goblin, orc",
@@ -800,8 +827,8 @@ An import folder's dialog lists the tag services it tags files for by
 their paths, with "edit" and "delete" for each and "add" for another
 (refused, with the reference's warning, for one it has). "add" and
 "edit" open that dialog's boxes on one service's options alone ("edit
-filename tagging options"), with an example path from the folder and
-the tags it would get.
+filename tagging options"), with an example path from the folder (the first of its first 25 entries that
+is a file of an importable type, by content) and the tags it would get.
 
 A gallery downloader page is the reference's too. Its "gallery
 downloader" box says how its searches stand ("2 queries - 4/6", and
@@ -1483,7 +1510,11 @@ pending ones marked `(+)` (it doesn't scroll yet); near its top, the
 file's info line, as in the media viewer. Images are shown
 whole. Ugoiras and animated WebP play with the client's own player, as
 the reference's defaults have it: frames are decoded on a thread of their
-own a few ahead of the one shown, each shown for its duration (a ugoira's
+own into a buffer sized from speed and memory's "Memory for video buffer"
+(96MB by default), two thirds of it behind the frame shown and a third
+ahead, so a short loop is decoded once and plays round again without being
+decoded (a changed size applies to the next file opened); each frame is
+shown for its duration (a ugoira's
 from its animation.json, else its timing notes), looping, and space
 pauses them (`src/animation.rs`; animated JPEG XL shows its first frame).
 Video, audio and other animations play in mpv: libmpv is loaded when first
@@ -1912,7 +1943,8 @@ Service review now opens a native Client API access-key list with the reference
 columns, extended selection, sorting, add/edit/duplicate/delete, copy-key and
 local base-URL opening, and "add from api request": a window waits for a tool
 to ask for access (refused with the reference's words if the service isn't
-running), and the first request opens the permissions editor with what the
+running; registration stays open only while the window does, as a short lease
+its timer renews), and the first request opens the permissions editor with what the
 tool asked for and the key it was given. Permission editors expose all 14 basic permissions,
 full access, the reusable permitted-search-tags filter and explicit key rotation
 with validation/collision refusal. List and nested edits remain detached until
@@ -1921,14 +1953,27 @@ controls/questions are recorded in `client_api_admin.json`; actual native-store
 GUI regressions render `client_api_keys.png`, `client_api_permissions.png` and
 `client_api_service.png` during the GUI test batch.
 
-Manage services narrowly permits editing the built-in API service's enabled
-state, port, local/network binding, CORS and anonymous request logging. Other
-imported flags remain preserved and display plain values, with unset external
-URL fields labeled "not set". Imported HTTPS can be disabled; enabling it
-is unsupported. The daemon notices configuration changes within one second and
+Manage services edits the built-in API service with the reference's rows and
+labels: "run the client api?:", "local port:", "allow non-local connections:",
+"use https", "support CORS headers", "log requests" and "normie-friendly
+welcome page", each with the reference's tooltip text on hover. All but
+"run" are enabled only while the service runs. In advanced mode three more rows
+appear, each a text box with a "none" box: the scheme, host and port overrides
+"when copying external links" (an empty port text is kept, and means no `:`).
+Apply stores them; cancelling stores nothing.
+
+With "use https" the Client API serves TLS with `client.crt` and `client.key`
+from the db directory. If neither file exists the first start makes a
+self-signed pair there (RSA 2048, valid ten years, for `localhost`, both files
+read-only), as the reference does; a pair the user puts there is used as it is;
+only one of the two fails the start with the reference's message. The
+"normie-friendly welcome page" swaps the root page (`GET /`) for the
+reference's alternate one; the plain page is served otherwise. "View it in a
+web browser" opens `https://` when the service uses it. The daemon notices
+configuration changes within one second and
 restarts only the API listener, keeping downloads, queues and authentication
 sessions alive. A bind failure reports its cause and recovers after settings
-are corrected; HTTPS reports a failure instead of silently serving HTTP.
+are corrected.
 Explicit CLI `--port` and `--bind` overrides retain precedence.
 The local daemon regression additionally mints an authenticated session before
 listener reconfiguration and uses that same session after bind-failure recovery.
@@ -2139,6 +2184,18 @@ activation and delays; unconfigured example domains remain unconfigured.
 dependency expansion, PNG export and mixed import. Native codec/model/window
 replays cover saved script-list consumers, concurrent domain changes, stale
 script lists and retired callbacks; these new assertions await hosted CI.
+
+Domain metadata (a domain's shareable custom headers and bandwidth rules, type 71)
+travels in the same packages. The export window's "add headers/bandwidth rules"
+button asks "Enter domain." and lists, for that domain and each parent down to
+its registrable domain, the ones that have approved headers or rules of their own;
+a domain with nothing to share says "No headers/bandwidth rules found!". Choosing a
+downloader also packages the headers and rules of its example URLs' domains. The
+review shows each package's headers and rules in detail (the first eight when
+there are more). Import keeps only the headers and rules the client lacks (same
+names and values count as the same), replaces the domain's headers with the shared
+approved ones and sets its rules. `record_domain_metadata_packages.py` drives the
+real chooser, domain prompt, PNG export and import, and the window replays it.
 
 Tab right-click offers the reference's four move-page destinations and six
 sibling sorts (file count, total size and name, both ways). Actions target the
@@ -3011,8 +3068,7 @@ retains only the latest queued target. A held obsolete decode therefore permits
 one successor to display; idle workers retain no Store, and close discards queued
 work and retires running replies. Actual Qt Options, manager and CanvasPanel transitions are
 recorded in `preview_viewing_intervals.json`; native model/display/store regressions
-are authored for hosted CI. Preview playback, audio, zoom and hover/rating controls
-remain Partial.
+are authored for hosted CI. Preview zoom and hover/rating controls remain Partial.
 
 Search-page autocomplete now shares results, favourites and children tabs in
 both its embedded and floating layouts. Favourites show the full saved list;
@@ -3864,7 +3920,7 @@ viewer padding; gui pages' forced hide-page signal; importing's "drag and drop"
 page switch; media playback's mpv and QtMediaPlayer boxes and system's system
 FFMPEG, truncated images and PIL switches; hovers' pinned duplicates hover and
 the "preview window hovers" box; popups' other-display freeze; speed and
-memory's "image tile cache" and "video buffer" boxes; system sleep's file system
+memory's "image tile cache" box; system sleep's file system
 wait; and tag editing's petition reason count. An
 imported client brings its values. mpv plays through the preferred audio
 device, and loops the playlist rather than the file when asked.
@@ -3904,7 +3960,9 @@ client lacks is restored after saying so, one it has asks "Are you certain you
 want to restore the defaults for "…"? Any custom shortcuts you have set will be
 wiped." "custom user sets" explains that they are advanced, and adds ("new
 shortcuts"), edits, renames and deletes ("Remove all selected?") custom sets;
-names are made unique as "name (1)", "name (2)". A "help" button shows the
+names are made unique as "name (1)", "name (2)", and a custom set cannot take a
+built-in set's name ("That name is reserved--please pick another!", and the
+editor stays open). A "help" button shows the
 reference's help. A new client starts with the reference's eleven default sets
 (107 shortcuts); a command with data (a seek's distance, a thumbnail focus
 move) is listed with the reference's text.
@@ -4732,7 +4790,9 @@ mode" (the maintenance daemons starting a pass), "file import report mode"
 caught as shortcuts), "idle report mode" (why the client is not idle: not
 on for 120s, normal idle work disabled, last user, mouse or Client API
 action, or forced from the debug menu), "network report mode" and its
-"(silent)" twin (redirects and errors; silent goes to the console only),
+"(silent)" twin (redirects and errors; silent goes to the console only; the
+two entries share the one mode, as the reference's do: silent turns it on and
+sets silent, the plain entry flips it and clears silent),
 "shortcut report mode" (what a shortcut matched, or that it matched
 nothing), "similar files metadata generation report mode" (each stage of
 making a perceptual hash), "subprocess report mode" (each external
@@ -5051,6 +5111,14 @@ does. The system counts as busy when at least "% on N cores" cores ran above
 "ignore cpu usage" turns the check off, and forced idle mode never reads busy.
 The status bar still says "idle" and shows "CPU busy".
 
+## Files and trash: local import copying
+
+Options > files and trash > "TEST: Import local files directly from source, do
+not copy to temp dir beforehand" is read by local imports and import folders.
+Left unticked (the default), each file is copied to a temporary path and
+imported from there, as the reference does; ticked, it is imported from where
+it is.
+
 ## System tray
 
 Slint's own `SystemTrayIcon` (on Linux a StatusNotifierItem on the session bus,
@@ -5125,3 +5193,82 @@ when the viewer moves on is dropped, so it can never be answered for the wrong f
 Proven by replays of `oracle/fixtures/manage_tags_cog.json` (`manage_tags_cog.rs`),
 `manage_tags_viewer.json` (`manage_tags_viewer.rs`, through real key events and the
 viewer's own navigation) and `manage_tags_keys.json` (the empty-input conditions).
+
+### Preview sound
+
+The preview pane plays the file it shows, as the reference's preview canvas
+does: a video, audio file or animation whose kind the view options show in
+mpv (`preview_show_action`, mpv by default for video, audio and GIF/APNG) and
+that does not start behind an embed button plays in the media viewer's
+player, from the start, looping, and starts paused if the view says so. A
+still, or a kind shown some other way, plays nothing, and moving on stops it.
+It plays at the volume and mute the reference picks (`ClientGUIMediaVolume`):
+the preview's own volume (`preview_audio_volume`, imported from a v688
+install with `preview_audio_mute`) if **File > Options > audio > The preview
+window has its own volume** is on (it is, by default), else the global
+volume; it is muted if either its own mute or the global mute is on. ctrl+g,
+the Options window and the control all take effect on the playing file.
+
+A file with sound has the reference's volume control at the bottom right of
+the preview: the global mute button, and with the pointer on it the volume
+slider (moving the preview's own volume or the global one, whichever applies)
+and the preview's own mute button. `oracle/record_preview_audio.py` records
+the reference's choice of volume and mute for every combination of the
+option, the three volumes and the three mutes, what the real preview control
+moves and flips, and the kinds the preview plays; they are replayed in
+`tests/model/preview_audio.rs` and `tests/gui/preview_audio.rs`.
+
+### Undeleting: where to, and the question
+
+Undelete (shift+delete in the viewer, the thumbnail menu's "undelete") asks as
+the reference's `UndeleteMedia` does. Files deleted from one local file
+domain go back to it, asking "Undelete this file back to {domain}?" first
+while Options > files and trash > "Confirm sending files to trash" is on (the
+reference words it for one file whatever the count). Files deleted from
+several local domains open an "Undelete for?" chooser with a button for each
+domain, by name, and "all the above" (every domain they were deleted from); a
+closed chooser undeletes nothing. Files not deleted from a local domain are
+left alone. Proven by `undelete_question.rs`, replaying
+`oracle/fixtures/undelete_question.json` (and `files_trash.json` for the
+delete question) through the main window and the viewer.
+
+### Options > media playback > mpv: fetch audio devices
+
+"--Fetch list of mpv audio device strings:" has a "fetch mpv audio devices"
+button. It asks libmpv (`audio-device-list`) for the devices a fresh mpv sees
+and offers them, with "null" last, in a "Select mpv audio device" chooser
+("auto - Autoselect device", "alsa - Default (alsa)", and so on). The choice
+fills "Preferred audio output device:" (it is saved by Apply, like any other
+edit; "auto" sets it to "use default"); cancelling changes nothing. Without
+libmpv it says "Sorry, MPV is not available!". Proven by
+`options_mpv_devices.rs`, replaying `oracle/fixtures/mpv_audio_devices.json`
+with a stubbed device list.
+
+### Options > system > system sleep: the file system waits too
+
+With "Include the file system in this wait" on (and wake detection on), a
+file or thumbnail path is not handed out until the wake delay after a wake from
+sleep has passed, checking once a second, as the reference's files manager
+does for a NAS that is slow to come back. The wake is noticed from a gap of
+over a minute between the client's (and the daemon's) regular checks.
+`oracle/fixtures/file_system_wake_wait.json` records how long the reference
+blocks for each combination of the two options; `wake_wait.rs` in
+`hydrus-store` replays it against the real path lookup.
+
+### Archive/delete filter: scanbar and volume
+
+A video, animation or audio file in the archive/delete filter has the media
+viewer's scanbar under it (by frame for the client's own animation player;
+dragging pauses until let go) and, with sound, the viewer's volume control at
+its right: the global mute, and with the pointer on it the volume and the
+viewer's own mute. Space pauses and plays, and the tags (pointer at the left)
+and information (top) frames show. `archive_delete_playback.rs` drives these,
+and checks the scanbar against the viewer's.
+
+### Status bar: tooltips and database activity
+
+The idle and "CPU busy" fields of the status bar have the reference's
+tooltips ("client is idle, it can do maintenance work", "this computer has been
+doing work recently, so some hydrus maintenance will not start"), shown after
+half a second under the pointer. A new field at the right of them says "db
+writing" or "db reading" while this window's database connection is busy.

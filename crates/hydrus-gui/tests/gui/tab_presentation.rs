@@ -238,6 +238,20 @@ fn apply_cancel_reopen_and_four_sides_preserve_real_nested_selection_and_full_na
         let y = ui.get_tab_navigation_y();
         let width = ui.get_tab_navigation_width();
         let height = ui.get_tab_navigation_height();
+        // Where the reference's QTabWidget put its bar (`root.position`),
+        // read off where the native bar and the page content ended up.
+        let observed = if width > height {
+            if y < ui.get_page_content_y() {
+                "North"
+            } else {
+                "South"
+            }
+        } else if x < ui.get_page_content_x() {
+            "West"
+        } else {
+            "East"
+        };
+        assert_eq!(observed, step["root"]["position"].as_str().unwrap());
         match alignment {
             TabAlignment::Top => {
                 dimension(height, 56.0);
@@ -331,6 +345,8 @@ fn apply_cancel_reopen_and_four_sides_preserve_real_nested_selection_and_full_na
     assert_eq!(reopened.shown().key, key);
 }
 
+// leaf: audit-options-gui-pages-navigation-and-drag-and-drop-experimental-hide-main-page-navigation-tabs
+// leaf: audit-options-gui-pages-navigation-and-drag-and-drop-experimental-show-tab-tree-view
 #[test]
 fn recorded_hide_gate_retains_live_hierarchy_access_and_elision_changes_actual_paint() {
     let windows = headless::init();

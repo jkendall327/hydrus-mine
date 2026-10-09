@@ -158,6 +158,7 @@ fn preview_and_confirmations_match_reference_panel() {
     }
 }
 
+// leaf: audit-network-export-worker
 #[test]
 fn copies_overwrite_existing_files_and_route_metadata() {
     let (_dirs, store, files) = setup();
@@ -217,6 +218,7 @@ fn copies_overwrite_existing_files_and_route_metadata() {
     }
 }
 
+// leaf: audit-network-export-worker
 #[test]
 fn cancellation_suppresses_trash_but_missing_sources_trash_successful_prefix() {
     let (_dirs, store, files) = setup();
@@ -255,6 +257,7 @@ fn cancellation_suppresses_trash_but_missing_sources_trash_successful_prefix() {
     assert!(files[1..].iter().all(|&f| current(&store, f)));
 }
 
+// leaf: audit-network-export-worker
 #[test]
 fn export_failure_and_cancellation_match_reference_durable_membership() {
     let recorded = hydrus_testkit::fixture_json("export_failure_prefix.json");
@@ -345,6 +348,7 @@ fn export_failure_and_cancellation_match_reference_durable_membership() {
     }
 }
 
+// leaf: audit-network-export-worker
 #[test]
 fn sidecar_failure_prevents_copy_and_trash_and_success_trashes() {
     let (_dirs, store, files) = setup();
@@ -396,6 +400,7 @@ fn sidecar_failure_prevents_copy_and_trash_and_success_trashes() {
     assert!(source(&store, files[0]).is_file());
 }
 
+// leaf: audit-network-export-worker
 #[test]
 fn later_trash_transaction_failure_retains_export_error_and_committed_prefix() {
     let (_dirs, store, original) = setup();
@@ -442,6 +447,7 @@ fn later_trash_transaction_failure_retains_export_error_and_committed_prefix() {
 }
 
 #[cfg(unix)]
+// leaf: audit-network-export-worker
 #[test]
 fn symlinks_existing_links_and_hardlinks_preserve_source_content() {
     let (_dirs, store, files) = setup();

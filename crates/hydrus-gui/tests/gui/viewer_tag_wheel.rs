@@ -47,6 +47,7 @@ pub(super) fn wheel(viewer: &hydrus_gui::MediaViewerWindow) {
             delta_y: -60.0,
         });
 }
+// leaf: audit-options-media-viewer-hovers-hover-windows-allow-a-mouse-wheel-scroll-over-the-taglist-to-propagate-to-the-main-canvas
 #[test]
 fn long_tag_hover_scrolls_before_policy_gated_real_navigation_and_zoom() {
     let (dirs, store) = crate::subscriptions::store();

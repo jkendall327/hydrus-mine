@@ -92,6 +92,8 @@ fn gesture(
     });
 }
 // leaf: audit-options-gui-pages-preview-window-hide-the-bottom-left-preview-window
+// leaf: audit-options-menu-menu-pages-save-current-page-s-sidebar-preview-size-now
+// leaf: audit-options-menu-menu-pages-show-hide-sidebar-and-preview-panel
 #[test]
 fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_ownership() {
     let (_dirs, store) = crate::subscriptions::store();

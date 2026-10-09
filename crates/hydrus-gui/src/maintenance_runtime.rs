@@ -51,6 +51,8 @@ struct Inner {
     published: Cell<Option<(bool, i64)>>,
     /// The CPU-busy check, sampled once a minute, and its answer.
     cpu: RefCell<hydrus_store::idle_state::CpuBusy>,
+    /// Per-core (busy, total) times given by a test instead of `/proc/stat`.
+    cpu_times: RefCell<Option<CpuTimes>>,
     cpu_at: Cell<i64>,
     busy: Cell<bool>,
 }
@@ -60,6 +62,7 @@ impl Drop for Inner {
         self.timer.stop();
     }
 }
+type CpuTimes = Box<dyn FnMut() -> Vec<(u64, u64)>>;
 /// One binding owns at most one pass of each kind, without retaining its window.
 #[derive(Clone)]
 pub struct Control(Rc<Inner>);
@@ -114,6 +117,7 @@ impl Control {
             timer: slint::Timer::default(),
             published: Cell::new(None),
             cpu: RefCell::default(),
+            cpu_times: RefCell::new(None),
             cpu_at: Cell::new(i64::MIN),
             busy: Cell::new(false),
         }));
@@ -164,6 +168,7 @@ impl Control {
     /// Publish the idle state for the daemon (on change, else every five
     /// seconds) and show it, with the CPU-busy check, in the status bar.
     fn publish_idle(&self, window: &MainWindow, store: &Store, now_ms: i64) {
+        store.sleep_check();
         self.check_busy(store, now_ms);
         let idle = self.0.monitor.idle_at(now_ms);
         // Background work wants idle and a system that is not busy
@@ -183,6 +188,18 @@ impl Control {
         let (idle_text, busy_text) = hydrus_gui_model::status::activity(idle, self.0.busy.get());
         window.set_status_idle(idle_text.into());
         window.set_status_busy(busy_text.into());
+        let (idle_tip, busy_tip) =
+            hydrus_gui_model::status::activity_tooltips(idle, self.0.busy.get());
+        window.set_status_idle_tip(idle_tip.into());
+        window.set_status_busy_tip(busy_tip.into());
+        // (the reference's job name has no counterpart here, so no tooltip)
+        window.set_status_db(store.db_activity().into());
+    }
+    /// Read the cores' (busy, total) times from `times` instead of the system,
+    /// so tests can say how busy each core was.
+    #[doc(hidden)]
+    pub fn use_cpu_times(&self, times: impl FnMut() -> Vec<(u64, u64)> + 'static) {
+        *self.0.cpu_times.borrow_mut() = Some(Box::new(times));
     }
     /// The CPU-busy check (`SystemBusy`), once a minute: busy when at least the
     /// saved number of cores ran above the saved percentage; never while idle
@@ -197,12 +214,14 @@ impl Control {
         let busy = match config.busy_cpu_count {
             _ if self.0.monitor.forced_idle() => false,
             None => false,
-            Some(count) => self
-                .0
-                .cpu
-                .borrow_mut()
-                .sample(config.busy_cpu_percent, count)
-                .unwrap_or(self.0.busy.get()),
+            Some(count) => {
+                let mut cpu = self.0.cpu.borrow_mut();
+                let sample = match self.0.cpu_times.borrow_mut().as_mut() {
+                    Some(times) => cpu.sample_times(&times(), config.busy_cpu_percent, count),
+                    None => cpu.sample(config.busy_cpu_percent, count),
+                };
+                sample.unwrap_or(self.0.busy.get())
+            }
         };
         self.0.busy.set(busy);
     }

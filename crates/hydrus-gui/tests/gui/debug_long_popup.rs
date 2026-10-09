@@ -64,6 +64,7 @@ fn assert_cards(ui: &MainWindow, saved: &[popups::Job]) {
     }
 }
 
+// leaf: audit-options-help-debug-action-make-a-long-text-popup
 #[test]
 fn actual_menu_and_toaster_replay_every_recorded_deadline_and_durable_string() {
     let fixture = hydrus_testkit::fixture_json("debug_long_popup.json");

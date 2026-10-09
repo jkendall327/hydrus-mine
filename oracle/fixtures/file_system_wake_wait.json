@@ -1,0 +1,29 @@
+{
+  "delay": 3,
+  "cases": [
+    {
+      "file_system_waits": false,
+      "detect": false,
+      "blocked_seconds": 0,
+      "just_woke_after": false
+    },
+    {
+      "file_system_waits": false,
+      "detect": true,
+      "blocked_seconds": 0,
+      "just_woke_after": true
+    },
+    {
+      "file_system_waits": true,
+      "detect": false,
+      "blocked_seconds": 0,
+      "just_woke_after": false
+    },
+    {
+      "file_system_waits": true,
+      "detect": true,
+      "blocked_seconds": 3,
+      "just_woke_after": false
+    }
+  ]
+}

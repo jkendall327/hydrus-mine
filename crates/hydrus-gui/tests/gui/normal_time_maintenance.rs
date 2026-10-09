@@ -120,6 +120,7 @@ pub(super) fn queue(store: &Store, id: HashId) {
         })
         .unwrap();
 }
+// leaf: audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time
 #[test]
 fn staged_controls_cancel_reopen_hidden_retired_and_peer_merge() {
     let fixture = hydrus_testkit::fixture_json("normal_time_maintenance.json");
@@ -214,6 +215,7 @@ fn staged_controls_cancel_reopen_hidden_retired_and_peer_merge() {
     .unwrap();
     w.invoke_cancel();
 }
+// leaf: audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time
 #[test]
 fn unchecked_normal_flags_block_real_workers_but_current_live_idle_admits_both() {
     let (_dirs, store, files) = owned();
@@ -295,6 +297,7 @@ fn unchecked_normal_flags_block_real_workers_but_current_live_idle_admits_both()
     });
     assert!(files[2].1.exists());
 }
+// leaf: audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time
 #[test]
 fn normal_time_apply_reaches_waiting_consumer_and_terminal_owner_wakes_without_successor() {
     let (_dirs, store, files) = owned();
@@ -380,6 +383,7 @@ fn normal_time_apply_reaches_waiting_consumer_and_terminal_owner_wakes_without_s
     assert!(files[2].1.exists());
 }
 
+// leaf: audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time
 #[test]
 fn rebind_wakes_previous_pass_and_preserves_queued_pair_for_current_owner() {
     let (_dirs, store, files) = owned();
@@ -435,6 +439,7 @@ fn rebind_wakes_previous_pass_and_preserves_queued_pair_for_current_owner() {
     assert!(files[3].1.exists());
 }
 
+// leaf: audit-options-files-and-trash-allow-deferred-file-deletes-during-normal-time
 #[test]
 fn dropped_binding_retires_retained_control_and_wakes_its_real_held_wait() {
     let (_dirs, store, files) = owned();
@@ -508,4 +513,90 @@ fn dropped_binding_retires_retained_control_and_wakes_its_real_held_wait() {
     next.maintenance.poll_at(due + 1_000_000).unwrap();
     assert!(!next.maintenance.running(Worker::Trash));
     assert!(!next.maintenance.running(Worker::Deferred));
+}
+
+// leaf: audit-options-files-and-trash-when-physically-deleting-files-or-folders-send-them-to-the-os-s-recycle-bin
+#[cfg(all(unix, not(target_os = "macos")))]
+#[test]
+fn the_recycle_bin_option_decides_whether_physical_deletes_go_to_the_os_bin() {
+    const RECYCLE: &str =
+        "When physically deleting files or folders, send them to the OS's recycle bin: ";
+    /// Empties the OS bin of what the test sent there, however it ends.
+    struct Purge(Vec<std::path::PathBuf>);
+    impl Drop for Purge {
+        fn drop(&mut self) {
+            for path in &self.0 {
+                hydrus_store::paths::purge_from_recycle_bin(path);
+            }
+        }
+    }
+    let (dirs, store, files) = owned();
+    // Where the OS has no usable bin for this disk, a recycled file is just
+    // deleted (as `delete_or_recycle` falls back to), and the test cannot tell.
+    let probe = dirs[1].path().join("recycle-probe");
+    std::fs::write(&probe, b"probe").unwrap();
+    let _purge = Purge(
+        std::iter::once(probe.clone())
+            .chain(files.iter().map(|(_, path)| path.clone()))
+            .collect(),
+    );
+    hydrus_store::paths::delete_or_recycle(&probe, true).unwrap();
+    if !hydrus_store::paths::recycle_bin_holds(&probe) {
+        eprintln!("the OS has no usable recycle bin here; skipped");
+        return;
+    }
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.show().unwrap();
+    let recycle = || {
+        store
+            .read(settings::get::<settings::FolderSettings>)
+            .unwrap()
+            .delete_to_recycle_bin
+    };
+    let set_recycle = |on: bool| {
+        let (w, rows) = open(&ui, &bound);
+        let at = i32::try_from(
+            w.get_rows()
+                .iter()
+                .position(|row| row.label == RECYCLE)
+                .unwrap(),
+        )
+        .unwrap();
+        let shown = w.get_rows().row_data(at as usize).unwrap();
+        assert_eq!(shown.kind, 1);
+        assert_eq!(shown.checked, recycle(), "shows what is saved");
+        w.invoke_check_toggled(at, on);
+        // (and the deferred deletes may run in normal time)
+        w.invoke_check_toggled(rows[1], true);
+        w.invoke_apply();
+        assert_eq!(recycle(), on);
+    };
+    let delete = |file: usize, now: i64| {
+        queue(&store, files[file].0);
+        let now = now.max(bound.maintenance.deadline(Worker::Deferred));
+        bound.session_autosave.user_at(now);
+        bound.maintenance.poll_at(now).unwrap();
+        wait(|| {
+            bound.maintenance.poll_at(now).unwrap();
+            !files[file].1.exists()
+        });
+    };
+    assert!(!recycle(), "(this store starts with it off)");
+    let now = bound.maintenance.started_ms() + 30_000;
+
+    // off: the file is gone for good
+    set_recycle(false);
+    delete(0, now);
+    assert!(!hydrus_store::paths::recycle_bin_holds(&files[0].1));
+
+    // on: it is in the OS's recycle bin
+    set_recycle(true);
+    delete(1, now + 120_000);
+    assert!(
+        hydrus_store::paths::recycle_bin_holds(&files[1].1),
+        "{} is in the bin",
+        files[1].1.display()
+    );
 }

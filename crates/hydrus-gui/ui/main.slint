@@ -34,6 +34,7 @@ import { DuplicatesData, DuplicatesFiltering, DuplicatesSidebar } from "duplicat
 export { DuplicatesData, DuplicatesFiltering }
 import { RatingRow, RatingShape } from "viewer.slint";
 import { PreviewRatingRow, PreviewTopRight } from "preview_hover.slint";
+import { PreviewVolume } from "preview_volume.slint";
 export { PreviewRatingRow }
 export { DownloadLine, GalleryData, WatcherData, JobCogMenu }
 export { NetworkErrorWindow } from "importing.slint";
@@ -414,6 +415,17 @@ export component MainWindow inherits Window {
     out property <length> preview-hover-width: preview-top-right.width;
     out property <length> preview-hover-height: preview-top-right.height;
     callback preview-rating-clicked(int, bool, float);
+    // the preview's volume control, for a file it plays that has sound
+    in property <bool> preview-volume-shown;
+    in property <int> preview-volume;
+    in property <bool> preview-global-muted;
+    in property <bool> preview-muted;
+    out property <bool> preview-volume-open: preview-volume-box.open;
+    out property <length> preview-volume-x: preview-volume-box.absolute-position.x;
+    out property <length> preview-volume-y: preview-volume-box.absolute-position.y;
+    callback preview-volume-changed(int);
+    callback preview-flip-global-mute();
+    callback preview-flip-mute();
     in-out property <bool> preview-splitter-hidden;
     callback preview-retired();
     callback preview-presentation-changed();
@@ -600,6 +612,12 @@ export component MainWindow inherits Window {
     // the idle and CPU-busy fields ("idle", "CPU busy", or empty)
     in property <string> status-idle;
     in property <string> status-busy;
+    // what the idle, CPU-busy and database fields say when hovered, and the
+    // database's activity ("db writing", "db reading")
+    in property <string> status-idle-tip;
+    in property <string> status-busy-tip;
+    in property <string> status-db;
+    in property <string> status-db-tip;
     in property <string> error;
     // a downloader page's importer (the reference's "url downloader" box):
     // its file log's status and progress, whether it is paused, and its
@@ -1596,6 +1614,18 @@ export component MainWindow inherits Window {
                             pop-in: root.preview-pop-in;
                             rating-clicked(row, left, proportion) => { root.preview-rating-clicked(row, left, proportion); }
                         }
+                        // (above the top-right hover, which an open control overlaps)
+                        preview-volume-box := PreviewVolume {
+                            visible: root.preview-volume-shown && root.preview-has-media;
+                            x: min(parent.width, root.preview-media-x + root.preview-media-width) - self.width;
+                            y: min(parent.height, root.preview-media-y + root.preview-media-height) - self.height;
+                            volume: root.preview-volume;
+                            global-muted: root.preview-global-muted;
+                            preview-muted: root.preview-muted;
+                            volume-changed(v) => { root.preview-volume-changed(v); }
+                            flip-global-mute => { root.preview-flip-global-mute(); }
+                            flip-preview-mute => { root.preview-flip-mute(); }
+                        }
                     }
                 }
                     }
@@ -2208,9 +2238,24 @@ export component MainWindow inherits Window {
             }
             // the status bar, as the reference's: the page's, then the
             // network's (what has been read since opening, and pauses)
-            Rectangle {
+            status-bar := Rectangle {
                 height: 24px;
                 background: Theme.panel;
+                // the tooltip of the field under the pointer, shown after a
+                // moment as the reference's status bar fields do
+                property <bool> hover-idle;
+                property <bool> hover-busy;
+                property <bool> hover-db;
+                property <string> tip: self.hover-idle ? root.status-idle-tip
+                    : self.hover-busy ? root.status-busy-tip
+                    : self.hover-db ? root.status-db-tip : "";
+                out property <bool> tip-visible;
+                changed tip => { self.tip-visible = false; }
+                Timer {
+                    interval: 500ms;
+                    running: status-bar.tip != "" && !status-bar.tip-visible;
+                    triggered => { status-bar.tip-visible = true; }
+                }
                 HorizontalLayout {
                     padding-left: 6px;
                     padding-right: 8px;
@@ -2221,18 +2266,54 @@ export component MainWindow inherits Window {
                         horizontal-stretch: 1;
                         overflow: elide;
                     }
-                    if root.status-idle != "": Text {
-                        text: root.status-idle;
-                        vertical-alignment: center;
+                    if root.status-idle != "": Rectangle {
+                        HorizontalLayout {
+                            Text {
+                                text: root.status-idle;
+                                vertical-alignment: center;
+                            }
+                        }
+                        TouchArea { changed has-hover => { status-bar.hover-idle = self.has-hover; } }
                     }
-                    if root.status-busy != "": Text {
-                        text: root.status-busy;
-                        vertical-alignment: center;
+                    if root.status-busy != "": Rectangle {
+                        HorizontalLayout {
+                            Text {
+                                text: root.status-busy;
+                                vertical-alignment: center;
+                            }
+                        }
+                        TouchArea { changed has-hover => { status-bar.hover-busy = self.has-hover; } }
+                    }
+                    if root.status-db != "": Rectangle {
+                        HorizontalLayout {
+                            Text {
+                                text: root.status-db;
+                                vertical-alignment: center;
+                            }
+                        }
+                        TouchArea { changed has-hover => { status-bar.hover-db = self.has-hover; } }
                     }
                     Text {
                         text: root.status-network;
                         vertical-alignment: center;
                         min-width: 120px;
+                    }
+                }
+                if status-bar.tip-visible && status-bar.tip != "": Rectangle {
+                    width: min(320px, status-bar.width);
+                    height: tip-text.preferred-height + 8px;
+                    x: max(0px, status-bar.width - self.width - 8px);
+                    y: -self.height - 2px;
+                    background: Theme.panel;
+                    border-width: 1px;
+                    border-color: Theme.border;
+                    tip-text := Text {
+                        x: 8px;
+                        y: 4px;
+                        width: parent.width - 16px;
+                        text: status-bar.tip;
+                        wrap: word-wrap;
+                        color: Theme.text;
                     }
                 }
             }

@@ -49,6 +49,7 @@ async fn rejected_and_read_requests_publish_activity_while_locked_without_waitin
         addr,
         cors: false,
         log_requests: false,
+        tls: None,
     };
     let (finish, finished) = tokio::sync::oneshot::channel::<()>();
     let server = tokio::spawn(async move {

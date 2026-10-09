@@ -226,18 +226,6 @@ pub fn reselect(earliest: usize, left: usize) -> Option<usize> {
 /// (`CallLater( 4, ... )`).
 pub const POPUP_AFTER: std::time::Duration = std::time::Duration::from_secs(4);
 
-static POPUP_AFTER_OVERRIDE: std::sync::Mutex<Option<std::time::Duration>> =
-    std::sync::Mutex::new(None);
-
-/// Show the popup after `after` instead of [`POPUP_AFTER`], for work started
-/// from now on (`None` to restore it). For tests, which cannot wait four
-/// seconds; process wide, so a test that sets it takes its own lock.
-pub fn set_popup_after(after: Option<std::time::Duration>) {
-    *POPUP_AFTER_OVERRIDE
-        .lock()
-        .unwrap_or_else(std::sync::PoisonError::into_inner) = after;
-}
-
 /// The popup's first text (`approving auto-resolution decisions`).
 pub fn action_title(approve: bool) -> &'static str {
     if approve {
@@ -267,11 +255,7 @@ pub fn action_pairs(
     approve: bool,
     status: &std::sync::Mutex<String>,
 ) -> hydrus_store::Result<()> {
-    let after = POPUP_AFTER_OVERRIDE
-        .lock()
-        .unwrap_or_else(std::sync::PoisonError::into_inner)
-        .unwrap_or(POPUP_AFTER);
-    action_pairs_after(store, rule_id, pairs, approve, status, after, &|_| {})
+    action_pairs_after(store, rule_id, pairs, approve, status, POPUP_AFTER, &|_| {})
 }
 
 /// [`action_pairs`] with the wait before its popup shows chosen, and told

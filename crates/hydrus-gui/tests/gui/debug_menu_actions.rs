@@ -400,6 +400,67 @@ fn idle_report_mode_says_why_the_client_is_not_idle() {
     debug_flags::set_sink(None);
 }
 
+/// Puts the network report flags and the sink back when dropped.
+struct Reset;
+impl Drop for Reset {
+    fn drop(&mut self) {
+        debug_flags::Flag::NetworkReport.set(false);
+        debug_flags::Flag::NetworkReportSilent.set(false);
+        debug_flags::set_sink(None);
+    }
+}
+
+// leaf: audit-options-help-debug-action-network-report-mode-silent
+#[test]
+fn network_report_mode_entries_share_the_mode_as_the_reference_does() {
+    let _one = ONE_AT_A_TIME
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    // the flags are process-wide: put them back even if an assertion fails
+    let _reset = Reset;
+    let d = start();
+    let seen = capture();
+    let plain = "network report mode";
+    let silent = "network report mode (silent)";
+    let state = |d: &Debug| (d.report_mode_checked(plain), d.report_mode_checked(silent));
+    let report = || debug_flags::report_network(|| "a network job".to_owned());
+    assert_eq!(state(&d), (false, false));
+
+    // the silent entry turns the mode on and sets silent: nothing reaches
+    // the popup sink (that it goes to the console instead is not observed:
+    // the console is not injectable)
+    d.click(&["report modes", silent]);
+    assert_eq!(state(&d), (true, true));
+    report();
+    assert!(seen.lock().unwrap().is_empty(), "silent keeps popups out");
+
+    // the plain entry flips the mode (off) and clears silent
+    d.click(&["report modes", plain]);
+    assert_eq!(state(&d), (false, false));
+    report();
+    assert!(seen.lock().unwrap().is_empty(), "the mode is off");
+
+    // and on again, loud
+    d.click(&["report modes", plain]);
+    assert_eq!(state(&d), (true, false));
+    report();
+    assert_eq!(*seen.lock().unwrap(), ["a network job"]);
+
+    // silent after plain flips the mode back off, as the reference's does,
+    // yet leaves silent set
+    d.click(&["report modes", silent]);
+    assert_eq!(state(&d), (false, true));
+    seen.lock().unwrap().clear();
+    report();
+    assert!(seen.lock().unwrap().is_empty());
+
+    // the plain entry turns the mode on (clearing silent), and again off
+    d.click(&["report modes", plain]);
+    assert_eq!(state(&d), (true, false));
+    d.click(&["report modes", plain]);
+    assert_eq!(state(&d), (false, false));
+}
+
 // leaf: audit-options-help-debug-action-shortcut-report-mode
 #[test]
 fn shortcut_report_mode_says_what_a_shortcut_matched() {

@@ -263,6 +263,36 @@ mod tests {
     use crate::import::tests::import_basic;
     use crate::transfer::{TransferMode, transfer_media};
 
+    /// The waits the reference's deferred loop made in one recorded scenario
+    /// (oracle/fixtures/physical_delete_delay.json), in milliseconds.
+    fn recorded_waits(scenario: &str) -> Vec<u128> {
+        let recorded = hydrus_testkit::fixture_json("physical_delete_delay.json");
+        let pass = recorded["passes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|p| p["scenario"] == scenario)
+            .unwrap();
+        pass["events"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|e| e[0] == "wait")
+            .map(|e| std::time::Duration::from_secs_f64(e[1].as_f64().unwrap()).as_millis())
+            .collect()
+    }
+    /// The delay the recorded scenario left saved, in milliseconds.
+    fn recorded_saved_after(scenario: &str) -> u128 {
+        let recorded = hydrus_testkit::fixture_json("physical_delete_delay.json");
+        let pass = recorded["passes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|p| p["scenario"] == scenario)
+            .unwrap();
+        u128::from(pass["saved_after"].as_u64().unwrap())
+    }
+
     fn three_owned_files(store: &Store) -> Vec<(HashId, std::path::PathBuf)> {
         let snap = store.snapshot();
         let local = DomainRoles::new(&snap.services).unwrap().local_file_storage;
@@ -369,7 +399,11 @@ mod tests {
         })
         .unwrap();
         assert_eq!(report.files_deleted, 2);
-        assert_eq!(waits, [600, 600], "per-pass policy plus final-pair wait");
+        assert_eq!(
+            waits,
+            recorded_waits("change_during_wait"),
+            "per-pass policy plus final-pair wait"
+        );
         assert!(files[1].1.exists());
         assert!(!files[2].1.exists());
         purge_file(&store, files[1].0);
@@ -385,7 +419,9 @@ mod tests {
         );
         assert_eq!(
             waits,
-            [900],
+            // (the delay the recorded first pass left saved is what the second pass
+            // is recorded as waiting: the recording has no wait of its own for it)
+            [recorded_saved_after("change_during_wait")],
             "successor pass captures edited policy and still waits after its last pair"
         );
     }
@@ -453,7 +489,7 @@ mod tests {
         assert_eq!(report.thumbnails_deleted, usize::from(had_thumbnail));
         assert_eq!(
             waits,
-            [600],
+            recorded_waits("missing")[..1],
             "missing physical original does not erase the final-pair delay"
         );
     }

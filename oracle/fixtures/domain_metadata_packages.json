@@ -1,0 +1,1142 @@
+{
+  "initial": {
+    "headers": {
+      "api.packages.example": {
+        "X-Api-Version": [
+          "2",
+          1,
+          "The API needs it."
+        ]
+      },
+      "packages.example": {
+        "Referer": [
+          "https://packages.example/",
+          1,
+          "The gallery checks the referral."
+        ],
+        "X-Denied": [
+          "never shared",
+          0,
+          "Denied."
+        ],
+        "X-Pending": [
+          "not shared",
+          2,
+          "Waiting for approval."
+        ]
+      },
+      "pendingonly.example": {
+        "X-Pending": [
+          "not shared",
+          2,
+          "Waiting."
+        ]
+      }
+    },
+    "rules": {
+      "packages.example": [
+        [
+          0,
+          86400,
+          67108864
+        ],
+        [
+          1,
+          2,
+          1
+        ]
+      ],
+      "rulesonly.example": [
+        [
+          1,
+          null,
+          5000
+        ]
+      ]
+    },
+    "gugs": [
+      "rules only gallery"
+    ],
+    "classes": [
+      "rules only gallery class"
+    ]
+  },
+  "reference": [
+    26,
+    3,
+    [
+      [
+        2,
+        [
+          71,
+          1,
+          [
+            "pendingonly.example",
+            [],
+            null
+          ]
+        ]
+      ],
+      [
+        2,
+        [
+          71,
+          1,
+          [
+            "api.packages.example",
+            [
+              [
+                "X-Api-Version",
+                "2",
+                "The API needs it."
+              ]
+            ],
+            null
+          ]
+        ]
+      ],
+      [
+        2,
+        [
+          71,
+          1,
+          [
+            "packages.example",
+            [
+              [
+                "Referer",
+                "https://packages.example/",
+                "The gallery checks the referral."
+              ]
+            ],
+            [
+              38,
+              1,
+              [
+                [
+                  1,
+                  2,
+                  1
+                ],
+                [
+                  0,
+                  86400,
+                  67108864
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        2,
+        [
+          71,
+          1,
+          [
+            "rulesonly.example",
+            null,
+            [
+              38,
+              1,
+              [
+                [
+                  1,
+                  null,
+                  5000
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        2,
+        [
+          69,
+          "rules only gallery",
+          1,
+          [
+            "8181818181818181818181818181818181818181818181818181818181818181",
+            "https://www.rulesonly.example/search/%tags%",
+            "%tags%",
+            "+",
+            "search tags",
+            "blue_eyes blonde_hair"
+          ]
+        ]
+      ],
+      [
+        2,
+        [
+          50,
+          "rules only gallery class",
+          15,
+          [
+            "8282828282828282828282828282828282828282828282828282828282828282",
+            3,
+            "https",
+            [
+              139,
+              1,
+              [
+                [
+                  "rulesonly.example"
+                ],
+                [],
+                false,
+                false
+              ]
+            ],
+            [
+              true,
+              false,
+              false,
+              true,
+              false,
+              true,
+              false
+            ],
+            [
+              [
+                [
+                  51,
+                  1,
+                  [
+                    0,
+                    "search",
+                    null,
+                    null,
+                    "search"
+                  ]
+                ],
+                null
+              ],
+              [
+                [
+                  51,
+                  1,
+                  [
+                    3,
+                    "",
+                    null,
+                    null,
+                    "example string"
+                  ]
+                ],
+                null
+              ]
+            ],
+            [
+              26,
+              3,
+              []
+            ],
+            false,
+            [
+              51,
+              1,
+              [
+                3,
+                "",
+                null,
+                null,
+                "example string"
+              ]
+            ],
+            [],
+            [
+              55,
+              2,
+              [
+                [],
+                "https://hostname.com/post/page.php?id=123456&s=view"
+              ]
+            ],
+            0,
+            [
+              55,
+              2,
+              [
+                [],
+                "https://hostname.com/post/page.php?id=123456&s=view"
+              ]
+            ],
+            null,
+            null,
+            1,
+            "https://www.rulesonly.example/search/cats"
+          ]
+        ]
+      ],
+      [
+        2,
+        [
+          58,
+          "rules only parser",
+          3,
+          [
+            "rules only parser",
+            "8383838383838383838383838383838383838383838383838383838383838383",
+            [
+              55,
+              2,
+              [
+                [],
+                "example string"
+              ]
+            ],
+            [
+              26,
+              3,
+              []
+            ],
+            [
+              26,
+              3,
+              []
+            ],
+            [
+              "https://www.rulesonly.example/search/cats"
+            ],
+            {
+              "url": "https://example.com/posts/index.php?id=123456"
+            }
+          ]
+        ]
+      ]
+    ]
+  ],
+  "export_steps": [
+    {
+      "step": "cancelled",
+      "state": [],
+      "notices": []
+    },
+    {
+      "step": "nothing",
+      "state": [],
+      "notices": [
+        "No headers/bandwidth rules found!"
+      ]
+    },
+    {
+      "step": "pending only",
+      "state": [
+        {
+          "name": "pendingonly.example",
+          "kind": 71,
+          "type": "Domain Metadata"
+        }
+      ],
+      "notices": [
+        "For domain \"pendingonly.example\":\n\nHeaders: \n"
+      ]
+    },
+    {
+      "step": "subdomain",
+      "state": [
+        {
+          "name": "pendingonly.example",
+          "kind": 71,
+          "type": "Domain Metadata"
+        },
+        {
+          "name": "api.packages.example",
+          "kind": 71,
+          "type": "Domain Metadata"
+        },
+        {
+          "name": "packages.example",
+          "kind": 71,
+          "type": "Domain Metadata"
+        }
+      ],
+      "notices": [
+        "For domain \"api.packages.example\":\n\nHeaders: \nX-Api-Version : 2 - The API needs it.",
+        "For domain \"packages.example\":\n\nBandwidth rules: \n1 rqs per 2 seconds\n64 MB per 1 day\n\nHeaders: \nReferer : https://packages.example/ - The gallery checks the referral."
+      ]
+    },
+    {
+      "step": "again",
+      "state": [
+        {
+          "name": "pendingonly.example",
+          "kind": 71,
+          "type": "Domain Metadata"
+        },
+        {
+          "name": "api.packages.example",
+          "kind": 71,
+          "type": "Domain Metadata"
+        },
+        {
+          "name": "packages.example",
+          "kind": 71,
+          "type": "Domain Metadata"
+        }
+      ],
+      "notices": [
+        "No headers/bandwidth rules found!"
+      ]
+    },
+    {
+      "step": "gug",
+      "state": [
+        {
+          "name": "pendingonly.example",
+          "kind": 71,
+          "type": "Domain Metadata"
+        },
+        {
+          "name": "api.packages.example",
+          "kind": 71,
+          "type": "Domain Metadata"
+        },
+        {
+          "name": "packages.example",
+          "kind": 71,
+          "type": "Domain Metadata"
+        },
+        {
+          "name": "rulesonly.example",
+          "kind": 71,
+          "type": "Domain Metadata"
+        },
+        {
+          "name": "rules only gallery",
+          "kind": 69,
+          "type": "Gallery URL Generator"
+        },
+        {
+          "name": "rules only gallery class",
+          "kind": 50,
+          "type": "URL Class"
+        },
+        {
+          "name": "rules only parser",
+          "kind": 58,
+          "type": "Page Parser"
+        }
+      ],
+      "notices": [
+        "For domain \"rulesonly.example\":\n\nBandwidth rules: \n5,000 rqs per month"
+      ]
+    }
+  ],
+  "prompts": [
+    {
+      "title": "Enter Text",
+      "message": "Enter domain.",
+      "answer": null
+    },
+    {
+      "title": "Enter Text",
+      "message": "Enter domain.",
+      "answer": "nothing.example"
+    },
+    {
+      "title": "Enter Text",
+      "message": "Enter domain.",
+      "answer": "pendingonly.example"
+    },
+    {
+      "title": "Enter Text",
+      "message": "Enter domain.",
+      "answer": "www.api.packages.example"
+    },
+    {
+      "title": "Enter Text",
+      "message": "Enter domain.",
+      "answer": "packages.example"
+    }
+  ],
+  "chooser_states": [
+    {
+      "title": "select gugs",
+      "labels": [
+        "rules only gallery"
+      ],
+      "answer": [
+        "rules only gallery"
+      ]
+    },
+    {
+      "title": "select objects to add",
+      "labels": [
+        "Domain Metadata: api.packages.example",
+        "Domain Metadata: packages.example",
+        "Domain Metadata: rulesonly.example",
+        "GUG: rules only gallery",
+        "Parser: rules only parser",
+        "URL Class: rules only gallery class"
+      ],
+      "answer": null
+    },
+    {
+      "title": "select objects to add",
+      "labels": [
+        "Domain Metadata: both.example",
+        "Domain Metadata: headersonly.example",
+        "Domain Metadata: zrules.example"
+      ],
+      "answer": [
+        "Domain Metadata: both.example",
+        "Domain Metadata: headersonly.example",
+        "Domain Metadata: zrules.example"
+      ]
+    }
+  ],
+  "png": {
+    "title": "easy-import downloader png - 1 downloaders",
+    "description": "rules only gallery",
+    "payload_description": "A list of 4 Domain Metadata, 1 Gallery URL Generator, 1 URL Class, 1 Page Parser - 1.46 KB"
+  },
+  "export_questions": [
+    "The end-user will see this sort of summary:\n\nheaders - pendingonly.example\nheaders - api.packages.example\nbandwidth rules and headers - packages.example\nbandwidth rules - rulesonly.example\nDownloader \"rules only gallery\" - www.rulesonly.example\nURL Class \"rules only gallery class\" - www.rulesonly.example\nParser \"rules only parser\" - www.rulesonly.example\n\nDoes that look good? (Ideally, every object should have correct and sane domains listed here)"
+  ],
+  "summaries": {
+    "pendingonly.example": {
+      "safe": "headers - pendingonly.example",
+      "detailed": "For domain \"pendingonly.example\":\n\nHeaders: \n"
+    },
+    "api.packages.example": {
+      "safe": "headers - api.packages.example",
+      "detailed": "For domain \"api.packages.example\":\n\nHeaders: \nX-Api-Version : 2 - The API needs it."
+    },
+    "packages.example": {
+      "safe": "bandwidth rules and headers - packages.example",
+      "detailed": "For domain \"packages.example\":\n\nBandwidth rules: \n1 rqs per 2 seconds\n64 MB per 1 day\n\nHeaders: \nReferer : https://packages.example/ - The gallery checks the referral."
+    },
+    "rulesonly.example": {
+      "safe": "bandwidth rules - rulesonly.example",
+      "detailed": "For domain \"rulesonly.example\":\n\nBandwidth rules: \n5,000 rqs per month"
+    }
+  },
+  "before": {
+    "headers": {
+      "api.packages.example": {
+        "X-Other": [
+          "kept?",
+          1,
+          "Replaced by import."
+        ]
+      },
+      "packages.example": {
+        "Referer": [
+          "https://packages.example/",
+          2,
+          "An older reason."
+        ]
+      },
+      "pendingonly.example": {}
+    },
+    "rules": {
+      "packages.example": [
+        [
+          1,
+          60,
+          10
+        ]
+      ]
+    },
+    "gugs": [],
+    "classes": []
+  },
+  "chooser_cancelled": {
+    "state": {
+      "headers": {
+        "api.packages.example": {
+          "X-Other": [
+            "kept?",
+            1,
+            "Replaced by import."
+          ]
+        },
+        "packages.example": {
+          "Referer": [
+            "https://packages.example/",
+            2,
+            "An older reason."
+          ]
+        },
+        "pendingonly.example": {}
+      },
+      "rules": {
+        "packages.example": [
+          [
+            1,
+            60,
+            10
+          ]
+        ]
+      },
+      "gugs": [],
+      "classes": []
+    },
+    "notices": [],
+    "questions": []
+  },
+  "declined": {
+    "state": {
+      "headers": {
+        "api.packages.example": {
+          "X-Other": [
+            "kept?",
+            1,
+            "Replaced by import."
+          ]
+        },
+        "packages.example": {
+          "Referer": [
+            "https://packages.example/",
+            2,
+            "An older reason."
+          ]
+        },
+        "pendingonly.example": {}
+      },
+      "rules": {
+        "packages.example": [
+          [
+            1,
+            60,
+            10
+          ]
+        ]
+      },
+      "gugs": [],
+      "classes": []
+    },
+    "notices": [
+      "For domain \"api.packages.example\":\n\nHeaders: \nX-Api-Version : 2 - The API needs it.",
+      "For domain \"packages.example\":\n\nBandwidth rules: \n1 rqs per 2 seconds\n64 MB per 1 day",
+      "For domain \"rulesonly.example\":\n\nBandwidth rules: \n5,000 rqs per month"
+    ],
+    "questions": [
+      "The client is about to add and link these objects:\n\nDownloader \"rules only gallery\" - www.rulesonly.example\nURL Class \"rules only gallery class\" - www.rulesonly.example\nParser \"rules only parser\" - www.rulesonly.example\nheaders - api.packages.example\nbandwidth rules - packages.example\nbandwidth rules - rulesonly.example\n\nDoes that sound good?"
+    ]
+  },
+  "accepted": {
+    "state": {
+      "headers": {
+        "api.packages.example": {
+          "X-Api-Version": [
+            "2",
+            1,
+            "The API needs it."
+          ]
+        },
+        "packages.example": {
+          "Referer": [
+            "https://packages.example/",
+            2,
+            "An older reason."
+          ]
+        },
+        "pendingonly.example": {}
+      },
+      "rules": {
+        "packages.example": [
+          [
+            1,
+            60,
+            10
+          ]
+        ]
+      },
+      "gugs": [
+        "rules only gallery"
+      ],
+      "classes": [
+        "rules only gallery class"
+      ]
+    },
+    "notices": [
+      "For domain \"api.packages.example\":\n\nHeaders: \nX-Api-Version : 2 - The API needs it.",
+      "For domain \"packages.example\":\n\nBandwidth rules: \n1 rqs per 2 seconds\n64 MB per 1 day",
+      "For domain \"rulesonly.example\":\n\nBandwidth rules: \n5,000 rqs per month",
+      "Successfully added 1 new downloaders and 5 auxiliary objects. 1 duplicate objects were not added (but some additional metadata may have been merged)."
+    ],
+    "questions": [
+      "The client is about to add and link these objects:\n\nDownloader \"rules only gallery\" - www.rulesonly.example\nURL Class \"rules only gallery class\" - www.rulesonly.example\nParser \"rules only parser\" - www.rulesonly.example\nheaders - api.packages.example\nbandwidth rules - packages.example\nbandwidth rules - rulesonly.example\n\nDoes that sound good?"
+    ]
+  },
+  "again": {
+    "state": {
+      "headers": {
+        "api.packages.example": {
+          "X-Api-Version": [
+            "2",
+            1,
+            "The API needs it."
+          ]
+        },
+        "packages.example": {
+          "Referer": [
+            "https://packages.example/",
+            2,
+            "An older reason."
+          ]
+        },
+        "pendingonly.example": {}
+      },
+      "rules": {
+        "packages.example": [
+          [
+            0,
+            86400,
+            67108864
+          ],
+          [
+            1,
+            2,
+            1
+          ]
+        ],
+        "rulesonly.example": [
+          [
+            1,
+            null,
+            5000
+          ]
+        ]
+      },
+      "gugs": [
+        "rules only gallery"
+      ],
+      "classes": [
+        "rules only gallery class"
+      ]
+    },
+    "notices": [
+      "For domain \"packages.example\":\n\nBandwidth rules: \n1 rqs per 2 seconds\n64 MB per 1 day",
+      "For domain \"rulesonly.example\":\n\nBandwidth rules: \n5,000 rqs per month",
+      "Successfully added 0 new downloaders and 2 auxiliary objects. 5 duplicate objects were not added (but some additional metadata may have been merged)."
+    ],
+    "questions": [
+      "The client is about to add and link these objects:\n\nbandwidth rules - packages.example\nbandwidth rules - rulesonly.example\n\nDoes that sound good?"
+    ]
+  },
+  "stopped": {
+    "source": [
+      26,
+      3,
+      [
+        [
+          2,
+          [
+            71,
+            1,
+            [
+              "headersonly.example",
+              [
+                [
+                  "X-A",
+                  "a",
+                  "Header only."
+                ]
+              ],
+              null
+            ]
+          ]
+        ],
+        [
+          2,
+          [
+            71,
+            1,
+            [
+              "zrules.example",
+              null,
+              [
+                38,
+                1,
+                [
+                  [
+                    1,
+                    1,
+                    1
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          2,
+          [
+            71,
+            1,
+            [
+              "both.example",
+              [
+                [
+                  "X-B",
+                  "b",
+                  "Both."
+                ]
+              ],
+              [
+                38,
+                1,
+                [
+                  [
+                    0,
+                    null,
+                    1024
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ],
+    "state": {
+      "headers": {
+        "api.packages.example": {},
+        "both.example": {
+          "X-B": [
+            "b",
+            1,
+            "Both."
+          ]
+        },
+        "headersonly.example": {
+          "X-A": [
+            "a",
+            1,
+            "Header only."
+          ]
+        },
+        "packages.example": {},
+        "pendingonly.example": {}
+      },
+      "rules": {
+        "both.example": [
+          [
+            0,
+            null,
+            1024
+          ]
+        ]
+      },
+      "gugs": [
+        "rules only gallery"
+      ],
+      "classes": [
+        "rules only gallery class"
+      ]
+    },
+    "notices": [
+      "For domain \"both.example\":\n\nBandwidth rules: \n1 KB per month\n\nHeaders: \nX-B : b - Both.",
+      "For domain \"headersonly.example\":\n\nHeaders: \nX-A : a - Header only.",
+      "For domain \"zrules.example\":\n\nBandwidth rules: \n1 rqs per 1 second",
+      "Successfully added 0 new downloaders and 3 auxiliary objects."
+    ],
+    "questions": [
+      "The client is about to add and link these objects:\n\nbandwidth rules and headers - both.example\nheaders - headersonly.example\nbandwidth rules - zrules.example\n\nDoes that sound good?"
+    ]
+  },
+  "nine": {
+    "source": [
+      26,
+      3,
+      [
+        [
+          2,
+          [
+            71,
+            1,
+            [
+              "site0.example",
+              null,
+              [
+                38,
+                1,
+                [
+                  [
+                    1,
+                    60,
+                    1
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          2,
+          [
+            71,
+            1,
+            [
+              "site1.example",
+              null,
+              [
+                38,
+                1,
+                [
+                  [
+                    1,
+                    60,
+                    2
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          2,
+          [
+            71,
+            1,
+            [
+              "site2.example",
+              null,
+              [
+                38,
+                1,
+                [
+                  [
+                    1,
+                    60,
+                    3
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          2,
+          [
+            71,
+            1,
+            [
+              "site3.example",
+              null,
+              [
+                38,
+                1,
+                [
+                  [
+                    1,
+                    60,
+                    4
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          2,
+          [
+            71,
+            1,
+            [
+              "site4.example",
+              null,
+              [
+                38,
+                1,
+                [
+                  [
+                    1,
+                    60,
+                    5
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          2,
+          [
+            71,
+            1,
+            [
+              "site5.example",
+              null,
+              [
+                38,
+                1,
+                [
+                  [
+                    1,
+                    60,
+                    6
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          2,
+          [
+            71,
+            1,
+            [
+              "site6.example",
+              null,
+              [
+                38,
+                1,
+                [
+                  [
+                    1,
+                    60,
+                    7
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          2,
+          [
+            71,
+            1,
+            [
+              "site7.example",
+              null,
+              [
+                38,
+                1,
+                [
+                  [
+                    1,
+                    60,
+                    8
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          2,
+          [
+            71,
+            1,
+            [
+              "site8.example",
+              null,
+              [
+                38,
+                1,
+                [
+                  [
+                    1,
+                    60,
+                    9
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ],
+    "state": {
+      "headers": {
+        "api.packages.example": {},
+        "both.example": {},
+        "headersonly.example": {},
+        "packages.example": {},
+        "pendingonly.example": {}
+      },
+      "rules": {
+        "site0.example": [
+          [
+            1,
+            60,
+            1
+          ]
+        ],
+        "site1.example": [
+          [
+            1,
+            60,
+            2
+          ]
+        ],
+        "site2.example": [
+          [
+            1,
+            60,
+            3
+          ]
+        ],
+        "site3.example": [
+          [
+            1,
+            60,
+            4
+          ]
+        ],
+        "site4.example": [
+          [
+            1,
+            60,
+            5
+          ]
+        ],
+        "site5.example": [
+          [
+            1,
+            60,
+            6
+          ]
+        ],
+        "site6.example": [
+          [
+            1,
+            60,
+            7
+          ]
+        ],
+        "site7.example": [
+          [
+            1,
+            60,
+            8
+          ]
+        ],
+        "site8.example": [
+          [
+            1,
+            60,
+            9
+          ]
+        ]
+      },
+      "gugs": [
+        "rules only gallery"
+      ],
+      "classes": [
+        "rules only gallery class"
+      ]
+    },
+    "notices": [
+      "For domain \"site0.example\":\n\nBandwidth rules: \n1 rqs per 1 minute",
+      "For domain \"site1.example\":\n\nBandwidth rules: \n2 rqs per 1 minute",
+      "For domain \"site2.example\":\n\nBandwidth rules: \n3 rqs per 1 minute",
+      "For domain \"site3.example\":\n\nBandwidth rules: \n4 rqs per 1 minute",
+      "For domain \"site4.example\":\n\nBandwidth rules: \n5 rqs per 1 minute",
+      "For domain \"site5.example\":\n\nBandwidth rules: \n6 rqs per 1 minute",
+      "For domain \"site6.example\":\n\nBandwidth rules: \n7 rqs per 1 minute",
+      "For domain \"site7.example\":\n\nBandwidth rules: \n8 rqs per 1 minute",
+      "Successfully added 0 new downloaders and 9 auxiliary objects."
+    ],
+    "questions": [
+      "The client is about to add and link these objects:\n\nbandwidth rules - site0.example\nbandwidth rules - site1.example\nbandwidth rules - site2.example\nbandwidth rules - site3.example\nbandwidth rules - site4.example\nbandwidth rules - site5.example\nbandwidth rules - site6.example\nbandwidth rules - site7.example\nbandwidth rules - site8.example\n\nDoes that sound good?"
+    ]
+  }
+}

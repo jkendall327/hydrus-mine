@@ -9,6 +9,7 @@ use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
 use slint::language::ColorScheme;
 
+// leaf: audit-options-colours-override-what-is-set-in-the-stylesheet-with-the-colours-on-this-page
 #[test]
 fn a_search_page_finds_files_and_shows_their_thumbnails() {
     let legacy = hydrus_testkit::legacy_fixture("basic");

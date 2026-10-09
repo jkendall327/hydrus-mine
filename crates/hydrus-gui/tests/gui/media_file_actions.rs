@@ -4,6 +4,7 @@
 
 use hydrus_core::HashId;
 use hydrus_gui::media_actions;
+use slint::{ComponentHandle as _, Model as _};
 
 use super::media_support::*;
 
@@ -42,6 +43,7 @@ fn inboxed(fixture: &Fixture, files: &[HashId]) -> Vec<HashId> {
 }
 
 // leaf: audit-media-context-lifecycle
+// leaf: audit-options-files-and-trash-confirm-sending-more-than-one-file-to-archive-or-inbox
 #[test]
 fn archive_inbox_delete_undelete_and_physical_delete_from_the_menu() {
     let fixture = start_local();
@@ -121,6 +123,11 @@ fn archive_inbox_delete_undelete_and_physical_delete_from_the_menu() {
         ["delete physically now", "undelete"]
     );
     fixture.ui.invoke_menu_chosen(find(&trash, "undelete"));
+    // (deleted from both its domains: the chooser asks where to, and "all the
+    // above" puts it back in both; `undelete_question.rs` has every case)
+    let chooser = hydrus_gui::undelete::last_chooser().expect("asked where to");
+    assert!(chooser.window().is_visible());
+    chooser.invoke_chosen(i32::try_from(chooser.get_choices().row_count()).unwrap() - 1);
     let restored = domains(&fixture, file);
     assert!(!restored.contains(&"trash".to_owned()), "{restored:?}");
     assert!(restored.contains(&domain), "{restored:?}");

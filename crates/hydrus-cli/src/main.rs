@@ -550,28 +550,9 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
         // in: packets of work and rests, by the GUI's idle state
         let searcher = store.clone();
         tokio::spawn(async move {
-            use hydrus_duplicates::daemon::{Turn, similar_files_turn};
             loop {
-                let store = searcher.clone();
-                let now = hydrus_core::time::TimestampMs::now().millis();
-                let tick = tokio::task::spawn_blocking(move || similar_files_turn(&store, now))
-                    .await;
-                let rest = match tick {
-                    Ok(tick) => {
-                        match &tick.turn {
-                            Turn::Worked(searched) if searched.files > 0 => {
-                                tracing::debug!(files = searched.files, "searched for similar files");
-                            }
-                            Turn::Failed(e) => {
-                                tracing::error!(error = %e, "the similar-files search failed");
-                            }
-                            _ => {}
-                        }
-                        tick.rest
-                    }
-                    Err(_) => Duration::from_secs(30),
-                };
-                tokio::time::sleep(rest).await;
+                let wait = similar_files_step(&searcher).await;
+                tokio::time::sleep(wait).await;
             }
         });
         // file maintenance, as the reference's manager does while active (a
@@ -632,39 +613,22 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                 }
             }
         });
-        // duplicates auto-resolution: bursts of work with rests between, by
-        // the GUI's idle state
+        // duplicates auto-resolution: bursts of work with rests between, as
+        // the reference's manager does, in idle or normal time by the GUI's
+        // published idle state (a daemon with no GUI is never idle)
         let resolver = store.clone();
         tokio::spawn(async move {
-            use hydrus_duplicates::daemon::{Turn, auto_resolution_turn};
             loop {
-                let store = resolver.clone();
-                let now = hydrus_core::time::TimestampMs::now().millis();
-                let tick = tokio::task::spawn_blocking(move || {
-                    auto_resolution_turn(
+                let wait = auto_resolution_step(&resolver, |store, budget| {
+                    hydrus_duplicates::work_rules(
                         &store,
-                        now,
+                        budget,
                         &mut hydrus_duplicates::Shuffle,
                         &hydrus_search::Clock::system(),
                     )
                 })
                 .await;
-                let rest = match tick {
-                    Ok(tick) => {
-                        match &tick.turn {
-                            Turn::Worked(done) if *done != hydrus_duplicates::WorkDone::default() => {
-                                tracing::debug!(?done, "auto-resolution worked");
-                            }
-                            Turn::Failed(e) => {
-                                tracing::error!(error = %e, "duplicates auto-resolution failed");
-                            }
-                            _ => {}
-                        }
-                        tick.rest
-                    }
-                    Err(_) => Duration::from_secs(600),
-                };
-                tokio::time::sleep(rest).await;
+                tokio::time::sleep(wait).await;
             }
         });
         // import folders, each checked when due
@@ -883,6 +847,16 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                 }
             });
         }
+        // (file paths wait after a wake too, when the options say so)
+        {
+            let store = store.clone();
+            tokio::spawn(async move {
+                loop {
+                    store.sleep_check();
+                    tokio::time::sleep(Duration::from_secs(15)).await;
+                }
+            });
+        }
         // stopping: on a signal, or (attached) with the input closing
         let (stop, stopped) = tokio::sync::watch::channel(false);
         let stopping_subscriptions = state.subscriptions.clone();
@@ -1034,6 +1008,105 @@ fn forget_unfinished_popups(store: &hydrus_store::Store) {
     }
 }
 
+/// One pass of the similar-files search loop: work for the packet its idle or
+/// normal-time switch allows, or hold (nothing is searched) when that switch is
+/// off. Returns how long to wait before the next pass.
+async fn similar_files_step(store: &std::sync::Arc<Store>) -> Duration {
+    use hydrus_store::idle_state::is_idle;
+    use hydrus_store::similar::SimilarFilesSettings;
+    let store = store.clone();
+    let settings: SimilarFilesSettings =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    let idle = is_idle(store.dir(), hydrus_core::time::TimestampMs::now().millis());
+    let mut pace = settings.pace(idle);
+    pace.allowed |= settings.work_hard;
+    if !pace.allowed {
+        return Duration::from_secs(10);
+    }
+    let started = std::time::Instant::now();
+    let work = pace.work;
+    let done = tokio::task::spawn_blocking(move || {
+        let mut total = 0;
+        loop {
+            let n = hydrus_store::similar::run_search(&store, 16)?;
+            total += n;
+            if n == 0 || started.elapsed() >= work {
+                return Ok::<_, hydrus_store::StoreError>((total, n > 0));
+            }
+        }
+    })
+    .await;
+    match done {
+        Ok(Ok((n, more))) if n > 0 => {
+            tracing::debug!(files = n, "searched for similar files");
+            let rest = if more {
+                pace.rest(started.elapsed())
+            } else {
+                Duration::from_secs(30)
+            };
+            rest.max(Duration::from_millis(100))
+        }
+        Ok(Err(e)) => {
+            tracing::error!(error = %e, "the similar-files search failed");
+            Duration::from_secs(600)
+        }
+        _ => Duration::from_secs(30),
+    }
+}
+
+/// One pass of the auto-resolution loop: `work` the rules for the packet the
+/// idle or normal-time switch allows (given the GUI's published idle state),
+/// or hold when that switch is off. Returns how long to wait before the next.
+async fn auto_resolution_step<W>(store: &std::sync::Arc<Store>, work: W) -> Duration
+where
+    W: FnOnce(
+            std::sync::Arc<Store>,
+            Duration,
+        ) -> Result<hydrus_duplicates::WorkDone, hydrus_store::StoreError>
+        + Send
+        + 'static,
+{
+    let store = store.clone();
+    let settings: hydrus_store::duplicates::auto::AutoResolutionSettings =
+        match store.read(hydrus_store::settings::get) {
+            Ok(s) => s,
+            Err(e) => {
+                tracing::error!(error = %e, "reading the auto-resolution settings failed");
+                return Duration::from_secs(600);
+            }
+        };
+    let pace = settings.pace(hydrus_store::idle_state::is_idle(
+        store.dir(),
+        hydrus_core::time::TimestampMs::now().millis(),
+    ));
+    if !pace.allowed {
+        return Duration::from_secs(10);
+    }
+    let budget = pace.work;
+    let started = std::time::Instant::now();
+    let done = tokio::task::spawn_blocking(move || work(store, budget)).await;
+    let rest = match done {
+        Ok(Ok(done)) if done.more_to_do => {
+            tracing::debug!(?done, "auto-resolution worked");
+            pace.rest(started.elapsed())
+        }
+        Ok(Ok(done)) => {
+            if done != hydrus_duplicates::WorkDone::default() {
+                tracing::debug!(?done, "auto-resolution worked");
+            }
+            // the reference rests ten minutes unless woken by
+            // new pairs; checking every minute stands in for that
+            Duration::from_secs(60)
+        }
+        Ok(Err(e)) => {
+            tracing::error!(error = %e, "duplicates auto-resolution failed");
+            Duration::from_secs(600)
+        }
+        Err(_) => Duration::from_secs(600),
+    };
+    rest.max(Duration::from_millis(100))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1047,5 +1120,161 @@ mod tests {
         assert!(refused.contains("a purge"), "{refused}");
         drop(held);
         lock_store(dir.path(), "a purge").unwrap();
+    }
+
+    /// The idle state the GUI would have published just now.
+    fn gui_is_idle(store: &Store, idle: bool) {
+        hydrus_store::idle_state::publish(
+            store.dir(),
+            idle,
+            hydrus_core::time::TimestampMs::now().millis(),
+        )
+        .unwrap();
+    }
+
+    fn block_on<T>(future: impl std::future::Future<Output = T>) -> T {
+        tokio::runtime::Runtime::new().unwrap().block_on(future)
+    }
+
+    // leaf: audit-media-preparation-scheduling
+    #[test]
+    fn the_similar_files_loop_holds_and_works_by_the_published_idle_state() {
+        use hydrus_store::similar::{SimilarFilesSettings, search_status_counts};
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::open(dir.path()).unwrap();
+        // one file waiting to be searched
+        store
+            .write(|ctx| {
+                ctx.conn().execute(
+                    "INSERT INTO hashes (hash_id, sha256) VALUES (1, zeroblob(32))",
+                    [],
+                )?;
+                ctx.conn().execute(
+                    "INSERT INTO similar_search_status (hash_id, searched_distance) VALUES (1, NULL)",
+                    [],
+                )?;
+                Ok(())
+            })
+            .unwrap();
+        let waiting = |store: &Store| {
+            store
+                .read(search_status_counts)
+                .unwrap()
+                .get(&None)
+                .copied()
+                .unwrap_or(0)
+        };
+        let set = |idle_switch: bool, normal_switch: bool| {
+            store
+                .write(move |ctx| {
+                    hydrus_store::settings::set(
+                        ctx.conn(),
+                        &SimilarFilesSettings {
+                            during_idle: idle_switch,
+                            during_active: normal_switch,
+                            ..SimilarFilesSettings::default()
+                        },
+                    )
+                })
+                .unwrap();
+        };
+
+        // idle time only: normal use holds (and the next pass is soon)
+        set(true, false);
+        gui_is_idle(&store, false);
+        assert_eq!(
+            block_on(similar_files_step(&store)),
+            Duration::from_secs(10)
+        );
+        assert_eq!(waiting(&store), 1, "held: nothing was searched");
+        // a daemon with no GUI is never idle either
+        std::fs::remove_file(dir.path().join("client_idle_state")).unwrap();
+        assert_eq!(
+            block_on(similar_files_step(&store)),
+            Duration::from_secs(10)
+        );
+        assert_eq!(waiting(&store), 1);
+        // the GUI goes idle: it works
+        gui_is_idle(&store, true);
+        block_on(similar_files_step(&store));
+        assert_eq!(waiting(&store), 0, "idle time: searched");
+
+        // normal time only: idle holds, normal use works
+        store
+            .write(|ctx| {
+                ctx.conn().execute(
+                    "UPDATE similar_search_status SET searched_distance = NULL",
+                    [],
+                )?;
+                Ok(())
+            })
+            .unwrap();
+        set(false, true);
+        gui_is_idle(&store, true);
+        assert_eq!(
+            block_on(similar_files_step(&store)),
+            Duration::from_secs(10)
+        );
+        assert_eq!(waiting(&store), 1, "held: idle, and only normal time is on");
+        gui_is_idle(&store, false);
+        block_on(similar_files_step(&store));
+        assert_eq!(waiting(&store), 0, "normal time: searched");
+    }
+
+    // leaf: audit-media-rule-sidebar-scheduling
+    #[test]
+    fn the_auto_resolution_loop_holds_and_works_by_the_published_idle_state() {
+        use hydrus_store::duplicates::auto::AutoResolutionSettings;
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::open(dir.path()).unwrap();
+        let budgets = std::sync::Arc::new(std::sync::Mutex::new(Vec::new()));
+        let step = |store: &std::sync::Arc<Store>| {
+            let budgets = budgets.clone();
+            block_on(auto_resolution_step(store, move |_, budget| {
+                budgets.lock().unwrap().push(budget);
+                Ok(hydrus_duplicates::WorkDone::default())
+            }))
+        };
+        let set = |idle_switch: bool, normal_switch: bool| {
+            store
+                .write(move |ctx| {
+                    hydrus_store::settings::set(
+                        ctx.conn(),
+                        &AutoResolutionSettings {
+                            during_idle: idle_switch,
+                            during_active: normal_switch,
+                            work_time_ms_active: 100,
+                            work_time_ms_idle: 1000,
+                            ..AutoResolutionSettings::default()
+                        },
+                    )
+                })
+                .unwrap();
+        };
+
+        // idle time only: normal use holds, and a daemon with no GUI is
+        // never idle
+        set(true, false);
+        gui_is_idle(&store, false);
+        assert_eq!(step(&store), Duration::from_secs(10));
+        std::fs::remove_file(dir.path().join("client_idle_state")).unwrap();
+        assert_eq!(step(&store), Duration::from_secs(10));
+        assert!(budgets.lock().unwrap().is_empty(), "held: no rule worked");
+        // idle: works, for the idle packet
+        gui_is_idle(&store, true);
+        assert_eq!(step(&store), Duration::from_secs(60));
+        assert_eq!(*budgets.lock().unwrap(), [Duration::from_millis(1000)]);
+
+        // normal time only: idle holds, normal use works, for its packet
+        set(false, true);
+        gui_is_idle(&store, true);
+        assert_eq!(step(&store), Duration::from_secs(10));
+        assert_eq!(budgets.lock().unwrap().len(), 1, "held while idle");
+        gui_is_idle(&store, false);
+        step(&store);
+        assert_eq!(
+            *budgets.lock().unwrap(),
+            [Duration::from_millis(1000), Duration::from_millis(100)]
+        );
     }
 }

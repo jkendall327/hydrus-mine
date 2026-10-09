@@ -277,9 +277,11 @@ search.
   inspection are pending.
   "Paste image!" takes the clipboard's bitmap if it holds one, else a file
   path, else the clipboard text as a path, as the reference does. A bitmap is
-  written to a temporary PNG and hashed as a file of those pixels, so its
-  hashes are a file's, not the numpy array's (not compared against the
-  reference's bitmap path, which Qt's clipboard cannot be scripted to feed).
+  written to a temporary PNG and hashed as a file of those pixels; its pixel
+  and perceptual hashes, and every warning, are compared with the reference's
+  for the same images (`oracle/record_similar_data_paste.py`, including a
+  translucent bitmap). A local path on the system clipboard (as opposed to
+  text) is read from the system's and is not replayed from the recording.
   The archived and modified date panels are checked, with the import and
   last-viewed ones, against the shared base class's recorded scenarios; the
   recorder ran import and last-viewed only, so the other two replay the same
@@ -523,6 +525,25 @@ separator.
   the open menus offer "in file browser" whether or not hydrus's advanced
   mode is on (the reference offers it only in advanced mode). Dragging
   out for real is jkendall327/hydrus-mine#26.
+- **The animation buffer is sized at the file's own resolution.** The
+  client's own player (ugoiras, animated WebP) keeps frames as the
+  reference's `RasterContainerVideo` does, sized from "Memory for video
+  buffer" with its formula (`oracle/record_video_buffer.py`), but it decodes
+  frames at the file's size, not the zoomed size the reference renders at,
+  so a file shown smaller than its size keeps fewer frames than the
+  reference would; its frames are RGBA where they have alpha, where the
+  formula counts three bytes a pixel, as the reference's does. The duration
+  and frame count it sizes by are the decoded frames', not the file's
+  metadata. Where the buffer holds a single frame, the reference's render
+  thread counts a frame behind its decoder and shows each frame's
+  neighbour; hydrus-rs decodes the same frames but keeps each as itself.
+- **Playback is not yet proven against the reference as a whole**
+  (`audit-media-viewer-playback`, untagged). The viewer's animation test
+  (`tests/gui/animation.rs`) plays, pauses and seeks ugoiras and animated
+  WebP with expected scanbar text worked out from the reference's
+  arithmetic rather than recorded from it; the mpv video tests skip where
+  libmpv isn't installed, which includes CI; and no test plays an audio
+  file in the viewer.
 
 ## The duplicate filter (`hydrus-gui`, `hydrus-duplicates::statements`)
 
@@ -816,14 +837,17 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   opens its former review child. Clipboard PNG
   image precedence and PNG list drops remain absent. Historical file-cache
   versions 1–7 now upgrade within the exchange codec, with recorded order,
-  timestamp, note, count and example preservation. Later historical caches can
-  contain duplicate identities; native queues cannot preserve those, so these
-  imports fail explicitly instead of dropping entries. Version-1 float/complex
-  notes requiring Python `str()` also fail explicitly; text, integer, boolean
-  and None notes are supported. The codec applies generic URL encoding without
-  a client's URL-class configuration; custom class-specific rewrites remain
-  outside this recorded slice. The read-only database importer's cache decoder
-  remains version 8 only.
+  timestamp, note, count and example preservation. A repeated seed in a
+  historical cache is dropped, first one winning, as the reference does when it
+  first indexes the cache (recorded with a list export). Version-1 notes of any
+  scalar type (text, integer, float, boolean, None) become text as Python's
+  `str()` makes them; a list or dictionary note fails explicitly. The exchange
+  codec applies generic URL encoding without a client's URL-class configuration;
+  custom class-specific rewrites remain outside this recorded slice. The
+  read-only database importer (an old install's subscriptions, import folders
+  and sessions) reads caches of versions 1–7 too, with the same upgrades
+  (`record_legacy_seed_caches.py`); there a URL seed's comparison form is
+  worked out from the client's URL classes, as for any seed saved before version 8.
   Missing histories now ask the original message, title and decisions before
   staging; accepted missing logs are initialised empty directly on Apply. The list owner now stages modern imports and
   persists both histories. JSON file export/overwrite and multi-file JSON/PNG
@@ -912,15 +936,40 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   presents component menus in a compact popup palette rather than nested
   submenus. Help links remain absent. Favourite phrase and description are edited
   together in a row form, where the reference uses sequential dialogs.
+  A converter step added or edited from the processor takes the processor's
+  example text as its own example when applied (the window is given it);
+  the reference's keeps the converter's own example.
 - **The string converter editor** persists the last accepted conversion
   in its owning store and reads preserved reference options until a native edit.
   Store-less embedded API callers retain the previous in-memory fallback. Conversion regex fields have component/replacement group
   controls; their help and favourites menus remain absent. Its date phrase link
   is shown as text. Date conversions execute and update live previews. Advanced parsing
   uses Jiff's diagnostic reasons rather than Python's; English directives and
-  common ISO/English automatic dates are supported. The easy parser supports
-  relative English units (seconds through years), now/today/yesterday/tomorrow,
-  but not dateparser's full multilingual and fuzzy grammar. Locale-dependent
+  common ISO/English automatic dates are supported. By the owner's decision,
+  the easy parser ("datestring to timestamp (easy)") matches a hydrus install
+  **without the `dateparser` library**, where `ClientTime.ParseDate` is
+  `dateutil.parser.parse`, plus the English relative expressions `dateparser`
+  reads. Non-English text, fuzzy text, Unix timestamps and words such as
+  "noon" are not parsed (use the advanced strptime step). It reads: ISO 8601,
+  RFC 2822 and HTTP dates, numeric dates (month first, day first when only
+  that is valid; two-digit years within fifty years of now), month names,
+  ordinals and weekdays (moving the date forward to the weekday), 12- and
+  24-hour times, `UTC`, `GMT` and `Z` (other zone names such as `EST` are
+  ignored, and `UTC+9` reads as POSIX does, west of UTC), filling a missing
+  part from the clock as dateutil does; and relative expressions (`now`,
+  `yesterday`, `2d ago`, `a day ago`, `two hours ago`, `1 year, 2 months ago`,
+  `in 3 weeks`, `last week`, `yesterday at 5pm`) with dateparser's month and
+  year arithmetic. A corpus of 247 forms recorded from the reference
+  (`oracle/record_dateparser_corpus.py`: relative forms with dateparser,
+  the rest with it disabled) all match, dateutil's odd readings of digit-only strings
+  included (`010203`, `-1`, `120`, `1 2 3`). The other callers of the
+  conversion follow a dateparser-less install too: a `Retry-After` date is read
+  by it (between a minute and a day), and `Last-Modified` is read only in the
+  fixed `Thu, 20 May 2010 07:00:23 GMT` form (taken as local time, as the
+  reference does). The Client API/search `system:time` predicates already use
+  the reference's dateparser-less grammar; the date editor's pasted text reads
+  only plain forms and does not fall back to the easy parser as the reference
+  does. Locale-dependent
   date phrases use English/C forms. Advanced parsing validates Python's
   six-digit microsecond limit, ignores recognised UTC/GMT/system timezone names
   as Python does, and rejects year zero and non-Python directives. Jiff's
@@ -974,21 +1023,36 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   buttons (the rule's own comparator list does), and its custom
   merge options are edited in their own window (the reference embeds
   the editor). A relative comparator's time delta and range are
-  in milliseconds, where the reference has a time widget.
+  in milliseconds, where the reference has a time widget. The rules and
+  comparator lists import one png or json at a time (the reference's picker
+  takes several), and a file that can't be read says "Problem importing!"
+  with the reason as the reference does, though not its separate text for a
+  payload that decodes but can't be understood (whose `{path}` the reference
+  never fills in). A hydrus-rs rules png given to the comparator list is a read error there, where the reference would warn which object types it refused.
 - **The file log window** can't yet import new sources, export them to
   a png, search for the selected URLs, or do its advanced entries (these
   are greyed out); its "additional urls" don't show the URL a URL class
   would actually fetch or refer from; trying a previously deleted file
   again doesn't offer to clear its deletion record.
-- **The import options editor** keeps typed-line fields for the tag filtering
-  whitelist and additional tags, with a detached shared write-tag autocomplete
-  editor for both lists. The reference embeds its tag inputs. Note names remain
+- **The import options editor** keeps a typed-line field for the tag filtering
+  whitelist, with a detached shared write-tag autocomplete editor for it and
+  for each service's additional tags (the reference embeds its tag inputs in
+  a dialog, and this one lacks the tag list's multiple-selection and
+  maintenance right-click menus). Each tag service's cog menu is a set of check boxes in the
+  box rather than a menu. Note names remain
   typed lines, and note renames use "parser name -> saved name" rather than the
   reference's two-column list.
   The tags page's "set a filter for already-exist test" isn't there.
-  Locations take one destination (the reference's takes several), and
-  presentation's location is all my files or all local files. It has no
-  copy, paste or favourites buttons, and always lists kinds as the
+  The shared location button's flags for local-only, combined-local-only and
+  no-multiple choices exist in the model and are replayed against the
+  reference's button, but no window uses them yet.
+  The destination and presentation location buttons are drop-downs of the
+  reference's menu, its "multiple/deleted locations" row opening the list
+  window, with a label beside them saying what is chosen (the reference has
+  one button whose popup menu has check marks). The list of kinds' summary of a
+  presentation location that is neither all my files nor all local files says
+  "in another location" where the reference names the domains.
+  It always lists kinds as the
   reference's "simple mode" does (hydrus-rs has no option for it yet).
 - **The merge options editor** asks its select dialogs as a row of
   buttons (no service or action preselected), and edits the note merge
@@ -1150,6 +1214,13 @@ native/store/model regression source awaits hosted CI; no Rust runs locally.
 
 ## Repositories (`/manage_services/*`)
 
+- **Commit pending only gates the pending routes.** The Client API permission
+  editor's "commit pending" permission is checked against the recorded
+  permission rows, and the pending-counts and commit routes check it (the test
+  reads the counts with a key that has it and is refused for one that lacks it);
+  nothing can commit to a repository (`commit_pending` passes the
+  permission check, then answers 422).
+
 - **Pending content can't be committed.** hydrus-rs doesn't talk to
   repository servers (the PTR, file repositories), so `commit_pending`
   checks the request as the reference does and then refuses it (422).
@@ -1172,7 +1243,7 @@ native/store/model regression source awaits hosted CI; no Rust runs locally.
 
 - **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions and repository/IPFS account administration remain unavailable. Local trash clear/undelete, double-confirmed deleted-file-record clearing and all three local rating-clear populations are implemented; bulk rating choices and confirmations use native inline controls rather than Qt popup menus/dialogs. Opening a replacement review retires the previous owner's pending maintenance confirmation.
 
-- **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields with four live, independently interactive rating examples; named SVG configurations are preserved/edited, with rendering subject to the existing SVG support limits. Remote repository/IPFS/account edits remain unavailable here. Client API listener settings are available; HTTPS, normie Eris and external URL overrides are preserved imported values, with an explicit control to disable unsupported HTTPS. A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
+- **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields with four live, independently interactive rating examples; named SVG configurations are preserved/edited, with rendering subject to the existing SVG support limits. Remote repository/IPFS/account edits remain unavailable here. Client API listener settings are available, including HTTPS, the normie welcome page and the external URL overrides (see the Client API entry below). A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
 
 ## Manual file exports
 
@@ -1316,14 +1387,34 @@ The access-key window opens separately from service review; the reference
 embeds its list within that panel. "add from api request" opens the
 reference's waiting window and takes the first request the running daemon
 records (the daemon, not the GUI, serves the API, so the request travels
-through the store, polled twice a second); `hydrus api-keys listen` remains
+through the store, polled twice a second; registration is a ten-second lease
+that timer renews, so a crash closes it within seconds instead of leaving it
+open; the renewal rides the UI timer, so a UI thread blocked for over ten seconds lets it lapse); `hydrus api-keys listen` remains
 for a store without a GUI. Key-change
 questions use an inline edit panel and generated-key button. Listener changes
 may take up to one second; current requests drain for at most ten seconds
-before restart. HTTP logs omit query strings and credentials. HTTPS is refused
-rather than served as plain HTTP; normie Eris/external URL override fields are
-shown as unsupported preserved values in plain text; unset external URL fields
-read "not set".
+before restart. HTTP logs omit query strings and credentials.
+HTTPS: the generated certificate is made with rcgen and aws-lc-rs rather than
+`cryptography`, so its serial number and key bytes differ but every field the
+recording checks (subject, SAN, ten-year validity, RSA 2048, SHA-256, a
+traditional-form unencrypted key, read-only files) matches. The reference
+listens on IPv4 and IPv6 separately; hydrus-rs binds one address (IPv4
+loopback, or all IPv4 interfaces for non-local). Plain HTTP sent to the HTTPS
+port gets no answer, as in the reference. A pair is read when the listener
+starts, so replacing the files takes effect on the next listener restart (any
+settings change, or a restart of the daemon), not mid-run. The two lines the
+reference's "half a pair" error shows as two popups are one message in the
+Client API status.
+The three external overrides are shown in advanced mode only. In the
+reference's current source those rows are hidden unconditionally
+(`if False:`); showing them follows the owner's request (2026-10-08) to have
+all three controls. As in the reference, nothing reads them: no link
+hydrus-rs copies uses the overrides, and "view in a web browser" always opens
+`127.0.0.1`. The port override is text, as in the reference; a number stored
+by an older import is shown as its digits.
+The normie page is the reference's HTML verbatim (service name, software
+version 688, API version, and the local/any-host line filled in as the
+reference fills them).
 Listener reconfiguration retains the same API state, so session keys continue
 to use the current permissions after rebind; revocation still invalidates them.
 
@@ -1478,9 +1569,9 @@ earlier unsupported versions must first be re-exported by the reference client.
 Unknown processing steps/conversions are rejected before staging because their
 native execution forms cannot retain all original data. Native/runtime fields
 take precedence over preserved auxiliary editor fields when exporting edits.
-Mixed downloader package import accepts URL classes, GUGs, page parsers and login scripts;
+Mixed downloader package import accepts URL classes, GUGs, page parsers, login scripts and domain metadata;
 standalone formulas/content nodes belong in their matching native editors.
-Domain metadata packages remain unsupported here. The native mixed exporter
+The native mixed exporter
 uses component checkboxes with dependency expansion instead of Qt's separate
 Add choosers. Imports review a whole supported package; Qt additionally offers
 optional per-object selection and skips unsupported objects. Mixed login script
@@ -1490,8 +1581,13 @@ credentials/activation/delays without configuring new example domains. Standalon
 login-list imports retain their separate nonduplicate-name policy. The actual
 Qt mixed-package recording also captures a repeated nested GUG import creating
 an additional nested generator after child keys change; native retains its
-existing remapped dependency duplicate checks. This login slice does not claim
-domain metadata, bitmap/drag ingestion, or the wider downloader exchange parent.
+existing remapped dependency duplicate checks. Domain metadata is reviewed in the same text as the other
+components, not in one pop-up per package, and imports have no final "successfully
+added" notice. Like the reference's bandwidth manager, an import stops adding
+rules at the first package (in domain order) that has none, so a headers-only
+package keeps later packages' rules out until they are imported again
+(recorded in `domain_metadata_packages.json`). Clipboard bitmap and drag/drop
+ingestion are not exposed (low priority).
 
 Tab context menus expose close, select, move-page, sort-pages and send-down submenus,
 rename, duplicate, collapse, grouped close and per-notebook saved-session
@@ -2160,7 +2256,7 @@ preview minimum/maximum fields, with the same cap-before-minimum and duration-ti
 policy. Successful raster presentation accepts the original request timestamp;
 unrenderable files and loading placeholders are rejected rather than counted as
 views. Qt accepts media before its player/decoder renders. The native canvas does
-not yet reproduce preview audio/video playback, embed/external buttons, interactive zoom/pan,
+not yet reproduce preview embed/external buttons, interactive zoom/pan,
 hovers or rating controls. These broader preview parents remain Partial. Owned
 page/request generations retire late decoded frames and rebound-window callbacks;
 hidden/cleared media and accepted client close finish once. Actual Qt boundary
@@ -3587,7 +3683,7 @@ The cache is owned by one main GUI binding, not a process-global controller; fil
 opened independently by auto-resolution own their own policy-bound cache. Existing
 duplicate pair prefetch warms this cache and retains no separate future raster
 store. The total prefetch percentage, controller-wide sharing, image tiles,
-video buffers and complete Qt scheduling/rendering families remain Partial and
+and complete Qt scheduling/rendering families remain Partial and
 receive no additional credit. Native failed full decodes use an uncached poster
 fallback instead of retaining Qt's synthetic error renderer. Injected public
 preview decoders keep their existing owned test/backend contract independently
@@ -3860,8 +3956,7 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 ## Options kept but not used
 
 - These Options rows are kept and edited, as the reference keeps them, but
-  nothing in hydrus-rs reads them yet: the preview window's own volume (the
-  preview shows a still or poster and plays nothing), the REQUESTS_CA_BUNDLE
+  nothing in hydrus-rs reads them yet: the REQUESTS_CA_BUNDLE
   switch (hydrus-rs uses its own TLS roots), drag-and-drop export (no files
   can be dragged out yet), the Qt-only gui misc and frame switches, the
   integer locale switch, the hide-page signal, the URL drop page switch, mpv's
@@ -3870,8 +3965,8 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   own way), the other-display popup freeze (hydrus-rs's popups sit inside the
   main window, not in a toaster window of their own that could be frozen from
   another display), the self-sizing media viewer rescue padding (there is no
-  self-sizing viewer), the image tile cache and video buffer (hydrus-rs
-  renders whole images and leaves video to mpv), the file system wake wait,
+  self-sizing viewer), the image tile cache (hydrus-rs renders whole
+  images), the file system wake wait,
   the petition reason count
   (there are no tag repositories to petition), the related-tag search
   durations (hydrus-rs ranks exactly rather than within time slices) and the
@@ -3894,10 +3989,9 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   text. A numerical rating is as wide as its stars: the reference's fraction
   text beside them is not drawn there. URLs can't be clicked there,
   and the cog menu of the reference's hover does not exist.
-- The duplicates filter's hover is a fixed panel beside the canvas while
-  pinned (the reference floats it over the canvas); unpinned it pops in over
-  the canvas' right edge. There is no cog menu to flip the pin from the
-  hover itself.
+- The duplicates filter's hover floats over the canvas' right edge, always
+  while pinned and on mouseover otherwise, as the reference's does. There is
+  no cog menu to flip the pin from the hover itself.
 - Frame locations: a child window opens at its parent's top-left (less the
   padding), centred on it, or where the mouse is, and grows toward the main
   window by its gravity, as `SetInitialTLWSizeAndPosition` does, taking the
@@ -4229,6 +4323,28 @@ directory.
   Linux only; elsewhere the system never reads busy. The reference's
   just-woke-from-sleep condition is not part of the idle gate here.
 
+## Quick-leaf checks (notes)
+
+- **Media Viewer playback** (still/animation/audio/video and scanbar) is left
+  untagged: the animation and scanbar tests run everywhere, but the libmpv
+  video test is skipped where libmpv is not installed (CI installs none), and
+  no test plays audio in the viewer.
+- **Import local files directly from source** now works: with the option off a
+  local import reads the file where it is; with it on (the default) it is
+  copied to a temporary path first, as the reference does. The reference's
+  "copying file to temp location" status text is not shown. The copy goes in
+  the database folder's `tmp` (on the same disk as the database, removed after
+  the import), not the system temp directory the reference uses, so it does not
+  move files off slow source storage onto the system partition. Only local
+  imports and import folders read the option; the Client API's add file by path
+  and the other import paths always copy, as the reference's do.
+- **Approve/deny progress** has no cancel, as in the reference. Its popup
+  appears once four seconds have passed at the start of a chunk of four pairs;
+  the reference publishes it after four seconds regardless.
+- **Shutdown and CPU options** live-enable their dependent rows only after the
+  options are applied and reopened (the reference enables them as the control
+  changes).
+
 ## System tray
 
 - **Minimise to tray is unproven against a real window system, and Wayland
@@ -4238,9 +4354,11 @@ directory.
   Windows and macOS; on **Wayland it does not** (`None`), so there minimising
   just minimises, whatever the option says, while closing, starting hidden,
   the icon's click and File > minimise to system tray work. The test of that
-  leaf drives Slint's own minimised state in the headless platform, never
-  winit's `is_minimized`, and nothing has been run against a real X11 window
-  manager, so the leaf is **not tagged**. The reference's two "BUGFIX"
+  leaf drives the real tray controller and Slint's own minimised state in the
+  headless platform, never winit's `is_minimized`, and nothing has been run
+  against a real X11 window manager; the leaf is tagged on the controller's
+  behaviour (the option read, the window hidden to the icon, restored on show,
+  nothing hidden with no tray), with the platform limits above. The reference's two "BUGFIX"
   switches (minimise-hide using event-deferred state-prep, with post-show
   state restoration) work around Qt's own window state events and have no
   counterpart; the window is restored from the minimise before it is hidden,
@@ -4307,3 +4425,85 @@ directory.
   keys were the one concrete reference behaviour found missing and are now done,
   but no test covers what those leaves name as a whole, and their long notes (context
   menus, selection, undo history) were not re-verified here.
+
+- **Out-of-range numbers in the services editor.** The Client API port, a numerical rating's star count and its icon padding refuse out-of-range values with an error on Apply; the reference's spin boxes clamp them as they are typed.
+
+## Preview sound
+
+- The preview plays through the media viewer's player (`mpv.rs`), so it needs
+  libmpv; without it the preview keeps showing the still, as the viewer does.
+  The tests run without libmpv: the preview's player records what it was asked
+  to play and the volume and mute it was given, and the tests check those
+  (which kinds play, which volume applies under each setting, the control, the
+  Options row). **Only verified with libmpv, by hand and not in CI:** that
+  sound actually comes out, that video frames replace the still in the pane,
+  and that a file starting paused (`preview_start_paused`) is paused (the
+  decision is made, but nothing observes the pause without mpv).
+- A kind whose preview starts behind an embed button (`preview_start_with_embed`)
+  plays nothing, since hydrus-rs has no embed button yet; the reference plays
+  it after a click.
+- The reference's preview control is a pop-up window that appears when the
+  pointer is on the global mute button; here it is drawn in the pane, at the
+  bottom right of the media, and opens in the same way. Its look (icons are
+  text speaker glyphs) is not the reference's.
+- The preview's player is one per window, not one per page: switching pages
+  starts the new page's file afresh, rather than keeping each page's player.
+- The preview starts playing only once its still has decoded and been accepted,
+  so a file whose still cannot be decoded is not played; the reference sends
+  the file to mpv whatever its thumbnail or still does.
+- The preview's right-click volume menu (`AddAudioVolumeMenu`: global, preview
+  and per-player mute) is not ported, and the control's tooltips ("Global
+  mute/unmute", "Mute/unmute: preview") are missing.
+- A change to the preview's show action while a file plays restarts it within
+  a quarter of a second, not at once.
+
+## Leaves left untagged because only part is tested
+
+- **mpv "set null audio device on silent media".** The Options row and the player plan's audio device are tested; mpv itself is not driven (no libmpv), and the leaf is out of scope.
+
+- **Closing tabs while downloaders are running.** Closing other pages, or the pages to the left or right, asks a plain yes/no question with the recorded wording; the reference, when a closing page has a downloader at work, asks a longer question with a statement and a third "no, but show me the pages" button. That path is not implemented or tested, so those three menu leaves stay untagged.
+
+## Options and shell leftovers (#91, #92)
+
+- **Undelete with several files.** The reference asks its single-file
+  question whatever the number of files (it says "this file"); so does
+  hydrus-rs, with the one domain. The remote-repository case of the question
+  has no counterpart (no remote file services).
+- **`audit-options-options-search` is untagged.** Of the 738 entries the
+  reference's search box offers (`oracle/fixtures/options_dialog.json`),
+  513 exist natively. The 225 missing are labels the native pages do not draw
+  at all: the help paragraphs the Qt panels carry ("Scheduled jobs such as
+  reparsing...", "These options are advanced!..."), the "help for this
+  panel -->" links, "(you appear to have 4 cores)"-style computed labels, and
+  the unit and "no limit"/"do not use" labels of some noneable controls and
+  combo boxes' current values on pages whose controls differ in kind. The
+  native options window has no collapsible boxes or inner tabs (they are
+  flattened into headings), so choosing a result needs no expanding.
+- **`audit-options-gui-main-window-application-display-name` is untagged.**
+  The main window and the tray tooltip follow the name; other windows keep
+  their own captions. Qt appends the display name to every window title;
+  here each window is a Slint component with its own title and no common
+  parent, so it would mean a change in all ~170 window openings.
+- **`audit-options-status-activity` is untagged.** Idle and CPU busy have
+  their tooltips, and the database field shows this process's reads and
+  writes ("db writing", "db reading"; the daemon is another process, so its
+  work is not shown, and with no job names there is no "current db job"
+  tooltip). The application-busy field (the reference's worker thread
+  pool: "working" above 3 busy threads, "busy" above 8, tooltip "There were N
+  threads doing jobs at last check") has no counterpart: hydrus-rs has no
+  such pool in the client.
+- **`audit-options-importing-drag-and-drop-when-dnding-a-url-onto-the-program-switch-to-the-page-where-it-lands`
+  stays untagged.** winit 0.30 delivers `DroppedFile` for dropped files on
+  X11 only, and its X11 drop parser rejects every non-`file://` URI
+  (`UnexpectedProtocol`), so a URL dragged from a browser never reaches the
+  program; on Wayland winit has no drag-and-drop at all. With no URL drops
+  there is nothing for the switch-to-page option to act on. It would need a
+  platform drop handler outside winit.
+- **`audit-options-geometry` stays untagged**, as documented under Frame
+  locations: main window saves, and the opening rescue, are proved; other
+  frames' saving and the reference's minimum size are not.
+- **The mpv "Preferred audio output device" applies as each file loads**
+  (the player sets `audio-device` before every load); players already open
+  are not updated when Options is applied, though the reference's tooltip
+  promises that ("Will update all new existing mpv players immediately on
+  dialog ok").

@@ -34,6 +34,7 @@ fn choices(node: &SidecarNodeWindow) -> Vec<String> {
         .collect()
 }
 
+// leaf: audit-shared-sidecar-import
 #[test]
 fn router_import_replays_permitted_subsets_and_ordered_png_failures() {
     use hydrus_downloader_exchange::routers as exchange;
@@ -720,6 +721,7 @@ fn a_sidecars_filename_conversion_is_edited_in_the_converter_editor() {
     assert_eq!(node.get_result(), "myimage.jpg.txt");
 }
 
+// leaf: audit-network-conversion-date-fields
 #[test]
 fn date_conversion_fields_preview_and_cancel_reach_the_converter() {
     use hydrus_core::url::strings::{Conversion, DateTimezone, StringConverter};
@@ -840,6 +842,7 @@ fn test_table(rows: &slint::ModelRc<hydrus_gui::TableRow>) -> Vec<Vec<String>> {
         .collect()
 }
 
+// leaf: sidecar-test
 #[test]
 fn router_examples_follow_reference_source_tabs_and_processor_children_without_exports() {
     use hydrus_gui::sidecars_window::{self, Slots};
@@ -1404,6 +1407,8 @@ fn router_png_child_has_recorded_parameters_and_closes_with_its_queue_owner() {
     assert!(slots.exchange.1.window().is_none());
 }
 
+// leaf: audit-network-export-folder-examples
+// leaf: sidecar-test
 #[test]
 fn export_folder_query_examples_refresh_media_and_reach_source_children() {
     use hydrus_core::search::context::FileSearchContext;
@@ -1850,7 +1855,7 @@ fn json_object_names_use_staged_text_children_and_saved_router_worker() {
 
 // leaf: audit-shared-sidecar-export
 #[test]
-fn the_router_list_exports_its_selected_routers_duplicates_and_reads_its_own_export_back() {
+fn the_router_list_exports_its_selected_routers_and_duplicates_them() {
     use hydrus_downloader_exchange::routers as exchange;
     use hydrus_gui::{Clip, sidecars_window};
     use hydrus_gui_model::sidecar_editors::Context;
@@ -1931,4 +1936,9 @@ fn the_router_list_exports_its_selected_routers_duplicates_and_reads_its_own_exp
         rows.row_data(0).unwrap().cells.row_data(0),
         rows.row_data(n).unwrap().cells.row_data(0)
     );
+    // the original stays selected and the copy joins it; nothing else is
+    let selected: Vec<usize> = (0..rows.row_count())
+        .filter(|i| rows.row_data(*i).unwrap().selected)
+        .collect();
+    assert_eq!(selected, [0, n]);
 }

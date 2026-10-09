@@ -176,6 +176,7 @@ fn rect(window: &MediaViewerWindow) -> [f32; 4] {
         window.get_media_height(),
     ]
 }
+// leaf: audit-options-media-playback-system-apply-image-icc-profile-colour-adjustments
 #[test]
 fn actual_saved_icc_updates_preview_viewer_tiles_and_archive_without_resetting_owned_state() {
     let (_dirs, store, file) = setup();
@@ -566,6 +567,7 @@ fn held_old_colour_reply_cannot_replace_current_or_rebound_canvas_and_ineligible
     assert_eq!(successor.preview.displayed_file(), None);
 }
 
+// leaf: audit-options-media-playback-system-apply-image-icc-profile-colour-adjustments
 #[test]
 fn paused_animation_keeps_accepted_frame_index_and_pixels_on_icc_notification() {
     let (_dirs, store, _) = setup();

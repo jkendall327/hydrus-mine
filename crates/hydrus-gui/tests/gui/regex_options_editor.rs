@@ -142,6 +142,7 @@ fn replay(w: &RegexFavouritesWindow, f: &Value, copied: &Rc<RefCell<Vec<String>>
     }
 }
 
+// leaf: audit-options-regex-favourites-regular-expression-favourites-editor
 #[test]
 fn real_options_saved_input_chooser_crud_cancel_apply_and_retired_owners_match_qt() {
     use hydrus_core::url::strings::{MatchKind, PyRegex, StringMatch};

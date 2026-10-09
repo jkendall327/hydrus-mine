@@ -4,6 +4,7 @@ use hydrus_store::{settings, tag_editing::TagEditingSettings};
 use slint::{ComponentHandle as _, Model as _};
 use std::{cell::RefCell, rc::Rc};
 
+// leaf: audit-options-tag-editing-tag-edit-autocomplete-when-pasting-multiline-content-into-a-write-autocomplete-skip-the-yes-no-check
 #[test]
 fn paste_confirmation_skip_and_list_height_are_consumed_by_manage_tags() {
     let f = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
@@ -304,6 +305,7 @@ fn import_whitelist_child_unlocks_on_cancel_and_closes_with_its_parent() {
     assert!(!child.window().is_visible());
 }
 
+// leaf: audit-options-tag-autocomplete-tabs-children-tags-how-many-tags-to-show-in-the-children-tab
 #[test]
 fn favourite_children_tabs_and_applied_cap_feed_manage_tags_and_import_tag_child() {
     use hydrus_core::Tag;
@@ -1338,6 +1340,7 @@ fn normal_paste_replays_cursor_selection_and_accepted_tags_preserve_the_draft() 
     assert!(bound.tag_relationships.borrow().is_none());
 }
 
+// leaf: audit-options-tag-editing-tag-edit-autocomplete-show-parents-expanded-by-default-on-edit-write-autocomplete-taglists
 #[test]
 fn keyboard_result_selection_copy_and_native_text_copy_use_their_own_focus() {
     use hydrus_core::{Sha256, Tag};

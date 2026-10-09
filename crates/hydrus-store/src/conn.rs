@@ -161,6 +161,7 @@ struct ReaderPool {
 /// Owns the database connections. Cheap to share behind an `Arc`.
 #[derive(Debug)]
 pub struct Db {
+    activity: std::sync::Arc<Activity>,
     path: PathBuf,
     writer: Writer,
     readers: ReaderPool,
@@ -214,6 +215,7 @@ impl Db {
             .spawn(move || writer_loop(&conn, &jobs_rx))?;
 
         Ok(Self {
+            activity: std::sync::Arc::default(),
             path: path.to_path_buf(),
             writer: Writer {
                 jobs: Some(jobs_tx),
@@ -262,8 +264,22 @@ impl Db {
         &self.path
     }
 
+    /// What this process's database is doing now (the reference's
+    /// `GetDBStatus`: "db writing", "db reading", else nothing).
+    pub fn activity(&self) -> &'static str {
+        use std::sync::atomic::Ordering::Relaxed;
+        if self.activity.writes.load(Relaxed) > 0 {
+            "db writing"
+        } else if self.activity.reads.load(Relaxed) > 0 {
+            "db reading"
+        } else {
+            ""
+        }
+    }
+
     /// Run `f` on a pooled connection inside a read transaction.
     pub fn read<R>(&self, f: impl FnOnce(&Connection) -> Result<R>) -> Result<R> {
+        let _reading = ActivityGuard::enter(&self.activity, false);
         let conn = self
             .readers
             .take
@@ -304,6 +320,7 @@ impl Db {
         f: impl FnOnce(&mut WriteCtx<'_>) -> Result<R> + Send + 'static,
         barrier: bool,
     ) -> Result<R> {
+        let _writing = ActivityGuard::enter(&self.activity, true);
         let (reply_tx, reply_rx) = crossbeam_channel::bounded::<Result<R>>(1);
         let run = Box::new(move |conn: &Connection| {
             let mut ctx = WriteCtx {
@@ -346,6 +363,39 @@ impl Drop for Db {
         if let Some(thread) = self.writer.thread.take() {
             let _ = thread.join();
         }
+    }
+}
+
+/// How many reads and writes are running or waiting, for the status bar.
+#[derive(Debug, Default)]
+struct Activity {
+    reads: std::sync::atomic::AtomicUsize,
+    writes: std::sync::atomic::AtomicUsize,
+}
+
+/// Counts one read or write while alive.
+struct ActivityGuard<'a>(&'a Activity, bool);
+
+impl<'a> ActivityGuard<'a> {
+    fn enter(activity: &'a Activity, write: bool) -> Self {
+        let counter = if write {
+            &activity.writes
+        } else {
+            &activity.reads
+        };
+        counter.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        Self(activity, write)
+    }
+}
+
+impl Drop for ActivityGuard<'_> {
+    fn drop(&mut self) {
+        let counter = if self.1 {
+            &self.0.writes
+        } else {
+            &self.0.reads
+        };
+        counter.fetch_sub(1, std::sync::atomic::Ordering::Relaxed);
     }
 }
 
@@ -486,6 +536,27 @@ mod tests {
         upkeep.after_commit(&conn, now + TRUNCATE_CHECKPOINT_PERIOD);
         assert_eq!(std::fs::metadata(&wal).unwrap().len(), 0, "emptied");
         drop(db);
+    }
+
+    #[test]
+    fn the_database_says_what_it_is_doing() {
+        let dir = tempfile::tempdir().unwrap();
+        let db = Db::open(&dir.path().join("hydrus.db"), 1).unwrap();
+        assert_eq!(db.activity(), "");
+        db.read(|_| {
+            assert_eq!(db.activity(), "db reading");
+            Ok(())
+        })
+        .unwrap();
+        let activity = Arc::clone(&db.activity);
+        db.write(move |_| {
+            use std::sync::atomic::Ordering::Relaxed;
+            // (the writer runs while its caller waits)
+            assert_eq!(activity.writes.load(Relaxed), 1);
+            Ok(())
+        })
+        .unwrap();
+        assert_eq!(db.activity(), "");
     }
 
     fn temp_db() -> (tempfile::TempDir, Db) {

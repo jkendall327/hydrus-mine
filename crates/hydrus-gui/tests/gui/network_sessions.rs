@@ -196,6 +196,7 @@ fn headers_validate_duplicate_delete_cancel_reopen_and_persist() {
             .is_empty()
     );
 }
+// leaf: cookies-file
 #[test]
 fn applied_widgets_change_existing_engines_outgoing_requests() {
     use std::io::{Read, Write};
@@ -394,6 +395,9 @@ fn dropping_final_owner_cancels_open_drafts_and_invalidates_child_callbacks() {
     );
 }
 
+// leaf: cookies-clipboard
+// leaf: cookies-export
+// leaf: cookies-file
 #[test]
 fn cookie_exchange_widgets_confirm_filter_cancel_import_export_and_report_errors() {
     use std::{cell::RefCell, rc::Rc};
@@ -561,6 +565,7 @@ fn wait_for_header(mut predicate: impl FnMut() -> bool) {
     }
 }
 
+// leaf: header-approval
 #[test]
 fn automatic_header_dialog_approval_denial_later_and_stale_callbacks() {
     use hydrus_gui::network_header_approval::{Monitor, last_question};
@@ -718,6 +723,7 @@ fn automatic_header_dialog_approval_denial_later_and_stale_callbacks() {
     );
 }
 
+// leaf: header-approval
 #[test]
 fn automatic_header_answers_reach_an_existing_engine_request() {
     use hydrus_gui::network_header_approval::{Monitor, last_question};

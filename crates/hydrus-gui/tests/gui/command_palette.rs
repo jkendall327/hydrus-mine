@@ -152,9 +152,19 @@ fn ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions() {
     palette.invoke_query_edited("Palette Folder".into());
     wait(&palette, "Favourite Alpha");
     let before = bound.pages.borrow().page_count();
-    activate(&palette, "Favourite Alpha");
-    assert_eq!(bound.pages.borrow().page_count(), before + 1);
-    assert_eq!(bound.pages.borrow().shown().name, "Favourite Alpha");
+    // What the reference's palette did on activating a favourite with the
+    // "open in a new page" option on (oracle/fixtures/command_palette.json).
+    let recorded = hydrus_testkit::fixture_json("command_palette.json");
+    let new_page = &recorded["selected"]["favourite"];
+    activate(&palette, new_page["name"].as_str().unwrap());
+    assert_eq!(
+        bound.pages.borrow().page_count(),
+        before + usize::try_from(new_page["new_pages"].as_u64().unwrap()).unwrap()
+    );
+    assert_eq!(
+        bound.pages.borrow().shown().name,
+        new_page["name"].as_str().unwrap()
+    );
     assert_eq!(
         bound
             .current
@@ -185,6 +195,7 @@ fn ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions() {
 }
 use hydrus_store::Store;
 
+// leaf: audit-options-command-palette-command-palette-search-provider-order-add
 #[test]
 fn palette_reopen_rejects_stale_callbacks_and_removed_providers_do_not_return() {
     let directory = tempfile::tempdir().unwrap();
@@ -324,6 +335,7 @@ fn media_provider_uses_the_actual_thumbnail_dispatcher_and_rejects_a_changed_pag
     );
 }
 
+// leaf: audit-options-command-palette-command-palette-start-searching-when-this-many-characters-have-been-typed
 #[test]
 fn asynchronous_calculator_ignores_page_threshold_and_activation_keeps_owner_open() {
     let directory = tempfile::tempdir().unwrap();
@@ -366,6 +378,8 @@ fn asynchronous_calculator_ignores_page_threshold_and_activation_keeps_owner_ope
     assert!(bound.command_palette.borrow().is_none());
 }
 
+// leaf: audit-options-command-palette-command-palette-max-favourite-searches-to-show
+// leaf: audit-options-command-palette-command-palette-max-page-results-to-show
 #[test]
 fn saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palette() {
     let directory = tempfile::tempdir().unwrap();
@@ -418,10 +432,16 @@ fn saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palet
     assert_eq!(rows.row_data(0).unwrap().primary, "Favourite Searches");
     assert_eq!(names(&window), ["Favourite Beta", "Palette Alpha"]);
     activate(&window, "Favourite Beta");
+    // Recorded for the option off: no new page, the shown page is searched.
+    let recorded = hydrus_testkit::fixture_json("command_palette.json");
+    let same_page = &recorded["selected"]["favourite_current"];
     assert!(bound.command_palette.borrow().is_none());
     assert_eq!(bound.pages.borrow().shown().key, original);
     assert_eq!(bound.pages.borrow().shown().name, "Palette Beta");
-    assert_eq!(bound.pages.borrow().page_count(), count);
+    assert_eq!(
+        bound.pages.borrow().page_count(),
+        count + usize::try_from(same_page["new_pages"].as_u64().unwrap()).unwrap()
+    );
     assert_eq!(
         bound
             .current

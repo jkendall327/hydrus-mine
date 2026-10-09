@@ -492,6 +492,7 @@ fn reopened_saved_process_uses_real_editor_inputs_and_owned_test_call_worker() {
     assert_eq!(saved(&store), before);
 }
 
+// leaf: audit-options-external-programs-external-calls-duplicate
 #[test]
 fn duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_and_retired_question_cannot_append()
  {
@@ -657,13 +658,28 @@ fn duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_an
 #[test]
 fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_change_saved_calls() {
     let (_dirs, store) = store();
-    let mut file = Callable::new("OS file");
+    // The reference's ProcessDeleteAction, recorded twice (declined, then
+    // accepted) on the two OS launch calls plus one other, with the OS calls
+    // selected: the question, and the names left in the list.
+    let recorded = hydrus_testkit::fixture_json("external_calls.json");
+    let strings = |value: &serde_json::Value| {
+        value
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|n| n.as_str().unwrap().to_owned())
+            .collect::<Vec<_>>()
+    };
+    let (declined, accepted) = (&recorded["deletes"][0], &recorded["deletes"][1]);
+    assert!(!declined["accept"].as_bool().unwrap() && accepted["accept"].as_bool().unwrap());
+    let before = strings(&declined["names"]);
+    let mut file = Callable::new(&before[0]);
     file.call = ActualCall::DefaultFile;
-    let mut url = Callable::new("OS URL");
+    let mut url = Callable::new(&before[1]);
     url.call = ActualCall::DefaultUrl;
     url.pipeline = hydrus_core::external_calls::Pipeline::Url;
     let manager = Manager {
-        calls: vec![file, url],
+        calls: vec![file, url, Callable::new(&before[2])],
     };
     let original = manager.clone();
     store
@@ -675,8 +691,8 @@ fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_chan
     retired_delete_question_preserves_successor(&ui, &bound, &store);
     let w = open(&ui, &bound);
     let list_index = windows.count() - 1;
-    w.invoke_external_call_clicked(0, false, false);
-    w.invoke_external_call_clicked(1, false, true);
+    w.invoke_external_call_clicked(named(&w, &before[0]), false, false);
+    w.invoke_external_call_clicked(named(&w, &before[1]), true, false);
     w.invoke_external_call_action("delete".into());
     let q = bound
         .options_external_calls
@@ -685,19 +701,32 @@ fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_chan
         .as_ref()
         .unwrap()
         .clone_strong();
-    assert_eq!(q.get_message(), "Remove all selected?");
     assert_eq!(
-        list_rows(&w)
+        q.get_message(),
+        declined["questions"][0]["message"].as_str().unwrap()
+    );
+    // (The recording lists data in insertion order; the list is shown sorted by
+    // pipeline, so compare as sorted names.)
+    let names = |w: &OptionsWindow| {
+        let mut names = list_rows(w)
             .into_iter()
             .map(|row| row.0[0].clone())
-            .collect::<Vec<_>>(),
-        original
-            .calls
-            .iter()
-            .map(|call| call.name.clone())
-            .collect::<Vec<_>>()
-    );
-    assert!(w.get_external_call_rows().iter().all(|row| row.selected));
+            .collect::<Vec<_>>();
+        names.sort();
+        names
+    };
+    let sorted = |mut names: Vec<String>| {
+        names.sort();
+        names
+    };
+    assert_eq!(names(&w), sorted(before.clone()));
+    let mut selected = list_rows(&w)
+        .into_iter()
+        .filter(|row| row.1)
+        .map(|row| row.0[0].clone())
+        .collect::<Vec<_>>();
+    selected.sort();
+    assert_eq!(selected, sorted(before[..2].to_vec()));
     list_capture(
         &windows,
         windows.count() - 1,
@@ -706,7 +735,7 @@ fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_chan
         (520, 200),
     );
     q.invoke_answered(false);
-    assert_eq!(w.get_external_call_rows().row_count(), 2);
+    assert_eq!(names(&w), sorted(strings(&declined["names"])));
     w.invoke_external_call_action("delete".into());
     let q = bound
         .options_external_calls
@@ -715,8 +744,12 @@ fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_chan
         .as_ref()
         .unwrap()
         .clone_strong();
+    assert_eq!(
+        q.get_message(),
+        accepted["questions"][0]["message"].as_str().unwrap()
+    );
     q.invoke_answered(true);
-    assert_eq!(w.get_external_call_rows().row_count(), 0);
+    assert_eq!(names(&w), sorted(strings(&accepted["names"])));
     assert_eq!(saved(&store), original);
     assert!(!w.get_external_call_selected());
     assert!(!w.get_external_call_child_open());
@@ -728,7 +761,14 @@ fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_chan
         (1100, 800),
     );
     w.invoke_apply();
-    assert!(saved(&store).calls.is_empty());
+    let saved_names = |store: &Store| {
+        saved(store)
+            .calls
+            .iter()
+            .map(|c| c.name.clone())
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(saved_names(&store), strings(&accepted["names"]));
     let w = open(&ui, &bound);
     w.invoke_external_call_action("defaults-all".into());
     let q = bound
@@ -740,7 +780,7 @@ fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_chan
         .clone_strong();
     w.invoke_cancel();
     q.invoke_answered(false);
-    assert!(saved(&store).calls.is_empty());
+    assert_eq!(saved_names(&store), strings(&accepted["names"]));
 }
 
 fn command(bound: &Bound) -> hydrus_gui::ExternalCommandWindow {
@@ -840,6 +880,7 @@ fn command_key(
         }
     }
 }
+// leaf: audit-options-nested-external-call-command-arguments
 #[test]
 fn actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consumer() {
     use slint::platform::{Key, PointerEventButton, WindowEvent};
@@ -1065,6 +1106,7 @@ fn actual_command_parameter_queue_buttons_keys_cancel_and_saved_argument_consume
     assert!(!bound.options_external_calls.has_open());
 }
 
+// leaf: audit-options-nested-external-call-command-copy
 #[test]
 fn command_clipboard_exact_review_raw_rows_clean_copy_errors_and_owner_retirement() {
     hydrus_gui::set_clipper(|clip| {
@@ -1649,7 +1691,7 @@ fn retired_duplicate_question_preserves_successor(
 fn retired_delete_question_preserves_successor(ui: &MainWindow, bound: &Bound, store: &Store) {
     // Use the existing OS file/URL fixture; do not rewrite the Store.
     let persisted = saved(store);
-    assert_eq!(persisted.calls.len(), 2);
+    assert_eq!(persisted.calls.len(), 3);
     let retired_options = open(ui, bound);
     retired_options.invoke_external_call_clicked(0, false, false);
     retired_options.invoke_external_call_action("delete".into());
@@ -1666,7 +1708,7 @@ fn retired_delete_question_preserves_successor(ui: &MainWindow, bound: &Bound, s
     successor.invoke_external_call_action("delete".into());
     let current = question(bound);
     let rows = list_rows(&successor);
-    assert_eq!(rows.len(), 2);
+    assert_eq!(rows.len(), 3);
     assert!(rows[last].1);
     assert!(!rows[0].1);
     let flags = list_flags(&successor);
@@ -1727,6 +1769,7 @@ fn list_flags(w: &OptionsWindow) -> (bool, bool, bool, i32, bool, slint::SharedS
     )
 }
 
+// leaf: audit-options-external-programs-external-calls-add-defaults
 #[test]
 fn defaults_physical_menu_exact_choices_saved_reopen_and_retired_selector_are_owned() {
     let oracle = hydrus_testkit::fixture_json("external_calls.json");

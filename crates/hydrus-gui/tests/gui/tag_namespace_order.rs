@@ -72,6 +72,8 @@ fn add(window: &OptionsWindow, raw: &str) {
     child.invoke_name_entered(raw.into());
     assert!(!window.get_tag_namespace_child_open());
 }
+// leaf: audit-options-tag-sort-tag-sort-namespace-grouping-sort-add
+// leaf: audit-options-tag-sort-tag-sort-namespace-grouping-sort-edit
 #[test]
 fn real_queue_matches_all_reference_prompts_and_parent_transactions() {
     let recorded = hydrus_testkit::fixture_json("tag_namespace_order.json");

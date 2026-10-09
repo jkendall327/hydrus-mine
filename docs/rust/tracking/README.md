@@ -62,6 +62,7 @@ Classes, decided after the pilot on `options-media` (2026-10-08):
 |---|---|
 | `sound` | The test drives the real thing (the window, menu or Options row through the GUI, or the real worker/consumer), its expected values come from a recording of the reference (or the behaviour is only strings or defaults checked against the reference), it covers everything the leaf names, and for a setting the code that reads it is exercised. |
 | `source-restated` | As sound, but the expected values are literals restated from the Python source, or computed by the same native function under test, where a recording would be possible. |
+| `likely-good` | As `source-restated`, but the leaf is only static text (labels, captions, headings, menu names, tooltips, fixed question wording, fixed defaults or choice lists) and the literals appear verbatim in the reference source. The owner decided (2026-10-08) these need no recording; a bug in one is low priority. Anything computed, conditional or behavioural stays `source-restated`. |
 | `weak` | A stand-in is tested instead of the real thing; part of the leaf is not covered; or a setting only round-trips while what reads it is untested or absent. |
 | `no-test` | A carried leaf with no test found. |
 | `wrong` | The test or the native code visibly contradicts the reference. |

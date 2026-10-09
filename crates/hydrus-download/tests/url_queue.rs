@@ -1061,6 +1061,7 @@ async fn running_file_queues_keep_limits_when_lowered_and_release_on_cancel_or_o
     }
 }
 
+// leaf: audit-options-importing-work-slots-number-of-gallery-downloader-searches-that-can-run-at-the-same-time
 #[tokio::test(flavor = "multi_thread")]
 async fn running_gallery_searches_pick_up_capacity_growth_and_release_on_error() {
     use hydrus_store::settings::{self, ImportWorkSlots};

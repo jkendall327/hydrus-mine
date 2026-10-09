@@ -100,6 +100,52 @@ fn services_menu_opens_review_and_refreshes() {
     window.invoke_close_clicked();
 }
 
+// leaf: audit-media-services-counts
+#[test]
+fn choosing_each_service_in_the_review_shows_the_counts_the_reference_shows() {
+    let recorded = hydrus_testkit::fixture_json("services.json");
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let dir = tempfile::tempdir().unwrap();
+    hydrus_store::import::import_legacy(
+        legacy.path(),
+        &dir.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = hydrus_store::Store::open(dir.path()).unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let titles = ui.get_menu_titles();
+    let index = titles.iter().position(|t| t.label == "services").unwrap();
+    ui.invoke_menu_title_pressed(i32::try_from(index).unwrap(), 10.0, 22.0);
+    let lines = ui.get_menu_panes().row_data(0).unwrap().lines;
+    let index = lines.iter().position(|l| l.label == "review").unwrap();
+    ui.invoke_menu_line_clicked(0, i32::try_from(index).unwrap(), 0.0, 0.0, 0.0);
+    let window = bound
+        .services_review
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let mut compared = 0;
+    for row in recorded["rows"].as_array().unwrap() {
+        let name = row["row"][0].as_str().unwrap();
+        choose_service(&window, name);
+        // the type shown with its name, as the reference lists it
+        assert_eq!(
+            window.get_name_and_type(),
+            format!("{name} - {}", row["row"][1].as_str().unwrap()),
+            "{name}"
+        );
+        if let Some(statistics) = row["statistics"].as_str() {
+            assert_eq!(window.get_statistics(), statistics, "{name}");
+            compared += 1;
+        }
+    }
+    assert_eq!(compared, 12);
+    window.invoke_close_clicked();
+}
+
 fn choose_service(window: &hydrus_gui::ServicesReviewWindow, name: &str) -> i32 {
     let index = window
         .get_services()
@@ -111,6 +157,8 @@ fn choose_service(window: &hydrus_gui::ServicesReviewWindow, name: &str) -> i32 
     index
 }
 
+// leaf: audit-media-services-missing-ratings
+// leaf: audit-media-services-missing-trash
 #[test]
 fn local_bulk_review_replays_confirmations_store_changes_and_reopens() {
     use hydrus_core::{ServiceType, Sha256};
@@ -414,6 +462,7 @@ fn deleted_record_state(
     serde_json::json!(statuses)
 }
 
+// leaf: audit-media-services-missing-deleted
 #[test]
 fn deleted_record_review_needs_both_answers_and_reopens_with_import_consumer_changed() {
     use hydrus_core::{ServiceType, Sha256};

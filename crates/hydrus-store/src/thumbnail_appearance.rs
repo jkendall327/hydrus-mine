@@ -104,6 +104,7 @@ pub fn load(conn: &Connection) -> Result<Preferences> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    // leaf: audit-options-thumbnails-appearance-use-blurhash-missing-thumbnail-fallback
     #[test]
     fn retained_actual_options_upgrade_native_override_and_reopen() {
         let fixture = hydrus_testkit::fixture_json("thumbnail_appearance.json");

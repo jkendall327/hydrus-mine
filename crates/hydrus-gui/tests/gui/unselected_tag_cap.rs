@@ -121,6 +121,7 @@ fn rows(page: &SearchPage) -> Value {
     )
 }
 
+// leaf: audit-options-tag-presentation-selection-tags-max-number-of-thumbnails-to-compute-tags-for-when-none-are-selected
 #[test]
 fn real_options_apply_cancel_reopen_counts_sorted_items_and_uncapped_selection() {
     let recorded = hydrus_testkit::fixture_json("unselected_tag_cap.json");

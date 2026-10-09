@@ -50,6 +50,63 @@ pub fn in_order(
     out
 }
 
+/// What a caller lets the file domain button offer (the reference's
+/// `SetOnlyImportableDomainsAllowed`, `SetOnlyLocalFileDomainsAllowed`,
+/// `SetOnlyCombinedLocalFileDomainsAllowed`, `SetAllKnownFilesAllowed`
+/// and `SetMultipleFileDomainsAllowed`), and whether advanced mode is on.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Flags {
+    pub advanced: bool,
+    pub all_known_files_allowed: bool,
+    pub only_importable: bool,
+    pub only_local: bool,
+    pub only_combined_local: bool,
+    pub multiple_allowed: bool,
+    /// Paired with a tag domain button, so all known files read "all known
+    /// files with tags" in the menu.
+    pub paired_with_tag_domain: bool,
+}
+
+impl Flags {
+    /// A search page's button: everything, all known files in advanced mode.
+    pub fn search(advanced: bool) -> Self {
+        Self {
+            advanced,
+            all_known_files_allowed: advanced,
+            only_importable: false,
+            only_local: false,
+            only_combined_local: false,
+            multiple_allowed: true,
+            paired_with_tag_domain: true,
+        }
+    }
+
+    /// The import destination button: the domains files can be imported to.
+    pub fn importable(advanced: bool) -> Self {
+        Self {
+            only_importable: true,
+            paired_with_tag_domain: false,
+            ..Self::search(advanced)
+        }
+    }
+
+    /// The presentation location button: the button with no restrictions
+    /// (all known files allowed).
+    pub fn unrestricted(advanced: bool) -> Self {
+        Self {
+            all_known_files_allowed: true,
+            paired_with_tag_domain: false,
+            ..Self::search(advanced)
+        }
+    }
+
+    /// Whether the multiple list offers "deleted from" boxes (advanced
+    /// mode, with no `only_` restriction).
+    fn offers_deleted(self) -> bool {
+        self.advanced && !(self.only_local || self.only_importable || self.only_combined_local)
+    }
+}
+
 /// The file domains a search page's button offers, in order
 /// (`GetPossibleFileDomainServicesInOrder`): the local file domains, all of
 /// them together when there are several (or in advanced mode), the trash,
@@ -57,21 +114,37 @@ pub fn in_order(
 /// everything deleted, the file repositories, and in advanced mode all
 /// known files.
 pub fn file_domains(services: &Services, advanced: bool) -> Vec<(ServiceKey, String, ServiceType)> {
+    file_domains_for(services, Flags::search(advanced))
+}
+
+/// The file domains a button with these `flags` offers.
+pub fn file_domains_for(
+    services: &Services,
+    flags: Flags,
+) -> Vec<(ServiceKey, String, ServiceType)> {
     let mut types = vec![ServiceType::LocalFileDomain];
-    if services.of_type(ServiceType::LocalFileDomain).count() > 1 || advanced {
-        types.push(ServiceType::CombinedLocalFileDomains);
-    }
-    types.push(ServiceType::LocalFileTrashDomain);
-    if advanced {
-        types.extend([
-            ServiceType::LocalFileUpdateDomain,
-            ServiceType::HydrusLocalFileStorage,
-            ServiceType::CombinedDeletedFile,
-        ]);
-    }
-    types.extend([ServiceType::FileRepository, ServiceType::Ipfs]);
-    if advanced {
-        types.push(ServiceType::CombinedFile);
+    if !flags.only_importable {
+        if services.of_type(ServiceType::LocalFileDomain).count() > 1 || flags.advanced {
+            types.push(ServiceType::CombinedLocalFileDomains);
+        }
+        if !flags.only_combined_local {
+            types.push(ServiceType::LocalFileTrashDomain);
+            if flags.advanced {
+                types.extend([
+                    ServiceType::LocalFileUpdateDomain,
+                    ServiceType::HydrusLocalFileStorage,
+                ]);
+            }
+            if !flags.only_local {
+                if flags.advanced {
+                    types.push(ServiceType::CombinedDeletedFile);
+                }
+                types.extend([ServiceType::FileRepository, ServiceType::Ipfs]);
+                if flags.all_known_files_allowed {
+                    types.push(ServiceType::CombinedFile);
+                }
+            }
+        }
     }
     in_order(services, &types)
 }
@@ -124,6 +197,15 @@ pub fn location_menu(
     advanced: bool,
     current: &LocationContext,
 ) -> Vec<Option<Row>> {
+    location_menu_for(services, Flags::search(advanced), current)
+}
+
+/// The file domain button's menu for a caller's `flags`.
+pub fn location_menu_for(
+    services: &Services,
+    flags: Flags,
+    current: &LocationContext,
+) -> Vec<Option<Row>> {
     let mut rows = Vec::new();
     let mut last_type = None;
     let mut checked_any = false;
@@ -136,11 +218,11 @@ pub fn location_menu(
             choice: Choice::Location(location),
         }));
     };
-    for (key, service_name, service_type) in file_domains(services, advanced) {
+    for (key, service_name, service_type) in file_domains_for(services, flags) {
         if last_type.is_some_and(|t| t != service_type) {
             rows.push(None);
         }
-        let label = if service_type == ServiceType::CombinedFile {
+        let label = if service_type == ServiceType::CombinedFile && flags.paired_with_tag_domain {
             "all known files with tags".to_owned()
         } else {
             service_name
@@ -157,12 +239,14 @@ pub fn location_menu(
             );
         }
     }
-    rows.push(None);
-    rows.push(Some(Row {
-        label: "multiple/deleted locations".to_owned(),
-        checked: !checked_any,
-        choice: Choice::Multiple,
-    }));
+    if flags.multiple_allowed {
+        rows.push(None);
+        rows.push(Some(Row {
+            label: "multiple/deleted locations".to_owned(),
+            checked: !checked_any,
+            choice: Choice::Multiple,
+        }));
+    }
     rows
 }
 
@@ -204,7 +288,14 @@ pub struct Tick {
 /// each domain the menu offers, then in advanced mode "deleted from" each
 /// that keeps a record of what it deleted.
 pub fn multiple_ticks(services: &Services, advanced: bool) -> Vec<Tick> {
-    let domains = file_domains(services, advanced);
+    multiple_ticks_for(services, Flags::search(advanced))
+}
+
+/// The "multiple/deleted locations" list for a caller's `flags`: no
+/// "deleted from" boxes when the caller restricts the domains.
+pub fn multiple_ticks_for(services: &Services, flags: Flags) -> Vec<Tick> {
+    let advanced = flags.offers_deleted();
+    let domains = file_domains_for(services, flags);
     let mut ticks: Vec<Tick> = domains
         .iter()
         .map(|(key, name, _)| Tick {
@@ -334,4 +425,45 @@ pub fn entries(rows: Vec<Option<Row>>) -> Vec<crate::main_menu::Entry> {
             },
         })
         .collect()
+}
+
+/// A location context from the hex service keys import options store,
+/// without the services that no longer exist (the reference's
+/// `FixMissingServices`, which every location button does on `SetValue`).
+pub fn context_from_hex(
+    services: &Services,
+    current: &[String],
+    deleted: &[String],
+) -> LocationContext {
+    let keys = |list: &[String]| -> Vec<ServiceKey> {
+        list.iter()
+            .filter_map(|k| hex::decode(k).ok())
+            .map(ServiceKey::new)
+            .filter(|k| services.by_key(k).is_ok())
+            .collect()
+    };
+    LocationContext::new(keys(current), keys(deleted))
+}
+
+/// A location context as the hex service keys import options store:
+/// (current, deleted).
+pub fn hex_of_context(location: &LocationContext) -> (Vec<String>, Vec<String>) {
+    let hexed =
+        |keys: &BTreeSet<ServiceKey>| keys.iter().map(|k| hex::encode(k.as_bytes())).collect();
+    (hexed(location.current()), hexed(location.deleted()))
+}
+
+/// A location button as a drop-down: the menu's entries (no separators),
+/// and the ticked one ("multiple/deleted locations" if no domain is).
+pub fn dropdown(
+    services: &Services,
+    flags: Flags,
+    current: &LocationContext,
+) -> (Vec<Row>, Option<usize>) {
+    let rows: Vec<Row> = location_menu_for(services, flags, current)
+        .into_iter()
+        .flatten()
+        .collect();
+    let at = rows.iter().position(|r| r.checked);
+    (rows, at)
 }

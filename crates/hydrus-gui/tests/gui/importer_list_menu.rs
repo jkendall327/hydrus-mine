@@ -204,6 +204,7 @@ fn a_watcher_lists_menu_copies_the_pressed_watchers_url() {
     );
 }
 
+// leaf: audit-network-file-log-advanced
 #[test]
 fn closed_log_renormalisation_menu_requires_confirmation() {
     let (_dirs, store) = store();
@@ -260,6 +261,7 @@ fn closed_log_renormalisation_menu_requires_confirmation() {
     assert_eq!(after[0].data, "https://renormalise.example/post/a");
 }
 
+// leaf: audit-network-search-log-exchange
 #[test]
 fn closed_search_log_exchange_retains_real_questions_and_png_children() {
     use hydrus_gui::{png_export_window, search_log_import_window};

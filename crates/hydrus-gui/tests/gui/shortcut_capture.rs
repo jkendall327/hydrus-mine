@@ -76,6 +76,7 @@ fn add(
     sets.invoke_action("add".into());
     (sets, hydrus_gui::shortcut_windows::last_command().unwrap())
 }
+// leaf: audit-options-nested-shortcuts-command-keyboard
 #[test]
 fn keyboard_capture_applies_through_owned_set_then_options_and_saved_main_executor() {
     use slint::platform::{Key, WindowEvent};
@@ -218,6 +219,7 @@ fn keyboard_capture_applies_through_owned_set_then_options_and_saved_main_execut
         saved
     );
 }
+// leaf: audit-options-nested-shortcuts-command-keyboard
 #[test]
 fn command_and_set_cancel_reject_stale_children_and_preserve_successor_drafts() {
     let (_dirs, store) = crate::subscriptions::store();
@@ -262,6 +264,7 @@ fn command_and_set_cancel_reject_stale_children_and_preserve_successor_drafts() 
         "Cancel and stale callbacks preserve every imported set and capture policy"
     );
 }
+// leaf: audit-options-nested-shortcuts-command-keyboard
 #[test]
 fn saved_mouse_and_keyboard_captures_feed_existing_viewer_navigation_and_guard_closed_owners() {
     let (_dirs, store) = crate::subscriptions::store();
@@ -337,6 +340,7 @@ fn saved_mouse_and_keyboard_captures_feed_existing_viewer_navigation_and_guard_c
     successor.invoke_close_requested();
 }
 
+// leaf: audit-options-nested-shortcuts-command-keyboard
 #[test]
 fn accepted_main_close_retires_saved_shortcuts_even_after_show_and_fresh_binding_reopens() {
     let (_dirs, store) = crate::subscriptions::store();
@@ -410,6 +414,7 @@ fn accepted_main_close_retires_saved_shortcuts_even_after_show_and_fresh_binding
     assert!(reopened.current.borrow().borrow().synchronised());
     assert!(!bound.current.borrow().borrow().synchronised());
 }
+// leaf: audit-options-nested-shortcuts-command-keyboard
 #[test]
 fn raw_backend_key_location_and_modifier_identity_reach_the_same_capture_contract() {
     use slint::winit_030::winit::keyboard::{Key, KeyLocation, NamedKey};

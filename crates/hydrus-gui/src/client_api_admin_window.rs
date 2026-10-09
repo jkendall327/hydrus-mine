@@ -55,6 +55,38 @@ pub fn last_request_opened() -> Option<ApiRequestWindow> {
         .filter(|w| w.window().is_visible())
 }
 
+/// How long "add from api request" keeps registration open at a time. The
+/// reference's flag lasts only while its dialog is open; this lease is
+/// renewed by the window's timer, so a crash closes registration within
+/// seconds instead of leaving it open (the `hydrus api-keys listen` CLI
+/// shares the same row).
+const REGISTRATION_LEASE_MS: i64 = 10_000;
+
+/// Push the lease forward while registration is open and running out.
+fn renew_registration(store: &Store) {
+    let now = hydrus_core::time::TimestampMs::now().millis();
+    let Ok(registration) =
+        store.read(hydrus_store::settings::get::<hydrus_store::api_permissions::Registration>)
+    else {
+        return;
+    };
+    if registration
+        .open_until_ms
+        .is_none_or(|until| until - now >= REGISTRATION_LEASE_MS / 2)
+    {
+        return;
+    }
+    let _ = store.write(move |ctx| {
+        let mut registration: hydrus_store::api_permissions::Registration =
+            hydrus_store::settings::get(ctx.conn())?;
+        if registration.open_until_ms.is_some() {
+            registration.open_until_ms = Some(now + REGISTRATION_LEASE_MS);
+            hydrus_store::settings::set(ctx.conn(), &registration)?;
+        }
+        Ok(())
+    });
+}
+
 /// Stop taking requests (the reference's `api_request_dialog_open = False`).
 fn close_registration(store: &Store) {
     if let Err(e) = store.write(|ctx| {
@@ -563,7 +595,7 @@ pub fn open(
             let Ok(waiting) = ApiRequestWindow::new() else {
                 return;
             };
-            let until = hydrus_core::time::TimestampMs::now().millis() + 3_600_000;
+            let until = hydrus_core::time::TimestampMs::now().millis() + REGISTRATION_LEASE_MS;
             if let Err(e) = store.write(move |ctx| {
                 let mut registration: hydrus_store::api_permissions::Registration =
                     hydrus_store::settings::get(ctx.conn())?;
@@ -612,6 +644,7 @@ pub fn open(
                     let open_edit = open_edit.clone();
                     let slot = Rc::downgrade(&slots.request);
                     move || {
+                        renew_registration(&store);
                         let Ok(registration) = store.read(
                             hydrus_store::settings::get::<
                                 hydrus_store::api_permissions::Registration,

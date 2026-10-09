@@ -399,6 +399,7 @@ fn overlapping_migration_is_rejected_without_waiting_for_a_reader() {
     assert_eq!(count(&store, &request.destination, false), 11);
 }
 
+// leaf: audit-media-migration-pause
 #[test]
 fn pause_waits_after_commit_resume_continues_and_cancel_wakes_without_next_batch() {
     let recording = hydrus_testkit::fixture_json("tag_migration_pause.json");
@@ -603,6 +604,8 @@ fn archive_rows(path: &std::path::Path) -> serde_json::Value {
             .collect::<Vec<_>>()
     )
 }
+// leaf: migration-archive-destination
+// leaf: migration-archive-source
 #[test]
 fn actual_python_archives_import_convert_scope_filter_and_reopen() {
     let recording = hydrus_testkit::fixture_json("tag_archives.json");
@@ -701,6 +704,7 @@ fn actual_python_archives_import_convert_scope_filter_and_reopen() {
         );
     }
 }
+// leaf: migration-archive-destination
 #[test]
 fn archive_exports_preserve_metadata_merge_and_cancelled_committed_prefix() {
     let recording = hydrus_testkit::fixture_json("tag_archives.json");
@@ -943,6 +947,7 @@ fn pair_count_gates_replay_real_current_pending_and_terminal_ideal_counts() {
         }
     }
 }
+// leaf: migration-archive-source
 #[test]
 fn archive_validation_rejects_wrong_types_and_unsupported_hashes_before_import() {
     let (dir, store, mut request) = setup();

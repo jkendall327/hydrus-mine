@@ -52,6 +52,10 @@ fn wheel(
         delta_y: delta,
     });
 }
+// leaf: audit-options-gui-pages-navigation-and-drag-and-drop-bugfix-disable-all-page-tab-drag-and-drop
+// leaf: audit-options-gui-pages-navigation-and-drag-and-drop-experimental-mouse-wheel-scrolls-tab-bar-not-page-selection
+// leaf: audit-options-gui-pages-navigation-and-drag-and-drop-selection-chases-dropped-page-after-drag-and-drop
+// leaf: audit-options-gui-pages-navigation-and-drag-and-drop-with-shift-held-down
 #[test]
 fn real_wheel_replays_qt_selection_and_staged_scroll_overflow_without_changing_session() {
     const LABEL: &str = "EXPERIMENTAL: Mouse wheel scrolls tab bar, not page selection: ";
@@ -415,6 +419,9 @@ fn expected(bound: &hydrus_gui::Bound, step: &serde_json::Value) {
 // leaf: audit-options-gui-pages-navigation-and-drag-and-drop-navigate-tabs-during-drag-and-drop
 // leaf: audit-options-gui-pages-navigation-and-drag-and-drop-with-shift-held-down-2
 // leaf: audit-options-tabs-drag
+// leaf: audit-options-gui-pages-navigation-and-drag-and-drop-bugfix-disable-all-page-tab-drag-and-drop
+// leaf: audit-options-gui-pages-navigation-and-drag-and-drop-experimental-mouse-wheel-scrolls-tab-bar-not-page-selection
+// leaf: audit-options-gui-pages-navigation-and-drag-and-drop-selection-chases-dropped-page-after-drag-and-drop
 #[test]
 fn real_pointer_drag_replays_shift_chase_hover_transfer_disable_and_cancel_with_ordered_media() {
     use hydrus_gui_model::tab_drag::Edge;

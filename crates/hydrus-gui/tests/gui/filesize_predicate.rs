@@ -38,6 +38,7 @@ fn fields(window: &PredicateEditorWindow) -> slint::ModelRc<hydrus_gui::EditorFi
     window.get_panels().row_data(0).unwrap().fields
 }
 
+// leaf: audit-options-predicate-filesize-size
 #[test]
 fn real_radio_keys_and_all_units_reach_the_search_consumer() {
     let (guards, store) = store();

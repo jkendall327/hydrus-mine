@@ -266,77 +266,26 @@ pub(super) fn parse(text: &str) -> Result<String, String> {
     parse_at(text, &Zoned::now()).map(|t| t.to_string())
 }
 
+/// The Unix time the easy conversion (`ClientTime.ParseDate`) reads from
+/// `text` now.
+pub fn parse_timestamp(text: &str) -> Result<i64, String> {
+    parse_at(text, &Zoned::now())
+}
+
+/// A `Last-Modified` header as a reference without dateparser reads it
+/// (`_GenerateModifiedDate`): the fixed `%a, %d %b %Y %H:%M:%S` form, "GMT"
+/// dropped and the rest taken as local time, if sensible (after the first
+/// week of 1970).
+pub fn parse_last_modified(text: &str) -> Option<i64> {
+    let text = text.strip_suffix(" GMT").unwrap_or(text);
+    let zone = Zoned::now().time_zone().clone();
+    let (dt, _) = datetime(text, "%a, %d %b %Y %H:%M:%S", &zone).ok()?;
+    let when = dt.to_zoned(zone).ok()?.timestamp().as_second();
+    (when > 86400 * 7).then_some(when)
+}
+
 fn parse_at(text: &str, now: &Zoned) -> Result<i64, String> {
-    let text = text.trim();
-    let lower = text.to_ascii_lowercase();
-    let failure = || "Sorry, could not parse that date!".to_owned();
-    let relative = match lower.as_str() {
-        "now" | "today" => Some(now.clone()),
-        "yesterday" => Some(now.checked_sub(Span::new().days(1)).map_err(err)?),
-        "tomorrow" => Some(now.checked_add(Span::new().days(1)).map_err(err)?),
-        _ => None,
-    };
-    if let Some(relative) = relative {
-        return Ok(relative.timestamp().as_second());
-    }
-    let words: Vec<_> = lower.split_whitespace().collect();
-    if let [count, unit, "ago"] = words.as_slice() {
-        let count: i64 = count.parse().map_err(|_| failure())?;
-        let span = match unit.trim_end_matches('s') {
-            "second" => Span::new().seconds(count),
-            "minute" => Span::new().minutes(count),
-            "hour" => Span::new().hours(count),
-            "day" => Span::new().days(count),
-            "week" => Span::new().weeks(count),
-            "month" => Span::new().months(count),
-            "year" => Span::new().years(count),
-            _ => return Err(failure()),
-        };
-        return now
-            .checked_sub(span)
-            .map(|dt| dt.timestamp().as_second())
-            .map_err(err);
-    }
-    if let Ok(timestamp) = text.parse::<Timestamp>() {
-        return Ok(timestamp.as_second());
-    }
-    // dateparser's English fallback and dateutil cover these common downloader
-    // forms. A supplied offset takes precedence over the user's local timezone.
-    for phrase in [
-        "%Y-%m-%dT%H:%M:%S.%f%z",
-        "%Y-%m-%dT%H:%M:%S%z",
-        "%Y-%m-%d %H:%M:%S%z",
-        "%Y-%m-%d %H:%M:%S %z",
-        "%Y-%m-%dT%H:%M:%S.%f",
-        "%Y-%m-%dT%H:%M:%S",
-        "%Y-%m-%d %H:%M:%S",
-        "%Y-%m-%d %H:%M",
-        "%Y-%m-%d",
-        "%m/%d/%Y %I:%M:%S%p",
-        "%m/%d/%Y %I:%M%p",
-        "%m/%d/%Y",
-        "%d %B %Y %H:%M:%S",
-        "%d %B %Y",
-        "%d %b %Y",
-        "%B %d, %Y %I:%M %p",
-        "%B %d, %Y",
-        "%b %d, %Y",
-        "%a, %d %b %Y %H:%M:%S %z",
-    ] {
-        if let Ok((dt, offset)) = datetime(text, phrase, now.time_zone()) {
-            return match offset {
-                Some(offset) => offset
-                    .to_timestamp(dt)
-                    .map(Timestamp::as_second)
-                    .map_err(err),
-                None => dt
-                    .to_zoned(now.time_zone().clone())
-                    .map(|dt| dt.timestamp().as_second())
-                    .map_err(err),
-            };
-        }
-    }
-    Err(failure())
+    super::date_parse::parse_at(text, now)
 }
 
 #[cfg(test)]
@@ -344,6 +293,7 @@ mod tests {
     use super::*;
     use crate::url::strings::{Conversion, StringConverter};
 
+    // leaf: audit-network-conversion-date-decode
     #[test]
     fn date_conversions_match_direct_reference_execution() {
         let fixture: serde_json::Value = serde_json::from_str(include_str!(
@@ -406,6 +356,51 @@ mod tests {
             } else {
                 assert_eq!(actual.unwrap(), expected, "{case}");
             }
+        }
+    }
+
+    // leaf: audit-network-conversion-dateparser
+    #[test]
+    fn the_easy_parser_matches_the_recorded_dateparser_corpus() {
+        let fixture: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../../oracle/fixtures/dateparser_corpus.json"
+        ))
+        .unwrap();
+        let now: Zoned = "2026-10-04T12:30:00+00:00[UTC]".parse().unwrap();
+        let mut gaps = Vec::new();
+        for case in fixture["cases"].as_array().unwrap() {
+            let text = case["text"].as_str().unwrap();
+            let actual = parse_at(text, &now);
+            let matches = if case["error"] == true {
+                actual.is_err()
+            } else {
+                actual.as_ref().map(ToString::to_string).ok().as_deref() == case["result"].as_str()
+            };
+            if !matches {
+                gaps.push(text.to_owned());
+            }
+        }
+        assert!(gaps.is_empty(), "the corpus' failures: {gaps:?}");
+    }
+
+    /// `Last-Modified` as the reference reads it without dateparser (the
+    /// recording ran in UTC).
+    #[test]
+    fn last_modified_headers_are_read_as_the_reference_does() {
+        let fixture: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../../oracle/fixtures/dateparser_corpus.json"
+        ))
+        .unwrap();
+        let utc = TimeZone::UTC;
+        for case in fixture["last_modified"].as_array().unwrap() {
+            let text = case["text"].as_str().unwrap();
+            let stripped = text.strip_suffix(" GMT").unwrap_or(text);
+            let got = datetime(stripped, "%a, %d %b %Y %H:%M:%S", &utc)
+                .ok()
+                .and_then(|(dt, _)| dt.to_zoned(utc.clone()).ok())
+                .map(|z| z.timestamp().as_second())
+                .filter(|when| *when > 86400 * 7);
+            assert_eq!(got, case["result"].as_i64(), "{text}");
         }
     }
 

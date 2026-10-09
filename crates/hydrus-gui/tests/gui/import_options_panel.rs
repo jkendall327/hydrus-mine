@@ -69,6 +69,13 @@ fn synthetic_classes() -> Vec<UrlClass> {
     .collect()
 }
 
+// leaf: audit-options-import-options-default-import-options-clear
+// leaf: audit-options-import-options-default-import-options-reset-to-defaults
+// leaf: audit-options-import-options-default-import-options-show-stack
+// leaf: audit-options-import-options-help-for-this-panel
+// leaf: audit-options-import-options-keep-this-panel-simple
+// leaf: audit-options-import-options-url-class-import-options-clear
+// leaf: audit-options-import-options-url-class-import-options-show-stack
 #[test]
 fn options_drafts_replay_clear_reset_simple_mode_and_cancel_without_store_changes() {
     let (_dirs, store) = crate::subscriptions::store();
@@ -263,6 +270,11 @@ fn options_drafts_replay_clear_reset_simple_mode_and_cancel_without_store_change
     options.invoke_cancel();
 }
 
+// leaf: audit-options-import-options-favourites-profiles-delete
+// leaf: audit-options-import-options-default-import-options-edit
+// leaf: audit-options-import-options-favourites-profiles-add
+// leaf: audit-options-import-options-favourites-profiles-edit
+// leaf: audit-options-import-options-url-class-import-options-edit
 #[test]
 fn applied_defaults_url_overrides_profiles_and_simple_preference_reach_consumers() {
     let (_dirs, store) = crate::subscriptions::store();
@@ -527,4 +539,162 @@ fn applied_defaults_url_overrides_profiles_and_simple_preference_reach_consumers
     local.invoke_cancel();
     folder.invoke_cancel();
     folders.invoke_cancel();
+}
+
+// leaf: audit-options-import-options-favourites-profiles-delete
+// (the reference's delete of a single selected profile raises before it asks,
+// a known difference in DIFFERENCES.md; the recorded multi-profile delete is
+// replayed here)
+#[test]
+fn deleting_selected_profiles_asks_as_the_reference_does_and_cancel_keeps_them() {
+    let fixture = hydrus_testkit::fixture_json("import_options_panel.json");
+    let recorded: Vec<&serde_json::Value> = fixture["steps"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|step| step["action"] == "_DeleteFavourite" && step["error"].is_null())
+        .collect();
+    let question = recorded[0]["calls"][0]["question"].as_str().unwrap();
+    assert_eq!(recorded[0]["calls"][0]["answer"], false);
+    assert_eq!(recorded[1]["calls"][0]["answer"], true);
+    assert_eq!(recorded[1]["calls"][0]["question"], question);
+
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    open_options(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    page(&options);
+    let window = panel::last_opened().unwrap();
+    let profiles = |window: &ImportOptionsPanelWindow| -> Vec<String> {
+        rows(window, 2)
+            .into_iter()
+            .map(|row| row[0].clone())
+            .collect()
+    };
+    let before = profiles(&window);
+    for _ in 0..2 {
+        window.invoke_action(2, "add".into());
+        let editor = panel::editing_window().unwrap();
+        editor.set_favourite_name("new profile".into());
+        kind(&editor, "notes");
+        editor.invoke_apply();
+    }
+    let added: Vec<String> = profiles(&window)
+        .into_iter()
+        .filter(|name| !before.contains(name))
+        .collect();
+    assert_eq!(added, ["new profile", "new profile (1)"]);
+
+    // both selected: the recorded question; no keeps them, yes deletes them
+    let rows_of = |window: &ImportOptionsPanelWindow| profiles(window);
+    let at = |name: &str| rows_of(&window).iter().position(|n| n == name).unwrap() as i32;
+    window.invoke_clicked(2, at("new profile"), false, false);
+    window.invoke_clicked(2, at("new profile (1)"), true, false);
+    window.invoke_action(2, "delete".into());
+    assert_eq!(window.get_question(), question);
+    window.invoke_answered(false);
+    assert_eq!(profiles(&window).len(), before.len() + 2, "cancelled");
+    window.invoke_action(2, "delete".into());
+    assert_eq!(window.get_question(), question);
+    window.invoke_answered(true);
+    assert_eq!(profiles(&window), before, "deleted");
+    options.invoke_cancel();
+}
+
+// The destination button of every editor the Options page opens (each default
+// caller, a URL class, a favourite) against the reference's panel for that
+// caller: the importable domains' menu, the start, and the URL boxes only for
+// the downloader callers.
+// leaf: import-locations
+#[test]
+fn every_callers_destination_editor_is_the_references_for_that_caller() {
+    let (_dirs, store) = crate::subscriptions::store();
+    let classes = synthetic_classes();
+    store
+        .write(move |tx| {
+            let mut registry: UrlClassSettings = settings::get(tx.conn())?;
+            registry.url_classes = classes;
+            settings::set(tx.conn(), &registry)
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let recorded = hydrus_testkit::fixture_json("location_selector_flags.json");
+    let theirs = &recorded["normal"]["destination"];
+    let menu: Vec<String> = theirs["menu"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter_map(|e| e["text"].as_str().map(str::to_owned))
+        .collect();
+    open_options(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    page(&options);
+    let window = panel::last_opened().unwrap();
+    let mut checked = Vec::new();
+    // (the editor, which reference caller it is, and what the list called it)
+    let mut visit = |list: i32, row: &str, caller: &str, action: &str| {
+        if action == "edit" {
+            select(&window, list, row);
+        }
+        window.invoke_action(list, action.into());
+        let editor = panel::editing_window().expect("the editor opens");
+        let has_locations = editor.get_labels().iter().any(|l| l.contains("locations"));
+        if has_locations {
+            kind(&editor, "locations");
+            editor.set_custom_index(1);
+            editor.invoke_changed();
+            let downloader = theirs["callers"][caller]["primary_urls"].as_bool().unwrap();
+            assert_eq!(editor.get_downloader(), downloader, "{caller}");
+            assert_eq!(
+                editor
+                    .get_destination_choices()
+                    .iter()
+                    .map(|c| c.to_string())
+                    .collect::<Vec<_>>(),
+                menu,
+                "{caller}"
+            );
+            assert_eq!(
+                editor.get_destination_label(),
+                theirs["start"]["label"].as_str().unwrap()
+            );
+            assert!(!editor.get_destination_warning(), "{caller}");
+            checked.push(caller.to_owned());
+        }
+        editor.invoke_cancel();
+    };
+    for (row, caller) in [
+        ("subscription", "subscription"),
+        ("gallery/post urls", "gallery/post urls"),
+        ("watchable urls", "watchable urls"),
+        ("import folder", "import folder"),
+        ("local hard drive import", "local import"),
+        ("client api", "client api"),
+        ("global", "global"),
+    ] {
+        visit(0, row, caller, "edit");
+    }
+    visit(1, "alpha post", "url class", "edit");
+    visit(2, "", "favourites", "add");
+    checked.sort();
+    assert!(
+        checked.len() >= 7,
+        "the callers whose editor lists locations: {checked:?}"
+    );
+    for needed in [
+        "client api",
+        "import folder",
+        "local import",
+        "subscription",
+        "global",
+    ] {
+        assert!(
+            checked.iter().any(|c| c == needed),
+            "{needed} in {checked:?}"
+        );
+    }
 }

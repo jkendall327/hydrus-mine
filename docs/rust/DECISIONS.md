@@ -99,6 +99,42 @@ record of what was decided, and why the roadmap looks the way it does.
 - **Merging:** the coordinating agent may merge a PR once CI is green and its
   independent review's findings are addressed.
 
+- **Date parsing matches a hydrus install without `dateparser`** (2026-10-08).
+  The reference's "datestring to timestamp (easy)" and its other `ParseDate`
+  callers use the optional `dateparser` library when installed and fall back
+  to `dateutil` otherwise. hydrus-rs is a superset of the `dateutil`
+  fallback (recorded from the reference with `dateparser` disabled) that adds
+  English relative dates ("now", "yesterday", "2 hours ago", "in 3 days"),
+  giving the same result `dateparser` would for those. It does not take on
+  the rest of `dateparser`: non-English and fuzzy free-text dates are not
+  parsed, and the advanced strptime step covers explicit formats.
+
+- **Deferred, low priority (2026-10-08)**, each noted on its leaf: drag-out
+  of files and its three exporting options (wanted, but it needs
+  hand-written X11/Wayland drag sources); saved size and position for the
+  remaining ~25 windows; idle from mouse movement outside hydrus-rs windows
+  (later through the platform's idle time, not cursor polling); custom SVG
+  rating stars; clipboard-bitmap and PNG drag-and-drop downloader exchange.
+  Reading old saved-object versions stays in scope: importing an existing
+  hydrus install must be easy.
+
+- **Client API extras are wanted** (2026-10-08, #120): HTTPS, the
+  normie-friendly welcome page, and the external scheme/host/port overrides.
+  The reference hides the three override rows (`if False:`) and nothing reads
+  them; hydrus-rs shows them as editable rows in advanced mode at the owner's
+  request. The video buffer follows the reference's sizing (#121).
+
+- **The status bar's app-busy field counts hydrus-rs's background jobs**
+  (2026-10-09). The reference reports its Python worker-thread pool, which
+  hydrus-rs doesn't have; the field shows in-flight background jobs
+  (downloads, imports, maintenance) instead, with the reference's wording.
+
+- **File lookup scripts are out of scope** (2026-10-09). The reference's
+  legacy file-lookup-script tag suggestions (the side panel, the script editor
+  and manager, the favourite-script option) are superseded by downloaders and
+  are not ported. Account/moderator handling for relationship petition
+  reasons goes out of scope with the PTR.
+
 ## Roadmap that follows
 
 1. **Client API parity**, with Hydrus Companion's request patterns checked

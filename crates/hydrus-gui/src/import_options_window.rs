@@ -16,15 +16,21 @@ use hydrus_core::import_options::{
     CallerType, ImportOptionsManager, ImportOptionsSlice, PrefetchCheck, PresentationInbox,
     PresentationStatus, UrlClassKind,
 };
-use hydrus_core::service::{ServiceType, builtin_keys};
+use hydrus_core::service::builtin_keys;
 use hydrus_store::Store;
 use hydrus_store::services::ServiceRegistry;
 
+use crate::domains::{self, Choice, Flags};
 use crate::import_options_editor::{
     CUSTOM_CHOICE, DESCRIPTION, EXISTING_TAGS_FILTER_MESSAGE, Editor, Kind, TagFilterTarget,
     inbox_choices, use_default_label,
 };
-use crate::{ImportOptionsWindow, ResolutionLimit, SizeLimit, TagServiceRow};
+
+/// What the additional tags dialog says (`_DoAdditionalTags`).
+const ADDITIONAL_TAGS_MESSAGE: &str = "Any tags you enter here will be applied to every file that passes through this import context.";
+/// What the whitelist dialog says (`_EditWhitelist`).
+const WHITELIST_MESSAGE: &str = "If you add tags here, then any file importing with these options must have at least one of these tags from the download source. You can mix it with a blacklist--both will apply in turn.\n\nThis is usually easier and faster to do just by adding tags to the downloader query (e.g. \"artistname desired_tag\"), so reserve this for downloaders that do not work on tags or where you want to whitelist multiple tags.";
+use crate::{ImportOptionsWindow, LocationsWindow, ResolutionLimit, SizeLimit, TagServiceRow};
 
 fn strings(items: Vec<String>) -> ModelRc<SharedString> {
     let items: Vec<SharedString> = items.into_iter().map(Into::into).collect();
@@ -41,20 +47,99 @@ fn namer(services: &ServiceRegistry) -> impl Fn(&str) -> String + '_ {
     }
 }
 
-/// The locations presentation offers: all my files, or all local files
-/// (including the trash).
-const PRESENTATION_LOCATIONS: [&[u8]; 2] = [
-    builtin_keys::COMBINED_LOCAL_FILE_DOMAINS,
-    builtin_keys::HYDRUS_LOCAL_FILE_STORAGE,
-];
+/// The two location buttons the editor has: the import destinations and
+/// the presentation location.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Selector {
+    Destination,
+    Presentation,
+}
 
-/// The local file domains files can be imported to: (key hex, name).
-fn destinations(services: &ServiceRegistry) -> Vec<(String, String)> {
-    services
-        .all()
-        .filter(|s| s.service_type() == ServiceType::LocalFileDomain)
-        .map(|s| (hex::encode(s.key.as_bytes()), s.name.clone()))
-        .collect()
+impl Selector {
+    fn named(which: &str) -> Option<Self> {
+        match which {
+            "destination" => Some(Self::Destination),
+            "presentation" => Some(Self::Presentation),
+            _ => None,
+        }
+    }
+
+    /// What the button lets its caller choose
+    /// (`SetOnlyImportableDomainsAllowed` on the destination button).
+    fn flags(self, advanced: bool) -> Flags {
+        match self {
+            Self::Destination => Flags::importable(advanced),
+            Self::Presentation => Flags::unrestricted(advanced),
+        }
+    }
+}
+
+pub(crate) fn advanced_mode(store: &Store) -> bool {
+    store
+        .read(hydrus_store::settings::get::<hydrus_store::settings::AdvancedMode>)
+        .unwrap_or_default()
+        .0
+}
+
+/// The location `which` button holds now.
+fn selected_location(
+    editor: &Editor,
+    services: &ServiceRegistry,
+    which: Selector,
+) -> hydrus_search::LocationContext {
+    let (current, deleted) = match which {
+        Selector::Destination => editor
+            .values
+            .locations
+            .as_ref()
+            .map(|o| (o.destinations.clone(), o.deleted_destinations.clone())),
+        Selector::Presentation => editor
+            .values
+            .presentation
+            .as_ref()
+            .map(|o| (o.location.clone(), o.deleted_location.clone())),
+    }
+    .unwrap_or_default();
+    domains::context_from_hex(services, &current, &deleted)
+}
+
+/// Make the `which` button hold `location`.
+fn select_location(
+    editor: &mut Editor,
+    which: Selector,
+    location: &hydrus_search::LocationContext,
+) {
+    let (current, deleted) = domains::hex_of_context(location);
+    match which {
+        Selector::Destination => {
+            if let Some(o) = &mut editor.values.locations {
+                o.destinations = current;
+                o.deleted_destinations = deleted;
+            }
+        }
+        Selector::Presentation => {
+            if let Some(o) = &mut editor.values.presentation {
+                o.location = current;
+                o.deleted_location = deleted;
+            }
+        }
+    }
+}
+
+/// A location button's drop-down, its label and chosen row.
+fn location_button(
+    editor: &Editor,
+    services: &ServiceRegistry,
+    which: Selector,
+    advanced: bool,
+) -> (ModelRc<SharedString>, i32, SharedString) {
+    let current = selected_location(editor, services, which);
+    let (rows, at) = domains::dropdown(services, which.flags(advanced), &current);
+    (
+        strings(rows.into_iter().map(|r| r.label).collect()),
+        at.and_then(|i| i32::try_from(i).ok()).unwrap_or(-1),
+        domains::location_label(services, &current).into(),
+    )
 }
 
 const UNITS: [u64; 4] = [1, 1024, 1024 * 1024, 1024 * 1024 * 1024];
@@ -158,6 +243,8 @@ struct State {
     tag_filter: crate::tag_filter_window::Slot,
     write_tags: crate::write_tag_window::Slot,
     overwrite: crate::import_options_overwrite_window::Slot,
+    /// The shared "multiple/deleted locations" list, from a location button.
+    locations: Rc<RefCell<Option<LocationsWindow>>>,
     favourites: Option<Rc<crate::import_options_favourites_window::Controller>>,
 }
 
@@ -207,6 +294,12 @@ fn show(window: &ImportOptionsWindow, state: &State) {
         .into(),
     );
     if let Some(o) = &values.presentation {
+        window.set_status_choices(strings(
+            crate::import_options_editor::STATUS_CHOICES
+                .iter()
+                .map(|s| (*s).to_owned())
+                .collect(),
+        ));
         window.set_status_index(match o.status {
             PresentationStatus::AnyGood => 0,
             PresentationStatus::NewOnly => 1,
@@ -223,14 +316,15 @@ fn show(window: &ImportOptionsWindow, state: &State) {
             PresentationInbox::RequireInbox => 1,
             PresentationInbox::AndIncludeAllInbox => 2,
         });
-        window.set_location_choices(strings(
-            PRESENTATION_LOCATIONS
-                .iter()
-                .map(|k| name(&hex::encode(k)))
-                .collect(),
-        ));
-        let storage = hex::encode(builtin_keys::HYDRUS_LOCAL_FILE_STORAGE);
-        window.set_location_index(i32::from(o.location == [storage]));
+        let (choices, at, label) = location_button(
+            editor,
+            services,
+            Selector::Presentation,
+            advanced_mode(&state.store),
+        );
+        window.set_location_choices(choices);
+        window.set_location_index(at);
+        window.set_location_label(label);
     }
     if let Some(o) = &values.prefetch {
         window.set_hash_index(check_index(o.hash_check));
@@ -320,15 +414,18 @@ fn show(window: &ImportOptionsWindow, state: &State) {
         window.set_gets_no_tags(!o.worth_fetching_tags() && !o.has_additional_tags());
     }
     if let Some(o) = &values.locations {
-        let choices = destinations(services);
-        window.set_destination_index(
-            o.destinations
-                .first()
-                .and_then(|d| choices.iter().position(|c| &c.0 == d))
-                .and_then(|i| i32::try_from(i).ok())
-                .unwrap_or(0),
+        let (choices, at, label) = location_button(
+            editor,
+            services,
+            Selector::Destination,
+            advanced_mode(&state.store),
         );
-        window.set_destination_choices(strings(choices.into_iter().map(|c| c.1).collect()));
+        window.set_destination_choices(choices);
+        window.set_destination_index(at);
+        window.set_destination_label(label);
+        window.set_destination_warning(
+            selected_location(editor, services, Selector::Destination).is_empty(),
+        );
         window.set_already_destinations(o.destinations_for_already_in_db);
         window.set_archive(o.automatically_archive);
         window.set_archive_already(o.archive_already_in_db);
@@ -359,7 +456,11 @@ fn show_tag_services(window: &ImportOptionsWindow, state: &State) {
                 )
                 .0
                 .into(),
-                additional: s.additional_tags.join("\n").into(),
+                additional: format!(
+                    "{} additional tags",
+                    hydrus_core::numbers::human_int(s.additional_tags.len() as u64)
+                )
+                .into(),
                 to_new: s.to_new_files,
                 to_inbox: s.to_already_in_inbox,
                 to_archive: s.to_already_in_archive,
@@ -383,7 +484,6 @@ fn value_set(o: &hydrus_core::import_options::FileFilteringOptions, label: &str)
 
 /// Read the shown page's two-way fields into the editor.
 fn read(window: &ImportOptionsWindow, state: &mut State) {
-    let services = state.services.clone();
     let editor = &mut state.editor;
     let Some(&kind) = editor.kinds.get(editor.shown) else {
         return;
@@ -402,8 +502,6 @@ fn read(window: &ImportOptionsWindow, state: &mut State) {
                     2 if choices == 3 => PresentationInbox::AndIncludeAllInbox,
                     _ => PresentationInbox::Agnostic,
                 };
-                let at = usize::try_from(window.get_location_index()).unwrap_or(0);
-                o.location = vec![hex::encode(PRESENTATION_LOCATIONS[at.min(1)])];
             }
         }
         Kind::Prefetch => {
@@ -454,14 +552,7 @@ fn read(window: &ImportOptionsWindow, state: &mut State) {
             }
         }
         Kind::Locations => {
-            let choices = destinations(&services.services);
             if let Some(o) = &mut editor.values.locations {
-                if let Some(d) = usize::try_from(window.get_destination_index())
-                    .ok()
-                    .and_then(|i| choices.get(i))
-                {
-                    o.destinations = vec![d.0.clone()];
-                }
                 o.destinations_for_already_in_db = window.get_already_destinations();
                 o.automatically_archive = window.get_archive();
                 o.archive_already_in_db = window.get_archive_already();
@@ -625,6 +716,7 @@ fn open_inner(
         tag_filter: Rc::default(),
         write_tags: Rc::default(),
         overwrite: Rc::default(),
+        locations: Rc::default(),
         favourites: None,
     }));
     let close = {
@@ -640,6 +732,7 @@ fn open_inner(
             if let Some(favourites) = favourites {
                 favourites.close();
             }
+            crate::locations_window::cancel(&state.borrow().locations);
             let overwrite = state.borrow().overwrite.borrow_mut().take();
             if let Some(overwrite) = overwrite {
                 overwrite.invoke_cancel();
@@ -872,7 +965,17 @@ fn open_inner(
                 applied,
                 closed,
             ) {
-                Ok(_) => window.set_tag_child_open(true),
+                Ok(child) => {
+                    child.set_message(
+                        if service.is_some() {
+                            ADDITIONAL_TAGS_MESSAGE
+                        } else {
+                            WHITELIST_MESSAGE
+                        }
+                        .into(),
+                    );
+                    window.set_tag_child_open(true);
+                }
                 Err(e) => eprintln!("could not open write tag editor: {e}"),
             }
         }
@@ -953,10 +1056,82 @@ fn open_inner(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if window.get_favourite_child_open() || window.get_tag_child_open() {
+            if window.get_favourite_child_open()
+                || window.get_tag_child_open()
+                || window.get_location_child_open()
+            {
                 return;
             }
             read(&window, &mut state.borrow_mut());
+            show(&window, &state.borrow());
+        }
+    });
+    window.on_location_picked({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = store.clone();
+        let active = active.clone();
+        move |which, index| {
+            let (Some(window), Some(which)) = (weak.upgrade(), Selector::named(&which)) else {
+                return;
+            };
+            if !active.get()
+                || window.get_favourite_child_open()
+                || window.get_tag_child_open()
+                || window.get_overwrite_open()
+                || window.get_location_child_open()
+            {
+                return;
+            }
+            let services = state.borrow().services.clone();
+            let flags = which.flags(advanced_mode(&store));
+            let current = selected_location(&state.borrow().editor, &services.services, which);
+            let (rows, _) = domains::dropdown(&services.services, flags, &current);
+            if let Some(row) = usize::try_from(index).ok().and_then(|i| rows.get(i)) {
+                match &row.choice {
+                    Choice::Location(location) => {
+                        select_location(&mut state.borrow_mut().editor, which, location);
+                    }
+                    Choice::Multiple => {
+                        let slot = state.borrow().locations.clone();
+                        let chosen = Rc::new({
+                            let weak = weak.clone();
+                            let state = state.clone();
+                            move |location: hydrus_search::LocationContext| {
+                                select_location(&mut state.borrow_mut().editor, which, &location);
+                                if let Some(window) = weak.upgrade() {
+                                    show(&window, &state.borrow());
+                                }
+                            }
+                        });
+                        match crate::locations_window::open_with_flags(
+                            &slot,
+                            store.clone(),
+                            &current,
+                            chosen,
+                            flags,
+                        ) {
+                            Ok(()) => {
+                                window.set_location_child_open(true);
+                                if let Some(child) = slot.borrow().as_ref() {
+                                    child.on_closed({
+                                        let weak = weak.clone();
+                                        let state = state.clone();
+                                        move || {
+                                            if let Some(window) = weak.upgrade() {
+                                                window.set_location_child_open(false);
+                                                show(&window, &state.borrow());
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                            Err(error) => eprintln!("could not open the locations list: {error}"),
+                        }
+                    }
+                    Choice::Tags(_) => {}
+                }
+            }
             show(&window, &state.borrow());
         }
     });
@@ -991,31 +1166,6 @@ fn open_inner(
             }
             show(&window, &state.borrow());
             show_tag_services(&window, &state.borrow());
-        }
-    });
-    // (typed in: the list's labels shown again, not the services)
-    window.on_tag_service_text({
-        let weak = window.as_weak();
-        let state = state.clone();
-        move |i, text| {
-            let Some(window) = weak.upgrade() else {
-                return;
-            };
-            if window.get_favourite_child_open() || window.get_tag_child_open() {
-                return;
-            }
-            {
-                let mut state = state.borrow_mut();
-                let services = tag_services(&state.services.services);
-                let Some((key, _)) = usize::try_from(i).ok().and_then(|i| services.get(i)) else {
-                    return;
-                };
-                if let Some(tags) = &mut state.editor.values.tags {
-                    service_options(tags, key).additional_tags =
-                        crate::import_options_editor::lines(&text);
-                }
-            }
-            show(&window, &state.borrow());
         }
     });
     window.on_size_edited({
@@ -1223,6 +1373,7 @@ fn open_inner(
                 || state.borrow().tag_filter.borrow().is_some()
                 || state.borrow().write_tags.borrow().is_some()
                 || state.borrow().overwrite.borrow().is_some()
+                || state.borrow().locations.borrow().is_some()
                 || state
                     .borrow()
                     .favourites

@@ -801,7 +801,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
             hooks.force_idle.toggle();
         }
         Command::DebugFlag(flag) => {
-            flag.flip();
+            flag.switch();
         }
         Command::DebugDelayedTextPopup => hooks.debug_long_popup.start_delayed_popup(),
         Command::DebugDelayedNewPage(location) => {

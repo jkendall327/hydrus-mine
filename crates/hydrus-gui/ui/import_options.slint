@@ -34,6 +34,7 @@ export struct TagServiceRow {
     get-tags: bool,
     // what its "get tags" filter lets through
     filter: string,
+    // the additional tags button's label ("3 additional tags")
     additional: string,
     to-new: bool,
     to-inbox: bool,
@@ -78,11 +79,16 @@ export component ImportOptionsWindow inherits Window {
     // (a kind with no editor here yet: its options' summary)
     in property <string> summary;
     // presentation
+    in property <[string]> status-choices;
     in-out property <int> status-index;
+    // "do not show anything" greys the inbox and location choices
+    out property <bool> presentation-gates-enabled: root.status-index != 2;
     in property <[string]> inbox-choices;
     in-out property <int> inbox-index;
     in property <[string]> location-choices;
     in-out property <int> location-index;
+    // the location button's label (what is chosen, as the reference says it)
+    in property <string> location-label;
     // prefetch
     in-out property <int> hash-index;
     in-out property <int> url-index;
@@ -102,9 +108,18 @@ export component ImportOptionsWindow inherits Window {
     // locations
     in property <[string]> destination-choices;
     in-out property <int> destination-index;
+    in property <string> destination-label;
+    // no destination: "THIS WILL NOT IMPORT ANYWHERE!"
+    in property <bool> destination-warning;
+    // a location button's choice (which, its drop-down row); the
+    // "multiple/deleted locations" row opens the shared list
+    callback location-picked(string, int);
+    in property <bool> location-child-open;
     in-out property <bool> already-destinations;
     in-out property <bool> archive;
     in-out property <bool> archive-already;
+    // "even for 'already in db' files?" needs auto-archive ticked
+    out property <bool> archive-already-enabled: root.archive;
     in property <bool> downloader;
     in-out property <bool> primary-urls;
     in-out property <bool> source-urls;
@@ -131,7 +146,6 @@ export component ImportOptionsWindow inherits Window {
     in property <[TagServiceRow]> tag-services;
     in property <bool> gets-no-tags;
     callback tag-service-toggled(int, string, bool);
-    callback tag-service-text(int, string);
     callback kind-clicked(int);
     // a field changed: what the window's two-way fields hold is read
     callback changed();
@@ -212,21 +226,26 @@ export component ImportOptionsWindow inherits Window {
                     if root.custom-index == 1 && root.kind == "presentation": HorizontalLayout {
                         spacing: 6px;
                         ComboBox {
-                            model: ["all files", "new files", "do not show anything"];
+                            model: root.status-choices;
                             current-index <=> root.status-index;
                             selected => { root.changed(); }
                         }
                         ComboBox {
-                            enabled: root.status-index != 2;
+                            enabled: root.presentation-gates-enabled;
                             model: root.inbox-choices;
                             current-index <=> root.inbox-index;
                             selected => { root.changed(); }
                         }
                         ComboBox {
-                            enabled: root.status-index != 2;
+                            enabled: root.presentation-gates-enabled;
                             model: root.location-choices;
                             current-index <=> root.location-index;
-                            selected => { root.changed(); }
+                            selected => { root.location-picked("presentation", self.current-index); }
+                        }
+                        Text {
+                            text: root.location-label;
+                            vertical-alignment: center;
+                            color: Theme.text;
                         }
                     }
                     if root.custom-index == 1 && root.kind == "prefetch logic": VerticalLayout {
@@ -345,12 +364,27 @@ export component ImportOptionsWindow inherits Window {
                     }
                     if root.custom-index == 1 && root.kind == "locations": VerticalLayout {
                         spacing: 6px;
+                        if root.destination-warning: Text {
+                            text: "THIS WILL NOT IMPORT ANYWHERE! Any import queue using this File Import Options will halt!\n\nWas the file service it was previously importing to deleted?";
+                            color: Theme.error;
+                            wrap: word-wrap;
+                            horizontal-alignment: center;
+                        }
                         Row {
                             label: "destination file service(s):";
-                            ComboBox {
-                                model: root.destination-choices;
-                                current-index <=> root.destination-index;
-                                selected => { root.changed(); }
+                            HorizontalLayout {
+                                spacing: 6px;
+                                ComboBox {
+                                    enabled: !root.location-child-open;
+                                    model: root.destination-choices;
+                                    current-index <=> root.destination-index;
+                                    selected => { root.location-picked("destination", self.current-index); }
+                                }
+                                Text {
+                                    text: root.destination-label;
+                                    vertical-alignment: center;
+                                    color: Theme.text;
+                                }
                             }
                         }
                         Row {
@@ -370,7 +404,7 @@ export component ImportOptionsWindow inherits Window {
                         Row {
                             label: "-- even for 'already in db' files?: ";
                             CheckBox {
-                                enabled: root.archive;
+                                enabled: root.archive-already-enabled;
                                 checked <=> root.archive-already;
                                 toggled => { root.changed(); }
                             }
@@ -491,13 +525,7 @@ export component ImportOptionsWindow inherits Window {
                                         clicked => { root.edit-get-tags-filter(i); }
                                     }
                                 }
-                                Label { text: "additional tags, one a line: "; }
-                                Button { text: "edit additional tags…"; enabled: !root.tag-child-open; clicked => { root.edit-additional-tags(i); } }
-                                TextEdit {
-                                    height: 60px;
-                                    text: service.additional;
-                                    edited(text) => { root.tag-service-text(i, text); }
-                                }
+                                Button { text: service.additional; enabled: !root.tag-child-open; clicked => { root.edit-additional-tags(i); } }
                                 CheckBox {
                                     text: "apply tags to new files";
                                     checked: service.to-new;
@@ -549,15 +577,15 @@ export component ImportOptionsWindow inherits Window {
             ImportFavouritesButton {
                 rows: root.favourites;
                 edit-allowed: !root.favourite-editor;
-                enabled: !root.favourite-child-open && !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open;
+                enabled: !root.favourite-child-open && !root.overwrite-open && !root.tag-child-open && !root.location-child-open;
                 refresh => { root.refresh-favourites(); }
                 selected(action, name) => { root.favourite(action, name); }
             }
-            Button { text: "copy"; enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open; clicked => { root.copy-options(); } }
+            Button { text: "copy"; enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open && !root.location-child-open; clicked => { root.copy-options(); } }
             Rectangle {
                 width: 66px;
                 height: 28px;
-                Button { width: parent.width; height: parent.height; text: "paste"; enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open; clicked => { clipboard-menu.show(); } }
+                Button { width: parent.width; height: parent.height; text: "paste"; enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open && !root.location-child-open; clicked => { clipboard-menu.show(); } }
                 clipboard-menu := PopupWindow {
                     y: parent.height;
                     width: 320px;
@@ -580,7 +608,7 @@ export component ImportOptionsWindow inherits Window {
             }
             Button {
                 text: "apply";
-                enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open;
+                enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open && !root.location-child-open;
                 clicked => { root.apply(); }
             }
             Button {
