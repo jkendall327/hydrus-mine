@@ -32,7 +32,6 @@ fn wait(time: Duration) {
     }
 }
 
-// leaf: audit-media-viewer-playback
 #[test]
 fn an_audio_file_plays_in_the_viewer_with_its_scanbar() {
     if mpv::skip_without_libmpv() {

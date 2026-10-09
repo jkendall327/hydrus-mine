@@ -3892,14 +3892,9 @@
    "native": null,
    "notes": [
     "Truth pass (2026-10-08): built-tested-untagged, test-only. Tag the existing viewer tests. Evidence: animation.rs:59; scanbar.rs:21,68,241 (viewer_canvas_options.json); mpv.rs:54,106",
-    "Uses native decoders/animation/player/scanbar and updates hover information for the chosen media; configured media behavior and unavailable formats are subject to the separate playback implementation. First-pass evidence scope: Recorded player choice and focused animation/MPV rendering/seek/pause assertions support the implemented playback slice. Codec tests cover representative ugoira/WebP/H.264 files, not an exhaustive format/engine matrix."
-   ],
-   "recheck": {
-    "date": "2026-10-09",
-    "class": "source-restated",
-    "by": "claude (viewer playback follow-up to #121)",
-    "note": "Ugoira and animated WebP: the viewer is driven (play, pause, scan drags, ctrl+arrows, ctrl+b/n) and its scanbar text replays oracle/fixtures/animation_playback.json, recorded from the reference's real Animation and AnimationBar on a frozen clock (timeline over two loops, GotoFrame, SeekDelta paused and playing, the container's frame step, bar presses/drags, StopForSlideshow); the recording found and fixed that a frame step must pause. Video and audio go through libmpv, which both clients use: the viewer test plays an mp4 and flac files (CI installs libmpv2 and requires it; audio goes to mpv's null output) and checks the bar moves, holds paused, and goes where a click seeks, but the expected times come from the native Scanbar function (whose time format is the one the animation recording confirms), and no mpv session of the reference is recorded. Not covered: stills (their zoom/fit is other leaves'), GIF/APNG/webm/other codecs through mpv, embedded cover art, volume and mute reaching mpv beyond the property round trip in tests/gui/mpv.rs. Tests: crates/hydrus-gui/tests/gui/animation.rs, scanbar.rs, viewer_audio.rs, mpv.rs; crates/hydrus-gui/src/animation.rs unit tests."
-   }
+    "Uses native decoders/animation/player/scanbar and updates hover information for the chosen media; configured media behavior and unavailable formats are subject to the separate playback implementation. First-pass evidence scope: Recorded player choice and focused animation/MPV rendering/seek/pause assertions support the implemented playback slice. Codec tests cover representative ugoira/WebP/H.264 files, not an exhaustive format/engine matrix.",
+    "2026-10-09 (viewer playback follow-up, PR 145): untagged, partial. Covered: ugoira and animated WebP in the viewer against oracle/fixtures/animation_playback.json (the reference's real Animation and AnimationBar on a frozen clock: play through two loops, GotoFrame, SeekDelta paused and playing, the container's frame step, bar press/drag/release, StopForSlideshow; tests/gui/animation.rs); an mp4 and flac files through libmpv in the viewer (scanbar moves, holds when paused, seeks where clicked, volume control shown; tests/gui/scanbar.rs, viewer_audio.rs), run in CI with libmpv installed; the mpv property round trip for volume and mute (tests/gui/mpv.rs). Not covered: stills in the viewer as part of this leaf; GIF, APNG, webm and other codecs through mpv; embedded cover art; volume and mute reaching playing audio; any recorded mpv session of the reference (the video and audio expected times come from the native Scanbar arithmetic). Tag when those are tested."
+   ]
   },
   {
    "id": "audit-media-viewer-slideshow",

@@ -64,7 +64,6 @@ fn the_bar_shows_and_seeks_as_the_reference_s_does() {
     assert_eq!(video.seek_delta(8000.0, 1, 5000), 0.0);
 }
 
-// leaf: audit-media-viewer-playback
 #[test]
 fn a_file_that_plays_seeks_by_its_bar_and_by_key() {
     let legacy = hydrus_testkit::legacy_fixture("basic");

@@ -96,7 +96,6 @@ fn as_str_vec(value: &serde_json::Value) -> Vec<String> {
         .collect()
 }
 
-// leaf: audit-media-viewer-playback
 #[test]
 fn animations_play_in_the_viewer_with_the_client_s_own_player() {
     let legacy = hydrus_testkit::legacy_fixture("basic");

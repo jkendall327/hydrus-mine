@@ -29,6 +29,10 @@ pub(crate) struct Playback {
     /// sought there), and where it was last seen, in milliseconds.
     restarts: Cell<u32>,
     last_position: Cell<Option<f64>>,
+    /// The last positions seen, with when (ms since the first), for a test
+    /// that says why it timed out.
+    #[cfg(test)]
+    samples: RefCell<std::collections::VecDeque<(u128, f64)>>,
 }
 
 /// Going back to within this many milliseconds of the start is a restart
@@ -73,6 +77,8 @@ impl Playback {
             stop_at_end: Cell::new(false),
             restarts: Cell::new(0),
             last_position: Cell::new(None),
+            #[cfg(test)]
+            samples: RefCell::default(),
         })
     }
 
@@ -187,6 +193,21 @@ impl Playback {
         let Some(position) = player.position_ms() else {
             return;
         };
+        #[cfg(test)]
+        {
+            static START: std::sync::OnceLock<std::time::Instant> = std::sync::OnceLock::new();
+            let mut samples = self.samples.borrow_mut();
+            samples.push_back((
+                START
+                    .get_or_init(std::time::Instant::now)
+                    .elapsed()
+                    .as_millis(),
+                position,
+            ));
+            if samples.len() > 80 {
+                samples.pop_front();
+            }
+        }
         let before = self.last_position.replace(Some(position));
         if before.is_some_and(|before| position < before) && position < RESTARTED_MS {
             self.restarts.set(self.restarts.get() + 1);
@@ -302,8 +323,13 @@ mod tests {
     /// Run the timers until `done`, or fifteen seconds have passed; whether
     /// done.
     fn until(done: impl Fn() -> bool) -> bool {
+        until_within(Duration::from_secs(15), done)
+    }
+
+    /// As `until`, with `limit` to wait.
+    fn until_within(limit: Duration, done: impl Fn() -> bool) -> bool {
         let started = Instant::now();
-        while started.elapsed() < Duration::from_secs(15) {
+        while started.elapsed() < limit {
             slint::platform::update_timers_and_animations();
             if done() {
                 return true;
@@ -312,6 +338,13 @@ mod tests {
         }
         false
     }
+
+    /// How long to wait for libmpv to loop a file. A two-frame, 80 ms GIF
+    /// takes mpv anything from 0.15 s to several seconds (nine, once) to come
+    /// round, whatever the timing options, with the position sampled every
+    /// 10 ms the whole while: the file sits on its last frame. So loops are
+    /// waited for patiently; a pass costs only what mpv takes.
+    const LOOP_PATIENCE: Duration = Duration::from_secs(90);
 
     /// `mpv_null_audio_on_silent_media` asks the store whether the file at a
     /// path (named by its hash) has sound: it does if the store says so, and
@@ -383,9 +416,9 @@ mod tests {
         let playback = Playback::for_store(store.clone());
         playback.play(Some(&path), || Some((20, 16)), |_| {});
         assert_eq!(playback.times_to_play.get(), 1);
-        assert!(until(|| playback.paused()));
+        assert!(until_within(LOOP_PATIENCE, || playback.paused()));
         assert_eq!(playback.restarts.get(), 1);
-        assert!(until(|| playback
+        assert!(until_within(LOOP_PATIENCE, || playback
             .position_ms()
             .is_some_and(|at| at < RESTARTED_MS)));
         // MPV captures the count at load, like the reference. Enabling forced
@@ -402,12 +435,13 @@ mod tests {
         playback.play(Some(&path), || Some((20, 16)), |_| {});
         assert_eq!(playback.times_to_play.get(), 0);
         assert!(
-            until(|| playback.restarts.get() >= 2),
-            "restarts {}, at {:?}ms, paused {}, times to play {}",
+            until_within(LOOP_PATIENCE, || playback.restarts.get() >= 2),
+            "restarts {}, at {:?}ms, paused {}, times to play {}, last samples (ms since start, position) {:?}",
             playback.restarts.get(),
             playback.position_ms(),
             playback.paused(),
             playback.times_to_play.get(),
+            playback.samples.borrow(),
         );
         assert!(!playback.paused());
         playback.close();
@@ -425,17 +459,21 @@ mod tests {
         playback.play(Some(&video), || Some((64, 48)), |_| {});
         assert!(!playback.played_through());
         // round once: played through, and playing on
-        assert!(until(|| playback.played_through()));
+        assert!(until_within(LOOP_PATIENCE, || playback.played_through()));
         assert!(!playback.paused());
         // told to stop at its end: it pauses back at its start
         playback.set_stop_at_end(true);
-        assert!(until(|| playback.paused()));
+        assert!(until_within(LOOP_PATIENCE, || playback.paused()));
         let at = || playback.position_ms().unwrap_or(f64::MAX);
-        assert!(until(|| at() < RESTARTED_MS), "{}", at());
+        assert!(
+            until_within(LOOP_PATIENCE, || at() < RESTARTED_MS),
+            "{}",
+            at()
+        );
         // a new file plays on, not yet played through
         playback.play(Some(&video), || Some((64, 48)), |_| {});
         assert!(!playback.played_through());
-        assert!(until(|| playback.played_through()));
+        assert!(until_within(LOOP_PATIENCE, || playback.played_through()));
         assert!(!playback.paused());
         playback.close();
     }

@@ -537,18 +537,20 @@ separator.
   metadata. Where the buffer holds a single frame, the reference's render
   thread counts a frame behind its decoder and shows each frame's
   neighbour; hydrus-rs decodes the same frames but keeps each as itself.
-- **Video and audio playback are compared with the reference only for
-  what libmpv shares.** Ugoira and animated WebP playback, the scanbar,
-  seeking, frame steps and coming round for a slideshow are replayed from
-  `oracle/record_animation_playback.py` (the reference's own `Animation`
-  and `AnimationBar` on a frozen clock). Video and audio files play in
-  libmpv in both clients, and the viewer tests (an mp4 and flac files, in
-  CI too, where `HYDRUS_REQUIRE_MPV` makes a missing libmpv a failure and
-  the harness gives mpv a null audio output) check that the bar moves,
-  holds while paused and goes where a click seeks; their expected times
-  come from the native bar's arithmetic, not a recorded mpv session of the
-  reference. Not tested: embedded cover art, GIF, APNG and other containers
-  through mpv, and volume or mute beyond the property round trip.
+- **Viewer playback (`audit-media-viewer-playback`) is partly tested, so
+  the leaf is untagged.** Covered: ugoira and animated WebP in the viewer,
+  replayed from `oracle/record_animation_playback.py` (the reference's own
+  `Animation` and `AnimationBar` on a frozen clock: playing through two
+  loops, going to a frame, seeking by time paused and playing, frame steps,
+  bar presses and drags, coming round for a slideshow); an mp4 and flac
+  files through libmpv in the viewer (the bar moves, holds while paused and
+  goes where a click seeks; the volume control shows), which CI runs now
+  that it installs libmpv and sets `HYDRUS_REQUIRE_MPV`; and volume and mute
+  as mpv properties. Not covered: stills as part of this leaf; GIF, APNG,
+  webm and other containers through mpv; embedded cover art; volume and mute
+  reaching audio that is playing; and any recorded mpv session of the
+  reference (the expected video and audio times are the native bar's
+  arithmetic). The headless harness gives mpv a null audio output.
 
 ## The duplicate filter (`hydrus-gui`, `hydrus-duplicates::statements`)
 
