@@ -9,7 +9,7 @@ use std::rc::Rc;
 use hydrus_core::HashId;
 use hydrus_gui::Clip;
 
-use super::media_support::{Fixture, find, group_rows, in_domain, rows, start};
+use super::media_support::{Fixture, find, group_rows, in_domain, rows, start, start_local};
 
 /// What each select row should select, worked out from the store.
 fn expected(fixture: &Fixture, label: &str, selected: &[HashId]) -> Vec<HashId> {
@@ -188,7 +188,14 @@ fn hex_names(fixture: &Fixture, files: &[HashId]) -> Vec<String> {
 // leaf: audit-media-context-rearrange
 #[test]
 fn rearrange_menu_offers_and_makes_the_moves_the_reference_did() {
-    let fixture = start();
+    let fixture = start_local();
+    // (the recorded page is sorted by file size, smallest first)
+    {
+        let page = fixture.bound.current.borrow();
+        let mut page = page.borrow_mut();
+        page.set_sort_by(hydrus_search::SortBy::FileSize);
+        page.set_sort_order(hydrus_search::SortOrder::Ascending);
+    }
     let recorded = hydrus_testkit::fixture_json("thumbnail_rearrange.json");
     let initial: Vec<String> = recorded["initial"]
         .as_array()
@@ -213,6 +220,7 @@ fn rearrange_menu_offers_and_makes_the_moves_the_reference_did() {
             .map(|i| i32::try_from(i.as_u64().unwrap()).unwrap())
             .collect();
         let hit = |fixture: &Fixture| fixture.select(hits[0], &hits[1..]);
+        fixture.bound.current.borrow().borrow_mut().refresh();
         hit(&fixture);
         let menu = fixture.menu(-1);
         let ours: Vec<String> = rows(&menu.rearrange).into_iter().map(|(l, _)| l).collect();
@@ -224,7 +232,7 @@ fn rearrange_menu_offers_and_makes_the_moves_the_reference_did() {
         assert_eq!(ours, offered, "the rearrange rows for {}", case["indices"]);
         for (name, theirs) in case["moves"].as_object().unwrap() {
             // (the page as it began)
-            fixture.ui.invoke_search_accepted();
+            fixture.bound.current.borrow().borrow_mut().refresh();
             assert_eq!(hex_names(&fixture, &fixture.results()), initial);
             hit(&fixture);
             let expected = strings(&theirs["order"]);

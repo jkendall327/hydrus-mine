@@ -66,6 +66,7 @@ def tree( menu ):
 
 def record( session ):
 
+    from hydrus.core import HydrusConstants as HC
     from hydrus.client import ClientApplicationCommand as CAC
     from hydrus.client import ClientConstants as CC
     from hydrus.client import ClientLocation
@@ -75,6 +76,10 @@ def record( session ):
     gui = controller.gui
 
     hashes = [ bytes.fromhex( f[ 'hash' ] ) for f in MANIFEST[ 'files' ] ]
+
+    # (a file in no local file domain, deleted or in the trash, is not a thumbnail on
+    # hydrus-rs's page of the local files)
+    hashes = [ m.GetHash() for m in controller.Read( 'media_results', hashes ) if any( controller.services_manager.GetServiceType( k ) == HC.LOCAL_FILE_DOMAIN for k in m.GetLocationsManager().GetCurrent() ) ]
 
     def qt( f ):
 
@@ -99,7 +104,21 @@ def record( session ):
         time.sleep( 0.05 )
 
 
+    # (sorted by file size, smallest first, which no two files share: the
+    # order hydrus-rs can put its own page in, whatever its ties do)
+    from hydrus.client.media import ClientMediaSort
+
+    media_sort = ClientMediaSort.MediaSort( sort_type = ( 'system', CC.SORT_FILES_BY_FILESIZE ), sort_order = CC.SORT_ASC )
+
+    qt( lambda: panel.Sort( media_sort ) )
+
+    time.sleep( 0.3 )
+
     original = qt( lambda: list( panel._sorted_media ) )
+
+    sizes = qt( lambda: [ m.GetSize() for m in panel._sorted_media ] )
+
+    assert sizes == sorted( set( sizes ) ), 'the sizes tie'
 
     def order():
 
