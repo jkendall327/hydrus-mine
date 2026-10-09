@@ -30,6 +30,7 @@ pub fn question_opened() -> Option<SessionDialog> {
     QUESTION.with(|q| {
         q.borrow()
             .as_ref()
+            .filter(|dialog| slint::ComponentHandle::window(*dialog).is_visible())
             .map(slint::ComponentHandle::clone_strong)
     })
 }

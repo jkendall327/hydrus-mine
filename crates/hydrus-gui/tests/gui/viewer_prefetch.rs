@@ -390,7 +390,6 @@ fn actual_duplicate_filter_uses_the_same_saved_percentage_for_future_images_with
     filter.invoke_close_requested();
 }
 
-// leaf: audit-options-speed-and-memory-image-prefetch-num-pairs-to-prefetch-in-duplicate-filter
 #[test]
 fn the_duplicate_filter_prefetches_as_many_pairs_as_the_options_row_says() {
     use hydrus_core::{

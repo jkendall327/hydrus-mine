@@ -5376,3 +5376,13 @@ A field after "idle" says "working" or "busy" while background jobs run (the
 daemon's downloads in flight and the client's maintenance passes: above 3 and
 above 8), with the tooltip "There were N threads doing jobs at last check."
 It looks every ten seconds.
+
+## Duplicate filter: batches, group mode, prefetch and quick processing
+
+The filter's batches, auto-commit, back, group mode (including "You appear to
+have skipped this whole group. Do you want to load up a different one?") and
+the pairs prefetched ahead are replayed against the reference's canvas from
+`oracle/fixtures/duplicate_filter_canvas.json`; the filtering tab's sort,
+direction and group chooser and the "quick and dirty processing" buttons from
+`oracle/fixtures/duplicates_quick_processing.json`. A file that is in several
+of the upcoming pairs is warmed once.
