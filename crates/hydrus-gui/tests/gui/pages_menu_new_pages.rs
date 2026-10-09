@@ -538,7 +538,10 @@ fn closed_pages_come_back_and_clear_all_asks_as_the_reference_s_undo_menu_does()
             }
             "undo" | "entry" => {
                 // (the most recent is the top entry of the menu)
-                let wanted = step["step"].get(1).and_then(|n| n.as_u64()).unwrap_or(1) as usize;
+                let wanted = step["step"]
+                    .get(1)
+                    .and_then(serde_json::Value::as_u64)
+                    .unwrap_or(1) as usize;
                 if let Some(shown) = open_closed(&ui) {
                     let entry = shown[1 + wanted].clone();
                     let (p, i) = line(&ui, &entry);
