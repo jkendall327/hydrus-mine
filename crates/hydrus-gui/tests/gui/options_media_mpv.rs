@@ -1,10 +1,8 @@
 //! The mpv box of the media playback page against the reference's
 //! `MediaPlaybackPanel`: what its rows set mpv to as a file loads, and the
-//! mpv.conf it can put in place. libmpv is not in the sandbox, so the
-//! commands a player is sent are those of the same plan the player runs,
-//! and mpv itself is not driven.
+//! mpv.conf it can put in place. The rows are checked on the media viewer's
+//! own mpv player (skipped where libmpv is missing).
 
-use hydrus_gui_model::mpv_options::Plan;
 use hydrus_store::reference_options::ReferenceOptions;
 
 use crate::options_gui_support::{Client, box_of, row, show_page};
@@ -14,19 +12,93 @@ const DEVICE: &str = "Preferred audio output device:";
 const NULL_AUDIO: &str = "DEBUG: Set null audio device on silent media:";
 const LOOP_PLAYLIST: &str = "DEBUG: Loop Playlist instead of Loop File in mpv:";
 
-fn set(name: &str, value: &str) -> Vec<String> {
-    vec!["set".into(), name.into(), value.into()]
+/// mpv's properties as the recording has them (python-mpv reads `no` as
+/// false).
+fn recorded(player: &serde_json::Value) -> [String; 3] {
+    let text = |key: &str| match &player[key] {
+        serde_json::Value::String(s) if s == "False" => "no".to_owned(),
+        serde_json::Value::String(s) => s.clone(),
+        other => panic!("{key}: {other}"),
+    };
+    [
+        text("loop-file"),
+        text("loop-playlist"),
+        text("audio-device"),
+    ]
 }
 
-fn plan(client: &Client, has_audio: bool) -> Plan {
-    Plan::for_file(&client.setting::<ReferenceOptions>(), has_audio)
+/// The properties of the `n`th player playing (oldest first), once it has
+/// them: they are set as the file loads, and an open player looks at the
+/// options twice a second.
+fn player_has(n: usize, expected: &[String; 3]) -> Option<[String; 3]> {
+    let read = || {
+        let get = |name: &str| {
+            hydrus_gui::live_mpv_property(name)
+                .get(n)
+                .cloned()
+                .flatten()
+                .unwrap_or_default()
+        };
+        [get("loop-file"), get("loop-playlist"), get("audio-device")]
+    };
+    let started = std::time::Instant::now();
+    while started.elapsed() < std::time::Duration::from_secs(10) {
+        slint::platform::update_timers_and_animations();
+        if read() == *expected {
+            return None;
+        }
+        std::thread::sleep(std::time::Duration::from_millis(20));
+    }
+    Some(read())
 }
 
 // leaf: audit-options-media-playback-mpv-debug-loop-playlist-instead-of-loop-file-in-mpv
 // leaf: audit-options-media-playback-mpv-preferred-audio-output-device
 #[test]
 fn the_mpv_rows_set_what_a_player_is_told_as_a_file_loads() {
-    let client = Client::basic();
+    use crate::options_media_support::Media;
+
+    if hydrus_gui::mpv::skip_without_libmpv() {
+        return;
+    }
+    // what the reference's players are set to (record_mpv_playback_options.py)
+    let recording = hydrus_testkit::fixture_json("mpv_playback_options.json");
+    let client = Media::basic();
+    let importer =
+        hydrus_import::FileImporter::new(client.store.clone(), hydrus_media::MediaTools::new());
+    let imported = importer
+        .import_path(
+            &hydrus_testkit::fixture_path("media/gif_anim.gif"),
+            &hydrus_import::FileImportOptions::default(),
+        )
+        .unwrap();
+    let hash = imported.hash.expect("imported");
+    let id = client
+        .store
+        .read(move |c| hydrus_store::master::hash_ids(c, &[hash]))
+        .unwrap()
+        .into_values()
+        .next()
+        .unwrap();
+    client.search("system:everything");
+    let at = client
+        .results()
+        .iter()
+        .position(|file| *file == id)
+        .unwrap();
+    let open_viewer = || {
+        client
+            .ui
+            .invoke_thumbnail_activated(i32::try_from(at).unwrap());
+        client
+            .bound
+            .viewer
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong)
+            .expect("the viewer opens")
+    };
+
     let options = client.open_options();
     show_page(&options, "media playback");
     for label in [CONF, DEVICE, NULL_AUDIO, LOOP_PLAYLIST] {
@@ -37,51 +109,62 @@ fn the_mpv_rows_set_what_a_player_is_told_as_a_file_loads() {
     assert!(!row(&options, NULL_AUDIO).1.checked);
     assert!(!row(&options, LOOP_PLAYLIST).1.checked);
     options.invoke_cancel();
-    assert_eq!(
-        plan(&client, true).commands(),
-        [
-            set("loop", "inf"),
-            set("loop-playlist", "no"),
-            set("audio-device", "auto")
-        ]
-    );
 
+    // the animation in the media viewer: its player as the reference's starts
+    let _first = open_viewer();
+    let start = recorded(&recording["open_player_at_start"]);
+    assert_eq!(player_has(0, &start), None, "at start");
+
+    // typed but cancelled: nothing changes
     let options = client.open_options();
     show_page(&options, "media playback");
     options.invoke_none_toggled(row(&options, DEVICE).0, false);
     options.invoke_text_edited(row(&options, DEVICE).0, "alsa/hw:1".into());
     options.invoke_check_toggled(row(&options, LOOP_PLAYLIST).0, true);
-    options.invoke_check_toggled(row(&options, NULL_AUDIO).0, true);
-    // staged until OK
     options.invoke_cancel();
-    assert_eq!(plan(&client, true).audio_device, "auto");
+    std::thread::sleep(std::time::Duration::from_millis(600));
+    assert_eq!(player_has(0, &start), None, "cancelled");
 
-    let options = client.open_options();
-    show_page(&options, "media playback");
-    options.invoke_none_toggled(row(&options, DEVICE).0, false);
-    options.invoke_text_edited(row(&options, DEVICE).0, "alsa/hw:1".into());
-    options.invoke_check_toggled(row(&options, LOOP_PLAYLIST).0, true);
-    options.invoke_check_toggled(row(&options, NULL_AUDIO).0, true);
-    options.invoke_apply();
-    // a file with sound goes to the preferred device and loops the playlist
+    for case in recording["cases"].as_array().unwrap() {
+        let device = case["typed"]["device"].as_str();
+        let loop_playlist = case["typed"]["loop_playlist"].as_bool().unwrap();
+        let options = client.open_options();
+        show_page(&options, "media playback");
+        let (i, _) = row(&options, DEVICE);
+        options.invoke_none_toggled(i, device.is_none());
+        if let Some(device) = device {
+            options.invoke_text_edited(i, device.into());
+        }
+        options.invoke_check_toggled(row(&options, LOOP_PLAYLIST).0, loop_playlist);
+        options.invoke_apply();
+        let saved = client.setting::<ReferenceOptions>();
+        assert_eq!(
+            saved.string("mpv_preferred_audio_device").as_deref(),
+            case["saved"]["mpv_preferred_audio_device"].as_str()
+        );
+        assert_eq!(
+            saved.boolean("mpv_loop_playlist_instead_of_file"),
+            case["saved"]["mpv_loop_playlist_instead_of_file"]
+                .as_bool()
+                .unwrap()
+        );
+        // the player already open follows, as the reference's on OK
+        assert_eq!(
+            player_has(0, &recorded(&case["open_player"])),
+            None,
+            "open player: {case}"
+        );
+    }
+
+    // and a player made now, in another viewer, starts so
+    let last = recording["cases"].as_array().unwrap().last().unwrap();
+    let _second = open_viewer();
+    assert_eq!(hydrus_gui::live_mpv_property("loop-file").len(), 2);
     assert_eq!(
-        plan(&client, true).commands(),
-        [
-            set("loop", "no"),
-            set("loop-playlist", "inf"),
-            set("audio-device", "alsa/hw:1")
-        ]
+        player_has(1, &recorded(&last["new_player"])),
+        None,
+        "new player"
     );
-    // a silent one to the null device
-    assert_eq!(plan(&client, false).audio_device, "null");
-
-    // none again: mpv's own choice
-    let options = client.open_options();
-    show_page(&options, "media playback");
-    options.invoke_none_toggled(row(&options, DEVICE).0, true);
-    options.invoke_check_toggled(row(&options, NULL_AUDIO).0, false);
-    options.invoke_apply();
-    assert_eq!(plan(&client, false).audio_device, "auto");
 }
 
 // leaf: audit-options-media-playback-mpv-set-a-new-mpv-conf-on-dialog-ok

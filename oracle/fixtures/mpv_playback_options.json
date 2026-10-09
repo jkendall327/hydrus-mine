@@ -1,0 +1,89 @@
+{
+ "cases": [
+  {
+   "typed": {
+    "device": null,
+    "loop_playlist": false
+   },
+   "saved": {
+    "mpv_preferred_audio_device": null,
+    "mpv_loop_playlist_instead_of_file": false
+   },
+   "new_player": {
+    "loop-file": "inf",
+    "loop-playlist": "False",
+    "audio-device": "auto"
+   },
+   "open_player": {
+    "loop-file": "inf",
+    "loop-playlist": "False",
+    "audio-device": "auto"
+   }
+  },
+  {
+   "typed": {
+    "device": "alsa/hw:1",
+    "loop_playlist": true
+   },
+   "saved": {
+    "mpv_preferred_audio_device": "alsa/hw:1",
+    "mpv_loop_playlist_instead_of_file": true
+   },
+   "new_player": {
+    "loop-file": "False",
+    "loop-playlist": "inf",
+    "audio-device": "alsa/hw:1"
+   },
+   "open_player": {
+    "loop-file": "False",
+    "loop-playlist": "inf",
+    "audio-device": "alsa/hw:1"
+   }
+  },
+  {
+   "typed": {
+    "device": "pulse",
+    "loop_playlist": false
+   },
+   "saved": {
+    "mpv_preferred_audio_device": "pulse",
+    "mpv_loop_playlist_instead_of_file": false
+   },
+   "new_player": {
+    "loop-file": "inf",
+    "loop-playlist": "False",
+    "audio-device": "pulse"
+   },
+   "open_player": {
+    "loop-file": "inf",
+    "loop-playlist": "False",
+    "audio-device": "pulse"
+   }
+  },
+  {
+   "typed": {
+    "device": null,
+    "loop_playlist": true
+   },
+   "saved": {
+    "mpv_preferred_audio_device": null,
+    "mpv_loop_playlist_instead_of_file": true
+   },
+   "new_player": {
+    "loop-file": "False",
+    "loop-playlist": "inf",
+    "audio-device": "auto"
+   },
+   "open_player": {
+    "loop-file": "False",
+    "loop-playlist": "inf",
+    "audio-device": "auto"
+   }
+  }
+ ],
+ "open_player_at_start": {
+  "loop-file": "inf",
+  "loop-playlist": "False",
+  "audio-device": "auto"
+ }
+}

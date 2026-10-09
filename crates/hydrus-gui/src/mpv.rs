@@ -409,6 +409,25 @@ impl Player {
         error >= 0 && flag != 0
     }
 
+    /// A property as mpv writes it (`loop-file` is `inf` or `no`), if mpv
+    /// has it.
+    pub fn string_property(&self, name: &str) -> Option<String> {
+        let name = std::ffi::CString::new(name).ok()?;
+        // SAFETY: a valid handle and a NUL-terminated name; mpv's string is
+        // copied, then freed with mpv_free
+        unsafe {
+            let text = (self.api.get_property_string)(self.handle, name.as_ptr());
+            if text.is_null() {
+                return None;
+            }
+            let value = std::ffi::CStr::from_ptr(text)
+                .to_string_lossy()
+                .into_owned();
+            (self.api.free)(text.cast());
+            Some(value)
+        }
+    }
+
     pub fn paused(&self) -> bool {
         self.flag(c"pause")
     }

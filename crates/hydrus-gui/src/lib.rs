@@ -307,6 +307,7 @@ pub use hydrus_gui_model::{
 };
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
+pub use playback::live_property as live_mpv_property;
 pub use unlock::unlock_window;
 pub use viewer::MediaViewer;
 

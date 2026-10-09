@@ -1539,7 +1539,10 @@ do, and a frame step pauses afterwards, as the reference's does
 Video, audio and other animations play in mpv: libmpv is loaded when first
 needed, so building needs nothing more, and without it these show their
 thumbnail. A file loops, space pauses it, and the store's `mpv.conf` (else
-hydrus's default one) applies. Frames come from mpv's software renderer, on
+hydrus's default one) applies. Options > media playback's mpv rows (loop
+the playlist instead of the file, the preferred audio device) reach players
+already open on OK as well as new ones, as the reference's do. Frames come
+from mpv's software renderer, on
 a thread of their own (`src/mpv.rs`); that is slower than the reference's
 embedded mpv window for large videos. Other files show their thumbnail.
 A duplicates page (a migrated session's, with its search, pair sort and

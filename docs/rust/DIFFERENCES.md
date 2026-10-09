@@ -4078,6 +4078,12 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   in with the connections closed; the effect on the file is the same.
 - The window opens directly, without the "loading database data" popup.
 
+## mpv options on open players
+
+- A player already open takes changed mpv options (loop playlist, audio
+  device) within half a second of Options OK, checked from its frame timer,
+  where the reference's `notify_new_options` updates it at once.
+
 ## Idle-time maintenance
 
 - The GUI publishes its idle state to a marker file the daemon reads; without

@@ -13237,10 +13237,10 @@
     "Native options registry has no editable 'DEBUG: Loop Playlist instead of Loop File in mpv:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options row is driven, but the consumer is stood in for by Plan::for_file(..).commands() (libmpv absent; playback.rs/mpv.rs set_playback_options never run) and the expected set loop/loop-playlist commands are literals from ClientGUIMPV.UpdateConfAndCoreOptions, no recording. Stale tracker note: says no editable row exists, but the row exists and is driven. Tests: crates/hydrus-gui/tests/gui/options_media_mpv.rs:25 the_mpv_rows_set_what_a_player_is_told_as_a_file_loads; crates/hydrus-gui-model/tests/model/mpv_options.rs"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin C)",
+    "note": "oracle/record_mpv_playback_options.py types each case into the reference's real MediaPlaybackPanel, UpdateOptions, then runs the real MPVWidget.UpdateConfAndCoreOptions (polite mediator) on a real libmpv player made after the change and on one open all along, reading mpv's own loop-file/loop-playlist/audio-device. The GUI test opens the real media viewer on an animation mpv plays, types the same cases into the real Options window (and a cancelled one), applies, and reads the viewer's own libmpv player's properties (hydrus_gui::live_mpv_property): the open player follows each OK, and a player opened afterwards starts with the recorded values. Fixed here: open players now take changed options (checked twice a second from the frame timer). Skips without libmpv (CI requires it). Tests: crates/hydrus-gui/tests/gui/options_media_mpv.rs the_mpv_rows_set_what_a_player_is_told_as_a_file_loads"
    }
   },
   {
@@ -13329,10 +13329,10 @@
     "Native options registry has no editable 'Preferred audio output device:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Same as loop-playlist: the real row stages/cancels/applies, but the effect is read through Plan::for_file (decision function standing in for the mpv player; 'auto' for none, typed 'alsa/hw:1' literal), not the player. Also the reference panel's device choices/list are not compared. Stale tracker note (says no editable row). Tests: crates/hydrus-gui/tests/gui/options_media_mpv.rs:26 the_mpv_rows_set_what_a_player_is_told_as_a_file_loads"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin C)",
+    "note": "As the loop-playlist leaf: the preferred device (none -> auto, alsa/hw:1, pulse, none again) typed into the real Options window and applied is read back from the media viewer's real libmpv player's audio-device, for the open player and a new one, against oracle/fixtures/mpv_playback_options.json (the reference's real UpdateConfAndCoreOptions and polite mediator on real libmpv). The device chooser's list is covered by options_mpv_devices.rs (mpv_audio_devices.json). Tests: crates/hydrus-gui/tests/gui/options_media_mpv.rs the_mpv_rows_set_what_a_player_is_told_as_a_file_loads"
    }
   },
   {
