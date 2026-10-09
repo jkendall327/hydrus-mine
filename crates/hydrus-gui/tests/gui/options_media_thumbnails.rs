@@ -189,6 +189,8 @@ fn distance(a: &[i64], b: &[i64]) -> i64 {
 
 // leaf: audit-options-thumbnails-appearance-generate-video-thumbnails-this-in
 #[test]
+// (the thumbnails of the gif, apng, webm and mp4 are made with ffmpeg, as the
+// reference's are)
 fn the_video_percentage_picks_the_frame_the_thumbnail_is_made_from() {
     // the reference's thumbnails of an animated gif and apng, a webm and an
     // mp4 at seven percentages, made by its client files manager

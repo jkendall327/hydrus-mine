@@ -22624,9 +22624,9 @@
    ],
    "recheck": {
     "date": "2026-10-09",
-    "class": "sound",
+    "class": "likely-good",
     "by": "Claude (recheck bin E, #97 phase 2)",
-    "note": "The border row (0, 1, 2, 3, 5, 20) set through the real Options window: cell sizes, spans, columns at six viewports, first thumbnails' rectangles and which file real clicks hit at the cell edges match the reference's graphics-view panel (oracle/fixtures/thumbnail_grid.json). Tests: crates/hydrus-gui/tests/gui/thumbnail_grid_geometry.rs the_thumbnail_options_lay_out_the_grid_as_the_reference_does."
+    "note": "The border row (0, 1, 2, 3, 5, 20) set through the real Options window: spans, columns at six viewports, grid content height and which file real clicks hit at the cell edges match the reference's graphics-view panel (oracle/fixtures/thumbnail_grid.json). Tests: crates/hydrus-gui/tests/gui/thumbnail_grid_geometry.rs the_thumbnail_options_lay_out_the_grid_as_the_reference_does. Geometry only: how the border is drawn (its colour and drawing) is untested; hits were recorded for the first two columns and rows at one viewport (DIFFERENCES.md)."
    }
   },
   {
@@ -22646,7 +22646,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "Claude (recheck bin E, #97 phase 2)",
-    "note": "Same test and recording as the width leaf: the height row set through the real Options window under ten settings, and the grid's row heights, grid height, click hits and every file's shown thumbnail size match the reference's panel and thumbnail cache (oracle/fixtures/thumbnail_grid.json). Tests: crates/hydrus-gui/tests/gui/thumbnail_grid_geometry.rs the_thumbnail_options_lay_out_the_grid_as_the_reference_does."
+    "note": "Same test and recording as the width leaf: the height row set through the real Options window under ten settings, and the grid's content height, click hits and every file's shown thumbnail size match the reference's panel and thumbnail cache (oracle/fixtures/thumbnail_grid.json). Tests: crates/hydrus-gui/tests/gui/thumbnail_grid_geometry.rs the_thumbnail_options_lay_out_the_grid_as_the_reference_does."
    }
   },
   {
@@ -22666,7 +22666,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "Claude (recheck bin E, #97 phase 2)",
-    "note": "The margin row (0, 1, 2, 7, 20) set through the real Options window: spans, columns at six viewports, thumbnail positions, grid height and real clicks on, just inside and just outside every margin edge of the first two columns and rows match the reference's panel (oracle/fixtures/thumbnail_grid.json). Tests: crates/hydrus-gui/tests/gui/thumbnail_grid_geometry.rs the_thumbnail_options_lay_out_the_grid_as_the_reference_does."
+    "note": "The margin row (0, 1, 2, 7, 20) set through the real Options window: spans, columns at six viewports, grid content height and real clicks on, just inside and just outside every margin edge of the first two columns and rows match the reference's panel (oracle/fixtures/thumbnail_grid.json). Tests: crates/hydrus-gui/tests/gui/thumbnail_grid_geometry.rs the_thumbnail_options_lay_out_the_grid_as_the_reference_does."
    }
   },
   {
@@ -22726,7 +22726,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "Claude (recheck bin E, #97 phase 2)",
-    "note": "Sets width, height, border and margin through the real Options window for ten settings (box 20x20 to 512x64, border 0-20, margin 0-20) and replays oracle/fixtures/thumbnail_grid.json (record_thumbnail_grid.py drives the reference's default graphics-view thumbnail panel): at six viewports each the span, columns, first thumbnails' rectangles and grid height match; 2,000+ real clicks around the margins hit the file the reference's panel finds; and every file's shown thumbnail is the size the reference's thumbnail cache gives the grid under each box. Fixed here: types without thumbnails (zip, audio) show their icon fitted to the box, not the stored padded square; a click below the last row deselects. Tests: crates/hydrus-gui/tests/gui/thumbnail_grid_geometry.rs the_thumbnail_options_lay_out_the_grid_as_the_reference_does."
+    "note": "Sets width, height, border and margin through the real Options window for ten settings (box 20x20 to 512x64, border 0-20, margin 0-20) and replays oracle/fixtures/thumbnail_grid.json (record_thumbnail_grid.py drives the reference's default graphics-view thumbnail panel): at six viewports each the span, columns and grid content height match (thumbnail positions are the layout's rule, not read from the rendered grid); 2,000+ real clicks around the margins hit the file the reference's panel finds; and every file's shown thumbnail is the size the reference's thumbnail cache gives the grid under each box. Fixed here: types without thumbnails (an archive, say) show their icon fitted to the box, not the stored padded square; a click below the last row deselects. Tests: crates/hydrus-gui/tests/gui/thumbnail_grid_geometry.rs the_thumbnail_options_lay_out_the_grid_as_the_reference_does."
    }
   },
   {

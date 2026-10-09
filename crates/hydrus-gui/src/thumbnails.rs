@@ -131,10 +131,11 @@ fn type_icon(
     if (width, height) == (icon.width(), icon.height()) {
         return Some(icon);
     }
-    let interpolation = if width < icon.width() || height < icon.height() {
-        Interpolation::Area
-    } else {
+    // (the rule the default thumbnail's resize uses in `recovery`)
+    let interpolation = if width > icon.height() || height > icon.width() {
         Interpolation::Lanczos4
+    } else {
+        Interpolation::Area
     };
     Some(resize(&icon, width, height, interpolation))
 }

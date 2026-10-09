@@ -638,7 +638,7 @@ many across as fit (a click in a margin, or below the last row, is on no
 file). Thumbnails given a new size show it at once: the grid's cells
 take it, and a thumbnail made at the old size is shown scaled to the new
 one and made again from its file, as the reference does. A file of a type
-with no thumbnail of its own (an archive, audio) shows its type's icon fitted
+with no thumbnail of its own (an archive, say) shows its type's icon fitted
 to the box, as the reference's thumbnail cache does. The grid's spans,
 columns, rows, clicks around the margins and each thumbnail's size under ten
 size/border/margin settings are replayed against
