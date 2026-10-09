@@ -216,7 +216,10 @@ fn test_call_runs_the_call_and_reports_as_the_reference_does() {
             "{}",
             case["name"]
         );
-        assert_eq!(call_enabled(child), case["enabled_after"].as_bool().unwrap());
+        assert_eq!(
+            call_enabled(child),
+            case["enabled_after"].as_bool().unwrap()
+        );
         assert_eq!(
             std::fs::read_to_string(path).ok().as_deref(),
             case["written"].as_str(),
