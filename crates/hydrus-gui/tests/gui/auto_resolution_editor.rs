@@ -13,7 +13,7 @@ use crate::auto_resolution_review::{Opened, opened};
 use crate::duplicates_lane_page::{kind_index, list_of, newest_comparator, rule_window};
 use hydrus_gui::{AutoResolutionRuleWindow, Bound};
 
-fn strings(model: slint::ModelRc<slint::SharedString>) -> Vec<String> {
+fn strings(model: &slint::ModelRc<slint::SharedString>) -> Vec<String> {
     model.iter().map(|s| s.to_string()).collect()
 }
 
@@ -79,7 +79,7 @@ fn the_rule_editors_name_pause_mode_and_pending_limit_are_the_references() {
     assert_eq!(rule.get_name(), start["name"].as_str().unwrap());
     assert_eq!(rule.get_paused(), start["paused"].as_bool().unwrap());
     assert_eq!(
-        strings(rule.get_operation_choices()),
+        strings(&rule.get_operation_choices()),
         labels(&start["modes"])
     );
     // (the reference's choice is its mode value, 1 then 2; ours its position)
@@ -122,8 +122,8 @@ fn the_rule_editors_name_pause_mode_and_pending_limit_are_the_references() {
             case["max_pending_enabled"].as_bool().unwrap(),
             "{case}"
         );
-        match case.get("error") {
-            Some(error) => {
+        if let Some(error) = case.get("error") {
+            {
                 // refused: "Hey, you have the action set to ..." and the editor stays open
                 rule.invoke_apply();
                 assert!(bound.auto_resolution.rule.borrow().is_some(), "{case}");
@@ -135,7 +135,8 @@ fn the_rule_editors_name_pause_mode_and_pending_limit_are_the_references() {
                 assert_eq!(rule.get_errors(), veto);
                 rule.invoke_cancel();
             }
-            None => {
+        } else {
+            {
                 assert_eq!(rule.get_errors(), "", "{case}");
                 rule.invoke_apply();
                 assert!(bound.auto_resolution.rule.borrow().is_none(), "{case}");
@@ -227,11 +228,11 @@ fn the_one_file_hardcoded_comparator_editor_is_the_references() {
         if !shown {
             shown = true;
             assert_eq!(
-                strings(window.get_looking_choices()),
+                strings(&window.get_looking_choices()),
                 labels(&hardcoded["target_choices"])
             );
             assert_eq!(
-                strings(window.get_test_choices()),
+                strings(&window.get_test_choices()),
                 labels(&hardcoded["test_choices"])
             );
             assert_eq!(
@@ -259,7 +260,7 @@ fn the_one_file_hardcoded_comparator_editor_is_the_references() {
         assert_eq!(comparator_summary(&expected, &context), summary);
         window.invoke_apply();
         // as the rule lists it
-        let listed = strings(rule.get_comparators());
+        let listed = strings(&rule.get_comparators());
         assert_eq!(listed.last().unwrap(), summary);
     }
     // the rule written holds each as chosen
@@ -277,11 +278,10 @@ fn o_rules(
 ) -> Vec<hydrus_store::duplicates::auto::Comparator> {
     // the comparators of the rule of this name the list wrote
     let rules = store.read(hydrus_store::duplicates::auto::rules).unwrap();
-    rules
-        .into_iter()
-        .find(|(_, r)| r.name == name)
-        .map(|(_, r)| r.comparators)
-        .unwrap_or_else(|| panic!("no rule {name:?} written"))
+    let Some((_, rule)) = rules.into_iter().find(|(_, r)| r.name == name) else {
+        panic!("no rule {name:?} written")
+    };
+    rule.comparators
 }
 
 // leaf: audit-media-comparator-visual
@@ -307,7 +307,7 @@ fn the_visual_duplicates_comparator_editor_is_the_references() {
         .iter()
         .map(|c| c[0].as_str().unwrap().to_owned())
         .collect();
-    for kind in strings(rule.get_comparator_kinds()) {
+    for kind in strings(&rule.get_comparator_kinds()) {
         assert!(
             offered.contains(&kind),
             "{kind:?} is offered by the reference"
@@ -321,7 +321,7 @@ fn the_visual_duplicates_comparator_editor_is_the_references() {
             window.get_window_title(),
             "edit visual duplicates comparator"
         );
-        assert_eq!(strings(window.get_visual_choices()), choices);
+        assert_eq!(strings(&window.get_visual_choices()), choices);
         let start = visual["choices"]
             .as_array()
             .unwrap()
@@ -348,7 +348,7 @@ fn the_visual_duplicates_comparator_editor_is_the_references() {
             summary
         );
         window.invoke_apply();
-        assert_eq!(strings(rule.get_comparators()).last().unwrap(), summary);
+        assert_eq!(strings(&rule.get_comparators()).last().unwrap(), summary);
     }
     rule.invoke_apply();
     list_of(&bound).invoke_apply();
@@ -356,7 +356,7 @@ fn the_visual_duplicates_comparator_editor_is_the_references() {
     let confidences: Vec<u32> = written
         .iter()
         .filter_map(|c| match c {
-            Comparator::VisualDuplicates { confidence } => Some(*confidence as u32),
+            Comparator::VisualDuplicates { confidence } => Some(u32::from(*confidence)),
             _ => None,
         })
         .collect();
@@ -438,7 +438,7 @@ fn the_note_merge_settings_dialog_is_the_references() {
                 ]
             );
             assert_eq!(
-                strings(editor.get_note_conflicts()),
+                strings(&editor.get_note_conflicts()),
                 labels(&dialog["conflict_choices"])
             );
         }

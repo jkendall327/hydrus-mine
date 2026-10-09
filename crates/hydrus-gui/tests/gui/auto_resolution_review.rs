@@ -119,7 +119,12 @@ pub(crate) struct Opened {
 }
 
 pub(crate) fn opened() -> Opened {
-    let legacy = hydrus_testkit::legacy_fixture("auto_resolution");
+    opened_from("auto_resolution")
+}
+
+/// [`opened`], from the legacy database fixture `name`.
+pub(crate) fn opened_from(name: &str) -> Opened {
+    let legacy = hydrus_testkit::legacy_fixture(name);
     let dir = tempfile::tempdir().unwrap();
     hydrus_store::import::import_legacy(
         legacy.path(),

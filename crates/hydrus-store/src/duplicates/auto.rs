@@ -577,6 +577,21 @@ pub fn remove_pairs(conn: &Connection, rule_id: i64, pairs: &[GroupPair]) -> Res
     Ok(())
 }
 
+/// Drop, from every rule's queue, the pairs that are no longer potential
+/// duplicates (the reference's `NotifyExistingPotentialDuplicatePairsRemoved`,
+/// which runs as a decision merges two groups: a pair between files that
+/// are now one group is gone from the pending list, the denied list and the
+/// rest). Returns how many rows went.
+pub fn drop_pairs_no_longer_potential(conn: &Connection) -> Result<usize> {
+    Ok(conn.execute(
+        "DELETE FROM dup_auto_pairs WHERE NOT EXISTS (
+            SELECT 1 FROM potential_pairs p
+            WHERE p.smaller_group_id = dup_auto_pairs.smaller_group_id
+              AND p.larger_group_id = dup_auto_pairs.larger_group_id)",
+        [],
+    )?)
+}
+
 /// A pair passed a semi-automatic rule's test: it waits, with A and B.
 pub fn set_ready_to_action(
     conn: &Connection,

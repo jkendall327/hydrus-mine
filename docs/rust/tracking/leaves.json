@@ -2925,10 +2925,10 @@
     "Actions execute immediately without reference cancellable progress/popup."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives fetch limit (default 250, 1 -> 'Found 1 pairs.'), fetch all, refresh, select all and approve of both pairs through the real window; expected labels and counts are typed from the Python source and the fetch-limit/select-all path is not in the recording (recording covers only single approve/deny). Reference's >5 'Are you sure' confirm and progress popup are untested here. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:350 pending_pairs_are_sampled_refreshed_selected_and_approved; auto_resolution_review.rs:175"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "crates/hydrus-gui/tests/gui/auto_resolution_pending.rs pending_pairs_are_fetched_selected_approved_and_denied_as_the_reference_does replays oracle/fixtures/auto_resolution_pending.json (record_auto_resolution_pending.py: the real ReviewActionsPanel on a semi-automatic rule with ten pending pairs, from legacy_db/auto_resolution_pending.tar.gz made by make_auto_resolution_pending.py) in the real review window: opening label, the sample size box (default 250, 'fetch all'), refreshing at limits 1, 7, 10, 11, fetch all and 250 ('Found N pairs.' with N = min(limit, 10)), select all (10 selected, approve/deny enabled), approving seven pairs (more than five) asks 'Are you sure you want to approve the 7 pairs?' (no changes nothing, yes approves), denying three asks nothing, the label after ('3 pairs remaining.', 'Found 0 pairs.') and the pairs the database holds after each step. The recording exposed and this PR fixed approvals leaving pairs between files now in one group pending (the reference drops them from every rule's queue). The reference lists the table in scan order (not specified; ours is by group), so a limited sample is compared by size and steps select the same pairs by identity (DIFFERENCES.md)."
    }
   },
   {
@@ -2946,10 +2946,10 @@
     "Native approve/deny runs synchronously and refreshes counts; reference worker progress/cancellation and popup UI are absent."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "phase 2 session (blind agent)",
-    "note": "auto_resolution_review.rs:464 approving_and_denying_show_their_progress_on_the_button_and_in_a_popup drives the real review window's approve/deny while the store writer is held and asserts the 'approving: 0/1' / 'denying: 0/1' button text, the popup job text, that it is not cancellable and is dismissed when done. Strings and the zero popup delay are restated from the reference source, not recorded."
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "recheck bin E session (claude/recheck-e-dupes)",
+    "note": "auto_resolution_pending.rs (same test) replays the progress the reference's approve/deny buttons show as the real worker goes four pairs at a time: 'approving: 0/7' then 'approving: 4/7' then back to 'approve', and 'denying: 0/3' then 'deny' (compared in the real window with the store's writer slowed so each chunk is seen), the same pairs end up approved or denied, and the reference's popup (published four seconds after the work starts, so a job that is done and dismissed by then never shows: recorded) is the native popup after the same delay (crates/hydrus-gui/tests/gui/auto_resolution_review.rs:464 approving_and_denying_show_their_progress_on_the_button_and_in_a_popup shows its text and dismissal with the delay set to zero). The recording's cancellability finding stands: neither job is cancellable."
    }
   },
   {

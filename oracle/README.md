@@ -45,6 +45,16 @@ at fixed copy boundaries; dialog replies and worker scheduling are scripted.
 | `make_import_media.py` | `fixtures/import_media/`: small deterministic media corpus (committed) |
 | `make_repository_fixture.py` | `fixtures/legacy_db/repositories.tar.gz` + manifest: `basic` with a tag and a file repository holding pending content |
 | `make_fixture_db.py` | `fixtures/legacy_db/<name>.tar.gz` + `.manifest.json`: a populated reference database |
+| `make_auto_resolution_pending.py` | `fixtures/legacy_db/auto_resolution_pending.tar.gz`: the auto-resolution database with eight more pairs pending in the semi-automatic rule that has two |
+| `record_cpu_busy.py` | `fixtures/cpu_busy.json`: the reference's `SystemBusy`/`CurrentlyIdle`/`GoodTimeToStartBackgroundWork` on scripted `/proc/stat` loads read by the real psutil |
+| `record_trash_maintenance.py` | `fixtures/trash_maintenance.json`: the reference's `DAEMONMaintainTrash` on generated files of exact sizes trashed at scripted times |
+| `record_shutdown_work.py` | `fixtures/shutdown_work.json`: the reference's `TryToExit` and `DoIdleShutdownWork` under each shutdown option, with the "Maintenance is due" question answered by script |
+| `record_file_paths_options.py` | `fixtures/file_paths_options.json`: imported file permissions with "do not chmod" off and on, and the deferred physical delete with the recycle bin off and on |
+| `record_archive_delete_reinbox.py` | `fixtures/archive_delete_reinbox.json`: `CommitArchiveDelete` under the archived-file delete lock and its reinbox option, then the trash emptied |
+| `record_duplicates_quick_processing.py` | `fixtures/duplicates_quick_processing.json`: the duplicates page's pair sort/direction/group chooser and "quick and dirty processing" buttons |
+| `record_auto_resolution_editor.py` | `fixtures/auto_resolution_editor.json`: the rule editor's name/pause/mode/max pending, unique naming, the hardcoded and visual comparator editors and the merge options' note settings dialog (the real nested panel) |
+| `record_auto_resolution_resets.py` | `fixtures/auto_resolution_resets.json`: the auto-resolution tab's reset/regenerate/resync buttons with rules selected or none, with every rule's pair counts by status |
+| `record_auto_resolution_pending.py` | `fixtures/auto_resolution_pending.json`: the review window's pending tab at ten pairs: fetch limits, select all, the confirmation, chunked progress texts and popups |
 | `dump_legacy_expectations.py` | `fixtures/legacy_db/<name>.expected.json`: what the reference reads from a fixture database, for `hydrus-legacy`'s tests |
 | `build_scenarios.py` | `scenarios/*.json`: Client API conformance scenarios (declarative request lists) |
 | `record_api.py` | `recordings/*.json`: the reference client's responses to each scenario |
