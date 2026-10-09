@@ -1051,7 +1051,11 @@ fn live_local_membership_restore_reaches_the_same_launcher_after_store_reopen() 
 }
 
 #[cfg(unix)]
-fn capture_process(output: &std::path::Path, parameters: &[Parameter], template: &str) -> Process {
+pub(crate) fn capture_process(
+    output: &std::path::Path,
+    parameters: &[Parameter],
+    template: &str,
+) -> Process {
     Process {
         executable: "/bin/sh".into(),
         arguments: vec![
@@ -1066,7 +1070,7 @@ fn capture_process(output: &std::path::Path, parameters: &[Parameter], template:
     }
 }
 #[cfg(unix)]
-fn await_output(path: &std::path::Path, expected: &str) {
+pub(crate) fn await_output(path: &std::path::Path, expected: &str) {
     let started = std::time::Instant::now();
     loop {
         slint::platform::update_timers_and_animations();

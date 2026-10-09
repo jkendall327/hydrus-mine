@@ -1,0 +1,7092 @@
+[
+  {
+    "kind": "siblings",
+    "local": true,
+    "service": "downloader tags",
+    "initial": [
+      [
+        "a",
+        "b"
+      ],
+      [
+        "b",
+        "c"
+      ],
+      [
+        "cousin",
+        "b"
+      ]
+    ],
+    "sort": [
+      2,
+      true
+    ],
+    "display_order": [
+      [
+        "a",
+        "b"
+      ],
+      [
+        "cousin",
+        "b"
+      ],
+      [
+        "b",
+        "c"
+      ],
+      [
+        "c",
+        "cousin"
+      ],
+      [
+        "upper case",
+        "lower"
+      ],
+      [
+        "many 00",
+        "many ideal"
+      ],
+      [
+        "many 01",
+        "many ideal"
+      ],
+      [
+        "many 02",
+        "many ideal"
+      ],
+      [
+        "many 03",
+        "many ideal"
+      ],
+      [
+        "many 04",
+        "many ideal"
+      ],
+      [
+        "many 05",
+        "many ideal"
+      ],
+      [
+        "many 06",
+        "many ideal"
+      ],
+      [
+        "many 07",
+        "many ideal"
+      ],
+      [
+        "many 08",
+        "many ideal"
+      ],
+      [
+        "many 09",
+        "many ideal"
+      ],
+      [
+        "many 10",
+        "many ideal"
+      ],
+      [
+        "many 11",
+        "many ideal"
+      ],
+      [
+        "p",
+        "q"
+      ],
+      [
+        "p",
+        "r"
+      ],
+      [
+        "self",
+        "self"
+      ],
+      [
+        "series:foo bar",
+        "series:foo"
+      ],
+      [
+        "x",
+        "y"
+      ]
+    ],
+    "steps": [
+      {
+        "how": "clipboard",
+        "text": "x\ny\nodd",
+        "asked": [
+          {
+            "kind": "information",
+            "message": "Uneven number of tags in clipboard!"
+          }
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "",
+            "b",
+            "c",
+            ""
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: added by user"
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "x",
+              "y"
+            ],
+            "No reason given."
+          ]
+        ],
+        "workspace": [
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "txt",
+        "text": "  Upper Case  \nlower\n\n\nx\ny\nSeries:Foo Bar\nseries:foo\n",
+        "asked": [
+          {
+            "kind": "file_dialog",
+            "message": "Select the file to import."
+          }
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "",
+            "b",
+            "c",
+            ""
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: added by user"
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "upper case",
+              "lower"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "x",
+              "y"
+            ],
+            "No reason given."
+          ]
+        ],
+        "workspace": [
+          "lower",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "a\nb",
+        "asked": [],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "",
+            "b",
+            "c",
+            ""
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: added by user"
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "upper case",
+              "lower"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "x",
+              "y"
+            ],
+            "No reason given."
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "lower",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "a\nnew ideal",
+        "asked": [],
+        "rows": [
+          [
+            "(-) ",
+            "a",
+            "b",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "b",
+            "c",
+            ""
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: added by user"
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "a",
+              "new ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "upper case",
+              "lower"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "x",
+              "y"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "a",
+              "b"
+            ],
+            "No reason given."
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "lower",
+          "new ideal",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "txt",
+        "text": "c\ncousin",
+        "asked": [
+          {
+            "kind": "file_dialog",
+            "message": "Select the file to import."
+          }
+        ],
+        "rows": [
+          [
+            "(-) ",
+            "a",
+            "b",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: added by user"
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "a",
+              "new ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "c",
+              "cousin"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "upper case",
+              "lower"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "x",
+              "y"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "a",
+              "b"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "new ideal",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "self\nself",
+        "asked": [
+          {
+            "kind": "critical",
+            "title": "Loop problem!",
+            "message": "The pair(s) you mean to add include some self-referencing loops, i.e. \"tag->tag\"! I will add what you wanted to, but you almost certainly want to undo this. If you are importing from an external source, is there a misplaced line somewhere? In any case, the loops appear to be (take a screenshot/write this down now!):\n\nself -> self"
+          }
+        ],
+        "rows": [
+          [
+            "(-) ",
+            "a",
+            "b",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: added by user"
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "a",
+              "new ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "c",
+              "cousin"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "self",
+              "self"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "upper case",
+              "lower"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "x",
+              "y"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "a",
+              "b"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "new ideal",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "p\nq\np\nr",
+        "asked": [],
+        "rows": [
+          [
+            "(-) ",
+            "a",
+            "b",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "p",
+            "q",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "p",
+            "r",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: added by user"
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "a",
+              "new ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "c",
+              "cousin"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "p",
+              "q"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "p",
+              "r"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "self",
+              "self"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "upper case",
+              "lower"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "x",
+              "y"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "a",
+              "b"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "new ideal",
+          "p",
+          "q",
+          "r",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "a\nb",
+        "asked": [
+          {
+            "kind": "yes_no",
+            "message": "The pair a->new ideal is pending.",
+            "yes": "rescind the pend",
+            "no": "do nothing",
+            "answer": true
+          },
+          {
+            "kind": "yes_no",
+            "message": "The pair a->b is petitioned.",
+            "yes": "rescind the petition",
+            "no": "do nothing",
+            "answer": true
+          }
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "p",
+            "q",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "p",
+            "r",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: added by user"
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "c",
+              "cousin"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "p",
+              "q"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "p",
+              "r"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "self",
+              "self"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "upper case",
+              "lower"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "x",
+              "y"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "new ideal",
+          "p",
+          "q",
+          "r",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "many 00\nmany ideal\nmany 01\nmany ideal\nmany 02\nmany ideal\nmany 03\nmany ideal\nmany 04\nmany ideal\nmany 05\nmany ideal\nmany 06\nmany ideal\nmany 07\nmany ideal\nmany 08\nmany ideal\nmany 09\nmany ideal\nmany 10\nmany ideal\nmany 11\nmany ideal",
+        "asked": [],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "many 00",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 01",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 02",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 03",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 04",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 05",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 06",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 07",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 08",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 09",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 10",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 11",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "p",
+            "q",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "p",
+            "r",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: added by user"
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "c",
+              "cousin"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 00",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 01",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 02",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 03",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 04",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 05",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 06",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 07",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 08",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 09",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 10",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 11",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "p",
+              "q"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "p",
+              "r"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "self",
+              "self"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "upper case",
+              "lower"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "x",
+              "y"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "many 00",
+          "many 01",
+          "many 02",
+          "many 03",
+          "many 04",
+          "many 05",
+          "many 06",
+          "many 07",
+          "many 08",
+          "many 09",
+          "many 10",
+          "many 11",
+          "many ideal",
+          "new ideal",
+          "p",
+          "q",
+          "r",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "",
+        "asked": [],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "many 00",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 01",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 02",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 03",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 04",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 05",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 06",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 07",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 08",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 09",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 10",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 11",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "p",
+            "q",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "p",
+            "r",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: added by user"
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "c",
+              "cousin"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 00",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 01",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 02",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 03",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 04",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 05",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 06",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 07",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 08",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 09",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 10",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 11",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "p",
+              "q"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "p",
+              "r"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "self",
+              "self"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "upper case",
+              "lower"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "x",
+              "y"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "many 00",
+          "many 01",
+          "many 02",
+          "many 03",
+          "many 04",
+          "many 05",
+          "many 06",
+          "many 07",
+          "many 08",
+          "many 09",
+          "many 10",
+          "many 11",
+          "many ideal",
+          "new ideal",
+          "p",
+          "q",
+          "r",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      }
+    ],
+    "exports": [
+      {
+        "selected": [],
+        "text": ""
+      },
+      {
+        "selected": [
+          [
+            "a",
+            "b"
+          ]
+        ],
+        "text": "a\nb"
+      },
+      {
+        "selected": [
+          [
+            "x",
+            "y"
+          ],
+          [
+            "a",
+            "b"
+          ],
+          [
+            "upper case",
+            "lower"
+          ]
+        ],
+        "text": "a\nb\nupper case\nlower\nx\ny"
+      }
+    ]
+  },
+  {
+    "kind": "parents",
+    "local": true,
+    "service": "downloader tags",
+    "initial": [
+      [
+        "a",
+        "b"
+      ],
+      [
+        "b",
+        "c"
+      ],
+      [
+        "cousin",
+        "b"
+      ]
+    ],
+    "sort": [
+      2,
+      true
+    ],
+    "display_order": [
+      [
+        "a",
+        "b"
+      ],
+      [
+        "cousin",
+        "b"
+      ],
+      [
+        "b",
+        "c"
+      ],
+      [
+        "c",
+        "cousin"
+      ],
+      [
+        "upper case",
+        "lower"
+      ],
+      [
+        "many 00",
+        "many ideal"
+      ],
+      [
+        "many 01",
+        "many ideal"
+      ],
+      [
+        "many 02",
+        "many ideal"
+      ],
+      [
+        "many 03",
+        "many ideal"
+      ],
+      [
+        "many 04",
+        "many ideal"
+      ],
+      [
+        "many 05",
+        "many ideal"
+      ],
+      [
+        "many 06",
+        "many ideal"
+      ],
+      [
+        "many 07",
+        "many ideal"
+      ],
+      [
+        "many 08",
+        "many ideal"
+      ],
+      [
+        "many 09",
+        "many ideal"
+      ],
+      [
+        "many 10",
+        "many ideal"
+      ],
+      [
+        "many 11",
+        "many ideal"
+      ],
+      [
+        "a",
+        "new ideal"
+      ],
+      [
+        "p",
+        "q"
+      ],
+      [
+        "p",
+        "r"
+      ],
+      [
+        "self",
+        "self"
+      ],
+      [
+        "series:foo bar",
+        "series:foo"
+      ],
+      [
+        "x",
+        "y"
+      ]
+    ],
+    "steps": [
+      {
+        "how": "clipboard",
+        "text": "x\ny\nodd",
+        "asked": [
+          {
+            "kind": "information",
+            "message": "Uneven number of tags in clipboard!"
+          }
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "",
+            "b",
+            "c",
+            ""
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: added by user"
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "x",
+              "y"
+            ],
+            "No reason given."
+          ]
+        ],
+        "workspace": [
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "txt",
+        "text": "  Upper Case  \nlower\n\n\nx\ny\nSeries:Foo Bar\nseries:foo\n",
+        "asked": [
+          {
+            "kind": "file_dialog",
+            "message": "Select the file to import."
+          }
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "",
+            "b",
+            "c",
+            ""
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: added by user"
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "upper case",
+              "lower"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "x",
+              "y"
+            ],
+            "No reason given."
+          ]
+        ],
+        "workspace": [
+          "lower",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "a\nb",
+        "asked": [],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "",
+            "b",
+            "c",
+            ""
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: added by user"
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "upper case",
+              "lower"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "x",
+              "y"
+            ],
+            "No reason given."
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "lower",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "a\nnew ideal",
+        "asked": [],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: added by user"
+          ],
+          [
+            "",
+            "b",
+            "c",
+            ""
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: added by user"
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "a",
+              "new ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "upper case",
+              "lower"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "x",
+              "y"
+            ],
+            "No reason given."
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "lower",
+          "new ideal",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "txt",
+        "text": "c\ncousin",
+        "asked": [
+          {
+            "kind": "file_dialog",
+            "message": "Select the file to import."
+          }
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: added by user"
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "a",
+              "new ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "c",
+              "cousin"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "upper case",
+              "lower"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "x",
+              "y"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "new ideal",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "self\nself",
+        "asked": [
+          {
+            "kind": "critical",
+            "title": "Loop problem!",
+            "message": "The pair(s) you mean to add include some self-referencing loops, i.e. \"tag->tag\"! I will add what you wanted to, but you almost certainly want to undo this. If you are importing from an external source, is there a misplaced line somewhere? In any case, the loops appear to be (take a screenshot/write this down now!):\n\nself -> self"
+          }
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: added by user"
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "a",
+              "new ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "c",
+              "cousin"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "self",
+              "self"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "upper case",
+              "lower"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "x",
+              "y"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "new ideal",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "p\nq\np\nr",
+        "asked": [],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "p",
+            "q",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "p",
+            "r",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: added by user"
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "a",
+              "new ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "c",
+              "cousin"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "p",
+              "q"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "p",
+              "r"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "self",
+              "self"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "upper case",
+              "lower"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "x",
+              "y"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "new ideal",
+          "p",
+          "q",
+          "r",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "a\nb",
+        "asked": [],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "p",
+            "q",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "p",
+            "r",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: added by user"
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "a",
+              "new ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "c",
+              "cousin"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "p",
+              "q"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "p",
+              "r"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "self",
+              "self"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "upper case",
+              "lower"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "x",
+              "y"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "new ideal",
+          "p",
+          "q",
+          "r",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "many 00\nmany ideal\nmany 01\nmany ideal\nmany 02\nmany ideal\nmany 03\nmany ideal\nmany 04\nmany ideal\nmany 05\nmany ideal\nmany 06\nmany ideal\nmany 07\nmany ideal\nmany 08\nmany ideal\nmany 09\nmany ideal\nmany 10\nmany ideal\nmany 11\nmany ideal",
+        "asked": [],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "many 00",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 01",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 02",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 03",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 04",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 05",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 06",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 07",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 08",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 09",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 10",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 11",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "p",
+            "q",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "p",
+            "r",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: added by user"
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "a",
+              "new ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "c",
+              "cousin"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 00",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 01",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 02",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 03",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 04",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 05",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 06",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 07",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 08",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 09",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 10",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 11",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "p",
+              "q"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "p",
+              "r"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "self",
+              "self"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "upper case",
+              "lower"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "x",
+              "y"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "many 00",
+          "many 01",
+          "many 02",
+          "many 03",
+          "many 04",
+          "many 05",
+          "many 06",
+          "many 07",
+          "many 08",
+          "many 09",
+          "many 10",
+          "many 11",
+          "many ideal",
+          "new ideal",
+          "p",
+          "q",
+          "r",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "",
+        "asked": [],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "many 00",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 01",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 02",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 03",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 04",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 05",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 06",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 07",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 08",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 09",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 10",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "many 11",
+            "many ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "p",
+            "q",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "p",
+            "r",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: added by user"
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "a",
+              "new ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "c",
+              "cousin"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 00",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 01",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 02",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 03",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 04",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 05",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 06",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 07",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 08",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 09",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 10",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "many 11",
+              "many ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "p",
+              "q"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "p",
+              "r"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "self",
+              "self"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "upper case",
+              "lower"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "x",
+              "y"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "many 00",
+          "many 01",
+          "many 02",
+          "many 03",
+          "many 04",
+          "many 05",
+          "many 06",
+          "many 07",
+          "many 08",
+          "many 09",
+          "many 10",
+          "many 11",
+          "many ideal",
+          "new ideal",
+          "p",
+          "q",
+          "r",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      }
+    ],
+    "exports": [
+      {
+        "selected": [],
+        "text": ""
+      },
+      {
+        "selected": [
+          [
+            "a",
+            "b"
+          ]
+        ],
+        "text": "a\nb"
+      },
+      {
+        "selected": [
+          [
+            "x",
+            "y"
+          ],
+          [
+            "a",
+            "b"
+          ],
+          [
+            "upper case",
+            "lower"
+          ]
+        ],
+        "text": "a\nb\nupper case\nlower\nx\ny"
+      }
+    ]
+  },
+  {
+    "kind": "siblings",
+    "local": false,
+    "service": "a tag repository",
+    "initial": [
+      [
+        "a",
+        "b"
+      ],
+      [
+        "b",
+        "c"
+      ],
+      [
+        "cousin",
+        "b"
+      ]
+    ],
+    "sort": [
+      2,
+      true
+    ],
+    "display_order": [
+      [
+        "a",
+        "b"
+      ],
+      [
+        "cousin",
+        "b"
+      ],
+      [
+        "b",
+        "c"
+      ],
+      [
+        "c",
+        "cousin"
+      ],
+      [
+        "upper case",
+        "lower"
+      ],
+      [
+        "many 00",
+        "many ideal"
+      ],
+      [
+        "many 01",
+        "many ideal"
+      ],
+      [
+        "many 02",
+        "many ideal"
+      ],
+      [
+        "many 03",
+        "many ideal"
+      ],
+      [
+        "many 04",
+        "many ideal"
+      ],
+      [
+        "many 05",
+        "many ideal"
+      ],
+      [
+        "many 06",
+        "many ideal"
+      ],
+      [
+        "many 07",
+        "many ideal"
+      ],
+      [
+        "many 08",
+        "many ideal"
+      ],
+      [
+        "many 09",
+        "many ideal"
+      ],
+      [
+        "many 10",
+        "many ideal"
+      ],
+      [
+        "many 11",
+        "many ideal"
+      ],
+      [
+        "p",
+        "q"
+      ],
+      [
+        "p",
+        "r"
+      ],
+      [
+        "self",
+        "self"
+      ],
+      [
+        "series:foo bar",
+        "series:foo"
+      ],
+      [
+        "x",
+        "y"
+      ]
+    ],
+    "steps": [
+      {
+        "how": "clipboard",
+        "text": "x\ny\nodd",
+        "asked": [
+          {
+            "kind": "information",
+            "message": "Uneven number of tags in clipboard!"
+          },
+          {
+            "kind": "reason",
+            "message": "Enter a reason for:\n\nx->y\n\nTo be added. A janitor will review your petition.",
+            "suggestions": [
+              "merging underscores/typos/phrasing/unnamespaced to a single uncontroversial good tag",
+              "rewording/namespacing based on preference"
+            ],
+            "answer": "oracle reason"
+          }
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "",
+            "b",
+            "c",
+            ""
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: oracle reason"
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "x",
+              "y"
+            ],
+            "oracle reason"
+          ]
+        ],
+        "workspace": [
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "txt",
+        "text": "  Upper Case  \nlower\n\n\nx\ny\nSeries:Foo Bar\nseries:foo\n",
+        "asked": [
+          {
+            "kind": "file_dialog",
+            "message": "Select the file to import."
+          },
+          {
+            "kind": "reason",
+            "message": "Enter a reason for:\n\nupper case->lower\nseries:foo bar->series:foo\n\nTo be added. A janitor will review your petition.",
+            "suggestions": [
+              "oracle reason",
+              "merging underscores/typos/phrasing/unnamespaced to a single uncontroversial good tag",
+              "rewording/namespacing based on preference"
+            ],
+            "answer": "oracle reason"
+          }
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "",
+            "b",
+            "c",
+            ""
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: oracle reason"
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "upper case",
+              "lower"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "x",
+              "y"
+            ],
+            "oracle reason"
+          ]
+        ],
+        "workspace": [
+          "lower",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "a\nb",
+        "asked": [],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "",
+            "b",
+            "c",
+            ""
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: oracle reason"
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "upper case",
+              "lower"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "x",
+              "y"
+            ],
+            "oracle reason"
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "lower",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "a\nnew ideal",
+        "asked": [
+          {
+            "kind": "reason",
+            "message": "Enter a reason for:\n\na->new ideal\n\nTo be added. A janitor will review your petition.",
+            "suggestions": [
+              "oracle reason",
+              "merging underscores/typos/phrasing/unnamespaced to a single uncontroversial good tag",
+              "rewording/namespacing based on preference"
+            ],
+            "answer": "oracle reason"
+          }
+        ],
+        "rows": [
+          [
+            "(-) ",
+            "a",
+            "b",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "b",
+            "c",
+            ""
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: oracle reason"
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "a",
+              "new ideal"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            2,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "upper case",
+              "lower"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "x",
+              "y"
+            ],
+            "oracle reason"
+          ],
+          [
+            4,
+            [
+              "a",
+              "b"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "lower",
+          "new ideal",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "txt",
+        "text": "c\ncousin",
+        "asked": [
+          {
+            "kind": "file_dialog",
+            "message": "Select the file to import."
+          },
+          {
+            "kind": "reason",
+            "message": "Enter a reason for:\n\nc->cousin\n\nTo be added. A janitor will review your petition.",
+            "suggestions": [
+              "oracle reason",
+              "merging underscores/typos/phrasing/unnamespaced to a single uncontroversial good tag",
+              "rewording/namespacing based on preference"
+            ],
+            "answer": "oracle reason"
+          }
+        ],
+        "rows": [
+          [
+            "(-) ",
+            "a",
+            "b",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: oracle reason"
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "a",
+              "new ideal"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            2,
+            [
+              "c",
+              "cousin"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            2,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "upper case",
+              "lower"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "x",
+              "y"
+            ],
+            "oracle reason"
+          ],
+          [
+            4,
+            [
+              "a",
+              "b"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "new ideal",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "self\nself",
+        "asked": [
+          {
+            "kind": "critical",
+            "title": "Loop problem!",
+            "message": "The pair(s) you mean to add include some self-referencing loops, i.e. \"tag->tag\"! I will add what you wanted to, but you almost certainly want to undo this. If you are importing from an external source, is there a misplaced line somewhere? In any case, the loops appear to be (take a screenshot/write this down now!):\n\nself -> self"
+          },
+          {
+            "kind": "reason",
+            "message": "Enter a reason for:\n\nself->self\n\nTo be added. A janitor will review your petition.",
+            "suggestions": [
+              "oracle reason",
+              "merging underscores/typos/phrasing/unnamespaced to a single uncontroversial good tag",
+              "rewording/namespacing based on preference"
+            ],
+            "answer": "oracle reason"
+          }
+        ],
+        "rows": [
+          [
+            "(-) ",
+            "a",
+            "b",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: oracle reason"
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "a",
+              "new ideal"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            2,
+            [
+              "c",
+              "cousin"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            2,
+            [
+              "self",
+              "self"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "upper case",
+              "lower"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "x",
+              "y"
+            ],
+            "oracle reason"
+          ],
+          [
+            4,
+            [
+              "a",
+              "b"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "new ideal",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "p\nq\np\nr",
+        "asked": [
+          {
+            "kind": "reason",
+            "message": "Enter a reason for:\n\np->q\np->r\n\nTo be added. A janitor will review your petition.",
+            "suggestions": [
+              "oracle reason",
+              "merging underscores/typos/phrasing/unnamespaced to a single uncontroversial good tag",
+              "rewording/namespacing based on preference"
+            ],
+            "answer": "oracle reason"
+          }
+        ],
+        "rows": [
+          [
+            "(-) ",
+            "a",
+            "b",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "p",
+            "q",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "p",
+            "r",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: oracle reason"
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "a",
+              "new ideal"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            2,
+            [
+              "c",
+              "cousin"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            2,
+            [
+              "p",
+              "q"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "p",
+              "r"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "self",
+              "self"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "upper case",
+              "lower"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "x",
+              "y"
+            ],
+            "oracle reason"
+          ],
+          [
+            4,
+            [
+              "a",
+              "b"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "new ideal",
+          "p",
+          "q",
+          "r",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "a\nb",
+        "asked": [
+          {
+            "kind": "yes_no",
+            "message": "The pair a->new ideal is pending.",
+            "yes": "rescind the pend",
+            "no": "do nothing",
+            "answer": true
+          },
+          {
+            "kind": "yes_no",
+            "message": "The pair a->b is petitioned.",
+            "yes": "rescind the petition",
+            "no": "do nothing",
+            "answer": true
+          }
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "p",
+            "q",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "p",
+            "r",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: oracle reason"
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "c",
+              "cousin"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            2,
+            [
+              "p",
+              "q"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "p",
+              "r"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "self",
+              "self"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "upper case",
+              "lower"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "x",
+              "y"
+            ],
+            "oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "new ideal",
+          "p",
+          "q",
+          "r",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "many 00\nmany ideal\nmany 01\nmany ideal\nmany 02\nmany ideal\nmany 03\nmany ideal\nmany 04\nmany ideal\nmany 05\nmany ideal\nmany 06\nmany ideal\nmany 07\nmany ideal\nmany 08\nmany ideal\nmany 09\nmany ideal\nmany 10\nmany ideal\nmany 11\nmany ideal",
+        "asked": [
+          {
+            "kind": "reason",
+            "message": "Enter a reason for:\n\nThe many pairs you entered.\n\nTo be added. A janitor will review your petition.",
+            "suggestions": [
+              "oracle reason",
+              "merging underscores/typos/phrasing/unnamespaced to a single uncontroversial good tag",
+              "rewording/namespacing based on preference"
+            ],
+            "answer": "oracle reason"
+          }
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "many 00",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 01",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 02",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 03",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 04",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 05",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 06",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 07",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 08",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 09",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 10",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 11",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "p",
+            "q",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "p",
+            "r",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: oracle reason"
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "c",
+              "cousin"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 00",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 01",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 02",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 03",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 04",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 05",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 06",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 07",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 08",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 09",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 10",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 11",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "p",
+              "q"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "p",
+              "r"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "self",
+              "self"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "upper case",
+              "lower"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "x",
+              "y"
+            ],
+            "oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "many 00",
+          "many 01",
+          "many 02",
+          "many 03",
+          "many 04",
+          "many 05",
+          "many 06",
+          "many 07",
+          "many 08",
+          "many 09",
+          "many 10",
+          "many 11",
+          "many ideal",
+          "new ideal",
+          "p",
+          "q",
+          "r",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "",
+        "asked": [],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "many 00",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 01",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 02",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 03",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 04",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 05",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 06",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 07",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 08",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 09",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 10",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 11",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "p",
+            "q",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "p",
+            "r",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: oracle reason"
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "c",
+              "cousin"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 00",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 01",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 02",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 03",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 04",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 05",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 06",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 07",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 08",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 09",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 10",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 11",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "p",
+              "q"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "p",
+              "r"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "self",
+              "self"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "upper case",
+              "lower"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "x",
+              "y"
+            ],
+            "oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "many 00",
+          "many 01",
+          "many 02",
+          "many 03",
+          "many 04",
+          "many 05",
+          "many 06",
+          "many 07",
+          "many 08",
+          "many 09",
+          "many 10",
+          "many 11",
+          "many ideal",
+          "new ideal",
+          "p",
+          "q",
+          "r",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      }
+    ],
+    "exports": [
+      {
+        "selected": [],
+        "text": ""
+      },
+      {
+        "selected": [
+          [
+            "a",
+            "b"
+          ]
+        ],
+        "text": "a\nb"
+      },
+      {
+        "selected": [
+          [
+            "x",
+            "y"
+          ],
+          [
+            "a",
+            "b"
+          ],
+          [
+            "upper case",
+            "lower"
+          ]
+        ],
+        "text": "a\nb\nupper case\nlower\nx\ny"
+      }
+    ]
+  },
+  {
+    "kind": "parents",
+    "local": false,
+    "service": "a tag repository",
+    "initial": [
+      [
+        "a",
+        "b"
+      ],
+      [
+        "b",
+        "c"
+      ],
+      [
+        "cousin",
+        "b"
+      ]
+    ],
+    "sort": [
+      2,
+      true
+    ],
+    "display_order": [
+      [
+        "a",
+        "b"
+      ],
+      [
+        "cousin",
+        "b"
+      ],
+      [
+        "b",
+        "c"
+      ],
+      [
+        "c",
+        "cousin"
+      ],
+      [
+        "upper case",
+        "lower"
+      ],
+      [
+        "many 00",
+        "many ideal"
+      ],
+      [
+        "many 01",
+        "many ideal"
+      ],
+      [
+        "many 02",
+        "many ideal"
+      ],
+      [
+        "many 03",
+        "many ideal"
+      ],
+      [
+        "many 04",
+        "many ideal"
+      ],
+      [
+        "many 05",
+        "many ideal"
+      ],
+      [
+        "many 06",
+        "many ideal"
+      ],
+      [
+        "many 07",
+        "many ideal"
+      ],
+      [
+        "many 08",
+        "many ideal"
+      ],
+      [
+        "many 09",
+        "many ideal"
+      ],
+      [
+        "many 10",
+        "many ideal"
+      ],
+      [
+        "many 11",
+        "many ideal"
+      ],
+      [
+        "a",
+        "new ideal"
+      ],
+      [
+        "p",
+        "q"
+      ],
+      [
+        "p",
+        "r"
+      ],
+      [
+        "self",
+        "self"
+      ],
+      [
+        "series:foo bar",
+        "series:foo"
+      ],
+      [
+        "x",
+        "y"
+      ]
+    ],
+    "steps": [
+      {
+        "how": "clipboard",
+        "text": "x\ny\nodd",
+        "asked": [
+          {
+            "kind": "information",
+            "message": "Uneven number of tags in clipboard!"
+          },
+          {
+            "kind": "reason",
+            "message": "Enter a reason for:\n\nx->y\n\nTo be added. A janitor will review your petition.",
+            "suggestions": [
+              "obvious by definition (a sword is a weapon)",
+              "character/series/studio/etc... belonging (character x belongs to series y)"
+            ],
+            "answer": "oracle reason"
+          }
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "",
+            "b",
+            "c",
+            ""
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: oracle reason"
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "x",
+              "y"
+            ],
+            "oracle reason"
+          ]
+        ],
+        "workspace": [
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "txt",
+        "text": "  Upper Case  \nlower\n\n\nx\ny\nSeries:Foo Bar\nseries:foo\n",
+        "asked": [
+          {
+            "kind": "file_dialog",
+            "message": "Select the file to import."
+          },
+          {
+            "kind": "reason",
+            "message": "Enter a reason for:\n\nupper case->lower\nseries:foo bar->series:foo\n\nTo be added. A janitor will review your petition.",
+            "suggestions": [
+              "oracle reason",
+              "obvious by definition (a sword is a weapon)",
+              "character/series/studio/etc... belonging (character x belongs to series y)"
+            ],
+            "answer": "oracle reason"
+          }
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "",
+            "b",
+            "c",
+            ""
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: oracle reason"
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "upper case",
+              "lower"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "x",
+              "y"
+            ],
+            "oracle reason"
+          ]
+        ],
+        "workspace": [
+          "lower",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "a\nb",
+        "asked": [],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "",
+            "b",
+            "c",
+            ""
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: oracle reason"
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "upper case",
+              "lower"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "x",
+              "y"
+            ],
+            "oracle reason"
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "lower",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "a\nnew ideal",
+        "asked": [
+          {
+            "kind": "reason",
+            "message": "Enter a reason for:\n\na->new ideal\n\nTo be added. A janitor will review your petition.",
+            "suggestions": [
+              "oracle reason",
+              "obvious by definition (a sword is a weapon)",
+              "character/series/studio/etc... belonging (character x belongs to series y)"
+            ],
+            "answer": "oracle reason"
+          }
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "",
+            "b",
+            "c",
+            ""
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: oracle reason"
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "a",
+              "new ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "upper case",
+              "lower"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "x",
+              "y"
+            ],
+            "oracle reason"
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "lower",
+          "new ideal",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "txt",
+        "text": "c\ncousin",
+        "asked": [
+          {
+            "kind": "file_dialog",
+            "message": "Select the file to import."
+          },
+          {
+            "kind": "reason",
+            "message": "Enter a reason for:\n\nc->cousin\n\nTo be added. A janitor will review your petition.",
+            "suggestions": [
+              "oracle reason",
+              "obvious by definition (a sword is a weapon)",
+              "character/series/studio/etc... belonging (character x belongs to series y)"
+            ],
+            "answer": "oracle reason"
+          }
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: oracle reason"
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "a",
+              "new ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "c",
+              "cousin"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            2,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "upper case",
+              "lower"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "x",
+              "y"
+            ],
+            "oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "new ideal",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "self\nself",
+        "asked": [
+          {
+            "kind": "critical",
+            "title": "Loop problem!",
+            "message": "The pair(s) you mean to add include some self-referencing loops, i.e. \"tag->tag\"! I will add what you wanted to, but you almost certainly want to undo this. If you are importing from an external source, is there a misplaced line somewhere? In any case, the loops appear to be (take a screenshot/write this down now!):\n\nself -> self"
+          },
+          {
+            "kind": "reason",
+            "message": "Enter a reason for:\n\nself->self\n\nTo be added. A janitor will review your petition.",
+            "suggestions": [
+              "oracle reason",
+              "obvious by definition (a sword is a weapon)",
+              "character/series/studio/etc... belonging (character x belongs to series y)"
+            ],
+            "answer": "oracle reason"
+          }
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: oracle reason"
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "a",
+              "new ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "c",
+              "cousin"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            2,
+            [
+              "self",
+              "self"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "upper case",
+              "lower"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "x",
+              "y"
+            ],
+            "oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "new ideal",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "p\nq\np\nr",
+        "asked": [
+          {
+            "kind": "reason",
+            "message": "Enter a reason for:\n\np->q\np->r\n\nTo be added. A janitor will review your petition.",
+            "suggestions": [
+              "oracle reason",
+              "obvious by definition (a sword is a weapon)",
+              "character/series/studio/etc... belonging (character x belongs to series y)"
+            ],
+            "answer": "oracle reason"
+          }
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "p",
+            "q",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "p",
+            "r",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: oracle reason"
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "a",
+              "new ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "c",
+              "cousin"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            2,
+            [
+              "p",
+              "q"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "p",
+              "r"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "self",
+              "self"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "upper case",
+              "lower"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "x",
+              "y"
+            ],
+            "oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "new ideal",
+          "p",
+          "q",
+          "r",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "a\nb",
+        "asked": [],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "p",
+            "q",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "p",
+            "r",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: oracle reason"
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "a",
+              "new ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "c",
+              "cousin"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            2,
+            [
+              "p",
+              "q"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "p",
+              "r"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "self",
+              "self"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "upper case",
+              "lower"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "x",
+              "y"
+            ],
+            "oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "new ideal",
+          "p",
+          "q",
+          "r",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "many 00\nmany ideal\nmany 01\nmany ideal\nmany 02\nmany ideal\nmany 03\nmany ideal\nmany 04\nmany ideal\nmany 05\nmany ideal\nmany 06\nmany ideal\nmany 07\nmany ideal\nmany 08\nmany ideal\nmany 09\nmany ideal\nmany 10\nmany ideal\nmany 11\nmany ideal",
+        "asked": [
+          {
+            "kind": "reason",
+            "message": "Enter a reason for:\n\nThe many pairs you entered.\n\nTo be added. A janitor will review your petition.",
+            "suggestions": [
+              "oracle reason",
+              "obvious by definition (a sword is a weapon)",
+              "character/series/studio/etc... belonging (character x belongs to series y)"
+            ],
+            "answer": "oracle reason"
+          }
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "many 00",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 01",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 02",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 03",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 04",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 05",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 06",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 07",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 08",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 09",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 10",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 11",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "p",
+            "q",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "p",
+            "r",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: oracle reason"
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "a",
+              "new ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "c",
+              "cousin"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 00",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 01",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 02",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 03",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 04",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 05",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 06",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 07",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 08",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 09",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 10",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 11",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "p",
+              "q"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "p",
+              "r"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "self",
+              "self"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "upper case",
+              "lower"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "x",
+              "y"
+            ],
+            "oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "many 00",
+          "many 01",
+          "many 02",
+          "many 03",
+          "many 04",
+          "many 05",
+          "many 06",
+          "many 07",
+          "many 08",
+          "many 09",
+          "many 10",
+          "many 11",
+          "many ideal",
+          "new ideal",
+          "p",
+          "q",
+          "r",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "",
+        "asked": [],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "many 00",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 01",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 02",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 03",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 04",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 05",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 06",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 07",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 08",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 09",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 10",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "many 11",
+            "many ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "p",
+            "q",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "p",
+            "r",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: oracle reason"
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "a",
+              "new ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "c",
+              "cousin"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 00",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 01",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 02",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 03",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 04",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 05",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 06",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 07",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 08",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 09",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 10",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "many 11",
+              "many ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "p",
+              "q"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "p",
+              "r"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "self",
+              "self"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "upper case",
+              "lower"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "x",
+              "y"
+            ],
+            "oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "many 00",
+          "many 01",
+          "many 02",
+          "many 03",
+          "many 04",
+          "many 05",
+          "many 06",
+          "many 07",
+          "many 08",
+          "many 09",
+          "many 10",
+          "many 11",
+          "many ideal",
+          "new ideal",
+          "p",
+          "q",
+          "r",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "upper case",
+          "x",
+          "y"
+        ]
+      }
+    ],
+    "exports": [
+      {
+        "selected": [],
+        "text": ""
+      },
+      {
+        "selected": [
+          [
+            "a",
+            "b"
+          ]
+        ],
+        "text": "a\nb"
+      },
+      {
+        "selected": [
+          [
+            "x",
+            "y"
+          ],
+          [
+            "a",
+            "b"
+          ],
+          [
+            "upper case",
+            "lower"
+          ]
+        ],
+        "text": "a\nb\nupper case\nlower\nx\ny"
+      }
+    ]
+  }
+]

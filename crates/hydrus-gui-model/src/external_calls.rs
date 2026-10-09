@@ -2,6 +2,7 @@
 //! Parent drafts own keys and selection; direct process calls use argument vectors.
 use crate::list_selection::ListSelection;
 use hydrus_core::external_calls::{ActualCall, Callable, Inputs, Manager, Process};
+use hydrus_core::url::string_descriptions::python_repr_str;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use std::sync::{
@@ -203,16 +204,20 @@ pub fn test_call_cancellable(
         return Err("The OS launcher test is not supported by this native test panel.".into());
     };
     let mut command = process_command(process, inputs)?;
-    command.stdout(Stdio::null()).stderr(Stdio::null());
+    // The reference's test reads the output, for its report of a bad return code.
+    command.stdout(Stdio::piped()).stderr(Stdio::piped());
     if cancel.load(Ordering::Acquire) {
         return Err("External call cancelled.".into());
     }
+    let cmd = python_list(&process.command(inputs).unwrap_or_default());
     let mut child = command.spawn().map_err(|e| {
         format!(
-            "Problem running external local process! Final call list was \"{:?}\", error was: {e}",
-            process.command(inputs).unwrap_or_default()
+            "ExecutableException: Problem running external local process! Final call list was \"{cmd}\", error was: {}",
+            python_os_error(&e, &process.executable)
         )
     })?;
+    let stdout = child.stdout.take().map(read_head);
+    let stderr = child.stderr.take().map(read_head);
     let timeout = Duration::from_secs(if process.long_lived {
         15
     } else {
@@ -222,11 +227,21 @@ pub fn test_call_cancellable(
     loop {
         match child.try_wait() {
             Ok(Some(status)) => {
-                return if status.success() {
-                    Ok(())
-                } else {
-                    Err(format!("External local process returned {status}."))
+                let Some(code) = status.code().filter(|code| *code != 0) else {
+                    return if status.success() {
+                        Ok(())
+                    } else {
+                        Err(format!("External local process returned {status}."))
+                    };
                 };
+                let text = |reader: Option<std::thread::JoinHandle<String>>| {
+                    python_repr_str(&reader.and_then(|r| r.join().ok()).unwrap_or_default())
+                };
+                return Err(format!(
+                    "BadReturnCodeException: A call to another executable gave a non-zero return code ({code})! The call was: {cmd}\n\n========== stdout ==========\n{}\n========== stderr ==========\n{}\n============================\n",
+                    text(stdout),
+                    text(stderr)
+                ));
             }
             Ok(None) => {}
             Err(error) => {
@@ -250,4 +265,49 @@ pub fn test_call_cancellable(
         }
         std::thread::sleep(Duration::from_millis(5));
     }
+}
+
+/// Python's `repr` of a list of strings, as the reference's messages show a
+/// command.
+fn python_list(values: &[String]) -> String {
+    format!(
+        "[{}]",
+        values
+            .iter()
+            .map(|s| python_repr_str(s))
+            .collect::<Vec<_>>()
+            .join(", ")
+    )
+}
+
+/// An OS error as Python words it (`[Errno 2] No such file or directory:
+/// 'name'`), for a program that could not be started.
+fn python_os_error(error: &std::io::Error, executable: &str) -> String {
+    let Some(code) = error.raw_os_error() else {
+        return error.to_string();
+    };
+    let text = error.to_string();
+    let text = text
+        .strip_suffix(&format!(" (os error {code})"))
+        .unwrap_or(&text);
+    format!("[Errno {code}] {text}: {}", python_repr_str(executable))
+}
+
+/// The first 256 characters a process writes to one of its pipes (what the
+/// reference's report quotes), read to the end on a thread of its own so the
+/// process never blocks on a full pipe.
+fn read_head(mut pipe: impl std::io::Read + Send + 'static) -> std::thread::JoinHandle<String> {
+    std::thread::spawn(move || {
+        let mut kept = Vec::new();
+        let mut buffer = [0_u8; 4096];
+        while let Ok(read) = pipe.read(&mut buffer) {
+            if read == 0 {
+                break;
+            }
+            if kept.len() < 4096 {
+                kept.extend_from_slice(&buffer[..read]);
+            }
+        }
+        String::from_utf8_lossy(&kept).chars().take(256).collect()
+    })
 }
