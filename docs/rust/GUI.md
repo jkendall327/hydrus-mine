@@ -3811,12 +3811,14 @@ call's argument vector in an owned worker and reports as the reference does:
 an error (quoting the first of its output). Long-lived calls are tested with a
 15 second deadline. Closing the owner cancels and reaps the direct child.
 Importing calls asks before adding one that looks unusual (a very long
-program path, too many or too long parameters), as the reference does. Clipboard/JSON-file/PNG exchange reviews supported callable exports
-before changing the Options draft. These editor/exchange/runtime families remain
+program path, too many or too long parameters), as the reference does.
+'test call!' on an OS launch call opens the test path or URL for real. A new
+editor starts each test input at the value last typed for that kind of input.
+Clipboard/JSON-file/PNG exchange reviews supported callable exports before
+changing the Options draft. These editor/exchange/runtime families remain
 partial: legacy executable-manager import and regeneration when opening only
-the registered-call page, deeper per-call launch menus and routing import,
-OS-launch test execution, rule clipboard controls and some command/dialog interactions are not
-ported. The complete scope is recorded in the external-call parity proposal.
+the registered-call page, deeper per-call launch menus and routing import, rule
+clipboard controls and some command/dialog interactions are not ported. The complete scope is recorded in the external-call parity proposal.
 Options > media viewer > mouse behaviour now stages cursor anchoring and its
 apparent-touchscreen override. Apply updates an already-open viewer; Cancel
 discards the draft. Anchored drags pan about the press position and request a

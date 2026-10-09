@@ -118,8 +118,38 @@ def record(session):
             p._test_value.setText('/typed/漢 value.png')
             typed = dict(output_before=before, output=text(), preview=panel._actual_command_preview.text())
             panel.deleteLater()
+
+            # a new editor starts each input at the value last typed for its kind
+            remembered = []
+            for call in [process('xdg-open', ['%path%']), process('firefox', ['%url%'], P.PARAMETER_TYPE_URL)]:
+                again = TestCallablePanel(c.gui)
+                again.SetActualCall(call)
+                remembered.append(dict(call=describe(call), rows=[dict(name=p._name.text(), value=p._test_value.text())
+                                       for p in again._input_param_types_to_edit_panels.values()]))
+                again.deleteLater()
+
+            # 'test call!' on the OS launchers opens the input for real: what
+            # each would have run is recorded instead
+            launched = []
+            old_run, old_open = A.HydrusSubprocess.RunSubprocess, A.webbrowser.open
+            A.HydrusSubprocess.RunSubprocess = lambda cmd, **kw: launched.append(dict(cmd=list(cmd))) or ('', '', 0)
+            A.webbrowser.open = lambda url, *a, **kw: launched.append(dict(url=url)) or True
+            os_calls = []
+            try:
+                for call in [A.ExecutableLocalProcessDefaultLaunchFile(), A.ExecutableLocalProcessDefaultLaunchURL()]:
+                    again = TestCallablePanel(c.gui)
+                    again.SetActualCall(call)
+                    launched.clear()
+                    again._test_call_button.click()
+                    interim = again._raw_output_text_box.toPlainText()
+                    settle(again._test_call_button)
+                    os_calls.append(dict(call=describe(call), interim=interim,
+                                         output=again._raw_output_text_box.toPlainText(), launched=list(launched)))
+                    again.deleteLater()
+            finally:
+                A.HydrusSubprocess.RunSubprocess, A.webbrowser.open = old_run, old_open
             return dict(setups=setups, availability=availability, calls=calls, typed=typed,
-                        output_path=output_path)
+                        remembered=remembered, os_calls=os_calls, output_path=output_path)
         return c.CallBlockingToQt(c.gui, work)
 
 

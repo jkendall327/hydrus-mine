@@ -736,13 +736,26 @@ fn the_icon_follows_the_reference_s_recorded_cases() {
         })
         .unwrap();
     set_options(&client, &[(ALWAYS, true)]);
+    // (paused through the main window's network > pause menu)
+    let network = i32::try_from(
+        super::menu_bar::titles(&client.ui)
+            .iter()
+            .position(|(label, _)| label == "network")
+            .unwrap(),
+    )
+    .unwrap();
+    let flip = |label: &str| {
+        client.ui.invoke_menu_title_pressed(network, 200.0, 22.0);
+        super::menu_bar::hover(&client.ui, "pause");
+        super::menu_bar::choose(&client.ui, label);
+    };
     for case in recorded["menu"]["tooltips"].as_array().unwrap() {
         let pauses: settings::Pauses = client.store.read(settings::get).unwrap();
         if pauses.network_traffic != case["network_paused"].as_bool().unwrap() {
-            client.bound.tray.flip_pause(true);
+            flip("all new network traffic");
         }
         if pauses.subscriptions != case["subscriptions_paused"].as_bool().unwrap() {
-            client.bound.tray.flip_pause(false);
+            flip("subscriptions");
         }
         assert_eq!(
             client.host.view().tooltip,

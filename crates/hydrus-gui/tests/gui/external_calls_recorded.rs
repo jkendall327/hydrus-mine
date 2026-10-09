@@ -71,6 +71,11 @@ fn synthetic_pair(reference: &Value) -> String {
 
 /// A staged call's key, read from what the list's export would write.
 fn key_of(bound: &Bound, w: &OptionsWindow, name: &str) -> [u8; 32] {
+    call_of(bound, w, name).key
+}
+
+/// A staged call, read from what the list's export would write.
+fn call_of(bound: &Bound, w: &OptionsWindow, name: &str) -> Callable {
     w.invoke_external_call_clicked(named(w, name), false, false);
     w.invoke_external_call_action("export".into());
     let text = bound
@@ -85,7 +90,7 @@ fn key_of(bound: &Bound, w: &OptionsWindow, name: &str) -> [u8; 32] {
     let calls = hydrus_downloader_exchange::external_calls::decode_text(&text).unwrap();
     assert_eq!(calls.len(), 1);
     assert_eq!(calls[0].name, name);
-    calls[0].key
+    calls[0].clone()
 }
 
 /// Everything of a call but its key.
@@ -215,10 +220,24 @@ fn importing_replays_the_reference_s_names_keys_and_weird_call_question() {
         reference["export"].as_str().unwrap(),
     )
     .unwrap();
-    for name in ["edited 日本 (1)", "synthetic call (1) (1)"] {
-        let key = key_of(&bound, &w, name);
+    // each imported call is the exported one under its new name, with a
+    // fresh key
+    for (name, exported_call) in ["edited 日本 (1)", "synthetic call (1) (1)"]
+        .into_iter()
+        .zip(&exported)
+    {
+        let imported = call_of(&bound, &w, name);
+        assert_eq!(
+            Callable {
+                key: [0; 32],
+                name: exported_call.name.clone(),
+                ..imported.clone()
+            },
+            keyless(std::slice::from_ref(exported_call))[0]
+        );
         assert!(
-            exported.iter().all(|c| c.key != key) && recorded.calls.iter().all(|c| c.key != key),
+            exported.iter().all(|c| c.key != imported.key)
+                && recorded.calls.iter().all(|c| c.key != imported.key),
             "an imported call has a fresh key"
         );
     }

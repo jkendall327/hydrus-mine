@@ -2897,12 +2897,10 @@ each unusual call as it is added; a no stops there with the reference's "User
 declined to add--the import looked weird.", shown on the list rather than in a
 "Problem importing!" dialog.
 Per-call PNG batches, drop import, input-rule clipboard controls and timeout
-minutes controls are not implemented. The callable editor's test box starts
-each input at the reference's example value, but does not remember the last
-value typed for a parameter across editors as the reference does; its input
-rows are the rule rows (one per parameter the job offers, those in use
-enabled). 'test call!' is off for the two OS launch calls, where the reference
-opens the example path or URL for real. Testing turns both test buttons off
+minutes controls are not implemented. The callable editor's test input rows
+are the rule rows (one per parameter the job offers, those in use enabled).
+'test call!' on an OS launch call opens its input at once, without the
+reference's brief "Testing…". Testing turns both test buttons off
 while it runs (the reference turns off only the one clicked). A test call's
 results and errors are the reference's (`Looks good!`, its
 `ExecutableException` and `BadReturnCodeException` texts with Python's list and

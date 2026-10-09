@@ -132,7 +132,7 @@ export component ExternalCallWindow inherits Window {
                     LineEdit{text:row.value;enabled:!root.testing && !root.child-open;edited=>{root.test-input(i,self.text);}}
                 }
                 LineEdit{text:root.preview;read-only:true;}
-                Button{text:"test call!";enabled:root.call-type==0 && !root.testing && !root.child-open;clicked=>{root.test(false);}}
+                Button{text:"test call!";enabled:!root.testing && !root.child-open;clicked=>{root.test(false);}}
                 Text{text:root.test-status;wrap:word-wrap;vertical-stretch:1;}
             }
         }

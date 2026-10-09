@@ -104,9 +104,14 @@ fn recorded_rows(rows: &Value) -> Vec<(String, String)> {
         .collect()
 }
 
-/// A test button is enabled as the editor's own binding says.
+/// 'test availability!' is enabled, as the editor's own binding says.
 fn enabled(child: &ExternalCallWindow) -> bool {
     child.get_call_type() == 0 && !child.get_testing() && !child.get_child_open()
+}
+
+/// 'test call!' is enabled, as the editor's own binding says.
+fn call_enabled(child: &ExternalCallWindow) -> bool {
+    !child.get_testing() && !child.get_child_open()
 }
 
 fn settle(child: &ExternalCallWindow) {
@@ -139,14 +144,11 @@ fn test_inputs_and_preview_start_as_the_reference_s_for_each_call() {
             setup["availability_enabled"].as_bool().unwrap(),
             "{setup}"
         );
-        // (the reference also offers 'test call!' for the OS launchers, which
-        // opens the example path for real; hydrus-rs does not: DIFFERENCES.md)
-        if setup["call"]["kind"] == "process" {
-            assert_eq!(
-                enabled(child),
-                setup["test_call_enabled"].as_bool().unwrap()
-            );
-        }
+        assert_eq!(
+            call_enabled(child),
+            setup["test_call_enabled"].as_bool().unwrap(),
+            "{setup}"
+        );
         child.invoke_cancel();
         editing.options.invoke_cancel();
     }
@@ -188,11 +190,12 @@ fn test_call_runs_the_call_and_reports_as_the_reference_does() {
     let recorded = hydrus_testkit::fixture_json("external_call_tests.json");
     let recorded_path = recorded["output_path"].as_str().unwrap();
     let _windows = headless::init();
+    let owned = tempfile::tempdir().unwrap();
+    let path = owned.path().join("owned output.txt");
+    let path = path.to_str().unwrap();
+    let ours = |text: &str| text.replace(recorded_path, path);
     for case in recorded["calls"].as_array().unwrap() {
-        let owned = tempfile::tempdir().unwrap();
-        let path = owned.path().join("owned output.txt");
-        let path = path.to_str().unwrap();
-        let ours = |text: &str| text.replace(recorded_path, path);
+        let _ = std::fs::remove_file(path);
         let editing = edit(&case["call"]);
         let child = &editing.child;
         child.invoke_test_input(0, ours(case["input"].as_str().unwrap()).into());
@@ -203,7 +206,7 @@ fn test_call_runs_the_call_and_reports_as_the_reference_does() {
         child.invoke_test(false);
         assert_eq!(child.get_test_status().as_str(), case["interim"]["output"]);
         assert_eq!(
-            enabled(child),
+            call_enabled(child),
             case["interim"]["enabled"].as_bool().unwrap()
         );
         settle(child);
@@ -213,7 +216,7 @@ fn test_call_runs_the_call_and_reports_as_the_reference_does() {
             "{}",
             case["name"]
         );
-        assert_eq!(enabled(child), case["enabled_after"].as_bool().unwrap());
+        assert_eq!(call_enabled(child), case["enabled_after"].as_bool().unwrap());
         assert_eq!(
             std::fs::read_to_string(path).ok().as_deref(),
             case["written"].as_str(),
@@ -224,7 +227,8 @@ fn test_call_runs_the_call_and_reports_as_the_reference_does() {
         editing.options.invoke_cancel();
     }
 
-    // typing a test value redoes the preview and clears the last result
+    // a call with no test value typed starts at the last one typed (the
+    // long-lived case's); typing redoes the preview and clears the result
     let typed = &recorded["typed"];
     let mut failing = recorded["calls"][0]["call"].clone();
     failing["arguments"][2] = "pre:%path%".into();
@@ -232,17 +236,46 @@ fn test_call_runs_the_call_and_reports_as_the_reference_does() {
     let child = &editing.child;
     child.invoke_test(false);
     settle(child);
-    assert!(
-        child.get_test_status().starts_with(
-            "BadReturnCodeException: A call to another executable gave a non-zero return code (2)!"
-        ),
-        "{} / {}",
-        child.get_test_status(),
-        typed["output_before"]
+    assert_eq!(
+        child.get_test_status().as_str(),
+        ours(typed["output_before"].as_str().unwrap())
     );
     child.invoke_test_input(0, "/typed/漢 value.png".into());
     assert_eq!(child.get_test_status().as_str(), typed["output"]);
     assert_eq!(child.get_preview().as_str(), typed["preview"]);
     child.invoke_cancel();
     editing.options.invoke_cancel();
+
+    // the next editors start at what was typed last, per kind of input
+    for case in recorded["remembered"].as_array().unwrap() {
+        let editing = edit(&case["call"]);
+        assert_eq!(rows(&editing.child), recorded_rows(&case["rows"]), "{case}");
+        editing.child.invoke_cancel();
+        editing.options.invoke_cancel();
+    }
+
+    // 'test call!' on the OS launchers opens that path or URL for real
+    let launched = std::rc::Rc::new(std::cell::RefCell::new(Vec::<String>::new()));
+    hydrus_gui::set_launcher({
+        let launched = launched.clone();
+        move |target| launched.borrow_mut().push(target.to_owned())
+    });
+    for case in recorded["os_calls"].as_array().unwrap() {
+        launched.borrow_mut().clear();
+        let editing = edit(&case["call"]);
+        let child = &editing.child;
+        assert!(call_enabled(child));
+        child.invoke_test(false);
+        settle(child);
+        assert_eq!(child.get_test_status().as_str(), case["output"]);
+        let target = &case["launched"][0];
+        let expected = target["url"]
+            .as_str()
+            .or_else(|| target["cmd"][1].as_str())
+            .unwrap();
+        assert_eq!(launched.borrow().as_slice(), [expected.to_owned()]);
+        child.invoke_cancel();
+        editing.options.invoke_cancel();
+    }
+    hydrus_gui::set_launcher(|_| {});
 }
