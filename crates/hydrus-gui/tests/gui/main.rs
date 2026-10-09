@@ -41,6 +41,7 @@ mod file_view_removal;
 mod filename_rules;
 mod filename_simple;
 mod filesize_predicate;
+mod filetype_handling;
 mod folder_manager_lifecycle;
 mod folders;
 mod force_filetype;

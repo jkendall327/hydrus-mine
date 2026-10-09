@@ -4745,8 +4745,10 @@ preview show actions and zoom info as the reference does, sorted by column.
 class's options; "edit" (or double-click) opens "edit media view options
 information" with the filetype's own show-action choices, start paused/embed
 switches, scaling, half/double zooms and interpolation qualities, enabled as
-`_UpdateControls` enables them; "delete" removes specific filetypes but never the
-classes. Edits stay in the Options draft until Apply. Dumped by
+`_UpdateControls` enables them; "delete" asks "Remove all selected?" and then
+removes specific filetypes but never the classes. Once Options is applied, the
+media viewer opens a file of that type at the row's zoom (checked on a jpeg
+against `oracle/record_filetype_handling.py`). Edits stay in the Options draft until Apply. Dumped by
 `oracle/dump_media_view_options.py`; `tests/model/media_view_options.rs`.
 Options Apply waits for its open media editor. Cancelled or replaced children,
 and children whose Options owner is hidden, cannot stage an edit or open a

@@ -8957,10 +8957,10 @@
     "Physical native tests use disposable copied media."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Options staging is recorded and the unchecked-and-busy case blocks the real Trash worker, and idle admits it; but no GUI test drives the real trash worker admitted by trash_normal=true while busy (only Preferences::allows, a decision function), and the recorded trash_shutdown / trash_admitted_setting_change / trash_shutdown_between_groups traces ([8,8] groups) are not replayed by any test, though the tracker note claims them. Tests: crates/hydrus-gui/tests/gui/normal_time_maintenance.rs:124,218; crates/hydrus-gui-model/tests/model/normal_time_maintenance.rs:30,110"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin C)",
+    "note": "Against oracle/fixtures/normal_time_maintenance.json (record_normal_time_maintenance.py: the reference's real DAEMONMaintainTrash with scripted idle, queue, sleep and shutdown boundaries): the test sets the option in the real Options window and applies it, then polls the GUI's real trash worker (maintenance runtime) with the client idle or in normal use. For each recorded trash admission (idle x option) the worker runs a pass exactly when the reference read the trash, and leaves the recorded number of the test's trashed file. An admitted pass of two-plus groups of eight keeps going when the option is turned off after its first group (trash_admitted_setting_change: saved off, trash emptied), and a retire between groups stops it before the second write (trash_shutdown_between_groups). Turning the gate to ignore normal use, or the per-group cancellation off, makes the test fail. The options staging (cancel, reopen) of this row is replayed with the deferred-deletes row in normal_time_maintenance.rs staged_controls_cancel_reopen_hidden_retired_and_peer_merge. Fixed here: a trash pass writes one group of eight per write, as the reference's, so a stop lands between groups. Differences: the store's own already-trashed files go in the same pass (the test counts groups from the starting trash size). Tests: crates/hydrus-gui/tests/gui/trash_normal_time.rs the_trash_worker_runs_in_normal_time_as_the_reference_s_does"
    }
   },
   {
@@ -13399,10 +13399,10 @@
     "Native options registry has no editable 'add' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real Options buttons and chooser/editor, but the 'reaches the viewer' check uses crate::zoom::Zoom::new(..).rect() (a decision function standing in for the viewer) with literal rects, and Apply is simulated via editor.applied()+save; the recording (media_view_options.json) only covers rows/addable/editor choices in a model test, not the add behaviour. Stale tracker note (says no editable row). Tests: crates/hydrus-gui/src/options_media_views.rs:646 added_edited_and_deleted_filetype_handling_reaches_the_viewer_s_zoom; :492 earlier add-path test; crates/hydrus-gui-model/tests/model/media_view_options.rs:46,120"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin C)",
+    "note": "oracle/record_filetype_handling.py runs the reference's real MediaPlaybackPanel: 'add' (the real filetype chooser, the real EditMediaViewOptionsPanel set to 100% scale up), Options OK, then CalculateCanvasZooms for a small and a big jpeg. The GUI test uses the real Options window: the table has no jpeg row and 'add' is available; add opens the chooser whose choices equal the recording's sorted list, choosing 'image: jpeg' opens the editor titled as the reference's on the general image options' scale up (the recorded 'before' value); set to 100%, Apply stages it (the viewer is unchanged, as the recording's zooms_before_ok), and after Options OK the real media viewer opens the small jpeg at 100% (the recorded 1.0), the big jpeg's recorded zoom being unchanged. With the viewer ignoring per-filetype rows the test fails. Tests: crates/hydrus-gui/tests/gui/filetype_handling.rs filetype_handling_is_added_edited_and_deleted_as_the_reference_does"
    }
   },
   {
@@ -13419,10 +13419,10 @@
     "Native options registry has no editable 'delete' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real delete button drives the editor, but effect is judged via Zoom::new rect stand-in and a simulated Apply; the delete rules (classes undeletable, fallback to class) are typed literals in a model test, the fixture's 'deletable'/'actions' keys are not replayed. Stale tracker note. Tests: crates/hydrus-gui/src/options_media_views.rs:648 added_edited_and_deleted_filetype_handling_reaches_the_viewer_s_zoom; crates/hydrus-gui-model/tests/model/media_view_options.rs:120 delete_spares_classes_and_add_copies_the_class"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin C)",
+    "note": "As the add leaf: with the jpeg row selected, 'delete' is available (the recorded can_delete) and asks 'Remove all selected?' (the recording's question; 'no' keeps the row) and 'yes' removes the row from the staged table. Fixed here: delete did not ask, nothing changes until Options OK, and then the real media viewer opens the small jpeg at its class's zoom (the recorded zoom equals the start's). Deleting is seen to change the zoom: the row is first set back to 100%. With delete doing nothing the test fails. Tests: crates/hydrus-gui/tests/gui/filetype_handling.rs filetype_handling_is_added_edited_and_deleted_as_the_reference_does"
    }
   },
   {
@@ -13439,10 +13439,10 @@
     "Native options registry has no editable 'edit' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real edit button and editor window ('edit media view options information'), but the viewer consumer is Zoom::new(..).rect() with literals and Apply is simulated; the recorded editor choices are replayed only in the model test, not tied to the edit flow. Stale tracker note. Tests: crates/hydrus-gui/src/options_media_views.rs:647 added_edited_and_deleted_filetype_handling_reaches_the_viewer_s_zoom; :492 edit/cancel test; crates/hydrus-gui-model/tests/model/media_view_options.rs:46"
+    "date": "2026-10-09",
+    "class": "sound",
+    "by": "Claude (recheck bin C)",
+    "note": "As the add leaf: 'edit' of the saved jpeg row in the real Options window opens the editor with the reference's title on the saved 100% (the recording's 'before'), changing it to 'scale to the canvas size' and pressing Options OK makes the real media viewer open the small jpeg exactly as it did before any row (the recorded zoom equals the start's). Tests: crates/hydrus-gui/tests/gui/filetype_handling.rs filetype_handling_is_added_edited_and_deleted_as_the_reference_does"
    }
   },
   {
