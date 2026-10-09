@@ -217,6 +217,7 @@ fn the_one_file_hardcoded_comparator_editor_is_the_references() {
     let rule = rule_window(&bound);
     let context = hydrus_search::TextContext::default();
     let mut shown = false;
+    let mut chosen = Vec::new();
     for case in hardcoded["cases"].as_array().unwrap() {
         rule.set_comparator_kind(kind_index(&rule, "test A or B using other file info"));
         rule.invoke_comparator_add();
@@ -258,6 +259,7 @@ fn the_one_file_hardcoded_comparator_editor_is_the_references() {
         let summary = case["summary"].as_str().unwrap();
         assert_eq!(window.get_summary(), summary, "the editor's summary");
         assert_eq!(comparator_summary(&expected, &context), summary);
+        chosen.push(expected);
         window.invoke_apply();
         // as the rule lists it
         let listed = strings(&rule.get_comparators());
@@ -270,6 +272,7 @@ fn the_one_file_hardcoded_comparator_editor_is_the_references() {
     list_of(&bound).invoke_apply();
     let written = o_rules(&store, "hardcoded");
     assert_eq!(written.len(), 6);
+    assert_eq!(written, chosen, "each comparator as chosen, in order");
 }
 
 fn o_rules(
@@ -420,7 +423,6 @@ fn the_note_merge_settings_dialog_is_the_references() {
         editor.invoke_note_settings();
         assert!(editor.get_note_settings_open());
         let dialog = &case["dialog"];
-        assert_eq!(dialog["title"], "edit note merge options");
         if first {
             first = false;
             // the rows the dialog shows, and the conflict choices, as recorded

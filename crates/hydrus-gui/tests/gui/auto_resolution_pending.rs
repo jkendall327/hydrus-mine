@@ -5,8 +5,8 @@
 //! "fetch all" phrase, refreshing at several fetch limits, select all, the
 //! question asked before approving more than five pairs, the progress texts
 //! the buttons show as the work goes four at a time, what the tab holds
-//! after, and the popup the reference publishes four seconds in (which a job
-//! done before then never shows).
+//! after (the popup the reference publishes four seconds in, which a job
+//! done before then never shows, is not replayed: only the buttons are).
 
 use serde_json::Value;
 use slint::Model as _;
@@ -155,7 +155,20 @@ fn pending_pairs_are_fetched_selected_approved_and_denied_as_the_reference_does(
                 // (a pair already gone from the database but still on the
                 // window's list, as the reference's stale list had it, is
                 // taken by its place: the lists then have the same pairs)
-                native.iter().position(|p| *p == theirs[at]).unwrap_or(at)
+                native
+                    .iter()
+                    .position(|p| *p == theirs[at])
+                    .unwrap_or_else(|| {
+                        // only a press that goes ahead can have such rows
+                        assert!(
+                            !declined,
+                            "a pair of the reference's list is missing from ours: {} {} row {at} of {}",
+                        step["button"],
+                        step["answer"],
+                        native.len()
+                        );
+                        at
+                    })
             })
             .collect();
         for (n, row) in rows.iter().enumerate() {

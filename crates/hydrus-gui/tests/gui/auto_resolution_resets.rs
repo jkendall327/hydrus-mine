@@ -235,12 +235,13 @@ fn resyncing_potential_pairs_to_local_storage_clears_the_pairs_the_reference_doe
             "answered {}",
             press["answer"]
         );
-        if let Some(job) = press["jobs"]
+        let job = press["jobs"]
             .as_array()
             .unwrap()
             .iter()
-            .find(|j| j["title"] == "resyncing potential pairs to hydrus local file storage")
-        {
+            .find(|j| j["title"] == "resyncing potential pairs to hydrus local file storage");
+        if press["answer"] == "yes" {
+            let job = job.expect("the recorded resync job");
             let popups = store
                 .read(|c| hydrus_store::popups::all(c, i64::MAX / 4))
                 .unwrap();
@@ -249,6 +250,8 @@ fn resyncing_potential_pairs_to_local_storage_clears_the_pairs_the_reference_doe
                 .find(|p| p.status_title.as_deref() == Some(job["title"].as_str().unwrap()))
                 .expect("the resync's popup");
             assert_eq!(popup.status_text_1.as_deref(), job["text"].as_str());
+        } else {
+            assert!(job.is_none(), "no resync when answered no");
         }
     }
 }

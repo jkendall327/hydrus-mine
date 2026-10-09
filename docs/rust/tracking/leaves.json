@@ -2949,7 +2949,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "recheck bin E session (claude/recheck-e-dupes)",
-    "note": "auto_resolution_pending.rs (same test) replays the progress the reference's approve/deny buttons show as the real worker goes four pairs at a time: 'approving: 0/7' then 'approving: 4/7' then back to 'approve', and 'denying: 0/3' then 'deny' (compared in the real window with the store's writer slowed so each chunk is seen), the same pairs end up approved or denied, and the reference's popup (published four seconds after the work starts, so a job that is done and dismissed by then never shows: recorded) is the native popup after the same delay (crates/hydrus-gui/tests/gui/auto_resolution_review.rs:464 approving_and_denying_show_their_progress_on_the_button_and_in_a_popup shows its text and dismissal with the delay set to zero). The recording's cancellability finding stands: neither job is cancellable."
+    "note": "auto_resolution_pending.rs (same test) replays the progress the reference's approve/deny buttons show as the real worker goes four pairs at a time: 'approving: 0/7' then 'approving: 4/7' then back to 'approve', and 'denying: 0/3' then 'deny' (compared in the real window with the store's writer slowed so each chunk is seen), the same pairs end up approved or denied. Buttons only: the reference's popup is published four seconds after the work starts, so a job done by then never shows one (the recording's late popup, dismissed, is not replayed); the native popup's text and dismissal are checked, with the delay at zero, by crates/hydrus-gui/tests/gui/auto_resolution_review.rs approving_and_denying_show_their_progress_on_the_button_and_in_a_popup. The recording's cancellability finding stands: neither job is cancellable."
    }
   },
   {
@@ -2962,7 +2962,7 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Rule fields update paused/operation/max-pending and validate rule names; action-changing controls reset incompatible custom merge state."
+    "Rule fields update paused/operation/max-pending and validate rule names."
    ],
    "recheck": {
     "date": "2026-10-09",
