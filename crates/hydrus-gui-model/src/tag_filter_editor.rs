@@ -40,6 +40,9 @@ pub const WHITELIST_ERROR: &str =
     "The filter is currently more complicated than a simple whitelist, so it cannot be shown here.";
 pub const BLACKLIST_ERROR: &str =
     "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.";
+/// The tooltip of "show other panels" (after the reference's `WrapToolTip`, which
+/// Slint's own wrapping replaces).
+pub const SHOW_OTHER_PANELS_TOOLTIP: &str = "This shows the whitelist and advanced panels, in case you want to craft a clever blacklist with 'except' rules.";
 pub const REMOVE_SELECTED: &str = "Remove all selected?";
 pub const GLOBAL_BOXES: [&str; 2] = ["unnamespaced tags", "namespaced tags"];
 pub const HELP: &str = "Here you can set rules to filter tags for one purpose or another. The default is typically to permit all tags. Check the current filter summary text at the bottom-left of the panel to ensure you have your logic correct.\n\nThe whitelist/blacklist/advanced tabs are different ways of looking at the same filter, so you can choose which works best for you. Sometimes it is more useful to think about a filter as a whitelist (where only the listed contents are kept) or a blacklist (where everything _except_ the listed contents are kept), while the advanced tab lets you do a more complicated combination of the two.\n\nAs well as selecting entire namespaces with the checkboxes, you can type or paste the individual tags directly--just hit enter to add each one. Double-click an existing entry in a list to remove it.";

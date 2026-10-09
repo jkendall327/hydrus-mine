@@ -384,3 +384,61 @@ fn the_previews_volume_control_opens_under_the_pointer_and_moves_the_volume() {
     assert!(p.settings().global_mute);
     p.until(|| p.playing().1 == (100, true));
 }
+
+#[test]
+fn the_previews_mute_buttons_show_the_references_tooltips_once_the_pointer_rests_on_them() {
+    use slint::platform::WindowEvent;
+    let recording = hydrus_testkit::fixture_json("tag_filter_tooltips.json");
+    let p = Preview::new();
+    let ui = &p.client.ui;
+    p.select("audio.mp3");
+    p.until(|| ui.get_preview_volume_shown());
+    assert_eq!(
+        ui.get_preview_global_tooltip(),
+        recording["global_mute"].as_str().unwrap()
+    );
+    assert_eq!(
+        ui.get_preview_mute_tooltip(),
+        recording["preview_mute"].as_str().unwrap()
+    );
+    let native = p.client.native();
+    headless::render(&native, 1000, 900);
+    let at = |x: f32, y: f32| slint::LogicalPosition::new(x, y);
+    let (x, y) = (ui.get_preview_volume_x(), ui.get_preview_volume_y());
+    // the pointer opens the control (upwards from the global mute), moves to one
+    // of its parts and rests there: the picture of the corner of the pane beside it
+    let rests = |zone: f32| {
+        ui.window().dispatch_event(WindowEvent::PointerExited);
+        headless::render(&native, 1000, 900);
+        ui.window().dispatch_event(WindowEvent::PointerMoved {
+            position: at(x + 12.0, y + 10.0),
+        });
+        assert!(ui.get_preview_volume_open());
+        headless::render(&native, 1000, 900);
+        let top = ui.get_preview_volume_y();
+        // (one move only: each move restarts the tooltip's delay)
+        ui.window().dispatch_event(WindowEvent::PointerMoved {
+            position: at(x + 12.0, top + zone),
+        });
+        for _ in 0..8 {
+            std::thread::sleep(Duration::from_millis(100));
+            slint::platform::update_timers_and_animations();
+        }
+        let picture = headless::render(&native, 1000, 900);
+        let mut corner = Vec::new();
+        for row in 760..900 {
+            corner.extend_from_slice(&picture[(row * 1000 + 300) * 4..(row * 1000 + 700) * 4]);
+        }
+        corner
+    };
+    // the slider's track has no tooltip; each mute button draws its own (the
+    // preview's own mute is at the top of the open control, the global one at its
+    // bottom), and the recording says what each says
+    let track = rests(60.0);
+    let own = rests(130.0);
+    let global = rests(150.0);
+    assert_ne!(track, own);
+    assert_ne!(track, global);
+    assert_ne!(own, global);
+    assert_eq!(track, rests(60.0));
+}

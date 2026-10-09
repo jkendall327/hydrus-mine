@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The session saving dialog (`src/session_dialog.rs`, driven by
 // hydrus-gui-model's session_saving): a name asked, as the reference's
 // text entry asks it (after a warning, for a name that can't be had), or a
@@ -93,7 +94,7 @@ export component SessionDialog inherits Window {
             }
             if root.regex-mode: HorizontalLayout {
                 RegexTools { components: root.regex-components; show-groups: false; enabled: !root.child-open; selected(c,i) => { root.regex-tool(c,i); } }
-                favourite := Button { text: "favourites"; enabled: !root.child-open; clicked => { root.favourite-menu(favourite.x / 1px, (favourite.y + favourite.height) / 1px); } }
+                favourite := Btn { text: "favourites"; enabled: !root.child-open; clicked => { root.favourite-menu(favourite.x / 1px, (favourite.y + favourite.height) / 1px); } }
                 Text { text: root.regex-validity; color: Theme.text; wrap: word-wrap; }
             }
             HorizontalLayout {
@@ -104,12 +105,12 @@ export component SessionDialog inherits Window {
                 if root.notice-only: FocusScope {
                     init => { self.focus(); }
                     HorizontalLayout {
-                        Button { text: root.notice-ok-label; clicked => { root.cancelled(); } }
+                        Btn { text: root.notice-ok-label; clicked => { root.cancelled(); } }
                     }
                 }
                 if root.asking-name: HorizontalLayout {
                     spacing: 0px;
-                    name-apply := Button {
+                    name-apply := Btn {
                         enabled: !root.child-open;
                         text: root.name-ok-label;
                         clicked => {
@@ -128,16 +129,16 @@ export component SessionDialog inherits Window {
                         }
                     }
                 }
-                if root.asking-name: Button {
+                if root.asking-name: Btn {
                     enabled: !root.child-open;
                     text: "cancel";
                     clicked => { root.cancelled(); }
                 }
-                if !root.asking-name && !root.notice-only: Button {
+                if !root.asking-name && !root.notice-only: Btn {
                     text: root.yes-label;
                     clicked => { root.answered(true); }
                 }
-                if !root.asking-name && !root.notice-only: Button {
+                if !root.asking-name && !root.notice-only: Btn {
                     text: root.no-label;
                     clicked => { root.answered(false); }
                 }

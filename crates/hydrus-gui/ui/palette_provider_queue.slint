@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // Command palette provider order, staged inside its owning Options window.
 import { Button, ScrollView } from "std-widgets.slint";
 import { ListTable, TableRow } from "list_table.slint";
@@ -27,23 +28,23 @@ export component PaletteProviderQueue inherits Rectangle {
             }
             VerticalLayout {
                 alignment: center;
-                Button { text:"\u{2191}"; enabled:root.has-selection; clicked=>{root.action("up");} }
-                Button { text:"X"; enabled:root.has-selection; clicked=>{root.action("delete");} }
-                Button { text:"\u{2193}"; enabled:root.has-selection; clicked=>{root.action("down");} }
+                Btn { text:"\u{2191}"; enabled:root.has-selection; clicked=>{root.action("up");} }
+                Btn { text:"X"; enabled:root.has-selection; clicked=>{root.action("delete");} }
+                Btn { text:"\u{2193}"; enabled:root.has-selection; clicked=>{root.action("down");} }
             }
         }
-        if root.mode == 0: Button { text:"add"; clicked=>{root.action("add");} }
+        if root.mode == 0: Btn { text:"add"; clicked=>{root.action("add");} }
         if root.mode != 0: Text { text:root.message; wrap:word-wrap; color:Theme.text; }
         if root.mode == 2: ScrollView {
             VerticalLayout {
                 alignment:start;
-                for name[i] in root.missing: Button { text:name; clicked=>{root.chosen(i);} }
+                for name[i] in root.missing: Btn { text:name; clicked=>{root.chosen(i);} }
             }
         }
         if root.mode == 1: HorizontalLayout {
-            Button { text:"yes"; clicked=>{root.answer(true);} }
-            Button { text:"no"; clicked=>{root.answer(false);} }
+            Btn { text:"yes"; clicked=>{root.answer(true);} }
+            Btn { text:"no"; clicked=>{root.answer(false);} }
         }
-        if root.mode == 2: Button { text:"cancel"; clicked=>{root.action("cancel");} }
+        if root.mode == 2: Btn { text:"cancel"; clicked=>{root.action("cancel");} }
     }
 }

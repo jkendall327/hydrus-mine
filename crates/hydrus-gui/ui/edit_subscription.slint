@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The edit subscription dialog (the reference's `EditSubscriptionPanel`,
 // opened from the manage subscriptions dialog's "add" and "edit"; its
 // workings are hydrus-gui-model's `edit_subscription`, bound by
@@ -176,7 +177,7 @@ export component EditSubscriptionWindow inherits Window {
                 Group {
                     title: "site and queries";
                     vertical-stretch: 1;
-                    Button {
+                    Btn {
                         text: root.downloader;
                         enabled: !root.asking && !root.quality-working;
                         clicked => { root.choose-downloader(); }
@@ -208,32 +209,32 @@ export component EditSubscriptionWindow inherits Window {
                     HorizontalLayout {
                         spacing: 6px;
                         alignment: end;
-                        Button {
+                        Btn {
                             text: "add";
                             enabled: !root.asking && !root.quality-working;
                             clicked => { root.add-query(); }
                         }
-                        if root.quality-visible: Button {
+                        if root.quality-visible: Btn {
                             text: "quality info ▾";
                             enabled: root.can-quality && !root.asking && !root.quality-working;
                             clicked => { root.quality-menu(self.absolute-position.x,self.absolute-position.y+self.height); }
                         }
-                        Button {
+                        Btn {
                             text: "copy queries";
                             enabled: root.any-selected && !root.asking && !root.quality-working;
                             clicked => { root.copy-queries(); }
                         }
-                        Button {
+                        Btn {
                             text: "paste queries";
                             enabled: !root.asking && !root.quality-working;
                             clicked => { root.paste-queries(); }
                         }
-                        Button {
+                        Btn {
                             text: "edit";
                             enabled: root.one-selected && !root.asking && !root.quality-working;
                             clicked => { root.edit-query(); }
                         }
-                        Button {
+                        Btn {
                             text: "delete";
                             enabled: root.any-selected && !root.asking && !root.quality-working;
                             clicked => { root.delete-queries(); }
@@ -242,27 +243,27 @@ export component EditSubscriptionWindow inherits Window {
                     HorizontalLayout {
                         spacing: 6px;
                         alignment: end;
-                        Button {
+                        Btn {
                             text: "pause/play";
                             enabled: root.any-selected && !root.asking && !root.quality-working;
                             clicked => { root.pause-play(); }
                         }
-                        if root.can-retry-failed: Button {
+                        if root.can-retry-failed: Btn {
                             text: "retry failed";
                             enabled: !root.asking && !root.quality-working;
                             clicked => { root.retry-failed(); }
                         }
-                        if root.can-retry-ignored: Button {
+                        if root.can-retry-ignored: Btn {
                             text: "retry ignored";
                             enabled: !root.asking && !root.quality-working;
                             clicked => { root.retry-ignored(); }
                         }
-                        Button {
+                        Btn {
                             text: "check now";
                             enabled: root.can-check-now && !root.asking && !root.quality-working;
                             clicked => { root.check-now(); }
                         }
-                        Button {
+                        Btn {
                             text: "reset";
                             enabled: root.can-reset && !root.asking && !root.quality-working;
                             clicked => { root.reset(); }
@@ -318,7 +319,7 @@ export component EditSubscriptionWindow inherits Window {
                                 label: "do not worry about subscription gaps: ";
                                 checked <=> root.random-sample;
                             }
-                            Button {
+                            Btn {
                                 text: "checker options";
                                 enabled: !root.asking && !root.quality-working;
                                 clicked => { root.edit-checker(); }
@@ -374,7 +375,7 @@ export component EditSubscriptionWindow inherits Window {
                         Rectangle { vertical-stretch: 1; }
                     }
                 }
-                Button {
+                Btn {
                     text: root.import-options;
                     clicked => { root.edit-import-options(); }
                 }
@@ -435,7 +436,7 @@ export component EditSubscriptionWindow inherits Window {
                             horizontal-stretch: 1;
                             vertical-alignment: center;
                         }
-                        Button {
+                        Btn {
                             text: "file log";
                             enabled: root.query-has-logs;
                             clicked => { root.query-log(false); }
@@ -448,7 +449,7 @@ export component EditSubscriptionWindow inherits Window {
                             horizontal-stretch: 1;
                             vertical-alignment: center;
                         }
-                        Button {
+                        Btn {
                             text: "search log";
                             enabled: root.query-has-logs;
                             clicked => { root.query-log(true); }
@@ -459,12 +460,12 @@ export component EditSubscriptionWindow inherits Window {
                 HorizontalLayout {
                     alignment: end;
                     spacing: 6px;
-                    Button {
+                    Btn {
                         text: "apply";
                         enabled: !root.asking && !root.quality-working;
                         clicked => { root.query-apply(); }
                     }
-                    Button {
+                    Btn {
                         text: "cancel";
                         clicked => { root.query-cancel(); }
                     }
@@ -480,12 +481,12 @@ export component EditSubscriptionWindow inherits Window {
             if !root.editing-query: HorizontalLayout {
                 alignment: end;
                 spacing: 6px;
-                Button {
+                Btn {
                     text: "apply";
                     enabled: !root.asking && !root.quality-working;
                     clicked => { root.apply(); }
                 }
-                Button {
+                Btn {
                     text: "cancel";
                     clicked => { root.cancel(); }
                 }

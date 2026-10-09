@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { Button } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
@@ -16,12 +17,12 @@ export component LoginCookiesWindow inherits Window {
     VerticalLayout { padding: 12px; spacing: 6px;
         ListTable { vertical-stretch: 1; columns: [{title: "cookie name", width: 340px}, {title: "permitted value", width: 400px, stretch: true}]; rows: root.rows; row-clicked(i,c,s) => { root.row-clicked(i,c,s); } row-activated(i) => { root.row-clicked(i,false,false); root.action("edit"); } delete-pressed => { root.action("delete"); } }
         HorizontalLayout { spacing: 6px;
-            Button { text: "add"; enabled: !root.child-open && !root.deleting; clicked => { root.action("add"); } }
-            Button { text: "edit"; enabled: root.one-selected && !root.child-open && !root.deleting; clicked => { root.action("edit"); } }
-            Button { text: "delete"; enabled: root.any-selected && !root.child-open && !root.deleting; clicked => { root.action("delete"); } }
+            Btn { text: "add"; enabled: !root.child-open && !root.deleting; clicked => { root.action("add"); } }
+            Btn { text: "edit"; enabled: root.one-selected && !root.child-open && !root.deleting; clicked => { root.action("edit"); } }
+            Btn { text: "delete"; enabled: root.any-selected && !root.child-open && !root.deleting; clicked => { root.action("delete"); } }
         }
-        if root.deleting: HorizontalLayout { Text { text: "Remove all selected?"; color: Theme.text; } Button { text: "yes"; clicked => { root.action("confirm-delete"); } } Button { text: "no"; clicked => { root.action("back"); } } }
+        if root.deleting: HorizontalLayout { Text { text: "Remove all selected?"; color: Theme.text; } Btn { text: "yes"; clicked => { root.action("confirm-delete"); } } Btn { text: "no"; clicked => { root.action("back"); } } }
         if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
-        HorizontalLayout { alignment: end; spacing: 6px; Button { text: "apply"; enabled: !root.child-open && !root.deleting; clicked => { root.action("apply"); } } Button { text: "cancel"; clicked => { root.action("cancel"); } } }
+        HorizontalLayout { alignment: end; spacing: 6px; Btn { text: "apply"; enabled: !root.child-open && !root.deleting; clicked => { root.action("apply"); } } Btn { text: "cancel"; clicked => { root.action("cancel"); } } }
     }
 }

@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { Button, ComboBox, VerticalBox, HorizontalBox } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 export component ServicesReviewWindow inherits Window {
@@ -49,28 +50,28 @@ export component ServicesReviewWindow inherits Window {
         Text { text: root.statistics; color: Theme.text; wrap: word-wrap; }
         Text { text: root.unavailable; color: Theme.text; wrap: word-wrap; }
         HorizontalBox {
-            if root.physical-storage: Button { text: "clear deleted files record"; enabled: root.question == ""; clicked => { root.maintenance(5); } }
-            if root.trash-service: Button { text: "undelete all"; enabled: root.trash-nonempty && root.question == ""; clicked => { root.maintenance(1); } }
-            if root.trash-service: Button { text: "clear trash"; enabled: root.trash-nonempty && root.question == ""; clicked => { root.maintenance(0); } }
-            if root.rating-service: Button { enabled: root.question == ""; text: "clear ratings"; clicked => { root.rating-menu-open(); } }
+            if root.physical-storage: Btn { text: "clear deleted files record"; enabled: root.question == ""; clicked => { root.maintenance(5); } }
+            if root.trash-service: Btn { text: "undelete all"; enabled: root.trash-nonempty && root.question == ""; clicked => { root.maintenance(1); } }
+            if root.trash-service: Btn { text: "clear trash"; enabled: root.trash-nonempty && root.question == ""; clicked => { root.maintenance(0); } }
+            if root.rating-service: Btn { enabled: root.question == ""; text: "clear ratings"; clicked => { root.rating-menu-open(); } }
             Rectangle { horizontal-stretch: 1; }
         }
         if root.rating-menu: VerticalBox {
-            Button { enabled: root.question == ""; text: "for deleted files"; clicked => { root.maintenance(2); } }
-            Button { enabled: root.question == ""; text: "for all non-local files"; clicked => { root.maintenance(3); } }
-            Button { enabled: root.question == ""; text: "for all files"; clicked => { root.maintenance(4); } }
+            Btn { enabled: root.question == ""; text: "for deleted files"; clicked => { root.maintenance(2); } }
+            Btn { enabled: root.question == ""; text: "for all non-local files"; clicked => { root.maintenance(3); } }
+            Btn { enabled: root.question == ""; text: "for all files"; clicked => { root.maintenance(4); } }
         }
         Text { text: root.database-id; color: Theme.text; }
         Text { text: root.error; color: red; wrap: word-wrap; }
         Rectangle { vertical-stretch: 1; }
         HorizontalBox {
-            if root.tag-service: Button { enabled: root.question == "";text: "migrate tags…"; clicked => {root.migrate-tags();}}
-            if root.client-api: Button { enabled: root.question == ""; text: "client api access keys"; clicked => { root.manage-api-keys(); } }
-            Button { enabled: root.question == ""; text: "id"; clicked => { root.show-id(); } }
-            Button { enabled: root.question == ""; text: "copy service key"; clicked => { root.copy-key(); } }
-            Button { enabled: root.question == ""; text: "refresh"; clicked => { root.refresh-clicked(); } }
+            if root.tag-service: Btn { enabled: root.question == "";text: "migrate tags…"; clicked => {root.migrate-tags();}}
+            if root.client-api: Btn { enabled: root.question == ""; text: "client api access keys"; clicked => { root.manage-api-keys(); } }
+            Btn { enabled: root.question == ""; text: "id"; clicked => { root.show-id(); } }
+            Btn { enabled: root.question == ""; text: "copy service key"; clicked => { root.copy-key(); } }
+            Btn { enabled: root.question == ""; text: "refresh"; clicked => { root.refresh-clicked(); } }
             Rectangle { horizontal-stretch: 1; }
-            Button { enabled: root.question == ""; text: "close"; clicked => { root.close-clicked(); } }
+            Btn { enabled: root.question == ""; text: "close"; clicked => { root.close-clicked(); } }
         }
     }
     if root.question != "": Rectangle {
@@ -81,8 +82,8 @@ export component ServicesReviewWindow inherits Window {
             padding: 20px;
             Text { text: root.question; color: Theme.text; wrap: word-wrap; }
             HorizontalBox {
-                Button { text: root.yes-label; clicked => { root.answer(true); } }
-                Button { text: root.no-label; clicked => { root.answer(false); } }
+                Btn { text: root.yes-label; clicked => { root.answer(true); } }
+                Btn { text: root.no-label; clicked => { root.answer(false); } }
             }
         }
     }

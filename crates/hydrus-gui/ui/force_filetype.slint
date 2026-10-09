@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The "force filetypes" dialog (the reference's
 // `EditFilesForcedFiletypePanel`, opened by a thumbnail's or the viewer's
 // "manage > force filetype"; its text and choices are hydrus-gui-model's
@@ -31,11 +32,11 @@ export component ForceFiletypeWindow inherits Window {
         HorizontalLayout {
             alignment: end;
             spacing: 6px;
-            Button {
+            Btn {
                 text: "apply";
                 clicked => { root.apply(); }
             }
-            Button {
+            Btn {
                 text: "cancel";
                 clicked => { root.cancel(); }
             }

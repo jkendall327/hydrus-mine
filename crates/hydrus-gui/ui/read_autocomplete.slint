@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 // The same read tabs in embedded and floating search-page autocomplete.
 import { ComboBox, Button } from "std-widgets.slint";
 import { ReadSuggestions } from "read_suggestions.slint";
@@ -35,12 +36,12 @@ export component ReadAutocomplete inherits Rectangle {
             selected => { root.tab-chosen(self.current-index); }
         }
         HorizontalLayout {
-            Button { enabled: root.enabled; text: "OR"; clicked => { root.or-action(3); } }
-            if root.advanced-visible: Button { enabled: root.enabled; text: "advanced"; clicked => { root.or-action(4); } }
+            Btn { enabled: root.enabled; text: "OR"; clicked => { root.or-action(3); } }
+            if root.advanced-visible: Btn { enabled: root.enabled; text: "advanced"; clicked => { root.or-action(4); } }
         }
         if root.or-active: HorizontalLayout {
-            if root.or-rewind-visible: Button { enabled: root.enabled; text: "↶"; clicked => { root.or-action(1); } }
-            Button { enabled: root.enabled; text: "cancel OR"; clicked => { root.or-action(2); } }
+            if root.or-rewind-visible: Btn { enabled: root.enabled; text: "↶"; clicked => { root.or-action(1); } }
+            Btn { enabled: root.enabled; text: "cancel OR"; clicked => { root.or-action(2); } }
         }
         results := ReadSuggestions {
             vertical-stretch: 1;

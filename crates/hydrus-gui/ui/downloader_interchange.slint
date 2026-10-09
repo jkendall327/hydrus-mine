@@ -1,3 +1,4 @@
+import { Btn } from "btn.slint";
 import { Button, CheckBox, LineEdit, ScrollView, TextEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 export struct PackageChoice { label: string, included: bool }
@@ -44,9 +45,9 @@ export component DownloaderExchangeWindow inherits Window {
                 }
             } }
             HorizontalLayout {
-                Button { text: "all"; enabled: !root.png-child && root.overwrite-question == "" && !root.domain-prompt; clicked => { root.package-chosen(-1, true); } }
-                Button { text: "none"; enabled: !root.png-child && root.overwrite-question == "" && !root.domain-prompt; clicked => { root.package-chosen(-1, false); } }
-                if root.domain-enabled: Button { text: "add headers/bandwidth rules"; enabled: root.active && !root.png-child && root.overwrite-question == "" && !root.domain-prompt; clicked => { root.action("add-domain"); } }
+                Btn { text: "all"; enabled: !root.png-child && root.overwrite-question == "" && !root.domain-prompt; clicked => { root.package-chosen(-1, true); } }
+                Btn { text: "none"; enabled: !root.png-child && root.overwrite-question == "" && !root.domain-prompt; clicked => { root.package-chosen(-1, false); } }
+                if root.domain-enabled: Btn { text: "add headers/bandwidth rules"; enabled: root.active && !root.png-child && root.overwrite-question == "" && !root.domain-prompt; clicked => { root.action("add-domain"); } }
             }
         }
         if root.domain-prompt: VerticalLayout {
@@ -55,48 +56,48 @@ export component DownloaderExchangeWindow inherits Window {
             HorizontalLayout {
                 spacing: 8px;
                 LineEdit { horizontal-stretch: 1; text <=> root.domain-text; accepted => { root.action("domain-ok"); } }
-                Button { text: "ok"; clicked => { root.action("domain-ok"); } }
-                Button { text: "cancel"; clicked => { root.action("domain-cancel"); } }
+                Btn { text: "ok"; clicked => { root.action("domain-ok"); } }
+                Btn { text: "cancel"; clicked => { root.action("domain-cancel"); } }
             }
         }
         TextEdit { vertical-stretch: 1; text <=> root.text; read-only: root.text-read-only; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; }
         HorizontalLayout {
-            Button { text: root.importing ? "paste" : "copy"; enabled: !root.export-empty && !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action(root.importing ? "paste" : "copy"); } }
-            if root.importing: Button { text: "review text"; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action("review"); } }
+            Btn { text: root.importing ? "paste" : "copy"; enabled: !root.export-empty && !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action(root.importing ? "paste" : "copy"); } }
+            if root.importing: Btn { text: "review text"; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action("review"); } }
         }
         if root.json-enabled && root.importing: HorizontalLayout {
-            Button { text: "from json files"; enabled: !root.ready; clicked => { root.action("import-jsons"); } }
-            Button { text: "from png files"; enabled: !root.ready; clicked => { root.action("import-pngs"); } }
+            Btn { text: "from json files"; enabled: !root.ready; clicked => { root.action("import-jsons"); } }
+            Btn { text: "from png files"; enabled: !root.ready; clicked => { root.action("import-pngs"); } }
         }
-        if root.router-import: Button {
+        if root.router-import: Btn {
             text: "from pngs"; enabled: root.active && !root.ready;
             clicked => { root.action("import-pngs"); }
         }
         if !root.png-enabled || root.importing: HorizontalLayout {
             LineEdit { horizontal-stretch: 1; text <=> root.path; placeholder-text: "PNG or text file path"; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; }
-            if !root.router-import: Button { text: "browse"; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action("browse"); } }
-            Button { text: root.importing ? "open file" : "save PNG"; enabled: !root.export-empty && !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action(root.importing ? "open" : "save"); } }
+            if !root.router-import: Btn { text: "browse"; enabled: !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action("browse"); } }
+            Btn { text: root.importing ? "open file" : "save PNG"; enabled: !root.export-empty && !root.ready && !root.png-child && root.overwrite-question == ""; clicked => { root.action(root.importing ? "open" : "save"); } }
         }
         if root.json-enabled && !root.importing: HorizontalLayout {
             LineEdit { horizontal-stretch: 1; text <=> root.path; placeholder-text: "JSON file path"; enabled: !root.png-child && root.overwrite-question == ""; }
-            Button { text: "browse json"; enabled: !root.png-child && root.overwrite-question == ""; clicked => { root.action("browse-json"); } }
-            Button { text: "export to json file"; enabled: !root.export-empty && !root.png-child && root.overwrite-question == ""; clicked => { root.action("save-json"); } }
+            Btn { text: "browse json"; enabled: !root.png-child && root.overwrite-question == ""; clicked => { root.action("browse-json"); } }
+            Btn { text: "export to json file"; enabled: !root.export-empty && !root.png-child && root.overwrite-question == ""; clicked => { root.action("save-json"); } }
         }
         if root.overwrite-question != "": VerticalLayout {
             Text { text: root.overwrite-question; wrap: word-wrap; color: Theme.text; }
             HorizontalLayout {
-                Button { text: "yes"; clicked => { root.action("yes-json"); } }
-                Button { text: "no"; clicked => { root.action("no-json"); } }
+                Btn { text: "yes"; clicked => { root.action("yes-json"); } }
+                Btn { text: "no"; clicked => { root.action("no-json"); } }
             }
         }
-        if root.png-enabled && !root.importing: Button { text: "export to png"; enabled: !root.png-child && root.overwrite-question == ""; clicked => { root.export-png(); } }
+        if root.png-enabled && !root.importing: Btn { text: "export to png"; enabled: !root.png-child && root.overwrite-question == ""; clicked => { root.export-png(); } }
         if root.review != "": TextEdit { height: 140px; text: root.review; read-only: true; }
         if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
         HorizontalLayout {
             alignment: end; spacing: 8px;
-            if root.ready: Button { text: "import"; clicked => { root.action("accept"); } }
-            if root.ready: Button { text: "back"; clicked => { root.action("back"); } }
-            Button { text: "cancel"; clicked => { root.action("cancel"); } }
+            if root.ready: Btn { text: "import"; clicked => { root.action("accept"); } }
+            if root.ready: Btn { text: "back"; clicked => { root.action("back"); } }
+            Btn { text: "cancel"; clicked => { root.action("cancel"); } }
         }
     }
 }
