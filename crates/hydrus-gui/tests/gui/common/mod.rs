@@ -1,4 +1,6 @@
+pub mod main_menu;
 pub mod menus;
+pub mod widgets;
 
 /// Recordings that expect trash to prune a view opt into that saved policy.
 /// The reference's false default otherwise retains page and viewer rows.

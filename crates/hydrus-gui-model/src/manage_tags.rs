@@ -230,8 +230,11 @@ impl ManageTags {
         })
     }
     fn deleted_tags(&self) -> BTreeMap<String, BTreeSet<HashId>> {
-        let mut out = self.deleted[self.service].clone();
-        for (tag, changes) in &self.staged[self.service] {
+        self.deleted_tags_at(self.service)
+    }
+    fn deleted_tags_at(&self, service: usize) -> BTreeMap<String, BTreeSet<HashId>> {
+        let mut out = self.deleted[service].clone();
+        for (tag, changes) in &self.staged[service] {
             for (file, add) in changes {
                 if *add {
                     if let Some(files) = out.get_mut(tag) {
@@ -260,6 +263,34 @@ impl ManageTags {
 
     pub fn service_names(&self) -> Vec<String> {
         self.services.iter().map(|(_, n)| n.clone()).collect()
+    }
+
+    /// Each tab's label, as the reference names its tabs: the service, the
+    /// number of tags its list shows when there are any, and " *" while it
+    /// has changes waiting.
+    pub fn tab_labels(&self) -> Vec<String> {
+        let show_deleted = self.show_deleted();
+        self.services
+            .iter()
+            .enumerate()
+            .map(|(i, (_, name))| {
+                let mut tags: BTreeSet<String> = self.current_tags_at(i).into_keys().collect();
+                if show_deleted {
+                    tags.extend(self.deleted_tags_at(i).into_keys());
+                }
+                let mut label = name.clone();
+                if !tags.is_empty() {
+                    label.push_str(&format!(
+                        " ({})",
+                        hydrus_core::numbers::human_int(tags.len() as u64)
+                    ));
+                }
+                if !self.staged[i].is_empty() {
+                    label.push_str(" *");
+                }
+                label
+            })
+            .collect()
     }
 
     pub fn service(&self) -> usize {
@@ -291,8 +322,11 @@ impl ManageTags {
     /// The files having each tag on the service chosen, its waiting
     /// changes made.
     fn current_tags(&self) -> BTreeMap<String, BTreeSet<HashId>> {
-        let mut out = self.stored[self.service].clone();
-        for (tag, changes) in &self.staged[self.service] {
+        self.current_tags_at(self.service)
+    }
+    fn current_tags_at(&self, service: usize) -> BTreeMap<String, BTreeSet<HashId>> {
+        let mut out = self.stored[service].clone();
+        for (tag, changes) in &self.staged[service] {
             for (file, add) in changes {
                 if *add {
                     out.entry(tag.clone()).or_default().insert(*file);
