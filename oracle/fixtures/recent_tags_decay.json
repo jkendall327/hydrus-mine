@@ -1,0 +1,43 @@
+{
+  "pushed": [
+    "recent:a",
+    "recent:b",
+    "recent:c",
+    "recent:d",
+    "recent:e"
+  ],
+  "steps": [
+    {
+      "step": "three",
+      "count": 3,
+      "tags": [
+        "recent:e",
+        "recent:d",
+        "recent:c"
+      ]
+    },
+    {
+      "step": "ten after three",
+      "count": 10,
+      "tags": [
+        "recent:e",
+        "recent:d",
+        "recent:c"
+      ]
+    },
+    {
+      "step": "none",
+      "count": null,
+      "tags": [
+        "recent:e",
+        "recent:d",
+        "recent:c"
+      ]
+    },
+    {
+      "step": "after clear",
+      "count": 10,
+      "tags": []
+    }
+  ]
+}

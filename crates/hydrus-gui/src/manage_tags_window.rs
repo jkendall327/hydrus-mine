@@ -322,7 +322,15 @@ pub(crate) fn open(
                         w.set_related_status("".into());
                     }
                     Ok(query) => {
-                        if last.borrow().as_ref() != Some(&query) {
+                        // (the reference searches again when its context changes or a
+                        // button is pressed, not when tags are added: the listed
+                        // suggestions are only filtered again)
+                        let mut same_context = query.clone();
+                        if let Some(previous) = last.borrow().as_ref() {
+                            same_context.searches.clone_from(&previous.searches);
+                            same_context.exclude.clone_from(&previous.exclude);
+                        }
+                        if last.borrow().as_ref() != Some(&same_context) {
                             worker.request(query.clone());
                             *last.borrow_mut() = Some(query);
                             started.set(Some(std::time::Instant::now()));

@@ -158,6 +158,7 @@ mod network_sessions;
 mod network_data;
 
 mod downloader_interchange;
+mod suggested_tag_panels;
 mod tag_filter_tooltips;
 mod tag_migration;
 

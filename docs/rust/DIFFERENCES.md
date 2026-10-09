@@ -2490,9 +2490,12 @@ most-used panel availability, matching Qt; updates refresh an already-existing
 panel without inventing a new tab. Native service-list editing uses owned child
 windows instead of embedding the write input directly in Options.
 
-The recent panel provides real history and add-only activation, but its Clear
-question, read-time decay and the full suggestion-list keyboard/context-menu
-interactions remain outside this slice. No recent/children/related/global
+The recent panel provides real history, add-only activation, the Clear
+question and read-time decay (what is older than the newest few the option
+keeps is forgotten for good), replayed from the reference. The suggestion lists'
+own context menus and keyboard (the reference's list boxes have right-click tag
+menus and Ctrl+A/C) are not ported: `suggested-tag-list-interactions`. No
+recent/children/related/global
 favourite-list aliases are promoted. Native most-used updates poll persisted
 settings every 200 ms instead of Qt's publication subscription. New local
 consumers preserve staged tag cancellation and retire their callbacks/timers.
@@ -3913,7 +3916,7 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   self-sizing viewer), the image tile cache and video buffer (hydrus-rs
   renders whole images and leaves video to mpv), the file system wake wait,
   the related-tag search durations are read (see Manage tags, below) and the
-  file lookup scripts switch (there are no file lookup scripts).
+  file lookup scripts switch (file lookup scripts are out of scope, below).
 - The mpv box lacks the audio device fetch button (it needs a running libmpv);
   the QtMediaPlayer box lacks its device choice and fetch button. The tag
   suggestions page lacks the "recent tags in quick entry dialogs" count, the
@@ -4346,12 +4349,24 @@ directory.
   it is closed when its own "close" is pressed rather than with the viewer. If a
   Manage tags window opened from a page is already open, F3 in the viewer shows that
   one (which does not follow the viewer).
-- Suggested tags: the file-lookup-script panel is not ported (the legacy
-  parsing scripts it runs are not in hydrus-rs), and `show_file_lookup_script_tags`
-  stays an option nothing reads. The related panel has the quick, medium and
-  thorough buttons and searches from the selected tags (see "The related panel"
-  below for how the time budget differs). `audit-media-tags-missing-suggestions`
-  and `audit-options-nested-tag-suggestions-tabs` are therefore not tagged.
+- **File lookup scripts are out of scope** (owner decision 2026-10-09: a legacy
+  feature superseded by downloaders). Not ported: the suggested-tags
+  file-lookup panel (and its tab), the script editor and manager, the favourite
+  file lookup script option, and `show_file_lookup_script_tags`, which stays an
+  Options row nothing reads. The default notebook page "file_lookup_scripts"
+  falls back to the first available page, as the reference does with the panel
+  disabled. They are the leaf `file-lookup-scripts` (out of scope).
+- Suggested tags: the related panel has the quick, medium and thorough buttons
+  and searches from the selected tags (see "The related panel" below for how
+  the time budget differs). Adding a tag does not search again, as the
+  reference's does not; the listed suggestions are filtered again.
+  `audit-media-tags-missing-suggestions` is tagged on the panels' replay
+  (`suggested_tag_panels.rs`); `audit-options-nested-tag-suggestions-tabs` stays
+  untagged (no test takes the related durations, the concurrence threshold or
+  the recent count from their Options rows to an observable effect). The
+  recent-tags-in-quick-entry-dialogs count has no consumer: the quick dialog
+  belongs to interactive shortcut commands, not ported
+  (`shortcut-interactive-tag-entry`).
 - The write-autocomplete leaves (`audit-media-tags-autocomplete`,
   `siblings-autocomplete`, `parents-autocomplete`) are tagged on the tests in
   `write_autocomplete_leaves.rs` (rows, entry, context menu, paste and manual
