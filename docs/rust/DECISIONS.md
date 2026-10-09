@@ -124,6 +124,11 @@ record of what was decided, and why the roadmap looks the way it does.
   them; hydrus-rs shows them as editable rows in advanced mode at the owner's
   request. The video buffer follows the reference's sizing (#121).
 
+- **The status bar's app-busy field counts hydrus-rs's background jobs**
+  (2026-10-09). The reference reports its Python worker-thread pool, which
+  hydrus-rs doesn't have; the field shows in-flight background jobs
+  (downloads, imports, maintenance) instead, with the reference's wording.
+
 ## Roadmap that follows
 
 1. **Client API parity**, with Hydrus Companion's request patterns checked
