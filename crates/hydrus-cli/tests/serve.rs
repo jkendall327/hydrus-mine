@@ -792,7 +792,7 @@ fn client_api_listener_reconfigures_recovers_and_preserves_daemon_state() {
     );
     config.use_https = true;
     update(config.clone());
-    wait(&|state| matches!(state,ClientApiState::Failed(why) if why.contains("HTTPS")));
+    wait(&|state| matches!(state, ClientApiState::Listening(_)));
     config.use_https = false;
     update(config.clone());
     wait(&|state| matches!(state, ClientApiState::Listening(_)));

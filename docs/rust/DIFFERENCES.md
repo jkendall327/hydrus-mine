@@ -1228,7 +1228,7 @@ native/store/model regression source awaits hosted CI; no Rust runs locally.
 
 - **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions and repository/IPFS account administration remain unavailable. Local trash clear/undelete, double-confirmed deleted-file-record clearing and all three local rating-clear populations are implemented; bulk rating choices and confirmations use native inline controls rather than Qt popup menus/dialogs. Opening a replacement review retires the previous owner's pending maintenance confirmation.
 
-- **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields with four live, independently interactive rating examples; named SVG configurations are preserved/edited, with rendering subject to the existing SVG support limits. Remote repository/IPFS/account edits remain unavailable here. Client API listener settings are available; HTTPS, normie Eris and external URL overrides are preserved imported values, with an explicit control to disable unsupported HTTPS. A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
+- **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields with four live, independently interactive rating examples; named SVG configurations are preserved/edited, with rendering subject to the existing SVG support limits. Remote repository/IPFS/account edits remain unavailable here. Client API listener settings are available, including HTTPS, the normie welcome page and the external URL overrides (see the Client API entry below). A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
 
 ## Manual file exports
 
@@ -1378,10 +1378,28 @@ open; the renewal rides the UI timer, so a UI thread blocked for over ten second
 for a store without a GUI. Key-change
 questions use an inline edit panel and generated-key button. Listener changes
 may take up to one second; current requests drain for at most ten seconds
-before restart. HTTP logs omit query strings and credentials. HTTPS is refused
-rather than served as plain HTTP; normie Eris/external URL override fields are
-shown as unsupported preserved values in plain text; unset external URL fields
-read "not set".
+before restart. HTTP logs omit query strings and credentials.
+HTTPS: the generated certificate is made with rcgen and aws-lc-rs rather than
+`cryptography`, so its serial number and key bytes differ but every field the
+recording checks (subject, SAN, ten-year validity, RSA 2048, SHA-256, a
+traditional-form unencrypted key, read-only files) matches. The reference
+listens on IPv4 and IPv6 separately; hydrus-rs binds one address (IPv4
+loopback, or all IPv4 interfaces for non-local). Plain HTTP sent to the HTTPS
+port gets no answer, as in the reference. A pair is read when the listener
+starts, so replacing the files takes effect on the next listener restart (any
+settings change, or a restart of the daemon), not mid-run. The two lines the
+reference's "half a pair" error shows as two popups are one message in the
+Client API status.
+The three external overrides are shown in advanced mode only. In the
+reference's current source those rows are hidden unconditionally
+(`if False:`); showing them follows the owner's request (2026-10-08) to have
+all three controls. As in the reference, nothing reads them: no link
+hydrus-rs copies uses the overrides, and "view in a web browser" always opens
+`127.0.0.1`. The port override is text, as in the reference; a number stored
+by an older import is shown as its digits.
+The normie page is the reference's HTML verbatim (service name, software
+version 688, API version, and the local/any-host line filled in as the
+reference fills them).
 Listener reconfiguration retains the same API state, so session keys continue
 to use the current permissions after rebind; revocation still invalidates them.
 

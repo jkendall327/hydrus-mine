@@ -18,6 +18,9 @@ pub struct ServerOptions {
     pub cors: bool,
     /// Log anonymous request method/path, status and duration, omitting keys and query strings.
     pub log_requests: bool,
+    /// Serve HTTPS with these TLS settings (the reference's `use_https`;
+    /// `crate::tls::server_config` makes them), else plain HTTP.
+    pub tls: Option<Arc<tokio_rustls::rustls::ServerConfig>>,
 }
 
 /// Serve until `shutdown` resolves.
@@ -62,10 +65,19 @@ pub async fn serve_on(
         ),
     );
     let addr = listener.local_addr().unwrap_or(options.addr);
-    tracing::info!(%addr, "Client API listening");
-    axum::serve(listener, app)
-        .with_graceful_shutdown(shutdown)
-        .await
+    tracing::info!(%addr, https = options.tls.is_some(), "Client API listening");
+    match &options.tls {
+        Some(tls) => {
+            axum::serve(crate::tls::TlsListener::new(listener, tls.clone())?, app)
+                .with_graceful_shutdown(shutdown)
+                .await
+        }
+        None => {
+            axum::serve(listener, app)
+                .with_graceful_shutdown(shutdown)
+                .await
+        }
+    }
 }
 
 async fn log_request(
