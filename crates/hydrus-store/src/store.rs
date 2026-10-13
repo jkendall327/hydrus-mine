@@ -208,6 +208,9 @@ pub struct Store {
     migration_active: Arc<AtomicBool>,
     /// This process's undoable content changes (the client's undo menu).
     undo: std::sync::Mutex<crate::undo::UndoLog>,
+    /// A clock for content writes, held by tests that need "now" to stand
+    /// still (`None`: the system clock).
+    write_clock: std::sync::Mutex<Option<Arc<dyn crate::workers::WorkClock>>>,
 }
 
 impl Store {
@@ -247,6 +250,7 @@ impl Store {
             claims: MediaClaims::default(),
             migration_active: Arc::new(AtomicBool::new(false)),
             undo: std::sync::Mutex::default(),
+            write_clock: std::sync::Mutex::default(),
         }))
     }
 
@@ -404,11 +408,25 @@ impl Store {
         Ok(true)
     }
 
+    /// Time content writes by `clock` instead of the system's, so a test can
+    /// hold "now" still (the trash cutoff, the added times).
+    pub fn set_write_clock(&self, clock: Arc<dyn crate::workers::WorkClock>) {
+        *self
+            .write_clock
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = Some(clock);
+    }
+
     pub fn write_content<R: Send + 'static>(
         &self,
         f: impl FnOnce(&mut ContentWriter<'_>) -> Result<R> + Send + 'static,
     ) -> Result<R> {
         let snapshot = Arc::clone(&self.snapshot);
+        let clock = self
+            .write_clock
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .clone();
         self.db.write(move |ctx| {
             // loaded on the writer thread: it reflects every committed write
             let old = snapshot.load_full();
@@ -425,7 +443,10 @@ impl Store {
             let mut writer = ContentWriter::new(
                 ctx.conn(),
                 &snap,
-                hydrus_core::time::TimestampMs::now().millis(),
+                clock.map_or_else(
+                    || hydrus_core::time::TimestampMs::now().millis(),
+                    |clock| clock.now_ms(),
+                ),
             )?;
             let result = f(&mut writer)?;
             writer.finish()?;
