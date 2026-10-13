@@ -15,6 +15,8 @@ use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
 use hydrus_store::sessions::{self, LAST_SESSION};
 
+use crate::common::widgets;
+
 fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();
@@ -103,29 +105,49 @@ fn clicking_a_tab_and_ctrl_page_keys_select_pages_and_restore_their_state() {
         headless::render(&window, 1100, 700);
     };
 
-    assert_eq!(shown(), "a");
-    // clicking the notebook's tab shows its remembered page
-    ui.invoke_tab_chosen(0, 1);
-    assert_eq!(shown(), "b");
-    assert_eq!(ui.get_tab_rows().row_count(), 2, "its own row of tabs");
-    // ctrl+page down: along the deepest notebook, then out of it
-    tap(Key::PageDown, true);
-    assert_eq!(shown(), "c");
-    tap(Key::PageUp, true);
-    assert_eq!(shown(), "b");
-    // clicking a tab in the inner row selects it
-    ui.invoke_tab_chosen(1, 1);
-    assert_eq!(shown(), "c");
-    // a tab of the top row, and back: the notebook remembers "c"
-    ui.invoke_tab_chosen(0, 2);
-    assert_eq!(shown(), "d");
-    assert_eq!(ui.get_tab_rows().row_count(), 1);
-    ui.invoke_tab_chosen(0, 1);
-    assert_eq!(shown(), "c");
-    // the keys never go round the end
-    ui.invoke_tab_chosen(0, 0);
-    tap(Key::PageUp, true);
-    assert_eq!(shown(), "a");
+    // the reference's steps (tab_selection.json, recorded by
+    // oracle/record_tab_selection.py: setCurrentIndex for a click on a tab,
+    // MoveSelection(+-1) for the keys), replayed with real clicks on the
+    // tabs and real key events; after each, the page shown and the selected
+    // tab of the top row and of n's row
+    let recorded = hydrus_testkit::fixture_json("tab_selection.json");
+    let top_names = ["a", "n", "d"];
+    for step in recorded["steps"].as_array().unwrap() {
+        let do_ = step["do"].as_array().unwrap();
+        match do_[0].as_str().unwrap() {
+            "click" => {
+                let name = top_names[do_[1].as_u64().unwrap() as usize];
+                widgets::click_nth(ui.window(), name, 0);
+            }
+            "click inner" => {
+                widgets::click(ui.window(), ["b", "c"][do_[1].as_u64().unwrap() as usize]);
+            }
+            "key" => match do_[1].as_str().unwrap() {
+                "ctrl+page down" => tap(Key::PageDown, true),
+                "ctrl+page up" => tap(Key::PageUp, true),
+                other => panic!("{other}"),
+            },
+            other => panic!("{other}"),
+        }
+        headless::render(&window, 1100, 700);
+        let rows = ui.get_tab_rows();
+        assert_eq!(shown(), step["shown"].as_str().unwrap(), "after {do_:?}");
+        assert_eq!(
+            i64::from(rows.row_data(0).unwrap().selected),
+            step["top"].as_i64().unwrap(),
+            "after {do_:?}: top tab"
+        );
+        if rows.row_count() == 2 {
+            assert_eq!(
+                i64::from(rows.row_data(1).unwrap().selected),
+                step["nested"].as_i64().unwrap(),
+                "after {do_:?}: n's tab"
+            );
+        } else {
+            // (the row of n's tabs is shown only while n is)
+            assert!(step["shown"] == "a" || step["shown"] == "d");
+        }
+    }
 }
 
 // leaf: audit-options-tabs-context-action-2120-selectable-page
