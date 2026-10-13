@@ -38,6 +38,60 @@ fn values(w: &OptionsWindow, row: i32) -> Vec<i32> {
         .map(|field| field.value)
         .collect()
 }
+/// The reference's control, recorded for each raw delay: what its two fields
+/// show, what typing into them leaves, and what Apply (or Cancel) saves and
+/// the reopened dialog shows. Here the same steps are made in the real window.
+// leaf: audit-options-files-and-trash-when-maintenance-physically-deletes-files-wait-this-long-between-each-delete
+#[test]
+fn recorded_raw_delays_typed_fields_apply_cancel_and_reopen_match_the_reference() {
+    let recorded = hydrus_testkit::fixture_json("physical_delete_delay.json");
+    let fields = |value: &serde_json::Value| -> Vec<i32> {
+        value
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|v| i32::try_from(v.as_i64().unwrap()).unwrap())
+            .collect()
+    };
+    let (_dirs, store) = super::subscriptions::store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.show().unwrap();
+    for case in recorded["controls"].as_array().unwrap() {
+        let raw = Preferences {
+            wait_ms: case["raw"].as_i64().unwrap(),
+        };
+        store
+            .write(move |ctx| settings::set(ctx.conn(), &raw))
+            .unwrap();
+        let (w, row) = open(&ui, &bound);
+        assert_eq!(values(&w, row), fields(&case["before"]), "{case}");
+        if let Some(typed) = case["typed"].as_array() {
+            for (field, value) in typed.iter().enumerate() {
+                w.invoke_field_edited(
+                    row,
+                    i32::try_from(field).unwrap(),
+                    i32::try_from(value.as_i64().unwrap()).unwrap(),
+                );
+            }
+            assert_eq!(values(&w, row), fields(&case["fields"]), "{case}");
+        }
+        if case["apply"].as_bool().unwrap() {
+            w.invoke_apply();
+        } else {
+            w.invoke_cancel();
+        }
+        assert_eq!(
+            store.read(physical_delete::load).unwrap().wait_ms,
+            case["saved"].as_i64().unwrap(),
+            "{case}"
+        );
+        let (reopened, row) = open(&ui, &bound);
+        assert_eq!(values(&reopened, row), fields(&case["reopened"]), "{case}");
+        reopened.invoke_cancel();
+    }
+}
 #[test]
 fn actual_fields_cancel_raw_apply_reopen_hidden_retired_and_rebind_ownership() {
     let (_dirs, store) = super::subscriptions::store();

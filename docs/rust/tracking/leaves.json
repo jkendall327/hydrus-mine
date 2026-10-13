@@ -5832,10 +5832,10 @@
     "A disappeared saved log reports an unavailable error (the actual Qt DB facade wraps its missing-object error as DBException). Cancellation stops publication immediately and is checked between query reads."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "sound",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real editor runs the async quality worker, copies the CSV and compares with subscription_quality.json clipboard; model test replays data, menu, messages, clipboard, empty-denominator 0.0%, cancellation and missing-log error. Carried, untagged. Tests: crates/hydrus-gui/tests/gui/edit_subscription.rs:~422 (quality csv/show flow); crates/hydrus-gui-model/tests/model/subscription_quality.rs:~100"
+    "by": "claude/flakes session (carried-leaf recheck)",
+    "note": "Tagged advanced_quality_menu_reads_saved_logs_and_current_media_without_applying_drafts (gui/edit_subscription.rs), which shares the quality-review leaf's recording. oracle/record_subscription_quality.py drives the real EditSubscriptionPanel's 'quality info' button and captures the clipboard; the test drives the native editor's menu and compares the copied text with fixtures/subscription_quality.json exactly (no header, no quoting, 33.3%, empty denominator 0.0%), then checks that no draft query is saved and that closing the editor stops a stale publication. The missing-log error type is the model test's."
    }
   },
   {
@@ -7967,10 +7967,10 @@
     "The authored defining native captures use supported 1100x800 Options lists, 900x420 long warning and 520x200 Delete question. Default-size/universal geometry and physical Delete/Duplicate button input are not established."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "sound",
-    "by": "phase 2 session",
-    "note": "simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_change_saved_calls (gui/external_calls.rs) now seeds the recorded three calls, selects the two OS calls and compares the question and the names left after decline and accept with external_calls.json deletes."
+    "by": "claude/flakes session (carried-leaf recheck)",
+    "note": "Tagged simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_change_saved_calls (gui/external_calls.rs). oracle/record_external_calls.py runs the real panel's ProcessDeleteAction twice (declined, accepted); the test seeds the recorded three calls, selects the two OS calls, and compares the question and the names left after each answer, then Options Apply and reopen."
    }
   },
   {
@@ -9378,10 +9378,10 @@
     "Expected native capture1s28ms is reopened after saving1029; Qt1s234ms was explicitly set from1234. This deliberate normalization/state difference is not a persistence defect."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "sound",
-    "by": "phase 2 session",
-    "note": "hydrus-store maintenance.rs tests captured_wait_follows_committed_pairs... and missing_file_still_waits... now take their waits and, for the successor pass, the delay the recorded first pass left saved (the recording has no wait of its own for it) (change_during_wait, missing), alongside the recorded options replay."
+    "by": "claude/flakes session (carried-leaf recheck)",
+    "note": "Tagged recorded_raw_delays_typed_fields_apply_cancel_and_reopen_match_the_reference (gui/physical_delete_delay.rs: the 16 recorded controls cases through the real Options window: fields, typing and clamping, Apply/Cancel, saved milliseconds, reopened fields), and the two store maintenance tests that read the delay (captured_wait_follows_committed_pairs..., missing_file_still_waits...), which compare the waits with the recorded passes. The successor pass's wait is the delay the recorded first pass left saved (the recording has no wait of its own for it); the daemon's pass cadence differs (DIFFERENCES.md)."
    }
   },
   {
@@ -10081,10 +10081,10 @@
     "Staged default-false checkbox requests actual text focus when changing the visible page, through existing search autocomplete and gallery/watcher/simple/URL query inputs. Same visible page and sidebars without a text input do not issue a request. Disabling the preference stops navigation focus requests; Apply/Cancel/reopening and legacy import retain exact behavior."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "sound",
-    "by": "phase 2 session",
-    "note": "applied_controls_reopen_and_drive_history_and_search_focus (gui/page_navigation_options.rs) now replays the recorded search-page focus steps (off, on, off; page_navigation_options.json focus) through real tab switches, alongside the importer_focus replay."
+    "by": "claude/flakes session (carried-leaf recheck)",
+    "note": "Tagged applied_controls_reopen_and_drive_history_and_search_focus (search page: option off, on, off, replaying page_navigation_options.json focus through real tab switches) and switching_to_each_importer_focuses_its_actual_query_or_url_text_input (gallery, watcher, simple and URL pages, replaying importer_focus, and checking the actual text input has focus)."
    }
   },
   {
@@ -10256,10 +10256,10 @@
     "Staged storage top checkbox defaults false; when enabled with storage visibility, inserts storage before combined and ordinary local domains. Preference survives while storage is disabled. Exact reference number-pad layout and nine-entry truncation are preserved."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "sound",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Same recording and tests as the combined-domain 'Put it at the top'; the storage_at_top flag is the fourth control and every storage-top combination is in the recorded steps, driven through the Options window and the real chooser. Sound. Tests: same as put-it-at-the-top: page_chooser_options.rs (gui:48, model:9, model:88)"
+    "by": "claude/flakes session (carried-leaf recheck)",
+    "note": "Tagged checkbox_drafts_cancel_apply_reopen_and_choose_exact_reference_locations (gui/page_chooser_options.rs): the four recorded flags (storage top is the fourth) are driven through the Options window for the 2-domain recorded steps, and the real chooser's labels are compared with the recording; the 1- and 10-domain steps (nine-entry cap) are replayed by the model tests."
    }
   },
   {

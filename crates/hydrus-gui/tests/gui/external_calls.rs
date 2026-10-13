@@ -653,6 +653,7 @@ fn duplicate_warning_decline_keeps_unsorted_unselected_prefix_accept_finishes_an
     }
 }
 
+// leaf: audit-options-external-programs-external-calls-delete
 #[test]
 fn simple_delete_includes_os_launch_rows_but_cancel_and_closed_owner_do_not_change_saved_calls() {
     let (_dirs, store) = store();
