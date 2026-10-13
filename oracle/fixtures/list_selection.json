@@ -1,0 +1,567 @@
+{
+ "files": [
+  "bmp_24.bmp",
+  "apng_rgba.png",
+  "gif_static.gif",
+  "png_rgba.png",
+  "bmp_8bit.bmp",
+  "bmp_gray.bmp"
+ ],
+ "sequences": [
+  {
+   "name": "ctrl then shift",
+   "steps": [
+    {
+     "row": 0,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      0
+     ],
+     "order": [
+      0
+     ]
+    },
+    {
+     "row": 2,
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      0,
+      2
+     ],
+     "order": [
+      0,
+      2
+     ]
+    },
+    {
+     "row": 0,
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      2
+     ],
+     "order": [
+      2
+     ]
+    },
+    {
+     "row": 1,
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      0,
+      1,
+      2
+     ],
+     "order": [
+      2,
+      0,
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ctrl-click adds, shift extends from it",
+   "steps": [
+    {
+     "row": 1,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      1
+     ],
+     "order": [
+      1
+     ]
+    },
+    {
+     "row": 3,
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      1,
+      3
+     ],
+     "order": [
+      1,
+      3
+     ]
+    },
+    {
+     "row": 5,
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      1,
+      3,
+      4,
+      5
+     ],
+     "order": [
+      1,
+      3,
+      4,
+      5
+     ]
+    }
+   ]
+  },
+  {
+   "name": "second shift shrinks the range",
+   "steps": [
+    {
+     "row": 0,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      0
+     ],
+     "order": [
+      0
+     ]
+    },
+    {
+     "row": 3,
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "order": [
+      0,
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "row": 1,
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      0,
+      1
+     ],
+     "order": [
+      0,
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ctrl+shift replaces the range too",
+   "steps": [
+    {
+     "row": 0,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      0
+     ],
+     "order": [
+      0
+     ]
+    },
+    {
+     "row": 3,
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "order": [
+      0,
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "row": 1,
+     "ctrl": true,
+     "shift": true,
+     "selected": [
+      0,
+      1
+     ],
+     "order": [
+      0,
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ctrl+shift from a ctrl-click",
+   "steps": [
+    {
+     "row": 2,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      2
+     ],
+     "order": [
+      2
+     ]
+    },
+    {
+     "row": 4,
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      2,
+      4
+     ],
+     "order": [
+      2,
+      4
+     ]
+    },
+    {
+     "row": 0,
+     "ctrl": true,
+     "shift": true,
+     "selected": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "order": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ]
+    }
+   ]
+  },
+  {
+   "name": "upward range",
+   "steps": [
+    {
+     "row": 5,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      5
+     ],
+     "order": [
+      5
+     ]
+    },
+    {
+     "row": 2,
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      2,
+      3,
+      4,
+      5
+     ],
+     "order": [
+      2,
+      3,
+      4,
+      5
+     ]
+    }
+   ]
+  },
+  {
+   "name": "toggled off then shift",
+   "steps": [
+    {
+     "row": 1,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      1
+     ],
+     "order": [
+      1
+     ]
+    },
+    {
+     "row": 3,
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      1,
+      3
+     ],
+     "order": [
+      1,
+      3
+     ]
+    },
+    {
+     "row": 3,
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      1
+     ],
+     "order": [
+      1
+     ]
+    },
+    {
+     "row": 5,
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      1,
+      3,
+      4,
+      5
+     ],
+     "order": [
+      1,
+      3,
+      4,
+      5
+     ]
+    }
+   ]
+  },
+  {
+   "name": "range, ctrl, shift",
+   "steps": [
+    {
+     "row": 0,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      0
+     ],
+     "order": [
+      0
+     ]
+    },
+    {
+     "row": 2,
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      0,
+      2
+     ],
+     "order": [
+      0,
+      2
+     ]
+    },
+    {
+     "row": 4,
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      0,
+      2,
+      3,
+      4
+     ],
+     "order": [
+      0,
+      2,
+      3,
+      4
+     ]
+    },
+    {
+     "row": 1,
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "order": [
+      0,
+      2,
+      3,
+      4,
+      1
+     ]
+    },
+    {
+     "row": 3,
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "order": [
+      0,
+      4,
+      1,
+      2,
+      3
+     ]
+    }
+   ]
+  },
+  {
+   "name": "range, ctrl off, shift",
+   "steps": [
+    {
+     "row": 0,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      0
+     ],
+     "order": [
+      0
+     ]
+    },
+    {
+     "row": 3,
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "order": [
+      0,
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "row": 1,
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      0,
+      2,
+      3
+     ],
+     "order": [
+      0,
+      2,
+      3
+     ]
+    },
+    {
+     "row": 5,
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "order": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ctrl off then shift back",
+   "steps": [
+    {
+     "row": 0,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      0
+     ],
+     "order": [
+      0
+     ]
+    },
+    {
+     "row": 4,
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "order": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ]
+    },
+    {
+     "row": 2,
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      0,
+      1,
+      3,
+      4
+     ],
+     "order": [
+      0,
+      1,
+      3,
+      4
+     ]
+    },
+    {
+     "row": 1,
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "order": [
+      0,
+      3,
+      4,
+      1,
+      2
+     ]
+    }
+   ]
+  }
+ ]
+}

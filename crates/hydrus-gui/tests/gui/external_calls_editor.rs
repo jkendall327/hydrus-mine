@@ -36,7 +36,9 @@ fn wait(child: &hydrus_gui::ExternalCallWindow) {
     }
 }
 
-// leaf: audit-options-external-programs-help-for-this-panel
+// Not tagged (audit-options-external-programs-help-for-this-panel): the
+// reference opens its local help, or asks "You do not have a local help!"
+// first; hydrus-rs opens the online page at once (DIFFERENCES.md, #182).
 #[test]
 fn help_button_opens_the_external_programs_documentation() {
     let (_dirs, store) = store();

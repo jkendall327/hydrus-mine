@@ -1,7 +1,8 @@
 //! Help > debug > report modes > subscription report mode: working out when a
-//! subscription is next due says why, per query (`Subscription` /
-//! `SubscriptionQueryLegacy`'s `IsSyncDue` report). The switches are
-//! process-wide, so this is tested alone here.
+//! subscription is next due says why, per query, in the words of the live
+//! reference's `SubscriptionQueryHeader.IsSyncDue` report
+//! (`ClientImportSubscriptionQuery.py`). The switches are process-wide, so
+//! this is tested alone here.
 use std::sync::{Arc, Mutex};
 
 use hydrus_core::debug_flags::{self, Flag};
@@ -13,7 +14,10 @@ use hydrus_net::{NetEngine, NetOptions};
 use hydrus_store::Store;
 use hydrus_store::subscriptions as store_subs;
 
-// leaf: audit-options-help-debug-action-subscription-report-mode
+// Not tagged (audit-options-help-debug-action-subscription-report-mode): the
+// reference's other subscription report points are not ported, and this one
+// is made when hydrus-rs schedules rather than as the reference syncs
+// (DIFFERENCES.md).
 #[test]
 fn subscription_report_mode_says_why_each_query_is_or_is_not_due() {
     let seen = Arc::new(Mutex::new(Vec::<String>::new()));
@@ -53,7 +57,7 @@ fn subscription_report_mode_says_why_each_query_is_or_is_not_due() {
     assert_eq!(seen.len(), 1, "{seen:?}");
     assert_eq!(
         seen[0],
-        "Query \"blue eyes: blue_eyes\" IsSyncDue test. Paused/dead status is False/False, check time due is True, and check_now is True."
+        "Query \"blue_eyes\" IsSyncDue test. Paused/dead/container status is False/False/True, check time due is True, and check_now is True."
     );
     debug_flags::set_sink(None);
 }

@@ -14,9 +14,9 @@ use hydrus_store::Store;
 
 use crate::list_selection::ListSelection;
 use crate::tag_filter_editor::{
-    BLACKLIST_TEST_NOTE, FAVOURITE_NAME, FavouriteTagFilters, GLOBAL_BOXES, HELP, INSTRUCTIONS,
-    NO_FAVOURITES, REMOVE_SELECTED, TagFilterEditor, delete_favourite, export_favourite,
-    import_favourite, overwrite_favourite, pretty_slice,
+    BLACKLIST_TEST_NOTE, BLANK_TEXT, FAVOURITE_NAME, FavouriteTagFilters, GLOBAL_BOXES, HELP,
+    INSTRUCTIONS, NO_FAVOURITES, REMOVE_SELECTED, TagFilterEditor, delete_favourite,
+    export_favourite, import_favourite, overwrite_favourite, pretty_slice,
 };
 use crate::{TableRow, TagFilterWindow, Tick};
 
@@ -48,6 +48,8 @@ enum Asking {
     Help,
     FavouriteMenu(String, Vec<String>),
     FavouriteName(TagFilter, bool),
+    /// The reference's warning for a blank name, then the name asked again.
+    BlankName(TagFilter, bool),
     OverwriteFavourite(String, TagFilter, bool),
     DeleteFavourite(String),
     Exchange(bool),
@@ -243,6 +245,7 @@ fn show(window: &TagFilterWindow, state: &State, store: &Store) {
             FAVOURITE_NAME.into(),
             vec!["cancel".into()],
         ),
+        Asking::BlankName(..) => ("Warning", BLANK_TEXT.into(), vec!["ok".into()]),
         Asking::OverwriteFavourite(name, ..) => (
             "Are you sure?",
             overwrite_favourite(name),
@@ -545,13 +548,17 @@ pub fn open(
         let store = store.clone();
         let refresh = refresh.clone();
         move |name| {
-            if name.is_empty() {
-                return;
-            }
             let mut s = state.borrow_mut();
             let Some(Asking::FavouriteName(filter, imported)) = s.asking.clone() else {
                 return;
             };
+            if name.is_empty() {
+                // the reference's text dialog warns and stays open
+                s.asking = Some(Asking::BlankName(filter, imported));
+                drop(s);
+                refresh();
+                return;
+            }
             match FavouriteTagFilters::save(&store, name.to_string(), filter.clone(), false) {
                 Ok(false) => {
                     s.asking = Some(Asking::OverwriteFavourite(
@@ -697,6 +704,9 @@ pub fn open(
                             s.editor.set_value(&filter);
                             s.changed();
                         }
+                    }
+                    (Asking::BlankName(filter, imported), _) => {
+                        s.asking = Some(Asking::FavouriteName(filter, imported));
                     }
                     (Asking::DeleteFavourite(name), Some(0)) => {
                         FavouriteTagFilters::delete(&store, name).map_err(|e| e.to_string())?;

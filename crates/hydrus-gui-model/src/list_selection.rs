@@ -1,22 +1,55 @@
 //! A list's selection, as the reference's lists select (Qt's extended
 //! selection): a click selects one row, ctrl+click adds or takes away
 //! one, shift+click selects from the anchor (the last row clicked without
-//! shift) to it, and ctrl+shift+click adds that range. Rows are kept by
+//! shift) to it, and ctrl+shift+click does the same. Rows are kept by
 //! their item, so a selection outlives the list being sorted or read
 //! again.
+//!
+//! As Qt's `QItemSelectionModel` does, the selection is the rows committed
+//! so far plus a current range: a ctrl+click commits what is selected and
+//! starts a new current range (toggling its row); a shift+click replaces only
+//! the current range with the rows from the anchor to it, on top of the
+//! committed rows. So after click 0, ctrl+click 2, ctrl+click 0, shift+click
+//! 1, rows 0, 1 and 2 are selected (`oracle/fixtures/list_selection.json`).
 
 /// The items selected, and the anchor.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ListSelection<T> {
+    /// What is selected, in the order Qt hands it out (`selectedRows`).
     selected: Vec<T>,
+    /// The rows committed before the current range.
+    committed: Vec<T>,
+    /// The current range, and whether it toggles (a ctrl+click) or selects.
+    current: Vec<T>,
+    toggling: bool,
     anchor: Option<T>,
+    /// A range is handed out from its anchor (Qt's list widgets, recorded in
+    /// `external_command.json`) rather than top to bottom (its tree views,
+    /// `list_selection.json`).
+    from_anchor: bool,
 }
 
 impl<T> Default for ListSelection<T> {
     fn default() -> Self {
         Self {
             selected: Vec::new(),
+            committed: Vec::new(),
+            current: Vec::new(),
+            toggling: false,
             anchor: None,
+            from_anchor: false,
+        }
+    }
+}
+
+impl<T> ListSelection<T> {
+    /// A selection whose shift ranges are handed out from their anchor, as a
+    /// Qt list widget's (the reference's queue lists) are.
+    #[must_use]
+    pub fn from_anchor() -> Self {
+        Self {
+            from_anchor: true,
+            ..Self::default()
         }
     }
 }
@@ -33,44 +66,57 @@ impl<T: Copy + PartialEq> ListSelection<T> {
             .filter(|_| shift);
         match from {
             Some(from) => {
+                // Qt's SelectCurrent: the current range becomes the rows from
+                // the anchor to this one; the committed rows stay.
                 let (a, b) = (from.min(row), from.max(row));
-                if !ctrl {
-                    // Qt retains selection insertion order for survivors,
-                    // then appends newly selected range items (notably when
-                    // a range grows upwards from its already-selected anchor).
-                    if self.selected.contains(&order[from]) {
-                        self.selected.retain(|item| order[a..=b].contains(item));
-                    } else {
-                        // Ctrl navigation can leave the range origin unselected;
-                        // Qt starts a fresh ordered range from that origin.
-                        self.selected.clear();
-                    }
+                self.current = order[a..=b].to_vec();
+                if self.from_anchor && from > row {
+                    self.current.reverse();
                 }
-                for &o in &order[a..=b] {
-                    if !self.selected.contains(&o) {
-                        self.selected.push(o);
-                    }
-                }
+                self.toggling = false;
             }
             None if ctrl => {
-                if let Some(i) = self.selected.iter().position(|&s| s == item) {
-                    self.selected.remove(i);
-                } else {
-                    self.selected.push(item);
-                }
+                self.committed = std::mem::take(&mut self.selected);
+                self.current = vec![item];
+                self.toggling = true;
                 self.anchor = Some(item);
             }
-            None => {
-                self.selected = vec![item];
-                self.anchor = Some(item);
-            }
+            None => self.restart(vec![item], Some(item)),
         }
+        self.merge();
+    }
+
+    /// Qt's merge of the current range into the committed rows: those the
+    /// range covers leave their place, and the range comes after the rest
+    /// (a toggling range takes away the rows it covers that were committed).
+    fn merge(&mut self) {
+        let mut selected: Vec<T> = self
+            .committed
+            .iter()
+            .copied()
+            .filter(|c| !self.current.contains(c))
+            .collect();
+        selected.extend(
+            self.current
+                .iter()
+                .copied()
+                .filter(|c| !(self.toggling && self.committed.contains(c))),
+        );
+        self.selected = selected;
+    }
+
+    /// Select only these, as a fresh current range from `anchor`.
+    fn restart(&mut self, items: Vec<T>, anchor: Option<T>) {
+        self.committed.clear();
+        self.current = items;
+        self.toggling = false;
+        self.anchor = anchor;
+        self.merge();
     }
 
     /// Select just these (as a list's `SelectDatas`), with no anchor.
     pub fn select_many(&mut self, items: &[T]) {
-        self.selected = items.to_vec();
-        self.anchor = None;
+        self.restart(items.to_vec(), None);
     }
 
     /// Reset the next Shift range origin without changing selected rows.
@@ -81,13 +127,13 @@ impl<T: Copy + PartialEq> ListSelection<T> {
 
     /// Qt's select-all replaces selected rows while keeping the current range origin.
     pub fn select_all(&mut self, order: &[T]) {
-        self.selected = order.to_vec();
+        let anchor = self.anchor;
+        self.restart(order.to_vec(), anchor);
     }
 
     /// Select only `item` (or nothing).
     pub fn select_only(&mut self, item: Option<T>) {
-        self.selected = item.into_iter().collect();
-        self.anchor = item;
+        self.restart(item.into_iter().collect(), item);
     }
 
     pub fn is_selected(&self, item: T) -> bool {
@@ -123,6 +169,8 @@ impl<T: Copy + PartialEq> ListSelection<T> {
     /// Forget an item gone from the list.
     pub fn forget(&mut self, item: T) {
         self.selected.retain(|&s| s != item);
+        self.committed.retain(|&s| s != item);
+        self.current.retain(|&s| s != item);
         if self.anchor == Some(item) {
             self.anchor = None;
         }
@@ -149,9 +197,10 @@ mod tests {
         assert_eq!(s.one(), None);
         s.click(&ORDER, 1, true, false);
         assert_eq!(s.in_order(&ORDER), [40]);
-        // shift: from the anchor (the last ctrl-clicked), replacing
+        // shift: from the anchor (the last ctrl-clicked), replacing the
+        // ctrl+click's toggle but keeping what was committed before it
         s.click(&ORDER, 0, false, true);
-        assert_eq!(s.in_order(&ORDER), [10, 20]);
+        assert_eq!(s.in_order(&ORDER), [10, 20, 40]);
         // (the anchor stays where it was)
         s.click(&ORDER, 4, false, true);
         assert_eq!(s.in_order(&ORDER), [20, 30, 40, 50]);

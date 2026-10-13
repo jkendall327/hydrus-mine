@@ -339,3 +339,70 @@ fn selected_processing_steps_match_qt_clipboard_and_png_exports() {
     );
     assert!(processing::encode_text(&[]).is_err());
 }
+
+#[test]
+fn packages_mixing_steps_with_other_objects_give_their_steps_and_the_reference_warning() {
+    // `oracle/record_processing_exchange_mixed.py`: the real queue imports
+    // a list of a converter, a tag filter and a match (and a PNG of it),
+    // appending the two steps and warning about the tag filter; a list of
+    // only a tag filter appends nothing and warns
+    use hydrus_downloader_exchange::processing;
+    let fixture = hydrus_testkit::fixture_json("processing_exchange_mixed.json");
+    let steps = fixture["steps"].as_array().unwrap();
+    let step = |name: &str| steps.iter().find(|s| s["name"] == name).unwrap();
+    let processor_steps = |state: &Value| state["processor"][2][2].as_array().unwrap().len();
+    let message = |s: &Value, kind: &str| -> Option<String> {
+        s["messages"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|m| m["kind"] == kind)
+            .map(|m| m["text"].as_str().unwrap().to_owned())
+    };
+    let start = processor_steps(&steps[0]["start"]);
+    let mixed = step("mixed list");
+    let package = processing::decode_package(mixed["text"].as_str().unwrap()).unwrap();
+    let added = processor_steps(&mixed["state"]) - start;
+    assert_eq!(package.steps.len(), added);
+    assert_eq!(
+        message(mixed, "information"),
+        Some(format!("{added} objects added!"))
+    );
+    // the steps added are the reference's, in its order
+    let appended = json!([
+        84,
+        1,
+        [
+            26,
+            3,
+            mixed["state"]["processor"][2][2].as_array().unwrap()[start..].to_vec()
+        ]
+    ]);
+    let theirs = processing::decode_text(&appended.to_string()).unwrap();
+    assert_eq!(package.steps, theirs);
+    assert_eq!(package.warning(), message(mixed, "warning"));
+    assert_eq!(
+        processing::warning(mixed["text"].as_str().unwrap().as_bytes()),
+        message(mixed, "warning")
+    );
+    // the PNG of the same list
+    let png = std::fs::read(hydrus_testkit::fixture_path(
+        "processing_exchange_mixed.png",
+    ))
+    .unwrap();
+    assert_eq!(processing::decode_png(&png).unwrap(), theirs);
+    assert_eq!(
+        processing::warning(&png),
+        message(step("mixed png"), "warning")
+    );
+    // nothing permitted: refused, with the reference's warning
+    let nothing = step("nothing permitted");
+    assert_eq!(message(nothing, "information"), None);
+    let refused = processing::decode_text(nothing["text"].as_str().unwrap())
+        .unwrap_err()
+        .to_string();
+    assert!(
+        refused.contains(&message(nothing, "warning").unwrap()),
+        "{refused}"
+    );
+}

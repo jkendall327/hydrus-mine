@@ -4,6 +4,7 @@ use hydrus_gui_model::tag_relationships::{Pair, RelationKind, Relationships};
 use hydrus_store::Store;
 use hydrus_store::content::tag_relations::{self, RelationAction, RelationUpdate};
 use serde_json::Value;
+use std::collections::BTreeSet;
 
 fn pair(value: &Value) -> Pair {
     (
@@ -20,7 +21,8 @@ fn update(service: ServiceId, pair: &Pair, action: RelationAction) -> RelationUp
     }
 }
 
-// leaf: audit-media-parents-pairs,audit-media-siblings-pairs
+// Not tagged (audit-media-parents-pairs, audit-media-siblings-pairs): a model
+// test standing in for the window, and the pre-existing-loop warning is absent.
 // leaf: audit-media-siblings-reasons
 #[test]
 fn reference_rows_questions_conflicts_and_loops() {
@@ -164,7 +166,6 @@ fn reference_rows_questions_conflicts_and_loops() {
     }
 }
 
-// leaf: audit-media-parents-exchange
 #[test]
 fn per_service_inputs_cancel_import_and_selection() {
     let dir = tempfile::tempdir().unwrap();
@@ -426,46 +427,80 @@ fn changes_refresh_other_services_applying_the_source() {
     assert_eq!(store.snapshot().display.get(display).ideal(a), a);
 }
 
-// leaf: audit-media-parents-pairs,audit-media-siblings-pairs,audit-media-parents-exchange
+// Not tagged (audit-media-parents-pairs, audit-media-siblings-pairs): a model
+// test standing in for the window, and the pre-existing-loop warning is absent.
 #[test]
-fn invalid_batch_graphs_are_reported_and_leave_valid_relationships_untouched() {
+fn self_pairs_cycles_and_two_ideals_in_one_batch_are_staged_as_the_reference_stages_them() {
+    // `oracle/record_relationship_exchange.py`: the reference warns about
+    // self-pairs ("Loop problem!") and stages them; it stages a cycle made
+    // inside one batch, and a sibling batch giving one tag two ideals, as
+    // they are (its loop repairs look only at the pairs it already has)
+    let recording = hydrus_testkit::fixture_json("relationship_exchange.json");
+    let step = |kind: &str, text: &str| {
+        recording
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|r| r["kind"] == kind && r["local"] == true)
+            .unwrap()["steps"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|s| s["text"] == text)
+            .unwrap()
+            .clone()
+    };
+    let staged = |editor: &Relationships| -> BTreeSet<Pair> {
+        editor
+            .updates()
+            .into_iter()
+            .map(|u| (u.left.as_str().to_owned(), u.right.as_str().to_owned()))
+            .collect()
+    };
+    let pair = |a: &str, b: &str| (a.to_owned(), b.to_owned());
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
-    for kind in [RelationKind::Parents, RelationKind::Siblings] {
+    for (kind, name) in [
+        (RelationKind::Parents, "parents"),
+        (RelationKind::Siblings, "siblings"),
+    ] {
         let mut editor = Relationships::new(store.clone(), kind).unwrap();
-        let pairs = vec![("one".into(), "two".into()), ("two".into(), "one".into())];
-        assert!(
-            editor
-                .enter_pairs(pairs.clone(), true, &[])
-                .unwrap_err()
-                .message
-                .contains("cycle")
+        let cycle = step(name, "one\ntwo\ntwo\none");
+        assert!(cycle["asked"].as_array().unwrap().is_empty());
+        editor.import("one\ntwo\ntwo\none", &[]).unwrap();
+        assert_eq!(
+            staged(&editor),
+            [pair("one", "two"), pair("two", "one")].into()
         );
-        editor
-            .enter_pairs(pairs, true, &[Some(String::new())])
-            .unwrap();
-        assert!(editor.updates().is_empty());
-        editor
-            .enter_pairs(vec![("one".into(), "two".into())], true, &[])
-            .unwrap();
         editor.apply().unwrap();
-        let q = editor.import("one\none", &[]).unwrap_err();
-        assert!(q.message.contains("self-referencing"));
-        editor.import("one\none", &[Some(String::new())]).unwrap();
-        assert_eq!(editor.updates().len(), 1);
+        let mut editor = Relationships::new(store.clone(), kind).unwrap();
+
+        let recorded = step(name, "self\nself");
+        let critical = &recorded["asked"][0];
+        assert_eq!(critical["kind"], "critical");
+        assert_eq!(critical["title"], "Loop problem!");
+        let q = editor.import("self\nself", &[]).unwrap_err();
+        assert_eq!(q.message, critical["message"].as_str().unwrap());
+        assert_eq!((q.yes.as_str(), q.no.as_str()), ("OK", ""));
+        assert!(editor.updates().is_empty());
+        // (dismissed either way, the pair is staged)
+        editor.import("self\nself", &[None]).unwrap();
+        assert_eq!(staged(&editor), [pair("self", "self")].into());
+        editor.apply().unwrap();
+        let mut editor = Relationships::new(store.clone(), kind).unwrap();
+        // (already there: no warning, nothing staged)
+        editor.import("self\nself", &[]).unwrap();
+        assert!(editor.updates().is_empty());
     }
     let mut editor = Relationships::new(store, RelationKind::Siblings).unwrap();
-    let pairs = vec![
-        ("alias".into(), "first".into()),
-        ("alias".into(), "second".into()),
-    ];
     assert!(
-        editor
-            .enter_pairs(pairs, true, &[])
-            .unwrap_err()
-            .message
-            .contains("conflicting sibling")
+        step("siblings", "p\nq\np\nr")["asked"]
+            .as_array()
+            .unwrap()
+            .is_empty()
     );
+    editor.import("p\nq\np\nr", &[]).unwrap();
+    assert_eq!(staged(&editor), [pair("p", "q"), pair("p", "r")].into());
 }
 
 /// The reason question's recent and fixed suggestions, which of them are

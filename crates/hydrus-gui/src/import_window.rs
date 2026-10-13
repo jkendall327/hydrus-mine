@@ -4,12 +4,13 @@
 //! import page with the good files (the reference's `new_hdd_import`).
 
 use std::cell::RefCell;
-use std::collections::{BTreeSet, HashSet};
+use std::collections::HashSet;
 use std::rc::Rc;
 use std::time::Duration;
 
 use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
 
+use crate::list_selection::ListSelection;
 use crate::local_import::{Parse, Review};
 use crate::{ImportRow, ReviewImportsWindow};
 
@@ -44,14 +45,6 @@ fn modified(path: &str) -> Option<i64> {
     i64::try_from(seconds).ok()
 }
 
-/// The window's state beside its model: which rows are selected, and the
-/// row a shift-click selects from.
-#[derive(Debug, Default)]
-struct Selection {
-    rows: BTreeSet<usize>,
-    anchor: Option<usize>,
-}
-
 /// Open the window on `paths`; it forgets itself from `slot` when closed,
 /// and hands its good files to `import_now`.
 pub(crate) fn open(
@@ -68,7 +61,8 @@ pub(crate) fn open(
         .with_ffmpeg_timeout_reader(hydrus_store::ffmpeg_policy::reader(&sidecars.store));
     let review = Rc::new(RefCell::new(Review::with_tools(tools)));
     review.borrow_mut().add_paths(paths);
-    let selection = Rc::new(RefCell::new(Selection::default()));
+    // (rows by their index, as the reference's list selects them)
+    let selection = Rc::new(RefCell::new(ListSelection::<usize>::default()));
     let show = {
         let store = sidecars.store.clone();
         let review = review.clone();
@@ -77,7 +71,7 @@ pub(crate) fn open(
         move || {
             let Some(window) = weak.upgrade() else { return };
             let review = review.borrow();
-            let selected = &selection.borrow().rows;
+            let selected = selection.borrow();
             let formatting = hydrus_gui_model::gui_format::preferences(&store);
             let rows: Vec<ImportRow> = review
                 .parsed()
@@ -91,7 +85,7 @@ pub(crate) fn open(
                         .collect();
                     ImportRow {
                         cells: ModelRc::new(VecModel::from(cells)),
-                        selected: selected.contains(&i),
+                        selected: selected.is_selected(i),
                         problem: !matches!(parsed.result, Parse::Good(_) | Parse::Sidecar),
                     }
                 })
@@ -169,30 +163,11 @@ pub(crate) fn open(
     });
     window.on_row_clicked({
         let selection = selection.clone();
+        let review = review.clone();
         let show = show.clone();
         move |row, ctrl, shift| {
-            let row = at(row);
-            let mut selection = selection.borrow_mut();
-            match (ctrl, shift, selection.anchor) {
-                (_, true, Some(anchor)) => {
-                    let (from, to) = (anchor.min(row), anchor.max(row));
-                    if !ctrl {
-                        selection.rows.clear();
-                    }
-                    selection.rows.extend(from..=to);
-                }
-                (true, _, _) => {
-                    if !selection.rows.remove(&row) {
-                        selection.rows.insert(row);
-                    }
-                    selection.anchor = Some(row);
-                }
-                _ => {
-                    selection.rows = BTreeSet::from([row]);
-                    selection.anchor = Some(row);
-                }
-            }
-            drop(selection);
+            let order: Vec<usize> = (0..review.borrow().parsed().len()).collect();
+            selection.borrow_mut().click(&order, at(row), ctrl, shift);
             show();
         }
     });
@@ -201,10 +176,11 @@ pub(crate) fn open(
         let selection = selection.clone();
         let show = show.clone();
         move || {
-            let rows: HashSet<usize> = std::mem::take(&mut selection.borrow_mut().rows)
-                .into_iter()
+            let rows: HashSet<usize> = std::mem::take(&mut *selection.borrow_mut())
+                .selected_order()
+                .iter()
+                .copied()
                 .collect();
-            selection.borrow_mut().anchor = None;
             review.borrow_mut().remove(&rows);
             show();
         }

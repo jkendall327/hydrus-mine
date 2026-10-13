@@ -1,6 +1,8 @@
 import { Btn } from "btn.slint";
 // Asked for before the client opens when a lock password is set, as the
-// reference asks: until the password is right, or the window is closed.
+// reference asks: until the password is right, or the window is closed. A
+// wrong password is asked for again with nothing said; a blank one is warned
+// about, as the reference's text dialog warns.
 
 import { Button, LineEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
@@ -13,8 +15,8 @@ export component UnlockWindow inherits Window {
     preferred-width: 360px;
     background: Theme.window;
 
-    // the last password entered was wrong
-    in property <bool> wrong;
+    // the reference text dialog's warning, for a blank entry
+    in property <string> warning;
 
     callback entered(string);
     callback cancelled();
@@ -30,14 +32,12 @@ export component UnlockWindow inherits Window {
         password := LineEdit {
             input-type: InputType.password;
             accepted(text) => {
-                if (text != "") {
-                    root.entered(text);
-                    self.text = "";
-                }
+                root.entered(text);
+                self.text = "";
             }
         }
-        if root.wrong: Text {
-            text: "That isn't the password.";
+        if root.warning != "": Text {
+            text: root.warning;
             color: Theme.error;
         }
         HorizontalLayout {
@@ -49,7 +49,6 @@ export component UnlockWindow inherits Window {
             }
             Btn {
                 text: "ok";
-                enabled: password.text != "";
                 clicked => {
                     root.entered(password.text);
                     password.text = "";

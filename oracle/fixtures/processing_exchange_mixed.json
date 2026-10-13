@@ -1,0 +1,425 @@
+{
+ "steps": [
+  {
+   "start": {
+    "processor": [
+     84,
+     1,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ",",
+          null
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "processed": [
+     "a",
+     "b"
+    ],
+    "selected": []
+   }
+  },
+  {
+   "name": "mixed list",
+   "how": "clipboard",
+   "text": "[26, 3, [[2, [55, 2, [[[3, \"!\"]], \"example string\"]]], [2, [44, 1, []]], [2, [51, 1, [3, \"\", null, null, \"a\"]]]]]",
+   "messages": [
+    {
+     "kind": "warning",
+     "text": "The imported objects included these types:\n\nTagFilter\n\nWhereas this control only allows:\n\nStringProcessingStep"
+    },
+    {
+     "kind": "information",
+     "text": "2 objects added!"
+    }
+   ],
+   "state": {
+    "processor": [
+     84,
+     1,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ",",
+          null
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "!"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          3,
+          "",
+          null,
+          null,
+          "a"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "processed": [
+     "a!",
+     "b!"
+    ],
+    "selected": []
+   }
+  },
+  {
+   "name": "bare processor",
+   "how": "clipboard",
+   "text": "[84, 1, [26, 3, [[2, [55, 2, [[[3, \"?\"]], \"example string\"]]]]]]",
+   "messages": [
+    {
+     "kind": "information",
+     "text": "1 objects added!"
+    }
+   ],
+   "state": {
+    "processor": [
+     84,
+     1,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ",",
+          null
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "!"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          3,
+          "",
+          null,
+          null,
+          "a"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                3,
+                "?"
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "processed": [],
+    "selected": []
+   }
+  },
+  {
+   "name": "nothing permitted",
+   "how": "clipboard",
+   "text": "[26, 3, [[2, [44, 1, []]]]]",
+   "messages": [
+    {
+     "kind": "warning",
+     "text": "The imported objects included these types:\n\nTagFilter\n\nWhereas this control only allows:\n\nStringProcessingStep"
+    }
+   ],
+   "state": {
+    "processor": [
+     84,
+     1,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ",",
+          null
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "!"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          3,
+          "",
+          null,
+          null,
+          "a"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                3,
+                "?"
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "processed": [],
+    "selected": []
+   }
+  },
+  {
+   "name": "mixed png",
+   "how": "png",
+   "messages": [
+    {
+     "kind": "warning",
+     "text": "The imported objects included these types:\n\nTagFilter\n\nWhereas this control only allows:\n\nStringProcessingStep"
+    },
+    {
+     "kind": "information",
+     "text": "2 objects added!"
+    }
+   ],
+   "state": {
+    "processor": [
+     84,
+     1,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ",",
+          null
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "!"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          3,
+          "",
+          null,
+          null,
+          "a"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                3,
+                "?"
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "!"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         51,
+         1,
+         [
+          3,
+          "",
+          null,
+          null,
+          "a"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "processed": [],
+    "selected": []
+   }
+  }
+ ]
+}
