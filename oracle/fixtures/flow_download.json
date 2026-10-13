@@ -1,0 +1,1058 @@
+{
+ "domain_manager": [
+  53,
+  7,
+  [
+   [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       69,
+       "local booru tag search",
+       1,
+       [
+        "e268f49a5a6ef6526c3c29608e83a0adfff5a74aa0b5ef023ecdfb1b0cf99f96",
+        "http://127.0.0.1:46012/search/%tags%/1",
+        "%tags%",
+        "+",
+        "tag",
+        "blue_eyes"
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    "e268f49a5a6ef6526c3c29608e83a0adfff5a74aa0b5ef023ecdfb1b0cf99f96"
+   ],
+   [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       50,
+       "local booru post",
+       15,
+       [
+        "72f590bcf7c52f069e59ead8f876f8f3cfc63d6f39e736514fc161e8ae7f147d",
+        0,
+        "http",
+        [
+         139,
+         1,
+         [
+          [
+           "127.0.0.1:46012"
+          ],
+          [],
+          false,
+          false
+         ]
+        ],
+        [
+         true,
+         false,
+         false,
+         true,
+         false,
+         true,
+         false
+        ],
+        [
+         [
+          [
+           51,
+           1,
+           [
+            0,
+            "post",
+            null,
+            null,
+            "post"
+           ]
+          ],
+          null
+         ],
+         [
+          [
+           51,
+           1,
+           [
+            3,
+            "",
+            null,
+            null,
+            "example string"
+           ]
+          ],
+          null
+         ]
+        ],
+        [
+         26,
+         3,
+         []
+        ],
+        false,
+        [
+         51,
+         1,
+         [
+          3,
+          "",
+          null,
+          null,
+          "example string"
+         ]
+        ],
+        [],
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        0,
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        null,
+        null,
+        1,
+        "http://127.0.0.1:46012/post/1"
+       ]
+      ]
+     ],
+     [
+      2,
+      [
+       50,
+       "local booru search",
+       15,
+       [
+        "98f595ed2ffa69a74a0b2110491f3dce2e75730103245adb463cc0b021c413d1",
+        3,
+        "http",
+        [
+         139,
+         1,
+         [
+          [
+           "127.0.0.1:46012"
+          ],
+          [],
+          false,
+          false
+         ]
+        ],
+        [
+         true,
+         false,
+         false,
+         true,
+         false,
+         true,
+         false
+        ],
+        [
+         [
+          [
+           51,
+           1,
+           [
+            0,
+            "search",
+            null,
+            null,
+            "search"
+           ]
+          ],
+          null
+         ],
+         [
+          [
+           51,
+           1,
+           [
+            3,
+            "",
+            null,
+            null,
+            "example string"
+           ]
+          ],
+          null
+         ],
+         [
+          [
+           51,
+           1,
+           [
+            3,
+            "",
+            null,
+            null,
+            "example string"
+           ]
+          ],
+          null
+         ]
+        ],
+        [
+         26,
+         3,
+         []
+        ],
+        false,
+        [
+         51,
+         1,
+         [
+          3,
+          "",
+          null,
+          null,
+          "example string"
+         ]
+        ],
+        [],
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        0,
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        null,
+        null,
+        1,
+        "http://127.0.0.1:46012/search/blue_eyes/1"
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    "72f590bcf7c52f069e59ead8f876f8f3cfc63d6f39e736514fc161e8ae7f147d"
+   ],
+   [
+    33,
+    1,
+    [
+     [
+      "72f590bcf7c52f069e59ead8f876f8f3cfc63d6f39e736514fc161e8ae7f147d",
+      "ee98a4457481f8d2be83859287a582237258e2792323864f96b87c7f4888164a"
+     ],
+     [
+      "98f595ed2ffa69a74a0b2110491f3dce2e75730103245adb463cc0b021c413d1",
+      "6929f581a0f8050748831b3e4fcb8753e52c74ab8b9971253e613f490d3157e5"
+     ]
+    ]
+   ],
+   [
+    [
+     6,
+     9,
+     [
+      false,
+      false,
+      [
+       150,
+       1,
+       [
+        [
+         44,
+         1,
+         []
+        ],
+        []
+       ]
+      ],
+      [
+       151,
+       1,
+       [
+        [
+         "646f776e6c6f616465722074616773",
+         [
+          65,
+          4,
+          [
+           true,
+           [
+            44,
+            1,
+            []
+           ],
+           [],
+           true,
+           true,
+           true,
+           false,
+           [
+            44,
+            1,
+            []
+           ],
+           false,
+           false
+          ]
+         ]
+        ]
+       ]
+      ],
+      false
+     ]
+    ],
+    [
+     6,
+     9,
+     [
+      false,
+      false,
+      [
+       150,
+       1,
+       [
+        [
+         44,
+         1,
+         []
+        ],
+        []
+       ]
+      ],
+      [
+       151,
+       1,
+       []
+      ],
+      false
+     ]
+    ],
+    []
+   ],
+   [
+    [
+     82,
+     2,
+     [
+      [
+       153,
+       1,
+       [
+        true,
+        true,
+        3,
+        [],
+        null,
+        []
+       ]
+      ],
+      false
+     ]
+    ],
+    [
+     82,
+     2,
+     [
+      [
+       153,
+       1,
+       [
+        true,
+        true,
+        3,
+        [],
+        null,
+        []
+       ]
+      ],
+      false
+     ]
+    ],
+    []
+   ],
+   [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       58,
+       "local booru post parser",
+       3,
+       [
+        "local booru post parser",
+        "ee98a4457481f8d2be83859287a582237258e2792323864f96b87c7f4888164a",
+        [
+         55,
+         2,
+         [
+          [],
+          "example string"
+         ]
+        ],
+        [
+         26,
+         3,
+         []
+        ],
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            30,
+            7,
+            [
+             "file",
+             7,
+             [
+              27,
+              8,
+              [
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   62,
+                   3,
+                   [
+                    0,
+                    "img",
+                    {
+                     "id": "image"
+                    },
+                    null,
+                    null,
+                    false,
+                    [
+                     51,
+                     1,
+                     [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ],
+               0,
+               "src",
+               "",
+               [
+                84,
+                1,
+                [
+                 26,
+                 3,
+                 []
+                ]
+               ]
+              ]
+             ],
+             [
+              7,
+              50
+             ]
+            ]
+           ]
+          ],
+          [
+           2,
+           [
+            30,
+            7,
+            [
+             "source",
+             7,
+             [
+              27,
+              8,
+              [
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   62,
+                   3,
+                   [
+                    0,
+                    "a",
+                    {
+                     "class": "source"
+                    },
+                    null,
+                    null,
+                    false,
+                    [
+                     51,
+                     1,
+                     [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ],
+               0,
+               "href",
+               "",
+               [
+                84,
+                1,
+                [
+                 26,
+                 3,
+                 []
+                ]
+               ]
+              ]
+             ],
+             [
+              8,
+              50
+             ]
+            ]
+           ]
+          ],
+          [
+           2,
+           [
+            30,
+            7,
+            [
+             "tags",
+             0,
+             [
+              27,
+              8,
+              [
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   62,
+                   3,
+                   [
+                    0,
+                    "li",
+                    {
+                     "class": "tag"
+                    },
+                    null,
+                    null,
+                    false,
+                    [
+                     51,
+                     1,
+                     [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ],
+               1,
+               "href",
+               "",
+               [
+                84,
+                1,
+                [
+                 26,
+                 3,
+                 []
+                ]
+               ]
+              ]
+             ],
+             null
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         "http://127.0.0.1:46012/post/1"
+        ],
+        {
+         "url": "https://example.com/posts/index.php?id=123456"
+        }
+       ]
+      ]
+     ],
+     [
+      2,
+      [
+       58,
+       "local booru search parser",
+       3,
+       [
+        "local booru search parser",
+        "6929f581a0f8050748831b3e4fcb8753e52c74ab8b9971253e613f490d3157e5",
+        [
+         55,
+         2,
+         [
+          [],
+          "example string"
+         ]
+        ],
+        [
+         26,
+         3,
+         []
+        ],
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            30,
+            7,
+            [
+             "next page",
+             7,
+             [
+              27,
+              8,
+              [
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   62,
+                   3,
+                   [
+                    0,
+                    "a",
+                    {
+                     "class": "next"
+                    },
+                    null,
+                    null,
+                    false,
+                    [
+                     51,
+                     1,
+                     [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ],
+               0,
+               "href",
+               "",
+               [
+                84,
+                1,
+                [
+                 26,
+                 3,
+                 []
+                ]
+               ]
+              ]
+             ],
+             [
+              6,
+              50
+             ]
+            ]
+           ]
+          ],
+          [
+           2,
+           [
+            30,
+            7,
+            [
+             "posts",
+             7,
+             [
+              27,
+              8,
+              [
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   62,
+                   3,
+                   [
+                    0,
+                    "a",
+                    {
+                     "class": "thumb"
+                    },
+                    null,
+                    null,
+                    false,
+                    [
+                     51,
+                     1,
+                     [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ],
+               0,
+               "href",
+               "",
+               [
+                84,
+                1,
+                [
+                 26,
+                 3,
+                 []
+                ]
+               ]
+              ]
+             ],
+             [
+              7,
+              50
+             ]
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         "http://127.0.0.1:46012/search/blue_eyes/1"
+        ],
+        {
+         "url": "https://example.com/posts/index.php?id=123456"
+        }
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    [
+     [
+      47,
+      2,
+      [
+       0,
+       null
+      ]
+     ],
+     [
+      [
+       "User-Agent",
+       [
+        "Mozilla/5.0 (compatible; Hydrus Client)",
+        1,
+        "This is the default User-Agent identifier for the client for all network connections."
+       ]
+      ],
+      [
+       "Accept",
+       [
+        "image/jpeg,image/png,image/*;q=0.9,*/*;q=0.8",
+        1,
+        "Prefers jpeg/png over webp, but provides graceful fallback."
+       ]
+      ],
+      [
+       "Cache-Control",
+       [
+        "no-transform",
+        1,
+        "Tells CDNs not to deliver \"optimised\" versions of files. May not be honoured."
+       ]
+      ]
+     ]
+    ]
+   ]
+  ]
+ ],
+ "site": {
+  "phases": [
+   {
+    "files": {
+     "/files/p1.jpg": "jpeg_420.jpg"
+    },
+    "pages": {
+     "/post/1": "<html><head><title>post 1</title></head><body><ul id=\"tags\"><li class=\"tag\">post 1</li><li class=\"tag\">creator:someone</li><li class=\"tag\">blue eyes</li></ul><img id=\"image\" src=\"/files/p1.jpg\"><a class=\"source\" href=\"https://elsewhere.example/art/1\">source</a></body></html>",
+     "/search/blue_eyes/1": "<html><body><a class=\"thumb\" href=\"/post/1\">post 1</a></body></html>"
+    }
+   }
+  ],
+  "port": 46012
+ },
+ "steps": [
+  {
+   "dialog": {},
+   "files": {
+    "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 1"
+      ]
+     },
+     "urls": [
+      "BASE/files/p1.jpg",
+      "BASE/post/1",
+      "https://elsewhere.example/art/1"
+     ]
+    }
+   },
+   "hits": [
+    "/files/p1.jpg",
+    "/post/1"
+   ],
+   "page": {
+    "files": [
+     {
+      "data": "BASE/post/1",
+      "note": "",
+      "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+      "status": 1,
+      "tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 1"
+      ]
+     }
+    ],
+    "thumbnails": 1
+   },
+   "popups": [],
+   "step": "download"
+  },
+  {
+   "dialog": {
+    "current tab": "my tags",
+    "services": [
+     "downloader tags (3)",
+     "my tags",
+     "second tags"
+    ],
+    "title": "manage tags for 1 files"
+   },
+   "files": {
+    "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 1"
+      ],
+      "my tags": [
+       "favourite"
+      ]
+     },
+     "urls": [
+      "BASE/files/p1.jpg",
+      "BASE/post/1",
+      "https://elsewhere.example/art/1"
+     ]
+    }
+   },
+   "hits": [],
+   "page": {
+    "files": [
+     {
+      "data": "BASE/post/1",
+      "note": "",
+      "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+      "status": 1,
+      "tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 1"
+      ]
+     }
+    ],
+    "thumbnails": 1
+   },
+   "popups": [],
+   "step": "tag"
+  },
+  {
+   "dialog": {},
+   "files": {
+    "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3": {
+     "in": [
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 1"
+      ],
+      "my tags": [
+       "favourite"
+      ]
+     },
+     "urls": [
+      "BASE/files/p1.jpg",
+      "BASE/post/1",
+      "https://elsewhere.example/art/1"
+     ]
+    }
+   },
+   "hits": [],
+   "page": {
+    "files": [
+     {
+      "data": "BASE/post/1",
+      "note": "",
+      "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+      "status": 1,
+      "tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 1"
+      ]
+     }
+    ],
+    "thumbnails": 1
+   },
+   "popups": [],
+   "step": "archive"
+  },
+  {
+   "dialog": {
+    "actions": null,
+    "description": "Send one file from my files to trash?",
+    "title": "Delete files?"
+   },
+   "files": {
+    "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3": {
+     "in": [
+      "trash"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 1"
+      ],
+      "my tags": [
+       "favourite"
+      ]
+     },
+     "urls": [
+      "BASE/files/p1.jpg",
+      "BASE/post/1",
+      "https://elsewhere.example/art/1"
+     ]
+    }
+   },
+   "hits": [],
+   "page": {
+    "files": [
+     {
+      "data": "BASE/post/1",
+      "note": "",
+      "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+      "status": 1,
+      "tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 1"
+      ]
+     }
+    ],
+    "thumbnails": 1
+   },
+   "popups": [],
+   "step": "delete"
+  }
+ ]
+}

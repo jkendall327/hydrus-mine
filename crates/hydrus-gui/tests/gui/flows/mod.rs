@@ -14,6 +14,7 @@
 //! with the `DIFFERENCES.md` entry that explains it; one that no longer
 //! differs fails the flow too, so the list stays true.
 
+mod download;
 mod subscription;
 
 use std::collections::{BTreeMap, BTreeSet, HashMap};
@@ -85,6 +86,32 @@ pub fn install(store: &Store, recording: &Json) {
 
 // ---------------------------------------------------------------- the site
 
+/// Each flow's recording and the port its site is served on (its URL
+/// classes name the port, so the recording fixes it). Tests run side by
+/// side in one process: no two flows may share a port.
+pub const PORTS: &[(&str, u16)] = &[
+    ("flow_subscription.json", 46011),
+    ("flow_download.json", 46012),
+];
+
+/// Whether a request to `http://127.0.0.1` goes straight there, whatever
+/// proxies the environment names (the daemon's HTTP client, like the
+/// reference's, takes them from it when the client sets none).
+fn loopback_bypasses_proxies() -> bool {
+    let set = |name: &str| std::env::var(name).is_ok_and(|v| !v.trim().is_empty());
+    let proxied = ["HTTP_PROXY", "http_proxy", "ALL_PROXY", "all_proxy"]
+        .iter()
+        .any(|name| set(name));
+    let bypassed = ["NO_PROXY", "no_proxy"].iter().any(|name| {
+        std::env::var(name).is_ok_and(|v| {
+            v.split(',')
+                .map(str::trim)
+                .any(|h| matches!(h, "*" | "127.0.0.1" | "127.0.0.0/8"))
+        })
+    });
+    !proxied || bypassed
+}
+
 /// The recording's fake site, served on its port in phases, noting every
 /// request.
 pub struct Site {
@@ -125,9 +152,19 @@ fn string_map(value: &Json) -> HashMap<String, String> {
 }
 
 impl Site {
-    /// Serve the recording's `site` (its port and phases), from phase 0.
-    pub fn serve(recording: &Json) -> Arc<Self> {
+    /// Serve the recording `name`'s `site` (its port and phases), from
+    /// phase 0.
+    pub fn serve(name: &str, recording: &Json) -> Arc<Self> {
         let port = u16::try_from(recording["site"]["port"].as_u64().unwrap()).unwrap();
+        assert!(
+            PORTS.contains(&(name, port)),
+            "{name}'s site port {port} is not in flows::PORTS"
+        );
+        assert!(
+            loopback_bypasses_proxies(),
+            "a proxy in the environment would carry the flow's requests to 127.0.0.1; \
+             add 127.0.0.1 to NO_PROXY"
+        );
         let runtime = tokio::runtime::Builder::new_multi_thread()
             .worker_threads(2)
             .enable_all()
@@ -204,6 +241,9 @@ pub struct Daemon {
     runtime: Option<tokio::runtime::Runtime>,
     state: Arc<hydrus_api::AppState>,
     store: Arc<Store>,
+    /// What went wrong in a task of its own, for the flow to fail on
+    /// (a panic there would only end that task).
+    failed: Arc<Mutex<Option<String>>>,
 }
 
 impl Daemon {
@@ -214,6 +254,7 @@ impl Daemon {
             .build()
             .unwrap();
         let state = hydrus_api::AppState::new(Arc::clone(store)).unwrap();
+        let failed = Arc::new(Mutex::new(None));
         {
             let _entered = runtime.enter();
             let downloads = state.downloads.clone().expect("the network engine starts");
@@ -222,11 +263,13 @@ impl Daemon {
             if let Some(runner) = &subscriptions {
                 runner.start();
             }
+            let failed = Arc::clone(&failed);
             runtime.spawn(async move {
                 loop {
                     tokio::time::sleep(Duration::from_secs(1)).await;
                     if let Err(e) = downloads.take_nudges(subscriptions.as_ref()) {
-                        panic!("acting on nudged queues failed: {e}");
+                        *failed.lock().unwrap() = Some(format!("acting on nudged queues: {e}"));
+                        return;
                     }
                 }
             });
@@ -235,19 +278,33 @@ impl Daemon {
             runtime: Some(runtime),
             state,
             store: Arc::clone(store),
+            failed,
         }
     }
 
-    /// Nothing running, nothing nudged and waiting to be taken, and no
-    /// subscription due within the minute (one just made, or told to
-    /// check now, is due at once).
+    /// Fail the flow if the daemon's own tasks failed.
+    pub fn check(&self) {
+        if let Some(error) = self.failed.lock().unwrap().as_ref() {
+            panic!("the daemon failed: {error}");
+        }
+    }
+
+    /// No download or subscription running, nothing nudged and waiting to
+    /// be taken, and no subscription due within the minute (one just made,
+    /// or told to check now, is due at once). A queue's task lives as long
+    /// as its page, so only its current file and gallery jobs count.
     pub fn idle(&self) -> bool {
         let runner = self.state.subscriptions.as_ref().unwrap();
         if !runner.status().active.is_empty() {
             return false;
         }
+        // (a queue's task lives as long as its page, waiting for work)
         let downloads = self.state.downloads.as_ref().unwrap();
-        if !downloads.live().is_empty() {
+        if downloads
+            .live()
+            .iter()
+            .any(|(_, live)| live.file_job.is_some() || live.gallery_job.is_some())
+        {
             return false;
         }
         if self.store.read(queues::any_nudged).unwrap() {
@@ -294,6 +351,7 @@ pub fn wait_until_idle(daemon: &Daemon, also: impl Fn() -> bool) {
     let mut quiet_since: Option<Instant> = None;
     while Instant::now() < deadline {
         slint::platform::update_timers_and_animations();
+        daemon.check();
         if daemon.idle() && also() {
             let since = *quiet_since.get_or_insert_with(Instant::now);
             if since.elapsed() >= Duration::from_millis(1500) {
@@ -304,7 +362,11 @@ pub fn wait_until_idle(daemon: &Daemon, also: impl Fn() -> bool) {
         }
         std::thread::sleep(Duration::from_millis(50));
     }
-    panic!("timed out waiting for the client and its daemon to go idle");
+    panic!(
+        "timed out waiting for the client and its daemon to go idle (daemon idle: {}, the flow's condition: {})",
+        daemon.idle(),
+        also()
+    );
 }
 
 // ---------------------------------------------------------------- the end state
@@ -316,6 +378,7 @@ pub struct Normaliser {
     base: String,
     date_time: regex::Regex,
     delta: regex::Regex,
+    just_now: regex::Regex,
 }
 
 impl Normaliser {
@@ -324,16 +387,19 @@ impl Normaliser {
             base: site.base.clone(),
             date_time: regex::Regex::new(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}").unwrap(),
             delta: regex::Regex::new(
-                r"\b(\d+ (year|month|day|hour|minute|second)s?( \d+ (year|month|day|hour|minute|second)s?)*( ago)?|just now|now)\b",
+                r"\b\d+ (year|month|day|hour|minute|second)s?( \d+ (year|month|day|hour|minute|second)s?)*( ago)?\b",
             )
             .unwrap(),
+            // (only a whole text: "now" in a note stays)
+            just_now: regex::Regex::new(r"^(just now|now)$").unwrap(),
         }
     }
 
     pub fn text(&self, text: &str) -> String {
         let text = text.replace(&self.base, "BASE");
         let text = self.date_time.replace_all(&text, "TIME");
-        self.delta.replace_all(&text, "DELTA").into_owned()
+        let text = self.delta.replace_all(&text, "DELTA");
+        self.just_now.replace(&text, "DELTA").into_owned()
     }
 }
 
@@ -370,10 +436,6 @@ impl State<'_> {
         for sub in self.store.read(subs::subscriptions).unwrap() {
             let mut queries = Vec::new();
             for q in self.store.read(|c| subs::queries(c, sub.id)).unwrap() {
-                let files = self
-                    .store
-                    .read(|c| queues::file_seeds(c, q.queue_id))
-                    .unwrap();
                 let searches = self
                     .store
                     .read(|c| queues::gallery_seeds(c, q.queue_id))
@@ -384,7 +446,7 @@ impl State<'_> {
                     "dead": q.state.dead,
                     "checked": q.state.last_check_time > 0,
                     "check_now": q.state.check_now,
-                    "files": files.iter().map(|f| self.file_seed(f)).collect::<Vec<_>>(),
+                    "files": self.file_log(q.queue_id),
                     "searches": searches.iter().map(|g| self.gallery_seed(g)).collect::<Vec<_>>(),
                 }));
             }
@@ -398,19 +460,15 @@ impl State<'_> {
         Json::Array(out)
     }
 
-    /// `flows.files_state`, for the files in `subscriptions`' logs.
-    pub fn files(&self, subscriptions: &Json) -> Json {
+    /// An importer's file log (`flows.file_log_state`).
+    pub fn file_log(&self, queue: i64) -> Json {
+        let files = self.store.read(|c| queues::file_seeds(c, queue)).unwrap();
+        Json::Array(files.iter().map(|f| self.file_seed(f)).collect())
+    }
+
+    /// `flows.files_state`: what each file shows.
+    pub fn files(&self, hashes: BTreeSet<String>) -> Json {
         use hydrus_core::service::ServiceType;
-        let mut hashes = BTreeSet::new();
-        for s in subscriptions.as_array().unwrap() {
-            for q in s["queries"].as_array().unwrap() {
-                for f in q["files"].as_array().unwrap() {
-                    if let Some(h) = f["sha256"].as_str() {
-                        hashes.insert(h.to_owned());
-                    }
-                }
-            }
-        }
         let snapshot = self.store.snapshot();
         let mut out = serde_json::Map::new();
         for hash in hashes {
@@ -490,19 +548,35 @@ impl State<'_> {
         )
     }
 
-    /// A step's state: `step` and `dialog` (what the flow saw in its
-    /// dialogs) as given, then what the user sees.
+    /// A subscription flow's step: `step` and `dialog` (what the flow saw
+    /// in its dialogs) as given, then what the user sees.
     pub fn step(&self, step: &str, dialog: &Json) -> Json {
         let subscriptions = self.subscriptions();
+        let mut hashes = BTreeSet::new();
+        for s in subscriptions.as_array().unwrap() {
+            for q in s["queries"].as_array().unwrap() {
+                hashes.extend(hashes_in_log(&q["files"]));
+            }
+        }
         json!({
             "step": step,
             "dialog": dialog,
-            "files": self.files(&subscriptions),
+            "files": self.files(hashes),
             "subscriptions": subscriptions,
             "popups": self.popups(),
             "hits": self.site.take_hits(),
         })
     }
+}
+
+/// The files a file log names (`flows.hashes_in_log`).
+pub fn hashes_in_log(files: &Json) -> BTreeSet<String> {
+    files
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter_map(|f| f["sha256"].as_str().map(str::to_owned))
+        .collect()
 }
 
 // ---------------------------------------------------------------- comparing
@@ -575,4 +649,27 @@ pub fn compare(ours: &[Json], recording: &Json, known: &[Known]) {
         "the flow differs from the reference:\n{}\n\nknown differences no longer shown: {gone:?}",
         unexpected.join("\n")
     );
+}
+
+#[test]
+fn each_flow_has_its_own_port_as_its_recording_names_it() {
+    let mut ports = BTreeSet::new();
+    for (name, port) in PORTS {
+        assert!(ports.insert(port), "two flows on port {port}");
+        let recording = hydrus_testkit::fixture_json(name);
+        assert_eq!(recording["site"]["port"], json!(port), "{name}");
+    }
+    let fixtures = std::fs::read_dir(hydrus_testkit::fixture_path("")).unwrap();
+    for entry in fixtures {
+        let name = entry.unwrap().file_name().to_string_lossy().into_owned();
+        let json = std::path::Path::new(&name)
+            .extension()
+            .is_some_and(|e| e.eq_ignore_ascii_case("json"));
+        if name.starts_with("flow_") && json {
+            assert!(
+                PORTS.iter().any(|(n, _)| *n == name),
+                "{name} has no port in flows::PORTS"
+            );
+        }
+    }
 }

@@ -1522,7 +1522,9 @@ option interlocks and real manage-tags tab changes. As the reference's
 default media shortcuts have it, F7 archives the file, shift+F7 returns it
 to the inbox, delete deletes it (from the page's domain, if it searches
 one, else to the trash; in the trash, for good, unless the delete lock
-holds it), asking first, and shift+delete undeletes it; a file deleted out
+holds it), asking first (in the reference's words where its delete files
+dialog has one action, such as "Send one file from my files to trash?" or
+"Permanently delete one trashed file?"), and shift+delete undeletes it; a file deleted out
 of the page's domains leaves the page and the viewer (which closes when
 none are left). The same keys (and F3) work on the thumbnails, once a click gives
 them the keyboard, for every file selected: F7 and shift+F7 on several
