@@ -229,6 +229,7 @@ struct Inner {
     schedule: RefCell<Autosave>,
     idle: RefCell<Idle>,
     force_idle: RefCell<Option<Weak<crate::force_idle::State>>>,
+    system_idle: RefCell<Box<dyn crate::system_idle::SystemIdle>>,
     previous: RefCell<Option<String>>,
     api_seen: std::cell::Cell<i64>,
     size_warning: RefCell<SizeWarning>,
@@ -262,6 +263,7 @@ pub(crate) fn bind(window: &MainWindow, pages: &Rc<RefCell<Pages>>) -> Monitor {
         schedule: RefCell::new(Autosave::new(now, &config)),
         idle: RefCell::new(Idle::new(now)),
         force_idle: RefCell::new(None),
+        system_idle: RefCell::new(Box::new(crate::system_idle::Unavailable)),
         previous: RefCell::new(None),
         api_seen: std::cell::Cell::new(0),
         size_warning: RefCell::new(SizeWarning::default()),
@@ -303,6 +305,10 @@ impl Monitor {
     }
     pub fn api_at(&self, now_ms: i64) {
         self.0.idle.borrow_mut().api(now_ms);
+    }
+    /// Take the desktop's idle time from `source` (a test's, or none).
+    pub fn set_system_idle(&self, source: Box<dyn crate::system_idle::SystemIdle>) {
+        *self.0.system_idle.borrow_mut() = source;
     }
     pub(crate) fn attach_force_idle(&self, state: Weak<crate::force_idle::State>) {
         *self.0.force_idle.borrow_mut() = Some(state);
@@ -350,6 +356,14 @@ impl Monitor {
         {
             self.0.api_seen.set(at);
             self.api_at(at);
+        }
+        // (input outside our windows: the desktop says how long ago it was)
+        if let Some(ms) = self.0.system_idle.borrow().idle_ms() {
+            let ago = i64::try_from(ms).unwrap_or(i64::MAX);
+            self.0
+                .idle
+                .borrow_mut()
+                .system_input(now_ms.saturating_sub(ago));
         }
         let idle = self.0.idle.borrow();
         for reason in hydrus_core::debug_flags::Flag::IdleReport

@@ -203,6 +203,7 @@ pub mod undelete;
 mod unlock;
 mod viewer;
 pub use viewer::hold_time as hold_viewer_time;
+pub mod system_idle;
 pub mod viewer_closing;
 pub mod viewer_cursor;
 mod viewer_drag;
