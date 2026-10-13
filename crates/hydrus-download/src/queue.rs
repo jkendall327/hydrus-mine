@@ -293,8 +293,9 @@ impl QueueRunner {
 
     /// Act on what another process (the desktop client) asked of the queues:
     /// downloads its pages cancelled are stopped, nudged queues looked at
-    /// now, and the "nudge subscriptions awake" menu entry wakes the
-    /// subscription runner. Whether there was anything to do.
+    /// now, the "nudge subscriptions awake" menu entry wakes the
+    /// subscription runner, and the subscriptions dialog's "apply" has it
+    /// take them afresh. Whether there was anything to do.
     pub fn take_nudges(
         self: &Arc<Self>,
         subscriptions: Option<&Arc<crate::subscriptions::SubscriptionRunner>>,
@@ -320,6 +321,12 @@ impl QueueRunner {
             if queue == hydrus_store::queues::SUBSCRIPTIONS_NUDGE {
                 if let Some(subscriptions) = subscriptions {
                     subscriptions.wake();
+                }
+                continue;
+            }
+            if queue == hydrus_store::queues::SUBSCRIPTIONS_SET_NUDGE {
+                if let Some(subscriptions) = subscriptions {
+                    subscriptions.subscriptions_set();
                 }
                 continue;
             }

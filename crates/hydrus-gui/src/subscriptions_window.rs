@@ -402,7 +402,10 @@ fn write(store: &Store, writes: Vec<Write>) -> hydrus_store::Result<()> {
                 Write::Query(queue, state) => subscriptions::set_query_state(conn, *queue, state)?,
             }
         }
-        Ok(())
+        // the daemon takes the subscriptions afresh, as the reference's
+        // `SetSubscriptions` does on "apply": what is due starts now, even
+        // one that has only just run
+        queues::nudge(conn, queues::SUBSCRIPTIONS_SET_NUDGE)
     })
 }
 

@@ -233,7 +233,10 @@ the reference does (name, source, status such as "2 working, 1 paused,
 1 dead", last new file time, last checked, error/delay such as
 "delayed--retrying in 2 hours - because: …", items, paused), sorted by
 any column and selected as the reference's lists select, and warns when
-subscriptions are paused from the network menu. Its buttons delete the
+subscriptions are paused from the network menu. "Apply" has the daemon
+take the subscriptions afresh within a second, so a new subscription, or a
+query told to check now, starts at once, as in the reference (the
+subscription flow, `FLOWS.md`). Its buttons delete the
 selected (asking "Remove all selected?"), duplicate them ("name (1)",
 with copies of their queries' file logs), merge those sharing a
 downloader (asking which is primary and its new name). Merge stages every
