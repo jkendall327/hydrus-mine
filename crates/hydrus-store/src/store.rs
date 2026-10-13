@@ -197,6 +197,16 @@ impl Drop for MediaClaim {
     }
 }
 
+/// The clock content writes use when a test holds one.
+#[derive(Default)]
+struct WriteClock(Option<Arc<dyn crate::workers::WorkClock>>);
+
+impl std::fmt::Debug for WriteClock {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(if self.0.is_some() { "held" } else { "system" })
+    }
+}
+
 /// A hydrus-rs database directory, open.
 #[derive(Debug)]
 pub struct Store {
@@ -210,7 +220,7 @@ pub struct Store {
     undo: std::sync::Mutex<crate::undo::UndoLog>,
     /// A clock for content writes, held by tests that need "now" to stand
     /// still (`None`: the system clock).
-    write_clock: std::sync::Mutex<Option<Arc<dyn crate::workers::WorkClock>>>,
+    write_clock: std::sync::Mutex<WriteClock>,
 }
 
 impl Store {
@@ -414,7 +424,7 @@ impl Store {
         *self
             .write_clock
             .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner) = Some(clock);
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = WriteClock(Some(clock));
     }
 
     pub fn write_content<R: Send + 'static>(
@@ -426,6 +436,7 @@ impl Store {
             .write_clock
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .0
             .clone();
         self.db.write(move |ctx| {
             // loaded on the writer thread: it reflects every committed write

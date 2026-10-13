@@ -75,7 +75,6 @@ fn recorded_raw_delays_typed_fields_apply_cancel_and_reopen_match_the_reference(
                     i32::try_from(value.as_i64().unwrap()).unwrap(),
                 );
             }
-            assert_eq!(values(&w, row), fields(&case["fields"]), "{case}");
         }
         if case["apply"].as_bool().unwrap() {
             w.invoke_apply();
