@@ -2183,9 +2183,9 @@
    ],
    "recheck": {
     "date": "2026-10-13",
-    "class": "sound",
+    "class": "likely-good",
     "by": "Claude session (#165 triage)",
-    "note": "crates/hydrus-gui/tests/gui/relationship_exchange.rs pair_import_and_export_replay_the_reference_on_local_and_repository_services replays oracle/record_relationship_exchange.py through the real window with no steps filtered: self-pairs are staged after the reference's 'Loop problem!' message (OK only), a batch looping within itself is staged as the reference stages it; rows, questions, reasons, exports and the committed rows after Apply compared on a local service and a repository. Tag moved off the model tests. The message has no window title (DIFFERENCES.md)."
+    "note": "crates/hydrus-gui/tests/gui/relationship_exchange.rs pair_import_and_export_replay_the_reference_on_local_and_repository_services replays oracle/record_relationship_exchange.py through the real window with no steps filtered: self-pairs are staged after the reference's 'Loop problem!' message (OK only), a batch looping within itself is staged as the reference stages it; rows, questions, reasons, exports and the committed rows after Apply compared on a local service and a repository. Tag moved off the model tests. The message has no window title (DIFFERENCES.md). Not sound: the reference's second 'Loop problem!' warning, for pairs that join loops already in the database (ClientGUITagActions.py:187-194), is not raised on this import path, and the recording has no step for it (DIFFERENCES.md)."
    }
   },
   {
@@ -2205,7 +2205,7 @@
     "date": "2026-10-13",
     "class": "weak",
     "by": "Claude session (#165 triage)",
-    "note": "Model replays tag_relationships.json (rows, questions, conflict/loop repairs); self_pairs_cycles_and_two_ideals_in_one_batch_are_staged_as_the_reference_stages_them (crates/hydrus-gui-model/tests/model/tag_relationships.rs) now checks the reference's staging of self-pairs and in-batch loops against relationship_exchange.json (batches are no longer rejected). Still weak: the reference's pre-existing-loop warning is absent (DIFFERENCES.md), and the model test stands in for the window."
+    "note": "Untagged (2026-10-13): Model replays tag_relationships.json (rows, questions, conflict/loop repairs); self_pairs_cycles_and_two_ideals_in_one_batch_are_staged_as_the_reference_stages_them (crates/hydrus-gui-model/tests/model/tag_relationships.rs) now checks the reference's staging of self-pairs and in-batch loops against relationship_exchange.json (batches are no longer rejected). Still weak: the reference's pre-existing-loop warning is absent (DIFFERENCES.md), and the model test stands in for the window."
    }
   },
   {
@@ -3419,9 +3419,9 @@
    ],
    "recheck": {
     "date": "2026-10-13",
-    "class": "sound",
+    "class": "likely-good",
     "by": "Claude session (#165 triage)",
-    "note": "crates/hydrus-gui/tests/gui/relationship_exchange.rs pair_import_and_export_replay_the_reference_on_local_and_repository_services replays oracle/record_relationship_exchange.py through the real window with no steps filtered: self-pairs are staged after the reference's 'Loop problem!' message (OK only), a sibling batch giving one tag two ideals and a batch looping within itself are staged as the reference stages them; rows, questions, reasons, exports and the committed rows after Apply compared on a local service and a repository. The message has no window title (DIFFERENCES.md)."
+    "note": "crates/hydrus-gui/tests/gui/relationship_exchange.rs pair_import_and_export_replay_the_reference_on_local_and_repository_services replays oracle/record_relationship_exchange.py through the real window with no steps filtered: self-pairs are staged after the reference's 'Loop problem!' message (OK only), a sibling batch giving one tag two ideals and a batch looping within itself are staged as the reference stages them; rows, questions, reasons, exports and the committed rows after Apply compared on a local service and a repository. The message has no window title (DIFFERENCES.md). Not sound: the reference's second 'Loop problem!' warning, for pairs that join loops already in the database (ClientGUITagActions.py:187-194), is not raised on this import path, and the recording has no step for it (DIFFERENCES.md)."
    }
   },
   {
@@ -3441,7 +3441,7 @@
     "date": "2026-10-13",
     "class": "weak",
     "by": "Claude session (#165 triage)",
-    "note": "Model replays tag_relationships.json (conflict repair, rows, updates, questions); self_pairs_cycles_and_two_ideals_in_one_batch_are_staged_as_the_reference_stages_them now checks self-pairs, in-batch loops and two ideals against relationship_exchange.json (batches are no longer rejected). Still weak: the pre-existing-loop warning is absent and write autocomplete in pair entry is missing; the model test stands in for the window."
+    "note": "Untagged (2026-10-13): Model replays tag_relationships.json (conflict repair, rows, updates, questions); self_pairs_cycles_and_two_ideals_in_one_batch_are_staged_as_the_reference_stages_them now checks self-pairs, in-batch loops and two ideals against relationship_exchange.json (batches are no longer rejected). Still weak: the pre-existing-loop warning is absent and write autocomplete in pair entry is missing; the model test stands in for the window."
    }
   },
   {

@@ -21,7 +21,8 @@ fn update(service: ServiceId, pair: &Pair, action: RelationAction) -> RelationUp
     }
 }
 
-// leaf: audit-media-parents-pairs,audit-media-siblings-pairs
+// Not tagged (audit-media-parents-pairs, audit-media-siblings-pairs): a model
+// test standing in for the window, and the pre-existing-loop warning is absent.
 // leaf: audit-media-siblings-reasons
 #[test]
 fn reference_rows_questions_conflicts_and_loops() {
@@ -426,7 +427,8 @@ fn changes_refresh_other_services_applying_the_source() {
     assert_eq!(store.snapshot().display.get(display).ideal(a), a);
 }
 
-// leaf: audit-media-parents-pairs,audit-media-siblings-pairs
+// Not tagged (audit-media-parents-pairs, audit-media-siblings-pairs): a model
+// test standing in for the window, and the pre-existing-loop warning is absent.
 #[test]
 fn self_pairs_cycles_and_two_ideals_in_one_batch_are_staged_as_the_reference_stages_them() {
     // `oracle/record_relationship_exchange.py`: the reference warns about

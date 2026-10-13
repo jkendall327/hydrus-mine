@@ -51,10 +51,24 @@ fn only_the_password_unlocks_the_client() {
     assert!(!opened.get());
     assert!(window.window().is_visible());
 
+    // only whitespace is accepted by the reference's dialog (no warning): it
+    // is checked as a password, here a wrong one, and asked for again
+    let spaces = recorded["dialogs"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["dialog"] == "password" && c["typed"] == "  ")
+        .unwrap();
+    assert!(spaces["accepted"].as_bool().unwrap());
+    assert!(spaces["shown"].as_array().unwrap().is_empty());
+    window.invoke_entered(spaces["value"].as_str().unwrap().into());
+    assert!(!widgets::shows(win, warning));
+    assert!(!opened.get());
+    assert!(window.window().is_visible(), "asked again");
+
     // the recorded boot: each answer, and the same question asked again
     // after a wrong one with nothing else said
     let events = recorded["password_gate"]["events"].as_array().unwrap();
-    assert!(events.iter().all(|e| e.get("shown").is_none()));
     let (last, wrong) = events.split_last().unwrap();
     for event in wrong {
         assert_eq!(event["asked"], "Enter your password.");
@@ -80,4 +94,15 @@ fn only_the_password_unlocks_the_client() {
     window.invoke_cancelled();
     assert!(!window.window().is_visible());
     assert!(!opened.get());
+
+    // and a password of only whitespace is a password
+    let opened = Rc::new(Cell::new(false));
+    let window = unlock_window(LockPassword::new(spaces["value"].as_str().unwrap()), {
+        let opened = opened.clone();
+        move || opened.set(true)
+    })
+    .unwrap();
+    window.show().unwrap();
+    window.invoke_entered(spaces["value"].as_str().unwrap().into());
+    assert!(opened.get());
 }

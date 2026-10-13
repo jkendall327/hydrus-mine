@@ -376,16 +376,6 @@ impl Relationships {
             store: &self.store,
             kind: self.kind,
         };
-        // Self-pairs being added: the reference warns about them once its
-        // loop repairs are done, then adds them anyway (`AutoPetitionLoops`).
-        let loops: Vec<String> = {
-            let active = service.state.effective();
-            pairs
-                .iter()
-                .filter(|p| p.0 == p.1 && !active.contains(*p))
-                .map(|p| format!("{} -> {}", p.0, p.1))
-                .collect()
-        };
         if self.kind == RelationKind::Siblings {
             let conflicts = service
                 .state
@@ -402,6 +392,17 @@ impl Relationships {
                 &mut answer,
             )?;
         }
+        // Self-pairs being added (after the conflict repairs, as
+        // `AutoPetitionLoops` reads them): the reference warns about them once
+        // its loop repairs are done, then adds them anyway.
+        let loops: Vec<String> = {
+            let active = service.state.effective();
+            pairs
+                .iter()
+                .filter(|p| p.0 == p.1 && !active.contains(*p))
+                .map(|p| format!("{} -> {}", p.0, p.1))
+                .collect()
+        };
         for pair in &pairs {
             service.workspace.extend([pair.0.clone(), pair.1.clone()]);
             let active = service.state.effective();
