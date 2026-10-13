@@ -2257,7 +2257,9 @@ after a question showing the summary the end-user will see. An import, once
 reviewed, asks as the reference's does: "select objects to add" when "select
 objects from list" is ticked (by default in advanced mode), each new domain
 metadata package in a notice of its own (the first eight), then "The client is
-about to add and link these objects", and says what it added. Login scripts contain credential definitions, cookie
+about to add and link these objects", and says what it added. Objects that
+aren't downloader ones are skipped, and with no default downloader the first
+by name becomes it. Login scripts contain credential definitions, cookie
 rules, ordered requests and response parsers; saved credentials, sessions and
 domain activation stay in the store. Mixed import reviews login scripts beside
 the other components, skips exact script duplicates without comparing their

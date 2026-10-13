@@ -201,9 +201,13 @@ fn package_reviews_real_png_cancel_and_invalid_input_before_atomic_apply() {
             .as_ref()
             .into(),
     );
+    // (its formulas and content parsers aren't downloader objects: they
+    // are skipped, as the reference's import skips them; see
+    // downloader_import_selection.json)
     w.invoke_action("open".into());
-    assert!(!w.get_ready());
-    assert!(w.get_error().contains("formulas or content"));
+    assert!(w.get_ready(), "{}", w.get_error());
+    assert!(!w.get_review().contains("Formula"), "{}", w.get_review());
+    w.invoke_action("back".into());
     w.set_text(one_page().into());
     w.invoke_action("review".into());
     assert!(w.get_ready());

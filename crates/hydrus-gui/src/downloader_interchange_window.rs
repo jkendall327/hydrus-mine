@@ -1012,6 +1012,7 @@ pub fn package(
                             let mut next = draft.clone();
                             let notice = import.apply(&mut next, &chosen)?;
                             next.save(&store).map_err(|e| e.to_string())?;
+                            default_downloader(&store);
                             ask(window, &notice, false);
                             *state.asking.borrow_mut() = Some(Asking::Notice { done: true });
                         }
@@ -1026,7 +1027,23 @@ pub fn package(
             Ok(None)
         }
     });
-    let window = open_with_actions(slots, importing, &[], preview, applied, Some(actions))?;
+    // (a package's other objects are skipped, as the reference's import
+    // skips them, and one with nothing else is warned about)
+    let window = open_objects(
+        slots,
+        importing,
+        &[],
+        Some((preview, applied)),
+        Codec {
+            encode_text: model::encode_text,
+            decode_text: hydrus_downloader_exchange::decode_package_definitions,
+            encode_png: model::encode_png,
+            decode_png: hydrus_downloader_exchange::decode_package_png,
+            processing: false,
+            warning: Some(hydrus_downloader_exchange::package_warning),
+            actions: Some(actions),
+        },
+    )?;
     window.set_json_enabled(true);
     if importing {
         window.set_select_from_list_shown(true);
@@ -1087,6 +1104,33 @@ pub fn package(
         }
     });
     Ok(window)
+}
+
+/// With no default downloader, the first by name becomes it, as the
+/// reference's import leaves it.
+fn default_downloader(store: &Store) {
+    let result = store.write(|ctx| {
+        let conn = ctx.conn();
+        let mut defaults: hydrus_core::subscriptions::GalleryDefaults =
+            hydrus_store::settings::get(conn)?;
+        if defaults.gug.is_some() {
+            return Ok(());
+        }
+        let downloaders: hydrus_parse::Downloaders = hydrus_store::settings::get(conn)?;
+        let first = downloaders
+            .gugs
+            .gugs
+            .iter()
+            .min_by(|a, b| a.name().cmp(b.name()));
+        if let Some(first) = first {
+            defaults.gug = Some((first.key().to_owned(), first.name().to_owned()));
+            hydrus_store::settings::set(conn, &defaults)?;
+        }
+        Ok(())
+    });
+    if let Err(e) = result {
+        eprintln!("could not set the default downloader: {e}");
+    }
 }
 
 /// The import's domain metadata notices, then its final question.

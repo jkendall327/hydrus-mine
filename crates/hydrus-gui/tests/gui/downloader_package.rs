@@ -313,3 +313,88 @@ fn a_mixed_package_is_chosen_asked_about_and_imported_as_the_reference_does() {
         recorded_manager(&fixture["reopened"])
     );
 }
+
+/// The client's downloaders, URL classes, parsers and default downloader,
+/// as `downloader_import_selection.json` lists them.
+fn selection_state(store: &Store) -> Value {
+    let downloaders: Downloaders = store.read(settings::get).unwrap();
+    let classes: hydrus_core::url::UrlClassSettings = store.read(settings::get).unwrap();
+    let defaults: hydrus_core::subscriptions::GalleryDefaults = store.read(settings::get).unwrap();
+    serde_json::json!({
+        "gugs": names(&downloaders.gugs.gugs, |g| g.name().to_owned()),
+        "classes": names(&classes.url_classes, |c| c.name.clone()),
+        "parsers": names(&downloaders.parsers, |p| p.name.clone()),
+        "default_gug": defaults.gug.map(|(_, name)| name),
+    })
+}
+
+// leaf: audit-network-exchange-unsupported
+#[test]
+fn objects_are_chosen_others_skipped_and_a_default_downloader_set_as_the_reference_does() {
+    let _rendered = headless::init();
+    let fixture = hydrus_testkit::fixture_json("downloader_import_selection.json");
+    let (dir, store) = setup();
+    assert_eq!(selection_state(&store), fixture["initial"]);
+    let slots = windows::Slots::default();
+    // "select objects from list" is on in advanced mode
+    store
+        .write(|ctx| settings::set(ctx.conn(), &settings::AdvancedMode(true)))
+        .unwrap();
+    let import = windows::package(&store, &slots, true).unwrap();
+    assert!(import.get_select_from_list());
+    import.invoke_action("cancel".into());
+    store
+        .write(|ctx| settings::set(ctx.conn(), &settings::AdvancedMode(false)))
+        .unwrap();
+    for stage in fixture["stages"].as_array().unwrap() {
+        let name = stage["name"].as_str().unwrap();
+        let source = dir.path().join(format!("{name}.json"));
+        std::fs::write(&source, stage["source"].to_string()).unwrap();
+        let import = windows::package(&store, &slots, true).unwrap();
+        assert!(!import.get_select_from_list());
+        import.set_select_from_list(stage["select"].as_bool().unwrap());
+        import.set_path(source.to_string_lossy().as_ref().into());
+        import.invoke_action("open".into());
+        if let Some(warning) = stage["warnings"].as_array().unwrap().first() {
+            // nothing downloader related: the warning is all it says
+            assert_eq!(
+                import.get_error().as_str(),
+                warning.as_str().unwrap(),
+                "{name}"
+            );
+            assert!(!import.get_ready());
+            import.invoke_action("cancel".into());
+            assert_eq!(selection_state(&store), stage["state"], "{name}");
+            continue;
+        }
+        assert!(import.get_ready(), "{name}: {}", import.get_error());
+        import.invoke_action("accept".into());
+        for chooser in stage["choosers"].as_array().unwrap() {
+            replay_chooser(&import, chooser);
+        }
+        let notices = stage["notices"].as_array().unwrap();
+        let (done, details) = notices.split_last().unwrap();
+        for detail in details {
+            assert_eq!(
+                shown(&import),
+                (detail.as_str().unwrap().to_owned(), false),
+                "{name}"
+            );
+            import.invoke_action("ok".into());
+        }
+        assert_eq!(
+            shown(&import),
+            (stage["questions"][0].as_str().unwrap().to_owned(), true),
+            "{name}"
+        );
+        import.invoke_action("yes".into());
+        assert_eq!(
+            shown(&import),
+            (done.as_str().unwrap().to_owned(), false),
+            "{name}"
+        );
+        import.invoke_action("ok".into());
+        assert!(slots.0.borrow().is_none(), "{name}: closed");
+        assert_eq!(selection_state(&store), stage["state"], "{name}");
+    }
+}

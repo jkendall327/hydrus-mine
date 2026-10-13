@@ -1677,8 +1677,12 @@ retarget existing matching example-domain links and preserve current domain
 credentials/activation/delays without configuring new example domains. Standalone
 login-list imports retain their separate nonduplicate-name policy. A nested
 generator imported again is new again (its members' keys were regenerated the
-first time), as the recording's repeated import shows. Unsupported objects in
-a package are rejected rather than skipped. Like the reference's bandwidth manager, an import stops adding
+first time), as the recording's repeated import shows. A package's other
+objects (formulas, content parsers, anything not a downloader object) are
+skipped, and one with nothing else says "I found N misc objects in that png, but
+nothing downloader related." (as an error, not a warning dialog); an import
+leaves the first downloader by name as the default when there is none
+(`downloader_import_selection.json`). Like the reference's bandwidth manager, an import stops adding
 rules at the first package (in domain order) that has none, so a headers-only
 package keeps later packages' rules out until they are imported again
 (recorded in `domain_metadata_packages.json`). Clipboard bitmap and drag/drop
