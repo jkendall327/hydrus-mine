@@ -15356,14 +15356,13 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Walks open Pages, removes watcher highlight state from watcher pages and redraws the shown page through the menu hook.",
-    "The traversal is inspected; a dedicated all-pages menu regression was not found among the checked tests."
+    "Walks open Pages, removes watcher highlight state from watcher pages and redraws the shown page through the menu hook."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu with two watcher pages; highlights are None afterwards including after reshowing and in the saved session. Expected None typed from source (pubsub clear_multiwatcher_highlights), no recording. Stale note: it says no regression was found, but this test exists. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:493 clear_all_multiwatcher_highlights_clears_every_watcher_page"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "gui/pages_menu_info.rs against pages_menu_info.json: two multiple watcher pages each get the recorded two threads added through the page's URL box; the first thread is highlighted on both as in the reference (sidebar and the saved multiple_watcher_import state), and Pages > clear > all multiwatcher highlights clears both, including the page not shown and the saved session."
    }
   },
   {
@@ -15592,14 +15591,12 @@
    "priority": "normal",
    "reference": null,
    "native": null,
-   "notes": [
-    "Informational row appears when Facts.history is None; it has no action by design and does not denote an unsupported command."
-   ],
+   "notes": [],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model test only: builds the menu from Facts and checks the single label 'no tab history' (string typed from ClientGUI.py, not from the recording, which has no such row). No GUI test opens the history submenu with no history, so the window's rendering of it is unproven. Tests: crates/hydrus-gui-model/tests/model/main_menu.rs:290 the_history_menu_is_a_plain_label_until_there_is_a_history"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "gui/pages_menu_info.rs against pages_menu_info.json: the reference builds the history submenu with a plain 'no tab history' label, but the pages menu's aboutToShow rebuilds it (_UpdateMenuPagesHistoryIfDirty) before it can be seen, so the user sees only 'Clear History' for an empty history. The window is compared with the recording for an empty history, a history of pages shown and after Clear History: it never shows the placeholder, as the reference never does. The model keeps the placeholder row for a menu built without a history (unreachable from the window)."
    }
   },
   {
@@ -23026,14 +23023,13 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Reference publishes the undo/redo operation to its manager; native Command has no corresponding content-history operation.",
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Undo menu clicked after an archive; 'undo/redo archive 2 files' labels and inbox state are typed from ClientManagers.GetUndoRedoStrings, no recording; only archive is exercised. Tracker note ('no native action/editor path') is stale. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:364 the_undo_menu_undoes_and_redoes_the_last_content_change"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "Same test as the undo leaf (gui/content_undo.rs against content_undo.json): redo entries, redo of tag and archive packages, the redo stack cut by a new write, and redo offered nothing at the end of the stack, all compared with the recording at every step."
    }
   },
   {
@@ -23046,14 +23042,13 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Reference publishes the undo/redo operation to its manager; native Command has no corresponding content-history operation.",
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Same test: real menu undo of an archive restores inbox and flips to redo. Labels are literals restated from the Python source and only one operation kind is covered. Tracker note ('no corresponding content-history operation') is stale. Tests: search_pages_menu.rs:363 the_undo_menu_undoes_and_redoes_the_last_content_change"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "gui/content_undo.rs replays oracle/fixtures/content_undo.json (record_content_undo.py: the reference's UndoManager under controller.Write('content_updates'), 31 steps of archive, inbox, tag add/delete, mixed packages, undo and redo) through the real Undo menu: at every step the menu's undo and redo entries and each of three files' inbox state and tags equal the recording, undo/redo with nothing to do offered nothing. The recording found a real difference, fixed here: the service name in 'undo my tags->...' is dropped only for services before an archive/inbox change in the package (Package::describe). The reference joins the actions from a Python set, so their order is not fixed and the test compares them as a set."
    }
   },
   {
@@ -23104,14 +23099,13 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Reference total-weight action opens a breakdown and explains file/URL weights. Native computes the total label but has no corresponding report dialog.",
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real pages-menu click opens the report; the long message is a literal from ClientGUI._ShowPageWeightInfo and weights (files from the page, 20 per URL, closed pages after closing) are computed by the test, with no recording. Tracker note ('no corresponding report dialog') is stale. Tests: search_pages_menu.rs:532 total_session_weight_explains_the_number_with_open_and_closed_file_and_url_weights"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "gui/pages_menu_info.rs replays oracle/fixtures/pages_menu_info.json (record_pages_menu_info.py: a search page of 5 files, a URLs page of 3 URLs, a watcher page with 4 file seeds in the running reference): the Pages > weight submenu ('3 pages open', 'total session weight: 145') and the report text opened by clicking it are equal to the recorded message with all three pages open, after the files page is closed (its 5 files move to the closed-pages weight) and after the other two are closed with the recorded 'still importing' questions answered yes. One known difference: hydrus-rs keeps a blank page when the last closes (DIFFERENCES.md, #183), so the last step is compared with '1 pages open'."
    }
   },
   {

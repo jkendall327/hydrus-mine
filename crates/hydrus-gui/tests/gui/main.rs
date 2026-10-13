@@ -24,6 +24,8 @@ mod autocomplete_decoration_flags;
 mod client_exit;
 mod clipboard_urls;
 mod collect;
+mod content_undo;
+mod pages_menu_info;
 mod cpu_busy;
 mod database_maintenance;
 mod downloader_definitions;

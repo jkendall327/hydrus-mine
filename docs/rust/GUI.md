@@ -4827,7 +4827,19 @@ The undo menu now starts with "undo …" and "redo …" for the client's content
 changes: archive/inbox and Manage Tags' applied tag changes, named as the
 reference names them ("undo archive 2 files", "redo my tags->add tags for 3
 files"). Undoing writes the inverse change, redoing the change again; a new
-change forgets what could be redone. `tests/model/content_undo.rs` covers it.
+change forgets what could be redone. `tests/model/content_undo.rs` covers it;
+`tests/gui/content_undo.rs` replays `oracle/fixtures/content_undo.json` (the
+reference's UndoManager over archive, inbox, tag and mixed packages) through the
+Undo menu. A package naming a tag service and an archive is labelled as the
+reference labels it ("undo my tags->add, archive tags for 2 files" when the tags
+come second, no service when they come first); the reference's order of the
+action words is a Python set's and so is sorted here.
+
+Pages > history shows only "Clear History" until pages have been shown (the
+reference's "no tab history" label is replaced before the menu can be seen);
+Pages > weight, Pages > clear > all multiwatcher highlights and the weight report
+are checked against `oracle/fixtures/pages_menu_info.json` in
+`tests/gui/pages_menu_info.rs`.
 
 ## Namespace colour edit and per-filetype media handling
 
