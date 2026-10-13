@@ -2184,7 +2184,10 @@ live refresh. The daemon publishes usage and jobs through typed local store IPC,
 independent of the Client API listener. Heartbeats expire after five seconds;
 offline bandwidth review falls back to saved history. Commands identify the
 reviewed daemon and request, so finished jobs or replacement daemons ignore them.
-The real Qt controls/rows/questions are recorded in `network_data.json`.
+The real Qt controls/rows/questions are recorded in `network_data.json`; the
+selected context's detail reads "Current usage" and "All time usage" and a line
+for each rule ("used 1/10 requests in the past 1 day") as the reference words
+them.
 Backend/model regressions cover cancellation, dropped futures, live overrides,
 settings reload, stale heartbeat, concurrent edits and persistence. GUI regressions
 cover draft cancellation, owner closure, invalid values, Apply/reopen and local

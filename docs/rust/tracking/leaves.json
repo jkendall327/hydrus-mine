@@ -4002,10 +4002,10 @@
     "New GUI assertions inspect all-time text, inherited/specific ownership, per-rule usage, default/revert availability and updates after a persisted override."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recording network_data.json has a 'detail' block (Current usage / All time usage / rules) that no test replays. Native shows no 'Current usage' line and no 'usage in the past [type] [delta]' selector, and its per-rule line ('10 requests every 1 day (1 used)', network_data_window.rs:337) differs from the reference's 'used 1/10 requests in the past 1 day' gauge rows; the test asserts the native wording from typed literals. Tests: crates/hydrus-gui/tests/gui/network_data.rs:436; crates/hydrus-gui-model/tests/model/network_data.rs:15"
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "Now matching the recording: the detail's 'Current usage: 2 KB/s', 'All time usage: ...', 'has its own rules' and the rule lines ('used 1/20 requests in the past 1 minute') are compared with network_data.json (detail and gauge_rows) in network_data.rs the_detail_panel_shows_the_references_usage_and_rule_gauge_rows (tagged bandwidth-rule-list). Still missing, so still weak: the reference's 'usage in the past [data|requests] [time]' selector (recorded as usage_past) does not exist natively, and the set specific rules / edit rules button labels are not compared. Documented in DIFFERENCES.md."
    }
   },
   {
@@ -4063,10 +4063,10 @@
     "New GUI assertions exercise week/day/month/all-time selector changes against distinct retained time buckets; custom age, show-all and persisted reopening are covered by the new-behavior filter test."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI selector changes (day/week/month/all) assert typed strings like '6 KB in 2 requests' computed from the native tracker; the recording (network_data.json usage_rows, bandwidth_history.json sort_rows) covers only one span (week), so the other spans are not replayed from a recording. Tests: crates/hydrus-gui/tests/gui/network_data.rs:436"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "The usage-age column is compared under every span the reference panel can be given: oracle/record_bandwidth_history.py now records the column ('span_usage') for one day, 7 days, 14 days and all time over usage from before its clock (Jan 2025, Jan 2026, ten days ago, now), and the real window, fed the same usage at the same offsets from now, shows the same cells ('4 KB in 1 requests', '512B in 1 requests', '7 KB in 3 requests'...) for the contexts it lists. Test: network_data.rs the_usage_in_the_past_column_follows_each_span_as_the_references_does. Which contexts are listed under a span is the filter leaf's. The window's 'this month' choice has no reference counterpart (DIFFERENCES.md)."
    }
   },
   {
@@ -4139,10 +4139,10 @@
     "Static/reactive toggle retains each mode and clamps intervals to normal/advanced limits."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model test replays recorded steps including toggle_flat, but no GUI test invokes the editor's flat_toggled callback (options_window.rs only asserts get_flat() is false), so the static/reactive switch in the window is not driven. Tests: crates/hydrus-gui-model/tests/model/checker_options.rs:250"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "The real checker options window is opened from Options (watcher default) on each recorded starting value, and every recorded step of oracle/fixtures/checker_options.json (presets, typed fields, intended files, velocity, the static checkbox) is replayed through the window's callbacks: after each step the checkbox/box state (reactive hidden when static), the three times' fields, the velocity and the intended count equal the recording (a typed field or spin box text is shown as typed, as the window does, and is compared by what it was typed as and how the box holds it). Test: options_downloading_checkers.rs the_checker_window_follows_the_references_edits_between_reactive_and_static_checking; the model replay is unchanged."
    }
   },
   {
@@ -4786,10 +4786,10 @@
     "Trash and export-and-close warnings are explicit; symlink and trash settings are mutually restricted."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window: plain copy and symlinks ask nothing, trash asks TRASH_WARNING (declining exports nothing, accepting copies real files, trash wins over symlinks). The question texts are checked against export_files.json in the model test (via Plan::confirmation) but the GUI compares against the same constant; the symlink/trash restriction and the symlink results are literals from the source (the test sets symlinks and trash by property, not via the checkbox toggle, which native disables instead of unticking). Export-and-close question is driven in an untagged test. Tests: crates/hydrus-gui/tests/gui/files_io_export_files.rs:158 files_are_copied_or_symlinked_and_trashing_asks_and_wins_over_symlinks; crates/hydrus-gui/tests/gui/export_files.rs (untagged, export(true) question); crates/hydrus-gui-model/tests/model/export_files.rs:72 preview_and_confirmations_match_reference_panel"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "The question texts in the real manual-export window come from oracle/fixtures/export_files.json (recorded from the reference's own panel in the same states): with symlinks and trash on, export asks questions[0], export-and-close asks questions[1], and with trash off export-and-close asks only questions[2]; declining exports nothing, accepting exports, and the files are copied rather than symlinked as the recorded symlinks_with_trash (false: ticking trash unticks symlinks) says. The test sets the two options by property, not by clicking the checkboxes; the export applies the symlink-unless-trash rule at the moment it starts, and the slint checkbox handler that unticks is not driven. Test: files_io_export_files.rs files_are_copied_or_symlinked_and_trashing_asks_and_wins_over_symlinks."
    }
   },
   {
@@ -14789,10 +14789,10 @@
     "Installation directory means the Rust executable parent, not the Python source installation path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu click launches store.dir() through a substituted launcher; menu labels are in the recorded main_menu.json, but the target (reference GetDBDir) is asserted from source. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:179 open_entries_launch_directories_and_manage_entries_open_the_folder_lists"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "oracle/record_file_menu_exit.py triggers the reference's real File > open > database directory and records that it launches the database directory; the real menu click launches the store's directory (files_io_file_menu.rs open_entries_launch_directories_and_manage_entries_open_the_folder_lists, which also checks the recorded relation)."
    }
   },
   {
@@ -14809,10 +14809,10 @@
     "No reference exit-confirmation flow or shutdown-maintenance/restart options."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu and close path: confirmation question (typed from ClientGUI.TryToExit), decline keeps client, accept closes, plain exit leaves shutdown work alone. Question text and flow are restated from source, not recorded; the page-with-importers variant and low-disk-space prompt are not covered. Stale note says there is no exit-confirmation flow. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:112 exit_restart_and_force_maintenance_ask_as_the_reference_does_and_close_the_client"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "oracle/record_file_menu_exit.py triggers the reference's real File > exit and records every question and whether the client exits: confirmation on (declined: the client stays; accepted: exits), confirmation off (exits unasked), and with shutdown work on-shutdown due or not due. exit_restart_and_force_maintenance_replay_the_references_questions_and_outcomes replays each through the real menu and window (question text, answer, window closed or kept, shutdown work run or not). Not ported, and documented in DIFFERENCES.md: the extra 'Importers will save...' paragraph for pages with importers and the low-free-space prompt."
    }
   },
   {
@@ -14829,10 +14829,10 @@
     "No native Command for 'exit/force maintenance'."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The test runs exit/force maintenance with the option off and recently done and asserts last_done advances and the window closes, so the shutdown work really runs. Expectations restated from source. Stale note says it is a disabled todo/command-less entry and has no Command; it is implemented (Command::ExitForceMaintenance). Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:114 same test (force-maintenance section)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "oracle/record_file_menu_exit.py triggers the reference's real File > exit/force maintenance: with confirmation off it exits unasked with the shutdown work forced even when it was done a moment ago and the option is off; with confirmation on it asks the exit question. The same replay test (files_io_file_menu.rs exit_restart_and_force_maintenance_replay_the_references_questions_and_outcomes) drives both through the real menu and checks that the work ran (last_done advanced) exactly when the recording says. The older test also keeps the entry order."
    }
   },
   {
@@ -14907,10 +14907,10 @@
     "Installation directory means the Rust executable parent, not the Python source installation path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu click launches the executable's parent via a substituted launcher; reference opens HC.BASE_DIR, so the target is a documented intentional difference asserted from source, not recorded. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:180 open_entries_launch_directories_and_manage_entries_open_the_folder_lists"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "oracle/record_file_menu_exit.py triggers the reference's real File > open > installation directory and records that it launches the install directory (HC.BASE_DIR); the real menu click launches the Rust client's install directory, its executable's directory (a documented difference in what the install is; DIFFERENCES.md). Test: files_io_file_menu.rs open_entries_launch_directories_and_manage_entries_open_the_folder_lists."
    }
   },
   {
@@ -15012,10 +15012,10 @@
     "No native Command for 'restart'."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Question flow and the RESTART flag are asserted, but the consumer that actually relaunches the process (hydrus-gui/src/main.rs:102) is untested, so a flag stands in for the restart. Question text is restated from source. Stale note says it is a disabled todo with no Command; it is implemented. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:113 exit_restart_and_force_maintenance_ask_as_the_reference_does_and_close_the_client"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "oracle/record_file_menu_exit.py triggers the reference's real File > restart: the restart question (confirmation on; declined it stays and does not restart; accepted exits with the restart flag), and with confirmation off it restarts unasked. The replay test drives the same through the real menu and window, and then calls client_exit::relaunch_if_requested, the function main() ends with (the process start moved out of main for this), with a stand-in program: it starts again with its arguments exactly when the recording restarted and never otherwise. The one line in main() that calls it is not run by a test."
    }
   },
   {
@@ -23716,10 +23716,10 @@
     "Confirmation dispatches reset_defaults, which retains all specific overrides and pacing settings."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test only asserts the question is non-empty and that the global rules changed from a custom value; it never checks they equal the reference defaults (ClientDefaults.SetDefaultBandwidthManagerRules: 5 req/1s + 16 GB/day etc.), and no test compares default_rules() with a recording. The recorded question text is only compared in the model fixture test, not in the GUI. Tests: crates/hydrus-gui/tests/gui/network_bandwidth_actions.rs:89 confirmed_reset_defaults_keeps_specific_overrides; crates/hydrus-gui-model/tests/model/network_data.rs:80"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "The real bandwidth window's reset button asks the recorded question (network_data.json 'questions'[1], compared in the GUI test), declining changes nothing, and accepting leaves the global rules and every kind's default rules equal to oracle/fixtures/bandwidth_defaults.json (recorded by oracle/dump_bandwidth_defaults.py from ClientDefaults.SetDefaultBandwidthManagerRules: six contexts, every rule), while a specific domain's override stays. Test: crates/hydrus-gui/tests/gui/network_bandwidth_actions.rs confirmed_reset_defaults_keeps_specific_overrides."
    }
   },
   {
@@ -23735,10 +23735,10 @@
     "List selection stages rule replacement/removal without changing persisted settings."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Add/replace/delete is driven and rule_row text is replayed against the recording, but the GUI never reads the displayed rule rows. 'Usage text': the detail panel shows '10 requests every 1 day (1 used)' which differs from the reference's 'used 1/10 requests in the past 1 day' (GetBandwidthStringsAndGaugeTuples, which also skips rules of 600 s or less) and the test pins the native wording; flag for audit-network-bandwidth-detail too. Tests: crates/hydrus-gui/tests/gui/network_bandwidth_actions.rs:135 rules_editor_adds_replaces_and_deletes_a_multiselection; crates/hydrus-gui-model/tests/model/network_data.rs:15 replay_qt_bandwidth_rows_rules_and_questions; crates/hydrus-gui/tests/gui/network_data.rs:431"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "Add/replace/delete is driven through the real rules editor (rules_editor_adds_replaces_and_deletes_a_multiselection); the_rules_editor_lists_rules_as_the_references_does adds the rules the recorder gave the reference's editor and the editor's rows equal its recorded rule_rows ('100 MB / per month', '4 KB / 1 day', '20 requests / 1 minute'); the_detail_panel_shows_the_references_usage_and_rule_gauge_rows (network_data.rs) gives the context the recorded usage and rules and reads the window's usage lines against network_data.json's recorded gauge_rows ('used 2 KB/100 MB this month', 'used 1/20 requests in the past 1 minute', 'used 2 KB/4 KB in the past 1 day'). The native detail wording was changed to the reference's. The gauges themselves are drawn as text lines (DIFFERENCES.md)."
    }
   },
   {
