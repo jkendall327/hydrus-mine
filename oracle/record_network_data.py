@@ -59,6 +59,8 @@ def record(session):
             'rule_values': values,
             'rule_rows': [widget._ConvertRuleToDisplayTuple(r) for r in values],
             'detail': {'current': detail._current_usage_st.text(), 'all_time': detail._all_time_usage.text(), 'rules': detail._uses_default_rules_st.text(), 'edit': detail._edit_rules_button.text()},
+            'gauge_rows': detail._last_fetched_rule_rows,
+            'usage_past': [detail._time_delta_usage_st.text(), detail._time_delta_usage_bandwidth_type.GetValue(), detail._time_delta_usage_time_delta.GetValue()],
             'job_columns': list(L.column_list_column_name_lookup[L.COLUMN_LIST_NETWORK_JOBS_REVIEW.ID].values()),
             'job_rows': [jobs._ConvertDataToDisplayTuple((p, job)) for p in sorted(N.job_status_str_lookup)],
             'job_phases': N.job_status_str_lookup,

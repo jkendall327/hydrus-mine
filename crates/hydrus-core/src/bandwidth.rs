@@ -392,6 +392,26 @@ impl Tracker {
         usage
     }
 
+    /// The speed to show a user (`GetUsage(DATA, 1, for_user=True)`): bytes
+    /// per second averaged over the past ten seconds, from the first of them
+    /// that saw any use, so a quiet stretch at the start does not dilute it.
+    pub fn current_speed(&self, now: i64) -> u64 {
+        let counter = &self.bytes.seconds;
+        let seen = counter.range(now - 10..=now);
+        let Some(earliest) = seen.clone().map(|(&t, _)| t).min() else {
+            return 0;
+        };
+        let total: u64 = seen.map(|(_, &n)| n).sum();
+        let sample = (now - earliest).max(1);
+        #[allow(
+            clippy::cast_precision_loss,
+            clippy::cast_possible_truncation,
+            clippy::cast_sign_loss
+        )]
+        let speed = (total as f64 / sample as f64) as u64;
+        speed
+    }
+
     /// Everything used this calendar month and before (the months kept).
     pub fn all_usage(&self, kind: BandwidthType) -> u64 {
         self.counters(kind).months.values().sum()

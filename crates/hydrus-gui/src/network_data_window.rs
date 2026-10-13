@@ -326,35 +326,22 @@ impl Bandwidth {
                     })
                     .collect::<Vec<_>>(),
             )));
-            let rules = review
-                .rules(context)
-                .rules()
-                .iter()
-                .map(|r| {
-                    let cells = model::rule_row_with_format(*r, &formatting);
-                    let used = tracker.usage(r.kind, r.time_delta, now());
-                    format!(
-                        "{} every {} ({} used)",
-                        cells[0],
-                        cells[1],
-                        if r.kind == BandwidthType::Data {
-                            hydrus_gui_model::gui_format::bytes(&formatting, used)
-                        } else {
-                            hydrus_core::numbers::human_int(used)
-                        }
-                    )
-                })
-                .collect::<Vec<_>>()
-                .join("\n");
+            let rules =
+                model::rule_gauge_rows(&review.rules(context), &mut tracker, now(), &formatting)
+                    .into_iter()
+                    .map(|(text, _, _)| text)
+                    .collect::<Vec<_>>()
+                    .join("\n");
             self.window.set_detail(
                 format!(
-                    "{} — {}\nAll time usage: {}\n{}",
+                    "{} — {}\nCurrent usage: {}/s\nAll time usage: {}\n{}",
                     context.to_human_string(),
                     if review.inherits(context) {
                         "uses default rules"
                     } else {
                         "has its own rules"
                     },
+                    hydrus_gui_model::gui_format::bytes(&formatting, tracker.current_speed(now())),
                     model::all_usage_text_with_format(&tracker, &formatting),
                     rules
                 )

@@ -83,6 +83,34 @@
   "rules": "has its own rules",
   "edit": "edit rules"
  },
+ "gauge_rows": [
+  [
+   "used 2 KB/100 MB this month",
+   [
+    2048,
+    104857600
+   ]
+  ],
+  [
+   "used 1/20 requests in the past 1 minute",
+   [
+    1,
+    20
+   ]
+  ],
+  [
+   "used 2 KB/4 KB in the past 1 day",
+   [
+    2048,
+    4096
+   ]
+  ]
+ ],
+ "usage_past": [
+  ": 2 KB",
+  0,
+  86400
+ ],
  "job_columns": [
   "position",
   "url",

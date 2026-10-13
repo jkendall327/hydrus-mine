@@ -432,7 +432,6 @@ fn bandwidth_filters_chart_multiselect_delete_cancel_live_reset_and_saved_age() 
 }
 
 // leaf: audit-network-bandwidth-rows
-// leaf: audit-network-bandwidth-history
 // leaf: audit-network-bandwidth-defaults
 // leaf: audit-network-bandwidth-detail
 #[test]
@@ -535,7 +534,11 @@ fn bandwidth_history_columns_sort_detail_and_default_kind_routing() {
             .get_detail()
             .contains("All time usage: 14 KB in 3 requests")
     );
-    assert!(review.get_detail().contains("2 KB used"));
+    assert!(
+        review
+            .get_detail()
+            .contains("used 2 KB/8 GB in the past 1 day")
+    );
     assert!(!review.get_can_revert());
     store
         .write(|ctx| {
@@ -553,7 +556,7 @@ fn bandwidth_history_columns_sort_detail_and_default_kind_routing() {
     assert!(
         review
             .get_detail()
-            .contains("10 requests every 1 day (1 used)")
+            .contains("used 1/10 requests in the past 1 day")
     );
     let f = hydrus_testkit::fixture_json("bandwidth_history.json");
     let kinds = [0, 2, 1, 4, 5, 6];
@@ -598,5 +601,136 @@ fn bandwidth_history_columns_sort_detail_and_default_kind_routing() {
                 )
         );
     }
+    review.invoke_close_clicked();
+}
+
+// leaf: bandwidth-rule-list
+#[test]
+fn the_detail_panel_shows_the_references_usage_and_rule_gauge_rows() {
+    use hydrus_core::bandwidth::{Rule, Rules};
+    use hydrus_store::bandwidth::{self, BandwidthSettings};
+    let recorded = hydrus_testkit::fixture_json("network_data.json");
+    let _rendered = headless::init();
+    let slots = windows::Slots::default();
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let now = TimestampMs::now().millis() / 1000;
+    let context = NetworkContext::domain("example.com");
+    // what the recorder reported on example.com, under the rules it set
+    let mut tracker = Tracker::new(now);
+    tracker.report_data(2048, now);
+    tracker.report_requests(1, now);
+    let rules: Vec<Rule> = recorded["rule_values"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|r| {
+            Rule::new(
+                BandwidthType::from_code(r[0].as_i64().unwrap()).unwrap(),
+                r[1].as_u64(),
+                r[2].as_u64().unwrap(),
+            )
+        })
+        .collect();
+    store
+        .write({
+            let context = context.clone();
+            move |ctx| {
+                bandwidth::save_usage(ctx.conn(), &[(context.clone(), tracker)])?;
+                let mut options = settings::get::<BandwidthSettings>(ctx.conn())?;
+                options.rules.push((context, Rules::new(rules)));
+                settings::set(ctx.conn(), &options)
+            }
+        })
+        .unwrap();
+    let review = windows::open_bandwidth(store.clone(), &slots).unwrap();
+    until(|| review.get_rows().row_count() == 1);
+    review.invoke_row_clicked(0, false, false);
+    let detail = review.get_detail().to_string();
+    let lines: Vec<&str> = detail.lines().collect();
+    let theirs = &recorded["detail"];
+    assert_eq!(lines[1], theirs["current"]);
+    assert_eq!(lines[2], theirs["all_time"]);
+    assert!(
+        lines[0].ends_with(theirs["rules"].as_str().unwrap()),
+        "{detail}"
+    );
+    let gauges: Vec<&str> = recorded["gauge_rows"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|g| g[0].as_str().unwrap())
+        .collect();
+    assert_eq!(lines[3..], gauges[..], "{detail}");
+    review.invoke_close_clicked();
+}
+
+// leaf: audit-network-bandwidth-history
+#[test]
+fn the_usage_in_the_past_column_follows_each_span_as_the_references_does() {
+    use hydrus_store::bandwidth;
+    let recorded = hydrus_testkit::fixture_json("bandwidth_history.json");
+    let _rendered = headless::init();
+    let slots = windows::Slots::default();
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    // the recorder's usage, as long before now as it was before its clock
+    let now = TimestampMs::now().millis() / 1000;
+    let then = recorded["now"].as_i64().unwrap();
+    let mut trackers: Vec<(NetworkContext, Tracker)> = Vec::new();
+    for event in recorded["events"].as_array().unwrap() {
+        let (at, name) = (event[0].as_i64().unwrap(), event[1].as_str().unwrap());
+        if name == "page" {
+            continue;
+        }
+        let context = NetworkContext::domain(format!("{name}.example.com"));
+        if !trackers.iter().any(|(c, _)| c == &context) {
+            trackers.push((context.clone(), Tracker::new(now)));
+        }
+        let tracker = &mut trackers.iter_mut().find(|(c, _)| c == &context).unwrap().1;
+        let at = now - (then - at);
+        tracker.report_data(event[2].as_u64().unwrap(), at);
+        tracker.report_requests(event[3].as_u64().unwrap(), at);
+    }
+    store
+        .write(move |ctx| bandwidth::save_usage(ctx.conn(), &trackers))
+        .unwrap();
+    let review = windows::open_bandwidth(store.clone(), &slots).unwrap();
+    until(|| review.get_rows().row_count() > 0);
+    // (a context with no use in the span is not listed: filtering is
+    // another leaf's)
+    let cell = |name: &str| {
+        let rows = review.get_rows();
+        let row = rows
+            .iter()
+            .find(|r| r.cells.row_data(0).unwrap().contains(name))?;
+        Some(row.cells.row_data(4).unwrap().to_string())
+    };
+    let mut seen = 0;
+    for choice in recorded["span_usage"].as_array().unwrap() {
+        // the window's choices: past 7 days, past day, all time, custom seconds
+        match choice["span"].as_u64() {
+            Some(604_800) => review.set_history(0),
+            Some(86_400) => review.set_history(1),
+            None => review.set_history(3),
+            Some(seconds) => {
+                review.set_history(4);
+                review.set_history_seconds(seconds.to_string().into());
+            }
+        }
+        review.invoke_refresh();
+        for name in ["recent", "old", "bytes"] {
+            if let Some(shown) = cell(name) {
+                assert_eq!(
+                    shown,
+                    choice["cells"][name].as_str().unwrap(),
+                    "{name} over {choice}"
+                );
+                seen += 1;
+            }
+        }
+    }
+    // (listed: recent under every span, old from 14 days, bytes under all time)
+    assert!(seen >= 6, "{seen}");
     review.invoke_close_clicked();
 }
