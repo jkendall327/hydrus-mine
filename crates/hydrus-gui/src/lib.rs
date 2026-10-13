@@ -2308,7 +2308,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 return;
             }
             if let Some(window) = weak.upgrade() {
-                window.set_question(asked.question().into());
+                let question = match &asked {
+                    Asked::Delete(files, deletion, _) => {
+                        media_actions::deletion_question(&store, files, deletion)
+                    }
+                    _ => asked.question(),
+                };
+                window.set_question(question.into());
                 *pending.borrow_mut() = Some((asked, removed));
             }
         }
@@ -7341,7 +7347,9 @@ fn open_viewer(
                     }
                 }
                 let question = match &asked {
-                    ViewerAsked::Delete(deletion, _) => deletion.question(1),
+                    ViewerAsked::Delete(deletion, file) => {
+                        media_actions::deletion_question(model.borrow().store(), &[*file], deletion)
+                    }
                     ViewerAsked::OpenUrls(urls) => {
                         Asked::OpenUrls(urls.clone(), external_launches.clone()).question()
                     }

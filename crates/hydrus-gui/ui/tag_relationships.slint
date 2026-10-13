@@ -249,7 +249,7 @@ export component TagRelationshipsWindow inherits Window {
                 HorizontalLayout {
                     alignment: end; spacing: 10px;
                     Btn { text: root.yes-label; enabled: !root.ask-reason || root.reason != ""; clicked => { root.answered(true); } }
-                    Btn { text: root.no-label; clicked => { root.answered(false); } }
+                    if root.no-label != "": Btn { text: root.no-label; clicked => { root.answered(false); } }
                 }
             }
         }

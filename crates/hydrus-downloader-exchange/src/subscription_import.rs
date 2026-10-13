@@ -24,7 +24,7 @@ impl Package {
     }
 }
 
-fn types() -> Result<BTreeMap<String, String>> {
+pub(crate) fn types() -> Result<BTreeMap<String, String>> {
     serde_json::from_str(include_str!("subscription_type_names.json"))
         .map_err(|e| Error::Invalid(e.to_string()))
 }

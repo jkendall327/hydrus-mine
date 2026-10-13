@@ -37,6 +37,7 @@ IMPORTS = [
     ('txt', 'c\ncousin', []),
     ('clipboard', 'self\nself', []),
     ('clipboard', 'p\nq\np\nr', []),
+    ('clipboard', 'one\ntwo\ntwo\none', []),
     ('clipboard', 'a\nb', [True, True]),
     ('clipboard', '\n'.join(f'many {i:02}\nmany ideal' for i in range(12)), []),
     ('clipboard', '', []),

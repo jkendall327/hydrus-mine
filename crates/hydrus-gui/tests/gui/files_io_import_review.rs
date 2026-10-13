@@ -128,7 +128,6 @@ fn rows_are_selected_as_a_list_selects_and_removed_after_asking_then_numbered_ag
             .map(|(i, _)| i)
             .collect()
     };
-    let mut differs = Vec::new();
     for step in recorded["selection_steps"].as_array().unwrap() {
         let name = step["do"].as_str().unwrap();
         let (kind, row) = name.rsplit_once(' ').unwrap();
@@ -145,17 +144,8 @@ fn rows_are_selected_as_a_list_selects_and_removed_after_asking_then_numbered_ag
             .iter()
             .map(|r| usize::try_from(r.as_i64().unwrap()).unwrap())
             .collect();
-        if selected(&window) != theirs {
-            differs.push((name.to_owned(), selected(&window), theirs));
-        }
+        assert_eq!(selected(&window), theirs, "{name}");
     }
-    // (a shift-click after a ctrl-click that cleared the range's origin
-    // keeps the other ctrl-selected row in the reference, not here:
-    // DIFFERENCES.md)
-    assert_eq!(
-        differs,
-        [("shift-click 1".to_owned(), vec![0, 1], vec![0, 1, 2])]
-    );
     // the recorded selection: the second row
     window.invoke_row_clicked(1, false, false);
     assert_eq!(selected(&window), [1]);
@@ -207,6 +197,52 @@ fn rows_are_selected_as_a_list_selects_and_removed_after_asking_then_numbered_ag
     }
     assert!(!window.get_any_selected());
     window.invoke_cancel();
+}
+
+#[test]
+fn ctrl_and_shift_click_sequences_select_as_the_reference_s_list_does() {
+    // Qt's extended selection, where ctrl and shift mix: a ctrl+click
+    // starts a new current range, a shift+click replaces only that range
+    // (`oracle/fixtures/list_selection.json`, from
+    // `oracle/record_list_selection.py`, on this same list)
+    let recorded = hydrus_testkit::fixture_json("list_selection.json");
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store).unwrap());
+    let window = open(&ui, &bound);
+    let work = tempfile::tempdir().unwrap();
+    for name in recorded["files"].as_array().unwrap() {
+        let path = place(work.path(), name.as_str().unwrap());
+        window.invoke_path_entered(path.into());
+        settle(&window);
+    }
+    assert_eq!(
+        rows(&window).len(),
+        recorded["files"].as_array().unwrap().len()
+    );
+    for sequence in recorded["sequences"].as_array().unwrap() {
+        for (i, step) in sequence["steps"].as_array().unwrap().iter().enumerate() {
+            window.invoke_row_clicked(
+                i32::try_from(step["row"].as_i64().unwrap()).unwrap(),
+                step["ctrl"].as_bool().unwrap(),
+                step["shift"].as_bool().unwrap(),
+            );
+            let ours: Vec<i64> = rows(&window)
+                .iter()
+                .enumerate()
+                .filter(|(_, r)| r.2)
+                .map(|(i, _)| i64::try_from(i).unwrap())
+                .collect();
+            let theirs: Vec<i64> = step["selected"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|r| r.as_i64().unwrap())
+                .collect();
+            assert_eq!(ours, theirs, "{} step {i}", sequence["name"]);
+        }
+    }
 }
 
 // leaf: audit-network-import-pause-stop

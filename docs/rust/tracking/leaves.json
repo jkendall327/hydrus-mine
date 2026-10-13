@@ -293,7 +293,7 @@
     "date": "2026-10-08",
     "class": "source-restated",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real thumbnail menu and store: archive/re-inbox, delete from domain, undelete, physical delete, with questions. Menu tree is replayed against thumbnail_menu.json in a separate untagged test, but question texts ('Send 2 files to inbox?', 'Delete this file from X?', 'Permanently delete this file?') and state effects are literals from the Python source; remote domains not covered. Tests: crates/hydrus-gui/tests/gui/media_file_actions.rs:44 archive_inbox_delete_undelete_and_physical_delete_from_the_menu; thumbnail_menu.rs the_menu_is_the_reference_s (untagged)"
+    "note": "Real thumbnail menu and store: archive/re-inbox, delete from domain, undelete, physical delete, with questions. Menu tree is replayed against thumbnail_menu.json in a separate untagged test, but question texts ('Send 2 files to inbox?', 'Send one file from X to trash?', 'Permanently delete one trashed file?'; the delete ones now the reference's delete files dialog labels, the one-domain case matched against a recording by the download flow, flows::download, 2026-10-13) and state effects are literals from the Python source; remote domains not covered. Tests: crates/hydrus-gui/tests/gui/media_file_actions.rs:44 archive_inbox_delete_undelete_and_physical_delete_from_the_menu; thumbnail_menu.rs the_menu_is_the_reference_s (untagged)"
    }
   },
   {
@@ -2182,10 +2182,10 @@
     "Direct buttons replace reference import/export menus; no reference add-only autocomplete context option."
    ],
    "recheck": {
-    "date": "2026-10-09",
-    "class": "weak",
-    "by": "phase 2 session (bin E)",
-    "note": "Replays oracle/record_relationship_exchange.py through the real window (import and export on a local service and a repository, uneven lines, cleaning, pre-existing/pending/petitioned pairs, conflicts, loops, more than ten pairs, exports), but two recorded steps differ and the test filters them out of later comparisons: hydrus-rs rejects self-pairs (the reference stores them after a critical warning). Not tagged; the owner decides on storing them via #165. Tests: crates/hydrus-gui/tests/gui/relationship_exchange.rs:56 pair_import_and_export_replay_the_reference_on_local_and_repository_services"
+    "date": "2026-10-13",
+    "class": "likely-good",
+    "by": "Claude session (#165 triage)",
+    "note": "crates/hydrus-gui/tests/gui/relationship_exchange.rs pair_import_and_export_replay_the_reference_on_local_and_repository_services replays oracle/record_relationship_exchange.py through the real window with no steps filtered: self-pairs are staged after the reference's 'Loop problem!' message (OK only), a batch looping within itself is staged as the reference stages it; rows, questions, reasons, exports and the committed rows after Apply compared on a local service and a repository. Tag moved off the model tests. The message has no window title (DIFFERENCES.md). Not sound: the reference's second 'Loop problem!' warning, for pairs that join loops already in the database (ClientGUITagActions.py:187-194), is not raised on this import path, and the recording has no step for it (DIFFERENCES.md)."
    }
   },
   {
@@ -2202,10 +2202,10 @@
     "Full write autocomplete and detailed pre-existing corrupt-graph warning are absent."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model replays tag_relationships.json (rows, questions, conflict/loop repairs) and a GUI test adds parents and applies. But DIFFERENCES.md says batches that create loops are rejected rather than auto-repaired, and the detailed pre-existing corrupt-graph warning is absent, so part of what the leaf names is not covered. Stale part of the note: write autocomplete is shared with Manage Tags. Tests: crates/hydrus-gui-model/tests/model/tag_relationships.rs:23 reference_rows_questions_conflicts_and_loops, :429; crates/hydrus-gui/tests/gui/tag_relationships.rs:11 (parents add/apply part, untagged for parents)"
+    "by": "Claude session (#165 triage)",
+    "note": "Untagged (2026-10-13): Model replays tag_relationships.json (rows, questions, conflict/loop repairs); self_pairs_cycles_and_two_ideals_in_one_batch_are_staged_as_the_reference_stages_them (crates/hydrus-gui-model/tests/model/tag_relationships.rs) now checks the reference's staging of self-pairs and in-batch loops against relationship_exchange.json (batches are no longer rejected). Still weak: the reference's pre-existing-loop warning is absent (DIFFERENCES.md), and the model test stands in for the window."
    }
   },
   {
@@ -3418,10 +3418,10 @@
     "Direct buttons replace reference import/export menus; no reference add-only autocomplete context option."
    ],
    "recheck": {
-    "date": "2026-10-09",
-    "class": "weak",
-    "by": "phase 2 session (bin E)",
-    "note": "Replays oracle/record_relationship_exchange.py through the real window (import and export on a local service and a repository, uneven lines, cleaning, pre-existing/pending/petitioned pairs, conflicts, loops, more than ten pairs, exports), but two recorded steps differ and the test filters them out of later comparisons: hydrus-rs rejects self-pairs (the reference stores them after a critical warning) and rejects a whole sibling batch that gives one tag two ideals, dropping its valid pairs too (the reference stores them). Not tagged; the owner decides on storing them via #165. Tests: crates/hydrus-gui/tests/gui/relationship_exchange.rs:56 pair_import_and_export_replay_the_reference_on_local_and_repository_services"
+    "date": "2026-10-13",
+    "class": "likely-good",
+    "by": "Claude session (#165 triage)",
+    "note": "crates/hydrus-gui/tests/gui/relationship_exchange.rs pair_import_and_export_replay_the_reference_on_local_and_repository_services replays oracle/record_relationship_exchange.py through the real window with no steps filtered: self-pairs are staged after the reference's 'Loop problem!' message (OK only), a sibling batch giving one tag two ideals and a batch looping within itself are staged as the reference stages them; rows, questions, reasons, exports and the committed rows after Apply compared on a local service and a repository. The message has no window title (DIFFERENCES.md). Not sound: the reference's second 'Loop problem!' warning, for pairs that join loops already in the database (ClientGUITagActions.py:187-194), is not raised on this import path, and the recording has no step for it (DIFFERENCES.md)."
    }
   },
   {
@@ -3438,10 +3438,10 @@
     "Full write autocomplete and detailed pre-existing corrupt-graph warning are absent."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Recording of tag_relationships.json (conflict repair, rows, updates, asked questions) is replayed against Relationships::enter_pairs and the GUI adds and applies pairs, which is good. But the tracker note itself records missing write autocomplete in pair entry and the corrupt-graph warning; loop rejection is only checked with typed values. Tests: crates/hydrus-gui-model/tests/model/tag_relationships.rs:23 reference_rows_questions_conflicts_and_loops; :429 invalid_batch_graphs_are_reported...; crates/hydrus-gui/tests/gui/tag_relationships.rs:10"
+    "by": "Claude session (#165 triage)",
+    "note": "Untagged (2026-10-13): Model replays tag_relationships.json (conflict repair, rows, updates, questions); self_pairs_cycles_and_two_ideals_in_one_batch_are_staged_as_the_reference_stages_them now checks self-pairs, in-batch loops and two ideals against relationship_exchange.json (batches are no longer rejected). Still weak: the pre-existing-loop warning is absent and write autocomplete in pair entry is missing; the model test stands in for the window."
    }
   },
   {
@@ -5269,10 +5269,10 @@
     "Selected rows are removed only after the inline Remove all selected confirmation."
    ],
    "recheck": {
-    "date": "2026-10-09",
-    "class": "weak",
-    "by": "Claude session (recheck bins A/B), #97 phase 2",
-    "note": "crates/hydrus-gui/tests/gui/files_io_import_review.rs rows_are_selected_as_a_list_selects_and_removed_after_asking_then_numbered_again replays import_review_remove.json (oracle/record_import_review_remove.py): the recorded click, ctrl-click, shift-click and ctrl+shift-click selection steps (real Qt mouse clicks on the reference's list) compared after each step, then the Delete key and a click on 'remove files' ask 'Remove all selected?' and are answered by clicking 'no' then 'yes'; rows compared. Weak: one recorded selection step differs (shift-click 1 after click 0, ctrl-click 2, ctrl-click 0: the reference keeps row 2 selected, [0,1,2]; hydrus-rs's shared ListSelection gives [0,1]); the test pins it and DIFFERENCES.md says so."
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#165 triage)",
+    "note": "crates/hydrus-gui/tests/gui/files_io_import_review.rs: the import_review_remove.json selection steps now all match (the shared ListSelection follows Qt's committed-rows-plus-current-range model), and ctrl_and_shift_click_sequences_select_as_the_reference_s_list_does replays oracle/fixtures/list_selection.json (oracle/record_list_selection.py, ten ctrl/shift click sequences on the same reference list) through the window; the model test list_selection.rs also compares the order the rows are handed out in. Removal questions as before."
    }
   },
   {
@@ -5758,19 +5758,19 @@
    "label": "Processor import/export/paste",
    "path": "Reusable editors > String processor step list/preview editor",
    "workstream": "editors",
-   "state": "carried",
+   "state": "partial",
    "priority": "normal",
    "reference": "hydrus/client/gui/ClientGUIStringPanels.py:2173",
    "native": null,
    "notes": [
     "Import/export selected processing steps in reference single-object/list JSON and compressed PNG. Clipboard/file import reviews atomic appended steps; selected exports retain execution order; accepted imports update draft previews, and parent cancellation invalidates exchange children.",
-    "Mixed unsupported packages are rejected atomically, whereas the reference may append permitted entries and warn about rejected ones. Native uses a shared text/PNG review window."
+    "A package mixing steps with other objects appends its steps and shows the reference's warning in the review. A bare string processor is flattened into its steps, where the reference appends it as one nested step (#185). Native uses a shared text/PNG review window."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Carried, untagged. Recorded single/list JSON, clipboard append and atomic invalid import are replayed through the window and model; PNG only via the codec test, not the window. The leaf itself admits mixed unsupported packages are rejected atomically where the reference appends the permitted ones, so part of the behaviour is not matched or tested. Tests: crates/hydrus-gui/tests/gui/sidecars.rs:792 processing_exchange_reviews_append_and_parent_cancel_invalidates_children; crates/hydrus-gui-model/tests/model/string_processor_editor.rs:276; crates/hydrus-downloader-exchange/tests/interchange.rs:312 (processing_exchange.json/.png, Qt recording)"
+    "by": "Claude session (#165 triage)",
+    "note": "Untagged, state now partial. crates/hydrus-gui/tests/gui/sidecars.rs processing_exchange_appends_the_steps_of_a_mixed_package_and_warns_as_the_reference_does replays oracle/record_processing_exchange_mixed.py through the window: a list mixing steps with a tag filter appends its steps with the reference's warning, a list of nothing permitted shows only the warning, and the PNG opens from a file; interchange.rs checks the codec against the same recording. Still a difference: a bare string processor is one nested step in the reference and is flattened here (#185, DIFFERENCES.md)."
    }
   },
   {
@@ -8065,10 +8065,10 @@
     "Native options registry has no editable 'help for this panel -->' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real help action launches the typed URL https://hydrusnetwork.github.io/hydrus/external_programs.html (from HC.DOCUMENTATION_EXTERNAL_PROGRAMS). The reference's OpenDocumentation opens a local help file if present, else asks 'open online help / how to build guide'; that is not replicated or recorded. Stale tracker note is false. Tests: crates/hydrus-gui/tests/gui/external_calls_editor.rs:40 help_button_opens_the_external_programs_documentation"
+    "date": "2026-10-13",
+    "class": "weak",
+    "by": "Claude session (#165 triage)",
+    "note": "Untagged. The help button launches the online external_programs.html; the reference's OpenDocumentation opens a local help file, or asks the 'You do not have a local help!' question first. DIFFERENCES.md; #182."
    }
   },
   {
@@ -11905,10 +11905,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Uses the SubscriptionQueryLegacy wording ('Paused/dead status is a/b'); the live reference path (ClientImportSubscriptionQuery.IsSyncDue, used by ClientImportSubscriptions) says 'Paused/dead/container status is a/b/c', so the native text differs from what the current client prints. Only that one of the many subscription report points is implemented. Flag set directly, not via the menu. Possibly wrong rather than weak. Tests: crates/hydrus-download/tests/debug_reports.rs:16 subscription_report_mode_says_why_each_query_is_or_is_not_due"
+    "by": "Claude session (#165 triage)",
+    "note": "Untagged. crates/hydrus-download/tests/debug_reports.rs now checks the live reference's IsSyncDue wording (query text alone; 'Paused/dead/container status is a/b/c', ClientImportSubscriptionQuery.py:768). Still weak: hydrus-rs reports when it schedules (next_work_time) rather than as the reference syncs, the reference's other report points are not ported, and the flag is set directly, not from the menu (#184, DIFFERENCES.md)."
    }
   },
   {
@@ -15138,10 +15138,10 @@
     "Opens the hosted website/changelog; Qt prefers bundled local documentation."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Test only asserts a typed URL 'https://hydrusnetwork.github.io/hydrus/changelog.html'. Reference (ClientGUIDialogsDocumentation.OpenDocumentation with HC.DOCUMENTATION_CHANGELOG = 'changelog.html#version_<ver>') opens the local help file if present, else asks 'You do not have a local help!...' (open online help / open how to build guide / forget it); native skips the question and drops the #version_ anchor. Undocumented in DIFFERENCES.md. Tests: shell_help_menu.rs:149 open_help_and_changelog_launch_their_pages"
+    "by": "Claude session (#165 triage)",
+    "note": "Untagged. As open help: the reference's OpenDocumentation opens the local changelog or asks the 'You do not have a local help!' question; hydrus-rs opens the online changelog at once. DIFFERENCES.md; #182."
    }
   },
   {
@@ -15258,10 +15258,10 @@
     "Opens the hosted website/changelog; Qt prefers bundled local documentation."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Asserts only a typed hosted URL. Reference _OpenHelp -> OpenDocumentation(index.html) opens the local help if it exists, otherwise asks the 'You do not have a local help!' question with open online help / open how to build guide / forget it; native always launches the website with no question. Not recorded or documented in DIFFERENCES.md. Tests: shell_help_menu.rs:149 open_help_and_changelog_launch_their_pages"
+    "by": "Claude session (#165 triage)",
+    "note": "Untagged. The reference's OpenDocumentation opens the local help, or with none asks 'You do not have a local help! ...' (open online help / open how to build guide / forget it); hydrus-rs ships no local help and opens the online page at once. Recorded as a difference in DIFFERENCES.md; the owner decides in #182."
    }
   },
   {
@@ -20880,10 +20880,10 @@
     "Close asks before stopping an active/pending importer; accepted close preserves the page for Undo > closed pages, pauses its queue and displays the next available page."
    ],
    "recheck": {
-    "date": "2026-10-09",
+    "date": "2026-10-13",
     "class": "weak",
-    "by": "Claude session (recheck bins A/B), #97 phase 2",
-    "note": "crates/hydrus-gui/tests/gui/page_close_replay.rs pages_close_by_middle_click_and_ctrl_w_asking_as_the_reference_does replays page_close.json (oracle/record_page_close.py): real middle-clicks on tabs and Ctrl+W key presses on a search page, a url import page holding 4 URLs and a simple downloader page holding 2, the close questions answered by clicking yes/no, comparing the questions, tabs and page shown after each step. The simple downloader's question was wrong ('urls import page') and now says 'simple urls import page'. Still not sound: closing the last page leaves the reference's notebook empty, while hydrus-rs opens a new search page (DIFFERENCES.md); the test pins that difference."
+    "by": "Claude session (#165 triage)",
+    "note": "crates/hydrus-gui/tests/gui/page_close_replay.rs replays page_close.json through real middle-clicks and Ctrl+W. Still weak: closing the last page leaves the reference's notebook empty, while hydrus-rs opens a new search page; too large for the #165 triage (Pages assumes a shown page), tracked in #183, pinned by the test and in DIFFERENCES.md."
    }
   },
   {
@@ -23064,10 +23064,10 @@
     "The masked input is checked with LockPassword::accepts; failure displays wrong and success invokes the once-only client opener before hiding."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the unlock window with typed password 'hunter2' checked by LockPassword::accepts (the function under test); no recording. Note a divergence: the reference re-prompts silently on a wrong password, hydrus-rs shows 'That isn't the password.' (not in DIFFERENCES.md); dialog title/chrome ('Enter Text', 'Enter your password.') not compared. Tests: hydrus-gui/tests/gui/unlock.rs:12 only_the_password_unlocks_the_client"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#165 triage)",
+    "note": "crates/hydrus-gui/tests/gui/unlock.rs only_the_password_unlocks_the_client replays oracle/fixtures/text_entry_checks.json (oracle/record_text_entry_checks.py): the real password dialog warns 'Cannot enter blank text here!' on a blank entry and stays open (clicked through the window's ok); a recorded reference boot with a password set asks 'Enter your password.' again after a wrong one with nothing shown in between, then boots on the right one. hydrus-rs's 'That isn't the password.' is gone. The window's title and the warning's message box differ (DIFFERENCES.md)."
    }
   },
   {
@@ -23531,10 +23531,10 @@
     "Ask Enter a name for the favourite; reject blank names, allow literal whitespace and case-sensitive distinct names, ask exact reference overwrite question, and persist only accepted saves immediately. Atomic per-name updates preserve other editors' saves."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Save, cancel, overwrite question text and No/keep match the recording (model) and are driven through the window. But the window silently ignores a blank name (tag_filter_window.rs:543 `if name.is_empty() return`), so the reference's 'Cannot enter blank text here!' error (recorded empty_name_error) is never shown; the model checks it only on FavouriteTagFilters::save which the window does not reach for blank names. The recorded whitespace-only name ('  ') is not tested anywhere; overwrite-yes is not driven through the window. Tests: crates/hydrus-gui/tests/gui/tag_filter_favourites.rs:18 (save part); model tag_filter_favourites.rs save_cancel/save/save_no/save_yes and concurrent_favourite_saves_merge..."
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#165 triage)",
+    "note": "crates/hydrus-gui/tests/gui/tag_filter_favourites.rs shared_favourites_exchange_and_cancel_preserve_the_owner_and_persist_on_reopen: through the window, a blank name now shows the reference's 'Warning' 'Cannot enter blank text here!' and asks the name again (oracle/record_text_entry_checks.py drives the real EditTextPanel dialog: blank warns and stays open, whitespace is accepted), a whitespace-only name is saved (tag_filter_favourites.json whitespace_name), and overwrite is answered yes and no through the window. Save/cancel/overwrite question text from tag_filter_favourites.json."
    }
   },
   {

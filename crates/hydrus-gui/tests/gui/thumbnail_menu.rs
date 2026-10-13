@@ -299,7 +299,7 @@ fn a_right_click_shows_the_menu_and_its_entries_act() {
     assert!(deletes[0].0.starts_with("delete from "), "{deletes:?}");
     ui.invoke_menu_chosen(deletes[0].1);
     assert!(
-        ui.get_question().starts_with("Delete this file from "),
+        ui.get_question().starts_with("Send one file from "),
         "{}",
         ui.get_question()
     );

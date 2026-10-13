@@ -1,0 +1,102 @@
+{
+  "dialogs": [
+    {
+      "dialog": "favourite name",
+      "typed": "",
+      "title": "Enter Text",
+      "echo_password": false,
+      "shown": [
+        {
+          "kind": "ShowWarning",
+          "args": [
+            "Cannot enter blank text here!"
+          ]
+        }
+      ],
+      "still_open": true,
+      "accepted": false,
+      "value": null
+    },
+    {
+      "dialog": "favourite name",
+      "typed": "  ",
+      "title": "Enter Text",
+      "echo_password": false,
+      "shown": [],
+      "still_open": false,
+      "accepted": true,
+      "value": "  "
+    },
+    {
+      "dialog": "favourite name",
+      "typed": "zebra",
+      "title": "Enter Text",
+      "echo_password": false,
+      "shown": [],
+      "still_open": false,
+      "accepted": true,
+      "value": "zebra"
+    },
+    {
+      "dialog": "password",
+      "typed": "",
+      "title": "Enter Text",
+      "echo_password": true,
+      "shown": [
+        {
+          "kind": "ShowWarning",
+          "args": [
+            "Cannot enter blank text here!"
+          ]
+        }
+      ],
+      "still_open": true,
+      "accepted": false,
+      "value": null
+    },
+    {
+      "dialog": "password",
+      "typed": "  ",
+      "title": "Enter Text",
+      "echo_password": true,
+      "shown": [],
+      "still_open": false,
+      "accepted": true,
+      "value": "  "
+    },
+    {
+      "dialog": "password",
+      "typed": "zebra",
+      "title": "Enter Text",
+      "echo_password": true,
+      "shown": [],
+      "still_open": false,
+      "accepted": true,
+      "value": "zebra"
+    }
+  ],
+  "password_gate": {
+    "events": [
+      {
+        "asked": "Enter your password.",
+        "kwargs": {
+          "allow_blank": false,
+          "password_entry": true,
+          "min_char_width": 36
+        },
+        "answered": "hunter"
+      },
+      {
+        "asked": "Enter your password.",
+        "kwargs": {
+          "allow_blank": false,
+          "password_entry": true,
+          "min_char_width": 36
+        },
+        "answered": "hunter2"
+      }
+    ],
+    "unanswered": [],
+    "booted": true
+  }
+}

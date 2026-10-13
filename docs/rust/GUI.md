@@ -11,7 +11,8 @@ over from hydrus), or a single search page if there is none, its tabs named
 as hydrus names them (each page's name, elided to the longest hydrus's
 options allow, with its number of files and an importer's progress, a
 notebook's decorated: "url import (5 - 6/10)", "pages (60) ↓"); if you had a
-lock password set in hydrus, it asks for it first, as hydrus does, and
+lock password set in hydrus, it asks for it first, as hydrus does (again,
+saying nothing, after a wrong one; a warning for a blank one), and
 cancelling closes it without opening anything. Once open, it starts the
 daemon, `hydrus serve`, which does the work (downloads, subscriptions,
 import and export folders, maintenance and the Client API), unless one is
@@ -406,7 +407,8 @@ filter does, and whether tags typed in the "testing" box pass (a
 blacklist testing each with its siblings). What it shows and does at each
 step is as `oracle/record_tag_filter_editor.py` recorded the reference's.
 The shared favourites box saves named filters immediately, loads detached drafts,
-asks before replacing or deleting a name, and imports/exports reference Tag Filter
+asks before replacing or deleting a name (a blank name is warned about and
+asked again; only whitespace is a name), and imports/exports reference Tag Filter
 JSON through clipboard text or a JSON file. Cancelling a pending name or import
 leaves the draft and favourites untouched; cancelling the editor leaves the
 caller untouched while keeping favourites already saved. These actions are
@@ -582,6 +584,8 @@ selected entries in execution order, and saves reference PNGs. Import updates
 per-step/final previews in the draft; parent Cancel closes and invalidates the
 exchange child. `oracle/record_processing_exchange.py` records real Qt single/
 multiple selection exports, clipboard append, invalid input and a reference PNG.
+A package mixing steps with other objects appends its steps, with the
+reference's warning about the rest (`record_processing_exchange_mixed.py`).
 
 Regex match and sorter controls offer saved favourite descriptions and copy the
 chosen phrase to the clipboard, as the reference menu does. Manage favourites
@@ -800,6 +804,11 @@ reference's pause/play button, and the file log's status, progress and
 bar; its files join the page as they come, in order; and closing it asks
 as the reference's does ("This page is still importing.", "This is a
 local import page holding 3 import objects.").
+
+The lists that share hydrus-rs's list selection (this one among them) select
+as the reference's (Qt's extended selection), down to ctrl and shift clicks
+mixed: a shift-click after a ctrl-click keeps the rows selected before it
+(`oracle/record_list_selection.py`, on this window's list).
 
 File > import files… opens the reference's "review files to import"
 window, and files dropped on the main window open it with them (dropped
@@ -1522,7 +1531,9 @@ option interlocks and real manage-tags tab changes. As the reference's
 default media shortcuts have it, F7 archives the file, shift+F7 returns it
 to the inbox, delete deletes it (from the page's domain, if it searches
 one, else to the trash; in the trash, for good, unless the delete lock
-holds it), asking first, and shift+delete undeletes it; a file deleted out
+holds it), asking first (in the reference's words where its delete files
+dialog has one action, such as "Send one file from my files to trash?" or
+"Permanently delete one trashed file?"), and shift+delete undeletes it; a file deleted out
 of the page's domains leaves the page and the viewer (which closes when
 none are left). The same keys (and F3) work on the thumbnails, once a click gives
 them the keyboard, for every file selected: F7 and shift+F7 on several
@@ -1932,8 +1943,9 @@ cover the implementation.
 
 Recorded against the reference (bin E of #97): pair import from the clipboard
 or a .txt file (uneven lines, cleaning, blank lines, pre-existing and pending
-pairs, sibling conflicts, loops, re-imported petitions, more than ten pairs on
-a repository) and selected-pair export to the clipboard or a .txt file
+pairs, sibling conflicts, loops, self-pairs staged after the "Loop problem!"
+message, a batch looping within itself or giving one tag two ideals,
+re-imported petitions, more than ten pairs on a repository) and selected-pair export to the clipboard or a .txt file
 (`oracle/record_relationship_exchange.py`); the default service tab and saving
 it on change, shared with Manage tags, whose tabs read "name (tags)" with " *"
 while changes wait (`record_tag_service_tabs.py`); sibling and parent source

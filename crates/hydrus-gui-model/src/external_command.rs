@@ -14,6 +14,8 @@ impl Queue {
     pub fn new(arguments: Vec<String>) -> Self {
         Self {
             arguments,
+            // (a Qt list widget: its ranges are handed out from the anchor)
+            selection: ListSelection::from_anchor(),
             ..Self::default()
         }
     }
@@ -86,7 +88,7 @@ impl Queue {
                 })
             });
         }
-        self.selection = ListSelection::default();
+        self.selection = ListSelection::from_anchor();
         self.selection.set_anchor(self.current);
     }
     /// Qt moves original selected indices, even across a selected neighbour.

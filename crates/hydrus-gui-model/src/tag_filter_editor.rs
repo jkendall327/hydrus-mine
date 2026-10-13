@@ -644,6 +644,8 @@ impl TagFilterEditor {
 
 /// The reference's prompt before saving or importing a favourite.
 pub const FAVOURITE_NAME: &str = "Enter a name for the favourite.";
+/// The reference text dialog's warning for a blank entry (`EditTextPanel.GetValue`).
+pub const BLANK_TEXT: &str = "Cannot enter blank text here!";
 /// The empty favourite menu's label.
 pub const NO_FAVOURITES: &str = "no favourites set!";
 /// Ask before replacing a saved name (case-sensitive, as the reference).
@@ -682,9 +684,7 @@ impl FavouriteTagFilters {
         overwrite: bool,
     ) -> hydrus_store::Result<bool> {
         if name.is_empty() {
-            return Err(hydrus_store::StoreError::Invalid(
-                "Cannot enter blank text here!".into(),
-            ));
+            return Err(hydrus_store::StoreError::Invalid(BLANK_TEXT.into()));
         }
         store.write(move |ctx| {
             let mut favourites: Self = hydrus_store::settings::get(ctx.conn())?;
