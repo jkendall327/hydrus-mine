@@ -1087,6 +1087,22 @@ fn gug_options(classes: &UrlClasses, percent_twenty_is_space: bool) -> GugOption
     }
 }
 
+/// What the daemon does about Help > debug each second: take up the
+/// switches the client set, and answer what it asked (a subscription
+/// manager snapshot).
+pub fn answer_debug_requests(
+    store: &hydrus_store::Store,
+    manager: Option<&SubscriptionRunner>,
+) -> Result<(), hydrus_store::StoreError> {
+    let asked = hydrus_store::debug_switches::apply(store)?;
+    if asked.subscription_snapshot
+        && let Some(manager) = manager
+    {
+        manager.show_snapshot();
+    }
+    Ok(())
+}
+
 /// What the subscription runner is doing.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct RunnerStatus {
@@ -1214,6 +1230,58 @@ impl SubscriptionRunner {
                 .map(|(_, name, text)| (name.clone(), text.clone())),
             active,
             notices: self.notices.lock().iter().cloned().collect(),
+        }
+    }
+
+    /// What "subscription manager snapshot" shows
+    /// (`SubscriptionsManager.ShowSnapshot`), at `now`: the subscriptions
+    /// there are, those running, those that cannot run (nothing they would
+    /// ever work on) and when each of the rest next wants to.
+    pub fn snapshot_text(&self, now: i64) -> Result<String, WorkError> {
+        let subs = self.downloader.store.read(store_subs::subscriptions)?;
+        let mut names: Vec<_> = subs.iter().map(|s| s.name.clone()).collect();
+        names.sort();
+        let mut running: Vec<_> = self.jobs.lock().values().map(|(n, _)| n.clone()).collect();
+        running.sort();
+        let mut cannot_run = Vec::new();
+        let mut next_times = Vec::new();
+        for sub in &subs {
+            match self.downloader.next_work_time(sub)? {
+                Some(time) => next_times.push((sub.name.clone(), time)),
+                None => cannot_run.push(sub.name.clone()),
+            }
+        }
+        cannot_run.sort();
+        next_times.sort_by_key(|(_, time)| *time);
+        let human = |n: usize| hydrus_core::numbers::human_int(n as u64);
+        let next_times_text: Vec<_> = next_times
+            .iter()
+            .map(|(name, time)| {
+                format!(
+                    "{name}: {}",
+                    hydrus_core::time::timestamp_to_pretty_time_delta(*time, now, " ago")
+                )
+            })
+            .collect();
+        Ok(format!(
+            "{} subs: {}\n\n{} running: {}\n\n{} not runnable: {}\n\n{} next times: {}",
+            human(names.len()),
+            names.join(", "),
+            human(running.len()),
+            running.join(", "),
+            human(cannot_run.len()),
+            cannot_run.join(", "),
+            human(next_times.len()),
+            next_times_text.join(", "),
+        ))
+    }
+
+    /// "subscription manager snapshot": say what the manager is doing, as
+    /// a report (`HydrusData.ShowText`).
+    pub fn show_snapshot(&self) {
+        match self.snapshot_text(now()) {
+            Ok(text) => hydrus_core::debug_flags::show_text(&text),
+            Err(e) => tracing::error!("taking the subscription snapshot: {e}"),
         }
     }
 

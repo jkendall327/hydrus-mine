@@ -54,20 +54,14 @@ fn debug_print(line: &str) {
 /// Send the report modes' messages to the console and a popup in `store`
 /// (`HydrusData.ShowText`), unless something already receives them.
 pub(crate) fn install_report_sink(store: &std::sync::Arc<Store>) {
-    // (a report can be made from inside a database job, so the popup is
-    // written by a thread of its own rather than waited for)
-    let (lines, queue) = std::sync::mpsc::channel::<String>();
-    let store = std::sync::Arc::downgrade(store);
-    std::thread::spawn(move || {
-        for text in queue {
-            let Some(store) = store.upgrade() else { break };
-            post(&store, vec![Job::text(text, now())]);
-        }
-    });
+    let popup = hydrus_store::debug_switches::report_to_popups(store);
     hydrus_core::debug_flags::set_sink_if_none(Box::new(move |text| {
         debug_print(text);
-        let _ = lines.send(text.to_owned());
+        popup(text);
     }));
+    // (the switches are not kept between runs, and the daemon follows the
+    // ones set here)
+    let _ = hydrus_store::debug_switches::publish(store);
 }
 
 static CRASH_LOGGING: AtomicBool = AtomicBool::new(false);
