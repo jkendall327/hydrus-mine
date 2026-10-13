@@ -13,7 +13,7 @@ This module holds the parts every flow shares:
   searches three posts a page, newest first), with every request noted;
 * `definitions`: URL classes, parsers and a gallery URL generator for it,
   built with the reference's own classes;
-* `scripted_dialogs`: `DialogEdit.exec` replaced by a script that acts on
+* `scripted_dialogs`: `DialogEdit` and `DialogManage` `exec` replaced by a script that acts on
   each dialog as it opens (by its panel's class), then accepts or cancels;
 * `wait_until_idle`: until the subscriptions manager has nothing running or
   due, the network engine has no jobs and the database no queued work, for
@@ -328,11 +328,12 @@ def install( controller, site ):
 # ---------------------------------------------------------------- dialogs
 
 class scripted_dialogs( object ):
-    """Within, each `DialogEdit` that opens is handed (once its modal loop
-    runs) to the next script for its panel's class name: `scripts` maps a
-    panel class name to a list of functions `( dialog, panel ) -> bool`,
-    used in turn; True accepts the dialog, False cancels it. What each
-    script saw can be noted in `seen`, a list it appends to."""
+    """Within, each `DialogEdit` or `DialogManage` that opens is handed
+    (once its modal loop runs) to the next script for its panel's class
+    name: `scripts` maps a panel class name to a list of functions
+    `( dialog, panel ) -> bool`, used in turn; True accepts the dialog
+    (a `DialogManage` through its OK, which commits its panel), False
+    cancels it."""
 
     def __init__( self, scripts ):
 
@@ -345,7 +346,8 @@ class scripted_dialogs( object ):
         from qtpy import QtCore as QC
         from hydrus.client.gui import ClientGUITopLevelWindowsPanels as Windows
 
-        self._real_exec = Windows.DialogEdit.exec
+        # (both are DialogApplyCancels, whose exec is QDialog's)
+        self._real_exec = Windows.DialogApplyCancel.exec
 
         real_exec = self._real_exec
         scripts = self.scripts
@@ -377,7 +379,11 @@ class scripted_dialogs( object ):
                     accepted = False
 
 
-                if accepted:
+                if accepted and isinstance( dlg, Windows.DialogManage ):
+
+                    dlg.DoOK()
+
+                elif accepted:
 
                     dlg.accept()
 
@@ -392,7 +398,7 @@ class scripted_dialogs( object ):
             return real_exec( dlg )
 
 
-        Windows.DialogEdit.exec = execute
+        Windows.DialogApplyCancel.exec = execute
 
         return self
 
@@ -412,7 +418,7 @@ class scripted_dialogs( object ):
 
         from hydrus.client.gui import ClientGUITopLevelWindowsPanels as Windows
 
-        Windows.DialogEdit.exec = self._real_exec
+        del Windows.DialogApplyCancel.exec
 
         if len( self.errors ) > 0 and args[0] is None:
 
@@ -669,9 +675,20 @@ def files_state( session, hashes, normalise ):
     return out
 
 
+def file_log_state( file_seed_cache, normalise ):
+    """An importer's file log, as `subscriptions_state` gives a query's."""
+
+    return [ file_seed_state( f, normalise ) for f in file_seed_cache.GetFileSeeds() ]
+
+
 def hashes_in( subscriptions ):
 
     return { f[ 'sha256' ] for s in subscriptions for q in s[ 'queries' ] for f in q[ 'files' ] if f[ 'sha256' ] is not None }
+
+
+def hashes_in_log( files ):
+
+    return { f[ 'sha256' ] for f in files if f[ 'sha256' ] is not None }
 
 
 def write_fixture( path, data ):
