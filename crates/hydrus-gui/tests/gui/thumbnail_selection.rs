@@ -208,7 +208,10 @@ fn several_thumbnails_are_selected_and_acted_on() {
         super::common::delete_question(&bound),
         "Remove one file from art?\nRemove 2 files from my files?\nDelete from all local services? (force send to trash)"
     );
-    key(Key::Return);
+    // (all of them to the trash: the last of the actions)
+    let dialog = super::common::delete_dialog(&bound).unwrap();
+    dialog.invoke_action_selected(2);
+    super::common::answer_delete(&bound, true);
     let after = page.borrow().results().to_vec();
     assert_eq!(after.len(), files.len() - 3);
     assert!(chosen.iter().all(|f| !after.contains(f)));

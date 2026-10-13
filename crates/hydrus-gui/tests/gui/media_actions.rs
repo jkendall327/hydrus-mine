@@ -114,7 +114,12 @@ fn the_viewer_s_shortcuts_archive_inbox_and_delete() {
     );
     // (the reference's "Delete files?" dialog, with the one action's label)
     viewer.invoke_delete();
-    let dialog = bound.viewer_deletion.borrow().as_ref().unwrap().clone_strong();
+    let dialog = bound
+        .viewer_deletion
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
     assert!(dialog.get_composed_title().starts_with("Delete files?"));
     assert!(dialog.get_simple());
     assert_eq!(
@@ -126,7 +131,12 @@ fn the_viewer_s_shortcuts_archive_inbox_and_delete() {
     assert_eq!(state(&store, file).1, ["my files"]);
     // accepting sends it to the trash, and it leaves the page and the viewer
     viewer.invoke_delete();
-    let dialog = bound.viewer_deletion.borrow().as_ref().unwrap().clone_strong();
+    let dialog = bound
+        .viewer_deletion
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
     dialog.invoke_accept_deletion();
     assert_eq!(state(&store, file).1, ["trash"]);
     let after = page.borrow().results().to_vec();

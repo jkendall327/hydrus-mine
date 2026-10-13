@@ -86,8 +86,14 @@ pub fn open_with_choice(
     let preferences: hydrus_store::settings::DeletionPreferences = store
         .read(hydrus_store::settings::get)
         .map_err(|e| e.to_string())?;
-    let draft = Draft::load_mode(store, files, suggested, default_reason, preferences.advanced)
-        .map_err(|e| e.to_string())?;
+    let draft = Draft::load_mode(
+        store,
+        files,
+        suggested,
+        default_reason,
+        preferences.advanced,
+    )
+    .map_err(|e| e.to_string())?;
     if draft.choices.is_empty() {
         return Err("No valid delete choices!".into());
     }

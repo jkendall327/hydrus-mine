@@ -174,7 +174,11 @@ fn simple_deletion_opens_the_delete_files_dialog_as_recorded() {
             continue;
         }
         let dialog = dialog.unwrap_or_else(|| panic!("{what}: the dialog"));
-        assert!(dialog.get_composed_title().starts_with(panel["title"].as_str().unwrap()));
+        assert!(
+            dialog
+                .get_composed_title()
+                .starts_with(panel["title"].as_str().unwrap())
+        );
         assert!(dialog.get_simple(), "{what}: no reason panel");
         let actions: Vec<String> = slint::Model::iter(&dialog.get_actions())
             .map(|a| a.to_string())
@@ -223,7 +227,11 @@ fn simple_deletion_opens_the_delete_files_dialog_as_recorded() {
                 let expected: BTreeSet<String> = match service {
                     "all local file domains" => BTreeSet::new(),
                     "local file storage" => was.clone(),
-                    domain => was.iter().filter(|d| d.as_str() != domain).cloned().collect(),
+                    domain => was
+                        .iter()
+                        .filter(|d| d.as_str() != domain)
+                        .cloned()
+                        .collect(),
                 };
                 if now != *was || (physical && !in_storage(store, file)) {
                     changed += 1;
@@ -247,7 +255,10 @@ fn simple_deletion_opens_the_delete_files_dialog_as_recorded() {
                     let service = store.snapshot().services.by_key(key).unwrap().clone();
                     // (the recording names builtin services by their keys' hex)
                     assert!(
-                        key.as_bytes().iter().map(|b| format!("{b:02x}")).collect::<String>()
+                        key.as_bytes()
+                            .iter()
+                            .map(|b| format!("{b:02x}"))
+                            .collect::<String>()
                             == hex
                             || service.name == updates[0]["service"].as_str().unwrap()
                             || updates[0]["service"] == "all local file domains",
