@@ -42,11 +42,26 @@ pub fn open(
             .map(SharedString::from)
             .collect::<Vec<_>>(),
     )));
+    // (`SelectFromListButtons`'s `quick_select_dialog` frame, or
+    // `GetYesYesNo`'s `quick_yesno_dialog` where there is a "no"; kept when a
+    // choice is made, as the reference's dialog does when accepted)
+    let frame = crate::windows::dialog_frame(if ask.no_label.is_empty() {
+        "quick_select_dialog"
+    } else {
+        "quick_yesno_dialog"
+    });
+    if let Some(frame) = &frame {
+        frame.place(&window);
+    }
     let answer: Rc<RefCell<Option<Answer>>> = Rc::new(RefCell::new(Some(Box::new(answer))));
     let finish = Rc::new({
         let weak = window.as_weak();
         move |choice: Option<usize>| {
             if let Some(window) = weak.upgrade() {
+                if let (Some(frame), Some(_)) = (&frame, choice) {
+                    frame.accept();
+                    frame.closing(window.window());
+                }
                 let _ = window.hide();
             }
             let taken = answer.borrow_mut().take();

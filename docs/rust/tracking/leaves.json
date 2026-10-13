@@ -9481,7 +9481,7 @@
    "label": "edit",
    "path": "File > Options window > gui > frame locations > Remembered/default frame locations table",
    "workstream": "options-gui",
-   "state": "partial",
+   "state": "implemented",
    "priority": "low",
    "reference": null,
    "native": null,
@@ -9492,7 +9492,13 @@
     "Placement consumers use remembered size/position and maximised/fullscreen for main_gui, media_viewer and manage_options_dialog. Other named owners, default gravity/parent-cursor positioning, screen fitting and offscreen rescue remain parent limitations; no parent or geometry-editor completion claimed.",
     "Native MinimalSoftwareWindow supports size/state but does not implement native-position adapter. Coordinate persistence and actual placement dispatch are covered; no rendered absolute desktop-position assertion is claimed.",
     "Rust model/native/store regressions authored for hosted CI only; no local Cargo builds, tests or mutations run. General ListTable arrow-key navigation remains outside this slice."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-13",
+    "class": "source-restated",
+    "by": "claude (issue 94 session)",
+    "note": "frame_geometry.rs the_frame_editor_decides_how_each_named_window_next_opens edits each of the 14 keyed windows' frames in the real Options frame editor child (remember size, size, maximised, fullscreen, x/y gravity, default position) and applies through the Options window, then opens the window as a user does and checks its size/maximised/fullscreen and the placement it is given. Expected sizes are the frame_placement.json formulae (main less 24 a side) restated, not a new recording. A software window has no place to read, so position is checked through windows::placement. quick_select/quick_yesno are consulted by choice_buttons (own test); quick_entry_dialog and deeply_nested_dialog have no hydrus-rs window to open, listed in DIFFERENCES. regular_dialog is the other session's."
+   }
   },
   {
    "id": "audit-options-gui-frame-locations-flip-remember-position",

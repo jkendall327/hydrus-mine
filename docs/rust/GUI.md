@@ -5189,7 +5189,13 @@ has been laid out where its frame grows it from its own size, and keeps its
 size and place as the reference's do: a frame as it closes, a dialog when it
 is applied (never when cancelled) (`tests/gui/frame_geometry.rs`, replaying
 `frame_state.json` through each). Every other window opens by the ordinary
-dialogs' frame (`regular_dialog`: the main window's top-left, its own size). Proven by `tests/model/frame_placement.rs` (the formulae worked from the
+dialogs' frame (`regular_dialog`: the main window's top-left, its own size),
+except the choice dialogs, which open by `quick_select_dialog` (a choice among
+buttons) or `quick_yesno_dialog` (one with a "no") and keep their size when a
+choice is made. Editing any of these frames' gravity, default position, size,
+maximised or fullscreen in the frame locations editor reaches each of those
+windows the next time it opens (`tests/gui/frame_geometry.rs`, through the
+Options window). Proven by `tests/model/frame_placement.rs` (the formulae worked from the
 reference's source) and `options_gui_frames.rs` (editing the Options window's
 own frame through the frames editor).
 
