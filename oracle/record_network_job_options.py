@@ -81,6 +81,9 @@ class Server:
 
 
 def record(session):
+    # the sandbox names proxies in the environment, which requests prefers over a session's
+    for key in [k for k in os.environ if k.lower().endswith('_proxy')]:
+        del os.environ[key]
     c = session.controller
     from hydrus.client.networking import ClientNetworkingJobs as J
     options = c.new_options
@@ -128,8 +131,8 @@ def record(session):
                 if not statuses or statuses[-1] != s:
                     statuses.append(s)
                 for name, wake in (('connection', job._connection_error_wake_time), ('serverside', job._serverside_bandwidth_wake_time)):
-                    if wake and (not wakes or wakes[-1][1:] != [name, wake - start_second]):
-                        wakes.append([round(time.monotonic() - started, 2), name, wake - start_second])
+                    if wake and (not wakes or not any(w[1] == name and w[3] == wake for w in wakes[-2:])):
+                        wakes.append([round(time.monotonic() - started, 2), name, wake - int(time.time()), wake])
                 time.sleep(0.02)
         threading.Thread(target=sample, daemon=True).start()
         while not job.IsDone() and time.monotonic() - started < limit:

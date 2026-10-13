@@ -1374,20 +1374,16 @@ fn the_database_menu_switches_decide_when_file_maintenance_works() {
             flag(saved, "file_maintenance_during_active"),
         );
         let now = client.get::<FileMaintenanceSettings>();
+        let typed = FileMaintenanceSettings {
+            idle_files: throttle("file_maintenance_idle_throttle_files"),
+            idle_seconds: throttle("file_maintenance_idle_throttle_time_delta"),
+            active_files: throttle("file_maintenance_active_throttle_files"),
+            active_seconds: throttle("file_maintenance_active_throttle_time_delta"),
+            ..now
+        };
         client
             .store
-            .write(move |ctx| {
-                hydrus_store::settings::set(
-                    ctx.conn(),
-                    &FileMaintenanceSettings {
-                        idle_files: throttle("file_maintenance_idle_throttle_files"),
-                        idle_seconds: throttle("file_maintenance_idle_throttle_time_delta"),
-                        active_files: throttle("file_maintenance_active_throttle_files"),
-                        active_seconds: throttle("file_maintenance_active_throttle_time_delta"),
-                        ..now
-                    },
-                )
-            })
+            .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &typed))
             .unwrap();
         for (label, wanted, current) in [
             (
@@ -2059,7 +2055,7 @@ mod network_consumers {
     async fn hold(State(hits): State<Arc<Hits>>) -> &'static str {
         let now = hits.active.fetch_add(1, Ordering::SeqCst) + 1;
         hits.max_active.fetch_max(now, Ordering::SeqCst);
-        tokio::time::sleep(Duration::from_millis(300)).await;
+        tokio::time::sleep(Duration::from_millis(1500)).await;
         hits.active.fetch_sub(1, Ordering::SeqCst);
         "held"
     }
@@ -2184,8 +2180,6 @@ mod network_consumers {
             .collect()
     }
 
-    // leaf: audit-options-connection-general-max-connection-attempts-allowed-per-request
-    // leaf: audit-options-connection-general-connection-error-retry-wait-seconds
     #[tokio::test]
     async fn failed_connections_are_retried_as_often_and_as_slowly_as_the_options_say() {
         let (client, engine) = with_engine();
@@ -2236,7 +2230,6 @@ mod network_consumers {
         assert!(slower.seconds >= 2.0, "{}", slower.seconds);
     }
 
-    // leaf: audit-options-connection-general-max-retries-allowed-per-request
     #[tokio::test]
     async fn a_failing_server_is_asked_as_many_times_as_the_retries_option_says() {
         let (client, engine) = with_engine();
@@ -2259,7 +2252,6 @@ mod network_consumers {
         }
     }
 
-    // leaf: audit-options-connection-general-serverside-bandwidth-retry-wait-seconds
     #[tokio::test]
     async fn a_server_that_limits_bandwidth_is_waited_for_as_long_as_the_option_says() {
         let (client, engine) = with_engine();
@@ -2301,8 +2293,6 @@ mod network_consumers {
         assert!(long.seconds >= 3.0 * 1.5625, "{}", long.seconds);
     }
 
-    // leaf: audit-options-connection-general-max-number-of-simultaneous-active-network-jobs
-    // leaf: audit-options-connection-general-max-number-of-simultaneous-active-network-jobs-per-domain
     #[tokio::test]
     async fn only_as_many_jobs_run_at_once_as_the_options_say() {
         let (client, engine) = with_engine();
@@ -2351,7 +2341,6 @@ mod network_consumers {
         assert!((2..=3).contains(&seen), "{seen}");
     }
 
-    // leaf: audit-options-connection-general-halt-new-jobs-as-long-as-this-many-network-infrastructure-errors-on-their-domain-0-for-never-wait
     #[tokio::test]
     async fn a_domain_with_enough_errors_is_left_alone_for_as_long_as_the_options_say() {
         let (client, engine) = with_engine();
@@ -2413,8 +2402,6 @@ mod network_consumers {
         assert!(fetched.seconds >= 6.0, "{}", fetched.seconds);
     }
 
-    // leaf: audit-options-connection-proxy-settings-http
-    // leaf: audit-options-connection-proxy-settings-no-proxy
     #[tokio::test]
     async fn the_http_proxy_and_the_hosts_it_is_not_used_for_decide_where_requests_go() {
         let (client, engine) = with_engine();
@@ -2463,7 +2450,6 @@ mod network_consumers {
         assert_eq!(hits.count("uri"), 2, "the proxy was not asked");
     }
 
-    // leaf: audit-options-connection-proxy-settings-https
     #[tokio::test]
     async fn https_requests_ask_the_https_proxy_to_connect() {
         use std::io::{BufRead as _, BufReader, Write as _};
@@ -2502,6 +2488,374 @@ mod network_consumers {
         let fetched = fetch(&engine, "https://booru.invalid/x").await;
         assert!(fetched.result.is_err());
         assert!(asked.try_recv().is_err(), "no proxy, no ask");
+    }
+
+    fn recorded() -> serde_json::Value {
+        hydrus_testkit::fixture_json("network_job_options.json")
+    }
+
+    fn seconds_of(wakes: &serde_json::Value, kind: &str) -> Vec<f64> {
+        wakes
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|w| w[1] == kind)
+            .map(|w| w[2].as_f64().unwrap())
+            .collect()
+    }
+
+    // The reference's real NetworkJob was run against a loopback server under each setting
+    // (oracle/record_network_job_options.py); these replay what it did through the real
+    // options window and a real NetEngine.
+
+    // leaf: audit-options-connection-general-max-connection-attempts-allowed-per-request
+    // leaf: audit-options-connection-general-connection-error-retry-wait-seconds
+    #[tokio::test]
+    async fn refused_connections_are_attempted_and_waited_for_as_the_reference_does() {
+        let (client, engine) = with_engine();
+        let (_held, url) = closed_port();
+        for case in recorded()["connection"].as_array().unwrap() {
+            apply(&client, &engine, |w| {
+                number(
+                    w,
+                    "max connection attempts allowed per request: ",
+                    (1, 10),
+                    case["attempts"].as_i64().unwrap() as i32,
+                );
+                number(
+                    w,
+                    "connection error retry wait (seconds): ",
+                    (1, 2_592_000),
+                    case["wait"].as_i64().unwrap() as i32,
+                );
+            });
+            let fetched = fetch(&engine, &url).await;
+            assert_eq!(case["error"], "ConnectionException");
+            assert!(matches!(fetched.result, Err(NetError::Connection(_))));
+            // the reference's job counts the attempt it would make next
+            let attempts = case["connection_attempts"].as_u64().unwrap() - 1;
+            assert_eq!(attempts, case["attempts"].as_u64().unwrap());
+            let waits: Vec<f64> = retry_waits(&fetched.statuses)
+                .into_iter()
+                .map(|s| s as f64)
+                .collect();
+            assert_eq!(waits, seconds_of(&case["wakes"], "connection"), "{case}");
+            assert_eq!(waits.len() as u64 + 1, attempts, "{case}");
+            assert!(fetched.seconds >= waits.iter().sum::<f64>(), "{case}");
+        }
+    }
+
+    // leaf: audit-options-connection-general-max-retries-allowed-per-request
+    #[tokio::test]
+    async fn a_failing_server_is_asked_as_often_as_the_reference_asks_it() {
+        let (client, engine) = with_engine();
+        let (base, hits) = serve().await;
+        for case in recorded()["retries"].as_array().unwrap() {
+            apply(&client, &engine, |w| {
+                number(
+                    w,
+                    "max retries allowed per request: ",
+                    (1, 10),
+                    case["retries"].as_i64().unwrap() as i32,
+                );
+            });
+            let before = hits.count("status503");
+            let fetched = fetch(&engine, &format!("{base}/status/503")).await;
+            assert_eq!(case["error"], "NetworkInfrastructureException");
+            assert!(
+                matches!(fetched.result, Err(NetError::Infrastructure(_))),
+                "{:?}",
+                fetched.result
+            );
+            assert_eq!(
+                (hits.count("status503") - before) as u64,
+                case["asked"].as_u64().unwrap(),
+                "{case}"
+            );
+        }
+    }
+
+    // leaf: audit-options-connection-general-serverside-bandwidth-retry-wait-seconds
+    #[tokio::test]
+    async fn a_server_that_limits_bandwidth_is_waited_for_as_the_reference_waits() {
+        let (client, engine) = with_engine();
+        let (base, hits) = serve().await;
+        for case in recorded()["bandwidth"].as_array().unwrap() {
+            apply(&client, &engine, |w| {
+                number(w, "max retries allowed per request: ", (1, 10), 2);
+                number(
+                    w,
+                    "serverside bandwidth retry wait (seconds): ",
+                    (1, 2_592_000),
+                    case["wait"].as_i64().unwrap() as i32,
+                );
+            });
+            let before = hits.count("status429");
+            let fetched = fetch(&engine, &format!("{base}/status/429")).await;
+            assert_eq!(case["error"], "BandwidthException");
+            assert!(
+                matches!(fetched.result, Err(NetError::Bandwidth(_))),
+                "{:?}",
+                fetched.result
+            );
+            assert_eq!(
+                (hits.count("status429") - before) as u64,
+                case["asked"].as_u64().unwrap(),
+                "{case}"
+            );
+            let waited = seconds_of(&case["wakes"], "serverside")[0];
+            assert!(fetched.seconds >= waited - 0.05, "{} for {case}", fetched.seconds);
+            assert!(
+                fetched
+                    .statuses
+                    .iter()
+                    .any(|s| s == "server reported limited bandwidth - retrying")
+            );
+        }
+    }
+
+    // leaf: audit-options-connection-general-max-number-of-simultaneous-active-network-jobs
+    // leaf: audit-options-connection-general-max-number-of-simultaneous-active-network-jobs-per-domain
+    #[tokio::test]
+    async fn as_many_jobs_run_at_once_as_the_reference_runs() {
+        let (client, engine) = with_engine();
+        let (base, hits) = serve().await;
+        let url = format!("{base}/hold");
+        for case in recorded()["simultaneous"].as_array().unwrap() {
+            apply(&client, &engine, |w| {
+                number(
+                    w,
+                    "max number of simultaneous active network jobs: ",
+                    (1, 1000),
+                    case["overall"].as_i64().unwrap() as i32,
+                );
+                number(
+                    w,
+                    "max number of simultaneous active network jobs per domain: ",
+                    (1, 100),
+                    case["per_domain"].as_i64().unwrap() as i32,
+                );
+            });
+            six(&engine, &url).await;
+            assert_eq!(hits.active.load(Ordering::SeqCst), 0);
+            assert_eq!(
+                hits.max_active.swap(0, Ordering::SeqCst) as u64,
+                case["max_active"].as_u64().unwrap(),
+                "{case}"
+            );
+        }
+    }
+
+    /// A server that answers `/uri` with its path and drops the connection on `/drop`, on one
+    /// port (the reference counts errors per host and port).
+    async fn droppy() -> String {
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let base = format!("http://{}", listener.local_addr().unwrap());
+        tokio::spawn(async move {
+            use tokio::io::{AsyncReadExt as _, AsyncWriteExt as _};
+            loop {
+                let Ok((mut stream, _)) = listener.accept().await else {
+                    return;
+                };
+                tokio::spawn(async move {
+                    let mut buffer = vec![0; 4096];
+                    let Ok(read) = stream.read(&mut buffer).await else {
+                        return;
+                    };
+                    let head = String::from_utf8_lossy(&buffer[..read]).into_owned();
+                    let path = head.split_whitespace().nth(1).unwrap_or("/").to_owned();
+                    if path == "/drop" {
+                        return;
+                    }
+                    let (code, body) = if let Some(code) = path.strip_prefix("/status/") {
+                        (code.to_owned(), "no".to_owned())
+                    } else {
+                        ("200".to_owned(), path)
+                    };
+                    let _ = stream
+                        .write_all(
+                            format!(
+                                "HTTP/1.1 {code} X\r\ncontent-length: {}\r\nconnection: close\r\n\r\n{body}",
+                                body.len()
+                            )
+                            .as_bytes(),
+                        )
+                        .await;
+                });
+            }
+        });
+        base
+    }
+
+    // leaf: audit-options-connection-general-halt-new-jobs-as-long-as-this-many-network-infrastructure-errors-on-their-domain-0-for-never-wait
+    #[tokio::test]
+    async fn a_domain_with_enough_errors_is_left_alone_as_the_reference_leaves_it() {
+        let (client, engine) = with_engine();
+        let base = droppy().await;
+        let label = "Halt new jobs as long as this many network infrastructure errors on their domain (0 for never wait): ";
+        for case in recorded()["domain_halt"].as_array().unwrap() {
+            engine.scrub_domain_errors(&base);
+            apply(&client, &engine, |w| {
+                number(w, "max connection attempts allowed per request: ", (1, 10), 3);
+                number(w, "connection error retry wait (seconds): ", (1, 2_592_000), 1);
+                number(w, "max retries allowed per request: ", (1, 10), 1);
+                let (i, _) = row(w, label);
+                w.invoke_number_edited(i, case["number"].as_i64().unwrap() as i32);
+                // the recorded window: 1200 seconds, twenty minutes
+                assert_eq!(case["delta"], 1200);
+                w.invoke_field_edited(i, 0, 0);
+                w.invoke_field_edited(i, 1, 20);
+                w.invoke_field_edited(i, 2, 0);
+            });
+            // a connection that is dropped, three attempts at it
+            let dropped = fetch(&engine, &format!("{base}/drop")).await;
+            assert_eq!(case["failed"]["error"], "ConnectionException");
+            assert!(matches!(dropped.result, Err(NetError::Connection(_))));
+            assert_eq!(
+                engine.domain_ok(&base),
+                case["domain_ok"].as_bool().unwrap(),
+                "{case}"
+            );
+            let job = Job::new();
+            let request = Request::get(format!("{base}/uri"));
+            let probe =
+                tokio::time::timeout(Duration::from_millis(1500), engine.fetch(&request, &job))
+                    .await;
+            if case["domain_ok"].as_bool().unwrap() {
+                assert_eq!(probe.unwrap().unwrap().text(), "/uri");
+            } else {
+                assert!(probe.is_err(), "it waited: {case}");
+                assert_eq!(job.state().wait, WaitReason::Domain);
+            }
+            // server errors that are only recorded on a job do not count against a domain
+            engine.scrub_domain_errors(&base);
+            for _ in 0..3 {
+                let fetched = fetch(&engine, &format!("{base}/status/500")).await;
+                assert!(fetched.result.is_err());
+            }
+            assert_eq!(
+                engine.domain_ok(&base),
+                case["ok_after_three_500s"].as_bool().unwrap()
+            );
+        }
+    }
+
+    // leaf: audit-options-connection-proxy-settings-http
+    #[tokio::test]
+    async fn the_http_proxy_gets_the_requests_it_got_from_the_reference() {
+        let (client, engine) = with_engine();
+        let (base, hits) = serve().await;
+        let recording = recorded();
+        let cases = recording["proxy"].as_array().unwrap();
+        let named = |name: &str| cases.iter().find(|c| c["case"] == name).unwrap();
+        // the local server is the proxy: a proxied request asks it for the whole URL
+        let proxied = named("http proxy, other host");
+        apply(&client, &engine, |w| {
+            noneable_text(w, "http: ", Some(&base));
+            // (the reference's no_proxy option is not what keeps the local host direct here)
+            noneable_text(w, "no_proxy: ", None);
+        });
+        let text = engine
+            .fetch(&Request::get("http://booru.invalid/uri"), &Job::new())
+            .await
+            .unwrap()
+            .text();
+        assert_eq!(text, proxied["text"].as_str().unwrap());
+        assert_eq!(hits.count("uri") as u64, proxied["proxy_asked"].as_u64().unwrap());
+        // with the proxy cleared, nothing is asked of it
+        let cleared = named("proxy cleared");
+        apply(&client, &engine, |w| {
+            noneable_text(w, "http: ", None);
+            number(w, "max connection attempts allowed per request: ", (1, 10), 1);
+        });
+        let before = hits.count("uri");
+        let fetched = fetch(&engine, "http://booru.invalid/uri").await;
+        assert_eq!(cleared["error"], "ConnectionException");
+        assert!(matches!(fetched.result, Err(NetError::Connection(_))), "{:?}", fetched.result);
+        assert_eq!(
+            (hits.count("uri") - before) as u64,
+            cleared["proxy_asked"].as_u64().unwrap()
+        );
+    }
+
+    // leaf: audit-options-connection-proxy-settings-https
+    #[tokio::test]
+    async fn the_https_proxy_is_asked_to_connect_as_the_reference_asks_it() {
+        use std::io::{BufRead as _, BufReader, Write as _};
+        let (client, engine) = with_engine();
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        let proxy = format!("http://{}", listener.local_addr().unwrap());
+        let (sent, asked) = std::sync::mpsc::channel();
+        std::thread::spawn(move || {
+            while let Ok((mut stream, _)) = listener.accept() {
+                let mut line = String::new();
+                let _ = BufReader::new(stream.try_clone().unwrap()).read_line(&mut line);
+                let _ = sent.send(line.trim().to_owned());
+                let _ = stream.write_all(b"HTTP/1.1 403 Forbidden\r\ncontent-length: 0\r\n\r\n");
+            }
+        });
+        let recording = recorded();
+        apply(&client, &engine, |w| {
+            noneable_text(w, "https: ", Some(&proxy));
+            number(w, "max connection attempts allowed per request: ", (1, 10), 1);
+        });
+        let fetched = fetch(&engine, "https://booru.invalid/x").await;
+        assert_eq!(recording["https_proxy"]["error"], "ConnectionException");
+        assert!(fetched.result.is_err(), "the proxy refused");
+        let wanted = recording["https_proxy"]["connect_lines"].as_array().unwrap();
+        assert_eq!(wanted.len(), 1);
+        assert_eq!(
+            asked.recv_timeout(Duration::from_secs(5)).unwrap(),
+            wanted[0].as_str().unwrap()
+        );
+        // and with none, it is not asked again
+        apply(&client, &engine, |w| {
+            noneable_text(w, "https: ", None);
+        });
+        let fetched = fetch(&engine, "https://booru.invalid/x").await;
+        assert!(fetched.result.is_err());
+        assert_eq!(recording["https_proxy_cleared"]["connect_lines"], serde_json::json!([]));
+        assert!(asked.try_recv().is_err(), "no proxy, no ask");
+    }
+
+    // leaf: audit-options-connection-general-debug-do-not-verify-regular-https-traffic
+    #[tokio::test]
+    async fn a_self_signed_https_server_is_refused_or_accepted_as_the_reference_does() {
+        use hydrus_api::tls::{TlsListener, server_config};
+        let (client, engine) = with_engine();
+        let dir = tempfile::tempdir().unwrap();
+        let config = server_config(dir.path()).unwrap();
+        let tcp = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let base = format!("https://{}", tcp.local_addr().unwrap());
+        let app = Router::new().route(
+            "/uri",
+            get(|uri: axum::http::Uri| async move { uri.path().to_owned() }),
+        );
+        tokio::spawn(async move {
+            axum::serve(TlsListener::new(tcp, config).unwrap(), app)
+                .await
+                .unwrap()
+        });
+        for case in recorded()["verify"].as_array().unwrap() {
+            let verify = case["verify"].as_bool().unwrap();
+            apply(&client, &engine, |w| {
+                number(w, "max connection attempts allowed per request: ", (1, 10), 1);
+                let (i, _) = row(w, "DEBUG: do not verify regular https traffic:");
+                // (ticked: the certificate is not checked)
+                w.invoke_check_toggled(i, !verify);
+            });
+            let fetched = fetch(&engine, &format!("{base}/uri")).await;
+            match case["error"].as_str() {
+                Some(_) => assert!(
+                    matches!(fetched.result, Err(NetError::Connection(_))),
+                    "{:?}",
+                    fetched.result
+                ),
+                None => {
+                    assert!(fetched.result.is_ok(), "{:?}", fetched.result);
+                }
+            }
+        }
     }
 }
 

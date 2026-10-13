@@ -1301,8 +1301,10 @@ impl NetEngine {
                 format!("Network Jobs Redirect: {} -> {}", request.url, response.url)
             });
         }
-        if let Err(e) = &result
-            && e.is_infrastructure()
+        // (the reference reports the infrastructure exceptions its job raises; a status it
+        // only records on the job, such as a 500 or a 451, is not one)
+        if let Err(NetError::Connection(_) | NetError::Infrastructure(_) | NetError::Bandwidth(_)) =
+            &result
         {
             self.report_domain_error(&request.url);
         }
@@ -1726,6 +1728,8 @@ impl NetEngine {
                             "Server reported very limited bandwidth: {message}"
                         )));
                     }
+                    // (each reattempt after a serverside bandwidth reply counts too)
+                    self.report_domain_error(&request.url);
                     let seconds = retry_after.map_or_else(
                         || {
                             let rating = f64::from(connection_attempt + request_attempt - 1);
@@ -1780,6 +1784,7 @@ impl NetEngine {
                     {
                         return Err(NetError::Connection(fail_text));
                     }
+                    self.report_domain_error(&request.url);
                     self.wait_on_connection_error(job, connection_attempt, "connection failed")
                         .await?;
                 }
