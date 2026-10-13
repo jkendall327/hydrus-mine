@@ -194,6 +194,7 @@ mod network_data;
 
 mod domain_metadata;
 mod downloader_interchange;
+mod exchange_bitmap_drop;
 mod downloader_package;
 mod interactive_tag_entry;
 mod subscriptions_missing_logs;

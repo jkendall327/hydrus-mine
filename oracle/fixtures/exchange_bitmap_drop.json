@@ -1,0 +1,562 @@
+{
+  "package_json": [
+    26,
+    3,
+    [
+      [
+        2,
+        [
+          69,
+          "bitmap gallery",
+          1,
+          [
+            "a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3",
+            "https://bitmap.example/search/%tags%",
+            "%tags%",
+            "+",
+            "search tags",
+            "blue_eyes blonde_hair"
+          ]
+        ]
+      ]
+    ]
+  ],
+  "ingest_clipboard": {
+    "grey": [
+      [
+        "clipboard image data",
+        [
+          26,
+          3,
+          [
+            [
+              2,
+              [
+                69,
+                "bitmap gallery",
+                1,
+                [
+                  "a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3",
+                  "https://bitmap.example/search/%tags%",
+                  "%tags%",
+                  "+",
+                  "search tags",
+                  "blue_eyes blonde_hair"
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ],
+    "rgb": [
+      [
+        "clipboard image data",
+        [
+          26,
+          3,
+          [
+            [
+              2,
+              [
+                69,
+                "bitmap gallery",
+                1,
+                [
+                  "a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3",
+                  "https://bitmap.example/search/%tags%",
+                  "%tags%",
+                  "+",
+                  "search tags",
+                  "blue_eyes blonde_hair"
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ],
+    "rgba": [
+      [
+        "clipboard image data",
+        [
+          26,
+          3,
+          [
+            [
+              2,
+              [
+                69,
+                "bitmap gallery",
+                1,
+                [
+                  "a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3",
+                  "https://bitmap.example/search/%tags%",
+                  "%tags%",
+                  "+",
+                  "search tags",
+                  "blue_eyes blonde_hair"
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ],
+    "plain": "Problem pasting image! Full error written to log; The image loaded, but it did not seem to be a hydrus serialised png! The error was: Exception('Payload bytes were invalid!')\n\nIf you believe this is a legit non-resized, non-converted hydrus serialised png, please send it to hydrus_dev.",
+    "text": [
+      [
+        "clipboard text data",
+        "not a package"
+      ]
+    ]
+  },
+  "downloader_import": {
+    "paste_grey": {
+      "gugs": [
+        "bitmap gallery"
+      ],
+      "questions": [
+        {
+          "message": "The client is about to add and link these objects:\n\nDownloader \"bitmap gallery\" - bitmap.example\n\nDoes that sound good?",
+          "title": "Are you sure?",
+          "accepted": true
+        }
+      ],
+      "messages": [
+        [
+          "information",
+          "Successfully added 1 new downloaders and 0 auxiliary objects."
+        ]
+      ]
+    },
+    "paste_rgb": {
+      "gugs": [
+        "bitmap gallery"
+      ],
+      "questions": [
+        {
+          "message": "The client is about to add and link these objects:\n\nDownloader \"bitmap gallery\" - bitmap.example\n\nDoes that sound good?",
+          "title": "Are you sure?",
+          "accepted": true
+        }
+      ],
+      "messages": [
+        [
+          "information",
+          "Successfully added 1 new downloaders and 0 auxiliary objects."
+        ]
+      ]
+    },
+    "paste_rgba": {
+      "gugs": [
+        "bitmap gallery"
+      ],
+      "questions": [
+        {
+          "message": "The client is about to add and link these objects:\n\nDownloader \"bitmap gallery\" - bitmap.example\n\nDoes that sound good?",
+          "title": "Are you sure?",
+          "accepted": true
+        }
+      ],
+      "messages": [
+        [
+          "information",
+          "Successfully added 1 new downloaders and 0 auxiliary objects."
+        ]
+      ]
+    },
+    "paste_plain": {
+      "gugs": [],
+      "questions": [],
+      "messages": [
+        [
+          "critical",
+          "problem importing!",
+          "Sorry, there was a problem importing those paths! Error was: Problem pasting image! Full error written to log; The image loaded, but it did not seem to be a hydrus serialised png! The error was: Exception('Payload bytes were invalid!')\n\nIf you believe this is a legit non-resized, non-converted hydrus serialised png, please send it to hydrus_dev."
+        ]
+      ]
+    },
+    "drop_png": {
+      "gugs": [
+        "bitmap gallery"
+      ],
+      "questions": [
+        {
+          "message": "The client is about to add and link these objects:\n\nDownloader \"bitmap gallery\" - bitmap.example\n\nDoes that sound good?",
+          "title": "Are you sure?",
+          "accepted": true
+        }
+      ],
+      "messages": [
+        [
+          "information",
+          "Successfully added 1 new downloaders and 0 auxiliary objects."
+        ]
+      ]
+    },
+    "drop_json": {
+      "gugs": [
+        "bitmap gallery"
+      ],
+      "questions": [
+        {
+          "message": "The client is about to add and link these objects:\n\nDownloader \"bitmap gallery\" - bitmap.example\n\nDoes that sound good?",
+          "title": "Are you sure?",
+          "accepted": true
+        }
+      ],
+      "messages": [
+        [
+          "information",
+          "Successfully added 1 new downloaders and 0 auxiliary objects."
+        ]
+      ]
+    },
+    "drop_plain_png": {
+      "gugs": [],
+      "questions": [],
+      "messages": [
+        [
+          "critical",
+          "problem importing!",
+          "Sorry, there was a problem importing those paths! Error was: Problem loading PNG at path \"{dir}/exchange_bitmap_plain.png\"! Full error written to log; The image loaded, but it did not seem to be a hydrus serialised png! The error was: Exception('Payload bytes were invalid!')\n\nIf you believe this is a legit non-resized, non-converted hydrus serialised png, please send it to hydrus_dev."
+        ]
+      ]
+    },
+    "drop_missing_png": {
+      "gugs": [],
+      "questions": [],
+      "messages": [
+        [
+          "critical",
+          "problem importing!",
+          "Sorry, there was a problem importing those paths! Error was: [Errno 2] No such file or directory: '{dir}/exchange_bitmap_missing.png'"
+        ]
+      ]
+    },
+    "drop_bad_then_good": {
+      "gugs": [],
+      "questions": [],
+      "messages": [
+        [
+          "critical",
+          "problem importing!",
+          "Sorry, there was a problem importing those paths! Error was: Problem loading PNG at path \"{dir}/exchange_bitmap_plain.png\"! Full error written to log; The image loaded, but it did not seem to be a hydrus serialised png! The error was: Exception('Payload bytes were invalid!')\n\nIf you believe this is a legit non-resized, non-converted hydrus serialised png, please send it to hydrus_dev."
+        ]
+      ]
+    },
+    "drop_upper_extension": {
+      "gugs": [
+        "bitmap gallery"
+      ],
+      "questions": [
+        {
+          "message": "The client is about to add and link these objects:\n\nDownloader \"bitmap gallery\" - bitmap.example\n\nDoes that sound good?",
+          "title": "Are you sure?",
+          "accepted": true
+        }
+      ],
+      "messages": [
+        [
+          "information",
+          "Successfully added 1 new downloaders and 0 auxiliary objects."
+        ]
+      ]
+    }
+  },
+  "subscription_list": {
+    "clipboard_grey": {
+      "names": [
+        "Bitmap artist"
+      ],
+      "messages": [
+        [
+          "information",
+          "1 objects added!"
+        ]
+      ],
+      "questions": []
+    },
+    "clipboard_rgb": {
+      "names": [
+        "Bitmap artist"
+      ],
+      "messages": [
+        [
+          "information",
+          "1 objects added!"
+        ]
+      ],
+      "questions": []
+    },
+    "clipboard_rgba": {
+      "names": [
+        "Bitmap artist"
+      ],
+      "messages": [
+        [
+          "information",
+          "1 objects added!"
+        ]
+      ],
+      "questions": []
+    },
+    "clipboard_plain": {
+      "names": [],
+      "messages": [
+        [
+          "critical",
+          "Problem loading!",
+          "I could not understand what was in the clipboard: The image loaded, but it did not seem to be a hydrus serialised png! The error was: Exception('Payload bytes were invalid!')\n\nIf you believe this is a legit non-resized, non-converted hydrus serialised png, please send it to hydrus_dev."
+        ]
+      ],
+      "questions": []
+    },
+    "drop_png_declined": {
+      "names": [],
+      "messages": [],
+      "questions": [
+        {
+          "message": "Try to import the 1 dropped files to this list? I am expecting json or png files.",
+          "title": "Are you sure?",
+          "accepted": false
+        }
+      ]
+    },
+    "drop_png": {
+      "names": [
+        "Bitmap artist"
+      ],
+      "messages": [
+        [
+          "information",
+          "1 objects added!"
+        ]
+      ],
+      "questions": [
+        {
+          "message": "Try to import the 1 dropped files to this list? I am expecting json or png files.",
+          "title": "Are you sure?",
+          "accepted": true
+        }
+      ]
+    },
+    "drop_json": {
+      "names": [
+        "Bitmap artist"
+      ],
+      "messages": [
+        [
+          "information",
+          "1 objects added!"
+        ]
+      ],
+      "questions": [
+        {
+          "message": "Try to import the 1 dropped files to this list? I am expecting json or png files.",
+          "title": "Are you sure?",
+          "accepted": true
+        }
+      ]
+    },
+    "drop_png_and_json": {
+      "names": [
+        "Bitmap artist",
+        "Bitmap artist (1)"
+      ],
+      "messages": [
+        [
+          "information",
+          "1 objects added!"
+        ],
+        [
+          "information",
+          "1 objects added!"
+        ]
+      ],
+      "questions": [
+        {
+          "message": "Try to import the 2 dropped files to this list? I am expecting json or png files.",
+          "title": "Are you sure?",
+          "accepted": true
+        }
+      ]
+    },
+    "drop_plain_png": {
+      "names": [],
+      "messages": [
+        [
+          "critical",
+          "Problem importing!",
+          "The image loaded, but it did not seem to be a hydrus serialised png! The error was: Exception('Payload bytes were invalid!')\n\nIf you believe this is a legit non-resized, non-converted hydrus serialised png, please send it to hydrus_dev."
+        ]
+      ],
+      "questions": [
+        {
+          "message": "Try to import the 1 dropped files to this list? I am expecting json or png files.",
+          "title": "Are you sure?",
+          "accepted": true
+        }
+      ]
+    },
+    "drop_bad_then_good": {
+      "names": [],
+      "messages": [
+        [
+          "critical",
+          "Problem importing!",
+          "The image loaded, but it did not seem to be a hydrus serialised png! The error was: Exception('Payload bytes were invalid!')\n\nIf you believe this is a legit non-resized, non-converted hydrus serialised png, please send it to hydrus_dev."
+        ]
+      ],
+      "questions": [
+        {
+          "message": "Try to import the 2 dropped files to this list? I am expecting json or png files.",
+          "title": "Are you sure?",
+          "accepted": true
+        }
+      ]
+    },
+    "drop_missing_png": {
+      "names": [],
+      "messages": [
+        [
+          "critical",
+          "Problem importing!",
+          "Cannot file-mirror \"{dir}/exchange_bitmap_missing.png\" to \"/tmp/hydrusp5lcvknm/serialised_png_bd6gdkf2\"--the source does not exist!"
+        ]
+      ],
+      "questions": [
+        {
+          "message": "Try to import the 1 dropped files to this list? I am expecting json or png files.",
+          "title": "Are you sure?",
+          "accepted": true
+        }
+      ]
+    }
+  },
+  "subscription_json": [
+    90,
+    1,
+    [
+      [
+        88,
+        "Bitmap artist",
+        4,
+        [
+          [
+            "1111111111111111111111111111111111111111111111111111111111111111",
+            "synthetic gallery"
+          ],
+          [
+            [
+              87,
+              3,
+              [
+                "4de5234fed6afa12f5f8b715a15989fa664e17f9810597684d4d8852934696ba",
+                "blue_eyes",
+                "blue artist",
+                false,
+                0,
+                0,
+                false,
+                0,
+                0,
+                [
+                  89,
+                  1,
+                  [
+                    1700000000,
+                    [],
+                    0
+                  ]
+                ],
+                250,
+                100,
+                [
+                  151,
+                  1,
+                  []
+                ],
+                [
+                  0,
+                  15552000
+                ],
+                "no files yet",
+                null,
+                null
+              ]
+            ]
+          ],
+          [
+            52,
+            1,
+            [
+              4,
+              86400,
+              7776000,
+              [
+                1,
+                15552000
+              ]
+            ]
+          ],
+          100,
+          100,
+          false,
+          true,
+          [
+            143,
+            1,
+            [
+              21,
+              2,
+              []
+            ]
+          ],
+          0,
+          "",
+          true,
+          true,
+          false,
+          null,
+          true
+        ]
+      ],
+      [
+        26,
+        3,
+        [
+          [
+            2,
+            [
+              86,
+              "4de5234fed6afa12f5f8b715a15989fa664e17f9810597684d4d8852934696ba",
+              1,
+              [
+                [
+                  67,
+                  1,
+                  [
+                    26,
+                    3,
+                    []
+                  ]
+                ],
+                [
+                  8,
+                  8,
+                  [
+                    26,
+                    3,
+                    []
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]
+  ]
+}

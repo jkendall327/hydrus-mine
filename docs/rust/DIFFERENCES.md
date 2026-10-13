@@ -891,9 +891,15 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   JSON and PNG without dropping query history or cached header metadata. Legacy
   subscription type3 versions1–10 now import through the actual list. The original transport menus are wired; clipboard text and JSON/PNG import menus now
   add to the staged list directly, as the reference's list control does (all
-  three import choices; only export opens a window). Clipboard PNG
-  image precedence and PNG list drops remain absent (their own leaf,
-  `subscriptions-exchange-bitmap-drop`, low priority). Historical file-cache
+  three import choices; only export opens a window). A bitmap on the
+  clipboard is read before its text, and PNG or JSON files dropped on the
+  list are asked about first, as the reference's list does
+  (`exchange_bitmap_drop.json`); the clipboard's bitmap is read through
+  `arboard`, which on Linux sees an image only when the owning program offers
+  one in a format it knows, and cannot tell "no image" from "could not read
+  it" (the reference's separate "Problem loading from clipboard" is only
+  reached when the PNG encoding fails). Python's own words in the messages of
+  a file that will not open are the operating system's here. Historical file-cache
   versions 1–7 now upgrade within the exchange codec, with recorded order,
   timestamp, note, count and example preservation. A repeated seed in a
   historical cache is dropped, first one winning, as the reference does when it
@@ -1650,7 +1656,10 @@ child after the confirmation appears changes only the next job's settings.
 ## Downloader definition interchange
 
 Downloader interchange uses text clipboard contents and selected PNG/text files;
-clipboard bitmap and drag/drop ingestion are not exposed. Exported PNGs carry
+the downloader import window also takes a bitmap on the clipboard and files
+dropped on it (`exchange_bitmap_drop.json`; the other exchange windows do not,
+as the reference's other panels have no drop target of their own). A clipboard
+holding local file paths is not read as the reference's `IngestClipboard` reads it. Exported PNGs carry
 the real reference pixel/payload format with a small plain header. A malformed
 or unsupported item rejects the whole package, with an actionable error, rather
 than the reference importer's partial skips. Payloads/pixels are capped at
@@ -1687,8 +1696,7 @@ leaves the first downloader by name as the default when there is none
 (`downloader_import_selection.json`). Like the reference's bandwidth manager, an import stops adding
 rules at the first package (in domain order) that has none, so a headers-only
 package keeps later packages' rules out until they are imported again
-(recorded in `domain_metadata_packages.json`). Clipboard bitmap and drag/drop
-ingestion are not exposed (low priority).
+(recorded in `domain_metadata_packages.json`).
 
 Tab context menus expose close, select, move-page, sort-pages and send-down submenus,
 rename, duplicate, collapse, grouped close and per-notebook saved-session

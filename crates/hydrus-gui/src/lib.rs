@@ -52,6 +52,8 @@ pub mod downloader_display_window;
 pub mod downloader_interchange_window;
 pub mod downloader_update_times;
 mod drops;
+mod exchange_bitmap;
+pub use drops::deliver_dropped_files;
 pub mod duplicates_filtering_sidebar;
 mod duplicates_sidebar;
 mod edit_subscription_window;

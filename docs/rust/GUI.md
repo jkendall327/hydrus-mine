@@ -2236,6 +2236,17 @@ dismissal states are recorded in `oracle/fixtures/tag_migration_progress.json`.
 
 ## Downloader definition interchange
 
+The import window's "paste" takes a bitmap on the clipboard before its text
+(the pixels are a hydrus PNG, whether the image has an alpha channel or not),
+and files dropped on the window load as the reference's import loads its
+paths: a file that is a PNG by its bytes is read as one, any other as JSON, and
+a failure says what the reference says ("Sorry, there was a problem importing
+those paths! Error was: ..."). Everything loaded joins the one review that
+"import" then asks about. The subscriptions list likewise reads a clipboard
+bitmap first, and files dropped on it ask "Try to import the N dropped files to
+this list? I am expecting json or png files." before importing, PNGs first
+(`oracle/fixtures/exchange_bitmap_drop.json`).
+
 Network > downloaders > import/export downloaders exchanges URL classes,
 page parsers, registered login scripts and single/nested gallery URL generators with the reference
 client's clipboard JSON and real downloader PNGs. Imports review the concrete

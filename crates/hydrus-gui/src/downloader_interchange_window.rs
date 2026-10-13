@@ -91,6 +91,7 @@ fn open_with_actions(
             encode_png: model::encode_png,
             decode_png: model::decode_png,
             processing: false,
+            drops: false,
             warning: None,
             actions,
         },
@@ -120,6 +121,7 @@ pub fn open_subscriptions(
             encode_png: subscriptions::encode_png,
             decode_png: subscriptions::decode_png,
             processing: false,
+            drops: false,
             warning: None,
             actions: None,
         },
@@ -169,6 +171,7 @@ pub fn open_external_calls(
             encode_png: codec::encode_png,
             decode_png: codec::decode_png,
             processing: false,
+            drops: false,
             warning: None,
             actions: None,
         },
@@ -200,6 +203,9 @@ struct Codec<T> {
     encode_png: fn(&[T]) -> hydrus_downloader_exchange::Result<Vec<u8>>,
     decode_png: fn(&[u8]) -> hydrus_downloader_exchange::Result<Vec<T>>,
     processing: bool,
+    /// The reference's drop target and image paste: files dropped on the
+    /// window, and a bitmap on the clipboard, load as PNG or JSON packages.
+    drops: bool,
     /// The reference's warning about a package's objects this list does not
     /// take (from text or PNG bytes), shown above the review.
     warning: Option<Warning>,
@@ -243,6 +249,7 @@ pub fn open_steps(
             encode_png: processing::encode_png,
             decode_png: processing::decode_png,
             processing: true,
+            drops: false,
             warning: Some(processing::warning),
             actions: None,
         },
@@ -269,6 +276,7 @@ pub fn open_login_scripts(
             encode_png: logins::encode_png,
             decode_png: logins::decode_png,
             processing: false,
+            drops: false,
             warning: None,
             actions: None,
         },
@@ -305,6 +313,7 @@ pub fn open_subsidiaries(
             encode_png: subsidiaries::encode_png,
             decode_png: subsidiaries::decode_png,
             processing: false,
+            drops: false,
             warning: None,
             actions: None,
         },
@@ -341,6 +350,7 @@ pub fn open_routers(
             encode_png: routers::encode_png,
             decode_png: routers::decode_png,
             processing: false,
+            drops: false,
             warning: None,
             actions: None,
         },
@@ -495,6 +505,8 @@ fn open_objects<T: Clone + 'static>(
                 .into(),
         );
     }
+    let codec = Rc::new(codec);
+    let review = Rc::new(review);
     let active = Rc::new(Cell::new(true));
     let pending = Rc::new(RefCell::new(None::<Vec<T>>));
     let overwrite = Rc::new(RefCell::new(None::<std::path::PathBuf>));
@@ -555,6 +567,19 @@ fn open_objects<T: Clone + 'static>(
                         w.set_ready(false);
                         w.set_review("".into());
                     }
+                    "paste" if importing && codec.drops && crate::clipboard_image().is_some() => {
+                        // (the reference's IngestClipboard: a bitmap is a hydrus PNG)
+                        let png = crate::exchange_bitmap::clipboard_png()
+                            .ok_or_else(|| "No bitmap on the clipboard!".to_owned())??;
+                        load_sources(
+                            &w,
+                            &codec,
+                            review.as_ref().as_ref(),
+                            &pending,
+                            vec![Source::Png(png, "Problem pasting image! Full error written to log; ".into())],
+                        )
+                        .map_err(|e| pasted_error(&e))?;
+                    }
                     "paste" => w.set_text(crate::from_clipboard()?.into()),
                     "copy" if !w.get_text().is_empty() => {
                         crate::copy_to_clipboard(w.get_text().as_str());
@@ -571,35 +596,16 @@ fn open_objects<T: Clone + 'static>(
                         if paths.is_empty() {
                             return Ok(());
                         }
-                        let mut definitions = Vec::new();
-                        let mut warnings = Vec::new();
-                        let mut total_bytes = 0usize;
+                        let mut sources = Vec::new();
                         for path in paths {
                             let bytes = read_bytes(&path)?;
-                            total_bytes = total_bytes.saturating_add(bytes.len());
-                            if total_bytes > hydrus_downloader_exchange::MAX_BYTES {
-                                return Err(hydrus_downloader_exchange::Error::Limit.to_string());
-                            }
-                            let warning = codec.warning.and_then(|warn| warn(&bytes));
-                            let mut incoming = if png {
-                                (codec.decode_png)(&bytes).map_err(|e| e.to_string())
+                            sources.push(if png {
+                                Source::Png(bytes, String::new())
                             } else {
-                                (codec.decode_text)(
-                                    std::str::from_utf8(&bytes).map_err(|e| e.to_string())?,
-                                )
-                                .map_err(|e| e.to_string())
-                            }
-                            .map_err(|e| warning.clone().unwrap_or(e))?;
-                            warnings.extend(warning);
-                            definitions.append(&mut incoming);
-                            if definitions.len() > hydrus_downloader_exchange::MAX_OBJECTS {
-                                return Err("Subscription package exceeds the object limit.".into());
-                            }
+                                Source::Text(bytes)
+                            });
                         }
-                        let description = review_of(review.as_ref())?.0(definitions.clone())?;
-                        w.set_review(warned(&warnings, description).into());
-                        *pending.borrow_mut() = Some(definitions);
-                        w.set_ready(true);
+                        load_sources(&w, &codec, review.as_ref().as_ref(), &pending, sources)?;
                     }
                     "browse-json" if !importing && w.get_json_enabled() => {
                         if let Some(path) = crate::pick_exchange_export() {
@@ -684,7 +690,7 @@ fn open_objects<T: Clone + 'static>(
                             (codec.decode_text)(w.get_text().as_str()).map_err(|e| e.to_string())
                         }
                         .map_err(|e| warnings.first().cloned().unwrap_or(e))?;
-                        let description = review_of(review.as_ref())?.0(definitions.clone())?;
+                        let description = review_of(review.as_ref().as_ref())?.0(definitions.clone())?;
                         w.set_review(warned(&warnings, description).into());
                         *pending.borrow_mut() = Some(definitions);
                         w.set_ready(true);
@@ -694,7 +700,7 @@ fn open_objects<T: Clone + 'static>(
                             .borrow()
                             .clone()
                             .ok_or_else(|| "Review a package before importing.".to_owned())?;
-                        review_of(review.as_ref())?.1(definitions)?;
+                        review_of(review.as_ref().as_ref())?.1(definitions)?;
                         close();
                     }
                     _ => (),
@@ -704,6 +710,31 @@ fn open_objects<T: Clone + 'static>(
             w.set_error(result.err().unwrap_or_default().into());
         }
     });
+    if importing && codec.drops {
+        // (files dropped on the window load as the reference's import loads
+        // its paths)
+        crate::drops::on_files_dropped(w.window(), {
+            let weak = w.as_weak();
+            let codec = codec.clone();
+            let review = review.clone();
+            let pending = pending.clone();
+            let active = active.clone();
+            move |paths| {
+                let Some(w) = weak.upgrade() else {
+                    return;
+                };
+                if !active.get() || w.get_png_child() || !w.get_overwrite_question().is_empty() {
+                    return;
+                }
+                let result = sources_of_paths(&paths)
+                    .and_then(|sources| {
+                        load_sources(&w, &codec, review.as_ref().as_ref(), &pending, sources)
+                    })
+                    .map_err(|e| pasted_error(&e));
+                w.set_error(result.err().unwrap_or_default().into());
+            }
+        });
+    }
     w.window().on_close_requested(move || {
         close();
         slint::CloseRequestResponse::HideWindow
@@ -712,6 +743,87 @@ fn open_objects<T: Clone + 'static>(
     *slots.0.borrow_mut() = Some(w.clone_strong());
     Ok(w)
 }
+/// Something an import loads packages from.
+enum Source {
+    /// A hydrus PNG's bytes, and what the reference says first of one that
+    /// fails to load (nothing, for a picked file).
+    Png(Vec<u8>, String),
+    /// A JSON file's (or the clipboard's) text.
+    Text(Vec<u8>),
+}
+
+/// The reference's `IngestPaths`: a PNG is read as one, anything else as JSON.
+fn sources_of_paths(paths: &[String]) -> Result<Vec<Source>, String> {
+    paths
+        .iter()
+        .map(|path| {
+            let bytes = read_bytes(Path::new(path))?;
+            Ok(if bytes.starts_with(b"\x89PNG") {
+                Source::Png(
+                    bytes,
+                    format!("Problem loading PNG at path \"{path}\"! Full error written to log; "),
+                )
+            } else {
+                Source::Text(bytes)
+            })
+        })
+        .collect()
+}
+
+/// How the package import tells of a failed paste or drop.
+fn pasted_error(error: &str) -> String {
+    format!("Sorry, there was a problem importing those paths! Error was: {error}")
+}
+
+/// Read each source into one package for the review, stopping at the first
+/// that will not load (the review is changed only when all do).
+fn load_sources<T: Clone>(
+    w: &DownloaderExchangeWindow,
+    codec: &Codec<T>,
+    review: Option<&(Preview<T>, Apply<T>)>,
+    pending: &RefCell<Option<Vec<T>>>,
+    sources: Vec<Source>,
+) -> Result<(), String> {
+    let mut definitions = Vec::new();
+    let mut warnings = Vec::new();
+    let mut total_bytes = 0usize;
+    for source in sources {
+        let (png, bytes, said) = match source {
+            Source::Png(bytes, said) => (true, bytes, said),
+            Source::Text(bytes) => (false, bytes, String::new()),
+        };
+        total_bytes = total_bytes.saturating_add(bytes.len());
+        if total_bytes > hydrus_downloader_exchange::MAX_BYTES {
+            return Err(hydrus_downloader_exchange::Error::Limit.to_string());
+        }
+        let warning = codec.warning.and_then(|warn| warn(&bytes));
+        let mut incoming = if png {
+            (codec.decode_png)(&bytes).map_err(|e| e.to_string())
+        } else {
+            (codec.decode_text)(std::str::from_utf8(&bytes).map_err(|e| e.to_string())?)
+                .map_err(|e| e.to_string())
+        }
+        .map_err(|e| {
+            warning.clone().unwrap_or_else(|| {
+                format!(
+                    "{said}{}",
+                    crate::exchange_bitmap::not_a_hydrus_png(&e).filter(|_| png && !said.is_empty()).unwrap_or(e)
+                )
+            })
+        })?;
+        warnings.extend(warning);
+        definitions.append(&mut incoming);
+        if definitions.len() > hydrus_downloader_exchange::MAX_OBJECTS {
+            return Err("Subscription package exceeds the object limit.".into());
+        }
+    }
+    let description = review_of(review)?.0(definitions.clone())?;
+    w.set_review(warned(&warnings, description).into());
+    *pending.borrow_mut() = Some(definitions);
+    w.set_ready(true);
+    Ok(())
+}
+
 /// A review, after the reference's warnings about what is left out.
 fn warned(warnings: &[String], description: String) -> String {
     if warnings.is_empty() {
@@ -1040,6 +1152,7 @@ pub fn package(
             encode_png: model::encode_png,
             decode_png: hydrus_downloader_exchange::decode_package_png,
             processing: false,
+            drops: true,
             warning: Some(hydrus_downloader_exchange::package_warning),
             actions: Some(actions),
         },
