@@ -49,3 +49,45 @@ pub fn export_folders_until_done(
     }
     panic!("export folders still flagged to run after 20 passes: {all:?}");
 }
+
+/// The "Delete files?" dialog a thumbnail panel or the viewer has open, if any.
+pub fn delete_dialog(bound: &hydrus_gui::Bound) -> Option<hydrus_gui::DeleteFilesWindow> {
+    let viewer = bound
+        .viewer_deletion
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong);
+    viewer.or_else(|| {
+        bound
+            .delete_files
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong)
+    })
+}
+
+/// What the open "Delete files?" dialog asks: its actions' labels, one per
+/// line (a single action is shown as its label alone); empty if none is open.
+pub fn delete_question(bound: &hydrus_gui::Bound) -> String {
+    use slint::Model as _;
+    delete_dialog(bound)
+        .map(|dialog| {
+            dialog
+                .get_actions()
+                .iter()
+                .map(|label| label.to_string())
+                .collect::<Vec<_>>()
+                .join("\n")
+        })
+        .unwrap_or_default()
+}
+
+/// Accept (`true`) or cancel the open "Delete files?" dialog.
+pub fn answer_delete(bound: &hydrus_gui::Bound, accept: bool) {
+    let dialog = delete_dialog(bound).expect("a Delete files? dialog is open");
+    if accept {
+        dialog.invoke_accept_deletion();
+    } else {
+        dialog.invoke_cancel();
+    }
+}

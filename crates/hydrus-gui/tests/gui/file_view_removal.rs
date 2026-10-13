@@ -361,7 +361,7 @@ fn live_trash_policy_uses_actual_membership_and_move_menu_only_removes_source() 
     // The saved default keeps a trashed row and selection. Enabling the option updates this live page.
     owner.borrow_mut().select_files(&files[..1]);
     ui.invoke_delete_selected();
-    ui.invoke_answer(true);
+    super::common::answer_delete(&bound, true);
     assert!(owner.borrow().files().contains(&files[0]));
     assert_eq!(owner.borrow().selected_files(), [files[0]]);
     assert!(
@@ -374,7 +374,7 @@ fn live_trash_policy_uses_actual_membership_and_move_menu_only_removes_source() 
     options.invoke_apply();
     owner.borrow_mut().select_files(&files[1..2]);
     ui.invoke_delete_selected();
-    ui.invoke_answer(true);
+    super::common::answer_delete(&bound, true);
     assert!(!owner.borrow().files().contains(&files[1]));
     assert!(owner.borrow().files().contains(&files[0]));
     // One remaining local membership keeps the file visible even though a domain delete occurred.
@@ -391,7 +391,7 @@ fn live_trash_policy_uses_actual_membership_and_move_menu_only_removes_source() 
     owner.borrow_mut().choose_location(location);
     owner.borrow_mut().select_files(&[file]);
     ui.invoke_delete_selected();
-    ui.invoke_answer(true);
+    super::common::answer_delete(&bound, true);
     assert!(owner.borrow().files().contains(&file));
     let current = store
         .read(|c| hydrus_store::media::current_domains(c, &[file]))
@@ -555,7 +555,7 @@ fn mixed_already_trash_advanced_choice_and_locked_physical_noop_retain_unaffecte
     let page = bound.current.borrow().clone();
     page.borrow_mut().select_files(&files[..1]);
     ui.invoke_delete_selected();
-    ui.invoke_answer(true);
+    super::common::answer_delete(&bound, true);
     assert!(page.borrow().files().contains(&files[0]));
     store
         .write(|ctx| {
@@ -570,7 +570,7 @@ fn mixed_already_trash_advanced_choice_and_locked_physical_noop_retain_unaffecte
         .unwrap();
     page.borrow_mut().select_files(&files[..2]);
     ui.invoke_delete_selected();
-    ui.invoke_answer(true);
+    super::common::answer_delete(&bound, true);
     assert!(
         page.borrow().files().contains(&files[0]),
         "previously trashed no-op row is untouched"
@@ -634,7 +634,7 @@ fn mixed_already_trash_advanced_choice_and_locked_physical_noop_retain_unaffecte
         .unwrap();
     let before = page.borrow().files();
     let selected = page.borrow().selected_files();
-    ui.invoke_answer(true);
+    super::common::answer_delete(&bound, true);
     assert_eq!(page.borrow().files(), before);
     assert_eq!(page.borrow().selected_files(), selected);
     assert!(
@@ -768,7 +768,7 @@ fn viewer_deletion_never_prunes_an_externally_retained_forgotten_source_or_succe
     ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
     let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
     viewer.invoke_delete();
-    assert!(!viewer.get_question().is_empty());
+    assert!(!super::common::delete_question(&bound).is_empty());
     bound
         .pages
         .borrow_mut()
@@ -783,7 +783,7 @@ fn viewer_deletion_never_prunes_an_externally_retained_forgotten_source_or_succe
     let successor = bound.current.borrow().clone();
     assert!(!Rc::ptr_eq(&owner, &successor));
     let before_successor = successor.borrow().files();
-    viewer.invoke_answer(true);
+    super::common::answer_delete(&bound, true);
     assert_eq!(owner.borrow().files(), before_owner);
     assert_eq!(successor.borrow().files(), before_successor);
     let roles = DomainRoles::new(&store.snapshot().services).unwrap();

@@ -299,11 +299,11 @@ fn a_right_click_shows_the_menu_and_its_entries_act() {
     assert!(deletes[0].0.starts_with("delete from "), "{deletes:?}");
     ui.invoke_menu_chosen(deletes[0].1);
     assert!(
-        ui.get_question().starts_with("Send one file from "),
+        super::common::delete_question(&bound).contains("Send one file from "),
         "{}",
-        ui.get_question()
+        super::common::delete_question(&bound)
     );
-    ui.invoke_answer(false);
+    super::common::answer_delete(&bound, false);
     // open → similar files in a new page → exact match, on a still
     // image's thumbnail: a new tab searching for it, which finds itself
     let at = opened

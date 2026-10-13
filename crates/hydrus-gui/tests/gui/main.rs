@@ -139,6 +139,7 @@ mod shutdown_jobs;
 mod sidecars;
 mod simple_downloader;
 mod simple_formulae_list;
+mod simple_delete_dialog;
 mod slideshow;
 mod status_app_busy;
 mod status_bar;

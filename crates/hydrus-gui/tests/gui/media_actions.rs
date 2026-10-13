@@ -126,13 +126,8 @@ fn the_viewer_s_shortcuts_archive_inbox_and_delete() {
     assert_eq!(state(&store, file).1, ["my files"]);
     // accepting sends it to the trash, and it leaves the page and the viewer
     viewer.invoke_delete();
-    bound
-        .viewer_deletion
-        .borrow()
-        .as_ref()
-        .unwrap()
-        .clone_strong()
-        .invoke_accept_deletion();
+    let dialog = bound.viewer_deletion.borrow().as_ref().unwrap().clone_strong();
+    dialog.invoke_accept_deletion();
     assert_eq!(state(&store, file).1, ["trash"]);
     let after = page.borrow().results().to_vec();
     assert_eq!(after.len(), before.len() - 1);
@@ -247,13 +242,8 @@ fn the_viewer_s_shortcuts_archive_inbox_and_delete() {
     assert!(bound.delete_files.borrow().is_none());
     assert_eq!(page.borrow().results().len(), before);
     key(slint::platform::Key::Delete);
-    bound
-        .delete_files
-        .borrow()
-        .as_ref()
-        .unwrap()
-        .clone_strong()
-        .invoke_accept_deletion();
+    let dialog = bound.delete_files.borrow().as_ref().unwrap().clone_strong();
+    dialog.invoke_accept_deletion();
     assert!(bound.delete_files.borrow().is_none());
     assert_eq!(state(&store, selected).1, ["trash"]);
     assert_eq!(page.borrow().results().len(), before - 1);

@@ -204,7 +204,10 @@ fn several_thumbnails_are_selected_and_acted_on() {
     click(2, Some(Key::Control));
     assert_eq!(selected(), [0, 1, 2]);
     key(Key::Delete);
-    assert_eq!(ui.get_question(), "Send these 3 files to the trash?");
+    assert_eq!(
+        super::common::delete_question(&bound),
+        "Remove 3 files from art?\nRemove 3 files from my files?\nDelete from all local services? (force send to trash)"
+    );
     key(Key::Return);
     let after = page.borrow().results().to_vec();
     assert_eq!(after.len(), files.len() - 3);
