@@ -94,6 +94,10 @@ def record(session):
     held.bind(('127.0.0.1', 0))
     closed = f'http://127.0.0.1:{held.getsockname()[1]}/x'
 
+    def clear_errors():
+        with engine.domain_manager._lock:
+            engine.domain_manager._domains_to_network_infrastructure_errors.clear()
+
     def settings(**kw):
         for key, value in kw.items():
             if isinstance(value, bool):
@@ -109,15 +113,20 @@ def record(session):
         job = J.NetworkJob('GET', url)
         job.OverrideBandwidth()
         statuses = []
+        wakes = []
         started = time.monotonic()
+        start_second = int(time.time())
         engine.AddJob(job)
         done = threading.Event()
 
         def sample():
             while not done.is_set():
-                s = job.GetStatus()
+                s = job.GetStatus()[0]
                 if not statuses or statuses[-1] != s:
                     statuses.append(s)
+                for name, wake in (('connection', job._connection_error_wake_time), ('serverside', job._serverside_bandwidth_wake_time)):
+                    if wake and (not wakes or wakes[-1][1:] != [name, wake - start_second]):
+                        wakes.append([round(time.monotonic() - started, 2), name, wake - start_second])
                 time.sleep(0.02)
         threading.Thread(target=sample, daemon=True).start()
         while not job.IsDone() and time.monotonic() - started < limit:
@@ -126,7 +135,7 @@ def record(session):
             time.sleep(0.02)
         done.set()
         error = job.GetErrorException() if job.HasError() else None
-        return dict(statuses=statuses, seconds=time.monotonic() - started, error=type(error).__name__ if error else None,
+        return dict(statuses=statuses, wakes=wakes, connection_attempts=job._current_connection_attempt_number, request_attempts=job._current_request_attempt_number, seconds=time.monotonic() - started, error=type(error).__name__ if error else None,
                     done=job.IsDone(), text=job.GetContentText() if job.IsDone() and not error and not job.IsCancelled() else None)
 
     def many(url, n=6):
@@ -140,7 +149,7 @@ def record(session):
 
     base_settings = dict(max_connection_attempts_allowed=3, connection_error_wait_time=1, max_request_attempts_allowed_get=2,
                          serverside_bandwidth_wait_time=1, network_timeout=10, max_network_jobs=15, max_network_jobs_per_domain=5,
-                         domain_network_infrastructure_error_number=3, domain_network_infrastructure_error_time_delta=600,
+                         domain_network_infrastructure_error_number=0, domain_network_infrastructure_error_time_delta=600,
                          http_proxy=None, https_proxy=None, no_proxy='127.0.0.1', verify_regular_https=True)
     out = {'defaults': {k: (options.GetNoneableString(k) if k in ('http_proxy', 'https_proxy', 'no_proxy') else options.GetBoolean(k) if k == 'verify_regular_https' else options.GetInteger(k)) for k in base_settings}}
     settings(**base_settings)
@@ -148,7 +157,7 @@ def record(session):
     out['connection'] = []
     for attempts, wait in ((3, 1), (2, 1), (2, 2)):
         settings(max_connection_attempts_allowed=attempts, connection_error_wait_time=wait)
-        engine.domain_manager.ScrubDomainErrors(closed)
+        clear_errors()
         out['connection'].append(dict(attempts=attempts, wait=wait, **run(closed)))
     settings(max_connection_attempts_allowed=3, connection_error_wait_time=1)
 
@@ -156,7 +165,7 @@ def record(session):
     for retries in (2, 4):
         settings(max_request_attempts_allowed_get=retries)
         before = server.count('/status/503')
-        engine.domain_manager.ScrubDomainErrors(server.base)
+        clear_errors()
         out['retries'].append(dict(retries=retries, **run(server.base + '/status/503'), asked=server.count('/status/503') - before))
 
     out['bandwidth'] = []
@@ -176,14 +185,21 @@ def record(session):
 
     out['domain_halt'] = []
     for number, delta in ((2, 1200), (3, 1200), (0, 1200)):
-        engine.domain_manager.ScrubDomainErrors(server.base)
-        settings(domain_network_infrastructure_error_number=number, domain_network_infrastructure_error_time_delta=delta, max_request_attempts_allowed_get=1)
-        errors = [run(server.base + '/status/500') for _ in range(2)]
+        clear_errors()
+        settings(domain_network_infrastructure_error_number=number, domain_network_infrastructure_error_time_delta=delta, max_connection_attempts_allowed=3, connection_error_wait_time=1)
+        failed = run(closed)
         ok = engine.domain_manager.DomainOK(server.base)
         probe = run(server.base + '/uri', limit=20, hold=1.5)
-        out['domain_halt'].append(dict(number=number, delta=delta, errors=[e['error'] for e in errors], domain_ok=ok, probe=probe))
-    engine.domain_manager.ScrubDomainErrors(server.base)
-    settings(domain_network_infrastructure_error_number=3, domain_network_infrastructure_error_time_delta=600, max_request_attempts_allowed_get=2)
+        # server errors (500) do not count as domain events
+        clear_errors()
+        settings(max_request_attempts_allowed_get=1)
+        for _ in range(3):
+            run(server.base + '/status/500')
+        server_errors_ok = engine.domain_manager.DomainOK(server.base)
+        settings(max_request_attempts_allowed_get=2)
+        out['domain_halt'].append(dict(number=number, delta=delta, failed=failed, domain_ok=ok, probe=probe, ok_after_three_500s=server_errors_ok))
+    clear_errors()
+    settings(domain_network_infrastructure_error_number=0, max_connection_attempts_allowed=3, connection_error_wait_time=1)
 
     settings(network_timeout=1, max_request_attempts_allowed_get=1)
     out['timeout'] = run(server.base + '/stall', limit=40)
