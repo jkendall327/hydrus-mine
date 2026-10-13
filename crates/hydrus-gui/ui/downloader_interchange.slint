@@ -1,6 +1,7 @@
 import { Btn } from "btn.slint";
 import { Button, CheckBox, LineEdit, ScrollView, TextEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
+import { ListTable, TableColumn, TableRow } from "list_table.slint";
 export struct PackageChoice { label: string, included: bool }
 export component DownloaderExchangeWindow inherits Window {
     in property <string> window-title: root.importing ? "import downloader definitions" : "export downloader definitions";
@@ -28,30 +29,52 @@ export component DownloaderExchangeWindow inherits Window {
     callback export-png();
     callback action(string);
     callback closed();
-    in property <[PackageChoice]> package-choices;
-    callback package-chosen(int, bool);
-    // The reference's "add headers/bandwidth rules" button and its domain prompt.
-    in property <bool> domain-enabled;
+    // The reference's "add headers/bandwidth rules" domain prompt.
     in property <bool> domain-prompt;
     in-out property <string> domain-text;
     out property <string> domain-prompt-text: "Enter domain.";
+    // The reference's export panel: its list, filled by its add buttons
+    // (each opening a chooser), and its delete button.
+    in property <bool> export-list;
+    in property <[TableColumn]> export-columns;
+    in property <[TableRow]> export-rows;
+    callback export-row-clicked(int, bool, bool);
+    // A chooser (`SelectMultipleFromList`): its title and checkable rows;
+    // "chooser-ok" and "chooser-cancel" answer it.
+    in property <string> chooser-title;
+    in property <[PackageChoice]> chooser-choices;
+    callback chooser-toggled(int, bool);
+    // A question ("yes" or "no") or a notice ("ok").
+    in property <string> question;
+    in property <bool> question-asks;
+    // The import's "select objects from list".
+    in property <bool> select-from-list-shown;
+    in-out property <bool> select-from-list;
     VerticalLayout {
         padding: 12px; spacing: 8px;
         Text { text: root.instructions; color: Theme.text; wrap: word-wrap; }
-        if root.package-choices.length > 0: VerticalLayout {
-            height: 170px;
-            ScrollView { vertical-stretch: 1; VerticalLayout {
-                for choice[index] in root.package-choices: CheckBox {
-                    text: choice.label; checked: choice.included;
-                    enabled: root.active && !root.png-child && root.overwrite-question == "";
-                    toggled => { root.package-chosen(index, self.checked); }
-                }
-            } }
-            HorizontalLayout {
-                Btn { text: "all"; enabled: !root.png-child && root.overwrite-question == "" && !root.domain-prompt; clicked => { root.package-chosen(-1, true); } }
-                Btn { text: "none"; enabled: !root.png-child && root.overwrite-question == "" && !root.domain-prompt; clicked => { root.package-chosen(-1, false); } }
-                if root.domain-enabled: Btn { text: "add headers/bandwidth rules"; enabled: root.active && !root.png-child && root.overwrite-question == "" && !root.domain-prompt; clicked => { root.action("add-domain"); } }
+        if root.export-list: VerticalLayout {
+            height: 220px; spacing: 4px;
+            ListTable {
+                vertical-stretch: 1;
+                columns: root.export-columns;
+                rows: root.export-rows;
+                row-clicked(row, ctrl, shift) => { root.export-row-clicked(row, ctrl, shift); }
+                delete-pressed => { root.action("delete"); }
             }
+            HorizontalLayout {
+                spacing: 4px;
+                Btn { text: "add gug"; enabled: root.active && !root.png-child && !root.domain-prompt; clicked => { root.action("add-gug"); } }
+                Btn { text: "add url class"; enabled: root.active && !root.png-child && !root.domain-prompt; clicked => { root.action("add-url-class"); } }
+                Btn { text: "add parser"; enabled: root.active && !root.png-child && !root.domain-prompt; clicked => { root.action("add-parser"); } }
+                Btn { text: "add login script"; enabled: root.active && !root.png-child && !root.domain-prompt; clicked => { root.action("add-login-script"); } }
+                Btn { text: "add headers/bandwidth rules"; enabled: root.active && !root.png-child && !root.domain-prompt; clicked => { root.action("add-domain"); } }
+                Btn { text: "delete"; enabled: root.active && !root.png-child && !root.domain-prompt; clicked => { root.action("delete"); } }
+            }
+        }
+        if root.importing && root.select-from-list-shown: CheckBox {
+            text: "select objects from list";
+            checked <=> root.select-from-list;
         }
         if root.domain-prompt: VerticalLayout {
             spacing: 4px;
@@ -101,6 +124,37 @@ export component DownloaderExchangeWindow inherits Window {
             if root.ready: Btn { text: "import"; clicked => { root.action("accept"); } }
             if root.ready: Btn { text: "back"; clicked => { root.action("back"); } }
             Btn { text: "cancel"; clicked => { root.action("cancel"); } }
+        }
+    }
+    if root.chooser-title != "" || root.question != "": Rectangle {
+        x: 0; y: 0; width: root.width; height: root.height;
+        background: Theme.window;
+        TouchArea { }
+        VerticalLayout {
+            padding: 12px; spacing: 8px;
+            if root.chooser-title != "": Text { text: root.chooser-title; color: Theme.text; font-weight: 700; }
+            if root.chooser-title != "": ScrollView {
+                vertical-stretch: 1;
+                VerticalLayout {
+                    alignment: start;
+                    for choice[index] in root.chooser-choices: CheckBox {
+                        text: choice.label; checked: choice.included;
+                        toggled => { root.chooser-toggled(index, self.checked); }
+                    }
+                }
+            }
+            if root.chooser-title != "": HorizontalLayout {
+                alignment: end; spacing: 8px;
+                Btn { text: "apply"; primary: true; clicked => { root.action("chooser-ok"); } }
+                Btn { text: "cancel"; clicked => { root.action("chooser-cancel"); } }
+            }
+            if root.question != "": Text { text: root.question; color: Theme.text; wrap: word-wrap; vertical-stretch: 1; }
+            if root.question != "": HorizontalLayout {
+                alignment: end; spacing: 8px;
+                if root.question-asks: Btn { text: "yes"; primary: true; clicked => { root.action("yes"); } }
+                if root.question-asks: Btn { text: "no"; clicked => { root.action("no"); } }
+                if !root.question-asks: Btn { text: "ok"; primary: true; clicked => { root.action("ok"); } }
+            }
         }
     }
 }

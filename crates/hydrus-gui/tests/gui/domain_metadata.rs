@@ -8,7 +8,6 @@ use hydrus_store::bandwidth::BandwidthSettings;
 use hydrus_store::network::{self, Approval};
 use hydrus_store::{Store, settings};
 use serde_json::{Value, json};
-use slint::Model as _;
 use std::sync::Arc;
 
 fn setup() -> (tempfile::TempDir, Arc<Store>) {
@@ -149,14 +148,6 @@ fn seed_initial(store: &Store, fixture: &Value) {
     draft.save(store).unwrap();
 }
 
-fn choice_names(window: &hydrus_gui::DownloaderExchangeWindow) -> Vec<String> {
-    window
-        .get_package_choices()
-        .iter()
-        .map(|c| c.label.to_string())
-        .collect()
-}
-
 fn add_domain(window: &hydrus_gui::DownloaderExchangeWindow, text: Option<&str>) {
     window.invoke_action("add-domain".into());
     assert!(window.get_domain_prompt());
@@ -179,38 +170,79 @@ fn add_domain(window: &hydrus_gui::DownloaderExchangeWindow, text: Option<&str>)
     assert!(!window.get_domain_prompt());
 }
 
+/// Take every domain's headers and rules away (the recorder's
+/// `clear_domains`).
+fn clear_domains(store: &Store) {
+    store
+        .write(|ctx| {
+            let conn = ctx.conn();
+            for context in network::header_contexts(conn)? {
+                if context.kind == hydrus_core::network::CONTEXT_DOMAIN {
+                    for h in network::headers(conn, &context)? {
+                        network::delete_header(conn, &context, &h.name)?;
+                    }
+                }
+            }
+            let mut current: BandwidthSettings = settings::get(conn)?;
+            current.rules.retain(|(c, _)| {
+                c.kind != hydrus_core::network::CONTEXT_DOMAIN || c.data.is_empty()
+            });
+            settings::set(conn, &current)
+        })
+        .unwrap();
+}
+
+/// Import what the window has reviewed as the recording's stage went: its
+/// notices one at a time, its question answered `yes`, then (accepted) its
+/// last notice.
+fn replay_import(import: &hydrus_gui::DownloaderExchangeWindow, stage: &Value, yes: bool) {
+    let notices: Vec<&str> = stage["notices"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|n| n.as_str().unwrap())
+        .collect();
+    let questions = stage["questions"].as_array().unwrap();
+    assert_eq!(questions.len(), 1);
+    let (details, done) = if yes {
+        notices.split_at(notices.len() - 1)
+    } else {
+        (&notices[..], &[][..])
+    };
+    for detail in details {
+        assert_eq!(shown(import), ((*detail).to_owned(), false));
+        import.invoke_action("ok".into());
+    }
+    assert_eq!(
+        shown(import),
+        (questions[0].as_str().unwrap().to_owned(), true)
+    );
+    import.invoke_action(if yes { "yes" } else { "no" }.into());
+    if let [done] = done {
+        assert_eq!(shown(import), ((*done).to_owned(), false));
+        import.invoke_action("ok".into());
+    }
+}
+
+use crate::downloader_package::{
+    export_state, recorded_state as recorded_list, replay_chooser, shown,
+};
+
 // leaf: exchange-domain
+// leaf: audit-network-exchange-unsupported
 #[test]
 fn domain_metadata_is_prompted_exported_to_png_and_imported_as_the_reference_does() {
     let _rendered = headless::init();
     let fixture = hydrus_testkit::fixture_json("domain_metadata_packages.json");
+    let choosers = fixture["chooser_states"].as_array().unwrap();
     let (dir, store) = setup();
     seed_initial(&store, &fixture);
     let slots = windows::Slots::default();
     let export = windows::package(&store, &slots, false).unwrap();
-    assert!(
-        !choice_names(&export)
-            .iter()
-            .any(|n| n.starts_with("Domain Metadata")),
-        "domain metadata is listed only once added"
-    );
-    // The recorded prompt steps: cancel, nothing, pending-only, subdomain, repeat.
+    assert!(export_state(&export).is_empty(), "the list starts empty");
+    // The recorded steps: the domain prompt cancelled, finding nothing,
+    // pending-only, a subdomain, repeated; then a downloader chosen.
     let steps = fixture["export_steps"].as_array().unwrap();
-    let domain_names = |window: &hydrus_gui::DownloaderExchangeWindow| -> Vec<String> {
-        choice_names(window)
-            .into_iter()
-            .filter_map(|n| n.strip_prefix("Domain Metadata: ").map(str::to_owned))
-            .collect()
-    };
-    let recorded_domains = |step: &Value| -> Vec<String> {
-        step["state"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .filter(|s| s["kind"] == 71)
-            .map(|s| s["name"].as_str().unwrap().to_owned())
-            .collect()
-    };
     let prompts = [
         "",
         "nothing.example",
@@ -240,34 +272,21 @@ fn domain_metadata_is_prompted_exported_to_png_and_imported_as_the_reference_doe
                 );
             }
         }
-        let mut expected = recorded_domains(step);
-        expected.sort();
-        let mut actual = domain_names(&export);
-        actual.sort();
-        assert_eq!(actual, expected, "{}", step["step"]);
+        assert_eq!(
+            export_state(&export),
+            recorded_list(&step["state"]),
+            "{}",
+            step["step"]
+        );
     }
-    // Choosing the recorded downloader packages its example domain's rules,
-    // its URL class and its parser.
-    let gug = choice_names(&export)
-        .iter()
-        .position(|n| n == "GUG: rules only gallery")
-        .unwrap();
-    export.invoke_package_chosen(-1, false);
-    export.invoke_package_chosen(i32::try_from(gug).unwrap(), true);
-    let exported = exchange::decode_text(export.get_text().as_str()).unwrap();
-    let mut names: Vec<_> = exported.iter().map(|d| d.name().to_owned()).collect();
-    names.sort();
-    assert_eq!(
-        names,
-        [
-            "rules only gallery",
-            "rules only gallery class",
-            "rules only parser",
-            "rulesonly.example"
-        ]
-    );
-    // Everything chosen reproduces the recorded package, tuple for tuple.
-    export.invoke_package_chosen(-1, true);
+    // the downloader brings its example domain's rules, its URL class and
+    // its parser
+    let gug = &steps[prompts.len()];
+    assert_eq!(gug["step"], "gug");
+    export.invoke_action("add-gug".into());
+    replay_chooser(&export, &choosers[0]);
+    assert_eq!(export_state(&export), recorded_list(&gug["state"]));
+    // the list reproduces the recorded package, tuple for tuple
     let exported = exchange::decode_text(export.get_text().as_str()).unwrap();
     let recorded = exchange::decode_text(&fixture["reference"].to_string()).unwrap();
     assert_eq!(exported.len(), recorded.len());
@@ -291,9 +310,18 @@ fn domain_metadata_is_prompted_exported_to_png_and_imported_as_the_reference_doe
     )
     .unwrap();
     assert_eq!(png.len(), recorded.len());
+    // "export to png" asks with the summary first
     let path = dir.path().join("domains.png");
     export.set_path(path.to_string_lossy().as_ref().into());
     export.invoke_action("save".into());
+    assert_eq!(
+        shown(&export),
+        (
+            fixture["export_questions"][0].as_str().unwrap().to_owned(),
+            true
+        )
+    );
+    export.invoke_action("yes".into());
     assert!(export.get_error().is_empty(), "{}", export.get_error());
     let written = exchange::decode_png(&std::fs::read(&path).unwrap()).unwrap();
     assert_eq!(written, exported);
@@ -318,51 +346,34 @@ fn domain_metadata_is_prompted_exported_to_png_and_imported_as_the_reference_doe
         rules(&other, domain, recorded);
     }
     assert_eq!(state(&other), recorded_state(&fixture["before"]));
-    let slots = windows::Slots::default();
-    let import = windows::package(&other, &slots, true).unwrap();
-    import.set_path(
-        hydrus_testkit::fixture_path("domain_metadata_packages.png")
-            .to_string_lossy()
-            .as_ref()
-            .into(),
-    );
-    import.invoke_action("open".into());
-    assert!(import.get_error().is_empty(), "{}", import.get_error());
-    assert!(import.get_ready());
-    for notice in fixture["accepted"]["notices"].as_array().unwrap() {
-        let notice = notice.as_str().unwrap();
-        if notice.starts_with("For domain") {
-            assert!(
-                import.get_review().contains(notice),
-                "{notice} missing from {}",
-                import.get_review()
-            );
-        }
-    }
-    for line in [
-        "Domain Metadata: api.packages.example",
-        "Domain Metadata: packages.example",
-        "Domain Metadata: rulesonly.example",
-    ] {
-        assert!(
-            import.get_review().contains(line),
-            "{}",
-            import.get_review()
-        );
-    }
-    // Reviewing and cancelling changes nothing.
-    import.invoke_action("cancel".into());
-    assert_eq!(state(&other), recorded_state(&fixture["declined"]["state"]));
-    let import = windows::package(&other, &slots, true).unwrap();
-    import.set_path(
-        hydrus_testkit::fixture_path("domain_metadata_packages.png")
-            .to_string_lossy()
-            .as_ref()
-            .into(),
-    );
-    import.invoke_action("open".into());
+    let open = |source: &str| {
+        let import = windows::package(&other, &slots, true).unwrap();
+        import.set_path(source.into());
+        import.invoke_action("open".into());
+        assert!(import.get_ready(), "{}", import.get_error());
+        import
+    };
+    let recorded_png = hydrus_testkit::fixture_path("domain_metadata_packages.png");
+    let recorded_png = recorded_png.to_string_lossy();
+    // "select objects from list", the chooser cancelled: nothing
+    let import = open(&recorded_png);
+    import.set_select_from_list(true);
     import.invoke_action("accept".into());
-    assert!(import.get_error().is_empty(), "{}", import.get_error());
+    replay_chooser(&import, &choosers[1]);
+    assert!(import.get_question().is_empty());
+    assert_eq!(
+        state(&other),
+        recorded_state(&fixture["chooser_cancelled"]["state"])
+    );
+    // without it: each new package's detail, then the question, declined
+    import.set_select_from_list(false);
+    import.invoke_action("accept".into());
+    replay_import(&import, &fixture["declined"], false);
+    assert_eq!(state(&other), recorded_state(&fixture["declined"]["state"]));
+    // accepted
+    import.invoke_action("accept".into());
+    replay_import(&import, &fixture["accepted"], true);
+    assert!(slots.0.borrow().is_none());
     assert_eq!(state(&other), recorded_state(&fixture["accepted"]["state"]));
     let saved: hydrus_parse::Downloaders = other.read(settings::get).unwrap();
     assert!(
@@ -372,20 +383,26 @@ fn domain_metadata_is_prompted_exported_to_png_and_imported_as_the_reference_doe
             .iter()
             .any(|g| g.name() == "rules only gallery")
     );
-    // The second import keeps only what is still new, then sets the rules.
-    let import = windows::package(&other, &slots, true).unwrap();
-    import.set_path(
-        hydrus_testkit::fixture_path("domain_metadata_packages.png")
-            .to_string_lossy()
-            .as_ref()
-            .into(),
-    );
-    import.invoke_action("open".into());
-    assert!(
-        import
-            .get_review()
-            .contains("Bandwidth rules: \n1 rqs per 2 seconds")
-    );
+    // again: only what is still new, then the rules are set
+    let import = open(&recorded_png);
     import.invoke_action("accept".into());
+    replay_import(&import, &fixture["again"], true);
     assert_eq!(state(&other), recorded_state(&fixture["again"]["state"]));
+    // chosen from the list: the reference's early return in the bandwidth
+    // manager, a headers-only package first stopping later rules
+    for (stage, chooser) in [("stopped", Some(&choosers[2])), ("nine", None)] {
+        clear_domains(&other);
+        let stage = &fixture[stage];
+        let source = dir.path().join("source.json");
+        std::fs::write(&source, stage["source"].to_string()).unwrap();
+        let import = open(&source.to_string_lossy());
+        import.set_select_from_list(chooser.is_some());
+        import.invoke_action("accept".into());
+        if let Some(chooser) = chooser {
+            replay_chooser(&import, chooser);
+        }
+        // (nine packages: the first eight shown)
+        replay_import(&import, stage, true);
+        assert_eq!(state(&other), recorded_state(&stage["state"]));
+    }
 }

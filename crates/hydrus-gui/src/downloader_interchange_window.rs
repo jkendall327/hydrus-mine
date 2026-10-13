@@ -2,6 +2,7 @@
 //! concrete review before its owner stages or atomically saves the package.
 use crate::DownloaderExchangeWindow;
 use hydrus_gui_model::downloader_interchange::{self as model, Definition, Draft};
+use hydrus_gui_model::downloader_package as package;
 use hydrus_store::Store;
 use slint::ComponentHandle as _;
 use std::{
@@ -207,10 +208,9 @@ struct Codec<T> {
 }
 /// A package's warning from its text or PNG bytes.
 type Warning = fn(&[u8]) -> Option<String>;
-/// Handle an action the shared window does not know.
-/// Redraw the package choices and text after a selection or addition.
-type Refresh = Rc<dyn Fn(&DownloaderExchangeWindow, &str)>;
-type ExtraActions = Rc<dyn Fn(&DownloaderExchangeWindow, &str) -> Result<(), String>>;
+/// See an action before the shared window does: `None` when handled, else
+/// the action the shared window then does (the same one, or another).
+type ExtraActions = Rc<dyn Fn(&DownloaderExchangeWindow, &str) -> Result<Option<String>, String>>;
 
 /// Import/export the shared processor editor's selected steps using reference
 /// JSON, clipboard text or PNG. Applying appends only to the owner's draft.
@@ -488,7 +488,7 @@ fn open_objects<T: Clone + 'static>(
         );
         w.set_instructions(if importing { "Paste reference processing-step text or open a hydrus PNG. Review the steps before appending them." } else { "Copy selected processing steps in queue order or save a hydrus PNG to share them." }.into());
     }
-    if !importing {
+    if !importing && !definitions.is_empty() {
         w.set_text(
             (codec.encode_text)(definitions)
                 .map_err(|e| e.to_string())?
@@ -541,6 +541,13 @@ fn open_objects<T: Clone + 'static>(
                 return;
             }
             let result = (|| -> Result<(), String> {
+                let action = match &codec.actions {
+                    Some(actions) => match actions(&w, action.as_str())? {
+                        Some(action) => action,
+                        None => return Ok(()),
+                    },
+                    None => action.to_string(),
+                };
                 match action.as_str() {
                     "cancel" => close(),
                     "back" => {
@@ -690,11 +697,7 @@ fn open_objects<T: Clone + 'static>(
                         review_of(review.as_ref())?.1(definitions)?;
                         close();
                     }
-                    other => {
-                        if let Some(actions) = &codec.actions {
-                            actions(&w, other)?;
-                        }
-                    }
+                    _ => (),
                 }
                 Ok(())
             })();
@@ -758,6 +761,95 @@ fn read_file<T>(path: &str, codec: &Codec<T>) -> Result<Vec<T>, String> {
     }
 }
 /// Network menu import/export over a consistent full settings snapshot.
+/// A chooser open over the package window.
+enum Chooser {
+    /// An export "add" button's.
+    Export(package::Add, Vec<package::Choice>),
+    /// The import's "select objects to add".
+    Import(package::Import, Vec<package::Choice>),
+}
+
+/// A question or notice open over the package window.
+enum Asking {
+    /// "export to png"'s summary: yes saves the PNG.
+    ExportPng,
+    /// The import's domain metadata, one notice at a time, then its final
+    /// question.
+    Details {
+        details: std::collections::VecDeque<String>,
+        question: String,
+        import: package::Import,
+        chosen: Vec<String>,
+    },
+    /// The import's final question: yes imports.
+    Confirm {
+        import: package::Import,
+        chosen: Vec<String>,
+    },
+    /// A notice; the window closes after it if the import is done.
+    Notice { done: bool },
+}
+
+#[derive(Default)]
+struct PackageState {
+    list: RefCell<package::ExportList>,
+    rows: RefCell<hydrus_gui_model::list_selection::ListSelection<usize>>,
+    chooser: RefCell<Option<Chooser>>,
+    asking: RefCell<Option<Asking>>,
+    /// The package last reviewed, for the import.
+    reviewed: RefCell<Option<Vec<Definition>>>,
+}
+
+fn show_chooser(window: &DownloaderExchangeWindow, title: &str, choices: &[package::Choice]) {
+    window.set_chooser_title(title.into());
+    window.set_chooser_choices(slint::ModelRc::new(slint::VecModel::from(
+        choices
+            .iter()
+            .map(|c| crate::PackageChoice {
+                label: c.label.as_str().into(),
+                included: c.checked,
+            })
+            .collect::<Vec<_>>(),
+    )));
+}
+
+fn ask(window: &DownloaderExchangeWindow, text: &str, asks: bool) {
+    window.set_question(text.into());
+    window.set_question_asks(asks);
+}
+
+/// The export list's rows and the package text it makes.
+fn show_export(window: &DownloaderExchangeWindow, state: &PackageState, notice: &str) {
+    let list = state.list.borrow();
+    let rows = state.rows.borrow();
+    window.set_export_rows(slint::ModelRc::new(slint::VecModel::from(
+        list.items()
+            .iter()
+            .enumerate()
+            .map(|(row, definition)| crate::TableRow {
+                cells: slint::ModelRc::new(slint::VecModel::from(vec![
+                    slint::SharedString::from(package::row_name(definition)),
+                    package::type_name(definition).into(),
+                ])),
+                selected: rows.is_selected(row),
+            })
+            .collect::<Vec<_>>(),
+    )));
+    window.set_review(notice.into());
+    if list.items().is_empty() {
+        window.set_text("".into());
+    } else {
+        match model::encode_text(list.items()) {
+            Ok(text) => window.set_text(text.into()),
+            Err(error) => window.set_error(error.to_string().into()),
+        }
+    }
+}
+
+/// The downloader sharing window: the reference's export panel (its list,
+/// filled by its add buttons, asked about before it becomes a PNG) or its
+/// import (the package reviewed, then, on import, the reference's chooser,
+/// domain metadata notices and final question).
 pub fn package(
     store: &Arc<Store>,
     slots: &Slots,
@@ -767,145 +859,302 @@ pub fn package(
         return Ok(window.clone_strong());
     }
     let draft = Draft::load(store).map_err(|e| e.to_string())?;
-    let definitions = draft.definitions();
+    let state = Rc::new(PackageState::default());
     let preview: Preview = Rc::new({
         let draft = draft.clone();
+        let state = state.clone();
         move |definitions| {
             let mut next = draft.clone();
-            next.import(definitions).map(|r| {
+            let text = next.import(definitions.clone()).map(|r| {
                 r.text().replace(
                     "Changes are saved only when you apply the owning editor.",
                     "Click import to save this package.",
                 )
-            })
+            })?;
+            *state.reviewed.borrow_mut() = Some(definitions);
+            Ok(text)
         }
     });
-    let export_draft = Rc::new(RefCell::new(draft.clone()));
-    let applied: Apply = Rc::new({
+    // (the import goes through the questions below instead)
+    let applied: Apply = Rc::new(|_| Ok(()));
+    let actions: ExtraActions = Rc::new({
+        let state = state.clone();
         let store = store.clone();
-        move |definitions| {
-            let mut next = draft.clone();
-            next.import(definitions)?;
-            next.save(&store).map_err(|e| e.to_string())
-        }
-    });
-    let selected = Rc::new(RefCell::new(
-        (0..definitions.len()).collect::<BTreeSet<_>>(),
-    ));
-    let refresh: Refresh = Rc::new({
-        let export_draft = export_draft.clone();
-        let selected = selected.clone();
-        move |window: &DownloaderExchangeWindow, notice: &str| {
-            let draft = export_draft.borrow();
-            let definitions = draft.definitions();
-            let selected = selected.borrow();
-            window.set_package_choices(slint::ModelRc::new(slint::VecModel::from(
-                definitions
-                    .iter()
-                    .enumerate()
-                    .map(|(index, definition)| crate::PackageChoice {
-                        label: format!("{}: {}", model::category(definition), definition.name())
-                            .into(),
-                        included: selected.contains(&index),
-                    })
-                    .collect::<Vec<_>>(),
-            )));
-            let payload = draft.export(&selected);
-            let mut review = format!("{} component(s) included with dependencies.", payload.len());
-            if !notice.is_empty() {
-                review = format!("{notice}\n\n{review}");
+        move |window: &DownloaderExchangeWindow, action: &str| {
+            let add = match action {
+                "add-gug" => Some(package::Add::Gug),
+                "add-url-class" => Some(package::Add::UrlClass),
+                "add-parser" => Some(package::Add::Parser),
+                "add-login-script" => Some(package::Add::LoginScript),
+                _ => None,
+            };
+            if let Some(add) = add {
+                let choices = state.list.borrow().choices(&draft, add);
+                show_chooser(window, add.title(), &choices);
+                *state.chooser.borrow_mut() = Some(Chooser::Export(add, choices));
+                return Ok(None);
             }
-            window.set_review(review.into());
-            if payload.is_empty() {
-                window.set_text("".into());
-            } else {
-                match model::encode_text(&payload) {
-                    Ok(text) => window.set_text(text.into()),
-                    Err(error) => window.set_error(error.to_string().into()),
+            match action {
+                "chooser-cancel" => {
+                    state.chooser.borrow_mut().take();
+                    window.set_chooser_title("".into());
                 }
+                "chooser-ok" => {
+                    let chooser = state.chooser.borrow_mut().take();
+                    window.set_chooser_title("".into());
+                    match chooser {
+                        Some(Chooser::Export(add, choices)) => {
+                            let chosen: Vec<Definition> = choices
+                                .into_iter()
+                                .filter(|c| c.checked)
+                                .map(|c| c.definition)
+                                .collect();
+                            state.list.borrow_mut().add(&draft, add, &chosen);
+                            show_export(window, &state, "");
+                        }
+                        Some(Chooser::Import(import, choices)) => {
+                            let chosen: Vec<String> = choices
+                                .into_iter()
+                                .filter(|c| c.checked)
+                                .map(|c| c.label)
+                                .collect();
+                            let step = import.confirm(&draft, &chosen)?;
+                            confirm(window, &state, import, chosen, step);
+                        }
+                        None => (),
+                    }
+                }
+                "add-domain" => {
+                    window.set_domain_text("".into());
+                    window.set_domain_prompt(true);
+                }
+                "domain-cancel" => window.set_domain_prompt(false),
+                "domain-ok" => {
+                    window.set_domain_prompt(false);
+                    let domain = window.get_domain_text().to_string();
+                    let details = state.list.borrow_mut().add_domain(&draft, &domain)?;
+                    show_export(window, &state, &details.join("\n\n"));
+                }
+                "delete" if !importing => {
+                    let rows: BTreeSet<usize> = state
+                        .rows
+                        .borrow()
+                        .selected_order()
+                        .iter()
+                        .copied()
+                        .collect();
+                    state.list.borrow_mut().remove(&rows);
+                    *state.rows.borrow_mut() =
+                        hydrus_gui_model::list_selection::ListSelection::default();
+                    show_export(window, &state, "");
+                }
+                "save" if !importing => {
+                    if window.get_path().is_empty() {
+                        return Ok(Some(action.to_owned()));
+                    }
+                    ask(window, &state.list.borrow().question(), true);
+                    *state.asking.borrow_mut() = Some(Asking::ExportPng);
+                }
+                "accept" if importing => {
+                    let definitions = state
+                        .reviewed
+                        .borrow()
+                        .clone()
+                        .ok_or_else(|| "Review a package before importing.".to_owned())?;
+                    let import = package::Import::new(&draft, definitions)?;
+                    match import.start(&draft, window.get_select_from_list())? {
+                        package::Step::NothingNew(notice) => {
+                            ask(window, &notice, false);
+                            *state.asking.borrow_mut() = Some(Asking::Notice { done: false });
+                        }
+                        package::Step::Choose(choices) => {
+                            show_chooser(window, "select objects to add", &choices);
+                            *state.chooser.borrow_mut() = Some(Chooser::Import(import, choices));
+                        }
+                        step @ package::Step::Confirm { .. } => {
+                            let chosen = import.all();
+                            confirm(window, &state, import, chosen, step);
+                        }
+                    }
+                }
+                "yes" | "no" | "ok" => {
+                    let asking = state.asking.borrow_mut().take();
+                    ask(window, "", false);
+                    match (asking, action) {
+                        (Some(Asking::ExportPng), "yes") => {
+                            // (asked and answered: the PNG is saved)
+                            return Ok(Some("save".into()));
+                        }
+                        (
+                            Some(Asking::Details {
+                                mut details,
+                                question,
+                                import,
+                                chosen,
+                            }),
+                            "ok",
+                        ) => {
+                            if let Some(detail) = details.pop_front() {
+                                ask(window, &detail, false);
+                                *state.asking.borrow_mut() = Some(Asking::Details {
+                                    details,
+                                    question,
+                                    import,
+                                    chosen,
+                                });
+                            } else {
+                                ask(window, &question, true);
+                                *state.asking.borrow_mut() =
+                                    Some(Asking::Confirm { import, chosen });
+                            }
+                        }
+                        (Some(Asking::Confirm { import, chosen }), "yes") => {
+                            let mut next = draft.clone();
+                            let notice = import.apply(&mut next, &chosen)?;
+                            next.save(&store).map_err(|e| e.to_string())?;
+                            default_downloader(&store);
+                            ask(window, &notice, false);
+                            *state.asking.borrow_mut() = Some(Asking::Notice { done: true });
+                        }
+                        (Some(Asking::Notice { done: true }), "ok") => {
+                            return Ok(Some("cancel".into()));
+                        }
+                        _ => (),
+                    }
+                }
+                _ => return Ok(Some(action.to_owned())),
             }
+            Ok(None)
         }
     });
-    let window = open_with_actions(
+    // (a package's other objects are skipped, as the reference's import
+    // skips them, and one with nothing else is warned about)
+    let window = open_objects(
         slots,
         importing,
-        &definitions,
-        preview,
-        applied,
-        (!importing).then(|| -> ExtraActions {
-            let export_draft = export_draft.clone();
-            let selected = selected.clone();
-            let refresh = refresh.clone();
-            Rc::new(
-                move |window: &DownloaderExchangeWindow, action: &str| match action {
-                    "add-domain" => {
-                        window.set_domain_text("".into());
-                        window.set_domain_prompt(true);
-                        Ok(())
-                    }
-                    "domain-cancel" => {
-                        window.set_domain_prompt(false);
-                        Ok(())
-                    }
-                    "domain-ok" => {
-                        window.set_domain_prompt(false);
-                        let domain = window.get_domain_text().to_string();
-                        let details = export_draft.borrow_mut().add_domain_exports(&domain)?;
-                        let count = export_draft.borrow().definitions().len();
-                        // (the new entries are the last ones)
-                        for index in count - details.len()..count {
-                            selected.borrow_mut().insert(index);
-                        }
-                        refresh(window, &details.join("\n\n"));
-                        Ok(())
-                    }
-                    _ => Ok(()),
-                },
-            )
-        }),
+        &[],
+        Some((preview, applied)),
+        Codec {
+            encode_text: model::encode_text,
+            decode_text: hydrus_downloader_exchange::decode_package_definitions,
+            encode_png: model::encode_png,
+            decode_png: hydrus_downloader_exchange::decode_package_png,
+            processing: false,
+            warning: Some(hydrus_downloader_exchange::package_warning),
+            actions: Some(actions),
+        },
     )?;
     window.set_json_enabled(true);
-    if !importing {
-        window.set_domain_enabled(true);
-        refresh(&window, "");
-        window.set_instructions("Choose the registered components to share. Linked generators, URL classes and parsers are included automatically. Login scripts include their rules, but not saved domain credentials, sessions or activation. Headers and bandwidth rules can be added by domain.".into());
-        window.on_package_chosen({
+    if importing {
+        window.set_select_from_list_shown(true);
+        window.set_select_from_list(
+            store
+                .read(hydrus_store::settings::get::<hydrus_store::settings::AdvancedMode>)
+                .is_ok_and(|advanced| advanced.0),
+        );
+    } else {
+        window.set_export_list(true);
+        window.set_export_columns(slint::ModelRc::new(slint::VecModel::from(vec![
+            crate::TableColumn {
+                title: "name".into(),
+                width: 380.0,
+                stretch: true,
+            },
+            crate::TableColumn {
+                title: "type".into(),
+                width: 220.0,
+                stretch: false,
+            },
+        ])));
+        show_export(&window, &state, "");
+        window.set_instructions("Add the downloaders, URL classes, parsers, login scripts and headers/bandwidth rules to share; a downloader brings its URL classes, parsers and domains' rules, and a URL class its API links and parser. Login scripts include their rules, but not saved domain credentials, sessions or activation.".into());
+        window.on_export_row_clicked({
             let weak = window.as_weak();
-            let refresh = refresh.clone();
-            let export_draft = export_draft.clone();
-            move |index, included| {
+            let state = state.clone();
+            move |row, ctrl, shift| {
                 let Some(window) = weak.upgrade() else {
                     return;
                 };
-                if !window.get_active()
-                    || window.get_png_child()
-                    || !window.get_overwrite_question().is_empty()
-                    || window.get_domain_prompt()
-                {
+                let Ok(row) = usize::try_from(row) else {
                     return;
-                }
-                let choice_count = export_draft.borrow().definitions().len();
-                {
-                    let mut selected = selected.borrow_mut();
-                    if index < 0 {
-                        if included {
-                            *selected = (0..choice_count).collect();
-                        } else {
-                            selected.clear();
-                        }
-                    } else if let Ok(index) = usize::try_from(index)
-                        && index < choice_count
-                    {
-                        if included {
-                            selected.insert(index);
-                        } else {
-                            selected.remove(&index);
-                        }
-                    }
-                }
-                refresh(&window, "");
+                };
+                let order: Vec<usize> = (0..state.list.borrow().items().len()).collect();
+                state.rows.borrow_mut().click(&order, row, ctrl, shift);
+                show_export(&window, &state, "");
             }
         });
     }
+    window.on_chooser_toggled({
+        let weak = window.as_weak();
+        let state = state.clone();
+        move |row, checked| {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let mut chooser = state.chooser.borrow_mut();
+            let (title, choices) = match chooser.as_mut() {
+                Some(Chooser::Export(add, choices)) => (add.title(), choices),
+                Some(Chooser::Import(_, choices)) => ("select objects to add", choices),
+                None => return,
+            };
+            if let Some(choice) = usize::try_from(row).ok().and_then(|r| choices.get_mut(r)) {
+                choice.checked = checked;
+            }
+            show_chooser(&window, title, choices);
+        }
+    });
     Ok(window)
+}
+
+/// With no default downloader, the first by name becomes it, as the
+/// reference's import leaves it.
+fn default_downloader(store: &Store) {
+    let result = store.write(|ctx| {
+        let conn = ctx.conn();
+        let mut defaults: hydrus_core::subscriptions::GalleryDefaults =
+            hydrus_store::settings::get(conn)?;
+        if defaults.gug.is_some() {
+            return Ok(());
+        }
+        let downloaders: hydrus_parse::Downloaders = hydrus_store::settings::get(conn)?;
+        let first = downloaders
+            .gugs
+            .gugs
+            .iter()
+            .min_by(|a, b| a.name().cmp(b.name()));
+        if let Some(first) = first {
+            defaults.gug = Some((first.key().to_owned(), first.name().to_owned()));
+            hydrus_store::settings::set(conn, &defaults)?;
+        }
+        Ok(())
+    });
+    if let Err(e) = result {
+        eprintln!("could not set the default downloader: {e}");
+    }
+}
+
+/// The import's domain metadata notices, then its final question.
+fn confirm(
+    window: &DownloaderExchangeWindow,
+    state: &PackageState,
+    import: package::Import,
+    chosen: Vec<String>,
+    step: package::Step,
+) {
+    let package::Step::Confirm { details, question } = step else {
+        return;
+    };
+    let mut details: std::collections::VecDeque<String> = details.into();
+    if let Some(detail) = details.pop_front() {
+        ask(window, &detail, false);
+        *state.asking.borrow_mut() = Some(Asking::Details {
+            details,
+            question,
+            import,
+            chosen,
+        });
+    } else {
+        ask(window, &question, true);
+        *state.asking.borrow_mut() = Some(Asking::Confirm { import, chosen });
+    }
 }

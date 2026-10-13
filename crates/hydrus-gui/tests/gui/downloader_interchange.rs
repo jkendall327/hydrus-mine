@@ -20,6 +20,20 @@ fn one_page() -> String {
     )
     .unwrap()
 }
+/// Import the package reviewed, answering the reference's final question
+/// yes and its notice ok.
+fn import_through(import: &hydrus_gui::DownloaderExchangeWindow) {
+    import.invoke_action("accept".into());
+    assert!(import.get_question_asks(), "{}", import.get_question());
+    import.invoke_action("yes".into());
+    assert!(
+        import.get_question().starts_with("Successfully added"),
+        "{} {}",
+        import.get_question(),
+        import.get_error()
+    );
+    import.invoke_action("ok".into());
+}
 // leaf: exchange-login
 #[test]
 fn mixed_registered_login_package_reviews_png_selects_dependencies_and_reopens_saved_scripts() {
@@ -66,7 +80,7 @@ fn mixed_registered_login_package_reviews_png_selects_dependencies_and_reopens_s
     import.invoke_action("paste".into());
     import.invoke_action("review".into());
     assert!(import.get_ready());
-    import.invoke_action("accept".into());
+    import_through(&import);
     let saved = store.read(hydrus_store::logins::load).unwrap();
     assert_eq!(saved.scripts.len(), 1);
     assert_eq!(saved.scripts[0].name, "mixed package login");
@@ -88,27 +102,18 @@ fn mixed_registered_login_package_reviews_png_selects_dependencies_and_reopens_s
     let export = windows::package(&store, &slots, false).unwrap();
     assert!(export.get_text_read_only());
     assert!(export.get_json_enabled());
-    let login = export
-        .get_package_choices()
-        .iter()
-        .position(|row| row.label == "Login Script: mixed package login")
-        .unwrap();
-    let nested = export
-        .get_package_choices()
-        .iter()
-        .position(|row| row.label == "GUG: mixed package nested")
-        .unwrap();
-    export.invoke_package_chosen(-1, false);
     assert!(export.get_text().is_empty());
     assert!(export.get_export_empty());
-    export.invoke_package_chosen(i32::try_from(login).unwrap(), true);
+    export.invoke_action("add-login-script".into());
+    crate::downloader_package::choose(&export, Some(&["mixed package login"]));
     let login_only = exchange::decode_text(export.get_text().as_str()).unwrap();
     assert_eq!(
         login_only.len(),
         fixture["login_only"].as_array().unwrap().len()
     );
     assert!(matches!(login_only[0].native, Native::Login(_)));
-    export.invoke_package_chosen(i32::try_from(nested).unwrap(), true);
+    export.invoke_action("add-gug".into());
+    crate::downloader_package::choose(&export, Some(&["mixed package nested"]));
     let mixed = exchange::decode_text(export.get_text().as_str()).unwrap();
     assert_eq!(mixed.len(), fixture["mixed"].as_array().unwrap().len());
     let copied = Rc::new(RefCell::new(String::new()));
@@ -133,6 +138,7 @@ fn mixed_registered_login_package_reviews_png_selects_dependencies_and_reopens_s
     let png_path = dir.path().join("mixed.png");
     export.set_path(png_path.to_string_lossy().as_ref().into());
     export.invoke_action("save".into());
+    export.invoke_action("yes".into());
     assert!(export.get_error().is_empty(), "{}", export.get_error());
     assert_eq!(
         exchange::decode_png(&std::fs::read(&png_path).unwrap()).unwrap(),
@@ -154,7 +160,7 @@ fn mixed_registered_login_package_reviews_png_selects_dependencies_and_reopens_s
     let clipboard = copied.borrow().clone();
     let retired_path = dir.path().join("retired.json");
     export.set_path(retired_path.to_string_lossy().as_ref().into());
-    export.invoke_package_chosen(-1, false);
+    export.invoke_action("add-login-script".into());
     export.invoke_action("copy".into());
     export.invoke_action("save-json".into());
     assert_eq!(export.get_text(), retained);
@@ -164,7 +170,7 @@ fn mixed_registered_login_package_reviews_png_selects_dependencies_and_reopens_s
     let import = windows::package(&other, &slots, true).unwrap();
     import.set_path(png_path.to_string_lossy().as_ref().into());
     import.invoke_action("open".into());
-    import.invoke_action("accept".into());
+    import_through(&import);
     let imported = other.read(hydrus_store::logins::load).unwrap();
     assert_eq!(imported.scripts[0].name, saved.scripts[0].name);
     assert_ne!(imported.scripts[0].key, saved.scripts[0].key);
@@ -195,9 +201,13 @@ fn package_reviews_real_png_cancel_and_invalid_input_before_atomic_apply() {
             .as_ref()
             .into(),
     );
+    // (its formulas and content parsers aren't downloader objects: they
+    // are skipped, as the reference's import skips them; see
+    // downloader_import_selection.json)
     w.invoke_action("open".into());
-    assert!(!w.get_ready());
-    assert!(w.get_error().contains("formulas or content"));
+    assert!(w.get_ready(), "{}", w.get_error());
+    assert!(!w.get_review().contains("Formula"), "{}", w.get_review());
+    w.invoke_action("back".into());
     w.set_text(one_page().into());
     w.invoke_action("review".into());
     assert!(w.get_ready());
@@ -232,7 +242,7 @@ fn package_reviews_real_png_cancel_and_invalid_input_before_atomic_apply() {
     let w = windows::package(&store, &slots, true).unwrap();
     w.set_text(one_page().into());
     w.invoke_action("review".into());
-    w.invoke_action("accept".into());
+    import_through(&w);
     let saved = store.read::<Downloaders>(settings::get).unwrap();
     assert_eq!(saved.parsers.len(), 1);
     assert_eq!(saved.parsers[0].name, "exchange page");

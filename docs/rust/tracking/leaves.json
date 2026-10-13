@@ -4612,7 +4612,13 @@
     "2026-10-09: domain metadata packages done (exchange-domain). Remaining: clipboard bitmap as PNG and PNG drag/drop (owner: low priority).",
     "2026-10-09: clipboard bitmap as PNG and PNG drag/drop into the downloader exchange window split out to exchange-bitmap-drop. Login scripts (exchange-login) and domain metadata (exchange-domain) are done.",
     "2026-10-09 review of #147: untagged. Not matched: the reference's separate Add choosers and questions (chooser_states, export_questions, notices in mixed_login_packages.json and domain_metadata_packages.json) are native checkboxes; per-object import selection and the one-pop-up-per-package domain metadata review are not ported. Covered by exchange-login and exchange-domain for what they name."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude/issue-154-viewer-drop-2",
+    "note": "Window tests replay the reference's real DownloaderExportPanel and ReviewDownloaderImport recordings through the package window: tests/gui/downloader_package.rs (mixed_login_packages.json: the four add choosers' titles, labels and answers, the export list after each, the export question before PNG save, the declined/accepted/repeated import questions and success notices, and the client's objects after each) and tests/gui/domain_metadata.rs (domain_metadata_packages.json: the gug chooser, export question, the 'select objects to add' chooser cancelled and answered, one notice per domain metadata package with the eight-package limit, final questions and notices, and headers/rules state after each stage). Also tests/gui/downloader_package.rs objects_are_chosen_others_skipped_and_a_default_downloader_set_as_the_reference_does replays oracle/record_downloader_import_selection.py (downloader_import_selection.json): a partial 'select objects to add' answer, the rest imported after it, a package mixing a downloader with a non-downloader object (skipped), one with only non-downloader objects (the reference's warning), the default downloader after each, and 'select objects from list' defaulting on in advanced mode."
+   }
   },
   {
    "id": "exchange-bitmap-drop",

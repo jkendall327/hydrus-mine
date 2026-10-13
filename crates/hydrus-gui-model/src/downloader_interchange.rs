@@ -224,14 +224,10 @@ impl Draft {
                 }
                 Native::Gug(g) => {
                     let incoming = g.key().to_owned();
-                    if let AnyGug::Nested(n) = g {
-                        for (key, name) in &mut n.gugs {
-                            if let Some((k, n)) = remap.get(key) {
-                                key.clone_from(k);
-                                name.clone_from(n);
-                            }
-                        }
-                    }
+                    // (`AlreadyHaveExactlyThisGUG` compares the package's
+                    // own member references: a nested generator imported
+                    // before had its members' keys regenerated, so it is
+                    // new again)
                     let duplicate = next
                         .downloaders
                         .gugs
@@ -247,6 +243,14 @@ impl Draft {
                         remap.insert(incoming, (old.key().to_owned(), old.name().to_owned()));
                         review.duplicates += 1;
                         continue;
+                    }
+                    if let AnyGug::Nested(n) = g {
+                        for (key, name) in &mut n.gugs {
+                            if let Some((k, n)) = remap.get(key) {
+                                key.clone_from(k);
+                                name.clone_from(n);
+                            }
+                        }
                     }
                     let name = non_dupe_name(g.name(), &|name| {
                         next.downloaders
@@ -318,10 +322,10 @@ impl Draft {
                 }
                 _ => unreachable!("definition kinds were checked before staging"),
             }
+            // (by the package's own name, as the reference's questions
+            // name it, whatever it is renamed to here)
+            review.added.push(format!("{category}: {}", name_seen.1));
             seen.insert(name_seen);
-            review
-                .added
-                .push(format!("{category}: {}", definition.name()));
             next.auxiliary.retain(&definition);
         }
         // Newly imported parsers replace links on duplicate classes; loose

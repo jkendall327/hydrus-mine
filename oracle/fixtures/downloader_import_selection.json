@@ -1,0 +1,566 @@
+{
+  "initial": {
+    "gugs": [],
+    "classes": [],
+    "parsers": [],
+    "default_gug": null
+  },
+  "stages": [
+    {
+      "name": "partial",
+      "source": [
+        26,
+        3,
+        [
+          [
+            2,
+            [
+              69,
+              "selection gallery",
+              1,
+              [
+                "9191919191919191919191919191919191919191919191919191919191919191",
+                "https://selection.example/search/%tags%",
+                "%tags%",
+                "+",
+                "search tags",
+                "blue_eyes blonde_hair"
+              ]
+            ]
+          ],
+          [
+            2,
+            [
+              50,
+              "selection gallery class",
+              15,
+              [
+                "9292929292929292929292929292929292929292929292929292929292929292",
+                3,
+                "https",
+                [
+                  139,
+                  1,
+                  [
+                    [
+                      "selection.example"
+                    ],
+                    [],
+                    false,
+                    false
+                  ]
+                ],
+                [
+                  true,
+                  false,
+                  false,
+                  true,
+                  false,
+                  true,
+                  false
+                ],
+                [
+                  [
+                    [
+                      51,
+                      1,
+                      [
+                        0,
+                        "search",
+                        null,
+                        null,
+                        "search"
+                      ]
+                    ],
+                    null
+                  ],
+                  [
+                    [
+                      51,
+                      1,
+                      [
+                        3,
+                        "",
+                        null,
+                        null,
+                        "example string"
+                      ]
+                    ],
+                    null
+                  ]
+                ],
+                [
+                  26,
+                  3,
+                  []
+                ],
+                false,
+                [
+                  51,
+                  1,
+                  [
+                    3,
+                    "",
+                    null,
+                    null,
+                    "example string"
+                  ]
+                ],
+                [],
+                [
+                  55,
+                  2,
+                  [
+                    [],
+                    "https://hostname.com/post/page.php?id=123456&s=view"
+                  ]
+                ],
+                0,
+                [
+                  55,
+                  2,
+                  [
+                    [],
+                    "https://hostname.com/post/page.php?id=123456&s=view"
+                  ]
+                ],
+                null,
+                null,
+                1,
+                "https://selection.example/search/cats"
+              ]
+            ]
+          ],
+          [
+            2,
+            [
+              58,
+              "selection parser",
+              3,
+              [
+                "selection parser",
+                "9393939393939393939393939393939393939393939393939393939393939393",
+                [
+                  55,
+                  2,
+                  [
+                    [],
+                    "example string"
+                  ]
+                ],
+                [
+                  26,
+                  3,
+                  []
+                ],
+                [
+                  26,
+                  3,
+                  []
+                ],
+                [
+                  "https://selection.example/search/cats"
+                ],
+                {
+                  "url": "https://example.com/posts/index.php?id=123456"
+                }
+              ]
+            ]
+          ],
+          [
+            2,
+            [
+              71,
+              1,
+              [
+                "selection.example",
+                null,
+                [
+                  38,
+                  1,
+                  [
+                    [
+                      1,
+                      60,
+                      3
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      "select": true,
+      "choosers": [
+        {
+          "title": "select objects to add",
+          "labels": [
+            "Domain Metadata: selection.example",
+            "GUG: selection gallery",
+            "Parser: selection parser",
+            "URL Class: selection gallery class"
+          ],
+          "answer": [
+            "URL Class: selection gallery class"
+          ]
+        }
+      ],
+      "questions": [
+        "The client is about to add and link these objects:\n\nURL Class \"selection gallery class\" - selection.example\n\nDoes that sound good?"
+      ],
+      "notices": [
+        "Successfully added 0 new downloaders and 1 auxiliary objects."
+      ],
+      "warnings": [],
+      "state": {
+        "gugs": [],
+        "classes": [
+          "selection gallery class"
+        ],
+        "parsers": [],
+        "default_gug": null
+      }
+    },
+    {
+      "name": "rest",
+      "source": [
+        26,
+        3,
+        [
+          [
+            2,
+            [
+              69,
+              "selection gallery",
+              1,
+              [
+                "9191919191919191919191919191919191919191919191919191919191919191",
+                "https://selection.example/search/%tags%",
+                "%tags%",
+                "+",
+                "search tags",
+                "blue_eyes blonde_hair"
+              ]
+            ]
+          ],
+          [
+            2,
+            [
+              50,
+              "selection gallery class",
+              15,
+              [
+                "9292929292929292929292929292929292929292929292929292929292929292",
+                3,
+                "https",
+                [
+                  139,
+                  1,
+                  [
+                    [
+                      "selection.example"
+                    ],
+                    [],
+                    false,
+                    false
+                  ]
+                ],
+                [
+                  true,
+                  false,
+                  false,
+                  true,
+                  false,
+                  true,
+                  false
+                ],
+                [
+                  [
+                    [
+                      51,
+                      1,
+                      [
+                        0,
+                        "search",
+                        null,
+                        null,
+                        "search"
+                      ]
+                    ],
+                    null
+                  ],
+                  [
+                    [
+                      51,
+                      1,
+                      [
+                        3,
+                        "",
+                        null,
+                        null,
+                        "example string"
+                      ]
+                    ],
+                    null
+                  ]
+                ],
+                [
+                  26,
+                  3,
+                  []
+                ],
+                false,
+                [
+                  51,
+                  1,
+                  [
+                    3,
+                    "",
+                    null,
+                    null,
+                    "example string"
+                  ]
+                ],
+                [],
+                [
+                  55,
+                  2,
+                  [
+                    [],
+                    "https://hostname.com/post/page.php?id=123456&s=view"
+                  ]
+                ],
+                0,
+                [
+                  55,
+                  2,
+                  [
+                    [],
+                    "https://hostname.com/post/page.php?id=123456&s=view"
+                  ]
+                ],
+                null,
+                null,
+                1,
+                "https://selection.example/search/cats"
+              ]
+            ]
+          ],
+          [
+            2,
+            [
+              58,
+              "selection parser",
+              3,
+              [
+                "selection parser",
+                "9393939393939393939393939393939393939393939393939393939393939393",
+                [
+                  55,
+                  2,
+                  [
+                    [],
+                    "example string"
+                  ]
+                ],
+                [
+                  26,
+                  3,
+                  []
+                ],
+                [
+                  26,
+                  3,
+                  []
+                ],
+                [
+                  "https://selection.example/search/cats"
+                ],
+                {
+                  "url": "https://example.com/posts/index.php?id=123456"
+                }
+              ]
+            ]
+          ],
+          [
+            2,
+            [
+              71,
+              1,
+              [
+                "selection.example",
+                null,
+                [
+                  38,
+                  1,
+                  [
+                    [
+                      1,
+                      60,
+                      3
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      "select": true,
+      "choosers": [
+        {
+          "title": "select objects to add",
+          "labels": [
+            "Domain Metadata: selection.example",
+            "GUG: selection gallery",
+            "Parser: selection parser"
+          ],
+          "answer": [
+            "GUG: selection gallery",
+            "Parser: selection parser",
+            "Domain Metadata: selection.example"
+          ]
+        }
+      ],
+      "questions": [
+        "The client is about to add and link these objects:\n\nDownloader \"selection gallery\" - selection.example\nParser \"selection parser\" - selection.example\nbandwidth rules - selection.example\n\nDoes that sound good?"
+      ],
+      "notices": [
+        "For domain \"selection.example\":\n\nBandwidth rules: \n3 rqs per 1 minute",
+        "Successfully added 1 new downloaders and 2 auxiliary objects. 1 duplicate objects were not added (but some additional metadata may have been merged)."
+      ],
+      "warnings": [],
+      "state": {
+        "gugs": [
+          "selection gallery"
+        ],
+        "classes": [
+          "selection gallery class"
+        ],
+        "parsers": [
+          "selection parser"
+        ],
+        "default_gug": "selection gallery"
+      }
+    },
+    {
+      "name": "mixed",
+      "source": [
+        26,
+        3,
+        [
+          [
+            2,
+            [
+              69,
+              "mixed gallery",
+              1,
+              [
+                "9494949494949494949494949494949494949494949494949494949494949494",
+                "https://mixed.example/search/%tags%",
+                "%tags%",
+                "+",
+                "search tags",
+                "blue_eyes blonde_hair"
+              ]
+            ]
+          ],
+          [
+            2,
+            [
+              51,
+              1,
+              [
+                0,
+                "not a downloader object",
+                null,
+                null,
+                "not a downloader object"
+              ]
+            ]
+          ]
+        ]
+      ],
+      "select": false,
+      "choosers": [],
+      "questions": [
+        "The client is about to add and link these objects:\n\nDownloader \"mixed gallery\" - mixed.example\n\nDoes that sound good?"
+      ],
+      "notices": [
+        "Successfully added 1 new downloaders and 0 auxiliary objects."
+      ],
+      "warnings": [],
+      "state": {
+        "gugs": [
+          "mixed gallery",
+          "selection gallery"
+        ],
+        "classes": [
+          "selection gallery class"
+        ],
+        "parsers": [
+          "selection parser"
+        ],
+        "default_gug": "selection gallery"
+      }
+    },
+    {
+      "name": "misc only",
+      "source": [
+        26,
+        3,
+        [
+          [
+            2,
+            [
+              51,
+              1,
+              [
+                0,
+                "not a downloader object",
+                null,
+                null,
+                "not a downloader object"
+              ]
+            ]
+          ],
+          [
+            2,
+            [
+              51,
+              1,
+              [
+                0,
+                "nor this",
+                null,
+                null,
+                "nor this"
+              ]
+            ]
+          ]
+        ]
+      ],
+      "select": false,
+      "choosers": [],
+      "questions": [],
+      "notices": [],
+      "warnings": [
+        "I found 2 misc objects in that png, but nothing downloader related."
+      ],
+      "state": {
+        "gugs": [
+          "mixed gallery",
+          "selection gallery"
+        ],
+        "classes": [
+          "selection gallery class"
+        ],
+        "parsers": [
+          "selection parser"
+        ],
+        "default_gug": "selection gallery"
+      }
+    }
+  ]
+}

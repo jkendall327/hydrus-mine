@@ -111,7 +111,7 @@ pub fn decode_text(text: &str) -> Result<Vec<Definition>> {
     let json: Value = serde_json::from_str(text).map_err(|e| Error::Invalid(e.to_string()))?;
     let mut count = 0;
     let mut output = Vec::new();
-    decode_value(json, 0, &mut count, &mut output)?;
+    decode_value(json, 0, &mut count, &mut output, None)?;
     if output.is_empty() {
         return Err(Error::Invalid(
             "The package contains no definitions.".into(),
@@ -119,11 +119,70 @@ pub fn decode_text(text: &str) -> Result<Vec<Definition>> {
     }
     Ok(output)
 }
+/// A downloader package as the reference's downloader import reads it: its
+/// generators, URL classes, page parsers, login scripts and domain metadata,
+/// and how many other objects it held (which are skipped).
+pub fn decode_package_text(text: &str) -> Result<(Vec<Definition>, usize)> {
+    if text.len() > MAX_BYTES {
+        return Err(Error::Limit);
+    }
+    let json: Value = serde_json::from_str(text).map_err(|e| Error::Invalid(e.to_string()))?;
+    let mut count = 0;
+    let mut output = Vec::new();
+    let mut misc = 0;
+    decode_value(json, 0, &mut count, &mut output, Some(&mut misc))?;
+    let before = output.len();
+    output.retain(|d| {
+        matches!(
+            d.native,
+            Native::Class(_)
+                | Native::Gug(_)
+                | Native::Page(_)
+                | Native::Login(_)
+                | Native::Domain(_)
+        )
+    });
+    let dropped = before - output.len();
+    Ok((output, misc + dropped))
+}
+
+/// The reference's warning for a downloader package with nothing downloader
+/// related in it (from its text or PNG bytes).
+pub fn package_warning(bytes: &[u8]) -> Option<String> {
+    let text = if bytes.starts_with(b"\x89PNG") {
+        transport::decode_payload(bytes).ok()?
+    } else {
+        std::str::from_utf8(bytes).ok()?.to_owned()
+    };
+    let (definitions, misc) = decode_package_text(&text).ok()?;
+    (definitions.is_empty() && misc > 0).then(|| {
+        format!("I found {misc} misc objects in that png, but nothing downloader related.")
+    })
+}
+
+/// A downloader package's definitions (`decode_package_text`), the others
+/// skipped; an error if none are left.
+pub fn decode_package_definitions(text: &str) -> Result<Vec<Definition>> {
+    let (definitions, _) = decode_package_text(text)?;
+    if definitions.is_empty() {
+        return Err(Error::Invalid(
+            "The package contains no definitions.".into(),
+        ));
+    }
+    Ok(definitions)
+}
+
+/// `decode_package_definitions` for a PNG.
+pub fn decode_package_png(bytes: &[u8]) -> Result<Vec<Definition>> {
+    decode_package_definitions(&transport::decode_payload(bytes)?)
+}
+
 fn decode_value(
     mut value: Value,
     depth: usize,
     count: &mut usize,
     output: &mut Vec<Definition>,
+    mut misc: Option<&mut usize>,
 ) -> Result<()> {
     if depth > 32 {
         return Err(Error::Limit);
@@ -149,7 +208,7 @@ fn decode_value(
             };
             let nested: Value = serde_json::from_str(&nested.to_tuple().to_python_string())
                 .map_err(|e| Error::Invalid(e.to_string()))?;
-            decode_value(nested, depth + 1, count, output)?;
+            decode_value(nested, depth + 1, count, output, misc.as_deref_mut())?;
         }
         return Ok(());
     }
@@ -167,7 +226,14 @@ fn decode_value(
         63 => Native::Simple(parsers::simple_formula(&object).map_err(err)?),
         71 => Native::Domain(domain_metadata::decode(&value)?),
         73 => Native::Login(hydrus_legacy::objects::logins::login_script(&object).map_err(err)?),
-        code => return Err(Error::Unsupported(format!("object type {code}"))),
+        code => {
+            // (a downloader package skips what isn't a downloader object)
+            if let Some(misc) = misc {
+                *misc += 1;
+                return Ok(());
+            }
+            return Err(Error::Unsupported(format!("object type {code}")));
+        }
     };
     // Encoding is also a losslessness check: unknown processors must never
     // pass through the decoder's reduced Unsupported { type_id } placeholder.

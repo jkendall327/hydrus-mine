@@ -2252,9 +2252,19 @@ separate from the read-only legacy reader. `record_downloader_interchange.py`
 checks real reference PNG/JSON -> native encoders -> real reference loads;
 codec/model/GUI regressions cover bounds, unsupported data, cancellation,
 duplicates, stale snapshots and live downloader settings reload.
-The mixed exporter offers registered component selection, including login-only
-packages and linked generator/class/parser dependencies, through clipboard JSON,
-JSON files and PNG files. Login scripts contain credential definitions, cookie
+The exporter is the reference's list: "add gug", "add url class", "add
+parser" and "add login script" each open a chooser of what isn't listed yet
+(working downloaders only), and add what is chosen with what it needs (a
+nested downloader's members, a downloader's domains' headers and rules, URL
+classes with their API links, parsers); "delete" takes the selected rows out.
+The list goes out through clipboard JSON, JSON files and PNG files, the PNG
+after a question showing the summary the end-user will see. An import, once
+reviewed, asks as the reference's does: "select objects to add" when "select
+objects from list" is ticked (by default in advanced mode), each new domain
+metadata package in a notice of its own (the first eight), then "The client is
+about to add and link these objects", and says what it added. Objects that
+aren't downloader ones are skipped, and with no default downloader the first
+by name becomes it. Login scripts contain credential definitions, cookie
 rules, ordered requests and response parsers; saved credentials, sessions and
 domain activation stay in the store. Mixed import reviews login scripts beside
 the other components, skips exact script duplicates without comparing their
@@ -2272,8 +2282,8 @@ button asks "Enter domain." and lists, for that domain and each parent down to
 its registrable domain, the ones that have approved headers or rules of their own;
 a domain with nothing to share says "No headers/bandwidth rules found!". Choosing a
 downloader also packages the headers and rules of its example URLs' domains. The
-review shows each package's headers and rules in detail (the first eight when
-there are more). Import keeps only the headers and rules the client lacks (same
+review, and then the import's notices, show each package's headers and rules in
+detail (the first eight when there are more). Import keeps only the headers and rules the client lacks (same
 names and values count as the same), replaces the domain's headers with the shared
 approved ones and sets its rules. `record_domain_metadata_packages.py` drives the
 real chooser, domain prompt, PNG export and import, and the window replays it.

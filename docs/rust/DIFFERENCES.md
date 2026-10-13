@@ -1662,19 +1662,29 @@ native execution forms cannot retain all original data. Native/runtime fields
 take precedence over preserved auxiliary editor fields when exporting edits.
 Mixed downloader package import accepts URL classes, GUGs, page parsers, login scripts and domain metadata;
 standalone formulas/content nodes belong in their matching native editors.
-The native mixed exporter
-uses component checkboxes with dependency expansion instead of Qt's separate
-Add choosers. Imports review a whole supported package; Qt additionally offers
-optional per-object selection and skips unsupported objects. Mixed login script
+Exports and imports go as the reference's panels do: the export list starts
+empty and is filled by its add buttons' choosers ("select gugs" and the rest,
+with their dependencies), rows are deleted from it, and "save PNG" first asks
+with the end-user's summary; an import, once the package is reviewed (a
+native step: the reference starts at once), shows the "select objects to add"
+chooser when "select objects from list" is on (by default in advanced mode),
+each new domain metadata package's detail in a notice of its own (the first
+eight), the final question, and the "Successfully added" notice, then closes
+(`downloader_package.rs`, `domain_metadata.rs`, replaying
+`mixed_login_packages.json` and `domain_metadata_packages.json`). The
+questions and choosers are drawn over the window rather than as dialogs of
+their own. Mixed login script
 duplicates ignore key/name; new imports keep script names, regenerate keys,
 retarget existing matching example-domain links and preserve current domain
 credentials/activation/delays without configuring new example domains. Standalone
-login-list imports retain their separate nonduplicate-name policy. The actual
-Qt mixed-package recording also captures a repeated nested GUG import creating
-an additional nested generator after child keys change; native retains its
-existing remapped dependency duplicate checks. Domain metadata is reviewed in the same text as the other
-components, not in one pop-up per package, and imports have no final "successfully
-added" notice. Like the reference's bandwidth manager, an import stops adding
+login-list imports retain their separate nonduplicate-name policy. A nested
+generator imported again is new again (its members' keys were regenerated the
+first time), as the recording's repeated import shows. A package's other
+objects (formulas, content parsers, anything not a downloader object) are
+skipped, and one with nothing else says "I found N misc objects in that png, but
+nothing downloader related." (as an error, not a warning dialog); an import
+leaves the first downloader by name as the default when there is none
+(`downloader_import_selection.json`). Like the reference's bandwidth manager, an import stops adding
 rules at the first package (in domain order) that has none, so a headers-only
 package keeps later packages' rules out until they are imported again
 (recorded in `domain_metadata_packages.json`). Clipboard bitmap and drag/drop
