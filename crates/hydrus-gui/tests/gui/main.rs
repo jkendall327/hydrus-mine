@@ -335,6 +335,7 @@ mod media_support;
 mod media_viewer_navigation;
 mod network_bandwidth_actions;
 mod network_pause_menu;
+mod options_close_focus;
 mod options_gui_duplicates;
 mod options_gui_frames;
 mod options_gui_kept;

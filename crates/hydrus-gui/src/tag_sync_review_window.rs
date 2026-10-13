@@ -247,11 +247,12 @@ mod tests {
                 Ok(())
             })
             .unwrap();
-        let service_rows: Vec<_> = store
-            .snapshot()
-            .services
-            .tag_services()
-            .map(|service| (service.key.clone(), service.name.clone()))
+        // (the tabs are in the reference's order, not the registry's)
+        let service_rows: Vec<_> = model::tabs(&store)
+            .unwrap()
+            .0
+            .into_iter()
+            .map(|tab| (tab.key, tab.name))
             .collect();
         let first_row =
             i32::try_from(service_rows.iter().position(|row| row.0 == first).unwrap()).unwrap();

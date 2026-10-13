@@ -4085,14 +4085,17 @@ custom sets' shortcuts run after its own set's.
 The page lists the sets as the reference does. "built-in hydrus shortcut sets"
 shows each built-in set the client has, by its pretty name in the reference's
 order, with its number of shortcuts; "edit" (or a double-click) opens that set
-with its description, and "restore defaults" offers every default set: one the
+with its description, and "restore defaults" offers every default set (in the reference's default order,
+global first, not alphabetically): one the
 client lacks is restored after saying so, one it has asks "Are you certain you
 want to restore the defaults for "…"? Any custom shortcuts you have set will be
 wiped." "custom user sets" explains that they are advanced, and adds ("new
 shortcuts"), edits, renames and deletes ("Remove all selected?") custom sets;
 names are made unique as "name (1)", "name (2)", and a custom set cannot take a
 built-in set's name ("That name is reserved--please pick another!", and the
-editor stays open). A "help" button shows the
+editor stays open). The page is replayed against the reference's panel (`shortcuts_panel.json`: lists, the locked
+name of a built-in set, the veto and the unique names, the restore questions).
+A "help" button shows the
 reference's help. A new client starts with the reference's eleven default sets
 (107 shortcuts); a command with data (a seek's distance, a thumbnail focus
 move) is listed with the reference's text.
@@ -4153,6 +4156,11 @@ Pages > sidebar toggles the current sidebar, saves its sizes immediately, toggle
 saving on accepted client exit, or restores saved sizes to every live page.
 Cancelling exit saves nothing. A hidden whole sidebar saves width zero and its
 last inner preview height; a separately collapsed preview keeps the saved height.
+Options > gui pages > "When closing the current tab, move focus" chooses the tab that
+takes focus when the current one closes; every tab of four closed in every selection,
+both choices, edges included (closing the first tab with "left" or the last with
+"right"), is compared with the reference's notebook (`close_focus.json`). Closing a tab
+that is not current leaves focus alone.
 Options > gui pages > preview window stages the global hide preference. Apply
 preserves concurrent size saves and the exit switch; Cancel discards the draft.
 New pages and restore/reveal consume the saved hide flag. Existing accepted preview

@@ -317,6 +317,169 @@ fn restore_defaults_asks_which_set_then_confirms_or_says_it_was_missing() {
     );
 }
 
+fn editor_rows(window: &hydrus_gui::ShortcutSetWindow) -> Vec<Vec<String>> {
+    window
+        .get_rows()
+        .iter()
+        .map(|row| row.cells.iter().map(|c| c.to_string()).collect())
+        .collect()
+}
+fn recorded_rows(value: &serde_json::Value) -> Vec<Vec<String>> {
+    value
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|row| {
+            row.as_array()
+                .unwrap()
+                .iter()
+                .map(|c| c.as_str().unwrap().to_owned())
+                .collect()
+        })
+        .collect()
+}
+
+// leaf: audit-options-shortcuts-built-in-hydrus-shortcut-sets-edit
+// leaf: audit-options-shortcuts-built-in-hydrus-shortcut-sets-restore-defaults
+// leaf: audit-options-shortcuts-custom-user-sets-add
+#[test]
+fn the_shortcuts_page_lists_edits_adds_and_restores_sets_as_the_reference_s_panel_does() {
+    let recorded = hydrus_testkit::fixture_json("shortcuts_panel.json");
+    let (_dirs, store) = crate::subscriptions::store();
+    let initial = store.read(hydrus_store::settings::get::<Settings>).unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let parent = options(&ui, &bound);
+
+    // the lists as the reference's panel shows them
+    let reserved: Vec<Vec<String>> = cells(&parent.get_shortcut_reserved_rows())
+        .into_iter()
+        .map(|(name, count)| vec![name, count])
+        .collect();
+    assert_eq!(reserved, recorded_rows(&recorded["reserved_rows"]));
+    assert!(custom(&parent).is_empty());
+    assert_eq!(recorded["custom_rows"], serde_json::json!([]));
+
+    // edit on a built-in set: its name locked, its description shown, its shortcuts listed
+    let edit = &recorded["edit_reserved"][0];
+    let main_gui = reserved
+        .iter()
+        .position(|row| row[0] == "the main window")
+        .unwrap();
+    parent.invoke_shortcut_set_clicked(false, i32::try_from(main_gui).unwrap(), false, false);
+    parent.invoke_shortcut_set_action("edit-reserved".into());
+    let window = hydrus_gui::shortcut_windows::last_set().unwrap();
+    assert_eq!(window.get_set_name(), edit["name"].as_str().unwrap());
+    assert_eq!(
+        window.get_name_enabled(),
+        edit["name_enabled"].as_bool().unwrap()
+    );
+    assert_eq!(
+        window.get_description(),
+        recorded["descriptions"]["main_gui"].as_str().unwrap()
+    );
+    let mut ours = editor_rows(&window);
+    let mut theirs = recorded_rows(&edit["rows"]);
+    ours.sort();
+    theirs.sort();
+    assert_eq!(ours, theirs);
+    window.invoke_cancel();
+
+    // add: "new shortcuts", name editable, nothing listed; cancelling adds nothing
+    let add = &recorded["add_cancelled"]["dialogs"][0];
+    parent.invoke_shortcut_set_action("add".into());
+    let window = hydrus_gui::shortcut_windows::last_set().unwrap();
+    assert_eq!(window.get_set_name(), add["name"].as_str().unwrap());
+    assert_eq!(
+        window.get_name_enabled(),
+        add["name_enabled"].as_bool().unwrap()
+    );
+    assert_eq!(editor_rows(&window), recorded_rows(&add["rows"]));
+    window.invoke_cancel();
+    assert!(custom(&parent).is_empty());
+
+    // the same names typed in the same order are named apart, or refused, as recorded
+    let named = &recorded["add_named"];
+    for (typed, veto) in named["typed"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .zip(named["vetoes"].as_array().unwrap())
+    {
+        parent.invoke_shortcut_set_action("add".into());
+        let window = hydrus_gui::shortcut_windows::last_set().unwrap();
+        window.set_set_name(typed.as_str().unwrap().into());
+        window.invoke_apply();
+        match veto.as_str() {
+            Some(veto) => {
+                assert_eq!(window.get_error(), veto);
+                window.invoke_cancel();
+            }
+            None => assert!(window.get_error().is_empty()),
+        }
+    }
+    let mut ours: Vec<Vec<String>> = custom(&parent)
+        .into_iter()
+        .map(|(name, count)| vec![name, count])
+        .collect();
+    let mut theirs = recorded_rows(&named["custom_rows"]);
+    ours.sort();
+    theirs.sort();
+    assert_eq!(ours, theirs);
+    parent.invoke_cancel();
+
+    // restore defaults: the choices, the confirmation, and the missing-set message
+    let mut damaged = initial.clone();
+    damaged.sets.remove("global");
+    store
+        .write({
+            let damaged = damaged.clone();
+            move |ctx| hydrus_store::settings::set(ctx.conn(), &damaged)
+        })
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let parent = options(&ui, &bound);
+    let ask = &recorded["restore_cancel"][0];
+    parent.invoke_shortcut_set_action("restore".into());
+    let which = chooser();
+    assert_eq!(which.get_message(), ask["title"].as_str().unwrap());
+    let names = choices(&which);
+    let recorded_names: Vec<String> = ask["choices"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|n| n.as_str().unwrap().to_owned())
+        .collect();
+    assert_eq!(names, recorded_names);
+    which.invoke_cancelled();
+    let sure_text = recorded["restore_no"]["asked"][1]["text"].as_str().unwrap();
+    parent.invoke_shortcut_set_action("restore".into());
+    chooser()
+        .invoke_chosen(i32::try_from(names.iter().position(|n| n == "main_gui").unwrap()).unwrap());
+    let sure = chooser();
+    assert_eq!(sure.get_message(), sure_text);
+    sure.invoke_cancelled();
+    let missing = recorded["restore_missing"]["asked"][1]["text"]
+        .as_str()
+        .unwrap();
+    parent.invoke_shortcut_set_action("restore".into());
+    chooser()
+        .invoke_chosen(i32::try_from(names.iter().position(|n| n == "global").unwrap()).unwrap());
+    let told = chooser();
+    assert_eq!(told.get_message(), missing);
+    told.invoke_cancelled();
+    assert_eq!(
+        parent.get_shortcut_reserved_rows().row_count(),
+        recorded["restore_missing"]["reserved_count"]
+            .as_u64()
+            .unwrap() as usize
+    );
+}
+
 fn bits(fixture: &serde_json::Value, flags: u64) -> i32 {
     ["Control", "Alt", "Shift", "Keypad", "GroupSwitch", "Meta"]
         .iter()

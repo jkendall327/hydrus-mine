@@ -1,0 +1,301 @@
+{
+ "reserved_names": [
+  "global",
+  "archive_delete_filter",
+  "duplicate_filter",
+  "media",
+  "thumbnails",
+  "tags_autocomplete",
+  "main_gui",
+  "media_viewer_browser",
+  "media_viewer",
+  "media_viewer_media_window",
+  "preview_media_window"
+ ],
+ "reserved_rows": [
+  [
+   "global",
+   "1"
+  ],
+  [
+   "the main window",
+   "14"
+  ],
+  [
+   "tag autocomplete",
+   "9"
+  ],
+  [
+   "media actions, either thumbnails or the viewer",
+   "9"
+  ],
+  [
+   "thumbnails",
+   "25"
+  ],
+  [
+   "media viewers - all",
+   "18"
+  ],
+  [
+   "media viewers - 'normal' browser",
+   "13"
+  ],
+  [
+   "media viewers - archive/delete filter",
+   "9"
+  ],
+  [
+   "media viewers - duplicate filter",
+   "5"
+  ],
+  [
+   "the actual media in a preview window (mouse only)",
+   "3"
+  ],
+  [
+   "the actual media in a media viewer (mouse only)",
+   "1"
+  ]
+ ],
+ "custom_rows": [],
+ "descriptions": {
+  "global": "Actions for the whole program. Should work in the main gui or a media viewer.",
+  "archive_delete_filter": "Navigation actions for the media viewer during an archive/delete filter. Mouse shortcuts should work.",
+  "duplicate_filter": "Navigation actions for the media viewer during a duplicate filter. Mouse shortcuts should work.",
+  "media": "Actions to alter metadata for media in the media viewer or the thumbnail grid.",
+  "thumbnails": "Actions that interact with the grid of thumbnails in a normal file page.",
+  "main_gui": "Actions to control pages in the main window of the program.",
+  "tags_autocomplete": "Actions to control tag autocomplete when its input text box is focused.",
+  "media_viewer_browser": "Navigation actions for the regular browsable media viewer.",
+  "media_viewer": "Zoom and pan and player actions for any media viewer.",
+  "media_viewer_media_window": "Actions for any video or audio player in a media viewer window. Mouse only!",
+  "preview_media_window": "Actions for any video or audio player in a preview window. Mouse only!"
+ },
+ "edit_reserved": [
+  {
+   "title": "edit shortcuts",
+   "name": "main_gui",
+   "name_enabled": false,
+   "rows": [
+    [
+     "ctrl+s",
+     "keyboard focus: to the default text entry of page/dialog"
+    ],
+    [
+     "ctrl+m",
+     "keyboard focus: to the thumbnail grid"
+    ],
+    [
+     "ctrl+page up",
+     "move page selection left (cycles up through page of pages at boundaries)"
+    ],
+    [
+     "ctrl+page down",
+     "move page selection right (cycles up through page of pages at boundaries)"
+    ],
+    [
+     "ctrl+t",
+     "open a new page: choose a page"
+    ],
+    [
+     "f9",
+     "open a new page: choose a page"
+    ],
+    [
+     "ctrl+p",
+     "open the command palette"
+    ],
+    [
+     "ctrl+shift+o",
+     "open the options dialog"
+    ],
+    [
+     "ctrl+w",
+     "pages: close current"
+    ],
+    [
+     "ctrl+u",
+     "pages: unclose the most recently closed"
+    ],
+    [
+     "ctrl+y",
+     "redo (limited support)"
+    ],
+    [
+     "f5",
+     "refresh page search/sort"
+    ],
+    [
+     "ctrl+shift+r",
+     "show/hide the left page panel and preview canvas"
+    ],
+    [
+     "ctrl+z",
+     "undo (limited support)"
+    ]
+   ],
+   "labels": [
+    "Please note the shortcut system does not support multiple commands per shortcut yet. If there are shortcut duplicates in this list, only one command will ever fire.",
+    "name: ",
+    "Actions to control pages in the main window of the program."
+   ],
+   "buttons": [
+    "add",
+    "edit",
+    "export",
+    "import",
+    "remove",
+    "special duplicate"
+   ]
+  }
+ ],
+ "add_cancelled": {
+  "dialogs": [
+   {
+    "title": "edit shortcuts",
+    "name": "new shortcuts",
+    "name_enabled": true,
+    "rows": [],
+    "labels": [
+     "Please note the shortcut system does not support multiple commands per shortcut yet. If there are shortcut duplicates in this list, only one command will ever fire.",
+     "name: "
+    ],
+    "buttons": [
+     "add",
+     "edit",
+     "export",
+     "import",
+     "remove",
+     "special duplicate"
+    ]
+   }
+  ],
+  "custom_rows": []
+ },
+ "add_named": {
+  "typed": [
+   "rating keys",
+   "rating keys",
+   "main_gui",
+   "Rating Keys"
+  ],
+  "vetoes": [
+   null,
+   null,
+   "That name is reserved--please pick another!",
+   null
+  ],
+  "custom_rows": [
+   [
+    "rating keys",
+    "0"
+   ],
+   [
+    "Rating Keys",
+    "0"
+   ],
+   [
+    "rating keys (1)",
+    "0"
+   ]
+  ]
+ },
+ "restore_cancel": [
+  {
+   "kind": "select",
+   "title": "select which default to restore",
+   "choices": [
+    "global",
+    "archive_delete_filter",
+    "duplicate_filter",
+    "media",
+    "tags_autocomplete",
+    "main_gui",
+    "media_viewer_browser",
+    "media_viewer",
+    "media_viewer_media_window",
+    "preview_media_window",
+    "thumbnails"
+   ]
+  }
+ ],
+ "restore_no": {
+  "asked": [
+   {
+    "kind": "select",
+    "title": "select which default to restore",
+    "choices": [
+     "global",
+     "archive_delete_filter",
+     "duplicate_filter",
+     "media",
+     "tags_autocomplete",
+     "main_gui",
+     "media_viewer_browser",
+     "media_viewer",
+     "media_viewer_media_window",
+     "preview_media_window",
+     "thumbnails"
+    ]
+   },
+   {
+    "kind": "yes_no",
+    "text": "Are you certain you want to restore the defaults for \"main_gui\"? Any custom shortcuts you have set will be wiped."
+   }
+  ],
+  "changed": false
+ },
+ "restore_yes": {
+  "asked": [
+   {
+    "kind": "select",
+    "title": "select which default to restore",
+    "choices": [
+     "global",
+     "archive_delete_filter",
+     "duplicate_filter",
+     "media",
+     "tags_autocomplete",
+     "main_gui",
+     "media_viewer_browser",
+     "media_viewer",
+     "media_viewer_media_window",
+     "preview_media_window",
+     "thumbnails"
+    ]
+   },
+   {
+    "kind": "yes_no",
+    "text": "Are you certain you want to restore the defaults for \"main_gui\"? Any custom shortcuts you have set will be wiped."
+   }
+  ],
+  "rows_equal_original": true
+ },
+ "restore_missing": {
+  "asked": [
+   {
+    "kind": "select",
+    "title": "select which default to restore",
+    "choices": [
+     "global",
+     "archive_delete_filter",
+     "duplicate_filter",
+     "media",
+     "tags_autocomplete",
+     "main_gui",
+     "media_viewer_browser",
+     "media_viewer",
+     "media_viewer_media_window",
+     "preview_media_window",
+     "thumbnails"
+    ]
+   },
+   {
+    "kind": "information",
+    "text": "It looks like your client was missing the \"global\" shortcut set! It will now be restored."
+   }
+  ],
+  "reserved_count": 11
+ }
+}
