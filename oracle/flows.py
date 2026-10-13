@@ -318,12 +318,13 @@ def definitions( site ):
     return ( url_classes, parsers, gugs )
 
 
-def install( controller, site ):
+def install( controller, site, definitions_ = None ):
     """Give the client the site's downloader and let it reach the network
     (the fixture was made with new traffic paused). Returns the domain
-    manager as serialised, for hydrus-rs to install as a migration would."""
+    manager as serialised, for hydrus-rs to install as a migration would.
+    `definitions_` is `definitions` unless a flow has other sites' kinds."""
 
-    ( url_classes, parsers, gugs ) = definitions( site )
+    ( url_classes, parsers, gugs ) = ( definitions_ or definitions )( site )
 
     domain_manager = controller.network_engine.domain_manager
 
@@ -344,6 +345,100 @@ def install( controller, site ):
     controller.new_options.SetInteger( 'gallery_page_wait_period_subscriptions', 0 )
 
     return list( domain_manager.GetSerialisableTuple() )
+
+
+# ---------------------------------------------------------------- an imageboard thread
+
+def thread_page( subject, posts ):
+    """A thread: its subject, a board tag for the whole thread, and each
+    post `( number, poster )` with its file."""
+
+    items = ''.join(
+        f'<div class="post"><span class="poster">poster:{poster}</span><a class="file" href="/files/t{n}.jpg">file {n}</a></div>'
+        for ( n, poster ) in posts
+    )
+
+    return (
+        f'<html><head><title>{subject}</title></head><body>'
+        f'<h1 id="subject">{subject}</h1><ul id="board"><li class="board">board:b</li></ul>{items}'
+        '</body></html>'
+    )
+
+
+def thread_phase( threads ):
+    """A phase of an imageboard: `threads` maps a thread number to
+    `( subject, [ ( post number, poster ), ... ] )`. Each post's file is one
+    of the media fixtures."""
+
+    pages = {}
+    files = {}
+
+    for ( number, ( subject, posts ) ) in threads.items():
+
+        pages[ f'/thread/{number}' ] = thread_page( subject, posts )
+
+        for ( n, poster ) in posts:
+
+            files[ f'/files/t{n}.jpg' ] = IMAGES[ ( n - 1 ) % len( IMAGES ) ]
+
+
+    return { 'pages' : pages, 'files' : files }
+
+
+def thread_definitions( site ):
+    """URL classes and a parser for the imageboard's threads, as a user
+    would import them: a thread's URL is watchable; its subject is the
+    title, its board a tag of every file, and each post its file and poster
+    tag (a subsidiary parser)."""
+
+    from hydrus.core import HydrusConstants as HC
+    from hydrus.client import ClientStrings as S
+    from hydrus.client.networking import ClientNetworkingURLClass as U
+    from hydrus.client.parsing import ClientParsing as P
+
+    def html( tag, attrs, content, attribute = None ):
+
+        return P.ParseFormulaHTML(
+            tag_rules = [ P.ParseRuleHTML( rule_type = P.HTML_RULE_TYPE_DESCENDING, tag_name = tag, tag_attributes = attrs ) ],
+            content_to_fetch = content,
+            attribute_to_fetch = attribute
+        )
+
+
+    url_class = U.URLClass(
+        'local imageboard thread',
+        url_type = HC.URL_TYPE_WATCHABLE,
+        preferred_scheme = 'http',
+        url_domain_mask = U.URLDomainMask( raw_domains = [ site.host ] ),
+        path_components = [
+            ( S.StringMatch( match_type = S.STRING_MATCH_FIXED, match_value = 'thread', example_string = 'thread' ), None ),
+            ( S.StringMatch(), None )
+        ],
+        parameters = [],
+        example_url = site.base + '/thread/100'
+    )
+
+    post_parser = P.PageParser(
+        'local imageboard post parser',
+        content_parsers = [
+            P.ContentParser( name = 'poster', content_type = HC.CONTENT_TYPE_MAPPINGS, formula = html( 'span', { 'class' : 'poster' }, P.HTML_CONTENT_STRING ), additional_info = None ),
+            P.ContentParser( name = 'file', content_type = HC.CONTENT_TYPE_URLS, formula = html( 'a', { 'class' : 'file' }, P.HTML_CONTENT_ATTRIBUTE, 'href' ), additional_info = ( HC.URL_TYPE_DESIRED, 50 ) ),
+        ]
+    )
+
+    separation = html( 'div', { 'class' : 'post' }, P.HTML_CONTENT_HTML )
+
+    parser = P.PageParser(
+        'local imageboard thread parser',
+        content_parsers = [
+            P.ContentParser( name = 'subject', content_type = HC.CONTENT_TYPE_TITLE, formula = html( 'h1', { 'id' : 'subject' }, P.HTML_CONTENT_STRING ), additional_info = 0 ),
+            P.ContentParser( name = 'board', content_type = HC.CONTENT_TYPE_MAPPINGS, formula = html( 'li', { 'class' : 'board' }, P.HTML_CONTENT_STRING ), additional_info = None ),
+        ],
+        subsidiary_page_parsers = [ P.SubsidiaryPageParser( formula = separation, page_parser = post_parser ) ],
+        example_urls = [ site.base + '/thread/100' ]
+    )
+
+    return ( [ url_class ], [ parser ], [] )
 
 
 # ---------------------------------------------------------------- dialogs
