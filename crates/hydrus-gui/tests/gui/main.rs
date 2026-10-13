@@ -194,6 +194,7 @@ mod network_data;
 
 mod domain_metadata;
 mod downloader_interchange;
+mod downloader_package;
 mod subscriptions_missing_logs;
 mod suggested_tag_panels;
 mod tag_filter_tooltips;
