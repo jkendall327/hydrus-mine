@@ -350,7 +350,7 @@ fn subscriptions_list_takes_a_clipboard_bitmap_and_dropped_pngs_like_the_referen
             names(&dialog).is_empty(),
             "nothing is added before the answer"
         );
-        dialog.invoke_chosen(if yes { 0 } else { 1 });
+        dialog.invoke_chosen(i32::from(!yes));
         let seen = notices(&dialog);
         let messages: Vec<&Value> = expected["messages"].as_array().unwrap().iter().collect();
         assert_eq!(seen.len(), messages.len(), "{case}: {seen:?}");

@@ -11,15 +11,16 @@ use slint::winit_030::winit::event::WindowEvent;
 use slint::winit_030::{EventResult, WinitWindowAccessor as _};
 
 type Handler = Rc<dyn Fn(Vec<String>)>;
+type Registry<H> = RefCell<Vec<(usize, H)>>;
 
 thread_local! {
     /// The drop handler of each window that has one, by the window's address,
     /// so a test can hand a window the files winit would (a headless window
     /// is sent no events). Dead handlers are simply not found.
-    static HANDLERS: RefCell<Vec<(usize, std::rc::Weak<dyn Fn(Vec<String>)>)>> = const { RefCell::new(Vec::new()) };
+    static HANDLERS: Registry<std::rc::Weak<dyn Fn(Vec<String>)>> = const { RefCell::new(Vec::new()) };
     /// The handlers of windows with no native window, whose filter is dropped
     /// at once (there is nothing to drop files on but the test hook).
-    static HELD: RefCell<Vec<(usize, Handler)>> = const { RefCell::new(Vec::new()) };
+    static HELD: Registry<Handler> = const { RefCell::new(Vec::new()) };
 }
 
 fn key(window: &slint::Window) -> usize {

@@ -74,6 +74,8 @@ impl Queue {
     /// The files dropped on the list (after the yes), PNGs first and then
     /// the rest as JSON, as the reference's `ImportFromDragDrop` does.
     pub(crate) fn from_paths(paths: &[String]) -> Self {
+        // (the reference's test is a case-sensitive `endswith('.png')`)
+        #[allow(clippy::case_sensitive_file_extension_comparisons)]
         let (pngs, jsons): (Vec<_>, Vec<_>) = paths.iter().partition(|p| p.ends_with(".png"));
         let mut queue = Self::default();
         queue.events.extend(
