@@ -2180,7 +2180,6 @@ mod network_consumers {
             .collect()
     }
 
-
     #[tokio::test]
     async fn a_failing_server_is_asked_as_many_times_as_the_retries_option_says() {
         let (client, engine) = with_engine();
@@ -2291,7 +2290,6 @@ mod network_consumers {
         let seen = busiest(&hits);
         assert!((2..=3).contains(&seen), "{seen}");
     }
-
 
     #[tokio::test]
     async fn a_server_that_goes_quiet_is_given_the_timeout_the_option_says() {
@@ -2515,7 +2513,11 @@ mod network_consumers {
                 "{case}"
             );
             let waited = seconds_of(&case["wakes"], "serverside")[0];
-            assert!(fetched.seconds >= waited - 0.05, "{} for {case}", fetched.seconds);
+            assert!(
+                fetched.seconds >= waited - 0.05,
+                "{} for {case}",
+                fetched.seconds
+            );
             assert!(
                 fetched
                     .statuses
@@ -2606,8 +2608,18 @@ mod network_consumers {
         for case in recorded()["domain_halt"].as_array().unwrap() {
             let base = droppy().await;
             apply(&client, &engine, |w| {
-                number(w, "max connection attempts allowed per request: ", (1, 10), 3);
-                number(w, "connection error retry wait (seconds): ", (1, 2_592_000), 1);
+                number(
+                    w,
+                    "max connection attempts allowed per request: ",
+                    (1, 10),
+                    3,
+                );
+                number(
+                    w,
+                    "connection error retry wait (seconds): ",
+                    (1, 2_592_000),
+                    1,
+                );
                 number(w, "max retries allowed per request: ", (1, 10), 1);
                 let (i, _) = row(w, label);
                 w.invoke_number_edited(i, case["number"].as_i64().unwrap() as i32);
@@ -2671,17 +2683,29 @@ mod network_consumers {
             .unwrap()
             .text();
         assert_eq!(text, proxied["text"].as_str().unwrap());
-        assert_eq!(hits.count("uri") as u64, proxied["proxy_asked"].as_u64().unwrap());
+        assert_eq!(
+            hits.count("uri") as u64,
+            proxied["proxy_asked"].as_u64().unwrap()
+        );
         // with the proxy cleared, nothing is asked of it
         let cleared = named("proxy cleared");
         apply(&client, &engine, |w| {
             noneable_text(w, "http: ", None);
-            number(w, "max connection attempts allowed per request: ", (1, 10), 1);
+            number(
+                w,
+                "max connection attempts allowed per request: ",
+                (1, 10),
+                1,
+            );
         });
         let before = hits.count("uri");
         let fetched = fetch(&engine, "http://booru.invalid/uri").await;
         assert_eq!(cleared["error"], "ConnectionException");
-        assert!(matches!(fetched.result, Err(NetError::Connection(_))), "{:?}", fetched.result);
+        assert!(
+            matches!(fetched.result, Err(NetError::Connection(_))),
+            "{:?}",
+            fetched.result
+        );
         assert_eq!(
             (hits.count("uri") - before) as u64,
             cleared["proxy_asked"].as_u64().unwrap()
@@ -2707,12 +2731,19 @@ mod network_consumers {
         let recording = recorded();
         apply(&client, &engine, |w| {
             noneable_text(w, "https: ", Some(&proxy));
-            number(w, "max connection attempts allowed per request: ", (1, 10), 1);
+            number(
+                w,
+                "max connection attempts allowed per request: ",
+                (1, 10),
+                1,
+            );
         });
         let fetched = fetch(&engine, "https://booru.invalid/x").await;
         assert_eq!(recording["https_proxy"]["error"], "ConnectionException");
         assert!(fetched.result.is_err(), "the proxy refused");
-        let wanted = recording["https_proxy"]["connect_lines"].as_array().unwrap();
+        let wanted = recording["https_proxy"]["connect_lines"]
+            .as_array()
+            .unwrap();
         assert_eq!(wanted.len(), 1);
         assert_eq!(
             asked.recv_timeout(Duration::from_secs(5)).unwrap(),
@@ -2724,7 +2755,10 @@ mod network_consumers {
         });
         let fetched = fetch(&engine, "https://booru.invalid/x").await;
         assert!(fetched.result.is_err());
-        assert_eq!(recording["https_proxy_cleared"]["connect_lines"], serde_json::json!([]));
+        assert_eq!(
+            recording["https_proxy_cleared"]["connect_lines"],
+            serde_json::json!([])
+        );
         assert!(asked.try_recv().is_err(), "no proxy, no ask");
     }
 
@@ -2749,7 +2783,12 @@ mod network_consumers {
         for case in recorded()["verify"].as_array().unwrap() {
             let verify = case["verify"].as_bool().unwrap();
             apply(&client, &engine, |w| {
-                number(w, "max connection attempts allowed per request: ", (1, 10), 1);
+                number(
+                    w,
+                    "max connection attempts allowed per request: ",
+                    (1, 10),
+                    1,
+                );
                 let (i, _) = row(w, "DEBUG: do not verify regular https traffic:");
                 // (ticked: the certificate is not checked)
                 w.invoke_check_toggled(i, !verify);

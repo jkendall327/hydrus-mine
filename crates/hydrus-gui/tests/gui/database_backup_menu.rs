@@ -152,7 +152,12 @@ impl Dirs {
         Self { _root: root, paths }
     }
     fn path(&self, name: &str) -> PathBuf {
-        self.paths.iter().find(|(n, _)| *n == name).unwrap().1.clone()
+        self.paths
+            .iter()
+            .find(|(n, _)| *n == name)
+            .unwrap()
+            .1
+            .clone()
     }
     fn expand(&self, text: &str) -> String {
         let mut text = text.to_owned();
@@ -212,13 +217,14 @@ fn replay(rig: &Rig, dirs: &Dirs, case: &serde_json::Value, entry: &str) {
             other => panic!("{other}"),
         }
     }
-    assert!(answers.next().is_none(), "every answer was asked for: {case}");
+    assert!(
+        answers.next().is_none(),
+        "every answer was asked for: {case}"
+    );
     assert_eq!(rig.ui.get_question(), "", "{case}");
     assert_eq!(
         rig.settings().path,
-        case["backup_path"]
-            .as_str()
-            .map(|p| dirs.expand(p)),
+        case["backup_path"].as_str().map(|p| dirs.expand(p)),
         "{case}"
     );
     for made in case["made"].as_array().unwrap() {
@@ -229,10 +235,16 @@ fn replay(rig: &Rig, dirs: &Dirs, case: &serde_json::Value, entry: &str) {
         let dest = dirs.path(write[1].as_str().unwrap().trim_matches(&['<', '>'][..]));
         let deadline = Instant::now() + Duration::from_secs(20);
         while rig.settings().last_backup.is_none() {
-            assert!(Instant::now() < deadline, "the backup never finished: {case}");
+            assert!(
+                Instant::now() < deadline,
+                "the backup never finished: {case}"
+            );
             pump(Duration::from_millis(20));
         }
-        assert!(dest.join(hydrus_store::store::DB_FILE_NAME).is_file(), "{case}");
+        assert!(
+            dest.join(hydrus_store::store::DB_FILE_NAME).is_file(),
+            "{case}"
+        );
     } else {
         assert_eq!(rig.settings().last_backup, None, "{case}");
     }

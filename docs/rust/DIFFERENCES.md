@@ -837,6 +837,20 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 
 ## Network requests (`hydrus-net`)
 
+- **The `no_proxy` option is honoured; the reference ignores it.** The reference
+  stores it in the session's proxies dictionary, where `requests` does not look
+  (it reads only the `NO_PROXY` environment variable), so with an http proxy set
+  its requests to every host, a host named in the option or the local host
+  included, go through the proxy (`oracle/record_network_job_options.py`).
+  hydrus-rs keeps those hosts direct, as the option's label says. The leaf is
+  left as it was for that reason.
+- **Domain errors are counted as the reference counts them.** A connection that
+  fails and is tried again counts once for each failure (and once more if it
+  gives up), as does each wait on a server's 429; a status the job only records
+  (a 500, a 451) counts for nothing. Errors are kept per host and port, and a
+  scrub of a bare IP address clears nothing, as in the reference.
+- **The network timeout's connect half is not exercised in tests.** It needs an
+  address that never answers.
 - **Pages are decoded with the web's own decoders.** A charset the server
   states is used as the reference uses it; otherwise, where the reference
   asks chardet, we take valid UTF-8 as UTF-8, then a `<meta>` charset, then
@@ -4318,6 +4332,12 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   way, but hydrus-rs doesn't distinguish a king outside the domain.
 
 ## Database > backup
+
+- The "(last N ago)" label of "update database backup" is checked against the
+  reference's source only: its menu is filled by a worker the recorder cannot
+  call (`oracle/record_backup_dialogs.py` records the dialogs, not the menu).
+  Choosing "restore from a database backup" asks the reference's questions and
+  leaves a restart request; the reference's exit and restart is not exercised.
 
 - A backup holds hydrus-rs's one database file and the media directory
   (`client_files` there), not the reference's four .db files. The backup
