@@ -22053,10 +22053,10 @@
     "Native options registry has no editable 'edit' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Tracker note ('no editable row exists in native options::pages') is stale: the test drives the real Options Edit button: picker opened per selected namespace, accept changes the colour, cancel keeps it, protected rows editable, staged until Apply and persisted. But there is no recording of _EditNamespaceColour or the colour picker; the start colours (0,170,0 etc.) and accepted values are typed literals, and the picker is a native window, not the reference's EditColour dialog. Tests: crates/hydrus-gui/tests/gui/options_namespace_edit.rs:8 edit_offers_the_picker_for_each_selected_namespace_and_a_cancel_keeps_the_colour"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The real Options > tag presentation page is driven and compared with namespace_colour_controls.json (edit_cases, recorded from the reference's panel with a scripted colour picker): the list as the reference shows it (every row's label and colour), the pickers offered for the two selected entries (each its own current colour; the reference's order comes out of a set so the recording compares them sorted), an accepted colour applied, a cancelled picker leaving the colour, nothing selected offering nothing, and no entry left selected afterwards (the recording showed native kept the selection; fixed). The start colours and accepted values are the recorded ones. The native picker is its own window, not QColorDialog (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/options_namespace_edit.rs edit_replays_the_reference_s_list_the_pickers_it_offers_and_what_is_left_selected."
    }
   },
   {
@@ -22073,10 +22073,10 @@
     "Native options registry has no editable 'Namespace colours editor' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Tracker note ('no editable row exists in native options::pages') is stale: the tag sits on the Edit test only, but the recorded namespace_colour_controls/namespace_sorts replays elsewhere cover the list rows, selection/sort and Add/Delete. The Edit half (colour picker) has no recording, so the editor as a whole is source-restated; the picker widget itself is not compared with the reference. Tests: crates/hydrus-gui/tests/gui/options_namespace_edit.rs:9; crates/hydrus-gui/tests/gui/namespace_colours.rs:75,:584 (untagged recording replays)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The editor as a whole: the list rows and Edit are replayed from namespace_colour_controls.json in options_namespace_edit.rs (see namespace-colours-edit), and Add/Delete, input normalisation, selection and sort are replayed from the same recording and tagged on their own leaves (crates/hydrus-gui/tests/gui/namespace_colours.rs). Tracker note 'no editable row exists' was stale."
    }
   },
   {

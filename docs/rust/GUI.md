@@ -4857,7 +4857,9 @@ change forgets what could be redone. `tests/model/content_undo.rs` covers it.
 
 Options > tag presentation > namespace colours now has "edit": each selected
 entry, defaults included, opens the colour picker in turn; OK recolours it in the
-draft, Cancel keeps its colour.
+draft, Cancel keeps its colour. Whichever the answer, the entry is taken out of the
+selection afterwards, as the reference's remove-and-add does (recorded in
+`namespace_colour_controls.json`, `edit_cases`).
 
 Options > media playback > per-filetype handling lists each filetype's media and
 preview show actions and zoom info as the reference does, sorted by column.
