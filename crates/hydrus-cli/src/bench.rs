@@ -134,7 +134,10 @@ pub fn run_bench(options: &Options) -> Result<Report> {
 
     timings.push(measure("startup", "store open (read-only)", runs, || {
         let store = Store::open_read_only(dir)?;
-        Ok(format!("{} services", store.snapshot().services.all().count()))
+        Ok(format!(
+            "{} services",
+            store.snapshot().services.all().count()
+        ))
     })?);
 
     let store = Store::open_read_only(dir)
@@ -142,7 +145,11 @@ pub fn run_bench(options: &Options) -> Result<Report> {
     let snapshot = store.snapshot();
     let my_files = snapshot.services.builtin(builtin_keys::MY_FILES)?.id;
     let my_tags = snapshot.services.builtin(builtin_keys::MY_TAGS)?.id;
-    let tag_service_key = snapshot.services.builtin(builtin_keys::MY_TAGS)?.key.clone();
+    let tag_service_key = snapshot
+        .services
+        .builtin(builtin_keys::MY_TAGS)?
+        .key
+        .clone();
 
     let counts = counts(&store, my_files, my_tags, dir)?;
 
@@ -150,8 +157,7 @@ pub fn run_bench(options: &Options) -> Result<Report> {
     // last session and its pages' file counts
     timings.push(measure("startup", "startup queries", runs, || {
         let (pages, files) = store.read(|conn| {
-            let _: hydrus_store::settings::GuiSessionSettings =
-                hydrus_store::settings::get(conn)?;
+            let _: hydrus_store::settings::GuiSessionSettings = hydrus_store::settings::get(conn)?;
             let session = hydrus_store::sessions::load(conn, hydrus_store::sessions::LAST_SESSION)?;
             let files = hydrus_store::sessions::page_file_counts(conn)?;
             Ok((session.map_or(0, |s| s.pages.len()), files.len()))
@@ -177,7 +183,10 @@ pub fn run_bench(options: &Options) -> Result<Report> {
     searches.push(("system:inbox".to_owned(), vec!["system:inbox".to_owned()]));
     searches.push((
         "system:limit".to_owned(),
-        vec!["system:everything".to_owned(), "system:limit=500".to_owned()],
+        vec![
+            "system:everything".to_owned(),
+            "system:limit=500".to_owned(),
+        ],
     ));
     if let Some(namespace) = top
         .iter()
@@ -212,13 +221,18 @@ pub fn run_bench(options: &Options) -> Result<Report> {
             tags: TagContext::new(tag_service_key.clone(), true, true),
             predicates,
         };
-        timings.push(measure("searches", format!("{name} [{}]", tags.join("; ")), runs, || {
-            let found = store.read(|conn| {
-                search_files(conn, &snapshot, &search, sort, &clock)
-                    .map_err(|e| hydrus_store::StoreError::Invalid(e.to_string()))
-            })?;
-            Ok(format!("{} files", found.len()))
-        })?);
+        timings.push(measure(
+            "searches",
+            format!("{name} [{}]", tags.join("; ")),
+            runs,
+            || {
+                let found = store.read(|conn| {
+                    search_files(conn, &snapshot, &search, sort, &clock)
+                        .map_err(|e| hydrus_store::StoreError::Invalid(e.to_string()))
+                })?;
+                Ok(format!("{} files", found.len()))
+            },
+        )?);
     }
 
     // autocomplete for a short prefix of a popular tag
@@ -245,7 +259,10 @@ pub fn run_bench(options: &Options) -> Result<Report> {
                         include_current: true,
                         include_pending: true,
                     };
-                    Ok(search_tags(conn, &snapshot.services, &snapshot.display, &scope, &query)?.len())
+                    Ok(
+                        search_tags(conn, &snapshot.services, &snapshot.display, &scope, &query)?
+                            .len(),
+                    )
                 })?;
                 Ok(format!("{matches} tags"))
             },
@@ -294,7 +311,9 @@ pub fn run_bench(options: &Options) -> Result<Report> {
                     missing += 1;
                 }
             }
-            Ok(format!("{decoded} decoded, {missing} missing or unreadable"))
+            Ok(format!(
+                "{decoded} decoded, {missing} missing or unreadable"
+            ))
         },
     )?);
 
@@ -307,7 +326,10 @@ pub fn run_bench(options: &Options) -> Result<Report> {
             let graphs = store.read(|conn| {
                 hydrus_store::display::DisplayGraphs::load(conn, &snapshot.services)
             })?;
-            Ok(format!("{} rules in my tags", graphs.get(my_tags).rule_count()))
+            Ok(format!(
+                "{} rules in my tags",
+                graphs.get(my_tags).rule_count()
+            ))
         },
     )?);
     let related = related_tags(&store, my_tags, 200)?;
@@ -334,14 +356,19 @@ pub fn run_bench(options: &Options) -> Result<Report> {
         "count potential duplicate pairs",
         runs,
         || {
-            let query = hydrus_duplicates::potentials::PotentialsQuery::from_search(&snapshot, &search)?;
+            let query =
+                hydrus_duplicates::potentials::PotentialsQuery::from_search(&snapshot, &search)?;
             let count = store.read(|conn| query.count(conn, &snapshot))?;
             Ok(count.map_or_else(|| "search failed".to_owned(), |n| format!("{n} pairs")))
         },
     )?);
 
     Ok(Report {
-        version: format!("{} ({})", env!("CARGO_PKG_VERSION"), env!("HYDRUS_GIT_DESCRIBE")),
+        version: format!(
+            "{} ({})",
+            env!("CARGO_PKG_VERSION"),
+            env!("HYDRUS_GIT_DESCRIBE")
+        ),
         machine: machine_info(),
         counts,
         runs,
@@ -388,9 +415,8 @@ fn counts(store: &Store, my_files: ServiceId, my_tags: ServiceId, dir: &Path) ->
             [my_files],
             |r| r.get(0),
         )?;
-        let potential_pairs = conn.query_row("SELECT COUNT(*) FROM potential_pairs", [], |r| {
-            r.get(0)
-        })?;
+        let potential_pairs =
+            conn.query_row("SELECT COUNT(*) FROM potential_pairs", [], |r| r.get(0))?;
         Ok(Counts {
             files,
             tags,
@@ -399,8 +425,8 @@ fn counts(store: &Store, my_files: ServiceId, my_tags: ServiceId, dir: &Path) ->
             database_bytes: 0,
         })
     })?;
-    let database_bytes = std::fs::metadata(dir.join(hydrus_store::store::DB_FILE_NAME))
-        .map_or(0, |m| m.len());
+    let database_bytes =
+        std::fs::metadata(dir.join(hydrus_store::store::DB_FILE_NAME)).map_or(0, |m| m.len());
     Ok(Counts {
         database_bytes,
         ..counts
@@ -408,7 +434,12 @@ fn counts(store: &Store, my_files: ServiceId, my_tags: ServiceId, dir: &Path) ->
 }
 
 /// The most used tags in my tags over my files, most first.
-fn top_tags(store: &Store, my_files: ServiceId, my_tags: ServiceId, n: usize) -> Result<Vec<String>> {
+fn top_tags(
+    store: &Store,
+    my_files: ServiceId,
+    my_tags: ServiceId,
+    n: usize,
+) -> Result<Vec<String>> {
     let tables = MappingTables::new(my_tags);
     let ids: Vec<TagId> = store.read(|conn| {
         let mut stmt = conn.prepare(&format!(
@@ -470,7 +501,8 @@ fn machine_info() -> Vec<(String, String)> {
         ),
         (
             "logical cpus".to_owned(),
-            std::thread::available_parallelism().map_or_else(|_| "unknown".to_owned(), |n| n.to_string()),
+            std::thread::available_parallelism()
+                .map_or_else(|_| "unknown".to_owned(), |n| n.to_string()),
         ),
     ];
     let cpu = std::fs::read_to_string("/proc/cpuinfo")
@@ -485,14 +517,19 @@ fn machine_info() -> Vec<(String, String)> {
     if let Some(cpu) = cpu {
         info.push(("cpu".to_owned(), cpu));
     }
-    let memory_kib = std::fs::read_to_string("/proc/meminfo").ok().and_then(|text| {
-        text.lines()
-            .find(|l| l.starts_with("MemTotal:"))
-            .and_then(|l| l.split_whitespace().nth(1))
-            .and_then(|n| n.parse::<u64>().ok())
-    });
+    let memory_kib = std::fs::read_to_string("/proc/meminfo")
+        .ok()
+        .and_then(|text| {
+            text.lines()
+                .find(|l| l.starts_with("MemTotal:"))
+                .and_then(|l| l.split_whitespace().nth(1))
+                .and_then(|n| n.parse::<u64>().ok())
+        });
     if let Some(kib) = memory_kib {
-        info.push(("memory".to_owned(), format!("{:.1} GiB", kib as f64 / 1_048_576.0)));
+        info.push((
+            "memory".to_owned(),
+            format!("{:.1} GiB", kib as f64 / 1_048_576.0),
+        ));
     }
     info
 }
@@ -515,7 +552,10 @@ impl Report {
             c.potential_pairs,
             c.database_bytes as f64 / 1_048_576.0
         ));
-        out.push_str(&format!("runs of each: {}  (times in milliseconds)\n", self.runs));
+        out.push_str(&format!(
+            "runs of each: {}  (times in milliseconds)\n",
+            self.runs
+        ));
         let mut group = "";
         for t in &self.timings {
             if t.group != group {
@@ -565,7 +605,11 @@ impl Report {
 
 /// `hydrus bench`: run it and print the report.
 pub fn run(options: &Options) -> Result<()> {
-    if !options.dir.join(hydrus_store::store::DB_FILE_NAME).is_file() {
+    if !options
+        .dir
+        .join(hydrus_store::store::DB_FILE_NAME)
+        .is_file()
+    {
         bail!(
             "{} is not a hydrus-rs store (no {})",
             options.dir.display(),
@@ -588,10 +632,10 @@ mod tests {
     #[test]
     fn percentiles_are_nearest_rank() {
         let sorted = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0];
-        assert_eq!(percentile(&sorted, 50), 5.0);
-        assert_eq!(percentile(&sorted, 90), 9.0);
-        assert_eq!(percentile(&[7.0], 90), 7.0);
-        assert_eq!(percentile(&[], 90), 0.0);
+        assert!((percentile(&sorted, 50) - 5.0).abs() < 1e-9);
+        assert!((percentile(&sorted, 90) - 9.0).abs() < 1e-9);
+        assert!((percentile(&[7.0], 90) - 7.0).abs() < 1e-9);
+        assert!(percentile(&[], 90).abs() < 1e-9);
     }
 
     #[test]

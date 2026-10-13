@@ -12,7 +12,7 @@ use hydrus_store::synth::{SynthSpec, populate};
 const HYDRUS: &str = env!("CARGO_BIN_EXE_hydrus");
 const STUB_THUMBNAIL: &[u8] = include_bytes!("../../../static/hydrus.png");
 
-/// A synthetic library with thumbnails for its first few files, closed.
+/// A synthetic library with a thumbnail for every file, closed.
 fn synthetic_store() -> (tempfile::TempDir, PathBuf) {
     let parent = tempfile::tempdir().unwrap();
     let dir = parent.path().join("store");
@@ -31,7 +31,7 @@ fn synthetic_store() -> (tempfile::TempDir, PathBuf) {
     )
     .unwrap();
     let snapshot = store.snapshot();
-    for (_, hash) in library.hashes.iter().take(30) {
+    for (_, hash) in &library.hashes {
         let path = snapshot.storage.thumbnail_path(hash).unwrap();
         std::fs::create_dir_all(path.parent().unwrap()).unwrap();
         std::fs::write(path, STUB_THUMBNAIL).unwrap();
@@ -54,9 +54,8 @@ fn state(dir: &Path) -> BTreeMap<PathBuf, (u64, std::time::SystemTime, Option<Ve
             if meta.is_dir() {
                 walk(&path, out);
             } else {
-                let bytes = (path.extension().is_some_and(|e| e == "db")).then(|| {
-                    std::fs::read(&path).unwrap()
-                });
+                let bytes = (path.extension().is_some_and(|e| e == "db"))
+                    .then(|| std::fs::read(&path).unwrap());
                 out.insert(path, (meta.len(), meta.modified().unwrap(), bytes));
             }
         }
@@ -90,7 +89,10 @@ fn bench_reports_every_measurement_and_does_not_change_the_store() {
     assert_eq!(report["store"]["files"], 400);
     assert_eq!(report["runs"], 3);
     let timings = report["timings"].as_array().unwrap();
-    let names: Vec<&str> = timings.iter().map(|t| t["name"].as_str().unwrap()).collect();
+    let names: Vec<&str> = timings
+        .iter()
+        .map(|t| t["name"].as_str().unwrap())
+        .collect();
     for wanted in [
         "store open (read-only)",
         "startup queries",
@@ -145,7 +147,10 @@ fn bench_reports_every_measurement_and_does_not_change_the_store() {
     let text = String::from_utf8(text.stdout).unwrap();
     assert!(text.starts_with("hydrus bench\nversion: "), "{text}");
     assert!(text.contains("store: 400 files"), "{text}");
-    assert!(text.contains("[searches]") && text.contains("[duplicates]"), "{text}");
+    assert!(
+        text.contains("[searches]") && text.contains("[duplicates]"),
+        "{text}"
+    );
 
     // and the store is as it was
     let after = state(&dir);
@@ -168,7 +173,11 @@ fn bench_reports_every_measurement_and_does_not_change_the_store() {
 fn bench_refuses_a_directory_that_is_not_a_store_and_makes_nothing() {
     let parent = tempfile::tempdir().unwrap();
     let dir = parent.path().join("nowhere");
-    let out = Command::new(HYDRUS).arg("bench").arg(&dir).output().unwrap();
+    let out = Command::new(HYDRUS)
+        .arg("bench")
+        .arg(&dir)
+        .output()
+        .unwrap();
     assert!(!out.status.success());
     assert!(String::from_utf8_lossy(&out.stderr).contains("not a hydrus-rs store"));
     assert!(!dir.exists());
