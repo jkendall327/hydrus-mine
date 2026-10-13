@@ -15,7 +15,6 @@ use hydrus_gui::{headless, unlock_window};
 use crate::common::widgets;
 
 // leaf: audit-options-unlock-password
-// leaf: audit-options-unlock-cancel
 #[test]
 fn only_the_password_unlocks_the_client() {
     let recorded = hydrus_testkit::fixture_json("text_entry_checks.json");
@@ -83,18 +82,6 @@ fn only_the_password_unlocks_the_client() {
     assert!(opened.get());
     assert!(!window.window().is_visible());
 
-    // cancelling closes the window and opens nothing
-    let opened = Rc::new(Cell::new(false));
-    let window = unlock_window(lock, {
-        let opened = opened.clone();
-        move || opened.set(true)
-    })
-    .unwrap();
-    window.show().unwrap();
-    window.invoke_cancelled();
-    assert!(!window.window().is_visible());
-    assert!(!opened.get());
-
     // and a password of only whitespace is a password
     let opened = Rc::new(Cell::new(false));
     let window = unlock_window(LockPassword::new(spaces["value"].as_str().unwrap()), {
@@ -105,4 +92,35 @@ fn only_the_password_unlocks_the_client() {
     window.show().unwrap();
     window.invoke_entered(spaces["value"].as_str().unwrap().into());
     assert!(opened.get());
+}
+
+// leaf: audit-options-unlock-cancel
+#[test]
+fn cancelling_the_password_dialog_opens_nothing() {
+    // the reference's boot with its password dialog cancelled
+    // (`oracle/record_text_entry_checks.py --cancel`): the question asked
+    // once, nothing else shown, and the client not booted
+    let recorded = hydrus_testkit::fixture_json("text_entry_checks.json");
+    let cancel = &recorded["password_cancel"];
+    assert_eq!(cancel["booted"], false);
+    let events = cancel["events"].as_array().unwrap();
+    assert_eq!(events.len(), 1, "asked once and nothing said");
+    assert_eq!(events[0]["cancelled"], true);
+    let windows = headless::init();
+    let opened = Rc::new(Cell::new(false));
+    let window = unlock_window(LockPassword::new("hunter2"), {
+        let opened = opened.clone();
+        move || opened.set(true)
+    })
+    .unwrap();
+    window.show().unwrap();
+    headless::render(&windows.get(0).unwrap(), 360, 140);
+    let win = window.window();
+    widgets::lay_out(win, 360.0, 140.0);
+    assert!(widgets::shows(win, events[0]["asked"].as_str().unwrap()));
+    // the dialog's cancel button, pressed; and its window gone
+    widgets::click(win, "cancel");
+    assert!(!window.window().is_visible());
+    assert!(!opened.get(), "the client does not open");
+    assert!(!cancel["gui_booted"].as_bool().unwrap());
 }

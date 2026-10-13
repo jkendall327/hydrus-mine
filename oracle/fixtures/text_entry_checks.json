@@ -98,5 +98,20 @@
     ],
     "unanswered": [],
     "booted": true
+  },
+  "password_cancel": {
+    "events": [
+      {
+        "asked": "Enter your password.",
+        "kwargs": {
+          "allow_blank": false,
+          "password_entry": true,
+          "min_char_width": 36
+        },
+        "cancelled": true
+      }
+    ],
+    "booted": false,
+    "gui_booted": false
   }
 }

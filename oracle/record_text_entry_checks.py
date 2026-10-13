@@ -104,7 +104,36 @@ def child_gate(db_dir, out):
         json.dump({'events': events, 'unanswered': answers, **booted}, f)
 
 
+def child_cancel(db_dir, out):
+    # the same boot, the password dialog cancelled (`EnterText` raises
+    # `CancelledException`, as the dialog does on cancel)
+    import hydrus_driver
+    from hydrus.client.gui import ClientGUIDialogsQuick as Q
+    from hydrus.client.gui import ClientGUIDialogsMessage as M
+    from hydrus.core import HydrusExceptions
+    events = []
+    for kind in ('ShowCritical', 'ShowWarning', 'ShowInformation'):
+        setattr(M, kind, lambda parent, *args, kind=kind: events.append({'shown': kind, 'args': list(args)}))
+
+    def enter_text(win, message, **kwargs):
+        events.append({'asked': message, 'kwargs': kwargs, 'cancelled': True})
+        raise HydrusExceptions.CancelledException('Dialog cancelled.')
+
+    Q.EnterText = enter_text
+    reached_hook = []
+    try:
+        hydrus_driver.run_client(db_dir, lambda session: reached_hook.append(True))
+        booted = True
+    except Exception:
+        booted = False
+    with open(out, 'w') as f:
+        json.dump({'events': events, 'booted': booted and bool(reached_hook), 'gui_booted': bool(reached_hook)}, f)
+
+
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == '--cancel':
+        child_cancel(sys.argv[2], sys.argv[3])
+        return
     if len(sys.argv) > 1 and sys.argv[1] == '--dialog':
         child_dialog(sys.argv[2], sys.argv[3])
         return
@@ -118,12 +147,16 @@ def main():
         gate = os.path.join(d, 'gate.json')
         hydrus_driver.run_in_subprocess(os.path.abspath(__file__), '--dialog', db_dir, dialog)
         hydrus_driver.run_in_subprocess(os.path.abspath(__file__), '--gate', db_dir, gate)
+        cancel = os.path.join(d, 'cancel.json')
+        hydrus_driver.run_in_subprocess(os.path.abspath(__file__), '--cancel', db_dir, cancel)
         with open(dialog) as f:
             dialogs = json.load(f)
         with open(gate) as f:
             gate = json.load(f)
+        with open(cancel) as f:
+            cancel = json.load(f)
     with open(OUT, 'w') as f:
-        json.dump({'dialogs': dialogs, 'password_gate': gate}, f, indent=2, ensure_ascii=False)
+        json.dump({'dialogs': dialogs, 'password_gate': gate, 'password_cancel': cancel}, f, indent=2, ensure_ascii=False)
         f.write('\n')
     print('wrote', OUT)
 

@@ -1,0 +1,1386 @@
+{
+  "content": [
+    {
+      "do": "shown",
+      "cards": [
+        {
+          "title": {
+            "shown": true,
+            "text": "a title"
+          },
+          "text_1": {
+            "shown": true,
+            "text": "first"
+          },
+          "gauge_1": {
+            "shown": true,
+            "value": 1,
+            "range": 4,
+            "pulsing": false
+          },
+          "text_2": {
+            "shown": true,
+            "text": "second"
+          },
+          "gauge_2": {
+            "shown": true,
+            "value": 0,
+            "range": 1,
+            "pulsing": true
+          },
+          "question": {
+            "shown": false,
+            "text": ""
+          },
+          "yes_shown": false,
+          "no_shown": false,
+          "show_tb": {
+            "shown": false,
+            "text": "show traceback"
+          },
+          "tb_text": {
+            "shown": false,
+            "text": ""
+          },
+          "copy_tb_shown": false,
+          "pause_shown": true,
+          "cancel_shown": false,
+          "cancel_enabled": true,
+          "job": {
+            "done": false,
+            "dismissed": false,
+            "cancelled": false,
+            "cancellable": false,
+            "pausable": true,
+            "paused": false,
+            "answer": null
+          }
+        },
+        {
+          "title": {
+            "shown": false,
+            "text": ""
+          },
+          "text_1": {
+            "shown": true,
+            "text": "plain"
+          },
+          "gauge_1": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "text_2": {
+            "shown": false,
+            "text": ""
+          },
+          "gauge_2": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "question": {
+            "shown": false,
+            "text": ""
+          },
+          "yes_shown": false,
+          "no_shown": false,
+          "show_tb": {
+            "shown": false,
+            "text": "show traceback"
+          },
+          "tb_text": {
+            "shown": false,
+            "text": ""
+          },
+          "copy_tb_shown": false,
+          "pause_shown": false,
+          "cancel_shown": false,
+          "cancel_enabled": true,
+          "job": {
+            "done": true,
+            "dismissed": false,
+            "cancelled": false,
+            "cancellable": false,
+            "pausable": false,
+            "paused": false,
+            "answer": null
+          }
+        },
+        {
+          "title": {
+            "shown": false,
+            "text": ""
+          },
+          "text_1": {
+            "shown": false,
+            "text": ""
+          },
+          "gauge_1": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "text_2": {
+            "shown": false,
+            "text": ""
+          },
+          "gauge_2": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "question": {
+            "shown": false,
+            "text": ""
+          },
+          "yes_shown": false,
+          "no_shown": false,
+          "show_tb": {
+            "shown": false,
+            "text": "show traceback"
+          },
+          "tb_text": {
+            "shown": false,
+            "text": ""
+          },
+          "copy_tb_shown": false,
+          "pause_shown": false,
+          "cancel_shown": false,
+          "cancel_enabled": true,
+          "job": {
+            "done": true,
+            "dismissed": false,
+            "cancelled": false,
+            "cancellable": false,
+            "pausable": false,
+            "paused": false,
+            "answer": null
+          }
+        },
+        {
+          "title": {
+            "shown": false,
+            "text": ""
+          },
+          "text_1": {
+            "shown": true,
+            "text": "long"
+          },
+          "gauge_1": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "text_2": {
+            "shown": true,
+            "text": "The text is too long to display here. Here is the start of it (the rest is printed to the log):\nyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy"
+          },
+          "gauge_2": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "question": {
+            "shown": false,
+            "text": ""
+          },
+          "yes_shown": false,
+          "no_shown": false,
+          "show_tb": {
+            "shown": false,
+            "text": "show traceback"
+          },
+          "tb_text": {
+            "shown": false,
+            "text": ""
+          },
+          "copy_tb_shown": false,
+          "pause_shown": false,
+          "cancel_shown": false,
+          "cancel_enabled": true,
+          "job": {
+            "done": true,
+            "dismissed": false,
+            "cancelled": false,
+            "cancellable": false,
+            "pausable": false,
+            "paused": false,
+            "answer": null
+          }
+        }
+      ]
+    },
+    {
+      "do": "pause",
+      "cards": [
+        {
+          "title": {
+            "shown": true,
+            "text": "a title"
+          },
+          "text_1": {
+            "shown": true,
+            "text": "paused"
+          },
+          "gauge_1": {
+            "shown": false,
+            "value": 1,
+            "range": 4,
+            "pulsing": false
+          },
+          "text_2": {
+            "shown": false,
+            "text": "second"
+          },
+          "gauge_2": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": true
+          },
+          "question": {
+            "shown": false,
+            "text": ""
+          },
+          "yes_shown": false,
+          "no_shown": false,
+          "show_tb": {
+            "shown": false,
+            "text": "show traceback"
+          },
+          "tb_text": {
+            "shown": false,
+            "text": ""
+          },
+          "copy_tb_shown": false,
+          "pause_shown": true,
+          "cancel_shown": false,
+          "cancel_enabled": true,
+          "job": {
+            "done": false,
+            "dismissed": false,
+            "cancelled": false,
+            "cancellable": false,
+            "pausable": true,
+            "paused": true,
+            "answer": null
+          }
+        },
+        {
+          "title": {
+            "shown": false,
+            "text": ""
+          },
+          "text_1": {
+            "shown": true,
+            "text": "plain"
+          },
+          "gauge_1": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "text_2": {
+            "shown": false,
+            "text": ""
+          },
+          "gauge_2": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "question": {
+            "shown": false,
+            "text": ""
+          },
+          "yes_shown": false,
+          "no_shown": false,
+          "show_tb": {
+            "shown": false,
+            "text": "show traceback"
+          },
+          "tb_text": {
+            "shown": false,
+            "text": ""
+          },
+          "copy_tb_shown": false,
+          "pause_shown": false,
+          "cancel_shown": false,
+          "cancel_enabled": true,
+          "job": {
+            "done": true,
+            "dismissed": false,
+            "cancelled": false,
+            "cancellable": false,
+            "pausable": false,
+            "paused": false,
+            "answer": null
+          }
+        },
+        {
+          "title": {
+            "shown": false,
+            "text": ""
+          },
+          "text_1": {
+            "shown": false,
+            "text": ""
+          },
+          "gauge_1": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "text_2": {
+            "shown": false,
+            "text": ""
+          },
+          "gauge_2": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "question": {
+            "shown": false,
+            "text": ""
+          },
+          "yes_shown": false,
+          "no_shown": false,
+          "show_tb": {
+            "shown": false,
+            "text": "show traceback"
+          },
+          "tb_text": {
+            "shown": false,
+            "text": ""
+          },
+          "copy_tb_shown": false,
+          "pause_shown": false,
+          "cancel_shown": false,
+          "cancel_enabled": true,
+          "job": {
+            "done": true,
+            "dismissed": false,
+            "cancelled": false,
+            "cancellable": false,
+            "pausable": false,
+            "paused": false,
+            "answer": null
+          }
+        },
+        {
+          "title": {
+            "shown": false,
+            "text": ""
+          },
+          "text_1": {
+            "shown": true,
+            "text": "long"
+          },
+          "gauge_1": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "text_2": {
+            "shown": true,
+            "text": "The text is too long to display here. Here is the start of it (the rest is printed to the log):\nyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy"
+          },
+          "gauge_2": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "question": {
+            "shown": false,
+            "text": ""
+          },
+          "yes_shown": false,
+          "no_shown": false,
+          "show_tb": {
+            "shown": false,
+            "text": "show traceback"
+          },
+          "tb_text": {
+            "shown": false,
+            "text": ""
+          },
+          "copy_tb_shown": false,
+          "pause_shown": false,
+          "cancel_shown": false,
+          "cancel_enabled": true,
+          "job": {
+            "done": true,
+            "dismissed": false,
+            "cancelled": false,
+            "cancellable": false,
+            "pausable": false,
+            "paused": false,
+            "answer": null
+          }
+        }
+      ]
+    },
+    {
+      "do": "play",
+      "cards": [
+        {
+          "title": {
+            "shown": true,
+            "text": "a title"
+          },
+          "text_1": {
+            "shown": true,
+            "text": "first"
+          },
+          "gauge_1": {
+            "shown": true,
+            "value": 1,
+            "range": 4,
+            "pulsing": false
+          },
+          "text_2": {
+            "shown": true,
+            "text": "second"
+          },
+          "gauge_2": {
+            "shown": true,
+            "value": 0,
+            "range": 1,
+            "pulsing": true
+          },
+          "question": {
+            "shown": false,
+            "text": ""
+          },
+          "yes_shown": false,
+          "no_shown": false,
+          "show_tb": {
+            "shown": false,
+            "text": "show traceback"
+          },
+          "tb_text": {
+            "shown": false,
+            "text": ""
+          },
+          "copy_tb_shown": false,
+          "pause_shown": true,
+          "cancel_shown": false,
+          "cancel_enabled": true,
+          "job": {
+            "done": false,
+            "dismissed": false,
+            "cancelled": false,
+            "cancellable": false,
+            "pausable": true,
+            "paused": false,
+            "answer": null
+          }
+        },
+        {
+          "title": {
+            "shown": false,
+            "text": ""
+          },
+          "text_1": {
+            "shown": true,
+            "text": "plain"
+          },
+          "gauge_1": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "text_2": {
+            "shown": false,
+            "text": ""
+          },
+          "gauge_2": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "question": {
+            "shown": false,
+            "text": ""
+          },
+          "yes_shown": false,
+          "no_shown": false,
+          "show_tb": {
+            "shown": false,
+            "text": "show traceback"
+          },
+          "tb_text": {
+            "shown": false,
+            "text": ""
+          },
+          "copy_tb_shown": false,
+          "pause_shown": false,
+          "cancel_shown": false,
+          "cancel_enabled": true,
+          "job": {
+            "done": true,
+            "dismissed": false,
+            "cancelled": false,
+            "cancellable": false,
+            "pausable": false,
+            "paused": false,
+            "answer": null
+          }
+        },
+        {
+          "title": {
+            "shown": false,
+            "text": ""
+          },
+          "text_1": {
+            "shown": false,
+            "text": ""
+          },
+          "gauge_1": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "text_2": {
+            "shown": false,
+            "text": ""
+          },
+          "gauge_2": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "question": {
+            "shown": false,
+            "text": ""
+          },
+          "yes_shown": false,
+          "no_shown": false,
+          "show_tb": {
+            "shown": false,
+            "text": "show traceback"
+          },
+          "tb_text": {
+            "shown": false,
+            "text": ""
+          },
+          "copy_tb_shown": false,
+          "pause_shown": false,
+          "cancel_shown": false,
+          "cancel_enabled": true,
+          "job": {
+            "done": true,
+            "dismissed": false,
+            "cancelled": false,
+            "cancellable": false,
+            "pausable": false,
+            "paused": false,
+            "answer": null
+          }
+        },
+        {
+          "title": {
+            "shown": false,
+            "text": ""
+          },
+          "text_1": {
+            "shown": true,
+            "text": "long"
+          },
+          "gauge_1": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "text_2": {
+            "shown": true,
+            "text": "The text is too long to display here. Here is the start of it (the rest is printed to the log):\nyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy"
+          },
+          "gauge_2": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "question": {
+            "shown": false,
+            "text": ""
+          },
+          "yes_shown": false,
+          "no_shown": false,
+          "show_tb": {
+            "shown": false,
+            "text": "show traceback"
+          },
+          "tb_text": {
+            "shown": false,
+            "text": ""
+          },
+          "copy_tb_shown": false,
+          "pause_shown": false,
+          "cancel_shown": false,
+          "cancel_enabled": true,
+          "job": {
+            "done": true,
+            "dismissed": false,
+            "cancelled": false,
+            "cancellable": false,
+            "pausable": false,
+            "paused": false,
+            "answer": null
+          }
+        }
+      ]
+    }
+  ],
+  "cancel": [
+    {
+      "do": "shown",
+      "cards": [
+        {
+          "title": {
+            "shown": false,
+            "text": ""
+          },
+          "text_1": {
+            "shown": true,
+            "text": "stoppable"
+          },
+          "gauge_1": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "text_2": {
+            "shown": false,
+            "text": ""
+          },
+          "gauge_2": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "question": {
+            "shown": false,
+            "text": ""
+          },
+          "yes_shown": false,
+          "no_shown": false,
+          "show_tb": {
+            "shown": false,
+            "text": "show traceback"
+          },
+          "tb_text": {
+            "shown": false,
+            "text": ""
+          },
+          "copy_tb_shown": false,
+          "pause_shown": true,
+          "cancel_shown": true,
+          "cancel_enabled": true,
+          "job": {
+            "done": false,
+            "dismissed": false,
+            "cancelled": false,
+            "cancellable": true,
+            "pausable": true,
+            "paused": false,
+            "answer": null
+          }
+        },
+        {
+          "title": {
+            "shown": false,
+            "text": ""
+          },
+          "text_1": {
+            "shown": true,
+            "text": "cannot stop"
+          },
+          "gauge_1": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "text_2": {
+            "shown": false,
+            "text": ""
+          },
+          "gauge_2": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "question": {
+            "shown": false,
+            "text": ""
+          },
+          "yes_shown": false,
+          "no_shown": false,
+          "show_tb": {
+            "shown": false,
+            "text": "show traceback"
+          },
+          "tb_text": {
+            "shown": false,
+            "text": ""
+          },
+          "copy_tb_shown": false,
+          "pause_shown": false,
+          "cancel_shown": false,
+          "cancel_enabled": true,
+          "job": {
+            "done": true,
+            "dismissed": false,
+            "cancelled": false,
+            "cancellable": false,
+            "pausable": false,
+            "paused": false,
+            "answer": null
+          }
+        }
+      ]
+    },
+    {
+      "do": "cancel",
+      "cards": [
+        {
+          "title": {
+            "shown": false,
+            "text": ""
+          },
+          "text_1": {
+            "shown": true,
+            "text": "stoppable"
+          },
+          "gauge_1": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "text_2": {
+            "shown": false,
+            "text": ""
+          },
+          "gauge_2": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "question": {
+            "shown": false,
+            "text": ""
+          },
+          "yes_shown": false,
+          "no_shown": false,
+          "show_tb": {
+            "shown": false,
+            "text": "show traceback"
+          },
+          "tb_text": {
+            "shown": false,
+            "text": ""
+          },
+          "copy_tb_shown": false,
+          "pause_shown": false,
+          "cancel_shown": false,
+          "cancel_enabled": false,
+          "job": {
+            "done": true,
+            "dismissed": false,
+            "cancelled": true,
+            "cancellable": false,
+            "pausable": false,
+            "paused": false,
+            "answer": null
+          }
+        },
+        {
+          "title": {
+            "shown": false,
+            "text": ""
+          },
+          "text_1": {
+            "shown": true,
+            "text": "cannot stop"
+          },
+          "gauge_1": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "text_2": {
+            "shown": false,
+            "text": ""
+          },
+          "gauge_2": {
+            "shown": false,
+            "value": 0,
+            "range": 1,
+            "pulsing": false
+          },
+          "question": {
+            "shown": false,
+            "text": ""
+          },
+          "yes_shown": false,
+          "no_shown": false,
+          "show_tb": {
+            "shown": false,
+            "text": "show traceback"
+          },
+          "tb_text": {
+            "shown": false,
+            "text": ""
+          },
+          "copy_tb_shown": false,
+          "pause_shown": false,
+          "cancel_shown": false,
+          "cancel_enabled": true,
+          "job": {
+            "done": true,
+            "dismissed": false,
+            "cancelled": false,
+            "cancellable": false,
+            "pausable": false,
+            "paused": false,
+            "answer": null
+          }
+        }
+      ]
+    }
+  ],
+  "traceback": [
+    {
+      "do": "shown",
+      "card": {
+        "title": {
+          "shown": true,
+          "text": "oh no"
+        },
+        "text_1": {
+          "shown": true,
+          "text": "it broke"
+        },
+        "gauge_1": {
+          "shown": false,
+          "value": 0,
+          "range": 1,
+          "pulsing": false
+        },
+        "text_2": {
+          "shown": false,
+          "text": ""
+        },
+        "gauge_2": {
+          "shown": false,
+          "value": 0,
+          "range": 1,
+          "pulsing": false
+        },
+        "question": {
+          "shown": false,
+          "text": ""
+        },
+        "yes_shown": false,
+        "no_shown": false,
+        "show_tb": {
+          "shown": true,
+          "text": "show traceback"
+        },
+        "tb_text": {
+          "shown": false,
+          "text": "The text is too long to display here. Here is the start of it (the rest is printed to the log):\ntrace line 1\ntrace line 2\nzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+        },
+        "copy_tb_shown": true,
+        "pause_shown": false,
+        "cancel_shown": false,
+        "cancel_enabled": true,
+        "job": {
+          "done": true,
+          "dismissed": false,
+          "cancelled": false,
+          "cancellable": false,
+          "pausable": false,
+          "paused": false,
+          "answer": null
+        }
+      }
+    },
+    {
+      "do": "show traceback",
+      "card": {
+        "title": {
+          "shown": true,
+          "text": "oh no"
+        },
+        "text_1": {
+          "shown": true,
+          "text": "it broke"
+        },
+        "gauge_1": {
+          "shown": false,
+          "value": 0,
+          "range": 1,
+          "pulsing": false
+        },
+        "text_2": {
+          "shown": false,
+          "text": ""
+        },
+        "gauge_2": {
+          "shown": false,
+          "value": 0,
+          "range": 1,
+          "pulsing": false
+        },
+        "question": {
+          "shown": false,
+          "text": ""
+        },
+        "yes_shown": false,
+        "no_shown": false,
+        "show_tb": {
+          "shown": true,
+          "text": "hide traceback"
+        },
+        "tb_text": {
+          "shown": true,
+          "text": "The text is too long to display here. Here is the start of it (the rest is printed to the log):\ntrace line 1\ntrace line 2\nzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+        },
+        "copy_tb_shown": true,
+        "pause_shown": false,
+        "cancel_shown": false,
+        "cancel_enabled": true,
+        "job": {
+          "done": true,
+          "dismissed": false,
+          "cancelled": false,
+          "cancellable": false,
+          "pausable": false,
+          "paused": false,
+          "answer": null
+        }
+      }
+    },
+    {
+      "do": "hide traceback",
+      "card": {
+        "title": {
+          "shown": true,
+          "text": "oh no"
+        },
+        "text_1": {
+          "shown": true,
+          "text": "it broke"
+        },
+        "gauge_1": {
+          "shown": false,
+          "value": 0,
+          "range": 1,
+          "pulsing": false
+        },
+        "text_2": {
+          "shown": false,
+          "text": ""
+        },
+        "gauge_2": {
+          "shown": false,
+          "value": 0,
+          "range": 1,
+          "pulsing": false
+        },
+        "question": {
+          "shown": false,
+          "text": ""
+        },
+        "yes_shown": false,
+        "no_shown": false,
+        "show_tb": {
+          "shown": true,
+          "text": "show traceback"
+        },
+        "tb_text": {
+          "shown": false,
+          "text": "The text is too long to display here. Here is the start of it (the rest is printed to the log):\ntrace line 1\ntrace line 2\nzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+        },
+        "copy_tb_shown": true,
+        "pause_shown": false,
+        "cancel_shown": false,
+        "cancel_enabled": true,
+        "job": {
+          "done": true,
+          "dismissed": false,
+          "cancelled": false,
+          "cancellable": false,
+          "pausable": false,
+          "paused": false,
+          "answer": null
+        }
+      }
+    },
+    {
+      "do": "copy",
+      "card": {
+        "title": {
+          "shown": true,
+          "text": "oh no"
+        },
+        "text_1": {
+          "shown": true,
+          "text": "it broke"
+        },
+        "gauge_1": {
+          "shown": false,
+          "value": 0,
+          "range": 1,
+          "pulsing": false
+        },
+        "text_2": {
+          "shown": false,
+          "text": ""
+        },
+        "gauge_2": {
+          "shown": false,
+          "value": 0,
+          "range": 1,
+          "pulsing": false
+        },
+        "question": {
+          "shown": false,
+          "text": ""
+        },
+        "yes_shown": false,
+        "no_shown": false,
+        "show_tb": {
+          "shown": true,
+          "text": "show traceback"
+        },
+        "tb_text": {
+          "shown": false,
+          "text": "The text is too long to display here. Here is the start of it (the rest is printed to the log):\ntrace line 1\ntrace line 2\nzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+        },
+        "copy_tb_shown": true,
+        "pause_shown": false,
+        "cancel_shown": false,
+        "cancel_enabled": true,
+        "job": {
+          "done": true,
+          "dismissed": false,
+          "cancelled": false,
+          "cancellable": false,
+          "pausable": false,
+          "paused": false,
+          "answer": null
+        }
+      },
+      "clipboard": "v688, linux, source\noh no\nit broke\ntrace line 1\ntrace line 2\nzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+      "job_string": "oh no\nit broke\ntrace line 1\ntrace line 2\nzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+    }
+  ],
+  "question": [
+    {
+      "answer": true,
+      "before": {
+        "title": {
+          "shown": false,
+          "text": ""
+        },
+        "text_1": {
+          "shown": true,
+          "text": "asking"
+        },
+        "gauge_1": {
+          "shown": false,
+          "value": 0,
+          "range": 1,
+          "pulsing": false
+        },
+        "text_2": {
+          "shown": false,
+          "text": ""
+        },
+        "gauge_2": {
+          "shown": false,
+          "value": 0,
+          "range": 1,
+          "pulsing": false
+        },
+        "question": {
+          "shown": true,
+          "text": "Accept this?"
+        },
+        "yes_shown": true,
+        "no_shown": true,
+        "show_tb": {
+          "shown": false,
+          "text": "show traceback"
+        },
+        "tb_text": {
+          "shown": false,
+          "text": ""
+        },
+        "copy_tb_shown": false,
+        "pause_shown": false,
+        "cancel_shown": false,
+        "cancel_enabled": true,
+        "job": {
+          "done": true,
+          "dismissed": false,
+          "cancelled": false,
+          "cancellable": false,
+          "pausable": false,
+          "paused": false,
+          "answer": null
+        }
+      },
+      "after": {
+        "title": {
+          "shown": false,
+          "text": ""
+        },
+        "text_1": {
+          "shown": true,
+          "text": "asking"
+        },
+        "gauge_1": {
+          "shown": false,
+          "value": 0,
+          "range": 1,
+          "pulsing": false
+        },
+        "text_2": {
+          "shown": false,
+          "text": ""
+        },
+        "gauge_2": {
+          "shown": false,
+          "value": 0,
+          "range": 1,
+          "pulsing": false
+        },
+        "question": {
+          "shown": true,
+          "text": "Accept this?"
+        },
+        "yes_shown": false,
+        "no_shown": false,
+        "show_tb": {
+          "shown": false,
+          "text": "show traceback"
+        },
+        "tb_text": {
+          "shown": false,
+          "text": ""
+        },
+        "copy_tb_shown": false,
+        "pause_shown": false,
+        "cancel_shown": false,
+        "cancel_enabled": true,
+        "job": {
+          "done": true,
+          "dismissed": true,
+          "cancelled": false,
+          "cancellable": false,
+          "pausable": false,
+          "paused": false,
+          "answer": true
+        }
+      }
+    },
+    {
+      "answer": false,
+      "before": {
+        "title": {
+          "shown": false,
+          "text": ""
+        },
+        "text_1": {
+          "shown": true,
+          "text": "asking"
+        },
+        "gauge_1": {
+          "shown": false,
+          "value": 0,
+          "range": 1,
+          "pulsing": false
+        },
+        "text_2": {
+          "shown": false,
+          "text": ""
+        },
+        "gauge_2": {
+          "shown": false,
+          "value": 0,
+          "range": 1,
+          "pulsing": false
+        },
+        "question": {
+          "shown": true,
+          "text": "Accept this?"
+        },
+        "yes_shown": true,
+        "no_shown": true,
+        "show_tb": {
+          "shown": false,
+          "text": "show traceback"
+        },
+        "tb_text": {
+          "shown": false,
+          "text": ""
+        },
+        "copy_tb_shown": false,
+        "pause_shown": false,
+        "cancel_shown": false,
+        "cancel_enabled": true,
+        "job": {
+          "done": true,
+          "dismissed": false,
+          "cancelled": false,
+          "cancellable": false,
+          "pausable": false,
+          "paused": false,
+          "answer": null
+        }
+      },
+      "after": {
+        "title": {
+          "shown": false,
+          "text": ""
+        },
+        "text_1": {
+          "shown": true,
+          "text": "asking"
+        },
+        "gauge_1": {
+          "shown": false,
+          "value": 0,
+          "range": 1,
+          "pulsing": false
+        },
+        "text_2": {
+          "shown": false,
+          "text": ""
+        },
+        "gauge_2": {
+          "shown": false,
+          "value": 0,
+          "range": 1,
+          "pulsing": false
+        },
+        "question": {
+          "shown": true,
+          "text": "Accept this?"
+        },
+        "yes_shown": false,
+        "no_shown": false,
+        "show_tb": {
+          "shown": false,
+          "text": "show traceback"
+        },
+        "tb_text": {
+          "shown": false,
+          "text": ""
+        },
+        "copy_tb_shown": false,
+        "pause_shown": false,
+        "cancel_shown": false,
+        "cancel_enabled": true,
+        "job": {
+          "done": true,
+          "dismissed": true,
+          "cancelled": false,
+          "cancellable": false,
+          "pausable": false,
+          "paused": false,
+          "answer": false
+        }
+      }
+    }
+  ],
+  "summary": [
+    {
+      "do": "shown",
+      "state": {
+        "summary": "12 messages",
+        "panel_shown": true,
+        "texts": [
+          "m0",
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7",
+          "m8",
+          "m9"
+        ]
+      }
+    },
+    {
+      "do": "collapse",
+      "state": {
+        "summary": "12 messages",
+        "panel_shown": false,
+        "texts": [
+          "m0",
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7",
+          "m8",
+          "m9"
+        ]
+      }
+    },
+    {
+      "do": "expand",
+      "state": {
+        "summary": "12 messages",
+        "panel_shown": true,
+        "texts": [
+          "m0",
+          "m1",
+          "m2",
+          "m3",
+          "m4",
+          "m5",
+          "m6",
+          "m7",
+          "m8",
+          "m9"
+        ]
+      }
+    }
+  ]
+}
