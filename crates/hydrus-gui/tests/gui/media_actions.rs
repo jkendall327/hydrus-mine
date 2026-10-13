@@ -112,17 +112,27 @@ fn the_viewer_s_shortcuts_archive_inbox_and_delete() {
             name: "my files".into()
         })
     );
+    // (the reference's "Delete files?" dialog, with the one action's label)
     viewer.invoke_delete();
+    let dialog = bound.viewer_deletion.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(dialog.get_composed_title(), "Delete files?");
+    assert!(dialog.get_simple());
     assert_eq!(
-        viewer.get_question(),
-        "Send one file from my files to trash?"
+        dialog.get_actions().iter().collect::<Vec<_>>(),
+        ["Send one file from my files to trash?"]
     );
-    viewer.invoke_answer(false);
-    assert_eq!(viewer.get_question(), "");
+    dialog.invoke_cancel();
+    assert!(bound.viewer_deletion.borrow().is_none());
     assert_eq!(state(&store, file).1, ["my files"]);
-    // yes sends it to the trash, and it leaves the page and the viewer
+    // accepting sends it to the trash, and it leaves the page and the viewer
     viewer.invoke_delete();
-    viewer.invoke_answer(true);
+    bound
+        .viewer_deletion
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong()
+        .invoke_accept_deletion();
     assert_eq!(state(&store, file).1, ["trash"]);
     let after = page.borrow().results().to_vec();
     assert_eq!(after.len(), before.len() - 1);
@@ -228,13 +238,23 @@ fn the_viewer_s_shortcuts_archive_inbox_and_delete() {
     assert!(state(&store, selected).0);
     let before = page.borrow().results().len();
     key(slint::platform::Key::Delete);
-    assert_eq!(ui.get_question(), "Send one file from art to trash?");
-    key(slint::platform::Key::Escape);
-    assert_eq!(ui.get_question(), "");
+    let dialog = bound.delete_files.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(
+        dialog.get_actions().iter().collect::<Vec<_>>(),
+        ["Send one file from art to trash?"]
+    );
+    dialog.invoke_cancel();
+    assert!(bound.delete_files.borrow().is_none());
     assert_eq!(page.borrow().results().len(), before);
     key(slint::platform::Key::Delete);
-    key(slint::platform::Key::Return);
-    assert_eq!(ui.get_question(), "");
+    bound
+        .delete_files
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong()
+        .invoke_accept_deletion();
+    assert!(bound.delete_files.borrow().is_none());
     assert_eq!(state(&store, selected).1, ["trash"]);
     assert_eq!(page.borrow().results().len(), before - 1);
 }
