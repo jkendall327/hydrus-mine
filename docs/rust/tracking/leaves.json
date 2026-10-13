@@ -16732,10 +16732,10 @@
     "Native removes cancelled popup immediately rather than Qt next message refresh; UI has no additional cancel confirmation."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the popup cancel callback; expects cancelled+done and not cancellable/pausable (matches JobStatus.Cancel -> Finish) and no-op for non-cancellable, but the values are typed from source though popup_actions.json already records the cancel state. 'Daemon consumers observe cancellation' only means the store flag; the native removing the card at once vs reference keeping it is a documented difference. Tests: crates/hydrus-gui/tests/gui/shell_popups.rs:120 cancel_marks_a_cancellable_job_cancelled_and_leaves_others_alone"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r4b)",
+    "note": "gui/popup_cards_replay.rs replays popup_cards.json: a cancellable job and a fixed one; cancel pressed on the first (via the card's callback: the stop button is an unlabelled icon); the jobs' done/cancelled/cancellable/pausable/paused flags equal the reference's after, the fixed one untouched. The reference keeps the cancelled card until dismissed; hydrus-rs removes it (DIFFERENCES.md), so the card itself is only checked as a subset."
    }
   },
   {
@@ -16772,10 +16772,10 @@
     "Job fields map to two gauges/text blocks; pause hides both gauges and second text and replaces first text with paused. Long second-text/traceback strings truncate at 1024 characters."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real window with typed values restated from PopupMessage.UpdateMessage (title, two texts, two gauges, paused hides gauges/text2 and shows 'paused', 1024-char cutoff text); no recording of the card content though one could be made. Does not check the hidden states when title/text/gauge are absent. Tests: shell_popups.rs:57 cards_show_title_texts_and_gauges_and_pausing_hides_them"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r4b)",
+    "note": "gui/popup_cards_replay.rs replays oracle/fixtures/popup_cards.json (record_popup_cards.py, the real PopupMessageManager): four jobs (every field, text only, none, second text past the 1024 cutoff) shown by the real main window and compared card by card (title, both texts, both gauges including pulsing, pause/cancel buttons), then the pause button pressed and pressed again (paused hides the gauges and second text and says 'paused'). The pause button has no label, so its callback is invoked rather than a click."
    }
   },
   {
@@ -16908,10 +16908,10 @@
     "Shows oldest IN_VIEW jobs, total job count and local collapse/expand; hiding cards does not cancel or delete jobs."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real pointer click on the collapse arrow, '12 messages' text and 10 rows are asserted, but the collapse is proved only by 'render differs from expanded' and 're-expand renders equal' (presence/change of pixels, not that the cards are hidden), and the ten-oldest order is in a separate untagged test with typed values. No recording. Tests: crates/hydrus-gui/tests/gui/popups_collapse.rs:30 the_summary_bar_collapses_and_expands_the_cards_without_touching_jobs; shell_popups.rs only_the_ten_oldest_cards_show_and_the_line_counts_them_all (untagged)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r4b)",
+    "note": "gui/popup_cards_replay.rs replays popup_cards.json: twelve jobs, '12 messages' and the ten oldest cards shown, the arrow clicked for real (collapse hides the cards, count stays; expand shows the same ten), no job deleted."
    }
   },
   {
@@ -16928,10 +16928,10 @@
     "Copied header identifies hydrus-rs rather than frozen/source Qt runtime."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Show/hide is found by brute-force clicking until the render changes, never checking the 'show traceback'/'hide traceback' text or that the traceback text appears; copy is checked against Job::nice_string (the native function) with only a version-contains check on the header (documented difference from the reference's 'v<ver>, <platform>, source|frozen'). Presence-only toggle, circular copy text. Tests: crates/hydrus-gui/tests/gui/popups_collapse.rs:76 a_card_shows_and_hides_its_traceback_and_copies_all_of_it; shell_popups.rs copy_traceback_puts_version_system_and_the_whole_job_on_the_clipboard (untagged)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r4b)",
+    "note": "gui/popup_cards_replay.rs replays popup_cards.json: 'show traceback' / 'hide traceback' clicked for real, the button text and the (1024-cut) traceback text compared with the reference's, then 'copy traceback information' clicked and the clipboard compared with the reference's after its first line (the complete job text). The first line differs by design ('hydrus-rs <ver>, <os>' for 'v<ver>, <platform>, source|frozen'; DIFFERENCES.md)."
    }
   },
   {
@@ -16949,10 +16949,10 @@
     "Popup download/cancel, modal/freeze, producer-family breadth and parent/alias completeness are outside these three leaf claims and receive zero credit."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Answer path is driven through the window callback (not a button click) with typed expectations (answer variable, finish-and-dismiss, buttons gone); popup_actions.json has recorded 'answer after True/False' states but only its question visibility/labels/cutoff are replayed (against view(), in a src unit test), not the answer outcome. Tracker note is a long narrative with no tag. Tests: crates/hydrus-gui/tests/gui/popup_job_actions.rs:159 yes_and_no_dismiss_the_popup_and_reach_the_retained_producer_once, :226 removed_question_tokens_and_retired_producers_cannot_answer_successors; crates/hydrus-gui/src/popups.rs:592 actual_qt_action_visibility_labels_and_question_cutoff_replay (unit test)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r4b)",
+    "note": "gui/popup_cards_replay.rs replays popup_cards.json: a live question with the reference's text and its yes and no buttons, each answered by a real click; the answer reaches the producer, the job is finished and dismissed and the buttons are gone, as recorded (the reference keeps the card until its next update; hydrus-rs drops it at once)."
    }
   },
   {
@@ -21022,10 +21022,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real tab menu and ShowPage, with reference-matching scope (notebook tab lists its descendants, media tab lists the notebook's), but names/expected pages are typed and the entry labels ('name - N files') are only prefix-matched, not compared with a recording. Tracker note 'native has no tab-context-menu callback' is stale. Tests: crates/hydrus-gui/tests/gui/shell_tabs.rs:131 tab_menu_pages_entry_shows_the_chosen_page"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r4b)",
+    "note": "gui/tab_keys_replay.rs replays tab_keys.json: the tab menu's 'pages' list opened on tabs a, n and d (labels such as 'b - 2 files' compared with the reference's) and entries chosen on a, n, c and d, each showing the recorded page and tab rows. Stale tracker note: the menu callback exists."
    }
   },
   {
@@ -21251,10 +21251,10 @@
     "Duplicate clicked page/notebook beside original with fresh page identities, media and importer queues; selected copied notebook starts on its first child. Media survives deleting original."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Menu-driven GUI test against recorded tree/hashes for a page and a notebook, fresh keys, and media surviving deletion of the original: good. But the leaf also names importer queues, and no duplicate test has an importer page (record_tab_harvest says importers are 'covered independently' by session_importers, which only exercises append/load of sessions, not duplicate_tab). Duplicated importer queue independence is untested. Tests: crates/hydrus-gui/tests/gui/session.rs:2485 duplicate_and_collapse_menus_replay_real_ordered_media_and_cancellation (tab_harvest.json duplicate)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r4b)",
+    "note": "Media: session.rs duplicate_and_collapse_menus_replay_real_ordered_media_and_cancellation (tab_harvest.json). Importers: gui/tab_duplicate_importers.rs replays tab_duplicate_importers.json (record_tab_duplicate_importers.py): a url import and a simple downloader page duplicated from the tab menu; tabs, URLs and pause state equal the reference's, the copy has its own queue, and a URL added to either leaves the other alone (added through the store, not the sidebar)."
    }
   },
   {
@@ -21644,10 +21644,10 @@
     "Selects the requested notebook depth/index or adjacent page, lazily opens it, restores its saved state and switches the active view."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives tab chosen and real Ctrl+PageUp/Down key events, but expectations are typed from the source (no recording of key navigation; tab_actions 'navigation' is the menu 'select' submenu). Lazy opening of the page is not asserted; 'then out of it' in the comment is not exercised. Tests: hydrus-gui/tests/gui/shell_tabs.rs:51 clicking_a_tab_and_ctrl_page_keys_select_pages_and_restore_their_state"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r4b)",
+    "note": "gui/tab_keys_replay.rs replays oracle/fixtures/tab_keys.json (record_tab_keys.py, real clicks and Ctrl+PageUp/PageDown on the real client): tab clicks in both rows, key moves into and along a nested notebook, no wrap at the ends, and the three-second rule (the keys' clock held and moved on where the recording waited); the page shown and every row's tabs and selection compared after each step."
    }
   },
   {
@@ -23069,10 +23069,10 @@
     "Cancel hides the gate without invoking unlocked; main reports the lock was not unlocked and exits."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Cancel hides the window and does not call unlocked, driven via invoke_cancelled; matches ClientController.InitView (cancel raises DBCredentialsException). No recording; main.rs's 'not unlocked' exit path is untested. Tests: hydrus-gui/tests/gui/unlock.rs:13 only_the_password_unlocks_the_client"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r4b)",
+    "note": "gui/unlock.rs cancelling_the_password_dialog_opens_nothing replays text_entry_checks.json password_cancel (the reference boot with the dialog cancelled: asked once, nothing else said, not booted): the dialog shows the recorded question, its cancel button is clicked, the window closes and the client is not opened. The binary's exit path after cancel is not run by a test."
    }
   },
   {

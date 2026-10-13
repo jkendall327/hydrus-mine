@@ -75,9 +75,9 @@ def record( session ):
 
         location = ClientLocation.LocationContext.STATICCreateSimple( CC.LOCAL_FILE_SERVICE_KEY )
 
-        urls_page = notebook.NewPageImportURLs( page_name = 'url import' )
+        urls_page = notebook.NewPageImportURLs()
 
-        simple_page = notebook.NewPageImportSimpleDownloader( page_name = 'simple downloader' )
+        simple_page = notebook.NewPageImportSimpleDownloader()
 
         notebook.NewPageQuery( location, page_name = 'c' )
 

@@ -94,7 +94,9 @@ pub fn advance_clock(by: std::time::Duration) {
 
 /// The time the page-selection keys see: the held clock, else the real one.
 pub(crate) fn clock_now() -> std::time::Instant {
-    HELD_CLOCK.with(std::cell::Cell::get).unwrap_or_else(std::time::Instant::now)
+    HELD_CLOCK
+        .with(std::cell::Cell::get)
+        .unwrap_or_else(std::time::Instant::now)
 }
 
 struct Headless {

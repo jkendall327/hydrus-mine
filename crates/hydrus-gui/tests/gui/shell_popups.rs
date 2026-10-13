@@ -57,7 +57,6 @@ fn window(store: &Arc<Store>) -> (MainWindow, hydrus_gui::Bound) {
     (ui, bound)
 }
 
-// leaf: audit-options-popups-content
 // leaf: audit-options-popups-pause
 #[test]
 fn cards_show_title_texts_and_gauges_and_pausing_hides_them() {
@@ -120,7 +119,6 @@ fn cards_show_title_texts_and_gauges_and_pausing_hides_them() {
     assert_eq!(body, "y".repeat(1024));
 }
 
-// leaf: audit-options-popups-cancel
 #[test]
 fn cancel_marks_a_cancellable_job_cancelled_and_leaves_others_alone() {
     let (_dirs, store) = store();

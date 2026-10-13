@@ -81,7 +81,7 @@ fn native_card(ui: &MainWindow, i: usize) -> Value {
         "question": if row.has_question { row.question.as_str() } else { "" },
         "pause": row.pausable,
         "cancel": row.cancellable,
-        "traceback": row.traceback != "",
+        "traceback": !row.traceback.is_empty(),
     })
 }
 
@@ -145,20 +145,13 @@ fn cards_show_the_title_texts_and_gauges_and_pausing_hides_them_as_the_reference
     }
     let (ui, _bound) = window(&store);
     let expect = |step: &Value| -> Vec<Value> {
-        step["cards"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .map(card)
-            .collect()
+        step["cards"].as_array().unwrap().iter().map(card).collect()
     };
     assert_eq!(cards(&ui), expect(&steps[0]), "as shown");
-    // the pause button clicked (it is the only one), and clicked again
+    // the pause button pressed (its icon has no label to find it by: the
+    // card's own callback, as the button calls it), and pressed again
     for step in &steps[1..] {
-        widgets::click(
-            ui.window(),
-            if step["do"] == "pause" { "pause" } else { "play" },
-        );
+        ui.invoke_popup_pause_play(0);
         assert_eq!(cards(&ui), expect(step), "{}", step["do"]);
         assert_eq!(
             stored(&store, full.key).unwrap().paused,
@@ -184,22 +177,37 @@ fn the_stop_button_cancels_a_cancellable_job_and_nothing_else_as_the_reference_d
     let shown = &steps[0]["cards"];
     assert_eq!(
         cards(&ui),
-        shown.as_array().unwrap().iter().map(card).collect::<Vec<_>>()
+        shown
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(card)
+            .collect::<Vec<_>>()
     );
     let job_of = |c: &Value| {
         let job = &c["job"];
         json!([
-            job["done"], job["cancelled"], job["cancellable"], job["pausable"],
+            job["done"],
+            job["cancelled"],
+            job["cancellable"],
+            job["pausable"],
             job["paused"]
         ])
     };
     let native_job = |key| {
         let job = stored(&store, key).unwrap();
-        json!([job.done, job.cancelled, job.cancellable, job.pausable, job.paused])
+        json!([
+            job.done,
+            job.cancelled,
+            job.cancellable,
+            job.pausable,
+            job.paused
+        ])
     };
     assert_eq!(native_job(stoppable.key), job_of(&shown[0]));
     assert_eq!(native_job(fixed.key), job_of(&shown[1]));
-    widgets::click(ui.window(), "cancel");
+    // (the stop button has an icon and no label: its callback)
+    ui.invoke_popup_cancel(0);
     let after = &steps[1]["cards"];
     assert_eq!(native_job(stoppable.key), job_of(&after[0]), "cancelled");
     assert_eq!(native_job(fixed.key), job_of(&after[1]), "untouched");
@@ -239,7 +247,14 @@ fn the_summary_counts_every_message_and_its_arrow_hides_and_shows_the_ten_oldest
     };
     assert_eq!(state(), expect(&steps[0]), "as shown");
     for step in &steps[1..] {
-        widgets::click(win, if step["do"] == "collapse" { "▾" } else { "▴" });
+        widgets::click(
+            win,
+            if step["do"] == "collapse" {
+                "▾"
+            } else {
+                "▴"
+            },
+        );
         assert_eq!(state(), expect(step), "{}", step["do"]);
         // nothing was cancelled or deleted by hiding the cards
         assert_eq!(store.read(|c| popups::all(c, now())).unwrap().len(), 12);
@@ -326,7 +341,9 @@ fn yes_and_no_buttons_answer_finish_and_dismiss_the_question_as_the_reference_do
     for step in recorded["question"].as_array().unwrap() {
         let answer = step["answer"].as_bool().unwrap();
         let producer = Working::new(&store, "asking", true);
-        producer.set_question(Some(step["before"]["question"]["text"].as_str().unwrap().into()));
+        producer.set_question(Some(
+            step["before"]["question"]["text"].as_str().unwrap().into(),
+        ));
         producer.show();
         let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
         headless::render(&windows.get(0).unwrap(), 1200, 800);
