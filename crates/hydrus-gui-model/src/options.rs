@@ -5049,6 +5049,14 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                                 |s| s.tag_suggestions.recent_limit.map(|n| n as i64),
                                 |s, v| s.tag_suggestions.recent_limit = v.map(|n| n as usize),
                             ),
+                            noneable(
+                                QUICK_RECENT_TAGS_MESSAGE,
+                                none("do not show", 10, (1, 1_000_000), None),
+                                |s| s.tag_suggestions.quick_recent_limit.map(|n| n as i64),
+                                |s, v| {
+                                    s.tag_suggestions.quick_recent_limit = v.map(|n| n as usize);
+                                },
+                            ),
                         ],
                     ),
                 ],
@@ -5316,6 +5324,7 @@ pub const SEARCH_PLACEHOLDER: &str = "Search options... (Experimental!)";
 /// The message of the recent tags spin box of the tag suggestions page, as
 /// the reference's search sees it.
 const RECENT_TAGS_MESSAGE: &str = "number of recent tags to show: ";
+const QUICK_RECENT_TAGS_MESSAGE: &str = "number of recent tags to show in quick entry dialogs: ";
 
 /// How many suggestions show at once (more scroll), as the reference's.
 pub const SEARCH_SHOWN: usize = 10;
@@ -5460,14 +5469,6 @@ const SEARCH_ONLY: &[SearchOnly] = &[
     }),
     ("tag suggestions", "Tag service: ", |k| {
         matches!(k.kind, Kind::MostUsedTags)
-    }),
-    (
-        "tag suggestions",
-        "number of recent tags to show in quick entry dialogs: ",
-        |k| k.label == RECENT_TAGS_MESSAGE,
-    ),
-    ("tag suggestions", "do not show", |k| {
-        k.label == RECENT_TAGS_MESSAGE
     }),
 ];
 

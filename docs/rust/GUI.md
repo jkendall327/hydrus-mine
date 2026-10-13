@@ -4035,6 +4035,22 @@ stars"). In the media viewer, such shortcuts in the "media" and
 added where the file lacks it, else flipped off; a rating is set, else
 flipped off; increment and decrement move a numerical rating a star (from
 none to its lowest or highest) or an inc/dec count by one.
+
+The third kind of command, "interactive 'edit value' manual set command",
+names a local tag service and reads "popup tag mappings entry dialog for my
+tags". Used in the media viewer (on the file shown) or on the thumbnails
+(given the keyboard, on the files selected; "media" set shortcuts), it asks
+"Enter the tag to be added to 'my tags'." in an "Enter Text" dialog: a button
+for each recent tag, newest first (as many as Options > tag suggestions >
+recent > "number of recent tags to show in quick entry dialogs", 10 by
+default, none for "do not show"; the recent tags are read, and forgotten past
+their own count, as the panels read them), and the newest in the line,
+selected. A button, or apply, sets that tag on the files (added where any
+lacks it) and makes it the newest recent tag; blank or whitespace is refused
+("Cannot enter blank text here!", "Cannot enter only whitespace here!");
+cancel does nothing. Proven by `interactive_tag_entry.rs` against
+`oracle/record_interactive_tag_entry.py` and
+`oracle/record_suggestion_options_consumers.py`.
 The media viewer's top hover has the reference's keyboard button: "edit
 shortcuts" opens the options, and with custom sets, "set current shortcuts"
 turns them on or off for this viewer and "set default shortcuts" for every
@@ -5179,10 +5195,14 @@ click to clear). Proven by `tests/gui/preview_top_right.rs`.
 **Tag suggestions.** The page now has the reference's four notebook pages as
 titled groups: most used (the per-service lists), related ("Show related tags",
 the three search durations, the concurrence threshold and the weight tables),
-file lookup scripts (the switch) and recent (the count, or "do not show").
+file lookup scripts (the switch) and recent (the count, and the count for
+quick entry dialogs, each with "do not show").
 "Show related tags", the concurrence threshold and the recent count change
-the Manage Tags window's panels; the durations and file lookup switch are kept
-only (see DIFFERENCES.md). Proven by `options_gui_suggestions.rs`.
+the Manage Tags window's panels, and each duration is the time its related
+button gives a search; the file lookup switch is kept only (see
+DIFFERENCES.md). Proven by `options_gui_suggestions.rs` and
+`suggestion_options_consumers.rs` (the rows set in Options, the panels then
+compared with `oracle/record_suggestion_options_consumers.py`).
 
 **mpv.** "Set a new mpv.conf on dialog ok?" copies the chosen file over the
 database's `mpv.conf` when Options is OKed (never kept, and a path that isn't a
@@ -5345,6 +5365,21 @@ tags; Enter on it enters them again. "copy" puts the selected tags (or all) on t
 clipboard, one per line in natural order, and says "Copied 3 tags!" under the buttons.
 The recent-tags panel has the reference's "clear" button ("Clear recent tags?").
 Activating a suggested tag only ever adds it, whatever the cog says.
+
+The suggestion lists (most used, recent, related) behave as the reference's
+tag lists: a click selects a tag (a click on a selected tag keeps the
+selection, a click below the tags clears it; ctrl and shift add, remove and
+range), the arrows move (wrapping round), as do home, end, page up/down and
+ctrl+n/p; escape clears the selection, ctrl+a selects all, ctrl+c copies the
+selection (or every tag) and ctrl+shift+c adds their parents; enter or a
+double-click adds the selected tags. A tag's sibling (`old → new`) and parents
+(rows under it, or "(1 parents)" collapsed) are drawn as the storage taglist
+options say, and the right-click menu turns them on and off for that list. The
+menu has the reference's copy, siblings, parents, open (a search page, an OR
+page, a page each, a duplicate filter page), favourites and maintenance
+entries; a middle-click opens a search page for the selection (with shift,
+their OR). Proven by `suggested_tag_list_interactions.rs` against
+`oracle/record_suggested_tag_list_interactions.py`.
 
 With the input empty, Left and Right change the autocomplete's tab and, if its list is
 empty too, Up and Down change the service tab (all wrapping), as the reference's

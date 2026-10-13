@@ -204,10 +204,19 @@ pub(crate) fn open(
         model.borrow().store(),
         active.clone(),
     );
+    // the suggestion lists draw the storage taglist decorators until their
+    // own menus change them
+    let side_decorators = hydrus_gui_model::tag_list_box::Decorators::from_settings(
+        &model
+            .borrow()
+            .store()
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default(),
+    );
     let side_lists = Rc::new(RefCell::new([
-        hydrus_gui_model::tag_suggestions::List::default(),
-        hydrus_gui_model::tag_suggestions::List::default(),
-        hydrus_gui_model::tag_suggestions::List::default(),
+        hydrus_gui_model::tag_suggestions::List::new(side_decorators),
+        hydrus_gui_model::tag_suggestions::List::new(side_decorators),
+        hydrus_gui_model::tag_suggestions::List::new(side_decorators),
     ]));
     let prefs = model.borrow().suggestion_preferences().clone();
     window.set_suggested_columns(prefs.columns);
@@ -364,54 +373,63 @@ pub(crate) fn open(
                 }
             }
             let mut lists = lists.borrow_mut();
+            let service_id = key
+                .as_ref()
+                .and_then(|key| m.store().snapshot().services.by_key(key).ok().map(|s| s.id));
+            let decorate = |tags: &[String]| match service_id {
+                Some(id) => hydrus_gui_model::tag_list_box::decorated(m.store(), id, tags),
+                None => tags
+                    .iter()
+                    .map(|tag| hydrus_gui_model::tag_list_box::Row {
+                        tag: tag.clone(),
+                        ..Default::default()
+                    })
+                    .collect(),
+            };
             for (i, list) in lists.iter_mut().enumerate().take(2) {
-                list.update(key.clone(), m.side_suggestions(i == 1));
+                list.update_with(key.clone(), m.side_suggestions(i == 1), decorate);
             }
-            lists[2].update(
+            lists[2].update_with(
                 key.clone(),
                 m.useful_related(results.borrow().iter().map(|row| row.tag.clone()).collect()),
+                decorate,
             );
             let presentation: hydrus_core::tag_presentation::TagPresentation = m
                 .store()
                 .read(hydrus_store::settings::get)
                 .unwrap_or_default();
-            let rows = |list: &hydrus_gui_model::tag_suggestions::List| {
+            // (the related list follows each tag with its score)
+            let rows = |list: &hydrus_gui_model::tag_suggestions::List, scored: bool| {
                 ModelRc::new(VecModel::from(
-                    list.tags
-                        .iter()
+                    list.list
+                        .drawn(&presentation.sibling_connector)
+                        .into_iter()
                         .zip(list.mask())
-                        .map(|(tag, selected)| crate::TableRow {
-                            cells: ModelRc::new(VecModel::from(vec![SharedString::from(
-                                presentation.render(tag),
-                            )])),
-                            selected,
+                        .map(|((row, parent_row, mut text), selected)| {
+                            if scored && !parent_row {
+                                let tag = &list.list.rows()[row].tag;
+                                text = format!(
+                                    "{text} ({})",
+                                    hydrus_core::numbers::human_int(
+                                        results
+                                            .borrow()
+                                            .iter()
+                                            .find(|r| &r.tag == tag)
+                                            .map_or(0, |r| r.score)
+                                    )
+                                );
+                            }
+                            crate::TableRow {
+                                cells: ModelRc::new(VecModel::from(vec![SharedString::from(text)])),
+                                selected,
+                            }
                         })
                         .collect::<Vec<_>>(),
                 ))
             };
-            w.set_most_used_rows(rows(&lists[0]));
-            w.set_recent_tag_rows(rows(&lists[1]));
-            w.set_related_tag_rows(ModelRc::new(VecModel::from(
-                lists[2]
-                    .tags
-                    .iter()
-                    .zip(lists[2].mask())
-                    .map(|(tag, selected)| crate::TableRow {
-                        cells: ModelRc::new(VecModel::from(vec![SharedString::from(format!(
-                            "{} ({})",
-                            presentation.render(tag),
-                            hydrus_core::numbers::human_int(
-                                results
-                                    .borrow()
-                                    .iter()
-                                    .find(|r| &r.tag == tag)
-                                    .map_or(0, |r| r.score)
-                            )
-                        ))])),
-                        selected,
-                    })
-                    .collect::<Vec<_>>(),
-            )));
+            w.set_most_used_rows(rows(&lists[0], false));
+            w.set_recent_tag_rows(rows(&lists[1], false));
+            w.set_related_tag_rows(rows(&lists[2], true));
         }
     });
     window.on_related_search({
@@ -459,6 +477,7 @@ pub(crate) fn open(
         Rc::new({
             let model = model.clone();
             let weak = window.as_weak();
+            let side_lists = side_lists.clone();
             move |action| {
                 if let hydrus_gui_model::write_tag_menu::Action::Decorate { tab, kind, value } =
                     action
@@ -467,6 +486,15 @@ pub(crate) fn open(
                         .borrow_mut()
                         .write_input_mut()
                         .decorate(tab, kind, value);
+                } else if let hydrus_gui_model::write_tag_menu::Action::ListDecorate {
+                    list,
+                    kind,
+                    value,
+                } = action
+                {
+                    if let Some(list) = side_lists.borrow_mut().get_mut(usize::from(list)) {
+                        list.list.decorate(kind, value);
+                    }
                 } else if let hydrus_gui_model::write_tag_menu::Action::Domain(choice) = action {
                     model.borrow_mut().write_input_mut().choose_domain(choice);
                 } else if matches!(
@@ -614,6 +642,139 @@ pub(crate) fn open(
                 ask(&w, &pending, entered);
             }
             refresh();
+        }
+    });
+    // the suggestion lists' own keys: selection, copying and activation
+    window.on_side_key({
+        let active = active.clone();
+        let pending = pending_paste.clone();
+        let menu = tag_menu.clone();
+        let incremental = incremental_open.clone();
+        let lists = side_lists.clone();
+        let model = model.clone();
+        let refresh = refresh.clone();
+        let weak = window.as_weak();
+        move |p, text, ctrl, shift, page| {
+            if !active.get() || incremental.get() || pending.borrow().is_some() || menu.busy() {
+                return false;
+            }
+            let Some(key) = hydrus_gui_model::tag_list_box::Key::from_text(&text) else {
+                return false;
+            };
+            let Ok(p) = usize::try_from(p) else {
+                return false;
+            };
+            let outcome = match lists.borrow_mut().get_mut(p) {
+                Some(list) => {
+                    list.list
+                        .key(key, ctrl, shift, usize::try_from(page).unwrap_or(1).max(1))
+                }
+                None => return false,
+            };
+            match outcome {
+                hydrus_gui_model::tag_list_box::Outcome::Ignored => return false,
+                hydrus_gui_model::tag_list_box::Outcome::Taken => {}
+                hydrus_gui_model::tag_list_box::Outcome::Copy(text) => {
+                    if !text.is_empty() {
+                        crate::copy_to_clipboard(&text);
+                    }
+                }
+                hydrus_gui_model::tag_list_box::Outcome::Activate => {
+                    let (tags, first) = {
+                        let lists = lists.borrow();
+                        let list = &lists[p];
+                        (list.selected(), list.list.first_selected())
+                    };
+                    if tags.is_empty() {
+                        return true;
+                    }
+                    let entered = model.borrow_mut().add_side_suggestions(&tags);
+                    if let (Some(w), Ok(entered)) = (weak.upgrade(), entered) {
+                        ask(&w, &pending, entered);
+                    }
+                    refresh();
+                    // the activated tags left; the row where they began is hit
+                    if let (Some(first), Some(list)) = (first, lists.borrow_mut().get_mut(p)) {
+                        list.list.rehit_after_activation(first);
+                    }
+                }
+            }
+            refresh();
+            true
+        }
+    });
+    window.on_side_menu({
+        let active = active.clone();
+        let pending = pending_paste.clone();
+        let menu = tag_menu.clone();
+        let incremental = incremental_open.clone();
+        let lists = side_lists.clone();
+        let model = model.clone();
+        let refresh = refresh.clone();
+        move |p, i, x, y| {
+            if !active.get() || incremental.get() || pending.borrow().is_some() || menu.busy() {
+                return;
+            }
+            let Ok(p) = usize::try_from(p) else {
+                return;
+            };
+            // a right press hits its row, as any press does
+            let entries = match lists.borrow_mut().get_mut(p) {
+                Some(list) => {
+                    list.list.click(usize::try_from(i).ok(), false, false);
+                    list.list
+                        .menu(model.borrow().store(), u8::try_from(p).unwrap_or_default())
+                }
+                None => return,
+            };
+            refresh();
+            menu.open(&entries, x, y);
+        }
+    });
+    window.on_side_middle({
+        let active = active.clone();
+        let pending = pending_paste.clone();
+        let menu = tag_menu.clone();
+        let incremental = incremental_open.clone();
+        let lists = side_lists.clone();
+        let model = model.clone();
+        let refresh = refresh.clone();
+        move |p, i, ctrl, shift| {
+            if !active.get() || incremental.get() || pending.borrow().is_some() || menu.busy() {
+                return;
+            }
+            let Ok(p) = usize::try_from(p) else {
+                return;
+            };
+            // a middle press hits its row, then opens a search page for the
+            // selection (with shift, for their OR)
+            let predicates = match lists.borrow_mut().get_mut(p) {
+                Some(list) => {
+                    list.list.click(usize::try_from(i).ok(), ctrl, shift);
+                    list.list.middle_click_predicates(shift)
+                }
+                None => return,
+            };
+            refresh();
+            if !predicates.is_empty() {
+                let defaults: hydrus_store::settings::SearchDefaults = model
+                    .borrow()
+                    .store()
+                    .read(hydrus_store::settings::get)
+                    .unwrap_or_default();
+                menu.choose(Some(crate::popup_menu::Chosen::Action(
+                    hydrus_gui_model::write_tag_menu::Action::Launch {
+                        location: hydrus_core::search::context::LocationContext::default(),
+                        context: hydrus_core::search::context::TagContext::new(
+                            defaults.tag_service,
+                            true,
+                            true,
+                        ),
+                        predicates,
+                        duplicate: false,
+                    },
+                )));
+            }
         }
     });
     window.on_sort_chosen({

@@ -48,6 +48,11 @@ export component ListTable inherits Rectangle {
     callback row-menu(int, length, length);
     // (the delete key, the list having the keyboard)
     callback delete-pressed();
+    // (a middle press on a row: the row, ctrl held, shift held)
+    callback row-middle(int, bool, bool);
+    // presses below the rows count too, as on a row past the last (the
+    // reference's tag lists clear the selection there, or show a menu)
+    in property <bool> fill-empty: false;
     border-width: 1px;
     border-color: Theme.border;
     background: Theme.panel;
@@ -85,7 +90,7 @@ export component ListTable inherits Rectangle {
                 }
             }
         }
-        ScrollView {
+        scroll := ScrollView {
             // the rows, and over them one touch area for them all, which
             // outlives the rows (a click usually gives the list new rows,
             // and a drag goes on over them)
@@ -95,8 +100,8 @@ export component ListTable inherits Rectangle {
                     // (as big as the rows, to scroll across them)
                     min-width: rows-layout.min-width;
                     preferred-width: rows-layout.preferred-width;
-                    min-height: rows-layout.min-height;
-                    preferred-height: rows-layout.preferred-height;
+                    min-height: root.fill-empty ? max(rows-layout.min-height, scroll.visible-height) : rows-layout.min-height;
+                    preferred-height: root.fill-empty ? max(rows-layout.preferred-height, scroll.visible-height) : rows-layout.preferred-height;
                     rows-layout := VerticalLayout {
                         alignment: start;
                         for row[r] in root.rows: Rectangle {
@@ -119,7 +124,7 @@ export component ListTable inherits Rectangle {
                     }
                     touch := TouchArea {
                         width: rows-layout.width;
-                        height: root.rows.length * root.row-height;
+                        height: root.fill-empty ? max(root.rows.length * root.row-height, scroll.visible-height) : root.rows.length * root.row-height;
                         y: 0;
                         pointer-event(event) => {
                             let at = floor(self.mouse-y / root.row-height);
@@ -130,6 +135,10 @@ export component ListTable inherits Rectangle {
                             }
                             if (event.kind == PointerEventKind.up) {
                                 root.drag-row = -1;
+                            }
+                            if (event.kind == PointerEventKind.down && event.button == PointerEventButton.middle) {
+                                keys.focus();
+                                root.row-middle(at, event.modifiers.control, event.modifiers.shift);
                             }
                             if (event.kind == PointerEventKind.down && event.button == PointerEventButton.right) {
                                 keys.focus();

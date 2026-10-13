@@ -70,6 +70,12 @@ pub enum Action {
         kind: Decoration,
         value: bool,
     },
+    /// A decorator of a suggestion list's own (`list`: its panel), not saved.
+    ListDecorate {
+        list: u8,
+        kind: Decoration,
+        value: bool,
+    },
     Favourite {
         tag: String,
         service: Option<ServiceKey>,
@@ -155,7 +161,17 @@ pub fn favourite_entries(store: &Store, tag: &str) -> Vec<Entry> {
         Entry::Separator,
     ];
     let tabs: settings::TagAutocompleteTabs = store.read(settings::get).unwrap_or_default();
-    for service in store.snapshot().services.tag_services() {
+    // as the reference's services manager lists them: local tag services,
+    // then repositories, each by lower-cased name
+    let snapshot = store.snapshot();
+    let mut services: Vec<_> = snapshot.services.tag_services().collect();
+    services.sort_by_key(|s| {
+        (
+            !matches!(s.kind, hydrus_store::services::ServiceKind::LocalTags),
+            s.name.to_lowercase(),
+        )
+    });
+    for service in services {
         let remove = tabs
             .most_used
             .get(&service.key.to_hex())
@@ -536,6 +552,13 @@ fn maintenance_entry(tags: Vec<String>) -> Entry {
     )
 }
 
+/// `AppendSeparator`: never first, never twice.
+fn append_separator(entries: &mut Vec<Entry>) {
+    if !entries.is_empty() && !matches!(entries.last(), Some(Entry::Separator)) {
+        entries.push(Entry::Separator);
+    }
+}
+
 fn spam(entries: &mut Vec<Entry>, labels: &[(String, String)]) {
     let count = if labels.len() > 10 { 9 } else { labels.len() };
     entries.extend(
@@ -645,6 +668,9 @@ pub fn relationship_entries(store: &Store, tag: &str) -> hydrus_store::Result<Ve
             tags: vec![tag.to_owned()],
         },
     )];
+    if !all_siblings.is_empty() {
+        append_separator(&mut sibling_entries);
+    }
     for (ideal, group) in ideals {
         if ideal != tag {
             sibling_entries.push(copy(
@@ -660,6 +686,7 @@ pub fn relationship_entries(store: &Store, tag: &str) -> hydrus_store::Result<Ve
     let mut sibling_groups: Vec<_> = groups.into_iter().collect();
     sibling_groups.sort_by_key(|(group, _)| (std::cmp::Reverse(group.len()), names(group)));
     for (group, (mut tags, _)) in sibling_groups {
+        append_separator(&mut sibling_entries);
         if group.len() != services.len() {
             let label = format!("--{}--", names(&group));
             sibling_entries.push(copy(&label, &label));
@@ -692,6 +719,7 @@ pub fn relationship_entries(store: &Store, tag: &str) -> hydrus_store::Result<Ve
     let mut parent_groups: Vec<_> = groups.into_iter().collect();
     parent_groups.sort_by_key(|(group, _)| (std::cmp::Reverse(group.len()), names(group)));
     for (group, (mut parents, mut children)) in parent_groups {
+        append_separator(&mut parent_entries);
         if group.len() != services.len() {
             let label = format!("--{}--", names(&group));
             parent_entries.push(copy(&label, &label));

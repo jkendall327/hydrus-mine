@@ -129,6 +129,9 @@ export component ManageTagsWindow inherits Window {
     in-out property <int> suggested-page;
     callback side-clicked(int,int,bool,bool);
     callback side-activated(int,int);
+    callback side-key(int,string,bool,bool,int) -> bool;
+    callback side-menu(int,int,length,length);
+    callback side-middle(int,int,bool,bool);
 
     forward-focus: input;
     FocusScope {
@@ -275,6 +278,9 @@ export component ManageTagsWindow inherits Window {
                 selected-page(i)=>{root.suggested-page=i;}
                 clicked(p,i,c,s)=>{root.side-clicked(p,i,c,s);}
                 activated(p,i)=>{root.side-activated(p,i);}
+                list-key(p,t,c,s,n)=>{return root.side-key(p,t,c,s,n);}
+                list-menu(p,i,x,y)=>{root.side-menu(p,i,x,y);}
+                list-middle(p,i,c,s)=>{root.side-middle(p,i,c,s);}
                 clear-recent=>{root.clear-recent();}
                 enabled:root.question=="";
               }

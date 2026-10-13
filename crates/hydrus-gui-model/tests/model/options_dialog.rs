@@ -513,7 +513,9 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
         }
         // A noneable spin box that carries its own message has no label
         // row to match: recorded and compared on its own below.
-        if option.label == "number of recent tags to show: " {
+        if option.label == "number of recent tags to show: "
+            || option.label == "number of recent tags to show in quick entry dialogs: "
+        {
             continue;
         }
         let found = rows
