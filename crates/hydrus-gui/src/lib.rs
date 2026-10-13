@@ -2281,14 +2281,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let owner = page();
             let removed = remove_from(owner.clone());
             let store = owner.borrow().store().clone();
-            if let Asked::Delete(files, deletion, location) = &asked
-                && store
-                    .read(
-                        hydrus_store::settings::get::<hydrus_store::settings::DeletionPreferences>,
-                    )
-                    .unwrap_or_default()
-                    .advanced
-            {
+            if let Asked::Delete(files, deletion, location) = &asked {
                 let owner = page();
                 let guard: delete_files_window::Guard = Rc::new({
                     let owner = owner.clone();
@@ -2328,20 +2321,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 }
                 return;
             }
-            if let Asked::Delete(files, deletion, _) = &asked
-                && !media_actions::confirm_deletion(&store, files, deletion)
-            {
-                asked.act(&store, &*removed);
-                shown(false);
-                return;
-            }
             if let Some(window) = weak.upgrade() {
-                let question = match &asked {
-                    Asked::Delete(files, deletion, _) => {
-                        media_actions::deletion_question(&store, files, deletion)
-                    }
-                    _ => asked.question(),
-                };
+                let question = asked.question();
                 window.set_question(question.into());
                 *pending.borrow_mut() = Some((asked, removed));
             }
@@ -7316,14 +7297,6 @@ fn open_viewer(
             if let Some(window) = weak.upgrade() {
                 if let ViewerAsked::Delete(deletion, file) = &asked {
                     let store = model.borrow().store().clone();
-                    if store
-                        .read(
-                            hydrus_store::settings::get::<
-                                hydrus_store::settings::DeletionPreferences,
-                            >,
-                        )
-                        .unwrap_or_default()
-                        .advanced
                     {
                         let guard: delete_files_window::Guard = Rc::new({
                             let weak = weak.clone();
@@ -7375,24 +7348,15 @@ fn open_viewer(
                     }
                 }
                 let question = match &asked {
-                    ViewerAsked::Delete(deletion, file) => {
-                        media_actions::deletion_question(model.borrow().store(), &[*file], deletion)
-                    }
+                    // (deleting opens the delete files dialog above)
+                    ViewerAsked::Delete(..) => String::new(),
                     ViewerAsked::OpenUrls(urls) => {
                         Asked::OpenUrls(urls.clone(), external_launches.clone()).question()
                     }
                     ViewerAsked::Then(question, _) => question.clone(),
                 };
-                let auto_accept = if let ViewerAsked::Delete(deletion, file) = &asked {
-                    !media_actions::confirm_deletion(model.borrow().store(), &[*file], deletion)
-                } else {
-                    false
-                };
                 window.set_question(question.into());
                 *pending.borrow_mut() = Some(asked);
-                if auto_accept {
-                    window.invoke_answer(true);
-                }
             }
         }
     };
