@@ -138,8 +138,9 @@ pub mod predicate_editor_window;
 mod predicate_notice;
 mod preview_audio;
 pub mod preview_window;
+pub mod quick_tag_entry;
 pub mod regex_favourites_window;
-mod related_tags_worker;
+pub mod related_tags_worker;
 pub mod related_weights_window;
 pub mod search_log_import_window;
 mod search_log_window;
@@ -1300,7 +1301,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
-    let shortcuts = shortcut_runtime::main(window, pages.borrow().store().clone());
+    let grid_content: shortcut_runtime::GridContent = Rc::default();
+    let shortcuts =
+        shortcut_runtime::main(window, pages.borrow().store().clone(), grid_content.clone());
     let mut shortcut_events = shortcuts.observer();
     let mut drop_events = drops::file_handler({
         let review_files = review_files.clone();
@@ -2186,6 +2189,31 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    // tag and rating shortcuts apply to the thumbnails selected
+    *grid_content.borrow_mut() = Some(Rc::new({
+        let page = page.clone();
+        let tags_changed = tags_changed.clone();
+        move |command: &hydrus_core::shortcuts::ContentCommand| {
+            let (store, files) = {
+                let page = page();
+                let page = page.borrow();
+                (page.store().clone(), page.selected_files())
+            };
+            if files.is_empty() {
+                return true;
+            }
+            if let hydrus_core::shortcuts::ContentCommand::Interactive { service } = command {
+                quick_tag_entry::ask(store, service.clone(), files, tags_changed.clone());
+            } else {
+                match hydrus_gui_model::shortcut_content::apply(&store, &files, command) {
+                    Ok(true) => tags_changed(),
+                    Ok(false) => {}
+                    Err(e) => eprintln!("could not apply the shortcut: {e}"),
+                }
+            }
+            true
+        }
+    }));
     window.on_manage_tags_selected({
         let page = page.clone();
         let binding_active = binding_active.clone();
@@ -7926,6 +7954,21 @@ fn open_viewer(
                 let model = model.borrow();
                 (model.store().clone(), model.current())
             };
+            if let hydrus_core::shortcuts::ContentCommand::Interactive { service } = command {
+                let (show, last, changed) =
+                    (show.clone(), last_tag_file.clone(), files_changed.clone());
+                quick_tag_entry::ask(
+                    store,
+                    service.clone(),
+                    vec![file],
+                    Rc::new(move || {
+                        last.set(None);
+                        show();
+                        changed();
+                    }),
+                );
+                return true;
+            }
             match hydrus_gui_model::shortcut_content::apply(&store, &[file], command) {
                 Ok(true) => {
                     last_tag_file.set(None);

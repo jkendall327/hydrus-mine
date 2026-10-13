@@ -89,6 +89,7 @@ fn most_used_related_and_recent_panels_follow_the_recording_in_every_layout_and_
                         columns,
                         default_page: page,
                         recent_limit: Some(20),
+                        ..TagSuggestionSettings::default()
                     },
                 )
             })
@@ -131,8 +132,10 @@ fn most_used_related_and_recent_panels_follow_the_recording_in_every_layout_and_
             };
             assert_eq!(case["selected"], shown, "{case}");
         }
+        // (the tags listed: parent rows drawn under a tag are left out)
         let texts = |rows: slint::ModelRc<hydrus_gui::TableRow>| {
             rows.iter()
+                .filter(|r| !r.cells.row_data(0).unwrap().starts_with("    "))
                 .map(|r| {
                     let text = r.cells.row_data(0).unwrap().to_string();
                     text.split(" (").next().unwrap().to_owned()

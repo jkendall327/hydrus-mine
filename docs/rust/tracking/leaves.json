@@ -16283,8 +16283,14 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Reference nested notebook configures each suggestion source independently. Native has the notebook (most used, related, recent) with real consumers: most used, recent (the count, read with decay) and related (show, concurrence, three durations, weights). Left untagged: no test drives the related durations from the Options rows to an observable effect (a duration shows only at its extremes, and the rows allow no less than 50 ms), and no test drives the concurrence and recent-count rows through Options to the panels. File lookup scripts: file-lookup-scripts (out of scope). The recent tab's second count (quick entry dialogs): shortcut-interactive-tag-entry."
-   ]
+    "Reference nested notebook configures each suggestion source independently. Native has the notebook (most used, related, recent) with real consumers for the most used lists, related (show, durations, concurrence, weights) and recent (the count, read with decay; the second count is the quick entry dialog's, shortcut-interactive-tag-entry). File lookup scripts: file-lookup-scripts (out of scope)."
+   ],
+   "recheck": {
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (issue #154 part A)",
+    "note": "Which test covers which part. Durations, concurrence threshold, recent count: crates/hydrus-gui/tests/gui/suggestion_options_consumers.rs sets them through the Options window's rows in four scenarios, Apply each time, then opens Manage Tags on the recording's two files and compares with oracle/fixtures/suggestion_options_consumers.json (the reference's real TagSuggestionsPanel set, then its SuggestedTagsPanel built). It compares the recent panel's tags and whether it shows, and for each of quick, medium and thorough: the tags searched, the time given (the reference's related_tags read, observed natively as the request the window hands its worker, via related_tags_worker::last_request), the concurrence passed, and the tags listed once the worker reports the whole search done; a search a short budget cut short on a loaded machine is checked only as cut short. The store's 85% deadline is covered by related_tags_panel.rs. The controls themselves (boxes, kinds, bounds, defaults) are checked against the reference's source by options_gui_suggestions.rs, which is untagged; the recent counts' bounds, default and none phrase are compared with the options_dialog.json recording in the model test the_recent_tab_s_count_is_the_noneable_the_reference_recorded. Most used lists: tag_suggestions model tests and tag_suggestions.json. Show related: options_gui_suggestions.rs. Weights: related_weight_table.rs."
+   }
   },
   {
    "id": "file-lookup-scripts",
@@ -16309,8 +16315,14 @@
    "reference": null,
    "native": null,
    "notes": [
-    "GetContentApplicationCommandFromInteractiveContentCommand asks for a tag in a quick dialog offering the recent tags (Options: recent tags in quick entry dialogs, 10 by default, none to hide). Native has no interactive content command and no such dialog, so the option has no consumer."
-   ]
+    "GetContentApplicationCommandFromInteractiveContentCommand asks for a tag in a quick 'Enter Text' dialog offering the recent tags (Options: recent tags in quick entry dialogs, 10 by default, 'do not show' for none). Native: ContentCommand::Interactive, the editor's \"interactive 'edit value' manual set command\" (local tag services only; the reference also offers numerical and inc/dec rating services, see DIFFERENCES.md), quick_tag_entry.rs/.slint (one at a time, not modal), the Options row and its legacy import, and dispatch from the media viewer and from the thumbnail grid's media-set shortcuts."
+   ],
+   "recheck": {
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (issue #154 part A)",
+    "note": "crates/hydrus-gui/tests/gui/interactive_tag_entry.rs. (1) the_shortcut_editor_makes_an_interactive_tag_command_as_the_reference: the real editor (Options > shortcuts > media > add) makes the command; its services are compared with the recording's local tag services (filtered by the recorded service type), its text with the recorded ToString, and it reopens as the interactive type; saved to the media set. (2) the_quick_dialog_offers_the_recent_tags_and_sets_the_tag_as_the_recording: all 13 recorded uses (oracle/record_interactive_tag_entry.py: the real quick dialog driven by its own buttons, then ApplyContentApplicationCommandToMedia) replayed in order through 'v' in the real media viewer (one file) or on the thumbnail grid, given the keyboard by a rendered click and ctrl+m (two files). Compared: title, message, suggestion buttons and starting text; button, typed, default and cancel; the blank and whitespace refusals in the reference's words; both files' tags and the recent tags after each use; and that a second press while the dialog asks opens no second one. Not observed: that the starting text is selected, because Slint does not expose a LineEdit's selection. (3) the_options_quick_dialog_count_reaches_the_dialog_as_the_recording: the quick count and recent count set through the Options rows reach the dialog in four scenarios (suggestion_options_consumers.json). The row's bounds, default and none phrase are compared with options_dialog.json in the model test the_recent_tab_s_count_is_the_noneable_the_reference_recorded; the legacy import is in the hydrus-store decode tests."
+   }
   },
   {
    "id": "suggested-tag-list-interactions",
@@ -16322,8 +16334,14 @@
    "reference": null,
    "native": null,
    "notes": [
-    "The reference's suggestion lists are ListBoxTagsStrings: right-click tag menus (copy, favourites, search), Ctrl+A/C and keyboard selection. Native lists have click/select and double-click activation only."
-   ]
+    "The reference's suggestion lists are ListBoxTagsStrings: their own hit selection, keys (arrows wrapping, home/end, page up/down, ctrl+n/p, escape, ctrl+a, ctrl+c and ctrl+shift+c, enter), sibling/parent decorators toggled from the menu, the right-click tag menu (copy, siblings, parents, open, favourites, maintenance) and middle-click search. Native: hydrus-gui-model tag_list_box.rs behind the most used, recent and related lists (tag_suggestions.slint SuggestionList). The related list keeps its ' (score)' suffix (DIFFERENCES.md)."
+   ],
+   "recheck": {
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (issue #154 part A)",
+    "note": "crates/hydrus-gui/tests/gui/suggested_tag_list_interactions.rs replays all 53 recorded steps of oracle/fixtures/suggested_tag_list_interactions.json (the reference's real SuggestedTagsPanel most-used list, driven by real Qt clicks, keys and right-clicks) through the real Manage Tags window. Compared: the selection after every click (plain, ctrl, shift, ctrl+shift, on a selected row, below the rows) and every key (arrows wrapping, home/end, page up/down, ctrl+n/p, ctrl+arrow, shift+arrow, escape, delete); the ctrl+a, ctrl+c and ctrl+shift+c payloads; the rows as drawn with sibling and parent decorators, and after each of the six decorator entries; the full menu tree, separators included, for none, one, two, three and all selected; every copy entry's payload and every open entry's pages (per-tag pages compared unordered, because the reference iterates a set); favourites add/remove with its question, and most-used removal; middle and shift+middle clicks; enter (with its re-hit) and double-click activation. The recent list's and the related list's (filled by its quick search over the recorded corpus) contents and first-row menus are compared too; their keys and clicks are the same code as the most-used list's, tested there. Not covered: drag-selection and scrolling (shared ListTable behaviour)."
+   }
   },
   {
    "id": "audit-options-nested-tag-suggestions-weights",

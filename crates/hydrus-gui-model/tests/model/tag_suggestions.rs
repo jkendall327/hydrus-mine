@@ -223,9 +223,7 @@ fn the_recent_tab_s_count_is_the_noneable_the_reference_recorded() {
         .iter()
         .find(|tab| tab["tab"] == "recent")
         .unwrap();
-    // (the first is the count; the second is for quick entry dialogs, which
-    // hydrus-rs has no equivalent of)
-    let theirs = &recent["items"][1];
+    // (the first is the count; the second the quick entry dialogs')
     let (_dirs, store) = super::options_dialog::fixture_store(&recorded);
     let mut editor = Editor::new(store.read(Settings::load).unwrap());
     let at = editor
@@ -234,30 +232,37 @@ fn the_recent_tab_s_count_is_the_noneable_the_reference_recorded() {
         .position(|name| *name == "tag suggestions")
         .unwrap();
     editor.show_page(at);
-    let ours = editor
-        .rows()
-        .into_iter()
-        .find_map(|row| match row {
-            Row::Opt { option, .. } if option.label == "number of recent tags to show: " => {
-                Some(option.kind.clone())
-            }
-            _ => None,
-        })
-        .unwrap();
-    let Kind::Noneable {
-        none_phrase,
-        default,
-        min,
-        max,
-        ..
-    } = ours
-    else {
-        panic!("{ours:?}");
-    };
-    assert_eq!(theirs["none_phrase"], none_phrase);
-    assert_eq!(theirs["noneable"], default);
-    assert_eq!(
-        (theirs["min"].as_i64(), theirs["max"].as_i64()),
-        (Some(min), Some(max))
-    );
+    for (theirs, label) in [
+        (&recent["items"][1], "number of recent tags to show: "),
+        (
+            &recent["items"][2],
+            "number of recent tags to show in quick entry dialogs: ",
+        ),
+    ] {
+        let ours = editor
+            .rows()
+            .into_iter()
+            .find_map(|row| match row {
+                Row::Opt { option, .. } if option.label == label => Some(option.kind.clone()),
+                _ => None,
+            })
+            .unwrap();
+        let Kind::Noneable {
+            none_phrase,
+            default,
+            min,
+            max,
+            ..
+        } = ours
+        else {
+            panic!("{ours:?}");
+        };
+        assert_eq!(theirs["none_phrase"], none_phrase, "{label}");
+        assert_eq!(theirs["noneable"], default, "{label}");
+        assert_eq!(
+            (theirs["min"].as_i64(), theirs["max"].as_i64()),
+            (Some(min), Some(max)),
+            "{label}"
+        );
+    }
 }

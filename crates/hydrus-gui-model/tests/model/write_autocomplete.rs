@@ -624,7 +624,11 @@ fn tag_menu_copy_decorations_favourites_and_launch_replay_real_qt_actions() {
             Action::Regenerate { .. } => {
                 panic!("the recorded single-tag menu replay has no maintenance dispatch");
             }
-            Action::Domain(..) | Action::Locations(..) | Action::Cog(..) | Action::MigrateTags => {
+            Action::Domain(..)
+            | Action::Locations(..)
+            | Action::Cog(..)
+            | Action::MigrateTags
+            | Action::ListDecorate { .. } => {
                 panic!("unexpected domain action in tag menu replay");
             }
             Action::Relationship { .. } | Action::LaunchMany { .. } => {

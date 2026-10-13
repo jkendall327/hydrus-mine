@@ -2645,8 +2645,11 @@ windows instead of embedding the write input directly in Options.
 The recent panel provides real history, add-only activation, the Clear
 question and read-time decay (what is older than the newest few the option
 keeps is forgotten for good), replayed from the reference. The suggestion lists'
-own context menus and keyboard (the reference's list boxes have right-click tag
-menus and Ctrl+A/C) are not ported: `suggested-tag-list-interactions`. No
+own selection, keys, decorators and right-click menus follow the reference's
+list boxes (`suggested-tag-list-interactions`); the related list keeps its
+" (score)" after each tag, which the reference's does not show. A list's menu
+has no "hide" or admin entries (the reference shows them only on media tag
+lists and to repository janitors). No
 recent/children/related/global
 favourite-list aliases are promoted. Native most-used updates poll persisted
 settings every 200 ms instead of Qt's publication subscription. New local
@@ -2730,7 +2733,7 @@ drop routing still outside the claim. Real Slint Move-event replays also retain
 the press across `pointer-event(Move)` followed by `moved`, and preserve ordinary
 unpressed tooltip hover.
 
-Related-tag weights use native owned drafts and inline namespace/weight question panes rather than Qt modal child frames. The two tables share a native view selector while retaining independent selections and header sorts; Qt displays both lists together. Header order follows Python casefolding with full-row tie-breaking. Native Manage Tags now offers related suggestions for its captured service/files, local/all-known domains and storage/display graphs. Its single coalescing worker computes the full corpus cosine scores, applies the recorded two weight stages and integer truncations, then returns the first 100 base-score candidates. Qt additionally samples large search-tag populations under configurable quick/medium/thorough time budgets; native does not implement those budgets, selected-main-tag search/exclusion mode, alternate tag-context service, repository Manage Tags, or file-lookup scripts. These wider suggested-tab/default-page families remain Partial; importing duration values does not make their controls usable. Default-page fallback excludes unavailable panels and per-service notebook selection is retained within the owner. The recorded binary64 result-weight boundary (100 × 29% truncates to 28) and sibling alias/ideal deduplication are preserved. In display mode, all-known queries intentionally use raw co-occurrences with display totals, matching the reference’s different local/all-known behavior. Numerical floating-point edge behavior beyond the fresh small-corpus ranking fixture remains unverified.
+Related-tag weights use native owned drafts and inline namespace/weight question panes rather than Qt modal child frames. The two tables share a native view selector while retaining independent selections and header sorts; Qt displays both lists together. Header order follows Python casefolding with full-row tie-breaking. Native Manage Tags now offers related suggestions for its captured service/files, local/all-known domains and storage/display graphs. Its single coalescing worker computes the full corpus cosine scores, applies the recorded two weight stages and integer truncations, then returns the first 100 base-score candidates. Qt additionally samples large search-tag populations under its quick/medium/thorough time budgets; native gives each search the button's budget (stopping at 85% of it, as the reference does) but does not sample, and has no alternate tag-context service, repository Manage Tags, or file-lookup scripts. These wider suggested-tab/default-page families remain Partial; importing duration values does not make their controls usable. Default-page fallback excludes unavailable panels and per-service notebook selection is retained within the owner. The recorded binary64 result-weight boundary (100 × 29% truncates to 28) and sibling alias/ideal deduplication are preserved. In display mode, all-known queries intentionally use raw co-occurrences with display totals, matching the reference’s different local/all-known behavior. Numerical floating-point edge behavior beyond the fresh small-corpus ranking fixture remains unverified.
 
 The read autocomplete favourite/children panes now support selected batches and
 favourite editing, with a stable pointer surface and actual SearchPage/OR
@@ -4079,10 +4082,9 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   file lookup scripts switch (file lookup scripts are out of scope, below).
 - The mpv box lacks the audio device fetch button (it needs a running libmpv);
   the QtMediaPlayer box lacks its device choice and fetch button. The tag
-  suggestions page lacks the "recent tags in quick entry dialogs" count, the
-  favourite file lookup script choice and the second recent count (there are
-  no quick dialogs or lookup scripts). The style page isn't offered: Slint has
-  no Qt styles or stylesheets.
+  suggestions page lacks the favourite file lookup script choice (there are
+  no lookup scripts). The style page isn't offered: Slint has no Qt styles or
+  stylesheets.
 - The ratings page's example inc/dec rectangle has no middle-click counter
   entry.
 - The mpv.conf chosen in the mpv box goes over the database's `mpv.conf` on
@@ -4622,12 +4624,23 @@ The `mpv.conf` copy replaces a read-only mpv.conf; recorded as root the referenc
   the time budget differs). Adding a tag does not search again, as the
   reference's does not; the listed suggestions are filtered again.
   `audit-media-tags-missing-suggestions` is tagged on the panels' replay
-  (`suggested_tag_panels.rs`); `audit-options-nested-tag-suggestions-tabs` stays
-  untagged (no test takes the related durations, the concurrence threshold or
-  the recent count from their Options rows to an observable effect). The
-  recent-tags-in-quick-entry-dialogs count has no consumer: the quick dialog
-  belongs to interactive shortcut commands, not ported
-  (`shortcut-interactive-tag-entry`).
+  (`suggested_tag_panels.rs`); `audit-options-nested-tag-suggestions-tabs` on
+  `suggestion_options_consumers.rs`, which sets the durations, the concurrence
+  threshold and the recent count through their Options rows and replays what
+  the reference's buttons then ask for (the time each gives) and list, and
+  what the recent panel shows. A concurrence threshold of 100% crashes the
+  reference's related search (a math domain error); hydrus-rs lists nothing. The
+  recent-tags-in-quick-entry-dialogs count is read by the interactive tag
+  shortcut's quick dialog (`shortcut-interactive-tag-entry`,
+  `interactive_tag_entry.rs`).
+- Interactive shortcut commands take local tag services only: the reference
+  also offers its numerical and inc/dec rating services, asking for a number
+  of stars or a count; hydrus-rs's editor does not list them. The thumbnails
+  run the "media" set's tag and rating shortcuts (interactive or not) on the
+  selected files, but not a custom set's, and none of the media set's simple
+  commands. The quick dialog is a window of its own, not modal: the viewer or
+  page behind it keeps working while it asks, but pressing the shortcut again
+  only brings the open dialog forward.
 - The write-autocomplete leaves (`audit-media-tags-autocomplete`,
   `siblings-autocomplete`, `parents-autocomplete`) are tagged on the tests in
   `write_autocomplete_leaves.rs` (rows, entry, context menu, paste and manual

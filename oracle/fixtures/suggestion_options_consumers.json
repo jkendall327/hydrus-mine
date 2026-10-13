@@ -1,0 +1,592 @@
+{
+ "service": "my tags",
+ "files": [
+  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+  "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+  "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+  "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b"
+ ],
+ "selected": [
+  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+ ],
+ "corpus": [
+  [
+   "source:seed",
+   [
+    0,
+    1,
+    2,
+    3
+   ]
+  ],
+  [
+   "context:seed",
+   [
+    2,
+    3
+   ]
+  ],
+  [
+   "alpha:first",
+   [
+    0,
+    1,
+    2
+   ]
+  ],
+  [
+   "beta:second",
+   [
+    3,
+    4,
+    5
+   ]
+  ],
+  [
+   "alpha:third",
+   [
+    2,
+    3,
+    4
+   ]
+  ],
+  [
+   "gamma:other",
+   [
+    0,
+    1,
+    4,
+    5
+   ]
+  ],
+  [
+   "rare:one",
+   [
+    0,
+    5
+   ]
+  ],
+  [
+   "wide:spread",
+   [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ]
+  ]
+ ],
+ "pushed": [
+  "recent:00",
+  "recent:01",
+  "recent:02",
+  "recent:03",
+  "recent:04",
+  "recent:05",
+  "recent:06",
+  "recent:07",
+  "recent:08",
+  "recent:09",
+  "recent:10",
+  "recent:11"
+ ],
+ "scenarios": [
+  {
+   "name": "defaults",
+   "set": {
+    "name": "defaults",
+    "durations": [
+     250,
+     2000,
+     6000
+    ],
+    "concurrence": 6,
+    "recent": 20,
+    "quick": 10
+   },
+   "stored": {
+    "durations": [
+     250,
+     2000,
+     6000
+    ],
+    "concurrence": 6,
+    "recent": 20,
+    "quick": 10
+   },
+   "recent_shown": true,
+   "recent": [
+    "recent:11",
+    "recent:10",
+    "recent:09",
+    "recent:08",
+    "recent:07",
+    "recent:06",
+    "recent:05",
+    "recent:04",
+    "recent:03",
+    "recent:02",
+    "recent:01",
+    "recent:00"
+   ],
+   "related": {
+    "quick": {
+     "read": {
+      "search_tags": [
+       "alpha:first",
+       "gamma:other",
+       "rare:one",
+       "safe",
+       "samus",
+       "source:seed",
+       "wide:spread"
+      ],
+      "max_time_to_take": 0.25
+     },
+     "listed": [
+      "beta:second",
+      "alpha:third",
+      "context:seed",
+      "smile",
+      "éclair",
+      "blue eyes",
+      "creator:someone else",
+      "character:link",
+      "page:10",
+      "volume:3",
+      "キャラクター:初音ミク",
+      "series:the legend of zelda",
+      "indoors",
+      "creator:anonymous artist",
+      "format:jpeg",
+      "meta:low resolution",
+      "outdoors",
+      "page:3",
+      "red hair",
+      "page:1"
+     ]
+    },
+    "medium": {
+     "read": {
+      "search_tags": [
+       "alpha:first",
+       "gamma:other",
+       "rare:one",
+       "safe",
+       "samus",
+       "source:seed",
+       "wide:spread"
+      ],
+      "max_time_to_take": 2.0
+     },
+     "listed": [
+      "beta:second",
+      "alpha:third",
+      "context:seed",
+      "smile",
+      "éclair",
+      "blue eyes",
+      "creator:someone else",
+      "character:link",
+      "page:10",
+      "volume:3",
+      "キャラクター:初音ミク",
+      "series:the legend of zelda",
+      "indoors",
+      "creator:anonymous artist",
+      "format:jpeg",
+      "meta:low resolution",
+      "outdoors",
+      "page:3",
+      "red hair",
+      "page:1"
+     ]
+    },
+    "thorough": {
+     "read": {
+      "search_tags": [
+       "alpha:first",
+       "gamma:other",
+       "rare:one",
+       "safe",
+       "samus",
+       "source:seed",
+       "wide:spread"
+      ],
+      "max_time_to_take": 6.0
+     },
+     "listed": [
+      "beta:second",
+      "alpha:third",
+      "context:seed",
+      "smile",
+      "éclair",
+      "blue eyes",
+      "creator:someone else",
+      "character:link",
+      "page:10",
+      "volume:3",
+      "キャラクター:初音ミク",
+      "series:the legend of zelda",
+      "indoors",
+      "creator:anonymous artist",
+      "format:jpeg",
+      "meta:low resolution",
+      "outdoors",
+      "page:3",
+      "red hair",
+      "page:1"
+     ]
+    }
+   },
+   "quick_dialog": {
+    "suggestions": [
+     "recent:11",
+     "recent:10",
+     "recent:09",
+     "recent:08",
+     "recent:07",
+     "recent:06",
+     "recent:05",
+     "recent:04",
+     "recent:03",
+     "recent:02"
+    ],
+    "text": "recent:11"
+   }
+  },
+  {
+   "name": "edited",
+   "set": {
+    "name": "edited",
+    "durations": [
+     50,
+     700,
+     60000
+    ],
+    "concurrence": 40,
+    "recent": 3,
+    "quick": 2
+   },
+   "stored": {
+    "durations": [
+     50,
+     700,
+     60000
+    ],
+    "concurrence": 40,
+    "recent": 3,
+    "quick": 2
+   },
+   "recent_shown": true,
+   "recent": [
+    "recent:11",
+    "recent:10",
+    "recent:09"
+   ],
+   "related": {
+    "quick": {
+     "read": {
+      "search_tags": [
+       "alpha:first",
+       "gamma:other",
+       "rare:one",
+       "safe",
+       "samus",
+       "source:seed",
+       "wide:spread"
+      ],
+      "max_time_to_take": 0.05
+     },
+     "listed": [
+      "beta:second",
+      "alpha:third",
+      "context:seed",
+      "blue eyes",
+      "format:jpeg",
+      "outdoors"
+     ]
+    },
+    "medium": {
+     "read": {
+      "search_tags": [
+       "alpha:first",
+       "gamma:other",
+       "rare:one",
+       "safe",
+       "samus",
+       "source:seed",
+       "wide:spread"
+      ],
+      "max_time_to_take": 0.7
+     },
+     "listed": [
+      "beta:second",
+      "alpha:third",
+      "context:seed",
+      "blue eyes",
+      "format:jpeg",
+      "outdoors"
+     ]
+    },
+    "thorough": {
+     "read": {
+      "search_tags": [
+       "alpha:first",
+       "gamma:other",
+       "rare:one",
+       "safe",
+       "samus",
+       "source:seed",
+       "wide:spread"
+      ],
+      "max_time_to_take": 60.0
+     },
+     "listed": [
+      "beta:second",
+      "alpha:third",
+      "context:seed",
+      "blue eyes",
+      "format:jpeg",
+      "outdoors"
+     ]
+    }
+   },
+   "quick_dialog": {
+    "suggestions": [
+     "recent:11",
+     "recent:10"
+    ],
+    "text": "recent:11"
+   }
+  },
+  {
+   "name": "recent off",
+   "set": {
+    "name": "recent off",
+    "durations": [
+     50,
+     50,
+     50
+    ],
+    "concurrence": 99,
+    "recent": null,
+    "quick": null
+   },
+   "stored": {
+    "durations": [
+     50,
+     50,
+     50
+    ],
+    "concurrence": 99,
+    "recent": null,
+    "quick": null
+   },
+   "recent_shown": false,
+   "recent": null,
+   "related": {
+    "quick": {
+     "read": {
+      "search_tags": [
+       "alpha:first",
+       "gamma:other",
+       "rare:one",
+       "safe",
+       "samus",
+       "source:seed",
+       "wide:spread"
+      ],
+      "max_time_to_take": 0.05
+     },
+     "listed": []
+    },
+    "medium": {
+     "read": {
+      "search_tags": [
+       "alpha:first",
+       "gamma:other",
+       "rare:one",
+       "safe",
+       "samus",
+       "source:seed",
+       "wide:spread"
+      ],
+      "max_time_to_take": 0.05
+     },
+     "listed": []
+    },
+    "thorough": {
+     "read": {
+      "search_tags": [
+       "alpha:first",
+       "gamma:other",
+       "rare:one",
+       "safe",
+       "samus",
+       "source:seed",
+       "wide:spread"
+      ],
+      "max_time_to_take": 0.05
+     },
+     "listed": []
+    }
+   },
+   "quick_dialog": {
+    "suggestions": [],
+    "text": ""
+   }
+  },
+  {
+   "name": "low threshold",
+   "set": {
+    "name": "low threshold",
+    "durations": [
+     300,
+     3000,
+     9000
+    ],
+    "concurrence": 1,
+    "recent": 5,
+    "quick": 1
+   },
+   "stored": {
+    "durations": [
+     300,
+     3000,
+     9000
+    ],
+    "concurrence": 1,
+    "recent": 5,
+    "quick": 1
+   },
+   "recent_shown": true,
+   "recent": [
+    "recent:11",
+    "recent:10",
+    "recent:09"
+   ],
+   "related": {
+    "quick": {
+     "read": {
+      "search_tags": [
+       "alpha:first",
+       "gamma:other",
+       "rare:one",
+       "safe",
+       "samus",
+       "source:seed",
+       "wide:spread"
+      ],
+      "max_time_to_take": 0.3
+     },
+     "listed": [
+      "beta:second",
+      "alpha:third",
+      "context:seed",
+      "smile",
+      "éclair",
+      "blue eyes",
+      "creator:someone else",
+      "character:link",
+      "page:10",
+      "volume:3",
+      "キャラクター:初音ミク",
+      "series:the legend of zelda",
+      "indoors",
+      "creator:anonymous artist",
+      "format:jpeg",
+      "meta:low resolution",
+      "outdoors",
+      "page:3",
+      "red hair",
+      "page:1"
+     ]
+    },
+    "medium": {
+     "read": {
+      "search_tags": [
+       "alpha:first",
+       "gamma:other",
+       "rare:one",
+       "safe",
+       "samus",
+       "source:seed",
+       "wide:spread"
+      ],
+      "max_time_to_take": 3.0
+     },
+     "listed": [
+      "beta:second",
+      "alpha:third",
+      "context:seed",
+      "smile",
+      "éclair",
+      "blue eyes",
+      "creator:someone else",
+      "character:link",
+      "page:10",
+      "volume:3",
+      "キャラクター:初音ミク",
+      "series:the legend of zelda",
+      "indoors",
+      "creator:anonymous artist",
+      "format:jpeg",
+      "meta:low resolution",
+      "outdoors",
+      "page:3",
+      "red hair",
+      "page:1"
+     ]
+    },
+    "thorough": {
+     "read": {
+      "search_tags": [
+       "alpha:first",
+       "gamma:other",
+       "rare:one",
+       "safe",
+       "samus",
+       "source:seed",
+       "wide:spread"
+      ],
+      "max_time_to_take": 9.0
+     },
+     "listed": [
+      "beta:second",
+      "alpha:third",
+      "context:seed",
+      "smile",
+      "éclair",
+      "blue eyes",
+      "creator:someone else",
+      "character:link",
+      "page:10",
+      "volume:3",
+      "キャラクター:初音ミク",
+      "series:the legend of zelda",
+      "indoors",
+      "creator:anonymous artist",
+      "format:jpeg",
+      "meta:low resolution",
+      "outdoors",
+      "page:3",
+      "red hair",
+      "page:1"
+     ]
+    }
+   },
+   "quick_dialog": {
+    "suggestions": [
+     "recent:11"
+    ],
+    "text": "recent:11"
+   }
+  }
+ ]
+}

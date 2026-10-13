@@ -116,6 +116,7 @@ pub mod system_tray;
 pub mod tab_context;
 pub mod tab_drag;
 pub mod tag_filter_editor;
+pub mod tag_list_box;
 pub mod tag_suggestions;
 pub mod tag_sync_review;
 pub mod thumbnail_cache;

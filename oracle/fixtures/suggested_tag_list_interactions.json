@@ -1,0 +1,2947 @@
+{
+ "service": "my tags",
+ "most_used": [
+  "alpha:first",
+  "series:spaced name",
+  "plain tag",
+  "old:sibling",
+  "parity:漢字",
+  "zeta:last"
+ ],
+ "files": [
+  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+ ],
+ "parents": [
+  [
+   "alpha:first",
+   "group:alpha"
+  ]
+ ],
+ "siblings": [
+  [
+   "old:sibling",
+   "new:sibling"
+  ]
+ ],
+ "mapped": [
+  [
+   "plain tag",
+   [
+    0
+   ]
+  ]
+ ],
+ "recent_pushed": [
+  "recent:one",
+  "recent:two"
+ ],
+ "six": [
+  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+  "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+  "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+  "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b"
+ ],
+ "corpus": [
+  [
+   "source:seed",
+   [
+    0,
+    1,
+    2,
+    3
+   ]
+  ],
+  [
+   "context:seed",
+   [
+    2,
+    3
+   ]
+  ],
+  [
+   "beta:second",
+   [
+    3,
+    4,
+    5
+   ]
+  ],
+  [
+   "gamma:other",
+   [
+    0,
+    1,
+    4,
+    5
+   ]
+  ]
+ ],
+ "weights": [
+  [
+   [
+    "",
+    100
+   ],
+   [
+    ":",
+    100
+   ]
+  ],
+  [
+   [
+    "",
+    100
+   ],
+   [
+    ":",
+    100
+   ]
+  ]
+ ],
+ "quick_ms": 2000,
+ "options": {
+  "show_parent_decorators": true,
+  "show_sibling_decorators": true,
+  "expand_parents": true
+ },
+ "tags": [
+  "series:spaced name",
+  "plain tag",
+  "alpha:first",
+  "old:sibling",
+  "parity:漢字",
+  "zeta:last"
+ ],
+ "drawn": [
+  [
+   "series:spaced name"
+  ],
+  [
+   "plain tag"
+  ],
+  [
+   "alpha:first",
+   "    group:alpha"
+  ],
+  [
+   "old:sibling → new:sibling"
+  ],
+  [
+   "parity:漢字"
+  ],
+  [
+   "zeta:last"
+  ]
+ ],
+ "steps": [
+  {
+   "step": "initial",
+   "selected": []
+  },
+  {
+   "step": "click alpha:first",
+   "selected": [
+    "alpha:first"
+   ]
+  },
+  {
+   "step": "down",
+   "selected": [
+    "old:sibling"
+   ]
+  },
+  {
+   "step": "shift down",
+   "selected": [
+    "old:sibling",
+    "parity:漢字"
+   ]
+  },
+  {
+   "step": "ctrl click plain tag adds it",
+   "selected": [
+    "plain tag",
+    "old:sibling",
+    "parity:漢字"
+   ]
+  },
+  {
+   "step": "ctrl click parity takes it away",
+   "selected": [
+    "plain tag",
+    "old:sibling"
+   ]
+  },
+  {
+   "step": "plain click on a selected row keeps the selection",
+   "selected": [
+    "plain tag",
+    "old:sibling"
+   ]
+  },
+  {
+   "step": "ctrl c",
+   "selected": [
+    "plain tag",
+    "old:sibling"
+   ],
+   "copied": "plain tag\nold:sibling"
+  },
+  {
+   "step": "menu on a selected row (two selected)",
+   "selected": [
+    "plain tag",
+    "old:sibling"
+   ],
+   "menu": {
+    "tree": [
+     {
+      "label": "collapse parent rows",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "hide parent decorators",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "hide sibling decorators",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "copy",
+      "separator": false,
+      "children": [
+       {
+        "label": "2 selected",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "2 selected subtags",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "2 selected subtags with underscores",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "all tags",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "all subtags",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "siblings",
+      "separator": false,
+      "children": [
+       {
+        "label": "add siblings to selection",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "parents",
+      "separator": false,
+      "children": [
+       {
+        "label": "add parents to selection",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "open",
+      "separator": false,
+      "children": [
+       {
+        "label": "open a new search page for 2 selected",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "open a new OR search page for 2 selected",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "open new search pages for each in selection",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "open a new duplicate filter page for 2 selected",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "maintenance",
+      "separator": false,
+      "children": [
+       {
+        "label": "regenerate tag display",
+        "separator": false,
+        "children": null
+       }
+      ]
+     }
+    ],
+    "copies": [
+     {
+      "label": "2 selected",
+      "payload": "plain tag\nold:sibling"
+     },
+     {
+      "label": "2 selected subtags",
+      "payload": "plain tag\nsibling"
+     },
+     {
+      "label": "2 selected subtags with underscores",
+      "payload": "plain_tag\nsibling"
+     },
+     {
+      "label": "all tags",
+      "payload": "series:spaced name\nplain tag\nalpha:first\nold:sibling\nparity:漢字\nzeta:last"
+     },
+     {
+      "label": "all subtags",
+      "payload": "spaced name\nplain tag\nfirst\nsibling\n漢字\nlast"
+     }
+    ],
+    "launches": [
+     {
+      "label": "open a new search page for 2 selected",
+      "launched": [
+       {
+        "topic": "new_page_query",
+        "predicates": [
+         "old:sibling",
+         "plain tag"
+        ],
+        "page_name": "old:sibling, plain tag",
+        "activate_window": false
+       }
+      ]
+     },
+     {
+      "label": "open a new OR search page for 2 selected",
+      "launched": [
+       {
+        "topic": "new_page_query",
+        "predicates": [
+         "old:sibling OR plain tag"
+        ],
+        "page_name": "old:sibling OR plain tag",
+        "activate_window": false
+       }
+      ]
+     },
+     {
+      "label": "open new search pages for each in selection",
+      "launched": [
+       {
+        "topic": "new_page_query",
+        "predicates": [
+         "old:sibling"
+        ],
+        "page_name": "old:sibling",
+        "activate_window": false
+       },
+       {
+        "topic": "new_page_query",
+        "predicates": [
+         "plain tag"
+        ],
+        "page_name": "plain tag",
+        "activate_window": false
+       }
+      ]
+     },
+     {
+      "label": "open a new duplicate filter page for 2 selected",
+      "launched": [
+       {
+        "topic": "new_page_duplicates",
+        "predicates": [
+         "old:sibling",
+         "plain tag"
+        ],
+        "page_name": "duplicates: old:sibling, plain tag",
+        "activate_window": false
+       }
+      ]
+     }
+    ],
+    "favourites": []
+   }
+  },
+  {
+   "step": "ctrl click alpha:first adds it",
+   "selected": [
+    "plain tag",
+    "alpha:first",
+    "old:sibling"
+   ]
+  },
+  {
+   "step": "ctrl shift c includes parents",
+   "selected": [
+    "plain tag",
+    "alpha:first",
+    "old:sibling"
+   ],
+   "copied": "plain tag\nalpha:first\ngroup:alpha\nold:sibling"
+  },
+  {
+   "step": "menu (three selected, one with a parent)",
+   "selected": [
+    "plain tag",
+    "alpha:first",
+    "old:sibling"
+   ],
+   "menu": {
+    "tree": [
+     {
+      "label": "collapse parent rows",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "hide parent decorators",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "hide sibling decorators",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "copy",
+      "separator": false,
+      "children": [
+       {
+        "label": "3 selected",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "3 selected subtags",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "3 selected subtags with underscores",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "3 selected and 1 parents",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "all tags",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "all subtags",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "siblings",
+      "separator": false,
+      "children": [
+       {
+        "label": "add siblings to selection",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "parents",
+      "separator": false,
+      "children": [
+       {
+        "label": "add parents to selection",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "open",
+      "separator": false,
+      "children": [
+       {
+        "label": "open a new search page for 3 selected and 1 parents",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "open a new OR search page for 3 selected and 1 parents",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "open new search pages for each in selection",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "open a new duplicate filter page for 3 selected and 1 parents",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "maintenance",
+      "separator": false,
+      "children": [
+       {
+        "label": "regenerate tag display",
+        "separator": false,
+        "children": null
+       }
+      ]
+     }
+    ],
+    "copies": [
+     {
+      "label": "3 selected",
+      "payload": "plain tag\nalpha:first\nold:sibling"
+     },
+     {
+      "label": "3 selected subtags",
+      "payload": "plain tag\nfirst\nsibling"
+     },
+     {
+      "label": "3 selected subtags with underscores",
+      "payload": "plain_tag\nfirst\nsibling"
+     },
+     {
+      "label": "3 selected and 1 parents",
+      "payload": "plain tag\nalpha:first\ngroup:alpha\nold:sibling"
+     },
+     {
+      "label": "all tags",
+      "payload": "series:spaced name\nplain tag\nalpha:first\nold:sibling\nparity:漢字\nzeta:last"
+     },
+     {
+      "label": "all subtags",
+      "payload": "spaced name\nplain tag\nfirst\nsibling\n漢字\nlast"
+     }
+    ],
+    "launches": [
+     {
+      "label": "open a new search page for 3 selected and 1 parents",
+      "launched": [
+       {
+        "topic": "new_page_query",
+        "predicates": [
+         "old:sibling",
+         "alpha:first",
+         "plain tag"
+        ],
+        "page_name": "alpha:first, old:sibling, plain tag",
+        "activate_window": false
+       }
+      ]
+     },
+     {
+      "label": "open a new OR search page for 3 selected and 1 parents",
+      "launched": [
+       {
+        "topic": "new_page_query",
+        "predicates": [
+         "alpha:first OR old:sibling OR plain tag"
+        ],
+        "page_name": "alpha:first OR old:sibling OR plain tag",
+        "activate_window": false
+       }
+      ]
+     },
+     {
+      "label": "open new search pages for each in selection",
+      "launched": [
+       {
+        "topic": "new_page_query",
+        "predicates": [
+         "old:sibling"
+        ],
+        "page_name": "old:sibling",
+        "activate_window": false
+       },
+       {
+        "topic": "new_page_query",
+        "predicates": [
+         "alpha:first"
+        ],
+        "page_name": "alpha:first",
+        "activate_window": false
+       },
+       {
+        "topic": "new_page_query",
+        "predicates": [
+         "plain tag"
+        ],
+        "page_name": "plain tag",
+        "activate_window": false
+       }
+      ]
+     },
+     {
+      "label": "open a new duplicate filter page for 3 selected and 1 parents",
+      "launched": [
+       {
+        "topic": "new_page_duplicates",
+        "predicates": [
+         "old:sibling",
+         "alpha:first",
+         "plain tag"
+        ],
+        "page_name": "duplicates: alpha:first, old:sibling, plain tag",
+        "activate_window": false
+       }
+      ]
+     }
+    ],
+    "favourites": []
+   }
+  },
+  {
+   "step": "plain click on an unselected row selects only it",
+   "selected": [
+    "series:spaced name"
+   ]
+  },
+  {
+   "step": "menu (one selected, with namespace and spaces)",
+   "selected": [
+    "series:spaced name"
+   ],
+   "menu": {
+    "tree": [
+     {
+      "label": "collapse parent rows",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "hide parent decorators",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "hide sibling decorators",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "copy",
+      "separator": false,
+      "children": [
+       {
+        "label": "series:spaced name",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "spaced name",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "spaced_name",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "all tags",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "all subtags",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "no siblings",
+      "separator": false,
+      "children": [
+       {
+        "label": "add siblings to series:spaced name",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "no parents",
+      "separator": false,
+      "children": [
+       {
+        "label": "add parents to series:spaced name",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "open",
+      "separator": false,
+      "children": [
+       {
+        "label": "open a new search page for series:spaced name",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "open a new duplicate filter page for series:spaced name",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "favourites",
+      "separator": false,
+      "children": [
+       {
+        "label": "add \"series:spaced name\" to favourites",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "add \"series:spaced name\" to most used for \"downloader tags\"",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "remove \"series:spaced name\" from most used for \"my tags\"",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "add \"series:spaced name\" to most used for \"second tags\"",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "maintenance",
+      "separator": false,
+      "children": [
+       {
+        "label": "regenerate tag display",
+        "separator": false,
+        "children": null
+       }
+      ]
+     }
+    ],
+    "copies": [
+     {
+      "label": "series:spaced name",
+      "payload": "series:spaced name"
+     },
+     {
+      "label": "spaced name",
+      "payload": "spaced name"
+     },
+     {
+      "label": "spaced_name",
+      "payload": "spaced_name"
+     },
+     {
+      "label": "all tags",
+      "payload": "series:spaced name\nplain tag\nalpha:first\nold:sibling\nparity:漢字\nzeta:last"
+     },
+     {
+      "label": "all subtags",
+      "payload": "spaced name\nplain tag\nfirst\nsibling\n漢字\nlast"
+     }
+    ],
+    "launches": [
+     {
+      "label": "open a new search page for series:spaced name",
+      "launched": [
+       {
+        "topic": "new_page_query",
+        "predicates": [
+         "series:spaced name"
+        ],
+        "page_name": "series:spaced name",
+        "activate_window": false
+       }
+      ]
+     },
+     {
+      "label": "open a new duplicate filter page for series:spaced name",
+      "launched": [
+       {
+        "topic": "new_page_duplicates",
+        "predicates": [
+         "series:spaced name"
+        ],
+        "page_name": "duplicates: series:spaced name",
+        "activate_window": false
+       }
+      ]
+     }
+    ],
+    "favourites": []
+   }
+  },
+  {
+   "step": "escape",
+   "selected": []
+  },
+  {
+   "step": "ctrl c with none selected",
+   "selected": [],
+   "copied": "series:spaced name\nplain tag\nalpha:first\nold:sibling\nparity:漢字\nzeta:last"
+  },
+  {
+   "step": "ctrl a",
+   "selected": [
+    "series:spaced name",
+    "plain tag",
+    "alpha:first",
+    "old:sibling",
+    "parity:漢字",
+    "zeta:last"
+   ]
+  },
+  {
+   "step": "menu with all selected",
+   "selected": [
+    "series:spaced name",
+    "plain tag",
+    "alpha:first",
+    "old:sibling",
+    "parity:漢字",
+    "zeta:last"
+   ],
+   "menu": {
+    "tree": [
+     {
+      "label": "collapse parent rows",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "hide parent decorators",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "hide sibling decorators",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "copy",
+      "separator": false,
+      "children": [
+       {
+        "label": "6 selected",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "6 selected subtags",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "6 selected subtags with underscores",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "6 selected and 1 parents",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "siblings",
+      "separator": false,
+      "children": [
+       {
+        "label": "add siblings to selection",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "parents",
+      "separator": false,
+      "children": [
+       {
+        "label": "add parents to selection",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "open",
+      "separator": false,
+      "children": [
+       {
+        "label": "open a new search page for 6 selected and 1 parents",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "open a new OR search page for 6 selected and 1 parents",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "open new search pages for each in selection",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "open a new duplicate filter page for 6 selected and 1 parents",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "maintenance",
+      "separator": false,
+      "children": [
+       {
+        "label": "regenerate tag display",
+        "separator": false,
+        "children": null
+       }
+      ]
+     }
+    ],
+    "copies": [
+     {
+      "label": "6 selected",
+      "payload": "series:spaced name\nplain tag\nalpha:first\nold:sibling\nparity:漢字\nzeta:last"
+     },
+     {
+      "label": "6 selected subtags",
+      "payload": "spaced name\nplain tag\nfirst\nsibling\n漢字\nlast"
+     },
+     {
+      "label": "6 selected subtags with underscores",
+      "payload": "spaced_name\nplain_tag\nfirst\nsibling\n漢字\nlast"
+     },
+     {
+      "label": "6 selected and 1 parents",
+      "payload": "series:spaced name\nplain tag\nalpha:first\ngroup:alpha\nold:sibling\nparity:漢字\nzeta:last"
+     }
+    ],
+    "launches": [
+     {
+      "label": "open a new search page for 6 selected and 1 parents",
+      "launched": [
+       {
+        "topic": "new_page_query",
+        "predicates": [
+         "zeta:last",
+         "parity:漢字",
+         "plain tag",
+         "old:sibling",
+         "series:spaced name",
+         "alpha:first"
+        ],
+        "page_name": "alpha:first, old:sibling, parity:漢字, plain tag, series:spaced name, zeta:last",
+        "activate_window": false
+       }
+      ]
+     },
+     {
+      "label": "open a new OR search page for 6 selected and 1 parents",
+      "launched": [
+       {
+        "topic": "new_page_query",
+        "predicates": [
+         "alpha:first OR old:sibling OR parity:漢字 OR plain tag OR series:spaced name OR zeta:last"
+        ],
+        "page_name": "alpha:first OR old:sibling OR parity:漢字 OR plain tag OR series:spaced name OR zeta:last",
+        "activate_window": false
+       }
+      ]
+     },
+     {
+      "label": "open new search pages for each in selection",
+      "launched": [
+       {
+        "topic": "new_page_query",
+        "predicates": [
+         "zeta:last"
+        ],
+        "page_name": "zeta:last",
+        "activate_window": false
+       },
+       {
+        "topic": "new_page_query",
+        "predicates": [
+         "parity:漢字"
+        ],
+        "page_name": "parity:漢字",
+        "activate_window": false
+       },
+       {
+        "topic": "new_page_query",
+        "predicates": [
+         "plain tag"
+        ],
+        "page_name": "plain tag",
+        "activate_window": false
+       },
+       {
+        "topic": "new_page_query",
+        "predicates": [
+         "old:sibling"
+        ],
+        "page_name": "old:sibling",
+        "activate_window": false
+       },
+       {
+        "topic": "new_page_query",
+        "predicates": [
+         "series:spaced name"
+        ],
+        "page_name": "series:spaced name",
+        "activate_window": false
+       },
+       {
+        "topic": "new_page_query",
+        "predicates": [
+         "alpha:first"
+        ],
+        "page_name": "alpha:first",
+        "activate_window": false
+       }
+      ]
+     },
+     {
+      "label": "open a new duplicate filter page for 6 selected and 1 parents",
+      "launched": [
+       {
+        "topic": "new_page_duplicates",
+        "predicates": [
+         "zeta:last",
+         "parity:漢字",
+         "plain tag",
+         "old:sibling",
+         "series:spaced name",
+         "alpha:first"
+        ],
+        "page_name": "duplicates: alpha:first, old:sibling, parity:漢字, plain tag, series:spaced name, zeta:last",
+        "activate_window": false
+       }
+      ]
+     }
+    ],
+    "favourites": []
+   }
+  },
+  {
+   "step": "escape again",
+   "selected": []
+  },
+  {
+   "step": "menu on alpha:first (unselected, so it is selected first)",
+   "selected": [
+    "alpha:first"
+   ],
+   "menu": {
+    "tree": [
+     {
+      "label": "collapse parent rows",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "hide parent decorators",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "hide sibling decorators",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "copy",
+      "separator": false,
+      "children": [
+       {
+        "label": "alpha:first",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "first",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "alpha:first and 1 parents",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "all tags",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "all subtags",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "no siblings",
+      "separator": false,
+      "children": [
+       {
+        "label": "add siblings to alpha:first",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "1 parents, 0 children",
+      "separator": false,
+      "children": [
+       {
+        "label": "add parents to alpha:first",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "--downloader tags, my tags--",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "parent: group:alpha",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "open",
+      "separator": false,
+      "children": [
+       {
+        "label": "open a new search page for alpha:first and 1 parents",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "open a new duplicate filter page for alpha:first and 1 parents",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "favourites",
+      "separator": false,
+      "children": [
+       {
+        "label": "add \"alpha:first\" to favourites",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "add \"alpha:first\" to most used for \"downloader tags\"",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "remove \"alpha:first\" from most used for \"my tags\"",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "add \"alpha:first\" to most used for \"second tags\"",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "maintenance",
+      "separator": false,
+      "children": [
+       {
+        "label": "regenerate tag display",
+        "separator": false,
+        "children": null
+       }
+      ]
+     }
+    ],
+    "copies": [
+     {
+      "label": "alpha:first",
+      "payload": "alpha:first"
+     },
+     {
+      "label": "first",
+      "payload": "first"
+     },
+     {
+      "label": "alpha:first and 1 parents",
+      "payload": "alpha:first\ngroup:alpha"
+     },
+     {
+      "label": "all tags",
+      "payload": "series:spaced name\nplain tag\nalpha:first\nold:sibling\nparity:漢字\nzeta:last"
+     },
+     {
+      "label": "all subtags",
+      "payload": "spaced name\nplain tag\nfirst\nsibling\n漢字\nlast"
+     }
+    ],
+    "launches": [
+     {
+      "label": "open a new search page for alpha:first and 1 parents",
+      "launched": [
+       {
+        "topic": "new_page_query",
+        "predicates": [
+         "alpha:first"
+        ],
+        "page_name": "alpha:first",
+        "activate_window": false
+       }
+      ]
+     },
+     {
+      "label": "open a new duplicate filter page for alpha:first and 1 parents",
+      "launched": [
+       {
+        "topic": "new_page_duplicates",
+        "predicates": [
+         "alpha:first"
+        ],
+        "page_name": "duplicates: alpha:first",
+        "activate_window": false
+       }
+      ]
+     }
+    ],
+    "favourites": []
+   }
+  },
+  {
+   "step": "menu on old:sibling",
+   "selected": [
+    "old:sibling"
+   ],
+   "menu": {
+    "tree": [
+     {
+      "label": "collapse parent rows",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "hide parent decorators",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "hide sibling decorators",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "copy",
+      "separator": false,
+      "children": [
+       {
+        "label": "old:sibling",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "sibling",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "all tags",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "all subtags",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "1 siblings",
+      "separator": false,
+      "children": [
+       {
+        "label": "add siblings to old:sibling",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "ideal is \"new:sibling\" on: downloader tags, my tags",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "no parents",
+      "separator": false,
+      "children": [
+       {
+        "label": "add parents to old:sibling",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "open",
+      "separator": false,
+      "children": [
+       {
+        "label": "open a new search page for old:sibling",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "open a new duplicate filter page for old:sibling",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "favourites",
+      "separator": false,
+      "children": [
+       {
+        "label": "add \"old:sibling\" to favourites",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "add \"old:sibling\" to most used for \"downloader tags\"",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "remove \"old:sibling\" from most used for \"my tags\"",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "add \"old:sibling\" to most used for \"second tags\"",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "maintenance",
+      "separator": false,
+      "children": [
+       {
+        "label": "regenerate tag display",
+        "separator": false,
+        "children": null
+       }
+      ]
+     }
+    ],
+    "copies": [
+     {
+      "label": "old:sibling",
+      "payload": "old:sibling"
+     },
+     {
+      "label": "sibling",
+      "payload": "sibling"
+     },
+     {
+      "label": "all tags",
+      "payload": "series:spaced name\nplain tag\nalpha:first\nold:sibling\nparity:漢字\nzeta:last"
+     },
+     {
+      "label": "all subtags",
+      "payload": "spaced name\nplain tag\nfirst\nsibling\n漢字\nlast"
+     }
+    ],
+    "launches": [
+     {
+      "label": "open a new search page for old:sibling",
+      "launched": [
+       {
+        "topic": "new_page_query",
+        "predicates": [
+         "old:sibling"
+        ],
+        "page_name": "old:sibling",
+        "activate_window": false
+       }
+      ]
+     },
+     {
+      "label": "open a new duplicate filter page for old:sibling",
+      "launched": [
+       {
+        "topic": "new_page_duplicates",
+        "predicates": [
+         "old:sibling"
+        ],
+        "page_name": "duplicates: old:sibling",
+        "activate_window": false
+       }
+      ]
+     }
+    ],
+    "favourites": []
+   }
+  },
+  {
+   "step": "menu on parity:漢字",
+   "selected": [
+    "parity:漢字"
+   ],
+   "menu": {
+    "tree": [
+     {
+      "label": "collapse parent rows",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "hide parent decorators",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "hide sibling decorators",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "copy",
+      "separator": false,
+      "children": [
+       {
+        "label": "parity:漢字",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "漢字",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "all tags",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "all subtags",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "no siblings",
+      "separator": false,
+      "children": [
+       {
+        "label": "add siblings to parity:漢字",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "no parents",
+      "separator": false,
+      "children": [
+       {
+        "label": "add parents to parity:漢字",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "open",
+      "separator": false,
+      "children": [
+       {
+        "label": "open a new search page for parity:漢字",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "open a new duplicate filter page for parity:漢字",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "favourites",
+      "separator": false,
+      "children": [
+       {
+        "label": "add \"parity:漢字\" to favourites",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "add \"parity:漢字\" to most used for \"downloader tags\"",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "remove \"parity:漢字\" from most used for \"my tags\"",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "add \"parity:漢字\" to most used for \"second tags\"",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "maintenance",
+      "separator": false,
+      "children": [
+       {
+        "label": "regenerate tag display",
+        "separator": false,
+        "children": null
+       }
+      ]
+     }
+    ],
+    "copies": [
+     {
+      "label": "parity:漢字",
+      "payload": "parity:漢字"
+     },
+     {
+      "label": "漢字",
+      "payload": "漢字"
+     },
+     {
+      "label": "all tags",
+      "payload": "series:spaced name\nplain tag\nalpha:first\nold:sibling\nparity:漢字\nzeta:last"
+     },
+     {
+      "label": "all subtags",
+      "payload": "spaced name\nplain tag\nfirst\nsibling\n漢字\nlast"
+     }
+    ],
+    "launches": [
+     {
+      "label": "open a new search page for parity:漢字",
+      "launched": [
+       {
+        "topic": "new_page_query",
+        "predicates": [
+         "parity:漢字"
+        ],
+        "page_name": "parity:漢字",
+        "activate_window": false
+       }
+      ]
+     },
+     {
+      "label": "open a new duplicate filter page for parity:漢字",
+      "launched": [
+       {
+        "topic": "new_page_duplicates",
+        "predicates": [
+         "parity:漢字"
+        ],
+        "page_name": "duplicates: parity:漢字",
+        "activate_window": false
+       }
+      ]
+     }
+    ],
+    "favourites": []
+   }
+  },
+  {
+   "step": "decorator collapse parent rows",
+   "selected": [
+    "alpha:first"
+   ],
+   "offered": [
+    "collapse parent rows",
+    "hide parent decorators",
+    "hide sibling decorators"
+   ],
+   "chosen": true,
+   "drawn": [
+    [
+     "series:spaced name"
+    ],
+    [
+     "plain tag"
+    ],
+    [
+     "alpha:first (1 parents)"
+    ],
+    [
+     "old:sibling → new:sibling"
+    ],
+    [
+     "parity:漢字"
+    ],
+    [
+     "zeta:last"
+    ]
+   ]
+  },
+  {
+   "step": "decorator expand parent rows",
+   "selected": [
+    "alpha:first"
+   ],
+   "offered": [
+    "expand parent rows",
+    "hide parent decorators",
+    "hide sibling decorators"
+   ],
+   "chosen": true,
+   "drawn": [
+    [
+     "series:spaced name"
+    ],
+    [
+     "plain tag"
+    ],
+    [
+     "alpha:first",
+     "    group:alpha"
+    ],
+    [
+     "old:sibling → new:sibling"
+    ],
+    [
+     "parity:漢字"
+    ],
+    [
+     "zeta:last"
+    ]
+   ]
+  },
+  {
+   "step": "decorator hide parent decorators",
+   "selected": [
+    "alpha:first"
+   ],
+   "offered": [
+    "collapse parent rows",
+    "hide parent decorators",
+    "hide sibling decorators"
+   ],
+   "chosen": true,
+   "drawn": [
+    [
+     "series:spaced name"
+    ],
+    [
+     "plain tag"
+    ],
+    [
+     "alpha:first"
+    ],
+    [
+     "old:sibling → new:sibling"
+    ],
+    [
+     "parity:漢字"
+    ],
+    [
+     "zeta:last"
+    ]
+   ]
+  },
+  {
+   "step": "decorator show parent decorators",
+   "selected": [
+    "alpha:first"
+   ],
+   "offered": [
+    "show parent decorators",
+    "hide sibling decorators",
+    "copy"
+   ],
+   "chosen": true,
+   "drawn": [
+    [
+     "series:spaced name"
+    ],
+    [
+     "plain tag"
+    ],
+    [
+     "alpha:first",
+     "    group:alpha"
+    ],
+    [
+     "old:sibling → new:sibling"
+    ],
+    [
+     "parity:漢字"
+    ],
+    [
+     "zeta:last"
+    ]
+   ]
+  },
+  {
+   "step": "decorator hide sibling decorators",
+   "selected": [
+    "alpha:first"
+   ],
+   "offered": [
+    "collapse parent rows",
+    "hide parent decorators",
+    "hide sibling decorators"
+   ],
+   "chosen": true,
+   "drawn": [
+    [
+     "series:spaced name"
+    ],
+    [
+     "plain tag"
+    ],
+    [
+     "alpha:first",
+     "    group:alpha"
+    ],
+    [
+     "old:sibling"
+    ],
+    [
+     "parity:漢字"
+    ],
+    [
+     "zeta:last"
+    ]
+   ]
+  },
+  {
+   "step": "decorator show sibling decorators",
+   "selected": [
+    "alpha:first"
+   ],
+   "offered": [
+    "collapse parent rows",
+    "hide parent decorators",
+    "show sibling decorators"
+   ],
+   "chosen": true,
+   "drawn": [
+    [
+     "series:spaced name"
+    ],
+    [
+     "plain tag"
+    ],
+    [
+     "alpha:first",
+     "    group:alpha"
+    ],
+    [
+     "old:sibling → new:sibling"
+    ],
+    [
+     "parity:漢字"
+    ],
+    [
+     "zeta:last"
+    ]
+   ]
+  },
+  {
+   "step": "menu on empty space",
+   "selected": [],
+   "menu": {
+    "tree": [
+     {
+      "label": "collapse parent rows",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "hide parent decorators",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "hide sibling decorators",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "copy",
+      "separator": false,
+      "children": [
+       {
+        "label": "all tags",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "all subtags",
+        "separator": false,
+        "children": null
+       }
+      ]
+     }
+    ],
+    "copies": [
+     {
+      "label": "all tags",
+      "payload": "series:spaced name\nplain tag\nalpha:first\nold:sibling\nparity:漢字\nzeta:last"
+     },
+     {
+      "label": "all subtags",
+      "payload": "spaced name\nplain tag\nfirst\nsibling\n漢字\nlast"
+     }
+    ],
+    "launches": [],
+    "favourites": []
+   }
+  },
+  {
+   "step": "click alpha:first again",
+   "selected": [
+    "alpha:first"
+   ]
+  },
+  {
+   "step": "up wraps to the end",
+   "selected": [
+    "plain tag"
+   ]
+  },
+  {
+   "step": "down wraps to the start",
+   "selected": [
+    "alpha:first"
+   ]
+  },
+  {
+   "step": "end",
+   "selected": [
+    "zeta:last"
+   ]
+  },
+  {
+   "step": "home",
+   "selected": [
+    "series:spaced name"
+   ]
+  },
+  {
+   "step": "ctrl n",
+   "selected": [
+    "plain tag"
+   ]
+  },
+  {
+   "step": "ctrl p",
+   "selected": [
+    "series:spaced name"
+   ]
+  },
+  {
+   "step": "page down",
+   "selected": [
+    "zeta:last"
+   ]
+  },
+  {
+   "step": "page up",
+   "selected": [
+    "series:spaced name"
+   ]
+  },
+  {
+   "step": "ctrl down",
+   "selected": [
+    "series:spaced name",
+    "plain tag"
+   ]
+  },
+  {
+   "step": "shift down after ctrl down",
+   "selected": [
+    "series:spaced name",
+    "plain tag",
+    "alpha:first"
+   ]
+  },
+  {
+   "step": "shift click zeta:last",
+   "selected": [
+    "series:spaced name",
+    "plain tag",
+    "alpha:first",
+    "old:sibling",
+    "parity:漢字",
+    "zeta:last"
+   ]
+  },
+  {
+   "step": "ctrl shift click series",
+   "selected": []
+  },
+  {
+   "step": "click empty space",
+   "selected": []
+  },
+  {
+   "step": "middle click plain tag",
+   "selected": [
+    "plain tag"
+   ],
+   "launched": [
+    {
+     "topic": "new_page_query",
+     "predicates": [
+      "plain tag"
+     ],
+     "page_name": "plain tag",
+     "activate_window": false
+    }
+   ]
+  },
+  {
+   "step": "shift middle click with two selected",
+   "selected": [
+    "series:spaced name",
+    "plain tag"
+   ],
+   "launched": [
+    {
+     "topic": "new_page_query",
+     "predicates": [
+      "plain tag OR series:spaced name"
+     ],
+     "page_name": "plain tag OR series:spaced name",
+     "activate_window": false
+    }
+   ]
+  },
+  {
+   "step": "return",
+   "selected": [
+    "parity:漢字"
+   ],
+   "activated": [
+    {
+     "tags": [
+      "zeta:last"
+     ],
+     "only_add": true
+    }
+   ],
+   "tags": [
+    "series:spaced name",
+    "plain tag",
+    "alpha:first",
+    "old:sibling",
+    "parity:漢字"
+   ]
+  },
+  {
+   "step": "double click",
+   "selected": [],
+   "activated": [
+    {
+     "tags": [
+      "parity:漢字"
+     ],
+     "only_add": true
+    }
+   ],
+   "tags": [
+    "series:spaced name",
+    "plain tag",
+    "alpha:first",
+    "old:sibling"
+   ]
+  },
+  {
+   "step": "delete does nothing",
+   "selected": [],
+   "tags": [
+    "series:spaced name",
+    "plain tag",
+    "alpha:first",
+    "old:sibling"
+   ]
+  },
+  {
+   "step": "menu on plain tag",
+   "selected": [
+    "plain tag"
+   ],
+   "menu": {
+    "tree": [
+     {
+      "label": "collapse parent rows",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "hide parent decorators",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "hide sibling decorators",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "copy",
+      "separator": false,
+      "children": [
+       {
+        "label": "plain tag",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "plain_tag",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "all tags",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "all subtags",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "no siblings",
+      "separator": false,
+      "children": [
+       {
+        "label": "add siblings to plain tag",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "no parents",
+      "separator": false,
+      "children": [
+       {
+        "label": "add parents to plain tag",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "open",
+      "separator": false,
+      "children": [
+       {
+        "label": "open a new search page for plain tag",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "open a new duplicate filter page for plain tag",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "favourites",
+      "separator": false,
+      "children": [
+       {
+        "label": "add \"plain tag\" to favourites",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "add \"plain tag\" to most used for \"downloader tags\"",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "remove \"plain tag\" from most used for \"my tags\"",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "add \"plain tag\" to most used for \"second tags\"",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "maintenance",
+      "separator": false,
+      "children": [
+       {
+        "label": "regenerate tag display",
+        "separator": false,
+        "children": null
+       }
+      ]
+     }
+    ],
+    "copies": [],
+    "launches": [],
+    "favourites": []
+   }
+  },
+  {
+   "step": "favourite added",
+   "selected": [
+    "plain tag"
+   ],
+   "favourites": [
+    "plain tag"
+   ]
+  },
+  {
+   "step": "menu on plain tag after favouriting",
+   "selected": [
+    "plain tag"
+   ],
+   "menu": {
+    "tree": [
+     {
+      "label": "collapse parent rows",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "hide parent decorators",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "hide sibling decorators",
+      "separator": false,
+      "children": null
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "copy",
+      "separator": false,
+      "children": [
+       {
+        "label": "plain tag",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "plain_tag",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "all tags",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "all subtags",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "no siblings",
+      "separator": false,
+      "children": [
+       {
+        "label": "add siblings to plain tag",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "no parents",
+      "separator": false,
+      "children": [
+       {
+        "label": "add parents to plain tag",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "open",
+      "separator": false,
+      "children": [
+       {
+        "label": "open a new search page for plain tag",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "open a new duplicate filter page for plain tag",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "favourites",
+      "separator": false,
+      "children": [
+       {
+        "label": "remove \"plain tag\" from favourites",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "",
+        "separator": true,
+        "children": null
+       },
+       {
+        "label": "add \"plain tag\" to most used for \"downloader tags\"",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "remove \"plain tag\" from most used for \"my tags\"",
+        "separator": false,
+        "children": null
+       },
+       {
+        "label": "add \"plain tag\" to most used for \"second tags\"",
+        "separator": false,
+        "children": null
+       }
+      ]
+     },
+     {
+      "label": "",
+      "separator": true,
+      "children": null
+     },
+     {
+      "label": "maintenance",
+      "separator": false,
+      "children": [
+       {
+        "label": "regenerate tag display",
+        "separator": false,
+        "children": null
+       }
+      ]
+     }
+    ],
+    "copies": [],
+    "launches": [],
+    "favourites": []
+   }
+  },
+  {
+   "step": "favourite removed",
+   "selected": [
+    "plain tag"
+   ],
+   "favourites": [],
+   "questions": [
+    "Remove \"plain tag\" from the favourites list?"
+   ]
+  },
+  {
+   "step": "most used toggled from the menu",
+   "selected": [],
+   "most_used": [
+    "zeta:last",
+    "parity:漢字",
+    "old:sibling",
+    "series:spaced name",
+    "alpha:first"
+   ],
+   "questions": [
+    "Remove \"plain tag\" from the favourites list?",
+    "Remove \"plain tag\" from the most used list for \"my tags\"?"
+   ]
+  }
+ ],
+ "other_lists": {
+  "recent": {
+   "tags": [
+    "recent:two",
+    "recent:one"
+   ],
+   "selected": [
+    "recent:two"
+   ],
+   "tree": [
+    {
+     "label": "hide parent decorators",
+     "separator": false,
+     "children": null
+    },
+    {
+     "label": "hide sibling decorators",
+     "separator": false,
+     "children": null
+    },
+    {
+     "label": "",
+     "separator": true,
+     "children": null
+    },
+    {
+     "label": "copy",
+     "separator": false,
+     "children": [
+      {
+       "label": "recent:two",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "two",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "",
+       "separator": true,
+       "children": null
+      },
+      {
+       "label": "all tags",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "all subtags",
+       "separator": false,
+       "children": null
+      }
+     ]
+    },
+    {
+     "label": "no siblings",
+     "separator": false,
+     "children": [
+      {
+       "label": "add siblings to recent:two",
+       "separator": false,
+       "children": null
+      }
+     ]
+    },
+    {
+     "label": "no parents",
+     "separator": false,
+     "children": [
+      {
+       "label": "add parents to recent:two",
+       "separator": false,
+       "children": null
+      }
+     ]
+    },
+    {
+     "label": "",
+     "separator": true,
+     "children": null
+    },
+    {
+     "label": "open",
+     "separator": false,
+     "children": [
+      {
+       "label": "open a new search page for recent:two",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "",
+       "separator": true,
+       "children": null
+      },
+      {
+       "label": "open a new duplicate filter page for recent:two",
+       "separator": false,
+       "children": null
+      }
+     ]
+    },
+    {
+     "label": "favourites",
+     "separator": false,
+     "children": [
+      {
+       "label": "add \"recent:two\" to favourites",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "",
+       "separator": true,
+       "children": null
+      },
+      {
+       "label": "add \"recent:two\" to most used for \"downloader tags\"",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "add \"recent:two\" to most used for \"my tags\"",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "add \"recent:two\" to most used for \"second tags\"",
+       "separator": false,
+       "children": null
+      }
+     ]
+    },
+    {
+     "label": "",
+     "separator": true,
+     "children": null
+    },
+    {
+     "label": "maintenance",
+     "separator": false,
+     "children": [
+      {
+       "label": "regenerate tag display",
+       "separator": false,
+       "children": null
+      }
+     ]
+    }
+   ]
+  },
+  "related": {
+   "tags": [
+    "beta:second",
+    "smile",
+    "éclair",
+    "blue eyes",
+    "creator:someone else",
+    "character:link",
+    "series:the legend of zelda",
+    "context:seed",
+    "indoors",
+    "キャラクター:初音ミク",
+    "format:jpeg",
+    "volume:3",
+    "page:10",
+    "red hair",
+    "creator:anonymous artist",
+    "page:1",
+    "meta:low resolution",
+    "outdoors",
+    "page:3"
+   ],
+   "selected": [
+    "beta:second"
+   ],
+   "tree": [
+    {
+     "label": "collapse parent rows",
+     "separator": false,
+     "children": null
+    },
+    {
+     "label": "hide parent decorators",
+     "separator": false,
+     "children": null
+    },
+    {
+     "label": "hide sibling decorators",
+     "separator": false,
+     "children": null
+    },
+    {
+     "label": "",
+     "separator": true,
+     "children": null
+    },
+    {
+     "label": "copy",
+     "separator": false,
+     "children": [
+      {
+       "label": "beta:second",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "second",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "",
+       "separator": true,
+       "children": null
+      },
+      {
+       "label": "all tags",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "all subtags",
+       "separator": false,
+       "children": null
+      }
+     ]
+    },
+    {
+     "label": "no siblings",
+     "separator": false,
+     "children": [
+      {
+       "label": "add siblings to beta:second",
+       "separator": false,
+       "children": null
+      }
+     ]
+    },
+    {
+     "label": "no parents",
+     "separator": false,
+     "children": [
+      {
+       "label": "add parents to beta:second",
+       "separator": false,
+       "children": null
+      }
+     ]
+    },
+    {
+     "label": "",
+     "separator": true,
+     "children": null
+    },
+    {
+     "label": "open",
+     "separator": false,
+     "children": [
+      {
+       "label": "open a new search page for beta:second",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "",
+       "separator": true,
+       "children": null
+      },
+      {
+       "label": "open a new duplicate filter page for beta:second",
+       "separator": false,
+       "children": null
+      }
+     ]
+    },
+    {
+     "label": "favourites",
+     "separator": false,
+     "children": [
+      {
+       "label": "add \"beta:second\" to favourites",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "",
+       "separator": true,
+       "children": null
+      },
+      {
+       "label": "add \"beta:second\" to most used for \"downloader tags\"",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "add \"beta:second\" to most used for \"my tags\"",
+       "separator": false,
+       "children": null
+      },
+      {
+       "label": "add \"beta:second\" to most used for \"second tags\"",
+       "separator": false,
+       "children": null
+      }
+     ]
+    },
+    {
+     "label": "",
+     "separator": true,
+     "children": null
+    },
+    {
+     "label": "maintenance",
+     "separator": false,
+     "children": [
+      {
+       "label": "regenerate tag display",
+       "separator": false,
+       "children": null
+      }
+     ]
+    }
+   ]
+  }
+ }
+}
