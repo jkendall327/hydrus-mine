@@ -146,8 +146,10 @@ fn every_help_link_opens_the_references_url() {
     }
 }
 
-// leaf: audit-options-menu-menu-help-open-help
-// leaf: audit-options-menu-menu-help-changelog
+// Not tagged (audit-options-menu-menu-help-open-help,
+// audit-options-menu-menu-help-changelog): the reference opens its local help,
+// or asks "You do not have a local help!" first; hydrus-rs opens the online
+// page at once (DIFFERENCES.md, #182).
 #[test]
 fn open_help_and_changelog_launch_their_pages() {
     let (_dirs, _store, ui, _bound) = bound_window();

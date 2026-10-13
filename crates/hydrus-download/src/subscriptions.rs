@@ -325,25 +325,28 @@ impl Downloader {
             if q.state.paused {
                 continue;
             }
-            if missing.contains(&q.queue_id) {
-                // (an unsynced header wants to be looked at at once)
-                earliest = Some(0);
-                continue;
-            }
-            let file_work = self.has_file_work(q.queue_id)?;
+            // (the live reference's `SubscriptionQueryHeader.IsSyncDue` report)
+            let log_ok = !missing.contains(&q.queue_id);
             hydrus_core::debug_flags::report(
                 hydrus_core::debug_flags::Flag::SubscriptionReport,
                 || {
                     format!(
-                        "Query \"{}\" IsSyncDue test. Paused/dead status is {}/{}, check time due is {}, and check_now is {}.",
-                        human_name(sub, q),
+                        "Query \"{}\" IsSyncDue test. Paused/dead/container status is {}/{}/{}, check time due is {}, and check_now is {}.",
+                        q.state.query_text,
                         py_bool(q.state.paused),
                         py_bool(q.state.dead),
+                        py_bool(log_ok),
                         py_bool(now() >= q.state.next_check_time),
                         py_bool(q.state.check_now),
                     )
                 },
             );
+            if !log_ok {
+                // (an unsynced header wants to be looked at at once)
+                earliest = Some(0);
+                continue;
+            }
+            let file_work = self.has_file_work(q.queue_id)?;
             if q.state.dead && !file_work {
                 continue;
             }
