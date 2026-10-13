@@ -5139,7 +5139,16 @@ plus the padding (slid back up and left if it would leave the display),
 centred on the main window, or at the mouse. Remembered sizes and places still
 come first. The main window, the media viewer and the Options window consult
 their frames; the Options window is placed once shown, when its own size is
-known. Proven by `tests/model/frame_placement.rs` (the formulae worked from the
+known. So do the windows the reference gives frames of their own: the file
+and search logs opened from a page, the import's filename tagging, manage
+subscriptions and edit subscription, review services, file history, how
+boned am I, manage tags (the thumbnails' dialog and the viewer's frame),
+export files, and manage URLs, times and notes. Each is placed again once it
+has been laid out where its frame grows it from its own size, and keeps its
+size and place as the reference's do: a frame as it closes, a dialog when it
+is applied (never when cancelled) (`tests/gui/frame_geometry.rs`, replaying
+`frame_state.json` through each). Every other window opens by the ordinary
+dialogs' frame (`regular_dialog`: the main window's top-left, its own size). Proven by `tests/model/frame_placement.rs` (the formulae worked from the
 reference's source) and `options_gui_frames.rs` (editing the Options window's
 own frame through the frames editor).
 

@@ -2438,17 +2438,30 @@ maximised/fullscreen for the main window, media viewer and Options window. Exist
 and parent/centre positioning now reach those owners too (see "Options kept but
 not used"); pointer positioning remains incomplete; the
 broader frame/table/editor coverage remains Partial.
-`audit-options-geometry` is untagged. What is proved: saving, as the
-reference's `SaveTLWSizeAndPosition` (`tests/model/frame_save.rs`, 26
-recorded cases), for the main window (`shell_geometry.rs`). Not proved:
-restoring stale or off-screen geometry on open (the opening rescue is
-tested under the frame-locations leaves), and saving for any other frame or
-dialog, which hydrus-rs does not do.
-A closing window saves as `SaveTLWSizeAndPosition` does (see GUI.md), but
-only the main window and the media viewer save: the main window as it closes
-and again a quarter second to half a second after it moves, resizes or
-maximises (the reference's frames use a tenth of a second); the viewer, and
-the reference's dialogs and other frames, only as they close or not at all.
+`audit-options-geometry` is untagged, because the ordinary dialogs don't
+keep their geometry. What is proved: the main window, the media viewer, the
+Options window and the fourteen windows with frame keys of their own open by
+their frames and keep them as the reference's do (`shell_geometry.rs`,
+`options_gui_frames.rs`, `frame_geometry.rs`, replaying `frame_state.json`
+and `frame_placement.json`; `tests/model/frame_save.rs` and
+`frame_placement.rs` for the arithmetic; `window_rescue.rs` for the
+off-screen rescue on open). Every other window opens by the ordinary
+dialogs' frame (`regular_dialog`), but none keeps it: the reference's
+dialogs save it when applied (`DialogThatResizes._SaveOKPosition`), which
+would take a hook in each of hydrus-rs's dialogs. It matters only once the
+frame is set to remember a size or place in Options > gui > frame locations
+(by default it remembers neither). Nor are the reference's
+`deeply_nested_dialog` and `quick_*` frames told apart from it. A window's
+place can't be seen in the headless tests (the software window has none),
+so places are proved only through the arithmetic and the rescue's recorded
+cases, and the display that bounds a gravity-grown window isn't there to
+see either.
+A closing window saves as `SaveTLWSizeAndPosition` does (see GUI.md): the
+main window as it closes and again a quarter second to half a second after
+it moves, resizes or maximises (the reference's frames use a tenth of a
+second); the viewer and the other frames only as they close (the
+reference's also a moment after each move or resize, which comes to the
+same unless the client dies with one open); dialogs when applied.
 A window's frame position is its outer
 position as winit reports it, which a Wayland compositor does not tell, and
 the display it is on is winit's current monitor; with no monitor list

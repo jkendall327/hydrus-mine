@@ -35,6 +35,9 @@ fn show(window: &ServicesReviewWindow, rows: &[Row], index: usize) {
     }
 }
 
+/// Its size and place, as the reference's review services keeps them.
+const FRAME: &str = "review_services";
+
 /// Open service review over a native store; refresh retains the selected service key.
 pub fn open(store: Arc<Store>) -> Result<ServicesReviewWindow, String> {
     open_with_changed(store, Rc::new(|| {}))
@@ -47,6 +50,7 @@ pub fn open_with_changed(
 ) -> Result<ServicesReviewWindow, String> {
     let window =
         crate::app_title::new::<crate::ServicesReviewWindow>().map_err(|e| e.to_string())?;
+    let frame_store = store.clone();
     let active = Rc::new(Cell::new(true));
     let pending = Rc::new(RefCell::new(
         None::<(hydrus_core::ServiceKey, Action, bool)>,
@@ -269,6 +273,7 @@ pub fn open_with_changed(
         let pending = pending.clone();
         let slots = slots.clone();
         let weak = window.as_weak();
+        let store = frame_store.clone();
         move || {
             active.set(false);
             pending.borrow_mut().take();
@@ -276,21 +281,25 @@ pub fn open_with_changed(
                 w.set_question(SharedString::new());
                 w.set_rating_menu(false);
                 slots.close();
+                crate::windows::save_named(w.window(), &store, FRAME);
                 let _ = w.hide();
             }
         }
     });
     let weak = window.as_weak();
+    let closing_store = frame_store.clone();
     window.window().on_close_requested(move || {
         active.set(false);
         pending.borrow_mut().take();
         if let Some(window) = weak.upgrade() {
             window.set_question(SharedString::new());
             window.set_rating_menu(false);
+            crate::windows::save_named(window.window(), &closing_store, FRAME);
         }
         slots.close();
         slint::CloseRequestResponse::HideWindow
     });
+    crate::windows::place_frame(&window, &frame_store, FRAME);
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }

@@ -311,7 +311,9 @@ pub(crate) fn open(
             }
         })
     };
+    let frame = crate::windows::DialogFrame::new(store, "manage_times_dialog");
     let close = {
+        let frame = frame.clone();
         let slot = slot.clone();
         let editing = editing.clone();
         let weak = window.as_weak();
@@ -328,6 +330,7 @@ pub(crate) fn open(
                 let _ = editing.hide();
             }
             if let Some(window) = weak.upgrade() {
+                frame.closing(window.window());
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
@@ -800,6 +803,7 @@ pub(crate) fn open(
         let state = state.clone();
         let store = store.clone();
         let close = close.clone();
+        let frame = frame.clone();
         let active = active.clone();
         let editing = editing.clone();
         let jobs = jobs.clone();
@@ -859,6 +863,7 @@ pub(crate) fn open(
                 }
                 applied();
             }
+            frame.accept();
             close();
         })
     };
@@ -955,6 +960,7 @@ pub(crate) fn open(
         }
     });
     show(&window, &state.borrow(), &tz);
+    frame.place(&window);
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }

@@ -240,6 +240,7 @@ mod system_or_activation;
 
 mod manage_tag_counts;
 
+mod frame_geometry;
 mod frame_locations;
 mod incremental_tagging;
 

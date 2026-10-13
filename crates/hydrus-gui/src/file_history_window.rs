@@ -101,6 +101,7 @@ pub fn open_with_worker(
         let slot = slot.clone();
         let weak = window.as_weak();
         let timer = timer.clone();
+        let store = store.clone();
         move || {
             if !state.active.replace(false) {
                 return;
@@ -108,6 +109,7 @@ pub fn open_with_worker(
             state.worker.borrow_mut().take();
             timer.stop();
             if let Some(window) = weak.upgrade() {
+                crate::windows::save_named(window.window(), &store, "file_history_chart");
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
@@ -374,6 +376,7 @@ pub fn open_with_worker(
         close();
         slint::CloseRequestResponse::HideWindow
     });
+    crate::windows::place_frame(&window, store, "file_history_chart");
     window.show().map_err(|e| e.to_string())?;
     *slot.borrow_mut() = Some(window.clone_strong());
     paint(&window, &state);

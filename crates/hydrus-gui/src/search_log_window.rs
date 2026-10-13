@@ -329,6 +329,7 @@ pub(crate) fn open(
     store: &Arc<Store>,
     queue: i64,
     slot: &Rc<RefCell<Option<FileLogWindow>>>,
+    from_page: bool,
 ) -> Result<FileLogWindow, String> {
     let kind = store
         .read(|c| queues::queue(c, queue))
@@ -403,6 +404,12 @@ pub(crate) fn open(
             state.borrow().imports.cancel();
             state.borrow().exports.cancel();
             if let Some(window) = weak.upgrade() {
+                // (as the reference's log opened from a page: from a
+                // dialog, it is a regular dialog)
+                if from_page {
+                    let store = state.borrow().store.clone();
+                    crate::windows::save_named(window.window(), &store, "gallery_import_log");
+                }
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
@@ -562,6 +569,9 @@ pub(crate) fn open(
         }
     });
     show(&window, &state.borrow());
+    if from_page {
+        crate::windows::place_frame(&window, store, "gallery_import_log");
+    }
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }

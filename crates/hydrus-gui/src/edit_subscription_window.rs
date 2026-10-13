@@ -328,13 +328,16 @@ pub(crate) fn open(
             }
         }),
     );
+    let frame = crate::windows::DialogFrame::new(store, "edit_subscription_dialog");
     let close = {
         let quality = quality.clone();
         let weak = window.as_weak();
         let slot = slots.edit.clone();
+        let frame = frame.clone();
         move || {
             quality.cancel();
             if let Some(window) = weak.upgrade() {
+                frame.closing(window.window());
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
@@ -380,9 +383,9 @@ pub(crate) fn open(
                 old.invoke_close_window();
             }
             let opened = if search {
-                crate::search_log_window::open(&store, queue, &log)
+                crate::search_log_window::open(&store, queue, &log, false)
             } else {
-                crate::file_log_window::open(&store, queue, &log, &open_files)
+                crate::file_log_window::open(&store, queue, &log, &open_files, false)
             };
             match opened {
                 Ok(window) => *log.borrow_mut() = Some(window),
@@ -734,6 +737,7 @@ pub(crate) fn open(
         let state = state.clone();
         let weak = window.as_weak();
         let close = close.clone();
+        let frame = frame.clone();
         move || {
             let Some(window) = weak.upgrade() else {
                 return;
@@ -746,6 +750,7 @@ pub(crate) fn open(
             let dialog = open.dialog.clone();
             drop(open);
             done(dialog);
+            frame.accept();
             close();
         }
     });
@@ -761,6 +766,7 @@ pub(crate) fn open(
         }
     });
     show(&window, &state.borrow());
+    frame.place(&window);
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }
