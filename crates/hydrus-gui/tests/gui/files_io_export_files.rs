@@ -284,10 +284,12 @@ fn files_are_copied_or_symlinked_and_trashing_asks_and_wins_over_symlinks() {
     window.set_trash(true);
     window.invoke_update();
     window.invoke_export(false);
+    // (the questions the reference asked in the same states, recorded)
+    let recorded = hydrus_testkit::fixture_json("export_files.json");
     assert!(window.get_asking());
     assert_eq!(
-        window.get_question(),
-        hydrus_gui_model::export_files::TRASH_WARNING
+        window.get_question().as_str(),
+        recorded["questions"][0].as_str().unwrap()
     );
     window.invoke_answer(1);
     assert!(!window.get_working());
@@ -295,8 +297,39 @@ fn files_are_copied_or_symlinked_and_trashing_asks_and_wins_over_symlinks() {
     window.invoke_export(false);
     window.invoke_answer(0);
     finish(&window);
+    // (in the reference, ticking trash unticks symlinks: recorded)
     let meta = std::fs::symlink_metadata(trashed.join("1.png")).unwrap();
-    assert!(meta.is_file() && !meta.file_type().is_symlink());
+    assert_eq!(
+        meta.file_type().is_symlink(),
+        recorded["symlinks_with_trash"].as_bool().unwrap()
+    );
+    assert!(meta.is_file() || meta.file_type().is_symlink());
+    window.invoke_dismissed();
+
+    // export and close asks the same, with its own opening, and only
+    // whether to export once nothing is trashed
+    let window = open(&store, &[HashId(1), HashId(3)], &slots);
+    let plain = work.path().join("plain");
+    std::fs::create_dir(&plain).unwrap();
+    window.set_destination(plain.to_string_lossy().into_owned().into());
+    window.set_phrase("{#}".into());
+    window.set_symlinks(true);
+    window.set_trash(true);
+    window.invoke_update();
+    window.invoke_export(true);
+    assert_eq!(
+        window.get_question().as_str(),
+        recorded["questions"][1].as_str().unwrap()
+    );
+    window.invoke_answer(1);
+    window.set_trash(false);
+    window.invoke_export(true);
+    assert_eq!(
+        window.get_question().as_str(),
+        recorded["questions"][2].as_str().unwrap()
+    );
+    window.invoke_answer(1);
+    assert_eq!(std::fs::read_dir(&plain).unwrap().count(), 0, "declined");
     let _ = changes;
     window.invoke_dismissed();
 }
