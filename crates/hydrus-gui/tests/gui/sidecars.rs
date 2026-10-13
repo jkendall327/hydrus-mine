@@ -836,6 +836,91 @@ fn processing_exchange_reviews_append_and_parent_cancel_invalidates_children() {
     assert!(accepted.borrow().is_none());
 }
 
+#[test]
+fn processing_exchange_appends_the_steps_of_a_mixed_package_and_warns_as_the_reference_does() {
+    // `oracle/record_processing_exchange_mixed.py`: the reference's queue
+    // appends a mixed list's steps and warns about the rest; a package of
+    // nothing permitted only warns
+    use hydrus_core::url::strings::StringProcessor;
+    use hydrus_gui::string_processor_window::{Slots, open};
+    use std::{cell::RefCell, rc::Rc};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let slots = Slots::default();
+    let accepted = Rc::new(RefCell::new(None));
+    let window = open(
+        &store,
+        &StringProcessor::default(),
+        vec!["a,b".into()],
+        &slots,
+        Rc::new({
+            let accepted = accepted.clone();
+            move |value| *accepted.borrow_mut() = Some(value)
+        }),
+    )
+    .unwrap();
+    let fixture = hydrus_testkit::fixture_json("processing_exchange_mixed.json");
+    let steps = fixture["steps"].as_array().unwrap();
+    let step = |name: &str| steps.iter().find(|s| s["name"] == name).unwrap().clone();
+    let warning = |s: &serde_json::Value| {
+        s["messages"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|m| m["kind"] == "warning")
+            .map(|m| m["text"].as_str().unwrap().to_owned())
+            .unwrap()
+    };
+    let start = steps[0]["start"]["processor"][2][2]
+        .as_array()
+        .unwrap()
+        .len();
+    let mixed = step("mixed list");
+    let added = mixed["state"]["processor"][2][2].as_array().unwrap().len() - start;
+
+    window.invoke_exchange("import".into());
+    let child = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    child.set_text(mixed["text"].as_str().unwrap().into());
+    child.invoke_action("review".into());
+    assert!(child.get_ready());
+    let review = child.get_review().to_string();
+    assert!(review.starts_with(&warning(&mixed)), "{review}");
+    assert!(
+        review.contains(&format!("Append {added} processing steps")),
+        "{review}"
+    );
+    child.invoke_action("accept".into());
+    assert_eq!(window.get_steps().row_count(), added);
+
+    // nothing permitted: the warning, and nothing appended
+    let nothing = step("nothing permitted");
+    window.invoke_exchange("import".into());
+    let child = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    child.set_text(nothing["text"].as_str().unwrap().into());
+    child.invoke_action("review".into());
+    assert!(!child.get_ready());
+    assert_eq!(child.get_error().as_str(), warning(&nothing));
+    child.invoke_action("cancel".into());
+    assert_eq!(window.get_steps().row_count(), added);
+
+    // the PNG of the mixed list, opened from a file
+    let png = step("mixed png");
+    window.invoke_exchange("import".into());
+    let child = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    child.set_path(
+        hydrus_testkit::fixture_path("processing_exchange_mixed.png")
+            .to_string_lossy()
+            .as_ref()
+            .into(),
+    );
+    child.invoke_action("open".into());
+    assert!(child.get_review().starts_with(&warning(&png)));
+    child.invoke_action("accept".into());
+    assert_eq!(window.get_steps().row_count(), 2 * added);
+    window.invoke_apply();
+    assert_eq!(accepted.borrow().as_ref().unwrap().steps.len(), 2 * added);
+}
+
 fn test_table(rows: &slint::ModelRc<hydrus_gui::TableRow>) -> Vec<Vec<String>> {
     rows.iter()
         .map(|row| row.cells.iter().map(|cell| cell.to_string()).collect())

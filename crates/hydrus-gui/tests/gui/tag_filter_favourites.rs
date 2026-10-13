@@ -55,9 +55,29 @@ fn shared_favourites_exchange_and_cancel_preserve_the_owner_and_persist_on_reope
     });
     let w = open();
     w.invoke_favourite("save".into());
+    // a blank name: the reference's text dialog warns and stays open
+    // (`text_entry_checks.json`, from `oracle/record_text_entry_checks.py`)
+    let entry = hydrus_testkit::fixture_json("text_entry_checks.json");
+    let blank = entry["dialogs"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["dialog"] == "favourite name" && c["typed"] == "")
+        .unwrap();
+    assert!(blank["still_open"].as_bool().unwrap());
+    assert_eq!(blank["shown"][0]["kind"], "ShowWarning");
+    assert_eq!(fixture["empty_name_error"], blank["shown"][0]["args"][0]);
     w.invoke_favourite_named("".into());
-    assert!(w.get_favourite_naming());
+    assert!(!w.get_favourite_naming());
+    assert_eq!(w.get_asking_title(), "Warning");
+    assert_eq!(
+        w.get_asking_message(),
+        blank["shown"][0]["args"][0].as_str().unwrap()
+    );
     assert!(FavouriteTagFilters::load(&store).unwrap().0.is_empty());
+    w.invoke_chosen(0);
+    assert!(w.get_favourite_naming(), "asked again");
+    assert_eq!(w.get_asking_message(), "Enter a name for the favourite.");
     w.invoke_favourite_named("zebra".into());
     assert_eq!(
         FavouriteTagFilters::load(&store).unwrap().get("zebra"),
@@ -163,6 +183,31 @@ fn shared_favourites_exchange_and_cancel_preserve_the_owner_and_persist_on_reope
             .is_none()
     );
     deleted.invoke_cancel();
+    // only whitespace is a name, as the reference's dialog accepts it; and
+    // replacing a favourite asks, and answered yes, replaces it
+    let whitespace = fixture["whitespace_name"].as_str().unwrap();
+    let spaced = open();
+    spaced.invoke_favourite("save".into());
+    spaced.invoke_favourite_named(whitespace.into());
+    assert_eq!(
+        FavouriteTagFilters::load(&store).unwrap().get(whitespace),
+        Some(caller.clone())
+    );
+    spaced.invoke_typed(2, "orc".into());
+    spaced.invoke_favourite("save".into());
+    spaced.invoke_favourite_named(whitespace.into());
+    assert_eq!(
+        spaced.get_asking_message(),
+        format!("\"{whitespace}\" already exists! Overwrite?")
+    );
+    spaced.invoke_chosen(0);
+    let replaced = FavouriteTagFilters::load(&store)
+        .unwrap()
+        .get(whitespace)
+        .unwrap();
+    assert_ne!(replaced, caller);
+    assert!(spaced.get_current().contains("orc"));
+    spaced.invoke_cancel();
     // Closing the owner while a name is pending invalidates that child too.
     let closing = open();
     closing.invoke_favourite("import".into());

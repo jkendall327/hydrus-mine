@@ -12,7 +12,8 @@ use crate::UnlockWindow;
 /// A window asking for `lock`'s password. Once the right one is entered,
 /// `unlocked` runs (opening the client, whose window should be shown before
 /// this one closes, or the event loop ends with no windows) and the window
-/// closes; a wrong one is said to be wrong and asked for again. Cancelling
+/// closes; a wrong one is asked for again with nothing said, and a blank one
+/// is warned about, as the reference's text dialog warns. Cancelling
 /// closes the window without unlocking.
 pub fn unlock_window(
     lock: LockPassword,
@@ -25,13 +26,17 @@ pub fn unlock_window(
         let Some(window) = weak.upgrade() else {
             return;
         };
-        if lock.accepts(&password) {
+        if password.is_empty() {
+            // the reference's text dialog warns and stays open
+            window.set_warning(crate::tag_filter_editor::BLANK_TEXT.into());
+        } else if lock.accepts(&password) {
             if let Some(unlocked) = unlocked.take() {
                 unlocked();
             }
             let _ = window.hide();
         } else {
-            window.set_wrong(true);
+            // the reference asks again, saying nothing
+            window.set_warning("".into());
         }
     });
     let weak = window.as_weak();
