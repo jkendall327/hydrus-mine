@@ -250,6 +250,30 @@ impl Store {
         }))
     }
 
+    /// Open the existing store in `dir` strictly read-only, for tools that
+    /// must not change a collection (`hydrus bench`): nothing is created,
+    /// migrated or written, and every write through the store fails.
+    pub fn open_read_only(dir: &Path) -> Result<Arc<Self>> {
+        let path = dir.join(DB_FILE_NAME);
+        if !path.is_file() {
+            return Err(crate::StoreError::Invalid(format!(
+                "{} is not a hydrus-rs store (no {DB_FILE_NAME})",
+                dir.display()
+            )));
+        }
+        let db = Db::open_read_only(&path, reader_count())?;
+        let snapshot = db.read(Snapshot::load)?;
+        Ok(Arc::new_cyclic(|weak| Self {
+            weak: weak.clone(),
+            dir: dir.to_path_buf(),
+            db,
+            snapshot: Arc::new(ArcSwap::from_pointee(snapshot)),
+            claims: MediaClaims::default(),
+            migration_active: Arc::new(AtomicBool::new(false)),
+            undo: std::sync::Mutex::default(),
+        }))
+    }
+
     /// Reserve one migration while leaving at least one pooled reader for the UI.
     pub(crate) fn claim_tag_migration(&self) -> Result<crate::tag_migration::Guard> {
         crate::tag_migration::Guard::claim(self.migration_active.clone())

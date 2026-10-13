@@ -14,6 +14,7 @@ use hydrus_store::store::DB_FILE_NAME;
 use hydrus_store::transfer::{TransferMode, transfer_media};
 
 mod api_keys;
+mod bench;
 mod client_api_listener;
 mod duplicates;
 mod folder_wait;
@@ -130,6 +131,10 @@ enum Command {
         #[command(subcommand)]
         action: duplicates::Action,
     },
+    /// Time what the client does on your collection (open, searches,
+    /// autocomplete, thumbnails, tag relations, duplicates) and print a
+    /// report to paste. Strictly read-only: the store is not changed.
+    Bench(bench::Options),
     /// Pause subscriptions, the network or the downloader queues, as
     /// hydrus's "network > pause" menu does (your pauses come across from
     /// hydrus). With nothing to pause, says what is paused.
@@ -272,6 +277,7 @@ fn main() -> Result<()> {
             }
             duplicates::run(&dir, action)
         }
+        Command::Bench(options) => bench::run(&options),
         Command::Pause { dir, what } => pauses::run(&dir, what, true),
         Command::Resume { dir, what } => pauses::run(&dir, Some(what), false),
         Command::Maintenance {

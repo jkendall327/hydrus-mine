@@ -22,6 +22,35 @@ to be fast:
 
 Searches for similar files are mostly at distance 0 and 2.
 
+## On your own collection: `hydrus bench`
+
+`hydrus bench <store>` times what the client does on a store of your own
+(`docs/rust/REPORTING.md` says how to run it and what to send). It is built on
+the pieces measured below: the same search, autocomplete, metadata, thumbnail,
+tag-relation and potential-duplicate code the client runs, timed `--runs`
+times each (default 5), reporting the first run (cold caches), the median and
+the 90th percentile. It opens the store read-only (`Store::open_read_only`:
+SQLite's read-only flag, no migration, no writer thread), so it is safe to
+point at the store you use every day, even with the client closed or open.
+CI runs it on a small synthetic store (`crates/hydrus-cli/tests/bench.rs`),
+which also checks that the database file's bytes, size and modification time
+are unchanged afterwards.
+
+What it measures, in `[groups]`:
+
+| group | measurement |
+|---|---|
+| startup | store open (connections, the services, tag-relation graphs and file-storage snapshot); the main window's startup queries (its session settings, the last session and its pages' file counts) |
+| searches | one popular tag; two popular tags; a negated tag; `system:inbox`; `system:limit=500`; a namespace wildcard (`ns:*`) of a popular namespaced tag; and each `--search "tag; tag; system:..."` you give. Popular tags are the most used in "my tags" over "my files" |
+| autocomplete | the first three characters of the most used tag |
+| thumbnails | basic and full metadata of the newest 500 files (a page); reading and decoding `--thumbnails N` (default 200) stored thumbnails from disk (thumbnails that are missing are counted, never regenerated) |
+| tag relations | building the sibling and parent graphs from the database; looking up the chain, ideal, ancestors and descendants of up to 200 tags that have rules |
+| duplicates | counting the potential pairs of the widest search (every file, distance 8) |
+
+Not measured: writes (it cannot make any), the media viewer, downloaders,
+and the interface itself (drawing, scrolling). A store that needs a schema
+migration is refused rather than migrated: open it with the client once.
+
 ## Similar-files search
 
 `crates/hydrus-store/src/similar.rs` (`scale`, release build): 414,569
