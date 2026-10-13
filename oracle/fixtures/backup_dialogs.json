@@ -1,0 +1,605 @@
+{
+ "setup": {
+  "cancel": {
+   "inputs": {
+    "existing": null,
+    "picks": [
+     null
+    ],
+    "answers": []
+   },
+   "dialogs": [
+    [
+     "information",
+     "Everything in your client is stored in the 'database', which consists of a handful of .db files and a single subdirectory that contains all your media files. It is a very good idea to maintain a regular backup schedule--to save from hard drive failure, serious software fault, accidental deletion, or any other unexpected problem. It sucks to lose all your work, so make sure it can't happen!\n\nIf you prefer to create a manual backup with an external program like FreeFileSync, then please cancel out of the dialog after this and set up whatever you like, but if you would rather a simple solution, simply select a directory and the client will remember it as the designated backup location. Creating or updating your backup can be triggered at any time from the database menu.\n\nAn ideal backup location is initially empty and on a different hard drive.\n\nIf you have a large database (100,000+ files) or a slow hard drive, creating the initial backup may take a long time--perhaps an hour or more--but updating an existing backup should only take a couple of minutes (since the client only has to copy new or modified files). Try to update your backup every week!\n\nIf you would like some more info on making or restoring backups, please consult the help's 'installing and updating' page."
+    ],
+    [
+     "pick directory",
+     "Select backup location."
+    ]
+   ],
+   "backup_path": null,
+   "last_backup_set": false,
+   "last_backup_now": false,
+   "did_a_backup": false,
+   "writes": [],
+   "made": []
+  },
+  "db_dir": {
+   "inputs": {
+    "existing": null,
+    "picks": [
+     "db_dir"
+    ],
+    "answers": []
+   },
+   "dialogs": [
+    [
+     "information",
+     "Everything in your client is stored in the 'database', which consists of a handful of .db files and a single subdirectory that contains all your media files. It is a very good idea to maintain a regular backup schedule--to save from hard drive failure, serious software fault, accidental deletion, or any other unexpected problem. It sucks to lose all your work, so make sure it can't happen!\n\nIf you prefer to create a manual backup with an external program like FreeFileSync, then please cancel out of the dialog after this and set up whatever you like, but if you would rather a simple solution, simply select a directory and the client will remember it as the designated backup location. Creating or updating your backup can be triggered at any time from the database menu.\n\nAn ideal backup location is initially empty and on a different hard drive.\n\nIf you have a large database (100,000+ files) or a slow hard drive, creating the initial backup may take a long time--perhaps an hour or more--but updating an existing backup should only take a couple of minutes (since the client only has to copy new or modified files). Try to update your backup every week!\n\nIf you would like some more info on making or restoring backups, please consult the help's 'installing and updating' page."
+    ],
+    [
+     "pick directory",
+     "Select backup location."
+    ],
+    [
+     "warning",
+     "That directory is your current database directory! You cannot backup to the same location you are backing up from!"
+    ]
+   ],
+   "backup_path": null,
+   "last_backup_set": false,
+   "last_backup_now": false,
+   "did_a_backup": false,
+   "writes": [],
+   "made": []
+  },
+  "empty_no": {
+   "inputs": {
+    "existing": null,
+    "picks": [
+     "empty"
+    ],
+    "answers": [
+     false
+    ]
+   },
+   "dialogs": [
+    [
+     "information",
+     "Everything in your client is stored in the 'database', which consists of a handful of .db files and a single subdirectory that contains all your media files. It is a very good idea to maintain a regular backup schedule--to save from hard drive failure, serious software fault, accidental deletion, or any other unexpected problem. It sucks to lose all your work, so make sure it can't happen!\n\nIf you prefer to create a manual backup with an external program like FreeFileSync, then please cancel out of the dialog after this and set up whatever you like, but if you would rather a simple solution, simply select a directory and the client will remember it as the designated backup location. Creating or updating your backup can be triggered at any time from the database menu.\n\nAn ideal backup location is initially empty and on a different hard drive.\n\nIf you have a large database (100,000+ files) or a slow hard drive, creating the initial backup may take a long time--perhaps an hour or more--but updating an existing backup should only take a couple of minutes (since the client only has to copy new or modified files). Try to update your backup every week!\n\nIf you would like some more info on making or restoring backups, please consult the help's 'installing and updating' page."
+    ],
+    [
+     "pick directory",
+     "Select backup location."
+    ],
+    [
+     "question",
+     "You chose \"<empty>\". Here is what I understand about it:\n\nIt looks currently empty, which is great--there is no danger of anything being overwritten.\n\nAre you sure this is the correct directory?",
+     null,
+     null
+    ]
+   ],
+   "backup_path": null,
+   "last_backup_set": false,
+   "last_backup_now": false,
+   "did_a_backup": false,
+   "writes": [],
+   "made": []
+  },
+  "empty_yes_later": {
+   "inputs": {
+    "existing": null,
+    "picks": [
+     "empty"
+    ],
+    "answers": [
+     true,
+     false
+    ]
+   },
+   "dialogs": [
+    [
+     "information",
+     "Everything in your client is stored in the 'database', which consists of a handful of .db files and a single subdirectory that contains all your media files. It is a very good idea to maintain a regular backup schedule--to save from hard drive failure, serious software fault, accidental deletion, or any other unexpected problem. It sucks to lose all your work, so make sure it can't happen!\n\nIf you prefer to create a manual backup with an external program like FreeFileSync, then please cancel out of the dialog after this and set up whatever you like, but if you would rather a simple solution, simply select a directory and the client will remember it as the designated backup location. Creating or updating your backup can be triggered at any time from the database menu.\n\nAn ideal backup location is initially empty and on a different hard drive.\n\nIf you have a large database (100,000+ files) or a slow hard drive, creating the initial backup may take a long time--perhaps an hour or more--but updating an existing backup should only take a couple of minutes (since the client only has to copy new or modified files). Try to update your backup every week!\n\nIf you would like some more info on making or restoring backups, please consult the help's 'installing and updating' page."
+    ],
+    [
+     "pick directory",
+     "Select backup location."
+    ],
+    [
+     "question",
+     "You chose \"<empty>\". Here is what I understand about it:\n\nIt looks currently empty, which is great--there is no danger of anything being overwritten.\n\nAre you sure this is the correct directory?",
+     null,
+     null
+    ],
+    [
+     "question",
+     "Would you like to create your backup now?",
+     null,
+     null
+    ]
+   ],
+   "backup_path": "<empty>",
+   "last_backup_set": false,
+   "last_backup_now": false,
+   "did_a_backup": false,
+   "writes": [],
+   "made": []
+  },
+  "has_files_no": {
+   "inputs": {
+    "existing": null,
+    "picks": [
+     "has_files"
+    ],
+    "answers": [
+     false
+    ]
+   },
+   "dialogs": [
+    [
+     "information",
+     "Everything in your client is stored in the 'database', which consists of a handful of .db files and a single subdirectory that contains all your media files. It is a very good idea to maintain a regular backup schedule--to save from hard drive failure, serious software fault, accidental deletion, or any other unexpected problem. It sucks to lose all your work, so make sure it can't happen!\n\nIf you prefer to create a manual backup with an external program like FreeFileSync, then please cancel out of the dialog after this and set up whatever you like, but if you would rather a simple solution, simply select a directory and the client will remember it as the designated backup location. Creating or updating your backup can be triggered at any time from the database menu.\n\nAn ideal backup location is initially empty and on a different hard drive.\n\nIf you have a large database (100,000+ files) or a slow hard drive, creating the initial backup may take a long time--perhaps an hour or more--but updating an existing backup should only take a couple of minutes (since the client only has to copy new or modified files). Try to update your backup every week!\n\nIf you would like some more info on making or restoring backups, please consult the help's 'installing and updating' page."
+    ],
+    [
+     "pick directory",
+     "Select backup location."
+    ],
+    [
+     "question",
+     "You chose \"<has_files>\". Here is what I understand about it:\n\nIt seems to have some files already in it--be careful and make sure you chose the correct location.\n\nAre you sure this is the correct directory?",
+     null,
+     null
+    ]
+   ],
+   "backup_path": null,
+   "last_backup_set": false,
+   "last_backup_now": false,
+   "did_a_backup": false,
+   "writes": [],
+   "made": []
+  },
+  "has_client_db_no": {
+   "inputs": {
+    "existing": null,
+    "picks": [
+     "has_client_db"
+    ],
+    "answers": [
+     false
+    ]
+   },
+   "dialogs": [
+    [
+     "information",
+     "Everything in your client is stored in the 'database', which consists of a handful of .db files and a single subdirectory that contains all your media files. It is a very good idea to maintain a regular backup schedule--to save from hard drive failure, serious software fault, accidental deletion, or any other unexpected problem. It sucks to lose all your work, so make sure it can't happen!\n\nIf you prefer to create a manual backup with an external program like FreeFileSync, then please cancel out of the dialog after this and set up whatever you like, but if you would rather a simple solution, simply select a directory and the client will remember it as the designated backup location. Creating or updating your backup can be triggered at any time from the database menu.\n\nAn ideal backup location is initially empty and on a different hard drive.\n\nIf you have a large database (100,000+ files) or a slow hard drive, creating the initial backup may take a long time--perhaps an hour or more--but updating an existing backup should only take a couple of minutes (since the client only has to copy new or modified files). Try to update your backup every week!\n\nIf you would like some more info on making or restoring backups, please consult the help's 'installing and updating' page."
+    ],
+    [
+     "pick directory",
+     "Select backup location."
+    ],
+    [
+     "question",
+     "You chose \"<has_client_db>\". Here is what I understand about it:\n\nIt looks like a client database already exists in the location--be certain that it is ok to overwrite it.\n\nAre you sure this is the correct directory?",
+     null,
+     null
+    ]
+   ],
+   "backup_path": null,
+   "last_backup_set": false,
+   "last_backup_now": false,
+   "did_a_backup": false,
+   "writes": [],
+   "made": []
+  },
+  "missing_no": {
+   "inputs": {
+    "existing": null,
+    "picks": [
+     "missing"
+    ],
+    "answers": [
+     false
+    ]
+   },
+   "dialogs": [
+    [
+     "information",
+     "Everything in your client is stored in the 'database', which consists of a handful of .db files and a single subdirectory that contains all your media files. It is a very good idea to maintain a regular backup schedule--to save from hard drive failure, serious software fault, accidental deletion, or any other unexpected problem. It sucks to lose all your work, so make sure it can't happen!\n\nIf you prefer to create a manual backup with an external program like FreeFileSync, then please cancel out of the dialog after this and set up whatever you like, but if you would rather a simple solution, simply select a directory and the client will remember it as the designated backup location. Creating or updating your backup can be triggered at any time from the database menu.\n\nAn ideal backup location is initially empty and on a different hard drive.\n\nIf you have a large database (100,000+ files) or a slow hard drive, creating the initial backup may take a long time--perhaps an hour or more--but updating an existing backup should only take a couple of minutes (since the client only has to copy new or modified files). Try to update your backup every week!\n\nIf you would like some more info on making or restoring backups, please consult the help's 'installing and updating' page."
+    ],
+    [
+     "pick directory",
+     "Select backup location."
+    ],
+    [
+     "question",
+     "You chose \"<missing>\". Here is what I understand about it:\n\nThe path does not exist yet--it will be created when you make your first backup.\n\nAre you sure this is the correct directory?",
+     null,
+     null
+    ]
+   ],
+   "backup_path": null,
+   "last_backup_set": false,
+   "last_backup_now": false,
+   "did_a_backup": false,
+   "writes": [],
+   "made": []
+  },
+  "same_as_saved": {
+   "inputs": {
+    "existing": "empty",
+    "picks": [
+     "empty"
+    ],
+    "answers": []
+   },
+   "dialogs": [
+    [
+     "information",
+     "Your current backup location is \"<empty>\".\n\nIf your client is getting large and/or complicated, I recommend you start backing up with a proper external program like FreeFileSync. If you would like some more info on making or restoring backups, please consult the help's 'installing and updating' page."
+    ],
+    [
+     "pick directory",
+     "Select backup location."
+    ],
+    [
+     "information",
+     "The path you chose is your current saved backup path. No changes have been made."
+    ]
+   ],
+   "backup_path": "<empty>",
+   "last_backup_set": false,
+   "last_backup_now": false,
+   "did_a_backup": false,
+   "writes": [],
+   "made": []
+  },
+  "change_has_files_no": {
+   "inputs": {
+    "existing": "empty",
+    "picks": [
+     "has_files"
+    ],
+    "answers": [
+     false
+    ]
+   },
+   "dialogs": [
+    [
+     "information",
+     "Your current backup location is \"<empty>\".\n\nIf your client is getting large and/or complicated, I recommend you start backing up with a proper external program like FreeFileSync. If you would like some more info on making or restoring backups, please consult the help's 'installing and updating' page."
+    ],
+    [
+     "pick directory",
+     "Select backup location."
+    ],
+    [
+     "question",
+     "You chose \"<has_files>\". Here is what I understand about it:\n\nIt seems to have some files already in it--be careful and make sure you chose the correct location.\n\nAre you sure this is the correct directory?",
+     null,
+     null
+    ]
+   ],
+   "backup_path": "<empty>",
+   "last_backup_set": false,
+   "last_backup_now": false,
+   "did_a_backup": false,
+   "writes": [],
+   "made": []
+  },
+  "empty_yes_now_no": {
+   "inputs": {
+    "existing": null,
+    "picks": [
+     "empty"
+    ],
+    "answers": [
+     true,
+     true,
+     false
+    ]
+   },
+   "dialogs": [
+    [
+     "information",
+     "Everything in your client is stored in the 'database', which consists of a handful of .db files and a single subdirectory that contains all your media files. It is a very good idea to maintain a regular backup schedule--to save from hard drive failure, serious software fault, accidental deletion, or any other unexpected problem. It sucks to lose all your work, so make sure it can't happen!\n\nIf you prefer to create a manual backup with an external program like FreeFileSync, then please cancel out of the dialog after this and set up whatever you like, but if you would rather a simple solution, simply select a directory and the client will remember it as the designated backup location. Creating or updating your backup can be triggered at any time from the database menu.\n\nAn ideal backup location is initially empty and on a different hard drive.\n\nIf you have a large database (100,000+ files) or a slow hard drive, creating the initial backup may take a long time--perhaps an hour or more--but updating an existing backup should only take a couple of minutes (since the client only has to copy new or modified files). Try to update your backup every week!\n\nIf you would like some more info on making or restoring backups, please consult the help's 'installing and updating' page."
+    ],
+    [
+     "pick directory",
+     "Select backup location."
+    ],
+    [
+     "question",
+     "You chose \"<empty>\". Here is what I understand about it:\n\nIt looks currently empty, which is great--there is no danger of anything being overwritten.\n\nAre you sure this is the correct directory?",
+     null,
+     null
+    ],
+    [
+     "question",
+     "Would you like to create your backup now?",
+     null,
+     null
+    ],
+    [
+     "question",
+     "Create a new backup at \"<empty>\"?\n\nThe database will be locked while the backup occurs, which may lock up your gui as well.",
+     null,
+     null
+    ]
+   ],
+   "backup_path": "<empty>",
+   "last_backup_set": false,
+   "last_backup_now": false,
+   "did_a_backup": false,
+   "writes": [],
+   "made": []
+  },
+  "empty_yes_now_yes": {
+   "inputs": {
+    "existing": null,
+    "picks": [
+     "empty"
+    ],
+    "answers": [
+     true,
+     true,
+     true
+    ]
+   },
+   "dialogs": [
+    [
+     "information",
+     "Everything in your client is stored in the 'database', which consists of a handful of .db files and a single subdirectory that contains all your media files. It is a very good idea to maintain a regular backup schedule--to save from hard drive failure, serious software fault, accidental deletion, or any other unexpected problem. It sucks to lose all your work, so make sure it can't happen!\n\nIf you prefer to create a manual backup with an external program like FreeFileSync, then please cancel out of the dialog after this and set up whatever you like, but if you would rather a simple solution, simply select a directory and the client will remember it as the designated backup location. Creating or updating your backup can be triggered at any time from the database menu.\n\nAn ideal backup location is initially empty and on a different hard drive.\n\nIf you have a large database (100,000+ files) or a slow hard drive, creating the initial backup may take a long time--perhaps an hour or more--but updating an existing backup should only take a couple of minutes (since the client only has to copy new or modified files). Try to update your backup every week!\n\nIf you would like some more info on making or restoring backups, please consult the help's 'installing and updating' page."
+    ],
+    [
+     "pick directory",
+     "Select backup location."
+    ],
+    [
+     "question",
+     "You chose \"<empty>\". Here is what I understand about it:\n\nIt looks currently empty, which is great--there is no danger of anything being overwritten.\n\nAre you sure this is the correct directory?",
+     null,
+     null
+    ],
+    [
+     "question",
+     "Would you like to create your backup now?",
+     null,
+     null
+    ],
+    [
+     "question",
+     "Create a new backup at \"<empty>\"?\n\nThe database will be locked while the backup occurs, which may lock up your gui as well.",
+     null,
+     null
+    ]
+   ],
+   "backup_path": "<empty>",
+   "last_backup_set": true,
+   "last_backup_now": true,
+   "did_a_backup": true,
+   "writes": [
+    [
+     "backup",
+     "<empty>"
+    ]
+   ],
+   "made": []
+  }
+ },
+ "update": {
+  "no_path": {
+   "inputs": {
+    "existing": null,
+    "picks": [],
+    "answers": []
+   },
+   "dialogs": [
+    [
+     "warning",
+     "No backup path is set!"
+    ]
+   ],
+   "backup_path": null,
+   "last_backup_set": false,
+   "last_backup_now": false,
+   "did_a_backup": false,
+   "writes": [],
+   "made": []
+  },
+  "missing_no": {
+   "inputs": {
+    "existing": "missing",
+    "picks": [],
+    "answers": [
+     false
+    ]
+   },
+   "dialogs": [
+    [
+     "information",
+     "The backup path does not exist--creating it now."
+    ],
+    [
+     "question",
+     "Create a new backup at \"<missing>\"?\n\nThe database will be locked while the backup occurs, which may lock up your gui as well.",
+     null,
+     null
+    ]
+   ],
+   "backup_path": "<missing>",
+   "last_backup_set": false,
+   "last_backup_now": false,
+   "did_a_backup": false,
+   "writes": [],
+   "made": [
+    "missing"
+   ]
+  },
+  "empty_no": {
+   "inputs": {
+    "existing": "empty",
+    "picks": [],
+    "answers": [
+     false
+    ]
+   },
+   "dialogs": [
+    [
+     "question",
+     "Create a new backup at \"<empty>\"?\n\nThe database will be locked while the backup occurs, which may lock up your gui as well.",
+     null,
+     null
+    ]
+   ],
+   "backup_path": "<empty>",
+   "last_backup_set": false,
+   "last_backup_now": false,
+   "did_a_backup": false,
+   "writes": [],
+   "made": []
+  },
+  "has_client_db_no": {
+   "inputs": {
+    "existing": "has_client_db",
+    "picks": [],
+    "answers": [
+     false
+    ]
+   },
+   "dialogs": [
+    [
+     "question",
+     "Update the existing backup at \"<has_client_db>\"?\n\nThe database will be locked while the backup occurs, which may lock up your gui as well.",
+     null,
+     null
+    ]
+   ],
+   "backup_path": "<has_client_db>",
+   "last_backup_set": false,
+   "last_backup_now": false,
+   "did_a_backup": false,
+   "writes": [],
+   "made": []
+  },
+  "has_client_db_yes": {
+   "inputs": {
+    "existing": "has_client_db",
+    "picks": [],
+    "answers": [
+     true
+    ]
+   },
+   "dialogs": [
+    [
+     "question",
+     "Update the existing backup at \"<has_client_db>\"?\n\nThe database will be locked while the backup occurs, which may lock up your gui as well.",
+     null,
+     null
+    ]
+   ],
+   "backup_path": "<has_client_db>",
+   "last_backup_set": true,
+   "last_backup_now": true,
+   "did_a_backup": true,
+   "writes": [
+    [
+     "backup",
+     "<has_client_db>"
+    ]
+   ],
+   "made": []
+  }
+ },
+ "restore": {
+  "cancel": {
+   "inputs": {
+    "existing": null,
+    "picks": [
+     null
+    ],
+    "answers": []
+   },
+   "dialogs": [
+    [
+     "pick directory",
+     "Select backup location."
+    ]
+   ],
+   "backup_path": null,
+   "last_backup_set": false,
+   "last_backup_now": false,
+   "did_a_backup": false,
+   "writes": [],
+   "made": []
+  },
+  "no": {
+   "inputs": {
+    "existing": null,
+    "picks": [
+     "has_client_db"
+    ],
+    "answers": [
+     false
+    ]
+   },
+   "dialogs": [
+    [
+     "pick directory",
+     "Select backup location."
+    ],
+    [
+     "question",
+     "Are you sure you want to restore a backup from \"<has_client_db>\"?\n\nEverything in your current database will be deleted!\n\nThe gui will shut down, and then it will take a while to complete the restore. Once it is done, the client will restart.",
+     null,
+     null
+    ]
+   ],
+   "backup_path": null,
+   "last_backup_set": false,
+   "last_backup_now": false,
+   "did_a_backup": false,
+   "writes": [],
+   "made": []
+  },
+  "yes": {
+   "inputs": {
+    "existing": null,
+    "picks": [
+     "has_client_db"
+    ],
+    "answers": [
+     true
+    ]
+   },
+   "dialogs": [
+    [
+     "pick directory",
+     "Select backup location."
+    ],
+    [
+     "question",
+     "Are you sure you want to restore a backup from \"<has_client_db>\"?\n\nEverything in your current database will be deleted!\n\nThe gui will shut down, and then it will take a while to complete the restore. Once it is done, the client will restart.",
+     null,
+     null
+    ]
+   ],
+   "backup_path": null,
+   "last_backup_set": false,
+   "last_backup_now": false,
+   "did_a_backup": false,
+   "writes": [
+    [
+     "exit",
+     {
+      "restart": true,
+      "fast_exit": false,
+      "restore": "<has_client_db>"
+     }
+    ]
+   ],
+   "made": []
+  }
+ }
+}
