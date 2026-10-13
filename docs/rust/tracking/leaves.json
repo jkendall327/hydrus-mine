@@ -16329,7 +16329,13 @@
    "native": null,
    "notes": [
     "The reference's suggestion lists are ListBoxTagsStrings: right-click tag menus (copy, favourites, search), Ctrl+A/C and keyboard selection. Native lists have click/select and double-click activation only."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (issue #154 part A)",
+    "note": "crates/hydrus-gui/tests/gui/suggested_tag_list_interactions.rs replays all 53 steps of oracle/fixtures/suggested_tag_list_interactions.json (the reference's real SuggestedTagsPanel most-used list driven by real Qt clicks, keys and right-clicks) through the real Manage Tags window: selection after every click (plain, ctrl, shift, ctrl+shift, on a selected row, below the rows) and key (arrows wrapping, home/end, page up/down, ctrl+n/p, ctrl+arrow, shift+arrow, escape, delete), ctrl+a, ctrl+c and ctrl+shift+c payloads, the rows as drawn with sibling and parent decorators and after each of the six decorator menu entries, the full menu tree (separators included) for none, one, two, three and all selected, every copy entry's payload and every open entry's pages (per-tag pages compared unordered: the reference iterates a set), favourites add/remove with its question and most-used removal, middle and shift-middle clicks, enter (with the re-hit) and double-click activation, and the recent list's menu. Not covered: drag-selection and scrolling (shared ListTable behaviour)."
+   }
   },
   {
    "id": "audit-options-nested-tag-suggestions-weights",

@@ -5320,6 +5320,21 @@ clipboard, one per line in natural order, and says "Copied 3 tags!" under the bu
 The recent-tags panel has the reference's "clear" button ("Clear recent tags?").
 Activating a suggested tag only ever adds it, whatever the cog says.
 
+The suggestion lists (most used, recent, related) behave as the reference's
+tag lists: a click selects a tag (a click on a selected tag keeps the
+selection, a click below the tags clears it; ctrl and shift add, remove and
+range), the arrows move (wrapping round), as do home, end, page up/down and
+ctrl+n/p; escape clears the selection, ctrl+a selects all, ctrl+c copies the
+selection (or every tag) and ctrl+shift+c adds their parents; enter or a
+double-click adds the selected tags. A tag's sibling (`old → new`) and parents
+(rows under it, or "(1 parents)" collapsed) are drawn as the storage taglist
+options say, and the right-click menu turns them on and off for that list. The
+menu has the reference's copy, siblings, parents, open (a search page, an OR
+page, a page each, a duplicate filter page), favourites and maintenance
+entries; a middle-click opens a search page for the selection (with shift,
+their OR). Proven by `suggested_tag_list_interactions.rs` against
+`oracle/record_suggested_tag_list_interactions.py`.
+
 With the input empty, Left and Right change the autocomplete's tab and, if its list is
 empty too, Up and Down change the service tab (all wrapping), as the reference's
 `tags_autocomplete` shortcuts do.

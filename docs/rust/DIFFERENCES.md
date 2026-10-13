@@ -2639,8 +2639,11 @@ windows instead of embedding the write input directly in Options.
 The recent panel provides real history, add-only activation, the Clear
 question and read-time decay (what is older than the newest few the option
 keeps is forgotten for good), replayed from the reference. The suggestion lists'
-own context menus and keyboard (the reference's list boxes have right-click tag
-menus and Ctrl+A/C) are not ported: `suggested-tag-list-interactions`. No
+own selection, keys, decorators and right-click menus follow the reference's
+list boxes (`suggested-tag-list-interactions`); the related list keeps its
+" (score)" after each tag, which the reference's does not show. A list's menu
+has no "hide" or admin entries (the reference shows them only on media tag
+lists and to repository janitors). No
 recent/children/related/global
 favourite-list aliases are promoted. Native most-used updates poll persisted
 settings every 200 ms instead of Qt's publication subscription. New local

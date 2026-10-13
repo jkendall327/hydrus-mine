@@ -164,7 +164,10 @@ impl TagMenu {
     fn execute(&self, action: Action) {
         match action {
             Action::Copy(text) => crate::copy_to_clipboard(&text),
-            Action::Domain(..) | Action::Decorate { .. } | Action::MigrateTags => {
+            Action::Domain(..)
+            | Action::Decorate { .. }
+            | Action::ListDecorate { .. }
+            | Action::MigrateTags => {
                 (self.decorate)(action);
             }
             Action::Cog(setting) => {
