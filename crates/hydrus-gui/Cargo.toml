@@ -54,6 +54,7 @@ axum.workspace = true
 tower.workspace = true
 hydrus-legacy.workspace = true
 hydrus-testkit.workspace = true
+regex.workspace = true
 
 [lints]
 workspace = true
