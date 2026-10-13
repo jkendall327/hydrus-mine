@@ -470,7 +470,7 @@ pub fn enter(store: &Store, files: &[HashId], service: &ServiceKey, text: &str) 
     let tag = Tag::new(text)
         .ok_or_else(|| StoreError::Invalid(format!("\"{text}\" is not a valid tag")))?;
     let id = store.snapshot().services.by_key(service)?.id;
-    crate::tag_suggestions::push_recent(store, id, &[tag.clone()])?;
+    crate::tag_suggestions::push_recent(store, id, std::slice::from_ref(&tag))?;
     apply(
         store,
         files,

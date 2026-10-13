@@ -143,7 +143,7 @@ struct Client {
     ui: MainWindow,
     bound: hydrus_gui::Bound,
     files: Vec<HashId>,
-    _windows: hydrus_gui::headless::Windows,
+    windows: hydrus_gui::headless::Windows,
 }
 
 impl Client {
@@ -171,7 +171,7 @@ impl Client {
             ui,
             bound,
             files,
-            _windows: windows,
+            windows,
         }
     }
     /// Press "v" on these files: in the viewer opened on the one, or on the
@@ -199,7 +199,7 @@ impl Client {
             self.bound.current.borrow().borrow_mut().select_files(files);
             // the search box takes the keyboard by a rendered click, as a
             // user's would, then ctrl+m hands it to the thumbnails
-            let _image = hydrus_gui::headless::render(&self._windows.get(0).unwrap(), 1000, 700);
+            let _image = hydrus_gui::headless::render(&self.windows.get(0).unwrap(), 1000, 700);
             let position = slint::LogicalPosition::new(
                 self.ui.get_autocomplete_anchor_x() + 24.0,
                 self.ui.get_autocomplete_anchor_y() - 12.0,

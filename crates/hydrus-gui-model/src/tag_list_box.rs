@@ -391,7 +391,6 @@ impl TagListBox {
         let hit = match (key, self.last_hit) {
             (Key::Home, _) => Some(0),
             (Key::End, _) => Some(n - 1),
-            (_, None) => None,
             (Key::Char('p'), Some(last)) if ctrl => {
                 ctrl = false;
                 Some((last + n - 1) % n)
