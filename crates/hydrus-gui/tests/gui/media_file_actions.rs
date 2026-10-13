@@ -112,7 +112,8 @@ fn archive_inbox_delete_undelete_and_physical_delete_from_the_menu() {
             )
         })
         .unwrap();
-    assert_eq!(reason.as_deref(), Some(media_actions::DELETE_REASON));
+    // (the file was deleted before, and the simple dialog keeps its reason)
+    assert_eq!(reason.as_deref(), Some("Deleted via Client API."));
 
     // in the trash: delete physically now, and undelete
     let menu = fixture.menu(-1);

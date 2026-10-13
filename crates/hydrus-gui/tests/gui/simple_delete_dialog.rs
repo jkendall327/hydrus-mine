@@ -229,7 +229,11 @@ fn simple_deletion_opens_the_delete_files_dialog_as_recorded() {
                     changed += 1;
                     assert_eq!(now, expected, "{what}: the domains left");
                     if !physical {
-                        assert_eq!(reason.as_deref(), Some(REMEMBERED), "{what}: the reason");
+                        assert_eq!(
+                            reason.as_deref(),
+                            updates[0]["reason"].as_str(),
+                            "{what}: the reason"
+                        );
                     }
                 }
             }

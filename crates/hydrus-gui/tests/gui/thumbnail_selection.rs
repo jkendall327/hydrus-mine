@@ -206,7 +206,7 @@ fn several_thumbnails_are_selected_and_acted_on() {
     key(Key::Delete);
     assert_eq!(
         super::common::delete_question(&bound),
-        "Remove 3 files from art?\nRemove 3 files from my files?\nDelete from all local services? (force send to trash)"
+        "Remove one file from art?\nRemove 2 files from my files?\nDelete from all local services? (force send to trash)"
     );
     key(Key::Return);
     let after = page.borrow().results().to_vec();

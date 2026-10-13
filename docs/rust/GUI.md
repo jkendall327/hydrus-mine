@@ -3217,9 +3217,15 @@ content-update broadcasting and broader Files and Trash behavior remain Partial.
 
 Files and Trash now saves the confirmation preferences for trash and multi-file
 archive/inbox operations. Thumbnail shortcuts and menu actions read the applied
-preferences; the viewer also skips a simple local deletion question when trash
-confirmation is disabled. Multiple actionable local domains and physical deletion
-continue to ask. Cancelling Options leaves these preferences unchanged.
+preferences; with trash confirmation disabled and one actionable local domain, a
+deletion goes through without the dialog, in the viewer too. Otherwise deleting
+opens "Delete files?" (the reference's `EditDeleteFilesPanel`, also when the
+advanced dialog is off): one action shows as its label ("Send one file from my
+files to trash?"), several as a list starting on the remembered or suggested
+action, and the reason panel is hidden; the reason the hidden panel selects
+(the remembered one, else the default, and a file's earlier reason kept) is
+recorded, as in the reference. Proven by `tests/gui/simple_delete_dialog.rs`
+(replaying `simple_delete_dialog.json`) and the download flow. Cancelling Options leaves these preferences unchanged.
 The real Qt inputs and questions are recorded in `files_trash.json`.
 
 The advanced Files and Trash deletion dialog now lists actionable local domains,

@@ -7133,6 +7133,7 @@ fn open_viewer(
         let animator = animator.clone();
         let with_slideshow = with_slideshow.clone();
         let slideshow_settings = slideshow_settings.clone();
+        let viewer_delete = viewer_delete.clone();
         let weak = window.as_weak();
         move || {
             url_ticks.set((url_ticks.get() + 1) % 10);
@@ -7141,9 +7142,12 @@ fn open_viewer(
             }
             // (not while the viewer asks something, as the reference's
             // waits while a menu is open)
-            let asking = weak.upgrade().is_some_and(|w| {
-                !w.get_question().is_empty() || w.get_period_asked() || !w.get_warning().is_empty()
-            });
+            let asking = viewer_delete.borrow().is_some()
+                || weak.upgrade().is_some_and(|w| {
+                    !w.get_question().is_empty()
+                        || w.get_period_asked()
+                        || !w.get_warning().is_empty()
+                });
             let current = slideshow.get();
             if asking && current.running() {
                 return;
