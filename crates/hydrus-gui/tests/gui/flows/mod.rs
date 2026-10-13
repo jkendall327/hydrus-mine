@@ -14,6 +14,7 @@
 //! with the `DIFFERENCES.md` entry that explains it; one that no longer
 //! differs fails the flow too, so the list stays true.
 
+mod download;
 mod subscription;
 
 use std::collections::{BTreeMap, BTreeSet, HashMap};
@@ -238,7 +239,8 @@ impl Daemon {
         }
     }
 
-    /// Nothing running, nothing nudged and waiting to be taken, and no
+    /// No download or subscription running, nothing nudged and waiting to
+    /// be taken, and no
     /// subscription due within the minute (one just made, or told to
     /// check now, is due at once).
     pub fn idle(&self) -> bool {
@@ -246,8 +248,13 @@ impl Daemon {
         if !runner.status().active.is_empty() {
             return false;
         }
+        // (a queue's task lives as long as its page, waiting for work)
         let downloads = self.state.downloads.as_ref().unwrap();
-        if !downloads.live().is_empty() {
+        if downloads
+            .live()
+            .iter()
+            .any(|(_, live)| live.file_job.is_some() || live.gallery_job.is_some())
+        {
             return false;
         }
         if self.store.read(queues::any_nudged).unwrap() {
@@ -304,7 +311,11 @@ pub fn wait_until_idle(daemon: &Daemon, also: impl Fn() -> bool) {
         }
         std::thread::sleep(Duration::from_millis(50));
     }
-    panic!("timed out waiting for the client and its daemon to go idle");
+    panic!(
+        "timed out waiting for the client and its daemon to go idle (daemon idle: {}, the flow's condition: {})",
+        daemon.idle(),
+        also()
+    );
 }
 
 // ---------------------------------------------------------------- the end state
@@ -370,10 +381,6 @@ impl State<'_> {
         for sub in self.store.read(subs::subscriptions).unwrap() {
             let mut queries = Vec::new();
             for q in self.store.read(|c| subs::queries(c, sub.id)).unwrap() {
-                let files = self
-                    .store
-                    .read(|c| queues::file_seeds(c, q.queue_id))
-                    .unwrap();
                 let searches = self
                     .store
                     .read(|c| queues::gallery_seeds(c, q.queue_id))
@@ -384,7 +391,7 @@ impl State<'_> {
                     "dead": q.state.dead,
                     "checked": q.state.last_check_time > 0,
                     "check_now": q.state.check_now,
-                    "files": files.iter().map(|f| self.file_seed(f)).collect::<Vec<_>>(),
+                    "files": self.file_log(q.queue_id),
                     "searches": searches.iter().map(|g| self.gallery_seed(g)).collect::<Vec<_>>(),
                 }));
             }
@@ -398,19 +405,15 @@ impl State<'_> {
         Json::Array(out)
     }
 
-    /// `flows.files_state`, for the files in `subscriptions`' logs.
-    pub fn files(&self, subscriptions: &Json) -> Json {
+    /// An importer's file log (`flows.file_log_state`).
+    pub fn file_log(&self, queue: i64) -> Json {
+        let files = self.store.read(|c| queues::file_seeds(c, queue)).unwrap();
+        Json::Array(files.iter().map(|f| self.file_seed(f)).collect())
+    }
+
+    /// `flows.files_state`: what each file shows.
+    pub fn files(&self, hashes: BTreeSet<String>) -> Json {
         use hydrus_core::service::ServiceType;
-        let mut hashes = BTreeSet::new();
-        for s in subscriptions.as_array().unwrap() {
-            for q in s["queries"].as_array().unwrap() {
-                for f in q["files"].as_array().unwrap() {
-                    if let Some(h) = f["sha256"].as_str() {
-                        hashes.insert(h.to_owned());
-                    }
-                }
-            }
-        }
         let snapshot = self.store.snapshot();
         let mut out = serde_json::Map::new();
         for hash in hashes {
@@ -490,19 +493,35 @@ impl State<'_> {
         )
     }
 
-    /// A step's state: `step` and `dialog` (what the flow saw in its
-    /// dialogs) as given, then what the user sees.
+    /// A subscription flow's step: `step` and `dialog` (what the flow saw
+    /// in its dialogs) as given, then what the user sees.
     pub fn step(&self, step: &str, dialog: &Json) -> Json {
         let subscriptions = self.subscriptions();
+        let mut hashes = BTreeSet::new();
+        for s in subscriptions.as_array().unwrap() {
+            for q in s["queries"].as_array().unwrap() {
+                hashes.extend(hashes_in_log(&q["files"]));
+            }
+        }
         json!({
             "step": step,
             "dialog": dialog,
-            "files": self.files(&subscriptions),
+            "files": self.files(hashes),
             "subscriptions": subscriptions,
             "popups": self.popups(),
             "hits": self.site.take_hits(),
         })
     }
+}
+
+/// The files a file log names (`flows.hashes_in_log`).
+pub fn hashes_in_log(files: &Json) -> BTreeSet<String> {
+    files
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter_map(|f| f["sha256"].as_str().map(str::to_owned))
+        .collect()
 }
 
 // ---------------------------------------------------------------- comparing

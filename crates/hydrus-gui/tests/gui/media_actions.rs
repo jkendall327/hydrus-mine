@@ -113,7 +113,10 @@ fn the_viewer_s_shortcuts_archive_inbox_and_delete() {
         })
     );
     viewer.invoke_delete();
-    assert_eq!(viewer.get_question(), "Send this file to the trash?");
+    assert_eq!(
+        viewer.get_question(),
+        "Send one file from my files to trash?"
+    );
     viewer.invoke_answer(false);
     assert_eq!(viewer.get_question(), "");
     assert_eq!(state(&store, file).1, ["my files"]);
@@ -225,7 +228,7 @@ fn the_viewer_s_shortcuts_archive_inbox_and_delete() {
     assert!(state(&store, selected).0);
     let before = page.borrow().results().len();
     key(slint::platform::Key::Delete);
-    assert_eq!(ui.get_question(), "Send this file to the trash?");
+    assert_eq!(ui.get_question(), "Send one file from art to trash?");
     key(slint::platform::Key::Escape);
     assert_eq!(ui.get_question(), "");
     assert_eq!(page.borrow().results().len(), before);

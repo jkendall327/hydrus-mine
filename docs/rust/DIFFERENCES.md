@@ -2380,7 +2380,10 @@ reference cancellation note.
 
 Files and Trash confirmation preferences now reach thumbnail and viewer local
 file operations. The native deletion question still presents one action rather
-than the reference's complete service/action picker when advanced mode is off.
+than the reference's complete service/action picker when advanced mode is off,
+and asks in the main window rather than in a "Delete files?" dialog (#187); where
+the reference has only one action it asks with that action's label ("Send one
+file from my files to trash?"; found by the download flow, `FLOWS.md`).
 Advanced local-domain, trash and physical/clean deletion now uses the action and
 reason picker with the ordered reason queue and remembered accepted choices.
 Remote repository/IPFS actions are outside this local dialog. Copy/move-domain
