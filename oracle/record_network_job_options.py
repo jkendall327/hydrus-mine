@@ -53,10 +53,13 @@ class Server:
                     with outer.lock:
                         outer.active += 1
                         outer.max_active = max(outer.max_active, outer.active)
-                    time.sleep(0.3)
+                    time.sleep(1.5)
                     with outer.lock:
                         outer.active -= 1
                     self.reply(200, b'held')
+                elif self.path == '/drop':
+                    self.close_connection = True
+                    self.connection.shutdown(socket.SHUT_RDWR)
                 elif self.path == '/stall':
                     time.sleep(25)
                     self.reply(200, b'late')
@@ -187,7 +190,7 @@ def record(session):
     for number, delta in ((2, 1200), (3, 1200), (0, 1200)):
         clear_errors()
         settings(domain_network_infrastructure_error_number=number, domain_network_infrastructure_error_time_delta=delta, max_connection_attempts_allowed=3, connection_error_wait_time=1)
-        failed = run(closed)
+        failed = run(server.base + '/drop')
         ok = engine.domain_manager.DomainOK(server.base)
         probe = run(server.base + '/uri', limit=20, hold=1.5)
         # server errors (500) do not count as domain events
@@ -237,10 +240,14 @@ def record(session):
             conn.close()
     threading.Thread(target=proxy, daemon=True).start()
     settings(https_proxy=f'http://127.0.0.1:{listener.getsockname()[1]}', max_connection_attempts_allowed=1, max_request_attempts_allowed_get=1)
-    out['https_proxy'] = dict(**run('https://booru.invalid/x', limit=30), connect_lines=list(asked))
+    result = run('https://booru.invalid/x', limit=30)
+    time.sleep(0.5)
+    out['https_proxy'] = dict(**result, connect_lines=list(asked))
     settings(https_proxy=None)
     asked.clear()
-    out['https_proxy_cleared'] = dict(**run('https://booru.invalid/x', limit=30), connect_lines=list(asked))
+    result = run('https://booru.invalid/x', limit=30)
+    time.sleep(0.5)
+    out['https_proxy_cleared'] = dict(**result, connect_lines=list(asked))
     listener.close()
     settings(max_connection_attempts_allowed=1, max_request_attempts_allowed_get=1)
 

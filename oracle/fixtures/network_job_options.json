@@ -19,20 +19,25 @@
    "attempts": 3,
    "wait": 1,
    "statuses": [
+    "sending request\u2026",
+    "connection failed - retrying now",
+    "Error: Could not connect!"
+   ],
+   "wakes": [
     [
-     "initialising\u2026",
-     0,
-     0,
-     null
+     0.02,
+     "connection",
+     1
     ],
     [
-     "connection failed - retrying now",
-     0,
-     0,
-     null
+     2.01,
+     "connection",
+     4
     ]
    ],
-   "seconds": 5.011548722000043,
+   "connection_attempts": 4,
+   "request_attempts": 1,
+   "seconds": 5.022778879000043,
    "error": "ConnectionException",
    "done": true,
    "text": null
@@ -41,38 +46,41 @@
    "attempts": 2,
    "wait": 1,
    "statuses": [
+    "connection failed - retrying now"
+   ],
+   "wakes": [
     [
-     "initialising\u2026",
-     0,
-     0,
-     null
-    ],
-    [
-     "This domain has had several serious errors recently. Waiting a bit.",
-     0,
-     0,
-     null
+     0.0,
+     "connection",
+     1
     ]
    ],
-   "seconds": 60.00355987199998,
-   "error": null,
-   "done": false,
+   "connection_attempts": 3,
+   "request_attempts": 1,
+   "seconds": 2.0181945910001104,
+   "error": "ConnectionException",
+   "done": true,
    "text": null
   },
   {
    "attempts": 2,
    "wait": 2,
    "statuses": [
+    "connection failed - retrying now",
+    "Error: Could not connect!"
+   ],
+   "wakes": [
     [
-     "This domain has had several serious errors recently. Waiting a bit.",
-     0,
-     0,
-     null
+     0.0,
+     "connection",
+     2
     ]
    ],
-   "seconds": 60.00386712399995,
-   "error": null,
-   "done": false,
+   "connection_attempts": 3,
+   "request_attempts": 1,
+   "seconds": 3.0127219290000085,
+   "error": "ConnectionException",
+   "done": true,
    "text": null
   }
  ],
@@ -80,26 +88,19 @@
   {
    "retries": 2,
    "statuses": [
+    "sending request\u2026",
+    "503: no - retrying now"
+   ],
+   "wakes": [
     [
-     "sending request\u2026",
-     0,
-     0,
-     null
-    ],
-    [
-     "503: no - retrying now",
-     2,
-     0,
-     null
-    ],
-    [
-     "503: no - retrying now",
-     0,
-     0,
-     null
+     0.02,
+     "connection",
+     0
     ]
    ],
-   "seconds": 1.0104922270000998,
+   "connection_attempts": 1,
+   "request_attempts": 3,
+   "seconds": 1.0142021720000685,
    "error": "NetworkInfrastructureException",
    "done": true,
    "text": null,
@@ -108,56 +109,30 @@
   {
    "retries": 4,
    "statuses": [
+    "initialising\u2026",
+    "503 - Service Unavailable",
+    "503: no - retrying now"
+   ],
+   "wakes": [
     [
-     "sending request\u2026",
-     0,
-     0,
-     null
+     0.06,
+     "connection",
+     0
     ],
     [
-     "503 - Service Unavailable",
-     0,
-     0,
+     1.06,
+     "connection",
+     1
+    ],
+    [
+     2.07,
+     "connection",
      2
-    ],
-    [
-     "503: no - retrying now",
-     2,
-     0,
-     null
-    ],
-    [
-     "503: no - retrying now",
-     0,
-     0,
-     null
-    ],
-    [
-     "503: no - retrying now",
-     2,
-     0,
-     null
-    ],
-    [
-     "503: no - retrying now",
-     0,
-     0,
-     null
-    ],
-    [
-     "503: no - retrying now",
-     2,
-     0,
-     null
-    ],
-    [
-     "503: no - retrying now",
-     0,
-     0,
-     null
     ]
    ],
-   "seconds": 3.0668692110000393,
+   "connection_attempts": 1,
+   "request_attempts": 5,
+   "seconds": 3.0533281999998962,
    "error": "NetworkInfrastructureException",
    "done": true,
    "text": null,
@@ -168,32 +143,21 @@
   {
    "wait": 1,
    "statuses": [
+    "sending request\u2026",
+    "429 - Too Many Requests",
+    "server reported limited bandwidth - retrying now",
+    "Error: Server reported very limited bandwidth: 429: no"
+   ],
+   "wakes": [
     [
-     "sending request\u2026",
-     0,
-     0,
-     null
-    ],
-    [
-     "429 - Too Many Requests",
-     0,
-     0,
-     2
-    ],
-    [
-     "server reported limited bandwidth - retrying now",
-     2,
-     0,
-     null
-    ],
-    [
-     "server reported limited bandwidth - retrying now",
-     0,
-     0,
-     null
+     0.06,
+     "serverside",
+     1.5625
     ]
    ],
-   "seconds": 2.0578409169999077,
+   "connection_attempts": 1,
+   "request_attempts": 3,
+   "seconds": 2.0643368539999756,
    "error": "BandwidthException",
    "done": true,
    "text": null,
@@ -202,159 +166,190 @@
   {
    "wait": 3,
    "statuses": [
+    "initialising\u2026",
+    "429 - Too Many Requests",
+    "server reported limited bandwidth - retrying in 4.7 seconds",
+    "server reported limited bandwidth - retrying in 3.7 seconds",
+    "server reported limited bandwidth - retrying now"
+   ],
+   "wakes": [
     [
-     "This domain has had several serious errors recently. Waiting a bit.",
-     0,
-     0,
-     null
+     0.06,
+     "serverside",
+     4.6875
     ]
    ],
-   "seconds": 60.00866807099999,
-   "error": null,
-   "done": false,
+   "connection_attempts": 1,
+   "request_attempts": 3,
+   "seconds": 5.0614375100001325,
+   "error": "BandwidthException",
+   "done": true,
    "text": null,
-   "asked": 0
+   "asked": 2
   }
  ],
  "simultaneous": [
   {
    "overall": 2,
    "per_domain": 5,
-   "max_active": 0
+   "max_active": 1
   },
   {
    "overall": 5,
    "per_domain": 3,
-   "max_active": 0
+   "max_active": 3
   }
  ],
  "domain_halt": [
   {
    "number": 2,
    "delta": 1200,
-   "errors": [
-    null,
-    null
-   ],
-   "domain_ok": false,
-   "probe": {
+   "failed": {
     "statuses": [
+     "connection failed - retrying now"
+    ],
+    "wakes": [
      [
-      "This domain has had several serious errors recently. Waiting a bit.",
-      0,
-      0,
-      null
+      0.01,
+      "connection",
+      1
      ],
      [
-      "cancelled!",
-      0,
-      0,
-      null
+      2.0,
+      "connection",
+      4
      ]
     ],
-    "seconds": 1.5330312400001276,
-    "error": null,
+    "connection_attempts": 4,
+    "request_attempts": 1,
+    "seconds": 5.0141324220001025,
+    "error": "ConnectionException",
     "done": true,
     "text": null
-   }
+   },
+   "domain_ok": true,
+   "probe": {
+    "statuses": [
+     "done!"
+    ],
+    "wakes": [],
+    "connection_attempts": 1,
+    "request_attempts": 1,
+    "seconds": 0.00301559400008955,
+    "error": null,
+    "done": true,
+    "text": "/uri"
+   },
+   "ok_after_three_500s": true
   },
   {
    "number": 3,
    "delta": 1200,
-   "errors": [
-    null,
-    null
-   ],
-   "domain_ok": false,
-   "probe": {
+   "failed": {
     "statuses": [
+     "sending request\u2026",
+     "connection failed - retrying now",
+     "Error: Could not connect!"
+    ],
+    "wakes": [
      [
-      "This domain has had several serious errors recently. Waiting a bit.",
-      0,
-      0,
-      null
+      0.02,
+      "connection",
+      1
      ],
      [
-      "cancelled!",
-      0,
-      0,
-      null
+      2.01,
+      "connection",
+      4
      ]
     ],
-    "seconds": 1.5329566220000288,
-    "error": null,
+    "connection_attempts": 4,
+    "request_attempts": 1,
+    "seconds": 5.023003001999996,
+    "error": "ConnectionException",
     "done": true,
     "text": null
-   }
+   },
+   "domain_ok": true,
+   "probe": {
+    "statuses": [
+     "done!"
+    ],
+    "wakes": [],
+    "connection_attempts": 1,
+    "request_attempts": 1,
+    "seconds": 0.0021194439998453163,
+    "error": null,
+    "done": true,
+    "text": "/uri"
+   },
+   "ok_after_three_500s": true
   },
   {
    "number": 0,
    "delta": 1200,
-   "errors": [
-    "ServerException",
-    "ServerException"
-   ],
-   "domain_ok": true,
-   "probe": {
+   "failed": {
     "statuses": [
+     "connection failed - retrying now"
+    ],
+    "wakes": [
      [
-      "initialising\u2026",
-      0,
-      0,
-      null
+      0.0,
+      "connection",
+      1
      ],
      [
-      "downloading\u2026",
-      0,
-      0,
-      4
-     ],
-     [
-      "done!",
-      4,
-      4,
+      2.01,
+      "connection",
       4
      ]
     ],
-    "seconds": 0.061986511999975846,
+    "connection_attempts": 4,
+    "request_attempts": 1,
+    "seconds": 5.019485566999947,
+    "error": "ConnectionException",
+    "done": true,
+    "text": null
+   },
+   "domain_ok": true,
+   "probe": {
+    "statuses": [
+     "done!"
+    ],
+    "wakes": [],
+    "connection_attempts": 1,
+    "request_attempts": 1,
+    "seconds": 0.0022685439998895163,
     "error": null,
     "done": true,
     "text": "/uri"
-   }
+   },
+   "ok_after_three_500s": true
   }
  ],
  "timeout": {
   "statuses": [
-   [
-    "This domain has had several serious errors recently. Waiting a bit.",
-    0,
-    0,
-    null
-   ]
+   "initialising\u2026",
+   "sending request\u2026"
   ],
-  "seconds": 40.00246819699987,
-  "error": null,
-  "done": false,
+  "wakes": [],
+  "connection_attempts": 1,
+  "request_attempts": 2,
+  "seconds": 6.014584789000082,
+  "error": "StreamTimeoutException",
+  "done": true,
   "text": null
  },
  "proxy": [
   {
    "case": "http proxy, other host",
    "statuses": [
-    [
-     "initialising\u2026",
-     0,
-     0,
-     null
-    ],
-    [
-     "done!",
-     24,
-     24,
-     24
-    ]
+    "initialising\u2026"
    ],
-   "seconds": 0.021296310999787238,
+   "wakes": [],
+   "connection_attempts": 1,
+   "request_attempts": 1,
+   "seconds": 0.02048223500014501,
    "error": null,
    "done": true,
    "text": "http://booru.invalid/uri",
@@ -366,36 +361,29 @@
   {
    "case": "http proxy, host in default no_proxy",
    "statuses": [
-    [
-     "This domain has had several serious errors recently. Waiting a bit.",
-     0,
-     0,
-     null
-    ]
+    "sending request\u2026",
+    "downloading\u2026"
    ],
-   "seconds": 60.00987914500001,
+   "wakes": [],
+   "connection_attempts": 1,
+   "request_attempts": 1,
+   "seconds": 0.06136829199999738,
    "error": null,
-   "done": false,
-   "text": null,
+   "done": true,
+   "text": "http://127.0.0.1:44297/uri",
    "direct_asked": 0
   },
   {
    "case": "http proxy, host in no_proxy",
    "statuses": [
-    [
-     "initialising\u2026",
-     0,
-     0,
-     null
-    ],
-    [
-     "done!",
-     24,
-     24,
-     24
-    ]
+    "initialising\u2026",
+    "downloading\u2026",
+    "done!"
    ],
-   "seconds": 0.021579328999905556,
+   "wakes": [],
+   "connection_attempts": 1,
+   "request_attempts": 1,
+   "seconds": 0.061119611999856716,
    "error": null,
    "done": true,
    "text": "http://booru.invalid/uri",
@@ -404,20 +392,13 @@
   {
    "case": "proxy cleared",
    "statuses": [
-    [
-     "initialising\u2026",
-     0,
-     0,
-     null
-    ],
-    [
-     "Error: Could not connect!",
-     0,
-     0,
-     null
-    ]
+    "sending request\u2026",
+    "Error: Could not connect!"
    ],
-   "seconds": 0.020563582000022507,
+   "wakes": [],
+   "connection_attempts": 2,
+   "request_attempts": 1,
+   "seconds": 0.02198039199993218,
    "error": "ConnectionException",
    "done": true,
    "text": null,
@@ -426,26 +407,14 @@
  ],
  "https_proxy": {
   "statuses": [
-   [
-    "initialising\u2026",
-    0,
-    0,
-    null
-   ],
-   [
-    "sending request\u2026",
-    0,
-    0,
-    null
-   ],
-   [
-    "Error: Could not connect!",
-    0,
-    0,
-    null
-   ]
+   "initialising\u2026",
+   "sending request\u2026",
+   "Error: Could not connect!"
   ],
-  "seconds": 0.30638027600002715,
+  "wakes": [],
+  "connection_attempts": 2,
+  "request_attempts": 1,
+  "seconds": 0.28378594000014346,
   "error": "ConnectionException",
   "done": true,
   "text": null,
@@ -453,20 +422,13 @@
  },
  "https_proxy_cleared": {
   "statuses": [
-   [
-    "sending request\u2026",
-    0,
-    0,
-    null
-   ],
-   [
-    "Error: Could not connect!",
-    0,
-    0,
-    null
-   ]
+   "initialising\u2026",
+   "sending request\u2026"
   ],
-  "seconds": 0.549006049000127,
+  "wakes": [],
+  "connection_attempts": 2,
+  "request_attempts": 1,
+  "seconds": 0.30289632299991354,
   "error": "ConnectionException",
   "done": true,
   "text": null,
@@ -476,26 +438,14 @@
   {
    "verify": true,
    "statuses": [
-    [
-     "initialising\u2026",
-     0,
-     0,
-     null
-    ],
-    [
-     "sending request\u2026",
-     0,
-     0,
-     null
-    ],
-    [
-     "Error: Problem with SSL Verification. (This may be due to a bad certificate on the site or hydrus's \"requests\" library not having up to date root certs or SSL, but ISP level content blockers can also cause it.): HTTPSConnectionPool(host='127.0.0.1', port=42371): Max retries exceeded with url: /uri (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1032)')))\n\n",
-     0,
-     0,
-     null
-    ]
+    "initialising\u2026",
+    "sending request\u2026",
+    "Error: Problem with SSL Verification. (This may be due to a bad certificate on the site or hydrus's \"requests\" library not having up to date root certs or SSL, but ISP level content blockers can also cause it.): HTTPSConnectionPool(host='127.0.0.1', port=40579): Max retries exceeded with url: /uri (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1032)')))\n\n"
    ],
-   "seconds": 0.04070765999995274,
+   "wakes": [],
+   "connection_attempts": 2,
+   "request_attempts": 1,
+   "seconds": 0.04055256600008761,
    "error": "ConnectionException",
    "done": true,
    "text": null,
@@ -504,14 +454,13 @@
   {
    "verify": false,
    "statuses": [
-    [
-     "sending request\u2026",
-     0,
-     0,
-     null
-    ]
+    "initialising\u2026",
+    "sending request\u2026"
    ],
-   "seconds": 0.0821318330001759,
+   "wakes": [],
+   "connection_attempts": 1,
+   "request_attempts": 1,
+   "seconds": 0.08138114300004418,
    "error": null,
    "done": true,
    "text": "/uri",
