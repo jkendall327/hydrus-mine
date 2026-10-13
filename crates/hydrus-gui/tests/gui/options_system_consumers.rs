@@ -2180,55 +2180,6 @@ mod network_consumers {
             .collect()
     }
 
-    #[tokio::test]
-    async fn failed_connections_are_retried_as_often_and_as_slowly_as_the_options_say() {
-        let (client, engine) = with_engine();
-        let (_held, url) = closed_port();
-        // three attempts, a second of wait per attempt gone: a wait of 1 s
-        // after the first failure and one of 2 s after the second
-        apply(&client, &engine, |w| {
-            number(
-                w,
-                "max connection attempts allowed per request: ",
-                (1, 10),
-                3,
-            );
-            number(
-                w,
-                "connection error retry wait (seconds): ",
-                (1, 2_592_000),
-                1,
-            );
-        });
-        let three = fetch(&engine, &url).await;
-        assert!(matches!(three.result, Err(NetError::Connection(_))));
-        assert_eq!(retry_waits(&three.statuses), [1, 2], "{:?}", three.statuses);
-        assert!(three.seconds >= 3.0, "{}", three.seconds);
-        // two attempts: the one wait
-        apply(&client, &engine, |w| {
-            number(
-                w,
-                "max connection attempts allowed per request: ",
-                (1, 10),
-                2,
-            );
-        });
-        let two = fetch(&engine, &url).await;
-        assert!(matches!(two.result, Err(NetError::Connection(_))));
-        assert_eq!(retry_waits(&two.statuses), [1], "{:?}", two.statuses);
-        // the same two attempts, with a wait of two seconds
-        apply(&client, &engine, |w| {
-            number(
-                w,
-                "connection error retry wait (seconds): ",
-                (1, 2_592_000),
-                2,
-            );
-        });
-        let slower = fetch(&engine, &url).await;
-        assert_eq!(retry_waits(&slower.statuses), [2], "{:?}", slower.statuses);
-        assert!(slower.seconds >= 2.0, "{}", slower.seconds);
-    }
 
     #[tokio::test]
     async fn a_failing_server_is_asked_as_many_times_as_the_retries_option_says() {
@@ -2341,47 +2292,6 @@ mod network_consumers {
         assert!((2..=3).contains(&seen), "{seen}");
     }
 
-    #[tokio::test]
-    async fn a_domain_with_enough_errors_is_left_alone_for_as_long_as_the_options_say() {
-        let (client, engine) = with_engine();
-        let (base, _hits) = serve().await;
-        let label = "Halt new jobs as long as this many network infrastructure errors on their domain (0 for never wait): ";
-        let set = |n: i32, minutes: i32| {
-            apply(&client, &engine, |w| {
-                number(w, "max retries allowed per request: ", (1, 10), 1);
-                let (i, _) = row(w, label);
-                w.invoke_number_edited(i, n);
-                w.invoke_field_edited(i, 0, 0);
-                w.invoke_field_edited(i, 1, minutes);
-                w.invoke_field_edited(i, 2, 0);
-            });
-        };
-        // two errors in twenty minutes (not the default ten) halt it
-        set(2, 20);
-        assert_eq!(engine.options().domain_error_window, 20 * 60);
-        for _ in 0..2 {
-            let fetched = fetch(&engine, &format!("{base}/status/500")).await;
-            assert!(fetched.result.is_err());
-        }
-        assert!(!engine.domain_ok(&base));
-        let job = Job::new();
-        let request = Request::get(format!("{base}/uri"));
-        let waited =
-            tokio::time::timeout(Duration::from_millis(400), engine.fetch(&request, &job)).await;
-        assert!(waited.is_err(), "it waited");
-        assert_eq!(job.state().wait, WaitReason::Domain);
-        // three needed: the same two do not halt it, and a request goes
-        set(3, 20);
-        assert!(engine.domain_ok(&base));
-        assert!(fetch(&engine, &format!("{base}/uri")).await.result.is_ok());
-        // zero is never wait: even with the errors still counted, and more
-        set(0, 20);
-        assert!(engine.domain_ok(&base));
-        let fetched = fetch(&engine, &format!("{base}/status/500")).await;
-        assert!(fetched.result.is_err());
-        assert!(engine.domain_ok(&base));
-        assert!(fetch(&engine, &format!("{base}/uri")).await.result.is_ok());
-    }
 
     #[tokio::test]
     async fn a_server_that_goes_quiet_is_given_the_timeout_the_option_says() {
@@ -2513,8 +2423,9 @@ mod network_consumers {
     #[tokio::test]
     async fn refused_connections_are_attempted_and_waited_for_as_the_reference_does() {
         let (client, engine) = with_engine();
-        let (_held, url) = closed_port();
         for case in recorded()["connection"].as_array().unwrap() {
+            // (errors are counted per host and port, and an address like this cannot be scrubbed)
+            let (_held, url) = closed_port();
             apply(&client, &engine, |w| {
                 number(
                     w,
@@ -2691,10 +2602,9 @@ mod network_consumers {
     #[tokio::test]
     async fn a_domain_with_enough_errors_is_left_alone_as_the_reference_leaves_it() {
         let (client, engine) = with_engine();
-        let base = droppy().await;
         let label = "Halt new jobs as long as this many network infrastructure errors on their domain (0 for never wait): ";
         for case in recorded()["domain_halt"].as_array().unwrap() {
-            engine.scrub_domain_errors(&base);
+            let base = droppy().await;
             apply(&client, &engine, |w| {
                 number(w, "max connection attempts allowed per request: ", (1, 10), 3);
                 number(w, "connection error retry wait (seconds): ", (1, 2_592_000), 1);
@@ -2728,7 +2638,7 @@ mod network_consumers {
                 assert_eq!(job.state().wait, WaitReason::Domain);
             }
             // server errors that are only recorded on a job do not count against a domain
-            engine.scrub_domain_errors(&base);
+            let base = droppy().await;
             for _ in 0..3 {
                 let fetched = fetch(&engine, &format!("{base}/status/500")).await;
                 assert!(fetched.result.is_err());
