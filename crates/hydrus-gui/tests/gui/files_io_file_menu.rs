@@ -104,16 +104,19 @@ fn last_done(store: &Store) -> i64 {
     store.read(settings::get::<ShutdownWork>).unwrap().last_done
 }
 
+/// The restart flag is process-wide: the tests that set it take turns.
+static RESTART_FLAG: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
 const EXIT_QUESTION: &str =
     "Are you sure you want to exit the client? (Will auto-yes in 15 seconds)";
 const RESTART_QUESTION: &str =
     "Are you sure you want to restart the client? (Will auto-yes in 15 seconds)";
 
-// leaf: audit-options-menu-menu-file-exit
-// leaf: audit-options-menu-menu-file-restart
-// leaf: audit-options-menu-menu-file-exit-force-maintenance
 #[test]
 fn exit_restart_and_force_maintenance_ask_as_the_reference_does_and_close_the_client() {
+    let _turn = RESTART_FLAG
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
     let (_dirs, store) = fixture_store("basic");
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
@@ -192,6 +195,17 @@ fn open_entries_launch_directories_and_manage_entries_open_the_folder_lists() {
         move |target| launched.borrow_mut().push(target.to_owned())
     });
 
+    // what the reference launched from each entry (recorded): its database
+    // directory, then its installation directory
+    let recorded = hydrus_testkit::fixture_json("file_menu_exit.json");
+    let theirs = recorded["launched"].as_array().unwrap();
+    assert_eq!(
+        (
+            theirs[0]["is_db_dir"].as_bool(),
+            theirs[1]["is_base_dir"].as_bool()
+        ),
+        (Some(true), Some(true))
+    );
     let shown = file_menu(&ui, &["open", "database directory"]);
     assert_eq!(
         shown[1].iter().map(|l| l.0.as_str()).collect::<Vec<_>>(),
@@ -664,4 +678,122 @@ fn checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_refer
         seen += 1;
     }
     assert_eq!(seen, 10);
+}
+
+// leaf: audit-options-menu-menu-file-exit
+// leaf: audit-options-menu-menu-file-restart
+// leaf: audit-options-menu-menu-file-exit-force-maintenance
+#[test]
+fn exit_restart_and_force_maintenance_replay_the_references_questions_and_outcomes() {
+    let _turn = RESTART_FLAG
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    let recorded = hydrus_testkit::fixture_json("file_menu_exit.json");
+    let (_dirs, store) = fixture_store("basic");
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let mut seen_work = (false, false);
+    // a stand-in program for the client: it says it was started
+    let scratch = tempfile::tempdir().unwrap();
+    let program = scratch.path().join("client.sh");
+    std::fs::write(&program, "#!/bin/sh\necho \"$2\" > \"$1\"\n").unwrap();
+    {
+        use std::os::unix::fs::PermissionsExt as _;
+        std::fs::set_permissions(&program, std::fs::Permissions::from_mode(0o755)).unwrap();
+    }
+    let mut restarts = 0;
+    let mut saw_restart = false;
+    for run in recorded["exits"].as_array().unwrap() {
+        let name = run["name"].as_str().unwrap();
+        ui.show().unwrap();
+        let _bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+        hydrus_gui::client_exit::RESTART.store(false, Ordering::SeqCst);
+        // (the reference's options: leave on shutdown or never; work due or
+        // done a moment ago)
+        let recently = hydrus_core::time::TimestampMs::now().secs() - 10;
+        let due = run["work_due"].as_bool().unwrap();
+        let before = if due { 0 } else { recently };
+        exit_settings(
+            &store,
+            run["confirm"].as_bool().unwrap(),
+            u8::from(run["idle_shutdown"] == 1),
+            before,
+        );
+        file_menu(&ui, &[run["entry"].as_str().unwrap()]);
+        let asked = run["asked"].as_array().unwrap();
+        if let Some(question) = asked.first() {
+            assert_eq!(
+                ui.get_question(),
+                question["text"].as_str().unwrap(),
+                "{name}"
+            );
+            ui.invoke_answer(run["answer"].as_bool().unwrap());
+        } else {
+            assert!(ui.get_question().is_empty(), "{name}: nothing is asked");
+        }
+        if let Some(exit) = run["exited"].as_array().unwrap().first() {
+            assert!(!ui.window().is_visible(), "{name}: the client exits");
+            assert_eq!(
+                hydrus_gui::client_exit::RESTART.load(Ordering::SeqCst),
+                exit["restart"].as_bool().unwrap(),
+                "{name}"
+            );
+            let ran = last_done(&store) > before;
+            assert_eq!(
+                ran,
+                exit["idle_work"].as_bool().unwrap(),
+                "{name}: shutdown work"
+            );
+            seen_work = (seen_work.0 || ran, seen_work.1 || !ran);
+        } else {
+            assert!(ui.window().is_visible(), "{name}: the client stays");
+            assert!(
+                !hydrus_gui::client_exit::RESTART.load(Ordering::SeqCst),
+                "{name}"
+            );
+            assert_eq!(last_done(&store), before, "{name}");
+        }
+        // once out, the process starts again (with its arguments) just when
+        // the reference restarted
+        restarts += 1;
+        let started = scratch.path().join(format!("started-{restarts}"));
+        let relaunched = hydrus_gui::client_exit::relaunch_if_requested(
+            &program,
+            [started.clone().into_os_string(), "--db-dir=x".into()],
+        )
+        .unwrap();
+        let restarted = run["exited"]
+            .as_array()
+            .unwrap()
+            .first()
+            .is_some_and(|exit| exit["restart"].as_bool().unwrap());
+        assert_eq!(relaunched, restarted, "{name}");
+        if relaunched {
+            let start = std::time::Instant::now();
+            while !started.exists() {
+                assert!(
+                    start.elapsed() < Duration::from_secs(10),
+                    "{name}: never started"
+                );
+                std::thread::sleep(Duration::from_millis(10));
+            }
+            std::thread::sleep(Duration::from_millis(100));
+            assert_eq!(
+                std::fs::read_to_string(&started).unwrap().trim(),
+                "--db-dir=x"
+            );
+            saw_restart = true;
+        } else {
+            std::thread::sleep(Duration::from_millis(50));
+            assert!(!started.exists(), "{name}");
+        }
+        // (the next run starts a plain exit again)
+        hydrus_gui::client_exit::RESTART.store(false, Ordering::SeqCst);
+    }
+    assert!(saw_restart);
+    assert_eq!(
+        seen_work,
+        (true, true),
+        "work ran and was left, as recorded"
+    );
 }
