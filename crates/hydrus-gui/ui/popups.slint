@@ -50,8 +50,6 @@ export struct PopupBounds { x: length, y: length, width: length, height: length 
 component PopupButton inherits Rectangle {
     in property <string> text;
     in property <image> icon;
-    // what an icon-only button is called to assistive technology (and tests)
-    in property <string> label;
     callback clicked();
     callback measured(PopupBounds);
     min-width: button.min-width;
@@ -61,7 +59,7 @@ component PopupButton inherits Rectangle {
     horizontal-stretch: button.horizontal-stretch;
     vertical-stretch: button.vertical-stretch;
     forward-focus: button;
-    button := Button { width: parent.width; height: parent.height; text: root.text; icon: root.icon; accessible-label: root.label != "" ? root.label : root.text; clicked => { root.clicked(); } }
+    button := Button { width: parent.width; height: parent.height; text: root.text; icon: root.icon; clicked => { root.clicked(); } }
     property <PopupBounds> frame: {x:button.absolute-position.x,y:button.absolute-position.y,width:button.width,height:button.height};
     property <bool> measurement-pending: true;
     changed frame => { self.measurement-pending = true; }
@@ -217,13 +215,11 @@ export component PopupStack inherits Rectangle {
                         alignment: end;
                         spacing: 2px;
                         if popup.pausable: Button {
-                            accessible-label: popup.paused ? "play" : "pause";
                             icon: popup.paused ? @image-url("../../../static/play.png") : @image-url("../../../static/pause.png");
                             clicked => { root.pause-play(i); }
                         }
                         if popup.cancellable: PopupButton {
                             measured(b) => { root.control-measured(i,popup.key,popup.gui-owner,"cancel",b,card.bounds); }
-                            label: "cancel";
                             icon: @image-url("../../../static/stop.png");
                             clicked => { root.cancel(i); }
                         }
