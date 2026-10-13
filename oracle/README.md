@@ -125,6 +125,7 @@ at fixed copy boundaries; dialog replies and worker scheduling are scripted.
 | `record_downloads.py` | `fixtures/downloads.json`: the downloader against a local fake site |
 | `flows.py` | the harness for user flows (`docs/rust/FLOWS.md`): a fake booru in phases, its downloader, scripted dialogs, waiting until idle, popups shown, the normalised end state |
 | `record_flow_subscription.py` | `fixtures/flow_subscription.json`: flow 1, a subscription added through the real manage subscriptions, chooser and edit dialogs, run, then checked again from the dialog once the site has a new post; each step's dialog rows, subscription logs, files, popups and requests |
+| `record_flow_download.py` | `fixtures/flow_download.json`: flow 2, a post's URL entered on a new URL downloader page, then its thumbnail tagged through the real manage tags dialog, archived and deleted through the real delete files dialog; each step's page file log and thumbnails, the file, popups and requests |
 | `record_import_folder.py` | `fixtures/import_folder_run.json` + `legacy_db/import_folder.tar.gz`: an import folder run |
 | `record_export_folder.py` | `fixtures/export_folder_run.json` + `legacy_db/export_folder.tar.gz`: export folder runs |
 | `dump_gui_sessions.py` | `fixtures/gui_sessions.json`: GUI sessions, their pages and the downloaders in them, with the reference's reading of each |

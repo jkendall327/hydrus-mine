@@ -88,7 +88,7 @@ fn archive_inbox_delete_undelete_and_physical_delete_from_the_menu() {
     fixture.ui.invoke_menu_chosen(id);
     assert_eq!(
         fixture.ui.get_question(),
-        format!("Delete this file from {domain}?")
+        format!("Send one file from {domain} to trash?")
     );
     fixture.ui.invoke_answer(false);
     assert_eq!(domains(&fixture, file), before);
@@ -151,14 +151,20 @@ fn archive_inbox_delete_undelete_and_physical_delete_from_the_menu() {
     fixture
         .ui
         .invoke_menu_chosen(find(&rows(&menu.delete), "delete from my files"));
-    assert_eq!(fixture.ui.get_question(), "Delete this file from my files?");
+    assert_eq!(
+        fixture.ui.get_question(),
+        "Send one file from my files to trash?"
+    );
     fixture.ui.invoke_answer(true);
     assert_eq!(domains(&fixture, file), ["trash"]);
     // and then for good: asked, "no" changing nothing
     let menu = fixture.menu(-1);
     let physically = find(&rows(&menu.trash), "delete physically now");
     fixture.ui.invoke_menu_chosen(physically);
-    assert_eq!(fixture.ui.get_question(), "Permanently delete this file?");
+    assert_eq!(
+        fixture.ui.get_question(),
+        "Permanently delete one trashed file?"
+    );
     fixture.ui.invoke_answer(false);
     assert!(domains(&fixture, file).contains(&"trash".to_owned()));
     fixture.ui.invoke_menu_chosen(physically);

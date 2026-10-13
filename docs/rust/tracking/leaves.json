@@ -293,7 +293,7 @@
     "date": "2026-10-08",
     "class": "source-restated",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real thumbnail menu and store: archive/re-inbox, delete from domain, undelete, physical delete, with questions. Menu tree is replayed against thumbnail_menu.json in a separate untagged test, but question texts ('Send 2 files to inbox?', 'Delete this file from X?', 'Permanently delete this file?') and state effects are literals from the Python source; remote domains not covered. Tests: crates/hydrus-gui/tests/gui/media_file_actions.rs:44 archive_inbox_delete_undelete_and_physical_delete_from_the_menu; thumbnail_menu.rs the_menu_is_the_reference_s (untagged)"
+    "note": "Real thumbnail menu and store: archive/re-inbox, delete from domain, undelete, physical delete, with questions. Menu tree is replayed against thumbnail_menu.json in a separate untagged test, but question texts ('Send 2 files to inbox?', 'Send one file from X to trash?', 'Permanently delete one trashed file?'; the delete ones now the reference's delete files dialog labels, the one-domain case matched against a recording by the download flow, flows::download, 2026-10-13) and state effects are literals from the Python source; remote domains not covered. Tests: crates/hydrus-gui/tests/gui/media_file_actions.rs:44 archive_inbox_delete_undelete_and_physical_delete_from_the_menu; thumbnail_menu.rs the_menu_is_the_reference_s (untagged)"
    }
   },
   {
