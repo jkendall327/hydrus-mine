@@ -170,10 +170,21 @@ fn mixed_login_import_replays_qt_duplicates_links_and_saved_consumer_without_exp
             .iter()
             .any(|definition| matches!(definition.native, Native::Login(_)))
     );
+    // imported again, all but the nested generator are duplicates: its
+    // members' keys were regenerated the first time, so it is new again
+    // (the recording's third import: "1 new downloaders ... 5 duplicate
+    // objects", and "mixed package nested (1)" reopened)
     let mut duplicate = reopened.clone();
     let review = duplicate.import(mixed_login_payload()).unwrap();
-    assert_eq!(review.duplicates, 6);
-    assert!(review.added.is_empty());
+    assert_eq!(review.duplicates, 5);
+    assert_eq!(review.added, ["GUG: mixed package nested"]);
+    assert!(
+        fixture["reopened"]["gugs"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|g| g == "mixed package nested (1)")
+    );
 }
 
 #[test]
@@ -267,8 +278,10 @@ fn reference_duplicate_rules_remap_nested_members_and_keep_auxiliary_context() {
     assert_ne!(single.key(), "11".repeat(32));
     let count = draft.definitions().len();
     let duplicate = draft.import(payload()).unwrap();
-    assert!(duplicate.added.is_empty());
-    assert_eq!(duplicate.duplicates, count);
+    // (a nested generator is new again: see the mixed login package's
+    // recorded re-import)
+    assert_eq!(duplicate.added, ["GUG: exchange nested"]);
+    assert_eq!(duplicate.duplicates, count - 1);
     assert!(
         fixture["duplicates"]["gug_ignores_key_and_name"]
             .as_bool()
