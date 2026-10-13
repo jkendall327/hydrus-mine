@@ -50,9 +50,8 @@ fn strings(value: &Value) -> Vec<String> {
         .collect()
 }
 
-// Not tagged: the self-pair and two-ideals steps differ from the reference
-// (DIFFERENCES.md) and are filtered out below, so this proves only part of
-// the exchange leaves.
+// leaf: audit-media-siblings-exchange
+// leaf: audit-media-parents-exchange
 #[test]
 fn pair_import_and_export_replay_the_reference_on_local_and_repository_services() {
     let recording = hydrus_testkit::fixture_json("relationship_exchange.json");
@@ -134,9 +133,6 @@ fn pair_import_and_export_replay_the_reference_on_local_and_repository_services(
         w.invoke_service_chosen(i32::try_from(at).unwrap());
         w.set_show_all(true);
         w.invoke_filters_changed();
-        // Documented difference: hydrus-rs rejects self-pairs, and a sibling
-        // batch giving one tag two ideals, where the reference stores them.
-        let mut rejected: BTreeSet<(String, String)> = BTreeSet::new();
         for step in run["steps"].as_array().unwrap() {
             let text = step["text"].as_str().unwrap();
             let asked = step["asked"].as_array().unwrap();
@@ -154,58 +150,42 @@ fn pair_import_and_export_replay_the_reference_on_local_and_repository_services(
                 hydrus_gui::set_paster(move || text.clone());
             }
             w.invoke_import_pairs(file);
-            let divergent = text == "self\nself" || (name == "siblings" && text == "p\nq\np\nr");
-            if divergent {
-                let lines: Vec<&str> = text.lines().collect();
-                for chunk in lines.chunks(2) {
-                    rejected.insert((chunk[0].to_owned(), chunk[1].to_owned()));
-                }
-                // the reason the reference asked is still asked; then the rejection
-                let mut asked_rejection = false;
-                while !w.get_question().is_empty() {
-                    if w.get_ask_reason() {
-                        w.set_reason("oracle reason".into());
-                    } else {
-                        let q = w.get_question().to_string();
-                        assert!(
-                            q.starts_with("Cannot add self-referencing")
-                                || q.starts_with("The relationships include a cycle"),
-                            "{q}"
-                        );
-                        asked_rejection = true;
+            for question in asked {
+                match question["kind"].as_str().unwrap() {
+                    "reason" => {
+                        assert!(w.get_ask_reason(), "{text}");
+                        assert_eq!(w.get_question(), question["message"].as_str().unwrap());
+                        let offered: Vec<String> = w
+                            .get_reason_suggestions()
+                            .iter()
+                            .map(|s| s.to_string())
+                            .collect();
+                        assert_eq!(offered, strings(&question["suggestions"]), "{text}");
+                        w.set_reason(question["answer"].as_str().unwrap().into());
+                        w.invoke_answered(true);
                     }
-                    w.invoke_answered(true);
-                }
-                assert!(asked_rejection, "{text}");
-            } else {
-                for question in asked {
-                    match question["kind"].as_str().unwrap() {
-                        "reason" => {
-                            assert!(w.get_ask_reason(), "{text}");
-                            assert_eq!(w.get_question(), question["message"].as_str().unwrap());
-                            let offered: Vec<String> = w
-                                .get_reason_suggestions()
-                                .iter()
-                                .map(|s| s.to_string())
-                                .collect();
-                            assert_eq!(offered, strings(&question["suggestions"]), "{text}");
-                            w.set_reason(question["answer"].as_str().unwrap().into());
-                            w.invoke_answered(true);
-                        }
-                        "yes_no" => {
-                            assert!(!w.get_ask_reason(), "{text}");
-                            assert_eq!(w.get_question(), question["message"].as_str().unwrap());
-                            assert_eq!(w.get_yes_label(), question["yes"].as_str().unwrap());
-                            assert_eq!(w.get_no_label(), question["no"].as_str().unwrap());
-                            w.invoke_answered(question["answer"].as_bool().unwrap());
-                        }
-                        // shown once the import is entered
-                        "information" | "file_dialog" => {}
-                        other => panic!("unexpected {other}"),
+                    "yes_no" => {
+                        assert!(!w.get_ask_reason(), "{text}");
+                        assert_eq!(w.get_question(), question["message"].as_str().unwrap());
+                        assert_eq!(w.get_yes_label(), question["yes"].as_str().unwrap());
+                        assert_eq!(w.get_no_label(), question["no"].as_str().unwrap());
+                        w.invoke_answered(question["answer"].as_bool().unwrap());
                     }
+                    // the reference's "Loop problem!" message: its text, and
+                    // only an OK to dismiss it
+                    "critical" => {
+                        assert!(!w.get_ask_reason(), "{text}");
+                        assert_eq!(w.get_question(), question["message"].as_str().unwrap());
+                        assert_eq!(w.get_yes_label(), "OK");
+                        assert_eq!(w.get_no_label(), "");
+                        w.invoke_answered(true);
+                    }
+                    // shown once the import is entered
+                    "information" | "file_dialog" => {}
+                    other => panic!("unexpected {other}"),
                 }
-                assert_eq!(w.get_question(), "", "{text}");
             }
+            assert_eq!(w.get_question(), "", "{text}");
             let information: Vec<&str> = asked
                 .iter()
                 .filter(|q| q["kind"] == "information")
@@ -221,7 +201,6 @@ fn pair_import_and_export_replay_the_reference_on_local_and_repository_services(
                 .unwrap()
                 .iter()
                 .map(strings)
-                .filter(|r| !rejected.contains(&pair_of(r)))
                 .collect();
             let shown: BTreeSet<Vec<String>> = rows(&w).into_iter().collect();
             assert_eq!(shown, expected, "{name} local={local} after {text:?}");
@@ -232,7 +211,6 @@ fn pair_import_and_export_replay_the_reference_on_local_and_repository_services(
             .unwrap()
             .iter()
             .map(|p| (p[0].as_str().unwrap().into(), p[1].as_str().unwrap().into()))
-            .filter(|p| !rejected.contains(p))
             .collect();
         let shown: Vec<(String, String)> = rows(&w).iter().map(|r| pair_of(r)).collect();
         assert_eq!(shown, order);
@@ -274,7 +252,6 @@ fn pair_import_and_export_replay_the_reference_on_local_and_repository_services(
             .unwrap()
             .iter()
             .map(strings)
-            .filter(|r| !rejected.contains(&pair_of(r)))
             .collect::<Vec<_>>();
         w.invoke_apply();
         assert!(client.bound.tag_relationships.borrow().is_none());

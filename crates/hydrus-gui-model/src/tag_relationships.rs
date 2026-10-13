@@ -10,6 +10,10 @@ use hydrus_store::Store;
 use hydrus_store::content::tag_relations::{self, RelationAction, RelationUpdate};
 pub use hydrus_store::display::RelationKind;
 
+/// The reference's "Loop problem!" warning about self-pairs being added
+/// (`TagPairActionContext.AutoPetitionLoops`), before the pairs themselves.
+pub const LOOP_PROBLEM: &str = "The pair(s) you mean to add include some self-referencing loops, i.e. \"tag->tag\"! I will add what you wanted to, but you almost certainly want to undo this. If you are importing from an external source, is there a misplaced line somewhere? In any case, the loops appear to be (take a screenshot/write this down now!):";
+
 /// A stored (less ideal, ideal) or (child, parent) pair.
 pub type Pair = (String, String);
 
@@ -372,19 +376,16 @@ impl Relationships {
             store: &self.store,
             kind: self.kind,
         };
-        // Invalid self-pairs cannot replace an existing valid relationship.
-        let mut cleaned = Vec::new();
-        for pair in pairs {
-            if pair.0 == pair.1 {
-                answer.ask(Question {
-                    message: format!("Cannot add self-referencing relationship {}->{}. A tag cannot replace or parent itself.", pair.0, pair.1),
-                    yes: "OK".into(), no: "cancel".into(), reason: false, suggestions: Vec::new(),
-                })?;
-            } else {
-                cleaned.push(pair);
-            }
-        }
-        let pairs = cleaned;
+        // Self-pairs being added: the reference warns about them once its
+        // loop repairs are done, then adds them anyway (`AutoPetitionLoops`).
+        let loops: Vec<String> = {
+            let active = service.state.effective();
+            pairs
+                .iter()
+                .filter(|p| p.0 == p.1 && !active.contains(*p))
+                .map(|p| format!("{} -> {}", p.0, p.1))
+                .collect()
+        };
         if self.kind == RelationKind::Siblings {
             let conflicts = service
                 .state
@@ -405,7 +406,7 @@ impl Relationships {
             service.workspace.extend([pair.0.clone(), pair.1.clone()]);
             let active = service.state.effective();
             // Repeal the final link of every path back to the new left tag.
-            if !active.contains(pair) {
+            if pair.0 != pair.1 && !active.contains(pair) {
                 let mut next = vec![pair.1.clone()];
                 let mut seen = BTreeSet::new();
                 while let Some(tag) = next.pop() {
@@ -430,19 +431,18 @@ impl Relationships {
                 }
             }
         }
+        if !loops.is_empty() {
+            answer.ask(Question {
+                message: format!("{LOOP_PROBLEM}\n\n{}", loops.join("\n")),
+                yes: "OK".into(),
+                no: String::new(),
+                reason: false,
+                suggestions: Vec::new(),
+            })?;
+        }
         let mut ordered = pairs;
         ordered.sort_by_key(|p| hydrus_core::sort::human_sort_key(&p.1));
         toggle_group(&mut service, &ordered, only_add, false, None, &mut answer)?;
-        let effective = service.state.effective();
-        if !effective.is_subset(&self.services[self.service].state.effective())
-            && invalid_graph(&effective, self.kind)
-        {
-            answer.ask(Question {
-                message: "The relationships include a cycle or conflicting sibling ideals. No changes have been staged. Enter these pairs separately to resolve the links.".into(),
-                yes: "OK".into(), no: "cancel".into(), reason: false, suggestions: Vec::new(),
-            })?;
-            return Ok(());
-        }
         self.services[self.service] = service;
         Ok(())
     }
@@ -767,7 +767,7 @@ fn toggle_group(
     let mut petition = Vec::new();
     let mut rescind_pend = Vec::new();
     let mut rescind_petition = Vec::new();
-    for pair in pairs.iter().filter(|p| p.0 != p.1) {
+    for pair in pairs {
         if s.state.pending.contains(pair) {
             if !only_add {
                 rescind_pend.push(pair.clone());
@@ -918,38 +918,6 @@ fn pertinent(
         right = next_right;
     }
     out
-}
-
-fn invalid_graph(pairs: &BTreeSet<Pair>, kind: RelationKind) -> bool {
-    let mut links: BTreeMap<&str, Vec<&str>> = BTreeMap::new();
-    let mut incoming: BTreeMap<&str, usize> = BTreeMap::new();
-    for (a, b) in pairs {
-        links.entry(a).or_default().push(b);
-        incoming.entry(a).or_default();
-        *incoming.entry(b).or_default() += 1;
-    }
-    if kind == RelationKind::Siblings && links.values().any(|v| v.len() > 1) {
-        return true;
-    }
-    let mut ready = incoming
-        .iter()
-        .filter(|(_, n)| **n == 0)
-        .map(|(t, _)| *t)
-        .collect::<Vec<_>>();
-    let mut visited = 0;
-    while let Some(tag) = ready.pop() {
-        visited += 1;
-        for next in links.get(tag).into_iter().flatten() {
-            let count = incoming
-                .get_mut(next)
-                .expect("every link target was counted");
-            *count -= 1;
-            if *count == 0 {
-                ready.push(*next);
-            }
-        }
-    }
-    visited != incoming.len()
 }
 
 fn load(store: &Store, kind: RelationKind, service: ServiceId) -> hydrus_store::Result<State> {
