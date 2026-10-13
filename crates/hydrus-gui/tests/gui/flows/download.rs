@@ -25,7 +25,7 @@ fn download_a_url_then_tag_archive_and_delete_it_as_the_reference_does() {
     let recording = hydrus_testkit::fixture_json("flow_download.json");
     let (_dirs, store) = super::basic_store();
     install(&store, &recording);
-    let site = Site::serve(&recording);
+    let site = Site::serve("flow_download.json", &recording);
     let n = Normaliser::new(&site);
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();

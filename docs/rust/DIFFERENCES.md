@@ -1159,10 +1159,7 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 - **Subscription concurrency** now uses the persisted 1–100 maximum,
   with the reference's default of one, single-flight subscription IDs,
   live changes, global pause admission checks and a 120-second finished-run
-  buffer, which saving the manage subscriptions dialog clears as the
-  reference's `SetSubscriptions` does (the daemon takes the dialog's nudge
-  within a second; found by the subscription flow, `FLOWS.md`).
-  Native Options and subscription drafts do not pause the daemon
+  buffer. Native Options and subscription drafts do not pause the daemon
   merely because an editor is open; the reference subscription manager has
   a separate pause-for-editing state. Concurrent script/import changes still
   use the existing optimistic merge boundaries rather than a global editor lock.

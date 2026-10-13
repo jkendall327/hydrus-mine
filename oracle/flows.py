@@ -119,6 +119,21 @@ def booru_phase( searches ):
     return { 'pages' : pages, 'files' : files }
 
 
+def loopback_bypasses_proxies():
+    """Whether a request to http://127.0.0.1 goes straight there, whatever
+    proxies the environment names."""
+
+    def set_( name ):
+
+        return os.environ.get( name, '' ).strip() != ''
+
+
+    proxied = any( set_( n ) for n in ( 'HTTP_PROXY', 'http_proxy', 'ALL_PROXY', 'all_proxy' ) )
+    bypassed = any( h.strip() in ( '*', '127.0.0.1', '127.0.0.0/8' ) for n in ( 'NO_PROXY', 'no_proxy' ) for h in os.environ.get( n, '' ).split( ',' ) )
+
+    return bypassed or not proxied
+
+
 class Site( object ):
     """The fake site, in phases; `phase` says which one is served."""
 
@@ -134,6 +149,12 @@ class Site( object ):
 
 
     def __enter__( self ):
+
+        # the reference's requests take proxies from the environment
+        if not loopback_bypasses_proxies():
+
+            raise Exception( 'a proxy in the environment would carry the flow\'s requests to 127.0.0.1; add 127.0.0.1 to NO_PROXY' )
+
 
         site = self
 
@@ -549,7 +570,9 @@ def popups_shown( controller, normalise ):
 # ---------------------------------------------------------------- the end state
 
 # ("now" within three seconds, else "5 seconds ago": the same, a moment apart)
-TIME_DELTA = re.compile( r'\b(\d+ (year|month|day|hour|minute|second)s?( \d+ (year|month|day|hour|minute|second)s?)*( ago)?|just now|now)\b' )
+TIME_DELTA = re.compile( r'\b\d+ (year|month|day|hour|minute|second)s?( \d+ (year|month|day|hour|minute|second)s?)*( ago)?\b' )
+# (only a whole text: "now" in a note stays)
+JUST_NOW = re.compile( r'^(just now|now)$' )
 DATE_TIME = re.compile( r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}' )
 
 
@@ -567,6 +590,7 @@ def normaliser( site ):
         text = text.replace( site.base, 'BASE' )
         text = DATE_TIME.sub( 'TIME', text )
         text = TIME_DELTA.sub( 'DELTA', text )
+        text = JUST_NOW.sub( 'DELTA', text )
 
         return text
 

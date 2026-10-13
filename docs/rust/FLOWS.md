@@ -50,6 +50,26 @@ the reference's codes, files are keyed by SHA-256, the order of the site's
 requests within a step is not compared (the reference works pages and
 files side by side).
 
+What a flow does not compare:
+
+- **Times.** Dates become `TIME` and relative times ("5 minutes ago",
+  "in 3 days", a whole "now") `DELTA`: masked, not compared. Of a query's
+  check times only whether it has been checked is compared.
+- **Input devices.** Both sides drive the windows' own handlers (the
+  reference's panel methods such as `Add` and `_ManageTags`, hydrus-rs's
+  Slint callbacks such as `invoke_add`), not mouse clicks or key presses.
+  The leaf tests cover those.
+- **All of `hydrus serve`.** The in-process `Daemon` runs the download
+  queues, the subscription runner and the nudge loop. It leaves out the
+  network runtime publisher (`publish_runtime`, the client's network jobs
+  panel), the live-status publisher, import and export folders and the
+  Client API listener; a flow needing one adds it.
+
+Each flow's site has its own port (`flows::PORTS`, checked against the
+recordings by a test), as the GUI tests run side by side. Both sides refuse
+to run when a proxy in the environment would carry requests to 127.0.0.1
+(add it to `NO_PROXY`).
+
 ## Adding a flow
 
 1. **Pick the steps** and the site they need. Reuse `booru_phase`, or add a
@@ -57,7 +77,8 @@ files side by side).
    definitions.
 2. **Write the recorder.** Copy `oracle/record_flow_subscription.py`:
    - pick a site port no other recorder or test uses (the URL classes name
-     it, so the Rust test serves the same port);
+     it, so the Rust test serves the same port) and add it to
+     `flows::PORTS`;
    - boot the `basic` fixture with `network = True`, `flows.install` first;
    - drive each step through the real GUI (`controller.gui`'s own
      methods, on the Qt thread), scripting every dialog it opens, then

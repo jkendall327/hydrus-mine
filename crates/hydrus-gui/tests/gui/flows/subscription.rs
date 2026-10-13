@@ -36,7 +36,7 @@ fn add_a_subscription_run_it_and_run_it_again_as_the_reference_does() {
     let recording = hydrus_testkit::fixture_json("flow_subscription.json");
     let (_dirs, store) = super::basic_store();
     install(&store, &recording);
-    let site = Site::serve(&recording);
+    let site = Site::serve("flow_subscription.json", &recording);
     let n = Normaliser::new(&site);
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
