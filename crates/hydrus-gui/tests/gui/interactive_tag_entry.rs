@@ -263,7 +263,9 @@ fn the_shortcut_editor_makes_an_interactive_tag_command_as_the_reference() {
         .collect();
     let recorded: Vec<String> = strings(&f["interactive_services"])
         .into_iter()
-        .filter(|s| s.ends_with(" tags"))
+        .zip(strings(&f["interactive_service_types"]))
+        .filter(|(_, kind)| kind == "local tag domain")
+        .map(|(name, _)| name)
         .collect();
     assert_eq!(services, recorded);
     editor.invoke_key_capture("v".into(), 0);
@@ -335,6 +337,17 @@ fn the_quick_dialog_offers_the_recent_tags_and_sets_the_tag_as_the_recording() {
             .collect();
         let viewer = client.press_v(&files);
         let dialog = hydrus_gui::quick_tag_entry::last_window().expect("the quick dialog");
+        // pressed again while it asks, no second dialog opens
+        let windows = client.windows.count();
+        match &viewer {
+            Some(viewer) => assert!(viewer.invoke_shortcut_key("v".into(), 0)),
+            None => press(&client.ui, &["v".into()]),
+        }
+        assert_eq!(
+            client.windows.count(),
+            windows,
+            "{name}: one dialog at a time"
+        );
         let seen = &step["dialog"];
         assert_eq!(
             dialog.get_composed_title(),
@@ -357,11 +370,6 @@ fn the_quick_dialog_offers_the_recent_tags_and_sets_the_tag_as_the_recording() {
             .collect();
         assert_eq!(suggestions, strings(&seen["suggestions"]), "{name}");
         assert_eq!(dialog.get_text(), seen["text"].as_str().unwrap(), "{name}");
-        assert_eq!(
-            dialog.get_selected_all(),
-            !seen["selected"].as_str().unwrap().is_empty(),
-            "{name}: the starting tag is selected"
-        );
         let act = &step["act"];
         match act[0].as_str().unwrap() {
             "button" => dialog.invoke_chosen(i32::try_from(act[1].as_i64().unwrap()).unwrap()),

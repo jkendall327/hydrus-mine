@@ -34,6 +34,13 @@
   "stars",
   "counter"
  ],
+ "interactive_service_types": [
+  "local tag domain",
+  "local tag domain",
+  "local tag domain",
+  "local numerical rating service",
+  "local inc/dec rating service"
+ ],
  "command_text": "popup tag mappings entry dialog for my tags",
  "command_round_trip": "interactive 'edit value' manual set command",
  "steps": [

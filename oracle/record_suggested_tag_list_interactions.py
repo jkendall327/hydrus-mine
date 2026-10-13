@@ -12,7 +12,9 @@ tree, every copy entry is triggered (clipboard payloads captured), the open
 entries are triggered (new search pages captured, not opened), and favourites
 entries are triggered with yes-answers. The rows as drawn (with sibling and
 parent decorators) are recorded. The recent and related lists' menus for one
-selected tag are recorded too, to show they are the same kind of list.
+selected tag are recorded too, to show they are the same kind of list (a
+small corpus over six files gives the related list suggestions, from its
+quick search).
 """
 import json
 import os
@@ -23,6 +25,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 OUT = os.path.join(HERE, 'fixtures', 'suggested_tag_list_interactions.json')
 
+# a small corpus over six files, so the related list has suggestions
+CORPUS = [('source:seed', [0, 1, 2, 3]), ('context:seed', [2, 3]), ('beta:second', [3, 4, 5]), ('gamma:other', [0, 1, 4, 5])]
+WEIGHTS = ([['', 100], [':', 100]], [['', 100], [':', 100]])
+QUICK_MS = 2000
 MOST_USED = ['alpha:first', 'series:spaced name', 'plain tag', 'old:sibling', 'parity:漢字', 'zeta:last']
 
 
@@ -38,12 +44,16 @@ def record(session):
     c = session.controller
     local = next(s.GetServiceKey() for s in c.services_manager.GetServices((HC.LOCAL_TAG,)) if s.GetName() == 'my tags')
     manifest = json.load(open(os.path.join(HERE, 'fixtures', 'legacy_db', 'basic.manifest.json')))
-    hashes = [bytes.fromhex(f['hash']) for f in manifest['files'][:2]]
+    six = [bytes.fromhex(f['hash']) for f in manifest['files'][:6]]
+    hashes = six[:2]
     c.WriteSynchronous('content_updates', U.ContentUpdatePackage.STATICCreateFromContentUpdates(local, [
         U.ContentUpdate(HC.CONTENT_TYPE_TAG_PARENTS, HC.CONTENT_UPDATE_ADD, ('alpha:first', 'group:alpha')),
         U.ContentUpdate(HC.CONTENT_TYPE_TAG_SIBLINGS, HC.CONTENT_UPDATE_ADD, ('old:sibling', 'new:sibling')),
         U.ContentUpdate(HC.CONTENT_TYPE_MAPPINGS, HC.CONTENT_UPDATE_ADD, ('plain tag', {hashes[0]})),
-    ]))
+    ] + [U.ContentUpdate(HC.CONTENT_TYPE_MAPPINGS, HC.CONTENT_UPDATE_ADD, (tag, {six[i] for i in files})) for tag, files in CORPUS]))
+    c.new_options.SetRelatedTagsTagSliceWeights(*WEIGHTS)
+    c.new_options.SetInteger('related_tags_concurrence_threshold_percent', 6)
+    c.new_options.SetInteger('related_tags_search_1_duration_ms', QUICK_MS)
     for _ in range(20):
         if not c.WriteSynchronous('sync_tag_display_maintenance', local, 0.5):
             break
@@ -168,6 +178,7 @@ def record(session):
         out = dict(service='my tags', most_used=MOST_USED, files=[x.hex() for x in hashes],
                    parents=[['alpha:first', 'group:alpha']], siblings=[['old:sibling', 'new:sibling']],
                    mapped=[['plain tag', [0]]], recent_pushed=['recent:one', 'recent:two'],
+                   six=[x.hex() for x in six], corpus=CORPUS, weights=WEIGHTS, quick_ms=QUICK_MS,
                    options=dict(show_parent_decorators=c.new_options.GetBoolean('show_parent_decorators_on_storage_taglists'),
                                 show_sibling_decorators=c.new_options.GetBoolean('show_sibling_decorators_on_storage_taglists'),
                                 expand_parents=c.new_options.GetBoolean('expand_parents_on_storage_taglists')),
@@ -259,7 +270,16 @@ def record(session):
                     a.trigger()
             step('most used toggled from the menu', most_used=list(c.new_options.GetSuggestedTagsMostUsed(local)), questions=list(questions))
             out['steps'] = steps
-            # the other two lists are the same kind of list
+            # the other two lists are the same kind of list (the related one
+            # filled by its quick search, its worker and publisher run at once)
+            old_thread, old_after = c.CallToThread, c.CallAfterQtSafe
+            c.CallToThread = lambda f, *a, **kw: f(*a, **kw) if getattr(f, '__name__', '') == 'do_it' else old_thread(f, *a, **kw)
+            c.CallAfterQtSafe = lambda w, f, *a, **kw: f(*a, **kw) if getattr(f, '__name__', '') == 'qt_code' else old_after(w, f, *a, **kw)
+            try:
+                panel._related_tags.RefreshQuick()
+                settle()
+            finally:
+                c.CallToThread, c.CallAfterQtSafe = old_thread, old_after
             others = {}
             for name, b in [('recent', panel._recent_tags._recent_tags), ('related', panel._related_tags._related_tags)]:
                 if not b._ordered_terms:

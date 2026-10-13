@@ -56,6 +56,7 @@ def record(session):
         out['command_types'] = [widget._panel_choice.itemText(i) for i in range(widget._panel_choice.count())]
         choices = widget._interactable_service_key_panel._settable_services
         out['interactive_services'] = [choices.itemText(i) for i in range(choices.count())]
+        out['interactive_service_types'] = [HC.service_string_lookup[c.services_manager.GetServiceType(choices.itemData(i))] for i in range(choices.count())]
         widget._panel_choice.SetValue(widget.PANEL_INTERACTABLE_SERVICE_KEY)
         choices.SetValue(local)
         command = widget.GetValue()

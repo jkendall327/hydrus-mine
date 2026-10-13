@@ -4632,7 +4632,8 @@ The `mpv.conf` copy replaces a read-only mpv.conf; recorded as root the referenc
   run the "media" set's tag and rating shortcuts (interactive or not) on the
   selected files, but not a custom set's, and none of the media set's simple
   commands. The quick dialog is a window of its own, not modal: the viewer or
-  page behind it keeps working while it asks.
+  page behind it keeps working while it asks, but pressing the shortcut again
+  only brings the open dialog forward.
 - The write-autocomplete leaves (`audit-media-tags-autocomplete`,
   `siblings-autocomplete`, `parents-autocomplete`) are tagged on the tests in
   `write_autocomplete_leaves.rs` (rows, entry, context menu, paste and manual

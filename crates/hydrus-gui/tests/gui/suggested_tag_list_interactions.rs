@@ -59,7 +59,28 @@ fn seeded(
         .by_name("my tags")
         .unwrap()
         .clone();
-    for row in f["mapped"].as_array().unwrap() {
+    // the corpus over six files that gives the related list suggestions
+    let six: Vec<Sha256> = strings(&f["six"])
+        .iter()
+        .map(|h| h.parse().unwrap())
+        .collect();
+    let six_ids = store
+        .read(|conn| hydrus_store::master::hash_ids(conn, &six))
+        .unwrap();
+    let six: Vec<HashId> = six.iter().map(|h| six_ids[h]).collect();
+    let rows = f["mapped"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|row| (row, &files))
+        .chain(
+            f["corpus"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|row| (row, &six)),
+        );
+    for (row, files) in rows {
         let tag = Tag::new(row[0].as_str().unwrap()).unwrap();
         let with: Vec<HashId> = row[1]
             .as_array()
@@ -97,6 +118,31 @@ fn seeded(
             .collect();
         tag_relations::apply(&store, kind, updates).unwrap();
     }
+    let weights = |i: usize| -> Vec<(String, u16)> {
+        f["weights"][i]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|w| {
+                (
+                    w[0].as_str().unwrap().to_owned(),
+                    u16::try_from(w[1].as_u64().unwrap()).unwrap(),
+                )
+            })
+            .collect()
+    };
+    let related = hydrus_store::related_tags::Settings {
+        weights: hydrus_store::related_tags::Weights {
+            search: weights(0),
+            result: weights(1),
+        },
+        durations_ms: [
+            u32::try_from(f["quick_ms"].as_u64().unwrap()).unwrap(),
+            2_000,
+            6_000,
+        ],
+        ..hydrus_store::related_tags::Settings::default()
+    };
     let recent = strings(&f["recent_pushed"]);
     let most_used = strings(&f["most_used"]);
     let (service, hex) = (mine.id, mine.key.to_hex());
@@ -114,6 +160,7 @@ fn seeded(
             tabs.most_used.insert(hex, most_used);
             hydrus_store::settings::set(ctx.conn(), &tabs)?;
             hydrus_store::settings::set(ctx.conn(), &FavouriteTags::default())?;
+            hydrus_store::settings::set(ctx.conn(), &related)?;
             hydrus_store::settings::set(
                 ctx.conn(),
                 &TagSuggestionSettings {
@@ -637,6 +684,42 @@ fn suggestion_lists_select_copy_decorate_search_and_activate_as_the_recording() 
     assert_eq!(recent, strings(&other["tags"]));
     m.invoke_side_clicked(1, 0, false, false);
     m.invoke_side_menu(1, 0, 10.0, 10.0);
+    settle();
+    assert_eq!(w.tree(), recorded_tree(&other["tree"]));
+    m.invoke_tag_menu_dismissed();
+    // and the related list, filled by its quick search
+    let other = &f["other_lists"]["related"];
+    m.set_related_level(0);
+    m.invoke_related_search(0);
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+    while !m.get_related_status().starts_with("Searched ") && std::time::Instant::now() < deadline {
+        slint::platform::update_timers_and_animations();
+        std::thread::sleep(std::time::Duration::from_millis(5));
+    }
+    let related: Vec<String> = w
+        .rows(2)
+        .into_iter()
+        .filter(|(text, _)| !text.starts_with("    "))
+        .map(|(text, _)| {
+            text.split(" (")
+                .next()
+                .unwrap()
+                .split(" \u{2192} ")
+                .next()
+                .unwrap()
+                .to_owned()
+        })
+        .collect();
+    assert_eq!(related, strings(&other["tags"]));
+    m.invoke_side_clicked(2, 0, false, false);
+    let selected: Vec<String> = w
+        .rows(2)
+        .into_iter()
+        .filter(|(text, selected)| *selected && !text.starts_with("    "))
+        .map(|(text, _)| text.split(" (").next().unwrap().to_owned())
+        .collect();
+    assert_eq!(selected, strings(&other["selected"]));
+    m.invoke_side_menu(2, 0, 10.0, 10.0);
     settle();
     assert_eq!(w.tree(), recorded_tree(&other["tree"]));
     m.invoke_tag_menu_dismissed();

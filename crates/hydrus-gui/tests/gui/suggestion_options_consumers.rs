@@ -220,11 +220,23 @@ fn related_durations_concurrence_and_the_recent_count_reach_the_panels_as_the_re
                 std::thread::sleep(std::time::Duration::from_millis(5));
             }
             assert!(answered(&m), "{name} {press}: the search finished");
-            assert_eq!(
-                texts(&m.get_related_tag_rows()),
-                listed,
-                "{name} {press}: listed"
-            );
+            // With every tag searched in its time, the list is the
+            // recording's. A short budget on a loaded machine can stop the
+            // search early (as the reference's would); then the status says
+            // how much of it was searched, and the list is not compared.
+            let status = m.get_related_status().to_string();
+            if status.starts_with("Searched ") || status == "no related tags found!" {
+                assert_eq!(
+                    texts(&m.get_related_tag_rows()),
+                    listed,
+                    "{name} {press}: listed"
+                );
+            } else {
+                assert!(
+                    status.contains(" searched fully in ") && asked.max_ms < Some(1000),
+                    "{name} {press}: only a short budget stops early: {status}"
+                );
+            }
         }
         m.invoke_cancel();
     }

@@ -17,7 +17,6 @@ export component QuickTagEntryWindow inherits Window {
     in property <string> message;
     in property <[string]> suggestions;
     in-out property <string> text;
-    in-out property <bool> selected-all;
     in property <string> refusal;
     callback chosen(int);
     callback applied(string);
@@ -25,7 +24,6 @@ export component QuickTagEntryWindow inherits Window {
     public function select-entry() {
         entry.focus();
         entry.select-all();
-        root.selected-all = true;
     }
     forward-focus: entry;
 
@@ -48,7 +46,6 @@ export component QuickTagEntryWindow inherits Window {
             }
             entry := LineEdit {
                 text <=> root.text;
-                edited => { root.selected-all = false; }
                 accepted => { root.applied(root.text); }
             }
             if root.refusal != "": Text {

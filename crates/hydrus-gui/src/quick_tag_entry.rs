@@ -37,6 +37,12 @@ pub(crate) fn ask(
     files: Vec<HashId>,
     changed: Rc<dyn Fn()>,
 ) {
+    // one at a time, as the reference's modal dialog allows: another press
+    // while one asks brings that one forward
+    if let Some(open) = last_window() {
+        let _ = open.show();
+        return;
+    }
     let entry = match content::quick_entry(&store, &service) {
         Ok(entry) => entry,
         Err(e) => {
@@ -60,7 +66,6 @@ pub(crate) fn ask(
             .collect::<Vec<_>>(),
     )));
     window.set_text(entry.default.clone().into());
-    let default_empty = entry.default.is_empty();
     let suggestions = Rc::new(entry.suggestions);
     let finish = Rc::new({
         let weak = window.as_weak();
@@ -117,8 +122,7 @@ pub(crate) fn ask(
         eprintln!("could not show the quick tag dialog: {e}");
         return;
     }
-    // the starting tag is selected, to be typed over (with none, nothing is)
+    // the starting tag is selected, to be typed over
     window.invoke_select_entry();
-    window.set_selected_all(!default_empty);
     LAST.with(|last| *last.borrow_mut() = Some(window));
 }
