@@ -123,6 +123,8 @@ at fixed copy boundaries; dialog replies and worker scheduling are scripted.
 | `record_similar_files.py` | `fixtures/similar_files.json`: the similar-files search on generated near-duplicates |
 | `record_auto_resolution.py` | `fixtures/auto_resolution_run.json` + `legacy_db/auto_resolution.tar.gz`: auto-resolution rules run on generated files |
 | `record_downloads.py` | `fixtures/downloads.json`: the downloader against a local fake site |
+| `flows.py` | the harness for user flows (`docs/rust/FLOWS.md`): a fake booru in phases, its downloader, scripted dialogs, waiting until idle, popups shown, the normalised end state |
+| `record_flow_subscription.py` | `fixtures/flow_subscription.json`: flow 1, a subscription added through the real manage subscriptions, chooser and edit dialogs, run, then checked again from the dialog once the site has a new post; each step's dialog rows, subscription logs, files, popups and requests |
 | `record_import_folder.py` | `fixtures/import_folder_run.json` + `legacy_db/import_folder.tar.gz`: an import folder run |
 | `record_export_folder.py` | `fixtures/export_folder_run.json` + `legacy_db/export_folder.tar.gz`: export folder runs |
 | `dump_gui_sessions.py` | `fixtures/gui_sessions.json`: GUI sessions, their pages and the downloaders in them, with the reference's reading of each |

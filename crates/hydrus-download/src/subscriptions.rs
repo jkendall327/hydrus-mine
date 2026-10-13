@@ -1107,6 +1107,8 @@ pub struct SubscriptionRunner {
     started: std::sync::atomic::AtomicBool,
     shutdown: std::sync::atomic::AtomicBool,
     stopped: std::sync::atomic::AtomicBool,
+    /// The subscriptions were set afresh: forget the pause after each run.
+    set_afresh: std::sync::atomic::AtomicBool,
     jobs: parking_lot::Mutex<std::collections::BTreeMap<i64, (String, std::sync::Arc<Job>)>>,
     notices: parking_lot::Mutex<VecDeque<String>>,
 }
@@ -1125,6 +1127,7 @@ impl SubscriptionRunner {
             started: std::sync::atomic::AtomicBool::new(false),
             shutdown: std::sync::atomic::AtomicBool::new(false),
             stopped: std::sync::atomic::AtomicBool::new(false),
+            set_afresh: std::sync::atomic::AtomicBool::new(false),
             jobs: parking_lot::Mutex::default(),
             notices: parking_lot::Mutex::default(),
         })
@@ -1142,6 +1145,15 @@ impl SubscriptionRunner {
     /// Look again now (after subscriptions or options were changed).
     pub fn wake(&self) {
         self.wake.notify_one();
+    }
+
+    /// The subscriptions were edited and saved (`SetSubscriptions`): look
+    /// again now, with no subscription held back for having just run.
+    /// One running now is held back again when it finishes.
+    pub fn subscriptions_set(&self) {
+        self.set_afresh
+            .store(true, std::sync::atomic::Ordering::SeqCst);
+        self.wake();
     }
 
     /// Cancel the first active subscription, retained for existing callers.
@@ -1275,6 +1287,12 @@ impl SubscriptionRunner {
         loop {
             if self.shutdown.load(std::sync::atomic::Ordering::SeqCst) && workers.is_empty() {
                 break;
+            }
+            if self
+                .set_afresh
+                .swap(false, std::sync::atomic::Ordering::SeqCst)
+            {
+                finished.clear();
             }
             let wait = match self.next(&finished) {
                 Ok(Ok(sub)) => {
