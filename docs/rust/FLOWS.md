@@ -1,0 +1,87 @@
+# User flows against the reference
+
+Leaf tests check one behaviour at a time. A **flow** runs several steps a
+user would take, in the reference and in hydrus-rs, and compares what the
+user can see after each step. It catches what leaf tests cannot: a setting
+that never reaches the code that uses it, the order of steps, state carried
+from one step to the next, a worker that is never told to start (issue
+#166).
+
+A flow has two halves:
+
+- a **recorder**, `oracle/record_flow_<name>.py`, which drives the running
+  reference through the steps with its real dialogs and workers and writes
+  `oracle/fixtures/flow_<name>.json`;
+- a **flow test**, `crates/hydrus-gui/tests/gui/flows/<name>.rs`, which
+  drives the headless GUI through the same steps on a real store, with the
+  work done as `hydrus serve` does it, and compares each step's end state
+  with the recording.
+
+Flows are not leaves: tag a flow test `// leaf:` only if it really proves a
+whole leaf.
+
+## The harness
+
+Python, `oracle/flows.py`:
+
+| part | what it does |
+|---|---|
+| `Site`, `booru_phase` | a fake booru on localhost (posts with tags, a file and a source link; tag searches three posts a page, newest first), served in phases, every request noted (`take_hits`) |
+| `definitions`, `install` | URL classes, parsers and a GUG for it, built with the reference's own classes, installed in the client; new traffic unpaused, no wait between a subscription's gallery pages. `install` returns the domain manager for hydrus-rs |
+| `scripted_dialogs` | replaces `DialogEdit.exec`: each dialog, as it opens, is handed to the next script for its panel's class, which acts on it as a user would and accepts or cancels it. A script that raises cancels its dialog and fails the flow |
+| `wait_until_idle` | until the subscriptions manager has nothing running or due within a minute, the network engine no jobs and the database no queued work, all for 1.5 seconds together |
+| `popups_shown` | the popups the popup manager holds, not dismissed (a file popup merged into an earlier one of the same label never shows on its own) |
+| `subscriptions_state`, `files_state` | each subscription and its queries' file and search logs; each file the logs name, with its tags by local tag service, URLs, inbox and local domains |
+| `normaliser` | the site's address becomes `BASE`, dates `TIME`, time deltas ("5 minutes", "just now") `DELTA` |
+
+Rust, `crates/hydrus-gui/tests/gui/flows/mod.rs`, the same parts:
+
+| part | what it does |
+|---|---|
+| `basic_store`, `install` | the `basic` fixture imported; the recording's domain manager installed as a migration installs it, with the same settings `flows.install` changed |
+| `Site` | the recording's site (its port and phases) served by axum, requests noted; `wait_for_a_request` fails if work the reference starts at once does not start promptly |
+| `Daemon` | what `hydrus serve` does for the client, in the test process: the download queues, the subscription runner, and the client's nudges taken every second. `idle` is the reference's idle: nothing running or nudged, nothing due within a minute |
+| `wait_until_idle` | runs the GUI's timers until the daemon is idle and the flow's own condition holds, for 1.5 seconds together |
+| `State` | a step's end state, read from the store and the main window (its popups) and shaped as the recorder writes it |
+| `compare`, `Known` | every difference between the steps and the recording, by JSON path; each must be listed as `Known` with its `DIFFERENCES.md` entry, and each known one must still differ |
+
+The end state compares what a user sees, not databases: seed statuses are
+the reference's codes, files are keyed by SHA-256, the order of the site's
+requests within a step is not compared (the reference works pages and
+files side by side).
+
+## Adding a flow
+
+1. **Pick the steps** and the site they need. Reuse `booru_phase`, or add a
+   site kind to `flows.py` (an imageboard thread, a login page) with its
+   definitions.
+2. **Write the recorder.** Copy `oracle/record_flow_subscription.py`:
+   - pick a site port no other recorder or test uses (the URL classes name
+     it, so the Rust test serves the same port);
+   - boot the `basic` fixture with `network = True`, `flows.install` first;
+   - drive each step through the real GUI (`controller.gui`'s own
+     methods, on the Qt thread), scripting every dialog it opens, then
+     `flows.wait_until_idle`, with an `also` condition for the step's
+     own worker (a dialog's thread, a page's importer);
+   - after each step, append `{step, dialog, subscriptions, files, popups,
+     hits}`; `dialog` holds what the scripts saw (rows, starting values).
+   Run it with `QT_QPA_PLATFORM=offscreen ~/pyenv/bin/python
+   oracle/record_flow_<name>.py`, read the fixture, and check it is what
+   a user would see. Commit the script and fixture together.
+3. **Write the flow test** in `crates/hydrus-gui/tests/gui/flows/<name>.rs`
+   (a `mod` line in `flows/mod.rs`): the same steps through the headless
+   GUI's windows, `wait_until_idle` after each, `state.step(...)` with the
+   same `dialog` keys, then `compare`.
+4. **Every difference is a finding.** Fix it when it is small and in
+   scope; otherwise add it to `DIFFERENCES.md`, open an issue, and list it
+   in the flow's `KNOWN` with that entry's heading.
+5. Say what the flow covers in the table below.
+
+Run one flow with `scripts/dev.sh gui flows::<name>`. A flow takes tens of
+seconds: the daemon and the reference pace their work in seconds.
+
+## Flows
+
+| flow | recorder | steps | findings |
+|---|---|---|---|
+| subscription | `record_flow_subscription.py` | network > subscriptions…: add (downloader chooser, edit dialog, a query added through its dialog), apply; the subscription runs (two search pages, five files); a sixth post; "check queries now", apply; only the new file is fetched; the dialog reopened | hydrus-rs's dialog did not tell the daemon it saved: a new subscription waited up to 30 seconds to start, and "check queries now" just after a run waited two minutes. Fixed: "apply" leaves a nudge that has the daemon take the subscriptions afresh, as `SetSubscriptions` does |
