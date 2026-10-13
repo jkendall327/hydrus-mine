@@ -151,8 +151,9 @@ fn window_key(window: &slint::Window) -> usize {
     std::ptr::from_ref(window) as usize
 }
 
-fn place_as(window: &slint::Window, frame: &FrameLocation, is_main: bool) {
-    // (placed now: an earlier placement waiting for it is replaced)
+/// Drop a placement waiting for `window` to be laid out: it is placed
+/// anew.
+fn cancel_pending(window: &slint::Window) {
     let key = window_key(window);
     PENDING.with(|pending| {
         pending.borrow_mut().retain(|(at, timer)| {
@@ -162,6 +163,11 @@ fn place_as(window: &slint::Window, frame: &FrameLocation, is_main: bool) {
             *at != key && timer.running()
         });
     });
+}
+
+fn place_as(window: &slint::Window, frame: &FrameLocation, is_main: bool) {
+    // (placed now: an earlier placement waiting for it is replaced)
+    cancel_pending(window);
     apply(window, placement(window, frame, is_main));
     // (`showMaximized`, then `showFullScreen`, which takes the maximised
     // state away: with both, the window is fullscreen and not maximised)
@@ -194,6 +200,9 @@ fn place_frame_as<C: slint::ComponentHandle + 'static>(
     name: &str,
     watch: bool,
 ) {
+    // (an ordinary dialog's placement, made as the window was, gives way
+    // to its own frame's, whether or not that frame is kept)
+    cancel_pending(component.window());
     if watch {
         place_named(component.window(), store, name);
     } else {

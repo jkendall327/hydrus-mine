@@ -141,6 +141,24 @@ fn pixels(image: &slint::Image) -> slint::SharedPixelBuffer<slint::Rgba8Pixel> {
         .unwrap_or_else(|| slint::SharedPixelBuffer::new(0, 0))
 }
 
+/// The player mpv made for the file with this sha256 (the latest, should
+/// an earlier one linger).
+fn player_of(sha256: &str) -> Option<u64> {
+    hydrus_gui::live_mpv_property("path")
+        .into_iter()
+        .filter(|(_, path)| path.as_deref().is_some_and(|p| p.contains(sha256)))
+        .map(|(id, _)| id)
+        .max()
+}
+
+/// An mpv property of player `id`.
+fn property(id: u64, name: &str) -> Option<String> {
+    hydrus_gui::live_mpv_property(name)
+        .into_iter()
+        .find(|(of, _)| *of == id)
+        .and_then(|(_, value)| value)
+}
+
 /// The viewer's picture, once it has one.
 fn picture(viewer: &MediaViewerWindow) -> slint::SharedPixelBuffer<slint::Rgba8Pixel> {
     settle(&|| viewer.get_media().to_rgba8().is_some());
@@ -319,11 +337,13 @@ fn embedded_cover_art_is_an_audio_file_s_picture() {
         let (sha256, _) = reference_info(name);
         let viewer = client.view(&sha256);
         let thumbnail = picture(&viewer);
-        let album_art = || {
-            hydrus_gui::live_mpv_property("current-tracks/video/albumart")
-                .into_iter()
-                .any(|(_, art)| art.as_deref() == Some("yes"))
-        };
+        assert!(
+            settle(&|| player_of(&sha256).is_some()),
+            "{name}: mpv plays it"
+        );
+        let player = player_of(&sha256).unwrap();
+        let album_art =
+            || property(player, "current-tracks/video/albumart").as_deref() == Some("yes");
         let shown_other = || {
             let now = pixels(&viewer.get_media());
             (now.width(), now.height()) != (thumbnail.width(), thumbnail.height())
@@ -334,6 +354,32 @@ fn embedded_cover_art_is_an_audio_file_s_picture() {
             assert!(
                 settle(&shown_other),
                 "{name}: the cover replaces the thumbnail"
+            );
+            // the picture mpv shows is the file's own, 60 by 60 (as ffprobe
+            // reads the fixtures' attached pictures)...
+            assert_eq!(
+                (
+                    property(player, "video-params/w").as_deref(),
+                    property(player, "video-params/h").as_deref()
+                ),
+                (Some("60"), Some("60")),
+                "{name}"
+            );
+            // ...and the frame shown holds it square, centred between bars
+            let shown = pixels(&viewer.get_media());
+            let (w, h) = (shown.width() as usize, shown.height() as usize);
+            let at = |x: usize, y: usize| &shown.as_bytes()[(y * w + x) * 4..(y * w + x) * 4 + 3];
+            let column_blank = |x: usize| (0..h).all(|y| at(x, y) == at(0, 0));
+            let side = w.min(h);
+            let bar = (w - side) / 2;
+            assert!(w != h && bar > 0, "{name}: {w}x{h}");
+            assert!(
+                (0..bar.saturating_sub(1)).all(column_blank) && (w - bar + 1..w).all(column_blank),
+                "{name}: bars beside it"
+            );
+            assert!(
+                !column_blank(w / 2) && !column_blank(bar + 2) && !column_blank(w - bar - 3),
+                "{name}: the picture fills the square between them"
             );
         } else {
             // (it plays: the bar moves; but it has no picture of its own)
@@ -404,15 +450,11 @@ fn audio(store: &Store) -> AudioSettings {
     store.read(hydrus_store::settings::get).unwrap()
 }
 
-/// The playing player's volume and mute, once they are `want`.
-fn player_sound(want: (u64, bool)) -> (u64, bool) {
+/// Player `id`'s volume and mute, once they are `want`.
+fn player_sound(id: u64, want: (u64, bool)) -> (u64, bool) {
     let now = || {
-        let volume = hydrus_gui::live_mpv_property("volume");
-        let mute = hydrus_gui::live_mpv_property("mute");
-        let volume = volume
-            .last()
-            .and_then(|(_, v)| v.as_deref()?.parse::<f64>().ok());
-        let mute = mute.last().and_then(|(_, m)| m.clone());
+        let volume = property(id, "volume").and_then(|v| v.parse::<f64>().ok());
+        let mute = property(id, "mute");
         #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
         (
             volume.map_or(u64::MAX, |v| v.round() as u64),
@@ -444,12 +486,13 @@ fn volume_and_mute_reach_the_playing_audio_as_the_reference_s_viewer_sets_them()
         .unwrap();
     keep(&client.store, audio_of(opening, volumes));
     let viewer = client.view(&sha256);
-    assert!(settle(&|| !hydrus_gui::live_mpv_property("path").is_empty()));
+    assert!(settle(&|| player_of(&sha256).is_some()));
+    let player = player_of(&sha256).unwrap();
     let want = (
         opening["viewer_volume"].as_u64().unwrap(),
         opening["viewer_muted"].as_bool().unwrap(),
     );
-    assert_eq!(player_sound(want), want, "as it opened");
+    assert_eq!(player_sound(player, want), want, "as it opened");
 
     // changed elsewhere while it plays (ctrl+g in the main window, the
     // Options window): every recorded case
@@ -460,7 +503,7 @@ fn volume_and_mute_reach_the_playing_audio_as_the_reference_s_viewer_sets_them()
             case["viewer_volume"].as_u64().unwrap(),
             case["viewer_muted"].as_bool().unwrap(),
         );
-        assert_eq!(player_sound(want), want, "{case}");
+        assert_eq!(player_sound(player, want), want, "{case}");
     }
 
     // its own control: the slider moves the volume it plays at (its own
@@ -483,21 +526,21 @@ fn volume_and_mute_reach_the_playing_audio_as_the_reference_s_viewer_sets_them()
         );
         let want = recorded_sound(now);
         assert_eq!(want.0, 17);
-        assert_eq!(player_sound(want), want, "slider, own {own}");
+        assert_eq!(player_sound(player, want), want, "slider, own {own}");
 
         viewer.invoke_flip_viewer_mute();
         let want = recorded_sound(audio(&client.store));
         assert!(want.1);
-        assert_eq!(player_sound(want), want, "viewer mute");
+        assert_eq!(player_sound(player, want), want, "viewer mute");
         viewer.invoke_flip_viewer_mute();
         viewer.invoke_flip_global_mute();
         let want = recorded_sound(audio(&client.store));
         assert!(want.1);
-        assert_eq!(player_sound(want), want, "global mute");
+        assert_eq!(player_sound(player, want), want, "global mute");
         viewer.invoke_flip_global_mute();
         let want = recorded_sound(audio(&client.store));
         assert!(!want.1);
-        assert_eq!(player_sound(want), want, "unmuted");
+        assert_eq!(player_sound(player, want), want, "unmuted");
     }
     viewer.invoke_close_requested();
 }

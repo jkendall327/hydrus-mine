@@ -516,6 +516,15 @@ fn named_windows_open_by_their_frames_and_keep_them_as_the_reference_s_do() {
             main[0].as_f64().unwrap() as f32,
             main[1].as_f64().unwrap() as f32,
         ));
+        // (the ordinary dialogs' frame grows windows across: its placement,
+        // made as the window was, gives way to the window's own frame)
+        client.keep(
+            "regular_dialog",
+            FrameLocation {
+                default_gravity: (1, -1),
+                ..client.frame("regular_dialog")
+            },
+        );
         client.keep(
             key,
             FrameLocation {
@@ -543,6 +552,16 @@ fn named_windows_open_by_their_frames_and_keep_them_as_the_reference_s_do() {
             std::thread::sleep(std::time::Duration::from_millis(10));
         }
         assert_eq!(height(), grown, "{key}: grown by its gravity");
+        // (and once both have had the chance, its width is still its own)
+        for _ in 0..20 {
+            slint::platform::update_timers_and_animations();
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        }
+        assert_eq!(
+            window.size().to_logical(window.scale_factor()).width,
+            400.0,
+            "{key}: not grown by the ordinary dialogs' frame"
+        );
         window.dispatch_event(slint::platform::WindowEvent::CloseRequested);
     }
 }
