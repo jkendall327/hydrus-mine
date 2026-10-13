@@ -205,12 +205,12 @@ search.
 
 ## Pages (`hydrus-gui`)
 
-- **Extended selection in the import review list** (`ListSelection`,
-  shared by every list): a shift-click after a ctrl-click has taken the
-  range's origin out of the selection keeps, in the reference, the other
-  ctrl-selected rows (rows 0, 1, 2 after click 0, ctrl 2, ctrl 0, shift 1);
-  hydrus-rs makes a fresh range (0, 1). Recorded in
-  `oracle/record_import_review_remove.py`; the test pins the difference.
+- **A few lists keep their own selection code** rather than the shared
+  `ListSelection` (which follows Qt, `oracle/record_list_selection.py`): the
+  favourites manager, the siblings/parents list, the options' namespace
+  colours and the write autocomplete lists. There a shift-click after a
+  ctrl-click makes a fresh range from the anchor, where Qt keeps the rows
+  selected before the ctrl-click.
 - **Replayed only by the model, not through the window:** Manage Times'
   "many files" case (over 100 files asks before applying; the test fixture
   has 36 files) and whether the date-time editor's value is a change (the
@@ -218,7 +218,7 @@ search.
 - **Closing the last page** (Ctrl+W or a middle click on the only tab)
   leaves the reference's main notebook empty; hydrus-rs's top notebook
   always holds a page, so a new search page ("files") takes its place
-  (`oracle/record_page_close.py`, the last step).
+  (`oracle/record_page_close.py`, the last step; #183).
 - **Active predicate editing remains Partial.** Represented system values and
   simple tags/namespaces/wildcards can now be edited together, with one atomic
   Apply and separate supplied values for repeated system families. Immutable
@@ -1009,8 +1009,11 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 - **The string processor editor** receives starting strings from the sidecar
   owner's first example, including source processors before their own processing.
   Import/export/paste use a shared
-  text/PNG review window. Unsupported mixed packages are rejected atomically;
-  the reference may append permitted entries and warn about rejected ones.
+  text/PNG review window. A package mixing steps with other objects gives its
+  steps, with the reference's warning about the rest above the review; the
+  reference's "N objects added!" is the review's "Append N processing steps"
+  (`oracle/record_processing_exchange_mixed.py`). A string processor is taken
+  as its steps, where the reference appends it as one nested step (#185).
   "add" lists its kinds' descriptions in
   its question. A sorter's or match's error for a regex that won't
   compile is in hydrus-rs's words, not Python's ("That regex did not
@@ -1393,12 +1396,12 @@ so it shows that behavior instead of the reference's background-sync status.
 Repository reasons, their recent/fixed suggestions and rescinds are
 supported, but account/moderator permission warnings and the moderator reason
 bypass are not implemented. Pending changes are persisted; uploading still depends on the
-repository uploader's existing capabilities. Self-pairs imported from text are
-reported and rejected rather than stored after the reference's critical loop
-warning (the display graph ignores such pairs anyway); a repository still asks
-its reason first, as the reference does, and remembers it. Batches creating loops
-or conflicting sibling ideals are rejected as a whole with an explicit message (so the batch's valid pairs are dropped too, and a repository's reason question is still asked first); enter
-the pairs separately to perform the ordinary automatic repairs. Already corrupt
+repository uploader's existing capabilities. Self-pairs are staged after the reference's
+"Loop problem!" message, and a batch that makes a loop within itself, or gives
+one sibling two ideals, is staged as it is, as the reference stages them (its
+repairs look only at the pairs already there; the display graph ignores the
+pairs that would loop or give a second ideal, as the reference's does). The
+message shows without the reference's "Loop problem!" window title. Already corrupt
 reference graph cycles are traversed safely, but do not raise its detailed
 pre-existing-loop warning. Manual background sibling/parent synchronization
 remains separate future work.
@@ -4217,6 +4220,10 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 - "force database commit" checkpoints SQLite's write-ahead log (hydrus-rs
   commits each write as it happens); "flush log" writes its line to
   standard error.
+- Subscription report mode makes one report, the live reference's
+  `IsSyncDue` line, and makes it when hydrus-rs works out a subscription's
+  next work time rather than as the reference syncs; the reference's other
+  subscription reports are not ported (#184).
 - Report modes are offered only where something in hydrus-rs can report:
   blurhash, cache, daemon, file, file import, gui, idle, network (and
   silent), shortcut, similar files metadata generation, subprocess and
@@ -4710,6 +4717,17 @@ The `mpv.conf` copy replaces a read-only mpv.conf; recorded as root the referenc
   entry dialogs, which have no consumers).
 
 ## Options and shell leftovers (#91, #92)
+
+- **Help pages open online at once.** hydrus-rs ships no local help, so Help >
+  open help, Help > changelog and the help buttons (external programs, import
+  options, ...) open the online page. The reference opens its bundled help,
+  or, where there is none (running from source), first asks "You do not have
+  a local help! ..." with open online help / open how to build guide / forget
+  it (`ClientGUIDialogsDocumentation.OpenDocumentation`; #182).
+- **The startup password window** is hydrus-rs's own window ("hydrus client"),
+  not the reference's "Enter Text" dialog over the splash; its blank-entry
+  warning ("Cannot enter blank text here!") shows in the window rather than in
+  a message box (`oracle/record_text_entry_checks.py`).
 
 - **Undelete with several files.** The reference asks its single-file
   question whatever the number of files (it says "this file"); so does
