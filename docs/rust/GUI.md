@@ -4015,6 +4015,22 @@ stars"). In the media viewer, such shortcuts in the "media" and
 added where the file lacks it, else flipped off; a rating is set, else
 flipped off; increment and decrement move a numerical rating a star (from
 none to its lowest or highest) or an inc/dec count by one.
+
+The third kind of command, "interactive 'edit value' manual set command",
+names a local tag service and reads "popup tag mappings entry dialog for my
+tags". Used in the media viewer (on the file shown) or on the thumbnails
+(given the keyboard, on the files selected; "media" set shortcuts), it asks
+"Enter the tag to be added to 'my tags'." in an "Enter Text" dialog: a button
+for each recent tag, newest first (as many as Options > tag suggestions >
+recent > "number of recent tags to show in quick entry dialogs", 10 by
+default, none for "do not show"; the recent tags are read, and forgotten past
+their own count, as the panels read them), and the newest in the line,
+selected. A button, or apply, sets that tag on the files (added where any
+lacks it) and makes it the newest recent tag; blank or whitespace is refused
+("Cannot enter blank text here!", "Cannot enter only whitespace here!");
+cancel does nothing. Proven by `interactive_tag_entry.rs` against
+`oracle/record_interactive_tag_entry.py` and
+`oracle/record_suggestion_options_consumers.py`.
 The media viewer's top hover has the reference's keyboard button: "edit
 shortcuts" opens the options, and with custom sets, "set current shortcuts"
 turns them on or off for this viewer and "set default shortcuts" for every
@@ -5150,7 +5166,8 @@ click to clear). Proven by `tests/gui/preview_top_right.rs`.
 **Tag suggestions.** The page now has the reference's four notebook pages as
 titled groups: most used (the per-service lists), related ("Show related tags",
 the three search durations, the concurrence threshold and the weight tables),
-file lookup scripts (the switch) and recent (the count, or "do not show").
+file lookup scripts (the switch) and recent (the count, and the count for
+quick entry dialogs, each with "do not show").
 "Show related tags", the concurrence threshold and the recent count change
 the Manage Tags window's panels, and each duration is the time its related
 button gives a search; the file lookup switch is kept only (see

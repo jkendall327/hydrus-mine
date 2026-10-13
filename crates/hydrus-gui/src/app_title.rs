@@ -87,6 +87,7 @@ titled!(
     BandwidthWindow,
     CheckerOptionsWindow,
     ChoiceButtonsWindow,
+    QuickTagEntryWindow,
     ClientApiKeysWindow,
     CommandPaletteWindow,
     ComparatorWindow,

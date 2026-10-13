@@ -88,6 +88,7 @@ export { CommandPaletteWindow, PaletteRow } from "command_palette.slint";
 export { CheckerOptionsWindow, CheckerTexts } from "checker_options.slint";
 export { SessionDialog } from "session_dialog.slint";
 export { ChoiceButtonsWindow } from "choice_buttons.slint";
+export { QuickTagEntryWindow } from "quick_tag_entry.slint";
 export { BonesRow, HowBonedWindow } from "how_boned.slint";
 export { MediaViewWindow } from "media_views.slint";
 export { TableColumn, TableRow }
@@ -460,6 +461,8 @@ export component MainWindow inherits Window {
     // have it back when a menu, which takes it, closes (the thumbnails, if
     // neither had)
     property <int> last-focus: 0;
+    // the thumbnail grid has the keyboard (its "media" shortcuts apply)
+    out property <bool> grid-focused;
     changed menu-open => {
         if (self.menu-open == -1) {
             if (self.last-focus == 1) {
@@ -2109,6 +2112,7 @@ export component MainWindow inherits Window {
                     }
                     grid-keys := FocusScope {
                         changed has-focus => {
+                            root.grid-focused = self.has-focus;
                             if (self.has-focus) {
                                 root.last-focus = 2;
                             }

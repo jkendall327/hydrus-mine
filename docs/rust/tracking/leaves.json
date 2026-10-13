@@ -16316,7 +16316,13 @@
    "native": null,
    "notes": [
     "GetContentApplicationCommandFromInteractiveContentCommand asks for a tag in a quick dialog offering the recent tags (Options: recent tags in quick entry dialogs, 10 by default, none to hide). Native has no interactive content command and no such dialog, so the option has no consumer."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (issue #154 part A)",
+    "note": "crates/hydrus-gui/tests/gui/interactive_tag_entry.rs: (1) the real shortcut editor (Options > shortcuts > media > add) makes the interactive command for 'my tags', its services compared with the recording's ApplicationCommandWidget (tag services only; ratings are a DIFFERENCES line), its text 'popup tag mappings entry dialog for my tags' as recorded, and reopened as the interactive type; saved to the media set. (2) all 13 recorded uses of the command (oracle/record_interactive_tag_entry.py: the real GetContentApplicationCommandFromInteractiveContentCommand with the real EnterText dialog driven by its own buttons, then ApplyContentApplicationCommandToMedia) replayed in order through 'v' in the real media viewer (one file) or on the thumbnail grid given the keyboard by a rendered click and ctrl+m (two files): title, message, suggestion buttons, starting text and whether it starts selected (a property the window sets beside LineEdit.select-all, which Slint does not expose), button/typed/default/cancel, blank and whitespace refusals with the reference's words, then both files' tags and the recent tags after each. (3) the quick dialog count and recent count set through the Options rows reach the dialog's suggestions and text in four scenarios (suggestion_options_consumers.json, the reference's TagSuggestionsPanel then quick dialog). The row's bounds/default/none phrase are compared with options_dialog.json in the model test the_recent_tab_s_count_is_the_noneable_the_reference_recorded; legacy import in hydrus-store decode tests."
+   }
   },
   {
    "id": "suggested-tag-list-interactions",

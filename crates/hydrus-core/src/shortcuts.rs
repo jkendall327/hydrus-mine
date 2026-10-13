@@ -160,6 +160,9 @@ pub enum ContentCommand {
         service: crate::ServiceKey,
         up: bool,
     },
+    /// Ask for the tag to set, in a quick dialog offering the recent tags
+    /// (`APPLICATION_COMMAND_TYPE_INTERACTIVE_CONTENT` on a tag service).
+    Interactive { service: crate::ServiceKey },
 }
 /// Staged named sets and the original capture/display policies.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

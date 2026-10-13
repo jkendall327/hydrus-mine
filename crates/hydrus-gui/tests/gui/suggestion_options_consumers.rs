@@ -29,7 +29,7 @@ fn texts(rows: &slint::ModelRc<hydrus_gui::TableRow>) -> Vec<String> {
 
 /// The basic store with the recording's corpus on "my tags", its recent tags
 /// pushed in order, and the recording's weights; returns the files by hash.
-fn seeded(
+pub(crate) fn seeded(
     f: &serde_json::Value,
 ) -> (
     Vec<tempfile::TempDir>,

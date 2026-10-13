@@ -1,0 +1,854 @@
+{
+ "service": "my tags",
+ "pushed": [
+  "recent:00",
+  "recent:01",
+  "recent:02",
+  "recent:03",
+  "recent:04",
+  "recent:05",
+  "recent:06",
+  "recent:07",
+  "recent:08",
+  "recent:09",
+  "recent:10",
+  "recent:11"
+ ],
+ "files": [
+  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+ ],
+ "command_types": [
+  "simple command",
+  "tag command",
+  "local file command",
+  "like/dislike rating command",
+  "numerical rating command",
+  "rating increment/decrement command",
+  "interactive 'edit value' manual set command"
+ ],
+ "interactive_services": [
+  "downloader tags",
+  "my tags",
+  "second tags",
+  "stars",
+  "counter"
+ ],
+ "command_text": "popup tag mappings entry dialog for my tags",
+ "command_round_trip": "interactive 'edit value' manual set command",
+ "steps": [
+  {
+   "name": "button",
+   "quick": 10,
+   "main": 20,
+   "act": [
+    "button",
+    2
+   ],
+   "files": [
+    0
+   ],
+   "dialog": {
+    "title": "Enter Text",
+    "message": [
+     "Enter the tag to be added to 'my tags'."
+    ],
+    "suggestions": [
+     "recent:11",
+     "recent:10",
+     "recent:09",
+     "recent:08",
+     "recent:07",
+     "recent:06",
+     "recent:05",
+     "recent:04",
+     "recent:03",
+     "recent:02"
+    ],
+    "text": "recent:11",
+    "selected": "recent:11",
+    "dialog_buttons": [
+     "apply",
+     "cancel"
+    ]
+   },
+   "returned_content": true,
+   "content_text": "set tag mappings \"recent:09\" for my tags",
+   "content_value": "recent:09",
+   "applied": true,
+   "tags_after": [
+    [
+     "recent:09",
+     "safe"
+    ],
+    [
+     "safe",
+     "samus"
+    ]
+   ],
+   "recent_after": [
+    "recent:09",
+    "recent:11",
+    "recent:10",
+    "recent:08",
+    "recent:07",
+    "recent:06",
+    "recent:05",
+    "recent:04",
+    "recent:03",
+    "recent:02",
+    "recent:01",
+    "recent:00"
+   ]
+  },
+  {
+   "name": "typed",
+   "quick": 10,
+   "main": 20,
+   "act": [
+    "type",
+    "typed:new tag"
+   ],
+   "files": [
+    0,
+    1
+   ],
+   "dialog": {
+    "title": "Enter Text",
+    "message": [
+     "Enter the tag to be added to 'my tags'."
+    ],
+    "suggestions": [
+     "recent:09",
+     "recent:11",
+     "recent:10",
+     "recent:08",
+     "recent:07",
+     "recent:06",
+     "recent:05",
+     "recent:04",
+     "recent:03",
+     "recent:02"
+    ],
+    "text": "recent:09",
+    "selected": "recent:09",
+    "dialog_buttons": [
+     "apply",
+     "cancel"
+    ]
+   },
+   "returned_content": true,
+   "content_text": "set tag mappings \"typed:new tag\" for my tags",
+   "content_value": "typed:new tag",
+   "applied": true,
+   "tags_after": [
+    [
+     "recent:09",
+     "safe",
+     "typed:new tag"
+    ],
+    [
+     "safe",
+     "samus",
+     "typed:new tag"
+    ]
+   ],
+   "recent_after": [
+    "typed:new tag",
+    "recent:09",
+    "recent:11",
+    "recent:10",
+    "recent:08",
+    "recent:07",
+    "recent:06",
+    "recent:05",
+    "recent:04",
+    "recent:03",
+    "recent:02",
+    "recent:01",
+    "recent:00"
+   ]
+  },
+  {
+   "name": "default",
+   "quick": 3,
+   "main": 20,
+   "act": [
+    "apply",
+    null
+   ],
+   "files": [
+    0
+   ],
+   "dialog": {
+    "title": "Enter Text",
+    "message": [
+     "Enter the tag to be added to 'my tags'."
+    ],
+    "suggestions": [
+     "typed:new tag",
+     "recent:09",
+     "recent:11"
+    ],
+    "text": "typed:new tag",
+    "selected": "typed:new tag",
+    "dialog_buttons": [
+     "apply",
+     "cancel"
+    ]
+   },
+   "returned_content": true,
+   "content_text": "set tag mappings \"typed:new tag\" for my tags",
+   "content_value": "typed:new tag",
+   "applied": true,
+   "tags_after": [
+    [
+     "recent:09",
+     "safe",
+     "typed:new tag"
+    ],
+    [
+     "safe",
+     "samus",
+     "typed:new tag"
+    ]
+   ],
+   "recent_after": [
+    "typed:new tag",
+    "recent:09",
+    "recent:11",
+    "recent:10",
+    "recent:08",
+    "recent:07",
+    "recent:06",
+    "recent:05",
+    "recent:04",
+    "recent:03",
+    "recent:02",
+    "recent:01",
+    "recent:00"
+   ]
+  },
+  {
+   "name": "already present",
+   "quick": 3,
+   "main": 20,
+   "act": [
+    "type",
+    "typed:new tag"
+   ],
+   "files": [
+    0,
+    1
+   ],
+   "dialog": {
+    "title": "Enter Text",
+    "message": [
+     "Enter the tag to be added to 'my tags'."
+    ],
+    "suggestions": [
+     "typed:new tag",
+     "recent:09",
+     "recent:11"
+    ],
+    "text": "typed:new tag",
+    "selected": "typed:new tag",
+    "dialog_buttons": [
+     "apply",
+     "cancel"
+    ]
+   },
+   "returned_content": true,
+   "content_text": "set tag mappings \"typed:new tag\" for my tags",
+   "content_value": "typed:new tag",
+   "applied": true,
+   "tags_after": [
+    [
+     "recent:09",
+     "safe",
+     "typed:new tag"
+    ],
+    [
+     "safe",
+     "samus",
+     "typed:new tag"
+    ]
+   ],
+   "recent_after": [
+    "typed:new tag",
+    "recent:09",
+    "recent:11",
+    "recent:10",
+    "recent:08",
+    "recent:07",
+    "recent:06",
+    "recent:05",
+    "recent:04",
+    "recent:03",
+    "recent:02",
+    "recent:01",
+    "recent:00"
+   ]
+  },
+  {
+   "name": "partly present",
+   "quick": 3,
+   "main": 20,
+   "act": [
+    "type",
+    "typed:second"
+   ],
+   "files": [
+    1
+   ],
+   "dialog": {
+    "title": "Enter Text",
+    "message": [
+     "Enter the tag to be added to 'my tags'."
+    ],
+    "suggestions": [
+     "typed:new tag",
+     "recent:09",
+     "recent:11"
+    ],
+    "text": "typed:new tag",
+    "selected": "typed:new tag",
+    "dialog_buttons": [
+     "apply",
+     "cancel"
+    ]
+   },
+   "returned_content": true,
+   "content_text": "set tag mappings \"typed:second\" for my tags",
+   "content_value": "typed:second",
+   "applied": true,
+   "tags_after": [
+    [
+     "recent:09",
+     "safe",
+     "typed:new tag"
+    ],
+    [
+     "safe",
+     "samus",
+     "typed:new tag",
+     "typed:second"
+    ]
+   ],
+   "recent_after": [
+    "typed:second",
+    "typed:new tag",
+    "recent:09",
+    "recent:11",
+    "recent:10",
+    "recent:08",
+    "recent:07",
+    "recent:06",
+    "recent:05",
+    "recent:04",
+    "recent:03",
+    "recent:02",
+    "recent:01",
+    "recent:00"
+   ]
+  },
+  {
+   "name": "partly present apply",
+   "quick": 3,
+   "main": 20,
+   "act": [
+    "type",
+    "typed:second"
+   ],
+   "files": [
+    0,
+    1
+   ],
+   "dialog": {
+    "title": "Enter Text",
+    "message": [
+     "Enter the tag to be added to 'my tags'."
+    ],
+    "suggestions": [
+     "typed:second",
+     "typed:new tag",
+     "recent:09"
+    ],
+    "text": "typed:second",
+    "selected": "typed:second",
+    "dialog_buttons": [
+     "apply",
+     "cancel"
+    ]
+   },
+   "returned_content": true,
+   "content_text": "set tag mappings \"typed:second\" for my tags",
+   "content_value": "typed:second",
+   "applied": true,
+   "tags_after": [
+    [
+     "recent:09",
+     "safe",
+     "typed:new tag",
+     "typed:second"
+    ],
+    [
+     "safe",
+     "samus",
+     "typed:new tag",
+     "typed:second"
+    ]
+   ],
+   "recent_after": [
+    "typed:second",
+    "typed:new tag",
+    "recent:09",
+    "recent:11",
+    "recent:10",
+    "recent:08",
+    "recent:07",
+    "recent:06",
+    "recent:05",
+    "recent:04",
+    "recent:03",
+    "recent:02",
+    "recent:01",
+    "recent:00"
+   ]
+  },
+  {
+   "name": "cancel",
+   "quick": 3,
+   "main": 20,
+   "act": [
+    "cancel",
+    null
+   ],
+   "files": [
+    0
+   ],
+   "dialog": {
+    "title": "Enter Text",
+    "message": [
+     "Enter the tag to be added to 'my tags'."
+    ],
+    "suggestions": [
+     "typed:second",
+     "typed:new tag",
+     "recent:09"
+    ],
+    "text": "typed:second",
+    "selected": "typed:second",
+    "dialog_buttons": [
+     "apply",
+     "cancel"
+    ]
+   },
+   "returned_content": false,
+   "tags_after": [
+    [
+     "recent:09",
+     "safe",
+     "typed:new tag",
+     "typed:second"
+    ],
+    [
+     "safe",
+     "samus",
+     "typed:new tag",
+     "typed:second"
+    ]
+   ],
+   "recent_after": [
+    "typed:second",
+    "typed:new tag",
+    "recent:09",
+    "recent:11",
+    "recent:10",
+    "recent:08",
+    "recent:07",
+    "recent:06",
+    "recent:05",
+    "recent:04",
+    "recent:03",
+    "recent:02",
+    "recent:01",
+    "recent:00"
+   ]
+  },
+  {
+   "name": "blank",
+   "quick": 1,
+   "main": 20,
+   "act": [
+    "type",
+    ""
+   ],
+   "files": [
+    0
+   ],
+   "dialog": {
+    "title": "Enter Text",
+    "message": [
+     "Enter the tag to be added to 'my tags'."
+    ],
+    "suggestions": [
+     "typed:second"
+    ],
+    "text": "typed:second",
+    "selected": "typed:second",
+    "dialog_buttons": [
+     "apply",
+     "cancel"
+    ],
+    "refused": [
+     {
+      "kind": "warning",
+      "message": "Cannot enter blank text here!"
+     }
+    ]
+   },
+   "returned_content": false,
+   "tags_after": [
+    [
+     "recent:09",
+     "safe",
+     "typed:new tag",
+     "typed:second"
+    ],
+    [
+     "safe",
+     "samus",
+     "typed:new tag",
+     "typed:second"
+    ]
+   ],
+   "recent_after": [
+    "typed:second",
+    "typed:new tag",
+    "recent:09",
+    "recent:11",
+    "recent:10",
+    "recent:08",
+    "recent:07",
+    "recent:06",
+    "recent:05",
+    "recent:04",
+    "recent:03",
+    "recent:02",
+    "recent:01",
+    "recent:00"
+   ]
+  },
+  {
+   "name": "whitespace",
+   "quick": 1,
+   "main": 20,
+   "act": [
+    "type",
+    "   "
+   ],
+   "files": [
+    0
+   ],
+   "dialog": {
+    "title": "Enter Text",
+    "message": [
+     "Enter the tag to be added to 'my tags'."
+    ],
+    "suggestions": [
+     "typed:second"
+    ],
+    "text": "typed:second",
+    "selected": "typed:second",
+    "dialog_buttons": [
+     "apply",
+     "cancel"
+    ],
+    "refused": [
+     {
+      "kind": "warning",
+      "message": "Cannot enter only whitespace here!"
+     }
+    ]
+   },
+   "returned_content": false,
+   "tags_after": [
+    [
+     "recent:09",
+     "safe",
+     "typed:new tag",
+     "typed:second"
+    ],
+    [
+     "safe",
+     "samus",
+     "typed:new tag",
+     "typed:second"
+    ]
+   ],
+   "recent_after": [
+    "typed:second",
+    "typed:new tag",
+    "recent:09",
+    "recent:11",
+    "recent:10",
+    "recent:08",
+    "recent:07",
+    "recent:06",
+    "recent:05",
+    "recent:04",
+    "recent:03",
+    "recent:02",
+    "recent:01",
+    "recent:00"
+   ]
+  },
+  {
+   "name": "do not show",
+   "quick": null,
+   "main": 20,
+   "act": [
+    "type",
+    "typed:hidden"
+   ],
+   "files": [
+    0
+   ],
+   "dialog": {
+    "title": "Enter Text",
+    "message": [
+     "Enter the tag to be added to 'my tags'."
+    ],
+    "suggestions": [],
+    "text": "",
+    "selected": "",
+    "dialog_buttons": [
+     "apply",
+     "cancel"
+    ]
+   },
+   "returned_content": true,
+   "content_text": "set tag mappings \"typed:hidden\" for my tags",
+   "content_value": "typed:hidden",
+   "applied": true,
+   "tags_after": [
+    [
+     "recent:09",
+     "safe",
+     "typed:hidden",
+     "typed:new tag",
+     "typed:second"
+    ],
+    [
+     "safe",
+     "samus",
+     "typed:new tag",
+     "typed:second"
+    ]
+   ],
+   "recent_after": [
+    "typed:hidden",
+    "typed:second",
+    "typed:new tag",
+    "recent:09",
+    "recent:11",
+    "recent:10",
+    "recent:08",
+    "recent:07",
+    "recent:06",
+    "recent:05",
+    "recent:04",
+    "recent:03",
+    "recent:02",
+    "recent:01",
+    "recent:00"
+   ]
+  },
+  {
+   "name": "one",
+   "quick": 1,
+   "main": 20,
+   "act": [
+    "button",
+    0
+   ],
+   "files": [
+    1
+   ],
+   "dialog": {
+    "title": "Enter Text",
+    "message": [
+     "Enter the tag to be added to 'my tags'."
+    ],
+    "suggestions": [
+     "typed:hidden"
+    ],
+    "text": "typed:hidden",
+    "selected": "typed:hidden",
+    "dialog_buttons": [
+     "apply",
+     "cancel"
+    ]
+   },
+   "returned_content": true,
+   "content_text": "set tag mappings \"typed:hidden\" for my tags",
+   "content_value": "typed:hidden",
+   "applied": true,
+   "tags_after": [
+    [
+     "recent:09",
+     "safe",
+     "typed:hidden",
+     "typed:new tag",
+     "typed:second"
+    ],
+    [
+     "safe",
+     "samus",
+     "typed:hidden",
+     "typed:new tag",
+     "typed:second"
+    ]
+   ],
+   "recent_after": [
+    "typed:hidden",
+    "typed:second",
+    "typed:new tag",
+    "recent:09",
+    "recent:11",
+    "recent:10",
+    "recent:08",
+    "recent:07",
+    "recent:06",
+    "recent:05",
+    "recent:04",
+    "recent:03",
+    "recent:02",
+    "recent:01",
+    "recent:00"
+   ]
+  },
+  {
+   "name": "unclean",
+   "quick": 2,
+   "main": 20,
+   "act": [
+    "type",
+    " Typed:Spaced  OUT "
+   ],
+   "files": [
+    1
+   ],
+   "dialog": {
+    "title": "Enter Text",
+    "message": [
+     "Enter the tag to be added to 'my tags'."
+    ],
+    "suggestions": [
+     "typed:hidden",
+     "typed:second"
+    ],
+    "text": "typed:hidden",
+    "selected": "typed:hidden",
+    "dialog_buttons": [
+     "apply",
+     "cancel"
+    ]
+   },
+   "returned_content": true,
+   "content_text": "set tag mappings \" Typed:Spaced  OUT \" for my tags",
+   "content_value": " Typed:Spaced  OUT ",
+   "applied": true,
+   "tags_after": [
+    [
+     "recent:09",
+     "safe",
+     "typed:hidden",
+     "typed:new tag",
+     "typed:second"
+    ],
+    [
+     "safe",
+     "samus",
+     "typed:hidden",
+     "typed:new tag",
+     "typed:second",
+     "typed:spaced out"
+    ]
+   ],
+   "recent_after": [
+    "typed:spaced out",
+    "typed:hidden",
+    "typed:second",
+    "typed:new tag",
+    "recent:09",
+    "recent:11",
+    "recent:10",
+    "recent:08",
+    "recent:07",
+    "recent:06",
+    "recent:05",
+    "recent:04",
+    "recent:03",
+    "recent:02",
+    "recent:01",
+    "recent:00"
+   ]
+  },
+  {
+   "name": "decayed by main count",
+   "quick": 10,
+   "main": 4,
+   "act": [
+    "cancel",
+    null
+   ],
+   "files": [
+    0
+   ],
+   "dialog": {
+    "title": "Enter Text",
+    "message": [
+     "Enter the tag to be added to 'my tags'."
+    ],
+    "suggestions": [
+     "typed:spaced out",
+     "typed:hidden",
+     "typed:second",
+     "typed:new tag"
+    ],
+    "text": "typed:spaced out",
+    "selected": "typed:spaced out",
+    "dialog_buttons": [
+     "apply",
+     "cancel"
+    ]
+   },
+   "returned_content": false,
+   "tags_after": [
+    [
+     "recent:09",
+     "safe",
+     "typed:hidden",
+     "typed:new tag",
+     "typed:second"
+    ],
+    [
+     "safe",
+     "samus",
+     "typed:hidden",
+     "typed:new tag",
+     "typed:second",
+     "typed:spaced out"
+    ]
+   ],
+   "recent_after": [
+    "typed:spaced out",
+    "typed:hidden",
+    "typed:second",
+    "typed:new tag"
+   ]
+  }
+ ]
+}

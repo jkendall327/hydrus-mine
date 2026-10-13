@@ -74,8 +74,11 @@ export component ShortcutCommandWindow inherits Window {
     in property <bool> release-enabled;
     in property <[string]> commands;
     in-out property <int> command-index;
-    // 0: a simple command; 1: a tag or rating (content) command
+    // 0: a simple command; 1: a tag or rating (content) command; 2: an
+    // interactive one (asks for the tag when used)
     in-out property <int> command-type;
+    in property <[string]> interactive-services;
+    in-out property <int> interactive-service;
     in property <[string]> content-services;
     in-out property <int> content-service;
     in property <[string]> content-actions;
@@ -124,7 +127,7 @@ export component ShortcutCommandWindow inherits Window {
             }
         }
         Text{text:"command";font-weight:700;}
-        ComboBox{model:["simple command","tag or rating"];current-index<=>root.command-type;enabled:root.content-services.length > 0;}
+        ComboBox{model:["simple command","tag or rating","interactive 'edit value' manual set command"];current-index<=>root.command-type;enabled:root.content-services.length > 0;}
         if root.command-type == 0: ComboBox{model:root.commands;current-index<=>root.command-index;}
         if root.command-type == 1: VerticalLayout {
             spacing:6px;
@@ -133,6 +136,7 @@ export component ShortcutCommandWindow inherits Window {
             LineEdit{text<=>root.content-value;placeholder-text:root.content-hint;}
             if root.content-error != "": Text{text:root.content-error;color:#b00020;wrap:word-wrap;}
         }
+        if root.command-type == 2: ComboBox{model:root.interactive-services;current-index<=>root.interactive-service;}
         HorizontalLayout {Rectangle{horizontal-stretch:1;}Button{text:"ok";clicked=>{root.apply();}}Button{text:"cancel";clicked=>{root.cancel();}}}
     }
 }

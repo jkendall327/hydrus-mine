@@ -51,6 +51,10 @@ pub fn text(services: &ServiceRegistry, command: &ContentCommand) -> String {
             if *up { "increment" } else { "decrement" },
             service_name(services, service)
         ),
+        ContentCommand::Interactive { service } => format!(
+            "popup tag mappings entry dialog for {}",
+            service_name(services, service)
+        ),
     }
 }
 
@@ -137,6 +141,9 @@ pub fn apply(store: &Store, files: &[HashId], command: &ContentCommand) -> Resul
             };
             store.write_content(move |w| w.set_rating(service.id, &files, set).map(|()| true))
         }
+        ContentCommand::Interactive { .. } => Err(StoreError::Invalid(
+            "an interactive command asks for its tag first".into(),
+        )),
         ContentCommand::Step { service, up } => {
             let service = snapshot.services.by_key(&service)?.clone();
             match &service.kind {
@@ -374,7 +381,103 @@ pub fn choices(
             if *up { "increment" } else { "decrement" },
             String::new(),
         ),
+        ContentCommand::Interactive { .. } => return None,
     };
     let index = services.iter().position(|s| &s.key == key)?;
     Some((index, action, value))
+}
+
+/// The services an interactive command can ask a tag for: the local tag
+/// services (the reference also offers numerical and inc/dec rating
+/// services, which hydrus-rs's interactive commands do not take).
+pub fn interactive_services(registry: &ServiceRegistry) -> Vec<ContentService> {
+    let mut tags: Vec<ContentService> = services(registry)
+        .into_iter()
+        .filter(|s| s.value == ValueKind::Tag)
+        .collect();
+    // (the reference's services manager lists them by lower-cased name)
+    tags.sort_by_key(|s| s.name.to_lowercase());
+    tags
+}
+
+/// What an interactive tag command's quick dialog shows: its message, a
+/// button per recent tag (newest first, as many as the quick dialog count
+/// allows, none when it says "do not show"), and the line's starting text
+/// (the newest).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct QuickEntry {
+    pub service: ServiceKey,
+    pub message: String,
+    pub suggestions: Vec<String>,
+    pub default: String,
+}
+
+/// The quick dialog for an interactive command on `service`
+/// (`GetContentApplicationCommandFromInteractiveContentCommand`). Reading the
+/// recent tags forgets those past the recent count, as every read does.
+///
+/// # Errors
+/// If the service is missing or not a local tag service.
+pub fn quick_entry(store: &Store, service: &ServiceKey) -> Result<QuickEntry> {
+    let snapshot = store.snapshot();
+    let found = snapshot.services.by_key(service)?;
+    if !matches!(found.kind, ServiceKind::LocalTags) {
+        return Err(StoreError::Invalid(format!(
+            "{} is not a local tag service",
+            found.name
+        )));
+    }
+    let settings: hydrus_store::settings::TagSuggestionSettings =
+        store.read(hydrus_store::settings::get)?;
+    let suggestions = match settings.quick_recent_limit {
+        None => Vec::new(),
+        Some(limit) => {
+            let mut recent = crate::tag_suggestions::recent(
+                store,
+                found.id,
+                settings.recent_limit.unwrap_or(20),
+            )?;
+            recent.truncate(limit);
+            recent
+        }
+    };
+    Ok(QuickEntry {
+        service: service.clone(),
+        message: format!("Enter the tag to be added to '{}'.", found.name),
+        default: suggestions.first().cloned().unwrap_or_default(),
+        suggestions,
+    })
+}
+
+/// Why the quick dialog refuses what was typed, if it does.
+pub fn refusal(text: &str) -> Option<&'static str> {
+    if text.is_empty() {
+        Some("Cannot enter blank text here!")
+    } else if text.trim().is_empty() {
+        Some("Cannot enter only whitespace here!")
+    } else {
+        None
+    }
+}
+
+/// The tag entered (typed, or a suggestion pressed): it becomes the newest
+/// recent tag, and is set on `files` (added where any lacks it; nothing
+/// where all have it). Returns whether the files changed.
+///
+/// # Errors
+/// If it is no tag, the service is missing, or the write fails.
+pub fn enter(store: &Store, files: &[HashId], service: &ServiceKey, text: &str) -> Result<bool> {
+    let tag = Tag::new(text)
+        .ok_or_else(|| StoreError::Invalid(format!("\"{text}\" is not a valid tag")))?;
+    let id = store.snapshot().services.by_key(service)?.id;
+    crate::tag_suggestions::push_recent(store, id, &[tag.clone()])?;
+    apply(
+        store,
+        files,
+        &ContentCommand::Tag {
+            service: service.clone(),
+            tag: tag.into_string(),
+            flip: false,
+        },
+    )
 }

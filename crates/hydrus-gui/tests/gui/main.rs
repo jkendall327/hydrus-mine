@@ -193,6 +193,7 @@ mod network_data;
 
 mod domain_metadata;
 mod downloader_interchange;
+mod interactive_tag_entry;
 mod subscriptions_missing_logs;
 mod suggested_tag_list_interactions;
 mod suggested_tag_panels;

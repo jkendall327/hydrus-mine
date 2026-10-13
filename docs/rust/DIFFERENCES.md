@@ -4076,10 +4076,9 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   file lookup scripts switch (file lookup scripts are out of scope, below).
 - The mpv box lacks the audio device fetch button (it needs a running libmpv);
   the QtMediaPlayer box lacks its device choice and fetch button. The tag
-  suggestions page lacks the "recent tags in quick entry dialogs" count, the
-  favourite file lookup script choice and the second recent count (there are
-  no quick dialogs or lookup scripts). The style page isn't offered: Slint has
-  no Qt styles or stylesheets.
+  suggestions page lacks the favourite file lookup script choice (there are
+  no lookup scripts). The style page isn't offered: Slint has no Qt styles or
+  stylesheets.
 - The ratings page's example inc/dec rectangle has no middle-click counter
   entry.
 - The mpv.conf chosen in the mpv box goes over the database's `mpv.conf` on
@@ -4621,9 +4620,16 @@ The `mpv.conf` copy replaces a read-only mpv.conf; recorded as root the referenc
   the reference's buttons then ask for (the time each gives) and list, and
   what the recent panel shows. A concurrence threshold of 100% crashes the
   reference's related search (a math domain error); hydrus-rs lists nothing. The
-  recent-tags-in-quick-entry-dialogs count has no consumer: the quick dialog
-  belongs to interactive shortcut commands, not ported
-  (`shortcut-interactive-tag-entry`).
+  recent-tags-in-quick-entry-dialogs count is read by the interactive tag
+  shortcut's quick dialog (`shortcut-interactive-tag-entry`,
+  `interactive_tag_entry.rs`).
+- Interactive shortcut commands take local tag services only: the reference
+  also offers its numerical and inc/dec rating services, asking for a number
+  of stars or a count; hydrus-rs's editor does not list them. The thumbnails
+  run the "media" set's tag and rating shortcuts (interactive or not) on the
+  selected files, but not a custom set's, and none of the media set's simple
+  commands. The quick dialog is a window of its own, not modal: the viewer or
+  page behind it keeps working while it asks.
 - The write-autocomplete leaves (`audit-media-tags-autocomplete`,
   `siblings-autocomplete`, `parents-autocomplete`) are tagged on the tests in
   `write_autocomplete_leaves.rs` (rows, entry, context menu, paste and manual
