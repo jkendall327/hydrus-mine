@@ -13,7 +13,7 @@ This module holds the parts every flow shares:
   searches three posts a page, newest first), with every request noted;
 * `definitions`: URL classes, parsers and a gallery URL generator for it,
   built with the reference's own classes;
-* `scripted_dialogs`: `DialogEdit.exec` replaced by a script that acts on
+* `scripted_dialogs`: `DialogEdit` and `DialogManage` `exec` replaced by a script that acts on
   each dialog as it opens (by its panel's class), then accepts or cancels;
 * `wait_until_idle`: until the subscriptions manager has nothing running or
   due, the network engine has no jobs and the database no queued work, for
@@ -119,6 +119,21 @@ def booru_phase( searches ):
     return { 'pages' : pages, 'files' : files }
 
 
+def loopback_bypasses_proxies():
+    """Whether a request to http://127.0.0.1 goes straight there, whatever
+    proxies the environment names."""
+
+    def set_( name ):
+
+        return os.environ.get( name, '' ).strip() != ''
+
+
+    proxied = any( set_( n ) for n in ( 'HTTP_PROXY', 'http_proxy', 'ALL_PROXY', 'all_proxy' ) )
+    bypassed = any( h.strip() in ( '*', '127.0.0.1', '127.0.0.0/8' ) for n in ( 'NO_PROXY', 'no_proxy' ) for h in os.environ.get( n, '' ).split( ',' ) )
+
+    return bypassed or not proxied
+
+
 class Site( object ):
     """The fake site, in phases; `phase` says which one is served."""
 
@@ -134,6 +149,12 @@ class Site( object ):
 
 
     def __enter__( self ):
+
+        # the reference's requests take proxies from the environment
+        if not loopback_bypasses_proxies():
+
+            raise Exception( 'a proxy in the environment would carry the flow\'s requests to 127.0.0.1; add 127.0.0.1 to NO_PROXY' )
+
 
         site = self
 
@@ -328,11 +349,12 @@ def install( controller, site ):
 # ---------------------------------------------------------------- dialogs
 
 class scripted_dialogs( object ):
-    """Within, each `DialogEdit` that opens is handed (once its modal loop
-    runs) to the next script for its panel's class name: `scripts` maps a
-    panel class name to a list of functions `( dialog, panel ) -> bool`,
-    used in turn; True accepts the dialog, False cancels it. What each
-    script saw can be noted in `seen`, a list it appends to."""
+    """Within, each `DialogEdit` or `DialogManage` that opens is handed
+    (once its modal loop runs) to the next script for its panel's class
+    name: `scripts` maps a panel class name to a list of functions
+    `( dialog, panel ) -> bool`, used in turn; True accepts the dialog
+    (a `DialogManage` through its OK, which commits its panel), False
+    cancels it."""
 
     def __init__( self, scripts ):
 
@@ -345,7 +367,8 @@ class scripted_dialogs( object ):
         from qtpy import QtCore as QC
         from hydrus.client.gui import ClientGUITopLevelWindowsPanels as Windows
 
-        self._real_exec = Windows.DialogEdit.exec
+        # (both are DialogApplyCancels, whose exec is QDialog's)
+        self._real_exec = Windows.DialogApplyCancel.exec
 
         real_exec = self._real_exec
         scripts = self.scripts
@@ -377,7 +400,11 @@ class scripted_dialogs( object ):
                     accepted = False
 
 
-                if accepted:
+                if accepted and isinstance( dlg, Windows.DialogManage ):
+
+                    dlg.DoOK()
+
+                elif accepted:
 
                     dlg.accept()
 
@@ -392,7 +419,7 @@ class scripted_dialogs( object ):
             return real_exec( dlg )
 
 
-        Windows.DialogEdit.exec = execute
+        Windows.DialogApplyCancel.exec = execute
 
         return self
 
@@ -412,7 +439,7 @@ class scripted_dialogs( object ):
 
         from hydrus.client.gui import ClientGUITopLevelWindowsPanels as Windows
 
-        Windows.DialogEdit.exec = self._real_exec
+        del Windows.DialogApplyCancel.exec
 
         if len( self.errors ) > 0 and args[0] is None:
 
@@ -543,7 +570,9 @@ def popups_shown( controller, normalise ):
 # ---------------------------------------------------------------- the end state
 
 # ("now" within three seconds, else "5 seconds ago": the same, a moment apart)
-TIME_DELTA = re.compile( r'\b(\d+ (year|month|day|hour|minute|second)s?( \d+ (year|month|day|hour|minute|second)s?)*( ago)?|just now|now)\b' )
+TIME_DELTA = re.compile( r'\b\d+ (year|month|day|hour|minute|second)s?( \d+ (year|month|day|hour|minute|second)s?)*( ago)?\b' )
+# (only a whole text: "now" in a note stays)
+JUST_NOW = re.compile( r'^(just now|now)$' )
 DATE_TIME = re.compile( r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}' )
 
 
@@ -561,6 +590,7 @@ def normaliser( site ):
         text = text.replace( site.base, 'BASE' )
         text = DATE_TIME.sub( 'TIME', text )
         text = TIME_DELTA.sub( 'DELTA', text )
+        text = JUST_NOW.sub( 'DELTA', text )
 
         return text
 
@@ -669,9 +699,20 @@ def files_state( session, hashes, normalise ):
     return out
 
 
+def file_log_state( file_seed_cache, normalise ):
+    """An importer's file log, as `subscriptions_state` gives a query's."""
+
+    return [ file_seed_state( f, normalise ) for f in file_seed_cache.GetFileSeeds() ]
+
+
 def hashes_in( subscriptions ):
 
     return { f[ 'sha256' ] for s in subscriptions for q in s[ 'queries' ] for f in q[ 'files' ] if f[ 'sha256' ] is not None }
+
+
+def hashes_in_log( files ):
+
+    return { f[ 'sha256' ] for f in files if f[ 'sha256' ] is not None }
 
 
 def write_fixture( path, data ):

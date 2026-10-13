@@ -25,7 +25,8 @@ pub enum Deletion {
 }
 
 impl Deletion {
-    /// The question asked before deleting `n` files.
+    /// The question asked before deleting `n` files where the reference
+    /// would offer several actions to choose from ([`deletion_question`]).
     pub fn question(&self, n: usize) -> String {
         let files = if n == 1 {
             "this file".to_owned()
@@ -37,6 +38,37 @@ impl Deletion {
             Deletion::ToTrash => format!("Send {files} to the trash?"),
             Deletion::Physically => format!("Permanently delete {files}?"),
         }
+    }
+}
+
+/// The question asked before a simple (not advanced) deletion of `files`.
+/// Where the reference's delete files dialog has one action, it shows that
+/// action's label alone (`EditDeleteFilesPanel`'s simple description, such
+/// as "Send one file from my files to trash?"), and so does this. Where it
+/// offers several, it shows them to pick from; this asks about the one
+/// [`Deletion`] does instead (see `DIFFERENCES.md`).
+pub fn deletion_question(store: &Store, files: &[HashId], deletion: &Deletion) -> String {
+    use hydrus_store::settings::DeletionAction;
+    let suggested = suggested_action(store, deletion);
+    let Ok(draft) =
+        crate::delete_files::Draft::load(store, files, suggested.as_ref(), DELETE_REASON)
+    else {
+        return deletion.question(files.len());
+    };
+    // the advanced dialog's choices, less what only it offers: deleting
+    // files not in the trash for good, and doing so without a record
+    let simple: Vec<_> = draft
+        .choices
+        .iter()
+        .filter(|c| match c.action {
+            DeletionAction::Domain(_) => true,
+            DeletionAction::Physical => c.label.contains(" trashed "),
+            DeletionAction::ClearRecord => false,
+        })
+        .collect();
+    match simple[..] {
+        [only] => only.label.clone(),
+        _ => deletion.question(files.len()),
     }
 }
 

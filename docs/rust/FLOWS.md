@@ -28,10 +28,10 @@ Python, `oracle/flows.py`:
 |---|---|
 | `Site`, `booru_phase` | a fake booru on localhost (posts with tags, a file and a source link; tag searches three posts a page, newest first), served in phases, every request noted (`take_hits`) |
 | `definitions`, `install` | URL classes, parsers and a GUG for it, built with the reference's own classes, installed in the client; new traffic unpaused, no wait between a subscription's gallery pages. `install` returns the domain manager for hydrus-rs |
-| `scripted_dialogs` | replaces `DialogEdit.exec`: each dialog, as it opens, is handed to the next script for its panel's class, which acts on it as a user would and accepts or cancels it. A script that raises cancels its dialog and fails the flow |
+| `scripted_dialogs` | replaces `DialogEdit` and `DialogManage`'s `exec`: each dialog, as it opens, is handed to the next script for its panel's class, which acts on it as a user would and accepts (a `DialogManage` through its OK, which commits its panel) or cancels it. A script that raises cancels its dialog and fails the flow |
 | `wait_until_idle` | until the subscriptions manager has nothing running or due within a minute, the network engine no jobs and the database no queued work, all for 1.5 seconds together |
 | `popups_shown` | the popups the popup manager holds, not dismissed (a file popup merged into an earlier one of the same label never shows on its own) |
-| `subscriptions_state`, `files_state` | each subscription and its queries' file and search logs; each file the logs name, with its tags by local tag service, URLs, inbox and local domains |
+| `subscriptions_state`, `file_log_state`, `files_state` | each subscription and its queries' file and search logs; an importer's file log; each file the logs name, with its tags by local tag service, URLs, inbox and local domains |
 | `normaliser` | the site's address becomes `BASE`, dates `TIME`, time deltas ("5 minutes", "just now") `DELTA` |
 
 Rust, `crates/hydrus-gui/tests/gui/flows/mod.rs`, the same parts:
@@ -40,15 +40,35 @@ Rust, `crates/hydrus-gui/tests/gui/flows/mod.rs`, the same parts:
 |---|---|
 | `basic_store`, `install` | the `basic` fixture imported; the recording's domain manager installed as a migration installs it, with the same settings `flows.install` changed |
 | `Site` | the recording's site (its port and phases) served by axum, requests noted; `wait_for_a_request` fails if work the reference starts at once does not start promptly |
-| `Daemon` | what `hydrus serve` does for the client, in the test process: the download queues, the subscription runner, and the client's nudges taken every second. `idle` is the reference's idle: nothing running or nudged, nothing due within a minute |
+| `Daemon` | what `hydrus serve` does for the client, in the test process: the download queues, the subscription runner, and the client's nudges taken every second. `idle` is the reference's idle: no download or subscription running, nothing nudged, nothing due within a minute. A queue's task lives as long as its page, so `idle` looks only at each queue's current file and gallery jobs, and a page's own condition (its seeds all done) says when it has finished |
 | `wait_until_idle` | runs the GUI's timers until the daemon is idle and the flow's own condition holds, for 1.5 seconds together |
-| `State` | a step's end state, read from the store and the main window (its popups) and shaped as the recorder writes it |
+| `State` | a step's end state, read from the store and the main window (its popups) and shaped as the recorder writes it: `subscriptions`, `file_log`, `files`, `popups`, and `step` for a subscription flow's whole step |
 | `compare`, `Known` | every difference between the steps and the recording, by JSON path; each must be listed as `Known` with its `DIFFERENCES.md` entry, and each known one must still differ |
 
 The end state compares what a user sees, not databases: seed statuses are
 the reference's codes, files are keyed by SHA-256, the order of the site's
 requests within a step is not compared (the reference works pages and
 files side by side).
+
+What a flow does not compare:
+
+- **Times.** Dates become `TIME` and relative times ("5 minutes ago",
+  "in 3 days", a whole "now") `DELTA`: masked, not compared. Of a query's
+  check times only whether it has been checked is compared.
+- **Input devices.** Both sides drive the windows' own handlers (the
+  reference's panel methods such as `Add` and `_ManageTags`, hydrus-rs's
+  Slint callbacks such as `invoke_add`), not mouse clicks or key presses.
+  The leaf tests cover those.
+- **All of `hydrus serve`.** The in-process `Daemon` runs the download
+  queues, the subscription runner and the nudge loop. It leaves out the
+  network runtime publisher (`publish_runtime`, the client's network jobs
+  panel), the live-status publisher, import and export folders and the
+  Client API listener; a flow needing one adds it.
+
+Each flow's site has its own port (`flows::PORTS`, checked against the
+recordings by a test), as the GUI tests run side by side. Both sides refuse
+to run when a proxy in the environment would carry requests to 127.0.0.1
+(add it to `NO_PROXY`).
 
 ## Adding a flow
 
@@ -57,7 +77,8 @@ files side by side).
    definitions.
 2. **Write the recorder.** Copy `oracle/record_flow_subscription.py`:
    - pick a site port no other recorder or test uses (the URL classes name
-     it, so the Rust test serves the same port);
+     it, so the Rust test serves the same port) and add it to
+     `flows::PORTS`;
    - boot the `basic` fixture with `network = True`, `flows.install` first;
    - drive each step through the real GUI (`controller.gui`'s own
      methods, on the Qt thread), scripting every dialog it opens, then
@@ -77,6 +98,10 @@ files side by side).
    in the flow's `KNOWN` with that entry's heading.
 5. Say what the flow covers in the table below.
 
+Downloader pages refresh from the store on the real client's timer, which
+headless tests don't run: call `(bound.sync)()` in the step's condition.
+Popups and thumbnail actions need the main window shown (`ui.show()`).
+
 Run one flow with `scripts/dev.sh gui flows::<name>`. A flow takes tens of
 seconds: the daemon and the reference pace their work in seconds.
 
@@ -85,3 +110,4 @@ seconds: the daemon and the reference pace their work in seconds.
 | flow | recorder | steps | findings |
 |---|---|---|---|
 | subscription | `record_flow_subscription.py` | network > subscriptions…: add (downloader chooser, edit dialog, a query added through its dialog), apply; the subscription runs (two search pages, five files); a sixth post; "check queries now", apply; only the new file is fetched; the dialog reopened | hydrus-rs's dialog did not tell the daemon it saved: a new subscription waited up to 30 seconds to start, and "check queries now" just after a run waited two minutes. Fixed: "apply" leaves a nudge that has the daemon take the subscriptions afresh, as `SetSubscriptions` does |
+| download | `record_flow_download.py` | a new URL downloader page, a post's URL entered; the file downloaded; its thumbnail clicked, manage tags ("favourite" in my tags), apply; archive; delete, accepting what it asks | the delete question had hydrus-rs's own wording ("Delete this file from my files?"); now the reference's ("Send one file from my files to trash?") where the reference shows one action. Known: the reference asks in a "Delete files?" dialog, hydrus-rs in the main window (#187) |

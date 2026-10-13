@@ -1159,10 +1159,7 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 - **Subscription concurrency** now uses the persisted 1–100 maximum,
   with the reference's default of one, single-flight subscription IDs,
   live changes, global pause admission checks and a 120-second finished-run
-  buffer, which saving the manage subscriptions dialog clears as the
-  reference's `SetSubscriptions` does (the daemon takes the dialog's nudge
-  within a second; found by the subscription flow, `FLOWS.md`).
-  Native Options and subscription drafts do not pause the daemon
+  buffer. Native Options and subscription drafts do not pause the daemon
   merely because an editor is open; the reference subscription manager has
   a separate pause-for-editing state. Concurrent script/import changes still
   use the existing optimistic merge boundaries rather than a global editor lock.
@@ -2380,7 +2377,10 @@ reference cancellation note.
 
 Files and Trash confirmation preferences now reach thumbnail and viewer local
 file operations. The native deletion question still presents one action rather
-than the reference's complete service/action picker when advanced mode is off.
+than the reference's complete service/action picker when advanced mode is off,
+and asks in the main window rather than in a "Delete files?" dialog (#187); where
+the reference has only one action it asks with that action's label ("Send one
+file from my files to trash?"; found by the download flow, `FLOWS.md`).
 Advanced local-domain, trash and physical/clean deletion now uses the action and
 reason picker with the ordered reason queue and remembered accepted choices.
 Remote repository/IPFS actions are outside this local dialog. Copy/move-domain
