@@ -139,7 +139,7 @@ mod predicate_notice;
 mod preview_audio;
 pub mod preview_window;
 pub mod regex_favourites_window;
-mod related_tags_worker;
+pub mod related_tags_worker;
 pub mod related_weights_window;
 pub mod search_log_import_window;
 mod search_log_window;

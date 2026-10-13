@@ -2724,7 +2724,7 @@ drop routing still outside the claim. Real Slint Move-event replays also retain
 the press across `pointer-event(Move)` followed by `moved`, and preserve ordinary
 unpressed tooltip hover.
 
-Related-tag weights use native owned drafts and inline namespace/weight question panes rather than Qt modal child frames. The two tables share a native view selector while retaining independent selections and header sorts; Qt displays both lists together. Header order follows Python casefolding with full-row tie-breaking. Native Manage Tags now offers related suggestions for its captured service/files, local/all-known domains and storage/display graphs. Its single coalescing worker computes the full corpus cosine scores, applies the recorded two weight stages and integer truncations, then returns the first 100 base-score candidates. Qt additionally samples large search-tag populations under configurable quick/medium/thorough time budgets; native does not implement those budgets, selected-main-tag search/exclusion mode, alternate tag-context service, repository Manage Tags, or file-lookup scripts. These wider suggested-tab/default-page families remain Partial; importing duration values does not make their controls usable. Default-page fallback excludes unavailable panels and per-service notebook selection is retained within the owner. The recorded binary64 result-weight boundary (100 × 29% truncates to 28) and sibling alias/ideal deduplication are preserved. In display mode, all-known queries intentionally use raw co-occurrences with display totals, matching the reference’s different local/all-known behavior. Numerical floating-point edge behavior beyond the fresh small-corpus ranking fixture remains unverified.
+Related-tag weights use native owned drafts and inline namespace/weight question panes rather than Qt modal child frames. The two tables share a native view selector while retaining independent selections and header sorts; Qt displays both lists together. Header order follows Python casefolding with full-row tie-breaking. Native Manage Tags now offers related suggestions for its captured service/files, local/all-known domains and storage/display graphs. Its single coalescing worker computes the full corpus cosine scores, applies the recorded two weight stages and integer truncations, then returns the first 100 base-score candidates. Qt additionally samples large search-tag populations under its quick/medium/thorough time budgets; native gives each search the button's budget (stopping at 85% of it, as the reference does) but does not sample, and has no alternate tag-context service, repository Manage Tags, or file-lookup scripts. These wider suggested-tab/default-page families remain Partial; importing duration values does not make their controls usable. Default-page fallback excludes unavailable panels and per-service notebook selection is retained within the owner. The recorded binary64 result-weight boundary (100 × 29% truncates to 28) and sibling alias/ideal deduplication are preserved. In display mode, all-known queries intentionally use raw co-occurrences with display totals, matching the reference’s different local/all-known behavior. Numerical floating-point edge behavior beyond the fresh small-corpus ranking fixture remains unverified.
 
 The read autocomplete favourite/children panes now support selected batches and
 favourite editing, with a stable pointer surface and actual SearchPage/OR
@@ -4612,9 +4612,12 @@ The `mpv.conf` copy replaces a read-only mpv.conf; recorded as root the referenc
   the time budget differs). Adding a tag does not search again, as the
   reference's does not; the listed suggestions are filtered again.
   `audit-media-tags-missing-suggestions` is tagged on the panels' replay
-  (`suggested_tag_panels.rs`); `audit-options-nested-tag-suggestions-tabs` stays
-  untagged (no test takes the related durations, the concurrence threshold or
-  the recent count from their Options rows to an observable effect). The
+  (`suggested_tag_panels.rs`); `audit-options-nested-tag-suggestions-tabs` on
+  `suggestion_options_consumers.rs`, which sets the durations, the concurrence
+  threshold and the recent count through their Options rows and replays what
+  the reference's buttons then ask for (the time each gives) and list, and
+  what the recent panel shows. A concurrence threshold of 100% crashes the
+  reference's related search (a math domain error); hydrus-rs lists nothing. The
   recent-tags-in-quick-entry-dialogs count has no consumer: the quick dialog
   belongs to interactive shortcut commands, not ported
   (`shortcut-interactive-tag-entry`).

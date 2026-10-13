@@ -16284,7 +16284,13 @@
    "native": null,
    "notes": [
     "Reference nested notebook configures each suggestion source independently. Native has the notebook (most used, related, recent) with real consumers: most used, recent (the count, read with decay) and related (show, concurrence, three durations, weights). Left untagged: no test drives the related durations from the Options rows to an observable effect (a duration shows only at its extremes, and the rows allow no less than 50 ms), and no test drives the concurrence and recent-count rows through Options to the panels. File lookup scripts: file-lookup-scripts (out of scope). The recent tab's second count (quick entry dialogs): shortcut-interactive-tag-entry."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (issue #154 part A)",
+    "note": "crates/hydrus-gui/tests/gui/suggestion_options_consumers.rs sets the three related durations, the concurrence threshold and the recent count through the Options window's rows (four scenarios, Apply each time), opens Manage Tags on the recording's two files and compares with oracle/fixtures/suggestion_options_consumers.json (the reference's real TagSuggestionsPanel set and SuggestedTagsPanel built): the recent panel's tags (and whether it shows), and for each of quick, medium and thorough the tags searched and the time given (the reference's related_tags read, observed natively as the request the window hands its worker via related_tags_worker::last_request), the concurrence passed, and the tags listed once the worker answers. The store's 85% deadline itself is covered by related_tags_panel.rs. Most used, show related and the weights have tests of their own (options_gui_suggestions.rs, tag_suggestions model tests, related_weight_table.rs)."
+   }
   },
   {
    "id": "file-lookup-scripts",

@@ -5152,8 +5152,11 @@ titled groups: most used (the per-service lists), related ("Show related tags",
 the three search durations, the concurrence threshold and the weight tables),
 file lookup scripts (the switch) and recent (the count, or "do not show").
 "Show related tags", the concurrence threshold and the recent count change
-the Manage Tags window's panels; the durations and file lookup switch are kept
-only (see DIFFERENCES.md). Proven by `options_gui_suggestions.rs`.
+the Manage Tags window's panels, and each duration is the time its related
+button gives a search; the file lookup switch is kept only (see
+DIFFERENCES.md). Proven by `options_gui_suggestions.rs` and
+`suggestion_options_consumers.rs` (the rows set in Options, the panels then
+compared with `oracle/record_suggestion_options_consumers.py`).
 
 **mpv.** "Set a new mpv.conf on dialog ok?" copies the chosen file over the
 database's `mpv.conf` when Options is OKed (never kept, and a path that isn't a

@@ -1,9 +1,9 @@
 //! The tag suggestions page against the reference's `TagSuggestionsPanel`:
 //! the controls of its related and recent tabs, and what the manage tags
-//! window does with them. Read from the reference's source (there is no Qt in
-//! the sandbox to record with). The page is not a whole leaf's worth: the
-//! file lookup tab's controls and the durations of the related search have no
-//! native consumer (see DIFFERENCES.md).
+//! window does with them. Read from the reference's source. The file lookup
+//! tab's controls have no native consumer (see DIFFERENCES.md); what the
+//! durations, the concurrence threshold and the recent count do to the panels
+//! is replayed from a recording in `suggestion_options_consumers.rs`.
 
 use slint::ComponentHandle as _;
 
