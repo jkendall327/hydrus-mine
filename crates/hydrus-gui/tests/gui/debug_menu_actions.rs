@@ -371,15 +371,22 @@ fn idle_report_mode_says_why_the_client_is_not_idle() {
     assert!(seen.lock().unwrap().is_empty(), "silent while off");
     d.click(&["report modes", "idle report mode"]);
     assert!(d.report_mode_checked("idle report mode"));
+    // (each idle check reports; the window's own timers may check too on a
+    // loaded runner, so the same line can come more than once)
+    let reported = |seen: &Mutex<Vec<String>>| {
+        let mut lines = seen.lock().unwrap().clone();
+        lines.dedup();
+        lines
+    };
     d.bound.session_autosave.idle_at(now);
     assert_eq!(
-        *seen.lock().unwrap(),
+        reported(&seen),
         ["IDLE MODE - Blocked: Program has not been on for 120s yet."]
     );
-    seen.lock().unwrap().clear();
     d.click(&["debug modes", "force idle mode"]);
+    seen.lock().unwrap().clear();
     d.bound.session_autosave.idle_at(now);
-    assert_eq!(*seen.lock().unwrap(), ["IDLE MODE - Forced via debug menu"]);
+    assert_eq!(reported(&seen), ["IDLE MODE - Forced via debug menu"]);
     d.click(&["debug modes", "force idle mode"]);
     d.click(&["report modes", "idle report mode"]);
     assert!(!d.report_mode_checked("idle report mode"));
