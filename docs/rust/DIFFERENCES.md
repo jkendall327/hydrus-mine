@@ -568,27 +568,29 @@ page by file size, which no two files of the fixture share.
   metadata. Where the buffer holds a single frame, the reference's render
   thread counts a frame behind its decoder and shows each frame's
   neighbour; hydrus-rs decodes the same frames but keeps each as itself.
-- **Viewer playback (`audit-media-viewer-playback`) is partly tested, so
-  the leaf is untagged.** Covered: ugoira and animated WebP in the viewer,
-  replayed from `oracle/record_animation_playback.py` (the reference's own
-  `Animation` and `AnimationBar` on a frozen clock: playing through two
-  loops, going to a frame, seeking by time paused and playing, frame steps,
-  bar presses and drags, coming round for a slideshow); an mp4 and flac
-  files through libmpv in the viewer (the bar moves, holds while paused and
-  goes where a click seeks; the volume control shows), which CI runs now
-  that it installs libmpv and sets `HYDRUS_REQUIRE_MPV`; and volume and mute
-  as mpv properties. Not covered: stills as part of this leaf; GIF, APNG,
-  webm and other containers through mpv; embedded cover art; volume and mute
-  reaching audio that is playing; and any recorded mpv session of the
-  reference (the expected video and audio times are the native bar's
-  arithmetic). Recorded but not replayed text for text: the seek-by-time
-  steps made while *playing* (the recording freezes the clock, the viewer
-  runs in real time, so the test checks only that a seek leaves it playing),
-  the `GotoFrame` entries made while playing (they are the bar drag and the
-  frame step, replayed paused and checked for pausing), and the status after
-  a scan is released while playing (checked as: it plays on). The headless
-  harness gives mpv a null audio output, which `headless::init` and
-  `mpv::use_audio_output` set for tests only.
+- **Viewer playback (`audit-media-viewer-playback`) is tested against the
+  reference's decoded pixels, metadata, bar and volume rules, but not
+  against a recorded mpv session of the reference.** Stills match the
+  reference's own render pixel for pixel (`render.json`; the fixture's two
+  WebPs are deleted after that recording, so they aren't shown); ugoiras and
+  animated WebP replay `oracle/record_animation_playback.py`; a GIF, an APNG,
+  webms, mp4 and flac play through libmpv with the reference's frames and
+  times on the bar (`media.json`, the bar's arithmetic replayed against the
+  reference's `AnimationBar` in `scanbar.rs`), and loop; and the volume and
+  mute a playing player gets follow `preview_audio.json` (the reference's
+  `GetCorrectCurrentVolume`/`GetCorrectCurrentMute`) as the viewer opens, as
+  the options change and from its own control. The reference's own mpv was
+  not recorded (its player needs a real display): embedded cover art is
+  checked as mpv choosing the file's album art and showing it in place of the
+  thumbnail (as hydrus's `default_mpv.conf`, `audio-display=embedded-first`,
+  asks), not pixel for pixel. Recorded but not replayed text for text: the
+  seek-by-time steps made while *playing* (the recording freezes the clock,
+  the viewer runs in real time, so the test checks only that a seek leaves it
+  playing), the `GotoFrame` entries made while playing (they are the bar drag
+  and the frame step, replayed paused and checked for pausing), and the
+  status after a scan is released while playing (checked as: it plays on).
+  The headless harness gives mpv a null audio output, which `headless::init`
+  and `mpv::use_audio_output` set for tests only.
 
 ## The duplicate filter (`hydrus-gui`, `hydrus-duplicates::statements`)
 
@@ -2442,17 +2444,30 @@ maximised/fullscreen for the main window, media viewer and Options window. Exist
 and parent/centre positioning now reach those owners too (see "Options kept but
 not used"); pointer positioning remains incomplete; the
 broader frame/table/editor coverage remains Partial.
-`audit-options-geometry` is untagged. What is proved: saving, as the
-reference's `SaveTLWSizeAndPosition` (`tests/model/frame_save.rs`, 26
-recorded cases), for the main window (`shell_geometry.rs`). Not proved:
-restoring stale or off-screen geometry on open (the opening rescue is
-tested under the frame-locations leaves), and saving for any other frame or
-dialog, which hydrus-rs does not do.
-A closing window saves as `SaveTLWSizeAndPosition` does (see GUI.md), but
-only the main window and the media viewer save: the main window as it closes
-and again a quarter second to half a second after it moves, resizes or
-maximises (the reference's frames use a tenth of a second); the viewer, and
-the reference's dialogs and other frames, only as they close or not at all.
+`audit-options-geometry` is untagged, because the ordinary dialogs don't
+keep their geometry. What is proved: the main window, the media viewer, the
+Options window and the fourteen windows with frame keys of their own open by
+their frames and keep them as the reference's do (`shell_geometry.rs`,
+`options_gui_frames.rs`, `frame_geometry.rs`, replaying `frame_state.json`
+and `frame_placement.json`; `tests/model/frame_save.rs` and
+`frame_placement.rs` for the arithmetic; `window_rescue.rs` for the
+off-screen rescue on open). Every other window opens by the ordinary
+dialogs' frame (`regular_dialog`), but none keeps it: the reference's
+dialogs save it when applied (`DialogThatResizes._SaveOKPosition`), which
+would take a hook in each of hydrus-rs's dialogs. It matters only once the
+frame is set to remember a size or place in Options > gui > frame locations
+(by default it remembers neither). Nor are the reference's
+`deeply_nested_dialog` and `quick_*` frames told apart from it. A window's
+place can't be seen in the headless tests (the software window has none),
+so places are proved only through the arithmetic and the rescue's recorded
+cases, and the display that bounds a gravity-grown window isn't there to
+see either.
+A closing window saves as `SaveTLWSizeAndPosition` does (see GUI.md): the
+main window as it closes and again a quarter second to half a second after
+it moves, resizes or maximises (the reference's frames use a tenth of a
+second); the viewer and the other frames only as they close (the
+reference's also a moment after each move or resize, which comes to the
+same unless the client dies with one open); dialogs when applied.
 A window's frame position is its outer
 position as winit reports it, which a Wayland compositor does not tell, and
 the display it is on is winit's current monitor; with no monitor list
@@ -4070,7 +4085,8 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   nothing in hydrus-rs reads them yet: the REQUESTS_CA_BUNDLE
   switch (hydrus-rs uses its own TLS roots), drag-and-drop export (no files
   can be dragged out yet), the Qt-only gui misc and frame switches, the
-  integer locale switch, the hide-page signal, the URL drop page switch, mpv's
+  integer locale switch, the hide-page signal, the URL drop page switch (see
+  below), mpv's
   legacy mediator, player reuse and setGeometry switches, every QtMediaPlayer
   row, system FFMPEG, truncated images and PIL (hydrus-rs decodes images its
   own way), the other-display popup freeze (hydrus-rs's popups sit inside the
@@ -4129,6 +4145,19 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   once, on Options OK.
 - A trash pass deletes in groups of eight, oldest first, including files
   already in the trash when the limit is set.
+
+## URL drops
+
+The reference takes a URL dropped on its window (from a browser's address
+bar or a link) and imports it, switching to the page where it lands if
+Options > importing says so. hydrus-rs can't receive one on Linux: winit
+0.30's X11 drag and drop asks only for `text/uri-list` and drops any URI
+that isn't `file://` as an unexpected protocol, delivering nothing
+(`winit/src/platform_impl/linux/x11/dnd.rs`), and its Wayland backend has
+no drag and drop at all. A dropped URL therefore does nothing, and the
+switch-to-page row (`audit-options-importing-drag-and-drop-when-dnding-a-url-onto-the-program-switch-to-the-page-where-it-lands`)
+is kept but not read; the leaf is untagged. Taking URL drops would need
+winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
 
 ## mpv options on open players
 

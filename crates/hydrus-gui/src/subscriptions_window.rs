@@ -932,6 +932,7 @@ pub(crate) fn open(
         .read(hydrus_store::settings::get::<hydrus_store::settings::Pauses>)
         .is_ok_and(|p| p.subscriptions);
     window.set_globally_paused(paused);
+    let frame = crate::windows::DialogFrame::new(store, "manage_subscriptions_dialog");
     let close = {
         let active = active.clone();
         let weak = window.as_weak();
@@ -940,6 +941,7 @@ pub(crate) fn open(
         let gallery = gallery_slot.clone();
         let state = state.clone();
         let exchange = exchange.clone();
+        let frame = frame.clone();
         move || {
             if !active.replace(false) {
                 return;
@@ -950,6 +952,7 @@ pub(crate) fn open(
                 favourites.close();
             }
             if let Some(window) = weak.upgrade() {
+                frame.closing(window.window());
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
@@ -1784,6 +1787,7 @@ pub(crate) fn open(
         }
     });
     window.on_apply({
+        let frame = frame.clone();
         let exchange = exchange.clone();
         let active = active.clone();
         let state = state.clone();
@@ -1806,6 +1810,7 @@ pub(crate) fn open(
             if let Err(e) = write(&store, writes) {
                 eprintln!("could not save the subscriptions: {e}");
             }
+            frame.accept();
             close();
         }
     });
@@ -1837,6 +1842,7 @@ pub(crate) fn open(
         state.borrow_mut().asking = Some(Asking::MissingLogs(missing));
     }
     show(&window, &state.borrow());
+    frame.place(&window);
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }

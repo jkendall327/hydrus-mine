@@ -1576,6 +1576,11 @@ already open on OK as well as new ones, as the reference's do. Frames come
 from mpv's software renderer, on
 a thread of their own (`src/mpv.rs`); that is slower than the reference's
 embedded mpv window for large videos. Other files show their thumbnail.
+GIFs, APNGs, webms and the rest show the reference's frame and time on
+the bar and loop; a still shows the file decoded whole, with no bar or
+volume; an audio file with embedded cover art shows the cover; and a
+playing file follows the volume and mutes as they change, from the
+viewer's own control or anywhere else (`tests/gui/viewer_playback.rs`).
 A duplicates page (a migrated session's, with its search, pair sort and
 group mode) says how many potential pairs its search finds, and launches
 the duplicate filter: its own window, showing one file of a pair at a time
@@ -5165,7 +5170,16 @@ plus the padding (slid back up and left if it would leave the display),
 centred on the main window, or at the mouse. Remembered sizes and places still
 come first. The main window, the media viewer and the Options window consult
 their frames; the Options window is placed once shown, when its own size is
-known. Proven by `tests/model/frame_placement.rs` (the formulae worked from the
+known. So do the windows the reference gives frames of their own: the file
+and search logs opened from a page, the import's filename tagging, manage
+subscriptions and edit subscription, review services, file history, how
+boned am I, manage tags (the thumbnails' dialog and the viewer's frame),
+export files, and manage URLs, times and notes. Each is placed again once it
+has been laid out where its frame grows it from its own size, and keeps its
+size and place as the reference's do: a frame as it closes, a dialog when it
+is applied (never when cancelled) (`tests/gui/frame_geometry.rs`, replaying
+`frame_state.json` through each). Every other window opens by the ordinary
+dialogs' frame (`regular_dialog`: the main window's top-left, its own size). Proven by `tests/model/frame_placement.rs` (the formulae worked from the
 reference's source) and `options_gui_frames.rs` (editing the Options window's
 own frame through the frames editor).
 

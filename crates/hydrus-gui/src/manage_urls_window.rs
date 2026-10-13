@@ -113,6 +113,10 @@ impl State {
     }
 }
 
+/// Its size and place, kept when applied, as the reference's manage URLs
+/// dialog keeps them.
+const FRAME: &str = "manage_urls_dialog";
+
 /// Open the dialog on `files`' URLs; it forgets itself from `slot` when
 /// closed, and calls `applied` once the URLs are written.
 pub(crate) fn open(
@@ -150,11 +154,14 @@ pub(crate) fn open(
             }
         })
     };
+    let frame = crate::windows::DialogFrame::new(store, FRAME);
     let close = {
         let slot = slot.clone();
         let weak = window.as_weak();
+        let frame = frame.clone();
         Rc::new(move || {
             if let Some(window) = weak.upgrade() {
+                frame.closing(window.window());
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
@@ -174,6 +181,7 @@ pub(crate) fn open(
         let state = state.clone();
         let store = store.clone();
         let close = close.clone();
+        let frame = frame.clone();
         Rc::new(move || {
             let updates = state.borrow().editor.updates().to_vec();
             let files = files.clone();
@@ -192,6 +200,7 @@ pub(crate) fn open(
             match written {
                 Ok(()) => {
                     applied();
+                    frame.accept();
                     close();
                 }
                 Err(e) => eprintln!("could not write the urls: {e}"),
@@ -347,6 +356,7 @@ pub(crate) fn open(
         }
     });
     show(&window, &state.borrow());
+    frame.place(&window);
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }

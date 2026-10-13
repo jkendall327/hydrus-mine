@@ -828,7 +828,20 @@ pub(crate) fn open(
         }),
     );
     let preference_timer = Rc::new(slint::Timer::default());
+    // (its size and place: the viewer's frame, kept as it closes, or the
+    // thumbnails' dialog, kept when applied)
+    let frame = if link.is_some() {
+        "manage_tags_frame"
+    } else {
+        "manage_tags_dialog"
+    };
+    let frame_store = model.borrow().store().clone();
+    let dialog_frame = link
+        .is_none()
+        .then(|| crate::windows::DialogFrame::new(&frame_store, "manage_tags_dialog"));
     let close = {
+        let frame_store = frame_store.clone();
+        let dialog_frame = dialog_frame.clone();
         let incremental_slot = incremental_slot.clone();
         let weak = window.as_weak();
         let slot = slot.clone();
@@ -857,6 +870,10 @@ pub(crate) fn open(
                 worker.close();
             }
             if let Some(window) = weak.upgrade() {
+                match &dialog_frame {
+                    Some(dialog) => dialog.closing(window.window()),
+                    None => crate::windows::save_named(window.window(), &frame_store, frame),
+                }
                 let _ = window.hide();
             }
             tag_menu.close();
@@ -972,6 +989,14 @@ pub(crate) fn open(
         let incremental_open = incremental_open.clone();
         let pending = pending_paste.clone();
         let tag_menu = tag_menu.clone();
+        let accept = {
+            let dialog_frame = dialog_frame.clone();
+            move || {
+                if let Some(dialog) = &dialog_frame {
+                    dialog.accept();
+                }
+            }
+        };
         move || {
             if !active.get()
                 || incremental_open.get()
@@ -982,6 +1007,7 @@ pub(crate) fn open(
             }
             // (the viewer's dialog has written every change already)
             if model.borrow().is_immediate() {
+                accept();
                 close();
                 return;
             }
@@ -992,6 +1018,7 @@ pub(crate) fn open(
                 return;
             }
             applied();
+            accept();
             close();
         }
     };
@@ -1709,6 +1736,7 @@ pub(crate) fn open(
         slint::CloseRequestResponse::HideWindow
     });
     refresh();
+    crate::windows::place_frame(&window, &frame_store, frame);
     window.show()?;
     Ok(window)
 }

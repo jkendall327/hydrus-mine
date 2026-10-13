@@ -148,7 +148,9 @@ pub(crate) fn open(
             }
         })
     };
+    let frame = crate::windows::DialogFrame::new(store, "manage_notes_dialog");
     let close = {
+        let frame = frame.clone();
         let active = active.clone();
         let slot = slot.clone();
         let weak = window.as_weak();
@@ -157,6 +159,7 @@ pub(crate) fn open(
                 return;
             }
             if let Some(window) = weak.upgrade() {
+                frame.closing(window.window());
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
@@ -458,6 +461,7 @@ pub(crate) fn open(
         let state = state.clone();
         let store = store.clone();
         let close = close.clone();
+        let frame = frame.clone();
         move || {
             if !active.get() {
                 return;
@@ -478,6 +482,7 @@ pub(crate) fn open(
             match written {
                 Ok(()) => {
                     applied();
+                    frame.accept();
                     close();
                 }
                 Err(e) => eprintln!("could not write the notes: {e}"),
@@ -591,6 +596,7 @@ pub(crate) fn open(
     show_preferences(&window, &preferences);
     show(&window, &state.borrow());
     focus_current(&window, &state.borrow());
+    frame.place(&window);
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }

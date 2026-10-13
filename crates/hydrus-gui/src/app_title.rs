@@ -51,6 +51,9 @@ pub trait Titled: ComponentHandle + Sized + 'static {
 pub fn new<C: Titled>() -> Result<C, slint::PlatformError> {
     let window = C::create()?;
     window.set_suffix(current());
+    // (where it opens: as the reference's ordinary dialogs, unless it has a
+    // frame of its own)
+    crate::windows::place_regular(&window);
     let weak = window.as_weak();
     WINDOWS.with(|windows| {
         windows.borrow_mut().push(Box::new(move |suffix| {

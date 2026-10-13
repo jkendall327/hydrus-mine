@@ -201,9 +201,9 @@ pub(crate) fn act(cx: &Context<'_>, action: &Action) {
                 old.invoke_close_window();
             }
             let opened = if *action == Action::ShowFileLog {
-                crate::file_log_window::open(&store, queue, cx.log, cx.open_files)
+                crate::file_log_window::open(&store, queue, cx.log, cx.open_files, true)
             } else {
-                crate::search_log_window::open(&store, queue, cx.log)
+                crate::search_log_window::open(&store, queue, cx.log, true)
             };
             match opened {
                 Ok(log) => *cx.log.borrow_mut() = Some(log),

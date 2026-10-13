@@ -670,9 +670,14 @@ pub(crate) fn open(
 ) -> Result<FilenameTaggingWindow, String> {
     let store = sidecars.store.clone();
     let (window, _) = build(&store, services, paths, slot, Some(sidecars), done)?;
+    crate::windows::place_frame(&window, &store, FRAME);
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }
+
+/// The import's dialog's size and place, as the reference keeps them (the
+/// options' dialog alone is a regular one).
+const FRAME: &str = "local_import_filename_tagging";
 
 /// The dialog, bound but not shown, and its state.
 fn build(
@@ -685,6 +690,9 @@ fn build(
 ) -> Result<(FilenameTaggingWindow, Rc<RefCell<State>>), String> {
     let window =
         crate::app_title::new::<crate::FilenameTaggingWindow>().map_err(|e| e.to_string())?;
+    let frame = sidecars
+        .as_ref()
+        .map(|sidecars| crate::windows::DialogFrame::new(&sidecars.store, FRAME));
     // (the reference's defaults: the filename's namespace "filename")
     let misc: [(bool, String); 7] = std::array::from_fn(|i| {
         (
@@ -724,6 +732,7 @@ fn build(
         let weak = window.as_weak();
         let slot = slot.clone();
         let state = state.clone();
+        let frame = frame.clone();
         move || {
             if state.borrow().closed {
                 return;
@@ -747,6 +756,9 @@ fn build(
                 sidecars.slots.cancel();
             }
             if let Some(window) = weak.upgrade() {
+                if let Some(frame) = &frame {
+                    frame.closing(window.window());
+                }
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
@@ -931,6 +943,7 @@ fn build(
     window.on_apply({
         let state = state.clone();
         let close = close.clone();
+        let frame = frame.clone();
         move || {
             if !state.borrow().can_edit() {
                 return;
@@ -956,6 +969,9 @@ fn build(
                     })
                     .collect()
             };
+            if let Some(frame) = &frame {
+                frame.accept();
+            }
             close();
             done(tags, routers);
         }

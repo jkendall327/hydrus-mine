@@ -28,12 +28,31 @@ thread_local! {
     static POINTER: std::cell::Cell<Option<(i32, i32)>> = const { std::cell::Cell::new(None) };
     static MAIN: std::cell::RefCell<Option<slint::Weak<crate::MainWindow>>> =
         const { std::cell::RefCell::new(None) };
+    /// Placements waiting for their windows to be laid out, by window.
+    static PENDING: std::cell::RefCell<Vec<(usize, std::rc::Rc<slint::Timer>)>> =
+        const { std::cell::RefCell::new(Vec::new()) };
+    /// The store the main window shows.
+    static STORE: std::cell::RefCell<Option<std::sync::Weak<Store>>> =
+        const { std::cell::RefCell::new(None) };
 }
 
-/// Note the main window, the parent that child windows open relative to.
-pub(crate) fn register_main(window: &crate::MainWindow) {
+/// Note the main window, the parent that child windows open relative to,
+/// and the store whose frames they open by.
+pub(crate) fn register_main(window: &crate::MainWindow, store: &std::sync::Arc<Store>) {
     use slint::ComponentHandle as _;
     MAIN.with(|main| *main.borrow_mut() = Some(window.as_weak()));
+    STORE.with(|kept| *kept.borrow_mut() = Some(std::sync::Arc::downgrade(store)));
+}
+
+/// Place a window just made by the reference's frame for its ordinary
+/// dialogs (`regular_dialog`: by default at the main window's top-left,
+/// its own size), as every dialog without a frame of its own opens. A
+/// window with a frame of its own is placed again by it as it opens.
+pub(crate) fn place_regular<C: slint::ComponentHandle + 'static>(component: &C) {
+    let store = STORE.with(|kept| kept.borrow().as_ref().and_then(std::sync::Weak::upgrade));
+    if let Some(store) = store {
+        place_frame_as(component, &store, "regular_dialog", false);
+    }
 }
 
 /// What a window opening now can see of the main window and its display.
@@ -127,8 +146,154 @@ pub fn place(window: &slint::Window, frame: &FrameLocation) {
     place_as(window, frame, false);
 }
 
+/// A window, told from the others for as long as it lives.
+fn window_key(window: &slint::Window) -> usize {
+    std::ptr::from_ref(window) as usize
+}
+
+/// Drop a placement waiting for `window` to be laid out: it is placed
+/// anew.
+fn cancel_pending(window: &slint::Window) {
+    let key = window_key(window);
+    PENDING.with(|pending| {
+        pending.borrow_mut().retain(|(at, timer)| {
+            if *at == key {
+                timer.stop();
+            }
+            *at != key && timer.running()
+        });
+    });
+}
+
 fn place_as(window: &slint::Window, frame: &FrameLocation, is_main: bool) {
-    let target = placement(window, frame, is_main);
+    // (placed now: an earlier placement waiting for it is replaced)
+    cancel_pending(window);
+    apply(window, placement(window, frame, is_main));
+    // (`showMaximized`, then `showFullScreen`, which takes the maximised
+    // state away: with both, the window is fullscreen and not maximised)
+    let fullscreen = frame.fullscreen && !cfg!(target_os = "macos");
+    if frame.maximised && !fullscreen {
+        window.set_maximized(true);
+    }
+    if fullscreen {
+        window.set_fullscreen(true);
+    }
+}
+
+/// Place a window about to open by its frame `name` (as [`place_named`],
+/// with its off-screen rescue) and, where its frame grows it from its own
+/// size (no remembered size), place it again once it has been laid out:
+/// a window has no size of its own until then (the reference's
+/// `sizeHint()`).
+pub(crate) fn place_frame<C: slint::ComponentHandle + 'static>(
+    component: &C,
+    store: &std::sync::Arc<Store>,
+    name: &str,
+) {
+    place_frame_as(component, store, name, true);
+}
+
+/// [`place_frame`], with its off-screen rescue (`watch`) or without.
+fn place_frame_as<C: slint::ComponentHandle + 'static>(
+    component: &C,
+    store: &std::sync::Arc<Store>,
+    name: &str,
+    watch: bool,
+) {
+    // (an ordinary dialog's placement, made as the window was, gives way
+    // to its own frame's, whether or not that frame is kept)
+    cancel_pending(component.window());
+    if watch {
+        place_named(component.window(), store, name);
+    } else {
+        place_named_geometry(component.window(), store, name);
+    }
+    let Some(frame) = settings(store).frame(name).cloned() else {
+        return;
+    };
+    let laid_out = |window: &slint::Window| window.size().width > 0 && window.size().height > 0;
+    if laid_out(component.window())
+        || (frame.remember_size && frame.last_size.is_some())
+        || frame.maximised
+        || frame.fullscreen
+    {
+        return;
+    }
+    let weak = component.as_weak();
+    let timer = std::rc::Rc::new(slint::Timer::default());
+    let started = std::time::Instant::now();
+    timer.start(
+        slint::TimerMode::Repeated,
+        std::time::Duration::from_millis(10),
+        {
+            let timer = std::rc::Rc::downgrade(&timer);
+            let is_main = name == "main_gui";
+            move || {
+                let stop = || {
+                    if let Some(timer) = timer.upgrade() {
+                        timer.stop();
+                    }
+                };
+                let Some(component) = weak.upgrade() else {
+                    return stop();
+                };
+                let window = component.window();
+                if laid_out(window) {
+                    let target = placement(window, &frame, is_main);
+                    apply(window, target);
+                    stop();
+                } else if started.elapsed() > std::time::Duration::from_secs(5) {
+                    stop();
+                }
+            }
+        },
+    );
+    let key = window_key(component.window());
+    PENDING.with(|pending| {
+        let mut pending = pending.borrow_mut();
+        pending.retain(|(_, timer)| timer.running());
+        pending.push((key, timer));
+    });
+}
+
+/// A dialog's frame, kept as the reference's `DialogThatResizes` keeps it:
+/// as it closes having been accepted (OK, apply), never when cancelled.
+#[derive(Clone)]
+pub(crate) struct DialogFrame {
+    name: &'static str,
+    store: std::sync::Arc<Store>,
+    accepted: std::rc::Rc<std::cell::Cell<bool>>,
+}
+
+impl DialogFrame {
+    pub(crate) fn new(store: &std::sync::Arc<Store>, name: &'static str) -> Self {
+        Self {
+            name,
+            store: store.clone(),
+            accepted: std::rc::Rc::default(),
+        }
+    }
+
+    /// Place the dialog about to open (as [`place_frame`]).
+    pub(crate) fn place<C: slint::ComponentHandle + 'static>(&self, component: &C) {
+        place_frame(component, &self.store, self.name);
+    }
+
+    /// It is being closed by its OK or apply.
+    pub(crate) fn accept(&self) {
+        self.accepted.set(true);
+    }
+
+    /// It is closing: kept, if accepted.
+    pub(crate) fn closing(&self, window: &slint::Window) {
+        if self.accepted.get() {
+            save_named(window, &self.store, self.name);
+        }
+    }
+}
+
+/// Give a window the size and place `target` says.
+fn apply(window: &slint::Window, target: Placement) {
     // (a window with no size yet keeps the one its toolkit gave it)
     if target.size.0 > 0 && target.size.1 > 0 {
         #[allow(clippy::cast_precision_loss)]
@@ -140,15 +305,6 @@ fn place_as(window: &slint::Window, frame: &FrameLocation, is_main: bool) {
     if let Some((x, y)) = target.position {
         #[allow(clippy::cast_precision_loss)]
         window.set_position(slint::LogicalPosition::new(x as f32, y as f32));
-    }
-    // (`showMaximized`, then `showFullScreen`, which takes the maximised
-    // state away: with both, the window is fullscreen and not maximised)
-    let fullscreen = frame.fullscreen && !cfg!(target_os = "macos");
-    if frame.maximised && !fullscreen {
-        window.set_maximized(true);
-    }
-    if fullscreen {
-        window.set_fullscreen(true);
     }
 }
 

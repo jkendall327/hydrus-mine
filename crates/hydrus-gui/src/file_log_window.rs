@@ -461,6 +461,7 @@ pub(crate) fn open(
     queue: i64,
     slot: &Rc<RefCell<Option<FileLogWindow>>>,
     open_files: &OpenFiles,
+    from_page: bool,
 ) -> Result<FileLogWindow, String> {
     open_source(
         store,
@@ -468,8 +469,11 @@ pub(crate) fn open(
         Source::Live(store.clone()),
         slot,
         open_files,
-        None,
-        Rc::new(|| {}),
+        Owner {
+            applied: None,
+            closed: Rc::new(|| {}),
+            frame: from_page.then_some(FRAME),
+        },
     )
 }
 
@@ -490,9 +494,25 @@ pub(crate) fn open_staged(
         Source::Draft(draft),
         slot,
         open_files,
-        Some(applied),
-        closed,
+        Owner {
+            applied: Some(applied),
+            closed,
+            frame: None,
+        },
     )
+}
+
+/// Its size and place, as the reference's file logs opened from a page keep
+/// them (opened from a dialog, or as a folder's copy, a log is a regular
+/// dialog).
+const FRAME: &str = "file_import_status";
+
+/// What opened a log: where an edited copy goes when applied, what to tell
+/// when it closes, and the frame it opens by (none: a regular dialog).
+struct Owner {
+    applied: Option<Rc<dyn Fn(Vec<FileSeed>)>>,
+    closed: Rc<dyn Fn()>,
+    frame: Option<&'static str>,
 }
 
 fn open_source(
@@ -501,9 +521,13 @@ fn open_source(
     source: Source,
     slot: &Rc<RefCell<Option<FileLogWindow>>>,
     open_files: &OpenFiles,
-    applied: Option<Rc<dyn Fn(Vec<FileSeed>)>>,
-    closed: Rc<dyn Fn()>,
+    owner: Owner,
 ) -> Result<FileLogWindow, String> {
+    let Owner {
+        applied,
+        closed,
+        frame,
+    } = owner;
     let window = crate::app_title::new::<crate::FileLogWindow>().map_err(|e| e.to_string())?;
     let alive = Rc::new(Cell::new(true));
     window.set_staged(applied.is_some());
@@ -571,6 +595,10 @@ fn open_source(
             }
             state.borrow().exports.cancel();
             if let Some(window) = weak.upgrade() {
+                if let Some(frame) = frame {
+                    let store = state.borrow().store.clone();
+                    crate::windows::save_named(window.window(), &store, frame);
+                }
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
@@ -888,6 +916,9 @@ fn open_source(
         }
     });
     show(&window, &state.borrow());
+    if let Some(frame) = frame {
+        crate::windows::place_frame(&window, store, frame);
+    }
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }

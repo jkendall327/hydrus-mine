@@ -1,8 +1,8 @@
 //! An audio file in the media viewer, played through libmpv as the reference
 //! plays it: its scanbar by time (no frames), moving while it plays, held
 //! while paused, and going where it is seeked; and its volume control shown.
-//! (Embedded cover art is not checked: nothing here tells it from the
-//! thumbnail the viewer shows first.) Skipped where libmpv isn't installed. The headless
+//! (Embedded cover art is checked in `viewer_playback.rs`.) Skipped where
+//! libmpv isn't installed. The headless
 //! harness gives mpv a null audio output, which plays in real time with no
 //! sound card.
 
@@ -32,6 +32,7 @@ fn wait(time: Duration) {
     }
 }
 
+// leaf: audit-media-viewer-playback
 #[test]
 fn an_audio_file_plays_in_the_viewer_with_its_scanbar() {
     if mpv::skip_without_libmpv() {

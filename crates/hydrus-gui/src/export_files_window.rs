@@ -376,6 +376,7 @@ pub fn open(
         let state = state.clone();
         let active = active.clone();
         let tag_menu = tag_menu.clone();
+        let store = store.clone();
         move || {
             active.set(false);
             tag_menu.close();
@@ -383,6 +384,7 @@ pub fn open(
             slots.timer.stop();
             slots.sidecars.cancel();
             if let Some(w) = weak.upgrade() {
+                crate::windows::save_named(w.window(), &store, "export_files_frame");
                 let _ = w.hide();
             }
             slots.window.borrow_mut().take();
@@ -680,6 +682,7 @@ pub fn open(
                 }
             }
         });
+    crate::windows::place_frame(&window, store, "export_files_frame");
     window.show()?;
     *slots.window.borrow_mut() = Some(window.clone_strong());
     Ok(window)

@@ -598,7 +598,7 @@ fn lay_out_thumbnails(window: &MainWindow, store: &hydrus_store::Store, rows: &T
 
 /// Show `pages` in `window`, and let the window change them.
 pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
-    windows::register_main(window);
+    windows::register_main(window, pages.store());
     about_window::note_boot();
     window
         .global::<TagTextHistory<'_>>()
@@ -1900,7 +1900,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             if let Some(old) = old {
                 old.invoke_close_window();
             }
-            match file_log_window::open(page.store(), importer.queue, &file_log, &open_files) {
+            match file_log_window::open(page.store(), importer.queue, &file_log, &open_files, true)
+            {
                 Ok(window) => *file_log.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open the file log: {e}"),
             }
@@ -1920,7 +1921,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             if let Some(old) = old {
                 old.invoke_close_window();
             }
-            match search_log_window::open(page.store(), importer.queue, &file_log) {
+            match search_log_window::open(page.store(), importer.queue, &file_log, true) {
                 Ok(window) => *file_log.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open the search log: {e}"),
             }
