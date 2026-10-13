@@ -49,6 +49,7 @@ mod filename_rules;
 mod filename_simple;
 mod filesize_predicate;
 mod filetype_handling;
+mod flows;
 mod folder_manager_lifecycle;
 mod folders;
 mod force_filetype;

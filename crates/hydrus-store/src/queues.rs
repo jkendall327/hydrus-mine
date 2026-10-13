@@ -428,6 +428,12 @@ fn finish_queue((mut queue, options, extra): (Queue, String, String)) -> Result<
 /// awake".
 pub const SUBSCRIPTIONS_NUDGE: i64 = 0;
 
+/// The nudge saying the subscriptions were saved from the client's
+/// manage subscriptions dialog (the reference's `SetSubscriptions`): the
+/// daemon looks at them afresh, forgetting the pause it keeps after each
+/// run, so a query told to check now starts at once.
+pub const SUBSCRIPTIONS_SET_NUDGE: i64 = -1;
+
 /// Tell whichever process runs the queues (the daemon) that a queue was
 /// made or changed (seeds added, paused or resumed, deleted), so it looks
 /// at it now rather than when it next would.

@@ -1309,6 +1309,50 @@ async fn subscription_runner_cancels_selected_peer_and_joins_all_on_shutdown() {
     held.notify_waiters();
 }
 
+/// The client's subscriptions dialog saving (`SetSubscriptions`): the
+/// runner takes the subscriptions afresh, so a query told to check now
+/// runs at once even though its subscription has only just run (rather
+/// than after the two minutes it is otherwise held back).
+#[tokio::test(flavor = "multi_thread")]
+async fn the_clients_saved_subscriptions_run_at_once_even_just_after_a_run() {
+    use hydrus_download::QueueRunner;
+    use hydrus_download::subscriptions::SubscriptionRunner;
+    use hydrus_store::queues;
+    let s = setup().await;
+    let ids = runner_subscriptions(&s);
+    runner_limit(&s, 3);
+    let runner = SubscriptionRunner::new(Arc::clone(&s.downloader));
+    runner.start();
+    let searched = |tag: &str| s.site.hits.lock().get(&format!("search/{tag}/1")).copied();
+    wait_runner(|| {
+        ["sub_1", "sub_2", "sub_10"]
+            .iter()
+            .all(|t| searched(t) == Some(1))
+            && runner.status().active.is_empty()
+    })
+    .await;
+    // the dialog: "check queries now" on sub 1, then apply
+    let first = ids[0];
+    s.store
+        .write(move |ctx| {
+            let query = subs::queries(ctx.conn(), first)?.remove(0);
+            let mut state = query.state;
+            state.check_now();
+            subs::set_query_state(ctx.conn(), query.queue_id, &state)?;
+            queues::nudge(ctx.conn(), queues::SUBSCRIPTIONS_SET_NUDGE)
+        })
+        .unwrap();
+    let queue_runner = QueueRunner::new(Arc::clone(&s.downloader), 60);
+    assert!(queue_runner.take_nudges(Some(&runner)).unwrap());
+    assert!(!s.store.read(queues::any_nudged).unwrap());
+    wait_runner(|| searched("sub_1") == Some(2) && runner.status().active.is_empty()).await;
+    assert_eq!(searched("sub_2"), Some(1), "only what was due");
+    runner.shutdown();
+    tokio::time::timeout(std::time::Duration::from_secs(15), runner.wait_stopped())
+        .await
+        .unwrap();
+}
+
 // leaf: audit-network-pause-nudge
 #[tokio::test(flavor = "multi_thread")]
 async fn the_clients_nudge_subscriptions_awake_is_consumed_and_wakes_the_runner() {
