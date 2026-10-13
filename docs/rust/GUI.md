@@ -2029,10 +2029,22 @@ its timer renews), and the first request opens the permissions editor with what 
 tool asked for and the key it was given. Permission editors expose all 14 basic permissions,
 full access, the reusable permitted-search-tags filter and explicit key rotation
 with validation/collision refusal. List and nested edits remain detached until
-Apply; Cancel and closing service review cancel their descendants. Real Qt
+Apply; Cancel and closing service review cancel their descendants. The key editor answers a typed key as the reference does (recorded
+in `client_api_admin.json`: spaces around it ignored, upper case kept as the same
+key, "the key you submitted was N characters long" for a wrong length, "did not
+seem to be hexadecimal"), and a key edited onto another entry's is refused with
+its "key collision" words. Real Qt
 controls/questions are recorded in `client_api_admin.json`; actual native-store
 GUI regressions render `client_api_keys.png`, `client_api_permissions.png` and
 `client_api_service.png` during the GUI test batch.
+
+Manage services' add button offers the reference's local kinds in its order
+(local tag domain, local file domain, like/dislike, numerical and inc/dec
+rating services; repositories and the rest are not offered), opening each
+as "new service"; an accepted name that matches another service's ignoring case
+is numbered as the reference does ("MY TAGS (1)", "my tags (2)"), and a rating's
+border and fill colours, and its thumbnail boxes, are saved as set. Recorded in
+`services.json` and replayed through the window.
 
 Manage services edits the built-in API service with the reference's rows and
 labels: "run the client api?:", "local port:", "allow non-local connections:",
@@ -2212,6 +2224,9 @@ current/deleted domain scopes apply through SHA256 even between alternate archiv
 Pair filters can require real current or pending mappings on the left, right or
 either side in a chosen tag service. For siblings, the right test follows its
 chain to the terminal ideal; either-side mode disables the individual tests.
+The window's hash selector, file-domain picker, selected-files box and count gates
+are driven in the GUI tests against the reference's archives (`tag_archives.json`:
+the 40 hash conversions and 16 count cases).
 
 The window shows the reference summary and its second confirmation outside
 advanced mode. Migration runs on a worker in bounded atomic batches, with live
@@ -4778,8 +4793,9 @@ vacuum" popup ("vacuuming main", then "done!"), recording the time.
 Tags > sync > "review current sibling/parent sync" opens "tag display sync":
 the reference's explanation, a line saying when sync runs (green when it runs
 all the time, orange otherwise), and a tab (or listbook entry) per tag
-service, opened on the default tag service's and remembering a changed tab
-when the tag dialogs do. Each says "All synced!" and "N rules, all synced!"
+service (local tag services, then repositories, each by lowercase name, as the
+reference lists them), opened on the default tag service's and remembering a
+changed tab when the tag dialogs do. Each says "All synced!" and "N rules, all synced!"
 (sibling lookup rows plus parent ancestry rows, as the reference counts
 them) or "No siblings/parents applying to this service.", with a refresh
 button. Close and window X retire that review's callbacks; a retained older

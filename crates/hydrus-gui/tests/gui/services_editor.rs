@@ -1287,3 +1287,208 @@ fn numerical_rating_star_and_padding_ranges_replay_the_recorded_spin_boxes() {
         assert!(snapshot.services.by_name(refused).is_none());
     }
 }
+
+fn basic_store() -> (
+    tempfile::TempDir,
+    std::sync::Arc<hydrus_store::store::Store>,
+) {
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let dir = tempfile::tempdir().unwrap();
+    hydrus_store::import::import_legacy(
+        legacy.path(),
+        &dir.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = hydrus_store::store::Store::open(dir.path()).unwrap();
+    (dir, store)
+}
+
+fn manage_window(ui: &MainWindow, bound: &hydrus_gui::Bound) -> hydrus_gui::ServicesEditorWindow {
+    open(ui);
+    let manage = bound.services_editor.manage.borrow();
+    manage.as_ref().unwrap().clone_strong()
+}
+
+fn names(manage: &hydrus_gui::ServicesEditorWindow) -> Vec<String> {
+    manage
+        .get_rows()
+        .iter()
+        .map(|r| r.cells.row_data(0).unwrap().to_string())
+        .collect()
+}
+
+fn hex(rgb: &serde_json::Value) -> slint::SharedString {
+    let c: Vec<u64> = rgb
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|v| v.as_u64().unwrap())
+        .collect();
+    format!("#{:02x}{:02x}{:02x}", c[0], c[1], c[2]).into()
+}
+
+// leaf: audit-media-services-add, audit-media-service-name
+#[test]
+fn the_add_button_names_and_unique_names_replay_the_recorded_add_path() {
+    let recorded = hydrus_testkit::fixture_json("services.json");
+    let (_dir, store) = basic_store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let manage = manage_window(&ui, &bound);
+    let rows_before = names(&manage);
+
+    // The add button's kinds are the reference's menu, restricted to the local services.
+    let recorded_menu: Vec<String> = recorded["add_menu"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .take(5)
+        .map(|m| m[0].as_str().unwrap().to_owned())
+        .collect();
+    let add_types: Vec<String> = manage
+        .get_add_types()
+        .iter()
+        .map(|s| s.to_string())
+        .collect();
+    assert_eq!(add_types, recorded_menu);
+
+    // Cancelling the editor of each kind opens "new service" of that kind and adds nothing.
+    for (i, dialog) in recorded["add_cancelled"]["dialogs"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .take(5)
+        .enumerate()
+    {
+        manage.invoke_add_clicked(i32::try_from(i).unwrap());
+        let edit = bound
+            .services_editor
+            .edit
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        assert_eq!(edit.get_service_name(), dialog["name"].as_str().unwrap());
+        assert_eq!(edit.get_service_type(), recorded_menu[i].as_str());
+        edit.invoke_cancel_clicked();
+    }
+    assert_eq!(names(&manage), rows_before);
+
+    // Typed names that collide (ignoring case) are numbered, as `SetNonDupeName` does.
+    let kinds = [0, 0, 2, 1];
+    for (typed, kind) in recorded["add_collisions"]["typed"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .zip(kinds)
+    {
+        manage.invoke_add_clicked(kind);
+        let edit = bound
+            .services_editor
+            .edit
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        edit.set_service_name(typed.as_str().unwrap().into());
+        edit.invoke_apply_clicked();
+    }
+    let existing: std::collections::BTreeSet<String> = recorded["add_collisions"]["existing"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|n| n.as_str().unwrap().to_owned())
+        .collect();
+    let recorded_new: std::collections::BTreeSet<String> = recorded["add_collisions"]["after"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|n| n.as_str().unwrap().to_owned())
+        .filter(|n| !existing.contains(n))
+        .collect();
+    let new: std::collections::BTreeSet<String> = names(&manage)
+        .into_iter()
+        .filter(|n| !rows_before.contains(n))
+        .collect();
+    assert_eq!(new, recorded_new);
+
+    // Nothing is written until the parent window applies; cancelling discards them.
+    assert!(store.snapshot().services.by_name("MY TAGS (1)").is_none());
+    manage.invoke_apply_clicked();
+    assert!(store.snapshot().services.by_name("MY TAGS (1)").is_some());
+    assert!(store.snapshot().services.by_name("my tags (2)").is_some());
+}
+
+// leaf: audit-media-service-rating-colours
+#[test]
+fn rating_colours_and_thumbnail_toggles_replay_the_recorded_colour_pickers() {
+    let recorded = hydrus_testkit::fixture_json("services.json");
+    let expected = &recorded["rating_colours_edited"];
+    let (_dir, store) = basic_store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let manage = manage_window(&ui, &bound);
+    manage.invoke_add_clicked(2);
+    let edit = bound
+        .services_editor
+        .edit
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let default =
+        hydrus_gui_model::services_editor::default_kind(hydrus_core::ServiceType::LocalRatingLike)
+            .unwrap();
+    edit.set_service_name("coloured".into());
+    for (i, state) in expected["colours"].as_array().unwrap().iter().enumerate() {
+        edit.invoke_colour_edited(i32::try_from(i).unwrap(), true, hex(&state[1][0]));
+        edit.invoke_colour_edited(i32::try_from(i).unwrap(), false, hex(&state[1][1]));
+    }
+    edit.set_show_thumbnail(expected["thumbnail"].as_bool().unwrap());
+    edit.set_show_null(expected["null_thumbnail"].as_bool().unwrap());
+    edit.invoke_apply_clicked();
+    manage.invoke_apply_clicked();
+    let saved = store
+        .snapshot()
+        .services
+        .by_name("coloured")
+        .unwrap()
+        .clone();
+    let hydrus_store::services::ServiceKind::RatingLike(c) = &saved.kind else {
+        panic!("not a like service")
+    };
+    let hydrus_store::services::ServiceKind::RatingLike(d) = default else {
+        panic!()
+    };
+    let pair = |p: hydrus_store::services::PenBrush| serde_json::json!([p.pen.0, p.brush.0]);
+    for (state, got) in [
+        (0, c.display.colours.like),
+        (1, c.display.colours.dislike),
+        (2, c.display.colours.null),
+        (4, c.display.colours.mixed),
+    ] {
+        let recorded = expected["colours"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|s| s[0] == state)
+            .unwrap();
+        assert_eq!(pair(got), recorded[1], "colour state {state}");
+    }
+    assert_eq!(
+        json_bool(c.display.show_in_thumbnail),
+        expected["thumbnail"]
+    );
+    assert_eq!(
+        json_bool(c.display.show_in_thumbnail_even_when_null),
+        expected["null_thumbnail"]
+    );
+    // What the editor was not asked to change keeps the kind's defaults.
+    assert_eq!(c.appearance, d.appearance);
+}
+
+fn json_bool(b: bool) -> serde_json::Value {
+    serde_json::json!(b)
+}

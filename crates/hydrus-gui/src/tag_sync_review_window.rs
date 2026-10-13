@@ -81,6 +81,11 @@ fn reload(state: &mut State) {
     }
 }
 
+/// The open review window, for tests.
+pub fn opened() -> Option<TagSyncReviewWindow> {
+    OPEN.with_borrow(|open| open.as_ref().map(|owner| owner.window.clone_strong()))
+}
+
 /// Open the review, or raise it if it is open.
 pub(crate) fn open(store: &Arc<Store>) {
     if let Some(window) =

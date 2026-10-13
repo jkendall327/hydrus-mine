@@ -374,6 +374,7 @@ fn supported_service_listener_fields_stage_cancel_and_persist() {
     let (manage, edit) = open();
     edit.set_api_running(true);
     edit.set_api_port(12345);
+    edit.set_api_non_local(true);
     edit.set_api_cors(true);
     edit.set_api_logs(true);
     edit.set_api_https(false);
@@ -392,6 +393,7 @@ fn supported_service_listener_fields_stage_cancel_and_persist() {
     };
     assert_eq!(config.port, Some(12345));
     assert!(config.support_cors && config.log_requests && !config.use_https);
+    assert!(config.allow_non_local_connections);
     assert!(config.use_normie_eris);
     // untouched in the editor, so kept as it was
     assert_eq!(
@@ -775,4 +777,146 @@ fn service_editor_https_normie_and_external_override_rows_match_the_reference() 
     assert!(!edit.get_api_advanced());
     edit.invoke_cancel_clicked();
     manage.invoke_cancel_clicked();
+}
+
+fn api_status(router: &axum::Router, key: &[u8; 32]) -> u16 {
+    use tower::ServiceExt as _;
+    let request = axum::http::Request::get("/verify_access_key")
+        .header("Hydrus-Client-API-Access-Key", hex::encode(key))
+        .body(axum::body::Body::empty())
+        .unwrap();
+    tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .unwrap()
+        .block_on(router.clone().oneshot(request))
+        .unwrap()
+        .status()
+        .as_u16()
+}
+
+// leaf: audit-media-permissions-key
+#[test]
+fn changing_an_access_key_asks_and_checks_what_was_typed_as_the_reference_does() {
+    let recorded = hydrus_testkit::fixture_json("client_api_admin.json");
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let _windows = headless::init();
+    let _parent = review(&store);
+    let keys = api::last_opened().unwrap();
+    keys.invoke_add_clicked();
+    let edit = api::last_edit_opened().unwrap();
+    edit.invoke_change_key();
+    // The question the reference asks, word for word.
+    assert_eq!(
+        edit.get_key_warning(),
+        recorded["actions"][1]["question"].as_str().unwrap()
+    );
+    // The suggestion button offers a random 64-hex key and typing it is accepted.
+    edit.invoke_generate_key();
+    let random = edit.get_new_key().to_string();
+    assert_eq!(recorded["key_offered"]["suggestion_count"], 1);
+    assert_eq!(recorded["key_offered"]["suggestion_is_64_hex"], true);
+    assert_eq!(random.len(), 64);
+    assert!(hex::decode(&random).is_ok());
+    edit.invoke_generate_key();
+    let second = edit.get_new_key();
+    assert_ne!(second, random.as_str(), "each press is a fresh key");
+    edit.invoke_accept_key();
+    assert!(edit.get_error().is_empty());
+    assert!(!edit.get_changing_key());
+    assert_eq!(edit.get_access_key(), second);
+    // The reference's typed cases: whitespace stripped, wrong length and not hex refused,
+    // each with the reference's message, leaving the key as it was.
+    for case in recorded["key_cases"].as_array().unwrap() {
+        let before = edit.get_access_key().to_string();
+        edit.invoke_change_key();
+        edit.set_new_key(case["typed"].as_str().unwrap().into());
+        edit.invoke_accept_key();
+        if let Some(message) = case["message"].as_str() {
+            assert_eq!(edit.get_error(), message, "{}", case["typed"]);
+            assert!(edit.get_changing_key());
+            assert_eq!(edit.get_access_key(), before.as_str());
+            edit.invoke_cancel_key();
+        } else {
+            assert!(edit.get_error().is_empty());
+            assert!(!edit.get_changing_key());
+            assert_eq!(
+                edit.get_access_key().to_lowercase(),
+                case["key_after"].as_str().unwrap().to_lowercase()
+            );
+        }
+    }
+}
+
+// leaf: audit-media-api-apply
+#[test]
+fn applied_key_edits_reach_the_running_api_and_collisions_are_refused_as_recorded() {
+    let recorded = hydrus_testkit::fixture_json("client_api_admin.json");
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let _windows = headless::init();
+    let state = hydrus_api::AppState::new(store.clone()).unwrap();
+    let router = hydrus_api::router(state);
+    let parent = review(&store);
+    let keys = api::last_opened().unwrap();
+    add(&keys, "first", 1);
+    add(&keys, "second", 2);
+    // Nothing is live until the list is applied.
+    assert_eq!(api_status(&router, &[1; 32]), 403);
+    keys.invoke_apply_clicked();
+    assert_eq!(api_status(&router, &[1; 32]), 200);
+    assert_eq!(api_status(&router, &[2; 32]), 200);
+
+    parent.invoke_manage_api_keys();
+    let keys = api::last_opened().unwrap();
+    let row = |keys: &hydrus_gui::ClientApiKeysWindow, wanted: &str| {
+        keys.get_rows()
+            .iter()
+            .position(|r| r.cells.row_data(0).unwrap() == wanted)
+            .unwrap()
+    };
+    // The reference refuses an edit onto a key that already exists, with its own message.
+    keys.invoke_row_clicked(i32::try_from(row(&keys, "first")).unwrap(), false, false);
+    keys.invoke_edit_clicked();
+    let edit = api::last_edit_opened().unwrap();
+    edit.invoke_change_key();
+    edit.set_new_key(hex::encode([2; 32]).into());
+    edit.invoke_accept_key();
+    edit.invoke_apply_clicked();
+    let collision = &recorded["collision"]["dialogs"][0]["message"];
+    assert_eq!(edit.get_error(), collision.as_str().unwrap());
+    edit.invoke_cancel_clicked();
+    keys.invoke_apply_clicked();
+    assert_eq!(
+        api_status(&router, &[1; 32]),
+        200,
+        "the refused edit changed nothing"
+    );
+
+    // An edit onto a fresh key takes effect in the daemon at once on apply: the old key stops.
+    parent.invoke_manage_api_keys();
+    let keys = api::last_opened().unwrap();
+    keys.invoke_row_clicked(i32::try_from(row(&keys, "first")).unwrap(), false, false);
+    keys.invoke_edit_clicked();
+    let edit = api::last_edit_opened().unwrap();
+    edit.invoke_change_key();
+    edit.set_new_key(hex::encode([9; 32]).into());
+    edit.invoke_accept_key();
+    edit.invoke_apply_clicked();
+    keys.invoke_apply_clicked();
+    assert_eq!(api_status(&router, &[9; 32]), 200);
+    assert_eq!(api_status(&router, &[1; 32]), 403);
+    assert_eq!(api_status(&router, &[2; 32]), 200);
+    // The reference's own outcome has the same shape: the refused edit changed nothing and
+    // the accepted one replaced exactly that key.
+    let collision = &recorded["collision"];
+    assert_eq!(collision["before"], collision["after_collision"]);
+    let changed = collision["after_new_key"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|k| !collision["before"].as_array().unwrap().contains(k))
+        .count();
+    assert_eq!(changed, 1);
 }
