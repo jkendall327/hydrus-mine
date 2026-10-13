@@ -1305,7 +1305,10 @@ pub(crate) fn open(
                 }
                 Some(Asking::DropImport(paths)) => {
                     if index == 0 {
-                        direct_import_next(open, crate::subscription_import::Queue::from_paths(&paths));
+                        direct_import_next(
+                            open,
+                            crate::subscription_import::Queue::from_paths(&paths),
+                        );
                     }
                 }
                 Some(Asking::Reset) => {

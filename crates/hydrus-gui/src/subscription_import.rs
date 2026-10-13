@@ -79,7 +79,11 @@ impl Queue {
         queue.events.extend(
             pngs.into_iter()
                 .map(|p| Event::File(PathBuf::from(p), true))
-                .chain(jsons.into_iter().map(|p| Event::File(PathBuf::from(p), false))),
+                .chain(
+                    jsons
+                        .into_iter()
+                        .map(|p| Event::File(PathBuf::from(p), false)),
+                ),
         );
         queue
     }
@@ -163,7 +167,9 @@ impl Queue {
                     let text = error.to_string();
                     return Some(Event::Notice(
                         "Problem importing!".into(),
-                        crate::exchange_bitmap::not_a_hydrus_png(&text).filter(|_| png).unwrap_or(text),
+                        crate::exchange_bitmap::not_a_hydrus_png(&text)
+                            .filter(|_| png)
+                            .unwrap_or(text),
                     ));
                 }
             }

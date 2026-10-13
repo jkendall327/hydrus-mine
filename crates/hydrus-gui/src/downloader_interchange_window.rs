@@ -537,6 +537,9 @@ fn open_objects<T: Clone + 'static>(
         let weak = w.as_weak();
         let active = active.clone();
         let close = close.clone();
+        let codec = codec.clone();
+        let review = review.clone();
+        let pending = pending.clone();
         move |action| {
             if !active.get() {
                 return;
@@ -576,7 +579,10 @@ fn open_objects<T: Clone + 'static>(
                             &codec,
                             review.as_ref().as_ref(),
                             &pending,
-                            vec![Source::Png(png, "Problem pasting image! Full error written to log; ".into())],
+                            vec![Source::Png(
+                                png,
+                                "Problem pasting image! Full error written to log; ".into(),
+                            )],
                         )
                         .map_err(|e| pasted_error(&e))?;
                     }
@@ -690,7 +696,8 @@ fn open_objects<T: Clone + 'static>(
                             (codec.decode_text)(w.get_text().as_str()).map_err(|e| e.to_string())
                         }
                         .map_err(|e| warnings.first().cloned().unwrap_or(e))?;
-                        let description = review_of(review.as_ref().as_ref())?.0(definitions.clone())?;
+                        let description =
+                            review_of(review.as_ref().as_ref())?.0(definitions.clone())?;
                         w.set_review(warned(&warnings, description).into());
                         *pending.borrow_mut() = Some(definitions);
                         w.set_ready(true);
@@ -807,7 +814,9 @@ fn load_sources<T: Clone>(
             warning.clone().unwrap_or_else(|| {
                 format!(
                     "{said}{}",
-                    crate::exchange_bitmap::not_a_hydrus_png(&e).filter(|_| png && !said.is_empty()).unwrap_or(e)
+                    crate::exchange_bitmap::not_a_hydrus_png(&e)
+                        .filter(|_| png && !said.is_empty())
+                        .unwrap_or(e)
                 )
             })
         })?;

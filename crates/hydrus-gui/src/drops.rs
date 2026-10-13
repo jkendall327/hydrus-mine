@@ -17,6 +17,9 @@ thread_local! {
     /// so a test can hand a window the files winit would (a headless window
     /// is sent no events). Dead handlers are simply not found.
     static HANDLERS: RefCell<Vec<(usize, std::rc::Weak<dyn Fn(Vec<String>)>)>> = const { RefCell::new(Vec::new()) };
+    /// The handlers of windows with no native window, whose filter is dropped
+    /// at once (there is nothing to drop files on but the test hook).
+    static HELD: RefCell<Vec<(usize, Handler)>> = const { RefCell::new(Vec::new()) };
 }
 
 fn key(window: &slint::Window) -> usize {
@@ -30,15 +33,22 @@ pub(crate) fn on_files_dropped(window: &slint::Window, handle: impl Fn(Vec<Strin
 }
 
 /// [`file_handler`] for a window whose filter the caller composes itself.
-pub(crate) fn file_handler_for(
+pub(crate) fn file_handler_for<T: Fn(Vec<String>) + 'static>(
     window: &slint::Window,
-    handle: impl Fn(Vec<String>) + 'static,
-) -> impl FnMut(&slint::Window, &WindowEvent) -> EventResult {
+    handle: T,
+) -> impl FnMut(&slint::Window, &WindowEvent) -> EventResult + use<T> {
     let handle: Handler = Rc::new(handle);
     HANDLERS.with(|handlers| {
         let mut handlers = handlers.borrow_mut();
         handlers.retain(|(at, weak)| *at != key(window) && weak.strong_count() > 0);
         handlers.push((key(window), Rc::downgrade(&handle)));
+    });
+    HELD.with(|held| {
+        let mut held = held.borrow_mut();
+        held.retain(|(at, _)| *at != key(window));
+        if !window.has_winit_window() {
+            held.push((key(window), handle.clone()));
+        }
     });
     gathering(handle)
 }
