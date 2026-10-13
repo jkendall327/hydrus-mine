@@ -4879,3 +4879,29 @@ a sample limit the same number of pairs, not the same pairs, are shown
 Approving pairs now drops, from every rule's queue, the pairs that are no longer
 potential duplicates (as the reference does as groups merge), so approving
 `A-B` and `B-C` leaves no `A-C` waiting.
+
+## Crash log (`hydrus-core::crash_log`)
+
+A deliberate step beyond the reference, so problems on a real collection can
+be diagnosed afterwards.
+
+- The reference logs crashes only while Help > debug > debug modes > "use
+  faulthandler to log crashes" is on (Python's faulthandler writes native
+  tracebacks to a `client crash - <date>.log`; it is off at boot). hydrus-rs
+  logs every Rust panic always, in the GUI client, `hydrus serve` and the
+  other `hydrus` commands, to `client crash.log` (capped, with one rotated
+  `client crash.log.old`) in the database directory.
+- The menu entry stays, **shown on and unable to be turned off**. Choosing
+  it posts a popup saying where the log is. The reference's faulthandler also
+  reports native crashes (a segfault in a library); that needs a signal
+  handler, which is `unsafe` code this workspace denies, so **a native crash
+  (a segfault, an abort from a C library) is not logged**; only panics are.
+  If these turn out to matter, the log could grow a child watcher that notes
+  a missing clean-exit marker (the session-startup marker already exists).
+- What a worker does after a panic is unchanged. The `serve` loops that
+  await a blocking job treat the panic as that pass failing and try again
+  after `AFTER_ERROR` (similar files, file maintenance, auto-resolution);
+  the trash worker logs an error and stops; the desktop client's detached
+  threads (popups, previews, exports) end quietly and their results never
+  arrive. The log is how to find out that this happened.
+- A panic with no database directory (`hydrus --help`) goes to stderr only.

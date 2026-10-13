@@ -190,6 +190,27 @@ impl From<FilesMode> for TransferMode {
     }
 }
 
+impl Command {
+    /// The store directory the command works on, where its crash log goes.
+    fn store_dir(&self) -> &Path {
+        match self {
+            Command::ImportLegacy { dest, .. } => dest,
+            Command::Serve { dir, .. }
+            | Command::Maintenance { dir, .. }
+            | Command::Purge { dir }
+            | Command::Gallery { dir, .. }
+            | Command::Subscriptions { dir, .. }
+            | Command::ImportFolders { dir, .. }
+            | Command::ExportFolders { dir, .. }
+            | Command::ApiKeys { dir, .. }
+            | Command::Queues { dir, .. }
+            | Command::Duplicates { dir, .. }
+            | Command::Pause { dir, .. }
+            | Command::Resume { dir, .. } => dir,
+        }
+    }
+}
+
 fn main() -> Result<()> {
     tracing_subscriber::fmt()
         .with_env_filter(
@@ -197,7 +218,10 @@ fn main() -> Result<()> {
                 .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("info")),
         )
         .init();
-    match Cli::parse().command {
+    let command = Cli::parse().command;
+    // every panic, on any thread, goes to the store's crash log
+    hydrus_core::crash_log::install(command.store_dir(), "hydrus");
+    match command {
         Command::ImportLegacy {
             source,
             dest,

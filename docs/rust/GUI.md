@@ -4932,8 +4932,8 @@ Also in Help > debug: gui actions > "autocomplete delay mode" (every tag
 autocomplete search takes three more seconds), data actions > "scan file
 storage folders" (pick a directory; it says how many storage subfolders it
 found and how long it took, or why it gave up), and debug modes > "use
-faulthandler to log crashes" (while on, each panic is written with a
-backtrace to a "client crash" log in the database directory).
+faulthandler to log crashes" (shown on always: see below; choosing it says
+where the log is).
 `tests/gui/debug_menu_actions.rs` clicks each debug entry in the real menu
 and reads the effect back; `tests/model/debug_flags.rs` and the
 `debug_*` tests of hydrus-import, hydrus-net, hydrus-download, hydrus-media
@@ -5531,3 +5531,16 @@ the pairs prefetched ahead are replayed against the reference's canvas from
 direction and group chooser and the "quick and dirty processing" buttons from
 `oracle/fixtures/duplicates_quick_processing.json`. A file that is in several
 of the upcoming pairs is warmed once.
+
+## Crash log
+
+Every panic, on any thread, in the desktop client, `hydrus serve` and the
+other `hydrus` commands is written to `client crash.log` in the database
+directory: the time (UTC), the version (crate version and `git describe`),
+the program, the thread's name, the panic message and location, and a
+backtrace. The panic's message still goes to stderr, followed by a line
+saying where the log is. The log is capped: before an entry that would take
+it past 512 KiB it is moved to `client crash.log.old` (replacing the earlier
+one), so the two files stay under about 1 MiB. Panics on `serve`'s tokio
+tasks and blocking jobs are logged too: the runtime catches them, but the
+panic hook runs first. `docs/rust/REPORTING.md` says what to send.

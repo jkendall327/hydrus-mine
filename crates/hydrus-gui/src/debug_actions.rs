@@ -7,7 +7,6 @@ use std::cell::RefCell;
 use std::io::Write as _;
 use std::rc::Rc;
 use std::sync::Mutex;
-use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use hydrus_core::Sha256;
@@ -70,53 +69,32 @@ pub(crate) fn install_report_sink(store: &std::sync::Arc<Store>) {
     }));
 }
 
-static CRASH_LOGGING: AtomicBool = AtomicBool::new(false);
-
-/// Whether "use faulthandler to log crashes" is on.
+/// Whether panics are logged: always (the reference logs crashes only
+/// while "use faulthandler to log crashes" is on; see `hydrus_core::crash_log`).
 pub fn crash_logging() -> bool {
-    CRASH_LOGGING.load(Ordering::SeqCst)
+    true
 }
 
-/// "use faulthandler to log crashes" (`FlipCrashReporting`): while on, each
-/// panic is written, with a backtrace, to a "client crash" log in the
-/// database directory; turning it off puts the earlier panic hook back.
-fn flip_crash_logging(dir: &std::path::Path) {
-    type Hook = Box<dyn Fn(&std::panic::PanicHookInfo<'_>) + Send + Sync>;
-    static EARLIER: Mutex<Option<Hook>> = Mutex::new(None);
-    if CRASH_LOGGING.fetch_xor(true, Ordering::SeqCst) {
-        let earlier = EARLIER
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner)
-            .take();
-        if let Some(earlier) = earlier {
-            std::panic::set_hook(earlier);
-        }
-        return;
-    }
-    let path = dir.join(format!("client crash - {}.log", now() as i64));
-    let earlier = std::panic::take_hook();
-    // (the earlier hook is kept to be put back, and called meanwhile)
-    let earlier = std::sync::Arc::new(earlier);
-    *EARLIER
-        .lock()
-        .unwrap_or_else(std::sync::PoisonError::into_inner) = Some(Box::new({
-        let earlier = earlier.clone();
-        move |info| earlier(info)
-    }));
-    std::panic::set_hook(Box::new(move |info| {
-        if let Ok(mut file) = std::fs::OpenOptions::new()
-            .create(true)
-            .append(true)
-            .open(&path)
-        {
-            let _ = writeln!(
-                file,
-                "{info}\n{}\n",
-                std::backtrace::Backtrace::force_capture()
-            );
-        }
-        earlier(info);
-    }));
+/// "use faulthandler to log crashes": it stays in the menu, shown on, and
+/// says where the log is. (The reference's faulthandler also catches native
+/// signals; a handler for those would need `unsafe`, which this workspace
+/// denies.)
+fn flip_crash_logging(store: &Store) {
+    let path = hydrus_core::crash_log::path().unwrap_or_else(|| {
+        store
+            .dir()
+            .join(hydrus_core::crash_log::LOG_NAME)
+    });
+    post(
+        store,
+        vec![Job::text(
+            format!(
+                "Crashes are always logged here. Each panic, on any thread, is written with a backtrace to {}",
+                path.display()
+            ),
+            now(),
+        )],
+    );
 }
 
 /// What the actions work with.
@@ -263,6 +241,6 @@ pub(crate) fn run(context: &Context, action: Action) {
             let text = model::scan_text(&found, started.elapsed().as_secs_f64());
             post(&store, vec![Job::text(text, now())]);
         }
-        Action::FlipCrashLogging => flip_crash_logging(store.dir()),
+        Action::FlipCrashLogging => flip_crash_logging(&store),
     }
 }
