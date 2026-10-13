@@ -119,54 +119,6 @@ pub async fn request_new_permissions(
     Ok(ApiResponse::json(json!({ "access_key": key }), &req))
 }
 
-/// The rating SVGs the reference ships (`static/star_shapes`).
-const BUNDLED_RATING_SVGS: &[(&str, &[u8])] = &[
-    (
-        "architecture",
-        include_bytes!("../../../../static/star_shapes/architecture.svg"),
-    ),
-    (
-        "art-palette",
-        include_bytes!("../../../../static/star_shapes/art-palette.svg"),
-    ),
-    (
-        "cinema-reel",
-        include_bytes!("../../../../static/star_shapes/cinema-reel.svg"),
-    ),
-    (
-        "eye",
-        include_bytes!("../../../../static/star_shapes/eye.svg"),
-    ),
-    (
-        "heart-cute",
-        include_bytes!("../../../../static/star_shapes/heart-cute.svg"),
-    ),
-    (
-        "inspiration",
-        include_bytes!("../../../../static/star_shapes/inspiration.svg"),
-    ),
-    (
-        "scenery",
-        include_bytes!("../../../../static/star_shapes/scenery.svg"),
-    ),
-    (
-        "smile",
-        include_bytes!("../../../../static/star_shapes/smile.svg"),
-    ),
-    (
-        "spiral",
-        include_bytes!("../../../../static/star_shapes/spiral.svg"),
-    ),
-    (
-        "star",
-        include_bytes!("../../../../static/star_shapes/star.svg"),
-    ),
-    (
-        "wallpaper",
-        include_bytes!("../../../../static/star_shapes/wallpaper.svg"),
-    ),
-];
-
 /// A rating service's SVG icon: the user's own (`static/star_shapes` in the
 /// store) before the bundled one of that name.
 pub async fn get_service_rating_svg(
@@ -243,7 +195,7 @@ pub async fn get_service_rating_svg(
                 service.name
             ))
         })?
-    } else if let Some((_, svg)) = BUNDLED_RATING_SVGS.iter().find(|(n, _)| n == name) {
+    } else if let Some((_, svg)) = hydrus_store::star_shapes::BUNDLED.iter().find(|(n, _)| n == name) {
         svg.to_vec()
     } else {
         return Err(ApiError::new(
