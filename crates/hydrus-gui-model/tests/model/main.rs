@@ -51,6 +51,7 @@ mod import_options_editor;
 mod import_options_overwrite;
 mod import_options_panel;
 mod importer_menu;
+mod list_selection;
 mod local_import_dialog;
 mod login_script_controls;
 mod login_workflows;
