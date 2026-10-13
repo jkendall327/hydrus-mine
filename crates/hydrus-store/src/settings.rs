@@ -160,6 +160,9 @@ pub struct TagSuggestionSettings {
     /// Reference page keys, including its legacy `favourites` spelling.
     pub default_page: String,
     pub recent_limit: Option<usize>,
+    /// How many recent tags a quick entry dialog (an interactive tag
+    /// shortcut's) offers; `None` offers none (`num_recent_tags_in_quick_dialog`).
+    pub quick_recent_limit: Option<usize>,
 }
 impl Default for TagSuggestionSettings {
     fn default() -> Self {
@@ -168,6 +171,7 @@ impl Default for TagSuggestionSettings {
             columns: false,
             default_page: "related".into(),
             recent_limit: Some(20),
+            quick_recent_limit: Some(10),
         }
     }
 }

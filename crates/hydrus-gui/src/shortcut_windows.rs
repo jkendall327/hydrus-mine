@@ -723,7 +723,27 @@ fn open_command(
             );
         })
     };
-    if let Some(command) = &value.content
+    // interactive commands, for the local tag services
+    let interactive = Rc::new(content::interactive_services(&snapshot.services));
+    window.set_interactive_services(ModelRc::new(VecModel::from(
+        interactive
+            .iter()
+            .map(|s| s.name.as_str().into())
+            .collect::<Vec<slint::SharedString>>(),
+    )));
+    if let Some(hydrus_core::shortcuts::ContentCommand::Interactive { service }) = &value.content {
+        window.set_command_type(2);
+        window.set_interactive_service(
+            interactive
+                .iter()
+                .position(|s| &s.key == service)
+                .and_then(|i| i32::try_from(i).ok())
+                .unwrap_or(0),
+        );
+        if !services.is_empty() {
+            show_service(0);
+        }
+    } else if let Some(command) = &value.content
         && let Some((index, action, text)) = content::choices(&services, command)
     {
         window.set_command_type(1);
@@ -902,6 +922,7 @@ fn open_command(
         let valid = valid.clone();
         let capture = capture.clone();
         let services = services.clone();
+        let interactive = interactive.clone();
         let weak = window.as_weak();
         let close = close.clone();
         move || {
@@ -916,6 +937,24 @@ fn open_command(
             } else {
                 capture.borrow().keyboard.clone()
             };
+            if window.get_command_type() == 2 {
+                let Some(service) = usize::try_from(window.get_interactive_service())
+                    .ok()
+                    .and_then(|i| interactive.get(i))
+                else {
+                    return;
+                };
+                applied(Command {
+                    gesture,
+                    action: 0,
+                    text: None,
+                    content: Some(hydrus_core::shortcuts::ContentCommand::Interactive {
+                        service: service.key.clone(),
+                    }),
+                });
+                close();
+                return;
+            }
             if window.get_command_type() == 1 {
                 let service = usize::try_from(window.get_content_service())
                     .ok()

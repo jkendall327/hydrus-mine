@@ -360,6 +360,12 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         if let Some(limit) = options.noneable_integers.get("num_recent_tags") {
             suggestions.recent_limit = limit.map(|n| usize::try_from(n).unwrap_or(20).max(1));
         }
+        if let Some(limit) = options
+            .noneable_integers
+            .get("num_recent_tags_in_quick_dialog")
+        {
+            suggestions.quick_recent_limit = limit.map(|n| usize::try_from(n).unwrap_or(10).max(1));
+        }
     }
     insert_setting(&mut input, &suggestions)?;
     let mut related = crate::related_tags::Settings::default();
@@ -5073,6 +5079,10 @@ mod tests {
                     r#"[[0, "default_suggested_tags_notebook_page"], [0, "related"]]"#,
                     r#"[[0, "default_suggested_tags_notebook_page"], [0, "file_lookup_scripts"]]"#,
                 ),
+                (
+                    r#"[[0, "num_recent_tags_in_quick_dialog"], [0, 10]]"#,
+                    r#"[[0, "num_recent_tags_in_quick_dialog"], [0, 4]]"#,
+                ),
             ],
         );
         assert_eq!(
@@ -5081,6 +5091,7 @@ mod tests {
                 width: 240,
                 columns: true,
                 default_page: "file_lookup_scripts".into(),
+                quick_recent_limit: Some(4),
                 ..TagSuggestionSettings::default()
             }
         );

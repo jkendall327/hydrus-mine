@@ -8,6 +8,15 @@ use std::sync::{
     atomic::{AtomicU64, Ordering},
 };
 type Reply = Result<Report, String>;
+thread_local! {
+    static LAST_REQUEST: std::cell::RefCell<Option<Query>> = const { std::cell::RefCell::new(None) };
+}
+/// The last search a Manage Tags window on this thread asked of its worker
+/// (the reference's `related_tags` read: the tags searched, the time given
+/// by the duration rows, the concurrence threshold), for tests.
+pub fn last_request() -> Option<Query> {
+    LAST_REQUEST.with(|last| last.borrow().clone())
+}
 type TaggedReply = (u64, Reply);
 struct Pending {
     request: Option<(u64, Query)>,
@@ -77,6 +86,7 @@ impl Worker {
         })
     }
     pub(crate) fn request(&self, query: Query) -> u64 {
+        LAST_REQUEST.with(|last| *last.borrow_mut() = Some(query.clone()));
         let id = self.shared.generation.fetch_add(1, Ordering::AcqRel) + 1;
         if let Ok(mut pending) = self.shared.pending.lock() {
             if pending.closed {

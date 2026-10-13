@@ -135,7 +135,12 @@ fn report(set: &str, gesture: &Gesture, command: Option<i32>) {
 fn settings(store: &Store) -> Settings {
     store.read(hydrus_store::settings::get).unwrap_or_default()
 }
-pub(crate) fn main(window: &MainWindow, store: Arc<Store>) -> Route {
+/// What applies a tag or rating shortcut to the thumbnails selected, once
+/// the main window has it.
+pub(crate) type GridContent =
+    Rc<RefCell<Option<Rc<dyn Fn(&hydrus_core::shortcuts::ContentCommand) -> bool>>>>;
+
+pub(crate) fn main(window: &MainWindow, store: Arc<Store>, grid: GridContent) -> Route {
     let route = Route::default();
     let active = route.1.clone();
     window.on_shortcut_key({
@@ -163,7 +168,17 @@ pub(crate) fn main(window: &MainWindow, store: Arc<Store>) -> Route {
                 Some(78) => window.invoke_refresh_page(),
                 Some(7) => window.invoke_close_page(),
                 Some(56) => window.invoke_new_page(),
-                _ => return false,
+                Some(_) => return false,
+                // the thumbnails take the "media" set's tag and rating commands
+                None => {
+                    let content = grid.borrow().clone();
+                    return match (window.get_grid_focused(), content) {
+                        (true, Some(content)) => settings
+                            .content_command("media", &gesture)
+                            .is_some_and(|command| content(command)),
+                        _ => false,
+                    };
+                }
             }
             true
         }
