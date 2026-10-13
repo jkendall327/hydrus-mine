@@ -115,8 +115,12 @@ fn confirmed_reset_defaults_keeps_specific_overrides() {
         .unwrap();
     let review = windows::open_bandwidth(store.clone(), &slots).unwrap();
     until(|| review.get_status().contains("offline"));
+    let questions: serde_json::Value = serde_json::from_str(include_str!(
+        "../../../../oracle/fixtures/network_data.json"
+    ))
+    .unwrap();
     review.invoke_reset_clicked();
-    assert!(!review.get_question().is_empty());
+    assert_eq!(review.get_question().as_str(), questions["questions"][1]);
     review.invoke_answer(false);
     assert_eq!(rules_of(&store, &global).unwrap().len(), 1);
     review.invoke_reset_clicked();
@@ -128,6 +132,39 @@ fn confirmed_reset_defaults_keeps_specific_overrides() {
         rules_of(&store, &a),
         Some(vec![Rule::new(BandwidthType::Requests, Some(60), 5)])
     );
+    // recording of ClientDefaults.SetDefaultBandwidthManagerRules: every
+    // context it sets holds exactly the reference's rules afterwards
+    let recorded: serde_json::Value = serde_json::from_str(include_str!(
+        "../../../../oracle/fixtures/bandwidth_defaults.json"
+    ))
+    .unwrap();
+    let calls = recorded["rules"].as_array().unwrap();
+    assert_eq!(calls.len(), 6);
+    for call in calls {
+        let kind = call[0][0].as_i64().unwrap();
+        let context = if kind == 0 {
+            NetworkContext::global()
+        } else {
+            NetworkContext::default_of_kind(kind)
+        };
+        let expected: Vec<Rule> = call[1]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|r| {
+                Rule::new(
+                    BandwidthType::from_code(r[0].as_i64().unwrap()).unwrap(),
+                    r[1].as_u64(),
+                    r[2].as_u64().unwrap(),
+                )
+            })
+            .collect();
+        let got = rules_of(&store, &context).unwrap_or_default();
+        assert_eq!(got.len(), expected.len(), "context {call:?}");
+        for rule in &expected {
+            assert!(got.contains(rule), "context {call:?}: missing {rule:?}");
+        }
+    }
     review.invoke_close_clicked();
 }
 
@@ -262,4 +299,62 @@ fn cookie_editor_expiry_modes_validate_and_persist() {
         .unwrap();
     assert_eq!(stored[0].expires, None);
     assert_eq!(stored[0].name, "sid");
+}
+
+// leaf: bandwidth-rule-list
+#[test]
+fn the_rules_editor_lists_rules_as_the_references_does() {
+    let recorded = hydrus_testkit::fixture_json("network_data.json");
+    let _h = headless::init();
+    let slots = windows::Slots::default();
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let review = windows::open_bandwidth(store.clone(), &slots).unwrap();
+    until(|| review.get_status().contains("offline"));
+    review.set_domain("example.com".into());
+    review.invoke_domain_clicked();
+    let edit = windows::last_rules().unwrap();
+    // the domain starts on the default rules; take them out, then add the
+    // rules the recorder gave the reference's editor, one by one
+    edit.invoke_row_clicked(0, false, false);
+    for i in 1..edit.get_rows().row_count() {
+        edit.invoke_row_clicked(i32::try_from(i).unwrap(), true, false);
+    }
+    edit.invoke_delete_rule();
+    assert_eq!(edit.get_rows().row_count(), 0);
+    for rule in recorded["rule_values"].as_array().unwrap() {
+        let requests = rule[0] == 1;
+        edit.set_requests(requests);
+        edit.set_monthly(rule[1].is_null());
+        edit.set_amount(rule[2].to_string().into());
+        if !rule[1].is_null() {
+            edit.set_seconds(rule[1].to_string().into());
+        }
+        edit.invoke_add_rule();
+        assert!(edit.get_error().is_empty(), "{}", edit.get_error());
+    }
+    let shown: Vec<Vec<String>> = edit
+        .get_rows()
+        .iter()
+        .map(|r| r.cells.iter().map(|c| c.to_string()).collect())
+        .collect();
+    let theirs: Vec<Vec<String>> = recorded["rule_rows"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|r| {
+            r.as_array()
+                .unwrap()
+                .iter()
+                .map(|c| c.as_str().unwrap().to_owned())
+                .collect()
+        })
+        .collect();
+    let mut shown = shown;
+    let mut theirs = theirs;
+    shown.sort();
+    theirs.sort();
+    assert_eq!(shown, theirs);
+    edit.invoke_cancel_clicked();
+    review.invoke_close_clicked();
 }
