@@ -87,8 +87,13 @@ page or file, as a downloader page shows one), a button to show its files
 in a new page
 (named for them), its error's traceback, and buttons to pause or cancel
 it while it runs; a right click dismisses one that is done, and the line
-under them counts them, with "dismiss all" (those done) and an arrow to
-hide or show them. They update four times a second.
+under them counts them, with "dismiss all" (those done) and an arrow (▼
+while the cards show, ▲ while they are hidden, as the reference's) to hide or
+show them. They update four times a second. What a card shows for a job (its
+title, two texts, two gauges that are filled or pulsing, what a pause hides,
+the start of a traceback, a text past 1,024 characters cut as the reference
+cuts it) is checked against a recording of the reference's card for the same
+jobs (`oracle/fixtures/popup_content.json`).
 A long job can be published as modal (`src/popup_modal.rs`,
 `hydrus-gui-model/src/popup_modal.rs`; Help > debug > "make a modal popup in
 five seconds"), as the reference's `AddModalMessage`: it is kept out of the
