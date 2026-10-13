@@ -1,0 +1,1 @@
+a text file with no image, so not a sidecar
