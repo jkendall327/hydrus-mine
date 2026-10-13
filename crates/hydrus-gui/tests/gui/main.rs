@@ -355,4 +355,5 @@ mod tag_filter_removal;
 mod tag_filter_replay;
 mod video_buffer;
 mod viewer_audio;
+mod viewer_playback;
 mod viewer_prefetch;

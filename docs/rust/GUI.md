@@ -1562,6 +1562,11 @@ already open on OK as well as new ones, as the reference's do. Frames come
 from mpv's software renderer, on
 a thread of their own (`src/mpv.rs`); that is slower than the reference's
 embedded mpv window for large videos. Other files show their thumbnail.
+GIFs, APNGs, webms and the rest show the reference's frame and time on
+the bar and loop; a still shows the file decoded whole, with no bar or
+volume; an audio file with embedded cover art shows the cover; and a
+playing file follows the volume and mutes as they change, from the
+viewer's own control or anywhere else (`tests/gui/viewer_playback.rs`).
 A duplicates page (a migrated session's, with its search, pair sort and
 group mode) says how many potential pairs its search finds, and launches
 the duplicate filter: its own window, showing one file of a pair at a time
