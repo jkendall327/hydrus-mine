@@ -1344,6 +1344,77 @@ fn background_work_options_set_the_pace_the_workers_take_in_idle_and_normal_time
     }
 }
 
+// The Database menu's two file-job switches, chosen as a user does, decide when the real file
+// maintenance pass works: the recorded passes (maintenance_pace.json) run in idle and normal time.
+// leaf: audit-media-menu-database-work-file-jobs-during-idle-time
+// leaf: audit-media-menu-database-work-file-jobs-during-normal-time
+#[test]
+fn the_database_menu_switches_decide_when_file_maintenance_works() {
+    use hydrus_store::file_maintenance::FileMaintenanceSettings;
+    use pace::{flag, int};
+
+    let recording = pace::recording();
+    let client = client();
+    let mut ran = 0;
+    for case in recording["cases"].as_array().unwrap() {
+        let saved = &case["saved"];
+        let passes: Vec<_> = case["passes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|pass| pass["worker"] == "files")
+            .collect();
+        if passes.is_empty() {
+            continue;
+        }
+        // the throttle is typed in Options elsewhere; here it is set directly
+        let throttle = |key: &str| u64::try_from(int(saved, key)).unwrap();
+        let (idle, active) = (
+            flag(saved, "file_maintenance_during_idle"),
+            flag(saved, "file_maintenance_during_active"),
+        );
+        let now = client.get::<FileMaintenanceSettings>();
+        client
+            .store
+            .write(move |ctx| {
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &FileMaintenanceSettings {
+                        idle_files: throttle("file_maintenance_idle_throttle_files"),
+                        idle_seconds: throttle("file_maintenance_idle_throttle_time_delta"),
+                        active_files: throttle("file_maintenance_active_throttle_files"),
+                        active_seconds: throttle("file_maintenance_active_throttle_time_delta"),
+                        ..now
+                    },
+                )
+            })
+            .unwrap();
+        for (label, wanted, current) in [
+            (
+                "work file jobs during idle time",
+                idle,
+                client.get::<FileMaintenanceSettings>().during_idle,
+            ),
+            (
+                "work file jobs during normal time",
+                active,
+                client.get::<FileMaintenanceSettings>().during_active,
+            ),
+        ] {
+            if wanted != current {
+                super::database_menu_jobs::from_menu_path(&client.ui, &["file maintenance"], label);
+            }
+        }
+        let files = client.get::<FileMaintenanceSettings>();
+        assert_eq!((files.during_idle, files.during_active), (idle, active));
+        for pass in passes {
+            pace::replay_files(&client.store, &recording, pass);
+            ran += 1;
+        }
+    }
+    assert!(ran > 0);
+}
+
 // leaf: audit-options-importing-filetypes-inspect-for-cbz-properties-when-importing-rescanning-zip-files
 #[test]
 fn the_cbz_option_decides_whether_zips_of_images_are_comic_books() {

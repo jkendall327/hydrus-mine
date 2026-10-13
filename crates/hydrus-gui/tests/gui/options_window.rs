@@ -7011,3 +7011,112 @@ fn the_suggested_tags_layout_chosen_in_options_reaches_manage_tags_as_the_refere
         manage.invoke_cancel();
     }
 }
+
+// leaf: audit-options-files-and-trash-advanced-file-deletion-and-custom-reasons-edit
+#[test]
+fn the_reason_list_replays_the_recorded_add_edit_move_and_delete_through_the_window() {
+    use hydrus_store::settings::DeletionPreferences;
+    let recording = hydrus_testkit::fixture_json("files_trash.json");
+    let recorded = &recording["reason_queue"];
+    let strings = |value: &serde_json::Value| -> Vec<String> {
+        value
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|v| v.as_str().unwrap().to_owned())
+            .collect()
+    };
+    let (_dirs, store) = store();
+    let seeded = strings(&recorded["events"][0]["rows"]);
+    store
+        .write({
+            let seeded = seeded.clone();
+            move |ctx| {
+                let mut prefs: DeletionPreferences = hydrus_store::settings::get(ctx.conn())?;
+                prefs.advanced = true;
+                prefs.reasons = seeded;
+                hydrus_store::settings::set(ctx.conn(), &prefs)
+            }
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    let reasons = |options: &OptionsWindow| -> Vec<String> {
+        let rows = options.get_reason_rows();
+        (0..rows.row_count())
+            .map(|i| rows.row_data(i).unwrap().cells.row_data(0).unwrap().to_string())
+            .collect()
+    };
+    let child = || {
+        bound
+            .options_reason_child
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong()
+    };
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "files and trash");
+    assert_eq!(reasons(&options), seeded);
+    for event in recorded["events"].as_array().unwrap() {
+        let default = event["default"].as_str().unwrap();
+        if event["answer"].is_null() {
+            continue;
+        }
+        if default == "beta" {
+            // The recorded edit of the second row, reached by its double-click.
+            options.invoke_reason_clicked(1, false, false);
+            options.invoke_reason_activated(1);
+        } else {
+            options.invoke_reason_action("add".into());
+        }
+        let dialog = child();
+        assert_eq!(dialog.get_message(), event["message"].as_str().unwrap());
+        assert_eq!(dialog.get_text(), default, "the editor starts on the row's own text");
+        assert!(options.get_reason_child_open());
+        dialog.invoke_name_entered(event["answer"].as_str().unwrap().into());
+        assert!(bound.options_reason_child.borrow().is_none());
+        assert_eq!(reasons(&options), strings(&event["rows"]));
+    }
+    // Cancelling the edit editor keeps the row as it was, and the Edit button reaches it too.
+    let before = reasons(&options);
+    options.invoke_reason_clicked(0, false, false);
+    options.invoke_reason_action("edit".into());
+    assert_eq!(child().get_text(), "alpha");
+    child().invoke_cancelled();
+    assert!(bound.options_reason_child.borrow().is_none());
+    assert_eq!(reasons(&options), before);
+    assert_eq!(
+        store.read(hydrus_store::settings::get::<DeletionPreferences>).unwrap().reasons,
+        seeded,
+        "nothing is saved before Apply"
+    );
+    // Move the edited row (the second) up and back down, then answer the removal question.
+    options.invoke_reason_clicked(1, false, false);
+    options.invoke_reason_action("up".into());
+    assert_eq!(reasons(&options), strings(&recorded["up"]));
+    options.invoke_reason_action("down".into());
+    assert_eq!(reasons(&options), strings(&recorded["down"]));
+    options.invoke_reason_action("delete".into());
+    assert_eq!(child().get_message(), recorded["delete_question"][0].as_str().unwrap());
+    child().invoke_answered(false);
+    assert_eq!(reasons(&options), strings(&recorded["cancel_rows"]));
+    options.invoke_reason_action("delete".into());
+    child().invoke_answered(true);
+    assert_eq!(reasons(&options), strings(&recorded["deleted_rows"]));
+    options.invoke_apply();
+    assert_eq!(
+        store.read(hydrus_store::settings::get::<DeletionPreferences>).unwrap().reasons,
+        strings(&recorded["reopened"])
+    );
+    open(&ui);
+    let reopened = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&reopened, "files and trash");
+    assert_eq!(reasons(&reopened), strings(&recorded["reopened"]));
+}

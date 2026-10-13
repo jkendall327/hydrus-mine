@@ -398,3 +398,66 @@ fn staged_exact_byte_units_timeout_policy_clear_reopen_and_incarnation_retiremen
 fn saved_gui(store: &Store) -> settings::GuiSettings {
     store.read(settings::get).unwrap()
 }
+// leaf: audit-options-speed-and-memory-thumbnail-cache-memory-reserved-for-thumbnail-cache
+#[test]
+fn the_memory_row_shows_and_saves_each_recorded_amount_with_the_reference_s_estimate() {
+    let fixture = hydrus_testkit::fixture_json("thumbnail_cache.json");
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    ui.show().unwrap();
+    for case in fixture["controls"].as_array().unwrap() {
+        let separated = case["separated"].as_array().unwrap();
+        let amount = separated[0].as_i64().unwrap() as i32;
+        // The unit choices are B, KB, MB, GB, TB: the recorded multiplier is a power of 1024.
+        let unit = separated[1].as_u64().unwrap().ilog(1024) as i32;
+        let wanted = case["saved"][0].as_u64().unwrap();
+        let window = options(&ui, &bound);
+        let bytes = row(&window, "Memory reserved for thumbnail cache:");
+        window.invoke_number_edited(bytes, amount);
+        window.invoke_choice_chosen(bytes, unit);
+        let shown = window.get_rows().row_data(bytes as usize).unwrap();
+        assert_eq!(shown.number, amount);
+        assert_eq!(shown.index, unit);
+        assert!(
+            shown.text.ends_with(case["estimate"].as_str().unwrap()),
+            "{} for {case}",
+            shown.text
+        );
+        assert_eq!(saved(&store).bytes, ThumbnailCacheSettings::default().bytes);
+        window.invoke_apply();
+        assert_eq!(saved(&store).bytes, wanted, "{case}");
+        assert_eq!(bound.rows.cache_policy().bytes, wanted, "{case}");
+        // Reopening shows the amount in the units the reference's control picks for it.
+        let window = options(&ui, &bound);
+        let bytes = row(&window, "Memory reserved for thumbnail cache:");
+        let reopened = window.get_rows().row_data(bytes as usize).unwrap();
+        assert_eq!((reopened.number, reopened.index), (amount, unit), "{case}");
+        window.invoke_cancel();
+    }
+    // A stored byte count that is not a whole number of its unit is clamped to it on Apply.
+    let raw = &fixture["bytes_boundaries"];
+    let (stored, kept) = (raw["raw"].as_u64().unwrap(), saved(&store));
+    store
+        .write(move |tx| {
+            hydrus_store::settings::set(
+                tx.conn(),
+                &ThumbnailCacheSettings {
+                    bytes: stored,
+                    ..kept
+                },
+            )
+        })
+        .unwrap();
+    let window = options(&ui, &bound);
+    window.invoke_apply();
+    assert_eq!(
+        saved(&store).bytes,
+        raw["unchanged_apply"].as_u64().unwrap()
+    );
+    assert_eq!(raw["loaded"], raw["unchanged_apply"]);
+}
