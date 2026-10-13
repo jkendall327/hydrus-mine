@@ -290,9 +290,9 @@ impl Daemon {
     }
 
     /// No download or subscription running, nothing nudged and waiting to
-    /// be taken, and no
-    /// subscription due within the minute (one just made, or told to
-    /// check now, is due at once).
+    /// be taken, and no subscription due within the minute (one just made,
+    /// or told to check now, is due at once). A queue's task lives as long
+    /// as its page, so only its current file and gallery jobs count.
     pub fn idle(&self) -> bool {
         let runner = self.state.subscriptions.as_ref().unwrap();
         if !runner.status().active.is_empty() {
