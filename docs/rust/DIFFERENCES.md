@@ -4076,7 +4076,8 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   nothing in hydrus-rs reads them yet: the REQUESTS_CA_BUNDLE
   switch (hydrus-rs uses its own TLS roots), drag-and-drop export (no files
   can be dragged out yet), the Qt-only gui misc and frame switches, the
-  integer locale switch, the hide-page signal, the URL drop page switch, mpv's
+  integer locale switch, the hide-page signal, the URL drop page switch (see
+  below), mpv's
   legacy mediator, player reuse and setGeometry switches, every QtMediaPlayer
   row, system FFMPEG, truncated images and PIL (hydrus-rs decodes images its
   own way), the other-display popup freeze (hydrus-rs's popups sit inside the
@@ -4136,6 +4137,19 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   once, on Options OK.
 - A trash pass deletes in groups of eight, oldest first, including files
   already in the trash when the limit is set.
+
+## URL drops
+
+The reference takes a URL dropped on its window (from a browser's address
+bar or a link) and imports it, switching to the page where it lands if
+Options > importing says so. hydrus-rs can't receive one on Linux: winit
+0.30's X11 drag and drop asks only for `text/uri-list` and drops any URI
+that isn't `file://` as an unexpected protocol, delivering nothing
+(`winit/src/platform_impl/linux/x11/dnd.rs`), and its Wayland backend has
+no drag and drop at all. A dropped URL therefore does nothing, and the
+switch-to-page row (`audit-options-importing-drag-and-drop-when-dnding-a-url-onto-the-program-switch-to-the-page-where-it-lands`)
+is kept but not read; the leaf is untagged. Taking URL drops would need
+winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
 
 ## mpv options on open players
 
