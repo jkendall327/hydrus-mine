@@ -1164,6 +1164,7 @@ mod pace {
             .map(|l| if let Line::Polls(n) = l { *n } else { 0 })
             .sum();
         let mut polls = 0;
+        let mut diagnosis = String::new();
         loop {
             publish(store, &clock, idle, good_time(pass));
             let before = due_jobs(store);
@@ -1202,13 +1203,21 @@ mod pace {
                 workers::FILE_MAINTENANCE_AFTER_WORK => trace.push(Line::AfterWork),
                 workers::FILE_MAINTENANCE_NOTHING_DUE => {
                     trace.push(Line::NothingDue);
+                    // (a pass that did nothing and was not held: say whether
+                    // the queue was empty or the lease was taken)
+                    let lease = hydrus_store::store::lock_file_maintenance(store.dir())
+                        .map(|lease| lease.is_some());
+                    diagnosis = format!(
+                        "after {polls} polls: lease free {lease:?}, queued {:?}",
+                        due_jobs(store)
+                    );
                     break;
                 }
                 other => panic!("{other:?}: {what}"),
             }
             assert!(trace.len() < 200, "{trace:?}");
         }
-        assert_eq!(trace, expected, "{what}");
+        assert_eq!(trace, expected, "{what} {diagnosis}");
     }
 }
 

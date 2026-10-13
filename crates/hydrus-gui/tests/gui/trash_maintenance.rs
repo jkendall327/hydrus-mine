@@ -125,7 +125,9 @@ fn replay(client: &mut Client, scenario: &Value) -> Vec<String> {
     // reference's did however long the pass takes.
     let pass = || {
         let now = hydrus_core::TimestampMs::now().0 / 1000 * 1000 + 500;
-        store.set_write_clock(std::sync::Arc::new(hydrus_store::workers::HeldClock::at(now)));
+        store.set_write_clock(std::sync::Arc::new(hydrus_store::workers::HeldClock::at(
+            now,
+        )));
         let times: Vec<(HashId, i64)> = files.iter().map(|f| (f.1, now - f.2)).collect();
         store
             .write_content(move |w| {
