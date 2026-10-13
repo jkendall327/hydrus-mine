@@ -90,6 +90,7 @@ fn open_with_actions(
             encode_png: model::encode_png,
             decode_png: model::decode_png,
             processing: false,
+            warning: None,
             actions,
         },
     )
@@ -118,6 +119,7 @@ pub fn open_subscriptions(
             encode_png: subscriptions::encode_png,
             decode_png: subscriptions::decode_png,
             processing: false,
+            warning: None,
             actions: None,
         },
     )?;
@@ -166,6 +168,7 @@ pub fn open_external_calls(
             encode_png: codec::encode_png,
             decode_png: codec::decode_png,
             processing: false,
+            warning: None,
             actions: None,
         },
     )?;
@@ -196,9 +199,14 @@ struct Codec<T> {
     encode_png: fn(&[T]) -> hydrus_downloader_exchange::Result<Vec<u8>>,
     decode_png: fn(&[u8]) -> hydrus_downloader_exchange::Result<Vec<T>>,
     processing: bool,
+    /// The reference's warning about a package's objects this list does not
+    /// take (from text or PNG bytes), shown above the review.
+    warning: Option<Warning>,
     /// Owner-specific actions (the package window's domain prompt).
     actions: Option<ExtraActions>,
 }
+/// A package's warning from its text or PNG bytes.
+type Warning = fn(&[u8]) -> Option<String>;
 /// Handle an action the shared window does not know.
 /// Redraw the package choices and text after a selection or addition.
 type Refresh = Rc<dyn Fn(&DownloaderExchangeWindow, &str)>;
@@ -235,6 +243,7 @@ pub fn open_steps(
             encode_png: processing::encode_png,
             decode_png: processing::decode_png,
             processing: true,
+            warning: Some(processing::warning),
             actions: None,
         },
     )
@@ -260,6 +269,7 @@ pub fn open_login_scripts(
             encode_png: logins::encode_png,
             decode_png: logins::decode_png,
             processing: false,
+            warning: None,
             actions: None,
         },
     )?;
@@ -295,6 +305,7 @@ pub fn open_subsidiaries(
             encode_png: subsidiaries::encode_png,
             decode_png: subsidiaries::decode_png,
             processing: false,
+            warning: None,
             actions: None,
         },
     )?;
@@ -330,6 +341,7 @@ pub fn open_routers(
             encode_png: routers::encode_png,
             decode_png: routers::decode_png,
             processing: false,
+            warning: None,
             actions: None,
         },
     )?;
@@ -553,6 +565,7 @@ fn open_objects<T: Clone + 'static>(
                             return Ok(());
                         }
                         let mut definitions = Vec::new();
+                        let mut warnings = Vec::new();
                         let mut total_bytes = 0usize;
                         for path in paths {
                             let bytes = read_bytes(&path)?;
@@ -560,20 +573,24 @@ fn open_objects<T: Clone + 'static>(
                             if total_bytes > hydrus_downloader_exchange::MAX_BYTES {
                                 return Err(hydrus_downloader_exchange::Error::Limit.to_string());
                             }
+                            let warning = codec.warning.and_then(|warn| warn(&bytes));
                             let mut incoming = if png {
-                                (codec.decode_png)(&bytes).map_err(|e| e.to_string())?
+                                (codec.decode_png)(&bytes).map_err(|e| e.to_string())
                             } else {
                                 (codec.decode_text)(
                                     std::str::from_utf8(&bytes).map_err(|e| e.to_string())?,
                                 )
-                                .map_err(|e| e.to_string())?
-                            };
+                                .map_err(|e| e.to_string())
+                            }
+                            .map_err(|e| warning.clone().unwrap_or(e))?;
+                            warnings.extend(warning);
                             definitions.append(&mut incoming);
                             if definitions.len() > hydrus_downloader_exchange::MAX_OBJECTS {
                                 return Err("Subscription package exceeds the object limit.".into());
                             }
                         }
-                        w.set_review(review_of(review.as_ref())?.0(definitions.clone())?.into());
+                        let description = review_of(review.as_ref())?.0(definitions.clone())?;
+                        w.set_review(warned(&warnings, description).into());
                         *pending.borrow_mut() = Some(definitions);
                         w.set_ready(true);
                     }
@@ -643,13 +660,25 @@ fn open_objects<T: Clone + 'static>(
                         w.set_review("PNG saved.".into());
                     }
                     "open" | "review" => {
-                        let definitions = if action == "open" {
-                            read_file(w.get_path().as_str(), &codec)?
+                        let bytes = if action == "open" {
+                            read_bytes(Path::new(w.get_path().as_str()))?
                         } else {
-                            (codec.decode_text)(w.get_text().as_str()).map_err(|e| e.to_string())?
+                            w.get_text().as_bytes().to_vec()
                         };
+                        let warnings: Vec<String> = codec
+                            .warning
+                            .and_then(|warn| warn(&bytes))
+                            .into_iter()
+                            .collect();
+                        // (nothing taken: the reference's warning is all it says)
+                        let definitions = if action == "open" {
+                            read_file(w.get_path().as_str(), &codec)
+                        } else {
+                            (codec.decode_text)(w.get_text().as_str()).map_err(|e| e.to_string())
+                        }
+                        .map_err(|e| warnings.first().cloned().unwrap_or(e))?;
                         let description = review_of(review.as_ref())?.0(definitions.clone())?;
-                        w.set_review(description.into());
+                        w.set_review(warned(&warnings, description).into());
                         *pending.borrow_mut() = Some(definitions);
                         w.set_ready(true);
                     }
@@ -679,6 +708,14 @@ fn open_objects<T: Clone + 'static>(
     w.show().map_err(|e| e.to_string())?;
     *slots.0.borrow_mut() = Some(w.clone_strong());
     Ok(w)
+}
+/// A review, after the reference's warnings about what is left out.
+fn warned(warnings: &[String], description: String) -> String {
+    if warnings.is_empty() {
+        description
+    } else {
+        format!("{}\n\n{description}", warnings.join("\n\n"))
+    }
 }
 fn review_of<T>(
     review: Option<&(Preview<T>, Apply<T>)>,
