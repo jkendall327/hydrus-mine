@@ -128,6 +128,8 @@ export component ImportOptionsWindow inherits Window {
     // "even for 'already in db' files?" needs auto-archive ticked
     out property <bool> archive-already-enabled: root.archive;
     in property <bool> downloader;
+    // editing the global defaults, whose paste menu has no fill-in or replace
+    in property <bool> global-defaults;
     in-out property <bool> primary-urls;
     in-out property <bool> source-urls;
     // notes
@@ -335,14 +337,14 @@ export component ImportOptionsWindow inherits Window {
                             }
                             SpinBox {
                                 enabled: size.on;
-                                minimum: 1;
-                                maximum: 1000000;
+                                minimum: 0;
+                                maximum: 1048576;
                                 value: size.value;
                                 edited(v) => { root.size-edited(i, size.on, v, size.unit); }
                             }
                             ComboBox {
                                 enabled: size.on;
-                                model: ["B", "KB", "MB", "GB"];
+                                model: ["B", "KB", "MB", "GB", "TB"];
                                 current-index: size.unit;
                                 selected => { root.size-edited(i, size.on, size.value, self.current-index); }
                             }
@@ -355,16 +357,16 @@ export component ImportOptionsWindow inherits Window {
                             }
                             SpinBox {
                                 enabled: res.on;
-                                minimum: 1;
-                                maximum: 100000;
+                                minimum: 0;
+                                maximum: 1000000;
                                 value: res.width;
                                 edited(v) => { root.resolution-edited(i, res.on, v, res.height); }
                             }
                             Label { text: "x"; }
                             SpinBox {
                                 enabled: res.on;
-                                minimum: 1;
-                                maximum: 100000;
+                                minimum: 0;
+                                maximum: 1000000;
                                 value: res.height;
                                 edited(v) => { root.resolution-edited(i, res.on, res.width, v); }
                             }
@@ -599,7 +601,7 @@ export component ImportOptionsWindow inherits Window {
                 clipboard-menu := PopupWindow {
                     y: parent.height;
                     width: 320px;
-                    height: 148px;
+                    height: root.global-defaults ? 90px : 148px;
                     Rectangle {
                         background: Theme.panel;
                         border-color: Theme.border;
@@ -610,8 +612,9 @@ export component ImportOptionsWindow inherits Window {
                             Btn { text: "custom paste: choose what you want"; clicked => { clipboard-menu.close(); root.paste-options(3); } }
                             Rectangle { height: 1px; background: Theme.border; }
                             Btn { text: "merge-paste"; clicked => { clipboard-menu.close(); root.paste-options(0); } }
-                            Btn { text: "fill-in-gaps-paste"; clicked => { clipboard-menu.close(); root.paste-options(1); } }
-                            Btn { text: "replace-paste"; clicked => { clipboard-menu.close(); root.paste-options(2); } }
+                            // (the global defaults are only merged into)
+                            if !root.global-defaults: Btn { text: "fill-in-gaps-paste"; clicked => { clipboard-menu.close(); root.paste-options(1); } }
+                            if !root.global-defaults: Btn { text: "replace-paste"; clicked => { clipboard-menu.close(); root.paste-options(2); } }
                         }
                     }
                 }

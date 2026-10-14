@@ -5454,10 +5454,10 @@
     "Boolean controls reach FileFiltering options consumed by file import."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives the editor and reads back the saved slice, with typed expected values (defaults from the Python source, no recording of this page). Consumers exist and are tested separately in hydrus-import, but not from the editor's output. Tag is shared with sizes and specific-default. Tests: crates/hydrus-gui/tests/gui/import_options_fields.rs:77 file_filtering_checkboxes_and_bounds_reach_the_importers_options; consumers hydrus-import/src/lib.rs:195,220 with hydrus-import/tests/import.rs:234,357"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "gui/import_options_recorded.rs (file_filtering_page_gives_the_references_options_and_files_are_judged_as_it_judges_them) drives the real import options window through 7 scenarios replaying oracle/fixtures/import_options_fields.json (record_import_options_fields.py: the reference's EditFileFilteringImportOptionsPanel driven the same way): the exclude-deleted and decompression-bomb boxes, applied and read back from the importer's saved options, equal the recording, and FileImportOptions::from_full (what the importer builds from the saved slice) carries them. What the import does with them (re-importing a deleted file, rejecting a bomb) is covered by hydrus-import/tests/import.rs:234,357 on typed options, not driven from the editor."
    }
   },
   {
@@ -5473,10 +5473,10 @@
     "Typed whitelist and source-to-destination name renames join merge-conflict and extension options."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the notes page and checks the saved slice, all typed (choice order restated from source; no recording). Consumer in hydrus-store/src/import/decode.rs:2904 is not exercised from here. Tests: crates/hydrus-gui/tests/gui/import_options_fields.rs:158 note_conflict_extension_whitelist_and_renames_reach_the_importers_options"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "gui/import_options_recorded.rs replays import_options_fields.json through the real window: get notes, extend, the four conflict choices (replace, ignore, append, rename, by index), whitelist, renames and the mass-rename for 6 scenarios; the saved options equal NoteImportOptions after the reference panel's GetValue and the notes NoteImportOptions::updates writes for 5 probe sets of existing and incoming notes equal GetUpdateeNamesToNotes's. The combo's labels are literals in the .slint (not readable from a test) and so are not compared."
    }
   },
   {
@@ -5492,10 +5492,10 @@
     "Known hash/URL handling and neighbour-spam flags populate the prefetch slice."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window drives hash/url checks, dispositive interlock and flags; expected values typed from source. Recorded summaries only cover the summary text. Consumer hydrus-download/src/predict.rs not exercised from the editor. Tests: crates/hydrus-gui/tests/gui/import_options_fields.rs:204 prefetch_checks_fetch_flags_and_the_dispositive_interlock_reach_the_importers_options; model/import_options_editor.rs:276 (summaries recorded)"
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "The editor's prefetch panel values are compared with the reference's panel step by step (import_options_fields.json), but the importer code that reads them (hydrus-download predict.rs, private) has no test of its hash/URL outcomes."
    }
   },
   {
@@ -5530,10 +5530,10 @@
     "Enabled size/unit and width/height controls populate optional validated bounds."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Size/GIF/resolution bounds driven through the window incl. reopen and off; typed values, no recording. Validation of bounds (e.g. min above max) and unit choices are not compared with the reference. Tests: crates/hydrus-gui/tests/gui/import_options_fields.rs:78 file_filtering_checkboxes_and_bounds_reach_the_importers_options"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "gui/import_options_recorded.rs replays import_options_fields.json through the real window: min/max/gif byte limits (value, unit B to TB, no limit) and min/max resolutions for 7 scenarios, including a minimum above the maximum (the reference accepts it), every unit, and the spin boxes' ranges (0 to 1048576 and 0 to 1000000, which clamp what is typed); the saved options equal the reference panel's GetValue; 16 probe files are judged by FileImportOptions::from_full(...).check_values exactly as CheckFileIsValid judges them (messages included); and the page shows saved limits as BytesControl.SetValue does (largest exact unit, 0 as 0 TB). The recording found differences, fixed here: no TB unit, spin range 1..1000000, resolutions 1..100000. Not covered: a saved limit above the spin range (the reference clamps it on OK)."
    }
   },
   {
@@ -5568,10 +5568,10 @@
     "Get-tags controls and new/redundant statuses decide which parsed/additional tags each service receives."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window drives per-service get-tags, new/inbox/archive gates and overwrite-deleted; saved slice and applies_to checked with typed expectations (no recording of the page). Consumer hydrus-download/src/content.rs:150 is not driven from the editor. Tests: crates/hydrus-gui/tests/gui/import_options_fields.rs:276 per_service_get_tags_and_new_or_redundant_gates_reach_the_importers_options"
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "The editor's tag service panel values are compared with the reference's panel step by step (import_options_fields.json), but the code that reads them (hydrus-download content.rs service_tags, the get-tags filter and the deleted-tag overwrite) is not driven from the editor's output, so the setting's consumer is untested."
    }
   },
   {
@@ -15411,14 +15411,13 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Walks open Pages, removes watcher highlight state from watcher pages and redraws the shown page through the menu hook.",
-    "The traversal is inspected; a dedicated all-pages menu regression was not found among the checked tests."
+    "Walks open Pages, removes watcher highlight state from watcher pages and redraws the shown page through the menu hook."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu with two watcher pages; highlights are None afterwards including after reshowing and in the saved session. Expected None typed from source (pubsub clear_multiwatcher_highlights), no recording. Stale note: it says no regression was found, but this test exists. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:493 clear_all_multiwatcher_highlights_clears_every_watcher_page"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "gui/pages_menu_info.rs against pages_menu_info.json: two multiple watcher pages each get the recorded two threads added through the page's URL box; the first thread is highlighted on both as in the reference (sidebar and the saved multiple_watcher_import state), and Pages > clear > all multiwatcher highlights clears both, including the page not shown and the saved session."
    }
   },
   {
@@ -15647,14 +15646,12 @@
    "priority": "normal",
    "reference": null,
    "native": null,
-   "notes": [
-    "Informational row appears when Facts.history is None; it has no action by design and does not denote an unsupported command."
-   ],
+   "notes": [],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model test only: builds the menu from Facts and checks the single label 'no tab history' (string typed from ClientGUI.py, not from the recording, which has no such row). No GUI test opens the history submenu with no history, so the window's rendering of it is unproven. Tests: crates/hydrus-gui-model/tests/model/main_menu.rs:290 the_history_menu_is_a_plain_label_until_there_is_a_history"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "gui/pages_menu_info.rs against pages_menu_info.json: the reference builds the history submenu with a plain 'no tab history' label, but the pages menu's aboutToShow rebuilds it (_UpdateMenuPagesHistoryIfDirty) before it can be seen, so the user sees only 'Clear History' for an empty history. The window is compared with the recording for an empty history, a history of pages shown and after Clear History: it never shows the placeholder, as the reference never does. The model keeps the placeholder row for a menu built without a history (unreachable from the window)."
    }
   },
   {
@@ -23077,14 +23074,13 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Reference publishes the undo/redo operation to its manager; native Command has no corresponding content-history operation.",
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Undo menu clicked after an archive; 'undo/redo archive 2 files' labels and inbox state are typed from ClientManagers.GetUndoRedoStrings, no recording; only archive is exercised. Tracker note ('no native action/editor path') is stale. Tests: crates/hydrus-gui/tests/gui/search_pages_menu.rs:364 the_undo_menu_undoes_and_redoes_the_last_content_change"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "Same test as the undo leaf (gui/content_undo.rs against content_undo.json): redo entries, redo of tag and archive packages, the redo stack cut by a new write, and redo offered nothing at the end of the stack, all compared with the recording at every step."
    }
   },
   {
@@ -23097,14 +23093,13 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Reference publishes the undo/redo operation to its manager; native Command has no corresponding content-history operation.",
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Same test: real menu undo of an archive restores inbox and flips to redo. Labels are literals restated from the Python source and only one operation kind is covered. Tracker note ('no corresponding content-history operation') is stale. Tests: search_pages_menu.rs:363 the_undo_menu_undoes_and_redoes_the_last_content_change"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "gui/content_undo.rs replays oracle/fixtures/content_undo.json (record_content_undo.py: the reference's UndoManager under controller.Write('content_updates'), 31 steps of archive, inbox, tag add/delete, mixed packages, undo and redo) through the real Undo menu: at every step the menu's undo and redo entries and each of three files' inbox state and tags equal the recording, undo/redo with nothing to do offered nothing. The recording found a real difference, fixed here: the service name in 'undo my tags->...' is dropped only for services before an archive/inbox change in the package (Package::describe). The reference joins the actions from a Python set, so their order is not fixed and the test compares them as a set."
    }
   },
   {
@@ -23155,14 +23150,13 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Reference total-weight action opens a breakdown and explains file/URL weights. Native computes the total label but has no corresponding report dialog.",
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real pages-menu click opens the report; the long message is a literal from ClientGUI._ShowPageWeightInfo and weights (files from the page, 20 per URL, closed pages after closing) are computed by the test, with no recording. Tracker note ('no corresponding report dialog') is stale. Tests: search_pages_menu.rs:532 total_session_weight_explains_the_number_with_open_and_closed_file_and_url_weights"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "gui/pages_menu_info.rs replays oracle/fixtures/pages_menu_info.json (record_pages_menu_info.py: a search page of 5 files, a URLs page of 3 URLs, a watcher page with 4 file seeds in the running reference): the Pages > weight submenu ('3 pages open', 'total session weight: 145') and the report text opened by clicking it are equal to the recorded message with all three pages open, after the files page is closed (its 5 files move to the closed-pages weight) and after the other two are closed with the recorded 'still importing' questions answered yes. One known difference: hydrus-rs keeps a blank page when the last closes (DIFFERENCES.md, #183), so the last step is compared with '1 pages open'."
    }
   },
   {
@@ -23547,10 +23541,10 @@
     "Export this draft or a selected saved favourite to the reference JSON Tag Filter format, copy immediately to clipboard and offer an atomic JSON file export; saved favourites retain insertion order after this-filter entry."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Export menu names match the recording, but the exported text is never compared with the reference's text: the model checks import_favourite(export_favourite(x)) == import_favourite(recorded payload) (native round trip) and the GUI re-imports its own clipboard/file output. Only the 'this tag filter' entry is exported through the GUI; exporting a selected saved favourite is untested. Tests: crates/hydrus-gui/tests/gui/tag_filter_favourites.rs:21 (export part); model tag_filter_favourites.rs import_invalid branch"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "gui/tag_filter_favourite_exchange.rs replays tag_filter_favourite_exchange.json (record_tag_filter_favourite_exchange.py: the reference's real _ExportFavourite menu on a filter with four rules and two favourites): the menu's entries equal the recording, the reference's text is shown to be its rules written as Python's json.dumps writes them, and the text each entry puts on the clipboard is byte for byte the same format with the same rules, sorted by tag slice (the reference lists the editor's blacklist then whitelist, or a favourite in the order it was made: DIFFERENCES.md). Export to a file writes the same text for every entry (driven in the same test)."
    }
   },
   {
@@ -23567,10 +23561,10 @@
     "An additional inline text/file panel precedes the reference naming prompt."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Naming prompt, cancel, overwrite no/yes and dirty-payload cleaning match the recording (model) and are driven through the window. But the recorded error dialogs ('Error', 'That object was not a Tag Filter! It seemed to be a ...SerialisableList') are not compared: the model only checks is_err / contains 'JSON-serialised Tag Filter object', the GUI only that exchange_error is non-empty, and the native strings differ from the reference's. Overwrite-yes through the window is not driven. Tests: crates/hydrus-gui/tests/gui/tag_filter_favourites.rs:22 (import part); model tag_filter_favourites.rs workflow import_* events and import_invalid/import_wrong_type"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "gui/tag_filter_favourite_exchange.rs, two replays through the window. (1) tag_filter_favourite_exchange.json: text that is not JSON, empty text, a SerialisableList, a SerialisableDictionary, a JSON string and a JSON object are imported; the whole error shown equals the reference's, Python's exception text included (JSONDecodeError, 'too many values to unpack', 'not enough values to unpack'); no name is asked and the favourites do not change. (2) the four import events of tag_filter_favourites.json (cancel at the naming prompt, no at the overwrite, a new name, yes at the overwrite) with an untidy clipboard payload: the prompts' text, the favourites after each step and the draft equal the recording. Python's exception text for other malformed JSON, and for a list of the wrong length, is approximate. File import and the inline text/file panel before the naming prompt are ours (DIFFERENCES.md)."
    }
   },
   {
@@ -24322,14 +24316,12 @@
    "priority": "normal",
    "reference": "hydrus/client/gui/importing/ClientGUIImportOptionsContainer.py:662",
    "native": "crates/hydrus-gui/src/import_options_window.rs:479",
-   "notes": [
-    "Native option editor has no serialized clipboard or custom-merging controls."
-   ],
+   "notes": [],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The custom-merge chooser is replayed against the recording (model, all 5 overwrite steps; GUI one preset), but the fixture's copied_text, errors (expected 'JSON-serialised Import Options Container') and merge-paste steps/questions are never read by any test. Copy only round-trips through the native codec, and the paste error is a substring check; paste modes 0/1 and the profile-level merge-paste are untested. Tracker note 'no serialized clipboard or custom-merging controls' is stale (paste_options/copy_options exist). Tests: crates/hydrus-gui/tests/gui/import_options.rs:12 shared_overwrite_drafts_close_cleanly_and_clipboard_reaches_real_importer; crates/hydrus-gui-model/tests/model/import_options_overwrite.rs:8"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "gui/import_options_paste.rs replays import_options_paste.json (record_import_options_paste.py: the reference's container editor panels given a clipboard): for a specific importer 18 merge/fill-in/replace pastes of three containers over two current ones, copy (what is put on the clipboard reads back as the same container), the clipboard errors (the reference's whole message, Python's exception text included, for text that is not JSON, empty text, and JSON of another object kind), and the global defaults editor's paste (merge and the non-full replace warning, with the saved global default compared; its menu hides fill-in and replace as the recorded menu does), each read back from what the editor saves. The custom-paste chooser (3 presets and cancel) is replayed against subscription_import_options.json, the recording of the reference's chooser made for the subscription editor, not a case in import_options_paste.json. The recording found the tags page differing, fixed here (every tag service named in the value). Python's exception text for JSON that is malformed in ways other than the recorded ones is approximate (pyjson python_message)."
    }
   },
   {

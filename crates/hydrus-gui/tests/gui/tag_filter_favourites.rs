@@ -18,8 +18,6 @@ fn choices(w: &TagFilterWindow) -> Vec<String> {
 // leaf: audit-shared-tag-favourite-save
 // leaf: audit-shared-tag-favourite-load
 // leaf: audit-shared-tag-favourite-delete
-// leaf: audit-shared-tag-favourite-export
-// leaf: audit-shared-tag-favourite-import
 #[test]
 fn shared_favourites_exchange_and_cancel_preserve_the_owner_and_persist_on_reopen() {
     let fixture = hydrus_testkit::fixture_json("tag_filter_favourites.json");
