@@ -1201,9 +1201,12 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   is the reference's text, but ends with the parse error's own text where the
   reference's has the Python exception (`JSONDecodeError(...)`); the subscription
   list's paste error is still a shorter message of its own. The prefetch and tag
-  pages' settings are compared with the reference's panels and the importer's
-  gates (`applies_to`), but the importer code that uses them (`predict`,
-  `service_tags`) is not driven from the editor's output.
+  pages' settings are compared with the reference's panels, and the editor's
+  output is run through a URL queue (prefetch: which pages the site is asked
+  for, the seed's status and note) and a local-import queue (tags of a new, an
+  inbox and an archived file) against recordings of the reference's engine
+  (`import_options_consumers.rs`). Not driven: prefetch by md5, sha1 or sha512
+  hashes, and in gallery, watcher and subscription importers (same code).
   The shared location button's flags for local-only, combined-local-only and
   no-multiple choices exist in the model and are replayed against the
   reference's button, but no window uses them yet.
