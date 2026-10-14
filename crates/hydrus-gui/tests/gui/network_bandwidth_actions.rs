@@ -350,10 +350,6 @@ fn the_rules_editor_lists_rules_as_the_references_does() {
                 .collect()
         })
         .collect();
-    let mut shown = shown;
-    let mut theirs = theirs;
-    shown.sort();
-    theirs.sort();
     assert_eq!(shown, theirs);
     edit.invoke_cancel_clicked();
     review.invoke_close_clicked();

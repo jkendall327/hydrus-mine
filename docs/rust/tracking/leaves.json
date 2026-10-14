@@ -14810,9 +14810,9 @@
    ],
    "recheck": {
     "date": "2026-10-13",
-    "class": "sound",
+    "class": "weak",
     "by": "claude, #97 phase 2 (w4-r2)",
-    "note": "oracle/record_file_menu_exit.py triggers the reference's real File > exit and records every question and whether the client exits: confirmation on (declined: the client stays; accepted: exits), confirmation off (exits unasked), and with shutdown work on-shutdown due or not due. exit_restart_and_force_maintenance_replay_the_references_questions_and_outcomes replays each through the real menu and window (question text, answer, window closed or kept, shutdown work run or not). Not ported, and documented in DIFFERENCES.md: the extra 'Importers will save...' paragraph for pages with importers and the low-free-space prompt."
+    "note": "oracle/record_file_menu_exit.py triggers the reference's real File > exit and records every question and whether the client exits (confirmation on declined/accepted, off, shutdown work due or not); exit_restart_and_force_maintenance_replay_the_references_questions_and_outcomes replays each through the real menu and window. Not class sound because two parts of the reference's exit are not ported: the 'Importers will save...' paragraph for pages with importers and the low-free-space prompt before saving exit data (both in DIFFERENCES.md); the replay does not check the dialog title, button labels or the 15 s auto-yes."
    }
   },
   {
@@ -14830,9 +14830,9 @@
    ],
    "recheck": {
     "date": "2026-10-13",
-    "class": "sound",
+    "class": "weak",
     "by": "claude, #97 phase 2 (w4-r2)",
-    "note": "oracle/record_file_menu_exit.py triggers the reference's real File > exit/force maintenance: with confirmation off it exits unasked with the shutdown work forced even when it was done a moment ago and the option is off; with confirmation on it asks the exit question. The same replay test (files_io_file_menu.rs exit_restart_and_force_maintenance_replay_the_references_questions_and_outcomes) drives both through the real menu and checks that the work ran (last_done advanced) exactly when the recording says. The older test also keeps the entry order."
+    "note": "oracle/record_file_menu_exit.py triggers the reference's File > exit/force maintenance: confirmation off exits unasked with shutdown work forced; confirmation on asks the exit question. The same replay test drives it through the real menu. Weak, not sound, for the same two unported parts as plain exit (importer paragraph, low-free-space prompt; DIFFERENCES.md); button labels and auto-yes are not compared."
    }
   },
   {
@@ -14908,9 +14908,9 @@
    ],
    "recheck": {
     "date": "2026-10-13",
-    "class": "sound",
+    "class": "likely-good",
     "by": "claude, #97 phase 2 (w4-r2)",
-    "note": "oracle/record_file_menu_exit.py triggers the reference's real File > open > installation directory and records that it launches the install directory (HC.BASE_DIR); the real menu click launches the Rust client's install directory, its executable's directory (a documented difference in what the install is; DIFFERENCES.md). Test: files_io_file_menu.rs open_entries_launch_directories_and_manage_entries_open_the_folder_lists."
+    "note": "oracle/record_file_menu_exit.py records that the reference's File > open > installation directory launches HC.BASE_DIR; the real menu click launches the Rust client's executable directory, which is what the install is here (DIFFERENCES.md). The comparison is the target kind, not a path, so likely-good. Test: files_io_file_menu.rs open_entries_launch_directories_and_manage_entries_open_the_folder_lists."
    }
   },
   {
@@ -15013,9 +15013,9 @@
    ],
    "recheck": {
     "date": "2026-10-13",
-    "class": "sound",
+    "class": "weak",
     "by": "claude, #97 phase 2 (w4-r2)",
-    "note": "oracle/record_file_menu_exit.py triggers the reference's real File > restart: the restart question (confirmation on; declined it stays and does not restart; accepted exits with the restart flag), and with confirmation off it restarts unasked. The replay test drives the same through the real menu and window, and then calls client_exit::relaunch_if_requested, the function main() ends with (the process start moved out of main for this), with a stand-in program: it starts again with its arguments exactly when the recording restarted and never otherwise. The one line in main() that calls it is not run by a test."
+    "note": "oracle/record_file_menu_exit.py triggers the reference's File > restart (question with confirmation on, declined stays, accepted exits with the restart flag; unasked with confirmation off); the replay test drives the same through the real menu and the relaunch hook. Weak, not sound: the importer paragraph and low-free-space prompt shared with exit are not ported (DIFFERENCES.md), and the relaunch itself is a stand-in client script, not the real binary."
    }
   },
   {
