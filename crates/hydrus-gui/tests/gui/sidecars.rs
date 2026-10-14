@@ -941,7 +941,14 @@ fn processing_exchange_appends_the_steps_of_a_mixed_package_and_warns_as_the_ref
     // the row says what the step is (`StringProcessor.ToString`: its converter)
     let last = window.get_steps().row_count() - 1;
     assert_eq!(
-        window.get_steps().row_data(last).unwrap().cells[0].as_str(),
+        window
+            .get_steps()
+            .row_data(last)
+            .unwrap()
+            .cells
+            .row_data(0)
+            .unwrap()
+            .as_str(),
         "some conversion"
     );
     // and it has no editor: editing it opens nothing
