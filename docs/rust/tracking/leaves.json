@@ -4600,10 +4600,10 @@
     "Preview validates supported types and displays names/duplicates; Back clears pending definitions and Accept saves/stages once."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only checks the review text contains 'exchange page', that Cancel then Accept does nothing, and a later Accept saves once. Duplicate review display and a distinct Back button are not asserted; duplicate rules rest on fixture booleans in a model test. Tests: crates/hydrus-gui/tests/gui/downloader_interchange.rs:182"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "wave 5 session (W5-6)",
+    "note": "The reference's real ReviewDownloaderImport (oracle/record_downloader_import_selection.py) is recorded through: choosing some objects, the rest, a mixed package, misc objects only, and now the same package again (everything a duplicate: 'All 4 downloader objects ... already in the client'), a new downloader with the final question declined (nothing added), the chooser cancelled, and a new downloader beside a duplicate ('1 duplicate objects were not added'). The real exchange window is replayed through each: the chooser, the final question and notices in the reference's words, and the client's downloaders, classes, parsers and default after each. The reference has no separate 'Back' step: declining the final question is its back, and hydrus-rs's Back button (which returns to the input) has no reference counterpart. Test: crates/hydrus-gui/tests/gui/downloader_package.rs objects_are_chosen_others_skipped_and_a_default_downloader_set_as_the_reference_does."
    }
   },
   {

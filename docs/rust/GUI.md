@@ -2330,6 +2330,14 @@ bitmap first, and files dropped on it ask "Try to import the N dropped files to
 this list? I am expecting json or png files." before importing, PNGs first
 (`oracle/fixtures/exchange_bitmap_drop.json`).
 
+The final review follows the reference's `ReviewDownloaderImport` step by step
+(`oracle/fixtures/downloader_import_selection.json`): a package whose objects
+are all in the client says "All N downloader objects in that package appeared to
+already be in the client, so nothing need be added.", a chooser (when "select
+objects from list" is on) can be cancelled, the final question lists what will
+be added, "no" adds nothing, and "yes" says how many were added and how many
+duplicates were not.
+
 Network > downloaders > import/export downloaders exchanges URL classes,
 page parsers, registered login scripts and single/nested gallery URL generators with the reference
 client's clipboard JSON and real downloader PNGs. Imports review the concrete

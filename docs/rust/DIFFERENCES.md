@@ -1809,7 +1809,9 @@ as the reference's other panels have no drop target of their own). A clipboard
 holding local file paths is not read as the reference's `IngestClipboard` reads it. Exported PNGs carry
 the real reference pixel/payload format with a small plain header. A malformed
 or unsupported item rejects the whole package, with an actionable error, rather
-than the reference importer's partial skips. Payloads/pixels are capped at
+than the reference importer's partial skips. The window also has a "back" that
+returns from the review to the input, which the reference lacks (it declines at
+the final question). Payloads/pixels are capped at
 16 MiB, bundles at 4096 objects, and recursive formats at bounded depth. Old
 container versions and recent URL/parser/formula versions are upgraded;
 earlier unsupported versions must first be re-exported by the reference client.
