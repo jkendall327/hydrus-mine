@@ -219,10 +219,11 @@ fn a_jobs_right_click_menu_is_the_reference_s_network_contexts_and_flags() {
     window.invoke_row_menu(1, 10.0, 10.0);
     assert!(menu(&window).is_empty());
     // a right press on a row that is not selected selects it alone
-    window.invoke_row_menu(0, 10.0, 10.0);
+    window.invoke_row_clicked(0, false, false);
+    window.invoke_row_menu(1, 10.0, 10.0);
     assert_eq!(menu(&window)[0].len(), 6);
-    assert!(window.get_rows().row_data(0).unwrap().selected);
-    assert!(!window.get_rows().row_data(1).unwrap().selected);
+    assert!(!window.get_rows().row_data(0).unwrap().selected);
+    assert!(window.get_rows().row_data(1).unwrap().selected);
     // each line is a label that copies itself
     let copied: Rc<RefCell<Vec<Clip>>> = Rc::default();
     set_clipper({
