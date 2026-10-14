@@ -16,6 +16,8 @@ use hydrus_store::import::import_legacy;
 use hydrus_store::settings::{self, ExportFolders, FolderSettings, GuiSettings, ShutdownWork};
 use hydrus_store::{Store, import_folders};
 
+use crate::common::widgets;
+
 /// The store migrated from a legacy fixture.
 fn fixture_store(name: &str) -> ([tempfile::TempDir; 2], Arc<Store>) {
     let legacy = hydrus_testkit::legacy_fixture(name);
@@ -123,6 +125,7 @@ fn exit_restart_and_force_maintenance_ask_as_the_reference_does_and_close_the_cl
     ui.show().unwrap();
     let _bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     hydrus_gui::client_exit::RESTART.store(false, Ordering::SeqCst);
+    hydrus_gui::client_exit::set_space(Some(Rc::new(|| (1, 1 << 40))));
 
     // the entries are all there, in the reference's order (confirmation on:
     // choosing exit asks the exit question, answered no)
@@ -680,6 +683,152 @@ fn checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_refer
     assert_eq!(seen, 10);
 }
 
+/// Pages for one recorded run: a search page, and (as the run names them)
+/// a url import page holding four URLs and a simple downloader holding two,
+/// their files playing unless the run pauses them.
+fn exit_session(store: &Arc<Store>, kinds: &[String]) -> Pages {
+    use hydrus_core::import_options::ImportOptionsSlice;
+    use hydrus_core::pages::{DownloaderKind, Page, PageContent, PageKey, Session};
+    use hydrus_search::FileSearchContext;
+    use hydrus_store::queues::{self, FileSeedMeta, NewFileSeed, QueueKind, SeedType};
+    let paused = kinds.iter().any(|k| k == "paused");
+    let seeds = |urls: Vec<String>| -> Vec<NewFileSeed> {
+        urls.into_iter()
+            .map(|u| NewFileSeed {
+                seed_type: SeedType::Url,
+                data: u.clone(),
+                data_for_comparison: u,
+                source_time: None,
+                referral_url: None,
+                meta: FileSeedMeta::default(),
+            })
+            .collect()
+    };
+    let urls: Vec<String> = (1..=4)
+        .map(|n| format!("https://site.example/post/{n}"))
+        .collect();
+    let files: Vec<String> = (1..=2)
+        .map(|n| format!("https://site.example/file/{n}.jpg"))
+        .collect();
+    let kinds = kinds.to_vec();
+    let (url_queue, simple_queue) = store
+        .write(move |ctx| {
+            let conn = ctx.conn();
+            let options = ImportOptionsSlice::default();
+            let url_queue =
+                queues::create_queue(conn, QueueKind::Urls, "url import", None, &options, 0)?;
+            queues::add_file_seeds(conn, url_queue, &seeds(urls), false, 0)?;
+            queues::set_paused(conn, url_queue, Some(paused), Some(paused))?;
+            let simple_queue = queues::create_simple_downloader(
+                conn,
+                None,
+                &options,
+                &queues::SimpleDownloader::default(),
+                0,
+            )?;
+            queues::add_file_seeds(conn, simple_queue, &seeds(files), false, 0)?;
+            queues::set_paused(conn, simple_queue, Some(false), Some(false))?;
+            Ok((url_queue, simple_queue))
+        })
+        .unwrap();
+    let page = |name: &str, content: PageContent| Page {
+        key: PageKey::random(),
+        name: name.into(),
+        content,
+    };
+    let downloader = |name: &str, kind: DownloaderKind, queue: i64| {
+        page(
+            name,
+            PageContent::Downloader {
+                kind,
+                queues: vec![queue],
+                sort: None,
+                page: None,
+            },
+        )
+    };
+    let mut pages = vec![page(
+        "a",
+        PageContent::Search {
+            search: FileSearchContext::default(),
+            synchronised: true,
+            sort: None,
+            lock: None,
+            collect: None,
+        },
+    )];
+    if kinds.iter().any(|k| k == "urls") {
+        pages.push(downloader("url import", DownloaderKind::Urls, url_queue));
+    }
+    if kinds.iter().any(|k| k == "simple") {
+        pages.push(downloader(
+            "simple downloader",
+            DownloaderKind::Simple,
+            simple_queue,
+        ));
+    }
+    let session = Session {
+        name: hydrus_store::sessions::LAST_SESSION.into(),
+        pages,
+    };
+    store
+        .write(move |ctx| hydrus_store::sessions::save(ctx.conn(), &session, 0))
+        .unwrap();
+    Pages::open(store.clone()).unwrap()
+}
+
+/// One recorded question is on screen as recorded: its text, title, buttons
+/// and (for the pages' dialog) the delay before "yes" can be pressed.
+/// Returns whether it is the pages' dialog.
+fn check_question(ui: &MainWindow, asked: &serde_json::Value, name: &str) -> bool {
+    let text = asked["text"].as_str().unwrap();
+    if asked["kind"] == "yes_no_no" {
+        let dialog = hydrus_gui::reasons_dialog::dialog()
+            .unwrap_or_else(|| panic!("{name}: the pages' dialog is asked"));
+        assert!(
+            ui.get_question().is_empty(),
+            "{name}: not also the plain one"
+        );
+        assert_eq!(dialog.get_message(), text, "{name}");
+        assert_eq!(
+            dialog.get_window_title(),
+            asked["title"].as_str().unwrap(),
+            "{name}"
+        );
+        let mut buttons = vec![asked["yes_label"].as_str().unwrap().to_owned()];
+        buttons.extend(
+            asked["no_labels"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|l| l.as_str().unwrap().to_owned()),
+        );
+        let shown: Vec<String> = dialog.get_choices().iter().map(|c| c.to_string()).collect();
+        assert_eq!(shown, buttons, "{name}: buttons");
+        let enabled: Vec<bool> = dialog.get_choices_enabled().iter().collect();
+        assert_eq!(
+            enabled[0],
+            !asked["disable_yes_initially"].as_bool().unwrap(),
+            "{name}: yes starts disabled"
+        );
+        true
+    } else {
+        assert_eq!(ui.get_question(), text, "{name}");
+        assert_eq!(
+            ui.get_question_title(),
+            asked["title"].as_str().unwrap(),
+            "{name}: title"
+        );
+        let win = ui.window();
+        widgets::position(win, asked["yes_label"].as_str().unwrap(), 0);
+        widgets::position(win, asked["no_label"].as_str().unwrap(), 0);
+        false
+    }
+}
+
+// leaf: audit-options-menu-menu-file-exit
+// leaf: audit-options-menu-menu-file-exit-force-maintenance
+// leaf: audit-options-menu-menu-file-restart
 #[test]
 fn exit_restart_and_force_maintenance_replay_the_references_questions_and_outcomes() {
     let _turn = RESTART_FLAG
@@ -700,94 +849,157 @@ fn exit_restart_and_force_maintenance_replay_the_references_questions_and_outcom
     }
     let mut restarts = 0;
     let mut saw_restart = false;
+    let (mut saw_auto_yes, mut saw_low_space, mut saw_importers) = (false, false, false);
     for run in recorded["exits"].as_array().unwrap() {
-        let name = run["name"].as_str().unwrap();
-        ui.show().unwrap();
-        let _bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
-        hydrus_gui::client_exit::RESTART.store(false, Ordering::SeqCst);
-        // (the reference's options: leave on shutdown or never; work due or
-        // done a moment ago)
-        let recently = hydrus_core::time::TimestampMs::now().secs() - 10;
-        let due = run["work_due"].as_bool().unwrap();
-        let before = if due { 0 } else { recently };
-        exit_settings(
-            &store,
-            run["confirm"].as_bool().unwrap(),
-            u8::from(run["idle_shutdown"] == 1),
-            before,
-        );
-        file_menu(&ui, &[run["entry"].as_str().unwrap()]);
         let asked = run["asked"].as_array().unwrap();
-        if let Some(question) = asked.first() {
-            assert_eq!(
-                ui.get_question(),
-                question["text"].as_str().unwrap(),
-                "{name}"
-            );
-            ui.invoke_answer(run["answer"].as_bool().unwrap());
-        } else {
-            assert!(ui.get_question().is_empty(), "{name}: nothing is asked");
-        }
-        if let Some(exit) = run["exited"].as_array().unwrap().first() {
-            assert!(!ui.window().is_visible(), "{name}: the client exits");
-            assert_eq!(
-                hydrus_gui::client_exit::RESTART.load(Ordering::SeqCst),
-                exit["restart"].as_bool().unwrap(),
-                "{name}"
-            );
-            let ran = last_done(&store) > before;
-            assert_eq!(
-                ran,
-                exit["idle_work"].as_bool().unwrap(),
-                "{name}: shutdown work"
-            );
-            seen_work = (seen_work.0 || ran, seen_work.1 || !ran);
-        } else {
-            assert!(ui.window().is_visible(), "{name}: the client stays");
-            assert!(
-                !hydrus_gui::client_exit::RESTART.load(Ordering::SeqCst),
-                "{name}"
-            );
-            assert_eq!(last_done(&store), before, "{name}");
-        }
-        // once out, the process starts again (with its arguments) just when
-        // the reference restarted
-        restarts += 1;
-        let started = scratch.path().join(format!("started-{restarts}"));
-        let relaunched = hydrus_gui::client_exit::relaunch_if_requested(
-            &program,
-            [started.clone().into_os_string(), "--db-dir=x".into()],
-        )
-        .unwrap();
-        let restarted = run["exited"]
-            .as_array()
-            .unwrap()
-            .first()
-            .is_some_and(|exit| exit["restart"].as_bool().unwrap());
-        assert_eq!(relaunched, restarted, "{name}");
-        if relaunched {
-            let start = std::time::Instant::now();
-            while !started.exists() {
-                assert!(
-                    start.elapsed() < Duration::from_secs(10),
-                    "{name}: never started"
-                );
-                std::thread::sleep(Duration::from_millis(10));
+        let accepted_at_last = run["answer"].as_bool().unwrap()
+            && asked
+                .last()
+                .is_some_and(|q| q["auto_yes_time"].as_u64().is_some());
+        // (a question that is accepted is answered once by its button and
+        // once by waiting out its auto-yes)
+        for auto in [false, true] {
+            if auto && !accepted_at_last {
+                continue;
             }
-            std::thread::sleep(Duration::from_millis(100));
-            assert_eq!(
-                std::fs::read_to_string(&started).unwrap().trim(),
-                "--db-dir=x"
+            let name = format!(
+                "{}{}",
+                run["name"].as_str().unwrap(),
+                if auto { " (auto-yes)" } else { "" }
             );
-            saw_restart = true;
-        } else {
-            std::thread::sleep(Duration::from_millis(50));
-            assert!(!started.exists(), "{name}");
+            let name = name.as_str();
+            ui.show().unwrap();
+            let kinds: Vec<String> = run["pages"]
+                .as_array()
+                .map(|p| p.iter().map(|k| k.as_str().unwrap().to_owned()).collect())
+                .unwrap_or_default();
+            let _bound = bind(&ui, exit_session(&store, &kinds));
+            widgets::lay_out(ui.window(), 1100.0, 700.0);
+            hydrus_gui::client_exit::RESTART.store(false, Ordering::SeqCst);
+            // (the room on the drive: as recorded, else plenty)
+            let space = run["space"].as_array().map_or((1, 1 << 40), |s| {
+                (s[0].as_u64().unwrap(), s[1].as_u64().unwrap())
+            });
+            hydrus_gui::client_exit::set_space(Some(Rc::new(move || space)));
+            // (the reference's options: leave on shutdown or never; work due or
+            // done a moment ago)
+            let recently = hydrus_core::time::TimestampMs::now().secs() - 10;
+            let due = run["work_due"].as_bool().unwrap();
+            let before = if due { 0 } else { recently };
+            exit_settings(
+                &store,
+                run["confirm"].as_bool().unwrap(),
+                u8::from(run["idle_shutdown"] == 1),
+                before,
+            );
+            file_menu(&ui, &[run["entry"].as_str().unwrap()]);
+            for (n, question) in asked.iter().enumerate() {
+                let last = n + 1 == asked.len();
+                let pages_dialog = check_question(&ui, question, name);
+                saw_low_space |= question["yes_label"] == "try exiting now";
+                saw_importers |= pages_dialog
+                    && question["text"]
+                        .as_str()
+                        .unwrap()
+                        .contains("Importers will save and continue their work on the next start.");
+                let answer = run["answer"].as_bool().unwrap();
+                if auto && last {
+                    // nothing is answered by itself before the time
+                    let wait = Duration::from_secs(question["auto_yes_time"].as_u64().unwrap());
+                    headless::advance_time(wait.checked_sub(Duration::from_secs(2)).unwrap());
+                    assert!(
+                        pages_dialog || !ui.get_question().is_empty(),
+                        "{name}: still asked just before the time"
+                    );
+                    assert!(
+                        !pages_dialog || hydrus_gui::reasons_dialog::dialog().is_some(),
+                        "{name}: still asked just before the time"
+                    );
+                    headless::advance_time(Duration::from_secs(3));
+                    saw_auto_yes = true;
+                } else if pages_dialog {
+                    let dialog = hydrus_gui::reasons_dialog::dialog().unwrap();
+                    // "yes" waits a moment before it can be pressed
+                    headless::advance_time(Duration::from_secs(2));
+                    assert!(dialog.get_choices_enabled().iter().all(|e| e), "{name}");
+                    dialog.invoke_chosen(i32::from(!answer));
+                } else {
+                    ui.invoke_answer(answer);
+                }
+            }
+            if asked.is_empty() {
+                assert!(ui.get_question().is_empty(), "{name}: nothing is asked");
+                assert!(
+                    hydrus_gui::reasons_dialog::dialog().is_none_or(|d| !d.window().is_visible()),
+                    "{name}: nothing is asked"
+                );
+            }
+            if let Some(exit) = run["exited"].as_array().unwrap().first() {
+                assert!(!ui.window().is_visible(), "{name}: the client exits");
+                assert_eq!(
+                    hydrus_gui::client_exit::RESTART.load(Ordering::SeqCst),
+                    exit["restart"].as_bool().unwrap(),
+                    "{name}"
+                );
+                let ran = last_done(&store) > before;
+                assert_eq!(
+                    ran,
+                    exit["idle_work"].as_bool().unwrap(),
+                    "{name}: shutdown work"
+                );
+                seen_work = (seen_work.0 || ran, seen_work.1 || !ran);
+            } else {
+                assert!(ui.window().is_visible(), "{name}: the client stays");
+                assert!(
+                    !hydrus_gui::client_exit::RESTART.load(Ordering::SeqCst),
+                    "{name}"
+                );
+                assert_eq!(last_done(&store), before, "{name}");
+            }
+            // once out, the process starts again (with its arguments) just when
+            // the reference restarted
+            restarts += 1;
+            let started = scratch.path().join(format!("started-{restarts}"));
+            let relaunched = hydrus_gui::client_exit::relaunch_if_requested(
+                &program,
+                [started.clone().into_os_string(), "--db-dir=x".into()],
+            )
+            .unwrap();
+            let restarted = run["exited"]
+                .as_array()
+                .unwrap()
+                .first()
+                .is_some_and(|exit| exit["restart"].as_bool().unwrap());
+            assert_eq!(relaunched, restarted, "{name}");
+            if relaunched {
+                let start = std::time::Instant::now();
+                while !started.exists() {
+                    assert!(
+                        start.elapsed() < Duration::from_secs(10),
+                        "{name}: never started"
+                    );
+                    std::thread::sleep(Duration::from_millis(10));
+                }
+                std::thread::sleep(Duration::from_millis(100));
+                assert_eq!(
+                    std::fs::read_to_string(&started).unwrap().trim(),
+                    "--db-dir=x"
+                );
+                saw_restart = true;
+            } else {
+                std::thread::sleep(Duration::from_millis(50));
+                assert!(!started.exists(), "{name}");
+            }
+            // (the next run starts a plain exit again)
+            hydrus_gui::client_exit::RESTART.store(false, Ordering::SeqCst);
+            if ui.window().is_visible() {
+                ui.hide().unwrap();
+            }
         }
-        // (the next run starts a plain exit again)
-        hydrus_gui::client_exit::RESTART.store(false, Ordering::SeqCst);
     }
+    hydrus_gui::client_exit::set_space(None);
     assert!(saw_restart);
+    assert!(saw_auto_yes && saw_low_space && saw_importers);
     assert_eq!(
         seen_work,
         (true, true),

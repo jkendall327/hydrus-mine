@@ -1827,6 +1827,30 @@ impl Pages {
             .collect()
     }
 
+    /// The pages that object to the client exiting (`GetAbleToCloseData(
+    /// for_session_close = True)`), in the order the reference lists them.
+    pub fn exit_objections(&mut self) -> Vec<Objection> {
+        fn walk(pages: &[Page], out: &mut Vec<(PageKey, String)>) {
+            for page in pages {
+                match &page.content {
+                    PageContent::Pages(children) => walk(children, out),
+                    PageContent::Downloader { .. } => out.push((page.key, page.name.clone())),
+                    _ => {}
+                }
+            }
+        }
+        let mut downloaders = Vec::new();
+        walk(&self.session.pages, &mut downloaders);
+        let objections = downloaders
+            .into_iter()
+            .filter_map(|(key, name)| {
+                let veto = self.page(&key)?.borrow().close_veto(false)?;
+                Some((veto, name, key))
+            })
+            .collect();
+        Self::listed(objections)
+    }
+
     /// Save the open pages, as they are now, as the session `name`
     /// (replacing one of that name): copies, with their files, so the
     /// saved session stays as it is while the pages change.

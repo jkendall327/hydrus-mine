@@ -2449,6 +2449,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let asked = pending.borrow_mut().take();
             if let Some(window) = weak.upgrade() {
                 window.set_question(SharedString::new());
+                window.set_question_title(SharedString::new());
+                window.set_question_yes_label("yes".into());
+                window.set_question_no_label("no".into());
             }
             if let Some((asked, removed)) = asked.filter(|_| yes) {
                 if let Asked::LockSearch(_) = asked {
@@ -3514,6 +3517,21 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     }));
+    let exit_pages = client_exit::ExitPages {
+        objections: Rc::new({
+            let pages = pages.clone();
+            move || pages.borrow_mut().exit_objections()
+        }),
+        show: Rc::new({
+            let change_pages = change_pages.clone();
+            move |key| {
+                change_pages(&|pages| {
+                    pages.show(&key);
+                    Ok(())
+                });
+            }
+        }),
+    };
     client_exit::bind(
         window,
         page().borrow().store().clone(),
@@ -3587,6 +3605,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 retire_popups();
             }
         }),
+        Some(exit_pages),
     );
     // a URL downloader page's importer: pausing, and URLs typed or pasted
     window.on_pause_play_files({

@@ -84,6 +84,37 @@ def record( session ):
     
     ClientGUIDialogsQuick.GetYesNo = fake_yes_no
     
+    def fake_yes_no_no( win, message, title = 'Are you sure?', yes_label = 'yes', no_tuples = None, auto_yes_time = None, disable_yes_initially = False ):
+        
+        asked.append( { 'text' : message, 'title' : title, 'yes_label' : yes_label, 'no_labels' : [ label for ( label, data ) in no_tuples ], 'auto_yes_time' : auto_yes_time, 'auto_no_time' : None, 'disable_yes_initially' : disable_yes_initially, 'kind' : 'yes_no_no' } )
+        
+        if answer[ 'yes' ]:
+            
+            return ( QW.QDialog.DialogCode.Accepted, None )
+            
+        
+        return ( QW.QDialog.DialogCode.Rejected, 'no' )
+        
+    
+    ClientGUIDialogsQuick.GetYesNoNo = fake_yes_no_no
+    
+    # the free space the exit looks at (None: the real one, which is plenty)
+    free_space = { 'wanted' : None }
+    
+    real_space = controller.db.GetSafeTransactionDiskSpaceAndCurrentFreeSpace
+    
+    def fake_space():
+        
+        if free_space[ 'wanted' ] is None:
+            
+            return real_space()
+            
+        
+        return free_space[ 'wanted' ]
+        
+    
+    controller.db.GetSafeTransactionDiskSpaceAndCurrentFreeSpace = fake_space
+    
     real_exit = controller.Exit
     
     controller.Exit = lambda: exits.append( { 'restart' : bool( HG.restart ), 'idle_work' : bool( HG.do_idle_shutdown_work ) } )
@@ -112,7 +143,7 @@ def record( session ):
     # leaving
     result[ 'exits' ] = []
     
-    def scenario( name, entry, confirm, yes, idle_shutdown, work_due ):
+    def scenario( name, entry, confirm, yes, idle_shutdown, work_due, space = None, pages = None ):
         
         del asked[ : ]
         del exits[ : ]
@@ -140,9 +171,62 @@ def record( session ):
             time.sleep( 1 )
             
         
+        free_space[ 'wanted' ] = space
+        
+        notebook = gui._notebook
+        
+        if pages is not None:
+            
+            def setup():
+                
+                from hydrus.client.importing import ClientImportFileSeeds
+                
+                while notebook.count() > 0:
+                    
+                    notebook.widget( 0 ).deleteLater()
+                    notebook.removeTab( 0 )
+                    
+                
+                location_context = controller.new_options.GetDefaultLocalLocationContext()
+                
+                notebook.NewPageQuery( location_context, page_name = 'a' )
+                
+                if 'urls' in pages:
+                    
+                    urls_page = notebook.NewPageImportURLs()
+                    
+                    urls_import = urls_page.GetSidebar()._urls_import
+                    
+                    # (the network is paused, so nothing is fetched, and the
+                    # importer still counts as working)
+                    if 'paused' in pages:
+                        
+                        urls_import.PausePlay()
+                        
+                    
+                    urls_import.PendURLs( [ f'https://site.example/post/{n}' for n in range( 1, 5 ) ] )
+                    
+                
+                if 'simple' in pages:
+                    
+                    simple_page = notebook.NewPageImportSimpleDownloader()
+                    
+                    simple_import = simple_page.GetSidebar()._simple_downloader_import
+                    
+                    simple_import._file_seed_cache.AddFileSeeds( [ ClientImportFileSeeds.FileSeed( ClientImportFileSeeds.FILE_SEED_TYPE_URL, f'https://site.example/file/{n}.jpg' ) for n in range( 1, 3 ) ] )
+                    
+                
+                notebook.setCurrentIndex( 0 )
+                
+            
+            controller.CallBlockingToQt( gui, setup )
+            
+            time.sleep( 1 )
+            
+        
         trigger( [ 'file', entry ] )
         
-        result[ 'exits' ].append( { 'name' : name, 'entry' : entry, 'confirm' : confirm, 'answer' : yes, 'idle_shutdown' : idle_shutdown, 'work_due' : work_due, 'asked' : list( asked ), 'exited' : list( exits ) } )
+        result[ 'exits' ].append( { 'name' : name, 'entry' : entry, 'confirm' : confirm, 'answer' : yes, 'idle_shutdown' : idle_shutdown, 'work_due' : work_due, 'space' : space, 'pages' : pages, 'asked' : list( asked ), 'exited' : list( exits ) } )
         
     
     NEVER = CC.IDLE_NOT_ON_SHUTDOWN
@@ -158,6 +242,22 @@ def record( session ):
     scenario( 'force confirmed', 'exit/force maintenance', True, True, NEVER, False )
     scenario( 'exit with work due', 'exit', False, False, ALWAYS, True )
     scenario( 'exit with work not due', 'exit', False, False, ALWAYS, False )
+    
+    # little free space (wanted, free), then pages that hold importers
+    LOW = ( 5 * 1048576, 1048576 )
+    
+    scenario( 'low space backed out', 'exit', False, False, NEVER, False, space = LOW )
+    scenario( 'low space tried', 'exit', False, True, NEVER, False, space = LOW )
+    scenario( 'low space then confirmed', 'exit', True, True, NEVER, False, space = LOW )
+    scenario( 'low space restart backed out', 'restart', True, False, NEVER, False, space = LOW )
+    scenario( 'low space enough', 'exit', False, False, NEVER, False, space = ( 5 * 1048576, 5 * 1048576 ) )
+    scenario( 'urls declined', 'exit', False, False, NEVER, False, pages = [ 'urls' ] )
+    scenario( 'urls accepted', 'exit', False, True, NEVER, False, pages = [ 'urls' ] )
+    scenario( 'urls restart accepted', 'restart', True, True, NEVER, False, pages = [ 'urls' ] )
+    scenario( 'urls and simple accepted', 'exit', True, True, NEVER, False, pages = [ 'urls', 'simple' ] )
+    scenario( 'paused urls', 'exit', False, True, NEVER, False, pages = [ 'urls', 'paused' ] )
+    scenario( 'simple declined', 'exit/force maintenance', False, False, NEVER, False, pages = [ 'simple' ] )
+    scenario( 'low space and urls', 'exit', True, True, NEVER, False, space = LOW, pages = [ 'urls' ] )
     
     controller.Exit = real_exit
     

@@ -26,9 +26,45 @@ thread_local! {
         const { std::cell::RefCell::new(None) };
     /// How the next close exits (File > restart, exit/force maintenance).
     static MODE: Cell<ExitMode> = const { Cell::new(ExitMode::Exit) };
+    /// A test's room on disk, `(wanted, free)`, in place of the real.
+    static SPACE: std::cell::RefCell<Option<SpaceFn>> =
+        const { std::cell::RefCell::new(None) };
     /// The "Maintenance is due" question, kept while shown.
     static MAINTENANCE: std::cell::RefCell<Option<Rc<MaintenanceQuestion>>> =
         const { std::cell::RefCell::new(None) };
+}
+
+/// The room the exit sees, `(wanted, free)`.
+pub type SpaceFn = Rc<dyn Fn() -> (u64, u64)>;
+
+/// What the exit asks the pages (`GetAbleToCloseData`).
+#[derive(Clone)]
+pub(crate) struct ExitPages {
+    pub objections: Rc<dyn Fn() -> Vec<crate::pages::Objection>>,
+    pub show: Rc<dyn Fn(hydrus_core::pages::PageKey)>,
+}
+
+/// For tests: the disk room the exit sees, `(wanted, free)`, instead of the
+/// database drive's own.
+pub fn set_space(space: Option<SpaceFn>) {
+    SPACE.with(|s| *s.borrow_mut() = space);
+}
+
+/// The room the exit needs to save its data and the room there is
+/// (`GetSafeTransactionDiskSpaceAndCurrentFreeSpace`).
+fn disk_space(store: &Store) -> Option<(u64, u64)> {
+    if let Some(space) = SPACE.with(|s| s.borrow().clone()) {
+        return Some(space());
+    }
+    let total: u64 = std::fs::read_dir(store.dir())
+        .ok()?
+        .filter_map(Result::ok)
+        .filter(|entry| entry.path().extension().is_some_and(|e| e == "db"))
+        .filter_map(|entry| entry.metadata().ok())
+        .map(|meta| meta.len())
+        .sum();
+    let free = hydrus_store::vacuum::free_space(&store.dir().join("db"))?;
+    Some((shutdown_work::space_wanted(total), free))
 }
 
 /// Whether the client should start again once it has exited.
@@ -224,6 +260,7 @@ pub(crate) fn bind(
     active: Rc<Cell<bool>>,
     ask: Ask,
     finished: Rc<dyn Fn()>,
+    pages: Option<ExitPages>,
 ) {
     bind_with_timeout(
         window,
@@ -232,10 +269,12 @@ pub(crate) fn bind(
         active,
         ask,
         finished,
-        Duration::from_secs(15),
+        pages,
+        Duration::from_secs(shutdown_work::AUTO_YES_SECONDS),
     );
 }
 
+#[allow(clippy::too_many_arguments)]
 fn bind_with_timeout(
     window: &MainWindow,
     store: Arc<Store>,
@@ -243,6 +282,7 @@ fn bind_with_timeout(
     active: Rc<Cell<bool>>,
     ask: Ask,
     finished: Rc<dyn Fn()>,
+    pages: Option<ExitPages>,
     timeout: Duration,
 ) {
     // Rebinding permanently retires the former maintenance child and its timer.
@@ -316,24 +356,76 @@ fn bind_with_timeout(
             // restart leaves the next close a plain exit)
             let mode = MODE.with(|m| m.replace(ExitMode::Exit));
             let question = mode.question();
-            if confirm {
+            // (the confirmation: when asked for, or when pages object)
+            let confirmation: Rc<dyn Fn()> = Rc::new({
                 let close = close.clone();
-                ask(question.into(), Rc::new(move || close(mode)));
-                timer.start(slint::TimerMode::SingleShot, timeout, {
-                    let weak = weak.clone();
-                    let active = active.clone();
-                    move || {
-                        if active.get()
-                            && let Some(window) = weak.upgrade()
-                            && window.window().is_visible()
-                            && window.get_question() == question
-                        {
-                            window.invoke_answer(true);
+                let ask = ask.clone();
+                let timer = timer.clone();
+                let weak = weak.clone();
+                let active = active.clone();
+                let pages = pages.clone();
+                move || {
+                    let objections = pages.as_ref().map(|p| (p.objections)()).unwrap_or_default();
+                    if let (Some(pages), false) = (&pages, objections.is_empty()) {
+                        let vetoes: Vec<(String, String)> = objections
+                            .iter()
+                            .map(|o| (o.reason.clone(), o.page.clone()))
+                            .collect();
+                        let statement =
+                            hydrus_gui_model::session_saving::reasons_statement(&vetoes)
+                                .unwrap_or_default();
+                        let text = shutdown_work::objection_question(mode, &statement);
+                        let yes: Rc<dyn Fn()> = Rc::new({
+                            let close = close.clone();
+                            move || close(mode)
+                        });
+                        if let Err(error) = crate::reasons_dialog::open_with_auto_yes(
+                            &text,
+                            objections,
+                            crate::reasons_dialog::yes_delay(),
+                            Some(timeout),
+                            yes,
+                            pages.show.clone(),
+                        ) {
+                            eprintln!("could not ask about exiting: {error}");
                         }
+                    } else if confirm {
+                        let close = close.clone();
+                        ask(question.into(), Rc::new(move || close(mode)));
+                        timer.start(slint::TimerMode::SingleShot, timeout, {
+                            let weak = weak.clone();
+                            let active = active.clone();
+                            move || {
+                                if active.get()
+                                    && let Some(window) = weak.upgrade()
+                                    && window.window().is_visible()
+                                    && window.get_question() == question
+                                {
+                                    window.invoke_answer(true);
+                                }
+                            }
+                        });
+                        if let Some(window) = weak.upgrade() {
+                            window.set_question_title(shutdown_work::QUESTION_TITLE.into());
+                        }
+                    } else {
+                        close(mode);
                     }
-                });
-            } else {
-                close(mode);
+                }
+            });
+            match disk_space(&store) {
+                Some((wanted, free)) if free < wanted => {
+                    ask(
+                        shutdown_work::low_space_question(free, wanted),
+                        confirmation,
+                    );
+                    if let Some(window) = weak.upgrade() {
+                        window.set_question_title(shutdown_work::QUESTION_TITLE.into());
+                        window.set_question_yes_label(shutdown_work::LOW_SPACE_YES.into());
+                        window.set_question_no_label(shutdown_work::LOW_SPACE_NO.into());
+                    }
+                }
+                _ => confirmation(),
             }
             slint::CloseRequestResponse::KeepWindowShown
         }
@@ -401,6 +493,7 @@ mod tests {
                 let finished = old_finished.clone();
                 move || finished.set(true)
             }),
+            None,
             Duration::from_millis(1),
         );
         window
@@ -420,6 +513,7 @@ mod tests {
                 let finished = current_finished.clone();
                 move || finished.set(true)
             }),
+            None,
             Duration::from_secs(3600),
         );
         window
