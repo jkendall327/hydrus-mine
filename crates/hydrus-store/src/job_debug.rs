@@ -64,7 +64,9 @@ fn note(sql: &str) {
 /// `query planner mode`'s `EXPLAIN QUERY PLAN` of each query the job ran.
 fn plan_pending(conn: &Connection) {
     let pending = PENDING.with(|p| std::mem::take(&mut *p.borrow_mut()));
-    let Some(dir) = database_dir(conn) else { return };
+    let Some(dir) = database_dir(conn) else {
+        return;
+    };
     for query in pending {
         if !profiling::needs_plan(&dir, &query) {
             continue;

@@ -350,7 +350,11 @@ pub fn needs_plan(dir: &Path, query: &str) -> bool {
         .lock()
         .unwrap_or_else(PoisonError::into_inner)
         .as_ref()
-        .is_some_and(|p| p.by_dir.get(dir).is_none_or(|(_, planned)| !planned.contains(query)))
+        .is_some_and(|p| {
+            p.by_dir
+                .get(dir)
+                .is_none_or(|(_, planned)| !planned.contains(query))
+        })
 }
 
 /// A Python `repr` of a string, as the plan rows print.
