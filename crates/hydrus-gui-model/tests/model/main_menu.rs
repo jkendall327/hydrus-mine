@@ -75,13 +75,23 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                     "debug modes",
                     &["force idle mode", "---", "use faulthandler to log crashes"],
                 ),
-                ("profiling", &["what is this?"]),
+                (
+                    "profiling",
+                    &[
+                        "what is this?",
+                        "profile mode (client api)",
+                        "profile mode (db)",
+                        "profile mode (ui)",
+                        "query planner mode",
+                    ],
+                ),
                 (
                     "report modes",
                     &[
                         "blurhash mode",
                         "cache report mode",
                         "daemon report mode",
+                        "db report mode",
                         "file report mode",
                         "file import report mode",
                         "gui report mode",
@@ -117,6 +127,7 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                         "force database commit",
                         "scan file storage folders",
                         "show env",
+                        "subscription manager snapshot",
                         "---",
                         "simulate program exit signal",
                     ],

@@ -1391,3 +1391,43 @@ async fn the_clients_nudge_subscriptions_awake_is_consumed_and_wakes_the_runner(
         .await
         .unwrap();
 }
+
+// leaf: audit-options-help-debug-action-subscription-manager-snapshot
+#[tokio::test(flavor = "multi_thread")]
+async fn the_snapshot_names_the_subscriptions_that_are_running_as_the_reference_does() {
+    use hydrus_download::subscriptions::SubscriptionRunner;
+    let s = setup().await;
+    let recording = hydrus_testkit::fixture_json("subscription_manager_snapshot.json");
+    let recorded = recording["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["when"] == "with one running")
+        .unwrap()["messages"][0]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let ids = runner_subscriptions(&s);
+    let held = Arc::new(tokio::sync::Notify::new());
+    *s.site.hold.lock() = Some(Arc::clone(&held));
+    runner_limit(&s, 1);
+    let runner = SubscriptionRunner::new(Arc::clone(&s.downloader));
+    runner.start();
+    wait_runner(|| runner.status().active.len() == 1).await;
+    assert_eq!(ids.len(), 3);
+    let text = runner.snapshot_text(1_700_000_000).unwrap();
+    let parts: Vec<&str> = text.split("\n\n").collect();
+    let recorded_parts: Vec<&str> = recorded.split("\n\n").collect();
+    assert_eq!(parts.len(), 4);
+    // the running part is the recorded one, with this subscription's name
+    assert_eq!(parts[1], "1 running: sub 1");
+    assert_eq!(parts[1].replace("sub 1", "artist one"), recorded_parts[1]);
+    assert_eq!(parts[0], "3 subs: sub 1, sub 10, sub 2");
+    assert!(parts[3].starts_with("3 next times: "), "{text}");
+    *s.site.hold.lock() = None;
+    held.notify_waiters();
+    runner.shutdown();
+    tokio::time::timeout(std::time::Duration::from_secs(15), runner.wait_stopped())
+        .await
+        .unwrap();
+}

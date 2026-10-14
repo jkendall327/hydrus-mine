@@ -87,8 +87,13 @@ page or file, as a downloader page shows one), a button to show its files
 in a new page
 (named for them), its error's traceback, and buttons to pause or cancel
 it while it runs; a right click dismisses one that is done, and the line
-under them counts them, with "dismiss all" (those done) and an arrow to
-hide or show them. They update four times a second.
+under them counts them, with "dismiss all" (those done) and an arrow (▼
+while the cards show, ▲ while they are hidden, as the reference's) to hide or
+show them. They update four times a second. What a card shows for a job (its
+title, two texts, two gauges that are filled or pulsing, what a pause hides,
+the start of a traceback, a text past 1,024 characters cut as the reference
+cuts it) is checked against a recording of the reference's card for the same
+jobs (`oracle/fixtures/popup_content.json`).
 A long job can be published as modal (`src/popup_modal.rs`,
 `hydrus-gui-model/src/popup_modal.rs`; Help > debug > "make a modal popup in
 five seconds"), as the reference's `AddModalMessage`: it is kept out of the
@@ -837,13 +842,17 @@ does: #, path, filetype ("png", "PROBLEM: filetype unsupported", "file is
 empty", "file is missing", "sidecar") and size, the problem rows in the
 reference's error colour; under it, "6 files parsed - 4 good | 1 bad: 1
 had unsupported file types - and looks like 1 txt/json/xml sidecars." and
-a gauge, with pause/play and stop while it parses. "remove files" takes
+a gauge, with pause/play and stop while it parses (paused with a path still to
+parse, then resumed; stopped with paths still to parse, which are dropped while
+the parsed rows stay: `oracle/fixtures/local_import_pause.json`). "remove files" takes
 the selected rows out (asking first), and "delete original files after
 successful import" says, in the reference's red, that they will be
 deleted. "import now" opens an "import" page of the good files, in the
-list's order. Paths go in through the box over the list (enter adds one,
-a file or folder, as typed or pasted with a file manager's quotes) in
-place of the reference's "add files"/"add folder" pickers.
+list's order, which deletes each original once it is in the database (new or
+already there) if the box was ticked (`oracle/fixtures/local_import_queue.json`).
+Paths go in through the box over the list (enter adds one, a file or folder,
+as typed or pasted with a file manager's quotes) in place of the reference's
+"add files"/"add folder" pickers.
 
 "add tags/urls with the import >>" opens the "filename tagging" dialog
 (`src/filename_tagging_window.rs`, `hydrus-gui-model/src/filename_tagging.rs`),
@@ -2203,7 +2212,9 @@ recorded by `oracle/record_bandwidth_history.py`. Detached rule editors add, rep
 and delete data/request limits with rolling-second or calendar-month periods.
 Apply preserves unrelated context edits and pacing settings; Cancel leaves them
 untouched. Default/global rules can be edited by kind or reset with the reference
-confirmation, and specific domains can inherit their defaults again.
+confirmation (global and every default context the reference names are reset;
+specific domains and the downloader default stay), and specific domains can
+inherit their defaults again.
 
 Current jobs show every active engine request, including subscriptions, with
 URL, status, typed wait reason, speed and progress. Extended selection supports
@@ -2266,6 +2277,17 @@ popup lifecycle, closing settings independently, exact phases/speed and cancel/
 dismissal states are recorded in `oracle/fixtures/tag_migration_progress.json`.
 
 ## Downloader definition interchange
+
+The import window's "paste" takes a bitmap on the clipboard before its text
+(the pixels are a hydrus PNG, whether the image has an alpha channel or not),
+and files dropped on the window load as the reference's import loads its
+paths: a file that is a PNG by its bytes is read as one, any other as JSON, and
+a failure says what the reference says ("Sorry, there was a problem importing
+those paths! Error was: ..."). Everything loaded joins the one review that
+"import" then asks about. The subscriptions list likewise reads a clipboard
+bitmap first, and files dropped on it ask "Try to import the N dropped files to
+this list? I am expecting json or png files." before importing, PNGs first
+(`oracle/fixtures/exchange_bitmap_drop.json`).
 
 Network > downloaders > import/export downloaders exchanges URL classes,
 page parsers, registered login scripts and single/nested gallery URL generators with the reference
@@ -4993,6 +5015,27 @@ and reads the effect back; `tests/model/debug_flags.rs` and the
 `debug_*` tests of hydrus-import, hydrus-net, hydrus-download, hydrus-media
 and hydrus-store cover the reports their crates make.
 
+Help > debug > profiling also has the reference's profile modes (client api,
+db and ui; one on at a time, turning another on ends the one before) and
+"query planner mode". Turning a profile mode on says `Profile mode "db"
+on!`; turning it off says how many slow and fast jobs there were. A job
+slower than the mode's minimum (db 16 ms, client api 10 ms, a menu click
+16 ms) is written, led by the time, to a `client profile (db) - <start>.log`
+in the database directory; db mode times each read and write job, client
+api mode each request, ui mode each menu command. Query planner mode writes
+each new query and its `EXPLAIN QUERY PLAN` rows to `client query planner -
+<start>.log` and says how many it analysed when turned off. Report modes
+gains "db report mode" (each db job, by name, as it finishes), and data
+actions gains "subscription manager snapshot" (the subscriptions there are,
+those running, those that cannot run and when the others next want to).
+The daemon does the Client API and most database work, so the client passes
+every debug switch on to it through the store (the daemon follows within a
+second), the daemon's reports and the snapshot arrive as popups, and both
+processes write the same logs. `tests/gui/debug_profiling.rs` clicks each in
+the real menu and compares what the popups, the checks and the logs say with
+`oracle/fixtures/debug_profiling.json` and
+`oracle/fixtures/subscription_manager_snapshot.json`.
+
 ## Pages > weight report
 
 Pages > weight > "total session weight: N" now explains the number as the
@@ -5243,9 +5286,18 @@ has been laid out where its frame grows it from its own size, and keeps its
 size and place as the reference's do: a frame as it closes, a dialog when it
 is applied (never when cancelled) (`tests/gui/frame_geometry.rs`, replaying
 `frame_state.json` through each). Every other window opens by the ordinary
-dialogs' frame (`regular_dialog`: the main window's top-left, its own size). Proven by `tests/model/frame_placement.rs` (the formulae worked from the
-reference's source) and `options_gui_frames.rs` (editing the Options window's
-own frame through the frames editor).
+dialogs' frame (`regular_dialog`: the main window's top-left, its own size),
+except the choice dialogs with choices, which open by `quick_select_dialog`
+(buttons only) or `quick_yesno_dialog` (a "no" too) and keep their size when a
+choice is made, never when cancelled; a message with no choices takes neither.
+Editing a frame's remembered size, maximised, fullscreen, gravity or default
+position in the frame locations editor reaches each of those windows the next
+time it opens, for its size and its maximised and fullscreen state (headless
+windows have no readable place, so a place is proved only through the
+arithmetic of `windows::placement`; `tests/gui/frame_geometry.rs`, through the
+Options window). Proven by `tests/model/frame_placement.rs` (the formulae
+worked from the reference's source) and `options_gui_frames.rs` (editing the
+Options window's own frame through the frames editor).
 
 **Preview window.** The preview pane draws the file's ratings at the sizes
 from Options > ratings > preview window (rounded, as the reference's

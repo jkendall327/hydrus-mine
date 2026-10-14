@@ -52,6 +52,8 @@ pub mod downloader_display_window;
 pub mod downloader_interchange_window;
 pub mod downloader_update_times;
 mod drops;
+mod exchange_bitmap;
+pub use drops::deliver_dropped_files;
 pub mod duplicates_filtering_sidebar;
 mod duplicates_sidebar;
 mod edit_subscription_window;
@@ -6207,6 +6209,12 @@ pub fn set_clipboard_image_reader(reader: impl Fn() -> Option<ClipboardImage> + 
 pub(crate) fn clipboard_image() -> Option<ClipboardImage> {
     if let Some(reader) = CLIPBOARD_IMAGE_READER.with(|reader| reader.borrow().clone()) {
         return reader();
+    }
+    // (a test that substitutes the clipboard's text has no bitmap there)
+    if CLIPBOARD_READER.with(|reader| reader.borrow().is_some())
+        || PASTER.with(|p| p.borrow().is_some())
+    {
+        return None;
     }
     let image = arboard::Clipboard::new().ok()?.get_image().ok()?;
     Some(ClipboardImage {

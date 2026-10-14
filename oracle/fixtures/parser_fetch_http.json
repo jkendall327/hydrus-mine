@@ -1,0 +1,69 @@
+{
+ "page": [
+  {
+   "typed": " <base>/a b ",
+   "referral": "https://referral.example/from",
+   "text": "<p>fetched café</p>",
+   "context": {
+    "url": "<base>/a%20b",
+    "post_index": "0",
+    "token": "preserved"
+   },
+   "test_url_after": " <base>/a b ",
+   "request": {
+    "line": "GET /a%20b HTTP/1.1",
+    "referer": "https://referral.example/from",
+    "cookie": null
+   },
+   "error_menu": true
+  },
+  {
+   "typed": "<base>/error",
+   "referral": "",
+   "text": "fetch failed: 404: missing\n\nmissing",
+   "context": {
+    "url": "<base>/error",
+    "post_index": "0",
+    "token": "preserved"
+   },
+   "test_url_after": "<base>/error",
+   "request": {
+    "line": "GET /error HTTP/1.1",
+    "referer": null,
+    "cookie": "test-document=saved"
+   },
+   "error_menu": true
+  }
+ ],
+ "formula": [
+  {
+   "typed": " <base>/a b ",
+   "text": "<p>fetched café</p>",
+   "context": {
+    "url": "<base>/a b",
+    "post_index": "0",
+    "token": "preserved"
+   },
+   "request": {
+    "line": "GET /a%20b HTTP/1.1",
+    "referer": null,
+    "cookie": "test-document=saved"
+   }
+  },
+  {
+   "typed": "<base>/error",
+   "text": "fetch failed:\n\n404: missing",
+   "context": {
+    "url": "<base>/error",
+    "post_index": "0",
+    "token": "preserved"
+   },
+   "request": {
+    "line": "GET /error HTTP/1.1",
+    "referer": null,
+    "cookie": "test-document=saved"
+   }
+  }
+ ],
+ "loopback_ok": true
+}
