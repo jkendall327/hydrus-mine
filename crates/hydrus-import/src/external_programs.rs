@@ -79,7 +79,7 @@ impl FileImporter {
             let outcome = target
                 .as_ref()
                 .map_err(Clone::clone)
-                .and_then(|(path, id)| send_single_file(&manager, entry, hash, path, *id));
+                .and_then(|path| send_single_file(&manager, entry, hash, path));
             if let Err(error) = outcome {
                 tracing::error!(
                     "Failed to run \"{}\" on file with hash \"{hash}\"! All importers--subscriptions, import folders, and paged file import queues--have been paused. Once the issue is clear, restart the client and resume your imports under the file and network menus!\n{error}",
@@ -91,8 +91,8 @@ impl FileImporter {
         }
     }
 
-    /// Where the file is stored and its id.
-    fn external_program_target(&self, hash: &Sha256) -> Result<(std::path::PathBuf, i64), String> {
+    /// Where the file is stored.
+    fn external_program_target(&self, hash: &Sha256) -> Result<std::path::PathBuf, String> {
         let id = self
             .store
             .read(|conn| hydrus_store::master::hash_id(conn, hash))
@@ -115,7 +115,7 @@ impl FileImporter {
             .storage
             .file_path(hash, mime)
             .ok_or_else(|| "This file is not local--it cannot be opened!".to_owned())?;
-        Ok((path, i64::from(id.0)))
+        Ok(path)
     }
 }
 
@@ -125,7 +125,6 @@ fn send_single_file(
     entry: &ExternalProgramEntry,
     hash: &Sha256,
     path: &Path,
-    id: i64,
 ) -> Result<(), String> {
     let missing = || {
         format!(
@@ -146,11 +145,13 @@ fn send_single_file(
         ));
     }
     let path_text = path.to_string_lossy().into_owned();
+    // (the file id is a number, which the reference's string processing
+    // refuses with a TypeError, so a call using `%file_id%` fails there; here
+    // it has no input and fails the same way)
     let inputs: Inputs = [
         (Parameter::Path, vec![path_text.clone()]),
         (Parameter::Uri, vec![file_uri(path)]),
         (Parameter::Hash, vec![hash.to_hex()]),
-        (Parameter::FileId, vec![id.to_string()]),
     ]
     .into_iter()
     .collect();

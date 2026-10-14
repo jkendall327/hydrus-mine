@@ -334,8 +334,7 @@ fn programs_are_authored_in_the_import_options_and_run_by_imports_like_the_refer
     editor.invoke_program_action("delete".into());
     dialog().invoke_answered(true);
     assert_eq!(list(&editor).len(), 3);
-    // (only the OS default, which is not run on an import here, goes after
-    // all: put the broken one back)
+    // (rows 3 and 4 are both gone; put the broken one back for the apply)
     editor.invoke_program_action("add".into());
     choose(&entry_window(), "broken", 3);
     entry_window().invoke_accepted();

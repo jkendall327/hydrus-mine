@@ -436,6 +436,96 @@ async fn a_url_queue_downloads_posts_and_files() {
     assert_eq!(s.site.hits.lock()["post/1"], 1);
 }
 
+/// A file the client knows by its URL, not fetched again, still has its
+/// import options' programs run on it (`FileSeed.DoExternalProgramCalls`
+/// after the pre-import prediction says "already in").
+#[cfg(unix)]
+#[tokio::test(flavor = "multi_thread")]
+async fn a_file_already_in_by_url_has_the_programs_of_the_queue_run() {
+    use hydrus_core::external_calls::{
+        ActualCall, Callable, Manager, Parameter, Pipeline, Process, Rule,
+    };
+    use hydrus_core::import_options::{
+        ExternalProgramEntry, ExternalProgramsOptions, ImportOptionsSlice,
+    };
+    let s = setup().await;
+    s.runner.start_all().unwrap();
+    let log = s.store.dir().join("programs.log");
+    let manager = Manager {
+        calls: vec![Callable {
+            key: [7; 32],
+            name: "logger".into(),
+            pipeline: Pipeline::File,
+            call: ActualCall::Process(Process {
+                executable: "/bin/sh".into(),
+                arguments: vec![
+                    "-c".into(),
+                    format!("echo \"$1\" >> '{}'", log.display()),
+                    "sh".into(),
+                    "%path%".into(),
+                ],
+                rules: vec![Rule::new(Parameter::Path)],
+                ..Process::default()
+            }),
+        }],
+    };
+    s.store
+        .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &manager))
+        .unwrap();
+    let url = format!("{}/post/1", s.base);
+    let pend = async |queue: &hydrus_store::queues::Queue| {
+        s.runner
+            .pend_urls(queue.id, std::slice::from_ref(&url), &BTreeSet::new(), &[])
+            .unwrap();
+        wait_until_done(&s.store, queue.id).await;
+    };
+    let first = s.runner.url_queue_for(Some("first"), None, None).unwrap();
+    pend(&first).await;
+    assert!(!log.exists(), "the first queue has no programs");
+
+    let entry = |on_new, on_already_in| ExternalProgramsOptions {
+        entries: vec![ExternalProgramEntry {
+            key: "07".repeat(32),
+            name: "logger".into(),
+            on_new,
+            on_already_in,
+        }],
+    };
+    let slice = |programs| ImportOptionsSlice {
+        external_programs: Some(programs),
+        ..ImportOptionsSlice::default()
+    };
+    // (a program for new files only is not run on a known one)
+    let new_only = slice(entry(true, false));
+    let second = s
+        .runner
+        .url_queue_for(Some("new only"), None, Some(&new_only))
+        .unwrap();
+    pend(&second).await;
+    assert!(!log.exists());
+    let on_known = slice(entry(false, true));
+    let third = s
+        .runner
+        .url_queue_for(Some("known"), None, Some(&on_known))
+        .unwrap();
+    pend(&third).await;
+    let seeds = s
+        .store
+        .read(|conn| queues::file_seeds(conn, third.id))
+        .unwrap();
+    assert_eq!(seeds[0].status, SeedStatus::SuccessfulButRedundant);
+    assert!(seeds[0].note.starts_with("url recognised"));
+    let logged = std::fs::read_to_string(&log).unwrap();
+    assert_eq!(logged.lines().count(), 1, "{logged}");
+    assert!(
+        std::path::Path::new(logged.trim())
+            .extension()
+            .is_some_and(|e| e.eq_ignore_ascii_case("jpg")),
+        "{logged}"
+    );
+    assert_eq!(s.site.hits.lock()["post/1"], 1, "nothing was fetched again");
+}
+
 #[tokio::test(flavor = "multi_thread")]
 async fn a_gallery_url_in_a_url_queue_queues_its_posts() {
     let s = setup().await;

@@ -4546,19 +4546,30 @@ The import options editor's external programs page is the reference's
 of "call NAME on WHEN" entries with add, edit (each selected row in turn,
 stopping at a cancel) and delete (after "Remove N selected?"), the entry editor
 with the registered "send single file" calls by name and the four "when"
-choices, and its notices (no calls; a call that is not registered). Differences:
-the entry editor is a small window with its own apply and cancel. Imports run the programs for a new file or one
-already in the client, in the order added, with the file's path, URI and hash;
-a program that cannot be run, times out, returns non-zero, or is not
-registered, pauses subscriptions, import folders and file queues, as the
-reference does, and says why in the log (the reference also shows the message
-as a popup, and prints its whole environment). A file the client already has
-that a downloader does not fetch again runs them too. The reference passes
-the file id parameter as a number, which its own string processing refuses
-(`TypeError`), so a call using the file id fails there and pauses the importers;
-here the number is passed as text and the call runs. The reference runs them
-after the whole import of a file, tags and notes included; here as soon as the
-file is stored.
+choices, and its notices (no calls; a call that is not registered).
+
+Imports run the programs for a new file or one already in the client, in the
+order added, with the file's path, URI and hash; a program that cannot be run,
+times out, returns non-zero, is of the wrong kind or is not registered pauses
+subscriptions, import folders and file queues, as the reference does, and says
+why in the log. A call using the file id fails and pauses them too, as in the
+reference, whose string processing refuses that number (`TypeError`). A file
+the client already has that a downloader does not fetch again runs the
+programs too.
+
+Differences:
+
+- The entry editor is a small window with its own apply and cancel.
+- The reference shows a failure's message as a popup and prints its whole
+  environment; here it is in the log only.
+- The reference runs the programs after the whole import of a file, tags and
+  notes included, and only for file seeds. Here they run in the importer's
+  `import_file`, as soon as the file is stored, so every way into the importer
+  runs them (the Client API, drag and drop), not only file seeds.
+- The "wrong kind" and "only failing entry" cases are from the reference's
+  source, not recordings.
+- The registered calls' OS default launch (`xdg-open` and its kin) is not
+  tested: a test cannot open a program on the machine.
 
 ## Options > external programs
 

@@ -109,6 +109,12 @@ fn world() -> World {
                 ActualCall::Process(logger(&log, "alpha", &[(Parameter::Path, "%path%")])),
             ),
             callable(
+                5,
+                "gamma file id",
+                Pipeline::File,
+                ActualCall::Process(logger(&log, "gamma", &[(Parameter::FileId, "%file_id%")])),
+            ),
+            callable(
                 4,
                 "broken",
                 Pipeline::File,
@@ -275,7 +281,7 @@ fn imports_run_the_programs_the_reference_runs_on_new_and_already_in_files() {
 fn a_program_that_cannot_be_run_pauses_every_importer_and_stops_the_rest() {
     let w = world();
     // (as recorded: a program that is not there, then one that is registered no more)
-    let (_, hash) = import(
+    import(
         &w,
         50,
         vec![
@@ -288,10 +294,18 @@ fn a_program_that_cannot_be_run_pauses_every_importer_and_stops_the_rest() {
     assert!(calls(&w).is_empty(), "the later program is not run");
     assert_eq!(paused(&w), [true; 3]);
     assert!(run["paused"].as_array().unwrap().iter().all(|p| p == true));
-    let _ = hash;
+    // a program using the file id: the reference's string processing refuses
+    // the number, so it fails there (recorded as `file-id-parameter`)
+    let w = world();
+    import(&w, 54, vec![entry(5, "gamma file id", true, true)]);
+    assert!(calls(&w).is_empty());
+    assert_eq!(paused(&w), [true; 3]);
+    let run = recorded("file-id-parameter");
+    assert!(run["lines"].as_array().unwrap().is_empty());
+    assert!(run["paused"].as_array().unwrap().iter().all(|p| p == true));
     // a program the manager does not have
     let w = world();
-    let (_, _) = import(&w, 51, vec![entry(9, "gone", true, true)]);
+    import(&w, 51, vec![entry(9, "gone", true, true)]);
     assert_eq!(paused(&w), [true; 3]);
     assert!(
         recorded("program-missing")["paused"]
@@ -300,11 +314,13 @@ fn a_program_that_cannot_be_run_pauses_every_importer_and_stops_the_rest() {
             .iter()
             .all(|p| p == true)
     );
-    // a program of the wrong kind
+    // a program of the wrong kind (from the reference's `SendSingleFile`, not
+    // recorded)
     let w = world();
     import(&w, 52, vec![entry(1, "Zulu URL", true, true)]);
     assert_eq!(paused(&w), [true; 3]);
     // ... and a failing one that is the only one, with the file imported anyway
+    // (the file is in before its programs run, in the reference's source)
     let w = world();
     let (status, _) = import(&w, 53, vec![entry(4, "broken", true, true)]);
     assert_eq!(status, ImportStatus::SuccessfulAndNew);
