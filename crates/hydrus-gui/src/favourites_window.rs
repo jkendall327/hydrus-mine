@@ -845,9 +845,7 @@ fn open_edit(
             }
         }
     });
-    let highlight_moved = Rc::new(Cell::new(false));
     window.on_suggestion_moved({
-        let highlight_moved = highlight_moved.clone();
         let ac = autocomplete.clone();
         let weak = window.as_weak();
         let active = active.clone();
@@ -855,7 +853,6 @@ fn open_edit(
             if !active.get() {
                 return;
             }
-            highlight_moved.set(true);
             let mut ac = ac.borrow_mut();
             ac.move_highlight(isize::try_from(by).unwrap_or(0));
             if let Some(w) = weak.upgrade() {
@@ -868,7 +865,6 @@ fn open_edit(
         }
     });
     let choose_suggestion: Rc<dyn Fn(Option<usize>, bool)> = Rc::new({
-        let highlight_moved = highlight_moved.clone();
         let or_draft = or_draft.clone();
         let enter = enter.clone();
         let weak = window.as_weak();
@@ -889,16 +885,9 @@ fn open_edit(
             if ac.text() != window.get_typed().as_str() {
                 ac.set_text(window.get_typed().as_str());
             }
-            // Return on typed text enters the text as typed (a wildcard
-            // included), as the reference does, unless the user has moved the
-            // highlight onto a suggestion
-            let typed_wins = index.is_none()
-                && !highlight_moved.replace(false)
-                && !window.get_typed().trim().is_empty();
-            let resolved = index.or_else(|| ac.highlighted().filter(|_| !typed_wins));
-            let own_draft = resolved == Some(0)
-                && ac.tab() == hydrus_gui_model::write_autocomplete::Tab::Tags
-                && !typed_wins;
+            let resolved = index.or_else(|| ac.highlighted());
+            let own_draft =
+                resolved == Some(0) && ac.tab() == hydrus_gui_model::write_autocomplete::Tab::Tags;
             let suggestion = resolved.and_then(|i| ac.suggestions().get(i)).cloned();
             drop(ac);
             // (the first result is the OR being built, which enters itself)
@@ -975,8 +964,11 @@ fn open_edit(
                 }
                 return;
             }
-            let typed =
-                suggestion.map_or_else(|| window.get_typed().trim().to_owned(), |s| s.predicate);
+            // (with nothing listed there is nothing to enter, as the
+            // reference's list has none)
+            let Some(typed) = suggestion.map(|s| s.predicate) else {
+                return;
+            };
             if typed.is_empty() {
                 return;
             }

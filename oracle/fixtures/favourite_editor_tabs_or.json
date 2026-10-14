@@ -248,7 +248,7 @@
     "construction": null,
     "predicates": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid"
+     "character:samus aran OR parity:tabs beta OR series:metroid"
     ],
     "rewind_shown": false,
     "rows": [
@@ -277,7 +277,7 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid"
+     "character:samus aran OR parity:tabs beta OR series:metroid"
     ],
     "tab": 0,
     "tab_text": "results",
@@ -285,7 +285,7 @@
    },
    "step": [
     "type",
-    "creator:someone"
+    "parity:tabs beta"
    ]
   },
   {
@@ -295,7 +295,7 @@
     "construction": null,
     "predicates": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
      "series:metroid"
     ],
     "rewind_shown": false,
@@ -325,7 +325,7 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
      "series:metroid"
     ],
     "tab": 0,
@@ -342,16 +342,16 @@
    "state": {
     "cancel_shown": true,
     "construction": [
-     "one"
+     "parity:tabs alpha"
     ],
     "predicates": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
      "series:metroid"
     ],
     "rewind_shown": false,
     "rows": [
-     "one",
+     "parity:tabs alpha",
      "system:everything",
      "system:inbox",
      "system:archive",
@@ -377,7 +377,7 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
      "series:metroid"
     ],
     "tab": 0,
@@ -386,7 +386,7 @@
    },
    "step": [
     "shift type",
-    "one"
+    "parity:tabs alpha"
    ]
   },
   {
@@ -394,17 +394,17 @@
    "state": {
     "cancel_shown": true,
     "construction": [
-     "one",
-     "two"
+     "parity:tabs alpha",
+     "parity:tabs beta"
     ],
     "predicates": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
      "series:metroid"
     ],
     "rewind_shown": true,
     "rows": [
-     "one OR two",
+     "parity:tabs alpha OR parity:tabs beta",
      "system:everything",
      "system:inbox",
      "system:archive",
@@ -430,7 +430,7 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
      "series:metroid"
     ],
     "tab": 0,
@@ -439,7 +439,7 @@
    },
    "step": [
     "shift type",
-    "two"
+    "parity:tabs beta"
    ]
   },
   {
@@ -447,16 +447,16 @@
    "state": {
     "cancel_shown": true,
     "construction": [
-     "one"
+     "parity:tabs alpha"
     ],
     "predicates": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
      "series:metroid"
     ],
     "rewind_shown": false,
     "rows": [
-     "one",
+     "parity:tabs alpha",
      "system:everything",
      "system:inbox",
      "system:archive",
@@ -482,7 +482,7 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
      "series:metroid"
     ],
     "tab": 0,
@@ -500,7 +500,7 @@
     "construction": null,
     "predicates": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
      "series:metroid"
     ],
     "rewind_shown": false,
@@ -530,7 +530,7 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
      "series:metroid"
     ],
     "tab": 0,
@@ -546,16 +546,16 @@
    "state": {
     "cancel_shown": true,
     "construction": [
-     "one"
+     "parity:tabs alpha"
     ],
     "predicates": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
      "series:metroid"
     ],
     "rewind_shown": false,
     "rows": [
-     "one",
+     "parity:tabs alpha",
      "system:everything",
      "system:inbox",
      "system:archive",
@@ -581,7 +581,7 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
      "series:metroid"
     ],
     "tab": 0,
@@ -590,7 +590,7 @@
    },
    "step": [
     "shift type",
-    "one"
+    "parity:tabs alpha"
    ]
   },
   {
@@ -600,7 +600,7 @@
     "construction": null,
     "predicates": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
      "series:metroid"
     ],
     "rewind_shown": false,
@@ -630,7 +630,7 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
      "series:metroid"
     ],
     "tab": 0,
@@ -646,16 +646,16 @@
    "state": {
     "cancel_shown": true,
     "construction": [
-     "solo"
+     "character:samus aran"
     ],
     "predicates": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
      "series:metroid"
     ],
     "rewind_shown": false,
     "rows": [
-     "solo",
+     "character:samus aran",
      "system:everything",
      "system:inbox",
      "system:archive",
@@ -681,7 +681,7 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
      "series:metroid"
     ],
     "tab": 0,
@@ -690,7 +690,7 @@
    },
    "step": [
     "shift type",
-    "solo"
+    "character:samus aran"
    ]
   },
   {
@@ -700,9 +700,9 @@
     "construction": null,
     "predicates": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
-     "series:metroid",
-     "solo OR tail"
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
+     "series:metroid"
     ],
     "rewind_shown": false,
     "rows": [
@@ -731,9 +731,9 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
-     "series:metroid",
-     "solo OR tail"
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
+     "series:metroid"
     ],
     "tab": 0,
     "tab_text": "results",
@@ -741,7 +741,7 @@
    },
    "step": [
     "type",
-    "tail"
+    "series:metroid"
    ]
   },
   {
@@ -749,17 +749,17 @@
    "state": {
     "cancel_shown": true,
     "construction": [
-     "again"
+     "parity:tabs alpha"
     ],
     "predicates": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
-     "series:metroid",
-     "solo OR tail"
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
+     "series:metroid"
     ],
     "rewind_shown": false,
     "rows": [
-     "again",
+     "parity:tabs alpha",
      "system:everything",
      "system:inbox",
      "system:archive",
@@ -785,9 +785,9 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
-     "series:metroid",
-     "solo OR tail"
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
+     "series:metroid"
     ],
     "tab": 0,
     "tab_text": "results",
@@ -795,7 +795,7 @@
    },
    "step": [
     "shift type",
-    "again"
+    "parity:tabs alpha"
    ]
   },
   {
@@ -803,18 +803,18 @@
    "state": {
     "cancel_shown": true,
     "construction": [
-     "again",
-     "again 2"
+     "parity:tabs alpha",
+     "parity:tabs beta"
     ],
     "predicates": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
-     "series:metroid",
-     "solo OR tail"
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
+     "series:metroid"
     ],
     "rewind_shown": true,
     "rows": [
-     "again OR again 2",
+     "parity:tabs alpha OR parity:tabs beta",
      "system:everything",
      "system:inbox",
      "system:archive",
@@ -840,9 +840,9 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
-     "series:metroid",
-     "solo OR tail"
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
+     "series:metroid"
     ],
     "tab": 0,
     "tab_text": "results",
@@ -850,7 +850,7 @@
    },
    "step": [
     "shift type",
-    "again 2"
+    "parity:tabs beta"
    ]
   },
   {
@@ -858,17 +858,17 @@
    "state": {
     "cancel_shown": true,
     "construction": [
-     "again"
+     "parity:tabs alpha"
     ],
     "predicates": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
-     "series:metroid",
-     "solo OR tail"
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
+     "series:metroid"
     ],
     "rewind_shown": false,
     "rows": [
-     "again",
+     "parity:tabs alpha",
      "system:everything",
      "system:inbox",
      "system:archive",
@@ -894,9 +894,9 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
-     "series:metroid",
-     "solo OR tail"
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
+     "series:metroid"
     ],
     "tab": 0,
     "tab_text": "results",
@@ -913,9 +913,9 @@
     "construction": null,
     "predicates": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
-     "series:metroid",
-     "solo OR tail"
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
+     "series:metroid"
     ],
     "rewind_shown": false,
     "rows": [
@@ -944,9 +944,9 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
-     "series:metroid",
-     "solo OR tail"
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
+     "series:metroid"
     ],
     "tab": 0,
     "tab_text": "results",
@@ -968,9 +968,9 @@
     "construction": null,
     "predicates": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
-     "series:metroid",
-     "solo OR tail"
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
+     "series:metroid"
     ],
     "rewind_shown": false,
     "rows": [
@@ -980,9 +980,9 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
-     "series:metroid",
-     "solo OR tail"
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
+     "series:metroid"
     ],
     "tab": 1,
     "tab_text": "favourites",
@@ -1000,10 +1000,10 @@
     "construction": null,
     "predicates": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
      "parity:tabs alpha old",
-     "series:metroid",
-     "solo OR tail"
+     "series:metroid"
     ],
     "rewind_shown": false,
     "rows": [
@@ -1013,10 +1013,10 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
      "parity:tabs alpha old",
-     "series:metroid",
-     "solo OR tail"
+     "series:metroid"
     ],
     "tab": 1,
     "tab_text": "favourites",
@@ -1038,10 +1038,10 @@
     "construction": null,
     "predicates": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
      "parity:tabs alpha old",
-     "series:metroid",
-     "solo OR tail"
+     "series:metroid"
     ],
     "rewind_shown": false,
     "rows": [
@@ -1050,10 +1050,10 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
      "parity:tabs alpha old",
-     "series:metroid",
-     "solo OR tail"
+     "series:metroid"
     ],
     "tab": 2,
     "tab_text": "children",
@@ -1072,10 +1072,10 @@
     "predicates": [
      "blue eyes",
      "character:samus aran",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
      "parity:tabs alpha old",
-     "series:metroid",
-     "solo OR tail"
+     "series:metroid"
     ],
     "rewind_shown": false,
     "rows": [
@@ -1083,11 +1083,11 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
      "character:samus aran",
      "parity:tabs alpha old",
-     "series:metroid",
-     "solo OR tail"
+     "series:metroid"
     ],
     "tab": 2,
     "tab_text": "children",
@@ -1109,10 +1109,10 @@
     "predicates": [
      "blue eyes",
      "character:samus aran",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
      "parity:tabs alpha old",
-     "series:metroid",
-     "solo OR tail"
+     "series:metroid"
     ],
     "rewind_shown": false,
     "rows": [
@@ -1120,11 +1120,11 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
      "character:samus aran",
      "parity:tabs alpha old",
-     "series:metroid",
-     "solo OR tail"
+     "series:metroid"
     ],
     "tab": 2,
     "tab_text": "children",
@@ -1143,20 +1143,20 @@
     "predicates": [
      "blue eyes",
      "character:samus aran",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
      "parity:tabs alpha old",
-     "series:metroid",
-     "solo OR tail"
+     "series:metroid"
     ],
     "rewind_shown": false,
     "rows": [],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
      "character:samus aran",
      "parity:tabs alpha old",
-     "series:metroid",
-     "solo OR tail"
+     "series:metroid"
     ],
     "tab": 0,
     "tab_text": "results",
@@ -1180,10 +1180,10 @@
     "predicates": [
      "blue eyes",
      "character:samus aran",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
      "parity:tabs alpha old",
-     "series:metroid",
-     "solo OR tail"
+     "series:metroid"
     ],
     "rewind_shown": false,
     "rows": [
@@ -1193,11 +1193,11 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
      "character:samus aran",
      "parity:tabs alpha old",
-     "series:metroid",
-     "solo OR tail"
+     "series:metroid"
     ],
     "tab": 1,
     "tab_text": "favourites",
@@ -1218,10 +1218,10 @@
     "predicates": [
      "blue eyes",
      "character:samus aran",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
      "parity:tabs alpha old",
-     "series:metroid",
-     "solo OR tail"
+     "series:metroid"
     ],
     "rewind_shown": false,
     "rows": [
@@ -1231,11 +1231,11 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
      "character:samus aran",
      "parity:tabs alpha old",
-     "series:metroid",
-     "solo OR tail"
+     "series:metroid"
     ],
     "tab": 1,
     "tab_text": "favourites",
@@ -1257,10 +1257,10 @@
     "predicates": [
      "blue eyes",
      "character:samus aran",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
      "parity:tabs alpha old",
-     "series:metroid",
-     "solo OR tail"
+     "series:metroid"
     ],
     "rewind_shown": true,
     "rows": [
@@ -1270,11 +1270,11 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
      "character:samus aran",
      "parity:tabs alpha old",
-     "series:metroid",
-     "solo OR tail"
+     "series:metroid"
     ],
     "tab": 1,
     "tab_text": "favourites",
@@ -1293,11 +1293,11 @@
     "predicates": [
      "blue eyes",
      "character:samus aran",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
      "parity:tabs alpha old",
      "parity:tabs alpha old OR parity:tabs root OR parity:tabs unseen",
-     "series:metroid",
-     "solo OR tail"
+     "series:metroid"
     ],
     "rewind_shown": false,
     "rows": [
@@ -1307,12 +1307,12 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
      "character:samus aran",
      "parity:tabs alpha old",
      "parity:tabs alpha old OR parity:tabs root OR parity:tabs unseen",
-     "series:metroid",
-     "solo OR tail"
+     "series:metroid"
     ],
     "tab": 1,
     "tab_text": "favourites",
@@ -1331,11 +1331,11 @@
     "predicates": [
      "blue eyes",
      "character:samus aran",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
      "parity:tabs alpha old",
      "parity:tabs alpha old OR parity:tabs root OR parity:tabs unseen",
-     "series:metroid",
-     "solo OR tail"
+     "series:metroid"
     ],
     "rewind_shown": false,
     "rows": [
@@ -1345,12 +1345,12 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
      "character:samus aran",
      "parity:tabs alpha old",
      "parity:tabs alpha old OR parity:tabs root OR parity:tabs unseen",
-     "series:metroid",
-     "solo OR tail"
+     "series:metroid"
     ],
     "tab": 1,
     "tab_text": "favourites",
@@ -1369,12 +1369,12 @@
     "predicates": [
      "blue eyes",
      "character:samus aran",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
      "parity:tabs alpha old",
      "parity:tabs alpha old OR parity:tabs root OR parity:tabs unseen",
      "parity:tabs root OR parity:tabs unseen",
-     "series:metroid",
-     "solo OR tail"
+     "series:metroid"
     ],
     "rewind_shown": false,
     "rows": [
@@ -1384,13 +1384,13 @@
     ],
     "shown": [
      "blue eyes",
-     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran OR parity:tabs beta OR series:metroid",
+     "character:samus aran OR series:metroid",
      "character:samus aran",
      "parity:tabs alpha old",
      "parity:tabs alpha old OR parity:tabs root OR parity:tabs unseen",
      "parity:tabs root OR parity:tabs unseen",
-     "series:metroid",
-     "solo OR tail"
+     "series:metroid"
     ],
     "tab": 1,
     "tab_text": "favourites",

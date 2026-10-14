@@ -261,21 +261,23 @@ search.
   names casefolded as lowercase (Python's casefold differs for a few letters,
   such as "ß", which we fold to "ss" as it does).
   Typed text and double-clicks in the favourite editor are compared with the
-  reference's (`oracle/record_favourite_predicates.py`: entering a tag again
-  removes it, a tag takes `system:everything` out, wildcards and negation,
-  and the list's order), including (recorded) text beginning "system:" that is
-  no system predicate, which stays in the box without a message, and a
-  wildcard such as "sam*", which Return enters as typed. In the recording the
-  reference's result list had not caught up with the text, so Return entered
-  the text as typed; here too Return enters typed text as typed unless the
-  user has moved the highlight onto a suggestion. Not matched: the
-  reference's Return acts on its result list's highlighted row when the list
-  has caught up with the text (`list_in_step` in the recording) and on the
-  text as typed when it has not, which depends on how fast its fetch ran
-  (text with no rows that is in step enters nothing there, as "system:" text
-  does; "sam*" and "series:metroid" were not in step). The native list is
-  always in step, so for text with no suggestions the two cannot agree in both
-  cases; native enters the text as typed.
+  reference's (`oracle/record_favourite_predicates.py`, which waits for the
+  reference's result list to catch up with the text and finish loading before
+  pressing Return, as a user who pauses does): Return enters the list's
+  highlighted first result, so a tag that exists enters as itself (or the best
+  match for a partial one), a wildcard such as "sam*" enters the wildcard (put
+  at the top of the list, as `InsertOtherPredicatesForRead` does, in the page's
+  list too), a system predicate such as "system:limit = 64" enters itself, and
+  text with no result ("system:" that is no predicate, a tag the database does
+  not have) enters nothing and stays in the box without a message. The first
+  result and the highlight are compared with the recording. Not covered: Return
+  pressed before the reference's list has caught up (it then enters the text
+  as typed; the native list is always current), and counts and context shown
+  in the results.
+  Remaining from #253 (not started): `audit-options-search-active-edit`
+  (embedded OR in the active-list edit, sibling/parent editors, favourite
+  tags), the tab and OR recordings for counts and context in the results, and
+  an in-step recording of Return in the tabs.
 
 - **Dimensions preset verification** separately tracks nine historical first-pass
   controls. The new Qt recording activates actual buttons through the real modal

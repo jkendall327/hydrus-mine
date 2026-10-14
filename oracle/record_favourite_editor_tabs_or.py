@@ -34,18 +34,18 @@ STEPS = [
     [ 'shift type', 'series:metroid' ],
     [ 'shift type', 'character:samus aran' ],
     [ 'shift type', 'series:metroid' ],
-    [ 'type', 'creator:someone' ],
+    [ 'type', 'parity:tabs beta' ],
     [ 'type', 'series:metroid' ],
-    [ 'shift type', 'one' ],
-    [ 'shift type', 'two' ],
+    [ 'shift type', 'parity:tabs alpha' ],
+    [ 'shift type', 'parity:tabs beta' ],
     [ 'rewind' ],
     [ 'rewind' ],
-    [ 'shift type', 'one' ],
+    [ 'shift type', 'parity:tabs alpha' ],
     [ 'cancel' ],
-    [ 'shift type', 'solo' ],
-    [ 'type', 'tail' ],
-    [ 'shift type', 'again' ],
-    [ 'shift type', 'again 2' ],
+    [ 'shift type', 'character:samus aran' ],
+    [ 'type', 'series:metroid' ],
+    [ 'shift type', 'parity:tabs alpha' ],
+    [ 'shift type', 'parity:tabs beta' ],
     [ 'escape' ],
     [ 'escape' ],
     [ 'tab', 'favourites' ],
@@ -176,6 +176,23 @@ def record( session ):
             QtTest.QTest.qWait( 50 )
 
 
+        def settle( what ):
+
+            # wait until the list has caught up with the text and is loaded
+            for _ in range( 200 ):
+
+                QtTest.QTest.qWait( 50 )
+
+                loading = any( 'loading' in term.GetPredicate().ToString( with_count = False ) for term in ac._search_results_list._ordered_terms )
+
+                if ac._GetParsedAutocompleteText() == ac._current_list_parsed_autocomplete_text and not loading:
+
+                    return
+
+
+            raise Exception( 'the result list never caught up with ' + what )
+
+
         out = []
 
         for step in STEPS:
@@ -190,7 +207,7 @@ def record( session ):
 
                 ac._text_ctrl.setText( step[ 1 ] )
 
-                QtTest.QTest.qWait( 800 )
+                settle( 'the text ' + repr( step[ 1 ] ) )
 
                 QW.QApplication.processEvents()
 
@@ -259,7 +276,7 @@ def record( session ):
 
             QW.QApplication.processEvents()
 
-            QtTest.QTest.qWait( 50 )
+            settle( repr( step ) )
 
             entry = { 'step' : step, 'messages' : list( messages ), 'state' : state() }
 

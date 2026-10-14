@@ -118,9 +118,23 @@ def record( session ):
 
                 ac._text_ctrl.setText( step[ 1 ] )
 
-                # (long enough for the suggestions the text finds to be listed, as
-                # they are for a user who pauses before pressing Return)
-                QtTest.QTest.qWait( 800 )
+                # wait until the suggestions the text finds are listed, as they
+                # are for a user who pauses before pressing Return
+                for _ in range( 200 ):
+
+                    QtTest.QTest.qWait( 50 )
+
+                    loading = any( 'loading' in term.GetPredicate().ToString( with_count = False ) for term in ac._search_results_list._ordered_terms )
+
+                    if ac._GetParsedAutocompleteText() == ac._current_list_parsed_autocomplete_text and not loading:
+
+                        break
+
+
+                else:
+
+                    raise Exception( 'the result list never caught up with ' + repr( step[ 1 ] ) )
+
 
                 QW.QApplication.processEvents()
 

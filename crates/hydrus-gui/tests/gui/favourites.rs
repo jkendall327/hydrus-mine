@@ -84,6 +84,21 @@ fn a_favourite_search_loads_into_the_page() {
     );
 }
 
+/// A suggestion's label without the count after it (`blue eyes (12)`).
+fn without_count(label: &str) -> String {
+    match label.rsplit_once(" (") {
+        Some((name, count))
+            if count.ends_with(')')
+                && count[..count.len() - 1]
+                    .chars()
+                    .all(|c| c.is_ascii_digit() || "~,.+-kM".contains(c)) =>
+        {
+            name.to_owned()
+        }
+        _ => label.to_owned(),
+    }
+}
+
 /// The lines of open menu `pane`: a separator as "---", a submenu with " >".
 fn pane_lines(ui: &MainWindow, pane: usize) -> Vec<String> {
     let lines = ui
@@ -690,6 +705,31 @@ fn typed_predicates_and_double_clicks_edit_the_search_as_the_references_editor_d
             "initial" => {}
             "type" => {
                 window.set_typed(what[1].as_str().unwrap().into());
+                window.invoke_typed_edited();
+                // the list as it is once it has caught up with the text: its
+                // first result (counts aside) and the highlight on it
+                let listed: Vec<String> = window
+                    .get_suggestions()
+                    .iter()
+                    .map(|s| without_count(s.as_str()))
+                    .collect();
+                let recorded: Vec<&str> = step["suggestions"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|s| s.as_str().unwrap())
+                    .collect();
+                if listed.first().map(String::as_str) != recorded.first().copied() {
+                    differences.push(format!(
+                        "{what:?}: first result {listed:?} not {recorded:?}"
+                    ));
+                }
+                if (window.get_suggestion_highlight() == 0) == recorded.is_empty() {
+                    differences.push(format!(
+                        "{what:?}: highlight {}",
+                        window.get_suggestion_highlight()
+                    ));
+                }
                 window.invoke_typed_accepted();
                 if window.get_typed() != step["typed_left"].as_str().unwrap() {
                     differences.push(format!("{what:?}: text left {:?}", window.get_typed()));

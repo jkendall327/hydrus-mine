@@ -8104,7 +8104,7 @@
     "date": "2026-10-14",
     "class": "weak",
     "by": "Claude session (W5-10)",
-    "note": "Adds gui/favourites.rs tests replaying fixtures/favourite_editor_buttons.json (paste, star menu loading search/sync/sort/collect, empty search) and favourite_editor_tabs_or.json (shift+Return OR construction, rewind, cancel, escape, favourites and children tabs, the OR button), through the real editor. Untagged: counts and context in suggestions and keyboard-highlight Return are not recorded against the reference's list, and its Return acts differently when its list has not caught up with the text (DIFFERENCES.md)."
+    "note": "Adds gui/favourites.rs tests replaying fixtures/favourite_editor_buttons.json (paste, star menu loading search/sync/sort/collect, empty search) and favourite_editor_tabs_or.json (shift+Return OR construction, rewind, cancel, escape, favourites and children tabs, the OR button, recorded after the reference's list caught up), through the real editor. Untagged: counts and context in suggestions, keyboard-highlight Return in the tabs and the advanced OR dialog from the editor are not recorded."
    }
   },
   {
@@ -8221,7 +8221,7 @@
     "date": "2026-10-14",
     "class": "weak",
     "by": "Claude session (W5-10)",
-    "note": "Same test as before, now replaying 18 recorded steps including 'system:nonsense words' and 'system:' (nothing entered, text kept, no message) and 'sam*' (enters the wildcard) and 'sam' (enters the text as typed); the list as drawn, the text left and the message all equal the recording. The reference's result list had not caught up with the text in the recording, so Return with the list in step is unrecorded. Still untagged: the recording shows the reference's Return acts on its result list when that is in step with the text and on the typed text when it is not (list_in_step), which native, with an always-current list, cannot match in both cases (DIFFERENCES.md). The reference's tabs, OR construction and icon buttons are now present here (see audit-options-favourite-edit-autocomplete)."
+    "note": "gui/favourites.rs typed_predicates_and_double_clicks_edit_the_search_as_the_references_editor_does opens the real favourite editor and replays 18 steps of oracle/fixtures/favourite_predicates.json (the reference's real EditFavouriteSearchPanel with typed text, QTest Return and double-clicks, recorded after its result list has caught up and finished loading). Per step it compares the list's first result, the highlight, the predicates as drawn (order included), the text left and any message; this covers tags, repeats, case, negation, wildcards (the wildcard first), namespace wildcards, extra spaces, system:limit/everything, 'system:' text that is no predicate, and removals. Untagged: Return before the reference's list has caught up (it enters the text as typed) is not covered, counts/context in the results are not compared, and the leaf's tracker state is still partial pending a review of the added tabs, OR construction and icon buttons (see audit-options-favourite-edit-autocomplete)."
    }
   },
   {
