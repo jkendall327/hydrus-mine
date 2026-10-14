@@ -1536,7 +1536,31 @@ hydrus service). The service choice lists the repositories by name; a hydrus
 service session is keyed by the service key's hex, as the existing ones are. With
 no repository "hydrus service" is refused ("Choose a hydrus service for this
 context."). Qt names the service wherever it lists a network context
-("hydrus service: <name>"); native lists the key's hex.
+("hydrus service: <name>"); native lists the key's hex. The reference's
+editor takes any text for a domain (it keeps the case, and `Example.COM` gets
+a session of its own; text that is no domain, such as `not a domain!!` or a
+URL, gets the empty domain's session, as does any host outside the public
+suffix list); native trims and lower-cases the domain, and refuses text that is
+not a domain, so those make no session
+(`oracle/record_session_create.py`).
+
+The header editor trims its key and value and refuses a newline in either with
+the reference's words (`oracle/record_headers_fields.py`), and opens on the
+reference's example (`Authorization` for `hostname.com`). It also demands an
+HTTP header name (the reference takes any text: `X Token`, `X-Ünicode` and an
+empty key, which it refuses with its newline words, are refused here with
+"Enter a valid HTTP header name."). The list opens in the reference's order
+(context, key, value, state, reason) but a header added or edited in a
+session stays where it is until the window is reopened, where the reference
+sorts again at once.
+
+The cookie editor's "set expires from now" holds its delta to the reference's
+control's range (a delta below 1200 seconds is raised to it, one above 200
+years of 366 days and a day is lowered to it) and begins at what is left of
+a coming expiry, else 30 days (`oracle/record_cookie_expiry.py`). It shows
+the expiry as UTC seconds with a "session cookie" box, not the reference's
+"expires in 2 hours" text, and refuses an empty name with its own words where
+the reference uses its newline ones.
 
 Cookie and HTTP-header editing uses detached native drafts with Apply/Cancel;
 Qt cookie-list actions take effect immediately, while its header list is staged.
@@ -1556,8 +1580,8 @@ set until either changes. A changed header must be reviewed anew; Qt's validatio
 process does not guard its answer against concurrent value edits. Requests resume
 on the engine's next approval check (currently up to five seconds).
 
-The browser can inspect imported service sessions and create domain sessions;
-creating new service sessions and drag/drop cookie imports remain deferred.
+The browser can inspect imported service sessions and create domain and
+service sessions; drag/drop cookie imports remain deferred.
 Clipboard export uses the same five-field format as Qt, so secure and other
 attributes are omitted and clipboard imports reset them; Netscape imports preserve
 secure/HttpOnly instead. Cookie-list imports use the existing Apply/Cancel draft.

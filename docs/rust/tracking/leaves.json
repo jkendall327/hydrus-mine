@@ -4353,10 +4353,10 @@
     "UTC seconds are typed, rather than Qt date/time dialogs."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real cookie editor: delta below 1200 s refused, 3600 s fills absolute expiry, bad absolute refused, session checkbox clears expiry, persisted. All expectations restated from the Python source (min=1200); no recording of the expiry editor, and the 200-year maximum and the reference's default 30 days are untested. Native types UTC seconds instead of the reference's delta dialog only. Tests: crates/hydrus-gui/tests/gui/network_bandwidth_actions.rs:204 cookie_editor_expiry_modes_validate_and_persist"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "oracle/record_cookie_expiry.py records the reference's cookie editor with its 'set expires as a delta from now' dialog (the clock held): the delta control's default (30 days without an expiry or past one, what is left of a coming one), deltas below 1200 seconds raised to it and above 200 years lowered to it, the expires texts, and the fields' newline vetoes. network_bandwidth_actions.rs the_cookie_editors_delta_and_fields_are_checked_as_the_references_were replays them through the real cookie editor and list: the delta begins as recorded, each delta is held to the recorded range and sets the expiry from now, a newline in the name, value, domain or path is refused with the reference's words, and fields are trimmed. Native fix: the delta is now clamped (it refused a delta under 1200 seconds with an error) and begins at what is left. The editor shows UTC seconds and a session cookie box, not the reference's 'expires in 2 hours' text, and says its own words for an empty name (DIFFERENCES.md)."
    }
   },
   {
@@ -5101,10 +5101,10 @@
     "Header fields are trimmed and newline validation rejects malformed values; approval choices are Approved/Denied/Pending."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real editor tested with typed values: a name with a space is rejected (native-only HTTP-token rule; the reference EditPanel only vetoes newlines, documented in DIFFERENCES), approval index 1 = Denied matches the reference order. Trimming, the newline message and the global/domain context chooser are not asserted here; no recording of the editor. Tests: crates/hydrus-gui/tests/gui/network_sessions.rs:131 headers_validate_duplicate_delete_cancel_reopen_and_persist"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "oracle/record_headers_fields.py records the reference's header manager: the rows over global and per-domain headers (in the order its list opens in), what 'add' opens with (hostname.com, Authorization, a Basic value, approved), and the editor's GetValue for typed keys and values (trimmed; a newline in the key or value vetoed with 'Hey, it looks like the \"key\" has a newline!'). network_sessions.rs the_header_editor_opens_and_checks_its_fields_as_the_references_does replays them in the real window: the rows equal the recording in order, add opens on the recorded defaults, the trimmed headers are taken, a newline is refused with the same words, a global header lists as 'global'. Native fix: the list now opens in the reference's order. Differences documented: native demands an HTTP header name (the reference takes 'X Token', 'X-Ünicode') and says so in its own words for an empty key; a header added in a session stays unsorted until reopened. The approval choices' labels are literal Slint text; their order and mapping (approved, denied, pending) are the stored approvals tested before."
    }
   },
   {
@@ -23815,10 +23815,10 @@
     "Fixture compares parsed text/error and selected kind; it does not independently assert every metadata field or downstream request combination."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI only toggles 'any namespace' and then cancels; it never applies, so the saved namespace (None vs empty meaning unnamespaced) is untested through the window. The recorded tags case only compares parsed text 'Samus' and the claim that preview uses native tag cleaning is not compared with a recording. Retention of disabled text is unrecorded reference logic. Tests: crates/hydrus-gui/tests/gui/parser_editors.rs:684 namespace_control_is_disabled_without_losing_its_saved_text; crates/hydrus-gui-model/tests/model/parser_editors.rs:132"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "oracle/record_parser_editors.py now records a tag content parser under 'any namespace', the empty namespace and given namespaces ('artist', 'Character Name') on two texts: the stored namespace, the parse results, and the reference's test panel text ('tag: character name:samus aran', ':metroid:fusion' for the empty namespace). parser_content_kinds.rs tag_content_keeps_its_namespace_as_the_reference_does_and_previews_the_cleaned_tags sets each through the real editor (the box and the text), runs the window's test, applies, and compares the preview text and the namespace the returned parser holds (None for any namespace) with the recording. Native fix: the content parser's test panel now words its results as the reference's does (all nine kinds are compared in the_content_test_panel_previews_every_kind_as_the_reference_does)."
    }
   },
   {
@@ -23917,10 +23917,10 @@
     "Fixture compares parsed text/error and selected kind; it does not independently assert every metadata field or downstream request combination."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only the recorded 'blocked' veto case is compared with the reference (and only as is_err, not the message); the narrowed matcher and flipped polarity outcomes are typed expectations of the Python semantics with no recording. The matcher is edited in a separate window rather than inline as in the reference. Tests: crates/hydrus-gui/tests/gui/parser_content_kinds.rs:271 veto_content_toggles_its_polarity_and_edits_its_matcher"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "oracle/record_parser_editors.py now records the reference's veto content parser under both polarities and a narrowed matcher (match 'other' / any) on two texts, with the veto message and the test panel's text. parser_content_kinds.rs veto_content_vetoes_as_the_reference_does_under_either_polarity_and_matcher drives the real editor (polarity toggle, the matcher's own child window), applies, and compares the saved parser's outcome and exact message ('veto: veto') with the recording; the_content_test_panel_previews_every_kind_as_the_reference_does compares the window's preview text ('veto: veto: veto' in the counted results lines) with the recording. The matcher is edited in a separate window rather than inline (GUI.md). Native fix: the content parser's test panel now words its results as the reference's does."
    }
   },
   {
@@ -24295,10 +24295,10 @@
     "Shared matcher keeps its own existing documented help limitations."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test opens the definition editor, edits name/kind/matcher and checks only the new name in the script's credential table and that cancel leaves the store unchanged. The accepted type (text/password) and matcher are never asserted, add/delete are not exercised, the type-choice labels are not compared, and no recording exists for this panel. No tag. Tests: crates/hydrus-gui/tests/gui/login_workflows.rs:98 script_definition_matcher_child_stages_until_parent_apply_and_cancel_discards"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "login_workflows.rs the_credential_definition_editor_holds_and_saves_what_the_reference_did: the script's credentials list equals the recorded rows (name, type, permitted input); the editor opens on the credential's name and input type; it is edited as the recording was (hidden, name 'account', the matcher fixed to 'token' through the matcher's own window), the script and the list applied, and the saved credential's name, type and string match equal the recorded edited definition. Cancelling is tested before. The input type's two labels ('normal', 'hidden (password)') are literal Slint text the test cannot read."
    }
   },
   {
@@ -24564,10 +24564,10 @@
     "Fetch controls use an inline URL field instead of the reference prompt. Window-local jobs show progress in their test panel rather than the daemon jobs review."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI tests drive the real fetch against a local HTTP server and the real network engine, but expected texts ('fetch failed: 404: missing\\n\\nmissing', percent-encoded URL, referer, one attempt, reset of post index) are typed literals. parser_test_data.json records the parser_fetch/formula_fetch cases (request settings, success/cancel/error text, context) and is only used by the multiple-examples test, not by the fetch tests; only the error-menu test uses parser_fetch_errors.json. No tag. Tests: crates/hydrus-gui/tests/gui/parser_editors.rs:125 content_test_panel_fetches_raw_data_and_hands_it_to_its_formula, :175 fetched_page_examples_use_actual_network_headers_cookies_context_and_child_converter, :290 page_fetch_error_menu_retains_completed_failure_and_clears_at_next_request"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "The window's fetch is driven against a local HTTP server and the real network engine (parser_editors.rs fetched_page_examples_use_actual_network_headers_cookies_context_and_child_converter, now tagged): the request has the recorded URL path (percent-encoded), the recorded referral, the saved cookie, one attempt, and the fetched text equals the recorded text. The three outcomes (success, cancel, failure) of both the formula and the page test panels are replayed against oracle/fixtures/parser_test_data.json in the model test fetched_test_documents_are_the_references_for_success_cancel_and_failure through the function the window calls (FormulaTestData::fetched with FetchedDocument::document): the document text, the 'fetch failed:' words for each panel, and the context left (post_index reset to 0). The reference's scripted failure text becomes the server's 404 message in the GUI test, so the failure words are compared in the model test, not the window."
    }
   },
   {
@@ -24663,10 +24663,10 @@
     "Existing service contexts can be reviewed and cleared, but a new service context cannot be selected."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window tests drive the Add editor with typed expectations (title 'enter new network context', the two type-info strings from ClientConstants.py, service list, resulting stored session); no recording of creation. Tracker notes and DIFFERENCES.md:1339 are stale (service sessions can now be created). Native rejects an invalid domain and a missing service with errors; the reference EditNetworkContextPanel does no validation, and this divergence is not documented. Tests: crates/hydrus-gui/tests/gui/network_sessions.rs:837 a_new_session_can_be_a_web_domain_or_a_hydrus_service_as_the_reference_s_editor_offers, :902 a_hydrus_service_session_needs_a_service_to_choose"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "oracle/record_session_create.py records the reference's 'enter new network context' editor as the sessions review makes it (web domain and hydrus service choices, the note under each, example.com first, the repositories offered, the default box hidden) and the sessions the session manager then makes for typed domains and each service. network_sessions.rs the_new_session_editor_offers_and_makes_what_the_references_did replays them through the real window: the title, first choice, notes, service names and the session of each service key; after each typed domain the set of domains with a session equals the recorded one (so a host outside the public suffix list shares the empty domain's session, as the reference's manager does). The reference takes any text and keeps its case; native trims, lower-cases and refuses text that is not a domain, so those make no session: documented in DIFFERENCES.md, with the stale note about service sessions. The type choice's labels are literal Slint text the test cannot read."
    }
   },
   {
