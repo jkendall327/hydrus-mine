@@ -305,6 +305,116 @@
     "step_count": 1
    }
   ],
+  "child_editor": [
+   {
+    "parameter": "file path",
+    "steps_before": [],
+    "starting_strings": [
+     "/home/me/hydrus_files/f89/89...jpg"
+    ],
+    "title": "edit string processor",
+    "steps_after": [
+     "CONVERT: prepend with \"pre-\""
+    ],
+    "processed_strings": [
+     "pre-/home/me/hydrus_files/f89/89...jpg"
+    ],
+    "accepted": {
+     "label": "prepend with \"pre-\"",
+     "step_count": 1,
+     "value_changed_emitted": 1
+    },
+    "cancelled_opened_with": [
+     "CONVERT: prepend with \"pre-\""
+    ],
+    "after_cancel": {
+     "label": "prepend with \"pre-\"",
+     "step_count": 1,
+     "value_changed_emitted": 1
+    }
+   },
+   {
+    "parameter": "file URI",
+    "steps_before": [],
+    "starting_strings": [
+     "file:///home/me/hydrus_files/f89/89...jpg"
+    ],
+    "title": "edit string processor",
+    "steps_after": [
+     "CONVERT: prepend with \"pre-\""
+    ],
+    "processed_strings": [
+     "pre-file:///home/me/hydrus_files/f89/89...jpg"
+    ],
+    "accepted": {
+     "label": "prepend with \"pre-\"",
+     "step_count": 1,
+     "value_changed_emitted": 1
+    },
+    "cancelled_opened_with": [
+     "CONVERT: prepend with \"pre-\""
+    ],
+    "after_cancel": {
+     "label": "prepend with \"pre-\"",
+     "step_count": 1,
+     "value_changed_emitted": 1
+    }
+   },
+   {
+    "parameter": "file hash (sha256)",
+    "steps_before": [],
+    "starting_strings": [
+     "896aba496da94160475f7ac956beace2083733b5a2972ffd3053dd3d0ad1d36b"
+    ],
+    "title": "edit string processor",
+    "steps_after": [
+     "CONVERT: prepend with \"pre-\""
+    ],
+    "processed_strings": [
+     "pre-896aba496da94160475f7ac956beace2083733b5a2972ffd3053dd3d0ad1d36b"
+    ],
+    "accepted": {
+     "label": "prepend with \"pre-\"",
+     "step_count": 1,
+     "value_changed_emitted": 1
+    },
+    "cancelled_opened_with": [
+     "CONVERT: prepend with \"pre-\""
+    ],
+    "after_cancel": {
+     "label": "prepend with \"pre-\"",
+     "step_count": 1,
+     "value_changed_emitted": 1
+    }
+   },
+   {
+    "parameter": "file id",
+    "steps_before": [],
+    "starting_strings": [
+     "117621484"
+    ],
+    "title": "edit string processor",
+    "steps_after": [
+     "CONVERT: prepend with \"pre-\""
+    ],
+    "processed_strings": [
+     "pre-117621484"
+    ],
+    "accepted": {
+     "label": "prepend with \"pre-\"",
+     "step_count": 1,
+     "value_changed_emitted": 1
+    },
+    "cancelled_opened_with": [
+     "CONVERT: prepend with \"pre-\""
+    ],
+    "after_cancel": {
+     "label": "prepend with \"pre-\"",
+     "step_count": 1,
+     "value_changed_emitted": 1
+    }
+   }
+  ],
   "pipeline": "send single file",
   "parameter_names": [
    "file path",

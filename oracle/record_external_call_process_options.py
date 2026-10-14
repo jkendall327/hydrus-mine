@@ -28,7 +28,7 @@ BYTES_SCRIPT = "printf 'caf\\303\\251 \\377'; printf 'err \\303\\251' >&2; exit 
 
 # name, script, timeout, long_lived, hide_terminal, text
 CASES = [
-    ('times out', 'echo started; sleep 30', 1, False, True, True),
+    ('times out', 'echo started; exec sleep 30', 1, False, True, True),
     ('inside its timeout', 'echo fine', 5, False, True, True),
     ('bad bytes, text', BYTES_SCRIPT, 15, False, True, True),
     ('bad bytes, not text', BYTES_SCRIPT, 15, False, True, False),

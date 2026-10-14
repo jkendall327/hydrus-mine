@@ -219,6 +219,12 @@ def record( session ):
 
             for panel in panels:
 
+                was_enabled = panel._enable.isChecked()
+
+                # (a disabled row's button does nothing)
+                panel._enable.setChecked( True )
+                panel._UpdateUI()
+
                 seen = {}
 
                 def prepend( dlg, editor ):
@@ -261,6 +267,9 @@ def record( session ):
                 child.append( { 'parameter' : panel._name.text(), **seen, 'accepted' : accepted, 'cancelled_opened_with' : cancelled_seen[ 'steps_before' ], 'after_cancel' : { 'label' : panel._string_processing_button._edit_button.text(), 'step_count' : len( panel._string_processing_button.GetValue().GetProcessingSteps() ), 'value_changed_emitted' : len( changes ) } } )
 
                 panel._string_processing_button.SetValue( ClientStrings.StringProcessor() )
+
+                panel._enable.setChecked( was_enabled )
+                panel._UpdateUI()
 
             rules[ 'child_editor' ] = child
 

@@ -81,8 +81,11 @@ def record(session):
         # export to png: the panel it opens and the file it writes
         opened = []
 
-        class Dialog:
+        from qtpy import QtWidgets as QW
+
+        class Dialog(QW.QDialog):
             def __init__(self, parent, title, *args, **kwargs):
+                super().__init__(parent)
                 self.title = title
 
             def __enter__(self):
