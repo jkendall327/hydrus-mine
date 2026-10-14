@@ -112,7 +112,11 @@ fn files_are_exported_with_a_pattern_and_sidecars_as_the_reference_does() {
         .clone_strong();
     let numbers: Vec<i64> = (1..=i64::try_from(window.get_rows().row_count()).unwrap()).collect();
     let seen = json!({
-        "title": window.get_composed_title().as_str(),
+        // (without the application's name, which is added to the window)
+        "title": window
+            .get_composed_title()
+            .strip_suffix(window.get_title_suffix().as_str())
+            .unwrap(),
         "phrase starts as": window.get_phrase().as_str(),
         "sidecars start as": window.get_sidecars().as_str(),
         "trash after export": window.get_trash(),

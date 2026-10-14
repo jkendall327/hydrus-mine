@@ -576,7 +576,31 @@ pub fn open(
             w.set_progress(0.0);
             w.set_status("Exporting: 0".into());
             std::thread::spawn(move || {
+                // the reference's "file export" popup: how far it has got,
+                // then "Done!" for five seconds
+                let popup = hydrus_download::popups::Working::new(&store, "file export", true);
+                popup.show();
+                let total = plan.rows.len();
                 export_files::run(&store, &plan, &cancel, |progress| {
+                    if popup.is_cancelled() {
+                        cancel.store(true, Ordering::Release);
+                    }
+                    if progress.finished {
+                        popup.set_gauge(None);
+                        popup.set_text(Some("Done!".into()));
+                        popup.finish_and_dismiss_after(5);
+                        popup.flush();
+                    } else {
+                        popup.set_text(Some(format!(
+                            "Exporting: {}",
+                            hydrus_core::numbers::value_range(
+                                progress.completed as u64,
+                                total as u64
+                            )
+                        )));
+                        #[allow(clippy::cast_possible_wrap)] // (a count of files)
+                        popup.set_gauge(Some((progress.completed as i64, total as i64)));
+                    }
                     let _ = sender.send(progress);
                 });
             });
