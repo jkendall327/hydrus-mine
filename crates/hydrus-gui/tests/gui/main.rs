@@ -106,6 +106,7 @@ mod pages_menu_info;
 mod pages_menu_new_pages;
 mod pages_menu_refresh;
 mod parser_content_kinds;
+mod parser_preview;
 mod physical_delete_delay;
 mod popup_card_replay;
 mod popup_freeze;

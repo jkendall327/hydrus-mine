@@ -129,6 +129,10 @@ enum Value {
 struct Editor {
     errors: std::collections::BTreeMap<i32, String>,
     fetch_control: hydrus_gui_model::network_job_control::Control,
+    /// What was typed in the page URL box for the last fetch of example data, and the encoded
+    /// URL the fetch made the context's (the reference keeps the typed text in its box and the
+    /// encoded one in the example parsing context).
+    typed_url: Option<(String, String)>,
     value: Value,
     original: Value,
     selected: Option<usize>,
@@ -309,8 +313,13 @@ fn test_data(
     e: &Editor,
     collapse_newlines: bool,
 ) -> Result<FormulaTestData, String> {
+    let typed = w.get_test_url().to_string();
+    let url = match &e.typed_url {
+        Some((box_text, context_url)) if *box_text == typed => context_url.clone(),
+        _ => typed,
+    };
     let context = TestContext::parse(
-        w.get_test_url().to_string(),
+        url,
         w.get_post_index().as_str(),
         w.get_variables().as_str(),
     )?;
@@ -494,6 +503,7 @@ fn open_editor(
     let state = Rc::new(RefCell::new(Editor {
         errors: std::collections::BTreeMap::new(),
         fetch_control: hydrus_gui_model::network_job_control::Control::default(),
+        typed_url: None,
         raw_mimes: hydrus_gui_model::parser_test_data::ExampleMimes::default(),
         original: value.clone(),
         value,
@@ -620,6 +630,7 @@ fn open_editor(
             let Some(w) = weak.upgrade() else {
                 return;
             };
+            let typed_box = w.get_test_url().to_string();
             let raw = if example_url {
                 w.get_test_url()
             } else {
@@ -715,7 +726,14 @@ fn open_editor(
                     let text = editor.test.text.clone();
                     editor.raw_mimes.remember(index, &text, outcome.mime);
                     w.set_document(editor.test.text.as_str().into());
-                    w.set_test_url(url.as_str().into());
+                    if example_url {
+                        // (the box keeps what was typed; the context gets the encoded URL)
+                        editor.typed_url = Some((typed_box.clone(), url.clone()));
+                        w.set_test_url(typed_box.as_str().into());
+                    } else {
+                        editor.typed_url = None;
+                        w.set_test_url(url.as_str().into());
+                    }
                     w.set_post_index("0".into());
                     w.set_fetch_status("fetch finished".into());
                     if let Some(error) = outcome.accounting_error {
@@ -1021,7 +1039,7 @@ fn open_editor(
                     let applied=Rc::new({let state=state.clone();let refresh=refresh.clone();move |mut definitions:Vec<Definition>| {let definition=definitions.pop().ok_or("No parser to import.")?;let mut e=state.borrow_mut();match (page,definition.native){(true,Native::Page(p))=>e.value=Value::Page(Box::new(p)),(false,Native::Content(c))=>{let test=if let Value::Content(old)=&e.value{old.test.clone()}else{FormulaTestData::default()};e.value=Value::Content(Box::new(ContentEditor::new(&c,test)));},_=>return Err("Import one matching parser.".into())}e.errors.clear();e.selected=None;e.subsidiary_selected=None;e.subsidiary_selection=ListSelection::default();drop(e);refresh();Ok(())}});
                     let child=crate::downloader_interchange_window::open(&slots.exchange,action=="import",&[Definition::new(native)],preview,applied)?; let refresh=refresh.clone(); child.on_closed(move||refresh());
                 }
-                "test" => { if state.borrow().raw_mimes.get(state.borrow().example,w.get_document().as_str()).is_some() {return Ok(());} let mut test = test_data(&w,&state.borrow(),true)?; /* (the reference's test parse drops post_index; a subsidiary sets it to 0) */ test.context.remove("post_index"); let mut e = state.borrow_mut();let subsidiary=e.subsidiary.clone();let parsed = match &mut e.value { Value::Page(p) => {if let Some(details)=subsidiary {test.context.insert("post_index".into(),"0".into());details.borrow().preview(p,&mut test.context,&test.text)}else{p.parse(&mut test.context,&test.text)}}, Value::Content(c) => { c.test = test; c.preview().map(|p| vec![p]) } }; w.set_preview(match parsed { Ok(posts) => model::preview_text(&posts), Err(error) => error.to_string() }.into()); }
+                "test" => { if state.borrow().raw_mimes.get(state.borrow().example,w.get_document().as_str()).is_some() {return Ok(());} let mut test = test_data(&w,&state.borrow(),true)?; /* (the reference's test parse drops post_index; a subsidiary sets it to 0) */ test.context.remove("post_index"); let mut e = state.borrow_mut();let subsidiary=e.subsidiary.clone();let parsed = match &mut e.value { Value::Page(p) => {if let Some(details)=subsidiary {test.context.insert("post_index".into(),"0".into());details.borrow().preview(p,&mut test.context,&test.text)}else{p.parse(&mut test.context,&test.text)}}, Value::Content(c) => { c.test = test; w.set_preview(model::parser_preview::content_preview(c.preview()).into()); return Ok(()); } }; w.set_preview(model::parser_preview::page_preview(parsed).into()); }
                 "delete-content" => { let mut e = state.borrow_mut(); if let Some(index) = e.selected.take() && let Value::Page(p) = &mut e.value && index < p.content_parsers.len() { p.content_parsers.remove(index); } }
                 "add-content"|"edit-content" => {
                     let test = child_test_data(&w,&state.borrow(),true)?;
