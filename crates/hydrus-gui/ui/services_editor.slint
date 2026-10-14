@@ -1,4 +1,5 @@
 import { Btn } from "btn.slint";
+import { TipCheckBox } from "tip_widgets.slint";
 import { Button, CheckBox, ComboBox, LineEdit, SpinBox, ScrollView, VerticalBox, HorizontalBox } from "std-widgets.slint";
 import { TableColumn, TableRow, ListTable } from "list_table.slint";
 import { RatingRow, RatingGraphic } from "viewer.slint";
@@ -48,6 +49,26 @@ export component RatingSampleControl inherits HorizontalBox {
             }
         }
     }
+}
+// One of the reference's radio buttons for the kind of star.
+component StarTypeRadio inherits Rectangle {
+    out property <length> hit-x: touch.absolute-position.x;
+    out property <length> hit-y: touch.absolute-position.y;
+    in property <string> text;
+    in property <bool> checked;
+    in property <bool> enabled: true;
+    callback clicked();
+    height: 22px;
+    HorizontalLayout {
+        spacing: 6px;
+        alignment: start;
+        Rectangle {
+            width: 14px; height: 14px; border-radius: 7px; border-width: 1px; border-color: Theme.text;
+            Rectangle { width: 8px; height: 8px; border-radius: 4px; background: root.checked ? Theme.text : transparent; }
+        }
+        Text { text: root.text; color: Theme.text; vertical-alignment: center; }
+    }
+    touch := TouchArea { enabled: root.enabled; clicked => { root.clicked(); } }
 }
 component RatingExamplePanel inherits VerticalBox {
     in property <[ServiceRatingExampleRow]> rows;
@@ -166,7 +187,17 @@ export component EditServiceWindow inherits Window {
     in-out property <bool> show-null;
     in property <[string]> appearances;
     in-out property <int> appearance;
-    in-out property <string> svg;
+    // the installed and the user's own SVGs; none hides the choice of them
+    in property <[string]> svg-names;
+    in-out property <bool> use-svg;
+    // which of the shape and svg lists can be used (the reference's radio choice)
+    out property <bool> shape-enabled: !root.counter-editing && !root.use-svg;
+    out property <bool> svg-enabled: !root.counter-editing && root.use-svg;
+    out property <length> shapes-radio-x: shapes-radio.hit-x;
+    out property <length> shapes-radio-y: shapes-radio.hit-y;
+    out property <length> svgs-radio-x: svgs-radio.hit-x;
+    out property <length> svgs-radio-y: svgs-radio.hit-y;
+    in-out property <int> svg-index;
     in-out property <int> stars: 5;
     in-out property <bool> allow-zero;
     in-out property <int> icon-padding: 4;
@@ -189,7 +220,8 @@ export component EditServiceWindow inherits Window {
     callback counter-edit(int);
     callback counter-answered(bool);
     changed appearance => { root.preview-edited(); }
-    changed svg => { root.preview-edited(); }
+    changed use-svg => { root.preview-edited(); }
+    changed svg-index => { root.preview-edited(); }
     changed stars => { root.preview-edited(); }
     changed icon-padding => { root.preview-edited(); }
     changed fraction => { root.preview-edited(); }
@@ -208,11 +240,11 @@ export component EditServiceWindow inherits Window {
                     Text { text: "client api options"; color: Theme.text; font-weight: 700; }
                     CheckBox { text: "run the client api?:"; checked <=> root.api-running; }
                     HorizontalBox { Text { text: "local port:"; color: Theme.text; } SpinBox { minimum: 1; maximum: 65535; value <=> root.api-port; enabled: root.api-controls-enabled; } }
-                    CheckBox { text: "allow non-local connections:"; checked <=> root.api-non-local; enabled: root.api-controls-enabled; Tooltip { text: @markdown("\{root.api-tooltip-non-local}"); } }
-                    CheckBox { text: "use https"; checked <=> root.api-https; enabled: root.api-controls-enabled; Tooltip { text: @markdown("\{root.api-tooltip-https}"); } }
-                    CheckBox { text: "support CORS headers"; checked <=> root.api-cors; enabled: root.api-controls-enabled; Tooltip { text: @markdown("\{root.api-tooltip-cors}"); } }
-                    CheckBox { text: "log requests"; checked <=> root.api-logs; enabled: root.api-controls-enabled; Tooltip { text: @markdown("\{root.api-tooltip-logs}"); } }
-                    CheckBox { text: "normie-friendly welcome page"; checked <=> root.api-normie; enabled: root.api-controls-enabled; Tooltip { text: @markdown("\{root.api-tooltip-normie}"); } }
+                    TipCheckBox { text: "allow non-local connections:"; checked <=> root.api-non-local; enabled: root.api-controls-enabled; tip: root.api-tooltip-non-local; }
+                    TipCheckBox { text: "use https"; checked <=> root.api-https; enabled: root.api-controls-enabled; tip: root.api-tooltip-https; }
+                    TipCheckBox { text: "support CORS headers"; checked <=> root.api-cors; enabled: root.api-controls-enabled; tip: root.api-tooltip-cors; }
+                    TipCheckBox { text: "log requests"; checked <=> root.api-logs; enabled: root.api-controls-enabled; tip: root.api-tooltip-logs; }
+                    TipCheckBox { text: "normie-friendly welcome page"; checked <=> root.api-normie; enabled: root.api-controls-enabled; tip: root.api-tooltip-normie; }
                     if root.api-advanced: VerticalBox {
                         HorizontalBox {
                             Text { text: "scheme (http/https) override when copying external links"; color: Theme.text; wrap: word-wrap; }
@@ -242,10 +274,30 @@ export component EditServiceWindow inherits Window {
                         LineEdit { enabled: !root.counter-editing; text: c.fill; edited(t) => { root.colour-edited(i,false,t); } }
                     }
                 }
-                if root.star-rating: VerticalBox {
-                    Text { text: "star ratings"; color: Theme.text; font-weight: 700; }
-                    ComboBox { enabled: !root.counter-editing; model: root.appearances; current-index <=> root.appearance; }
-                    if root.appearance == root.appearances.length - 1: LineEdit { enabled: !root.counter-editing; text <=> root.svg; placeholder-text: "SVG name"; }
+                // (always present, as the radios' geometry is read from outside)
+                VerticalBox {
+                    visible: root.star-rating;
+                    height: self.visible ? self.preferred-height : 0px;
+                    Text { text: "rating shape"; color: Theme.text; font-weight: 700; }
+                    HorizontalBox {
+                        visible: root.svg-names.length > 0;
+                        height: self.visible ? self.preferred-height : 0px;
+                        Text { text: "type: "; color: Theme.text; }
+                        VerticalLayout {
+                            shapes-radio := StarTypeRadio { text: "shapes"; checked: !root.use-svg; enabled: !root.counter-editing; clicked => { root.use-svg = false; } }
+                            svgs-radio := StarTypeRadio { text: "svgs"; checked: root.use-svg; enabled: !root.counter-editing; clicked => { root.use-svg = true; } }
+                        }
+                    }
+                    HorizontalBox {
+                        Text { text: "shape: "; color: Theme.text; }
+                        ComboBox { enabled: root.shape-enabled; model: root.appearances; current-index <=> root.appearance; }
+                    }
+                    HorizontalBox {
+                        visible: root.svg-names.length > 0;
+                        height: self.visible ? self.preferred-height : 0px;
+                        Text { text: "svg: "; color: Theme.text; }
+                        ComboBox { enabled: root.svg-enabled; model: root.svg-names; current-index <=> root.svg-index; }
+                    }
                 }
                 if root.numerical: VerticalBox {
                     Text { text: "numerical ratings"; color: Theme.text; font-weight: 700; }

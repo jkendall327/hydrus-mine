@@ -1515,7 +1515,7 @@ ratings, each name bold over its text, while the pointer is over them, as
 the reference's notes hover frame does. With the pointer near the window's top right, the file's ratings show
 there, as in the reference's top-right hover frame: each like/dislike
 service, then each numerical, then each inc/dec, in its service's shape
-(a named SVG is drawn as the fat star) and colours, at your viewer rating
+(a named SVG is drawn from the SVG, or as the fat star when there is none of that name) and colours, at your viewer rating
 sizes. A left click likes (again, unrates), a right click dislikes; on
 stars, a left click (or drag) sets the stars there and a right click
 unrates; on an inc/dec, left adds one and right takes one away.
@@ -1949,6 +1949,8 @@ autocomplete options, sessions, shortcut sets, recent tags.
   page with a thumbnail grid over a real library, is where that is judged.
 
 Services → review opens the service registry with each local and built-in service's name, type, database id, service key copying and refresh. File-domain sizes and deleted counts, tag mapping/tag/file counts, and rated-file counts come from a consistent native store read and match `oracle/record_services.py`. Refresh retains the selected key. Local trash review now offers confirmed clear/undelete actions and local rating review offers confirmed deleted/non-local/all-file clearing; unavailable remote administration actions retain an explicit explanation.
+
+The star rating editors choose the kind of star as the reference's do: "shapes" or "svgs" (offered only when there are SVGs), a shape list, and an svg list of the SVGs there are, the installed ones and the user's own in `static/star_shapes` of the database directory, in human order. An SVG the service names that is not there leaves the first chosen. The four example displays, the thumbnails and the viewer's and preview window's ratings draw an SVG star as its opaque pixels in the fill colour inside the border colour (`oracle/record_star_svgs.py`).
 
 Services → edit opens the manage services list (`services_editor`, `services_editor_window`, `services_editor.slint`). Add local file, local tag, like/dislike, numerical and inc/dec rating services; edit their names and rating display colours, shapes/SVG names, thumbnail flags, stars, zero, padding and fraction placement. Names acquire casefolded duplicate suffixes. Child editors and the list hold changes until their apply buttons; either cancel forgets its changes. Deletion asks before staging and again before Apply, rejects nonempty local file domains and the last local file/tag domain, and rechecks inside the atomic write. Apply republishes the registry/graphs, reconciles deleted-domain membership, rebuilds tag counts and invalidates visible thumbnails. It refreshes the current selection's tags even on a locked page and refreshes an open viewer's tags when deletion changes sibling or parent display. Concurrent service changes reject the stale editor without partial writes.
 

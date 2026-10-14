@@ -64,6 +64,7 @@ pub mod session_reload;
 pub mod sessions;
 pub mod settings;
 pub mod similar;
+pub mod star_shapes;
 pub mod stats;
 pub mod storage;
 pub mod storage_locations;

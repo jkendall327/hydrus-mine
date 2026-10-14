@@ -60,6 +60,10 @@ export struct RatingRow {
     text: string,
     pen: color,
     brush: color,
+    // the SVG the stars are drawn with, if one was found for the service:
+    // a picture of each star, in its colours (a list, as an image never
+    // compares equal to another)
+    svg: [image],
 }
 
 // Shared passive rating drawing; input belongs only to the hover's own TouchArea.
@@ -85,17 +89,30 @@ export component RatingGraphic inherits Rectangle {
             font-size: max(root.incdec-height - 1px, 6px);
         }
     }
-    for star[k] in root.rating.shapes: Path {
-        x: k * (root.icon-size + root.rating.pad);
-        y: 0;
-        width: root.icon-size;
-        height: root.icon-size;
-        viewbox-width: 12;
-        viewbox-height: 12;
-        commands: root.rating.shape;
-        fill: star.brush;
-        stroke: star.pen;
-        stroke-width: root.outline;
+    if root.rating.svg.length == 0: Rectangle {
+        for star[k] in root.rating.shapes: Path {
+            x: k * (root.icon-size + root.rating.pad);
+            y: 0;
+            width: root.icon-size;
+            height: root.icon-size;
+            viewbox-width: 12;
+            viewbox-height: 12;
+            commands: root.rating.shape;
+            fill: star.brush;
+            stroke: star.pen;
+            stroke-width: root.outline;
+        }
+    }
+    // an SVG star: one picture each, its border and fill already drawn
+    if root.rating.svg.length > 0: Rectangle {
+        for picture[k] in root.rating.svg: Image {
+            x: k * (root.icon-size + root.rating.pad);
+            y: 0;
+            width: root.icon-size;
+            height: root.icon-size;
+            source: picture;
+            image-fit: contain;
+        }
     }
 }
 

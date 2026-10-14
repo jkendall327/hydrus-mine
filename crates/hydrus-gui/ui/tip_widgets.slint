@@ -2,7 +2,7 @@
 // them. One component each, so that the popup a `Tooltip` makes is generated
 // once rather than at every place that wants one (the generated UI crate is
 // at the edge of what a 16 GB machine compiles).
-import { Button, ComboBox } from "std-widgets.slint";
+import { Button, CheckBox, ComboBox } from "std-widgets.slint";
 
 export component TipButton inherits HorizontalLayout {
     in property <string> text;
@@ -28,6 +28,21 @@ export component TipComboBox inherits HorizontalLayout {
         model: root.model;
         current-index: root.current-index;
         selected(_) => { root.selected(self.current-index); }
+        Tooltip { text: @markdown("\{root.tip}"); }
+    }
+}
+
+// A std check box with the tooltip the reference shows on it (one component,
+// for the same reason as the others).
+export component TipCheckBox inherits HorizontalLayout {
+    in property <string> text;
+    in property <string> tip;
+    in property <bool> enabled: true;
+    in-out property <bool> checked;
+    CheckBox {
+        text: root.text;
+        enabled: root.enabled;
+        checked <=> root.checked;
         Tooltip { text: @markdown("\{root.tip}"); }
     }
 }

@@ -1,0 +1,1310 @@
+{
+  "installed": {
+    "radio_visible": true,
+    "radio_choices": null,
+    "shape_enabled": true,
+    "svg_enabled": false,
+    "svg_visible": true,
+    "svg_choices": [
+      [
+        "architecture",
+        "architecture"
+      ],
+      [
+        "art-palette",
+        "art-palette"
+      ],
+      [
+        "cinema-reel",
+        "cinema-reel"
+      ],
+      [
+        "eye",
+        "eye"
+      ],
+      [
+        "heart-cute",
+        "heart-cute"
+      ],
+      [
+        "inspiration",
+        "inspiration"
+      ],
+      [
+        "scenery",
+        "scenery"
+      ],
+      [
+        "smile",
+        "smile"
+      ],
+      [
+        "spiral",
+        "spiral"
+      ],
+      [
+        "star",
+        "star"
+      ],
+      [
+        "wallpaper",
+        "wallpaper"
+      ]
+    ],
+    "shapes": [
+      [
+        "circle",
+        0
+      ],
+      [
+        "square",
+        1
+      ],
+      [
+        "fat star",
+        2
+      ],
+      [
+        "pentagram star",
+        3
+      ],
+      [
+        "six point star",
+        4
+      ],
+      [
+        "eight point star",
+        5
+      ],
+      [
+        "x shape",
+        6
+      ],
+      [
+        "square cross",
+        7
+      ],
+      [
+        "triangle up",
+        30
+      ],
+      [
+        "triangle down",
+        31
+      ],
+      [
+        "triangle right",
+        32
+      ],
+      [
+        "triangle left",
+        33
+      ],
+      [
+        "diamond",
+        40
+      ],
+      [
+        "rhombus right",
+        42
+      ],
+      [
+        "rhombus left",
+        43
+      ],
+      [
+        "hourglass",
+        44
+      ],
+      [
+        "pentagon",
+        50
+      ],
+      [
+        "hexagon",
+        60
+      ],
+      [
+        "small hexagon",
+        61
+      ],
+      [
+        "heart",
+        101
+      ],
+      [
+        "teardrop",
+        102
+      ],
+      [
+        "crescent moon",
+        103
+      ]
+    ],
+    "value": {
+      "shape": 3,
+      "rating_svg": null
+    },
+    "told": []
+  },
+  "installed_svg_selected": {
+    "radio_visible": true,
+    "radio_choices": null,
+    "shape_enabled": false,
+    "svg_enabled": true,
+    "svg_visible": true,
+    "svg_choices": [
+      [
+        "architecture",
+        "architecture"
+      ],
+      [
+        "art-palette",
+        "art-palette"
+      ],
+      [
+        "cinema-reel",
+        "cinema-reel"
+      ],
+      [
+        "eye",
+        "eye"
+      ],
+      [
+        "heart-cute",
+        "heart-cute"
+      ],
+      [
+        "inspiration",
+        "inspiration"
+      ],
+      [
+        "scenery",
+        "scenery"
+      ],
+      [
+        "smile",
+        "smile"
+      ],
+      [
+        "spiral",
+        "spiral"
+      ],
+      [
+        "star",
+        "star"
+      ],
+      [
+        "wallpaper",
+        "wallpaper"
+      ]
+    ],
+    "shapes": [
+      [
+        "circle",
+        0
+      ],
+      [
+        "square",
+        1
+      ],
+      [
+        "fat star",
+        2
+      ],
+      [
+        "pentagram star",
+        3
+      ],
+      [
+        "six point star",
+        4
+      ],
+      [
+        "eight point star",
+        5
+      ],
+      [
+        "x shape",
+        6
+      ],
+      [
+        "square cross",
+        7
+      ],
+      [
+        "triangle up",
+        30
+      ],
+      [
+        "triangle down",
+        31
+      ],
+      [
+        "triangle right",
+        32
+      ],
+      [
+        "triangle left",
+        33
+      ],
+      [
+        "diamond",
+        40
+      ],
+      [
+        "rhombus right",
+        42
+      ],
+      [
+        "rhombus left",
+        43
+      ],
+      [
+        "hourglass",
+        44
+      ],
+      [
+        "pentagon",
+        50
+      ],
+      [
+        "hexagon",
+        60
+      ],
+      [
+        "small hexagon",
+        61
+      ],
+      [
+        "heart",
+        101
+      ],
+      [
+        "teardrop",
+        102
+      ],
+      [
+        "crescent moon",
+        103
+      ]
+    ],
+    "value": {
+      "shape": null,
+      "rating_svg": "architecture"
+    },
+    "told": [
+      [
+        "shape",
+        null
+      ],
+      [
+        "rating_svg",
+        "architecture"
+      ]
+    ]
+  },
+  "installed_smile_chosen": {
+    "radio_visible": true,
+    "radio_choices": null,
+    "shape_enabled": false,
+    "svg_enabled": true,
+    "svg_visible": true,
+    "svg_choices": [
+      [
+        "architecture",
+        "architecture"
+      ],
+      [
+        "art-palette",
+        "art-palette"
+      ],
+      [
+        "cinema-reel",
+        "cinema-reel"
+      ],
+      [
+        "eye",
+        "eye"
+      ],
+      [
+        "heart-cute",
+        "heart-cute"
+      ],
+      [
+        "inspiration",
+        "inspiration"
+      ],
+      [
+        "scenery",
+        "scenery"
+      ],
+      [
+        "smile",
+        "smile"
+      ],
+      [
+        "spiral",
+        "spiral"
+      ],
+      [
+        "star",
+        "star"
+      ],
+      [
+        "wallpaper",
+        "wallpaper"
+      ]
+    ],
+    "shapes": [
+      [
+        "circle",
+        0
+      ],
+      [
+        "square",
+        1
+      ],
+      [
+        "fat star",
+        2
+      ],
+      [
+        "pentagram star",
+        3
+      ],
+      [
+        "six point star",
+        4
+      ],
+      [
+        "eight point star",
+        5
+      ],
+      [
+        "x shape",
+        6
+      ],
+      [
+        "square cross",
+        7
+      ],
+      [
+        "triangle up",
+        30
+      ],
+      [
+        "triangle down",
+        31
+      ],
+      [
+        "triangle right",
+        32
+      ],
+      [
+        "triangle left",
+        33
+      ],
+      [
+        "diamond",
+        40
+      ],
+      [
+        "rhombus right",
+        42
+      ],
+      [
+        "rhombus left",
+        43
+      ],
+      [
+        "hourglass",
+        44
+      ],
+      [
+        "pentagon",
+        50
+      ],
+      [
+        "hexagon",
+        60
+      ],
+      [
+        "small hexagon",
+        61
+      ],
+      [
+        "heart",
+        101
+      ],
+      [
+        "teardrop",
+        102
+      ],
+      [
+        "crescent moon",
+        103
+      ]
+    ],
+    "value": {
+      "shape": null,
+      "rating_svg": "smile"
+    },
+    "told": [
+      [
+        "shape",
+        null
+      ],
+      [
+        "rating_svg",
+        "architecture"
+      ],
+      [
+        "shape",
+        null
+      ],
+      [
+        "rating_svg",
+        "smile"
+      ]
+    ]
+  },
+  "installed_shape_again": {
+    "radio_visible": true,
+    "radio_choices": null,
+    "shape_enabled": true,
+    "svg_enabled": false,
+    "svg_visible": true,
+    "svg_choices": [
+      [
+        "architecture",
+        "architecture"
+      ],
+      [
+        "art-palette",
+        "art-palette"
+      ],
+      [
+        "cinema-reel",
+        "cinema-reel"
+      ],
+      [
+        "eye",
+        "eye"
+      ],
+      [
+        "heart-cute",
+        "heart-cute"
+      ],
+      [
+        "inspiration",
+        "inspiration"
+      ],
+      [
+        "scenery",
+        "scenery"
+      ],
+      [
+        "smile",
+        "smile"
+      ],
+      [
+        "spiral",
+        "spiral"
+      ],
+      [
+        "star",
+        "star"
+      ],
+      [
+        "wallpaper",
+        "wallpaper"
+      ]
+    ],
+    "shapes": [
+      [
+        "circle",
+        0
+      ],
+      [
+        "square",
+        1
+      ],
+      [
+        "fat star",
+        2
+      ],
+      [
+        "pentagram star",
+        3
+      ],
+      [
+        "six point star",
+        4
+      ],
+      [
+        "eight point star",
+        5
+      ],
+      [
+        "x shape",
+        6
+      ],
+      [
+        "square cross",
+        7
+      ],
+      [
+        "triangle up",
+        30
+      ],
+      [
+        "triangle down",
+        31
+      ],
+      [
+        "triangle right",
+        32
+      ],
+      [
+        "triangle left",
+        33
+      ],
+      [
+        "diamond",
+        40
+      ],
+      [
+        "rhombus right",
+        42
+      ],
+      [
+        "rhombus left",
+        43
+      ],
+      [
+        "hourglass",
+        44
+      ],
+      [
+        "pentagon",
+        50
+      ],
+      [
+        "hexagon",
+        60
+      ],
+      [
+        "small hexagon",
+        61
+      ],
+      [
+        "heart",
+        101
+      ],
+      [
+        "teardrop",
+        102
+      ],
+      [
+        "crescent moon",
+        103
+      ]
+    ],
+    "value": {
+      "shape": 3,
+      "rating_svg": null
+    },
+    "told": [
+      [
+        "shape",
+        null
+      ],
+      [
+        "rating_svg",
+        "architecture"
+      ],
+      [
+        "shape",
+        null
+      ],
+      [
+        "rating_svg",
+        "smile"
+      ],
+      [
+        "shape",
+        3
+      ],
+      [
+        "rating_svg",
+        null
+      ]
+    ]
+  },
+  "opened_on_svg": {
+    "radio_visible": true,
+    "radio_choices": null,
+    "shape_enabled": false,
+    "svg_enabled": true,
+    "svg_visible": true,
+    "svg_choices": [
+      [
+        "architecture",
+        "architecture"
+      ],
+      [
+        "art-palette",
+        "art-palette"
+      ],
+      [
+        "cinema-reel",
+        "cinema-reel"
+      ],
+      [
+        "eye",
+        "eye"
+      ],
+      [
+        "heart-cute",
+        "heart-cute"
+      ],
+      [
+        "inspiration",
+        "inspiration"
+      ],
+      [
+        "scenery",
+        "scenery"
+      ],
+      [
+        "smile",
+        "smile"
+      ],
+      [
+        "spiral",
+        "spiral"
+      ],
+      [
+        "star",
+        "star"
+      ],
+      [
+        "wallpaper",
+        "wallpaper"
+      ]
+    ],
+    "shapes": [
+      [
+        "circle",
+        0
+      ],
+      [
+        "square",
+        1
+      ],
+      [
+        "fat star",
+        2
+      ],
+      [
+        "pentagram star",
+        3
+      ],
+      [
+        "six point star",
+        4
+      ],
+      [
+        "eight point star",
+        5
+      ],
+      [
+        "x shape",
+        6
+      ],
+      [
+        "square cross",
+        7
+      ],
+      [
+        "triangle up",
+        30
+      ],
+      [
+        "triangle down",
+        31
+      ],
+      [
+        "triangle right",
+        32
+      ],
+      [
+        "triangle left",
+        33
+      ],
+      [
+        "diamond",
+        40
+      ],
+      [
+        "rhombus right",
+        42
+      ],
+      [
+        "rhombus left",
+        43
+      ],
+      [
+        "hourglass",
+        44
+      ],
+      [
+        "pentagon",
+        50
+      ],
+      [
+        "hexagon",
+        60
+      ],
+      [
+        "small hexagon",
+        61
+      ],
+      [
+        "heart",
+        101
+      ],
+      [
+        "teardrop",
+        102
+      ],
+      [
+        "crescent moon",
+        103
+      ]
+    ],
+    "value": {
+      "shape": null,
+      "rating_svg": "spiral"
+    },
+    "told": []
+  },
+  "opened_on_missing_svg": {
+    "radio_visible": true,
+    "radio_choices": null,
+    "shape_enabled": false,
+    "svg_enabled": true,
+    "svg_visible": true,
+    "svg_choices": [
+      [
+        "architecture",
+        "architecture"
+      ],
+      [
+        "art-palette",
+        "art-palette"
+      ],
+      [
+        "cinema-reel",
+        "cinema-reel"
+      ],
+      [
+        "eye",
+        "eye"
+      ],
+      [
+        "heart-cute",
+        "heart-cute"
+      ],
+      [
+        "inspiration",
+        "inspiration"
+      ],
+      [
+        "scenery",
+        "scenery"
+      ],
+      [
+        "smile",
+        "smile"
+      ],
+      [
+        "spiral",
+        "spiral"
+      ],
+      [
+        "star",
+        "star"
+      ],
+      [
+        "wallpaper",
+        "wallpaper"
+      ]
+    ],
+    "shapes": [
+      [
+        "circle",
+        0
+      ],
+      [
+        "square",
+        1
+      ],
+      [
+        "fat star",
+        2
+      ],
+      [
+        "pentagram star",
+        3
+      ],
+      [
+        "six point star",
+        4
+      ],
+      [
+        "eight point star",
+        5
+      ],
+      [
+        "x shape",
+        6
+      ],
+      [
+        "square cross",
+        7
+      ],
+      [
+        "triangle up",
+        30
+      ],
+      [
+        "triangle down",
+        31
+      ],
+      [
+        "triangle right",
+        32
+      ],
+      [
+        "triangle left",
+        33
+      ],
+      [
+        "diamond",
+        40
+      ],
+      [
+        "rhombus right",
+        42
+      ],
+      [
+        "rhombus left",
+        43
+      ],
+      [
+        "hourglass",
+        44
+      ],
+      [
+        "pentagon",
+        50
+      ],
+      [
+        "hexagon",
+        60
+      ],
+      [
+        "small hexagon",
+        61
+      ],
+      [
+        "heart",
+        101
+      ],
+      [
+        "teardrop",
+        102
+      ],
+      [
+        "crescent moon",
+        103
+      ]
+    ],
+    "value": {
+      "shape": null,
+      "rating_svg": "architecture"
+    },
+    "told": []
+  },
+  "with_user_svgs": {
+    "radio_visible": true,
+    "radio_choices": null,
+    "shape_enabled": true,
+    "svg_enabled": false,
+    "svg_visible": true,
+    "svg_choices": [
+      [
+        "architecture",
+        "architecture"
+      ],
+      [
+        "art-palette",
+        "art-palette"
+      ],
+      [
+        "cinema-reel",
+        "cinema-reel"
+      ],
+      [
+        "eye",
+        "eye"
+      ],
+      [
+        "heart-cute",
+        "heart-cute"
+      ],
+      [
+        "inspiration",
+        "inspiration"
+      ],
+      [
+        "my star",
+        "my star"
+      ],
+      [
+        "scenery",
+        "scenery"
+      ],
+      [
+        "smile",
+        "smile"
+      ],
+      [
+        "Smile",
+        "Smile"
+      ],
+      [
+        "spiral",
+        "spiral"
+      ],
+      [
+        "star",
+        "star"
+      ],
+      [
+        "wallpaper",
+        "wallpaper"
+      ]
+    ],
+    "shapes": [
+      [
+        "circle",
+        0
+      ],
+      [
+        "square",
+        1
+      ],
+      [
+        "fat star",
+        2
+      ],
+      [
+        "pentagram star",
+        3
+      ],
+      [
+        "six point star",
+        4
+      ],
+      [
+        "eight point star",
+        5
+      ],
+      [
+        "x shape",
+        6
+      ],
+      [
+        "square cross",
+        7
+      ],
+      [
+        "triangle up",
+        30
+      ],
+      [
+        "triangle down",
+        31
+      ],
+      [
+        "triangle right",
+        32
+      ],
+      [
+        "triangle left",
+        33
+      ],
+      [
+        "diamond",
+        40
+      ],
+      [
+        "rhombus right",
+        42
+      ],
+      [
+        "rhombus left",
+        43
+      ],
+      [
+        "hourglass",
+        44
+      ],
+      [
+        "pentagon",
+        50
+      ],
+      [
+        "hexagon",
+        60
+      ],
+      [
+        "small hexagon",
+        61
+      ],
+      [
+        "heart",
+        101
+      ],
+      [
+        "teardrop",
+        102
+      ],
+      [
+        "crescent moon",
+        103
+      ]
+    ],
+    "value": {
+      "shape": 3,
+      "rating_svg": null
+    },
+    "told": []
+  },
+  "user_svg_paths": {
+    "spiral": "install:spiral.svg",
+    "smile": "install:smile.svg",
+    "scenery": "install:scenery.svg",
+    "heart-cute": "install:heart-cute.svg",
+    "inspiration": "install:inspiration.svg",
+    "art-palette": "install:art-palette.svg",
+    "architecture": "install:architecture.svg",
+    "wallpaper": "install:wallpaper.svg",
+    "eye": "install:eye.svg",
+    "cinema-reel": "install:cinema-reel.svg",
+    "star": "install:star.svg",
+    "my star": "static/star_shapes/my star.svg",
+    "Smile": "static/star_shapes/Smile.SVG"
+  },
+  "drawn": {
+    "star_svg_smile_12.png": [
+      "smile",
+      12
+    ],
+    "star_svg_smile_16.png": [
+      "smile",
+      16
+    ],
+    "star_svg_smile_24.png": [
+      "smile",
+      24
+    ],
+    "star_svg_smile_32.png": [
+      "smile",
+      32
+    ],
+    "star_svg_star_12.png": [
+      "star",
+      12
+    ],
+    "star_svg_star_16.png": [
+      "star",
+      16
+    ],
+    "star_svg_star_24.png": [
+      "star",
+      24
+    ],
+    "star_svg_star_32.png": [
+      "star",
+      32
+    ],
+    "star_svg_spiral_12.png": [
+      "spiral",
+      12
+    ],
+    "star_svg_spiral_16.png": [
+      "spiral",
+      16
+    ],
+    "star_svg_spiral_24.png": [
+      "spiral",
+      24
+    ],
+    "star_svg_spiral_32.png": [
+      "spiral",
+      32
+    ],
+    "star_svg_my_star_12.png": [
+      "my star",
+      12
+    ],
+    "star_svg_my_star_16.png": [
+      "my star",
+      16
+    ],
+    "star_svg_my_star_24.png": [
+      "my star",
+      24
+    ],
+    "star_svg_my_star_32.png": [
+      "my star",
+      32
+    ],
+    "star_svg_gone_12.png": [
+      "gone",
+      12
+    ],
+    "star_svg_gone_16.png": [
+      "gone",
+      16
+    ],
+    "star_svg_gone_24.png": [
+      "gone",
+      24
+    ],
+    "star_svg_gone_32.png": [
+      "gone",
+      32
+    ]
+  },
+  "border": "#112233",
+  "fill": "#dd8800",
+  "sizes": [
+    12,
+    16,
+    24,
+    32
+  ],
+  "none_found": {
+    "radio_visible": false,
+    "radio_choices": null,
+    "shape_enabled": true,
+    "svg_enabled": false,
+    "svg_visible": false,
+    "svg_choices": [
+      [
+        "no svgs found",
+        null
+      ]
+    ],
+    "shapes": [
+      [
+        "circle",
+        0
+      ],
+      [
+        "square",
+        1
+      ],
+      [
+        "fat star",
+        2
+      ],
+      [
+        "pentagram star",
+        3
+      ],
+      [
+        "six point star",
+        4
+      ],
+      [
+        "eight point star",
+        5
+      ],
+      [
+        "x shape",
+        6
+      ],
+      [
+        "square cross",
+        7
+      ],
+      [
+        "triangle up",
+        30
+      ],
+      [
+        "triangle down",
+        31
+      ],
+      [
+        "triangle right",
+        32
+      ],
+      [
+        "triangle left",
+        33
+      ],
+      [
+        "diamond",
+        40
+      ],
+      [
+        "rhombus right",
+        42
+      ],
+      [
+        "rhombus left",
+        43
+      ],
+      [
+        "hourglass",
+        44
+      ],
+      [
+        "pentagon",
+        50
+      ],
+      [
+        "hexagon",
+        60
+      ],
+      [
+        "small hexagon",
+        61
+      ],
+      [
+        "heart",
+        101
+      ],
+      [
+        "teardrop",
+        102
+      ],
+      [
+        "crescent moon",
+        103
+      ]
+    ],
+    "value": {
+      "shape": 3,
+      "rating_svg": null
+    },
+    "told": []
+  }
+}
