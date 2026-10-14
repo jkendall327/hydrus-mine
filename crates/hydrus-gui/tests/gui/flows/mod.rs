@@ -16,6 +16,7 @@
 
 mod download;
 mod gallery;
+mod import_folder;
 mod subscription;
 mod watcher;
 
@@ -95,6 +96,7 @@ pub const PORTS: &[(&str, u16)] = &[
     ("flow_subscription.json", 46011),
     ("flow_download.json", 46012),
     ("flow_gallery.json", 46033),
+    ("flow_import_folder.json", 46013),
     ("flow_watcher.json", 46031),
 ];
 
@@ -239,9 +241,10 @@ impl Drop for Site {
 // ---------------------------------------------------------------- the daemon
 
 /// The work `hydrus serve` does for the client, in this process: the
-/// download queues, the subscription runner, the client's nudges taken
-/// every second, and the queues' live status published four times a second,
-/// as `serve` does them.
+/// download queues, the subscription runner, the import folders (looked at
+/// every second, not at `serve`'s pace), the client's nudges taken every
+/// second, and the queues' live status published four times a second, as
+/// `serve` does them.
 pub struct Daemon {
     runtime: Option<tokio::runtime::Runtime>,
     state: Arc<hydrus_api::AppState>,
@@ -249,6 +252,8 @@ pub struct Daemon {
     /// What went wrong in a task of its own, for the flow to fail on
     /// (a panic there would only end that task).
     failed: Arc<Mutex<Option<String>>>,
+    /// An import folder pass is running.
+    folders_working: Arc<std::sync::atomic::AtomicBool>,
 }
 
 impl Daemon {
@@ -260,6 +265,7 @@ impl Daemon {
             .unwrap();
         let state = hydrus_api::AppState::new(Arc::clone(store)).unwrap();
         let failed = Arc::new(Mutex::new(None));
+        let folders_working = Arc::new(std::sync::atomic::AtomicBool::new(false));
         {
             let _entered = runtime.enter();
             let downloads = state.downloads.clone().expect("the network engine starts");
@@ -291,6 +297,43 @@ impl Daemon {
                     }
                 });
             }
+
+            let folder_downloads = downloads.clone();
+            let working = Arc::clone(&folders_working);
+            let folders_failed = Arc::clone(&failed);
+            runtime.spawn(async move {
+                let mut schedule = hydrus_download::folders::ImportFolderSchedule::new();
+                loop {
+                    working.store(true, Ordering::SeqCst);
+                    let downloader = Arc::clone(folder_downloads.downloader());
+                    let done = tokio::task::spawn_blocking(move || {
+                        let result = hydrus_download::folders::work_due_import_folders(
+                            &downloader,
+                            &mut schedule,
+                        );
+                        (schedule, result)
+                    })
+                    .await;
+                    match done {
+                        Ok((kept, Ok(_))) => schedule = kept,
+                        // (a failure ends this task with `working` still set: the
+                        // flow fails on it at its next wait, `check` panicking
+                        // before `idle` is looked at)
+                        Ok((_, Err(e))) => {
+                            *folders_failed.lock().unwrap() =
+                                Some(format!("working import folders: {e}"));
+                            return;
+                        }
+                        Err(e) => {
+                            *folders_failed.lock().unwrap() =
+                                Some(format!("working import folders: {e}"));
+                            return;
+                        }
+                    }
+                    working.store(false, Ordering::SeqCst);
+                    tokio::time::sleep(Duration::from_secs(1)).await;
+                }
+            });
             let failed = Arc::clone(&failed);
             runtime.spawn(async move {
                 loop {
@@ -307,6 +350,7 @@ impl Daemon {
             state,
             store: Arc::clone(store),
             failed,
+            folders_working,
         }
     }
 
@@ -317,11 +361,15 @@ impl Daemon {
         }
     }
 
-    /// No download or subscription running, nothing nudged and waiting to
-    /// be taken, and no subscription due within the minute (one just made,
-    /// or told to check now, is due at once). A queue's task lives as long
-    /// as its page, so only its current file and gallery jobs count.
+    /// No download, subscription or import folder running, nothing nudged
+    /// and waiting to be taken, and no subscription or import folder due
+    /// within the minute (one just made, or told to check now, is due at
+    /// once). A queue's task lives as long as its page, so only its current
+    /// file and gallery jobs count.
     pub fn idle(&self) -> bool {
+        if self.folders_working.load(Ordering::SeqCst) {
+            return false;
+        }
         let runner = self.state.subscriptions.as_ref().unwrap();
         if !runner.status().active.is_empty() {
             return false;
@@ -339,6 +387,19 @@ impl Daemon {
             return false;
         }
         let soon = hydrus_core::time::TimestampMs::now().millis() / 1000 + 60;
+        let folders_due = self
+            .store
+            .read(hydrus_store::import_folders::import_folders)
+            .unwrap()
+            .iter()
+            .any(|f| {
+                f.settings
+                    .next_work_time(f.paused(), soon - 60)
+                    .is_some_and(|t| t < soon)
+            });
+        if folders_due {
+            return false;
+        }
         let downloader = downloads.downloader();
         self.store
             .read(subs::subscriptions)
@@ -404,6 +465,8 @@ pub fn wait_until_idle(daemon: &Daemon, also: impl Fn() -> bool) {
 /// seconds ago") `DELTA`.
 pub struct Normaliser {
     base: String,
+    /// Directories a flow made, and what to call them.
+    places: Vec<(String, &'static str)>,
     date_time: regex::Regex,
     delta: regex::Regex,
     just_now: regex::Regex,
@@ -413,6 +476,7 @@ impl Normaliser {
     pub fn new(site: &Site) -> Self {
         Self {
             base: site.base.clone(),
+            places: Vec::new(),
             date_time: regex::Regex::new(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}").unwrap(),
             delta: regex::Regex::new(
                 r"\b\d+ (year|month|day|hour|minute|second)s?( \d+ (year|month|day|hour|minute|second)s?)*( ago)?\b",
@@ -423,7 +487,20 @@ impl Normaliser {
         }
     }
 
+    /// A directory the flow made, named `name` in the recording.
+    pub fn place(mut self, path: &std::path::Path, name: &'static str) -> Self {
+        self.places
+            .push((path.to_string_lossy().into_owned(), name));
+        self
+    }
+
     pub fn text(&self, text: &str) -> String {
+        let text = self
+            .places
+            .iter()
+            .fold(text.to_owned(), |text, (path, name)| {
+                text.replace(path, name)
+            });
         let text = text.replace(&self.base, "BASE");
         let text = self.date_time.replace_all(&text, "TIME");
         let text = self.delta.replace_all(&text, "DELTA");

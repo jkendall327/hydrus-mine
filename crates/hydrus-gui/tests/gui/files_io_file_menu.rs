@@ -49,7 +49,7 @@ fn lines(ui: &MainWindow, pane: usize) -> Vec<(String, bool, bool)> {
 
 /// file > `path`: points along the submenus, then chooses the last. Returns
 /// the lines of each pane that was open on the way (the last one's, too).
-fn file_menu(ui: &MainWindow, path: &[&str]) -> Vec<Vec<(String, bool, bool)>> {
+pub(crate) fn file_menu(ui: &MainWindow, path: &[&str]) -> Vec<Vec<(String, bool, bool)>> {
     ui.invoke_menu_title_pressed(0, 10.0, 22.0);
     let mut seen = Vec::new();
     for (depth, label) in path.iter().enumerate() {
