@@ -624,7 +624,8 @@ running reference's dialog, recorded by `oracle/record_options_dialog.py`).
 It has the options hydrus-rs honours, so far on twenty-five pages: audio,
 connection (retries, timeouts, job limits, the halt on a domain's errors,
 HTTPS checks and proxies), downloading (gallery, subscription and watcher
-waits, the default file limit, highlighting, the pause and stop
+waits, the default file limit (which a new subscription's first sync
+also follows when lower than its usual 100 files), highlighting, the pause and stop
 characters, short summaries' counts, the waits after errors, two
 debug switches, and the default subscription and watcher checker
 options), duplicates (the duplicate filter's batches and its

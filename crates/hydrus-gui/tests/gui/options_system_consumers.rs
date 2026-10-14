@@ -350,9 +350,7 @@ pub(crate) fn row_in(options: &OptionsWindow, in_box: &str, label: &str) -> (i32
     panic!("{in_box:?} {label:?}")
 }
 
-// leaf: audit-options-downloading-gallery-downloader-additional-fixed-time-in-seconds-to-wait-between-gallery-page-fetches
-// leaf: audit-options-downloading-subscriptions-additional-fixed-time-in-seconds-to-wait-between-gallery-page-fetches
-// leaf: audit-options-downloading-watchers-additional-fixed-time-in-seconds-to-wait-between-watcher-checks
+// (the three waits are proved in options_download_waits.rs)
 // leaf: audit-options-downloading-gallery-downloader-force-file-downloads-to-occur-quickly-after-post-url-fetches
 #[test]
 fn downloading_waits_and_post_url_override_reach_the_running_network_engine() {
@@ -403,13 +401,12 @@ fn downloading_waits_and_post_url_override_reach_the_running_network_engine() {
 }
 
 /// A new download page, gallery or watcher, as the page chooser makes one.
-fn new_page(ui: &MainWindow, gallery: bool) {
+pub(crate) fn new_page(ui: &MainWindow, gallery: bool) {
     ui.invoke_new_page();
     ui.invoke_chooser_pressed(4);
     ui.invoke_chooser_pressed(if gallery { 6 } else { 4 });
 }
 
-// leaf: audit-options-downloading-gallery-downloader-by-default-stop-searching-once-this-many-files-are-found
 #[test]
 fn the_default_file_limit_is_the_new_gallery_pages_and_searches() {
     let client = client();
@@ -449,7 +446,7 @@ fn the_default_file_limit_is_the_new_gallery_pages_and_searches() {
 }
 
 /// A downloader for the gallery pages' queries.
-fn add_example_downloader(store: &Store) {
+pub(crate) fn add_example_downloader(store: &Store) {
     add_downloader_with_template(store, "https://booru.example/search/%tags%/1");
 }
 
@@ -1420,7 +1417,6 @@ fn the_cbz_option_decides_whether_zips_of_images_are_comic_books() {
     assert_eq!(mime_of("media/cbz_flat.cbz"), Mime::ApplicationCbz);
 }
 
-// leaf: audit-options-file-viewing-statistics-enable-file-viewing-statistics-tracking
 #[test]
 fn the_tracking_option_decides_whether_viewing_a_file_is_recorded() {
     use hydrus_core::CanvasType;
@@ -2491,6 +2487,37 @@ mod error_delays {
     const SUBSCRIPTION_NETWORK_ROW: &str = "Delay time on a subscription network error:";
     const SUBSCRIPTION_OTHER_ROW: &str = "Delay time on a subscription other error:";
 
+    /// What the reference did (`oracle/fixtures/error_delays.json`, from
+    /// `oracle/record_error_delays.py`): the option's value, the wait it
+    /// produced and the reason it gave, for `what` at its `default` or `changed`
+    /// setting.
+    fn recorded(what: &str, setting: &str) -> (i64, i64, String) {
+        let fixture = hydrus_testkit::fixture_json("error_delays.json");
+        let case = fixture["cases"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|c| c["what"] == what && c["setting"] == setting)
+            .unwrap_or_else(|| panic!("{what} {setting}"));
+        let (value, delay) = (
+            case["value"].as_i64().unwrap(),
+            case["delay"].as_i64().unwrap(),
+        );
+        assert_eq!(value, delay, "the wait is the option, no more");
+        (value, delay, case["reason"].as_str().unwrap().to_owned())
+    }
+
+    /// Days, hours, minutes and seconds of a number of seconds.
+    fn split(seconds: i64) -> (i32, i32, i32, i32) {
+        let part = |n: i64| i32::try_from(n).unwrap();
+        (
+            part(seconds / 86_400),
+            part(seconds % 86_400 / 3_600),
+            part(seconds % 3_600 / 60),
+            part(seconds % 60),
+        )
+    }
+
     /// Seconds from the epoch.
     fn now() -> i64 {
         i64::try_from(
@@ -2765,14 +2792,25 @@ mod error_delays {
             }
         };
         // the default: ninety minutes, for a search and for a watcher
+        let (_, default, _) = recorded("gallery", "default");
+        assert_eq!(recorded("watcher", "default").1, default);
         let first = search("first");
         let wait = waiting(first).await - now();
-        assert!((5_390..=5_400).contains(&wait), "{wait}");
+        assert!(
+            (default - 10..=default).contains(&wait),
+            "{wait} against {default}"
+        );
         let wait = watcher_waits(watch(1)).await;
-        assert!((5_390..=5_400).contains(&wait), "{wait}");
+        assert!(
+            (default - 10..=default).contains(&wait),
+            "{wait} against {default}"
+        );
         // three hours, twenty minutes and five seconds, once the runner has
         // reloaded the options as the app's poll does
-        let set = set_delay(&client, NETWORK_ROW, (0, 3, 20, 5));
+        let (changed, _, _) = recorded("gallery", "changed");
+        assert_eq!(recorded("watcher", "changed").0, changed);
+        let set = set_delay(&client, NETWORK_ROW, split(changed));
+        assert_eq!(set, changed);
         runner.reload_settings().unwrap();
         let second = search("second");
         let wait = waiting(second).await - now();
@@ -2860,18 +2898,25 @@ mod error_delays {
         functional_downloader(&client, &address);
         downloader.reload_settings().unwrap();
         let first = subscription(&client, "first", true);
-        // the default: twelve hours
+        // the default
+        let (_, default, reference_reason) = recorded("subscription network", "default");
+        let prefix = reference_reason.split_once(": ").unwrap().0.to_owned() + ": ";
         let (wait, reason) = waits(&client, &downloader, first).await;
-        assert!((43_190..=43_200).contains(&wait), "{wait}");
-        assert!(reason.starts_with("network error: "), "{reason}");
+        assert!(
+            (default - 10..=default).contains(&wait),
+            "{wait} against {default}"
+        );
+        assert!(reason.starts_with(&prefix), "{reason}");
         // a day, two hours and a minute, once the downloader has reloaded the
         // options as the app's poll does
-        let set = set_delay(&client, SUBSCRIPTION_NETWORK_ROW, (1, 2, 1, 0));
+        let (changed, _, _) = recorded("subscription network", "changed");
+        let set = set_delay(&client, SUBSCRIPTION_NETWORK_ROW, split(changed));
+        assert_eq!(set, changed);
         downloader.reload_settings().unwrap();
         let second = subscription(&client, "second", true);
         let (wait, reason) = waits(&client, &downloader, second).await;
         assert!((set - 10..=set).contains(&wait), "{wait} against {set}");
-        assert!(reason.starts_with("network error: "), "{reason}");
+        assert!(reason.starts_with(&prefix), "{reason}");
     }
 
     // leaf: audit-options-downloading-misc-delay-time-on-a-subscription-other-error
@@ -2879,16 +2924,21 @@ mod error_delays {
     async fn a_subscription_that_meets_another_error_waits_as_long_as_the_option_says() {
         let (client, downloader, _held, _address) = with_downloader();
         let first = subscription(&client, "first", false);
-        // the default: thirty-six hours
+        // the default
+        let (_, default, reference_reason) = recorded("subscription other", "default");
         let (wait, reason) = waits(&client, &downloader, first).await;
-        assert!((129_590..=129_600).contains(&wait), "{wait}");
-        assert!(reason.starts_with("error: "), "{reason}");
-        // two days and an hour
-        let set = set_delay(&client, SUBSCRIPTION_OTHER_ROW, (2, 1, 0, 0));
+        assert!(
+            (default - 10..=default).contains(&wait),
+            "{wait} against {default}"
+        );
+        assert_eq!(reason, reference_reason);
+        let (changed, _, _) = recorded("subscription other", "changed");
+        let set = set_delay(&client, SUBSCRIPTION_OTHER_ROW, split(changed));
+        assert_eq!(set, changed);
         downloader.reload_settings().unwrap();
         let second = subscription(&client, "second", false);
         let (wait, reason) = waits(&client, &downloader, second).await;
         assert!((set - 10..=set).contains(&wait), "{wait} against {set}");
-        assert!(reason.starts_with("error: "), "{reason}");
+        assert_eq!(reason, reference_reason);
     }
 }

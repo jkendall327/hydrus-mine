@@ -128,6 +128,25 @@ def record(session):
             for index,button in enumerate(dialog._action_radio._radio_buttons):
                 dialog._action_radio.Select(index);dialog._UpdateControls();dialog.GetValue()
                 out['action_cases'].append({'selected':button.text(),'state':snapshot(dialog),'saved_action':c.new_options.GetNoneableString('last_advanced_file_deletion_special_action')})
+            # "Remember the last action": each action accepted with the option on and
+            # off, and the dialog opened again afterwards (the first time with nothing
+            # remembered)
+            out['remember_action']=[]
+            for remember in (True,False):
+                c.new_options.SetBoolean('remember_last_advanced_file_deletion_special_action',remember)
+                for index in range(len(dialog._action_radio._radio_buttons)):
+                    c.new_options.SetNoneableString('last_advanced_file_deletion_special_action',None)
+                    first=E.EditDeleteFilesPanel(c.gui,[M.MediaSingle(single),M.MediaSingle(double)],'Deleted from Preview or Media Viewer.');panels.append(first)
+                    first.show();QW.QApplication.processEvents()
+                    chosen=first._action_radio._radio_buttons[index].text()
+                    first._action_radio.Select(index);first._UpdateControls();first.GetValue()
+                    saved=c.new_options.GetNoneableString('last_advanced_file_deletion_special_action')
+                    again=E.EditDeleteFilesPanel(c.gui,[M.MediaSingle(single),M.MediaSingle(double)],'Deleted from Preview or Media Viewer.');panels.append(again)
+                    again.show();QW.QApplication.processEvents()
+                    out['remember_action'].append({'remember':remember,'selected':index,'label':chosen,'saved_action':saved,'reopened':snapshot(again)['action'],'reopened_label':snapshot(again)['actions'][snapshot(again)['action']]})
+                    first.hide();again.hide()
+            c.new_options.SetBoolean('remember_last_advanced_file_deletion_special_action',True)
+            c.new_options.SetNoneableString('last_advanced_file_deletion_special_action','clear_delete')
             mixed=[]
             for result,reason in ((single,'alpha'),(double,'different existing')):
                 result=result.Duplicate();result.GetLocationsManager()._local_file_deletion_reason=reason;mixed.append(M.MediaSingle(result))

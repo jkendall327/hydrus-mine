@@ -482,3 +482,221 @@ fn the_duplicate_filter_prefetches_as_many_pairs_as_the_options_row_says() {
     // (the more pairs the row says, the more are decoded ahead)
     assert!(seen[0] < seen[2] && seen[2] < seen[1], "{seen:?}");
 }
+
+/// The cache keys once the viewer's warm worker has gone quiet.
+fn settled_keys(bound: &Bound) -> std::collections::BTreeSet<HashId> {
+    let deadline = Instant::now() + Duration::from_millis(250);
+    while Instant::now() < deadline {
+        slint::platform::update_timers_and_animations();
+        std::thread::sleep(Duration::from_millis(5));
+    }
+    bound.image_cache.keys().into_iter().collect()
+}
+
+/// Both counts set in the real Options rows, and a real media viewer opened on
+/// each file of a three-file page: the files the cache holds afterwards are the
+/// viewer's own and the neighbours the reference chose for those counts
+/// (`neighbours` in `oracle/fixtures/viewer_prefetch.json`, all 18 recorded
+/// cases for three files).
+// leaf: audit-options-speed-and-memory-image-prefetch-num-previous-to-prefetch-in-media-viewer
+#[test]
+fn the_viewer_warms_the_recorded_neighbours_for_the_previous_and_next_counts_in_the_rows() {
+    let fixture = hydrus_testkit::fixture_json("viewer_prefetch.json");
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    for name in ["a.png", "c.png", "d.png"] {
+        import(&store, name);
+    }
+    store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &Policy {
+                    bytes: 400,
+                    timeout: 300,
+                    percentage: 50,
+                },
+            )?;
+            let mut layout = hydrus_store::page_layout::load(ctx.conn())?;
+            layout.hide_preview = true;
+            settings::set(ctx.conn(), &layout)
+        })
+        .unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    headless::render(&windows.get(0).unwrap(), 1400, 1000);
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    assert_eq!(files.len(), 3);
+    let name_of = |name: &str| files[usize::from(name.as_bytes()[0] - b'a')];
+    let initial = &fixture["initial"];
+    assert_eq!(
+        store.read(viewer_prefetch::load).unwrap().previous,
+        initial[0].as_u64().unwrap(),
+        "the row starts on the reference's default"
+    );
+
+    let mut checked = 0;
+    for case in fixture["neighbours"].as_array().unwrap() {
+        if case["files"].as_array().unwrap().len() != 3 {
+            continue;
+        }
+        let index = case["index"].as_u64().unwrap() as usize;
+        let [previous, next] =
+            ["previous", "next"].map(|k| i32::try_from(case[k].as_i64().unwrap()).unwrap());
+        let window = options(&ui, &bound);
+        window.invoke_number_edited(row(&window, PREVIOUS), previous);
+        window.invoke_number_edited(row(&window, NEXT), next);
+        window.invoke_apply();
+        let saved = store.read(viewer_prefetch::load).unwrap();
+        assert_eq!(
+            (
+                i32::try_from(saved.previous).unwrap(),
+                i32::try_from(saved.next).unwrap()
+            ),
+            (previous, next)
+        );
+
+        bound.image_cache.clear();
+        ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
+        let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+        let mut expected: std::collections::BTreeSet<HashId> = case["neighbours"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|n| name_of(n.as_str().unwrap()))
+            .collect();
+        expected.insert(files[index]);
+        pump_until(|| expected.is_subset(&bound.image_cache.keys().into_iter().collect()));
+        assert_eq!(settled_keys(&bound), expected, "{case}");
+        viewer.invoke_close_requested();
+        checked += 1;
+    }
+    assert_eq!(checked, 18);
+    bound.preview.close();
+}
+
+/// "Maximum % of cache that will be prefetched per media viewer:" set in the
+/// real Options row, with a real media viewer warming its neighbours: the
+/// reference's two budget scenarios (`prefetch` in
+/// `oracle/fixtures/viewer_prefetch.json`) with 30-byte images, then the same
+/// pass with a larger cache, where the percentage is what changes the outcome.
+// leaf: audit-options-speed-and-memory-image-cache-maximum-of-cache-that-will-be-prefetched-per-media-viewer
+#[test]
+fn the_percentage_row_limits_what_a_viewer_prefetches_as_in_the_recorded_scenarios() {
+    let fixture = hydrus_testkit::fixture_json("viewer_prefetch.json");
+    let scenario = |name: &str| {
+        fixture["prefetch"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|s| s["name"] == name)
+            .unwrap()
+            .clone()
+    };
+    // (cache bytes, percentage, the files, neighbours asked for, how many of the files are cached)
+    let one_miss = scenario("one miss and pending blocks");
+    let total_equality = scenario("total equality permits");
+    let policy = |s: &serde_json::Value| {
+        (
+            s["policy"][0].as_u64().unwrap(),
+            i32::try_from(s["policy"][2].as_u64().unwrap()).unwrap(),
+        )
+    };
+    let _windows = headless::init();
+    let run = |files: &[&str], bytes: u64, percentage: i32, next: i32| {
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::open(dir.path()).unwrap();
+        let ids: Vec<HashId> = files.iter().map(|name| import(&store, name)).collect();
+        store
+            .write(move |ctx| {
+                settings::set(
+                    ctx.conn(),
+                    &Policy {
+                        bytes,
+                        timeout: 300,
+                        percentage: 50,
+                    },
+                )?;
+                let mut layout = hydrus_store::page_layout::load(ctx.conn())?;
+                layout.hide_preview = true;
+                settings::set(ctx.conn(), &layout)
+            })
+            .unwrap();
+        let ui = MainWindow::new().unwrap();
+        ui.show().unwrap();
+        let bound = bind(
+            &ui,
+            Pages::single(super::common::all_local_page(store.clone())),
+        );
+        ui.invoke_search_edited("system:everything".into());
+        ui.invoke_search_accepted();
+        let results = bound.current.borrow().borrow().results().to_vec();
+        let window = options(&ui, &bound);
+        window.invoke_number_edited(row(&window, PREVIOUS), 0);
+        window.invoke_number_edited(row(&window, NEXT), next);
+        window.invoke_number_edited(row(&window, PERCENT), percentage);
+        window.invoke_apply();
+        assert_eq!(
+            i32::try_from(store.read(viewer_prefetch::load).unwrap().percentage).unwrap(),
+            percentage
+        );
+        // (opened on the first file imported, the reference's "a")
+        let first = ids[0];
+        let at = results.iter().position(|id| *id == first).unwrap();
+        ui.invoke_thumbnail_activated(i32::try_from(at).unwrap());
+        let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+        pump_until(|| bound.image_cache.keys().contains(&first));
+        let kept = settled_keys(&bound);
+        let held = bound.image_cache.bytes();
+        viewer.invoke_close_requested();
+        bound.preview.close();
+        // (which of the imported files they are, in the page's order)
+        let in_order: Vec<usize> = results
+            .iter()
+            .enumerate()
+            .filter(|(_, id)| kept.contains(id))
+            .map(|(i, _)| i)
+            .collect();
+        assert!(in_order.contains(&at), "the viewer's own file is cached");
+        (in_order, at, held)
+    };
+
+    // a, b, c at 30 bytes each, 120 bytes and 50%: the first is cached, then
+    // one miss more, then the 60-byte budget is spent and the third is not
+    let (bytes, percentage) = policy(&one_miss);
+    assert_eq!(
+        one_miss["events"].as_array().unwrap().last().unwrap()["keys"],
+        serde_json::json!(["a", "b"])
+    );
+    let (kept, at, held) = run(&["a.png", "c.png", "d.png"], bytes, percentage, 2);
+    let next = (at + 1) % 3;
+    assert_eq!(
+        kept,
+        [at.min(next), at.max(next)],
+        "the viewer's file and the next"
+    );
+    assert_eq!(held, 60, "two 30-byte images");
+
+    // 100 bytes and 30%: a 30-byte file is cached and the budget of 30 is
+    // already met, so the second (27 bytes) is not, though the cache has room
+    let (bytes, percentage) = policy(&total_equality);
+    assert_eq!(
+        total_equality["events"].as_array().unwrap().last().unwrap()["keys"],
+        serde_json::json!(["a"])
+    );
+    let (kept, at, held) = run(&["a.png", "small.png"], bytes, percentage, 1);
+    assert_eq!(kept, [at], "only the viewer's own file");
+    assert_eq!(held, 30, "one 30-byte image");
+
+    // the same pass with a cache twice the size, the budget now 60: it goes in
+    let (kept, _, held) = run(&["a.png", "small.png"], bytes * 2, percentage, 1);
+    assert_eq!(kept, [0, 1], "both files");
+    assert_eq!(held, 57, "30 and 27 bytes");
+}

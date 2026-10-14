@@ -1,0 +1,68 @@
+{
+ "default": 2000,
+ "cases": [
+  {
+   "limit": 2000,
+   "gallery page": 2000,
+   "gallery import": 2000,
+   "new subscription initial": 100,
+   "new subscription periodic": 100
+  },
+  {
+   "limit": 345,
+   "gallery page": 345,
+   "gallery import": 345,
+   "new subscription initial": 100,
+   "new subscription periodic": 100
+  },
+  {
+   "limit": 100,
+   "gallery page": 100,
+   "gallery import": 100,
+   "new subscription initial": 100,
+   "new subscription periodic": 100
+  },
+  {
+   "limit": 99,
+   "gallery page": 99,
+   "gallery import": 99,
+   "new subscription initial": 99,
+   "new subscription periodic": 100
+  },
+  {
+   "limit": 101,
+   "gallery page": 101,
+   "gallery import": 101,
+   "new subscription initial": 100,
+   "new subscription periodic": 100
+  },
+  {
+   "limit": 50,
+   "gallery page": 50,
+   "gallery import": 50,
+   "new subscription initial": 50,
+   "new subscription periodic": 100
+  },
+  {
+   "limit": 1,
+   "gallery page": 1,
+   "gallery import": 1,
+   "new subscription initial": 1,
+   "new subscription periodic": 100
+  },
+  {
+   "limit": 1000000,
+   "gallery page": 1000000,
+   "gallery import": 1000000,
+   "new subscription initial": 100,
+   "new subscription periodic": 100
+  },
+  {
+   "limit": null,
+   "gallery page": null,
+   "gallery import": null,
+   "new subscription initial": 100,
+   "new subscription periodic": 100
+  }
+ ]
+}

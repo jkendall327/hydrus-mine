@@ -5015,3 +5015,13 @@ potential duplicates (as the reference does as groups merge), so approving
   the reference's "db committing" and "db locked", and has no "current db job: <name>"
   tooltip (`HydrusDB._current_status`, `ClientGUI._RefreshStatusBarDB`); hydrus-rs's
   database has no job names to show. `audit-options-status-activity` stays untagged for this.
+
+## Options > file viewing statistics, downloading (recheck notes)
+
+- **Viewing statistics tracking** is proved through the media viewer only
+  (`options_viewing_tracking.rs`); the preview and duplicate-filter canvases
+  are not driven against the "Enable file viewing statistics tracking?" row.
+- **Default gallery file limit.** The reference also gives a single
+  `GalleryImport` the limit; hydrus-rs has no separate single-gallery-import
+  object, so that recorded value (`gallery_file_limit.json` `gallery import`) is
+  not replayed. A gallery page and a new subscription are.
