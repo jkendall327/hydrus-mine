@@ -154,6 +154,10 @@ incremental = false
 # (it is not a workspace member, so the `"*"` override below would otherwise
 # optimise it, which runs out of memory)
 opt-level = 0
+# (no assertion or overflow-check code in the generated arithmetic: less MIR
+# for rustc to hold)
+debug-assertions = false
+overflow-checks = false
 # Cargo strips debuginfo when the *root* of a build has none, so a solo
 # `cargo build -p hydrus-gui-ui` would otherwise differ from the same crate
 # built under hydrus-gui, and its artifact would not be reused.
