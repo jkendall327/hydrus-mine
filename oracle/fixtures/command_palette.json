@@ -1,4 +1,306 @@
 {
+  "main_menu_real": [
+    {
+      "provider": 1,
+      "query": "options",
+      "rows": [
+        {
+          "text": [
+            "<b>options</b>\u2026",
+            "file"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 1,
+      "query": "backup",
+      "rows": [
+        {
+          "text": [
+            "set up a database <b>backup</b> location\u2026",
+            "database | backup"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "update database <b>backup</b>",
+            "database | backup"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "change database <b>backup</b> location\u2026",
+            "database | backup"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "restore from a database <b>backup</b>\u2026",
+            "database | backup"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 1,
+      "query": "review",
+      "rows": [
+        {
+          "text": [
+            "show/hide sidebar and p<b>review</b> panel",
+            "pages | sidebar"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "save current page&#x27;s sidebar/p<b>review</b> size on client exit",
+            "pages | sidebar"
+          ],
+          "toggled": true,
+          "close": true
+        },
+        {
+          "text": [
+            "save current page&#x27;s sidebar/p<b>review</b> size now",
+            "pages | sidebar"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "restore all pages&#x27; sidebar/p<b>review</b> sizes to saved value",
+            "pages | sidebar"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>review</b> deferred delete table data",
+            "database | db maintenance"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>review</b> vacuum data\u2026",
+            "database | db maintenance"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>review</b> bandwidth usage and edit rules",
+            "network | data"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>review</b> current network jobs",
+            "network | data"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>review</b> session cookies",
+            "network | data"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>review</b>",
+            "services"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>review</b> current sibling/parent sync",
+            "tags | sync"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>review</b> threads",
+            "help | debug | data actions"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>review</b> current network jobs",
+            "help | debug | network actions"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 1,
+      "query": "import",
+      "rows": [
+        {
+          "text": [
+            "<b>import</b> files\u2026",
+            "file"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>import</b> folders",
+            "file | import/export folders | pause"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "manage <b>import</b> folders\u2026",
+            "file | import/export folders"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "all paged <b>import</b>er work",
+            "network | pause"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "paged file <b>import</b>ing",
+            "network | pause"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>import</b> downloaders\u2026",
+            "network | downloaders"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "<b>import</b> repository update files\u2026",
+            "services | advanced"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "file <b>import</b> report mode",
+            "help | debug | report modes"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 1,
+      "query": "tags",
+      "rows": [
+        {
+          "text": [
+            "fix invalid <b>tags</b>\u2026",
+            "database | check and repair"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "tag storage mappings cache (just pending <b>tags</b>, instant calculation)\u2026",
+            "database | regenerate"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "tag display mappings cache (just pending <b>tags</b>, instant calculation)\u2026",
+            "database | regenerate"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "tag text search cache (sub<b>tags</b> repopulation)\u2026",
+            "database | regenerate"
+          ],
+          "toggled": false,
+          "close": true
+        },
+        {
+          "text": [
+            "local <b>tags</b> cache\u2026",
+            "database | regenerate"
+          ],
+          "toggled": false,
+          "close": true
+        }
+      ]
+    },
+    {
+      "provider": 1,
+      "query": "stats",
+      "rows": []
+    }
+  ],
+  "main_menu_off": [
+    {
+      "provider": 1,
+      "query": "Palette",
+      "rows": []
+    },
+    {
+      "provider": 1,
+      "query": "options",
+      "rows": []
+    },
+    {
+      "provider": 1,
+      "query": "review",
+      "rows": []
+    }
+  ],
   "initial": {
     "show_page_of_pages": false,
     "initially_show_all_pages": true,
@@ -504,12 +806,43 @@
     ],
     "favourite": {
       "name": "Favourite Alpha",
-      "new_pages": 1
+      "new_pages": 1,
+      "page": {
+        "sort": {
+          "type": "system",
+          "data": 9,
+          "order": 1
+        },
+        "collect_namespaces": [
+          "series"
+        ],
+        "favourite_sort": {
+          "type": "system",
+          "data": 9,
+          "order": 1
+        }
+      }
     },
     "favourite_current": {
-      "name": "Favourite Alpha",
+      "name": "Palette Gamma",
       "new_pages": 0,
-      "same_page": true
+      "same_page": true,
+      "name_unchanged": true,
+      "page": {
+        "sort": {
+          "type": "system",
+          "data": 9,
+          "order": 1
+        },
+        "collect_namespaces": [
+          "series"
+        ],
+        "favourite_sort": {
+          "type": "system",
+          "data": 9,
+          "order": 1
+        }
+      }
     },
     "notebook_row": {
       "rows": 1,
@@ -1376,7 +1709,7 @@
       "rows": [
         {
           "text": [
-            "0.09637590592025036",
+            "0.6010957312021067",
             "Calculator"
           ],
           "toggled": false,

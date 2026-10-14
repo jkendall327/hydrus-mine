@@ -117,6 +117,8 @@ fn tick(w: &TagRelationshipsWindow, label: &str, on: bool) {
 // leaf: audit-media-siblings-workspace
 // leaf: audit-media-parents-workspace
 // leaf: audit-media-parents-reasons
+// leaf: audit-media-siblings-pairs
+// leaf: audit-media-parents-pairs
 #[test]
 fn the_relationship_windows_edit_and_filter_pairs_as_the_reference_s_do() {
     let recorded = hydrus_testkit::fixture_json("tag_relationships.json");

@@ -1462,9 +1462,10 @@ repository uploader's existing capabilities. Self-pairs are staged after the ref
 one sibling two ideals, is staged as it is, as the reference stages them (its
 repairs look only at the pairs already there; the display graph ignores the
 pairs that would loop or give a second ideal, as the reference's does). The
-message shows without the reference's "Loop problem!" window title. Already corrupt
-reference graph cycles are traversed safely, but do not raise its detailed
-pre-existing-loop warning. Manual background sibling/parent synchronization
+message shows without the reference's "Loop problem!" window title. A pair that leads into a loop
+already there (staged or stored) raises the reference's second "Loop problem!" message,
+listing the path ("one->two->one"); native chases the paths one list order, where the
+reference's follows a Python set's, so several loops may list in another order. Manual background sibling/parent synchronization
 remains separate future work.
 
 ## Detailed embedded file metadata (`hydrus-gui`, `hydrus-media`)
@@ -1491,7 +1492,7 @@ uses a zero source id solely to represent an explicitly empty queue; absent queu
 retain the default of applying the service's own rules. Deleting the last source
 from an explicit queue preserves its empty intent. Native settings preserve
 unknown JSON fields and unedited service settings. The application
-window uses ordered native lists and an inline source selector. Display/search
+window uses ordered native lists and an inline source selector, and a service dropdown where the reference has a tab per tag service. Display/search
 uses a numeric zero for the reference's nullable "always autocomplete" threshold.
 Manual/background sibling/parent sync remains unimplemented.
 Autocomplete configuration refresh preserves any open manage-tags draft; its
@@ -1533,6 +1534,7 @@ results; a stale in-flight search cannot restore them. The database unlock
 endpoint authenticates its cached admin key while the native store is paused.
 The detached GUI model saves a whole key edit only on Apply and rejects stale
 concurrent editor state; Qt service review applies list actions immediately.
+Opening the API's base URL follows the reference (the configured port and https; "The service is not running..." with no port) until a running daemon reports its own listening address, which then wins so that command-line `--port`/`--bind` overrides are honoured (the reference has no such overrides).
 A key edited onto another entry's key is refused with the reference's "key collision" words, shown in the open editor (the reference shows a modal once its editor has closed).
 The access-key window opens separately from service review; the reference
 embeds its list within that panel. "add from api request" opens the
@@ -5036,7 +5038,7 @@ The `mpv.conf` copy replaces a read-only mpv.conf; recorded as root the referenc
 
 ### Command palette: unrecorded cases
 
-The palette's media-menu rows and the effect of activating one are recorded only for a page with no files (`oracle/fixtures/command_palette.json`); rows for selected files are checked against the thumbnail menu's own code, not a recording. Favourite searches opened from the palette are compared for page count and synchronisation, but their sort and collect settings are not recorded. Which of several children a page-of-pages row shows is not recorded either (the recording has one child).
+The palette's media-menu rows and the effect of activating one are recorded only for a page with no files (`oracle/fixtures/command_palette.json`); rows for selected files are checked against the thumbnail menu's own code, not a recording. Favourite searches opened from the palette are compared for page count, synchronisation, sort, collect and (with the option off) the shown page's unchanged name. The palette lists the reference's whole menubar, including actions the menubar hides until a backup location is set ("update database backup", "change database backup location…") and the Help > debug action "review threads"; native has neither. Which of several children a page-of-pages row shows is not recorded either (the recording has one child).
 
 ### Downloading misc options: unrecorded cases
 

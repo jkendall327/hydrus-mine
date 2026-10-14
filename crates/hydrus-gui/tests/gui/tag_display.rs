@@ -309,3 +309,169 @@ fn dialogs_cancel_nested_editors_persist_and_refresh_locked_pages_and_viewer() {
     assert!(bound.tag_display.borrow().is_none());
     viewer.invoke_close_requested();
 }
+
+// leaf: audit-media-application-siblings
+#[test]
+fn the_application_window_says_what_the_reference_says_and_orders_sibling_sources_as_recorded() {
+    let recorded = hydrus_testkit::fixture_json("tag_display.json");
+    let _windows = headless::init();
+    let legacy = hydrus_testkit::legacy_fixture("repositories");
+    let dir = tempfile::tempdir().unwrap();
+    hydrus_store::import::import_legacy(
+        legacy.path(),
+        &dir.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    // the sync line under each combination of the two sync switches, and its colour
+    for case in recorded["application_status_by_switches"]
+        .as_array()
+        .unwrap()
+    {
+        let (idle, active) = (
+            case["idle"].as_bool().unwrap(),
+            case["active"].as_bool().unwrap(),
+        );
+        store
+            .write_and_refresh(move |ctx| {
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &hydrus_store::settings::BackgroundWork {
+                        tag_display_during_idle: idle,
+                        tag_display_during_active: active,
+                        ..hydrus_store::settings::get::<hydrus_store::settings::BackgroundWork>(
+                            ctx.conn(),
+                        )?
+                    },
+                )
+            })
+            .unwrap();
+        let w = open(&ui, &bound, true);
+        assert_eq!(
+            w.get_application_sync_status(),
+            case["text"].as_str().unwrap()
+        );
+        assert_eq!(
+            w.get_application_sync_valid(),
+            case["object_name"] == "HydrusValid",
+            "{case}"
+        );
+        w.invoke_cancel();
+    }
+    // (back to syncing all the time, as the first window below expects)
+    store
+        .write_and_refresh(|ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::settings::BackgroundWork {
+                    tag_display_during_idle: true,
+                    tag_display_during_active: true,
+                    ..hydrus_store::settings::get::<hydrus_store::settings::BackgroundWork>(
+                        ctx.conn(),
+                    )?
+                },
+            )
+        })
+        .unwrap();
+    let w = open(&ui, &bound, true);
+
+    // what the reference's editor says: the warning, the explanation and the sync line
+    let labels = recorded["application_labels"].as_array().unwrap();
+    assert_eq!(w.get_application_warning(), labels[0].as_str().unwrap());
+    assert_eq!(w.get_application_message(), labels[1].as_str().unwrap());
+    assert_eq!(w.get_application_sync_status(), labels[2].as_str().unwrap());
+    assert!(
+        w.get_application_sync_valid(),
+        "all-the-time sync reads as valid"
+    );
+
+    // the recorded master service, and the states its sibling list was put in
+    let name_of = |hex: &str| {
+        store
+            .snapshot()
+            .services
+            .by_key(&hydrus_core::ServiceKey::from_hex(hex).unwrap())
+            .unwrap()
+            .name
+            .clone()
+    };
+    let master = recorded["application_initial"]["siblings"]
+        .as_object()
+        .unwrap()
+        .keys()
+        .find(|k| {
+            !recorded["application_initial"]["siblings"][k.as_str()]
+                .as_array()
+                .unwrap()
+                .is_empty()
+        })
+        .unwrap()
+        .clone();
+    let at = w
+        .get_services()
+        .iter()
+        .position(|s| *s == name_of(&master))
+        .unwrap();
+    w.invoke_service_chosen(i32::try_from(at).unwrap());
+    let sibling_names = |w: &TagDisplayWindow| -> Vec<String> {
+        w.get_sibling_rows()
+            .iter()
+            .map(|r| r.cells.row_data(0).unwrap().to_string())
+            .collect()
+    };
+    let expected = |state: &str| -> Vec<String> {
+        recorded[state]["siblings"][master.as_str()]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|k| name_of(k.as_str().unwrap()))
+            .collect()
+    };
+    let clear = |w: &TagDisplayWindow| {
+        while w.get_sibling_rows().row_count() > 0 {
+            w.invoke_source_click(false, 0);
+            w.invoke_source_change(false, 0);
+        }
+    };
+    // initial: the services in the recorded order
+    clear(&w);
+    for key in recorded["application_initial"]["siblings"][master.as_str()]
+        .as_array()
+        .unwrap()
+    {
+        let name = name_of(key.as_str().unwrap());
+        let at = w
+            .get_source_services()
+            .iter()
+            .position(|s| *s == name)
+            .unwrap();
+        w.set_source_index(i32::try_from(at).unwrap());
+        w.invoke_source_add(false);
+    }
+    assert_eq!(sibling_names(&w), expected("application_initial"));
+    // applied and reopened, the window shows that queue on opening
+    w.invoke_apply();
+    let w = open(&ui, &bound, true);
+    let at = w
+        .get_services()
+        .iter()
+        .position(|s| *s == name_of(&master))
+        .unwrap();
+    w.invoke_service_chosen(i32::try_from(at).unwrap());
+    assert_eq!(sibling_names(&w), expected("application_initial"));
+    // reordered: the same services in the reverse order, reached with the up button
+    let count = w.get_sibling_rows().row_count();
+    for target in 0..count.saturating_sub(1) {
+        for from in (target + 1..count).rev() {
+            w.invoke_source_click(false, i32::try_from(from).unwrap());
+            w.invoke_source_change(false, -1);
+        }
+    }
+    assert_eq!(sibling_names(&w), expected("application_reordered"));
+    // empty: removing every service leaves none (that kind of application is off)
+    clear(&w);
+    assert_eq!(sibling_names(&w), expected("application_empty"));
+    w.invoke_cancel();
+}

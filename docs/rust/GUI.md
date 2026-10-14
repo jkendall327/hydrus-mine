@@ -1972,7 +1972,8 @@ cover the implementation.
 Recorded against the reference (bin E of #97): pair import from the clipboard
 or a .txt file (uneven lines, cleaning, blank lines, pre-existing and pending
 pairs, sibling conflicts, loops, self-pairs staged after the "Loop problem!"
-message, a batch looping within itself or giving one tag two ideals,
+message, a pair leading into a loop already there (its path listed in a second
+"Loop problem!" message), a batch looping within itself or giving one tag two ideals,
 re-imported petitions, more than ten pairs on a repository) and selected-pair export to the clipboard or a .txt file
 (`oracle/record_relationship_exchange.py`); the default service tab and saving
 it on change, shared with Manage tags, whose tabs read "name (tags)" with " *"
@@ -1998,7 +1999,11 @@ file/tag domains. Domain changes use the native location selector, including all
 known files and existing combined domains outside advanced mode. Ctrl+Space
 fetches search/manage-tags suggestions manually. The advanced `manage where tag
 siblings and parents apply` window edits ordered source queues in ListTable;
-empty queues disable that relationship kind. Both dialogs stage changes until
+empty queues disable that relationship kind. The window opens with the reference's
+"THIS IS COMPLICATED, THINK CAREFULLY" heading, its explanation and its sync line
+(green when sync runs all the time, orange otherwise, by the two sync switches), as
+recorded in `tag_display.json`; the recorded queue states (services in order,
+reversed, emptied) are reached with the add, up and remove buttons. Both dialogs stage changes until
 Apply, disable parent editing while a nested editor is open, close owned nested
 editors on cancel and preserve unrelated settings.
 Applying updates selection tags on all open pages (including locked pages),

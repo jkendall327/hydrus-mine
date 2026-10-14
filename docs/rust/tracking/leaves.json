@@ -34,10 +34,10 @@
     "Exactly-one selected key is copied in hex and base URL is generated from configured listener, including disabled/imported settings handling."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Hex copy of the single selected key is driven through the window and matches ClientGUIClientsideServices._CopyAPIAccessKey. The open-base-URL half deliberately differs from the reference: it opens the daemon's reported listening address (asserts http://127.0.0.1:45990/ even when the configured port is None, where the reference only warns 'not running'), and refuses HTTPS rather than using https://. Documented in GUI.md, but not compared with a recording. Tests: crates/hydrus-gui/tests/gui/client_api_admin.rs:125; crates/hydrus-gui-model/tests/model/client_api_admin.rs:68 (reference rows only)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "Copy: one selected key is copied as hex and two selected copy nothing (the reference's _CopyAPIAccessKey). Open base URL: all six recorded cases (client_api_admin.json base_url, from the reference's real _OpenBaseURL: no port warns 'The service is not running, so you cannot view it in a web browser!', a port launches http or https://127.0.0.1:port/) are replayed through the window with no daemon status. When a running daemon reports its own address that wins, so command-line --port/--bind overrides work (not in the reference; DIFFERENCES.md); the earlier note that https was refused was stale. Test: crates/hydrus-gui/tests/gui/client_api_admin.rs opening_the_base_url_launches_or_warns_as_the_reference_does_with_no_daemon_overriding."
    }
   },
   {
@@ -90,13 +90,13 @@
    "native": null,
    "notes": [
     "Adds/removes/reorders the sibling source queues for each real tag service. Explicit empty queues remain empty after reopen; absent queues default to own rules. Atomic Apply republishes graphs/counts and daemon revision rather than running background sync.",
-    "Native applies/recalculates immediately; reference background sync status and saved default service tab are unavailable."
+    "Native applies/recalculates immediately; the reference's background sync is not run, but the window shows its warning, explanation and sync status line (by the two sync switches). The saved default service tab is unavailable."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives the application window (add/change source, Apply, reopen, empty queue, refresh of pages/viewer) and the model test covers add/reorder/remove/reopen/daemon, but all expected values are typed. oracle/fixtures/tag_display.json application_labels/initial/reordered/empty exist and no Rust test reads them. Tests: crates/hydrus-gui/tests/gui/tag_display.rs:44 dialogs_cancel_nested_editors_persist_and_refresh_locked_pages_and_viewer (w4/w5/w6); crates/hydrus-gui-model/tests/model/tag_application_queues.rs:118"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The real 'manage where tag siblings and parents apply' window is opened and compared with tag_display.json (the reference's EditTagDisplayApplication on the repositories fixture): its heading, explanation and the sync line under all three switch combinations with its colour (tag_display.json application_status_by_switches; the recording showed native had different intro text and no sync line; fixed), the queue shown on opening after an apply, and the sibling queue put into the recorded initial, reversed and emptied states with the add/up/remove buttons. The service dropdown standing in for the reference's tab per service is in DIFFERENCES.md. Test: crates/hydrus-gui/tests/gui/tag_display.rs the_application_window_says_what_the_reference_says_and_orders_sibling_sources_as_recorded; the store-level queue test is crates/hydrus-gui-model/tests/model/tag_application_queues.rs."
    }
   },
   {
@@ -2197,14 +2197,14 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Cleaned left/right text inputs construct staged pair batches, repair ordinary conflicts and reject self/looping batches; Apply is atomic and refreshes display graphs/counts.",
-    "Full write autocomplete and detailed pre-existing corrupt-graph warning are absent."
+    "Cleaned left/right text inputs construct staged pair batches, repair ordinary conflicts and warn about self-pairs and loops (also loops already there) as the reference does, staging them anyway; Apply is atomic and refreshes display graphs/counts.",
+    "Pair entry has write autocomplete suggestions; several loops already there may be listed in another order than the reference's (a Python set's): DIFFERENCES.md."
    ],
    "recheck": {
     "date": "2026-10-13",
-    "class": "weak",
-    "by": "Claude session (#165 triage)",
-    "note": "Untagged (2026-10-13): Model replays tag_relationships.json (rows, questions, conflict/loop repairs); self_pairs_cycles_and_two_ideals_in_one_batch_are_staged_as_the_reference_stages_them (crates/hydrus-gui-model/tests/model/tag_relationships.rs) now checks the reference's staging of self-pairs and in-batch loops against relationship_exchange.json (batches are no longer rejected). Still weak: the reference's pre-existing-loop warning is absent (DIFFERENCES.md), and the model test stands in for the window."
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "As audit-media-siblings-pairs, for the parents window: pair entry and preview, conflict and loop repairs, self-pairs, a loop inside one batch, and a pair leading into a loop already there (second 'Loop problem!' message), on a local service and a repository, replayed through the window against tag_relationships.json and relationship_exchange.json. Tests: crates/hydrus-gui/tests/gui/relationship_exchange.rs, tag_relationships_replay.rs."
    }
   },
   {
@@ -3433,14 +3433,14 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Cleaned left/right text inputs construct staged pair batches, repair ordinary conflicts and reject self/looping batches; Apply is atomic and refreshes display graphs/counts.",
-    "Full write autocomplete and detailed pre-existing corrupt-graph warning are absent."
+    "Cleaned left/right text inputs construct staged pair batches, repair ordinary conflicts and warn about self-pairs and loops (also loops already there) as the reference does, staging them anyway; Apply is atomic and refreshes display graphs/counts.",
+    "Pair entry has write autocomplete suggestions; several loops already there may be listed in another order than the reference's (a Python set's): DIFFERENCES.md."
    ],
    "recheck": {
     "date": "2026-10-13",
-    "class": "weak",
-    "by": "Claude session (#165 triage)",
-    "note": "Untagged (2026-10-13): Model replays tag_relationships.json (conflict repair, rows, updates, questions); self_pairs_cycles_and_two_ideals_in_one_batch_are_staged_as_the_reference_stages_them now checks self-pairs, in-batch loops and two ideals against relationship_exchange.json (batches are no longer rejected). Still weak: the pre-existing-loop warning is absent and write autocomplete in pair entry is missing; the model test stands in for the window."
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "Pair entry, the staged-rows preview and the graph repairs run through the real siblings window (typed tags (the suggestion list is used to pick the exact tag, but its contents are not compared), add/delete, the questions answered with their buttons, rows compared after each step) against tag_relationships.json and relationship_exchange.json: ordinary conflicts auto-petitioned, a pair closing a loop repealed, self-pairs, a loop inside one batch, two ideals, and (new, recorded and implemented) a pair leading into a loop already there, which raises the reference's second 'Loop problem!' message listing the path. Local service and repository. Several pre-existing loops may list in a different order from the reference's (a Python set's): DIFFERENCES.md. Tests: crates/hydrus-gui/tests/gui/relationship_exchange.rs, tag_relationships_replay.rs."
    }
   },
   {
@@ -6454,10 +6454,10 @@
     "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Palette query rows with show_main_menu on are replayed from command_palette.json (events 4,5,17,18) against palette::query; the window test (setting on) activates 'options…' through the real main-menu dispatcher. The off gate, independence from provider order and the history requirement are only asserted with typed values in each_live_provider_policy (no recording of show_main_menu=false), and the recording uses a synthetic menu rather than the flattened native menubar. Tests: crates/hydrus-gui-model/tests/model/command_palette.rs:98 providers_match_real_qt_order_limits_and_thresholds; :242 each_live_provider_policy_reaches_its_results_and_preferences_persist; crates/hydrus-gui/tests/gui/command_palette.rs:47 ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions; crates/hydrus-gui/tests/gui/options_window.rs:4469 command_palette_options_stage_queue_changes_and_persist_only_on_apply"
+    "date": "2026-10-13",
+    "class": "weak",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The setting's gate and the flattened menubar are replayed against command_palette.json (main_menu_real, main_menu_off): six queries give the reference's rows and menu paths in order, and with the setting off none. Not sound: three rows the reference lists are missing natively and the test filters them (update database backup… and change database backup location… which the menubar hides until a location is set, and Help > debug > review threads); DIFFERENCES.md. Not tagged. Test: crates/hydrus-gui/tests/gui/command_palette.rs the_main_menu_rows_are_the_reference_s_flattened_menubar_and_the_setting_gates_them."
    }
   },
   {
@@ -6634,10 +6634,10 @@
     "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
    ],
    "recheck": {
-    "date": "2026-10-09",
-    "class": "weak",
-    "by": "phase 2 session",
-    "note": "Both settings drive the real palette; the new-page count (selected.favourite) and, for the off case, the new-page count and same_page (selected.favourite_current) are read from the recording. Missing: favourite sort/collect are not recorded and not compared (DIFFERENCES.md); the recorded page's name was already the favourite's, so the off case's name is not comparable. Tests: command_palette.rs ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions; saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palette."
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "Both settings drive the real palette against command_palette.json: on opens one new page named for the favourite, off searches the shown page and leaves its name (recorded name_unchanged), and in both the favourite's sort and collect (recorded: number of tags descending, collect by series) are applied and its synchronised flag kept. Compared as relations for the sort because the reference and native number sort types differently. Tests: crates/hydrus-gui/tests/gui/command_palette.rs ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions, saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palette."
    }
   },
   {
@@ -8585,10 +8585,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real checkbox (label, box, default off) and the real sort-choice path (lib.rs:506 sort_chosen) are driven, but what the behaviour does (default sort saved only when the option is on, new pages open with it) is typed from ClientGUIMediaResultsPanelSortCollect._UserChoseASort; no recording of the reference doing it (sidebar_sort_collect_cogs.json forces the option off). Reference calls _UserChoseASort from the sort-order choice too; the test covers order and type. Tests: crates/hydrus-gui/tests/gui/options_gui_misc.rs:12 a_chosen_sort_becomes_the_default_only_if_the_option_says_so; sidebar_context_cogs.rs:717"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The option is set in the real Options window, then a sort type is chosen and the order flipped on a real search page, and whether the default sort follows (and what a new page opens with) is compared with default_sort_update.json, recorded from the reference's real sort control with the option off and on (type and order choices both save). Compared as relations (default equals page sort; default changed) because the reference and native number their sort types differently. Tests: crates/hydrus-gui/tests/gui/options_gui_misc.rs choosing_a_sort_updates_the_default_as_the_reference_s_sort_control_does."
    }
   },
   {
@@ -9680,10 +9680,10 @@
     "Native options registry has no editable 'Switch to main window when creating new file search page from media viewer:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options row and real viewer middle-press; the activation consumer (activate_if_inactive) is observed only through a request counter, and expected page/predicate values are typed, not recorded. Tracker note 'no editable row exists' is stale. Tests: crates/hydrus-gui/tests/gui/main_identity.rs:46 actual_middle_press_uses_canonical_tag_location_defaults_and_saved_activation"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The real Options row and a real middle press on a viewer tag now compare the new page's name, predicate and whether the main window is asked to come forward (first page only) with tag_search_new_page.json, recorded from the reference's ListBoxTags._NewSearchPages with the option off and on and with a connector and underscore replacement set. The activation itself is observed as a request counter on the main window (the headless platform has no window manager). Test: crates/hydrus-gui/tests/gui/main_identity.rs actual_middle_press_uses_canonical_tag_location_defaults_and_saved_activation."
    }
   },
   {

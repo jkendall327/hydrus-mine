@@ -38,6 +38,8 @@ IMPORTS = [
     ('clipboard', 'self\nself', []),
     ('clipboard', 'p\nq\np\nr', []),
     ('clipboard', 'one\ntwo\ntwo\none', []),
+    # (the cycle just staged is a loop already there: a pair leading into it says so)
+    ('clipboard', 'x2\none', []),
     ('clipboard', 'a\nb', [True, True]),
     ('clipboard', '\n'.join(f'many {i:02}\nmany ideal' for i in range(12)), []),
     ('clipboard', '', []),
