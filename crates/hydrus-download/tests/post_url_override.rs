@@ -92,8 +92,19 @@ fn post_parser() -> PageParser {
 
 struct Run {
     site: Arc<Site>,
-    _dir: tempfile::TempDir,
+    runner: Arc<QueueRunner>,
+    queue: i64,
     started: Instant,
+    _dir: tempfile::TempDir,
+}
+
+impl Drop for Run {
+    /// Stops the queue's jobs before the store directory goes.
+    fn drop(&mut self) {
+        use hydrus_store::live::JobKind;
+        self.runner.cancel(self.queue, JobKind::File);
+        self.runner.cancel(self.queue, JobKind::Gallery);
+    }
 }
 
 /// Queue one post under a bandwidth rule allowing one request a day (the
@@ -162,12 +173,12 @@ async fn run(override_on_file_urls_from_posts: bool) -> Run {
             &[],
         )
         .unwrap();
-    // (the runner lives as long as the test's store directory)
-    std::mem::forget(runner);
     Run {
         site,
-        _dir: dir,
+        runner,
+        queue: queue.id,
         started,
+        _dir: dir,
     }
 }
 

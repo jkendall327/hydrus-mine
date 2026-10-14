@@ -347,18 +347,36 @@ fn image_of(post: u32) -> &'static str {
     }
 }
 
+/// The md5 of a media file, from the system's `md5sum`.
+fn md5_of(name: &str) -> String {
+    let out = std::process::Command::new("md5sum")
+        .arg(
+            Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("../../oracle/fixtures/media")
+                .join(name),
+        )
+        .output()
+        .expect("md5sum runs");
+    String::from_utf8(out.stdout)
+        .unwrap()
+        .split_whitespace()
+        .next()
+        .unwrap()
+        .to_owned()
+}
+
 async fn post_page(State(site): State<Arc<Site>>, AxPath(id): AxPath<u32>) -> Response {
     site.hits.lock().unwrap().push(format!("/post/{id}"));
-    if ![1, 2, 3, 90].contains(&id) {
+    if ![1, 2, 3, 90, 91].contains(&id) {
         return StatusCode::NOT_FOUND.into_response();
     }
-    let hash = if id == 90 {
-        format!(
+    let hash = match id {
+        90 => format!(
             r#"<span class="hash">{}</span>"#,
             site.hash_90.lock().unwrap()
-        )
-    } else {
-        String::new()
+        ),
+        91 => format!(r#"<span class="md5">{}</span>"#, md5_of(image_of(1))),
+        _ => String::new(),
     };
     let html = format!(
         r#"<html><head><title>post {id}</title></head><body><ul id="tags"><li class="tag">post {id}</li></ul>{hash}<img id="image" src="/files/p{id}.jpg"></body></html>"#
@@ -422,6 +440,14 @@ fn booru_parser() -> PageParser {
                     &[("id", "image")],
                     HtmlContent::Attribute("src".into()),
                 ),
+            },
+            ContentParser {
+                name: "md5".into(),
+                kind: ContentKind::Hash {
+                    hash_type: "md5".into(),
+                    encoding: "hex".into(),
+                },
+                formula: html_formula("span", &[("class", "md5")], HtmlContent::Text),
             },
             ContentParser {
                 name: "hash".into(),

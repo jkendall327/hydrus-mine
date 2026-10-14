@@ -1205,7 +1205,7 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   output is run through a URL queue (prefetch: which pages the site is asked
   for, the seed's status and note) and a local-import queue (tags of a new, an
   inbox and an archived file) against recordings of the reference's engine
-  (`import_options_consumers.rs`). Not driven: prefetch by md5, sha1 or sha512
+  (`import_options_consumers.rs`). Not driven: prefetch by sha1 or sha512 (md5 is driven)
   hashes, and in gallery, watcher and subscription importers (same code).
   The shared location button's flags for local-only, combined-local-only and
   no-multiple choices exist in the model and are replayed against the

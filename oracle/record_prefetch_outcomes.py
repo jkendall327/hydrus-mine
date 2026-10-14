@@ -52,6 +52,8 @@ SCENARIOS = [
     ( 'a parsed hash known, hash check on', None, '/post/90', ( CHECK, NOT_CHECK, True, False, False ) ),
     ( 'a parsed hash known, hash check dispositive', None, '/post/90', ( DISPOSITIVE, NOT_CHECK, True, False, False ) ),
     ( 'a parsed hash known, hash check off', None, '/post/90', ( NOT_CHECK, NOT_CHECK, True, False, False ) ),
+    ( 'a parsed md5 known, hash check on', None, '/post/91', ( CHECK, NOT_CHECK, True, False, False ) ),
+    ( 'a parsed md5 known, hash check off', None, '/post/91', ( NOT_CHECK, NOT_CHECK, True, False, False ) ),
     ( 'the seed already has the hash, hash check on', 'preset_hash', '/post/90', ( CHECK, NOT_CHECK, True, False, False ) ),
     ( 'the seed already has the hash, hash check on, fetch metadata anyway', 'preset_hash', '/post/90', ( CHECK, NOT_CHECK, True, True, False ) ),
     ( 'the seed already has the hash, hash dispositive', 'preset_hash', '/post/90', ( DISPOSITIVE, NOT_CHECK, True, False, False ) ),
@@ -76,13 +78,16 @@ def build_phase():
     pages = {}
     files = {}
 
-    for pid in [ 1, 2, 3, 90 ]:
+    for pid in [ 1, 2, 3, 90, 91 ]:
 
-        image = flows.IMAGES[ ( ( 1 if pid == 90 else pid ) - 1 ) % len( flows.IMAGES ) ]
+        image = flows.IMAGES[ ( ( 1 if pid in ( 90, 91 ) else pid ) - 1 ) % len( flows.IMAGES ) ]
 
         with open( os.path.join( flows.MEDIA_DIR, image ), 'rb' ) as f:
 
-            sha256 = hashlib.sha256( f.read() ).hexdigest()
+            data = f.read()
+
+        sha256 = hashlib.sha256( data ).hexdigest()
+        md5 = hashlib.md5( data ).hexdigest()
 
 
         pages[ f'/post/{pid}' ] = (
@@ -91,6 +96,11 @@ def build_phase():
             f'<span class="hash">{sha256}</span>'
             f'<img id="image" src="/files/p{pid}.jpg"></body></html>'
         ) if pid == 90 else (
+            f'<html><head><title>post {pid}</title></head><body>'
+            f'<ul id="tags"><li class="tag">post {pid}</li></ul>'
+            f'<span class="md5">{md5}</span>'
+            f'<img id="image" src="/files/p{pid}.jpg"></body></html>'
+        ) if pid == 91 else (
             f'<html><head><title>post {pid}</title></head><body>'
             f'<ul id="tags"><li class="tag">post {pid}</li></ul>'
             f'<img id="image" src="/files/p{pid}.jpg"></body></html>'
@@ -137,6 +147,7 @@ def definitions( site ):
         content_parsers = [
             P.ContentParser( name = 'tags', content_type = HC.CONTENT_TYPE_MAPPINGS, formula = html( 'li', { 'class' : 'tag' }, P.HTML_CONTENT_STRING ), additional_info = None ),
             P.ContentParser( name = 'file', content_type = HC.CONTENT_TYPE_URLS, formula = html( 'img', { 'id' : 'image' }, P.HTML_CONTENT_ATTRIBUTE, 'src' ), additional_info = ( HC.URL_TYPE_DESIRED, 50 ) ),
+            P.ContentParser( name = 'md5', content_type = HC.CONTENT_TYPE_HASH, formula = html( 'span', { 'class' : 'md5' }, P.HTML_CONTENT_STRING ), additional_info = ( 'md5', 'hex' ) ),
             P.ContentParser( name = 'hash', content_type = HC.CONTENT_TYPE_HASH, formula = html( 'span', { 'class' : 'hash' }, P.HTML_CONTENT_STRING ), additional_info = ( 'sha256', 'hex' ) ),
         ],
         example_urls = [ site.base + '/post/1' ]

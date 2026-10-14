@@ -3,7 +3,8 @@
   "/post/1",
   "/post/2",
   "/post/3",
-  "/post/90"
+  "/post/90",
+  "/post/91"
  ],
  "scenarios": [
   {
@@ -144,6 +145,49 @@
     "url_check": 0
    },
    "path": "/post/90",
+   "seed": {
+    "note": "file recognised: Imported at TIME, which was AGO before this check.",
+    "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+    "status": 2
+   },
+   "setup": null
+  },
+  {
+   "hits": [
+    "/post/91"
+   ],
+   "name": "a parsed md5 known, hash check on",
+   "options": {
+    "exclude_deleted": true,
+    "fetch_hash": false,
+    "fetch_url": false,
+    "hash_check": 1,
+    "neighbour_spam": true,
+    "url_check": 0
+   },
+   "path": "/post/91",
+   "seed": {
+    "note": "md5 hash recognised: Imported at TIME, which was AGO before this check.",
+    "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+    "status": 2
+   },
+   "setup": null
+  },
+  {
+   "hits": [
+    "/files/p91.jpg",
+    "/post/91"
+   ],
+   "name": "a parsed md5 known, hash check off",
+   "options": {
+    "exclude_deleted": true,
+    "fetch_hash": false,
+    "fetch_url": false,
+    "hash_check": 0,
+    "neighbour_spam": true,
+    "url_check": 0
+   },
+   "path": "/post/91",
    "seed": {
     "note": "file recognised: Imported at TIME, which was AGO before this check.",
     "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
