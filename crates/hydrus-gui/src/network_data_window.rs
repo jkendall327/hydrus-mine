@@ -43,6 +43,7 @@ impl Worker {
     fn start(store: Arc<Store>) -> Self {
         let (send, requests) = crossbeam_channel::unbounded();
         let (events, receive) = crossbeam_channel::unbounded();
+        let owner = std::thread::current().id();
         std::thread::spawn(move || {
             loop {
                 let operation = requests.recv_timeout(Duration::from_millis(500));
@@ -79,7 +80,7 @@ impl Worker {
                     let _ = events.send(Event::Written(result));
                 }
                 // A closing view can still have an owner-release command queued.
-                let _ = events.send(Event::Review(Review::load(&store, now()).map(Box::new)));
+                let _ = events.send(Event::Review(Review::load(&store, now_for(owner)).map(Box::new)));
             }
         });
         let _ = send.send(Operation::Refresh);
@@ -91,24 +92,37 @@ impl Drop for Worker {
         let _ = self.send.send(Operation::Stop);
     }
 }
-/// The second the windows treat as now, when a test holds time still
-/// (`i64::MIN`: the clock).
-static HELD_NOW: std::sync::atomic::AtomicI64 = std::sync::atomic::AtomicI64::new(i64::MIN);
+/// The second the windows treat as now, per thread, when a test holds time
+/// still. A window's worker threads use their owner's, so tests running in
+/// parallel on different threads never see each other's clock.
+static HELD_NOW: std::sync::Mutex<Vec<(std::thread::ThreadId, i64)>> =
+    std::sync::Mutex::new(Vec::new());
 
-/// Hold the windows' "now" at `seconds` (or let it run again with `None`).
+/// Hold the calling thread's windows' "now" at `seconds` (or let it run
+/// again with `None`).
 #[doc(hidden)]
 pub fn hold_now(seconds: Option<i64>) {
-    HELD_NOW.store(
-        seconds.unwrap_or(i64::MIN),
-        std::sync::atomic::Ordering::SeqCst,
-    );
+    let me = std::thread::current().id();
+    let mut held = HELD_NOW
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    held.retain(|(id, _)| *id != me);
+    if let Some(seconds) = seconds {
+        held.push((me, seconds));
+    }
+}
+
+fn now_for(owner: std::thread::ThreadId) -> i64 {
+    let held = HELD_NOW
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner)
+        .iter()
+        .find_map(|(id, seconds)| (*id == owner).then_some(*seconds));
+    held.unwrap_or_else(|| TimestampMs::now().millis() / 1000)
 }
 
 fn now() -> i64 {
-    match HELD_NOW.load(std::sync::atomic::Ordering::SeqCst) {
-        i64::MIN => TimestampMs::now().millis() / 1000,
-        held => held,
-    }
+    now_for(std::thread::current().id())
 }
 fn columns(titles: &[(&str, f32)]) -> ModelRc<TableColumn> {
     ModelRc::new(VecModel::from(

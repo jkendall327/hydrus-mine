@@ -1122,7 +1122,7 @@
     "date": "2026-10-14",
     "class": "sound",
     "by": "W5-8 session",
-    "note": "Native-only (DECISIONS.md 2026-10-14): the reference has no counterpart, so there is nothing to record; sound because a test drives it end to end. crates/hydrus-gui/tests/gui/force_filetype.rs forcing_a_filetype_moves_owned_media_to_its_new_extension_keeping_bytes_and_times and ..._copies_shared_media_keeping_bytes_and_times: through the thumbnail menu and the metadata job on a real filesystem, the owned file is renamed (bytes and modification time kept, old path gone) and shared media is copied (original kept, queued for cleanup in the older test). Not reproduced: a rename that fails at the file system (cross-device), which needs two mounts; the store test of metadata_jobs covers it with an injected failure. Stale tracker note about the copied source not being queued is false."
+    "note": "Compared with oracle/fixtures/force_filetype.json `disk` (record_force_filetype.py runs the reference's ChangeFileExt on a real file): crates/hydrus-gui/tests/gui/force_filetype.rs forcing_a_filetype_moves_owned_media_as_the_references_change_file_ext_does and ..._copies_shared_media_as_the_references_failed_move_does drive the thumbnail menu, the job and the store on a real filesystem and assert the recorded files (names, bytes, modification time; new extension only after a move, both after a copy). Differences, in DIFFERENCES.md: the reference's own forcing action moves nothing (it passes ChangeFileExt the already refreshed filetype) while hydrus-rs renames; the reference copies when the move fails or the path is in use, hydrus-rs when media is shared with another install; the cross-device rename failure is not reproduced, and the reference's one-hour delay on the cleanup job is not compared (the older test in the same file checks the job is queued)."
    }
   },
   {
@@ -4032,7 +4032,7 @@
     "date": "2026-10-14",
     "class": "sound",
     "by": "W5-8 session",
-    "note": "Native-only (DECISIONS.md 2026-10-14): the reference has no counterpart, so there is nothing to record; sound because a test drives it end to end. crates/hydrus-gui/tests/gui/network_native_end_to_end.rs a_typed_domain_override_limits_the_engines_next_request_to_that_domain: a domain typed in the bandwidth window is given a requests rule and applied; the running engine reloads it and its next request to that domain (through a loopback proxy, since the window takes no port) waits on bandwidth under that domain's context. The cancel/stale-handle cases are in network_data.rs."
+    "note": "Native-only (DECISIONS.md 2026-10-14): the reference has no counterpart, so there is nothing to record; sound because a test drives it end to end. crates/hydrus-gui/tests/gui/network_native_end_to_end.rs a_typed_domain_override_limits_the_engines_next_request_to_that_domain: a domain typed in the bandwidth window is given a requests rule and applied; the running engine reloads it and its next request to that domain (through a loopback proxy, since the window takes no port) waits on bandwidth under that domain's context. The cancel/stale-handle cases are in network_data.rs. The engine's settings reload is called directly (engine.reload_settings()), not through the application's settings poll. Invalid typed domains (no dot, scheme, path, space, empty) open nothing and show the window's message; the rule saved for the typed domain is the only one that holds the second request past the inherited default of one a second."
    }
   },
   {
@@ -4546,7 +4546,7 @@
     "date": "2026-10-14",
     "class": "sound",
     "by": "W5-8 session",
-    "note": "Native-only (DECISIONS.md 2026-10-14): the reference has no counterpart, so there is nothing to record; sound because a test drives it end to end. crates/hydrus-gui/tests/gui/network_native_end_to_end.rs a_package_imported_in_the_window_saves_new_keys_members_and_links_and_a_stale_review_saves_nothing: a package imported through the real window into a real store gets new keys, nested members that follow them, parser links from the recorded parser_auto_links classes and parsers, adds only what is new on a second import, and a review made stale by another save is refused with nothing written. The reference's duplicate rules stay compared with oracle/fixtures/downloader_interchange.json in the model tests."
+    "note": "Compared with oracle/fixtures/package_import.json (record_package_import.py: the reference's ReviewDownloaderImport on the downloader_interchange package imported twice and on the parser_auto_links classes and parsers): crates/hydrus-gui/tests/gui/network_native_end_to_end.rs a_package_imported_in_the_window_matches_the_recorded_import_and_a_stale_review_saves_nothing drives the real window into a real store and asserts the final question and the result notice word for word, the generators, classes and parsers by name, the new keys, the duplicate rule (the nested generator is added again on re-import, as recorded) and the parser links. Fixed by the recording: duplicates are judged against what the client already had, not earlier objects of the same package. Native-only part: the stale-review refusal with nothing saved. Not matched: the reference leaves a nested generator's member keys dangling after regenerating them; hydrus-rs points them at the new keys (DIFFERENCES.md)."
    }
   },
   {
@@ -5329,7 +5329,7 @@
     "date": "2026-10-14",
     "class": "sound",
     "by": "W5-8 session",
-    "note": "Native-only (DECISIONS.md 2026-10-14): the reference has no counterpart, so there is nothing to record; sound because a test drives it end to end. crates/hydrus-gui/tests/gui/network_native_end_to_end.rs a_silent_daemon_disables_the_command_controls_after_five_seconds: the real engine heartbeat is stopped, the window's clock is held at the last heartbeat + 5 s (controls still enabled) and + 6 s (disabled, status offline, Cancel/Override send nothing), and a restarted heartbeat re-enables them on the same request."
+    "note": "Native-only (DECISIONS.md 2026-10-14): the reference has no counterpart, so there is nothing to record; sound because a test drives it end to end. crates/hydrus-gui/tests/gui/network_native_end_to_end.rs a_silent_daemon_disables_the_command_controls_after_five_seconds: the real engine heartbeat is stopped, the window's clock is held at the last heartbeat + 5 s (controls still enabled) and + 6 s (disabled, status offline, Cancel/Override send nothing), and a restarted heartbeat re-enables them on the same request. The window's held clock is per test thread (network_data_window::hold_now), so parallel tests do not see it."
    }
   },
   {
@@ -5348,7 +5348,7 @@
     "date": "2026-10-14",
     "class": "sound",
     "by": "W5-8 session",
-    "note": "Native-only (DECISIONS.md 2026-10-14): the reference has no counterpart, so there is nothing to record; sound because a test drives it end to end. crates/hydrus-gui/tests/gui/network_native_end_to_end.rs overriding_a_selected_request_releases_the_bandwidth_wait_and_counts_usage: a real fetch held by a global requests rule; the window's Override button reaches the engine through the store IPC, the fetch completes and the second request is counted in the saved usage."
+    "note": "Native-only (DECISIONS.md 2026-10-14): the reference has no counterpart, so there is nothing to record; sound because a test drives it end to end. crates/hydrus-gui/tests/gui/network_native_end_to_end.rs overriding_a_selected_request_releases_the_bandwidth_wait_and_counts_usage: a real fetch held by a global requests rule; the window's Override button reaches the engine through the store IPC, the fetch completes and the second request is counted in the saved usage. The engine's settings reload is called directly (engine.reload_settings()), not through the application's settings poll."
    }
   },
   {

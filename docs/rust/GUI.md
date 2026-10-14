@@ -2232,7 +2232,7 @@ writes and actual outgoing cookie/header values through an existing NetEngine.
 
 ## Bandwidth and current network jobs
 
-The jobs window's Cancel and Override buttons, its five-second offline expiry, a typed domain's rules and a downloader package's save are proved end to end (tests/gui/network_native_end_to_end.rs): window, store IPC, a running engine and a loopback server. These are native-only, so there is no reference recording.
+The jobs window's Cancel and Override buttons, its five-second offline expiry, a typed domain's rules and a downloader package's import are proved end to end (tests/gui/network_native_end_to_end.rs): window, store IPC, a running engine and a loopback server. The first four are native-only; the package import is replayed against the reference's recording (its question and result messages word for word, the objects, new keys, duplicates and parser links), with the conflict-safe save the one native-only part.
 
 Network > data opens native bandwidth usage/rule and current network-job reviews.
 Bandwidth review filters contexts by recent request usage, with custom seconds,

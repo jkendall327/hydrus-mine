@@ -1154,5 +1154,150 @@
    ],
    "value": null
   }
+ ],
+ "disk": [
+  {
+   "case": "plain",
+   "entry": "action",
+   "before": {
+    "old": {
+     "name": "{hash}.jpg",
+     "same_bytes": true,
+     "mtime": 1500000000
+    }
+   },
+   "after": {
+    "old": {
+     "name": "{hash}.jpg",
+     "same_bytes": true,
+     "mtime": 1500000000
+    }
+   },
+   "writes": [
+    [
+     "force_filetype",
+     1,
+     "png"
+    ]
+   ],
+   "needed_to_copy": null
+  },
+  {
+   "case": "plain",
+   "entry": "change file ext",
+   "before": {
+    "old": {
+     "name": "{hash}.jpg",
+     "same_bytes": true,
+     "mtime": 1500000000
+    }
+   },
+   "after": {
+    "new": {
+     "name": "{hash}.png",
+     "same_bytes": true,
+     "mtime": 1500000000
+    }
+   },
+   "writes": [],
+   "needed_to_copy": false
+  },
+  {
+   "case": "read only",
+   "entry": "action",
+   "before": {
+    "old": {
+     "name": "{hash}.jpg",
+     "same_bytes": true,
+     "mtime": 1500000000
+    }
+   },
+   "after": {
+    "old": {
+     "name": "{hash}.jpg",
+     "same_bytes": true,
+     "mtime": 1500000000
+    }
+   },
+   "writes": [
+    [
+     "force_filetype",
+     1,
+     "png"
+    ]
+   ],
+   "needed_to_copy": null
+  },
+  {
+   "case": "read only",
+   "entry": "change file ext",
+   "before": {
+    "old": {
+     "name": "{hash}.jpg",
+     "same_bytes": true,
+     "mtime": 1500000000
+    }
+   },
+   "after": {
+    "new": {
+     "name": "{hash}.png",
+     "same_bytes": true,
+     "mtime": 1500000000
+    }
+   },
+   "writes": [],
+   "needed_to_copy": false
+  },
+  {
+   "case": "move fails",
+   "entry": "action",
+   "before": {
+    "old": {
+     "name": "{hash}.jpg",
+     "same_bytes": true,
+     "mtime": 1500000000
+    }
+   },
+   "after": {
+    "old": {
+     "name": "{hash}.jpg",
+     "same_bytes": true,
+     "mtime": 1500000000
+    }
+   },
+   "writes": [
+    [
+     "force_filetype",
+     1,
+     "png"
+    ]
+   ],
+   "needed_to_copy": null
+  },
+  {
+   "case": "move fails",
+   "entry": "change file ext",
+   "before": {
+    "old": {
+     "name": "{hash}.jpg",
+     "same_bytes": true,
+     "mtime": 1500000000
+    }
+   },
+   "after": {
+    "old": {
+     "name": "{hash}.jpg",
+     "same_bytes": true,
+     "mtime": 1500000000
+    },
+    "new": {
+     "name": "{hash}.png",
+     "same_bytes": true,
+     "mtime": 1500000000
+    }
+   },
+   "writes": [],
+   "needed_to_copy": true
+  }
  ]
 }

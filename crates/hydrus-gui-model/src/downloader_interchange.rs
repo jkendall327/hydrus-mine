@@ -164,6 +164,13 @@ impl Draft {
         let mut review = Review::default();
         let mut seen = BTreeSet::new();
         let mut remap = BTreeMap::new();
+        // (the reference compares each object only with what the client
+        // already had, never with an earlier object of the same package)
+        let (old_classes, old_gugs, old_parsers) = (
+            next.classes.url_classes.len(),
+            next.downloaders.gugs.gugs.len(),
+            next.downloaders.parsers.len(),
+        );
         let mut duplicate_classes = Vec::new();
         let mut new_classes = Vec::new();
         let mut new_parsers = Vec::new();
@@ -189,6 +196,7 @@ impl Draft {
                         .classes
                         .url_classes
                         .iter()
+                        .take(old_classes)
                         .find(|old| {
                             let mut old = (*old).clone();
                             old.name.clone_from(&c.name);
@@ -233,6 +241,7 @@ impl Draft {
                         .gugs
                         .gugs
                         .iter()
+                        .take(old_gugs)
                         .find(|old| {
                             let mut old = (*old).clone();
                             set_gug_identity(&mut old, g.key(), g.name());
@@ -266,7 +275,7 @@ impl Draft {
                     next.downloaders.gugs.gugs.push(g.clone());
                 }
                 Native::Page(p) => {
-                    let duplicate = next.downloaders.parsers.iter_mut().find(|old| {
+                    let duplicate = next.downloaders.parsers.iter_mut().take(old_parsers).find(|old| {
                         let mut old = (*old).clone();
                         old.name.clone_from(&p.name);
                         old.key.clone_from(&p.key);

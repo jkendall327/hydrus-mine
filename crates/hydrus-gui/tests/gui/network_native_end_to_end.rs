@@ -25,16 +25,6 @@ use hydrus_store::{
 };
 use slint::Model as _;
 
-/// The windows share one process-wide clock that the expiry test holds still;
-/// every test here that opens a window takes this first.
-static CLOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
-
-fn clock() -> std::sync::MutexGuard<'static, ()> {
-    CLOCK
-        .lock()
-        .unwrap_or_else(std::sync::PoisonError::into_inner)
-}
-
 fn until(mut condition: impl FnMut() -> bool) {
     let start = std::time::Instant::now();
     while !condition() {
@@ -186,7 +176,6 @@ fn select_only_row(jobs: &hydrus_gui::NetworkJobsWindow, wait: &str) {
 // leaf: audit-network-jobs-cancel
 #[test]
 fn cancelling_a_selected_request_stops_the_engines_fetch_and_clears_the_row() {
-    let _clock = clock();
     let _headless = headless::init();
     let daemon = Daemon::start(false);
     daemon.set(settings::Pauses {
@@ -196,7 +185,7 @@ fn cancelling_a_selected_request_stops_the_engines_fetch_and_clears_the_row() {
     let slots = windows::Slots::default();
     let fetch = daemon.fetch();
     let jobs = windows::open_jobs(daemon.store.clone(), &slots).unwrap();
-    select_only_row(&jobs, "");
+    select_only_row(&jobs, "all new network traffic is paused");
     assert_eq!(daemon.snapshot().jobs[0].wait, WaitReason::Paused);
     jobs.invoke_cancel_jobs();
     assert!(matches!(daemon.finished(fetch), Err(NetError::Cancelled)));
@@ -208,7 +197,6 @@ fn cancelling_a_selected_request_stops_the_engines_fetch_and_clears_the_row() {
 // leaf: audit-network-jobs-override
 #[test]
 fn overriding_a_selected_request_releases_the_bandwidth_wait_and_counts_usage() {
-    let _clock = clock();
     let _headless = headless::init();
     let daemon = Daemon::start(true);
     daemon.set(BandwidthSettings {
@@ -252,7 +240,6 @@ fn overriding_a_selected_request_releases_the_bandwidth_wait_and_counts_usage() 
 // leaf: audit-network-jobs-expiry
 #[test]
 fn a_silent_daemon_disables_the_command_controls_after_five_seconds() {
-    let _clock = clock();
     let _headless = headless::init();
     let mut daemon = Daemon::start(false);
     daemon.set(settings::Pauses {
@@ -262,7 +249,7 @@ fn a_silent_daemon_disables_the_command_controls_after_five_seconds() {
     let slots = windows::Slots::default();
     let fetch = daemon.fetch();
     let jobs = windows::open_jobs(daemon.store.clone(), &slots).unwrap();
-    select_only_row(&jobs, "");
+    select_only_row(&jobs, "all new network traffic is paused");
     daemon.stop_heartbeat();
     let at = daemon.snapshot().at;
     // The last heartbeat is what the window judges against; hold its clock.
@@ -299,7 +286,6 @@ fn a_silent_daemon_disables_the_command_controls_after_five_seconds() {
 // leaf: audit-network-bandwidth-domain
 #[test]
 fn a_typed_domain_override_limits_the_engines_next_request_to_that_domain() {
-    let _clock = clock();
     let _headless = headless::init();
     let daemon = Daemon::start(true);
     let slots = windows::Slots::default();
@@ -309,6 +295,18 @@ fn a_typed_domain_override_limits_the_engines_next_request_to_that_domain() {
     };
     let name = domain.data.clone();
     let review = windows::open_bandwidth(daemon.store.clone(), &slots).unwrap();
+    // Text that is not a bare domain opens nothing and says why.
+    for bad in ["localhost", "http://files.example.com", "files.example.com/x", "a b.com", ""] {
+        review.set_domain(bad.into());
+        review.invoke_domain_clicked();
+        assert!(windows::last_rules().is_none(), "{bad:?}");
+        assert!(
+            review
+                .get_status()
+                .contains("Enter a domain without a scheme or path."),
+            "{bad:?}"
+        );
+    }
     review.set_domain(name.clone().into());
     // (the click does nothing until the window's first review has loaded)
     until(|| {
@@ -335,7 +333,12 @@ fn a_typed_domain_override_limits_the_engines_next_request_to_that_domain() {
             .first()
             .is_some_and(|j| j.wait == WaitReason::Bandwidth && j.contexts.contains(&domain))
     });
-    assert!(!held.is_finished());
+    // The inherited default domain rule (one request a second) would let the
+    // request through after a second; only the typed rule holds it longer.
+    let start = std::time::Instant::now();
+    until(|| start.elapsed() > Duration::from_millis(2500));
+    assert!(!held.is_finished(), "the typed one-an-hour rule still holds it");
+    assert_eq!(daemon.snapshot().jobs[0].wait, WaitReason::Bandwidth);
     // The rule the window saved for the typed domain is the one in force.
     let saved = daemon.engine.bandwidth_settings();
     let (_, rules) = saved.rules.iter().find(|(c, _)| c == &domain).unwrap();
@@ -352,6 +355,7 @@ fn a_typed_domain_override_limits_the_engines_next_request_to_that_domain() {
     jobs.invoke_close_clicked();
 }
 
+/// The reference's package, as the recording imported it.
 fn package_text() -> String {
     hydrus_testkit::fixture_json("downloader_interchange.json")["reference"].to_string()
 }
@@ -372,13 +376,6 @@ fn linkable_package_text() -> String {
     serde_json::json!([26, 3, objects]).to_string()
 }
 
-fn staged_package(
-    store: &Arc<Store>,
-    slots: &hydrus_gui::downloader_interchange_window::Slots,
-) -> hydrus_gui::DownloaderExchangeWindow {
-    staged_text(store, slots, package_text())
-}
-
 fn staged_text(
     store: &Arc<Store>,
     slots: &hydrus_gui::downloader_interchange_window::Slots,
@@ -393,102 +390,123 @@ fn staged_text(
     import
 }
 
-// leaf: audit-network-exchange-commit
-// Native-only: the reference's import has no conflict-safe save (it writes
-// each object as it goes); the reference's duplicate rules are replayed in
-// the model tests against oracle/fixtures/downloader_interchange.json.
-#[test]
-fn a_package_imported_in_the_window_saves_new_keys_members_and_links_and_a_stale_review_saves_nothing()
- {
+/// What the store holds, in the recording's terms: generators with their keys
+/// and nested members, class and parser names, and parser links by name.
+fn state(store: &Store) -> serde_json::Value {
     use hydrus_core::url::{AnyGug, UrlClassSettings};
     use hydrus_parse::Downloaders;
-    let _clock = clock();
+    let downloaders: Downloaders = store.read(settings::get).unwrap();
+    let classes: UrlClassSettings = store.read(settings::get).unwrap();
+    let mut gugs = downloaders.gugs.gugs.iter().collect::<Vec<_>>();
+    gugs.sort_by_key(|g| g.name().to_owned());
+    let mut class_names = classes
+        .url_classes
+        .iter()
+        .map(|c| c.name.clone())
+        .collect::<Vec<_>>();
+    class_names.sort();
+    let mut parser_names = downloaders
+        .parsers
+        .iter()
+        .map(|p| p.name.clone())
+        .collect::<Vec<_>>();
+    parser_names.sort();
+    let mut links = classes
+        .parser_links
+        .iter()
+        .filter_map(|(class, parser)| {
+            let class = classes
+                .url_classes
+                .iter()
+                .find(|c| hex::encode(&c.key) == *class)?;
+            let parser = downloaders.parser(parser.as_ref()?)?;
+            Some(serde_json::json!([class.name, parser.name]))
+        })
+        .collect::<Vec<_>>();
+    links.sort_by_key(ToString::to_string);
+    serde_json::json!({
+        "gugs": gugs.iter().map(|g| match g {
+            AnyGug::Nested(n) => serde_json::json!({"name": n.name, "members": n.gugs}),
+            _ => serde_json::json!({"name": g.name()}),
+        }).collect::<Vec<_>>(),
+        "classes": class_names,
+        "parsers": parser_names,
+        "links": links,
+    })
+}
+
+fn names(state: &serde_json::Value, key: &str) -> Vec<String> {
+    state[key]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|v| v["name"].as_str().or(v.as_str()).unwrap().to_owned())
+        .collect()
+}
+
+// leaf: audit-network-exchange-commit
+// The import's message, duplicate rule, new keys and parser links are
+// replayed from oracle/fixtures/package_import.json (the reference's
+// ReviewDownloaderImport on the same packages). The conflict-safe save at
+// the end is native-only: the reference writes each object as it goes.
+#[test]
+fn a_package_imported_in_the_window_matches_the_recorded_import_and_a_stale_review_saves_nothing() {
+    use hydrus_core::url::UrlClassSettings;
+    use hydrus_parse::Downloaders;
+    let recording = hydrus_testkit::fixture_json("package_import.json");
+    let steps = recording["steps"].as_array().unwrap();
     let _headless = headless::init();
     let slots = hydrus_gui::downloader_interchange_window::Slots::default();
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
-    let import = staged_package(&store, &slots);
-    // nothing is written until the question is answered
-    assert!(
-        store
-            .read::<Downloaders>(settings::get)
-            .unwrap()
-            .parsers
-            .is_empty()
-    );
-    import.invoke_action("yes".into());
-    assert!(
-        import.get_question().starts_with("Successfully added"),
-        "{} {}",
-        import.get_question(),
-        import.get_error()
-    );
-    import.invoke_action("ok".into());
+    let texts = [package_text(), package_text(), linkable_package_text()];
+    let before: Downloaders = store.read(settings::get).unwrap();
+    assert!(before.parsers.is_empty() && before.gugs.gugs.is_empty());
+    for (step, text) in steps.iter().zip(texts) {
+        let label = step["step"].as_str().unwrap();
+        let import = staged_text(&store, &slots, text);
+        // The final question, word for word (the reference lists the objects
+        // it is about to add and link).
+        assert_eq!(
+            import.get_question().as_str(),
+            step["questions"][0].as_str().unwrap(),
+            "{label}"
+        );
+        if label == "package" {
+            // nothing is written until the question is answered
+            let unchanged: Downloaders = store.read(settings::get).unwrap();
+            assert!(unchanged.parsers.is_empty(), "{label}");
+        }
+        import.invoke_action("yes".into());
+        assert_eq!(
+            import.get_question().as_str(),
+            step["notices"][0].as_str().unwrap(),
+            "{label}: {}",
+            import.get_error()
+        );
+        import.invoke_action("ok".into());
+        let recorded = &step["state"];
+        let ours = state(&store);
+        for key in ["gugs", "classes", "parsers"] {
+            assert_eq!(names(&ours, key), names(recorded, key), "{label}: {key}");
+        }
+        assert_eq!(ours["links"], recorded["links"], "{label}: links");
+    }
+    // Imported generators get new keys, as the recording's do.
     let saved: Downloaders = store.read(settings::get).unwrap();
     let single = saved
         .gugs
         .gugs
         .iter()
         .find(|g| g.name() == "exchange gallery")
-        .expect("the package's gallery generator");
-    assert_ne!(
-        single.key(),
-        "11".repeat(32),
-        "imported objects get new keys"
-    );
-    let nested = saved
-        .gugs
-        .gugs
-        .iter()
-        .find_map(|g| match g {
-            AnyGug::Nested(n) if n.name == "exchange nested" => Some(n),
-            _ => None,
-        })
-        .expect("the nested generator");
-    assert_eq!(
-        nested.gugs,
-        vec![(single.key().to_owned(), single.name().to_owned())],
-        "nested members follow their new keys"
-    );
-    let classes: UrlClassSettings = store.read(settings::get).unwrap();
-    assert!(!classes.url_classes.is_empty());
-    // A package whose parser examples match its classes gets those links.
-    let dir = tempfile::tempdir().unwrap();
-    let linked_store = Store::open(dir.path()).unwrap();
-    let linked = staged_text(&linked_store, &slots, linkable_package_text());
-    linked.invoke_action("yes".into());
-    linked.invoke_action("ok".into());
-    let downloaders: Downloaders = linked_store.read(settings::get).unwrap();
-    let classes: UrlClassSettings = linked_store.read(settings::get).unwrap();
-    let direct = classes
-        .url_classes
-        .iter()
-        .find(|c| c.name == "direct")
-        .expect("the direct class");
-    let direct_parser = downloaders
-        .parsers
-        .iter()
-        .find(|p| p.name == "direct parser")
-        .expect("the direct parser");
-    assert!(
-        classes
-            .parser_links
-            .contains(&(hex::encode(&direct.key), Some(direct_parser.key.clone()))),
-        "{:?}",
-        classes.parser_links
-    );
-    // The same package again adds only what is new (the nested generator).
-    let again = staged_package(&store, &slots);
-    again.invoke_action("yes".into());
-    again.invoke_action("ok".into());
-    let twice: Downloaders = store.read(settings::get).unwrap();
-    assert_eq!(twice.parsers.len(), saved.parsers.len());
-    assert_eq!(twice.gugs.gugs.len(), saved.gugs.gugs.len() + 1);
+        .unwrap();
+    assert_ne!(single.key(), "11".repeat(32));
 
-    // Another editor saves between the review and the answer: nothing is saved.
+    // Native-only: another editor saves between the review and the answer,
+    // and nothing is saved.
     let dir = tempfile::tempdir().unwrap();
     let other = Store::open(dir.path()).unwrap();
-    let stale = staged_package(&other, &slots);
+    let stale = staged_text(&other, &slots, package_text());
     other
         .write_and_refresh(|ctx| {
             let mut classes: UrlClassSettings = settings::get(ctx.conn())?;
