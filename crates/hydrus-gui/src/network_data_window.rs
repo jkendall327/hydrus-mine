@@ -80,7 +80,9 @@ impl Worker {
                     let _ = events.send(Event::Written(result));
                 }
                 // A closing view can still have an owner-release command queued.
-                let _ = events.send(Event::Review(Review::load(&store, now_for(owner)).map(Box::new)));
+                let _ = events.send(Event::Review(
+                    Review::load(&store, now_for(owner)).map(Box::new),
+                ));
             }
         });
         let _ = send.send(Operation::Refresh);

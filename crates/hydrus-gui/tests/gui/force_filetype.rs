@@ -222,11 +222,7 @@ fn a_forced_file_is_renamed_or_when_the_media_is_shared_copied_with_its_old_copy
 /// The files under a hash's two extensions, as `oracle/record_force_filetype.py`
 /// records them: whether each exists, its name with the hash blanked out,
 /// whether its bytes are the original's and its modification time.
-fn disk(
-    hash: &str,
-    paths: [(&str, &std::path::Path); 2],
-    original: &[u8],
-) -> serde_json::Value {
+fn disk(hash: &str, paths: [(&str, &std::path::Path); 2], original: &[u8]) -> serde_json::Value {
     let mut out = serde_json::Map::new();
     for (label, path) in paths {
         if path.exists() {

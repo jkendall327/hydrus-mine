@@ -275,13 +275,18 @@ impl Draft {
                     next.downloaders.gugs.gugs.push(g.clone());
                 }
                 Native::Page(p) => {
-                    let duplicate = next.downloaders.parsers.iter_mut().take(old_parsers).find(|old| {
-                        let mut old = (*old).clone();
-                        old.name.clone_from(&p.name);
-                        old.key.clone_from(&p.key);
-                        old.example_urls.clone_from(&p.example_urls);
-                        semantic_eq(&old, p)
-                    });
+                    let duplicate =
+                        next.downloaders
+                            .parsers
+                            .iter_mut()
+                            .take(old_parsers)
+                            .find(|old| {
+                                let mut old = (*old).clone();
+                                old.name.clone_from(&p.name);
+                                old.key.clone_from(&p.key);
+                                old.example_urls.clone_from(&p.example_urls);
+                                semantic_eq(&old, p)
+                            });
                     if let Some(old) = duplicate {
                         old.example_urls.extend(p.example_urls.iter().cloned());
                         old.example_urls.sort();

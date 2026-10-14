@@ -296,7 +296,13 @@ fn a_typed_domain_override_limits_the_engines_next_request_to_that_domain() {
     let name = domain.data.clone();
     let review = windows::open_bandwidth(daemon.store.clone(), &slots).unwrap();
     // Text that is not a bare domain opens nothing and says why.
-    for bad in ["localhost", "http://files.example.com", "files.example.com/x", "a b.com", ""] {
+    for bad in [
+        "localhost",
+        "http://files.example.com",
+        "files.example.com/x",
+        "a b.com",
+        "",
+    ] {
         review.set_domain(bad.into());
         review.invoke_domain_clicked();
         assert!(windows::last_rules().is_none(), "{bad:?}");
@@ -337,7 +343,10 @@ fn a_typed_domain_override_limits_the_engines_next_request_to_that_domain() {
     // request through after a second; only the typed rule holds it longer.
     let start = std::time::Instant::now();
     until(|| start.elapsed() > Duration::from_millis(2500));
-    assert!(!held.is_finished(), "the typed one-an-hour rule still holds it");
+    assert!(
+        !held.is_finished(),
+        "the typed one-an-hour rule still holds it"
+    );
     assert_eq!(daemon.snapshot().jobs[0].wait, WaitReason::Bandwidth);
     // The rule the window saved for the typed domain is the one in force.
     let saved = daemon.engine.bandwidth_settings();
