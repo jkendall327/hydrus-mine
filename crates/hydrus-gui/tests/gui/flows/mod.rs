@@ -18,6 +18,7 @@ mod download;
 mod gallery;
 mod import_folder;
 mod subscription;
+mod tag_relationships;
 mod watcher;
 
 use std::collections::{BTreeMap, BTreeSet, HashMap};
@@ -769,7 +770,9 @@ fn each_flow_has_its_own_port_as_its_recording_names_it() {
         let json = std::path::Path::new(&name)
             .extension()
             .is_some_and(|e| e.eq_ignore_ascii_case("json"));
-        if name.starts_with("flow_") && json {
+        // (a flow with no site, all local, needs no port)
+        let has_site = json && hydrus_testkit::fixture_json(&name).get("site").is_some();
+        if name.starts_with("flow_") && has_site {
             assert!(
                 PORTS.iter().any(|(n, _)| *n == name),
                 "{name} has no port in flows::PORTS"
