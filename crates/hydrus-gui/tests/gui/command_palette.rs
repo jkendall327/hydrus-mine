@@ -895,7 +895,7 @@ fn menu_rows(window: &CommandPaletteWindow, query: &str, any: bool) -> Vec<(Stri
 }
 
 // "review threads" is missing natively: the leaf `audit-options-help-debug-action-review-threads`
-// is out of scope (Python runtime internals; DECISIONS.md 2026-10-14, the 79 signed off)
+// is out of scope (Python runtime internals; DECISIONS.md, "Out of scope, signed off": the 79 triaged on 2026-10-08)
 // leaf: audit-options-command-palette-command-palette-advanced-search-main-menubar
 #[test]
 fn the_main_menu_rows_are_the_reference_s_flattened_menubar_and_the_setting_gates_them() {

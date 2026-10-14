@@ -1448,3 +1448,103 @@ async fn boot_pause_blocks_real_requests_and_resume_does_not_reset_the_preferenc
             .network_traffic
     );
 }
+
+/// The recorded job-menu states (`network_jobs_panel.json`) that come from a
+/// real fetch: a POST does not obey bandwidth, and a gallery page whose site's
+/// token is taken waits on it with its tokens not ok.
+#[tokio::test]
+async fn the_snapshot_reports_a_post_and_a_gallery_page_waiting_on_its_token_as_recorded() {
+    use hydrus_net::{BandwidthScope, Method};
+    use hydrus_store::{
+        bandwidth::BandwidthSettings,
+        network_runtime::WaitReason,
+        settings::{self, Pauses},
+    };
+    let recorded = hydrus_testkit::fixture_json("network_jobs_panel.json");
+    let flag = |case: &str, name: &str| -> bool {
+        recorded["menus"][case]["rows"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter_map(|r| r["label"].as_str())
+            .find_map(|l| l.strip_prefix(&format!("{name}: ")))
+            .unwrap()
+            == "True"
+    };
+    let s = setup(|_| Vec::new()).await;
+    s.store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &BandwidthSettings {
+                    gallery_page_wait_pages: 3600,
+                    ..BandwidthSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    let engine = NetEngine::new(
+        s.store.clone(),
+        NetOptions {
+            obey_bandwidth: true,
+            ..s.engine.options()
+        },
+    )
+    .unwrap();
+    let url = format!("{}/echo", s.base);
+
+    // a POST (held at the network pause, so it stays in the registry)
+    s.store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &Pauses {
+                    network_traffic: true,
+                    ..Pauses::default()
+                },
+            )
+        })
+        .unwrap();
+    let post = Job::new();
+    let request = Request {
+        method: Method::Post,
+        ..Request::get(url.clone())
+    };
+    let mut held = Box::pin(engine.fetch(&request, &post));
+    tokio::select! { _ = &mut held => panic!("paused POST ran"), () = tokio::time::sleep(std::time::Duration::from_millis(30)) => {} }
+    let snapshot = engine.runtime_snapshot();
+    assert_eq!(snapshot.jobs.len(), 1);
+    assert_eq!(
+        snapshot.jobs[0].obeys_bandwidth,
+        flag("post", "obeys bandwidth")
+    );
+    assert!(!snapshot.jobs[0].obeys_bandwidth);
+    drop(held);
+    s.store
+        .write(|ctx| settings::set(ctx.conn(), &Pauses::default()))
+        .unwrap();
+
+    // a gallery page after another took the site's token
+    let scope = || BandwidthScope {
+        gallery_token: Some(hydrus_core::bandwidth::GalleryTokenKind::DownloadPage),
+        ..BandwidthScope::default()
+    };
+    let gallery_request = Request {
+        gallery_page: true,
+        ..Request::get(url)
+    };
+    engine
+        .fetch(&gallery_request, &Job::scoped(scope()))
+        .await
+        .unwrap();
+    let second = Job::scoped(scope());
+    let mut waiting = Box::pin(engine.fetch(&gallery_request, &second));
+    tokio::select! { _ = &mut waiting => panic!("gallery page ran without its token"), () = tokio::time::sleep(std::time::Duration::from_millis(50)) => {} }
+    let snapshot = engine.runtime_snapshot();
+    assert_eq!(snapshot.jobs[0].wait, WaitReason::Gallery);
+    assert_eq!(
+        snapshot.controls[0].tokens_ok,
+        flag("gallery_token_blocked", "tokens ok")
+    );
+    assert!(!snapshot.controls[0].tokens_ok);
+}

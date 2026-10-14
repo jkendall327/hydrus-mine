@@ -2821,4 +2821,113 @@ mod reload_tests {
         engine.set_options(options).unwrap();
         assert!(Arc::ptr_eq(&slots, &engine.slots.read()));
     }
+
+    /// The states the reference's job menu was recorded in
+    /// (`oracle/record_network_jobs_panel.py`, `network_jobs_panel.json`):
+    /// what the engine's snapshot says of a job in each, which is what the
+    /// jobs window's menu reads.
+    #[test]
+    fn the_snapshot_reports_the_recorded_job_menu_states() {
+        let recorded = hydrus_testkit::fixture_json("network_jobs_panel.json");
+        let flag = |case: &str, name: &str| -> bool {
+            recorded["menus"][case]["rows"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter_map(|r| r["label"].as_str())
+                .find_map(|l| l.strip_prefix(&format!("{name}: ")))
+                .unwrap()
+                == "True"
+        };
+        let (_dir, store, _) = engine();
+        // the recorded rule: one request in a minute, on the global context
+        store
+            .write(|ctx| {
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &BandwidthSettings {
+                        rules: vec![(
+                            NetworkContext::global(),
+                            hydrus_core::bandwidth::Rules::new([
+                                hydrus_core::bandwidth::Rule::new(
+                                    hydrus_core::bandwidth::BandwidthType::Requests,
+                                    Some(60),
+                                    1,
+                                ),
+                            ]),
+                        )],
+                        ..BandwidthSettings::default()
+                    },
+                )
+            })
+            .unwrap();
+        let settings: NetworkSettings = store.read(hydrus_store::settings::get).unwrap();
+        let engine =
+            NetEngine::new(Arc::clone(&store), NetOptions::from_settings(&settings)).unwrap();
+        let contexts = vec![
+            NetworkContext::global(),
+            NetworkContext::domain("example.com"),
+            NetworkContext::domain("sub.example.com"),
+            NetworkContext::downloader_page("66697874757265"),
+        ];
+        engine
+            .bandwidth
+            .lock()
+            .0
+            .report_request(&[NetworkContext::global()], now());
+        let register = |id: u64, job: &Job| {
+            job.state.lock().url = "https://example.com/file".into();
+            job.state.lock().tokens_ok = true;
+            job.state.lock().obeys_bandwidth = true;
+            engine
+                .jobs
+                .lock()
+                .insert(id, ((*job).clone(), contexts.clone()));
+        };
+        let control = |id: u64| {
+            engine
+                .runtime_snapshot()
+                .controls
+                .into_iter()
+                .find(|c| c.id == id)
+                .unwrap()
+        };
+        let shown = |id: u64| {
+            engine
+                .runtime_snapshot()
+                .jobs
+                .into_iter()
+                .find(|j| j.id == id)
+                .unwrap()
+        };
+
+        // plain: the global rule makes it wait about a minute, the others not at all
+        let plain = Job::new();
+        register(1, &plain);
+        let waits = control(1).context_waits;
+        assert_eq!(waits.len(), 4);
+        assert!((50..=60).contains(&waits[0]), "{waits:?}");
+        assert_eq!(&waits[1..], [0, 0, 0]);
+        assert_eq!(
+            recorded["menus"]["plain"]["rows"][0]["children"][0]["label"],
+            "global (1 minute)"
+        );
+        assert!(control(1).domain_ok == flag("plain", "domain ok"));
+        assert!(control(1).tokens_ok == flag("plain", "tokens ok"));
+        assert!(shown(1).obeys_bandwidth == flag("plain", "obeys bandwidth"));
+
+        // overridden by hand: it no longer obeys
+        let overridden = Job::new();
+        register(2, &overridden);
+        overridden.override_bandwidth();
+        assert!(shown(2).obeys_bandwidth == flag("overridden", "obeys bandwidth"));
+        assert!(!shown(2).obeys_bandwidth);
+
+        // domain errors, as many as the option says: the domain is not ok
+        for _ in 0..engine.options().domain_error_number {
+            engine.report_domain_error("https://example.com/file");
+        }
+        assert!(control(1).domain_ok == flag("domain_errors", "domain ok"));
+        assert!(!control(1).domain_ok);
+    }
 }
