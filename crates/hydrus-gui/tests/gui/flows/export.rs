@@ -187,6 +187,14 @@ fn files_are_exported_with_a_pattern_and_sidecars_as_the_reference_does() {
         slint::platform::update_timers_and_animations();
     }
     assert!(!window.get_working());
+    // the main window shows the popup's last words on its next look at the
+    // store (its timer), not at once
+    let shown = |state: &State<'_>| state.popups()[0]["text_1"] == json!("Done!");
+    let started = std::time::Instant::now();
+    while !shown(&state) && started.elapsed() < std::time::Duration::from_secs(30) {
+        std::thread::sleep(std::time::Duration::from_millis(20));
+        slint::platform::update_timers_and_animations();
+    }
     let seen = json!({"rows": rows(&window, &n)});
     steps.push(step("export", seen));
 
