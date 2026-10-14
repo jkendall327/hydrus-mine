@@ -11937,7 +11937,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "claude (issue #96 session)",
-    "note": "The real menu entry asks the daemon (store request), the daemon's tick answers through a real SubscriptionRunner on the store, and the report arrives through the report sink; the four subscriptions of the recording give the same message at the reference's clock (exact) and the same words with a live clock; the empty case is exact too; asking twice answers twice and a look with nothing asked says nothing. Running subscriptions are not shown by this test (the runner is not started). Test: crates/hydrus-gui/tests/gui/debug_profiling.rs subscription_manager_snapshot_is_asked_for_in_the_menu_and_shown_by_the_daemon; recording oracle/fixtures/subscription_manager_snapshot.json."
+    "note": "The real menu entry asks the daemon (store request), the daemon's tick answers through a real SubscriptionRunner on the store, and the report arrives through the report sink; the recording's subscriptions give the same message at the reference's clock (exact) and the same words with a live clock; the empty case is exact too. A running subscription is checked in hydrus-download against a held real sync: its 'N running: name' part has the recorded form. With no manager the daemon says so. Tests: crates/hydrus-gui/tests/gui/debug_profiling.rs subscription_manager_snapshot_is_asked_for_in_the_menu_and_shown_by_the_daemon; crates/hydrus-download/tests/subscriptions.rs the_snapshot_names_the_subscriptions_that_are_running_as_the_reference_does; oracle/fixtures/subscription_manager_snapshot.json."
    }
   },
   {

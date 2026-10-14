@@ -333,7 +333,7 @@ fn client_api_profile_mode_counts_each_request() {
         access_key: key.to_vec(),
         name: "profile test".into(),
         permits_everything: true,
-        basic: Default::default(),
+        basic: std::collections::BTreeSet::default(),
         search_filter: hydrus_core::TagFilter::default(),
     };
     d.store
