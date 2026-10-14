@@ -522,23 +522,16 @@ fn the_popups_that_carry_buttons_do_what_the_reference_s_buttons_do_and_the_test
         // and each is a gallery downloader page where recorded so
         for page in recorded["pages_after"].as_array().unwrap() {
             let name = page["name"].as_str().unwrap();
-            let ours = d
-                .bound
-                .pages
-                .borrow()
-                .session()
-                .pages
-                .iter()
-                .any(|p| {
-                    p.name == name
-                        && matches!(
-                            p.content,
-                            hydrus_core::pages::PageContent::Downloader {
-                                kind: hydrus_core::pages::DownloaderKind::Gallery,
-                                ..
-                            }
-                        )
-                });
+            let ours = d.bound.pages.borrow().session().pages.iter().any(|p| {
+                p.name == name
+                    && matches!(
+                        p.content,
+                        hydrus_core::pages::PageContent::Downloader {
+                            kind: hydrus_core::pages::DownloaderKind::Gallery,
+                            ..
+                        }
+                    )
+            });
             assert_eq!(ours, page["gallery"].as_bool().unwrap(), "{title}: {name}");
         }
     }
