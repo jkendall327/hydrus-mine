@@ -263,7 +263,6 @@ fn rearrange_menu_offers_and_makes_the_moves_the_reference_did() {
     assert!(made > 30, "{made}");
 }
 
-// leaf: audit-media-context-share
 #[test]
 fn share_rows_copy_the_selected_files_paths_hashes_and_ids() {
     let fixture = start();
@@ -397,4 +396,157 @@ fn share_rows_copy_the_selected_files_paths_hashes_and_ids() {
     );
     chosen("hash", "sha256");
     assert_eq!(last_text(), m.hash.to_string());
+}
+
+// leaf: audit-media-context-share
+#[test]
+fn share_rows_copy_what_the_reference_copies_for_the_same_files() {
+    // (oracle/record_share_copies.py: the clipboard text of the reference's
+    // copy hashes / file ids / paths for three selections of the basic files,
+    // each line the value of one file; the reference copies a selection in
+    // the order of its thumbnails and so do we, so each file's recorded value
+    // is looked up by hash and put in our order)
+    let recorded = hydrus_testkit::fixture_json("share_copies.json");
+    let fixture = start_local();
+    let copied: Rc<RefCell<Vec<Clip>>> = Rc::default();
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| copied.borrow_mut().push(clip.clone())
+    });
+    let names = hex_names(&fixture, &fixture.results());
+    let at = |hash: &str| -> i32 {
+        i32::try_from(names.iter().position(|n| n == hash).unwrap()).unwrap()
+    };
+    let text = || match copied.borrow().last() {
+        Some(Clip::Text(text)) => text.clone(),
+        other => panic!("{other:?}"),
+    };
+    let mut copied_rows = 0;
+    for selection in recorded["selections"].as_array().unwrap() {
+        let hashes: Vec<&str> = selection["hashes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|h| h.as_str().unwrap())
+            .collect();
+        // one value per file of what a row copies (none: the file has none)
+        let per_file = |kind: &str| -> Vec<(String, Option<String>)> {
+            let value = |key: &str| -> Vec<Option<String>> {
+                selection[key]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|v| v.as_str().map(str::to_owned))
+                    .collect()
+            };
+            let values: Vec<Option<String>> = match kind {
+                "blurhash" => value("blurhashes"),
+                "pixel_hash" => value("pixel_hashes"),
+                _ => {
+                    let lines = selection["copies"][kind][0][1].as_str().unwrap().lines();
+                    lines.map(|l| Some(l.to_owned())).collect()
+                }
+            };
+            hashes.iter().map(|h| (*h).to_owned()).zip(values).collect()
+        };
+        let others: Vec<i32> = hashes[1..].iter().map(|h| at(h)).collect();
+        fixture.select(at(hashes[0]), &others);
+        let chosen = hex_names(&fixture, &fixture.selected());
+        assert_eq!(chosen.len(), hashes.len());
+        let wanted = |kind: &str| -> String {
+            let values = per_file(kind);
+            chosen
+                .iter()
+                .filter_map(|h| {
+                    values
+                        .iter()
+                        .find(|(v, _)| v == h)
+                        .and_then(|(_, t)| t.clone())
+                })
+                .collect::<Vec<_>>()
+                .join("\n")
+        };
+        // (a lone file is the focused one: the reference then offers its own
+        // rows, not the selection's: "copy hash" over "copy hashes", "copy
+        // file id (N)", "copy path", "copy file"; they take the same places
+        // in the native menu)
+        let single = hashes.len() == 1;
+        let menu_at = if single { at(hashes[0]) } else { -1 };
+        let rows_of = |menu: &hydrus_gui::ThumbnailMenu, group: &str| -> Vec<(String, i32)> {
+            rows(match group {
+                "hashes" => &menu.share_hashes,
+                "ids" => &menu.share_b,
+                "paths" => &menu.share_a,
+                _ => unreachable!(),
+            })
+        };
+        let menu = fixture.menu(menu_at);
+        let hash_rows = rows_of(&menu, "hashes");
+        for (kind, prefix) in [
+            ("sha256", "sha256"),
+            ("md5", "md5"),
+            ("sha1", "sha1"),
+            ("sha512", "sha512"),
+            ("blurhash", "blurhash"),
+            (
+                "pixel_hash",
+                if single { "pixel hash" } else { "pixel hashes" },
+            ),
+        ] {
+            let offered = hash_rows.iter().any(|(label, _)| label.starts_with(prefix));
+            if selection["copies"][kind].as_array().unwrap().is_empty() {
+                // (the reference copies nothing, and offers no row for it)
+                assert!(!offered, "{prefix} for {hashes:?}");
+                continue;
+            }
+            assert!(offered, "{prefix} for {hashes:?}: {hash_rows:?}");
+            let menu = fixture.menu(menu_at);
+            fixture
+                .ui
+                .invoke_menu_chosen(find(&rows_of(&menu, "hashes"), prefix));
+            assert_eq!(text(), wanted(kind), "{prefix} for {hashes:?}");
+            copied_rows += 1;
+        }
+        let menu = fixture.menu(menu_at);
+        fixture.ui.invoke_menu_chosen(find(
+            &rows_of(&menu, "ids"),
+            if single {
+                "copy file id"
+            } else {
+                "copy file ids"
+            },
+        ));
+        let want = wanted("file ids");
+        assert_eq!(text(), want, "file ids for {hashes:?}");
+        // paths: the files in the client's files directory, one per line,
+        // named by hash and extension as the reference's are (the directory
+        // is the client's own)
+        let menu = fixture.menu(menu_at);
+        fixture.ui.invoke_menu_chosen(find(
+            &rows_of(&menu, "paths"),
+            if single { "copy path" } else { "copy paths" },
+        ));
+        let name = |line: &str| line.rsplit('/').next().unwrap().to_owned();
+        let ours: Vec<String> = text().lines().map(name).collect();
+        let theirs: Vec<String> = wanted("paths").lines().map(name).collect();
+        assert_eq!(ours, theirs, "paths for {hashes:?}");
+        // copy files: the same files, as a clipboard file list
+        let menu = fixture.menu(menu_at);
+        fixture.ui.invoke_menu_chosen(find(
+            &rows_of(&menu, "paths"),
+            if single { "copy file" } else { "copy files" },
+        ));
+        match copied.borrow().last() {
+            Some(Clip::Files(paths)) => {
+                let named: Vec<String> = paths
+                    .iter()
+                    .map(|p| p.file_name().unwrap().to_string_lossy().into_owned())
+                    .collect();
+                assert_eq!(named, theirs, "copied files for {hashes:?}");
+            }
+            other => panic!("{other:?}"),
+        }
+        copied_rows += 3;
+    }
+    assert!(copied_rows >= 15, "{copied_rows}");
 }

@@ -1,0 +1,622 @@
+{
+"2": [
+"Shortcut Set",
+2
+],
+"3": [
+"Legacy Subscription",
+10
+],
+"5": [
+"Gallery Identifier",
+1
+],
+"6": [
+"Tag Import Options (Legacy)",
+9
+],
+"7": [
+"File Import Options (Legacy)",
+15
+],
+"8": [
+"Import File Status Cache",
+8
+],
+"9": [
+"Local File Import",
+4
+],
+"12": [
+"Client Page Management Controller",
+17
+],
+"13": [
+"Legacy GUI Session",
+4
+],
+"14": [
+"File Search Predicate",
+8
+],
+"15": [
+"File Search Context",
+5
+],
+"16": [
+"Export Folder",
+9
+],
+"17": [
+"Watcher",
+10
+],
+"18": [
+"Simple Downloader Import",
+6
+],
+"19": [
+"Import Folder",
+11
+],
+"20": [
+"Multiple Gallery Import",
+10
+],
+"21": [
+"Serialisable Dictionary",
+2
+],
+"22": [
+"Client Options",
+8
+],
+"23": [
+"Content",
+1
+],
+"24": [
+"Petition",
+3
+],
+"25": [
+"Account Identifier",
+1
+],
+"26": [
+"Serialisable List",
+3
+],
+"27": [
+"HTML Parsing Formula",
+8
+],
+"28": [
+"URL Import",
+5
+],
+"29": [
+"Content Parsing Link",
+1
+],
+"30": [
+"Content Parser",
+7
+],
+"31": [
+"JSON Parsing Formula",
+4
+],
+"32": [
+"File Lookup Script",
+2
+],
+"33": [
+"Serialisable Dictionary With Bytestring Key/Value Support",
+1
+],
+"34": [
+"Content Update",
+1
+],
+"35": [
+"Credentials",
+1
+],
+"36": [
+"Definitions Update",
+1
+],
+"37": [
+"Metadata",
+1
+],
+"38": [
+"Bandwidth Rules",
+1
+],
+"39": [
+"Bandwidth Tracker",
+1
+],
+"40": [
+"Client To Server Update",
+1
+],
+"41": [
+"Shortcut",
+3
+],
+"42": [
+"Application Command",
+7
+],
+"43": [
+"Duplicate Metadata Merge Options",
+8
+],
+"44": [
+"Tag Filter Rules",
+1
+],
+"45": [
+"Legacy Bandwidth Manager",
+1
+],
+"46": [
+"Legacy Session Manager",
+1
+],
+"47": [
+"Network Context",
+2
+],
+"48": [
+"Login Manager",
+1
+],
+"49": [
+"Media Sort",
+3
+],
+"50": [
+"URL Class",
+15
+],
+"51": [
+"String Match",
+1
+],
+"52": [
+"Checker Timing Options",
+1
+],
+"53": [
+"Domain Manager",
+7
+],
+"54": [
+"Legacy Subscription Query",
+3
+],
+"55": [
+"String Converter",
+2
+],
+"56": [
+"Filename Tagging Options",
+2
+],
+"57": [
+"File Import",
+8
+],
+"58": [
+"Page Parser",
+3
+],
+"59": [
+"Zipper Parsing Formula",
+3
+],
+"60": [
+"Context Variable Formula",
+3
+],
+"61": [
+"Tag Summary Generator",
+2
+],
+"62": [
+"HTML Parsing Rule",
+3
+],
+"63": [
+"Simple Downloader Parsing Formula",
+1
+],
+"64": [
+"Multiple Watcher",
+4
+],
+"65": [
+"Service Tag Import Options",
+4
+],
+"66": [
+"Gallery Log Entry",
+4
+],
+"67": [
+"Gallery Log",
+1
+],
+"68": [
+"Gallery Import",
+4
+],
+"69": [
+"Gallery URL Generator",
+1
+],
+"70": [
+"Nested Gallery URL Generator",
+1
+],
+"71": [
+"Domain Metadata",
+1
+],
+"72": [
+"Login Credential Definition",
+1
+],
+"73": [
+"Login Script - Domain",
+2
+],
+"74": [
+"Login Step",
+2
+],
+"75": [
+"Client API Manager",
+1
+],
+"76": [
+"Client API Permissions",
+2
+],
+"77": [
+"Service Keys To Tags",
+1
+],
+"78": [
+"Media Collect",
+2
+],
+"79": [
+"Tag Display Manager",
+4
+],
+"80": [
+"Tag Search Context",
+2
+],
+"81": [
+"Favourite Search Manager",
+1
+],
+"82": [
+"Note Import Options (Legacy)",
+2
+],
+"83": [
+"String Splitter",
+2
+],
+"84": [
+"String Processor",
+1
+],
+"85": [
+"Tag Autocomplete Options",
+5
+],
+"86": [
+"Subscription Query Container",
+1
+],
+"87": [
+"Subscription Query Summary",
+3
+],
+"88": [
+"Subscription",
+4
+],
+"89": [
+"Import File Status Cache Status",
+1
+],
+"90": [
+"Subscription with all data",
+1
+],
+"91": [
+"Column List Status",
+1
+],
+"92": [
+"Column List Manager",
+1
+],
+"93": [
+"Number Test",
+2
+],
+"94": [
+"Bandwidth Manager",
+1
+],
+"95": [
+"Session Manager",
+1
+],
+"96": [
+"Session Manager Session Container",
+2
+],
+"97": [
+"Bandwidth Manager Tracker Container",
+1
+],
+"99": [
+"String Sorter",
+1
+],
+"100": [
+"String Selector/Slicer",
+1
+],
+"101": [
+"Tag Sort",
+1
+],
+"102": [
+"Account Type",
+2
+],
+"103": [
+"Location Search Context",
+1
+],
+"104": [
+"GUI Session Container",
+1
+],
+"105": [
+"GUI Session Page Data",
+1
+],
+"106": [
+"GUI Session Container Notebook Page",
+1
+],
+"107": [
+"GUI Session Container Media Page",
+1
+],
+"108": [
+"Presentation Import Options",
+2
+],
+"109": [
+"Metadata Single File Router",
+3
+],
+"110": [
+"Metadata Single File Importer TXT",
+4
+],
+"111": [
+"Metadata Single File Importer Media Tags",
+3
+],
+"112": [
+"String Tag Filter",
+1
+],
+"113": [
+"Metadata Single File Exporter JSON",
+2
+],
+"114": [
+"Metadata Single File Importer JSON",
+3
+],
+"115": [
+"Metadata Single File Exporter Media Tags",
+1
+],
+"116": [
+"Metadata Single File Exporter TXT",
+3
+],
+"117": [
+"Metadata Single File Exporter Media URLs",
+1
+],
+"118": [
+"Metadata Single File Importer Media URLs",
+2
+],
+"119": [
+"Metadata Single File Exporter Media Notes",
+2
+],
+"120": [
+"Metadata Single File Importer Media Notes",
+1
+],
+"121": [
+"Timestamp Data",
+2
+],
+"122": [
+"Metadata Single File Exporter Media Timestamps",
+1
+],
+"123": [
+"Metadata Single File Importer Media Timestamps",
+1
+],
+"124": [
+"Petitions Header",
+1
+],
+"125": [
+"String Concatenator",
+2
+],
+"126": [
+"File Filter",
+1
+],
+"127": [
+"URL Class Parameter - Fixed Name",
+2
+],
+"128": [
+"Duplicates Auto-Resolution Rule",
+3
+],
+"129": [
+"Duplicates Auto-Resolution Pair Selector",
+1
+],
+"130": [
+"Duplicates Auto-Resolution Pair Comparator - One File (Metadata Conditional)",
+1
+],
+"131": [
+"Duplicates Auto-Resolution Pair Comparator - Relative File Info",
+1
+],
+"132": [
+"Metadata Conditional",
+1
+],
+"133": [
+"Nested Parsing Formula",
+2
+],
+"134": [
+"Potential Duplicates Search Context",
+1
+],
+"135": [
+"Subsidiary Page Parser",
+2
+],
+"136": [
+"Static Parsing Formula",
+1
+],
+"137": [
+"Duplicates Auto-Resolution Pair Comparator - Relative Hardcoded",
+1
+],
+"138": [
+"Duplicates Auto-Resolution Pair Comparator - Relative Visual Duplicates",
+1
+],
+"139": [
+"URL Domain Mask",
+1
+],
+"140": [
+"Duplicates Auto-Resolution Pair Comparator - OR",
+1
+],
+"141": [
+"Duplicates Auto-Resolution Pair Comparator - AND",
+1
+],
+"142": [
+"Service Specifier",
+1
+],
+"143": [
+"Import Options Container",
+1
+],
+"144": [
+"Import Options Manager",
+1
+],
+"145": [
+"Prefetch Import Options",
+2
+],
+"148": [
+"File Filtering Import Options",
+1
+],
+"149": [
+"Location Import Options",
+1
+],
+"150": [
+"Tag Filtering Import Options",
+1
+],
+"151": [
+"Tag Import Options",
+1
+],
+"152": [
+"Duplicates Auto-Resolution Pair Comparator - One File (Hardcoded)",
+1
+],
+"153": [
+"Note Import Options",
+1
+],
+"155": [
+"Executable Manager",
+1
+],
+"156": [
+"Executable Manager Callable",
+1
+],
+"157": [
+"Local Process Call",
+1
+],
+"158": [
+"Serialisable Object ID and Name",
+1
+],
+"159": [
+"Local Process Call - Input Parameter Processing Rule",
+1
+],
+"160": [
+"Local Process (Default Launch File Command)",
+1
+],
+"161": [
+"Local Process (Default Launch URL Command)",
+1
+],
+"162": [
+"External Programs Import Options",
+1
+],
+"163": [
+"External Programs Import Options - Single Entry",
+1
+]
+}

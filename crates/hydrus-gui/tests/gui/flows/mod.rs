@@ -15,6 +15,7 @@
 //! differs fails the flow too, so the list stays true.
 
 mod download;
+mod gallery;
 mod subscription;
 mod tag_relationships;
 mod watcher;
@@ -94,6 +95,7 @@ pub fn install(store: &Store, recording: &Json) {
 pub const PORTS: &[(&str, u16)] = &[
     ("flow_subscription.json", 46011),
     ("flow_download.json", 46012),
+    ("flow_gallery.json", 46033),
     ("flow_watcher.json", 46031),
 ];
 
@@ -238,8 +240,9 @@ impl Drop for Site {
 // ---------------------------------------------------------------- the daemon
 
 /// The work `hydrus serve` does for the client, in this process: the
-/// download queues, the subscription runner, and the client's nudges
-/// taken every second, as `serve` takes them.
+/// download queues, the subscription runner, the client's nudges taken
+/// every second, and the queues' live status published four times a second,
+/// as `serve` does them.
 pub struct Daemon {
     runtime: Option<tokio::runtime::Runtime>,
     state: Arc<hydrus_api::AppState>,
@@ -265,6 +268,29 @@ impl Daemon {
             let subscriptions = state.subscriptions.clone();
             if let Some(runner) = &subscriptions {
                 runner.start();
+            }
+            // what the queues are doing, for their pages' status lines
+            // (as `serve` publishes it, four times a second)
+            {
+                let downloads = downloads.clone();
+                let store = Arc::clone(store);
+                let failed = Arc::clone(&failed);
+                runtime.spawn(async move {
+                    let mut last = std::collections::HashMap::new();
+                    loop {
+                        tokio::time::sleep(Duration::from_millis(250)).await;
+                        let changes = hydrus_store::live::changes(&mut last, downloads.live());
+                        if changes.is_empty() {
+                            continue;
+                        }
+                        if let Err(e) = store
+                            .write(move |ctx| hydrus_store::live::publish(ctx.conn(), &changes))
+                        {
+                            *failed.lock().unwrap() = Some(format!("publishing live state: {e}"));
+                            return;
+                        }
+                    }
+                });
             }
             let failed = Arc::clone(&failed);
             runtime.spawn(async move {

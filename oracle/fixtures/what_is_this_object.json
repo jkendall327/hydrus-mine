@@ -1,0 +1,1506 @@
+{
+  "types": [
+    {
+      "type": 2,
+      "class_name": "ShortcutSet",
+      "name": "Shortcut Set",
+      "version": 2,
+      "kind": "named"
+    },
+    {
+      "type": 3,
+      "class_name": "SubscriptionLegacy",
+      "name": "Legacy Subscription",
+      "version": 10,
+      "kind": "named"
+    },
+    {
+      "type": 5,
+      "class_name": "GalleryIdentifier",
+      "name": "Gallery Identifier",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 6,
+      "class_name": "TagImportOptionsLegacy",
+      "name": "Tag Import Options (Legacy)",
+      "version": 9,
+      "kind": "base"
+    },
+    {
+      "type": 7,
+      "class_name": "FileImportOptionsLegacy",
+      "name": "File Import Options (Legacy)",
+      "version": 15,
+      "kind": "base"
+    },
+    {
+      "type": 8,
+      "class_name": "FileSeedCache",
+      "name": "Import File Status Cache",
+      "version": 8,
+      "kind": "base"
+    },
+    {
+      "type": 9,
+      "class_name": "HDDImport",
+      "name": "Local File Import",
+      "version": 4,
+      "kind": "base"
+    },
+    {
+      "type": 12,
+      "class_name": "PageManager",
+      "name": "Client Page Management Controller",
+      "version": 17,
+      "kind": "base"
+    },
+    {
+      "type": 13,
+      "class_name": "GUISessionLegacy",
+      "name": "Legacy GUI Session",
+      "version": 4,
+      "kind": "named"
+    },
+    {
+      "type": 14,
+      "class_name": "Predicate",
+      "name": "File Search Predicate",
+      "version": 8,
+      "kind": "base"
+    },
+    {
+      "type": 15,
+      "class_name": "FileSearchContext",
+      "name": "File Search Context",
+      "version": 5,
+      "kind": "base"
+    },
+    {
+      "type": 16,
+      "class_name": "ExportFolder",
+      "name": "Export Folder",
+      "version": 9,
+      "kind": "named"
+    },
+    {
+      "type": 17,
+      "class_name": "WatcherImport",
+      "name": "Watcher",
+      "version": 10,
+      "kind": "base"
+    },
+    {
+      "type": 18,
+      "class_name": "SimpleDownloaderImport",
+      "name": "Simple Downloader Import",
+      "version": 6,
+      "kind": "base"
+    },
+    {
+      "type": 19,
+      "class_name": "ImportFolder",
+      "name": "Import Folder",
+      "version": 11,
+      "kind": "named"
+    },
+    {
+      "type": 20,
+      "class_name": "MultipleGalleryImport",
+      "name": "Multiple Gallery Import",
+      "version": 10,
+      "kind": "base"
+    },
+    {
+      "type": 21,
+      "class_name": "SerialisableDictionary",
+      "name": "Serialisable Dictionary",
+      "version": 2,
+      "kind": "dict"
+    },
+    {
+      "type": 22,
+      "class_name": "ClientOptions",
+      "name": "Client Options",
+      "version": 8,
+      "kind": "base"
+    },
+    {
+      "type": 23,
+      "class_name": "Content",
+      "name": "Content",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 24,
+      "class_name": "Petition",
+      "name": "Petition",
+      "version": 3,
+      "kind": "base"
+    },
+    {
+      "type": 25,
+      "class_name": "AccountIdentifier",
+      "name": "Account Identifier",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 26,
+      "class_name": "SerialisableList",
+      "name": "Serialisable List",
+      "version": 3,
+      "kind": "list"
+    },
+    {
+      "type": 27,
+      "class_name": "ParseFormulaHTML",
+      "name": "HTML Parsing Formula",
+      "version": 8,
+      "kind": "base"
+    },
+    {
+      "type": 28,
+      "class_name": "URLsImport",
+      "name": "URL Import",
+      "version": 5,
+      "kind": "base"
+    },
+    {
+      "type": 29,
+      "class_name": "ParseNodeContentLink",
+      "name": "Content Parsing Link",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 30,
+      "class_name": "ContentParser",
+      "name": "Content Parser",
+      "version": 7,
+      "kind": "base"
+    },
+    {
+      "type": 31,
+      "class_name": "ParseFormulaJSON",
+      "name": "JSON Parsing Formula",
+      "version": 4,
+      "kind": "base"
+    },
+    {
+      "type": 32,
+      "class_name": "ParseRootFileLookup",
+      "name": "File Lookup Script",
+      "version": 2,
+      "kind": "named"
+    },
+    {
+      "type": 33,
+      "class_name": "SerialisableBytesDictionary",
+      "name": "Serialisable Dictionary With Bytestring Key/Value Support",
+      "version": 1,
+      "kind": "dict"
+    },
+    {
+      "type": 34,
+      "class_name": "ContentUpdate",
+      "name": "Content Update",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 35,
+      "class_name": "Credentials",
+      "name": "Credentials",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 36,
+      "class_name": "DefinitionsUpdate",
+      "name": "Definitions Update",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 37,
+      "class_name": "Metadata",
+      "name": "Metadata",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 38,
+      "class_name": "BandwidthRules",
+      "name": "Bandwidth Rules",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 39,
+      "class_name": "BandwidthTracker",
+      "name": "Bandwidth Tracker",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 40,
+      "class_name": "ClientToServerUpdate",
+      "name": "Client To Server Update",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 41,
+      "class_name": "Shortcut",
+      "name": "Shortcut",
+      "version": 3,
+      "kind": "base"
+    },
+    {
+      "type": 42,
+      "class_name": "ApplicationCommand",
+      "name": "Application Command",
+      "version": 7,
+      "kind": "base"
+    },
+    {
+      "type": 43,
+      "class_name": "DuplicateContentMergeOptions",
+      "name": "Duplicate Metadata Merge Options",
+      "version": 8,
+      "kind": "base"
+    },
+    {
+      "type": 44,
+      "class_name": "TagFilter",
+      "name": "Tag Filter Rules",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 45,
+      "class_name": "NetworkBandwidthManagerLegacy",
+      "name": "Legacy Bandwidth Manager",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 46,
+      "class_name": "NetworkSessionManagerLegacy",
+      "name": "Legacy Session Manager",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 47,
+      "class_name": "NetworkContext",
+      "name": "Network Context",
+      "version": 2,
+      "kind": "base"
+    },
+    {
+      "type": 48,
+      "class_name": "NetworkLoginManager",
+      "name": "Login Manager",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 49,
+      "class_name": "MediaSort",
+      "name": "Media Sort",
+      "version": 3,
+      "kind": "base"
+    },
+    {
+      "type": 50,
+      "class_name": "URLClass",
+      "name": "URL Class",
+      "version": 15,
+      "kind": "named"
+    },
+    {
+      "type": 51,
+      "class_name": "StringMatch",
+      "name": "String Match",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 52,
+      "class_name": "CheckerOptions",
+      "name": "Checker Timing Options",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 53,
+      "class_name": "NetworkDomainManager",
+      "name": "Domain Manager",
+      "version": 7,
+      "kind": "base"
+    },
+    {
+      "type": 54,
+      "class_name": "SubscriptionQueryLegacy",
+      "name": "Legacy Subscription Query",
+      "version": 3,
+      "kind": "base"
+    },
+    {
+      "type": 55,
+      "class_name": "StringConverter",
+      "name": "String Converter",
+      "version": 2,
+      "kind": "base"
+    },
+    {
+      "type": 56,
+      "class_name": "FilenameTaggingOptions",
+      "name": "Filename Tagging Options",
+      "version": 2,
+      "kind": "base"
+    },
+    {
+      "type": 57,
+      "class_name": "FileSeed",
+      "name": "File Import",
+      "version": 8,
+      "kind": "base"
+    },
+    {
+      "type": 58,
+      "class_name": "PageParser",
+      "name": "Page Parser",
+      "version": 3,
+      "kind": "named"
+    },
+    {
+      "type": 59,
+      "class_name": "ParseFormulaZipper",
+      "name": "Zipper Parsing Formula",
+      "version": 3,
+      "kind": "base"
+    },
+    {
+      "type": 60,
+      "class_name": "ParseFormulaContextVariable",
+      "name": "Context Variable Formula",
+      "version": 3,
+      "kind": "base"
+    },
+    {
+      "type": 61,
+      "class_name": "TagSummaryGenerator",
+      "name": "Tag Summary Generator",
+      "version": 2,
+      "kind": "base"
+    },
+    {
+      "type": 62,
+      "class_name": "ParseRuleHTML",
+      "name": "HTML Parsing Rule",
+      "version": 3,
+      "kind": "base"
+    },
+    {
+      "type": 63,
+      "class_name": "SimpleDownloaderParsingFormula",
+      "name": "Simple Downloader Parsing Formula",
+      "version": 1,
+      "kind": "named"
+    },
+    {
+      "type": 64,
+      "class_name": "MultipleWatcherImport",
+      "name": "Multiple Watcher",
+      "version": 4,
+      "kind": "base"
+    },
+    {
+      "type": 65,
+      "class_name": "ServiceTagImportOptions",
+      "name": "Service Tag Import Options",
+      "version": 4,
+      "kind": "base"
+    },
+    {
+      "type": 66,
+      "class_name": "GallerySeed",
+      "name": "Gallery Log Entry",
+      "version": 4,
+      "kind": "base"
+    },
+    {
+      "type": 67,
+      "class_name": "GallerySeedLog",
+      "name": "Gallery Log",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 68,
+      "class_name": "GalleryImport",
+      "name": "Gallery Import",
+      "version": 4,
+      "kind": "base"
+    },
+    {
+      "type": 69,
+      "class_name": "GalleryURLGenerator",
+      "name": "Gallery URL Generator",
+      "version": 1,
+      "kind": "named"
+    },
+    {
+      "type": 70,
+      "class_name": "NestedGalleryURLGenerator",
+      "name": "Nested Gallery URL Generator",
+      "version": 1,
+      "kind": "named"
+    },
+    {
+      "type": 71,
+      "class_name": "DomainMetadataPackage",
+      "name": "Domain Metadata",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 72,
+      "class_name": "LoginCredentialDefinition",
+      "name": "Login Credential Definition",
+      "version": 1,
+      "kind": "named"
+    },
+    {
+      "type": 73,
+      "class_name": "LoginScriptDomain",
+      "name": "Login Script - Domain",
+      "version": 2,
+      "kind": "named"
+    },
+    {
+      "type": 74,
+      "class_name": "LoginStep",
+      "name": "Login Step",
+      "version": 2,
+      "kind": "named"
+    },
+    {
+      "type": 75,
+      "class_name": "APIManager",
+      "name": "Client API Manager",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 76,
+      "class_name": "APIPermissions",
+      "name": "Client API Permissions",
+      "version": 2,
+      "kind": "named"
+    },
+    {
+      "type": 77,
+      "class_name": "ServiceKeysToTags",
+      "name": "Service Keys To Tags",
+      "version": 1,
+      "kind": "dict"
+    },
+    {
+      "type": 78,
+      "class_name": "MediaCollect",
+      "name": "Media Collect",
+      "version": 2,
+      "kind": "base"
+    },
+    {
+      "type": 79,
+      "class_name": "TagDisplayManager",
+      "name": "Tag Display Manager",
+      "version": 4,
+      "kind": "base"
+    },
+    {
+      "type": 80,
+      "class_name": "TagContext",
+      "name": "Tag Search Context",
+      "version": 2,
+      "kind": "base"
+    },
+    {
+      "type": 81,
+      "class_name": "FavouriteSearchManager",
+      "name": "Favourite Search Manager",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 82,
+      "class_name": "NoteImportOptionsLegacy",
+      "name": "Note Import Options (Legacy)",
+      "version": 2,
+      "kind": "base"
+    },
+    {
+      "type": 83,
+      "class_name": "StringSplitter",
+      "name": "String Splitter",
+      "version": 2,
+      "kind": "base"
+    },
+    {
+      "type": 84,
+      "class_name": "StringProcessor",
+      "name": "String Processor",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 85,
+      "class_name": "TagAutocompleteOptions",
+      "name": "Tag Autocomplete Options",
+      "version": 5,
+      "kind": "base"
+    },
+    {
+      "type": 86,
+      "class_name": "SubscriptionQueryLogContainer",
+      "name": "Subscription Query Container",
+      "version": 1,
+      "kind": "named"
+    },
+    {
+      "type": 87,
+      "class_name": "SubscriptionQueryHeader",
+      "name": "Subscription Query Summary",
+      "version": 3,
+      "kind": "base"
+    },
+    {
+      "type": 88,
+      "class_name": "Subscription",
+      "name": "Subscription",
+      "version": 4,
+      "kind": "named"
+    },
+    {
+      "type": 89,
+      "class_name": "FileSeedCacheStatus",
+      "name": "Import File Status Cache Status",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 90,
+      "class_name": "SubscriptionContainer",
+      "name": "Subscription with all data",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 91,
+      "class_name": "ColumnListStatus",
+      "name": "Column List Status",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 92,
+      "class_name": "ColumnListManager",
+      "name": "Column List Manager",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 93,
+      "class_name": "NumberTest",
+      "name": "Number Test",
+      "version": 2,
+      "kind": "base"
+    },
+    {
+      "type": 94,
+      "class_name": "NetworkBandwidthManager",
+      "name": "Bandwidth Manager",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 95,
+      "class_name": "NetworkSessionManager",
+      "name": "Session Manager",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 96,
+      "class_name": "NetworkSessionManagerSessionContainer",
+      "name": "Session Manager Session Container",
+      "version": 2,
+      "kind": "named"
+    },
+    {
+      "type": 97,
+      "class_name": "NetworkBandwidthManagerTrackerContainer",
+      "name": "Bandwidth Manager Tracker Container",
+      "version": 1,
+      "kind": "named"
+    },
+    {
+      "type": 99,
+      "class_name": "StringSorter",
+      "name": "String Sorter",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 100,
+      "class_name": "StringSlicer",
+      "name": "String Selector/Slicer",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 101,
+      "class_name": "TagSort",
+      "name": "Tag Sort",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 102,
+      "class_name": "AccountType",
+      "name": "Account Type",
+      "version": 2,
+      "kind": "base"
+    },
+    {
+      "type": 103,
+      "class_name": "LocationContext",
+      "name": "Location Search Context",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 104,
+      "class_name": "GUISessionContainer",
+      "name": "GUI Session Container",
+      "version": 1,
+      "kind": "named"
+    },
+    {
+      "type": 105,
+      "class_name": "GUISessionPageData",
+      "name": "GUI Session Page Data",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 106,
+      "class_name": "GUISessionContainerPageNotebook",
+      "name": "GUI Session Container Notebook Page",
+      "version": 1,
+      "kind": "named"
+    },
+    {
+      "type": 107,
+      "class_name": "GUISessionContainerPageSingle",
+      "name": "GUI Session Container Media Page",
+      "version": 1,
+      "kind": "named"
+    },
+    {
+      "type": 108,
+      "class_name": "PresentationImportOptions",
+      "name": "Presentation Import Options",
+      "version": 2,
+      "kind": "base"
+    },
+    {
+      "type": 109,
+      "class_name": "SingleFileMetadataRouter",
+      "name": "Metadata Single File Router",
+      "version": 3,
+      "kind": "base"
+    },
+    {
+      "type": 110,
+      "class_name": "SingleFileMetadataImporterTXT",
+      "name": "Metadata Single File Importer TXT",
+      "version": 4,
+      "kind": "base"
+    },
+    {
+      "type": 111,
+      "class_name": "SingleFileMetadataImporterMediaTags",
+      "name": "Metadata Single File Importer Media Tags",
+      "version": 3,
+      "kind": "base"
+    },
+    {
+      "type": 112,
+      "class_name": "StringTagFilter",
+      "name": "String Tag Filter",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 113,
+      "class_name": "SingleFileMetadataExporterJSON",
+      "name": "Metadata Single File Exporter JSON",
+      "version": 2,
+      "kind": "base"
+    },
+    {
+      "type": 114,
+      "class_name": "SingleFileMetadataImporterJSON",
+      "name": "Metadata Single File Importer JSON",
+      "version": 3,
+      "kind": "base"
+    },
+    {
+      "type": 115,
+      "class_name": "SingleFileMetadataExporterMediaTags",
+      "name": "Metadata Single File Exporter Media Tags",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 116,
+      "class_name": "SingleFileMetadataExporterTXT",
+      "name": "Metadata Single File Exporter TXT",
+      "version": 3,
+      "kind": "base"
+    },
+    {
+      "type": 117,
+      "class_name": "SingleFileMetadataExporterMediaURLs",
+      "name": "Metadata Single File Exporter Media URLs",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 118,
+      "class_name": "SingleFileMetadataImporterMediaURLs",
+      "name": "Metadata Single File Importer Media URLs",
+      "version": 2,
+      "kind": "base"
+    },
+    {
+      "type": 119,
+      "class_name": "SingleFileMetadataExporterMediaNotes",
+      "name": "Metadata Single File Exporter Media Notes",
+      "version": 2,
+      "kind": "base"
+    },
+    {
+      "type": 120,
+      "class_name": "SingleFileMetadataImporterMediaNotes",
+      "name": "Metadata Single File Importer Media Notes",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 121,
+      "class_name": "TimestampData",
+      "name": "Timestamp Data",
+      "version": 2,
+      "kind": "base"
+    },
+    {
+      "type": 122,
+      "class_name": "SingleFileMetadataExporterMediaTimestamps",
+      "name": "Metadata Single File Exporter Media Timestamps",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 123,
+      "class_name": "SingleFileMetadataImporterMediaTimestamps",
+      "name": "Metadata Single File Importer Media Timestamps",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 124,
+      "class_name": "PetitionHeader",
+      "name": "Petitions Header",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 125,
+      "class_name": "StringJoiner",
+      "name": "String Concatenator",
+      "version": 2,
+      "kind": "base"
+    },
+    {
+      "type": 126,
+      "class_name": "FileFilter",
+      "name": "File Filter",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 127,
+      "class_name": "URLClassParameterFixedName",
+      "name": "URL Class Parameter - Fixed Name",
+      "version": 2,
+      "kind": "base"
+    },
+    {
+      "type": 128,
+      "class_name": "DuplicatesAutoResolutionRule",
+      "name": "Duplicates Auto-Resolution Rule",
+      "version": 3,
+      "kind": "named"
+    },
+    {
+      "type": 129,
+      "class_name": "PairSelector",
+      "name": "Duplicates Auto-Resolution Pair Selector",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 130,
+      "class_name": "PairComparatorOneFileMetadataConditional",
+      "name": "Duplicates Auto-Resolution Pair Comparator - One File (Metadata Conditional)",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 131,
+      "class_name": "PairComparatorRelativeFileInfo",
+      "name": "Duplicates Auto-Resolution Pair Comparator - Relative File Info",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 132,
+      "class_name": "MetadataConditional",
+      "name": "Metadata Conditional",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 133,
+      "class_name": "ParseFormulaNested",
+      "name": "Nested Parsing Formula",
+      "version": 2,
+      "kind": "base"
+    },
+    {
+      "type": 134,
+      "class_name": "PotentialDuplicatesSearchContext",
+      "name": "Potential Duplicates Search Context",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 135,
+      "class_name": "SubsidiaryPageParser",
+      "name": "Subsidiary Page Parser",
+      "version": 2,
+      "kind": "base"
+    },
+    {
+      "type": 136,
+      "class_name": "ParseFormulaStatic",
+      "name": "Static Parsing Formula",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 137,
+      "class_name": "PairComparatorRelativeHardcoded",
+      "name": "Duplicates Auto-Resolution Pair Comparator - Relative Hardcoded",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 138,
+      "class_name": "PairComparatorRelativeVisualDuplicates",
+      "name": "Duplicates Auto-Resolution Pair Comparator - Relative Visual Duplicates",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 139,
+      "class_name": "URLDomainMask",
+      "name": "URL Domain Mask",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 140,
+      "class_name": "PairComparatorOR",
+      "name": "Duplicates Auto-Resolution Pair Comparator - OR",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 141,
+      "class_name": "PairComparatorAND",
+      "name": "Duplicates Auto-Resolution Pair Comparator - AND",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 142,
+      "class_name": "ServiceSpecifier",
+      "name": "Service Specifier",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 143,
+      "class_name": "ImportOptionsContainer",
+      "name": "Import Options Container",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 144,
+      "class_name": "ImportOptionsManager",
+      "name": "Import Options Manager",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 145,
+      "class_name": "PrefetchImportOptions",
+      "name": "Prefetch Import Options",
+      "version": 2,
+      "kind": "base"
+    },
+    {
+      "type": 148,
+      "class_name": "FileFilteringImportOptions",
+      "name": "File Filtering Import Options",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 149,
+      "class_name": "LocationImportOptions",
+      "name": "Location Import Options",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 150,
+      "class_name": "TagFilteringImportOptions",
+      "name": "Tag Filtering Import Options",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 151,
+      "class_name": "TagImportOptions",
+      "name": "Tag Import Options",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 152,
+      "class_name": "PairComparatorOneFileHardcoded",
+      "name": "Duplicates Auto-Resolution Pair Comparator - One File (Hardcoded)",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 153,
+      "class_name": "NoteImportOptions",
+      "name": "Note Import Options",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 155,
+      "class_name": "ExecutableManager",
+      "name": "Executable Manager",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 156,
+      "class_name": "ClientExecutableCallable",
+      "name": "Executable Manager Callable",
+      "version": 1,
+      "kind": "named"
+    },
+    {
+      "type": 157,
+      "class_name": "ExecutableLocalProcessCall",
+      "name": "Local Process Call",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 158,
+      "class_name": "IdAndName",
+      "name": "Serialisable Object ID and Name",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 159,
+      "class_name": "LocalProcessCallInputParameterProcessingRule",
+      "name": "Local Process Call - Input Parameter Processing Rule",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 160,
+      "class_name": "ExecutableLocalProcessDefaultLaunchFile",
+      "name": "Local Process (Default Launch File Command)",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 161,
+      "class_name": "ExecutableLocalProcessDefaultLaunchURL",
+      "name": "Local Process (Default Launch URL Command)",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 162,
+      "class_name": "ExternalProgramsImportOptions",
+      "name": "External Programs Import Options",
+      "version": 1,
+      "kind": "base"
+    },
+    {
+      "type": 163,
+      "class_name": "ExternalProgramsImportOptionsSingleEntry",
+      "name": "External Programs Import Options - Single Entry",
+      "version": 1,
+      "kind": "base"
+    }
+  ],
+  "menu_path": [
+    "help",
+    "debug",
+    "what is this object?"
+  ],
+  "tooltip": "Submit a serialised hydrus object and get info from it.",
+  "window": {
+    "title": "what is this?",
+    "edits": 2,
+    "edit_read_only": [
+      false,
+      false
+    ],
+    "pixmaps": [
+      [
+        362,
+        346
+      ]
+    ],
+    "paste_tooltip": "Paste paths/bitmaps/JSON from clipboard!",
+    "initial": [
+      "",
+      ""
+    ]
+  },
+  "objects": {
+    "dictionary of plain values": {
+      "payloads": [
+        "[21, 2, [[[0, \"text\"], [0, \"a\"]], [[0, \"int\"], [0, 1]], [[0, \"float\"], [0, 1.5]], [[0, \"bool\"], [0, true]], [[0, \"none\"], [0, null]], [[0, \"list\"], [2, [26, 3, [[0, 1], [0, 2]]]]], [[0, 3], [0, \"three\"]]]]"
+      ],
+      "description": "1 items\n\nObject Type: Serialisable Dictionary (21)\n1: <class 'str'>: <class 'str'>\n1: <class 'str'>: <class 'int'>\n1: <class 'str'>: <class 'float'>\n1: <class 'str'>: <class 'bool'>\n1: <class 'str'>: <class 'NoneType'>\n1: <class 'str'>: Serialisable List (26)\n2: <class 'int'>\n1: <class 'int'>: <class 'str'>\nJSON: 205B",
+      "json_len": 205,
+      "json": "[21, 2, [[[0, \"text\"], [0, \"a\"]], [[0, \"int\"], [0, 1]], [[0, \"float\"], [0, 1.5]], [[0, \"bool\"], [0, true]], [[0, \"none\"], [0, null]], [[0, \"list\"], [2, [26, 3, [[0, 1], [0, 2]]]]], [[0, 3], [0, \"three\"]]]]"
+    },
+    "list of plain values": {
+      "payloads": [
+        "[26, 3, [[0, 1], [0, \"two\"], [0, 3.0], [0, null]]]"
+      ],
+      "description": "1 items\n\nObject Type: Serialisable List (26)\n1: <class 'int'>\n1: <class 'str'>\n1: <class 'float'>\n1: <class 'NoneType'>\nJSON: 50B",
+      "json_len": 50,
+      "json": "[26, 3, [[0, 1], [0, \"two\"], [0, 3.0], [0, null]]]"
+    },
+    "dictionary holding serialisables": {
+      "payloads": [
+        "[21, 2, [[[0, \"inner\"], [2, [21, 2, [[[0, \"x\"], [0, 1]]]]]], [[0, \"inner list\"], [2, [26, 3, [[0, 1]]]]]]]"
+      ],
+      "description": "1 items\n\nObject Type: Serialisable Dictionary (21)\n1: <class 'str'>: Serialisable Dictionary (21)\n1: <class 'str'>: <class 'int'>\n1: <class 'str'>: Serialisable List (26)\n1: <class 'int'>\nJSON: 106B",
+      "json_len": 106,
+      "json": "[21, 2, [[[0, \"inner\"], [2, [21, 2, [[[0, \"x\"], [0, 1]]]]]], [[0, \"inner list\"], [2, [26, 3, [[0, 1]]]]]]]"
+    },
+    "list of serialisables": {
+      "payloads": [
+        "[26, 3, [[2, [26, 3, [[0, 1]]]], [2, [21, 2, []]], [2, [26, 3, [[0, 2]]]]]]"
+      ],
+      "description": "1 items\n\nObject Type: Serialisable List (26)\n2: Serialisable List (26)\n1: <class 'int'>\n1: Serialisable Dictionary (21)\n\nJSON: 75B",
+      "json_len": 75,
+      "json": "[26, 3, [[2, [26, 3, [[0, 1]]]], [2, [21, 2, []]], [2, [26, 3, [[0, 2]]]]]]"
+    },
+    "empty dictionary": {
+      "payloads": [
+        "[21, 2, []]"
+      ],
+      "description": "1 items\n\nObject Type: Serialisable Dictionary (21)\n\nJSON: 11B",
+      "json_len": 11,
+      "json": "[21, 2, []]"
+    },
+    "empty list": {
+      "payloads": [
+        "[26, 3, []]"
+      ],
+      "description": "1 items\n\nObject Type: Serialisable List (26)\n\nJSON: 11B",
+      "json_len": 11,
+      "json": "[26, 3, []]"
+    },
+    "bytes dictionary": {
+      "payloads": [
+        "[33, 1, [[\"6162\", \"6364\"]]]"
+      ],
+      "description": "1 items\n\nObject Type: Serialisable Dictionary With Bytestring Key/Value Support (33)\n1: <class 'bytes'>: <class 'bytes'>\nJSON: 27B",
+      "json_len": 27,
+      "json": "[33, 1, [[\"6162\", \"6364\"]]]"
+    },
+    "shortcut set": {
+      "payloads": [
+        "[2, \"my shortcuts\", 2, []]"
+      ],
+      "description": "1 items\n\nObject Type: Shortcut Set (2) \"my shortcuts\"\nJSON: 26B",
+      "json_len": 26,
+      "json": "[2, \"my shortcuts\", 2, []]"
+    },
+    "tag filter": {
+      "payloads": [
+        "[44, 1, []]"
+      ],
+      "description": "1 items\n\nObject Type: Tag Filter Rules (44)\nJSON: 11B",
+      "json_len": 11,
+      "json": "[44, 1, []]"
+    },
+    "list of named objects": {
+      "payloads": [
+        "[26, 3, [[2, [2, \"one\", 2, []]], [2, [2, \"two\", 2, []]]]]"
+      ],
+      "description": "1 items\n\nObject Type: Serialisable List (26)\n1: Shortcut Set (2) \"one\"\n1: Shortcut Set (2) \"two\"\nJSON: 57B",
+      "json_len": 57,
+      "json": "[26, 3, [[2, [2, \"one\", 2, []]], [2, [2, \"two\", 2, []]]]]"
+    }
+  },
+  "errors": {
+    "not json": {
+      "payloads": [
+        "this is not json"
+      ],
+      "description": "1 items\n\nError: Expecting value: line 1 column 1 (char 0)",
+      "json_len": 16,
+      "json": "this is not json"
+    },
+    "empty": {
+      "payloads": [
+        ""
+      ],
+      "description": "1 items\n\nError: Expecting value: line 1 column 1 (char 0)",
+      "json_len": 0,
+      "json": ""
+    },
+    "a json list": {
+      "payloads": [
+        "[1, 2, 3]"
+      ],
+      "description": "1 items\n\nError: 1",
+      "json_len": 9,
+      "json": "[1, 2, 3]"
+    },
+    "two payloads": {
+      "payloads": [
+        "[26, 3, [[0, 1]]]",
+        "nope"
+      ],
+      "description": "2 items\n\nObject Type: Serialisable List (26)\n1: <class 'int'>\nJSON: 17B\n\nError: Expecting value: line 1 column 1 (char 0)",
+      "json_len": 23,
+      "json": "[26, 3, [[0, 1]]]\n\nnope"
+    },
+    "nothing": {
+      "payloads": [],
+      "description": "0 items\n\n",
+      "json_len": 0,
+      "json": ""
+    },
+    "future version": {
+      "payloads": [
+        "[26, 9999, [[0, 1]]]"
+      ],
+      "description": "1 items\n\nError: Unfortunately, an object of type Serialisable List could not be loaded because it was created in a client/server that uses an updated version of that object! We support up to version 3, but the object was version 9999.\n\nPlease update your client/server to import this object.",
+      "json_len": 20,
+      "json": "[26, 9999, [[0, 1]]]"
+    },
+    "truncated list": {
+      "payloads": [
+        "[1, 2"
+      ],
+      "description": "1 items\n\nError: Expecting ',' delimiter: line 1 column 6 (char 5)",
+      "json_len": 5,
+      "json": "[1, 2"
+    },
+    "missing colon": {
+      "payloads": [
+        "{\"a\" 1}"
+      ],
+      "description": "1 items\n\nError: Expecting ':' delimiter: line 1 column 6 (char 5)",
+      "json_len": 7,
+      "json": "{\"a\" 1}"
+    },
+    "bare key": {
+      "payloads": [
+        "{a: 1}"
+      ],
+      "description": "1 items\n\nError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+      "json_len": 6,
+      "json": "{a: 1}"
+    },
+    "missing comma": {
+      "payloads": [
+        "[1 2]"
+      ],
+      "description": "1 items\n\nError: Expecting ',' delimiter: line 1 column 4 (char 3)",
+      "json_len": 5,
+      "json": "[1 2]"
+    },
+    "extra data": {
+      "payloads": [
+        "[1] x"
+      ],
+      "description": "1 items\n\nError: Extra data: line 1 column 5 (char 4)",
+      "json_len": 5,
+      "json": "[1] x"
+    },
+    "unterminated string": {
+      "payloads": [
+        "\"abc"
+      ],
+      "description": "1 items\n\nError: Unterminated string starting at: line 1 column 1 (char 0)",
+      "json_len": 4,
+      "json": "\"abc"
+    },
+    "missing value": {
+      "payloads": [
+        "{\"a\": }"
+      ],
+      "description": "1 items\n\nError: Expecting value: line 1 column 7 (char 6)",
+      "json_len": 7,
+      "json": "{\"a\": }"
+    },
+    "whitespace only": {
+      "payloads": [
+        "   "
+      ],
+      "description": "1 items\n\nError: Expecting value: line 1 column 4 (char 3)",
+      "json_len": 3,
+      "json": "   "
+    },
+    "a json object": {
+      "payloads": [
+        "{\"a\": 1}"
+      ],
+      "description": "1 items\n\nError: not enough values to unpack (expected 4, got 1)",
+      "json_len": 8,
+      "json": "{\"a\": 1}"
+    },
+    "a number": {
+      "payloads": [
+        "5"
+      ],
+      "description": "1 items\n\nError: object of type 'int' has no len()",
+      "json_len": 1,
+      "json": "5"
+    },
+    "a string": {
+      "payloads": [
+        "\"str\""
+      ],
+      "description": "1 items\n\nError: 's'",
+      "json_len": 5,
+      "json": "\"str\""
+    },
+    "null": {
+      "payloads": [
+        "null"
+      ],
+      "description": "1 items\n\nError: object of type 'NoneType' has no len()",
+      "json_len": 4,
+      "json": "null"
+    },
+    "true": {
+      "payloads": [
+        "true"
+      ],
+      "description": "1 items\n\nError: object of type 'bool' has no len()",
+      "json_len": 4,
+      "json": "true"
+    },
+    "type 21 only": {
+      "payloads": [
+        "[21]"
+      ],
+      "description": "1 items\n\nError: not enough values to unpack (expected 4, got 1)",
+      "json_len": 4,
+      "json": "[21]"
+    },
+    "type 21 and version": {
+      "payloads": [
+        "[21, 2]"
+      ],
+      "description": "1 items\n\nError: not enough values to unpack (expected 4, got 2)",
+      "json_len": 7,
+      "json": "[21, 2]"
+    },
+    "unknown type": {
+      "payloads": [
+        "[99999, 1, []]"
+      ],
+      "description": "1 items\n\nError: 99999",
+      "json_len": 14,
+      "json": "[99999, 1, []]"
+    },
+    "nan": {
+      "payloads": [
+        "[NaN]"
+      ],
+      "description": "1 items\n\nError: not enough values to unpack (expected 4, got 1)",
+      "json_len": 5,
+      "json": "[NaN]"
+    },
+    "two lines": {
+      "payloads": [
+        "[1,\n2"
+      ],
+      "description": "1 items\n\nError: Expecting ',' delimiter: line 2 column 2 (char 5)",
+      "json_len": 5,
+      "json": "[1,\n2"
+    },
+    "unicode before": {
+      "payloads": [
+        "\"\u00e9\" x"
+      ],
+      "description": "1 items\n\nError: Extra data: line 1 column 5 (char 4)",
+      "json_len": 5,
+      "json": "\"\u00e9\" x"
+    },
+    "control character": {
+      "payloads": [
+        "\"a\tb\""
+      ],
+      "description": "1 items\n\nError: Invalid control character at: line 1 column 3 (char 2)",
+      "json_len": 5,
+      "json": "\"a\tb\""
+    },
+    "bad escape": {
+      "payloads": [
+        "\"\\q\""
+      ],
+      "description": "1 items\n\nError: Invalid \\escape: line 1 column 2 (char 1)",
+      "json_len": 4,
+      "json": "\"\\q\""
+    }
+  },
+  "pastes": [
+    {
+      "case": "json text",
+      "description": "1 items\n\nObject Type: Serialisable List (26)\n2: <class 'int'>\nJSON: 25B",
+      "json": "[26, 3, [[0, 1], [0, 2]]]",
+      "micro": [
+        "Pasted 1 items!"
+      ],
+      "critical": []
+    },
+    {
+      "case": "path to a json file",
+      "description": "1 items\n\nError: Expecting value: line 1 column 1 (char 0)",
+      "json": "/tmp/tmpm4g91dr7/object.json",
+      "micro": [
+        "Pasted 1 items!"
+      ],
+      "critical": []
+    },
+    {
+      "case": "url to a json file",
+      "description": "1 items\n\nObject Type: Serialisable List (26)\n2: <class 'int'>\nJSON: 25B",
+      "json": "[26, 3, [[0, 1], [0, 2]]]",
+      "micro": [
+        "Pasted 1 items!"
+      ],
+      "critical": []
+    },
+    {
+      "case": "url to a png",
+      "description": "1 items\n\nObject Type: Serialisable List (26)\n2: <class 'int'>\nJSON: 25B",
+      "json": "[26, 3, [[0, 1], [0, 2]]]",
+      "micro": [
+        "Pasted 1 items!"
+      ],
+      "critical": []
+    },
+    {
+      "case": "two urls",
+      "description": "2 items\n\nObject Type: Serialisable List (26)\n2: <class 'int'>\nJSON: 25B\n\nObject Type: Serialisable List (26)\n2: <class 'int'>\nJSON: 25B",
+      "json": "[26, 3, [[0, 1], [0, 2]]]\n\n[26, 3, [[0, 1], [0, 2]]]",
+      "micro": [
+        "Pasted 2 items!"
+      ],
+      "critical": []
+    },
+    {
+      "case": "missing path",
+      "description": "",
+      "json": "[26, 3, [[0, 1], [0, 2]]]\n\n[26, 3, [[0, 1], [0, 2]]]",
+      "micro": [],
+      "critical": [
+        {
+          "title": "problem importing!",
+          "message": "Sorry, there was a problem importing those paths! Error was: [Errno 2] No such file or directory: '/tmp/tmpm4g91dr7/missing.json'"
+        }
+      ]
+    },
+    {
+      "case": "garbage text",
+      "description": "1 items\n\nError: Expecting value: line 1 column 1 (char 0)",
+      "json": "garbage",
+      "micro": [
+        "Pasted 1 items!"
+      ],
+      "critical": []
+    }
+  ],
+  "paste_payload": "[26, 3, [[0, 1], [0, 2]]]",
+  "import_paths_json": {
+    "description": "1 items\n\nObject Type: Serialisable List (26)\n2: <class 'int'>\nJSON: 25B",
+    "critical": []
+  },
+  "import_paths_png": {
+    "description": "1 items\n\nObject Type: Serialisable List (26)\n2: <class 'int'>\nJSON: 25B",
+    "critical": []
+  },
+  "import_paths_not_utf8": {
+    "critical": [
+      {
+        "title": "problem importing!",
+        "message": "Sorry, there was a problem importing those paths! Error was: Problem loading assumed JSON at path \"/tmp/tmpm4g91dr7/binary.json\"! Full error written to log; 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte"
+      }
+    ]
+  },
+  "import_paths_absent": {
+    "critical": [
+      {
+        "title": "problem importing!",
+        "message": "Sorry, there was a problem importing those paths! Error was: [Errno 2] No such file or directory: '<dir>/absent.json'"
+      }
+    ]
+  }
+}

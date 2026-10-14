@@ -55,6 +55,13 @@ pub(crate) fn place_regular<C: slint::ComponentHandle + 'static>(component: &C) 
     }
 }
 
+/// The frame of a dialog the reference opens by a frame key of its own
+/// (`quick_select_dialog` and the like), where the client is running.
+pub(crate) fn dialog_frame(name: &'static str) -> Option<DialogFrame> {
+    let store = STORE.with(|kept| kept.borrow().as_ref().and_then(std::sync::Weak::upgrade))?;
+    Some(DialogFrame::new(&store, name))
+}
+
 /// What a window opening now can see of the main window and its display.
 fn surroundings(is_main: bool) -> Surroundings {
     use slint::ComponentHandle as _;
