@@ -55,6 +55,31 @@ fn real_constructor_cancel_acceptance_reopen_fields_and_concurrent_policy_replac
             for (field, value) in case["typed"].as_array().unwrap().iter().enumerate() {
                 draft.field(row, field, value.as_i64().unwrap());
             }
+            // (what the reference's two spin boxes hold once typed into,
+            // clamped to their maxima)
+            let seconds = match draft.rows()[row] {
+                Row::Opt {
+                    value: Value::Duration(seconds),
+                    ..
+                } => *seconds,
+                _ => panic!("duration row"),
+            };
+            let held = duration_fields(seconds, &[Unit::Seconds, Unit::Milliseconds]);
+            let recorded: Vec<i64> = case["fields"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|v| v.as_i64().unwrap())
+                .collect();
+            if held != recorded {
+                // (the one difference, in DIFFERENCES.md: the reference's
+                // field holds its 20 ms minimum at once, ours until Apply)
+                assert_eq!(
+                    (&held[..], &recorded[..]),
+                    (&[0, 0][..], &[0, 20][..]),
+                    "{case}"
+                );
+            }
         }
         if case["apply"].as_bool().unwrap() {
             let (after, before, errors) = draft.applied();
