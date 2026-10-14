@@ -17,6 +17,7 @@ fn label(line: &str) -> String {
 }
 
 // leaf: audit-options-menu-menu-help-about
+// leaf: audit-options-about-description
 #[test]
 fn help_about_opens_the_about_window() {
     let (_dirs, store) = store();
@@ -52,8 +53,6 @@ fn help_about_opens_the_about_window() {
     let description = texts.row_data(0).unwrap();
     // (the store's own directory and database settings)
     assert!(description.contains(&format!("db dir: {}", store.dir().display())));
-    assert!(description.contains("db journal mode: wal"));
-    assert!(description.contains("db cache size per file: 256MB"));
     // each line of the description is one of the reference's, by label
     let recorded = hydrus_testkit::fixture_json("about_window.json");
     let theirs = recorded["tabs"][0][1].as_str().unwrap();
@@ -77,6 +76,69 @@ fn help_about_opens_the_about_window() {
             "{line:?} isn't one of {their_labels:?}"
         );
     }
+    // each value has the form of the recorded one: the settings the store
+    // fixes are the recording's exactly (WAL, synchronous 1, 256MB, no
+    // memory temp), the times and paths have its shape
+    let their_value = |wanted: &str| -> String {
+        theirs
+            .lines()
+            .find(|l| label(l) == wanted)
+            .and_then(|l| l.split_once(": "))
+            .map_or_else(|| panic!("{wanted} is recorded"), |(_, v)| v.to_owned())
+    };
+    let our_value = |wanted: &str| -> String {
+        lines
+            .iter()
+            .find(|l| label(l) == wanted)
+            .and_then(|l| l.split_once(": "))
+            .map_or_else(|| panic!("{wanted} is shown"), |(_, v)| v.to_owned())
+    };
+    for exact in ["db cache size per file", "db journal mode"] {
+        assert_eq!(our_value(exact), their_value(exact), "{exact}");
+    }
+    // (the synchronous pragma and the temp store are the store's own, FULL
+    // (2) and in memory; the reference's configured 1 and False:
+    // DIFFERENCES.md)
+    assert!(["True", "False"].contains(&our_value("db using memory for temp?").as_str()));
+    assert!(["0", "1", "2", "3"].contains(&our_value("db synchronous mode").as_str()));
+    let digits_as_zero = |s: String| {
+        let mut out = String::new();
+        for c in s.chars() {
+            if c.is_ascii_digit() {
+                if !out.ends_with('0') {
+                    out.push('0');
+                }
+            } else {
+                out.push(c);
+            }
+        }
+        out
+    };
+    // ("N seconds ago (date time.ms)", or "now" in the first second)
+    let our_boot = digits_as_zero(our_value("boot time"));
+    let their_boot = digits_as_zero(their_value("boot time"));
+    assert!(
+        our_boot == their_boot || our_boot.replacen("now", "0 seconds ago", 1) == their_boot,
+        "{our_boot} vs {their_boot}"
+    );
+    assert_eq!(our_value("db dir"), store.dir().display().to_string());
+    assert_eq!(
+        our_value("temp dir"),
+        std::env::temp_dir().display().to_string()
+    );
+    assert!(std::path::Path::new(&our_value("install dir")).is_absolute());
+    // (the first lines: the recording's "running on x86_64 Linux from source"
+    // is ours with the build kind, and ffmpeg and sqlite have versions)
+    assert!(lines[0].starts_with("running on "), "{}", lines[0]);
+    if cfg!(all(target_arch = "x86_64", target_os = "linux")) {
+        // (the recording was made on x86_64 Linux)
+        let platform = theirs.split_once("\n\n").unwrap().1.lines().next().unwrap();
+        let platform = platform.rsplit_once(" from ").unwrap().0;
+        assert!(lines[0].starts_with(platform), "{} vs {platform}", lines[0]);
+    }
+    assert!(lines[0].ends_with(" build"), "{}", lines[0]);
+    assert!(lines[1].starts_with("FFMPEG: "), "{}", lines[1]);
+    assert!(lines[2].starts_with("sqlite: "), "{}", lines[2]);
     for wanted in ["locale", "db using memory for temp?", "temp dir"] {
         assert!(lines.iter().any(|l| label(l) == wanted), "{wanted}");
     }

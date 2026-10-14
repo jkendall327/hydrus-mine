@@ -1,0 +1,985 @@
+{
+ "domain_manager": [
+  53,
+  7,
+  [
+   [
+    26,
+    3,
+    []
+   ],
+   [],
+   [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       50,
+       "local imageboard thread",
+       15,
+       [
+        "ceeb98ed6b0428fa4774d9bfbc7d274a23726a922b1f2e50487743152486a30e",
+        4,
+        "http",
+        [
+         139,
+         1,
+         [
+          [
+           "127.0.0.1:46031"
+          ],
+          [],
+          false,
+          false
+         ]
+        ],
+        [
+         true,
+         false,
+         false,
+         true,
+         false,
+         true,
+         false
+        ],
+        [
+         [
+          [
+           51,
+           1,
+           [
+            0,
+            "thread",
+            null,
+            null,
+            "thread"
+           ]
+          ],
+          null
+         ],
+         [
+          [
+           51,
+           1,
+           [
+            3,
+            "",
+            null,
+            null,
+            "example string"
+           ]
+          ],
+          null
+         ]
+        ],
+        [
+         26,
+         3,
+         []
+        ],
+        false,
+        [
+         51,
+         1,
+         [
+          3,
+          "",
+          null,
+          null,
+          "example string"
+         ]
+        ],
+        [],
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        0,
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        null,
+        null,
+        1,
+        "http://127.0.0.1:46031/thread/100"
+       ]
+      ]
+     ]
+    ]
+   ],
+   [],
+   [
+    33,
+    1,
+    [
+     [
+      "ceeb98ed6b0428fa4774d9bfbc7d274a23726a922b1f2e50487743152486a30e",
+      "c5a0dc1b11ab06e48a63c062976cba6bac138708f9cd1ac1b9b90d58601d4595"
+     ]
+    ]
+   ],
+   [
+    [
+     6,
+     9,
+     [
+      false,
+      false,
+      [
+       150,
+       1,
+       [
+        [
+         44,
+         1,
+         []
+        ],
+        []
+       ]
+      ],
+      [
+       151,
+       1,
+       [
+        [
+         "646f776e6c6f616465722074616773",
+         [
+          65,
+          4,
+          [
+           true,
+           [
+            44,
+            1,
+            []
+           ],
+           [],
+           true,
+           true,
+           true,
+           false,
+           [
+            44,
+            1,
+            []
+           ],
+           false,
+           false
+          ]
+         ]
+        ]
+       ]
+      ],
+      false
+     ]
+    ],
+    [
+     6,
+     9,
+     [
+      false,
+      false,
+      [
+       150,
+       1,
+       [
+        [
+         44,
+         1,
+         []
+        ],
+        []
+       ]
+      ],
+      [
+       151,
+       1,
+       []
+      ],
+      false
+     ]
+    ],
+    []
+   ],
+   [
+    [
+     82,
+     2,
+     [
+      [
+       153,
+       1,
+       [
+        true,
+        true,
+        3,
+        [],
+        null,
+        []
+       ]
+      ],
+      false
+     ]
+    ],
+    [
+     82,
+     2,
+     [
+      [
+       153,
+       1,
+       [
+        true,
+        true,
+        3,
+        [],
+        null,
+        []
+       ]
+      ],
+      false
+     ]
+    ],
+    []
+   ],
+   [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       58,
+       "local imageboard thread parser",
+       3,
+       [
+        "local imageboard thread parser",
+        "c5a0dc1b11ab06e48a63c062976cba6bac138708f9cd1ac1b9b90d58601d4595",
+        [
+         55,
+         2,
+         [
+          [],
+          "example string"
+         ]
+        ],
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            135,
+            2,
+            [
+             [
+              27,
+              8,
+              [
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   62,
+                   3,
+                   [
+                    0,
+                    "div",
+                    {
+                     "class": "post"
+                    },
+                    null,
+                    null,
+                    false,
+                    [
+                     51,
+                     1,
+                     [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ],
+               2,
+               "href",
+               "",
+               [
+                84,
+                1,
+                [
+                 26,
+                 3,
+                 []
+                ]
+               ]
+              ]
+             ],
+             false,
+             [
+              58,
+              "local imageboard post parser",
+              3,
+              [
+               "local imageboard post parser",
+               "e565c8cc21c9bb604a54dad1543f4a905440393c751e7f891c76cf6d7973ed73",
+               [
+                55,
+                2,
+                [
+                 [],
+                 "example string"
+                ]
+               ],
+               [
+                26,
+                3,
+                []
+               ],
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   30,
+                   7,
+                   [
+                    "file",
+                    7,
+                    [
+                     27,
+                     8,
+                     [
+                      [
+                       26,
+                       3,
+                       [
+                        [
+                         2,
+                         [
+                          62,
+                          3,
+                          [
+                           0,
+                           "a",
+                           {
+                            "class": "file"
+                           },
+                           null,
+                           null,
+                           false,
+                           [
+                            51,
+                            1,
+                            [
+                             3,
+                             "",
+                             null,
+                             null,
+                             "example string"
+                            ]
+                           ]
+                          ]
+                         ]
+                        ]
+                       ]
+                      ],
+                      0,
+                      "href",
+                      "",
+                      [
+                       84,
+                       1,
+                       [
+                        26,
+                        3,
+                        []
+                       ]
+                      ]
+                     ]
+                    ],
+                    [
+                     7,
+                     50
+                    ]
+                   ]
+                  ]
+                 ],
+                 [
+                  2,
+                  [
+                   30,
+                   7,
+                   [
+                    "poster",
+                    0,
+                    [
+                     27,
+                     8,
+                     [
+                      [
+                       26,
+                       3,
+                       [
+                        [
+                         2,
+                         [
+                          62,
+                          3,
+                          [
+                           0,
+                           "span",
+                           {
+                            "class": "poster"
+                           },
+                           null,
+                           null,
+                           false,
+                           [
+                            51,
+                            1,
+                            [
+                             3,
+                             "",
+                             null,
+                             null,
+                             "example string"
+                            ]
+                           ]
+                          ]
+                         ]
+                        ]
+                       ]
+                      ],
+                      1,
+                      "href",
+                      "",
+                      [
+                       84,
+                       1,
+                       [
+                        26,
+                        3,
+                        []
+                       ]
+                      ]
+                     ]
+                    ],
+                    null
+                   ]
+                  ]
+                 ]
+                ]
+               ],
+               [],
+               {
+                "url": "https://example.com/posts/index.php?id=123456"
+               }
+              ]
+             ]
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            30,
+            7,
+            [
+             "board",
+             0,
+             [
+              27,
+              8,
+              [
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   62,
+                   3,
+                   [
+                    0,
+                    "li",
+                    {
+                     "class": "board"
+                    },
+                    null,
+                    null,
+                    false,
+                    [
+                     51,
+                     1,
+                     [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ],
+               1,
+               "href",
+               "",
+               [
+                84,
+                1,
+                [
+                 26,
+                 3,
+                 []
+                ]
+               ]
+              ]
+             ],
+             null
+            ]
+           ]
+          ],
+          [
+           2,
+           [
+            30,
+            7,
+            [
+             "subject",
+             17,
+             [
+              27,
+              8,
+              [
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   62,
+                   3,
+                   [
+                    0,
+                    "h1",
+                    {
+                     "id": "subject"
+                    },
+                    null,
+                    null,
+                    false,
+                    [
+                     51,
+                     1,
+                     [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ],
+               1,
+               "href",
+               "",
+               [
+                84,
+                1,
+                [
+                 26,
+                 3,
+                 []
+                ]
+               ]
+              ]
+             ],
+             0
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         "http://127.0.0.1:46031/thread/100"
+        ],
+        {
+         "url": "https://example.com/posts/index.php?id=123456"
+        }
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    [
+     [
+      47,
+      2,
+      [
+       0,
+       null
+      ]
+     ],
+     [
+      [
+       "User-Agent",
+       [
+        "Mozilla/5.0 (compatible; Hydrus Client)",
+        1,
+        "This is the default User-Agent identifier for the client for all network connections."
+       ]
+      ],
+      [
+       "Accept",
+       [
+        "image/jpeg,image/png,image/*;q=0.9,*/*;q=0.8",
+        1,
+        "Prefers jpeg/png over webp, but provides graceful fallback."
+       ]
+      ],
+      [
+       "Cache-Control",
+       [
+        "no-transform",
+        1,
+        "Tells CDNs not to deliver \"optimised\" versions of files. May not be honoured."
+       ]
+      ]
+     ]
+    ]
+   ]
+  ]
+ ],
+ "site": {
+  "phases": [
+   {
+    "files": {
+     "/files/t1.jpg": "jpeg_420.jpg",
+     "/files/t2.jpg": "jpeg_422.jpg",
+     "/files/t3.jpg": "jpeg_444_q95.jpg"
+    },
+    "pages": {
+     "/thread/100": "<html><head><title>Blue sky thread</title></head><body><h1 id=\"subject\">Blue sky thread</h1><ul id=\"board\"><li class=\"board\">board:b</li></ul><div class=\"post\"><span class=\"poster\">poster:anon</span><a class=\"file\" href=\"/files/t1.jpg\">file 1</a></div><div class=\"post\"><span class=\"poster\">poster:sky</span><a class=\"file\" href=\"/files/t2.jpg\">file 2</a></div><div class=\"post\"><span class=\"poster\">poster:anon</span><a class=\"file\" href=\"/files/t3.jpg\">file 3</a></div></body></html>"
+    }
+   },
+   {
+    "files": {
+     "/files/t1.jpg": "jpeg_420.jpg",
+     "/files/t2.jpg": "jpeg_422.jpg",
+     "/files/t3.jpg": "jpeg_444_q95.jpg",
+     "/files/t4.jpg": "jpeg_flat.jpg"
+    },
+    "pages": {
+     "/thread/100": "<html><head><title>Blue sky thread</title></head><body><h1 id=\"subject\">Blue sky thread</h1><ul id=\"board\"><li class=\"board\">board:b</li></ul><div class=\"post\"><span class=\"poster\">poster:anon</span><a class=\"file\" href=\"/files/t1.jpg\">file 1</a></div><div class=\"post\"><span class=\"poster\">poster:sky</span><a class=\"file\" href=\"/files/t2.jpg\">file 2</a></div><div class=\"post\"><span class=\"poster\">poster:anon</span><a class=\"file\" href=\"/files/t3.jpg\">file 3</a></div><div class=\"post\"><span class=\"poster\">poster:late</span><a class=\"file\" href=\"/files/t4.jpg\">file 4</a></div></body></html>"
+    }
+   }
+  ],
+  "port": 46031
+ },
+ "steps": [
+  {
+   "dialog": {},
+   "files": {
+    "7be488e1b7471773fb6dd9698bc71f96a2d5696f4f6477dc048e042eec59ae0a": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {},
+     "urls": [
+      "BASE/files/t3.jpg",
+      "BASE/thread/100"
+     ]
+    },
+    "b5db2dde9ab28f632a19dc5bfd32be14f57b9b2c2dfdd824d00828487be735fe": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {},
+     "urls": [
+      "BASE/files/t2.jpg",
+      "BASE/thread/100"
+     ]
+    },
+    "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {},
+     "urls": [
+      "BASE/files/t1.jpg",
+      "BASE/thread/100"
+     ]
+    }
+   },
+   "hits": [
+    "/files/t1.jpg",
+    "/files/t2.jpg",
+    "/files/t3.jpg",
+    "/thread/100"
+   ],
+   "page": {
+    "checks": [
+     {
+      "note": "3 new urls found",
+      "status": 1,
+      "url": "BASE/thread/100"
+     }
+    ],
+    "files": [
+     {
+      "data": "BASE/files/t1.jpg",
+      "note": "",
+      "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+      "status": 1,
+      "tags": [
+       "board:b",
+       "poster:anon"
+      ]
+     },
+     {
+      "data": "BASE/files/t2.jpg",
+      "note": "",
+      "sha256": "b5db2dde9ab28f632a19dc5bfd32be14f57b9b2c2dfdd824d00828487be735fe",
+      "status": 1,
+      "tags": [
+       "board:b",
+       "poster:sky"
+      ]
+     },
+     {
+      "data": "BASE/files/t3.jpg",
+      "note": "",
+      "sha256": "7be488e1b7471773fb6dd9698bc71f96a2d5696f4f6477dc048e042eec59ae0a",
+      "status": 1,
+      "tags": [
+       "board:b",
+       "poster:anon"
+      ]
+     }
+    ],
+    "texts": {
+     "bottom": "3 successful",
+     "check log summary": "1 successful",
+     "check now enabled": true,
+     "checker status": "next check in DELTA",
+     "checking pause enabled": true,
+     "file log progress": "3/3",
+     "file log summary": "3 successful",
+     "files status": "",
+     "row": [
+      "* Blue sky thread",
+      "",
+      "",
+      "DELTA",
+      "3",
+      "DELTA"
+     ],
+     "subject": "Blue sky thread",
+     "top": "1 watchers - 3/3",
+     "url": "BASE/thread/100",
+     "velocity": "at last check, found 3 files in previous DELTA"
+    },
+    "thumbnails": 3,
+    "timing": {
+     "check now": false,
+     "checked": true,
+     "checking paused": false,
+     "checking status": 0,
+     "dead": false,
+     "files paused": false,
+     "next check in the future": true,
+     "subject": "Blue sky thread"
+    }
+   },
+   "popups": [],
+   "step": "watch"
+  },
+  {
+   "dialog": {},
+   "files": {
+    "1ebba84c5d3e9bda468be7bb9889e80ed5d86f10a78d8eb8c11e42bbc32214a5": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {},
+     "urls": [
+      "BASE/files/t4.jpg",
+      "BASE/thread/100"
+     ]
+    },
+    "7be488e1b7471773fb6dd9698bc71f96a2d5696f4f6477dc048e042eec59ae0a": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {},
+     "urls": [
+      "BASE/files/t3.jpg",
+      "BASE/thread/100"
+     ]
+    },
+    "b5db2dde9ab28f632a19dc5bfd32be14f57b9b2c2dfdd824d00828487be735fe": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {},
+     "urls": [
+      "BASE/files/t2.jpg",
+      "BASE/thread/100"
+     ]
+    },
+    "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {},
+     "urls": [
+      "BASE/files/t1.jpg",
+      "BASE/thread/100"
+     ]
+    }
+   },
+   "hits": [
+    "/files/t4.jpg",
+    "/thread/100"
+   ],
+   "page": {
+    "checks": [
+     {
+      "note": "3 new urls found",
+      "status": 1,
+      "url": "BASE/thread/100"
+     },
+     {
+      "note": "1 new urls found (3 of page already in)",
+      "status": 1,
+      "url": "BASE/thread/100"
+     }
+    ],
+    "files": [
+     {
+      "data": "BASE/files/t1.jpg",
+      "note": "",
+      "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+      "status": 1,
+      "tags": [
+       "board:b",
+       "poster:anon"
+      ]
+     },
+     {
+      "data": "BASE/files/t2.jpg",
+      "note": "",
+      "sha256": "b5db2dde9ab28f632a19dc5bfd32be14f57b9b2c2dfdd824d00828487be735fe",
+      "status": 1,
+      "tags": [
+       "board:b",
+       "poster:sky"
+      ]
+     },
+     {
+      "data": "BASE/files/t3.jpg",
+      "note": "",
+      "sha256": "7be488e1b7471773fb6dd9698bc71f96a2d5696f4f6477dc048e042eec59ae0a",
+      "status": 1,
+      "tags": [
+       "board:b",
+       "poster:anon"
+      ]
+     },
+     {
+      "data": "BASE/files/t4.jpg",
+      "note": "",
+      "sha256": "1ebba84c5d3e9bda468be7bb9889e80ed5d86f10a78d8eb8c11e42bbc32214a5",
+      "status": 1,
+      "tags": [
+       "board:b",
+       "poster:late"
+      ]
+     }
+    ],
+    "texts": {
+     "bottom": "4 successful",
+     "check log summary": "2 successful",
+     "check now enabled": true,
+     "checker status": "next check in DELTA",
+     "checking pause enabled": true,
+     "file log progress": "4/4",
+     "file log summary": "4 successful",
+     "files status": "",
+     "row": [
+      "* Blue sky thread",
+      "",
+      "",
+      "DELTA",
+      "4",
+      "DELTA"
+     ],
+     "subject": "Blue sky thread",
+     "top": "1 watchers - 4/4",
+     "url": "BASE/thread/100",
+     "velocity": "at last check, found 4 files in previous DELTA"
+    },
+    "thumbnails": 4,
+    "timing": {
+     "check now": false,
+     "checked": true,
+     "checking paused": false,
+     "checking status": 0,
+     "dead": false,
+     "files paused": false,
+     "next check in the future": true,
+     "subject": "Blue sky thread"
+    }
+   },
+   "popups": [],
+   "step": "check again"
+  }
+ ]
+}
