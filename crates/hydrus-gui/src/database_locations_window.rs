@@ -34,6 +34,7 @@ thread_local! {
     static OPENED: RefCell<slint::Weak<DatabaseLocationsWindow>> = RefCell::new(slint::Weak::default());
     static MAX_SIZE: RefCell<slint::Weak<LocationMaxSizeWindow>> = RefCell::new(slint::Weak::default());
     static RUNTIME: RefCell<slint::Weak<crate::ChoiceButtonsWindow>> = RefCell::new(slint::Weak::default());
+    static CUSTOM: RefCell<slint::Weak<crate::EditValueWindow>> = RefCell::new(slint::Weak::default());
 }
 
 /// The locations window most recently opened, while it exists.
@@ -44,6 +45,11 @@ pub fn opened() -> Option<DatabaseLocationsWindow> {
 /// The maximum-size editor most recently opened, while it exists.
 pub fn max_size_window() -> Option<LocationMaxSizeWindow> {
     MAX_SIZE.with(|w| w.borrow().upgrade())
+}
+
+/// The custom run time editor most recently opened, while it exists.
+pub fn custom_runtime_window() -> Option<crate::EditValueWindow> {
+    CUSTOM.with(|w| w.borrow().upgrade())
 }
 
 /// The "how long to run" question most recently asked, while it exists.
@@ -57,8 +63,6 @@ struct State {
     review: Review,
     selection: ListSelection<usize>,
     ascending: bool,
-    /// A rebalance at work: whether it has finished.
-    working: Option<Arc<AtomicBool>>,
 }
 
 fn now() -> i64 {
@@ -74,7 +78,17 @@ impl State {
     }
 
     fn order(&self) -> Vec<usize> {
-        let mut order: Vec<usize> = (0..self.review.locations.len()).collect();
+        // (as the reference lists them: the weighted, the thumbnail location, and any that hold
+        // folders)
+        let mut order: Vec<usize> = (0..self.review.locations.len())
+            .filter(|&i| {
+                let l = &self.review.locations[i];
+                l.weight > 0
+                    || l.thumbnail_override
+                    || l.files_share > 0.0
+                    || l.thumbnails_share > 0.0
+            })
+            .collect();
         if !self.ascending {
             order.reverse();
         }
@@ -182,7 +196,6 @@ fn show(window: &DatabaseLocationsWindow, state: &State) {
         .is_some();
     window.set_rebalance_status(model::rebalance_label(work).into());
     window.set_can_rebalance(work);
-    window.set_busy(state.working.is_some());
 }
 
 /// Open the window (or show it again).
@@ -203,7 +216,6 @@ pub(crate) fn open(
         review: Review::default(),
         selection: ListSelection::default(),
         ascending: true,
-        working: None,
     };
     state.reload();
     let state = Rc::new(RefCell::new(state));
@@ -286,9 +298,6 @@ fn close(slots: &Slots) {
 
 #[allow(clippy::too_many_lines)]
 fn act(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots, action: &str) {
-    if state.borrow().working.is_some() {
-        return;
-    }
     match action {
         "add" => {
             let Some(path) = crate::pick(crate::Pick::Folder, model::PICK_LOCATION)
@@ -421,7 +430,7 @@ fn act(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots, action
             );
             return;
         }
-        "rebalance" => return rebalance(state, refresh, slots),
+        "rebalance" => return rebalance(state, slots),
         "granularity" => {
             let store = state.borrow().store.clone();
             let granularity = slots.borrow().granularity.clone();
@@ -485,19 +494,24 @@ fn remove(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, l: &storage::Locat
 /// "move files now" (`_Rebalance`): every location must be there; then a
 /// run time is chosen and the folders move on a worker with a cancellable
 /// "rebalancing files" popup.
-fn rebalance(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots) {
-    let missing = state
-        .borrow()
-        .review
-        .locations
-        .iter()
-        .find(|l| !l.path.is_dir())
-        .map(|l| l.path.display().to_string());
+fn rebalance(state: &Rc<RefCell<State>>, slots: &Slots) {
+    let missing = {
+        let s = state.borrow();
+        s.order()
+            .into_iter()
+            .map(|i| &s.review.locations[i])
+            .find(|l| !l.path.exists())
+            .map(|l| {
+                // (a thumbnail location is made with weight 1)
+                let weight = if l.weight == 0 { 1 } else { l.weight };
+                model::location_repr(&l.path.display().to_string(), weight, l.max_bytes)
+            })
+    };
     if let Some(path) = missing {
         crate::debug_actions::message("Warning", &model::missing_path_warning(&path));
         return;
     }
-    let (state_after, refresh_after, slots_after) = (state.clone(), refresh.clone(), slots.clone());
+    let (state_after, slots_after) = (state.clone(), slots.clone());
     let chooser = crate::choice_buttons::open(
         &crate::choice_buttons::Ask {
             title: "Are you sure?",
@@ -513,8 +527,8 @@ fn rebalance(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots) 
                 return;
             };
             match model::RUNTIMES.get(i).map(|(_, s)| *s) {
-                Some(Some(-1)) => custom_runtime(&state_after, &refresh_after, &slots_after),
-                Some(seconds) => start(&state_after, &refresh_after, &slots_after, seconds),
+                Some(Some(-1)) => custom_runtime(&state_after, &slots_after),
+                Some(seconds) => start(&state_after, &slots_after, seconds),
                 None => {}
             }
         },
@@ -528,7 +542,7 @@ fn rebalance(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots) 
 }
 
 /// "run for custom time": minutes, from two hours.
-fn custom_runtime(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots) {
+fn custom_runtime(state: &Rc<RefCell<State>>, slots: &Slots) {
     let Ok(window) = crate::app_title::new::<crate::EditValueWindow>() else {
         return;
     };
@@ -537,12 +551,12 @@ fn custom_runtime(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Sl
     window.set_value(120);
     window.on_apply({
         let weak = window.as_weak();
-        let (state, refresh, slots) = (state.clone(), refresh.clone(), slots.clone());
+        let (state, slots) = (state.clone(), slots.clone());
         move || {
             if let Some(w) = weak.upgrade() {
                 let minutes = i64::from(w.get_value());
                 let _ = w.hide();
-                start(&state, &refresh, &slots, Some(minutes * 60));
+                start(&state, &slots, Some(minutes * 60));
             }
         }
     });
@@ -555,17 +569,15 @@ fn custom_runtime(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Sl
         }
     });
     if window.show().is_ok() {
+        CUSTOM.with(|w| *w.borrow_mut() = window.as_weak());
         slots.borrow_mut().custom = Some(window);
     }
 }
 
 #[allow(clippy::cast_precision_loss)] // (seconds)
-fn start(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots, seconds: Option<i64>) {
+fn start(state: &Rc<RefCell<State>>, slots: &Slots, seconds: Option<i64>) {
     let store = state.borrow().store.clone();
-    let done = Arc::new(AtomicBool::new(false));
-    state.borrow_mut().working = Some(done.clone());
     let stop_at = seconds.map(|s| now() + s);
-    let thread_done = done.clone();
     std::thread::spawn(move || {
         let mut job = Job::new(false, true, now() as f64);
         job.status_title = Some(model::REBALANCE_TITLE.into());
@@ -606,35 +618,7 @@ fn start(state: &Rc<RefCell<State>>, refresh: &Rc<dyn Fn()>, slots: &Slots, seco
             })
             .map(|_| ())
         });
-        thread_done.store(true, Ordering::Release);
     });
-    // (the list is read again once the work is done)
-    let timer = slint::Timer::default();
-    timer.start(
-        slint::TimerMode::Repeated,
-        std::time::Duration::from_millis(250),
-        {
-            let state = Rc::downgrade(state);
-            let refresh = refresh.clone();
-            move || {
-                let Some(state) = state.upgrade() else {
-                    return;
-                };
-                let finished = state
-                    .borrow()
-                    .working
-                    .as_ref()
-                    .is_some_and(|d| d.load(Ordering::Acquire));
-                if finished {
-                    let mut s = state.borrow_mut();
-                    s.working = None;
-                    s.reload();
-                    drop(s);
-                    refresh();
-                }
-            }
-        },
-    );
-    slots.borrow_mut().timer = Some(timer);
-    refresh();
+    // (the reference closes the dialog once the job is started; the popup shows the rest)
+    close(slots);
 }

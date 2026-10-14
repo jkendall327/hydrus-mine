@@ -267,6 +267,14 @@ pub struct Move {
 /// folder (or the thumbnail override) is.
 pub fn next_move(conn: &Connection) -> Result<Option<Move>> {
     let review = review(conn)?;
+    // (the reference does nothing while a location it would move to is not there)
+    if review
+        .locations
+        .iter()
+        .any(|l| (l.weight > 0 || l.thumbnail_override) && !l.path.exists())
+    {
+        return Ok(None);
+    }
     let mut subfolders: Vec<(String, PathBuf)> = conn
         .prepare(
             "SELECT s.prefix, l.path FROM storage_subfolders s JOIN storage_locations l USING (location_id)

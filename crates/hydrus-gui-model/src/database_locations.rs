@@ -201,7 +201,19 @@ pub const MAX_SIZE_MESSAGE: &str = "If a location goes over its set size, it wil
 /// The max size control's starting value when there is none.
 pub const MAX_SIZE_DEFAULT: i64 = 100 * 1024 * 1024 * 1024;
 
-/// "move files now" for a location that isn't there.
+/// A location as the reference words it in a sentence
+/// (`FilesStorageBaseLocation.__repr__`): `path (weight, limit)`.
+pub fn location_repr(path: &str, weight: i64, max_bytes: Option<i64>) -> String {
+    match max_bytes {
+        None => format!("{path} ({weight}, unlimited)"),
+        Some(max) => format!(
+            "{path} ({weight}, {})",
+            hydrus_core::numbers::human_bytes(u64::try_from(max).unwrap_or(0))
+        ),
+    }
+}
+
+/// "move files now" for a location that isn't there (`location_repr` of it).
 pub fn missing_path_warning(path: &str) -> String {
     format!(
         "The path \"{path}\" does not exist! Please ensure all the locations on this dialog are valid before trying to rebalance your files."

@@ -98,7 +98,7 @@ fn cells(window: &DatabaseLocationsWindow) -> Vec<Vec<String>> {
 fn select(window: &DatabaseLocationsWindow, path: &Path) {
     let at = cells(window)
         .iter()
-        .position(|row| row[0] == path.display().to_string())
+        .position(|row| row[0].ends_with(&path.display().to_string()))
         .expect("the location is listed");
     window.invoke_clicked(i32::try_from(at).unwrap(), false, false);
 }
@@ -107,6 +107,337 @@ fn warning(text: &str) {
     let window = message_window().expect("a warning is shown");
     assert_eq!(window.get_message(), text);
     window.invoke_cancelled();
+}
+
+/// The paths a recorded step names, and what the recorder called them.
+struct Names(Vec<(PathBuf, &'static str)>);
+
+impl Names {
+    fn norm(&self, text: &str) -> String {
+        let mut pairs: Vec<_> = self.0.iter().collect();
+        pairs.sort_by_key(|(path, _)| std::cmp::Reverse(path.display().to_string().len()));
+        let mut text = text.to_owned();
+        for (path, name) in pairs {
+            text = text.replace(&path.display().to_string(), &format!("<{name}>"));
+        }
+        text
+    }
+    fn path(&self, name: &str) -> PathBuf {
+        self.0.iter().find(|(_, n)| *n == name).unwrap().0.clone()
+    }
+}
+
+fn strings(value: &serde_json::Value) -> Vec<String> {
+    value
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|v| v.as_str().unwrap().to_owned())
+        .collect()
+}
+
+/// Every step of the reference's panel (oracle/record_locations_panel.py) replayed through the
+/// real window: the same selection, pick and answers, then the dialogs, list, buttons and saved
+/// locations compared. Returns the differences found, step by step.
+fn replay_locations_panel(
+    rig: &Rig,
+    names: &Names,
+    window: &DatabaseLocationsWindow,
+) -> Vec<String> {
+    let recording = hydrus_testkit::fixture_json("locations_panel.json");
+    let mut differences = Vec::new();
+    for step in recording["steps"].as_array().unwrap() {
+        let name = step["step"].as_str().unwrap();
+        let inputs = &step["inputs"];
+        let mut yesno = inputs["yesno"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .map(|a| a.as_bool().unwrap());
+        let mut yesyesno = inputs["yesyesno"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .map(|a| a.as_str().map(str::to_owned));
+        let mut edit = inputs["edit"].as_array().into_iter().flatten();
+        *rig.next.borrow_mut() = inputs["pick"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .filter_map(|p| p.as_str().map(|n| names.path(n)))
+            .collect();
+        // the action: ["select", name] and/or the button's
+        let mut words = step["action"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|w| w.as_str().unwrap());
+        let mut diff = |what: String| differences.push(format!("{name}: {what}"));
+        while let Some(word) = words.next() {
+            match word {
+                "open" => {}
+                "select" => select(window, &names.path(words.next().unwrap())),
+                other => window.invoke_action(other.into()),
+            }
+        }
+        // the dialogs, in order
+        for dialog in step["dialogs"].as_array().unwrap() {
+            let wanted = |i: usize| dialog[i].as_str().unwrap_or_default().to_owned();
+            match dialog[0].as_str().unwrap() {
+                "pick directory" => {
+                    if rig.asked.borrow().last().map(String::as_str) != Some(wanted(1).as_str()) {
+                        diff(format!("picker title {:?}", rig.asked.borrow().last()));
+                    }
+                }
+                "warning" => match message_window().filter(|w| w.window().is_visible()) {
+                    Some(w) => {
+                        let text = names.norm(&w.get_message());
+                        if text != wanted(1) {
+                            diff(format!("warning {text:?}, not {:?}", wanted(1)));
+                        }
+                        w.invoke_cancelled();
+                    }
+                    None => diff(format!("no warning {:?}", wanted(1))),
+                },
+                "question" => {
+                    let question = rig.ui.get_question().to_string();
+                    if question.is_empty() {
+                        diff(format!("no question {:?}", wanted(1)));
+                    } else {
+                        if names.norm(&question) != wanted(1) {
+                            diff(format!("question {question:?}, not {:?}", wanted(1)));
+                        }
+                        rig.ui.invoke_answer(yesno.next().unwrap());
+                    }
+                }
+                "choice" => match runtime_question() {
+                    Some(q) if q.window().is_visible() => {
+                        if q.get_message() != wanted(1).as_str() {
+                            diff("run time question".into());
+                        }
+                        let choices: Vec<String> =
+                            q.get_choices().iter().map(|c| c.to_string()).collect();
+                        if choices != strings(&dialog[2]) || q.get_no_label() != wanted(3).as_str()
+                        {
+                            diff(format!("run time choices {choices:?}"));
+                        }
+                        match yesyesno.next().unwrap() {
+                            None => q.invoke_cancelled(),
+                            Some(label) => q.invoke_chosen(
+                                i32::try_from(choices.iter().position(|c| *c == label).unwrap())
+                                    .unwrap(),
+                            ),
+                        }
+                    }
+                    _ => diff("no run time question".into()),
+                },
+                "dialog" => {
+                    let entry = &dialog[1];
+                    let accepted = entry["accepted"].as_bool().unwrap();
+                    if entry["title"] == "edit max size" {
+                        let Some(d) = max_size_window().filter(|d| d.window().is_visible()) else {
+                            diff("no max size dialog".into());
+                            continue;
+                        };
+                        if d.get_window_title() != entry["title"].as_str().unwrap() {
+                            diff(format!("title {:?}", d.get_window_title()));
+                        }
+                        if d.get_message() != entry["message"].as_str().unwrap() {
+                            diff("max size message".into());
+                        }
+                        let initial = entry["initial"].as_i64();
+                        let shown = (!d.get_no_limit()).then(|| {
+                            i64::from(d.get_amount())
+                                * 1024_i64.pow(u32::try_from(d.get_unit()).unwrap())
+                        });
+                        if initial != shown {
+                            diff(format!("max size started at {shown:?}, not {initial:?}"));
+                        }
+                        edit.next();
+                        if accepted {
+                            match entry["entered"].as_i64() {
+                                Some(bytes) => {
+                                    let mut unit = 0;
+                                    let mut amount = bytes;
+                                    while unit < 4 && amount % 1024 == 0 && amount >= 1024 {
+                                        amount /= 1024;
+                                        unit += 1;
+                                    }
+                                    d.set_no_limit(false);
+                                    d.set_amount(i32::try_from(amount).unwrap());
+                                    d.set_unit(unit);
+                                }
+                                None => d.set_no_limit(true),
+                            }
+                            d.invoke_apply();
+                        } else {
+                            d.invoke_cancel();
+                        }
+                    } else {
+                        let Some(d) =
+                            hydrus_gui::database_locations_window::custom_runtime_window()
+                                .filter(|d| d.window().is_visible())
+                        else {
+                            diff("no custom time dialog".into());
+                            continue;
+                        };
+                        // (minutes, not hours and minutes)
+                        let initial = entry["initial"].as_i64().unwrap() / 60;
+                        if i64::from(d.get_value()) != initial {
+                            diff(format!("custom time started at {} minutes", d.get_value()));
+                        }
+                        if accepted {
+                            d.set_value(
+                                i32::try_from(entry["entered"].as_i64().unwrap() / 60).unwrap(),
+                            );
+                            d.invoke_apply();
+                        } else {
+                            d.invoke_cancel();
+                        }
+                    }
+                }
+                "closed the panel" => {
+                    if window.window().is_visible() {
+                        diff("the window stayed open".into());
+                    }
+                }
+                other => panic!("{other}"),
+            }
+        }
+        if window.window().is_visible() {
+            // the state
+            let mut rows: Vec<Vec<String>> = cells(window)
+                .into_iter()
+                .map(|mut row| {
+                    row[0] = names.norm(&row[0]);
+                    if row[2] != "DOES NOT EXIST" && row[2] != "unknown" {
+                        row[2] = "<free space>".into();
+                    }
+                    row
+                })
+                .collect();
+            rows.sort();
+            let mut wanted: Vec<Vec<String>> = step["rows"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(strings)
+                .collect();
+            wanted.sort();
+            if rows != wanted {
+                diff(format!("rows {rows:?}, not {wanted:?}"));
+            }
+            let buttons: Vec<bool> = window.get_buttons().iter().collect();
+            let wanted_buttons: Vec<bool> = step["buttons"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|b| b.as_bool().unwrap())
+                .collect();
+            if buttons != wanted_buttons {
+                diff(format!("buttons {buttons:?}, not {wanted_buttons:?}"));
+            }
+            let thumbs = (
+                names.norm(&window.get_thumbnail_location()),
+                window.get_can_clear_thumbnails(),
+            );
+            if thumbs
+                != (
+                    step["thumbnails"][0].as_str().unwrap().to_owned(),
+                    step["thumbnails"][1].as_bool().unwrap(),
+                )
+            {
+                diff(format!("thumbnail location {thumbs:?}"));
+            }
+            if window.get_granularity() != step["granularity"].as_str().unwrap() {
+                diff(format!("granularity {:?}", window.get_granularity()));
+            }
+            let rebalance = (
+                window.get_rebalance_status().to_string(),
+                window.get_can_rebalance(),
+            );
+            if rebalance
+                != (
+                    step["rebalance"][0].as_str().unwrap().to_owned(),
+                    step["rebalance"][1].as_bool().unwrap(),
+                )
+            {
+                diff(format!("rebalance {rebalance:?}"));
+            }
+        }
+        let review = rig.review();
+        let mut saved: Vec<(String, i64, Option<i64>)> = review
+            .locations
+            .iter()
+            .filter(|l| l.weight > 0)
+            .map(|l| {
+                (
+                    names.norm(&l.path.display().to_string()),
+                    l.weight,
+                    l.max_bytes,
+                )
+            })
+            .collect();
+        saved.sort();
+        let mut wanted: Vec<(String, i64, Option<i64>)> = step["saved"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|l| {
+                (
+                    l[0].as_str().unwrap().to_owned(),
+                    l[1].as_i64().unwrap(),
+                    l[2].as_i64(),
+                )
+            })
+            .collect();
+        wanted.sort();
+        if saved != wanted {
+            diff(format!("saved {saved:?}, not {wanted:?}"));
+        }
+        let thumbs = review
+            .locations
+            .iter()
+            .find(|l| l.thumbnail_override)
+            .map(|l| names.norm(&l.path.display().to_string()));
+        if thumbs.as_deref() != step["saved_thumbnails"].as_str() {
+            diff(format!("saved thumbnail location {thumbs:?}"));
+        }
+        // (the unused edit answers are the reference's own record of a dialog it did not open)
+        let _ = edit;
+    }
+    differences
+}
+
+#[test]
+fn the_locations_panel_replays_the_reference_s_steps() {
+    let rig = rig();
+    let media = rig.home.path().join("client_files");
+    let scratch = tempfile::tempdir().unwrap();
+    let mut pairs = vec![
+        (media.clone(), "default"),
+        (rig.home.path().to_path_buf(), "db"),
+    ];
+    for name in ["a", "b", "thumbs"] {
+        let path = scratch.path().join(name);
+        std::fs::create_dir(&path).unwrap();
+        pairs.push((path, name));
+    }
+    pairs.push((scratch.path().join("missing"), "missing"));
+    let names = Names(pairs);
+    let window = rig.open();
+    // What differs on purpose (DIFFERENCES.md, Database > locations): the reference warns that
+    // the last location cannot be removed and then asks anyway (it does not return); and after
+    // a removal its list keeps a row selected where the native list selects none.
+    let unexplained: Vec<_> = replay_locations_panel(&rig, &names, &window)
+        .into_iter()
+        .filter(|d| {
+            !(d.starts_with("remove the last location: no question")
+                || (d.starts_with("remove the missing path, yes: buttons")
+                    || d.starts_with("move files now, forget it: buttons")))
+        })
+        .collect();
+    assert!(unexplained.is_empty(), "{}", unexplained.join("\n"));
 }
 
 // leaf: audit-media-database-locations-paths
@@ -344,6 +675,65 @@ fn the_thumbnail_location_override_is_set_and_cleared() {
     assert!(!window.get_can_clear_thumbnails());
 }
 
+/// With a thumbnail location set in the window, "move files now" moves the thumbnail folders
+/// there (and only them), and clearing it moves them back.
+// leaf: audit-media-database-locations-thumbnails
+#[test]
+fn moving_files_now_puts_the_thumbnail_folders_at_the_thumbnail_location() {
+    let rig = rig();
+    let media = rig.home.path().join("client_files");
+    // a thumbnail and a file, in the layout their folders have to begin with
+    let thumb = hydrus_store::storage::prefix_dir(&media, "t3a").join("3ab4567.thumbnail");
+    let file = hydrus_store::storage::prefix_dir(&media, "f3a").join("3ab4567.png");
+    for path in [&thumb, &file] {
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        std::fs::write(path, b"x").unwrap();
+    }
+    let window = rig.open();
+    let thumbs = tempfile::tempdir().unwrap();
+    rig.pick(thumbs.path());
+    window.invoke_action("set thumbnails".into());
+    assert_eq!(
+        window.get_thumbnail_location(),
+        thumbs.path().display().to_string()
+    );
+    let finish = |window: &DatabaseLocationsWindow| {
+        window.invoke_action("rebalance".into());
+        runtime_question().unwrap().invoke_chosen(4);
+        let deadline = Instant::now() + Duration::from_secs(60);
+        while rig.store.read(locations::next_move).unwrap().is_some() {
+            assert!(
+                Instant::now() < deadline,
+                "the folders never finished moving"
+            );
+            pump(Duration::from_millis(50));
+        }
+    };
+    finish(&window);
+    let at = |base: &Path| hydrus_store::storage::prefix_dir(base, "t3a").join("3ab4567.thumbnail");
+    assert!(
+        at(thumbs.path()).is_file(),
+        "the thumbnail folder moved to the override"
+    );
+    assert!(!thumb.exists());
+    assert!(file.is_file(), "the file folders stayed");
+    let review = rig.review();
+    let there = review
+        .locations
+        .iter()
+        .find(|l| l.path == thumbs.path())
+        .unwrap();
+    assert!((there.thumbnails_share - 1.0).abs() < f64::EPSILON);
+    assert!(there.files_share.abs() < f64::EPSILON);
+    // clearing it sends them back
+    let window = rig.open();
+    window.invoke_action("clear thumbnails".into());
+    rig.answer(true);
+    finish(&window);
+    assert!(thumb.is_file());
+    assert!(!at(thumbs.path()).exists());
+}
+
 // leaf: audit-media-database-locations-rebalance
 #[test]
 fn move_files_now_asks_for_a_run_time_and_moves_folders_with_a_popup() {
@@ -365,9 +755,11 @@ fn move_files_now_asks_for_a_run_time_and_moves_folders_with_a_popup() {
     window.invoke_action("add".into());
     drop(gone);
     window.invoke_action("rebalance".into());
-    warning(&model::missing_path_warning(
+    warning(&model::missing_path_warning(&model::location_repr(
         &gone_path.display().to_string(),
-    ));
+        1,
+        None,
+    )));
     std::fs::create_dir_all(&gone_path).unwrap();
 
     // the question, in the reference's words; "forget it" moves nothing
@@ -395,15 +787,17 @@ fn move_files_now_asks_for_a_run_time_and_moves_folders_with_a_popup() {
     // "run indefinitely" runs to the end, with the popup
     window.invoke_action("rebalance".into());
     runtime_question().unwrap().invoke_chosen(4);
-    assert!(window.get_busy());
+    assert!(
+        !window.window().is_visible(),
+        "the reference closes the dialog once the job is started"
+    );
     let deadline = Instant::now() + Duration::from_secs(60);
-    while window.get_busy() || rig.store.read(locations::next_move).unwrap().is_some() {
+    while rig.store.read(locations::next_move).unwrap().is_some() {
         assert!(Instant::now() < deadline, "the files never finished moving");
         pump(Duration::from_millis(50));
     }
     // (the finished popup dismisses itself, so there is none left to read)
     assert!(shown(&rig.store).is_empty());
-    assert_eq!(window.get_rebalance_status(), model::rebalance_label(false));
     // every location now holds folders
     let moved = rig.review();
     assert!(
