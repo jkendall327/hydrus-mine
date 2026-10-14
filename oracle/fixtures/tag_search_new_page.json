@@ -1,0 +1,144 @@
+{
+ "cases": [
+  {
+   "connector": ": ",
+   "underscores": false,
+   "activate": false,
+   "calls": [
+    {
+     "topic": "new_page_query",
+     "location": [
+      "6c6f63616c2066696c6573",
+      "deleted"
+     ],
+     "page_name": "series:canonical_under_score",
+     "predicates": [
+      "series:canonical_under_score"
+     ],
+     "activate_window": false
+    },
+    {
+     "topic": "new_page_query",
+     "location": [
+      "6c6f63616c2066696c6573",
+      "deleted"
+     ],
+     "page_name": "plain_tag, series:other_tag",
+     "predicates": [
+      "plain_tag",
+      "series:other_tag"
+     ],
+     "activate_window": false
+    }
+   ],
+   "default_location": [
+    "6c6f63616c2066696c6573"
+   ]
+  },
+  {
+   "connector": ": ",
+   "underscores": false,
+   "activate": true,
+   "calls": [
+    {
+     "topic": "new_page_query",
+     "location": [
+      "6c6f63616c2066696c6573",
+      "deleted"
+     ],
+     "page_name": "series:canonical_under_score",
+     "predicates": [
+      "series:canonical_under_score"
+     ],
+     "activate_window": true
+    },
+    {
+     "topic": "new_page_query",
+     "location": [
+      "6c6f63616c2066696c6573",
+      "deleted"
+     ],
+     "page_name": "plain_tag, series:other_tag",
+     "predicates": [
+      "plain_tag",
+      "series:other_tag"
+     ],
+     "activate_window": false
+    }
+   ],
+   "default_location": [
+    "6c6f63616c2066696c6573"
+   ]
+  },
+  {
+   "connector": " ⇢ ",
+   "underscores": true,
+   "activate": false,
+   "calls": [
+    {
+     "topic": "new_page_query",
+     "location": [
+      "6c6f63616c2066696c6573",
+      "deleted"
+     ],
+     "page_name": "series:canonical_under_score",
+     "predicates": [
+      "series:canonical_under_score"
+     ],
+     "activate_window": false
+    },
+    {
+     "topic": "new_page_query",
+     "location": [
+      "6c6f63616c2066696c6573",
+      "deleted"
+     ],
+     "page_name": "plain_tag, series:other_tag",
+     "predicates": [
+      "plain_tag",
+      "series:other_tag"
+     ],
+     "activate_window": false
+    }
+   ],
+   "default_location": [
+    "6c6f63616c2066696c6573"
+   ]
+  },
+  {
+   "connector": " ⇢ ",
+   "underscores": true,
+   "activate": true,
+   "calls": [
+    {
+     "topic": "new_page_query",
+     "location": [
+      "6c6f63616c2066696c6573",
+      "deleted"
+     ],
+     "page_name": "series:canonical_under_score",
+     "predicates": [
+      "series:canonical_under_score"
+     ],
+     "activate_window": true
+    },
+    {
+     "topic": "new_page_query",
+     "location": [
+      "6c6f63616c2066696c6573",
+      "deleted"
+     ],
+     "page_name": "plain_tag, series:other_tag",
+     "predicates": [
+      "plain_tag",
+      "series:other_tag"
+     ],
+     "activate_window": false
+    }
+   ],
+   "default_location": [
+    "6c6f63616c2066696c6573"
+   ]
+  }
+ ]
+}

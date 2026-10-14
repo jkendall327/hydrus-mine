@@ -1,0 +1,87 @@
+{
+ "cases": [
+  {
+   "save": false,
+   "default_before": {
+    "type": "system",
+    "data": 0,
+    "order": 0
+   },
+   "steps": [
+    {
+     "step": "type num tags",
+     "page_sort": {
+      "type": "system",
+      "data": 9,
+      "order": 0
+     },
+     "default": {
+      "type": "system",
+      "data": 0,
+      "order": 0
+     }
+    },
+    {
+     "step": "flip order",
+     "page_sort": {
+      "type": "system",
+      "data": 9,
+      "order": 1
+     },
+     "default": {
+      "type": "system",
+      "data": 0,
+      "order": 0
+     }
+    }
+   ],
+   "new_page_sort": {
+    "type": "system",
+    "data": 0,
+    "order": 0
+   }
+  },
+  {
+   "save": true,
+   "default_before": {
+    "type": "system",
+    "data": 2,
+    "order": 0
+   },
+   "steps": [
+    {
+     "step": "type num tags",
+     "page_sort": {
+      "type": "system",
+      "data": 9,
+      "order": 0
+     },
+     "default": {
+      "type": "system",
+      "data": 9,
+      "order": 0
+     }
+    },
+    {
+     "step": "flip order",
+     "page_sort": {
+      "type": "system",
+      "data": 9,
+      "order": 1
+     },
+     "default": {
+      "type": "system",
+      "data": 9,
+      "order": 1
+     }
+    }
+   ],
+   "new_page_sort": {
+    "type": "system",
+    "data": 9,
+    "order": 1
+   }
+  }
+ ],
+ "save_default": false
+}

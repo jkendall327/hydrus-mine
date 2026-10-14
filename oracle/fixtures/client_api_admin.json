@@ -165,7 +165,7 @@
    ],
    [
     "full (1)",
-    "cee67a718c4054f909d2ad9596322a23f927391c47c0c0a469be8c0b9846ce24"
+    "bdb81a7f0406e454af8420c539361d9dc483dc29b4fdbc0f561cdcde6d8426f9"
    ],
    [
     "searcher",
@@ -173,7 +173,7 @@
    ],
    [
     "searcher (1)",
-    "d6e9a4c3bbe966d1bec1e516ef6a6ee2b03010640237edfb7c1b1584e7f441db"
+    "296a2190e3020f3c979eb8d9dce9f0b0ab7189d7921620e6cbdda638ecc54fed"
    ]
   ],
   "after_collision": [
@@ -183,7 +183,7 @@
    ],
    [
     "full (1)",
-    "cee67a718c4054f909d2ad9596322a23f927391c47c0c0a469be8c0b9846ce24"
+    "bdb81a7f0406e454af8420c539361d9dc483dc29b4fdbc0f561cdcde6d8426f9"
    ],
    [
     "searcher",
@@ -191,7 +191,7 @@
    ],
    [
     "searcher (1)",
-    "d6e9a4c3bbe966d1bec1e516ef6a6ee2b03010640237edfb7c1b1584e7f441db"
+    "296a2190e3020f3c979eb8d9dce9f0b0ab7189d7921620e6cbdda638ecc54fed"
    ]
   ],
   "dialogs": [
@@ -207,7 +207,7 @@
    ],
    [
     "full (1)",
-    "cee67a718c4054f909d2ad9596322a23f927391c47c0c0a469be8c0b9846ce24"
+    "bdb81a7f0406e454af8420c539361d9dc483dc29b4fdbc0f561cdcde6d8426f9"
    ],
    [
     "searcher",
@@ -215,7 +215,7 @@
    ],
    [
     "searcher (1)",
-    "d6e9a4c3bbe966d1bec1e516ef6a6ee2b03010640237edfb7c1b1584e7f441db"
+    "296a2190e3020f3c979eb8d9dce9f0b0ab7189d7921620e6cbdda638ecc54fed"
    ]
   ],
   "dialogs_after_new_key": [
@@ -225,6 +225,56 @@
    }
   ]
  },
+ "base_url": [
+  {
+   "port": null,
+   "https": false,
+   "launched": [],
+   "warned": [
+    "The service is not running, so you cannot view it in a web browser!"
+   ]
+  },
+  {
+   "port": null,
+   "https": true,
+   "launched": [],
+   "warned": [
+    "The service is not running, so you cannot view it in a web browser!"
+   ]
+  },
+  {
+   "port": 45869,
+   "https": false,
+   "launched": [
+    "http://127.0.0.1:45869/"
+   ],
+   "warned": []
+  },
+  {
+   "port": 45869,
+   "https": true,
+   "launched": [
+    "https://127.0.0.1:45869/"
+   ],
+   "warned": []
+  },
+  {
+   "port": 1,
+   "https": false,
+   "launched": [
+    "http://127.0.0.1:1/"
+   ],
+   "warned": []
+  },
+  {
+   "port": 65535,
+   "https": true,
+   "launched": [
+    "https://127.0.0.1:65535/"
+   ],
+   "warned": []
+  }
+ ],
  "server": {
   "running": true,
   "port": 45901,

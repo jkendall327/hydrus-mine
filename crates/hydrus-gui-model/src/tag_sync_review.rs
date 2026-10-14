@@ -75,3 +75,30 @@ pub fn tabs(store: &hydrus_store::Store) -> hydrus_store::Result<(Vec<Tab>, usiz
     let start = tabs.iter().position(|t| t.key == default).unwrap_or(0);
     Ok((tabs, start))
 }
+
+/// The warning heading of the sibling/parent application editor
+/// (`EditTagDisplayApplication`).
+pub const APPLICATION_WARNING: &str = "THIS IS COMPLICATED, THINK CAREFULLY";
+/// Its explanation.
+pub const APPLICATION_MESSAGE: &str = "While a tag service normally only applies its own siblings and parents to itself, it does not have to. You can have other services' rules apply (e.g. putting the PTR's siblings on your \"my tags\"), or no siblings/parents at all.\n\nIf you apply multiple services and there are conflicts (e.g. disagreements on where siblings go, or loops), the services at the top of the list have precedence. If you want to overwrite some PTR rules, then make what you want on a local service and then put it above the PTR here. Also, siblings apply first, then parents.\n\nIf you make big changes here, it will take a long time for the client to recalculate everything. Sibling and parent chains will be broken apart and rearranged live, and for a brief period, some sibling or parent suggestions or presentation may be unusual. Check the sync progress panel under _tags->sync->review current sibling/parent sync_ to see how it is going. If your client gets too laggy doing the recalc, turn it off during \"normal time\".";
+
+/// The application editor's sync status line, by the background sync switches;
+/// `true` when it is the valid (rather than warning) colour.
+pub fn application_status(during_idle: bool, during_active: bool) -> (&'static str, bool) {
+    if during_active {
+        (
+            "Siblings and parents are set to sync all the time. Changes will start applying as soon as you ok this dialog.",
+            true,
+        )
+    } else if during_idle {
+        (
+            "Siblings and parents are only set to sync during idle time. Changes here will only start to apply when you are not using the client.",
+            false,
+        )
+    } else {
+        (
+            "Siblings and parents are not set to sync in the background at any time. If there is sync work to do, you will have to force it to run using the 'review' window under _tags->sync_.",
+            false,
+        )
+    }
+}
