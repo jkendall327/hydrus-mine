@@ -4251,8 +4251,9 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 
 ## Auto-resolution rule export and import
 
-- Rules export as hydrus-rs JSON, not the reference's serialised form, so
-  the reference can't import them; hydrus-rs imports both. A rule's comparator
+- Rules export as hydrus-rs JSON, not the reference's serialised form (an
+  encoder for it is not written yet), so the reference can't import them;
+  hydrus-rs imports both. A rule's comparator
   list exports a comparator to the clipboard or a png, imports from the
   clipboard or pngs (hydrus-rs JSON or the reference's serialised comparator,
   alone or in a list) and duplicates one; the lists inside OR/AND comparators

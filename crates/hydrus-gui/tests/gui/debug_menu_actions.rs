@@ -358,12 +358,17 @@ use std::sync::Mutex;
 /// The flags and the sink are process-wide: one of these tests at a time.
 pub(crate) static ONE_AT_A_TIME: Mutex<()> = Mutex::new(());
 
-/// Send reports to a list, not the popups.
+/// Send the reports made on this thread to a list, not the popups. (The flags
+/// and the sink are process-wide, so other tests' timers can report too; those
+/// run on their own threads, and are left out.)
 pub(super) fn capture() -> std::sync::Arc<Mutex<Vec<String>>> {
     let seen = std::sync::Arc::new(Mutex::new(Vec::new()));
     let sink = seen.clone();
+    let mine = std::thread::current().id();
     debug_flags::set_sink(Some(Box::new(move |text| {
-        sink.lock().unwrap().push(text.to_owned());
+        if std::thread::current().id() == mine {
+            sink.lock().unwrap().push(text.to_owned());
+        }
     })));
     seen
 }
@@ -398,12 +403,13 @@ impl Debug {
     }
 }
 
-/// Puts the network report flags and the sink back when dropped.
-struct Reset;
+/// Puts the network and idle report flags and the sink back when dropped.
+pub(super) struct Reset;
 impl Drop for Reset {
     fn drop(&mut self) {
         debug_flags::Flag::NetworkReport.set(false);
         debug_flags::Flag::NetworkReportSilent.set(false);
+        debug_flags::Flag::IdleReport.set(false);
         debug_flags::set_sink(None);
     }
 }
