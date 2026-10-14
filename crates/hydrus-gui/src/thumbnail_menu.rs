@@ -1735,7 +1735,17 @@ impl OpenSlots {
         inner.extend(
             self.similar
                 .iter()
-                .map(|(title, items)| Entry::Menu(title.clone(), items.iter().map(item).collect())),
+                .map(|(title, items)| {
+                    // (the reference sets its "custom" distance apart)
+                    let mut sub = Vec::new();
+                    for slot in items {
+                        if slot.1 == Action::OpenSimilarCustom {
+                            sub.push(Entry::Separator);
+                        }
+                        sub.push(item(slot));
+                    }
+                    Entry::Menu(title.clone(), sub)
+                }),
         );
         separate(&mut inner);
         inner.extend(self.b.iter().map(item));
