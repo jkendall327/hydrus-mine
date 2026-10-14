@@ -825,10 +825,10 @@
     "Reference vacuum selection asks a duration/disk-space confirmation before pausing work and vacuuming component DB files; no native GUI flow."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The tagged test replaces the accepted callback by a closure that calls vacuum::vacuum itself, so it alone would be a stand-in; the untagged companion test drives the production menu hook and real off-thread vacuum and checks the 'done!' popup and persisted time. Question text is native model::question and estimates are typed literals from the Python source; no recording. The reference's pause-work/disk-space admission beyond the 'can vacuum' row is not covered. Tag sits on the weaker test. Tracker note ('native has no ...') is stale. Tests: crates/hydrus-gui/src/vacuum_review_window.rs:399 visible_pending_eligible_confirmation_declines_and_runs_real_vacuum_once; same file pending_main_exit_blocks_vacuum_then_decline_admits_the_same_question (untagged, production hook); crates/hydrus-gui-model/tests/model/vacuum_review.rs"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude, #97 phase 2",
+    "note": "Two tagged tests. (1) crates/hydrus-gui/src/vacuum_review_window.rs the_review_replays_the_reference_s_rows_and_questions_on_made_up_sizes opens the real window on the synthetic database sizes and a fixed 11 GB of free space from oracle/fixtures/vacuum_review.json (oracle/record_vacuum_review.py, the reference's ReviewVacuumData) and compares the info text, every cell of four rows (size, free pages, last vacuum, can-vacuum reason incl. the not-enough-disk messages, time estimate), which selections may be vacuumed, the question text and buttons for one and two files, and that 'do it' calls the accept callback and closes the window while 'forget it' keeps it open. The accept callback there is a counter. (2) pending_main_exit_blocks_vacuum_then_decline_admits_the_same_question drives the production menu hook: the question waits while the main window's exit question is pending, then 'do it' runs the real off-thread vacuum, which shows the 'database maintenance - vacuum' popup ending 'done!' and records the time in the store. That popup's title and text are restated from the Python source, not recorded. Not covered: the file list is not compared (the reference vacuums each chosen file, hydrus-rs its one file 'main'); row order, the column headings, the button label, the window title and the 'loading database data' step are not recorded; the pause of other work during the vacuum is only exercised by the store's own tests."
    }
   },
   {
