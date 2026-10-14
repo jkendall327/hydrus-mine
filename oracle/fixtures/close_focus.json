@@ -1,0 +1,709 @@
+{
+  "options": {
+    "0": "left of the closed page tab",
+    "1": "right of the closed page tab"
+  },
+  "default": 1,
+  "cases": [
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 0,
+      "closed": 0,
+      "remaining": [
+        "b",
+        "c",
+        "d",
+        "e"
+      ],
+      "current_index": 0,
+      "shown": "b"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 0,
+      "closed": 1,
+      "remaining": [
+        "a",
+        "c",
+        "d",
+        "e"
+      ],
+      "current_index": 0,
+      "shown": "a"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 0,
+      "closed": 2,
+      "remaining": [
+        "a",
+        "b",
+        "d",
+        "e"
+      ],
+      "current_index": 0,
+      "shown": "a"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 0,
+      "closed": 3,
+      "remaining": [
+        "a",
+        "b",
+        "c",
+        "e"
+      ],
+      "current_index": 0,
+      "shown": "a"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 0,
+      "closed": 4,
+      "remaining": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "current_index": 0,
+      "shown": "a"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 1,
+      "closed": 0,
+      "remaining": [
+        "b",
+        "c",
+        "d",
+        "e"
+      ],
+      "current_index": 0,
+      "shown": "b"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 1,
+      "closed": 1,
+      "remaining": [
+        "a",
+        "c",
+        "d",
+        "e"
+      ],
+      "current_index": 0,
+      "shown": "a"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 1,
+      "closed": 2,
+      "remaining": [
+        "a",
+        "b",
+        "d",
+        "e"
+      ],
+      "current_index": 1,
+      "shown": "b"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 1,
+      "closed": 3,
+      "remaining": [
+        "a",
+        "b",
+        "c",
+        "e"
+      ],
+      "current_index": 1,
+      "shown": "b"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 1,
+      "closed": 4,
+      "remaining": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "current_index": 1,
+      "shown": "b"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 2,
+      "closed": 0,
+      "remaining": [
+        "b",
+        "c",
+        "d",
+        "e"
+      ],
+      "current_index": 1,
+      "shown": "c"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 2,
+      "closed": 1,
+      "remaining": [
+        "a",
+        "c",
+        "d",
+        "e"
+      ],
+      "current_index": 1,
+      "shown": "c"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 2,
+      "closed": 2,
+      "remaining": [
+        "a",
+        "b",
+        "d",
+        "e"
+      ],
+      "current_index": 1,
+      "shown": "b"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 2,
+      "closed": 3,
+      "remaining": [
+        "a",
+        "b",
+        "c",
+        "e"
+      ],
+      "current_index": 2,
+      "shown": "c"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 2,
+      "closed": 4,
+      "remaining": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "current_index": 2,
+      "shown": "c"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 3,
+      "closed": 0,
+      "remaining": [
+        "b",
+        "c",
+        "d",
+        "e"
+      ],
+      "current_index": 2,
+      "shown": "d"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 3,
+      "closed": 1,
+      "remaining": [
+        "a",
+        "c",
+        "d",
+        "e"
+      ],
+      "current_index": 2,
+      "shown": "d"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 3,
+      "closed": 2,
+      "remaining": [
+        "a",
+        "b",
+        "d",
+        "e"
+      ],
+      "current_index": 2,
+      "shown": "d"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 3,
+      "closed": 3,
+      "remaining": [
+        "a",
+        "b",
+        "c",
+        "e"
+      ],
+      "current_index": 2,
+      "shown": "c"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 3,
+      "closed": 4,
+      "remaining": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "current_index": 3,
+      "shown": "d"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 4,
+      "closed": 0,
+      "remaining": [
+        "b",
+        "c",
+        "d",
+        "e"
+      ],
+      "current_index": 3,
+      "shown": "e"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 4,
+      "closed": 1,
+      "remaining": [
+        "a",
+        "c",
+        "d",
+        "e"
+      ],
+      "current_index": 3,
+      "shown": "e"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 4,
+      "closed": 2,
+      "remaining": [
+        "a",
+        "b",
+        "d",
+        "e"
+      ],
+      "current_index": 3,
+      "shown": "e"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 4,
+      "closed": 3,
+      "remaining": [
+        "a",
+        "b",
+        "c",
+        "e"
+      ],
+      "current_index": 3,
+      "shown": "e"
+    },
+    {
+      "option": 0,
+      "label": "left of the closed page tab",
+      "current": 4,
+      "closed": 4,
+      "remaining": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "current_index": 3,
+      "shown": "d"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 0,
+      "closed": 0,
+      "remaining": [
+        "b",
+        "c",
+        "d",
+        "e"
+      ],
+      "current_index": 0,
+      "shown": "b"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 0,
+      "closed": 1,
+      "remaining": [
+        "a",
+        "c",
+        "d",
+        "e"
+      ],
+      "current_index": 0,
+      "shown": "a"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 0,
+      "closed": 2,
+      "remaining": [
+        "a",
+        "b",
+        "d",
+        "e"
+      ],
+      "current_index": 0,
+      "shown": "a"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 0,
+      "closed": 3,
+      "remaining": [
+        "a",
+        "b",
+        "c",
+        "e"
+      ],
+      "current_index": 0,
+      "shown": "a"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 0,
+      "closed": 4,
+      "remaining": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "current_index": 0,
+      "shown": "a"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 1,
+      "closed": 0,
+      "remaining": [
+        "b",
+        "c",
+        "d",
+        "e"
+      ],
+      "current_index": 0,
+      "shown": "b"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 1,
+      "closed": 1,
+      "remaining": [
+        "a",
+        "c",
+        "d",
+        "e"
+      ],
+      "current_index": 1,
+      "shown": "c"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 1,
+      "closed": 2,
+      "remaining": [
+        "a",
+        "b",
+        "d",
+        "e"
+      ],
+      "current_index": 1,
+      "shown": "b"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 1,
+      "closed": 3,
+      "remaining": [
+        "a",
+        "b",
+        "c",
+        "e"
+      ],
+      "current_index": 1,
+      "shown": "b"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 1,
+      "closed": 4,
+      "remaining": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "current_index": 1,
+      "shown": "b"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 2,
+      "closed": 0,
+      "remaining": [
+        "b",
+        "c",
+        "d",
+        "e"
+      ],
+      "current_index": 1,
+      "shown": "c"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 2,
+      "closed": 1,
+      "remaining": [
+        "a",
+        "c",
+        "d",
+        "e"
+      ],
+      "current_index": 1,
+      "shown": "c"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 2,
+      "closed": 2,
+      "remaining": [
+        "a",
+        "b",
+        "d",
+        "e"
+      ],
+      "current_index": 2,
+      "shown": "d"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 2,
+      "closed": 3,
+      "remaining": [
+        "a",
+        "b",
+        "c",
+        "e"
+      ],
+      "current_index": 2,
+      "shown": "c"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 2,
+      "closed": 4,
+      "remaining": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "current_index": 2,
+      "shown": "c"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 3,
+      "closed": 0,
+      "remaining": [
+        "b",
+        "c",
+        "d",
+        "e"
+      ],
+      "current_index": 2,
+      "shown": "d"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 3,
+      "closed": 1,
+      "remaining": [
+        "a",
+        "c",
+        "d",
+        "e"
+      ],
+      "current_index": 2,
+      "shown": "d"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 3,
+      "closed": 2,
+      "remaining": [
+        "a",
+        "b",
+        "d",
+        "e"
+      ],
+      "current_index": 2,
+      "shown": "d"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 3,
+      "closed": 3,
+      "remaining": [
+        "a",
+        "b",
+        "c",
+        "e"
+      ],
+      "current_index": 3,
+      "shown": "e"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 3,
+      "closed": 4,
+      "remaining": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "current_index": 3,
+      "shown": "d"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 4,
+      "closed": 0,
+      "remaining": [
+        "b",
+        "c",
+        "d",
+        "e"
+      ],
+      "current_index": 3,
+      "shown": "e"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 4,
+      "closed": 1,
+      "remaining": [
+        "a",
+        "c",
+        "d",
+        "e"
+      ],
+      "current_index": 3,
+      "shown": "e"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 4,
+      "closed": 2,
+      "remaining": [
+        "a",
+        "b",
+        "d",
+        "e"
+      ],
+      "current_index": 3,
+      "shown": "e"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 4,
+      "closed": 3,
+      "remaining": [
+        "a",
+        "b",
+        "c",
+        "e"
+      ],
+      "current_index": 3,
+      "shown": "e"
+    },
+    {
+      "option": 1,
+      "label": "right of the closed page tab",
+      "current": 4,
+      "closed": 4,
+      "remaining": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "current_index": 3,
+      "shown": "d"
+    }
+  ]
+}

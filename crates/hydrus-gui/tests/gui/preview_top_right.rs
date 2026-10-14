@@ -21,14 +21,34 @@ fn first_file(client: &Client) -> HashId {
 
 /// Show the first file in the preview, with its pane laid out.
 fn preview_first(client: &Client) -> HashId {
-    let file = first_file(client);
+    preview_at(client, None)
+}
+
+/// Show a file in the preview (the first, or the one with this hash).
+fn preview_at(client: &Client, wanted: Option<&str>) -> HashId {
+    let first = first_file(client);
+    let results = client.bound.current.borrow().borrow().results().to_vec();
+    let (file, index) = match wanted {
+        None => (first, 0),
+        Some(hash) => {
+            let hash: hydrus_core::Sha256 = hash.parse().unwrap();
+            let id = client
+                .store
+                .read(|c| hydrus_store::master::hash_id(c, &hash))
+                .unwrap()
+                .unwrap();
+            (id, results.iter().position(|r| *r == id).unwrap())
+        }
+    };
     client.ui.show().unwrap();
     let native = client.native();
     for _ in 0..3 {
         headless::render(&native, 1000, 900);
     }
     client.bound.preview.refresh();
-    client.ui.invoke_thumbnail_clicked(0, false, false);
+    client
+        .ui
+        .invoke_thumbnail_clicked(i32::try_from(index).unwrap(), false, false);
     let started = std::time::Instant::now();
     while client.ui.get_preview_media().size().width == 0 {
         client.bound.preview.refresh();
@@ -418,5 +438,165 @@ fn the_preview_ratings_and_hover_are_the_references_under_the_options() {
         }
     }
     assert!(popped_somewhere >= 3, "the points inside pop it in");
+    set_options(&client, &[], &[(POP_IN, true)]);
+}
+
+/// What the preview window's background draws of the top-right hover besides
+/// the ratings, for the file in each of its states (inbox, archived,
+/// trashed), and with the draw option turned off, against the reference's
+/// `_DrawTopRight` (oracle/record_preview_background_details.py): the
+/// inbox or trash icon and the location strings, in order.
+// leaf: audit-options-media-viewer-hovers-preview-window-hovers-draw-ratings-and-locations-top-right-in-preview-window-background
+#[test]
+fn the_preview_background_draws_the_icons_and_locations_the_reference_does() {
+    let recorded = hydrus_testkit::fixture_json("preview_background_details.json");
+    let client = Client::basic();
+    let file = preview_at(&client, recorded["file"].as_str());
+    let ui = &client.ui;
+    // (the file is in "my files" and in "art": it is trashed only once it is
+    // deleted from both)
+    let domains: Vec<_> = ["my files", "art"]
+        .iter()
+        .map(|name| client.store.snapshot().services.by_name(name).unwrap().id)
+        .collect();
+    for state in recorded["states"].as_array().unwrap() {
+        let name = state["state"].as_str().unwrap();
+        match name {
+            "inbox" => client
+                .store
+                .write_content(move |w| w.inbox(&[file]))
+                .unwrap(),
+            "archive" => client
+                .store
+                .write_content(move |w| w.archive(&[file]))
+                .unwrap(),
+            "trash" => {
+                for domain in domains.clone() {
+                    client
+                        .store
+                        .write_content(move |w| w.delete_files(domain, &[file], Some("test")))
+                        .unwrap();
+                }
+            }
+            other => panic!("{other}"),
+        }
+        client.bound.preview.refresh();
+        headless::render(&client.native(), 1000, 900);
+        let drawn: Vec<(String, String)> = state["draws"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|d| {
+                (
+                    d["kind"].as_str().unwrap().to_owned(),
+                    d["which"]
+                        .as_str()
+                        .or_else(|| d["text"].as_str())
+                        .unwrap()
+                        .to_owned(),
+                )
+            })
+            .collect();
+        let icons: Vec<&str> = drawn
+            .iter()
+            .filter(|(kind, _)| kind == "icon")
+            .map(|(_, which)| which.as_str())
+            .collect();
+        // the icons: the trash, then the inbox, as the reference orders them
+        let mut ours = Vec::new();
+        if ui.get_preview_trashed() {
+            ours.push("trash");
+        }
+        if ui.get_preview_inbox() {
+            ours.push("inbox");
+        }
+        assert_eq!(ours, icons, "{name}: the icons drawn");
+        // the location strings come first, then the URLs (which hydrus-rs
+        // lists by its own default, DIFFERENCES.md: every class, unmatched
+        // too), where the reference's default shows none of this file's
+        let lines: Vec<String> = ui
+            .get_preview_lines()
+            .iter()
+            .map(|l| l.to_string())
+            .collect();
+        let locations: Vec<String> = state["draws"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|d| d["kind"] == "text")
+            .map(|d| d["text"].as_str().unwrap().to_owned())
+            .collect();
+        assert_eq!(
+            lines[..locations.len().min(lines.len())],
+            locations[..],
+            "{name}: the locations drawn"
+        );
+        assert!(ui.get_preview_draw_top_right(), "{name}");
+    }
+    // the option off: nothing of it is drawn (the reference's draws are none)
+    let off = recorded["switches"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|s| s["draw"] == false)
+        .unwrap();
+    assert_eq!(off["drawn"], 0);
+    set_options(&client, &[], &[(DRAW, false)]);
+    assert!(!ui.get_preview_draw_top_right());
+    set_options(&client, &[], &[(DRAW, true)]);
+    assert!(ui.get_preview_draw_top_right());
+}
+
+/// Whether the hover pops in with the mouse at points around where it pops
+/// in, the switch on and off, against the reference's `DoRegularHideShow`
+/// run with the mouse put there (oracle/record_preview_background_details.py).
+// leaf: audit-options-media-viewer-hovers-preview-window-hovers-pop-in-this-hover-on-mouseover
+#[test]
+#[allow(clippy::cast_precision_loss, clippy::cast_possible_truncation)]
+fn the_hover_pops_in_with_the_mouse_where_the_reference_does_and_never_with_the_switch_off() {
+    let recorded = hydrus_testkit::fixture_json("preview_background_details.json");
+    let client = Client::basic();
+    preview_first(&client);
+    let ui = &client.ui;
+    let rect = recorded["hover_rect"].as_array().unwrap();
+    let (their_w, their_h) = (
+        rect[2].as_f64().unwrap() as f32,
+        rect[3].as_f64().unwrap() as f32,
+    );
+    // a point d from the hover's corner in the reference's hover of `theirs`
+    // size, in ours of `size`: the same edge, or the same distance past it
+    let map = |d: f32, size: f32, theirs: f32| -> f32 {
+        if (d - (theirs - 1.0)).abs() < f32::EPSILON {
+            size - 1.0
+        } else if (d - theirs).abs() < f32::EPSILON {
+            size
+        } else if (d - (theirs / 2.0).floor()).abs() < f32::EPSILON {
+            (size / 2.0).floor()
+        } else if d > theirs {
+            d - theirs + size
+        } else {
+            d
+        }
+    };
+    let mut popped_somewhere = 0;
+    for decision in recorded["pop_in_decisions"].as_array().unwrap() {
+        let on = decision["pop_in"].as_bool().unwrap();
+        set_options(&client, &[], &[(DRAW, true), (POP_IN, on)]);
+        pointer_to(&client, 1.0, 1.0);
+        let (x, y) = (ui.get_preview_hover_x(), ui.get_preview_hover_y());
+        let (w, h) = (ui.get_preview_hover_width(), ui.get_preview_hover_height());
+        let dx = decision["from_left"].as_f64().unwrap() as f32;
+        let dy = decision["from_top"].as_f64().unwrap() as f32;
+        let (px, py) = (x + map(dx, w, their_w), y + map(dy, h, their_h));
+        pointer_to(&client, px + 0.5, py + 0.5);
+        assert_eq!(
+            ui.get_preview_hover_popped(),
+            decision["pops_in"].as_bool().unwrap(),
+            "pop-in {on}: the mouse {dx}, {dy} from the hover's corner"
+        );
+        popped_somewhere += usize::from(ui.get_preview_hover_popped());
+        pointer_to(&client, 1.0, 1.0);
+    }
+    assert_eq!(popped_somewhere, 3, "the three points inside, with it on");
     set_options(&client, &[], &[(POP_IN, true)]);
 }

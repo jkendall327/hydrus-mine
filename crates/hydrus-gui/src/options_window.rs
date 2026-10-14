@@ -1557,6 +1557,19 @@ pub(crate) fn open(
             } else {
                 editor.choose(at(i), at(index));
             }
+            // (a choice can switch other rows on or off, as the layout does
+            // the suggested tags' default page)
+            if let Some(window) = weak.upgrade() {
+                for (index, row) in editor.rows().iter().enumerate() {
+                    if let Row::Opt { enabled, .. } = row
+                        && let Some(mut shown) = window.get_rows().row_data(index)
+                        && shown.enabled != *enabled
+                    {
+                        shown.enabled = *enabled;
+                        window.get_rows().set_row_data(index, shown);
+                    }
+                }
+            }
         }
     });
     // A type change preserves the order when both labels match the previous

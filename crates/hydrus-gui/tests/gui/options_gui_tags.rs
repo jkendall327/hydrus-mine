@@ -356,7 +356,6 @@ fn the_default_tag_sorts_order_new_search_page_and_media_viewer_tag_lists() {
     assert_eq!(viewer_rows(&client), reversed(viewer_az));
 }
 
-// leaf: audit-options-tag-suggestions-suggested-tags-default-notebook-page
 #[test]
 fn the_default_suggested_tags_page_is_the_one_manage_tags_opens_on() {
     use hydrus_store::settings::TagSuggestionSettings;
@@ -433,5 +432,104 @@ fn the_default_suggested_tags_page_is_the_one_manage_tags_opens_on() {
             saved
         );
         assert_eq!(manage_tags_page(&client), page, "{saved}");
+    }
+}
+
+/// The suggested-tags rows of Options, driven through the window, then
+/// Manage Tags opened over the recorded corpus, against
+/// `oracle/record_suggestion_options_panel.py` (the options page) and
+/// `oracle/record_suggested_tag_panels.py` (the panel's selected page).
+// leaf: audit-options-tag-suggestions-suggested-tags-default-notebook-page
+#[test]
+fn the_layout_enables_the_default_page_and_manage_tags_opens_on_it_as_recorded() {
+    let options_fixture = hydrus_testkit::fixture_json("suggestion_options_panel.json");
+    let panels = hydrus_testkit::fixture_json("suggested_tag_panels.json");
+    let (dirs, store) = crate::options_gui_support::basic_store();
+    let files = crate::suggested_tag_panels::seed(&store, &panels);
+    let client = Client::with(dirs, store);
+    client.ui.invoke_search_edited("system:everything".into());
+    client.ui.invoke_search_accepted();
+    let (page_label, layout_label) = ("Default notebook page: ", "Column layout: ");
+
+    // the page as opened: the recorded choices, layout and default
+    let initial = &options_fixture["initial"];
+    let options = client.open_options();
+    show_page(&options, "tag suggestions");
+    let (_, layout) = row(&options, layout_label);
+    let (_, page) = row(&options, page_label);
+    let strings = |value: &serde_json::Value| {
+        value
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|v| v.as_str().unwrap().to_owned())
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(items(&layout), strings(&initial["layout_labels"]));
+    assert_eq!(items(&page), strings(&initial["default_labels"]));
+    let keys = strings(&initial["default_values"]);
+    assert_eq!(keys[page.index as usize], initial["default"]);
+    assert_eq!(page.enabled, initial["default_enabled"].as_bool().unwrap());
+
+    // the layout switches the default page's row on and off, step by step
+    for step in options_fixture["layout_steps"].as_array().unwrap() {
+        let (at, _) = row(&options, layout_label);
+        options.invoke_choice_chosen(at, i32::from(step["layout"] == "columns"));
+        assert_eq!(
+            row(&options, page_label).1.enabled,
+            step["default_enabled"].as_bool().unwrap(),
+            "{step}"
+        );
+    }
+    options.invoke_cancel();
+
+    // each recorded layout and default page, set through the window and
+    // applied, shows the page the reference selects
+    for case in panels["cases"].as_array().unwrap() {
+        let columns = case["layout"] == "columns";
+        let options = client.open_options();
+        show_page(&options, "tag suggestions");
+        let (at, _) = row(&options, layout_label);
+        options.invoke_choice_chosen(at, i32::from(columns));
+        let (at, page) = row(&options, page_label);
+        assert_eq!(page.enabled, !columns);
+        if !columns {
+            let wanted = keys
+                .iter()
+                .position(|key| key == case["default"].as_str().unwrap())
+                .unwrap();
+            options.invoke_choice_chosen(at, i32::try_from(wanted).unwrap());
+        }
+        options.invoke_apply();
+        client
+            .bound
+            .current
+            .borrow()
+            .borrow_mut()
+            .select_files(&files[..2]);
+        client.ui.invoke_manage_tags_selected();
+        let manage = client
+            .bound
+            .manage_tags
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        let mine = manage
+            .get_service_names()
+            .iter()
+            .position(|n| n == "my tags")
+            .unwrap();
+        manage.invoke_service_chosen(i32::try_from(mine).unwrap());
+        assert_eq!(manage.get_suggested_columns(), columns, "{case}");
+        if !columns {
+            let shown = match manage.get_suggested_page() {
+                0 => "most used",
+                2 => "related",
+                _ => "recent",
+            };
+            assert_eq!(case["selected"], shown, "{case}");
+        }
+        manage.invoke_cancel();
     }
 }

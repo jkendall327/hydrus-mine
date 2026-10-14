@@ -17,7 +17,7 @@ pub fn hold_time(ms: Option<i64>) {
     HELD_NOW.with(|held| held.set(ms));
 }
 
-fn now_ms() -> i64 {
+pub(crate) fn now_ms() -> i64 {
     HELD_NOW
         .with(std::cell::Cell::get)
         .unwrap_or_else(|| hydrus_core::TimestampMs::now().0)

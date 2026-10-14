@@ -121,15 +121,19 @@ impl Editor {
             .map(|row| (row.namespace, row.rgb))
             .collect()
     }
-    /// Recolour one entry, keeping its place and selection; a cancelled
-    /// picker gives back the colour it was given.
+    /// Recolour one entry, keeping its place but not its selection: the
+    /// reference removes the entry's term and adds a new one
+    /// (`SetNamespaceColour`), which is not selected. A cancelled picker
+    /// gives back the colour it was given, and the entry is replaced all the
+    /// same.
     pub fn set_colour(&mut self, namespace: Option<&str>, rgb: [u8; 3]) {
-        if let Some(entry) = self
+        if let Some(index) = self
             .colours
-            .iter_mut()
-            .find(|(existing, _)| existing.as_deref() == namespace)
+            .iter()
+            .position(|(existing, _)| existing.as_deref() == namespace)
         {
-            entry.1 = rgb;
+            self.colours[index].1 = rgb;
+            self.selection.selected.remove(&index);
         }
     }
     /// Protected default rows alone offer no destructive question.

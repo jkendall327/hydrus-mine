@@ -10038,10 +10038,10 @@
     "Validation is Linux only; Windows and macOS are deferred. No parent, alias, fade, renderer or broader family completion credit is granted."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options window and MainWindow; stored tab names compared to the recording. But placement is asserted with typed literals (56 px bar, side edges), the recorded 'position' and rendered paint/rotation are not compared, and vertical text is checked only as ink along the length, not direction (-90/+90). Tests: crates/hydrus-gui/tests/gui/tab_presentation.rs:142 apply_cancel_reopen_and_four_sides_preserve_real_nested_selection_and_full_names; oracle/fixtures/tab_presentation.json"
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "Real Options and MainWindow replay of oracle/fixtures/tab_presentation.json: root bar side and the nested bar toward the content now compared with the recording. Still not compared: bar thickness (typed 56 px, Qt's tabs are 26 px; documented) and the direction of rotated West/East labels (an ink-profile comparison with the Qt PNGs was tried and does not discriminate). Left untagged. Test: crates/hydrus-gui/tests/gui/tab_presentation.rs apply_cancel_reopen_and_four_sides_..."
    }
   },
   {
@@ -10160,10 +10160,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options row and close of one urls page, but the question text is a typed literal from the source, no recording, and only the urls kind is driven (gallery, watcher, simple, local import veto wording/conditions only in src unit tests of decision functions). Note that the reference also vetoes for_session_close differently. Tests: crates/hydrus-gui/tests/gui/options_gui_pages.rs:255 closing_a_non_empty_importer_page_asks_only_if_the_option_says_so; crates/hydrus-gui/src/page.rs:3235 and watcher.rs:713 (src unit tests)"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "Options row through the window; then urls, simple downloader, gallery, watcher and local import pages each holding 3 import objects closed by Ctrl+W: the question text and that 'no' keeps the page replay oracle/record_importer_page_close.py; the option off asks nothing; a page still importing asks regardless; loading a session over them asks nothing further (for_session_close). Test: crates/hydrus-gui/tests/gui/page_close_replay.rs closing_each_kind_of_importer_page_asks_as_recorded_..."
    }
   },
   {
@@ -10295,10 +10295,10 @@
     "Sibling selection and nested close behavior are consumed by the pages agent implementation; pending option drafts are discarded on Cancel."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The Options row (label, choices, default, import) is checked against the options_dialog and tab_actions recordings, and the GUI tests drive the choice then close a tab through the real Pages::close with typed expected selection (left of closed / right of closed). The close-focus behaviour itself was never recorded (tab_actions.json only records default_close_focus), so the expected neighbour is restated from ClientGUIPages._ClosePage. Edge cases (closing the first tab with 'left', last tab with 'right') are untested. Tests: crates/hydrus-gui/tests/gui/options_window.rs:1360 notebook_focus_option_changes_the_next_tab_close; crates/hydrus-gui/tests/gui/session.rs:~1955 (left/right close loop); crates/hydrus-gui-model/tests/model/options_dialog.rs:892 notebook_navigation_preferences_match_recorded_controls; crates/hydrus-gui-model/tests/model/tab_context.rs:~133 (default only)"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "All 50 cases of oracle/record_close_focus.py (left/right, each of five pages current and closed, edges included) replayed through the Options choice and Ctrl+W / middle-click closes in the real window; remaining tabs and the page shown compared. Test: page_close_replay.rs closing_a_tab_moves_focus_as_every_recorded_case_does"
    }
   },
   {
@@ -10459,10 +10459,10 @@
     "The separate notebook-tab-alignment original leaf is not in the 301-completion ledger and remains Missing in the reference inventory. Four-side captures/source are supporting evidence only, with no alignment completion credit. Broader GUI Pages/navigation/tab parents and unrelated drag/context actions remain Partial."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The setting round-trips (recorded defaults, apply, cancel, reopen) and the GUI test only asserts the painted strip pixels differ between elide on and off ('presence instead of content'); the near-fit test measures native glyph widths, not Qt's. The model test replays recorded Qt labels but feeds middle_name the kept-character count taken from the recording, so it does not show the native code chooses the same cut. Whether and how much the native strip elides at a given width is never compared with the reference (the notes admit font metrics differ). No test shows the elided text. Tests: crates/hydrus-gui/tests/gui/tab_presentation.rs:335 recorded_hide_gate_retains_live_hierarchy_access_and_elision_changes_actual_paint, :497 selected_glyph_measurement_triggers_elision_at_the_actual_near_fit_boundary; crates/hydrus-gui-model/tests/model/tab_presentation.rs:43, :170 middle_names_replay_actual_qt_paint_without_changing_stored_names"
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "Unchanged, not fixable here: the setting round-trips and the native strip paints differently with it on and off, but the elided text and the width at which Qt elides depend on Qt's font metrics and per-tab sizing (recorded tab widths 179/49/192 are not proportional), which the native strip does not share, so no recorded cut can be replayed. Documented in DIFFERENCES.md."
    }
   },
   {
@@ -14227,10 +14227,10 @@
     "Native options registry has no editable 'Draw ratings and locations (top-right) in preview window background:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-09",
-    "class": "weak",
-    "by": "Claude (recheck bin E, #97 phase 2)",
-    "note": "Only part of the leaf is covered: the draw switch is checked as a flag (the reference's canvas makes its rating draw calls only with it on, oracle/fixtures/preview_ratings.json) and the ratings' sizes as in the size leaves; the locations and icons it also draws (the leaf's 'and locations') are not compared, and the flag is not checked against what is painted. Tests: crates/hydrus-gui/tests/gui/preview_top_right.rs the_top_right_hover_draws_in_the_background_and_pops_in_as_the_options_say; the_preview_ratings_and_hover_are_the_references_under_the_options."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "Ratings sizes and the draw switch replay oracle/fixtures/preview_ratings.json; the trash/inbox icon and the location strings drawn for the recorded file inbox, archived and trashed (really deleted from both local domains) replay oracle/record_preview_background_details.py, with the option off drawing nothing. Not compared: pixel positions of the strings, and the URL lines hydrus-rs adds by its default (DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/preview_top_right.rs the_preview_background_draws_the_icons_and_locations_the_reference_does, the_preview_ratings_and_hover_are_the_references_under_the_options"
    }
   },
   {
@@ -14247,10 +14247,10 @@
     "Native options registry has no editable 'Pop-in this hover on mouseover:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-09",
-    "class": "source-restated",
-    "by": "Claude (recheck bin E, #97 phase 2)",
-    "note": "Real preview pane and Options row: the sizes the popped-in hover takes and the points around its edges that pop it up are checked against the reference's `_GetIdealSizeAndPosition` rectangle (oracle/fixtures/preview_ratings.json), but the recording holds only that rectangle's `contains` for each point, not the reference's hide/show with the switch off; 'never with it off' is the test's own expectation, restated from the Python source. Tests: crates/hydrus-gui/tests/gui/preview_top_right.rs the_top_right_hover_draws_in_the_background_and_pops_in_as_the_options_say; the_preview_ratings_and_hover_are_the_references_under_the_options."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "The reference's own DoRegularHideShow was run with the mouse at six points around its pop-in rectangle, switch on and off (oracle/record_preview_background_details.py pop_in_decisions); the real preview pane's pointer replays each, mapped to its own hover size. Test: preview_top_right.rs the_hover_pops_in_with_the_mouse_where_the_reference_does_and_never_with_the_switch_off"
    }
   },
   {
@@ -16561,10 +16561,10 @@
     "Write failures are printed to stderr and keep the dialog open; no inline save-error panel."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real window: page list, search, cancel discards, Apply persists together across pages, invalid slideshow text left unchanged with a popup, tab names refreshed. Expected page names, values and the popup string are typed literals from the Python source; no recording of the Apply sequence (the page/row structure is recorded separately). Reference CommitChanges shows a critical 'Problem saving options!' dialog on write failure; native only prints to stderr (documented in tracker note), so write-error reporting is untested. Tests: crates/hydrus-gui/tests/gui/options_window.rs:342 the_options_window_applies_its_changes; recording-based crates/hydrus-gui/tests/gui/options_window.rs:1190; crates/hydrus-gui-model/tests/model/options_dialog.rs:540 the_options_pages_are_the_references"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "oracle/record_options_apply_search.py: real ManageOptionsPanel; edits on six pages applied and cancelled; native settings after Cancel and OK, the 'Could not parse those slideshow durations' popup and the main tab names ('files' -> 'f...') all compared with the recording. Other consumers belong to their own leaves; the reference's critical 'Problem saving options!' dialog on a write failure is not implemented (stderr only, noted in the tracker). Test: crates/hydrus-gui/tests/gui/options_window.rs applying_and_cancelling_change_what_the_references_ok_and_cancel_do"
    }
   },
   {
@@ -16582,10 +16582,10 @@
     "Auxiliary widget labels, unit labels and current combo choices are omitted; only exposed native rows are searchable."
    ],
    "recheck": {
-    "date": "2026-10-09",
-    "class": "source-restated",
-    "by": "Claude, options-shell-followups",
-    "note": "tests/model/options_dialog.rs compares the whole index the Editor builds (a machine of four cores and an 800x800 screen, as recorded) with the 738 entries of options_dialog.json and pins what is left, each with its reason, in options_search_known_differences.json: Qt's style page and the Qt media player device chooser, file lookup scripts (out of scope), the curl_cffi test control, the collect dropdown's current text ('chapter'), four blank labels, and 23 extra time-unit labels. Entries for widgets drawn elsewhere (import options page, the external calls help link, the most used tags service, the second recent-tags count) go to the nearest control, which is not where the reference puts them. tests/gui/options_search_notes.rs searches in the real options window for a paragraph, a computed label and a unit and checks the page and highlighted row. Inner-tab / box expansion has no native counterpart."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "Eight recorded queries typed in the real Options window: the matches offered equal the reference completer's (as multisets, less the pinned known differences), choosing the first shows its page, a found row and an emptied box; the whole-index comparison is the model test. Order of matches differs (DIFFERENCES.md); inner-tab/box expansion has no native counterpart (rows are not collapsible). Tests: options_window.rs the_search_box_offers_and_goes_to_what_the_references_does; model options_dialog.rs:2234"
    }
   },
   {
@@ -20116,10 +20116,10 @@
     "Fresh6b Options and builtin-editor images were actually inspected: visible names/counts, immutable main_gui name, default rows and footer are readable; not all reserved/default rows or the added Ctrl+Shift+q binding are visible at the captured scroll position, and long command text elides within its cell. Historical7d86 stills were not used as current artifact proof."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Carried, untagged. The list names/order/default contents are checked against a dump of the reference and the reserved editor is opened and edited, but no test asserts the reserved name field is locked or that the set's description is shown (get_name_enabled/get_description only asserted for custom sets), nor the list counts after edit against the reference. Tests: crates/hydrus-gui/tests/gui/shortcut_capture.rs:25 edit_set (opens reserved editor, name equals set); options_shortcut_sets.rs:206 and :237 (adds a key to main_gui); crates/hydrus-gui-model/tests/model/shortcut_sets.rs:22,:44 (names/order/defaults vs shortcut_sets.json dump)"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "oracle/record_shortcuts_panel.py (real ShortcutsPanel): the editor opened on all 11 built-in sets has its name locked, the set's description and its recorded row count; a binding added and applied changes the list count as recorded, a cancelled edit changes nothing. Test: options_shortcut_sets.rs the_shortcuts_panel_replays_the_references_edit_restore_and_add_steps"
    }
   },
   {
@@ -20136,10 +20136,10 @@
     "Native options registry has no editable 'restore defaults' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Stale note: the button exists. Real Options flow driven (choose list, cancel, 'Are you certain...' yes/no, missing-set info), but question strings and sequence are typed from ShortcutsPanel._RestoreDefaults rather than recorded; the default set contents come from the native default_sets (compared to a dump fixture in a separate model test). Tests: crates/hydrus-gui/tests/gui/options_shortcut_sets.rs:207 restore_defaults_asks_which_set_then_confirms_or_says_it_was_missing; crates/hydrus-gui-model/tests/model/shortcut_sets.rs:96"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "Recorded list entries and order, cancel, 'no', 'yes' (counts before/after) and the missing-set information replayed in the window (a button list stands in for the reference's list dialog; documented). Tests: options_shortcut_sets.rs the_shortcuts_panel_replays_..., restoring_a_missing_set_says_so_as_the_reference_does"
    }
   },
   {
@@ -20156,10 +20156,10 @@
     "Native options registry has no editable 'add' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "fix session",
-    "note": "Expected values are restated from the Python source (veto string, importable-mime filter, _SwitchBoolean), not recorded. A custom set named after a built-in one is refused with the reference's 'That name is reserved--please pick another!' and the editor stays open (GetValue's VetoException); the window test drives add, the veto (also on rename), cancel and Options OK. Tests: crates/hydrus-gui/tests/gui/options_shortcut_sets.rs custom_sets_are_added_edited_renamed_deleted_and_saved_only_by_options_ok; crates/hydrus-gui-model/tests/model/shortcut_sets.rs"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "Recorded add: default name and enabled state, cancel, a set with two bindings, a duplicate name made apart, the reserved-name veto text with the editor staying open then a rename, all against the recording; edit-rename and delete too. Test: options_shortcut_sets.rs the_shortcuts_panel_replays_..."
    }
   },
   {
@@ -21845,10 +21845,10 @@
     "Native layout differs from Qt, including fixed row pixels for character-height sizing. Declining multiline paste preserves the current native text instead of handing the event to Qt normal paste. Full parent entries remain partial because maintenance/admin actions and multiple-tag selection menus are not yet implemented."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Default 11 and staging are checked against the recording via the model Editor (not the Options window), but the consumer test only asserts the window property get_autocomplete_height()==3 after writing the setting directly. Nothing checks that visible rows or scrolling follow it, or that more than 12 results stay reachable; the Options row is not driven through the GUI. The reference only sets height_num_chars (layout), so no recording of the effect exists. Tests: crates/hydrus-gui/tests/gui/write_autocomplete.rs:7 paste_confirmation_skip_and_list_height_are_consumed_by_manage_tags; crates/hydrus-gui-model/tests/model/write_autocomplete.rs:240 six_write_options_replay_recorded_defaults_and_stay_staged_until_apply"
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "Unchanged: the reference only sets the list's height in characters (a layout effect) and the native consumer is read as a window property; the laid-out list was not measured (would need geometry exposed from the Slint layout). Documented in DIFFERENCES.md."
    }
   },
   {
@@ -22053,10 +22053,10 @@
     "Native options registry has no editable 'edit' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Tracker note ('no editable row exists in native options::pages') is stale: the test drives the real Options Edit button: picker opened per selected namespace, accept changes the colour, cancel keeps it, protected rows editable, staged until Apply and persisted. But there is no recording of _EditNamespaceColour or the colour picker; the start colours (0,170,0 etc.) and accepted values are typed literals, and the picker is a native window, not the reference's EditColour dialog. Tests: crates/hydrus-gui/tests/gui/options_namespace_edit.rs:8 edit_offers_the_picker_for_each_selected_namespace_and_a_cancel_keeps_the_colour"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "oracle/record_namespace_colour_edit.py (real _EditNamespaceColour with Qt's QColorDialog scripted): colours the pickers start on (as a set; the reference's order is a Python set's), the list and its selection after each answer (edited entries are no longer selected: fixed here), protected rows, and what OK writes, replayed through the Options window. The picker itself is hydrus-rs's own. Test: options_namespace_edit.rs edit_replays_the_references_pickers_selections_and_saved_colours"
    }
   },
   {
@@ -22073,10 +22073,10 @@
     "Native options registry has no editable 'Namespace colours editor' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Tracker note ('no editable row exists in native options::pages') is stale: the tag sits on the Edit test only, but the recorded namespace_colour_controls/namespace_sorts replays elsewhere cover the list rows, selection/sort and Add/Delete. The Edit half (colour picker) has no recording, so the editor as a whole is source-restated; the picker widget itself is not compared with the reference. Tests: crates/hydrus-gui/tests/gui/options_namespace_edit.rs:9; crates/hydrus-gui/tests/gui/namespace_colours.rs:75,:584 (untagged recording replays)"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "The editor as a whole: the list as opened, in order, and Edit (recorded, above), plus Add/Delete and live colours replayed from oracle/fixtures/namespace_colour_controls.json. Tests: options_namespace_edit.rs edit_replays_...; namespace_colours.rs actual_namespace_questions_cancel_retired_owners_reopen_and_live_colours_replay_qt"
    }
   },
   {
@@ -22216,10 +22216,10 @@
     "Live native notification refreshes valid visible owners on a 100 ms owned subscription; pending menu/questions defer revision consumption, close stops the subscription."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Options staging/Cancel/Apply/reopen and the namespace control's disabled state are driven through the real window, and the segmented run texts/colours come from oracle/fixtures/sibling_colours.json (Qt storage/write rows). But the fade itself is not recorded: expected PartFade is computed in the test as fade && can_fade && i>0 && prev!=colour (the Python rule restated), and the selected-row paint is only a heuristic 'red-to-green gradient has >=4 colours' pixel check, not compared with the Qt PNG. Tracker note 'Qt fading ... remain missing' on the sibling-connecting-string leaf is stale. Tests: crates/hydrus-gui/tests/gui/sibling_colours.rs:94 options_cancel_retired_apply_reopen_and_all_segmented_native_consumers; crates/hydrus-gui-model/tests/model/sibling_colours.rs:83 qt_sibling_colours_stage_cancel_apply_reopen_and_all_live_model_runs; crates/hydrus-gui-model/tests/model/sibling_colours.rs:190"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "oracle/record_sibling_fade_paint.py runs the real lists' _Redraw with a recording painter: which runs get a gradient pen or background and between which colours, for eight option cases, selected and not, storage and write lists. The real consumers' runs (fade flag, previous and own colour) replayed; the option row's disabled namespace control from the recording. Test: sibling_colours.rs options_cancel_retired_apply_reopen_and_all_segmented_native_consumers"
    }
   },
   {
@@ -22570,10 +22570,10 @@
     "Native options registry has no editable 'Default notebook page:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Row exists (tracker note 'no editable row exists' is stale) and the test drives Options to ManageTags suggested-page index. But expected pages (0,1,2) are typed from the Python logic, the recorded per-case 'selected' is never compared, the reference disables this row when layout is not 'notebook' (TagSuggestionsPanel._NotifyLayoutChanged) and native has no such dependency (enabled defaults true), and the file_lookup_scripts choice has no native consumer. Tests: crates/hydrus-gui/tests/gui/options_gui_tags.rs:360 the_default_suggested_tags_page_is_the_one_manage_tags_opens_on; crates/hydrus-gui-model/tests/model/tag_suggestions.rs:23"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "oracle/record_suggestion_options_panel.py: the row's labels, default and enabled state follow the layout (fixed: native never disabled it); each recorded layout/default set in Options then Manage Tags opens on the page the real SuggestedTagsPanel selected (suggested_tag_panels.json). Test: options_gui_tags.rs the_layout_enables_the_default_page_and_manage_tags_opens_on_it_as_recorded"
    }
   },
   {
@@ -22594,10 +22594,10 @@
     "Only already-present most-used panels broadcast updates, as Qt; native polls persisted settings every200ms and captures layout/availability at opening. No remote/IPFS fetching or uploads; lists can retain imported real service keys."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Spin box 20-65535 stages/persists/reopens and ManageTags passes the width into the Slint property, but no test observes the lists' actual (minimum) width; DIFFERENCES.md itself says the saved width property is not a direct measured-geometry observation. Reference sets setMinimumWidth on each most-used/related list. Tests: crates/hydrus-gui/tests/gui/manage_tags.rs:34 (get_suggested_width bits == 240); crates/hydrus-gui/tests/gui/options_window.rs:63 (prefs.width, reopen row number); crates/hydrus-gui-model/tests/model/tag_suggestions.rs:23"
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "Unchanged: stages/persists/reopens and reaches Manage Tags as a property, but the lists' laid-out width was not compared with the recorded setMinimumWidth (oracle/record_suggestion_options_panel.py records 20/240/500 in both layouts; pixel measurement showed the most-used list stretches). Needs geometry exposed from the Slint layout."
    }
   },
   {
@@ -22614,10 +22614,10 @@
     "Native options registry has no editable 'Fade thumbnails:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options row and real grid paint: fade on starts at opacity 0.0, off shows 1.0 at once. Values typed; the recorded fade durations/samples in thumbnail_appearance.json (new_fade/old_fade) are not replayed anywhere, and the default/staging recording is replayed only in the model test. Tracker note ('no editable row exists') is stale: the row exists and is tested. Tests: crates/hydrus-gui/tests/gui/options_media_thumbnails.rs:181 thumbnails_fade_in_only_if_asked_to"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "oracle/record_thumbnail_fade_option.py: the real panels' fade, new renderer (opacity after a cell changes) and old (frames drawn as the panel draws them), option on and off, sampled at nine times of a held clock; the real grid, toggled in Options, replays the curves (old within 0.02, the reference quantises to 8 bits per frame). Test: options_media_thumbnails.rs fade_thumbnails_follows_the_recorded_curve_of_the_renderer_each_page_was_made_with"
    }
   },
   {
@@ -22942,10 +22942,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options row and real page status: the info line is present when on and absent after Apply when off, but the expected line is computed by the native status_line_with_format (recorded elsewhere in info_lines.json) rather than a recording of the toggle. status_bar.json does record the off case, but its replay (status_bar.rs:30) decides the single line itself rather than via the page/option. Tests: crates/hydrus-gui/tests/gui/options_media_hovers.rs:255 a_single_selected_thumbnail_shows_the_top_hover_text_in_the_status_bar_if_asked"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "The recorded 'all' page (36 files) clicked one file at a time: the status bar equals the recorded line for every file with the option on, and the recorded 'no single file info' lines with it off through Options (the page's single-file line now reads the held clock). Test: options_media_hovers.rs the_status_bar_shows_the_top_hover_text_of_a_clicked_file_as_recorded_and_not_when_off"
    }
   },
   {
@@ -23010,10 +23010,10 @@
     "Native options registry has no editable 'Use the new thumbnail rendering tech (only applies to new pages):' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options toggle: existing page keeps the renderer, new SearchPage takes it; default true matches the recording (new_renderer_default). It asserts the page's flag accessor, not a different rendering, and the old/new fade timings (recorded) are not replayed. Tracker note (no editable row exists) is stale. Tests: crates/hydrus-gui/tests/gui/thumbnail_appearance.rs:65 staged_browse_cancel_apply_new_page_policy_and_permanent_owner_retirement; model thumbnail_appearance.rs:23"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "With the option turned off in Options while a page is open, that page keeps the new renderer's fade curve and a page made afterwards follows the old renderer's, both against the recorded curves; policy/cancel/reopen in thumbnail_appearance.rs. Test: options_media_thumbnails.rs fade_thumbnails_follows_..."
    }
   },
   {
@@ -24407,10 +24407,10 @@
     "Remote repository uploading and IPFS are outside the authorized scope."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The 40 recorded conversion cases (16 kind pairs x selected/domain) run through the real worker and compare to the recording, which is strong. But no test selects the destination hash kind in the window (only the md5 lock is checked on the model), so the selectors and a conversion launched from the UI are not exercised. Tests: crates/hydrus-store/tests/tag_migration.rs:606 actual_python_archives_import_convert_scope_filter_and_reopen; crates/hydrus-gui-model/tests/model/tag_migration.rs:256"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "All 40 recorded conversions (16 archive/wanted-hash pairs; all files, a selection, the my-files current and deleted domains) launched from the real migration window: source archive and its hash type text, hash type and destination chosen, scope, tag filter edited in its window, Go and both confirmations, destination compared. Not covered: the destination-hash lock difference noted in the tracker. Tests: crates/hydrus-gui/tests/gui/tag_migration.rs. every_recorded_conversion_runs_from_the_window_with_its_hash_type_and_file_scope"
    }
   },
   {
@@ -24426,10 +24426,10 @@
     "Selected-file scope freezes the launching IDs or file-domain scope selects through nested LocationContext. Mappings and pair scope are handled according to native request content."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI proves the selected-files scope through the real worker (delete for the launching file). File-domain scope: the model sets model.location directly (no nested LocationContext picker driven in the window) and the recording covers the confirmation for 'my files' and the run with all known files only; domain filtering is otherwise store-level. Tests: crates/hydrus-gui-model/tests/model/tag_migration.rs:73 reference_database_pending_outcomes; crates/hydrus-gui/tests/gui/tag_migration.rs:112 manage_tags_launches_selected_scope_and_refreshes_after_background_delete"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "The selected-files scope (window opened on a selection) and the file-domain scope through the nested location list (all known files, my files current, deleted from my files) run through the real worker from the window and match the 40 recordings. Tests: crates/hydrus-gui/tests/gui/tag_migration.rs. every_recorded_conversion_runs_...; manage_tags_launches_selected_scope_and_refreshes_after_background_delete"
    }
   },
   {
@@ -24469,10 +24469,10 @@
     "Remote repository uploading and IPFS are outside the authorized scope."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The 16 recorded count cases and dynamic between-batch counts run through the real worker for archive and service sources into archive destinations. Not covered: native-destination output, the selectable count service, and the window's gate checkboxes (only count_either confirmation text and model count_right summary). Tests: crates/hydrus-store/tests/tag_migration.rs:830 pair_count_gates_replay_real_current_pending_and_terminal_ideal_counts; :1008; crates/hydrus-gui/tests/gui/tag_migration.rs:302 (count_either only)"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (recheck w4-r3b, #97 phase 2)",
+    "note": "All 16 recorded pair count cases (siblings/parents, local or repository count service, child/parent/either gates) from the window, with the recording's archive and the client's own service as source, into a new archive and into a client service; gate checkboxes and count service chosen in the window. Tests: crates/hydrus-gui/tests/gui/tag_migration.rs. every_recorded_pair_count_case_runs_from_the_window_into_an_archive_and_a_service"
    }
   },
   {

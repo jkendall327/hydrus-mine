@@ -476,3 +476,313 @@ fn mouse_events_on_the_capture_box_set_the_gesture_and_a_second_click_makes_it_a
     window.invoke_cancel();
     parent.invoke_cancel();
 }
+
+/// `ShortcutsPanel` as the reference draws and answers it, replayed from
+/// `oracle/record_shortcuts_panel.py`: the same steps in the same order on the
+/// real Options window.
+fn rows_of(value: &serde_json::Value) -> Vec<(String, String)> {
+    value
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|row| {
+            (
+                row[0].as_str().unwrap().to_owned(),
+                row[1].as_str().unwrap().to_owned(),
+            )
+        })
+        .collect()
+}
+fn sorted(mut rows: Vec<(String, String)>) -> Vec<(String, String)> {
+    rows.sort();
+    rows
+}
+fn reserved_sorted(parent: &OptionsWindow) -> Vec<(String, String)> {
+    sorted(cells(&parent.get_shortcut_reserved_rows()))
+}
+fn custom_sorted(parent: &OptionsWindow) -> Vec<(String, String)> {
+    sorted(custom(parent))
+}
+fn select_reserved(parent: &OptionsWindow, name: &str) {
+    let label = sets::pretty_name(name);
+    let row = cells(&parent.get_shortcut_reserved_rows())
+        .iter()
+        .position(|(pretty, _)| pretty == label)
+        .unwrap();
+    parent.invoke_shortcut_set_clicked(false, i32::try_from(row).unwrap(), false, false);
+}
+fn select_custom(parent: &OptionsWindow, name: &str) {
+    let row = custom(parent)
+        .iter()
+        .position(|(set, _)| set == name)
+        .unwrap();
+    parent.invoke_shortcut_set_clicked(true, i32::try_from(row).unwrap(), false, false);
+}
+/// The recorded description label of an editor (its third label, after the
+/// fixed note and "name: "), or nothing for a set without one.
+fn recorded_description(editor: &serde_json::Value) -> String {
+    editor["labels"]
+        .as_array()
+        .unwrap()
+        .get(2)
+        .map(|label| label.as_str().unwrap().to_owned())
+        .unwrap_or_default()
+}
+
+// leaf: audit-options-shortcuts-built-in-hydrus-shortcut-sets-edit
+// leaf: audit-options-shortcuts-built-in-hydrus-shortcut-sets-restore-defaults
+// leaf: audit-options-shortcuts-custom-user-sets-add
+#[test]
+fn the_shortcuts_panel_replays_the_references_edit_restore_and_add_steps() {
+    let fixture = hydrus_testkit::fixture_json("shortcuts_panel.json");
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let parent = options(&ui, &bound);
+
+    // the panel as opened
+    let opened = &fixture["opened"];
+    assert_eq!(
+        reserved_sorted(&parent),
+        sorted(rows_of(&opened["reserved"]))
+    );
+    assert_eq!(custom_sorted(&parent), sorted(rows_of(&opened["custom"])));
+    let labels = opened["labels"].as_array().unwrap();
+    assert_eq!(labels[2].as_str().unwrap(), sets::CUSTOM_MESSAGE);
+    assert_eq!(
+        [
+            parent.get_shortcuts_primary_labels(),
+            parent.get_shortcuts_merge_numpad()
+        ],
+        [
+            opened["checkboxes"][0].as_bool().unwrap(),
+            opened["checkboxes"][1].as_bool().unwrap()
+        ]
+    );
+
+    // the set editor: built-in sets keep their name and show their description
+    for editor in fixture["editors"].as_array().unwrap() {
+        let name = editor["name"].as_str().unwrap();
+        let window = if name == "new shortcuts" {
+            parent.invoke_shortcut_set_action("add".into());
+            hydrus_gui::shortcut_windows::last_set().unwrap()
+        } else if name == "a custom set" {
+            continue; // opened on a set the user made, below
+        } else {
+            select_reserved(&parent, name);
+            parent.invoke_shortcut_set_action("edit-reserved".into());
+            hydrus_gui::shortcut_windows::last_set().unwrap()
+        };
+        assert_eq!(
+            window.get_set_name().as_str(),
+            editor["text"].as_str().unwrap(),
+            "{name}"
+        );
+        assert_eq!(
+            window.get_name_enabled(),
+            editor["enabled"].as_bool().unwrap(),
+            "{name}"
+        );
+        assert_eq!(
+            window.get_description().as_str(),
+            recorded_description(editor),
+            "{name}"
+        );
+        assert_eq!(
+            window.get_rows().row_count(),
+            usize::try_from(editor["rows"].as_i64().unwrap()).unwrap(),
+            "{name}"
+        );
+        window.invoke_cancel();
+        assert!(!parent.get_shortcuts_child_open());
+    }
+
+    // edit a built-in set: one binding added, then a cancelled edit
+    let edit = &fixture["edit_reserved"];
+    assert_eq!(reserved_sorted(&parent), sorted(rows_of(&edit["before"])));
+    select_reserved(&parent, edit["log"]["name"].as_str().unwrap());
+    parent.invoke_shortcut_set_action("edit-reserved".into());
+    let window = hydrus_gui::shortcut_windows::last_set().unwrap();
+    add_key(&window, "q");
+    window.invoke_apply();
+    assert_eq!(reserved_sorted(&parent), sorted(rows_of(&edit["after"])));
+    parent.invoke_shortcut_set_action("edit-reserved".into());
+    let window = hydrus_gui::shortcut_windows::last_set().unwrap();
+    add_key(&window, "w");
+    window.invoke_cancel();
+    assert_eq!(reserved_sorted(&parent), sorted(rows_of(&edit["after"])));
+    assert!(
+        fixture["edit_reserved_cancel"]["unchanged"]
+            .as_bool()
+            .unwrap()
+    );
+
+    // restore defaults: the recorded scenarios in order (the missing set is
+    // replayed on a client that lost it, below)
+    for step in fixture["restore_defaults"].as_array().unwrap() {
+        let label = step["label"].as_str().unwrap();
+        if label == "missing" {
+            continue;
+        }
+        assert_eq!(
+            reserved_sorted(&parent),
+            sorted(rows_of(&step["before"])),
+            "{label}"
+        );
+        parent.invoke_shortcut_set_action("restore".into());
+        let which = chooser();
+        let recorded = step["log"][0]["entries"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|name| name.as_str().unwrap().to_owned())
+            .collect::<Vec<_>>();
+        assert_eq!(choices(&which), recorded, "{label}");
+        assert_eq!(
+            which.get_message().as_str(),
+            step["log"][0]["dialog"].as_str().unwrap()
+        );
+        match step["picked"].as_str() {
+            None => which.invoke_cancelled(),
+            Some(name) => {
+                which.invoke_chosen(recorded.iter().position(|n| n == name).unwrap() as i32);
+                let sure = chooser();
+                assert_eq!(
+                    sure.get_message().as_str(),
+                    step["log"][1]["labels"][0].as_str().unwrap(),
+                    "{label}"
+                );
+                if step["log"][1]["accepted"].as_bool().unwrap() {
+                    sure.invoke_chosen(0);
+                } else {
+                    sure.invoke_cancelled();
+                }
+            }
+        }
+        assert_eq!(
+            reserved_sorted(&parent),
+            sorted(rows_of(&step["after"])),
+            "{label}"
+        );
+    }
+
+    // add, with the veto, the second name and the dialog's cancel
+    let mut sequence = fixture["custom"].as_array().unwrap().iter();
+    let step = sequence.next().unwrap();
+    assert_eq!(step["label"], "add, cancelled");
+    parent.invoke_shortcut_set_action("add".into());
+    let window = hydrus_gui::shortcut_windows::last_set().unwrap();
+    assert_eq!(
+        window.get_set_name().as_str(),
+        step["log"][0]["name"].as_str().unwrap()
+    );
+    assert_eq!(
+        window.get_name_enabled(),
+        step["log"][0]["name_enabled"].as_bool().unwrap()
+    );
+    window.invoke_cancel();
+    assert_eq!(custom_sorted(&parent), sorted(rows_of(&step["custom"])));
+    for (step, name, keys) in [
+        (sequence.next().unwrap(), "rating keys", vec!["q", "w"]),
+        (sequence.next().unwrap(), "rating keys", vec![]),
+    ] {
+        add_custom(&parent, name, &keys);
+        assert_eq!(
+            custom_sorted(&parent),
+            sorted(rows_of(&step["custom"])),
+            "{}",
+            step["label"]
+        );
+    }
+    let step = sequence.next().unwrap();
+    parent.invoke_shortcut_set_action("add".into());
+    let window = hydrus_gui::shortcut_windows::last_set().unwrap();
+    window.set_set_name("main_gui".into());
+    add_key(&window, "e");
+    window.invoke_apply();
+    assert_eq!(
+        window.get_error().as_str(),
+        step["messages"][0][1].as_str().unwrap()
+    );
+    assert!(
+        parent.get_shortcuts_child_open(),
+        "the editor stays open after the veto"
+    );
+    window.set_set_name("other keys".into());
+    window.invoke_apply();
+    assert!(!parent.get_shortcuts_child_open());
+    assert_eq!(custom_sorted(&parent), sorted(rows_of(&step["custom"])));
+
+    // edit a custom set: rename it onto another set's name
+    let step = sequence.next().unwrap();
+    select_custom(&parent, "rating keys");
+    parent.invoke_shortcut_set_action("edit-custom".into());
+    let window = hydrus_gui::shortcut_windows::last_set().unwrap();
+    assert_eq!(
+        window.get_set_name().as_str(),
+        step["log"][0]["name"].as_str().unwrap()
+    );
+    window.set_set_name("rating keys (1)".into());
+    window.invoke_apply();
+    assert_eq!(custom_sorted(&parent), sorted(rows_of(&step["custom"])));
+
+    // delete: declined, then accepted
+    let declined = sequence.next().unwrap();
+    select_custom(&parent, "other keys");
+    parent.invoke_shortcut_set_action("delete".into());
+    let question = chooser();
+    assert_eq!(
+        question.get_message().as_str(),
+        declined["log"][0]["labels"][0].as_str().unwrap()
+    );
+    question.invoke_cancelled();
+    assert_eq!(custom_sorted(&parent), sorted(rows_of(&declined["custom"])));
+    let accepted = sequence.next().unwrap();
+    parent.invoke_shortcut_set_action("delete".into());
+    chooser().invoke_chosen(0);
+    assert_eq!(custom_sorted(&parent), sorted(rows_of(&accepted["custom"])));
+    assert!(sequence.next().is_none());
+}
+
+// leaf: audit-options-shortcuts-built-in-hydrus-shortcut-sets-restore-defaults
+#[test]
+fn restoring_a_missing_set_says_so_as_the_reference_does() {
+    let fixture = hydrus_testkit::fixture_json("shortcuts_panel.json");
+    let step = fixture["restore_defaults"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|step| step["label"] == "missing")
+        .unwrap();
+    let (_dirs, store) = crate::subscriptions::store();
+    let mut damaged = store.read(hydrus_store::settings::get::<Settings>).unwrap();
+    damaged.sets.remove("global");
+    store
+        .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &damaged))
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let parent = options(&ui, &bound);
+    assert_eq!(reserved_sorted(&parent), sorted(rows_of(&step["before"])));
+    parent.invoke_shortcut_set_action("restore".into());
+    let which = chooser();
+    let recorded = step["log"][0]["entries"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|name| name.as_str().unwrap().to_owned())
+        .collect::<Vec<_>>();
+    assert_eq!(choices(&which), recorded);
+    which.invoke_chosen(recorded.iter().position(|n| n == "global").unwrap() as i32);
+    let told = chooser();
+    assert_eq!(
+        told.get_message().as_str(),
+        step["messages"][0][1].as_str().unwrap()
+    );
+    told.invoke_cancelled();
+    assert_eq!(reserved_sorted(&parent), sorted(rows_of(&step["after"])));
+}
