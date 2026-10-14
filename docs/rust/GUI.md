@@ -5782,3 +5782,14 @@ it past 512 KiB it is moved to `client crash.log.old` (replacing the earlier
 one), so the two files stay under about 1 MiB. Panics on `serve`'s tokio
 tasks and blocking jobs are logged too: the runtime catches them, but the
 panic hook runs first.
+
+## Layout geometry for tests (W5-13)
+
+Windows expose read-only measured geometry so tests can prove a layout
+setting takes effect against the reference's laid-out widgets. Users see no
+difference. Proven, each against a recording of the reference: the options
+search bar above or below the page list; the notebook tab bars' side, thickness,
+tab order and rotated-label direction; the rows shown by the active-predicate,
+search-result and tag-edit autocomplete lists; the suggested-tag lists' widths;
+the thumbnail border's drawn width; and the sidecar custom-separator box's
+enabled state.

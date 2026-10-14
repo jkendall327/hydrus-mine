@@ -2197,8 +2197,12 @@ fn the_read_lists_show_as_many_rows_as_the_options_say_when_laid_out_as_the_refe
     // (a list the reference laid out with room to spare, at its hint)
     let their_rows = |list: &serde_json::Value| {
         let frame = list["frame"].as_i64().unwrap();
-        let rows = (list["hint"].as_i64().unwrap() - 2 * frame) as f64 / list["text_height"].as_f64().unwrap();
-        assert!((rows - rows.round()).abs() < 1e-9, "a whole number of rows: {rows}");
+        let rows = (list["hint"].as_i64().unwrap() - 2 * frame) as f64
+            / list["text_height"].as_f64().unwrap();
+        assert!(
+            (rows - rows.round()).abs() < 1e-9,
+            "a whole number of rows: {rows}"
+        );
         rows.round() as i64
     };
     for event in fixture["events"].as_array().unwrap() {
@@ -2208,14 +2212,20 @@ fn the_read_lists_show_as_many_rows_as_the_options_say_when_laid_out_as_the_refe
         );
         let floating = event["floating"].as_bool().unwrap();
         assert_eq!(their_rows(&event["view"]["active"]), active_rows);
-        assert_eq!(their_rows(&event["view"]["autocomplete"]), autocomplete_rows);
+        assert_eq!(
+            their_rows(&event["view"]["autocomplete"]),
+            autocomplete_rows
+        );
 
         open(&ui);
         let window = bound.options.borrow().as_ref().unwrap().clone_strong();
         show_page(&window, "file search");
         let (active_row, _) = row(&window, "Active Search Predicates list height:");
         let (suggestion_row, _) = row(&window, "Autocomplete list height:");
-        let (float_row, _) = row(&window, "Autocomplete dropdown floats over file search pages:");
+        let (float_row, _) = row(
+            &window,
+            "Autocomplete dropdown floats over file search pages:",
+        );
         window.invoke_number_edited(active_row, active_rows as i32);
         window.invoke_number_edited(suggestion_row, autocomplete_rows as i32);
         window.invoke_check_toggled(float_row, floating);
@@ -7184,15 +7194,28 @@ fn the_options_search_field_is_laid_out_above_or_below_the_page_list_as_the_refe
         let window = bound.options.borrow().as_ref().unwrap().clone_strong();
         crate::common::widgets::lay_out(window.window(), 1000.0, 700.0);
         let _image = headless::render(&windows.get(windows.count() - 1).unwrap(), 1000, 700);
-        let (ours_field_y, ours_field_h) = (window.get_search_field_y(), window.get_search_field_height());
+        let (ours_field_y, ours_field_h) = (
+            window.get_search_field_y(),
+            window.get_search_field_height(),
+        );
         let (ours_list_y, ours_list_h) = (window.get_page_list_y(), window.get_page_list_height());
-        let (their_field_y, their_field_h) = (placed["search"][1].as_f64().unwrap(), placed["search"][3].as_f64().unwrap());
-        let (their_list_y, their_list_h) = (placed["list"][1].as_f64().unwrap(), placed["list"][3].as_f64().unwrap());
+        let (their_field_y, their_field_h) = (
+            placed["search"][1].as_f64().unwrap(),
+            placed["search"][3].as_f64().unwrap(),
+        );
+        let (their_list_y, their_list_h) = (
+            placed["list"][1].as_f64().unwrap(),
+            placed["list"][3].as_f64().unwrap(),
+        );
         let ours_above = ours_field_y + ours_field_h <= ours_list_y + 0.5;
         let ours_below = ours_field_y >= ours_list_y + ours_list_h - 0.5;
         let theirs_above = their_field_y + their_field_h <= their_list_y;
         let theirs_below = their_field_y >= their_list_y + their_list_h;
-        assert_eq!((theirs_above, theirs_below), (top, !top), "case {case}: the recording");
+        assert_eq!(
+            (theirs_above, theirs_below),
+            (top, !top),
+            "case {case}: the recording"
+        );
         assert_eq!(
             (ours_above, ours_below),
             (theirs_above, theirs_below),

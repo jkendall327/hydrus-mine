@@ -316,14 +316,22 @@ fn the_thumbnail_border_is_drawn_as_wide_as_the_option_says_as_the_reference_dra
             bound.rows.wait();
             headless::render(&main_window, width, height);
             let pixels = headless::render_snapshot(&main_window, width, height);
-            let colour = theme
-                .invoke_thumbnail_border(true, selected)
-                .color();
+            // (the border's colour is translucent: what it gives over the
+            // thumbnail's fill)
+            let border_colour = theme.invoke_thumbnail_border(true, selected).color();
+            let fill = theme.invoke_thumbnail_background(true, selected).color();
+            let blend = |over: u8, under: u8| -> i32 {
+                let a = f32::from(border_colour.alpha()) / 255.0;
+                (f32::from(over) * a + f32::from(under) * (1.0 - a)).round() as i32
+            };
+            let expected = [
+                blend(border_colour.red(), fill.red()),
+                blend(border_colour.green(), fill.green()),
+                blend(border_colour.blue(), fill.blue()),
+            ];
             let at = |x: i64, y: i64| -> bool {
                 let i = (y as usize * width as usize + x as usize) * 4;
-                pixels[i] == colour.red()
-                    && pixels[i + 1] == colour.green()
-                    && pixels[i + 2] == colour.blue()
+                (0..3).all(|c| (i32::from(pixels[i + c]) - expected[c]).abs() <= 3)
             };
             let margin = ui.get_thumbnail_margin().round() as i64;
             let span = (
@@ -368,10 +376,26 @@ fn the_thumbnail_border_is_drawn_as_wide_as_the_option_says_as_the_reference_dra
                     points.into_iter().take_while(|&(x, y)| at(x, y)).count() as i64
                 };
                 let measured = [
-                    ("left", run((0..w).map(|x| (cell_x + x, cell_y + h / 2)).collect())),
-                    ("right", run((0..w).map(|x| (cell_x + w - 1 - x, cell_y + h / 2)).collect())),
-                    ("top", run((0..h).map(|y| (cell_x + w / 2, cell_y + y)).collect())),
-                    ("bottom", run((0..h).map(|y| (cell_x + w / 2, cell_y + h - 1 - y)).collect())),
+                    (
+                        "left",
+                        run((0..w).map(|x| (cell_x + x, cell_y + h / 2)).collect()),
+                    ),
+                    (
+                        "right",
+                        run((0..w)
+                            .map(|x| (cell_x + w - 1 - x, cell_y + h / 2))
+                            .collect()),
+                    ),
+                    (
+                        "top",
+                        run((0..h).map(|y| (cell_x + w / 2, cell_y + y)).collect()),
+                    ),
+                    (
+                        "bottom",
+                        run((0..h)
+                            .map(|y| (cell_x + w / 2, cell_y + h - 1 - y))
+                            .collect()),
+                    ),
                 ];
                 for (side, ours) in measured {
                     let theirs = int(&theirs[side]);

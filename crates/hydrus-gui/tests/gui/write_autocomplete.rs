@@ -1795,7 +1795,8 @@ fn replacement_history_replays_real_keys_typing_undo_redo_and_independent_owners
 // (Qt's font height, 22 px here), so rows are compared, not pixels.
 // leaf: audit-options-tag-editing-tag-edit-autocomplete-autocomplete-list-height
 #[test]
-fn the_write_autocomplete_list_shows_as_many_rows_as_the_option_says_as_the_reference_lays_it_out() {
+fn the_write_autocomplete_list_shows_as_many_rows_as_the_option_says_as_the_reference_lays_it_out()
+{
     let recorded = hydrus_testkit::fixture_json("tag_edit_list_height.json");
     let (_dirs, store) = crate::subscriptions::store();
     // more favourites than the biggest list can show, so every list is full
@@ -1847,15 +1848,18 @@ fn the_write_autocomplete_list_shows_as_many_rows_as_the_option_says_as_the_refe
             .position(|row| row.label == "Autocomplete list height: ")
             .unwrap();
         let control = options.get_rows().row_data(row).unwrap();
-        assert_eq!((i64::from(control.minimum), i64::from(control.maximum)), limits);
+        assert_eq!(
+            (i64::from(control.minimum), i64::from(control.maximum)),
+            limits
+        );
         options.invoke_number_edited(i32::try_from(row).unwrap(), i32::try_from(rows).unwrap());
         options.invoke_apply();
 
         ui.invoke_manage_tags_selected();
         let w = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
         w.invoke_tab_chosen(1);
-        let suggestions = w.get_suggestions().row_count() as f32;
-        assert_eq!(suggestions, 150.0);
+        assert_eq!(w.get_suggestions().row_count(), 150);
+        let suggestions = 150.0_f32;
         let shown = windows.get(windows.count() - 1).unwrap();
         for _ in 0..3 {
             headless::render(&shown, 900, 4000);

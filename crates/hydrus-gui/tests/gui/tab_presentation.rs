@@ -144,6 +144,7 @@ fn selection(ui: &MainWindow, bound: &hydrus_gui::Bound, key: PageKey, original:
     assert_eq!(rows.row_data(1).unwrap().selected, 1);
 }
 
+// leaf: audit-options-gui-pages-navigation-and-drag-and-drop-notebook-tab-alignment
 #[test]
 fn apply_cancel_reopen_and_four_sides_preserve_real_nested_selection_and_full_names() {
     let windows = headless::init();
@@ -305,7 +306,9 @@ fn apply_cancel_reopen_and_four_sides_preserve_real_nested_selection_and_full_na
         {
             let vertical = matches!(alignment, TabAlignment::Left | TabAlignment::Right);
             let theirs = &step["root"]["geometry"];
-            let thickness = |rect: &serde_json::Value| rect[if vertical { 2 } else { 3 }].as_f64().unwrap() as f32;
+            let thickness = |rect: &serde_json::Value| {
+                rect[if vertical { 2 } else { 3 }].as_f64().unwrap() as f32
+            };
             dimension_within(
                 (if vertical { width } else { height }) / 2.0,
                 thickness(&theirs["bar"]),
@@ -324,7 +327,7 @@ fn apply_cancel_reopen_and_four_sides_preserve_real_nested_selection_and_full_na
                 .as_array()
                 .unwrap()
                 .iter()
-                .map(|rect| rect[if vertical { 1 } else { 0 }].as_f64().unwrap())
+                .map(|rect| rect[usize::from(vertical)].as_f64().unwrap())
                 .collect();
             assert!(
                 along.windows(2).all(|w| w[0] < w[1]) && recorded.windows(2).all(|w| w[0] < w[1]),
@@ -333,7 +336,10 @@ fn apply_cancel_reopen_and_four_sides_preserve_real_nested_selection_and_full_na
             // the first tab starts at the bar's start, in both
             let (fx, fy, ..) = frames[&original.pages[0].key.to_hex()];
             let start = if vertical { fy - y } else { fx - x };
-            assert!(start.abs() < 6.0, "{alignment:?}: the first tab starts the bar ({start})");
+            assert!(
+                start.abs() < 6.0,
+                "{alignment:?}: the first tab starts the bar ({start})"
+            );
             assert!(recorded[0].abs() < 1.0);
         }
         if matches!(alignment, TabAlignment::Left | TabAlignment::Right) {
@@ -644,6 +650,7 @@ fn selected_glyph_measurement_triggers_elision_at_the_actual_near_fit_boundary()
 // (`ink` in oracle/fixtures/tab_presentation.json: where the ink of a label
 // that is heavy at its start lies along the tab, 0 the bar's start and 1 its
 // end): West labels start at the bottom, East labels at the top.
+// leaf: audit-options-gui-pages-navigation-and-drag-and-drop-notebook-tab-alignment
 #[test]
 fn rotated_tab_labels_read_the_way_the_references_do() {
     let windows = headless::init();
@@ -663,7 +670,9 @@ fn rotated_tab_labels_read_the_way_the_references_do() {
         let frames = frames.clone();
         move |key, _, _, _, x, y, width, height| {
             if !key.is_empty() {
-                frames.borrow_mut().insert(key.to_string(), (x, y, width, height));
+                frames
+                    .borrow_mut()
+                    .insert(key.to_string(), (x, y, width, height));
             }
         }
     });
@@ -716,7 +725,13 @@ fn rotated_tab_labels_read_the_way_the_references_do() {
         }
         let total: f64 = sums.iter().sum();
         assert!(total > 0.0, "{alignment:?}: the label paints");
-        let centroid = sums.iter().enumerate().map(|(i, v)| i as f64 * v).sum::<f64>() / total / span as f64;
+        let centroid = sums
+            .iter()
+            .enumerate()
+            .map(|(i, v)| i as f64 * v)
+            .sum::<f64>()
+            / total
+            / span as f64;
         let theirs = entry["centroid"].as_f64().unwrap();
         assert_eq!(
             centroid < 0.5,
