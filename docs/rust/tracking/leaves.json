@@ -19891,10 +19891,10 @@
     "Load restores domains/predicates/synchronization and applies saved optional sort/collect; searches real Store if synchronized and retains existing optional values when None."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the star menu and loads into the real page, but nothing about what a load does (predicates, sort, collect, paused/synchronised, None keeps existing) is recorded; expectations are typed literals and own-function comparisons from the Python source (_LoadFavouriteSearch). The recording only covers the menu structure. Tests: crates/hydrus-gui/tests/gui/favourites.rs:15 a_favourite_search_loads_into_the_page; :107 a_favourite_s_collect_collects_the_page; search_pages_favourites.rs:245"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "The star menu's entries are clicked in the real window; the page's predicates, paused/synchronised state, sort, collect and file count after each load are compared with favourite_load.json (record_favourite_load.py: the reference's ActivateFavouriteSearch on five favourites with and without sort, collect and sync), including a search that keeps the page's sort and collect and a paused one that does not search."
    }
   },
   {
