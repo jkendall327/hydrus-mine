@@ -583,6 +583,18 @@ impl HeaderDraft {
             }
             Ok(rows)
         })?;
+        // (the reference's list opens sorted by its whole sort tuple: the
+        // context, then the key and value, the state's words, the reason)
+        let mut rows = rows;
+        rows.sort_by_cached_key(|r| {
+            (
+                r.context.to_human_string(),
+                r.header.name.clone(),
+                r.header.value.clone(),
+                approval_text(r.header.approval),
+                r.header.reason.clone(),
+            )
+        });
         Ok(Self {
             original: rows.clone(),
             rows,
