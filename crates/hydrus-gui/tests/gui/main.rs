@@ -115,6 +115,7 @@ mod popups;
 mod popups_collapse;
 mod predicate_editors;
 mod predicate_history;
+mod preview_pair_lists;
 mod preview_top_right;
 mod preview_viewing;
 mod rating_sizes;

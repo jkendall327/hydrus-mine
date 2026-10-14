@@ -2751,10 +2751,10 @@
     "Native pass/fail activation opens filter, but reference preview pair-list context menu and show-selected-in-page action are absent."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Native menu exists (tracker notes saying it is absent are stale) and the test drives the pass list: labels 'show selected row in a new page' / 'show 2 rows in a new page' match the reference's ThumbnailPairList source, and a page opens. But the page's files are only checked as 3 to 4 distinct files, not the selected pairs' exact files; the fail list's menu is never driven with a selection; labels are typed, not recorded. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:415 preview_pair_lists_offer_show_selected_pairs_in_a_new_page"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "wave 5 session (W5-6)",
+    "note": "The reference's real PreviewPanel is recorded on its auto-resolution database for two rules (one with 5 passing pairs, one with 16 failing) with real mouse clicks and its context menu (oracle/record_preview_pair_lists.py): both lists are single-selection, the menu is only offered with a row selected, always reads 'show selected row in a new page', and sends the row's two files to a new page in 'all local media'. The real rule editor is replayed against it for both lists. Found: ctrl-click added a row natively (the reference's lists take one); fixed. Every row of each list is also clicked and shown: the pairs and the order by the smaller file's size match; pairs the sort can't tell apart may come in another order. A pair with a trashed or non-local file (other location contexts) is not recorded. Test: crates/hydrus-gui/tests/gui/preview_pair_lists.rs."
    }
   },
   {

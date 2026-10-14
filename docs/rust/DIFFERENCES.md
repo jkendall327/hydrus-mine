@@ -688,8 +688,11 @@ in-memory predicate tests their comparators use by
   groups; the reference lists them in its table's order (when they were
   queued), which hydrus-rs doesn't keep. A double-clicked pair with no
   local file says so on the terminal, not in a dialog. The rule preview's
-  lists select as the reference's do, and their right-click menu shows the
-  selected rows' files in a new page. Approving and denying work four pairs at a
+  lists take one row at a time as the reference's do (control and shift add
+  none; recorded in `oracle/fixtures/preview_pair_lists.json`), and their
+  right-click menu shows the selected row's two files in a new page in the
+  same file domain. Pairs the sort cannot tell apart (the same smaller file)
+  may come in another order than the reference's. Approving and denying work four pairs at a
   time off the UI thread, showing "approving: 4/12" on the button and, after
   four seconds, in a popup, as the reference does; the popup's text is
   checked between chunks rather than live.

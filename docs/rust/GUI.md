@@ -1743,7 +1743,10 @@ and what it would change) and those that will be skipped, either list's
 pairs opening in the duplicate filter from the one double-clicked; a changed
 search fetches again, changed comparators or actions test again, and a
 rule that can't be had says why. What they say is as
-`oracle/record_auto_resolution_summaries.py` recorded the reference's.
+`oracle/record_auto_resolution_summaries.py` recorded the reference's. Either
+list takes one row at a time, and right-clicking a selected row offers "show
+selected row in a new page", which opens the pair's two files in a page in
+"all local media" (replayed against `oracle/fixtures/preview_pair_lists.json`).
 
 "review actions" (or double-clicking a rule) opens the reference's
 "review duplicate auto-resolution actions" window for each selected rule
