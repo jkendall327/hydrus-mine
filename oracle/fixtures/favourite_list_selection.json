@@ -1,0 +1,229 @@
+{
+ "questions": [
+  "Remove all selected?"
+ ],
+ "rows": [
+  [
+   null,
+   "delta"
+  ],
+  [
+   null,
+   "alpha"
+  ],
+  [
+   "art",
+   "charlie"
+  ],
+  [
+   "art",
+   "bravo"
+  ]
+ ],
+ "steps": [
+  {
+   "delete_enabled": false,
+   "edit_enabled": false,
+   "selected": [],
+   "shown": [
+    "alpha",
+    "delta",
+    "bravo",
+    "charlie"
+   ],
+   "step": [
+    "initial"
+   ]
+  },
+  {
+   "delete_enabled": true,
+   "edit_enabled": true,
+   "selected": [
+    "delta"
+   ],
+   "shown": [
+    "alpha",
+    "delta",
+    "bravo",
+    "charlie"
+   ],
+   "step": [
+    "click",
+    1
+   ]
+  },
+  {
+   "delete_enabled": true,
+   "edit_enabled": false,
+   "selected": [
+    "delta",
+    "charlie"
+   ],
+   "shown": [
+    "alpha",
+    "delta",
+    "bravo",
+    "charlie"
+   ],
+   "step": [
+    "ctrl",
+    3
+   ]
+  },
+  {
+   "delete_enabled": true,
+   "edit_enabled": true,
+   "selected": [
+    "delta"
+   ],
+   "shown": [
+    "alpha",
+    "delta",
+    "bravo",
+    "charlie"
+   ],
+   "step": [
+    "ctrl",
+    3
+   ]
+  },
+  {
+   "delete_enabled": true,
+   "edit_enabled": true,
+   "selected": [
+    "alpha"
+   ],
+   "shown": [
+    "alpha",
+    "delta",
+    "bravo",
+    "charlie"
+   ],
+   "step": [
+    "click",
+    0
+   ]
+  },
+  {
+   "delete_enabled": true,
+   "edit_enabled": false,
+   "selected": [
+    "alpha",
+    "delta",
+    "bravo"
+   ],
+   "shown": [
+    "alpha",
+    "delta",
+    "bravo",
+    "charlie"
+   ],
+   "step": [
+    "shift",
+    2
+   ]
+  },
+  {
+   "delete_enabled": true,
+   "edit_enabled": false,
+   "selected": [
+    "alpha",
+    "bravo",
+    "delta"
+   ],
+   "shown": [
+    "alpha",
+    "bravo",
+    "charlie",
+    "delta"
+   ],
+   "step": [
+    "header",
+    1
+   ]
+  },
+  {
+   "delete_enabled": true,
+   "edit_enabled": true,
+   "selected": [
+    "alpha"
+   ],
+   "shown": [
+    "alpha",
+    "bravo",
+    "charlie",
+    "delta"
+   ],
+   "step": [
+    "click",
+    0
+   ]
+  },
+  {
+   "delete_enabled": true,
+   "edit_enabled": false,
+   "selected": [
+    "alpha",
+    "bravo"
+   ],
+   "shown": [
+    "alpha",
+    "bravo",
+    "charlie",
+    "delta"
+   ],
+   "step": [
+    "shift",
+    1
+   ]
+  },
+  {
+   "delete_enabled": true,
+   "edit_enabled": false,
+   "selected": [
+    "alpha",
+    "bravo",
+    "delta"
+   ],
+   "shown": [
+    "alpha",
+    "bravo",
+    "charlie",
+    "delta"
+   ],
+   "step": [
+    "ctrl",
+    3
+   ]
+  },
+  {
+   "delete_enabled": true,
+   "edit_enabled": false,
+   "selected": [
+    "alpha",
+    "bravo",
+    "charlie",
+    "delta"
+   ],
+   "shown": [
+    "alpha",
+    "bravo",
+    "charlie",
+    "delta"
+   ],
+   "step": [
+    "shift",
+    0
+   ]
+  },
+  {
+   "delete_enabled": false,
+   "edit_enabled": false,
+   "selected": [],
+   "shown": [],
+   "step": [
+    "delete"
+   ]
+  }
+ ]
+}

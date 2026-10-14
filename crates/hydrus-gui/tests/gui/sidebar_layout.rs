@@ -94,10 +94,23 @@ fn gesture(
 // leaf: audit-options-gui-pages-preview-window-hide-the-bottom-left-preview-window
 // leaf: audit-options-menu-menu-pages-save-current-page-s-sidebar-preview-size-now
 // leaf: audit-options-menu-menu-pages-show-hide-sidebar-and-preview-panel
+// leaf: audit-options-menu-menu-pages-restore-all-pages-sidebar-preview-sizes-to-saved-value
 #[test]
 fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_ownership() {
     let (_dirs, store) = crate::subscriptions::store();
     let fixture = hydrus_testkit::fixture_json("sidebar_layout.json");
+    // the sizes the reference's splitters had at a step of the recording (the
+    // sidebar's width, the preview's height) for a page
+    let recorded = |action: &str, page: &str, preview: bool| -> f32 {
+        let step = fixture["steps"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|s| s["action"] == action)
+            .unwrap_or_else(|| panic!("a recorded {action:?} step"));
+        let sizes = &step[page][if preview { "vertical" } else { "horizontal" }];
+        sizes[usize::from(preview)].as_f64().unwrap() as f32
+    };
     assert_eq!(
         store.read(page_layout::load).unwrap(),
         PageLayout::default()
@@ -111,8 +124,14 @@ fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_owners
     );
     let native = windows.get(0).unwrap();
     render(&native);
-    dim(ui.get_sidebar_actual_width(), 400.0);
-    dim(ui.get_preview_actual_height(), 240.0);
+    dim(
+        ui.get_sidebar_actual_width(),
+        recorded("initial", "one", false),
+    );
+    dim(
+        ui.get_preview_actual_height(),
+        recorded("initial", "one", true),
+    );
     gesture(
         &native,
         ui.get_sidebar_handle_x() + 3.0,
@@ -121,7 +140,10 @@ fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_owners
         0.0,
     );
     render(&native);
-    dim(ui.get_sidebar_actual_width(), 470.0);
+    dim(
+        ui.get_sidebar_actual_width(),
+        recorded("drag sidebar", "one", false),
+    );
     gesture(
         &native,
         ui.get_preview_handle_x() + 100.0,
@@ -130,7 +152,10 @@ fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_owners
         -55.0,
     );
     render(&native);
-    dim(ui.get_preview_actual_height(), 295.0);
+    dim(
+        ui.get_preview_actual_height(),
+        recorded("drag preview", "one", true),
+    );
     sidebar(&ui, TOGGLE);
     render(&native);
     sidebar(&ui, SAVE);
@@ -164,11 +189,20 @@ fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_owners
     ui.invoke_sidebar_resized(second.clone(), ui.get_layout_epoch(), true, 280.0);
     ui.invoke_sidebar_resized(first.clone(), epoch, false, 900.0);
     render(&native);
-    dim(ui.get_sidebar_actual_width(), 460.0);
+    dim(
+        ui.get_sidebar_actual_width(),
+        recorded("resize second", "two", false),
+    );
     ui.invoke_tab_chosen(0, 0);
     render(&native);
-    dim(ui.get_sidebar_actual_width(), 470.0);
-    dim(ui.get_preview_actual_height(), 295.0);
+    dim(
+        ui.get_sidebar_actual_width(),
+        recorded("return first retains sizes", "one", false),
+    );
+    dim(
+        ui.get_preview_actual_height(),
+        recorded("return first retains sizes", "one", true),
+    );
     sidebar(&ui, SAVE);
     assert_eq!(
         serde_json::json!([
@@ -236,8 +270,14 @@ fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_owners
         .unwrap();
     sidebar(&ui, RESTORE);
     render(&native);
-    dim(ui.get_sidebar_actual_width(), 420.0);
-    dim(ui.get_preview_actual_height(), 260.0);
+    dim(
+        ui.get_sidebar_actual_width(),
+        recorded("restore all", "one", false),
+    );
+    dim(
+        ui.get_preview_actual_height(),
+        recorded("restore all", "one", true),
+    );
     bound
         .pages
         .borrow_mut()
@@ -245,8 +285,14 @@ fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_owners
     let (d, i) = bound.pages.borrow().shown_position();
     ui.invoke_tab_chosen(d as i32, i as i32);
     render(&native);
-    dim(ui.get_sidebar_actual_width(), 420.0);
-    dim(ui.get_preview_actual_height(), 260.0);
+    dim(
+        ui.get_sidebar_actual_width(),
+        recorded("restore all", "two", false),
+    );
+    dim(
+        ui.get_preview_actual_height(),
+        recorded("restore all", "two", true),
+    );
     let w = options(&ui, &bound);
     hide(&w, true);
     w.invoke_cancel();
@@ -256,10 +302,16 @@ fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_owners
     w.invoke_apply();
     assert!(store.read(page_layout::load).unwrap().hide_preview);
     render(&native);
-    dim(ui.get_preview_actual_height(), 260.0);
+    dim(
+        ui.get_preview_actual_height(),
+        recorded("apply hide preference retains existing split", "two", true),
+    );
     sidebar(&ui, RESTORE);
     render(&native);
-    dim(ui.get_preview_actual_height(), 0.0);
+    dim(
+        ui.get_preview_actual_height(),
+        recorded("restore obeys hide preference", "one", true),
+    );
     new_page(&ui, &bound);
     let new_page_key = bound.pages.borrow().shown().key;
     let hidden_preview = render(&native);
@@ -280,7 +332,10 @@ fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_owners
     w.invoke_apply();
     sidebar(&ui, RESTORE);
     render(&native);
-    dim(ui.get_preview_actual_height(), 260.0);
+    dim(
+        ui.get_preview_actual_height(),
+        recorded("restore visible preview", "one", true),
+    );
     let screenshot = render(&native);
     headless::save_png(
         &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("sidebar_layout_native.png"),
@@ -307,8 +362,14 @@ fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_owners
         .unwrap();
     let key = ui.get_layout_page_key();
     let epoch = ui.get_layout_epoch();
-    ui.invoke_sidebar_resized(key.clone(), epoch, false, 510.0);
-    ui.invoke_sidebar_resized(key.clone(), epoch, true, 310.0);
+    // (the sizes the reference's exit was recorded saving: record_sidebar_exit_save.py)
+    let exit = hydrus_testkit::fixture_json("sidebar_exit_save.json");
+    let moved = (
+        exit["moved"][0].as_f64().unwrap() as f32,
+        -exit["moved"][1].as_f64().unwrap() as f32,
+    );
+    ui.invoke_sidebar_resized(key.clone(), epoch, false, moved.0);
+    ui.invoke_sidebar_resized(key.clone(), epoch, true, moved.1);
     render(&native);
     ui.window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);
@@ -319,22 +380,21 @@ fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_owners
     ui.invoke_sidebar_resized(key.clone(), epoch, false, 900.0);
     ui.show().unwrap();
     render(&native);
-    dim(ui.get_sidebar_actual_width(), 510.0);
+    dim(ui.get_sidebar_actual_width(), moved.0);
     ui.window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);
     ui.invoke_answer(true);
     assert!(!ui.window().is_visible());
+    let saved = store.read(page_layout::load).unwrap();
     assert_eq!(
-        (
-            store.read(page_layout::load).unwrap().hpos,
-            store.read(page_layout::load).unwrap().vpos
-        ),
-        (510, -310)
+        serde_json::json!([saved.hpos, saved.vpos]),
+        exit_case(&exit, true)["after"]["saved"],
+        "accepted exit saves the current page's sizes, as the reference's does"
     );
     ui.invoke_sidebar_resized(key, epoch, false, 990.0);
     ui.show().unwrap();
     render(&native);
-    dim(ui.get_sidebar_actual_width(), 510.0);
+    dim(ui.get_sidebar_actual_width(), moved.0);
     ui.hide().unwrap();
     let reopened = hydrus_store::Store::open(store.dir()).unwrap();
     assert_eq!(
@@ -346,8 +406,87 @@ fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_owners
     let _successor = bind(&successor, Pages::open(reopened).unwrap());
     let rendered = windows.get(windows.count() - 1).unwrap();
     render(&rendered);
-    dim(successor.get_sidebar_actual_width(), 510.0);
-    dim(successor.get_preview_actual_height(), 310.0);
+    dim(successor.get_sidebar_actual_width(), moved.0);
+    dim(successor.get_preview_actual_height(), moved.1);
+}
+
+/// The recorded exit with "save on exit" on or off.
+fn exit_case(exit: &serde_json::Value, enabled: bool) -> &serde_json::Value {
+    exit["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["saving_sash_positions_on_exit"] == enabled)
+        .unwrap()
+}
+
+// leaf: audit-options-menu-menu-pages-save-current-page-s-sidebar-preview-size-on-client-exit
+#[test]
+fn exit_saves_the_current_pages_sizes_only_when_the_menu_says_to_as_the_reference_does() {
+    let exit = hydrus_testkit::fixture_json("sidebar_exit_save.json");
+    let moved = (
+        exit["moved"][0].as_f64().unwrap() as f32,
+        -exit["moved"][1].as_f64().unwrap() as f32,
+    );
+    let windows = headless::init();
+    for enabled in [true, false] {
+        let (_dirs, store) = crate::subscriptions::store();
+        // (the sizes the recording started with)
+        store
+            .write({
+                let initial = exit["initial"].clone();
+                move |ctx| {
+                    settings::set(
+                        ctx.conn(),
+                        &PageLayout {
+                            hpos: initial[0].as_i64().unwrap(),
+                            vpos: initial[1].as_i64().unwrap(),
+                            ..Default::default()
+                        },
+                    )
+                }
+            })
+            .unwrap();
+        store
+            .write(|ctx| {
+                let mut s: settings::GuiSettings = settings::get(ctx.conn())?;
+                s.confirm_exit = true;
+                let mut shutdown: hydrus_store::settings::ShutdownWork =
+                    hydrus_store::settings::get(ctx.conn())?;
+                shutdown.action = 0;
+                hydrus_store::settings::set(ctx.conn(), &shutdown)?;
+                settings::set(ctx.conn(), &s)
+            })
+            .unwrap();
+        let ui = MainWindow::new().unwrap();
+        ui.show().unwrap();
+        let _bound = bind(
+            &ui,
+            Pages::single(super::common::all_local_page(store.clone())),
+        );
+        let native = windows.get(windows.count() - 1).unwrap();
+        render(&native);
+        // the tick is on to begin with; the case turns it off
+        if !enabled {
+            assert!(sidebar(&ui, EXIT), "ticked before the click");
+        }
+        assert_eq!(store.read(page_layout::load).unwrap().save_on_exit, enabled);
+        let key = ui.get_layout_page_key();
+        let epoch = ui.get_layout_epoch();
+        ui.invoke_sidebar_resized(key.clone(), epoch, false, moved.0);
+        ui.invoke_sidebar_resized(key, epoch, true, moved.1);
+        render(&native);
+        ui.window()
+            .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+        ui.invoke_answer(true);
+        let saved = store.read(page_layout::load).unwrap();
+        assert_eq!(
+            serde_json::json!([saved.hpos, saved.vpos]),
+            exit_case(&exit, enabled)["after"]["saved"],
+            "exit with the tick {}",
+            if enabled { "on" } else { "off" }
+        );
+    }
 }
 #[test]
 fn live_hide_setting_keeps_accepted_preview_refuses_replacements_and_collapse_retains_selection() {

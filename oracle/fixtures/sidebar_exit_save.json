@@ -1,0 +1,62 @@
+{
+ "cases": [
+  {
+   "after": {
+    "have_shown_once": true,
+    "page": [
+     510,
+     -310
+    ],
+    "saved": [
+     510,
+     -310
+    ]
+   },
+   "before": {
+    "have_shown_once": true,
+    "page": [
+     510,
+     -310
+    ],
+    "saved": [
+     400,
+     -240
+    ]
+   },
+   "saving_sash_positions_on_exit": true
+  },
+  {
+   "after": {
+    "have_shown_once": true,
+    "page": [
+     510,
+     -310
+    ],
+    "saved": [
+     400,
+     -240
+    ]
+   },
+   "before": {
+    "have_shown_once": true,
+    "page": [
+     510,
+     -310
+    ],
+    "saved": [
+     400,
+     -240
+    ]
+   },
+   "saving_sash_positions_on_exit": false
+  }
+ ],
+ "initial": [
+  400,
+  -240
+ ],
+ "moved": [
+  510,
+  -310
+ ]
+}

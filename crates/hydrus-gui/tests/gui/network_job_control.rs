@@ -76,6 +76,7 @@ fn snapshot() -> Snapshot {
         ..Snapshot::default()
     }
 }
+// leaf: audit-network-download-control-errors
 #[test]
 fn page_cog_rules_cancel_apply_and_error_owner_boundary() {
     let rendered = headless::init();
@@ -293,7 +294,15 @@ fn page_cog_rules_cancel_apply_and_error_owner_boundary() {
         queue: 1,
         gallery: false,
     });
-    assert!(!window.get_file_cog().has_error);
+    // (the reference's error button is hidden once its owner clears the error,
+    // and what it held is gone: `error_button_hidden`, `owner_clear_error`)
+    assert_eq!(
+        !window.get_file_cog().has_error,
+        recorded["actions"]["error_button_hidden"]
+            .as_bool()
+            .unwrap()
+    );
+    assert!(recorded["actions"]["owner_clear_error"].is_null());
     let count = copies.borrow().len();
     window.invoke_control_action(false, 9);
     assert_eq!(copies.borrow().len(), count);
