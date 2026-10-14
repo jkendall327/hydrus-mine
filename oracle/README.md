@@ -46,6 +46,16 @@ at fixed copy boundaries; dialog replies and worker scheduling are scripted.
 | `make_repository_fixture.py` | `fixtures/legacy_db/repositories.tar.gz` + manifest: `basic` with a tag and a file repository holding pending content |
 | `make_fixture_db.py` | `fixtures/legacy_db/<name>.tar.gz` + `.manifest.json`: a populated reference database |
 | `make_auto_resolution_pending.py` | `fixtures/legacy_db/auto_resolution_pending.tar.gz`: the auto-resolution database with eight more pairs pending in the semi-automatic rule that has two |
+| `record_file_menu.py` | `fixtures/file_menu.json`: the real File menu's exit, restart and exit/force maintenance (the exit question with "confirm client exit" on and off, answered yes and no; whether the client exits, restarts, runs shutdown work) and open > installation/database directory |
+| `record_bandwidth_reset.py` | `fixtures/bandwidth_reset.json`: the real "reset default bandwidth rules" on a manager with custom rules: the question, every context's rules before and after |
+| `record_bandwidth_usage_text.py` | `fixtures/bandwidth_usage_text.json`: `GetBandwidthStringsAndGaugeTuples` (the per-rule usage lines) on trackers with scripted usage at a held time |
+| `record_local_import_pause.py` | `fixtures/local_import_pause.json`: the review-files-to-import panel paused, resumed and stopped while paths wait to be parsed |
+| `record_local_import_queue.py` | `fixtures/local_import_queue.json`: its "import now" (the publication, the new page, the files left or deleted, delete option off and on) |
+| `record_parser_content_variants.py` | `fixtures/parser_content_variants.json`: the content parser editor edited to other tag namespaces and veto settings, the parser it hands back and what it parses |
+| `record_parser_context.py` | `fixtures/parser_context.json`: the parser test panel's example parsing context (url, a variable, post_index) and "test parse" |
+| `record_parser_fetch_http.py` | `fixtures/parser_fetch_http.json`: the parser test panels' fetch from a url over real HTTP (the page editor's and the generic panel's) with the real engine |
+| `record_session_create.py` | `fixtures/session_create.json`: the session browser's create new (its dialog scripted), with and without repositories |
+| `record_import_folder_example.py` | `fixtures/import_folder_example.json`: the import folder editor's filename tagging dialog: the example path, the output, the duplicate-service warning |
 | `record_cpu_busy.py` | `fixtures/cpu_busy.json`: the reference's `SystemBusy`/`CurrentlyIdle`/`GoodTimeToStartBackgroundWork` on scripted `/proc/stat` loads read by the real psutil |
 | `record_trash_maintenance.py` | `fixtures/trash_maintenance.json`: the reference's `DAEMONMaintainTrash` on generated files of exact sizes trashed at scripted times |
 | `record_shutdown_work.py` | `fixtures/shutdown_work.json`: the reference's `TryToExit` and `DoIdleShutdownWork` under each shutdown option, with the "Maintenance is due" question answered by script |

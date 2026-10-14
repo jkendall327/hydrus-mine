@@ -439,8 +439,10 @@ search.
   reaches the main-window title; secondary window titles still use their existing
   captions. Regex favourites open in a child list editor rather than embedding
   that list on the options page; their changes still wait for the parent Apply.
-  Exit confirmation honors the switch and auto-accept timeout; importer
-  activity reasons and shutdown-maintenance questions are not yet included. Search position and
+  Exit confirmation honors the switch and auto-accept timeout, and the shutdown
+  maintenance question is asked (see Shutdown maintenance); the question that
+  names pages with importers or other reasons not to close ("no, but show me the
+  pages") and the low-disk-space prompt before it are not yet included. Search position and
   remembering the last panel are editable. Connection/error-delay ranges follow the saved advanced mode
   when opening the window; changing that mode takes effect on reopening, as in
   the reference. Two options with the same label each go to their own
@@ -1176,6 +1178,15 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 
 ## Downloader definition editors
 
+- The parser test panels take their example parsing context from three boxes
+  (url, post index, other variables) where the reference has one dictionary
+  button. Like the reference's, a content or page parser's test parse leaves
+  out the post index (a subsidiary parser's sets it to 0); the url, other
+  variables and relative-url joining are replayed from
+  `oracle/fixtures/parser_context.json`. After a fetch the page parser's url box
+  shows the encoded url the context holds, where the reference keeps what was
+  typed (its fetch texts, requests and cookies are replayed from
+  `oracle/fixtures/parser_fetch_http.json`).
 - URL classes and single/nested gallery URL generators have native lists and
   rule editors. Their duplicate button creates new keys and unique names.
   Domain lists and regex lists use one rule per line, and nested generators
@@ -1535,8 +1546,13 @@ The session browser's "create new" offers the reference's two types (web domain,
 hydrus service). The service choice lists the repositories by name; a hydrus
 service session is keyed by the service key's hex, as the existing ones are. With
 no repository "hydrus service" is refused ("Choose a hydrus service for this
-context."). Qt names the service wherever it lists a network context
-("hydrus service: <name>"); native lists the key's hex.
+context."), where Qt makes the "hydrus service default" context. Both name the
+service wherever the browser lists a context ("hydrus service: <name>"). A domain
+is lower-cased and refused if it is not one; Qt keeps what was typed ("Example.com")
+and, for something that is not a domain such as "not a domain!!", makes a session
+with an empty domain. The dialog's opening state, title, notes, defaults, offered
+services and the sessions made are replayed from
+`oracle/fixtures/session_create.json` (`oracle/record_session_create.py`).
 
 Cookie and HTTP-header editing uses detached native drafts with Apply/Cancel;
 Qt cookie-list actions take effect immediately, while its header list is staged.
@@ -1596,6 +1612,21 @@ context/obeys-bandwidth details are inline, and cancel/override controls are
 explicit buttons. Login-script waits remain outside the implemented engine.
 Local snapshots are published by the daemon without requiring its Client API;
 expiry disables stale controls and saved bandwidth history remains available.
+The reference's auto-refresh is a "manual refresh"-or-interval control (at least
+0.05 s, manual to begin with); native has an auto-refresh checkbox, on to begin
+with. The jobs list's position column says "waiting for bandwidth", "waiting for
+login" and "running" as the reference does (its positions "waiting for
+validation" and "waiting for free work slot" have no native counterpart), and
+its other waits are native's own; the speed column is titled "current speed" as
+the reference's is. A job's contexts are shown in the detail under the list, not
+in a right-click menu with each context's waiting estimate.
+
+A selected context's rules read as the reference's do ("used 1/10 requests in
+the past 1 day", "used 2 KB/4 KB this month", sorted by span, a rule allowing
+nothing left out; `oracle/fixtures/bandwidth_usage_text.json`). "Reset default
+bandwidth rules" resets the global and default contexts the reference names (not
+the downloader default, which it leaves) and keeps every specific context
+(`oracle/fixtures/bandwidth_reset.json`).
 
 ## Tag migration
 

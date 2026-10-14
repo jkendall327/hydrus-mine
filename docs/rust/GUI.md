@@ -821,11 +821,14 @@ does: #, path, filetype ("png", "PROBLEM: filetype unsupported", "file is
 empty", "file is missing", "sidecar") and size, the problem rows in the
 reference's error colour; under it, "6 files parsed - 4 good | 1 bad: 1
 had unsupported file types - and looks like 1 txt/json/xml sidecars." and
-a gauge, with pause/play and stop while it parses. "remove files" takes
+a gauge, with pause/play and stop while it parses (paused with a path still to
+parse, then resumed; stopped with paths still to parse, which are dropped while
+the parsed rows stay: `oracle/fixtures/local_import_pause.json`). "remove files" takes
 the selected rows out (asking first), and "delete original files after
 successful import" says, in the reference's red, that they will be
 deleted. "import now" opens an "import" page of the good files, in the
-list's order. Paths go in through the box over the list (enter adds one,
+list's order, which deletes each original once it is in the database (new or
+already there) if the box was ticked (`oracle/fixtures/local_import_queue.json`). Paths go in through the box over the list (enter adds one,
 a file or folder, as typed or pasted with a file manager's quotes) in
 place of the reference's "add files"/"add folder" pickers.
 
@@ -2175,7 +2178,10 @@ recorded by `oracle/record_bandwidth_history.py`. Detached rule editors add, rep
 and delete data/request limits with rolling-second or calendar-month periods.
 Apply preserves unrelated context edits and pacing settings; Cancel leaves them
 untouched. Default/global rules can be edited by kind or reset with the reference
-confirmation, and specific domains can inherit their defaults again.
+confirmation (global and every default context the reference names are reset;
+specific domains and the downloader default stay), and specific domains can
+inherit their defaults again. A selected context lists each rule's usage as the
+reference words it ("used 1/10 requests in the past 1 day").
 
 Current jobs show every active engine request, including subscriptions, with
 URL, status, typed wait reason, speed and progress. Extended selection supports
@@ -4819,7 +4825,12 @@ finishes; "due" means more than one period since then (exactly one period is
 not). All of this is replayed from `oracle/fixtures/shutdown_work.json`
 (`tests/gui/shutdown_jobs.rs`). File > exit/force maintenance
 runs it whatever the schedule, and File > restart asks the restart question,
-exits, and starts the client again once it has let go of the store.
+exits, and starts the client again once it has let go of the store. The three
+entries' questions (asked only with "confirm client exit" on), whether the client
+exits and whether the shutdown work is flagged are replayed from
+`oracle/fixtures/file_menu.json` (`oracle/record_file_menu.py`, the real menu),
+which also records File > open > database directory opening the database
+directory.
 
 ## Content undo and redo
 
