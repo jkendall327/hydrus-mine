@@ -762,6 +762,88 @@
       "saved_action": "clear_delete"
     }
   ],
+  "remember_action": [
+    {
+      "remember": true,
+      "selected": 0,
+      "label": "Remove 2 files from art?",
+      "saved_action": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+      "reopened": 0,
+      "reopened_label": "Remove 2 files from art?"
+    },
+    {
+      "remember": true,
+      "selected": 1,
+      "label": "Remove one file from my files?",
+      "saved_action": "6c6f63616c2066696c6573",
+      "reopened": 1,
+      "reopened_label": "Remove one file from my files?"
+    },
+    {
+      "remember": true,
+      "selected": 2,
+      "label": "Delete from all local services? (force send to trash)",
+      "saved_action": "616c6c206c6f63616c206d65646961",
+      "reopened": 2,
+      "reopened_label": "Delete from all local services? (force send to trash)"
+    },
+    {
+      "remember": true,
+      "selected": 3,
+      "label": "Permanently delete 2 files?",
+      "saved_action": "physical_delete",
+      "reopened": 3,
+      "reopened_label": "Permanently delete 2 files?"
+    },
+    {
+      "remember": true,
+      "selected": 4,
+      "label": "Permanently delete these 2 files and do not save a deletion record?",
+      "saved_action": "clear_delete",
+      "reopened": 4,
+      "reopened_label": "Permanently delete these 2 files and do not save a deletion record?"
+    },
+    {
+      "remember": false,
+      "selected": 0,
+      "label": "Remove 2 files from art?",
+      "saved_action": null,
+      "reopened": 0,
+      "reopened_label": "Remove 2 files from art?"
+    },
+    {
+      "remember": false,
+      "selected": 1,
+      "label": "Remove one file from my files?",
+      "saved_action": null,
+      "reopened": 0,
+      "reopened_label": "Remove 2 files from art?"
+    },
+    {
+      "remember": false,
+      "selected": 2,
+      "label": "Delete from all local services? (force send to trash)",
+      "saved_action": null,
+      "reopened": 0,
+      "reopened_label": "Remove 2 files from art?"
+    },
+    {
+      "remember": false,
+      "selected": 3,
+      "label": "Permanently delete 2 files?",
+      "saved_action": null,
+      "reopened": 0,
+      "reopened_label": "Remove 2 files from art?"
+    },
+    {
+      "remember": false,
+      "selected": 4,
+      "label": "Permanently delete these 2 files and do not save a deletion record?",
+      "saved_action": null,
+      "reopened": 0,
+      "reopened_label": "Remove 2 files from art?"
+    }
+  ],
   "mixed_existing": {
     "actions": [
       "Remove 2 files from art?",

@@ -1,0 +1,69 @@
+{
+ "now": 1000000,
+ "cases": [
+  {
+   "what": "gallery",
+   "option": "downloader_network_error_delay",
+   "setting": "default",
+   "value": 5400,
+   "delay": 5400,
+   "reason": "connection refused"
+  },
+  {
+   "what": "gallery",
+   "option": "downloader_network_error_delay",
+   "setting": "changed",
+   "value": 12005,
+   "delay": 12005,
+   "reason": "connection refused"
+  },
+  {
+   "what": "watcher",
+   "option": "downloader_network_error_delay",
+   "setting": "default",
+   "value": 5400,
+   "delay": 5400,
+   "reason": "connection refused"
+  },
+  {
+   "what": "watcher",
+   "option": "downloader_network_error_delay",
+   "setting": "changed",
+   "value": 12005,
+   "delay": 12005,
+   "reason": "connection refused"
+  },
+  {
+   "what": "subscription network",
+   "option": "subscription_network_error_delay",
+   "setting": "default",
+   "value": 43200,
+   "delay": 43200,
+   "reason": "network error: connection refused"
+  },
+  {
+   "what": "subscription network",
+   "option": "subscription_network_error_delay",
+   "setting": "changed",
+   "value": 93660,
+   "delay": 93660,
+   "reason": "network error: connection refused"
+  },
+  {
+   "what": "subscription other",
+   "option": "subscription_other_error_delay",
+   "setting": "default",
+   "value": 129600,
+   "delay": 129600,
+   "reason": "error: There is no import destination set in the Location Import Options!"
+  },
+  {
+   "what": "subscription other",
+   "option": "subscription_other_error_delay",
+   "setting": "changed",
+   "value": 176400,
+   "delay": 176400,
+   "reason": "error: There is no import destination set in the Location Import Options!"
+  }
+ ]
+}
