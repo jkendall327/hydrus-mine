@@ -4221,6 +4221,22 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   rows, which reach nothing. `audit-options-gui-frame-locations-edit` stays
   partial and untagged for those reasons.
 
+- Idle from input outside hydrus-rs's windows: the reference learns that the
+  mouse moved elsewhere by polling the global cursor position. winit cannot,
+  so hydrus-rs asks the desktop how long ago it last saw any keyboard or
+  mouse input (sampled once a second on a thread of its own) and counts that
+  against both the user and the mouse idle timers, since the desktop cannot
+  say which it was. So typing in another program holds back "only autosave
+  during idle time" (and other idle work), which the reference's cursor
+  polling would not. On Linux the sources are GNOME's
+  `org.gnome.Mutter.IdleMonitor` on the session bus (X11 and Wayland) and,
+  on an X11 session, the X server's screensaver extension. A Wayland
+  compositor without the Mutter monitor (KDE, sway, Hyprland and the like)
+  has neither, so only input to hydrus-rs's own windows and the Client API
+  counts there, as before this change; XWayland's screensaver time is not
+  used because it sees only input to X clients. Windows and macOS have no
+  source yet.
+
 ## Review vacuum data
 
 - hydrus-rs has one database file (listed as "main"), not the reference's

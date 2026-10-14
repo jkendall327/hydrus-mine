@@ -69,6 +69,12 @@ impl Idle {
     pub fn api(&mut self, now_ms: i64) {
         self.api = now_ms;
     }
+    /// Keyboard or mouse input the desktop saw at `at_ms`, to any window:
+    /// it can't say which of the two it was, so it counts for both.
+    pub fn system_input(&mut self, at_ms: i64) {
+        self.user = self.user.max(at_ms);
+        self.mouse = self.mouse.max(at_ms);
+    }
     /// Why the client is not idle, in the order `ClientController.CurrentlyIdle`
     /// reports them in idle report mode (empty when it is idle).
     pub fn blocked_reasons(&self, now_ms: i64, settings: &GuiIdleSettings) -> Vec<String> {
