@@ -139,8 +139,16 @@ fn content_test_panel_fetches_raw_data_and_hands_it_to_its_formula() {
     content.set_variables("token=preserved".into());
     content.invoke_fetch_from_url();
     until_fetch(|| !content.get_fetching());
-    assert_eq!(content.get_document(), "<p>fetched café</p>");
-    assert_eq!(content.get_post_index(), "0");
+    // the texts and context are the real reference engine's
+    // (`oracle/fixtures/parser_fetch_http.json`, from
+    // `oracle/record_parser_fetch_http.py`: the same server, the test panel)
+    let recorded = hydrus_testkit::fixture_json("parser_fetch_http.json");
+    let fetches = &recorded["formula"];
+    assert_eq!(content.get_document(), fetches[0]["text"].as_str().unwrap());
+    assert_eq!(
+        content.get_post_index(),
+        fetches[0]["context"]["post_index"].as_str().unwrap()
+    );
     assert_eq!(content.get_variables(), "token=preserved");
     content.invoke_action("formula".into());
     let formula = slots
@@ -161,7 +169,7 @@ fn content_test_panel_fetches_raw_data_and_hands_it_to_its_formula() {
     content.set_fetch_url(format!("{}/error", server.base).into());
     content.invoke_fetch_from_url();
     until_fetch(|| !content.get_fetching());
-    assert_eq!(content.get_document(), "fetch failed:\n\n404: missing");
+    assert_eq!(content.get_document(), fetches[1]["text"].as_str().unwrap());
     assert!(
         !server.requests.lock().unwrap()[0]
             .to_lowercase()
@@ -219,15 +227,42 @@ fn fetched_page_examples_use_actual_network_headers_cookies_context_and_child_co
     page.invoke_action("apply".into());
     assert!(slots.page.borrow().is_some());
     until_fetch(|| !page.get_fetching());
-    assert_eq!(page.get_document(), "<p>fetched café</p>");
-    assert_eq!(page.get_test_url(), format!("{}/a%20b", server.base));
-    assert_eq!(page.get_post_index(), "0");
+    // the real reference engine's texts, request and context
+    // (`oracle/fixtures/parser_fetch_http.json`, from
+    // `oracle/record_parser_fetch_http.py`: the same server)
+    let recorded = hydrus_testkit::fixture_json("parser_fetch_http.json");
+    let (first, second) = (&recorded["page"][0], &recorded["page"][1]);
+    assert_eq!(page.get_document(), first["text"].as_str().unwrap());
+    // (the example context's url is the encoded one the reference holds; the
+    // url box shows it too, where the reference keeps what was typed)
+    assert_eq!(
+        page.get_test_url(),
+        first["context"]["url"]
+            .as_str()
+            .unwrap()
+            .replace("<base>", &server.base)
+    );
+    assert_eq!(
+        page.get_post_index(),
+        first["context"]["post_index"].as_str().unwrap()
+    );
     assert_eq!(page.get_variables(), "token=preserved");
     assert_eq!(page.get_examples().row_count(), 2);
     screenshot(&rendered, 1, "parser-fetch.png", &page);
     let request = server.requests.lock().unwrap()[0].to_lowercase();
-    assert!(request.starts_with("get /a%20b "));
-    assert!(request.contains("referer: https://referral.example/from"));
+    assert!(
+        request.starts_with(
+            &first["request"]["line"]
+                .as_str()
+                .unwrap()
+                .replace("GET", "get")
+                .replace(" HTTP/1.1", " ")
+        )
+    );
+    assert!(request.contains(&format!(
+        "referer: {}",
+        first["request"]["referer"].as_str().unwrap()
+    )));
     assert!(request.contains("x-test-document: approved"));
     page.invoke_row_clicked(0, false, false);
     page.invoke_action("edit-content".into());
@@ -248,8 +283,10 @@ fn fetched_page_examples_use_actual_network_headers_cookies_context_and_child_co
     page.set_test_url(format!("{}/error", server.base).into());
     page.invoke_fetch();
     until_fetch(|| !page.get_fetching());
-    assert_eq!(page.get_document(), "fetch failed: 404: missing\n\nmissing");
-    assert!(server.requests.lock().unwrap()[1].contains("test-document=saved"));
+    assert_eq!(page.get_document(), second["text"].as_str().unwrap());
+    assert!(
+        server.requests.lock().unwrap()[1].contains(second["request"]["cookie"].as_str().unwrap())
+    );
     let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
     let usage = store
         .read(|conn| hydrus_store::bandwidth::usage(conn, now))

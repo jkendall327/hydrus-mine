@@ -17,6 +17,7 @@
 mod download;
 mod subscription;
 mod tag_relationships;
+mod watcher;
 
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::sync::Arc;
@@ -93,6 +94,7 @@ pub fn install(store: &Store, recording: &Json) {
 pub const PORTS: &[(&str, u16)] = &[
     ("flow_subscription.json", 46011),
     ("flow_download.json", 46012),
+    ("flow_watcher.json", 46031),
 ];
 
 /// Whether a request to `http://127.0.0.1` goes straight there, whatever
