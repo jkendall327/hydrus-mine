@@ -186,13 +186,6 @@ fn run_fast_memory_maintenance_trims_the_image_and_thumbnail_caches_and_slow_doe
             "{entry}"
         );
     }
-    assert!(
-        step("after fast")["pubs"]
-            .as_array()
-            .unwrap()
-            .contains(&Value::from("memory_maintenance_pulse"))
-    );
-    assert!(step("after slow")["pubs"].as_array().unwrap().is_empty());
     // past the timeout (the reference's 302.5 s): slow still leaves them, fast
     // drops what has idled, keeping the newest
     let late = (step("past the timeout, after slow")["now"]

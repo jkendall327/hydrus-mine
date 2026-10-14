@@ -56,10 +56,15 @@ fn watch_until(
     false
 }
 
-/// Whether the picture holds still for `time`, once a frame in flight has
-/// landed.
+/// Whether the picture comes to a stop (a frame in flight lands, then a
+/// stretch shows one picture), and holds still for `time` after.
 fn holds_still(window: &ArchiveDeleteWindow, time: Duration) -> bool {
-    watch(window, Duration::from_millis(100));
+    let deadline = Instant::now() + Duration::from_secs(5);
+    while watch(window, Duration::from_millis(150)).len() > 1 {
+        if Instant::now() > deadline {
+            return false;
+        }
+    }
     watch(window, time).len() <= 1
 }
 

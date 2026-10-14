@@ -4592,6 +4592,13 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   reference's is its own `DialogEdit`; the range, start value and step are
   the same, the look is Slint's.
 
+## Archive/delete filter playback
+
+- The pause command on a file mpv plays (audio, video) is not compared with
+  the reference: its recorded mpv widget stayed paused throughout in the
+  offscreen recorder, so the recording has nothing to compare. The animations
+  (ugoira, animated WebP), which the client's own player shows, are.
+
 ## Pages not yet shown
 
 - The reference loads every page of a session in the background and its tab
@@ -4606,11 +4613,12 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   menu doesn't have the submenu yet.
 - The questions the reference asks before each action are asked in its
   words (`oracle/record_file_relationship_actions.py`, from the real menu).
-  Not ported: the yes and no buttons' own labels in its two warnings for a
-  hundred pairs or more of alternates or false positives ("they are all
-  alternates" / "some may be duplicates"), and the "N false positive
-  relationships cleared." (or "No false positives to clear!") popup after
-  clearing false positives.
+  Clearing false positives says "N false positive relationships cleared."
+  (or "No false positives to clear!") in a popup, as recorded. Not ported:
+  the yes and no buttons' own labels in its warning for a hundred pairs or
+  more of alternates ("they are all alternates" / "some may be
+  duplicates"), and its separate warning for that many false positives
+  (hydrus-rs sets false positives only in the duplicate filter).
 - A group's "best quality file" is offered when the group has other files in
   the page's domain; the reference counts its members per domain the same
   way, but hydrus-rs doesn't distinguish a king outside the domain.

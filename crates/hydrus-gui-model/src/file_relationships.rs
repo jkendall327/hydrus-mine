@@ -549,9 +549,13 @@ pub fn run(
                 writer.dissolve_alternate_groups_of(&files(whose))?;
             }
             Act::ClearFalsePositives(whose) => {
-                writer.clear_false_positives(&files(whose), false)?;
+                let cleared = writer.clear_false_positives(&files(whose), false)?;
+                say_cleared(w.conn(), cleared)?;
             }
-            Act::ClearInternalFalsePositives => writer.clear_false_positives(&selected, true)?,
+            Act::ClearInternalFalsePositives => {
+                let cleared = writer.clear_false_positives(&selected, true)?;
+                say_cleared(w.conn(), cleared)?;
+            }
             Act::ResetSearch(whose) => writer.reset_potential_search(&files(whose))?,
             Act::RemovePotentials(whose) => {
                 for hash_id in files(whose) {
@@ -562,6 +566,21 @@ pub fn run(
         }
         Ok(())
     })
+}
+
+/// What clearing false positives says in a popup (`HydrusData.ShowText`).
+pub fn cleared_text(cleared: usize) -> String {
+    if cleared == 0 {
+        "No false positives to clear!".to_owned()
+    } else {
+        format!("{} false positive relationships cleared.", human_int(cleared as u64))
+    }
+}
+
+fn say_cleared(conn: &rusqlite::Connection, cleared: usize) -> hydrus_store::Result<()> {
+    let now = hydrus_core::TimestampMs::now().0 / 1000;
+    let job = hydrus_store::popups::Job::text(cleared_text(cleared), now as f64);
+    hydrus_store::popups::add(conn, &job, now)
 }
 
 /// The duplicates scope of a page's location.

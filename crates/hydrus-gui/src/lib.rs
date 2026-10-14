@@ -40,6 +40,7 @@ pub mod command_palette_window;
 pub mod daemon;
 mod database_backup_window;
 pub mod database_locations_window;
+pub mod similar_distance_window;
 mod debug_actions;
 mod rule_count;
 pub use debug_actions::{crash_logging, debug_printed, message_window, set_environment};
@@ -363,9 +364,6 @@ pub struct Bound {
     pub manage_ratings: Rc<RefCell<Option<ManageRatingsWindow>>>,
     /// The "edit value" dialog an inc/dec rating's middle click opens.
     pub rating_count_editor: Rc<RefCell<Option<EditValueWindow>>>,
-    /// The "choose distance" dialog the open menu's "similar files in a new
-    /// page > custom" opens.
-    pub similar_distance_editor: Rc<RefCell<Option<EditValueWindow>>>,
     /// The manage times dialog while one is open, and the date-time
     /// editor it opens.
     pub manage_times: Rc<RefCell<Option<ManageTimesWindow>>>,
@@ -2121,7 +2119,6 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // a thumbnail's or the viewer's "manage > ratings"
     let manage_ratings: Rc<RefCell<Option<ManageRatingsWindow>>> = Rc::default();
     let rating_count_editor: Rc<RefCell<Option<EditValueWindow>>> = Rc::default();
-    let similar_distance_editor: Rc<RefCell<Option<EditValueWindow>>> = Rc::default();
     let open_manage_ratings: OpenOnFiles = Rc::new({
         let manage_ratings = manage_ratings.clone();
         let rating_count_editor = rating_count_editor.clone();
@@ -4872,7 +4869,6 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let relationship_merge_options: merge_options_window::Slot = Rc::default();
     window.on_menu_chosen({
         let relationship_merge_options = relationship_merge_options.clone();
-        let similar_distance_editor = similar_distance_editor.clone();
         let selected_delete_epoch = selected_delete_epoch.clone();
         let selected_delete_menu_epoch = selected_delete_menu_epoch.clone();
         let delete_files = Rc::downgrade(&delete_files);
@@ -5277,7 +5273,6 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     ));
                 }
                 Action::OpenSimilarCustom => {
-                    // (`choose distance`: a spin box, from 10 in steps of 2, 0 to 99)
                     let (store, selected, location) = {
                         let page = page.borrow();
                         (
@@ -5286,48 +5281,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                             page.location().clone(),
                         )
                     };
-                    let Ok(editor) = app_title::new::<EditValueWindow>() else {
-                        return;
-                    };
-                    editor.set_window_title("choose distance".into());
-                    editor.set_minimum(0);
-                    editor.set_maximum(99);
-                    editor.set_step_size(2);
-                    editor.set_value(10);
-                    editor.on_apply({
-                        let weak = editor.as_weak();
-                        let slot = similar_distance_editor.clone();
-                        let change_pages = change_pages.clone();
-                        move || {
-                            let Some(editor) = weak.upgrade() else {
-                                return;
-                            };
-                            let distance = u64::try_from(editor.get_value()).unwrap_or(0);
-                            let _ = editor.hide();
-                            *slot.borrow_mut() = None;
-                            if let Some(search) =
-                                thumbnail_menu::similar_search(&store, &selected, distance)
-                            {
-                                change_pages(&|pages| {
-                                    pages.open_search(location.clone(), vec![search.clone()], "files");
-                                    Ok(())
-                                });
-                            }
-                        }
+                    let change_pages = change_pages.clone();
+                    similar_distance_window::open(store, selected, location, move |f| {
+                        change_pages(f);
                     });
-                    editor.on_cancel({
-                        let weak = editor.as_weak();
-                        let slot = similar_distance_editor.clone();
-                        move || {
-                            if let Some(editor) = weak.upgrade() {
-                                let _ = editor.hide();
-                            }
-                            *slot.borrow_mut() = None;
-                        }
-                    });
-                    if editor.show().is_ok() {
-                        *similar_distance_editor.borrow_mut() = Some(editor);
-                    }
                 }
                 Action::Relationship(act) => {
                     use hydrus_gui_model::file_relationships::{self as relationships, Act};
@@ -5585,7 +5542,6 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         manage_notes,
         manage_ratings,
         rating_count_editor,
-        similar_distance_editor,
         manage_times,
         datetime_editor,
         force_filetype,
@@ -7900,6 +7856,16 @@ fn open_viewer(
                         media_actions::Deletion::Physically,
                         file,
                     ));
+                }
+                Action::OpenSimilarCustom => {
+                    let (store, location) = {
+                        let model = model.borrow();
+                        (model.store().clone(), model.location().clone())
+                    };
+                    let change_pages = change_pages.clone();
+                    similar_distance_window::open(store, vec![file], location, move |f| {
+                        change_pages(f);
+                    });
                 }
                 _ => {
                     let model = model.borrow();

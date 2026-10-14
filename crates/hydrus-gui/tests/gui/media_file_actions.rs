@@ -604,6 +604,18 @@ fn file_relationship_rows_set_view_and_reset_duplicate_groups() {
             assert!(offered.iter().all(|(label, _)| label != row), "{context}");
             continue;
         }
+        let popup_texts = || -> Vec<String> {
+            fixture
+                .store
+                .read(|c| {
+                    hydrus_store::popups::all(c, hydrus_core::TimestampMs::now().0 / 1000)
+                })
+                .unwrap()
+                .into_iter()
+                .filter_map(|job| job.status_text_1)
+                .collect()
+        };
+        let popups_before = popup_texts().len();
         let id = find(&offered, row);
         fixture.ui.invoke_menu_chosen(id);
         // the questions asked, and their answer
@@ -656,6 +668,15 @@ fn file_relationship_rows_set_view_and_reset_duplicate_groups() {
                 fixture.ui.invoke_tab_chosen(0, 0);
             }
         }
+        // what it says in popups (the false-positive clears' count)
+        let said: Vec<String> = popup_texts().split_off(popups_before);
+        let recorded_said: Vec<&str> = step["popups"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|t| t.as_str().unwrap())
+            .collect();
+        assert_eq!(said, recorded_said, "{context}: popups");
         check_infos(&step["after"], &context);
     }
 }
@@ -760,12 +781,7 @@ fn open_rows_launch_the_focused_file_and_open_pages_of_the_selection() {
                 // "custom": a dialog asks the distance, from the recording's
                 // 10 in steps of 2, and cancelling opens nothing
                 let dialog = &row["dialogs"][0];
-                let editor = fixture
-                    .bound
-                    .similar_distance_editor
-                    .borrow()
-                    .as_ref()
-                    .map(slint::ComponentHandle::clone_strong)
+                let editor = hydrus_gui::similar_distance_window::editor()
                     .expect("the distance dialog opens");
                 assert_eq!(editor.get_window_title(), dialog["title"].as_str().unwrap());
                 assert_eq!(
@@ -805,7 +821,7 @@ fn open_rows_launch_the_focused_file_and_open_pages_of_the_selection() {
                     editor.invoke_cancel();
                     assert_eq!(tab_names(&fixture).len(), tabs.len(), "cancelled: no page");
                 }
-                assert!(fixture.bound.similar_distance_editor.borrow().is_none());
+                assert!(hydrus_gui::similar_distance_window::editor().is_none());
                 fixture.ui.invoke_select_none();
                 fixture.select(
                     i32::try_from(selection[0]).unwrap(),

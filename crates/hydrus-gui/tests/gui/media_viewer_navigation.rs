@@ -114,6 +114,7 @@ fn the_viewer_goes_first_previous_next_last_random_and_removes_from_view() {
         );
     }
     assert!(closed, "removing the last file closes the viewer");
+    hydrus_gui::hold_viewer_random(&[]);
 }
 
 // the slideshow's shuffle (a native-only check: its draws are not scripted)

@@ -116,6 +116,14 @@ def _record(session):
         asked.append(dict(warning=message))
     ClientGUIDialogsQuick.GetYesNo = yesno
     ClientGUIDialogsMessage.ShowWarning = warn
+    popups = []
+    original_pub = controller.pub
+
+    def pub(topic, *args, **kwargs):
+        if topic == 'message':
+            popups.append(args[0].GetStatusText())
+        return original_pub(topic, *args, **kwargs)
+    controller.pub = pub
 
     def tree(menu):
         out = []
@@ -157,6 +165,7 @@ def _record(session):
                 steps.append({'setup': 'false positive', 'selection': [NAMES[n] for n in path], 'after': everything()})
                 continue
             asked.clear()
+            popups.clear()
             tabs = qt(lambda: gui._notebook.count())
 
             built = {}
@@ -198,10 +207,11 @@ def _record(session):
                 made['hashes'] = sorted(qt(lambda: [m.GetHash().hex() for m in panel2._sorted_media]))
                 qt(lambda: gui._notebook.setCurrentIndex(0))
             steps.append({'selection': [NAMES[n] for n in names], 'path': path, 'offered': bool(offered), 'menu': menu_tree,
-                          'asked': list(asked), 'page': made, 'after': everything()})
+                          'asked': list(asked), 'popups': list(popups), 'page': made, 'after': everything()})
     finally:
         ClientGUIDialogsQuick.GetYesNo = old_yesno
         ClientGUIDialogsMessage.ShowWarning = old_warning
+        controller.pub = original_pub
     return {'initial': initial, 'steps': steps, 'names': NAMES}
 
 
