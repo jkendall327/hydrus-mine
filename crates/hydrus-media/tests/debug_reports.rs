@@ -59,7 +59,10 @@ fn phash_generation_says_what_the_reference_says_for_the_same_file() {
                 .unwrap()
                 .parse()
                 .unwrap();
-            assert!((mine - theirs.parse::<f64>().unwrap()).abs() < 1e-9, "{mine}");
+            assert!(
+                (mine - theirs.parse::<f64>().unwrap()).abs() < 1e-9,
+                "{mine}"
+            );
         } else {
             assert_eq!(mine, theirs);
         }

@@ -22,7 +22,10 @@ fn kind(line: &str) -> &'static str {
         ("Network Job Added: ", "added"),
         ("Network Job Starting: ", "starting"),
         ("Network Jobs Referral URLs for ", "referral"),
-        ("Request Headers set by the network domain manager: ", "domain headers"),
+        (
+            "Request Headers set by the network domain manager: ",
+            "domain headers",
+        ),
         ("No custom headers set", "domain headers"),
         ("Request Headers:\n", "headers"),
         ("Network Jobs Redirect: ", "redirect"),
@@ -60,12 +63,15 @@ fn recorded(mode: &str) -> Vec<(String, Vec<String>)> {
 /// same reports in the same order, and the same words where the words do not
 /// depend on this client's headers and server.
 fn same_reports(path: &str, said: &[String], reference: &[String], base: &str) {
-    let reference: Vec<String> = reference.iter().map(|l| l.replace("<base>", base)).collect();
+    let reference: Vec<String> = reference
+        .iter()
+        .map(|l| l.replace("<base>", base))
+        .collect();
     // (the reference's retry of its own earlier job can end late: its "done"
     // for the previous path is not this path's)
     let reference: Vec<&String> = reference
         .iter()
-        .filter(|l| !(l.starts_with("Network Job Done: ") && !l.ends_with(path)))
+        .filter(|l| !l.starts_with("Network Job Done: ") || l.ends_with(path))
         .collect();
     let said_kinds: Vec<&str> = said.iter().map(|l| kind(l)).collect();
     let reference_kinds: Vec<&str> = reference.iter().map(|l| kind(l)).collect();
@@ -91,7 +97,7 @@ fn same_reports(path: &str, said: &[String], reference: &[String], base: &str) {
                     let lines: Vec<&str> = block.lines().collect();
                     assert!(lines.iter().all(|l| l.contains(": ")), "{mine}");
                     let mut sorted = lines.clone();
-                    sorted.sort();
+                    sorted.sort_unstable();
                     assert_eq!(lines, sorted, "{mine}");
                 }
                 assert!(theirs.contains("\n\nResponse Headers:\n"));

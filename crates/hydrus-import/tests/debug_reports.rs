@@ -29,7 +29,10 @@ fn recorded() -> (Vec<String>, Vec<String>) {
             .map(|m| m["text"].as_str().unwrap().to_owned())
             .collect()
     };
-    assert_eq!(recording["import"]["off"]["messages"], serde_json::json!([]));
+    assert_eq!(
+        recording["import"]["off"]["messages"],
+        serde_json::json!([])
+    );
     (
         texts(&recording["import"]["on"]),
         texts(&recording["import"]["again"]),
@@ -104,10 +107,7 @@ fn plain(line: &str, store_dir: &Path, import_path: &Path) -> String {
             .collect::<Vec<_>>()
             .join("\n");
     }
-    if let (Some(at), Some(end)) = (
-        line.find("Imported at "),
-        line.find(" before this check."),
-    ) {
+    if let (Some(at), Some(end)) = (line.find("Imported at "), line.find(" before this check.")) {
         line.replace_range(at..end, "Imported at <time>, which was <ago>");
     }
     if let Some(rest) = line.strip_prefix("Adding thumbnail: (")
@@ -151,7 +151,10 @@ fn import_twice(flags: &[Flag], keep: impl Fn(&str) -> bool) -> Run {
     quiet
         .import_path(&path, &FileImportOptions::default())
         .unwrap();
-    assert!(seen.lock().unwrap().is_empty(), "silent while the mode is off");
+    assert!(
+        seen.lock().unwrap().is_empty(),
+        "silent while the mode is off"
+    );
 
     for flag in flags {
         flag.set(true);

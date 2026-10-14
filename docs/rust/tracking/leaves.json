@@ -10650,10 +10650,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Sets Flag::AutocompleteDelay directly and times search_tags; the Help > debug > gui actions menu entry is never clicked (only the menu model lists the label), and nothing checks the checked state. Reference skips the delay when exact_match and also delays GetMediaPredicates; native delays every search and the test only uses a wildcard query. Tracker notes ('no equivalent diagnostics action') are stale. Tests: crates/hydrus-store/tests/debug_autocomplete_delay.rs:14 autocomplete_delay_mode_makes_each_search_take_three_seconds 2026-10-14 (#96): not made sound yet. Needs a recording of the reference's wildcard and exact-match searches timed through the real autocomplete path, a GUI test typing into the search box with the menu entry on, and the exact-match skip and the media-predicates delay ported. The daemon-side switch channel (debug_switches) now exists."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The real Help > debug > gui actions > autocomplete delay mode entry (checked state read back) is clicked and a wildcard search typed into the search box takes the reference's three seconds with it on and is quick with it off, with the same suggestions (oracle/fixtures/debug_report_modes_gui.json from oracle/record_debug_report_modes_gui.py: the real client's autocomplete_predicates read took 3.0 s on with a wildcard, 0.0 s off). The timing is bounded from one side. Not ported, no hydrus-rs event (DIFFERENCES.md): the exact-match search that is not delayed, the delayed media predicates lookup, and ending the delay on cancel. Test: crates/hydrus-gui/tests/gui/debug_report_modes.rs autocomplete_delay_mode_holds_a_typed_search_for_the_reference_s_three_seconds."
    }
   },
   {
@@ -10670,10 +10670,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Flips the flag directly on the thumbnail loader; no menu click or checked state. Expected pixels come from the native recovery() function (circular), no recording. Reference also applies it in the second ClientCaches site (line 1218); not covered. Tracker notes are stale. Tests: crates/hydrus-gui/src/thumbnails.rs:336 blurhash_mode_draws_the_blurhash_in_place_of_the_stored_thumbnail 2026-10-14 (#96): not made sound yet. Needs a recorder that renders the reference's blurhash bitmap (HydrusBlurhash) for fixture hashes so the pixels are compared with the recording rather than with the native recovery function, a menu-driven test, and the second ClientCaches site."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The real menu entry turns the mode on; the grid's thumbnails for the 30 files with a blurhash are, sampled at 16 points each, the pixels of the reference's own thumbnail cache bitmap with the mode off (stored thumbnail) and on (blurhash), to the digit (oracle/fixtures/debug_report_modes_gui.json, record_debug_report_modes_gui.py calls ThumbnailCache._GetThumbnailHydrusBitmap). Only the grid's bitmap site is ported: the reference's second site (the unsized thumbnail numpy image the mode makes empty) has no counterpart. Test: crates/hydrus-gui/tests/gui/debug_report_modes.rs blurhash_mode_draws_the_thumbnails_the_reference_draws_from_each_blurhash."
    }
   },
   {
@@ -10690,10 +10690,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Typed-literal message for one eviction on the thumbnail Cache; no menu path. Reference has three messages (adding, removing specific, removing oldest) and covers image and thumb caches; native tests only 'removing oldest' and the size format uses 'X/Y' human bytes rather than the reference's ConvertValueRangeToBytes. Stale tracker notes. Tests: crates/hydrus-gui-model/tests/model/debug_flags.rs:64 cache_report_mode_reports_each_eviction_with_the_sizes 2026-10-14 (#96): not made sound yet. Needs a recording of the reference's three messages (adding, removing specific, removing oldest) from the real image and thumbnail caches, the size format of ConvertValueRangeToBytes, and a menu-driven test."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The real menu entry is clicked and the real thumbnail grid, its cache limited to 1000 bytes, says 'adding' and 'removing oldest' lines whose words match the reference's (shaped with the cache, key and sizes named); a replay of the recorded run of a real DataCache (adding a to d, an eviction, a delete) on the native cache gives its 'adding', 'removing oldest' and 'removing specific' lines exactly, with its size-against-limit format, and nothing with the mode off (oracle/fixtures/debug_report_modes.json). Only the thumbnail cache is driven through the window; the image cache shares the code. Tests: crates/hydrus-gui/tests/gui/debug_report_modes.rs cache_report_mode_says_what_the_reference_says_as_the_thumbnail_cache_fills; crates/hydrus-gui-model/tests/model/debug_flags.rs."
    }
   },
   {
@@ -10812,10 +10812,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the menu toggle and the real maintenance runtime, but expected strings are typed literals. Reference reports in DAEMON._DoPreCall on every firing before the job checks idle; native reports only after its gates allow, and only for the two ported daemons. No recording. Stale tracker notes. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:415 daemon_report_mode_says_when_a_maintenance_daemon_does_a_job 2026-10-14 (#96): not made sound yet. The reference reports in DAEMON._DoPreCall on every firing, before the job checks idle, for every daemon; native reports only after its gates allow and for the two ported daemons. Needs a recording of the firing messages and the report moved before the gates."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The real menu entry is clicked and the real maintenance runtime reports 'maintain_trash doing a job.' and 'deferred_physical_deletes doing a job.' in the form of the line the reference's pool prints ('CallToThread doing a job.', recorded in oracle/fixtures/debug_report_modes.json), for every firing including one the gates turn away (as the reference reports before the job looks at idle), and nothing with the mode off. The daemon names differ from the reference's pool thread name (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/debug_menu_actions.rs daemon_report_mode_says_when_a_maintenance_daemon_does_a_job."
    }
   },
   {
@@ -10922,10 +10922,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Sets the flag directly on FileImporter; no menu. Only 4 of the ~25 reference messages (ClientImportFiles and ClientDB 'File import job ...') are emitted/tested, order differs (hash/done), typed literals. Stale tracker notes. Tests: crates/hydrus-import/tests/debug_reports.rs:11 file_import_report_mode_reports_the_import_job_as_it_goes 2026-10-14 (#96): not made sound yet. The importer runs in the daemon: the switch now reaches it (debug_switches), but ~21 of the reference's ~25 messages are not emitted, and none is recorded. Needs the messages ported and a recording of an import's reports."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The real importer, run on the recorded file with the mode on, says the 20 lines the reference said for a new file (created to done, including the check against the import options and the database job's steps) and the 5 it said when the file was already in the database, in order, with run-specific paths, the source label and Python tuples/lists shaped as Rust shapes them (oracle/fixtures/debug_report_modes.json, from the real Client API add_file); nothing with the mode off. The menu half (entry to the daemon-read switch) is in crates/hydrus-gui/tests/gui/debug_report_modes.rs the_report_mode_entries_turn_their_switches_on_and_pass_them_to_the_daemon. A decompression bomb test is reported before the mime line (DIFFERENCES.md). Test: crates/hydrus-import/tests/debug_reports.rs file_import_report_mode_says_what_the_reference_says_through_an_import."
    }
   },
   {
@@ -10942,10 +10942,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Sets the flag directly; no menu. Covers 2 messages; native formats hash as hex and mime as Debug name and omits the mime from the thumbnail request, unlike the reference str((hash, mime)); reference's 'Adding thumbnail', 'Adding file from string', 'Changing file ext', 'Adding file to client file structure' reports are absent. Stale tracker notes. Tests: crates/hydrus-store/tests/debug_file_report.rs:10 file_report_mode_reports_file_and_thumbnail_path_requests 2026-10-14 (#96): not made sound yet. Native formats hash and mime differently from str((hash, mime)) and lacks four of the reference's reports; needs those ported, a recording, and a menu-driven test."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The real importer with the mode on says the reference's 'Adding file to client file structure' and 'Adding thumbnail' lines for a new file and its 'File path request' line when the file is already in the database, as recorded from the real client (oracle/fixtures/debug_report_modes.json), the hash and type named as hydrus-rs names them; nothing with the mode off. Also ported from the reference's source, not recorded: wrong-sized thumbnail, file maintenance job, Deleting and Recycling lines; not ported: Changing file ext, Adding file from string, File path test, Thumbnail path test (no such step) (DIFFERENCES.md). Test: crates/hydrus-import/tests/debug_reports.rs file_report_mode_says_what_the_reference_says_through_an_import."
    }
   },
   {
@@ -11070,10 +11070,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu toggle and key events, but typed literals and only key events; reference gui_report_mode also reports mouse events, manage-tags panel opening and list-box virtual size, none tested or ported. Stale tracker notes. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:576 gui_report_mode_says_which_key_events_it_caught 2026-10-14 (#96): not made sound yet. The reference's gui report mode reports Qt key and mouse events (key ints, modifiers), the manage-tags panel and list-box sizes; only key events are ported and none is recorded. The Qt-specific event details have no counterpart; needs an owner decision on scope."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The real menu entry is clicked and the real main window's key callback is pressed with ten keys (plain, shifted, ctrl, alt, ctrl+f5, numpad, return, space, escape, f5): its 'key event caught' lines are the reference's for the same keys, recorded from the real main window's event filter; and the real Manage tags window opened on the same files says the reference's five lines (the services, one per service panel with its key, the tab count), the services named by their names; nothing with the mode off (oracle/fixtures/debug_report_modes_gui.json). Not ported: mouse events (not recorded), the Qt list boxes' virtual size lines (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/debug_report_modes.rs gui_report_mode_says_what_the_reference_says_for_keys_and_the_manage_tags_panel."
    }
   },
   {
@@ -11372,10 +11372,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Sets the flag directly (no menu click), drives the real engine against a local server and checks the redirect line and an error prefix against typed strings. Reference also reports domain-manager headers, request/response headers and URL class lookups; native does not (DIFFERENCES). The menu entry's reference semantics (clearing silent) are not mirrored by menu_bar's plain flip(). Tests: crates/hydrus-net/tests/debug_reports.rs:14 network_report_mode_reports_redirects_and_errors_unless_silent 2026-10-14 (#96): not made sound yet. The network engine runs in the daemon: the switch now reaches it. The reference also reports domain-manager headers, request and response headers and URL class lookups; those are not ported and nothing is recorded."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The real engine, fetching a redirect, a page and a 404 from a local server with the mode on, says the reports the reference said for the same three fetches, in the same order and kinds: job added, starting, referral URLs, the headers set for the domain, request and response headers (sorted, key: value), the redirect, the error as a notice, an exception line mentioning 404 and the server's text, and job done; the exact words match where they do not depend on this client's headers (oracle/fixtures/debug_report_modes.json). Nothing with the mode off. The menu entries' shared-mode semantics are in debug_menu_actions.rs network_report_mode_entries_share_the_mode_as_the_reference_does. Not ported: the URL class lookup report; the default header set differs (DIFFERENCES.md). Test: crates/hydrus-net/tests/debug_reports.rs network_report_mode_says_what_the_reference_says_unless_silent."
    }
   },
   {
@@ -11392,10 +11392,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "fix session",
-    "note": "Expected values are restated from the Python source (veto string, importable-mime filter, _SwitchBoolean), not recorded. The two network report entries now share the mode as ClientGUI._SwitchBoolean does (silent turns it on and sets silent, the plain entry flips it and clears silent), driven through the real help > debug > report modes menu, with the consumer (report_network) checked for the sink. Test: crates/hydrus-gui/tests/gui/debug_menu_actions.rs network_report_mode_entries_share_the_mode_as_the_reference_does The console half of silent mode is not observed (only that nothing reaches the popup sink). 2026-10-14 (#96): not made sound yet; as network-report-mode: needs a recording of the reference's reports in silent mode and the console half observed."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The same three fetches with the mode on and silent say the same lines the reference printed in silent mode (its Print) to the console and nothing to the popup sink (crates/hydrus-net/tests/debug_reports.rs, against oracle/fixtures/debug_report_modes.json); and the real help > debug > report modes entries share the one mode as the reference's _SwitchBoolean does, with the console half now observed through a console hook (crates/hydrus-gui/tests/gui/debug_menu_actions.rs network_report_mode_entries_share_the_mode_as_the_reference_does)."
    }
   },
   {
@@ -11820,10 +11820,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Toggles via the real menu and presses real keys. Unmatched line and 'matched on \"main_gui\" set to' prefix are typed; the command is printed as a number rather than the reference's repr(command), only the GetCommand-level messages exist (not the passing-through/parent/key-ord reports), and the unmatched text omits the reference's variants. Partial coverage, no recording. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:390 shortcut_report_mode_says_what_a_shortcut_matched 2026-10-14 (#96): not made sound yet. The reference reports Qt key ords and repr(command) in several places; native prints a command number and lacks the pass-through and parent reports. Needs a recording of the reference's reports for a few shortcuts and the missing reports ported."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The real menu entry is clicked and the real main window's key callback is pressed with the ten recorded keys: its reports are the reference's for the same keys, recorded from the real main window: 'Key shortcut passing through main window. I am in a state to catch it.' for each, and for f5 'matched on main_gui set to refresh page search/sort command' and 'matched to command ... It was processed.'; nothing with the mode off. The reference's names for the nine simple commands hydrus-rs runs equal the native ones (record_debug_report_modes_gui.py). Keyboard only: mouse, double-click retry and other sets' reports are ported from the source but not recorded (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/debug_report_modes.rs shortcut_report_mode_says_what_the_reference_says_for_each_key."
    }
   },
   {
@@ -11892,10 +11892,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Calls perceptual_hash with the flag set directly (no menu) and compares the eight lines with typed strings from ClientImagePerceptualHashes. Native omits the reference's 'loading image' line and shapes come from the native raster; no recording of the reference. Tests: crates/hydrus-media/tests/debug_reports.rs:10 phash_generation_report_mode_reports_each_stage 2026-10-14 (#96): not made sound yet. Needs the reference's reports recorded for a generated hash (ClientImagePerceptualHashes), compared with the native stages, and a menu-driven test; the generation runs in the daemon, which the switch now reaches."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The real tools' perceptual hash generation of the recorded file with the mode on says the nine lines the reference said (loading image, image, grey, tiny and tiny float shapes, generating dct, median, collapsing bytes, the hash), the median to 1e-9 and every other line exactly, ending on the hash the reference made; nothing with the mode off (oracle/fixtures/debug_report_modes.json). The import's own 'generating perceptual_hashes' lines are in the file import test. Test: crates/hydrus-media/tests/debug_reports.rs phash_generation_says_what_the_reference_says_for_the_same_file."
    }
   },
   {
@@ -11953,10 +11953,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Calls the model's test_call with the flag set directly and checks a loose 'KWargs are: ' prefix and a substring. Native prints a Rust arg list, not Python kwargs, and omits the env dump and the 'stdout:/stderr:/No stdout or stderr came back.' reports (DIFFERENCES). Not driven through the menu; no recording. Tests: crates/hydrus-gui-model/tests/model/debug_flags.rs:36 subprocess_report_mode_reports_the_call_before_it_is_made 2026-10-14 (#96): not made sound yet. The reference prints Python keyword arguments, an environment dump and stdout/stderr reports; native prints a Rust argument list and lacks the others. Needs a recording and a decision on whether to print Python-shaped text."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The real menu entry is clicked and the real external call test (Options > external programs > edit > test call) runs 'echo hello': with the mode on it says the environment dump, the KWargs line (hydrus-rs's arguments, not Python's dict), 'stdout: ...' and 'stderr: ...' as the reference said for the same command, a Python repr's quotes being Rust's (oracle/fixtures/debug_report_modes.json); a model replay covers three commands (stdout, stderr, neither). The environment dump is this process's, in the layout the reference's formatter gives its recorded environment. Nothing with the mode off. Tests: crates/hydrus-gui/tests/gui/debug_report_modes.rs subprocess_report_mode_says_what_the_reference_says_through_the_external_call_test; crates/hydrus-gui-model/tests/model/debug_flags.rs."
    }
   },
   {

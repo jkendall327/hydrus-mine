@@ -168,7 +168,11 @@ pub fn set_console(console: Option<Sink>) {
 
 /// `HydrusData.Print`: `text` to the console only.
 pub fn print(text: &str) {
-    match CONSOLE.lock().unwrap_or_else(PoisonError::into_inner).as_ref() {
+    match CONSOLE
+        .lock()
+        .unwrap_or_else(PoisonError::into_inner)
+        .as_ref()
+    {
         Some(console) => console(text),
         None => eprintln!("{text}"),
     }

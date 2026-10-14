@@ -230,8 +230,8 @@ pub fn test_call_cancellable(
                 };
                 // (a program that left a child holding a pipe open must not
                 // hold up a call that went well, unless it is being reported)
-                let wanted = !status.success()
-                    || hydrus_core::debug_flags::Flag::SubprocessReport.is_on();
+                let wanted =
+                    !status.success() || hydrus_core::debug_flags::Flag::SubprocessReport.is_on();
                 let (stdout, stderr) = if wanted {
                     (read(stdout), read(stderr))
                 } else {

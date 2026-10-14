@@ -228,6 +228,36 @@ pub fn fitted(
     if right_size(current, expected) {
         return (raster, false);
     }
+    // file report mode (`_GetThumbnailHydrusBitmap`): a wrong-sized thumbnail
+    // is made again from its file if the client has it, else only scaled
+    hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::FileReport, || {
+        let snapshot = store.snapshot();
+        let media = store
+            .read(|conn| hydrus_store::media::load(conn, &snapshot.services, None, &[id]))
+            .ok()
+            .and_then(|batch| batch.results.into_iter().next());
+        let hash = media.as_ref().map(|m| m.hash.to_hex()).unwrap_or_default();
+        let local = media.as_ref().is_some_and(|m| {
+            m.info.as_ref().is_some_and(|info| {
+                snapshot
+                    .storage
+                    .expected_file_path(&m.hash, info.mime)
+                    .is_some_and(|path| path.is_file())
+            })
+        });
+        format!(
+            "Thumbnail {hash} wrong size ({}x{} instead of {}x{}), {}.",
+            current.0,
+            current.1,
+            expected.0,
+            expected.1,
+            if local {
+                "scheduling regeneration from source"
+            } else {
+                "only scaling due to no local source"
+            }
+        )
+    });
     let interpolation = if expected.0 < current.0 || expected.1 < current.1 {
         Interpolation::Area
     } else {
@@ -374,71 +404,6 @@ impl ThumbnailLoader {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    // leaf: audit-options-help-debug-action-blurhash-mode
-    #[test]
-    fn blurhash_mode_draws_the_blurhash_in_place_of_the_stored_thumbnail() {
-        use hydrus_core::debug_flags::Flag;
-        let legacy = hydrus_testkit::legacy_fixture("basic");
-        let native = tempfile::tempdir().unwrap();
-        hydrus_store::import::import_legacy(
-            legacy.path(),
-            &native.path().join(hydrus_store::store::DB_FILE_NAME),
-        )
-        .unwrap();
-        let store = Store::open(native.path()).unwrap();
-        let id = store
-            .read(|conn| {
-                conn.query_row("SELECT hash_id FROM files ORDER BY hash_id", [], |r| {
-                    r.get::<_, HashId>(0)
-                })
-                .map_err(Into::into)
-            })
-            .unwrap();
-        assert!(thumbnail(&store, id).is_some(), "the file has a thumbnail");
-        store
-            .write(move |ctx| {
-                ctx.conn()
-                    .execute(
-                        "UPDATE files SET blurhash = 'LEHV6nWB2yk8pyo0adR*.7kCMdnj' WHERE hash_id = ?1",
-                        [id],
-                    )
-                    .map(|_| ())
-                    .map_err(Into::into)
-            })
-            .unwrap();
-        let loader = ThumbnailLoader::new(&store, 1);
-        let load = || {
-            loader.request(id, 1.0, 0);
-            let (_, _, _, pixels) = loader
-                .receive_timeout(Duration::from_secs(10))
-                .expect("a thumbnail");
-            pixels
-                .unwrap()
-                .image()
-                .to_rgba8()
-                .unwrap()
-                .as_bytes()
-                .to_vec()
-        };
-        let stored = load();
-        Flag::Blurhash.set(true);
-        let blurred = load();
-        Flag::Blurhash.set(false);
-        let settings = store.snapshot().thumbnails;
-        let expected = Pixels::new(&for_display(
-            recovery(&store, id, &settings, true),
-            &settings,
-            1.0,
-        ))
-        .image()
-        .to_rgba8()
-        .unwrap()
-        .as_bytes()
-        .to_vec();
-        assert_ne!(stored, blurred, "the mode changes what is drawn");
-        assert_eq!(blurred, expected, "the blurhash is what is drawn");
-    }
 
     #[test]
     fn a_thumbnail_turned_sideways_is_the_right_size() {

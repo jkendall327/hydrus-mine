@@ -272,8 +272,11 @@ fn content_command(
 /// The viewer's simple command for `gesture`: its own set's, else a custom
 /// set's that is turned on.
 fn viewer_command(settings: &Settings, gesture: &Gesture, custom: &[String]) -> Option<i32> {
-    command_in(settings, "media_viewer", gesture)
-        .or_else(|| custom.iter().find_map(|set| command_in(settings, set, gesture)))
+    command_in(settings, "media_viewer", gesture).or_else(|| {
+        custom
+            .iter()
+            .find_map(|set| command_in(settings, set, gesture))
+    })
 }
 
 pub(crate) fn viewer(

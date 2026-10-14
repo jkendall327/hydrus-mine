@@ -4493,19 +4493,69 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   (there is nothing in hydrus-rs for them to report on or change, or the
   place that would report isn't built).
 - The reports use the reference's wording where hydrus-rs does the same
-  step. Some differ: the subprocess report shows the argument list rather
-  than Python's keyword arguments and doesn't dump the environment; file
-  report mode shows the hash as hex and the mime by name; cache report mode
-  names the cache "thumbnail" or "image" and shows a numeric file id; gui
-  report mode reports only key and mouse events turned into shortcuts; the
-  daemon names are the reference's job names for the two maintenance daemons
-  that exist; network report mode has redirects and errors but not the
-  request and response headers.
+  step (the owner decided on 2026-10-14 that they are hydrus-rs-shaped: the
+  wording at the places hydrus-rs has the event, not Python's or Qt's
+  shapes). What differs from the reference's text:
+  - Python reprs are shaped as Rust shapes the same values: a file's
+    hash is hex and its type is named ("png") where the reference prints a
+    bytes literal and the type's number; the file info is a tuple of the same
+    fields with `false` and `None`; a list of perceptual hashes has no quotes;
+    a service is its name where the reference prints its Python object; the
+    main window is "main window" and the viewer "media viewer" where the
+    reference prints the object's repr; stdout and stderr are in double
+    quotes.
+  - Subprocess report mode says `KWargs are: args=[...], hide_terminal=...`,
+    not Python's keyword dict; the environment and what came back on stdout
+    and stderr are the reference's. Only the external programs, the external
+    call test and ffmpeg run are reported; hydrus-rs keeps no `RunSubprocess`.
+  - The reference's daemon report is the line of its `CallToThread` pool
+    ("CallToThread doing a job.") because its daemons run on that pool;
+    hydrus-rs reports the two maintenance daemons by their own names
+    ("maintain_trash doing a job."), each time they come due.
+  - Cache report mode names the cache "thumbnail" or "image" and its key is
+    the file's id, not a hash.
+  - File import report mode puts "mime" and "file info" at the media
+    analysis, which reads them there, so a decompression bomb test is
+    reported before them, not after "mime"; "generating thumbnail" and
+    "generating perceptual_hashes" narrate work the analysis does from one
+    decode of the file. A thumbnail's size in the "Adding thumbnail" line is
+    the size hydrus-rs's encoder gives it. The phash median is a float whose
+    last digits come from the arithmetic.
+  - File report mode has no `Changing file ext`, `Adding file from string`,
+    `File path test` or `Thumbnail path test` reports (there is no such step
+    in hydrus-rs), no Python stack trace after "Deleting" and "Recycling",
+    and the thumbnail path request names only the hash (hydrus-rs's
+    thumbnail path does not depend on the type). The "wrong size", "file
+    maintenance" and "Deleting"/"Recycling" lines are ported from the
+    reference's source, not recorded.
+  - Gui report mode reports key events and the manage tags panel opening
+    (without the tag repositories, which hydrus-rs does not list there). The
+    reference's mouse event reports and its list boxes' "Setting a virtual
+    size" lines (Qt layout) are not reported; mouse events are not recorded.
+  - Shortcut report mode has the reference's reports for keys passing
+    through the main window and the media viewer, a set's command, and the
+    command being processed. The reference's reports for a mouse press, for
+    a double-click that is tried again as a single click, for a key Qt
+    reports as not allowed, and for the sets the main window's children add
+    (its thumbnails' and media's) are not recorded. A key the window cannot
+    catch is reported as one it is not in a state to catch.
+  - Network report mode has the job, header and redirect reports and the
+    error as three lines; hydrus-rs sends its own set of default headers,
+    so the list the domain manager "sets" and the headers on the wire are
+    not the reference's. The reference's report of a URL class lookup
+    (`GetURLToFetchAndParser`) has no counterpart.
+  - Blurhash mode draws the grid's thumbnails from their blurhash (the
+    reference's `_GetThumbnailHydrusBitmap`); the reference's second site,
+    its unsized thumbnail numpy image, which the mode makes return nothing,
+    has no counterpart.
+  - The autocomplete delay holds the one search hydrus-rs makes. The
+    reference makes an exact-match search first (not delayed), a delayed
+    wildcard search, and a delayed lookup of media predicates, and the delay
+    ends early when the search is cancelled; hydrus-rs has no exact-match
+    stage, no media predicates lookup, and no cancelling.
 - "use faulthandler to log crashes" logs Rust panics (with a backtrace),
   not Python's fatal-signal tracebacks; a segfault inside a native library
   isn't logged.
-- "autocomplete delay mode" delays the tag autocomplete search only, not the
-  media predicates lookup the reference also delays.
 - Not offered: "thumbnail debug mode" (it lightens alternate canvas pages of Qt's
   thumbnail painting); the mpv "allow crashy files" modes (they switch
   Python mpv wrapper crash handling); "simulate a wake from sleep" (the GUI

@@ -592,7 +592,10 @@ fn pretty_header_name(name: &str) -> String {
         .map(|part| {
             let mut chars = part.chars();
             chars.next().map_or_else(String::new, |first| {
-                first.to_uppercase().chain(chars.flat_map(char::to_lowercase)).collect()
+                first
+                    .to_uppercase()
+                    .chain(chars.flat_map(char::to_lowercase))
+                    .collect()
             })
         })
         .collect::<Vec<_>>()

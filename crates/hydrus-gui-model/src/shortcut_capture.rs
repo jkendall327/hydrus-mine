@@ -99,7 +99,10 @@ pub fn command_name(command: i32) -> String {
         .iter()
         .flat_map(|set| commands(set))
         .find(|(id, _)| *id == command)
-        .map_or_else(|| format!("command {command}"), |(_, name)| (*name).to_owned())
+        .map_or_else(
+            || format!("command {command}"),
+            |(_, name)| (*name).to_owned(),
+        )
 }
 
 /// Only commands with an existing native executor are offered in this slice.

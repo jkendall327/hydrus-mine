@@ -52,6 +52,7 @@ def record(session):
     controller = session.controller
     gui = controller.gui
     import re
+    import threading
     seen = []
     original = HydrusData.ShowText
 
@@ -70,7 +71,8 @@ def record(session):
         raise ValueError(labels)
 
     status, _, body = session.api.request('GET', '/get_files/search_files', query={'tags': json.dumps(['system:everything']), 'return_file_ids': 'true'})
-    file_ids = json.loads(body)['file_ids'][:2]
+    all_file_ids = json.loads(body)['file_ids']
+    file_ids = all_file_ids[:2]
     out = {'menu_path': ['help', 'debug', 'report modes']}
 
     def go():
@@ -129,6 +131,25 @@ def record(session):
             panel.deleteLater()
             if label:
                 switch(label)
+        # blurhash mode: the thumbnail cache's own bitmap for each file, as
+        # the grid asks for it, with the mode off and on
+        import hashlib
+        out['blurhash'] = []
+        cache = controller.thumbnails_cache
+        for result in controller.Read('media_results_from_ids', all_file_ids):
+            row = {'hash': result.GetHash().hex(), 'mime': result.GetMime(), 'blurhash': result.GetFileInfoManager().blurhash, 'resolution': list(result.GetResolution() or [])}
+
+            def bitmap():
+                image = cache._GetThumbnailHydrusBitmap(result).GetNumpyImage()
+                height, width = image.shape[0], image.shape[1]
+                samples = [[int(v) for v in image[min(height - 1, (y * height) // 4 + height // 8), min(width - 1, (x * width) // 4 + width // 8)]] for y in range(4) for x in range(4)]
+                return {'shape': list(image.shape), 'sha256': hashlib.sha256(image.tobytes()).hexdigest(), 'samples': samples}
+            row['off'] = bitmap()
+            switch('blurhash mode')
+            assert HG.blurhash_mode
+            row['on'] = bitmap()
+            switch('blurhash mode')
+            out['blurhash'].append(row)
         services = controller.services_manager.GetServices((HC_LOCAL_TAG, HC_TAG_REPOSITORY))
         out['tag_services'] = [{'name': s.GetName(), 'key': s.GetServiceKey().hex()} for s in services]
         return out
@@ -136,11 +157,55 @@ def record(session):
     from hydrus.core import HydrusConstants as HC
     global HC_LOCAL_TAG, HC_TAG_REPOSITORY
     HC_LOCAL_TAG, HC_TAG_REPOSITORY = HC.LOCAL_TAG, HC.TAG_REPOSITORY
+    def autocomplete():
+        """Help > debug > gui actions > autocomplete delay mode: how long the
+        reference's autocomplete reads take with it on and off."""
+        import time
+        from hydrus.client import ClientConstants as CC
+        from hydrus.client.metadata import ClientTags
+        from hydrus.client.search import ClientSearchFileSearchContext, ClientSearchTagContext
+        from hydrus.client import ClientThreading
+
+        def toggle():
+            def flip():
+                menu, _ = gui._InitialiseMenuInfoHelp()
+                find(menu, ['debug', 'gui actions', 'autocomplete delay mode']).trigger()
+                menu.deleteLater()
+            controller.CallBlockingToQt(gui, flip)
+
+        context = ClientSearchFileSearchContext.FileSearchContext(tag_context=ClientSearchTagContext.TagContext())
+
+        def timed(read, *args, **kwargs):
+            start = time.monotonic()
+            result = read(*args, **kwargs)
+            return {'seconds': round(time.monotonic() - start, 1), 'results': len(result)}
+
+        def reads():
+            return {
+                'wildcard search': timed(controller.Read, 'autocomplete_predicates', ClientTags.TAG_DISPLAY_DISPLAY_ACTUAL, context, search_text='b*', job_status=ClientThreading.JobStatus()),
+                'exact match search': timed(controller.Read, 'autocomplete_predicates', ClientTags.TAG_DISPLAY_DISPLAY_ACTUAL, context, search_text='blue', exact_match=True, job_status=ClientThreading.JobStatus()),
+                'media predicates': timed(controller.Read, 'media_predicates', ClientSearchTagContext.TagContext(), {}, job_status=ClientThreading.JobStatus()),
+            }
+
+        result = {'menu_path': ['help', 'debug', 'gui actions', 'autocomplete delay mode'], 'off': reads()}
+        toggle()
+        assert HG.autocomplete_delay_mode
+        result['on'] = reads()
+        # cancelled half a second in, a delayed read gives up at once
+        job = ClientThreading.JobStatus(cancellable=True)
+        threading.Timer(0.5, job.Cancel).start()
+        result['cancelled'] = timed(controller.Read, 'media_predicates', ClientSearchTagContext.TagContext(), {}, job_status=job)
+        toggle()
+        assert not HG.autocomplete_delay_mode
+        return result
+
     try:
-        return controller.CallBlockingToQt(gui, go)
+        out = controller.CallBlockingToQt(gui, go)
+        out['autocomplete'] = autocomplete()
+        return out
     finally:
         HydrusData.ShowText = original
-        HG.shortcut_report_mode = HG.gui_report_mode = False
+        HG.shortcut_report_mode = HG.gui_report_mode = HG.autocomplete_delay_mode = HG.blurhash_mode = False
 
 
 def main():

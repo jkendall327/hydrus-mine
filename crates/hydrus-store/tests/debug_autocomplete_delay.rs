@@ -11,7 +11,6 @@ use hydrus_store::{
     autocomplete::{CountDomain, TagDisplayType, TagQuery, TagSearchScope, search_tags},
 };
 
-// leaf: audit-options-help-debug-action-autocomplete-delay-mode
 #[test]
 fn autocomplete_delay_mode_makes_each_search_take_three_seconds() {
     let dir = tempfile::tempdir().unwrap();
