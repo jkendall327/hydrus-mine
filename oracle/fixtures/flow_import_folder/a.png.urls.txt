@@ -1,0 +1,2 @@
+https://example.com/post/1
+https://example.com/other/1
