@@ -3192,11 +3192,9 @@ commands with a native executor (three for the main window, six for the
 viewers), so editing a default binding for another command replaces it with
 one of those, and only those run. Default bindings with data are shown, not
 run. The viewer's "edit shortcuts" opens the whole options dialog rather
-than a shortcuts dialog of its own. A custom set can't take a built-in set's name (the reference vetoes it
-too, "That name is reserved--please pick another!", recorded in
-`oracle/fixtures/shortcuts_panel.json`). "restore defaults" chooses from
-buttons rather than the reference's list dialog (same entries, same order),
-and the help shows in a message window.
+than a shortcuts dialog of its own. A custom set can't take a built-in set's name (the reference only
+keeps custom names apart from each other). "restore defaults" chooses from
+buttons rather than a list, and the help shows in a message window.
 
 Options > shortcuts' custom-set add/edit/delete, "restore defaults" and the
 command editor's mouse capture (press/release, double-click, vertical wheel,
@@ -4890,11 +4888,6 @@ potential duplicates (as the reference does as groups merge), so approving
   `oracle/fixtures/options_search_known_differences.json`) but in layout
   order; the reference lists them in the order Qt finds the widgets (the
   order they were made in).
-- Namespace colours "edit": as in the reference, every namespace edited
-  (accepted or cancelled) is replaced in the list and so is no longer
-  selected. The picker is hydrus-rs's own colour window, not Qt's
-  `QColorDialog`; the reference offers the selected entries in the arbitrary
-  order of a Python set.
 - The preview window's top-right background draws the file's URLs after its
   locations by hydrus-rs's default (every URL class, unmatched URLs too); the
   reference's default shows none of the `basic` file's.

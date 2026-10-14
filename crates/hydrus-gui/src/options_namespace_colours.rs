@@ -80,7 +80,6 @@ fn edit_next(
         return;
     }
     let (namespace, [red, green, blue]) = queue.remove(0);
-    let original = [red, green, blue];
     let Ok(picker) = crate::app_title::new::<crate::GuiColourPickerWindow>() else {
         return;
     };
@@ -98,10 +97,9 @@ fn edit_next(
             if let Some(picker) = weak.upgrade() {
                 let _ = picker.hide();
             }
-            // (a cancelled picker gives the colour back, and the entry is
-            // replaced all the same, as the reference does)
-            if valid() {
-                let rgb = rgb.unwrap_or(original);
+            if let Some(rgb) = rgb
+                && valid()
+            {
                 list.borrow_mut().set_colour(namespace.as_deref(), rgb);
                 editor
                     .borrow_mut()

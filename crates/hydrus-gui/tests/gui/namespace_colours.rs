@@ -73,7 +73,6 @@ fn rgb(colour: slint::Color) -> [u8; 3] {
 
 // leaf: audit-options-tag-presentation-namespace-colours-add
 // leaf: audit-options-tag-presentation-namespace-colours-delete
-// leaf: audit-options-tag-presentation-namespace-colours-namespace-colours-editor
 // leaf: audit-options-tag-presentation-other-rendering-namespace-for-the-or-top-row
 #[test]
 fn actual_namespace_questions_cancel_retired_owners_reopen_and_live_colours_replay_qt() {

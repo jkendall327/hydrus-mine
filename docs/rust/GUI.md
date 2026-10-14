@@ -5539,8 +5539,7 @@ Options > tag suggestions: "Default notebook page" is switched off while the
 layout is side-by-side, as in the reference. Choosing in any dropdown now
 refreshes which rows are enabled. The thumbnails' status bar shows a single
 selected file's line from the held clock (so tests can fix "imported 2 days
-ago"). Namespace colours "edit" deselects what it edited. The recorded
-behaviour of the shortcuts panel, closing importer pages and tabs, the
-options search and Apply, the preview background and pop-in, thumbnail fades
-and tag migration conversions and pair counts is replayed in the tests named
+ago"). The recorded
+behaviour of closing importer pages, the
+options search and Apply, the preview background and pop-in and thumbnail fades is replayed in the tests named
 by each leaf's recheck note.
