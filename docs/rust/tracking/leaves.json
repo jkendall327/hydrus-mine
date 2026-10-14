@@ -93,10 +93,10 @@
     "Native applies/recalculates immediately; reference background sync status and saved default service tab are unavailable."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives the application window (add/change source, Apply, reopen, empty queue, refresh of pages/viewer) and the model test covers add/reorder/remove/reopen/daemon, but all expected values are typed. oracle/fixtures/tag_display.json application_labels/initial/reordered/empty exist and no Rust test reads them. Tests: crates/hydrus-gui/tests/gui/tag_display.rs:44 dialogs_cancel_nested_editors_persist_and_refresh_locked_pages_and_viewer (w4/w5/w6); crates/hydrus-gui-model/tests/model/tag_application_queues.rs:118"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The real 'manage where tag siblings and parents apply' window is opened and compared with tag_display.json (the reference's EditTagDisplayApplication on the repositories fixture): its heading, explanation and sync line (the recording showed native had different intro text and no sync line; fixed), and the sibling queue put into the recorded initial, reversed and emptied states with the add/up/remove buttons. The service dropdown standing in for the reference's tab per service is in DIFFERENCES.md. Test: crates/hydrus-gui/tests/gui/tag_display.rs the_application_window_says_what_the_reference_says_and_orders_sibling_sources_as_recorded; the store-level queue test is crates/hydrus-gui-model/tests/model/tag_application_queues.rs."
    }
   },
   {
@@ -8581,10 +8581,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real checkbox (label, box, default off) and the real sort-choice path (lib.rs:506 sort_chosen) are driven, but what the behaviour does (default sort saved only when the option is on, new pages open with it) is typed from ClientGUIMediaResultsPanelSortCollect._UserChoseASort; no recording of the reference doing it (sidebar_sort_collect_cogs.json forces the option off). Reference calls _UserChoseASort from the sort-order choice too; the test covers order and type. Tests: crates/hydrus-gui/tests/gui/options_gui_misc.rs:12 a_chosen_sort_becomes_the_default_only_if_the_option_says_so; sidebar_context_cogs.rs:717"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The option is set in the real Options window, then a sort type is chosen and the order flipped on a real search page, and whether the default sort follows (and what a new page opens with) is compared with default_sort_update.json, recorded from the reference's real sort control with the option off and on (type and order choices both save). Compared as relations (default equals page sort; default changed) because the reference and native number their sort types differently. Tests: crates/hydrus-gui/tests/gui/options_gui_misc.rs choosing_a_sort_updates_the_default_as_the_reference_s_sort_control_does."
    }
   },
   {

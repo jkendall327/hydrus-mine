@@ -1970,7 +1970,11 @@ file/tag domains. Domain changes use the native location selector, including all
 known files and existing combined domains outside advanced mode. Ctrl+Space
 fetches search/manage-tags suggestions manually. The advanced `manage where tag
 siblings and parents apply` window edits ordered source queues in ListTable;
-empty queues disable that relationship kind. Both dialogs stage changes until
+empty queues disable that relationship kind. The window opens with the reference's
+"THIS IS COMPLICATED, THINK CAREFULLY" heading, its explanation and its sync line
+(green when sync runs all the time, orange otherwise, by the two sync switches), as
+recorded in `tag_display.json`; the recorded queue states (services in order,
+reversed, emptied) are reached with the add, up and remove buttons. Both dialogs stage changes until
 Apply, disable parent editing while a nested editor is open, close owned nested
 editors on cancel and preserve unrelated settings.
 Applying updates selection tags on all open pages (including locked pages),

@@ -1432,7 +1432,7 @@ uses a zero source id solely to represent an explicitly empty queue; absent queu
 retain the default of applying the service's own rules. Deleting the last source
 from an explicit queue preserves its empty intent. Native settings preserve
 unknown JSON fields and unedited service settings. The application
-window uses ordered native lists and an inline source selector. Display/search
+window uses ordered native lists and an inline source selector, and a service dropdown where the reference has a tab per tag service. Display/search
 uses a numeric zero for the reference's nullable "always autocomplete" threshold.
 Manual/background sibling/parent sync remains unimplemented.
 Autocomplete configuration refresh preserves any open manage-tags draft; its
