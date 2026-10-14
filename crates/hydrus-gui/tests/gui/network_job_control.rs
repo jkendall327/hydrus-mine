@@ -268,6 +268,30 @@ fn page_cog_rules_cancel_apply_and_error_owner_boundary() {
         error.get_error_text(),
         recorded["messages"][0][1].as_str().unwrap()
     );
+    // (our windows add the client's name after the message box's title)
+    assert!(
+        error
+            .get_composed_title()
+            .starts_with(recorded["messages"][0][0].as_str().unwrap()),
+        "the window is titled as the reference's message box"
+    );
+    // the cog's two entries are the recorded menu's labels, in its order (the
+    // labels are in the .slint, in the error menu's block)
+    let source = include_str!("../../ui/importing.slint");
+    let block = &source[source.find("error-menu := ContextMenuArea").unwrap()..];
+    let block = &block[..block.find("Button {").unwrap()];
+    let shipped: Vec<&str> = block
+        .split("MenuItem { title: \"")
+        .skip(1)
+        .map(|rest| rest.split('"').next().unwrap())
+        .collect();
+    let recorded_labels: Vec<&str> = recorded["menus"]["error"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|entry| entry["label"].as_str().unwrap())
+        .collect();
+    assert_eq!(shipped, recorded_labels);
     window.invoke_control_action(false, 9);
     assert_eq!(
         copies.borrow().last().unwrap(),
@@ -294,15 +318,14 @@ fn page_cog_rules_cancel_apply_and_error_owner_boundary() {
         queue: 1,
         gallery: false,
     });
-    // (the reference's error button is hidden once its owner clears the error,
-    // and what it held is gone: `error_button_hidden`, `owner_clear_error`)
+    // (the reference's error button is hidden once its owner clears the error:
+    // `error_button_hidden`; the copy below finds nothing left to copy)
     assert_eq!(
         !window.get_file_cog().has_error,
         recorded["actions"]["error_button_hidden"]
             .as_bool()
             .unwrap()
     );
-    assert!(recorded["actions"]["owner_clear_error"].is_null());
     let count = copies.borrow().len();
     window.invoke_control_action(false, 9);
     assert_eq!(copies.borrow().len(), count);

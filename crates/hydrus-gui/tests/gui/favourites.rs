@@ -159,6 +159,13 @@ use hydrus_core::pages::{FavouriteSearch, PageCollect, PageSort, PageSortBy, Sor
 use hydrus_gui::favourites::{self, Describe, Edit, Manager};
 use hydrus_gui::main_menu::Entry;
 
+// `CC.SORT_FILES_BY_*` (ClientConstants.py) as `PageSortBy::System` takes them
+const SORT_FILES_BY_FILESIZE: i64 = 0;
+const SORT_FILES_BY_IMPORT_TIME: i64 = 2;
+const SORT_FILES_BY_WIDTH: i64 = 5;
+// `ClientTags.TAG_DISPLAY_DISPLAY_ACTUAL`
+const TAG_DISPLAY_DISPLAY_ACTUAL: i64 = 1;
+
 fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();
@@ -226,13 +233,13 @@ fn recorded_rows(store: &Store, recorded: &Json) -> Vec<FavouriteSearch> {
                 spec => {
                     let by = match spec[0].as_str().unwrap() {
                         "system" => PageSortBy::System(match spec[1].as_str().unwrap() {
-                            "SORT_FILES_BY_IMPORT_TIME" => 2,
-                            "SORT_FILES_BY_WIDTH" => 5,
+                            "SORT_FILES_BY_IMPORT_TIME" => SORT_FILES_BY_IMPORT_TIME,
+                            "SORT_FILES_BY_WIDTH" => SORT_FILES_BY_WIDTH,
                             other => panic!("{other}"),
                         }),
                         "namespaces" => PageSortBy::Namespaces {
                             namespaces: strings(&spec[1]),
-                            tag_display_type: 1,
+                            tag_display_type: TAG_DISPLAY_DISPLAY_ACTUAL,
                         },
                         _ => PageSortBy::Rating(service_key(store, spec[1].as_str().unwrap())),
                     };
@@ -561,9 +568,9 @@ fn star_menu_entries_load_search_sort_and_collect_as_the_reference_does() {
                 spec => Some(PageSort {
                     tag_context: hydrus_core::search::context::TagContext::default(),
                     by: PageSortBy::System(match spec[0].as_str().unwrap() {
-                        "SORT_FILES_BY_FILESIZE" => 0,
-                        "SORT_FILES_BY_IMPORT_TIME" => 2,
-                        "SORT_FILES_BY_WIDTH" => 5,
+                        "SORT_FILES_BY_FILESIZE" => SORT_FILES_BY_FILESIZE,
+                        "SORT_FILES_BY_IMPORT_TIME" => SORT_FILES_BY_IMPORT_TIME,
+                        "SORT_FILES_BY_WIDTH" => SORT_FILES_BY_WIDTH,
                         other => panic!("{other}"),
                     }),
                     ascending: spec[1].as_bool().unwrap(),
@@ -645,7 +652,6 @@ fn star_menu_entries_load_search_sort_and_collect_as_the_reference_does() {
     assert!(differences.is_empty(), "{}", differences.join("\n"));
 }
 
-// leaf: audit-options-favourites-edit-predicates
 #[test]
 fn typed_predicates_and_double_clicks_edit_the_search_as_the_references_editor_does() {
     // (`record_favourite_predicates.py`: the reference's editor on a search of

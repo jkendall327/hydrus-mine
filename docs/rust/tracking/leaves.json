@@ -4237,9 +4237,9 @@
    ],
    "recheck": {
     "date": "2026-10-13",
-    "class": "likely-good",
+    "class": "source-restated",
     "by": "Claude session (#97 phase 2, w4-r5)",
-    "note": "The reference's converter was recorded under five system zones (New York, Kolkata, Lord Howe, Auckland, UTC; date_encode_local.json) with winter and summer timestamps and the offset then in force; the native encode, given that offset, gives the same text, including naive %z/%Z. Not sound: the offset is injected into the encoder rather than read from the machine's clock in a test, and the editor's live preview is only compared under UTC (string_date_editor.json)."
+    "note": "Carried, untagged. The reference's converter was recorded under five system zones (New York, Kolkata, Lord Howe, Auckland, UTC; date_encode_local.json) with winter and summer timestamps and the offset then in force, and string_dates.rs local_encode_adds_the_current_offset_as_the_reference_does_in_other_zones compares the native encode, given that offset, with them (including naive %z/%Z). That test hands the offset to encode_at; it does not drive the production path that reads the machine's clock (encode), and the editor's live preview is only compared under UTC (string_date_editor.json), so the leaf's 'current local offset' behaviour stays restated, not proved, and the test carries no tag."
    }
   },
   {
@@ -8214,9 +8214,9 @@
    ],
    "recheck": {
     "date": "2026-10-13",
-    "class": "sound",
+    "class": "weak",
     "by": "Claude session (#97 phase 2, w4-r5)",
-    "note": "gui/favourites.rs typed_predicates_and_double_clicks_edit_the_search_as_the_references_editor_does opens the real favourite editor from 'save this search' on a page of 'blue eyes' and replays oracle/fixtures/favourite_predicates.json (record_favourite_predicates.py: the reference's real EditFavouriteSearchPanel with typed text and QTest Return/double-click events): 14 steps of tags, a repeated tag (which removes it), a differently-cased tag, a negated tag, a wildcard, a namespace wildcard, extra spaces, system:limit and system:everything (which a tag takes out), and double-click removals; after each the list as drawn (order included) and the text left in the box equal the recording. Not matched, so not recorded (DIFFERENCES.md): text beginning 'system:' that is not a system predicate, and a wildcard that matches a suggestion. The stale tracker notes about missing autocomplete and system editors apply to the leaf's other rows."
+    "note": "gui/favourites.rs typed_predicates_and_double_clicks_edit_the_search_as_the_references_editor_does opens the real favourite editor from 'save this search' on a page of 'blue eyes' and replays oracle/fixtures/favourite_predicates.json (record_favourite_predicates.py: the reference's real EditFavouriteSearchPanel with typed text and QTest Return/double-click events): 14 steps of tags, a repeated tag (which removes it), a differently-cased tag, a negated tag, a wildcard, a namespace wildcard, extra spaces, system:limit and system:everything (which a tag takes out), and double-click removals; after each the list as drawn (order included) and the text left in the box equal the recording. Weak, not sound, and untagged: two typed-entry cases differ from the reference and are not recorded (DIFFERENCES.md): text beginning 'system:' that is not a system predicate shows an error here where the reference's Return enters system:everything, and a wildcard such as 'sam*' enters the highlighted first suggestion here where the reference's Return entered the wildcard; and the leaf itself is still partial (the reference's cog, favourite predicates and fetch/children tabs are absent). The stale tracker notes about missing autocomplete and system editors apply to the leaf's other rows."
    }
   },
   {

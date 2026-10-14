@@ -111,6 +111,33 @@ fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_owners
         let sizes = &step[page][if preview { "vertical" } else { "horizontal" }];
         sizes[usize::from(preview)].as_f64().unwrap() as f32
     };
+    // the sizes saved at a step: [sidebar width, -preview height]
+    let saved_at = |action: &str| -> (i64, i64) {
+        let step = fixture["steps"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|s| s["action"] == action)
+            .unwrap_or_else(|| panic!("a recorded {action:?} step"));
+        (
+            step["saved"][0].as_i64().unwrap(),
+            step["saved"][1].as_i64().unwrap(),
+        )
+    };
+    // the sizes the recording dragged to (`vertical` is [rest, preview])
+    let dragged_sidebar = recorded("drag sidebar", "one", false);
+    let dragged_preview = recorded("drag preview", "one", true);
+    let drag_step = fixture["steps"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|s| s["action"] == "drag preview")
+        .unwrap();
+    assert_eq!(
+        drag_step["one"]["sash"][1].as_i64().unwrap(),
+        -(dragged_preview as i64),
+        "the sash is the preview's height, negated"
+    );
     assert_eq!(
         store.read(page_layout::load).unwrap(),
         PageLayout::default()
@@ -164,7 +191,7 @@ fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_owners
             store.read(page_layout::load).unwrap().hpos,
             store.read(page_layout::load).unwrap().vpos
         ),
-        (0, -295),
+        saved_at("save hidden unsaved preview"),
         "hidden inner preview retains the unsaved drag height"
     );
     store
@@ -175,9 +202,14 @@ fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_owners
         ui.get_layout_page_key(),
         ui.get_layout_epoch(),
         false,
-        470.0,
+        dragged_sidebar,
     );
-    ui.invoke_sidebar_resized(ui.get_layout_page_key(), ui.get_layout_epoch(), true, 295.0);
+    ui.invoke_sidebar_resized(
+        ui.get_layout_page_key(),
+        ui.get_layout_epoch(),
+        true,
+        dragged_preview,
+    );
     render(&native);
     let first = ui.get_layout_page_key();
     let epoch = ui.get_layout_epoch();
@@ -218,8 +250,8 @@ fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_owners
     );
     new_page(&ui, &bound);
     render(&native);
-    dim(ui.get_sidebar_actual_width(), 470.0);
-    dim(ui.get_preview_actual_height(), 295.0);
+    dim(ui.get_sidebar_actual_width(), dragged_sidebar);
+    dim(ui.get_preview_actual_height(), dragged_preview);
     // Per-live-page geometry survives closing/reopening; defaults are independent.
     ui.invoke_sidebar_resized(
         ui.get_layout_page_key(),
@@ -254,7 +286,11 @@ fn real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_owners
     .unwrap();
     sidebar(&ui, SAVE);
     let saved = store.read(page_layout::load).unwrap();
-    assert_eq!((saved.hpos, saved.vpos), (0, -295));
+    assert_eq!(
+        (saved.hpos, saved.vpos),
+        saved_at("save while hidden"),
+        "saved while the sidebar is hidden"
+    );
     // Restore reaches current and inactive pages, not just a single UI property.
     store
         .write(|ctx| {
@@ -476,6 +512,18 @@ fn exit_saves_the_current_pages_sizes_only_when_the_menu_says_to_as_the_referenc
         ui.invoke_sidebar_resized(key.clone(), epoch, false, moved.0);
         ui.invoke_sidebar_resized(key, epoch, true, moved.1);
         render(&native);
+        // refusing the exit question leaves the window open and the saved
+        // sizes as they were (the recording's `before`)
+        ui.window()
+            .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+        ui.invoke_answer(false);
+        assert!(ui.window().is_visible(), "the exit was refused");
+        let kept = store.read(page_layout::load).unwrap();
+        assert_eq!(
+            serde_json::json!([kept.hpos, kept.vpos]),
+            exit_case(&exit, enabled)["before"]["saved"],
+            "a refused exit saves nothing"
+        );
         ui.window()
             .dispatch_event(slint::platform::WindowEvent::CloseRequested);
         ui.invoke_answer(true);
