@@ -313,6 +313,8 @@ pub enum Command {
     /// Forget a repository's pending content, asking first.
     ForgetPending(ServiceKey),
     OpenUrl(&'static str),
+    /// A help page, from the local help or by asking (`OpenDocumentation`).
+    OpenHelp(&'static str),
     AdvancedMode,
     /// Open the options window.
     Options,
@@ -1372,7 +1374,7 @@ fn help_menu(facts: &Facts) -> Entry {
     menu(
         "&help",
         vec![
-            link("open help", "https://hydrusnetwork.github.io/hydrus/"),
+            item("open help", Command::OpenHelp("index.html")),
             menu(
                 "links",
                 vec![
@@ -1399,9 +1401,9 @@ fn help_menu(facts: &Facts) -> Entry {
                     link("patreon", "https://www.patreon.com/hydrus_dev"),
                 ],
             ),
-            link(
+            item(
                 "changelog",
-                "https://hydrusnetwork.github.io/hydrus/changelog.html",
+                Command::OpenHelp("changelog.html#version_688"),
             ),
             SEP,
             todo(dots("add the PTR")),

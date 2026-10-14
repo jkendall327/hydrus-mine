@@ -46,6 +46,7 @@ pub mod debug_fetch;
 pub mod debug_long_popup;
 pub mod debug_session_reload;
 pub mod delete_files_window;
+pub mod documentation;
 pub mod domain_mask_entry;
 pub mod downloader_definitions_window;
 pub mod downloader_display_window;
