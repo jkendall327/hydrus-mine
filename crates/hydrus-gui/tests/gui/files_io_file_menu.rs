@@ -106,23 +106,69 @@ fn last_done(store: &Store) -> i64 {
 
 const EXIT_QUESTION: &str =
     "Are you sure you want to exit the client? (Will auto-yes in 15 seconds)";
-const RESTART_QUESTION: &str =
-    "Are you sure you want to restart the client? (Will auto-yes in 15 seconds)";
 
 // leaf: audit-options-menu-menu-file-exit
 // leaf: audit-options-menu-menu-file-restart
 // leaf: audit-options-menu-menu-file-exit-force-maintenance
 #[test]
-fn exit_restart_and_force_maintenance_ask_as_the_reference_does_and_close_the_client() {
+fn exit_restart_and_force_maintenance_replay_the_reference_s_file_menu() {
+    // oracle/record_file_menu.py: the real File menu actions, "confirm client
+    // exit" on and off, the question answered yes and no
+    let recorded = hydrus_testkit::fixture_json("file_menu.json");
+    let rows = recorded["exits"].as_array().unwrap();
+    assert_eq!(rows.len(), 9);
     let (_dirs, store) = fixture_store("basic");
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
-    ui.show().unwrap();
-    let _bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     hydrus_gui::client_exit::RESTART.store(false, Ordering::SeqCst);
 
-    // the entries are all there, in the reference's order (confirmation on:
-    // choosing exit asks the exit question, answered no)
+    for row in rows {
+        let menu = row["menu"][0].as_str().unwrap();
+        let confirm = row["confirm"].as_bool().unwrap();
+        let yes = row["answer"] == "yes";
+        let name = format!("{menu}, confirm {confirm}, answer {}", row["answer"]);
+        ui.show().unwrap();
+        let _bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+        // (never run shutdown work unless forced; last done a moment ago)
+        let recently = hydrus_core::time::TimestampMs::now().secs() - 10;
+        exit_settings(&store, confirm, 0, recently);
+        file_menu(&ui, &[menu]);
+        let questions = row["questions"].as_array().unwrap();
+        if questions.is_empty() {
+            assert!(ui.get_question().is_empty(), "{name}: no question");
+        } else {
+            assert_eq!(questions.len(), 1, "{name}");
+            assert_eq!(
+                ui.get_question(),
+                questions[0]["message"].as_str().unwrap(),
+                "{name}"
+            );
+            assert_eq!(questions[0]["kwargs"]["auto_yes_time"], 15, "{name}");
+            ui.invoke_answer(yes);
+        }
+        let exited = !ui.window().is_visible();
+        assert_eq!(exited, row["exited"].as_bool().unwrap(), "{name}: exited");
+        assert_eq!(
+            hydrus_gui::client_exit::RESTART.swap(false, Ordering::SeqCst),
+            row["restart"].as_bool().unwrap(),
+            "{name}: restart"
+        );
+        assert_eq!(
+            last_done(&store) > recently,
+            row["do_shutdown_work"].as_bool().unwrap(),
+            "{name}: shutdown work"
+        );
+        // (backed out of: the next plain close is a plain exit again)
+        if !exited {
+            request_close(&ui);
+            assert_eq!(ui.get_question(), EXIT_QUESTION, "{name}: back to exit");
+            ui.invoke_answer(false);
+        }
+    }
+
+    // the entries are all there, in the reference's order
+    ui.show().unwrap();
+    let _bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     exit_settings(&store, true, 0, 0);
     let shown = file_menu(&ui, &["exit"]);
     let labels: Vec<&str> = shown[0].iter().map(|l| l.0.as_str()).collect();
@@ -130,50 +176,42 @@ fn exit_restart_and_force_maintenance_ask_as_the_reference_does_and_close_the_cl
         &labels[labels.len() - 3..],
         ["restart", "exit/force maintenance", "exit"]
     );
-    assert_eq!(ui.get_question(), EXIT_QUESTION);
     ui.invoke_answer(false);
-    assert!(ui.window().is_visible(), "declined, the client stays");
-    assert!(ui.get_question().is_empty());
-    assert_eq!(last_done(&store), 0, "no maintenance asked for or run");
-
-    // restart asks its own question; declined, it neither restarts nor
-    // leaves the next plain close restarting
-    file_menu(&ui, &["restart"]);
-    assert_eq!(ui.get_question(), RESTART_QUESTION);
-    ui.invoke_answer(false);
-    assert!(ui.window().is_visible());
-    assert!(!hydrus_gui::client_exit::RESTART.load(Ordering::SeqCst));
-    request_close(&ui);
-    assert_eq!(ui.get_question(), EXIT_QUESTION, "back to a plain exit");
-    ui.invoke_answer(false);
-
-    // restart, accepted: the window closes and the process is to start again
-    file_menu(&ui, &["restart"]);
-    ui.invoke_answer(true);
-    assert!(!ui.window().is_visible());
-    assert!(hydrus_gui::client_exit::RESTART.load(Ordering::SeqCst));
-    hydrus_gui::client_exit::RESTART.store(false, Ordering::SeqCst);
-    assert_eq!(last_done(&store), 0, "shutdown work was not due");
-
-    // exit/force maintenance: the shutdown work runs whatever the options
-    // say, even though it is switched off and not yet due again
-    ui.show().unwrap();
-    let _bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
-    let recently = hydrus_core::time::TimestampMs::now().secs() - 10;
-    exit_settings(&store, false, 0, recently);
-    file_menu(&ui, &["exit/force maintenance"]);
-    assert!(!ui.window().is_visible(), "no confirmation: closed at once");
-    assert!(!hydrus_gui::client_exit::RESTART.load(Ordering::SeqCst));
-    assert!(last_done(&store) > recently, "the work ran and registered");
-
-    // plain exit leaves the same options alone
-    ui.show().unwrap();
-    let _bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
-    let before = last_done(&store);
-    file_menu(&ui, &["exit"]);
-    assert!(!ui.window().is_visible());
-    assert_eq!(last_done(&store), before);
     no_menus(&ui);
+}
+
+// leaf: audit-options-menu-menu-file-restart
+#[cfg(unix)]
+#[test]
+fn a_requested_restart_starts_the_client_again_with_its_arguments() {
+    use std::os::unix::fs::PermissionsExt as _;
+    let dir = tempfile::tempdir().unwrap();
+    let marker = dir.path().join("started");
+    let exe = dir.path().join("client");
+    std::fs::write(
+        &exe,
+        format!("#!/bin/sh\necho \"$@\" > '{}'\n", marker.display()),
+    )
+    .unwrap();
+    std::fs::set_permissions(&exe, std::fs::Permissions::from_mode(0o755)).unwrap();
+    let args = || ["--db".into(), "somewhere".into()];
+    // an ordinary exit starts nothing
+    assert!(!hydrus_gui::client_exit::relaunch(false, &exe, args()).unwrap());
+    std::thread::sleep(Duration::from_millis(300));
+    assert!(!marker.exists());
+    // File > restart's exit starts the program again, with its arguments
+    assert!(hydrus_gui::client_exit::relaunch(true, &exe, args()).unwrap());
+    for _ in 0..100 {
+        if marker.exists() {
+            break;
+        }
+        std::thread::sleep(Duration::from_millis(50));
+    }
+    assert_eq!(
+        std::fs::read_to_string(&marker).unwrap().trim(),
+        "--db somewhere"
+    );
+    assert!(hydrus_gui::client_exit::relaunch(true, &dir.path().join("missing"), args()).is_err());
 }
 
 // leaf: audit-options-menu-menu-file-database-directory
@@ -192,6 +230,18 @@ fn open_entries_launch_directories_and_manage_entries_open_the_folder_lists() {
         move |target| launched.borrow_mut().push(target.to_owned())
     });
 
+    // oracle/record_file_menu.py: the real menu actions launch the database
+    // directory and the installation directory (HC.BASE_DIR)
+    let recorded = hydrus_testkit::fixture_json("file_menu.json");
+    let opens = recorded["opens"].as_array().unwrap();
+    assert_eq!(opens[0]["menu"][1], "installation directory");
+    assert_eq!(opens[0]["launched"].as_array().unwrap().len(), 1);
+    assert_eq!(opens[1]["menu"][1], "database directory");
+    assert_eq!(opens[1]["launched"].as_array().unwrap().len(), 1);
+    assert_eq!(
+        opens[1]["launched"][0],
+        "database directory (controller.GetDBDir)"
+    );
     let shown = file_menu(&ui, &["open", "database directory"]);
     assert_eq!(
         shown[1].iter().map(|l| l.0.as_str()).collect::<Vec<_>>(),
