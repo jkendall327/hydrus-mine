@@ -627,7 +627,7 @@ impl NetEngine {
                     tokens_ok: state.tokens_ok || job.override_gallery.load(Ordering::Relaxed),
                     auto_override: job.auto_override_at.load(Ordering::Relaxed) > 0,
                     context_waits: {
-                        let bandwidth = self.bandwidth.lock();
+                        let mut bandwidth = self.bandwidth.lock();
                         contexts
                             .iter()
                             .map(|context| {
