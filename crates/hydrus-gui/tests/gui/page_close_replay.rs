@@ -9,8 +9,8 @@
 
 use std::sync::Arc;
 
+use slint::ComponentHandle as _;
 use slint::platform::PointerEventButton;
-use slint::{ComponentHandle as _, Model as _};
 
 use hydrus_core::import_options::ImportOptionsSlice;
 use hydrus_core::pages::{DownloaderKind, Page, PageContent, PageKey, Session};
