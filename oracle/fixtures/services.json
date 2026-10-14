@@ -7,6 +7,7 @@
     "client api",
     ""
    ],
+   "service_id": 13,
    "label": "client api - client api\n\nThe Client API."
   },
   {
@@ -16,6 +17,7 @@
     "local file domain",
     "must be empty of files, must have at least one"
    ],
+   "service_id": 15,
    "label": "art - local file domain\n\nThis stores media files you have imported. You can have multiple local file domains, and files may be in multiple local file domains at once. Each domain is completely isolated from one another when you perform a file or tag search (if your search page is pointed at A, you will not get any file search results or tag autocomplete suggestions from B).",
    "statistics": "8 files, totalling 71.4 KB - 0 deleted files"
   },
@@ -26,6 +28,7 @@
     "local file domain",
     "must be empty of files, must have at least one"
    ],
+   "service_id": 6,
    "label": "my files - local file domain\n\nThis stores media files you have imported. You can have multiple local file domains, and files may be in multiple local file domains at once. Each domain is completely isolated from one another when you perform a file or tag search (if your search page is pointed at A, you will not get any file search results or tag autocomplete suggestions from B).",
    "statistics": "30 files, totalling 324 KB - 6 deleted files"
   },
@@ -36,6 +39,7 @@
     "local file notes service",
     ""
    ],
+   "service_id": 11,
    "label": "local notes - local file notes service\n\nThis stores your file notes.\n\nNotes are not removed when files are deleted, and if you later re-import the file, you will see it still has its notes."
   },
   {
@@ -45,6 +49,7 @@
     "local inc/dec rating service",
     "yes"
    ],
+   "service_id": 17,
    "label": "counter - local inc/dec rating service\n\nThis stores inc/dec ratings.\n\nRatings are not removed when files are deleted, and if you later re-import the file, you will see it still has its ratings.",
    "statistics": "3 files are rated"
   },
@@ -55,6 +60,7 @@
     "local like/dislike rating service",
     "yes"
    ],
+   "service_id": 12,
    "label": "favourites - local like/dislike rating service\n\nThis stores like/dislike ratings.\n\nRatings are not removed when files are deleted, and if you later re-import the file, you will see it still has its ratings.",
    "statistics": "12 files are rated"
   },
@@ -65,6 +71,7 @@
     "local numerical rating service",
     "yes"
    ],
+   "service_id": 16,
    "label": "stars - local numerical rating service\n\nThis stores numerical ratings.\n\nRatings are not removed when files are deleted, and if you later re-import the file, you will see it still has its ratings.",
    "statistics": "12 files are rated"
   },
@@ -75,6 +82,7 @@
     "local tag domain",
     "must have at least one"
    ],
+   "service_id": 10,
    "label": "downloader tags - local tag domain\n\nThis stores tag mappings (tag-file pairs) that you have added/imported. You can have multiple local tag domains, and the exact same mappings map appear in multiple domains.\n\nTags are not removed when files are deleted, and if you later re-import the file, you will see it still has its tags.\n\nThe \"all known tags\" service is a union of all local tag services and tag repositories.",
    "statistics": "36 total mappings involving 30 different tags on 18 different files"
   },
@@ -85,6 +93,7 @@
     "local tag domain",
     "must have at least one"
    ],
+   "service_id": 9,
    "label": "my tags - local tag domain\n\nThis stores tag mappings (tag-file pairs) that you have added/imported. You can have multiple local tag domains, and the exact same mappings map appear in multiple domains.\n\nTags are not removed when files are deleted, and if you later re-import the file, you will see it still has its tags.\n\nThe \"all known tags\" service is a union of all local tag services and tag repositories.",
    "statistics": "129 total mappings involving 33 different tags on 36 different files"
   },
@@ -95,6 +104,7 @@
     "local tag domain",
     "must have at least one"
    ],
+   "service_id": 14,
    "label": "second tags - local tag domain\n\nThis stores tag mappings (tag-file pairs) that you have added/imported. You can have multiple local tag domains, and the exact same mappings map appear in multiple domains.\n\nTags are not removed when files are deleted, and if you later re-import the file, you will see it still has its tags.\n\nThe \"all known tags\" service is a union of all local tag services and tag repositories.",
    "statistics": "18 total mappings involving 3 different tags on 9 different files"
   },
@@ -105,6 +115,7 @@
     "local trash file domain",
     ""
    ],
+   "service_id": 8,
    "label": "trash - local trash file domain\n\nThis is where your files go when they have been removed from all your local file domains. It is a waiting area to allow for undeletes of mistakes. When files are deleted from this place, they are physically deleted.",
    "statistics": "2 files, totalling 32 KB"
   },
@@ -115,6 +126,7 @@
     "local update file domain",
     ""
    ],
+   "service_id": 7,
    "label": "repository updates - local update file domain\n\nThis holds repository update files if you decide to sync with a file or tag repository. It is full of zipped up JSON and is not covered by \"combined local file domains\" like the normal local file domains. You can generally ignore it.",
    "statistics": "0 files, totalling 0B"
   },
@@ -125,6 +137,7 @@
     "virtual combined file domain",
     ""
    ],
+   "service_id": 2,
    "label": "all known files - virtual combined file domain\n\nThis is a special view on a tag service. It will deliver results without any cross-reference with a known file service, and thus if the file is tagged on a service, you will see it whether you have it, had it, or have never had it."
   },
   {
@@ -134,6 +147,7 @@
     "virtual combined local file domain",
     ""
    ],
+   "service_id": 4,
    "label": "hydrus local file storage - virtual combined local file domain\n\nThis represents all files currently tracked and stored in your database. If a file is in here, it is either in \"repository updates\", \"combined local file domains\", or \"trash\", and it should be loadable from disk.\n\nWhen a file is deleted from the trash, it also leaves this domain and is scheduled to be physically deleted--which usually happens within a few seconds.",
    "statistics": "33 files, totalling 356 KB - 3 deleted files"
   },
@@ -144,6 +158,7 @@
     "virtual combined local media domain",
     ""
    ],
+   "service_id": 5,
    "label": "combined local file domains - virtual combined local media domain\n\nThis represents all files currently in any of your local file domains. You start with only \"my files\", but if you add more, this is a convenient umbrella that unions all of them with efficient search tech. When a file is deleted from all of its local file domains, it leaves this service and enters the trash.",
    "statistics": "31 files, totalling 324 KB - 5 deleted files"
   },
@@ -154,6 +169,7 @@
     "virtual combined tag domain",
     ""
    ],
+   "service_id": 1,
    "label": "all known tags - virtual combined tag domain\n\nThis is a union of all your local tag domains and remote tag repositories."
   },
   {
@@ -163,6 +179,7 @@
     "virtual deleted file service",
     ""
    ],
+   "service_id": 3,
    "label": "deleted from anywhere - virtual deleted file service\n\nThis represents all the files that have ever been deleted from any location. It is for advanced technical jobs, and you can generally ignore it."
   }
  ],
@@ -497,5 +514,229 @@
    64
   ]
  },
- "empty_name_error": "Please enter a name!"
+ "empty_name_error": "Please enter a name!",
+ "add_menu": [
+  [
+   "local tag domain",
+   "Add a new local tag domain.",
+   5
+  ],
+  [
+   "local file domain",
+   "Add a new local file domain.",
+   2
+  ],
+  [
+   "local like/dislike rating service",
+   "Add a new local like/dislike rating service.",
+   7
+  ],
+  [
+   "local numerical rating service",
+   "Add a new local numerical rating service.",
+   6
+  ],
+  [
+   "local inc/dec rating service",
+   "Add a new local inc/dec rating service.",
+   22
+  ],
+  [
+   "hydrus file repository",
+   "Add a new hydrus file repository.",
+   1
+  ],
+  [
+   "hydrus tag repository",
+   "Add a new hydrus tag repository.",
+   0
+  ],
+  [
+   "hydrus server administration service",
+   "Add a new hydrus server administration service.",
+   99
+  ],
+  [
+   "ipfs daemon",
+   "Add a new ipfs daemon.",
+   13
+  ]
+ ],
+ "add_cancelled": {
+  "dialogs": [
+   {
+    "title": "edit service",
+    "name": "new service",
+    "type": 5,
+    "key_len": 32
+   },
+   {
+    "title": "edit service",
+    "name": "new service",
+    "type": 2,
+    "key_len": 32
+   },
+   {
+    "title": "edit service",
+    "name": "new service",
+    "type": 7,
+    "key_len": 32
+   },
+   {
+    "title": "edit service",
+    "name": "new service",
+    "type": 6,
+    "key_len": 32
+   },
+   {
+    "title": "edit service",
+    "name": "new service",
+    "type": 22,
+    "key_len": 32
+   },
+   {
+    "title": "edit service",
+    "name": "new service",
+    "type": 1,
+    "key_len": 32
+   },
+   {
+    "title": "edit service",
+    "name": "new service",
+    "type": 0,
+    "key_len": 32
+   },
+   {
+    "title": "edit service",
+    "name": "new service",
+    "type": 99,
+    "key_len": 32
+   },
+   {
+    "title": "edit service",
+    "name": "new service",
+    "type": 13,
+    "key_len": 32
+   }
+  ],
+  "rows_before": 16,
+  "rows_after": 16
+ },
+ "add_collisions": {
+  "existing": [
+   "all known files",
+   "all known tags",
+   "art",
+   "client api",
+   "combined local file domains",
+   "counter",
+   "deleted from anywhere",
+   "downloader tags",
+   "favourites",
+   "hydrus local file storage",
+   "local notes",
+   "my files",
+   "my tags",
+   "repository updates",
+   "second tags",
+   "stars",
+   "trash"
+  ],
+  "after": [
+   "Art (1)",
+   "FAVOURITES (1)",
+   "MY TAGS (1)",
+   "all known files",
+   "all known tags",
+   "art",
+   "client api",
+   "combined local file domains",
+   "counter",
+   "deleted from anywhere",
+   "favourites",
+   "hydrus local file storage",
+   "local notes",
+   "my files",
+   "my tags",
+   "my tags (2)",
+   "repository updates",
+   "second tags",
+   "stars",
+   "trash"
+  ],
+  "typed": [
+   "MY TAGS",
+   "my tags",
+   "FAVOURITES",
+   "Art"
+  ]
+ },
+ "rating_colours_edited": {
+  "type": 7,
+  "colours": [
+   [
+    0,
+    [
+     [
+      1,
+      2,
+      3
+     ],
+     [
+      4,
+      5,
+      6
+     ]
+    ]
+   ],
+   [
+    1,
+    [
+     [
+      7,
+      8,
+      9
+     ],
+     [
+      10,
+      11,
+      12
+     ]
+    ]
+   ],
+   [
+    2,
+    [
+     [
+      13,
+      14,
+      15
+     ],
+     [
+      16,
+      17,
+      18
+     ]
+    ]
+   ],
+   [
+    4,
+    [
+     [
+      19,
+      20,
+      21
+     ],
+     [
+      22,
+      23,
+      24
+     ]
+    ]
+   ]
+  ],
+  "thumbnail": true,
+  "null_thumbnail": true,
+  "shape": 0
+ }
 }

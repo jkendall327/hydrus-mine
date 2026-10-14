@@ -47,3 +47,16 @@ pub fn unlock_window(
     });
     Ok(window)
 }
+
+/// What the process does when the event loop ends with no client open
+/// because the password was never entered (the window cancelled or closed):
+/// the running marker is cleared, as the reference's `CleanRunningFile` does
+/// when `InitView` raises `DBCredentialsException`, and the exit says why.
+pub fn finish_locked(run: crate::session_startup::Run) -> anyhow::Result<()> {
+    use anyhow::Context as _;
+    run.finish()
+        .context("clearing the cancelled startup marker")?;
+    Err(anyhow::anyhow!(
+        "the client is locked, and its password wasn't entered"
+    ))
+}
