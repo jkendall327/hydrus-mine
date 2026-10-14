@@ -15,6 +15,7 @@
 //! differs fails the flow too, so the list stays true.
 
 mod download;
+mod gallery;
 mod subscription;
 
 use std::collections::{BTreeMap, BTreeSet, HashMap};
@@ -92,6 +93,7 @@ pub fn install(store: &Store, recording: &Json) {
 pub const PORTS: &[(&str, u16)] = &[
     ("flow_subscription.json", 46011),
     ("flow_download.json", 46012),
+    ("flow_gallery.json", 46033),
 ];
 
 /// Whether a request to `http://127.0.0.1` goes straight there, whatever
