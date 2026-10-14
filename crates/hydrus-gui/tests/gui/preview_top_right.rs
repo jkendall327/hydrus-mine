@@ -448,6 +448,7 @@ fn the_preview_ratings_and_hover_are_the_references_under_the_options() {
 /// inbox or trash icon and the location strings, in order.
 // leaf: audit-options-media-viewer-hovers-preview-window-hovers-draw-ratings-and-locations-top-right-in-preview-window-background
 #[test]
+#[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
 fn the_preview_background_draws_the_icons_and_locations_the_reference_does() {
     let recorded = hydrus_testkit::fixture_json("preview_background_details.json");
     let client = Client::basic();
@@ -526,8 +527,9 @@ fn the_preview_background_draws_the_icons_and_locations_the_reference_does() {
             .filter(|d| d["kind"] == "text")
             .map(|d| d["text"].as_str().unwrap().to_owned())
             .collect();
+        assert!(lines.len() >= locations.len(), "{name}: {lines:?}");
         assert_eq!(
-            lines[..locations.len().min(lines.len())],
+            lines[..locations.len()],
             locations[..],
             "{name}: the locations drawn"
         );
@@ -541,10 +543,32 @@ fn the_preview_background_draws_the_icons_and_locations_the_reference_does() {
         .find(|s| s["draw"] == false)
         .unwrap();
     assert_eq!(off["drawn"], 0);
+    // what is painted in the hover's corner of the pane, drawn and not
+    let painted = |client: &Client| -> Vec<u8> {
+        let ui = &client.ui;
+        let pixels = headless::render(&client.native(), 1000, 900);
+        let (x, y) = (
+            ui.get_preview_hover_x() as usize,
+            ui.get_preview_hover_y() as usize,
+        );
+        let (w, h) = (
+            ui.get_preview_hover_width() as usize,
+            ui.get_preview_hover_height() as usize,
+        );
+        let mut out = Vec::new();
+        for row in y..y + h {
+            out.extend_from_slice(&pixels[(row * 1000 + x) * 4..(row * 1000 + x + w) * 4]);
+        }
+        out
+    };
+    let drawn = painted(&client);
     set_options(&client, &[], &[(DRAW, false)]);
     assert!(!ui.get_preview_draw_top_right());
+    let blank = painted(&client);
+    assert_ne!(drawn, blank, "the corner is painted differently with it on");
     set_options(&client, &[], &[(DRAW, true)]);
     assert!(ui.get_preview_draw_top_right());
+    assert_ne!(painted(&client), blank, "and on again it is painted");
 }
 
 /// Whether the hover pops in with the mouse at points around where it pops

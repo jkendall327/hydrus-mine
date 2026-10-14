@@ -10041,7 +10041,7 @@
     "date": "2026-10-14",
     "class": "source-restated",
     "by": "Claude (recheck w4-r3b, #97 phase 2)",
-    "note": "Real Options and MainWindow replay of oracle/fixtures/tab_presentation.json: root bar side and the nested bar toward the content now compared with the recording. Still not compared: bar thickness (typed 56 px, Qt's tabs are 26 px; documented) and the direction of rotated West/East labels (an ink-profile comparison with the Qt PNGs was tried and does not discriminate). Left untagged. Test: crates/hydrus-gui/tests/gui/tab_presentation.rs apply_cancel_reopen_and_four_sides_..."
+    "note": "Real Options and MainWindow replay of oracle/fixtures/tab_presentation.json: root bar side and the nested bar toward the content now compared with the recording. Still not compared: bar thickness (two 28 px rows typed as 56 px; Qt's tabs are 26 px) and the direction of rotated West/East labels (an ink-profile comparison with the Qt PNGs was tried and does not discriminate). Left untagged. Test: crates/hydrus-gui/tests/gui/tab_presentation.rs apply_cancel_reopen_and_four_sides_..."
    }
   },
   {
@@ -14230,7 +14230,7 @@
     "date": "2026-10-14",
     "class": "sound",
     "by": "Claude (recheck w4-r3b, #97 phase 2)",
-    "note": "Ratings sizes and the draw switch replay oracle/fixtures/preview_ratings.json; the trash/inbox icon and the location strings drawn for the recorded file inbox, archived and trashed (really deleted from both local domains) replay oracle/record_preview_background_details.py, with the option off drawing nothing. Not compared: pixel positions of the strings, and the URL lines hydrus-rs adds by its default (DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/preview_top_right.rs the_preview_background_draws_the_icons_and_locations_the_reference_does, the_preview_ratings_and_hover_are_the_references_under_the_options"
+    "note": "Ratings sizes and the draw switch replay oracle/fixtures/preview_ratings.json; the trash/inbox icon and the location strings drawn for the recorded file inbox, archived and trashed (really deleted from both local domains) replay oracle/record_preview_background_details.py, with the option off drawing nothing. Not compared: pixel positions of the strings, and the URL lines hydrus-rs adds by its default (DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/preview_top_right.rs the_preview_background_draws_the_icons_and_locations_the_reference_does, the_preview_ratings_and_hover_are_the_references_under_the_options The painted corner of the pane is compared on and off (it differs), not pixel-matched with Qt."
    }
   },
   {
@@ -14250,7 +14250,7 @@
     "date": "2026-10-14",
     "class": "sound",
     "by": "Claude (recheck w4-r3b, #97 phase 2)",
-    "note": "The reference's own DoRegularHideShow was run with the mouse at six points around its pop-in rectangle, switch on and off (oracle/record_preview_background_details.py pop_in_decisions); the real preview pane's pointer replays each, mapped to its own hover size. Test: preview_top_right.rs the_hover_pops_in_with_the_mouse_where_the_reference_does_and_never_with_the_switch_off"
+    "note": "The reference's own DoRegularHideShow was run with the mouse at six points around its pop-in rectangle, switch on and off (oracle/record_preview_background_details.py pop_in_decisions); the real preview pane's pointer replays each, mapped to its own hover size. Test: preview_top_right.rs the_hover_pops_in_with_the_mouse_where_the_reference_does_and_never_with_the_switch_off The recorded point distances are mapped to hydrus-rs's own hover size (edges, middle, same distance past an edge)."
    }
   },
   {
@@ -16564,7 +16564,7 @@
     "date": "2026-10-14",
     "class": "sound",
     "by": "Claude (recheck w4-r3b, #97 phase 2)",
-    "note": "oracle/record_options_apply_search.py: real ManageOptionsPanel; edits on six pages applied and cancelled; native settings after Cancel and OK, the 'Could not parse those slideshow durations' popup and the main tab names ('files' -> 'f...') all compared with the recording. Other consumers belong to their own leaves; the reference's critical 'Problem saving options!' dialog on a write failure is not implemented (stderr only, noted in the tracker). Test: crates/hydrus-gui/tests/gui/options_window.rs applying_and_cancelling_change_what_the_references_ok_and_cancel_do"
+    "note": "oracle/record_options_apply_search.py: real ManageOptionsPanel; edits on six pages applied and cancelled; native settings after Cancel and OK, the 'Could not parse those slideshow durations' popup and the main tab names ('files' -> 'f...') all compared with the recording. Other consumers belong to their own leaves; the reference's critical 'Problem saving options!' dialog on a write failure is not implemented (stderr only, noted in the tracker). Test: crates/hydrus-gui/tests/gui/options_window.rs applying_and_cancelling_change_what_the_references_ok_and_cancel_do (The reference's Qt style page is the one page hydrus-rs lacks.)"
    }
   },
   {
@@ -16583,9 +16583,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "sound",
+    "class": "source-restated",
     "by": "Claude (recheck w4-r3b, #97 phase 2)",
-    "note": "Eight recorded queries typed in the real Options window: the matches offered equal the reference completer's (as multisets, less the pinned known differences), choosing the first shows its page, a found row and an emptied box; the whole-index comparison is the model test. Order of matches differs (DIFFERENCES.md); inner-tab/box expansion has no native counterpart (rows are not collapsible). Tests: options_window.rs the_search_box_offers_and_goes_to_what_the_references_does; model options_dialog.rs:2234"
+    "note": "Eight recorded queries typed in the real Options window: the matches offered equal the reference completer's (as multisets, less the pinned known differences), choosing the first shows its page, a found row and an emptied box; the whole-index comparison is the model test. Order of matches differs (DIFFERENCES.md); inner-tab/box expansion has no native counterpart (rows are not collapsible). Tests: options_window.rs the_search_box_offers_and_goes_to_what_the_references_does; model options_dialog.rs:2234 Source-restated for the gaps: match order differs and inner tabs/boxes have no native counterpart; the known shortfalls are pinned per query (N entries per known difference, nothing else dropped) and the highlighted row's label is checked."
    }
   },
   {
@@ -22219,7 +22219,7 @@
     "date": "2026-10-14",
     "class": "sound",
     "by": "Claude (recheck w4-r3b, #97 phase 2)",
-    "note": "oracle/record_sibling_fade_paint.py runs the real lists' _Redraw with a recording painter: which runs get a gradient pen or background and between which colours, for eight option cases, selected and not, storage and write lists. The real consumers' runs (fade flag, previous and own colour) replayed; the option row's disabled namespace control from the recording. Test: sibling_colours.rs options_cancel_retired_apply_reopen_and_all_segmented_native_consumers"
+    "note": "oracle/record_sibling_fade_paint.py runs the real lists' _Redraw with a recording painter: which runs get a gradient pen or background and between which colours, for eight option cases, storage and write lists (selected and unselected paints are merged: hydrus-rs has one fade flag per run). The real consumers' runs (fade flag, previous and own colour) replayed; the option row's disabled namespace control from the recording. Test: sibling_colours.rs options_cancel_retired_apply_reopen_and_all_segmented_native_consumers"
    }
   },
   {
@@ -22573,7 +22573,7 @@
     "date": "2026-10-14",
     "class": "sound",
     "by": "Claude (recheck w4-r3b, #97 phase 2)",
-    "note": "oracle/record_suggestion_options_panel.py: the row's labels, default and enabled state follow the layout (fixed: native never disabled it); each recorded layout/default set in Options then Manage Tags opens on the page the real SuggestedTagsPanel selected (suggested_tag_panels.json). Test: options_gui_tags.rs the_layout_enables_the_default_page_and_manage_tags_opens_on_it_as_recorded"
+    "note": "oracle/record_suggestion_options_panel.py: the row's labels, default and enabled state follow the layout (fixed: native never disabled it); each recorded layout/default set in Options then Manage Tags opens on the page the real SuggestedTagsPanel selected (suggested_tag_panels.json). Test: options_gui_tags.rs the_layout_enables_the_default_page_and_manage_tags_opens_on_it_as_recorded The file_lookup_scripts choice has no native consumer: it falls back to the first page, as the reference does with none available."
    }
   },
   {

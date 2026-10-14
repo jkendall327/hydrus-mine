@@ -366,8 +366,15 @@ fn a_single_selected_thumbnail_shows_the_top_hover_text_in_the_status_bar_if_ask
 // leaf: audit-options-thumbnails-interaction-when-a-single-thumbnail-is-selected-show-the-media-viewer-s-normal-top-hover-file-text-in-the-status
 #[test]
 fn the_status_bar_shows_the_top_hover_text_of_a_clicked_file_as_recorded_and_not_when_off() {
+    struct Release;
+    impl Drop for Release {
+        fn drop(&mut self) {
+            hydrus_gui::hold_viewer_time(None);
+        }
+    }
     const LABEL: &str = "When a single thumbnail is selected, show the media viewer's normal top hover file text in the status bar: ";
     let fixture = hydrus_testkit::fixture_json("status_bar.json");
+    let _release = Release;
     hydrus_gui::hold_viewer_time(Some(fixture["now"].as_i64().unwrap() * 1000));
     let (dirs, store) = crate::options_gui_support::basic_store();
     // (the recorded "all" page held the fixture's 36 files, trash and deleted too)
@@ -430,7 +437,13 @@ fn the_status_bar_shows_the_top_hover_text_of_a_clicked_file_as_recorded_and_not
     };
     // on (the default): every clicked file's line is the recorded one
     let on = single_clicks(&page_of("all"));
-    assert!(on.len() >= 30, "{}", on.len());
+    let singles = page_of("all")["selections"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|s| s["selected"].as_array().unwrap().len() == 1)
+        .count();
+    assert_eq!(on.len(), singles, "every recorded single click is replayed");
     for (ours, theirs) in &on {
         assert_eq!(ours, theirs);
     }
@@ -458,5 +471,4 @@ fn the_status_bar_shows_the_top_hover_text_of_a_clicked_file_as_recorded_and_not
     for (ours, theirs) in &off {
         assert_eq!(ours, theirs);
     }
-    hydrus_gui::hold_viewer_time(None);
 }

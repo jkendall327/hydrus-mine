@@ -526,7 +526,8 @@ fn the_layout_enables_the_default_page_and_manage_tags_opens_on_it_as_recorded()
             let shown = match manage.get_suggested_page() {
                 0 => "most used",
                 2 => "related",
-                _ => "recent",
+                1 => "recent",
+                other => panic!("no suggested page {other}"),
             };
             assert_eq!(case["selected"], shown, "{case}");
         }

@@ -5561,11 +5561,12 @@ of the upcoming pairs is warmed once.
 
 ## Options recheck additions (#97 phase 2)
 
-Options > tag suggestions: "Default notebook page" is switched off while the
-layout is side-by-side, as in the reference. Choosing in any dropdown now
-refreshes which rows are enabled. The thumbnails' status bar shows a single
-selected file's line from the held clock (so tests can fix "imported 2 days
-ago"). The recorded
-behaviour of closing importer pages, the
-options search and Apply, the preview background and pop-in and thumbnail fades is replayed in the tests named
-by each leaf's recheck note.
+- Options > tag suggestions: "Default notebook page" is greyed out while the
+  layout is side-by-side, as in the reference.
+- Choosing from any Options dropdown now updates which other rows are enabled.
+- With "show the top hover text in the status bar" on, the status line of a
+  single selected file counts "imported ... ago" from the same clock the
+  viewer uses.
+- Closing importer pages, the preview background and pop-in, the Options
+  search and Apply, and thumbnail fades are tested against recordings of the
+  reference; each leaf's recheck note names the test.

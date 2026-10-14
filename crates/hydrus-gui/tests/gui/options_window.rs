@@ -7013,7 +7013,7 @@ fn the_suggested_tags_layout_chosen_in_options_reaches_manage_tags_as_the_refere
 
 /// The options window's search and Apply/Cancel, replayed from
 /// `oracle/record_options_apply_search.py` (the real `ManageOptionsPanel`).
-fn known_prefixes(key: &str) -> Vec<String> {
+fn known_prefixes(key: &str) -> Vec<(usize, String)> {
     let known = hydrus_testkit::fixture_json("options_search_known_differences.json");
     known[key]
         .as_array()
@@ -7022,7 +7022,8 @@ fn known_prefixes(key: &str) -> Vec<String> {
         .map(|v| {
             let entry = v["entry"].as_str().unwrap();
             // ("N x text", the text cut to sixty characters)
-            entry.split_once(" x ").unwrap().1.to_owned()
+            let (n, text) = entry.split_once(" x ").unwrap();
+            (n.parse().unwrap(), text.to_owned())
         })
         .collect()
 }
@@ -7058,43 +7059,32 @@ fn the_search_box_offers_and_goes_to_what_the_references_does() {
         // (the reference's matches less those hydrus-rs has no control for,
         // the native ones less those the reference has no text for)
         let offered = listed(&window);
-        let count = |list: &[String], text: &str| list.iter().filter(|m| *m == text).count();
         let all_theirs: Vec<String> = search["matches"]
             .as_array()
             .unwrap()
             .iter()
             .map(|m| m.as_str().unwrap().to_owned())
             .collect();
-        // (the reference's matches less those hydrus-rs has no control for,
-        // as many times over as it lacks them)
-        let mut surplus: std::collections::BTreeMap<String, usize> = all_theirs
-            .iter()
-            .filter(|m| missing.iter().any(|k| m.starts_with(k.as_str())))
-            .map(|m| {
-                (
-                    m.clone(),
-                    count(&all_theirs, m).saturating_sub(count(&offered, m)),
-                )
-            })
-            .collect();
-        let theirs: Vec<String> = all_theirs
-            .iter()
-            .filter(|m| {
-                if let Some(left) = surplus.get_mut(*m)
-                    && *left > 0
-                {
-                    *left -= 1;
-                    return false;
-                }
-                true
-            })
-            .cloned()
-            .collect();
-        let ours: Vec<String> = offered
-            .iter()
-            .filter(|m| !extra.iter().any(|k| m.starts_with(k.as_str())))
-            .cloned()
-            .collect();
+        // (each known difference is up to N entries starting with its text:
+        // the reference's less those hydrus-rs has no control for, hydrus-rs's
+        // less those the reference has no text for; nothing else is dropped)
+        let without = |list: &[String], known: &[(usize, String)]| -> Vec<String> {
+            let mut left: Vec<usize> = known.iter().map(|(n, _)| *n).collect();
+            list.iter()
+                .filter(|m| {
+                    for (at, (_, prefix)) in known.iter().enumerate() {
+                        if left[at] > 0 && m.starts_with(prefix.as_str()) {
+                            left[at] -= 1;
+                            return false;
+                        }
+                    }
+                    true
+                })
+                .cloned()
+                .collect()
+        };
+        let theirs = without(&all_theirs, &missing);
+        let ours = without(&offered, &extra);
         let mut sorted_theirs = theirs;
         let mut sorted_ours = ours;
         sorted_theirs.sort();
@@ -7119,14 +7109,29 @@ fn the_search_box_offers_and_goes_to_what_the_references_does() {
                 "{query:?}"
             );
             assert!(search["highlighted"].as_bool().unwrap());
-            assert!(
-                (0..window.get_rows().row_count()).any(|i| window
-                    .get_rows()
-                    .row_data(i)
-                    .unwrap()
-                    .found),
-                "{query:?}: a row is highlighted"
-            );
+            // the row highlighted is the one the match names
+            let wanted = first
+                .rsplit_once(" (")
+                .map_or(first, |(label, _)| label)
+                .trim()
+                .to_owned();
+            // (a unit or dropdown text names no row of its own: then the row
+            // that holds it is the one highlighted)
+            let rows: Vec<_> = (0..window.get_rows().row_count())
+                .map(|i| window.get_rows().row_data(i).unwrap())
+                .collect();
+            if rows.iter().any(|row| row.label.trim() == wanted) {
+                assert!(
+                    rows.iter()
+                        .any(|row| row.found && row.label.trim() == wanted),
+                    "{query:?}: the row {wanted:?} is highlighted"
+                );
+            } else {
+                assert!(
+                    rows.iter().any(|row| row.found),
+                    "{query:?}: a row holding {wanted:?} is highlighted"
+                );
+            }
             assert_eq!(
                 window.get_search_text().as_str(),
                 search["search_text_after"].as_str().unwrap()
@@ -7141,6 +7146,8 @@ fn the_search_box_offers_and_goes_to_what_the_references_does() {
 // leaf: audit-options-options-apply
 #[test]
 fn applying_and_cancelling_change_what_the_references_ok_and_cancel_do() {
+    // (the reference's list also has Qt's "style" page, which has no counterpart)
+    const QT_STYLE_PAGES: usize = 1;
     let recorded = hydrus_testkit::fixture_json("options_apply_search.json");
     let (_dirs, store) = store();
     let _windows = headless::init();
@@ -7167,7 +7174,7 @@ fn applying_and_cancelling_change_what_the_references_ok_and_cancel_do() {
             options()
         })
         .len()
-            + 1,
+            + QT_STYLE_PAGES,
         recorded["pages"].as_array().unwrap().len(),
         "(the reference also has Qt's style page)"
     );
@@ -7195,8 +7202,9 @@ fn applying_and_cancelling_change_what_the_references_ok_and_cancel_do() {
         let (i, _) = row(window, "Score for file with audio:");
         window.invoke_number_edited(i, -30);
     };
+    // (read at one moment; the popups were made within the last minute)
+    let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
     let popups = || {
-        let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
         store
             .read(|conn| hydrus_store::popups::all(conn, now))
             .unwrap()

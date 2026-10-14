@@ -4892,7 +4892,7 @@ potential duplicates (as the reference does as groups merge), so approving
 - The preview window's top-right background draws the file's URLs after its
   locations by hydrus-rs's default (every URL class, unmatched URLs too); the
   reference's default shows none of the `basic` file's.
-- Tab alignment: the bar's thickness (28 px a row) and the direction of
+- Tab alignment: the bar's thickness (28 px a row, 56 px for the two rows; Qt's tabs are 26 px) and the direction of
   rotated West/East labels are not compared with the reference's Qt tabs.
 - "Width of suggested tags columns" and "Autocomplete list height" are read
   as properties of the Manage Tags window; the lists' laid-out size is not
