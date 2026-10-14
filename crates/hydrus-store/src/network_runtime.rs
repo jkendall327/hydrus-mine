@@ -72,6 +72,10 @@ pub struct JobControl {
     pub domain_ok: bool,
     pub tokens_ok: bool,
     pub auto_override: bool,
+    /// Seconds each of the job's contexts (in the job's order) would make it
+    /// wait for bandwidth now (`GetWaitingEstimateAndContext` of each alone).
+    #[serde(default)]
+    pub context_waits: Vec<u64>,
 }
 /// A recent failed request, retained even when a short request leaves the live list.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

@@ -617,7 +617,7 @@ impl NetEngine {
             .jobs
             .lock()
             .iter()
-            .map(|(id, (job, _))| {
+            .map(|(id, (job, contexts))| {
                 let state = job.state();
                 network_runtime::JobControl {
                     id: *id,
@@ -626,6 +626,21 @@ impl NetEngine {
                     domain_ok: state.one_shot || self.domain_ok(&state.url),
                     tokens_ok: state.tokens_ok || job.override_gallery.load(Ordering::Relaxed),
                     auto_override: job.auto_override_at.load(Ordering::Relaxed) > 0,
+                    context_waits: {
+                        let bandwidth = self.bandwidth.lock();
+                        contexts
+                            .iter()
+                            .map(|context| {
+                                bandwidth
+                                    .0
+                                    .waiting_estimate_and_context(
+                                        std::slice::from_ref(context),
+                                        now(),
+                                    )
+                                    .0
+                            })
+                            .collect()
+                    },
                 }
             })
             .collect();

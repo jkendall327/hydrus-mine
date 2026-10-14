@@ -2253,8 +2253,14 @@ inherit their defaults again.
 
 Current jobs show every active engine request, including subscriptions, with
 URL, status, typed wait reason, speed and progress. Extended selection supports
-cancel and bandwidth override, with selected-job context details and manual or
-live refresh. The daemon publishes usage and jobs through typed local store IPC,
+cancel and bandwidth override, with selected-job context details. As in the
+reference, the list is a snapshot: "manual refresh" is checked to begin with and
+"refresh snapshot" takes one; unchecking it asks for a snapshot every so many
+seconds (0.25 to begin with, never under 0.05). A right-click on a job selects it
+and opens the reference's menu: "network contexts" (each context with the wait it
+adds, or "bandwidth ok") and the lines "domain ok", "waiting on connection
+error", "waiting on serverside bandwidth", "obeys bandwidth" and "tokens ok",
+each of which copies itself when chosen (`oracle/record_network_jobs_panel.py`). The daemon publishes usage and jobs through typed local store IPC,
 independent of the Client API listener. Heartbeats expire after five seconds;
 offline bandwidth review falls back to saved history. Commands identify the
 reviewed daemon and request, so finished jobs or replacement daemons ignore them.

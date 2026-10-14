@@ -72,6 +72,7 @@ fn snapshot() -> Snapshot {
             domain_ok: false,
             tokens_ok: false,
             auto_override: false,
+            context_waits: Vec::new(),
         }],
         ..Snapshot::default()
     }

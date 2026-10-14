@@ -38,6 +38,7 @@ fn meta(id: u64, now: i64) -> JobControl {
         domain_ok: false,
         tokens_ok: false,
         auto_override: false,
+        context_waits: Vec::new(),
     }
 }
 

@@ -86,6 +86,7 @@ mod menu_choice_wheel;
 mod merge_options;
 mod mpv;
 mod namespace_colours;
+mod network_jobs_panel;
 mod network_jobs_rows;
 mod network_pause_paged;
 mod normal_time_maintenance;

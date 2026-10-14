@@ -146,6 +146,16 @@ impl std::fmt::Debug for Slots {
     }
 }
 impl Slots {
+    /// How often the open current-jobs review asks for a snapshot (none:
+    /// manual refresh), for tests.
+    #[doc(hidden)]
+    pub fn jobs_refresh_interval(&self) -> Option<Duration> {
+        self.jobs
+            .borrow()
+            .as_ref()
+            .filter(|jobs| jobs.refresh_timer.running())
+            .map(|jobs| jobs.refresh_timer.interval())
+    }
     /// Whether this owner retains a review or detached rules draft.
     pub fn has_open(&self) -> bool {
         self.bandwidth.borrow().is_some() || self.jobs.borrow().is_some()
@@ -932,9 +942,41 @@ struct Jobs {
     order: RefCell<Vec<u64>>,
     selection: RefCell<ListSelection<u64>>,
     manual: Cell<bool>,
+    /// The newest snapshot's epoch and time (the rows shown may be older: the
+    /// reference's panel is a manual snapshot unless it is given an interval).
+    latest: RefCell<network_runtime::Snapshot>,
+    refresh_timer: Timer,
+    popup: Rc<crate::popup_menu::Popup<()>>,
     error: RefCell<String>,
 }
 impl Jobs {
+    /// Whether the daemon is publishing now (not whether the rows shown are).
+    fn fresh(&self) -> bool {
+        self.latest.borrow().fresh(now())
+    }
+    /// The refresh control changed: manual, or a snapshot every so often.
+    fn refresh_changed(self: &Rc<Self>) {
+        self.refresh_timer.stop();
+        if self.window.get_manual_refresh() {
+            return;
+        }
+        let Some(seconds) =
+            model::parse_refresh_seconds(self.window.get_refresh_seconds().as_str())
+        else {
+            return;
+        };
+        let state = Rc::downgrade(self);
+        self.refresh_timer.start(
+            TimerMode::Repeated,
+            Duration::from_secs_f64(seconds),
+            move || {
+                if let Some(s) = state.upgrade() {
+                    s.manual.set(true);
+                    let _ = s.worker.send.send(Operation::Refresh);
+                }
+            },
+        );
+    }
     fn show(&self) {
         let formatting = hydrus_gui_model::gui_format::preferences(&self.store);
         let review = self.review.borrow();
@@ -971,7 +1013,7 @@ impl Jobs {
                 .collect::<Vec<_>>(),
         )));
         self.window
-            .set_can_act(!self.selection.borrow().is_empty() && review.runtime.fresh(now()));
+            .set_can_act(!self.selection.borrow().is_empty() && self.fresh());
         let selected = self
             .selection
             .borrow()
@@ -1007,7 +1049,7 @@ impl Jobs {
         cog.auto_override = self.auto_override.get();
         cog.has_error = self.last_error.borrow().is_some();
         self.window.set_cog(cog);
-        let selected = selected.filter(|_| review.runtime.fresh(now()));
+        let selected = selected.filter(|_| self.fresh());
         let next = selected.map(|job| {
             (
                 review.runtime.epoch.clone(),
@@ -1078,16 +1120,14 @@ impl Jobs {
             .borrow()
             .one()
             .and_then(|id| review.runtime.jobs.iter().find(|j| j.id == id));
-        let job = selected
-            .filter(|_| review.runtime.fresh(now()))
-            .and_then(|job| {
-                review
-                    .runtime
-                    .controls
-                    .iter()
-                    .find(|c| c.id == job.id)
-                    .map(|meta| (job, meta))
-            });
+        let job = selected.filter(|_| self.fresh()).and_then(|job| {
+            review
+                .runtime
+                .controls
+                .iter()
+                .find(|c| c.id == job.id)
+                .map(|meta| (job, meta))
+        });
         let menu = hydrus_gui_model::network_job_control::cog(
             review,
             job,
@@ -1127,7 +1167,7 @@ impl Jobs {
             Some(hydrus_gui_model::network_job_control::Action::Job(action)) => {
                 if let Some((epoch, id)) = self.cog_job.borrow().as_ref()
                     && self.review.borrow().as_ref().is_some_and(|r| {
-                        r.runtime.fresh(now())
+                        self.fresh()
                             && r.runtime.epoch == *epoch
                             && r.runtime.jobs.iter().any(|j| j.id == *id)
                     })
@@ -1142,11 +1182,47 @@ impl Jobs {
             _ => {}
         }
     }
+    /// A right press on a job: it is selected, and the reference's menu of
+    /// its debug flags opens (`_GetListCtrlMenu`, which needs exactly one).
+    fn row_menu(&self, row: usize, x: f32, y: f32) {
+        use hydrus_gui_model::main_menu::PopupNode;
+        use model::JobMenuLine;
+        let Some(&id) = self.order.borrow().get(row) else {
+            return;
+        };
+        if !self.selection.borrow().is_selected(id) {
+            self.selection.borrow_mut().select_only(Some(id));
+            self.show();
+        }
+        if self.selection.borrow().one() != Some(id) {
+            return;
+        }
+        let review = self.review.borrow();
+        let Some(review) = review.as_ref() else {
+            return;
+        };
+        let Some(job) = review.runtime.jobs.iter().find(|j| j.id == id) else {
+            return;
+        };
+        let control = review.runtime.controls.iter().find(|c| c.id == id);
+        let lines = model::job_menu(job, control);
+        let (entries, _) =
+            hydrus_gui_model::main_menu::popup::<_, ()>(&lines, &|line| match line {
+                JobMenuLine::Label(text) => PopupNode::Label(text),
+                JobMenuLine::Submenu(label, children) => PopupNode::Menu(label, children),
+            });
+        self.popup.open(entries, Vec::new(), x, y);
+    }
     fn poll(&self) {
         for event in self.worker.receive.try_iter() {
             match event {
                 Event::Review(Ok(review)) => {
-                    if self.manual.replace(false) || self.window.get_auto_refresh() {
+                    *self.latest.borrow_mut() = network_runtime::Snapshot {
+                        epoch: review.runtime.epoch.clone(),
+                        at: review.runtime.at,
+                        ..Default::default()
+                    };
+                    if self.manual.replace(false) {
                         if self
                             .review
                             .borrow()
@@ -1169,18 +1245,13 @@ impl Jobs {
                 }
             }
         }
-        if self
-            .review
-            .borrow()
-            .as_ref()
-            .is_some_and(|r| !r.runtime.fresh(now()))
-        {
+        if self.review.borrow().as_ref().is_some() && !self.fresh() {
             self.window.set_can_act(false);
         }
     }
     fn action(&self, action: JobAction) {
         let review = self.review.borrow();
-        let Some(review) = review.as_ref().filter(|r| r.runtime.fresh(now())) else {
+        let Some(review) = review.as_ref().filter(|_| self.fresh()) else {
             return;
         };
         for id in self.selection.borrow().in_order(&self.order.borrow()) {
@@ -1252,6 +1323,9 @@ pub fn open_jobs(store: Arc<Store>, slots: &Slots) -> Result<NetworkJobsWindow, 
         order: RefCell::default(),
         selection: RefCell::default(),
         manual: Cell::new(true),
+        latest: RefCell::default(),
+        refresh_timer: Timer::default(),
+        popup: crate::popup_menu::Popup::new(),
         error: RefCell::default(),
     });
     window.on_row_clicked({
@@ -1282,6 +1356,58 @@ pub fn open_jobs(store: Arc<Store>, slots: &Slots) -> Result<NetworkJobsWindow, 
             if let Some(s) = state.upgrade() {
                 s.manual.set(true);
                 let _ = s.worker.send.send(Operation::Refresh);
+            }
+        }
+    });
+    window.set_menu_panes(state.popup.model());
+    window.on_row_menu({
+        let state = Rc::downgrade(&state);
+        move |r, x, y| {
+            if let (Some(state), Ok(r)) = (state.upgrade(), usize::try_from(r)) {
+                state.row_menu(r, x, y);
+            }
+        }
+    });
+    window.on_menu_line_hovered({
+        let state = Rc::downgrade(&state);
+        move |p, l, right, top, left| {
+            if let Some(s) = state.upgrade() {
+                s.popup.hover(p, l, right, top, left);
+            }
+        }
+    });
+    window.on_menu_placed({
+        let state = Rc::downgrade(&state);
+        move |p, x, y, w| {
+            if let Some(s) = state.upgrade() {
+                s.popup.placed(p, x, y, w);
+            }
+        }
+    });
+    window.on_menu_dismissed({
+        let state = Rc::downgrade(&state);
+        move || {
+            if let Some(s) = state.upgrade() {
+                s.popup.close();
+            }
+        }
+    });
+    window.on_menu_line_clicked({
+        let state = Rc::downgrade(&state);
+        move |p, l, right, top, left| {
+            if let Some(s) = state.upgrade()
+                && let Some(crate::popup_menu::Chosen::Copy(text)) =
+                    s.popup.click(p, l, right, top, left)
+            {
+                crate::copy_to_clipboard(&text);
+            }
+        }
+    });
+    window.on_refresh_changed({
+        let state = Rc::downgrade(&state);
+        move || {
+            if let Some(s) = state.upgrade() {
+                s.refresh_changed();
             }
         }
     });

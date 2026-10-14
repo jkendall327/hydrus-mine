@@ -1726,22 +1726,26 @@ gauges. Its "[data|requests] in the past [seconds]" line takes the span in
 seconds rather than the reference's days, hours, minutes and seconds buttons, and
 the usage-age choice has "this month" besides the reference's span and "all time".
 
-Current network-job review refreshes live by default (Qt starts with manual
-snapshots). Native typed wait reasons distinguish pauses, header approval, wake,
+Native typed wait reasons distinguish pauses, header approval, wake,
 bandwidth, domain, gallery, connection and server waits from transfers; Qt's
-engine-position strings/debug menu use different categories. Selected-job debug
-context/obeys-bandwidth details are inline, and cancel/override controls are
+engine-position strings use different categories. Selected-job context and
+obeys-bandwidth details are also inline, and cancel/override controls are
 explicit buttons. Login-script waits remain outside the implemented engine.
 Local snapshots are published by the daemon without requiring its Client API;
 expiry disables stale controls and saved bandwidth history remains available.
-The reference's auto-refresh is a "manual refresh"-or-interval control (at least
-0.05 s, manual to begin with); native has an auto-refresh checkbox, on to begin
-with. The jobs list's position column says "waiting for bandwidth", "waiting for
+The jobs window's refresh control is the reference's: "manual refresh" to begin
+with, or a snapshot every so many seconds (never under 0.05; the reference's
+interval is minutes, seconds and milliseconds boxes, native's one number of
+seconds). The jobs list's position column says "waiting for bandwidth", "waiting for
 login" and "running" as the reference does (its positions "waiting for
 validation" and "waiting for free work slot" have no native counterpart), and
 its other waits are native's own; the speed column is titled "current speed" as
-the reference's is. A job's contexts are shown in the detail under the list, not
-in a right-click menu with each context's waiting estimate.
+the reference's is. A job's right-click menu is the reference's (recorded in
+`oracle/fixtures/network_jobs_panel.json`), with these differences: a job has one
+typed wait, so "waiting on connection error" and "waiting on serverside bandwidth"
+cannot both read True as they can in the reference; a hydrus-service context
+is named by its key, where the reference looks its service's name up; and the
+contexts are also listed in the detail under the list, which the reference lacks.
 
 "Reset default bandwidth rules" resets the global and default contexts the
 reference names (not the downloader default, which it leaves) and keeps every
