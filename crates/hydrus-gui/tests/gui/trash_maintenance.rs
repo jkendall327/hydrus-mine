@@ -172,6 +172,10 @@ fn groups(scenario: &Value) -> Vec<usize> {
 }
 
 // leaf: audit-options-files-and-trash-number-of-hours-a-file-will-stay-in-the-trash-before-being-deleted
+// leaf: audit-options-files-and-trash-maximum-size-of-trash-mb
+// (the size limit's recorded difference, DECISIONS.md 2026-10-14: the reference deletes the oldest
+// 256 in CPython set order, hydrus-rs the oldest first; the two scenarios where that shows assert
+// the group sizes and the count left as recorded, and that the files left are not the reference's)
 #[test]
 fn trash_limits_delete_what_the_reference_deletes() {
     let recorded = hydrus_testkit::fixture_json("trash_maintenance.json");
@@ -223,11 +227,13 @@ fn trash_limits_delete_what_the_reference_deletes() {
                     "the youngest four"
                 );
                 assert_eq!(recorded_left.len(), left.len());
+                assert_ne!(left, recorded_left, "the recorded difference");
             }
             "small files go with the big ones in a group" => {
                 assert_eq!(groups(scenario), [8], "{name}");
                 assert_eq!(left, ["bmp6", "jpeg_04.jpg"], "the youngest two");
                 assert_eq!(recorded_left.len(), left.len());
+                assert_ne!(left, recorded_left, "the recorded difference");
             }
             _ => assert_eq!(left, recorded_left, "{name}"),
         }

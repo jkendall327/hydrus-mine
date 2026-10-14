@@ -131,7 +131,12 @@ fn cancel_marks_a_cancellable_job_cancelled_and_leaves_others_alone() {
     let (ui, _bound) = window(&store);
     assert!(ui.get_popups().row_data(0).unwrap().cancellable);
     assert!(!ui.get_popups().row_data(1).unwrap().cancellable);
-
+    // (only the card of the job that can be cancelled has the button)
+    widgets::lay_out(ui.window(), 1200.0, 800.0);
+    widgets::settle();
+    assert_eq!(widgets::count(ui.window(), "cancel"), 1);
+    // (and asked through the window's callback anyway, a job that cannot be
+    // cancelled is left alone)
     ui.invoke_popup_cancel(1);
     let job = stored(&store, fixed.key).unwrap();
     assert!(
@@ -164,7 +169,7 @@ fn cancel_marks_a_cancellable_job_cancelled_and_leaves_others_alone() {
             before["done"].as_bool().unwrap()
         )
     );
-    ui.invoke_popup_cancel(0);
+    widgets::click(ui.window(), "cancel");
     let job = stored(&store, cancellable.key).unwrap();
     assert_eq!(
         (job.cancelled, job.done),

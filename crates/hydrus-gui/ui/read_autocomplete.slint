@@ -20,6 +20,9 @@ export component ReadAutocomplete inherits Rectangle {
     callback move-highlight(int);
     out property <length> results-x: results.results-x;
     out property <length> results-y: results.results-y;
+    out property <length> results-height: results.height;
+    out property <length> rows-height: results.rows-height;
+    out property <length> view-height: results.view-height;
     callback scroll-geometry(length,length,length);
     callback context-menu(int,length,length);
     in property <bool> or-active;

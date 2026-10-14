@@ -15,6 +15,33 @@ use hydrus_core::time::pretty_time_delta_f64;
 use crate::thumbnail_menu::{Action, Entry};
 use crate::viewer_menu::{Seconds, ViewerAction};
 
+thread_local! {
+    static HELD_CLOCK: std::cell::Cell<Option<f64>> = const { std::cell::Cell::new(None) };
+    static TICKS: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
+}
+
+/// Hold the viewers' slideshow clock at `seconds` (the clock the reference's
+/// `HydrusTime.GetNowFloat` is, held still in `oracle/record_slideshow_run.py`),
+/// or let it run again with `None`. For tests: the viewer's timer still runs
+/// on its own, but reads this time.
+pub fn hold_clock(seconds: Option<f64>) {
+    HELD_CLOCK.with(|c| c.set(seconds));
+}
+
+pub(crate) fn held_clock() -> Option<f64> {
+    HELD_CLOCK.with(std::cell::Cell::get)
+}
+
+pub(crate) fn note_tick() {
+    TICKS.with(|t| t.set(t.get() + 1));
+}
+
+/// How many times a viewer's slideshow timer has run, so a test can wait
+/// for one full pass after it changed something.
+pub fn timer_ticks() -> u64 {
+    TICKS.with(std::cell::Cell::get)
+}
+
 /// The slideshow options now.
 pub fn settings(store: &hydrus_store::Store) -> SlideshowSettings {
     store.read(hydrus_store::settings::get).unwrap_or_default()

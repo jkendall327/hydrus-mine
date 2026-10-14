@@ -233,14 +233,15 @@ fn fetched_page_examples_use_actual_network_headers_cookies_context_and_child_co
     let recorded = hydrus_testkit::fixture_json("parser_fetch_http.json");
     let (first, second) = (&recorded["page"][0], &recorded["page"][1]);
     assert_eq!(page.get_document(), first["text"].as_str().unwrap());
-    // (the example context's url is the encoded one the reference holds; the
-    // url box shows it too, where the reference keeps what was typed)
+    // the url box keeps what was typed, as the reference's does (`test_url_after`); the context
+    // url is the encoded one (read back through the child editor below)
     assert_eq!(
-        page.get_test_url(),
-        first["context"]["url"]
+        page.get_test_url().trim(),
+        first["test_url_after"]
             .as_str()
             .unwrap()
             .replace("<base>", &server.base)
+            .trim()
     );
     assert_eq!(
         page.get_post_index(),
@@ -271,7 +272,14 @@ fn fetched_page_examples_use_actual_network_headers_cookies_context_and_child_co
         content.get_document(),
         "<p>fetched café</p><!-- converted -->"
     );
-    assert_eq!(content.get_test_url(), page.get_test_url());
+    // the child gets the example context, whose url is the encoded one (`context.url`)
+    assert_eq!(
+        content.get_test_url(),
+        first["context"]["url"]
+            .as_str()
+            .unwrap()
+            .replace("<base>", &server.base)
+    );
     assert_eq!(content.get_examples().row_count(), 2);
     content.invoke_action("cancel".into());
     page.set_example(0);
@@ -280,6 +288,18 @@ fn fetched_page_examples_use_actual_network_headers_cookies_context_and_child_co
     page.set_example(1);
     page.invoke_example_chosen();
     assert_eq!(page.get_document(), "<p>fetched café</p>");
+    // switching examples stored the encoded url, not the typed text, as the context's
+    page.invoke_row_clicked(0, false, false);
+    page.invoke_action("edit-content".into());
+    let content = child(&slots.content);
+    assert_eq!(
+        content.get_test_url(),
+        first["context"]["url"]
+            .as_str()
+            .unwrap()
+            .replace("<base>", &server.base)
+    );
+    content.invoke_action("cancel".into());
     page.set_test_url(format!("{}/error", server.base).into());
     page.invoke_fetch();
     until_fetch(|| !page.get_fetching());
@@ -872,7 +892,7 @@ fn recursive_formula_edits_reach_saved_page_parser_and_consumer() {
     formula.invoke_apply();
     content.invoke_action("test".into());
     assert!(
-        content.get_preview().contains("tags: edited tag"),
+        content.get_preview().contains("tag: series:edited tag"),
         "{}",
         content.get_preview()
     );
@@ -2108,7 +2128,7 @@ fn timestamp_content_has_only_source_choice_and_persists_real_parsed_metadata() 
         content.set_test_url("https://source-time.example/post/1".into());
         content.set_document(case["cases"][0]["document"].as_str().unwrap().into());
         content.invoke_action("test".into());
-        assert!(content.get_preview().contains("timestamp:"));
+        assert!(content.get_preview().contains("source/post time:"));
         assert_eq!(definitions(&store), original);
         let pixels = headless::render(&rendered.get(rendered.count() - 1).unwrap(), 1000, 780);
         assert_eq!(pixels.len(), 1000 * 780 * 4);

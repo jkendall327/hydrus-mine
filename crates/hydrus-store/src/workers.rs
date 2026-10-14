@@ -63,6 +63,10 @@ pub const FILE_MAINTENANCE_NOTHING_DUE: Duration = Duration::from_secs(60);
 /// The shortest rest between packets.
 const SHORTEST_REST: Duration = Duration::from_millis(100);
 
+/// A work-hard pass's packet (`_GetWorkPeriod`); its rest is [`SHORTEST_REST`]
+/// (`_GetRestTime`'s 0.1 s).
+const WORK_HARD_PACKET: Duration = Duration::from_millis(500);
+
 fn since(clock: &dyn WorkClock, started_ms: i64) -> Duration {
     Duration::from_millis(u64::try_from(clock.now_ms() - started_ms).unwrap_or(0))
 }
@@ -87,13 +91,34 @@ pub fn similar_files_step(
         }
     };
     let mut pace = settings.pace(currently_idle(store.dir(), clock.now_ms()));
-    pace.allowed |= settings.work_hard;
+    if settings.work_hard {
+        // working hard (`SetWorkHard`): whatever the switches say, in half
+        // second packets with a tenth of a second between them
+        pace = crate::idle_state::Pace {
+            allowed: true,
+            work: WORK_HARD_PACKET,
+            rest_percentage: 0,
+        };
+    }
     if !pace.allowed {
         return SIMILAR_FILES_HOLD;
     }
     let started = clock.now_ms();
     match search(store, pace.work) {
-        Ok(0) => SIMILAR_FILES_HOLD,
+        Ok(0) => {
+            if settings.work_hard {
+                // nothing left to search: work hard ends, as the reference's
+                // `_work_hard.clear()` when there is no work to do
+                if let Err(e) = store.write(|ctx| {
+                    let mut settings: SimilarFilesSettings = crate::settings::get(ctx.conn())?;
+                    settings.work_hard = false;
+                    crate::settings::set(ctx.conn(), &settings)
+                }) {
+                    tracing::error!(error = %e, "ending work hard failed");
+                }
+            }
+            SIMILAR_FILES_HOLD
+        }
         Ok(files) => {
             tracing::debug!(files, "searched for similar files");
             pace.rest(since(clock, started)).max(SHORTEST_REST)

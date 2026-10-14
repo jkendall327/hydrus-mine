@@ -21,6 +21,9 @@ def record(session):
         from hydrus.client.gui.panels.options import FileSearchPanel
         controller = session.controller
         options = controller.new_options
+        # (shown tall, so lists are laid out at their ideal heights)
+        controller.gui.showNormal()
+        controller.gui.resize(1300, 3600)
         panel = FileSearchPanel.FileSearchPanel(controller.gui, options)
         controls = (panel._active_search_predicates_height_num_chars, panel._ac_read_list_height_num_chars)
         initial = {'active_rows': controls[0].value(), 'autocomplete_rows': controls[1].value(),
@@ -30,7 +33,7 @@ def record(session):
         first = None
         def view(ac):
             def dimensions(widget):
-                return {'rows': widget._height_num_chars, 'hint': widget.sizeHint().height(),
+                return {'rows': widget._height_num_chars, 'hint': widget.sizeHint().height(), 'height': widget.height(),
                         'text_height': widget.fontMetrics().height(), 'frame': widget.frameWidth()}
             return {'active': dimensions(ac._predicates_listbox),
                     'autocomplete': dimensions(ac._search_results_list),
@@ -46,7 +49,8 @@ def record(session):
                 ac = page.GetSidebar()._tag_autocomplete
                 if first is None:
                     first = ac
-                QW.QApplication.processEvents()
+                for _ in range(4):
+                    QW.QApplication.processEvents()
                 events.append({'active_rows': active, 'autocomplete_rows': suggestions, 'floating': floating,
                                'view': view(ac), 'first_view': view(first)})
         finally:

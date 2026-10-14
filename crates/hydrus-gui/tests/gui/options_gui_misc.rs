@@ -60,7 +60,6 @@ fn a_chosen_sort_becomes_the_default_only_if_the_option_says_so() {
     );
 }
 
-// leaf: audit-options-gui-frame-locations-save-media-viewer-window-size-and-position-on-close
 #[test]
 fn the_media_viewer_keeps_its_window_geometry_on_close_only_if_the_option_says_so() {
     let client = Client::basic();

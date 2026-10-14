@@ -137,6 +137,7 @@ pub mod viewer_shortcut_menu;
 pub mod tag_relationships;
 
 pub mod parser_editors;
+pub mod parser_preview;
 pub mod parser_test_data;
 pub mod tag_display;
 

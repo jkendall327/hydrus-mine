@@ -1,0 +1,16 @@
+{
+  "what is this?": [
+    {
+      "kind": "information",
+      "title": "Information",
+      "text": "If something is running slow, you can turn on a profile mode to have hydrus gather information on it. You probably want \"db\" profile mode, but if it seems to be lag related to dialog spawning or similar, you might like to try the \"ui\" mode.\n\nTurn the mode on, do the slow thing for a bit, and then turn it off. In your database directory will be a new profile log, which is really helpful for hydrus dev to figure out what is running slow for you and how to fix it.\n\nThe Query Planner mode makes detailed database analysis of specific database queries. This is sometimes useful to hydev, but he will usually ask for it specifically.\n\nMore information is available in the help, under 'reducing lag'."
+    }
+  ],
+  "make a QMessageBox": [
+    {
+      "kind": "warning",
+      "title": "Warning",
+      "text": "This is a test message!\n\nI have a second line of information to give! I will repeat it! I have a second line of information to give! I will repeat it! I have a second line of information to give! I will repeat it! I have a second line of information to give! I will repeat it! I have a second line of information to give! I will repeat it!"
+    }
+  ]
+}

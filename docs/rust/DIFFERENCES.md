@@ -458,8 +458,8 @@ search.
   reaches the main-window title; secondary window titles still use their existing
   captions. Regex favourites open in a child list editor rather than embedding
   that list on the options page; their changes still wait for the parent Apply.
-  Exit confirmation honors the switch and auto-accept timeout; importer
-  activity reasons and shutdown-maintenance questions are not yet included. Search position and
+  Exit confirmation honors the switch and auto-accept timeout (see Shutdown
+  maintenance for the exit questions). Search position and
   remembering the last panel are editable. Connection/error-delay ranges follow the saved advanced mode
   when opening the window; changing that mode takes effect on reopening, as in
   the reference. Two options with the same label each go to their own
@@ -565,16 +565,25 @@ page by file size, which no two files of the fixture share.
 
 ## The media viewer (`hydrus-gui`)
 
+- **Random and undo random are shortcut commands, as in the reference.**
+  "media navigation: random" and "media navigation: undo random" (and first,
+  last, and "remove file from current view") can be given keys in the media
+  viewer's shortcut set, and have none by default, as in the reference; a
+  shuffled slideshow's moves are random too. Undo random goes back to where
+  the last random move came from. Unlike the reference's list of places, which
+  holds indices that go stale when files are removed, ours keeps the place
+  within the files left.
+
 - **The top hover frame's drag button shows the file in your file
   browser instead.** The reference's lets you drag the file out to other
   programs (a chat, a web page); Slint can't start a drag out of its
   window, so the button in that place shows the file, selected, in
   Explorer, Finder or your desktop's file manager (its FileManager1 D-Bus
   service, as the reference's show-in-file-manager package uses, or else
-  the folder opened), from where it can be dragged. For the same reason
-  the open menus offer "in file browser" whether or not hydrus's advanced
-  mode is on (the reference offers it only in advanced mode). Dragging
-  out for real is jkendall327/hydrus-mine#26.
+  the folder opened), from where it can be dragged. The thumbnail's open
+  menu offers "in file browser" only in advanced mode, as the reference's
+  does (`oracle/record_open_menu_actions.py`). Dragging out for real is
+  jkendall327/hydrus-mine#26.
 - **The animation buffer is sized at the file's own resolution.** The
   client's own player (ugoiras, animated WebP) keeps frames as the
   reference's `RasterContainerVideo` does, sized from "Memory for video
@@ -862,8 +871,9 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   the `NO_PROXY` environment variable), so with an http proxy set its requests
   to every host, a host named in the option and the local host included, go
   through the proxy (`oracle/record_network_job_options.py`). hydrus-rs keeps
-  those hosts direct, as the label says. The leaf is left as it was for that
-  reason.
+  those hosts direct, as the label says. The owner decided (2026-10-14) that
+  ours stands; the leaf is tagged on the test that replays the rest of the
+  recording and asserts this difference.
 - **Retry waits read as the reference's do.** A wait before a retry (a failed
   connection, a 503, a 429) shows "... - retrying now" or "... - retrying in
   4.7 seconds", renewed each second, and runs on into the second after its
@@ -1201,9 +1211,12 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   is the reference's text, but ends with the parse error's own text where the
   reference's has the Python exception (`JSONDecodeError(...)`); the subscription
   list's paste error is still a shorter message of its own. The prefetch and tag
-  pages' settings are compared with the reference's panels and the importer's
-  gates (`applies_to`), but the importer code that uses them (`predict`,
-  `service_tags`) is not driven from the editor's output.
+  pages' settings are compared with the reference's panels, and the editor's
+  output is run through a URL queue (prefetch: which pages the site is asked
+  for, the seed's status and note) and a local-import queue (tags of a new, an
+  inbox and an archived file) against recordings of the reference's engine
+  (`import_options_consumers.rs`). Not driven: prefetch by sha1 or sha512 (md5 is driven)
+  hashes, and in gallery, watcher and subscription importers (same code).
   The shared location button's flags for local-only, combined-local-only and
   no-multiple choices exist in the model and are replayed against the
   reference's button, but no window uses them yet.
@@ -1267,16 +1280,15 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   out the post index (a subsidiary parser's sets it to 0); the url, other
   variables and relative-url joining are replayed from
   `oracle/fixtures/parser_context.json`. After a fetch the page parser's url box
-  shows the encoded url the context holds, where the reference keeps what was
-  typed (its fetch texts, requests and cookies are replayed from
+  keeps what was typed, as the reference's does, and the context holds the
+  encoded url (its fetch texts, requests and cookies are replayed from
   `oracle/fixtures/parser_fetch_http.json`).
-- The test panels' result preview reads "Post 1" then "tags: abc" lines, where the
-  reference prints "*** 1 RESULTS BEGIN ***", then one line per result with its own
-  label ("tag: artist:samus" with the namespace joined and the tag cleaned,
-  "downloadable/pursuable url (priority 50): ...", 'note "name":', "sha256 hash:",
-  "source/post time: <date>", "veto: ...") and "*** RESULTS END ***"
-  (`oracle/fixtures/parser_context.json`, `parser_editors.json`). The parsed texts
-  match; the labels and layout do not.
+- The test panels' results read as the reference's do ("*** N RESULTS BEGIN ***",
+  one sorted line per result worded by its kind, posts separated by the
+  reference's break, a veto as its own line; `oracle/fixtures/parser_preview.json`).
+  Not matched: with no document the reference prints "Nothing to parse!" where hydrus-rs parses the empty text (so a static formula still shows its result); the error text of a hash that cannot be decoded (Python's words, e.g. "non-hexadecimal number found in fromhex()"), a tag that cannot be parsed ("unparsable tag, will likely be discarded"),
+  timestamps are shown in UTC (the reference's local time), and a parse error is
+  shown as its message where the reference prints an exception trace.
 - URL classes and single/nested gallery URL generators have native lists and
   rule editors. Their duplicate button creates new keys and unique names.
   Domain lists and regex lists use one rule per line, and nested generators
@@ -3122,7 +3134,7 @@ while it runs (the reference turns off only the one clicked). A test call's
 results and errors are the reference's (`Looks good!`, its
 `ExecutableException` and `BadReturnCodeException` texts with Python's list and
 string quoting, and the first 256 characters of the program's output);
-timeouts and cancellation say so in hydrus-rs's words. Cancellation owns/reaps
+a timeout is reported in the reference's words too (W5-2; hydrus-rs stops the call at its timeout, not at the reference's 3-second check), cancellation says so in hydrus-rs's words. Cancellation owns/reaps
 the direct child only; descendant process groups are not claimed. Ordinary
 executable arguments use the process API; batch/shell interpreters retain their
 own quoting semantics.
@@ -3622,12 +3634,7 @@ and playback parents remain Partial. Native regression/render source is authored
 for hosted validation; local checks used the actual Qt recorder, Python/source
 invariants, direct rustfmt and diff inspection only.
 
-“Allow loading of truncated images” remains Missing, with no inert native
-checkbox. Actual PIL accepts the authored short PNG/GIF/JPEG fixtures when enabled
-and reports damaged/truncated-file errors when disabled. The native PNG/GIF and
-other format decoders do not yet implement that shared permissive policy; a saved
-Boolean alone would not provide its real consumer behavior. The scoped evidence
-records this gap with zero completion credit.
+“Allow loading of truncated images” is ported (see Truncated images, below).
 
 The selected collapsed-sibling fade probe measures pixels inside the actual
 painted tag-text rectangle. The outer selection strips use the palette blue and
@@ -4264,7 +4271,7 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   integer locale switch, the hide-page signal, the URL drop page switch (see
   below), mpv's
   legacy mediator, player reuse and setGeometry switches, every QtMediaPlayer
-  row, system FFMPEG, truncated images and PIL (hydrus-rs decodes images its
+  row, system FFMPEG and PIL (hydrus-rs decodes images its
   own way), the other-display popup freeze (hydrus-rs's popups sit inside the
   main window, not in a toaster window of their own that could be frozen from
   another display), the self-sizing media viewer rescue padding (there is no
@@ -4429,11 +4436,19 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   the reference); FTS virtual tables are never analysed.
 - Restart is offered on every platform (the reference hides it for frozen
   Linux builds).
-- Exit asks the reference's question (`oracle/record_file_menu_exit.py`) but
-  not its other two: the extra paragraph naming the pages that hold importers
-  ("Importers will save and continue their work on the next start.") and the
-  "very little free space" prompt before saving the exit data. The exit
-  question is asked whenever confirmation is on.
+- Exit asks what the reference asks (`oracle/record_file_menu_exit.py`): the
+  "very little free space" question first (the database drive's free space
+  against half the database size, between 64MB and 5GB), then the exit
+  question, which becomes the pages' dialog (with the "Importers will save
+  and continue their work on the next start." paragraph) when a downloader
+  page is still importing. The exit question's 15-second auto-yes is a timer
+  in the window; the reference also counts it down in the dialog's title,
+  which hydrus-rs does not. The question is shown over the main window rather
+  than in a dialog, with the recorded title above its text and the recorded
+  button labels. The exit's free-space sum counts the `*.db` files in the
+  database directory, as the reference counts its own.
+- Restart is proven by a stand-in program started with the client's
+  arguments, not by relaunching the real binary (DECISIONS.md, 2026-10-14).
 
 ## Content undo
 
@@ -4523,7 +4538,7 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   is no thread pool of background tasks to time); and the tests, do not
   touch: the ui, client api, server and
   visual duplicates test suites (they drive the Python test harness),
-  both self-sigterms and "induce a program crash".
+  and both self-sigterms ("induce a program crash" is offered: see Crash log).
 - "what is this object?" takes drops anywhere on its window (the reference
   drops on the picture only). A bitmap on the clipboard is read as the
   reference reads it (the first channel of its pixels, then the payload) but
@@ -4574,11 +4589,44 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   when asked, so a subscription that has just finished is not held back for
   two minutes in the snapshot as it is in the reference's.
 
+## Thumbnail open menu
+
+- "focused file in web browser" sends the browser a file URL with the path
+  percent-escaped (`file:///home/me/a%20b.jpg`); the reference sends
+  `'file:///' + path` unescaped, which on Linux is four slashes
+  (`oracle/record_open_menu_actions.py`).
+- "similar files in a new page > custom" asks its distance in the shared
+  "edit value" dialog (a spin box, titled `choose distance`), where the
+  reference's is its own `DialogEdit`; the range, start value and step are
+  the same, the look is Slint's.
+
+## Archive/delete filter playback
+
+- The pause command on a file mpv plays (audio, video) is not compared with
+  the reference: its recorded mpv widget stayed paused throughout in the
+  offscreen recorder, so the recording has nothing to compare. The animations
+  (ugoira, animated WebP), which the client's own player shows, are.
+
+## Pages not yet shown
+
+- The reference loads every page of a session in the background and its tab
+  reads `initialising (N)` until that page has loaded; hydrus-rs opens a page
+  when it is first shown and its tab always carries the name and the count
+  the session kept (`oracle/record_tab_selection.py`, `lazy`).
+
 ## Thumbnail manage > file relationships
 
 - "set a relationship with custom metadata merge options" and "set selected
   collections as groups of alternates" aren't offered yet. The viewer's
   menu doesn't have the submenu yet.
+- The questions the reference asks before each action are asked in its
+  words (`oracle/record_file_relationship_actions.py`, from the real menu).
+  Clearing false positives says "N false positive relationships cleared."
+  (or "No false positives to clear!") in a popup, as recorded. Not ported:
+  the yes and no buttons' own labels in its warning for a hundred pairs or
+  more of alternates ("they are all alternates" / "some may be
+  duplicates"), and its separate warning for that many false positives
+  (hydrus-rs sets false positives only in the duplicate filter).
 - A group's "best quality file" is offered when the group has other files in
   the page's domain; the reference counts its members per domain the same
   way, but hydrus-rs doesn't distinguish a king outside the domain.
@@ -4597,7 +4645,10 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   reference's source only: its menu is filled by a worker the recorder cannot
   call (`oracle/record_backup_dialogs.py` records the dialogs, not the menu).
   Choosing "restore from a database backup" asks the reference's questions and
-  leaves a restart request; the reference's exit and restart is not exercised.
+  exits the client for a restart at once, with no second question and no
+  shutdown jobs; the restart is driven with a stand-in program and the start it
+  stands for (`client_store::open_store`) restores the backup
+  (`tests/gui/database_backup_menu.rs`).
 
 - Restoring refuses the store's own directory, including aliases. Startup takes
   the GUI lock before restoring or opening the database, and restore refuses an
@@ -4816,8 +4867,13 @@ directory.
 
 The grid's geometry under the thumbnail size, border and margin is replayed
 against the reference (`oracle/record_thumbnail_grid.py`): spans, columns, the
-grid's content height, click hits and the size each thumbnail is shown at. How
-the border is drawn (its colour and drawing) is not tested. Click hits were
+grid's content height, click hits and the size each thumbnail is shown at.
+The border's drawn width on each edge of a thumbnail is compared with the
+reference's own painted thumbnail (`oracle/record_thumbnail_border.py`),
+measured on the rendered pixels; its colour is the theme's, not compared. A
+selected thumbnail at a border of 0 or 1 px is drawn 2 px wide here, where the
+reference draws 0 or 1; selected thumbnails are compared only from 2 px.
+Click hits were
 recorded for the first two columns and rows only, at one viewport per setting,
 and thumbnail positions are the layout's rule rather than read from the
 rendered grid.
@@ -5189,7 +5245,7 @@ The palette's media-menu rows and the effect of activating one are recorded only
 
 The palette's media-menu rows for a page with one and with three files selected, for nine queries, and the effect of activating a row on the selection, are replayed against `palette_media_rows.json`; they match the reference's except the two single-file rows "copy bitmap" and "copy thumbnail bitmap" (the bitmap exchange is not ported).
 
-The options search bar's own position (top or bottom of the options window) is not measured against the reference: the recording holds only the field's index in the layout, and the field exposes no geometry to the tests, which read the suggestions' and the page list's positions instead (the page list sits 30 px lower with the field on top, our own field's height). The leaf is left untagged.
+The options search bar's place (above or below the page list) is compared with the reference's laid-out `_options_search` and `_listbook` geometry. Our field is 30 px high, Qt's 23 px, and ours is 6 px from the list, Qt's flush.
 
 The "open files in a new duplicates filter page" command (shortcut command 154) differs from the reference in two ways. In the media viewer the reference then pauses the video (`_MediaFocusWentToExternalProgram`, `ClientGUICanvas.py`); ours leaves it playing. On the thumbnails with nothing selected the reference still opens a page (with no files); ours does nothing, as the key is taken and ignored.
 
@@ -5277,11 +5333,25 @@ be diagnosed afterwards. The owner chose always-on crash logging (2026-10-14).
 - The preview window's top-right background draws the file's URLs after its
   locations by hydrus-rs's default (every URL class, unmatched URLs too); the
   reference's default shows none of the `basic` file's.
-- Tab alignment: the bar's thickness (28 px a row, 56 px for the two rows; Qt's tabs are 26 px) and the direction of
-  rotated West/East labels are not compared with the reference's Qt tabs.
-- "Width of suggested tags columns" and "Autocomplete list height" are read
-  as properties of the Manage Tags window; the lists' laid-out size is not
-  measured against the reference.
+- Tab alignment: a row of tabs is 28 px thick, Qt's 27 px (compared to within
+  1.5 px, against the recorded bar); the first tab starts 4 px in from the bar's
+  start, Qt's at 0. The direction of rotated West/East labels is compared with
+  the reference (where the ink of a label heavy at its start lies,
+  `oracle/record_tab_presentation.py` `ink`).
+- "Width of suggested tags columns": the lists' laid-out width, with the Manage
+  Tags window squeezed as narrow as its layout lets it, equals the option for
+  240 and 500, as the reference's. At the option's lower limit (20) our list
+  table will not go narrower than its own minimum, so the list is wider than the
+  reference's.
+- "Autocomplete list height" (tag editing, and file search's two lists): the rows
+  a list shows once laid out equal the option, compared with the reference's
+  *size hint* (`rows * text height + 2 * frame`), not its laid-out height: Qt
+  stretches or shrinks a list to fill its parent (the recordings' own laid-out
+  heights, 342/1599/64 px for file search and 1291 px for every tag-edit setting,
+  do not follow the option). The tag-edit recording uses a bare vertical layout
+  as host, not the real Manage Tags dialog. The row is 22 px here and a font
+  height in Qt, and our lists' padding differs from Qt's frame. Our tag-edit
+  list is only as tall as its suggestions (fewer than the option's rows shrinks it).
 
 - **A sidebar saved at width 0 and revealed** (Pages > sidebar > show/hide after
   "save current page's sidebar/preview size now" while hidden) shows nothing, as
@@ -5310,3 +5380,104 @@ be diagnosed afterwards. The owner chose always-on crash logging (2026-10-14).
   one process; here the client shows the popup and resets its idle timer, and
   the daemon (which owns the network engine and subscriptions) is asked to see a
   wake too, within about a second (that request is not tested end to end).
+
+## External call process options and the processor editor (W5-2, 2026-10-14)
+
+- **A call is stopped at its timeout.** The reference checks every 3 seconds
+  (`SubprocessCommunicate`), so a call is stopped between its timeout and 3
+  seconds after; hydrus-rs stops it at the timeout (the owner kept that). The
+  report is the reference's. A stray child that keeps the pipes open after a
+  timeout is not waited for, where the reference waits two seconds and then
+  reports a possible zombie in the stderr part.
+- **The rule row's string processor editor starts from the row's test
+  input**, the value typed in the testing box (the parameter's example until
+  it is changed); the reference always starts from the parameter's fixed
+  example value.
+- **Output is quoted as the text flag says**, as in the reference: text mode
+  as text (invalid UTF-8 replaced), otherwise as bytes. Hide terminal acts only
+  on Windows, as in the reference; deferred.
+- **The maximum size of the trash** is trimmed oldest first; the reference's
+  oldest 256 are deleted in CPython set order, so which files stay differs
+  (the owner decided ours stands, 2026-10-14).
+- **Processing steps: export to PNG and paste.** Export to PNG is the shared
+  exchange window (a path and save), not the reference's `PNGExportPanel` with
+  title, description and width fields. Paste opens a review before adding, and
+  failures show inline in it (the reference adds at once, says "N objects
+  added!", and shows a "Problem pasting!" or "Clipboard Error!" dialog). The
+  string processor's export button does nothing without a selection, as in the
+  reference.
+
+## Media viewer, duplicates daemons and the rebalance job (wave 5, W5-5)
+
+- The viewer's window size and place are kept only when it closes with "Save
+  media viewer window size and position on close" on. The reference also
+  saves them a moment after every resize or move whatever that option says
+  (`oracle/record_viewer_close_geometry.py`), so a viewer left a moment after
+  a resize keeps the size there and here it does not.
+- The viewer has no shortcut commands for forcing the mute or unmuting just
+  here (`SIMPLE_PER_PLAYER_AUDIO_MUTE`, `_UNMUTE`, `_FLIP`), for zooming to
+  100% or the canvas apart from switching, or for panning to the edges and
+  centres. The forced mute is reached by the volume menu, as in the reference.
+- After a drag, the reference's "zoom to canvas" keeps the dragged place
+  (`oracle/record_viewer_pan_zoom.py`); the nearest command here, switching with
+  z, goes to 100%, and from 100% to a centred fit.
+- The similar-files search never rests less than 0.1 s between packets; the
+  reference rests as little as its percentage computes. Working hard ends,
+  as the reference's does, once nothing is left to search. The auto-resolution
+  loop has no per-rule "work hard" and holds 10 s when it may not work, 60 s
+  when it has no work left (the reference rests 600 s).
+- The rebalance job's popup is dismissed at once when the job ends, so it
+  cannot be read afterwards; the moves are counted from the folders instead.
+
+"Induce a program crash" (Help > debug > tests, do not touch) asks the
+reference's question (title "Are you sure?", the text "u wot mate I'll hook u
+in the gabber", buttons "nice crash", "not a nice crash" and "forget it";
+recorded in `oracle/fixtures/crash_question.json`). "Nice crash" panics on the
+window's thread instead of calling `os.abort`: the crash log records the
+panic with a backtrace and the process ends. (An `os.abort`, a signal or a
+segfault in a native library leaves no log entry; a panic does.) "Not a nice
+crash" does not repaint in a loop until Qt gives out; it panics a worker
+thread, which the log records and the process survives. "Forget it" and
+closing the question do nothing, as in the reference. The reference's other
+entries in that submenu (the weekly UI, Client API and server tests, the visual
+duplicates tuning suites, fake petition mode, the self-sigterms) are not
+offered.
+
+## Truncated images
+
+Options > media playback > system > "Allow loading of truncated images" is
+read by the decoders, on by default as in the reference (Pillow's
+`LOAD_TRUNCATED_IMAGES`). Compared with `image_decoder_policies.json`
+(`oracle/record_image_decoder_policies.py`), which holds the reference's
+decoding of cut-off JPEG, PNG, GIF, WebP and BMP files with the option on and
+off:
+
+- On, a cut-off JPEG (libjpeg-turbo's premature-end handling), PNG, GIF or BMP
+  loads what is there and the rest is filled as Pillow fills it: JPEG mid
+  grey, PNG and BMP zeros (black, or palette entry 0), GIF the transparent or
+  first palette index. Only whole scanlines (PNG, BMP) and whole sub-blocks
+  (GIF) count, as in the reference. The pixels equal the recording.
+- Off, those files are refused with the reference's "Looks like a truncated
+  file that PIL could not handle!". A JPEG that only misses its end-of-image
+  marker counts as cut off, as it does in the reference.
+- A cut-off WebP is refused with the option on or off, as the reference does
+  (libwebp does not decode partial files); a JPEG cut inside its header is
+  refused too.
+- The importer's thumbnail comes from the same decode. As in the reference, a
+  file whose thumbnail cannot be made is still imported, but hydrus-rs stores
+  no thumbnail for it (the reference stores its default one). The viewer,
+  preview and archive/delete filter show no picture of such a file; what the
+  reference's viewer shows for it was not recorded.
+- The setting is read as each image is opened, not applied process-wide.
+  Changing it drops the decoded-image cache and repaints open viewers and
+  previews, as the reference's `SetEnableLoadTruncatedImages` clears its image
+  and tile caches.
+- A file is filled out to the size its header declares, so BMP and PNG refuse
+  a header over Pillow's decompression-bomb limit (twice 89,478,485 pixels)
+  before allocating anything, with Pillow's message. A tiny file that claims
+  just under the limit still makes an image of that size, as it does in
+  Pillow.
+- Not compared: truncated TIFF, ICO, QOI and animated GIF/WebP frames (the
+  reference never records them here); GIF and BMP follow the same rules.
+- Only the first frame of a GIF follows the setting; frames of an animation
+  decode as before.

@@ -278,3 +278,68 @@ fn a_right_click_shows_the_viewer_s_menu_and_its_entries_act() {
     assert_ne!(viewer.get_caption().to_string(), before);
     viewer.invoke_close_requested();
 }
+
+// The viewer's open menu shares the thumbnails' similar-files submenu; its
+// "custom" row asks the distance (`oracle/fixtures/open_menu_actions.json`:
+// "choose distance", 10, 0 to 99, steps of 2) and opens the search.
+#[test]
+fn the_viewer_s_similar_files_custom_row_asks_a_distance_and_opens_the_search() {
+    use hydrus_gui::{MainWindow, Pages, SearchPage, bind, headless};
+    use slint::Model as _;
+
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store: Arc<Store> = Store::open(native.path()).unwrap();
+    super::common::remove_trashed_from_view(&store);
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let page = bound.current.borrow().clone();
+    let files = page.borrow().results().to_vec();
+    let index = files
+        .iter()
+        .position(|&f| player(&store, f) == Player::StaticImage)
+        .unwrap();
+    ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
+    let viewer = bound
+        .viewer
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong)
+        .unwrap();
+    viewer.invoke_context_menu_requested();
+    let custom = viewer
+        .get_context_menu()
+        .open_similar
+        .iter()
+        .find(|r| r.label == "custom")
+        .expect("the viewer's menu has custom")
+        .id;
+    viewer.invoke_menu_chosen(custom);
+    let dialog = hydrus_gui::similar_distance_window::editor().expect("the dialog opens");
+    assert_eq!(dialog.get_window_title(), "choose distance");
+    assert_eq!(
+        (
+            dialog.get_value(),
+            dialog.get_minimum(),
+            dialog.get_maximum(),
+            dialog.get_step_size()
+        ),
+        (10, 0, 99, 2)
+    );
+    dialog.set_value(6);
+    dialog.invoke_apply();
+    let opened = bound.current.borrow().clone();
+    assert_eq!(
+        opened.borrow().predicates(),
+        ["system:similar to 1 files with distance of 6"]
+    );
+    viewer.invoke_close_requested();
+}

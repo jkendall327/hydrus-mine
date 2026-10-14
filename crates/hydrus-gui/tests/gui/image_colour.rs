@@ -39,7 +39,7 @@ fn expected(enabled: bool) -> Vec<u8> {
         .unwrap();
     serde_json::from_value(row["pixels"].clone()).unwrap()
 }
-fn rgb(image: &slint::Image) -> Vec<u8> {
+pub(super) fn rgb(image: &slint::Image) -> Vec<u8> {
     image.to_rgba8().map_or_else(Vec::new, |pixels| {
         pixels
             .as_bytes()
@@ -48,7 +48,7 @@ fn rgb(image: &slint::Image) -> Vec<u8> {
             .collect()
     })
 }
-fn wait(mut ready: impl FnMut() -> bool) {
+pub(super) fn wait(mut ready: impl FnMut() -> bool) {
     let deadline = Instant::now() + Duration::from_secs(10);
     while !ready() {
         assert!(Instant::now() < deadline, "owned image did not finish");
@@ -111,7 +111,7 @@ fn setup() -> ([tempfile::TempDir; 2], Arc<Store>, HashId) {
         .unwrap();
     (dirs, store, id)
 }
-fn query_select(ui: &MainWindow, bound: &hydrus_gui::Bound, file: HashId) -> i32 {
+pub(super) fn query_select(ui: &MainWindow, bound: &hydrus_gui::Bound, file: HashId) -> i32 {
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
     let index = bound
@@ -128,7 +128,7 @@ fn query_select(ui: &MainWindow, bound: &hydrus_gui::Bound, file: HashId) -> i32
 }
 // Re-entering an active Everything predicate removes it. Refresh the owned
 // query without changing its predicates, location, or full result membership.
-fn refresh_select(ui: &MainWindow, bound: &hydrus_gui::Bound, file: HashId) -> i32 {
+pub(super) fn refresh_select(ui: &MainWindow, bound: &hydrus_gui::Bound, file: HashId) -> i32 {
     let current = bound.current.borrow().clone();
     let predicates = current.borrow().predicates();
     assert_eq!(predicates, vec!["system:everything".to_owned()]);
@@ -156,7 +156,11 @@ fn refresh_select(ui: &MainWindow, bound: &hydrus_gui::Bound, file: HashId) -> i
     index
 }
 // A visible owner also needs a measured native preview viewport before SetMedia.
-fn settle_viewport(ui: &MainWindow, bound: &hydrus_gui::Bound, windows: &headless::Windows) {
+pub(super) fn settle_viewport(
+    ui: &MainWindow,
+    bound: &hydrus_gui::Bound,
+    windows: &headless::Windows,
+) {
     assert!(ui.window().is_visible());
     let native = windows.get(0).unwrap();
     for _ in 0..3 {
