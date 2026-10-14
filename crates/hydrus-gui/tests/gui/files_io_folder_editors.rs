@@ -79,7 +79,6 @@ fn saved(store: &Store) -> hydrus_store::import_folders::ImportFolder {
         .unwrap()
 }
 
-// leaf: audit-network-import-folder-schedule
 // leaf: audit-network-import-folder-outcomes
 #[test]
 fn an_import_folders_schedule_skip_period_and_outcomes_are_what_its_worker_does() {
@@ -326,8 +325,6 @@ fn stored_export(store: &Store, name: &str) -> hydrus_parse::folders::ExportFold
     folders.0.into_iter().find(|f| f.name == name).unwrap()
 }
 
-// leaf: audit-network-export-folder-schedule
-// leaf: audit-network-export-folder-filename
 #[test]
 fn an_export_folders_search_phrase_schedule_and_overwrites_are_what_its_worker_does() {
     let (_dirs, store) = crate::subscriptions::store();
@@ -519,7 +516,6 @@ fn an_export_folders_type_symlinks_and_trash_choices_reach_its_worker() {
     );
 }
 
-// leaf: audit-network-import-folder-filetypes
 #[test]
 fn an_import_folders_allowed_filetypes_decide_which_files_its_worker_imports() {
     let (_dirs, store) = fixture_store("import_folder");
@@ -583,4 +579,639 @@ fn an_import_folders_allowed_filetypes_decide_which_files_its_worker_imports() {
     assert!(run.checked);
     assert_eq!(run.new_files, 2, "both are found by the check");
     assert_eq!(run.imported, 1, "only the allowed filetype comes in");
+}
+
+/// Keep every popup the work sends, even those it dismisses at its end.
+fn log_popups(store: &Store) {
+    store
+        .write(|ctx| {
+            ctx.conn().execute_batch(
+                "CREATE TABLE IF NOT EXISTS popup_log (seq INTEGER PRIMARY KEY, job TEXT NOT NULL);
+                 CREATE TRIGGER IF NOT EXISTS popup_logger AFTER INSERT ON popups
+                 BEGIN INSERT INTO popup_log (job) VALUES (new.job); END;",
+            )?;
+            Ok(())
+        })
+        .unwrap();
+}
+
+/// The popups sent since the last call, as `(title, carries files)`.
+fn popups_since(store: &Store) -> Vec<(String, bool)> {
+    store
+        .write(|ctx| {
+            let jobs: Vec<String> = ctx
+                .conn()
+                .prepare("SELECT job FROM popup_log ORDER BY seq")?
+                .query_map([], |r| r.get(0))?
+                .collect::<Result<_, _>>()?;
+            ctx.conn().execute("DELETE FROM popup_log", [])?;
+            Ok(jobs
+                .iter()
+                .map(|job| {
+                    let job: serde_json::Value = serde_json::from_str(job).unwrap();
+                    (
+                        job["status_title"].as_str().unwrap_or_default().to_owned(),
+                        !job["files"].is_null(),
+                    )
+                })
+                .collect())
+        })
+        .unwrap()
+}
+
+fn recorded_popups(case: &serde_json::Value) -> Vec<(String, bool)> {
+    case["popups"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|p| {
+            (
+                p["title"].as_str().unwrap_or_default().to_owned(),
+                p["has_files"].as_bool().unwrap(),
+            )
+        })
+        .collect()
+}
+
+// leaf: audit-network-export-folder-schedule
+#[test]
+fn an_export_folder_works_and_shows_popups_when_its_edited_schedule_says_as_the_reference_does() {
+    let recorded = hydrus_testkit::fixture_json("folder_schedule.json");
+    let (_dirs, store) = crate::subscriptions::store();
+    log_popups(&store);
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let now = || hydrus_core::time::TimestampMs::now().millis() / 1000;
+    for (n, case) in recorded["export"].as_array().unwrap().iter().enumerate() {
+        let name = case["name"].as_str().unwrap();
+        let options = &case["options"];
+        let dest = tempfile::tempdir().unwrap();
+        crate::folders::open(&ui, "manage export folders\u{2026}");
+        let list = export_list(&bound);
+        if n == 0 {
+            list.invoke_add();
+        } else {
+            list.invoke_row_clicked(0, false, false);
+            list.invoke_edit();
+        }
+        let edit = export_edit(&bound);
+        if n == 0 {
+            // (named as the recorder's)
+            edit.set_name("schedule".into());
+            edit.set_phrase("{hash}".into());
+            edit.set_typed("system:filetype is png".into());
+            edit.invoke_typed_accepted();
+        }
+        edit.set_path(dest.path().to_string_lossy().into_owned().into());
+        edit.set_run_regularly(options["run_regularly"].as_bool().unwrap_or(true));
+        edit.set_show_popup(options["show_working_popup"].as_bool().unwrap_or(false));
+        edit.set_run_now(options["run_now"].as_bool().unwrap_or(false));
+        // the recorded period: an hour
+        edit.invoke_period_edited(1, 1);
+        edit.invoke_period_edited(0, 0);
+        edit.invoke_apply();
+        assert!(
+            bound.folders.export_edit.borrow().is_none(),
+            "{name}: {}",
+            edit.get_asking_message()
+        );
+        list.invoke_apply();
+        assert_eq!(
+            stored_export(&store, "schedule").period,
+            recorded["period"].as_i64().unwrap()
+        );
+        // it was last checked this long ago
+        let before = now() - case["age"].as_i64().unwrap();
+        store
+            .write(move |ctx| {
+                let mut folders: hydrus_store::settings::ExportFolders =
+                    hydrus_store::settings::get(ctx.conn())?;
+                folders.0[0].last_checked = before;
+                hydrus_store::settings::set(ctx.conn(), &folders)
+            })
+            .unwrap();
+        popups_since(&store);
+        let run = hydrus_download::export::work_on_export_folder(&store, "schedule").unwrap();
+        assert_eq!(run.error, None, "{name}");
+        assert_eq!(
+            !exported(dest.path()).is_empty(),
+            case["worked"].as_bool().unwrap(),
+            "{name}: files written"
+        );
+        assert_eq!(
+            popups_since(&store),
+            recorded_popups(case),
+            "{name}: popups"
+        );
+        let after = stored_export(&store, "schedule");
+        assert_eq!(
+            after.run_now,
+            case["run_now_after"].as_bool().unwrap(),
+            "{name}"
+        );
+        assert_eq!(
+            after.run_regularly,
+            case["run_regularly_after"].as_bool().unwrap(),
+            "{name}"
+        );
+        assert_eq!(
+            after.last_checked != before,
+            case["last_checked_moved"].as_bool().unwrap(),
+            "{name}"
+        );
+    }
+}
+
+// leaf: audit-network-import-folder-schedule
+#[test]
+fn an_import_folder_checks_and_shows_popups_when_its_edited_schedule_says_as_the_reference_does() {
+    let recorded = hydrus_testkit::fixture_json("folder_schedule.json");
+    let (_dirs, store) = fixture_store("import_folder");
+    log_popups(&store);
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let worker = downloader(&store);
+    let now = || hydrus_core::time::TimestampMs::now().millis() / 1000;
+    // a file the client has not seen for each case, as the recorder had
+    let images = [
+        "p01_e.jpg",
+        "p03_a.png",
+        "p04_a.png",
+        "p00_c.bmp",
+        "p00_f_exif.jpg",
+        "p00_g_lossy.jpg",
+        "p00_b_bloated.png",
+        "p00_h.gif",
+    ];
+    for (n, case) in recorded["import"].as_array().unwrap().iter().enumerate() {
+        let name = case["name"].as_str().unwrap();
+        let options = &case["options"];
+        let watched = tempfile::tempdir().unwrap();
+        let target = watched.path().join("a.png");
+        std::fs::copy(
+            hydrus_testkit::fixture_path(format!("auto_resolution/{}", images[n])),
+            &target,
+        )
+        .unwrap();
+        std::fs::File::options()
+            .write(true)
+            .open(&target)
+            .unwrap()
+            .set_modified(std::time::SystemTime::now() - Duration::from_secs(1_000_000))
+            .unwrap();
+        let (list, edit) = edit_first(&ui, &bound);
+        edit.set_path(watched.path().to_string_lossy().into_owned().into());
+        edit.set_check_regularly(options["check_regularly"].as_bool().unwrap_or(true));
+        edit.set_paused(options["paused"].as_bool().unwrap_or(false));
+        edit.set_check_now(options["check_now"].as_bool().unwrap_or(false));
+        edit.set_show_popup(options["show_working_popup"].as_bool().unwrap_or(true));
+        edit.set_publish_popup_button(
+            options["publish_files_to_popup_button"]
+                .as_bool()
+                .unwrap_or(true),
+        );
+        edit.set_publish_page(false);
+        // the recorded period: an hour
+        edit.invoke_period_edited(1, 1);
+        edit.invoke_period_edited(2, 0);
+        // leave the source files where they are
+        for row in 0..4 {
+            edit.invoke_action_chosen(row, 1);
+        }
+        edit.invoke_apply();
+        assert!(
+            bound.folders.import_edit.borrow().is_none(),
+            "{name}: {}",
+            edit.get_asking_message()
+        );
+        list.invoke_apply();
+        let folder = saved(&store);
+        assert_eq!(folder.settings.period, recorded["period"].as_i64().unwrap());
+        let id = folder.id();
+        let before = now() - case["age"].as_i64().unwrap();
+        store
+            .write(move |ctx| {
+                let mut settings = import_folders::import_folder(ctx.conn(), id)?
+                    .unwrap()
+                    .settings;
+                settings.last_checked = before;
+                import_folders::set_settings(ctx.conn(), id, &settings)
+            })
+            .unwrap();
+        popups_since(&store);
+        let run = worker.work_on_import_folder(id).unwrap();
+        assert_eq!(run.error, None, "{name}");
+        assert_eq!(
+            run.checked,
+            case["worked"].as_bool().unwrap(),
+            "{name}: checked"
+        );
+        // (the work's own popup is titled by the folder: "drop box" here)
+        let ours: Vec<(String, bool)> = popups_since(&store)
+            .into_iter()
+            .map(|(title, files)| (title.replace("drop box", "schedule"), files))
+            .collect();
+        assert_eq!(ours, recorded_popups(case), "{name}: popups");
+        let after = saved(&store);
+        assert_eq!(
+            after.paused(),
+            case["paused_after"].as_bool().unwrap(),
+            "{name}"
+        );
+        assert_eq!(
+            after.settings.check_now,
+            case["check_now_after"].as_bool().unwrap(),
+            "{name}"
+        );
+        assert_eq!(
+            after.settings.last_checked != before,
+            case["last_checked_moved"].as_bool().unwrap(),
+            "{name}"
+        );
+    }
+}
+
+// leaf: audit-network-import-folder-filetypes
+#[test]
+fn an_import_folders_allowed_filetypes_veto_the_other_files_as_the_reference_does() {
+    let recorded = hydrus_testkit::fixture_json("import_folder_filetypes.json");
+    let sources = [
+        ["p03_a.png", "p01_e.jpg", "p00_h.gif", "p00_c.bmp"],
+        ["p04_a.png", "p02_e.jpg", "p03_h.gif", "p02_c.bmp"],
+        ["p05_a.png", "p03_e.jpg", "p04_h.gif", "p04_c.bmp"],
+        ["p06_a.png", "p04_e.jpg", "p05_h.gif", "p05_c.bmp"],
+    ];
+    let names = ["a.png", "b.jpg", "c.gif", "d.bmp"];
+    let (_dirs, store) = fixture_store("import_folder");
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let worker = downloader(&store);
+    // (the last folder stays for the edit after)
+    let mut last_watched = None;
+    for (n, case) in recorded["cases"].as_array().unwrap().iter().enumerate() {
+        let name = case["name"].as_str().unwrap();
+        let watched = tempfile::tempdir().unwrap();
+        for (target, source) in names.iter().zip(sources[n]) {
+            let path = watched.path().join(target);
+            std::fs::copy(
+                hydrus_testkit::fixture_path(format!("auto_resolution/{source}")),
+                &path,
+            )
+            .unwrap();
+            std::fs::File::options()
+                .write(true)
+                .open(&path)
+                .unwrap()
+                .set_modified(std::time::SystemTime::now() - Duration::from_secs(1_000_000))
+                .unwrap();
+        }
+        let (list, edit) = edit_first(&ui, &bound);
+        edit.set_path(watched.path().to_string_lossy().into_owned().into());
+        edit.set_check_regularly(false);
+        edit.set_paused(false);
+        edit.set_check_now(true);
+        for row in 0..4 {
+            edit.invoke_action_chosen(row, 1);
+        }
+        if let Some(allowed) = case["allowed"].as_array() {
+            edit.invoke_edit_import_options();
+            let editor = bound
+                .folders
+                .import_options
+                .borrow()
+                .as_ref()
+                .expect("it opens")
+                .clone_strong();
+            editor.invoke_kind_clicked(0);
+            editor.set_custom_index(1);
+            editor.invoke_changed();
+            // the options by the names the editor gives them
+            let wanted: Vec<&str> = allowed
+                .iter()
+                .map(|t| match t.as_str().unwrap() {
+                    "IMAGE_PNG" => "png",
+                    "IMAGE_JPEG" => "jpeg",
+                    "IMAGE_GIF" => "static gif",
+                    "IMAGE_BMP" => "bitmap",
+                    other => panic!("{other}"),
+                })
+                .collect();
+            let groups = editor.get_filetype_rows().row_count();
+            for g in 0..groups {
+                editor.invoke_filetype_expanded(i32::try_from(g).unwrap(), true);
+            }
+            let rows = editor.get_filetype_rows();
+            let options: Vec<_> = rows.iter().filter(|r| r.option >= 0).collect();
+            for r in &options {
+                let want = wanted.contains(&r.text.as_str());
+                if r.ticked != want {
+                    editor.invoke_filetype_ticked(r.group, r.option, want);
+                }
+            }
+            let mut ticked: Vec<String> = editor
+                .get_filetype_rows()
+                .iter()
+                .filter(|r| r.option >= 0 && r.ticked)
+                .map(|r| r.text.to_string())
+                .collect();
+            ticked.sort();
+            let mut wanted_sorted = wanted.clone();
+            wanted_sorted.sort_unstable();
+            assert_eq!(ticked, wanted_sorted, "{name}: the editor's ticks");
+            editor.invoke_apply();
+        }
+        edit.invoke_apply();
+        assert!(
+            bound.folders.import_edit.borrow().is_none(),
+            "{name}: {}",
+            edit.get_asking_message()
+        );
+        list.invoke_apply();
+        let folder = saved(&store);
+        let run = worker.work_on_import_folder(folder.id()).unwrap();
+        assert_eq!(run.error, None, "{name}");
+        let id = folder.id();
+        let mut seeds: Vec<(String, i64, String)> = store
+            .read(move |conn| hydrus_store::queues::file_seeds(conn, id))
+            .unwrap()
+            .into_iter()
+            .map(|s| {
+                (
+                    std::path::Path::new(&s.data)
+                        .strip_prefix(watched.path())
+                        .unwrap()
+                        .to_string_lossy()
+                        .into_owned(),
+                    s.status.code(),
+                    s.note,
+                )
+            })
+            .collect();
+        seeds.sort();
+        let theirs: Vec<(String, i64, String)> = case["seeds"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|s| {
+                (
+                    s[0].as_str().unwrap().to_owned(),
+                    s[1].as_i64().unwrap(),
+                    s[2].as_str().unwrap().to_owned(),
+                )
+            })
+            .collect();
+        assert_eq!(seeds, theirs, "{name}");
+        last_watched = Some(watched);
+    }
+    let _watched = last_watched;
+    // the last folder (only bmp allowed) edited to allow every filetype: the
+    // ignored files are forgotten at once, and found again by the next check
+    let (list, edit) = edit_first(&ui, &bound);
+    edit.set_check_now(true);
+    edit.invoke_edit_import_options();
+    let editor = bound
+        .folders
+        .import_options
+        .borrow()
+        .as_ref()
+        .expect("it opens")
+        .clone_strong();
+    for g in 0..editor.get_filetype_rows().row_count() {
+        editor.invoke_filetype_expanded(i32::try_from(g).unwrap(), true);
+    }
+    for r in editor
+        .get_filetype_rows()
+        .iter()
+        .filter(|r| r.option >= 0 && !r.ticked)
+    {
+        editor.invoke_filetype_ticked(r.group, r.option, true);
+    }
+    let unticked = editor
+        .get_filetype_rows()
+        .iter()
+        .filter(|r| r.option >= 0 && !r.ticked)
+        .count();
+    assert_eq!(unticked, 0, "every filetype is allowed in the editor");
+    editor.invoke_apply();
+    edit.invoke_apply();
+    list.invoke_apply();
+    let folder = saved(&store);
+    let id = folder.id();
+    let seeds_of = |store: &Store| -> Vec<(String, i64, String)> {
+        let mut seeds: Vec<(String, i64, String)> = store
+            .read(move |conn| hydrus_store::queues::file_seeds(conn, id))
+            .unwrap()
+            .into_iter()
+            .map(|s| {
+                (
+                    std::path::Path::new(&s.data)
+                        .file_name()
+                        .unwrap()
+                        .to_string_lossy()
+                        .into_owned(),
+                    s.status.code(),
+                    s.note,
+                )
+            })
+            .collect();
+        seeds.sort();
+        seeds
+    };
+    let after = &recorded["after_edit"];
+    assert_eq!(
+        seeds_of(&store).len(),
+        after["seeds_forgotten"].as_u64().unwrap() as usize
+    );
+    let run = worker.work_on_import_folder(id).unwrap();
+    assert_eq!(run.error, None);
+    let theirs: Vec<(String, i64, String)> = after["seeds"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|s| {
+            (
+                s[0].as_str().unwrap().to_owned(),
+                s[1].as_i64().unwrap(),
+                s[2].as_str().unwrap().to_owned(),
+            )
+        })
+        .collect();
+    assert_eq!(seeds_of(&store), theirs);
+
+    // the skip period: files modified more recently than it wait
+    let skip = &recorded["skip"];
+    let watched = tempfile::tempdir().unwrap();
+    for (target, source) in [("new.png", "p06_b_bloated.png"), ("old.jpg", "p05_e.jpg")] {
+        let path = watched.path().join(target);
+        std::fs::copy(
+            hydrus_testkit::fixture_path(format!("auto_resolution/{source}")),
+            &path,
+        )
+        .unwrap();
+        std::fs::File::options()
+            .write(true)
+            .open(&path)
+            .unwrap()
+            .set_modified(
+                std::time::SystemTime::now()
+                    - Duration::from_secs(skip["ages"][target].as_u64().unwrap()),
+            )
+            .unwrap();
+    }
+    for (n, check) in skip["checks"].as_array().unwrap().iter().enumerate() {
+        let (list, edit) = edit_first(&ui, &bound);
+        edit.set_path(watched.path().to_string_lossy().into_owned().into());
+        edit.set_check_regularly(false);
+        edit.set_paused(false);
+        edit.set_check_now(true);
+        for row in 0..4 {
+            edit.invoke_action_chosen(row, 1);
+        }
+        // a day, then a second
+        if n == 0 {
+            edit.invoke_skip_edited(0, 1);
+            edit.invoke_skip_edited(2, 0);
+        } else {
+            edit.invoke_skip_edited(0, 0);
+            edit.invoke_skip_edited(3, 1);
+        }
+        edit.invoke_apply();
+        list.invoke_apply();
+        let folder = saved(&store);
+        assert_eq!(
+            folder.settings.last_modified_time_skip_period,
+            check["period"].as_i64().unwrap()
+        );
+        let id = folder.id();
+        let run = worker.work_on_import_folder(id).unwrap();
+        assert_eq!(run.error, None);
+        let mut seeds: Vec<(String, i64)> = store
+            .read(move |conn| hydrus_store::queues::file_seeds(conn, id))
+            .unwrap()
+            .into_iter()
+            .map(|s| {
+                (
+                    std::path::Path::new(&s.data)
+                        .file_name()
+                        .unwrap()
+                        .to_string_lossy()
+                        .into_owned(),
+                    s.status.code(),
+                )
+            })
+            .collect();
+        seeds.sort();
+        let theirs: Vec<(String, i64)> = check["seeds"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|s| (s[0].as_str().unwrap().to_owned(), s[1].as_i64().unwrap()))
+            .collect();
+        assert_eq!(seeds, theirs, "skip period {}", check["period"]);
+    }
+}
+
+// leaf: audit-network-export-folder-filename
+#[test]
+fn an_export_folders_sidecar_overwrite_options_decide_what_its_worker_writes_as_the_reference_did()
+{
+    let recorded = hydrus_testkit::fixture_json("export_folder_overwrite.json");
+    let (_dirs, store) = fixture_store("export_folder");
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let names: Vec<String> = recorded["names"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|n| n.as_str().unwrap().to_owned())
+        .collect();
+    let sidecars = |dir: &std::path::Path| -> std::collections::BTreeMap<String, String> {
+        exported(dir)
+            .into_iter()
+            .filter(|n| {
+                std::path::Path::new(n).extension().is_some_and(|e| {
+                    e.eq_ignore_ascii_case("txt") || e.eq_ignore_ascii_case("json")
+                })
+            })
+            .map(|n| {
+                let text = std::fs::read_to_string(dir.join(&n)).unwrap();
+                (n, text)
+            })
+            .collect()
+    };
+    for case in recorded["cases"].as_array().unwrap() {
+        let name = case["name"].as_str().unwrap();
+        let dest = tempfile::tempdir().unwrap();
+        crate::folders::open(&ui, "manage export folders\u{2026}");
+        let list = export_list(&bound);
+        let row = list
+            .get_rows()
+            .iter()
+            .position(|r| r.cells.row_data(0).unwrap() == "regular")
+            .expect("the recorded regular folder");
+        list.invoke_row_clicked(i32::try_from(row).unwrap(), false, false);
+        list.invoke_edit();
+        let edit = export_edit(&bound);
+        edit.set_path(dest.path().to_string_lossy().into_owned().into());
+        // the files named by their hashes
+        edit.set_phrase("{hash}".into());
+        edit.set_run_regularly(false);
+        edit.set_run_now(true);
+        edit.set_overwrite_next(case["next_run"].as_bool().unwrap());
+        edit.set_overwrite_always(case["always"].as_bool().unwrap());
+        edit.invoke_apply();
+        assert!(
+            bound.folders.export_edit.borrow().is_none(),
+            "{name}: {}",
+            edit.get_asking_message()
+        );
+        list.invoke_apply();
+        for (n, run) in case["runs"].as_array().unwrap().iter().enumerate() {
+            for file in &names {
+                let sidecar = dest.path().join(format!("{file}.txt"));
+                if case["stale"].as_bool().unwrap() {
+                    std::fs::write(&sidecar, recorded["stale"].as_str().unwrap()).unwrap();
+                } else {
+                    let _ = std::fs::remove_file(&sidecar);
+                }
+            }
+            if n > 0 {
+                // (run again: the next-run option was spent by the first)
+                store
+                    .write(|ctx| {
+                        let mut folders: hydrus_store::settings::ExportFolders =
+                            hydrus_store::settings::get(ctx.conn())?;
+                        for f in &mut folders.0 {
+                            f.run_now = f.name == "regular";
+                        }
+                        hydrus_store::settings::set(ctx.conn(), &folders)
+                    })
+                    .unwrap();
+            }
+            let result = hydrus_download::export::work_on_export_folder(&store, "regular").unwrap();
+            assert_eq!(result.error, None, "{name}, run {n}");
+            let theirs: std::collections::BTreeMap<String, String> = run["sidecars"]
+                .as_object()
+                .unwrap()
+                .iter()
+                .map(|(k, v)| (k.clone(), v.as_str().unwrap().to_owned()))
+                .collect();
+            assert_eq!(sidecars(dest.path()), theirs, "{name}, run {n}: sidecars");
+            let after = stored_export(&store, "regular");
+            assert_eq!(
+                after.overwrite_sidecars_on_next_run,
+                run["overwrite_next_after"].as_bool().unwrap(),
+                "{name}, run {n}"
+            );
+            assert_eq!(
+                after.always_overwrite_sidecars,
+                run["always_after"].as_bool().unwrap(),
+                "{name}, run {n}"
+            );
+        }
+    }
 }

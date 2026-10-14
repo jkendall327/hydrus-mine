@@ -1,0 +1,130 @@
+{
+ "names": [
+  "18eaa2a4acc36081c952694b31f8bfc95a8c92b40c6c570bbd93d78e34676ca2.gif",
+  "52e3557be64b2cc20dc8e7279f1c0af54d0b22b4c221b4491e6113c546903c13.jpg",
+  "76322a345f5ea96fd94f1fe83d0abb33711022fd3dc9bc10e5c3a746ee9eb511.png"
+ ],
+ "stale": "stale tag\n",
+ "cases": [
+  {
+   "name": "nothing set, a stale sidecar",
+   "stale": true,
+   "next_run": false,
+   "always": false,
+   "runs": [
+    {
+     "sidecars": {
+      "18eaa2a4acc36081c952694b31f8bfc95a8c92b40c6c570bbd93d78e34676ca2.gif.txt": "stale tag\n",
+      "52e3557be64b2cc20dc8e7279f1c0af54d0b22b4c221b4491e6113c546903c13.jpg.json": "{\"urls\": [\"https://example.com/post/2\", \"https://example.com/post/3\"]}",
+      "52e3557be64b2cc20dc8e7279f1c0af54d0b22b4c221b4491e6113c546903c13.jpg.txt": "stale tag\n",
+      "76322a345f5ea96fd94f1fe83d0abb33711022fd3dc9bc10e5c3a746ee9eb511.png.json": "{\"urls\": [\"https://example.com/post/1\"]}",
+      "76322a345f5ea96fd94f1fe83d0abb33711022fd3dc9bc10e5c3a746ee9eb511.png.txt": "stale tag\n"
+     },
+     "overwrite_next_after": false,
+     "always_after": false
+    },
+    {
+     "sidecars": {
+      "18eaa2a4acc36081c952694b31f8bfc95a8c92b40c6c570bbd93d78e34676ca2.gif.txt": "stale tag\n",
+      "52e3557be64b2cc20dc8e7279f1c0af54d0b22b4c221b4491e6113c546903c13.jpg.json": "{\"urls\": [\"https://example.com/post/2\", \"https://example.com/post/3\"]}",
+      "52e3557be64b2cc20dc8e7279f1c0af54d0b22b4c221b4491e6113c546903c13.jpg.txt": "stale tag\n",
+      "76322a345f5ea96fd94f1fe83d0abb33711022fd3dc9bc10e5c3a746ee9eb511.png.json": "{\"urls\": [\"https://example.com/post/1\"]}",
+      "76322a345f5ea96fd94f1fe83d0abb33711022fd3dc9bc10e5c3a746ee9eb511.png.txt": "stale tag\n"
+     },
+     "overwrite_next_after": false,
+     "always_after": false
+    }
+   ]
+  },
+  {
+   "name": "nothing set, no sidecar yet",
+   "stale": false,
+   "next_run": false,
+   "always": false,
+   "runs": [
+    {
+     "sidecars": {
+      "18eaa2a4acc36081c952694b31f8bfc95a8c92b40c6c570bbd93d78e34676ca2.gif.txt": "export me\nümlaut",
+      "52e3557be64b2cc20dc8e7279f1c0af54d0b22b4c221b4491e6113c546903c13.jpg.json": "{\"urls\": [\"https://example.com/post/2\", \"https://example.com/post/3\"]}",
+      "52e3557be64b2cc20dc8e7279f1c0af54d0b22b4c221b4491e6113c546903c13.jpg.txt": "creator:a/b\nexport me\npage:2\nseries:metroid",
+      "76322a345f5ea96fd94f1fe83d0abb33711022fd3dc9bc10e5c3a746ee9eb511.png.json": "{\"urls\": [\"https://example.com/post/1\"]}",
+      "76322a345f5ea96fd94f1fe83d0abb33711022fd3dc9bc10e5c3a746ee9eb511.png.txt": "blue eyes\ncharacter:samus aran\ncreator:someone\nexport me\nseries:metroid"
+     },
+     "overwrite_next_after": false,
+     "always_after": false
+    },
+    {
+     "sidecars": {
+      "18eaa2a4acc36081c952694b31f8bfc95a8c92b40c6c570bbd93d78e34676ca2.gif.txt": "export me\nümlaut",
+      "52e3557be64b2cc20dc8e7279f1c0af54d0b22b4c221b4491e6113c546903c13.jpg.json": "{\"urls\": [\"https://example.com/post/2\", \"https://example.com/post/3\"]}",
+      "52e3557be64b2cc20dc8e7279f1c0af54d0b22b4c221b4491e6113c546903c13.jpg.txt": "creator:a/b\nexport me\npage:2\nseries:metroid",
+      "76322a345f5ea96fd94f1fe83d0abb33711022fd3dc9bc10e5c3a746ee9eb511.png.json": "{\"urls\": [\"https://example.com/post/1\"]}",
+      "76322a345f5ea96fd94f1fe83d0abb33711022fd3dc9bc10e5c3a746ee9eb511.png.txt": "blue eyes\ncharacter:samus aran\ncreator:someone\nexport me\nseries:metroid"
+     },
+     "overwrite_next_after": false,
+     "always_after": false
+    }
+   ]
+  },
+  {
+   "name": "next run, a stale sidecar",
+   "stale": true,
+   "next_run": true,
+   "always": false,
+   "runs": [
+    {
+     "sidecars": {
+      "18eaa2a4acc36081c952694b31f8bfc95a8c92b40c6c570bbd93d78e34676ca2.gif.txt": "export me\nümlaut",
+      "52e3557be64b2cc20dc8e7279f1c0af54d0b22b4c221b4491e6113c546903c13.jpg.json": "{\"urls\": [\"https://example.com/post/2\", \"https://example.com/post/3\"]}",
+      "52e3557be64b2cc20dc8e7279f1c0af54d0b22b4c221b4491e6113c546903c13.jpg.txt": "creator:a/b\nexport me\npage:2\nseries:metroid",
+      "76322a345f5ea96fd94f1fe83d0abb33711022fd3dc9bc10e5c3a746ee9eb511.png.json": "{\"urls\": [\"https://example.com/post/1\"]}",
+      "76322a345f5ea96fd94f1fe83d0abb33711022fd3dc9bc10e5c3a746ee9eb511.png.txt": "blue eyes\ncharacter:samus aran\ncreator:someone\nexport me\nseries:metroid"
+     },
+     "overwrite_next_after": false,
+     "always_after": false
+    },
+    {
+     "sidecars": {
+      "18eaa2a4acc36081c952694b31f8bfc95a8c92b40c6c570bbd93d78e34676ca2.gif.txt": "stale tag\n",
+      "52e3557be64b2cc20dc8e7279f1c0af54d0b22b4c221b4491e6113c546903c13.jpg.json": "{\"urls\": [\"https://example.com/post/2\", \"https://example.com/post/3\"]}",
+      "52e3557be64b2cc20dc8e7279f1c0af54d0b22b4c221b4491e6113c546903c13.jpg.txt": "stale tag\n",
+      "76322a345f5ea96fd94f1fe83d0abb33711022fd3dc9bc10e5c3a746ee9eb511.png.json": "{\"urls\": [\"https://example.com/post/1\"]}",
+      "76322a345f5ea96fd94f1fe83d0abb33711022fd3dc9bc10e5c3a746ee9eb511.png.txt": "stale tag\n"
+     },
+     "overwrite_next_after": false,
+     "always_after": false
+    }
+   ]
+  },
+  {
+   "name": "always, a stale sidecar",
+   "stale": true,
+   "next_run": false,
+   "always": true,
+   "runs": [
+    {
+     "sidecars": {
+      "18eaa2a4acc36081c952694b31f8bfc95a8c92b40c6c570bbd93d78e34676ca2.gif.txt": "export me\nümlaut",
+      "52e3557be64b2cc20dc8e7279f1c0af54d0b22b4c221b4491e6113c546903c13.jpg.json": "{\"urls\": [\"https://example.com/post/2\", \"https://example.com/post/3\"]}",
+      "52e3557be64b2cc20dc8e7279f1c0af54d0b22b4c221b4491e6113c546903c13.jpg.txt": "creator:a/b\nexport me\npage:2\nseries:metroid",
+      "76322a345f5ea96fd94f1fe83d0abb33711022fd3dc9bc10e5c3a746ee9eb511.png.json": "{\"urls\": [\"https://example.com/post/1\"]}",
+      "76322a345f5ea96fd94f1fe83d0abb33711022fd3dc9bc10e5c3a746ee9eb511.png.txt": "blue eyes\ncharacter:samus aran\ncreator:someone\nexport me\nseries:metroid"
+     },
+     "overwrite_next_after": false,
+     "always_after": true
+    },
+    {
+     "sidecars": {
+      "18eaa2a4acc36081c952694b31f8bfc95a8c92b40c6c570bbd93d78e34676ca2.gif.txt": "export me\nümlaut",
+      "52e3557be64b2cc20dc8e7279f1c0af54d0b22b4c221b4491e6113c546903c13.jpg.json": "{\"urls\": [\"https://example.com/post/2\", \"https://example.com/post/3\"]}",
+      "52e3557be64b2cc20dc8e7279f1c0af54d0b22b4c221b4491e6113c546903c13.jpg.txt": "creator:a/b\nexport me\npage:2\nseries:metroid",
+      "76322a345f5ea96fd94f1fe83d0abb33711022fd3dc9bc10e5c3a746ee9eb511.png.json": "{\"urls\": [\"https://example.com/post/1\"]}",
+      "76322a345f5ea96fd94f1fe83d0abb33711022fd3dc9bc10e5c3a746ee9eb511.png.txt": "blue eyes\ncharacter:samus aran\ncreator:someone\nexport me\nseries:metroid"
+     },
+     "overwrite_next_after": false,
+     "always_after": true
+    }
+   ]
+  }
+ ]
+}
