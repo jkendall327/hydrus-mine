@@ -9414,6 +9414,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Untagged until the ordinary dialogs share one Dialog helper that owns apply and cancel and saves regular_dialog on apply (owner, 2026-10-14, #154); window positions also can't be observed in the headless tests. See DECISIONS.md and DIFFERENCES.md.",
     "WindowSettings restores remembered dimensions/position, maximised/fullscreen flags; main close captures current WindowState and persists it. It does not fit stale geometry to the current screen or implement reference parent-relative default placement.",
     "No screen fitting or default gravity/position placement.",
     "No GUI frame-location editor (listed under options > gui)."
@@ -11947,10 +11948,11 @@
    "path": "Help > debug > report modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope (owner, 2026-10-14, #184): the reference's report points sit on its subscription manager's polling loop, so a recording holds a timing-dependent number of repeated lines that hydrus-rs's daemon does not produce at the same call sites. The one report ported (the IsSyncDue wording) stays. See DECISIONS.md.",
     "Reference debug action wires 'subscription report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],

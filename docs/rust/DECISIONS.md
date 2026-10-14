@@ -147,6 +147,21 @@ record of what was decided, and why the roadmap looks the way it does.
   pubsub), `mpv report mode` (the Python mpv wrapper's debug output),
   `graphics view thumbnail update report mode` and `canvas tile borders
   mode` (Qt graphics-view and canvas tile painting).
+- **Out of scope: subscription report mode (#184).** Its report points sit on
+  the reference's subscription manager polling loop (repeated can-do-work,
+  sync-due, login, bandwidth and domain tests), so a recording of one
+  `Sync` holds a timing-dependent number of repeated lines that hydrus-rs's
+  daemon does not produce at the same call sites. The one report ported (the
+  `IsSyncDue` wording) stays. `audit-options-help-debug-action-subscription-report-mode`
+  is `out-of-scope`.
+- **The empty notebook (#183) stays open as its own refactor, for a later
+  wave.** hydrus-rs always keeps at least one page; making "no current page"
+  a state means changing the main window's current-page type throughout
+  (DIFFERENCES.md, Pages).
+- **`audit-options-geometry` stays untagged** until the ordinary dialogs
+  share one `Dialog` helper that owns apply and cancel, and saves
+  `regular_dialog` on apply (#154); doing it per handler (62 sites) would be
+  neither testable nor honest to tag.
 
 ## Roadmap that follows
 

@@ -222,6 +222,11 @@ search.
   report of a client with no other page says "1 pages open" where the reference's
   says "0 pages open" (the replay in `pages_menu_info.rs` edits the recorded
   count to match, for that one page).
+
+  (`oracle/record_page_close.py`, the last step; #183). **hydrus-rs always
+  keeps at least one page.** Allowing an empty top-level notebook is a
+  refactor of the main window's current-page type (owner, 2026-10-14: its
+  own issue, for a later wave), not a slice.
 - **Active predicate editing remains Partial.** Represented system values and
   simple tags/namespaces/wildcards can now be edited together, with one atomic
   Apply and separate supplied values for repeated system families. Immutable
