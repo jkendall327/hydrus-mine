@@ -17,6 +17,7 @@
 mod download;
 mod import_folder;
 mod subscription;
+mod watcher;
 
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::sync::Arc;
@@ -94,6 +95,7 @@ pub const PORTS: &[(&str, u16)] = &[
     ("flow_subscription.json", 46011),
     ("flow_download.json", 46012),
     ("flow_import_folder.json", 46013),
+    ("flow_watcher.json", 46031),
 ];
 
 /// Whether a request to `http://127.0.0.1` goes straight there, whatever

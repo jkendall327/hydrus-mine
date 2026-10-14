@@ -388,6 +388,7 @@ mod tests {
         );
     }
 
+    // leaf: audit-options-files-and-trash-when-maintenance-physically-deletes-files-wait-this-long-between-each-delete
     #[test]
     fn captured_wait_follows_committed_pairs_including_last_and_allows_live_readd() {
         let (_source, _directory, store, _, _) = owned_store();
@@ -507,6 +508,7 @@ mod tests {
         );
     }
 
+    // leaf: audit-options-files-and-trash-when-maintenance-physically-deletes-files-wait-this-long-between-each-delete
     #[test]
     fn missing_file_still_waits_after_its_thumbnail_and_queue_commit() {
         let (_source, _directory, store, id, path) = owned_store();
