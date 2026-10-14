@@ -4689,10 +4689,10 @@
     "Phrase and sidecar overwrite policy reach the scheduled export engine."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Phrase: GUI test plus recorded dialog replay (bad-phrase vetoes, values) and the recorded worker run cover it. Overwrite-next/always: the GUI test only round-trips the two flags and checks the worker spends the one-time flag; no sidecar router/existing sidecar is present, so nothing shows that overwriting actually changes the written sidecars (consumer export.rs:340 not exercised). Overwrite semantics are therefore untested. Tests: crates/hydrus-gui/tests/gui/files_io_folder_editors.rs:226 an_export_folders_search_phrase_schedule_and_overwrites_are_what_its_worker_does; crates/hydrus-gui-model/tests/model/folders.rs:232 the_export_folder_dialog_is_the_references"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "The phrase is covered by the older test and the recorded dialog replay. oracle/record_export_folder_overwrite.py runs the reference's recorded 'regular' export folder (a tags .txt sidecar and a URLs .json one per file) into fresh folders with stale sidecars in place, under no option, 'overwrite on next run' (spent by the run: a second run leaves stale sidecars) and 'always'; files_io_folder_editors.rs an_export_folders_sidecar_overwrite_options_decide_what_its_worker_writes_as_the_reference_did sets the options in the real editor and compares the sidecars the real worker leaves, run by run, and the stored flags, with the recording."
    }
   },
   {
@@ -4728,10 +4728,10 @@
     "Opened schedule values/enablement have fixture coverage; no scoped inspected assertion edits every period/run-now/popup field, reopens it, and verifies due execution."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Fields are edited, saved and reopened, and run-now makes the worker run (flag spent). Not covered: run-regularly period actually making the folder due, and the popup flag's effect (worker recording test shows popups only for its fixed folders, not the edited values). Tracker note (that no test edits every field) is partly stale: the test does edit all of them, but consumers of period and popup are untested. Tests: crates/hydrus-gui/tests/gui/files_io_folder_editors.rs:225 same test; crates/hydrus-gui-model/tests/model/folders.rs:232; crates/hydrus-download/tests/export_folder.rs:75 export_folders_do_what_the_reference_did"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "oracle/record_folder_schedule.py runs the reference's ExportFolder.DoWork for six schedule cases (regular and not yet due, due, due with the popup option, not regular and long ago, run now, run now with the popup option off). The real editor sets run-regularly, the one-hour period, popup and run-now for each, last_checked is put at the recorded age, and the real worker (work_on_export_folder) must write files or not, send the recorded popups (the working popup also for a run-now), and leave run_now spent, run_regularly and last_checked as recorded. Test: files_io_folder_editors.rs an_export_folder_works_and_shows_popups_when_its_edited_schedule_says_as_the_reference_does. Popups are read from a trigger on the store's popup table, as the working popup is dismissed at the end."
    }
   },
   {
@@ -4946,10 +4946,10 @@
     "URLs/locations launch externally; more than ten require the reference confirmation."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window launches URLs and asks the reference >10 question (string matches ClientGUIFileSeedCache.py:816). The leaf names 'URLs/locations'; the non-http branch (reference OpenFileLocations; native launches parent directory) is untested and differs. Tests: crates/hydrus-gui/tests/gui/file_log_actions.rs:150 selected_rows_copy_sources_and_notes_and_open_many_only_after_confirming"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "oracle/record_file_log_selected.py drives the reference's _OpenSelectedFileSeedData: three URLs open without asking, twelve ask the recorded 'You have many objects selected' question and open all on yes and none on no, and path sources are handed to OpenFileLocations. file_log_actions.rs opening_selected_sources_launches_what_the_reference_opened replays each through the real window's menu: the same URLs are launched in the same order, and for paths each file's folder is opened where the reference shows the files in the file manager (a documented difference, DIFFERENCES.md; the reference does nothing at all on Linux without its optional showinfm)."
    }
   },
   {
@@ -4987,10 +4987,10 @@
     "Retry writes status changes and nudges queue work; selected Try Again and Skip write specific seed IDs."
    ],
    "recheck": {
-    "date": "2026-10-09",
-    "class": "weak",
-    "by": "phase 2 session",
-    "note": "Whole-log 'retry N failures' (asks, clears errors on yes) and 'retry N ignored' (the four-button choice: all, 403s, 404s, blacklisted, or cancel) match the recording. Test: crates/hydrus-gui/tests/gui/file_log_actions.rs whole_log_menu_entries_ask_and_change_the_list_as_the_reference_did, replaying every whole-log menu entry of oracle/fixtures/file_log_effects.json (recorded from the reference's own PopulateFileSeedCacheMenu on a list holding every status) with each answer: question text, buttons and the list afterwards. Missing: the selected rows' 'try again' and its question about erasing deletion records are not recorded or ported."
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "The whole-log retry entries replay oracle/fixtures/file_log_effects.json (whole_log_menu_entries_ask_and_change_the_list_as_the_reference_did). The selected rows' 'try again' and 'skip' replay oracle/fixtures/file_log_selected.json, recorded by oracle/record_file_log_selected.py from the reference's real EditFileSeedCachePanel._SetSelected on a really deleted file: with a previously deleted file with a hash selected it asks the recorded erase-deletion-records question; yes takes the file out of the trash and clears its delete record, no leaves both; the selected rows are reset to unknown either way, and with no such file nothing is asked; skip never asks. Test: file_log_actions.rs trying_selected_rows_again_or_skipping_them_asks_and_erases_as_the_reference_did, through the row menu of the real window and the real store. The native 'try again' did not ask this question before; it does now."
    }
   },
   {
@@ -5121,10 +5121,10 @@
     "The skip-period model value is regression-backed; no inspected GUI assertion changes each allowed-filetype control and verifies its saved import/filter consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real editor and import-options child unticks png, the real worker finds 2 files and imports only the jpeg. Only one filetype is exercised and expectations are literals; the skip period is covered in the schedule test, not here. No recording of filetype filtering. Tests: crates/hydrus-gui/tests/gui/files_io_folder_editors.rs:419 an_import_folders_allowed_filetypes_decide_which_files_its_worker_imports"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "oracle/record_import_folder_filetypes.py runs the reference's import folder over a png, a jpeg, a static gif and a bitmap with everything allowed, jpeg and gif only, png only and bitmap only, and records every file seed's status and note ('File was a png, which is not allowed by the File Filtering Import Options.' and so on); the real editor's filetype tree is ticked to the same set and the real worker's seeds must be the recorded. The skip period (a day, then a second, over files an hour and two days old) is replayed the same way, and editing the allowed filetypes of a folder forgets its ignored files and re-checks them, as recorded (ImportFolder.SetTuple), as does a new path starting a new log. Native fix: the manage dialog's apply now does both. Test: files_io_folder_editors.rs an_import_folders_allowed_filetypes_veto_the_other_files_as_the_reference_does."
    }
   },
   {
@@ -5161,10 +5161,10 @@
     "Regular timer cadence and every popup setting combination are source-traced, not separately asserted by these tests."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Period, skip, check-now and popup/page flags are edited, saved and reopened; check-now makes the worker run and is spent. Not covered: the folder-level pause actually stopping the worker (the test only sets paused=false), the regular period making it due, and the popup/page flags' effect for edited values. Recorded dialog values cover the model only. Tests: crates/hydrus-gui/tests/gui/files_io_folder_editors.rs:82 an_import_folders_schedule_skip_period_and_outcomes_are_what_its_worker_does; crates/hydrus-gui-model/tests/model/folders.rs:120; crates/hydrus-download/tests/import_folder.rs:80"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "oracle/record_folder_schedule.py runs the reference's ImportFolder.DoWork for eight cases (regular and not yet due, due, due with a working popup and files published to the popup button or not, not regular and long ago, check now with the popup option off, paused with check now, paused and due). The real editor sets check-regularly, the one-hour period, paused, check-now and the popup options; last_checked is put at the recorded age; the real worker (work_on_import_folder) must check or not, send the recorded popups (the working popup, and the files popup only when published to the button), and leave paused, check_now and last_checked as recorded. Test: files_io_folder_editors.rs an_import_folder_checks_and_shows_popups_when_its_edited_schedule_says_as_the_reference_does. Not covered by a recording: the publish-to-page option's effect."
    }
   },
   {
@@ -5237,10 +5237,10 @@
     "Pause retains pending paths; Stop clears unparsed work while keeping parsed rows."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window: paused path stays unparsed, resume parses, stop drops unparsed paths but keeps parsed rows, and the window is usable after. Progress strings ('0/1 files parsed.', '1 files parsed.') and enable rules are literals restated from _InitialiseParseWorkUpdater/_UpdateWidgets; the recording only has finished-state texts and button enables. Tests: crates/hydrus-gui/tests/gui/files_io_import_review.rs:182 pausing_holds_the_paths_still_to_parse_and_stop_drops_them_but_keeps_the_parsed; crates/hydrus-gui-model/tests/model/local_import_dialog.rs (parsing_shows_its_progress_and_can_be_paused_and_stopped)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "oracle/record_local_import.py now records the reference's dialog pausing and stopping: a path given while paused waits ('0/1 files parsed.', pause and stop live, import still off), resumed it is parsed ('1 files parsed.'), two paths given while paused show '1/3 files parsed.', stop drops them and keeps the parsed row and clears the pause, and the dialog accepts a path afterwards. files_io_import_review.rs pause_and_stop_step_through_the_references_progress_and_buttons replays all eight steps through the real window and compares progress text, rows kept, paused state and the buttons with the recording."
    }
   },
   {
@@ -5256,10 +5256,10 @@
     "Only good parsed paths create a local-import page/queue; delete-after-success reaches queue settings."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Import now closes the window, opens an import page whose queue has only the good paths in list order with their modified times, and delete_after_success lands in the queue settings; the download test shows the queue runner honours it. Good-path lists are recorded, but the page/queue creation and delete semantics are literals from _DoImport/HDDImport; no recording of them. Tests: crates/hydrus-gui/tests/gui/import_files.rs:80 files_given_are_reviewed_then_imported; crates/hydrus-download/tests/local_import.rs:289 a_local_import_imports_its_files; crates/hydrus-gui-model/tests/model/local_import_dialog.rs:59"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "oracle/record_local_import.py now also records the import page the reference's 'import now' makes (an HDDImport from the pub'd paths): each file's source time (the file's modified time, which the recorder sets per file) and whether it deletes the originals (ticked in one case). import_files.rs the_references_recorded_paths_are_reviewed_and_handed_to_an_import_page_as_it_did replays the three recorded cases through the real window (paths typed in, subdirectories on or off, rows and progress compared too), imports, and compares the new page's queue (paths in list order with modified times) and the stored delete-after-success flag with the recording. The queue runner's honouring of the flag is tested in hydrus-download (local_import.rs)."
    }
   },
   {

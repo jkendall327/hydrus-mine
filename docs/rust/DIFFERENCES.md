@@ -1118,10 +1118,10 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   payload that decodes but can't be understood (whose `{path}` the reference
   never fills in). A hydrus-rs rules png given to the comparator list is a read error there, where the reference would warn which object types it refused.
 - **The file log window**'s "additional urls" don't show the URL a URL class
-  would actually fetch or refer from; trying selected files again never asks
-  the reference's question about erasing the deletion record of a
-  previously deleted file; "open files' locations" for path sources opens
-  the parent folder rather than selecting the file; and the file log menu
+  would actually fetch or refer from; "open files' locations" for path
+  sources opens each file's folder rather than selecting the file in the file
+  manager (the reference's `ClientPaths.OpenFileLocations`, recorded in
+  `oracle/record_file_log_selected.py`); and the file log menu
   of a downloader page's list (not the window) leaves "search for URLs"
   greyed out.
 - **The import options editor** keeps a typed-line field for the tag filtering

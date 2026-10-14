@@ -473,6 +473,17 @@ its positive, the list sorted as the reference's, text that doesn't start with
 "system:" taken as a tag), and the folder runs the search they make, as
 `oracle/record_export_folder_predicates.py` recorded.
 
+When "apply" saves an import folder, a new path starts a new file log and other
+allowed filetypes forget its ignored files so they are looked at again
+(`ImportFolder.SetTuple`). The folders do their work when their edited
+schedule says (`oracle/record_folder_schedule.py`: regular period, run or check
+now, paused, which popups they show, and what they leave of the schedule
+afterwards), skip the files modified more recently than the skip period and
+veto the files of filetypes not allowed with the reference's notes
+(`oracle/record_import_folder_filetypes.py`), and an export folder's sidecar
+overwrite options decide which existing sidecars its run replaces
+(`oracle/record_export_folder_overwrite.py`).
+
 File > import/export folders > "check import folder now" and "run export folder now" flag a named folder, or all of them with "check all" / "run all", to be checked or run at the scheduler's next pass. Checking a folder also unpauses it, as the reference's `CheckNow` does. While the folders are paused under file > pause, the entries still flag the folders but say that they are paused ("Import folders are currently paused under the 'file' menu. Please unpause them and try this again.", and the export equivalent), as the reference does (`oracle/record_folder_runs.py`).
 
 Both dialogs' sidecars button ("no sidecars", the one router as it
