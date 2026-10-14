@@ -7,7 +7,7 @@ use hydrus_gui_model::debug_actions::{
 };
 
 #[test]
-fn some_popups_are_the_reference_s_less_its_callbacks() {
+fn some_popups_are_the_reference_s() {
     let mut n = 0u8;
     let popups = some_popups(5.0, || {
         n += 1;

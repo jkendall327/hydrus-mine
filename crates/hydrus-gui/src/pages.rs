@@ -730,6 +730,45 @@ impl Pages {
         page
     }
 
+    /// A gallery downloader page named `name`, made if there is none, and
+    /// shown: the one shown if it is one, else the first
+    /// (`GetOrMakeGalleryDownloaderPage`).
+    ///
+    /// # Errors
+    /// If it could not be made.
+    pub fn gallery_page_named(&mut self, name: &str) -> Result<Rc<RefCell<SearchPage>>, String> {
+        let named: Vec<PageKey> = self
+            .session
+            .all_pages()
+            .into_iter()
+            .filter(|p| {
+                p.name == name
+                    && matches!(
+                        p.content,
+                        PageContent::Downloader {
+                            kind: DownloaderKind::Gallery,
+                            ..
+                        }
+                    )
+            })
+            .map(|p| p.key)
+            .collect();
+        let shown = self.shown().key;
+        let key = if named.contains(&shown) {
+            shown
+        } else if let Some(first) = named.into_iter().next() {
+            first
+        } else {
+            self.new_page(&NewPage::Gallery)?;
+            self.rename_shown(name);
+            self.shown().key
+        };
+        self.show(&key);
+        self.page(&key).ok_or_else(|| {
+            "Sorry, could not create the downloader page! Is your session super full atm?".into()
+        })
+    }
+
     /// The page shown, opened.
     pub fn current(&mut self) -> Rc<RefCell<SearchPage>> {
         let page = self.shown().clone();

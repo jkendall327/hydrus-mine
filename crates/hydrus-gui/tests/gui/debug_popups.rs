@@ -5,6 +5,7 @@
 use super::debug_menu_actions::start;
 use hydrus_store::popups;
 use serde_json::Value;
+use slint::Model as _;
 use std::time::{Duration, Instant};
 
 fn recording() -> Value {
@@ -22,23 +23,15 @@ fn pump(ms: u64) {
 
 // leaf: audit-options-help-debug-action-make-some-popups
 #[test]
-fn make_some_popups_makes_the_reference_s_popups_in_its_order_less_three_that_call_back() {
+fn make_some_popups_makes_the_reference_s_popups_in_its_order() {
     let d = start();
     let recording = recording();
     let events = recording["some_popups"].as_array().unwrap();
     d.click(&["gui actions", "make some popups"]);
     let started = Instant::now();
-    // the three that call back into the client or the network engine are not
-    // made (DIFFERENCES.md)
-    let left_out = [
-        "user call test",
-        "sub gap downloader test",
-        "test network control",
-    ];
     let expected: Vec<&Value> = events
         .iter()
         .map(|e| &e["job"])
-        .filter(|j| !left_out.contains(&j["title"].as_str().unwrap_or("")))
         // (the second file merge popup joins the first: the store merges them
         // as the toaster does, which is why the first says five files)
         .filter(|j| {
@@ -47,7 +40,7 @@ fn make_some_popups_makes_the_reference_s_popups_in_its_order_less_three_that_ca
                 .is_some_and(|t| t.starts_with("hey you should not see me"))
         })
         .collect();
-    assert_eq!(expected.len(), 16);
+    assert_eq!(expected.len(), 19);
     // everything but the three delayed ones comes at once
     let mut arrivals: Vec<(Duration, Vec<popups::Job>)> = Vec::new();
     while d.jobs().len() < expected.len() {
@@ -80,6 +73,16 @@ fn make_some_popups_makes_the_reference_s_popups_in_its_order_less_three_that_ca
         assert_eq!(
             job.status_text_2.as_deref(),
             text(&recorded["text_2"]),
+            "{label}"
+        );
+        assert_eq!(
+            job.user_callable_label.as_deref(),
+            text(&recorded["user_callable_label"]),
+            "{label}"
+        );
+        assert_eq!(
+            job.network_job.is_some(),
+            recorded["has_network_job"].as_bool().unwrap(),
             "{label}"
         );
         let gauge = recorded["gauge_1"]
@@ -152,7 +155,7 @@ fn make_some_popups_makes_the_reference_s_popups_in_its_order_less_three_that_ca
         "recorded {gaps:?}"
     );
     let mut times = Vec::new();
-    for n in 14..17 {
+    for n in 17..20 {
         // (the arrivals list has one entry per change of count)
         if let Some((at, _)) = arrivals.iter().find(|(_, seen)| seen.len() >= n) {
             times.push(at.as_secs_f64() * 1000.0);
@@ -392,4 +395,111 @@ fn cancelling_the_modal_popup_stops_its_countdown() {
         "dismissed {:?} after",
         stopped.elapsed()
     );
+}
+
+// leaf: audit-options-help-debug-action-make-some-popups
+#[test]
+fn the_popups_that_carry_buttons_do_what_the_reference_s_buttons_do_and_the_test_job_pulses() {
+    let d = start();
+    let recording = recording();
+    d.click(&["gui actions", "make some popups"]);
+    let started = Instant::now();
+    while d.jobs().len() < 19 {
+        assert!(
+            started.elapsed() < Duration::from_secs(10),
+            "the popups arrive"
+        );
+        pump(10);
+    }
+    let gui_owner =
+        d.ui.get_popups()
+            .row_data(0)
+            .expect("a popup is shown")
+            .gui_owner;
+    let pages_named = |d: &super::debug_menu_actions::Debug| -> Vec<String> {
+        d.bound
+            .pages
+            .borrow()
+            .session()
+            .pages
+            .iter()
+            .map(|page| page.name.clone())
+            .collect()
+    };
+    let calls = recording["user_calls"].as_array().unwrap();
+    assert_eq!(calls.len(), 2);
+    for recorded in calls {
+        let title = recorded["title"].as_str().unwrap();
+        let job = d
+            .jobs()
+            .into_iter()
+            .find(|j| j.status_title.as_deref() == Some(title))
+            .unwrap();
+        assert_eq!(
+            job.user_callable_label.as_deref(),
+            recorded["label"].as_str()
+        );
+        let before = d.jobs().len();
+        let recorded_before: Vec<&str> = recorded["pages_before"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|p| p.as_str().unwrap())
+            .collect();
+        assert_eq!(pages_named(&d), recorded_before, "{title}");
+        // the button, clicked as the popup control does
+        d.ui.invoke_popup_call(
+            hex::encode(job.key).into(),
+            hex::encode(job.action_owner.unwrap()).into(),
+            gui_owner.clone(),
+        );
+        let messages: Vec<&Value> = recorded["messages"].as_array().unwrap().iter().collect();
+        let waited = Instant::now();
+        while d.jobs().len() < before + messages.len() {
+            assert!(
+                waited.elapsed() < Duration::from_secs(5),
+                "{title}: it acts"
+            );
+            pump(20);
+        }
+        // the text popups it shows
+        let made: Vec<popups::Job> = d.jobs().into_iter().skip(before).collect();
+        assert_eq!(made.len(), messages.len(), "{title}");
+        for (job, recorded) in made.iter().zip(&messages) {
+            assert_eq!(job.status_text_1.as_deref(), text(&recorded["text_1"]));
+            assert_eq!(job.status_title.as_deref(), text(&recorded["title"]));
+            assert_eq!(job.had_error, recorded["had_error"].as_bool().unwrap());
+        }
+        // the pages it left
+        let after: Vec<&str> = recorded["pages_after"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|p| p["name"].as_str().unwrap())
+            .collect();
+        assert_eq!(pages_named(&d), after, "{title}");
+    }
+    // the test job gets its pulsing sub-job two seconds in, and not before
+    let recorded = &recording["some_popups_two_seconds_on"][0];
+    let at = recorded["index"].as_u64().unwrap();
+    assert_eq!(
+        recording["some_popups"][usize::try_from(at).unwrap()]["job"]["title"],
+        "test job"
+    );
+    let test_job = || {
+        d.jobs()
+            .into_iter()
+            .find(|j| j.status_title.as_deref() == Some("test job"))
+            .unwrap()
+    };
+    // (recorded as `gauge_2: [0, null]`: no range, so a pulse)
+    assert!(recorded["gauge_2"][1].is_null());
+    let pulsed = wait_for("it pulses", 6, || test_job().popup_gauge_2.is_some());
+    assert!(
+        pulsed.duration_since(started) >= Duration::from_millis(1900),
+        "not before two seconds"
+    );
+    let job = test_job();
+    assert_eq!(job.status_text_2.as_deref(), text(&recorded["text_2"]));
+    assert_eq!(job.popup_gauge_2, Some((0, 0)));
 }

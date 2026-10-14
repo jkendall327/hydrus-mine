@@ -26,8 +26,9 @@ const TEST_FILE: &str = "78f92ba4a786225ee2a1236efa6b7dc81dd729faf4af99f96f3e20b
 
 /// The popups "make some popups" shows at once (`_DebugMakeSomePopups`),
 /// at `now` (seconds), with `random` keys for its made-up files. Its
-/// buttons that call back (the user call, auto-account and gap downloader
-/// tests) and its network-job popup are left out.
+/// buttons that call back are made too: [`call_of`] says what each does. The
+/// auto-account test is made only where the client has tag repositories, which
+/// hydrus-rs does not.
 pub fn some_popups(now: f64, mut random: impl FnMut() -> Sha256) -> Vec<Job> {
     let text = |t: &str| Job::text(t, now);
     let mut out: Vec<Job> = (1..7)
@@ -40,6 +41,10 @@ pub fn some_popups(now: f64, mut random: impl FnMut() -> Sha256) -> Vec<Job> {
     job.status_title = Some(
         "This popup has a very long title -- it is a subscription that is running with a long \"artist sub 123456\" kind of name".into(),
     );
+    out.push(job);
+    let mut job = text("click the button m8");
+    job.status_title = Some("user call test".into());
+    job.user_callable_label = Some(USER_CALL_LABEL.into());
     out.push(job);
     let mut job = text("client api test file popup");
     if let Ok(hash) = TEST_FILE.parse() {
@@ -57,6 +62,10 @@ pub fn some_popups(now: f64, mut random: impl FnMut() -> Sha256) -> Vec<Job> {
     job.attached_files_mergable = true;
     job.set_files(vec![random(), random(), first], Some("cool pics".into()));
     out.push(job);
+    let mut job = Job::new(false, false, now);
+    job.status_title = Some("sub gap downloader test".into());
+    job.user_callable_label = Some(GAP_LABEL.into());
+    out.push(job);
     let mut job = text("\u{24b2}\u{24a0}\u{24b2} \u{24a7}\u{249c}\u{249f}");
     job.status_title = Some("\u{24c9}\u{24d7}\u{24d8}\u{24e2} \u{24d8}\u{24e2} \u{24d0} \u{24e3}\u{24d4}\u{24e2}\u{24e3} \u{24e4}\u{24dd}\u{24d8}\u{24d2}\u{24de}\u{24d3}\u{24d4} \u{24dc}\u{24d4}\u{24e2}\u{24e2}\u{24d0}\u{24d6}\u{24d4}".into());
     job.status_text_2 = Some("p\u{250}\u{5df} \u{28d}\u{1dd}\u{28d}".into());
@@ -66,6 +75,16 @@ pub fn some_popups(now: f64, mut random: impl FnMut() -> Sha256) -> Vec<Job> {
     job.status_text_1 = Some("Currently processing test job 5/8".into());
     job.popup_gauge_1 = Some((4, 8));
     out.push(job);
+    let mut job = Job::new(true, true, now);
+    job.status_title = Some("test network control".into());
+    job.status_text_1 = Some("Downloading...".into());
+    job.popup_gauge_1 = Some((2, 21));
+    // (a network job that has no engine yet: its control shows nothing)
+    job.network_job = Some(hydrus_store::live::JobLive {
+        url: "https://site.com/123456".into(),
+        ..hydrus_store::live::JobLive::default()
+    });
+    out.push(job);
     let mut job = text("This is a test exception");
     job.status_title = Some("DataMissing".into());
     job.had_error = true;
@@ -73,6 +92,46 @@ pub fn some_popups(now: f64, mut random: impl FnMut() -> Sha256) -> Vec<Job> {
     job.traceback = Some("================ Exception ================\nDataMissing: This is a test exception\n================ Traceback ================\nDataMissing: This is a test exception\n================== Stack ==================\n=================== End ===================".into());
     out.push(job);
     out
+}
+
+/// The button of the "user call test" popup.
+pub const USER_CALL_LABEL: &str = "cheeki breeki";
+/// What it shows when clicked.
+pub const USER_CALL_TEXT: &str = "iv damke";
+/// The button of the "sub gap downloader test" popup.
+pub const GAP_LABEL: &str = "start a new downloader for this to fill in the gap!";
+/// The gallery downloader page the gap downloader goes in.
+pub const GAP_PAGE_NAME: &str = "subscription gap downloaders";
+/// The downloader, search and file limit the test asks the gap downloader for.
+pub const GAP_GUG: (&str, &str) = ("", "booru tag search");
+pub const GAP_QUERY: &str = "skirt";
+pub const GAP_FILE_LIMIT: u64 = 2;
+
+/// What a popup of "make some popups" does when its button is clicked.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Call {
+    /// Show a text popup.
+    ShowText,
+    /// Pend the gap downloader's search on its page.
+    GapDownloader,
+}
+
+/// What `job`'s button does.
+pub fn call_of(job: &Job) -> Option<Call> {
+    match job.user_callable_label.as_deref() {
+        Some(USER_CALL_LABEL) => Some(Call::ShowText),
+        Some(GAP_LABEL) => Some(Call::GapDownloader),
+        _ => None,
+    }
+}
+
+/// The title of the job that pulses two seconds in.
+pub const PULSING_JOB: &str = "test job";
+
+/// What "test job" gets two seconds in: a pulsing sub-job.
+pub fn pulse(job: &mut Job) {
+    job.status_text_2 = Some("Pulsing subjob".into());
+    job.popup_gauge_2 = Some((0, 0));
 }
 
 /// The popups "make some popups" shows after half a second, a second and
