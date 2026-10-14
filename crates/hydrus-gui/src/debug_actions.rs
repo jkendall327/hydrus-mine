@@ -18,6 +18,7 @@ use crate::ChoiceButtonsWindow;
 use slint::ComponentHandle as _;
 
 /// How the modal popup's thread waits out the five seconds and each second.
+#[doc(hidden)]
 pub type Wait = Arc<dyn Fn(Duration) + Send + Sync>;
 
 thread_local! {
@@ -29,6 +30,7 @@ thread_local! {
 
 /// Make the modal popups made from this thread wait this way instead of
 /// sleeping, so a test can release each second itself.
+#[doc(hidden)]
 pub fn set_modal_wait(wait: Option<Wait>) {
     MODAL_WAIT.with(|w| *w.borrow_mut() = wait);
 }
@@ -180,8 +182,12 @@ fn modal(store: &Store, cancellable: bool, wait: Option<Wait>) {
             .write(move |ctx| {
                 // (gone, as dismissed, counts as cancelled)
                 Ok(popups::update(ctx.conn(), &key, at, |job| {
-                    job.status_text_1 = Some(model::modal_text(i));
-                    job.popup_gauge_1 = Some((i, 10));
+                    // (as the reference: cancelled is checked before the
+                    // next second's words are written)
+                    if !job.cancelled {
+                        job.status_text_1 = Some(model::modal_text(i));
+                        job.popup_gauge_1 = Some((i, 10));
+                    }
                     job.cancelled
                 })?
                 .unwrap_or(true))
