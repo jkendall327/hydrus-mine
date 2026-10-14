@@ -77,7 +77,6 @@ fn rows(window: &ReviewImportsWindow) -> Vec<Vec<String>> {
 }
 
 // leaf: audit-options-menu-menu-file-import-files
-// leaf: audit-network-import-queue
 // leaf: audit-network-import-paths
 #[test]
 fn files_given_are_reviewed_then_imported() {
@@ -181,6 +180,93 @@ fn files_given_are_reviewed_then_imported() {
     // escape closes it, importing nothing
     window().invoke_cancel();
     assert!(bound.review_imports.borrow().is_none());
+}
+
+// leaf: audit-network-import-queue
+#[test]
+fn import_now_makes_the_page_the_reference_makes_from_the_good_paths() {
+    // `oracle/fixtures/local_import_queue.json`, from
+    // `oracle/record_local_import_queue.py`: the real dialog's "import now"
+    // on a good png, a copy of it, a text file and a file that is not a
+    // picture, with the delete option off and on
+    let recorded = hydrus_testkit::fixture_json("local_import_queue.json");
+    let _windows = headless::init();
+    for run in recorded["runs"].as_array().unwrap() {
+        let delete = run["delete_after_success"].as_bool().unwrap();
+        let publication = &run["publication"][0];
+        let (_dirs, store) = store();
+        let ui = MainWindow::new().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        let window = || {
+            bound
+                .review_imports
+                .borrow()
+                .as_ref()
+                .map(|(w, _)| w.clone_strong())
+                .expect("the window is open")
+        };
+        menu(&ui, "import files\u{2026}");
+        let work = tempfile::tempdir().unwrap();
+        std::fs::copy(
+            hydrus_testkit::fixture_path("media/apng_rgba.png"),
+            work.path().join("first.png"),
+        )
+        .unwrap();
+        std::fs::copy(
+            hydrus_testkit::fixture_path("media/apng_rgba.png"),
+            work.path().join("second_copy.png"),
+        )
+        .unwrap();
+        std::fs::write(work.path().join("notes.txt"), "just some text").unwrap();
+        std::fs::write(work.path().join("Thumbs.db"), b"not a picture").unwrap();
+        window().invoke_path_entered(work.path().to_string_lossy().into_owned().into());
+        parsed(&window());
+        assert_eq!(rows(&window()).len(), 4);
+        assert!(window().get_can_import());
+        if delete {
+            window().set_delete_after_success(true);
+            window().invoke_delete_toggled(true);
+        }
+        window().invoke_import_now();
+        assert!(bound.review_imports.borrow().is_none(), "closed");
+        // a new page, named as the reference names it
+        assert_eq!(bound.pages.borrow().shown().name, run["page_name"]);
+        let queue = bound
+            .current
+            .borrow()
+            .borrow()
+            .importer()
+            .map(|i| i.queue)
+            .unwrap();
+        let made = store
+            .read(move |c| queues::queue(c, queue))
+            .unwrap()
+            .unwrap();
+        let local = LocalImport::of(&made).unwrap();
+        assert_eq!(local.delete_after_success, delete);
+        assert_eq!(
+            local.routers.len(),
+            publication["routers"].as_u64().unwrap() as usize
+        );
+        assert_eq!(
+            local.delete_after_success,
+            publication["delete_after_success"].as_bool().unwrap()
+        );
+        // only the good paths, in the list's order
+        let seeds: Vec<String> = store
+            .read(move |c| queues::file_seeds(c, queue))
+            .unwrap()
+            .into_iter()
+            .map(|s| {
+                Path::new(&s.data)
+                    .file_name()
+                    .unwrap()
+                    .to_string_lossy()
+                    .into_owned()
+            })
+            .collect();
+        assert_eq!(serde_json::json!(seeds), publication["paths"]);
+    }
 }
 
 /// The open window's paths list's metadata column.
