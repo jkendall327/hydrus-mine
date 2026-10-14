@@ -128,7 +128,17 @@ fn profile_modes_turn_each_other_off_and_say_how_many_jobs_there_were() {
             let said = said(&seen);
             assert_eq!(said.len(), 1, "{said:?}");
             assert_eq!(alike(&said[0]), alike(&recorded[0]));
-            assert_eq!(said[0], "Profiling \"ui\" done: 0 slow jobs, 1 fast jobs");
+            // one job in all; whether it beat the 16 ms threshold depends on how
+            // loaded the machine is
+            assert!(
+                [
+                    "Profiling \"ui\" done: 0 slow jobs, 1 fast jobs",
+                    "Profiling \"ui\" done: 1 slow jobs, 0 fast jobs",
+                ]
+                .contains(&said[0].as_str()),
+                "{}",
+                said[0]
+            );
             assert_eq!(checks(&d), recorded_checks(&checked));
         }
     }
