@@ -88,7 +88,8 @@ fn every_request_is_a_row_with_its_typed_wait_speed_bytes_and_contexts() {
         .iter()
         .map(|c| c.title.to_string())
         .collect();
-    assert_eq!(columns, ["position", "url", "status", "speed", "progress"]);
+    let recorded = hydrus_testkit::fixture_json("network_data.json");
+    assert_eq!(serde_json::json!(columns), recorded["job_columns"]);
     for (i, wait) in waits.iter().enumerate() {
         // (rows may be in any order: find ours by URL)
         let url = format!("https://site{i}.example/file");
@@ -136,5 +137,72 @@ fn every_request_is_a_row_with_its_typed_wait_speed_bytes_and_contexts() {
             detail.contains(&format!("obeys bandwidth: {}", i % 3 != 0)),
             "{detail}"
         );
+    }
+}
+
+#[test]
+fn rows_for_the_waits_the_reference_names_read_as_its_jobs_panel_reads() {
+    // `oracle/fixtures/network_data.json` "job_rows": the real jobs panel on
+    // jobs at each of its five positions, one at 2 KB/s with 2 KB of 4 KB
+    // read. The native engine's waits for bandwidth, login and running are
+    // those positions; its other waits are its own (DIFFERENCES.md).
+    let recorded = hydrus_testkit::fixture_json("network_data.json");
+    let _headless = headless::init();
+    let slots = windows::Slots::default();
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let now = TimestampMs::now().millis() / 1000;
+    let mapped = [
+        (1, WaitReason::Bandwidth),
+        (2, WaitReason::Login),
+        (4, WaitReason::Downloading),
+    ];
+    let jobs: Vec<NetworkJob> = mapped
+        .iter()
+        .enumerate()
+        .map(|(i, (_, wait))| NetworkJob {
+            id: i as u64 + 1,
+            url: "https://example.com/file".into(),
+            status: "downloading\u{2026}".into(),
+            wait: *wait,
+            speed: 2048,
+            bytes_read: 2048,
+            bytes_total: Some(4096),
+            contexts: vec![NetworkContext::global()],
+            obeys_bandwidth: true,
+        })
+        .collect();
+    store
+        .write(move |ctx| {
+            settings::set(
+                ctx.conn(),
+                &Snapshot {
+                    epoch: "daemon".into(),
+                    at: now,
+                    usage: Vec::new(),
+                    jobs,
+                    ..Snapshot::default()
+                },
+            )
+        })
+        .unwrap();
+    let window = windows::open_jobs(store.clone(), &slots).unwrap();
+    until(|| window.get_rows().row_count() == mapped.len());
+    let shown: Vec<Vec<String>> = (0..mapped.len())
+        .map(|r| {
+            let row = window.get_rows().row_data(r).unwrap();
+            (0..row.cells.row_count())
+                .map(|c| row.cells.row_data(c).unwrap().to_string())
+                .collect()
+        })
+        .collect();
+    for (recorded_row, _) in mapped {
+        let want: Vec<String> = recorded["job_rows"][recorded_row]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|c| c.as_str().unwrap().to_owned())
+            .collect();
+        assert!(shown.contains(&want), "{want:?} in {shown:?}");
     }
 }

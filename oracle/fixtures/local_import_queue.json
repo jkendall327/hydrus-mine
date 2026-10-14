@@ -1,0 +1,66 @@
+{
+ "runs": [
+  {
+   "delete_after_success": false,
+   "publication": [
+    {
+     "paths": [
+      "first.png",
+      "second_copy.png"
+     ],
+     "routers": 0,
+     "additional_tags": {},
+     "delete_after_success": false
+    }
+   ],
+   "page_name": "import",
+   "pages_added": 1,
+   "seeds": [
+    [
+     "first.png",
+     1
+    ],
+    [
+     "second_copy.png",
+     2
+    ]
+   ],
+   "on_disk": [
+    "first.png",
+    "second_copy.png",
+    "notes.txt",
+    "Thumbs.db"
+   ]
+  },
+  {
+   "delete_after_success": true,
+   "publication": [
+    {
+     "paths": [
+      "first.png",
+      "second_copy.png"
+     ],
+     "routers": 0,
+     "additional_tags": {},
+     "delete_after_success": true
+    }
+   ],
+   "page_name": "import",
+   "pages_added": 1,
+   "seeds": [
+    [
+     "first.png",
+     2
+    ],
+    [
+     "second_copy.png",
+     2
+    ]
+   ],
+   "on_disk": [
+    "notes.txt",
+    "Thumbs.db"
+   ]
+  }
+ ]
+}
