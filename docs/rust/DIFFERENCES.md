@@ -4814,8 +4814,12 @@ directory.
 
 The grid's geometry under the thumbnail size, border and margin is replayed
 against the reference (`oracle/record_thumbnail_grid.py`): spans, columns, the
-grid's content height, click hits and the size each thumbnail is shown at. How
-the border is drawn (its colour and drawing) is not tested. Click hits were
+grid's content height, click hits and the size each thumbnail is shown at.
+The border's drawn width on each edge of a thumbnail is compared with the
+reference's own painted thumbnail (`oracle/record_thumbnail_border.py`),
+measured on the rendered pixels; its colour is the theme's, not compared. A
+selected thumbnail is compared from a 2 px border (ours is at least 2 px wide).
+Click hits were
 recorded for the first two columns and rows only, at one viewport per setting,
 and thumbnail positions are the layout's rule rather than read from the
 rendered grid.
@@ -5187,7 +5191,7 @@ The palette's media-menu rows and the effect of activating one are recorded only
 
 The palette's media-menu rows for a page with one and with three files selected, for nine queries, and the effect of activating a row on the selection, are replayed against `palette_media_rows.json`; they match the reference's except the two single-file rows "copy bitmap" and "copy thumbnail bitmap" (the bitmap exchange is not ported).
 
-The options search bar's own position (top or bottom of the options window) is not measured against the reference: the recording holds only the field's index in the layout, and the field exposes no geometry to the tests, which read the suggestions' and the page list's positions instead (the page list sits 30 px lower with the field on top, our own field's height). The leaf is left untagged.
+The options search bar's place (above or below the page list) is compared with the reference's laid-out `_options_search` and `_listbook` geometry. Our field is 30 px high, Qt's 23 px, and ours is 6 px from the list, Qt's flush.
 
 The "open files in a new duplicates filter page" command (shortcut command 154) differs from the reference in two ways. In the media viewer the reference then pauses the video (`_MediaFocusWentToExternalProgram`, `ClientGUICanvas.py`); ours leaves it playing. On the thumbnails with nothing selected the reference still opens a page (with no files); ours does nothing, as the key is taken and ignored.
 
@@ -5275,11 +5279,21 @@ be diagnosed afterwards. The owner chose always-on crash logging (2026-10-14).
 - The preview window's top-right background draws the file's URLs after its
   locations by hydrus-rs's default (every URL class, unmatched URLs too); the
   reference's default shows none of the `basic` file's.
-- Tab alignment: the bar's thickness (28 px a row, 56 px for the two rows; Qt's tabs are 26 px) and the direction of
-  rotated West/East labels are not compared with the reference's Qt tabs.
-- "Width of suggested tags columns" and "Autocomplete list height" are read
-  as properties of the Manage Tags window; the lists' laid-out size is not
-  measured against the reference.
+- Tab alignment: a row of tabs is 28 px thick, Qt's 27 px (compared to within
+  1.5 px, against the recorded bar); the first tab starts 4 px in from the bar's
+  start, Qt's at 0. The direction of rotated West/East labels is compared with
+  the reference (where the ink of a label heavy at its start lies,
+  `oracle/record_tab_presentation.py` `ink`).
+- "Width of suggested tags columns": the lists' laid-out width, with the Manage
+  Tags window squeezed as narrow as its layout lets it, equals the option for
+  240 and 500, as the reference's. At the option's lower limit (20) our list
+  table will not go narrower than its own minimum, so the list is wider than the
+  reference's.
+- "Autocomplete list height" (tag editing, and file search's two lists): the
+  rows a list shows once laid out equal the option, as the reference's; the row
+  is 22 px here and a font height in Qt, and our lists' padding differs from Qt's
+  frame. The tag-edit list is only as tall as its suggestions (fewer than the
+  option's rows shrinks it); the reference's keeps its full height.
 
 - **A sidebar saved at width 0 and revealed** (Pages > sidebar > show/hide after
   "save current page's sidebar/preview size now" while hidden) shows nothing, as

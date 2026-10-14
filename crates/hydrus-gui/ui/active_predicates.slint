@@ -12,7 +12,7 @@ export component ActivePredicates inherits Rectangle {
     callback menu-opened(int);
     callback menu-chosen(int);
     // the rows laid out and the room they are shown in, read by tests
-    out property <length> content-height: scroll.content-height;
+    out property <length> content-height: rows-layout.preferred-height;
     out property <length> view-height: scroll.visible-height;
     property <bool> ctrl;
     property <bool> shift;
@@ -24,7 +24,7 @@ export component ActivePredicates inherits Rectangle {
             reject
         }
         scroll := ScrollView {
-            VerticalLayout {
+            rows-layout := VerticalLayout {
                 alignment: start;
                 for row[i] in root.rows: Rectangle {
                     height: 22px;

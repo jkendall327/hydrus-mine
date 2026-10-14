@@ -310,7 +310,7 @@ fn the_thumbnail_border_is_drawn_as_wide_as_the_option_says_as_the_reference_dra
                 ui.invoke_select_all();
             }
             let width = 1100_u32;
-            let height = 700_u32;
+            let height = 2400_u32;
             headless::render(&main_window, width, height);
             slint::platform::update_timers_and_animations();
             bound.rows.wait();
