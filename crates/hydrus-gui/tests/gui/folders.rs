@@ -605,6 +605,13 @@ fn the_filename_tagging_list_and_its_example_path_follow_the_references_recorded
     // the example path for other folders: the first importable file by content
     for example in recorded["examples"].as_array().unwrap() {
         let name = example["name"].as_str().unwrap();
+        if name.starts_with("twenty-six") {
+            // (the example is the first importable of the directory's first
+            // 25 entries in the file system's order, here and in the
+            // recording alike, so which of 27 entries make the cut is not
+            // the same on two file systems; DIFFERENCES.md)
+            continue;
+        }
         let files: Vec<(String, &str)> = example["listing"]
             .as_array()
             .unwrap()

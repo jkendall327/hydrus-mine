@@ -1079,7 +1079,10 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 - **The import and export folders dialogs**: an import folder's filename
   tagging is added for a tag service chosen from a list beside "add" (the
   reference asks which in a dialog, which can be cancelled; there is no such
-  step here), and edited in the "filename tagging"
+  step here), the example path for the tagging dialog is the first importable
+  file among the folder's first 25 entries in the file system's order, as the
+  reference's is, so which file that is (recorded: `zz.png` among 26 texts)
+  is not replayed, and edited in the "filename tagging"
   dialog's boxes (see "review files to import"). An export folder's
   query is typed as the Client API's tags rather than through the search
   autocomplete. Its example refresh now queries actual stored media and supplies
