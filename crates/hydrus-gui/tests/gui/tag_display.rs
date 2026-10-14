@@ -325,6 +325,56 @@ fn the_application_window_says_what_the_reference_says_and_orders_sibling_source
     let store = Store::open(dir.path()).unwrap();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    // the sync line under each combination of the two sync switches, and its colour
+    for case in recorded["application_status_by_switches"]
+        .as_array()
+        .unwrap()
+    {
+        let (idle, active) = (
+            case["idle"].as_bool().unwrap(),
+            case["active"].as_bool().unwrap(),
+        );
+        store
+            .write_and_refresh(move |ctx| {
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &hydrus_store::settings::BackgroundWork {
+                        tag_display_during_idle: idle,
+                        tag_display_during_active: active,
+                        ..hydrus_store::settings::get::<hydrus_store::settings::BackgroundWork>(
+                            ctx.conn(),
+                        )?
+                    },
+                )
+            })
+            .unwrap();
+        let w = open(&ui, &bound, true);
+        assert_eq!(
+            w.get_application_sync_status(),
+            case["text"].as_str().unwrap()
+        );
+        assert_eq!(
+            w.get_application_sync_valid(),
+            case["object_name"] == "HydrusValid",
+            "{case}"
+        );
+        w.invoke_cancel();
+    }
+    // (back to syncing all the time, as the first window below expects)
+    store
+        .write_and_refresh(|ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::settings::BackgroundWork {
+                    tag_display_during_idle: true,
+                    tag_display_during_active: true,
+                    ..hydrus_store::settings::get::<hydrus_store::settings::BackgroundWork>(
+                        ctx.conn(),
+                    )?
+                },
+            )
+        })
+        .unwrap();
     let w = open(&ui, &bound, true);
 
     // what the reference's editor says: the warning, the explanation and the sync line
@@ -400,6 +450,16 @@ fn the_application_window_says_what_the_reference_says_and_orders_sibling_source
         w.set_source_index(i32::try_from(at).unwrap());
         w.invoke_source_add(false);
     }
+    assert_eq!(sibling_names(&w), expected("application_initial"));
+    // applied and reopened, the window shows that queue on opening
+    w.invoke_apply();
+    let w = open(&ui, &bound, true);
+    let at = w
+        .get_services()
+        .iter()
+        .position(|s| *s == name_of(&master))
+        .unwrap();
+    w.invoke_service_chosen(i32::try_from(at).unwrap());
     assert_eq!(sibling_names(&w), expected("application_initial"));
     // reordered: the same services in the reverse order, reached with the up button
     let count = w.get_sibling_rows().row_count();

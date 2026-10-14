@@ -857,22 +857,44 @@ fn sorted_favourite(name: &str, folder: Option<&str>, synchronised: bool) -> Fav
     }
 }
 
-/// The main-menu rows the palette shows for `query`: (text, menu path).
-fn menu_rows(window: &CommandPaletteWindow, query: &str) -> Vec<(String, String)> {
+/// The main-menu rows the palette shows for `query`: (text, menu path). With `any`, polls
+/// until some are there and have settled; without, for long enough to be sure none come.
+fn menu_rows(window: &CommandPaletteWindow, query: &str, any: bool) -> Vec<(String, String)> {
     window.invoke_query_edited(query.into());
-    for _ in 0..200 {
+    let read = || {
+        let rows = window.get_rows();
+        (0..rows.row_count())
+            .map(|i| rows.row_data(i).unwrap())
+            .filter(|r| !r.heading)
+            .map(|r| (r.primary.to_string(), r.secondary.to_string()))
+            .collect::<Vec<_>>()
+    };
+    let started = Instant::now();
+    let deadline = started + Duration::from_secs(5);
+    let mut last = Vec::new();
+    let mut stable = 0;
+    loop {
         window.invoke_poll();
+        let now = read();
+        if now == last {
+            stable += 1;
+        } else {
+            stable = 0;
+            last = now;
+        }
+        let done = if any {
+            !last.is_empty() && stable >= 25
+        } else {
+            started.elapsed() > Duration::from_millis(500)
+        };
+        if done || Instant::now() > deadline {
+            return last;
+        }
         std::thread::sleep(Duration::from_millis(2));
     }
-    let rows = window.get_rows();
-    (0..rows.row_count())
-        .map(|i| rows.row_data(i).unwrap())
-        .filter(|r| !r.heading)
-        .map(|r| (r.primary.to_string(), r.secondary.to_string()))
-        .collect()
 }
 
-// leaf: audit-options-command-palette-command-palette-advanced-search-main-menubar
+// (not tagged for the main-menubar leaf: the three rows below are missing natively)
 #[test]
 fn the_main_menu_rows_are_the_reference_s_flattened_menubar_and_the_setting_gates_them() {
     let recorded = hydrus_testkit::fixture_json("command_palette.json");
@@ -928,7 +950,11 @@ fn the_main_menu_rows_are_the_reference_s_flattened_menubar_and_the_setting_gate
                     .filter(|(a, b)| !known_missing.contains(&(a.as_str(), b.as_str())))
                     .collect();
                 assert_eq!(
-                    menu_rows(&window, case["query"].as_str().unwrap()),
+                    menu_rows(
+                        &window,
+                        case["query"].as_str().unwrap(),
+                        !expected.is_empty()
+                    ),
                     expected,
                     "{}",
                     case["query"]
@@ -938,7 +964,7 @@ fn the_main_menu_rows_are_the_reference_s_flattened_menubar_and_the_setting_gate
             for case in recorded["main_menu_off"].as_array().unwrap() {
                 assert!(case["rows"].as_array().unwrap().is_empty());
                 assert_eq!(
-                    menu_rows(&window, case["query"].as_str().unwrap()),
+                    menu_rows(&window, case["query"].as_str().unwrap(), false),
                     Vec::<(String, String)>::new(),
                     "{}",
                     case["query"]

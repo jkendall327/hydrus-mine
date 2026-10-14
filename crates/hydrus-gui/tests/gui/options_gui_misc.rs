@@ -140,15 +140,23 @@ fn choosing_a_sort_updates_the_default_as_the_reference_s_sort_control_does() {
         let default_before = client.setting::<SortSettings>().default_sort;
         let step_names = ["type", "flip order"];
         for (n, step) in case["steps"].as_array().unwrap().iter().enumerate() {
+            let before_sort = page.borrow().sort().clone();
             if n == 0 {
-                // a type other than the page's
-                client.ui.invoke_sort_chosen(1);
+                // "number of tags", found by its label in the page's choices
+                let choices =
+                    hydrus_gui_model::sort::page_choices(&client.store, &page.borrow().sort().by);
+                let tags = choices
+                    .iter()
+                    .position(|c| c.name.ends_with("number of tags"))
+                    .expect("the sort type list has number of tags");
+                client.ui.invoke_sort_chosen(i32::try_from(tags).unwrap());
             } else {
                 let ascending = page.borrow().sort().ascending;
                 client.ui.invoke_order_chosen(i32::from(ascending));
             }
             let default = client.setting::<SortSettings>().default_sort;
             let page_sort = page.borrow().sort().clone();
+            assert_ne!(page_sort, before_sort, "the page's sort really changed");
             let recorded_equal = step["page_sort"] == step["default"];
             assert_eq!(
                 default == page_sort,

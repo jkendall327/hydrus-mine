@@ -90,13 +90,13 @@
    "native": null,
    "notes": [
     "Adds/removes/reorders the sibling source queues for each real tag service. Explicit empty queues remain empty after reopen; absent queues default to own rules. Atomic Apply republishes graphs/counts and daemon revision rather than running background sync.",
-    "Native applies/recalculates immediately; reference background sync status and saved default service tab are unavailable."
+    "Native applies/recalculates immediately; the reference's background sync is not run, but the window shows its warning, explanation and sync status line (by the two sync switches). The saved default service tab is unavailable."
    ],
    "recheck": {
     "date": "2026-10-13",
     "class": "sound",
     "by": "Claude, #97 phase 2 (recheck-w4-r3)",
-    "note": "The real 'manage where tag siblings and parents apply' window is opened and compared with tag_display.json (the reference's EditTagDisplayApplication on the repositories fixture): its heading, explanation and sync line (the recording showed native had different intro text and no sync line; fixed), and the sibling queue put into the recorded initial, reversed and emptied states with the add/up/remove buttons. The service dropdown standing in for the reference's tab per service is in DIFFERENCES.md. Test: crates/hydrus-gui/tests/gui/tag_display.rs the_application_window_says_what_the_reference_says_and_orders_sibling_sources_as_recorded; the store-level queue test is crates/hydrus-gui-model/tests/model/tag_application_queues.rs."
+    "note": "The real 'manage where tag siblings and parents apply' window is opened and compared with tag_display.json (the reference's EditTagDisplayApplication on the repositories fixture): its heading, explanation and the sync line under all three switch combinations with its colour (tag_display.json application_status_by_switches; the recording showed native had different intro text and no sync line; fixed), the queue shown on opening after an apply, and the sibling queue put into the recorded initial, reversed and emptied states with the add/up/remove buttons. The service dropdown standing in for the reference's tab per service is in DIFFERENCES.md. Test: crates/hydrus-gui/tests/gui/tag_display.rs the_application_window_says_what_the_reference_says_and_orders_sibling_sources_as_recorded; the store-level queue test is crates/hydrus-gui-model/tests/model/tag_application_queues.rs."
    }
   },
   {
@@ -2198,8 +2198,8 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Cleaned left/right text inputs construct staged pair batches, repair ordinary conflicts and reject self/looping batches; Apply is atomic and refreshes display graphs/counts.",
-    "Full write autocomplete and detailed pre-existing corrupt-graph warning are absent."
+    "Cleaned left/right text inputs construct staged pair batches, repair ordinary conflicts and warn about self-pairs and loops (also loops already there) as the reference does, staging them anyway; Apply is atomic and refreshes display graphs/counts.",
+    "Pair entry has write autocomplete suggestions; several loops already there may be listed in another order than the reference's (a Python set's): DIFFERENCES.md."
    ],
    "recheck": {
     "date": "2026-10-13",
@@ -3434,14 +3434,14 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Cleaned left/right text inputs construct staged pair batches, repair ordinary conflicts and reject self/looping batches; Apply is atomic and refreshes display graphs/counts.",
-    "Full write autocomplete and detailed pre-existing corrupt-graph warning are absent."
+    "Cleaned left/right text inputs construct staged pair batches, repair ordinary conflicts and warn about self-pairs and loops (also loops already there) as the reference does, staging them anyway; Apply is atomic and refreshes display graphs/counts.",
+    "Pair entry has write autocomplete suggestions; several loops already there may be listed in another order than the reference's (a Python set's): DIFFERENCES.md."
    ],
    "recheck": {
     "date": "2026-10-13",
     "class": "sound",
     "by": "Claude, #97 phase 2 (recheck-w4-r3)",
-    "note": "Pair entry, the staged-rows preview and the graph repairs run through the real siblings window (typed and autocompleted tags, add/delete, the questions answered with their buttons, rows compared after each step) against tag_relationships.json and relationship_exchange.json: ordinary conflicts auto-petitioned, a pair closing a loop repealed, self-pairs, a loop inside one batch, two ideals, and (new, recorded and implemented) a pair leading into a loop already there, which raises the reference's second 'Loop problem!' message listing the path. Local service and repository. Several pre-existing loops may list in a different order from the reference's (a Python set's): DIFFERENCES.md. Tests: crates/hydrus-gui/tests/gui/relationship_exchange.rs, tag_relationships_replay.rs."
+    "note": "Pair entry, the staged-rows preview and the graph repairs run through the real siblings window (typed tags (the suggestion list is used to pick the exact tag, but its contents are not compared), add/delete, the questions answered with their buttons, rows compared after each step) against tag_relationships.json and relationship_exchange.json: ordinary conflicts auto-petitioned, a pair closing a loop repealed, self-pairs, a loop inside one batch, two ideals, and (new, recorded and implemented) a pair leading into a loop already there, which raises the reference's second 'Loop problem!' message listing the path. Local service and repository. Several pre-existing loops may list in a different order from the reference's (a Python set's): DIFFERENCES.md. Tests: crates/hydrus-gui/tests/gui/relationship_exchange.rs, tag_relationships_replay.rs."
    }
   },
   {
@@ -6451,9 +6451,9 @@
    ],
    "recheck": {
     "date": "2026-10-13",
-    "class": "sound",
+    "class": "weak",
     "by": "Claude, #97 phase 2 (recheck-w4-r3)",
-    "note": "The real palette is opened with the setting on and off and compared with command_palette.json (main_menu_real and main_menu_off, recorded from the reference's real menubar provider): six queries over the whole menubar give the reference's rows and menu paths in order, and with the setting off the provider gives none. Native lacks three entries the reference lists (two backup items its menubar hides until a location is set, and Help > debug > review threads): listed in the test and DIFFERENCES.md. Test: crates/hydrus-gui/tests/gui/command_palette.rs the_main_menu_rows_are_the_reference_s_flattened_menubar_and_the_setting_gates_them."
+    "note": "The setting's gate and the flattened menubar are replayed against command_palette.json (main_menu_real, main_menu_off): six queries give the reference's rows and menu paths in order, and with the setting off none. Not sound: three rows the reference lists are missing natively and the test filters them (update database backup… and change database backup location… which the menubar hides until a location is set, and Help > debug > review threads); DIFFERENCES.md. Not tagged. Test: crates/hydrus-gui/tests/gui/command_palette.rs the_main_menu_rows_are_the_reference_s_flattened_menubar_and_the_setting_gates_them."
    }
   },
   {
