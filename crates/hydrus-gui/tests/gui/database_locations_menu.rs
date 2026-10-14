@@ -867,7 +867,23 @@ fn move_files_now_stops_at_its_run_time_and_moves_what_the_reference_s_job_does(
     let moves_left = || rig.store.read(locations::next_move).unwrap().is_some();
     // (a finished job dismisses its popup at once, so there is no "done!"
     // left to read: the job is given time, and the folders it left are looked at)
-    let wait_for_done = || pump(Duration::from_secs(2));
+    // The job's popup appears when the worker starts and goes when it ends, so wait for it
+    // to be seen and gone (a job that finished between two looks is given a few seconds).
+    let wait_for_done = || {
+        let started = Instant::now();
+        let mut seen = false;
+        loop {
+            pump(Duration::from_millis(20));
+            let showing = !shown(&rig.store).is_empty();
+            seen |= showing;
+            if (seen && !showing) || started.elapsed() > Duration::from_secs(10) {
+                break;
+            }
+            if !seen && started.elapsed() > Duration::from_secs(3) {
+                break;
+            }
+        }
+    };
 
     // the stop time ("run for 10 minutes") has passed by the first look
     let passed = run("stop time passed");
