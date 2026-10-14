@@ -334,11 +334,9 @@ fn fix_invalid_tags_repairs_the_tags_the_reference_repaired_the_same_way() {
     let deadline = Instant::now() + Duration::from_secs(10);
     let mut seen: Vec<String> = Vec::new();
     loop {
-        for (_, text) in shown(&store) {
-            if let Some(text) = text {
-                if seen.last() != Some(&text) {
-                    seen.push(text);
-                }
+        for text in shown(&store).into_iter().filter_map(|(_, text)| text) {
+            if seen.last() != Some(&text) {
+                seen.push(text);
             }
         }
         if seen.last() == Some(&last) {

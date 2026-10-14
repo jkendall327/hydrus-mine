@@ -208,7 +208,7 @@ fn clearing_orphan_files_replays_the_reference_s_runs_and_its_cancel() {
                 if inputs["pick"].is_string() {
                     picked.borrow_mut().1 = vec![away_root.path().join("away")];
                 }
-                chooser.invoke_chosen(if choice == "move" { 0 } else { 1 });
+                chooser.invoke_chosen(i32::from(choice != "move"));
                 if choice == "move" {
                     let title = &step["asked"][1][1];
                     assert_eq!(
@@ -288,7 +288,7 @@ fn clearing_orphan_files_replays_the_reference_s_runs_and_its_cancel() {
         let moved: Vec<String> = place(away_root.path());
         let expected_moved: Vec<String> = wanted("moved_files")
             .into_iter()
-            .filter(|f| inputs["choice"] == "move" || name.contains("cancelled"))
+            .filter(|_| inputs["choice"] == "move" || name.contains("cancelled"))
             .collect();
         if inputs["choice"] == "move" && inputs["pick"].is_string() {
             assert_eq!(moved, expected_moved, "{name}");
