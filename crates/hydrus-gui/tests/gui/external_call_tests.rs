@@ -40,7 +40,6 @@ fn recorded_call(recorded: &Value) -> (Pipeline, ActualCall) {
                 timeout_seconds: recorded["timeout"].as_u64().unwrap_or(15),
                 hide_terminal: recorded["hide_terminal"].as_bool().unwrap_or(true),
                 text: recorded["text"].as_bool().unwrap_or(true),
-                ..Process::default()
             };
             (pipeline, ActualCall::Process(process))
         }
@@ -325,7 +324,11 @@ fn the_process_options_decide_how_a_call_runs_as_the_reference_does() {
         );
         // stopped at its timeout, or by the 3 second check the reference makes
         let timeout = case["call"]["timeout"].as_f64().unwrap();
-        if case["box"]["output"].as_str().unwrap().contains("took too long") {
+        if case["box"]["output"]
+            .as_str()
+            .unwrap()
+            .contains("took too long")
+        {
             assert!(
                 (timeout..=timeout + 3.0).contains(&seconds),
                 "{name}: stopped after {seconds} s"
@@ -356,12 +359,18 @@ fn the_process_options_decide_how_a_call_runs_as_the_reference_does() {
             ),
         }
         if process.long_lived {
-            assert!(seconds < 1.0, "{name}: a long-lived launch waited {seconds} s");
+            assert!(
+                seconds < 1.0,
+                "{name}: a long-lived launch waited {seconds} s"
+            );
         } else if case["launch"]["error"]["text"]
             .as_str()
             .is_some_and(|t| t.contains("took too long"))
         {
-            assert!((timeout..=timeout + 3.0).contains(&seconds), "{name}: {seconds} s");
+            assert!(
+                (timeout..=timeout + 3.0).contains(&seconds),
+                "{name}: {seconds} s"
+            );
         }
     }
 

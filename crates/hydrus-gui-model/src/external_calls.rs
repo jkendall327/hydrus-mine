@@ -313,9 +313,7 @@ fn python_os_error(error: &std::io::Error, executable: &str) -> String {
 /// The first bytes a process writes to one of its pipes (what the reference's report quotes),
 /// read to the end on a thread of its own so the process never blocks on a full pipe. The head
 /// is sent when the pipe closes.
-fn read_head(
-    mut pipe: impl std::io::Read + Send + 'static,
-) -> std::sync::mpsc::Receiver<Vec<u8>> {
+fn read_head(mut pipe: impl std::io::Read + Send + 'static) -> std::sync::mpsc::Receiver<Vec<u8>> {
     let (sender, receiver) = std::sync::mpsc::channel();
     std::thread::spawn(move || {
         let mut kept = Vec::new();
@@ -337,7 +335,12 @@ fn read_head(
 /// not) and quotes the first 256 characters; otherwise the first 256 bytes are quoted as bytes.
 fn quote_output(head: &[u8], text: bool) -> String {
     if text {
-        python_repr_str(&String::from_utf8_lossy(head).chars().take(256).collect::<String>())
+        python_repr_str(
+            &String::from_utf8_lossy(head)
+                .chars()
+                .take(256)
+                .collect::<String>(),
+        )
     } else {
         python_repr_bytes(&head[..head.len().min(256)])
     }

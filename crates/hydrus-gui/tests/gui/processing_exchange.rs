@@ -78,7 +78,6 @@ fn selected(e: &Editing) -> Vec<usize> {
         .collect()
 }
 
-// leaf: audit-network-processor-exchange
 #[test]
 fn selected_steps_export_and_paste_as_the_reference_queue_does() {
     let rec = recorded();
@@ -122,10 +121,13 @@ fn selected_steps_export_and_paste_as_the_reference_queue_does() {
     let path = folder.path().join(png["png_file"].as_str().unwrap());
     window.set_path(path.to_str().unwrap().into());
     window.invoke_action("save".into());
-    let ours = hydrus_downloader_exchange::processing::decode_png(&std::fs::read(&path).unwrap())
-        .unwrap();
+    let ours =
+        hydrus_downloader_exchange::processing::decode_png(&std::fs::read(&path).unwrap()).unwrap();
     let theirs = hydrus_downloader_exchange::processing::decode_png(
-        &std::fs::read(hydrus_testkit::fixture_path("processing_exchange_export.png")).unwrap(),
+        &std::fs::read(hydrus_testkit::fixture_path(
+            "processing_exchange_export.png",
+        ))
+        .unwrap(),
     )
     .unwrap();
     assert_eq!(ours, theirs);
@@ -150,14 +152,15 @@ fn selected_steps_export_and_paste_as_the_reference_queue_does() {
         if child.get_ready() {
             let added = recorded_steps - before;
             assert!(
-                child.get_review().contains(&format!("Append {added} processing steps")),
+                child
+                    .get_review()
+                    .contains(&format!("Append {added} processing steps")),
                 "{name}: {}",
                 child.get_review()
             );
             child.invoke_action("accept".into());
         } else {
             assert_eq!(recorded_steps, before, "{name}: nothing was added");
-            eprintln!("PASTE {name}: error={:?} exch_err={:?}", child.get_error(), e.window.get_exchange_error());
             child.invoke_action("cancel".into());
         }
         assert_eq!(e.window.get_steps().row_count(), recorded_steps, "{name}");

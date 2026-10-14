@@ -2675,7 +2675,10 @@ mod network_consumers {
             .unwrap()
             .text();
         assert_eq!(text, other["text"].as_str().unwrap());
-        assert_eq!(hits.count("uri") as u64, other["proxy_asked"].as_u64().unwrap());
+        assert_eq!(
+            hits.count("uri") as u64,
+            other["proxy_asked"].as_u64().unwrap()
+        );
 
         // the local host in no_proxy: the reference still used the proxy (the recorded text is the
         // whole URL and the host was not asked); hydrus-rs asks the host itself
@@ -2690,7 +2693,12 @@ mod network_consumers {
         // the named host: the reference asked the proxy (proxy_asked 1); hydrus-rs does not
         apply(&client, &engine, |w| {
             noneable_text(w, "no_proxy: ", Some("booru.invalid"));
-            number(w, "max connection attempts allowed per request: ", (1, 10), 1);
+            number(
+                w,
+                "max connection attempts allowed per request: ",
+                (1, 10),
+                1,
+            );
         });
         let before = hits.count("uri");
         let fetched = fetch(&engine, "http://booru.invalid/uri").await;

@@ -284,12 +284,12 @@ mod relationship_exchange;
 
 mod external_call_editor_recorded;
 mod external_call_tests;
-mod processing_exchange;
 mod external_calls;
 mod external_calls_editor;
 mod external_calls_recorded;
 mod open_externally;
 mod open_externally_dispatch;
+mod processing_exchange;
 mod viewer_drag;
 mod window_rescue;
 
