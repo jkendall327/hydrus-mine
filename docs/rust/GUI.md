@@ -777,7 +777,13 @@ once), and the formula chooser. Each page waiting is parsed by `hydrus
 serve` with its formula, the files found downloaded as a URL page's are.
 A new page starts on the formula last chosen. Its "edit formulae" button
 opens the saved formula list: add, edit, remove (with confirmation), and add
-defaults. Selected formulae edit in sequence; cancelling a child stops the
+defaults ("add defaults" asks "add them all" or "select from a list", the
+list offering the defaults by name, none ticked). The buttons and their
+questions are replayed against the reference's own list
+(`oracle/fixtures/simple_formula_list.json`): the name is asked first ("Edit
+name.", with the formula's current name), a name already used gets "(1)" (editing
+a formula without renaming it does too, as the reference's does), and rows stay
+in the order they were added. Selected formulae edit in sequence; cancelling a child stops the
 remaining edits. Each formula's name is entered before its reusable editor;
 Apply saves the list and refreshes the chooser, while Cancel discards it.
 

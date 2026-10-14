@@ -5983,10 +5983,10 @@
     "Name stage opens the reusable formula child; duplicate names are made unique and default formulas join the draft."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Both tests drive the real list window (defaults, Add, Name stage, Edit, confirmed delete 'Remove 1 selected?', unique names '(1)'), but expected values are typed from the Python (AddEditDeleteListBoxUniqueNamedObjects); no recording of the list. Defaults are the reference's dumped formulae only by construction. Tests: crates/hydrus-gui/tests/gui/simple_formulae_list.rs:21 simple_formula_list_defaults_exchange_and_apply; crates/hydrus-gui/tests/gui/formula_editors.rs:239 formula_editors_simple_downloader_list_saves_cancel_and_unique_names"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "wave 5 session (W5-6)",
+    "note": "The reference's real _EditFormulae dialog and AddEditDeleteListBoxUniqueNamedObjects are recorded with scripted answers (oracle/record_simple_formula_list.py): the button states, add (the name asked first as 'Edit name.' with 'new parsing formula', then the formula editor), cancelling either, a name clash getting '(1)', edit (current name offered; keeping it gets '(1)'), 'Remove N selected?' declined and accepted, delete with nothing selected, 'add them all' (twice), 'select from a list' (cancelled, none ticked, one ticked), and what Apply and Cancel leave saved. The real list window is replayed step by step. 'add defaults' had no 'select from a list' natively; added. The defaults' order in the reference follows the filesystem, so rows are compared as a set after defaults go in. Test: crates/hydrus-gui/tests/gui/simple_formulae_list.rs the_list_buttons_replay_the_reference_s_add_edit_delete_and_defaults."
    }
   },
   {
@@ -6021,10 +6021,10 @@
     "Imports accept named simple formulas only and remain in the formula list draft."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "List test drives export of the selected row as text and import (non-simple refused, simple accepted and renamed) via the real list; PNG import/export is not driven from this list (only text; PNG is covered by the shared interchange window under another leaf). The refusal strings are native, not the reference's. Tests: crates/hydrus-gui/tests/gui/simple_formulae_list.rs:21 simple_formula_list_defaults_exchange_and_apply; shared window tested in downloader_interchange (fixture downloader_interchange.json)"
+    "by": "wave 5 session (W5-6)",
+    "note": "The text a single selected formula exports as is now compared with what the reference's _ExportToClipboard wrote for it (oracle/fixtures/simple_formula_list.json; a tag rule with no attributes is {} here, null there). The rest is not recorded-and-matching: the reference's clipboard/png menus, 'N objects added!', its warning listing the types refused, the duplicate button and its PNG dialogs differ from this list's shared import window (DIFFERENCES.md, Simple downloader formula list); the refusal strings are native. Not raised. Tests: crates/hydrus-gui/tests/gui/simple_formulae_list.rs (simple_formula_list_defaults_exchange_and_apply, exporting_a_formula_writes_the_reference_s_serialisation)."
    }
   },
   {
