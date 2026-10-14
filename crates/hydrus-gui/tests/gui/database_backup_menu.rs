@@ -595,6 +595,9 @@ fn accepting_the_restore_restarts_the_client_and_the_next_start_restores_it() {
     hydrus_gui::client_exit::RESTART.store(false, Ordering::SeqCst);
     let rig = rig();
     let live = rig.store.dir().to_path_buf();
+    // exiting would ask, and shutdown jobs are due: a restore does neither
+    // (`do_idle_shutdown_work = False`, and it asks its own question only)
+    super::files_io_file_menu::exit_settings(&rig.store, true, 1, 0);
     let backup = tempfile::tempdir().unwrap();
     let backup_text = backup.path().to_string_lossy().into_owned();
     // the database as it was when it was backed up has no backup location
@@ -630,11 +633,13 @@ fn accepting_the_restore_restarts_the_client_and_the_next_start_restores_it() {
     *rig.next.borrow_mut() = vec![backup.path().to_path_buf()];
     rig.click("restore from a database backup\u{2026}");
     rig.answer(true);
-    assert!(
-        !rig.ui.window().is_visible(),
-        "the client exits: {:?} {}",
-        hydrus_gui::client_exit::maintenance_question().is_some(),
-        rig.ui.get_question()
+    assert!(!rig.ui.window().is_visible(), "the client exits");
+    assert_eq!(rig.ui.get_question(), "", "no second question");
+    assert!(hydrus_gui::client_exit::maintenance_question().is_none());
+    assert_eq!(
+        super::files_io_file_menu::last_done(&rig.store),
+        0,
+        "no shutdown jobs ran"
     );
     assert!(hydrus_gui::client_exit::RESTART.load(Ordering::SeqCst));
     assert_eq!(
@@ -678,7 +683,15 @@ fn accepting_the_restore_restarts_the_client_and_the_next_start_restores_it() {
         assert!(Instant::now() < deadline, "never started");
         std::thread::sleep(Duration::from_millis(10));
     }
-    std::thread::sleep(Duration::from_millis(100));
+    // (the stand-in writes the file, then its text)
+    while std::fs::read_to_string(&started)
+        .unwrap_or_default()
+        .trim()
+        .is_empty()
+    {
+        assert!(Instant::now() < deadline, "never said where");
+        std::thread::sleep(Duration::from_millis(10));
+    }
     assert_eq!(
         std::fs::read_to_string(&started).unwrap().trim(),
         live.to_string_lossy()

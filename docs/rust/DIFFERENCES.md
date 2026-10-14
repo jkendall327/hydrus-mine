@@ -5322,9 +5322,7 @@ be diagnosed afterwards. The owner chose always-on crash logging (2026-10-14).
 - The viewer has no shortcut commands for forcing the mute or unmuting just
   here (`SIMPLE_PER_PLAYER_AUDIO_MUTE`, `_UNMUTE`, `_FLIP`), for zooming to
   100% or the canvas apart from switching, or for panning to the edges and
-  centres. The menu offers a force only when it changes what the options say, as the
-  reference's does; the other forced states are shortcut-only there and not
-  reachable here.
+  centres. The forced mute is reached by the volume menu, as in the reference.
 - After a drag, the reference's "zoom to canvas" keeps the dragged place
   (`oracle/record_viewer_pan_zoom.py`); the nearest command here, switching with
   z, goes to 100%, and from 100% to a centred fit.

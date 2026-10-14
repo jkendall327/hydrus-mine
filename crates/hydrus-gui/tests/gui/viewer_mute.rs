@@ -95,7 +95,7 @@ fn the_volume_menu_and_the_forced_mute_are_the_reference_s() {
         .expect("the viewer opened");
     let cases = fixture["cases"].as_array().unwrap();
     assert_eq!(cases.len(), 24);
-    let (mut driven, mut shown_only) = (0, 0);
+    let (mut driven, mut two_steps) = (0, 0);
     for case in cases {
         let audio = AudioSettings {
             global_mute: case["global_mute"].as_bool().unwrap(),
@@ -115,29 +115,33 @@ fn the_volume_menu_and_the_forced_mute_are_the_reference_s() {
         if let Some((_, id)) = stop {
             viewer.invoke_menu_chosen(id);
         }
-        // forced as the case is, if the menu offers it
-        let forced = case["forced"].as_bool();
-        let mut reached = true;
-        if let Some(mute) = forced {
-            let want = if mute {
-                "force mute just here"
-            } else {
-                "force unmute just here"
-            };
+        // forced as the case is, by the menu's entries: the force the
+        // options leave open, and then (once a force is set the menu offers
+        // the opposite) the other
+        let choose = |label: &str| -> bool {
             match volume_rows(&viewer)
                 .into_iter()
                 .flatten()
-                .find(|(label, _)| label == want)
+                .find(|(l, _)| l == label)
             {
-                Some((_, id)) => viewer.invoke_menu_chosen(id),
-                // (the reference offers only the force that isn't what the
-                // options already say; the other it has only on a shortcut)
-                None => reached = false,
+                Some((_, id)) => {
+                    viewer.invoke_menu_chosen(id);
+                    true
+                }
+                None => false,
             }
-        }
-        if !reached {
-            shown_only += 1;
-            continue;
+        };
+        if let Some(mute) = case["forced"].as_bool() {
+            let (want, other) = if mute {
+                ("force mute just here", "force unmute just here")
+            } else {
+                ("force unmute just here", "force mute just here")
+            };
+            if !choose(want) {
+                assert!(choose(other), "{case}");
+                assert!(choose(want), "{case}");
+                two_steps += 1;
+            }
         }
         driven += 1;
         // the submenu now
@@ -153,7 +157,7 @@ fn the_volume_menu_and_the_forced_mute_are_the_reference_s() {
             "{case}"
         );
     }
-    // every case that the menu can reach was driven
-    assert_eq!((driven, shown_only), (16, 8));
+    // every case was driven by the menu, 8 of them in two steps
+    assert_eq!((driven, two_steps), (24, 8));
     viewer.invoke_close_requested();
 }

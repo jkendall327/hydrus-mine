@@ -3879,7 +3879,7 @@
     "date": "2026-10-14",
     "class": "sound",
     "by": "W5-5 session (wave 5)",
-    "note": "tests/gui/viewer_mute.rs replays oracle/fixtures/viewer_mute.json (the reference's AddAudioVolumeMenu and container mute for all 24 combinations of global mute, viewer mute, own volume and forced mute) through a real viewer: the forced mute is reached by the menu's own entries, and the volume submenu and the mute the viewer hands its player (playing-muted) match. 8 forced states the reference reaches only by shortcut (forced unmute while nothing is muted, and the reverse) are not reachable here (DIFFERENCES.md). No audio output is checked."
+    "note": "tests/gui/viewer_mute.rs replays oracle/fixtures/viewer_mute.json (the reference's AddAudioVolumeMenu and container mute for all 24 combinations of global mute, viewer mute, own volume and forced mute) through a real viewer: the forced mute is reached by the menu's own entries (8 states in two steps, the menu offering the opposite force once one is set), and the volume submenu and the mute the viewer hands its player (playing-muted) match. No audio output is checked; no shortcut commands for forcing the mute (DIFFERENCES.md)."
    }
   },
   {
@@ -3974,7 +3974,7 @@
     "date": "2026-10-14",
     "class": "sound",
     "by": "W5-5 session (wave 5)",
-    "note": "tests/gui/zoom_recorded.rs replays oracle/fixtures/viewer_pan_zoom.json (the reference's real MediaContainer in an 800x600 canvas) step by step through the real viewer: zoom in/out, switching between 100% and fit, max, panning by steps, a drag, and fullscreen toggling. Not replayed (no native command): zoom to canvas after a drag, explicit 100%/canvas commands and panning to edges/centres (DIFFERENCES.md)."
+    "note": "tests/gui/zoom_recorded.rs replays oracle/fixtures/viewer_pan_zoom.json (the reference's real MediaContainer in an 800x600 canvas) step by step (27 compared; the edge pans and zoom to canvas after a drag are skipped) through the real viewer: zoom in/out, switching between 100% and fit, max, panning by steps, a drag, and fullscreen toggling. Not replayed (no native command): zoom to canvas after a drag, explicit 100%/canvas commands and panning to edges/centres (DIFFERENCES.md)."
    }
   },
   {
