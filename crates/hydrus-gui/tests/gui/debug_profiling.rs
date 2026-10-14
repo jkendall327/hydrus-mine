@@ -382,20 +382,27 @@ fn client_api_profile_mode_counts_each_request() {
         alike(&done[0]),
         alike(&step("threads on (ends client api)").0[0])
     );
-    // this database's own requests: one slow, three fast
-    assert_eq!(
-        done[0],
-        "Profiling \"client_api\" done: 1 slow jobs, 3 fast jobs"
-    );
+    // this database's own requests: four in all. The one with the readers held
+    // is slow for certain; how many of the other three the 10 ms threshold
+    // calls fast depends on how loaded the machine is, so only the total and
+    // the held one are asserted.
+    let counts = Regex::new(r#"^Profiling "client_api" done: (\d+) slow jobs, (\d+) fast jobs$"#)
+        .unwrap()
+        .captures(&done[0])
+        .unwrap_or_else(|| panic!("{}", done[0]));
+    let (slow, fast): (usize, usize) = (counts[1].parse().unwrap(), counts[2].parse().unwrap());
+    assert!(slow >= 1, "{}", done[0]);
+    assert_eq!(slow + fast, 4, "{}", done[0]);
     // the slow one is logged by the reference's wording, in a log named as its
     let logged = logs(&d, "profile");
     assert_eq!(logged.len(), 1, "{logged:?}");
     let text = std::fs::read_to_string(&logged[0]).unwrap();
+    assert!(text.contains("verify_access_key"), "{text}");
     let lines = Regex::new(r"(?m)^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d: (?:EXCLUSIVE: )?Profiling client api: /verify_access_key")
         .unwrap()
         .find_iter(&text)
         .count();
-    assert_eq!(lines, 1, "{text}");
+    assert_eq!(lines, slow, "{text}");
     assert!(
         Regex::new(
             &recording["profile_log_name_pattern"]
