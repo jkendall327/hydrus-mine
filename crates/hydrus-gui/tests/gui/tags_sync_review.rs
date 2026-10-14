@@ -98,3 +98,44 @@ fn the_review_window_reads_as_the_reference_s_panel_does() {
     }
     window.invoke_close_clicked();
 }
+
+// leaf: audit-media-menu-tags-review-current-sibling-parent-sync
+#[test]
+fn the_review_lists_repositories_after_local_services_as_the_reference_does() {
+    let recorded = hydrus_testkit::fixture_json("tag_sync_review.json");
+    let legacy = hydrus_testkit::legacy_fixture("repositories");
+    let dir = tempfile::tempdir().unwrap();
+    hydrus_store::import::import_legacy(
+        legacy.path(),
+        &dir.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = hydrus_store::Store::open(dir.path()).unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let _bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    open_review(&ui);
+    let window = hydrus_gui::tag_sync_review_opened().unwrap();
+    let tabs = recorded["repositories"]["tabs"].as_array().unwrap();
+    let names: Vec<String> = window
+        .get_service_names()
+        .iter()
+        .map(|n| n.to_string())
+        .collect();
+    let expected: Vec<&str> = tabs.iter().map(|t| t["name"].as_str().unwrap()).collect();
+    assert_eq!(names, expected);
+    assert_eq!(
+        window.get_service_index(),
+        recorded["repositories"]["current_tab"]
+    );
+    for (i, tab) in tabs.iter().enumerate() {
+        window.invoke_service_chosen(i32::try_from(i).unwrap());
+        assert_eq!(
+            window.get_progress(),
+            tab["progress"].as_str().unwrap(),
+            "{}",
+            tab["name"]
+        );
+    }
+    window.invoke_close_clicked();
+}

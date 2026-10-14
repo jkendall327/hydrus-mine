@@ -47,13 +47,17 @@ def main():
     if len(sys.argv) > 1 and sys.argv[1] == '--child':
         import record_api
         out = sys.argv[2]
-        result = hydrus_driver.run_client(record_api.unpack_fixture('basic'), record)
+        result = hydrus_driver.run_client(record_api.unpack_fixture(sys.argv[3] if len(sys.argv) > 3 else 'basic'), record)
         with open(out, 'w') as f: json.dump(result, f)
         return
-    with tempfile.TemporaryDirectory() as work:
-        out = os.path.join(work, 'result.json')
-        hydrus_driver.run_in_subprocess(os.path.abspath(__file__), '--child', out)
-        with open(out) as f: result = json.load(f)
+    results = {}
+    for fixture in ('basic', 'repositories'):
+        with tempfile.TemporaryDirectory() as work:
+            out = os.path.join(work, 'result.json')
+            hydrus_driver.run_in_subprocess(os.path.abspath(__file__), '--child', out, fixture)
+            with open(out) as f: results[fixture] = json.load(f)
+    result = results['basic']
+    result['repositories'] = {k: results['repositories'][k] for k in ('tabs', 'current_tab')}
     with open(os.path.join(HERE, 'fixtures/tag_sync_review.json'), 'w') as f:
         json.dump(result, f, indent=1, ensure_ascii=False)
         f.write('\n')

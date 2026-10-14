@@ -188,6 +188,10 @@ fn edit_replays_the_reference_s_list_the_pickers_it_offers_and_what_is_left_sele
     // nothing selected: edit offers nothing
     options.invoke_namespace_colour_action("edit".into());
     assert!(hydrus_gui::options_namespace_colours::last_picker().is_none());
+    assert_eq!(
+        recorded["edit_cases"]["nothing_selected_offered"],
+        serde_json::json!([])
+    );
 
     let edit = &recorded["edit_cases"];
     for (n, namespace) in edit["selected"].as_array().unwrap().iter().enumerate() {

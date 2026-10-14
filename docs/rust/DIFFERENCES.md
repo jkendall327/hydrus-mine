@@ -1474,6 +1474,7 @@ results; a stale in-flight search cannot restore them. The database unlock
 endpoint authenticates its cached admin key while the native store is paused.
 The detached GUI model saves a whole key edit only on Apply and rejects stale
 concurrent editor state; Qt service review applies list actions immediately.
+A key edited onto another entry's key is refused with the reference's "key collision" words, shown in the open editor (the reference shows a modal once its editor has closed).
 The access-key window opens separately from service review; the reference
 embeds its list within that panel. "add from api request" opens the
 reference's waiting window and takes the first request the running daemon

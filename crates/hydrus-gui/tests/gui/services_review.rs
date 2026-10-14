@@ -60,6 +60,7 @@ fn services_menu_opens_review_and_refreshes() {
     // the reference's own (services.json, read from its database).
     let recorded = hydrus_testkit::fixture_json("services.json");
     let before = window.get_selected();
+    let mut matched = 0;
     for row in recorded["rows"].as_array().unwrap() {
         let name = row["row"][0].as_str().unwrap();
         let Some(position) = window
@@ -69,6 +70,7 @@ fn services_menu_opens_review_and_refreshes() {
         else {
             continue;
         };
+        matched += 1;
         window.invoke_selected_service(i32::try_from(position).unwrap());
         window.invoke_show_id();
         assert_eq!(
@@ -77,6 +79,7 @@ fn services_menu_opens_review_and_refreshes() {
             "{name}"
         );
     }
+    assert!(matched >= 10, "only {matched} recorded services compared");
     window.invoke_selected_service(before);
     let copied = std::rc::Rc::new(std::cell::RefCell::new(Vec::new()));
     hydrus_gui::set_clipper({

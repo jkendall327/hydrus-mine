@@ -61,12 +61,15 @@ def record(session):
         Q.SelectFromList = select
         M.ShowInformation = lambda parent, text: asked.append({'kind': 'information', 'text': text})
         try:
-            # the editor on a built-in set
+            # the editor on every built-in set
             Scripted.seen = []
-            panel._reserved_shortcuts.SelectDatas([next(d for d in panel._reserved_shortcuts.GetData() if d.GetName() == 'main_gui')], deselect_others=True)
             Scripted.script = None
-            panel._EditReserved()
-            result['edit_reserved'] = list(Scripted.seen)
+            result['edit_reserved'] = []
+            for data in list(panel._reserved_shortcuts.GetData()):
+                Scripted.seen = []
+                panel._reserved_shortcuts.SelectDatas([data], deselect_others=True)
+                panel._EditReserved()
+                result['edit_reserved'].append(Scripted.seen[0])
             # a new custom set, and what it is called when added again
             Scripted.seen = []
             Scripted.script = None

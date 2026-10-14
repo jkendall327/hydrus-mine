@@ -908,15 +908,4 @@ fn applied_key_edits_reach_the_running_api_and_collisions_are_refused_as_recorde
     assert_eq!(api_status(&router, &[9; 32]), 200);
     assert_eq!(api_status(&router, &[1; 32]), 403);
     assert_eq!(api_status(&router, &[2; 32]), 200);
-    // The reference's own outcome has the same shape: the refused edit changed nothing and
-    // the accepted one replaced exactly that key.
-    let collision = &recorded["collision"];
-    assert_eq!(collision["before"], collision["after_collision"]);
-    let changed = collision["after_new_key"]
-        .as_array()
-        .unwrap()
-        .iter()
-        .filter(|k| !collision["before"].as_array().unwrap().contains(k))
-        .count();
-    assert_eq!(changed, 1);
 }

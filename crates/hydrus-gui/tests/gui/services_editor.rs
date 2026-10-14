@@ -1394,6 +1394,20 @@ fn the_add_button_names_and_unique_names_replay_the_recorded_add_path() {
         edit.set_service_name(typed.as_str().unwrap().into());
         edit.invoke_apply_clicked();
     }
+    // The numerical (star) and inc/dec kinds are accepted too.
+    for (kind, name) in [(3, "more stars"), (4, "more counts")] {
+        manage.invoke_add_clicked(kind);
+        let edit = bound
+            .services_editor
+            .edit
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        edit.set_service_name(name.into());
+        edit.invoke_apply_clicked();
+        assert!(names(&manage).iter().any(|n| n == name), "{name}");
+    }
     let existing: std::collections::BTreeSet<String> = recorded["add_collisions"]["existing"]
         .as_array()
         .unwrap()
@@ -1409,7 +1423,7 @@ fn the_add_button_names_and_unique_names_replay_the_recorded_add_path() {
         .collect();
     let new: std::collections::BTreeSet<String> = names(&manage)
         .into_iter()
-        .filter(|n| !rows_before.contains(n))
+        .filter(|n| !rows_before.contains(n) && n != "more stars" && n != "more counts")
         .collect();
     assert_eq!(new, recorded_new);
 
@@ -1418,6 +1432,19 @@ fn the_add_button_names_and_unique_names_replay_the_recorded_add_path() {
     manage.invoke_apply_clicked();
     assert!(store.snapshot().services.by_name("MY TAGS (1)").is_some());
     assert!(store.snapshot().services.by_name("my tags (2)").is_some());
+    // each new service has a generated key of the recorded length, and its kind
+    let key_len = recorded["add_cancelled"]["dialogs"][0]["key_len"]
+        .as_u64()
+        .unwrap() as usize;
+    for (name, kind) in [
+        ("more stars", hydrus_core::ServiceType::LocalRatingNumerical),
+        ("more counts", hydrus_core::ServiceType::LocalRatingIncDec),
+        ("MY TAGS (1)", hydrus_core::ServiceType::LocalTag),
+    ] {
+        let saved = store.snapshot().services.by_name(name).unwrap().clone();
+        assert_eq!(saved.key.to_hex().len(), key_len * 2, "{name}");
+        assert_eq!(saved.service_type(), kind, "{name}");
+    }
 }
 
 // leaf: audit-media-service-rating-colours

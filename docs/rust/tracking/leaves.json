@@ -18,7 +18,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "Claude, #97 phase 2 (recheck-w4-r3)",
-    "note": "The reference has no parent Apply (it saves each edit at once), so what is compared is what it does: an edit onto an existing key is refused with its exact 'key collision' message and changes nothing, an edit onto a new key replaces exactly that key (client_api_admin.json collision block), and the applied list reaches the running API (a request with the old key is refused, the new key works) through the real window and hydrus-api's router. The native stale-editor refusal has no reference counterpart and is not claimed. Test: crates/hydrus-gui/tests/gui/client_api_admin.rs applied_key_edits_reach_the_running_api_and_collisions_are_refused_as_recorded."
+    "note": "The reference has no parent Apply (it saves each edit at once), so what is compared is what it does: an edit onto an existing key is refused with its exact 'key collision' message and changes nothing (the reference shows it in a modal after its editor closes, native in the open editor: DIFFERENCES.md), and the applied list reaches the running API (a request with the old key is refused, the new key works) through the real window and hydrus-api's router. The native stale-editor refusal has no reference counterpart and is not claimed. Test: crates/hydrus-gui/tests/gui/client_api_admin.rs applied_key_edits_reach_the_running_api_and_collisions_are_refused_as_recorded. An edit onto a new key makes the old key stop and the new one work in the running API."
    }
   },
   {
@@ -1788,7 +1788,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "Claude, #97 phase 2 (recheck-w4-r3)",
-    "note": "The real 'review current sibling/parent sync' window is opened from the Tags menu and compared with tag_sync_review.json (the reference's ReviewTagDisplayMaintenancePanel): message, status line and colour under each combination of the two sync switches, the tabs (the recording showed native listed them in database order; now local tag services then repositories by lowercase name, as the reference does), the tab opened on, and each tab's 'All synced!' and rule count. Native applies sibling/parent changes as it writes, so it never shows unsynced work or the work-now button (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/tags_sync_review.rs."
+    "note": "The real 'review current sibling/parent sync' window is opened from the Tags menu and compared with tag_sync_review.json (the reference's ReviewTagDisplayMaintenancePanel): message, status line and colour under each combination of the two sync switches, the tabs (the recording showed native listed them in database order; now local tag services then repositories by lowercase name, as the reference does), the tab opened on, and each tab's 'All synced!' and rule count. Native applies sibling/parent changes as it writes, so it never shows unsynced work or the work-now button (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/tags_sync_review.rs. Repositories listed after local services is recorded from the 'repositories' fixture (tag_sync_review.json repositories) and replayed in the_review_lists_repositories_after_local_services_as_the_reference_does."
    }
   },
   {
@@ -3085,7 +3085,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "Claude, #97 phase 2 (recheck-w4-r3)",
-    "note": "The real service editor is driven (cancel, ports outside and inside the range, apply, reopen) with the field set, defaults and port range taken from client_api_admin.json's server block, and now the allow-non-local box too; the consumer is exercised by crates/hydrus-cli/tests/serve.rs client_api_listener_reconfigures_recovers_and_preserves_daemon_state (a service edit restarts only the listener) and service_edits_reach_the_running_client_api_without_a_restart, which are separate tests from the window's. Test: crates/hydrus-gui/tests/gui/client_api_admin.rs supported_service_listener_fields_stage_cancel_and_persist."
+    "note": "The real service editor is driven (cancel, ports outside and inside the range, apply, reopen) with the field set, defaults and port range taken from client_api_admin.json's server block, and now the allow-non-local box too; the consumer is exercised by the daemon reads the saved ServerConfig in crates/hydrus-cli/src/client_api_listener.rs:32, exercised by crates/hydrus-cli/tests/client_api_https.rs:261 (non-local and normie combinations) and crates/hydrus-cli/tests/serve.rs client_api_listener_reconfigures_recovers_and_preserves_daemon_state (a service edit restarts only the listener); these are separate tests from the window's. Test: crates/hydrus-gui/tests/gui/client_api_admin.rs supported_service_listener_fields_stage_cancel_and_persist."
    }
   },
   {
@@ -3177,7 +3177,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "Claude, #97 phase 2 (recheck-w4-r3)",
-    "note": "The add button's kinds are compared with the reference's menu (services.json add_menu, local kinds only: repositories, server admin and IPFS are not offered, DIFFERENCES.md), each opens 'new service' of that kind as the reference's panel._Add does, cancelling adds nothing, and an accepted name goes into the staged list and is written only by the parent Apply. Test: crates/hydrus-gui/tests/gui/services_editor.rs the_add_button_names_and_unique_names_replay_the_recorded_add_path."
+    "note": "The add button's kinds are compared with the reference's menu (services.json add_menu, local kinds only: repositories, server admin and IPFS are not offered, DIFFERENCES.md), each opens 'new service' of that kind as the reference's panel._Add does, cancelling adds nothing, and an accepted name goes into the staged list and is written only by the parent Apply. Test: crates/hydrus-gui/tests/gui/services_editor.rs the_add_button_names_and_unique_names_replay_the_recorded_add_path. All five local kinds are accepted (tag, file, like, numerical and inc/dec) and each saved service has a generated key of the recorded length (32 bytes) and its kind."
    }
   },
   {
@@ -20119,7 +20119,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "Claude, #97 phase 2 (recheck-w4-r3)",
-    "note": "Through the real Options > shortcuts page and the set editor, compared with shortcuts_panel.json (the reference's ShortcutsPanel): the built-in list (pretty names, counts, order), the editor on 'the main window' with its name locked, its description, and every shortcut/command row of the set. (The recording showed the restore chooser's order was alphabetical in native; fixed, see restore-defaults.) Adding a key to a set was already driven (options_shortcut_sets.rs). Test: crates/hydrus-gui/tests/gui/options_shortcut_sets.rs the_shortcuts_page_lists_edits_adds_and_restores_sets_as_the_reference_s_panel_does."
+    "note": "Through the real Options > shortcuts page and the set editor, compared with shortcuts_panel.json (the reference's ShortcutsPanel): the built-in list (pretty names, counts, order), the editor on all 11 built-in sets, each with its name locked, its description and every shortcut/command row. (The recording showed the restore chooser's order was alphabetical in native; fixed, see restore-defaults.) Adding a key to a set was already driven (options_shortcut_sets.rs). Test: crates/hydrus-gui/tests/gui/options_shortcut_sets.rs the_shortcuts_page_lists_edits_adds_and_restores_sets_as_the_reference_s_panel_does."
    }
   },
   {
@@ -20139,7 +20139,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "Claude, #97 phase 2 (recheck-w4-r3)",
-    "note": "The restore chooser, the confirmation and the missing-set message are compared word for word with shortcuts_panel.json (restore_cancel/no/yes/missing, recorded from the reference's _RestoreDefaults). The recording showed the chooser listed the defaults alphabetically; the reference lists them in GetDefaultShortcuts order (global first): fixed in shortcut_sets::default_names. Restoring to the original contents and 'nothing saved before OK' are covered by restore_defaults_asks_which_set_then_confirms_or_says_it_was_missing in the same file. Test: crates/hydrus-gui/tests/gui/options_shortcut_sets.rs the_shortcuts_page_lists_edits_adds_and_restores_sets_as_the_reference_s_panel_does."
+    "note": "The restore chooser, the confirmation and the missing-set message are compared word for word with shortcuts_panel.json (restore_cancel/no/yes/missing, recorded from the reference's _RestoreDefaults). The recording showed the chooser listed the defaults alphabetically; the reference lists them in GetDefaultShortcuts order (global first): fixed in shortcut_sets::default_names. Restoring to the original contents and 'nothing saved before OK' are covered by restore_defaults_asks_which_set_then_confirms_or_says_it_was_missing in the same file. Test: crates/hydrus-gui/tests/gui/options_shortcut_sets.rs the_shortcuts_page_lists_edits_adds_and_restores_sets_as_the_reference_s_panel_does. The same test now does the 'yes' restore: a set altered through its editor is restored to its recorded contents (restore_yes), and 'no' keeps the edit."
    }
   },
   {
@@ -22076,7 +22076,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "Claude, #97 phase 2 (recheck-w4-r3)",
-    "note": "The editor as a whole: the list rows and Edit are replayed from namespace_colour_controls.json in options_namespace_edit.rs (see namespace-colours-edit), and Add/Delete, input normalisation, selection and sort are replayed from the same recording and tagged on their own leaves (crates/hydrus-gui/tests/gui/namespace_colours.rs). Tracker note 'no editable row exists' was stale."
+    "note": "The editor as a whole: the list rows and Edit are replayed from namespace_colour_controls.json in options_namespace_edit.rs (see namespace-colours-edit), and Add/Delete, input normalisation, selection and sort are replayed from the same recording and tagged on their own leaves (crates/hydrus-gui/tests/gui/namespace_colours.rs). Tracker note 'no editable row exists' was stale. This leaf is the list and Edit; Add and Delete are separate leaves with their own tagged tests, which this note relies on."
    }
   },
   {

@@ -50,5 +50,38 @@
    "work_button": "work now!"
   }
  ],
- "current_tab": 1
+ "current_tab": 1,
+ "repositories": {
+  "tabs": [
+   {
+    "name": "downloader tags",
+    "siblings_and_parents": "All synced!",
+    "progress": "10 rules, all synced!",
+    "work_button_visible": false,
+    "work_button": "work now!"
+   },
+   {
+    "name": "my tags",
+    "siblings_and_parents": "All synced!",
+    "progress": "10 rules, all synced!",
+    "work_button_visible": false,
+    "work_button": "work now!"
+   },
+   {
+    "name": "second tags",
+    "siblings_and_parents": "All synced!",
+    "progress": "1 rules, all synced!",
+    "work_button_visible": false,
+    "work_button": "work now!"
+   },
+   {
+    "name": "a tag repository",
+    "siblings_and_parents": "All synced!",
+    "progress": "2 rules, all synced!",
+    "work_button_visible": false,
+    "work_button": "work now!"
+   }
+  ],
+  "current_tab": 1
+ }
 }

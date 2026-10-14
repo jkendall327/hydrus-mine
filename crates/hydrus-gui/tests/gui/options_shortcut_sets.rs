@@ -362,30 +362,32 @@ fn the_shortcuts_page_lists_edits_adds_and_restores_sets_as_the_reference_s_pane
     assert!(custom(&parent).is_empty());
     assert_eq!(recorded["custom_rows"], serde_json::json!([]));
 
-    // edit on a built-in set: its name locked, its description shown, its shortcuts listed
-    let edit = &recorded["edit_reserved"][0];
-    let main_gui = reserved
-        .iter()
-        .position(|row| row[0] == "the main window")
-        .unwrap();
-    parent.invoke_shortcut_set_clicked(false, i32::try_from(main_gui).unwrap(), false, false);
-    parent.invoke_shortcut_set_action("edit-reserved".into());
-    let window = hydrus_gui::shortcut_windows::last_set().unwrap();
-    assert_eq!(window.get_set_name(), edit["name"].as_str().unwrap());
-    assert_eq!(
-        window.get_name_enabled(),
-        edit["name_enabled"].as_bool().unwrap()
-    );
-    assert_eq!(
-        window.get_description(),
-        recorded["descriptions"]["main_gui"].as_str().unwrap()
-    );
-    let mut ours = editor_rows(&window);
-    let mut theirs = recorded_rows(&edit["rows"]);
-    ours.sort();
-    theirs.sort();
-    assert_eq!(ours, theirs);
-    window.invoke_cancel();
+    // edit on every built-in set: its name locked, its description shown, its shortcuts listed
+    for edit in recorded["edit_reserved"].as_array().unwrap() {
+        let name = edit["name"].as_str().unwrap();
+        let pretty = sets::pretty_name(name);
+        let at = reserved.iter().position(|row| row[0] == pretty).unwrap();
+        parent.invoke_shortcut_set_clicked(false, i32::try_from(at).unwrap(), false, false);
+        parent.invoke_shortcut_set_action("edit-reserved".into());
+        let window = hydrus_gui::shortcut_windows::last_set().unwrap();
+        assert_eq!(window.get_set_name(), name);
+        assert_eq!(
+            window.get_name_enabled(),
+            edit["name_enabled"].as_bool().unwrap(),
+            "{name}"
+        );
+        assert_eq!(
+            window.get_description(),
+            recorded["descriptions"][name].as_str().unwrap(),
+            "{name}"
+        );
+        let mut ours = editor_rows(&window);
+        let mut theirs = recorded_rows(&edit["rows"]);
+        ours.sort();
+        theirs.sort();
+        assert_eq!(ours, theirs, "{name}");
+        window.invoke_cancel();
+    }
 
     // add: "new shortcuts", name editable, nothing listed; cancelling adds nothing
     let add = &recorded["add_cancelled"]["dialogs"][0];
@@ -463,6 +465,41 @@ fn the_shortcuts_page_lists_edits_adds_and_restores_sets_as_the_reference_s_pane
     let sure = chooser();
     assert_eq!(sure.get_message(), sure_text);
     sure.invoke_cancelled();
+    // "yes" really restores: alter a set, restore it, and it is as recorded again
+    // (this window is the damaged client's, without the "global" row)
+    let main_gui = cells(&parent.get_shortcut_reserved_rows())
+        .iter()
+        .position(|(name, _)| name == "the main window")
+        .unwrap();
+    let original = reserved_count(&parent, "main_gui");
+    let recorded_count = &reserved[reserved
+        .iter()
+        .position(|row| row[0] == "the main window")
+        .unwrap()][1];
+    assert_eq!(&original, recorded_count);
+    parent.invoke_shortcut_set_clicked(false, i32::try_from(main_gui).unwrap(), false, false);
+    parent.invoke_shortcut_set_action("edit-reserved".into());
+    let window = hydrus_gui::shortcut_windows::last_set().unwrap();
+    add_key(&window, "x");
+    window.invoke_apply();
+    assert_ne!(reserved_count(&parent, "main_gui"), original);
+    parent.invoke_shortcut_set_action("restore".into());
+    chooser()
+        .invoke_chosen(i32::try_from(names.iter().position(|n| n == "main_gui").unwrap()).unwrap());
+    let sure = chooser();
+    assert_eq!(sure.get_message(), sure_text);
+    sure.invoke_cancelled();
+    assert_ne!(
+        reserved_count(&parent, "main_gui"),
+        original,
+        "no keeps the edit"
+    );
+    parent.invoke_shortcut_set_action("restore".into());
+    chooser()
+        .invoke_chosen(i32::try_from(names.iter().position(|n| n == "main_gui").unwrap()).unwrap());
+    chooser().invoke_chosen(0);
+    assert_eq!(recorded["restore_yes"]["rows_equal_original"], true);
+    assert_eq!(reserved_count(&parent, "main_gui"), original);
     let missing = recorded["restore_missing"]["asked"][1]["text"]
         .as_str()
         .unwrap();
