@@ -279,9 +279,15 @@ impl Db {
             give_back.send(reader).map_err(|_| StoreError::WriterGone)?;
             version
         };
-        if version != schema::SCHEMA_VERSION {
+        if version < schema::SCHEMA_VERSION {
             return Err(StoreError::Invalid(format!(
-                "the database is at schema version {version}, this build reads {}: open it with the client once to migrate it",
+                "the database is at schema version {version}, older than the {} this build reads: open it with the client once to migrate it",
+                schema::SCHEMA_VERSION
+            )));
+        }
+        if version > schema::SCHEMA_VERSION {
+            return Err(StoreError::Invalid(format!(
+                "the database is at schema version {version}, newer than the {} this build reads: use a newer build",
                 schema::SCHEMA_VERSION
             )));
         }

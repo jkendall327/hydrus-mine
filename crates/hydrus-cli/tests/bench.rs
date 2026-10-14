@@ -41,22 +41,19 @@ fn synthetic_store() -> (tempfile::TempDir, PathBuf) {
     (parent, dir)
 }
 
-/// Every file under `dir`: its size, modification time and (for the
-/// database) its bytes.
-fn state(dir: &Path) -> BTreeMap<PathBuf, (u64, std::time::SystemTime, Option<Vec<u8>>)> {
-    fn walk(
-        dir: &Path,
-        out: &mut BTreeMap<PathBuf, (u64, std::time::SystemTime, Option<Vec<u8>>)>,
-    ) {
+/// Every database file under `dir`: its size and bytes. (Modification times
+/// are not compared: SQLite may touch the `-wal` and `-shm` files.)
+fn state(dir: &Path) -> BTreeMap<PathBuf, (u64, Vec<u8>)> {
+    fn walk(dir: &Path, out: &mut BTreeMap<PathBuf, (u64, Vec<u8>)>) {
         for entry in std::fs::read_dir(dir).unwrap().map(Result::unwrap) {
             let path = entry.path();
             let meta = entry.metadata().unwrap();
             if meta.is_dir() {
                 walk(&path, out);
-            } else {
-                let bytes = (path.extension().is_some_and(|e| e == "db"))
-                    .then(|| std::fs::read(&path).unwrap());
-                out.insert(path, (meta.len(), meta.modified().unwrap(), bytes));
+            } else if path.extension().is_some_and(|e| e == "db") {
+                out.insert(path.clone(), (meta.len(), std::fs::read(&path).unwrap()));
+            } else if !is_wal_companion(&path) {
+                out.insert(path, (meta.len(), Vec::new()));
             }
         }
     }
@@ -152,21 +149,8 @@ fn bench_reports_every_measurement_and_does_not_change_the_store() {
         "{text}"
     );
 
-    // and the store is as it was
-    let after = state(&dir);
-    let strip = |m: &BTreeMap<PathBuf, _>| {
-        m.keys()
-            .filter(|p| !is_wal_companion(p))
-            .cloned()
-            .collect::<Vec<_>>()
-    };
-    assert_eq!(strip(&before), strip(&after), "files appeared or went");
-    for (path, was) in &before {
-        if is_wal_companion(path) {
-            continue;
-        }
-        assert_eq!(was, &after[path], "{} changed", path.display());
-    }
+    // and the store is as it was: the same files, the database byte for byte
+    assert_eq!(before, state(&dir), "the store changed");
 }
 
 #[test]

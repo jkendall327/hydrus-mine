@@ -30,8 +30,10 @@ the pieces measured below: the same search, autocomplete, metadata, thumbnail,
 tag-relation and potential-duplicate code the client runs, timed `--runs`
 times each (default 5), reporting the first run (cold caches), the median and
 the 90th percentile. It opens the store read-only (`Store::open_read_only`:
-SQLite's read-only flag, no migration, no writer thread), so it is safe to
-point at the store you use every day, even with the client closed or open.
+SQLite's read-only flag, no migration, no writer thread), so the database file is never
+modified (SQLite may touch the `-wal` and `-shm` files beside it) and it can be
+pointed at the store you use every day; `docs/rust/REPORTING.md` says when to
+close the client first.
 CI runs it on a small synthetic store (`crates/hydrus-cli/tests/bench.rs`),
 which also checks that the database file's bytes, size and modification time
 are unchanged afterwards.

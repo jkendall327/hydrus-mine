@@ -1,9 +1,11 @@
 //! `hydrus bench <store>`: time what the client does on a real collection.
 //!
-//! Strictly read-only: the store is opened with SQLite's read-only flag (see
-//! `Store::open_read_only`), nothing is migrated, created or regenerated, and
-//! the thumbnail step only reads files. It needs nothing but this binary and
-//! runs the same on Linux and Windows. The report is plain text to paste
+//! Read-only: the store is opened with SQLite's read-only flag (see
+//! `Store::open_read_only`), so the database file is never modified, nothing
+//! is migrated, created or regenerated, and the thumbnail step only reads
+//! files. (SQLite itself may create or touch the `-wal` and `-shm` files
+//! beside the database.) It needs nothing but this binary and runs the same
+//! on Linux and Windows. The report is plain text to paste
 //! into a message (`--json` for a machine-readable one).
 
 use std::path::Path;
@@ -103,26 +105,44 @@ pub struct Report {
     pub timings: Vec<Timing>,
 }
 
-/// Run `f` `runs` times, timing each; the note is the last run's.
+/// Run `f` `runs` times, timing each; the note is the last run's. A run that
+/// fails ends the measurement with an `error:` note and the runs so far, so
+/// one failing measurement doesn't take the rest of the report with it.
 fn measure<T: ToString>(
     group: &'static str,
     name: impl Into<String>,
     runs: usize,
     mut f: impl FnMut() -> Result<T>,
-) -> Result<Timing> {
+) -> Timing {
     let mut runs_ms = Vec::with_capacity(runs);
     let mut note = String::new();
     for _ in 0..runs.max(1) {
         let started = Instant::now();
-        let out = f()?;
-        runs_ms.push(started.elapsed().as_secs_f64() * 1000.0);
-        note = out.to_string();
+        match f() {
+            Ok(out) => {
+                runs_ms.push(started.elapsed().as_secs_f64() * 1000.0);
+                note = out.to_string();
+            }
+            Err(e) => {
+                note = format!("error: {e}");
+                break;
+            }
+        }
     }
-    Ok(Timing {
+    Timing {
         group,
         name: name.into(),
         runs_ms,
         note,
+    }
+}
+
+/// A setup step that failed leaves its measurements empty, with a warning,
+/// rather than ending the report.
+fn or_default<T: Default>(what: &str, result: Result<T>) -> T {
+    result.unwrap_or_else(|e| {
+        eprintln!("hydrus bench: {what} failed: {e:#}");
+        T::default()
     })
 }
 
@@ -138,7 +158,7 @@ pub fn run_bench(options: &Options) -> Result<Report> {
             "{} services",
             store.snapshot().services.all().count()
         ))
-    })?);
+    }));
 
     let store = Store::open_read_only(dir)
         .with_context(|| format!("opening {} read-only", dir.display()))?;
@@ -151,7 +171,7 @@ pub fn run_bench(options: &Options) -> Result<Report> {
         .key
         .clone();
 
-    let counts = counts(&store, my_files, my_tags, dir)?;
+    let counts = or_default("counting the store", counts(&store, my_files, my_tags, dir));
 
     // what the main window reads before it shows: its session settings, the
     // last session and its pages' file counts
@@ -163,11 +183,14 @@ pub fn run_bench(options: &Options) -> Result<Report> {
             Ok((session.map_or(0, |s| s.pages.len()), files.len()))
         })?;
         Ok(format!("last session: {pages} pages, {files} with files"))
-    })?);
+    }));
 
     // searches
     let mut searches: Vec<(String, Vec<String>)> = Vec::new();
-    let top = top_tags(&store, my_files, my_tags, 8)?;
+    let top = or_default(
+        "finding popular tags",
+        top_tags(&store, my_files, my_tags, 8),
+    );
     match top.as_slice() {
         [] => {}
         [one] => searches.push(("a single tag".to_owned(), vec![one.clone()])),
@@ -232,7 +255,7 @@ pub fn run_bench(options: &Options) -> Result<Report> {
                 })?;
                 Ok(format!("{} files", found.len()))
             },
-        )?);
+        ));
     }
 
     // autocomplete for a short prefix of a popular tag
@@ -266,11 +289,14 @@ pub fn run_bench(options: &Options) -> Result<Report> {
                 })?;
                 Ok(format!("{matches} tags"))
             },
-        )?);
+        ));
     }
 
     // a page of thumbnails: their metadata, then their pixels from disk
-    let page = newest_files(&store, my_files, 500)?;
+    let page = or_default(
+        "finding the newest files",
+        newest_files(&store, my_files, 500),
+    );
     timings.push(measure(
         "thumbnails",
         format!("load basic metadata of {} files (a page)", page.len()),
@@ -279,7 +305,7 @@ pub fn run_bench(options: &Options) -> Result<Report> {
             let loaded = store.read(|conn| hydrus_store::media::load_basic(conn, &page))?;
             Ok(format!("{} loaded", loaded.len()))
         },
-    )?);
+    ));
     timings.push(measure(
         "thumbnails",
         format!("load full metadata of {} files (tags, urls...)", page.len()),
@@ -290,7 +316,7 @@ pub fn run_bench(options: &Options) -> Result<Report> {
             })?;
             Ok(format!("{} loaded", loaded.results.len()))
         },
-    )?);
+    ));
     let wanted = &page[..page.len().min(options.thumbnails)];
     timings.push(measure(
         "thumbnails",
@@ -315,7 +341,7 @@ pub fn run_bench(options: &Options) -> Result<Report> {
                 "{decoded} decoded, {missing} missing or unreadable"
             ))
         },
-    )?);
+    ));
 
     // tag siblings and parents
     timings.push(measure(
@@ -331,8 +357,11 @@ pub fn run_bench(options: &Options) -> Result<Report> {
                 graphs.get(my_tags).rule_count()
             ))
         },
-    )?);
-    let related = related_tags(&store, my_tags, 200)?;
+    ));
+    let related = or_default(
+        "finding tags with relations",
+        related_tags(&store, my_tags, 200),
+    );
     let graph = snapshot.display.get(my_tags);
     timings.push(measure(
         "tag relations",
@@ -347,10 +376,10 @@ pub fn run_bench(options: &Options) -> Result<Report> {
             }
             Ok(format!("{found} related tags"))
         },
-    )?);
+    ));
 
     // potential duplicates
-    let search = potentials_everything(&snapshot, my_files)?;
+    let search = potentials_everything()?;
     timings.push(measure(
         "duplicates",
         "count potential duplicate pairs",
@@ -361,7 +390,7 @@ pub fn run_bench(options: &Options) -> Result<Report> {
             let count = store.read(|conn| query.count(conn, &snapshot))?;
             Ok(count.map_or_else(|| "search failed".to_owned(), |n| format!("{n} pairs")))
         },
-    )?);
+    ));
 
     Ok(Report {
         version: format!(
@@ -377,12 +406,8 @@ pub fn run_bench(options: &Options) -> Result<Report> {
 }
 
 /// "Every file, any pair within 8": the duplicates page's widest search.
-fn potentials_everything(
-    snapshot: &hydrus_store::Snapshot,
-    _my_files: ServiceId,
-) -> Result<hydrus_core::duplicates::DuplicatesSearch> {
+fn potentials_everything() -> Result<hydrus_core::duplicates::DuplicatesSearch> {
     use hydrus_core::duplicates::{DuplicatesSearch, PairSearchKind, PixelDuplicates};
-    let _ = snapshot;
     let everything = FileSearchContext {
         location: LocationContext::default(),
         tags: TagContext::default(),
@@ -493,6 +518,9 @@ fn related_tags(store: &Store, my_tags: ServiceId, n: usize) -> Result<Vec<TagId
     })?)
 }
 
+/// OS, architecture and logical CPUs everywhere; the CPU model and memory
+/// are read from `/proc` on Linux (the CPU model from `PROCESSOR_IDENTIFIER`
+/// on Windows) and left out where neither exists.
 fn machine_info() -> Vec<(String, String)> {
     let mut info = vec![
         (
@@ -636,6 +664,20 @@ mod tests {
         assert!((percentile(&sorted, 90) - 9.0).abs() < 1e-9);
         assert!((percentile(&[7.0], 90) - 7.0).abs() < 1e-9);
         assert!(percentile(&[], 90).abs() < 1e-9);
+    }
+
+    #[test]
+    fn a_failing_run_leaves_an_error_note_and_the_runs_so_far() {
+        let mut n = 0;
+        let t = measure("g", "flaky", 5, || {
+            n += 1;
+            if n == 3 {
+                bail!("boom");
+            }
+            Ok("fine")
+        });
+        assert_eq!(t.runs_ms.len(), 2);
+        assert_eq!(t.note, "error: boom");
     }
 
     #[test]

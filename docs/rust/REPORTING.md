@@ -23,14 +23,24 @@ On Windows: `hydrus.exe bench D:\path\to\store`. It needs only the binary
   searches that feel slow.
 - `--thumbnails N`: how many thumbnails to read and decode (default 200).
 
-It is **strictly read-only**: the store is opened with SQLite's read-only
-flag, nothing is migrated, created or regenerated, and nothing is written, not
-even a crash log. It is safe on your daily store, with the client open or
-closed. If the store needs a schema migration it says so and stops (open it
-with the client once). Close other heavy programs first, and run it twice:
-the first run warms the operating system's file cache, and the report shows
-the *first* run of each measurement as well as the median and the 90th
-percentile, so a cold start is visible too.
+It is **read-only**: the store is opened with SQLite's read-only flag, so
+the database file is never modified, and nothing is migrated, created or
+regenerated (SQLite itself may create or touch the `-wal` and `-shm` files
+beside the database). Notes:
+
+- Close the client first if the store's folder is read-only or the client
+  crashed: a read-only connection cannot recover a stale write-ahead log.
+- A long run holds a read open, which holds off the live client's
+  checkpoints of the log while it lasts; prefer a closed client for a
+  clean measurement anyway.
+- If the store needs a schema migration, it says so and stops (open it with
+  the client once). One measurement failing is noted on its row
+  (`error: ...`) and the rest of the report goes on.
+
+Run it twice: the first run warms the operating system's file cache, and the
+report shows the *first* run of each measurement as well as the median and
+the 90th percentile, so a cold start is visible too. Close other heavy
+programs first.
 
 Send the whole output (paste the text; attach the JSON if asked). It holds
 the version, the machine (operating system, CPU, memory), the size of the
