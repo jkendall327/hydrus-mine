@@ -290,10 +290,10 @@
     "Context actions pass explicit service/file scopes to native media-actions and the Delete files? dialog (#187) and other prompts; lifecycle writes are real store operations rather than labels. First-pass evidence scope: Recorded lifecycle menu is matched and focused action tests inspect archive/inbox/trash/undelete/physical-delete state and questions; full remote-domain behavior is not claimed."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real thumbnail menu and store: archive/re-inbox, delete from domain, undelete, physical delete, with questions. Menu tree is replayed against thumbnail_menu.json in a separate untagged test, but question texts ('Send 2 files to inbox?', 'Send one file from X to trash?', 'Permanently delete one trashed file?'; the delete ones now the reference's delete files dialog labels, the one-domain case matched against a recording by the download flow, flows::download, 2026-10-13) and state effects are literals from the Python source; remote domains not covered. Tests: crates/hydrus-gui/tests/gui/media_file_actions.rs:44 archive_inbox_delete_undelete_and_physical_delete_from_the_menu; thumbnail_menu.rs the_menu_is_the_reference_s (untagged) Since #187 the delete questions ('Send one file from X to trash?', 'Permanently delete one trashed file?') are the actions of the Delete files? dialog (tests/gui/common delete_question), not an inline yes/no."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "wave 5 session (W5-6)",
+    "note": "The reference's real media results panel runs archive, re-inbox (declined, accepted, a lone file already in the inbox), delete from one domain and from the other of two, undelete (declined, accepted, the 'Undelete for?' chooser cancelled, one domain, all the above) and physical delete (declined, accepted) with its real database writes (oracle/record_media_lifecycle.py, fixtures/media_lifecycle.json): every question in its words and order, and each file's inbox flag, local domains, deleted domains and kept deletion reason read back after each step. The real thumbnail menu and store replay it step by step. Found: a deletion from a page's thumbnails kept 'Deleted from Preview or Media Viewer.' where the reference keeps 'Deleted from Media Page.'; fixed (the viewer keeps its own). The reference's 'Unknown deletion reason.' is no reason kept. Remote (file repository) domains and the trash-only 'delete trash physically now' entry are not recorded. Test: crates/hydrus-gui/tests/gui/media_file_actions.rs the_lifecycle_actions_replay_the_reference_s_questions_and_state."
    }
   },
   {

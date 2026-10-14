@@ -1267,7 +1267,10 @@ one, to end, as the selection allows; alt and home, left, right or end do
 the same, and the order holds until the page sorts again); the
 archive/delete filter; archive and re-inbox;
 delete from each local file domain the selection is in (asking), delete
-trash physically, delete physically and undelete; manage → tags and
+trash physically, delete physically and undelete (their questions, and the
+files' inbox, domains and deletion reasons afterwards, replayed against
+the reference's own panel in `oracle/fixtures/media_lifecycle.json`; a
+deletion from the page's thumbnails keeps "Deleted from Media Page."); manage → tags and
 notes (below); and urls → open in browser, open in a new page, or copy the focused file's
 URLs (labelled by URL class, decoded as hydrus shows them, sorted), its
 recognised URLs or all of them, and the selection's URLs of each class or

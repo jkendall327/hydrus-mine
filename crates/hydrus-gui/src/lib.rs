@@ -2362,7 +2362,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     &store,
                     files,
                     suggested.as_ref(),
-                    media_actions::DELETE_REASON,
+                    media_actions::MEDIA_PAGE_DELETE_REASON,
                     guard,
                     applied,
                 ) {
@@ -6524,14 +6524,18 @@ impl Asked {
         let done = match self {
             Self::Archive(files) => media_actions::archive(store, files),
             Self::Inbox(files) => media_actions::inbox(store, files),
-            Self::Delete(files, deletion, location) => {
-                media_actions::delete_changed(store, files, deletion).map(|affected| {
-                    let gone = hydrus_gui_model::file_view_removal::deleted(
-                        store, location, &affected, deletion,
-                    );
-                    removed(&gone);
-                })
-            }
+            Self::Delete(files, deletion, location) => media_actions::delete_changed_for(
+                store,
+                files,
+                deletion,
+                media_actions::MEDIA_PAGE_DELETE_REASON,
+            )
+            .map(|affected| {
+                let gone = hydrus_gui_model::file_view_removal::deleted(
+                    store, location, &affected, deletion,
+                );
+                removed(&gone);
+            }),
             // (the page locks itself; the pages close it)
             Self::LockSearch(_) | Self::ClosePage(..) | Self::RemoveQueries(..) => Ok(()),
             Self::Then(_, then) => {
