@@ -110,9 +110,11 @@ fn bake(base: &[u8], border: [u8; 3], fill: [u8; 3]) -> slint::Image {
             pixels.push((alpha * 255.0).round().clamp(0.0, 255.0) as u8);
         }
     }
-    slint::Image::from_rgba8(slint::SharedPixelBuffer::<slint::Rgba8Pixel>::clone_from_slice(
-        &pixels,
-        u32::try_from(DRAWN).unwrap_or(96),
-        u32::try_from(DRAWN).unwrap_or(96),
-    ))
+    slint::Image::from_rgba8(
+        slint::SharedPixelBuffer::<slint::Rgba8Pixel>::clone_from_slice(
+            &pixels,
+            u32::try_from(DRAWN).unwrap_or(96),
+            u32::try_from(DRAWN).unwrap_or(96),
+        ),
+    )
 }

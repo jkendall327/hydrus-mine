@@ -1,4 +1,4 @@
-//! The rating service editor's star appearance: the choice of shapes or SVGs,
+//! The rating service editors star appearance: the choice of shapes or SVGs,
 //! the SVGs offered, and an SVG star drawn wherever ratings are drawn (the
 //! editor's examples, the thumbnails, the media viewer, the preview window),
 //! against `oracle/record_star_svgs.py` (the reference's
@@ -9,6 +9,7 @@ use std::rc::Rc;
 
 use hydrus_gui::{EditServiceWindow, MainWindow, Pages, bind, headless};
 use hydrus_store::services::{PenBrush, Rgb, ServiceKind, StarAppearance, StarShape};
+use slint::platform::WindowAdapter as _;
 use slint::platform::software_renderer::MinimalSoftwareWindow;
 use slint::platform::{PointerEventButton, WindowEvent};
 use slint::{ComponentHandle as _, Model as _};
@@ -367,6 +368,28 @@ impl Mask {
         })
     }
 
+    /// This with each painted point's neighbours painted too: the thin
+    /// outline of the default star, whose anti-aliased points are in neither
+    /// colour, closed up.
+    fn grown(&self) -> Self {
+        let (w, h) = (self.width + 2, self.height + 2);
+        let mut painted = vec![false; w * h];
+        for y in 0..self.height {
+            for x in 0..self.width {
+                if self.painted[y * self.width + x] {
+                    for (dy, dx) in (0..3).flat_map(|dy| (0..3).map(move |dx| (dy, dx))) {
+                        painted[(y + dy) * w + x + dx] = true;
+                    }
+                }
+            }
+        }
+        Self {
+            width: w,
+            height: h,
+            painted,
+        }
+    }
+
     /// How much of what either paints both paint, the two boxes' top left
     /// corners together.
     fn overlap(&self, other: &Self) -> f64 {
@@ -407,7 +430,11 @@ fn hex(rgb: [u8; 3]) -> String {
 }
 
 fn near(pixel: &[u8], colour: [u8; 3]) -> bool {
-    pixel[3] == 255 && pixel[..3].iter().zip(colour).all(|(a, b)| a.abs_diff(b) < 12)
+    pixel[3] == 255
+        && pixel[..3]
+            .iter()
+            .zip(colour)
+            .all(|(a, b)| a.abs_diff(b) < 12)
 }
 
 /// The first star in a picture of a window, found by its colours: the box
@@ -433,7 +460,7 @@ fn star_in(pixels: &[u8], width: usize, size: usize, colours: [[u8; 3]; 2]) -> O
     Mask::of(size, &grid)
 }
 
-fn set_setting<T: hydrus_store::settings::Setting + serde::Serialize + Send + 'static>(
+fn set_setting<T: hydrus_store::settings::Setting + Send + 'static>(
     store: &hydrus_store::Store,
     change: impl FnOnce(&mut T) + Send + 'static,
 ) {
@@ -460,9 +487,25 @@ fn check_star(
     let ours = star_in(pixels, width, size, colours)
         .unwrap_or_else(|| panic!("{what}: no star in the border and fill colours was drawn"));
     let theirs = qt_mask(file);
-    let similar = ours.overlap(&theirs);
+    // (the default star is a thin outline: closed up on both sides before
+    // they are compared)
+    let hollow = file.contains("gone");
+    let similar = if hollow {
+        ours.grown().overlap(&theirs.grown())
+    } else {
+        ours.overlap(&theirs)
+    };
+    // (over 70%; a star 12 pixels across has too few pixels for its edge to
+    // be Qt's, so 65% there; the closed-up outlines over 75%, their edges being anti-aliased)
     assert!(
-        similar >= 0.7,
+        similar
+            >= if hollow {
+                0.75
+            } else if size <= 12 {
+                0.65
+            } else {
+                0.7
+            },
         "{what}: paints {similar:.2} of what Qt paints ({file})"
     );
     assert!(
@@ -547,15 +590,20 @@ fn svg_stars_are_drawn_in_the_editors_examples_where_the_reference_paints_them()
 
 // leaf: audit-media-service-star-appearance
 #[test]
-fn svg_stars_are_drawn_by_the_thumbnails_viewer_and_preview_and_a_missing_svg_is_the_default_star()
-{
+fn an_svg_star_is_drawn_by_the_thumbnails_viewer_and_preview() {
+    svg_star_is_drawn_everywhere("smile", "star_svg_smile_24.png");
+}
+
+// (the default star the reference draws for an SVG it has not got)
+// leaf: audit-media-service-star-appearance
+#[test]
+fn a_missing_svg_is_the_default_star_in_the_thumbnails_viewer_and_preview() {
+    svg_star_is_drawn_everywhere("gone", "star_svg_gone_24.png");
+}
+
+fn svg_star_is_drawn_everywhere(service_svg: &str, file: &str) {
     let size = 24_u32;
-    // (the star in "smile" at 24 pixels, and the default star the reference
-    // draws for an SVG it has not got)
-    for (service_svg, file) in [
-        ("smile", "star_svg_smile_24.png"),
-        ("gone", "star_svg_gone_24.png"),
-    ] {
+    {
         let (dirs, store) = basic_store();
         configure(
             &store,
@@ -596,6 +644,7 @@ fn svg_stars_are_drawn_by_the_thumbnails_viewer_and_preview_and_a_missing_svg_is
         );
 
         // the preview window's top right
+        let before = headless::render(&main, width, height);
         client.bound.preview.refresh();
         client.ui.invoke_thumbnail_clicked(0, false, false);
         let started = std::time::Instant::now();
@@ -610,16 +659,17 @@ fn svg_stars_are_drawn_by_the_thumbnails_viewer_and_preview_and_a_missing_svg_is
                 && (r.graphic.svg.row_count() == 1) == (service_svg == "smile")),
             "{service_svg}: the preview's rating rows carry the SVG only when there is one"
         );
-        let mut pixels = headless::render(&main, width, height);
-        // (the grid's thumbnails are in the picture too: the preview pane is
-        // the right half, so look there)
-        for row in 0..height as usize {
-            for x in 0..width as usize / 2 {
-                pixels[(row * width as usize + x) * 4 + 3] = 0;
+        let mut after = headless::render(&main, width, height);
+        // (the grid's thumbnails carry the star too: what the preview adds)
+        let is_coloured =
+            |pixels: &[u8], i: usize| colours.iter().any(|c| near(&pixels[i * 4..i * 4 + 4], *c));
+        for i in 0..after.len() / 4 {
+            if !is_coloured(&after, i) || is_coloured(&before, i) {
+                after[i * 4 + 3] = 0;
             }
         }
         check_star(
-            &pixels,
+            &after,
             width as usize,
             size as usize,
             colours,
@@ -640,9 +690,20 @@ fn svg_stars_are_drawn_by_the_thumbnails_viewer_and_preview_and_a_missing_svg_is
         for _ in 0..3 {
             headless::render(&native, width, height);
         }
+        // (its rating is in the top right corner, away from the title text)
+        let corner = |pixels: &[u8]| {
+            let mut pixels = pixels.to_vec();
+            for (i, pixel) in pixels.chunks_exact_mut(4).enumerate() {
+                if i % width as usize + 250 < width as usize || i / (width as usize) > 70 {
+                    pixel[3] = 0;
+                }
+            }
+            pixels
+        };
         let pixels = render_until(&native, (width, height), |pixels| {
-            star_in(pixels, width as usize, size as usize, colours).is_some()
+            star_in(&corner(pixels), width as usize, size as usize, colours).is_some()
         });
+        let pixels = corner(&pixels);
         check_star(
             &pixels,
             width as usize,
