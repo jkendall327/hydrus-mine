@@ -284,6 +284,7 @@ mod relationship_exchange;
 
 mod external_call_editor_recorded;
 mod external_call_tests;
+mod processing_exchange;
 mod external_calls;
 mod external_calls_editor;
 mod external_calls_recorded;

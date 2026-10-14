@@ -36,6 +36,10 @@ fn recorded_call(recorded: &Value) -> (Pipeline, ActualCall) {
                     .collect(),
                 rules,
                 long_lived: recorded["long_lived"].as_bool().unwrap(),
+                // (the process options recording says them; the older ones leave the defaults)
+                timeout_seconds: recorded["timeout"].as_u64().unwrap_or(15),
+                hide_terminal: recorded["hide_terminal"].as_bool().unwrap_or(true),
+                text: recorded["text"].as_bool().unwrap_or(true),
                 ..Process::default()
             };
             (pipeline, ActualCall::Process(process))
@@ -281,4 +285,110 @@ fn test_call_runs_the_call_and_reports_as_the_reference_does() {
         editing.options.invoke_cancel();
     }
     hydrus_gui::set_launcher(|_| {});
+}
+
+/// The process options at work (`oracle/record_external_call_process_options.py`: the
+/// reference's `TestCallablePanel` and `ExecutableLocalProcessCall.Call` run on `sh` scripts
+/// under each option). Through the real editor and its worker: the timeout stops a call that
+/// outlives it, with the reference's report; text mode quotes the output as text and its
+/// absence as bytes; a long-lived call is tested under the forced 15 second timeout; the flag
+/// for the terminal changes nothing here. The same call launched for real (what opening a file
+/// does) raises the reference's errors, and a long-lived launch returns at once and is left
+/// running. The reference notices a timeout only every 3 seconds, and hydrus-rs stops the call
+/// at the timeout (the owner kept that, DECISIONS.md), so a call is accepted as stopped from
+/// its timeout up to 3 seconds after it.
+// leaf: audit-options-nested-external-call-process-timeout
+#[test]
+fn the_process_options_decide_how_a_call_runs_as_the_reference_does() {
+    use hydrus_core::external_calls::Inputs;
+    use std::time::{Duration, Instant};
+    let recorded = hydrus_testkit::fixture_json("external_call_process_options.json");
+    let _windows = headless::init();
+    for case in recorded["cases"].as_array().unwrap() {
+        let name = case["name"].as_str().unwrap();
+        let editing = edit(&case["call"]);
+        let child = &editing.child;
+        child.invoke_test_input(0, "/synthetic/file.png".into());
+        let started = Instant::now();
+        child.invoke_test(false);
+        assert_eq!(
+            child.get_test_status().as_str(),
+            case["box"]["interim"],
+            "{name}"
+        );
+        settle(child);
+        let seconds = started.elapsed().as_secs_f64();
+        assert_eq!(
+            child.get_test_status().as_str(),
+            case["box"]["output"].as_str().unwrap(),
+            "{name}"
+        );
+        // stopped at its timeout, or by the 3 second check the reference makes
+        let timeout = case["call"]["timeout"].as_f64().unwrap();
+        if case["box"]["output"].as_str().unwrap().contains("took too long") {
+            assert!(
+                (timeout..=timeout + 3.0).contains(&seconds),
+                "{name}: stopped after {seconds} s"
+            );
+            assert!(case["box"]["seconds"].as_f64().unwrap() >= timeout);
+        }
+        child.invoke_cancel();
+        editing.options.invoke_cancel();
+
+        // launched for real, without the box's forced timeout
+        let ActualCall::Process(process) = recorded_call(&case["call"]).1 else {
+            unreachable!()
+        };
+        let inputs = Inputs::from([(Parameter::Path, vec!["/synthetic/file.png".to_owned()])]);
+        let started = Instant::now();
+        let launched = hydrus_gui_model::open_externally::run_process(&process, &inputs);
+        let seconds = started.elapsed().as_secs_f64();
+        match &case["launch"]["error"] {
+            Value::Null => assert_eq!(launched, Ok(()), "{name}"),
+            error => assert_eq!(
+                launched,
+                Err(format!(
+                    "{}: {}",
+                    error["type"].as_str().unwrap(),
+                    error["text"].as_str().unwrap()
+                )),
+                "{name}"
+            ),
+        }
+        if process.long_lived {
+            assert!(seconds < 1.0, "{name}: a long-lived launch waited {seconds} s");
+        } else if case["launch"]["error"]["text"]
+            .as_str()
+            .is_some_and(|t| t.contains("took too long"))
+        {
+            assert!((timeout..=timeout + 3.0).contains(&seconds), "{name}: {seconds} s");
+        }
+    }
+
+    // a long-lived launch is left running: its file appears after the launch has returned
+    let late = &recorded["late"];
+    assert_eq!(late["existed_at_return"], false);
+    let owned = tempfile::tempdir().unwrap();
+    let path = owned.path().join("late.txt");
+    let process = Process {
+        executable: "sh".into(),
+        arguments: vec![
+            "-c".into(),
+            "sleep 1; echo late > \"$0\"".into(),
+            "%path%".into(),
+        ],
+        rules: vec![Rule::new(Parameter::Path)],
+        long_lived: true,
+        ..Process::default()
+    };
+    let inputs = Inputs::from([(Parameter::Path, vec![path.to_str().unwrap().to_owned()])]);
+    let started = Instant::now();
+    hydrus_gui_model::open_externally::run_process(&process, &inputs).unwrap();
+    assert!(started.elapsed() < Duration::from_secs(1));
+    assert!(!path.exists());
+    let deadline = Instant::now() + Duration::from_secs(10);
+    while !path.exists() && Instant::now() < deadline {
+        std::thread::sleep(Duration::from_millis(50));
+    }
+    assert_eq!(path.exists(), late["existed_later"].as_bool().unwrap());
 }
