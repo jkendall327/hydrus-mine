@@ -3159,7 +3159,13 @@
     "Truth pass (2026-10-08): partial, small. Shapes and live preview done and recorded; SVG appearance not faithful. Missing: SVG choice is a free-text name and is not rendered (shape_path maps Svg to the default star); reference offers a list of installed SVG icons. Evidence: services_editor_window.rs:118-145, 319-370; recorded preview tests services_editor.rs:505,617,655",
     "Native shape selector/named SVG field sets rating appearance and preserves existing SVG configuration.",
     "No live rating-settings preview; rendering has existing named-SVG limits."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (issue #94 pickup)",
+    "note": "The real edit-service window is driven against star_svgs.json recorded from the reference's EditServiceStarRatingsSubPanel: the offered SVGs (installed, and with the user's own and a non-SVG file added; the user's SVG sharing an installed name does not replace it), the shapes/svgs choice saved through the parent Apply and reopened, and an SVG that is not there leaving the first chosen. The live preview draws the chosen SVG: for four SVGs (one the user's own) at 16, 24 and 32 px the painted pixels overlap those of Qt's DrawShape PNGs (star_svg_*.png) by over 65% (0.71-0.95 measured) and the fill and border colours appear. Qt's rasteriser and its feathered outline are not matched pixel for pixel, and the thumbnail overlay still draws an SVG as the default star (DIFFERENCES.md). The no-SVGs-found state cannot occur (the installed SVGs are built in). Tests: crates/hydrus-gui/tests/gui/star_svgs.rs"
+   }
   },
   {
    "id": "audit-media-services-add",

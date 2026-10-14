@@ -18,10 +18,7 @@ pub const BUNDLED: &[(&str, &[u8])] = &[
         "cinema-reel",
         include_bytes!("../../../static/star_shapes/cinema-reel.svg"),
     ),
-    (
-        "eye",
-        include_bytes!("../../../static/star_shapes/eye.svg"),
-    ),
+    ("eye", include_bytes!("../../../static/star_shapes/eye.svg")),
     (
         "heart-cute",
         include_bytes!("../../../static/star_shapes/heart-cute.svg"),
@@ -51,7 +48,6 @@ pub const BUNDLED: &[(&str, &[u8])] = &[
         include_bytes!("../../../static/star_shapes/wallpaper.svg"),
     ),
 ];
-
 
 /// The directory of a user's own rating SVGs.
 pub fn user_dir(db_dir: &Path) -> PathBuf {

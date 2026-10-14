@@ -195,7 +195,10 @@ pub async fn get_service_rating_svg(
                 service.name
             ))
         })?
-    } else if let Some((_, svg)) = hydrus_store::star_shapes::BUNDLED.iter().find(|(n, _)| n == name) {
+    } else if let Some((_, svg)) = hydrus_store::star_shapes::BUNDLED
+        .iter()
+        .find(|(n, _)| n == name)
+    {
         svg.to_vec()
     } else {
         return Err(ApiError::new(

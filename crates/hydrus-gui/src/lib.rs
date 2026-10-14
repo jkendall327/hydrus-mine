@@ -52,7 +52,6 @@ pub mod downloader_display_window;
 pub mod downloader_interchange_window;
 pub mod downloader_update_times;
 mod drops;
-mod star_images;
 pub mod duplicates_filtering_sidebar;
 mod duplicates_sidebar;
 mod edit_subscription_window;
@@ -159,6 +158,7 @@ mod sidebar_layout;
 pub mod sidecars_window;
 pub mod simple_formulae_window;
 pub mod slideshow;
+mod star_images;
 pub mod still;
 pub mod string_processor_window;
 mod subscription_import;
@@ -599,9 +599,9 @@ fn lay_out_thumbnails(window: &MainWindow, store: &hydrus_store::Store, rows: &T
 
 /// Show `pages` in `window`, and let the window change them.
 pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
+    windows::register_main(window, pages.store());
     about_window::note_boot();
     star_images::set_dir(pages.store().dir());
-    about_window::note_boot();
     window
         .global::<TagTextHistory<'_>>()
         .on_record(write_tag_history::record);

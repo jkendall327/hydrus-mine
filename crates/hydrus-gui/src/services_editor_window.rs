@@ -174,7 +174,7 @@ fn edit(
     parent_active: Rc<Cell<bool>>,
     sizes: [(f64, f64); 4],
     advanced: bool,
-    svgs: Vec<String>,
+    svgs: &[String],
 ) -> Result<(), String> {
     let window = crate::app_title::new::<crate::EditServiceWindow>().map_err(|e| e.to_string())?;
     window.set_service_name(service.name.as_str().into());
@@ -241,7 +241,7 @@ fn edit(
         }
     }
     window.set_colours(ModelRc::new(VecModel::from(colour_rows)));
-    let mut appearances = SHAPES
+    let appearances = SHAPES
         .iter()
         .map(|code| SharedString::from(StarShape(*code).name().unwrap_or("circle")))
         .collect::<Vec<_>>();
@@ -670,7 +670,7 @@ pub fn open(
                 active.clone(),
                 sizes,
                 advanced_mode(&store),
-                hydrus_store::star_shapes::names(store.dir()),
+                &hydrus_store::star_shapes::names(store.dir()),
             ) {
                 w.set_error(e.into());
             }
@@ -725,7 +725,7 @@ pub fn open(
                 active.clone(),
                 sizes,
                 advanced_mode(&store),
-                hydrus_store::star_shapes::names(store.dir()),
+                &hydrus_store::star_shapes::names(store.dir()),
             ) {
                 w.set_error(e.into());
             }
