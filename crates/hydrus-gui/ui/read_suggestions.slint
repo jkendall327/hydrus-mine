@@ -20,6 +20,7 @@ export component ReadSuggestions inherits Rectangle {
     out property <bool> has-focus: keys.has-focus;
     // the height the rows take as laid out, read by tests
     out property <length> rows-height: rows-layout.preferred-height;
+    out property <length> view-height: scroll.visible-height;
     out property <length> results-x: touch.absolute-position.x;
     out property <length> results-y: touch.absolute-position.y;
     callback scroll-geometry(length,length,length);

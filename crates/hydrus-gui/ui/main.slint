@@ -543,6 +543,8 @@ export component MainWindow inherits Window {
     out property <length> read-rows-height: suggestions-overlay.rows-height;
     // the embedded list's own, once it exists (it is made only when embedded)
     out property <length> read-embedded-rows-height;
+    out property <length> read-overlay-view-height: suggestions-overlay.view-height;
+    out property <length> read-embedded-view-height;
     out property <length> read-scroll-y;
     out property <length> read-view-height;
     out property <length> read-content-height;
@@ -1507,7 +1509,8 @@ export component MainWindow inherits Window {
                         controls-measured(p,a,b,aw,bw) => { root.sidebar-buttons-measured(1,p,a,b,aw,bw); }
                     }
                     if !root.search-locked && !root.float-autocomplete && root.note == "": embedded-suggestions := ReadAutocomplete {
-                        init => { root.read-embedded-rows-height = self.rows-height; }
+                        init => { root.read-embedded-rows-height = self.rows-height; root.read-embedded-view-height = self.view-height; }
+                        changed view-height => { root.read-embedded-view-height = self.view-height; }
                         changed rows-height => { root.read-embedded-rows-height = self.rows-height; }
                         scroll-geometry(y,h,c) => { if !root.float-autocomplete { root.read-scroll-y=y; root.read-view-height=h; root.read-content-height=c; } }
                         preferred-height: root.autocomplete-preferred-height + (root.or-active ? 108px : 72px);

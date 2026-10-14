@@ -2212,6 +2212,13 @@ fn the_read_lists_show_as_many_rows_as_the_options_say_when_laid_out_as_the_refe
             autocomplete_rows
         );
 
+        // (a new main window for each case: the measured values start at
+        // nothing, so one left by an earlier case cannot pass for this one)
+        let ui = MainWindow::new().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        ui.show().unwrap();
+        let main = windows.get(windows.count() - 1).unwrap();
+        main.dispatch_event(slint::platform::WindowEvent::WindowActiveChanged(true));
         open(&ui);
         let window = bound.options.borrow().as_ref().unwrap().clone_strong();
         show_page(&window, "file search");
@@ -2263,12 +2270,17 @@ fn the_read_lists_show_as_many_rows_as_the_options_say_when_laid_out_as_the_refe
         } else {
             ui.get_read_embedded_rows_height()
         };
+        let view_height = if floating {
+            ui.get_read_overlay_view_height()
+        } else {
+            ui.get_read_embedded_view_height()
+        };
         assert!(
-            rows_height > 0.0 && ui.get_read_view_height() > 0.0,
+            rows_height > 0.0 && view_height > 0.0,
             "{what}: the results list was laid out"
         );
         let pitch = rows_height / suggestions;
-        let shown = ui.get_read_view_height() / pitch;
+        let shown = view_height / pitch;
         assert!(
             (shown - autocomplete_rows as f32).abs() < 0.01,
             "{what}: the results list shows {shown} rows of {pitch}"
