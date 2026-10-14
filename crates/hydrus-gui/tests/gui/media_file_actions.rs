@@ -482,7 +482,7 @@ fn relationship_rows(menu: &hydrus_gui::ThumbnailMenu) -> Vec<(String, i32)> {
         &menu.rel_reset_all_c,
     ]
     .into_iter()
-    .flat_map(|group| rows(group))
+    .flat_map(rows)
     .collect()
 }
 
@@ -528,7 +528,7 @@ fn file_relationship_rows_set_view_and_reset_duplicate_groups() {
             let count = |key: &str| {
                 want["counts"]
                     .get(key)
-                    .and_then(|c| c.as_u64())
+                    .and_then(serde_json::Value::as_u64)
                     .unwrap_or(0) as usize
             };
             assert_eq!(
@@ -734,7 +734,7 @@ fn open_rows_launch_the_focused_file_and_open_pages_of_the_selection() {
         let menu = fixture.menu(i32::try_from(selection[0]).unwrap());
         let all: Vec<(String, i32)> = [&menu.open_a, &menu.open_similar, &menu.open_b]
             .into_iter()
-            .flat_map(|group| rows(group))
+            .flat_map(rows)
             .collect();
         let ours: Vec<&str> = all.iter().map(|(l, _)| l.as_str()).collect();
         let theirs: Vec<&str> = leaves.iter().map(String::as_str).collect();
@@ -753,7 +753,7 @@ fn open_rows_launch_the_focused_file_and_open_pages_of_the_selection() {
             let menu = fixture.menu(i32::try_from(selection[0]).unwrap());
             let all: Vec<(String, i32)> = [&menu.open_a, &menu.open_similar, &menu.open_b]
                 .into_iter()
-                .flat_map(|group| rows(group))
+                .flat_map(rows)
                 .collect();
             fixture.ui.invoke_menu_chosen(find(&all, name));
             if let Some(accepted) = row.get("accepted") {

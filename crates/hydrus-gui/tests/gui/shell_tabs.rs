@@ -160,11 +160,13 @@ fn locked_page(store: &Arc<Store>, name: &str, files: &[hydrus_core::HashId], n:
     let hashes = store
         .read(|c| hydrus_store::master::hashes(c, &files[..n]))
         .unwrap();
-    let mut search = FileSearchContext::default();
-    search.predicates = vec![Predicate::System(SystemPredicate::Hash {
-        hashes: FileHashes::Sha256(hashes.values().copied().collect()),
-        inclusive: true,
-    })];
+    let search = FileSearchContext {
+        predicates: vec![Predicate::System(SystemPredicate::Hash {
+            hashes: FileHashes::Sha256(hashes.values().copied().collect()),
+            inclusive: true,
+        })],
+        ..FileSearchContext::default()
+    };
     page(
         name,
         PageContent::Search {
@@ -199,7 +201,11 @@ fn pages_not_yet_shown_carry_their_file_counts_and_open_with_that_many_files() {
         .as_array()
         .unwrap()
         .iter()
-        .filter(|f| f["name"].as_str().unwrap().ends_with(".jpg"))
+        .filter(|f| {
+            std::path::Path::new(f["name"].as_str().unwrap())
+                .extension()
+                .is_some_and(|e| e.eq_ignore_ascii_case("jpg"))
+        })
         .take(5)
         .map(|f| {
             let hash: hydrus_core::Sha256 = f["hash"].as_str().unwrap().parse().unwrap();
