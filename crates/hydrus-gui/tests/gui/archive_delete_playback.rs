@@ -56,10 +56,15 @@ fn watch_until(
     false
 }
 
-/// Whether the picture holds still for `time`, once a frame in flight has
-/// landed.
+/// Whether the picture comes to a stop (a frame in flight lands, then a
+/// stretch shows one picture), and holds still for `time` after.
 fn holds_still(window: &ArchiveDeleteWindow, time: Duration) -> bool {
-    watch(window, Duration::from_millis(100));
+    let deadline = Instant::now() + Duration::from_secs(5);
+    while watch(window, Duration::from_millis(150)).len() > 1 {
+        if Instant::now() > deadline {
+            return false;
+        }
+    }
     watch(window, time).len() <= 1
 }
 
@@ -168,19 +173,53 @@ fn the_filter_plays_files_with_a_scanbar_and_volume_as_the_viewer_does() {
             .unwrap()
     };
 
+    // oracle/record_archive_delete_playback.py: the reference's real filter
+    // canvas over these files: how each is presented, whether the scanbar
+    // and volume control show, and whether it is paused after each of three
+    // pause-play commands (what space sends)
+    let recorded = hydrus_testkit::fixture_json("archive_delete_playback.json");
+    let recorded_for = |name: &str| {
+        recorded["files"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|f| f["file"] == name)
+            .unwrap_or_else(|| panic!("{name} is recorded"))
+            .clone()
+    };
     for (name, hash) in imported.iter().take(2) {
+        let reference = recorded_for(name);
+        assert_eq!(reference["window"], "Animation");
+        assert!(!reference["paused at first"].as_bool().unwrap());
         let window = filter_on(hash);
         // plays frame after frame, looping
         assert!(
             watch_until(&window, |seen| seen.len() >= 3),
             "{name}: plays"
         );
-        // space pauses; again plays on
-        key(&window, " ");
-        assert!(
-            holds_still(&window, Duration::from_millis(400)),
-            "{name}: paused"
-        );
+        // space toggles pause, as the reference's does each time
+        for (i, paused) in reference["paused after each pause-play"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .enumerate()
+        {
+            key(&window, " ");
+            if paused.as_bool().unwrap() {
+                assert!(
+                    holds_still(&window, Duration::from_millis(400)),
+                    "{name}: paused after space {}",
+                    i + 1
+                );
+            } else {
+                assert!(
+                    watch_until(&window, |seen| seen.len() >= 2),
+                    "{name}: plays on after space {}",
+                    i + 1
+                );
+            }
+        }
+        // (the last of the three paused it: play again)
         key(&window, " ");
         assert!(
             watch_until(&window, |seen| seen.len() >= 2),
@@ -189,8 +228,16 @@ fn the_filter_plays_files_with_a_scanbar_and_volume_as_the_viewer_does() {
 
         // the scanbar, by frame; a drag pauses and goes to the frame under
         // the pointer
-        assert!(window.get_scanbar_shown(), "{name}");
-        assert!(!window.get_volume_shown(), "{name}");
+        assert_eq!(
+            window.get_scanbar_shown(),
+            reference["controls bar shown"].as_bool().unwrap(),
+            "{name}"
+        );
+        assert_eq!(
+            window.get_volume_shown(),
+            reference["volume shown"].as_bool().unwrap(),
+            "{name}"
+        );
         watch(&window, Duration::from_millis(200));
         let text = window.get_scanbar_text().to_string();
         let frames: usize = text.split(['/', ' ']).nth(1).unwrap().parse().unwrap();
@@ -233,9 +280,19 @@ fn the_filter_plays_files_with_a_scanbar_and_volume_as_the_viewer_does() {
 
     // a file with sound has the volume control, kept as in the viewer
     let (_, audio) = &imported[2];
+    // (the information line counts "ago" from the recording's time)
+    hydrus_gui::hold_viewer_time(Some(recorded["now"].as_i64().unwrap() * 1000));
     let window = filter_on(audio);
-    assert!(window.get_scanbar_shown());
-    assert!(window.get_volume_shown());
+    let reference = recorded_for("audio.mp3");
+    assert_eq!(reference["window"], "MPVWidget");
+    assert_eq!(
+        window.get_scanbar_shown(),
+        reference["controls bar shown"].as_bool().unwrap()
+    );
+    assert_eq!(
+        window.get_volume_shown(),
+        reference["volume shown"].as_bool().unwrap()
+    );
     assert_eq!(window.get_volume(), 70);
     assert!(!window.get_global_muted() && !window.get_viewer_muted());
     window.invoke_flip_global_mute();
@@ -292,9 +349,23 @@ fn the_filter_plays_files_with_a_scanbar_and_volume_as_the_viewer_does() {
         .iter()
         .map(|t| (t.text.to_string(), format!("{:?}", t.colour)))
         .collect();
-    assert!(!tags.is_empty(), "the file has tags to show");
+    // (the reference's left hover lists these tags for this file)
+    let mut recorded_tags: Vec<&str> = reference["tags"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|t| t.as_str().unwrap())
+        .collect();
+    let mut shown_tags: Vec<&str> = tags.iter().map(|(text, _)| text.as_str()).collect();
+    recorded_tags.sort_unstable();
+    shown_tags.sort_unstable();
+    assert_eq!(shown_tags, recorded_tags, "the tags shown");
     let info = window.get_info_line().to_string();
-    assert!(!info.is_empty());
+    assert_eq!(
+        info,
+        reference["info"].as_str().unwrap(),
+        "the information line"
+    );
     headless::render(&drawn, 800, 600);
     window
         .window()

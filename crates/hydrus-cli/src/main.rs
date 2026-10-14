@@ -1099,31 +1099,59 @@ mod tests {
         lock_store(dir.path(), "a purge").unwrap();
     }
 
-    /// The idle state the GUI would have published just now.
-    fn gui_is_idle(store: &Store, idle: bool) {
-        hydrus_store::idle_state::publish(
-            store.dir(),
-            idle,
-            hydrus_core::time::TimestampMs::now().millis(),
-        )
-        .unwrap();
+    /// A clock the test moves: the search or work closure of a step "takes" the
+    /// time it advances it by.
+    struct HeldClock(std::sync::atomic::AtomicI64);
+
+    impl HeldClock {
+        fn new() -> Self {
+            Self(std::sync::atomic::AtomicI64::new(
+                hydrus_core::time::TimestampMs::now().millis(),
+            ))
+        }
+
+        fn advance(&self, ms: i64) {
+            self.0.fetch_add(ms, std::sync::atomic::Ordering::SeqCst);
+        }
     }
 
+    impl hydrus_store::workers::WorkClock for HeldClock {
+        fn now_ms(&self) -> i64 {
+            self.0.load(std::sync::atomic::Ordering::SeqCst)
+        }
+    }
+
+    /// The idle state the GUI would have published just now: idle or not
+    /// and, if idle, whether it is a good time to start background work.
+    fn gui_state(store: &Store, clock: &HeldClock, idle: bool, good_time: bool) {
+        use hydrus_store::workers::WorkClock as _;
+        hydrus_store::idle_state::publish_state(store.dir(), idle, good_time, clock.now_ms())
+            .unwrap();
+    }
+
+    fn seconds(value: &serde_json::Value) -> Duration {
+        Duration::from_secs_f64(value.as_f64().unwrap())
+    }
+
+    /// The reference's `PotentialDuplicatesMaintenanceManager`, recorded
+    /// (`oracle/record_work_scheduling.py`) on every combination of the idle
+    /// state, the two switches and "work hard": whether it works, for how
+    /// long, and how long it rests after a pass that took 0.05 s. Replayed
+    /// through the daemon's own loop step with the same published idle state
+    /// and settings, and the real search.
     // leaf: audit-media-preparation-scheduling
     #[test]
-    fn the_similar_files_loop_holds_and_works_by_the_published_idle_state() {
+    fn the_similar_files_loop_works_when_the_reference_s_manager_does() {
         use hydrus_store::similar::{SimilarFilesSettings, search_status_counts};
+        let fixture = hydrus_testkit::fixture_json("work_scheduling.json");
+        let took = (fixture["took"].as_f64().unwrap() * 1000.0) as i64;
         let dir = tempfile::tempdir().unwrap();
         let store = Store::open(dir.path()).unwrap();
-        // one file waiting to be searched
+        let clock = HeldClock::new();
         store
             .write(|ctx| {
                 ctx.conn().execute(
                     "INSERT INTO hashes (hash_id, sha256) VALUES (1, zeroblob(32))",
-                    [],
-                )?;
-                ctx.conn().execute(
-                    "INSERT INTO similar_search_status (hash_id, searched_distance) VALUES (1, NULL)",
                     [],
                 )?;
                 Ok(())
@@ -1137,36 +1165,93 @@ mod tests {
                 .copied()
                 .unwrap_or(0)
         };
-        let set = |idle_switch: bool, normal_switch: bool| {
+        let mut worked = 0;
+        let mut held = 0;
+        for case in fixture["search"].as_array().unwrap() {
+            // one file waiting to be searched
+            store
+                .write(|ctx| {
+                    ctx.conn().execute(
+                        "INSERT OR REPLACE INTO similar_search_status (hash_id, searched_distance) VALUES (1, NULL)",
+                        [],
+                    )?;
+                    Ok(())
+                })
+                .unwrap();
+            let (during_idle, during_active, work_hard) = (
+                case["during_idle"].as_bool().unwrap(),
+                case["during_active"].as_bool().unwrap(),
+                case["work_hard"].as_bool().unwrap(),
+            );
             store
                 .write(move |ctx| {
                     hydrus_store::settings::set(
                         ctx.conn(),
                         &SimilarFilesSettings {
-                            during_idle: idle_switch,
-                            during_active: normal_switch,
+                            during_idle,
+                            during_active,
+                            work_hard,
+                            work_time_ms_idle: 5000,
+                            work_time_ms_active: 100,
+                            rest_percentage_idle: 50,
+                            rest_percentage_active: 1900,
                             ..SimilarFilesSettings::default()
                         },
                     )
                 })
                 .unwrap();
+            gui_state(&store, &clock, case["idle"].as_bool().unwrap(), true);
+            let packets = std::cell::RefCell::new(Vec::new());
+            let wait =
+                hydrus_store::workers::similar_files_step(&store, &clock, |store, packet| {
+                    packets.borrow_mut().push(packet);
+                    clock.advance(took);
+                    hydrus_store::similar::run_search(store, 16)
+                });
+            if case["permitted"].as_bool().unwrap() {
+                worked += 1;
+                assert_eq!(waiting(&store), 0, "searched: {case}");
+                assert_eq!(*packets.borrow(), [seconds(&case["work_period"])], "{case}");
+                // (ours never rests less than a tenth of a second between
+                // packets, where the reference rests as little as it computes)
+                assert_eq!(
+                    wait,
+                    seconds(&case["rest"]).max(Duration::from_millis(100)),
+                    "{case}"
+                );
+            } else {
+                held += 1;
+                assert_eq!(waiting(&store), 1, "held: {case}");
+                assert!(packets.borrow().is_empty(), "{case}");
+                assert_eq!(wait, Duration::from_secs(30), "{case}");
+            }
+        }
+        assert_eq!((worked, held), (12, 4));
+
+        // working hard ends once nothing is left to search (the reference
+        // clears the flag when it is permitted and has no work to do)
+        let hard = SimilarFilesSettings {
+            work_hard: true,
+            during_idle: false,
+            during_active: false,
+            ..SimilarFilesSettings::default()
         };
-
-        // idle time only: normal use holds (and the next pass is soon)
-        set(true, false);
-        gui_is_idle(&store, false);
-        assert_eq!(similar_files_step(&store), Duration::from_secs(30));
-        assert_eq!(waiting(&store), 1, "held: nothing was searched");
-        // a daemon with no GUI is never idle either
-        std::fs::remove_file(dir.path().join("client_idle_state")).unwrap();
-        assert_eq!(similar_files_step(&store), Duration::from_secs(30));
-        assert_eq!(waiting(&store), 1);
-        // the GUI goes idle: it works
-        gui_is_idle(&store, true);
+        store
+            .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &hard))
+            .unwrap();
+        gui_state(&store, &clock, false, true);
         similar_files_step(&store);
-        assert_eq!(waiting(&store), 0, "idle time: searched");
-
-        // normal time only: idle holds, normal use works
+        let kept: SimilarFilesSettings = store.read(hydrus_store::settings::get).unwrap();
+        assert!(!kept.work_hard);
+        // a daemon with no GUI is never idle, so an idle-only switch holds
+        let idle_only = SimilarFilesSettings {
+            during_idle: true,
+            during_active: false,
+            ..SimilarFilesSettings::default()
+        };
+        store
+            .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &idle_only))
+            .unwrap();
         store
             .write(|ctx| {
                 ctx.conn().execute(
@@ -1176,73 +1261,99 @@ mod tests {
                 Ok(())
             })
             .unwrap();
-        set(false, true);
-        gui_is_idle(&store, true);
+        std::fs::remove_file(dir.path().join("client_idle_state")).unwrap();
         assert_eq!(similar_files_step(&store), Duration::from_secs(30));
-        assert_eq!(waiting(&store), 1, "held: idle, and only normal time is on");
-        gui_is_idle(&store, false);
-        similar_files_step(&store);
-        assert_eq!(waiting(&store), 0, "normal time: searched");
+        assert_eq!(waiting(&store), 1);
     }
 
+    /// The reference's `DuplicatesAutoResolutionManager._AbleToWork`, recorded
+    /// (`oracle/record_work_scheduling.py`) on every combination of the idle
+    /// state, whether it is a good time to start background work, and the two
+    /// switches: whether it works, for how long, and how long it rests.
+    /// Replayed through the daemon's own loop step with the same published
+    /// idle state and settings; the rules' work is a stand-in that takes
+    /// 0.05 s and has more to do.
     // leaf: audit-media-rule-sidebar-scheduling
     #[test]
-    fn the_auto_resolution_loop_holds_and_works_by_the_published_idle_state() {
+    fn the_auto_resolution_loop_works_when_the_reference_s_manager_does() {
         use hydrus_store::duplicates::auto::AutoResolutionSettings;
+        let fixture = hydrus_testkit::fixture_json("work_scheduling.json");
+        let took = (fixture["took"].as_f64().unwrap() * 1000.0) as i64;
         let dir = tempfile::tempdir().unwrap();
         let store = Store::open(dir.path()).unwrap();
-        let budgets = std::sync::Arc::new(std::sync::Mutex::new(Vec::new()));
-        let step = |store: &std::sync::Arc<Store>| {
-            let budgets = budgets.clone();
-            hydrus_store::workers::auto_resolution_step(
-                store,
-                &hydrus_store::workers::SystemClock,
-                move |_, budget| {
-                    budgets.lock().unwrap().push(budget);
-                    Ok(false)
-                },
-            )
-        };
-        let set = |idle_switch: bool, normal_switch: bool| {
+        let clock = HeldClock::new();
+        let (mut worked, mut held) = (0, 0);
+        for case in fixture["auto_resolution"].as_array().unwrap() {
+            // (the rules' own "work hard" has no counterpart in this loop)
+            if case["work_hard"].as_bool().unwrap() {
+                continue;
+            }
+            let (during_idle, during_active) = (
+                case["during_idle"].as_bool().unwrap(),
+                case["during_active"].as_bool().unwrap(),
+            );
             store
                 .write(move |ctx| {
                     hydrus_store::settings::set(
                         ctx.conn(),
                         &AutoResolutionSettings {
-                            during_idle: idle_switch,
-                            during_active: normal_switch,
-                            work_time_ms_active: 100,
+                            during_idle,
+                            during_active,
                             work_time_ms_idle: 1000,
-                            ..AutoResolutionSettings::default()
+                            work_time_ms_active: 100,
+                            rest_percentage_idle: 100,
+                            rest_percentage_active: 900,
                         },
                     )
                 })
                 .unwrap();
-        };
-
-        // idle time only: normal use holds, and a daemon with no GUI is
-        // never idle
-        set(true, false);
-        gui_is_idle(&store, false);
-        assert_eq!(step(&store), Duration::from_secs(10));
+            gui_state(
+                &store,
+                &clock,
+                case["idle"].as_bool().unwrap(),
+                case["good_time"].as_bool().unwrap(),
+            );
+            let packets = std::cell::RefCell::new(Vec::new());
+            let wait = hydrus_store::workers::auto_resolution_step(&store, &clock, |_, packet| {
+                packets.borrow_mut().push(packet);
+                clock.advance(took);
+                Ok(true)
+            });
+            if case["able"].as_bool().unwrap() {
+                worked += 1;
+                assert_eq!(*packets.borrow(), [seconds(&case["work_period"])], "{case}");
+                assert_eq!(
+                    wait,
+                    seconds(&case["rest_if_work_left"]).max(Duration::from_millis(100)),
+                    "{case}"
+                );
+            } else {
+                held += 1;
+                assert!(packets.borrow().is_empty(), "held: {case}");
+                assert_eq!(wait, Duration::from_secs(10), "{case}");
+            }
+        }
+        assert_eq!((worked, held), (6, 10));
+        // a daemon with no GUI is never idle: with only idle time on, it holds
+        store
+            .write(|ctx| {
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &AutoResolutionSettings {
+                        during_idle: true,
+                        during_active: false,
+                        ..AutoResolutionSettings::default()
+                    },
+                )
+            })
+            .unwrap();
         std::fs::remove_file(dir.path().join("client_idle_state")).unwrap();
-        assert_eq!(step(&store), Duration::from_secs(10));
-        assert!(budgets.lock().unwrap().is_empty(), "held: no rule worked");
-        // idle: works, for the idle packet
-        gui_is_idle(&store, true);
-        assert_eq!(step(&store), Duration::from_secs(60));
-        assert_eq!(*budgets.lock().unwrap(), [Duration::from_millis(1000)]);
-
-        // normal time only: idle holds, normal use works, for its packet
-        set(false, true);
-        gui_is_idle(&store, true);
-        assert_eq!(step(&store), Duration::from_secs(10));
-        assert_eq!(budgets.lock().unwrap().len(), 1, "held while idle");
-        gui_is_idle(&store, false);
-        step(&store);
-        assert_eq!(
-            *budgets.lock().unwrap(),
-            [Duration::from_millis(1000), Duration::from_millis(100)]
-        );
+        let ran = std::cell::Cell::new(false);
+        let wait = hydrus_store::workers::auto_resolution_step(&store, &clock, |_, _| {
+            ran.set(true);
+            Ok(false)
+        });
+        assert!(!ran.get());
+        assert_eq!(wait, Duration::from_secs(10));
     }
 }

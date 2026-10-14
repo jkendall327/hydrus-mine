@@ -102,8 +102,13 @@ pub fn commands(set: &str) -> &'static [(i32, &'static str)] {
     } else {
         &[
             (6, "close media viewer"),
+            (97, "media navigation: first"),
+            (98, "media navigation: last"),
             (99, "media navigation: next"),
             (100, "media navigation: previous"),
+            (186, "media navigation: random"),
+            (187, "media navigation: undo random"),
+            (81, "remove file from current view"),
             (101, "zoom: in"),
             (102, "zoom: out"),
             (

@@ -497,6 +497,9 @@ fn updating_the_backup_asks_backs_up_with_a_popup_and_the_menu_remembers() {
 /// (The reference then exits and restarts the client; that step is not driven here.)
 #[test]
 fn restoring_replays_the_reference_s_dialogs() {
+    let _turn = super::files_io_file_menu::RESTART_FLAG
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
     let rig = rig();
     for (name, case) in recorded()["restore"].as_object().unwrap() {
         let dirs = Dirs::new(rig.store.dir());
@@ -541,6 +544,9 @@ fn restoring_replays_the_reference_s_dialogs() {
 // leaf: audit-media-menu-database-restore-from-a-database-backup
 #[test]
 fn restoring_picks_a_backup_asks_and_requests_the_restore() {
+    let _turn = super::files_io_file_menu::RESTART_FLAG
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
     let rig = rig();
     let backup = tempfile::tempdir().unwrap();
     let backup_text = backup.path().to_string_lossy().into_owned();
@@ -571,4 +577,135 @@ fn restoring_picks_a_backup_asks_and_requests_the_restore() {
         .unwrap()
         .expect("the restore was requested");
     assert_eq!(from, backup.path());
+}
+
+/// Accepting the restore exits the client for a restart, and the client that
+/// starts again restores the backup: the first half through the real menu,
+/// question and exit; the relaunch is a stand-in program that says it was
+/// started, and the start it stands for (`client_store::open_store`, what
+/// `main` opens the store with) is run here, on the same directory.
+// leaf: audit-media-menu-database-restore-from-a-database-backup
+#[test]
+fn accepting_the_restore_restarts_the_client_and_the_next_start_restores_it() {
+    use std::sync::atomic::Ordering;
+
+    let _turn = super::files_io_file_menu::RESTART_FLAG
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    hydrus_gui::client_exit::RESTART.store(false, Ordering::SeqCst);
+    let rig = rig();
+    let live = rig.store.dir().to_path_buf();
+    // exiting would ask, and shutdown jobs are due: a restore does neither
+    // (`do_idle_shutdown_work = False`, and it asks its own question only)
+    super::files_io_file_menu::exit_settings(&rig.store, true, 1, 0);
+    let backup = tempfile::tempdir().unwrap();
+    let backup_text = backup.path().to_string_lossy().into_owned();
+    // the database as it was when it was backed up has no backup location
+    let mut say = |_: String| {};
+    hydrus_store::backup::backup(&rig.store, backup.path(), &mut say, &|| false).unwrap();
+    assert_eq!(rig.settings().path, None);
+    // ... and has since been changed
+    rig.store
+        .write(|ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &BackupSettings {
+                    path: Some("changed since the backup".into()),
+                    last_backup: None,
+                },
+            )
+        })
+        .unwrap();
+
+    // the reference's pick and question; declining leaves the client running
+    *rig.next.borrow_mut() = vec![backup.path().to_path_buf()];
+    rig.click("restore from a database backup\u{2026}");
+    assert_eq!(rig.answer(false), model::restore_question(&backup_text));
+    assert!(rig.ui.window().is_visible());
+    assert!(!hydrus_gui::client_exit::RESTART.load(Ordering::SeqCst));
+    assert_eq!(
+        rig.settings().path.as_deref(),
+        Some("changed since the backup")
+    );
+
+    // accepting exits the client to restart; nothing is restored yet, the
+    // live database is still the changed one
+    *rig.next.borrow_mut() = vec![backup.path().to_path_buf()];
+    rig.click("restore from a database backup\u{2026}");
+    rig.answer(true);
+    assert!(!rig.ui.window().is_visible(), "the client exits");
+    assert_eq!(rig.ui.get_question(), "", "no second question");
+    assert!(hydrus_gui::client_exit::maintenance_question().is_none());
+    assert_eq!(
+        super::files_io_file_menu::last_done(&rig.store),
+        0,
+        "no shutdown jobs ran"
+    );
+    assert!(hydrus_gui::client_exit::RESTART.load(Ordering::SeqCst));
+    assert_eq!(
+        rig.settings().path.as_deref(),
+        Some("changed since the backup")
+    );
+    assert!(
+        hydrus_store::backup::restore_request(&live)
+            .unwrap()
+            .is_some()
+    );
+
+    // the client lets go of its store, and the process starts again
+    let Rig {
+        _dir,
+        store,
+        ui,
+        bound,
+        ..
+    } = rig;
+    drop((store, ui, bound));
+    let scratch = tempfile::tempdir().unwrap();
+    let program = scratch.path().join("client.sh");
+    std::fs::write(&program, "#!/bin/sh\necho \"$2\" > \"$1\"\n").unwrap();
+    {
+        use std::os::unix::fs::PermissionsExt as _;
+        std::fs::set_permissions(&program, std::fs::Permissions::from_mode(0o755)).unwrap();
+    }
+    let started = scratch.path().join("started");
+    let relaunched = hydrus_gui::client_exit::relaunch_if_requested(
+        &program,
+        [
+            started.clone().into_os_string(),
+            live.clone().into_os_string(),
+        ],
+    )
+    .unwrap();
+    assert!(relaunched);
+    let deadline = Instant::now() + Duration::from_secs(10);
+    while !started.exists() {
+        assert!(Instant::now() < deadline, "never started");
+        std::thread::sleep(Duration::from_millis(10));
+    }
+    // (the stand-in writes the file, then its text)
+    while std::fs::read_to_string(&started)
+        .unwrap_or_default()
+        .trim()
+        .is_empty()
+    {
+        assert!(Instant::now() < deadline, "never said where");
+        std::thread::sleep(Duration::from_millis(10));
+    }
+    assert_eq!(
+        std::fs::read_to_string(&started).unwrap().trim(),
+        live.to_string_lossy()
+    );
+    hydrus_gui::client_exit::RESTART.store(false, Ordering::SeqCst);
+
+    // what the started client does first: open the store, restoring first
+    let (reopened, _lease) = hydrus_gui::client_store::open_store(&live).unwrap();
+    let kept: BackupSettings = reopened.read(hydrus_store::settings::get).unwrap();
+    assert_eq!(kept.path, None, "the backup's database is the live one");
+    assert!(
+        hydrus_store::backup::restore_request(&live)
+            .unwrap()
+            .is_none(),
+        "the request is spent"
+    );
 }

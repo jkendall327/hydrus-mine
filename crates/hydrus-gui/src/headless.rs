@@ -63,7 +63,17 @@ impl Windows {
 }
 
 thread_local! {
+    /// Time that has passed for this thread's timers without anyone waiting.
+    static JUMPED: std::cell::Cell<std::time::Duration> = const { std::cell::Cell::new(std::time::Duration::ZERO) };
     static CLIPBOARD_TEXT: RefCell<Option<String>> = const { RefCell::new(None) };
+}
+
+/// Let `by` pass for the timers of this thread's windows at once (their
+/// 15-second auto-answers, say), instead of sleeping through it. Run the
+/// timers after (`slint::platform::update_timers_and_animations`).
+pub fn advance_time(by: std::time::Duration) {
+    JUMPED.with(|jumped| jumped.set(jumped.get() + by));
+    slint::platform::update_timers_and_animations();
 }
 
 /// Seed the native text editor's clipboard for headless key/paste tests.
@@ -103,6 +113,11 @@ impl EventLoopProxy for QuitOnly {
 }
 
 impl Platform for Headless {
+    fn duration_since_start(&self) -> std::time::Duration {
+        static START: std::sync::OnceLock<std::time::Instant> = std::sync::OnceLock::new();
+        START.get_or_init(std::time::Instant::now).elapsed() + JUMPED.with(std::cell::Cell::get)
+    }
+
     fn set_clipboard_text(&self, text: &str, clipboard: Clipboard) {
         if clipboard == Clipboard::DefaultClipboard {
             set_clipboard_text(text);

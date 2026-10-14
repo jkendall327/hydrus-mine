@@ -347,11 +347,10 @@ fn add_opens_a_new_call_that_is_named_keyed_and_asked_about_as_recorded() {
     assert!(add["keys_unique"].as_bool().unwrap());
 }
 
-/// Not tagged (audit-options-nested-external-call-input-rules): the rows, the
-/// pipeline description, the vetoes and the string processor buttons' labels
-/// are the recorded ones, but a processor is not edited through the child
-/// editor here (it is put in the store and the editor reopened), so the leaf's
-/// String Processor part is only half shown.
+/// The rows (label, enable flag, token), the pipeline description, the vetoes and the string
+/// processor buttons' labels are the recorded ones. The button's child editor is driven by
+/// `the_rule_rows_string_processor_button_opens_the_child_editor_as_the_reference_does`.
+// leaf: audit-options-nested-external-call-input-rules
 #[test]
 fn the_input_rows_vetoes_and_processor_button_labels_are_the_recorded_ones() {
     use hydrus_core::url::strings::{Conversion, ProcessingStep, StringConverter};
@@ -445,6 +444,109 @@ fn the_input_rows_vetoes_and_processor_button_labels_are_the_recorded_ones() {
         labels(&child)[0],
         buttons[0]["label_with_a_conversion"].as_str().unwrap()
     );
+    child.invoke_cancel();
+    w.invoke_cancel();
+}
+
+/// The string processor button on each input rule row, clicked: the child editor opens on the
+/// rule's processor with the parameter's example value as its starting string, a step added there
+/// and applied reaches the row's button and the command preview, and cancelled leaves the row as
+/// it was. Replays `rules.child_editor` of the recording (the reference's own
+/// `StringProcessorButton._Edit` dialog, scripted). The step is put in through the editor's
+/// import (the recording adds the same prepend step with the queue's own `AddDatas`).
+// leaf: audit-options-nested-external-call-input-rules
+#[test]
+fn the_rule_rows_string_processor_button_opens_the_child_editor_as_the_reference_does() {
+    let rec = recording();
+    let rules = &rec["rules"];
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let (_ui, bound, w, child) = edit_seeded(&store);
+    let strings = &bound.options_external_calls.strings;
+    let editor = || {
+        strings
+            .processor
+            .borrow()
+            .as_ref()
+            .expect("the child editor is open")
+            .clone_strong()
+    };
+    let column = |rows: slint::ModelRc<hydrus_gui::TableRow>| -> Vec<String> {
+        rows.iter()
+            .map(|r| r.cells.row_data(0).unwrap().to_string())
+            .collect()
+    };
+    let recorded = rules["child_editor"].as_array().unwrap();
+    assert_eq!(recorded.len(), child.get_rules().row_count());
+    for (i, case) in recorded.iter().enumerate() {
+        let index = i32::try_from(i).unwrap();
+        assert_eq!(
+            child.get_rules().row_data(i).unwrap().label.as_str(),
+            case["parameter"].as_str().unwrap()
+        );
+        // (the reference's button does nothing on a row that is not enabled)
+        child.invoke_rule_enabled(index, true);
+        child.invoke_rule_process(index);
+        let e = editor();
+        let wanted: Vec<String> = serde_json::from_value(case["starting_strings"].clone()).unwrap();
+        assert_eq!(column(e.get_processed()), wanted, "{case}");
+        assert_eq!(
+            column(e.get_steps()),
+            serde_json::from_value::<Vec<String>>(case["steps_before"].clone()).unwrap()
+        );
+
+        // cancelled with nothing changed: the row keeps what it had
+        let before = child.get_rules().row_data(i).unwrap().summary.to_string();
+        e.invoke_cancel();
+        assert!(strings.processor.borrow().is_none());
+        assert_eq!(child.get_rules().row_data(i).unwrap().summary, before);
+
+        // the step added and accepted
+        child.invoke_rule_process(index);
+        let e = editor();
+        e.invoke_exchange("import".into());
+        let exchange = strings.exchange.0.borrow().as_ref().unwrap().clone_strong();
+        exchange.set_text(r#"[55, 2, [[[2, "pre-"]], "example string"]]"#.into());
+        exchange.invoke_action("review".into());
+        exchange.invoke_action("accept".into());
+        assert_eq!(
+            column(e.get_processed()),
+            serde_json::from_value::<Vec<String>>(case["processed_strings"].clone()).unwrap(),
+            "{case}"
+        );
+        e.invoke_apply();
+        assert!(strings.processor.borrow().is_none());
+        let accepted = &case["accepted"];
+        assert_eq!(
+            child.get_rules().row_data(i).unwrap().summary.as_str(),
+            accepted["label"].as_str().unwrap()
+        );
+        assert_eq!(
+            child.get_rules().row_data(i).unwrap().summary.as_str(),
+            case["after_cancel"]["label"].as_str().unwrap()
+        );
+
+        // opened again with the step in it, then cancelled after an edit: unchanged
+        child.invoke_rule_process(index);
+        let e = editor();
+        assert_eq!(
+            column(e.get_steps()).len(),
+            case["cancelled_opened_with"].as_array().unwrap().len()
+        );
+        e.invoke_exchange("import".into());
+        let exchange = strings.exchange.0.borrow().as_ref().unwrap().clone_strong();
+        exchange.set_text(r#"[55, 2, [[[3, "-post"]], "example string"]]"#.into());
+        exchange.invoke_action("review".into());
+        exchange.invoke_action("accept".into());
+        assert_eq!(column(e.get_steps()).len(), 2);
+        e.invoke_cancel();
+        assert_eq!(
+            child.get_rules().row_data(i).unwrap().summary.as_str(),
+            case["after_cancel"]["label"].as_str().unwrap()
+        );
+        // back to the first state for the next row
+        child.invoke_rule_enabled(index, i == 0);
+    }
     child.invoke_cancel();
     w.invoke_cancel();
 }

@@ -1,0 +1,67 @@
+{
+  "files": [
+    {
+      "file": "ugoira_json.zip",
+      "window": "Animation",
+      "controls bar shown": true,
+      "volume shown": false,
+      "has duration": true,
+      "paused at first": false,
+      "info": "8.81 KB ugoira (80x60), 400 milliseconds (5 frames, 12fps) | imported: 17 years 7 months ago",
+      "background info": "8.81 KB ugoira (80x60), 400 milliseconds (5 frames, 12fps) | 1166.67% | imported: 17 years 7 months ago",
+      "tags": [
+        "meta:low resolution",
+        "format:jpeg",
+        "page:3"
+      ],
+      "paused after each pause-play": [
+        true,
+        false,
+        true
+      ]
+    },
+    {
+      "file": "webp_anim.webp",
+      "window": "Animation",
+      "controls bar shown": true,
+      "volume shown": false,
+      "has duration": true,
+      "paused at first": false,
+      "info": "5.33 KB animated webp (120x90), 283 milliseconds (3 frames, 11fps) | imported: 17 years 7 months ago",
+      "background info": "5.33 KB animated webp (120x90), 283 milliseconds (3 frames, 11fps) | 777.78% | imported: 17 years 7 months ago",
+      "tags": [
+        "meta:low resolution",
+        "format:jpeg",
+        "page:3"
+      ],
+      "paused after each pause-play": [
+        true,
+        false,
+        true
+      ]
+    },
+    {
+      "file": "audio.mp3",
+      "window": "MPVWidget",
+      "controls bar shown": true,
+      "volume shown": true,
+      "has duration": true,
+      "paused at first": true,
+      "info": "16.2 KB mp3, 2.1 seconds, \ud83d\udd0a | imported: 14 days 22 hours ago | modified: 6 years ago",
+      "background info": "16.2 KB mp3, 2.1 seconds, \ud83d\udd0a | 100% | imported: 14 days 22 hours ago | modified: 6 years ago",
+      "tags": [
+        "blue eyes",
+        "safe",
+        "page:10",
+        "volume:3",
+        "\u30ad\u30e3\u30e9\u30af\u30bf\u30fc:\u521d\u97f3\u30df\u30af"
+      ],
+      "paused after each pause-play": [
+        true,
+        true,
+        true
+      ]
+    }
+  ],
+  "now": 1791997389
+}
