@@ -732,7 +732,6 @@ fn a_saved_session_holds_clones_of_the_importers_as_they_were_as_the_reference_s
 
 /// pages > sessions > "clear and load" > a session: asked first, then the
 /// pages are closed for good and the session's pages are at the top.
-// leaf: audit-options-menu-menu-pages-sessions-clear-and-load-saved-session
 #[test]
 fn clear_and_load_replaces_the_pages_with_a_session() {
     use hydrus_gui::session_saving::clear_and_load_question;

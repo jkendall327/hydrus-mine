@@ -386,7 +386,7 @@ search.
   pointer passes; ours don't yet, and the history's latest page isn't in
   bold. Saving a session asks its name and its questions in one dialog,
   and says a name can't be had over the name box, where the reference
-  shows a message box first; and "clear and load" isn't there yet.
+  shows a message box first.
 - **The about window describes hydrus-rs**: its name, its own version
   beside the hydrus version it ports ("v0.1.0, porting hydrus v688, using
   network version 20"), and, on its description tab, the reference's

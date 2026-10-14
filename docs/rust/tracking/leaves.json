@@ -15799,10 +15799,10 @@
     "No session backups are retained or selectable; reserved names excluded from overwrite/delete entries."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Question and yes/no are driven through the menu and the question text is replayed from sessions_menu.json. But the recorded part where importing pages veto the close (grouped 'still importing' question) is only replayed on the model function close_all_question; no GUI test makes a page veto, so the window's use of it is unproven (README: stand-in for the real path). Tests: crates/hydrus-gui/tests/gui/menu_bar.rs:508 clear_and_load_replaces_the_pages_with_a_session; crates/hydrus-gui-model/tests/model/session_saving.rs:83 clear_and_load_asks_as_the_references_does"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "gui/pages_menu_info.rs clear_and_load_asks_again_for_importing_pages_as_the_reference_does drives Pages > sessions > clear and load through the real menu over pages that are actually importing (URL pages with files to get; a watcher page of two watchers), replaying the clear-and-load steps of oracle/fixtures/sessions_menu.json (record_sessions_menu.py): the first question, then the grouped 'Close \"top page notebook\"?' question built from the pages' own objections ('This page is still importing.' from two pages; '2 watchers are still importing.' from one) equal the recorded text, a no leaves the pages, a yes replaces them with the session's, and the page counts after each answer equal the recording's. The plain question with no objecting page (yes and no, none to reopen) is driven in gui/menu_bar.rs clear_and_load_replaces_the_pages_with_a_session, and the question wording is also checked in model/session_saving.rs. The recording stubs the reference's page vetoes rather than running its importers, so the objection text is compared, not the reference's importers' own state; the page vetoes themselves are the page-close leaves' business. Tracker note about retained backups is separate (the append-backup menu). The leaf's other bullet, that new queue ids are cloned from the saved session, is proved by gui/menu_bar.rs a_saved_session_holds_clones_of_the_importers_as_they_were_as_the_reference_saves_them, not by this test."
    }
   },
   {
