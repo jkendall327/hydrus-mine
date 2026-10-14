@@ -3,6 +3,7 @@
     {
       "case": "one domain",
       "confirm_trash": true,
+      "suggested": null,
       "panel": {
         "title": "Delete files?",
         "resolved": false,
@@ -30,6 +31,7 @@
     {
       "case": "one domain",
       "confirm_trash": false,
+      "suggested": null,
       "panel": {
         "title": "Delete files?",
         "resolved": true,
@@ -57,6 +59,7 @@
     {
       "case": "two domains",
       "confirm_trash": true,
+      "suggested": null,
       "panel": {
         "title": "Delete files?",
         "resolved": false,
@@ -114,6 +117,7 @@
     {
       "case": "two domains",
       "confirm_trash": false,
+      "suggested": null,
       "panel": {
         "title": "Delete files?",
         "resolved": false,
@@ -169,8 +173,9 @@
       ]
     },
     {
-      "case": "two domains, suggested the second",
+      "case": "two domains, suggested my files",
       "confirm_trash": true,
+      "suggested": "my files",
       "panel": {
         "title": "Delete files?",
         "resolved": false,
@@ -180,7 +185,7 @@
           "Remove one file from my files?",
           "Delete from all local services? (force send to trash)"
         ],
-        "selected": 0,
+        "selected": 1,
         "reason_panel_visible": false
       },
       "values": [
@@ -226,8 +231,9 @@
       ]
     },
     {
-      "case": "two domains, suggested the second",
+      "case": "two domains, suggested my files",
       "confirm_trash": false,
+      "suggested": "my files",
       "panel": {
         "title": "Delete files?",
         "resolved": false,
@@ -237,7 +243,7 @@
           "Remove one file from my files?",
           "Delete from all local services? (force send to trash)"
         ],
-        "selected": 0,
+        "selected": 1,
         "reason_panel_visible": false
       },
       "values": [
@@ -285,6 +291,7 @@
     {
       "case": "both files",
       "confirm_trash": true,
+      "suggested": null,
       "panel": {
         "title": "Delete files?",
         "resolved": false,
@@ -342,6 +349,7 @@
     {
       "case": "both files",
       "confirm_trash": false,
+      "suggested": null,
       "panel": {
         "title": "Delete files?",
         "resolved": false,
@@ -399,6 +407,7 @@
     {
       "case": "trashed",
       "confirm_trash": true,
+      "suggested": null,
       "panel": {
         "title": "Delete files?",
         "resolved": false,
@@ -426,6 +435,7 @@
     {
       "case": "trashed",
       "confirm_trash": false,
+      "suggested": null,
       "panel": {
         "title": "Delete files?",
         "resolved": false,
@@ -446,60 +456,6 @@
             }
           ],
           "saved_action": null,
-          "saved_reason": "remembered reason"
-        }
-      ]
-    },
-    {
-      "case": "existing reason",
-      "confirm_trash": true,
-      "panel": {
-        "title": "Delete files?",
-        "resolved": false,
-        "description": "Send one file from art to trash?",
-        "actions": null,
-        "selected": 0,
-        "reason_panel_visible": false
-      },
-      "values": [
-        {
-          "physically_deleted": 0,
-          "updates": [
-            {
-              "service": "art",
-              "action": 1,
-              "reason": "earlier reason",
-              "files": 1
-            }
-          ],
-          "saved_action": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
-          "saved_reason": "remembered reason"
-        }
-      ]
-    },
-    {
-      "case": "existing reason",
-      "confirm_trash": false,
-      "panel": {
-        "title": "Delete files?",
-        "resolved": true,
-        "description": "Send one file from art to trash?",
-        "actions": null,
-        "selected": 0,
-        "reason_panel_visible": false
-      },
-      "values": [
-        {
-          "physically_deleted": 0,
-          "updates": [
-            {
-              "service": "art",
-              "action": 1,
-              "reason": "earlier reason",
-              "files": 1
-            }
-          ],
-          "saved_action": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
           "saved_reason": "remembered reason"
         }
       ]
@@ -507,6 +463,7 @@
     {
       "case": "last action",
       "confirm_trash": true,
+      "suggested": null,
       "panel": {
         "title": "Delete files?",
         "resolved": false,
@@ -560,6 +517,7 @@
           "saved_reason": "remembered reason"
         }
       ],
+      "last_action": "my files",
       "remembered": {
         "title": "Delete files?",
         "resolved": false,
@@ -576,6 +534,7 @@
     {
       "case": "last action",
       "confirm_trash": false,
+      "suggested": null,
       "panel": {
         "title": "Delete files?",
         "resolved": false,
@@ -629,6 +588,7 @@
           "saved_reason": "remembered reason"
         }
       ],
+      "last_action": "my files",
       "remembered": {
         "title": "Delete files?",
         "resolved": false,

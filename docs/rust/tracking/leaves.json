@@ -287,13 +287,13 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Context actions pass explicit service/file scopes to native media-actions and delete prompts; lifecycle writes are real store operations rather than labels. First-pass evidence scope: Recorded lifecycle menu is matched and focused action tests inspect archive/inbox/trash/undelete/physical-delete state and questions; full remote-domain behavior is not claimed."
+    "Context actions pass explicit service/file scopes to native media-actions and the Delete files? dialog (#187) and other prompts; lifecycle writes are real store operations rather than labels. First-pass evidence scope: Recorded lifecycle menu is matched and focused action tests inspect archive/inbox/trash/undelete/physical-delete state and questions; full remote-domain behavior is not claimed."
    ],
    "recheck": {
     "date": "2026-10-08",
     "class": "source-restated",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real thumbnail menu and store: archive/re-inbox, delete from domain, undelete, physical delete, with questions. Menu tree is replayed against thumbnail_menu.json in a separate untagged test, but question texts ('Send 2 files to inbox?', 'Send one file from X to trash?', 'Permanently delete one trashed file?'; the delete ones now the reference's delete files dialog labels, the one-domain case matched against a recording by the download flow, flows::download, 2026-10-13) and state effects are literals from the Python source; remote domains not covered. Tests: crates/hydrus-gui/tests/gui/media_file_actions.rs:44 archive_inbox_delete_undelete_and_physical_delete_from_the_menu; thumbnail_menu.rs the_menu_is_the_reference_s (untagged)"
+    "note": "Real thumbnail menu and store: archive/re-inbox, delete from domain, undelete, physical delete, with questions. Menu tree is replayed against thumbnail_menu.json in a separate untagged test, but question texts ('Send 2 files to inbox?', 'Send one file from X to trash?', 'Permanently delete one trashed file?'; the delete ones now the reference's delete files dialog labels, the one-domain case matched against a recording by the download flow, flows::download, 2026-10-13) and state effects are literals from the Python source; remote domains not covered. Tests: crates/hydrus-gui/tests/gui/media_file_actions.rs:44 archive_inbox_delete_undelete_and_physical_delete_from_the_menu; thumbnail_menu.rs the_menu_is_the_reference_s (untagged) Since #187 the delete questions ('Send one file from X to trash?', 'Permanently delete one trashed file?') are the actions of the Delete files? dialog (tests/gui/common delete_question), not an inline yes/no."
    }
   },
   {
@@ -8826,7 +8826,7 @@
    "native": null,
    "notes": [
     "The actual Add control opens an owned Enter Text child asking Enter the reason with I do not like the file. as default. Accepted text, including empty/duplicate/Unicode text, appends verbatim; cancel leaves rows unchanged. Options Apply is blocked while the child is open; parent Cancel closes descendants and invalidates retained callbacks. Saved suggestions reach the real advanced deletion dialog and actual stored deletion reason.",
-    "Remote repository/IPFS deletion is excluded from this local native dialog. Simple/nonadvanced service-choice picker, undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
+    "Remote repository/IPFS deletion is excluded from this local native dialog. The simple (non-advanced) dialog is the same Delete files? dialog without the reason panel (#187); undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
     "Queue uses existing ListTable/SessionDialog geometry. Recorded selection/add/edit/move/delete behavior and Delete-key route are covered; general ListTable keyboard arrow selection is not expanded by this slice.",
     "Rust model/native/store regressions are authored for root hosted CI; no local Cargo build/test or mutation tests were run."
    ],
@@ -8848,7 +8848,7 @@
    "native": null,
    "notes": [
     "The actual Edit/double-click control opens the first selected visual row in an owned Enter Text child with its existing text. Acceptance replaces only that stable row verbatim, including duplicates and blanks; cancellation and closed-parent callbacks preserve the draft/store. Options Apply commits the complete ordered list, reopened deletion dialogs consume the saved suggestion list.",
-    "Remote repository/IPFS deletion is excluded from this local native dialog. Simple/nonadvanced service-choice picker, undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
+    "Remote repository/IPFS deletion is excluded from this local native dialog. The simple (non-advanced) dialog is the same Delete files? dialog without the reason panel (#187); undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
     "Queue uses existing ListTable/SessionDialog geometry. Recorded selection/add/edit/move/delete behavior and Delete-key route are covered; general ListTable keyboard arrow selection is not expanded by this slice.",
     "Rust model/native/store regressions are authored for root hosted CI; no local Cargo build/test or mutation tests were run."
    ],
@@ -8870,7 +8870,7 @@
    "native": null,
    "notes": [
     "Exact default-false dependent checkbox persists/imports and recalls the last accepted action when available, otherwise falls back to the suggested domain/first actionable row. Actual accepted local, all-local, physical and clean actions update remembered state; Cancel and stale callbacks do not. Physical-only dialogs preserve a prior 32-byte user-service key or absent value, but short builtin service keys behave like special actions, matching the four actual Qt cases.",
-    "Remote repository/IPFS deletion is excluded from this local native dialog. Simple/nonadvanced service-choice picker, undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
+    "Remote repository/IPFS deletion is excluded from this local native dialog. The simple (non-advanced) dialog is the same Delete files? dialog without the reason panel (#187); undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
     "Queue uses existing ListTable/SessionDialog geometry. Recorded selection/add/edit/move/delete behavior and Delete-key route are covered; general ListTable keyboard arrow selection is not expanded by this slice.",
     "Rust model/native/store regressions are authored for root hosted CI; no local Cargo build/test or mutation tests were run."
    ],
@@ -8892,7 +8892,7 @@
    "native": null,
    "notes": [
     "Exact default-true dependent checkbox persists/imports and initializes listed or custom last reason only when enabled. Existing shared/differing reasons override recalled selection. The last matching duplicate suggestion is selected on initialization, as real Qt BetterRadioBox does. Accepted non-default custom/list reasons are remembered; selecting default clears memory; preserved/existing reasons, clean deletion and Cancel retain it. Runtime memories merge safely with concurrent Options changes.",
-    "Remote repository/IPFS deletion is excluded from this local native dialog. Simple/nonadvanced service-choice picker, undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
+    "Remote repository/IPFS deletion is excluded from this local native dialog. The simple (non-advanced) dialog is the same Delete files? dialog without the reason panel (#187); undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
     "Queue uses existing ListTable/SessionDialog geometry. Recorded selection/add/edit/move/delete behavior and Delete-key route are covered; general ListTable keyboard arrow selection is not expanded by this slice.",
     "Rust model/native/store regressions are authored for root hosted CI; no local Cargo build/test or mutation tests were run."
    ],
@@ -8914,7 +8914,7 @@
    "native": null,
    "notes": [
     "Exact default-false checkbox enables dependent remembered flags/reason queue, stages/persists/imports and switches actual thumbnail/viewer Delete to an owned local action/reason dialog. Local domains and all-local trashing use actual selected membership; unlocked physical and clean deletion reach ContentWriter and cleared records. Existing/shared/differing reasons are preserved as the recorded radio choices; Cancel/closed owner cannot mutate files or memories.",
-    "Remote repository/IPFS deletion is excluded from this local native dialog. Simple/nonadvanced service-choice picker, undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
+    "Remote repository/IPFS deletion is excluded from this local native dialog. The simple (non-advanced) dialog is the same Delete files? dialog without the reason panel (#187); undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
     "Queue uses existing ListTable/SessionDialog geometry. Recorded selection/add/edit/move/delete behavior and Delete-key route are covered; general ListTable keyboard arrow selection is not expanded by this slice.",
     "Rust model/native/store regressions are authored for root hosted CI; no local Cargo build/test or mutation tests were run."
    ],
@@ -8922,7 +8922,7 @@
     "date": "2026-10-08",
     "class": "sound",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Toggle enables the dependents (only the reason row asserted in the GUI; advanced_controls recording not replayed) and switches thumbnail and viewer Delete to the real dialog; action and reason lists replayed from the recording; clean/locked deletion via ContentWriter tested. Minor gap: not all three dependent rows asserted. Tests: crates/hydrus-gui/tests/gui/options_window.rs:5111; crates/hydrus-gui/tests/gui/media_actions.rs:318 closing_viewer_discards_advanced_deletion_and_reopening_recalls_applied_choice; crates/hydrus-gui-model/tests/model/delete_files.rs:34,122,307"
+    "note": "Toggle enables the dependents (only the reason row asserted in the GUI; advanced_controls recording not replayed) and switches thumbnail and viewer Delete to the dialog with the reason panel (since #187 the simple form opens the same dialog without it); action and reason lists replayed from the recording; clean/locked deletion via ContentWriter tested. Minor gap: not all three dependent rows asserted. Tests: crates/hydrus-gui/tests/gui/options_window.rs:5111; crates/hydrus-gui/tests/gui/media_actions.rs:318 closing_viewer_discards_advanced_deletion_and_reopening_recalls_applied_choice; crates/hydrus-gui-model/tests/model/delete_files.rs:34,122,307"
    }
   },
   {
@@ -8985,7 +8985,7 @@
    "notes": [
     "Truth pass (2026-10-08): partial, small. Delete question matches the recording; undelete question missing. Missing: Undelete never asks the reference's 'Undelete this file back to {service}?' (ClientGUIMediaModalActions.py:1629). Evidence: options.rs:2479; options_window.rs:5000-5040; media_actions.rs:98-120; recorded policy test media_actions.rs:239 (files_trash.json)",
     "Exact default-true checkbox stages, persists/reopens and imports legacy confirm_trash. Thumbnail/viewer local delete consumers skip a single-actionable-domain question when false, retain multiple-domain ambiguity and physical questions, and use the remembered selected action in advanced auto-resolution. Undelete still restores immediately, so the original leaf remains Partial.",
-    "Remote repository/IPFS deletion is excluded from this local native dialog. Simple/nonadvanced service-choice picker, undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
+    "Remote repository/IPFS deletion is excluded from this local native dialog. The simple (non-advanced) dialog is the same Delete files? dialog without the reason panel (#187); undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
     "Queue uses existing ListTable/SessionDialog geometry. Recorded selection/add/edit/move/delete behavior and Delete-key route are covered; general ListTable keyboard arrow selection is not expanded by this slice.",
     "Rust model/native/store regressions are authored for root hosted CI; no local Cargo build/test or mutation tests were run."
    ],
@@ -9007,7 +9007,7 @@
    "native": null,
    "notes": [
     "Exact default-true checkbox stages until Apply, imports legacy confirm_archive, persists/reopens and gates real thumbnail/menu/shortcut Archive/Inbox writes. Only multiple actionable files ask Archive N files? or Send N files to inbox?; cancel retains inbox states, accepted questions and disabled confirmation perform the store mutation. Single actionable files never ask.",
-    "Remote repository/IPFS deletion is excluded from this local native dialog. Simple/nonadvanced service-choice picker, undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
+    "Remote repository/IPFS deletion is excluded from this local native dialog. The simple (non-advanced) dialog is the same Delete files? dialog without the reason panel (#187); undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
     "Queue uses existing ListTable/SessionDialog geometry. Recorded selection/add/edit/move/delete behavior and Delete-key route are covered; general ListTable keyboard arrow selection is not expanded by this slice.",
     "Rust model/native/store regressions are authored for root hosted CI; no local Cargo build/test or mutation tests were run."
    ],

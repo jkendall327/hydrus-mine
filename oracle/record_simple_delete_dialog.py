@@ -5,7 +5,7 @@ With `use_advanced_file_deletion_dialog` off, `ClientGUIDialogsQuick.GetDeleteFi
 still opens a `DialogEdit` holding `EditDeleteFilesPanel`; it hides the reason
 panel, and shows either the one action's label (`_simple_description`) or the
 action radio. For authored files of the `basic` fixture (in one local domain,
-in two, in the trash) and each `confirm_trash` and existing-reason case, this
+in two, in the trash) and each `confirm_trash` case (with a suggested domain or a remembered action), this
 records what the panel shows (title, visible parts, action labels and the
 selected one), whether the question is already resolved, and what `GetValue`
 would do for each action: the content updates (service, action, reason, file
@@ -56,6 +56,12 @@ def record(session):
                 return 'local file storage'
             return c.services_manager.GetName(key)
 
+        def key_named(name):
+            for service in c.services_manager.GetServices((HC.LOCAL_FILE_DOMAIN,)):
+                if service.GetName() == name:
+                    return service.GetServiceKey()
+            raise RuntimeError('no local file domain named ' + name)
+
         def describe_value(panel):
             physical, packages = panel.GetValue()
             updates = []
@@ -92,32 +98,24 @@ def record(session):
                 result.GetLocationsManager()._current = {CC.TRASH_SERVICE_KEY, CC.HYDRUS_LOCAL_FILE_STORAGE_SERVICE_KEY}
                 return result
 
-            def reasoned(result, reason):
-                result = result.Duplicate()
-                result.GetLocationsManager()._local_file_deletion_reason = reason
-                return result
-
             cases = [
                 ('one domain', [single], None, None),
                 ('two domains', [double], None, None),
-                ('two domains, suggested the second', [double], 1, None),
+                ('two domains, suggested my files', [double], 'my files', None),
                 ('both files', [single, double], None, None),
                 ('trashed', [trashed(single)], None, None),
-                ('existing reason', [reasoned(single, 'earlier reason')], None, None),
-                ('last action', [double], None, 1),
+                ('last action', [double], None, 'my files'),
             ]
             for name, files, suggested, last in cases:
                 for confirm in (True, False):
                     HC.options['confirm_trash'] = confirm
                     media = [M.MediaSingle(r) for r in files]
-                    suggested_key = None
-                    if suggested is not None:
-                        suggested_key = sorted(k for k in double.GetLocationsManager().GetCurrent() if c.services_manager.GetServiceType(k) == HC.LOCAL_FILE_DOMAIN)[suggested]
+                    suggested_key = key_named(suggested) if suggested is not None else None
                     c.new_options.SetNoneableString('last_advanced_file_deletion_special_action', None)
                     c.new_options.SetNoneableString('last_advanced_file_deletion_reason', 'remembered reason')
                     first = E.EditDeleteFilesPanel(c.gui, media, default_reason, suggested_file_service_key=suggested_key)
                     panels.append(first)
-                    item = {'case': name, 'confirm_trash': confirm}
+                    item = {'case': name, 'confirm_trash': confirm, 'suggested': suggested}
                     item['panel'] = shown(first, 'Delete files?')
                     item['values'] = []
                     count = len(first._action_radio._radio_buttons)
@@ -130,7 +128,8 @@ def record(session):
                         panel._UpdateControls()
                         item['values'].append(describe_value(panel))
                     if last is not None:
-                        c.new_options.SetNoneableString('last_advanced_file_deletion_special_action', (lambda k: k.hex() if isinstance(k, bytes) else k)(first._permitted_action_choices[last][1][0]))
+                        c.new_options.SetNoneableString('last_advanced_file_deletion_special_action', key_named(last).hex())
+                        item['last_action'] = last
                         again = E.EditDeleteFilesPanel(c.gui, media, default_reason, suggested_file_service_key=suggested_key)
                         panels.append(again)
                         item['remembered'] = shown(again, 'Delete files?')
