@@ -717,6 +717,12 @@ fn thumb_rating(drawn: &thumbnail_ratings::Drawn) -> ThumbRating {
             out.size = *size as f32;
             out.step = *step as f32;
             out.outline = crate::ratings::outline_width(f64::from(*size)) as f32;
+            let pictures = drawn
+                .control
+                .svg
+                .as_deref()
+                .map(|name| crate::star_images::pictures(name, shapes))
+                .unwrap_or_default();
             let shapes: Vec<RatingShape> = shapes
                 .iter()
                 .map(|s| RatingShape {
@@ -725,6 +731,7 @@ fn thumb_rating(drawn: &thumbnail_ratings::Drawn) -> ThumbRating {
                 })
                 .collect();
             out.shapes = ModelRc::new(VecModel::from(shapes));
+            out.svg = ModelRc::new(VecModel::from(pictures));
             text.as_ref()
         }
         Look::Counter {

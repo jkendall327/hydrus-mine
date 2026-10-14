@@ -1,0 +1,165 @@
+{
+ "initial": {
+  "collect": "no collections",
+  "collect_namespaces": [],
+  "files": 0,
+  "predicates": [],
+  "sort": "sort by file: filesize, smallest first",
+  "synchronised": true
+ },
+ "loads": [
+  {
+   "name": "by size",
+   "state": {
+    "collect": "creator",
+    "collect_namespaces": [
+     "creator"
+    ],
+    "files": 8,
+    "predicates": [
+     "blue eyes",
+     "system:inbox"
+    ],
+    "sort": "sort by file: filesize, largest first",
+    "synchronised": true
+   }
+  },
+  {
+   "name": "keeps",
+   "state": {
+    "collect": "creator",
+    "collect_namespaces": [
+     "creator"
+    ],
+    "files": 4,
+    "predicates": [
+     "series:metroid",
+     "system:inbox"
+    ],
+    "sort": "sort by file: filesize, largest first",
+    "synchronised": true
+   }
+  },
+  {
+   "name": "paused",
+   "state": {
+    "collect": "no collections",
+    "collect_namespaces": [],
+    "files": 4,
+    "predicates": [
+     "blue eyes",
+     "system:inbox"
+    ],
+    "sort": "sort by time: import time, oldest first",
+    "synchronised": false
+   }
+  },
+  {
+   "name": "paused keeps",
+   "state": {
+    "collect": "no collections",
+    "collect_namespaces": [],
+    "files": 4,
+    "predicates": [
+     "system:inbox"
+    ],
+    "sort": "sort by time: import time, oldest first",
+    "synchronised": false
+   }
+  },
+  {
+   "name": "by width",
+   "state": {
+    "collect": "no collections",
+    "collect_namespaces": [],
+    "files": 14,
+    "predicates": [
+     "system:inbox"
+    ],
+    "sort": "sort by dimensions: width, slimmest first",
+    "synchronised": true
+   }
+  },
+  {
+   "name": "keeps",
+   "state": {
+    "collect": "no collections",
+    "collect_namespaces": [],
+    "files": 4,
+    "predicates": [
+     "series:metroid",
+     "system:inbox"
+    ],
+    "sort": "sort by dimensions: width, slimmest first",
+    "synchronised": true
+   }
+  },
+  {
+   "name": "paused keeps",
+   "state": {
+    "collect": "no collections",
+    "collect_namespaces": [],
+    "files": 4,
+    "predicates": [
+     "system:inbox"
+    ],
+    "sort": "sort by dimensions: width, slimmest first",
+    "synchronised": false
+   }
+  }
+ ],
+ "rows": [
+  [
+   "by size",
+   [
+    "blue eyes"
+   ],
+   true,
+   [
+    "SORT_FILES_BY_FILESIZE",
+    false
+   ],
+   [
+    "creator"
+   ]
+  ],
+  [
+   "keeps",
+   [
+    "series:metroid"
+   ],
+   true,
+   null,
+   null
+  ],
+  [
+   "paused",
+   [
+    "blue eyes"
+   ],
+   false,
+   [
+    "SORT_FILES_BY_IMPORT_TIME",
+    true
+   ],
+   []
+  ],
+  [
+   "paused keeps",
+   [],
+   false,
+   null,
+   null
+  ],
+  [
+   "by width",
+   [],
+   true,
+   [
+    "SORT_FILES_BY_WIDTH",
+    true
+   ],
+   null
+  ]
+ ]
+}

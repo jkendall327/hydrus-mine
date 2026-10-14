@@ -69,7 +69,6 @@ fn selected(window: &FavouritesWindow) -> Vec<String> {
         .collect()
 }
 
-// leaf: audit-options-favourites-list-selection
 // leaf: audit-options-favourites-list-add-edit
 #[test]
 fn the_list_selects_by_click_ctrl_and_shift_and_adds_and_edits_through_its_child() {
@@ -182,6 +181,73 @@ fn the_list_selects_by_click_ctrl_and_shift_and_adds_and_edits_through_its_child
     manage.invoke_apply();
     assert_eq!(kept(&store).len(), 5);
     assert!(kept(&store).iter().any(|r| r.1 == "renamed once"));
+}
+
+// leaf: audit-options-favourites-list-selection
+#[test]
+fn the_list_selects_and_sorts_as_the_references_list_does_under_real_clicks() {
+    // (`record_favourite_list_selection.py`: the reference's manage dialog on
+    // these four favourites, driven with real clicks on its list and header)
+    let fixture = hydrus_testkit::fixture_json("favourite_list_selection.json");
+    let (_dirs, store) = store_with_four();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_favourites_menu_requested(10.0, 100.0);
+    ui.invoke_menu_line_clicked(0, 0, 0.0, 0.0, 0.0);
+    let manage = bound
+        .favourites
+        .list
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong)
+        .expect("the list open");
+    for step in fixture["steps"].as_array().unwrap() {
+        let what = step["step"].as_array().unwrap();
+        let row = what.get(1).and_then(serde_json::Value::as_i64).unwrap_or(0) as i32;
+        match what[0].as_str().unwrap() {
+            "initial" => {}
+            "click" => manage.invoke_row_clicked(row, false, false),
+            "ctrl" => manage.invoke_row_clicked(row, true, false),
+            "shift" => manage.invoke_row_clicked(row, false, true),
+            "header" => manage.invoke_header_clicked(row),
+            "delete" => {
+                manage.invoke_delete();
+                assert_eq!(
+                    manage.get_question(),
+                    fixture["questions"][0].as_str().unwrap(),
+                    "the question"
+                );
+                manage.invoke_answered(true);
+            }
+            other => panic!("unknown step {other}"),
+        }
+        let shown: Vec<String> = rows(&manage).into_iter().map(|r| r.0).collect();
+        let want = |key: &str| -> Vec<String> {
+            step[key]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|n| n.as_str().unwrap().to_owned())
+                .collect()
+        };
+        assert_eq!(shown, want("shown"), "{what:?}: the rows as shown");
+        assert_eq!(
+            selected(&manage),
+            want("selected"),
+            "{what:?}: the selection"
+        );
+        assert_eq!(
+            manage.get_can_edit(),
+            step["edit_enabled"].as_bool().unwrap(),
+            "{what:?}: edit"
+        );
+        assert_eq!(
+            manage.get_can_delete(),
+            step["delete_enabled"].as_bool().unwrap(),
+            "{what:?}: delete"
+        );
+    }
 }
 
 // leaf: audit-options-favourites-edit-sync

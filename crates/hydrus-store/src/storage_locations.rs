@@ -267,6 +267,14 @@ pub struct Move {
 /// folder (or the thumbnail override) is.
 pub fn next_move(conn: &Connection) -> Result<Option<Move>> {
     let review = review(conn)?;
+    // (the reference does nothing while a location it would move to is not there)
+    if review
+        .locations
+        .iter()
+        .any(|l| (l.weight > 0 || l.thumbnail_override) && !l.path.exists())
+    {
+        return Ok(None);
+    }
     let mut subfolders: Vec<(String, PathBuf)> = conn
         .prepare(
             "SELECT s.prefix, l.path FROM storage_subfolders s JOIN storage_locations l USING (location_id)
@@ -493,6 +501,8 @@ mod tests {
     fn a_second_location_takes_half_and_thumbnails_follow() {
         let (home, other) = (tempfile::tempdir().unwrap(), tempfile::tempdir().unwrap());
         let store = crate::Store::open(home.path()).unwrap();
+        // (the reference moves nothing while a location is missing)
+        std::fs::create_dir_all(home.path().join("client_files")).unwrap();
         assert_eq!(store.read(next_move).unwrap(), None);
         let second = other.path().to_path_buf();
         store

@@ -10,7 +10,7 @@ use hydrus_store::{
     Store,
     services::{PenBrush, RatingDisplay, Rgb, Service, ServiceKind, StarAppearance, StarShape},
 };
-use slint::{ComponentHandle, ModelRc, SharedString, VecModel};
+use slint::{ComponentHandle, Model as _, ModelRc, SharedString, VecModel};
 use std::{
     cell::{Cell, RefCell},
     rc::Rc,
@@ -134,11 +134,15 @@ fn edited_kind(
             }
         }
     }
-    let appearance = if usize::try_from(window.get_appearance()).ok() == Some(SHAPES.len()) {
-        if window.get_svg().is_empty() {
-            return Err("Enter an SVG name.".into());
-        }
-        StarAppearance::Svg(window.get_svg().to_string())
+    let svgs = window.get_svg_names();
+    let appearance = if window.get_use_svg() && svgs.row_count() > 0 {
+        StarAppearance::Svg(
+            usize::try_from(window.get_svg_index())
+                .ok()
+                .and_then(|i| svgs.row_data(i))
+                .ok_or("Unknown rating SVG.")?
+                .to_string(),
+        )
     } else {
         StarAppearance::Shape(StarShape(
             *usize::try_from(window.get_appearance())
@@ -170,6 +174,7 @@ fn edit(
     parent_active: Rc<Cell<bool>>,
     sizes: [(f64, f64); 4],
     advanced: bool,
+    svgs: &[String],
 ) -> Result<(), String> {
     let window = crate::app_title::new::<crate::EditServiceWindow>().map_err(|e| e.to_string())?;
     window.set_service_name(service.name.as_str().into());
@@ -236,21 +241,28 @@ fn edit(
         }
     }
     window.set_colours(ModelRc::new(VecModel::from(colour_rows)));
-    let mut appearances = SHAPES
+    let appearances = SHAPES
         .iter()
         .map(|code| SharedString::from(StarShape(*code).name().unwrap_or("circle")))
         .collect::<Vec<_>>();
-    appearances.push("svg".into());
     window.set_appearances(ModelRc::new(VecModel::from(appearances)));
+    window.set_svg_names(ModelRc::new(VecModel::from(
+        svgs.iter().map(SharedString::from).collect::<Vec<_>>(),
+    )));
     if let Some(a) = appearance(&service.kind) {
         match a {
             StarAppearance::Shape(s) => window.set_appearance(
                 i32::try_from(SHAPES.iter().position(|c| *c == s.0).unwrap_or(0)).unwrap_or(0),
             ),
-            StarAppearance::Svg(name) => {
-                window.set_appearance(i32::try_from(SHAPES.len()).unwrap_or(0));
-                window.set_svg(name.as_str().into());
+            // (with no SVGs to choose from the reference shows its shapes; one it
+            // can't find leaves its first SVG chosen)
+            StarAppearance::Svg(name) if !svgs.is_empty() => {
+                window.set_use_svg(true);
+                window.set_svg_index(
+                    i32::try_from(svgs.iter().position(|n| n == name).unwrap_or(0)).unwrap_or(0),
+                );
             }
+            StarAppearance::Svg(_) => (),
         }
     }
     if let ServiceKind::RatingNumerical(c) = &service.kind {
@@ -517,6 +529,7 @@ pub fn open(
 ) -> Result<ServicesEditorWindow, String> {
     let window =
         crate::app_title::new::<crate::ServicesEditorWindow>().map_err(|e| e.to_string())?;
+    crate::star_images::set_dir(store.dir());
     let active = Rc::new(Cell::new(true));
     let editor = Rc::new(RefCell::new(Editor::new(store).map_err(|e| e.to_string())?));
     let sizes = store
@@ -657,6 +670,7 @@ pub fn open(
                 active.clone(),
                 sizes,
                 advanced_mode(&store),
+                &hydrus_store::star_shapes::names(store.dir()),
             ) {
                 w.set_error(e.into());
             }
@@ -711,6 +725,7 @@ pub fn open(
                 active.clone(),
                 sizes,
                 advanced_mode(&store),
+                &hydrus_store::star_shapes::names(store.dir()),
             ) {
                 w.set_error(e.into());
             }

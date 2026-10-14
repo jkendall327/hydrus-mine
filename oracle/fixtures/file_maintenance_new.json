@@ -1,0 +1,415 @@
+{
+ "steps": [
+  {
+   "step": "opened",
+   "texts": [
+    "Here is the outstanding file maintenance work. This will be slowly completed in the background, usually a file every few seconds (you can edit this under _options->maintenance and processing_). Although you can rush work if you want to, it is best to generally leave it alone.",
+    "Here you can queue up new file maintenance work. You determine the files to run a job on by loading a normal file search.\n\nOnce your search is set, you need to hit 'run this search' to actually load up the files. Then select the job type to apply and click 'add job'. Click 'see description' for more information on the job.\n\nBe cautious--do not queue up an integrity scan for all your files on a whim! If you don't know what a job does, do not add it!",
+    "add job",
+    "easy select",
+    "no files selected yet",
+    "no results yet",
+    "select files by search"
+   ],
+   "buttons": [
+    "OR",
+    "add job",
+    "advanced",
+    "all known tags",
+    "all media files",
+    "all repository update files",
+    "clear",
+    "do all work",
+    "do work",
+    "include current tags",
+    "include pending tags",
+    "my files",
+    "refresh",
+    "run this search",
+    "searching immediately",
+    "see description",
+    "▲"
+   ],
+   "job_labels": [
+    "if file is missing, then if has URL try to redownload, else remove record",
+    "if file is missing, then if has URL try to redownload",
+    "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+    "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+    "if file is missing, remove record (leave no delete record)",
+    "if file is missing, remove record (leave a delete record)",
+    "if file is missing/incorrect, move file out and remove record",
+    "if file is incorrect, move file out",
+    "if file is missing, note it in log",
+    "regenerate file metadata",
+    "regenerate thumbnail if incorrect size",
+    "regenerate thumbnail",
+    "regenerate blurhash",
+    "regenerate pixel hashes",
+    "regenerate perceptual hashes",
+    "regenerate file modified time",
+    "regenerate non-standard hashes",
+    "check for membership in the potential duplicate pairs search system",
+    "determine if the file has transparency",
+    "determine if the file has EXIF metadata",
+    "determine if the file has XMP metadata",
+    "determine if the file has IPTC metadata",
+    "determine if the file has human-readable metadata",
+    "determine if the file has software/source metadata",
+    "determine if the file has an icc profile",
+    "fix file read/write permissions",
+    "delete duplicate neighbours with incorrect file extension"
+   ],
+   "tabs": [
+    "scheduled work",
+    "add new work"
+   ],
+   "descriptions": [
+    {
+     "job": "if file is missing, then if has URL try to redownload, else remove record",
+     "dialogs": [
+      [
+       "information",
+       "THIS IS THE EASY AND QUICK ONE-SHOT WAY TO REPAIR A DATABASE WITH MISSING FILES.\n\nThis checks to see if the file is present in the file system as expected. If it is not, and it has known post/file URLs, the URLs will be automatically added to a new URL downloader.\n\nNote that if a files's URL(s) are now 404, or if they point to slightly different new duplicate files (let's say the server resized them or the CDN optimised their file cache), then hydrus will not recognise that the original file has not been 'filled in' and the broken file record will remain. In this case, you would want to run the alternate simpler 'if file is missing, remove record (leave no delete record)' job after this URL job has completely cleared and its downloader page finished, just to catch any lingering strays.\n\nMissing files with no URLs will have their internal file record in the database completely removed. This is just like a file delete except it does not leave a deletion record, so if a normal import ever sees the file again in future, it will not appear to be 'previously deleted', but completely new.\n\nAll missing files will have their hashes, tags, and URLs exported to a new folder in your database directory for later manual recovery attempts if you wish.\n\nThis job has weight 30, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "if file is missing, then if has URL try to redownload",
+     "dialogs": [
+      [
+       "information",
+       "This checks to see if the file is present in the file system as expected. If it is not, and it has known post/file URLs, the URLs will be automatically added to a new URL downloader.'\n\nNote that if a files's URL(s) are now 404, or if they point to slightly different new duplicate files (let's say the server resized them or the CDN optimised their file cache), then hydrus will not recognise that the original file has not been 'filled in' and the broken file record will remain. In this case, you would want to run the alternate simpler 'if file is missing, remove record (leave no delete record)' job after this URL job has completely cleared and its downloader page finished, just to catch any lingering strays.\n\nAll missing files will have their hashes, tags, and URLs exported to a new folder in your database directory for later manual recovery attempts if you wish.\n\nThis job has weight 25, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+     "dialogs": [
+      [
+       "information",
+       "This does the same check as the 'file is missing' job, and if the file is where it is expected, it ensures its file content, byte-for-byte, is as expected. This discovers hard drive damage or other external interference. This is a heavy job, so be wary. If the file is missing/incorrect _and_ has known post/file URLs, the URLs will be automatically added to a new URL downloader.\n\nMissing/Incorrect files with no URLs will have their internal file record in the database completely removed. This is just like a file delete except it does not leave a deletion record, so if a normal import ever sees the file again in future, it will not appear to be 'previously deleted', but completely new.\n\nNote that if a files's URL(s) are now 404, or if they point to slightly different new duplicate files (let's say the server resized them or the CDN optimised their file cache), then hydrus will not recognise that the original file has not been 'filled in' and the broken file record will remain. In this case, you would want to run the alternate simpler 'if file is missing, remove record (leave no delete record)' job after this URL job has completely cleared and its downloader page finished, just to catch any lingering strays.\n\nAll incorrect files will be exported to a new folder in your database directory for later manual examination if you wish.\n\nAll missing/incorrect files will also have their hashes, tags, and URLs exported to a new folder in your database directory for later manual recovery attempts if you wish.\n\nThis job has weight 100, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+     "dialogs": [
+      [
+       "information",
+       "This does the same check as the 'file is missing' job, and if the file is where it is expected, it ensures its file content, byte-for-byte, is as expected. This discovers hard drive damage or other external interference. This is a heavy job, so be wary. If the file is missing/incorrect _and_ has known post/file URLs, the URLs will be automatically added to a new URL downloader.\n\nNote that if a files's URL(s) are now 404, or if they point to slightly different new duplicate files (let's say the server resized them or the CDN optimised their file cache), then hydrus will not recognise that the original file has not been 'filled in' and the broken file record will remain. In this case, you would want to run the alternate simpler 'if file is missing, remove record (leave no delete record)' job after this URL job has completely cleared and its downloader page finished, just to catch any lingering strays.\n\nAll incorrect files will be exported to a new folder in your database directory for later manual examination if you wish.\n\nAll missing/incorrect files will also have their hashes, tags, and URLs exported to a new folder in your database directory for later manual recovery attempts if you wish.\n\nThis job has weight 100, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "if file is missing, remove record (leave no delete record)",
+     "dialogs": [
+      [
+       "information",
+       "This checks to see if the file is present in the file system as expected. Use this if you have lost a number of files from your file structure, do not think you can recover them, and need hydrus to re-sync with what it actually has.\n\nMissing files will have their internal file record in the database completely removed. This is just like a file delete except it does not leave a deletion record, so if a normal import ever sees the file again in future, it will not appear to be 'previously deleted', but completely new.\n\nAll missing files will have their hashes, tags, and URLs exported to a new folder in your database directory for later manual recovery attempts if you wish.\n\nThis job has weight 5, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "if file is missing, remove record (leave a delete record)",
+     "dialogs": [
+      [
+       "information",
+       "This checks to see if the file is present in the file system as expected. Use this if you have manually deleted a number of files from your file structure, do not want to get them again, and need hydrus to re-sync with what it actually has. Another example of this situation is restoring an old backed-up database to a newer client_files structure--to catch the database up, you want to teach it that any files missing in the newer structure should be deleted, with a record.\n\nMissing files will have their internal file record processed just like a normal file delete. Normal imports that see these files again in future will consider them as 'previously deleted'.\n\nAll missing files will have their hashes, tags, and URLs exported to a new folder in your database directory for later manual recovery attempts if you wish.\n\nThis job has weight 5, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "if file is missing/incorrect, move file out and remove record",
+     "dialogs": [
+      [
+       "information",
+       "This does the same check as the 'file is missing' job, and if the file is where it is expected, it ensures its file content, byte-for-byte, is as expected. This discovers hard drive damage or other external interference. This is a heavy job, so be wary.\n\nMissing/Incorrect files will have their internal file record in the database completely removed. This is just like a file delete except it does not leave a deletion record, so if a normal import ever sees the file again in future, it will not appear to be 'previously deleted', but completely new.\n\nAll incorrect files will be exported to a new folder in your database directory for later manual examination if you wish.\n\nAll missing/incorrect files will also have their hashes, tags, and URLs exported to a new folder in your database directory for later manual recovery attempts if you wish.\n\nThis job has weight 100, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "if file is incorrect, move file out",
+     "dialogs": [
+      [
+       "information",
+       "If the file is where it is expected, this ensures its file content, byte-for-byte, is correct. This is a heavy job, so be wary. If the file is incorrect, it will be exported to your database directory along with its known URLs. The client's file record will not be deleted. This is useful if you have a valid backup and need to clear out invalid files from your live db so you can fill in gaps from your backup with a program like FreeFileSync.\n\nThis job has weight 100, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "if file is missing, note it in log",
+     "dialogs": [
+      [
+       "information",
+       "This checks to see if the file is present in the file system as expected. If it is not, it records the file's hash, tags, and URLs to your database directory, just like the other \"missing file\" jobs, but makes no other action.\n\nThis job has weight 5, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "regenerate file metadata",
+     "dialogs": [
+      [
+       "information",
+       "This regenerates file metadata like resolution and duration, or even filetype (such as mkv->webm), which may have been misparsed in a previous version.\n\nThis job has weight 100, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "regenerate thumbnail if incorrect size",
+     "dialogs": [
+      [
+       "information",
+       "This looks for the existing thumbnail, and if it is not the correct resolution or is missing, will regenerate a new one for the source file.\n\nThis job has weight 25, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "regenerate thumbnail",
+     "dialogs": [
+      [
+       "information",
+       "This forces a complete regeneration of the thumbnail from the source file.\n\nThis job has weight 50, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "regenerate blurhash",
+     "dialogs": [
+      [
+       "information",
+       "This generates a very small version of the file's thumbnail that can be used as a placeholder while the thumbnail loads.\n\nThis job has weight 15, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "regenerate pixel hashes",
+     "dialogs": [
+      [
+       "information",
+       "This generates a fast unique identifier for the pixels in a still image, which is used in duplicate pixel searches.\n\nThis job has weight 100, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "regenerate perceptual hashes",
+     "dialogs": [
+      [
+       "information",
+       "This forces a regeneration of the file's similar-files 'phashes'. If phashes change and are useful, files will be queued into potential duplicate pair search. It is not useful unless you know there is missing data to repair or that the phash generation tech has changed (e.g. it fixes some file rotation), meaning for new phashes if re-generated.\n\nThis job has weight 100, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "regenerate file modified time",
+     "dialogs": [
+      [
+       "information",
+       "This rechecks the file's modified timestamp and saves it to the database.\n\nThis job has weight 10, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "regenerate non-standard hashes",
+     "dialogs": [
+      [
+       "information",
+       "This regenerates hydrus's store of md5, sha1, and sha512 supplementary hashes, which it can use for various external (usually website) lookups.\n\nThis job has weight 100, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "check for membership in the potential duplicate pairs search system",
+     "dialogs": [
+      [
+       "information",
+       "This checks to see if files should be in the search system that looks for potential duplicate pairs, and if they are falsely in or falsely out, it will remove their record or queue them up for a search as appropriate. It is useful to repair database damage.\n\nThis job has weight 1, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "determine if the file has transparency",
+     "dialogs": [
+      [
+       "information",
+       "This loads the file to see if it has an alpha channel with useful data (the strictness of this test is determined in the options). Only works for images and some animations.\n\nThis job has weight 25, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "determine if the file has EXIF metadata",
+     "dialogs": [
+      [
+       "information",
+       "This loads the file to see if it has EXIF metadata, which can be shown in the media viewer and searched with \"system:has exif\".\n\nThis job has weight 25, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "determine if the file has XMP metadata",
+     "dialogs": [
+      [
+       "information",
+       "This loads the file to see if it has XMP metadata, which can be shown in the media viewer and searched with \"system:has xmp\".\n\nThis job has weight 25, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "determine if the file has IPTC metadata",
+     "dialogs": [
+      [
+       "information",
+       "This loads the file to see if it has XMP metadata, which can be shown in the media viewer and searched with \"system:has iptc\".\n\nThis job has weight 25, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "determine if the file has human-readable metadata",
+     "dialogs": [
+      [
+       "information",
+       "This loads the file to see if it has human-readable metadata outside of EXIF and such, things like a stray Artist or Title or Comment label, or something like an AI prompt, which can be shown in the media viewer and searched with \"system:has human-readable metadata\".\n\nThis job has weight 25, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "determine if the file has software/source metadata",
+     "dialogs": [
+      [
+       "information",
+       "This loads the file to see if it has software/source metadata, which can be shown in the media viewer and searched with \"system:has software/source metadata\".\n\nThis job has weight 25, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "determine if the file has an icc profile",
+     "dialogs": [
+      [
+       "information",
+       "This loads the file to see if it has an ICC profile, which is generally applied in hydrus and can be searched with \"system:has icc profile\".\n\nThis job has weight 25, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "fix file read/write permissions",
+     "dialogs": [
+      [
+       "information",
+       "This ensures that files in the file system are readable and writeable. For Linux/macOS users, it specifically sets 644. If you wish to run this job on Linux/macOS, ensure you are first the file owner of all your files.\n\nThis job has weight 25, where a normalised unit of file work has value 100."
+      ]
+     ]
+    },
+    {
+     "job": "delete duplicate neighbours with incorrect file extension",
+     "dialogs": [
+      [
+       "information",
+       "Sometimes, a file metadata regeneration will mean a new filetype and thus a new file extension. If the existing, incorrectly named file is in use, it must be copied rather than renamed, and so there is a spare duplicate left over after the operation. This jobs cleans up the duplicate at a later time.\n\nThis job has weight 25, where a normalised unit of file work has value 100."
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "step": "scheduled work list at the start",
+   "selected": "no files selected yet",
+   "search": "no results yet",
+   "can_add": false,
+   "run_search_enabled": true,
+   "job": 14,
+   "dialogs": [],
+   "rows": []
+  },
+  {
+   "step": "no files",
+   "selected": "0 files selected",
+   "search": "no results yet",
+   "can_add": false,
+   "run_search_enabled": true,
+   "job": 14,
+   "dialogs": [],
+   "rows": []
+  },
+  {
+   "step": "run the default search",
+   "selected": "30 files selected",
+   "search": "30 files found",
+   "can_add": true,
+   "run_search_enabled": true,
+   "job": 14,
+   "dialogs": [],
+   "rows": []
+  },
+  {
+   "step": "all media files",
+   "selected": "31 files selected",
+   "search": "30 files found",
+   "can_add": true,
+   "run_search_enabled": true,
+   "job": 14,
+   "dialogs": [],
+   "rows": []
+  },
+  {
+   "step": "all repository update files",
+   "selected": "0 files selected",
+   "search": "30 files found",
+   "can_add": false,
+   "run_search_enabled": true,
+   "job": 14,
+   "dialogs": [],
+   "rows": []
+  },
+  {
+   "step": "add the file metadata job on all media",
+   "selected": "31 files selected",
+   "search": "30 files found",
+   "can_add": true,
+   "run_search_enabled": true,
+   "job": 0,
+   "dialogs": [
+    [
+     "information",
+     "Jobs added!"
+    ]
+   ],
+   "rows": []
+  },
+  {
+   "step": "add a job on 1001 files, forget it",
+   "selected": "1,001 files selected",
+   "search": "30 files found",
+   "can_add": true,
+   "run_search_enabled": true,
+   "job": 0,
+   "dialogs": [
+    [
+     "question",
+     "Are you sure you want to schedule \"regenerate file metadata\" on 1,001 files?",
+     "do it",
+     "forget it"
+    ]
+   ],
+   "rows": [
+    [
+     "regenerate file metadata",
+     "31"
+    ]
+   ]
+  },
+  {
+   "step": "no files again",
+   "selected": "0 files selected",
+   "search": "30 files found",
+   "can_add": false,
+   "run_search_enabled": true,
+   "job": 1,
+   "dialogs": [],
+   "rows": [
+    [
+     "regenerate file metadata",
+     "31"
+    ]
+   ]
+  }
+ ]
+}

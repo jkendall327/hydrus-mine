@@ -308,7 +308,6 @@ fn export_folders_are_added_edited_and_written() {
     );
 }
 
-// leaf: audit-network-import-folder-tagging
 // leaf: audit-network-tagging-example
 #[test]
 fn an_import_folders_filename_tagging_is_added_edited_and_deleted() {
@@ -418,6 +417,248 @@ fn an_import_folders_filename_tagging_is_added_edited_and_deleted() {
         .clone_strong();
     edit.invoke_tagging_delete(0);
     assert!(listed(&edit).is_empty());
+}
+
+// leaf: audit-network-import-folder-tagging
+#[test]
+fn the_filename_tagging_list_and_its_example_path_follow_the_references_recorded_steps() {
+    // oracle/record_import_folder_tagging.py: the reference's editor, its
+    // service chooser and tagging dialog scripted
+    let recorded = hydrus_testkit::fixture_json("import_folder_tagging.json");
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let work = tempfile::tempdir().unwrap();
+    // a folder like the recorder's first: a text file, a one-byte jpeg, a
+    // png, a folder and a gif
+    let make_folder = |files: &[(&str, &str)]| {
+        let path = tempfile::tempdir_in(work.path()).unwrap().keep();
+        for (name, kind) in files {
+            let full = path.join(name);
+            match *kind {
+                "dir" => std::fs::create_dir(&full).unwrap(),
+                "one byte" => std::fs::write(&full, b"x").unwrap(),
+                "text" => std::fs::write(&full, b"just words").unwrap(),
+                image => {
+                    std::fs::copy(
+                        hydrus_testkit::fixture_path(format!("auto_resolution/{image}")),
+                        &full,
+                    )
+                    .unwrap();
+                }
+            }
+        }
+        path
+    };
+    let folder = make_folder(&[
+        ("a.txt", "text"),
+        ("b.jpg", "one byte"),
+        ("c.png", "p03_a.png"),
+        ("d", "dir"),
+        ("e.gif", "p00_h.gif"),
+    ]);
+    open(&ui, "manage import folders\u{2026}");
+    let list = import_list(&bound);
+    list.invoke_add();
+    let edit = bound
+        .folders
+        .import_edit
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    edit.set_path(folder.to_string_lossy().into_owned().into());
+    // the services to choose from are the reference's tag services
+    let choices: Vec<String> = (0..edit.get_tagging_choices().row_count())
+        .map(|i| edit.get_tagging_choices().row_data(i).unwrap().to_string())
+        .collect();
+    let mut theirs: Vec<String> = recorded["services"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|s| s.as_str().unwrap().to_owned())
+        .collect();
+    let mut ours = choices.clone();
+    ours.sort();
+    theirs.sort();
+    assert_eq!(ours, theirs);
+    let listed = |w: &hydrus_gui::ImportFolderWindow| -> Vec<Vec<String>> {
+        (0..w.get_filename_tagging().row_count())
+            .map(|i| vec![w.get_filename_tagging().row_data(i).unwrap().to_string()])
+            .collect()
+    };
+    let started: Vec<Vec<String>> = recorded["start"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|r| vec![r.as_str().unwrap().to_owned()])
+        .collect();
+    assert_eq!(listed(&edit), started);
+    let dialog = || {
+        bound
+            .folders
+            .filename_tagging
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong)
+    };
+    let pick = |name: &str| i32::try_from(choices.iter().position(|c| c == name).unwrap()).unwrap();
+    let services: Vec<String> = recorded["services"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|s| s.as_str().unwrap().to_owned())
+        .collect();
+    let example_is_recorded = |example: &str, recorded_names: &serde_json::Value| {
+        let names: Vec<&str> = recorded_names
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|n| n.as_str().unwrap())
+            .collect();
+        match std::path::Path::new(example).file_name() {
+            Some(name) => names.contains(&name.to_string_lossy().as_ref()),
+            None => names.is_empty(),
+        }
+    };
+    let first_examples = &recorded["examples"][0]["example_paths"];
+    let mut previous_rows: Vec<String> = Vec::new();
+    for step in recorded["steps"].as_array().unwrap() {
+        let name = step["name"].as_str().unwrap();
+        let warnings = step["warnings"].as_array().unwrap();
+        let dialogs = step["dialogs"].as_array().unwrap();
+        match name {
+            "add the first service" | "add it again" | "add the second service" => {
+                let service = if name == "add the second service" {
+                    &services[1]
+                } else {
+                    &services[0]
+                };
+                edit.set_tagging_choice(pick(service));
+                edit.invoke_tagging_add();
+            }
+            "edit the first" => edit.invoke_tagging_edit(0),
+            "delete the first" => edit.invoke_tagging_delete(0),
+            // (native chooses the service in the box beside the button)
+            "cancel the service choice" => continue,
+            other => panic!("{other}"),
+        }
+        // the warning, as the reference's words
+        match warnings.first() {
+            Some(warning) => {
+                assert_eq!(
+                    edit.get_asking_message().as_str(),
+                    warning.as_str().unwrap(),
+                    "{name}"
+                );
+                edit.invoke_chosen(0);
+            }
+            None => assert!(edit.get_asking_message().is_empty(), "{name}"),
+        }
+        // the tagging dialog, with the example path it was given
+        match (dialogs.first(), dialog()) {
+            (Some(theirs), Some(open)) => {
+                assert_eq!(
+                    open.get_window_title(),
+                    theirs["title"].as_str().unwrap(),
+                    "{name}"
+                );
+                // (the reference lists a folder's files in the file system's
+                // order and takes the first importable; the folder here has two,
+                // so either of them is the example, as in the recording's set)
+                assert!(
+                    example_is_recorded(&open.get_example(), first_examples),
+                    "{name}: {}",
+                    open.get_example()
+                );
+                // the dialog is for the service the step added or edited, as
+                // the recorded list names it (the recorded key is the
+                // reference's own, not a name)
+                let wanted = if name == "edit the first" {
+                    step["rows"][0][0].as_str().unwrap().to_owned()
+                } else {
+                    step["rows"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .map(|r| r[0].as_str().unwrap())
+                        .find(|n| !previous_rows.iter().any(|p| p.as_str() == *n))
+                        .unwrap()
+                        .to_owned()
+                };
+                let shown_services = open.get_services();
+                let index = usize::try_from(open.get_service_index()).unwrap();
+                assert_eq!(
+                    shown_services.row_data(index).unwrap().as_str(),
+                    wanted,
+                    "{name}"
+                );
+                open.invoke_apply();
+            }
+            (None, None) => {}
+            (theirs, ours) => panic!("{name}: {theirs:?} {}", ours.is_some()),
+        }
+        // the list after the step, as the reference's (service names, sorted)
+        let mut shown = listed(&edit);
+        shown.sort();
+        let mut theirs: Vec<Vec<String>> = step["rows"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|r| {
+                r.as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|c| c.as_str().unwrap().to_owned())
+                    .collect()
+            })
+            .collect();
+        theirs.sort();
+        assert_eq!(shown, theirs, "{name}");
+        previous_rows = theirs.into_iter().flatten().collect();
+    }
+    // the example path for other folders: the first importable file by content
+    for example in recorded["examples"].as_array().unwrap() {
+        let name = example["name"].as_str().unwrap();
+        if name.starts_with("twenty-six") {
+            // (the example is the first importable of the directory's first
+            // 25 entries in the file system's order, here and in the
+            // recording alike, so which of 27 entries make the cut is not
+            // the same on two file systems; DIFFERENCES.md)
+            continue;
+        }
+        let files: Vec<(String, &str)> = example["listing"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|n| {
+                let n = n.as_str().unwrap();
+                let kind = match std::path::Path::new(n).extension().and_then(|e| e.to_str()) {
+                    Some("txt") => "text",
+                    Some("jpg") => "one byte",
+                    Some("png") => "p03_a.png",
+                    Some("gif") => "p00_h.gif",
+                    _ => "dir",
+                };
+                (n.to_owned(), kind)
+            })
+            .collect();
+        let refs: Vec<(&str, &str)> = files.iter().map(|(n, k)| (n.as_str(), *k)).collect();
+        let path = make_folder(&refs);
+        edit.set_path(path.to_string_lossy().into_owned().into());
+        // (the services listed by the steps above are still there)
+        assert!(!listed(&edit).is_empty(), "{name}");
+        edit.invoke_tagging_edit(0);
+        let open = dialog().expect("the dialog opens");
+        assert!(
+            example_is_recorded(&open.get_example(), &example["example_paths"]),
+            "{name}: {}",
+            open.get_example()
+        );
+        open.invoke_cancel();
+    }
+    list.invoke_cancel();
 }
 
 /// "browse" beside a folder path, and beside a moved file outcome's

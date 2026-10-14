@@ -252,6 +252,14 @@ search.
   overwrite/delete questions appear inside the owner window. The list sorts
   names casefolded as lowercase (Python's casefold differs for a few letters,
   such as "ß", which we fold to "ss" as it does).
+  Typed text and double-clicks in the favourite editor are compared with the
+  reference's (`oracle/record_favourite_predicates.py`: entering a tag again
+  removes it, a tag takes `system:everything` out, wildcards and negation,
+  and the list's order). Not matched: text beginning "system:" that is not a
+  system predicate shows an error here where the reference's Return enters
+  `system:everything`, and a wildcard such as "sam*" enters the highlighted first
+  suggestion here where the reference's Return entered the wildcard (seen on
+  the basic fixture); neither is in the recording.
 
 - **Dimensions preset verification** separately tracks nine historical first-pass
   controls. The new Qt recording activates actual buttons through the real modal
@@ -848,6 +856,25 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 
 ## Network requests (`hydrus-net`)
 
+- **The `no_proxy` option is honoured.** The reference's own panel says it
+  "DOES NOT WORK UNLESS YOU HAVE A CUSTOM BUILD OF REQUESTS": the option goes
+  into the session's proxies dictionary, where `requests` does not read it (only
+  the `NO_PROXY` environment variable), so with an http proxy set its requests
+  to every host, a host named in the option and the local host included, go
+  through the proxy (`oracle/record_network_job_options.py`). hydrus-rs keeps
+  those hosts direct, as the label says. The leaf is left as it was for that
+  reason.
+- **Retry waits read as the reference's do.** A wait before a retry (a failed
+  connection, a 503, a 429) shows "... - retrying now" or "... - retrying in
+  4.7 seconds", renewed each second, and runs on into the second after its
+  wake time, so a wait of nothing still takes a second, as in the reference.
+- **Domain errors are counted as the reference counts them.** A connection that
+  fails and is tried again counts once for each failure (and once more if it
+  gives up), as does each wait on a server's 429; a status the job only records
+  (a 500, a 451) counts for nothing. Errors are kept per host and port, and a
+  scrub of a bare IP address clears nothing, as in the reference.
+- **The network timeout's connect half is not exercised in tests.** It needs an
+  address that never answers.
 - **Pages are decoded with the web's own decoders.** A charset the server
   states is used as the reference uses it; otherwise, where the reference
   asks chardet, we take valid UTF-8 as UTF-8, then a `<meta>` charset, then
@@ -1087,7 +1114,11 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   hydrus-rs's words too where Python's says more.
 - **The import and export folders dialogs**: an import folder's filename
   tagging is added for a tag service chosen from a list beside "add" (the
-  reference asks which in a dialog), and edited in the "filename tagging"
+  reference asks which in a dialog, which can be cancelled; there is no such
+  step here), the example path for the tagging dialog is the first importable
+  file among the folder's first 25 entries in the file system's order, as the
+  reference's is, so which file that is (recorded: `zz.png` among 26 texts)
+  is not replayed, and edited in the "filename tagging"
   dialog's boxes (see "review files to import"). An export folder's
   query is typed as the Client API's tags rather than through the search
   autocomplete. Its example refresh now queries actual stored media and supplies
@@ -1149,10 +1180,10 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   payload that decodes but can't be understood (whose `{path}` the reference
   never fills in). A hydrus-rs rules png given to the comparator list is a read error there, where the reference would warn which object types it refused.
 - **The file log window**'s "additional urls" don't show the URL a URL class
-  would actually fetch or refer from; trying selected files again never asks
-  the reference's question about erasing the deletion record of a
-  previously deleted file; "open files' locations" for path sources opens
-  the parent folder rather than selecting the file; and the file log menu
+  would actually fetch or refer from; "open files' locations" for path
+  sources opens each file's folder rather than selecting the file in the file
+  manager (the reference's `ClientPaths.OpenFileLocations`, recorded in
+  `oracle/record_file_log_selected.py`); and the file log menu
   of a downloader page's list (not the window) leaves "search for URLs"
   greyed out.
 - **The import options editor** keeps a typed-line field for the tag filtering
@@ -1403,7 +1434,7 @@ native/store/model regression source awaits hosted CI; no Rust runs locally.
 
 - **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh; the id button says "The service id is: N" (the reference's words and ids, recorded) in the window, not in an information dialog. The long service descriptions and repository/IPFS account administration remain unavailable. Local trash clear/undelete, double-confirmed deleted-file-record clearing and all three local rating-clear populations are implemented; bulk rating choices and confirmations use native inline controls rather than Qt popup menus/dialogs. Opening a replacement review retires the previous owner's pending maintenance confirmation.
 
-- **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields (the reference's colour pickers cannot hold an invalid colour; the recorded colours are applied as given) with four live, independently interactive rating examples; named SVG configurations are preserved/edited, with rendering subject to the existing SVG support limits. Remote repository/IPFS/account edits remain unavailable here. Client API listener settings are available, including HTTPS, the normie welcome page and the external URL overrides (see the Client API entry below). A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
+- **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields (the reference's colour pickers cannot hold an invalid colour; the recorded colours are applied as given) with four live, independently interactive rating examples; named SVG stars are chosen from the list of installed and user SVGs and drawn in the editor's examples, on thumbnails, in the viewer and in the preview window, and as the default star where the SVG is not there (as the reference does); Qt and resvg rasterise differently, so the outline is a ring of copies of the SVG rather than the reference's stamped feather, and the tests compare what is painted (70% or more overlap with Qt's) rather than its pixels. The viewer's and preview window's hover popups draw the same shared graphic but have no test of their own. The reference hides the choice when it finds no SVGs; here the installed ones are built in, so it is always offered. Remote repository/IPFS/account edits remain unavailable here. Client API listener settings are available, including HTTPS, the normie welcome page and the external URL overrides (see the Client API entry below). A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
 
 ## Manual file exports
 
@@ -2659,8 +2690,7 @@ controls with the actual bounds and two decimal places; Qt's documented icon /
 counter ratio clamp is disabled in the reference, so no ratio clamp is applied.
 The native preview canvas remains absent, keeping both preview-size leaves
 Partial. The Ratings Options style selector and live example panel remain
-unimplemented; broader Ratings Options and service parents remain Partial. Named SVG rendering retains the existing
-fallback. Numerical examples retain the reference opening click conversion while
+unimplemented; broader Ratings Options and service parents remain Partial. Named SVG rendering is described with the local service management entry. Numerical examples retain the reference opening click conversion while
 star-count changes repaint the stored fraction; the allow-zero checkbox changes
 the saved service configuration, without changing the opening preview conversion.
 This includes the one-star boundary: the preview keeps its opening nonzero scale,
@@ -4146,6 +4176,10 @@ manual save-last-session action and wider debug GUI/style families remain unclai
 
 ## Database maintenance entries
 
+- The GUI process runs no file-maintenance loop; hydrus-cli's daemon does, and
+  the Database menu's "work file jobs during idle / normal time" items set the
+  flags it reads. The tests run the production pass the loop calls, not the loop.
+
 - The native store keeps fewer derived caches (ADR-6), so each maintenance job
   regenerates what serves its purpose: the tag storage/display counts (one
   rebuild serves "all", "just pending" and "missing file repopulation"), the
@@ -4169,6 +4203,8 @@ manual save-last-session action and wider debug GUI/style families remain unclai
   Resyncing tag counts reports "N desynced tag counts in SERVICE!" per tag
   service, where the reference reports surplus or missing files per
   file/tag-service cache. Fixed invalid tags aren't written to a log.
+  The popup does not count tags while it works ("Scanning tags: 60/60", "Fixing bad tags: n/6" in the
+  reference); it shows only the closing line, which matches the reference.
 - The jobs show their result popups but no step-by-step progress text, and
   can't be cancelled once started.
 
@@ -4555,6 +4591,11 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
 - "Simple" means the media is in one location, which may be outside the
   database directory (an imported client's); the reference requires its
   default `client_files`.
+- The "(last N ago)" label of "update database backup" is checked against the
+  reference's source only: its menu is filled by a worker the recorder cannot
+  call (`oracle/record_backup_dialogs.py` records the dialogs, not the menu).
+  Choosing "restore from a database backup" asks the reference's questions and
+  leaves a restart request; the reference's exit and restart is not exercised.
 
 - Restoring refuses the store's own directory, including aliases. Startup takes
   the GUI lock before restoring or opening the database, and restore refuses an
@@ -4572,9 +4613,31 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
 - "manage granularity" runs its progress in an ordinary popup rather than
   a modal dialog, and its questions in button windows.
 - The prefix folder moved first is the first in order, not a random one.
+- The offline-folder granularity scan of a folder holding both layouts is not
+  recorded against the reference (nor are the cancel and error messages of the
+  jobs), so that leaf stays at source-restated.
 - The list selects one location; it sorts by location only.
-- The rebalance runs from a non-modal popup and the window stays open
-  (the reference closes the panel and shows a modal progress dialog).
+- The rebalance runs from a non-modal popup, and closes the panel once it has
+  started, as the reference does (the reference's progress is a modal dialog;
+  its stop times (10 minutes to 1 hour) are not observable in tests, so that
+  leaf stays weak). The custom run time is asked in minutes ("set time to run
+  (minutes)"), not hours and minutes.
+- Removing the last weighted location: the reference warns that it cannot be
+  emptied and then asks to remove it anyway (the warning has no `return`);
+  hydrus-rs stops at the warning.
+- After a removal the reference's list keeps a row selected (Qt moves the
+  selection on); the native list selects none.
+- A thumbnail location that is cleared, and holds no folders, is not listed
+  any more, and "move files now" is not on offer while a location it would
+  move to is missing, as in the reference (`oracle/record_locations_panel.py`).
+
+## Database > file maintenance > clear orphan files
+
+- Moving: the reference moves each orphan as it finds it during the scan;
+  hydrus-rs scans, then moves, saying "moving orphan files: 1/1". The result
+  and the last line are the same. Deleting waits as the reference does (two
+  seconds after the scan, five before each kind) so it can be cancelled, and a
+  cancelled job leaves its popup as it was (`oracle/record_clear_orphans.py`).
 
 
 ## Validation pass: backup and migration failures
@@ -5120,7 +5183,13 @@ Differences:
 
 ### Command palette: unrecorded cases
 
-The palette's media-menu rows and the effect of activating one are recorded only for a page with no files (`oracle/fixtures/command_palette.json`); rows for selected files are checked against the thumbnail menu's own code, not a recording. Favourite searches opened from the palette are compared for page count, synchronisation, sort, collect and (with the option off) the shown page's unchanged name. The palette lists the reference's whole menubar, including actions the menubar hides until a backup location is set ("update database backup", "change database backup location…") and the Help > debug action "review threads"; native has neither. Which of several children a page-of-pages row shows is not recorded either (the recording has one child).
+The palette's media-menu rows and the effect of activating one are recorded only for a page with no files (`oracle/fixtures/command_palette.json`); rows for selected files are replayed against `palette_media_rows.json` (below). Favourite searches opened from the palette are compared for page count, synchronisation, sort, collect and (with the option off) the shown page's unchanged name. The palette lists the reference's whole menubar, including actions the menubar hides until a backup location is set ("update database backup", "change database backup location…") and the Help > debug action "review threads"; native has neither. Which of several children a page-of-pages row shows is not recorded either (the recording has one child).
+
+The palette's media-menu rows for a page with one and with three files selected, for nine queries, and the effect of activating a row on the selection, are replayed against `palette_media_rows.json`; they match the reference's except the two single-file rows "copy bitmap" and "copy thumbnail bitmap" (the bitmap exchange is not ported).
+
+The options search bar's own position (top or bottom of the options window) is not measured against the reference: the recording holds only the field's index in the layout, and the field exposes no geometry to the tests, which read the suggestions' and the page list's positions instead (the page list sits 30 px lower with the field on top, our own field's height). The leaf is left untagged.
+
+The "open files in a new duplicates filter page" command (shortcut command 154) differs from the reference in two ways. In the media viewer the reference then pauses the video (`_MediaFocusWentToExternalProgram`, `ClientGUICanvas.py`); ours leaves it playing. On the thumbnails with nothing selected the reference still opens a page (with no files); ours does nothing, as the key is taken and ignored.
 
 ### Downloading misc options: unrecorded cases
 

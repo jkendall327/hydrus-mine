@@ -342,6 +342,7 @@ async fn flaky(State(s): State<Arc<Server>>, Path(kind): Path<String>) -> Respon
             .header(header::RETRY_AFTER, "0")
             .body(Body::from("slow down"))
             .unwrap(),
+        "always503" => (StatusCode::SERVICE_UNAVAILABLE, "busy").into_response(),
         "404" => (StatusCode::NOT_FOUND, "not here").into_response(),
         "500" => (StatusCode::INTERNAL_SERVER_ERROR, "broken").into_response(),
         _ => (StatusCode::OK, format!("ok after {n}")).into_response(),
@@ -808,12 +809,22 @@ async fn a_domain_with_several_serious_errors_waits() {
         assert!(fetch("404").await.is_err());
     }
     assert!(s.engine.domain_ok(&s.base));
+    // a status the job only records is not a domain event either (recorded:
+    // oracle/fixtures/network_job_options.json, `ok_after_three_500s`)
     for _ in 0..3 {
         match fetch("500").await {
             Err(NetError::Status {
                 kind: StatusKind::Server,
                 ..
             }) => {}
+            other => panic!("{other:?}"),
+        }
+    }
+    assert!(s.engine.domain_ok(&s.base));
+    // a server that stays unavailable through every reattempt is
+    for _ in 0..3 {
+        match fetch("always503").await {
+            Err(NetError::Infrastructure(_)) => {}
             other => panic!("{other:?}"),
         }
     }
@@ -1224,14 +1235,14 @@ async fn runtime_cog_server_retry_domain_scrub_and_retained_error() {
         },
     )
     .unwrap();
-    let mut fail = Request::get(format!("{}/flaky/500", s.base));
+    let mut fail = Request::get(format!("{}/flaky/always503", s.base));
     fail.one_shot = true;
     assert!(engine.fetch(&fail, &Job::new()).await.is_err());
     let snapshot = engine.runtime_snapshot();
     assert!(snapshot.jobs.is_empty());
     assert_eq!(snapshot.errors.len(), 1);
     assert_eq!(snapshot.errors[0].url, fail.url);
-    assert_eq!(snapshot.errors[0].text, "broken");
+    assert_eq!(snapshot.errors[0].text, "busy");
     // Loopback IPs have no registrable domain. The reference's scrub action
     // does not clear that gate; registered-domain wake consumption is asserted
     // in the engine unit test with a synthetic domain and no external requests.

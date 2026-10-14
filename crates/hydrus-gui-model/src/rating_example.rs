@@ -116,6 +116,7 @@ impl Example {
         }
     }
     pub fn control(&self, index: usize, kind: &ServiceKind) -> Option<Control> {
+        let kind_of = kind;
         let sample = self.samples.get(index)?;
         let (kind, colours) = match (sample, kind) {
             (Sample::Like(state), ServiceKind::RatingLike(c)) => (
@@ -146,6 +147,11 @@ impl Example {
             name: LABELS[index].into(),
             kind,
             colours,
+            svg: match kind_of {
+                ServiceKind::RatingLike(c) => ratings::svg_of(&c.appearance),
+                ServiceKind::RatingNumerical(c) => ratings::svg_of(&c.appearance),
+                _ => None,
+            },
         })
     }
     pub fn fraction(&self, index: usize, kind: &ServiceKind) -> String {

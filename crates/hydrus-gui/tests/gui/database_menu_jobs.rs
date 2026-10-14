@@ -241,6 +241,141 @@ fn fix_invalid_tags_from_the_database_menu() {
     drive(Job::FixInvalidTags);
 }
 
+/// The reference's own repair (oracle/record_repair_invalid_tags.py) on the same invalid tags:
+/// what the popup said, and what the tags are called afterwards.
+// leaf: audit-media-database-repair-invalid-tags
+#[test]
+fn fix_invalid_tags_repairs_the_tags_the_reference_repaired_the_same_way() {
+    let recording = hydrus_testkit::fixture_json("repair_invalid_tags.json");
+    let (_dir, store) = basic();
+    let bad: Vec<(String, String)> = recording["bad"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|t| {
+            (
+                t[0].as_str().unwrap().to_owned(),
+                t[1].as_str().unwrap().to_owned(),
+            )
+        })
+        .collect();
+    // ("safe" is already a tag of the fixture, which is why "SAFE" collides once cleaned)
+    let fresh: Vec<(String, String)> = bad.iter().filter(|t| t.1 != "safe").cloned().collect();
+    let seeded = bad.clone();
+    store
+        .write(move |ctx| {
+            let conn = ctx.conn();
+            for (namespace, subtag) in &seeded {
+                let namespace = hydrus_store::master::intern_namespace(conn, namespace)?;
+                let subtag = hydrus_store::master::intern_subtag(conn, subtag)?;
+                conn.execute(
+                    "INSERT OR IGNORE INTO tags (namespace_id, subtag_id) VALUES (?1, ?2)",
+                    rusqlite::params![namespace, subtag],
+                )?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    let tags = |store: &Store| -> Vec<(String, String)> {
+        store
+            .read(|conn| {
+                Ok(conn
+                    .prepare(
+                        "SELECT n.namespace, s.subtag FROM tags t JOIN namespaces n USING (namespace_id)
+                         JOIN subtags s USING (subtag_id) ORDER BY t.tag_id DESC LIMIT ?1",
+                    )?
+                    .query_map([fresh.len() as i64], |r| Ok((r.get(0)?, r.get(1)?)))?
+                    .collect::<Result<Vec<_>, _>>()?)
+            })
+            .unwrap()
+    };
+    let mut before = tags(&store);
+    before.reverse();
+    assert_eq!(before, fresh, "the bad tags are in, oldest first");
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound: Bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let step = |name: &str| {
+        recording["steps"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|s| s["step"] == name)
+            .unwrap()
+            .clone()
+    };
+    let (forget, done) = (step("forget it"), step("do it"));
+    let asked = &done["asked"][0];
+    let slot = &bound.database_maintenance;
+    let open = |ui: &MainWindow| from_menu(ui, "check and repair", Job::FixInvalidTags.label());
+    // the question, in the reference's words; declining changes nothing
+    open(&ui);
+    let question = slot.question().expect("a question");
+    assert_eq!(question.get_message(), asked[1].as_str().unwrap());
+    assert_eq!(question.get_yes_label(), asked[2].as_str().unwrap());
+    assert_eq!(question.get_no_label(), asked[3].as_str().unwrap());
+    assert_eq!(forget["asked"][0], *asked);
+    question.invoke_answered(false);
+    pump(Duration::from_millis(300));
+    let mut unchanged = tags(&store);
+    unchanged.reverse();
+    assert_eq!(unchanged, fresh);
+    // accepting repairs them
+    open(&ui);
+    slot.question().unwrap().invoke_answered(true);
+    let statuses: Vec<String> = done["statuses"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|s| s.as_str().unwrap().to_owned())
+        .collect();
+    let last = statuses.last().unwrap().clone();
+    let deadline = Instant::now() + Duration::from_secs(10);
+    let mut seen: Vec<String> = Vec::new();
+    loop {
+        for text in shown(&store).into_iter().filter_map(|(_, text)| text) {
+            if seen.last() != Some(&text) {
+                seen.push(text);
+            }
+        }
+        if seen.last() == Some(&last) {
+            break;
+        }
+        assert!(
+            Instant::now() < deadline,
+            "the repair never finished: {seen:?}"
+        );
+        pump(Duration::from_millis(5));
+    }
+    for text in &seen {
+        assert!(
+            statuses.contains(text) || text.is_empty(),
+            "{text:?} not in {statuses:?}"
+        );
+    }
+    // (the reference also says "Scanning tags: 60/60 ..." and "Fixing bad tags: n/6" while it
+    // works; the native repair is one transaction and says only how it ended: DIFFERENCES.md)
+    assert_eq!(seen.last(), statuses.last());
+    let wanted: Vec<(String, String)> = recording["after_shutdown"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .rev()
+        .take(fresh.len())
+        .rev()
+        .map(|t| {
+            (
+                t[1].as_str().unwrap().to_owned(),
+                t[2].as_str().unwrap().to_owned(),
+            )
+        })
+        .collect();
+    let mut after = tags(&Store::open(store.dir()).unwrap());
+    after.reverse();
+    assert_eq!(after, wanted);
+}
+
 // leaf: audit-media-menu-database-check-and-repair-fix-logically-inconsistent-mappings
 #[test]
 fn fix_inconsistent_mappings_from_the_database_menu() {

@@ -186,6 +186,7 @@ mod tag_relationships;
 mod tag_relationships_replay;
 
 mod services_editor;
+mod star_svgs;
 
 mod client_api_admin;
 mod client_api_permissions;
@@ -386,6 +387,7 @@ mod options_remember_action;
 mod options_shortcut_sets;
 mod options_system_consumers;
 mod options_viewing_tracking;
+mod palette_media;
 mod preview_audio;
 mod search_pages_favourites;
 mod search_pages_menu;

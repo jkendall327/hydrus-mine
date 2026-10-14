@@ -121,7 +121,6 @@ fn setup(count: usize) -> Setup {
 }
 
 // leaf: audit-network-file-log-copy
-// leaf: audit-network-file-log-open
 #[test]
 fn selected_rows_copy_sources_and_notes_and_open_many_only_after_confirming() {
     let _windows = headless::init();
@@ -354,4 +353,286 @@ fn whole_log_menu_entries_ask_and_change_the_list_as_the_reference_did() {
     }
     // (the recording holds the whole menu with every answer)
     assert_eq!(recorded["actions"].as_array().unwrap().len(), 33);
+}
+
+/// The log's rows as `[data, status code, note]`.
+fn rows_of(store: &hydrus_store::Store, queue: i64) -> Vec<(String, i64, String)> {
+    store
+        .read(move |conn| queues::file_seeds(conn, queue))
+        .unwrap()
+        .into_iter()
+        .map(|s| (s.data, s.status.code(), s.note))
+        .collect()
+}
+
+fn recorded_rows(rows: &serde_json::Value) -> Vec<(String, i64, String)> {
+    rows.as_array()
+        .unwrap()
+        .iter()
+        .map(|row| {
+            (
+                row[0].as_str().unwrap().to_owned(),
+                row[1].as_i64().unwrap(),
+                row[2].as_str().unwrap().to_owned(),
+            )
+        })
+        .collect()
+}
+
+/// Replace the log's seeds with `seeds` (data, status, note, hash).
+fn fill(
+    store: &hydrus_store::Store,
+    queue: i64,
+    seed_type: SeedType,
+    seeds: Vec<(String, i64, String, Option<String>)>,
+) {
+    store
+        .write(move |ctx| {
+            let conn = ctx.conn();
+            let old: Vec<i64> = queues::file_seeds(conn, queue)?
+                .iter()
+                .map(|s| s.id)
+                .collect();
+            queues::remove_file_seeds_by_id(conn, &old)?;
+            let news: Vec<NewFileSeed> = seeds
+                .iter()
+                .map(|(data, _, _, _)| NewFileSeed {
+                    seed_type,
+                    data: data.clone(),
+                    data_for_comparison: data.clone(),
+                    source_time: None,
+                    referral_url: None,
+                    meta: FileSeedMeta::default(),
+                })
+                .collect();
+            queues::add_file_seeds(conn, queue, &news, false, 0)?;
+            for (n, mut seed) in queues::file_seeds(conn, queue)?.into_iter().enumerate() {
+                seed.status = SeedStatus::from_code(seeds[n].1).unwrap();
+                seed.note.clone_from(&seeds[n].2);
+                if let Some(hash) = &seeds[n].3 {
+                    seed.meta.set_hash("sha256", hash.clone());
+                }
+                queues::update_file_seed(conn, &seed)?;
+            }
+            Ok(())
+        })
+        .unwrap();
+}
+
+// leaf: audit-network-file-log-retry
+#[test]
+fn trying_selected_rows_again_or_skipping_them_asks_and_erases_as_the_reference_did() {
+    let recorded = hydrus_testkit::fixture_json("file_log_selected.json");
+    let _windows = headless::init();
+    let (_dirs, _copied, _launched, ui, bound, log) = setup(3);
+    log.invoke_close_window();
+    let store = bound.pages.borrow().store().clone();
+    let queue = bound
+        .current
+        .borrow()
+        .borrow()
+        .importer()
+        .map(|i| i.queue)
+        .unwrap();
+    // the recorder deleted a file of the client, and the log knows it by hash
+    let (victim_id, victim) = store
+        .read(|conn| {
+            let id: hydrus_core::HashId = conn.query_row(
+                "SELECT hash_id FROM files ORDER BY hash_id LIMIT 1",
+                [],
+                |r| r.get(0),
+            )?;
+            Ok((id, hydrus_store::master::hash(conn, id)?.unwrap()))
+        })
+        .unwrap();
+    let file_state = |store: &hydrus_store::Store| -> (bool, bool) {
+        store
+            .write_content(move |w| {
+                let ids = [victim_id];
+                let mut record = false;
+                for domain in w.roles().local.clone() {
+                    record |= !w.filter_deleted(domain, &ids)?.is_empty();
+                }
+                Ok((!w.filter_current(w.roles().trash, &ids)?.is_empty(), record))
+            })
+            .unwrap()
+    };
+    let delete_it = |store: &hydrus_store::Store| {
+        store
+            .write_content(move |w| {
+                if w.filter_current(w.roles().trash, &[victim_id])?.is_empty() {
+                    w.delete_files(w.roles().combined_local_media, &[victim_id], Some("test"))?;
+                }
+                Ok(())
+            })
+            .unwrap();
+    };
+    let start = |store: &hydrus_store::Store| {
+        let seeds = recorded["start"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .enumerate()
+            .map(|(n, row)| {
+                (
+                    row[0].as_str().unwrap().to_owned(),
+                    row[1].as_i64().unwrap(),
+                    row[2].as_str().unwrap().to_owned(),
+                    (n == 0).then(|| victim.to_hex()),
+                )
+            })
+            .collect();
+        fill(store, queue, SeedType::Url, seeds);
+    };
+    let select = |log: &FileLogWindow, rows: &serde_json::Value| {
+        for (n, row) in rows.as_array().unwrap().iter().enumerate() {
+            log.invoke_row_clicked(i32::try_from(row.as_u64().unwrap()).unwrap(), n > 0, false);
+        }
+    };
+    let mut cases: Vec<(String, &serde_json::Value, &str)> = recorded["try_again"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|c| (c["name"].as_str().unwrap().to_owned(), c, "try again"))
+        .collect();
+    cases.push(("skip".into(), &recorded["skip"], "skip"));
+    // each question is also dismissed instead of answered "no": the
+    // reference's yes/no dialog returns "no" when closed
+    let mut runs = Vec::new();
+    for (name, case, entry) in cases {
+        runs.push((name.clone(), case, entry, false));
+        if !case["asked"].as_array().unwrap().is_empty() && !case["answer"].as_bool().unwrap() {
+            runs.push((format!("{name} (dismissed)"), case, entry, true));
+        }
+    }
+    for (name, case, entry, dismiss) in runs {
+        delete_it(&store);
+        start(&store);
+        assert_eq!(rows_of(&store, queue), recorded_rows(&recorded["start"]));
+        ui.invoke_open_file_log();
+        let log = bound.file_log.borrow().as_ref().unwrap().clone_strong();
+        select(&log, &case["selected"]);
+        log.invoke_row_menu(
+            i32::try_from(case["selected"][0].as_u64().unwrap()).unwrap(),
+            50.0,
+            50.0,
+        );
+        choose(&log, 0, entry);
+        let asked = case["asked"].as_array().unwrap();
+        assert_eq!(log.get_asking(), !asked.is_empty(), "{name}");
+        if let Some(question) = asked.first() {
+            assert_eq!(
+                log.get_asking_message(),
+                question.as_str().unwrap(),
+                "{name}"
+            );
+            assert_eq!(
+                rows_of(&store, queue),
+                recorded_rows(&recorded["start"]),
+                "{name}: unchanged until answered"
+            );
+            if dismiss {
+                log.invoke_cancelled();
+            } else {
+                log.invoke_chosen(i32::from(!case["answer"].as_bool().unwrap()));
+            }
+        }
+        assert_eq!(
+            rows_of(&store, queue),
+            recorded_rows(&case["after"]),
+            "{name}"
+        );
+        let after = &case["file_after"];
+        assert_eq!(
+            file_state(&store),
+            (
+                after["trashed"].as_bool().unwrap(),
+                after["deleted_record"].as_bool().unwrap()
+            ),
+            "{name}: the file in the client"
+        );
+        log.invoke_close_window();
+    }
+}
+
+// leaf: audit-network-file-log-open
+#[test]
+fn opening_selected_sources_launches_what_the_reference_opened() {
+    let recorded = hydrus_testkit::fixture_json("file_log_selected.json");
+    let _windows = headless::init();
+    let (_dirs, _copied, launched, ui, bound, log) = setup(3);
+    log.invoke_close_window();
+    let store = bound.pages.borrow().store().clone();
+    let queue = bound
+        .current
+        .borrow()
+        .borrow()
+        .importer()
+        .map(|i| i.queue)
+        .unwrap();
+    for case in recorded["open"].as_array().unwrap() {
+        let name = case["name"].as_str().unwrap();
+        let sources: Vec<String> = case["sources"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|s| s.as_str().unwrap().to_owned())
+            .collect();
+        let paths = sources.iter().all(|s| !s.starts_with("http"));
+        fill(
+            &store,
+            queue,
+            if paths { SeedType::Path } else { SeedType::Url },
+            sources
+                .iter()
+                .map(|s| (s.clone(), 0, String::new(), None))
+                .collect(),
+        );
+        launched.borrow_mut().clear();
+        ui.invoke_open_file_log();
+        let log = bound.file_log.borrow().as_ref().unwrap().clone_strong();
+        log.invoke_row_clicked(0, false, false);
+        log.invoke_row_clicked(i32::try_from(sources.len() - 1).unwrap(), false, true);
+        log.invoke_row_menu(0, 50.0, 50.0);
+        choose(&log, 0, if paths { "open files" } else { "open URLs" });
+        let asked = case["asked"].as_array().unwrap();
+        assert_eq!(log.get_asking(), !asked.is_empty(), "{name}");
+        if let Some(question) = asked.first() {
+            assert_eq!(
+                log.get_asking_message(),
+                question.as_str().unwrap(),
+                "{name}"
+            );
+            log.invoke_chosen(i32::from(!case["answer"].as_bool().unwrap()));
+        }
+        // URLs go to the browser as they are; for paths the reference was
+        // given the files to show in the file manager and here each file's
+        // folder is opened
+        let expected: Vec<String> = if paths {
+            case["locations"][0]
+                .as_array()
+                .map(|files| {
+                    files
+                        .iter()
+                        .map(|f| {
+                            std::path::Path::new(f.as_str().unwrap())
+                                .parent()
+                                .unwrap()
+                                .to_string_lossy()
+                                .into_owned()
+                        })
+                        .collect()
+                })
+                .unwrap_or_default()
+        } else {
+            case["urls"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|u| u.as_str().unwrap().to_owned())
+                .collect()
+        };
+        assert_eq!(*launched.borrow(), expected, "{name}");
+        log.invoke_close_window();
+    }
 }

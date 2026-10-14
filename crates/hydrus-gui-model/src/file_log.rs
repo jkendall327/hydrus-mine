@@ -595,6 +595,10 @@ pub fn delete_question(n: usize) -> String {
     )
 }
 
+/// What trying again asks when a selected file was refused as previously
+/// deleted and its file is known.
+pub const ERASE_DELETION_RECORDS_QUESTION: &str = "One or more of these files did not import due to being previously deleted. They will likely fail again unless you erase those deletion records. Would you like to do this now?";
+
 /// What opening many selected asks first.
 pub const OPEN_MANY_QUESTION: &str =
     "You have many objects selected--are you sure you want to open them all?";

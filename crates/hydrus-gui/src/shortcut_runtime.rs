@@ -140,7 +140,15 @@ fn settings(store: &Store) -> Settings {
 pub(crate) type GridContent =
     Rc<RefCell<Option<Rc<dyn Fn(&hydrus_core::shortcuts::ContentCommand) -> bool>>>>;
 
-pub(crate) fn main(window: &MainWindow, store: Arc<Store>, grid: GridContent) -> Route {
+/// What runs a simple command (by its number) on the thumbnails selected; whether it did.
+pub(crate) type GridSimple = Rc<RefCell<Option<Rc<dyn Fn(i32) -> bool>>>>;
+
+pub(crate) fn main(
+    window: &MainWindow,
+    store: Arc<Store>,
+    grid: GridContent,
+    grid_simple: GridSimple,
+) -> Route {
     let route = Route::default();
     let active = route.1.clone();
     window.on_shortcut_key({
@@ -169,8 +177,21 @@ pub(crate) fn main(window: &MainWindow, store: Arc<Store>, grid: GridContent) ->
                 Some(7) => window.invoke_close_page(),
                 Some(56) => window.invoke_new_page(),
                 Some(_) => return false,
-                // the thumbnails take the "media" set's tag and rating commands
+                // the thumbnails take the "media" and "thumbnails" sets' simple commands
+                // and the "media" set's tag and rating commands
                 None => {
+                    if window.get_grid_focused() {
+                        let simple = grid_simple.borrow().clone();
+                        if let Some(simple) = simple {
+                            for set in ["media", "thumbnails"] {
+                                if let Some(action) = settings.command(set, &gesture)
+                                    && simple(action)
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
                     let content = grid.borrow().clone();
                     return match (window.get_grid_focused(), content) {
                         (true, Some(content)) => settings
@@ -214,11 +235,13 @@ pub(crate) fn viewer(
     canvas: crate::viewing_tracking::CanvasTracker,
     content: &Rc<dyn Fn(&hydrus_core::shortcuts::ContentCommand) -> bool>,
     custom: &Rc<RefCell<Vec<String>>>,
+    simple: &Rc<dyn Fn(i32) -> bool>,
 ) -> Route {
     let route = Route::default();
     let execute: Rc<dyn Fn(i32) -> bool> = Rc::new({
         let weak = window.as_weak();
         let canvas = canvas.clone();
+        let simple = simple.clone();
         move |action| {
             if !canvas.active() {
                 return false;
@@ -235,7 +258,8 @@ pub(crate) fn viewer(
                 101 => window.invoke_zoom(1, false, 0.0, 0.0),
                 102 => window.invoke_zoom(-1, false, 0.0, 0.0),
                 92 => window.invoke_toggle_fullscreen(),
-                _ => return false,
+                // the commands the application handles (open in a new duplicates page)
+                _ => return simple(action),
             }
             true
         }

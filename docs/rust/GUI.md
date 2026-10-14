@@ -164,9 +164,12 @@ as Qt's do; a press anywhere else closes them. What works so far:
   and asks again, and asks before overwriting one that exists, "no,
   choose another name" asking again; a session's own entry asks whether to
   overwrite it; a session saved is a copy of the pages, with their files,
-  so it stays as saved while the pages change), "clear and load" (asking
+  so it stays as saved while the pages change, importers included: appended
+  from the menu twice they are two copies of the importer as it was saved,
+  `tests/gui/menu_bar.rs` against `session_importers.json`), "clear and load" (asking
   first, then, if a downloader page objects, asking again with the
-  reference's words for every page's objection; the pages closed are
+  reference's words for every page's objection (recorded in
+  `sessions_menu.json`; replayed against the model only); the pages closed are
   gone, not kept to reopen, and the session's pages are at the top), and
   deleting one (asking first); the page chooser; a new search page on each
   local file domain, the trash or a file repository (searching the tag
@@ -321,6 +324,10 @@ copying every source. Retrying failures, deleting whole statuses and
 reversing ask the reference's questions first (retrying ignored files offers
 its four buttons: all, 403s, 404s, blacklisted), and each entry's effect on a
 list holding every status is as `oracle/record_file_log_effects.py` recorded.
+Trying again files that were deleted asks whether to erase their deletion
+records first (and take the files out of the trash); "yes" does, either answer
+(or closing the question) tries the selected files again, as
+`oracle/record_file_log_selected.py` recorded.
 Its actions change the importer at once, as the
 reference's frame does. The rows and menus are as
 `oracle/record_file_log.py` recorded the reference's. Windows' own
@@ -493,6 +500,20 @@ Enter key enters them (entering one again removes it, a negated tag replaces
 its positive, the list sorted as the reference's, text that doesn't start with
 "system:" taken as a tag), and the folder runs the search they make, as
 `oracle/record_export_folder_predicates.py` recorded.
+
+When "apply" saves an import folder, a new path starts a new file log and other
+allowed filetypes forget its ignored files so they are looked at again
+(`ImportFolder.SetTuple`, which runs after the dialog's own file log is set, so
+the new path's empty log wins over edits made in the dialog; the filetype
+change is recorded in `oracle/record_import_folder_filetypes.py`, the path
+change follows the reference's source and is not recorded). The folders do their work when their edited
+schedule says (`oracle/record_folder_schedule.py`: regular period, run or check
+now, paused, which popups they show, and what they leave of the schedule
+afterwards), skip the files modified more recently than the skip period and
+veto the files of filetypes not allowed with the reference's notes
+(`oracle/record_import_folder_filetypes.py`), and an export folder's sidecar
+overwrite options decide which existing sidecars its run replaces
+(`oracle/record_export_folder_overwrite.py`).
 
 File > import/export folders > "check import folder now" and "run export folder now" flag a named folder, or all of them with "check all" / "run all", to be checked or run at the scheduler's next pass. Checking a folder also unpauses it, as the reference's `CheckNow` does. While the folders are paused under file > pause, the entries still flag the folders but say that they are paused ("Import folders are currently paused under the 'file' menu. Please unpause them and try this again.", and the export equivalent), as the reference does (`oracle/record_folder_runs.py`).
 
@@ -1248,7 +1269,7 @@ search" page on all my files); open → in a new page (locked to the files,
 with the page's sort and collect), in a
 new duplicate filter page (a duplicates page searching a `system:hash` of
 them, on all my files unless hydrus's
-`open_files_to_duplicate_filter_uses_all_my_files` was off), similar
+`open_files_to_duplicate_filter_uses_all_my_files` was off; with "switch to main window when creating new file search page from media viewer" on, the main window comes forward; the "open files in a new duplicates filter page" shortcut command does the same for the selected thumbnails and, in the media viewer, for the file shown, as recorded in `open_in_duplicates.json`), similar
 files in a new page (for a focused still
 image: a new page searching `system:similar to` the selected still images
 at the reference's exact match, very similar, similar or speculative
@@ -1512,7 +1533,7 @@ ratings, each name bold over its text, while the pointer is over them, as
 the reference's notes hover frame does. With the pointer near the window's top right, the file's ratings show
 there, as in the reference's top-right hover frame: each like/dislike
 service, then each numerical, then each inc/dec, in its service's shape
-(a named SVG is drawn as the fat star) and colours, at your viewer rating
+(a named SVG is drawn from the SVG, or as the fat star when there is none of that name) and colours, at your viewer rating
 sizes. A left click likes (again, unrates), a right click dislikes; on
 stars, a left click (or drag) sets the stars there and a right click
 unrates; on an inc/dec, left adds one and right takes one away.
@@ -1946,6 +1967,8 @@ autocomplete options, sessions, shortcut sets, recent tags.
   page with a thumbnail grid over a real library, is where that is judged.
 
 Services → review opens the service registry with each local and built-in service's name, type, database id, service key copying and refresh. File-domain sizes and deleted counts, tag mapping/tag/file counts, and rated-file counts come from a consistent native store read and match `oracle/record_services.py`. Refresh retains the selected key. Local trash review now offers confirmed clear/undelete actions and local rating review offers confirmed deleted/non-local/all-file clearing; unavailable remote administration actions retain an explicit explanation.
+
+The star rating editors choose the kind of star as the reference's do: "shapes" or "svgs" (offered only when there are SVGs), a shape list, and an svg list of the SVGs there are, the installed ones and the user's own in `static/star_shapes` of the database directory, in human order. An SVG the service names that is not there leaves the first chosen. The four example displays, the thumbnails and the viewer's and preview window's ratings draw an SVG star as its opaque pixels in the fill colour inside the border colour (`oracle/record_star_svgs.py`).
 
 Services → edit opens the manage services list (`services_editor`, `services_editor_window`, `services_editor.slint`). Add local file, local tag, like/dislike, numerical and inc/dec rating services; edit their names and rating display colours, shapes/SVG names, thumbnail flags, stars, zero, padding and fraction placement. Names acquire casefolded duplicate suffixes. Child editors and the list hold changes until their apply buttons; either cancel forgets its changes. Deletion asks before staging and again before Apply, rejects nonempty local file domains and the last local file/tag domain, and rechecks inside the atomic write. Apply republishes the registry/graphs, reconciles deleted-domain membership, rebuilds tag counts and invalidates visible thumbnails. It refreshes the current selection's tags even on a locked page and refreshes an open viewer's tags when deletion changes sibling or parent display. Concurrent service changes reject the stale editor without partial writes.
 
@@ -5158,7 +5181,9 @@ db" popup ending "backup complete!". "change database backup location"
 picks again. "restore from a database backup" picks a backup, asks, and
 restarts, restoring it before the store opens. A client with media in
 several locations shows "database is stored in multiple locations", whose
-note explains. `tests/model/database_backup.rs` and hydrus-store's
+note explains. The messages and questions of setting up, updating and restoring are replayed against
+`oracle/fixtures/backup_dialogs.json` (the reference's own dialogs, scripted answers) in
+`tests/gui/database_backup_menu.rs`. `tests/model/database_backup.rs` and hydrus-store's
 `backup` tests cover the menu, texts, mirror, backup and restore. Restore rejects
 its own database directory and waits until startup owns the GUI lock; an active
 serving process prevents it. The replacement database is copied before the old
@@ -5167,6 +5192,12 @@ tests cover rejected aliases, failed copies, request retention and serving locks
 startup tests cover the competing GUI and a new-store lease.
 
 ## Database > locations
+
+Every step of the reference's locations panel and of its granularity window
+(adding, weighting and removing locations, max sizes, the thumbnail location,
+"move files now" and its questions, both migrations) is replayed against
+recordings of the reference's own panels: `oracle/fixtures/locations_panel.json`
+and `granularity_panel.json`, in `tests/gui/database_locations_menu.rs`.
 
 Database > locations opens the reference's "database locations" window: the
 advanced-use warning, the install, database and media/thumbnail size lines,
@@ -5197,6 +5228,12 @@ alone. hydrus-store's `granularity` tests cover both ways, the scan, and an
 undone cancel.
 
 ## Database > file maintenance > clear orphan files
+
+Its questions, the popup's lines, what is moved or deleted and the cancel are
+replayed against `oracle/fixtures/clear_orphans.json`
+(`tests/gui/database_orphan_files.rs`). The "add new work" tab and the invalid
+tag repair are likewise replayed (`file_maintenance_new.json`,
+`repair_invalid_tags.json`).
 
 "clear orphan files" asks the reference's question with "move them
 somewhere", "delete them" and "forget it"; moving picks a folder. A worker

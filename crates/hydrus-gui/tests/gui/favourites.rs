@@ -12,7 +12,6 @@ use hydrus_gui::{MainWindow, Pages, SearchPage, bind, headless};
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
 
-// leaf: audit-options-search-star-load
 #[test]
 fn a_favourite_search_loads_into_the_page() {
     let legacy = hydrus_testkit::legacy_fixture("basic");
@@ -104,7 +103,6 @@ fn pane_lines(ui: &MainWindow, pane: usize) -> Vec<String> {
         .collect()
 }
 
-// leaf: audit-options-search-star-load
 #[test]
 fn a_favourite_s_collect_collects_the_page() {
     use hydrus_core::pages::PageCollect;
@@ -160,6 +158,13 @@ use hydrus_core::ServiceKey;
 use hydrus_core::pages::{FavouriteSearch, PageCollect, PageSort, PageSortBy, SortSettings};
 use hydrus_gui::favourites::{self, Describe, Edit, Manager};
 use hydrus_gui::main_menu::Entry;
+
+// `CC.SORT_FILES_BY_*` (ClientConstants.py) as `PageSortBy::System` takes them
+const SORT_FILES_BY_FILESIZE: i64 = 0;
+const SORT_FILES_BY_IMPORT_TIME: i64 = 2;
+const SORT_FILES_BY_WIDTH: i64 = 5;
+// `ClientTags.TAG_DISPLAY_DISPLAY_ACTUAL`
+const TAG_DISPLAY_DISPLAY_ACTUAL: i64 = 1;
 
 fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
@@ -228,13 +233,13 @@ fn recorded_rows(store: &Store, recorded: &Json) -> Vec<FavouriteSearch> {
                 spec => {
                     let by = match spec[0].as_str().unwrap() {
                         "system" => PageSortBy::System(match spec[1].as_str().unwrap() {
-                            "SORT_FILES_BY_IMPORT_TIME" => 2,
-                            "SORT_FILES_BY_WIDTH" => 5,
+                            "SORT_FILES_BY_IMPORT_TIME" => SORT_FILES_BY_IMPORT_TIME,
+                            "SORT_FILES_BY_WIDTH" => SORT_FILES_BY_WIDTH,
                             other => panic!("{other}"),
                         }),
                         "namespaces" => PageSortBy::Namespaces {
                             namespaces: strings(&spec[1]),
-                            tag_display_type: 1,
+                            tag_display_type: TAG_DISPLAY_DISPLAY_ACTUAL,
                         },
                         _ => PageSortBy::Rating(service_key(store, spec[1].as_str().unwrap())),
                     };
@@ -534,8 +539,187 @@ fn the_edit_dialog_gives_back_what_the_reference_s_does() {
     }
 }
 
+// leaf: audit-options-search-star-load
+#[test]
+fn star_menu_entries_load_search_sort_and_collect_as_the_reference_does() {
+    // (`record_favourite_load.py`: the reference's autocomplete given each
+    // favourite as the star menu's entries do, after the page has searched)
+    let fixture = hydrus_testkit::fixture_json("favourite_load.json");
+    let (_dirs, store) = store();
+    let base = fixture_favourites(&store)[0].search.clone();
+    let rows: Vec<FavouriteSearch> = fixture["rows"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|row| {
+            let mut search = base.clone();
+            let mut tags = vec!["system:inbox".to_owned()];
+            tags.extend(strings(&row[1]));
+            search.predicates = tags
+                .iter()
+                .map(|t| {
+                    hydrus_search::parse_api_search(&json!([t]))
+                        .unwrap()
+                        .remove(0)
+                })
+                .collect();
+            let sort = match &row[3] {
+                Json::Null => None,
+                spec => Some(PageSort {
+                    tag_context: hydrus_core::search::context::TagContext::default(),
+                    by: PageSortBy::System(match spec[0].as_str().unwrap() {
+                        "SORT_FILES_BY_FILESIZE" => SORT_FILES_BY_FILESIZE,
+                        "SORT_FILES_BY_IMPORT_TIME" => SORT_FILES_BY_IMPORT_TIME,
+                        "SORT_FILES_BY_WIDTH" => SORT_FILES_BY_WIDTH,
+                        other => panic!("{other}"),
+                    }),
+                    ascending: spec[1].as_bool().unwrap(),
+                }),
+            };
+            let collect = match &row[4] {
+                Json::Null => None,
+                spec => Some(PageCollect {
+                    namespaces: strings(spec),
+                    ..PageCollect::default()
+                }),
+            };
+            FavouriteSearch {
+                folder: None,
+                name: row[0].as_str().unwrap().to_owned(),
+                search,
+                synchronised: row[2].as_bool().unwrap(),
+                sort,
+                collect,
+            }
+        })
+        .collect();
+    store
+        .write(|ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::settings::FavouriteSearches(rows),
+            )
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let state = || -> Json {
+        let current = bound.current.borrow();
+        let page = current.borrow();
+        let mut predicates = page.predicates();
+        predicates.sort();
+        json!({
+            "predicates": predicates,
+            "synchronised": page.synchronised(),
+            "sort": hydrus_gui_model::sort::sort_text(&store, page.sort()),
+            "collect_namespaces": page.collect().namespaces,
+            "files": page.files().len(),
+        })
+    };
+    let mut differences = Vec::new();
+    let initial = &fixture["initial"];
+    let ours = state();
+    for key in ["predicates", "synchronised", "sort", "collect_namespaces"] {
+        if ours[key] != initial[key] {
+            differences.push(format!("initial {key}: {} not {}", ours[key], initial[key]));
+        }
+    }
+    for load in fixture["loads"].as_array().unwrap() {
+        let name = load["name"].as_str().unwrap();
+        ui.invoke_favourites_menu_requested(10.0, 100.0);
+        let line = pane_lines(&ui, 0)
+            .iter()
+            .position(|l| l == name)
+            .unwrap_or_else(|| panic!("no entry {name}"));
+        ui.invoke_menu_line_clicked(0, i32::try_from(line).unwrap(), 0.0, 0.0, 0.0);
+        let ours = state();
+        for key in [
+            "predicates",
+            "synchronised",
+            "sort",
+            "collect_namespaces",
+            "files",
+        ] {
+            if ours[key] != load["state"][key] {
+                differences.push(format!(
+                    "{name} {key}: {} not {}",
+                    ours[key], load["state"][key]
+                ));
+            }
+        }
+    }
+    assert!(differences.is_empty(), "{}", differences.join("\n"));
+}
+
+#[test]
+fn typed_predicates_and_double_clicks_edit_the_search_as_the_references_editor_does() {
+    // (`record_favourite_predicates.py`: the reference's editor on a search of
+    // "blue eyes", given typed text and Return, and double-clicks on its list)
+    let fixture = hydrus_testkit::fixture_json("favourite_predicates.json");
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    bound
+        .current
+        .borrow()
+        .borrow_mut()
+        .add_predicate("blue eyes");
+    // "save this search" opens the editor on the page's search
+    ui.invoke_favourites_menu_requested(10.0, 100.0);
+    ui.invoke_menu_line_clicked(0, 2, 0.0, 0.0, 0.0);
+    let window = bound
+        .favourites
+        .edit
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong)
+        .expect("the edit dialog open");
+    let shown = |window: &hydrus_gui::FavouriteEditWindow| -> Vec<String> {
+        window
+            .get_predicates()
+            .iter()
+            .map(|p| p.to_string())
+            .collect()
+    };
+    let mut differences = Vec::new();
+    for step in fixture["steps"].as_array().unwrap() {
+        let what = step["step"].as_array().unwrap();
+        match what[0].as_str().unwrap() {
+            "initial" => {}
+            "type" => {
+                window.set_typed(what[1].as_str().unwrap().into());
+                window.invoke_typed_accepted();
+                if window.get_typed() != step["typed_left"].as_str().unwrap() {
+                    differences.push(format!("{what:?}: text left {:?}", window.get_typed()));
+                }
+                // (the reference says nothing of text it can't use)
+                if window.get_error().is_empty() != step["messages"].as_array().unwrap().is_empty()
+                {
+                    differences.push(format!("{what:?}: message {:?}", window.get_error()));
+                }
+            }
+            "double click" => window.invoke_predicate_removed(what[1].as_i64().unwrap() as i32),
+            other => panic!("unknown step {other}"),
+        }
+        let want: Vec<String> = step["shown"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|p| p.as_str().unwrap().to_owned())
+            .collect();
+        if shown(&window) != want {
+            differences.push(format!(
+                "{what:?}: drawn {:?}, not {want:?}",
+                shown(&window)
+            ));
+        }
+    }
+    assert!(differences.is_empty(), "{}", differences.join("\n"));
+}
+
 // leaf: audit-options-search-star-manage
-// leaf: audit-options-favourites-edit-predicates
 // leaf: audit-options-favourites-list-apply
 // leaf: audit-options-favourites-list-delete
 // leaf: audit-options-favourites-list-rows

@@ -7011,6 +7011,60 @@ fn the_suggested_tags_layout_chosen_in_options_reaches_manage_tags_as_the_refere
     }
 }
 
+// (untagged: the search field's own position is not measured, see DIFFERENCES.md)
+#[test]
+fn the_search_bar_and_its_suggestions_sit_where_the_option_puts_them() {
+    use crate::common::widgets;
+    use hydrus_store::settings::OptionsPreferences;
+    let recorded = hydrus_testkit::fixture_json("options_preferences.json");
+    let windows = headless::init();
+    let mut first_row = std::collections::BTreeMap::new();
+    for case in recorded["cases"].as_array().unwrap() {
+        let top = case["top"].as_bool().unwrap();
+        let (_dirs, store) = store();
+        let seeded = OptionsPreferences {
+            remember_panel: false,
+            last_panel: "gui".into(),
+            search_at_top: top,
+        };
+        store
+            .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &seeded))
+            .unwrap();
+        let ui = MainWindow::new().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        widgets::lay_out(window.window(), 1000.0, 700.0);
+        show_page(&window, "gui");
+        window.invoke_search_edited("export".into());
+        // (laid out and painted, as the window is on screen)
+        let _image = headless::render(&windows.get(windows.count() - 1).unwrap(), 1000, 700);
+        let matches: Vec<String> = window.get_matches().iter().map(|m| m.to_string()).collect();
+        assert!(!matches.is_empty(), "the search finds something");
+        // where things are on the window, by what the user reads: the first suggestion, the
+        // first page in the list, the apply button
+        let suggestion = widgets::position(window.window(), &matches[0], 0).y;
+        let apply = widgets::position(window.window(), "apply", 0).y;
+        let list_row = widgets::position(window.window(), "gui", 0).y;
+        if top {
+            // the suggestions drop from a field at the top, above the page list's first rows
+            assert!(
+                suggestion < list_row,
+                "case {case}: {suggestion} {list_row}"
+            );
+        } else {
+            // the suggestions rise from a field at the bottom, above the apply row
+            assert!(
+                suggestion > list_row && suggestion < apply,
+                "case {case}: {suggestion} {list_row} {apply}"
+            );
+        }
+        first_row.insert(top, list_row);
+    }
+    // a field at the top takes 30 pixels from the list, at the bottom it takes them below
+    assert!((first_row[&true] - first_row[&false] - 30.0).abs() < 0.5);
+}
+
 /// The options window's search and Apply/Cancel, replayed from
 /// `oracle/record_options_apply_search.py` (the real `ManageOptionsPanel`).
 fn known_prefixes(key: &str) -> Vec<(usize, String)> {

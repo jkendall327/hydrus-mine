@@ -380,7 +380,6 @@ fn the_pointer_opens_menus_and_chooses_from_them() {
 // leaf: audit-options-session-name
 // leaf: audit-options-session-overwrite
 // leaf: audit-options-session-cancel
-// leaf: audit-options-session-persist
 // leaf: audit-options-menu-menu-pages-sessions-save-saved-session
 // leaf: audit-options-menu-menu-pages-as-new-session
 #[test]
@@ -500,6 +499,234 @@ fn sessions_are_saved_from_the_pages_menu() {
     assert_eq!(
         saved("my session").unwrap().pages.len(),
         live.pages.len() + 1
+    );
+}
+
+// leaf: audit-options-session-persist
+#[test]
+fn a_saved_session_holds_clones_of_the_importers_as_they_were_as_the_reference_saves_them() {
+    use hydrus_gui::page_chooser::NewPage;
+    use hydrus_store::queues::{
+        self, FileSeedMeta, GallerySeedMeta, NewFileSeed, NewGallerySeed, SeedStatus, SeedType,
+    };
+    use hydrus_store::sessions;
+    // (`record_session_importers.py`: a URL importer with two file seeds, one
+    // failed, and a failed gallery seed, saved as a session, then changed)
+    let fixture = hydrus_testkit::fixture_json("session_importers.json");
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    (bound.open_page)(&NewPage::Urls);
+    let queue = match &bound.pages.borrow().shown().content {
+        hydrus_core::pages::PageContent::Downloader { queues, .. } => queues[0],
+        _ => panic!("a URL importer"),
+    };
+    let initial = &fixture["initial"];
+    store
+        .write({
+            let initial = initial.clone();
+            move |ctx| {
+                let conn = ctx.conn();
+                queues::set_paused(
+                    conn,
+                    queue,
+                    Some(initial["paused"].as_bool().unwrap()),
+                    None,
+                )?;
+                for recorded in initial["files"].as_array().unwrap() {
+                    let url = recorded["url"].as_str().unwrap().to_owned();
+                    queues::add_file_seeds(
+                        conn,
+                        queue,
+                        &[NewFileSeed {
+                            seed_type: SeedType::Url,
+                            data: url.clone(),
+                            data_for_comparison: url,
+                            source_time: None,
+                            referral_url: None,
+                            meta: FileSeedMeta::default(),
+                        }],
+                        false,
+                        100,
+                    )?;
+                }
+                let mut seeds = queues::file_seeds(conn, queue)?;
+                for (seed, recorded) in seeds.iter_mut().zip(initial["files"].as_array().unwrap()) {
+                    seed.status =
+                        SeedStatus::from_code(recorded["status"].as_i64().unwrap()).unwrap();
+                    seed.note = recorded["note"].as_str().unwrap().to_owned();
+                    queues::update_file_seed(conn, seed)?;
+                }
+                for recorded in initial["gallery"].as_array().unwrap() {
+                    queues::add_gallery_seeds(
+                        conn,
+                        queue,
+                        &[NewGallerySeed {
+                            url: recorded["url"].as_str().unwrap().to_owned(),
+                            can_generate_more_pages: true,
+                            referral_url: None,
+                            meta: GallerySeedMeta::default(),
+                        }],
+                        None,
+                        100,
+                    )?;
+                }
+                let mut gallery = queues::gallery_seeds(conn, queue)?;
+                for (seed, recorded) in gallery
+                    .iter_mut()
+                    .zip(initial["gallery"].as_array().unwrap())
+                {
+                    seed.status =
+                        SeedStatus::from_code(recorded["status"].as_i64().unwrap()).unwrap();
+                    seed.note = recorded["note"].as_str().unwrap().to_owned();
+                    queues::update_gallery_seed(conn, seed)?;
+                }
+                Ok(())
+            }
+        })
+        .unwrap();
+    // what a queue holds, as the recording lists it
+    let facts = |queue: i64| -> serde_json::Value {
+        store
+            .read(move |conn| {
+                let files: Vec<_> = queues::file_seeds(conn, queue)?
+                    .into_iter()
+                    .map(|s| serde_json::json!({"url": s.data, "status": s.status.code(), "note": s.note}))
+                    .collect();
+                let gallery: Vec<_> = queues::gallery_seeds(conn, queue)?
+                    .into_iter()
+                    .map(|s| serde_json::json!({"url": s.url, "status": s.status.code(), "note": s.note}))
+                    .collect();
+                let paused = queues::queue(conn, queue)?.unwrap().files_paused;
+                Ok(serde_json::json!({"paused": paused, "files": files, "gallery": gallery}))
+            })
+            .unwrap()
+    };
+    assert_eq!(facts(queue), *initial, "the importer as recorded");
+
+    // saved through the menu
+    let title =
+        |label: &str| -> i32 { titles(&ui).iter().position(|(t, _)| t == label).unwrap() as i32 };
+    ui.invoke_menu_title_pressed(title("pages"), 80.0, 22.0);
+    hover(&ui, "sessions");
+    hover(&ui, "save");
+    choose(&ui, "as new session\u{2026}");
+    let d = bound
+        .session_dialog
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong)
+        .expect("a name is asked");
+    d.invoke_name_entered("importer history".into());
+    assert!(bound.session_dialog.borrow().is_none(), "saved");
+    let saved = store
+        .read(|c| sessions::load(c, "importer history"))
+        .unwrap()
+        .expect("saved");
+    assert!(
+        saved.pages.iter().any(|page| matches!(
+            page.content,
+            hydrus_core::pages::PageContent::Downloader { .. }
+        )),
+        "the importer page is in the saved session"
+    );
+
+    // the live importer moves on after the session was saved
+    store
+        .write({
+            let later = fixture["source_changed"]["files"][2]["url"]
+                .as_str()
+                .unwrap()
+                .to_owned();
+            move |ctx| {
+                let conn = ctx.conn();
+                queues::add_file_seeds(
+                    conn,
+                    queue,
+                    &[NewFileSeed {
+                        seed_type: SeedType::Url,
+                        data: later.clone(),
+                        data_for_comparison: later,
+                        source_time: None,
+                        referral_url: None,
+                        meta: FileSeedMeta::default(),
+                    }],
+                    false,
+                    110,
+                )?;
+                let mut first = queues::file_seeds(conn, queue)?[0].clone();
+                first.status = SeedStatus::SuccessfulButRedundant;
+                first.note = "later state".into();
+                queues::update_file_seed(conn, &first)
+            }
+        })
+        .unwrap();
+    assert_eq!(
+        facts(queue),
+        fixture["source_changed"],
+        "the live importer as recorded"
+    );
+
+    // appending the saved session (twice) gives importers as they were when it
+    // was saved, each its own copy
+    // (the importers the open pages hold, in order, whichever notebook they are in)
+    let importers = || -> Vec<i64> {
+        fn walk(pages: &[hydrus_core::pages::Page], out: &mut Vec<i64>) {
+            for page in pages {
+                match &page.content {
+                    hydrus_core::pages::PageContent::Pages(children) => walk(children, out),
+                    hydrus_core::pages::PageContent::Downloader { queues, .. } => {
+                        out.extend(queues);
+                    }
+                    _ => {}
+                }
+            }
+        }
+        let mut out = Vec::new();
+        walk(&bound.pages.borrow().session().pages, &mut out);
+        out
+    };
+    let appended = || -> i64 {
+        let before = importers();
+        ui.invoke_menu_title_pressed(title("pages"), 80.0, 22.0);
+        hover(&ui, "sessions");
+        hover(&ui, "append");
+        choose(&ui, "importer history");
+        let after = importers();
+        assert_eq!(after.len(), before.len() + 1, "one importer appended");
+        *after.iter().find(|q| !before.contains(q)).unwrap()
+    };
+    let first = appended();
+    assert_ne!(first, queue, "a copy, not the live importer");
+    assert_eq!(facts(first), fixture["loaded_backup"]);
+    let second = appended();
+    assert_ne!(second, first, "each append its own copy");
+    assert_eq!(facts(second), fixture["second_copy"]);
+    store
+        .write(move |ctx| {
+            queues::add_file_seeds(
+                ctx.conn(),
+                first,
+                &[NewFileSeed {
+                    seed_type: SeedType::Url,
+                    data: "https://files.example/copy-only.jpg".into(),
+                    data_for_comparison: "https://files.example/copy-only.jpg".into(),
+                    source_time: None,
+                    referral_url: None,
+                    meta: FileSeedMeta::default(),
+                }],
+                false,
+                120,
+            )?;
+            Ok(())
+        })
+        .unwrap();
+    assert_eq!(facts(first), fixture["first_copy_changed"]);
+    assert_eq!(
+        facts(second),
+        fixture["second_copy"],
+        "the other copy is unmoved"
     );
 }
 

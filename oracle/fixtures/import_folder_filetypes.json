@@ -1,0 +1,176 @@
+{
+ "files": [
+  "a.png",
+  "b.jpg",
+  "c.gif",
+  "d.bmp"
+ ],
+ "cases": [
+  {
+   "name": "everything",
+   "allowed": null,
+   "seeds": [
+    [
+     "a.png",
+     1,
+     ""
+    ],
+    [
+     "b.jpg",
+     1,
+     ""
+    ],
+    [
+     "c.gif",
+     1,
+     ""
+    ],
+    [
+     "d.bmp",
+     1,
+     ""
+    ]
+   ]
+  },
+  {
+   "name": "jpeg and gif",
+   "allowed": [
+    "IMAGE_JPEG",
+    "IMAGE_GIF"
+   ],
+   "seeds": [
+    [
+     "a.png",
+     7,
+     "File was a png, which is not allowed by the File Filtering Import Options."
+    ],
+    [
+     "b.jpg",
+     1,
+     ""
+    ],
+    [
+     "c.gif",
+     1,
+     ""
+    ],
+    [
+     "d.bmp",
+     7,
+     "File was a bitmap, which is not allowed by the File Filtering Import Options."
+    ]
+   ]
+  },
+  {
+   "name": "only png",
+   "allowed": [
+    "IMAGE_PNG"
+   ],
+   "seeds": [
+    [
+     "a.png",
+     1,
+     ""
+    ],
+    [
+     "b.jpg",
+     7,
+     "File was a jpeg, which is not allowed by the File Filtering Import Options."
+    ],
+    [
+     "c.gif",
+     7,
+     "File was a static gif, which is not allowed by the File Filtering Import Options."
+    ],
+    [
+     "d.bmp",
+     7,
+     "File was a bitmap, which is not allowed by the File Filtering Import Options."
+    ]
+   ]
+  },
+  {
+   "name": "nothing but bmp",
+   "allowed": [
+    "IMAGE_BMP"
+   ],
+   "seeds": [
+    [
+     "a.png",
+     7,
+     "File was a png, which is not allowed by the File Filtering Import Options."
+    ],
+    [
+     "b.jpg",
+     7,
+     "File was a jpeg, which is not allowed by the File Filtering Import Options."
+    ],
+    [
+     "c.gif",
+     7,
+     "File was a static gif, which is not allowed by the File Filtering Import Options."
+    ],
+    [
+     "d.bmp",
+     1,
+     ""
+    ]
+   ]
+  }
+ ],
+ "after_edit": {
+  "seeds_forgotten": 1,
+  "seeds": [
+   [
+    "a.png",
+    1,
+    ""
+   ],
+   [
+    "b.jpg",
+    1,
+    ""
+   ],
+   [
+    "c.gif",
+    1,
+    ""
+   ],
+   [
+    "d.bmp",
+    1,
+    ""
+   ]
+  ]
+ },
+ "skip": {
+  "ages": {
+   "new.png": 3600,
+   "old.jpg": 200000
+  },
+  "checks": [
+   {
+    "period": 86400,
+    "seeds": [
+     [
+      "old.jpg",
+      1
+     ]
+    ]
+   },
+   {
+    "period": 1,
+    "seeds": [
+     [
+      "new.png",
+      1
+     ],
+     [
+      "old.jpg",
+      1
+     ]
+    ]
+   }
+  ]
+ }
+}
