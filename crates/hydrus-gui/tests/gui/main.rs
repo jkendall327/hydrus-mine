@@ -295,7 +295,6 @@ mod image_colour;
 
 mod debug_data_actions;
 mod debug_delayed_pages;
-mod debug_what_is_this;
 mod debug_delayed_popup;
 mod debug_fetch;
 mod debug_long_popup;
@@ -303,6 +302,7 @@ mod debug_menu_actions;
 mod debug_popups;
 mod debug_profiling;
 mod debug_session_reload;
+mod debug_what_is_this;
 mod duplicates_progress;
 mod quick_export_directory;
 

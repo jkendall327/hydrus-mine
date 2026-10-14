@@ -163,7 +163,6 @@ pub mod string_processor_window;
 mod subscription_import;
 mod subscription_quality_control;
 mod subscriptions_window;
-pub mod what_is_this_window;
 pub mod system_tray;
 mod tab_context_window;
 mod tab_drag;
@@ -178,6 +177,7 @@ mod tag_sync_review_window;
 mod tag_text;
 pub mod thumbnail_background;
 mod vacuum_review_window;
+pub mod what_is_this_window;
 
 /// Missing-thumbnail recovery, independent of stored image colour policy.
 pub fn thumbnail_recovery(

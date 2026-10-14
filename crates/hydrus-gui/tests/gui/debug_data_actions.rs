@@ -239,7 +239,7 @@ fn reset_multi_column_list_settings_asks_the_question_in_the_reference_s_source(
 // leaf: audit-options-help-debug-action-review-current-network-jobs
 #[test]
 fn review_current_network_jobs_opens_the_reference_s_jobs_window() {
-    use slint::Model as _;
+    use slint::{ComponentHandle as _, Model as _};
     let d = start();
     // the frame the reference titles 'review network jobs' (ClientGUI._ReviewNetworkJobs)
     // and the columns its list registers (recorded in network_data.json)
@@ -248,7 +248,11 @@ fn review_current_network_jobs_opens_the_reference_s_jobs_window() {
     )
     .unwrap();
     let body = &source[source.find("def _ReviewNetworkJobs").unwrap()..];
-    let title = Regex::new(r"FrameThatTakesScrollablePanel\( self, '([^']*)' \)").unwrap().captures(body).unwrap()[1].to_owned();
+    let title = Regex::new(r"FrameThatTakesScrollablePanel\( self, '([^']*)' \)")
+        .unwrap()
+        .captures(body)
+        .unwrap()[1]
+        .to_owned();
     let recorded: Vec<String> = hydrus_testkit::fixture_json("network_data.json")["job_columns"]
         .as_array()
         .unwrap()
@@ -259,8 +263,16 @@ fn review_current_network_jobs_opens_the_reference_s_jobs_window() {
     d.click(&["network actions", "review current network jobs"]);
     let window = hydrus_gui::network_data_window::last_jobs().expect("the window opens");
     assert!(window.window().is_visible());
-    assert!(window.get_composed_title().starts_with(&title), "{}", window.get_composed_title());
-    let columns: Vec<String> = window.get_columns().iter().map(|c| c.title.to_string()).collect();
+    assert!(
+        window.get_composed_title().starts_with(&title),
+        "{}",
+        window.get_composed_title()
+    );
+    let columns: Vec<String> = window
+        .get_columns()
+        .iter()
+        .map(|c| c.title.to_string())
+        .collect();
     assert_eq!(columns, recorded);
     assert_eq!(window.get_rows().row_count(), 0, "no jobs are running");
 }

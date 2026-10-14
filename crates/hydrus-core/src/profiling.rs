@@ -350,12 +350,19 @@ pub fn needs_plan(dir: &Path, query: &str) -> bool {
         .lock()
         .unwrap_or_else(PoisonError::into_inner)
         .as_ref()
-        .is_some_and(|p| p.by_dir.get(dir).is_none_or(|(_, planned)| !planned.contains(query)))
+        .is_some_and(|p| {
+            p.by_dir
+                .get(dir)
+                .is_none_or(|(_, planned)| !planned.contains(query))
+        })
 }
 
 /// One `EXPLAIN QUERY PLAN` row, as Python prints the row tuple.
 pub fn plan_row(id: i64, parent: i64, not_used: i64, detail: &str) -> String {
-    format!("({id}, {parent}, {not_used}, {})", crate::pyjson::python_str_repr(detail))
+    format!(
+        "({id}, {parent}, {not_used}, {})",
+        crate::pyjson::python_str_repr(detail)
+    )
 }
 
 /// `PrintQueryPlan`: count the query, and the first time write it down with

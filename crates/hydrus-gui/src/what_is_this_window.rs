@@ -19,7 +19,12 @@ thread_local! {
 
 /// The windows opened so far (for the tests).
 pub fn windows() -> Vec<WhatIsThisWindow> {
-    OPEN.with(|open| open.borrow().iter().map(WhatIsThisWindow::clone_strong).collect())
+    OPEN.with(|open| {
+        open.borrow()
+            .iter()
+            .map(WhatIsThisWindow::clone_strong)
+            .collect()
+    })
 }
 
 /// A payload's description (`PNG "path"`, `JSON "path"`, ...) and its text.
@@ -44,12 +49,14 @@ fn io_message(path: &Path, error: &std::io::Error) -> String {
 fn utf8_message(error: &std::str::Utf8Error, bytes: &[u8]) -> String {
     let at = error.valid_up_to();
     let byte = bytes.get(at).copied().unwrap_or(0);
-    let why = if (0x80..0xC0).contains(&byte) {
-        "invalid start byte"
-    } else if error.error_len().is_none() {
+    // (a byte that can begin no sequence, or one that begins a sequence
+    // whose next byte is wrong)
+    let why = if error.error_len().is_none() {
         "unexpected end of data"
-    } else {
+    } else if (0xC2..=0xF4).contains(&byte) {
         "invalid continuation byte"
+    } else {
+        "invalid start byte"
     };
     format!("'utf-8' codec can't decode byte 0x{byte:02x} in position {at}: {why}")
 }
@@ -69,7 +76,7 @@ fn ingest_paths(paths: &[PathBuf]) -> Result<Vec<Payload>, String> {
             let text = std::str::from_utf8(&bytes).map_err(|e| {
                 format!(
                     "Problem loading assumed JSON at path \"{shown}\"! Full error written to log; {}",
-                    utf8_message(e, &bytes)
+                    utf8_message(&e, &bytes)
                 )
             })?;
             payloads.push((format!("JSON \"{shown}\""), text.to_owned()));
@@ -144,13 +151,19 @@ pub fn open() -> Result<WhatIsThisWindow, slint::PlatformError> {
                 Ok(payloads) => {
                     import_payloads(&window, &payloads);
                     // (the reference's micro-notification, for three seconds)
-                    window.set_notice(format!("Pasted {} items!", human_int(payloads.len() as u64)).into());
+                    window.set_notice(
+                        format!("Pasted {} items!", human_int(payloads.len() as u64)).into(),
+                    );
                     let weak = window.as_weak();
-                    notice.start(slint::TimerMode::SingleShot, Duration::from_secs(3), move || {
-                        if let Some(window) = weak.upgrade() {
-                            window.set_notice("".into());
-                        }
-                    });
+                    notice.start(
+                        slint::TimerMode::SingleShot,
+                        Duration::from_secs(3),
+                        move || {
+                            if let Some(window) = weak.upgrade() {
+                                window.set_notice("".into());
+                            }
+                        },
+                    );
                 }
                 Err(error) => problem(&error),
             }

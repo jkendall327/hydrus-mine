@@ -15,7 +15,7 @@ use std::sync::OnceLock;
 use hydrus_core::numbers::{human_bytes, human_int};
 use hydrus_core::pyjson::PyJson;
 
-use super::{BytesKey, BytesValue, Body, Meta, SerialisableObject};
+use super::{Body, BytesKey, BytesValue, Meta, SerialisableObject};
 
 fn classes() -> &'static BTreeMap<u16, (String, u32)> {
     static CLASSES: OnceLock<BTreeMap<u16, (String, u32)>> = OnceLock::new();
@@ -156,16 +156,18 @@ fn repr(text: &str) -> String {
 fn tuple_error(value: &PyJson) -> Option<String> {
     let unpack = |n: usize| -> Option<String> {
         match n.cmp(&4) {
-            std::cmp::Ordering::Less => Some(format!(
-                "not enough values to unpack (expected 4, got {n})"
-            )),
+            std::cmp::Ordering::Less => {
+                Some(format!("not enough values to unpack (expected 4, got {n})"))
+            }
             std::cmp::Ordering::Greater => Some("too many values to unpack (expected 4)".into()),
             std::cmp::Ordering::Equal => None,
         }
     };
     let key_error = |first: &PyJson| -> Option<String> {
         match first {
-            PyJson::Int(n) if classes().contains_key(&u16::try_from(*n).unwrap_or(u16::MAX)) => None,
+            PyJson::Int(n) if classes().contains_key(&u16::try_from(*n).unwrap_or(u16::MAX)) => {
+                None
+            }
             PyJson::Int(n) => Some(n.to_string()),
             PyJson::BigInt(digits) => Some(digits.clone()),
             PyJson::Float(f) => Some(PyJson::Float(*f).to_python_string()),
@@ -208,7 +210,10 @@ fn tuple_error(value: &PyJson) -> Option<String> {
 /// is not JSON (`json.decoder.JSONDecodeError`).
 pub fn python_json_error(text: &str) -> Option<String> {
     let chars: Vec<char> = text.chars().collect();
-    let mut scanner = Scanner { chars: &chars, at: 0 };
+    let mut scanner = Scanner {
+        chars: &chars,
+        at: 0,
+    };
     scanner.skip_ws();
     let outcome = scanner.value().and_then(|()| {
         scanner.skip_ws();
@@ -220,8 +225,15 @@ pub fn python_json_error(text: &str) -> Option<String> {
     });
     let (message, at) = outcome.err()?;
     let line = chars[..at].iter().filter(|c| **c == '\n').count() + 1;
-    let column = at - chars[..at].iter().rposition(|c| *c == '\n').map_or(0, |i| i + 1) + 1;
-    Some(format!("{message}: line {line} column {column} (char {at})"))
+    let column = at
+        - chars[..at]
+            .iter()
+            .rposition(|c| *c == '\n')
+            .map_or(0, |i| i + 1)
+        + 1;
+    Some(format!(
+        "{message}: line {line} column {column} (char {at})"
+    ))
 }
 
 struct Scanner<'a> {
@@ -277,7 +289,12 @@ impl Scanner<'_> {
                 return Err(("Expecting value", start));
             }
         }
-        if self.peek() == Some('.') && self.chars.get(self.at + 1).is_some_and(char::is_ascii_digit) {
+        if self.peek() == Some('.')
+            && self
+                .chars
+                .get(self.at + 1)
+                .is_some_and(char::is_ascii_digit)
+        {
             self.at += 1;
             while self.peek().is_some_and(|c| c.is_ascii_digit()) {
                 self.at += 1;
@@ -321,7 +338,9 @@ impl Scanner<'_> {
                     }
                     Some(_) => return Err(("Invalid \\escape", self.at)),
                 },
-                Some(c) if (c as u32) < 0x20 => return Err(("Invalid control character at", self.at)),
+                Some(c) if (c as u32) < 0x20 => {
+                    return Err(("Invalid control character at", self.at));
+                }
                 Some(_) => self.at += 1,
             }
         }

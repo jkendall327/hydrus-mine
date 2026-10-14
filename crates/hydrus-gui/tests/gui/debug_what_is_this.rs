@@ -153,7 +153,10 @@ fn pasting_files_and_dropping_them_go_through_the_same_ingest_as_the_reference()
     }
     // a path as text is only text, and garbage is an error
     for (case, text) in [
-        ("path to a json file", json_path.to_string_lossy().into_owned()),
+        (
+            "path to a json file",
+            json_path.to_string_lossy().into_owned(),
+        ),
         ("garbage text", "garbage".to_owned()),
         ("json text", list_text.clone()),
     ] {
@@ -180,7 +183,9 @@ fn pasting_files_and_dropping_them_go_through_the_same_ingest_as_the_reference()
     hydrus_gui::what_is_this_window::drop_paths(&window, &[json_path]);
     assert_eq!(
         window.get_description(),
-        recording["import_paths_json"]["description"].as_str().unwrap()
+        recording["import_paths_json"]["description"]
+            .as_str()
+            .unwrap()
     );
     let asked = Rc::new(std::cell::RefCell::new(Vec::new()));
     hydrus_gui::set_picker({
@@ -195,11 +200,16 @@ fn pasting_files_and_dropping_them_go_through_the_same_ingest_as_the_reference()
     window.invoke_picture_clicked();
     assert_eq!(
         *asked.borrow(),
-        [(hydrus_gui::Pick::Files, "Select the pngs to add.".to_owned())]
+        [(
+            hydrus_gui::Pick::Files,
+            "Select the pngs to add.".to_owned()
+        )]
     );
     assert_eq!(
         window.get_description(),
-        recording["import_paths_png"]["description"].as_str().unwrap()
+        recording["import_paths_png"]["description"]
+            .as_str()
+            .unwrap()
     );
     let binary = dir.path().join("binary.json");
     std::fs::write(&binary, b"\xff\xfe\x00bad").unwrap();
@@ -209,7 +219,9 @@ fn pasting_files_and_dropping_them_go_through_the_same_ingest_as_the_reference()
     assert_eq!(
         quoted.replace(&message, "\"<path>\""),
         quoted.replace(
-            recording["import_paths_not_utf8"]["critical"][0]["message"].as_str().unwrap(),
+            recording["import_paths_not_utf8"]["critical"][0]["message"]
+                .as_str()
+                .unwrap(),
             "\"<path>\""
         )
     );

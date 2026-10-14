@@ -11608,10 +11608,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only asserts a visible network-jobs window exists after the click: no title ('review network jobs') or content check. Presence instead of content. Tracker note is stale. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:301 review_current_network_jobs_opens_the_jobs_review"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude (issue #96 session)",
+    "note": "Real menu click opens the jobs window with the reference's frame title ('review network jobs', read from ClientGUI._ReviewNetworkJobs at test time) and its columns as recorded in oracle/fixtures/network_data.json (the title said 'review current network jobs' and the speed column 'speed' before: both fixed); no jobs, no rows. The rows' content is covered by network_jobs_rows.rs against the same recording. Test: crates/hydrus-gui/tests/gui/debug_data_actions.rs review_current_network_jobs_opens_the_reference_s_jobs_window."
    }
   },
   {
@@ -11937,7 +11937,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "claude (issue #96 session)",
-    "note": "The real menu entry asks the daemon (store request), the daemon's tick answers through a real SubscriptionRunner on the store, and the report arrives through the report sink; the four subscriptions of the recording give the same message at the reference's clock (exact) and the same words with a live clock; the empty case is exact too; asking twice answers twice and a look with nothing asked says nothing. Running subscriptions are not shown by this test (the runner is not started). Test: crates/hydrus-gui/tests/gui/debug_profiling.rs subscription_manager_snapshot_is_asked_for_in_the_menu_and_shown_by_the_daemon; recording oracle/fixtures/subscription_manager_snapshot.json."
+    "note": "The real menu entry asks the daemon (store request), the daemon's tick answers through a real SubscriptionRunner on the store, and the report arrives through the report sink; the recording's subscriptions give the same message at the reference's clock (exact) and the same words with a live clock; the empty case is exact too. A running subscription is checked in hydrus-download against a held real sync: its 'N running: name' part has the recorded form. With no manager the daemon says so. Tests: crates/hydrus-gui/tests/gui/debug_profiling.rs subscription_manager_snapshot_is_asked_for_in_the_menu_and_shown_by_the_daemon; crates/hydrus-download/tests/subscriptions.rs the_snapshot_names_the_subscriptions_that_are_running_as_the_reference_does; oracle/fixtures/subscription_manager_snapshot.json."
    }
   },
   {
@@ -12073,7 +12073,13 @@
     "Truth pass (2026-10-08): missing, medium. Needs a dialog and native deserialisation. Missing: Paste dialog, decoding of serialised objects, popup of its type, test. Evidence: No menu entry or code.",
     "Reference debug action wires 'what is this object?' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude (issue #96 session)",
+    "note": "Real menu click opens the window (title, two boxes, paste tooltip as recorded); the constructed objects (dictionaries, lists, nested, bytes dictionary, named, list of named), and every kind of non-object (25 JSON and tuple errors worded as Python words them, a future version) give the text the real window gives (oracle/fixtures/what_is_this_object.json, record_what_is_this_object.py, the window's own _ImportPayloads), pasted as clipboard text, files (JSON and hydrus PNG) and several files, with the 'Pasted N items!' notice; a missing path or non-UTF-8 file is the reference's problem dialog; the PNG chooser and a drop use the same ingest. A bitmap on the clipboard is read as the reference reads it but has no recorded case. The whole window takes drops, not only the picture (DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/debug_what_is_this.rs; crates/hydrus-legacy/tests/what_is_this.rs."
+   }
   },
   {
    "id": "audit-options-import-options-default-import-options-clear",
