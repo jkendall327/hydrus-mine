@@ -308,6 +308,7 @@ fn export_folders_are_added_edited_and_written() {
     );
 }
 
+// leaf: audit-network-tagging-example
 #[test]
 fn an_import_folders_filename_tagging_is_added_edited_and_deleted() {
     let (_dirs, store) = store();
@@ -347,13 +348,32 @@ fn an_import_folders_filename_tagging_is_added_edited_and_deleted() {
             .expect("it opens")
             .clone_strong()
     };
-    assert_eq!(dialog().get_window_title(), "edit filename tagging options");
+    // `oracle/fixtures/import_folder_example.json`, from
+    // `oracle/record_import_folder_example.py`: the real editor's dialog
+    // on this same folder
+    let recorded = hydrus_testkit::fixture_json("import_folder_example.json");
+    let opened = &recorded["dialogs"][0];
+    assert_eq!(
+        dialog().get_window_title(),
+        opened["title"].as_str().unwrap()
+    );
     assert!(dialog().get_options_mode());
     assert_eq!(dialog().get_example(), example.to_string_lossy().as_ref());
+    assert_eq!(
+        example.file_name().unwrap().to_string_lossy(),
+        opened["example_path"].as_str().unwrap()
+    );
+    assert_eq!(
+        dialog().get_example_tags(),
+        opened["output_as_opened"].as_str().unwrap()
+    );
     dialog().set_tags_all("Imported".into());
     dialog().invoke_changed();
     dialog().invoke_misc_toggled(0, true);
-    assert_eq!(dialog().get_example_tags(), "filename:pic 1, imported");
+    assert_eq!(
+        dialog().get_example_tags(),
+        opened["output_edited"].as_str().unwrap()
+    );
     dialog().invoke_apply();
     assert!(bound.folders.filename_tagging.borrow().is_none());
     let listed = |w: &hydrus_gui::ImportFolderWindow| -> Vec<String> {
@@ -361,12 +381,12 @@ fn an_import_folders_filename_tagging_is_added_edited_and_deleted() {
             .map(|i| w.get_filename_tagging().row_data(i).unwrap().to_string())
             .collect()
     };
-    assert_eq!(listed(&edit), ["my tags"]);
+    assert_eq!(serde_json::json!(listed(&edit)), recorded["rows"][0]);
     // the same service again: refused
     edit.invoke_tagging_add();
     assert_eq!(
         edit.get_asking_message(),
-        "You already have an entry for that service key! Please try editing it instead!"
+        recorded["warnings"][0].as_str().unwrap()
     );
     edit.invoke_chosen(0);
     // edited: what it had
@@ -400,7 +420,6 @@ fn an_import_folders_filename_tagging_is_added_edited_and_deleted() {
 }
 
 // leaf: audit-network-import-folder-tagging
-// leaf: audit-network-tagging-example
 #[test]
 fn the_filename_tagging_list_and_its_example_path_follow_the_references_recorded_steps() {
     // oracle/record_import_folder_tagging.py: the reference's editor, its

@@ -5237,10 +5237,10 @@
     "Pause retains pending paths; Stop clears unparsed work while keeping parsed rows."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window: paused path stays unparsed, resume parses, stop drops unparsed paths but keeps parsed rows, and the window is usable after. Progress strings ('0/1 files parsed.', '1 files parsed.') and enable rules are literals restated from _InitialiseParseWorkUpdater/_UpdateWidgets; the recording only has finished-state texts and button enables. Tests: crates/hydrus-gui/tests/gui/files_io_import_review.rs:182 pausing_holds_the_paths_still_to_parse_and_stop_drops_them_but_keeps_the_parsed; crates/hydrus-gui-model/tests/model/local_import_dialog.rs (parsing_shows_its_progress_and_can_be_paused_and_stopped)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "phase 2 session (recheck w4-r2b)",
+    "note": "Real review window against a new recording of the real panel (oracle/record_local_import_pause.py, fixtures/local_import_pause.json): paused before a path is parsed (progress '0/1 files parsed.', import buttons off, pause/stop live, no rows), resumed (parsed, buttons on); paused again with two paths waiting ('1/3 files parsed.', import still on, one row), stopped (the unparsed dropped, '1 files parsed.', pause/stop off, the parsed row kept), and a path added after still parses. Every state compares progress text, the import and tag buttons, pause/stop enables and the rows (number, name, filetype). Test: crates/hydrus-gui/tests/gui/files_io_import_review.rs pausing_holds_the_paths_still_to_parse_and_stop_drops_them_but_keeps_the_parsed"
    }
   },
   {
@@ -5256,10 +5256,10 @@
     "Only good parsed paths create a local-import page/queue; delete-after-success reaches queue settings."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Import now closes the window, opens an import page whose queue has only the good paths in list order with their modified times, and delete_after_success lands in the queue settings; the download test shows the queue runner honours it. Good-path lists are recorded, but the page/queue creation and delete semantics are literals from _DoImport/HDDImport; no recording of them. Tests: crates/hydrus-gui/tests/gui/import_files.rs:80 files_given_are_reviewed_then_imported; crates/hydrus-download/tests/local_import.rs:289 a_local_import_imports_its_files; crates/hydrus-gui-model/tests/model/local_import_dialog.rs:59"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "phase 2 session (recheck w4-r2b)",
+    "note": "Two tests against a recording of the real dialog's import now (oracle/record_local_import_queue.py, fixtures/local_import_queue.json; a png, a copy, a text file and a non-picture, delete option off and on). GUI: the window closes, an 'import' page is made, its queue holds only the good paths in list order, no routers, and the delete flag as the recorded publication. Worker: a local-import queue made that way, run by the real runner, ends with the recorded statuses (new, then already-there) and leaves or deletes the originals as recorded (both deleted, including the one already in the database; the two unimportable files stay). Source modified times on the seeds are native-only detail. Tests: crates/hydrus-gui/tests/gui/import_files.rs import_now_makes_the_page_the_reference_makes_from_the_good_paths; crates/hydrus-download/tests/local_import.rs a_local_import_with_delete_after_success_deletes_what_the_reference_deletes The delete path is run with the recycle bin off; the trash route is untested."
    }
   },
   {
@@ -5294,10 +5294,10 @@
     "Commands identify both daemon epoch and request ID; ended/replaced jobs ignore the command."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window enqueues an epoch+job-id Cancel and ignores a replaced daemon; the engine consuming it is tested separately (untagged). The reference ReviewNetworkJobs has no cancel/override control (only a '# button to stop jobs en-masse' comment), so this is a native extension with nothing to record. Tests: crates/hydrus-gui/tests/gui/network_data.rs:170 jobs_live_progress_commands_and_offline_expiry; crates/hydrus-net/tests/engine.rs:~60 (Cancel via runtime command, untagged)"
+    "by": "phase 2 session (recheck w4-r2b)",
+    "note": "Unchanged: the reference's ReviewNetworkJobs has no cancel control (only a comment, '# button to stop jobs en-masse'), so this is a native extension with nothing to record; the window enqueues an epoch+job-id Cancel and ignores a replaced daemon, and the engine consuming it is tested separately (untagged). A window-to-engine test through the daemon's IPC is the missing piece. Test: crates/hydrus-gui/tests/gui/network_data.rs jobs_live_progress_commands_and_offline_expiry"
    }
   },
   {
@@ -5313,10 +5313,10 @@
     "Five-second heartbeat expiry disables actions; no API listener is required for local runtime snapshots."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Stale/empty snapshot makes rows vanish, status 'offline' and commands inert, tested in the real window. The five-second boundary is not exercised (default snapshot at=0) and the feature has no reference counterpart. Tests: crates/hydrus-gui/tests/gui/network_data.rs:170 jobs_live_progress_commands_and_offline_expiry"
+    "by": "phase 2 session (recheck w4-r2b)",
+    "note": "Unchanged: a native heartbeat feature with no reference counterpart (nothing to record); the stale-snapshot behaviour is driven in the real window but the five-second boundary is not exercised. Test: crates/hydrus-gui/tests/gui/network_data.rs jobs_live_progress_commands_and_offline_expiry"
    }
   },
   {
@@ -5332,10 +5332,10 @@
     "Live selected requests can bypass their bandwidth gate through daemon IPC."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window enqueues OverrideBandwidth; the engine consumer is proven in a separate untagged test. Native extension: the reference jobs panel has no such control. Tests: crates/hydrus-gui/tests/gui/network_data.rs:170 jobs_live_progress_commands_and_offline_expiry; crates/hydrus-net/tests/engine.rs:~121 runtime_override_releases_a_live_bandwidth_wait_and_counts_usage (untagged)"
+    "by": "phase 2 session (recheck w4-r2b)",
+    "note": "Unchanged: the reference jobs panel has no override control, so this is a native extension with nothing to record. The window enqueues OverrideBandwidth; the engine consumer is proven in a separate untagged test (crates/hydrus-net/tests/engine.rs runtime_override_releases_a_live_bandwidth_wait_and_counts_usage). Test: crates/hydrus-gui/tests/gui/network_data.rs jobs_live_progress_commands_and_offline_expiry"
    }
   },
   {
@@ -5351,10 +5351,10 @@
     "Manual refresh replaces the displayed snapshot; live refresh follows daemon updates and clears selection on epoch replacement."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only manual refresh and epoch-replacement clearing are driven. The reference auto-refresh NoneableTimeDelta control (min 0.05s, default manual) and its timer are never exercised (get_auto_refresh unset in tests). Tests: crates/hydrus-gui/tests/gui/network_data.rs:170 jobs_live_progress_commands_and_offline_expiry"
+    "by": "phase 2 session (recheck w4-r2b)",
+    "note": "Unchanged: manual refresh and epoch-replacement clearing are driven, but the reference's auto-refresh is a manual-or-interval control (NoneableTimeDeltaWidget, at least 0.05 s, manual to begin with) with a timer, where native has an auto-refresh checkbox that starts on; no test exercises the toggle, and the control needs .slint work to match (now in DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/network_data.rs jobs_live_progress_commands_and_offline_expiry"
    }
   },
   {
@@ -5370,10 +5370,10 @@
     "Rows reflect all engine requests; selected detail reports contexts and bandwidth obedience."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window rows checked, but the position column is compared with the native WaitReason::label() and speed with the native bytes formatter (circular); the reference only has five position strings (job_status_str_lookup) and the native eleven waits are an extension. Only the progress cell is tied to a recording (network_data.json job_rows). Tests: crates/hydrus-gui/tests/gui/network_jobs_rows.rs:22 every_request_is_a_row_with_its_typed_wait_speed_bytes_and_contexts; crates/hydrus-gui-model/tests/model/network_data.rs:17"
+    "by": "phase 2 session (recheck w4-r2b)",
+    "note": "Recorded rows (network_data.json, the real jobs panel) now compared through the real window: the position words for bandwidth, login and running are the reference's ('waiting for bandwidth', 'waiting for login', 'running'; native's labels were different, fixed), the speed column is titled 'current speed' as recorded (was 'speed'), and the speed/progress cells match for 2 KB/s with 2 KB of 4 KB. The reference's positions 'waiting for validation' and 'waiting for free work slot' have no native wait, and native's other eight waits are an extension with nothing to record; those and the selected-job contexts are still checked only against native values. Tests: crates/hydrus-gui/tests/gui/network_jobs_rows.rs every_request_is_a_row_with_its_typed_wait_speed_bytes_and_contexts (tagged); rows_for_the_waits_the_reference_names_read_as_its_jobs_panel_reads (untagged: three of the reference's five positions)"
    }
   },
   {
@@ -5748,15 +5748,14 @@
    "reference": "hydrus/client/gui/ClientGUI.py:3793",
    "native": "crates/hydrus-gui/src/menu_bar.rs:610",
    "notes": [
-    "The menu item toggles the persistent watcher-checking flag and reflects it as a checkmark; both directions are asserted by the GUI regression. Queue scheduling reads the same field in source.",
-    "Settings are persisted; scheduling changes are observed by the daemon on its refresh cycle.",
-    "The GUI regression checks menu/store state; global watcher-worker pause/resume is source-traced rather than asserted by this test."
+    "The menu item toggles the persistent watcher-checking flag and reflects it as a checkmark; both directions are asserted by the GUI regression.",
+    "The watcher runner reads the flag on each pass: no thread is fetched while it is set, and the next check follows the clear (the runner is woken; it also looks again within 30 seconds)."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Menu click flips the watcher_checkers field and tick; no test sets watcher_checkers and shows a watcher stopping/resuming (only paged_importers is tested against watchers; queue.rs:1014 and Pauses::watchers_run read it untested). The note admits it is source-traced. Tests: crates/hydrus-gui/tests/gui/network_pause_menu.rs:63; crates/hydrus-download/tests/watchers.rs:304 (paged_importers only)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "phase 2 session (recheck w4-r2b)",
+    "note": "Menu click flips only watcher_checkers and ticks it (GUI test, as the paged_importers leaf), and a real watcher runner holds its thread checks while it is set and checks when it is cleared (the worker test, as the paged_importers one), so the consumer the note called source-traced is now exercised. Tests: crates/hydrus-gui/tests/gui/network_pause_menu.rs each_pause_item_flips_only_its_own_switch_and_shows_it_ticked; crates/hydrus-download/tests/watchers.rs pausing_watcher_checkers_holds_watcher_checks_until_resumed"
    }
   },
   {
@@ -6125,8 +6124,8 @@
    "recheck": {
     "date": "2026-10-13",
     "class": "sound",
-    "by": "claude, #97 phase 2 (w4-r2)",
-    "note": "The same recording (_PathChanged) gives the example path the tagging dialog opens with: the first importable file by content among a folder's entries (a text file and a one-byte .jpg are passed over; a folder with nothing importable gives none). The same test replays three of the four recorded folders and checks the dialog's example is one of the files the reference listed; the fourth (26 text files before a png, which depends on the file system's order of entries as the reference's first-25 rule does) is not replayed, and the example is compared as one of the reference's listed files, not as the one it chose first, for that reason."
+    "by": "phase 2 session (recheck w4-r2b)",
+    "note": "Against a recording of the real import folder editor (oracle/record_import_folder_example.py, fixtures/import_folder_example.json, on a folder holding a text file, a one-byte .jpg and a png): the filename tagging dialog's title, the example path the editor picks, the example output as it opens (empty) and after 'Imported' is entered for all files with 'add filename?' ticked ('filename:pic 1, imported'), the warning for a second entry for the same service, and the box's rows are all compared. Test: crates/hydrus-gui/tests/gui/folders.rs an_import_folders_filename_tagging_is_added_edited_and_deleted"
    }
   },
   {
@@ -23716,10 +23715,10 @@
     "Confirmation dispatches reset_defaults, which retains all specific overrides and pacing settings."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test only asserts the question is non-empty and that the global rules changed from a custom value; it never checks they equal the reference defaults (ClientDefaults.SetDefaultBandwidthManagerRules: 5 req/1s + 16 GB/day etc.), and no test compares default_rules() with a recording. The recorded question text is only compared in the model fixture test, not in the GUI. Tests: crates/hydrus-gui/tests/gui/network_bandwidth_actions.rs:89 confirmed_reset_defaults_keeps_specific_overrides; crates/hydrus-gui-model/tests/model/network_data.rs:80"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "phase 2 session (recheck w4-r2b)",
+    "note": "Replays a recording of the real button (oracle/record_bandwidth_reset.py, fixtures/bandwidth_reset.json: _ResetDefaultBandwidthRules on a real manager holding custom global, default, downloader-default, watcher-default and two specific-domain rules): the window asks the recorded question; no changes nothing; yes leaves every context equal to the recording (global, hydrus, domain, downloader-page, subscription and watcher defaults reset to the reference's rules, so the defaults themselves are compared; the legacy downloader default (kind 3), which the reference does not touch, and the specific domains, kept). The comparison found native dropping the downloader default (kind 3) on reset; fixed. Test: crates/hydrus-gui/tests/gui/network_bandwidth_actions.rs reset_defaults_replays_the_reference_s_reset_button"
    }
   },
   {
@@ -23815,10 +23814,10 @@
     "Fixture compares parsed text/error and selected kind; it does not independently assert every metadata field or downstream request combination."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI only toggles 'any namespace' and then cancels; it never applies, so the saved namespace (None vs empty meaning unnamespaced) is untested through the window. The recorded tags case only compares parsed text 'Samus' and the claim that preview uses native tag cleaning is not compared with a recording. Retention of disabled text is unrecorded reference logic. Tests: crates/hydrus-gui/tests/gui/parser_editors.rs:684 namespace_control_is_disabled_without_losing_its_saved_text; crates/hydrus-gui-model/tests/model/parser_editors.rs:132"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "phase 2 session (recheck w4-r2b)",
+    "note": "Against a recording of the real editor edited three ways (oracle/record_parser_content_variants.py, fixtures/parser_content_variants.json): the 'any namespace' box ticked, the namespace emptied (unnamespaced) and set to creator; the window's Apply hands back exactly the parser the reference's GetValue made (serialised parser compared), and the tags it makes of four texts (including ones with a colon and spaces) are the reference's ParsedPost.GetTags (any: kept as is; empty: ':'-prefixed when a colon; creator: 'creator:...'), so the saved namespace (None vs empty) and the tag cleaning are covered. The disabled-field-keeps-its-text behaviour stays a native detail of the control. Tests: crates/hydrus-gui/tests/gui/parser_content_kinds.rs edited_namespace_makes_the_tags_the_reference_s_edited_parser_makes; crates/hydrus-gui/tests/gui/parser_editors.rs namespace_control_is_disabled_without_losing_its_saved_text; crates/hydrus-gui-model/tests/model/parser_editors.rs any_namespace_toggle_retains_the_disabled_namespace"
    }
   },
   {
@@ -23917,10 +23916,10 @@
     "Fixture compares parsed text/error and selected kind; it does not independently assert every metadata field or downstream request combination."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only the recorded 'blocked' veto case is compared with the reference (and only as is_err, not the message); the narrowed matcher and flipped polarity outcomes are typed expectations of the Python semantics with no recording. The matcher is edited in a separate window rather than inline as in the reference. Tests: crates/hydrus-gui/tests/gui/parser_content_kinds.rs:271 veto_content_toggles_its_polarity_and_edits_its_matcher"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "phase 2 session (recheck w4-r2b)",
+    "note": "Against a recording of the real editor edited four ways (oracle/record_parser_content_variants.py, fixtures/parser_content_variants.json: the 'veto if match found' box on and off, the string match anything or fixed 'other'): the window's polarity and the matcher window's edits hand back exactly the parser the reference's GetValue made (serialised parser compared), and parsing 'blocked' and 'other' vetoes (with the reference's message, 'veto: veto') or yields nothing exactly as recorded. The matcher is edited in a separate window rather than inline (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/parser_content_kinds.rs edited_veto_content_vetoes_exactly_when_the_reference_s_edited_veto_does"
    }
   },
   {
@@ -24160,10 +24159,10 @@
     "Checked generator identities form the nested set; list Apply owns persistence."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window test only toggles two member checkboxes and checks the nested set has 2 members after Apply, with typed values. The reference editor uses a members list with an Add button ('choose gugs' multi-select), the 'No remaining gugs available!' warning and an 'available' yes/no column; none exist natively (checklist instead) and none is tested or recorded. Tests: crates/hydrus-gui/tests/gui/downloader_definitions.rs:211 single_nested_generators_roundtrip_delete_and_cancel"
+    "by": "phase 2 session (recheck w4-r2b)",
+    "note": "Unchanged: the reference's nested generator editor has a members list with an 'add' button (choose gugs, multi-select), a 'No remaining gugs available!' warning and an 'available' yes/no column; native has a checklist, none of which is tested or recorded. Porting the list needs .slint work (a recording of the reference's panel, then the editor); left for a slice of its own. Test: crates/hydrus-gui/tests/gui/downloader_definitions.rs single_nested_generators_roundtrip_delete_and_cancel"
    }
   },
   {
@@ -24295,10 +24294,10 @@
     "Shared matcher keeps its own existing documented help limitations."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test opens the definition editor, edits name/kind/matcher and checks only the new name in the script's credential table and that cancel leaves the store unchanged. The accepted type (text/password) and matcher are never asserted, add/delete are not exercised, the type-choice labels are not compared, and no recording exists for this panel. No tag. Tests: crates/hydrus-gui/tests/gui/login_workflows.rs:98 script_definition_matcher_child_stages_until_parent_apply_and_cancel_discards"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "phase 2 session (recheck w4-r2b)",
+    "note": "The editor opened on the reference's recorded definition (login_editors.json 'definition', from the real panel), name/input type/permitted input edited as recorded, and carried through the script editor's and the list's Apply: the saved definition is the recording's 'after' (name, hidden input, fixed matcher), the starting definition is the recording's 'before' (shown as its name, normal input, matcher text), and the script's other credential is untouched. The input-type labels ('normal', 'hidden (password)') are static text in the .slint, not read by the test. Add/delete of definitions belong to the script editor (not this leaf). Test: crates/hydrus-gui/tests/gui/login_workflows.rs an_edited_credential_definition_is_saved_in_its_script_as_the_reference_s_editor_makes_it"
    }
   },
   {
@@ -24488,10 +24487,10 @@
     "Commands identify both daemon epoch and request ID; ended/replaced jobs ignore the command."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Test proves cancel/override buttons queue commands carrying daemon epoch and job id and that replaced daemons ignore selection, with typed values. The reference's job-row context menu (network contexts submenu with per-context waiting estimates or 'bandwidth ok', 'domain ok', 'waiting on connection error', 'tokens ok' labels) is absent natively (a detail text is shown instead), so the 'debug contexts' part of the leaf is untested and unported. Tests: crates/hydrus-gui/tests/gui/network_data.rs:167 jobs_live_progress_commands_and_offline_expiry"
+    "by": "phase 2 session (recheck w4-r2b)",
+    "note": "Unchanged: cancel/override buttons queue commands carrying the daemon epoch and job id (typed values; the reference has no such buttons), and the reference's right-click menu on a job (a 'network contexts' submenu with each context's waiting estimate or 'bandwidth ok', then 'domain ok', 'waiting on connection error', 'waiting on serverside bandwidth', 'obeys bandwidth', 'tokens ok') is shown natively as detail text instead; the 'debug contexts' part is unported and untested. Test: crates/hydrus-gui/tests/gui/network_data.rs jobs_live_progress_commands_and_offline_expiry"
    }
   },
   {
@@ -24544,10 +24543,10 @@
     "Typed context rejects invalid/duplicate/reserved variable names and runs real page/content parse previews."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model-only test of TestContext::parse with typed literals; no GUI test drives the context control and nothing is compared with a recording. The 'runs real page/content parse previews' claim in the tracker note is not in the tagged test (untagged GUI tests touch post_index/variables). Reference edits context via a StringToStringDict button, which is not compared. Tests: crates/hydrus-gui-model/tests/model/parser_editors.rs:52 test_context_rejects_invalid_duplicate_and_reserved_variables"
+    "date": "2026-10-13",
+    "class": "source-restated",
+    "by": "phase 2 session (recheck w4-r2b)",
+    "note": "Against a recording of the real test panel (oracle/record_parser_context.py, fixtures/parser_context.json): relative urls resolved against the context's url (two urls, and none), a context variable formula reading a present and an absent variable, and one reading post_index. Through the content editor window's url, post index and variables boxes, 'test' shows the recorded texts (compared as the parsed text on each result line: the native preview's labels and layout, e.g. 'tags: abc' for the reference's 'tag: abc' and its '(priority 50)', are not compared, a known difference); the comparison found native passing post_index to a content parse where the reference's test panel removes it (so the recorded result is empty); fixed. The reference edits the context in a dictionary button, native in three boxes (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/parser_content_kinds.rs the_test_panel_s_context_is_what_the_reference_s_context_is_to_a_test_parse; crates/hydrus-gui-model/tests/model/parser_editors.rs test_context_rejects_invalid_duplicate_and_reserved_variables Class lowered at review: the preview lines are compared by parsed text only, because the native preview's labels and layout differ from the reference's (DIFFERENCES.md); porting its formatter would let full lines be compared."
    }
   },
   {
@@ -24564,10 +24563,10 @@
     "Fetch controls use an inline URL field instead of the reference prompt. Window-local jobs show progress in their test panel rather than the daemon jobs review."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI tests drive the real fetch against a local HTTP server and the real network engine, but expected texts ('fetch failed: 404: missing\\n\\nmissing', percent-encoded URL, referer, one attempt, reset of post index) are typed literals. parser_test_data.json records the parser_fetch/formula_fetch cases (request settings, success/cancel/error text, context) and is only used by the multiple-examples test, not by the fetch tests; only the error-menu test uses parser_fetch_errors.json. No tag. Tests: crates/hydrus-gui/tests/gui/parser_editors.rs:125 content_test_panel_fetches_raw_data_and_hands_it_to_its_formula, :175 fetched_page_examples_use_actual_network_headers_cookies_context_and_child_converter, :290 page_fetch_error_menu_retains_completed_failure_and_clears_at_next_request"
+    "by": "phase 2 session (recheck w4-r2b)",
+    "note": "Texts, requests and cookies now come from the real reference engine against a local server (oracle/record_parser_fetch_http.py, fixtures/parser_fetch_http.json): the page editor's fetch of 'a b' with a referral (request GET /a%20b with the Referer, text, context url and post index 0, other variables kept), its 404 ('fetch failed: 404: missing' + body, the first response's cookie sent), and the generic panel's success and 404 texts; the native tests compare these. Not tagged: the cancel, hold, close-owner and one-attempt behaviours, the blank-url-takes-the-example behaviour and the progress display are still checked against literals or the stubbed-engine fixture (parser_test_data.json), and the page editor's url box shows the encoded url after a fetch where the reference keeps what was typed (DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/parser_editors.rs content_test_panel_fetches_raw_data_and_hands_it_to_its_formula, fetched_page_examples_use_actual_network_headers_cookies_context_and_child_converter, page_fetch_error_menu_retains_completed_failure_and_clears_at_next_request"
    }
   },
   {
@@ -24659,14 +24658,14 @@
    "reference": "hydrus/client/gui/networking/ClientGUINetwork.py:1454",
    "native": "crates/hydrus-gui/src/network_sessions_window.rs:787",
    "notes": [
-    "Native browser creates a validated domain session. The reference also permits creation of Hydrus-service contexts, which the native domain-only editor cannot author.",
-    "Existing service contexts can be reviewed and cleared, but a new service context cannot be selected."
+    "Native creates a validated domain session or a hydrus-service session keyed by the chosen repository's key, as the reference's two-type editor offers.",
+    "Native refuses what the reference stores as nonsense (a domain that is not one, a hydrus service with none to choose) and lower-cases domains; see DIFFERENCES.md."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window tests drive the Add editor with typed expectations (title 'enter new network context', the two type-info strings from ClientConstants.py, service list, resulting stored session); no recording of creation. Tracker notes and DIFFERENCES.md:1339 are stale (service sessions can now be created). Native rejects an invalid domain and a missing service with errors; the reference EditNetworkContextPanel does no validation, and this divergence is not documented. Tests: crates/hydrus-gui/tests/gui/network_sessions.rs:837 a_new_session_can_be_a_web_domain_or_a_hydrus_service_as_the_reference_s_editor_offers, :902 a_hydrus_service_session_needs_a_service_to_choose"
+    "by": "phase 2 session (recheck w4-r2b)",
+    "note": "Against a recording of the real browser's create new, its edit dialog scripted (oracle/record_session_create.py, fixtures/session_create.json, on a client with no repositories and one with two): the dialog's title, type note, starting domain (example.com), the repositories offered, the sessions made and their rows (including 'hydrus service: <name>', which native listed by key; fixed) and a cancelled dialog are compared in the window. Left because native differs where the reference accepts nonsense: it lower-cases a domain ('Example.com' is kept by the reference), refuses a domain that is not one (the reference makes a session with an empty domain), and refuses a hydrus service with no repository (the reference makes the 'hydrus service default' context); these are now in DIFFERENCES.md and asserted as native behaviour. Tests (the recording-replay test is deliberately untagged): crates/hydrus-gui/tests/gui/network_sessions.rs create_new_opens_and_makes_sessions_as_the_reference_s_browser_does, a_new_session_can_be_a_web_domain_or_a_hydrus_service_as_the_reference_s_editor_offers, a_hydrus_service_session_needs_a_service_to_choose"
    }
   },
   {
