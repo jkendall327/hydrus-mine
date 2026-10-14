@@ -84,11 +84,7 @@ fn main() -> Result<()> {
         return Err(e);
     }
     let Some(client) = client.take() else {
-        run.finish()
-            .context("clearing the cancelled startup marker")?;
-        return Err(anyhow!(
-            "the client is locked, and its password wasn't entered"
-        ));
+        return hydrus_gui::finish_locked(run);
     };
     save(&mut client.bound.pages.borrow_mut()).context("saving the session")?;
     // (closed pages don't outlive the client; their downloads go with them)
