@@ -1,0 +1,413 @@
+{
+ "steps": [
+  {
+   "step": "opened",
+   "texts": [
+    "If you have a backup from when you were granularity 2, updating it from your new 3 will be hellish expensive because all the files have moved. Click the button here to granularise your backup, too, so it has the same folder structure as your client. Trust me, this will save lots of time.",
+    "THIS IS SERIOUSLY ONLY FOR ADVANCED USERS. THE MIGRATION IS BIG AND SLOW, SO USERS WITH >1m FILES SHOULD THINK CAREFULLY.\n\nDO NOT DO THIS IF YOU DO SYMLINK MAGIC INSIDE YOUR FILE STORAGE",
+    "The client uses many subfolders to split up your collection into manageable chunks. As clients have grown, we are pushing from a granularity of 2, which means 512 subfolders, to 3, which means 8,192.\n\nMigrating to a higher granularity requires running a job here and then repeating it on your backups.",
+    "Your granularity is currently 2. If you are an advanced user, you are invited to move to 3.",
+    "detailed help for this panel -->",
+    "granularising offline storage",
+    "this client"
+   ],
+   "buttons": [
+    "I AM READY TO GO FROM 2 TO 3",
+    "I want to return from 3 back to 2",
+    "Migrate an offline folder from 2 to 3",
+    "Migrate an offline folder from 3 to 2",
+    "▲"
+   ],
+   "granularity": "Your granularity is currently 2. If you are an advanced user, you are invited to move to 3.",
+   "to3": true,
+   "to2": false
+  },
+  {
+   "step": "2 to 3, not ready",
+   "inputs": {
+    "yesno": [
+     false
+    ],
+    "pick": []
+   },
+   "dialogs": [
+    [
+     "question",
+     "One last check!",
+     "We are going to be rearranging your file storage completely. The process can be cancelled if it is taking too long, but it has to do the same amount of work to undo. If it fails half way through, I will attempt to undo it.\n\n Ideally, your client is currently calm and not trying to import many things. Granularisation migration works at about this speed:\n\nNVME/SSD: 3,000-5,000 files/s\nSATA/USB HDD: 100-500 files/s\nNAS/SMB: 50-250 files/s\nCloud storage: should not be attempted\nBTRFS and EXT4 filesystems may be up to 10x this speed.\n\nIf this is going to be too slow for you, it is ok to back out!\n\nDo you have a recent backup, in case something goes wrong?",
+     "yes, I have a backup and I am ready",
+     "no, I am not ready"
+    ]
+   ],
+   "files": [
+    "f3a/3ab4567.png"
+   ],
+   "granularity": "Your granularity is currently 2. If you are an advanced user, you are invited to move to 3.",
+   "to3": true,
+   "to2": false
+  },
+  {
+   "step": "2 to 3, ready",
+   "inputs": {
+    "yesno": [
+     true
+    ],
+    "pick": []
+   },
+   "dialogs": [
+    [
+     "question",
+     "One last check!",
+     "We are going to be rearranging your file storage completely. The process can be cancelled if it is taking too long, but it has to do the same amount of work to undo. If it fails half way through, I will attempt to undo it.\n\n Ideally, your client is currently calm and not trying to import many things. Granularisation migration works at about this speed:\n\nNVME/SSD: 3,000-5,000 files/s\nSATA/USB HDD: 100-500 files/s\nNAS/SMB: 50-250 files/s\nCloud storage: should not be attempted\nBTRFS and EXT4 filesystems may be up to 10x this speed.\n\nIf this is going to be too slow for you, it is ok to back out!\n\nDo you have a recent backup, in case something goes wrong?",
+     "yes, I have a backup and I am ready",
+     "no, I am not ready"
+    ]
+   ],
+   "files": [
+    "f3a/b/3ab4567.png"
+   ],
+   "granularity": "Your granularity is currently 2. If you are an advanced user, you are invited to move to 3.",
+   "to3": true,
+   "to2": false
+  },
+  {
+   "step": "3 to 2, not ready",
+   "inputs": {
+    "yesno": [
+     false
+    ],
+    "pick": []
+   },
+   "dialogs": [
+    [
+     "critical",
+     "error!",
+     "Hey, your current granularity is 2, but it needs to be 3 to start this process! Something went wrong, please tell hydev."
+    ]
+   ],
+   "files": [
+    "f3a/b/3ab4567.png"
+   ],
+   "granularity": "Your granularity is currently 2. If you are an advanced user, you are invited to move to 3.",
+   "to3": true,
+   "to2": false
+  },
+  {
+   "step": "3 to 2, ready",
+   "inputs": {
+    "yesno": [
+     true
+    ],
+    "pick": []
+   },
+   "dialogs": [
+    [
+     "critical",
+     "error!",
+     "Hey, your current granularity is 2, but it needs to be 3 to start this process! Something went wrong, please tell hydev."
+    ]
+   ],
+   "files": [
+    "f3a/b/3ab4567.png"
+   ],
+   "granularity": "Your granularity is currently 2. If you are an advanced user, you are invited to move to 3.",
+   "to3": true,
+   "to2": false
+  },
+  {
+   "step": "offline 2 to 3, not ready",
+   "inputs": {
+    "yesno": [
+     false
+    ],
+    "pick": []
+   },
+   "dialogs": [
+    [
+     "question",
+     "Ready check!",
+     "We are going to be rearranging the file storage of your selected folder completely.Granularisation migration works at about this speed:\n\nNVME/SSD: 3,000-5,000 files/s\nSATA/USB HDD: 100-500 files/s\nNAS/SMB: 50-250 files/s\nCloud storage: should not be attempted\nBTRFS and EXT4 filesystems may be up to 10x this speed.\n\nIf this is going to be too slow for you, it is ok to back out!\n\nWhen I ask which folder to work on, you want to select the one that _contains_ stuff like f86 or t32, often called \"client_files\" under a \"db\" dir. I will scan it beforehand to make sure it looks correct.\n\nAre you ready?",
+     "yes, I am ready",
+     "no, I am not ready"
+    ],
+    [
+     "information",
+     "1 files moved in 3 minutes 8 seconds.\n\nEverything went great. You now have finer, lower-latency file storage. The next step is to repeat this process for your backup file storage folders. Let hydev know if you have any problems!"
+    ]
+   ],
+   "files": [
+    "f3a/3ab4567.png"
+   ],
+   "granularity": "Your granularity is currently 3. How is it going?",
+   "to3": false,
+   "to2": true
+  },
+  {
+   "step": "offline 2 to 3, cancel the picker",
+   "inputs": {
+    "yesno": [
+     true
+    ],
+    "pick": [
+     null
+    ]
+   },
+   "dialogs": [
+    [
+     "question",
+     "Ready check!",
+     "We are going to be rearranging the file storage of your selected folder completely.Granularisation migration works at about this speed:\n\nNVME/SSD: 3,000-5,000 files/s\nSATA/USB HDD: 100-500 files/s\nNAS/SMB: 50-250 files/s\nCloud storage: should not be attempted\nBTRFS and EXT4 filesystems may be up to 10x this speed.\n\nIf this is going to be too slow for you, it is ok to back out!\n\nWhen I ask which folder to work on, you want to select the one that _contains_ stuff like f86 or t32, often called \"client_files\" under a \"db\" dir. I will scan it beforehand to make sure it looks correct.\n\nAre you ready?",
+     "yes, I am ready",
+     "no, I am not ready"
+    ],
+    [
+     "pick directory",
+     "Select folder to regranularise."
+    ]
+   ],
+   "files": [
+    "f3a/3ab4567.png"
+   ],
+   "granularity": "Your granularity is currently 3. How is it going?",
+   "to3": false,
+   "to2": true
+  },
+  {
+   "step": "offline 2 to 3, decline the scan",
+   "inputs": {
+    "yesno": [
+     true,
+     false
+    ],
+    "pick": [
+     "<offline>"
+    ]
+   },
+   "dialogs": [
+    [
+     "question",
+     "Ready check!",
+     "We are going to be rearranging the file storage of your selected folder completely.Granularisation migration works at about this speed:\n\nNVME/SSD: 3,000-5,000 files/s\nSATA/USB HDD: 100-500 files/s\nNAS/SMB: 50-250 files/s\nCloud storage: should not be attempted\nBTRFS and EXT4 filesystems may be up to 10x this speed.\n\nIf this is going to be too slow for you, it is ok to back out!\n\nWhen I ask which folder to work on, you want to select the one that _contains_ stuff like f86 or t32, often called \"client_files\" under a \"db\" dir. I will scan it beforehand to make sure it looks correct.\n\nAre you ready?",
+     "yes, I am ready",
+     "no, I am not ready"
+    ],
+    [
+     "pick directory",
+     "Select folder to regranularise."
+    ],
+    [
+     "question",
+     "Looking good.",
+     "Everything looks good. Start?",
+     "yes",
+     "no"
+    ]
+   ],
+   "files": [
+    "f3a/3ab4567.png"
+   ],
+   "granularity": "Your granularity is currently 3. How is it going?",
+   "to3": false,
+   "to2": true
+  },
+  {
+   "step": "offline 2 to 3, ready",
+   "inputs": {
+    "yesno": [
+     true,
+     true
+    ],
+    "pick": [
+     "<offline>"
+    ]
+   },
+   "dialogs": [
+    [
+     "question",
+     "Ready check!",
+     "We are going to be rearranging the file storage of your selected folder completely.Granularisation migration works at about this speed:\n\nNVME/SSD: 3,000-5,000 files/s\nSATA/USB HDD: 100-500 files/s\nNAS/SMB: 50-250 files/s\nCloud storage: should not be attempted\nBTRFS and EXT4 filesystems may be up to 10x this speed.\n\nIf this is going to be too slow for you, it is ok to back out!\n\nWhen I ask which folder to work on, you want to select the one that _contains_ stuff like f86 or t32, often called \"client_files\" under a \"db\" dir. I will scan it beforehand to make sure it looks correct.\n\nAre you ready?",
+     "yes, I am ready",
+     "no, I am not ready"
+    ],
+    [
+     "pick directory",
+     "Select folder to regranularise."
+    ],
+    [
+     "question",
+     "Looking good.",
+     "Everything looks good. Start?",
+     "yes",
+     "no"
+    ],
+    [
+     "information",
+     "1 files moved in <time>.\n\nEverything went great. Your folder has been granularised to level 3."
+    ]
+   ],
+   "files": [
+    "f3a/b/3ab4567.png"
+   ],
+   "granularity": "Your granularity is currently 3. How is it going?",
+   "to3": false,
+   "to2": true
+  },
+  {
+   "step": "offline 2 to 3 again (already 3), decline",
+   "inputs": {
+    "yesno": [
+     true,
+     false
+    ],
+    "pick": [
+     "<offline>"
+    ]
+   },
+   "dialogs": [
+    [
+     "question",
+     "Ready check!",
+     "We are going to be rearranging the file storage of your selected folder completely.Granularisation migration works at about this speed:\n\nNVME/SSD: 3,000-5,000 files/s\nSATA/USB HDD: 100-500 files/s\nNAS/SMB: 50-250 files/s\nCloud storage: should not be attempted\nBTRFS and EXT4 filesystems may be up to 10x this speed.\n\nIf this is going to be too slow for you, it is ok to back out!\n\nWhen I ask which folder to work on, you want to select the one that _contains_ stuff like f86 or t32, often called \"client_files\" under a \"db\" dir. I will scan it beforehand to make sure it looks correct.\n\nAre you ready?",
+     "yes, I am ready",
+     "no, I am not ready"
+    ],
+    [
+     "pick directory",
+     "Select folder to regranularise."
+    ],
+    [
+     "question",
+     "Proceed at your own risk.",
+     "I examined the folder, but I think it is already granularity 3. Maybe it is a mixed folder? Are you sure this is correct?",
+     "yes",
+     "no"
+    ]
+   ],
+   "files": [
+    "f3a/b/3ab4567.png"
+   ],
+   "granularity": "Your granularity is currently 3. How is it going?",
+   "to3": false,
+   "to2": true
+  },
+  {
+   "step": "offline 3 to 2, scan says 3, go",
+   "inputs": {
+    "yesno": [
+     true,
+     true
+    ],
+    "pick": [
+     "<offline>"
+    ]
+   },
+   "dialogs": [
+    [
+     "question",
+     "Ready check!",
+     "We are going to be rearranging the file storage of your selected folder completely.Granularisation migration works at about this speed:\n\nNVME/SSD: 3,000-5,000 files/s\nSATA/USB HDD: 100-500 files/s\nNAS/SMB: 50-250 files/s\nCloud storage: should not be attempted\nBTRFS and EXT4 filesystems may be up to 10x this speed.\n\nIf this is going to be too slow for you, it is ok to back out!\n\nWhen I ask which folder to work on, you want to select the one that _contains_ stuff like f86 or t32, often called \"client_files\" under a \"db\" dir. I will scan it beforehand to make sure it looks correct.\n\nAre you ready?",
+     "yes, I am ready",
+     "no, I am not ready"
+    ],
+    [
+     "pick directory",
+     "Select folder to regranularise."
+    ],
+    [
+     "question",
+     "Looking good.",
+     "Everything looks good. Start?",
+     "yes",
+     "no"
+    ],
+    [
+     "information",
+     "1 files moved in <time>.\n\nEverything went great. Your folder has been granularised to level 2."
+    ]
+   ],
+   "files": [
+    "f3a/3ab4567.png"
+   ],
+   "granularity": "Your granularity is currently 3. How is it going?",
+   "to3": false,
+   "to2": true
+  },
+  {
+   "step": "offline 2 to 3, unknown folder, decline",
+   "inputs": {
+    "yesno": [
+     true,
+     false
+    ],
+    "pick": [
+     "<empty>"
+    ]
+   },
+   "dialogs": [
+    [
+     "question",
+     "Ready check!",
+     "We are going to be rearranging the file storage of your selected folder completely.Granularisation migration works at about this speed:\n\nNVME/SSD: 3,000-5,000 files/s\nSATA/USB HDD: 100-500 files/s\nNAS/SMB: 50-250 files/s\nCloud storage: should not be attempted\nBTRFS and EXT4 filesystems may be up to 10x this speed.\n\nIf this is going to be too slow for you, it is ok to back out!\n\nWhen I ask which folder to work on, you want to select the one that _contains_ stuff like f86 or t32, often called \"client_files\" under a \"db\" dir. I will scan it beforehand to make sure it looks correct.\n\nAre you ready?",
+     "yes, I am ready",
+     "no, I am not ready"
+    ],
+    [
+     "pick directory",
+     "Select folder to regranularise."
+    ],
+    [
+     "question",
+     "Unable to determine current granularity.",
+     "I examined the folder but I am not sure what I am looking at. Are you sure this is correct?",
+     "yes",
+     "no"
+    ]
+   ],
+   "files": [],
+   "granularity": "Your granularity is currently 3. How is it going?",
+   "to3": false,
+   "to2": true
+  },
+  {
+   "step": "offline 3 to 2 of an empty folder, go",
+   "inputs": {
+    "yesno": [
+     true,
+     true,
+     true
+    ],
+    "pick": [
+     "<empty>"
+    ]
+   },
+   "dialogs": [
+    [
+     "question",
+     "Ready check!",
+     "We are going to be rearranging the file storage of your selected folder completely.Granularisation migration works at about this speed:\n\nNVME/SSD: 3,000-5,000 files/s\nSATA/USB HDD: 100-500 files/s\nNAS/SMB: 50-250 files/s\nCloud storage: should not be attempted\nBTRFS and EXT4 filesystems may be up to 10x this speed.\n\nIf this is going to be too slow for you, it is ok to back out!\n\nWhen I ask which folder to work on, you want to select the one that _contains_ stuff like f86 or t32, often called \"client_files\" under a \"db\" dir. I will scan it beforehand to make sure it looks correct.\n\nAre you ready?",
+     "yes, I am ready",
+     "no, I am not ready"
+    ],
+    [
+     "pick directory",
+     "Select folder to regranularise."
+    ],
+    [
+     "question",
+     "Unable to determine current granularity.",
+     "I examined the folder but I am not sure what I am looking at. Are you sure this is correct?",
+     "yes",
+     "no"
+    ],
+    [
+     "information",
+     "0 files moved in <time>.\n\nEverything went great. Your folder has been granularised to level 2."
+    ]
+   ],
+   "files": [],
+   "granularity": "Your granularity is currently 3. How is it going?",
+   "to3": false,
+   "to2": true
+  }
+ ]
+}

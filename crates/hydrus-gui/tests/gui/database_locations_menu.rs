@@ -817,6 +817,153 @@ fn granularity_window(
     granularity
 }
 
+fn tree(base: &Path) -> Vec<String> {
+    fn walk(dir: &Path, base: &Path, out: &mut Vec<String>) {
+        for entry in std::fs::read_dir(dir).into_iter().flatten().flatten() {
+            let path = entry.path();
+            if path.is_dir() {
+                walk(&path, base, out);
+            } else {
+                out.push(
+                    path.strip_prefix(base)
+                        .unwrap()
+                        .to_string_lossy()
+                        .into_owned(),
+                );
+            }
+        }
+    }
+    let mut out = Vec::new();
+    walk(base, base, &mut out);
+    out.sort();
+    out
+}
+
+/// Every step of the reference's granularity window (oracle/record_granularity_panel.py)
+/// replayed through the real window: the same answers, then the questions and messages
+/// compared in order and words, and where the file ended up. The steps with `only` in
+/// their name are the ones for this leaf: "offline" or not.
+fn replay_granularity(offline: bool) {
+    let recording = hydrus_testkit::fixture_json("granularity_panel.json");
+    let rig = rig();
+    let media = rig.home.path().join("client_files");
+    let file = media.join("f3a").join("3ab4567.png");
+    std::fs::create_dir_all(file.parent().unwrap()).unwrap();
+    std::fs::write(&file, b"x").unwrap();
+    let scratch = tempfile::tempdir().unwrap();
+    let make = |name: &str, files: &[&str]| {
+        let path = scratch.path().join(name);
+        std::fs::create_dir(&path).unwrap();
+        for f in files {
+            let f = path.join(f);
+            std::fs::create_dir_all(f.parent().unwrap()).unwrap();
+            std::fs::write(f, b"x").unwrap();
+        }
+        path
+    };
+    let folders = [
+        ("offline", make("offline", &["f3a/3ab4567.png"])),
+        ("empty", make("empty", &[])),
+    ];
+    let window = rig.open();
+    let g = granularity_window(&rig, &window);
+    let time = regex::Regex::new(r"in \d+(\.\d+)? (micro|milli)?seconds?\.|in (\d+ \w+ ?)+\.").unwrap();
+    let norm = |text: &str| {
+        let mut text = time.replace_all(text, "in <time>.").into_owned();
+        text = text.replace(&scratch.path().join("offline").display().to_string(), "<offline>");
+        text.replace(&scratch.path().join("empty").display().to_string(), "<empty>")
+    };
+    let mut seen = 0;
+    for step in recording["steps"].as_array().unwrap() {
+        let name = step["step"].as_str().unwrap();
+        if name == "opened" {
+            assert_eq!(g.get_client_label(), step["granularity"].as_str().unwrap());
+            continue;
+        }
+        let is_offline = name.starts_with("offline");
+        if is_offline != offline {
+            // (the other leaf's steps still run, so the layout is where they left it)
+        }
+        let action = match name.split(',').next().unwrap() {
+            n if n.starts_with("2 to 3") => "2to3",
+            n if n.starts_with("3 to 2") => "3to2",
+            n if n.starts_with("offline 2 to 3") => "folder 2to3",
+            _ => "folder 3to2",
+        };
+        let inputs = &step["inputs"];
+        let mut answers = inputs["yesno"].as_array().unwrap().iter().map(|a| a.as_bool().unwrap());
+        *rig.next.borrow_mut() = inputs["pick"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter_map(|p| p.as_str())
+            .map(|p| folders.iter().find(|(n, _)| format!("<{n}>") == p).unwrap().1.clone())
+            .collect();
+        g.invoke_action(action.into());
+        for dialog in step["dialogs"].as_array().unwrap() {
+            match dialog[0].as_str().unwrap() {
+                "question" => {
+                    let q = hydrus_gui::granularity_window::question().filter(|q| q.window().is_visible());
+                    let Some(q) = q else { panic!("{name}: no question {:?}", dialog[2]) };
+                    assert_eq!(q.get_window_title(), dialog[1].as_str().unwrap(), "{name}");
+                    assert_eq!(norm(&q.get_message()), dialog[2].as_str().unwrap(), "{name}");
+                    let yes: Vec<String> = q.get_choices().iter().map(|c| c.to_string()).collect();
+                    assert_eq!(yes, [dialog[3].as_str().unwrap()], "{name}");
+                    assert_eq!(q.get_no_label(), dialog[4].as_str().unwrap(), "{name}");
+                    if answers.next().unwrap() {
+                        q.invoke_chosen(0);
+                    } else {
+                        q.invoke_cancelled();
+                    }
+                }
+                "pick directory" => {
+                    assert_eq!(rig.asked.borrow().last().unwrap(), dialog[1].as_str().unwrap(), "{name}");
+                }
+                kind @ ("information" | "critical") => {
+                    let deadline = Instant::now() + Duration::from_secs(120);
+                    while message_window().is_none_or(|m| !m.window().is_visible()) {
+                        assert!(Instant::now() < deadline, "{name}: no {kind} message");
+                        pump(Duration::from_millis(50));
+                    }
+                    let m = message_window().unwrap();
+                    let wanted = dialog[dialog.as_array().unwrap().len() - 1].as_str().unwrap();
+                    assert_eq!(norm(&m.get_message()), wanted, "{name}");
+                    m.invoke_cancelled();
+                }
+                other => panic!("{other}"),
+            }
+        }
+        pump(Duration::from_millis(200));
+        let place = if inputs["pick"].to_string().contains("<empty>") {
+            &folders[1].1
+        } else if is_offline {
+            &folders[0].1
+        } else {
+            &media
+        };
+        assert_eq!(tree(place), strings(&step["files"]), "{name}");
+        assert_eq!(g.get_client_label(), granularity_of(&step), "{name}");
+        seen += 1;
+    }
+    assert!(seen > 5);
+}
+
+fn granularity_of(step: &serde_json::Value) -> String {
+    // (the reference's panel says "currently 2"; the native window's label is its own words
+    // for the same two states, checked by its level)
+    let text = step["granularity"].as_str().unwrap();
+    if text.contains("currently 3") {
+        hydrus_gui_model::database_granularity::granularity_label(3)
+    } else {
+        hydrus_gui_model::database_granularity::granularity_label(2)
+    }
+}
+
+#[test]
+fn the_granularity_window_replays_the_reference_s_steps() {
+    replay_granularity(false);
+}
+
 // leaf: audit-media-database-locations-granularity-client
 #[test]
 fn this_client_s_granularity_is_changed_after_the_last_check_and_reported() {
