@@ -39,6 +39,9 @@ pub fn copy_file(source: impl AsRef<Path>, dest: impl AsRef<Path>) -> io::Result
 /// for good; nothing if it isn't there.
 pub fn delete_path(path: impl AsRef<Path>) -> io::Result<()> {
     let path = path.as_ref();
+    hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::FileReport, || {
+        format!("Deleting {}", path.display())
+    });
     match std::fs::symlink_metadata(path) {
         Err(e) if e.kind() == io::ErrorKind::NotFound => Ok(()),
         Err(e) => Err(e),
@@ -58,6 +61,9 @@ pub fn delete_or_recycle(path: impl AsRef<Path>, recycle: bool) -> io::Result<()
     if std::fs::symlink_metadata(path).is_err() {
         return Ok(());
     }
+    hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::FileReport, || {
+        format!("Recycling {}", path.display())
+    });
     match ::trash::delete(path) {
         Ok(()) => Ok(()),
         Err(e) => {

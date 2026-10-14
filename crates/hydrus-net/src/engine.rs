@@ -585,6 +585,47 @@ fn http_client(options: &NetOptions) -> Result<reqwest::Client, NetError> {
     builder.build().map_err(failed)
 }
 
+/// A header name as the reference words it in network reports
+/// (`accept-encoding` is `Accept-Encoding`).
+fn pretty_header_name(name: &str) -> String {
+    name.split('-')
+        .map(|part| {
+            let mut chars = part.chars();
+            chars.next().map_or_else(String::new, |first| {
+                first
+                    .to_uppercase()
+                    .chain(chars.flat_map(char::to_lowercase))
+                    .collect()
+            })
+        })
+        .collect::<Vec<_>>()
+        .join("-")
+}
+
+/// `key: value` lines, sorted by key, as network report mode lists headers.
+fn header_lines<'a>(headers: impl Iterator<Item = (&'a HeaderName, &'a HeaderValue)>) -> String {
+    let mut rows: Vec<(String, String)> = headers
+        .map(|(name, value)| {
+            (
+                pretty_header_name(name.as_str()),
+                String::from_utf8_lossy(value.as_bytes()).into_owned(),
+            )
+        })
+        .collect();
+    rows.sort();
+    rows.iter()
+        .map(|(key, value)| format!("{key}: {value}"))
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
+fn method_word(method: Method) -> &'static str {
+    match method {
+        Method::Get => "GET",
+        Method::Post => "POST",
+    }
+}
+
 fn set_header(headers: &mut Vec<(String, String)>, name: &str, value: String) {
     headers.retain(|(n, _)| !n.eq_ignore_ascii_case(name));
     headers.push((name.to_owned(), value));
@@ -617,7 +658,7 @@ impl NetEngine {
             .jobs
             .lock()
             .iter()
-            .map(|(id, (job, _))| {
+            .map(|(id, (job, contexts))| {
                 let state = job.state();
                 network_runtime::JobControl {
                     id: *id,
@@ -626,6 +667,21 @@ impl NetEngine {
                     domain_ok: state.one_shot || self.domain_ok(&state.url),
                     tokens_ok: state.tokens_ok || job.override_gallery.load(Ordering::Relaxed),
                     auto_override: job.auto_override_at.load(Ordering::Relaxed) > 0,
+                    context_waits: {
+                        let mut bandwidth = self.bandwidth.lock();
+                        contexts
+                            .iter()
+                            .map(|context| {
+                                bandwidth
+                                    .0
+                                    .waiting_estimate_and_context(
+                                        std::slice::from_ref(context),
+                                        now(),
+                                    )
+                                    .0
+                            })
+                            .collect()
+                    },
                 }
             })
             .collect();
@@ -1254,6 +1310,13 @@ impl NetEngine {
     /// Make a request, retrying as the reference does, and report progress
     /// on `job`.
     pub async fn fetch(&self, request: &Request, job: &Job) -> Result<Response, NetError> {
+        hydrus_core::debug_flags::report_network(|| {
+            format!(
+                "Network Job Added: {}  {}",
+                method_word(request.method),
+                request.url
+            )
+        });
         let id;
         {
             let _control = job.control.lock();
@@ -1301,6 +1364,13 @@ impl NetEngine {
             self.jobs.lock().insert(id, (job.clone(), contexts));
         }
         let _registered = RegisteredJob { engine: self, id };
+        hydrus_core::debug_flags::report_network(|| {
+            format!(
+                "Network Job Starting: {} {}",
+                method_word(request.method),
+                request.url
+            )
+        });
         let result = self.fetch_inner(request, job).await;
         if let Ok(response) = &result
             && response.url != request.url
@@ -1328,9 +1398,9 @@ impl NetEngine {
                 Some(body) if !body.is_empty() => body,
                 _ => error.to_string(),
             };
-            hydrus_core::debug_flags::report_network(|| {
-                format!("Network error should follow:\n{error}\n{text}")
-            });
+            hydrus_core::debug_flags::report_network(|| "Network error should follow:".to_owned());
+            hydrus_core::debug_flags::report_network(|| error.to_string());
+            hydrus_core::debug_flags::report_network(|| text.clone());
             let text = if text.chars().count() > 1024 {
                 tracing::debug!(error_text = %text.chars().take(512 * 1024).collect::<String>(), "server error detail");
                 format!(
@@ -1369,6 +1439,13 @@ impl NetEngine {
             Err(NetError::Cancelled) => "Cancelled!".into(),
             Err(e) => format!("Error: {e}"),
         };
+        hydrus_core::debug_flags::report_network(|| {
+            format!(
+                "Network Job Done: {} {}",
+                method_word(request.method),
+                request.url
+            )
+        });
         result
     }
 
@@ -1876,6 +1953,30 @@ impl NetEngine {
         for (name, value) in &a.request.additional_headers {
             set_header(&mut headers, name, value.clone());
         }
+        hydrus_core::debug_flags::report_network(|| {
+            let used = classes.referral_url(&a.request.url, a.request.referral_url.as_deref());
+            format!(
+                "Network Jobs Referral URLs for {}:\nGiven: {}\nUsed: {}",
+                a.request.url,
+                a.request.referral_url.as_deref().unwrap_or("None"),
+                used.as_deref().unwrap_or("None")
+            )
+        });
+        hydrus_core::debug_flags::report_network(|| {
+            let mut names: Vec<String> = headers
+                .iter()
+                .map(|(name, _)| pretty_header_name(name))
+                .collect();
+            names.sort();
+            if names.is_empty() {
+                "No custom headers set by the network domain manager.".to_owned()
+            } else {
+                format!(
+                    "Request Headers set by the network domain manager: {}",
+                    names.join(", ")
+                )
+            }
+        });
         let mut map = HeaderMap::new();
         for (name, value) in headers {
             let header_name = HeaderName::from_bytes(name.as_bytes())
@@ -1965,6 +2066,7 @@ impl NetEngine {
             {
                 hop_headers.insert(reqwest::header::COOKIE, value);
             }
+            let sent_headers = hop_headers.clone();
             let mut builder = self
                 .client
                 .read()
@@ -1997,6 +2099,13 @@ impl NetEngine {
                 .map(|l| String::from_utf8_lossy(l.as_bytes()).into_owned());
             let Some(location) = location.filter(|_| matches!(status, 301 | 302 | 303 | 307 | 308))
             else {
+                hydrus_core::debug_flags::report_network(|| {
+                    format!(
+                        "Request Headers:\n{}\n\nResponse Headers:\n{}",
+                        header_lines(sent_headers.iter()),
+                        header_lines(response.headers().iter())
+                    )
+                });
                 return Ok((response, url));
             };
             let mut next = if location.starts_with("//") {
@@ -2805,5 +2914,114 @@ mod reload_tests {
         options.max_get_attempts += 1;
         engine.set_options(options).unwrap();
         assert!(Arc::ptr_eq(&slots, &engine.slots.read()));
+    }
+
+    /// The states the reference's job menu was recorded in
+    /// (`oracle/record_network_jobs_panel.py`, `network_jobs_panel.json`):
+    /// what the engine's snapshot says of a job in each, which is what the
+    /// jobs window's menu reads.
+    #[test]
+    fn the_snapshot_reports_the_recorded_job_menu_states() {
+        let recorded = hydrus_testkit::fixture_json("network_jobs_panel.json");
+        let flag = |case: &str, name: &str| -> bool {
+            recorded["menus"][case]["rows"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter_map(|r| r["label"].as_str())
+                .find_map(|l| l.strip_prefix(&format!("{name}: ")))
+                .unwrap()
+                == "True"
+        };
+        let (_dir, store, _) = engine();
+        // the recorded rule: one request in a minute, on the global context
+        store
+            .write(|ctx| {
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &BandwidthSettings {
+                        rules: vec![(
+                            NetworkContext::global(),
+                            hydrus_core::bandwidth::Rules::new([
+                                hydrus_core::bandwidth::Rule::new(
+                                    hydrus_core::bandwidth::BandwidthType::Requests,
+                                    Some(60),
+                                    1,
+                                ),
+                            ]),
+                        )],
+                        ..BandwidthSettings::default()
+                    },
+                )
+            })
+            .unwrap();
+        let settings: NetworkSettings = store.read(hydrus_store::settings::get).unwrap();
+        let engine =
+            NetEngine::new(Arc::clone(&store), NetOptions::from_settings(&settings)).unwrap();
+        let contexts = vec![
+            NetworkContext::global(),
+            NetworkContext::domain("example.com"),
+            NetworkContext::domain("sub.example.com"),
+            NetworkContext::downloader_page("66697874757265"),
+        ];
+        engine
+            .bandwidth
+            .lock()
+            .0
+            .report_request(&[NetworkContext::global()], now());
+        let register = |id: u64, job: &Job| {
+            job.state.lock().url = "https://example.com/file".into();
+            job.state.lock().tokens_ok = true;
+            job.state.lock().obeys_bandwidth = true;
+            engine
+                .jobs
+                .lock()
+                .insert(id, ((*job).clone(), contexts.clone()));
+        };
+        let control = |id: u64| {
+            engine
+                .runtime_snapshot()
+                .controls
+                .into_iter()
+                .find(|c| c.id == id)
+                .unwrap()
+        };
+        let shown = |id: u64| {
+            engine
+                .runtime_snapshot()
+                .jobs
+                .into_iter()
+                .find(|j| j.id == id)
+                .unwrap()
+        };
+
+        // plain: the global rule makes it wait about a minute, the others not at all
+        let plain = Job::new();
+        register(1, &plain);
+        let waits = control(1).context_waits;
+        assert_eq!(waits.len(), 4);
+        assert!((50..=60).contains(&waits[0]), "{waits:?}");
+        assert_eq!(&waits[1..], [0, 0, 0]);
+        assert_eq!(
+            recorded["menus"]["plain"]["rows"][0]["children"][0]["label"],
+            "global (1 minute)"
+        );
+        assert!(control(1).domain_ok == flag("plain", "domain ok"));
+        assert!(control(1).tokens_ok == flag("plain", "tokens ok"));
+        assert!(shown(1).obeys_bandwidth == flag("plain", "obeys bandwidth"));
+
+        // overridden by hand: it no longer obeys
+        let overridden = Job::new();
+        register(2, &overridden);
+        overridden.override_bandwidth();
+        assert!(shown(2).obeys_bandwidth == flag("overridden", "obeys bandwidth"));
+        assert!(!shown(2).obeys_bandwidth);
+
+        // domain errors, as many as the option says: the domain is not ok
+        for _ in 0..engine.options().domain_error_number {
+            engine.report_domain_error("https://example.com/file");
+        }
+        assert!(control(1).domain_ok == flag("domain_errors", "domain ok"));
+        assert!(!control(1).domain_ok);
     }
 }

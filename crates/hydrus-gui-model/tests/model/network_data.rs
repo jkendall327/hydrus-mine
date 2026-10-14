@@ -290,3 +290,72 @@ fn reference_bandwidth_age_rule_filters_months_and_history_deletion() {
         .is_empty()
     );
 }
+
+#[test]
+fn a_job_menu_lists_each_context_with_its_wait_then_the_flags_as_the_reference_does() {
+    use hydrus_store::network_runtime::JobControl;
+    let f = hydrus_testkit::fixture_json("network_jobs_panel.json");
+    let job = NetworkJob {
+        id: 1,
+        url: "https://example.com/file".into(),
+        status: "downloading…".into(),
+        wait: WaitReason::Downloading,
+        bytes_read: 0,
+        bytes_total: None,
+        speed: 0,
+        contexts: vec![
+            NetworkContext::global(),
+            NetworkContext::domain("example.com"),
+            NetworkContext::domain("sub.example.com"),
+            NetworkContext::downloader_page("66697874757265"),
+        ],
+        obeys_bandwidth: true,
+    };
+    let control = JobControl {
+        id: 1,
+        created: 0,
+        gallery: false,
+        domain_ok: true,
+        tokens_ok: true,
+        auto_override: false,
+        context_waits: vec![60, 0, 0, 0],
+    };
+    let lines = model::job_menu(&job, Some(&control));
+    let recorded = &f["menus"]["plain"]["rows"];
+    let expected: Vec<model::JobMenuLine> = recorded
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|row| {
+            let label = row["label"].as_str().unwrap().to_owned();
+            if row["children"].as_array().unwrap().is_empty() {
+                model::JobMenuLine::Label(label)
+            } else {
+                model::JobMenuLine::Submenu(
+                    label,
+                    row["children"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .map(|c| model::JobMenuLine::Label(c["label"].as_str().unwrap().to_owned()))
+                        .collect(),
+                )
+            }
+        })
+        .collect();
+    assert_eq!(lines, expected);
+}
+
+#[test]
+fn the_refresh_interval_is_clamped_to_the_reference_s_minimum() {
+    let f = hydrus_testkit::fixture_json("network_jobs_panel.json");
+    for step in f["refresh"]["steps"].as_array().unwrap() {
+        if let Some(set) = step["set"].as_f64() {
+            assert_eq!(
+                model::parse_refresh_seconds(&set.to_string()),
+                step["value"].as_f64()
+            );
+        }
+    }
+    assert_eq!(model::parse_refresh_seconds("abc"), None);
+}

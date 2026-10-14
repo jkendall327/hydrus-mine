@@ -65,24 +65,35 @@ struct State {
 }
 
 /// A scripted clock, for tests: the first time asked is `first`, every later
-/// one is `then`. `None` is the system's.
-static SCRIPTED_CLOCK: std::sync::Mutex<Option<(Option<i64>, i64)>> = std::sync::Mutex::new(None);
+/// one is `then`. `None` is the system's. It belongs to the thread that sets it
+/// (a test's own window) and the job that thread starts, so tests running side
+/// by side cannot spend each other's script.
+type Clock = std::sync::Arc<std::sync::Mutex<(Option<i64>, i64)>>;
+
+thread_local! {
+    static SCRIPTED_CLOCK: RefCell<Option<Clock>> = const { RefCell::new(None) };
+}
 
 #[doc(hidden)]
 pub fn script_clock(script: Option<(i64, i64)>) {
-    *SCRIPTED_CLOCK
-        .lock()
-        .unwrap_or_else(std::sync::PoisonError::into_inner) =
-        script.map(|(first, then)| (Some(first), then));
+    SCRIPTED_CLOCK.with(|c| {
+        *c.borrow_mut() = script
+            .map(|(first, then)| std::sync::Arc::new(std::sync::Mutex::new((Some(first), then))));
+    });
 }
 
-fn now() -> i64 {
-    if let Some((first, then)) = SCRIPTED_CLOCK
-        .lock()
-        .unwrap_or_else(std::sync::PoisonError::into_inner)
-        .as_mut()
-    {
-        return first.take().unwrap_or(*then);
+/// This thread's scripted clock, to hand to a job it starts.
+fn scripted_clock() -> Option<Clock> {
+    SCRIPTED_CLOCK.with(|c| c.borrow().clone())
+}
+
+fn now(clock: Option<&Clock>) -> i64 {
+    if let Some(clock) = clock {
+        let mut clock = clock
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        let then = clock.1;
+        return clock.0.take().unwrap_or(then);
     }
     hydrus_core::TimestampMs::now().millis() / 1000
 }
@@ -594,16 +605,17 @@ fn custom_runtime(state: &Rc<RefCell<State>>, slots: &Slots) {
 #[allow(clippy::cast_precision_loss)] // (seconds)
 fn start(state: &Rc<RefCell<State>>, slots: &Slots, seconds: Option<i64>) {
     let store = state.borrow().store.clone();
-    let stop_at = seconds.map(|s| now() + s);
+    let clock = scripted_clock();
+    let stop_at = seconds.map(|s| now(clock.as_ref()) + s);
     std::thread::spawn(move || {
-        let mut job = Job::new(false, true, now() as f64);
+        let mut job = Job::new(false, true, now(clock.as_ref()) as f64);
         job.status_title = Some(model::REBALANCE_TITLE.into());
         let key = job.key;
-        let at = now();
+        let at = now(clock.as_ref());
         let _ = store.write(move |ctx| popups::add(ctx.conn(), &job, at));
         let cancelled = Arc::new(AtomicBool::new(false));
         let mut say = |text: String| {
-            let at = now();
+            let at = now(clock.as_ref());
             let flag = cancelled.clone();
             let _ = store.write(move |ctx| {
                 popups::update(ctx.conn(), &key, at, |job| {
@@ -616,13 +628,13 @@ fn start(state: &Rc<RefCell<State>>, slots: &Slots, seconds: Option<i64>) {
             });
         };
         let result = storage::rebalance(&store, &mut say, &|| {
-            cancelled.load(Ordering::Relaxed) || stop_at.is_some_and(|t| now() >= t)
+            cancelled.load(Ordering::Relaxed) || stop_at.is_some_and(|t| now(clock.as_ref()) >= t)
         });
         let text = match result {
             Ok(_) => model::REBALANCE_DONE.to_owned(),
             Err(e) => format!("could not move the files: {e}"),
         };
-        let at = now();
+        let at = now(clock.as_ref());
         let failed = text != model::REBALANCE_DONE;
         let _ = store.write(move |ctx| {
             popups::update(ctx.conn(), &key, at, |job| {

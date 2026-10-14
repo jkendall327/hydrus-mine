@@ -175,9 +175,7 @@ fn process_command(process: &Process, inputs: &Inputs) -> Result<Command, String
     let executable = args
         .first()
         .ok_or_else(|| "No executable path is set!".to_owned())?;
-    hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::SubprocessReport, || {
-        format!("KWargs are: {{'args': {args:?}}}")
-    });
+    hydrus_core::debug_flags::report_subprocess_call(&args, process.hide_terminal);
     let mut command = Command::new(executable);
     command.args(&args[1..]);
     #[cfg(windows)]
@@ -227,6 +225,24 @@ pub fn test_call_cancellable(
     loop {
         match child.try_wait() {
             Ok(Some(status)) => {
+                // (a program that left a child holding a pipe open must not
+                // hold up a call that went well, unless it is being reported)
+                let wanted =
+                    !status.success() || hydrus_core::debug_flags::Flag::SubprocessReport.is_on();
+                let read = |reader: Option<std::sync::mpsc::Receiver<Vec<u8>>>| {
+                    if wanted {
+                        reader
+                            .and_then(|r| r.recv_timeout(Duration::from_secs(1)).ok())
+                            .unwrap_or_default()
+                    } else {
+                        Vec::new()
+                    }
+                };
+                let (out, err) = (read(stdout), read(stderr));
+                hydrus_core::debug_flags::report_subprocess_output(
+                    Some(&String::from_utf8_lossy(&out)),
+                    Some(&String::from_utf8_lossy(&err)),
+                );
                 let Some(code) = status.code().filter(|code| *code != 0) else {
                     return if status.success() {
                         Ok(())
@@ -234,18 +250,10 @@ pub fn test_call_cancellable(
                         Err(format!("External local process returned {status}."))
                     };
                 };
-                let quoted = |reader: Option<std::sync::mpsc::Receiver<Vec<u8>>>| {
-                    quote_output(
-                        &reader
-                            .and_then(|r| r.recv_timeout(Duration::from_secs(1)).ok())
-                            .unwrap_or_default(),
-                        process.text,
-                    )
-                };
                 return Err(format!(
                     "BadReturnCodeException: A call to another executable gave a non-zero return code ({code})! The call was: {cmd}\n\n========== stdout ==========\n{}\n========== stderr ==========\n{}\n============================\n",
-                    quoted(stdout),
-                    quoted(stderr)
+                    quote_output(&out, process.text),
+                    quote_output(&err, process.text)
                 ));
             }
             Ok(None) => {}

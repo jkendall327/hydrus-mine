@@ -275,30 +275,36 @@ fn new_work_selects_files_by_search_or_the_easy_select_buttons() {
     assert_eq!(w.get_files_label(), model::selected(searched));
     assert!(w.get_can_add());
 
-    // a typed predicate narrows it, and can be taken away again
-    w.set_search_input("system:archive".into());
-    w.invoke_search_entered();
-    assert_eq!(w.get_search_input(), "");
-    assert_eq!(w.get_predicates().row_count(), 1);
-    w.invoke_run_search();
-    until(|| !w.get_searching(), "the narrowed search");
-    let archived = model::find(
-        &rig.store,
-        Pick::Search,
-        &hydrus_search::parse_api_search(&serde_json::json!(["system:archive"])).unwrap(),
-    )
-    .unwrap()
-    .len();
-    assert_eq!(w.get_search_status(), model::found(archived));
-    assert_eq!(w.get_files_label(), model::selected(archived));
-    w.invoke_predicate_removed(0);
-    assert_eq!(w.get_predicates().row_count(), 0);
+    // a typed predicate narrows it, and can be taken away again; the counts are the
+    // reference's, from the same basic client (oracle/record_file_maintenance_new.py)
+    let recording = recorded();
+    for predicate in ["system:archive", "system:inbox"] {
+        w.set_search_input(predicate.into());
+        w.invoke_search_entered();
+        assert_eq!(w.get_search_input(), "");
+        assert_eq!(w.get_predicates().row_count(), 1);
+        w.invoke_run_search();
+        until(|| !w.get_searching(), "the narrowed search");
+        let wanted = step(&recording, &format!("run the search {predicate}"));
+        assert_eq!(
+            w.get_search_status(),
+            wanted["search"].as_str().unwrap(),
+            "{predicate}"
+        );
+        assert_eq!(
+            w.get_files_label(),
+            wanted["selected"].as_str().unwrap(),
+            "{predicate}"
+        );
+        w.invoke_predicate_removed(0);
+        assert_eq!(w.get_predicates().row_count(), 0);
+    }
 
     // an unreadable search says why and keeps nothing
     w.set_search_input("system:not a real predicate".into());
     w.invoke_search_entered();
     assert_eq!(w.get_predicates().row_count(), 0);
-    assert_ne!(w.get_search_status(), model::found(archived));
+    assert_ne!(w.get_search_status(), "16 files found");
 
     // the easy-select buttons: all media files, all repository update files
     w.invoke_easy_select(false);

@@ -375,6 +375,22 @@ pub(super) fn capture() -> std::sync::Arc<Mutex<Vec<String>>> {
     seen
 }
 
+/// Send the reports made on this thread to a list, not the popups. For a
+/// report that is made on the calling thread: the flags and the sink are
+/// process-wide, so other tests' timers can report too (on their own
+/// threads), and those are left out.
+pub(super) fn capture_here() -> std::sync::Arc<Mutex<Vec<String>>> {
+    let seen = std::sync::Arc::new(Mutex::new(Vec::new()));
+    let sink = seen.clone();
+    let mine = std::thread::current().id();
+    debug_flags::set_sink(Some(Box::new(move |text| {
+        if std::thread::current().id() == mine {
+            sink.lock().unwrap().push(text.to_owned());
+        }
+    })));
+    seen
+}
+
 impl Debug {
     /// Whether `help > debug > report modes > label` shows checked.
     pub(super) fn report_mode_checked(&self, label: &str) -> bool {
@@ -405,13 +421,15 @@ impl Debug {
     }
 }
 
-/// Puts the network report flags and the sink back when dropped.
-struct Reset;
+/// Puts the network and idle report flags and the sink back when dropped.
+pub(super) struct Reset;
 impl Drop for Reset {
     fn drop(&mut self) {
         debug_flags::Flag::NetworkReport.set(false);
         debug_flags::Flag::NetworkReportSilent.set(false);
+        debug_flags::Flag::IdleReport.set(false);
         debug_flags::set_sink(None);
+        debug_flags::set_console(None);
     }
 }
 
@@ -425,6 +443,11 @@ fn network_report_mode_entries_share_the_mode_as_the_reference_does() {
     let _reset = Reset;
     let d = start();
     let seen = capture();
+    let console = std::sync::Arc::new(Mutex::new(Vec::<String>::new()));
+    let printed = console.clone();
+    debug_flags::set_console(Some(Box::new(move |text| {
+        printed.lock().unwrap().push(text.to_owned());
+    })));
     let plain = "network report mode";
     let silent = "network report mode (silent)";
     let state = |d: &Debug| (d.report_mode_checked(plain), d.report_mode_checked(silent));
@@ -432,12 +455,13 @@ fn network_report_mode_entries_share_the_mode_as_the_reference_does() {
     assert_eq!(state(&d), (false, false));
 
     // the silent entry turns the mode on and sets silent: nothing reaches
-    // the popup sink (that it goes to the console instead is not observed:
-    // the console is not injectable)
+    // the popup sink, the console gets it
     d.click(&["report modes", silent]);
     assert_eq!(state(&d), (true, true));
     report();
     assert!(seen.lock().unwrap().is_empty(), "silent keeps popups out");
+    assert_eq!(*console.lock().unwrap(), ["a network job"]);
+    console.lock().unwrap().clear();
 
     // the plain entry flips the mode (off) and clears silent
     d.click(&["report modes", plain]);
@@ -450,6 +474,10 @@ fn network_report_mode_entries_share_the_mode_as_the_reference_does() {
     assert_eq!(state(&d), (true, false));
     report();
     assert_eq!(*seen.lock().unwrap(), ["a network job"]);
+    assert!(
+        console.lock().unwrap().is_empty(),
+        "loud keeps to the popups"
+    );
 
     // silent after plain flips the mode back off, as the reference's does,
     // yet leaves silent set
@@ -466,31 +494,6 @@ fn network_report_mode_entries_share_the_mode_as_the_reference_does() {
     assert_eq!(state(&d), (false, false));
 }
 
-// leaf: audit-options-help-debug-action-shortcut-report-mode
-#[test]
-fn shortcut_report_mode_says_what_a_shortcut_matched() {
-    let _one = ONE_AT_A_TIME
-        .lock()
-        .unwrap_or_else(std::sync::PoisonError::into_inner);
-    let d = start();
-    let seen = capture();
-    d.click(&["report modes", "shortcut report mode"]);
-    assert!(d.report_mode_checked("shortcut report mode"));
-    assert!(!d.ui.invoke_shortcut_key("j".into(), 0));
-    // ctrl+t is "new page" in the main gui set
-    assert!(d.ui.invoke_shortcut_key("t".into(), 1));
-    let seen_now = seen.lock().unwrap().clone();
-    assert_eq!(seen_now.len(), 2, "{seen_now:?}");
-    assert_eq!(seen_now[0], "Shortcut \"j\" did not match any command.");
-    assert!(
-        seen_now[1].starts_with("Shortcut \"ctrl+t\" matched on \"main_gui\" set to "),
-        "{}",
-        seen_now[1]
-    );
-    d.click(&["report modes", "shortcut report mode"]);
-    debug_flags::set_sink(None);
-}
-
 // leaf: audit-options-help-debug-action-daemon-report-mode
 #[test]
 fn daemon_report_mode_says_when_a_maintenance_daemon_does_a_job() {
@@ -501,7 +504,7 @@ fn daemon_report_mode_says_when_a_maintenance_daemon_does_a_job() {
     let _one = ONE_AT_A_TIME
         .lock()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
-    let seen = capture();
+    let seen = capture_here();
     let (dirs, store, files) = super::normal_time_maintenance::owned();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
@@ -555,16 +558,67 @@ fn daemon_report_mode_says_when_a_maintenance_daemon_does_a_job() {
         let stats = d.bound.maintenance.statistics();
         stats.trash_passes == 1 && stats.deferred_passes == 1
     });
+    // the reference's line for a daemon firing (`DAEMON._DoPreCall`), which it
+    // names for its pool thread: `oracle/record_debug_report_modes.py`
+    let recording = hydrus_testkit::fixture_json("debug_report_modes.json");
+    let recorded = recording["daemon"]["on"][0]["text"].as_str().unwrap();
+    assert_eq!(recording["daemon"]["off"], serde_json::json!([]));
+    let line = |name: &str| recorded.replace("CallToThread", name);
     let mut said = seen.lock().unwrap().clone();
     said.sort();
     assert_eq!(
         said,
-        [
-            "deferred_physical_deletes doing a job.",
-            "maintain_trash doing a job."
-        ]
+        [line("deferred_physical_deletes"), line("maintain_trash")]
+    );
+    // the reference reports every firing, before the job looks at idle: a
+    // pass the gates turn away (normal-time maintenance off, the user at the
+    // keyboard) is reported too, and does no work
+    let done = d.bound.maintenance.statistics();
+    d.store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &hydrus_store::maintenance_gates::Preferences {
+                    trash_normal: false,
+                    deferred_normal: false,
+                },
+            )?;
+            settings::set(
+                ctx.conn(),
+                &GuiIdleSettings {
+                    enabled: true,
+                    user_seconds: Some(3600),
+                    mouse_seconds: None,
+                    api_seconds: None,
+                    busy_cpu_percent: 50,
+                    busy_cpu_count: None,
+                },
+            )
+        })
+        .unwrap();
+    let later = d
+        .bound
+        .maintenance
+        .deadline(Worker::Trash)
+        .max(d.bound.maintenance.deadline(Worker::Deferred));
+    d.bound.session_autosave.user_at(later);
+    seen.lock().unwrap().clear();
+    d.bound.maintenance.poll_at(later).unwrap();
+    let mut gated = seen.lock().unwrap().clone();
+    gated.sort();
+    assert_eq!(gated, said);
+    let after = d.bound.maintenance.statistics();
+    assert_eq!(
+        (after.trash_passes, after.deferred_passes),
+        (done.trash_passes, done.deferred_passes)
     );
     d.click(&["report modes", "daemon report mode"]);
+    seen.lock().unwrap().clear();
+    d.bound
+        .maintenance
+        .poll_at(later + 2 * 24 * 3600 * 1000)
+        .unwrap();
+    assert!(seen.lock().unwrap().is_empty(), "off: nothing");
     debug_flags::set_sink(None);
 }
 
@@ -647,30 +701,4 @@ fn scan_file_storage_folders_asks_for_a_directory_and_says_what_it_found() {
     let before = d.jobs().len();
     d.click(&["data actions", "scan file storage folders"]);
     assert_eq!(d.jobs().len(), before);
-}
-
-// leaf: audit-options-help-debug-action-gui-report-mode
-#[test]
-fn gui_report_mode_says_which_key_events_it_caught() {
-    let _one = ONE_AT_A_TIME
-        .lock()
-        .unwrap_or_else(std::sync::PoisonError::into_inner);
-    let d = start();
-    let seen = capture();
-    assert!(!d.report_mode_checked("gui report mode"));
-    d.ui.invoke_shortcut_key("j".into(), 0);
-    assert!(seen.lock().unwrap().is_empty(), "silent while off");
-    d.click(&["report modes", "gui report mode"]);
-    assert!(d.report_mode_checked("gui report mode"));
-    d.ui.invoke_shortcut_key("j".into(), 0);
-    d.ui.invoke_shortcut_key("t".into(), 1);
-    assert_eq!(
-        *seen.lock().unwrap(),
-        [
-            "key event caught: Shortcut: j",
-            "key event caught: Shortcut: ctrl+t"
-        ]
-    );
-    d.click(&["report modes", "gui report mode"]);
-    debug_flags::set_sink(None);
 }

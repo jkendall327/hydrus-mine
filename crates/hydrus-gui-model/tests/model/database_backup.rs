@@ -39,7 +39,7 @@ fn the_menu_follows_the_backup_location_and_storage() {
     assert_eq!(
         backup_menu(&facts)[..2],
         [
-            "update database backup (did one recently)\u{2026}",
+            "update database backup (did one recently)",
             "change database backup location\u{2026}"
         ]
     );

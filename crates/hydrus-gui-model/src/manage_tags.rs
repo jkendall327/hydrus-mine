@@ -92,6 +92,33 @@ impl ManageTags {
         if services.is_empty() {
             return None;
         }
+        // gui report mode: the panel opening (`ManageTagsPanel.__init__`)
+        {
+            use hydrus_core::debug_flags::{Flag, report};
+            report(Flag::GuiReport, || {
+                let names: Vec<&str> = services.iter().map(|(_, name)| name.as_str()).collect();
+                format!(
+                    "Opening manage tags on these services: [{}]",
+                    names.join(", ")
+                )
+            });
+            for (id, name) in &services {
+                report(Flag::GuiReport, || {
+                    let key = snapshot
+                        .services
+                        .get(*id)
+                        .map(|service| service.key.to_hex())
+                        .unwrap_or_default();
+                    format!("Opening manage tags panel on {name}, {name}, {key}")
+                });
+            }
+            report(Flag::GuiReport, || {
+                format!(
+                    "Opening manage tags panel, notebook tab count is {}",
+                    services.len()
+                )
+            });
+        }
         let preference = store
             .read(hydrus_store::settings::get::<hydrus_store::tag_editing::TagEditingSettings>)
             .unwrap_or_default();

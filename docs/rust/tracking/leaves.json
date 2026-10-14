@@ -290,10 +290,10 @@
     "Context actions pass explicit service/file scopes to native media-actions and the Delete files? dialog (#187) and other prompts; lifecycle writes are real store operations rather than labels. First-pass evidence scope: Recorded lifecycle menu is matched and focused action tests inspect archive/inbox/trash/undelete/physical-delete state and questions; full remote-domain behavior is not claimed."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real thumbnail menu and store: archive/re-inbox, delete from domain, undelete, physical delete, with questions. Menu tree is replayed against thumbnail_menu.json in a separate untagged test, but question texts ('Send 2 files to inbox?', 'Send one file from X to trash?', 'Permanently delete one trashed file?'; the delete ones now the reference's delete files dialog labels, the one-domain case matched against a recording by the download flow, flows::download, 2026-10-13) and state effects are literals from the Python source; remote domains not covered. Tests: crates/hydrus-gui/tests/gui/media_file_actions.rs:44 archive_inbox_delete_undelete_and_physical_delete_from_the_menu; thumbnail_menu.rs the_menu_is_the_reference_s (untagged) Since #187 the delete questions ('Send one file from X to trash?', 'Permanently delete one trashed file?') are the actions of the Delete files? dialog (tests/gui/common delete_question), not an inline yes/no."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "wave 5 session (W5-6)",
+    "note": "The reference's real media results panel runs archive, re-inbox (declined, accepted, a lone file already in the inbox), delete from one domain and from the other of two, undelete (declined, accepted, the 'Undelete for?' chooser cancelled, one domain, all the above) and physical delete (declined, accepted) with its real database writes (oracle/record_media_lifecycle.py, fixtures/media_lifecycle.json): every question in its words and order, and each file's inbox flag, local domains, deleted domains and kept deletion reason read back after each step. The real thumbnail menu and store replay it step by step. Found: a deletion from a page's thumbnails kept 'Deleted from Preview or Media Viewer.' where the reference keeps 'Deleted from Media Page.'; fixed (the viewer keeps its own). The reference's 'Unknown deletion reason.' is no reason kept. Remote (file repository) domains are not recorded. 'delete trash physically now' is recorded with a mixed selection (only the trashed file is deleted for good) and replayed. Test: crates/hydrus-gui/tests/gui/media_file_actions.rs the_lifecycle_actions_replay_the_reference_s_questions_and_state."
    }
   },
   {
@@ -524,10 +524,10 @@
     "Reference backup submenu dynamically offers update/change backup or a multiple-storage explanation. Native only has disabled initial-setup/restore placeholders; these states are absent."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "The recorded update scenarios (Create a new / Update the existing question, the missing path made with its message, declined, accepted: backup made and time remembered) are replayed through the real menu entry and compared in order and words (oracle/fixtures/backup_dialogs.json). 'No backup path is set!' cannot be reached from the menu in either client (the entry is hidden) and the '(last N ago)' label is not recorded (the reference fills its menu from a worker the recorder could not call), so those stay restated from the source. Test: crates/hydrus-gui/tests/gui/database_backup_menu.rs updating_the_backup_replays_the_reference_s_dialogs."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "wave 5 session (W5-6)",
+    "note": "The reference's real database menu updater is recorded for each state of the backup path, last-backup age (none, 10 s, 29 and 31 minutes, 2 hours, 3 days) and file locations (single, multiple) with the entries shown and their text (oracle/record_backup_menu.py, fixtures/backup_menu.json); the real menu is replayed against it (found: the label had a stray ellipsis, fixed), plus the multiple-locations note text. The update, change and decline/accept dialogs replay backup_dialogs.json. 'No backup path is set!' cannot be reached from the menu in either client, so it is not replayed. Tests: crates/hydrus-gui/tests/gui/database_backup_menu.rs the_backup_menu_shows_the_reference_s_entries_and_ages, updating_the_backup_replays_the_reference_s_dialogs."
    }
   },
   {
@@ -659,8 +659,8 @@
    "recheck": {
     "date": "2026-10-14",
     "class": "source-restated",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "The ready check declined, the picker cancelled, the scan question ('Looking good.', declined and accepted, 2 to 3 and back), the already-3 and unknown-folder scans, and the empty folder. oracle/fixtures/granularity_panel.json (oracle/record_granularity_panel.py runs the reference's real ReviewGranularityPanel, its jobs included, on an empty client with a file in the granularity 2 layout). crates/hydrus-gui/tests/gui/database_locations_menu.rs the_granularity_window_replays_the_reference_s_steps replays every step through the real window and compares each question (title, text, buttons), the picker, each message and the file's place on disk. It showed the questions lacked the reference's closing speed sentence; fixed. The mixed-folder scan (a folder in both layouts), which the leaf names, and the cancel and error messages are not recorded, so the leaf is held at source-restated."
+    "by": "wave 5 session (W5-6)",
+    "note": "As before, plus the mixed folder (granularity 2 files beside a granularity 3 one, a stray file) recorded in oracle/fixtures/granularity_panel.json and replayed through the real window: the 'already granularity 2, mixed' question, declining it, and moving on to the 2-to-3 result with the files' places. The cancel and error messages of the job are still restated from the source (not recorded), so the class is not raised."
    }
   },
   {
@@ -805,9 +805,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "source-restated",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "The default search, 'all media files' and 'all repository update files' counts, the labels and the explanation now agree with oracle/fixtures/file_maintenance_new.json (the same replay test as the schedule leaf). A typed predicate (system:archive) and the bad-search case are checked against hydrus-rs's own search function, not recorded (the reference's autocomplete cannot be typed into headlessly), so the class is not raised."
+    "class": "sound",
+    "by": "wave 5 session (W5-6)",
+    "note": "Every step of the reference's new-work tab is replayed through the real window: default search, 'all media files', 'all repository update files', and now system:archive and system:inbox searches (counts 16 and 14 recorded by setting the reference autocomplete's search context, since it can't be typed into headlessly; hydrus-rs's typed box parses the same predicates). The 'unreadable search' case is hydrus-rs's own parser's behaviour with no reference counterpart. Tests: crates/hydrus-gui/tests/gui/database_file_maintenance_new.rs."
    }
   },
   {
@@ -1019,10 +1019,10 @@
     "Switch changes which file is A and reuses shared zoom position. Comparison statements combine metadata facts plus deferred visual/quality data for the currently shown pair. First-pass evidence scope: Statement/score/pixel/slow-data outputs are reference-compared, and pair orientation/retained canvas state has focused native assertions."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window test opens the filter, checks statements exist, the score text format, A/B switch and retained zoom/pan geometry; statement content is replayed against the comparison_statements recording in a separate test on the function. Zoom/pan/switch expectations are relational asserts from the Python behaviour, not recorded, and the window test checks only that statements are present, not their content. Tests: crates/hydrus-gui/tests/gui/duplicate_filter.rs:229 the_filter_opens_from_a_duplicates_page_and_compares_the_pair; crates/hydrus-duplicates/tests/comparison_statements.rs"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "wave 5 session (W5-6)",
+    "note": "The reference's real CanvasFilterDuplicates is recorded through switch, zoom to 100%, zoom in, pan right and down, switch back and skip (oracle/record_duplicate_filter_canvas.py, scenario compare_switch_keeps_zoom_and_pan): after every command the file shown, the hover's statements (text and sign) and score for that file against the other, the zoom and where the file sits on the canvas. The real filter window is replayed step by step and matches, including the exact geometry after zooming and panning (14 px per pan). The statements' ages (time imported) are compared with the numbers taken out, because the reference's clock was held at 2030. The retained zoom between files of different sizes and shapes (landscape vs portrait, long thin pairs, large vs small, square vs tiny square, two portraits, including the cases that spill over the canvas) is recorded on the basic fixture (oracle/record_duplicate_filter_sizes.py) and replayed through the window within 2 px (test the_retained_zoom_follows_the_reference_between_files_of_different_sizes). Test: crates/hydrus-gui/tests/gui/duplicate_filter_canvas.rs the_filter_switches_between_the_pair_s_files_keeping_zoom_and_pan_as_the_reference_does."
    }
   },
   {
@@ -1108,19 +1108,19 @@
    "label": "Rename extension or copy fallback",
    "path": "Media files, metadata and viewing > Force Filetype",
    "workstream": "media",
-   "state": "partial",
+   "state": "implemented",
    "priority": "normal",
-   "reference": null,
-   "native": null,
+   "reference": "hydrus/client/files/ClientFilesManager.py:226",
+   "native": "crates/hydrus-store/src/metadata_jobs.rs:116",
    "notes": [
-    "After committing MIME, each managed path is renamed to new extension. Rename fallback copies bytes but leaves the original path; parity is incomplete at the job/cleanup boundary.",
-    "No cancellable rename job; copied fallback source is not queued for cleanup."
+    "After committing the filetype, each managed path is moved to the new extension (bytes and modification time kept), or copied when the media is shared with another install (the reference copies when the move fails or the path is in use); a copied original is queued for the delete-neighbour-dupes cleanup job.",
+    "No cancellable rename job. The reference one-hour delay on the cleanup job is not compared; its own forcing action moves nothing (DIFFERENCES.md)."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Checks the new extension exists, old removed (own media) or kept and queued for DeleteNeighbourDupes (shared media); native-only behaviour with no recording of the rename. Stale tracker note: it says the copied source is not queued for cleanup, but the test asserts it is. No cancellable job remains a difference. Tests: crates/hydrus-gui/tests/gui/force_filetype.rs:158 a_forced_file_is_renamed_or_when_the_media_is_shared_copied_with_its_old_copy_queued_for_cleanup; :61 (rename in plain case)"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-8 session",
+    "note": "Compared with oracle/fixtures/force_filetype.json `disk` (record_force_filetype.py runs the reference's ChangeFileExt on a real file): crates/hydrus-gui/tests/gui/force_filetype.rs forcing_a_filetype_moves_owned_media_as_the_references_change_file_ext_does and ..._copies_shared_media_as_the_references_failed_move_does drive the thumbnail menu, the job and the store on a real filesystem and assert the recorded files (names, bytes, modification time; new extension only after a move, both after a copy). Differences, in DIFFERENCES.md: the reference's own forcing action moves nothing (it passes ChangeFileExt the already refreshed filetype) while hydrus-rs renames; the reference copies when the move fails or the path is in use, hydrus-rs when media is shared with another install; the cross-device rename failure is not reproduced, and the reference's one-hour delay on the cleanup job is not compared (the older test in the same file checks the job is queued)."
    }
   },
   {
@@ -2179,10 +2179,10 @@
     "Direct buttons replace reference import/export menus; no reference add-only autocomplete context option."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "likely-good",
-    "by": "Claude session (#165 triage)",
-    "note": "crates/hydrus-gui/tests/gui/relationship_exchange.rs pair_import_and_export_replay_the_reference_on_local_and_repository_services replays oracle/record_relationship_exchange.py through the real window with no steps filtered: self-pairs are staged after the reference's 'Loop problem!' message (OK only), a batch looping within itself is staged as the reference stages it; rows, questions, reasons, exports and the committed rows after Apply compared on a local service and a repository. Tag moved off the model tests. The message has no window title (DIFFERENCES.md). Not sound: the reference's second 'Loop problem!' warning, for pairs that join loops already in the database (ClientGUITagActions.py:187-194), is not raised on this import path, and the recording has no step for it (DIFFERENCES.md)."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-11)",
+    "note": "crates/hydrus-gui/tests/gui/relationship_exchange.rs pair_import_and_export_replay_the_reference_on_local_and_repository_services replays oracle/record_relationship_exchange.py through the real window with no steps filtered: rows, questions, reasons, both 'Loop problem!' messages (self-pairs, and a pair that joins a loop already there, step 8 of the recording) with the reference's window title and text, exports and the committed rows after Apply, on a local service and a repository. The title is now shown over the message (question_title). Direct import/export buttons replace the reference's menus (DIFFERENCES.md); the order in which several pre-existing loops list follows hydrus-rs's list order, not a Python set's."
    }
   },
   {
@@ -2749,10 +2749,10 @@
     "Native pass/fail activation opens filter, but reference preview pair-list context menu and show-selected-in-page action are absent."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Native menu exists (tracker notes saying it is absent are stale) and the test drives the pass list: labels 'show selected row in a new page' / 'show 2 rows in a new page' match the reference's ThumbnailPairList source, and a page opens. But the page's files are only checked as 3 to 4 distinct files, not the selected pairs' exact files; the fail list's menu is never driven with a selection; labels are typed, not recorded. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:415 preview_pair_lists_offer_show_selected_pairs_in_a_new_page"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "wave 5 session (W5-6)",
+    "note": "The reference's real PreviewPanel is recorded on its auto-resolution database for two rules (one with 5 passing pairs, one with 16 failing) with real mouse clicks and its context menu (oracle/record_preview_pair_lists.py): both lists are single-selection, the menu is only offered with a row selected, always reads 'show selected row in a new page', and sends the row's two files to a new page in 'all local media'. The real rule editor is replayed against it for both lists. Found: ctrl-click added a row natively (the reference's lists take one); fixed. Every row of each list is also clicked and shown: the pairs and the order by the smaller file's size match; pairs the sort can't tell apart may come in another order. A pair with a trashed or non-local file (other location contexts) is not recorded. Test: crates/hydrus-gui/tests/gui/preview_pair_lists.rs."
    }
   },
   {
@@ -3423,10 +3423,10 @@
     "Direct buttons replace reference import/export menus; no reference add-only autocomplete context option."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "likely-good",
-    "by": "Claude session (#165 triage)",
-    "note": "crates/hydrus-gui/tests/gui/relationship_exchange.rs pair_import_and_export_replay_the_reference_on_local_and_repository_services replays oracle/record_relationship_exchange.py through the real window with no steps filtered: self-pairs are staged after the reference's 'Loop problem!' message (OK only), a sibling batch giving one tag two ideals and a batch looping within itself are staged as the reference stages them; rows, questions, reasons, exports and the committed rows after Apply compared on a local service and a repository. The message has no window title (DIFFERENCES.md). Not sound: the reference's second 'Loop problem!' warning, for pairs that join loops already in the database (ClientGUITagActions.py:187-194), is not raised on this import path, and the recording has no step for it (DIFFERENCES.md)."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-11)",
+    "note": "crates/hydrus-gui/tests/gui/relationship_exchange.rs pair_import_and_export_replay_the_reference_on_local_and_repository_services replays oracle/record_relationship_exchange.py through the real window with no steps filtered: rows, questions, reasons, a sibling batch giving one tag two ideals, both 'Loop problem!' messages (self-pairs, and a pair that joins a loop already there) with the reference's window title and text, exports and the committed rows after Apply, on a local service and a repository. The title is now shown over the message (question_title). Direct buttons replace the reference's menus (DIFFERENCES.md); the order in which several pre-existing loops list follows hydrus-rs's list order, not a Python set's. The earlier note that the second warning is not raised was stale: it is, and the recording has the step."
    }
   },
   {
@@ -4027,10 +4027,10 @@
     "New subscription/service contexts cannot be authored here, but existing rows can be edited."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window: typed domain opens a rules draft, cancel stores nothing, apply persists the override, stale handle is inert. Expected values are typed literals; no recording of the create-override path (the typed-domain entry is a native addition; reference only offers 'set specific rules' from the detail panel). Tests: crates/hydrus-gui/tests/gui/network_data.rs:36 bandwidth_rules_cancel_apply_reopen_and_render"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-8 session",
+    "note": "Native-only (DECISIONS.md 2026-10-14): the reference has no counterpart, so there is nothing to record; sound because a test drives it end to end. crates/hydrus-gui/tests/gui/network_native_end_to_end.rs a_typed_domain_override_limits_the_engines_next_request_to_that_domain: a domain typed in the bandwidth window is given a requests rule and applied; the running engine reloads it and its next request to that domain (through a loopback proxy, since the window takes no port) waits on bandwidth under that domain's context. The cancel/stale-handle cases are in network_data.rs. The engine's settings reload is called directly (engine.reload_settings()), not through the application's settings poll. Invalid typed domains (no dot, scheme, path, space, empty) open nothing and show the window's message; the rule saved for the typed domain is the only one that holds the second request past the inherited default of one a second."
    }
   },
   {
@@ -4541,10 +4541,10 @@
     "Staged import remaps identities and merges exact duplicates; Store save rejects stale snapshots atomically."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model tests import the recorded payload and assert remapped keys, nested members, duplicate merging and stale-save rollback from typed expectations on the native Draft (fixture supplies only duplicate-rule booleans); GUI accept saves once. Conflict-safe save is a native design with no reference recording. Tests: crates/hydrus-gui-model/tests/model/downloader_interchange.rs:235,296; crates/hydrus-gui/tests/gui/downloader_interchange.rs:182"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-8 session",
+    "note": "Compared with oracle/fixtures/package_import.json (record_package_import.py: the reference's ReviewDownloaderImport on the downloader_interchange package imported twice and on the parser_auto_links classes and parsers): crates/hydrus-gui/tests/gui/network_native_end_to_end.rs a_package_imported_in_the_window_matches_the_recorded_import_and_a_stale_review_saves_nothing drives the real window into a real store and asserts the final question and the result notice word for word, the generators, classes and parsers by name, the new keys, the duplicate rule (the nested generator is added again on re-import, as recorded) and the parser links. Fixed by the recording: duplicates are judged against what the client already had, not earlier objects of the same package. Native-only part: the stale-review refusal with nothing saved. Not matched: the reference leaves a nested generator's member keys dangling after regenerating them; hydrus-rs points them at the new keys (DIFFERENCES.md)."
    }
   },
   {
@@ -4598,10 +4598,10 @@
     "Preview validates supported types and displays names/duplicates; Back clears pending definitions and Accept saves/stages once."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only checks the review text contains 'exchange page', that Cancel then Accept does nothing, and a later Accept saves once. Duplicate review display and a distinct Back button are not asserted; duplicate rules rest on fixture booleans in a model test. Tests: crates/hydrus-gui/tests/gui/downloader_interchange.rs:182"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "wave 5 session (W5-6)",
+    "note": "The reference's real ReviewDownloaderImport (oracle/record_downloader_import_selection.py) is recorded through: choosing some objects, the rest, a mixed package, misc objects only, and now the same package again (everything a duplicate: 'All 4 downloader objects ... already in the client'), a new downloader with the final question declined (nothing added), the chooser cancelled, and a new downloader beside a duplicate ('1 duplicate objects were not added'). The real exchange window is replayed through each: the chooser, the final question and notices in the reference's words, and the client's downloaders, classes, parsers and default after each. The reference has no separate 'Back' step: declining the final question is its back, and hydrus-rs's Back button (which returns to the input) has no reference counterpart. Test: crates/hydrus-gui/tests/gui/downloader_package.rs objects_are_chosen_others_skipped_and_a_default_downloader_set_as_the_reference_does."
    }
   },
   {
@@ -5305,10 +5305,10 @@
     "Commands identify both daemon epoch and request ID; ended/replaced jobs ignore the command."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Unchanged: the reference's ReviewNetworkJobs has no cancel control (only a comment, '# button to stop jobs en-masse'), so this is a native extension with nothing to record; the window enqueues an epoch+job-id Cancel and ignores a replaced daemon, and the engine consuming it is tested separately (untagged). A window-to-engine test through the daemon's IPC is the missing piece. Test: crates/hydrus-gui/tests/gui/network_data.rs jobs_live_progress_commands_and_offline_expiry"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-8 session",
+    "note": "Native-only (DECISIONS.md 2026-10-14): the reference has no counterpart, so there is nothing to record; sound because a test drives it end to end. crates/hydrus-gui/tests/gui/network_native_end_to_end.rs cancelling_a_selected_request_stops_the_engines_fetch_and_clears_the_row: a real NetEngine fetch (held by the network pause) against a loopback server; the real jobs window selects its row and Cancel goes through the store IPC to the engine's heartbeat worker; the fetch ends Cancelled and the row leaves the window. The replaced-daemon and closed-window cases stay in network_data.rs."
    }
   },
   {
@@ -5324,10 +5324,10 @@
     "Five-second heartbeat expiry disables actions; no API listener is required for local runtime snapshots."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Unchanged: a native heartbeat feature with no reference counterpart (nothing to record); the stale-snapshot behaviour is driven in the real window but the five-second boundary is not exercised. Test: crates/hydrus-gui/tests/gui/network_data.rs jobs_live_progress_commands_and_offline_expiry"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-8 session",
+    "note": "Native-only (DECISIONS.md 2026-10-14): the reference has no counterpart, so there is nothing to record; sound because a test drives it end to end. crates/hydrus-gui/tests/gui/network_native_end_to_end.rs a_silent_daemon_disables_the_command_controls_after_five_seconds: the real engine heartbeat is stopped, the window's clock is held at the last heartbeat + 5 s (controls still enabled) and + 6 s (disabled, status offline, Cancel/Override send nothing), and a restarted heartbeat re-enables them on the same request. The window's held clock is per test thread (network_data_window::hold_now), so parallel tests do not see it."
    }
   },
   {
@@ -5343,10 +5343,10 @@
     "Live selected requests can bypass their bandwidth gate through daemon IPC."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Unchanged: the reference jobs panel has no override control, so this is a native extension with nothing to record. The window enqueues OverrideBandwidth; the engine consumer is proven in a separate untagged test (crates/hydrus-net/tests/engine.rs runtime_override_releases_a_live_bandwidth_wait_and_counts_usage). Test: crates/hydrus-gui/tests/gui/network_data.rs jobs_live_progress_commands_and_offline_expiry"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-8 session",
+    "note": "Native-only (DECISIONS.md 2026-10-14): the reference has no counterpart, so there is nothing to record; sound because a test drives it end to end. crates/hydrus-gui/tests/gui/network_native_end_to_end.rs overriding_a_selected_request_releases_the_bandwidth_wait_and_counts_usage: a real fetch held by a global requests rule; the window's Override button reaches the engine through the store IPC, the fetch completes and the second request is counted in the saved usage. The engine's settings reload is called directly (engine.reload_settings()), not through the application's settings poll."
    }
   },
   {
@@ -5362,10 +5362,10 @@
     "Manual refresh replaces the displayed snapshot; live refresh follows daemon updates and clears selection on epoch replacement."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "weak",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Unchanged: manual refresh and epoch-replacement clearing are driven, but the reference's auto-refresh is a manual-or-interval control (NoneableTimeDeltaWidget, at least 0.05 s, manual to begin with) with a timer, where native has an auto-refresh checkbox that starts on; no test exercises the toggle, and the control needs .slint work to match (now in DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/network_data.rs jobs_live_progress_commands_and_offline_expiry"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-12 session (wave 5)",
+    "note": "The reference's refresh control is replayed against network_jobs_panel.json: manual refresh to begin with and no timer, 'refresh snapshot' takes a snapshot while a manual list stays put, and each recorded step (0.25, 2.0, 0.01 clamped to 0.05, manual, 1.5) gives the recorded timer interval or none; an interval refreshes the list by itself. Differs only in the interval being one number of seconds rather than minutes/seconds/milliseconds boxes (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/network_jobs_panel.rs the_refresh_control_is_manual_to_begin_with_or_an_interval_as_the_reference_s_is."
    }
   },
   {
@@ -5384,7 +5384,7 @@
     "date": "2026-10-13",
     "class": "source-restated",
     "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Recorded rows (network_data.json, the real jobs panel) now compared through the real window: the position words for bandwidth, login and running are the reference's ('waiting for bandwidth', 'waiting for login', 'running'; native's labels were different, fixed), the speed column is titled 'current speed' as recorded (was 'speed'), and the speed/progress cells match for 2 KB/s with 2 KB of 4 KB. The reference's positions 'waiting for validation' and 'waiting for free work slot' have no native wait, and native's other eight waits are an extension with nothing to record; those and the selected-job contexts are still checked only against native values. Tests: crates/hydrus-gui/tests/gui/network_jobs_rows.rs every_request_is_a_row_with_its_typed_wait_speed_bytes_and_contexts (tagged); rows_for_the_waits_the_reference_names_read_as_its_jobs_panel_reads (untagged: three of the reference's five positions)"
+    "note": "Recorded rows (network_data.json, the real jobs panel) now compared through the real window: the position words for bandwidth, login and running are the reference's ('waiting for bandwidth', 'waiting for login', 'running'; native's labels were different, fixed), the speed column is titled 'current speed' as recorded (was 'speed'), and the speed/progress cells match for 2 KB/s with 2 KB of 4 KB. The reference's positions 'waiting for validation' and 'waiting for free work slot' have no native wait, and native's other eight waits are an extension with nothing to record; those and the selected-job contexts are still checked only against native values. Tests: crates/hydrus-gui/tests/gui/network_jobs_rows.rs every_request_is_a_row_with_its_typed_wait_speed_bytes_and_contexts (tagged); rows_for_the_waits_the_reference_names_read_as_its_jobs_panel_reads (untagged: three of the reference's five positions) W5-12 2026-10-14: the selected job's contexts are now compared with the reference's menu (network_jobs_panel.json); the two reference positions without a native wait remain, so the class is unchanged."
    }
   },
   {
@@ -5981,10 +5981,10 @@
     "Name stage opens the reusable formula child; duplicate names are made unique and default formulas join the draft."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Both tests drive the real list window (defaults, Add, Name stage, Edit, confirmed delete 'Remove 1 selected?', unique names '(1)'), but expected values are typed from the Python (AddEditDeleteListBoxUniqueNamedObjects); no recording of the list. Defaults are the reference's dumped formulae only by construction. Tests: crates/hydrus-gui/tests/gui/simple_formulae_list.rs:21 simple_formula_list_defaults_exchange_and_apply; crates/hydrus-gui/tests/gui/formula_editors.rs:239 formula_editors_simple_downloader_list_saves_cancel_and_unique_names"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "wave 5 session (W5-6)",
+    "note": "The reference's real _EditFormulae dialog and AddEditDeleteListBoxUniqueNamedObjects are recorded with scripted answers (oracle/record_simple_formula_list.py): the button states, add (the name asked first as 'Edit name.' with 'new parsing formula', then the formula editor), cancelling either, a name clash getting '(1)', edit (current name offered; keeping it gets '(1)'), 'Remove N selected?' declined and accepted, delete with nothing selected, 'add them all' (twice), 'select from a list' (cancelled, none ticked, one ticked), and what Apply and Cancel leave saved. The real list window is replayed step by step. 'add defaults' had no 'select from a list' natively; added. The defaults' order in the reference follows the filesystem, so rows are compared as a set after defaults go in. Test: crates/hydrus-gui/tests/gui/simple_formulae_list.rs the_list_buttons_replay_the_reference_s_add_edit_delete_and_defaults."
    }
   },
   {
@@ -6019,10 +6019,10 @@
     "Imports accept named simple formulas only and remain in the formula list draft."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "List test drives export of the selected row as text and import (non-simple refused, simple accepted and renamed) via the real list; PNG import/export is not driven from this list (only text; PNG is covered by the shared interchange window under another leaf). The refusal strings are native, not the reference's. Tests: crates/hydrus-gui/tests/gui/simple_formulae_list.rs:21 simple_formula_list_defaults_exchange_and_apply; shared window tested in downloader_interchange (fixture downloader_interchange.json)"
+    "by": "wave 5 session (W5-6)",
+    "note": "The text a single selected formula exports as is now compared with what the reference's _ExportToClipboard wrote for it (oracle/fixtures/simple_formula_list.json; a tag rule with no attributes is {} here, null there). The rest is not recorded-and-matching: the reference's clipboard/png menus, 'N objects added!', its warning listing the types refused, the duplicate button and its PNG dialogs differ from this list's shared import window (DIFFERENCES.md, Simple downloader formula list); the refusal strings are native. Not raised. Tests: crates/hydrus-gui/tests/gui/simple_formulae_list.rs (simple_formula_list_defaults_exchange_and_apply, exporting_a_formula_writes_the_reference_s_serialisation)."
    }
   },
   {
@@ -6460,10 +6460,10 @@
     "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "weak",
-    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
-    "note": "The setting's gate and the flattened menubar are replayed against command_palette.json (main_menu_real, main_menu_off): six queries give the reference's rows and menu paths in order, and with the setting off none. Not sound: three rows the reference lists are missing natively and the test filters them (update database backup… and change database backup location… which the menubar hides until a location is set, and Help > debug > review threads); DIFFERENCES.md. Not tagged. Test: crates/hydrus-gui/tests/gui/command_palette.rs the_main_menu_rows_are_the_reference_s_flattened_menubar_and_the_setting_gates_them."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-12 session (wave 5)",
+    "note": "Six queries replay the reference's flattened menubar rows and menu paths in order (command_palette.json main_menu_real, now including the backup rows the menubar hides, which the reference's QAction walk lists), and with the setting off none; activating the hidden update row with no location warns 'No backup path is set!'. The one reference row absent natively is Help > debug > data actions > 'review threads' (Python threads and schedulers), whose leaf audit-options-help-debug-action-review-threads is out of scope (DECISIONS.md, 'Out of scope, signed off': the 79 leaves triaged on 2026-10-08); the test filters that row only. Tests: crates/hydrus-gui/tests/gui/command_palette.rs the_main_menu_rows_are_the_reference_s_flattened_menubar_and_the_setting_gates_them, a_hidden_backup_row_is_listed_and_runs_as_the_reference_s_action_does."
    }
   },
   {
@@ -6483,7 +6483,7 @@
     "date": "2026-10-13",
     "class": "weak",
     "by": "Claude, #97 phase 2 (recheck-w4-r3)",
-    "note": "Rows for a page with no files, with one and with three files selected (nine queries each) and the effect of activating a row on the selection are replayed through the real palette against command_palette.json and palette_media_rows.json (recorded from the reference's real MediaMenuSearchProvider); they match except the two single-file rows 'copy bitmap' and 'copy thumbnail bitmap' (bitmap exchange not ported, DIFFERENCES.md), which the test filters. Stays weak for that reason. Setting off gives no rows (command_palette.rs). Tests: crates/hydrus-gui/tests/gui/palette_media.rs; command_palette.rs media_menu_results_follow_the_setting_and_the_page_shown_as_the_reference_did."
+    "note": "Rows for a page with no files, with one and with three files selected (nine queries each) and the effect of activating a row on the selection are replayed through the real palette against command_palette.json and palette_media_rows.json (recorded from the reference's real MediaMenuSearchProvider); they match except the two single-file rows 'copy bitmap' and 'copy thumbnail bitmap' (bitmap exchange not ported, DIFFERENCES.md), which the test filters. Stays weak for that reason. Setting off gives no rows (command_palette.rs). Tests: crates/hydrus-gui/tests/gui/palette_media.rs; command_palette.rs media_menu_results_follow_the_setting_and_the_page_shown_as_the_reference_did. Re-read 2026-10-14 (W5-12): unchanged; 'copy bitmap' and 'copy thumbnail bitmap' need the bitmap exchange, a large separate port, so the leaf stays weak."
    }
   },
   {
@@ -8101,10 +8101,10 @@
     "Multiple/deleted domain selection and overwrite questions are inline in the owner."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Click-choosing a suggestion, the system:limit child editor (OK adds 'system:limit is 7') and close-cancel of the child are driven and replayed against fixtures/favourite_search_editor.json (suggestion list names only). Not covered: counts/context shown in suggestions, keyboard highlight + Enter. Notes already admit the reference cog, OR construction and tabs are absent. Tests: crates/hydrus-gui/tests/gui/favourite_search_editor.rs:32 favourite_domain_sort_collect_and_autocomplete_widgets_reach_saved_searches; crates/hydrus-gui-model/tests/model/favourite_search_editor.rs:60"
+    "by": "Claude session (W5-10)",
+    "note": "Adds gui/favourites.rs tests replaying fixtures/favourite_editor_buttons.json (paste, star menu loading search/sync/sort/collect, empty search) and favourite_editor_tabs_or.json (shift+Return OR construction, rewind, cancel, escape, favourites and children tabs, the OR button, recorded after the reference's list caught up), through the real editor. Untagged: counts and context in suggestions, keyboard-highlight Return in the tabs and the advanced OR dialog from the editor are not recorded."
    }
   },
   {
@@ -8218,10 +8218,10 @@
     "Multiple/deleted domain selection and overwrite questions are inline in the owner."
    ],
    "recheck": {
-    "date": "2026-10-13",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "Claude session (#97 phase 2, w4-r5)",
-    "note": "gui/favourites.rs typed_predicates_and_double_clicks_edit_the_search_as_the_references_editor_does opens the real favourite editor from 'save this search' on a page of 'blue eyes' and replays oracle/fixtures/favourite_predicates.json (record_favourite_predicates.py: the reference's real EditFavouriteSearchPanel with typed text and QTest Return/double-click events): 14 steps of tags, a repeated tag (which removes it), a differently-cased tag, a negated tag, a wildcard, a namespace wildcard, extra spaces, system:limit and system:everything (which a tag takes out), and double-click removals; after each the list as drawn (order included) and the text left in the box equal the recording. Weak, not sound, and untagged: two typed-entry cases differ from the reference and are not recorded (DIFFERENCES.md): text beginning 'system:' that is not a system predicate shows an error here where the reference's Return enters system:everything, and a wildcard such as 'sam*' enters the highlighted first suggestion here where the reference's Return entered the wildcard; and the leaf itself is still partial (the reference's cog, favourite predicates and fetch/children tabs are absent). The stale tracker notes about missing autocomplete and system editors apply to the leaf's other rows."
+    "by": "Claude session (W5-10)",
+    "note": "gui/favourites.rs typed_predicates_and_double_clicks_edit_the_search_as_the_references_editor_does opens the real favourite editor and replays 18 steps of oracle/fixtures/favourite_predicates.json (the reference's real EditFavouriteSearchPanel with typed text, QTest Return and double-clicks, recorded after its result list has caught up and finished loading). Per step it compares the list's first result, the highlight, the predicates as drawn (order included), the text left and any message; this covers tags, repeats, case, negation, wildcards (the wildcard first), namespace wildcards, extra spaces, system:limit/everything, 'system:' text that is no predicate, and removals. Untagged: Return before the reference's list has caught up (it enters the text as typed) is not covered, counts/context in the results are not compared, and the leaf's tracker state is still partial pending a review of the added tabs, OR construction and icon buttons (see audit-options-favourite-edit-autocomplete)."
    }
   },
   {
@@ -10648,10 +10648,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Sets Flag::AutocompleteDelay directly and times search_tags; the Help > debug > gui actions menu entry is never clicked (only the menu model lists the label), and nothing checks the checked state. Reference skips the delay when exact_match and also delays GetMediaPredicates; native delays every search and the test only uses a wildcard query. Tracker notes ('no equivalent diagnostics action') are stale. Tests: crates/hydrus-store/tests/debug_autocomplete_delay.rs:14 autocomplete_delay_mode_makes_each_search_take_three_seconds 2026-10-14 (#96): not made sound yet. Needs a recording of the reference's wildcard and exact-match searches timed through the real autocomplete path, a GUI test typing into the search box with the menu entry on, and the exact-match skip and the media-predicates delay ported. The daemon-side switch channel (debug_switches) now exists."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The real Help > debug > gui actions > autocomplete delay mode entry (checked state read back) is clicked and a wildcard search typed into the search box takes the reference's three seconds with it on and is quick with it off, with the same suggestions (oracle/fixtures/debug_report_modes_gui.json from oracle/record_debug_report_modes_gui.py: the real client's autocomplete_predicates read took 3.0 s on with a wildcard, 0.0 s off). The timing is bounded from one side. Not ported, no hydrus-rs event (DIFFERENCES.md): the exact-match search that is not delayed, the delayed media predicates lookup, and ending the delay on cancel. Test: crates/hydrus-gui/tests/gui/debug_report_modes.rs autocomplete_delay_mode_holds_a_typed_search_for_the_reference_s_three_seconds."
    }
   },
   {
@@ -10668,10 +10668,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Flips the flag directly on the thumbnail loader; no menu click or checked state. Expected pixels come from the native recovery() function (circular), no recording. Reference also applies it in the second ClientCaches site (line 1218); not covered. Tracker notes are stale. Tests: crates/hydrus-gui/src/thumbnails.rs:336 blurhash_mode_draws_the_blurhash_in_place_of_the_stored_thumbnail 2026-10-14 (#96): not made sound yet. Needs a recorder that renders the reference's blurhash bitmap (HydrusBlurhash) for fixture hashes so the pixels are compared with the recording rather than with the native recovery function, a menu-driven test, and the second ClientCaches site."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The real menu entry turns the mode on; the grid's thumbnails for the 30 files with a blurhash are, sampled at 16 points each, the pixels of the reference's own thumbnail cache bitmap with the mode off (stored thumbnail) and on (blurhash), to the digit (oracle/fixtures/debug_report_modes_gui.json, record_debug_report_modes_gui.py calls ThumbnailCache._GetThumbnailHydrusBitmap). Only the grid's bitmap site is ported: the reference's second site (the unsized thumbnail numpy image the mode makes empty) has no counterpart. Test: crates/hydrus-gui/tests/gui/debug_report_modes.rs blurhash_mode_draws_the_thumbnails_the_reference_draws_from_each_blurhash."
    }
   },
   {
@@ -10688,10 +10688,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Typed-literal message for one eviction on the thumbnail Cache; no menu path. Reference has three messages (adding, removing specific, removing oldest) and covers image and thumb caches; native tests only 'removing oldest' and the size format uses 'X/Y' human bytes rather than the reference's ConvertValueRangeToBytes. Stale tracker notes. Tests: crates/hydrus-gui-model/tests/model/debug_flags.rs:64 cache_report_mode_reports_each_eviction_with_the_sizes 2026-10-14 (#96): not made sound yet. Needs a recording of the reference's three messages (adding, removing specific, removing oldest) from the real image and thumbnail caches, the size format of ConvertValueRangeToBytes, and a menu-driven test."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The real menu entry is clicked and the real thumbnail grid, its cache limited to 1000 bytes, says 'adding' and 'removing oldest' lines whose words match the reference's (shaped with the cache, key and sizes named); a replay of the recorded run of a real DataCache (adding a to d, an eviction, a delete) on the native cache gives its 'adding', 'removing oldest' and 'removing specific' lines exactly, with its size-against-limit format, and nothing with the mode off (oracle/fixtures/debug_report_modes.json). Only the thumbnail cache is driven through the window; the image cache shares the code. Tests: crates/hydrus-gui/tests/gui/debug_report_modes.rs cache_report_mode_says_what_the_reference_says_as_the_thumbnail_cache_fills; crates/hydrus-gui-model/tests/model/debug_flags.rs."
    }
   },
   {
@@ -10810,10 +10810,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the menu toggle and the real maintenance runtime, but expected strings are typed literals. Reference reports in DAEMON._DoPreCall on every firing before the job checks idle; native reports only after its gates allow, and only for the two ported daemons. No recording. Stale tracker notes. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:415 daemon_report_mode_says_when_a_maintenance_daemon_does_a_job 2026-10-14 (#96): not made sound yet. The reference reports in DAEMON._DoPreCall on every firing, before the job checks idle, for every daemon; native reports only after its gates allow and for the two ported daemons. Needs a recording of the firing messages and the report moved before the gates."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The real menu entry is clicked and the real maintenance runtime reports 'maintain_trash doing a job.' and 'deferred_physical_deletes doing a job.' in the form of the line the reference's pool prints ('CallToThread doing a job.', recorded in oracle/fixtures/debug_report_modes.json), for every firing including one the gates turn away (as the reference reports before the job looks at idle), and nothing with the mode off. The daemon names differ from the reference's pool thread name (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/debug_menu_actions.rs daemon_report_mode_says_when_a_maintenance_daemon_does_a_job."
    }
   },
   {
@@ -10920,10 +10920,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Sets the flag directly on FileImporter; no menu. Only 4 of the ~25 reference messages (ClientImportFiles and ClientDB 'File import job ...') are emitted/tested, order differs (hash/done), typed literals. Stale tracker notes. Tests: crates/hydrus-import/tests/debug_reports.rs:11 file_import_report_mode_reports_the_import_job_as_it_goes 2026-10-14 (#96): not made sound yet. The importer runs in the daemon: the switch now reaches it (debug_switches), but ~21 of the reference's ~25 messages are not emitted, and none is recorded. Needs the messages ported and a recording of an import's reports."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The real importer, run on the recorded file with the mode on, says the 20 lines the reference said for a new file (created to done, including the check against the import options and the database job's steps) and the 5 it said when the file was already in the database, in order, with run-specific paths, the source label and Python tuples/lists shaped as Rust shapes them (oracle/fixtures/debug_report_modes.json, from the real Client API add_file); nothing with the mode off. The menu half (entry to the daemon-read switch) is in crates/hydrus-gui/tests/gui/debug_report_modes.rs the_report_mode_entries_turn_their_switches_on_and_pass_them_to_the_daemon. A decompression bomb test is reported before the mime line (DIFFERENCES.md). Test: crates/hydrus-import/tests/debug_reports.rs file_import_report_mode_says_what_the_reference_says_through_an_import."
    }
   },
   {
@@ -10940,10 +10940,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Sets the flag directly; no menu. Covers 2 messages; native formats hash as hex and mime as Debug name and omits the mime from the thumbnail request, unlike the reference str((hash, mime)); reference's 'Adding thumbnail', 'Adding file from string', 'Changing file ext', 'Adding file to client file structure' reports are absent. Stale tracker notes. Tests: crates/hydrus-store/tests/debug_file_report.rs:10 file_report_mode_reports_file_and_thumbnail_path_requests 2026-10-14 (#96): not made sound yet. Native formats hash and mime differently from str((hash, mime)) and lacks four of the reference's reports; needs those ported, a recording, and a menu-driven test."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The real importer with the mode on says the reference's 'Adding file to client file structure' and 'Adding thumbnail' lines for a new file and its 'File path request' line when the file is already in the database, as recorded from the real client (oracle/fixtures/debug_report_modes.json), the hash and type named as hydrus-rs names them; nothing with the mode off. Also ported from the reference's source, not recorded: wrong-sized thumbnail, file maintenance job, Deleting and Recycling lines; not ported: Changing file ext, Adding file from string, File path test, Thumbnail path test (no such step) (DIFFERENCES.md). Test: crates/hydrus-import/tests/debug_reports.rs file_report_mode_says_what_the_reference_says_through_an_import."
    }
   },
   {
@@ -11068,10 +11068,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu toggle and key events, but typed literals and only key events; reference gui_report_mode also reports mouse events, manage-tags panel opening and list-box virtual size, none tested or ported. Stale tracker notes. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:576 gui_report_mode_says_which_key_events_it_caught 2026-10-14 (#96): not made sound yet. The reference's gui report mode reports Qt key and mouse events (key ints, modifiers), the manage-tags panel and list-box sizes; only key events are ported and none is recorded. The Qt-specific event details have no counterpart; needs an owner decision on scope."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The real menu entry is clicked and the real main window's key callback is pressed with ten keys (plain, shifted, ctrl, alt, ctrl+f5, numpad, return, space, escape, f5): its 'key event caught' lines are the reference's for the same keys, recorded from the real main window's event filter; and the real Manage tags window opened on the same files says the reference's five lines (the services, one per service panel with its key, the tab count), the services named by their names; nothing with the mode off (oracle/fixtures/debug_report_modes_gui.json). Not ported: mouse events (not recorded), the Qt list boxes' virtual size lines (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/debug_report_modes.rs gui_report_mode_says_what_the_reference_says_for_keys_and_the_manage_tags_panel."
    }
   },
   {
@@ -11324,10 +11324,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "weak",
-    "by": "claude (issue #96 session)",
-    "note": "Real menu click; every popup the reference makes that hydrus-rs makes is compared field by field with oracle/fixtures/debug_popups.json (record_debug_popups.py: title, texts, gauge, pausable/cancellable, files and label, merge flag, the exception's text framing, order, the three delayed ones about half a second apart). Still weak because three of the reference's popups are not made: 'user call test' (a button that calls back), 'sub gap downloader test' (a button that opens a gap downloader) and 'test network control' (a popup holding a network job), and the 'test job' sub-job does not start pulsing after two seconds (DIFFERENCES.md). Python's traceback frames have no counterpart; the framing lines and first two lines match. Test: crates/hydrus-gui/tests/gui/debug_popups.rs make_some_popups_makes_the_reference_s_popups_in_its_order_less_three_that_call_back."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-11)",
+    "note": "crates/hydrus-gui/tests/gui/debug_popups.rs: the real Help menu entry makes all 19 popups of oracle/fixtures/debug_popups.json in the recorded order, field by field (title, texts, gauges, pausable/cancellable, files, merge flag, the button's label, whether it holds a network job, the exception's framing), the three delayed ones about half a second apart; a second test clicks the 'user call test' and 'sub gap downloader test' buttons through the popup control and compares the popups and the pages they leave with the recorded user_calls (a text popup 'iv damke'; the 'subscription gap downloaders' gallery page and the reference's 'Could not find a Gallery URL Generator' text); and the test job's pulsing sub-job arrives two seconds in, as recorded. The auto-account popup is made only with a tag repository, which the recorded client and hydrus-rs lack. Python's traceback frames have no counterpart."
    }
   },
   {
@@ -11377,10 +11377,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Sets the flag directly (no menu click), drives the real engine against a local server and checks the redirect line and an error prefix against typed strings. Reference also reports domain-manager headers, request/response headers and URL class lookups; native does not (DIFFERENCES). The menu entry's reference semantics (clearing silent) are not mirrored by menu_bar's plain flip(). Tests: crates/hydrus-net/tests/debug_reports.rs:14 network_report_mode_reports_redirects_and_errors_unless_silent 2026-10-14 (#96): not made sound yet. The network engine runs in the daemon: the switch now reaches it. The reference also reports domain-manager headers, request and response headers and URL class lookups; those are not ported and nothing is recorded."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The real engine, fetching a redirect, a page and a 404 from a local server with the mode on, says the reports the reference said for the same three fetches, in the same order and kinds: job added, starting, referral URLs, the headers set for the domain, request and response headers (sorted, key: value), the redirect, the error as a notice, an exception line mentioning 404 and the server's text, and job done; the exact words match where they do not depend on this client's headers (oracle/fixtures/debug_report_modes.json). Nothing with the mode off. The menu entries' shared-mode semantics are in debug_menu_actions.rs network_report_mode_entries_share_the_mode_as_the_reference_does. Not ported: the URL class lookup report; the default header set differs (DIFFERENCES.md). Test: crates/hydrus-net/tests/debug_reports.rs network_report_mode_says_what_the_reference_says_unless_silent."
    }
   },
   {
@@ -11397,10 +11397,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "fix session",
-    "note": "Expected values are restated from the Python source (veto string, importable-mime filter, _SwitchBoolean), not recorded. The two network report entries now share the mode as ClientGUI._SwitchBoolean does (silent turns it on and sets silent, the plain entry flips it and clears silent), driven through the real help > debug > report modes menu, with the consumer (report_network) checked for the sink. Test: crates/hydrus-gui/tests/gui/debug_menu_actions.rs network_report_mode_entries_share_the_mode_as_the_reference_does The console half of silent mode is not observed (only that nothing reaches the popup sink). 2026-10-14 (#96): not made sound yet; as network-report-mode: needs a recording of the reference's reports in silent mode and the console half observed."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The same three fetches with the mode on and silent say the same lines the reference printed in silent mode (its Print) to the console and nothing to the popup sink (crates/hydrus-net/tests/debug_reports.rs, against oracle/fixtures/debug_report_modes.json); and the real help > debug > report modes entries share the one mode as the reference's _SwitchBoolean does, with the console half now observed through a console hook (crates/hydrus-gui/tests/gui/debug_menu_actions.rs network_report_mode_entries_share_the_mode_as_the_reference_does)."
    }
   },
   {
@@ -11825,10 +11825,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Toggles via the real menu and presses real keys. Unmatched line and 'matched on \"main_gui\" set to' prefix are typed; the command is printed as a number rather than the reference's repr(command), only the GetCommand-level messages exist (not the passing-through/parent/key-ord reports), and the unmatched text omits the reference's variants. Partial coverage, no recording. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:390 shortcut_report_mode_says_what_a_shortcut_matched 2026-10-14 (#96): not made sound yet. The reference reports Qt key ords and repr(command) in several places; native prints a command number and lacks the pass-through and parent reports. Needs a recording of the reference's reports for a few shortcuts and the missing reports ported."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The real menu entry is clicked and the real main window's key callback is pressed with the ten recorded keys: its reports are the reference's for the same keys, recorded from the real main window: 'Key shortcut passing through main window. I am in a state to catch it.' for each, and for f5 'matched on main_gui set to refresh page search/sort command' and 'matched to command ... It was processed.'; nothing with the mode off. The reference's names for the nine simple commands hydrus-rs runs equal the native ones (record_debug_report_modes_gui.py). Keyboard only: mouse, double-click retry and other sets' reports are ported from the source but not recorded (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/debug_report_modes.rs shortcut_report_mode_says_what_the_reference_says_for_each_key."
    }
   },
   {
@@ -11897,10 +11897,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Calls perceptual_hash with the flag set directly (no menu) and compares the eight lines with typed strings from ClientImagePerceptualHashes. Native omits the reference's 'loading image' line and shapes come from the native raster; no recording of the reference. Tests: crates/hydrus-media/tests/debug_reports.rs:10 phash_generation_report_mode_reports_each_stage 2026-10-14 (#96): not made sound yet. Needs the reference's reports recorded for a generated hash (ClientImagePerceptualHashes), compared with the native stages, and a menu-driven test; the generation runs in the daemon, which the switch now reaches."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The real tools' perceptual hash generation of the recorded file with the mode on says the nine lines the reference said (loading image, image, grey, tiny and tiny float shapes, generating dct, median, collapsing bytes, the hash), the median to 1e-9 and every other line exactly, ending on the hash the reference made; nothing with the mode off (oracle/fixtures/debug_report_modes.json). The import's own 'generating perceptual_hashes' lines are in the file import test. Test: crates/hydrus-media/tests/debug_reports.rs phash_generation_says_what_the_reference_says_for_the_same_file."
    }
   },
   {
@@ -11958,10 +11958,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Calls the model's test_call with the flag set directly and checks a loose 'KWargs are: ' prefix and a substring. Native prints a Rust arg list, not Python kwargs, and omits the env dump and the 'stdout:/stderr:/No stdout or stderr came back.' reports (DIFFERENCES). Not driven through the menu; no recording. Tests: crates/hydrus-gui-model/tests/model/debug_flags.rs:36 subprocess_report_mode_reports_the_call_before_it_is_made 2026-10-14 (#96): not made sound yet. The reference prints Python keyword arguments, an environment dump and stdout/stderr reports; native prints a Rust argument list and lacks the others. Needs a recording and a decision on whether to print Python-shaped text."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (W5-9, #255)",
+    "note": "The real menu entry is clicked and the real external call test (Options > external programs > edit > test call) runs 'echo hello': with the mode on it says the environment dump, the KWargs line (hydrus-rs's arguments, not Python's dict), 'stdout: ...' and 'stderr: ...' as the reference said for the same command, a Python repr's quotes being Rust's (oracle/fixtures/debug_report_modes.json); a model replay covers three commands (stdout, stderr, neither). The environment dump is this process's, in the layout the reference's formatter gives its recorded environment. Nothing with the mode off. Tests: crates/hydrus-gui/tests/gui/debug_report_modes.rs subprocess_report_mode_says_what_the_reference_says_through_the_external_call_test; crates/hydrus-gui-model/tests/model/debug_flags.rs."
    }
   },
   {
@@ -13241,10 +13241,10 @@
     "Native options registry has no editable 'Permit idle mode if your mouse cursor has not been moved in the past:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The control, saved seconds and gate arithmetic are recorded and replayed soundly, but the reference tooltip says the timer follows the mouse anywhere on the system, and native only observes cursor movement over its own windows (DIFFERENCES.md ~1772 says so), so the setting does not do what the leaf names. The GUI test also uses mouse_at() directly rather than a cursor event. Stale tracker note says no editable row exists; it does. Tests: crates/hydrus-gui/tests/gui/idle_timeout_options.rs:49 staged_timeouts_change_live_browsing_mouse_api_and_autosave_gates_only_after_apply; crates/hydrus-gui-model/tests/model/idle_timeout_options.rs (recording replays)"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-11)",
+    "note": "crates/hydrus-gui/tests/gui/idle_timeout_options.rs: the control, its saved seconds and the gate arithmetic are recorded and replayed (staged_timeouts_change_live_browsing_mouse_api_and_autosave_gates_only_after_apply, idle_timeout_options.json). the_mouse_timeout_counts_the_cursor_moving_anywhere_on_the_desktop sets only the mouse timeout in the Options row, applies it, and feeds the live gate the desktop's idle time (a stand-in for GNOME's IdleMonitor / the X screensaver extension): input seen elsewhere on the desktop holds idle mode back, a quiet desktop permits it, with the reference's strict boundary. The old note that native sees only its own windows is stale (DIFFERENCES.md, 'Idle from input outside hydrus-rs's windows'). Limits, written there: the desktop cannot say mouse from keyboard, so typing elsewhere also counts, and a Wayland compositor without GNOME's monitor has no source."
    }
   },
   {
@@ -16969,10 +16969,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Lifecycle (dialog, title, close button, ask/warn, wait while minimised/inactive/another dialog, self-close, release) is driven through the window and the model replays popup_modal.json. But Effect::PauseAllMedia (pause_all_media pub, in the recording) is not performed by the GUI, other windows are not hidden, and the dialog does not block the main window (DIFFERENCES); the hide-main-GUI recorded case is replayed by no test. Part of the recorded lifecycle is uncovered. Tests: crates/hydrus-gui-model/tests/model/popup_modal.rs:110,213; crates/hydrus-gui/tests/gui/shell_modal_popups.rs:104,166,199"
+    "by": "Claude session (wave 5, W5-11)",
+    "note": "Lifecycle (dialog, title, close button, ask/warn, waiting while minimised/inactive/another dialog, self-close, release) is driven through the window and the model replays popup_modal.json; since 2026-10-14 the dialog also pauses playing media as it opens (viewer_playback.rs a_modal_popup_pauses_the_playing_media_as_it_opens, a real mpv player) and hides the other windows while it is up, restoring them on release (shell_modal_popups.rs, the recorded 'other windows hidden, main kept' case). Still weak: the dialog does not block the main window, and the recorded 'main window hidden too' case (a panel made with hide_main_gui, used only by the reference's file migration dialogs) is replayed by no test (DIFFERENCES.md)."
    }
   },
   {
@@ -24252,10 +24252,10 @@
     "Checked generator identities form the nested set; list Apply owns persistence."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "weak",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Unchanged: the reference's nested generator editor has a members list with an 'add' button (choose gugs, multi-select), a 'No remaining gugs available!' warning and an 'available' yes/no column; native has a checklist, none of which is tested or recorded. Porting the list needs .slint work (a recording of the reference's panel, then the editor); left for a slice of its own. Test: crates/hydrus-gui/tests/gui/downloader_definitions.rs single_nested_generators_roundtrip_delete_and_cancel"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-11)",
+    "note": "crates/hydrus-gui/tests/gui/downloader_definitions.rs the_nested_generators_members_list_adds_through_a_chooser_and_deletes_as_the_reference_does opens the nested editor on the generators oracle/record_nested_gug_members.py used and replays oracle/fixtures/nested_gug_members.json through the real window: the rows and 'available?' by key or name, the add button's chooser (the generators offered in the chooser's own order, none ticked, cancel, two ticked, the rest), the selection after adding, 'No remaining gugs available!' when none is left, delete's 'Remove all selected?' declined and accepted, and the members the list stores on Apply (a gone generator dropped, one found by name re-keyed). The chooser is an overlay of tick boxes in the editor and the warning an inline notice with ok, rather than Qt dialogs (DIFFERENCES.md)."
    }
   },
   {
@@ -24584,10 +24584,10 @@
     "Commands identify both daemon epoch and request ID; ended/replaced jobs ignore the command."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "weak",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Unchanged: cancel/override buttons queue commands carrying the daemon epoch and job id (typed values; the reference has no such buttons), and the reference's right-click menu on a job (a 'network contexts' submenu with each context's waiting estimate or 'bandwidth ok', then 'domain ok', 'waiting on connection error', 'waiting on serverside bandwidth', 'obeys bandwidth', 'tokens ok') is shown natively as detail text instead; the 'debug contexts' part is unported and untested. Test: crates/hydrus-gui/tests/gui/network_data.rs jobs_live_progress_commands_and_offline_expiry"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-12 session (wave 5)",
+    "note": "The reference's job right-click menu (network contexts with each context's wait or 'bandwidth ok', then domain ok, waiting on connection error, waiting on serverside bandwidth, obeys bandwidth, tokens ok) is replayed through the real jobs window against network_jobs_panel.json (recorded from the real ReviewNetworkJobs): eight recorded job states, the submenu, copy-on-click, no menu with two jobs selected, a right press selecting an unselected row. Differences in DIFFERENCES.md (one typed wait where the reference's two flags can both be True; service contexts named by key). What this leaf counts: the reference's debug-contexts menu (_GetListCtrlMenu has no cancel or override). The engine's values behind the menu are checked against the same recording (hydrus-net the_snapshot_reports_the_recorded_job_menu_states, the_snapshot_reports_a_post_and_a_gallery_page_waiting_on_its_token_as_recorded). The cancel/override buttons are native-only; this leaf proves only that they queue epoch+id commands (jobs_live_progress_commands_and_offline_expiry), and their effect on the engine belongs to the audit-network-jobs-cancel/-override leaves. Test: crates/hydrus-gui/tests/gui/network_jobs_panel.rs a_jobs_right_click_menu_is_the_reference_s_network_contexts_and_flags."
    }
   },
   {

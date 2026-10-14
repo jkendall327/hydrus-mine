@@ -101,19 +101,21 @@ def record(session):
                         default_gug=None if default is None else default[1])
 
         Windows.DialogEdit.exec = edit
-        Quick.GetYesNo = lambda parent, message, **kwargs: (questions.append(message), QW.QDialog.DialogCode.Accepted)[1]
+        yes_answers = []
+        Quick.GetYesNo = lambda parent, message, **kwargs: (questions.append(message), QW.QDialog.DialogCode.Accepted if yes_answers.pop(0) else QW.QDialog.DialogCode.Rejected)[1]
         Message.ShowInformation = lambda parent, message, **kwargs: notices.append(message)
         Message.ShowWarning = lambda parent, message, **kwargs: warnings.append(message)
         importer = Import.ReviewDownloaderImport(c.gui, engine)
         stages = []
         try:
-            def stage(name, source, select, answer=None):
+            def stage(name, source, select, answer=None, yes=True):
                 choices.clear(); questions.clear(); notices.clear(); warnings.clear()
+                yes_answers[:] = [yes]
                 if select:
                     answers.append(answer)
                 importer._select_from_list.setChecked(select)
                 importer._ImportPayloads([('synthetic ' + name, source.DumpToString())])
-                stages.append(dict(name=name, source=json.loads(source.DumpToString()), select=select,
+                stages.append(dict(name=name, source=json.loads(source.DumpToString()), select=select, yes=yes,
                                    choosers=list(choices), questions=list(questions), notices=list(notices),
                                    warnings=list(warnings), state=state()))
 
@@ -122,6 +124,18 @@ def record(session):
             stage('rest', package, True, ['GUG: selection gallery', 'Parser: selection parser', 'Domain Metadata: selection.example'])
             stage('mixed', mixed, False)
             stage('misc only', misc_only, False)
+            # the package again: everything in it is already there
+            stage('all duplicates', package, False)
+            # a new downloader, the final question declined ("back": nothing is added)
+            declined = G.GalleryURLGenerator('declined gallery', url_template='https://declined.example/search/%tags%', replacement_phrase='%tags%')
+            declined.SetGUGKeyAndName((bytes.fromhex('95' * 32), declined.GetName()))
+            stage('declined', S.SerialisableList([declined]), False, yes=False)
+            # the chooser cancelled
+            stage('chooser cancelled', S.SerialisableList([declined]), True, answer=None)
+            # a new downloader beside one the client has: the duplicate is counted, not added
+            fresh = G.GalleryURLGenerator('fresh gallery', url_template='https://fresh.example/search/%tags%', replacement_phrase='%tags%')
+            fresh.SetGUGKeyAndName((bytes.fromhex('96' * 32), fresh.GetName()))
+            stage('new and a duplicate', S.SerialisableList([fresh, other]), False)
             return dict(initial=initial, stages=stages)
         finally:
             Windows.DialogEdit.exec = real_edit

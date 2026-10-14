@@ -337,9 +337,8 @@ impl Control {
             let idle = self.0.monitor.idle_at(now_ms) && !self.0.busy.get();
             let gates = store.read(maintenance_gates::load)?;
             self.0.deadlines[index(worker)].set(now_ms.saturating_add(period(worker)));
-            if !gates.allows(worker, idle) {
-                continue;
-            }
+            // the reference says so for every firing, before the job itself
+            // looks at idle (`DAEMON._DoPreCall`)
             hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::DaemonReport, || {
                 let name = match worker {
                     Worker::Trash => "maintain_trash",
@@ -347,6 +346,9 @@ impl Control {
                 };
                 format!("{name} doing a job.")
             });
+            if !gates.allows(worker, idle) {
+                continue;
+            }
             let store = store.clone();
             let cancellation = self.0.control.clone();
             let (result, receiver) = mpsc::sync_channel(1);

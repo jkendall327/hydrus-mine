@@ -894,18 +894,15 @@ fn menu_rows(window: &CommandPaletteWindow, query: &str, any: bool) -> Vec<(Stri
     }
 }
 
-// (not tagged for the main-menubar leaf: the three rows below are missing natively)
+// "review threads" is missing natively: the leaf `audit-options-help-debug-action-review-threads`
+// is out of scope (Python runtime internals; DECISIONS.md, "Out of scope, signed off": the 79 triaged on 2026-10-08)
+// leaf: audit-options-command-palette-command-palette-advanced-search-main-menubar
 #[test]
 fn the_main_menu_rows_are_the_reference_s_flattened_menubar_and_the_setting_gates_them() {
     let recorded = hydrus_testkit::fixture_json("command_palette.json");
-    // Entries the reference's menubar holds that the palette lists but the native
-    // menu has no counterpart for (DIFFERENCES.md): the backup items it hides until a
-    // backup location is set up, and a Help > debug action.
-    let known_missing = [
-        ("update database backup", "database | backup"),
-        ("change database backup location…", "database | backup"),
-        ("review threads", "help | debug | data actions"),
-    ];
+    // The one entry the reference's menubar holds that native has no counterpart
+    // for (DIFFERENCES.md): a Help > debug action listing Python threads.
+    let known_missing = [("review threads", "help | debug | data actions")];
     let _windows = headless::init();
     for shown in [true, false] {
         let directory = tempfile::tempdir().unwrap();
@@ -972,4 +969,49 @@ fn the_main_menu_rows_are_the_reference_s_flattened_menubar_and_the_setting_gate
             }
         }
     }
+}
+
+/// The palette lists the backup entries the menubar hides, and activating one
+/// runs it as `action.trigger()` does in the reference: "update database
+/// backup" with no location set warns "No backup path is set!".
+#[test]
+fn a_hidden_backup_row_is_listed_and_runs_as_the_reference_s_action_does() {
+    let _windows = headless::init();
+    let directory = tempfile::tempdir().unwrap();
+    let store = Store::open(directory.path()).unwrap();
+    store
+        .write(|ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &CommandPaletteSettings {
+                    show_main_menu: true,
+                    ..Default::default()
+                },
+            )
+        })
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store).unwrap());
+    ui.invoke_command_palette_requested();
+    let window = bound
+        .command_palette
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let rows = menu_rows(&window, "update database backup", true);
+    assert_eq!(
+        rows,
+        [(
+            "update database backup".to_owned(),
+            "database | backup".to_owned()
+        )]
+    );
+    activate(&window, "update database backup");
+    let message = hydrus_gui::message_window().expect("a message is shown");
+    assert_eq!(
+        message.get_message(),
+        hydrus_gui_model::database_backup::NO_PATH
+    );
+    message.invoke_cancelled();
 }

@@ -1,0 +1,413 @@
+{
+ "now": 1770000000,
+ "menus": {
+  "plain": {
+   "url": "https://example.com/file",
+   "contexts": [
+    "global",
+    "web domain: example.com",
+    "web domain: sub.example.com",
+    "downloader page: 66697874757265"
+   ],
+   "rows": [
+    {
+     "label": "network contexts",
+     "children": [
+      {
+       "label": "global (1 minute)",
+       "children": []
+      },
+      {
+       "label": "web domain: example.com (bandwidth ok)",
+       "children": []
+      },
+      {
+       "label": "web domain: sub.example.com (bandwidth ok)",
+       "children": []
+      },
+      {
+       "label": "downloader page: 66697874757265 (bandwidth ok)",
+       "children": []
+      }
+     ]
+    },
+    {
+     "label": "domain ok: True",
+     "children": []
+    },
+    {
+     "label": "waiting on connection error: False",
+     "children": []
+    },
+    {
+     "label": "waiting on serverside bandwidth: False",
+     "children": []
+    },
+    {
+     "label": "obeys bandwidth: True",
+     "children": []
+    },
+    {
+     "label": "tokens ok: True",
+     "children": []
+    }
+   ]
+  },
+  "waiting": {
+   "url": "https://example.com/file",
+   "contexts": [
+    "global",
+    "web domain: example.com",
+    "web domain: sub.example.com",
+    "downloader page: 66697874757265"
+   ],
+   "rows": [
+    {
+     "label": "network contexts",
+     "children": [
+      {
+       "label": "global (1 minute)",
+       "children": []
+      },
+      {
+       "label": "web domain: example.com (bandwidth ok)",
+       "children": []
+      },
+      {
+       "label": "web domain: sub.example.com (bandwidth ok)",
+       "children": []
+      },
+      {
+       "label": "downloader page: 66697874757265 (bandwidth ok)",
+       "children": []
+      }
+     ]
+    },
+    {
+     "label": "domain ok: True",
+     "children": []
+    },
+    {
+     "label": "waiting on connection error: True",
+     "children": []
+    },
+    {
+     "label": "waiting on serverside bandwidth: True",
+     "children": []
+    },
+    {
+     "label": "obeys bandwidth: True",
+     "children": []
+    },
+    {
+     "label": "tokens ok: True",
+     "children": []
+    }
+   ]
+  },
+  "post": {
+   "url": "https://example.com/file",
+   "contexts": [
+    "global",
+    "web domain: example.com",
+    "web domain: sub.example.com",
+    "downloader page: 66697874757265"
+   ],
+   "rows": [
+    {
+     "label": "network contexts",
+     "children": [
+      {
+       "label": "global (1 minute)",
+       "children": []
+      },
+      {
+       "label": "web domain: example.com (bandwidth ok)",
+       "children": []
+      },
+      {
+       "label": "web domain: sub.example.com (bandwidth ok)",
+       "children": []
+      },
+      {
+       "label": "downloader page: 66697874757265 (bandwidth ok)",
+       "children": []
+      }
+     ]
+    },
+    {
+     "label": "domain ok: True",
+     "children": []
+    },
+    {
+     "label": "waiting on connection error: False",
+     "children": []
+    },
+    {
+     "label": "waiting on serverside bandwidth: False",
+     "children": []
+    },
+    {
+     "label": "obeys bandwidth: False",
+     "children": []
+    },
+    {
+     "label": "tokens ok: True",
+     "children": []
+    }
+   ]
+  },
+  "overridden": {
+   "url": "https://example.com/file",
+   "contexts": [
+    "global",
+    "web domain: example.com",
+    "web domain: sub.example.com",
+    "downloader page: 66697874757265"
+   ],
+   "rows": [
+    {
+     "label": "network contexts",
+     "children": [
+      {
+       "label": "global (1 minute)",
+       "children": []
+      },
+      {
+       "label": "web domain: example.com (bandwidth ok)",
+       "children": []
+      },
+      {
+       "label": "web domain: sub.example.com (bandwidth ok)",
+       "children": []
+      },
+      {
+       "label": "downloader page: 66697874757265 (bandwidth ok)",
+       "children": []
+      }
+     ]
+    },
+    {
+     "label": "domain ok: True",
+     "children": []
+    },
+    {
+     "label": "waiting on connection error: False",
+     "children": []
+    },
+    {
+     "label": "waiting on serverside bandwidth: False",
+     "children": []
+    },
+    {
+     "label": "obeys bandwidth: False",
+     "children": []
+    },
+    {
+     "label": "tokens ok: True",
+     "children": []
+    }
+   ]
+  },
+  "gallery_token_needed": {
+   "url": "https://example.com/file",
+   "contexts": [
+    "global",
+    "web domain: example.com",
+    "web domain: sub.example.com",
+    "downloader page: 66697874757265"
+   ],
+   "rows": [
+    {
+     "label": "network contexts",
+     "children": [
+      {
+       "label": "global (1 minute)",
+       "children": []
+      },
+      {
+       "label": "web domain: example.com (bandwidth ok)",
+       "children": []
+      },
+      {
+       "label": "web domain: sub.example.com (bandwidth ok)",
+       "children": []
+      },
+      {
+       "label": "downloader page: 66697874757265 (bandwidth ok)",
+       "children": []
+      }
+     ]
+    },
+    {
+     "label": "domain ok: True",
+     "children": []
+    },
+    {
+     "label": "waiting on connection error: False",
+     "children": []
+    },
+    {
+     "label": "waiting on serverside bandwidth: False",
+     "children": []
+    },
+    {
+     "label": "obeys bandwidth: True",
+     "children": []
+    },
+    {
+     "label": "tokens ok: True",
+     "children": []
+    }
+   ]
+  },
+  "gallery_token_blocked": {
+   "url": "https://example.com/file",
+   "contexts": [
+    "global",
+    "web domain: example.com",
+    "web domain: sub.example.com",
+    "downloader page: 66697874757265"
+   ],
+   "rows": [
+    {
+     "label": "network contexts",
+     "children": [
+      {
+       "label": "global (1 minute)",
+       "children": []
+      },
+      {
+       "label": "web domain: example.com (bandwidth ok)",
+       "children": []
+      },
+      {
+       "label": "web domain: sub.example.com (bandwidth ok)",
+       "children": []
+      },
+      {
+       "label": "downloader page: 66697874757265 (bandwidth ok)",
+       "children": []
+      }
+     ]
+    },
+    {
+     "label": "domain ok: True",
+     "children": []
+    },
+    {
+     "label": "waiting on connection error: False",
+     "children": []
+    },
+    {
+     "label": "waiting on serverside bandwidth: False",
+     "children": []
+    },
+    {
+     "label": "obeys bandwidth: True",
+     "children": []
+    },
+    {
+     "label": "tokens ok: False",
+     "children": []
+    }
+   ]
+  },
+  "domain_errors": {
+   "url": "https://example.com/file",
+   "contexts": [
+    "global",
+    "web domain: example.com",
+    "web domain: sub.example.com",
+    "downloader page: 66697874757265"
+   ],
+   "rows": [
+    {
+     "label": "network contexts",
+     "children": [
+      {
+       "label": "global (1 minute)",
+       "children": []
+      },
+      {
+       "label": "web domain: example.com (bandwidth ok)",
+       "children": []
+      },
+      {
+       "label": "web domain: sub.example.com (bandwidth ok)",
+       "children": []
+      },
+      {
+       "label": "downloader page: 66697874757265 (bandwidth ok)",
+       "children": []
+      }
+     ]
+    },
+    {
+     "label": "domain ok: False",
+     "children": []
+    },
+    {
+     "label": "waiting on connection error: False",
+     "children": []
+    },
+    {
+     "label": "waiting on serverside bandwidth: False",
+     "children": []
+    },
+    {
+     "label": "obeys bandwidth: True",
+     "children": []
+    },
+    {
+     "label": "tokens ok: True",
+     "children": []
+    }
+   ]
+  }
+ },
+ "hint": [
+  "right-click a job for more debug info!"
+ ],
+ "buttons": [
+  "refresh snapshot"
+ ],
+ "checkbox": "manual refresh",
+ "refresh": {
+  "initial_value": null,
+  "initial_active": false,
+  "steps": [
+   {
+    "set": 0.25,
+    "value": 0.25,
+    "active": true,
+    "interval_ms": 250
+   },
+   {
+    "set": 2.0,
+    "value": 2.0,
+    "active": true,
+    "interval_ms": 2000
+   },
+   {
+    "set": 0.01,
+    "value": 0.05,
+    "active": true,
+    "interval_ms": 50
+   },
+   {
+    "set": null,
+    "value": null,
+    "active": false,
+    "interval_ms": null
+   },
+   {
+    "set": 1.5,
+    "value": 1.5,
+    "active": true,
+    "interval_ms": 1500
+   }
+  ]
+ },
+ "no_selection": "DataMissing"
+}

@@ -91,13 +91,27 @@ impl Capture {
     }
 }
 
+/// The reference's words for a simple command (`ApplicationCommand.ToString`),
+/// as shortcut report mode quotes it; a command this slice does not name is
+/// said by its number.
+pub fn command_name(command: i32) -> String {
+    ["main_gui", "media_viewer"]
+        .iter()
+        .flat_map(|set| commands(set))
+        .find(|(id, _)| *id == command)
+        .map_or_else(
+            || format!("command {command}"),
+            |(_, name)| (*name).to_owned(),
+        )
+}
+
 /// Only commands with an existing native executor are offered in this slice.
 pub fn commands(set: &str) -> &'static [(i32, &'static str)] {
     if set == "main_gui" {
         &[
             (78, "refresh page search/sort"),
             (7, "pages: close current"),
-            (56, "pages: new page"),
+            (56, "open a new page: choose a page"),
         ]
     } else {
         &[

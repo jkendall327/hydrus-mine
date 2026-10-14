@@ -360,3 +360,62 @@ fn complete_idle_captions_and_actual_none_states_fit_opening_and_capture_sizes()
         }
     }
 }
+
+/// The desktop's idle time, set by the test.
+struct Desktop(std::rc::Rc<std::cell::Cell<Option<u64>>>);
+
+impl hydrus_gui::system_idle::SystemIdle for Desktop {
+    fn idle_ms(&self) -> Option<u64> {
+        self.0.get()
+    }
+}
+
+// leaf: audit-options-maintenance-and-processing-when-to-run-high-cpu-jobs-idle-permit-idle-mode-if-your-mouse-cursor-has-not-been-moved-in-the-past
+#[test]
+fn the_mouse_timeout_counts_the_cursor_moving_anywhere_on_the_desktop() {
+    let (_dirs, store) = crate::subscriptions::store();
+    store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &GuiSessionSettings {
+                    only_during_idle: true,
+                    ..GuiSessionSettings::default()
+                },
+            )
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let desktop = std::rc::Rc::new(std::cell::Cell::new(None));
+    bound
+        .session_autosave
+        .set_system_idle(Box::new(Desktop(desktop.clone())));
+    // only the mouse timeout, set in the Options row
+    let window = open(&ui, &bound);
+    set(&window, [None, Some(10), None]);
+    window.invoke_apply();
+    let due = bound.session_autosave.next().unwrap();
+    bound.session_autosave.boot_at(0);
+    bound.session_autosave.mouse_at(0);
+    let at = due + 11 * 60_000;
+    // nothing over our windows for longer than the timeout, and the desktop
+    // can't say: idle
+    desktop.set(None);
+    assert!(bound.session_autosave.idle_at(at));
+    // the cursor last moved, in another program, just over the timeout ago:
+    // still idle
+    desktop.set(Some(10 * 60_000 + 1));
+    assert!(bound.session_autosave.idle_at(at));
+    // exactly the timeout ago it is not (the reference's `TimeHasPassed(
+    // last + period )`, the strict boundary of `idle_timeout_options.json`)
+    desktop.set(Some(10 * 60_000));
+    assert!(!bound.session_autosave.idle_at(at));
+    // and it moved three seconds ago, though none of our windows saw it
+    desktop.set(Some(3_000));
+    assert!(!bound.session_autosave.idle_at(at + 1_000));
+    // left alone for the timeout after that: idle again
+    desktop.set(Some(3_000 + 10 * 60_000 + 2_000));
+    assert!(bound.session_autosave.idle_at(at + 10 * 60_000 + 2_000));
+}

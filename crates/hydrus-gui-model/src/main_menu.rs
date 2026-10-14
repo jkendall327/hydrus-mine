@@ -422,6 +422,9 @@ pub struct Facts {
     /// (seconds).
     pub backup: hydrus_store::backup::BackupSettings,
     pub locations_default: bool,
+    /// Build the menubar for the command palette, which (as the reference's
+    /// does, walking every `QAction`) lists the backup entries the menu hides.
+    pub palette_lists_hidden: bool,
     pub now: i64,
     pub pauses: Pauses,
     pub network_boot_pause: hydrus_store::settings::NetworkBootPause,
@@ -1001,6 +1004,33 @@ pub const RESERVED_SESSION_NAMES: [&str; 2] = ["last session", "exit session"];
 /// several locations, a note.
 fn backup_entries(facts: &Facts) -> Vec<Entry> {
     use crate::database_backup::Action;
+    if facts.palette_lists_hidden {
+        // (every action the updater shows or hides, in the order it appends them)
+        return vec![
+            item(
+                dots("set up a database backup location"),
+                Command::Backup(Action::SetUp),
+            ),
+            // (the updater's `setText` drops the ellipsis the item was made with)
+            item(
+                crate::database_backup::update_label(facts.backup.last_backup, facts.now),
+                Command::Backup(Action::Update),
+            ),
+            item(
+                dots("change database backup location"),
+                Command::Backup(Action::SetUp),
+            ),
+            SEP,
+            item(
+                dots("restore from a database backup"),
+                Command::Backup(Action::Restore),
+            ),
+            item(
+                "database is stored in multiple locations",
+                Command::Backup(Action::Multiple),
+            ),
+        ];
+    }
     if !facts.locations_default {
         return vec![item(
             "database is stored in multiple locations",
@@ -1013,11 +1043,9 @@ fn backup_entries(facts: &Facts) -> Vec<Entry> {
             Command::Backup(Action::SetUp),
         )],
         Some(_) => vec![
+            // (the reference's updater replaces the text without the ellipsis)
             item(
-                dots(&crate::database_backup::update_label(
-                    facts.backup.last_backup,
-                    facts.now,
-                )),
+                crate::database_backup::update_label(facts.backup.last_backup, facts.now),
                 Command::Backup(Action::Update),
             ),
             item(

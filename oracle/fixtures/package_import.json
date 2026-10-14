@@ -1,0 +1,155 @@
+{
+ "steps": [
+  {
+   "step": "package",
+   "questions": [
+    "The client is about to add and link these objects:\n\nDownloader \"artist lookup\" - exämple.com\nDownloader \"exchange gallery\" - example.com\nNested downloader \"exchange nested\" - exchange gallery\nURL Class \"path gallery\" - example.com\nParser \"exchange page\" - example.com\nParser \"page parser\" - \n\nDoes that sound good?"
+   ],
+   "notices": [
+    "Successfully added 3 new downloaders and 3 auxiliary objects."
+   ],
+   "state": {
+    "gugs": [
+     {
+      "name": "artist lookup",
+      "key": "1213b9206eb02db3d6dc27de2aab248430e4577a9d40aad4bef63e3d990cb8c8"
+     },
+     {
+      "name": "exchange gallery",
+      "key": "a75faa1e7ee17979f86796257acb21538382af16feebb8986549dcc615dedef7"
+     },
+     {
+      "name": "exchange nested",
+      "key": "1fe716d8518598ac31e47c27b1722cdf35727c26be79bd04d74a8fbca6f3ddfc",
+      "members": [
+       [
+        "0dc933993b3816f6c3ce26819d1043d519b8cb69354caed61cef6732bf27fe08",
+        "exchange gallery"
+       ]
+      ]
+     }
+    ],
+    "classes": [
+     "path gallery"
+    ],
+    "parsers": [
+     "exchange page",
+     "page parser"
+    ],
+    "links": []
+   }
+  },
+  {
+   "step": "package again",
+   "questions": [
+    "The client is about to add and link these objects:\n\nNested downloader \"exchange nested\" - exchange gallery\n\nDoes that sound good?"
+   ],
+   "notices": [
+    "Successfully added 1 new downloaders and 0 auxiliary objects. 5 duplicate objects were not added (but some additional metadata may have been merged)."
+   ],
+   "state": {
+    "gugs": [
+     {
+      "name": "artist lookup",
+      "key": "1213b9206eb02db3d6dc27de2aab248430e4577a9d40aad4bef63e3d990cb8c8"
+     },
+     {
+      "name": "exchange gallery",
+      "key": "a75faa1e7ee17979f86796257acb21538382af16feebb8986549dcc615dedef7"
+     },
+     {
+      "name": "exchange nested",
+      "key": "1fe716d8518598ac31e47c27b1722cdf35727c26be79bd04d74a8fbca6f3ddfc",
+      "members": [
+       [
+        "0dc933993b3816f6c3ce26819d1043d519b8cb69354caed61cef6732bf27fe08",
+        "exchange gallery"
+       ]
+      ]
+     },
+     {
+      "name": "exchange nested (1)",
+      "key": "e7be93efd175040b3867b74fe04aca3297f4b9b8a862cfba20659e44e201f05d",
+      "members": [
+       [
+        "c0609aacafb6a4f1027c84194fc6aa65f6291d245b439defd20a523eac870867",
+        "exchange gallery"
+       ]
+      ]
+     }
+    ],
+    "classes": [
+     "path gallery"
+    ],
+    "parsers": [
+     "exchange page",
+     "page parser"
+    ],
+    "links": []
+   }
+  },
+  {
+   "step": "linkable package",
+   "questions": [
+    "The client is about to add and link these objects:\n\nURL Class \"API target\" - links.example\nURL Class \"direct\" - links.example\nURL Class \"redirect source\" - links.example\nParser \"API parser\" - links.example\nParser \"direct parser\" - links.example\n\nDoes that sound good?"
+   ],
+   "notices": [
+    "Successfully added 0 new downloaders and 5 auxiliary objects."
+   ],
+   "state": {
+    "gugs": [
+     {
+      "name": "artist lookup",
+      "key": "1213b9206eb02db3d6dc27de2aab248430e4577a9d40aad4bef63e3d990cb8c8"
+     },
+     {
+      "name": "exchange gallery",
+      "key": "a75faa1e7ee17979f86796257acb21538382af16feebb8986549dcc615dedef7"
+     },
+     {
+      "name": "exchange nested",
+      "key": "1fe716d8518598ac31e47c27b1722cdf35727c26be79bd04d74a8fbca6f3ddfc",
+      "members": [
+       [
+        "0dc933993b3816f6c3ce26819d1043d519b8cb69354caed61cef6732bf27fe08",
+        "exchange gallery"
+       ]
+      ]
+     },
+     {
+      "name": "exchange nested (1)",
+      "key": "e7be93efd175040b3867b74fe04aca3297f4b9b8a862cfba20659e44e201f05d",
+      "members": [
+       [
+        "c0609aacafb6a4f1027c84194fc6aa65f6291d245b439defd20a523eac870867",
+        "exchange gallery"
+       ]
+      ]
+     }
+    ],
+    "classes": [
+     "API target",
+     "direct",
+     "path gallery",
+     "redirect source"
+    ],
+    "parsers": [
+     "API parser",
+     "direct parser",
+     "exchange page",
+     "page parser"
+    ],
+    "links": [
+     [
+      "API target",
+      "API parser"
+     ],
+     [
+      "direct",
+      "direct parser"
+     ]
+    ]
+   }
+  }
+ ]
+}

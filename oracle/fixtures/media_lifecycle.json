@@ -1,0 +1,545 @@
+{
+ "names": {
+  "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270": "art",
+  "6c6f63616c2066696c6573": "my files",
+  "7472617368": "trash"
+ },
+ "steps": [
+  {
+   "step": "archive an inbox file and an archived file",
+   "files": [
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+   ],
+   "dialogs": [],
+   "states": [
+    {
+     "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+     "inbox": false,
+     "current": [
+      "art"
+     ],
+     "deleted": [
+      "my files"
+     ],
+     "reason": "Deleted via Client API."
+    },
+    {
+     "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "inbox": false,
+     "current": [
+      "art",
+      "my files"
+     ],
+     "deleted": [],
+     "reason": "Unknown deletion reason."
+    }
+   ]
+  },
+  {
+   "step": "re-inbox both, declined",
+   "files": [
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+   ],
+   "dialogs": [
+    [
+     "question",
+     "Send 2 files to inbox?",
+     false
+    ]
+   ],
+   "states": [
+    {
+     "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+     "inbox": false,
+     "current": [
+      "art"
+     ],
+     "deleted": [
+      "my files"
+     ],
+     "reason": "Deleted via Client API."
+    },
+    {
+     "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "inbox": false,
+     "current": [
+      "art",
+      "my files"
+     ],
+     "deleted": [],
+     "reason": "Unknown deletion reason."
+    }
+   ]
+  },
+  {
+   "step": "re-inbox both",
+   "files": [
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+   ],
+   "dialogs": [
+    [
+     "question",
+     "Send 2 files to inbox?",
+     true
+    ]
+   ],
+   "states": [
+    {
+     "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+     "inbox": true,
+     "current": [
+      "art"
+     ],
+     "deleted": [
+      "my files"
+     ],
+     "reason": "Deleted via Client API."
+    },
+    {
+     "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "inbox": true,
+     "current": [
+      "art",
+      "my files"
+     ],
+     "deleted": [],
+     "reason": "Unknown deletion reason."
+    }
+   ]
+  },
+  {
+   "step": "re-inbox one",
+   "files": [
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+   ],
+   "dialogs": [],
+   "states": [
+    {
+     "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+     "inbox": true,
+     "current": [
+      "art"
+     ],
+     "deleted": [
+      "my files"
+     ],
+     "reason": "Deleted via Client API."
+    }
+   ]
+  },
+  {
+   "step": "delete a file from its only domain, declined",
+   "files": [
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "dialogs": [
+    [
+     "delete files dialog",
+     "Send one file from my files to trash?",
+     false
+    ]
+   ],
+   "states": [
+    {
+     "hash": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+     "inbox": false,
+     "current": [
+      "my files"
+     ],
+     "deleted": [],
+     "reason": "Unknown deletion reason."
+    }
+   ]
+  },
+  {
+   "step": "delete a file from its only domain",
+   "files": [
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "dialogs": [
+    [
+     "delete files dialog",
+     "Send one file from my files to trash?",
+     true
+    ]
+   ],
+   "states": [
+    {
+     "hash": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+     "inbox": false,
+     "current": [
+      "trash"
+     ],
+     "deleted": [
+      "my files"
+     ],
+     "reason": "Deleted from Media Page."
+    }
+   ]
+  },
+  {
+   "step": "undelete it, declined",
+   "files": [
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "dialogs": [
+    [
+     "question",
+     "Undelete this file back to my files?",
+     false
+    ]
+   ],
+   "states": [
+    {
+     "hash": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+     "inbox": false,
+     "current": [
+      "trash"
+     ],
+     "deleted": [
+      "my files"
+     ],
+     "reason": "Deleted from Media Page."
+    }
+   ]
+  },
+  {
+   "step": "undelete it, accepted",
+   "files": [
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "dialogs": [
+    [
+     "question",
+     "Undelete this file back to my files?",
+     true
+    ]
+   ],
+   "states": [
+    {
+     "hash": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+     "inbox": false,
+     "current": [
+      "my files"
+     ],
+     "deleted": [],
+     "reason": "Deleted from Media Page."
+    }
+   ]
+  },
+  {
+   "step": "delete a two-domain file from one domain",
+   "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+   ],
+   "dialogs": [
+    [
+     "delete files dialog",
+     "Remove one file from my files?",
+     true
+    ]
+   ],
+   "states": [
+    {
+     "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "inbox": true,
+     "current": [
+      "art"
+     ],
+     "deleted": [
+      "my files"
+     ],
+     "reason": "Deleted from Media Page."
+    }
+   ]
+  },
+  {
+   "step": "delete it from the other",
+   "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+   ],
+   "dialogs": [
+    [
+     "delete files dialog",
+     "Send one file from art to trash?",
+     true
+    ]
+   ],
+   "states": [
+    {
+     "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "inbox": true,
+     "current": [
+      "trash"
+     ],
+     "deleted": [
+      "art",
+      "my files"
+     ],
+     "reason": "Deleted from Media Page."
+    }
+   ]
+  },
+  {
+   "step": "undelete, chooser cancelled",
+   "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+   ],
+   "dialogs": [
+    [
+     "chooser",
+     "Undelete for?",
+     [
+      "art",
+      "my files",
+      "all the above"
+     ],
+     null
+    ]
+   ],
+   "states": [
+    {
+     "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "inbox": true,
+     "current": [
+      "trash"
+     ],
+     "deleted": [
+      "art",
+      "my files"
+     ],
+     "reason": "Deleted from Media Page."
+    }
+   ]
+  },
+  {
+   "step": "undelete, back to one domain",
+   "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+   ],
+   "dialogs": [
+    [
+     "chooser",
+     "Undelete for?",
+     [
+      "art",
+      "my files",
+      "all the above"
+     ],
+     "my files"
+    ]
+   ],
+   "states": [
+    {
+     "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "inbox": true,
+     "current": [
+      "my files"
+     ],
+     "deleted": [
+      "art"
+     ],
+     "reason": "Deleted from Media Page."
+    }
+   ]
+  },
+  {
+   "step": "delete it from the domain it is back in",
+   "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+   ],
+   "dialogs": [
+    [
+     "delete files dialog",
+     "Send one file from my files to trash?",
+     true
+    ]
+   ],
+   "states": [
+    {
+     "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "inbox": true,
+     "current": [
+      "trash"
+     ],
+     "deleted": [
+      "art",
+      "my files"
+     ],
+     "reason": "Deleted from Media Page."
+    }
+   ]
+  },
+  {
+   "step": "undelete, back to all the above",
+   "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+   ],
+   "dialogs": [
+    [
+     "chooser",
+     "Undelete for?",
+     [
+      "art",
+      "my files",
+      "all the above"
+     ],
+     "all the above"
+    ]
+   ],
+   "states": [
+    {
+     "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "inbox": true,
+     "current": [
+      "art",
+      "my files"
+     ],
+     "deleted": [],
+     "reason": "Deleted from Media Page."
+    }
+   ]
+  },
+  {
+   "step": "delete the single file again",
+   "files": [
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "dialogs": [
+    [
+     "delete files dialog",
+     "Send one file from my files to trash?",
+     true
+    ]
+   ],
+   "states": [
+    {
+     "hash": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+     "inbox": false,
+     "current": [
+      "trash"
+     ],
+     "deleted": [
+      "my files"
+     ],
+     "reason": "Deleted from Media Page."
+    }
+   ]
+  },
+  {
+   "step": "delete it physically, declined",
+   "files": [
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "dialogs": [
+    [
+     "delete files dialog",
+     "Permanently delete one trashed file?",
+     false
+    ]
+   ],
+   "states": [
+    {
+     "hash": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+     "inbox": false,
+     "current": [
+      "trash"
+     ],
+     "deleted": [
+      "my files"
+     ],
+     "reason": "Deleted from Media Page."
+    }
+   ]
+  },
+  {
+   "step": "delete it physically",
+   "files": [
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "dialogs": [
+    [
+     "delete files dialog",
+     "Permanently delete one trashed file?",
+     true
+    ]
+   ],
+   "states": [
+    {
+     "hash": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+     "inbox": false,
+     "current": [],
+     "deleted": [
+      "my files"
+     ],
+     "reason": "Deleted from Media Page."
+    }
+   ]
+  },
+  {
+   "step": "delete another file to the trash",
+   "files": [
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726"
+   ],
+   "dialogs": [
+    [
+     "delete files dialog",
+     "Send one file from my files to trash?",
+     true
+    ]
+   ],
+   "states": [
+    {
+     "hash": "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+     "inbox": true,
+     "current": [
+      "trash"
+     ],
+     "deleted": [
+      "my files"
+     ],
+     "reason": "Deleted from Media Page."
+    }
+   ]
+  },
+  {
+   "step": "delete trash physically now, with a mixed selection",
+   "files": [
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+   ],
+   "dialogs": [
+    [
+     "delete files dialog",
+     "Permanently delete one trashed file?",
+     true
+    ]
+   ],
+   "states": [
+    {
+     "hash": "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+     "inbox": false,
+     "current": [],
+     "deleted": [
+      "my files"
+     ],
+     "reason": "Deleted from Media Page."
+    },
+    {
+     "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+     "inbox": true,
+     "current": [
+      "art"
+     ],
+     "deleted": [
+      "my files"
+     ],
+     "reason": "Deleted via Client API."
+    }
+   ]
+  }
+ ]
+}

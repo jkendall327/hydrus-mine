@@ -64,7 +64,7 @@
     ],
     [
      "information",
-     "1 files moved in 5 minutes 35 seconds.\n\nEverything went great. You now have finer, lower-latency file storage. The next step is to repeat this process for your backup file storage folders. Let hydev know if you have any problems!"
+     "1 files moved in 4 minutes 17 seconds.\n\nEverything went great. You now have finer, lower-latency file storage. The next step is to repeat this process for your backup file storage folders. Let hydev know if you have any problems!"
     ]
    ],
    "files": [
@@ -116,7 +116,7 @@
     ],
     [
      "information",
-     "1 files moved in 5 minutes 4 seconds.\n\nEverything went great. You now have simpler file storage. The next step is to repeat this process for your backup file storage folders. Let hydev know if you have any problems!"
+     "1 files moved in <time>.\n\nEverything went great. You now have simpler file storage. The next step is to repeat this process for your backup file storage folders. Let hydev know if you have any problems!"
     ]
    ],
    "files": [
@@ -413,6 +413,92 @@
     ]
    ],
    "files": [],
+   "granularity": "Your granularity is currently 2. If you are an advanced user, you are invited to move to 3.",
+   "to3": true,
+   "to2": false
+  },
+  {
+   "step": "offline 3 to 2 of a mixed folder (mostly 2), decline",
+   "inputs": {
+    "yesno": [
+     true,
+     false
+    ],
+    "pick": [
+     "<mixed>"
+    ]
+   },
+   "dialogs": [
+    [
+     "question",
+     "Ready check!",
+     "We are going to be rearranging the file storage of your selected folder completely.Granularisation migration works at about this speed:\n\nNVME/SSD: 3,000-5,000 files/s\nSATA/USB HDD: 100-500 files/s\nNAS/SMB: 50-250 files/s\nCloud storage: should not be attempted\nBTRFS and EXT4 filesystems may be up to 10x this speed.\n\nIf this is going to be too slow for you, it is ok to back out!\n\nWhen I ask which folder to work on, you want to select the one that _contains_ stuff like f86 or t32, often called \"client_files\" under a \"db\" dir. I will scan it beforehand to make sure it looks correct.\n\nAre you ready?",
+     "yes, I am ready",
+     "no, I am not ready"
+    ],
+    [
+     "pick directory",
+     "Select folder to regranularise."
+    ],
+    [
+     "question",
+     "Proceed at your own risk.",
+     "I examined the folder, but I think it is already granularity 2. Maybe it is a mixed folder? Are you sure this is correct?",
+     "yes",
+     "no"
+    ]
+   ],
+   "files": [
+    "f3a/b/3ab4567.png",
+    "f4c/4c12345.png",
+    "f5d/5d12345.png",
+    "stray.txt"
+   ],
+   "granularity": "Your granularity is currently 2. If you are an advanced user, you are invited to move to 3.",
+   "to3": true,
+   "to2": false
+  },
+  {
+   "step": "offline 2 to 3 of a mixed folder (mostly 2), go",
+   "inputs": {
+    "yesno": [
+     true,
+     true
+    ],
+    "pick": [
+     "<mixed>"
+    ]
+   },
+   "dialogs": [
+    [
+     "question",
+     "Ready check!",
+     "We are going to be rearranging the file storage of your selected folder completely.Granularisation migration works at about this speed:\n\nNVME/SSD: 3,000-5,000 files/s\nSATA/USB HDD: 100-500 files/s\nNAS/SMB: 50-250 files/s\nCloud storage: should not be attempted\nBTRFS and EXT4 filesystems may be up to 10x this speed.\n\nIf this is going to be too slow for you, it is ok to back out!\n\nWhen I ask which folder to work on, you want to select the one that _contains_ stuff like f86 or t32, often called \"client_files\" under a \"db\" dir. I will scan it beforehand to make sure it looks correct.\n\nAre you ready?",
+     "yes, I am ready",
+     "no, I am not ready"
+    ],
+    [
+     "pick directory",
+     "Select folder to regranularise."
+    ],
+    [
+     "question",
+     "Looking good.",
+     "Everything looks good. Start?",
+     "yes",
+     "no"
+    ],
+    [
+     "information",
+     "2 files moved in <time>.\n\nEverything went great. Your folder has been granularised to level 3."
+    ]
+   ],
+   "files": [
+    "f3a/b/3ab4567.png",
+    "f4c/1/4c12345.png",
+    "f5d/1/5d12345.png",
+    "stray.txt"
+   ],
    "granularity": "Your granularity is currently 2. If you are an advanced user, you are invited to move to 3.",
    "to3": true,
    "to2": false

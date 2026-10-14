@@ -1016,6 +1016,68 @@ impl SearchPage {
         Ok(())
     }
 
+    /// A search for `query` on the downloader `gug_key`/`gug_name`, stopping
+    /// after `file_limit` new files, with `options`, and the page's other
+    /// settings (`PendSubscriptionGapDownloader`). The downloader missing
+    /// says so with the page's own downloader's name, as the reference does.
+    pub fn pend_gap_downloader(
+        &mut self,
+        gug: (&str, &str),
+        query: &str,
+        options: hydrus_core::import_options::ImportOptionsSlice,
+        file_limit: u64,
+    ) -> Result<(), String> {
+        let Some(gallery) = &self.gallery else {
+            return Ok(());
+        };
+        let definitions: hydrus_parse::Downloaders = self
+            .store
+            .read(hydrus_store::settings::get)
+            .map_err(|e| e.to_string())?;
+        if definitions.gugs.get(gug.0, gug.1).is_none() {
+            return Err(format!(
+                "Could not find a Gallery URL Generator (Downloader) for \"{}\"!",
+                gallery.gallery().gug_name
+            ));
+        }
+        let page = gallery.gallery();
+        let existing: Vec<(String, String)> = gallery
+            .queries
+            .iter()
+            .map(|q| (q.query.clone(), q.source.clone()))
+            .collect();
+        let how = hydrus_store::gallery::NewSearches {
+            page_name: Some(&gallery.page_name),
+            page_key: Some(&gallery.page_key.0),
+            gug_key: gug.0,
+            gug_name: gug.1,
+            file_limit: Some(Some(file_limit)),
+            options,
+            start_files_paused: page.start_files_paused,
+            start_gallery_paused: page.start_gallery_paused,
+            merge: false,
+            no_new_dupes: false,
+            existing: &existing,
+        };
+        let made = hydrus_store::gallery::create_gallery_searches(
+            &self.store,
+            &definitions,
+            &how,
+            &[query.to_owned()],
+            now(),
+        )
+        .map_err(|e| e.to_string())?;
+        let gallery = self.gallery.as_mut().expect("a gallery page");
+        gallery.queues.extend(made.queues.iter().map(|q| q.id));
+        let first = made.queues.first().map(|q| q.id);
+        let show = gallery.state.highlighted.is_none() && gallery.settings.highlight_new_query;
+        self.refresh_import();
+        if show && first.is_some() {
+            self.highlight_query(first);
+        }
+        Ok(())
+    }
+
     /// Pause or resume a search's files, or its search, nudging the daemon.
     pub fn pause_play_query(&mut self, queue: i64, search: bool) {
         let Some(query) = self.gallery.as_ref().and_then(|g| g.query(queue)) else {

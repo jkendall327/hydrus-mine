@@ -238,9 +238,10 @@ impl Preview {
         window: &AutoResolutionRuleWindow,
         passing: bool,
         row: usize,
-        control: bool,
-        shift: bool,
+        _control: bool,
+        _shift: bool,
     ) {
+        // (the reference's preview lists are `SingleSelection`: control and shift add no rows)
         {
             let mut state = self.state.borrow_mut();
             let order: Vec<usize> = (0..if passing {
@@ -249,7 +250,7 @@ impl Preview {
                 state.failed.len()
             })
                 .collect();
-            state.selections[usize::from(!passing)].click(&order, row, control, shift);
+            state.selections[usize::from(!passing)].click(&order, row, false, false);
         }
         self.show(window);
     }

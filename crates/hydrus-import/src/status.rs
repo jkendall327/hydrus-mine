@@ -21,6 +21,28 @@ impl ImportStatus {
         self as u8
     }
 
+    /// `CC.status_string_lookup`.
+    pub const fn word(self) -> &'static str {
+        match self {
+            ImportStatus::Unknown => "unknown",
+            ImportStatus::SuccessfulAndNew => "successful",
+            ImportStatus::SuccessfulButRedundant => "already in db",
+            ImportStatus::Deleted => "deleted",
+            ImportStatus::Error => "error",
+            ImportStatus::Vetoed => "ignored",
+            ImportStatus::Skipped => "skipped",
+        }
+    }
+
+    /// `FileImportStatus.ToString`: the word, then the note if there is one.
+    pub fn text(self, note: &str) -> String {
+        if note.is_empty() {
+            self.word().to_owned()
+        } else {
+            format!("{}, {note}", self.word())
+        }
+    }
+
     /// Whether the file is in the client afterwards.
     pub const fn is_successful(self) -> bool {
         matches!(

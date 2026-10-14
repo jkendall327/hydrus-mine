@@ -100,7 +100,8 @@ five seconds"), as the reference's `AddModalMessage`: it is kept out of the
 popups and thrown up in a dialog of its own, titled with the job's title
 ("important job" without one), with the job's texts, gauges, download and
 pause and stop buttons, and a close button only if the job can be cancelled.
-It waits (one retried at a time) while the main window is minimised or not
+As it opens, every playing video or audio file is paused and the other
+secondary windows are hidden until the job is released. It waits (one retried at a time) while the main window is minimised or not
 the active one, or another modal is up. Closing a running job asks "Cancel/stop
 job?" (yes cancels it); closing one that cannot be cancelled says so and the
 dialog stays; a job that finishes closes its dialog by itself. Either way the
@@ -780,7 +781,13 @@ once), and the formula chooser. Each page waiting is parsed by `hydrus
 serve` with its formula, the files found downloaded as a URL page's are.
 A new page starts on the formula last chosen. Its "edit formulae" button
 opens the saved formula list: add, edit, remove (with confirmation), and add
-defaults. Selected formulae edit in sequence; cancelling a child stops the
+defaults ("add defaults" asks "add them all" or "select from a list", the
+list offering the defaults by name, none ticked). The buttons and their
+questions are replayed against the reference's own list
+(`oracle/fixtures/simple_formula_list.json`): the name is asked first ("Edit
+name.", with the formula's current name), a name already used gets "(1)" (editing
+a formula without renaming it does too, as the reference's does), and rows stay
+in the order they were added. Selected formulae edit in sequence; cancelling a child stops the
 remaining edits. Each formula's name is entered before its reusable editor;
 Apply saves the list and refreshes the chooser, while Cancel discards it.
 
@@ -1264,7 +1271,10 @@ one, to end, as the selection allows; alt and home, left, right or end do
 the same, and the order holds until the page sorts again); the
 archive/delete filter; archive and re-inbox;
 delete from each local file domain the selection is in (asking), delete
-trash physically, delete physically and undelete; manage → tags and
+trash physically, delete physically and undelete (their questions, and the
+files' inbox, domains and deletion reasons afterwards, replayed against
+the reference's own panel in `oracle/fixtures/media_lifecycle.json`; a
+deletion from the page's thumbnails keeps "Deleted from Media Page."); manage → tags and
 notes (below); and urls → open in browser, open in a new page, or copy the focused file's
 URLs (labelled by URL class, decoded as hydrus shows them, sorted), its
 recognised URLs or all of them, and the selection's URLs of each class or
@@ -1752,7 +1762,10 @@ and what it would change) and those that will be skipped, either list's
 pairs opening in the duplicate filter from the one double-clicked; a changed
 search fetches again, changed comparators or actions test again, and a
 rule that can't be had says why. What they say is as
-`oracle/record_auto_resolution_summaries.py` recorded the reference's.
+`oracle/record_auto_resolution_summaries.py` recorded the reference's. Either
+list takes one row at a time, and right-clicking a selected row offers "show
+selected row in a new page", which opens the pair's two files in a page in
+"all local media" (replayed against `oracle/fixtures/preview_pair_lists.json`).
 
 "review actions" (or double-clicking a rule) opens the reference's
 "review duplicate auto-resolution actions" window for each selected rule
@@ -1823,8 +1836,13 @@ so the definition can be closed or edited again without abandoned windows.
 Network > downloaders > gallery url generators has single and nested lists,
 with add/edit/duplicate/delete, template and replacement controls, search term
 separator, initial/example searches, raw/request URL previews and matched
-classes. Nested generators select existing single generators; missing members
-are reported in the list and repaired on Apply, as in the reference. Deleting
+classes. A nested generator's members are a list (gug name, available?, sorted
+by either heading) with the reference's `add` and `delete` buttons: `add` opens
+a "choose gugs" list of the single generators not already members, in the
+chooser's order, to tick, or warns "No remaining gugs available!" when none is
+left; `delete` asks "Remove all selected?". A member whose generator is gone is
+listed "no" and dropped on Apply, one found by name is re-keyed
+(`oracle/record_nested_gug_members.py`). Deleting
 generators asks "Remove all selected?", then, for each one a nested generator
 uses, the reference's warning naming those (a "no" stops there, the ones
 before it already gone). Parser and URL link
@@ -2241,6 +2259,8 @@ writes and actual outgoing cookie/header values through an existing NetEngine.
 
 ## Bandwidth and current network jobs
 
+The jobs window's Cancel and Override buttons, its five-second offline expiry, a typed domain's rules and a downloader package's import are proved end to end (tests/gui/network_native_end_to_end.rs): window, store IPC, a running engine and a loopback server. The first four are native-only; the package import is replayed against the reference's recording (its question and result messages word for word, the objects, new keys, duplicates and parser links), with the conflict-safe save the one native-only part.
+
 Network > data opens native bandwidth usage/rule and current network-job reviews.
 Bandwidth review filters contexts by recent request usage, with custom seconds,
 show-all, and an option to include anything with specific rules. The last age or
@@ -2262,8 +2282,14 @@ inherit their defaults again.
 
 Current jobs show every active engine request, including subscriptions, with
 URL, status, typed wait reason, speed and progress. Extended selection supports
-cancel and bandwidth override, with selected-job context details and manual or
-live refresh. The daemon publishes usage and jobs through typed local store IPC,
+cancel and bandwidth override, with selected-job context details. As in the
+reference, the list is a snapshot: "manual refresh" is checked to begin with and
+"refresh snapshot" takes one; unchecking it asks for a snapshot every so many
+seconds (0.25 to begin with, never under 0.05). A right-click on a job selects it
+and opens the reference's menu: "network contexts" (each context with the wait it
+adds, or "bandwidth ok") and the lines "domain ok", "waiting on connection
+error", "waiting on serverside bandwidth", "obeys bandwidth" and "tokens ok",
+each of which copies itself when chosen (`oracle/record_network_jobs_panel.py`). The daemon publishes usage and jobs through typed local store IPC,
 independent of the Client API listener. Heartbeats expire after five seconds;
 offline bandwidth review falls back to saved history. Commands identify the
 reviewed daemon and request, so finished jobs or replacement daemons ignore them.
@@ -2335,6 +2361,14 @@ those paths! Error was: ..."). Everything loaded joins the one review that
 bitmap first, and files dropped on it ask "Try to import the N dropped files to
 this list? I am expecting json or png files." before importing, PNGs first
 (`oracle/fixtures/exchange_bitmap_drop.json`).
+
+The final review follows the reference's `ReviewDownloaderImport` step by step
+(`oracle/fixtures/downloader_import_selection.json`): a package whose objects
+are all in the client says "All N downloader objects in that package appeared to
+already be in the client, so nothing need be added.", a chooser (when "select
+objects from list" is on) can be cancelled, the final question lists what will
+be added, "no" adds nothing, and "yes" says how many were added and how many
+duplicates were not.
 
 Network > downloaders > import/export downloaders exchanges URL classes,
 page parsers, registered login scripts and single/nested gallery URL generators with the reference
@@ -3295,6 +3329,19 @@ Accepted favourite-menu edits publish a settings revision to other live read
 and detached write panes, preserving each owner's input. Locked read pages
 consume the pending revision after unlocking; cancelled detached editors stop
 their subscription.
+
+The favourite search editor has the reference autocomplete's icon buttons
+beside its search box: paste (newline-separated predicates from the clipboard,
+lines that are no predicate passed over, ones already there removed), a star
+menu of the saved favourites (folders nesting) whose choice loads its search,
+whether it searches as it changes, and the sort and collect it keeps into the
+controls, and empty search (no predicates, the default file and tag domains).
+Recorded in `favourite_editor_buttons.json`. Beneath the box it has the
+results, favourites and children tabs (a tab is kept until text is typed), and
+explicit OR construction: shift+enter adds a result to the OR being built (shown
+as the first result), a plain entry commits it, "↶" rewinds, "cancel OR" and
+escape in an empty box cancel or rewind, and "OR" and "advanced" open the OR
+editors. Recorded in `favourite_editor_tabs_or.json`.
 
 Downloader HTTP requests now perform domain login admission before acquiring a
 connection slot. Active most-specific login domains use current credentials and
@@ -5089,7 +5136,11 @@ checked against the reference's real menu in
 `oracle/fixtures/debug_message_boxes.json`), "make some popups" (the reference's test
 popups: six numbered messages, the very long message and title, a client API
 file popup, two mergeable file popups, the unicode one, a pausable and
-cancellable job with a gauge, an error, then three delayed messages),
+cancellable job with a gauge that gets a pulsing sub-job two seconds in, a
+network-job popup, an error, then three delayed messages; the "user call
+test" popup's button shows a text popup, and the "sub gap downloader test"
+popup's opens (or makes) the "subscription gap downloaders" gallery page and
+pends its search there, saying so if the downloader is not found),
 "reset multi-column list settings to default" (its question) and "save 'last
 session' gui session"; data actions > "flush log", "force database commit",
 "show env" (every environment variable in a popup and the log) and "simulate
@@ -5100,35 +5151,55 @@ program exit signal" (leaves the event loop at once); and memory actions >
 
 Help > debug > report modes offers the reference's checked switches, off at
 every start and shared by the whole client; each reports through a popup and
-a console line, in the reference's words where it has them:
+a console line, in the reference's words where it has them (recorded from a
+real reference client with each mode on: `oracle/fixtures/debug_report_modes.json`
+and `debug_report_modes_gui.json`; see DIFFERENCES.md for the reports that
+have no counterpart here):
 "blurhash mode" (thumbnails are drawn from their blurhash, if the fallback
-option allows it, never from the stored thumbnail), "cache report mode" (each
-eviction from the image and thumbnail caches, with sizes), "daemon report
-mode" (the maintenance daemons starting a pass), "file import report mode"
-(an import job's creation, start, hash and completion), "file report mode"
-(file and thumbnail path requests), "gui report mode" (key and mouse events
-caught as shortcuts), "idle report mode" (why the client is not idle: not
-on for 120s, normal idle work disabled, last user, mouse or Client API
-action, or forced from the debug menu; and when it turns idle or active), "network report mode" and its
-"(silent)" twin (redirects and errors; silent goes to the console only; the
-two entries share the one mode, as the reference's do: silent turns it on and
+option allows it, never from the stored thumbnail: each pixel sampled from
+the reference's bitmap for 30 files is the same), "cache report mode" (each
+item added to, taken out of and evicted from the image and thumbnail caches,
+with the cache's size against its limit), "daemon report mode" (each time a
+maintenance daemon comes due, before it looks at idle: "maintain_trash doing
+a job."), "file import report mode" (each step of an import job: created,
+starting work, hash, pre-import status, type, file info, thumbnail,
+perceptual hashes, other hashes, the check against the import options, the
+database job's steps, and done), "file report mode" (the file and thumbnail an
+import adds to storage, file and thumbnail path requests, a wrong-sized
+thumbnail seen, a file maintenance job starting, and a file deleted or
+recycled), "gui report mode" (each key event caught as a shortcut, and the
+manage tags panel opening on its services), "idle report mode" (why the
+client is not idle: not on for 120s, normal idle work disabled, last user,
+mouse or Client API action, or forced from the debug menu; and when it turns
+idle or active), "network report mode" and its "(silent)" twin (a job added,
+starting and done, the referral URL it used, the headers set for the domain,
+the request and response headers, a redirect, and an error as the notice, the
+exception and the text; silent prints the same to the console only; the two
+entries share the one mode, as the reference's do: silent turns it on and
 sets silent, the plain entry flips it and clears silent),
-"shortcut report mode" (what a shortcut matched, or that it matched
-nothing), "similar files metadata generation report mode" (each stage of
-making a perceptual hash), "subprocess report mode" (each external
-program's arguments before it starts) and "subscription report mode" (each
-query's sync-due test).
+"shortcut report mode" (a key passing through the main window or the media
+viewer and whether it was in a state to catch it, which set had a command for
+it, and whether the command was processed, naming the command in the
+reference's words), "similar files metadata generation report mode" (each
+stage of making a perceptual hash, from loading the image), "subprocess
+report mode" (the environment, how each external program is called, and what
+it printed on stdout and stderr) and "subscription report mode" (each query's
+sync-due test).
 
-Also in Help > debug: gui actions > "autocomplete delay mode" (every tag
-autocomplete search takes three more seconds), data actions > "scan file
+Also in Help > debug: gui actions > "autocomplete delay mode" (a tag
+autocomplete search typed into the search box takes three more seconds, as the
+reference's does), data actions > "scan file
 storage folders" (pick a directory; it says how many storage subfolders it
 found and how long it took, or why it gave up; the picker opens in the
 database directory), and debug modes > "use faulthandler to log crashes"
 (shown on always: see below; choosing it says where the log is).
 `tests/gui/debug_menu_actions.rs` clicks each debug entry in the real menu
-and reads the effect back; `tests/model/debug_flags.rs` and the
-`debug_*` tests of hydrus-import, hydrus-net, hydrus-download, hydrus-media
-and hydrus-store cover the reports their crates make.
+and reads the effect back; `tests/gui/debug_report_modes.rs` clicks the report
+modes and compares what they say with the recordings (keys, the manage tags
+panel, the caches, blurhash thumbnails, an external call, the autocomplete
+delay); `tests/model/debug_flags.rs` and the `debug_*` tests of hydrus-import,
+hydrus-net, hydrus-download and hydrus-media cover the reports their crates
+make.
 
 Help > debug > tests, do not touch > "induce a program crash" asks "u wot mate
 I'll hook u in the gabber" with "nice crash", "not a nice crash" and "forget
@@ -5242,7 +5313,10 @@ picks again. "restore from a database backup" picks a backup, asks, and
 exits at once to restart (no second question and no shutdown jobs, as the
 reference's `RestoreDatabase` sets), restoring it before the store opens. A client with media in
 several locations shows "database is stored in multiple locations", whose
-note explains. The messages and questions of setting up, updating and restoring are replayed against
+note explains. The label has no ellipsis once it carries the age, as the
+reference's updater sets it; the entries and labels for each state of the
+backup location, its age and the file locations are replayed against
+`oracle/fixtures/backup_menu.json`. The messages and questions of setting up, updating and restoring are replayed against
 `oracle/fixtures/backup_dialogs.json` (the reference's own dialogs, scripted answers) in
 `tests/gui/database_backup_menu.rs`. `tests/model/database_backup.rs` and hydrus-store's
 `backup` tests cover the menu, texts, mirror, backup and restore. Restore rejects
@@ -5815,7 +5889,13 @@ the pairs prefetched ahead are replayed against the reference's canvas from
 `oracle/fixtures/duplicate_filter_canvas.json`; the filtering tab's sort,
 direction and group chooser and the "quick and dirty processing" buttons from
 `oracle/fixtures/duplicates_quick_processing.json`. A file that is in several
-of the upcoming pairs is warmed once.
+of the upcoming pairs is warmed once. Switching between the pair's two files
+shows each against the other (the comparison statements and score the
+reference's hover gives, with the slow ones arriving after) and keeps the
+zoom and position: the reference's canvas is recorded through switching, zooming
+to 100%, zooming in, panning and skipping to a fresh pair (fitted again), and
+the window's statements, score and where the file sits match it step by step
+(scenario `compare_switch_keeps_zoom_and_pan`).
 
 
 ## Options recheck additions (#97 phase 2)

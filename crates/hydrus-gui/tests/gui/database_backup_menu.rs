@@ -279,7 +279,7 @@ fn updating_the_backup_replays_the_reference_s_dialogs() {
             // (no location set: the reference warns; the menu hides the entry instead)
             continue;
         }
-        replay(&rig, &dirs, case, "update database backup\u{2026}");
+        replay(&rig, &dirs, case, "update database backup");
     }
 }
 
@@ -388,7 +388,7 @@ fn updating_the_backup_asks_backs_up_with_a_popup_and_the_menu_remembers() {
     assert_eq!(
         rig.backup_entries(),
         [
-            "update database backup\u{2026}",
+            "update database backup",
             "change database backup location\u{2026}",
             "",
             "restore from a database backup\u{2026}"
@@ -396,7 +396,7 @@ fn updating_the_backup_asks_backs_up_with_a_popup_and_the_menu_remembers() {
     );
 
     // declining writes nothing
-    rig.click("update database backup\u{2026}");
+    rig.click("update database backup");
     assert_eq!(rig.answer(false), model::update_question(&dest_text, false));
     pump(Duration::from_millis(200));
     assert!(std::fs::read_dir(dest.path()).unwrap().next().is_none());
@@ -406,7 +406,7 @@ fn updating_the_backup_asks_backs_up_with_a_popup_and_the_menu_remembers() {
     // `modal_message`): held out of the popups for its dialog, and released
     // to them when done
     rig.bound.popup_modal.set_active(Some(false));
-    rig.click("update database backup\u{2026}");
+    rig.click("update database backup");
     rig.answer(true);
     let deadline = Instant::now() + Duration::from_secs(10);
     let held = loop {
@@ -440,11 +440,11 @@ fn updating_the_backup_asks_backs_up_with_a_popup_and_the_menu_remembers() {
     }
     assert_eq!(
         rig.backup_entries()[0],
-        "update database backup (did one recently)\u{2026}"
+        "update database backup (did one recently)"
     );
 
     // the next one updates the existing backup
-    rig.click("update database backup (did one recently)\u{2026}");
+    rig.click("update database backup (did one recently)");
     assert_eq!(rig.answer(false), model::update_question(&dest_text, true));
 
     // a location that has gone is made, with a word about it
@@ -461,7 +461,7 @@ fn updating_the_backup_asks_backs_up_with_a_popup_and_the_menu_remembers() {
             )
         })
         .unwrap();
-    rig.click("update database backup\u{2026}");
+    rig.click("update database backup");
     assert_eq!(rig.ok(), model::CREATING_PATH);
     assert!(gone.is_dir());
     assert_eq!(
@@ -490,6 +490,80 @@ fn updating_the_backup_asks_backs_up_with_a_popup_and_the_menu_remembers() {
         assert!(Instant::now() < deadline, "the note was never shown");
         pump(Duration::from_millis(20));
     }
+}
+
+/// `oracle/record_backup_menu.py` runs the reference's real database menu updater for each
+/// state of the backup options and of the file locations and records which entries of the
+/// backup submenu it shows and their text, including the age in "update database backup
+/// (last 2 hours ago)" and the missing ellipsis once the label is set. Each scenario is
+/// replayed through the real menu with the same saved location, last-backup age and
+/// locations. (The separator's visibility is not recorded, so it is not compared. The click
+/// on the note is compared with the reference's message.)
+// leaf: audit-media-database-backup-update
+#[test]
+fn the_backup_menu_shows_the_reference_s_entries_and_ages() {
+    let recorded: serde_json::Value = hydrus_testkit::fixture_json("backup_menu.json");
+    let order = [
+        "set_up_backup_path",
+        "update_backup",
+        "change_backup_path",
+        "restore_backup",
+        "multiple_location_label",
+    ];
+    let rig = rig();
+    let mut elsewhere_added = false;
+    // (the recording lists the single-location states first)
+    for (name, case) in recorded.as_object().unwrap() {
+        if name == "multiple_locations_note" {
+            continue;
+        }
+        let inputs = &case["inputs"];
+        if !inputs["all_locations_are_default"].as_bool().unwrap() && !elsewhere_added {
+            elsewhere_added = true;
+            let elsewhere = tempfile::tempdir().unwrap();
+            let path = elsewhere.path().to_path_buf();
+            rig.store
+                .write_and_refresh(move |ctx| {
+                    hydrus_store::storage_locations::add_location(ctx.conn(), &path)
+                })
+                .unwrap();
+            std::mem::forget(elsewhere);
+        }
+        let wanted: Vec<String> = order
+            .iter()
+            .filter(|key| case[**key]["visible"].as_bool().unwrap())
+            .map(|key| case[*key]["text"].as_str().unwrap().to_owned())
+            .collect();
+        // (the age is read against the clock now: retry if the second ticks over)
+        let mut shown_entries = vec![];
+        for _ in 0..5 {
+            let before = hydrus_core::time::TimestampMs::now().millis() / 1000;
+            let last = inputs["ago_seconds"].as_i64().map(|ago| before - ago);
+            let path = inputs["backup_path"].as_str().map(str::to_owned);
+            rig.store
+                .write(move |ctx| {
+                    hydrus_store::settings::set(
+                        ctx.conn(),
+                        &BackupSettings {
+                            path,
+                            last_backup: last,
+                        },
+                    )
+                })
+                .unwrap();
+            shown_entries = rig
+                .backup_entries()
+                .into_iter()
+                .filter(|l| !l.is_empty())
+                .collect();
+            if before == hydrus_core::time::TimestampMs::now().millis() / 1000 {
+                break;
+            }
+        }
+        assert_eq!(shown_entries, wanted, "{name}");
+    }
+    let note = recorded["multiple_locations_note"].as_str().unwrap();
+    assert_eq!(note.trim_end(), model::MULTIPLE_LOCATIONS);
 }
 
 /// The recorded restore scenarios (cancel, decline, accept): the picker's title and the

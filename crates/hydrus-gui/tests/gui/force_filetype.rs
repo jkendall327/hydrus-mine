@@ -218,3 +218,114 @@ fn a_forced_file_is_renamed_or_when_the_media_is_shared_copied_with_its_old_copy
     // and the extra copy is queued for the "delete neighbour dupes" job
     assert!(jobs(&store).contains(&JobType::DeleteNeighbourDupes));
 }
+
+/// The files under a hash's two extensions, as `oracle/record_force_filetype.py`
+/// records them: whether each exists, its name with the hash blanked out,
+/// whether its bytes are the original's and its modification time.
+fn disk(hash: &str, paths: [(&str, &std::path::Path); 2], original: &[u8]) -> serde_json::Value {
+    let mut out = serde_json::Map::new();
+    for (label, path) in paths {
+        if path.exists() {
+            let mtime = std::fs::metadata(path)
+                .unwrap()
+                .modified()
+                .unwrap()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_secs();
+            out.insert(
+                label.to_owned(),
+                serde_json::json!({
+                    "name": path.file_name().unwrap().to_string_lossy().replace(hash, "{hash}"),
+                    "same_bytes": std::fs::read(path).unwrap() == original,
+                    "mtime": mtime,
+                }),
+            );
+        }
+    }
+    out.into()
+}
+
+/// Force the fixture's jpeg to png through the thumbnail menu and report what
+/// is on disk, in the recording's terms. `shared` marks the media as shared
+/// with another install, which makes the job copy instead of move.
+fn force_and_read_the_disk(shared: bool) -> (serde_json::Value, impl Sized) {
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store: Arc<Store> = Store::open(native.path()).unwrap();
+    let ownership = hydrus_store::transfer::MediaOwnership {
+        shared_with: shared.then(|| legacy.path().to_path_buf()),
+    };
+    store
+        .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &ownership))
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let results = bound.current.borrow().borrow().results().to_vec();
+    let index = results
+        .iter()
+        .position(|&f| info(&store, f).0.mime == Mime::ImageJpeg)
+        .unwrap();
+    let (_, hash) = info(&store, results[index]);
+    let hex = hash.to_string();
+    let path = |mime: Mime| store.snapshot().storage.file_path(&hash, mime).unwrap();
+    let (jpeg, png) = (path(Mime::ImageJpeg), path(Mime::ImagePng));
+    // The recording gave its file this modification time.
+    std::fs::File::options()
+        .write(true)
+        .open(&jpeg)
+        .unwrap()
+        .set_modified(std::time::UNIX_EPOCH + std::time::Duration::from_secs(1_500_000_000))
+        .unwrap();
+    let bytes = std::fs::read(&jpeg).unwrap();
+    let index = i32::try_from(index).unwrap();
+    ui.invoke_thumbnail_clicked(index, false, false);
+    let dialog = open(&ui, &bound, index);
+    dialog.set_chosen(0);
+    dialog.invoke_apply();
+    wait_for_file_work(&bound);
+    let after = disk(&hex, [("old", &jpeg), ("new", &png)], &bytes);
+    (after, (native, legacy))
+}
+
+/// The recorded outcome of the reference's `ChangeFileExt` (jpeg to png).
+fn recorded_disk(case: &str) -> serde_json::Value {
+    hydrus_testkit::fixture_json("force_filetype.json")["disk"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|d| d["case"] == case && d["entry"] == "change file ext")
+        .unwrap()["after"]
+        .clone()
+}
+
+// leaf: audit-media-force-rename
+// Compared with oracle/fixtures/force_filetype.json: what the reference's
+// ChangeFileExt leaves on disk when the move works (the new extension only,
+// bytes and modification time kept). The reference's own forcing action
+// never gets there (it passes ChangeFileExt the already refreshed
+// filetype), which hydrus-rs does not copy; see DIFFERENCES.md.
+#[test]
+fn forcing_a_filetype_moves_owned_media_as_the_references_change_file_ext_does() {
+    let (after, _dirs) = force_and_read_the_disk(false);
+    assert_eq!(after, recorded_disk("plain"));
+}
+
+// leaf: audit-media-force-rename
+// The reference copies when the move fails (or the path is in use); hydrus-rs
+// when the media is shared with another install. The result on disk is the
+// recorded one: both extensions, bytes and modification time kept.
+#[test]
+fn forcing_a_filetype_copies_shared_media_as_the_references_failed_move_does() {
+    let (after, _dirs) = force_and_read_the_disk(true);
+    assert_eq!(after, recorded_disk("move fails"));
+}

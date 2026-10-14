@@ -246,20 +246,44 @@ search.
   a switched page. Remaining list keyboard navigation is unchanged.
 - **Favourite search autocomplete shares the native page's suggestion model**,
   including blank system predicate editors, and has editable file/tag domains,
-  current/pending tags, sort and collection controls. It does not yet offer the
-  reference's autocomplete cog, explicit OR-construction buttons, favourite
-  predicates or fetch/children tabs. Multiple/deleted location selection and
+  current/pending tags, sort and collection controls, and the paste, star
+  (favourites to load) and empty-search buttons beside the box
+  (`oracle/record_favourite_editor_buttons.py`; the reference's autocomplete has
+  no cog), the results/favourites/children tabs and explicit OR construction
+  (shift+enter, the OR and advanced buttons, rewind, cancel, escape;
+  `oracle/record_favourite_editor_tabs_or.py`). The OR and advanced editors
+  are the page's, recorded for the page (`read_or_editors.json`); the
+  editor's OR button is recorded with that dialog answered by a script. It
+  lacks the cancel-search and lock-search buttons (the reference's editor hides lock; cancel shows only
+  while a search runs). Paste with no text on the clipboard shows a message
+  inline where the reference shows a dialog. Multiple/deleted location selection and
   overwrite/delete questions appear inside the owner window. The list sorts
   names casefolded as lowercase (Python's casefold differs for a few letters,
   such as "ß", which we fold to "ss" as it does).
   Typed text and double-clicks in the favourite editor are compared with the
-  reference's (`oracle/record_favourite_predicates.py`: entering a tag again
-  removes it, a tag takes `system:everything` out, wildcards and negation,
-  and the list's order). Not matched: text beginning "system:" that is not a
-  system predicate shows an error here where the reference's Return enters
-  `system:everything`, and a wildcard such as "sam*" enters the highlighted first
-  suggestion here where the reference's Return entered the wildcard (seen on
-  the basic fixture); neither is in the recording.
+  reference's (`oracle/record_favourite_predicates.py`, which waits for the
+  reference's result list to catch up with the text and finish loading before
+  pressing Return, as a user who pauses does): Return enters the list's
+  highlighted first result, so a tag that exists enters as itself (or the best
+  match for a partial one), a wildcard such as "sam*" enters the wildcard (put
+  at the top of the list, as `InsertOtherPredicatesForRead` does, in the page's
+  list too), a system predicate such as "system:limit = 64" enters itself, and
+  text with no result ("system:" that is no predicate, a tag the database does
+  not have) enters nothing and stays in the box without a message. The first
+  result and the highlight are compared with the recording. Not covered: Return
+  pressed before the reference's list has caught up (it then enters the text
+  as typed; the native list is always current), and counts and context shown
+  in the results. A bare "*" lists nothing here as with the default options,
+  but the other fetch-all settings are not consulted, and the second wildcard
+  (`*:x*`) the reference adds when unnamespaced searches give any-namespace
+  wildcards is not listed (unrecorded). On the main page, Return with a tag the
+  database does not have and nothing highlighted still enters the typed text
+  (`chosen()`'s fallback in `page.rs`), where the reference enters nothing; the
+  favourite editor enters nothing.
+  Remaining from #253 (not started): `audit-options-search-active-edit`
+  (embedded OR in the active-list edit, sibling/parent editors, favourite
+  tags), the tab and OR recordings for counts and context in the results, and
+  an in-step recording of Return in the tabs.
 
 - **Dimensions preset verification** separately tracks nine historical first-pass
   controls. The new Qt recording activates actual buttons through the real modal
@@ -408,15 +432,18 @@ search.
 - **A modal popup's dialog doesn't block the main window**, and "active"
   means the main window has the focus (a modal waits while another window of
   hydrus-rs is the focused one, and does not know of other dialogs, only
-  its own). It does not pause playing media as it opens
-  (`pub( 'pause_all_media' )`), and the variant that hides the other windows
-  (the file migration dialogs, which hydrus-rs does not have in this form)
-  isn't there. Waiting jobs are retried oldest first; the reference's
+  its own). It pauses playing media as it opens (`pub( 'pause_all_media' )`)
+  and hides the other windows made through `app_title::new` while it is up,
+  showing them again when the job is released; windows made another way
+  (nine are, among them the viewer's) stay. The variant that also hides the
+  main window (the file migration dialogs, which hydrus-rs does not have in
+  this form) isn't there. Waiting jobs are retried oldest first; the reference's
   set has no order. Only one real job is published modal so far, the
   database backup (the reference's `_Backup`); the reference's other
   `modal_message` jobs (the cache regenerations, orphan file records and
   so on) are not ported as modal where hydrus-rs has an equivalent, and the
-  recorded hide-the-main-GUI case is not replayed by any test. The
+  recorded hide-the-main-GUI case is not replayed by any test (it has no
+  consumer). The
   `audit-options-popups-modal` tag is for the dialog's lifecycle, proved with
   the debug job and the backup.
 - **The popup freeze's mouse-on-another-monitor condition**
@@ -697,8 +724,11 @@ in-memory predicate tests their comparators use by
   groups; the reference lists them in its table's order (when they were
   queued), which hydrus-rs doesn't keep. A double-clicked pair with no
   local file says so on the terminal, not in a dialog. The rule preview's
-  lists select as the reference's do, and their right-click menu shows the
-  selected rows' files in a new page. Approving and denying work four pairs at a
+  lists take one row at a time as the reference's do (control and shift add
+  none; recorded in `oracle/fixtures/preview_pair_lists.json`), and their
+  right-click menu shows the selected row's two files in a new page in the
+  same file domain. Pairs the sort cannot tell apart (the same smaller file)
+  may come in another order than the reference's. Approving and denying work four pairs at a
   time off the UI thread, showing "approving: 4/12" on the button and, after
   four seconds, in a popup, as the reference does; the popup's text is
   checked between chunks rather than live.
@@ -1291,8 +1321,11 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   shown as its message where the reference prints an exception trace.
 - URL classes and single/nested gallery URL generators have native lists and
   rule editors. Their duplicate button creates new keys and unique names.
-  Domain lists and regex lists use one rule per line, and nested generators
-  select members with checkboxes. Page/content parsers and direct URL-class links
+  Domain lists and regex lists use one rule per line. A nested generator's
+  members are a list with `add` (a chooser) and `delete` buttons as the
+  reference's; its chooser is a window of tick boxes over the editor rather
+  than a dialog, and the warning "No remaining gugs available!" shows in the
+  editor beside an ok button. Page/content parsers and direct URL-class links
   have native editors and reference JSON/PNG import/export. Login editors
   remain follow-up work.
 - Timestamp content editing now uses the original single source-time choice,
@@ -1515,8 +1548,8 @@ repository uploader's existing capabilities. Self-pairs are staged after the ref
 "Loop problem!" message, and a batch that makes a loop within itself, or gives
 one sibling two ideals, is staged as it is, as the reference stages them (its
 repairs look only at the pairs already there; the display graph ignores the
-pairs that would loop or give a second ideal, as the reference's does). The
-message shows without the reference's "Loop problem!" window title. A pair that leads into a loop
+pairs that would loop or give a second ideal, as the reference's does). Both
+"Loop problem!" messages show with that title over their text. A pair that leads into a loop
 already there (staged or stored) raises the reference's second "Loop problem!" message,
 listing the path ("one->two->one"); native chases the paths one list order, where the
 reference's follows a Python set's, so several loops may list in another order. Manual background sibling/parent synchronization
@@ -1716,6 +1749,8 @@ local database fields, as in the reference.
 
 ## Bandwidth and current network jobs
 
+The reference's jobs panel has no cancel or override and its bandwidth panel takes no typed domain; these are native-only. A typed domain cannot name a port, so the tests reach a loopback server through a proxy, and the settings reload the engine does after a rule is saved is called directly rather than through the application's settings poll. The reference's package import writes each object as it goes; hydrus-rs's save is conflict-safe (native-only), and the rest of the import is compared with `oracle/fixtures/package_import.json`. One recorded difference: the reference leaves a re-imported nested generator's members pointing at keys that no generator has (the key it regenerated for the member after copying the nested one), while hydrus-rs points them at the member's new key. Forced filetypes: the reference's forcing action calls `ChangeFileExt` with the file's already refreshed filetype, so it moves nothing and the file keeps its old extension (recorded in `force_filetype.json`, `disk`); hydrus-rs renames the file, as `ChangeFileExt` itself does when given the old filetype. Where the reference copies (the move failed, or the path is in use) hydrus-rs copies when the media is shared with another install; a rename failing at the file system (cross-device) cannot be reproduced on one mount, so that is only tested with an injected failure in the store. The copy's cleanup job is queued, but the reference's one-hour delay is not compared.
+
 Native bandwidth review uses numeric bytes/requests and seconds with a monthly
 switch in one detached rules window, rather than the reference's nested amount
 and time widgets. Rule usage and monthly charts are inline in the all-context
@@ -1738,22 +1773,26 @@ gauges. Its "[data|requests] in the past [seconds]" line takes the span in
 seconds rather than the reference's days, hours, minutes and seconds buttons, and
 the usage-age choice has "this month" besides the reference's span and "all time".
 
-Current network-job review refreshes live by default (Qt starts with manual
-snapshots). Native typed wait reasons distinguish pauses, header approval, wake,
+Native typed wait reasons distinguish pauses, header approval, wake,
 bandwidth, domain, gallery, connection and server waits from transfers; Qt's
-engine-position strings/debug menu use different categories. Selected-job debug
-context/obeys-bandwidth details are inline, and cancel/override controls are
+engine-position strings use different categories. Selected-job context and
+obeys-bandwidth details are also inline, and cancel/override controls are
 explicit buttons. Login-script waits remain outside the implemented engine.
 Local snapshots are published by the daemon without requiring its Client API;
 expiry disables stale controls and saved bandwidth history remains available.
-The reference's auto-refresh is a "manual refresh"-or-interval control (at least
-0.05 s, manual to begin with); native has an auto-refresh checkbox, on to begin
-with. The jobs list's position column says "waiting for bandwidth", "waiting for
+The jobs window's refresh control is the reference's: "manual refresh" to begin
+with, or a snapshot every so many seconds (never under 0.05; the reference's
+interval is minutes, seconds and milliseconds boxes, native's one number of
+seconds). The jobs list's position column says "waiting for bandwidth", "waiting for
 login" and "running" as the reference does (its positions "waiting for
 validation" and "waiting for free work slot" have no native counterpart), and
 its other waits are native's own; the speed column is titled "current speed" as
-the reference's is. A job's contexts are shown in the detail under the list, not
-in a right-click menu with each context's waiting estimate.
+the reference's is. A job's right-click menu is the reference's (recorded in
+`oracle/fixtures/network_jobs_panel.json`), with these differences: a job has one
+typed wait, so "waiting on connection error" and "waiting on serverside bandwidth"
+cannot both read True as they can in the reference; a hydrus-service context
+is named by its key, where the reference looks its service's name up; and the
+contexts are also listed in the detail under the list, which the reference lacks.
 
 "Reset default bandwidth rules" resets the global and default contexts the
 reference names (not the downloader default, which it leaves) and keeps every
@@ -1818,7 +1857,9 @@ as the reference's other panels have no drop target of their own). A clipboard
 holding local file paths is not read as the reference's `IngestClipboard` reads it. Exported PNGs carry
 the real reference pixel/payload format with a small plain header. A malformed
 or unsupported item rejects the whole package, with an actionable error, rather
-than the reference importer's partial skips. Payloads/pixels are capped at
+than the reference importer's partial skips. The window also has a "back" that
+returns from the review to the input, which the reference lacks (it declines at
+the final question). Payloads/pixels are capped at
 16 MiB, bundles at 4096 objects, and recursive formats at bounded depth. Old
 container versions and recent URL/parser/formula versions are upgraded;
 earlier unsupported versions must first be re-exported by the reference client.
@@ -3212,11 +3253,11 @@ Sibling colour replays also capture a selected collapsed-parent suffix with a di
 
 Options > maintenance and processing now exposes the three independent browsing,
 mouse and Client API idle timeouts as minute controls (1–1000) with the reference
-ignore choices. The browsing and API thresholds reach the running idle-only
-session autosave monitor on its next check, with the strict two-minute boot guard
-and strict activity boundaries. The mouse timeout uses the same live gate but
-remains Partial because the reference polls the system-wide cursor and native
-tracking only observes movement in application windows. This does not implement
+ignore choices. The three thresholds reach the running idle-only session
+autosave monitor on its next check, with the strict two-minute boot guard and
+strict activity boundaries. The mouse timeout counts movement anywhere on the
+desktop where the desktop can say (see "Idle from input outside hydrus-rs's
+windows", above), and only over its own windows elsewhere. This does not implement
 high-CPU maintenance scheduling, CPU-busy detection or the broader idle settings.
 Ignored controls reopen with a hidden one-minute value, matching the recorded
 Qt constructor/multiplier behavior. Unchanged Apply normalizes raw imported
@@ -4240,6 +4281,10 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   file domain; there is no domain or tag-service button.
 - The description and "Jobs added!" show in the tab rather than as message
   boxes.
+- The reference's autocomplete can't be typed into headlessly, so its narrowed
+  searches (system:archive, system:inbox) are recorded by setting the search
+  context; the counts are replayed through hydrus-rs's typed box. A search that
+  can't be read has no reference counterpart to record.
 
 ## Review current sibling/parent sync
 
@@ -4250,10 +4295,26 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   an old Close/X cannot dismiss its successor. This ownership repair does not
   add the reference's background sync work or progress controls.
 
+## Simple downloader formula list
+
+- The list's import and export go through the shared downloader exchange window
+  (a text box and PNG paths, reviewed before they join the draft) rather than the
+  reference's import/export menus (from clipboard, from pngs; to clipboard, to
+  png, to pngs) and "duplicate" button, which hydrus-rs lacks. The reference adds
+  what it accepts at once and says "N objects added!", with a warning listing the
+  types it refused ("The imported objects included these types: ... Whereas this
+  control only allows: SimpleDownloaderParsingFormula"); this window refuses a
+  package holding anything else, in its own words, and adds nothing. Only the
+  exported text is compared with the reference's (`simple_formula_list.json`),
+  and a tag rule with no attributes is `{}` here and `null` there.
+- The defaults' order in the reference follows its static folder's listing, which
+  the filesystem decides; hydrus-rs's is fixed.
+
 ## Auto-resolution rule export and import
 
-- Rules export as hydrus-rs JSON, not the reference's serialised form, so
-  the reference can't import them; hydrus-rs imports both. A rule's comparator
+- Rules export as hydrus-rs JSON, not the reference's serialised form (an
+  encoder for it is not written yet), so the reference can't import them;
+  hydrus-rs imports both. A rule's comparator
   list exports a comparator to the clipboard or a png, imports from the
   clipboard or pngs (hydrus-rs JSON or the reference's serialised comparator,
   alone or in a list) and duplicates one; the lists inside OR/AND comparators
@@ -4484,10 +4545,10 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
 
 ## Help > debug actions
 
-- "make some popups" leaves out the reference's popups whose buttons call
-  back into the client (user call test, auto-account creation, gap
-  downloader) and its network-job popup, and the test job's subjob doesn't
-  start pulsing after two seconds.
+- "make some popups" leaves out the reference's auto-account creation popup,
+  which it makes only when the client has a tag repository (hydrus-rs has
+  none). The network-job popup holds a job with no engine yet, as the
+  reference's does, so its control shows nothing.
 - The "modal" popups open a dialog of their own (see "A modal popup's
   dialog" above); the debug action's cancellable one counts down in it.
 - "reset multi-column list settings to default" asks, then has nothing to
@@ -4508,19 +4569,75 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   (there is nothing in hydrus-rs for them to report on or change, or the
   place that would report isn't built).
 - The reports use the reference's wording where hydrus-rs does the same
-  step. Some differ: the subprocess report shows the argument list rather
-  than Python's keyword arguments and doesn't dump the environment; file
-  report mode shows the hash as hex and the mime by name; cache report mode
-  names the cache "thumbnail" or "image" and shows a numeric file id; gui
-  report mode reports only key and mouse events turned into shortcuts; the
-  daemon names are the reference's job names for the two maintenance daemons
-  that exist; network report mode has redirects and errors but not the
-  request and response headers.
+  step (the owner decided on 2026-10-14 that they are hydrus-rs-shaped: the
+  wording at the places hydrus-rs has the event, not Python's or Qt's
+  shapes). What differs from the reference's text:
+  - Python reprs are shaped as Rust shapes the same values: a file's
+    hash is hex and its type is named ("png") where the reference prints a
+    bytes literal and the type's number; the file info is a tuple of the same
+    fields with `false` and `None`; a list of perceptual hashes has no quotes;
+    a service is its name where the reference prints its Python object; the
+    main window is "main window" and the viewer "media viewer" where the
+    reference prints the object's repr; stdout and stderr are in double
+    quotes.
+  - Subprocess report mode says `KWargs are: args=[...], hide_terminal=...`,
+    not Python's keyword dict; the environment and what came back on stdout
+    and stderr are the reference's. Only the external programs, the external
+    call test and ffmpeg run are reported; hydrus-rs keeps no `RunSubprocess`.
+  - The reference's daemon report is the line of its `CallToThread` pool
+    ("CallToThread doing a job.") because its daemons run on that pool;
+    hydrus-rs reports the two maintenance daemons by their own names
+    ("maintain_trash doing a job."), each time they come due.
+  - Cache report mode names the cache "thumbnail" or "image" and its key is
+    the file's id, not a hash.
+  - File import report mode puts "mime" and "file info" at the media
+    analysis, which reads them there, so a decompression bomb test is
+    reported before them, not after "mime"; "generating thumbnail" and
+    "generating perceptual_hashes" narrate work the analysis does from one
+    decode of the file. A thumbnail's size in the "Adding thumbnail" line is
+    the size hydrus-rs's encoder gives it. The phash median is a float whose
+    last digits come from the arithmetic.
+  - File report mode has no `Changing file ext`, `Adding file from string`,
+    `File path test` or `Thumbnail path test` reports (there is no such step
+    in hydrus-rs), no Python stack trace after "Deleting" and "Recycling",
+    and the thumbnail path request names only the hash (hydrus-rs's
+    thumbnail path does not depend on the type). The "wrong size", "file
+    maintenance" and "Deleting"/"Recycling" lines are ported from the
+    reference's source, not recorded.
+  - Gui report mode reports key events and the manage tags panel opening
+    (without the tag repositories, which hydrus-rs does not list there). The
+    reference's mouse event reports and its list boxes' "Setting a virtual
+    size" lines (Qt layout) are not reported; mouse events are not recorded.
+  - Shortcut report mode has the reference's reports for keys passing
+    through the main window and the media viewer, a set's command, and the
+    command being processed. The reference's reports for a mouse press, for
+    a double-click that is tried again as a single click, for a key Qt
+    reports as not allowed, and for the sets the main window's children add
+    (its thumbnails' and media's) are not recorded. A key the window cannot
+    catch is reported as one it is not in a state to catch.
+  - Network report mode has the job, header and redirect reports and the
+    error as three lines; hydrus-rs sends its own set of default headers,
+    so the list the domain manager "sets" and the headers on the wire are
+    not the reference's. The reference's report of a URL class lookup
+    (`GetURLToFetchAndParser`) has no counterpart.
+  - Blurhash mode draws the grid's thumbnails from their blurhash (the
+    reference's `_GetThumbnailHydrusBitmap`); the reference's second site,
+    its unsized thumbnail numpy image, which the mode makes return nothing,
+    has no counterpart.
+  - The autocomplete delay holds the one search hydrus-rs makes. The
+    reference makes an exact-match search first (not delayed), a delayed
+    wildcard search, and a delayed lookup of media predicates, and the delay
+    ends early when the search is cancelled; hydrus-rs has no exact-match
+    stage, no media predicates lookup, and no cancelling.
+    The delay also holds the calling thread, which is the window's: the
+    reference delays its database thread, so its interface stays responsive
+    while the search waits and hydrus-rs's does not.
+  - Silent network report mode prints to standard error, as "flush log"
+    does, not to a client log file; under `hydrus serve` that may go
+    nowhere that is kept.
 - "use faulthandler to log crashes" logs Rust panics (with a backtrace),
   not Python's fatal-signal tracebacks; a segfault inside a native library
   isn't logged.
-- "autocomplete delay mode" delays the tag autocomplete search only, not the
-  media predicates lookup the reference also delays.
 - Not offered: "thumbnail debug mode" (it lightens alternate canvas pages of Qt's
   thumbnail painting); the mpv "allow crashy files" modes (they switch
   Python mpv wrapper crash handling); "simulate a wake from sleep" (the GUI
@@ -4639,9 +4756,11 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
 - "Simple" means the media is in one location, which may be outside the
   database directory (an imported client's); the reference requires its
   default `client_files`.
-- The "(last N ago)" label of "update database backup" is checked against the
-  reference's source only: its menu is filled by a worker the recorder cannot
-  call (`oracle/record_backup_dialogs.py` records the dialogs, not the menu).
+- The backup submenu (which entries show, the "(did one recently)" and
+  "(last N ago)" label, the multiple-locations note) is replayed against the
+  reference's real menu updater (`oracle/record_backup_menu.py`). "No backup
+  path is set!" can't be reached from the menu in either client (the update
+  entry is hidden until a path is set), so it is not replayed.
   Choosing "restore from a database backup" asks the reference's questions and
   exits the client for a restart at once, with no second question and no
   shutdown jobs; the restart is driven with a stand-in program and the start it
@@ -4664,9 +4783,11 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
 - "manage granularity" runs its progress in an ordinary popup rather than
   a modal dialog, and its questions in button windows.
 - The prefix folder moved first is the first in order, not a random one.
-- The offline-folder granularity scan of a folder holding both layouts is not
-  recorded against the reference (nor are the cancel and error messages of the
-  jobs), so that leaf stays at source-restated.
+- The offline-folder granularity scan of a folder holding both layouts is
+  recorded and replayed (`oracle/record_granularity_panel.py`, the mixed
+  folder steps). The cancel and error messages of the jobs are not recorded
+  (the jobs end too quickly to cancel from a test, and an error needs a broken
+  folder), so that leaf stays at source-restated.
 - The list selects one location; it sorts by location only.
 - The rebalance runs from a non-modal popup, and closes the panel once it has
   started, as the reference does (the reference's progress is a modal dialog;
@@ -5239,7 +5360,7 @@ Differences:
 
 ### Command palette: unrecorded cases
 
-The palette's media-menu rows and the effect of activating one are recorded only for a page with no files (`oracle/fixtures/command_palette.json`); rows for selected files are replayed against `palette_media_rows.json` (below). Favourite searches opened from the palette are compared for page count, synchronisation, sort, collect and (with the option off) the shown page's unchanged name. The palette lists the reference's whole menubar, including actions the menubar hides until a backup location is set ("update database backup", "change database backup location…") and the Help > debug action "review threads"; native has neither. Which of several children a page-of-pages row shows is not recorded either (the recording has one child).
+The palette's media-menu rows and the effect of activating one are recorded only for a page with no files (`oracle/fixtures/command_palette.json`); rows for selected files are replayed against `palette_media_rows.json` (below). Favourite searches opened from the palette are compared for page count, synchronisation, sort, collect and (with the option off) the shown page's unchanged name. The palette lists the reference's whole menubar, including actions the menubar hides until a backup location is set ("update database backup", "change database backup location…", which native lists too); native lacks the Help > debug action "review threads" (it shows Python threads and job schedulers), which is out of scope (DECISIONS.md, "Out of scope, signed off": the 79 leaves triaged on 2026-10-08). Which of several children a page-of-pages row shows is not recorded either (the recording has one child).
 
 The palette's media-menu rows for a page with one and with three files selected, for nine queries, and the effect of activating a row on the selection, are replayed against `palette_media_rows.json`; they match the reference's except the two single-file rows "copy bitmap" and "copy thumbnail bitmap" (the bitmap exchange is not ported).
 
@@ -5309,6 +5430,27 @@ be diagnosed afterwards. The owner chose always-on crash logging (2026-10-14).
   the reference's "db committing" and "db locked", and has no "current db job: <name>"
   tooltip (`HydrusDB._current_status`, `ClientGUI._RefreshStatusBarDB`); hydrus-rs's
   database has no job names to show. `audit-options-status-activity` stays untagged for this.
+
+- **Wave 5, group W5-12: what remains** (wound down 2026-10-14; the owner
+  stopped the wave to save usage).
+  - `audit-options-status-activity`: the database field needs job names (the
+    store's reads and writes are closures, not named jobs), a "db committing"
+    state around a write's commit, a "db locked" state while a backup holds
+    the database, and the "current db job" tooltip (a `.slint` change).
+  - `...highlight-the-new-query`: the reference's second site,
+    `PendSubscriptionGapDownloader`, is reached from subscription sync
+    (`ClientImportSubscriptions.py:234`, a popup button when a gap is found)
+    and opens a "subscription gap downloaders" page. None of that is ported,
+    so only the first site is proved.
+  - `audit-network-download-control-cog`: the engine tests on branch
+    `claude/w5-12-2` check the cog's four actions against the recorded
+    `actions.retry` flags (connection wait, server bandwidth wait, domain
+    scrub, gallery token). That branch also renames the jobs list's header
+    approval and engine-slot waits "waiting for validation" and "waiting for
+    free work slot", and sets `audit-network-jobs-waits` to sound. It was
+    pushed without being built or run, and has no pull request.
+  - `...advanced-search-media-menu`: "copy bitmap" and "copy thumbnail bitmap"
+    need the bitmap exchange.
 
 ## Options > file viewing statistics, downloading (recheck notes)
 

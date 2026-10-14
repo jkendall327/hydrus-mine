@@ -12,6 +12,10 @@ use hydrus_store::content::DomainRoles;
 /// The reason a deletion records, as the reference's viewer gives it.
 pub const DELETE_REASON: &str = "Deleted from Preview or Media Viewer.";
 
+/// The reason a deletion from a page's thumbnails records
+/// (`ClientGUIMediaResultsPanel._Delete`).
+pub const MEDIA_PAGE_DELETE_REASON: &str = "Deleted from Media Page.";
+
 /// What deleting files does: the first choice the reference's delete
 /// dialog would offer.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -136,6 +140,16 @@ pub fn delete_changed(
     files: &[HashId],
     deletion: &Deletion,
 ) -> hydrus_store::Result<Vec<HashId>> {
+    delete_changed_for(store, files, deletion, DELETE_REASON)
+}
+
+/// [`delete_changed`], recording `reason`.
+pub fn delete_changed_for(
+    store: &Store,
+    files: &[HashId],
+    deletion: &Deletion,
+    reason: &'static str,
+) -> hydrus_store::Result<Vec<HashId>> {
     let files = files.to_vec();
     let deletion = deletion.clone();
     store.write_content(move |w| {
@@ -146,7 +160,7 @@ pub fn delete_changed(
             Deletion::Physically => roles.local_file_storage,
         };
         let before = hydrus_store::media::current_domains(w.conn(), &files)?;
-        w.delete_files(domain, &files, Some(DELETE_REASON))?;
+        w.delete_files(domain, &files, Some(reason))?;
         let after = hydrus_store::media::current_domains(w.conn(), &files)?;
         Ok(files
             .into_iter()

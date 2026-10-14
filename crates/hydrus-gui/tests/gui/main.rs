@@ -86,6 +86,7 @@ mod menu_choice_wheel;
 mod merge_options;
 mod mpv;
 mod namespace_colours;
+mod network_jobs_panel;
 mod network_jobs_rows;
 mod network_pause_paged;
 mod normal_time_maintenance;
@@ -116,6 +117,7 @@ mod popups;
 mod popups_collapse;
 mod predicate_editors;
 mod predicate_history;
+mod preview_pair_lists;
 mod preview_top_right;
 mod preview_viewing;
 mod rating_sizes;
@@ -203,6 +205,7 @@ mod tags_sync_review;
 mod network_sessions;
 
 mod network_data;
+mod network_native_end_to_end;
 
 mod domain_metadata;
 mod downloader_interchange;

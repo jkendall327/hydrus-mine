@@ -115,6 +115,9 @@ def record(session):
             empty = folder('empty', [])
             step('offline 2 to 3, unknown folder, decline', panel._MigrateFolder2To3, [True, False], [empty], where=empty, panel=panel)
             step('offline 3 to 2 of an empty folder, go', panel._MigrateFolder3To2, [True, True, True], [empty], where=empty, panel=panel)
+            mixed = folder('mixed', ['f3a/b/3ab4567.png', 'f4c/4c12345.png', 'f5d/5d12345.png', 'stray.txt'])
+            step('offline 3 to 2 of a mixed folder (mostly 2), decline', panel._MigrateFolder3To2, [True, False], [mixed], where=mixed, panel=panel)
+            step('offline 2 to 3 of a mixed folder (mostly 2), go', panel._MigrateFolder2To3, [True, True], [mixed], where=mixed, panel=panel)
         finally:
             M.ShowInformation, M.ShowCritical, Q.GetYesNo, Q.PickDirectory, T.DialogNullipotent.exec = old
         return dict(steps=steps)

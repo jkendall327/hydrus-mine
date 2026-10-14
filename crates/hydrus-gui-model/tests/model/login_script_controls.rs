@@ -32,6 +32,7 @@ fn review(now: i64) -> Review {
                 domain_ok: true,
                 tokens_ok: true,
                 auto_override: false,
+                context_waits: Vec::new(),
             }],
             ..Default::default()
         },

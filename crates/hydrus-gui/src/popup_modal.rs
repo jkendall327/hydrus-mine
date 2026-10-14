@@ -39,6 +39,8 @@ struct State {
     known: HashSet<Key>,
     dialog: Option<PopupModalWindow>,
     question: Option<ChoiceButtonsWindow>,
+    /// The other windows hidden while the dialog is up.
+    hidden: crate::app_title::Hidden,
 }
 
 /// Runs the held jobs as modals for one main window.
@@ -241,8 +243,7 @@ impl Controller {
     fn run(self: &Rc<Self>, effects: Vec<Effect>) {
         for effect in effects {
             match effect {
-                // (the viewer's playback pauses itself when it is not shown)
-                Effect::PauseAllMedia => {}
+                Effect::PauseAllMedia => crate::playback::pause_all(),
                 Effect::Show {
                     key,
                     title,
@@ -298,12 +299,21 @@ impl Controller {
                             &[0; 32],
                         ));
                     }
+                    // (the other windows go while it is up, and come back when
+                    // the job is released)
+                    let hidden = crate::app_title::hide_others(dialog.window());
                     if let Err(error) = dialog.show() {
                         eprintln!("could not show the modal popup: {error}");
                     }
-                    self.state.borrow_mut().dialog = Some(dialog);
+                    let mut state = self.state.borrow_mut();
+                    state.dialog = Some(dialog);
+                    std::mem::replace(&mut state.hidden, hidden).restore();
                 }
-                Effect::Release(key) => self.change(key, |job| job.held_by_modal = false),
+                Effect::Release(key) => {
+                    let hidden = std::mem::take(&mut self.state.borrow_mut().hidden);
+                    hidden.restore();
+                    self.change(key, |job| job.held_by_modal = false);
+                }
                 Effect::Cancel(key) => self.change(key, Job::cancel),
                 Effect::Ask => {
                     let weak = Rc::downgrade(self);

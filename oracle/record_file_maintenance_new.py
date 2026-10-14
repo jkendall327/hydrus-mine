@@ -43,8 +43,12 @@ def record(session):
                     break
             QT.QTest.qWait(60)
 
-        def snap(step, *, jobs=False):
+        def snap(step, *, jobs=False, rows=False):
             for _ in range(40):
+                QT.QTest.qWait(50)
+            for _ in range(200 if rows else 0):
+                if len(panel._jobs_listctrl.GetData()) > 0:
+                    break
                 QT.QTest.qWait(50)
             out = dict(step=step, selected=panel._selected_files_st.text(), search=panel._run_search_st.text(), can_add=panel._add_new_job.isEnabled(),
                        run_search_enabled=panel._run_search.isEnabled(), job=panel._action_selector.GetValue(), dialogs=list(log))
@@ -85,17 +89,32 @@ def record(session):
             panel._AddJob()
             settle(lambda: len(log) > 0 and panel._add_new_job.isEnabled())
             settle()
-            snap('add the file metadata job on all media')
+            snap('add the file metadata job on all media', rows=True)
             panel._SetHashIds(set(range(1, 1002)))
             answers[:] = [False]
             panel._AddJob()
             settle()
-            snap('add a job on 1001 files, forget it')
+            snap('add a job on 1001 files, forget it', rows=True)
             panel._SetHashIds(set(range(1, 1001)))
             answers[:] = []
             panel._action_selector.SetValue(F.REGENERATE_FILE_DATA_JOB_FORCE_THUMBNAIL)
             panel._SetHashIds(set())
-            snap('no files again')
+            snap('no files again', rows=True)
+            # a predicate in the search box (the autocomplete cannot be typed into headlessly, so the
+            # search context is set as choosing the predicate would): the narrowed searches
+            from hydrus.client.search import ClientSearchPredicate as P
+            previous = panel._selected_files_st.text()
+            for name, predicate_type in (('system:archive', P.PREDICATE_TYPE_SYSTEM_ARCHIVE), ('system:inbox', P.PREDICATE_TYPE_SYSTEM_INBOX)):
+                context = panel._tag_autocomplete.GetFileSearchContext().Duplicate()
+                context.SetPredicates([P.Predicate(predicate_type)])
+                panel._tag_autocomplete.SetFileSearchContext(context)
+                panel._RunSearch()
+                for _ in range(400):
+                    QT.QTest.qWait(50)
+                    if 'files found' in panel._run_search_st.text() and panel._run_search.isEnabled() and panel._selected_files_st.text() != previous:
+                        break
+                previous = panel._selected_files_st.text()
+                snap('run the search ' + name)
         finally:
             M.ShowInformation, Q.GetYesNo = old
         return dict(steps=steps)

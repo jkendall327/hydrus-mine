@@ -1,0 +1,591 @@
+{
+  "menu_path": [
+    "help",
+    "debug",
+    "report modes"
+  ],
+  "cache": {
+    "size_limit": 1000,
+    "off": [
+      {
+        "step": "add a (400 bytes)",
+        "messages": []
+      },
+      {
+        "step": "add b (400 bytes)",
+        "messages": []
+      },
+      {
+        "step": "add c (400 bytes)",
+        "messages": []
+      },
+      {
+        "step": "add d (100 bytes)",
+        "messages": []
+      },
+      {
+        "step": "delete c",
+        "messages": []
+      }
+    ],
+    "on": [
+      {
+        "step": "add a (400 bytes)",
+        "messages": [
+          {
+            "sink": "show",
+            "text": "Cache \"oracle cache\" adding \"a\" (400B). Current size 400B/1,000B."
+          }
+        ]
+      },
+      {
+        "step": "add b (400 bytes)",
+        "messages": [
+          {
+            "sink": "show",
+            "text": "Cache \"oracle cache\" adding \"b\" (400B). Current size 800B/1,000B."
+          }
+        ]
+      },
+      {
+        "step": "add c (400 bytes)",
+        "messages": [
+          {
+            "sink": "show",
+            "text": "Cache \"oracle cache\" adding \"c\" (400B). Current size 1.17 KB/1,000B."
+          }
+        ]
+      },
+      {
+        "step": "add d (100 bytes)",
+        "messages": [
+          {
+            "sink": "show",
+            "text": "Cache \"oracle cache\" removing oldest item \"a\", size \"400B\". Current size 800B/1,000B."
+          },
+          {
+            "sink": "show",
+            "text": "Cache \"oracle cache\" adding \"d\" (100B). Current size 900B/1,000B."
+          }
+        ]
+      },
+      {
+        "step": "delete c",
+        "messages": [
+          {
+            "sink": "show",
+            "text": "Cache \"oracle cache\" removing specific item \"c\", size \"400B\". Current size 500B/1,000B."
+          }
+        ]
+      }
+    ]
+  },
+  "subprocess": {
+    "environment": {
+      "HOME": "/home/oracle",
+      "LANG": "C",
+      "PATH": "/usr/bin:/bin"
+    },
+    "commands": [
+      {
+        "cmd": [
+          "echo",
+          "hello"
+        ],
+        "on": false,
+        "messages": []
+      },
+      {
+        "cmd": [
+          "sh",
+          "-c",
+          "echo oops 1>&2"
+        ],
+        "on": false,
+        "messages": []
+      },
+      {
+        "cmd": [
+          "true"
+        ],
+        "on": false,
+        "messages": []
+      },
+      {
+        "cmd": [
+          "echo",
+          "hello"
+        ],
+        "on": true,
+        "messages": [
+          {
+            "sink": "show",
+            "text": "Full environment:\nHOME: /home/oracle\nLANG: C\nPATH:\n    /usr/bin\n    /bin"
+          },
+          {
+            "sink": "show",
+            "text": "KWargs are: {'env': None, 'text': True, 'encoding': 'utf-8', 'errors': 'replace', 'startupinfo': None}"
+          },
+          {
+            "sink": "show",
+            "text": "stdout: 'hello\\n'"
+          },
+          {
+            "sink": "show",
+            "text": "stderr: ''"
+          }
+        ]
+      },
+      {
+        "cmd": [
+          "sh",
+          "-c",
+          "echo oops 1>&2"
+        ],
+        "on": true,
+        "messages": [
+          {
+            "sink": "show",
+            "text": "Full environment:\nHOME: /home/oracle\nLANG: C\nPATH:\n    /usr/bin\n    /bin"
+          },
+          {
+            "sink": "show",
+            "text": "KWargs are: {'env': None, 'text': True, 'encoding': 'utf-8', 'errors': 'replace', 'startupinfo': None}"
+          },
+          {
+            "sink": "show",
+            "text": "stdout: ''"
+          },
+          {
+            "sink": "show",
+            "text": "stderr: 'oops\\n'"
+          }
+        ]
+      },
+      {
+        "cmd": [
+          "true"
+        ],
+        "on": true,
+        "messages": [
+          {
+            "sink": "show",
+            "text": "Full environment:\nHOME: /home/oracle\nLANG: C\nPATH:\n    /usr/bin\n    /bin"
+          },
+          {
+            "sink": "show",
+            "text": "KWargs are: {'env': None, 'text': True, 'encoding': 'utf-8', 'errors': 'replace', 'startupinfo': None}"
+          },
+          {
+            "sink": "show",
+            "text": "stdout: ''"
+          },
+          {
+            "sink": "show",
+            "text": "stderr: ''"
+          }
+        ]
+      }
+    ]
+  },
+  "daemon": {
+    "off": [],
+    "on": [
+      {
+        "sink": "show",
+        "text": "CallToThread doing a job."
+      },
+      {
+        "sink": "show",
+        "text": "CallToThread doing a job."
+      }
+    ]
+  },
+  "network": {
+    "off": [
+      {
+        "path": "/bounce",
+        "messages": []
+      },
+      {
+        "path": "/ok",
+        "messages": []
+      },
+      {
+        "path": "/bad",
+        "messages": []
+      }
+    ],
+    "on": [
+      {
+        "path": "/bounce",
+        "messages": [
+          {
+            "sink": "show",
+            "text": "Network Job Added: GET  <base>/bounce"
+          },
+          {
+            "sink": "show",
+            "text": "Network Job Starting: GET <base>/bounce"
+          },
+          {
+            "sink": "show",
+            "text": "Network Jobs Referral URLs for <base>/bounce:\nGiven: None\nUsed: None"
+          },
+          {
+            "sink": "show",
+            "text": "Request Headers set by the network domain manager: Accept, Cache-Control, Range, User-Agent"
+          },
+          {
+            "sink": "show",
+            "text": "Request Headers:\nAccept: image/jpeg,image/png,image/*;q=0.9,*/*;q=0.8\nAccept-Encoding: gzip, deflate\nCache-Control: no-transform\nConnection: keep-alive\nRange: bytes=0-\nUser-Agent: Mozilla/5.0 (compatible; Hydrus Client)\n\nResponse Headers:\nConnection: close\nContent-Length: 4\nDate: <date>\nServer: <server>"
+          },
+          {
+            "sink": "show",
+            "text": "Network Jobs Redirect: <base>/bounce -> <base>/ok"
+          },
+          {
+            "sink": "show",
+            "text": "Network Job Done: GET <base>/bounce"
+          }
+        ]
+      },
+      {
+        "path": "/ok",
+        "messages": [
+          {
+            "sink": "show",
+            "text": "Network Job Added: GET  <base>/ok"
+          },
+          {
+            "sink": "show",
+            "text": "Network Job Starting: GET <base>/ok"
+          },
+          {
+            "sink": "show",
+            "text": "Network Jobs Referral URLs for <base>/ok:\nGiven: None\nUsed: None"
+          },
+          {
+            "sink": "show",
+            "text": "Request Headers set by the network domain manager: Accept, Cache-Control, Range, User-Agent"
+          },
+          {
+            "sink": "show",
+            "text": "Request Headers:\nAccept: image/jpeg,image/png,image/*;q=0.9,*/*;q=0.8\nAccept-Encoding: gzip, deflate\nCache-Control: no-transform\nConnection: keep-alive\nRange: bytes=0-\nUser-Agent: Mozilla/5.0 (compatible; Hydrus Client)\n\nResponse Headers:\nConnection: close\nContent-Length: 4\nDate: <date>\nServer: <server>"
+          },
+          {
+            "sink": "show",
+            "text": "Network Job Done: GET <base>/ok"
+          }
+        ]
+      },
+      {
+        "path": "/bad",
+        "messages": [
+          {
+            "sink": "show",
+            "text": "Network Job Added: GET  <base>/bad"
+          },
+          {
+            "sink": "show",
+            "text": "Network Job Starting: GET <base>/bad"
+          },
+          {
+            "sink": "show",
+            "text": "Network Jobs Referral URLs for <base>/bad:\nGiven: None\nUsed: None"
+          },
+          {
+            "sink": "show",
+            "text": "Request Headers set by the network domain manager: Accept, Cache-Control, Range, User-Agent"
+          },
+          {
+            "sink": "show",
+            "text": "Request Headers:\nAccept: image/jpeg,image/png,image/*;q=0.9,*/*;q=0.8\nAccept-Encoding: gzip, deflate\nCache-Control: no-transform\nConnection: keep-alive\nRange: bytes=0-\nUser-Agent: Mozilla/5.0 (compatible; Hydrus Client)\n\nResponse Headers:\nConnection: close\nContent-Length: 13\nDate: <date>\nServer: <server>"
+          },
+          {
+            "sink": "show",
+            "text": "Network error should follow:"
+          },
+          {
+            "sink": "exception",
+            "text": "NotFoundException: 404: no such thing"
+          },
+          {
+            "sink": "show",
+            "text": "no such thing"
+          },
+          {
+            "sink": "show",
+            "text": "Network Job Done: GET <base>/bad"
+          }
+        ]
+      }
+    ],
+    "silent": [
+      {
+        "path": "/bounce",
+        "messages": [
+          {
+            "sink": "print",
+            "text": "Network Job Added: GET  <base>/bounce"
+          },
+          {
+            "sink": "print",
+            "text": "Network Job Starting: GET <base>/bounce"
+          },
+          {
+            "sink": "print",
+            "text": "Network Jobs Referral URLs for <base>/bounce:\nGiven: None\nUsed: None"
+          },
+          {
+            "sink": "print",
+            "text": "Request Headers set by the network domain manager: Accept, Cache-Control, Range, User-Agent"
+          },
+          {
+            "sink": "print",
+            "text": "Request Headers:\nAccept: image/jpeg,image/png,image/*;q=0.9,*/*;q=0.8\nAccept-Encoding: gzip, deflate\nCache-Control: no-transform\nConnection: keep-alive\nRange: bytes=0-\nUser-Agent: Mozilla/5.0 (compatible; Hydrus Client)\n\nResponse Headers:\nConnection: close\nContent-Length: 4\nDate: <date>\nServer: <server>"
+          },
+          {
+            "sink": "print",
+            "text": "Network Jobs Redirect: <base>/bounce -> <base>/ok"
+          },
+          {
+            "sink": "print",
+            "text": "Network Job Done: GET <base>/bounce"
+          }
+        ]
+      },
+      {
+        "path": "/ok",
+        "messages": [
+          {
+            "sink": "print",
+            "text": "Network Job Added: GET  <base>/ok"
+          },
+          {
+            "sink": "print",
+            "text": "Network Job Starting: GET <base>/ok"
+          },
+          {
+            "sink": "print",
+            "text": "Network Jobs Referral URLs for <base>/ok:\nGiven: None\nUsed: None"
+          },
+          {
+            "sink": "print",
+            "text": "Request Headers set by the network domain manager: Accept, Cache-Control, Range, User-Agent"
+          },
+          {
+            "sink": "print",
+            "text": "Request Headers:\nAccept: image/jpeg,image/png,image/*;q=0.9,*/*;q=0.8\nAccept-Encoding: gzip, deflate\nCache-Control: no-transform\nConnection: keep-alive\nRange: bytes=0-\nUser-Agent: Mozilla/5.0 (compatible; Hydrus Client)\n\nResponse Headers:\nConnection: close\nContent-Length: 4\nDate: <date>\nServer: <server>"
+          },
+          {
+            "sink": "print",
+            "text": "Network Job Done: GET <base>/ok"
+          }
+        ]
+      },
+      {
+        "path": "/bad",
+        "messages": [
+          {
+            "sink": "print",
+            "text": "Network Job Added: GET  <base>/bad"
+          },
+          {
+            "sink": "print",
+            "text": "Network Job Starting: GET <base>/bad"
+          },
+          {
+            "sink": "print",
+            "text": "Network Jobs Referral URLs for <base>/bad:\nGiven: None\nUsed: None"
+          },
+          {
+            "sink": "print",
+            "text": "Request Headers set by the network domain manager: Accept, Cache-Control, Range, User-Agent"
+          },
+          {
+            "sink": "print",
+            "text": "Request Headers:\nAccept: image/jpeg,image/png,image/*;q=0.9,*/*;q=0.8\nAccept-Encoding: gzip, deflate\nCache-Control: no-transform\nConnection: keep-alive\nRange: bytes=0-\nUser-Agent: Mozilla/5.0 (compatible; Hydrus Client)\n\nResponse Headers:\nConnection: close\nContent-Length: 13\nDate: <date>\nServer: <server>"
+          },
+          {
+            "sink": "print",
+            "text": "Network error should follow:"
+          },
+          {
+            "sink": "print_exception",
+            "text": "NotFoundException: 404: no such thing"
+          },
+          {
+            "sink": "print",
+            "text": "no such thing"
+          },
+          {
+            "sink": "print",
+            "text": "Network Job Done: GET <base>/bad"
+          }
+        ]
+      }
+    ]
+  },
+  "import": {
+    "path": "debug_report_modes.png",
+    "on": {
+      "api_status": 200,
+      "messages": [
+        {
+          "sink": "show",
+          "text": "File import job created:\nSource: API POSTed File\nRaw import path: <temp>."
+        },
+        {
+          "sink": "show",
+          "text": "File import job starting work."
+        },
+        {
+          "sink": "show",
+          "text": "File import job hash: a9b3e639327885dc5baeeabb067bd1f923066f69e2aa814b18a7ae89ddefa00e"
+        },
+        {
+          "sink": "show",
+          "text": "File import job pre-import status: unknown"
+        },
+        {
+          "sink": "show",
+          "text": "File import job mime: png"
+        },
+        {
+          "sink": "show",
+          "text": "File import job file info: (138, 2, 64, 48, None, None, False, None)"
+        },
+        {
+          "sink": "show",
+          "text": "File import job generating thumbnail"
+        },
+        {
+          "sink": "show",
+          "text": "File import job generating perceptual_hashes"
+        },
+        {
+          "sink": "show",
+          "text": "phash generation: loading image"
+        },
+        {
+          "sink": "show",
+          "text": "phash generation: image shape: (48, 64, 3)"
+        },
+        {
+          "sink": "show",
+          "text": "phash generation: grey image shape: (48, 64)"
+        },
+        {
+          "sink": "show",
+          "text": "phash generation: tiny image shape: (32, 32)"
+        },
+        {
+          "sink": "show",
+          "text": "phash generation: tiny float image shape: (32, 32)"
+        },
+        {
+          "sink": "show",
+          "text": "phash generation: generating dct"
+        },
+        {
+          "sink": "show",
+          "text": "phash generation: median: -0.004305614121784127"
+        },
+        {
+          "sink": "show",
+          "text": "phash generation: collapsing bytes"
+        },
+        {
+          "sink": "show",
+          "text": "phash generation: perceptual_hash: 95562e4a187fb52a"
+        },
+        {
+          "sink": "show",
+          "text": "File import job generated 1 perceptual_hashes: ['95562e4a187fb52a']"
+        },
+        {
+          "sink": "show",
+          "text": "File import job generating other hashes"
+        },
+        {
+          "sink": "show",
+          "text": "File import job testing if good to import for file import options"
+        },
+        {
+          "sink": "show",
+          "text": "Adding file to client file structure: from <temp> to <db>/client_files/fa9/a9b3e639327885dc5baeeabb067bd1f923066f69e2aa814b18a7ae89ddefa00e.png"
+        },
+        {
+          "sink": "show",
+          "text": "Adding thumbnail: (1162, '<db>/client_files/ta9/a9b3e639327885dc5baeeabb067bd1f923066f69e2aa814b18a7ae89ddefa00e.thumbnail')"
+        },
+        {
+          "sink": "show",
+          "text": "File import job starting db job"
+        },
+        {
+          "sink": "show",
+          "text": "File import job adding new file"
+        },
+        {
+          "sink": "show",
+          "text": "File import job adding file info row"
+        },
+        {
+          "sink": "show",
+          "text": "File import job associating perceptual_hashes"
+        },
+        {
+          "sink": "show",
+          "text": "File import job adding file to local file domain"
+        },
+        {
+          "sink": "show",
+          "text": "File import job inboxing new file"
+        },
+        {
+          "sink": "show",
+          "text": "File import job done at db level, final status: successful"
+        },
+        {
+          "sink": "show",
+          "text": "File import job is done, now publishing content updates"
+        }
+      ]
+    },
+    "again": {
+      "api_status": 200,
+      "messages": [
+        {
+          "sink": "show",
+          "text": "File import job created:\nSource: API POSTed File\nRaw import path: <temp>."
+        },
+        {
+          "sink": "show",
+          "text": "File import job starting work."
+        },
+        {
+          "sink": "show",
+          "text": "File import job hash: a9b3e639327885dc5baeeabb067bd1f923066f69e2aa814b18a7ae89ddefa00e"
+        },
+        {
+          "sink": "show",
+          "text": "File path request: (b'\\xa9\\xb3\\xe692x\\x85\\xdc[\\xae\\xea\\xbb\\x06{\\xd1\\xf9#\\x06oi\\xe2\\xaa\\x81K\\x18\\xa7\\xae\\x89\\xdd\\xef\\xa0\\x0e', 2)"
+        },
+        {
+          "sink": "show",
+          "text": "File import job pre-import status: already in db, file recognised: Imported at <time>, which was <ago> before this check."
+        },
+        {
+          "sink": "show",
+          "text": "File import job is done, now publishing content updates"
+        }
+      ]
+    },
+    "off": {
+      "api_status": 200,
+      "messages": []
+    }
+  }
+}

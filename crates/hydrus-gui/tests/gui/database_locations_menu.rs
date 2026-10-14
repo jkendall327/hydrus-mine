@@ -867,7 +867,23 @@ fn move_files_now_stops_at_its_run_time_and_moves_what_the_reference_s_job_does(
     let moves_left = || rig.store.read(locations::next_move).unwrap().is_some();
     // (a finished job dismisses its popup at once, so there is no "done!"
     // left to read: the job is given time, and the folders it left are looked at)
-    let wait_for_done = || pump(Duration::from_secs(2));
+    // The job's popup appears when the worker starts and goes when it ends, so wait for it
+    // to be seen and gone (a job that finished between two looks is given a few seconds).
+    let wait_for_done = || {
+        let started = Instant::now();
+        let mut seen = false;
+        loop {
+            pump(Duration::from_millis(20));
+            let showing = !shown(&rig.store).is_empty();
+            seen |= showing;
+            if (seen && !showing) || started.elapsed() > Duration::from_secs(10) {
+                break;
+            }
+            if !seen && started.elapsed() > Duration::from_secs(3) {
+                break;
+            }
+        }
+    };
 
     // the stop time ("run for 10 minutes") has passed by the first look
     let passed = run("stop time passed");
@@ -998,6 +1014,18 @@ fn replay_granularity() {
     let folders = [
         ("offline", make("offline", &["f3a/3ab4567.png"])),
         ("empty", make("empty", &[])),
+        (
+            "mixed",
+            make(
+                "mixed",
+                &[
+                    "f3a/b/3ab4567.png",
+                    "f4c/4c12345.png",
+                    "f5d/5d12345.png",
+                    "stray.txt",
+                ],
+            ),
+        ),
     ];
     let window = rig.open();
     let g = granularity_window(&rig, &window);
@@ -1008,6 +1036,10 @@ fn replay_granularity() {
         text = text.replace(
             &scratch.path().join("offline").display().to_string(),
             "<offline>",
+        );
+        text = text.replace(
+            &scratch.path().join("mixed").display().to_string(),
+            "<mixed>",
         );
         text.replace(
             &scratch.path().join("empty").display().to_string(),
@@ -1098,6 +1130,8 @@ fn replay_granularity() {
         pump(Duration::from_millis(200));
         let place = if inputs["pick"].to_string().contains("<empty>") {
             &folders[1].1
+        } else if inputs["pick"].to_string().contains("<mixed>") {
+            &folders[2].1
         } else if is_offline {
             &folders[0].1
         } else {

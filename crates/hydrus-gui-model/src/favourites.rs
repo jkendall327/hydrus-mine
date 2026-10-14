@@ -65,6 +65,47 @@ pub fn menu(favourites: &[FavouriteSearch]) -> Vec<Entry> {
     entries
 }
 
+/// The star button's menu in the favourite search editor
+/// (`hide_favourites_edit_actions`): only the favourites, each loading its
+/// search. Each item's [`Command::Popup`] is an index into the returned
+/// list, which holds its favourite's index among `favourites`.
+pub fn editor_menu(favourites: &[FavouriteSearch]) -> (Vec<Entry>, Vec<usize>) {
+    fn number(entries: Vec<Entry>, loads: &mut Vec<usize>) -> Vec<Entry> {
+        entries
+            .into_iter()
+            .map(|entry| match entry {
+                Entry::Item {
+                    label,
+                    command: Some(Command::Favourite(Action::Load(index))),
+                    enabled,
+                } => {
+                    loads.push(index);
+                    Entry::Item {
+                        label,
+                        command: Some(Command::Popup(loads.len() - 1)),
+                        enabled,
+                    }
+                }
+                Entry::Menu {
+                    label,
+                    entries,
+                    enabled,
+                } => Entry::Menu {
+                    label,
+                    entries: number(entries, loads),
+                    enabled,
+                },
+                other => other,
+            })
+            .collect()
+    }
+    // (the manage and save entries, and a separator, come first)
+    let all: Vec<Entry> = menu(favourites).into_iter().skip(4).collect();
+    let mut loads = Vec::new();
+    let entries = number(all, &mut loads);
+    (entries, loads)
+}
+
 fn folder_entries(folder: &mut Folder<'_>) -> Vec<Entry> {
     // (a stable sort, as Python's, keeping stored order among equal names)
     folder.searches.sort_by_key(|&(name, _)| name);
@@ -301,6 +342,34 @@ impl Edit {
                 .unwrap_or_else(|| default_collect.clone()),
             save_collect: row.collect.is_some(),
             original: (row.folder.clone(), row.name.clone()),
+        }
+    }
+
+    /// The empty search button (`_ClearSearch`): no predicates, the default
+    /// local file domain and the default tag domain; the sort, collect and
+    /// whether to keep them stay.
+    pub fn empty_search(
+        &mut self,
+        default_location: hydrus_core::search::context::LocationContext,
+    ) {
+        self.search = hydrus_core::search::context::FileSearchContext {
+            location: default_location,
+            ..Default::default()
+        };
+    }
+
+    /// Load a favourite into the editor from the star menu
+    /// (`_LoadFavouriteSearch`): its search and whether it searches as it
+    /// changes, and the sort and collect it keeps in the controls (whether
+    /// to save them is unchanged).
+    pub fn load(&mut self, row: &FavouriteSearch) {
+        self.search = row.search.clone();
+        self.synchronised = row.synchronised;
+        if let Some(sort) = &row.sort {
+            self.sort = sort.clone();
+        }
+        if let Some(collect) = &row.collect {
+            self.collect = collect.clone();
         }
     }
 

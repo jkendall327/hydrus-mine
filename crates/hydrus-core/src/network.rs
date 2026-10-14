@@ -88,6 +88,18 @@ impl NetworkContext {
         matches!(self.kind, CONTEXT_DOWNLOADER_PAGE | CONTEXT_WATCHER_PAGE)
     }
 
+    /// As `NetworkContext.ToString` words it, which keeps an ephemeral
+    /// context's data where [`Self::to_human_string`] says "instance".
+    pub fn to_reference_string(&self) -> String {
+        if self.is_ephemeral() && !self.data.is_empty() {
+            let kind = self.to_human_string();
+            let kind = kind.trim_end_matches(" instance");
+            format!("{kind}: {}", self.data)
+        } else {
+            self.to_human_string()
+        }
+    }
+
     /// As the reference names it to the user.
     pub fn to_human_string(&self) -> String {
         let kind = match self.kind {

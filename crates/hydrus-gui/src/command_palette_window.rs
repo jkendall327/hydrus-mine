@@ -450,9 +450,9 @@ pub(crate) fn bind(
                 ..Default::default()
             };
             if settings.show_main_menu {
-                snapshot.main_menu = palette::main_menu_items(&crate::main_menu::menubar(
-                    &crate::menu_bar::facts(&pages, false),
-                ));
+                let mut facts = crate::menu_bar::facts(&pages, false);
+                facts.palette_lists_hidden = true;
+                snapshot.main_menu = palette::main_menu_items(&crate::main_menu::menubar(&facts));
             }
             let key = pages.borrow().shown().key;
             let media_context = if settings.show_media_menu

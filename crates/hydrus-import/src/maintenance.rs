@@ -366,6 +366,13 @@ impl FileImporter {
 
     /// One job's work (`_RunJob`'s branches).
     fn run_job(&self, media: &MediaResult, job: JobType, pass: &mut Pass) -> Result<JobResult> {
+        hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::FileReport, || {
+            format!(
+                "file maintenance: {} for {}",
+                job.description(),
+                media.hash.to_hex()
+            )
+        });
         let Some(info) = &media.info else {
             return Ok(JobResult::Nothing);
         };
