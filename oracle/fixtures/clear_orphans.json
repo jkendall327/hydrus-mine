@@ -1,0 +1,275 @@
+{
+ "steps": [
+  {
+   "step": "forget it",
+   "inputs": {
+    "choice": null,
+    "pick": null,
+    "cancel_when": null
+   },
+   "asked": [
+    [
+     "choice",
+     "This job will iterate through every file in your database's file storage, extracting any it does not expect to be there. This is particularly useful for 're-syncing' your file storage to what it should be after, say, marrying an older/newer database with a newer/older file storage.\n\nYou can choose to move the orphans in your file directories somewhere or delete them. Orphan thumbnails will be put in a subdirectory, in case you wish to perform reverse lookups.\n\nAccess to files and thumbnails will be slightly limited while this runs, and it may take some time.",
+     [
+      "move them somewhere",
+      "delete them"
+     ],
+     "forget it"
+    ]
+   ],
+   "checked": [
+    "..."
+   ],
+   "num_checked": 0,
+   "statuses": [],
+   "done": false,
+   "cancelled": false,
+   "default_files": [
+    "fab/abababababababababababababababababababababababababababababababab.png",
+    "t00/Thumbs.db"
+   ],
+   "moved_files": []
+  },
+  {
+   "step": "move, cancel the folder picker",
+   "inputs": {
+    "choice": "move",
+    "pick": null,
+    "cancel_when": null
+   },
+   "asked": [
+    [
+     "choice",
+     "This job will iterate through every file in your database's file storage, extracting any it does not expect to be there. This is particularly useful for 're-syncing' your file storage to what it should be after, say, marrying an older/newer database with a newer/older file storage.\n\nYou can choose to move the orphans in your file directories somewhere or delete them. Orphan thumbnails will be put in a subdirectory, in case you wish to perform reverse lookups.\n\nAccess to files and thumbnails will be slightly limited while this runs, and it may take some time.",
+     [
+      "move them somewhere",
+      "delete them"
+     ],
+     "forget it"
+    ],
+    [
+     "pick directory",
+     "Select location."
+    ]
+   ],
+   "checked": [
+    "..."
+   ],
+   "num_checked": 0,
+   "statuses": [],
+   "done": false,
+   "cancelled": false,
+   "default_files": [
+    "fab/abababababababababababababababababababababababababababababababab.png",
+    "t00/Thumbs.db"
+   ],
+   "moved_files": []
+  },
+  {
+   "step": "delete",
+   "inputs": {
+    "choice": "delete",
+    "pick": null,
+    "cancel_when": null
+   },
+   "asked": [
+    [
+     "choice",
+     "This job will iterate through every file in your database's file storage, extracting any it does not expect to be there. This is particularly useful for 're-syncing' your file storage to what it should be after, say, marrying an older/newer database with a newer/older file storage.\n\nYou can choose to move the orphans in your file directories somewhere or delete them. Orphan thumbnails will be put in a subdirectory, in case you wish to perform reverse lookups.\n\nAccess to files and thumbnails will be slightly limited while this runs, and it may take some time.",
+     [
+      "move them somewhere",
+      "delete them"
+     ],
+     "forget it"
+    ]
+   ],
+   "checked": [
+    "checking f01",
+    "checking f02",
+    "checking f03",
+    "...",
+    "checking tfe",
+    "checking tff"
+   ],
+   "num_checked": 387,
+   "statuses": [
+    [
+     "finished checking",
+     ""
+    ],
+    [
+     "found 1 orphan files, now deleting",
+     ""
+    ],
+    [
+     "deleting orphan files: 1/1",
+     ""
+    ],
+    [
+     "found 1 orphan thumbnails, now deleting",
+     ""
+    ],
+    [
+     "deleting orphan thumbnails: 1/1",
+     ""
+    ],
+    [
+     "1 orphan files and 1 orphan thumbnails cleared!",
+     ""
+    ]
+   ],
+   "done": true,
+   "cancelled": false,
+   "default_files": [],
+   "moved_files": []
+  },
+  {
+   "step": "nothing to clear",
+   "inputs": {
+    "choice": "delete",
+    "pick": null,
+    "cancel_when": null
+   },
+   "asked": [
+    [
+     "choice",
+     "This job will iterate through every file in your database's file storage, extracting any it does not expect to be there. This is particularly useful for 're-syncing' your file storage to what it should be after, say, marrying an older/newer database with a newer/older file storage.\n\nYou can choose to move the orphans in your file directories somewhere or delete them. Orphan thumbnails will be put in a subdirectory, in case you wish to perform reverse lookups.\n\nAccess to files and thumbnails will be slightly limited while this runs, and it may take some time.",
+     [
+      "move them somewhere",
+      "delete them"
+     ],
+     "forget it"
+    ]
+   ],
+   "checked": [
+    "checking f00",
+    "checking f01",
+    "checking f02",
+    "...",
+    "checking tfd",
+    "checking tff"
+   ],
+   "num_checked": 261,
+   "statuses": [
+    [
+     "finished checking",
+     ""
+    ],
+    [
+     "no orphans found!",
+     ""
+    ]
+   ],
+   "done": true,
+   "cancelled": false,
+   "default_files": [],
+   "moved_files": []
+  },
+  {
+   "step": "move to a folder",
+   "inputs": {
+    "choice": "move",
+    "pick": "<away>",
+    "cancel_when": null
+   },
+   "asked": [
+    [
+     "choice",
+     "This job will iterate through every file in your database's file storage, extracting any it does not expect to be there. This is particularly useful for 're-syncing' your file storage to what it should be after, say, marrying an older/newer database with a newer/older file storage.\n\nYou can choose to move the orphans in your file directories somewhere or delete them. Orphan thumbnails will be put in a subdirectory, in case you wish to perform reverse lookups.\n\nAccess to files and thumbnails will be slightly limited while this runs, and it may take some time.",
+     [
+      "move them somewhere",
+      "delete them"
+     ],
+     "forget it"
+    ],
+    [
+     "pick directory",
+     "Select location."
+    ]
+   ],
+   "checked": [
+    "checking f00",
+    "checking f01",
+    "checking f02",
+    "...",
+    "checking tfe",
+    "checking tff"
+   ],
+   "num_checked": 438,
+   "statuses": [
+    [
+     "finished checking",
+     "reviewed 0 thumbnails, found 0 orphans"
+    ],
+    [
+     "finished checking",
+     ""
+    ],
+    [
+     "1 orphan files and 1 orphan thumbnails cleared!",
+     ""
+    ]
+   ],
+   "done": true,
+   "cancelled": false,
+   "default_files": [],
+   "moved_files": [
+    "away/abababababababababababababababababababababababababababababababab.png",
+    "away/thumbnails/Thumbs.db"
+   ]
+  },
+  {
+   "step": "delete, cancelled while it waits",
+   "inputs": {
+    "choice": "delete",
+    "pick": null,
+    "cancel_when": "now deleting"
+   },
+   "asked": [
+    [
+     "choice",
+     "This job will iterate through every file in your database's file storage, extracting any it does not expect to be there. This is particularly useful for 're-syncing' your file storage to what it should be after, say, marrying an older/newer database with a newer/older file storage.\n\nYou can choose to move the orphans in your file directories somewhere or delete them. Orphan thumbnails will be put in a subdirectory, in case you wish to perform reverse lookups.\n\nAccess to files and thumbnails will be slightly limited while this runs, and it may take some time.",
+     [
+      "move them somewhere",
+      "delete them"
+     ],
+     "forget it"
+    ]
+   ],
+   "checked": [
+    "checking f00",
+    "checking f01",
+    "checking f03",
+    "...",
+    "checking tfe",
+    "checking tff"
+   ],
+   "num_checked": 385,
+   "statuses": [
+    [
+     "finished checking",
+     "reviewed 0 thumbnails, found 0 orphans"
+    ],
+    [
+     "finished checking",
+     ""
+    ],
+    [
+     "found 1 orphan files, now deleting",
+     ""
+    ]
+   ],
+   "done": true,
+   "cancelled": true,
+   "default_files": [
+    "fab/abababababababababababababababababababababababababababababababab.png",
+    "t00/Thumbs.db"
+   ],
+   "moved_files": [
+    "away/abababababababababababababababababababababababababababababababab.png",
+    "away/thumbnails/Thumbs.db"
+   ]
+  }
+ ]
+}

@@ -4192,6 +4192,8 @@ manual save-last-session action and wider debug GUI/style families remain unclai
   Resyncing tag counts reports "N desynced tag counts in SERVICE!" per tag
   service, where the reference reports surplus or missing files per
   file/tag-service cache. Fixed invalid tags aren't written to a log.
+  The popup does not count tags while it works ("Scanning tags: 60/60", "Fixing bad tags: n/6" in the
+  reference); it shows only the closing line, which matches the reference.
 - The jobs show their result popups but no step-by-step progress text, and
   can't be cancelled once started.
 
@@ -4600,9 +4602,31 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
 - "manage granularity" runs its progress in an ordinary popup rather than
   a modal dialog, and its questions in button windows.
 - The prefix folder moved first is the first in order, not a random one.
+- The offline-folder granularity scan of a folder holding both layouts is not
+  recorded against the reference (nor are the cancel and error messages of the
+  jobs), so that leaf stays at source-restated.
 - The list selects one location; it sorts by location only.
-- The rebalance runs from a non-modal popup and the window stays open
-  (the reference closes the panel and shows a modal progress dialog).
+- The rebalance runs from a non-modal popup, and closes the panel once it has
+  started, as the reference does (the reference's progress is a modal dialog;
+  its stop times (10 minutes to 1 hour) are not observable in tests, so that
+  leaf stays weak). The custom run time is asked in minutes ("set time to run
+  (minutes)"), not hours and minutes.
+- Removing the last weighted location: the reference warns that it cannot be
+  emptied and then asks to remove it anyway (the warning has no `return`);
+  hydrus-rs stops at the warning.
+- After a removal the reference's list keeps a row selected (Qt moves the
+  selection on); the native list selects none.
+- A thumbnail location that is cleared, and holds no folders, is not listed
+  any more, and "move files now" is not on offer while a location it would
+  move to is missing, as in the reference (`oracle/record_locations_panel.py`).
+
+## Database > file maintenance > clear orphan files
+
+- Moving: the reference moves each orphan as it finds it during the scan;
+  hydrus-rs scans, then moves, saying "moving orphan files: 1/1". The result
+  and the last line are the same. Deleting waits as the reference does (two
+  seconds after the scan, five before each kind) so it can be cancelled, and a
+  cancelled job leaves its popup as it was (`oracle/record_clear_orphans.py`).
 
 
 ## Validation pass: backup and migration failures

@@ -1,0 +1,2611 @@
+{
+ "steps": [
+  {
+   "step": "opened",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 100% everything"
+    ]
+   ],
+   "selected": [],
+   "buttons": [
+    false,
+    false,
+    false,
+    false
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "all files are in their ideal locations",
+    false
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [],
+   "pubs": [],
+   "action": [
+    "open"
+   ],
+   "panel": {
+    "db": "database (about 2.22 MB): <db>",
+    "media": "media is 0B, thumbnails are estimated at 0B-0B",
+    "tooltip": "Precise thumbnail sizes are not tracked, so this is an estimate based on your\ncurrent thumbnail dimensions.",
+    "install_starts": "install: "
+   }
+  },
+  {
+   "step": "select the default location",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 100% everything"
+    ]
+   ],
+   "selected": [
+    "<default>"
+   ],
+   "buttons": [
+    false,
+    false,
+    false,
+    false
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "all files are in their ideal locations",
+    false
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [],
+   "pubs": [],
+   "action": [
+    "select",
+    "default"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [],
+    "yesyesno": [],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "add a",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ],
+    [
+     "<a>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ]
+   ],
+   "selected": [
+    "<default>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<a>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "pick directory",
+     "Select location."
+    ]
+   ],
+   "pubs": [],
+   "action": [
+    "add"
+   ],
+   "inputs": {
+    "pick": [
+     "a"
+    ],
+    "yesno": [],
+    "yesyesno": [],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "add a again",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ],
+    [
+     "<a>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ]
+   ],
+   "selected": [
+    "<default>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<a>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "pick directory",
+     "Select location."
+    ],
+    [
+     "warning",
+     "You already have that location entered!"
+    ]
+   ],
+   "pubs": [],
+   "action": [
+    "add"
+   ],
+   "inputs": {
+    "pick": [
+     "a"
+    ],
+    "yesno": [],
+    "yesyesno": [],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "cancel the picker",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ],
+    [
+     "<a>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ]
+   ],
+   "selected": [
+    "<default>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<a>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "pick directory",
+     "Select location."
+    ]
+   ],
+   "pubs": [],
+   "action": [
+    "add"
+   ],
+   "inputs": {
+    "pick": [
+     null
+    ],
+    "yesno": [],
+    "yesyesno": [],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "select a",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ],
+    [
+     "<a>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ]
+   ],
+   "selected": [
+    "<a>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<a>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [],
+   "pubs": [],
+   "action": [
+    "select",
+    "a"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [],
+    "yesyesno": [],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "increase a",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 33.33% everything"
+    ],
+    [
+     "<a>",
+     "no",
+     "<free space>",
+     "nothing",
+     "2",
+     "n/a",
+     "0B - 66.67% everything"
+    ]
+   ],
+   "selected": [
+    "<a>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<a>",
+     2,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [],
+   "pubs": [],
+   "action": [
+    "increase"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [],
+    "yesyesno": [],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "decrease a",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ],
+    [
+     "<a>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ]
+   ],
+   "selected": [
+    "<a>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<a>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [],
+   "pubs": [],
+   "action": [
+    "decrease"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [],
+    "yesyesno": [],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "decrease a to nothing, no",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ],
+    [
+     "<a>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ]
+   ],
+   "selected": [
+    "<a>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<a>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "question",
+     "Are you sure you want to remove this location?"
+    ]
+   ],
+   "pubs": [],
+   "action": [
+    "decrease"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [
+     false
+    ],
+    "yesyesno": [],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "set a max size to 5 GB",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ],
+    [
+     "<a>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "5 GB",
+     "0B - 50% everything"
+    ]
+   ],
+   "selected": [
+    "<a>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<a>",
+     1,
+     5368709120
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "dialog",
+     {
+      "title": "edit max size",
+      "message": "If a location goes over its set size, it will schedule to migrate some files to other locations. At least one media location must have no limit.\n\nThis is not precise (it works on average size, and thumbnails can add a bit), so give it some padding. Also, in general, remember it is not healthy to fill any hard drive more than 90% full.\n\nAlso, this feature is under active development. The client will go over this limit if your collection grows significantly--the only way things rebalance atm are if you click \"move files now\"--but in future I will have things automatically migrate in the background to ensure limits are obeyed. This is just for advanced users to play with for now!",
+      "initial": null,
+      "entered": 5368709120,
+      "accepted": true
+     }
+    ]
+   ],
+   "pubs": [],
+   "action": [
+    "max"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [],
+    "yesyesno": [],
+    "edit": [
+     {
+      "value": 5368709120
+     }
+    ]
+   },
+   "unused_script": []
+  },
+  {
+   "step": "cancel the max size dialog",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ],
+    [
+     "<a>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "5 GB",
+     "0B - 50% everything"
+    ]
+   ],
+   "selected": [
+    "<a>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<a>",
+     1,
+     5368709120
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "dialog",
+     {
+      "title": "edit max size",
+      "message": "If a location goes over its set size, it will schedule to migrate some files to other locations. At least one media location must have no limit.\n\nThis is not precise (it works on average size, and thumbnails can add a bit), so give it some padding. Also, in general, remember it is not healthy to fill any hard drive more than 90% full.\n\nAlso, this feature is under active development. The client will go over this limit if your collection grows significantly--the only way things rebalance atm are if you click \"move files now\"--but in future I will have things automatically migrate in the background to ensure limits are obeyed. This is just for advanced users to play with for now!",
+      "initial": 5368709120,
+      "accepted": false
+     }
+    ]
+   ],
+   "pubs": [],
+   "action": [
+    "max"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [],
+    "yesyesno": [],
+    "edit": [
+     "cancel"
+    ]
+   },
+   "unused_script": []
+  },
+  {
+   "step": "clear the max size of a",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ],
+    [
+     "<a>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ]
+   ],
+   "selected": [
+    "<a>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<a>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "dialog",
+     {
+      "title": "edit max size",
+      "message": "If a location goes over its set size, it will schedule to migrate some files to other locations. At least one media location must have no limit.\n\nThis is not precise (it works on average size, and thumbnails can add a bit), so give it some padding. Also, in general, remember it is not healthy to fill any hard drive more than 90% full.\n\nAlso, this feature is under active development. The client will go over this limit if your collection grows significantly--the only way things rebalance atm are if you click \"move files now\"--but in future I will have things automatically migrate in the background to ensure limits are obeyed. This is just for advanced users to play with for now!",
+      "initial": 5368709120,
+      "entered": null,
+      "accepted": true
+     }
+    ]
+   ],
+   "pubs": [],
+   "action": [
+    "max"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [],
+    "yesyesno": [],
+    "edit": [
+     {
+      "value": null
+     }
+    ]
+   },
+   "unused_script": []
+  },
+  {
+   "step": "set a max size again",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ],
+    [
+     "<a>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "5 GB",
+     "0B - 50% everything"
+    ]
+   ],
+   "selected": [
+    "<a>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<a>",
+     1,
+     5368709120
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "dialog",
+     {
+      "title": "edit max size",
+      "message": "If a location goes over its set size, it will schedule to migrate some files to other locations. At least one media location must have no limit.\n\nThis is not precise (it works on average size, and thumbnails can add a bit), so give it some padding. Also, in general, remember it is not healthy to fill any hard drive more than 90% full.\n\nAlso, this feature is under active development. The client will go over this limit if your collection grows significantly--the only way things rebalance atm are if you click \"move files now\"--but in future I will have things automatically migrate in the background to ensure limits are obeyed. This is just for advanced users to play with for now!",
+      "initial": null,
+      "entered": 5368709120,
+      "accepted": true
+     }
+    ]
+   ],
+   "pubs": [],
+   "action": [
+    "max"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [],
+    "yesyesno": [],
+    "edit": [
+     {
+      "value": 5368709120
+     }
+    ]
+   },
+   "unused_script": []
+  },
+  {
+   "step": "select the default",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ],
+    [
+     "<a>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "5 GB",
+     "0B - 50% everything"
+    ]
+   ],
+   "selected": [
+    "<default>"
+   ],
+   "buttons": [
+    true,
+    true,
+    false,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<a>",
+     1,
+     5368709120
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [],
+   "pubs": [],
+   "action": [
+    "select",
+    "default"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [],
+    "yesyesno": [],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "set the default max size",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ],
+    [
+     "<a>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "5 GB",
+     "0B - 50% everything"
+    ]
+   ],
+   "selected": [
+    "<default>"
+   ],
+   "buttons": [
+    true,
+    true,
+    false,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<a>",
+     1,
+     5368709120
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [],
+   "pubs": [],
+   "action": [
+    "max"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [],
+    "yesyesno": [],
+    "edit": [
+     {
+      "value": 2147483648
+     }
+    ]
+   },
+   "unused_script": [
+    "edit"
+   ]
+  },
+  {
+   "step": "remove a, yes",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 100% everything"
+    ]
+   ],
+   "selected": [
+    "<default>"
+   ],
+   "buttons": [
+    false,
+    false,
+    false,
+    false
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "all files are in their ideal locations",
+    false
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "question",
+     "Are you sure you want to remove this location?"
+    ]
+   ],
+   "pubs": [],
+   "action": [
+    "select",
+    "a",
+    "remove"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [
+     true
+    ],
+    "yesyesno": [],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "remove the last location",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 100% everything"
+    ]
+   ],
+   "selected": [
+    "<default>"
+   ],
+   "buttons": [
+    false,
+    false,
+    false,
+    false
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "all files are in their ideal locations",
+    false
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "warning",
+     "You cannot empty every single current file location--please add a new place for the files to be moved to and then try again."
+    ],
+    [
+     "question",
+     "Are you sure you want to remove this location? This will schedule all of the files it is currently responsible for to be moved elsewhere."
+    ]
+   ],
+   "pubs": [],
+   "action": [
+    "select",
+    "default",
+    "remove"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [
+     false
+    ],
+    "yesyesno": [],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "thumbnail location: a regular location",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 100% everything"
+    ]
+   ],
+   "selected": [
+    "<default>"
+   ],
+   "buttons": [
+    false,
+    false,
+    false,
+    false
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "all files are in their ideal locations",
+    false
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "pick directory",
+     "Select thumbnail location."
+    ],
+    [
+     "warning",
+     "That path already exists as a regular file location! Please choose another."
+    ]
+   ],
+   "pubs": [],
+   "action": [
+    "set thumbnails"
+   ],
+   "inputs": {
+    "pick": [
+     "default"
+    ],
+    "yesno": [],
+    "yesyesno": [],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "thumbnail location: cancel",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 100% everything"
+    ]
+   ],
+   "selected": [
+    "<default>"
+   ],
+   "buttons": [
+    false,
+    false,
+    false,
+    false
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "all files are in their ideal locations",
+    false
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "pick directory",
+     "Select thumbnail location."
+    ]
+   ],
+   "pubs": [],
+   "action": [
+    "set thumbnails"
+   ],
+   "inputs": {
+    "pick": [
+     null
+    ],
+    "yesno": [],
+    "yesyesno": [],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "thumbnail location: set",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 100% files"
+    ],
+    [
+     "<thumbs>",
+     "no",
+     "<free space>",
+     "nothing",
+     "n/a",
+     "n/a",
+     "0B - 100% thumbnails"
+    ]
+   ],
+   "selected": [
+    "<default>"
+   ],
+   "buttons": [
+    false,
+    false,
+    false,
+    false
+   ],
+   "thumbnails": [
+    "<thumbs>",
+    true
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": "<thumbs>",
+   "dialogs": [
+    [
+     "pick directory",
+     "Select thumbnail location."
+    ]
+   ],
+   "pubs": [],
+   "action": [
+    "set thumbnails"
+   ],
+   "inputs": {
+    "pick": [
+     "thumbs"
+    ],
+    "yesno": [],
+    "yesyesno": [],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "add the thumbnail location as a file location",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 100% files"
+    ],
+    [
+     "<thumbs>",
+     "no",
+     "<free space>",
+     "nothing",
+     "n/a",
+     "n/a",
+     "0B - 100% thumbnails"
+    ]
+   ],
+   "selected": [
+    "<default>"
+   ],
+   "buttons": [
+    false,
+    false,
+    false,
+    false
+   ],
+   "thumbnails": [
+    "<thumbs>",
+    true
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": "<thumbs>",
+   "dialogs": [
+    [
+     "pick directory",
+     "Select location."
+    ],
+    [
+     "warning",
+     "That path is already used as the special thumbnail location--please choose another."
+    ]
+   ],
+   "pubs": [],
+   "action": [
+    "add"
+   ],
+   "inputs": {
+    "pick": [
+     "thumbs"
+    ],
+    "yesno": [],
+    "yesyesno": [],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "clear the thumbnail location, no",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 100% files"
+    ],
+    [
+     "<thumbs>",
+     "no",
+     "<free space>",
+     "nothing",
+     "n/a",
+     "n/a",
+     "0B - 100% thumbnails"
+    ]
+   ],
+   "selected": [
+    "<default>"
+   ],
+   "buttons": [
+    false,
+    false,
+    false,
+    false
+   ],
+   "thumbnails": [
+    "<thumbs>",
+    true
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": "<thumbs>",
+   "dialogs": [
+    [
+     "question",
+     "Clear the custom thumbnail location? This will schedule all the thumbnail files to migrate back into the regular file locations."
+    ]
+   ],
+   "pubs": [],
+   "action": [
+    "clear thumbnails"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [
+     false
+    ],
+    "yesyesno": [],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "clear the thumbnail location, yes",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 100% everything"
+    ]
+   ],
+   "selected": [
+    "<default>"
+   ],
+   "buttons": [
+    false,
+    false,
+    false,
+    false
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "all files are in their ideal locations",
+    false
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "question",
+     "Clear the custom thumbnail location? This will schedule all the thumbnail files to migrate back into the regular file locations."
+    ]
+   ],
+   "pubs": [],
+   "action": [
+    "clear thumbnails"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [
+     true
+    ],
+    "yesyesno": [],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "add b",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ],
+    [
+     "<b>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ]
+   ],
+   "selected": [
+    "<default>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<b>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "pick directory",
+     "Select location."
+    ]
+   ],
+   "pubs": [],
+   "action": [
+    "add"
+   ],
+   "inputs": {
+    "pick": [
+     "b"
+    ],
+    "yesno": [],
+    "yesyesno": [],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "add a path that does not exist",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 33.33% everything"
+    ],
+    [
+     "<b>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "n/a",
+     "0B - 33.33% everything"
+    ],
+    [
+     "DOES NOT EXIST: <missing>",
+     "no",
+     "DOES NOT EXIST",
+     "nothing",
+     "1",
+     "n/a",
+     "0B - 33.33% everything"
+    ]
+   ],
+   "selected": [
+    "<default>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "all files are in their ideal locations",
+    false
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<b>",
+     1,
+     null
+    ],
+    [
+     "<missing>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "pick directory",
+     "Select location."
+    ]
+   ],
+   "pubs": [],
+   "action": [
+    "add"
+   ],
+   "inputs": {
+    "pick": [
+     "missing"
+    ],
+    "yesno": [],
+    "yesyesno": [],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "move files now with a missing path",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 33.33% everything"
+    ],
+    [
+     "<b>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "n/a",
+     "0B - 33.33% everything"
+    ],
+    [
+     "DOES NOT EXIST: <missing>",
+     "no",
+     "DOES NOT EXIST",
+     "nothing",
+     "1",
+     "n/a",
+     "0B - 33.33% everything"
+    ]
+   ],
+   "selected": [
+    "<default>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "all files are in their ideal locations",
+    false
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<b>",
+     1,
+     null
+    ],
+    [
+     "<missing>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "warning",
+     "The path \"<missing> (1, unlimited)\" does not exist! Please ensure all the locations on this dialog are valid before trying to rebalance your files."
+    ]
+   ],
+   "pubs": [],
+   "action": [
+    "rebalance"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [],
+    "yesyesno": [],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "select the missing path",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 33.33% everything"
+    ],
+    [
+     "<b>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "n/a",
+     "0B - 33.33% everything"
+    ],
+    [
+     "DOES NOT EXIST: <missing>",
+     "no",
+     "DOES NOT EXIST",
+     "nothing",
+     "1",
+     "n/a",
+     "0B - 33.33% everything"
+    ]
+   ],
+   "selected": [
+    "<missing>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "all files are in their ideal locations",
+    false
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<b>",
+     1,
+     null
+    ],
+    [
+     "<missing>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [],
+   "pubs": [],
+   "action": [
+    "select",
+    "missing"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [],
+    "yesyesno": [],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "remove the missing path, yes",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ],
+    [
+     "<b>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ]
+   ],
+   "selected": [
+    "<b>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<b>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "question",
+     "This path does not exist. Just checking, but I recommend you remove it."
+    ]
+   ],
+   "pubs": [],
+   "action": [
+    "remove"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [
+     true
+    ],
+    "yesyesno": [],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "move files now, forget it",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ],
+    [
+     "<b>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ]
+   ],
+   "selected": [
+    "<b>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<b>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "choice",
+     "Moving files can be a slow and slightly laggy process, with the UI intermittently hanging, which sometimes makes manually stopping a large ongoing job difficult. Would you like to set a max runtime on this job?",
+     [
+      "run for 10 minutes",
+      "run for 30 minutes",
+      "run for 1 hour",
+      "run for custom time",
+      "run indefinitely"
+     ],
+     "forget it"
+    ]
+   ],
+   "pubs": [],
+   "action": [
+    "rebalance"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [],
+    "yesyesno": [
+     null
+    ],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "move files now, 10 minutes",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ],
+    [
+     "<b>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ]
+   ],
+   "selected": [
+    "<b>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<b>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "choice",
+     "Moving files can be a slow and slightly laggy process, with the UI intermittently hanging, which sometimes makes manually stopping a large ongoing job difficult. Would you like to set a max runtime on this job?",
+     [
+      "run for 10 minutes",
+      "run for 30 minutes",
+      "run for 1 hour",
+      "run for custom time",
+      "run indefinitely"
+     ],
+     "forget it"
+    ],
+    [
+     "closed the panel"
+    ]
+   ],
+   "pubs": [
+    {
+     "topic": "do_file_storage_rebalance",
+     "stop_in": 600,
+     "cancellable": true
+    }
+   ],
+   "action": [
+    "rebalance"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [],
+    "yesyesno": [
+     "run for 10 minutes"
+    ],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "move files now, 30 minutes",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ],
+    [
+     "<b>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ]
+   ],
+   "selected": [
+    "<b>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<b>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "choice",
+     "Moving files can be a slow and slightly laggy process, with the UI intermittently hanging, which sometimes makes manually stopping a large ongoing job difficult. Would you like to set a max runtime on this job?",
+     [
+      "run for 10 minutes",
+      "run for 30 minutes",
+      "run for 1 hour",
+      "run for custom time",
+      "run indefinitely"
+     ],
+     "forget it"
+    ],
+    [
+     "closed the panel"
+    ]
+   ],
+   "pubs": [
+    {
+     "topic": "do_file_storage_rebalance",
+     "stop_in": 1800,
+     "cancellable": true
+    }
+   ],
+   "action": [
+    "rebalance"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [],
+    "yesyesno": [
+     "run for 30 minutes"
+    ],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "move files now, 1 hour",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ],
+    [
+     "<b>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ]
+   ],
+   "selected": [
+    "<b>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<b>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "choice",
+     "Moving files can be a slow and slightly laggy process, with the UI intermittently hanging, which sometimes makes manually stopping a large ongoing job difficult. Would you like to set a max runtime on this job?",
+     [
+      "run for 10 minutes",
+      "run for 30 minutes",
+      "run for 1 hour",
+      "run for custom time",
+      "run indefinitely"
+     ],
+     "forget it"
+    ],
+    [
+     "closed the panel"
+    ]
+   ],
+   "pubs": [
+    {
+     "topic": "do_file_storage_rebalance",
+     "stop_in": 3600,
+     "cancellable": true
+    }
+   ],
+   "action": [
+    "rebalance"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [],
+    "yesyesno": [
+     "run for 1 hour"
+    ],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "move files now, indefinitely",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ],
+    [
+     "<b>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ]
+   ],
+   "selected": [
+    "<b>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<b>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "choice",
+     "Moving files can be a slow and slightly laggy process, with the UI intermittently hanging, which sometimes makes manually stopping a large ongoing job difficult. Would you like to set a max runtime on this job?",
+     [
+      "run for 10 minutes",
+      "run for 30 minutes",
+      "run for 1 hour",
+      "run for custom time",
+      "run indefinitely"
+     ],
+     "forget it"
+    ],
+    [
+     "closed the panel"
+    ]
+   ],
+   "pubs": [
+    {
+     "topic": "do_file_storage_rebalance",
+     "stop_in": null,
+     "cancellable": true
+    }
+   ],
+   "action": [
+    "rebalance"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [],
+    "yesyesno": [
+     "run indefinitely"
+    ],
+    "edit": []
+   },
+   "unused_script": []
+  },
+  {
+   "step": "move files now, custom, accepted",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ],
+    [
+     "<b>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ]
+   ],
+   "selected": [
+    "<b>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<b>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "choice",
+     "Moving files can be a slow and slightly laggy process, with the UI intermittently hanging, which sometimes makes manually stopping a large ongoing job difficult. Would you like to set a max runtime on this job?",
+     [
+      "run for 10 minutes",
+      "run for 30 minutes",
+      "run for 1 hour",
+      "run for custom time",
+      "run indefinitely"
+     ],
+     "forget it"
+    ],
+    [
+     "dialog",
+     {
+      "title": "set time to run",
+      "initial": 7200,
+      "entered": 5400,
+      "accepted": true
+     }
+    ],
+    [
+     "closed the panel"
+    ]
+   ],
+   "pubs": [
+    {
+     "topic": "do_file_storage_rebalance",
+     "stop_in": 5400,
+     "cancellable": true
+    }
+   ],
+   "action": [
+    "rebalance"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [],
+    "yesyesno": [
+     "run for custom time"
+    ],
+    "edit": [
+     {
+      "value": 5400
+     }
+    ]
+   },
+   "unused_script": []
+  },
+  {
+   "step": "move files now, custom, cancelled",
+   "rows": [
+    [
+     "<default>",
+     "yes",
+     "<free space>",
+     "0B - 100% everything",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ],
+    [
+     "<b>",
+     "no",
+     "<free space>",
+     "nothing",
+     "1",
+     "n/a",
+     "0B - 50% everything"
+    ]
+   ],
+   "selected": [
+    "<b>"
+   ],
+   "buttons": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "thumbnails": [
+    "none set",
+    false
+   ],
+   "granularity": "You have a granularity of 2, which means 512 total subfolders.",
+   "rebalance": [
+    "files need to be moved",
+    true
+   ],
+   "saved": [
+    [
+     "<default>",
+     1,
+     null
+    ],
+    [
+     "<b>",
+     1,
+     null
+    ]
+   ],
+   "saved_thumbnails": null,
+   "dialogs": [
+    [
+     "choice",
+     "Moving files can be a slow and slightly laggy process, with the UI intermittently hanging, which sometimes makes manually stopping a large ongoing job difficult. Would you like to set a max runtime on this job?",
+     [
+      "run for 10 minutes",
+      "run for 30 minutes",
+      "run for 1 hour",
+      "run for custom time",
+      "run indefinitely"
+     ],
+     "forget it"
+    ],
+    [
+     "dialog",
+     {
+      "title": "set time to run",
+      "initial": 7200,
+      "accepted": false
+     }
+    ]
+   ],
+   "pubs": [],
+   "action": [
+    "rebalance"
+   ],
+   "inputs": {
+    "pick": [],
+    "yesno": [],
+    "yesyesno": [
+     "run for custom time"
+    ],
+    "edit": [
+     "cancel"
+    ]
+   },
+   "unused_script": []
+  }
+ ],
+ "default_is_under_db": true
+}

@@ -122,13 +122,45 @@ fn free_name(path: &Path) -> PathBuf {
         .unwrap_or_else(|| path.to_path_buf())
 }
 
+/// How long the reference waits (in whole seconds, so that the job can be cancelled): after the
+/// scan, and before it deletes each kind of orphan.
+#[derive(Debug, Clone, Copy)]
+pub struct Waits {
+    pub after_scan: u64,
+    pub before_delete: u64,
+}
+
+impl Waits {
+    /// `ClearOrphans`' `time.sleep( 2 )` and `time.sleep( 5 )`.
+    pub const REFERENCE: Self = Self {
+        after_scan: 2,
+        before_delete: 5,
+    };
+    pub const NONE: Self = Self {
+        after_scan: 0,
+        before_delete: 0,
+    };
+}
+
+/// Wait `seconds`, a little at a time; whether it was cancelled meanwhile.
+fn wait(seconds: u64, cancelled: &dyn Fn() -> bool) -> bool {
+    for _ in 0..seconds * 20 {
+        if cancelled() {
+            return true;
+        }
+        std::thread::sleep(std::time::Duration::from_millis(50));
+    }
+    cancelled()
+}
+
 /// Clear what a scan found: moved under `to` (thumbnails into its
 /// `thumbnails` folder), or deleted; refused for media another install
-/// owns.
+/// owns. Deleting says what it found and waits first, as the reference does.
 pub fn clear(
     store: &crate::Store,
     outcome: &Outcome,
     to: Option<&Path>,
+    waits: Waits,
     say: &mut dyn FnMut(String),
     cancelled: &dyn Fn() -> bool,
 ) -> Result<()> {
@@ -139,12 +171,24 @@ pub fn clear(
             owner.display()
         )));
     }
+    if wait(waits.after_scan, cancelled) {
+        return Ok(());
+    }
     for (paths, what) in [
         (&outcome.orphan_files, "files"),
         (&outcome.orphan_thumbnails, "thumbnails"),
     ] {
         if paths.is_empty() {
             continue;
+        }
+        if to.is_none() {
+            say(format!(
+                "found {} orphan {what}, now deleting",
+                hydrus_core::numbers::human_int(paths.len() as u64)
+            ));
+            if wait(waits.before_delete, cancelled) {
+                return Ok(());
+            }
         }
         let dest_dir = to.map(|to| {
             if what == "files" {
@@ -200,7 +244,15 @@ mod tests {
         let found = scan(&store, &mut |_, _| {}, &|| false).unwrap();
         assert_eq!(found.orphan_files, std::slice::from_ref(&stray));
         assert_eq!(found.orphan_thumbnails, std::slice::from_ref(&junk));
-        clear(&store, &found, Some(away.path()), &mut |_| {}, &|| false).unwrap();
+        clear(
+            &store,
+            &found,
+            Some(away.path()),
+            Waits::NONE,
+            &mut |_| {},
+            &|| false,
+        )
+        .unwrap();
         assert!(!stray.exists());
         assert!(away.path().join(stray.file_name().unwrap()).is_file());
         assert!(away.path().join("thumbnails/Thumbs.db").is_file());

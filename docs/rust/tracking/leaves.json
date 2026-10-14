@@ -545,10 +545,10 @@
     "Reference orphan scan asks delete-versus-move/path questions and schedules file cleanup; native disabled leaf has no chooser or scanner UI."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu, question, picker and move/delete with the popup. Expected strings are native model:: constants (match ClientFilesManager.ClearOrphans), no recording. The leaf names a 'cancellable scan' and cancelling the scan or job is never tested although the window wires it. Leave untagged until cancellation is driven. Tracker note ('native has no ...') is stale. Tests: crates/hydrus-gui/tests/gui/database_orphan_files.rs:61 clearing_orphan_files_moves_or_deletes_strays_after_the_reference_s_questions; crates/hydrus-store/src/orphan_files.rs:190 (unit, kept files stay)"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "phase 2 session (recheck-w4-r1)",
+    "note": "oracle/fixtures/clear_orphans.json (oracle/record_clear_orphans.py runs the reference's ClearOrphans). crates/hydrus-gui/tests/gui/database_orphan_files.rs clearing_orphan_files_replays_the_reference_s_runs_and_its_cancel replays forget it, a cancelled picker, delete, nothing to clear, move to a folder (the file and the thumbnail under 'thumbnails/'), and the job cancelled from its popup while it waits to delete (the strays stay and the popup is left saying what it found): question, choices, picker, the popup's words and what is on disk compared. Showed: deleting did not say what it found for thumbnails or wait, and a cancelled job claimed to have cleared; fixed. The move happens after the scan here, during it in the reference (DIFFERENCES.md)."
    }
   },
   {
@@ -640,10 +640,10 @@
     "Reference migration changes live storage layout through a dedicated confirmation/job; no native GUI equivalent."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real locations window and granularity window: last-check question, decline, 2->3 with the real file move, report text, persistence after reopening, and back 3->2. Expected strings are native database_granularity constants (they match ReviewGranularityPanel); no recording. Cancelling a running job and the error report are untested. Tracker note ('native has no ...') is stale. Tests: crates/hydrus-gui/tests/gui/database_locations_menu.rs:426 this_client_s_granularity_is_changed_after_the_last_check_and_reported"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "phase 2 session (recheck-w4-r1)",
+    "note": "2 to 3 declined and accepted (the file moved, the report, the label), 3 to 2 declined and accepted. oracle/fixtures/granularity_panel.json (oracle/record_granularity_panel.py runs the reference's real ReviewGranularityPanel, its jobs included, on an empty client with a file in the granularity 2 layout). crates/hydrus-gui/tests/gui/database_locations_menu.rs the_granularity_window_replays_the_reference_s_steps replays every step through the real window and compares each question (title, text, buttons), the picker, each message and the file's place on disk. It showed the questions lacked the reference's closing speed sentence; fixed. The window's 'currently N' label is compared by its level, not its wording. The cancel and error messages of the client job are not recorded (static strings)."
    }
   },
   {
@@ -659,10 +659,10 @@
     "Reference offline backup-folder migration chooses a directory and rewrites folder granularity. Native locations UI absent."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window: ready check, picker, scan result ('Looking good.'), decline, then a real 2->3 move of a backup folder and its report, client untouched. Strings from native constants; no recording. The unknown-granularity and already-3 scan branches, and cancel mid-job, are not driven. Tracker note ('native has no ...') is stale. Tests: crates/hydrus-gui/tests/gui/database_locations_menu.rs:519 an_offline_folder_is_regranularised_after_its_ready_check_and_scan"
+    "by": "phase 2 session (recheck-w4-r1)",
+    "note": "The ready check declined, the picker cancelled, the scan question ('Looking good.', declined and accepted, 2 to 3 and back), the already-3 and unknown-folder scans, and the empty folder. oracle/fixtures/granularity_panel.json (oracle/record_granularity_panel.py runs the reference's real ReviewGranularityPanel, its jobs included, on an empty client with a file in the granularity 2 layout). crates/hydrus-gui/tests/gui/database_locations_menu.rs the_granularity_window_replays_the_reference_s_steps replays every step through the real window and compares each question (title, text, buttons), the picker, each message and the file's place on disk. It showed the questions lacked the reference's closing speed sentence; fixed. The mixed-folder scan (a folder in both layouts), which the leaf names, and the cancel and error messages are not recorded, so the leaf is held at source-restated."
    }
   },
   {
@@ -678,10 +678,10 @@
     "Reference path maximum-byte dialog is opened by activation/set-max-size. Native locations entrypoint has no implementation."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real dialog: title/message, cancel, 5 GB set, shown in list, survives reopening, activation reopens with saved value, 'no limit' clears, and the 'one location must stay unlimited' button rule. The limit is read by ideal_shares (unit-tested). Strings from native constants (match _SetMaxNumBytes); no recording. The 100 GB default when switching off 'no limit' is not asserted. Tracker note ('native has no ...') is stale. Tests: crates/hydrus-gui/tests/gui/database_locations_menu.rs:197 a_location_s_maximum_size_is_edited_in_its_own_dialog; crates/hydrus-store/src/storage_locations.rs:466 shares_follow_weights_and_limits"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "phase 2 session (recheck-w4-r1)",
+    "note": "The edit max size dialog (title, the long message, starting value, accepted 5 GB, cancelled, no limit) and the rule that one location must stay unlimited (the button is off). oracle/fixtures/locations_panel.json (oracle/record_locations_panel.py drives the reference's real MoveMediaFilesPanel on an empty client). Replayed step by step through the real locations window by crates/hydrus-gui/tests/gui/database_locations_menu.rs the_locations_panel_replays_the_reference_s_steps: the same selection, pick and answers, then every message, question and dialog, the rows, the button states, the thumbnail location, the granularity and rebalance labels and the saved locations compared. Differences it showed are fixed or in DIFFERENCES.md (Database > locations). The 100 GB shown when 'no limit' is first unticked is the reference's literal default and is not recorded."
    }
   },
   {
@@ -697,10 +697,10 @@
     "Reference physical storage panel lists weighted base paths with capacity/removal guards. Native Database > locations is todo(), with no path/weight UI."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window: warning, row cells, add (weight 1, duplicate refused, cancel), increase/decrease, decrease-from-1 asks to remove, remove, last location cannot be removed, persistence. Expected strings and row values come from the native model; no recording. (Reference _RemoveBaseLocation shows the cannot-empty warning but does not return, native returns; not visible in tests.) Tracker note ('native has no ...') is stale. Tests: crates/hydrus-gui/tests/gui/database_locations_menu.rs:112 locations_lists_weights_and_adds_changes_and_removes_them_with_the_reference_s_guards; crates/hydrus-gui-model/tests/model/database_locations.rs:22"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "phase 2 session (recheck-w4-r1)",
+    "note": "Add, duplicate refused, cancelled picker, increase, decrease, decrease to nothing (question), remove, remove the last location (the reference's warning is shown; it then asks anyway, which hydrus-rs does not: DIFFERENCES.md), a missing path. oracle/fixtures/locations_panel.json (oracle/record_locations_panel.py drives the reference's real MoveMediaFilesPanel on an empty client). Replayed step by step through the real locations window by crates/hydrus-gui/tests/gui/database_locations_menu.rs the_locations_panel_replays_the_reference_s_steps: the same selection, pick and answers, then every message, question and dialog, the rows, the button states, the thumbnail location, the granularity and rebalance labels and the saved locations compared. Differences it showed are fixed or in DIFFERENCES.md (Database > locations)."
    }
   },
   {
@@ -716,10 +716,10 @@
     "Reference rebalance calculates storage need, asks run duration and runs cancellable move/progress work. Native Database > locations remains disabled."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Covers the missing-path warning, the run-time question and 'forget it', and 'run indefinitely' moving real folders. Not covered: the 10 min/30 min/1 hour choices (stop_at is never exercised), 'run for custom time' dialog, the popup content/cancel (the test notes the popup dismisses itself and asserts it is empty), and the reference closing the dialog after starting. Strings are native constants, no recording. Tracker note ('native has no ...') is stale. Tests: crates/hydrus-gui/tests/gui/database_locations_menu.rs:347 move_files_now_asks_for_a_run_time_and_moves_folders_with_a_popup"
+    "by": "phase 2 session (recheck-w4-r1)",
+    "note": "Replayed against the same recording: the missing-path warning (now with the location as the reference words it), the run-time question and its choices, 'forget it', the custom time dialog (accepted and cancelled), the dialog closing once the job starts (fixed), and 'move files now' not being on offer while a location is missing (fixed). Not driven: the 10 minute / 30 minute / 1 hour stop times (the reference's job carries a stop time; the recording has it, nothing native shows it), and the popup's content while it runs. oracle/fixtures/locations_panel.json (oracle/record_locations_panel.py drives the reference's real MoveMediaFilesPanel on an empty client). Replayed step by step through the real locations window by crates/hydrus-gui/tests/gui/database_locations_menu.rs the_locations_panel_replays_the_reference_s_steps: the same selection, pick and answers, then every message, question and dialog, the rows, the button states, the thumbnail location, the granularity and rebalance labels and the saved locations compared. Differences it showed are fixed or in DIFFERENCES.md (Database > locations)."
    }
   },
   {
@@ -735,10 +735,10 @@
     "Reference separate thumbnail destination override and clear controls are absent from native GUI."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window: set, refusal when the folder is a file location, refusal when adding the thumbnail folder as file location, clear asks first, persistence. But the override only round-trips in tests: the reader in storage_locations.rs (next_move sends thumbnails to the override) is never exercised with an override set. Native-constant strings, no recording. Tracker note ('native has no ...') is stale. Tests: crates/hydrus-gui/tests/gui/database_locations_menu.rs:291 the_thumbnail_location_override_is_set_and_cleared"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "phase 2 session (recheck-w4-r1)",
+    "note": "Set, refusal when the folder is a file location, cancelled picker, cleared with the question declined and accepted (the row goes with it), adding the thumbnail folder as a file location refused. The reader: crates/hydrus-gui/tests/gui/database_locations_menu.rs moving_files_now_puts_the_thumbnail_folders_at_the_thumbnail_location sets the override in the window, runs 'move files now', and the thumbnail folder (not the file folders) is moved to it and back. oracle/fixtures/locations_panel.json (oracle/record_locations_panel.py drives the reference's real MoveMediaFilesPanel on an empty client). Replayed step by step through the real locations window by crates/hydrus-gui/tests/gui/database_locations_menu.rs the_locations_panel_replays_the_reference_s_steps: the same selection, pick and answers, then every message, question and dialog, the rows, the button states, the thumbnail location, the granularity and rebalance labels and the saved locations compared. Differences it showed are fixed or in DIFFERENCES.md (Database > locations)."
    }
   },
   {
@@ -787,10 +787,10 @@
     "Reference job-type selector changes job description then confirms and queues chosen maintenance for selected hashes. Native menu does not open any scheduler."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window: 27 job labels, description dialog, no files no job, queueing on selected files, current list shows it. The leaf names a scheduling confirmation, but the window test only asserts that few files need none; the >1000 files 'Are you sure you want to schedule...' question (reference _AddJob) is tested only as a string in a model test, never through the window. No recording; strings are native/typed. Tracker note ('native has no ...') is stale. Tests: crates/hydrus-gui/tests/gui/database_file_maintenance_new.rs:134 new_work_lists_jobs_describes_them_and_queues_the_chosen_one_on_the_selected_files; crates/hydrus-gui-model/tests/model/file_maintenance_new.rs"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "phase 2 session (recheck-w4-r1)",
+    "note": "oracle/fixtures/file_maintenance_new.json (oracle/record_file_maintenance_new.py drives the reference's real ReviewFileMaintenance on the basic client). crates/hydrus-gui/tests/gui/database_file_maintenance_new.rs the_new_work_tab_replays_the_reference_s_steps compares its words, all 27 job labels and descriptions, the selections, adding a job (the message and the scheduled list) through the real window; a_job_on_over_a_thousand_files_asks_first seeds a thousand more files and compares the confirmation question (declined) with the recorded one. The accepted large job is not recorded."
    }
   },
   {
@@ -806,10 +806,10 @@
     "Reference new-work tab selects files by read autocomplete search or all-media/all-repository-update shortcuts. Native GUI has no file-selection job scheduler."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window: explanation text, run search with nothing typed, typed system:archive predicate and removal, bad search, easy-select all media and all repository update files. The expected counts are computed by model::find, the same function the window uses, and there is no recording. Strings match _SelectAllMediaFiles/_AddJob flow. Tracker note ('native has no ...') is stale. Tests: crates/hydrus-gui/tests/gui/database_file_maintenance_new.rs:70 new_work_selects_files_by_search_or_the_easy_select_buttons"
+    "by": "phase 2 session (recheck-w4-r1)",
+    "note": "The default search, 'all media files' and 'all repository update files' counts, the labels and the explanation now agree with oracle/fixtures/file_maintenance_new.json (the same replay test as the schedule leaf). A typed predicate (system:archive) and the bad-search case are checked against hydrus-rs's own search function, not recorded (the reference's autocomplete cannot be typed into headlessly), so the class is not raised."
    }
   },
   {
@@ -844,10 +844,10 @@
     "Reference repair asks a warning then cleans/remaps invalid tags as DB work; native disabled leaf has no concrete command."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The question (words, buttons), decline, and the accepted run's popup 'Invalid tag scanning: No bad tags found!' match the recording. But only a database with no bad tags is run; the actual repair (clean/rename, collision suffix, 'N bad tags found and fixed' text) in db_maintenance::repair_invalid_tags has no test anywhere. Tracker note ('native has no ...') is stale. Tests: crates/hydrus-gui/tests/gui/database_menu_jobs.rs:238 fix_invalid_tags_from_the_database_menu (replays database_maintenance.json)"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "phase 2 session (recheck-w4-r1)",
+    "note": "oracle/fixtures/repair_invalid_tags.json (oracle/record_repair_invalid_tags.py seeds the reference's database with invalid tags: uppercase, stray spaces, a bad namespace, one that cleans to nothing, one that collides once cleaned, and runs its repair). crates/hydrus-gui/tests/gui/database_menu_jobs.rs fix_invalid_tags_repairs_the_tags_the_reference_repaired_the_same_way seeds the same tags, runs the real menu entry (question words and buttons, declined, accepted) and compares the popup's closing line ('Invalid tag scanning: 6 bad tags found and fixed! ...'; every line the popup shows is one the reference showed) and the tags afterwards ('mixed case', 'trailing space', 'safe (1)', 'unrecoverable invalid tag', 'creator:foo', 'a b'). A second run in the reference (not restarted) re-renames from its stale cache: not replicated. The reference's progress lines ('Scanning tags: 60/60 - Bad Found: 0', 'Fixing bad tags: n/6') are not shown natively (one transaction): DIFFERENCES.md."
    }
   },
   {
@@ -1376,10 +1376,10 @@
     "The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Question, 'Which service?'-style button choices and cancel are checked against the recording, but on accept it only waits for a popup ending in 'table and column pairs sent to clipboard.'; the clipboard text and the count are never compared (the reference's accepted run hit a DBException in the recording, so there is no reference output either). Only hash (first button) is exercised. Tracker notes saying the menu entry is todo()/no command are stale. Tests: crates/hydrus-gui/tests/gui/database_menu_jobs.rs:232 tables_using_definitions_from_the_database_menu (drive() early-returns at ~:117)"
+    "by": "phase 2 session (recheck-w4-r1)",
+    "note": "The question and choices are checked against the recording, and the native job lists its own tables. The reference's list is its own schema's tables and columns (and its accepted run hit a DBException in the recording), so there is no output hydrus-rs could be compared with: it cannot be made sound. Left as it is."
    }
   },
   {

@@ -101,16 +101,16 @@ fn start(store: &Arc<Store>, to: Option<std::path::PathBuf>) {
             Err(e) => format!("could not clear the orphans: {e}"),
             Ok(found) => {
                 update(Some("finished checking".into()), Some(None));
-                if to.is_none() && !found.orphan_files.is_empty() {
-                    update(Some(model::found(found.orphan_files.len(), "files")), None);
-                }
                 match hydrus_store::orphan_files::clear(
                     &store,
                     &found,
                     to.as_deref(),
+                    hydrus_store::orphan_files::Waits::REFERENCE,
                     &mut |text| update(Some(text), None),
                     &is_cancelled,
                 ) {
+                    // (cancelled: the popup is left as it was, as the reference leaves it)
+                    Ok(()) if is_cancelled() => return,
                     Ok(()) => {
                         model::final_text(found.orphan_files.len(), found.orphan_thumbnails.len())
                     }

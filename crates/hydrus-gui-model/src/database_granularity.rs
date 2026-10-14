@@ -12,7 +12,7 @@ pub const INTRO: &str = "The client uses many subfolders to split up your collec
 
 pub const OFFLINE: &str = "If you have a backup from when you were granularity 2, updating it from your new 3 will be hellish expensive because all the files have moved. Click the button here to granularise your backup, too, so it has the same folder structure as your client. Trust me, this will save lots of time.";
 
-const SPEED: &str = "Granularisation migration works at about this speed:\n\nNVME/SSD: 3,000-5,000 files/s\nSATA/USB HDD: 100-500 files/s\nNAS/SMB: 50-250 files/s\nCloud storage: should not be attempted\nBTRFS and EXT4 filesystems may be up to 10x this speed.\n\n";
+const SPEED: &str = "Granularisation migration works at about this speed:\n\nNVME/SSD: 3,000-5,000 files/s\nSATA/USB HDD: 100-500 files/s\nNAS/SMB: 50-250 files/s\nCloud storage: should not be attempted\nBTRFS and EXT4 filesystems may be up to 10x this speed.\n\nIf this is going to be too slow for you, it is ok to back out!";
 
 /// "this client"'s line.
 pub fn granularity_label(granularity: usize) -> String {

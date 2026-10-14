@@ -67,6 +67,191 @@ fn rig() -> Rig {
     }
 }
 
+fn recorded() -> serde_json::Value {
+    hydrus_testkit::fixture_json("file_maintenance_new.json")
+}
+
+fn step<'a>(recording: &'a serde_json::Value, name: &str) -> &'a serde_json::Value {
+    recording["steps"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|s| s["step"] == name)
+        .unwrap()
+}
+
+/// The reference's own "add new work" tab (oracle/record_file_maintenance_new.py, on the same
+/// basic client), replayed through the real window: its words, every job's label and
+/// description, the searches and easy selects with their counts, adding a job and the
+/// scheduled list afterwards.
+// leaf: audit-media-database-maintenance-search
+// leaf: audit-media-database-maintenance-schedule
+#[test]
+fn the_new_work_tab_replays_the_reference_s_steps() {
+    let recording = recorded();
+    let rig = rig();
+    let w = &rig.window;
+    let opened = step(&recording, "opened");
+    let text = |start: &str| {
+        opened["texts"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|t| t.as_str().unwrap())
+            .find(|t| t.starts_with(start))
+            .unwrap_or_else(|| panic!("{start}"))
+            .to_owned()
+    };
+    assert_eq!(w.get_new_explanation(), text("Here you can queue up"));
+    assert_eq!(w.get_search_status(), text("no results yet"));
+    assert_eq!(w.get_files_label(), text("no files selected yet"));
+    // every job: its label, and the description it shows
+    let labels: Vec<String> = w.get_job_labels().iter().map(|l| l.to_string()).collect();
+    let wanted: Vec<String> = opened["job_labels"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|l| l.as_str().unwrap().to_owned())
+        .collect();
+    assert_eq!(labels, wanted);
+    for (i, description) in opened["descriptions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .enumerate()
+    {
+        w.set_job_index(i32::try_from(i).unwrap());
+        w.invoke_see_description();
+        assert_eq!(
+            w.get_information(),
+            description["dialogs"][0][1].as_str().unwrap(),
+            "{}",
+            description["job"]
+        );
+        w.invoke_information_closed();
+    }
+    // no files, no job
+    assert!(!w.get_can_add());
+    // the default search, then the easy selects
+    let selected = |n: &str| step(&recording, n)["selected"].as_str().unwrap().to_owned();
+    w.invoke_run_search();
+    until(|| !w.get_searching(), "the search");
+    assert_eq!(
+        w.get_search_status(),
+        step(&recording, "run the default search")["search"]
+            .as_str()
+            .unwrap()
+    );
+    assert_eq!(w.get_files_label(), selected("run the default search"));
+    assert!(w.get_can_add());
+    w.invoke_easy_select(false);
+    until(
+        || w.get_files_label() == selected("all media files"),
+        "all media files",
+    );
+    assert!(w.get_can_add());
+    w.invoke_easy_select(true);
+    until(
+        || w.get_files_label() == selected("all repository update files"),
+        "all repository update files",
+    );
+    assert!(!w.get_can_add());
+    // the job the reference added, on all media files
+    w.invoke_easy_select(false);
+    until(|| w.get_can_add(), "the files");
+    let added = step(&recording, "add the file metadata job on all media");
+    let job = added["job"].as_i64().unwrap();
+    assert_eq!(job, 0, "regenerate file metadata");
+    let label = wanted[9].clone();
+    w.set_job_index(9);
+    assert_eq!(w.get_files_label(), added["selected"].as_str().unwrap());
+    w.invoke_add_job();
+    assert_eq!(w.get_new_question(), "", "few files need no confirmation");
+    until(
+        || w.get_information() == added["dialogs"][0][1].as_str().unwrap(),
+        "jobs added",
+    );
+    w.invoke_information_closed();
+    let after = step(&recording, "add a job on 1001 files, forget it");
+    let rows = after["rows"].as_array().unwrap();
+    until(
+        || {
+            w.get_rows()
+                .iter()
+                .map(|row| row.cells.iter().map(|c| c.to_string()).collect::<Vec<_>>())
+                .collect::<Vec<_>>()
+                == rows
+                    .iter()
+                    .map(|r| {
+                        r.as_array()
+                            .unwrap()
+                            .iter()
+                            .map(|c| c.as_str().unwrap().to_owned())
+                            .collect::<Vec<_>>()
+                    })
+                    .collect::<Vec<_>>()
+        },
+        "the scheduled-work list",
+    );
+    assert_eq!(rows[0][0], label.as_str());
+}
+
+/// Past a thousand files the reference asks before it schedules.
+// leaf: audit-media-database-maintenance-schedule
+#[test]
+fn a_job_on_over_a_thousand_files_asks_first() {
+    let recording = recorded();
+    let rig = rig();
+    let w = &rig.window;
+    // a thousand more files in the local domain
+    rig.store
+        .write_and_refresh(|ctx| {
+            let conn = ctx.conn();
+            // (in every domain that holds the existing files: the local ones, the combined
+            // one, and the local storage)
+            let domains: Vec<i64> = conn
+                .prepare("SELECT DISTINCT service_id FROM file_domain_current")?
+                .query_map([], |r| r.get(0))?
+                .collect::<Result<_, _>>()?;
+            for i in 0..1000_i64 {
+                let id = 1_000_000 + i;
+                conn.execute("INSERT INTO hashes (hash_id, sha256) VALUES (?, randomblob(32))", [id])?;
+                conn.execute("INSERT INTO files (hash_id, size, mime) VALUES (?, 1, 1)", [id])?;
+                for domain in &domains {
+                    conn.execute("INSERT INTO file_domain_current (service_id, hash_id, added_ms) VALUES (?, ?, 0)", [domain, &id])?;
+                }
+            }
+            Ok(())
+        })
+        .unwrap();
+    let everything = model::find(&rig.store, Pick::AllMedia, &[]).unwrap().len();
+    let in_domain: i64 = rig
+        .store
+        .read(|c| Ok(c.query_row("SELECT COUNT(*) FROM file_domain_current", [], |r| r.get(0))?))
+        .unwrap();
+    assert!(everything > 1000, "{everything} of {in_domain}");
+    w.invoke_easy_select(false);
+    until(|| w.get_can_add(), "the files");
+    until(
+        || w.get_files_label() == model::selected(everything),
+        "all media",
+    );
+    w.set_job_index(9);
+    w.invoke_add_job();
+    let asked = step(&recording, "add a job on 1001 files, forget it")["dialogs"][0].clone();
+    let pretty = hydrus_core::numbers::human_int(everything as u64);
+    assert_eq!(
+        w.get_new_question(),
+        asked[1].as_str().unwrap().replace("1,001", &pretty)
+    );
+    // declining schedules nothing
+    w.invoke_new_answered(false);
+    std::thread::sleep(Duration::from_millis(300));
+    slint::platform::update_timers_and_animations();
+    assert!(counts(&rig.store).is_empty());
+    assert_eq!(w.get_new_question(), "");
+}
+
 // leaf: audit-media-database-maintenance-search
 #[test]
 fn new_work_selects_files_by_search_or_the_easy_select_buttons() {
