@@ -1,12 +1,14 @@
 name: rust
 
-# Every push and pull request that changes code runs the whole Linux check, GUI
-# included. Lint and tests are separate jobs so they run side by side. Windows
+# Every pull request that changes code, and every push to master, runs the whole
+# Linux check, GUI included. (Pushes to working branches run nothing on their
+# own: their pull request's run covers them, and running both doubled the queue
+# when many sessions pushed at once.) Lint and tests are separate jobs so they run side by side. Windows
 # and macOS are deferred (owner, 2026-10-06) and run only when dispatched by
 # hand. Changes to the tracker and the scripts alone run tracker.yml instead.
 on:
   push:
-    branches: [master, 'claude/**', 'codex/**']
+    branches: [master]
     paths: ['crates/**', 'generated/**', 'tools/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.config/**', '.github/workflows/rust.yml']
   pull_request:
     paths: ['crates/**', 'generated/**', 'tools/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.config/**', '.github/workflows/rust.yml']
