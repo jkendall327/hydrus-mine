@@ -1,4 +1,4 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 // The sidecar editors (the reference's `ClientGUIMetadataMigration*`;
 // their workings are hydrus-gui-model's `sidecar_editors`, bound by
 // `src/sidecars_window.rs`): the routers list, a router's editor (its
@@ -6,9 +6,9 @@ import { Btn } from "btn.slint";
 // destination.
 
 import { Button, CheckBox, ComboBox, LineEdit, TextEdit } from "std-widgets.slint";
-import { Theme } from "theme.slint";
-import { Asking } from "subscriptions.slint";
-import { ListTable, TableRow } from "list_table.slint";
+import { Theme } from "@hydrus_ui_core";
+import { Asking } from "@hydrus_ui_core";
+import { ListTable, TableRow } from "@hydrus_ui_core";
 
 component Box inherits Rectangle {
     in property <string> title;

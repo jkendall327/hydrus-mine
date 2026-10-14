@@ -1,4 +1,4 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 // The archive/delete filter's window: a page's files one at a time, at
 // their default zoom. As the reference's defaults have it, a left click or
 // F7 keeps the file, a right click or delete deletes it, a middle click or
@@ -11,7 +11,7 @@ import { Btn } from "btn.slint";
 // its top, the file's info line.
 
 import { Button } from "std-widgets.slint";
-import { ListText, Theme } from "theme.slint";
+import { ListText, Theme } from "@hydrus_ui_core";
 
 export component ArchiveDeleteWindow inherits Window {
     in property <string> title-suffix: "";

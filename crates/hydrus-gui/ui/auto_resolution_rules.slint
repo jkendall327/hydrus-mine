@@ -1,4 +1,4 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 // The duplicates auto-resolution rules editor (the reference's "edit
 // rules" dialog, `EditDuplicatesAutoResolutionRulesPanel`, its rule editor
 // `EditDuplicatesAutoResolutionRulePanel`, and the comparator editors; the
@@ -6,9 +6,9 @@ import { Btn } from "btn.slint";
 // `src/auto_resolution_rules_window.rs`).
 
 import { Button, CheckBox, ComboBox, LineEdit, ScrollView, SpinBox, TextEdit } from "std-widgets.slint";
-import { Theme } from "theme.slint";
-import { ListTable, TableRow } from "list_table.slint";
-import { Asking, SubscriptionExchangeButton } from "subscriptions.slint";
+import { Theme } from "@hydrus_ui_core";
+import { ListTable, TableRow } from "@hydrus_ui_core";
+import { Asking, SubscriptionExchangeButton } from "@hydrus_ui_core";
 import { PairList, PairRow } from "auto_resolution_review.slint";
 
 component Label inherits Text {

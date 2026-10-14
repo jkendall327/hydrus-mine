@@ -1,13 +1,13 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 // A modal popup (`src/popup_modal.rs`): the reference's
 // `PopupMessageDialogPanel` in its dialog. The job's popup (title, texts,
 // gauges, download, pause and stop), and under it a close button, unless
 // the job can't be cancelled.
 
 import { Button, ProgressIndicator } from "std-widgets.slint";
-import { Theme } from "theme.slint";
-import { DownloadControl } from "importing.slint";
-import { PopupData } from "popups.slint";
+import { Theme } from "@hydrus_ui_core";
+import { DownloadControl } from "@hydrus_ui_core";
+import { PopupData } from "@hydrus_ui_core";
 
 export component PopupModalWindow inherits Window {
     in property <string> window-title: "important job";

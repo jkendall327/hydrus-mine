@@ -1,7 +1,7 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 import { Button, CheckBox, LineEdit, ScrollView, TextEdit } from "std-widgets.slint";
-import { Theme } from "theme.slint";
-import { ListTable, TableColumn, TableRow } from "list_table.slint";
+import { Theme } from "@hydrus_ui_core";
+import { ListTable, TableColumn, TableRow } from "@hydrus_ui_core";
 export struct PackageChoice { label: string, included: bool }
 export component DownloaderExchangeWindow inherits Window {
     in property <string> window-title: root.importing ? "import downloader definitions" : "export downloader definitions";

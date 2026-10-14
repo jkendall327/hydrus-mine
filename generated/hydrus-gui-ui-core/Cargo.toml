@@ -1,0 +1,29 @@
+[package]
+name = "hydrus-gui-ui-core"
+description = "The generated Slint UI for the hydrus-rs desktop client: the main window and the components the dialog crates share."
+# Not a workspace member (see the root Cargo.toml), so nothing is inherited;
+# keep these in step with the workspace.
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.89"
+license = "WTFPL"
+publish = false
+# (Cargo hands the crates that depend on this one the library's location, as
+# `DEP_HYDRUS_UI_CORE_*`, which Slint's module builds read; hence `links`)
+links = "hydrus_ui_core"
+
+[lib]
+test = false
+bench = false
+doctest = false
+
+[dependencies]
+# keep in step with the workspace's slint pin and features. The module builds
+# used by the UI crates (`as_library` and `@hydrus_ui_core` imports) are
+# experimental in Slint and may change between releases: they depend on this
+# exact `=` pin, so upgrade Slint only after rebuilding these crates.
+slint = { version = "=1.18.1", default-features = false, features = ["std", "compat-1-2", "backend-winit", "renderer-software", "unstable-winit-030", "system-tray"] }
+hydrus-workspace-hack = { version = "0.1", path = "../../crates/hydrus-workspace-hack" }
+
+[build-dependencies]
+slint-build = { version = "=1.18.1", features = ["experimental-module-builds"] }

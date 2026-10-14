@@ -1,6 +1,6 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 import { Button, ScrollView } from "std-widgets.slint";
-import { Theme } from "theme.slint";
+import { Theme } from "@hydrus_ui_core";
 export struct NamespaceColourRow { label: string, colour: color, selected: bool }
 export component NamespaceColourList inherits Rectangle {
     in property <[NamespaceColourRow]> rows;

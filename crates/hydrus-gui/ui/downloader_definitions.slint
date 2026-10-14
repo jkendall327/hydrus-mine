@@ -1,10 +1,10 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 // Native downloader lists and typed rule editors. Fields are individual
 // controls, never a serialized definition or free-form JSON editor.
 import { Button, CheckBox, ComboBox, LineEdit, ScrollView, TextEdit } from "std-widgets.slint";
-import { Theme } from "theme.slint";
-import { ListTable, TableColumn, TableRow } from "list_table.slint";
-import { Question } from "favourites.slint";
+import { Theme } from "@hydrus_ui_core";
+import { ListTable, TableColumn, TableRow } from "@hydrus_ui_core";
+import { Question } from "@hydrus_ui_core";
 
 export struct DefinitionField {
     id: int, label: string, kind: int, text: string,

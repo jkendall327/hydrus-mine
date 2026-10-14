@@ -1,8 +1,8 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 import { Button, CheckBox, ComboBox, LineEdit, ScrollView, VerticalBox } from "std-widgets.slint";
-import { ListTable, TableColumn, TableRow } from "list_table.slint";
-import { DownloadControl, DownloadLine, JobCogMenu } from "importing.slint";
-import { Theme } from "theme.slint";
+import { ListTable, TableColumn, TableRow } from "@hydrus_ui_core";
+import { DownloadControl, DownloadLine, JobCogMenu } from "@hydrus_ui_core";
+import { Theme } from "@hydrus_ui_core";
 
 export struct MonthlyBandwidthBar { month: string, usage: string, fraction: float }
 export component BandwidthWindow inherits Window {

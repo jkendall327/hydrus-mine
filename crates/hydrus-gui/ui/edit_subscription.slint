@@ -1,4 +1,4 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 // The edit subscription dialog (the reference's `EditSubscriptionPanel`,
 // opened from the manage subscriptions dialog's "add" and "edit"; its
 // workings are hydrus-gui-model's `edit_subscription`, bound by
@@ -8,10 +8,10 @@ import { Btn } from "btn.slint";
 // is edited.
 
 import { Button, CheckBox, LineEdit, SpinBox } from "std-widgets.slint";
-import { Theme } from "theme.slint";
-import { ListTable, TableRow } from "list_table.slint";
-import { Asking } from "subscriptions.slint";
-import { MenuPane, MenuPanes } from "main_menu.slint";
+import { Theme } from "@hydrus_ui_core";
+import { ListTable, TableRow } from "@hydrus_ui_core";
+import { Asking } from "@hydrus_ui_core";
+import { MenuPane, MenuPanes } from "@hydrus_ui_core";
 
 // a box's title, as the reference's static boxes
 component BoxTitle inherits Text {

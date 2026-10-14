@@ -1,0 +1,30 @@
+// Dialog group 2: windows compiled as their own crate (generated/hydrus-gui-ui-dialogs-2),
+// apart from the main window, so rustc holds a fraction of the UI at a time. Files stay
+// where they are; this file only exports the windows of its group. A new window with a
+// main.slint export goes in the smallest group (not in main.slint).
+
+// (the compiler records which types come from the library by the imports of the
+// entry file only, so this file imports from it too)
+import { Btn, Theme } from "@hydrus_ui_core";
+
+export { LocalTransferWindow } from "local_transfer.slint";
+export { RelatedWeightsWindow } from "related_weights.slint";
+export { ManageRatingsWindow } from "manage_ratings.slint";
+export { VacuumReviewWindow } from "vacuum_review.slint";
+export { DatabaseLocationsWindow, GranularityWindow, LocationMaxSizeWindow } from "database_locations.slint";
+export { DateTimeEditorWindow, ManageTimesWindow, TimeRow } from "manage_times.slint";
+export { AboutWindow } from "about.slint";
+export { PopupModalWindow } from "popup_modal.slint";
+export { AutoResolutionReviewWindow, PairRow } from "auto_resolution_review.slint";
+export { CommandPaletteWindow, PaletteRow } from "command_palette.slint";
+export { ImportRow, ReviewImportsWindow } from "import_files.slint";
+export { UnlockWindow } from "unlock.slint";
+export { AutoResolutionRulesWindow, AutoResolutionRuleWindow, ComparatorWindow } from "auto_resolution_rules.slint";
+export { FilenameTaggingWindow, MiscRow } from "filename_tagging.slint";
+export { LoginScriptsWindow, LoginScriptWindow } from "login_workflows.slint";
+export { RegexFavouritesWindow } from "regex_favourites.slint";
+export { LoginDomainsWindow } from "login_domains.slint";
+export { LoginDomainEntryWindow } from "login_domain_entry.slint";
+export { DeleteFilesWindow } from "delete_files.slint";
+export { ArchiveRepairWindow } from "archive_repair.slint";
+export { WhatIsThisWindow } from "what_is_this.slint";
