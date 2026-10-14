@@ -285,6 +285,7 @@ impl Store {
             claims: MediaClaims::default(),
             migration_active: Arc::new(AtomicBool::new(false)),
             undo: std::sync::Mutex::default(),
+            write_clock: std::sync::Mutex::default(),
         }))
     }
 
