@@ -49,6 +49,24 @@ export component RatingSampleControl inherits HorizontalBox {
         }
     }
 }
+// One of the reference's radio buttons for the kind of star.
+component StarTypeRadio inherits Rectangle {
+    in property <string> text;
+    in property <bool> checked;
+    in property <bool> enabled: true;
+    callback clicked();
+    height: 22px;
+    HorizontalLayout {
+        spacing: 6px;
+        alignment: start;
+        Rectangle {
+            width: 14px; height: 14px; border-radius: 7px; border-width: 1px; border-color: Theme.text;
+            Rectangle { width: 8px; height: 8px; border-radius: 4px; background: root.checked ? Theme.text : transparent; }
+        }
+        Text { text: root.text; color: Theme.text; vertical-alignment: center; }
+    }
+    TouchArea { enabled: root.enabled; clicked => { root.clicked(); } }
+}
 component RatingExamplePanel inherits VerticalBox {
     in property <[ServiceRatingExampleRow]> rows;
     in property <bool> interactive: true;
@@ -166,7 +184,10 @@ export component EditServiceWindow inherits Window {
     in-out property <bool> show-null;
     in property <[string]> appearances;
     in-out property <int> appearance;
-    in-out property <string> svg;
+    // the installed and the user's own SVGs; none hides the choice of them
+    in property <[string]> svg-names;
+    in-out property <bool> use-svg;
+    in-out property <int> svg-index;
     in-out property <int> stars: 5;
     in-out property <bool> allow-zero;
     in-out property <int> icon-padding: 4;
@@ -189,7 +210,8 @@ export component EditServiceWindow inherits Window {
     callback counter-edit(int);
     callback counter-answered(bool);
     changed appearance => { root.preview-edited(); }
-    changed svg => { root.preview-edited(); }
+    changed use-svg => { root.preview-edited(); }
+    changed svg-index => { root.preview-edited(); }
     changed stars => { root.preview-edited(); }
     changed icon-padding => { root.preview-edited(); }
     changed fraction => { root.preview-edited(); }
@@ -243,9 +265,22 @@ export component EditServiceWindow inherits Window {
                     }
                 }
                 if root.star-rating: VerticalBox {
-                    Text { text: "star ratings"; color: Theme.text; font-weight: 700; }
-                    ComboBox { enabled: !root.counter-editing; model: root.appearances; current-index <=> root.appearance; }
-                    if root.appearance == root.appearances.length - 1: LineEdit { enabled: !root.counter-editing; text <=> root.svg; placeholder-text: "SVG name"; }
+                    Text { text: "rating shape"; color: Theme.text; font-weight: 700; }
+                    if root.svg-names.length > 0: HorizontalBox {
+                        Text { text: "type: "; color: Theme.text; }
+                        VerticalLayout {
+                            StarTypeRadio { text: "shapes"; checked: !root.use-svg; enabled: !root.counter-editing; clicked => { root.use-svg = false; } }
+                            StarTypeRadio { text: "svgs"; checked: root.use-svg; enabled: !root.counter-editing; clicked => { root.use-svg = true; } }
+                        }
+                    }
+                    HorizontalBox {
+                        Text { text: "shape: "; color: Theme.text; }
+                        ComboBox { enabled: !root.counter-editing && !root.use-svg; model: root.appearances; current-index <=> root.appearance; }
+                    }
+                    if root.svg-names.length > 0: HorizontalBox {
+                        Text { text: "svg: "; color: Theme.text; }
+                        ComboBox { enabled: !root.counter-editing && root.use-svg; model: root.svg-names; current-index <=> root.svg-index; }
+                    }
                 }
                 if root.numerical: VerticalBox {
                     Text { text: "numerical ratings"; color: Theme.text; font-weight: 700; }

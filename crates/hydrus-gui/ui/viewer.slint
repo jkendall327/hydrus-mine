@@ -60,6 +60,9 @@ export struct RatingRow {
     text: string,
     pen: color,
     brush: color,
+    // an SVG the stars are drawn with, if one was found for the service
+    has-svg: bool,
+    svg: image,
 }
 
 // Shared passive rating drawing; input belongs only to the hover's own TouchArea.
@@ -85,17 +88,45 @@ export component RatingGraphic inherits Rectangle {
             font-size: max(root.incdec-height - 1px, 6px);
         }
     }
-    for star[k] in root.rating.shapes: Path {
-        x: k * (root.icon-size + root.rating.pad);
-        y: 0;
-        width: root.icon-size;
-        height: root.icon-size;
-        viewbox-width: 12;
-        viewbox-height: 12;
-        commands: root.rating.shape;
-        fill: star.brush;
-        stroke: star.pen;
-        stroke-width: root.outline;
+    if !root.rating.has-svg: Rectangle {
+        for star[k] in root.rating.shapes: Path {
+            x: k * (root.icon-size + root.rating.pad);
+            y: 0;
+            width: root.icon-size;
+            height: root.icon-size;
+            viewbox-width: 12;
+            viewbox-height: 12;
+            commands: root.rating.shape;
+            fill: star.brush;
+            stroke: star.pen;
+            stroke-width: root.outline;
+        }
+    }
+    // an SVG star: the SVG's opaque pixels in the fill colour over copies of
+    // them in the border colour spread around by the outline width
+    if root.rating.has-svg: Rectangle {
+        for star[k] in root.rating.shapes: Rectangle {
+            x: k * (root.icon-size + root.rating.pad);
+            y: 0;
+            width: root.icon-size;
+            height: root.icon-size;
+            for j in 8: Image {
+                source: root.rating.svg;
+                colorize: star.pen;
+                image-fit: contain;
+                x: Math.cos(j * 45deg) * root.outline * 0.8;
+                y: Math.sin(j * 45deg) * root.outline * 0.8;
+                width: parent.width;
+                height: parent.height;
+            }
+            Image {
+                source: root.rating.svg;
+                colorize: star.brush;
+                image-fit: contain;
+                width: parent.width;
+                height: parent.height;
+            }
+        }
     }
 }
 

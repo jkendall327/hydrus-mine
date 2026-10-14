@@ -52,6 +52,7 @@ pub mod downloader_display_window;
 pub mod downloader_interchange_window;
 pub mod downloader_update_times;
 mod drops;
+mod star_images;
 pub mod duplicates_filtering_sidebar;
 mod duplicates_sidebar;
 mod edit_subscription_window;
@@ -598,7 +599,8 @@ fn lay_out_thumbnails(window: &MainWindow, store: &hydrus_store::Store, rows: &T
 
 /// Show `pages` in `window`, and let the window change them.
 pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
-    windows::register_main(window, pages.store());
+    about_window::note_boot();
+    star_images::set_dir(pages.store().dir());
     about_window::note_boot();
     window
         .global::<TagTextHistory<'_>>()
@@ -8026,7 +8028,10 @@ pub(crate) fn rating_row(control: &ratings::Control) -> RatingRow {
             hydrus_core::numbers::human_int(value.unsigned_abs()),
         ),
     };
+    let svg = control.svg.as_deref().and_then(star_images::image);
     RatingRow {
+        has_svg: svg.is_some(),
+        svg: svg.unwrap_or_default(),
         kind,
         shape: shape.into(),
         shapes: ModelRc::new(VecModel::from(shapes)),

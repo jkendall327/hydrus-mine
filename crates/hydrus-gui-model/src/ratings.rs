@@ -20,6 +20,9 @@ pub struct Control {
     pub name: String,
     pub kind: Kind,
     pub colours: RatingColours,
+    /// The SVG its stars are drawn with, if it has one chosen (the front
+    /// end falls back to the fat star where there is no such SVG).
+    pub svg: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -109,6 +112,14 @@ pub fn shape_path(appearance: &StarAppearance) -> &'static str {
     }
 }
 
+/// The SVG an appearance names.
+pub fn svg_of(appearance: &StarAppearance) -> Option<String> {
+    match appearance {
+        StarAppearance::Svg(name) => Some(name.clone()),
+        StarAppearance::Shape(_) => None,
+    }
+}
+
 const FAT_STAR: &str =
     "M 6 0 L 7.8 4.1 L 12 4.6 L 8.9 7.6 L 9.8 12 L 6 9.8 L 2.2 12 L 3.1 7.6 L 0 4.5 L 4.2 4.1 Z";
 
@@ -174,11 +185,17 @@ pub fn controls_of(
                 ),
                 _ => continue,
             };
+            let svg = match &service.kind {
+                ServiceKind::RatingLike(config) => svg_of(&config.appearance),
+                ServiceKind::RatingNumerical(config) => svg_of(&config.appearance),
+                _ => None,
+            };
             out.push(Control {
                 service: service.id,
                 name: service.name.clone(),
                 kind,
                 colours,
+                svg,
             });
         }
     }

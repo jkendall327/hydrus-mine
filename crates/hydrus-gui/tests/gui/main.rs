@@ -180,6 +180,7 @@ mod tag_relationships;
 mod tag_relationships_replay;
 
 mod services_editor;
+mod star_svgs;
 
 mod client_api_admin;
 mod client_api_permissions;
