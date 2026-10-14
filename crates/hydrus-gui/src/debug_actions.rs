@@ -204,16 +204,119 @@ fn modal(store: &Store, cancellable: bool, wait: Option<Wait>) {
     });
 }
 
+thread_local! {
+    /// The popups whose buttons call back, kept for as long as the client
+    /// runs (a dropped one finishes and goes).
+    static CALLING: RefCell<Vec<std::sync::Arc<hydrus_download::popups::Working>>> =
+        const { RefCell::new(Vec::new()) };
+    /// Buttons clicked that need the pages, from the thread that polls them.
+    static GAP_CALLS: std::sync::Arc<Mutex<usize>> = std::sync::Arc::new(Mutex::new(0));
+    /// The pages the gap downloader's popup works on.
+    static GAP_PAGES: RefCell<std::rc::Weak<RefCell<crate::Pages>>> =
+        const { RefCell::new(std::rc::Weak::new()) };
+    static CALL_TIMER: slint::Timer = slint::Timer::default();
+}
+
+/// `_DebugMakeSomePopups`' popups at once, those with buttons in a live
+/// popup that is polled for its clicks, and the key of the one that pulses.
+fn some_popups(store: &std::sync::Arc<Store>, context: &Context) -> Option<[u8; 32]> {
+    let mut pulsing = None;
+    for job in model::some_popups(now(), || Sha256(rand::random::<[u8; 32]>())) {
+        if job.status_title.as_deref() == Some(model::PULSING_JOB) {
+            pulsing = Some(job.key);
+        }
+        let Some(call) = model::call_of(&job) else {
+            post(store, vec![job]);
+            continue;
+        };
+        let popup = hydrus_download::popups::Working::new(
+            store,
+            job.status_title.clone().unwrap_or_default(),
+            false,
+        );
+        popup.set_text(job.status_text_1.clone());
+        let label = job.user_callable_label.clone().unwrap_or_default();
+        match call {
+            model::Call::ShowText => {
+                let store = store.clone();
+                popup.set_user_callable(label, move || {
+                    hydrus_download::popups::show_text(&store, model::USER_CALL_TEXT);
+                });
+            }
+            model::Call::GapDownloader => {
+                let calls = GAP_CALLS.with(std::sync::Arc::clone);
+                popup.set_user_callable(label, move || {
+                    *calls
+                        .lock()
+                        .unwrap_or_else(std::sync::PoisonError::into_inner) += 1;
+                });
+            }
+        }
+        popup.show();
+        CALLING.with(|c| c.borrow_mut().push(popup));
+    }
+    GAP_PAGES.with(|p| *p.borrow_mut() = Rc::downgrade(&context.pages));
+    let store = store.clone();
+    CALL_TIMER.with(|timer| {
+        timer.start(
+            slint::TimerMode::Repeated,
+            Duration::from_millis(100),
+            move || {
+                for popup in CALLING.with(|c| c.borrow().clone()) {
+                    popup.poll_actions();
+                }
+                let calls = GAP_CALLS.with(std::sync::Arc::clone);
+                let clicks = std::mem::take(
+                    &mut *calls
+                        .lock()
+                        .unwrap_or_else(std::sync::PoisonError::into_inner),
+                );
+                for _ in 0..clicks {
+                    if let Some(pages) = GAP_PAGES.with(|p| p.borrow().upgrade()) {
+                        gap_downloader(&store, &pages);
+                    }
+                }
+            },
+        );
+    });
+    pulsing
+}
+
+/// `CreateNewSubscriptionGapDownloader`: the "subscription gap downloaders"
+/// page, and the search pended on it.
+fn gap_downloader(store: &Store, pages: &Rc<RefCell<crate::Pages>>) {
+    let page = pages.borrow_mut().gallery_page_named(model::GAP_PAGE_NAME);
+    let result = page.and_then(|page| {
+        page.borrow_mut().pend_gap_downloader(
+            model::GAP_GUG,
+            model::GAP_QUERY,
+            hydrus_core::import_options::ImportOptionsSlice::default(),
+            model::GAP_FILE_LIMIT,
+        )
+    });
+    if let Err(text) = result {
+        hydrus_download::popups::show_text(store, text);
+    }
+}
+
 pub(crate) fn run(context: &Context, action: Action) {
     let store = context.pages.borrow().store().clone();
     match action {
         Action::ProfileInfo => message("Information", model::PROFILE_MESSAGE),
         Action::MessageBox => message("Warning", model::MESSAGE_BOX_TEXT),
         Action::SomePopups => {
-            post(
-                &store,
-                model::some_popups(now(), || Sha256(rand::random::<[u8; 32]>())),
-            );
+            let pulsing = some_popups(&store, context);
+            if let Some(key) = pulsing {
+                // (`CallLater( 2.0, ... )`: the test job gets a pulsing sub-job)
+                let store = store.clone();
+                slint::Timer::single_shot(Duration::from_secs(2), move || {
+                    #[allow(clippy::cast_possible_truncation)] // (seconds)
+                    let at = now() as i64;
+                    let _ = store.write(move |ctx| {
+                        popups::update(ctx.conn(), &key, at, model::pulse).map(|_| ())
+                    });
+                });
+            }
             for i in 1..4 {
                 let store = store.clone();
                 slint::Timer::single_shot(Duration::from_millis(500 * i as u64), move || {

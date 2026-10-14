@@ -16,6 +16,7 @@ use crate::{
     DefinitionField, DownloaderDefinitionEditWindow, DownloaderDefinitionsWindow, TableColumn,
     TableRow,
 };
+use hydrus_gui_model::nested_gug_members;
 
 /// Definition list and child editors while open.
 #[derive(Clone, Default)]
@@ -693,23 +694,39 @@ fn show_editor(window: &DownloaderDefinitionEditWindow, editor: &Editor, whole: 
             window.set_preview_next(preview.next.into());
         }
     }
-    if let Value::Gug(AnyGug::Nested(n)) = &editor.value {
+    if let Value::Gug(AnyGug::Nested(_)) = &editor.value {
+        let selected = editor.member_selected();
         window.set_members(ModelRc::new(VecModel::from(
             editor
-                .downloaders
-                .gugs
-                .gugs
-                .iter()
-                .filter(|g| matches!(g, AnyGug::Single(_)))
-                .map(|g| {
+                .member_rows()
+                .into_iter()
+                .enumerate()
+                .map(|(i, (name, available))| {
                     row(
-                        vec![g.name().to_owned()],
-                        n.gugs
-                            .iter()
-                            .any(|(k, name)| k == g.key() || name == g.name()),
+                        vec![name, if available { "yes" } else { "no" }.into()],
+                        selected.contains(&i),
                     )
                 })
                 .collect::<Vec<_>>(),
+        )));
+        window.set_members_selected(!selected.is_empty());
+        window.set_members_sort(int(editor.members.sort.0));
+        window.set_members_ascending(editor.members.sort.1);
+        let chooser = editor.members.chooser.as_ref();
+        window.set_chooser_title(if chooser.is_some() {
+            nested_gug_members::CHOOSER_TITLE.into()
+        } else {
+            SharedString::new()
+        });
+        window.set_chooser_rows(ModelRc::new(VecModel::from(
+            chooser
+                .map(|c| {
+                    c.choices
+                        .iter()
+                        .map(|(_, name, ticked)| row(vec![name.clone()], *ticked))
+                        .collect::<Vec<_>>()
+                })
+                .unwrap_or_default(),
         )));
     }
 }
@@ -1024,38 +1041,83 @@ fn open_editor(
             refresh(false);
         }
     });
-    window.on_member_toggled({
+    window.on_member_row_clicked({
         let state = state.clone();
         let refresh = refresh.clone();
         let blocked = blocked.clone();
-        move |i| {
+        move |i, ctrl, shift| {
             if blocked() {
                 return;
             }
-            let mut e = state.borrow_mut();
-            let member = usize::try_from(i)
-                .ok()
-                .and_then(|i| {
-                    e.downloaders
-                        .gugs
-                        .gugs
-                        .iter()
-                        .filter(|g| matches!(g, AnyGug::Single(_)))
-                        .nth(i)
-                })
-                .map(|g| (g.key().to_owned(), g.name().to_owned()));
-            if let (Some(member), Value::Gug(AnyGug::Nested(g))) = (member, &mut e.value) {
-                if let Some(i) = g
-                    .gugs
-                    .iter()
-                    .position(|(k, n)| k == &member.0 || n == &member.1)
-                {
-                    g.gugs.remove(i);
-                } else {
-                    g.gugs.push(member);
-                }
+            if let Ok(i) = usize::try_from(i) {
+                state.borrow_mut().member_click(i, ctrl, shift);
             }
-            drop(e);
+            refresh(false);
+        }
+    });
+    window.on_member_sort({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        move |column, ascending| {
+            if blocked() {
+                return;
+            }
+            if let Ok(column) = usize::try_from(column) {
+                state.borrow_mut().member_sort(column, ascending);
+            }
+            refresh(false);
+        }
+    });
+    window.on_member_action({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        let weak = window.as_weak();
+        move |action| {
+            if blocked() {
+                return;
+            }
+            let Some(w) = weak.upgrade() else { return };
+            match action.as_str() {
+                "add" => {
+                    if let Err(notice) = state.borrow_mut().member_add() {
+                        w.set_notice(notice.into());
+                    }
+                }
+                "delete" => {
+                    if let Some(question) = state.borrow_mut().member_delete() {
+                        w.set_question(question.into());
+                    }
+                }
+                _ => (),
+            }
+            refresh(false);
+        }
+    });
+    window.on_notice_dismissed({
+        let weak = window.as_weak();
+        move || {
+            if let Some(w) = weak.upgrade() {
+                w.set_notice(SharedString::new());
+            }
+        }
+    });
+    window.on_chooser_toggled({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        move |i| {
+            if let Ok(i) = usize::try_from(i) {
+                state.borrow_mut().member_tick(i);
+            }
+            refresh(false);
+        }
+    });
+    window.on_chooser_answered({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        move |ok| {
+            state.borrow_mut().member_chosen(ok);
             refresh(false);
         }
     });
@@ -1143,11 +1205,16 @@ fn open_editor(
     window.on_answered({
         let apply = apply.clone();
         let weak = window.as_weak();
+        let state = state.clone();
+        let refresh = refresh.clone();
         move |yes| {
             if let Some(w) = weak.upgrade() {
                 w.set_question(SharedString::new());
             }
-            if yes {
+            if state.borrow().members.deleting {
+                state.borrow_mut().member_deleted(yes);
+                refresh(false);
+            } else if yes {
                 apply(true);
             }
         }

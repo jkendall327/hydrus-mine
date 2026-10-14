@@ -329,7 +329,7 @@
     },
     {
       "topic": "message",
-      "at_ms": 142,
+      "at_ms": 121,
       "job": {
         "title": "test network control",
         "text_1": "Downloading...",
@@ -353,7 +353,7 @@
     },
     {
       "topic": "message",
-      "at_ms": 151,
+      "at_ms": 128,
       "job": {
         "title": "DataMissing",
         "text_1": "This is a test exception",
@@ -365,7 +365,7 @@
         "done": true,
         "had_error": false,
         "has_traceback": true,
-        "traceback": "================ Exception ================\nDataMissing: This is a test exception\n================ Traceback ================\nTraceback (most recent call last):\n  File \"/home/user/hydrus-mine/hydrus/client/gui/ClientGUI.py\", line 1580, in _DebugMakeSomePopups\n    raise HydrusExceptions.DataMissing( 'This is a test exception' )\nhydrus.core.HydrusExceptions.DataMissing: This is a test exception\n================== Stack ==================\n  File \"/home/user/hydrus-mine/oracle/record_debug_popups.py\", line 145, in <module>\n    main()\n  File \"/home/user/hydrus-mine/oracle/record_debug_popups.py\", line 134, in main\n    Path(sys.argv[2]).write_text(json.dumps(hydrus_driver.run_client(database, record)))\n  File \"/home/user/hydrus-mine/oracle/hydrus_driver.py\", line 361, in run_client\n    hydrus_client_boot.boot()\n  File \"/home/user/hydrus-mine/hydrus/hydrus_client_boot.py\", line 267, in boot\n    controller.Run()\n  File \"/home/user/hydrus-mine/hydrus/client/ClientController.py\", line 2045, in Run\n    self.app.exec_()\n  File \"/root/pyenv/lib/python3.13/site-packages/qtpy/QtWidgets.py\", line 165, in <lambda>\n    QApplication.exec_ = lambda *args, **kwargs: possibly_static_exec(\n  File \"/root/pyenv/lib/python3.13/site-packages/qtpy/_utils.py\", line 53, in possibly_static_exec\n    return args[0].exec()\n  File \"/home/user/hydrus-mine/hydrus/client/gui/ClientGUICallAfter.py\", line 64, in event\n    event.Execute()\n  File \"/home/user/hydrus-mine/hydrus/client/gui/ClientGUICallAfter.py\", line 29, in Execute\n    self._call()\n  File \"/home/user/hydrus-mine/hydrus/core/HydrusData.py\", line 520, in __call__\n    return self._func( *self._args, **self._kwargs )\n  File \"/home/user/hydrus-mine/hydrus/client/ClientController.py\", line 458, in qt_code\n    result = func( *args, **kwargs )\n  File \"/home/user/hydrus-mine/oracle/record_debug_popups.py\", line 72, in drive\n    find(menu, ['debug', 'gui actions', 'make some popups']).trigger()\n  File \"/home/user/hydrus-mine/hydrus/client/gui/ClientGUIMenus.py\", line 342, in event_callable\n    callable( *args, **kwargs )\n  File \"/home/user/hydrus-mine/hydrus/client/gui/ClientGUI.py\", line 1584, in _DebugMakeSomePopups\n    HydrusData.ShowException( e, do_wait = False )\n  File \"/home/user/hydrus-mine/hydrus/client/ClientData.py\", line 134, in ShowExceptionClient\n    ShowExceptionTupleClient( etype, value, tb, do_wait = do_wait )\n  File \"/home/user/hydrus-mine/hydrus/client/ClientData.py\", line 148, in ShowExceptionTupleClient\n    job_status.SetExceptionTuple( etype, value, tb )\n  File \"/home/user/hydrus-mine/hydrus/client/ClientThreading.py\", line 365, in SetExceptionTuple\n    nice_trace = HydrusData.ConvertExceptionTupleToNiceTrace( etype, value, tb )\n  File \"/home/user/hydrus-mine/hydrus/core/HydrusData.py\", line 328, in ConvertExceptionTupleToNiceTrace\n    stack_list = traceback.format_stack()\n=================== End ===================",
+        "traceback": "================ Exception ================\nDataMissing: This is a test exception\n================ Traceback ================\nTraceback (most recent call last):\n  File \"/home/user/hydrus-mine/hydrus/client/gui/ClientGUI.py\", line 1580, in _DebugMakeSomePopups\n    raise HydrusExceptions.DataMissing( 'This is a test exception' )\nhydrus.core.HydrusExceptions.DataMissing: This is a test exception\n================== Stack ==================\n  File \"/home/user/hydrus-mine/oracle/record_debug_popups.py\", line 165, in <module>\n    main()\n  File \"/home/user/hydrus-mine/oracle/record_debug_popups.py\", line 154, in main\n    Path(sys.argv[2]).write_text(json.dumps(hydrus_driver.run_client(database, record)))\n  File \"/home/user/hydrus-mine/oracle/hydrus_driver.py\", line 361, in run_client\n    hydrus_client_boot.boot()\n  File \"/home/user/hydrus-mine/hydrus/hydrus_client_boot.py\", line 267, in boot\n    controller.Run()\n  File \"/home/user/hydrus-mine/hydrus/client/ClientController.py\", line 2045, in Run\n    self.app.exec_()\n  File \"/root/pyenv/lib/python3.13/site-packages/qtpy/QtWidgets.py\", line 165, in <lambda>\n    QApplication.exec_ = lambda *args, **kwargs: possibly_static_exec(\n  File \"/root/pyenv/lib/python3.13/site-packages/qtpy/_utils.py\", line 53, in possibly_static_exec\n    return args[0].exec()\n  File \"/home/user/hydrus-mine/hydrus/client/gui/ClientGUICallAfter.py\", line 64, in event\n    event.Execute()\n  File \"/home/user/hydrus-mine/hydrus/client/gui/ClientGUICallAfter.py\", line 29, in Execute\n    self._call()\n  File \"/home/user/hydrus-mine/hydrus/core/HydrusData.py\", line 520, in __call__\n    return self._func( *self._args, **self._kwargs )\n  File \"/home/user/hydrus-mine/hydrus/client/ClientController.py\", line 458, in qt_code\n    result = func( *args, **kwargs )\n  File \"/home/user/hydrus-mine/oracle/record_debug_popups.py\", line 72, in drive\n    find(menu, ['debug', 'gui actions', 'make some popups']).trigger()\n  File \"/home/user/hydrus-mine/hydrus/client/gui/ClientGUIMenus.py\", line 342, in event_callable\n    callable( *args, **kwargs )\n  File \"/home/user/hydrus-mine/hydrus/client/gui/ClientGUI.py\", line 1584, in _DebugMakeSomePopups\n    HydrusData.ShowException( e, do_wait = False )\n  File \"/home/user/hydrus-mine/hydrus/client/ClientData.py\", line 134, in ShowExceptionClient\n    ShowExceptionTupleClient( etype, value, tb, do_wait = do_wait )\n  File \"/home/user/hydrus-mine/hydrus/client/ClientData.py\", line 148, in ShowExceptionTupleClient\n    job_status.SetExceptionTuple( etype, value, tb )\n  File \"/home/user/hydrus-mine/hydrus/client/ClientThreading.py\", line 365, in SetExceptionTuple\n    nice_trace = HydrusData.ConvertExceptionTupleToNiceTrace( etype, value, tb )\n  File \"/home/user/hydrus-mine/hydrus/core/HydrusData.py\", line 328, in ConvertExceptionTupleToNiceTrace\n    stack_list = traceback.format_stack()\n=================== End ===================",
         "files": null,
         "mergable": null,
         "user_callable_label": null,
@@ -374,7 +374,7 @@
     },
     {
       "topic": "message",
-      "at_ms": 715,
+      "at_ms": 678,
       "job": {
         "title": null,
         "text_1": "This is a delayed popup message -- 1",
@@ -395,7 +395,7 @@
     },
     {
       "topic": "message",
-      "at_ms": 1192,
+      "at_ms": 1133,
       "job": {
         "title": null,
         "text_1": "This is a delayed popup message -- 2",
@@ -416,7 +416,7 @@
     },
     {
       "topic": "message",
-      "at_ms": 1682,
+      "at_ms": 1654,
       "job": {
         "title": null,
         "text_1": "This is a delayed popup message -- 3",
@@ -446,11 +446,57 @@
       ]
     }
   ],
+  "user_calls": [
+    {
+      "title": "user call test",
+      "label": "cheeki breeki",
+      "messages": [
+        {
+          "text_1": "iv damke",
+          "title": null,
+          "had_error": false
+        }
+      ],
+      "pages_before": [
+        "files"
+      ],
+      "pages_after": [
+        {
+          "name": "files",
+          "gallery": false
+        }
+      ]
+    },
+    {
+      "title": "sub gap downloader test",
+      "label": "start a new downloader for this to fill in the gap!",
+      "messages": [
+        {
+          "text_1": "Could not find a Gallery URL Generator (Downloader) for \"\"!",
+          "title": null,
+          "had_error": false
+        }
+      ],
+      "pages_before": [
+        "files"
+      ],
+      "pages_after": [
+        {
+          "name": "files",
+          "gallery": false
+        },
+        {
+          "name": "subscription gap downloaders",
+          "gallery": true
+        }
+      ]
+    }
+  ],
   "cancellable": {
     "events": [
       {
         "topic": "modal_message",
-        "at_ms": 5173,
+        "at_ms": 5190,
         "job": {
           "title": "debug modal job",
           "text_1": null,
@@ -471,7 +517,7 @@
       },
       {
         "topic": "message",
-        "at_ms": 15482,
+        "at_ms": 15505,
         "job": {
           "title": "debug modal job",
           "text_1": "Will auto-dismiss in 1 second.",
@@ -495,10 +541,10 @@
       }
     ],
     "cancel_at_ms": null,
-    "finish_ms": 15486,
+    "finish_ms": 15510,
     "samples": [
       {
-        "at_ms": 5174,
+        "at_ms": 5191,
         "text_1": "Will auto-dismiss in 10 seconds.",
         "gauge_1": [
           0,
@@ -509,7 +555,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 15486,
+        "at_ms": 15510,
         "text_1": "Will auto-dismiss in 1 second.",
         "gauge_1": [
           9,
@@ -525,7 +571,7 @@
     "events": [
       {
         "topic": "modal_message",
-        "at_ms": 5169,
+        "at_ms": 5205,
         "job": {
           "title": "debug modal job",
           "text_1": null,
@@ -546,7 +592,7 @@
       },
       {
         "topic": "message",
-        "at_ms": 5169,
+        "at_ms": 5206,
         "job": {
           "title": "debug modal job",
           "text_1": "Will auto-dismiss in 10 seconds.",
@@ -570,10 +616,10 @@
       }
     ],
     "cancel_at_ms": null,
-    "finish_ms": 5169,
+    "finish_ms": 5205,
     "samples": [
       {
-        "at_ms": 5169,
+        "at_ms": 5205,
         "text_1": "Will auto-dismiss in 10 seconds.",
         "gauge_1": [
           0,
@@ -584,7 +630,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 5677,
+        "at_ms": 5713,
         "text_1": "Will auto-dismiss in 10 seconds.",
         "gauge_1": [
           0,
@@ -595,7 +641,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 6185,
+        "at_ms": 6229,
         "text_1": "Will auto-dismiss in 9 seconds.",
         "gauge_1": [
           0,
@@ -606,7 +652,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 6692,
+        "at_ms": 6736,
         "text_1": "Will auto-dismiss in 9 seconds.",
         "gauge_1": [
           1,
@@ -617,7 +663,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 7200,
+        "at_ms": 7243,
         "text_1": "Will auto-dismiss in 9 seconds.",
         "gauge_1": [
           1,
@@ -628,7 +674,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 7707,
+        "at_ms": 7751,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -639,7 +685,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 8214,
+        "at_ms": 8260,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -650,7 +696,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 8721,
+        "at_ms": 8769,
         "text_1": "Will auto-dismiss in 7 seconds.",
         "gauge_1": [
           3,
@@ -661,7 +707,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 9229,
+        "at_ms": 9281,
         "text_1": "Will auto-dismiss in 7 seconds.",
         "gauge_1": [
           3,
@@ -672,7 +718,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 9737,
+        "at_ms": 9790,
         "text_1": "Will auto-dismiss in 6 seconds.",
         "gauge_1": [
           4,
@@ -683,7 +729,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 10246,
+        "at_ms": 10296,
         "text_1": "Will auto-dismiss in 6 seconds.",
         "gauge_1": [
           4,
@@ -694,8 +740,8 @@
         "cancelled": false
       },
       {
-        "at_ms": 10754,
-        "text_1": "Will auto-dismiss in 6 seconds.",
+        "at_ms": 10803,
+        "text_1": "Will auto-dismiss in 5 seconds.",
         "gauge_1": [
           4,
           10
@@ -705,7 +751,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 11261,
+        "at_ms": 11309,
         "text_1": "Will auto-dismiss in 5 seconds.",
         "gauge_1": [
           5,
@@ -716,7 +762,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 11768,
+        "at_ms": 11818,
         "text_1": "Will auto-dismiss in 5 seconds.",
         "gauge_1": [
           5,
@@ -727,7 +773,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 12276,
+        "at_ms": 12327,
         "text_1": "Will auto-dismiss in 4 seconds.",
         "gauge_1": [
           6,
@@ -738,7 +784,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 12781,
+        "at_ms": 12835,
         "text_1": "Will auto-dismiss in 4 seconds.",
         "gauge_1": [
           6,
@@ -749,7 +795,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 13291,
+        "at_ms": 13344,
         "text_1": "Will auto-dismiss in 3 seconds.",
         "gauge_1": [
           7,
@@ -760,7 +806,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 13798,
+        "at_ms": 13859,
         "text_1": "Will auto-dismiss in 3 seconds.",
         "gauge_1": [
           7,
@@ -771,7 +817,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 14305,
+        "at_ms": 14366,
         "text_1": "Will auto-dismiss in 2 seconds.",
         "gauge_1": [
           8,
@@ -782,7 +828,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 14813,
+        "at_ms": 14876,
         "text_1": "Will auto-dismiss in 2 seconds.",
         "gauge_1": [
           8,
@@ -793,18 +839,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 15321,
-        "text_1": "Will auto-dismiss in 1 second.",
-        "gauge_1": [
-          8,
-          10
-        ],
-        "done": true,
-        "dismissed": false,
-        "cancelled": false
-      },
-      {
-        "at_ms": 15828,
+        "at_ms": 15384,
         "text_1": "Will auto-dismiss in 1 second.",
         "gauge_1": [
           9,
@@ -815,7 +850,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 16336,
+        "at_ms": 15892,
         "text_1": "Will auto-dismiss in 1 second.",
         "gauge_1": [
           9,
@@ -826,7 +861,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 16437,
+        "at_ms": 16296,
         "text_1": "Will auto-dismiss in 1 second.",
         "gauge_1": [
           9,
@@ -842,7 +877,7 @@
     "events": [
       {
         "topic": "modal_message",
-        "at_ms": 5277,
+        "at_ms": 5281,
         "job": {
           "title": "debug modal job",
           "text_1": null,
@@ -863,7 +898,7 @@
       },
       {
         "topic": "modal_message",
-        "at_ms": 5379,
+        "at_ms": 5587,
         "job": {
           "title": "debug modal job",
           "text_1": "Will auto-dismiss in 10 seconds.",
@@ -887,7 +922,7 @@
       },
       {
         "topic": "modal_message",
-        "at_ms": 5684,
+        "at_ms": 5992,
         "job": {
           "title": "debug modal job",
           "text_1": "Will auto-dismiss in 10 seconds.",
@@ -911,7 +946,7 @@
       },
       {
         "topic": "modal_message",
-        "at_ms": 6190,
+        "at_ms": 6295,
         "job": {
           "title": "debug modal job",
           "text_1": "Will auto-dismiss in 10 seconds.",
@@ -935,7 +970,7 @@
       },
       {
         "topic": "modal_message",
-        "at_ms": 6698,
+        "at_ms": 6601,
         "job": {
           "title": "debug modal job",
           "text_1": "Will auto-dismiss in 9 seconds.",
@@ -959,7 +994,7 @@
       },
       {
         "topic": "modal_message",
-        "at_ms": 7003,
+        "at_ms": 6903,
         "job": {
           "title": "debug modal job",
           "text_1": "Will auto-dismiss in 9 seconds.",
@@ -983,13 +1018,37 @@
       },
       {
         "topic": "modal_message",
-        "at_ms": 7510,
+        "at_ms": 7210,
+        "job": {
+          "title": "debug modal job",
+          "text_1": "Will auto-dismiss in 9 seconds.",
+          "text_2": null,
+          "gauge_1": [
+            1,
+            10
+          ],
+          "gauge_2": null,
+          "pausable": false,
+          "cancellable": true,
+          "done": false,
+          "had_error": false,
+          "has_traceback": false,
+          "traceback": null,
+          "files": null,
+          "mergable": null,
+          "user_callable_label": null,
+          "has_network_job": false
+        }
+      },
+      {
+        "topic": "modal_message",
+        "at_ms": 7516,
         "job": {
           "title": "debug modal job",
           "text_1": "Will auto-dismiss in 8 seconds.",
           "text_2": null,
           "gauge_1": [
-            1,
+            2,
             10
           ],
           "gauge_2": null,
@@ -1007,13 +1066,13 @@
       },
       {
         "topic": "message",
-        "at_ms": 7510,
+        "at_ms": 7516,
         "job": {
           "title": "debug modal job",
           "text_1": "Will auto-dismiss in 8 seconds.",
           "text_2": null,
           "gauge_1": [
-            1,
+            2,
             10
           ],
           "gauge_2": null,
@@ -1031,10 +1090,10 @@
       }
     ],
     "cancel_at_ms": 7500,
-    "finish_ms": 7510,
+    "finish_ms": 7513,
     "samples": [
       {
-        "at_ms": 5277,
+        "at_ms": 5281,
         "text_1": "Will auto-dismiss in 10 seconds.",
         "gauge_1": [
           0,
@@ -1045,7 +1104,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 5784,
+        "at_ms": 5789,
         "text_1": "Will auto-dismiss in 10 seconds.",
         "gauge_1": [
           0,
@@ -1056,8 +1115,8 @@
         "cancelled": false
       },
       {
-        "at_ms": 6292,
-        "text_1": "Will auto-dismiss in 9 seconds.",
+        "at_ms": 6295,
+        "text_1": "Will auto-dismiss in 10 seconds.",
         "gauge_1": [
           0,
           10
@@ -1067,7 +1126,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 6799,
+        "at_ms": 6801,
         "text_1": "Will auto-dismiss in 9 seconds.",
         "gauge_1": [
           1,
@@ -1078,7 +1137,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 7306,
+        "at_ms": 7310,
         "text_1": "Will auto-dismiss in 9 seconds.",
         "gauge_1": [
           1,
@@ -1089,7 +1148,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 7814,
+        "at_ms": 7817,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1100,7 +1159,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 8321,
+        "at_ms": 8323,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1111,7 +1170,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 8828,
+        "at_ms": 8832,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1122,7 +1181,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 9335,
+        "at_ms": 9339,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1133,7 +1192,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 9841,
+        "at_ms": 9849,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1144,7 +1203,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 10348,
+        "at_ms": 10354,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1155,7 +1214,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 10854,
+        "at_ms": 10863,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1166,7 +1225,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 11360,
+        "at_ms": 11369,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1177,7 +1236,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 11868,
+        "at_ms": 11877,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1188,7 +1247,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 12374,
+        "at_ms": 12388,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1199,7 +1258,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 12881,
+        "at_ms": 12899,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1210,7 +1269,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 13387,
+        "at_ms": 13405,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1221,7 +1280,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 13895,
+        "at_ms": 13916,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1232,7 +1291,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 14402,
+        "at_ms": 14421,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1243,7 +1302,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 14921,
+        "at_ms": 14939,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1254,7 +1313,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 15428,
+        "at_ms": 15450,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1265,7 +1324,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 15933,
+        "at_ms": 15960,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1276,7 +1335,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 16441,
+        "at_ms": 16469,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1287,7 +1346,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 16543,
+        "at_ms": 16570,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,

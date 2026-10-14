@@ -127,6 +127,13 @@ export component DownloaderDefinitionEditWindow inherits Window {
     in property <int> rule-tab;
     in property <int> selected-rule: -1;
     in property <[TableRow]> members;
+    in property <bool> members-selected;
+    in property <int> members-sort;
+    in property <bool> members-ascending: true;
+    // The members chooser (`SelectMultipleFromList`): its title, and a row
+    // for each generator offered, selected when ticked.
+    in property <string> chooser-title;
+    in property <[TableRow]> chooser-rows;
     in property <bool> nested;
     in property <bool> rule-processor;
     in property <bool> child-open;
@@ -156,6 +163,9 @@ export component DownloaderDefinitionEditWindow inherits Window {
     in property <string> preview-next;
     in property <string> error;
     in property <string> question;
+    // A warning to dismiss with ok.
+    in-out property <string> notice;
+    callback notice-dismissed();
     callback tab-chosen(int);
     callback text-edited(int,string);
     callback choice-edited(int,int);
@@ -163,7 +173,11 @@ export component DownloaderDefinitionEditWindow inherits Window {
     callback rule-tab-chosen(int);
     callback rule-selected(int);
     callback rule-action(string);
-    callback member-toggled(int);
+    callback member-row-clicked(int, bool, bool);
+    callback member-sort(int, bool);
+    callback member-action(string);
+    callback chooser-toggled(int);
+    callback chooser-answered(bool);
     callback converter(int);
     callback action(string);
     callback answered(bool);
@@ -269,9 +283,21 @@ export component DownloaderDefinitionEditWindow inherits Window {
                 }
                 if root.rule-processor: Btn { text: "edit default value string processor"; enabled: !root.child-open; clicked => { root.converter(2); } }
                 if root.nested: VerticalLayout {
-                    vertical-stretch: 0;
-                    Text { text: "choose gugs"; color: Theme.text; }
-                    for member[i] in root.members: CheckBox { text: member.cells[0]; checked: member.selected; enabled: !root.child-open; toggled => { root.member-toggled(i); } }
+                    vertical-stretch: 0; spacing: 6px;
+                    ListTable {
+                        height: 180px;
+                        columns: [{title: "gug name", width: 300px, stretch: true}, {title: "available?", width: 120px}];
+                        rows: root.members;
+                        sort-column: root.members-sort; ascending: root.members-ascending;
+                        sort(column, ascending) => { if !root.child-open { root.member-sort(column, ascending); } }
+                        row-clicked(i, c, s) => { if !root.child-open { root.member-row-clicked(i, c, s); } }
+                        delete-pressed => { if !root.child-open { root.member-action("delete"); } }
+                    }
+                    HorizontalLayout {
+                        spacing: 6px; alignment: start;
+                        Btn { text: "add"; enabled: !root.child-open; clicked => { root.member-action("add"); } }
+                        Btn { text: "delete"; enabled: root.members-selected && !root.child-open; clicked => { root.member-action("delete"); } }
+                    }
                 }
                 if root.note != "": Text { text: root.note; color: Theme.text; wrap: word-wrap; }
                 if !root.url-class: Text { text: root.preview; color: Theme.text; wrap: word-wrap; }
@@ -292,6 +318,11 @@ export component DownloaderDefinitionEditWindow inherits Window {
             }
         }
         if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+        if root.notice != "": HorizontalLayout {
+            spacing: 6px; vertical-stretch: 0;
+            Text { horizontal-stretch: 1; vertical-alignment: center; text: root.notice; color: Theme.text; wrap: word-wrap; }
+            Btn { text: "ok"; clicked => { root.notice-dismissed(); } }
+        }
         if root.question != "" && !root.child-open: Question { text: root.question; answered(yes) => { root.answered(yes); } }
     }
     footer := HorizontalLayout {
@@ -300,5 +331,30 @@ export component DownloaderDefinitionEditWindow inherits Window {
         spacing: 6px; alignment: end;
         Btn { text: "apply"; enabled: !root.child-open; clicked => { root.action("apply"); } }
         Btn { text: "cancel"; enabled: !root.child-open; clicked => { root.action("cancel"); } }
+    }
+    if root.chooser-title != "": Rectangle {
+        background: #00000055;
+        TouchArea {}
+    }
+    if root.chooser-title != "": Rectangle {
+        background: Theme.window;
+        border-width: 1px; border-color: Theme.border;
+        x: 60px; y: 40px; width: root.width - 120px; height: root.height - 80px;
+        VerticalLayout {
+            padding: 14px; spacing: 8px;
+            Text { text: root.chooser-title; color: Theme.text; font-weight: 700; }
+            ScrollView {
+                vertical-stretch: 1;
+                VerticalLayout {
+                    alignment: start; spacing: 2px;
+                    for row[i] in root.chooser-rows: CheckBox { text: row.cells[0]; checked: row.selected; toggled => { root.chooser-toggled(i); } }
+                }
+            }
+            HorizontalLayout {
+                alignment: end; spacing: 8px;
+                Btn { text: "ok"; clicked => { root.chooser-answered(true); } }
+                Btn { text: "cancel"; clicked => { root.chooser-answered(false); } }
+            }
+        }
     }
 }

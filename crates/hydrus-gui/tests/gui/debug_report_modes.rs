@@ -1,7 +1,7 @@
 //! Help > debug > report modes, clicked in the real menu and compared with the
 //! reference's own reports for the same situations (the recordings
 //! `oracle/fixtures/debug_*.json`, made by `oracle/record_debug_*.py`).
-use super::debug_menu_actions::{ONE_AT_A_TIME, capture, start};
+use super::debug_menu_actions::{ONE_AT_A_TIME, Reset, capture_here, start};
 use hydrus_store::settings::{self, GuiIdleSettings};
 use serde_json::Value;
 
@@ -11,8 +11,10 @@ fn idle_report_mode_says_what_the_reference_says_in_each_situation() {
     let _one = ONE_AT_A_TIME
         .lock()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
+    // the flags are process-wide: put them back even if an assertion fails
+    let _reset = Reset;
     let d = start();
-    let seen = capture();
+    let seen = capture_here();
     let recording = hydrus_testkit::fixture_json("debug_idle_report.json");
     assert_eq!(
         recording["menu_path"],

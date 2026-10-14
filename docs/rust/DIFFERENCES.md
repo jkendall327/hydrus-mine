@@ -408,15 +408,18 @@ search.
 - **A modal popup's dialog doesn't block the main window**, and "active"
   means the main window has the focus (a modal waits while another window of
   hydrus-rs is the focused one, and does not know of other dialogs, only
-  its own). It does not pause playing media as it opens
-  (`pub( 'pause_all_media' )`), and the variant that hides the other windows
-  (the file migration dialogs, which hydrus-rs does not have in this form)
-  isn't there. Waiting jobs are retried oldest first; the reference's
+  its own). It pauses playing media as it opens (`pub( 'pause_all_media' )`)
+  and hides the other windows made through `app_title::new` while it is up,
+  showing them again when the job is released; windows made another way
+  (nine are, among them the viewer's) stay. The variant that also hides the
+  main window (the file migration dialogs, which hydrus-rs does not have in
+  this form) isn't there. Waiting jobs are retried oldest first; the reference's
   set has no order. Only one real job is published modal so far, the
   database backup (the reference's `_Backup`); the reference's other
   `modal_message` jobs (the cache regenerations, orphan file records and
   so on) are not ported as modal where hydrus-rs has an equivalent, and the
-  recorded hide-the-main-GUI case is not replayed by any test. The
+  recorded hide-the-main-GUI case is not replayed by any test (it has no
+  consumer). The
   `audit-options-popups-modal` tag is for the dialog's lifecycle, proved with
   the debug job and the backup.
 - **The popup freeze's mouse-on-another-monitor condition**
@@ -1291,8 +1294,11 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   shown as its message where the reference prints an exception trace.
 - URL classes and single/nested gallery URL generators have native lists and
   rule editors. Their duplicate button creates new keys and unique names.
-  Domain lists and regex lists use one rule per line, and nested generators
-  select members with checkboxes. Page/content parsers and direct URL-class links
+  Domain lists and regex lists use one rule per line. A nested generator's
+  members are a list with `add` (a chooser) and `delete` buttons as the
+  reference's; its chooser is a window of tick boxes over the editor rather
+  than a dialog, and the warning "No remaining gugs available!" shows in the
+  editor beside an ok button. Page/content parsers and direct URL-class links
   have native editors and reference JSON/PNG import/export. Login editors
   remain follow-up work.
 - Timestamp content editing now uses the original single source-time choice,
@@ -1515,8 +1521,8 @@ repository uploader's existing capabilities. Self-pairs are staged after the ref
 "Loop problem!" message, and a batch that makes a loop within itself, or gives
 one sibling two ideals, is staged as it is, as the reference stages them (its
 repairs look only at the pairs already there; the display graph ignores the
-pairs that would loop or give a second ideal, as the reference's does). The
-message shows without the reference's "Loop problem!" window title. A pair that leads into a loop
+pairs that would loop or give a second ideal, as the reference's does). Both
+"Loop problem!" messages show with that title over their text. A pair that leads into a loop
 already there (staged or stored) raises the reference's second "Loop problem!" message,
 listing the path ("one->two->one"); native chases the paths one list order, where the
 reference's follows a Python set's, so several loops may list in another order. Manual background sibling/parent synchronization
@@ -3218,11 +3224,11 @@ Sibling colour replays also capture a selected collapsed-parent suffix with a di
 
 Options > maintenance and processing now exposes the three independent browsing,
 mouse and Client API idle timeouts as minute controls (1–1000) with the reference
-ignore choices. The browsing and API thresholds reach the running idle-only
-session autosave monitor on its next check, with the strict two-minute boot guard
-and strict activity boundaries. The mouse timeout uses the same live gate but
-remains Partial because the reference polls the system-wide cursor and native
-tracking only observes movement in application windows. This does not implement
+ignore choices. The three thresholds reach the running idle-only session
+autosave monitor on its next check, with the strict two-minute boot guard and
+strict activity boundaries. The mouse timeout counts movement anywhere on the
+desktop where the desktop can say (see "Idle from input outside hydrus-rs's
+windows", above), and only over its own windows elsewhere. This does not implement
 high-CPU maintenance scheduling, CPU-busy detection or the broader idle settings.
 Ignored controls reopen with a hidden one-minute value, matching the recorded
 Qt constructor/multiplier behavior. Unchanged Apply normalizes raw imported
@@ -4258,8 +4264,9 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 
 ## Auto-resolution rule export and import
 
-- Rules export as hydrus-rs JSON, not the reference's serialised form, so
-  the reference can't import them; hydrus-rs imports both. A rule's comparator
+- Rules export as hydrus-rs JSON, not the reference's serialised form (an
+  encoder for it is not written yet), so the reference can't import them;
+  hydrus-rs imports both. A rule's comparator
   list exports a comparator to the clipboard or a png, imports from the
   clipboard or pngs (hydrus-rs JSON or the reference's serialised comparator,
   alone or in a list) and duplicates one; the lists inside OR/AND comparators
@@ -4490,10 +4497,10 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
 
 ## Help > debug actions
 
-- "make some popups" leaves out the reference's popups whose buttons call
-  back into the client (user call test, auto-account creation, gap
-  downloader) and its network-job popup, and the test job's subjob doesn't
-  start pulsing after two seconds.
+- "make some popups" leaves out the reference's auto-account creation popup,
+  which it makes only when the client has a tag repository (hydrus-rs has
+  none). The network-job popup holds a job with no engine yet, as the
+  reference's does, so its control shows nothing.
 - The "modal" popups open a dialog of their own (see "A modal popup's
   dialog" above); the debug action's cancellable one counts down in it.
 - "reset multi-column list settings to default" asks, then has nothing to

@@ -208,7 +208,6 @@ fn class_rules_apply_snapshot_roundtrip_and_cancel_safety() {
     );
 }
 
-// leaf: gug-members
 // leaf: audit-network-gugs-test
 // leaf: audit-network-gugs-delete-dependencies
 #[test]
@@ -241,8 +240,10 @@ fn single_nested_generators_roundtrip_delete_and_cancel() {
     list.invoke_action("add".into());
     let nested = child(&slots.gug_edit);
     nested.invoke_text_edited(0, "combined search".into());
-    nested.invoke_member_toggled(0);
-    nested.invoke_member_toggled(1);
+    nested.invoke_member_action("add".into());
+    nested.invoke_chooser_toggled(0);
+    nested.invoke_chooser_toggled(1);
+    nested.invoke_chooser_answered(true);
     assert_eq!(nested.get_members().row_count(), 2);
     screenshot(
         &rendered,
@@ -1068,4 +1069,238 @@ fn full_domain_mask_owned_entries_questions_and_favourites_reach_persisted_consu
     list.invoke_action("cancel".into());
     edit.invoke_domain_action(false, "add".into());
     assert!(!slots.domains.has_open());
+}
+
+fn cells(rows: &slint::ModelRc<hydrus_gui::TableRow>) -> Vec<Vec<String>> {
+    rows.iter()
+        .map(|r| r.cells.iter().map(|c| c.to_string()).collect())
+        .collect()
+}
+
+fn selected_names(rows: &slint::ModelRc<hydrus_gui::TableRow>) -> Vec<String> {
+    rows.iter()
+        .filter(|r| r.selected)
+        .map(|r| r.cells.row_data(0).unwrap().to_string())
+        .collect()
+}
+
+fn recorded_rows(value: &serde_json::Value) -> Vec<Vec<String>> {
+    value
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|row| {
+            row.as_array()
+                .unwrap()
+                .iter()
+                .map(|c| c.as_str().unwrap().to_owned())
+                .collect()
+        })
+        .collect()
+}
+
+// leaf: gug-members
+#[test]
+fn the_nested_generators_members_list_adds_through_a_chooser_and_deletes_as_the_reference_does() {
+    let fixture = hydrus_testkit::fixture_json("nested_gug_members.json");
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    // the generators and the nested one `record_nested_gug_members.py` built
+    let mut downloaders = Downloaders::default();
+    for pair in fixture["available"].as_array().unwrap() {
+        downloaders
+            .gugs
+            .gugs
+            .push(AnyGug::Single(hydrus_core::url::Gug {
+                name: pair[1].as_str().unwrap().into(),
+                key: pair[0].as_str().unwrap().into(),
+                url_template: "https://example.com/search?q=%tags%".into(),
+                replacement_phrase: "%tags%".into(),
+                separator: "+".into(),
+                initial_search_text: "search tags".into(),
+                example_search_text: "blue_eyes".into(),
+            }));
+    }
+    let alpha = fixture["opening_value"]["members"][0][0].as_str().unwrap();
+    downloaders
+        .gugs
+        .gugs
+        .push(AnyGug::Nested(hydrus_core::url::NestedGug {
+            name: "combined search".into(),
+            key: "33".repeat(32),
+            initial_search_text: "combined tags".into(),
+            // alpha by key; beta under a key that is gone; one that is gone
+            gugs: vec![
+                (alpha.into(), "alpha search".into()),
+                ("99".repeat(32), "beta search".into()),
+                ("00".repeat(32), "missing search".into()),
+            ],
+        }));
+    store
+        .write(move |ctx| settings::set(ctx.conn(), &downloaders))
+        .unwrap();
+    let _windows = headless::init();
+    let slots = Slots::default();
+    let open_editor = || {
+        let list = windows::open(&store, &slots, false).unwrap();
+        list.invoke_tab_chosen(1);
+        list.invoke_row_clicked(0, false, false);
+        list.invoke_action("edit".into());
+        (list, child(&slots.gug_edit))
+    };
+    // opening: the rows, "available?" by key or name
+    let (list, editor) = open_editor();
+    assert_eq!(
+        cells(&editor.get_members()),
+        recorded_rows(&fixture["opening_rows"])
+    );
+    // applying with nothing changed hands back what the panel does: the
+    // generator that is gone dropped, the one found by name re-keyed
+    editor.invoke_action("apply".into());
+    list.invoke_action("apply".into());
+    let saved_members = |store: &Store| -> Vec<(String, String)> {
+        let saved: Downloaders = store.read(settings::get).unwrap();
+        let Some(AnyGug::Nested(n)) = saved.gugs.gugs.last() else {
+            panic!("the nested generator is last");
+        };
+        n.gugs.clone()
+    };
+    let recorded_members = |value: &serde_json::Value| -> Vec<(String, String)> {
+        value["members"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|m| (m[0].as_str().unwrap().into(), m[1].as_str().unwrap().into()))
+            .collect()
+    };
+    assert_eq!(
+        saved_members(&store),
+        recorded_members(&fixture["opening_value"])
+    );
+    // the same editor, re-opened from the saved definition without its
+    // gone member, then the recorded steps
+    let with_missing = || {
+        let mut downloaders: Downloaders = store.read(settings::get).unwrap();
+        if let Some(AnyGug::Nested(n)) = downloaders.gugs.gugs.last_mut() {
+            n.gugs.push(("00".repeat(32), "missing search".into()));
+        }
+        store
+            .write(move |ctx| settings::set(ctx.conn(), &downloaders))
+            .unwrap();
+    };
+    with_missing();
+    let (list, editor) = open_editor();
+    let mut choosers = fixture["choosers"].as_array().unwrap().iter();
+    for step in fixture["add_steps"].as_array().unwrap() {
+        editor.invoke_member_action("add".into());
+        let label = step["step"].as_str().unwrap();
+        if step["warnings"].as_u64().unwrap() > 0 {
+            // none left: the warning, and no chooser
+            assert_eq!(
+                editor.get_notice(),
+                fixture["warnings"][0].as_str().unwrap(),
+                "{label}"
+            );
+            assert_eq!(editor.get_chooser_title(), "", "{label}");
+            editor.invoke_notice_dismissed();
+            assert_eq!(editor.get_notice(), "", "{label}");
+        } else {
+            let chooser = choosers.next().unwrap();
+            assert_eq!(editor.get_notice(), "", "{label}");
+            assert_eq!(
+                editor.get_chooser_title(),
+                chooser["title"].as_str().unwrap(),
+                "{label}"
+            );
+            let offered: Vec<String> = cells(&editor.get_chooser_rows())
+                .into_iter()
+                .map(|mut row| row.remove(0))
+                .collect();
+            let recorded: Vec<String> = chooser["offered"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|o| o.as_str().unwrap().to_owned())
+                .collect();
+            assert_eq!(offered, recorded, "{label}");
+            // nothing is ticked as it opens
+            assert!(selected_names(&editor.get_chooser_rows()).is_empty());
+            match chooser["answer"].as_array() {
+                None => editor.invoke_chooser_answered(false),
+                Some(answer) => {
+                    for name in answer {
+                        let at = offered
+                            .iter()
+                            .position(|o| o == name.as_str().unwrap())
+                            .unwrap();
+                        editor.invoke_chooser_toggled(i32::try_from(at).unwrap());
+                    }
+                    editor.invoke_chooser_answered(true);
+                }
+            }
+            assert_eq!(editor.get_chooser_title(), "", "{label}");
+        }
+        assert_eq!(
+            cells(&editor.get_members()),
+            recorded_rows(&step["rows"]),
+            "{label}"
+        );
+        let selected: Vec<String> = step["selected"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|s| s.as_str().unwrap().to_owned())
+            .collect();
+        assert_eq!(selected_names(&editor.get_members()), selected, "{label}");
+    }
+    // the list as the panel would hand it back
+    editor.invoke_action("apply".into());
+    list.invoke_action("apply".into());
+    assert_eq!(
+        saved_members(&store),
+        recorded_members(&fixture["after_add_value"])
+    );
+    // delete: asks, declined and accepted
+    with_missing();
+    let (list, editor) = open_editor();
+    for step in fixture["delete_steps"].as_array().unwrap() {
+        let label = step["step"].as_str().unwrap();
+        // select the recorded rows with ctrl+click
+        let wanted: Vec<String> = step["selected"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|s| s.as_str().unwrap().to_owned())
+            .collect();
+        let names: Vec<String> = cells(&editor.get_members())
+            .into_iter()
+            .map(|mut r| r.remove(0))
+            .collect();
+        for (n, name) in wanted.iter().enumerate() {
+            let at = names.iter().position(|m| m == name);
+            if let Some(at) = at {
+                editor.invoke_member_row_clicked(i32::try_from(at).unwrap(), n > 0, false);
+            }
+        }
+        assert_eq!(selected_names(&editor.get_members()), wanted, "{label}");
+        editor.invoke_member_action("delete".into());
+        assert_eq!(
+            editor.get_question(),
+            fixture["delete_questions"][0].as_str().unwrap(),
+            "{label}"
+        );
+        editor.invoke_answered(label == "accepted");
+        assert_eq!(editor.get_question(), "", "{label}");
+        assert_eq!(
+            cells(&editor.get_members()),
+            recorded_rows(&step["rows"]),
+            "{label}"
+        );
+    }
+    editor.invoke_action("apply".into());
+    list.invoke_action("apply".into());
+    assert_eq!(
+        saved_members(&store),
+        recorded_members(&fixture["final_value"])
+    );
 }

@@ -1,0 +1,323 @@
+{
+  "available": [
+    [
+      "2525252525252525252525252525252525252525252525252525252525252525",
+      "delta search"
+    ],
+    [
+      "2323232323232323232323232323232323232323232323232323232323232323",
+      "Gamma 10"
+    ],
+    [
+      "2121212121212121212121212121212121212121212121212121212121212121",
+      "alpha search"
+    ],
+    [
+      "2424242424242424242424242424242424242424242424242424242424242424",
+      "Gamma 2"
+    ],
+    [
+      "2222222222222222222222222222222222222222222222222222222222222222",
+      "beta search"
+    ]
+  ],
+  "opening_rows": [
+    [
+      "alpha search",
+      "yes"
+    ],
+    [
+      "beta search",
+      "yes"
+    ],
+    [
+      "missing search",
+      "no"
+    ]
+  ],
+  "opening_value": {
+    "name": "combined search",
+    "initial_search_text": "combined tags",
+    "members": [
+      [
+        "2121212121212121212121212121212121212121212121212121212121212121",
+        "alpha search"
+      ],
+      [
+        "2222222222222222222222222222222222222222222222222222222222222222",
+        "beta search"
+      ]
+    ]
+  },
+  "choosers": [
+    {
+      "title": "choose gugs",
+      "offered": [
+        "delta search",
+        "Gamma 2",
+        "Gamma 10"
+      ],
+      "ticked": [],
+      "answer": null
+    },
+    {
+      "title": "choose gugs",
+      "offered": [
+        "delta search",
+        "Gamma 2",
+        "Gamma 10"
+      ],
+      "ticked": [],
+      "answer": [
+        "Gamma 2",
+        "delta search"
+      ],
+      "returned": [
+        "delta search",
+        "Gamma 2"
+      ]
+    },
+    {
+      "title": "choose gugs",
+      "offered": [
+        "Gamma 10"
+      ],
+      "ticked": [],
+      "answer": [
+        "Gamma 10"
+      ],
+      "returned": [
+        "Gamma 10"
+      ]
+    }
+  ],
+  "warnings": [
+    "No remaining gugs available!"
+  ],
+  "add_steps": [
+    {
+      "step": "add, cancelled",
+      "rows": [
+        [
+          "alpha search",
+          "yes"
+        ],
+        [
+          "beta search",
+          "yes"
+        ],
+        [
+          "missing search",
+          "no"
+        ]
+      ],
+      "selected": [],
+      "chooser": 1,
+      "warnings": 0
+    },
+    {
+      "step": "add two",
+      "rows": [
+        [
+          "alpha search",
+          "yes"
+        ],
+        [
+          "beta search",
+          "yes"
+        ],
+        [
+          "delta search",
+          "yes"
+        ],
+        [
+          "Gamma 2",
+          "yes"
+        ],
+        [
+          "missing search",
+          "no"
+        ]
+      ],
+      "selected": [
+        "Gamma 2"
+      ],
+      "chooser": 2,
+      "warnings": 0
+    },
+    {
+      "step": "add the last",
+      "rows": [
+        [
+          "alpha search",
+          "yes"
+        ],
+        [
+          "beta search",
+          "yes"
+        ],
+        [
+          "delta search",
+          "yes"
+        ],
+        [
+          "Gamma 10",
+          "yes"
+        ],
+        [
+          "Gamma 2",
+          "yes"
+        ],
+        [
+          "missing search",
+          "no"
+        ]
+      ],
+      "selected": [
+        "Gamma 10"
+      ],
+      "chooser": 3,
+      "warnings": 0
+    },
+    {
+      "step": "add with none left",
+      "rows": [
+        [
+          "alpha search",
+          "yes"
+        ],
+        [
+          "beta search",
+          "yes"
+        ],
+        [
+          "delta search",
+          "yes"
+        ],
+        [
+          "Gamma 10",
+          "yes"
+        ],
+        [
+          "Gamma 2",
+          "yes"
+        ],
+        [
+          "missing search",
+          "no"
+        ]
+      ],
+      "selected": [
+        "Gamma 10"
+      ],
+      "chooser": 3,
+      "warnings": 1
+    }
+  ],
+  "after_add_value": {
+    "name": "combined search",
+    "initial_search_text": "combined tags",
+    "members": [
+      [
+        "2121212121212121212121212121212121212121212121212121212121212121",
+        "alpha search"
+      ],
+      [
+        "2222222222222222222222222222222222222222222222222222222222222222",
+        "beta search"
+      ],
+      [
+        "2525252525252525252525252525252525252525252525252525252525252525",
+        "delta search"
+      ],
+      [
+        "2323232323232323232323232323232323232323232323232323232323232323",
+        "Gamma 10"
+      ],
+      [
+        "2424242424242424242424242424242424242424242424242424242424242424",
+        "Gamma 2"
+      ]
+    ]
+  },
+  "delete_questions": [
+    "Remove all selected?",
+    "Remove all selected?"
+  ],
+  "delete_steps": [
+    {
+      "step": "declined",
+      "selected": [
+        "delta search",
+        "Gamma 2",
+        "missing search"
+      ],
+      "rows": [
+        [
+          "alpha search",
+          "yes"
+        ],
+        [
+          "beta search",
+          "yes"
+        ],
+        [
+          "delta search",
+          "yes"
+        ],
+        [
+          "Gamma 10",
+          "yes"
+        ],
+        [
+          "Gamma 2",
+          "yes"
+        ],
+        [
+          "missing search",
+          "no"
+        ]
+      ]
+    },
+    {
+      "step": "accepted",
+      "selected": [
+        "delta search",
+        "Gamma 2",
+        "missing search"
+      ],
+      "rows": [
+        [
+          "alpha search",
+          "yes"
+        ],
+        [
+          "beta search",
+          "yes"
+        ],
+        [
+          "Gamma 10",
+          "yes"
+        ]
+      ]
+    }
+  ],
+  "final_value": {
+    "name": "combined search",
+    "initial_search_text": "combined tags",
+    "members": [
+      [
+        "2121212121212121212121212121212121212121212121212121212121212121",
+        "alpha search"
+      ],
+      [
+        "2222222222222222222222222222222222222222222222222222222222222222",
+        "beta search"
+      ],
+      [
+        "2323232323232323232323232323232323232323232323232323232323232323",
+        "Gamma 10"
+      ]
+    ]
+  }
+}
