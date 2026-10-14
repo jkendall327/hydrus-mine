@@ -1,0 +1,258 @@
+{
+ "steps": [
+  {
+   "dialog": {
+    "rows": [
+     [
+      "(+) ",
+      "doggo",
+      "dog",
+      "Reason: added by user"
+     ]
+    ],
+    "services": [
+     "downloader tags",
+     "my tags",
+     "second tags"
+    ],
+    "sync status": "\"downloader tags\", \"my tags\" apply these siblings and are fully synced. | Siblings are set to sync all the time in the background. | Changes from this dialog should be reflected soon after closing the dialog.",
+    "title": "manage tag siblings"
+   },
+   "files": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "displayed": [
+      "safe"
+     ],
+     "stored": [
+      "safe"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "displayed": [
+      "creator:anonymous artist",
+      "meta:low resolution",
+      "page:3"
+     ],
+     "stored": [
+      "creator:anonymous artist",
+      "meta:lowres",
+      "page:3"
+     ]
+    }
+   },
+   "step": "siblings"
+  },
+  {
+   "dialog": {
+    "rows": [
+     [
+      "(+) ",
+      "dog",
+      "animal",
+      "Reason: added by user"
+     ]
+    ],
+    "services": [
+     "downloader tags",
+     "my tags",
+     "second tags"
+    ],
+    "sync status": "\"downloader tags\", \"my tags\" apply these parents and are fully synced. | Parents are set to sync all the time in the background. | Changes from this dialog should be reflected soon after closing the dialog.",
+    "title": "manage tag parents"
+   },
+   "files": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "displayed": [
+      "safe"
+     ],
+     "stored": [
+      "safe"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "displayed": [
+      "creator:anonymous artist",
+      "meta:low resolution",
+      "page:3"
+     ],
+     "stored": [
+      "creator:anonymous artist",
+      "meta:lowres",
+      "page:3"
+     ]
+    }
+   },
+   "step": "parents"
+  },
+  {
+   "dialog": {},
+   "files": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "displayed": [
+      "animal",
+      "dog",
+      "safe"
+     ],
+     "stored": [
+      "doggo",
+      "safe"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "displayed": [
+      "animal",
+      "creator:anonymous artist",
+      "dog",
+      "meta:low resolution",
+      "page:3"
+     ],
+     "stored": [
+      "creator:anonymous artist",
+      "dog",
+      "meta:lowres",
+      "page:3"
+     ]
+    }
+   },
+   "sidebar": [
+    {
+     "rows": [
+      "animal (2)"
+     ],
+     "tag": "animal"
+    },
+    {
+     "rows": [
+      "dog (2)"
+     ],
+     "tag": "dog"
+    }
+   ],
+   "step": "tag"
+  },
+  {
+   "autocomplete": {
+    "ani": [
+     {
+      "predicate": "animal (2)",
+      "rows": [
+       "animal (2)"
+      ]
+     }
+    ],
+    "dog": [
+     {
+      "predicate": "dog (2)",
+      "rows": [
+       "dog (2)"
+      ]
+     }
+    ],
+    "doggo": [
+     {
+      "predicate": "dog (2)",
+      "rows": [
+       "dog (2)"
+      ]
+     }
+    ]
+   },
+   "dialog": {},
+   "files": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "displayed": [
+      "animal",
+      "dog",
+      "safe"
+     ],
+     "stored": [
+      "doggo",
+      "safe"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "displayed": [
+      "animal",
+      "creator:anonymous artist",
+      "dog",
+      "meta:low resolution",
+      "page:3"
+     ],
+     "stored": [
+      "creator:anonymous artist",
+      "dog",
+      "meta:lowres",
+      "page:3"
+     ]
+    }
+   },
+   "searches": {
+    "animal": {
+     "hashes": [
+      "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+      "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+     ],
+     "sidebar": [
+      {
+       "rows": [
+        "animal (2)"
+       ],
+       "tag": "animal"
+      },
+      {
+       "rows": [
+        "dog (2)"
+       ],
+       "tag": "dog"
+      }
+     ]
+    },
+    "dog": {
+     "hashes": [
+      "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+      "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+     ],
+     "sidebar": [
+      {
+       "rows": [
+        "animal (2)"
+       ],
+       "tag": "animal"
+      },
+      {
+       "rows": [
+        "dog (2)"
+       ],
+       "tag": "dog"
+      }
+     ]
+    },
+    "doggo": {
+     "hashes": [
+      "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+      "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+     ],
+     "sidebar": [
+      {
+       "rows": [
+        "animal (2)"
+       ],
+       "tag": "animal"
+      },
+      {
+       "rows": [
+        "dog (2)"
+       ],
+       "tag": "dog"
+      }
+     ]
+    }
+   },
+   "step": "search"
+  }
+ ],
+ "tagged": [
+  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+ ]
+}

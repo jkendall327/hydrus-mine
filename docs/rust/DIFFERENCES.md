@@ -1088,7 +1088,11 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 - **Tags > sync**: hydrus-rs applies siblings and parents as it writes, so
   "sync now" always finds nothing to do, and its idle/normal switches are
   kept without a background-work consumer. The review reports each service's
-  current sync state but has no pending-work scheduler to control.
+  current sync state but has no pending-work scheduler to control. The
+  siblings and parents windows' status line says which services apply the
+  pairs and that "Changes stay here until Apply; tag displays update
+  immediately after Apply", not the reference's "are fully synced" and
+  background-sync sentences (`flows::tag_relationships`).
 - **Database > db maintenance**'s deferred delete switches are kept without
   a consumer: hydrus-rs drops tables as it writes.
 - **The duplicates page's preparation tab**'s "regenerate search tree"
