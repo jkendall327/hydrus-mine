@@ -329,9 +329,16 @@ fn apply_cancel_reopen_and_four_sides_preserve_real_nested_selection_and_full_na
                 .iter()
                 .map(|rect| rect[usize::from(vertical)].as_f64().unwrap())
                 .collect();
-            assert!(
-                along.windows(2).all(|w| w[0] < w[1]) && recorded.windows(2).all(|w| w[0] < w[1]),
-                "{alignment:?}: the tabs run the same way along the bar: ours {along:?}, theirs {recorded:?}"
+            // the order the tabs run in along the bar, ours and theirs
+            let order = |positions: Vec<f64>| {
+                let mut indices: Vec<usize> = (0..positions.len()).collect();
+                indices.sort_by(|&a, &b| positions[a].total_cmp(&positions[b]));
+                indices
+            };
+            assert_eq!(
+                order(along.iter().map(|&a| f64::from(a)).collect()),
+                order(recorded.clone()),
+                "{alignment:?}: the tabs run in the reference's order along the bar: ours {along:?}, theirs {recorded:?}"
             );
             // the first tab starts at the bar's start, in both
             let (fx, fy, ..) = frames[&original.pages[0].key.to_hex()];

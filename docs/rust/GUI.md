@@ -5790,6 +5790,7 @@ setting takes effect against the reference's laid-out widgets. Users see no
 difference. Proven, each against a recording of the reference: the options
 search bar above or below the page list; the notebook tab bars' side, thickness,
 tab order and rotated-label direction; the rows shown by the active-predicate,
-search-result and tag-edit autocomplete lists; the suggested-tag lists' widths;
+search-result and tag-edit autocomplete lists (against the reference's recorded
+size hints, as Qt stretches the laid-out lists); the suggested-tag lists' widths;
 the thumbnail border's drawn width; and the sidecar custom-separator box's
 enabled state.

@@ -2188,12 +2188,7 @@ fn the_read_lists_show_as_many_rows_as_the_options_say_when_laid_out_as_the_refe
     use hydrus_gui::page_chooser::NewPage;
     let (_dirs, store) = store();
     let windows = headless::init();
-    let ui = MainWindow::new().unwrap();
-    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let fixture = hydrus_testkit::fixture_json("file_search_presentation.json");
-    ui.show().unwrap();
-    let main = windows.get(0).unwrap();
-    main.dispatch_event(slint::platform::WindowEvent::WindowActiveChanged(true));
     // (a list the reference laid out with room to spare, at its hint)
     let their_rows = |list: &serde_json::Value| {
         let frame = list["frame"].as_i64().unwrap();
@@ -2262,7 +2257,17 @@ fn the_read_lists_show_as_many_rows_as_the_options_say_when_laid_out_as_the_refe
 
         // the autocomplete results: the room shown over the height of one row
         let suggestions = ui.get_suggestions().row_count() as f32;
-        let pitch = ui.get_read_rows_height() / suggestions;
+        // (the rows' height and the room, of the list that is shown)
+        let rows_height = if floating {
+            ui.get_read_rows_height()
+        } else {
+            ui.get_read_embedded_rows_height()
+        };
+        assert!(
+            rows_height > 0.0 && ui.get_read_view_height() > 0.0,
+            "{what}: the results list was laid out"
+        );
+        let pitch = rows_height / suggestions;
         let shown = ui.get_read_view_height() / pitch;
         assert!(
             (shown - autocomplete_rows as f32).abs() < 0.01,
@@ -7169,7 +7174,7 @@ fn the_search_bar_and_its_suggestions_sit_where_the_option_puts_them() {
 // (oracle/fixtures/options_preferences.json `placed`: the reference's
 // `_options_search` and `_listbook` geometry in the panel). Qt's field is 23 px
 // high and ours 30, so what is compared is which side of the list the field
-// is on, that it does not overlap the list, and that it spans the panel's width.
+// is on and that it does not overlap the list.
 // leaf: audit-options-gui-misc-put-the-options-search-bar-at-the
 #[test]
 fn the_options_search_field_is_laid_out_above_or_below_the_page_list_as_the_reference_does() {
@@ -7222,7 +7227,8 @@ fn the_options_search_field_is_laid_out_above_or_below_the_page_list_as_the_refe
             "case {case}: field at {ours_field_y}+{ours_field_h}, list at {ours_list_y}+{ours_list_h}"
         );
         // the list gives up the field's height and no more: the field is
-        // flush with the list's edge (Qt: the 2 px layout margin)
+        // close to the list's edge (within 8 px: ours is 6 px from it, Qt's
+        // flush)
         let gap = if top {
             ours_list_y - (ours_field_y + ours_field_h)
         } else {

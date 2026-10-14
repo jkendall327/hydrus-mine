@@ -4818,7 +4818,8 @@ grid's content height, click hits and the size each thumbnail is shown at.
 The border's drawn width on each edge of a thumbnail is compared with the
 reference's own painted thumbnail (`oracle/record_thumbnail_border.py`),
 measured on the rendered pixels; its colour is the theme's, not compared. A
-selected thumbnail is compared from a 2 px border (ours is at least 2 px wide).
+selected thumbnail at a border of 0 or 1 px is drawn 2 px wide here, where the
+reference draws 0 or 1; selected thumbnails are compared only from 2 px.
 Click hits were
 recorded for the first two columns and rows only, at one viewport per setting,
 and thumbnail positions are the layout's rule rather than read from the
@@ -5289,11 +5290,15 @@ be diagnosed afterwards. The owner chose always-on crash logging (2026-10-14).
   240 and 500, as the reference's. At the option's lower limit (20) our list
   table will not go narrower than its own minimum, so the list is wider than the
   reference's.
-- "Autocomplete list height" (tag editing, and file search's two lists): the
-  rows a list shows once laid out equal the option, as the reference's; the row
-  is 22 px here and a font height in Qt, and our lists' padding differs from Qt's
-  frame. The tag-edit list is only as tall as its suggestions (fewer than the
-  option's rows shrinks it); the reference's keeps its full height.
+- "Autocomplete list height" (tag editing, and file search's two lists): the rows
+  a list shows once laid out equal the option, compared with the reference's
+  *size hint* (`rows * text height + 2 * frame`), not its laid-out height: Qt
+  stretches or shrinks a list to fill its parent (the recordings' own laid-out
+  heights, 342/1599/64 px for file search and 1291 px for every tag-edit setting,
+  do not follow the option). The tag-edit recording uses a bare vertical layout
+  as host, not the real Manage Tags dialog. The row is 22 px here and a font
+  height in Qt, and our lists' padding differs from Qt's frame. Our tag-edit
+  list is only as tall as its suggestions (fewer than the option's rows shrinks it).
 
 - **A sidebar saved at width 0 and revealed** (Pages > sidebar > show/hide after
   "save current page's sidebar/preview size now" while hidden) shows nothing, as
