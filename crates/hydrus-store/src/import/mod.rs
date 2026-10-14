@@ -1424,9 +1424,12 @@ pub(crate) mod tests {
     fn import_options_that_run_programs_are_reported() {
         use hydrus_core::import_options::{ExternalProgramsOptions, ImportOptionsSlice};
         let runs = ImportOptionsSlice {
-            external_programs: Some(ExternalProgramsOptions {
-                stored: Some("[...]".into()),
-            }),
+            external_programs: Some(
+                ExternalProgramsOptions::from_serialised(
+                    r#"[26,3,[[2,[163,1,[[158,1,["0101010101010101010101010101010101010101010101010101010101010101","a"]],true,false]]]]]"#,
+                )
+                .unwrap(),
+            ),
             ..ImportOptionsSlice::default()
         };
         let source = legacy_fixture("basic");

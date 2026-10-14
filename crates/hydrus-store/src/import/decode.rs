@@ -2013,7 +2013,7 @@ pub(super) fn external_program_users(input: &ImportInput) -> Vec<String> {
     let calls = |s: &ImportOptionsSlice| {
         s.external_programs
             .as_ref()
-            .is_some_and(|e| e.stored.is_some())
+            .is_some_and(|e| !e.entries.is_empty())
     };
     let mut out = Vec::new();
     if let Some(Ok(manager)) = input
