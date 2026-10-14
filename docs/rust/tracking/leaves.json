@@ -4236,10 +4236,10 @@
     "Locale date phrases use English/C forms. Platform-specific strftime extensions such as %s remain outside the supported grammar."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Carried, untagged. UTC encode cases (naive %z/%Z, zero %f, underscores, fractions rejected, pre-epoch) are recorded and compared exactly. The leaf's distinctive 'current local offset' behaviour is only checked by a test whose expected value comes from the same native strftime and the recordings run at UTC offset 0, so it cannot distinguish current from historical offset. Tests: crates/hydrus-core/src/url/string_dates.rs:344 date_conversions_match_direct_reference_execution, :437 local_encode_uses_current_offset_and_naive_timezone_fields; string_converter_editor.rs:182 (string_date_editor.json, recorded under TZ=UTC)"
+    "date": "2026-10-13",
+    "class": "likely-good",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "The reference's converter was recorded under five system zones (New York, Kolkata, Lord Howe, Auckland, UTC; date_encode_local.json) with winter and summer timestamps and the offset then in force; the native encode, given that offset, gives the same text, including naive %z/%Z. Not sound: the offset is injected into the encoder rather than read from the machine's clock in a test, and the editor's live preview is only compared under UTC (string_date_editor.json)."
    }
   },
   {

@@ -207,6 +207,17 @@ fn decode_in_zone(
 }
 
 pub(super) fn encode(text: &str, phrase: &str, timezone: DateTimezone) -> Result<String, String> {
+    encode_at(text, phrase, timezone, Zoned::now().offset())
+}
+
+/// `encode` with the machine's current UTC offset given (so a test can hold
+/// it still).
+fn encode_at(
+    text: &str,
+    phrase: &str,
+    timezone: DateTimezone,
+    current_offset: Offset,
+) -> Result<String, String> {
     let trimmed = text.trim();
     let unsigned = trimmed.strip_prefix(['+', '-']).unwrap_or(trimmed);
     if !unsigned
@@ -223,7 +234,7 @@ pub(super) fn encode(text: &str, phrase: &str, timezone: DateTimezone) -> Result
     // TimestampToDateTime uses the *current* local offset, yielding a naive
     // datetime: Python consequently renders both %z and %Z as empty strings.
     let offset = if timezone == DateTimezone::Local {
-        Zoned::now().offset()
+        current_offset
     } else {
         Offset::UTC
     };
@@ -418,6 +429,33 @@ mod tests {
                 DateTimezone::Local,
                 0,
                 &timezone,
+            );
+            if case["error"] == true {
+                assert!(result.is_err(), "{case}");
+            } else {
+                assert_eq!(result.unwrap(), case["result"].as_str().unwrap(), "{case}");
+            }
+        }
+    }
+
+    // leaf: audit-network-conversion-date-encode
+    #[test]
+    fn local_encode_adds_the_current_offset_as_the_reference_does_in_other_zones() {
+        // (`oracle/record_date_encode_local.py`: the reference's converter
+        // under several system zones, with the offset then in force)
+        let fixture: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../../oracle/fixtures/date_encode_local.json"
+        ))
+        .unwrap();
+        for case in fixture["cases"].as_array().unwrap() {
+            let offset =
+                Offset::from_seconds(i32::try_from(case["offset"].as_i64().unwrap()).unwrap())
+                    .unwrap();
+            let result = encode_at(
+                case["text"].as_str().unwrap(),
+                case["phrase"].as_str().unwrap(),
+                DateTimezone::Local,
+                offset,
             );
             if case["error"] == true {
                 assert!(result.is_err(), "{case}");

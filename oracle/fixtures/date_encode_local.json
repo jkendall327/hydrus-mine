@@ -1,0 +1,604 @@
+{
+ "cases": [
+  {
+   "zone": "America/New_York",
+   "offset": -14400,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "1700000000",
+   "result": "2023-11-14 18:13:20",
+   "error": false
+  },
+  {
+   "zone": "America/New_York",
+   "offset": -14400,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "1720000000",
+   "result": "2024-07-03 05:46:40",
+   "error": false
+  },
+  {
+   "zone": "America/New_York",
+   "offset": -14400,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "-1",
+   "result": "1969-12-31 19:59:59",
+   "error": false
+  },
+  {
+   "zone": "America/New_York",
+   "offset": -14400,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "0",
+   "result": "1969-12-31 20:00:00",
+   "error": false
+  },
+  {
+   "zone": "America/New_York",
+   "offset": -14400,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "1000000000",
+   "result": "2001-09-08 21:46:40",
+   "error": false
+  },
+  {
+   "zone": "America/New_York",
+   "offset": -14400,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "1700000000",
+   "result": "2023-11-14 18:13:20",
+   "error": false
+  },
+  {
+   "zone": "America/New_York",
+   "offset": -14400,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "1720000000",
+   "result": "2024-07-03 05:46:40",
+   "error": false
+  },
+  {
+   "zone": "America/New_York",
+   "offset": -14400,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "-1",
+   "result": "1969-12-31 19:59:59",
+   "error": false
+  },
+  {
+   "zone": "America/New_York",
+   "offset": -14400,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "0",
+   "result": "1969-12-31 20:00:00",
+   "error": false
+  },
+  {
+   "zone": "America/New_York",
+   "offset": -14400,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "1000000000",
+   "result": "2001-09-08 21:46:40",
+   "error": false
+  },
+  {
+   "zone": "America/New_York",
+   "offset": -14400,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "1700000000",
+   "result": "Tue 14 Nov 2023 06:13 PM",
+   "error": false
+  },
+  {
+   "zone": "America/New_York",
+   "offset": -14400,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "1720000000",
+   "result": "Wed 03 Jul 2024 05:46 AM",
+   "error": false
+  },
+  {
+   "zone": "America/New_York",
+   "offset": -14400,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "-1",
+   "result": "Wed 31 Dec 1969 07:59 PM",
+   "error": false
+  },
+  {
+   "zone": "America/New_York",
+   "offset": -14400,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "0",
+   "result": "Wed 31 Dec 1969 08:00 PM",
+   "error": false
+  },
+  {
+   "zone": "America/New_York",
+   "offset": -14400,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "1000000000",
+   "result": "Sat 08 Sep 2001 09:46 PM",
+   "error": false
+  },
+  {
+   "zone": "Asia/Kolkata",
+   "offset": 19800,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "1700000000",
+   "result": "2023-11-15 03:43:20",
+   "error": false
+  },
+  {
+   "zone": "Asia/Kolkata",
+   "offset": 19800,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "1720000000",
+   "result": "2024-07-03 15:16:40",
+   "error": false
+  },
+  {
+   "zone": "Asia/Kolkata",
+   "offset": 19800,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "-1",
+   "result": "1970-01-01 05:29:59",
+   "error": false
+  },
+  {
+   "zone": "Asia/Kolkata",
+   "offset": 19800,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "0",
+   "result": "1970-01-01 05:30:00",
+   "error": false
+  },
+  {
+   "zone": "Asia/Kolkata",
+   "offset": 19800,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "1000000000",
+   "result": "2001-09-09 07:16:40",
+   "error": false
+  },
+  {
+   "zone": "Asia/Kolkata",
+   "offset": 19800,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "1700000000",
+   "result": "2023-11-15 03:43:20",
+   "error": false
+  },
+  {
+   "zone": "Asia/Kolkata",
+   "offset": 19800,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "1720000000",
+   "result": "2024-07-03 15:16:40",
+   "error": false
+  },
+  {
+   "zone": "Asia/Kolkata",
+   "offset": 19800,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "-1",
+   "result": "1970-01-01 05:29:59",
+   "error": false
+  },
+  {
+   "zone": "Asia/Kolkata",
+   "offset": 19800,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "0",
+   "result": "1970-01-01 05:30:00",
+   "error": false
+  },
+  {
+   "zone": "Asia/Kolkata",
+   "offset": 19800,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "1000000000",
+   "result": "2001-09-09 07:16:40",
+   "error": false
+  },
+  {
+   "zone": "Asia/Kolkata",
+   "offset": 19800,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "1700000000",
+   "result": "Wed 15 Nov 2023 03:43 AM",
+   "error": false
+  },
+  {
+   "zone": "Asia/Kolkata",
+   "offset": 19800,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "1720000000",
+   "result": "Wed 03 Jul 2024 03:16 PM",
+   "error": false
+  },
+  {
+   "zone": "Asia/Kolkata",
+   "offset": 19800,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "-1",
+   "result": "Thu 01 Jan 1970 05:29 AM",
+   "error": false
+  },
+  {
+   "zone": "Asia/Kolkata",
+   "offset": 19800,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "0",
+   "result": "Thu 01 Jan 1970 05:30 AM",
+   "error": false
+  },
+  {
+   "zone": "Asia/Kolkata",
+   "offset": 19800,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "1000000000",
+   "result": "Sun 09 Sep 2001 07:16 AM",
+   "error": false
+  },
+  {
+   "zone": "Australia/Lord_Howe",
+   "offset": 39600,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "1700000000",
+   "result": "2023-11-15 09:13:20",
+   "error": false
+  },
+  {
+   "zone": "Australia/Lord_Howe",
+   "offset": 39600,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "1720000000",
+   "result": "2024-07-03 20:46:40",
+   "error": false
+  },
+  {
+   "zone": "Australia/Lord_Howe",
+   "offset": 39600,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "-1",
+   "result": "1970-01-01 10:59:59",
+   "error": false
+  },
+  {
+   "zone": "Australia/Lord_Howe",
+   "offset": 39600,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "0",
+   "result": "1970-01-01 11:00:00",
+   "error": false
+  },
+  {
+   "zone": "Australia/Lord_Howe",
+   "offset": 39600,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "1000000000",
+   "result": "2001-09-09 12:46:40",
+   "error": false
+  },
+  {
+   "zone": "Australia/Lord_Howe",
+   "offset": 39600,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "1700000000",
+   "result": "2023-11-15 09:13:20",
+   "error": false
+  },
+  {
+   "zone": "Australia/Lord_Howe",
+   "offset": 39600,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "1720000000",
+   "result": "2024-07-03 20:46:40",
+   "error": false
+  },
+  {
+   "zone": "Australia/Lord_Howe",
+   "offset": 39600,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "-1",
+   "result": "1970-01-01 10:59:59",
+   "error": false
+  },
+  {
+   "zone": "Australia/Lord_Howe",
+   "offset": 39600,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "0",
+   "result": "1970-01-01 11:00:00",
+   "error": false
+  },
+  {
+   "zone": "Australia/Lord_Howe",
+   "offset": 39600,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "1000000000",
+   "result": "2001-09-09 12:46:40",
+   "error": false
+  },
+  {
+   "zone": "Australia/Lord_Howe",
+   "offset": 39600,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "1700000000",
+   "result": "Wed 15 Nov 2023 09:13 AM",
+   "error": false
+  },
+  {
+   "zone": "Australia/Lord_Howe",
+   "offset": 39600,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "1720000000",
+   "result": "Wed 03 Jul 2024 08:46 PM",
+   "error": false
+  },
+  {
+   "zone": "Australia/Lord_Howe",
+   "offset": 39600,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "-1",
+   "result": "Thu 01 Jan 1970 10:59 AM",
+   "error": false
+  },
+  {
+   "zone": "Australia/Lord_Howe",
+   "offset": 39600,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "0",
+   "result": "Thu 01 Jan 1970 11:00 AM",
+   "error": false
+  },
+  {
+   "zone": "Australia/Lord_Howe",
+   "offset": 39600,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "1000000000",
+   "result": "Sun 09 Sep 2001 12:46 PM",
+   "error": false
+  },
+  {
+   "zone": "Pacific/Auckland",
+   "offset": 46800,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "1700000000",
+   "result": "2023-11-15 11:13:20",
+   "error": false
+  },
+  {
+   "zone": "Pacific/Auckland",
+   "offset": 46800,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "1720000000",
+   "result": "2024-07-03 22:46:40",
+   "error": false
+  },
+  {
+   "zone": "Pacific/Auckland",
+   "offset": 46800,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "-1",
+   "result": "1970-01-01 12:59:59",
+   "error": false
+  },
+  {
+   "zone": "Pacific/Auckland",
+   "offset": 46800,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "0",
+   "result": "1970-01-01 13:00:00",
+   "error": false
+  },
+  {
+   "zone": "Pacific/Auckland",
+   "offset": 46800,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "1000000000",
+   "result": "2001-09-09 14:46:40",
+   "error": false
+  },
+  {
+   "zone": "Pacific/Auckland",
+   "offset": 46800,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "1700000000",
+   "result": "2023-11-15 11:13:20",
+   "error": false
+  },
+  {
+   "zone": "Pacific/Auckland",
+   "offset": 46800,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "1720000000",
+   "result": "2024-07-03 22:46:40",
+   "error": false
+  },
+  {
+   "zone": "Pacific/Auckland",
+   "offset": 46800,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "-1",
+   "result": "1970-01-01 12:59:59",
+   "error": false
+  },
+  {
+   "zone": "Pacific/Auckland",
+   "offset": 46800,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "0",
+   "result": "1970-01-01 13:00:00",
+   "error": false
+  },
+  {
+   "zone": "Pacific/Auckland",
+   "offset": 46800,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "1000000000",
+   "result": "2001-09-09 14:46:40",
+   "error": false
+  },
+  {
+   "zone": "Pacific/Auckland",
+   "offset": 46800,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "1700000000",
+   "result": "Wed 15 Nov 2023 11:13 AM",
+   "error": false
+  },
+  {
+   "zone": "Pacific/Auckland",
+   "offset": 46800,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "1720000000",
+   "result": "Wed 03 Jul 2024 10:46 PM",
+   "error": false
+  },
+  {
+   "zone": "Pacific/Auckland",
+   "offset": 46800,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "-1",
+   "result": "Thu 01 Jan 1970 12:59 PM",
+   "error": false
+  },
+  {
+   "zone": "Pacific/Auckland",
+   "offset": 46800,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "0",
+   "result": "Thu 01 Jan 1970 01:00 PM",
+   "error": false
+  },
+  {
+   "zone": "Pacific/Auckland",
+   "offset": 46800,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "1000000000",
+   "result": "Sun 09 Sep 2001 02:46 PM",
+   "error": false
+  },
+  {
+   "zone": "UTC",
+   "offset": 0,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "1700000000",
+   "result": "2023-11-14 22:13:20",
+   "error": false
+  },
+  {
+   "zone": "UTC",
+   "offset": 0,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "1720000000",
+   "result": "2024-07-03 09:46:40",
+   "error": false
+  },
+  {
+   "zone": "UTC",
+   "offset": 0,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "-1",
+   "result": "1969-12-31 23:59:59",
+   "error": false
+  },
+  {
+   "zone": "UTC",
+   "offset": 0,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "0",
+   "result": "1970-01-01 00:00:00",
+   "error": false
+  },
+  {
+   "zone": "UTC",
+   "offset": 0,
+   "phrase": "%Y-%m-%d %H:%M:%S",
+   "text": "1000000000",
+   "result": "2001-09-09 01:46:40",
+   "error": false
+  },
+  {
+   "zone": "UTC",
+   "offset": 0,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "1700000000",
+   "result": "2023-11-14 22:13:20",
+   "error": false
+  },
+  {
+   "zone": "UTC",
+   "offset": 0,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "1720000000",
+   "result": "2024-07-03 09:46:40",
+   "error": false
+  },
+  {
+   "zone": "UTC",
+   "offset": 0,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "-1",
+   "result": "1969-12-31 23:59:59",
+   "error": false
+  },
+  {
+   "zone": "UTC",
+   "offset": 0,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "0",
+   "result": "1970-01-01 00:00:00",
+   "error": false
+  },
+  {
+   "zone": "UTC",
+   "offset": 0,
+   "phrase": "%Y-%m-%d %H:%M:%S%z%Z",
+   "text": "1000000000",
+   "result": "2001-09-09 01:46:40",
+   "error": false
+  },
+  {
+   "zone": "UTC",
+   "offset": 0,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "1700000000",
+   "result": "Tue 14 Nov 2023 10:13 PM",
+   "error": false
+  },
+  {
+   "zone": "UTC",
+   "offset": 0,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "1720000000",
+   "result": "Wed 03 Jul 2024 09:46 AM",
+   "error": false
+  },
+  {
+   "zone": "UTC",
+   "offset": 0,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "-1",
+   "result": "Wed 31 Dec 1969 11:59 PM",
+   "error": false
+  },
+  {
+   "zone": "UTC",
+   "offset": 0,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "0",
+   "result": "Thu 01 Jan 1970 12:00 AM",
+   "error": false
+  },
+  {
+   "zone": "UTC",
+   "offset": 0,
+   "phrase": "%a %d %b %Y %I:%M %p",
+   "text": "1000000000",
+   "result": "Sun 09 Sep 2001 01:46 AM",
+   "error": false
+  }
+ ]
+}
