@@ -77,7 +77,6 @@ fn rows(window: &ReviewImportsWindow) -> Vec<Vec<String>> {
 }
 
 // leaf: audit-options-menu-menu-file-import-files
-// leaf: audit-network-import-queue
 // leaf: audit-network-import-paths
 #[test]
 fn files_given_are_reviewed_then_imported() {
@@ -491,4 +490,142 @@ fn files_and_folders_picked_are_reviewed() {
             ),
         ]
     );
+}
+
+fn copy_dir(from: &Path, to: &Path) {
+    std::fs::create_dir_all(to).unwrap();
+    for entry in std::fs::read_dir(from).unwrap() {
+        let entry = entry.unwrap();
+        let target = to.join(entry.file_name());
+        if entry.file_type().unwrap().is_dir() {
+            copy_dir(&entry.path(), &target);
+        } else {
+            std::fs::copy(entry.path(), &target).unwrap();
+        }
+    }
+}
+
+// leaf: audit-network-import-queue
+#[test]
+fn the_references_recorded_paths_are_reviewed_and_handed_to_an_import_page_as_it_did() {
+    // oracle/record_local_import.py: a folder (with sidecars, a subfolder, a
+    // duplicate, an empty file, a Thumbs.db and one it can't import), one of
+    // its files again and a missing path, with and without its subfolders;
+    // then "import now" hands the good files, in order, to an import page
+    let recorded = hydrus_testkit::fixture_json("local_import_dialog.json");
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let work = tempfile::tempdir().unwrap();
+    let folder = work.path().join("in");
+    copy_dir(&hydrus_testkit::fixture_path("import_folder"), &folder);
+    std::fs::File::create(folder.join("empty.png")).unwrap();
+    std::fs::copy(folder.join("a.png"), folder.join("Thumbs.db")).unwrap();
+    // each file last modified when the recorder's was
+    for (rel, time) in recorded["mtimes"].as_object().unwrap() {
+        let path = folder.join(rel);
+        if path.exists() {
+            std::fs::File::options()
+                .write(true)
+                .open(&path)
+                .unwrap()
+                .set_modified(std::time::UNIX_EPOCH + Duration::from_secs(time.as_u64().unwrap()))
+                .unwrap();
+        }
+    }
+    let missing = work.path().join("gone.png");
+    let (folder_text, missing_text) = (
+        folder.to_string_lossy().into_owned(),
+        missing.to_string_lossy().into_owned(),
+    );
+    let ours = |recorded: &str| -> String {
+        if recorded == "<missing>" {
+            return missing_text.clone();
+        }
+        recorded
+            .replacen("<folder>", &folder_text, 1)
+            .replace('/', std::path::MAIN_SEPARATOR_STR)
+    };
+    for case in recorded["cases"].as_array().unwrap() {
+        let name = case["given"].to_string();
+        menu(&ui, "import files\u{2026}");
+        let window = bound
+            .review_imports
+            .borrow()
+            .as_ref()
+            .map(|(w, _)| w.clone_strong())
+            .expect("the window is open");
+        // (the checkbox sets its property and tells the window)
+        let search = case["search_subdirectories"].as_bool().unwrap();
+        window.set_search_subdirectories(search);
+        window.invoke_subdirectories_toggled(search);
+        for given in case["given"].as_array().unwrap() {
+            window.invoke_path_entered(ours(given.as_str().unwrap()).into());
+        }
+        parsed(&window);
+        let theirs: Vec<Vec<String>> = case["rows"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|row| {
+                row.as_array()
+                    .unwrap()
+                    .iter()
+                    .enumerate()
+                    .map(|(c, cell)| {
+                        let cell = cell.as_str().unwrap();
+                        if c == 1 { ours(cell) } else { cell.to_owned() }
+                    })
+                    .collect()
+            })
+            .collect();
+        assert_eq!(rows(&window), theirs, "{name}: rows");
+        // (the reference ends the text with a full stop in its own way)
+        assert_eq!(
+            window.get_progress().trim_end_matches('.'),
+            case["progress"].as_str().unwrap().trim_end_matches('.'),
+            "{name}"
+        );
+        assert_eq!(
+            window.get_can_import(),
+            case["enabled"]["import now"].as_bool().unwrap(),
+            "{name}"
+        );
+        // (the recorder ticked "delete original files after success" in one)
+        let page = &case["page"];
+        let delete = page["delete_after_success"].as_bool().unwrap();
+        window.set_delete_after_success(delete);
+        window.invoke_delete_toggled(delete);
+        window.invoke_import_now();
+        let queue = bound
+            .current
+            .borrow()
+            .borrow()
+            .importer()
+            .map(|i| i.queue)
+            .unwrap();
+        let seeds: Vec<(String, Option<i64>)> = store
+            .read(move |c| queues::file_seeds(c, queue))
+            .unwrap()
+            .into_iter()
+            .map(|s| (s.data, s.source_time))
+            .collect();
+        let handed: Vec<(String, Option<i64>)> = page["seeds"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|p| (ours(p[0].as_str().unwrap()), p[1].as_i64()))
+            .collect();
+        assert_eq!(seeds, handed, "{name}: the import page's queue");
+        let made = store
+            .read(move |c| queues::queue(c, queue))
+            .unwrap()
+            .unwrap();
+        assert_eq!(
+            LocalImport::of(&made).map(|l| l.delete_after_success),
+            Some(delete),
+            "{name}: deleting the originals"
+        );
+    }
 }

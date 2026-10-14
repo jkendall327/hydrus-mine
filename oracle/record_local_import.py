@@ -56,6 +56,26 @@ def record( session ):
 
     missing = os.path.join( work, 'gone.png' )
 
+    # each file last modified at its own known time, so the import page's
+    # source times can be told apart
+    mtimes = {}
+
+    for ( root, dirs, files ) in os.walk( folder ):
+
+        for name in sorted( files ):
+
+            path = os.path.join( root, name )
+
+            mtimes[ os.path.relpath( path, folder ) ] = None
+
+
+    for ( k, rel ) in enumerate( sorted( mtimes ) ):
+
+        mtimes[ rel ] = 1_600_000_000 + 10 * k
+
+        os.utime( os.path.join( folder, rel ), ( mtimes[ rel ], mtimes[ rel ] ) )
+
+
     def shown( path ):
 
         if path == missing:
@@ -90,7 +110,7 @@ def record( session ):
         return panel
 
 
-    out = { 'cases' : [] }
+    out = { 'cases' : [], 'mtimes' : mtimes }
 
     panel = controller.CallBlockingToQt( gui, make, True )
 
@@ -163,6 +183,7 @@ def record( session ):
 
         # "import now": the paths it hands over
         handed = []
+        pages = []
 
         original = controller.pub
 
@@ -171,6 +192,14 @@ def record( session ):
             if topic == 'new_hdd_import':
 
                 handed.append( [ shown( p ) for p in args[ 0 ] ] )
+
+                # the import page it makes: each file's source time and
+                # whether it deletes the originals
+                from hydrus.client.importing import ClientImportLocal
+
+                hdd = ClientImportLocal.HDDImport( paths = args[ 0 ], import_options_container = args[ 1 ], metadata_routers = args[ 2 ], paths_to_additional_service_keys_to_tags = args[ 3 ], delete_after_success = args[ 4 ] )
+
+                pages.append( { 'delete_after_success' : bool( args[ 4 ] ), 'seeds' : [ [ shown( f.file_seed_data ), f.source_time ] for f in hdd.GetFileSeedCache().GetFileSeeds() ] } )
 
                 return
 
@@ -182,6 +211,12 @@ def record( session ):
 
         try:
 
+            # (the second case ticks "delete original files after success")
+            if len( out[ 'cases' ] ) == 1:
+
+                controller.CallBlockingToQt( gui, lambda: panel._delete_after_success.setChecked( True ) )
+
+
             controller.CallBlockingToQt( gui, panel._DoImport )
 
         finally:
@@ -190,11 +225,53 @@ def record( session ):
 
 
         case[ 'imported' ] = handed[ 0 ] if len( handed ) > 0 else None
+        case[ 'page' ] = pages[ 0 ] if len( pages ) > 0 else None
 
         controller.CallBlockingToQt( gui, panel.deleteLater )
 
         out[ 'cases' ].append( case )
 
+
+    # pause and stop: a path given while paused waits; resumed, it is parsed;
+    # stopping drops the paths still to parse but keeps the parsed ones
+    def snapshot( panel ):
+
+        return { **state( panel ), 'rows' : len( panel._paths_list.GetData() ), 'paused' : panel._pause_event.is_set() }
+
+
+    def after( seconds, panel ):
+
+        time.sleep( seconds )
+
+        return controller.CallBlockingToQt( gui, snapshot, panel )
+
+
+    panel = controller.CallBlockingToQt( gui, make, True )
+
+    steps = []
+
+    def record_step( name, call, wait ):
+
+        if call is not None:
+
+            controller.CallBlockingToQt( gui, call )
+
+
+        steps.append( { 'name' : name, **after( wait, panel ) } )
+
+
+    record_step( 'paused', panel.PauseProgress, 0.3 )
+    record_step( 'a path given while paused', lambda: panel._AddPathsToList( [ os.path.join( folder, 'a.png' ) ] ), 1.0 )
+    record_step( 'resumed', panel.PauseProgress, 2.0 )
+    record_step( 'paused again', panel.PauseProgress, 0.3 )
+    record_step( 'two paths given while paused', lambda: panel._AddPathsToList( [ os.path.join( folder, 'dupe.gif' ), os.path.join( folder, 'sub', 'c.png' ) ] ), 1.0 )
+    record_step( 'stopped', panel.Cancel, 2.0 )
+    record_step( 'resumed after the stop', panel.PauseProgress, 2.0 )
+    record_step( 'a path given after the stop', lambda: panel._AddPathsToList( [ os.path.join( folder, 'dupe.gif' ) ] ), 2.0 )
+
+    out[ 'pause_stop' ] = steps
+
+    controller.CallBlockingToQt( gui, panel.deleteLater )
 
     shutil.rmtree( work, ignore_errors = True )
 
