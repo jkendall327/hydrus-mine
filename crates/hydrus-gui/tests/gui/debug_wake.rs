@@ -77,9 +77,10 @@ fn run(name: &str) -> (Value, Seen) {
 
     d.click(&["debug modes", "simulate a wake from sleep"]);
     let started = Instant::now();
-    let cancel_at = run["cancel_at_ms"]
-        .as_f64()
-        .map(|ms| Duration::from_secs_f64(ms / 1000.0));
+    // (a run that was cancelled is cancelled the moment its popup is first
+    // seen, not after a wait on the real clock, which the machine's load
+    // could stretch past the first words of the countdown)
+    let cancelled_run = run["cancel_at_ms"].as_f64().is_some();
     let mut seen = Seen {
         first: None,
         texts: Vec::new(),
@@ -95,10 +96,7 @@ fn run(name: &str) -> (Value, Seen) {
             seen.first.get_or_insert_with(|| job.clone());
             seen.texts.extend(job.status_text_1.clone());
             seen.woke_during |= d.store.wake_ends_at().is_some();
-            if let Some(at) = cancel_at
-                && seen.cancelled_after.is_none()
-                && started.elapsed() >= at
-            {
+            if cancelled_run && seen.cancelled_after.is_none() {
                 seen.cancelled_after = Some(started.elapsed());
                 let key = job.key;
                 d.store
