@@ -218,10 +218,8 @@ impl hydrus_gui::system_idle::SystemIdle for Desktop {
     }
 }
 
-// leaf: audit-options-gui-sessions-sessions-if-last-session-above-only-autosave-during-idle-time
-#[test]
-fn keyboard_and_mouse_input_outside_our_windows_holds_back_the_idle_only_autosave() {
-    let _windows = headless::init();
+/// One run of the idle-only autosave with only the given idle timeouts set.
+fn outside_input_holds_back_the_autosave(user_seconds: Option<u64>, mouse_seconds: Option<u64>) {
     let (_dirs, store) = store();
     store
         .write(move |ctx| {
@@ -237,8 +235,8 @@ fn keyboard_and_mouse_input_outside_our_windows_holds_back_the_idle_only_autosav
                 ctx.conn(),
                 &GuiIdleSettings {
                     enabled: true,
-                    user_seconds: Some(10),
-                    mouse_seconds: Some(10),
+                    user_seconds,
+                    mouse_seconds,
                     api_seconds: None,
                     busy_cpu_percent: 50,
                     busy_cpu_count: None,
@@ -287,6 +285,15 @@ fn keyboard_and_mouse_input_outside_our_windows_holds_back_the_idle_only_autosav
     // and away again
     desktop.set(Some(1_200_000));
     assert!(bound.session_autosave.idle_at(due + 400_000 + 600_000));
+}
+
+// leaf: audit-options-gui-sessions-sessions-if-last-session-above-only-autosave-during-idle-time
+#[test]
+fn keyboard_and_mouse_input_outside_our_windows_holds_back_the_idle_only_autosave() {
+    let _windows = headless::init();
+    // (each timeout on its own, so neither can pass for the other)
+    outside_input_holds_back_the_autosave(Some(10), None);
+    outside_input_holds_back_the_autosave(None, Some(10));
 }
 
 #[test]

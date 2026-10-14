@@ -40,11 +40,20 @@ fn start(program: &str, args: &[&str]) -> Option<(Server, String)> {
             return None;
         }
     };
-    let mut line = String::new();
-    BufReader::new(child.stdout.take().unwrap())
-        .read_line(&mut line)
-        .unwrap();
-    Some((Server(child), line.trim().to_owned()))
+    // (read on a thread: a server that never says its address must fail the
+    // test, not hang it)
+    let stdout = child.stdout.take().unwrap();
+    let server = Server(child);
+    let (sender, receiver) = std::sync::mpsc::channel();
+    std::thread::spawn(move || {
+        let mut line = String::new();
+        BufReader::new(stdout).read_line(&mut line).unwrap();
+        let _ = sender.send(line);
+    });
+    let line = receiver
+        .recv_timeout(Duration::from_secs(10))
+        .unwrap_or_else(|_| panic!("{program} did not say its address"));
+    Some((server, line.trim().to_owned()))
 }
 
 /// The platform's idle time once it has been sampled.
@@ -90,7 +99,7 @@ fn the_x_servers_idle_time_grows_and_input_resets_it() {
         wayland: false,
     });
     let first = sampled(&platform);
-    std::thread::sleep(Duration::from_millis(1500));
+    std::thread::sleep(Duration::from_secs(2));
     let later = platform.idle_ms().unwrap();
     assert!(later >= first + 1400, "grew from {first} to {later}");
 
