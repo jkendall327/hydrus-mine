@@ -2363,8 +2363,9 @@ mod network_consumers {
                 recorded_retry_statuses(case),
                 "{case}"
             );
+            // (a second less: where in a second the job starts moves its end by up to one)
             assert!(
-                fetched.seconds >= case["seconds"].as_f64().unwrap() - 0.5,
+                fetched.seconds >= case["seconds"].as_f64().unwrap() - 1.0 - 0.5,
                 "{} for {case}",
                 fetched.seconds
             );
@@ -2403,8 +2404,9 @@ mod network_consumers {
                 recorded_retry_statuses(case),
                 "{case}"
             );
+            // (a second less: where in a second the job starts moves its end by up to one)
             assert!(
-                fetched.seconds >= case["seconds"].as_f64().unwrap() - 0.5,
+                fetched.seconds >= case["seconds"].as_f64().unwrap() - 1.0 - 0.5,
                 "{} for {case}",
                 fetched.seconds
             );
@@ -2444,14 +2446,17 @@ mod network_consumers {
                 recorded_retry_statuses(case),
                 "{case}"
             );
+            // The wake time is a whole second (`GetNow()`) plus the wait, and the wait ends in
+            // the first second after it, so how long it takes depends on where in a second
+            // the job started: the recording's one sample and this run can differ by a second.
             let waited = seconds_of(&case["wakes"], "serverside")[0];
             assert!(
-                fetched.seconds >= waited - 0.05,
+                fetched.seconds >= waited - 1.0 - 0.05,
                 "{} for {case}",
                 fetched.seconds
             );
             assert!(
-                fetched.seconds >= case["seconds"].as_f64().unwrap() - 0.5,
+                fetched.seconds >= case["seconds"].as_f64().unwrap() - 1.0 - 0.5,
                 "{} for {case}",
                 fetched.seconds
             );
