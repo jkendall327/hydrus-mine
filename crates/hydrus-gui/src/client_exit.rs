@@ -35,6 +35,7 @@ thread_local! {
 }
 
 /// The room the exit sees, `(wanted, free)`.
+#[doc(hidden)]
 pub type SpaceFn = Rc<dyn Fn() -> (u64, u64)>;
 
 /// What the exit asks the pages (`GetAbleToCloseData`).
@@ -46,6 +47,7 @@ pub(crate) struct ExitPages {
 
 /// For tests: the disk room the exit sees, `(wanted, free)`, instead of the
 /// database drive's own.
+#[doc(hidden)]
 pub fn set_space(space: Option<SpaceFn>) {
     SPACE.with(|s| *s.borrow_mut() = space);
 }
@@ -530,6 +532,24 @@ mod tests {
         window.invoke_answer(true);
         assert!(current_finished.get());
         assert!(!window.window().is_visible());
+    }
+
+    #[test]
+    fn the_real_disk_check_counts_the_database_files_and_the_drive_s_free_room() {
+        set_space(None);
+        let directory = tempfile::tempdir().unwrap();
+        let store = Store::open(directory.path()).unwrap();
+        let (wanted, free) = disk_space(&store).expect("the drive is read");
+        assert_eq!(wanted, 64 * 1_048_576, "a small database: the 64MB floor");
+        assert_eq!(
+            Some(free),
+            hydrus_store::vacuum::free_space(&directory.path().join("db"))
+        );
+        // (a sparse 400MB database file makes half of it wanted)
+        let big = std::fs::File::create(directory.path().join("big.db")).unwrap();
+        big.set_len(400 * 1_048_576).unwrap();
+        let (wanted, _) = disk_space(&store).unwrap();
+        assert!(wanted >= 200 * 1_048_576, "{wanted}");
     }
 
     fn maintenance_test_store() -> (tempfile::TempDir, Arc<Store>) {

@@ -1806,6 +1806,21 @@ impl Pages {
     /// load (`CheckAbleToClose(for_session_close = True)`): `(reason, page
     /// name)`, in the pages' order.
     pub fn session_close_vetoes(&mut self) -> Vec<(String, String)> {
+        self.downloader_objections()
+            .into_iter()
+            .map(|(reason, name, _)| (reason, name))
+            .collect()
+    }
+
+    /// The pages that object to the client exiting (`GetAbleToCloseData(
+    /// for_session_close = True)`), in the order the reference lists them.
+    pub fn exit_objections(&mut self) -> Vec<Objection> {
+        Self::listed(self.downloader_objections())
+    }
+
+    /// `(reason, page name, page)` of each downloader page that objects to a
+    /// session close, in the pages' order.
+    fn downloader_objections(&mut self) -> Vec<(String, String, PageKey)> {
         fn walk(pages: &[Page], out: &mut Vec<(PageKey, String)>) {
             for page in pages {
                 match &page.content {
@@ -1820,35 +1835,10 @@ impl Pages {
         downloaders
             .into_iter()
             .filter_map(|(key, name)| {
-                let opened = self.page(&key)?;
-                let veto = opened.borrow().close_veto(false)?;
-                Some((veto, name))
-            })
-            .collect()
-    }
-
-    /// The pages that object to the client exiting (`GetAbleToCloseData(
-    /// for_session_close = True)`), in the order the reference lists them.
-    pub fn exit_objections(&mut self) -> Vec<Objection> {
-        fn walk(pages: &[Page], out: &mut Vec<(PageKey, String)>) {
-            for page in pages {
-                match &page.content {
-                    PageContent::Pages(children) => walk(children, out),
-                    PageContent::Downloader { .. } => out.push((page.key, page.name.clone())),
-                    _ => {}
-                }
-            }
-        }
-        let mut downloaders = Vec::new();
-        walk(&self.session.pages, &mut downloaders);
-        let objections = downloaders
-            .into_iter()
-            .filter_map(|(key, name)| {
                 let veto = self.page(&key)?.borrow().close_veto(false)?;
                 Some((veto, name, key))
             })
-            .collect();
-        Self::listed(objections)
+            .collect()
     }
 
     /// Save the open pages, as they are now, as the session `name`

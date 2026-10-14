@@ -912,7 +912,9 @@ fn exit_restart_and_force_maintenance_replay_the_references_questions_and_outcom
                         "{name}: still asked just before the time"
                     );
                     assert!(
-                        !pages_dialog || hydrus_gui::reasons_dialog::dialog().is_some(),
+                        !pages_dialog
+                            || hydrus_gui::reasons_dialog::dialog()
+                                .is_some_and(|d| d.window().is_visible()),
                         "{name}: still asked just before the time"
                     );
                     headless::advance_time(Duration::from_secs(3));

@@ -15103,7 +15103,7 @@
     "date": "2026-10-14",
     "class": "sound",
     "by": "claude, wave 5 W5-1",
-    "note": "Same recording and replay as plain exit, for the restart entry: the restart question (text, title, buttons, auto-yes), declined stays, accepted exits with the restart flag, unasked with confirmation off, little free space and importing pages asked first. The relaunch is a stand-in client script rather than the real binary, which DECISIONS.md (2026-10-14) accepts as proof of restart."
+    "note": "Same recording and replay as plain exit, for the restart entry: the restart question (text, title, buttons, auto-yes), declined stays, accepted exits with the restart flag, unasked with confirmation off, little free space and importing pages asked first. The relaunch is a stand-in client script rather than the real binary, which DECISIONS.md (2026-10-14) accepts as proof of restart. The arguments the real client passes to the relaunch (current_exe and args_os minus the first, main.rs) are not driven: the test supplies its own, and that part is checked by reading the code."
    }
   },
   {
