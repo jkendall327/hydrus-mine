@@ -174,6 +174,7 @@ pub mod tag_migration_window;
 pub(crate) mod tag_relationships_window;
 pub mod tag_suggestions_window;
 mod tag_sync_review_window;
+pub use tag_sync_review_window::opened as tag_sync_review_opened;
 mod tag_text;
 pub mod thumbnail_background;
 mod vacuum_review_window;

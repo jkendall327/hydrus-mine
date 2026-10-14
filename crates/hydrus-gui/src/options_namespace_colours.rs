@@ -97,10 +97,11 @@ fn edit_next(
             if let Some(picker) = weak.upgrade() {
                 let _ = picker.hide();
             }
-            if let Some(rgb) = rgb
-                && valid()
-            {
-                list.borrow_mut().set_colour(namespace.as_deref(), rgb);
+            // (a cancelled picker gives back the colour it was given, and the entry is
+            // still taken out of the selection)
+            if valid() {
+                list.borrow_mut()
+                    .set_colour(namespace.as_deref(), rgb.unwrap_or([red, green, blue]));
                 editor
                     .borrow_mut()
                     .set_namespace_colours(list.borrow().values());
