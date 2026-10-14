@@ -1021,10 +1021,10 @@
     "Switch changes which file is A and reuses shared zoom position. Comparison statements combine metadata facts plus deferred visual/quality data for the currently shown pair. First-pass evidence scope: Statement/score/pixel/slow-data outputs are reference-compared, and pair orientation/retained canvas state has focused native assertions."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window test opens the filter, checks statements exist, the score text format, A/B switch and retained zoom/pan geometry; statement content is replayed against the comparison_statements recording in a separate test on the function. Zoom/pan/switch expectations are relational asserts from the Python behaviour, not recorded, and the window test checks only that statements are present, not their content. Tests: crates/hydrus-gui/tests/gui/duplicate_filter.rs:229 the_filter_opens_from_a_duplicates_page_and_compares_the_pair; crates/hydrus-duplicates/tests/comparison_statements.rs"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "wave 5 session (W5-6)",
+    "note": "The reference's real CanvasFilterDuplicates is recorded through switch, zoom to 100%, zoom in, pan right and down, switch back and skip (oracle/record_duplicate_filter_canvas.py, scenario compare_switch_keeps_zoom_and_pan): after every command the file shown, the hover's statements (text and sign) and score for that file against the other, the zoom and where the file sits on the canvas. The real filter window is replayed step by step and matches, including the exact geometry after zooming and panning (14 px per pan). The statements' ages (time imported) are compared with the numbers taken out, because the reference's clock was held at 2030. Both files of the recorded pair are the same size, so the retained zoom is not tested across different sizes. Test: crates/hydrus-gui/tests/gui/duplicate_filter_canvas.rs the_filter_switches_between_the_pair_s_files_keeping_zoom_and_pan_as_the_reference_does."
    }
   },
   {

@@ -5758,7 +5758,13 @@ the pairs prefetched ahead are replayed against the reference's canvas from
 `oracle/fixtures/duplicate_filter_canvas.json`; the filtering tab's sort,
 direction and group chooser and the "quick and dirty processing" buttons from
 `oracle/fixtures/duplicates_quick_processing.json`. A file that is in several
-of the upcoming pairs is warmed once.
+of the upcoming pairs is warmed once. Switching between the pair's two files
+shows each against the other (the comparison statements and score the
+reference's hover gives, with the slow ones arriving after) and keeps the
+zoom and position: the reference's canvas is recorded through switching, zooming
+to 100%, zooming in, panning and skipping to a fresh pair (fitted again), and
+the window's statements, score and where the file sits match it step by step
+(scenario `compare_switch_keeps_zoom_and_pan`).
 
 
 ## Options recheck additions (#97 phase 2)

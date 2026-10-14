@@ -465,8 +465,141 @@ fn the_filter_window_goes_through_the_references_batches_as_it_does() {
     hydrus_store::duplicates::pin_random_group_choice();
     let recorded = hydrus_testkit::fixture_json("duplicate_filter_canvas.json");
     let scenarios = recorded["scenarios"].as_array().unwrap();
-    assert_eq!(scenarios.len(), 17);
+    assert_eq!(scenarios.len(), 18);
     for scenario in scenarios {
-        replay(scenario);
+        // (the comparison scenario is replayed on its own, below)
+        if scenario["options"].get("inspect").is_none() {
+            replay(scenario);
+        }
+    }
+}
+
+/// The age in a "time imported" statement, which the reference computed at the time
+/// the scenario was recorded (the clock was held at 2030).
+fn without_ages(text: &str) -> String {
+    regex::Regex::new(r"(\d+ \w+ )*\d+ \w+ old")
+        .unwrap()
+        .replace_all(text, "<age> old")
+        .into_owned()
+}
+
+/// The A/B switch of the reference's real duplicate filter canvas, recorded by
+/// `oracle/record_duplicate_filter_canvas.py` (scenario `compare_switch_keeps_zoom_and_pan`):
+/// after every command, which file is shown, the comparison statements and score the hover
+/// shows for it (each file against the other), the zoom and where the file sits on the
+/// canvas. The window shows the same, through switching, zooming to 100%, zooming in, panning
+/// and skipping to a fresh pair (fitted again). The statements' ages are the one thing that
+/// depend on the clock when recorded, so they are compared with their numbers taken out.
+// leaf: audit-media-filter-compare
+#[test]
+fn the_filter_switches_between_the_pair_s_files_keeping_zoom_and_pan_as_the_reference_does() {
+    let windows = headless::init();
+    hydrus_store::duplicates::pin_random_group_choice();
+    let recorded = hydrus_testkit::fixture_json("duplicate_filter_canvas.json");
+    let scenario = recorded["scenarios"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|s| s["name"] == "compare_switch_keeps_zoom_and_pan")
+        .unwrap();
+    let o = opened();
+    set_options(&o, &scenario["options"]);
+    o.ui.invoke_launch_filter();
+    let window = o
+        .bound
+        .filter
+        .borrow()
+        .as_ref()
+        .expect("the filter opens")
+        .clone_strong();
+    // (the reference's canvas was 1000x750)
+    let native = windows
+        .get(windows.count() - 1)
+        .expect("the filter's window");
+
+    let settle = |window: &hydrus_gui::DuplicateFilterWindow| {
+        // the slow statements come from their own thread
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(60);
+        while window.get_score_text().ends_with('\u{2026}') {
+            assert!(
+                std::time::Instant::now() < deadline,
+                "the statements never finished"
+            );
+            slint::platform::update_timers_and_animations();
+            std::thread::sleep(std::time::Duration::from_millis(20));
+        }
+        for _ in 0..5 {
+            slint::platform::update_timers_and_animations();
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        }
+        let _ = headless::render(&native, 1000, 750);
+    };
+    let check = |what: &str, wanted: &Value, window: &hydrus_gui::DuplicateFilterWindow| {
+        settle(window);
+        assert_eq!(
+            window.get_index_text(),
+            wanted["index"].as_str().unwrap(),
+            "{what}"
+        );
+        let shown = pair_now(&o).unwrap();
+        assert_eq!(
+            shown[0],
+            wanted["shown"].as_str().unwrap(),
+            "{what}: file shown"
+        );
+        let view = &wanted["view"];
+        let statements: Vec<(String, i32)> = window
+            .get_statements()
+            .iter()
+            .map(|r| (without_ages(&r.text), r.score.signum()))
+            .collect();
+        let wanted_statements: Vec<(String, i32)> = view["statements"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|s| {
+                (
+                    without_ages(s[1].as_str().unwrap()),
+                    i32::try_from(s[2].as_i64().unwrap()).unwrap(),
+                )
+            })
+            .collect();
+        assert_eq!(statements, wanted_statements, "{what}: statements");
+        assert_eq!(
+            window.get_score_text(),
+            view["score"].as_str().unwrap(),
+            "{what}"
+        );
+        let container = view["container"].as_array().unwrap();
+        let wanted_rect: Vec<f32> = container
+            .iter()
+            .map(|v| v.as_f64().unwrap() as f32)
+            .collect();
+        let rect = [
+            window.get_media_x(),
+            window.get_media_y(),
+            window.get_media_width(),
+            window.get_media_height(),
+        ];
+        for (ours, theirs) in rect.iter().zip(&wanted_rect) {
+            assert!(
+                (ours - theirs).abs() <= 1.0,
+                "{what}: {rect:?} against {wanted_rect:?}"
+            );
+        }
+    };
+    check("start", &scenario["start"], &window);
+    for step in scenario["steps"].as_array().unwrap() {
+        let what = step["do"].as_str().unwrap();
+        match what {
+            "switch" => window.invoke_switch_media(),
+            "zoom_switch" => window.invoke_zoom(0, false, 0.0, 0.0),
+            "zoom_in" => window.invoke_zoom(1, false, 0.0, 0.0),
+            "pan_right" => window.invoke_pan(1, 0),
+            "pan_down" => window.invoke_pan(0, 1),
+            "skip" => window.invoke_decide("skip".into()),
+            other => panic!("{other}"),
+        }
+        check(what, &step["after"], &window);
     }
 }
