@@ -259,17 +259,17 @@ fn clearing_orphan_files_replays_the_reference_s_runs_and_its_cancel() {
                         .iter()
                         .map(|s| s[0].as_str().unwrap().to_owned())
                         .collect();
-                    // every non-scan line it said is one the reference said (the scan's own
-                    // "checking ..." lines are the folders, sampled)
-                    let moving = |t: &str| t.starts_with("moving orphan");
-                    for text in seen.iter().filter(|t| {
-                        !t.starts_with("checking ") && t.as_str() != "preparing" && !moving(t)
-                    }) {
-                        assert!(
-                            recorded.contains(text),
-                            "{name}: {text:?} not in {recorded:?}"
-                        );
-                    }
+                    // the lines it said, but for the scan's own "checking ..." lines (the
+                    // folders, sampled) and the moves one by one, are the ones the reference
+                    // said, in the same order
+                    let kept = |t: &&String| {
+                        !t.starts_with("checking ")
+                            && t.as_str() != "preparing"
+                            && !t.starts_with("moving orphan")
+                    };
+                    let said: Vec<&String> = seen.iter().filter(kept).collect();
+                    let recorded_kept: Vec<&String> = recorded.iter().filter(kept).collect();
+                    assert_eq!(said, recorded_kept, "{name}");
                     if wait_for.is_empty() {
                         assert_eq!(seen.last(), recorded.last(), "{name}");
                     } else {

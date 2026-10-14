@@ -146,8 +146,16 @@ fn replay_locations_panel(
 ) -> Vec<String> {
     let recording = hydrus_testkit::fixture_json("locations_panel.json");
     let mut differences = Vec::new();
+    let mut window = window.clone_strong();
+    // once a move has really run, the list and the rebalance line are the native's own: the
+    // reference's recorder never let one go on
+    let mut moved = false;
     for step in recording["steps"].as_array().unwrap() {
         let name = step["step"].as_str().unwrap();
+        // a started move closes the panel; the reference's recorder opens it afresh
+        if !window.window().is_visible() {
+            window = rig.open();
+        }
         let inputs = &step["inputs"];
         let mut yesno = inputs["yesno"]
             .as_array()
@@ -176,7 +184,7 @@ fn replay_locations_panel(
         while let Some(word) = words.next() {
             match word {
                 "open" => {}
-                "select" => select(window, &names.path(words.next().unwrap())),
+                "select" => select(&window, &names.path(words.next().unwrap())),
                 other => window.invoke_action(other.into()),
             }
         }
@@ -304,9 +312,9 @@ fn replay_locations_panel(
                 other => panic!("{other}"),
             }
         }
-        if window.window().is_visible() {
+        if window.window().is_visible() && !moved {
             // the state
-            let mut rows: Vec<Vec<String>> = cells(window)
+            let mut rows: Vec<Vec<String>> = cells(&window)
                 .into_iter()
                 .map(|mut row| {
                     row[0] = names.norm(&row[0]);
@@ -364,6 +372,21 @@ fn replay_locations_panel(
             {
                 diff(format!("rebalance {rebalance:?}"));
             }
+        }
+        // a started move is a real one on its own thread: let it finish before the next step
+        if step["dialogs"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|d| d[0] == "closed the panel")
+        {
+            let deadline = Instant::now() + Duration::from_secs(30);
+            while rig.store.read(locations::next_move).unwrap().is_some() {
+                assert!(Instant::now() < deadline, "{name}: the move never finished");
+                pump(Duration::from_millis(20));
+            }
+            pump(Duration::from_millis(300));
+            moved = true;
         }
         let review = rig.review();
         let mut saved: Vec<(String, i64, Option<i64>)> = review
@@ -432,15 +455,14 @@ fn the_locations_panel_replays_the_reference_s_steps() {
     // What differs on purpose (DIFFERENCES.md, Database > locations): the reference warns that
     // the last location cannot be removed and then asks anyway (it does not return); and after
     // a removal its list keeps a row selected where the native list selects none.
-    let unexplained: Vec<_> = replay_locations_panel(&rig, &names, &window)
-        .into_iter()
-        .filter(|d| {
-            !(d.starts_with("remove the last location: no question")
-                || (d.starts_with("remove the missing path, yes: buttons")
-                    || d.starts_with("move files now, forget it: buttons")))
-        })
-        .collect();
-    assert!(unexplained.is_empty(), "{}", unexplained.join("\n"));
+    let all = replay_locations_panel(&rig, &names, &window);
+    let none = "[false, false, false, false], not [true, true, true, true]";
+    let on_purpose = [
+        "remove the last location: no question \"Are you sure you want to remove this location? This will schedule all of the files it is currently responsible for to be moved elsewhere.\"".to_owned(),
+        format!("remove the missing path, yes: buttons {none}"),
+        format!("move files now, forget it: buttons {none}"),
+    ];
+    assert_eq!(all, on_purpose, "{}", all.join("\n"));
 }
 
 // leaf: audit-media-database-locations-paths
@@ -844,9 +866,9 @@ fn tree(base: &Path) -> Vec<String> {
 
 /// Every step of the reference's granularity window (oracle/record_granularity_panel.py)
 /// replayed through the real window: the same answers, then the questions and messages
-/// compared in order and words, and where the file ended up. The steps with `only` in
-/// their name are the ones for this leaf: "offline" or not.
-fn replay_granularity(offline: bool) {
+/// compared in order and words, and where the file ended up. The panel's own "currently N"
+/// label is compared by its level, not its wording.
+fn replay_granularity() {
     let recording = hydrus_testkit::fixture_json("granularity_panel.json");
     let rig = rig();
     let media = rig.home.path().join("client_files");
@@ -891,9 +913,6 @@ fn replay_granularity(offline: bool) {
             continue;
         }
         let is_offline = name.starts_with("offline");
-        if is_offline != offline {
-            // (the other leaf's steps still run, so the layout is where they left it)
-        }
         let action = match name.split(',').next().unwrap() {
             n if n.starts_with("2 to 3") => "2to3",
             n if n.starts_with("3 to 2") => "3to2",
@@ -997,7 +1016,7 @@ fn granularity_of(step: &serde_json::Value) -> String {
 // leaf: audit-media-database-locations-granularity-offline
 #[test]
 fn the_granularity_window_replays_the_reference_s_steps() {
-    replay_granularity(false);
+    replay_granularity();
 }
 
 // leaf: audit-media-database-locations-granularity-client

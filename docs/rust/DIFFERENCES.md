@@ -4378,6 +4378,9 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
 - "manage granularity" runs its progress in an ordinary popup rather than
   a modal dialog, and its questions in button windows.
 - The prefix folder moved first is the first in order, not a random one.
+- The offline-folder granularity scan of a folder holding both layouts is not
+  recorded against the reference (nor are the cancel and error messages of the
+  jobs), so that leaf stays at source-restated.
 - The list selects one location; it sorts by location only.
 - The rebalance runs from a non-modal popup, and closes the panel once it has
   started, as the reference does (the reference's progress is a modal dialog;

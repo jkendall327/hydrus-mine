@@ -23,7 +23,6 @@ pub(crate) struct Slot {
     max_size: Option<LocationMaxSizeWindow>,
     runtime: Option<crate::ChoiceButtonsWindow>,
     custom: Option<crate::EditValueWindow>,
-    timer: Option<slint::Timer>,
     granularity: crate::granularity_window::Slots,
 }
 
@@ -293,7 +292,6 @@ fn close(slots: &Slots) {
     if let Some(w) = slot.window.take() {
         let _ = w.hide();
     }
-    slot.timer = None;
 }
 
 #[allow(clippy::too_many_lines)]
