@@ -3155,16 +3155,14 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Deferred (owner, 2026-10-08): custom SVG star shapes.",
-    "Truth pass (2026-10-08): partial, small. Shapes and live preview done and recorded; SVG appearance not faithful. Missing: SVG choice is a free-text name and is not rendered (shape_path maps Svg to the default star); reference offers a list of installed SVG icons. Evidence: services_editor_window.rs:118-145, 319-370; recorded preview tests services_editor.rs:505,617,655",
-    "Native shape selector/named SVG field sets rating appearance and preserves existing SVG configuration.",
-    "No live rating-settings preview; rendering has existing named-SVG limits."
+    "Deferred (owner, 2026-10-08): custom SVG star shapes; taken up 2026-10-14.",
+    "The editor offers the installed and the user's own SVGs behind the reference's shapes/svgs radio, and an SVG star is drawn in the editor's four example displays, the thumbnails, the media viewer and its hover, and the preview window, with the default star for an SVG that is not there (DIFFERENCES.md: Qt's feathered outline is a ring of copies here)."
    ],
    "recheck": {
     "date": "2026-10-14",
     "class": "sound",
     "by": "Claude (issue #94 pickup)",
-    "note": "The real edit-service window is driven against star_svgs.json recorded from the reference's EditServiceStarRatingsSubPanel: the offered SVGs (installed, and with the user's own and a non-SVG file added; the user's SVG sharing an installed name does not replace it), the shapes/svgs choice saved through the parent Apply and reopened, and an SVG that is not there leaving the first chosen. The live preview draws the chosen SVG: for four SVGs (one the user's own) at 16, 24 and 32 px the painted pixels overlap those of Qt's DrawShape PNGs (star_svg_*.png) by over 65% (0.71-0.95 measured) and the fill and border colours appear. Qt's rasteriser and its feathered outline are not matched pixel for pixel, and the thumbnail overlay still draws an SVG as the default star (DIFFERENCES.md). The no-SVGs-found state cannot occur (the installed SVGs are built in). Tests: crates/hydrus-gui/tests/gui/star_svgs.rs"
+    "note": "The real edit-service window is clicked (the shapes and svgs radios) and read against star_svgs.json recorded from the reference's EditServiceStarRatingsSubPanel: the offered SVGs (installed, and with the user's own, a non-SVG file and one called just '.svg'; an installed SVG wins over a user's of the same name), which of the shape and svg lists is in use at each step, the saved shape or SVG after Apply, the service's own SVG shown on opening and the first SVG for one that is not there. An SVG star is then drawn, found by its colours in the real windows' pictures, where the reference's DrawShape paints it (the PNGs it recorded, at 12, 16, 24 and 32 pixels for four SVGs, one the user's own): in the editor's examples, on a thumbnail, in the preview window and in the media viewer, 70% or better overlap of what is painted either way (Qt's rasteriser and feathered outline are not resvg's; measured 0.71-0.95), and the default star for an SVG that is not there. Not checked: the hover popups of the viewer and preview (they draw the same shared rating graphic), the 12 px case outside the editor, and pixel identity. The no-SVGs-found state cannot occur (the installed SVGs are built in). Tests: crates/hydrus-gui/tests/gui/star_svgs.rs"
    }
   },
   {

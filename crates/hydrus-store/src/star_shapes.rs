@@ -54,6 +54,21 @@ pub fn user_dir(db_dir: &Path) -> PathBuf {
     db_dir.join("static").join("star_shapes")
 }
 
+/// The name an SVG file of `filename` goes by (`os.path.splitext`, for a
+/// name ending in ".svg" however it is cased; a file called just ".svg" is
+/// named ".svg", as Python names it).
+fn name_of(filename: &str) -> Option<String> {
+    let cut = filename.len().checked_sub(4)?;
+    if !filename.is_char_boundary(cut) || !filename[cut..].eq_ignore_ascii_case(".svg") {
+        return None;
+    }
+    Some(if cut == 0 {
+        filename.to_owned()
+    } else {
+        filename[..cut].to_owned()
+    })
+}
+
 /// The user's own SVGs: name and path.
 fn user_files(db_dir: &Path) -> Vec<(String, PathBuf)> {
     let Ok(entries) = std::fs::read_dir(user_dir(db_dir)) else {
@@ -63,13 +78,8 @@ fn user_files(db_dir: &Path) -> Vec<(String, PathBuf)> {
         .flatten()
         .map(|entry| entry.path())
         .filter(|path| path.is_file())
-        .filter(|path| {
-            path.extension()
-                .and_then(|e| e.to_str())
-                .is_some_and(|e| e.eq_ignore_ascii_case("svg"))
-        })
         .filter_map(|path| {
-            let name = path.file_stem()?.to_str()?.to_owned();
+            let name = name_of(path.file_name()?.to_str()?)?;
             Some((name, path))
         })
         .collect()
@@ -97,4 +107,20 @@ pub fn data(db_dir: &Path, name: &str) -> Option<Vec<u8>> {
     }
     let (_, path) = user_files(db_dir).into_iter().find(|(n, _)| n == name)?;
     std::fs::read(path).ok()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::name_of;
+
+    #[test]
+    fn names_are_what_precedes_a_final_svg() {
+        assert_eq!(name_of("my star.svg").as_deref(), Some("my star"));
+        assert_eq!(name_of("Smile.SVG").as_deref(), Some("Smile"));
+        assert_eq!(name_of("a.b.svg").as_deref(), Some("a.b"));
+        // (Python's splitext keeps the whole name of a file called just ".svg")
+        assert_eq!(name_of(".svg").as_deref(), Some(".svg"));
+        assert_eq!(name_of("readme.md"), None);
+        assert_eq!(name_of("svg"), None);
+    }
 }

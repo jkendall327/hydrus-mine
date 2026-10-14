@@ -8029,9 +8029,13 @@ pub(crate) fn rating_row(control: &ratings::Control) -> RatingRow {
             hydrus_core::numbers::human_int(value.unsigned_abs()),
         ),
     };
-    let svg = control.svg.as_deref().and_then(star_images::image);
+    let svg = control
+        .svg
+        .as_deref()
+        .map(|name| star_images::pictures(name, &control.shapes()))
+        .unwrap_or_default();
     RatingRow {
-        svg: ModelRc::new(VecModel::from(svg.into_iter().collect::<Vec<_>>())),
+        svg: ModelRc::new(VecModel::from(svg)),
         kind,
         shape: shape.into(),
         shapes: ModelRc::new(VecModel::from(shapes)),

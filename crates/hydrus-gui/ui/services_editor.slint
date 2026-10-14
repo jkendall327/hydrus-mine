@@ -51,6 +51,8 @@ export component RatingSampleControl inherits HorizontalBox {
 }
 // One of the reference's radio buttons for the kind of star.
 component StarTypeRadio inherits Rectangle {
+    out property <length> hit-x: touch.absolute-position.x;
+    out property <length> hit-y: touch.absolute-position.y;
     in property <string> text;
     in property <bool> checked;
     in property <bool> enabled: true;
@@ -65,7 +67,7 @@ component StarTypeRadio inherits Rectangle {
         }
         Text { text: root.text; color: Theme.text; vertical-alignment: center; }
     }
-    TouchArea { enabled: root.enabled; clicked => { root.clicked(); } }
+    touch := TouchArea { enabled: root.enabled; clicked => { root.clicked(); } }
 }
 component RatingExamplePanel inherits VerticalBox {
     in property <[ServiceRatingExampleRow]> rows;
@@ -187,6 +189,13 @@ export component EditServiceWindow inherits Window {
     // the installed and the user's own SVGs; none hides the choice of them
     in property <[string]> svg-names;
     in-out property <bool> use-svg;
+    // which of the shape and svg lists can be used (the reference's radio choice)
+    out property <bool> shape-enabled: !root.counter-editing && !root.use-svg;
+    out property <bool> svg-enabled: !root.counter-editing && root.use-svg;
+    out property <length> shapes-radio-x: shapes-radio.hit-x;
+    out property <length> shapes-radio-y: shapes-radio.hit-y;
+    out property <length> svgs-radio-x: svgs-radio.hit-x;
+    out property <length> svgs-radio-y: svgs-radio.hit-y;
     in-out property <int> svg-index;
     in-out property <int> stars: 5;
     in-out property <bool> allow-zero;
@@ -264,22 +273,29 @@ export component EditServiceWindow inherits Window {
                         LineEdit { enabled: !root.counter-editing; text: c.fill; edited(t) => { root.colour-edited(i,false,t); } }
                     }
                 }
-                if root.star-rating: VerticalBox {
+                // (always present, as the radios' geometry is read from outside)
+                VerticalBox {
+                    visible: root.star-rating;
+                    height: self.visible ? self.preferred-height : 0px;
                     Text { text: "rating shape"; color: Theme.text; font-weight: 700; }
-                    if root.svg-names.length > 0: HorizontalBox {
+                    HorizontalBox {
+                        visible: root.svg-names.length > 0;
+                        height: self.visible ? self.preferred-height : 0px;
                         Text { text: "type: "; color: Theme.text; }
                         VerticalLayout {
-                            StarTypeRadio { text: "shapes"; checked: !root.use-svg; enabled: !root.counter-editing; clicked => { root.use-svg = false; } }
-                            StarTypeRadio { text: "svgs"; checked: root.use-svg; enabled: !root.counter-editing; clicked => { root.use-svg = true; } }
+                            shapes-radio := StarTypeRadio { text: "shapes"; checked: !root.use-svg; enabled: !root.counter-editing; clicked => { root.use-svg = false; } }
+                            svgs-radio := StarTypeRadio { text: "svgs"; checked: root.use-svg; enabled: !root.counter-editing; clicked => { root.use-svg = true; } }
                         }
                     }
                     HorizontalBox {
                         Text { text: "shape: "; color: Theme.text; }
-                        ComboBox { enabled: !root.counter-editing && !root.use-svg; model: root.appearances; current-index <=> root.appearance; }
+                        ComboBox { enabled: root.shape-enabled; model: root.appearances; current-index <=> root.appearance; }
                     }
-                    if root.svg-names.length > 0: HorizontalBox {
+                    HorizontalBox {
+                        visible: root.svg-names.length > 0;
+                        height: self.visible ? self.preferred-height : 0px;
                         Text { text: "svg: "; color: Theme.text; }
-                        ComboBox { enabled: !root.counter-editing && root.use-svg; model: root.svg-names; current-index <=> root.svg-index; }
+                        ComboBox { enabled: root.svg-enabled; model: root.svg-names; current-index <=> root.svg-index; }
                     }
                 }
                 if root.numerical: VerticalBox {
