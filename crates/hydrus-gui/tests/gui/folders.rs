@@ -488,7 +488,13 @@ fn the_filename_tagging_list_and_its_example_path_follow_the_references_recorded
             .map(|i| vec![w.get_filename_tagging().row_data(i).unwrap().to_string()])
             .collect()
     };
-    assert_eq!(listed(&edit), Vec::<Vec<String>>::new());
+    let started: Vec<Vec<String>> = recorded["start"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|r| vec![r.as_str().unwrap().to_owned()])
+        .collect();
+    assert_eq!(listed(&edit), started);
     let dialog = || {
         bound
             .folders
@@ -641,13 +647,8 @@ fn the_filename_tagging_list_and_its_example_path_follow_the_references_recorded
         let refs: Vec<(&str, &str)> = files.iter().map(|(n, k)| (n.as_str(), *k)).collect();
         let path = make_folder(&refs);
         edit.set_path(path.to_string_lossy().into_owned().into());
-        if listed(&edit).is_empty() {
-            edit.set_tagging_choice(pick(&services[0]));
-            edit.invoke_tagging_add();
-            dialog().expect("it opens").invoke_cancel();
-            edit.invoke_tagging_add();
-            edit.invoke_chosen(0);
-        }
+        // (the services listed by the steps above are still there)
+        assert!(!listed(&edit).is_empty(), "{name}");
         edit.invoke_tagging_edit(0);
         let open = dialog().expect("the dialog opens");
         assert!(
