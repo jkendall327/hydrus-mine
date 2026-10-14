@@ -91,8 +91,20 @@ impl Drop for Worker {
         let _ = self.send.send(Operation::Stop);
     }
 }
+thread_local! {
+    /// The time the review windows use, held still by tests that replay a
+    /// recording made at a fixed time.
+    static HELD_NOW: std::cell::Cell<Option<i64>> = const { std::cell::Cell::new(None) };
+}
+/// Hold the review windows' clock at `seconds` (`None`: let it run again).
+#[doc(hidden)]
+pub fn hold_now(seconds: Option<i64>) {
+    HELD_NOW.with(|held| held.set(seconds));
+}
 fn now() -> i64 {
-    TimestampMs::now().millis() / 1000
+    HELD_NOW
+        .with(std::cell::Cell::get)
+        .unwrap_or_else(|| TimestampMs::now().millis() / 1000)
 }
 fn columns(titles: &[(&str, f32)]) -> ModelRc<TableColumn> {
     ModelRc::new(VecModel::from(
@@ -326,26 +338,9 @@ impl Bandwidth {
                     })
                     .collect::<Vec<_>>(),
             )));
-            let rules = review
-                .rules(context)
-                .rules()
-                .iter()
-                .map(|r| {
-                    let cells = model::rule_row_with_format(*r, &formatting);
-                    let used = tracker.usage(r.kind, r.time_delta, now());
-                    format!(
-                        "{} every {} ({} used)",
-                        cells[0],
-                        cells[1],
-                        if r.kind == BandwidthType::Data {
-                            hydrus_gui_model::gui_format::bytes(&formatting, used)
-                        } else {
-                            hydrus_core::numbers::human_int(used)
-                        }
-                    )
-                })
-                .collect::<Vec<_>>()
-                .join("\n");
+            let rules =
+                model::rule_usage_lines(&review.rules(context), &mut tracker, now(), &formatting)
+                    .join("\n");
             self.window.set_detail(
                 format!(
                     "{} — {}\nAll time usage: {}\n{}",
@@ -1182,7 +1177,7 @@ pub fn open_jobs(store: Arc<Store>, slots: &Slots) -> Result<NetworkJobsWindow, 
         ("position", 150.0),
         ("url", 350.0),
         ("status", 290.0),
-        ("speed", 95.0),
+        ("current speed", 95.0),
         ("progress", 110.0),
     ]));
     let state = Rc::new(Jobs {
