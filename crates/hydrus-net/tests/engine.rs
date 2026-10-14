@@ -1539,12 +1539,29 @@ async fn the_snapshot_reports_a_post_and_a_gallery_page_waiting_on_its_token_as_
         .unwrap();
     let second = Job::scoped(scope());
     let mut waiting = Box::pin(engine.fetch(&gallery_request, &second));
-    tokio::select! { _ = &mut waiting => panic!("gallery page ran without its token"), () = tokio::time::sleep(std::time::Duration::from_millis(50)) => {} }
-    let snapshot = engine.runtime_snapshot();
-    assert_eq!(snapshot.jobs[0].wait, WaitReason::Gallery);
+    // (it first waits out the default per-domain request rule, then for the token)
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+    let snapshot = loop {
+        tokio::select! { _ = &mut waiting => panic!("gallery page ran without its token"), () = tokio::time::sleep(std::time::Duration::from_millis(50)) => {} }
+        let snapshot = engine.runtime_snapshot();
+        if snapshot.jobs.iter().any(|j| j.wait == WaitReason::Gallery) {
+            break snapshot;
+        }
+        assert!(std::time::Instant::now() < deadline, "{:?}", snapshot.jobs);
+    };
+    let gallery = snapshot
+        .jobs
+        .iter()
+        .find(|j| j.wait == WaitReason::Gallery)
+        .unwrap_or_else(|| panic!("the gallery page waits on its token: {:?}", snapshot.jobs));
+    let control = snapshot
+        .controls
+        .iter()
+        .find(|c| c.id == gallery.id)
+        .unwrap();
     assert_eq!(
-        snapshot.controls[0].tokens_ok,
+        control.tokens_ok,
         flag("gallery_token_blocked", "tokens ok")
     );
-    assert!(!snapshot.controls[0].tokens_ok);
+    assert!(!control.tokens_ok);
 }
