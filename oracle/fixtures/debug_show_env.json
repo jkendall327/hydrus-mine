@@ -1,0 +1,57 @@
+{
+  "pathsep": ":",
+  "cases": {
+    "plain": {
+      "env": {
+        "B": "2",
+        "A": "1",
+        "a": "lower",
+        "Z": "upper"
+      },
+      "messages": [
+        "Full environment:\nA: 1\nB: 2\nZ: upper\na: lower"
+      ]
+    },
+    "paths split": {
+      "env": {
+        "PATH": "/usr/bin:/bin:/opt/x",
+        "XDG_DATA_DIRS": "/usr/share:/usr/local/share",
+        "HOME": "/home/me",
+        "LD_LIBRARY_PATH": "/one"
+      },
+      "messages": [
+        "Full environment:\nHOME: /home/me\nLD_LIBRARY_PATH: /one\nPATH:\n    /usr/bin\n    /bin\n    /opt/x\nXDG_DATA_DIRS:\n    /usr/share\n    /usr/local/share"
+      ]
+    },
+    "only names with PATH or DIRS split": {
+      "env": {
+        "PATHEXT": ".A:.B",
+        "MY_DIRS": "a:b",
+        "MYPATHS": "c",
+        "other": "x:y",
+        "path": "lower:case",
+        "EMPTY": "",
+        "PATH_EMPTY": ""
+      },
+      "messages": [
+        "Full environment:\nEMPTY: \nMYPATHS: c\nMY_DIRS:\n    a\n    b\nPATHEXT:\n    .A\n    .B\nPATH_EMPTY: \nother: x:y\npath: lower:case"
+      ]
+    },
+    "unicode and spaces": {
+      "env": {
+        "NAME": "caf\u00e9 au lait",
+        "SPACE KEY": "a b",
+        "PATH": "a b:\u00fc"
+      },
+      "messages": [
+        "Full environment:\nNAME: caf\u00e9 au lait\nPATH:\n    a b\n    \u00fc\nSPACE KEY: a b"
+      ]
+    },
+    "empty": {
+      "env": {},
+      "messages": [
+        "Full environment:\n"
+      ]
+    }
+  }
+}

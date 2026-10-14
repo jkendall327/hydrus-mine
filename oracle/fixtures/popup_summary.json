@@ -1,0 +1,307 @@
+{
+  "states": [
+    {
+      "label": "twelve",
+      "cards": [
+        "m0",
+        "m1",
+        "m2",
+        "m3",
+        "m4",
+        "m5",
+        "m6",
+        "m7",
+        "m8",
+        "m9"
+      ],
+      "panel_hidden": false,
+      "summary": "12 messages",
+      "arrow": "▼",
+      "jobs": [
+        {
+          "text": "m0",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m1",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m2",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m3",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m4",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m5",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m6",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m7",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m8",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m9",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m10",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m11",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        }
+      ]
+    },
+    {
+      "label": "collapsed",
+      "cards": [
+        "m0",
+        "m1",
+        "m2",
+        "m3",
+        "m4",
+        "m5",
+        "m6",
+        "m7",
+        "m8",
+        "m9"
+      ],
+      "panel_hidden": true,
+      "summary": "12 messages",
+      "arrow": "▲",
+      "jobs": [
+        {
+          "text": "m0",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m1",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m2",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m3",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m4",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m5",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m6",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m7",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m8",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m9",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m10",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m11",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        }
+      ]
+    },
+    {
+      "label": "expanded again",
+      "cards": [
+        "m0",
+        "m1",
+        "m2",
+        "m3",
+        "m4",
+        "m5",
+        "m6",
+        "m7",
+        "m8",
+        "m9"
+      ],
+      "panel_hidden": false,
+      "summary": "12 messages",
+      "arrow": "▼",
+      "jobs": [
+        {
+          "text": "m0",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m1",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m2",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m3",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m4",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m5",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m6",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m7",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m8",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m9",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m10",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        },
+        {
+          "text": "m11",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        }
+      ]
+    },
+    {
+      "label": "one",
+      "cards": [
+        "m0",
+        "m1",
+        "m2",
+        "m3",
+        "m4",
+        "m5",
+        "m6",
+        "m7",
+        "m8",
+        "m9",
+        "alone"
+      ],
+      "panel_hidden": false,
+      "summary": "1 message",
+      "arrow": "▼",
+      "jobs": [
+        {
+          "text": "alone",
+          "done": true,
+          "dismissed": false,
+          "cancelled": false
+        }
+      ]
+    }
+  ]
+}

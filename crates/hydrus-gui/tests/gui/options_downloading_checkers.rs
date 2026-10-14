@@ -8,6 +8,7 @@ use hydrus_core::url::{AnyGug, Gug, Gugs};
 use hydrus_gui::checker_options::PRESETS;
 use hydrus_gui::{MainWindow, OptionsWindow, Pages, bind, headless};
 use hydrus_store::{queues, subscriptions, watchers::watcher_state};
+use serde_json::Value as Json;
 use slint::{ComponentHandle as _, Model as _};
 
 fn open(ui: &MainWindow) {
@@ -177,4 +178,163 @@ fn the_random_order_check_box_is_kept_for_apply_and_cancel_forgets_it() {
         assert!(bound.options.borrow().is_none());
         assert_eq!(read(), if apply { !before } else { before });
     }
+}
+
+/// The window's fields for one time, as `(label, value)` in its order.
+fn shown_fields(fields: &slint::ModelRc<hydrus_gui::DurationField>) -> Vec<(String, i64)> {
+    fields
+        .iter()
+        .map(|f| (f.label.to_string(), i64::from(f.value)))
+        .collect()
+}
+
+// leaf: audit-network-checker-mode
+#[test]
+fn the_checker_window_follows_the_references_edits_between_reactive_and_static_checking() {
+    use hydrus_core::subscriptions::CheckerDefaults;
+    let recorded = hydrus_testkit::fixture_json("checker_options.json");
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let mut flat_seen = (false, false);
+    for run in recorded["steps"].as_array().unwrap() {
+        let given = &run["given"];
+        let given = CheckerOptions {
+            intended_files_per_check: given[0].as_f64().unwrap(),
+            never_faster_than: given[1].as_i64().unwrap(),
+            never_slower_than: given[2].as_i64().unwrap(),
+            death_file_velocity: (given[3][0].as_i64().unwrap(), given[3][1].as_i64().unwrap()),
+        };
+        store
+            .write(move |ctx| {
+                let mut defaults: CheckerDefaults = hydrus_store::settings::get(ctx.conn())?;
+                defaults.watchers = given;
+                hydrus_store::settings::set(ctx.conn(), &defaults)
+            })
+            .unwrap();
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        options.invoke_search_edited("watcher checker".into());
+        options.invoke_search_chosen(0);
+        options.invoke_checker_clicked(row(&options, "Default watcher checker options:"));
+        let editor = bound
+            .checker_options
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        for step in run["steps"].as_array().unwrap() {
+            let edit = &step["edit"];
+            let field_index = |fields: slint::ModelRc<hydrus_gui::DurationField>, name: &Json| {
+                fields
+                    .iter()
+                    .position(|f| f.label == name.as_str().unwrap())
+                    .unwrap() as i32
+            };
+            match edit[0].as_str().unwrap() {
+                "preset" => {
+                    let i = PRESETS.iter().position(|(l, _)| *l == edit[1]).unwrap();
+                    editor.invoke_preset(i as i32);
+                }
+                "field" => {
+                    let (time, fields) = match edit[1].as_str().unwrap() {
+                        "faster" => (0, editor.get_faster_fields()),
+                        "slower" => (1, editor.get_slower_fields()),
+                        "flat" => (2, editor.get_period_fields()),
+                        other => panic!("{other}"),
+                    };
+                    let at = field_index(fields.clone(), &edit[2]);
+                    editor.invoke_field_edited(time, at, edit[3].as_i64().unwrap() as i32);
+                }
+                "intended" => {
+                    // (the line edit holds what is typed in it)
+                    let text = edit[1].as_f64().unwrap().to_string();
+                    editor.set_intended(text.clone().into());
+                    editor.invoke_intended_edited(text.into());
+                }
+                "velocity" => {
+                    editor.set_velocity_files(edit[1].as_i64().unwrap().to_string().into());
+                    editor.invoke_velocity_files_edited(edit[1].as_i64().unwrap() as i32);
+                    if !edit[2].is_null() {
+                        let fields = editor.get_velocity_fields();
+                        let i = field_index(fields.clone(), &edit[2]);
+                        editor.invoke_field_edited(3, i, edit[3].as_i64().unwrap() as i32);
+                    }
+                }
+                "flat" => editor.invoke_flat_toggled(),
+                other => panic!("{other}"),
+            }
+            let at = format!("{} then {edit}", run["given"]);
+            // the box that shows: reactive unless checking statically
+            assert_eq!(editor.get_flat(), step["flat"].as_bool().unwrap(), "{at}");
+            assert_eq!(step["reactive_hidden"], editor.get_flat(), "{at}");
+            if editor.get_flat() {
+                flat_seen.1 = true;
+            } else {
+                flat_seen.0 = true;
+            }
+            // what the editor would apply is exactly what the reference's
+            // panel held, whichever way the box shows it
+            let held = hydrus_gui::latest_checker_value().unwrap();
+            let theirs = &step["value"];
+            assert_eq!(
+                (
+                    held.intended_files_per_check,
+                    held.never_faster_than,
+                    held.never_slower_than,
+                    held.death_file_velocity
+                ),
+                (
+                    theirs[0].as_f64().unwrap(),
+                    theirs[1].as_i64().unwrap(),
+                    theirs[2].as_i64().unwrap(),
+                    (
+                        theirs[3][0].as_i64().unwrap(),
+                        theirs[3][1].as_i64().unwrap()
+                    )
+                ),
+                "{at}"
+            );
+            // after a preset or the mode switch the whole window is shown
+            // again, and then its fields are the recorded ones too (a
+            // typed field keeps the number typed, which the value above has)
+            if matches!(edit[0].as_str().unwrap(), "preset" | "flat") {
+                for (key, fields) in [
+                    ("faster", editor.get_faster_fields()),
+                    ("slower", editor.get_slower_fields()),
+                    ("flat_period", editor.get_period_fields()),
+                    ("velocity", editor.get_velocity_fields()),
+                ] {
+                    let want = if key == "velocity" {
+                        &step[key][1]
+                    } else {
+                        &step[key]
+                    };
+                    for (label, value) in shown_fields(&fields) {
+                        assert_eq!(
+                            value,
+                            want[label.as_str()].as_i64().unwrap(),
+                            "{at}: {key} {label}"
+                        );
+                    }
+                }
+                assert!(
+                    (editor.get_intended().parse::<f64>().unwrap()
+                        - step["intended"].as_f64().unwrap())
+                    .abs()
+                        < 1e-9,
+                    "{at}"
+                );
+                assert_eq!(
+                    editor.get_velocity_files().parse::<i64>().unwrap(),
+                    step["velocity"][0].as_i64().unwrap(),
+                    "{at}"
+                );
+            }
+        }
+        editor.invoke_cancel();
+        options.invoke_cancel();
+    }
+    assert_eq!(flat_seen, (true, true), "both modes were replayed");
 }
