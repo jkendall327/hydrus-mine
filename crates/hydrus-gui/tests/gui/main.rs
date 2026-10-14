@@ -100,6 +100,7 @@ mod page_chooser_options;
 mod page_close_replay;
 mod page_navigation_options;
 mod page_scroll;
+mod pages_api_replay;
 mod pages_menu_new_pages;
 mod pages_menu_refresh;
 mod parser_content_kinds;
