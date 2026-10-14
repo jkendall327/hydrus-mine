@@ -135,8 +135,8 @@ The GUI compiles locally; use it. Measured on a 4-core, 16 GB machine:
 
 ## CI
 
-`.github/workflows/rust.yml` runs on pushes to `master`, `claude/**` and
-`codex/**`, and on pull requests: a Slint check, a lint job (fmt, tracker
+`.github/workflows/rust.yml` runs on pull requests and on pushes to `master`
+(a working branch gets CI once its pull request is open): a Slint check, a lint job (fmt, tracker
 check, hakari, strict Clippy, parity ratchet) and a test job (every Linux
 test, including the ~960 GUI tests), in parallel, ~25 minutes. A newer push
 cancels the older run on the same branch. Windows and macOS run only when
