@@ -346,9 +346,11 @@ impl Autocomplete {
         let presentation = self.presentation();
         // an explicit wildcard or namespace search is put at the top
         // (`InsertOtherPredicatesForRead`)
-        let wildcard = self
-            .text
-            .contains('*')
+        // (but not a bare "*", which the default options do not search:
+        // `IsAcceptableForTagSearches`; other fetch-all settings are
+        // not consulted)
+        let bare = matches!(self.text.trim().trim_start_matches('-'), "*" | "*:*" | ":*");
+        let wildcard = (self.text.contains('*') && !bare)
             .then(|| self.typed_predicate())
             .flatten()
             .into_iter();

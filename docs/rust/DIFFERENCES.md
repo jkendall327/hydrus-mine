@@ -273,7 +273,13 @@ search.
   result and the highlight are compared with the recording. Not covered: Return
   pressed before the reference's list has caught up (it then enters the text
   as typed; the native list is always current), and counts and context shown
-  in the results.
+  in the results. A bare "*" lists nothing here as with the default options,
+  but the other fetch-all settings are not consulted, and the second wildcard
+  (`*:x*`) the reference adds when unnamespaced searches give any-namespace
+  wildcards is not listed (unrecorded). On the main page, Return with a tag the
+  database does not have and nothing highlighted still enters the typed text
+  (`chosen()`'s fallback in `page.rs`), where the reference enters nothing; the
+  favourite editor enters nothing.
   Remaining from #253 (not started): `audit-options-search-active-edit`
   (embedded OR in the active-list edit, sibling/parent editors, favourite
   tags), the tab and OR recordings for counts and context in the results, and

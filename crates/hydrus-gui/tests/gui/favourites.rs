@@ -706,8 +706,8 @@ fn typed_predicates_and_double_clicks_edit_the_search_as_the_references_editor_d
             "type" => {
                 window.set_typed(what[1].as_str().unwrap().into());
                 window.invoke_typed_edited();
-                // the list as it is once it has caught up with the text: its
-                // first result (counts aside) and the highlight on it
+                // the list as it is once it has caught up with the text (counts
+                // aside) and the highlight on its recorded row
                 let listed: Vec<String> = window
                     .get_suggestions()
                     .iter()
@@ -719,14 +719,16 @@ fn typed_predicates_and_double_clicks_edit_the_search_as_the_references_editor_d
                     .iter()
                     .map(|s| s.as_str().unwrap())
                     .collect();
-                if listed.first().map(String::as_str) != recorded.first().copied() {
-                    differences.push(format!(
-                        "{what:?}: first result {listed:?} not {recorded:?}"
-                    ));
+                if listed != recorded {
+                    differences.push(format!("{what:?}: results {listed:?} not {recorded:?}"));
                 }
-                if (window.get_suggestion_highlight() == 0) == recorded.is_empty() {
+                let highlighted = step["highlighted"][0]
+                    .as_str()
+                    .and_then(|row| recorded.iter().position(|r| *r == row))
+                    .map_or(-1, |at| i32::try_from(at).unwrap());
+                if window.get_suggestion_highlight() != highlighted {
                     differences.push(format!(
-                        "{what:?}: highlight {}",
+                        "{what:?}: highlight {} not {highlighted}",
                         window.get_suggestion_highlight()
                     ));
                 }
@@ -1275,27 +1277,15 @@ fn the_editors_tabs_and_or_construction_act_as_the_references_do() {
         check("rewind_shown", json!(window.get_or_rewind_visible()));
         check("tab", json!(window.get_tab_index()));
         check("typed_left", json!(window.get_typed().to_string()));
-        let rows = strs(window.get_suggestions());
-        match want["tab"].as_i64().unwrap() {
-            0 => {
-                // the OR being built is the first result
-                if want["construction"].is_null() {
-                    if rows.first().is_some_and(|r| r.contains(" OR ")) {
-                        differences.push(format!("{what:?}: an OR result with none built"));
-                    }
-                } else if rows.first() != want["rows"][0].as_str().map(str::to_owned).as_ref() {
-                    differences.push(format!(
-                        "{what:?}: first result {:?} not {}",
-                        rows.first(),
-                        want["rows"][0]
-                    ));
-                }
-            }
-            _ => {
-                if json!(rows) != want["rows"] {
-                    differences.push(format!("{what:?}: rows {rows:?} not {}", want["rows"]));
-                }
-            }
+        let rows: Vec<String> = strs(window.get_suggestions())
+            .iter()
+            .map(|r| without_count(r))
+            .collect();
+        let mut saved = strs(window.get_predicates());
+        saved.sort();
+        check("predicates", json!(saved));
+        if json!(rows) != want["rows"] {
+            differences.push(format!("{what:?}: rows {rows:?} not {}", want["rows"]));
         }
     }
     assert!(differences.is_empty(), "{}", differences.join("\n"));
