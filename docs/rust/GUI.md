@@ -5891,3 +5891,14 @@ search-result and tag-edit autocomplete lists (against the reference's recorded
 size hints, as Qt stretches the laid-out lists); the suggested-tag lists' widths;
 the thumbnail border's drawn width; and the sidecar custom-separator box's
 enabled state.
+
+## Parser test panels' results (W5-2 follow-up)
+
+- "test parse" in the content parser and page parser editors prints what the
+  reference prints: "*** N RESULTS BEGIN ***", one line per result worded by its
+  kind (for example "tag: series:foo bar", "downloadable/pursuable url
+  (priority 50): ...", 'note "name":', "sha256 hash: ...", "source/post time:
+  ...", "veto: ..."), sorted, with posts separated by "*** SEPARATE FILE
+  RESULTS BREAK ***".
+- After "fetch example data" the page URL box keeps what you typed; the parse
+  context uses the encoded URL.

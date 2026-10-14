@@ -605,29 +605,6 @@ impl Draft {
         })
     }
 }
-/// Format real parsed contents without hiding content kinds or empty results.
-pub fn preview_text(posts: &[ParsedPost]) -> String {
-    if posts.is_empty() {
-        return "No parsed results.".into();
-    }
-    posts
-        .iter()
-        .enumerate()
-        .map(|(i, post)| {
-            format!(
-                "Post {}\n{}",
-                i + 1,
-                post.contents
-                    .iter()
-                    .map(|c| format!("{}: {}", CONTENT_TYPES[kind_index(&c.kind)], c.text))
-                    .collect::<Vec<_>>()
-                    .join("\n")
-            )
-        })
-        .collect::<Vec<_>>()
-        .join("\n\n")
-}
-
 fn can_link(class: &UrlClass) -> bool {
     matches!(
         class.url_type,
