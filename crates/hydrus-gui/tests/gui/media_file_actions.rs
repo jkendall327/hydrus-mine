@@ -525,7 +525,12 @@ fn file_relationship_rows_set_view_and_reset_duplicate_groups() {
         for (name, want) in expected.as_object().unwrap() {
             let file = results[position(names[name].as_str().unwrap())];
             let info = read(&fixture.store, &scope, file).unwrap().0;
-            let count = |key: &str| want["counts"].get(key).and_then(|c| c.as_u64()).unwrap_or(0) as usize;
+            let count = |key: &str| {
+                want["counts"]
+                    .get(key)
+                    .and_then(|c| c.as_u64())
+                    .unwrap_or(0) as usize
+            };
             assert_eq!(
                 (
                     info.is_king,
@@ -604,7 +609,10 @@ fn file_relationship_rows_set_view_and_reset_duplicate_groups() {
         // the questions asked, and their answer
         let asked = step["asked"].as_array().unwrap();
         if asked.is_empty() {
-            assert!(fixture.ui.get_question().is_empty(), "{context}: no question");
+            assert!(
+                fixture.ui.get_question().is_empty(),
+                "{context}: no question"
+            );
         } else {
             assert_eq!(asked.len(), 1);
             assert_eq!(
@@ -629,7 +637,13 @@ fn file_relationship_rows_set_view_and_reset_duplicate_groups() {
                 let mut shown: Vec<String> = fixture
                     .results()
                     .iter()
-                    .map(|f| fixture.store.read(|c| hydrus_store::master::hashes(c, &[*f])).unwrap()[f].to_hex())
+                    .map(|f| {
+                        fixture
+                            .store
+                            .read(|c| hydrus_store::master::hashes(c, &[*f]))
+                            .unwrap()[f]
+                            .to_hex()
+                    })
                     .collect();
                 shown.sort();
                 let want: Vec<&str> = page["hashes"]
@@ -671,7 +685,12 @@ fn open_rows_launch_the_focused_file_and_open_pages_of_the_selection() {
         .store
         .read(|c| hydrus_store::master::hashes(c, &results))
         .unwrap();
-    let position = |hex: &str| results.iter().position(|f| hashes[f].to_hex() == hex).unwrap();
+    let position = |hex: &str| {
+        results
+            .iter()
+            .position(|f| hashes[f].to_hex() == hex)
+            .unwrap()
+    };
     let tab_names = |fixture: &Fixture| fixture.bound.pages.borrow().tabs()[0].names.clone();
     for case in recorded["cases"].as_array().unwrap() {
         let advanced = case["advanced"].as_bool().unwrap();
@@ -722,7 +741,13 @@ fn open_rows_launch_the_focused_file_and_open_pages_of_the_selection() {
         assert_eq!(ours, theirs, "advanced {advanced}: the rows");
         assert_eq!(menu.open_similar_title, "similar files in a new page");
         for row in case["rows"].as_array().unwrap() {
-            let name = row["path"].as_array().unwrap().last().unwrap().as_str().unwrap();
+            let name = row["path"]
+                .as_array()
+                .unwrap()
+                .last()
+                .unwrap()
+                .as_str()
+                .unwrap();
             launched.borrow_mut().clear();
             let tabs = tab_names(&fixture);
             let menu = fixture.menu(i32::try_from(selection[0]).unwrap());
@@ -744,7 +769,12 @@ fn open_rows_launch_the_focused_file_and_open_pages_of_the_selection() {
                     .expect("the distance dialog opens");
                 assert_eq!(editor.get_window_title(), dialog["title"].as_str().unwrap());
                 assert_eq!(
-                    (editor.get_value(), editor.get_minimum(), editor.get_maximum(), editor.get_step_size()),
+                    (
+                        editor.get_value(),
+                        editor.get_minimum(),
+                        editor.get_maximum(),
+                        editor.get_step_size()
+                    ),
                     (
                         dialog["value"].as_i64().unwrap() as i32,
                         dialog["minimum"].as_i64().unwrap() as i32,
@@ -766,7 +796,10 @@ fn open_rows_launch_the_focused_file_and_open_pages_of_the_selection() {
                             .collect::<Vec<_>>()
                     );
                     assert_eq!(tab_names(&fixture).len(), tabs.len() + 1);
-                    assert_eq!(tab_names(&fixture).last().unwrap(), row["page name"].as_str().unwrap());
+                    assert_eq!(
+                        tab_names(&fixture).last().unwrap(),
+                        row["page name"].as_str().unwrap()
+                    );
                     fixture.ui.invoke_tab_chosen(0, 0);
                 } else {
                     editor.invoke_cancel();

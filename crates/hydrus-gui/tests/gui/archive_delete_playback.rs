@@ -356,7 +356,11 @@ fn the_filter_plays_files_with_a_scanbar_and_volume_as_the_viewer_does() {
     shown_tags.sort_unstable();
     assert_eq!(shown_tags, recorded_tags, "the tags shown");
     let info = window.get_info_line().to_string();
-    assert_eq!(info, reference["info"].as_str().unwrap(), "the information line");
+    assert_eq!(
+        info,
+        reference["info"].as_str().unwrap(),
+        "the information line"
+    );
     headless::render(&drawn, 800, 600);
     window
         .window()

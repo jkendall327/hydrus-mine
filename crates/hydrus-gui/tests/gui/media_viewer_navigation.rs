@@ -43,7 +43,9 @@ fn the_viewer_goes_first_previous_next_last_random_and_removes_from_view() {
             hydrus_store::settings::set(ctx.conn(), &settings)
         })
         .unwrap();
-    fixture.ui.invoke_search_edited("system:filetype is jpeg".into());
+    fixture
+        .ui
+        .invoke_search_edited("system:filetype is jpeg".into());
     fixture.ui.invoke_search_accepted();
     let n = fixture.results().len();
 

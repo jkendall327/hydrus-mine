@@ -124,11 +124,15 @@ fn run_fast_memory_maintenance_trims_the_image_and_thumbnail_caches_and_slow_doe
             std::thread::yield_now();
         }
     }
-    let letter_of = |file: HashId| {
-        letters[files.iter().position(|f| *f == file).unwrap()].to_owned()
-    };
+    let letter_of =
+        |file: HashId| letters[files.iter().position(|f| *f == file).unwrap()].to_owned();
     let image_keys = |bound: &hydrus_gui::Bound| -> Vec<String> {
-        let mut keys: Vec<String> = bound.image_cache.keys().into_iter().map(letter_of).collect();
+        let mut keys: Vec<String> = bound
+            .image_cache
+            .keys()
+            .into_iter()
+            .map(letter_of)
+            .collect();
         keys.sort();
         keys
     };
@@ -171,7 +175,11 @@ fn run_fast_memory_maintenance_trims_the_image_and_thumbnail_caches_and_slow_doe
         ("run fast memory maintenance", "after fast"),
     ] {
         d.click(&["memory actions", entry]);
-        assert_eq!(image_keys(&d.bound), recorded_keys(after, "image"), "{entry}");
+        assert_eq!(
+            image_keys(&d.bound),
+            recorded_keys(after, "image"),
+            "{entry}"
+        );
         assert_eq!(
             thumbnail_keys(&d.bound),
             recorded_keys(after, "thumbnail"),
@@ -187,9 +195,14 @@ fn run_fast_memory_maintenance_trims_the_image_and_thumbnail_caches_and_slow_doe
     assert!(step("after slow")["pubs"].as_array().unwrap().is_empty());
     // past the timeout (the reference's 302.5 s): slow still leaves them, fast
     // drops what has idled, keeping the newest
-    let late = (step("past the timeout, after slow")["now"].as_f64().unwrap() * 1000.0) as u64;
+    let late = (step("past the timeout, after slow")["now"]
+        .as_f64()
+        .unwrap()
+        * 1000.0) as u64;
     clock.store(late, Ordering::Release);
-    d.bound.rows.advance_cache_clock(Duration::from_millis(late - 3000));
+    d.bound
+        .rows
+        .advance_cache_clock(Duration::from_millis(late - 3000));
     d.click(&["memory actions", "run slow memory maintenance"]);
     assert_eq!(
         image_keys(&d.bound),

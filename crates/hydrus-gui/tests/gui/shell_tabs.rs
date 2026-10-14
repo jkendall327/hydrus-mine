@@ -155,12 +155,7 @@ fn clicking_a_tab_and_ctrl_page_keys_select_pages_and_restore_their_state() {
 }
 
 /// A page locked to the first `n` of `files`.
-fn locked_page(
-    store: &Arc<Store>,
-    name: &str,
-    files: &[hydrus_core::HashId],
-    n: usize,
-) -> Page {
+fn locked_page(store: &Arc<Store>, name: &str, files: &[hydrus_core::HashId], n: usize) -> Page {
     use hydrus_core::search::predicate::{FileHashes, Predicate, SystemPredicate};
     let hashes = store
         .read(|c| hydrus_store::master::hashes(c, &files[..n]))
@@ -224,11 +219,7 @@ fn pages_not_yet_shown_carry_their_file_counts_and_open_with_that_many_files() {
     let counts = ["a", "b", "c", "d"].map(size);
     let session = Session {
         name: LAST_SESSION.into(),
-        pages: vec![
-            a,
-            page("n", PageContent::Pages(vec![b, c])),
-            d,
-        ],
+        pages: vec![a, page("n", PageContent::Pages(vec![b, c])), d],
     };
     store
         .write(move |ctx| {
@@ -254,7 +245,15 @@ fn pages_not_yet_shown_carry_their_file_counts_and_open_with_that_many_files() {
     };
     // the tabs of the loaded session carry the reference's counts and
     // names (n sums its pages and says it holds more)
-    assert_eq!(names(0), loaded["tabs"].as_array().unwrap().iter().map(|t| t.as_str().unwrap().to_owned()).collect::<Vec<_>>());
+    assert_eq!(
+        names(0),
+        loaded["tabs"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|t| t.as_str().unwrap().to_owned())
+            .collect::<Vec<_>>()
+    );
     // selecting each opens it with that many files
     for (tab, name) in [(0, "a"), (2, "d")] {
         ui.invoke_tab_chosen(0, tab);
@@ -275,7 +274,15 @@ fn pages_not_yet_shown_carry_their_file_counts_and_open_with_that_many_files() {
             "{name}"
         );
     }
-    assert_eq!(names(1), loaded["inner tabs"].as_array().unwrap().iter().map(|t| t.as_str().unwrap().to_owned()).collect::<Vec<_>>());
+    assert_eq!(
+        names(1),
+        loaded["inner tabs"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|t| t.as_str().unwrap().to_owned())
+            .collect::<Vec<_>>()
+    );
 }
 
 // leaf: audit-options-tabs-context-action-2120-selectable-page

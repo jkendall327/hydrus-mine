@@ -639,7 +639,9 @@ pub fn open_menu(store: &Store, focused: Option<HashId>, num_selected: usize) ->
             format!("{prefix}in web browser"),
             Action::OpenInWebBrowser,
         ));
-        if crate::import_options_window::advanced_mode(store) && !paths(store, &[focused]).is_empty() {
+        if crate::import_options_window::advanced_mode(store)
+            && !paths(store, &[focused]).is_empty()
+        {
             open.push(Entry::Item(
                 format!("{prefix}in file browser"),
                 Action::OpenInFileBrowser,
@@ -1732,21 +1734,17 @@ impl OpenSlots {
     fn entry(&self) -> Entry {
         let item = |(label, action): &SlotItem| Entry::Item(label.clone(), *action);
         let mut inner: Vec<Entry> = self.a.iter().map(item).collect();
-        inner.extend(
-            self.similar
-                .iter()
-                .map(|(title, items)| {
-                    // (the reference sets its "custom" distance apart)
-                    let mut sub = Vec::new();
-                    for slot in items {
-                        if slot.1 == Action::OpenSimilarCustom {
-                            sub.push(Entry::Separator);
-                        }
-                        sub.push(item(slot));
-                    }
-                    Entry::Menu(title.clone(), sub)
-                }),
-        );
+        inner.extend(self.similar.iter().map(|(title, items)| {
+            // (the reference sets its "custom" distance apart)
+            let mut sub = Vec::new();
+            for slot in items {
+                if slot.1 == Action::OpenSimilarCustom {
+                    sub.push(Entry::Separator);
+                }
+                sub.push(item(slot));
+            }
+            Entry::Menu(title.clone(), sub)
+        }));
         separate(&mut inner);
         inner.extend(self.b.iter().map(item));
         Entry::Menu("open".into(), inner)
