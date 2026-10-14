@@ -147,6 +147,10 @@ record of what was decided, and why the roadmap looks the way it does.
   pubsub), `mpv report mode` (the Python mpv wrapper's debug output),
   `graphics view thumbnail update report mode` and `canvas tile borders
   mode` (Qt graphics-view and canvas tile painting).
+- **Also out of scope in Help > debug (#96):** `file sort report mode`,
+  `media load report mode`, `hover window report mode`, `potential duplicates
+  report mode` and `shutdown report mode` report Python/Qt internals with no
+  hydrus-rs counterpart.
 
 ## Roadmap that follows
 

@@ -10945,13 +10945,14 @@
    "path": "Help > debug > report modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
     "Truth pass (2026-10-08): missing, small. Flag only. Missing: Report sites in the media sort code, the menu entry, a test. Evidence: Flag::FileSortReport defined, never reported to.",
     "Reference debug action wires 'file sort report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Out of scope (owner decision 2026-10-14): this report mode reports Python/Qt internals that have no hydrus-rs counterpart."
    ]
   },
   {
@@ -11071,13 +11072,14 @@
    "path": "Help > debug > report modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
     "Truth pass (2026-10-08): missing, small. Flag only. Missing: Report calls in the canvas hover show/hide code, the menu entry, a test. Evidence: Flag::HoverWindowReport defined, never reported to. Reference ClientGUICanvasHoverFrames.py:494,516,730,740,758.",
     "Reference debug action wires 'hover window report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Out of scope (owner decision 2026-10-14): this report mode reports Python/Qt internals that have no hydrus-rs counterpart."
    ]
   },
   {
@@ -11317,13 +11319,14 @@
    "path": "Help > debug > report modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
     "Truth pass (2026-10-08): missing, small. Flag only. Missing: Report sites in the media loader, the menu entry, a test. Evidence: Flag::MediaLoadReport defined, never reported to.",
     "Reference debug action wires 'media load report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Out of scope (owner decision 2026-10-14): this report mode reports Python/Qt internals that have no hydrus-rs counterpart."
    ]
   },
   {
@@ -11388,13 +11391,14 @@
    "path": "Help > debug > report modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
     "Truth pass (2026-10-08): missing, small. Flag only. Missing: Report sites in the potential-duplicates search, the menu entry, a test. Evidence: Flag::PotentialDuplicatesReport defined, never reported to.",
     "Reference debug action wires 'potential duplicates report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Out of scope (owner decision 2026-10-14): this report mode reports Python/Qt internals that have no hydrus-rs counterpart."
    ]
   },
   {
@@ -11849,13 +11853,14 @@
    "path": "Help > debug > report modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
     "Truth pass (2026-10-08): missing, small. Flag only. Missing: Report calls as workers and daemons stop, the menu entry, a test. Evidence: Flag::ShutdownReport defined, never reported to. Reference hydrus_client_boot.py:288, ClientDaemons.py:243,252.",
     "Reference debug action wires 'shutdown report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Out of scope (owner decision 2026-10-14): this report mode reports Python/Qt internals that have no hydrus-rs counterpart."
    ]
   },
   {

@@ -73,7 +73,10 @@ pub(crate) fn begin(store: &Store) {
                         job.finish_and_dismiss(None, at);
                         Some(true)
                     } else if let Some(ends) = ends.filter(|e| *e > now_ms) {
-                        job.status_text_1 = Some(text(ends, now_ms));
+                        // (under a second to go: the words stay as they were)
+                        if ends / 1000 > now_ms / 1000 {
+                            job.status_text_1 = Some(text(ends, now_ms));
+                        }
                         None
                     } else {
                         job.finish_and_dismiss(None, at);
