@@ -526,10 +526,10 @@
     "Reference backup submenu dynamically offers update/change backup or a multiple-storage explanation. Native only has disabled initial-setup/restore placeholders; these states are absent."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "The recorded update scenarios (Create a new / Update the existing question, the missing path made with its message, declined, accepted: backup made and time remembered) are replayed through the real menu entry and compared in order and words (oracle/fixtures/backup_dialogs.json). 'No backup path is set!' cannot be reached from the menu in either client (the entry is hidden) and the '(last N ago)' label is not recorded (the reference fills its menu from a worker the recorder could not call), so those stay restated from the source. Test: crates/hydrus-gui/tests/gui/database_backup_menu.rs updating_the_backup_replays_the_reference_s_dialogs."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "wave 5 session (W5-6)",
+    "note": "The reference's real database menu updater is recorded for each state of the backup path, last-backup age (none, 10 s, 29 and 31 minutes, 2 hours, 3 days) and file locations (single, multiple) with the entries shown and their text (oracle/record_backup_menu.py, fixtures/backup_menu.json); the real menu is replayed against it (found: the label had a stray ellipsis, fixed), plus the multiple-locations note text. The update, change and decline/accept dialogs replay backup_dialogs.json. 'No backup path is set!' cannot be reached from the menu in either client, so it is not replayed. Tests: crates/hydrus-gui/tests/gui/database_backup_menu.rs the_backup_menu_shows_the_reference_s_entries_and_ages, updating_the_backup_replays_the_reference_s_dialogs."
    }
   },
   {
@@ -661,8 +661,8 @@
    "recheck": {
     "date": "2026-10-14",
     "class": "source-restated",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "The ready check declined, the picker cancelled, the scan question ('Looking good.', declined and accepted, 2 to 3 and back), the already-3 and unknown-folder scans, and the empty folder. oracle/fixtures/granularity_panel.json (oracle/record_granularity_panel.py runs the reference's real ReviewGranularityPanel, its jobs included, on an empty client with a file in the granularity 2 layout). crates/hydrus-gui/tests/gui/database_locations_menu.rs the_granularity_window_replays_the_reference_s_steps replays every step through the real window and compares each question (title, text, buttons), the picker, each message and the file's place on disk. It showed the questions lacked the reference's closing speed sentence; fixed. The mixed-folder scan (a folder in both layouts), which the leaf names, and the cancel and error messages are not recorded, so the leaf is held at source-restated."
+    "by": "wave 5 session (W5-6)",
+    "note": "As before, plus the mixed folder (granularity 2 files beside a granularity 3 one, a stray file) recorded in oracle/fixtures/granularity_panel.json and replayed through the real window: the 'already granularity 2, mixed' question, declining it, and moving on to the 2-to-3 result with the files' places. The cancel and error messages of the job are still restated from the source (not recorded), so the class is not raised."
    }
   },
   {
@@ -807,9 +807,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "source-restated",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "The default search, 'all media files' and 'all repository update files' counts, the labels and the explanation now agree with oracle/fixtures/file_maintenance_new.json (the same replay test as the schedule leaf). A typed predicate (system:archive) and the bad-search case are checked against hydrus-rs's own search function, not recorded (the reference's autocomplete cannot be typed into headlessly), so the class is not raised."
+    "class": "sound",
+    "by": "wave 5 session (W5-6)",
+    "note": "Every step of the reference's new-work tab is replayed through the real window: default search, 'all media files', 'all repository update files', and now system:archive and system:inbox searches (counts 16 and 14 recorded by setting the reference autocomplete's search context, since it can't be typed into headlessly; hydrus-rs's typed box parses the same predicates). The 'unreadable search' case is hydrus-rs's own parser's behaviour with no reference counterpart. Tests: crates/hydrus-gui/tests/gui/database_file_maintenance_new.rs."
    }
   },
   {

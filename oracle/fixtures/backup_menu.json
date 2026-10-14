@@ -1,0 +1,246 @@
+{
+ "no_path": {
+  "set_up_backup_path": {
+   "visible": true,
+   "text": "set up a database backup location…"
+  },
+  "update_backup": {
+   "visible": false,
+   "text": "update database backup"
+  },
+  "change_backup_path": {
+   "visible": false,
+   "text": "change database backup location…"
+  },
+  "restore_backup": {
+   "visible": true,
+   "text": "restore from a database backup…"
+  },
+  "multiple_location_label": {
+   "visible": false,
+   "text": "database is stored in multiple locations"
+  },
+  "inputs": {
+   "backup_path": null,
+   "ago_seconds": null,
+   "all_locations_are_default": true
+  }
+ },
+ "path_never": {
+  "set_up_backup_path": {
+   "visible": false,
+   "text": "set up a database backup location…"
+  },
+  "update_backup": {
+   "visible": true,
+   "text": "update database backup"
+  },
+  "change_backup_path": {
+   "visible": true,
+   "text": "change database backup location…"
+  },
+  "restore_backup": {
+   "visible": true,
+   "text": "restore from a database backup…"
+  },
+  "multiple_location_label": {
+   "visible": false,
+   "text": "database is stored in multiple locations"
+  },
+  "inputs": {
+   "backup_path": "/somewhere",
+   "ago_seconds": null,
+   "all_locations_are_default": true
+  }
+ },
+ "path_just_now": {
+  "set_up_backup_path": {
+   "visible": false,
+   "text": "set up a database backup location…"
+  },
+  "update_backup": {
+   "visible": true,
+   "text": "update database backup (did one recently)"
+  },
+  "change_backup_path": {
+   "visible": true,
+   "text": "change database backup location…"
+  },
+  "restore_backup": {
+   "visible": true,
+   "text": "restore from a database backup…"
+  },
+  "multiple_location_label": {
+   "visible": false,
+   "text": "database is stored in multiple locations"
+  },
+  "inputs": {
+   "backup_path": "/somewhere",
+   "ago_seconds": 10,
+   "all_locations_are_default": true
+  }
+ },
+ "path_29_minutes": {
+  "set_up_backup_path": {
+   "visible": false,
+   "text": "set up a database backup location…"
+  },
+  "update_backup": {
+   "visible": true,
+   "text": "update database backup (did one recently)"
+  },
+  "change_backup_path": {
+   "visible": true,
+   "text": "change database backup location…"
+  },
+  "restore_backup": {
+   "visible": true,
+   "text": "restore from a database backup…"
+  },
+  "multiple_location_label": {
+   "visible": false,
+   "text": "database is stored in multiple locations"
+  },
+  "inputs": {
+   "backup_path": "/somewhere",
+   "ago_seconds": 1740,
+   "all_locations_are_default": true
+  }
+ },
+ "path_31_minutes": {
+  "set_up_backup_path": {
+   "visible": false,
+   "text": "set up a database backup location…"
+  },
+  "update_backup": {
+   "visible": true,
+   "text": "update database backup (last 31 minutes ago)"
+  },
+  "change_backup_path": {
+   "visible": true,
+   "text": "change database backup location…"
+  },
+  "restore_backup": {
+   "visible": true,
+   "text": "restore from a database backup…"
+  },
+  "multiple_location_label": {
+   "visible": false,
+   "text": "database is stored in multiple locations"
+  },
+  "inputs": {
+   "backup_path": "/somewhere",
+   "ago_seconds": 1860,
+   "all_locations_are_default": true
+  }
+ },
+ "path_2_hours": {
+  "set_up_backup_path": {
+   "visible": false,
+   "text": "set up a database backup location…"
+  },
+  "update_backup": {
+   "visible": true,
+   "text": "update database backup (last 2 hours ago)"
+  },
+  "change_backup_path": {
+   "visible": true,
+   "text": "change database backup location…"
+  },
+  "restore_backup": {
+   "visible": true,
+   "text": "restore from a database backup…"
+  },
+  "multiple_location_label": {
+   "visible": false,
+   "text": "database is stored in multiple locations"
+  },
+  "inputs": {
+   "backup_path": "/somewhere",
+   "ago_seconds": 7200,
+   "all_locations_are_default": true
+  }
+ },
+ "path_3_days": {
+  "set_up_backup_path": {
+   "visible": false,
+   "text": "set up a database backup location…"
+  },
+  "update_backup": {
+   "visible": true,
+   "text": "update database backup (last 3 days ago)"
+  },
+  "change_backup_path": {
+   "visible": true,
+   "text": "change database backup location…"
+  },
+  "restore_backup": {
+   "visible": true,
+   "text": "restore from a database backup…"
+  },
+  "multiple_location_label": {
+   "visible": false,
+   "text": "database is stored in multiple locations"
+  },
+  "inputs": {
+   "backup_path": "/somewhere",
+   "ago_seconds": 259200,
+   "all_locations_are_default": true
+  }
+ },
+ "multiple_locations": {
+  "set_up_backup_path": {
+   "visible": false,
+   "text": "set up a database backup location…"
+  },
+  "update_backup": {
+   "visible": false,
+   "text": "update database backup"
+  },
+  "change_backup_path": {
+   "visible": false,
+   "text": "change database backup location…"
+  },
+  "restore_backup": {
+   "visible": false,
+   "text": "restore from a database backup…"
+  },
+  "multiple_location_label": {
+   "visible": true,
+   "text": "database is stored in multiple locations"
+  },
+  "inputs": {
+   "backup_path": null,
+   "ago_seconds": null,
+   "all_locations_are_default": false
+  }
+ },
+ "multiple_locations_with_path": {
+  "set_up_backup_path": {
+   "visible": false,
+   "text": "set up a database backup location…"
+  },
+  "update_backup": {
+   "visible": false,
+   "text": "update database backup (did one recently)"
+  },
+  "change_backup_path": {
+   "visible": false,
+   "text": "change database backup location…"
+  },
+  "restore_backup": {
+   "visible": false,
+   "text": "restore from a database backup…"
+  },
+  "multiple_location_label": {
+   "visible": true,
+   "text": "database is stored in multiple locations"
+  },
+  "inputs": {
+   "backup_path": "/somewhere",
+   "ago_seconds": 60,
+   "all_locations_are_default": false
+  }
+ },
+ "multiple_locations_note": "Your database is stored across multiple locations. The in-client backup routine can only handle simple databases (in one location), so the menu commands to backup have been hidden. To back up, please use a third-party program that will work better than anything I can write.\n\nCheck the help for more info on how best to backup manually.\n"
+}

@@ -5182,7 +5182,10 @@ db" popup ending "backup complete!". "change database backup location"
 picks again. "restore from a database backup" picks a backup, asks, and
 restarts, restoring it before the store opens. A client with media in
 several locations shows "database is stored in multiple locations", whose
-note explains. The messages and questions of setting up, updating and restoring are replayed against
+note explains. The label has no ellipsis once it carries the age, as the
+reference's updater sets it; the entries and labels for each state of the
+backup location, its age and the file locations are replayed against
+`oracle/fixtures/backup_menu.json`. The messages and questions of setting up, updating and restoring are replayed against
 `oracle/fixtures/backup_dialogs.json` (the reference's own dialogs, scripted answers) in
 `tests/gui/database_backup_menu.rs`. `tests/model/database_backup.rs` and hydrus-store's
 `backup` tests cover the menu, texts, mirror, backup and restore. Restore rejects

@@ -1013,11 +1013,9 @@ fn backup_entries(facts: &Facts) -> Vec<Entry> {
             Command::Backup(Action::SetUp),
         )],
         Some(_) => vec![
+            // (the reference's updater replaces the text without the ellipsis)
             item(
-                dots(&crate::database_backup::update_label(
-                    facts.backup.last_backup,
-                    facts.now,
-                )),
+                crate::database_backup::update_label(facts.backup.last_backup, facts.now),
                 Command::Backup(Action::Update),
             ),
             item(

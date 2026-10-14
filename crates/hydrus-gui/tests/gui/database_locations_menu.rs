@@ -889,6 +889,18 @@ fn replay_granularity() {
     let folders = [
         ("offline", make("offline", &["f3a/3ab4567.png"])),
         ("empty", make("empty", &[])),
+        (
+            "mixed",
+            make(
+                "mixed",
+                &[
+                    "f3a/b/3ab4567.png",
+                    "f4c/4c12345.png",
+                    "f5d/5d12345.png",
+                    "stray.txt",
+                ],
+            ),
+        ),
     ];
     let window = rig.open();
     let g = granularity_window(&rig, &window);
@@ -899,6 +911,10 @@ fn replay_granularity() {
         text = text.replace(
             &scratch.path().join("offline").display().to_string(),
             "<offline>",
+        );
+        text = text.replace(
+            &scratch.path().join("mixed").display().to_string(),
+            "<mixed>",
         );
         text.replace(
             &scratch.path().join("empty").display().to_string(),
@@ -989,6 +1005,8 @@ fn replay_granularity() {
         pump(Duration::from_millis(200));
         let place = if inputs["pick"].to_string().contains("<empty>") {
             &folders[1].1
+        } else if inputs["pick"].to_string().contains("<mixed>") {
+            &folders[2].1
         } else if is_offline {
             &folders[0].1
         } else {

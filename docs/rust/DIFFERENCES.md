@@ -4233,6 +4233,10 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   file domain; there is no domain or tag-service button.
 - The description and "Jobs added!" show in the tab rather than as message
   boxes.
+- The reference's autocomplete can't be typed into headlessly, so its narrowed
+  searches (system:archive, system:inbox) are recorded by setting the search
+  context; the counts are replayed through hydrus-rs's typed box. A search that
+  can't be read has no reference counterpart to record.
 
 ## Review current sibling/parent sync
 
@@ -4591,9 +4595,11 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
 - "Simple" means the media is in one location, which may be outside the
   database directory (an imported client's); the reference requires its
   default `client_files`.
-- The "(last N ago)" label of "update database backup" is checked against the
-  reference's source only: its menu is filled by a worker the recorder cannot
-  call (`oracle/record_backup_dialogs.py` records the dialogs, not the menu).
+- The backup submenu (which entries show, the "(did one recently)" and
+  "(last N ago)" label, the multiple-locations note) is replayed against the
+  reference's real menu updater (`oracle/record_backup_menu.py`). "No backup
+  path is set!" can't be reached from the menu in either client (the update
+  entry is hidden until a path is set), so it is not replayed.
   Choosing "restore from a database backup" asks the reference's questions and
   leaves a restart request; the reference's exit and restart is not exercised.
 
@@ -4613,9 +4619,11 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
 - "manage granularity" runs its progress in an ordinary popup rather than
   a modal dialog, and its questions in button windows.
 - The prefix folder moved first is the first in order, not a random one.
-- The offline-folder granularity scan of a folder holding both layouts is not
-  recorded against the reference (nor are the cancel and error messages of the
-  jobs), so that leaf stays at source-restated.
+- The offline-folder granularity scan of a folder holding both layouts is
+  recorded and replayed (`oracle/record_granularity_panel.py`, the mixed
+  folder steps). The cancel and error messages of the jobs are not recorded
+  (the jobs end too quickly to cancel from a test, and an error needs a broken
+  folder), so that leaf stays at source-restated.
 - The list selects one location; it sorts by location only.
 - The rebalance runs from a non-modal popup, and closes the panel once it has
   started, as the reference does (the reference's progress is a modal dialog;
