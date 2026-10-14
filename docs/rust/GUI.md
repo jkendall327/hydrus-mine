@@ -5862,3 +5862,15 @@ panic hook runs first.
   call!' forces a 15-second timeout on a long-lived call.
 - The string processor editor's export puts the selected steps, in queue
   order, on the clipboard or in a PNG; with nothing selected it does nothing.
+
+## Layout geometry for tests (W5-13)
+
+Windows expose read-only measured geometry so tests can prove a layout
+setting takes effect against the reference's laid-out widgets. Users see no
+difference. Proven, each against a recording of the reference: the options
+search bar above or below the page list; the notebook tab bars' side, thickness,
+tab order and rotated-label direction; the rows shown by the active-predicate,
+search-result and tag-edit autocomplete lists (against the reference's recorded
+size hints, as Qt stretches the laid-out lists); the suggested-tag lists' widths;
+the thumbnail border's drawn width; and the sidecar custom-separator box's
+enabled state.

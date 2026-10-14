@@ -330,6 +330,8 @@ export component SidecarNodeWindow inherits Window {
     in property <[string]> separators;
     in-out property <int> separator;
     in-out property <string> custom-separator;
+    // whether the custom box is enabled, as laid out (read by tests)
+    out property <bool> custom-separator-enabled;
     // the tag service
     in property <string> service-label;
     in property <[string]> displays;
@@ -505,6 +507,8 @@ export component SidecarNodeWindow inherits Window {
                 LineEdit {
                     horizontal-stretch: 1;
                     enabled: root.separator == 2;
+                    init => { root.custom-separator-enabled = self.enabled; }
+                    changed enabled => { root.custom-separator-enabled = self.enabled; }
                     text <=> root.custom-separator;
                     edited => { root.changed(); }
                 }
