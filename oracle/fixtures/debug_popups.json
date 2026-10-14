@@ -1,0 +1,1397 @@
+{
+  "some_popups": [
+    {
+      "topic": "message",
+      "at_ms": 0,
+      "job": {
+        "title": null,
+        "text_1": "This is a test popup message -- 1",
+        "text_2": null,
+        "gauge_1": null,
+        "gauge_2": null,
+        "pausable": false,
+        "cancellable": false,
+        "done": true,
+        "had_error": false,
+        "has_traceback": false,
+        "traceback_first_lines": [
+          ""
+        ],
+        "files": null,
+        "mergable": null,
+        "user_callable_label": null,
+        "has_network_job": false
+      }
+    },
+    {
+      "topic": "message",
+      "at_ms": 0,
+      "job": {
+        "title": null,
+        "text_1": "This is a test popup message -- 2",
+        "text_2": null,
+        "gauge_1": null,
+        "gauge_2": null,
+        "pausable": false,
+        "cancellable": false,
+        "done": true,
+        "had_error": false,
+        "has_traceback": false,
+        "traceback_first_lines": [
+          ""
+        ],
+        "files": null,
+        "mergable": null,
+        "user_callable_label": null,
+        "has_network_job": false
+      }
+    },
+    {
+      "topic": "message",
+      "at_ms": 1,
+      "job": {
+        "title": null,
+        "text_1": "This is a test popup message -- 3",
+        "text_2": null,
+        "gauge_1": null,
+        "gauge_2": null,
+        "pausable": false,
+        "cancellable": false,
+        "done": true,
+        "had_error": false,
+        "has_traceback": false,
+        "traceback_first_lines": [
+          ""
+        ],
+        "files": null,
+        "mergable": null,
+        "user_callable_label": null,
+        "has_network_job": false
+      }
+    },
+    {
+      "topic": "message",
+      "at_ms": 1,
+      "job": {
+        "title": null,
+        "text_1": "This is a test popup message -- 4",
+        "text_2": null,
+        "gauge_1": null,
+        "gauge_2": null,
+        "pausable": false,
+        "cancellable": false,
+        "done": true,
+        "had_error": false,
+        "has_traceback": false,
+        "traceback_first_lines": [
+          ""
+        ],
+        "files": null,
+        "mergable": null,
+        "user_callable_label": null,
+        "has_network_job": false
+      }
+    },
+    {
+      "topic": "message",
+      "at_ms": 1,
+      "job": {
+        "title": null,
+        "text_1": "This is a test popup message -- 5",
+        "text_2": null,
+        "gauge_1": null,
+        "gauge_2": null,
+        "pausable": false,
+        "cancellable": false,
+        "done": true,
+        "had_error": false,
+        "has_traceback": false,
+        "traceback_first_lines": [
+          ""
+        ],
+        "files": null,
+        "mergable": null,
+        "user_callable_label": null,
+        "has_network_job": false
+      }
+    },
+    {
+      "topic": "message",
+      "at_ms": 1,
+      "job": {
+        "title": null,
+        "text_1": "This is a test popup message -- 6",
+        "text_2": null,
+        "gauge_1": null,
+        "gauge_2": null,
+        "pausable": false,
+        "cancellable": false,
+        "done": true,
+        "had_error": false,
+        "has_traceback": false,
+        "traceback_first_lines": [
+          ""
+        ],
+        "files": null,
+        "mergable": null,
+        "user_callable_label": null,
+        "has_network_job": false
+      }
+    },
+    {
+      "topic": "message",
+      "at_ms": 1,
+      "job": {
+        "title": null,
+        "text_1": "This is a very long message:  \n\n++++What the fuck did you just fucking say about me, you worthless heretic? I'll have you know I graduated top of my aspirant tournament in the Heralds of Ultramar, and I've led an endless crusade of secret raids against the forces of The Great Enemy, and I have over 30 million confirmed purgings. I am trained in armored warfare and I'm the top brother in all the 8th Company. You are nothing to me but just another heretic. I will wipe you the fuck out with precision the likes of which has never been seen before in this Galaxy, mark my fucking words. You think you can get away with saying that shit to me over the Divine Astropathic Network? Think again, traitor. As we speak I am contacting my secret network of inquisitors across the galaxy and your malign powers are being traced right now so you better prepare for the holy storm, maggot. The storm that wipes out the pathetic little thing you call your soul. You're fucking dead, kid. I can transit the immaterium to anywhere, anytime, and I can kill you in over seven hundred ways, and that's just with my purity seals. Not only am I extensively trained in unarmed combat, but I have access to the entire arsenal of the Departmento Munitorum and I will use it to its full extent to wipe your miserable ass off the face of the galaxy, you little shit. If only you could have known what holy retribution your little \"clever\" comment was about to bring down upon you, maybe you would have held your fucking impure mutant tongue. But you couldn't, you didn't, and now you're paying the price, you Emperor-damned heretic.++++\n\n++++Better crippled in body than corrupt in mind++++\n\n++++The Emperor Protects++++",
+        "text_2": null,
+        "gauge_1": null,
+        "gauge_2": null,
+        "pausable": false,
+        "cancellable": false,
+        "done": true,
+        "had_error": false,
+        "has_traceback": false,
+        "traceback_first_lines": [
+          ""
+        ],
+        "files": null,
+        "mergable": null,
+        "user_callable_label": null,
+        "has_network_job": false
+      }
+    },
+    {
+      "topic": "message",
+      "at_ms": 1,
+      "job": {
+        "title": "This popup has a very long title -- it is a subscription that is running with a long \"artist sub 123456\" kind of name",
+        "text_1": "test",
+        "text_2": null,
+        "gauge_1": null,
+        "gauge_2": null,
+        "pausable": false,
+        "cancellable": false,
+        "done": true,
+        "had_error": false,
+        "has_traceback": false,
+        "traceback_first_lines": [
+          ""
+        ],
+        "files": null,
+        "mergable": null,
+        "user_callable_label": null,
+        "has_network_job": false
+      }
+    },
+    {
+      "topic": "message",
+      "at_ms": 1,
+      "job": {
+        "title": "user call test",
+        "text_1": "click the button m8",
+        "text_2": null,
+        "gauge_1": null,
+        "gauge_2": null,
+        "pausable": false,
+        "cancellable": false,
+        "done": true,
+        "had_error": false,
+        "has_traceback": false,
+        "traceback_first_lines": [
+          ""
+        ],
+        "files": null,
+        "mergable": null,
+        "user_callable_label": "cheeki breeki",
+        "has_network_job": false
+      }
+    },
+    {
+      "topic": "message",
+      "at_ms": 1,
+      "job": {
+        "title": null,
+        "text_1": "client api test file popup",
+        "text_2": null,
+        "gauge_1": null,
+        "gauge_2": null,
+        "pausable": false,
+        "cancellable": false,
+        "done": true,
+        "had_error": false,
+        "has_traceback": false,
+        "traceback_first_lines": [
+          ""
+        ],
+        "files": {
+          "count": 1,
+          "label": "go"
+        },
+        "mergable": null,
+        "user_callable_label": null,
+        "has_network_job": false
+      }
+    },
+    {
+      "topic": "message",
+      "at_ms": 1,
+      "job": {
+        "title": "Popup file merge test",
+        "text_1": "hey I should have five files",
+        "text_2": null,
+        "gauge_1": null,
+        "gauge_2": null,
+        "pausable": false,
+        "cancellable": false,
+        "done": true,
+        "had_error": false,
+        "has_traceback": false,
+        "traceback_first_lines": [
+          ""
+        ],
+        "files": {
+          "count": 3,
+          "label": "cool pics"
+        },
+        "mergable": true,
+        "user_callable_label": null,
+        "has_network_job": false
+      }
+    },
+    {
+      "topic": "message",
+      "at_ms": 1,
+      "job": {
+        "title": "Popup file merge test",
+        "text_1": "hey you should not see me, I should be merged",
+        "text_2": null,
+        "gauge_1": null,
+        "gauge_2": null,
+        "pausable": false,
+        "cancellable": false,
+        "done": true,
+        "had_error": false,
+        "has_traceback": false,
+        "traceback_first_lines": [
+          ""
+        ],
+        "files": {
+          "count": 3,
+          "label": "cool pics"
+        },
+        "mergable": true,
+        "user_callable_label": null,
+        "has_network_job": false
+      }
+    },
+    {
+      "topic": "message",
+      "at_ms": 1,
+      "job": {
+        "title": "sub gap downloader test",
+        "text_1": null,
+        "text_2": null,
+        "gauge_1": null,
+        "gauge_2": null,
+        "pausable": false,
+        "cancellable": false,
+        "done": true,
+        "had_error": false,
+        "has_traceback": false,
+        "traceback_first_lines": [
+          ""
+        ],
+        "files": null,
+        "mergable": null,
+        "user_callable_label": "start a new downloader for this to fill in the gap!",
+        "has_network_job": false
+      }
+    },
+    {
+      "topic": "message",
+      "at_ms": 1,
+      "job": {
+        "title": "\u24c9\u24d7\u24d8\u24e2 \u24d8\u24e2 \u24d0 \u24e3\u24d4\u24e2\u24e3 \u24e4\u24dd\u24d8\u24d2\u24de\u24d3\u24d4 \u24dc\u24d4\u24e2\u24e2\u24d0\u24d6\u24d4",
+        "text_1": "\u24b2\u24a0\u24b2 \u24a7\u249c\u249f",
+        "text_2": "p\u0250\u05df \u028d\u01dd\u028d",
+        "gauge_1": null,
+        "gauge_2": null,
+        "pausable": false,
+        "cancellable": false,
+        "done": true,
+        "had_error": false,
+        "has_traceback": false,
+        "traceback_first_lines": [
+          ""
+        ],
+        "files": null,
+        "mergable": null,
+        "user_callable_label": null,
+        "has_network_job": false
+      }
+    },
+    {
+      "topic": "message",
+      "at_ms": 1,
+      "job": {
+        "title": "test job",
+        "text_1": "Currently processing test job 5/8",
+        "text_2": null,
+        "gauge_1": [
+          4,
+          8
+        ],
+        "gauge_2": null,
+        "pausable": true,
+        "cancellable": true,
+        "done": false,
+        "had_error": false,
+        "has_traceback": false,
+        "traceback_first_lines": [
+          ""
+        ],
+        "files": null,
+        "mergable": null,
+        "user_callable_label": null,
+        "has_network_job": false
+      }
+    },
+    {
+      "topic": "message",
+      "at_ms": 115,
+      "job": {
+        "title": "test network control",
+        "text_1": "Downloading...",
+        "text_2": null,
+        "gauge_1": [
+          2,
+          21
+        ],
+        "gauge_2": null,
+        "pausable": true,
+        "cancellable": true,
+        "done": false,
+        "had_error": false,
+        "has_traceback": false,
+        "traceback_first_lines": [
+          ""
+        ],
+        "files": null,
+        "mergable": null,
+        "user_callable_label": null,
+        "has_network_job": true
+      }
+    },
+    {
+      "topic": "message",
+      "at_ms": 124,
+      "job": {
+        "title": "DataMissing",
+        "text_1": "This is a test exception",
+        "text_2": null,
+        "gauge_1": null,
+        "gauge_2": null,
+        "pausable": false,
+        "cancellable": false,
+        "done": true,
+        "had_error": false,
+        "has_traceback": true,
+        "traceback_first_lines": [
+          "================ Exception ================"
+        ],
+        "files": null,
+        "mergable": null,
+        "user_callable_label": null,
+        "has_network_job": false
+      }
+    },
+    {
+      "topic": "message",
+      "at_ms": 717,
+      "job": {
+        "title": null,
+        "text_1": "This is a delayed popup message -- 1",
+        "text_2": null,
+        "gauge_1": null,
+        "gauge_2": null,
+        "pausable": false,
+        "cancellable": false,
+        "done": true,
+        "had_error": false,
+        "has_traceback": false,
+        "traceback_first_lines": [
+          ""
+        ],
+        "files": null,
+        "mergable": null,
+        "user_callable_label": null,
+        "has_network_job": false
+      }
+    },
+    {
+      "topic": "message",
+      "at_ms": 1133,
+      "job": {
+        "title": null,
+        "text_1": "This is a delayed popup message -- 2",
+        "text_2": null,
+        "gauge_1": null,
+        "gauge_2": null,
+        "pausable": false,
+        "cancellable": false,
+        "done": true,
+        "had_error": false,
+        "has_traceback": false,
+        "traceback_first_lines": [
+          ""
+        ],
+        "files": null,
+        "mergable": null,
+        "user_callable_label": null,
+        "has_network_job": false
+      }
+    },
+    {
+      "topic": "message",
+      "at_ms": 1672,
+      "job": {
+        "title": null,
+        "text_1": "This is a delayed popup message -- 3",
+        "text_2": null,
+        "gauge_1": null,
+        "gauge_2": null,
+        "pausable": false,
+        "cancellable": false,
+        "done": true,
+        "had_error": false,
+        "has_traceback": false,
+        "traceback_first_lines": [
+          ""
+        ],
+        "files": null,
+        "mergable": null,
+        "user_callable_label": null,
+        "has_network_job": false
+      }
+    }
+  ],
+  "some_popups_two_seconds_on": [
+    {
+      "index": 14,
+      "text_2": "Pulsing subjob",
+      "gauge_2": [
+        0,
+        null
+      ]
+    }
+  ],
+  "cancellable": {
+    "events": [
+      {
+        "topic": "modal_message",
+        "at_ms": 5174,
+        "job": {
+          "title": "debug modal job",
+          "text_1": null,
+          "text_2": null,
+          "gauge_1": null,
+          "gauge_2": null,
+          "pausable": false,
+          "cancellable": true,
+          "done": false,
+          "had_error": false,
+          "has_traceback": false,
+          "traceback_first_lines": [
+            ""
+          ],
+          "files": null,
+          "mergable": null,
+          "user_callable_label": null,
+          "has_network_job": false
+        }
+      },
+      {
+        "topic": "message",
+        "at_ms": 15472,
+        "job": {
+          "title": "debug modal job",
+          "text_1": "Will auto-dismiss in 1 second.",
+          "text_2": null,
+          "gauge_1": [
+            9,
+            10
+          ],
+          "gauge_2": null,
+          "pausable": false,
+          "cancellable": false,
+          "done": true,
+          "had_error": false,
+          "has_traceback": false,
+          "traceback_first_lines": [
+            ""
+          ],
+          "files": null,
+          "mergable": null,
+          "user_callable_label": null,
+          "has_network_job": false
+        }
+      }
+    ],
+    "cancel_at_ms": null,
+    "finish_ms": 15477,
+    "samples": [
+      {
+        "at_ms": 5175,
+        "text_1": "Will auto-dismiss in 10 seconds.",
+        "gauge_1": [
+          0,
+          10
+        ],
+        "done": false,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 15477,
+        "text_1": "Will auto-dismiss in 1 second.",
+        "gauge_1": [
+          9,
+          10
+        ],
+        "done": true,
+        "dismissed": true,
+        "cancelled": false
+      }
+    ]
+  },
+  "non_cancellable": {
+    "events": [
+      {
+        "topic": "modal_message",
+        "at_ms": 5176,
+        "job": {
+          "title": "debug modal job",
+          "text_1": null,
+          "text_2": null,
+          "gauge_1": null,
+          "gauge_2": null,
+          "pausable": false,
+          "cancellable": false,
+          "done": true,
+          "had_error": false,
+          "has_traceback": false,
+          "traceback_first_lines": [
+            ""
+          ],
+          "files": null,
+          "mergable": null,
+          "user_callable_label": null,
+          "has_network_job": false
+        }
+      },
+      {
+        "topic": "message",
+        "at_ms": 5176,
+        "job": {
+          "title": "debug modal job",
+          "text_1": "Will auto-dismiss in 10 seconds.",
+          "text_2": null,
+          "gauge_1": [
+            0,
+            10
+          ],
+          "gauge_2": null,
+          "pausable": false,
+          "cancellable": false,
+          "done": true,
+          "had_error": false,
+          "has_traceback": false,
+          "traceback_first_lines": [
+            ""
+          ],
+          "files": null,
+          "mergable": null,
+          "user_callable_label": null,
+          "has_network_job": false
+        }
+      }
+    ],
+    "cancel_at_ms": null,
+    "finish_ms": 5176,
+    "samples": [
+      {
+        "at_ms": 5176,
+        "text_1": "Will auto-dismiss in 10 seconds.",
+        "gauge_1": [
+          0,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 5681,
+        "text_1": "Will auto-dismiss in 10 seconds.",
+        "gauge_1": [
+          0,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 6187,
+        "text_1": "Will auto-dismiss in 9 seconds.",
+        "gauge_1": [
+          0,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 6695,
+        "text_1": "Will auto-dismiss in 9 seconds.",
+        "gauge_1": [
+          1,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 7203,
+        "text_1": "Will auto-dismiss in 9 seconds.",
+        "gauge_1": [
+          1,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 7711,
+        "text_1": "Will auto-dismiss in 8 seconds.",
+        "gauge_1": [
+          2,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 8218,
+        "text_1": "Will auto-dismiss in 8 seconds.",
+        "gauge_1": [
+          2,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 8725,
+        "text_1": "Will auto-dismiss in 7 seconds.",
+        "gauge_1": [
+          3,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 9231,
+        "text_1": "Will auto-dismiss in 7 seconds.",
+        "gauge_1": [
+          3,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 9742,
+        "text_1": "Will auto-dismiss in 6 seconds.",
+        "gauge_1": [
+          4,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 10250,
+        "text_1": "Will auto-dismiss in 6 seconds.",
+        "gauge_1": [
+          4,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 10758,
+        "text_1": "Will auto-dismiss in 5 seconds.",
+        "gauge_1": [
+          5,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 11263,
+        "text_1": "Will auto-dismiss in 5 seconds.",
+        "gauge_1": [
+          5,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 11769,
+        "text_1": "Will auto-dismiss in 5 seconds.",
+        "gauge_1": [
+          5,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 12275,
+        "text_1": "Will auto-dismiss in 4 seconds.",
+        "gauge_1": [
+          6,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 12783,
+        "text_1": "Will auto-dismiss in 4 seconds.",
+        "gauge_1": [
+          6,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 13288,
+        "text_1": "Will auto-dismiss in 3 seconds.",
+        "gauge_1": [
+          7,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 13796,
+        "text_1": "Will auto-dismiss in 3 seconds.",
+        "gauge_1": [
+          7,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 14303,
+        "text_1": "Will auto-dismiss in 2 seconds.",
+        "gauge_1": [
+          8,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 14813,
+        "text_1": "Will auto-dismiss in 2 seconds.",
+        "gauge_1": [
+          8,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 15320,
+        "text_1": "Will auto-dismiss in 1 second.",
+        "gauge_1": [
+          9,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 15828,
+        "text_1": "Will auto-dismiss in 1 second.",
+        "gauge_1": [
+          9,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 16335,
+        "text_1": "Will auto-dismiss in 1 second.",
+        "gauge_1": [
+          9,
+          10
+        ],
+        "done": true,
+        "dismissed": true,
+        "cancelled": false
+      },
+      {
+        "at_ms": 16335,
+        "text_1": "Will auto-dismiss in 1 second.",
+        "gauge_1": [
+          9,
+          10
+        ],
+        "done": true,
+        "dismissed": true,
+        "cancelled": false
+      }
+    ]
+  },
+  "cancellable_cancelled": {
+    "events": [
+      {
+        "topic": "modal_message",
+        "at_ms": 5174,
+        "job": {
+          "title": "debug modal job",
+          "text_1": null,
+          "text_2": null,
+          "gauge_1": null,
+          "gauge_2": null,
+          "pausable": false,
+          "cancellable": true,
+          "done": false,
+          "had_error": false,
+          "has_traceback": false,
+          "traceback_first_lines": [
+            ""
+          ],
+          "files": null,
+          "mergable": null,
+          "user_callable_label": null,
+          "has_network_job": false
+        }
+      },
+      {
+        "topic": "modal_message",
+        "at_ms": 5682,
+        "job": {
+          "title": "debug modal job",
+          "text_1": "Will auto-dismiss in 10 seconds.",
+          "text_2": null,
+          "gauge_1": [
+            0,
+            10
+          ],
+          "gauge_2": null,
+          "pausable": false,
+          "cancellable": true,
+          "done": false,
+          "had_error": false,
+          "has_traceback": false,
+          "traceback_first_lines": [
+            ""
+          ],
+          "files": null,
+          "mergable": null,
+          "user_callable_label": null,
+          "has_network_job": false
+        }
+      },
+      {
+        "topic": "modal_message",
+        "at_ms": 5986,
+        "job": {
+          "title": "debug modal job",
+          "text_1": "Will auto-dismiss in 10 seconds.",
+          "text_2": null,
+          "gauge_1": [
+            0,
+            10
+          ],
+          "gauge_2": null,
+          "pausable": false,
+          "cancellable": true,
+          "done": false,
+          "had_error": false,
+          "has_traceback": false,
+          "traceback_first_lines": [
+            ""
+          ],
+          "files": null,
+          "mergable": null,
+          "user_callable_label": null,
+          "has_network_job": false
+        }
+      },
+      {
+        "topic": "modal_message",
+        "at_ms": 6291,
+        "job": {
+          "title": "debug modal job",
+          "text_1": "Will auto-dismiss in 9 seconds.",
+          "text_2": null,
+          "gauge_1": [
+            1,
+            10
+          ],
+          "gauge_2": null,
+          "pausable": false,
+          "cancellable": true,
+          "done": false,
+          "had_error": false,
+          "has_traceback": false,
+          "traceback_first_lines": [
+            ""
+          ],
+          "files": null,
+          "mergable": null,
+          "user_callable_label": null,
+          "has_network_job": false
+        }
+      },
+      {
+        "topic": "modal_message",
+        "at_ms": 6798,
+        "job": {
+          "title": "debug modal job",
+          "text_1": "Will auto-dismiss in 9 seconds.",
+          "text_2": null,
+          "gauge_1": [
+            1,
+            10
+          ],
+          "gauge_2": null,
+          "pausable": false,
+          "cancellable": true,
+          "done": false,
+          "had_error": false,
+          "has_traceback": false,
+          "traceback_first_lines": [
+            ""
+          ],
+          "files": null,
+          "mergable": null,
+          "user_callable_label": null,
+          "has_network_job": false
+        }
+      },
+      {
+        "topic": "modal_message",
+        "at_ms": 7102,
+        "job": {
+          "title": "debug modal job",
+          "text_1": "Will auto-dismiss in 9 seconds.",
+          "text_2": null,
+          "gauge_1": [
+            1,
+            10
+          ],
+          "gauge_2": null,
+          "pausable": false,
+          "cancellable": true,
+          "done": false,
+          "had_error": false,
+          "has_traceback": false,
+          "traceback_first_lines": [
+            ""
+          ],
+          "files": null,
+          "mergable": null,
+          "user_callable_label": null,
+          "has_network_job": false
+        }
+      },
+      {
+        "topic": "modal_message",
+        "at_ms": 7407,
+        "job": {
+          "title": "debug modal job",
+          "text_1": "Will auto-dismiss in 8 seconds.",
+          "text_2": null,
+          "gauge_1": [
+            1,
+            10
+          ],
+          "gauge_2": null,
+          "pausable": false,
+          "cancellable": true,
+          "done": false,
+          "had_error": false,
+          "has_traceback": false,
+          "traceback_first_lines": [
+            ""
+          ],
+          "files": null,
+          "mergable": null,
+          "user_callable_label": null,
+          "has_network_job": false
+        }
+      },
+      {
+        "topic": "modal_message",
+        "at_ms": 8015,
+        "job": {
+          "title": "debug modal job",
+          "text_1": "Will auto-dismiss in 8 seconds.",
+          "text_2": null,
+          "gauge_1": [
+            2,
+            10
+          ],
+          "gauge_2": null,
+          "pausable": false,
+          "cancellable": false,
+          "done": true,
+          "had_error": false,
+          "has_traceback": false,
+          "traceback_first_lines": [
+            ""
+          ],
+          "files": null,
+          "mergable": null,
+          "user_callable_label": null,
+          "has_network_job": false
+        }
+      },
+      {
+        "topic": "message",
+        "at_ms": 8015,
+        "job": {
+          "title": "debug modal job",
+          "text_1": "Will auto-dismiss in 8 seconds.",
+          "text_2": null,
+          "gauge_1": [
+            2,
+            10
+          ],
+          "gauge_2": null,
+          "pausable": false,
+          "cancellable": false,
+          "done": true,
+          "had_error": false,
+          "has_traceback": false,
+          "traceback_first_lines": [
+            ""
+          ],
+          "files": null,
+          "mergable": null,
+          "user_callable_label": null,
+          "has_network_job": false
+        }
+      }
+    ],
+    "cancel_at_ms": 7500,
+    "finish_ms": 7508,
+    "samples": [
+      {
+        "at_ms": 5174,
+        "text_1": "Will auto-dismiss in 10 seconds.",
+        "gauge_1": [
+          0,
+          10
+        ],
+        "done": false,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 5681,
+        "text_1": "Will auto-dismiss in 10 seconds.",
+        "gauge_1": [
+          0,
+          10
+        ],
+        "done": false,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 6189,
+        "text_1": "Will auto-dismiss in 9 seconds.",
+        "gauge_1": [
+          1,
+          10
+        ],
+        "done": false,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 6696,
+        "text_1": "Will auto-dismiss in 9 seconds.",
+        "gauge_1": [
+          1,
+          10
+        ],
+        "done": false,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 7203,
+        "text_1": "Will auto-dismiss in 9 seconds.",
+        "gauge_1": [
+          1,
+          10
+        ],
+        "done": false,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 7711,
+        "text_1": "Will auto-dismiss in 8 seconds.",
+        "gauge_1": [
+          2,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": true
+      },
+      {
+        "at_ms": 8217,
+        "text_1": "Will auto-dismiss in 8 seconds.",
+        "gauge_1": [
+          2,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": true
+      },
+      {
+        "at_ms": 8723,
+        "text_1": "Will auto-dismiss in 8 seconds.",
+        "gauge_1": [
+          2,
+          10
+        ],
+        "done": true,
+        "dismissed": true,
+        "cancelled": true
+      },
+      {
+        "at_ms": 9228,
+        "text_1": "Will auto-dismiss in 8 seconds.",
+        "gauge_1": [
+          2,
+          10
+        ],
+        "done": true,
+        "dismissed": true,
+        "cancelled": true
+      },
+      {
+        "at_ms": 9734,
+        "text_1": "Will auto-dismiss in 8 seconds.",
+        "gauge_1": [
+          2,
+          10
+        ],
+        "done": true,
+        "dismissed": true,
+        "cancelled": true
+      },
+      {
+        "at_ms": 10241,
+        "text_1": "Will auto-dismiss in 8 seconds.",
+        "gauge_1": [
+          2,
+          10
+        ],
+        "done": true,
+        "dismissed": true,
+        "cancelled": true
+      },
+      {
+        "at_ms": 10746,
+        "text_1": "Will auto-dismiss in 8 seconds.",
+        "gauge_1": [
+          2,
+          10
+        ],
+        "done": true,
+        "dismissed": true,
+        "cancelled": true
+      },
+      {
+        "at_ms": 11253,
+        "text_1": "Will auto-dismiss in 8 seconds.",
+        "gauge_1": [
+          2,
+          10
+        ],
+        "done": true,
+        "dismissed": true,
+        "cancelled": true
+      },
+      {
+        "at_ms": 11761,
+        "text_1": "Will auto-dismiss in 8 seconds.",
+        "gauge_1": [
+          2,
+          10
+        ],
+        "done": true,
+        "dismissed": true,
+        "cancelled": true
+      },
+      {
+        "at_ms": 12267,
+        "text_1": "Will auto-dismiss in 8 seconds.",
+        "gauge_1": [
+          2,
+          10
+        ],
+        "done": true,
+        "dismissed": true,
+        "cancelled": true
+      },
+      {
+        "at_ms": 12774,
+        "text_1": "Will auto-dismiss in 8 seconds.",
+        "gauge_1": [
+          2,
+          10
+        ],
+        "done": true,
+        "dismissed": true,
+        "cancelled": true
+      },
+      {
+        "at_ms": 13281,
+        "text_1": "Will auto-dismiss in 8 seconds.",
+        "gauge_1": [
+          2,
+          10
+        ],
+        "done": true,
+        "dismissed": true,
+        "cancelled": true
+      },
+      {
+        "at_ms": 13788,
+        "text_1": "Will auto-dismiss in 8 seconds.",
+        "gauge_1": [
+          2,
+          10
+        ],
+        "done": true,
+        "dismissed": true,
+        "cancelled": true
+      },
+      {
+        "at_ms": 14295,
+        "text_1": "Will auto-dismiss in 8 seconds.",
+        "gauge_1": [
+          2,
+          10
+        ],
+        "done": true,
+        "dismissed": true,
+        "cancelled": true
+      },
+      {
+        "at_ms": 14802,
+        "text_1": "Will auto-dismiss in 8 seconds.",
+        "gauge_1": [
+          2,
+          10
+        ],
+        "done": true,
+        "dismissed": true,
+        "cancelled": true
+      },
+      {
+        "at_ms": 15309,
+        "text_1": "Will auto-dismiss in 8 seconds.",
+        "gauge_1": [
+          2,
+          10
+        ],
+        "done": true,
+        "dismissed": true,
+        "cancelled": true
+      },
+      {
+        "at_ms": 15815,
+        "text_1": "Will auto-dismiss in 8 seconds.",
+        "gauge_1": [
+          2,
+          10
+        ],
+        "done": true,
+        "dismissed": true,
+        "cancelled": true
+      },
+      {
+        "at_ms": 16322,
+        "text_1": "Will auto-dismiss in 8 seconds.",
+        "gauge_1": [
+          2,
+          10
+        ],
+        "done": true,
+        "dismissed": true,
+        "cancelled": true
+      },
+      {
+        "at_ms": 16526,
+        "text_1": "Will auto-dismiss in 8 seconds.",
+        "gauge_1": [
+          2,
+          10
+        ],
+        "done": true,
+        "dismissed": true,
+        "cancelled": true
+      }
+    ]
+  },
+  "menu_path": [
+    "help",
+    "debug",
+    "gui actions"
+  ]
+}

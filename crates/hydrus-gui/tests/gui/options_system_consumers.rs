@@ -1161,10 +1161,40 @@ mod pace {
             .map(|l| if let Line::Polls(n) = l { *n } else { 0 })
             .sum();
         let mut polls = 0;
+        let mut lease_retries = 0;
+        let mut let_go_rerun = false;
         loop {
             publish(store, &clock, idle, good_time(pass));
             let before = due_jobs(store);
             let wait = importer.file_maintenance_pass(&throttle, &clock, &|_| {});
+            // A pass that found nothing due while jobs are still queued did
+            // not look at them: the file-maintenance lease was taken at that
+            // moment, and a pass that finds it taken stops (the real daemon
+            // then waits a minute before its next). That is not a result of
+            // the recorded run, so the same pass is tried again on the same
+            // held time: every 10 ms while the lease is held (up to 5 s), and
+            // once straight away if it has just been let go. A pass that still
+            // finds nothing due with the lease free is a regression, and
+            // fails below.
+            if wait == workers::FILE_MAINTENANCE_NOTHING_DUE
+                && due_jobs(store).values().any(|&n| n > 0)
+            {
+                match hydrus_store::store::lock_file_maintenance(store.dir()) {
+                    Ok(None) if lease_retries < 500 => {
+                        lease_retries += 1;
+                        std::thread::sleep(std::time::Duration::from_millis(10));
+                        continue;
+                    }
+                    Ok(Some(lease)) if !let_go_rerun => {
+                        drop(lease);
+                        let_go_rerun = true;
+                        continue;
+                    }
+                    _ => {}
+                }
+            } else {
+                let_go_rerun = false;
+            }
             // (the jobs the pass did, in the order the reference ran them)
             let after = due_jobs(store);
             for job in JobType::RUN_ORDER {
@@ -1205,7 +1235,13 @@ mod pace {
             }
             assert!(trace.len() < 200, "{trace:?}");
         }
-        assert_eq!(trace, expected, "{what}");
+        assert_eq!(
+            trace,
+            expected,
+            "{what}: after {polls} polls and {lease_retries} lease retries, lease free {:?}, queued {:?}",
+            hydrus_store::store::lock_file_maintenance(store.dir()).map(|lease| lease.is_some()),
+            due_jobs(store)
+        );
     }
 }
 

@@ -42,11 +42,28 @@ pub fn open(
             .map(SharedString::from)
             .collect::<Vec<_>>(),
     )));
+    // (`SelectFromListButtons`'s `quick_select_dialog` frame with buttons and no
+    // "no", or `GetYesNo`/`GetYesYesNo`'s `quick_yesno_dialog` with a "no"
+    // too; a message with no choices is not one of those dialogs and has no
+    // frame of its own. Kept when a choice is made, as the reference's
+    // dialog does when accepted.)
+    let frame = match (ask.choices.is_empty(), ask.no_label.is_empty()) {
+        (true, _) => None,
+        (false, true) => crate::windows::dialog_frame("quick_select_dialog"),
+        (false, false) => crate::windows::dialog_frame("quick_yesno_dialog"),
+    };
+    if let Some(frame) = &frame {
+        frame.place(&window);
+    }
     let answer: Rc<RefCell<Option<Answer>>> = Rc::new(RefCell::new(Some(Box::new(answer))));
     let finish = Rc::new({
         let weak = window.as_weak();
         move |choice: Option<usize>| {
             if let Some(window) = weak.upgrade() {
+                if let (Some(frame), Some(_)) = (&frame, choice) {
+                    frame.accept();
+                    frame.closing(window.window());
+                }
                 let _ = window.hide();
             }
             let taken = answer.borrow_mut().take();

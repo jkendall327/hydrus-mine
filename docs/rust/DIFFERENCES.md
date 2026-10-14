@@ -379,7 +379,12 @@ search.
   lines that mean something for it (the platform and how it was built,
   ffmpeg and SQLite versions, the boot time, the directories, the locale,
   and the store's cache size, journal and synchronous modes and whether
-  its temporary files are in memory, as SQLite reports them); the Python,
+  its temporary files are in memory, as SQLite reports them: the journal
+  mode is written in capitals as the reference does ("WAL"), but the store
+  runs synchronous FULL and keeps temporary tables in memory, so those lines
+  say 2 and True where the reference says its configured 1 and False; the
+  platform line ends "from a release build" or "from a debug build" where the
+  reference's says "from source" or "frozen"); the Python,
   OpenCV, openssl, numpy, Pillow and Qt version lines and the transaction
   commit period (every write commits) aren't there, and the optional
   libraries tab lists hydrus-rs's own optional parts (ffmpeg, mpv,
@@ -891,9 +896,14 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   JSON and PNG without dropping query history or cached header metadata. Legacy
   subscription type3 versions1–10 now import through the actual list. The original transport menus are wired; clipboard text and JSON/PNG import menus now
   add to the staged list directly, as the reference's list control does (all
-  three import choices; only export opens a window). Clipboard PNG
-  image precedence and PNG list drops remain absent (their own leaf,
-  `subscriptions-exchange-bitmap-drop`, low priority). Historical file-cache
+  three import choices; only export opens a window). A bitmap on the
+  clipboard is read before its text, and PNG or JSON files dropped on the
+  list are asked about first, as the reference's list does
+  (`exchange_bitmap_drop.json`); the clipboard's bitmap is read through
+  `arboard`, which on Linux sees an image only when the owning program offers
+  one in a format it knows, and cannot tell "no image" from "could not read
+  it" (the reference's separate "Problem loading from clipboard" is only
+  reached when the PNG encoding fails). The reference's words for a dropped file that is not there are hydrus's own ("Cannot file-mirror ... the source does not exist!"); here the downloader window and the list say the operating system's. The downloader window shows a review of what a paste or drop brought and asks on "import", where the reference asks its final question at once. Not checked against the reference: its "Pasted N items!" notification, its "select objects from list" choice on a paste or drop, and the "problem importing!" dialog title (here a line of the window). Winit's own delivery of a dropped file to these windows is not tested (only the files it would hand over). Historical file-cache
   versions 1–7 now upgrade within the exchange codec, with recorded order,
   timestamp, note, count and example preservation. A repeated seed in a
   historical cache is dropped, first one winning, as the reference does when it
@@ -1176,6 +1186,22 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 
 ## Downloader definition editors
 
+- The parser test panels take their example parsing context from three boxes
+  (url, post index, other variables) where the reference has one dictionary
+  button. Like the reference's, a content or page parser's test parse leaves
+  out the post index (a subsidiary parser's sets it to 0); the url, other
+  variables and relative-url joining are replayed from
+  `oracle/fixtures/parser_context.json`. After a fetch the page parser's url box
+  shows the encoded url the context holds, where the reference keeps what was
+  typed (its fetch texts, requests and cookies are replayed from
+  `oracle/fixtures/parser_fetch_http.json`).
+- The test panels' result preview reads "Post 1" then "tags: abc" lines, where the
+  reference prints "*** 1 RESULTS BEGIN ***", then one line per result with its own
+  label ("tag: artist:samus" with the namespace joined and the tag cleaned,
+  "downloadable/pursuable url (priority 50): ...", 'note "name":', "sha256 hash:",
+  "source/post time: <date>", "veto: ...") and "*** RESULTS END ***"
+  (`oracle/fixtures/parser_context.json`, `parser_editors.json`). The parsed texts
+  match; the labels and layout do not.
 - URL classes and single/nested gallery URL generators have native lists and
   rule editors. Their duplicate button creates new keys and unique names.
   Domain lists and regex lists use one rule per line, and nested generators
@@ -1536,8 +1562,13 @@ The session browser's "create new" offers the reference's two types (web domain,
 hydrus service). The service choice lists the repositories by name; a hydrus
 service session is keyed by the service key's hex, as the existing ones are. With
 no repository "hydrus service" is refused ("Choose a hydrus service for this
-context."). Qt names the service wherever it lists a network context
-("hydrus service: <name>"); native lists the key's hex.
+context."), where Qt makes the "hydrus service default" context. Both name the
+service wherever the browser lists a context ("hydrus service: <name>"). A domain
+is lower-cased and refused if it is not one; Qt keeps what was typed ("Example.com")
+and, for something that is not a domain such as "not a domain!!", makes a session
+with an empty domain. The dialog's opening state, title, notes, defaults, offered
+services and the sessions made are replayed from
+`oracle/fixtures/session_create.json` (`oracle/record_session_create.py`).
 
 Cookie and HTTP-header editing uses detached native drafts with Apply/Cancel;
 Qt cookie-list actions take effect immediately, while its header list is staged.
@@ -1597,6 +1628,18 @@ context/obeys-bandwidth details are inline, and cancel/override controls are
 explicit buttons. Login-script waits remain outside the implemented engine.
 Local snapshots are published by the daemon without requiring its Client API;
 expiry disables stale controls and saved bandwidth history remains available.
+The reference's auto-refresh is a "manual refresh"-or-interval control (at least
+0.05 s, manual to begin with); native has an auto-refresh checkbox, on to begin
+with. The jobs list's position column says "waiting for bandwidth", "waiting for
+login" and "running" as the reference does (its positions "waiting for
+validation" and "waiting for free work slot" have no native counterpart), and
+its other waits are native's own; the speed column is titled "current speed" as
+the reference's is. A job's contexts are shown in the detail under the list, not
+in a right-click menu with each context's waiting estimate.
+
+"Reset default bandwidth rules" resets the global and default contexts the
+reference names (not the downloader default, which it leaves) and keeps every
+specific context (`oracle/fixtures/bandwidth_reset.json`).
 
 ## Tag migration
 
@@ -1651,7 +1694,10 @@ child after the confirmation appears changes only the next job's settings.
 ## Downloader definition interchange
 
 Downloader interchange uses text clipboard contents and selected PNG/text files;
-clipboard bitmap and drag/drop ingestion are not exposed. Exported PNGs carry
+the downloader import window also takes a bitmap on the clipboard and files
+dropped on it (`exchange_bitmap_drop.json`; the other exchange windows do not,
+as the reference's other panels have no drop target of their own). A clipboard
+holding local file paths is not read as the reference's `IngestClipboard` reads it. Exported PNGs carry
 the real reference pixel/payload format with a small plain header. A malformed
 or unsupported item rejects the whole package, with an actionable error, rather
 than the reference importer's partial skips. Payloads/pixels are capped at
@@ -1688,8 +1734,7 @@ leaves the first downloader by name as the default when there is none
 (`downloader_import_selection.json`). Like the reference's bandwidth manager, an import stops adding
 rules at the first package (in domain order) that has none, so a headers-only
 package keeps later packages' rules out until they are imported again
-(recorded in `domain_metadata_packages.json`). Clipboard bitmap and drag/drop
-ingestion are not exposed (low priority).
+(recorded in `domain_metadata_packages.json`).
 
 Tab context menus expose close, select, move-page, sort-pages and send-down submenus,
 rename, duplicate, collapse, grouped close and per-notebook saved-session
@@ -4133,9 +4178,24 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   main window's title bar and borders off its size where winit reports them.
   Winit cannot read the pointer outside the application's windows, so "mouse"
   uses where the pointer last was over one of hydrus-rs's windows, else the
-  centre of the main window. Only the main window, the media viewer and the
-  Options window consult their frames. The Options window is placed before it
-  shows, and again once shown when its own size was needed to grow from.
+  centre of the main window. The main window, the media viewer, the Options
+  window, the fourteen windows with frame keys of their own and the choice
+  dialogs (`quick_select_dialog` for a choice among buttons, `quick_yesno_dialog`
+  for one with a "no") consult their frames. The reference's
+  `quick_entry_dialog` and `deeply_nested_dialog` are not told apart from
+  `regular_dialog`: hydrus-rs has no single text-entry dialog or nested-editor
+  frame to hang them on, so editing those two rows reaches nothing. The
+  Options window is placed before it shows, and again once shown when its own
+  size was needed to grow from.
+- The reference's `OpenListButtons` (Go To Page) is a frame that keeps its
+  geometry on any close; hydrus-rs's choice dialogs keep it only when a
+  choice is made, as the reference's `SelectFromListButtons` dialog does.
+- Frame locations editor, not yet proved: the remembered place of a window
+  (a headless window has no readable place, so only the arithmetic of
+  `windows::placement` and the off-screen rescue are tested, not a window
+  opening at it), and the `quick_entry_dialog` and `deeply_nested_dialog`
+  rows, which reach nothing. `audit-options-gui-frame-locations-edit` stays
+  partial and untagged for those reasons.
 
 ## Review vacuum data
 
@@ -4156,6 +4216,15 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   once, on Options OK.
 - A trash pass deletes in groups of eight, oldest first, including files
   already in the trash when the limit is set.
+- The wait between physical deletes (Options > files and trash) is read at
+  the start of each pass and waited after every file and thumbnail pair, the
+  last included. The reference's maintenance loop decides when a pass runs
+  (idle or normal time); the daemon here keeps its own cadence of up to 1024
+  pairs a pass and ten minutes between passes, so only the waits within a pass
+  are compared with the recording.
+- Typing 0 s 0 ms into that control leaves 0 in the dialog's draft until Apply
+  saves the 20 ms minimum; the reference's field shows 20 ms at once. Other
+  typed values (clamped to 59 s and 999 ms) match its fields exactly.
 
 ## URL drops
 
@@ -4270,9 +4339,9 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   next work time rather than as the reference syncs; the reference's other
   subscription reports are not ported (#184).
 - Report modes are offered only where something in hydrus-rs can report:
-  blurhash, cache, daemon, file, file import, gui, idle, network (and
+  blurhash, cache, daemon, db, file, file import, gui, idle, network (and
   silent), shortcut, similar files metadata generation, subprocess and
-  subscription. Missing: callto, canvas tile borders, db, file sort,
+  subscription. Missing: callto, canvas tile borders, file sort,
   graphics view thumbnail update, hover window, media load, mpv, potential
   duplicates, pubsub and shutdown report modes, and "fake petition mode"
   (there is nothing in hydrus-rs for them to report on or change, or the
@@ -4291,9 +4360,7 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   isn't logged.
 - "autocomplete delay mode" delays the tag autocomplete search only, not the
   media predicates lookup the reference also delays.
-- Not offered: profile modes (client api, db, threads, ui) and query planner
-  mode (they need hooks in every database connection and request path);
-  "thumbnail debug mode" (it lightens alternate canvas pages of Qt's
+- Not offered: "thumbnail debug mode" (it lightens alternate canvas pages of Qt's
   thumbnail painting); the mpv "allow crashy files" modes (they switch
   Python mpv wrapper crash handling); "simulate a wake from sleep" (the GUI
   keeps no shared network engine to wake); run fast/slow memory
@@ -4304,10 +4371,48 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   "macos anti-flicker test" (Qt widget, stylesheet, mpv widget or macOS
   internals); "review threads" and "show scheduled jobs" (Python threads
   and scheduler); the pympler memory-use entries; "publish some sub files
-  in five seconds", "subscription manager snapshot", "what is this
-  object?"; and the tests, do not touch: the ui, client api, server and
+  in five seconds" and "what is this object?"; profile mode (threads) (there
+  is no thread pool of background tasks to time); and the tests, do not
+  touch: the ui, client api, server and
   visual duplicates test suites (they drive the Python test harness),
   both self-sigterms and "induce a program crash".
+- Profile modes log each slow job's summary and how long it took, where the
+  reference follows the summary with Python's cProfile table of the calls
+  inside it (there is nothing like it for Rust). The job names are Rust's:
+  db jobs are named by the closure that ran (`hydrus_gui::foo::{{closure}}`),
+  not the reference's `read nums_pending`; "profile mode (ui)" times menu
+  commands only, not the reference's other Qt events (call-afters, pubsub
+  and timers); "profile mode (client api)" times a request from its arrival
+  to its response, not just the handler's thread. The slow-and-fast count
+  in the message is of the client's own jobs; the daemon times its own and
+  writes to the same log, but its count is not added.
+- Profile and query planner modes count jobs, and plan queries, per database
+  directory: one client has one database, but a process here can hold
+  several, and a job belongs to its own. The profile lock that makes a
+  second concurrent job `EXCLUSIVE` is per database too.
+- A debug switch the client set before the daemon first looked is ignored
+  (it may be left from a client that crashed); only what is set after is
+  followed. The query planner and db report hooks on SQLite connections are
+  registered only while one of those two modes is on.
+- With no downloader (so no subscription manager) the daemon answers
+  "subscription manager snapshot" with a line saying so.
+- "db report mode" reports a job after it has run, not before, and leaves
+  out the jobs that only read or write the popups (reporting those would
+  make a popup of every popup). The client has timers that read the
+  database every moment, so the mode is spammier here than in the
+  reference.
+- Query planner mode plans each statement SQLite runs (as the trace
+  callback reports it), once per distinct text, after the job that ran it;
+  the reference plans the queries its own `_Execute` is given. The plans are
+  SQLite's own, of a different schema.
+- The debug switches follow the client into the daemon through the store, a
+  second behind; the reference is one process. A report the daemon makes
+  arrives as a popup in the client.
+- "subscription manager snapshot" is answered by the daemon (it has the
+  subscriptions manager), a second after the click. The manager here keeps
+  no list of "next work times"; the snapshot works each subscription's out
+  when asked, so a subscription that has just finished is not held back for
+  two minutes in the snapshot as it is in the reference's.
 
 ## Thumbnail manage > file relationships
 
