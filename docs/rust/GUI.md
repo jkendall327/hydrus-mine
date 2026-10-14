@@ -169,8 +169,7 @@ as Qt's do; a press anywhere else closes them. What works so far:
   `tests/gui/menu_bar.rs` against `session_importers.json`), "clear and load" (asking
   first, then, if a downloader page objects, asking again with the
   reference's words for every page's objection (recorded in
-  `sessions_menu.json` and replayed with importing pages in
-  `tests/gui/pages_menu_info.rs`); the pages closed are
+  `sessions_menu.json`; replayed against the model only); the pages closed are
   gone, not kept to reopen, and the session's pages are at the top), and
   deleting one (asking first); the page chooser; a new search page on each
   local file domain, the trash or a file repository (searching the tag

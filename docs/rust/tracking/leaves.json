@@ -15796,10 +15796,10 @@
     "No session backups are retained or selectable; reserved names excluded from overwrite/delete entries."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "sound",
-    "by": "Claude session (#97 phase 2, w4-r5)",
-    "note": "gui/pages_menu_info.rs clear_and_load_asks_again_of_pages_still_importing_as_the_reference_does drives Pages > sessions > clear and load > a session through the real menu with pages that object: two URL pages with importing queues named 'files', and a watcher page with two importing watchers, against oracle/fixtures/sessions_menu.json steps 14, 15 and 17. The first question ('Close the current pages and load session ...?') and the second, grouped by the pages that object ('Close \"top page notebook\"?...say: This page is still importing.' and 'page \"files\" says: 2 watchers are still importing.'), equal the recorded text; answering no to the second closes nothing, answering yes replaces the pages with the session's. The dialog's 'Are you sure?' title, its 'no, but show me the pages' button and the initially disabled yes are not in the native question (DIFFERENCES.md); the earlier model replay of close_all_question stays."
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Question and yes/no are driven through the menu and the question text is replayed from sessions_menu.json. But the recorded part where importing pages veto the close (grouped 'still importing' question) is only replayed on the model function close_all_question; no GUI test makes a page veto, so the window's use of it is unproven (README: stand-in for the real path). Tests: crates/hydrus-gui/tests/gui/menu_bar.rs:508 clear_and_load_replaces_the_pages_with_a_session; crates/hydrus-gui-model/tests/model/session_saving.rs:83 clear_and_load_asks_as_the_references_does"
    }
   },
   {
