@@ -5129,3 +5129,8 @@ potential duplicates (as the reference does as groups merge), so approving
 - "Width of suggested tags columns" and "Autocomplete list height" are read
   as properties of the Manage Tags window; the lists' laid-out size is not
   measured against the reference.
+
+- **A sidebar saved at width 0 and revealed** (Pages > sidebar > show/hide after
+  "save current page's sidebar/preview size now" while hidden) shows nothing, as
+  the reference does, but its preview is reported hidden too; the reference's
+  preview widget there still reports itself visible, in a column of no width.
