@@ -425,7 +425,9 @@ def record( session, site ):
 
     flows.wait_until_idle( controller )
 
-    step( 'close', { 'ok to close': ok, 'unused answers': list( answers ) } )
+    assert len( answers ) == 0, f'unused answers: {answers}'
+
+    step( 'close', { 'ok to close': ok } )
 
     return { 'domain_manager' : domain_manager, 'prepared' : prepared, 'files' : batch_hashes, 'steps' : steps }
 

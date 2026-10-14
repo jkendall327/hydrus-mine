@@ -1764,8 +1764,7 @@
     }
    ],
    "dialog": {
-    "ok to close": true,
-    "unused answers": []
+    "ok to close": true
    },
    "files": {
     "1ddfdfb0fdd66c77a7c04407c100e6838370ee96a72a22afd2bb4d04e89ff148": {

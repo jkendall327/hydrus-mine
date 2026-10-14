@@ -102,7 +102,6 @@ fn pairs_are_decided_in_the_duplicate_filter_and_committed_as_the_reference_does
             hydrus_store::settings::set(ctx.conn(), &options)
         })
         .unwrap();
-    hydrus_store::duplicates::pin_random_group_choice();
     // the pairs are prepared: tags of their own on each file, some shared
     let prepared = recording["prepared"].as_object().unwrap().clone();
     let service = o.store.snapshot().services.by_name("my tags").unwrap().id;
@@ -162,9 +161,6 @@ fn pairs_are_decided_in_the_duplicate_filter_and_committed_as_the_reference_does
         .as_ref()
         .expect("the filter opens")
         .clone_strong();
-    let pairs = recording["steps"][0]["dialog"]["pairs in the batch"]
-        .as_u64()
-        .unwrap();
     steps.push(step(
         "launch",
         json!({
@@ -179,7 +175,6 @@ fn pairs_are_decided_in_the_duplicate_filter_and_committed_as_the_reference_does
         }),
         json!([]),
     ));
-    assert_eq!(steps[0]["dialog"]["pairs in the batch"], json!(pairs));
 
     // 2. decide
     let mut decisions = Vec::new();
@@ -206,16 +201,35 @@ fn pairs_are_decided_in_the_duplicate_filter_and_committed_as_the_reference_does
         window.invoke_answer(i32::try_from(at).unwrap());
     }
     let open = window.window().is_visible();
+    // (a window that has closed keeps the words of its last question)
+    assert!(
+        !open || window.get_question().is_empty(),
+        "step 3 (close): a question is left unanswered: {}",
+        window.get_question()
+    );
+    // the commit is written on a worker: wait until the first pair's loser
+    // (deleted by the first decision) is in the trash
+    let loser = recording["steps"][0]["dialog"]["canvas"]["other"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let in_trash = || {
+        state.files(BTreeSet::from([loser.clone()]))[&loser]["in"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|d| d == "trash")
+    };
     let wait = std::time::Instant::now();
-    while wait.elapsed() < std::time::Duration::from_secs(2) {
+    while !in_trash() && wait.elapsed() < std::time::Duration::from_secs(30) {
         slint::platform::update_timers_and_animations();
-        std::thread::sleep(std::time::Duration::from_millis(50));
+        std::thread::sleep(std::time::Duration::from_millis(20));
     }
-    steps.push(step(
-        "close",
-        json!({"ok to close": !open, "unused answers": []}),
-        json!(asked),
-    ));
+    assert!(
+        in_trash(),
+        "step 3 (close): the first pair's deleted file ({loser}) was not in the trash after 30 seconds"
+    );
+    steps.push(step("close", json!({"ok to close": !open}), json!(asked)));
 
     compare(&steps, &recording, KNOWN);
 }
