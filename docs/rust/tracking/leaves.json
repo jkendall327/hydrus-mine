@@ -5364,10 +5364,10 @@
     "Manual refresh replaces the displayed snapshot; live refresh follows daemon updates and clears selection on epoch replacement."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "weak",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Unchanged: manual refresh and epoch-replacement clearing are driven, but the reference's auto-refresh is a manual-or-interval control (NoneableTimeDeltaWidget, at least 0.05 s, manual to begin with) with a timer, where native has an auto-refresh checkbox that starts on; no test exercises the toggle, and the control needs .slint work to match (now in DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/network_data.rs jobs_live_progress_commands_and_offline_expiry"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-12 session (wave 5)",
+    "note": "The reference's refresh control is replayed against network_jobs_panel.json: manual refresh to begin with and no timer, 'refresh snapshot' takes a snapshot while a manual list stays put, and each recorded step (0.25, 2.0, 0.01 clamped to 0.05, manual, 1.5) gives the recorded timer interval or none; an interval refreshes the list by itself. Differs only in the interval being one number of seconds rather than minutes/seconds/milliseconds boxes (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/network_jobs_panel.rs the_refresh_control_is_manual_to_begin_with_or_an_interval_as_the_reference_s_is."
    }
   },
   {
@@ -5386,7 +5386,7 @@
     "date": "2026-10-13",
     "class": "source-restated",
     "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Recorded rows (network_data.json, the real jobs panel) now compared through the real window: the position words for bandwidth, login and running are the reference's ('waiting for bandwidth', 'waiting for login', 'running'; native's labels were different, fixed), the speed column is titled 'current speed' as recorded (was 'speed'), and the speed/progress cells match for 2 KB/s with 2 KB of 4 KB. The reference's positions 'waiting for validation' and 'waiting for free work slot' have no native wait, and native's other eight waits are an extension with nothing to record; those and the selected-job contexts are still checked only against native values. Tests: crates/hydrus-gui/tests/gui/network_jobs_rows.rs every_request_is_a_row_with_its_typed_wait_speed_bytes_and_contexts (tagged); rows_for_the_waits_the_reference_names_read_as_its_jobs_panel_reads (untagged: three of the reference's five positions)"
+    "note": "Recorded rows (network_data.json, the real jobs panel) now compared through the real window: the position words for bandwidth, login and running are the reference's ('waiting for bandwidth', 'waiting for login', 'running'; native's labels were different, fixed), the speed column is titled 'current speed' as recorded (was 'speed'), and the speed/progress cells match for 2 KB/s with 2 KB of 4 KB. The reference's positions 'waiting for validation' and 'waiting for free work slot' have no native wait, and native's other eight waits are an extension with nothing to record; those and the selected-job contexts are still checked only against native values. Tests: crates/hydrus-gui/tests/gui/network_jobs_rows.rs every_request_is_a_row_with_its_typed_wait_speed_bytes_and_contexts (tagged); rows_for_the_waits_the_reference_names_read_as_its_jobs_panel_reads (untagged: three of the reference's five positions) W5-12 2026-10-14: the selected job's contexts are now compared with the reference's menu (network_jobs_panel.json); the two reference positions without a native wait remain, so the class is unchanged."
    }
   },
   {
@@ -6462,10 +6462,10 @@
     "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
    ],
    "recheck": {
-    "date": "2026-10-13",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
-    "note": "The setting's gate and the flattened menubar are replayed against command_palette.json (main_menu_real, main_menu_off): six queries give the reference's rows and menu paths in order, and with the setting off none. Not sound: three rows the reference lists are missing natively and the test filters them (update database backup… and change database backup location… which the menubar hides until a location is set, and Help > debug > review threads); DIFFERENCES.md. Not tagged. Test: crates/hydrus-gui/tests/gui/command_palette.rs the_main_menu_rows_are_the_reference_s_flattened_menubar_and_the_setting_gates_them."
+    "by": "W5-12 session (wave 5)",
+    "note": "The hidden backup entries ('update database backup', 'change database backup location…', the multiple-locations note) are now listed as the reference's QAction walk lists them, and activating the hidden update row with no location warns 'No backup path is set!' (command_palette.rs a_hidden_backup_row_is_listed_and_runs_as_the_reference_s_action_does; the recorded main_menu_real rows now replay without filtering them). Still weak: Help > debug > data actions > 'review threads' (Python threads and job schedulers, ReviewThreads) has no native counterpart and the test filters that row; DIFFERENCES.md. Not tagged."
    }
   },
   {
@@ -6485,7 +6485,7 @@
     "date": "2026-10-13",
     "class": "weak",
     "by": "Claude, #97 phase 2 (recheck-w4-r3)",
-    "note": "Rows for a page with no files, with one and with three files selected (nine queries each) and the effect of activating a row on the selection are replayed through the real palette against command_palette.json and palette_media_rows.json (recorded from the reference's real MediaMenuSearchProvider); they match except the two single-file rows 'copy bitmap' and 'copy thumbnail bitmap' (bitmap exchange not ported, DIFFERENCES.md), which the test filters. Stays weak for that reason. Setting off gives no rows (command_palette.rs). Tests: crates/hydrus-gui/tests/gui/palette_media.rs; command_palette.rs media_menu_results_follow_the_setting_and_the_page_shown_as_the_reference_did."
+    "note": "Rows for a page with no files, with one and with three files selected (nine queries each) and the effect of activating a row on the selection are replayed through the real palette against command_palette.json and palette_media_rows.json (recorded from the reference's real MediaMenuSearchProvider); they match except the two single-file rows 'copy bitmap' and 'copy thumbnail bitmap' (bitmap exchange not ported, DIFFERENCES.md), which the test filters. Stays weak for that reason. Setting off gives no rows (command_palette.rs). Tests: crates/hydrus-gui/tests/gui/palette_media.rs; command_palette.rs media_menu_results_follow_the_setting_and_the_page_shown_as_the_reference_did. Re-read 2026-10-14 (W5-12): unchanged; 'copy bitmap' and 'copy thumbnail bitmap' need the bitmap exchange, a large separate port, so the leaf stays weak."
    }
   },
   {
@@ -24574,10 +24574,10 @@
     "Commands identify both daemon epoch and request ID; ended/replaced jobs ignore the command."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "weak",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Unchanged: cancel/override buttons queue commands carrying the daemon epoch and job id (typed values; the reference has no such buttons), and the reference's right-click menu on a job (a 'network contexts' submenu with each context's waiting estimate or 'bandwidth ok', then 'domain ok', 'waiting on connection error', 'waiting on serverside bandwidth', 'obeys bandwidth', 'tokens ok') is shown natively as detail text instead; the 'debug contexts' part is unported and untested. Test: crates/hydrus-gui/tests/gui/network_data.rs jobs_live_progress_commands_and_offline_expiry"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-12 session (wave 5)",
+    "note": "The reference's job right-click menu (network contexts with each context's wait or 'bandwidth ok', then domain ok, waiting on connection error, waiting on serverside bandwidth, obeys bandwidth, tokens ok) is replayed through the real jobs window against network_jobs_panel.json (recorded from the real ReviewNetworkJobs): eight recorded job states, the submenu, copy-on-click, no menu with two jobs selected, a right press selecting an unselected row. Differences in DIFFERENCES.md (one typed wait where the reference's two flags can both be True; service contexts named by key). The cancel/override buttons are native-only and queue epoch+id commands (jobs_live_progress_commands_and_offline_expiry); their end-to-end drive belongs to the audit-network-jobs-cancel/override leaves. Test: crates/hydrus-gui/tests/gui/network_jobs_panel.rs a_jobs_right_click_menu_is_the_reference_s_network_contexts_and_flags."
    }
   },
   {
