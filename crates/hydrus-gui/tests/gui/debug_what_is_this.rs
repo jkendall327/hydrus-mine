@@ -93,7 +93,9 @@ fn what_is_this_object_opens_the_reference_s_window_and_describes_what_is_pasted
             .iter()
             .enumerate()
             .map(|(i, text)| {
-                let path = dir.path().join(format!("{}-{i}.json", name.replace(' ', "-")));
+                let path = dir
+                    .path()
+                    .join(format!("{}-{i}.json", name.replace(' ', "-")));
                 std::fs::write(&path, text).unwrap();
                 path
             })

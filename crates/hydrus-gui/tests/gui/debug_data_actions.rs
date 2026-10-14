@@ -203,12 +203,21 @@ fn save_last_session_writes_the_pages_that_are_open_now() {
     // a page opened through the pages menu, after the session was loaded
     choose_in_menu(&ui, "pages", &["download"], "new url download page");
     let live = bound.pages.borrow().session().clone();
-    assert_eq!(live.pages.len(), open.pages.len() + 1, "the new page is open");
+    assert_eq!(
+        live.pages.len(),
+        open.pages.len() + 1,
+        "the new page is open"
+    );
     // the saved 'last session' is lost (a crash): the action puts what is open back at once
     store
         .write(|ctx| sessions::delete(ctx.conn(), LAST_SESSION))
         .unwrap();
-    assert!(store.read(|c| sessions::load(c, LAST_SESSION)).unwrap().is_none());
+    assert!(
+        store
+            .read(|c| sessions::load(c, LAST_SESSION))
+            .unwrap()
+            .is_none()
+    );
     let d = super::debug_menu_actions::Debug::from_parts(dirs, store.clone(), ui, bound, windows);
     d.click(&["gui actions", "save 'last session' gui session"]);
     let saved = store
