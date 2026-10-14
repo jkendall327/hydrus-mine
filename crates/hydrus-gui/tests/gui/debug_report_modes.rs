@@ -575,17 +575,27 @@ fn subprocess_report_mode_says_what_the_reference_says_through_the_external_call
     d.click(&["report modes", "subprocess report mode"]);
     assert!(d.report_mode_checked("subprocess report mode"));
     run();
+    // (other tests' programs run at the same time and say things too: the
+    // four lines are found in order among them)
     let said = std::mem::take(&mut *seen.lock().unwrap());
-    assert_eq!(said.len(), recorded.len(), "{said:?}");
+    let kwargs = said
+        .iter()
+        .position(|l| l.starts_with("KWargs are: ") && l.contains("\"echo\", \"hello\""))
+        .unwrap_or_else(|| panic!("{said:?}"));
     // the environment (this process's, in the reference's layout), how the
     // call is made, and what came back, a Python repr's quotes being Rust's
-    assert_eq!(said[0], hydrus_core::debug_flags::current_env_text());
     assert!(recorded[0].starts_with("Full environment:\n"));
-    assert!(said[1].starts_with("KWargs are: ") && said[1].contains("\"echo\", \"hello\""));
     assert!(recorded[1].starts_with("KWargs are: "));
-    for i in 2..recorded.len() {
-        assert_eq!(said[i], recorded[i].replace('\'', "\""));
-    }
+    assert!(
+        said[..kwargs]
+            .iter()
+            .any(|l| *l == hydrus_core::debug_flags::current_env_text())
+    );
+    let after = &said[kwargs + 1..];
+    let stdout = recorded[2].replace('\'', "\"");
+    let stderr = recorded[3].replace('\'', "\"");
+    let at = after.iter().position(|l| *l == stdout).expect("stdout");
+    assert!(after[at + 1..].contains(&stderr), "{after:?}");
     d.click(&["report modes", "subprocess report mode"]);
 }
 
