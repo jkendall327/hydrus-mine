@@ -4236,10 +4236,10 @@
     "Locale date phrases use English/C forms. Platform-specific strftime extensions such as %s remain outside the supported grammar."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Carried, untagged. UTC encode cases (naive %z/%Z, zero %f, underscores, fractions rejected, pre-epoch) are recorded and compared exactly. The leaf's distinctive 'current local offset' behaviour is only checked by a test whose expected value comes from the same native strftime and the recordings run at UTC offset 0, so it cannot distinguish current from historical offset. Tests: crates/hydrus-core/src/url/string_dates.rs:344 date_conversions_match_direct_reference_execution, :437 local_encode_uses_current_offset_and_naive_timezone_fields; string_converter_editor.rs:182 (string_date_editor.json, recorded under TZ=UTC)"
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "Carried, untagged. The reference's converter was recorded under five system zones (New York, Kolkata, Lord Howe, Auckland, UTC; date_encode_local.json) with winter and summer timestamps and the offset then in force, and string_dates.rs local_encode_adds_the_current_offset_as_the_reference_does_in_other_zones compares the native encode, given that offset, with them (including naive %z/%Z). That test hands the offset to encode_at; it does not drive the production path that reads the machine's clock (encode), and the editor's live preview is only compared under UTC (string_date_editor.json), so the leaf's 'current local offset' behaviour stays restated, not proved, and the test carries no tag."
    }
   },
   {
@@ -4495,10 +4495,10 @@
     "Native rule UI uses detached apply/cancel rather than Qt modal editors."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Carried, untagged. Real GUI/engine path is driven (copy URL, retry/scrub/override commands, rule apply/cancel, auto-override after 5 s, page close) but expected values are typed literals; the recording (network_job_control.json) is replayed only for menu labels and error text. Recorded 'rules', 'retry' gating, 'auto_at_five' and clipboard keys are never read by any test. Tracker note about 'no debug menu' is accurate (reference has none). Tests: crates/hydrus-gui-model/tests/model/network_job_control.rs:40 cog_replays_actual_qt_context_submenu_and_phase_actions, :132 control_auto_policy_targets_future_requests_and_owner_clears_error_once; crates/hydrus-gui/tests/gui/network_job_control.rs:58,252,365,497"
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "Stale in the triage note: the recorded 'rules' (cancelled and accepted drafts), 'clipboard' and 'messages' ARE read by gui/network_job_control.rs, the 'waiting' menu's labels by model/network_job_control.rs, and 'auto_at_five'/'auto_after_five'/'obeys_after_override' by hydrus-net's engine test. Still typed: the window-to-engine commands the four retry/scrub/override entries send (the expected JobActions), and the recorded 'retry' flags (what the reference's job reports after those four actions) are not replayed because hydrus-net's runtime does not keep the reference's per-job wake-time flags to compare with."
    }
   },
   {
@@ -4516,10 +4516,10 @@
     "Failure journal retains 128 requests per daemon epoch and displays the reference long-text prefix."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Carried, untagged. Show/copy/clear, retention after job leaves, owner-only clear and parser example-fetch owner are driven through windows, but the text is typed; the recording is used only for clear-semantics in the model test. The 'Network Error' title and 128-request journal are not asserted against the recording. Tests: crates/hydrus-gui/tests/gui/network_job_control.rs:58,497,563; crates/hydrus-gui/tests/gui/parser_editors.rs:298-353; model/network_job_control.rs:132"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "gui/network_job_control.rs page_cog_rules_cancel_apply_and_error_owner_boundary drives the page's real cog menu with a retained error after the job has left: 'show error' gives the window the recorded text (network_job_control.json messages) and 'copy error' puts the recorded text on the clipboard, the owner's clear hides the button and empties it as recorded (error_button_hidden, owner_clear_error), and the model's Control replays the recorded clear semantics (model/network_job_control.rs: the error kept after the job goes, cleared once without the journal resurrecting it). The error menu's two entries and the 'Network Error' window title are literals in the .slint, equal to the recorded labels. Tracker notes stale: there is no clear menu item in the reference either. Not driven here: the 128-request journal is ours; the parser example-fetch owner is covered separately in parser_editors.rs."
    }
   },
   {
@@ -8212,10 +8212,10 @@
     "Multiple/deleted domain selection and overwrite questions are inline in the owner."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test types 'series:metroid' and removes a predicate via the removal callback; the invalid-input case only checks the error is non-empty. Expected values are typed, no recording of typed entry or double-click removal. Stale note: autocomplete/system-editor parts are in the untagged favourite_search_editor test. Tests: crates/hydrus-gui/tests/gui/favourites.rs:544 the_dialogs_save_edit_and_delete_searches"
+    "date": "2026-10-13",
+    "class": "weak",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "gui/favourites.rs typed_predicates_and_double_clicks_edit_the_search_as_the_references_editor_does opens the real favourite editor from 'save this search' on a page of 'blue eyes' and replays oracle/fixtures/favourite_predicates.json (record_favourite_predicates.py: the reference's real EditFavouriteSearchPanel with typed text and QTest Return/double-click events): 14 steps of tags, a repeated tag (which removes it), a differently-cased tag, a negated tag, a wildcard, a namespace wildcard, extra spaces, system:limit and system:everything (which a tag takes out), and double-click removals; after each the list as drawn (order included) and the text left in the box equal the recording. Weak, not sound, and untagged: two typed-entry cases differ from the reference and are not recorded (DIFFERENCES.md): text beginning 'system:' that is not a system predicate shows an error here where the reference's Return enters system:everything, and a wildcard such as 'sam*' enters the highlighted first suggestion here where the reference's Return entered the wildcard; and the leaf itself is still partial (the reference's cog, favourite predicates and fetch/children tabs are absent). The stale tracker notes about missing autocomplete and system editors apply to the leaf's other rows."
    }
   },
   {
@@ -8345,10 +8345,10 @@
     "Selection keeps logical row indices across displayed column order; edit requires one selection, delete acts on the selected batch."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window driven for click/ctrl/shift selection, edit-needs-one and delete of the batch, including after a header sort; expectations typed (Qt ExtendedSelection semantics), no recording. Column reordering is not tested despite the note. Tests: crates/hydrus-gui/tests/gui/search_pages_favourites.rs:75"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "gui/search_pages_favourites.rs the_list_selects_and_sorts_as_the_references_list_does_under_real_clicks replays oracle/fixtures/favourite_list_selection.json (record_favourite_list_selection.py: the reference's real EditFavouriteSearchesPanel on four favourites, driven with QTest mouse clicks on its tree view and header): 12 steps of plain, ctrl and shift clicks (including a ctrl-click setting the anchor for a later shift range), a click on the name header (the list re-sorts, the selection kept) and a range chosen after the sort, then delete; at each step the rows' order, the selected names, whether edit (single selection only) and delete are enabled, and the delete question ('Remove all selected?') equal the recording. Column reordering is not driven (the earlier note claimed it)."
    }
   },
   {
@@ -15707,10 +15707,10 @@
     "Restore advances epoch and source rejects stale pre-restore epochs. Native old-epoch tests exercise rebind/reload rather than a dedicated held physical press across RestoreAll."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives the real Pages > sidebar menu, restores to a stored pair and checks the current and an inactive page and the hide-preview policy (height 0), but with typed values (420/-260, 260); the recording has a 'restore all' / 'restore obeys hide preference' step that no test replays, the model replay covers other steps. Carried and untagged although a real test exists; it should be tagged. Tests: crates/hydrus-gui/tests/gui/sidebar_layout.rs:96 real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_ownership (untagged); crates/hydrus-gui-model/tests/model/page_layout.rs"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "gui/sidebar_layout.rs real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_ownership drives the real Pages > sidebar menu and splitter handles, and its widths and heights are now read from oracle/fixtures/sidebar_layout.json's steps (not typed): the initial 400/240, the drags, the second page's own sizes, 'restore all' (the current page and, once shown, the page that was not current: both 420/260), 'apply hide preference retains existing split' and 'restore obeys hide preference' (the preview's height 0), and 'restore visible preview'. Native handles, scrollbars and the 80px reserve differ from Qt's metrics (DIFFERENCES.md; compared within the test's tolerance, 1400x1000 window against Qt's 1392x926). The stale-epoch and rebind cases are checked separately in the same file."
    }
   },
   {
@@ -15755,10 +15755,10 @@
     "Reference recorder observes preference flips and inspects accepted FrameGUI._Exit source; it does not execute full reference shutdown. Native actual accepted/rejected close is asserted."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives the tick and real window close (accepted saves 510/-310, rejected saves nothing) and reopens, but the recorder explicitly does not run the reference exit (fixture limits), so the exit-saves behaviour is restated from _Exit source; only the preference flips are recorded. Carried and untagged although a real test exists; it should be tagged. Tests: crates/hydrus-gui/tests/gui/sidebar_layout.rs:96 real_drag_menu... (exit confirm yes/no, tick toggle); crates/hydrus-gui-model/tests/model/page_layout.rs:87 hide_draft_cancel_apply_reopen_preserves_concurrent_saved_sizes_and_exit_switch"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "gui/sidebar_layout.rs exit_saves_the_current_pages_sizes_only_when_the_menu_says_to_as_the_reference_does moves the current page's sidebar and preview, sets the menu's tick on or off and closes the window, answering the exit question yes, and the saved sizes equal oracle/fixtures/sidebar_exit_save.json (record_sidebar_exit_save.py: the reference's real SaveAndHide, which _Exit runs after its confirmation, in a client with the tick on, saving the moved sizes, and off, leaving them). The earlier recording only flipped the tick and inspected the source; it still gives the tick's states. Rejecting the exit question saves nothing (typed from _Exit, in the main sidebar test)."
    }
   },
   {
@@ -19890,10 +19890,10 @@
     "Load restores domains/predicates/synchronization and applies saved optional sort/collect; searches real Store if synchronized and retains existing optional values when None."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the star menu and loads into the real page, but nothing about what a load does (predicates, sort, collect, paused/synchronised, None keeps existing) is recorded; expectations are typed literals and own-function comparisons from the Python source (_LoadFavouriteSearch). The recording only covers the menu structure. Tests: crates/hydrus-gui/tests/gui/favourites.rs:15 a_favourite_search_loads_into_the_page; :107 a_favourite_s_collect_collects_the_page; search_pages_favourites.rs:245"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "The star menu's entries are clicked in the real window; the page's predicates, paused/synchronised state, sort, collect and file count after each load are compared with favourite_load.json (record_favourite_load.py: the reference's ActivateFavouriteSearch on five favourites with and without sort, collect and sync), including a search that keeps the page's sort and collect and a paused one that does not search."
    }
   },
   {
@@ -20141,10 +20141,10 @@
     "Accepted save first syncs current page state, copies queue-backed saved page data and writes the named session through hydrus_store::sessions::save."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Checks that the saved session has copied page keys, same names and same files as the live pages, saved with a timestamp. The 'cloned importer queues' half is not exercised through this save (no importer page is in the tested session; queue cloning is covered only through backup tests calling Pages::save_session directly), and no recording of the saved structure is compared. Tests: menu_bar.rs:383 sessions_are_saved_from_the_pages_menu"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r5)",
+    "note": "gui/menu_bar.rs a_saved_session_holds_clones_of_the_importers_as_they_were_as_the_reference_saves_them drives Pages > sessions > save > as new session through the real menu with a URL importer holding the recorded seeds (session_importers.json initial: two file seeds, one failed with its note, a failed gallery seed, paused), changes the live importer (the recorded source_changed state), then appends the saved session twice from the menu: each appended importer equals the recorded loaded_backup/second_copy (the importer as it was when saved, not as it became) and is its own copy, changing the first leaves the second as recorded (first_copy_changed, second_copy). The earlier test sessions_are_saved_from_the_pages_menu keeps the name prompt, reserved names, overwrite question, timestamp and files of a saved search page. The session container itself is native (saved page rows and cloned queue rows), not the reference's serialised session."
    }
   },
   {

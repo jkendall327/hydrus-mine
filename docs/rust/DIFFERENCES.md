@@ -252,6 +252,14 @@ search.
   overwrite/delete questions appear inside the owner window. The list sorts
   names casefolded as lowercase (Python's casefold differs for a few letters,
   such as "ß", which we fold to "ss" as it does).
+  Typed text and double-clicks in the favourite editor are compared with the
+  reference's (`oracle/record_favourite_predicates.py`: entering a tag again
+  removes it, a tag takes `system:everything` out, wildcards and negation,
+  and the list's order). Not matched: text beginning "system:" that is not a
+  system predicate shows an error here where the reference's Return enters
+  `system:everything`, and a wildcard such as "sam*" enters the highlighted first
+  suggestion here where the reference's Return entered the wildcard (seen on
+  the basic fixture); neither is in the recording.
 
 - **Dimensions preset verification** separately tracks nine historical first-pass
   controls. The new Qt recording activates actual buttons through the real modal

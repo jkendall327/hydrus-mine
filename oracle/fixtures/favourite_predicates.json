@@ -1,0 +1,255 @@
+{
+ "steps": [
+  {
+   "messages": [],
+   "predicates": [
+    "blue eyes"
+   ],
+   "shown": [
+    "blue eyes"
+   ],
+   "step": [
+    "initial"
+   ],
+   "typed_left": ""
+  },
+  {
+   "messages": [],
+   "predicates": [
+    "blue eyes",
+    "series:metroid"
+   ],
+   "shown": [
+    "blue eyes",
+    "series:metroid"
+   ],
+   "step": [
+    "type",
+    "series:metroid"
+   ],
+   "typed_left": ""
+  },
+  {
+   "messages": [],
+   "predicates": [
+    "blue eyes"
+   ],
+   "shown": [
+    "blue eyes"
+   ],
+   "step": [
+    "type",
+    "series:metroid"
+   ],
+   "typed_left": ""
+  },
+  {
+   "messages": [],
+   "predicates": [],
+   "shown": [],
+   "step": [
+    "type",
+    "Blue Eyes"
+   ],
+   "typed_left": ""
+  },
+  {
+   "messages": [],
+   "predicates": [
+    "-creator:samus aran"
+   ],
+   "shown": [
+    "-creator:samus aran"
+   ],
+   "step": [
+    "type",
+    "-creator:samus aran"
+   ],
+   "typed_left": ""
+  },
+  {
+   "messages": [],
+   "predicates": [
+    "-creator:samus aran",
+    "zz* (wildcard search)"
+   ],
+   "shown": [
+    "-creator:samus aran",
+    "zz* (wildcard search)"
+   ],
+   "step": [
+    "type",
+    "zz*"
+   ],
+   "typed_left": ""
+  },
+  {
+   "messages": [],
+   "predicates": [
+    "-creator:samus aran",
+    "character:*anything*",
+    "zz* (wildcard search)"
+   ],
+   "shown": [
+    "-creator:samus aran",
+    "character:*anything*",
+    "zz* (wildcard search)"
+   ],
+   "step": [
+    "type",
+    "character:*"
+   ],
+   "typed_left": ""
+  },
+  {
+   "messages": [],
+   "predicates": [
+    "-creator:samus aran",
+    "character:*anything*",
+    "spaced tag",
+    "zz* (wildcard search)"
+   ],
+   "shown": [
+    "-creator:samus aran",
+    "character:*anything*",
+    "spaced tag",
+    "zz* (wildcard search)"
+   ],
+   "step": [
+    "type",
+    "  spaced   tag  "
+   ],
+   "typed_left": ""
+  },
+  {
+   "messages": [],
+   "predicates": [
+    "-creator:samus aran",
+    "character:*anything*",
+    "spaced tag",
+    "system:limit is 64",
+    "zz* (wildcard search)"
+   ],
+   "shown": [
+    "-creator:samus aran",
+    "character:*anything*",
+    "spaced tag",
+    "system:limit is 64",
+    "zz* (wildcard search)"
+   ],
+   "step": [
+    "type",
+    "system:limit = 64"
+   ],
+   "typed_left": ""
+  },
+  {
+   "messages": [],
+   "predicates": [
+    "-creator:samus aran",
+    "character:*anything*",
+    "spaced tag",
+    "system:everything",
+    "system:limit is 64",
+    "zz* (wildcard search)"
+   ],
+   "shown": [
+    "-creator:samus aran",
+    "character:*anything*",
+    "spaced tag",
+    "system:everything",
+    "system:limit is 64",
+    "zz* (wildcard search)"
+   ],
+   "step": [
+    "type",
+    "system:everything"
+   ],
+   "typed_left": ""
+  },
+  {
+   "messages": [],
+   "predicates": [
+    "character:*anything*",
+    "spaced tag",
+    "system:everything",
+    "system:limit is 64",
+    "zz* (wildcard search)"
+   ],
+   "shown": [
+    "character:*anything*",
+    "spaced tag",
+    "system:everything",
+    "system:limit is 64",
+    "zz* (wildcard search)"
+   ],
+   "step": [
+    "double click",
+    0
+   ],
+   "typed_left": ""
+  },
+  {
+   "messages": [],
+   "predicates": [
+    "character:*anything*",
+    "spaced tag",
+    "system:limit is 64",
+    "zz* (wildcard search)"
+   ],
+   "shown": [
+    "character:*anything*",
+    "spaced tag",
+    "system:limit is 64",
+    "zz* (wildcard search)"
+   ],
+   "step": [
+    "double click",
+    2
+   ],
+   "typed_left": ""
+  },
+  {
+   "messages": [],
+   "predicates": [
+    "blue eyes",
+    "character:*anything*",
+    "spaced tag",
+    "system:limit is 64",
+    "zz* (wildcard search)"
+   ],
+   "shown": [
+    "blue eyes",
+    "character:*anything*",
+    "spaced tag",
+    "system:limit is 64",
+    "zz* (wildcard search)"
+   ],
+   "step": [
+    "type",
+    "blue eyes"
+   ],
+   "typed_left": ""
+  },
+  {
+   "messages": [],
+   "predicates": [
+    "character:*anything*",
+    "spaced tag",
+    "system:limit is 64",
+    "zz* (wildcard search)"
+   ],
+   "shown": [
+    "character:*anything*",
+    "spaced tag",
+    "system:limit is 64",
+    "zz* (wildcard search)"
+   ],
+   "step": [
+    "double click",
+    0
+   ],
+   "typed_left": ""
+  }
+ ]
+}
