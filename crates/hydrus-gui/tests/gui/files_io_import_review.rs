@@ -247,48 +247,90 @@ fn ctrl_and_shift_click_sequences_select_as_the_reference_s_list_does() {
 
 #[test]
 fn pausing_holds_the_paths_still_to_parse_and_stop_drops_them_but_keeps_the_parsed() {
+    // replayed against the reference's real panel
+    // (`oracle/fixtures/local_import_pause.json`, from
+    // `oracle/record_local_import_pause.py`)
+    let recorded = hydrus_testkit::fixture_json("local_import_pause.json");
     let (_dirs, store) = store();
     let _windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store).unwrap());
     let window = open(&ui, &bound);
     let work = tempfile::tempdir().unwrap();
-    let first = place(work.path(), "bmp_24.bmp");
-    let second = place(work.path(), "gif_static.gif");
-    let third = place(work.path(), "apng_rgba.png");
+    let files: Vec<String> = recorded["files"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|name| place(work.path(), name.as_str().unwrap()))
+        .collect();
+    // the window as the recording's `state`: progress text, whether import
+    // now / add tags and pause / stop can be pressed, the rows
+    let check = |window: &ReviewImportsWindow, want: &serde_json::Value, context: &str| {
+        assert_eq!(
+            window.get_progress(),
+            want["progress"].as_str().unwrap(),
+            "{context}"
+        );
+        assert_eq!(
+            window.get_can_import(),
+            want["enabled"]["import now"].as_bool().unwrap(),
+            "{context}: import now"
+        );
+        assert_eq!(
+            want["enabled"]["import now"], want["enabled"]["add tags/urls with the import >>"],
+            "{context}: the two import buttons go together"
+        );
+        assert_eq!(
+            window.get_working(),
+            want["enabled"]["pause"].as_bool().unwrap(),
+            "{context}: pause"
+        );
+        assert_eq!(
+            want["enabled"]["pause"], want["enabled"]["stop"],
+            "{context}"
+        );
+        let ours: Vec<serde_json::Value> = {
+            let rows = window.get_rows();
+            (0..rows.row_count())
+                .map(|i| {
+                    let row = rows.row_data(i).unwrap();
+                    let cell = |c| row.cells.row_data(c).unwrap().to_string();
+                    serde_json::json!([
+                        cell(0).parse::<i64>().unwrap(),
+                        Path::new(&cell(1)).file_name().unwrap().to_string_lossy(),
+                        cell(2)
+                    ])
+                })
+                .collect()
+        };
+        assert_eq!(serde_json::json!(ours), want["rows"], "{context}: rows");
+    };
 
-    // paused before anything is parsed: the path waits, "import" still off
-    window.invoke_path_entered(first.clone().into());
-    assert!(window.get_working());
+    // paused before anything is parsed: the path waits; resumed, it parses
     window.invoke_pause_play();
     assert!(window.get_paused());
+    window.invoke_path_entered(files[0].clone().into());
     tick(Duration::from_millis(300));
-    assert!(rows(&window).is_empty(), "paused, nothing parsed");
-    assert_eq!(window.get_progress(), "0/1 files parsed.");
-    assert!(window.get_working(), "its pause and stop buttons stay live");
-    // resumed: it parses
+    check(&window, &recorded["pause"]["held"], "pause: held");
     window.invoke_pause_play();
     assert!(!window.get_paused());
     settle(&window);
-    assert_eq!(rows(&window).len(), 1);
-    assert!(window.get_can_import());
+    check(&window, &recorded["pause"]["resumed"], "pause: resumed");
 
-    // paths added then stopped before they are parsed: dropped, and the
-    // parsed row stays
-    window.invoke_path_entered(second.clone().into());
-    window.invoke_path_entered(third.into());
-    assert!(window.get_working());
-    window.invoke_stop();
-    assert!(!window.get_working());
+    // paused again, two more paths, then stopped before they are parsed:
+    // dropped, and the parsed row stays
+    window.invoke_pause_play();
+    window.invoke_path_entered(files[1].clone().into());
+    window.invoke_path_entered(files[2].clone().into());
     tick(Duration::from_millis(300));
-    let kept = rows(&window);
-    assert_eq!(kept.len(), 1, "{kept:?}");
-    assert_eq!(kept[0].1, first);
-    assert_eq!(window.get_progress(), "1 files parsed.");
-    // and the window is usable again afterwards
-    window.invoke_path_entered(second.into());
+    check(&window, &recorded["stop"]["held"], "stop: held");
+    window.invoke_stop();
+    tick(Duration::from_millis(300));
+    check(&window, &recorded["stop"]["stopped"], "stop: stopped");
+    // and the window parses again afterwards
+    window.invoke_path_entered(files[1].clone().into());
     settle(&window);
-    assert_eq!(rows(&window).len(), 2);
+    check(&window, &recorded["stop"]["again"], "stop: again");
     window.invoke_cancel();
 }
 
