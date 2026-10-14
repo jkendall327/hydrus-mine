@@ -305,6 +305,7 @@ mod debug_delayed_pages;
 mod debug_delayed_popup;
 mod debug_fetch;
 mod debug_long_popup;
+mod debug_memory;
 mod debug_menu_actions;
 mod debug_popups;
 mod debug_profiling;

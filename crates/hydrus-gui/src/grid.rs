@@ -26,6 +26,8 @@ pub struct ThumbnailRows {
     columns: Cell<usize>,
     cache: RefCell<Cache<slint::Image>>,
     clock: Instant,
+    /// How far a test has moved the cache's clock on.
+    clock_skew: Cell<Duration>,
     active: Cell<bool>,
     paint_owner: Rc<()>,
     admissions: RefCell<HashMap<HashId, u64>>,
@@ -94,6 +96,7 @@ impl ThumbnailRows {
             columns: Cell::new(1),
             cache: RefCell::new(Cache::new(policy)),
             clock: Instant::now(),
+            clock_skew: Cell::new(Duration::ZERO),
             active: Cell::new(true),
             loader,
             scale: Cell::new(1.0),
@@ -166,7 +169,7 @@ impl ThumbnailRows {
                         .map(crate::thumbnails::Pixels::image)
                         .unwrap_or_default(),
                     bytes,
-                    self.clock.elapsed(),
+                    self.cache_now(),
                 );
                 let admission = self.next_admission.get().wrapping_add(1);
                 self.next_admission.set(admission);
@@ -238,13 +241,25 @@ impl ThumbnailRows {
         if self.active.get() {
             self.cache
                 .borrow_mut()
-                .set_policy(policy, self.clock.elapsed());
+                .set_policy(policy, self.cache_now());
         }
+    }
+    /// The cache's monotonic clock.
+    fn cache_now(&self) -> Duration {
+        self.clock.elapsed() + self.clock_skew.get()
+    }
+    /// Move the cache's clock on, to age what it holds (tests).
+    pub fn advance_cache_clock(&self, by: Duration) {
+        self.clock_skew.set(self.clock_skew.get() + by);
+    }
+    /// The thumbnails the cache holds, least recently used first.
+    pub fn cached_keys(&self) -> Vec<HashId> {
+        self.cache.borrow().keys()
     }
     /// Idle maintenance expires entries independently of scrolling or cache reads.
     pub fn maintain_cache(&self) {
         if self.active.get() {
-            self.cache.borrow_mut().maintain(self.clock.elapsed());
+            self.cache.borrow_mut().maintain(self.cache_now());
             let retained: BTreeSet<_> = self.cache.borrow().keys().into_iter().collect();
             self.admissions
                 .borrow_mut()
@@ -454,7 +469,7 @@ impl ThumbnailRows {
         if !self.active.get() {
             return slint::Image::default();
         }
-        if let Some(image) = self.cache.borrow_mut().get(id, self.clock.elapsed()) {
+        if let Some(image) = self.cache.borrow_mut().get(id, self.cache_now()) {
             return image;
         }
         if self.pending.borrow_mut().insert(id, index).is_none() {

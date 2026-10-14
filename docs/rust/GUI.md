@@ -4562,6 +4562,15 @@ admission. Actual Qt controls and renderer accounting are recorded in
 await hosted execution and inspection.
 
 
+Help → Debug → memory actions → “run fast memory maintenance” makes every cache
+maintain itself, as the reference's pulse does every minute: the decoded-image
+cache and the thumbnail caches drop what is over their limit and what has idled
+past their timeout. “Run slow memory maintenance” (also every five minutes)
+deletes the closed pages (and their downloads) closed over an hour ago, but only
+when no page has been opened or closed for half an hour. Closed pages are no
+longer forgotten when the undo menu is built or another page closes: they stay
+until the slow maintenance deletes them, as in the reference.
+
 Help → Debug → debug modes → “simulate a wake from sleep” makes the sleep check
 see a wake, as the reference does: with wake-from-system-sleep detection on, a
 cancellable “just woke up from sleep” popup counts down “enabling I/O in N

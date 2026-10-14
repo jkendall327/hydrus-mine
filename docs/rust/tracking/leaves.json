@@ -11490,7 +11490,8 @@
    "notes": [
     "Truth pass (2026-10-08): missing, small. Sits next to the existing delayed-popup debug actions. Missing: Menu entry, five-second delayed publish of real files, test. Evidence: No entry; the popup job model supports files via set_files (hydrus-gui-model/src/debug_actions.rs).",
     "Reference debug action wires 'publish some sub files in five seconds' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Blocked, not out of scope (2026-10-14, owner/coordinator): the reference publishes subscription files to a named page; this needs the daemon's subscriptions to publish to a named page, which hydrus-rs has no way to do yet. Do the leaf when it has."
    ]
   },
   {
@@ -11643,7 +11644,13 @@
     "Truth pass (2026-10-08): partial, small. Cache maintenance exists but has no debug entry. Missing: Menu entry calling cache maintenance; test with an over-limit cache. Evidence: No menu entry; thumbnail_cache.rs:169 maintain(now) exists.",
     "Reference debug action wires 'run fast memory maintenance' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (issue #96 session)",
+    "note": "Clicked in the real menu with the image and thumbnail caches primed under held clocks: the fast pulse drops what idled past the timeout and keeps the newest, the slow one leaves them, as oracle/fixtures/debug_memory_maintenance.json records; the pulse also runs every minute."
+   }
   },
   {
    "id": "audit-options-help-debug-action-run-slow-memory-maintenance",
@@ -11658,7 +11665,13 @@
     "Truth pass (2026-10-08): partial, small. As fast maintenance, covering the slower caches. Missing: Menu entry maintaining all native caches; test. Evidence: No menu entry; the same maintain() exists.",
     "Reference debug action wires 'run slow memory maintenance' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (issue #96 session)",
+    "note": "Clicked in the real menu: closed pages over an hour old are deleted only when no page changed for half an hour, in each of the recorded situations (oracle/fixtures/debug_memory_maintenance.json); the fast one leaves them; it also runs every five minutes. Temp-path cleaning, the thread pool and Qt canvas-frame references are Python/Qt internals."
+   }
   },
   {
    "id": "audit-options-help-debug-action-run-the-client-api-test",
@@ -11880,7 +11893,7 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-13",
+    "date": "2026-10-14",
     "class": "sound",
     "by": "claude (issue #96 session)",
     "note": "Clicked in the real menu: the popup (title, cancellable, countdown words, dismissal), the idle-timer reset, cancel enabling I/O at once and detection-off all match oracle/fixtures/debug_wake_from_sleep.json; the daemon is asked too."

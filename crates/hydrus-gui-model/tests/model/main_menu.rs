@@ -134,7 +134,7 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                 ),
                 (
                     "memory actions",
-                    &["clear all rendering caches", "clear thumbnail cache"],
+                    &["run fast memory maintenance", "run slow memory maintenance", "clear all rendering caches", "clear thumbnail cache"],
                 ),
                 (
                     "network actions",

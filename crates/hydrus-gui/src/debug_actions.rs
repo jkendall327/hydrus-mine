@@ -130,6 +130,8 @@ pub(crate) struct Context {
     pub ask: crate::menu_bar::Ask,
     /// Clear the image, tile and thumbnail caches.
     pub clear_caches: Rc<dyn Fn()>,
+    /// Tell the caches to maintain themselves (the fast pulse).
+    pub maintain_caches: Rc<dyn Fn()>,
 }
 
 fn now() -> f64 {
@@ -258,6 +260,8 @@ pub(crate) fn run(context: &Context, action: Action) {
             let _ = slint::quit_event_loop();
         }
         Action::ClearRenderingCaches => (context.clear_caches)(),
+        Action::MaintainMemoryFast => (context.maintain_caches)(),
+        Action::MaintainMemorySlow => context.pages.borrow_mut().delete_old_closed_pages(),
         Action::ScanStorage => {
             let Some(path) = crate::pick_in(crate::Pick::Folder, "Select directory", store.dir())
                 .into_iter()

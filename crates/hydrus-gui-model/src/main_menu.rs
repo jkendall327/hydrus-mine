@@ -1540,6 +1540,14 @@ fn help_menu(facts: &Facts) -> Entry {
                         "memory actions",
                         vec![
                             item(
+                                "run fast memory maintenance",
+                                debug(DebugAction::MaintainMemoryFast),
+                            ),
+                            item(
+                                "run slow memory maintenance",
+                                debug(DebugAction::MaintainMemorySlow),
+                            ),
+                            item(
                                 "clear all rendering caches",
                                 debug(DebugAction::ClearRenderingCaches),
                             ),
