@@ -182,6 +182,237 @@ fn archive_inbox_delete_undelete_and_physical_delete_from_the_menu() {
     );
 }
 
+/// The state the recording reads back for a file: in the inbox, the local domains it is in
+/// (the trash included) and was deleted from, and the reason kept for its deletion.
+fn lifecycle_state(fixture: &Fixture, file: HashId) -> serde_json::Value {
+    let snapshot = fixture.store.snapshot();
+    let names = |table: &'static str| -> Vec<String> {
+        let mut names: Vec<String> = fixture
+            .store
+            .read(move |c| {
+                let mut stmt = c.prepare(&format!(
+                    "SELECT service_id FROM {table} WHERE hash_id = ?1"
+                ))?;
+                Ok(stmt
+                    .query_map([file], |r| r.get::<_, hydrus_core::ServiceId>(0))?
+                    .collect::<rusqlite::Result<Vec<_>>>()?)
+            })
+            .unwrap()
+            .into_iter()
+            .filter_map(|id| snapshot.services.get(id).ok())
+            .filter(|s| {
+                matches!(
+                    s.service_type(),
+                    hydrus_core::ServiceType::LocalFileDomain
+                        | hydrus_core::ServiceType::LocalFileTrashDomain
+                )
+            })
+            .map(|s| s.name.clone())
+            .collect();
+        names.sort();
+        names
+    };
+    let reason = fixture
+        .store
+        .read(|c| {
+            Ok(
+                hydrus_store::media::load(c, &fixture.store.snapshot().services, None, &[file])?
+                    .results[0]
+                    .deletion_reason
+                    .clone(),
+            )
+        })
+        .unwrap();
+    serde_json::json!({
+        "inbox": !inboxed(fixture, &[file]).is_empty(),
+        "current": names("file_domain_current"),
+        "deleted": names("file_domain_deleted"),
+        "reason": reason,
+    })
+}
+
+/// The reference's real thumbnail panel archiving, inboxing, deleting from a domain,
+/// undeleting and physically deleting, recorded with its real writes
+/// (`oracle/record_media_lifecycle.py` on the basic fixture): each step's questions, in its
+/// words and the order asked, and the files' state read back afterwards, replayed through the
+/// real thumbnail menu and store.
+// leaf: audit-media-context-lifecycle
+#[test]
+fn the_lifecycle_actions_replay_the_reference_s_questions_and_state() {
+    let recorded = hydrus_testkit::fixture_json("media_lifecycle.json");
+    let fixture = start_local();
+    let id_of = |hex: &str| -> HashId {
+        let bytes: Vec<u8> = (0..hex.len())
+            .step_by(2)
+            .map(|i| u8::from_str_radix(&hex[i..i + 2], 16).unwrap())
+            .collect();
+        fixture
+            .store
+            .read(move |c| {
+                Ok(c.query_row(
+                    "SELECT hash_id FROM hashes WHERE sha256 = ?1",
+                    [bytes],
+                    |r| r.get::<_, HashId>(0),
+                )?)
+            })
+            .unwrap()
+    };
+    let domain_in = |dialog: &str| -> String {
+        regex::Regex::new(r"from (.+?)( to trash)?\?$")
+            .unwrap()
+            .captures(dialog)
+            .unwrap_or_else(|| panic!("{dialog}"))[1]
+            .to_owned()
+    };
+    for step in recorded["steps"].as_array().unwrap() {
+        let what = step["step"].as_str().unwrap();
+        let files: Vec<HashId> = step["files"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|h| id_of(h.as_str().unwrap()))
+            .collect();
+        let mut now_selected = fixture.selected();
+        now_selected.sort_unstable();
+        let mut wanted_selected = files.clone();
+        wanted_selected.sort_unstable();
+        if now_selected != wanted_selected {
+            fixture.select_files(&files);
+        }
+        let menu = fixture.menu(-1);
+        let dialogs = step["dialogs"].as_array().unwrap();
+        let delete_dialog = dialogs
+            .iter()
+            .find(|d| d[0] == "delete files dialog")
+            .map(|d| d[1].as_str().unwrap().to_owned());
+        if what.starts_with("archive") {
+            fixture
+                .ui
+                .invoke_menu_chosen(find(&rows(&menu.filter), "archive selected"));
+        } else if what.starts_with("re-inbox") {
+            // (a lone file already in the inbox has nothing to re-inbox: the reference's
+            // action does nothing and neither client's menu offers it)
+            let filter = rows(&menu.filter);
+            if let Some((_, id)) = filter.iter().find(|(l, _)| l.starts_with("re-inbox")) {
+                fixture.ui.invoke_menu_chosen(*id);
+            } else {
+                assert!(dialogs.is_empty(), "{what}");
+            }
+        } else if what.starts_with("undelete") {
+            fixture
+                .ui
+                .invoke_menu_chosen(find(&rows(&menu.trash), "undelete"));
+        } else if what.contains("trash physically now") {
+            fixture
+                .ui
+                .invoke_menu_chosen(find(&rows(&menu.trash), "delete trash physically now"));
+        } else if what.contains("physically") {
+            fixture
+                .ui
+                .invoke_menu_chosen(find(&rows(&menu.trash), "delete physically now"));
+        } else {
+            // delete from the domain the recording's dialog names
+            let domain = domain_in(delete_dialog.as_deref().unwrap());
+            let direct = rows(&menu.delete);
+            if let Some((_, id)) = direct
+                .iter()
+                .find(|(l, _)| *l == format!("delete from {domain}"))
+            {
+                fixture.ui.invoke_menu_chosen(*id);
+            } else {
+                let from = rows(&menu.delete_menu);
+                let (_, id) = from
+                    .iter()
+                    .find(|(l, _)| *l == format!("from {domain}"))
+                    .unwrap_or_else(|| panic!("{what}: {direct:?} {from:?}"));
+                fixture.ui.invoke_menu_chosen(*id);
+            }
+        }
+        // the questions, in order
+        for dialog in dialogs {
+            match dialog[0].as_str().unwrap() {
+                "question" => {
+                    assert_eq!(
+                        fixture.ui.get_question(),
+                        dialog[1].as_str().unwrap(),
+                        "{what}"
+                    );
+                    fixture.ui.invoke_answer(dialog[2].as_bool().unwrap());
+                }
+                "delete files dialog" => {
+                    // (the reference's simple description is the action chosen; the dialog may
+                    // offer others beside it)
+                    let open = super::common::delete_dialog(&fixture.bound)
+                        .unwrap_or_else(|| panic!("{what}: the Delete files? dialog"));
+                    let chosen = open
+                        .get_actions()
+                        .row_data(usize::try_from(open.get_selected_action()).unwrap())
+                        .unwrap();
+                    assert_eq!(chosen.as_str(), dialog[1].as_str().unwrap(), "{what}");
+                    super::common::answer_delete(&fixture.bound, dialog[2].as_bool().unwrap());
+                }
+                "chooser" => {
+                    let chooser = hydrus_gui::undelete::last_chooser().expect("asked where to");
+                    let labels: Vec<String> = chooser
+                        .get_choices()
+                        .iter()
+                        .map(|c| c.to_string())
+                        .collect();
+                    assert_eq!(labels, strings_of(&dialog[2]), "{what}");
+                    match dialog[3].as_str() {
+                        Some(label) => chooser.invoke_chosen(
+                            i32::try_from(labels.iter().position(|l| l == label).unwrap()).unwrap(),
+                        ),
+                        None => chooser.invoke_cancelled(),
+                    }
+                }
+                other => panic!("{other}"),
+            }
+        }
+        // (the page learns of the changes on its next tick)
+        for _ in 0..15 {
+            slint::platform::update_timers_and_animations();
+            std::thread::sleep(std::time::Duration::from_millis(20));
+        }
+        for state in step["states"].as_array().unwrap() {
+            let file = id_of(state["hash"].as_str().unwrap());
+            let mut ours = lifecycle_state(&fixture, file);
+            // (the recording's reason is the one kept: absent before any deletion)
+            let wanted = state.clone();
+            let wanted_obj = wanted.as_object().unwrap();
+            ours = serde_json::json!({
+                "inbox": ours["inbox"], "current": ours["current"], "deleted": ours["deleted"], "reason": ours["reason"],
+            });
+            for key in ["inbox", "current", "deleted"] {
+                assert_eq!(
+                    ours[key], wanted_obj[key],
+                    "{what}: {key} of {}",
+                    state["hash"]
+                );
+            }
+            // (the reference's "Unknown deletion reason." is no reason kept at all)
+            let wanted_reason = match wanted_obj["reason"].as_str() {
+                Some("Unknown deletion reason.") | None => serde_json::Value::Null,
+                Some(reason) => serde_json::json!(reason),
+            };
+            assert_eq!(
+                ours["reason"], wanted_reason,
+                "{what}: reason of {}",
+                state["hash"]
+            );
+        }
+    }
+}
+
+fn strings_of(value: &serde_json::Value) -> Vec<String> {
+    value
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|v| v.as_str().unwrap().to_owned())
+        .collect()
+}
+
 fn blurhash(fixture: &Fixture, file: HashId) -> Option<String> {
     fixture
         .store

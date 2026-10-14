@@ -1,0 +1,939 @@
+{
+ "initial": [
+  "all files linked by images in page",
+  "all images embedded in page"
+ ],
+ "default_names": [
+  "all images embedded in page",
+  "all files linked by images in page"
+ ],
+ "actions": [
+  {
+   "step": "opened",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page"
+   ],
+   "selected": [],
+   "buttons": {
+    "add": true,
+    "edit": false,
+    "delete": false,
+    "export": false,
+    "import": true,
+    "duplicate": false,
+    "add defaults": true
+   },
+   "dialogs": [],
+   "clipboard": []
+  },
+  {
+   "step": "add a formula",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "my formula"
+   ],
+   "selected": [],
+   "buttons": {
+    "add": true,
+    "edit": false,
+    "delete": false,
+    "export": false,
+    "import": true,
+    "duplicate": false,
+    "add defaults": true
+   },
+   "dialogs": [
+    [
+     "enter text",
+     "Edit name.",
+     "new parsing formula",
+     "my formula"
+    ],
+    [
+     "formula editor",
+     true
+    ]
+   ],
+   "clipboard": []
+  },
+  {
+   "step": "add one with the same name",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "my formula",
+    "my formula (1)"
+   ],
+   "selected": [],
+   "buttons": {
+    "add": true,
+    "edit": false,
+    "delete": false,
+    "export": false,
+    "import": true,
+    "duplicate": false,
+    "add defaults": true
+   },
+   "dialogs": [
+    [
+     "enter text",
+     "Edit name.",
+     "new parsing formula",
+     "my formula"
+    ],
+    [
+     "formula editor",
+     true
+    ]
+   ],
+   "clipboard": []
+  },
+  {
+   "step": "cancel the name",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "my formula",
+    "my formula (1)"
+   ],
+   "selected": [],
+   "buttons": {
+    "add": true,
+    "edit": false,
+    "delete": false,
+    "export": false,
+    "import": true,
+    "duplicate": false,
+    "add defaults": true
+   },
+   "dialogs": [
+    [
+     "enter text",
+     "Edit name.",
+     "new parsing formula",
+     null
+    ]
+   ],
+   "clipboard": []
+  },
+  {
+   "step": "cancel the formula editor",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "my formula",
+    "my formula (1)"
+   ],
+   "selected": [],
+   "buttons": {
+    "add": true,
+    "edit": false,
+    "delete": false,
+    "export": false,
+    "import": true,
+    "duplicate": false,
+    "add defaults": true
+   },
+   "dialogs": [
+    [
+     "enter text",
+     "Edit name.",
+     "new parsing formula",
+     "never kept"
+    ],
+    [
+     "formula editor",
+     false
+    ]
+   ],
+   "clipboard": []
+  },
+  {
+   "step": "select a row",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "my formula",
+    "my formula (1)"
+   ],
+   "selected": [
+    2
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true
+   },
+   "dialogs": [],
+   "clipboard": []
+  },
+  {
+   "step": "edit it",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "renamed",
+    "my formula (1)"
+   ],
+   "selected": [
+    2
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true
+   },
+   "dialogs": [
+    [
+     "enter text",
+     "Edit name.",
+     "my formula",
+     "renamed"
+    ],
+    [
+     "formula editor",
+     true
+    ]
+   ],
+   "clipboard": []
+  },
+  {
+   "step": "edit, cancel the name",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "renamed",
+    "my formula (1)"
+   ],
+   "selected": [
+    2
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true
+   },
+   "dialogs": [
+    [
+     "enter text",
+     "Edit name.",
+     "renamed",
+     null
+    ]
+   ],
+   "clipboard": []
+  },
+  {
+   "step": "edit, cancel the formula editor",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "renamed",
+    "my formula (1)"
+   ],
+   "selected": [
+    2
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true
+   },
+   "dialogs": [
+    [
+     "enter text",
+     "Edit name.",
+     "renamed",
+     "x"
+    ],
+    [
+     "formula editor",
+     false
+    ]
+   ],
+   "clipboard": []
+  },
+  {
+   "step": "edit, keep the name",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "renamed (1)",
+    "my formula (1)"
+   ],
+   "selected": [
+    2
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true
+   },
+   "dialogs": [
+    [
+     "enter text",
+     "Edit name.",
+     "renamed",
+     "renamed"
+    ],
+    [
+     "formula editor",
+     true
+    ]
+   ],
+   "clipboard": []
+  },
+  {
+   "step": "delete, say no",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "renamed (1)",
+    "my formula (1)"
+   ],
+   "selected": [
+    2
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true
+   },
+   "dialogs": [
+    [
+     "question",
+     "Remove 1 selected?",
+     false
+    ]
+   ],
+   "clipboard": []
+  },
+  {
+   "step": "delete, say yes",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "my formula (1)"
+   ],
+   "selected": [],
+   "buttons": {
+    "add": true,
+    "edit": false,
+    "delete": false,
+    "export": false,
+    "import": true,
+    "duplicate": false,
+    "add defaults": true
+   },
+   "dialogs": [
+    [
+     "question",
+     "Remove 1 selected?",
+     true
+    ]
+   ],
+   "clipboard": []
+  },
+  {
+   "step": "delete with nothing selected",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "my formula (1)"
+   ],
+   "selected": [],
+   "buttons": {
+    "add": true,
+    "edit": false,
+    "delete": false,
+    "export": false,
+    "import": true,
+    "duplicate": false,
+    "add defaults": true
+   },
+   "dialogs": [],
+   "clipboard": []
+  },
+  {
+   "step": "add them all",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "my formula (1)",
+    "all images embedded in page (1)",
+    "all files linked by images in page (1)"
+   ],
+   "selected": [],
+   "buttons": {
+    "add": true,
+    "edit": false,
+    "delete": false,
+    "export": false,
+    "import": true,
+    "duplicate": false,
+    "add defaults": true
+   },
+   "dialogs": [],
+   "clipboard": []
+  },
+  {
+   "step": "add them all again",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "my formula (1)",
+    "all images embedded in page (1)",
+    "all files linked by images in page (1)",
+    "all images embedded in page (2)",
+    "all files linked by images in page (2)"
+   ],
+   "selected": [],
+   "buttons": {
+    "add": true,
+    "edit": false,
+    "delete": false,
+    "export": false,
+    "import": true,
+    "duplicate": false,
+    "add defaults": true
+   },
+   "dialogs": [],
+   "clipboard": []
+  },
+  {
+   "step": "select from a list, cancel",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "my formula (1)",
+    "all images embedded in page (1)",
+    "all files linked by images in page (1)",
+    "all images embedded in page (2)",
+    "all files linked by images in page (2)"
+   ],
+   "selected": [],
+   "buttons": {
+    "add": true,
+    "edit": false,
+    "delete": false,
+    "export": false,
+    "import": true,
+    "duplicate": false,
+    "add defaults": true
+   },
+   "dialogs": [
+    [
+     "choose",
+     "select the defaults to add",
+     [
+      "all images embedded in page",
+      "all files linked by images in page"
+     ],
+     [
+      false,
+      false
+     ],
+     null
+    ]
+   ],
+   "clipboard": []
+  },
+  {
+   "step": "select from a list, none ticked",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "my formula (1)",
+    "all images embedded in page (1)",
+    "all files linked by images in page (1)",
+    "all images embedded in page (2)",
+    "all files linked by images in page (2)"
+   ],
+   "selected": [],
+   "buttons": {
+    "add": true,
+    "edit": false,
+    "delete": false,
+    "export": false,
+    "import": true,
+    "duplicate": false,
+    "add defaults": true
+   },
+   "dialogs": [
+    [
+     "choose",
+     "select the defaults to add",
+     [
+      "all images embedded in page",
+      "all files linked by images in page"
+     ],
+     [
+      false,
+      false
+     ],
+     []
+    ]
+   ],
+   "clipboard": []
+  },
+  {
+   "step": "select from a list, one ticked",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "my formula (1)",
+    "all images embedded in page (1)",
+    "all files linked by images in page (1)",
+    "all images embedded in page (2)",
+    "all files linked by images in page (2)",
+    "all files linked by images in page (3)"
+   ],
+   "selected": [],
+   "buttons": {
+    "add": true,
+    "edit": false,
+    "delete": false,
+    "export": false,
+    "import": true,
+    "duplicate": false,
+    "add defaults": true
+   },
+   "dialogs": [
+    [
+     "choose",
+     "select the defaults to add",
+     [
+      "all images embedded in page",
+      "all files linked by images in page"
+     ],
+     [
+      false,
+      false
+     ],
+     [
+      "all files linked by images in page"
+     ]
+    ]
+   ],
+   "clipboard": []
+  },
+  {
+   "step": "select two rows",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "my formula (1)",
+    "all images embedded in page (1)",
+    "all files linked by images in page (1)",
+    "all images embedded in page (2)",
+    "all files linked by images in page (2)",
+    "all files linked by images in page (3)"
+   ],
+   "selected": [
+    0,
+    1
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true
+   },
+   "dialogs": [],
+   "clipboard": []
+  },
+  {
+   "step": "delete two",
+   "rows": [
+    "my formula (1)",
+    "all images embedded in page (1)",
+    "all files linked by images in page (1)",
+    "all images embedded in page (2)",
+    "all files linked by images in page (2)",
+    "all files linked by images in page (3)"
+   ],
+   "selected": [],
+   "buttons": {
+    "add": true,
+    "edit": false,
+    "delete": false,
+    "export": false,
+    "import": true,
+    "duplicate": false,
+    "add defaults": true
+   },
+   "dialogs": [
+    [
+     "question",
+     "Remove 2 selected?",
+     true
+    ]
+   ],
+   "clipboard": []
+  }
+ ],
+ "exchange": [
+  {
+   "step": "opened",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page"
+   ],
+   "selected": [],
+   "buttons": {
+    "add": true,
+    "edit": false,
+    "delete": false,
+    "export": false,
+    "import": true,
+    "duplicate": false,
+    "add defaults": true
+   },
+   "dialogs": [],
+   "clipboard": []
+  },
+  {
+   "step": "select the first row",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page"
+   ],
+   "selected": [
+    0
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true
+   },
+   "dialogs": [],
+   "clipboard": []
+  },
+  {
+   "step": "export to clipboard",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page"
+   ],
+   "selected": [
+    0
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true
+   },
+   "dialogs": [],
+   "clipboard": [
+    "[63, \"all files linked by images in page\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"a\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, \"img\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [1, \"a\", null, null, 1, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"href\", \"\", [84, 1, [26, 3, []]]]]]"
+   ]
+  },
+  {
+   "step": "import it from the clipboard",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "all files linked by images in page (1)"
+   ],
+   "selected": [
+    0,
+    2
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true
+   },
+   "dialogs": [
+    [
+     "information",
+     "1 objects added!"
+    ]
+   ],
+   "clipboard": []
+  },
+  {
+   "step": "duplicate",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "all files linked by images in page (1)",
+    "all files linked by images in page (2)",
+    "all files linked by images in page (1) (1)"
+   ],
+   "selected": [
+    0,
+    2,
+    3,
+    4
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true
+   },
+   "dialogs": [
+    [
+     "information",
+     "2 objects added!"
+    ]
+   ],
+   "clipboard": []
+  },
+  {
+   "step": "select two rows",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "all files linked by images in page (1)",
+    "all files linked by images in page (2)",
+    "all files linked by images in page (1) (1)"
+   ],
+   "selected": [
+    0,
+    1
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true
+   },
+   "dialogs": [],
+   "clipboard": []
+  },
+  {
+   "step": "export two to clipboard",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "all files linked by images in page (1)",
+    "all files linked by images in page (2)",
+    "all files linked by images in page (1) (1)"
+   ],
+   "selected": [
+    0,
+    1
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true
+   },
+   "dialogs": [],
+   "clipboard": [
+    "[26, 3, [[2, [63, \"all files linked by images in page\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"a\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, \"img\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [1, \"a\", null, null, 1, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"href\", \"\", [84, 1, [26, 3, []]]]]]], [2, [63, \"all images embedded in page\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"img\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"src\", \"\", [84, 1, [26, 3, []]]]]]]]]"
+   ]
+  },
+  {
+   "step": "import both from the clipboard",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "all files linked by images in page (1)",
+    "all files linked by images in page (2)",
+    "all files linked by images in page (1) (1)",
+    "all files linked by images in page (3)",
+    "all images embedded in page (1)"
+   ],
+   "selected": [
+    0,
+    1,
+    5,
+    6
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true
+   },
+   "dialogs": [
+    [
+     "information",
+     "2 objects added!"
+    ]
+   ],
+   "clipboard": []
+  },
+  {
+   "step": "import something that is not a formula",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "all files linked by images in page (1)",
+    "all files linked by images in page (2)",
+    "all files linked by images in page (1) (1)",
+    "all files linked by images in page (3)",
+    "all images embedded in page (1)"
+   ],
+   "selected": [
+    0,
+    1,
+    5,
+    6
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true
+   },
+   "dialogs": [
+    [
+     "warning",
+     "The imported objects included these types:\n\nStringMatch\n\nWhereas this control only allows:\n\nSimpleDownloaderParsingFormula"
+    ]
+   ],
+   "clipboard": []
+  },
+  {
+   "step": "import text that is not an object",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "all files linked by images in page (1)",
+    "all files linked by images in page (2)",
+    "all files linked by images in page (1) (1)",
+    "all files linked by images in page (3)",
+    "all images embedded in page (1)"
+   ],
+   "selected": [
+    0,
+    1,
+    5,
+    6
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true
+   },
+   "dialogs": [
+    [
+     "critical",
+     "Clipboard Error!",
+     "Sorry, I could not understand what was in the clipboard. I was expecting \"JSON-serialised Hydrus Object(s)\" but received this text:\n\nnot json at all\n\nMore details have been written to the log, but the general error was:\n\nJSONDecodeError('Expecting value: line 1 column 1 (char 0)')"
+    ]
+   ],
+   "clipboard": []
+  },
+  {
+   "step": "import a formula and something else",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "all files linked by images in page (1)",
+    "all files linked by images in page (2)",
+    "all files linked by images in page (1) (1)",
+    "all files linked by images in page (3)",
+    "all images embedded in page (1)",
+    "all images embedded in page (2)"
+   ],
+   "selected": [
+    0,
+    1,
+    5,
+    6,
+    7
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true
+   },
+   "dialogs": [
+    [
+     "warning",
+     "The imported objects included these types:\n\nStringMatch\n\nWhereas this control only allows:\n\nSimpleDownloaderParsingFormula"
+    ],
+    [
+     "information",
+     "1 objects added!"
+    ]
+   ],
+   "clipboard": []
+  }
+ ],
+ "commit": {
+  "before": [
+   "all files linked by images in page",
+   "all images embedded in page"
+  ],
+  "after_cancel": [
+   "all files linked by images in page",
+   "all images embedded in page"
+  ],
+  "after_apply": [
+   "all files linked by images in page",
+   "all images embedded in page",
+   "saved one"
+  ]
+ }
+}

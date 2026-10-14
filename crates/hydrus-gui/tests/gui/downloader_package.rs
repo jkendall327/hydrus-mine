@@ -329,6 +329,7 @@ fn selection_state(store: &Store) -> Value {
 }
 
 // leaf: audit-network-exchange-unsupported
+// leaf: audit-network-exchange-review
 #[test]
 fn objects_are_chosen_others_skipped_and_a_default_downloader_set_as_the_reference_does() {
     let _rendered = headless::init();
@@ -373,7 +374,24 @@ fn objects_are_chosen_others_skipped_and_a_default_downloader_set_as_the_referen
             replay_chooser(&import, chooser);
         }
         let notices = stage["notices"].as_array().unwrap();
-        let (done, details) = notices.split_last().unwrap();
+        if stage["questions"].as_array().unwrap().is_empty() {
+            // (everything already there: the one notice says so; or the chooser was cancelled)
+            match notices.first() {
+                Some(notice) => {
+                    assert_eq!(
+                        shown(&import),
+                        (notice.as_str().unwrap().to_owned(), false),
+                        "{name}"
+                    );
+                    import.invoke_action("ok".into());
+                }
+                None => assert_eq!(shown(&import).0, "", "{name}: nothing asked"),
+            }
+            import.invoke_action("cancel".into());
+            assert_eq!(selection_state(&store), stage["state"], "{name}");
+            continue;
+        }
+        let (done, details) = notices.split_last().unwrap_or((&Value::Null, &[]));
         for detail in details {
             assert_eq!(
                 shown(&import),
@@ -387,6 +405,13 @@ fn objects_are_chosen_others_skipped_and_a_default_downloader_set_as_the_referen
             (stage["questions"][0].as_str().unwrap().to_owned(), true),
             "{name}"
         );
+        if !stage["yes"].as_bool().unwrap() {
+            // "no": back to the review, nothing added
+            import.invoke_action("no".into());
+            assert_eq!(selection_state(&store), stage["state"], "{name}");
+            import.invoke_action("cancel".into());
+            continue;
+        }
         import.invoke_action("yes".into());
         assert_eq!(
             shown(&import),

@@ -372,7 +372,12 @@
      "Jobs added!"
     ]
    ],
-   "rows": []
+   "rows": [
+    [
+     "regenerate file metadata",
+     "31"
+    ]
+   ]
   },
   {
    "step": "add a job on 1001 files, forget it",
@@ -401,6 +406,36 @@
    "selected": "0 files selected",
    "search": "30 files found",
    "can_add": false,
+   "run_search_enabled": true,
+   "job": 1,
+   "dialogs": [],
+   "rows": [
+    [
+     "regenerate file metadata",
+     "31"
+    ]
+   ]
+  },
+  {
+   "step": "run the search system:archive",
+   "selected": "16 files selected",
+   "search": "16 files found",
+   "can_add": true,
+   "run_search_enabled": true,
+   "job": 1,
+   "dialogs": [],
+   "rows": [
+    [
+     "regenerate file metadata",
+     "31"
+    ]
+   ]
+  },
+  {
+   "step": "run the search system:inbox",
+   "selected": "14 files selected",
+   "search": "14 files found",
+   "can_add": true,
    "run_search_enabled": true,
    "job": 1,
    "dialogs": [],

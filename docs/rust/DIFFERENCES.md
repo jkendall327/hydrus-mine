@@ -700,8 +700,11 @@ in-memory predicate tests their comparators use by
   groups; the reference lists them in its table's order (when they were
   queued), which hydrus-rs doesn't keep. A double-clicked pair with no
   local file says so on the terminal, not in a dialog. The rule preview's
-  lists select as the reference's do, and their right-click menu shows the
-  selected rows' files in a new page. Approving and denying work four pairs at a
+  lists take one row at a time as the reference's do (control and shift add
+  none; recorded in `oracle/fixtures/preview_pair_lists.json`), and their
+  right-click menu shows the selected row's two files in a new page in the
+  same file domain. Pairs the sort cannot tell apart (the same smaller file)
+  may come in another order than the reference's. Approving and denying work four pairs at a
   time off the UI thread, showing "approving: 4/12" on the button and, after
   four seconds, in a popup, as the reference does; the popup's text is
   checked between chunks rather than live.
@@ -1830,7 +1833,9 @@ as the reference's other panels have no drop target of their own). A clipboard
 holding local file paths is not read as the reference's `IngestClipboard` reads it. Exported PNGs carry
 the real reference pixel/payload format with a small plain header. A malformed
 or unsupported item rejects the whole package, with an actionable error, rather
-than the reference importer's partial skips. Payloads/pixels are capped at
+than the reference importer's partial skips. The window also has a "back" that
+returns from the review to the input, which the reference lacks (it declines at
+the final question). Payloads/pixels are capped at
 16 MiB, bundles at 4096 objects, and recursive formats at bounded depth. Old
 container versions and recent URL/parser/formula versions are upgraded;
 earlier unsupported versions must first be re-exported by the reference client.
@@ -4252,6 +4257,10 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   file domain; there is no domain or tag-service button.
 - The description and "Jobs added!" show in the tab rather than as message
   boxes.
+- The reference's autocomplete can't be typed into headlessly, so its narrowed
+  searches (system:archive, system:inbox) are recorded by setting the search
+  context; the counts are replayed through hydrus-rs's typed box. A search that
+  can't be read has no reference counterpart to record.
 
 ## Review current sibling/parent sync
 
@@ -4261,6 +4270,21 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 - Retired and hidden review callbacks cannot change service memory or refresh;
   an old Close/X cannot dismiss its successor. This ownership repair does not
   add the reference's background sync work or progress controls.
+
+## Simple downloader formula list
+
+- The list's import and export go through the shared downloader exchange window
+  (a text box and PNG paths, reviewed before they join the draft) rather than the
+  reference's import/export menus (from clipboard, from pngs; to clipboard, to
+  png, to pngs) and "duplicate" button, which hydrus-rs lacks. The reference adds
+  what it accepts at once and says "N objects added!", with a warning listing the
+  types it refused ("The imported objects included these types: ... Whereas this
+  control only allows: SimpleDownloaderParsingFormula"); this window refuses a
+  package holding anything else, in its own words, and adds nothing. Only the
+  exported text is compared with the reference's (`simple_formula_list.json`),
+  and a tag rule with no attributes is `{}` here and `null` there.
+- The defaults' order in the reference follows its static folder's listing, which
+  the filesystem decides; hydrus-rs's is fixed.
 
 ## Auto-resolution rule export and import
 
@@ -4652,9 +4676,11 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
 - "Simple" means the media is in one location, which may be outside the
   database directory (an imported client's); the reference requires its
   default `client_files`.
-- The "(last N ago)" label of "update database backup" is checked against the
-  reference's source only: its menu is filled by a worker the recorder cannot
-  call (`oracle/record_backup_dialogs.py` records the dialogs, not the menu).
+- The backup submenu (which entries show, the "(did one recently)" and
+  "(last N ago)" label, the multiple-locations note) is replayed against the
+  reference's real menu updater (`oracle/record_backup_menu.py`). "No backup
+  path is set!" can't be reached from the menu in either client (the update
+  entry is hidden until a path is set), so it is not replayed.
   Choosing "restore from a database backup" asks the reference's questions and
   exits the client for a restart at once, with no second question and no
   shutdown jobs; the restart is driven with a stand-in program and the start it
@@ -4677,9 +4703,11 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
 - "manage granularity" runs its progress in an ordinary popup rather than
   a modal dialog, and its questions in button windows.
 - The prefix folder moved first is the first in order, not a random one.
-- The offline-folder granularity scan of a folder holding both layouts is not
-  recorded against the reference (nor are the cancel and error messages of the
-  jobs), so that leaf stays at source-restated.
+- The offline-folder granularity scan of a folder holding both layouts is
+  recorded and replayed (`oracle/record_granularity_panel.py`, the mixed
+  folder steps). The cancel and error messages of the jobs are not recorded
+  (the jobs end too quickly to cancel from a test, and an error needs a broken
+  folder), so that leaf stays at source-restated.
 - The list selects one location; it sorts by location only.
 - The rebalance runs from a non-modal popup, and closes the panel once it has
   started, as the reference does (the reference's progress is a modal dialog;

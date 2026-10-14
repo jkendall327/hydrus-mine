@@ -415,6 +415,25 @@ fn hover_pinned(store: &Store) -> bool {
         .boolean("hover_window_duplicates_always_on_top")
 }
 
+/// Open the filter on exactly these pairs (A, B), as given, as a rule preview's
+/// list does: the window comes back, and is kept open by the caller holding it.
+///
+/// # Errors
+/// If the pairs cannot be filtered or the window cannot be made.
+pub fn open_pairs(
+    store: &Arc<Store>,
+    search: &hydrus_core::duplicates::DuplicatesSearch,
+    pairs: Vec<(HashId, HashId)>,
+) -> anyhow::Result<DuplicateFilterWindow> {
+    let query =
+        hydrus_duplicates::potentials::PotentialsQuery::from_search(&store.snapshot(), search)?;
+    let mut model = DuplicateFilter::for_pairs(store.clone(), query, pairs)?;
+    let step = model.load_batch();
+    let slot = Rc::new(RefCell::new(None));
+    let window = open_filter(model, step, &slot, None)?;
+    Ok(window)
+}
+
 /// Open the filter's window on `model`, whose first batch is loaded with
 /// `step`; `slot` holds the window while it is open.
 pub(crate) fn open_filter(

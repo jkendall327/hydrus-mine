@@ -781,7 +781,13 @@ once), and the formula chooser. Each page waiting is parsed by `hydrus
 serve` with its formula, the files found downloaded as a URL page's are.
 A new page starts on the formula last chosen. Its "edit formulae" button
 opens the saved formula list: add, edit, remove (with confirmation), and add
-defaults. Selected formulae edit in sequence; cancelling a child stops the
+defaults ("add defaults" asks "add them all" or "select from a list", the
+list offering the defaults by name, none ticked). The buttons and their
+questions are replayed against the reference's own list
+(`oracle/fixtures/simple_formula_list.json`): the name is asked first ("Edit
+name.", with the formula's current name), a name already used gets "(1)" (editing
+a formula without renaming it does too, as the reference's does), and rows stay
+in the order they were added. Selected formulae edit in sequence; cancelling a child stops the
 remaining edits. Each formula's name is entered before its reusable editor;
 Apply saves the list and refreshes the chooser, while Cancel discards it.
 
@@ -1265,7 +1271,10 @@ one, to end, as the selection allows; alt and home, left, right or end do
 the same, and the order holds until the page sorts again); the
 archive/delete filter; archive and re-inbox;
 delete from each local file domain the selection is in (asking), delete
-trash physically, delete physically and undelete; manage → tags and
+trash physically, delete physically and undelete (their questions, and the
+files' inbox, domains and deletion reasons afterwards, replayed against
+the reference's own panel in `oracle/fixtures/media_lifecycle.json`; a
+deletion from the page's thumbnails keeps "Deleted from Media Page."); manage → tags and
 notes (below); and urls → open in browser, open in a new page, or copy the focused file's
 URLs (labelled by URL class, decoded as hydrus shows them, sorted), its
 recognised URLs or all of them, and the selection's URLs of each class or
@@ -1753,7 +1762,10 @@ and what it would change) and those that will be skipped, either list's
 pairs opening in the duplicate filter from the one double-clicked; a changed
 search fetches again, changed comparators or actions test again, and a
 rule that can't be had says why. What they say is as
-`oracle/record_auto_resolution_summaries.py` recorded the reference's.
+`oracle/record_auto_resolution_summaries.py` recorded the reference's. Either
+list takes one row at a time, and right-clicking a selected row offers "show
+selected row in a new page", which opens the pair's two files in a page in
+"all local media" (replayed against `oracle/fixtures/preview_pair_lists.json`).
 
 "review actions" (or double-clicking a rule) opens the reference's
 "review duplicate auto-resolution actions" window for each selected rule
@@ -2349,6 +2361,14 @@ those paths! Error was: ..."). Everything loaded joins the one review that
 bitmap first, and files dropped on it ask "Try to import the N dropped files to
 this list? I am expecting json or png files." before importing, PNGs first
 (`oracle/fixtures/exchange_bitmap_drop.json`).
+
+The final review follows the reference's `ReviewDownloaderImport` step by step
+(`oracle/fixtures/downloader_import_selection.json`): a package whose objects
+are all in the client says "All N downloader objects in that package appeared to
+already be in the client, so nothing need be added.", a chooser (when "select
+objects from list" is on) can be cancelled, the final question lists what will
+be added, "no" adds nothing, and "yes" says how many were added and how many
+duplicates were not.
 
 Network > downloaders > import/export downloaders exchanges URL classes,
 page parsers, registered login scripts and single/nested gallery URL generators with the reference
@@ -5260,7 +5280,10 @@ picks again. "restore from a database backup" picks a backup, asks, and
 exits at once to restart (no second question and no shutdown jobs, as the
 reference's `RestoreDatabase` sets), restoring it before the store opens. A client with media in
 several locations shows "database is stored in multiple locations", whose
-note explains. The messages and questions of setting up, updating and restoring are replayed against
+note explains. The label has no ellipsis once it carries the age, as the
+reference's updater sets it; the entries and labels for each state of the
+backup location, its age and the file locations are replayed against
+`oracle/fixtures/backup_menu.json`. The messages and questions of setting up, updating and restoring are replayed against
 `oracle/fixtures/backup_dialogs.json` (the reference's own dialogs, scripted answers) in
 `tests/gui/database_backup_menu.rs`. `tests/model/database_backup.rs` and hydrus-store's
 `backup` tests cover the menu, texts, mirror, backup and restore. Restore rejects
@@ -5833,7 +5856,13 @@ the pairs prefetched ahead are replayed against the reference's canvas from
 `oracle/fixtures/duplicate_filter_canvas.json`; the filtering tab's sort,
 direction and group chooser and the "quick and dirty processing" buttons from
 `oracle/fixtures/duplicates_quick_processing.json`. A file that is in several
-of the upcoming pairs is warmed once.
+of the upcoming pairs is warmed once. Switching between the pair's two files
+shows each against the other (the comparison statements and score the
+reference's hover gives, with the slow ones arriving after) and keeps the
+zoom and position: the reference's canvas is recorded through switching, zooming
+to 100%, zooming in, panning and skipping to a fresh pair (fitted again), and
+the window's statements, score and where the file sits match it step by step
+(scenario `compare_switch_keeps_zoom_and_pan`).
 
 
 ## Options recheck additions (#97 phase 2)

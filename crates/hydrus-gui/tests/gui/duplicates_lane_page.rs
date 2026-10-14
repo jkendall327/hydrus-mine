@@ -327,7 +327,7 @@ fn pending_pairs_are_sampled_refreshed_selected_and_approved() {
 }
 
 /// Let the preview test every pair it fetched.
-fn tested(rule: &hydrus_gui::AutoResolutionRuleWindow) {
+pub(crate) fn tested(rule: &hydrus_gui::AutoResolutionRuleWindow) {
     for _ in 0..3000 {
         std::thread::sleep(std::time::Duration::from_millis(10));
         slint::platform::update_timers_and_animations();
@@ -338,60 +338,6 @@ fn tested(rule: &hydrus_gui::AutoResolutionRuleWindow) {
         }
     }
     panic!("the preview never finished");
-}
-
-// leaf: audit-media-preview-context
-#[test]
-fn preview_pair_lists_offer_show_selected_pairs_in_a_new_page() {
-    let Opened {
-        ui, bound, store, ..
-    } = opened();
-    ui.invoke_duplicates_action("edit rules".into(), 0, false, false);
-    let list = bound
-        .auto_resolution
-        .list
-        .borrow()
-        .as_ref()
-        .unwrap()
-        .clone_strong();
-    list.invoke_add_suggested();
-    list.invoke_suggested_chosen(0);
-    list.invoke_row_clicked(0, false, false);
-    list.invoke_edit();
-    let rule = bound
-        .auto_resolution
-        .rule
-        .borrow()
-        .as_ref()
-        .unwrap()
-        .clone_strong();
-    rule.set_tab(3);
-    rule.invoke_preview_shown();
-    tested(&rule);
-    let passed = rule.get_preview_pass_rows().row_count();
-    assert!(passed >= 2, "{passed} passing pairs");
-
-    // nothing selected: no menu
-    assert_eq!(rule.get_preview_pass_menu(), "");
-    // one row, then two (control-click), each with the reference's label
-    rule.invoke_preview_pass_clicked(0, false, false);
-    assert_eq!(
-        rule.get_preview_pass_menu(),
-        "show selected row in a new page"
-    );
-    rule.invoke_preview_pass_clicked(1, true, false);
-    assert_eq!(rule.get_preview_pass_menu(), "show 2 rows in a new page");
-    // the other list's menu is its own
-    assert_eq!(rule.get_preview_fail_menu(), "");
-    let pages_before = bound.pages.borrow().open_pages().len();
-    rule.invoke_preview_pass_show();
-    assert_eq!(bound.pages.borrow().open_pages().len(), pages_before + 1);
-    let mut shown = bound.current.borrow().borrow().files();
-    shown.sort();
-    shown.dedup();
-    // both pairs' files (a pair's two files, twice over), whatever was shown
-    assert!(shown.len() >= 3 && shown.len() <= 4, "{shown:?}");
-    let _ = store;
 }
 
 pub(crate) fn rule_window(bound: &Bound) -> hydrus_gui::AutoResolutionRuleWindow {

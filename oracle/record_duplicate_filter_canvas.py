@@ -50,6 +50,10 @@ COMMANDS = {
     'skip' : 'SIMPLE_DUPLICATE_FILTER_SKIP',
     'back' : 'SIMPLE_DUPLICATE_FILTER_BACK',
     'switch' : 'SIMPLE_VIEW_NEXT',
+    'zoom_switch' : 'SIMPLE_SWITCH_BETWEEN_100_PERCENT_AND_CANVAS_ZOOM',
+    'zoom_in' : 'SIMPLE_ZOOM_IN',
+    'pan_right' : 'SIMPLE_PAN_RIGHT',
+    'pan_down' : 'SIMPLE_PAN_DOWN',
 }
 
 # Each scenario: ( name, options, steps ). A step is a command name (above)
@@ -136,6 +140,12 @@ SCENARIOS = [
     ( 'group_mode_goes_on_to_the_next_group', { 'duplicate_filter_auto_commit_batch_size' : None, 'group_mode' : True }, [
         { 'cycle' : [ 'alternates' ], 'answers' : [ 'commit and continue' ], 'stop_after_answers' : True },
         { 'cycle' : [ 'false_positive' ], 'answers' : [ 'commit and continue' ], 'stop_after_answers' : True },
+    ] ),
+    # the A/B switch with the comparison statements shown for each file, and the zoom and
+    # position kept across the switch, then a fresh pair fitted again
+    ( 'compare_switch_keeps_zoom_and_pan', { 'duplicate_filter_auto_commit_batch_size' : None, 'duplicate_filter_max_batch_size' : 6, 'inspect' : True }, [
+        'switch', 'zoom_switch', 'switch', 'zoom_in', 'pan_right', 'pan_down', 'switch', 'switch', 'zoom_switch', 'skip',
+        'zoom_in', 'switch', 'skip', 'zoom_in', 'switch', 'skip', 'zoom_in', 'switch', 'skip', 'zoom_in', 'switch', 'skip', 'zoom_in', 'switch',
     ] ),
     ( 'group_mode_a_group_skipped_whole', { 'duplicate_filter_auto_commit_batch_size' : None, 'group_mode' : True }, [
         { 'cycle' : [ 'skip' ], 'answers' : [ 'no' ], 'stop_after_answers' : True },
@@ -370,7 +380,7 @@ def record( session ):
 
         for ( key, value ) in options.items():
 
-            if key == 'group_mode':
+            if key in ( 'group_mode', 'inspect' ):
 
                 continue
 
@@ -383,6 +393,7 @@ def record( session ):
                 new_options.SetNoneableInteger( key, value )
 
         state[ 'prefetch' ] = 'duplicate_filter_prefetch_num_pairs' in options
+        state[ 'inspect' ] = bool( options.get( 'inspect' ) )
 
         context = ClientPotentialDuplicatesSearchContext.PotentialDuplicatesSearchContext()
         context.SetMaxHammingDistance( 4 )
@@ -426,6 +437,34 @@ def record( session ):
         if media is not None and len( canvas._media_list ) > 1:
 
             out[ 'other' ] = canvas._media_list.GetNext( media ).GetHash().hex()
+
+        if state.get( 'inspect' ) and media is not None:
+
+            container = canvas._media_container
+            hover = canvas._duplicates_right_hover
+
+            statements = []
+
+            for name in hover._comparison_statement_names_fast + hover._comparison_statement_names_slow:
+
+                ( panel, st ) = hover._comparison_statements_sts[ name ]
+
+                if not panel.isHidden():
+
+                    sign = { 'HydrusValid' : 1, 'HydrusInvalid' : -1 }.get( st.objectName(), 0 )
+
+                    statements.append( [ name, st.text(), sign ] )
+
+            geometry = container.geometry()
+
+            out[ 'view' ] = {
+                'zoom' : container.GetCurrentZoom(),
+                'canvas' : [ canvas.width(), canvas.height() ],
+                'container' : [ geometry.x(), geometry.y(), geometry.width(), geometry.height() ],
+                'resolution' : list( media.GetResolution() ),
+                'statements' : statements,
+                'score' : hover._comparison_statement_score_summary.text(),
+            }
 
         if state.get( 'prefetch' ):
 
@@ -492,6 +531,20 @@ def record( session ):
 
         sizes.clear()
 
+        if state.get( 'inspect' ):
+
+            for i in range( 300 ):
+
+                score = first.get( 'view', {} ).get( 'score', '' )
+
+                if score != '' and not score.endswith( '\u2026' ):
+
+                    break
+
+                time.sleep( 0.1 )
+
+                first = qt( observe )
+
         scenario = { 'name' : name, 'options' : options, 'batch' : batch() if first[ 'open' ] else [], 'start' : first, 'steps' : [] }
 
         def run_step( do, step_answers ):
@@ -514,6 +567,21 @@ def record( session ):
             time.sleep( SETTLE )
 
             observed = qt( observe )
+
+            if state.get( 'inspect' ):
+
+                # (the slow statements come from their own thread)
+                for i in range( 300 ):
+
+                    score = observed.get( 'view', {} ).get( 'score', '' )
+
+                    if score != '' and not score.endswith( '\u2026' ):
+
+                        break
+
+                    time.sleep( 0.1 )
+
+                    observed = qt( observe )
 
             if observed[ 'committing' ]:
 
@@ -638,8 +706,23 @@ def main():
 
     merged = { 'scenarios' : [] }
 
+    # ONLY=name re-records one scenario into the existing fixture
+    only = os.environ.get( 'ONLY' )
+
+    if only is not None:
+
+        with open( OUT ) as f:
+
+            merged = json.load( f )
+
+        merged[ 'scenarios' ] = [ sc for sc in merged[ 'scenarios' ] if sc[ 'name' ] != only ]
+
     # (each scenario on its own copy of the database: commits change it)
     for i in range( len( SCENARIOS ) ):
+
+        if only is not None and SCENARIOS[ i ][ 0 ] != only:
+
+            continue
 
         with tempfile.TemporaryDirectory() as work:
 

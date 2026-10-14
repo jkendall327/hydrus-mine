@@ -27,6 +27,9 @@ struct State {
     selection: ListSelection<usize>,
     editing: Option<(Option<usize>, SimpleFormula)>,
     deleting: bool,
+    /// The "add defaults" menu (1), then its "select from a list" chooser (2).
+    defaults_step: i32,
+    default_ticks: Vec<bool>,
     child_open: bool,
     pending_edits: Vec<usize>,
 }
@@ -49,6 +52,22 @@ fn show(w: &SimpleFormulaeWindow, s: &State) {
     );
     w.set_naming(s.editing.is_some());
     w.set_deleting(s.deleting);
+    w.set_defaults_step(s.defaults_step);
+    let names: Vec<_> = SimpleDownloaderFormulae::default()
+        .formulae
+        .iter()
+        .map(|f| f.name.clone())
+        .collect();
+    w.set_default_ticks(ModelRc::new(VecModel::from(
+        names
+            .iter()
+            .zip(&s.default_ticks)
+            .map(|(name, on)| crate::Tick {
+                label: name.as_str().into(),
+                on: *on,
+            })
+            .collect::<Vec<_>>(),
+    )));
     w.set_editing_formula(s.child_open);
 }
 fn put(s: &mut State, at: Option<usize>, f: SimpleFormula) {
@@ -71,6 +90,8 @@ pub fn open(
         selection: ListSelection::default(),
         editing: None,
         deleting: false,
+        defaults_step: 0,
+        default_ticks: Vec::new(),
         child_open: false,
         pending_edits: Vec::new(),
     }));
@@ -354,12 +375,82 @@ pub fn open(
             refresh();
         }
     });
+    // "add defaults": a menu of "add them all" and "select from a list" (a chooser of the
+    // defaults' names, none ticked), as the reference's defaults button has
     w.on_defaults({
         let state = state.clone();
         let refresh = refresh.clone();
         move || {
-            for f in SimpleDownloaderFormulae::default().formulae {
-                put(&mut state.borrow_mut(), None, f);
+            state.borrow_mut().defaults_step = 1;
+            refresh();
+        }
+    });
+    w.on_defaults_chosen({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        move |i| {
+            {
+                let mut s = state.borrow_mut();
+                if i == 0 {
+                    for f in SimpleDownloaderFormulae::default().formulae {
+                        put(&mut s, None, f);
+                    }
+                    s.defaults_step = 0;
+                } else {
+                    s.default_ticks =
+                        vec![false; SimpleDownloaderFormulae::default().formulae.len()];
+                    s.defaults_step = 2;
+                }
+            }
+            refresh();
+        }
+    });
+    w.on_default_ticked({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        move |i, on| {
+            {
+                let mut s = state.borrow_mut();
+                if let Some(tick) = usize::try_from(i)
+                    .ok()
+                    .and_then(|i| s.default_ticks.get_mut(i))
+                {
+                    *tick = on;
+                }
+            }
+            refresh();
+        }
+    });
+    w.on_defaults_picked({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        move |_| {
+            {
+                let mut s = state.borrow_mut();
+                let ticks = s.default_ticks.clone();
+                for (f, on) in SimpleDownloaderFormulae::default()
+                    .formulae
+                    .into_iter()
+                    .zip(ticks)
+                {
+                    if on {
+                        put(&mut s, None, f);
+                    }
+                }
+                s.defaults_step = 0;
+                s.default_ticks.clear();
+            }
+            refresh();
+        }
+    });
+    w.on_defaults_cancelled({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        move || {
+            {
+                let mut s = state.borrow_mut();
+                s.defaults_step = 0;
+                s.default_ticks.clear();
             }
             refresh();
         }

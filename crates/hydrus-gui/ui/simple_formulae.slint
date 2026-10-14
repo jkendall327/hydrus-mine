@@ -2,7 +2,7 @@ import { Btn } from "@hydrus_ui_core";
 import { Button, LineEdit } from "std-widgets.slint";
 import { Theme } from "@hydrus_ui_core";
 import { ListTable, TableRow } from "@hydrus_ui_core";
-import { Asking } from "@hydrus_ui_core";
+import { Asking, Tick } from "@hydrus_ui_core";
 export component SimpleFormulaeWindow inherits Window {
     in property <string> title-suffix: "";
     // the title as composed, for tests and the platform
@@ -15,6 +15,10 @@ export component SimpleFormulaeWindow inherits Window {
     in property <bool> naming;
     in property <bool> editing-formula;
     in property <bool> deleting;
+    // the "add defaults" menu (1) and its "select from a list" chooser (2)
+    in property <int> defaults-step;
+    in property <[Tick]> default-ticks;
+    callback defaults-chosen(int); callback default-ticked(int, bool); callback defaults-picked(int); callback defaults-cancelled();
     in property <string> question;
     in property <string> error;
     callback row-clicked(int, bool, bool); callback row-activated(int);
@@ -23,14 +27,14 @@ export component SimpleFormulaeWindow inherits Window {
     callback apply(); callback cancel();
     callback exchange(bool);
     VerticalLayout { padding: 10px; spacing: 6px;
-        ListTable { vertical-stretch: 1; columns: [{title: "formula", width: 600px, stretch: true}]; rows: root.rows; row-clicked(r,c,s) => { if !root.naming && !root.deleting && !root.editing-formula { root.row-clicked(r,c,s); } } row-activated(r) => { if !root.naming && !root.deleting && !root.editing-formula { root.row-activated(r); } } }
+        ListTable { vertical-stretch: 1; columns: [{title: "formula", width: 600px, stretch: true}]; rows: root.rows; row-clicked(r,c,s) => { if !root.naming && !root.deleting && !root.editing-formula && root.defaults-step == 0 { root.row-clicked(r,c,s); } } row-activated(r) => { if !root.naming && !root.deleting && !root.editing-formula && root.defaults-step == 0 { root.row-activated(r); } } }
         HorizontalLayout { spacing: 6px;
-            Btn { text: "add"; enabled: !root.naming && !root.deleting && !root.editing-formula; clicked => { root.add(); } }
-            Btn { text: "edit"; enabled: root.selected && !root.naming && !root.deleting && !root.editing-formula; clicked => { root.edit(); } }
-            Btn { text: "delete"; enabled: root.selected && !root.naming && !root.deleting && !root.editing-formula; clicked => { root.delete(); } }
-            Btn { text: "import"; enabled: !root.naming && !root.deleting && !root.editing-formula; clicked => { root.exchange(true); } }
-            Btn { text: "export"; enabled: root.selected && !root.naming && !root.deleting && !root.editing-formula; clicked => { root.exchange(false); } }
-            Btn { text: "add defaults"; enabled: !root.naming && !root.deleting && !root.editing-formula; clicked => { root.defaults(); } }
+            Btn { text: "add"; enabled: !root.naming && !root.deleting && !root.editing-formula && root.defaults-step == 0; clicked => { root.add(); } }
+            Btn { text: "edit"; enabled: root.selected && !root.naming && !root.deleting && !root.editing-formula && root.defaults-step == 0; clicked => { root.edit(); } }
+            Btn { text: "delete"; enabled: root.selected && !root.naming && !root.deleting && !root.editing-formula && root.defaults-step == 0; clicked => { root.delete(); } }
+            Btn { text: "import"; enabled: !root.naming && !root.deleting && !root.editing-formula && root.defaults-step == 0; clicked => { root.exchange(true); } }
+            Btn { text: "export"; enabled: root.selected && !root.naming && !root.deleting && !root.editing-formula && root.defaults-step == 0; clicked => { root.exchange(false); } }
+            Btn { text: "add defaults"; enabled: !root.naming && !root.deleting && !root.editing-formula && root.defaults-step == 0; clicked => { root.defaults(); } }
         }
         if root.naming: VerticalLayout {
             Text { text: "Edit name."; color: Theme.text; }
@@ -38,9 +42,11 @@ export component SimpleFormulaeWindow inherits Window {
             HorizontalLayout { Btn { text: "continue"; clicked => { root.named(); } } Btn { text: "cancel name"; clicked => { root.name-cancelled(); } } }
         }
         if root.deleting: Asking { title: "Are you sure?"; message: root.question; choices: ["yes", "no"]; chosen(i) => { root.chosen(i); } cancelled => { root.cancelled(); } }
+        if root.defaults-step == 1: Asking { title: "add defaults"; message: ""; choices: ["add them all", "select from a list"]; chosen(i) => { root.defaults-chosen(i); } cancelled => { root.defaults-cancelled(); } }
+        if root.defaults-step == 2: Asking { title: "select the defaults to add"; message: ""; choices: ["apply"]; ticks: root.default-ticks; ticked(i, on) => { root.default-ticked(i, on); } chosen(i) => { root.defaults-picked(i); } cancelled => { root.defaults-cancelled(); } }
         Text { text: root.error; color: Theme.text; wrap: word-wrap; }
         HorizontalLayout { alignment: end; spacing: 6px;
-            Btn { text: "apply"; enabled: !root.naming && !root.deleting && !root.editing-formula; clicked => { root.apply(); } }
+            Btn { text: "apply"; enabled: !root.naming && !root.deleting && !root.editing-formula && root.defaults-step == 0; clicked => { root.apply(); } }
             Btn { text: "cancel"; clicked => { root.cancel(); } }
         }
     }

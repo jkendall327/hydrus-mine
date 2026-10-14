@@ -290,10 +290,10 @@
     "Context actions pass explicit service/file scopes to native media-actions and the Delete files? dialog (#187) and other prompts; lifecycle writes are real store operations rather than labels. First-pass evidence scope: Recorded lifecycle menu is matched and focused action tests inspect archive/inbox/trash/undelete/physical-delete state and questions; full remote-domain behavior is not claimed."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real thumbnail menu and store: archive/re-inbox, delete from domain, undelete, physical delete, with questions. Menu tree is replayed against thumbnail_menu.json in a separate untagged test, but question texts ('Send 2 files to inbox?', 'Send one file from X to trash?', 'Permanently delete one trashed file?'; the delete ones now the reference's delete files dialog labels, the one-domain case matched against a recording by the download flow, flows::download, 2026-10-13) and state effects are literals from the Python source; remote domains not covered. Tests: crates/hydrus-gui/tests/gui/media_file_actions.rs:44 archive_inbox_delete_undelete_and_physical_delete_from_the_menu; thumbnail_menu.rs the_menu_is_the_reference_s (untagged) Since #187 the delete questions ('Send one file from X to trash?', 'Permanently delete one trashed file?') are the actions of the Delete files? dialog (tests/gui/common delete_question), not an inline yes/no."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "wave 5 session (W5-6)",
+    "note": "The reference's real media results panel runs archive, re-inbox (declined, accepted, a lone file already in the inbox), delete from one domain and from the other of two, undelete (declined, accepted, the 'Undelete for?' chooser cancelled, one domain, all the above) and physical delete (declined, accepted) with its real database writes (oracle/record_media_lifecycle.py, fixtures/media_lifecycle.json): every question in its words and order, and each file's inbox flag, local domains, deleted domains and kept deletion reason read back after each step. The real thumbnail menu and store replay it step by step. Found: a deletion from a page's thumbnails kept 'Deleted from Preview or Media Viewer.' where the reference keeps 'Deleted from Media Page.'; fixed (the viewer keeps its own). The reference's 'Unknown deletion reason.' is no reason kept. Remote (file repository) domains are not recorded. 'delete trash physically now' is recorded with a mixed selection (only the trashed file is deleted for good) and replayed. Test: crates/hydrus-gui/tests/gui/media_file_actions.rs the_lifecycle_actions_replay_the_reference_s_questions_and_state."
    }
   },
   {
@@ -524,10 +524,10 @@
     "Reference backup submenu dynamically offers update/change backup or a multiple-storage explanation. Native only has disabled initial-setup/restore placeholders; these states are absent."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "The recorded update scenarios (Create a new / Update the existing question, the missing path made with its message, declined, accepted: backup made and time remembered) are replayed through the real menu entry and compared in order and words (oracle/fixtures/backup_dialogs.json). 'No backup path is set!' cannot be reached from the menu in either client (the entry is hidden) and the '(last N ago)' label is not recorded (the reference fills its menu from a worker the recorder could not call), so those stay restated from the source. Test: crates/hydrus-gui/tests/gui/database_backup_menu.rs updating_the_backup_replays_the_reference_s_dialogs."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "wave 5 session (W5-6)",
+    "note": "The reference's real database menu updater is recorded for each state of the backup path, last-backup age (none, 10 s, 29 and 31 minutes, 2 hours, 3 days) and file locations (single, multiple) with the entries shown and their text (oracle/record_backup_menu.py, fixtures/backup_menu.json); the real menu is replayed against it (found: the label had a stray ellipsis, fixed), plus the multiple-locations note text. The update, change and decline/accept dialogs replay backup_dialogs.json. 'No backup path is set!' cannot be reached from the menu in either client, so it is not replayed. Tests: crates/hydrus-gui/tests/gui/database_backup_menu.rs the_backup_menu_shows_the_reference_s_entries_and_ages, updating_the_backup_replays_the_reference_s_dialogs."
    }
   },
   {
@@ -659,8 +659,8 @@
    "recheck": {
     "date": "2026-10-14",
     "class": "source-restated",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "The ready check declined, the picker cancelled, the scan question ('Looking good.', declined and accepted, 2 to 3 and back), the already-3 and unknown-folder scans, and the empty folder. oracle/fixtures/granularity_panel.json (oracle/record_granularity_panel.py runs the reference's real ReviewGranularityPanel, its jobs included, on an empty client with a file in the granularity 2 layout). crates/hydrus-gui/tests/gui/database_locations_menu.rs the_granularity_window_replays_the_reference_s_steps replays every step through the real window and compares each question (title, text, buttons), the picker, each message and the file's place on disk. It showed the questions lacked the reference's closing speed sentence; fixed. The mixed-folder scan (a folder in both layouts), which the leaf names, and the cancel and error messages are not recorded, so the leaf is held at source-restated."
+    "by": "wave 5 session (W5-6)",
+    "note": "As before, plus the mixed folder (granularity 2 files beside a granularity 3 one, a stray file) recorded in oracle/fixtures/granularity_panel.json and replayed through the real window: the 'already granularity 2, mixed' question, declining it, and moving on to the 2-to-3 result with the files' places. The cancel and error messages of the job are still restated from the source (not recorded), so the class is not raised."
    }
   },
   {
@@ -805,9 +805,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "source-restated",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "The default search, 'all media files' and 'all repository update files' counts, the labels and the explanation now agree with oracle/fixtures/file_maintenance_new.json (the same replay test as the schedule leaf). A typed predicate (system:archive) and the bad-search case are checked against hydrus-rs's own search function, not recorded (the reference's autocomplete cannot be typed into headlessly), so the class is not raised."
+    "class": "sound",
+    "by": "wave 5 session (W5-6)",
+    "note": "Every step of the reference's new-work tab is replayed through the real window: default search, 'all media files', 'all repository update files', and now system:archive and system:inbox searches (counts 16 and 14 recorded by setting the reference autocomplete's search context, since it can't be typed into headlessly; hydrus-rs's typed box parses the same predicates). The 'unreadable search' case is hydrus-rs's own parser's behaviour with no reference counterpart. Tests: crates/hydrus-gui/tests/gui/database_file_maintenance_new.rs."
    }
   },
   {
@@ -1019,10 +1019,10 @@
     "Switch changes which file is A and reuses shared zoom position. Comparison statements combine metadata facts plus deferred visual/quality data for the currently shown pair. First-pass evidence scope: Statement/score/pixel/slow-data outputs are reference-compared, and pair orientation/retained canvas state has focused native assertions."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window test opens the filter, checks statements exist, the score text format, A/B switch and retained zoom/pan geometry; statement content is replayed against the comparison_statements recording in a separate test on the function. Zoom/pan/switch expectations are relational asserts from the Python behaviour, not recorded, and the window test checks only that statements are present, not their content. Tests: crates/hydrus-gui/tests/gui/duplicate_filter.rs:229 the_filter_opens_from_a_duplicates_page_and_compares_the_pair; crates/hydrus-duplicates/tests/comparison_statements.rs"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "wave 5 session (W5-6)",
+    "note": "The reference's real CanvasFilterDuplicates is recorded through switch, zoom to 100%, zoom in, pan right and down, switch back and skip (oracle/record_duplicate_filter_canvas.py, scenario compare_switch_keeps_zoom_and_pan): after every command the file shown, the hover's statements (text and sign) and score for that file against the other, the zoom and where the file sits on the canvas. The real filter window is replayed step by step and matches, including the exact geometry after zooming and panning (14 px per pan). The statements' ages (time imported) are compared with the numbers taken out, because the reference's clock was held at 2030. The retained zoom between files of different sizes and shapes (landscape vs portrait, long thin pairs, large vs small, square vs tiny square, two portraits, including the cases that spill over the canvas) is recorded on the basic fixture (oracle/record_duplicate_filter_sizes.py) and replayed through the window within 2 px (test the_retained_zoom_follows_the_reference_between_files_of_different_sizes). Test: crates/hydrus-gui/tests/gui/duplicate_filter_canvas.rs the_filter_switches_between_the_pair_s_files_keeping_zoom_and_pan_as_the_reference_does."
    }
   },
   {
@@ -2749,10 +2749,10 @@
     "Native pass/fail activation opens filter, but reference preview pair-list context menu and show-selected-in-page action are absent."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Native menu exists (tracker notes saying it is absent are stale) and the test drives the pass list: labels 'show selected row in a new page' / 'show 2 rows in a new page' match the reference's ThumbnailPairList source, and a page opens. But the page's files are only checked as 3 to 4 distinct files, not the selected pairs' exact files; the fail list's menu is never driven with a selection; labels are typed, not recorded. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:415 preview_pair_lists_offer_show_selected_pairs_in_a_new_page"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "wave 5 session (W5-6)",
+    "note": "The reference's real PreviewPanel is recorded on its auto-resolution database for two rules (one with 5 passing pairs, one with 16 failing) with real mouse clicks and its context menu (oracle/record_preview_pair_lists.py): both lists are single-selection, the menu is only offered with a row selected, always reads 'show selected row in a new page', and sends the row's two files to a new page in 'all local media'. The real rule editor is replayed against it for both lists. Found: ctrl-click added a row natively (the reference's lists take one); fixed. Every row of each list is also clicked and shown: the pairs and the order by the smaller file's size match; pairs the sort can't tell apart may come in another order. A pair with a trashed or non-local file (other location contexts) is not recorded. Test: crates/hydrus-gui/tests/gui/preview_pair_lists.rs."
    }
   },
   {
@@ -4598,10 +4598,10 @@
     "Preview validates supported types and displays names/duplicates; Back clears pending definitions and Accept saves/stages once."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only checks the review text contains 'exchange page', that Cancel then Accept does nothing, and a later Accept saves once. Duplicate review display and a distinct Back button are not asserted; duplicate rules rest on fixture booleans in a model test. Tests: crates/hydrus-gui/tests/gui/downloader_interchange.rs:182"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "wave 5 session (W5-6)",
+    "note": "The reference's real ReviewDownloaderImport (oracle/record_downloader_import_selection.py) is recorded through: choosing some objects, the rest, a mixed package, misc objects only, and now the same package again (everything a duplicate: 'All 4 downloader objects ... already in the client'), a new downloader with the final question declined (nothing added), the chooser cancelled, and a new downloader beside a duplicate ('1 duplicate objects were not added'). The real exchange window is replayed through each: the chooser, the final question and notices in the reference's words, and the client's downloaders, classes, parsers and default after each. The reference has no separate 'Back' step: declining the final question is its back, and hydrus-rs's Back button (which returns to the input) has no reference counterpart. Test: crates/hydrus-gui/tests/gui/downloader_package.rs objects_are_chosen_others_skipped_and_a_default_downloader_set_as_the_reference_does."
    }
   },
   {
@@ -5981,10 +5981,10 @@
     "Name stage opens the reusable formula child; duplicate names are made unique and default formulas join the draft."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Both tests drive the real list window (defaults, Add, Name stage, Edit, confirmed delete 'Remove 1 selected?', unique names '(1)'), but expected values are typed from the Python (AddEditDeleteListBoxUniqueNamedObjects); no recording of the list. Defaults are the reference's dumped formulae only by construction. Tests: crates/hydrus-gui/tests/gui/simple_formulae_list.rs:21 simple_formula_list_defaults_exchange_and_apply; crates/hydrus-gui/tests/gui/formula_editors.rs:239 formula_editors_simple_downloader_list_saves_cancel_and_unique_names"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "wave 5 session (W5-6)",
+    "note": "The reference's real _EditFormulae dialog and AddEditDeleteListBoxUniqueNamedObjects are recorded with scripted answers (oracle/record_simple_formula_list.py): the button states, add (the name asked first as 'Edit name.' with 'new parsing formula', then the formula editor), cancelling either, a name clash getting '(1)', edit (current name offered; keeping it gets '(1)'), 'Remove N selected?' declined and accepted, delete with nothing selected, 'add them all' (twice), 'select from a list' (cancelled, none ticked, one ticked), and what Apply and Cancel leave saved. The real list window is replayed step by step. 'add defaults' had no 'select from a list' natively; added. The defaults' order in the reference follows the filesystem, so rows are compared as a set after defaults go in. Test: crates/hydrus-gui/tests/gui/simple_formulae_list.rs the_list_buttons_replay_the_reference_s_add_edit_delete_and_defaults."
    }
   },
   {
@@ -6019,10 +6019,10 @@
     "Imports accept named simple formulas only and remain in the formula list draft."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "List test drives export of the selected row as text and import (non-simple refused, simple accepted and renamed) via the real list; PNG import/export is not driven from this list (only text; PNG is covered by the shared interchange window under another leaf). The refusal strings are native, not the reference's. Tests: crates/hydrus-gui/tests/gui/simple_formulae_list.rs:21 simple_formula_list_defaults_exchange_and_apply; shared window tested in downloader_interchange (fixture downloader_interchange.json)"
+    "by": "wave 5 session (W5-6)",
+    "note": "The text a single selected formula exports as is now compared with what the reference's _ExportToClipboard wrote for it (oracle/fixtures/simple_formula_list.json; a tag rule with no attributes is {} here, null there). The rest is not recorded-and-matching: the reference's clipboard/png menus, 'N objects added!', its warning listing the types refused, the duplicate button and its PNG dialogs differ from this list's shared import window (DIFFERENCES.md, Simple downloader formula list); the refusal strings are native. Not raised. Tests: crates/hydrus-gui/tests/gui/simple_formulae_list.rs (simple_formula_list_defaults_exchange_and_apply, exporting_a_formula_writes_the_reference_s_serialisation)."
    }
   },
   {
