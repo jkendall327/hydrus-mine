@@ -287,6 +287,9 @@ impl Daemon {
                     .await;
                     match done {
                         Ok((kept, Ok(_))) => schedule = kept,
+                        // (a failure ends this task with `working` still set: the
+                        // flow fails on it at its next wait, `check` panicking
+                        // before `idle` is looked at)
                         Ok((_, Err(e))) => {
                             *folders_failed.lock().unwrap() =
                                 Some(format!("working import folders: {e}"));

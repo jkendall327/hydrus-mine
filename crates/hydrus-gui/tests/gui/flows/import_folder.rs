@@ -126,6 +126,14 @@ fn choose_in_node(node: &SidecarNodeWindow, label: &str) {
     node.invoke_chosen(i32::try_from(at).unwrap());
 }
 
+/// What a dialog asked or warned of when it was applied, if it did (the
+/// recorder notes the reference's warnings and questions).
+fn note(asked: &mut Vec<Json>, asking: bool, message: &str, n: &Normaliser) {
+    if asking {
+        asked.push(json!({"kind": "asking", "message": n.text(message)}));
+    }
+}
+
 /// Add a router through the routers window: its source (a .txt sidecar
 /// with `suffix`, split by four pipes when `pipes`), and for a destination
 /// other than tags the type to change it to (and a forced note name).
@@ -136,6 +144,8 @@ fn add_router(
     pipes: bool,
     destination: Option<(&str, Option<&str>)>,
     seen: &mut serde_json::Map<String, Json>,
+    asked: &mut Vec<Json>,
+    n: &Normaliser,
 ) {
     let slots = &bound.folders.sidecars;
     let routers = slots.routers.borrow().as_ref().unwrap().clone_strong();
@@ -202,6 +212,7 @@ fn add_router(
             "processing": router.get_processing().as_str(),
         }));
     router.invoke_apply();
+    note(asked, router.get_asking(), &router.get_asking_message(), n);
     assert!(slots.router.borrow().is_none(), "the router dialog closes");
 }
 
@@ -287,13 +298,11 @@ fn an_import_folder_with_sidecars_is_set_up_run_and_checked_again_as_the_referen
         });
         folder_id().is_some() && !unknown && expected()
     };
-    let step = |name: &str, dialog: Json| -> Json {
+    let step = |name: &str, dialog: Json, asked: Vec<Json>| -> Json {
         json!({
             "step": name,
             "dialog": dialog,
-            // (nothing was warned of or asked: each dialog is checked as it
-            // is applied)
-            "asked": [],
+            "asked": asked,
             "folder log": log(),
             "watch": listing(&watch),
             "moved": listing(&moved),
@@ -348,13 +357,16 @@ fn an_import_folder_with_sidecars_is_set_up_run_and_checked_again_as_the_referen
         ),
     );
     edit.invoke_edit_sidecars();
-    add_router(&bound, "", false, None, &mut seen);
+    let mut asked = Vec::new();
+    add_router(&bound, "", false, None, &mut seen, &mut asked, &n);
     add_router(
         &bound,
         "urls",
         false,
         Some(("a file's URLs", None)),
         &mut seen,
+        &mut asked,
+        &n,
     );
     add_router(
         &bound,
@@ -362,6 +374,8 @@ fn an_import_folder_with_sidecars_is_set_up_run_and_checked_again_as_the_referen
         true,
         Some(("a file's notes", Some("comment"))),
         &mut seen,
+        &mut asked,
+        &n,
     );
     let routers = bound
         .folders
@@ -378,13 +392,24 @@ fn an_import_folder_with_sidecars_is_set_up_run_and_checked_again_as_the_referen
         json!(edit.get_sidecars().as_str()),
     );
     edit.invoke_apply();
-    assert!(!edit.get_asking(), "{}", edit.get_asking_message());
+    note(
+        &mut asked,
+        edit.get_asking(),
+        &edit.get_asking_message(),
+        &n,
+    );
     seen.insert("rows at apply".into(), rows(&list, &n));
     list.invoke_apply();
+    note(
+        &mut asked,
+        list.get_asking(),
+        &list.get_asking_message(),
+        &n,
+    );
     super::wait_until_idle(&daemon, || {
         settled(&|| listing(&moved).as_object().is_some_and(|m| !m.is_empty()))
     });
-    steps.push(step("add", Json::Object(seen)));
+    steps.push(step("add", Json::Object(seen), asked));
 
     // 2. reopen: the list, then cancel
     open(&ui, "manage import folders\u{2026}");
@@ -392,7 +417,7 @@ fn an_import_folder_with_sidecars_is_set_up_run_and_checked_again_as_the_referen
     let seen = json!({"rows when opened": rows(&list, &n)});
     list.invoke_cancel();
     super::wait_until_idle(&daemon, || settled(&|| true));
-    steps.push(step("reopen", seen));
+    steps.push(step("reopen", seen, Vec::new()));
 
     // 3. new file: it arrives, file > import/export folders > check import
     // folder now > drop box
@@ -409,7 +434,7 @@ fn an_import_folder_with_sidecars_is_set_up_run_and_checked_again_as_the_referen
     super::wait_until_idle(&daemon, || {
         settled(&|| listing(&watch).as_object().unwrap().len() < before)
     });
-    steps.push(step("new file", json!({})));
+    steps.push(step("new file", json!({}), Vec::new()));
 
     compare(&steps, &recording, KNOWN);
 }
