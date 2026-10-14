@@ -10531,16 +10531,21 @@
    "label": "If 'last session' above, only autosave during idle time?",
    "path": "File > Options window > gui sessions > sessions",
    "workstream": "options-gui",
-   "state": "partial",
+   "state": "implemented",
    "priority": "low",
    "reference": null,
    "native": null,
    "notes": [
+    "Done (2026-10-13): keyboard and mouse input outside hydrus-rs's windows counts toward the user and mouse idle timers, from the desktop's idle time (GNOME's idle monitor, or the X server's screensaver extension on X11) behind the SystemIdle trait. A Wayland compositor without the Mutter monitor has no such source; see DIFFERENCES.md.",
     "Deferred (owner, 2026-10-08): idle from mouse movement outside hydrus-rs windows; a later fix should use the platform's idle time (X11 XScreenSaver, Wayland ext-idle-notify) rather than the reference's cursor polling.",
-    "Truth pass (2026-10-08): partial, medium. All but out-of-window mouse movement built and tested; consider documenting the difference and tagging. Missing: Mouse movement outside hydrus-rs windows does not reset mouse idle (needs a global cursor query; X11 only, not Wayland). Evidence: tests/gui/session_autosave.rs:51,148,212,274",
-    "Consume the applied idle-only checkbox on the historical autosave timer; active sessions retry after 60 seconds. Reference boot guard and independent user/mouse/API timeouts are driven by input across all native auxiliary/main windows and atomic timestamp-only IPC from every recognized API request before authentication or busy refusal. Rejected and read-only API requests also postpone idle saves.",
-    "The reference polls global OS cursor position; mouse movement outside native application windows does not yet reset native mouse idle. The leaf remains partial and is not counted as completed."
-   ]
+    "Consume the applied idle-only checkbox on the historical autosave timer; active sessions retry after 60 seconds. Reference boot guard and independent user/mouse/API timeouts are driven by input across all native auxiliary/main windows and atomic timestamp-only IPC from every recognized API request before authentication or busy refusal. Rejected and read-only API requests also postpone idle saves."
+   ],
+   "recheck": {
+    "date": "2026-10-13",
+    "class": "source-restated",
+    "by": "claude (issue 94 session)",
+    "note": "session_autosave.rs keyboard_and_mouse_input_outside_our_windows_holds_back_the_idle_only_autosave drives the real Monitor::poll_at with an injected SystemIdle: desktop input 3s ago holds the save back and it retries every 60s; a desktop that can't say counts only our windows; 20 minutes away is idle. tests/system_idle.rs runs the real Platform source against Xvfb (XTEST input resets the screensaver idle time) and a private dbus-daemon serving org.gnome.Mutter.IdleMonitor. The owner chose the platform idle time over the reference's cursor polling (2026-10-08), so there is no recording to compare; the user/mouse timers themselves are those of record_session_autosave.py. The main.rs wiring that installs Platform on the running client is untested (tests inject the source). Wayland without the Mutter monitor: own windows and API only, see DIFFERENCES."
+   }
   },
   {
    "id": "audit-options-gui-sessions-sessions-number-of-session-backups-to-keep",
