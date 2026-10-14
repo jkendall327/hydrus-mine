@@ -4207,8 +4207,10 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 - The review is replayed against the reference on made-up database sizes
   (`oracle/fixtures/vacuum_review.json`). The reference writes the names of
   the chosen files and vacuums each; "do it" here always vacuums the one
-  file. The reference's question also appears when "can vacuum?" says no
-  (only its disabled button stops it); the window never asks then.
+  file, so the file list is not compared. Where "can vacuum?" says no, the
+  reference's vacuum button is off, as it is here; nothing is asked in
+  either. The row order, column headings, button label and window title are
+  not recorded.
 
 ## Delete lock, importers and the trash worker, as rechecked
 

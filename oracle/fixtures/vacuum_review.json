@@ -1,6 +1,6 @@
 {
- "now": 1791945384,
- "free": 11819728896,
+ "now": 1791949092,
+ "free": 11811160064,
  "data": {
   "client.db": {
    "path": "DIR/client.db",
@@ -14,7 +14,7 @@
    "page_size": 4096,
    "page_count": 5000000,
    "freelist_count": 50000,
-   "last_vacuumed_ms": 1791686184000
+   "last_vacuumed_ms": 1791689892000
   },
   "client.caches.db": {
    "path": "DIR/client.caches.db",
@@ -28,7 +28,7 @@
    "page_size": 4096,
    "page_count": 10000000000,
    "freelist_count": 0,
-   "last_vacuumed_ms": 1791938184000
+   "last_vacuumed_ms": 1791940092000
   }
  },
  "texts": [
@@ -63,7 +63,7 @@
    "client.master.db",
    "37.3 TB",
    "0B (0%)",
-   "2 hours ago",
+   "2 hours 30 minutes ago",
    "I believe you need about 41 TB on your db's disk partition (perhaps only temporarily), but you only seem to have 11 GB.",
    "2 days 17 hours to 1 month 23 days"
   ]

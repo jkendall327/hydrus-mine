@@ -728,6 +728,7 @@ mod tests {
         window.invoke_menu_line_clicked(1, i32::try_from(review).unwrap(), 0.0, 0.0, 0.0);
     }
 
+    // leaf: audit-media-database-maintenance-vacuum-run
     #[test]
     fn pending_main_exit_blocks_vacuum_then_decline_admits_the_same_question() {
         let _windows = crate::headless::init();

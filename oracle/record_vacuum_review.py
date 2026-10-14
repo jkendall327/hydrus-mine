@@ -24,12 +24,14 @@ def record(session):
         from hydrus.client.gui.panels import ClientGUIScrolledPanelsReview as R
         root = tempfile.mkdtemp()
         now = HydrusTime.GetNow()
-        free = HydrusPaths.GetFreeSpace(root)
+        free = 11 * 1024 ** 3  # (a fixed 11 GB, so a re-record gives the same text)
+        real_free_space = HydrusPaths.GetFreeSpace
+        HydrusPaths.GetFreeSpace = lambda path: free
         data = {
             'client.db': dict(path=os.path.join(root, 'client.db'), page_size=4096, page_count=1000, freelist_count=100, last_vacuumed_ms=None),
             'client.mappings.db': dict(path=os.path.join(root, 'client.mappings.db'), page_size=4096, page_count=5_000_000, freelist_count=50_000, last_vacuumed_ms=(now - 3 * 86400) * 1000),
             'client.caches.db': dict(path=os.path.join(root, 'client.caches.db'), page_size=16384, page_count=1000, freelist_count=0, last_vacuumed_ms=0),
-            'client.master.db': dict(path=os.path.join(root, 'client.master.db'), page_size=4096, page_count=10 ** 10, freelist_count=0, last_vacuumed_ms=(now - 7200) * 1000),
+            'client.master.db': dict(path=os.path.join(root, 'client.master.db'), page_size=4096, page_count=10 ** 10, freelist_count=0, last_vacuumed_ms=(now - 9000) * 1000),
         }
         names_to_pretty = {}
         log = []
@@ -88,6 +90,7 @@ def record(session):
             snap('select the one too big for the disk', ['client.master.db'])
         finally:
             Q.GetYesNo, c.Write = old
+            HydrusPaths.GetFreeSpace = real_free_space
         return dict(now=now, free=free, data={k: {**v, 'path': 'DIR/' + os.path.basename(v['path'])} for k, v in data.items()}, texts=texts, rows=rows, steps=steps)
     return c.CallBlockingToQt(c.gui, work)
 
