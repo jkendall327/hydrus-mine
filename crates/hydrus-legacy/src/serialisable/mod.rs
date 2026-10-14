@@ -29,8 +29,10 @@
 //! container upgrades when a caller needs the current form. Typed decoders
 //! for specific object types live in [`crate::objects`].
 
+mod describe;
 mod types;
 
+pub use describe::{class_name, describe, python_json_error, what_is_this};
 pub use types::SerialisableType;
 
 use crate::pyjson::{JsonError, PyJson};

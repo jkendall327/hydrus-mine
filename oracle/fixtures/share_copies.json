@@ -1,0 +1,225 @@
+{
+  "selections": [
+    {
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+      ],
+      "ids": [
+        1,
+        2
+      ],
+      "mimes": [
+        23,
+        11
+      ],
+      "blurhashes": [
+        "USG8xmG=cBxByzy4k8Vxk.jGjGayW=Z:V_kA",
+        null
+      ],
+      "pixel_hashes": [
+        null,
+        null
+      ],
+      "copies": {
+        "sha256": [
+          [
+            "text",
+            "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b\n2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+          ]
+        ],
+        "md5": [
+          [
+            "text",
+            "9757493665f05cc8562c8ee5163f7970\n4ad379b2181ef8d95f534a48ba5d398f"
+          ]
+        ],
+        "sha1": [
+          [
+            "text",
+            "1e2fb68814dcb2e5dedd04363aee2f905d9b68f4\nbc1e353d76a5099b6244b9f863eebd187759abf1"
+          ]
+        ],
+        "sha512": [
+          [
+            "text",
+            "31dc5890c62c497fb0dc554e9e42b53e840b2a37ad69e4dd6ba41b21fc74152a4cfc170c29e5bd80090a5eae16c321a24679b25977b5a2f3b9ee9d4e431b3982\n66b28190dfc71c2f0a04eccdfbdd282100fe3111d1cf6d0960e17c150df0c465623e263a9a9144b070eeabdd18e15e3f3436a9d37b09d2ab560b5a007efa57da"
+          ]
+        ],
+        "blurhash": [
+          [
+            "text",
+            "USG8xmG=cBxByzy4k8Vxk.jGjGayW=Z:V_kA"
+          ]
+        ],
+        "pixel_hash": [],
+        "file ids": [
+          [
+            "text",
+            "1\n2"
+          ]
+        ],
+        "paths": [
+          [
+            "text",
+            "/tmp/hydrus_record_06vqil2t/db/client_files/f03/03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b.png\n/tmp/hydrus_record_06vqil2t/db/client_files/f2a/2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61.zip"
+          ]
+        ]
+      }
+    },
+    {
+      "hashes": [
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+      ],
+      "ids": [
+        3
+      ],
+      "mimes": [
+        16
+      ],
+      "blurhashes": [
+        "UxJ*;rM{D%Rj9Ft7xuof4Tt7t7oft7RjWBWB"
+      ],
+      "pixel_hashes": [
+        null
+      ],
+      "copies": {
+        "sha256": [
+          [
+            "text",
+            "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+          ]
+        ],
+        "md5": [
+          [
+            "text",
+            "474668a0a55f0bd72dac674ba8cfbda1"
+          ]
+        ],
+        "sha1": [
+          [
+            "text",
+            "7dd5c961a0472040aac2e90a9c7188f74762af00"
+          ]
+        ],
+        "sha512": [
+          [
+            "text",
+            "924d150c9747913f3a8bb758a87c67d1b23145441cb21b2f94a24bfbf8e6323999dfc2273ed2ba694d2932c2c714dca60e9b49d3d9d3a8a7fd5e730efee704b5"
+          ]
+        ],
+        "blurhash": [
+          [
+            "text",
+            "UxJ*;rM{D%Rj9Ft7xuof4Tt7t7oft7RjWBWB"
+          ]
+        ],
+        "pixel_hash": [],
+        "file ids": [
+          [
+            "text",
+            "3"
+          ]
+        ],
+        "paths": [
+          [
+            "text",
+            "/tmp/hydrus_record_06vqil2t/db/client_files/f18/188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147.flac"
+          ]
+        ]
+      }
+    },
+    {
+      "hashes": [
+        "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+        "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+        "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+        "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+        "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+        "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b"
+      ],
+      "ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        7
+      ],
+      "mimes": [
+        23,
+        11,
+        16,
+        13,
+        4,
+        10
+      ],
+      "blurhashes": [
+        "USG8xmG=cBxByzy4k8Vxk.jGjGayW=Z:V_kA",
+        null,
+        "UxJ*;rM{D%Rj9Ft7xuof4Tt7t7oft7RjWBWB",
+        "UxJ*;rM{D%Rj9Ft7xuof4Tt7t7oft7RjWBWB",
+        "UhOzLp~cElxs?jN4Z+obrcN1x.WEt%nOWZRl",
+        "cgG]IJz{*LPAKfn3+QX3XSr?w3s=rXkDXl"
+      ],
+      "pixel_hashes": [
+        null,
+        null,
+        null,
+        null,
+        "9f55ce881033d1accbc0f5f822c52bba9781c7022c990b8634d4b6666a91383a",
+        null
+      ],
+      "copies": {
+        "sha256": [
+          [
+            "text",
+            "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b\n2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61\n188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147\n65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b\n5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a\n01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b"
+          ]
+        ],
+        "md5": [
+          [
+            "text",
+            "9757493665f05cc8562c8ee5163f7970\n4ad379b2181ef8d95f534a48ba5d398f\n474668a0a55f0bd72dac674ba8cfbda1\neec1078974b0628f45a82d587d89c09f\nb06d02ad4b874e8614011cc4b4e1ee06\ncbf4e48bde2825c23e6c366fa6f737a9"
+          ]
+        ],
+        "sha1": [
+          [
+            "text",
+            "1e2fb68814dcb2e5dedd04363aee2f905d9b68f4\nbc1e353d76a5099b6244b9f863eebd187759abf1\n7dd5c961a0472040aac2e90a9c7188f74762af00\n09e43ba226935abd2df0309c16d1746d129efeb4\n1393830fa1653e1c514919ac2ce37bfa8ce4b279\n15ee3a0c405aef1fda2f3c2eb802ca7e18b5eef3"
+          ]
+        ],
+        "sha512": [
+          [
+            "text",
+            "31dc5890c62c497fb0dc554e9e42b53e840b2a37ad69e4dd6ba41b21fc74152a4cfc170c29e5bd80090a5eae16c321a24679b25977b5a2f3b9ee9d4e431b3982\n66b28190dfc71c2f0a04eccdfbdd282100fe3111d1cf6d0960e17c150df0c465623e263a9a9144b070eeabdd18e15e3f3436a9d37b09d2ab560b5a007efa57da\n924d150c9747913f3a8bb758a87c67d1b23145441cb21b2f94a24bfbf8e6323999dfc2273ed2ba694d2932c2c714dca60e9b49d3d9d3a8a7fd5e730efee704b5\n5ccac7283c7b3c5f7a84c2e90968cb25ca972c60b963fe89aaf2c14924ecfab65dbd8b4c7ffcaf46ca450bbfc1816fdf421a188a7c1fb797bf2f11d4c2666439\n33d0c3f5f104dacc7bc1840d800704345d4d9331580434fe604c9a48f0728e527e7b1d9b57090ce534dbe1f8cb7fbbbcfbe49c07d65bc5d3f14b56ec5cd4616f\n670c5de58d62b0576f7cbf4c36118a4fa2cee9dc02675f44c29e74fad51e4d24ffad196c460a7c1669bd1a49fa0a7288cf3e18abdf567dec6d2e707f8d5463a4"
+          ]
+        ],
+        "blurhash": [
+          [
+            "text",
+            "USG8xmG=cBxByzy4k8Vxk.jGjGayW=Z:V_kA\nUxJ*;rM{D%Rj9Ft7xuof4Tt7t7oft7RjWBWB\nUxJ*;rM{D%Rj9Ft7xuof4Tt7t7oft7RjWBWB\nUhOzLp~cElxs?jN4Z+obrcN1x.WEt%nOWZRl\ncgG]IJz{*LPAKfn3+QX3XSr?w3s=rXkDXl"
+          ]
+        ],
+        "pixel_hash": [
+          [
+            "text",
+            "9f55ce881033d1accbc0f5f822c52bba9781c7022c990b8634d4b6666a91383a"
+          ]
+        ],
+        "file ids": [
+          [
+            "text",
+            "1\n2\n3\n4\n5\n7"
+          ]
+        ],
+        "paths": [
+          [
+            "text",
+            "/tmp/hydrus_record_06vqil2t/db/client_files/f03/03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b.png\n/tmp/hydrus_record_06vqil2t/db/client_files/f2a/2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61.zip\n/tmp/hydrus_record_06vqil2t/db/client_files/f18/188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147.flac\n/tmp/hydrus_record_06vqil2t/db/client_files/f65/65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b.mp3\n/tmp/hydrus_record_06vqil2t/db/client_files/f5d/5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a.bmp\n/tmp/hydrus_record_06vqil2t/db/client_files/f01/01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b.pdf"
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -286,6 +286,92 @@ async fn saved_existing_tag_filter_reaches_real_file_importer_for_parsed_and_add
     assert_eq!(serde_json::json!(result), fixture["disabled_consumer"]);
 }
 
+// leaf: audit-network-import-queue
+#[tokio::test(flavor = "multi_thread")]
+async fn a_local_import_with_delete_after_success_deletes_what_the_reference_deletes() {
+    // oracle/fixtures/local_import_queue.json (oracle/record_local_import_queue.py):
+    // the real page importing a png and a copy of it, the originals left or
+    // deleted, run twice on one database
+    let recorded = hydrus_testkit::fixture_json("local_import_queue.json");
+    let dir = tempfile::tempdir().unwrap();
+    let store = Arc::new(Store::open(dir.path()).unwrap());
+    // (deleted for good: the recycle-bin path is not tested here or recorded)
+    store
+        .write(|ctx| {
+            let mut folders: FolderSettings = settings::get(ctx.conn())?;
+            folders.delete_to_recycle_bin = false;
+            settings::set(ctx.conn(), &folders)
+        })
+        .unwrap();
+    let runner = runner(&store);
+    runner.start_all().unwrap();
+    for run in recorded["runs"].as_array().unwrap() {
+        let work = tempfile::tempdir().unwrap();
+        let names = ["first.png", "second_copy.png", "notes.txt", "Thumbs.db"];
+        for name in &names[..2] {
+            std::fs::copy(media("apng_rgba.png"), work.path().join(name)).unwrap();
+        }
+        std::fs::write(work.path().join(names[2]), "just some text").unwrap();
+        std::fs::write(work.path().join(names[3]), b"not a picture").unwrap();
+        let paths: Vec<(String, Option<i64>)> = run["publication"][0]["paths"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|p| (path_text(&work.path().join(p.as_str().unwrap())), None))
+            .collect();
+        let delete = run["delete_after_success"].as_bool().unwrap();
+        let id = store
+            .write(move |ctx| {
+                queues::create_local_import(
+                    ctx.conn(),
+                    None,
+                    &ImportOptionsSlice::default(),
+                    &paths,
+                    &queues::PathTags::new(),
+                    LocalImport {
+                        delete_after_success: delete,
+                        routers: Vec::new(),
+                    },
+                    0,
+                )
+            })
+            .unwrap();
+        runner.wake(id);
+        wait_until_done(&store, id).await;
+        let statuses: Vec<(String, i64)> = store
+            .read(|c| queues::file_seeds(c, id))
+            .unwrap()
+            .iter()
+            .map(|s| {
+                let status = match s.status {
+                    SeedStatus::SuccessfulAndNew => 1,
+                    SeedStatus::SuccessfulButRedundant => 2,
+                    other => panic!("{other:?}"),
+                };
+                (
+                    Path::new(&s.data)
+                        .file_name()
+                        .unwrap()
+                        .to_string_lossy()
+                        .into_owned(),
+                    status,
+                )
+            })
+            .collect();
+        assert_eq!(serde_json::json!(statuses), run["seeds"], "delete {delete}");
+        let on_disk: Vec<&str> = names
+            .iter()
+            .copied()
+            .filter(|n| work.path().join(n).exists())
+            .collect();
+        assert_eq!(
+            serde_json::json!(on_disk),
+            run["on_disk"],
+            "delete {delete}"
+        );
+    }
+}
+
 #[tokio::test(flavor = "multi_thread")]
 async fn a_local_import_imports_its_files() {
     let dir = tempfile::tempdir().unwrap();

@@ -285,6 +285,14 @@ pub enum Command {
     DebugForceIdleMode,
     /// Help > debug's runtime switches (`HG.x = not HG.x`).
     DebugFlag(hydrus_core::debug_flags::Flag),
+    /// Help > debug > profiling's profile modes (one on at a time).
+    DebugProfile(hydrus_core::profiling::Mode),
+    /// Help > debug > profiling > query planner mode.
+    DebugQueryPlanner,
+    /// Help > debug > data actions > subscription manager snapshot.
+    DebugSubscriptionSnapshot,
+    /// Help > debug > what is this object?
+    DebugWhatIsThisObject,
     /// Publish the actual delayed message after five seconds.
     DebugDelayedTextPopup,
     Debug(crate::debug_actions::Action),
@@ -369,6 +377,9 @@ pub struct Facts {
     pub crash_logging: bool,
     /// The debug switches that are on.
     pub debug_flags: Vec<hydrus_core::debug_flags::Flag>,
+    /// The profile mode that is on, and whether query planner mode is.
+    pub profile_mode: Option<hydrus_core::profiling::Mode>,
+    pub query_planner: bool,
     pub advanced: bool,
     /// Whether the desktop has a system tray to hide to.
     pub tray_available: bool,
@@ -1428,10 +1439,27 @@ fn help_menu(facts: &Facts) -> Entry {
                             ),
                         ],
                     ),
-                    menu(
-                        "profiling",
-                        vec![item("what is this?", debug(DebugAction::ProfileInfo))],
-                    ),
+                    menu("profiling", {
+                        use hydrus_core::profiling::Mode;
+                        let mode = |label: &str, mode: Mode| {
+                            check(
+                                label,
+                                Some(Command::DebugProfile(mode)),
+                                facts.profile_mode == Some(mode),
+                            )
+                        };
+                        vec![
+                            item("what is this?", debug(DebugAction::ProfileInfo)),
+                            mode("profile mode (client api)", Mode::ClientApi),
+                            mode("profile mode (db)", Mode::Db),
+                            mode("profile mode (ui)", Mode::Ui),
+                            check(
+                                "query planner mode",
+                                Some(Command::DebugQueryPlanner),
+                                facts.query_planner,
+                            ),
+                        ]
+                    }),
                     menu(
                         "report modes",
                         hydrus_core::debug_flags::Flag::REPORT_MODES
@@ -1497,6 +1525,10 @@ fn help_menu(facts: &Facts) -> Entry {
                             item("force database commit", debug(DebugAction::ForceCommit)),
                             item("scan file storage folders", debug(DebugAction::ScanStorage)),
                             item("show env", debug(DebugAction::ShowEnv)),
+                            item(
+                                "subscription manager snapshot",
+                                Command::DebugSubscriptionSnapshot,
+                            ),
                             SEP,
                             item("simulate program exit signal", debug(DebugAction::Exit)),
                         ],
@@ -1518,6 +1550,8 @@ fn help_menu(facts: &Facts) -> Entry {
                             item("fetch a url", Command::DebugFetchUrl),
                         ],
                     ),
+                    SEP,
+                    item("what is this object?", Command::DebugWhatIsThisObject),
                 ],
             ),
             SEP,

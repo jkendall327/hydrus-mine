@@ -322,6 +322,54 @@ pub fn usage_text_with_format(
     )
 }
 
+/// The detail panel's rule rows with their usage, as the reference words
+/// them (`BandwidthRules.GetBandwidthStringsAndGaugeTuples` with no
+/// threshold): shortest span first, this month before any span, rules with
+/// no maximum left out.
+pub fn rule_gauge_rows(
+    rules: &Rules,
+    tracker: &mut Tracker,
+    now: i64,
+    formatting: &GuiFormatting,
+) -> Vec<(String, u64, u64)> {
+    let mut sorted = rules.rules().to_vec();
+    sorted.sort_by_key(|r| {
+        r.time_delta
+            .map_or(-1, |d| i64::try_from(d).unwrap_or(i64::MAX))
+    });
+    sorted
+        .into_iter()
+        .filter(|r| r.max_allowed != 0)
+        .map(|r| {
+            let usage = tracker.usage(r.kind, r.time_delta, now);
+            let mut text = String::from("used ");
+            match r.kind {
+                BandwidthType::Data => text.push_str(&format!(
+                    "{}/{}",
+                    crate::gui_format::bytes(formatting, usage),
+                    crate::gui_format::bytes(formatting, r.max_allowed)
+                )),
+                BandwidthType::Requests => text.push_str(&format!(
+                    "{}/{} requests",
+                    human_int(usage.min(r.max_allowed)),
+                    human_int(r.max_allowed)
+                )),
+            }
+            match r.time_delta {
+                None => text.push_str(" this month"),
+                Some(d) => text.push_str(&format!(
+                    " in the past {}",
+                    hydrus_core::time::pretty_time_delta(
+                        i64::try_from(d).unwrap_or(i64::MAX),
+                        false
+                    )
+                )),
+            }
+            (text, usage, r.max_allowed)
+        })
+        .collect()
+}
+
 /// All retained monthly totals.
 pub fn all_usage_text(tracker: &Tracker) -> String {
     all_usage_text_with_format(tracker, &GuiFormatting::default())
@@ -446,10 +494,13 @@ pub fn reset_defaults(store: &Store) -> Result<(), String> {
     store
         .write(|ctx| {
             let mut current = settings::get::<BandwidthSettings>(ctx.conn())?;
+            // (only the contexts the defaults name are reset: the reference
+            // leaves the rest, such as the downloader default, as they are)
+            let defaults = default_rules();
             current
                 .rules
-                .retain(|(c, _)| !c.is_default() && c.kind != CONTEXT_GLOBAL);
-            current.rules.extend(default_rules());
+                .retain(|(c, _)| !defaults.iter().any(|(d, _)| d == c));
+            current.rules.extend(defaults);
             settings::set(ctx.conn(), &current)
         })
         .map_err(|e| e.to_string())

@@ -94,10 +94,11 @@ impl Flag {
 
     /// The "report modes" submenu's switches, in the reference's order. Only
     /// switches something in hydrus-rs reads are offered.
-    pub const REPORT_MODES: [Flag; 13] = [
+    pub const REPORT_MODES: [Flag; 14] = [
         Flag::Blurhash,
         Flag::CacheReport,
         Flag::DaemonReport,
+        Flag::DbReport,
         Flag::FileReport,
         Flag::FileImportReport,
         Flag::GuiReport,
@@ -162,6 +163,34 @@ pub fn set_sink_if_none(sink: Sink) {
     let mut slot = SINK.lock().unwrap_or_else(PoisonError::into_inner);
     if slot.is_none() {
         *slot = Some(sink);
+    }
+}
+
+thread_local! {
+    static QUIET: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+}
+
+/// Run `f` with the reports of this thread's database jobs switched off:
+/// the thread that writes reports into the popup table must not report its
+/// own writes (db report mode would answer each popup with another).
+pub fn quiet<R>(f: impl FnOnce() -> R) -> R {
+    let before = QUIET.with(|q| q.replace(true));
+    let result = f();
+    QUIET.with(|q| q.set(before));
+    result
+}
+
+/// Whether this thread is inside [`quiet`].
+pub fn is_quiet() -> bool {
+    QUIET.with(std::cell::Cell::get)
+}
+
+/// `HydrusData.ShowText`: `text` to the sink (a popup and the console),
+/// whether or not a report mode is on.
+pub fn show_text(text: &str) {
+    match SINK.lock().unwrap_or_else(PoisonError::into_inner).as_ref() {
+        Some(sink) => sink(text),
+        None => eprintln!("{text}"),
     }
 }
 

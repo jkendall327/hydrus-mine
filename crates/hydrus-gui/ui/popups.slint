@@ -244,7 +244,7 @@ export component PopupStack inherits Rectangle {
                     clicked => { root.dismiss-all(); }
                 }
                 Btn {
-                    text: root.expanded ? "▾" : "▴";
+                    text: root.expanded ? "▼" : "▲";
                     clicked => { root.expanded = !root.expanded; }
                 }
             }

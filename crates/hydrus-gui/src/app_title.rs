@@ -99,6 +99,7 @@ titled!(
     DatabaseLocationsWindow,
     DateTimeEditorWindow,
     DebugFetchWindow,
+    WhatIsThisWindow,
     DeleteFilesWindow,
     DownloaderDefinitionEditWindow,
     DownloaderDefinitionsWindow,

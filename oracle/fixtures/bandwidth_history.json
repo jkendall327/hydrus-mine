@@ -76,6 +76,40 @@
   "questions": [
     "Are you sure? This will delete all bandwidth record for the selected network contexts."
   ],
+  "span_usage": [
+    {
+      "span": 86400,
+      "cells": {
+        "recent": "4 KB in 1 requests",
+        "old": "0B in 0 requests",
+        "bytes": "123B in 0 requests"
+      }
+    },
+    {
+      "span": 604800,
+      "cells": {
+        "recent": "4 KB in 1 requests",
+        "old": "0B in 0 requests",
+        "bytes": "123B in 0 requests"
+      }
+    },
+    {
+      "span": 1209600,
+      "cells": {
+        "recent": "4 KB in 1 requests",
+        "old": "512B in 1 requests",
+        "bytes": "123B in 0 requests"
+      }
+    },
+    {
+      "span": null,
+      "cells": {
+        "recent": "7 KB in 3 requests",
+        "old": "512B in 1 requests",
+        "bytes": "123B in 0 requests"
+      }
+    }
+  ],
   "months": [
     [
       "2025-01",

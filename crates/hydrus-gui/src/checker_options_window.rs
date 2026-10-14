@@ -83,6 +83,19 @@ fn which(i: i32) -> Option<Which> {
     usize::try_from(i).ok().and_then(|i| TIMES.get(i).copied())
 }
 
+thread_local! {
+    /// The editor of the window opened last, for tests to read its value.
+    static LATEST: RefCell<Option<Rc<RefCell<Editor>>>> = const { RefCell::new(None) };
+}
+
+/// The options the latest checker window would apply now (tests read the
+/// editor behind the window, whatever the window shows of it).
+#[doc(hidden)]
+#[must_use]
+pub fn latest_value() -> Option<CheckerOptions> {
+    LATEST.with(|l| l.borrow().as_ref().map(|e| e.borrow().value()))
+}
+
 /// Open the editor on `options` (its least times tiny if `advanced`); it
 /// forgets itself from `slot` when closed, and gives what was applied to
 /// `done`.
@@ -116,6 +129,7 @@ pub(crate) fn open(
     window.set_presets(ModelRc::new(VecModel::from(presets)));
     window.set_advanced(advanced);
     let editor = Rc::new(RefCell::new(Editor::new(options, advanced)));
+    LATEST.with(|l| *l.borrow_mut() = Some(editor.clone()));
     let shown = Rc::new(RefCell::new(Shown::default()));
     show_all(&window, &editor.borrow(), &mut shown.borrow_mut());
 
