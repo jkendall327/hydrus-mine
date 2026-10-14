@@ -38,10 +38,18 @@ fn search_a_gallery_with_a_file_limit_as_the_reference_does() {
         n: &n,
     };
 
-    // pages > new page: download, gallery
+    // pages > new page: download, gallery (the chooser's buttons by label)
+    let choose = |label: &str| {
+        let labels = ui.get_chooser_labels();
+        let at = labels
+            .iter()
+            .position(|l| l == label)
+            .unwrap_or_else(|| panic!("a \"{label}\" button in the page chooser"));
+        ui.invoke_chooser_pressed(i32::try_from(at + 1).unwrap());
+    };
     ui.invoke_new_page();
-    ui.invoke_chooser_pressed(4);
-    ui.invoke_chooser_pressed(6);
+    choose("download");
+    choose("gallery");
 
     let queries = || -> Vec<(i64, String)> {
         bound
@@ -153,6 +161,15 @@ fn search_a_gallery_with_a_file_limit_as_the_reference_does() {
     ui.invoke_gallery_queries("red_hair".into());
     super::wait_until_idle(&daemon, || searched(2));
     steps.push(step("second search"));
+
+    // 3. raise the limit: the highlighted query's own, to 20; its search
+    // has no page left to read (the limit stopped it adding the next), so
+    // nothing more is fetched, but the status "hit file limit" clears
+    ui.invoke_gallery_shown_limit(false, 20);
+    super::wait_until_idle(&daemon, || {
+        searched(2) && ui.get_gallery_data().search_line.is_empty()
+    });
+    steps.push(step("raise the limit"));
 
     compare(&steps, &recording, KNOWN);
 }

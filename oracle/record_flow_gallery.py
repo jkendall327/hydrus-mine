@@ -13,6 +13,12 @@ three posts a page, newest first) and its downloader installed:
    in the database from the first search). It searches its one page and
    fetches the new files; the highlight stays on the first query.
 
+3. "raise the limit": the highlighted query's own "stop after this many
+   files" raised to 20. Its search had stopped at the limit, and with no
+   page left to read it cannot go on (the limit stopped it adding the next
+   page): nothing more is fetched, but its search status ("hit file limit")
+   clears.
+
 After each step: each query's file log and search log, the files (tags,
 URLs, inbox, domains), each query's row in the list, the list's totals, the
 highlighted query's box, the page's thumbnails, the popups still shown and
@@ -194,6 +200,32 @@ def record( session, site ):
 
 
     step( 'second search' )
+
+    # 3. raise the limit ------------------------------------------------
+
+    def raise_limit():
+
+        panel = sidebar._highlighted_gallery_import_panel
+
+        panel._file_limit.SetValue( 20 )
+        panel.EventFileLimit()
+
+
+    def status_cleared():
+        """The search's work loop has looked again (it does, now and then)
+        and found no reason left to stop."""
+
+        return imports()[ 0 ]._gallery_status == ''
+
+
+    with flows.scripted_dialogs( {} ) as dialogs:
+
+        qt( raise_limit )
+
+        flows.wait_until_idle( controller, also = lambda: dialogs.check() and status_cleared() and searched( 2 ) )
+
+
+    step( 'raise the limit' )
 
     return { 'domain_manager' : domain_manager, 'steps' : steps }
 

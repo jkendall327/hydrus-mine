@@ -14,7 +14,7 @@
        "local booru tag search",
        1,
        [
-        "7065ac3d8c4a3169ae401f2cde7618ef12e8399f2ce3c537f327a179c533f029",
+        "d5cf99f00fa053f44b0d81dcf201d16db40ad2aeda3a329bf3fcf6f1de08f8e7",
         "http://127.0.0.1:46033/search/%tags%/1",
         "%tags%",
         "+",
@@ -26,7 +26,7 @@
     ]
    ],
    [
-    "7065ac3d8c4a3169ae401f2cde7618ef12e8399f2ce3c537f327a179c533f029"
+    "d5cf99f00fa053f44b0d81dcf201d16db40ad2aeda3a329bf3fcf6f1de08f8e7"
    ],
    [
     26,
@@ -39,7 +39,7 @@
        "local booru post",
        15,
        [
-        "3d801a54825e7a55e5fa8a25d3db4d5fea4c08e72d65919815d886b852300dac",
+        "0b8c7f801d6eee96b179ed576ac669ac84cfd40818ecba90c65e48b47e43798a",
         0,
         "http",
         [
@@ -142,7 +142,7 @@
        "local booru search",
        15,
        [
-        "ab70f01d8e054ccec8c1f97500b395a140e1b60f255c0e33cb0911e52cbbfc07",
+        "107b10a59e0b101c7eeeda47cbe8f163090ab8c433436f6af310e28ebcfa22e9",
         3,
         "http",
         [
@@ -255,19 +255,19 @@
     ]
    ],
    [
-    "3d801a54825e7a55e5fa8a25d3db4d5fea4c08e72d65919815d886b852300dac"
+    "0b8c7f801d6eee96b179ed576ac669ac84cfd40818ecba90c65e48b47e43798a"
    ],
    [
     33,
     1,
     [
      [
-      "3d801a54825e7a55e5fa8a25d3db4d5fea4c08e72d65919815d886b852300dac",
-      "1863e4a402b511b157a84d1a0393018b2efee0096ea5083b0f1d85411f7a3b86"
+      "0b8c7f801d6eee96b179ed576ac669ac84cfd40818ecba90c65e48b47e43798a",
+      "53f8d3eaafb531a3c01fbe6307e3c9c4190fe3c823dfcf33af0e12f47bb94a63"
      ],
      [
-      "ab70f01d8e054ccec8c1f97500b395a140e1b60f255c0e33cb0911e52cbbfc07",
-      "9568191ae04a65b9e67958109156cb2313563b4a8ba4f232a8c6814d8236d80f"
+      "107b10a59e0b101c7eeeda47cbe8f163090ab8c433436f6af310e28ebcfa22e9",
+      "0ff4480405fa48c214c8ad1035384120e2525701f6e188d5064c177fe47bc844"
      ]
     ]
    ],
@@ -407,7 +407,7 @@
        3,
        [
         "local booru post parser",
-        "1863e4a402b511b157a84d1a0393018b2efee0096ea5083b0f1d85411f7a3b86",
+        "53f8d3eaafb531a3c01fbe6307e3c9c4190fe3c823dfcf33af0e12f47bb94a63",
         [
          55,
          2,
@@ -642,7 +642,7 @@
        3,
        [
         "local booru search parser",
-        "9568191ae04a65b9e67958109156cb2313563b4a8ba4f232a8c6814d8236d80f",
+        "0ff4480405fa48c214c8ad1035384120e2525701f6e188d5064c177fe47bc844",
         [
          55,
          2,
@@ -1427,6 +1427,326 @@
    },
    "popups": [],
    "step": "second search"
+  },
+  {
+   "dialog": {},
+   "files": {
+    "1ebba84c5d3e9bda468be7bb9889e80ed5d86f10a78d8eb8c11e42bbc32214a5": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 4"
+      ]
+     },
+     "urls": [
+      "BASE/files/p4.jpg",
+      "BASE/post/4",
+      "BASE/search/blue_eyes/2",
+      "https://elsewhere.example/art/4"
+     ]
+    },
+    "3560e1fa1a059fd7ba6f2a1a9bf86c9fe389e750e2b3a1e1247d38c83ec5679c": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 6"
+      ]
+     },
+     "urls": [
+      "BASE/files/p6.jpg",
+      "BASE/post/6",
+      "BASE/search/blue_eyes/1",
+      "https://elsewhere.example/art/6"
+     ]
+    },
+    "7be488e1b7471773fb6dd9698bc71f96a2d5696f4f6477dc048e042eec59ae0a": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 3",
+       "red hair"
+      ]
+     },
+     "urls": [
+      "BASE/files/p3.jpg",
+      "BASE/post/3",
+      "BASE/search/red_hair/1",
+      "https://elsewhere.example/art/3"
+     ]
+    },
+    "7cc262d587ece5b4cc901db2ec2efddd8ce15c6f4c82595f5872000bf71924da": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 8"
+      ]
+     },
+     "urls": [
+      "BASE/files/p8.jpg",
+      "BASE/post/8",
+      "BASE/search/blue_eyes/1",
+      "https://elsewhere.example/art/8"
+     ]
+    },
+    "95702ba0537e3cbc72e4d062a2d28c415e6d62bb930bd5d6edca4ec4844395d1": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 5"
+      ]
+     },
+     "urls": [
+      "BASE/files/p5.jpg",
+      "BASE/post/5",
+      "BASE/search/blue_eyes/2",
+      "https://elsewhere.example/art/5"
+     ]
+    },
+    "aed64e94c1be6800e547b03d1ac9901ee46d7af1599b810a4bff2fd73a954e4a": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 7"
+      ]
+     },
+     "urls": [
+      "BASE/files/p7.jpg",
+      "BASE/post/7",
+      "BASE/search/blue_eyes/1",
+      "https://elsewhere.example/art/7"
+     ]
+    },
+    "b3c6ce7daf6954e17646d256809e7fd752102dd5615ba73ea75a9342cebdcb25": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "creator:someone",
+       "post 9",
+       "red hair"
+      ]
+     },
+     "urls": [
+      "BASE/files/p9.jpg",
+      "BASE/post/9",
+      "BASE/search/red_hair/1",
+      "https://elsewhere.example/art/9"
+     ]
+    },
+    "ebaf32c3362f85bf6af790fcb6599babf6d6a16ec16e2ffe132d44af9e08c47d": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "creator:someone",
+       "post 10",
+       "red hair"
+      ]
+     },
+     "urls": [
+      "BASE/files/p10.jpg",
+      "BASE/post/10",
+      "BASE/search/red_hair/1",
+      "https://elsewhere.example/art/10"
+     ]
+    }
+   },
+   "hits": [],
+   "page": {
+    "queries": [
+     {
+      "files": [
+       {
+        "data": "BASE/post/8",
+        "note": "",
+        "sha256": "7cc262d587ece5b4cc901db2ec2efddd8ce15c6f4c82595f5872000bf71924da",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 8"
+        ]
+       },
+       {
+        "data": "BASE/post/7",
+        "note": "",
+        "sha256": "aed64e94c1be6800e547b03d1ac9901ee46d7af1599b810a4bff2fd73a954e4a",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 7"
+        ]
+       },
+       {
+        "data": "BASE/post/6",
+        "note": "",
+        "sha256": "3560e1fa1a059fd7ba6f2a1a9bf86c9fe389e750e2b3a1e1247d38c83ec5679c",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 6"
+        ]
+       },
+       {
+        "data": "BASE/post/5",
+        "note": "",
+        "sha256": "95702ba0537e3cbc72e4d062a2d28c415e6d62bb930bd5d6edca4ec4844395d1",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 5"
+        ]
+       },
+       {
+        "data": "BASE/post/4",
+        "note": "",
+        "sha256": "1ebba84c5d3e9bda468be7bb9889e80ed5d86f10a78d8eb8c11e42bbc32214a5",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 4"
+        ]
+       }
+      ],
+      "files finished": true,
+      "finished": true,
+      "searches": [
+       {
+        "note": "3 new urls found - 1 next gallery pages found",
+        "status": 1,
+        "url": "BASE/search/blue_eyes/1"
+       },
+       {
+        "note": "2 new urls found - hit file limit",
+        "status": 1,
+        "url": "BASE/search/blue_eyes/2"
+       }
+      ],
+      "source": "local booru tag search",
+      "text": "blue_eyes"
+     },
+     {
+      "files": [
+       {
+        "data": "BASE/post/10",
+        "note": "",
+        "sha256": "ebaf32c3362f85bf6af790fcb6599babf6d6a16ec16e2ffe132d44af9e08c47d",
+        "status": 1,
+        "tags": [
+         "creator:someone",
+         "post 10",
+         "red hair"
+        ]
+       },
+       {
+        "data": "BASE/post/9",
+        "note": "",
+        "sha256": "b3c6ce7daf6954e17646d256809e7fd752102dd5615ba73ea75a9342cebdcb25",
+        "status": 1,
+        "tags": [
+         "creator:someone",
+         "post 9",
+         "red hair"
+        ]
+       },
+       {
+        "data": "BASE/post/3",
+        "note": "",
+        "sha256": "7be488e1b7471773fb6dd9698bc71f96a2d5696f4f6477dc048e042eec59ae0a",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 3",
+         "red hair"
+        ]
+       }
+      ],
+      "files finished": true,
+      "finished": true,
+      "searches": [
+       {
+        "note": "3 new urls found",
+        "status": 1,
+        "url": "BASE/search/red_hair/1"
+       }
+      ],
+      "source": "local booru tag search",
+      "text": "red_hair"
+     }
+    ],
+    "texts": {
+     "bottom": "8 successful",
+     "file log progress": "5/5",
+     "file log summary": "5 successful",
+     "files status": "",
+     "query": "blue_eyes",
+     "rows": [
+      [
+       "* blue_eyes",
+       "local booru tag search",
+       "⏹",
+       "⏹",
+       "DONE",
+       "5",
+       "DELTA"
+      ],
+      [
+       "red_hair",
+       "local booru tag search",
+       "⏹",
+       "⏹",
+       "DONE",
+       "3",
+       "DELTA"
+      ]
+     ],
+     "search log summary": "2 successful",
+     "search status": "",
+     "top": "2 queries - 8/8"
+    },
+    "thumbnails": 5
+   },
+   "popups": [],
+   "step": "raise the limit"
   }
  ]
 }
