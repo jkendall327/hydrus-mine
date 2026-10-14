@@ -105,29 +105,58 @@ def child_gate(db_dir, out):
 
 
 def child_cancel(db_dir, out):
-    # the same boot, the password dialog cancelled (`EnterText` raises
-    # `CancelledException`, as the dialog does on cancel)
+    # the same boot, the real password dialog put up and its real cancel
+    # button clicked (`EnterText` then raises `CancelledException`, which
+    # `InitView` turns into a `DBCredentialsException`, ending the boot)
     import hydrus_driver
+    from qtpy import QtCore as C
+    from qtpy import QtWidgets as W
+    from hydrus.client import ClientController
     from hydrus.client.gui import ClientGUIDialogsQuick as Q
     from hydrus.client.gui import ClientGUIDialogsMessage as M
-    from hydrus.core import HydrusExceptions
     events = []
     for kind in ('ShowCritical', 'ShowWarning', 'ShowInformation'):
         setattr(M, kind, lambda parent, *args, kind=kind: events.append({'shown': kind, 'args': list(args)}))
 
+    real_enter_text = Q.EnterText
+
+    def click_cancel():
+        for widget in W.QApplication.topLevelWidgets():
+            if widget.isVisible() and hasattr(widget, '_cancel'):
+                widget._cancel.click()
+                return
+        C.QTimer.singleShot(50, click_cancel)
+
     def enter_text(win, message, **kwargs):
-        events.append({'asked': message, 'kwargs': kwargs, 'cancelled': True})
-        raise HydrusExceptions.CancelledException('Dialog cancelled.')
+        event = {'asked': message, 'kwargs': kwargs}
+        events.append(event)
+        C.QTimer.singleShot(200, click_cancel)
+        try:
+            return real_enter_text(win, message, **kwargs)
+        except BaseException as e:
+            event['raised'] = type(e).__name__
+            raise
 
     Q.EnterText = enter_text
+
+    outcome = {}
+    real_init_view = ClientController.Controller.InitView
+
+    def init_view(self):
+        try:
+            return real_init_view(self)
+        except BaseException as e:
+            outcome['boot_raised'] = type(e).__name__
+            raise
+
+    ClientController.Controller.InitView = init_view
     reached_hook = []
     try:
         hydrus_driver.run_client(db_dir, lambda session: reached_hook.append(True))
-        booted = True
     except Exception:
-        booted = False
+        pass
     with open(out, 'w') as f:
-        json.dump({'events': events, 'booted': booted and bool(reached_hook), 'gui_booted': bool(reached_hook)}, f)
+        json.dump({'events': events, 'booted': bool(reached_hook), **outcome}, f)
 
 
 def main():

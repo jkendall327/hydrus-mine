@@ -108,10 +108,10 @@
           "password_entry": true,
           "min_char_width": 36
         },
-        "cancelled": true
+        "raised": "CancelledException"
       }
     ],
     "booted": false,
-    "gui_booted": false
+    "boot_raised": "DBCredentialsException"
   }
 }

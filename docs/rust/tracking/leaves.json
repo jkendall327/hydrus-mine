@@ -23072,7 +23072,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "Claude session (#97 phase 2, w4-r4b)",
-    "note": "gui/unlock.rs cancelling_the_password_dialog_opens_nothing replays text_entry_checks.json password_cancel (the reference boot with the dialog cancelled: asked once, nothing else said, not booted): the dialog shows the recorded question, its cancel button is clicked, the window closes and the client is not opened. The binary's exit path after cancel is not run by a test."
+    "note": "gui/unlock.rs cancelling_the_password_dialog_opens_nothing_and_the_process_says_why replays text_entry_checks.json password_cancel (record_text_entry_checks.py --cancel: the reference's real password dialog put up on boot and its cancel button clicked: asked once with the gate's arguments, CancelledException out of the dialog, DBCredentialsException out of the boot, nothing else shown, not booted). The native window shows the recorded question, a blank entry warns and stays (allow_blank false), its cancel button is clicked, the window closes and the client is not opened; then finish_locked (the tail main.rs runs when no client opened) clears the running marker and returns the 'locked' error. Exit status is hydrus-rs's (error, non-zero); the recording does not capture the reference's exit code."
    }
   },
   {
