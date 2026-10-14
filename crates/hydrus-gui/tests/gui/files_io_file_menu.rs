@@ -680,9 +680,6 @@ fn checking_and_running_folders_from_the_file_menu_flags_and_says_what_the_refer
     assert_eq!(seen, 10);
 }
 
-// leaf: audit-options-menu-menu-file-exit
-// leaf: audit-options-menu-menu-file-restart
-// leaf: audit-options-menu-menu-file-exit-force-maintenance
 #[test]
 fn exit_restart_and_force_maintenance_replay_the_references_questions_and_outcomes() {
     let _turn = RESTART_FLAG
