@@ -1227,7 +1227,7 @@ pub fn open_jobs(store: Arc<Store>, slots: &Slots) -> Result<NetworkJobsWindow, 
         ("position", 150.0),
         ("url", 350.0),
         ("status", 290.0),
-        ("speed", 95.0),
+        ("current speed", 95.0),
         ("progress", 110.0),
     ]));
     let state = Rc::new(Jobs {
