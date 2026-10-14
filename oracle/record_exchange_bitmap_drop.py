@@ -78,7 +78,14 @@ def record(session):
             grey = QG.QImage(path)
             rgb = grey.convertToFormat(QG.QImage.Format.Format_RGB888)
             rgba = grey.convertToFormat(QG.QImage.Format.Format_RGBA8888)
-            return {'grey': grey, 'rgb': rgb, 'rgba': rgba}
+            # the other channels and the alpha differ from the first: the
+            # reference reads only the first channel of what it is given
+            varied = QG.QImage(grey.width(), grey.height(), QG.QImage.Format.Format_RGBA8888)
+            for y in range(grey.height()):
+                for x in range(grey.width()):
+                    value = QG.QColor(grey.pixel(x, y)).red()
+                    varied.setPixelColor(x, y, QG.QColor(value, (value * 7 + 40) % 256, 255 - value, 100 + (x + y) % 100))
+            return {'grey': grey, 'rgb': rgb, 'rgba': rgba, 'varied': varied}
 
         try:
             # one downloader package and one subscription bundle, as hydrus PNGs
@@ -258,9 +265,12 @@ def main():
         with open(output) as f:
             result = json.load(f)
         # (paths in the messages are relative to the fixtures directory)
+        import re
         text = json.dumps(result, ensure_ascii=False, indent=2).replace(
             json.dumps(os.path.join(HERE, 'fixtures'))[1:-1], '{dir}'
         )
+        # (the reference's temporary copy of a file it reads is random)
+        text = re.sub(r'/tmp/hydrus[0-9a-z_]+/serialised_png_[0-9a-z_]+', '{temp}', text)
         with open(os.path.join(HERE, 'fixtures/exchange_bitmap_drop.json'), 'w') as f:
             f.write(text + '\n')
 

@@ -35,8 +35,12 @@ fn path_of(name: &str) -> String {
     fixtures().join(name).to_string_lossy().into_owned()
 }
 
-/// The pixels of a fixture PNG as the clipboard holds an image: RGBA, grey
-/// values in every colour channel, as `kind` says.
+/// The pixels of a fixture PNG as the clipboard holds an image (always RGBA
+/// here, whatever the source's format was): "grey" has its grey value in
+/// every colour channel and is opaque, which is what the reference's grey,
+/// RGB and RGBA images all give; "varied" has other values in the other
+/// channels and the alpha, as the recorder's does, and only the first
+/// channel is the payload.
 fn bitmap(name: &str, kind: &str) -> ClipboardImage {
     let file = std::fs::File::open(fixtures().join(name)).unwrap();
     let mut decoder = png::Decoder::new(std::io::BufReader::new(file));
@@ -45,16 +49,25 @@ fn bitmap(name: &str, kind: &str) -> ClipboardImage {
     let mut pixels = vec![0; reader.output_buffer_size().unwrap()];
     let info = reader.next_frame(&mut pixels).unwrap();
     let channels = info.color_type.samples();
+    let width = info.width as usize;
     let rgba: Vec<u8> = pixels[..info.buffer_size()]
         .chunks_exact(channels)
-        .flat_map(|p| match (channels, kind) {
-            (1, _) => [p[0], p[0], p[0], 255],
-            (3, _) => [p[0], p[1], p[2], 255],
-            _ => [p[0], p[1], p[2], p[3]],
+        .enumerate()
+        .flat_map(|(i, p)| {
+            let v = p[0];
+            match kind {
+                "varied" => [
+                    v,
+                    ((u32::from(v) * 7 + 40) % 256) as u8,
+                    255 - v,
+                    (100 + (i % width + i / width) % 100) as u8,
+                ],
+                _ => [v, v, v, 255],
+            }
         })
         .collect();
     ClipboardImage {
-        width: info.width as usize,
+        width,
         height: info.height as usize,
         rgba,
     }
@@ -90,11 +103,9 @@ fn downloader_import_takes_a_clipboard_bitmap_and_dropped_pngs_like_the_referenc
     let _windows = headless::init();
     let reference = reference();
     let cases = &reference["downloader_import"];
-    for (kind, case) in [
-        ("grey", "paste_grey"),
-        ("rgb", "paste_rgb"),
-        ("rgba", "paste_rgba"),
-    ] {
+    // (the reference's grey, RGB and RGBA images are the same RGBA pixels
+    // from the clipboard here, so "grey" stands for all three)
+    for (kind, case) in [("grey", "paste_grey"), ("varied", "paste_varied")] {
         let (_dirs, store) = store();
         let slots = windows::Slots::default();
         let window = windows::package(&store, &slots, true).unwrap();
@@ -129,7 +140,7 @@ fn downloader_import_takes_a_clipboard_bitmap_and_dropped_pngs_like_the_referenc
         let (_dirs, store) = store();
         let slots = windows::Slots::default();
         let window = windows::package(&store, &slots, true).unwrap();
-        let image = bitmap("exchange_bitmap_plain.png", "rgb");
+        let image = bitmap("exchange_bitmap_plain.png", "grey");
         hydrus_gui::set_clipboard_image_reader(move || Some(image.clone()));
         window.invoke_action("paste".into());
         assert_eq!(
@@ -281,7 +292,7 @@ fn subscriptions_list_takes_a_clipboard_bitmap_and_dropped_pngs_like_the_referen
         let ui = MainWindow::new().unwrap();
         let bound = bind(&ui, Pages::open(store.clone()).unwrap());
         let dialog = open_dialog(&ui, &bound);
-        let image = bitmap("exchange_bitmap_plain.png", "rgb");
+        let image = bitmap("exchange_bitmap_plain.png", "grey");
         hydrus_gui::set_clipboard_image_reader(move || Some(image.clone()));
         dialog.invoke_exchange_mode(3);
         let expected = &cases["clipboard_plain"]["messages"][0];
@@ -377,7 +388,7 @@ fn subscriptions_list_takes_a_clipboard_bitmap_and_dropped_pngs_like_the_referen
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let dialog = open_dialog(&ui, &bound);
-    let image = bitmap("exchange_bitmap_plain.png", "rgb");
+    let image = bitmap("exchange_bitmap_plain.png", "grey");
     hydrus_gui::set_clipboard_image_reader(move || Some(image.clone()));
     dialog.invoke_exchange_mode(3);
     let before = asked(&dialog);

@@ -103,6 +103,33 @@
         ]
       ]
     ],
+    "varied": [
+      [
+        "clipboard image data",
+        [
+          26,
+          3,
+          [
+            [
+              2,
+              [
+                69,
+                "bitmap gallery",
+                1,
+                [
+                  "a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3",
+                  "https://bitmap.example/search/%tags%",
+                  "%tags%",
+                  "+",
+                  "search tags",
+                  "blue_eyes blonde_hair"
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ],
     "plain": "Problem pasting image! Full error written to log; The image loaded, but it did not seem to be a hydrus serialised png! The error was: Exception('Payload bytes were invalid!')\n\nIf you believe this is a legit non-resized, non-converted hydrus serialised png, please send it to hydrus_dev.",
     "text": [
       [
@@ -149,6 +176,24 @@
       ]
     },
     "paste_rgba": {
+      "gugs": [
+        "bitmap gallery"
+      ],
+      "questions": [
+        {
+          "message": "The client is about to add and link these objects:\n\nDownloader \"bitmap gallery\" - bitmap.example\n\nDoes that sound good?",
+          "title": "Are you sure?",
+          "accepted": true
+        }
+      ],
+      "messages": [
+        [
+          "information",
+          "Successfully added 1 new downloaders and 0 auxiliary objects."
+        ]
+      ]
+    },
+    "paste_varied": {
       "gugs": [
         "bitmap gallery"
       ],
@@ -302,6 +347,18 @@
       ],
       "questions": []
     },
+    "clipboard_varied": {
+      "names": [
+        "Bitmap artist"
+      ],
+      "messages": [
+        [
+          "information",
+          "1 objects added!"
+        ]
+      ],
+      "questions": []
+    },
     "clipboard_plain": {
       "names": [],
       "messages": [
@@ -423,7 +480,7 @@
         [
           "critical",
           "Problem importing!",
-          "Cannot file-mirror \"{dir}/exchange_bitmap_missing.png\" to \"/tmp/hydrusp5lcvknm/serialised_png_bd6gdkf2\"--the source does not exist!"
+          "Cannot file-mirror \"{dir}/exchange_bitmap_missing.png\" to \"{temp}\"--the source does not exist!"
         ]
       ],
       "questions": [
@@ -453,7 +510,7 @@
               87,
               3,
               [
-                "4de5234fed6afa12f5f8b715a15989fa664e17f9810597684d4d8852934696ba",
+                "1a0ead7880110e052b97874c649a95206165dc789a6d492f8d3d25b5c915c873",
                 "blue_eyes",
                 "blue artist",
                 false,
@@ -531,7 +588,7 @@
             2,
             [
               86,
-              "4de5234fed6afa12f5f8b715a15989fa664e17f9810597684d4d8852934696ba",
+              "1a0ead7880110e052b97874c649a95206165dc789a6d492f8d3d25b5c915c873",
               1,
               [
                 [

@@ -6210,6 +6210,12 @@ pub(crate) fn clipboard_image() -> Option<ClipboardImage> {
     if let Some(reader) = CLIPBOARD_IMAGE_READER.with(|reader| reader.borrow().clone()) {
         return reader();
     }
+    // (a test that substitutes the clipboard's text has no bitmap there)
+    if CLIPBOARD_READER.with(|reader| reader.borrow().is_some())
+        || PASTER.with(|p| p.borrow().is_some())
+    {
+        return None;
+    }
     let image = arboard::Clipboard::new().ok()?.get_image().ok()?;
     Some(ClipboardImage {
         width: image.width,

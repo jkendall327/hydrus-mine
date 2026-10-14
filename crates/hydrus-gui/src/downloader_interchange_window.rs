@@ -570,21 +570,23 @@ fn open_objects<T: Clone + 'static>(
                         w.set_ready(false);
                         w.set_review("".into());
                     }
-                    "paste" if importing && codec.drops && crate::clipboard_image().is_some() => {
+                    "paste" if importing && codec.drops => {
                         // (the reference's IngestClipboard: a bitmap is a hydrus PNG)
-                        let png = crate::exchange_bitmap::clipboard_png()
-                            .ok_or_else(|| "No bitmap on the clipboard!".to_owned())??;
-                        load_sources(
-                            &w,
-                            &codec,
-                            review.as_ref().as_ref(),
-                            &pending,
-                            vec![Source::Png(
-                                png,
-                                "Problem pasting image! Full error written to log; ".into(),
-                            )],
-                        )
-                        .map_err(|e| pasted_error(&e))?;
+                        if let Some(png) = crate::exchange_bitmap::clipboard_png() {
+                            load_sources(
+                                &w,
+                                &codec,
+                                review.as_ref().as_ref(),
+                                &pending,
+                                vec![Source::Png(
+                                    png?,
+                                    "Problem pasting image! Full error written to log; ".into(),
+                                )],
+                            )
+                            .map_err(|e| pasted_error(&e))?;
+                        } else {
+                            w.set_text(crate::from_clipboard()?.into());
+                        }
                     }
                     "paste" => w.set_text(crate::from_clipboard()?.into()),
                     "copy" if !w.get_text().is_empty() => {

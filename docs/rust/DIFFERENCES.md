@@ -898,8 +898,7 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   `arboard`, which on Linux sees an image only when the owning program offers
   one in a format it knows, and cannot tell "no image" from "could not read
   it" (the reference's separate "Problem loading from clipboard" is only
-  reached when the PNG encoding fails). Python's own words in the messages of
-  a file that will not open are the operating system's here. Historical file-cache
+  reached when the PNG encoding fails). The reference's words for a dropped file that is not there are hydrus's own ("Cannot file-mirror ... the source does not exist!"); here the downloader window and the list say the operating system's. The downloader window shows a review of what a paste or drop brought and asks on "import", where the reference asks its final question at once. Not checked against the reference: its "Pasted N items!" notification, its "select objects from list" choice on a paste or drop, and the "problem importing!" dialog title (here a line of the window). Winit's own delivery of a dropped file to these windows is not tested (only the files it would hand over). Historical file-cache
   versions 1–7 now upgrade within the exchange codec, with recorded order,
   timestamp, note, count and example preservation. A repeated seed in a
   historical cache is dropped, first one winning, as the reference does when it
