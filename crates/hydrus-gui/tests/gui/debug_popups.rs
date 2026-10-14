@@ -411,23 +411,18 @@ fn cancelling_the_modal_popup_stops_its_countdown() {
     }
     release.send(()).unwrap();
     // (the next second: the job is dismissed without its words moving on)
-    let mut dismissed = false;
-    wait_for("dismissed", 30, || match read() {
-        Some(job) => {
-            assert_eq!(
-                job.status_text_1.as_deref(),
-                Some(text_at_cancel.as_str()),
-                "never moves past the cancel"
-            );
-            assert_eq!(job.popup_gauge_1, first.popup_gauge_1, "never moves");
-            false
-        }
-        None => {
-            dismissed = true;
-            true
-        }
+    wait_for("dismissed", 30, || {
+        let Some(job) = read() else {
+            return true;
+        };
+        assert_eq!(
+            job.status_text_1.as_deref(),
+            Some(text_at_cancel.as_str()),
+            "never moves past the cancel"
+        );
+        assert_eq!(job.popup_gauge_1, first.popup_gauge_1, "never moves");
+        false
     });
-    assert!(dismissed);
     // the reference dismissed it by its next second too
     let recorded_gap = cancelled["samples"]
         .as_array()
