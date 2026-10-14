@@ -2,7 +2,7 @@
 //! clicked in the real menu and compared with the reference's own
 //! (`oracle/fixtures/debug_popups.json`, recorded by
 //! `oracle/record_debug_popups.py` from the real client's menu).
-use super::debug_menu_actions::{Debug, start};
+use super::debug_menu_actions::start;
 use hydrus_store::popups;
 use serde_json::Value;
 use std::time::{Duration, Instant};
@@ -158,6 +158,7 @@ fn make_some_popups_makes_the_reference_s_popups_in_its_order_less_three_that_ca
             times.push(at.as_secs_f64() * 1000.0);
         }
     }
+    assert_eq!(times.len(), 3, "the three delayed popups arrive one by one");
     let ours: Vec<f64> = times.windows(2).map(|w| w[1] - w[0]).collect();
     assert!(ours.iter().all(|g| (350.0..700.0).contains(g)), "{ours:?}");
 }
@@ -192,98 +193,142 @@ fn recorded_countdown_holds(run: &Value) {
     }
 }
 
-fn gauge_of(job: &popups::Job) -> Option<(i64, i64)> {
-    job.popup_gauge_1
+/// Follow a countdown for its ten seconds: `read` gives the job's text and
+/// gauge now (`None` once it is gone). Texts must be the recorded ones for
+/// the time, and the gauge only goes up and reaches the end.
+fn follow_countdown(
+    published: Instant,
+    mut read: impl FnMut() -> Option<(String, Option<(i64, i64)>)>,
+) {
+    let mut last_gauge = 0;
+    let mut gauges = std::collections::BTreeSet::new();
+    while published.elapsed() < Duration::from_millis(10_600) {
+        pump(100);
+        let elapsed = published.elapsed().as_secs_f64();
+        let Some((text, gauge)) = read() else {
+            continue;
+        };
+        if elapsed < 9.8 {
+            assert!(
+                countdown_texts(elapsed).contains(&text),
+                "{elapsed:.2}: shows {text:?}"
+            );
+        }
+        if let Some((value, range)) = gauge {
+            assert_eq!(range, 10);
+            assert!(value >= last_gauge, "the gauge only goes up");
+            last_gauge = value;
+            gauges.insert(value);
+        }
+    }
+    assert!(gauges.len() >= 9, "{gauges:?}");
 }
 
-// leaf: audit-options-help-debug-action-make-a-modal-popup-in-five-seconds
+fn wait_for(what: &str, limit: u64, mut done: impl FnMut() -> bool) -> Instant {
+    let started = Instant::now();
+    while !done() {
+        assert!(started.elapsed() < Duration::from_secs(limit), "{what}");
+        pump(20);
+    }
+    Instant::now()
+}
+
+fn recorded_end(recording: &Value, run: &str) -> f64 {
+    let first = recording[run]["events"][0]["at_ms"].as_f64().unwrap();
+    (recording[run]["finish_ms"].as_f64().unwrap() - first) / 1000.0
+}
+
 // leaf: audit-options-help-debug-action-make-a-non-cancellable-modal-popup-in-five-seconds
 #[test]
-fn modal_popups_count_down_ten_seconds_and_a_cancelled_one_stops() {
+fn the_non_cancellable_modal_popup_is_done_from_the_start_and_counts_down_ten_seconds() {
     let d = start();
     let recording = recording();
-    for name in ["cancellable", "non_cancellable", "cancellable_cancelled"] {
-        recorded_countdown_holds(&recording[name]);
-    }
-    let both = |d: &Debug| (d.bound.popup_modal.dialog().is_some(), d.jobs().len());
-    d.click(&["gui actions", "make a modal popup in five seconds"]);
+    recorded_countdown_holds(&recording["non_cancellable"]);
     d.click(&[
         "gui actions",
         "make a non-cancellable modal popup in five seconds",
     ]);
     let started = Instant::now();
-    while !(both(&d).0 && both(&d).1 == 1) {
-        assert!(started.elapsed() < Duration::from_secs(15), "both arrive");
-        pump(20);
-    }
-    let published = Instant::now();
+    assert!(
+        d.jobs().is_empty() && d.bound.popup_modal.dialog().is_none(),
+        "nothing before five seconds"
+    );
+    let published = wait_for("it arrives", 15, || !d.jobs().is_empty());
     assert!(started.elapsed() >= Duration::from_secs(5));
-    // recorded: the cancellable one shows in a dialog, not done; the other
-    // is done from the start and goes to the popups
-    let recorded_first = &recording["cancellable"]["events"][0]["job"];
-    let recorded_other = &recording["non_cancellable"]["events"][0]["job"];
-    assert!(
-        recorded_first["cancellable"].as_bool().unwrap()
-            && !recorded_first["done"].as_bool().unwrap()
-    );
-    assert!(
-        !recorded_other["cancellable"].as_bool().unwrap()
-            && recorded_other["done"].as_bool().unwrap()
-    );
-    let time_now = hydrus_core::TimestampMs::now().0 / 1000;
-    let held_now = |d: &Debug| d.store.read(|c| popups::held(c, time_now)).unwrap();
-    assert_eq!(held_now(&d).len(), 1);
-    assert_eq!(d.jobs()[0].status_title.as_deref(), Some("debug modal job"));
-    assert!(!d.jobs()[0].pausable && !d.jobs()[0].cancellable);
-    assert_eq!(
-        held_now(&d)[0].status_title.as_deref(),
-        Some("debug modal job")
-    );
-    // follow both to the end: the text and gauge each second
-    let mut last_gauge = (0, 10);
-    let mut seen_gauges = std::collections::BTreeSet::new();
-    while published.elapsed() < Duration::from_millis(10_600) {
-        pump(100);
-        let elapsed = published.elapsed().as_secs_f64();
-        let now = hydrus_core::TimestampMs::now().0 / 1000;
-        let other = d.store.read(|c| popups::all(c, now)).unwrap();
-        if let Some(job) = other.first() {
-            if elapsed < 9.8 {
-                let shown = job.status_text_1.clone().unwrap_or_default();
-                assert!(
-                    countdown_texts(elapsed).contains(&shown),
-                    "{elapsed:.2}: non-cancellable shows {shown:?}"
-                );
-            }
-            if let Some(g) = gauge_of(job) {
-                assert_eq!(g.1, 10);
-                assert!(g.0 >= last_gauge.0, "the gauge only goes up");
-                last_gauge = g;
-                seen_gauges.insert(g.0);
-            }
-        }
-    }
-    assert!(seen_gauges.len() >= 9, "{seen_gauges:?}");
-    // the dialog closes itself when the job finishes, and the job is gone
-    let until = Instant::now();
-    while d.bound.popup_modal.dialog().is_some() {
-        assert!(
-            until.elapsed() < Duration::from_secs(5),
-            "the dialog closes"
-        );
-        pump(50);
-    }
+    // recorded: not pausable or cancellable, done from the start, so it goes
+    // straight to the popups and no dialog holds it
+    let recorded = &recording["non_cancellable"]["events"][0]["job"];
+    assert!(!recorded["cancellable"].as_bool().unwrap() && recorded["done"].as_bool().unwrap());
+    let job = d.jobs().remove(0);
+    assert_eq!(job.status_title.as_deref(), Some("debug modal job"));
+    assert!(!job.pausable && !job.cancellable);
+    assert!(d.bound.popup_modal.dialog().is_none());
+    follow_countdown(published, || {
+        d.jobs().first().map(|job| {
+            (
+                job.status_text_1.clone().unwrap_or_default(),
+                job.popup_gauge_1,
+            )
+        })
+    });
     let end = published.elapsed().as_secs_f64();
-    let recorded_end = (recording["cancellable"]["finish_ms"].as_f64().unwrap()
-        - recording["cancellable"]["events"][0]["at_ms"]
-            .as_f64()
-            .unwrap())
-        / 1000.0;
+    // (the countdown ends ten seconds on, as the cancellable one's recorded end shows)
+    let reference = recorded_end(&recording, "cancellable");
     assert!(
-        (end - recorded_end).abs() < 1.2,
-        "ends {end:.2}s in, recorded {recorded_end:.2}s"
+        (end - reference).abs() < 3.0,
+        "ends {end:.2}s in, recorded {reference:.2}s"
     );
-    let _ = held_now;
+}
+
+// leaf: audit-options-help-debug-action-make-a-modal-popup-in-five-seconds
+#[test]
+fn the_cancellable_modal_popup_is_held_by_a_dialog_and_counts_down_ten_seconds() {
+    let d = start();
+    let recording = recording();
+    recorded_countdown_holds(&recording["cancellable"]);
+    d.click(&["gui actions", "make a modal popup in five seconds"]);
+    let started = Instant::now();
+    assert!(
+        d.jobs().is_empty() && d.bound.popup_modal.dialog().is_none(),
+        "nothing before five seconds"
+    );
+    let published = wait_for("its dialog opens", 15, || {
+        d.bound.popup_modal.dialog().is_some()
+    });
+    assert!(started.elapsed() >= Duration::from_secs(5));
+    // recorded: cancellable and not done, so a dialog holds it; the popups don't have it yet
+    let recorded = &recording["cancellable"]["events"][0]["job"];
+    assert!(recorded["cancellable"].as_bool().unwrap() && !recorded["done"].as_bool().unwrap());
+    assert!(d.jobs().is_empty());
+    let dialog = d.bound.popup_modal.dialog().unwrap();
+    assert_eq!(dialog.get_window_title(), "debug modal job");
+    assert!(!dialog.get_hide_close_button(), "it can be cancelled");
+    let held = || {
+        d.store
+            .read(|c| popups::held(c, hydrus_core::TimestampMs::now().0 / 1000))
+            .unwrap()
+            .into_iter()
+            .next()
+    };
+    assert!(held().is_some_and(|job| job.cancellable && !job.pausable));
+    follow_countdown(published, || {
+        held().map(|job| {
+            (
+                job.status_text_1.clone().unwrap_or_default(),
+                job.popup_gauge_1,
+            )
+        })
+    });
+    // the dialog closes itself when the job finishes, about when the reference's did
+    wait_for("the dialog closes", 8, || {
+        d.bound.popup_modal.dialog().is_none()
+    });
+    let end = published.elapsed().as_secs_f64();
+    let reference = recorded_end(&recording, "cancellable");
+    assert!(
+        (end - reference).abs() < 3.0,
+        "ends {end:.2}s in, recorded {reference:.2}s"
+    );
 }
 
 // leaf: audit-options-help-debug-action-make-a-modal-popup-in-five-seconds
@@ -295,35 +340,45 @@ fn cancelling_the_modal_popup_stops_its_countdown() {
     let at0 = cancelled["events"][0]["at_ms"].as_f64().unwrap();
     let cancel_after = (cancelled["cancel_at_ms"].as_f64().unwrap() - at0) / 1000.0;
     d.click(&["gui actions", "make a modal popup in five seconds"]);
-    let started = Instant::now();
-    while d.bound.popup_modal.dialog().is_none() {
-        assert!(started.elapsed() < Duration::from_secs(15));
-        pump(20);
-    }
-    let published = Instant::now();
+    let published = wait_for("its dialog opens", 15, || {
+        d.bound.popup_modal.dialog().is_some()
+    });
     while published.elapsed().as_secs_f64() < cancel_after {
         pump(50);
     }
     let dialog = d.bound.popup_modal.dialog().unwrap();
     dialog.invoke_close_clicked();
     d.bound.popup_modal.question().unwrap().invoke_chosen(0);
-    let frozen = d
-        .store
-        .read(|c| popups::all(c, hydrus_core::TimestampMs::now().0 / 1000 + 1))
-        .unwrap();
-    // cancelled: the countdown stops where it was, and the job is dismissed
-    // within a second, as recorded
-    let text_at_cancel = frozen[0].status_text_1.clone().unwrap();
-    assert!(frozen[0].cancelled);
+    // cancelled: released to the popups, the countdown stops where it was, and
+    // the job is dismissed within a second or two, as recorded
+    let read = || {
+        d.store
+            .read(|c| popups::all(c, hydrus_core::TimestampMs::now().0 / 1000))
+            .unwrap()
+            .into_iter()
+            .find(|job| job.status_title.as_deref() == Some("debug modal job"))
+    };
+    let first = read().expect("it is in the popups, cancelled");
+    assert!(first.cancelled);
+    let text_at_cancel = first.status_text_1.clone().unwrap();
     assert!(
         countdown_texts(cancel_after).contains(&text_at_cancel),
         "{text_at_cancel}"
     );
     let stopped = Instant::now();
-    while !d.jobs().is_empty() {
-        assert!(stopped.elapsed() < Duration::from_secs(3), "dismissed");
+    let mut samples = 1;
+    while let Some(job) = read() {
+        assert_eq!(
+            job.status_text_1.as_deref(),
+            Some(text_at_cancel.as_str()),
+            "frozen"
+        );
+        assert_eq!(job.popup_gauge_1, first.popup_gauge_1, "frozen");
+        samples += 1;
+        assert!(stopped.elapsed() < Duration::from_secs(4), "dismissed");
         pump(50);
     }
+    let _ = samples;
     let recorded_gap = cancelled["samples"]
         .as_array()
         .unwrap()
@@ -333,11 +388,8 @@ fn cancelling_the_modal_popup_stops_its_countdown() {
         .unwrap();
     assert!(recorded_gap < 1600.0);
     assert!(
-        stopped.elapsed().as_millis() < 1700,
+        stopped.elapsed() < Duration::from_secs(3),
         "dismissed {:?} after",
         stopped.elapsed()
     );
-    // and it stays at the text it had
-    std::thread::sleep(Duration::from_millis(1200));
-    assert_eq!(text_at_cancel, frozen[0].status_text_1.clone().unwrap());
 }

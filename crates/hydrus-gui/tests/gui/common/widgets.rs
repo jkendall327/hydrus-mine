@@ -114,6 +114,18 @@ pub fn click_at(window: &slint::Window, position: LogicalPosition, button: Point
     settle();
 }
 
+/// Toggle the check box labelled `label` the way assistive technology
+/// does (its default action); the pointer path is `click`.
+pub fn toggle(window: &slint::Window, label: &str) {
+    settle();
+    let found = labelled(window, label);
+    let (item, _) = found
+        .first()
+        .unwrap_or_else(|| panic!("no visible widget labelled {label:?}"));
+    item.accessible_action(&i_slint_core::accessibility::AccessibilityAction::Default);
+    settle();
+}
+
 /// Click (left) the visible widget labelled `label`; there must be one.
 pub fn click(window: &slint::Window, label: &str) {
     click_nth(window, label, 0);

@@ -133,6 +133,7 @@ fn real_close_questions_cancel_and_undo_preserve_nested_trees_and_session_exempt
 }
 
 // leaf: audit-options-gui-pages-navigation-and-drag-and-drop-maximum-entries-to-show-in-page-navigation-history
+// leaf: audit-options-gui-pages-navigation-and-drag-and-drop-when-switching-to-pages-move-keyboard-focus-to-any-text-input-field
 #[test]
 fn applied_controls_reopen_and_drive_history_and_search_focus() {
     let windows = headless::init();
@@ -258,6 +259,7 @@ fn applied_controls_reopen_and_drive_history_and_search_focus() {
     }
 }
 
+// leaf: audit-options-gui-pages-navigation-and-drag-and-drop-when-switching-to-pages-move-keyboard-focus-to-any-text-input-field
 #[test]
 fn switching_to_each_importer_focuses_its_actual_query_or_url_text_input() {
     let windows = headless::init();

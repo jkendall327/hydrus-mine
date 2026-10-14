@@ -86,48 +86,110 @@ fn confirmed_revert_removes_only_that_override() {
     review.invoke_close_clicked();
 }
 
+/// A recorded context ([kind, data]) as the native one.
+fn recorded_context(c: &serde_json::Value) -> NetworkContext {
+    match (c[0].as_i64().unwrap(), c[1].as_str()) {
+        (0, _) => NetworkContext::global(),
+        (2, Some(domain)) => NetworkContext::domain(domain),
+        (kind, None) => NetworkContext::default_of_kind(kind),
+        other => panic!("{other:?}"),
+    }
+}
+
+/// A context's rules in the recording's order (data before requests, by span).
+fn sorted(rules: &[Rule]) -> Vec<Rule> {
+    let mut rules = rules.to_vec();
+    rules.sort_by_key(|r| (r.kind as i64, r.time_delta, r.max_allowed));
+    rules
+}
+
+fn recorded_rules(rows: &serde_json::Value) -> Vec<(NetworkContext, Rules)> {
+    rows.as_array()
+        .unwrap()
+        .iter()
+        .map(|row| {
+            let rules = row["rules"].as_array().unwrap().iter().map(|r| {
+                Rule::new(
+                    BandwidthType::from_code(r[0].as_i64().unwrap()).unwrap(),
+                    r[1].as_u64(),
+                    r[2].as_u64().unwrap(),
+                )
+            });
+            (recorded_context(&row["context"]), Rules::new(rules))
+        })
+        .collect()
+}
+
 // leaf: bandwidth-reset-default
 #[test]
-fn confirmed_reset_defaults_keeps_specific_overrides() {
+fn reset_defaults_replays_the_reference_s_reset_button() {
+    // oracle/record_bandwidth_reset.py: the real button on a real manager
+    let recorded = hydrus_testkit::fixture_json("bandwidth_reset.json");
+    let before = recorded_rules(&recorded["before"]);
     let _h = headless::init();
     let slots = windows::Slots::default();
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
-    let a = NetworkContext::domain("a.example.com");
-    let global = NetworkContext::global();
     store
         .write({
-            let (a, global) = (a.clone(), global.clone());
+            let before = before.clone();
             move |ctx| {
                 let mut s = settings::get::<BandwidthSettings>(ctx.conn())?;
-                s.rules.retain(|(c, _)| c != &global);
-                s.rules.push((
-                    global,
-                    Rules::new([Rule::new(BandwidthType::Requests, Some(60), 1)]),
-                ));
-                s.rules.push((
-                    a,
-                    Rules::new([Rule::new(BandwidthType::Requests, Some(60), 5)]),
-                ));
+                s.rules = before;
                 settings::set(ctx.conn(), &s)
             }
         })
         .unwrap();
+    let all_rules = |store: &Store| {
+        let mut rows: Vec<_> = store
+            .read(settings::get::<BandwidthSettings>)
+            .unwrap()
+            .rules
+            .into_iter()
+            .map(|(c, r)| (c, sorted(r.rules())))
+            .collect();
+        rows.sort_by_key(|(c, _)| (c.kind, c.data.clone()));
+        rows
+    };
+    let expected = |rows: &serde_json::Value| {
+        let mut rows: Vec<_> = recorded_rules(rows)
+            .into_iter()
+            .map(|(c, r)| (c, sorted(r.rules())))
+            .collect();
+        rows.sort_by_key(|(c, _)| (c.kind, c.data.clone()));
+        rows
+    };
     let review = windows::open_bandwidth(store.clone(), &slots).unwrap();
     until(|| review.get_status().contains("offline"));
+    let (no, yes) = (&recorded["cases"][0], &recorded["cases"][1]);
+    assert_eq!(no["answer"], "no");
+    // asked the recorded question; "no" changes nothing
     review.invoke_reset_clicked();
-    assert!(!review.get_question().is_empty());
-    review.invoke_answer(false);
-    assert_eq!(rules_of(&store, &global).unwrap().len(), 1);
-    review.invoke_reset_clicked();
-    review.invoke_answer(true);
-    until(|| {
-        rules_of(&store, &global) != Some(vec![Rule::new(BandwidthType::Requests, Some(60), 1)])
-    });
     assert_eq!(
-        rules_of(&store, &a),
-        Some(vec![Rule::new(BandwidthType::Requests, Some(60), 5)])
+        review.get_question(),
+        no["questions"][0]["message"].as_str().unwrap()
     );
+    review.invoke_answer(false);
+    assert_eq!(all_rules(&store), expected(&no["after"]));
+    // "yes": global and every default context the reference names are reset;
+    // specific domains and the other defaults are left alone
+    review.invoke_reset_clicked();
+    assert_eq!(
+        review.get_question(),
+        yes["questions"][0]["message"].as_str().unwrap()
+    );
+    review.invoke_answer(true);
+    let want = expected(&yes["after"]);
+    let start = std::time::Instant::now();
+    while all_rules(&store) != want {
+        assert!(
+            start.elapsed() < std::time::Duration::from_secs(8),
+            "{:#?}\nagainst\n{want:#?}",
+            all_rules(&store)
+        );
+        slint::platform::update_timers_and_animations();
+        std::thread::sleep(std::time::Duration::from_millis(10));
+    }
     review.invoke_close_clicked();
 }
 
@@ -262,4 +324,58 @@ fn cookie_editor_expiry_modes_validate_and_persist() {
         .unwrap();
     assert_eq!(stored[0].expires, None);
     assert_eq!(stored[0].name, "sid");
+}
+
+// leaf: bandwidth-rule-list
+#[test]
+fn the_rules_editor_lists_rules_as_the_references_does() {
+    let recorded = hydrus_testkit::fixture_json("network_data.json");
+    let _h = headless::init();
+    let slots = windows::Slots::default();
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let review = windows::open_bandwidth(store.clone(), &slots).unwrap();
+    until(|| review.get_status().contains("offline"));
+    review.set_domain("example.com".into());
+    review.invoke_domain_clicked();
+    let edit = windows::last_rules().unwrap();
+    // the domain starts on the default rules; take them out, then add the
+    // rules the recorder gave the reference's editor, one by one
+    edit.invoke_row_clicked(0, false, false);
+    for i in 1..edit.get_rows().row_count() {
+        edit.invoke_row_clicked(i32::try_from(i).unwrap(), true, false);
+    }
+    edit.invoke_delete_rule();
+    assert_eq!(edit.get_rows().row_count(), 0);
+    for rule in recorded["rule_values"].as_array().unwrap() {
+        let requests = rule[0] == 1;
+        edit.set_requests(requests);
+        edit.set_monthly(rule[1].is_null());
+        edit.set_amount(rule[2].to_string().into());
+        if !rule[1].is_null() {
+            edit.set_seconds(rule[1].to_string().into());
+        }
+        edit.invoke_add_rule();
+        assert!(edit.get_error().is_empty(), "{}", edit.get_error());
+    }
+    let shown: Vec<Vec<String>> = edit
+        .get_rows()
+        .iter()
+        .map(|r| r.cells.iter().map(|c| c.to_string()).collect())
+        .collect();
+    let theirs: Vec<Vec<String>> = recorded["rule_rows"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|r| {
+            r.as_array()
+                .unwrap()
+                .iter()
+                .map(|c| c.as_str().unwrap().to_owned())
+                .collect()
+        })
+        .collect();
+    assert_eq!(shown, theirs);
+    edit.invoke_cancel_clicked();
+    review.invoke_close_clicked();
 }

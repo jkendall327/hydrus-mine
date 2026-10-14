@@ -97,7 +97,10 @@ impl Normaliser {
         Self {
             base: base.to_owned(),
             time: regex::Regex::new(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}").unwrap(),
-            ago: regex::Regex::new(r"which was .*? ago").unwrap(),
+            // (how long ago a file was imported depends on how fast the run
+            // is: the reference's "now" when it was in the same second, else
+            // "N seconds ago" and so on)
+            ago: regex::Regex::new(r"which was (?:now|.*? ago)").unwrap(),
         }
     }
 

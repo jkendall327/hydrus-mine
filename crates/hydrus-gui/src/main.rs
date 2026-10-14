@@ -84,11 +84,7 @@ fn main() -> Result<()> {
         return Err(e);
     }
     let Some(client) = client.take() else {
-        run.finish()
-            .context("clearing the cancelled startup marker")?;
-        return Err(anyhow!(
-            "the client is locked, and its password wasn't entered"
-        ));
+        return hydrus_gui::finish_locked(run);
     };
     save(&mut client.bound.pages.borrow_mut()).context("saving the session")?;
     // (closed pages don't outlive the client; their downloads go with them)
@@ -99,13 +95,9 @@ fn main() -> Result<()> {
     drop(client);
     drop(open_guard);
     // File > restart: start again, now this client has let go of the store
-    if hydrus_gui::client_exit::RESTART.load(std::sync::atomic::Ordering::SeqCst) {
-        let exe = std::env::current_exe().context("finding this program to restart it")?;
-        std::process::Command::new(exe)
-            .args(std::env::args_os().skip(1))
-            .spawn()
-            .context("restarting the client")?;
-    }
+    let exe = std::env::current_exe().context("finding this program to restart it")?;
+    hydrus_gui::client_exit::relaunch_if_requested(&exe, std::env::args_os().skip(1))
+        .context("restarting the client")?;
     Ok(())
 }
 

@@ -87,8 +87,13 @@ page or file, as a downloader page shows one), a button to show its files
 in a new page
 (named for them), its error's traceback, and buttons to pause or cancel
 it while it runs; a right click dismisses one that is done, and the line
-under them counts them, with "dismiss all" (those done) and an arrow to
-hide or show them. They update four times a second.
+under them counts them, with "dismiss all" (those done) and an arrow (▼
+while the cards show, ▲ while they are hidden, as the reference's) to hide or
+show them. They update four times a second. What a card shows for a job (its
+title, two texts, two gauges that are filled or pulsing, what a pause hides,
+the start of a traceback, a text past 1,024 characters cut as the reference
+cuts it) is checked against a recording of the reference's card for the same
+jobs (`oracle/fixtures/popup_content.json`).
 A long job can be published as modal (`src/popup_modal.rs`,
 `hydrus-gui-model/src/popup_modal.rs`; Help > debug > "make a modal popup in
 five seconds"), as the reference's `AddModalMessage`: it is kept out of the
@@ -821,13 +826,17 @@ does: #, path, filetype ("png", "PROBLEM: filetype unsupported", "file is
 empty", "file is missing", "sidecar") and size, the problem rows in the
 reference's error colour; under it, "6 files parsed - 4 good | 1 bad: 1
 had unsupported file types - and looks like 1 txt/json/xml sidecars." and
-a gauge, with pause/play and stop while it parses. "remove files" takes
+a gauge, with pause/play and stop while it parses (paused with a path still to
+parse, then resumed; stopped with paths still to parse, which are dropped while
+the parsed rows stay: `oracle/fixtures/local_import_pause.json`). "remove files" takes
 the selected rows out (asking first), and "delete original files after
 successful import" says, in the reference's red, that they will be
 deleted. "import now" opens an "import" page of the good files, in the
-list's order. Paths go in through the box over the list (enter adds one,
-a file or folder, as typed or pasted with a file manager's quotes) in
-place of the reference's "add files"/"add folder" pickers.
+list's order, which deletes each original once it is in the database (new or
+already there) if the box was ticked (`oracle/fixtures/local_import_queue.json`).
+Paths go in through the box over the list (enter adds one, a file or folder,
+as typed or pasted with a file manager's quotes) in place of the reference's
+"add files"/"add folder" pickers.
 
 "add tags/urls with the import >>" opens the "filename tagging" dialog
 (`src/filename_tagging_window.rs`, `hydrus-gui-model/src/filename_tagging.rs`),
@@ -890,7 +899,9 @@ or resume each selected search's files or its search, retry their ignored
 or failed files, and remove them, asking first as the reference does
 ("Remove the 2 selected queries?", saying how many are still working and
 that the page will be cleared if the one shown is among them). Each
-search keeps the file limit and import options it was made with; while a
+search keeps the file limit and import options it was made with (a search
+that has reached its limit says "hit file limit" in the shown search's
+status, as the reference's does, until the limit is raised); while a
 selected one's differ from the page's, "update selected with current
 options" shows under the file limit, and gives them the page's, asking
 first as the reference does. Queries typed into its box
@@ -2029,10 +2040,22 @@ its timer renews), and the first request opens the permissions editor with what 
 tool asked for and the key it was given. Permission editors expose all 14 basic permissions,
 full access, the reusable permitted-search-tags filter and explicit key rotation
 with validation/collision refusal. List and nested edits remain detached until
-Apply; Cancel and closing service review cancel their descendants. Real Qt
+Apply; Cancel and closing service review cancel their descendants. The key editor answers a typed key as the reference does (recorded
+in `client_api_admin.json`: spaces around it ignored, upper case kept as the same
+key, "the key you submitted was N characters long" for a wrong length, "did not
+seem to be hexadecimal"), and a key edited onto another entry's is refused with
+its "key collision" words. Real Qt
 controls/questions are recorded in `client_api_admin.json`; actual native-store
 GUI regressions render `client_api_keys.png`, `client_api_permissions.png` and
 `client_api_service.png` during the GUI test batch.
+
+Manage services' add button offers the reference's local kinds in its order
+(local tag domain, local file domain, like/dislike, numerical and inc/dec
+rating services; repositories and the rest are not offered), opening each
+as "new service"; an accepted name that matches another service's ignoring case
+is numbered as the reference does ("MY TAGS (1)", "my tags (2)"), and a rating's
+border and fill colours, and its thumbnail boxes, are saved as set. Recorded in
+`services.json` and replayed through the window.
 
 Manage services edits the built-in API service with the reference's rows and
 labels: "run the client api?:", "local port:", "allow non-local connections:",
@@ -2175,7 +2198,9 @@ recorded by `oracle/record_bandwidth_history.py`. Detached rule editors add, rep
 and delete data/request limits with rolling-second or calendar-month periods.
 Apply preserves unrelated context edits and pacing settings; Cancel leaves them
 untouched. Default/global rules can be edited by kind or reset with the reference
-confirmation, and specific domains can inherit their defaults again.
+confirmation (global and every default context the reference names are reset;
+specific domains and the downloader default stay), and specific domains can
+inherit their defaults again.
 
 Current jobs show every active engine request, including subscriptions, with
 URL, status, typed wait reason, speed and progress. Extended selection supports
@@ -2184,7 +2209,10 @@ live refresh. The daemon publishes usage and jobs through typed local store IPC,
 independent of the Client API listener. Heartbeats expire after five seconds;
 offline bandwidth review falls back to saved history. Commands identify the
 reviewed daemon and request, so finished jobs or replacement daemons ignore them.
-The real Qt controls/rows/questions are recorded in `network_data.json`.
+The real Qt controls/rows/questions are recorded in `network_data.json`; the
+selected context's detail reads "Current usage" and "All time usage" and a line
+for each rule ("used 1/10 requests in the past 1 day") as the reference words
+them.
 Backend/model regressions cover cancellation, dropped futures, live overrides,
 settings reload, stale heartbeat, concurrent edits and persistence. GUI regressions
 cover draft cancellation, owner closure, invalid values, Apply/reopen and local
@@ -2212,6 +2240,9 @@ current/deleted domain scopes apply through SHA256 even between alternate archiv
 Pair filters can require real current or pending mappings on the left, right or
 either side in a chosen tag service. For siblings, the right test follows its
 chain to the terminal ideal; either-side mode disables the individual tests.
+The window's hash selector, file-domain picker, selected-files box and count gates
+are driven in the GUI tests against the reference's archives (`tag_archives.json`:
+the 40 hash conversions and 16 count cases).
 
 The window shows the reference summary and its second confirmation outside
 advanced mode. Migration runs on a worker in bounded atomic batches, with live
@@ -2235,6 +2266,17 @@ popup lifecycle, closing settings independently, exact phases/speed and cancel/
 dismissal states are recorded in `oracle/fixtures/tag_migration_progress.json`.
 
 ## Downloader definition interchange
+
+The import window's "paste" takes a bitmap on the clipboard before its text
+(the pixels are a hydrus PNG, whether the image has an alpha channel or not),
+and files dropped on the window load as the reference's import loads its
+paths: a file that is a PNG by its bytes is read as one, any other as JSON, and
+a failure says what the reference says ("Sorry, there was a problem importing
+those paths! Error was: ..."). Everything loaded joins the one review that
+"import" then asks about. The subscriptions list likewise reads a clipboard
+bitmap first, and files dropped on it ask "Try to import the N dropped files to
+this list? I am expecting json or png files." before importing, PNGs first
+(`oracle/fixtures/exchange_bitmap_drop.json`).
 
 Network > downloaders > import/export downloaders exchanges URL classes,
 page parsers, registered login scripts and single/nested gallery URL generators with the reference
@@ -4070,14 +4112,17 @@ custom sets' shortcuts run after its own set's.
 The page lists the sets as the reference does. "built-in hydrus shortcut sets"
 shows each built-in set the client has, by its pretty name in the reference's
 order, with its number of shortcuts; "edit" (or a double-click) opens that set
-with its description, and "restore defaults" offers every default set: one the
+with its description, and "restore defaults" offers every default set (in the reference's default order,
+global first, not alphabetically): one the
 client lacks is restored after saying so, one it has asks "Are you certain you
 want to restore the defaults for "…"? Any custom shortcuts you have set will be
 wiped." "custom user sets" explains that they are advanced, and adds ("new
 shortcuts"), edits, renames and deletes ("Remove all selected?") custom sets;
 names are made unique as "name (1)", "name (2)", and a custom set cannot take a
 built-in set's name ("That name is reserved--please pick another!", and the
-editor stays open). A "help" button shows the
+editor stays open). The page is replayed against the reference's panel (`shortcuts_panel.json`: lists, the locked
+name of a built-in set, the veto and the unique names, the restore questions).
+A "help" button shows the
 reference's help. A new client starts with the reference's eleven default sets
 (107 shortcuts); a command with data (a seek's distance, a thumbnail focus
 move) is listed with the reference's text.
@@ -4138,6 +4183,11 @@ Pages > sidebar toggles the current sidebar, saves its sizes immediately, toggle
 saving on accepted client exit, or restores saved sizes to every live page.
 Cancelling exit saves nothing. A hidden whole sidebar saves width zero and its
 last inner preview height; a separately collapsed preview keeps the saved height.
+Options > gui pages > "When closing the current tab, move focus" chooses the tab that
+takes focus when the current one closes; every tab of four closed in every selection,
+both choices, edges included (closing the first tab with "left" or the last with
+"right"), is compared with the reference's notebook (`close_focus.json`). Closing a tab
+that is not current leaves focus alone.
 Options > gui pages > preview window stages the global hide preference. Apply
 preserves concurrent size saves and the exit switch; Cancel discards the draft.
 New pages and restore/reveal consume the saved hide flag. Existing accepted preview
@@ -4778,8 +4828,9 @@ vacuum" popup ("vacuuming main", then "done!"), recording the time.
 Tags > sync > "review current sibling/parent sync" opens "tag display sync":
 the reference's explanation, a line saying when sync runs (green when it runs
 all the time, orange otherwise), and a tab (or listbook entry) per tag
-service, opened on the default tag service's and remembering a changed tab
-when the tag dialogs do. Each says "All synced!" and "N rules, all synced!"
+service (local tag services, then repositories, each by lowercase name, as the
+reference lists them), opened on the default tag service's and remembering a
+changed tab when the tag dialogs do. Each says "All synced!" and "N rules, all synced!"
 (sibling lookup rows plus parent ancestry rows, as the reference counts
 them) or "No siblings/parents applying to this service.", with a refresh
 button. Close and window X retire that review's callbacks; a retained older
@@ -4833,7 +4884,9 @@ change forgets what could be redone. `tests/model/content_undo.rs` covers it.
 
 Options > tag presentation > namespace colours now has "edit": each selected
 entry, defaults included, opens the colour picker in turn; OK recolours it in the
-draft, Cancel keeps its colour.
+draft, Cancel keeps its colour. Whichever the answer, the entry is taken out of the
+selection afterwards, as the reference's remove-and-add does (recorded in
+`namespace_colour_controls.json`, `edit_cases`).
 
 Options > media playback > per-filetype handling lists each filetype's media and
 preview show actions and zoom info as the reference does, sorted by column.
@@ -4959,6 +5012,19 @@ processes write the same logs. `tests/gui/debug_profiling.rs` clicks each in
 the real menu and compares what the popups, the checks and the logs say with
 `oracle/fixtures/debug_profiling.json` and
 `oracle/fixtures/subscription_manager_snapshot.json`.
+
+Help > debug > "what is this object?" opens the reference's window: a picture
+to click (it asks for hydrus PNGs to read) or drop files on, a paste button
+(a bitmap, copied files or text), and two boxes: what each pasted object is
+and the text itself. An object is described as `Serialisable Dictionary
+(21)` with a count of what it holds ("2: <class 'int'>", the descriptions of
+nested objects), a named object with its name, and what is not one says
+"Error:" and why in Python's words. `tests/gui/debug_what_is_this.rs` pastes
+and drops what the reference's own window was given
+(`oracle/fixtures/what_is_this_object.json`), and
+`hydrus-legacy/tests/what_is_this.rs` checks every description and class
+name. Help > debug > network actions > "review current network jobs" opens
+the jobs window titled "review network jobs", as the reference's frame is.
 
 ## Pages > weight report
 
@@ -5210,9 +5276,18 @@ has been laid out where its frame grows it from its own size, and keeps its
 size and place as the reference's do: a frame as it closes, a dialog when it
 is applied (never when cancelled) (`tests/gui/frame_geometry.rs`, replaying
 `frame_state.json` through each). Every other window opens by the ordinary
-dialogs' frame (`regular_dialog`: the main window's top-left, its own size). Proven by `tests/model/frame_placement.rs` (the formulae worked from the
-reference's source) and `options_gui_frames.rs` (editing the Options window's
-own frame through the frames editor).
+dialogs' frame (`regular_dialog`: the main window's top-left, its own size),
+except the choice dialogs with choices, which open by `quick_select_dialog`
+(buttons only) or `quick_yesno_dialog` (a "no" too) and keep their size when a
+choice is made, never when cancelled; a message with no choices takes neither.
+Editing a frame's remembered size, maximised, fullscreen, gravity or default
+position in the frame locations editor reaches each of those windows the next
+time it opens, for its size and its maximised and fullscreen state (headless
+windows have no readable place, so a place is proved only through the
+arithmetic of `windows::placement`; `tests/gui/frame_geometry.rs`, through the
+Options window). Proven by `tests/model/frame_placement.rs` (the formulae
+worked from the reference's source) and `options_gui_frames.rs` (editing the
+Options window's own frame through the frames editor).
 
 **Preview window.** The preview pane draws the file's ratings at the sizes
 from Options > ratings > preview window (rounded, as the reference's

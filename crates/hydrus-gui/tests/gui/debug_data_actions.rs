@@ -138,6 +138,24 @@ fn show_env_dumps_each_recorded_environment_as_the_reference_does() {
     assert_eq!(recording["pathsep"], ":");
 }
 
+/// Open the main window's `title` menu and go down the `path` of its submenus
+/// to the line `last`, and click it.
+fn choose_in_menu(ui: &hydrus_gui::MainWindow, title: &str, path: &[&str], last: &str) {
+    use slint::Model as _;
+    let at = ui
+        .get_menu_titles()
+        .iter()
+        .position(|row| row.label == title)
+        .unwrap();
+    ui.invoke_menu_title_pressed(i32::try_from(at).unwrap(), 80.0, 22.0);
+    for (pane, label) in path.iter().chain([&last]).enumerate() {
+        let lines = ui.get_menu_panes().row_data(pane).unwrap().lines;
+        let row = lines.iter().position(|l| l.label == *label).unwrap();
+        let (pane, row) = (i32::try_from(pane).unwrap(), i32::try_from(row).unwrap());
+        ui.invoke_menu_line_clicked(pane, row, 0.0, 0.0, 0.0);
+    }
+}
+
 // leaf: audit-options-help-debug-action-save-last-session-gui-session
 #[test]
 fn save_last_session_writes_the_pages_that_are_open_now() {
@@ -182,8 +200,15 @@ fn save_last_session_writes_the_pages_that_are_open_now() {
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
-    // what the reference's "last session" is saved as at exit is lost (a
-    // crash): clear it, and the action puts the open pages back at once
+    // a page opened through the pages menu, after the session was loaded
+    choose_in_menu(&ui, "pages", &["download"], "new url download page");
+    let live = bound.pages.borrow().session().clone();
+    assert_eq!(
+        live.pages.len(),
+        open.pages.len() + 1,
+        "the new page is open"
+    );
+    // the saved 'last session' is lost (a crash): the action puts what is open back at once
     store
         .write(|ctx| sessions::delete(ctx.conn(), LAST_SESSION))
         .unwrap();
@@ -199,16 +224,12 @@ fn save_last_session_writes_the_pages_that_are_open_now() {
         .read(|c| sessions::load(c, LAST_SESSION))
         .unwrap()
         .expect("saved at once");
-    let names = |s: &Session| -> Vec<(usize, String)> {
-        s.all_pages().iter().map(|p| (0, p.name.clone())).collect()
-    };
-    assert_eq!(names(&saved), names(&open));
-    assert_eq!(saved.pages.len(), 3);
     assert_eq!(
         serde_json::to_value(&saved.pages).unwrap(),
-        serde_json::to_value(&open.pages).unwrap(),
-        "every page as it was, keys and searches too"
+        serde_json::to_value(&live.pages).unwrap(),
+        "every open page as it is, the new one too"
     );
+    assert!(saved.all_pages().iter().any(|p| p.name == "url import"));
 }
 
 // leaf: audit-options-help-debug-action-reset-multi-column-list-settings-to-default
