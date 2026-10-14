@@ -375,6 +375,22 @@ pub(super) fn capture() -> std::sync::Arc<Mutex<Vec<String>>> {
     seen
 }
 
+/// Send the reports made on this thread to a list, not the popups. For a
+/// report that is made on the calling thread: the flags and the sink are
+/// process-wide, so other tests' timers can report too (on their own
+/// threads), and those are left out.
+pub(super) fn capture_here() -> std::sync::Arc<Mutex<Vec<String>>> {
+    let seen = std::sync::Arc::new(Mutex::new(Vec::new()));
+    let sink = seen.clone();
+    let mine = std::thread::current().id();
+    debug_flags::set_sink(Some(Box::new(move |text| {
+        if std::thread::current().id() == mine {
+            sink.lock().unwrap().push(text.to_owned());
+        }
+    })));
+    seen
+}
+
 impl Debug {
     /// Whether `help > debug > report modes > label` shows checked.
     pub(super) fn report_mode_checked(&self, label: &str) -> bool {
@@ -405,12 +421,13 @@ impl Debug {
     }
 }
 
-/// Puts the network report flags and the sink back when dropped.
-struct Reset;
+/// Puts the network and idle report flags and the sink back when dropped.
+pub(super) struct Reset;
 impl Drop for Reset {
     fn drop(&mut self) {
         debug_flags::Flag::NetworkReport.set(false);
         debug_flags::Flag::NetworkReportSilent.set(false);
+        debug_flags::Flag::IdleReport.set(false);
         debug_flags::set_sink(None);
         debug_flags::set_console(None);
     }
@@ -487,7 +504,7 @@ fn daemon_report_mode_says_when_a_maintenance_daemon_does_a_job() {
     let _one = ONE_AT_A_TIME
         .lock()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
-    let seen = capture();
+    let seen = capture_here();
     let (dirs, store, files) = super::normal_time_maintenance::owned();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();

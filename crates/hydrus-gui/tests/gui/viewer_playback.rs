@@ -544,3 +544,41 @@ fn volume_and_mute_reach_the_playing_audio_as_the_reference_s_viewer_sets_them()
     }
     viewer.invoke_close_requested();
 }
+
+// leaf: audit-options-popups-modal
+#[test]
+fn a_modal_popup_pauses_the_playing_media_as_it_opens() {
+    if mpv::skip_without_libmpv() {
+        return;
+    }
+    let client = Client::basic();
+    client.import(&["webm_vp9_opus.webm"]);
+    let (sha256, _) = reference_info("webm_vp9_opus.webm");
+    // (a modal waits unless the main window is shown and active)
+    slint::ComponentHandle::show(&client.ui).unwrap();
+    client.bound.popup_modal.set_active(Some(true));
+    let viewer = client.view(&sha256);
+    assert!(settle(&|| player_of(&sha256).is_some()), "mpv plays it");
+    let player = player_of(&sha256).unwrap();
+    // (the viewer is playing: the reference's player is not paused)
+    assert!(settle(
+        &|| property(player, "pause").as_deref() == Some("no")
+    ));
+    // a held job asks for its modal dialog, which pauses all media first,
+    // as `AddModalMessage` publishes `pause_all_media`
+    let mut job = hydrus_store::popups::Job::new(false, true, 0.0);
+    job.status_title = Some("a long job".into());
+    job.held_by_modal = true;
+    let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
+    client
+        .store
+        .write(move |ctx| hydrus_store::popups::add(ctx.conn(), &job, now))
+        .unwrap();
+    assert!(
+        settle(&|| property(player, "pause").as_deref() == Some("yes")),
+        "the modal popup paused the media, with its dialog {:?}",
+        client.bound.popup_modal.dialog().is_some()
+    );
+    assert!(client.bound.popup_modal.dialog().is_some());
+    drop(viewer);
+}

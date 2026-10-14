@@ -75,7 +75,27 @@ def record(session):
             out['some_popups_two_seconds_on'] = [
                 dict(index=i, text_2=e['_job'].GetStatusText(2), gauge_2=e['_job'].GetGauge(2))
                 for i, e in enumerate(events) if e['_job'].GetStatusTitle() == 'test job']
-            for e in events:
+            # the buttons the popups carry: what each does when clicked
+            made = list(events)
+            out['user_calls'] = []
+            for e in made:
+                job = e['_job']
+                call = job.GetUserCallable()
+                if call is None:
+                    continue
+                before_pages = [p.GetName() for p in gui._notebook._GetMediaPages(False)]
+                events.clear()
+                started[0] = time.monotonic()
+                call()
+                wait_ms(700)
+                pages = [dict(name=p.GetName(), gallery=p.IsGalleryDownloaderPage())
+                         for p in gui._notebook._GetMediaPages(False)]
+                out['user_calls'].append(dict(
+                    title=job.GetStatusTitle(), label=call.GetLabel(),
+                    messages=[dict(text_1=x['job']['text_1'], title=x['job']['title'], had_error=x['job']['had_error'])
+                              for x in events],
+                    pages_before=before_pages, pages_after=pages))
+            for e in made + events:
                 e['_job'].FinishAndDismiss()
             events.clear()
 

@@ -1,7 +1,7 @@
 //! Help > debug > report modes, clicked in the real menu and compared with the
 //! reference's own reports for the same situations (the recordings
 //! `oracle/fixtures/debug_*.json`, made by `oracle/record_debug_*.py`).
-use super::debug_menu_actions::{ONE_AT_A_TIME, capture, start};
+use super::debug_menu_actions::{ONE_AT_A_TIME, Reset, capture, capture_here, start};
 use hydrus_core::debug_flags;
 use hydrus_gui::{MainWindow, Pages, bind, headless};
 use hydrus_store::settings::{self, GuiIdleSettings};
@@ -14,8 +14,10 @@ fn idle_report_mode_says_what_the_reference_says_in_each_situation() {
     let _one = ONE_AT_A_TIME
         .lock()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
+    // the flags are process-wide: put them back even if an assertion fails
+    let _reset = Reset;
     let d = start();
-    let seen = capture();
+    let seen = capture_here();
     let recording = hydrus_testkit::fixture_json("debug_idle_report.json");
     assert_eq!(
         recording["menu_path"],
@@ -95,8 +97,8 @@ fn idle_report_mode_says_what_the_reference_says_in_each_situation() {
 
 /// Puts the switches these tests turn on, and the sink, back when dropped:
 /// they are the whole client's, so a failure must not leave them on.
-struct Reset;
-impl Drop for Reset {
+struct FlagsReset;
+impl Drop for FlagsReset {
     fn drop(&mut self) {
         for flag in [
             debug_flags::Flag::ShortcutReport,
@@ -156,9 +158,9 @@ fn shortcut_report_mode_says_what_the_reference_says_for_each_key() {
     let _one = ONE_AT_A_TIME
         .lock()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
-    let _reset = Reset;
+    let _reset = FlagsReset;
     let d = start();
-    let seen = capture();
+    let seen = capture_here();
     let recording = hydrus_testkit::fixture_json("debug_report_modes_gui.json");
     assert_eq!(
         recording["menu_path"],
@@ -201,9 +203,9 @@ fn gui_report_mode_says_what_the_reference_says_for_keys_and_the_manage_tags_pan
     let _one = ONE_AT_A_TIME
         .lock()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
-    let _reset = Reset;
+    let _reset = FlagsReset;
     let d = start();
-    let seen = capture();
+    let seen = capture_here();
     let recording = hydrus_testkit::fixture_json("debug_report_modes_gui.json");
     // key events
     for key in recording["keys"].as_array().unwrap() {
@@ -297,7 +299,7 @@ fn autocomplete_delay_mode_holds_a_typed_search_for_the_reference_s_three_second
     let _one = ONE_AT_A_TIME
         .lock()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
-    let _reset = Reset;
+    let _reset = FlagsReset;
     let d = start();
     let recording = hydrus_testkit::fixture_json("debug_report_modes_gui.json");
     let delay = &recording["autocomplete"];
@@ -353,7 +355,7 @@ fn cache_report_mode_says_what_the_reference_says_as_the_thumbnail_cache_fills()
     let _one = ONE_AT_A_TIME
         .lock()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
-    let _reset = Reset;
+    let _reset = FlagsReset;
     let (dirs, store) = super::subscriptions::store();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
@@ -369,7 +371,7 @@ fn cache_report_mode_says_what_the_reference_says_as_the_thumbnail_cache_fills()
         headless::render(&adapter, 1400, 1000);
     }
     let d = Debug::from_parts(dirs, store, ui, bound, windows);
-    let seen = capture();
+    let seen = capture_here();
     let recording = hydrus_testkit::fixture_json("debug_report_modes.json");
     let recorded: std::collections::BTreeSet<String> = recording["cache"]["on"]
         .as_array()
@@ -441,7 +443,7 @@ fn blurhash_mode_draws_the_thumbnails_the_reference_draws_from_each_blurhash() {
         headless::render(&adapter, 1400, 1000);
     }
     let d = super::debug_menu_actions::Debug::from_parts(dirs, store, ui, bound, windows);
-    let _reset = Reset;
+    let _reset = FlagsReset;
     let recording = hydrus_testkit::fixture_json("debug_report_modes_gui.json");
     d.ui.invoke_search_edited("system:everything".into());
     d.ui.invoke_search_accepted();
@@ -503,6 +505,8 @@ fn blurhash_mode_draws_the_thumbnails_the_reference_draws_from_each_blurhash() {
     assert!(!d.report_mode_checked("blurhash mode"));
     check("off");
     // on: the blurhash of each file, as the reference's recovery draws it
+    // (the switch is the whole client's: on only while the thumbnails are
+    // drawn, so that other tests' are not)
     d.click(&["report modes", "blurhash mode"]);
     assert!(d.report_mode_checked("blurhash mode"));
     d.bound.rows.clear_thumbnail_cache();
@@ -524,7 +528,7 @@ fn subprocess_report_mode_says_what_the_reference_says_through_the_external_call
     let _one = ONE_AT_A_TIME
         .lock()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
-    let _reset = Reset;
+    let _reset = FlagsReset;
     let d = start();
     let seen = capture();
     let recording = hydrus_testkit::fixture_json("debug_report_modes.json");
@@ -611,7 +615,7 @@ fn the_report_mode_entries_turn_their_switches_on_and_pass_them_to_the_daemon() 
         .lock()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
     let d = start();
-    let _reset = Reset;
+    let _reset = FlagsReset;
     // the imports, files, hashes and network jobs these modes report on run
     // in the daemon, which reads the switches the client writes to the store
     let stored = || -> Vec<String> {

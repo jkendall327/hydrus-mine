@@ -11,11 +11,65 @@ use std::cell::RefCell;
 use slint::{ComponentHandle, SharedString};
 
 type Retitle = Box<dyn Fn(&SharedString) -> bool>;
+/// A window made by [`new`], as something that lends its `slint::Window`
+/// (false once it is gone).
+type Lend = std::rc::Rc<dyn Fn(&mut dyn FnMut(&slint::Window)) -> bool>;
 
 thread_local! {
     static SUFFIX: RefCell<SharedString> = RefCell::new(SharedString::new());
     /// Each window made, as something that sets its suffix; false once it is gone.
     static WINDOWS: RefCell<Vec<Retitle>> = const { RefCell::new(Vec::new()) };
+    /// The same windows, for hiding them.
+    static LENT: RefCell<Vec<Lend>> = const { RefCell::new(Vec::new()) };
+}
+
+/// Windows hidden by [`hide_others`].
+#[derive(Default)]
+pub struct Hidden(Vec<Lend>);
+
+impl std::fmt::Debug for Hidden {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Hidden")
+            .field("windows", &self.0.len())
+            .finish()
+    }
+}
+
+impl Hidden {
+    /// Show them again (`_RestoreOtherWindows`).
+    pub fn restore(self) {
+        for lend in self.0 {
+            lend(&mut |window| {
+                let _ = window.show();
+            });
+        }
+    }
+}
+
+/// Hide every window made by [`new`] that is shown and not minimised, except
+/// `keep` (`PopupMessageDialogPanel._HideOtherWindows`; the main window is
+/// not one of them, and is not hidden).
+pub fn hide_others(keep: &slint::Window) -> Hidden {
+    let mut hidden = Vec::new();
+    LENT.with(|lent| {
+        lent.borrow_mut().retain(|lend| {
+            let mut hide = false;
+            let alive = lend(&mut |window| {
+                if std::ptr::eq(window, keep)
+                    || !window.is_visible()
+                    || crate::popup_freeze::minimized(window) == Some(true)
+                {
+                    return;
+                }
+                hide = window.hide().is_ok();
+            });
+            if hide {
+                hidden.push(lend.clone());
+            }
+            alive
+        });
+    });
+    Hidden(hidden)
 }
 
 /// The title suffix for the display name `name` (with the version, as the
@@ -55,6 +109,15 @@ pub fn new<C: Titled>() -> Result<C, slint::PlatformError> {
     // frame of its own)
     crate::windows::place_regular(&window);
     let weak = window.as_weak();
+    LENT.with(|lent| {
+        let weak = weak.clone();
+        lent.borrow_mut().push(std::rc::Rc::new(move |with| {
+            weak.upgrade().is_some_and(|window| {
+                with(window.window());
+                true
+            })
+        }));
+    });
     WINDOWS.with(|windows| {
         windows.borrow_mut().push(Box::new(move |suffix| {
             weak.upgrade().is_some_and(|window| {

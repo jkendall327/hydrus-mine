@@ -55,6 +55,7 @@ export component TagRelationshipsWindow inherits Window {
     in property <int> sort-column: 2;
     in property <bool> ascending: true;
     in property <string> question;
+    in property <string> question-title;
     in property <string> yes-label;
     in property <string> no-label;
     in property <bool> ask-reason;
@@ -240,6 +241,7 @@ export component TagRelationshipsWindow inherits Window {
             x: 50px; y: 150px; width: parent.width - 100px; height: root.ask-reason ? 340px + 30px * root.reason-suggestions.length : 340px;
             VerticalLayout {
                 padding: 20px; spacing: 10px;
+                if root.question-title != "": Text { text: root.question-title; color: Theme.text; font-weight: 700; }
                 TextEdit { text: root.question; read-only: true; vertical-stretch: 1; }
                 if root.ask-reason: VerticalLayout {
                     spacing: 4px;
