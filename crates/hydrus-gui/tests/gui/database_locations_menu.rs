@@ -976,7 +976,7 @@ fn replay_granularity(offline: bool) {
             &media
         };
         assert_eq!(tree(place), strings(&step["files"]), "{name}");
-        assert_eq!(g.get_client_label(), granularity_of(&step), "{name}");
+        assert_eq!(g.get_client_label(), granularity_of(step), "{name}");
         seen += 1;
     }
     assert!(seen > 5);
