@@ -214,9 +214,25 @@ pub fn delete_custom(settings: &mut Settings, names: &[String]) {
     }
 }
 
-/// The defaults "restore defaults" offers, by name.
+/// The defaults "restore defaults" offers, by name, in the order of the reference's
+/// `GetDefaultShortcuts` (which is not alphabetical).
 pub fn default_names() -> Vec<String> {
-    default_sets().into_keys().collect()
+    const ORDER: [&str; 11] = [
+        "global",
+        "archive_delete_filter",
+        "duplicate_filter",
+        "media",
+        "tags_autocomplete",
+        "main_gui",
+        "media_viewer_browser",
+        "media_viewer",
+        "media_viewer_media_window",
+        "preview_media_window",
+        "thumbnails",
+    ];
+    let mut names: Vec<String> = default_sets().into_keys().collect();
+    names.sort_by_key(|name| ORDER.iter().position(|n| n == name).unwrap_or(ORDER.len()));
+    names
 }
 
 /// What restoring `name`'s defaults says first.
