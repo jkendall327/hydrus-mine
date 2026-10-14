@@ -381,6 +381,8 @@ impl ProcessingStep {
                     ),
                 )
             }
+            // (`StringProcessor.ToString`, whatever it is asked)
+            ProcessingStep::Nested(nested) => nested.summary(),
             ProcessingStep::Unsupported { type_id } => format!("unknown step {type_id}"),
         }
     }

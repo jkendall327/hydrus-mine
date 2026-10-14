@@ -917,8 +917,32 @@ fn processing_exchange_appends_the_steps_of_a_mixed_package_and_warns_as_the_ref
     assert!(child.get_review().starts_with(&warning(&png)));
     child.invoke_action("accept".into());
     assert_eq!(window.get_steps().row_count(), 2 * added);
+
+    // a bare processor: one nested step, after which the example gives nothing
+    let bare = step("bare processor");
+    window.invoke_exchange("import".into());
+    let child = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    child.set_text(bare["text"].as_str().unwrap().into());
+    child.invoke_action("review".into());
+    assert!(child.get_ready());
+    assert!(
+        child.get_review().contains("Append 1 processing steps"),
+        "{}",
+        child.get_review()
+    );
+    child.invoke_action("accept".into());
+    assert_eq!(window.get_steps().row_count(), 2 * added + 1);
     window.invoke_apply();
-    assert_eq!(accepted.borrow().as_ref().unwrap().steps.len(), 2 * added);
+    let value = accepted.borrow().clone().unwrap();
+    assert_eq!(value.steps.len(), 2 * added + 1);
+    assert!(matches!(
+        value.steps.last(),
+        Some(hydrus_core::url::strings::ProcessingStep::Nested(_))
+    ));
+    assert_eq!(
+        serde_json::json!(value.process(vec!["a,b".into()]).unwrap()),
+        serde_json::json!([])
+    );
 }
 
 fn test_table(rows: &slint::ModelRc<hydrus_gui::TableRow>) -> Vec<Vec<String>> {

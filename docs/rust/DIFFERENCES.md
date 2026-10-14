@@ -1014,8 +1014,11 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   text/PNG review window. A package mixing steps with other objects gives its
   steps, with the reference's warning about the rest above the review; the
   reference's "N objects added!" is the review's "Append N processing steps"
-  (`oracle/record_processing_exchange_mixed.py`). A string processor is taken
-  as its steps, where the reference appends it as one nested step (#185).
+  (`oracle/record_processing_exchange_mixed.py`). A string processor is
+  appended as one nested step, as the reference does (#185): the list shows
+  its summary ("some filtering"), running it leaves no strings (`ProcessStrings`
+  has no case for it), it exports as it came, and it has no editor (the
+  reference's `_Edit` has none for it either).
   "add" lists its kinds' descriptions in
   its question. A sorter's or match's error for a regex that won't
   compile is in hydrus-rs's words, not Python's ("That regex did not

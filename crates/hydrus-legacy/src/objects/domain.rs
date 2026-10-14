@@ -587,6 +587,7 @@ pub fn string_processor(object: &SerialisableObject) -> DecodeResult<StringProce
                             .unwrap_or_default(),
                     })
                 }
+                STRING_PROCESSOR => ProcessingStep::Nested(Box::new(string_processor(step)?)),
                 other => ProcessingStep::Unsupported {
                     type_id: other.code(),
                 },

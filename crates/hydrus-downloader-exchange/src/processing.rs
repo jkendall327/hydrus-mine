@@ -12,12 +12,12 @@ use std::collections::BTreeSet;
 
 /// The reference's processing-step serialisable types (StringMatch,
 /// StringConverter, StringSplitter, StringSorter, StringSlicer, StringJoiner,
-/// StringTagFilter).
-const STEP_CODES: [i64; 7] = [51, 55, 83, 99, 100, 125, 112];
+/// StringTagFilter, and StringProcessor, which is itself a step).
+const STEP_CODES: [i64; 8] = [51, 55, 83, 99, 100, 125, 112, PROCESSOR];
 const PROCESSOR: i64 = 84;
 const LIST: i64 = 26;
 
-/// An imported package: its processing steps, and the types of the other
+/// An imported package: its processing steps (a processor is one nested step), and the types of the other
 /// objects in it, which the queue does not take.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Package {
@@ -141,9 +141,6 @@ fn collect(
                 }
             }
         }
-        // (the reference takes a processor as one nested step; hydrus-rs
-        // takes its steps: DIFFERENCES.md)
-        PROCESSOR => collect(&object[2], names, items, other_types, depth + 1)?,
         // (a type the reference does not know: it cannot read the package)
         _ => {
             let name = names

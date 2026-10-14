@@ -395,6 +395,38 @@ fn packages_mixing_steps_with_other_objects_give_their_steps_and_the_reference_w
         processing::warning(&png),
         message(step("mixed png"), "warning")
     );
+    // a bare processor is one nested step, saying "1 objects added!", and
+    // leaves the queue's example output empty
+    let bare = step("bare processor");
+    let package = processing::decode_package(bare["text"].as_str().unwrap()).unwrap();
+    assert_eq!(package.steps.len(), 1);
+    assert!(matches!(
+        package.steps[0],
+        hydrus_core::url::strings::ProcessingStep::Nested(_)
+    ));
+    assert_eq!(
+        message(bare, "information"),
+        Some("1 objects added!".to_owned())
+    );
+    assert_eq!(package.warning(), None);
+    // the queue then holds the recorded steps, the nested one last, and
+    // running them gives what the reference gave
+    let recorded = json!([84, 1, bare["state"]["processor"][2].clone()]);
+    let queue = processing::decode_text(&recorded.to_string()).unwrap();
+    assert_eq!(queue.len(), processor_steps(&bare["state"]));
+    assert_eq!(queue.last(), package.steps.last());
+    let processor = hydrus_core::url::strings::StringProcessor { steps: queue };
+    assert_eq!(
+        json!(processor.process(vec!["a,b".to_owned()]).unwrap()),
+        bare["state"]["processed"]
+    );
+    // and exports as it came
+    assert_eq!(
+        processing::encode_text(&package.steps).unwrap(),
+        hydrus_core::pyjson::PyJson::parse(bare["text"].as_str().unwrap())
+            .unwrap()
+            .to_python_string()
+    );
     // nothing permitted: refused, with the reference's warning
     let nothing = step("nothing permitted");
     assert_eq!(message(nothing, "information"), None);
