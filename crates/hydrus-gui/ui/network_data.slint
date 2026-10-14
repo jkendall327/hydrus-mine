@@ -31,7 +31,13 @@ export component BandwidthWindow inherits Window {
     in property <bool> can-delete;
     in property <[MonthlyBandwidthBar]> monthly-bars;
     in property <string> chart-context;
+    // "usage in the past [data|requests] [time]" for the selected context
+    in-out property <int> usage-type: 0;
+    in-out property <string> usage-seconds: "86400";
+    in property <string> usage-text;
+    in property <string> edit-label: "edit rules";
     in-out property <string> question;
+    callback usage-changed();
     callback row-clicked(int, bool, bool);
     callback sort(int, bool);
     callback edit-clicked();
@@ -59,6 +65,13 @@ export component BandwidthWindow inherits Window {
             sort(c,a) => { root.sort(c,a); }
         }
         Text { text: root.detail; wrap: word-wrap; color: Theme.text; min-height: 70px; }
+        if root.chart-context != "": HorizontalLayout {
+            spacing: 6px;
+            ComboBox { model: ["data", "requests"]; current-index <=> root.usage-type; selected(_) => { root.usage-changed(); } }
+            Text { text: "in the past"; color: Theme.text; vertical-alignment: center; }
+            LineEdit { width: 110px; text <=> root.usage-seconds; edited(_) => { root.usage-changed(); } }
+            Text { text: "seconds" + root.usage-text; color: Theme.text; vertical-alignment: center; }
+        }
         if root.chart-context != "": VerticalBox {
             Text { text: "Monthly bandwidth history (UTC) — " + root.chart-context; color: Theme.text; }
             if root.monthly-bars.length == 0: Text { text: "No usage yet, so no usage history to show."; color: Theme.text; }
@@ -78,7 +91,7 @@ export component BandwidthWindow inherits Window {
         }
         HorizontalLayout {
             Btn { text: "delete selected history"; enabled: root.can-delete && !root.busy && root.question == ""; clicked => { root.delete-history-clicked(); } }
-            Btn { text: "edit rules"; enabled: root.can-edit && !root.busy; clicked => { root.edit-clicked(); } }
+            Btn { text: root.edit-label; enabled: root.can-edit && !root.busy; clicked => { root.edit-clicked(); } }
             Btn { text: "use default rules"; enabled: root.can-revert && !root.busy; clicked => { root.revert-clicked(); } }
             Rectangle { horizontal-stretch: 1; }
             ComboBox { model: ["global", "web domain", "hydrus service", "downloader page", "subscription", "watcher page"]; current-index <=> root.default-kind; }

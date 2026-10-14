@@ -433,7 +433,6 @@ fn bandwidth_filters_chart_multiselect_delete_cancel_live_reset_and_saved_age() 
 
 // leaf: audit-network-bandwidth-rows
 // leaf: audit-network-bandwidth-defaults
-// leaf: audit-network-bandwidth-detail
 #[test]
 fn bandwidth_history_columns_sort_detail_and_default_kind_routing() {
     use hydrus_core::bandwidth::{Rule, Rules};
@@ -529,6 +528,8 @@ fn bandwidth_history_columns_sort_detail_and_default_kind_routing() {
     );
     review.invoke_row_clicked(i32::try_from(a_row()).unwrap(), false, false);
     assert!(review.get_detail().contains("uses default rules"));
+    // (the button begins the context's own rules; the reference's words)
+    assert_eq!(review.get_edit_label().as_str(), "set specific rules");
     assert!(
         review
             .get_detail()
@@ -605,6 +606,7 @@ fn bandwidth_history_columns_sort_detail_and_default_kind_routing() {
 }
 
 // leaf: bandwidth-rule-list
+// leaf: audit-network-bandwidth-detail
 #[test]
 fn the_detail_panel_shows_the_references_usage_and_rule_gauge_rows() {
     use hydrus_core::bandwidth::{Rule, Rules};
@@ -662,6 +664,22 @@ fn the_detail_panel_shows_the_references_usage_and_rule_gauge_rows() {
         .map(|g| g[0].as_str().unwrap())
         .collect();
     assert_eq!(lines[3..], gauges[..], "{detail}");
+    // the button on a context with its own rules, and the usage in the
+    // past [data|requests] [time] chosen as the recorder chose them
+    assert_eq!(
+        review.get_edit_label().as_str(),
+        theirs["edit"].as_str().unwrap()
+    );
+    for past in recorded["usage_past"].as_array().unwrap() {
+        review.set_usage_type(i32::try_from(past["type"].as_i64().unwrap()).unwrap());
+        review.set_usage_seconds(past["seconds"].to_string().into());
+        review.invoke_usage_changed();
+        assert_eq!(
+            review.get_usage_text().as_str(),
+            past["text"].as_str().unwrap(),
+            "{past}"
+        );
+    }
     review.invoke_close_clicked();
 }
 

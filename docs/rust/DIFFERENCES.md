@@ -1593,8 +1593,9 @@ The selected context's detail shows the reference's "Current usage: N/s" and
 "All time usage" lines, whether it "uses default rules" or "has its own
 rules", and one line per rule worded as the reference's gauge rows ("used 1/10
 requests in the past 1 day", `oracle/record_network_data.py`) as text, not
-gauges. It has no "usage in the past [data|requests] [time]" selector, and the
-usage-age choice has "this month" besides the reference's span and "all time".
+gauges. Its "[data|requests] in the past [seconds]" line takes the span in
+seconds rather than the reference's days, hours, minutes and seconds buttons, and
+the usage-age choice has "this month" besides the reference's span and "all time".
 
 Current network-job review refreshes live by default (Qt starts with manual
 snapshots). Native typed wait reasons distinguish pauses, header approval, wake,

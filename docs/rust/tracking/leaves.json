@@ -4003,9 +4003,9 @@
    ],
    "recheck": {
     "date": "2026-10-13",
-    "class": "weak",
+    "class": "sound",
     "by": "claude, #97 phase 2 (w4-r2)",
-    "note": "Now matching the recording: the detail's 'Current usage: 2 KB/s', 'All time usage: ...', 'has its own rules' and the rule lines ('used 1/20 requests in the past 1 minute') are compared with network_data.json (detail and gauge_rows) in network_data.rs the_detail_panel_shows_the_references_usage_and_rule_gauge_rows (tagged bandwidth-rule-list). Still missing, so still weak: the reference's 'usage in the past [data|requests] [time]' selector (recorded as usage_past) does not exist natively, and the set specific rules / edit rules button labels are not compared. Documented in DIFFERENCES.md."
+    "note": "The selected context's detail is compared with oracle/fixtures/network_data.json (record_network_data.py) in network_data.rs the_detail_panel_shows_the_references_usage_and_rule_gauge_rows: 'Current usage: 2 KB/s', 'All time usage: 2 KB in 1 requests', 'has its own rules' and the three rule lines ('used 2 KB/100 MB this month', 'used 1/20 requests in the past 1 minute', 'used 2 KB/4 KB in the past 1 day'), the 'edit rules' button, and the '[data|requests] in the past [time]' selector's text for four recorded choices (': 2 KB', ': 1'); the default-rules context says 'uses default rules' and 'set specific rules' (the reference's words from source, in the older test). Native additions made for this: the selector (the span is typed in seconds, not days/hours/minutes buttons) and the button's two labels. The gauges are drawn as text lines (DIFFERENCES.md)."
    }
   },
   {

@@ -52,6 +52,12 @@ def record(session):
         job._num_bytes_read = 2048
         job._num_bytes_to_read = 4096
         job._bandwidth_tracker.ReportDataUsed(2048)
+        usage_past = []
+        for bandwidth_type, delta in [(HC.BANDWIDTH_TYPE_DATA, 86400), (HC.BANDWIDTH_TYPE_REQUESTS, 86400), (HC.BANDWIDTH_TYPE_DATA, 60), (HC.BANDWIDTH_TYPE_REQUESTS, 3600)]:
+            detail._time_delta_usage_bandwidth_type.SetValue(bandwidth_type)
+            detail._time_delta_usage_time_delta.SetValue(delta)
+            detail._Update()
+            usage_past.append({'type': bandwidth_type, 'seconds': delta, 'text': detail._time_delta_usage_st.text()})
         out = {
             'now': NOW,
             'contexts': [[n.context_type, n.context_data] for n in contexts],
@@ -60,7 +66,7 @@ def record(session):
             'rule_rows': [widget._ConvertRuleToDisplayTuple(r) for r in values],
             'detail': {'current': detail._current_usage_st.text(), 'all_time': detail._all_time_usage.text(), 'rules': detail._uses_default_rules_st.text(), 'edit': detail._edit_rules_button.text()},
             'gauge_rows': detail._last_fetched_rule_rows,
-            'usage_past': [detail._time_delta_usage_st.text(), detail._time_delta_usage_bandwidth_type.GetValue(), detail._time_delta_usage_time_delta.GetValue()],
+            'usage_past': usage_past,
             'job_columns': list(L.column_list_column_name_lookup[L.COLUMN_LIST_NETWORK_JOBS_REVIEW.ID].values()),
             'job_rows': [jobs._ConvertDataToDisplayTuple((p, job)) for p in sorted(N.job_status_str_lookup)],
             'job_phases': N.job_status_str_lookup,

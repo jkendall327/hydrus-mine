@@ -310,6 +310,8 @@ impl Bandwidth {
                 .is_some_and(|c| !c.is_default() && c.kind != 0 && !review.inherits(c)),
         );
         self.window.set_detail("".into());
+        self.window.set_usage_text("".into());
+        self.window.set_edit_label("edit rules".into());
         self.window.set_chart_context("".into());
         self.window.set_monthly_bars(ModelRc::default());
         if let Some(context) = selected.as_ref() {
@@ -332,6 +334,38 @@ impl Bandwidth {
                     .map(|(text, _, _)| text)
                     .collect::<Vec<_>>()
                     .join("\n");
+            // the reference's "[data|requests] in the past [time]: usage"
+            let used = self
+                .window
+                .get_usage_seconds()
+                .trim()
+                .parse::<u64>()
+                .ok()
+                .map(|seconds| {
+                    if self.window.get_usage_type() == 0 {
+                        hydrus_gui_model::gui_format::bytes(
+                            &formatting,
+                            tracker.usage(BandwidthType::Data, Some(seconds), now()),
+                        )
+                    } else {
+                        hydrus_core::numbers::human_int(tracker.usage(
+                            BandwidthType::Requests,
+                            Some(seconds),
+                            now(),
+                        ))
+                    }
+                });
+            self.window
+                .set_usage_text(used.map_or_else(String::new, |u| format!(": {u}")).into());
+            // (the button begins specific rules for a context on the defaults)
+            self.window.set_edit_label(
+                if review.inherits(context) {
+                    "set specific rules"
+                } else {
+                    "edit rules"
+                }
+                .into(),
+            );
             self.window.set_detail(
                 format!(
                     "{} — {}\nCurrent usage: {}/s\nAll time usage: {}\n{}",
@@ -676,6 +710,14 @@ pub fn open_bandwidth(store: Arc<Store>, slots: &Slots) -> Result<BandwidthWindo
             if let Some(s) = state.upgrade() {
                 s.window.set_sort_column(c);
                 s.window.set_ascending(a);
+                s.show();
+            }
+        }
+    });
+    window.on_usage_changed({
+        let state = Rc::downgrade(&state);
+        move || {
+            if let Some(s) = state.upgrade() {
                 s.show();
             }
         }

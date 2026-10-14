@@ -107,9 +107,26 @@
   ]
  ],
  "usage_past": [
-  ": 2 KB",
-  0,
-  86400
+  {
+   "type": 0,
+   "seconds": 86400,
+   "text": ": 2 KB"
+  },
+  {
+   "type": 1,
+   "seconds": 86400,
+   "text": ": 1"
+  },
+  {
+   "type": 0,
+   "seconds": 60,
+   "text": ": 2 KB"
+  },
+  {
+   "type": 1,
+   "seconds": 3600,
+   "text": ": 1"
+  }
  ],
  "job_columns": [
   "position",
