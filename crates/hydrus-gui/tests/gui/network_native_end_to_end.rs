@@ -252,13 +252,21 @@ fn a_silent_daemon_disables_the_command_controls_after_five_seconds() {
     select_only_row(&jobs, "all new network traffic is paused");
     daemon.stop_heartbeat();
     let at = daemon.snapshot().at;
-    // The last heartbeat is what the window judges against; hold its clock.
-    windows::hold_now(Some(at + 5));
-    refresh_until(&jobs, || jobs.get_rows().row_count() == 1);
+    // The last heartbeat is what the window judges against; hold its clock,
+    // let the window load a review under that clock, then select the row so
+    // the controls are worked out afresh.
+    let at_clock = |seconds: i64| {
+        windows::hold_now(Some(seconds));
+        jobs.invoke_refresh();
+        let start = std::time::Instant::now();
+        until(|| start.elapsed() > Duration::from_millis(400));
+        jobs.invoke_row_clicked(0, false, false);
+    };
+    at_clock(at + 5);
     assert!(jobs.get_can_act(), "five seconds old is still current");
-    windows::hold_now(Some(at + 6));
-    jobs.invoke_refresh();
-    until(|| !jobs.get_can_act());
+    assert_eq!(jobs.get_rows().row_count(), 1);
+    at_clock(at + 6);
+    assert!(!jobs.get_can_act(), "six seconds old is stale");
     assert!(jobs.get_status().contains("offline"));
     jobs.invoke_cancel_jobs();
     jobs.invoke_override_jobs();
@@ -295,7 +303,17 @@ fn a_typed_domain_override_limits_the_engines_next_request_to_that_domain() {
     };
     let name = domain.data.clone();
     let review = windows::open_bandwidth(daemon.store.clone(), &slots).unwrap();
-    // Text that is not a bare domain opens nothing and says why.
+    // The click does nothing until the window's first review has loaded, so
+    // wait for a valid domain to open the rules window, then close it.
+    review.set_domain(name.clone().into());
+    until(|| {
+        review.invoke_domain_clicked();
+        windows::last_rules().is_some()
+    });
+    windows::last_rules().unwrap().invoke_cancel_clicked();
+    assert!(windows::last_rules().is_none());
+    // Text that is not a bare domain opens nothing and says why (the status
+    // is cleared first, so the message is this input's).
     for bad in [
         "localhost",
         "http://files.example.com",
@@ -303,6 +321,7 @@ fn a_typed_domain_override_limits_the_engines_next_request_to_that_domain() {
         "a b.com",
         "",
     ] {
+        review.set_status("".into());
         review.set_domain(bad.into());
         review.invoke_domain_clicked();
         assert!(windows::last_rules().is_none(), "{bad:?}");
@@ -501,8 +520,27 @@ fn a_package_imported_in_the_window_matches_the_recorded_import_and_a_stale_revi
         }
         assert_eq!(ours["links"], recorded["links"], "{label}: links");
     }
-    // Imported generators get new keys, as the recording's do.
+    // Imported generators get new keys, as the recording's do, and every
+    // nested generator's members are saved generators (the reference leaves
+    // them pointing at keys no generator has; DIFFERENCES.md).
     let saved: Downloaders = store.read(settings::get).unwrap();
+    let nested = saved
+        .gugs
+        .gugs
+        .iter()
+        .filter_map(|g| match g {
+            hydrus_core::url::AnyGug::Nested(n) => Some(n),
+            hydrus_core::url::AnyGug::Single(_) => None,
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(nested.len(), 2, "the nested generator and its re-import");
+    for n in nested {
+        assert_eq!(n.gugs.len(), 1);
+        for (key, name) in &n.gugs {
+            let member = saved.gugs.gugs.iter().find(|g| g.key() == key);
+            assert_eq!(member.map(|g| g.name()), Some(name.as_str()), "{key}");
+        }
+    }
     let single = saved
         .gugs
         .gugs

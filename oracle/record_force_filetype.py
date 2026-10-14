@@ -12,8 +12,9 @@ The `disk` entries record what applying the choice does to the files: the
 real `set_files_forced_filetypes` (entry "action") and the
 `ChangeFileExt` it calls (entry "change file ext", given the file's old
 filetype) run on a jpeg of the basic fixture, once
-plainly, once with the file read-only (the reference treats such a path as
-"not free" and copies instead of moving) and once with the move failing; for
+plainly, once with the file read-only (which still counts as free to the
+reference, so it is a plain move) and once with the move failing (the
+reference then copies); for
 each, which files exist under the old and the new extension before and
 after, whether bytes and modification time were kept, and the writes the
 reference made (the database `force_filetype` and the file maintenance job

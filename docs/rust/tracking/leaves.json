@@ -1110,13 +1110,13 @@
    "label": "Rename extension or copy fallback",
    "path": "Media files, metadata and viewing > Force Filetype",
    "workstream": "media",
-   "state": "partial",
+   "state": "implemented",
    "priority": "normal",
-   "reference": null,
-   "native": null,
+   "reference": "hydrus/client/files/ClientFilesManager.py:226",
+   "native": "crates/hydrus-store/src/metadata_jobs.rs:116",
    "notes": [
-    "After committing MIME, each managed path is renamed to new extension. Rename fallback copies bytes but leaves the original path; parity is incomplete at the job/cleanup boundary.",
-    "No cancellable rename job; copied fallback source is not queued for cleanup."
+    "After committing the filetype, each managed path is moved to the new extension (bytes and modification time kept), or copied when the media is shared with another install (the reference copies when the move fails or the path is in use); a copied original is queued for the delete-neighbour-dupes cleanup job.",
+    "No cancellable rename job. The reference one-hour delay on the cleanup job is not compared; its own forcing action moves nothing (DIFFERENCES.md)."
    ],
    "recheck": {
     "date": "2026-10-14",
