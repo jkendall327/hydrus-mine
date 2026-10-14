@@ -4316,6 +4316,16 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   to its response, not just the handler's thread. The slow-and-fast count
   in the message is of the client's own jobs; the daemon times its own and
   writes to the same log, but its count is not added.
+- Profile and query planner modes count jobs, and plan queries, per database
+  directory: one client has one database, but a process here can hold
+  several, and a job belongs to its own. The profile lock that makes a
+  second concurrent job `EXCLUSIVE` is per database too.
+- A debug switch the client set before the daemon first looked is ignored
+  (it may be left from a client that crashed); only what is set after is
+  followed. The query planner and db report hooks on SQLite connections are
+  registered only while one of those two modes is on.
+- With no downloader (so no subscription manager) the daemon answers
+  "subscription manager snapshot" with a line saying so.
 - "db report mode" reports a job after it has run, not before, and leaves
   out the jobs that only read or write the popups (reporting those would
   make a popup of every popup). The client has timers that read the

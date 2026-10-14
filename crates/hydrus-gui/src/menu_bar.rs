@@ -833,7 +833,7 @@ fn run_command(window: &MainWindow, hooks: &Hooks, command: Command) {
             publish_switches(&store);
         }
         Command::DebugProfile(mode) => {
-            hydrus_core::profiling::flip_mode(mode);
+            hydrus_core::profiling::flip_mode(store.dir(), mode);
             publish_switches(&store);
         }
         Command::DebugSubscriptionSnapshot => {
@@ -848,7 +848,7 @@ fn run_command(window: &MainWindow, hooks: &Hooks, command: Command) {
             }
         }
         Command::DebugQueryPlanner => {
-            hydrus_core::profiling::flip_query_planner();
+            hydrus_core::profiling::flip_query_planner(store.dir());
             publish_switches(&store);
         }
         Command::DebugDelayedTextPopup => hooks.debug_long_popup.start_delayed_popup(),

@@ -30,6 +30,27 @@
       "running": []
     },
     {
+      "when": "with one running",
+      "messages": [
+        "4 subs: Empty sub, artist one, no downloader, paused and delayed\n\n1 running: artist one\n\n3 not runnable: Empty sub, no downloader, paused and delayed\n\n1 next times: artist one: 53 years 10 months ago"
+      ],
+      "subs": [
+        "Empty sub",
+        "artist one",
+        "no downloader",
+        "paused and delayed"
+      ],
+      "not_runnable": [
+        "Empty sub",
+        "no downloader",
+        "paused and delayed"
+      ],
+      "next_work_times": {
+        "artist one": -1700000000
+      },
+      "running": []
+    },
+    {
       "when": "with none",
       "messages": [
         "0 subs: \n\n0 running: \n\n0 not runnable: \n\n0 next times: "

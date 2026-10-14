@@ -1095,10 +1095,14 @@ pub fn answer_debug_requests(
     manager: Option<&SubscriptionRunner>,
 ) -> Result<(), hydrus_store::StoreError> {
     let asked = hydrus_store::debug_switches::apply(store)?;
-    if asked.subscription_snapshot
-        && let Some(manager) = manager
-    {
-        manager.show_snapshot();
+    if asked.subscription_snapshot {
+        match manager {
+            Some(manager) => manager.show_snapshot(),
+            // (no downloader could start here: say so rather than nothing)
+            None => hydrus_core::debug_flags::show_text(
+                "The subscription manager is not running (the downloader could not start).",
+            ),
+        }
     }
     Ok(())
 }

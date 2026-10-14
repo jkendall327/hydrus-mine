@@ -196,7 +196,6 @@ impl Db {
         let mut conn = Connection::open(path)?;
         schema::configure(&conn)?;
         schema::migrate(&mut conn)?;
-        crate::job_debug::instrument(&conn);
 
         let num_readers = num_readers.max(1);
         let (give_back, take) = crossbeam_channel::bounded(num_readers);
@@ -206,7 +205,6 @@ impl Db {
                 OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NO_MUTEX,
             )?;
             schema::configure(&reader)?;
-            crate::job_debug::instrument(&reader);
             reader.pragma_update(None, "query_only", true)?;
             give_back.send(reader).map_err(|_| StoreError::WriterGone)?;
         }

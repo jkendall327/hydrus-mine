@@ -10699,7 +10699,8 @@
     "Out of scope by the owner's decision of 2026-10-08 (#95): reports the Python CallTo thread pool. To bring it back, set priority to normal and remove this note.",
     "Truth pass (2026-10-08): not-applicable, small. Reports tasks given to the Python CallTo thread pool, which hydrus-rs does not have. Evidence: Reference ClientGUI.py:3591 reports tasks given to HydrusThreading's Python thread pool; hydrus-rs has no such pool.",
     "Reference debug action wires 'callto report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Out of scope (owner decision 2026-10-14, DECISIONS.md): hydrus-rs has no pool of background tasks like the reference's CallToThread to report on."
    ]
   },
   {
@@ -10715,7 +10716,8 @@
     "Out of scope by the owner's decision of 2026-10-08 (#95): borders on Qt canvas tiles. To bring it back, set priority to normal and remove this note.",
     "Truth pass (2026-10-08): not-applicable, small. Draws borders on the Qt media-canvas tiles; hydrus-rs has no tiled canvas. Evidence: Flag::CanvasTileBorders is defined but nothing reads it; the menu does not offer it.",
     "Reference debug action wires 'canvas tile borders mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Out of scope (owner decision 2026-10-14, DECISIONS.md): It outlines the Qt canvas's image tiles; the viewer here does not paint tiles."
    ]
   },
   {
@@ -11038,7 +11040,8 @@
    "notes": [
     "Not applicable (2026-10-08, help-debug session report): depends only on Qt widgets, stylesheets, icons or mpv widgets of the reference toolkit. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'graphics view thumbnail update report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Out of scope (owner decision 2026-10-14, DECISIONS.md): It reports Qt graphics-view thumbnail updates; Slint paints thumbnails differently."
    ]
   },
   {
@@ -11334,7 +11337,8 @@
    "notes": [
     "Not applicable (2026-10-08, help-debug session report): depends only on Qt widgets, stylesheets, icons or mpv widgets of the reference toolkit. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'mpv report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Out of scope (owner decision 2026-10-14, DECISIONS.md): It reports the Python mpv wrapper's debug output; hydrus-rs uses libmpv directly."
    ]
   },
   {
@@ -11447,7 +11451,8 @@
     "Out of scope by the owner's decision of 2026-10-08 (#95): profiles the Python thread pool. To bring it back, set priority to normal and remove this note.",
     "Truth pass (2026-10-08): not-applicable, small. Profiles Python thread-pool jobs with cProfile. Evidence: The reference profiles its Python thread-pool CallTo jobs; no native equivalent.",
     "Reference debug action wires 'profile mode (threads)' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Out of scope (owner decision 2026-10-14, DECISIONS.md): hydrus-rs has no pool of background tasks like the reference's CallToThread to time."
    ]
   },
   {
@@ -11463,8 +11468,14 @@
     "Truth pass (2026-10-08): missing, medium. Would time Slint callbacks/timers. Missing: Timing wrapper on UI callbacks, toggle, profile log, test. Evidence: No flag or menu entry; no timing around Slint callbacks.",
     "Reference debug action wires 'profile mode (ui)' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
-    "Implemented 2026-10-13 for menu commands only (crates/hydrus-gui/src/menu_bar.rs run(): in ui mode each menu command is timed and logged as 'Profiling menu: <command>', counted slow/fast; exercised in the profile_modes_* test) but left untagged: the reference's ui mode also times Qt call-after events, pubsub topics and ui timers, which have no counterpart here (Slint callbacks and timers are not wrapped). Needs an owner decision: tag with the menu-only scope, or out-of-scope."
-   ]
+    "Done for menu commands only (owner decision 2026-10-14, DECISIONS.md): the reference's ui mode also times Qt call-after events, pubsub topics and ui timers; see DIFFERENCES.md."
+   ],
+   "recheck": {
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (issue #96 session)",
+    "note": "Real menu clicks with ui mode on: a menu command is timed, counted slow or fast and logged as 'Profiling menu: <command>'; the on/off messages and checks are compared with the recording of the reference's menu (oracle/fixtures/debug_profiling.json). Scope is menu commands only, by owner decision. Counts are kept per database, so other tests' menu clicks do not count. Test: crates/hydrus-gui/tests/gui/debug_profiling.rs profile_modes_turn_each_other_off_and_say_how_many_jobs_there_were."
+   }
   },
   {
    "id": "audit-options-help-debug-action-publish-some-sub-files-in-five-seconds",
@@ -11493,7 +11504,8 @@
    "notes": [
     "Not applicable (2026-10-08, help-debug session report): depends only on Python runtime internals (threads, scheduler, pubsub, pympler memory accounting). See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'pubsub report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Out of scope (owner decision 2026-10-14, DECISIONS.md): The reference's pubsub is Python's; nothing here to report on."
    ]
   },
   {
