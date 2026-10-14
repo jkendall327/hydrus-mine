@@ -324,5 +324,9 @@ pub fn router(state: Arc<AppState>) -> Router {
         ))
         .fallback(|| async { request::no_such_resource() })
         .layer(DefaultBodyLimit::disable())
+        .layer(axum::middleware::from_fn_with_state(
+            Arc::clone(&state),
+            server::profile_request,
+        ))
         .with_state(state)
 }

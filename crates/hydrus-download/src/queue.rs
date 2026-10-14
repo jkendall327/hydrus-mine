@@ -762,6 +762,16 @@ impl QueueRunner {
             let over_limit = search
                 .as_ref()
                 .is_some_and(|s| s.file_limit.is_some_and(|l| s.num_new_urls_found >= l));
+            // (the check's veto is what the page shows as the search's status:
+            // "hit file limit", until the limit is raised)
+            {
+                let mut status = handle.status.lock();
+                if over_limit && !queue.page_closed {
+                    status.gallery_status = "hit file limit".into();
+                } else if status.gallery_status == "hit file limit" {
+                    status.gallery_status.clear();
+                }
+            }
             // (a closed page's queue waits: "page is closed")
             if !queue.gallery_paused && !queue.page_closed && !over_limit && pauses.galleries_run()
             {

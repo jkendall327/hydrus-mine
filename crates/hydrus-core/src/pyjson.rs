@@ -37,6 +37,32 @@ pub enum PyJson {
     Object(Vec<(String, PyJson)>),
 }
 
+/// Python's `repr` of a string: single-quoted, or double-quoted when it holds
+/// a single quote and no double quote, with the usual escapes.
+pub fn python_str_repr(text: &str) -> String {
+    let quote = if text.contains('\'') && !text.contains('"') {
+        '"'
+    } else {
+        '\''
+    };
+    let mut out = String::from(quote);
+    for c in text.chars() {
+        match c {
+            '\\' => out.push_str("\\\\"),
+            '\n' => out.push_str("\\n"),
+            '\r' => out.push_str("\\r"),
+            '\t' => out.push_str("\\t"),
+            c if c == quote => {
+                out.push('\\');
+                out.push(c);
+            }
+            c => out.push(c),
+        }
+    }
+    out.push(quote);
+    out
+}
+
 /// Why a document could not be parsed.
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 #[error("invalid json at byte {offset}: {message}")]

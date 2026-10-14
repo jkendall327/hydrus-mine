@@ -87,8 +87,13 @@ page or file, as a downloader page shows one), a button to show its files
 in a new page
 (named for them), its error's traceback, and buttons to pause or cancel
 it while it runs; a right click dismisses one that is done, and the line
-under them counts them, with "dismiss all" (those done) and an arrow to
-hide or show them. They update four times a second.
+under them counts them, with "dismiss all" (those done) and an arrow (▼
+while the cards show, ▲ while they are hidden, as the reference's) to hide or
+show them. They update four times a second. What a card shows for a job (its
+title, two texts, two gauges that are filled or pulsing, what a pause hides,
+the start of a traceback, a text past 1,024 characters cut as the reference
+cuts it) is checked against a recording of the reference's card for the same
+jobs (`oracle/fixtures/popup_content.json`).
 A long job can be published as modal (`src/popup_modal.rs`,
 `hydrus-gui-model/src/popup_modal.rs`; Help > debug > "make a modal popup in
 five seconds"), as the reference's `AddModalMessage`: it is kept out of the
@@ -894,7 +899,9 @@ or resume each selected search's files or its search, retry their ignored
 or failed files, and remove them, asking first as the reference does
 ("Remove the 2 selected queries?", saying how many are still working and
 that the page will be cleared if the one shown is among them). Each
-search keeps the file limit and import options it was made with; while a
+search keeps the file limit and import options it was made with (a search
+that has reached its limit says "hit file limit" in the shown search's
+status, as the reference's does, until the limit is raised); while a
 selected one's differ from the page's, "update selected with current
 options" shows under the file limit, and gives them the page's, asking
 first as the reference does. Queries typed into its box
@@ -2202,7 +2209,10 @@ live refresh. The daemon publishes usage and jobs through typed local store IPC,
 independent of the Client API listener. Heartbeats expire after five seconds;
 offline bandwidth review falls back to saved history. Commands identify the
 reviewed daemon and request, so finished jobs or replacement daemons ignore them.
-The real Qt controls/rows/questions are recorded in `network_data.json`.
+The real Qt controls/rows/questions are recorded in `network_data.json`; the
+selected context's detail reads "Current usage" and "All time usage" and a line
+for each rule ("used 1/10 requests in the past 1 day") as the reference words
+them.
 Backend/model regressions cover cancellation, dropped futures, live overrides,
 settings reload, stale heartbeat, concurrent edits and persistence. GUI regressions
 cover draft cancellation, owner closure, invalid values, Apply/reopen and local
@@ -2256,6 +2266,17 @@ popup lifecycle, closing settings independently, exact phases/speed and cancel/
 dismissal states are recorded in `oracle/fixtures/tag_migration_progress.json`.
 
 ## Downloader definition interchange
+
+The import window's "paste" takes a bitmap on the clipboard before its text
+(the pixels are a hydrus PNG, whether the image has an alpha channel or not),
+and files dropped on the window load as the reference's import loads its
+paths: a file that is a PNG by its bytes is read as one, any other as JSON, and
+a failure says what the reference says ("Sorry, there was a problem importing
+those paths! Error was: ..."). Everything loaded joins the one review that
+"import" then asks about. The subscriptions list likewise reads a clipboard
+bitmap first, and files dropped on it ask "Try to import the N dropped files to
+this list? I am expecting json or png files." before importing, PNGs first
+(`oracle/fixtures/exchange_bitmap_drop.json`).
 
 Network > downloaders > import/export downloaders exchanges URL classes,
 page parsers, registered login scripts and single/nested gallery URL generators with the reference
@@ -4963,13 +4984,47 @@ query's sync-due test).
 Also in Help > debug: gui actions > "autocomplete delay mode" (every tag
 autocomplete search takes three more seconds), data actions > "scan file
 storage folders" (pick a directory; it says how many storage subfolders it
-found and how long it took, or why it gave up), and debug modes > "use
+found and how long it took, or why it gave up; the picker opens in the database directory), and debug modes > "use
 faulthandler to log crashes" (while on, each panic is written with a
 backtrace to a "client crash" log in the database directory).
 `tests/gui/debug_menu_actions.rs` clicks each debug entry in the real menu
 and reads the effect back; `tests/model/debug_flags.rs` and the
 `debug_*` tests of hydrus-import, hydrus-net, hydrus-download, hydrus-media
 and hydrus-store cover the reports their crates make.
+
+Help > debug > profiling also has the reference's profile modes (client api,
+db and ui; one on at a time, turning another on ends the one before) and
+"query planner mode". Turning a profile mode on says `Profile mode "db"
+on!`; turning it off says how many slow and fast jobs there were. A job
+slower than the mode's minimum (db 16 ms, client api 10 ms, a menu click
+16 ms) is written, led by the time, to a `client profile (db) - <start>.log`
+in the database directory; db mode times each read and write job, client
+api mode each request, ui mode each menu command. Query planner mode writes
+each new query and its `EXPLAIN QUERY PLAN` rows to `client query planner -
+<start>.log` and says how many it analysed when turned off. Report modes
+gains "db report mode" (each db job, by name, as it finishes), and data
+actions gains "subscription manager snapshot" (the subscriptions there are,
+those running, those that cannot run and when the others next want to).
+The daemon does the Client API and most database work, so the client passes
+every debug switch on to it through the store (the daemon follows within a
+second), the daemon's reports and the snapshot arrive as popups, and both
+processes write the same logs. `tests/gui/debug_profiling.rs` clicks each in
+the real menu and compares what the popups, the checks and the logs say with
+`oracle/fixtures/debug_profiling.json` and
+`oracle/fixtures/subscription_manager_snapshot.json`.
+
+Help > debug > "what is this object?" opens the reference's window: a picture
+to click (it asks for hydrus PNGs to read) or drop files on, a paste button
+(a bitmap, copied files or text), and two boxes: what each pasted object is
+and the text itself. An object is described as `Serialisable Dictionary
+(21)` with a count of what it holds ("2: <class 'int'>", the descriptions of
+nested objects), a named object with its name, and what is not one says
+"Error:" and why in Python's words. `tests/gui/debug_what_is_this.rs` pastes
+and drops what the reference's own window was given
+(`oracle/fixtures/what_is_this_object.json`), and
+`hydrus-legacy/tests/what_is_this.rs` checks every description and class
+name. Help > debug > network actions > "review current network jobs" opens
+the jobs window titled "review network jobs", as the reference's frame is.
 
 ## Pages > weight report
 
@@ -5221,9 +5276,18 @@ has been laid out where its frame grows it from its own size, and keeps its
 size and place as the reference's do: a frame as it closes, a dialog when it
 is applied (never when cancelled) (`tests/gui/frame_geometry.rs`, replaying
 `frame_state.json` through each). Every other window opens by the ordinary
-dialogs' frame (`regular_dialog`: the main window's top-left, its own size). Proven by `tests/model/frame_placement.rs` (the formulae worked from the
-reference's source) and `options_gui_frames.rs` (editing the Options window's
-own frame through the frames editor).
+dialogs' frame (`regular_dialog`: the main window's top-left, its own size),
+except the choice dialogs with choices, which open by `quick_select_dialog`
+(buttons only) or `quick_yesno_dialog` (a "no" too) and keep their size when a
+choice is made, never when cancelled; a message with no choices takes neither.
+Editing a frame's remembered size, maximised, fullscreen, gravity or default
+position in the frame locations editor reaches each of those windows the next
+time it opens, for its size and its maximised and fullscreen state (headless
+windows have no readable place, so a place is proved only through the
+arithmetic of `windows::placement`; `tests/gui/frame_geometry.rs`, through the
+Options window). Proven by `tests/model/frame_placement.rs` (the formulae
+worked from the reference's source) and `options_gui_frames.rs` (editing the
+Options window's own frame through the frames editor).
 
 **Preview window.** The preview pane draws the file's ratings at the sizes
 from Options > ratings > preview window (rounded, as the reference's

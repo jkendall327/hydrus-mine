@@ -1,0 +1,199 @@
+{
+ "launched": [
+  {
+   "is_db_dir": true,
+   "is_base_dir": false
+  },
+  {
+   "is_db_dir": false,
+   "is_base_dir": true
+  }
+ ],
+ "exits": [
+  {
+   "name": "exit declined",
+   "entry": "exit",
+   "confirm": true,
+   "answer": false,
+   "idle_shutdown": 0,
+   "work_due": false,
+   "asked": [
+    {
+     "text": "Are you sure you want to exit the client? (Will auto-yes in 15 seconds)",
+     "title": "Are you sure?",
+     "yes_label": "yes",
+     "no_label": "no",
+     "auto_yes_time": 15,
+     "auto_no_time": null
+    }
+   ],
+   "exited": []
+  },
+  {
+   "name": "exit accepted",
+   "entry": "exit",
+   "confirm": true,
+   "answer": true,
+   "idle_shutdown": 0,
+   "work_due": false,
+   "asked": [
+    {
+     "text": "Are you sure you want to exit the client? (Will auto-yes in 15 seconds)",
+     "title": "Are you sure?",
+     "yes_label": "yes",
+     "no_label": "no",
+     "auto_yes_time": 15,
+     "auto_no_time": null
+    }
+   ],
+   "exited": [
+    {
+     "restart": false,
+     "idle_work": false
+    }
+   ]
+  },
+  {
+   "name": "restart declined",
+   "entry": "restart",
+   "confirm": true,
+   "answer": false,
+   "idle_shutdown": 0,
+   "work_due": false,
+   "asked": [
+    {
+     "text": "Are you sure you want to restart the client? (Will auto-yes in 15 seconds)",
+     "title": "Are you sure?",
+     "yes_label": "yes",
+     "no_label": "no",
+     "auto_yes_time": 15,
+     "auto_no_time": null
+    }
+   ],
+   "exited": []
+  },
+  {
+   "name": "restart accepted",
+   "entry": "restart",
+   "confirm": true,
+   "answer": true,
+   "idle_shutdown": 0,
+   "work_due": false,
+   "asked": [
+    {
+     "text": "Are you sure you want to restart the client? (Will auto-yes in 15 seconds)",
+     "title": "Are you sure?",
+     "yes_label": "yes",
+     "no_label": "no",
+     "auto_yes_time": 15,
+     "auto_no_time": null
+    }
+   ],
+   "exited": [
+    {
+     "restart": true,
+     "idle_work": false
+    }
+   ]
+  },
+  {
+   "name": "exit unconfirmed",
+   "entry": "exit",
+   "confirm": false,
+   "answer": false,
+   "idle_shutdown": 0,
+   "work_due": false,
+   "asked": [],
+   "exited": [
+    {
+     "restart": false,
+     "idle_work": false
+    }
+   ]
+  },
+  {
+   "name": "restart unconfirmed",
+   "entry": "restart",
+   "confirm": false,
+   "answer": false,
+   "idle_shutdown": 0,
+   "work_due": false,
+   "asked": [],
+   "exited": [
+    {
+     "restart": true,
+     "idle_work": false
+    }
+   ]
+  },
+  {
+   "name": "force unconfirmed",
+   "entry": "exit/force maintenance",
+   "confirm": false,
+   "answer": false,
+   "idle_shutdown": 0,
+   "work_due": false,
+   "asked": [],
+   "exited": [
+    {
+     "restart": false,
+     "idle_work": true
+    }
+   ]
+  },
+  {
+   "name": "force confirmed",
+   "entry": "exit/force maintenance",
+   "confirm": true,
+   "answer": true,
+   "idle_shutdown": 0,
+   "work_due": false,
+   "asked": [
+    {
+     "text": "Are you sure you want to exit the client? (Will auto-yes in 15 seconds)",
+     "title": "Are you sure?",
+     "yes_label": "yes",
+     "no_label": "no",
+     "auto_yes_time": 15,
+     "auto_no_time": null
+    }
+   ],
+   "exited": [
+    {
+     "restart": false,
+     "idle_work": true
+    }
+   ]
+  },
+  {
+   "name": "exit with work due",
+   "entry": "exit",
+   "confirm": false,
+   "answer": false,
+   "idle_shutdown": 1,
+   "work_due": true,
+   "asked": [],
+   "exited": [
+    {
+     "restart": false,
+     "idle_work": true
+    }
+   ]
+  },
+  {
+   "name": "exit with work not due",
+   "entry": "exit",
+   "confirm": false,
+   "answer": false,
+   "idle_shutdown": 1,
+   "work_due": false,
+   "asked": [],
+   "exited": [
+    {
+     "restart": false,
+     "idle_work": false
+    }
+   ]
+  }
+ ]
+}

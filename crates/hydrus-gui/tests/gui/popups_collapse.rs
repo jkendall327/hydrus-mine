@@ -11,6 +11,8 @@ use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
 use hydrus_store::popups::{self, Job};
 
+use crate::common::widgets;
+
 fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();
@@ -30,6 +32,28 @@ fn now() -> i64 {
 // leaf: audit-options-popups-summary
 #[test]
 fn the_summary_bar_collapses_and_expands_the_cards_without_touching_jobs() {
+    // the reference's manager with twelve messages (popup_summary.json,
+    // recorded by oracle/record_popup_summary.py): ten cards of the oldest,
+    // the bar counting all twelve, its arrow hiding the cards panel and
+    // showing the same ten again, jobs untouched; one message is "1 message"
+    let recorded = hydrus_testkit::fixture_json("popup_summary.json");
+    let state = |label: &str| {
+        recorded["states"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|s| s["label"] == label)
+            .unwrap()
+            .clone()
+    };
+    let cards_of = |state: &serde_json::Value| -> Vec<String> {
+        state["cards"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|c| c.as_str().unwrap().to_owned())
+            .collect()
+    };
     let (_dirs, store) = store();
     let windows = headless::init();
     for i in 0..12 {
@@ -44,36 +68,79 @@ fn the_summary_bar_collapses_and_expands_the_cards_without_touching_jobs() {
     let _bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let (w, h) = (1100_u32, 760_u32);
     let window = windows.get(0).unwrap();
-    let expanded = headless::render(&window, w, h);
-    assert_eq!(ui.get_popup_summary(), "12 messages");
-    assert_eq!(ui.get_popups().row_count(), 10);
+    widgets::lay_out(ui.window(), w as f32, h as f32);
+    headless::render(&window, w, h);
     let count = || store.read(|c| popups::all(c, now())).unwrap().len();
-    // (the bar sits at the stack's bottom, 25px above the window's, its
-    // collapse button the rightmost 20px in from the right)
-    let click = |x: f32, y: f32| {
-        let position = slint::LogicalPosition::new(x, y);
-        ui.window().dispatch_event(WindowEvent::PointerPressed {
-            position,
-            button: PointerEventButton::Left,
-        });
-        ui.window().dispatch_event(WindowEvent::PointerReleased {
-            position,
-            button: PointerEventButton::Left,
-        });
-        ui.window().dispatch_event(WindowEvent::PointerExited);
+    let shown_cards = || -> Vec<String> {
+        ui.get_popups()
+            .iter()
+            .map(|p| p.text_1.to_string())
+            .collect()
     };
-    click(w as f32 - 20.0 - 22.0, h as f32 - 25.0 - 16.0);
-    let collapsed = headless::render(&window, w, h);
-    assert!(collapsed != expanded, "the cards are hidden");
-    assert_eq!(ui.get_popup_summary(), "12 messages", "the line stays");
-    assert_eq!(count(), 12, "nothing was cancelled or deleted");
-    click(w as f32 - 20.0 - 22.0, h as f32 - 25.0 - 16.0);
-    let again = headless::render(&window, w, h);
-    assert!(again == expanded, "the same ten cards are back");
+    let twelve = state("twelve");
+    assert_eq!(shown_cards(), cards_of(&twelve));
+    assert_eq!(ui.get_popup_summary(), twelve["summary"].as_str().unwrap());
+    let arrow = twelve["arrow"].as_str().unwrap();
+    assert!(widgets::shows(ui.window(), arrow));
+    for card in cards_of(&twelve) {
+        assert!(widgets::shows(ui.window(), &card), "{card} is shown");
+    }
+    assert!(!widgets::shows(ui.window(), "m10"), "only the ten oldest");
+    // the arrow, clicked
+    let collapsed = state("collapsed");
+    widgets::click(ui.window(), arrow);
+    headless::render(&window, w, h);
+    assert!(collapsed["panel_hidden"].as_bool().unwrap());
+    for card in cards_of(&collapsed) {
+        assert!(!widgets::shows(ui.window(), &card), "{card} is hidden");
+    }
+    assert!(widgets::shows(
+        ui.window(),
+        collapsed["arrow"].as_str().unwrap()
+    ));
+    assert_eq!(
+        ui.get_popup_summary(),
+        collapsed["summary"].as_str().unwrap()
+    );
+    assert_eq!(count(), 12);
+    for job in store.read(|c| popups::all(c, now())).unwrap() {
+        let want = &collapsed["jobs"][0];
+        assert_eq!(job.done, want["done"].as_bool().unwrap());
+        assert_eq!(job.dismissed, want["dismissed"].as_bool().unwrap());
+        assert_eq!(job.cancelled, want["cancelled"].as_bool().unwrap());
+    }
+    // and again: the same ten
+    let again = state("expanded again");
+    widgets::click(ui.window(), collapsed["arrow"].as_str().unwrap());
+    headless::render(&window, w, h);
+    assert!(!again["panel_hidden"].as_bool().unwrap());
+    for card in cards_of(&again) {
+        assert!(widgets::shows(ui.window(), &card), "{card} is back");
+    }
+    assert_eq!(ui.get_popup_summary(), again["summary"].as_str().unwrap());
     assert_eq!(count(), 12);
 }
 
-// leaf: audit-options-popups-traceback
+#[test]
+fn one_message_is_counted_in_the_singular() {
+    let recorded = hydrus_testkit::fixture_json("popup_summary.json");
+    let one = recorded["states"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|s| s["label"] == "one")
+        .unwrap();
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    store
+        .write(move |ctx| popups::add(ctx.conn(), &Job::text("alone", 0.0), now()))
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let _bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    assert_eq!(ui.get_popup_summary(), one["summary"].as_str().unwrap());
+}
+
 #[test]
 fn a_card_shows_and_hides_its_traceback_and_copies_all_of_it() {
     use std::{cell::RefCell, rc::Rc};

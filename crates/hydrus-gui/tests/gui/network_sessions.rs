@@ -1243,7 +1243,7 @@ fn the_header_editor_opens_and_checks_its_fields_as_the_references_does() {
     // each approval choice, in the recorded order, stores the recorded
     // state and lists with the recorded words
     for (n, approval) in recorded["approvals"].as_array().unwrap().iter().enumerate() {
-        let (words, code) = (approval[0].as_str().unwrap(), approval[1].as_i64().unwrap());
+        let words = approval[0].as_str().unwrap();
         headers.invoke_add_clicked();
         let edit = windows::last_edit_opened().unwrap();
         edit.set_name(format!("X-Approval-{n}").into());
