@@ -204,6 +204,66 @@ def record( session ):
 
                 panel._string_processing_button.SetValue( ClientStrings.StringProcessor() )
 
+            # the string processor button on each row: the child editor it opens (its starting
+            # strings are the parameter's example values), accepted with a step added, then
+            # opened again and cancelled
+            import flows
+
+            from hydrus.client import ClientStrings as S
+
+            def list_texts( list_widget ):
+
+                return [ list_widget.item( i ).data( 0x0100 ) if list_widget.item( i ).data( 0x0100 ) is not None else list_widget.item( i ).text() for i in range( list_widget.count() ) ]
+
+            child = []
+
+            for panel in panels:
+
+                seen = {}
+
+                def prepend( dlg, editor ):
+
+                    seen[ 'steps_before' ] = [ editor._ConvertDataToListBoxString( x ) for x in editor._processing_steps.GetData() ]
+                    seen[ 'starting_strings' ] = list_texts( editor._multiline_test_panel._test_data )
+                    seen[ 'title' ] = dlg.windowTitle()
+
+                    editor._processing_steps.AddDatas( [ S.StringConverter( conversions = [ ( S.STRING_CONVERSION_PREPEND_TEXT, 'pre-' ) ] ) ] )
+
+                    seen[ 'steps_after' ] = [ editor._ConvertDataToListBoxString( x ) for x in editor._processing_steps.GetData() ]
+                    seen[ 'processed_strings' ] = list_texts( editor._multiline_test_panel._result_data )
+
+                    return True
+
+                changes = []
+
+                panel._string_processing_button.valueChanged.connect( lambda: changes.append( True ) )
+
+                with flows.scripted_dialogs( { 'EditStringProcessorPanel' : [ prepend ] } ):
+
+                    panel._string_processing_button._edit_button.click()
+
+                accepted = { 'label' : panel._string_processing_button._edit_button.text(), 'step_count' : len( panel._string_processing_button.GetValue().GetProcessingSteps() ), 'value_changed_emitted' : len( changes ) }
+
+                cancelled_seen = {}
+
+                def remove_and_cancel( dlg, editor ):
+
+                    cancelled_seen[ 'steps_before' ] = [ editor._ConvertDataToListBoxString( x ) for x in editor._processing_steps.GetData() ]
+
+                    editor._processing_steps.AddDatas( [ S.StringConverter( conversions = [ ( S.STRING_CONVERSION_APPEND_TEXT, '-post' ) ] ) ] )
+
+                    return False
+
+                with flows.scripted_dialogs( { 'EditStringProcessorPanel' : [ remove_and_cancel ] } ):
+
+                    panel._string_processing_button._edit_button.click()
+
+                child.append( { 'parameter' : panel._name.text(), **seen, 'accepted' : accepted, 'cancelled_opened_with' : cancelled_seen[ 'steps_before' ], 'after_cancel' : { 'label' : panel._string_processing_button._edit_button.text(), 'step_count' : len( panel._string_processing_button.GetValue().GetProcessingSteps() ), 'value_changed_emitted' : len( changes ) } } )
+
+                panel._string_processing_button.SetValue( ClientStrings.StringProcessor() )
+
+            rules[ 'child_editor' ] = child
+
             rules[ 'pipeline' ] = L.executable_pipeline_types_to_strs[ pipeline ]
             rules[ 'parameter_names' ] = [ L.parameter_types_to_strs[ t ] for t in L.executable_pipeline_types_to_input_params[ pipeline ] ]
 
