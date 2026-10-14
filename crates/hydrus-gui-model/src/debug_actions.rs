@@ -149,23 +149,8 @@ pub fn modal_text(i: i64) -> String {
     )
 }
 
-/// "show env"'s popup (`HydrusEnvironment.DumpEnv`): every variable by
-/// name, path-like ones (names with PATH or DIRS holding `separator`) one
-/// entry per line.
-pub fn env_text(vars: impl IntoIterator<Item = (String, String)>, separator: char) -> String {
-    let mut vars: Vec<(String, String)> = vars.into_iter().collect();
-    vars.sort();
-    let mut rows = Vec::new();
-    for (key, value) in vars {
-        if (key.contains("PATH") || key.contains("DIRS")) && value.contains(separator) {
-            rows.push(format!("{key}:"));
-            rows.extend(value.split(separator).map(|v| format!("    {v}")));
-        } else {
-            rows.push(format!("{key}: {value}"));
-        }
-    }
-    format!("Full environment:\n{}", rows.join("\n"))
-}
+/// "show env"'s popup (`HydrusEnvironment.DumpEnv`).
+pub use hydrus_core::debug_flags::env_text;
 
 /// A Help > debug entry hydrus-rs runs.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

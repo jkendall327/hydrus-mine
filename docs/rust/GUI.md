@@ -5151,35 +5151,55 @@ program exit signal" (leaves the event loop at once); and memory actions >
 
 Help > debug > report modes offers the reference's checked switches, off at
 every start and shared by the whole client; each reports through a popup and
-a console line, in the reference's words where it has them:
+a console line, in the reference's words where it has them (recorded from a
+real reference client with each mode on: `oracle/fixtures/debug_report_modes.json`
+and `debug_report_modes_gui.json`; see DIFFERENCES.md for the reports that
+have no counterpart here):
 "blurhash mode" (thumbnails are drawn from their blurhash, if the fallback
-option allows it, never from the stored thumbnail), "cache report mode" (each
-eviction from the image and thumbnail caches, with sizes), "daemon report
-mode" (the maintenance daemons starting a pass), "file import report mode"
-(an import job's creation, start, hash and completion), "file report mode"
-(file and thumbnail path requests), "gui report mode" (key and mouse events
-caught as shortcuts), "idle report mode" (why the client is not idle: not
-on for 120s, normal idle work disabled, last user, mouse or Client API
-action, or forced from the debug menu; and when it turns idle or active), "network report mode" and its
-"(silent)" twin (redirects and errors; silent goes to the console only; the
-two entries share the one mode, as the reference's do: silent turns it on and
+option allows it, never from the stored thumbnail: each pixel sampled from
+the reference's bitmap for 30 files is the same), "cache report mode" (each
+item added to, taken out of and evicted from the image and thumbnail caches,
+with the cache's size against its limit), "daemon report mode" (each time a
+maintenance daemon comes due, before it looks at idle: "maintain_trash doing
+a job."), "file import report mode" (each step of an import job: created,
+starting work, hash, pre-import status, type, file info, thumbnail,
+perceptual hashes, other hashes, the check against the import options, the
+database job's steps, and done), "file report mode" (the file and thumbnail an
+import adds to storage, file and thumbnail path requests, a wrong-sized
+thumbnail seen, a file maintenance job starting, and a file deleted or
+recycled), "gui report mode" (each key event caught as a shortcut, and the
+manage tags panel opening on its services), "idle report mode" (why the
+client is not idle: not on for 120s, normal idle work disabled, last user,
+mouse or Client API action, or forced from the debug menu; and when it turns
+idle or active), "network report mode" and its "(silent)" twin (a job added,
+starting and done, the referral URL it used, the headers set for the domain,
+the request and response headers, a redirect, and an error as the notice, the
+exception and the text; silent prints the same to the console only; the two
+entries share the one mode, as the reference's do: silent turns it on and
 sets silent, the plain entry flips it and clears silent),
-"shortcut report mode" (what a shortcut matched, or that it matched
-nothing), "similar files metadata generation report mode" (each stage of
-making a perceptual hash), "subprocess report mode" (each external
-program's arguments before it starts) and "subscription report mode" (each
-query's sync-due test).
+"shortcut report mode" (a key passing through the main window or the media
+viewer and whether it was in a state to catch it, which set had a command for
+it, and whether the command was processed, naming the command in the
+reference's words), "similar files metadata generation report mode" (each
+stage of making a perceptual hash, from loading the image), "subprocess
+report mode" (the environment, how each external program is called, and what
+it printed on stdout and stderr) and "subscription report mode" (each query's
+sync-due test).
 
-Also in Help > debug: gui actions > "autocomplete delay mode" (every tag
-autocomplete search takes three more seconds), data actions > "scan file
+Also in Help > debug: gui actions > "autocomplete delay mode" (a tag
+autocomplete search typed into the search box takes three more seconds, as the
+reference's does), data actions > "scan file
 storage folders" (pick a directory; it says how many storage subfolders it
 found and how long it took, or why it gave up; the picker opens in the
 database directory), and debug modes > "use faulthandler to log crashes"
 (shown on always: see below; choosing it says where the log is).
 `tests/gui/debug_menu_actions.rs` clicks each debug entry in the real menu
-and reads the effect back; `tests/model/debug_flags.rs` and the
-`debug_*` tests of hydrus-import, hydrus-net, hydrus-download, hydrus-media
-and hydrus-store cover the reports their crates make.
+and reads the effect back; `tests/gui/debug_report_modes.rs` clicks the report
+modes and compares what they say with the recordings (keys, the manage tags
+panel, the caches, blurhash thumbnails, an external call, the autocomplete
+delay); `tests/model/debug_flags.rs` and the `debug_*` tests of hydrus-import,
+hydrus-net, hydrus-download and hydrus-media cover the reports their crates
+make.
 
 Help > debug > tests, do not touch > "induce a program crash" asks "u wot mate
 I'll hook u in the gabber" with "nice crash", "not a nice crash" and "forget

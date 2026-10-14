@@ -71,6 +71,11 @@ impl Native {
         }
     }
 }
+/// What shortcut report mode calls the main window where the reference
+/// quotes the Python repr of its frame.
+const MAIN_WINDOW: &str = "main window";
+/// The media viewer's, the same way.
+const MEDIA_VIEWER: &str = "media viewer";
 #[derive(Debug, Clone)]
 pub(crate) struct Route(Rc<RefCell<Native>>, Rc<Cell<bool>>);
 impl Default for Route {
@@ -118,19 +123,46 @@ fn caught(kind: &str, gesture: &Gesture) {
         format!("{kind} event caught: Shortcut: {}", gesture.text(false))
     });
 }
-/// Shortcut report mode (`ClientGUIShortcuts`): what a gesture matched.
-fn report(set: &str, gesture: &Gesture, command: Option<i32>) {
+/// Shortcut report mode (`ClientGUIShortcuts`): a key or mouse press went
+/// through a window's shortcut handler (`eventFilter`), which says whether it
+/// was in a state to catch it. `parent` names the window the reference
+/// quotes by its Python repr.
+fn passing_through(kind: &str, gesture: &Gesture, parent: &str, in_state: bool) {
     hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::ShortcutReport, || {
-        let shortcut = gesture.text(false);
-        match command {
-            Some(command) => {
-                format!(
-                    "Shortcut \"{shortcut}\" matched on \"{set}\" set to \"{command}\" command."
-                )
-            }
-            None => format!("Shortcut \"{shortcut}\" did not match any command."),
-        }
+        format!(
+            "{kind} shortcut \"{}\" passing through {parent}. I am {} a state to catch it.",
+            gesture.text(false),
+            if in_state { "in" } else { "not in" }
+        )
     });
+}
+/// Shortcut report mode: a set had a command for a gesture
+/// (`ShortcutsManager.GetCommand`).
+fn matched_on(set: &str, gesture: &Gesture, command: i32) {
+    hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::ShortcutReport, || {
+        format!(
+            "Shortcut \"{}\" matched on \"{set}\" set to \"{}\" command.",
+            gesture.text(false),
+            hydrus_gui_model::shortcut_capture::command_name(command)
+        )
+    });
+}
+/// Shortcut report mode: the command was run (`_ProcessShortcut`).
+fn matched_to(gesture: &Gesture, command: i32, parent: &str, processed: bool) {
+    hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::ShortcutReport, || {
+        format!(
+            "Shortcut \"{}\" matched to command \"{}\" on {parent}. It was {}processed.",
+            gesture.text(false),
+            hydrus_gui_model::shortcut_capture::command_name(command),
+            if processed { "" } else { "not " }
+        )
+    });
+}
+/// A set's command for a gesture, said under shortcut report mode.
+fn command_in(settings: &Settings, set: &str, gesture: &Gesture) -> Option<i32> {
+    let command = settings.command(set, gesture)?;
+    matched_on(set, gesture, command);
+    Some(command)
 }
 fn settings(store: &Store) -> Settings {
     store.read(hydrus_store::settings::get).unwrap_or_default()
@@ -158,25 +190,36 @@ pub(crate) fn main(
             if !active.get() {
                 return false;
             }
-            let Some(window) = weak.upgrade().filter(|w| {
-                w.window().is_visible()
-                    && w.get_question().is_empty()
-                    && w.get_menu_panes().row_count() == 0
-                    && w.get_chooser_labels().row_count() == 0
-            }) else {
+            let Some(window) = weak.upgrade() else {
                 return false;
             };
+            let in_state = window.window().is_visible()
+                && window.get_question().is_empty()
+                && window.get_menu_panes().row_count() == 0
+                && window.get_chooser_labels().row_count() == 0;
             let settings = settings(&store);
             let Some(gesture) = route.keyboard(&text, bits as u8, settings.merge_numpad) else {
                 return false;
             };
-            let command = settings.command("main_gui", &gesture);
-            report("main_gui", &gesture, command);
-            match command {
-                Some(78) => window.invoke_refresh_page(),
-                Some(7) => window.invoke_close_page(),
-                Some(56) => window.invoke_new_page(),
-                Some(_) => return false,
+            passing_through("Key", &gesture, MAIN_WINDOW, in_state);
+            if !in_state {
+                return false;
+            }
+            let command = command_in(&settings, "main_gui", &gesture);
+            let processed = match command {
+                Some(78) => {
+                    window.invoke_refresh_page();
+                    true
+                }
+                Some(7) => {
+                    window.invoke_close_page();
+                    true
+                }
+                Some(56) => {
+                    window.invoke_new_page();
+                    true
+                }
+                Some(_) => false,
                 // the thumbnails take the "media" and "thumbnails" sets' simple commands
                 // and the "media" set's tag and rating commands
                 None => {
@@ -184,10 +227,12 @@ pub(crate) fn main(
                         let simple = grid_simple.borrow().clone();
                         if let Some(simple) = simple {
                             for set in ["media", "thumbnails"] {
-                                if let Some(action) = settings.command(set, &gesture)
-                                    && simple(action)
-                                {
-                                    return true;
+                                if let Some(action) = command_in(&settings, set, &gesture) {
+                                    let done = simple(action);
+                                    matched_to(&gesture, action, MAIN_WINDOW, done);
+                                    if done {
+                                        return true;
+                                    }
                                 }
                             }
                         }
@@ -200,8 +245,11 @@ pub(crate) fn main(
                         _ => false,
                     };
                 }
+            };
+            if let Some(command) = command {
+                matched_to(&gesture, command, MAIN_WINDOW, processed);
             }
-            true
+            processed
         }
     });
     route
@@ -224,9 +272,11 @@ fn content_command(
 /// The viewer's simple command for `gesture`: its own set's, else a custom
 /// set's that is turned on.
 fn viewer_command(settings: &Settings, gesture: &Gesture, custom: &[String]) -> Option<i32> {
-    settings
-        .command("media_viewer", gesture)
-        .or_else(|| custom.iter().find_map(|set| settings.command(set, gesture)))
+    command_in(settings, "media_viewer", gesture).or_else(|| {
+        custom
+            .iter()
+            .find_map(|set| command_in(settings, set, gesture))
+    })
 }
 
 pub(crate) fn viewer(
@@ -284,13 +334,17 @@ pub(crate) fn viewer(
             let Some(gesture) = route.keyboard(&text, bits as u8, settings.merge_numpad) else {
                 return false;
             };
+            passing_through("Key", &gesture, MEDIA_VIEWER, true);
             let custom = custom.borrow().clone();
             if let Some(command) = content_command(&settings, &gesture, &custom) {
                 return content(&command);
             }
             let command = viewer_command(&settings, &gesture, &custom);
-            report("media_viewer", &gesture, command);
-            command.is_some_and(|action| execute(action))
+            let done = command.is_some_and(|action| execute(action));
+            if let Some(command) = command {
+                matched_to(&gesture, command, MEDIA_VIEWER, done);
+            }
+            done
         }
     });
     window.on_shortcut_mouse({

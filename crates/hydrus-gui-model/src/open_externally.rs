@@ -304,9 +304,7 @@ pub fn run_process(
     let executable = arguments
         .first()
         .ok_or_else(|| "No executable path is set!".to_owned())?;
-    hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::SubprocessReport, || {
-        format!("KWargs are: {{'args': {arguments:?}}}")
-    });
+    hydrus_core::debug_flags::report_subprocess_call(&arguments, process.hide_terminal);
     let mut command = std::process::Command::new(executable);
     command
         .args(&arguments[1..])

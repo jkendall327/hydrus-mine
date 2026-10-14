@@ -119,6 +119,14 @@ impl Ffmpeg {
     }
 
     fn command(&self, args: &[OsString]) -> Command {
+        hydrus_core::debug_flags::report_subprocess_call(
+            &std::iter::once(&self.exe)
+                .map(|exe| exe.as_os_str())
+                .chain(args.iter().map(OsString::as_os_str))
+                .map(|part| part.to_string_lossy().into_owned())
+                .collect::<Vec<_>>(),
+            true,
+        );
         let mut cmd = Command::new(&self.exe);
         cmd.args(args).stdin(Stdio::null());
         cmd

@@ -586,6 +586,10 @@ impl MediaTools {
         if !mimes::has_perceptual_hash(mime) {
             return Vec::new();
         }
+        hydrus_core::debug_flags::report(
+            hydrus_core::debug_flags::Flag::SimilarFilesMetadataGenerationReport,
+            || "phash generation: loading image".to_owned(),
+        );
         self.load_image(path, mime)
             .map(|r| vec![phash::perceptual_hash(&r)])
             .unwrap_or_default()
@@ -832,8 +836,32 @@ impl MediaTools {
 
     /// Everything the import job computes, decoding the file as few times as possible.
     pub fn analyse(&self, path: &Path, spec: &ThumbnailSpec) -> Result<Analysis> {
+        // file import report mode narrates this in the order of the
+        // reference's `FileImportJob.GenerateInfo`
+        let say = |message: &dyn Fn() -> String| {
+            hydrus_core::debug_flags::report(
+                hydrus_core::debug_flags::Flag::FileImportReport,
+                || format!("File import job {}", message()),
+            );
+        };
         let mime = self.detect_mime(path)?;
+        say(&|| format!("mime: {}", mime.human_name()));
         let info = self.inspect_as(path, mime)?;
+        say(&|| {
+            let count = |n: Option<u64>| n.map_or_else(|| "None".to_owned(), |n| n.to_string());
+            let side = |n: Option<u32>| n.map_or_else(|| "None".to_owned(), |n| n.to_string());
+            format!(
+                "file info: ({}, {}, {}, {}, {}, {}, {}, {})",
+                info.size,
+                mime.human_name(),
+                side(info.width),
+                side(info.height),
+                count(info.duration_ms),
+                count(info.num_frames),
+                info.has_audio,
+                count(info.num_words)
+            )
+        });
         let hashes = hashes::hash_file(path)?;
         let decoded = if mimes::has_perceptual_hash(mime) || mimes::is_image(mime) {
             self.load_image(path, mime).ok()
@@ -841,6 +869,7 @@ impl MediaTools {
             None
         };
         let thumbnail = if mimes::has_thumbnail(mime) {
+            say(&|| "generating thumbnail".to_owned());
             let target = thumbnail::thumbnail_resolution(info.width, info.height, spec)
                 .ok_or_else(|| MediaError::damaged("degenerate thumbnail bounding box"))?;
             Some(self.thumbnail_at(path, &info, spec, target, decoded.as_ref())?)
@@ -851,9 +880,29 @@ impl MediaTools {
             .as_ref()
             .and_then(|t| blurhash::blurhash(&t.pixels));
         let perceptual_hashes = match (&decoded, mimes::has_perceptual_hash(mime)) {
-            (Some(r), true) => vec![phash::perceptual_hash(r)],
+            (Some(r), true) => {
+                say(&|| "generating perceptual_hashes".to_owned());
+                hydrus_core::debug_flags::report(
+                    hydrus_core::debug_flags::Flag::SimilarFilesMetadataGenerationReport,
+                    || "phash generation: loading image".to_owned(),
+                );
+                let generated = vec![phash::perceptual_hash(r)];
+                say(&|| {
+                    format!(
+                        "generated {} perceptual_hashes: [{}]",
+                        generated.len(),
+                        generated
+                            .iter()
+                            .map(|p| hex::encode(p.0))
+                            .collect::<Vec<_>>()
+                            .join(", ")
+                    )
+                });
+                generated
+            }
             _ => Vec::new(),
         };
+        say(&|| "generating other hashes".to_owned());
         let pixel_hash = if mimes::can_have_pixel_hash(mime) && info.duration_ms.is_none() {
             decoded.as_ref().map(|r| hashes::sha256(r.data()))
         } else {
