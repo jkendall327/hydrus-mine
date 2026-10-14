@@ -605,6 +605,117 @@ impl Draft {
         })
     }
 }
+/// A content parser's own test panel, as the reference words it
+/// (`ContentParser.ParsePretty`): each result described by its kind, sorted,
+/// between the lines counting them; a veto is the one result.
+pub fn content_preview_text(name: &str, parsed: Result<ParsedPost, ParseFailure>) -> String {
+    use hydrus_core::numbers::human_int;
+    use hydrus_parse::content::url_type;
+    let results: Vec<String> = match parsed {
+        Err(ParseFailure::Veto(message)) => vec![format!("veto: veto: {message}")],
+        Err(ParseFailure::Error(error)) => return format!("Content Parser {name}: {error}"),
+        Ok(post) => {
+            let mut results: Vec<String> = post
+                .contents
+                .iter()
+                .map(|c| match &c.kind {
+                    ContentKind::Url {
+                        url_type: kind,
+                        priority,
+                    } => format!(
+                        "{} (priority {priority}): {}",
+                        match *kind {
+                            url_type::DESIRED => "downloadable/pursuable url",
+                            url_type::SOURCE => "associable/source url",
+                            url_type::NEXT => "next page url",
+                            url_type::SUB_GALLERY => "sub-gallery url",
+                            _ => "unknown url type!",
+                        },
+                        c.text
+                    ),
+                    ContentKind::Tag { namespace } => {
+                        let combined = namespace.as_ref().map_or_else(
+                            || c.text.clone(),
+                            |ns| hydrus_core::tag::combine_tag(ns, &c.text),
+                        );
+                        let tag = hydrus_core::tag::clean_tag(&combined);
+                        if hydrus_core::tag::split_tag(&tag).1.is_empty() {
+                            "tag: empty tag, will be discarded".to_owned()
+                        } else {
+                            format!("tag: {tag}")
+                        }
+                    }
+                    ContentKind::Note { name } => format!("note \"{name}\":\n{}", c.text),
+                    ContentKind::Hash {
+                        hash_type,
+                        encoding,
+                    } => {
+                        let decoded = PostHashes::decode(encoding, &c.text);
+                        format!(
+                            "{hash_type} hash: {}",
+                            decoded.unwrap_or_else(|| format!(
+                                "Could not decode a hash from {}",
+                                c.text
+                            ))
+                        )
+                    }
+                    ContentKind::Timestamp { .. } => format!(
+                        "source/post time: {}",
+                        c.text.trim().parse::<i64>().map_or_else(
+                            |_| "could not convert to integer".to_owned(),
+                            |t| hydrus_core::time::timestamp_to_iso_with_offset(
+                                Some(t),
+                                jiff::Zoned::now().offset()
+                            )
+                        )
+                    ),
+                    ContentKind::Title { priority } => {
+                        format!("watcher page title (priority {priority}): {}", c.text)
+                    }
+                    ContentKind::HttpHeader { name } => {
+                        format!("http header \"{name}\": {}", c.text)
+                    }
+                    ContentKind::Variable { name } => {
+                        format!("temp variable \"{name}\": {}", c.text)
+                    }
+                    ContentKind::Veto { .. } => format!("veto: {}", c.name),
+                })
+                .collect();
+            results.sort();
+            results
+        }
+    };
+    let mut lines = vec![format!(
+        "*** {} RESULTS BEGIN ***",
+        human_int(results.len() as u64)
+    )];
+    lines.extend(results);
+    lines.push("*** RESULTS END ***".into());
+    lines.join("\n")
+}
+
+/// Hashes as a parser's text gives them, hex-encoded.
+struct PostHashes;
+impl PostHashes {
+    fn decode(encoding: &str, text: &str) -> Option<String> {
+        let parsed = ParsedPost {
+            contents: vec![hydrus_parse::content::ParsedContent {
+                name: String::new(),
+                kind: ContentKind::Hash {
+                    hash_type: "sha256".into(),
+                    encoding: encoding.into(),
+                },
+                text: text.into(),
+            }],
+        };
+        parsed
+            .hashes()
+            .into_iter()
+            .next()
+            .map(|(_, bytes)| hex::encode(bytes))
+    }
+}
+
 /// Format real parsed contents without hiding content kinds or empty results.
 pub fn preview_text(posts: &[ParsedPost]) -> String {
     if posts.is_empty() {

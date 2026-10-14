@@ -53,6 +53,43 @@ def record(session):
                         'collapse_newlines': panel._test_panel._collapse_newlines})
             parsers.append(value)
             panel.deleteLater()
+        # veto parsers: what a match (or none) does under either polarity and a
+        # narrowed string match, and the message it vetoes with
+        variants = []
+        for if_match_found, match_value in [(True, 'other'), (False, 'other'), (False, None), (True, None)]:
+            string_match = S.StringMatch() if match_value is None else S.StringMatch(match_type=S.STRING_MATCH_FIXED, match_value=match_value, example_string=match_value)
+            for text in ['blocked', 'other']:
+                formula = P.ParseFormulaHTML(tag_rules=[P.ParseRuleHTML(tag_name='p')], content_to_fetch=P.HTML_CONTENT_STRING)
+                content = P.ContentParser(name='veto', content_type=H.CONTENT_TYPE_VETO, formula=formula, additional_info=(if_match_found, string_match))
+                panel = G.EditContentParserPanel(root, content, P.ParsingTestData(context, ['<p>' + text + '</p>']), kinds)
+                value = panel.GetValue()
+                panel._test_panel._SetExampleData('<p>' + text + '</p>')
+                panel._test_panel.TestParse()
+                error = None
+                try: value.Parse(dict(context), '<p>' + text + '</p>')
+                except Exception as e: error = str(e)
+                variants.append({'if_match_found': if_match_found, 'match': match_value, 'text': text, 'error': error, 'preview': panel._test_panel._results.toPlainText()})
+                panel.deleteLater()
+        out.append({'case': 'veto_variants', 'variants': variants})
+        # tag parsers: the namespace (any, none, given), as the panel's
+        # "any namespace" box and text hold it, and what the preview shows
+        tag_variants = []
+        for namespace in [None, '', 'artist', 'Character Name']:
+            for text in ['Samus  Aran', 'Metroid:Fusion']:
+                formula = P.ParseFormulaHTML(tag_rules=[P.ParseRuleHTML(tag_name='p')], content_to_fetch=P.HTML_CONTENT_STRING)
+                content = P.ContentParser(name='tags', content_type=H.CONTENT_TYPE_MAPPINGS, formula=formula, additional_info='x')
+                panel = G.EditContentParserPanel(root, content, P.ParsingTestData(context, ['<p>' + text + '</p>']), kinds)
+                panel._namespace.SetValue(namespace)
+                value = panel.GetValue()
+                panel._test_panel._SetExampleData('<p>' + text + '</p>')
+                panel._test_panel.TestParse()
+                parsed = None
+                error = None
+                try: parsed = [c.parsed_text for c in value.Parse(dict(context), '<p>' + text + '</p>').parsed_contents]
+                except Exception as e: error = str(e)
+                tag_variants.append({'namespace': namespace, 'text': text, 'additional_info': value.GetSerialisableTuple()[2][3], 'results': parsed, 'error': error, 'preview': panel._test_panel._results.toPlainText(), 'any_checked': panel._namespace._checkbox.isChecked() if hasattr(panel._namespace, '_checkbox') else None})
+                panel.deleteLater()
+        out.append({'case': 'tag_variants', 'variants': tag_variants})
         page = P.PageParser(name='test page', content_parsers=parsers[:3], example_urls=['https://example.com/post/1'])
         panel = G.EditPageParserPanel(root, page)
         panel._name.setText('edited page')

@@ -647,6 +647,160 @@
     "collapse_newlines": true
   },
   {
+    "case": "veto_variants",
+    "variants": [
+      {
+        "if_match_found": true,
+        "match": "other",
+        "text": "blocked",
+        "error": null,
+        "preview": "*** 0 RESULTS BEGIN ***\n*** RESULTS END ***"
+      },
+      {
+        "if_match_found": true,
+        "match": "other",
+        "text": "other",
+        "error": "veto: veto",
+        "preview": "*** 1 RESULTS BEGIN ***\nveto: veto: veto\n*** RESULTS END ***"
+      },
+      {
+        "if_match_found": false,
+        "match": "other",
+        "text": "blocked",
+        "error": "veto: veto",
+        "preview": "*** 1 RESULTS BEGIN ***\nveto: veto: veto\n*** RESULTS END ***"
+      },
+      {
+        "if_match_found": false,
+        "match": "other",
+        "text": "other",
+        "error": null,
+        "preview": "*** 0 RESULTS BEGIN ***\n*** RESULTS END ***"
+      },
+      {
+        "if_match_found": false,
+        "match": null,
+        "text": "blocked",
+        "error": null,
+        "preview": "*** 0 RESULTS BEGIN ***\n*** RESULTS END ***"
+      },
+      {
+        "if_match_found": false,
+        "match": null,
+        "text": "other",
+        "error": null,
+        "preview": "*** 0 RESULTS BEGIN ***\n*** RESULTS END ***"
+      },
+      {
+        "if_match_found": true,
+        "match": null,
+        "text": "blocked",
+        "error": "veto: veto",
+        "preview": "*** 1 RESULTS BEGIN ***\nveto: veto: veto\n*** RESULTS END ***"
+      },
+      {
+        "if_match_found": true,
+        "match": null,
+        "text": "other",
+        "error": "veto: veto",
+        "preview": "*** 1 RESULTS BEGIN ***\nveto: veto: veto\n*** RESULTS END ***"
+      }
+    ]
+  },
+  {
+    "case": "tag_variants",
+    "variants": [
+      {
+        "namespace": null,
+        "text": "Samus  Aran",
+        "additional_info": null,
+        "results": [
+          "Samus  Aran"
+        ],
+        "error": null,
+        "preview": "*** 1 RESULTS BEGIN ***\ntag: samus aran\n*** RESULTS END ***",
+        "any_checked": true
+      },
+      {
+        "namespace": null,
+        "text": "Metroid:Fusion",
+        "additional_info": null,
+        "results": [
+          "Metroid:Fusion"
+        ],
+        "error": null,
+        "preview": "*** 1 RESULTS BEGIN ***\ntag: metroid:fusion\n*** RESULTS END ***",
+        "any_checked": true
+      },
+      {
+        "namespace": "",
+        "text": "Samus  Aran",
+        "additional_info": "",
+        "results": [
+          "Samus  Aran"
+        ],
+        "error": null,
+        "preview": "*** 1 RESULTS BEGIN ***\ntag: samus aran\n*** RESULTS END ***",
+        "any_checked": false
+      },
+      {
+        "namespace": "",
+        "text": "Metroid:Fusion",
+        "additional_info": "",
+        "results": [
+          "Metroid:Fusion"
+        ],
+        "error": null,
+        "preview": "*** 1 RESULTS BEGIN ***\ntag: :metroid:fusion\n*** RESULTS END ***",
+        "any_checked": false
+      },
+      {
+        "namespace": "artist",
+        "text": "Samus  Aran",
+        "additional_info": "artist",
+        "results": [
+          "Samus  Aran"
+        ],
+        "error": null,
+        "preview": "*** 1 RESULTS BEGIN ***\ntag: artist:samus aran\n*** RESULTS END ***",
+        "any_checked": false
+      },
+      {
+        "namespace": "artist",
+        "text": "Metroid:Fusion",
+        "additional_info": "artist",
+        "results": [
+          "Metroid:Fusion"
+        ],
+        "error": null,
+        "preview": "*** 1 RESULTS BEGIN ***\ntag: artist:metroid:fusion\n*** RESULTS END ***",
+        "any_checked": false
+      },
+      {
+        "namespace": "Character Name",
+        "text": "Samus  Aran",
+        "additional_info": "Character Name",
+        "results": [
+          "Samus  Aran"
+        ],
+        "error": null,
+        "preview": "*** 1 RESULTS BEGIN ***\ntag: character name:samus aran\n*** RESULTS END ***",
+        "any_checked": false
+      },
+      {
+        "namespace": "Character Name",
+        "text": "Metroid:Fusion",
+        "additional_info": "Character Name",
+        "results": [
+          "Metroid:Fusion"
+        ],
+        "error": null,
+        "preview": "*** 1 RESULTS BEGIN ***\ntag: character name:metroid:fusion\n*** RESULTS END ***",
+        "any_checked": false
+      }
+    ]
+  },
+  {
     "case": "page",
     "tuple": [
       58,
@@ -654,7 +808,7 @@
       3,
       [
         "edited page",
-        "d7ee607b869e4c91dbb899832fd03558213daa8157d2cd4aabc83a5bb921c09d",
+        "9a8961d151587dd464468db5a704024ca01ca704ae044d17d5809f3967ee3b81",
         [
           55,
           2,

@@ -171,6 +171,7 @@ fn content_test_panel_fetches_raw_data_and_hands_it_to_its_formula() {
     list.invoke_action("cancel".into());
     assert_eq!(definitions(&store), original);
 }
+// leaf: parser-fetch
 #[test]
 fn fetched_page_examples_use_actual_network_headers_cookies_context_and_child_converter() {
     use hydrus_core::{
@@ -221,13 +222,43 @@ fn fetched_page_examples_use_actual_network_headers_cookies_context_and_child_co
     until_fetch(|| !page.get_fetching());
     assert_eq!(page.get_document(), "<p>fetched café</p>");
     assert_eq!(page.get_test_url(), format!("{}/a%20b", server.base));
+    assert_eq!(
+        page.get_document(),
+        hydrus_testkit::fixture_json("parser_test_data.json")
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|c| c["case"] == "parser_fetch" && c["mode"] == "success")
+            .unwrap()["text"]
+            .as_str()
+            .unwrap()
+    );
     assert_eq!(page.get_post_index(), "0");
     assert_eq!(page.get_variables(), "token=preserved");
     assert_eq!(page.get_examples().row_count(), 2);
     screenshot(&rendered, 1, "parser-fetch.png", &page);
+    // the request the reference's page test panel made (recorded): the URL
+    // percent-encoded, the referral URL given
+    let recorded: Vec<serde_json::Value> =
+        serde_json::from_value(hydrus_testkit::fixture_json("parser_test_data.json")).unwrap();
+    let theirs = recorded
+        .iter()
+        .find(|c| c["case"] == "parser_fetch" && c["mode"] == "success")
+        .unwrap();
+    let their_path = theirs["request"]["url"]
+        .as_str()
+        .unwrap()
+        .strip_prefix("https://test-docs.example")
+        .unwrap();
     let request = server.requests.lock().unwrap()[0].to_lowercase();
-    assert!(request.starts_with("get /a%20b "));
-    assert!(request.contains("referer: https://referral.example/from"));
+    assert!(
+        request.starts_with(&format!("get {their_path} ")),
+        "{request}"
+    );
+    assert!(request.contains(&format!(
+        "referer: {}",
+        theirs["request"]["referral"].as_str().unwrap()
+    )));
     assert!(request.contains("x-test-document: approved"));
     page.invoke_row_clicked(0, false, false);
     page.invoke_action("edit-content".into());
@@ -835,7 +866,7 @@ fn recursive_formula_edits_reach_saved_page_parser_and_consumer() {
     formula.invoke_apply();
     content.invoke_action("test".into());
     assert!(
-        content.get_preview().contains("tags: edited tag"),
+        content.get_preview().contains("tag: series:edited tag"),
         "{}",
         content.get_preview()
     );
@@ -2071,7 +2102,7 @@ fn timestamp_content_has_only_source_choice_and_persists_real_parsed_metadata() 
         content.set_test_url("https://source-time.example/post/1".into());
         content.set_document(case["cases"][0]["document"].as_str().unwrap().into());
         content.invoke_action("test".into());
-        assert!(content.get_preview().contains("timestamp:"));
+        assert!(content.get_preview().contains("source/post time:"));
         assert_eq!(definitions(&store), original);
         let pixels = headless::render(&rendered.get(rendered.count() - 1).unwrap(), 1000, 780);
         assert_eq!(pixels.len(), 1000 * 780 * 4);

@@ -560,3 +560,47 @@ fn timestamp_editor_normalises_recorded_source_choice_and_preserves_converted_me
         );
     }
 }
+
+// leaf: parser-fetch
+#[test]
+fn fetched_test_documents_are_the_references_for_success_cancel_and_failure() {
+    use hydrus_gui_model::formula_editors::FetchedDocument;
+    // oracle/record_parser_test_data.py: the formula and page test panels'
+    // "fetch from URL", with the network job scripted to succeed, be
+    // cancelled or fail, as the window gives its outcome to the data it keeps
+    let recorded = hydrus_testkit::fixture_json("parser_test_data.json");
+    let mut seen = 0;
+    for case in recorded.as_array().unwrap() {
+        let page = match case["case"].as_str().unwrap() {
+            "formula_fetch" => false,
+            "parser_fetch" => true,
+            _ => continue,
+        };
+        let body = "<p>fetched caf\u{e9}</p>";
+        let result = match case["mode"].as_str().unwrap() {
+            "success" => FetchedDocument::Text(body.into()),
+            "cancel" => FetchedDocument::Cancelled,
+            "error" => FetchedDocument::Failed {
+                error: "scripted failure".into(),
+                text: body.into(),
+            },
+            other => panic!("{other}"),
+        };
+        let mut data = FormulaTestData::default();
+        data.context.insert("token".into(), "preserved".into());
+        data.context.insert("post_index".into(), "12".into());
+        data.text = "old text".into();
+        let url = case["request"]["url"].as_str().unwrap().to_owned();
+        data.fetched(url.clone(), result, page);
+        assert_eq!(data.text, case["text"].as_str().unwrap(), "{case}");
+        for (key, value) in case["context"].as_object().unwrap() {
+            assert_eq!(
+                data.context.get(key),
+                value.as_str().map(str::to_owned).as_ref(),
+                "{case} {key}"
+            );
+        }
+        seen += 1;
+    }
+    assert_eq!(seen, 6);
+}

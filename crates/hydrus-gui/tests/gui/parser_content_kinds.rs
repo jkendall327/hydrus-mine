@@ -268,7 +268,6 @@ fn variable_content_keeps_its_variable_name() {
     assert_eq!(post.contents[0].kind, saved.kind);
 }
 
-// leaf: content-veto
 #[test]
 fn veto_content_toggles_its_polarity_and_edits_its_matcher() {
     let _windows = headless::init();
@@ -319,4 +318,164 @@ fn veto_content_toggles_its_polarity_and_edits_its_matcher() {
     ));
     // (the recorded matcher matches anything)
     assert!(flipped.parse(&context, "<p>blocked</p>").is_ok());
+}
+
+// leaf: content-veto
+#[test]
+fn veto_content_vetoes_as_the_reference_does_under_either_polarity_and_matcher() {
+    let _windows = headless::init();
+    let all = hydrus_testkit::fixture_json("parser_editors.json");
+    let variants = all
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["case"] == "veto_variants")
+        .expect("recorded")["variants"]
+        .as_array()
+        .unwrap()
+        .clone();
+    let case = recorded("veto");
+    let mut context = ParsingContext::new();
+    context.insert("url".into(), "https://example.com/post/1".into());
+    let mut vetoes = 0;
+    for variant in &variants {
+        let name = variant.to_string();
+        // the editor: the polarity, and a matcher narrowed to a fixed string
+        let s = open(&case.parser);
+        let polarity = variant["if_match_found"].as_bool().unwrap();
+        if s.field("veto if match found").checked != polarity {
+            s.window.invoke_toggled(9, polarity);
+        }
+        if let Some(fixed) = variant["match"].as_str() {
+            s.window.invoke_action("match".into());
+            let matcher = s
+                .slots
+                .formula
+                .strings
+                .step
+                .borrow()
+                .as_ref()
+                .expect("the matcher opens")
+                .clone_strong();
+            matcher.set_match_type(1);
+            matcher.set_fixed(fixed.into());
+            matcher.invoke_changed();
+            matcher.invoke_apply();
+        }
+        let saved = s.apply().unwrap();
+        let parsed = saved.parse(
+            &context,
+            &format!("<p>{}</p>", variant["text"].as_str().unwrap()),
+        );
+        match variant["error"].as_str() {
+            Some(error) => {
+                vetoes += 1;
+                assert_eq!(parsed.unwrap_err().to_string(), error, "{name}");
+            }
+            None => {
+                assert!(parsed.unwrap().contents.is_empty(), "{name}");
+            }
+        }
+    }
+    assert!(
+        vetoes >= 4 && vetoes < variants.len(),
+        "both outcomes were replayed"
+    );
+}
+
+// leaf: content-tags
+#[test]
+fn tag_content_keeps_its_namespace_as_the_reference_does_and_previews_the_cleaned_tags() {
+    let _windows = headless::init();
+    let all = hydrus_testkit::fixture_json("parser_editors.json");
+    let variants = all
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["case"] == "tag_variants")
+        .expect("recorded")["variants"]
+        .as_array()
+        .unwrap()
+        .clone();
+    let case = recorded("tags");
+    for variant in &variants {
+        let name = format!("{} {}", variant["namespace"], variant["text"]);
+        let s = open(&case.parser);
+        // (the document the preview parses)
+        s.window
+            .set_document(format!("<p>{}</p>", variant["text"].as_str().unwrap()).into());
+        let labels = s.labels();
+        let any = labels
+            .iter()
+            .position(|l| l.contains("any namespace"))
+            .unwrap_or_else(|| panic!("{labels:?}"));
+        let any_field = s.window.get_fields().row_data(any).unwrap();
+        match variant["namespace"].as_str() {
+            Some(namespace) => {
+                if any_field.checked {
+                    s.window.invoke_toggled(any_field.id, false);
+                }
+                // (the namespace text is the field after the "any namespace" box)
+                let text_field = s.window.get_fields().row_data(any + 1).unwrap();
+                s.window.invoke_text_edited(text_field.id, namespace.into());
+            }
+            None => {
+                if !any_field.checked {
+                    s.window.invoke_toggled(any_field.id, true);
+                }
+            }
+        }
+        s.window.invoke_action("test".into());
+        assert_eq!(
+            s.window.get_preview().as_str(),
+            variant["preview"].as_str().unwrap(),
+            "{name}"
+        );
+        // and the parser it hands back holds the namespace as recorded
+        let saved = s.apply().unwrap();
+        match (&saved.kind, variant["additional_info"].as_str()) {
+            (ContentKind::Tag { namespace }, theirs) => {
+                assert_eq!(namespace.as_deref(), theirs, "{name}");
+            }
+            other => panic!("{other:?}"),
+        }
+    }
+}
+
+#[test]
+fn the_content_test_panel_previews_every_kind_as_the_reference_does() {
+    let _windows = headless::init();
+    let all = hydrus_testkit::fixture_json("parser_editors.json");
+    let mut seen = 0;
+    for kind in [
+        "urls",
+        "tags",
+        "notes",
+        "file hash",
+        "timestamp",
+        "watcher title",
+        "http headers",
+        "temporary variable",
+        "veto",
+    ] {
+        let theirs = all
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|c| c["case"] == "content" && c["kind"] == kind)
+            .unwrap();
+        let case = recorded(kind);
+        let s = open(&case.parser);
+        s.window
+            .set_document(format!("<p>{}</p>", case.text).into());
+        s.window.set_test_url("https://example.com/post/1".into());
+        s.window.invoke_action("test".into());
+        assert_eq!(
+            s.window.get_preview().as_str(),
+            theirs["preview"].as_str().unwrap(),
+            "{kind}"
+        );
+        seen += 1;
+    }
+    assert_eq!(seen, 9);
 }
