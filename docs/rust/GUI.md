@@ -821,13 +821,17 @@ does: #, path, filetype ("png", "PROBLEM: filetype unsupported", "file is
 empty", "file is missing", "sidecar") and size, the problem rows in the
 reference's error colour; under it, "6 files parsed - 4 good | 1 bad: 1
 had unsupported file types - and looks like 1 txt/json/xml sidecars." and
-a gauge, with pause/play and stop while it parses. "remove files" takes
+a gauge, with pause/play and stop while it parses (paused with a path still to
+parse, then resumed; stopped with paths still to parse, which are dropped while
+the parsed rows stay: `oracle/fixtures/local_import_pause.json`). "remove files" takes
 the selected rows out (asking first), and "delete original files after
 successful import" says, in the reference's red, that they will be
 deleted. "import now" opens an "import" page of the good files, in the
-list's order. Paths go in through the box over the list (enter adds one,
-a file or folder, as typed or pasted with a file manager's quotes) in
-place of the reference's "add files"/"add folder" pickers.
+list's order, which deletes each original once it is in the database (new or
+already there) if the box was ticked (`oracle/fixtures/local_import_queue.json`).
+Paths go in through the box over the list (enter adds one, a file or folder,
+as typed or pasted with a file manager's quotes) in place of the reference's
+"add files"/"add folder" pickers.
 
 "add tags/urls with the import >>" opens the "filename tagging" dialog
 (`src/filename_tagging_window.rs`, `hydrus-gui-model/src/filename_tagging.rs`),
@@ -2193,7 +2197,9 @@ recorded by `oracle/record_bandwidth_history.py`. Detached rule editors add, rep
 and delete data/request limits with rolling-second or calendar-month periods.
 Apply preserves unrelated context edits and pacing settings; Cancel leaves them
 untouched. Default/global rules can be edited by kind or reset with the reference
-confirmation, and specific domains can inherit their defaults again.
+confirmation (global and every default context the reference names are reset;
+specific domains and the downloader default stay), and specific domains can
+inherit their defaults again.
 
 Current jobs show every active engine request, including subscriptions, with
 URL, status, typed wait reason, speed and progress. Extended selection supports

@@ -1,134 +1,426 @@
 {
- "types": [
-  "web domain",
-  "hydrus service"
- ],
- "initial": {
-  "type": 2,
-  "domain_text": "example.com",
-  "note": "Network traffic going to or from a web domain (or a subdomain)."
+ "basic": {
+  "cases": [
+   {
+    "name": "accepted as it opens",
+    "title": "enter new network context",
+    "types": [
+     "web domain",
+     "hydrus service"
+    ],
+    "type_info": "Network traffic going to or from a web domain (or a subdomain).",
+    "domain": "example.com",
+    "services": [],
+    "enabled": {
+     "domain": true,
+     "service": false,
+     "default box visible": false
+    },
+    "value": [
+     2,
+     "example.com"
+    ],
+    "contexts": [
+     [
+      2,
+      "example.com"
+     ]
+    ],
+    "rows": [
+     [
+      "web domain: example.com",
+      "0",
+      ""
+     ]
+    ],
+    "show_empty": true
+   },
+   {
+    "name": "domain typed",
+    "title": "enter new network context",
+    "types": [
+     "web domain",
+     "hydrus service"
+    ],
+    "type_info": "Network traffic going to or from a web domain (or a subdomain).",
+    "domain": "example.com",
+    "services": [],
+    "enabled": {
+     "domain": true,
+     "service": false,
+     "default box visible": false
+    },
+    "value": [
+     2,
+     "Example.com"
+    ],
+    "contexts": [
+     [
+      2,
+      "Example.com"
+     ]
+    ],
+    "rows": [
+     [
+      "web domain: Example.com",
+      "0",
+      ""
+     ]
+    ],
+    "show_empty": true
+   },
+   {
+    "name": "domain that is not one",
+    "title": "enter new network context",
+    "types": [
+     "web domain",
+     "hydrus service"
+    ],
+    "type_info": "Network traffic going to or from a web domain (or a subdomain).",
+    "domain": "example.com",
+    "services": [],
+    "enabled": {
+     "domain": true,
+     "service": false,
+     "default box visible": false
+    },
+    "value": [
+     2,
+     "not a domain!!"
+    ],
+    "contexts": [
+     [
+      2,
+      ""
+     ]
+    ],
+    "rows": [
+     [
+      "web domain: ",
+      "0",
+      ""
+     ]
+    ],
+    "show_empty": true
+   },
+   {
+    "name": "hydrus service chosen",
+    "title": "enter new network context",
+    "types": [
+     "web domain",
+     "hydrus service"
+    ],
+    "type_info": "Network traffic going to or from a web domain (or a subdomain).",
+    "domain": "example.com",
+    "services": [],
+    "enabled": {
+     "domain": true,
+     "service": false,
+     "default box visible": false
+    },
+    "type_info_hydrus": "Network traffic going to or from a hydrus service.",
+    "enabled_hydrus": {
+     "domain": false,
+     "service": true
+    },
+    "value": [
+     1,
+     null
+    ],
+    "contexts": [
+     [
+      1,
+      null
+     ]
+    ],
+    "rows": [
+     [
+      "hydrus service default",
+      "0",
+      ""
+     ]
+    ],
+    "show_empty": true
+   },
+   {
+    "name": "hydrus service, none to choose",
+    "title": "enter new network context",
+    "types": [
+     "web domain",
+     "hydrus service"
+    ],
+    "type_info": "Network traffic going to or from a web domain (or a subdomain).",
+    "domain": "example.com",
+    "services": [],
+    "enabled": {
+     "domain": true,
+     "service": false,
+     "default box visible": false
+    },
+    "type_info_hydrus": "Network traffic going to or from a hydrus service.",
+    "enabled_hydrus": {
+     "domain": false,
+     "service": true
+    },
+    "value": [
+     1,
+     null
+    ],
+    "contexts": [
+     [
+      1,
+      null
+     ]
+    ],
+    "rows": [
+     [
+      "hydrus service default",
+      "0",
+      ""
+     ]
+    ],
+    "show_empty": true
+   },
+   {
+    "name": "cancelled",
+    "title": "enter new network context",
+    "types": [
+     "web domain",
+     "hydrus service"
+    ],
+    "type_info": "Network traffic going to or from a web domain (or a subdomain).",
+    "domain": "example.com",
+    "services": [],
+    "enabled": {
+     "domain": true,
+     "service": false,
+     "default box visible": false
+    },
+    "contexts": [],
+    "rows": [],
+    "show_empty": true
+   }
+  ]
  },
- "services": [
-  "a tag repository",
-  "a file repository"
- ],
- "default_box_hidden": true,
- "per_type": [
-  {
-   "note": "Network traffic going to or from a web domain (or a subdomain).",
-   "domain_enabled": true,
-   "services_enabled": false
-  },
-  {
-   "note": "Network traffic going to or from a hydrus service.",
-   "domain_enabled": false,
-   "services_enabled": true
-  }
- ],
- "domains": [
-  {
-   "typed": "example.com",
-   "context": [
-    2,
-    "example.com"
-   ],
-   "session": true,
-   "contexts_now": [
-    "web domain: example.com"
-   ]
-  },
-  {
-   "typed": "Example.COM",
-   "context": [
-    2,
-    "Example.COM"
-   ],
-   "session": true,
-   "contexts_now": [
-    "web domain: Example.COM",
-    "web domain: example.com"
-   ]
-  },
-  {
-   "typed": "  spaced.example  ",
-   "context": [
-    2,
-    "  spaced.example  "
-   ],
-   "session": true,
-   "contexts_now": [
-    "web domain: ",
-    "web domain: Example.COM",
-    "web domain: example.com"
-   ]
-  },
-  {
-   "typed": "not a domain!!",
-   "context": [
-    2,
-    "not a domain!!"
-   ],
-   "session": true,
-   "contexts_now": [
-    "web domain: ",
-    "web domain: Example.COM",
-    "web domain: example.com"
-   ]
-  },
-  {
-   "typed": "",
-   "context": [
-    2,
-    ""
-   ],
-   "session": true,
-   "contexts_now": [
-    "web domain: ",
-    "web domain: Example.COM",
-    "web domain: example.com"
-   ]
-  },
-  {
-   "typed": "sub.domain.example:8080",
-   "context": [
-    2,
-    "sub.domain.example:8080"
-   ],
-   "session": true,
-   "contexts_now": [
-    "web domain: ",
-    "web domain: Example.COM",
-    "web domain: example.com"
-   ]
-  },
-  {
-   "typed": "http://example.com/path",
-   "context": [
-    2,
-    "http://example.com/path"
-   ],
-   "session": true,
-   "contexts_now": [
-    "web domain: ",
-    "web domain: Example.COM",
-    "web domain: example.com"
-   ]
-  }
- ],
- "services_values": [
-  {
-   "name": "a tag repository",
-   "context": [
-    1,
-    "7a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67"
-   ]
-  },
-  {
-   "name": "a file repository",
-   "context": [
-    1,
-    "f11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11e"
-   ]
-  }
- ]
+ "repositories": {
+  "cases": [
+   {
+    "name": "accepted as it opens",
+    "title": "enter new network context",
+    "types": [
+     "web domain",
+     "hydrus service"
+    ],
+    "type_info": "Network traffic going to or from a web domain (or a subdomain).",
+    "domain": "example.com",
+    "services": [
+     "a tag repository",
+     "a file repository"
+    ],
+    "enabled": {
+     "domain": true,
+     "service": false,
+     "default box visible": false
+    },
+    "value": [
+     2,
+     "example.com"
+    ],
+    "contexts": [
+     [
+      2,
+      "example.com"
+     ]
+    ],
+    "rows": [
+     [
+      "web domain: example.com",
+      "0",
+      ""
+     ]
+    ],
+    "show_empty": true
+   },
+   {
+    "name": "domain typed",
+    "title": "enter new network context",
+    "types": [
+     "web domain",
+     "hydrus service"
+    ],
+    "type_info": "Network traffic going to or from a web domain (or a subdomain).",
+    "domain": "example.com",
+    "services": [
+     "a tag repository",
+     "a file repository"
+    ],
+    "enabled": {
+     "domain": true,
+     "service": false,
+     "default box visible": false
+    },
+    "value": [
+     2,
+     "Example.com"
+    ],
+    "contexts": [
+     [
+      2,
+      "Example.com"
+     ]
+    ],
+    "rows": [
+     [
+      "web domain: Example.com",
+      "0",
+      ""
+     ]
+    ],
+    "show_empty": true
+   },
+   {
+    "name": "domain that is not one",
+    "title": "enter new network context",
+    "types": [
+     "web domain",
+     "hydrus service"
+    ],
+    "type_info": "Network traffic going to or from a web domain (or a subdomain).",
+    "domain": "example.com",
+    "services": [
+     "a tag repository",
+     "a file repository"
+    ],
+    "enabled": {
+     "domain": true,
+     "service": false,
+     "default box visible": false
+    },
+    "value": [
+     2,
+     "not a domain!!"
+    ],
+    "contexts": [
+     [
+      2,
+      ""
+     ]
+    ],
+    "rows": [
+     [
+      "web domain: ",
+      "0",
+      ""
+     ]
+    ],
+    "show_empty": true
+   },
+   {
+    "name": "hydrus service chosen",
+    "title": "enter new network context",
+    "types": [
+     "web domain",
+     "hydrus service"
+    ],
+    "type_info": "Network traffic going to or from a web domain (or a subdomain).",
+    "domain": "example.com",
+    "services": [
+     "a tag repository",
+     "a file repository"
+    ],
+    "enabled": {
+     "domain": true,
+     "service": false,
+     "default box visible": false
+    },
+    "type_info_hydrus": "Network traffic going to or from a hydrus service.",
+    "enabled_hydrus": {
+     "domain": false,
+     "service": true
+    },
+    "value": [
+     1,
+     "7a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67"
+    ],
+    "contexts": [
+     [
+      1,
+      "7a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67"
+     ]
+    ],
+    "rows": [
+     [
+      "hydrus service: a tag repository",
+      "0",
+      ""
+     ]
+    ],
+    "show_empty": true
+   },
+   {
+    "name": "hydrus service, none to choose",
+    "title": "enter new network context",
+    "types": [
+     "web domain",
+     "hydrus service"
+    ],
+    "type_info": "Network traffic going to or from a web domain (or a subdomain).",
+    "domain": "example.com",
+    "services": [
+     "a tag repository",
+     "a file repository"
+    ],
+    "enabled": {
+     "domain": true,
+     "service": false,
+     "default box visible": false
+    },
+    "type_info_hydrus": "Network traffic going to or from a hydrus service.",
+    "enabled_hydrus": {
+     "domain": false,
+     "service": true
+    },
+    "value": [
+     1,
+     "7a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67"
+    ],
+    "contexts": [
+     [
+      1,
+      "7a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67"
+     ]
+    ],
+    "rows": [
+     [
+      "hydrus service: a tag repository",
+      "0",
+      ""
+     ]
+    ],
+    "show_empty": true
+   },
+   {
+    "name": "cancelled",
+    "title": "enter new network context",
+    "types": [
+     "web domain",
+     "hydrus service"
+    ],
+    "type_info": "Network traffic going to or from a web domain (or a subdomain).",
+    "domain": "example.com",
+    "services": [
+     "a tag repository",
+     "a file repository"
+    ],
+    "enabled": {
+     "domain": true,
+     "service": false,
+     "default box visible": false
+    },
+    "contexts": [],
+    "rows": [],
+    "show_empty": true
+   }
+  ]
+ }
 }

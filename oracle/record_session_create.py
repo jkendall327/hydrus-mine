@@ -1,151 +1,136 @@
 #!/usr/bin/env python3
-"""Record the reference's "enter new network context" editor (network >
-data > review session cookies > add).
+"""Record "create new" on the reference's network session browser.
 
-On the `repositories` fixture, the real `EditNetworkContextPanel` is made as
-the sessions review makes it (`limited_types=( web domain, hydrus service )`,
-no "act as default" box), starting on a web domain "example.com". Recorded:
-the type choices and the note under each, what is enabled for each, the
-hydrus service choices, and the network context `GetValue` gives (and the
-session the session manager then establishes for it, or its error) for a
-range of typed domains and for each service.
+The real `ReviewNetworkSessionsPanel` (on a fresh `NetworkSessionManager`) has
+its `_Add` pressed with the edit dialog replaced by a script that records the
+dialog's title and the panel inside it (its type choices, the note under
+them, the starting domain, the services it offers, whether each data control
+is enabled) and then sets values and accepts. Cases: the dialog accepted as
+it opens; a domain typed (`Example.com`, `not a domain!!`); a hydrus service
+chosen; the hydrus service type with no service to choose; and the dialog
+cancelled. Recorded: what the dialog showed and the contexts the manager holds
+afterwards (as `[type, data]`), and the list's rows.
+
+The same on the `basic` fixture (no repositories) and the `repositories` fixture
+(two), under those keys.
 
 Usage: QT_QPA_PLATFORM=offscreen python oracle/record_session_create.py
        (writes fixtures/session_create.json)
 """
+import json, os, sys, tempfile
 
-import json
-import os
-import sys
-import tempfile
-
-HERE = os.path.dirname( os.path.abspath( __file__ ) )
-
-sys.path.insert( 0, HERE )
-
-import hydrus_driver
-
-DOMAINS = [ 'example.com', 'Example.COM', '  spaced.example  ', 'not a domain!!', '', 'sub.domain.example:8080', 'http://example.com/path' ]
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
 
 
-def record( session ):
-    
+def record(session):
     controller = session.controller
-    
+
     def qt():
-        
         from hydrus.client import ClientConstants as CC
-        from hydrus.client.gui.networking import ClientGUINetwork as G
-        from hydrus.client.networking import ClientNetworkingContexts as C
-        
-        manager = controller.network_engine.session_manager
-        
-        start = C.NetworkContext( CC.NETWORK_CONTEXT_DOMAIN, 'example.com' )
-        
-        panel = G.EditNetworkContextPanel( controller.gui, start, limited_types = ( CC.NETWORK_CONTEXT_DOMAIN, CC.NETWORK_CONTEXT_HYDRUS ), allow_default = False )
-        
-        out = {
-            'types' : [ panel._context_type.itemText( i ) for i in range( panel._context_type.count() ) ],
-            'initial' : { 'type' : panel._context_type.GetValue(), 'domain_text' : panel._context_data_text.text(), 'note' : panel._context_type_info.text() },
-            'services' : [ panel._context_data_services.itemText( i ) for i in range( panel._context_data_services.count() ) ],
-            'default_box_hidden' : not panel._context_data_none.isVisibleTo( panel ),
-            'per_type' : [],
-            'domains' : [],
-            'services_values' : [],
-        }
-        
-        for i in range( panel._context_type.count() ):
-            
-            panel._context_type.setCurrentIndex( i )
-            
-            out[ 'per_type' ].append( { 'note' : panel._context_type_info.text(), 'domain_enabled' : panel._context_data_text.isEnabled(), 'services_enabled' : panel._context_data_services.isEnabled() } )
-            
-        
-        panel._context_type.SetValue( CC.NETWORK_CONTEXT_DOMAIN )
-        
-        for text in DOMAINS:
-            
-            panel._context_data_text.setText( text )
-            
-            value = panel.GetValue()
-            
-            entry = { 'typed' : text, 'context' : [ value.context_type, value.context_data ] }
-            
+        from hydrus.client.gui.networking import ClientGUINetwork as N
+        from hydrus.client.gui import ClientGUITopLevelWindowsPanels as T
+        from hydrus.client.networking import ClientNetworkingSessions
+        from qtpy import QtWidgets as QW
+        root = controller.gui
+
+        cases = [
+            ('accepted as it opens', None),
+            ('domain typed', ('domain', 'Example.com')),
+            ('domain that is not one', ('domain', 'not a domain!!')),
+            ('hydrus service chosen', ('service', 0)),
+            ('hydrus service, none to choose', ('service', None)),
+            ('cancelled', 'cancel'),
+        ]
+        out = {'cases': []}
+        for name, action in cases:
+            shown = {}
+
+            class FakeDialog(QW.QDialog):
+                def __init__(self, parent, title, **kwargs):
+                    super().__init__(parent)
+                    shown['title'] = title
+
+                def __enter__(self):
+                    return self
+
+                def __exit__(self, *a):
+                    return False
+
+                def SetPanel(self, panel):
+                    self.panel = panel
+
+                def exec(self):
+                    p = self.panel
+                    shown['types'] = [p._context_type.itemText(i) for i in range(p._context_type.count())]
+                    shown['type_info'] = p._context_type_info.text()
+                    shown['domain'] = p._context_data_text.text()
+                    shown['services'] = [p._context_data_services.itemText(i) for i in range(p._context_data_services.count())]
+                    shown['enabled'] = {'domain': p._context_data_text.isEnabled(), 'service': p._context_data_services.isEnabled(), 'default box visible': p._context_data_none.isVisibleTo(p)}
+                    if action == 'cancel':
+                        return QW.QDialog.DialogCode.Rejected
+                    if action is not None:
+                        kind, value = action
+                        if kind == 'domain':
+                            p._context_data_text.setText(value)
+                        else:
+                            p._context_type.SetValue(CC.NETWORK_CONTEXT_HYDRUS)
+                            p._Update()
+                            shown['type_info_hydrus'] = p._context_type_info.text()
+                            shown['enabled_hydrus'] = {'domain': p._context_data_text.isEnabled(), 'service': p._context_data_services.isEnabled()}
+                    try:
+                        shown['value'] = [p.GetValue().context_type, _data(p.GetValue().context_data)]
+                    except Exception as e:
+                        shown['value_error'] = str(e)
+                    return QW.QDialog.DialogCode.Accepted
+
+            def _data(d):
+                return d.hex() if isinstance(d, bytes) else d
+
+            manager = ClientNetworkingSessions.NetworkSessionManager()
+            panel = N.ReviewNetworkSessionsPanel(root, manager)
+            real = T.DialogEdit
+            T.DialogEdit = FakeDialog
             try:
-                
-                manager.GetSession( value )
-                
-                entry[ 'session' ] = True
-                
-            except Exception as e:
-                
-                entry[ 'session' ] = False
-                entry[ 'error' ] = str( e )
-                
-            
-            entry[ 'contexts_now' ] = sorted( [ n.ToString() for n in manager.GetNetworkContexts() ] )
-            
-            out[ 'domains' ].append( entry )
-            
-        
-        panel._context_type.SetValue( CC.NETWORK_CONTEXT_HYDRUS )
-        
-        for i in range( panel._context_data_services.count() ):
-            
-            panel._context_data_services.setCurrentIndex( i )
-            
-            value = panel.GetValue()
-            
-            out[ 'services_values' ].append( { 'name' : panel._context_data_services.itemText( i ), 'context' : [ value.context_type, value.context_data.hex() ] } )
-            
-        
-        panel.deleteLater()
-        
+                try:
+                    panel._Add()
+                except Exception as e:
+                    shown['error'] = f'{type(e).__name__}: {e}'
+            finally:
+                T.DialogEdit = real
+            shown['contexts'] = sorted([c.context_type, _data(c.context_data)] for c in manager.GetNetworkContexts()) if True else []
+            shown['rows'] = [list(panel._ConvertNetworkContextToDisplayTuple(c)) for c in manager.GetNetworkContexts()]
+            shown['show_empty'] = panel._show_empty.isChecked()
+            out['cases'].append(dict(name=name, **shown))
+            panel.deleteLater()
         return out
-        
-    
-    return controller.CallBlockingToQt( controller.gui, qt )
-    
+    return controller.CallBlockingToQt(controller.gui, qt)
+
+
+def child(out, fixture):
+    import hydrus_driver, record_api
+    result = hydrus_driver.run_client(record_api.unpack_fixture(fixture), record)
+    with open(out, 'w') as f:
+        json.dump(result, f, ensure_ascii=False)
+
 
 def main():
-    
-    if len( sys.argv ) > 1 and sys.argv[ 1 ] == '--child':
-        
-        import record_api
-        
-        output_path = sys.argv[ 2 ]
-        
-        result = hydrus_driver.run_client( record_api.unpack_fixture( 'repositories' ), record )
-        
-        with open( output_path, 'w' ) as f:
-            
-            json.dump( result, f, ensure_ascii = False )
-            
-        
+    if len(sys.argv) > 1 and sys.argv[1] == '--child':
+        child(sys.argv[2], sys.argv[3])
         return
-        
-    
-    with tempfile.TemporaryDirectory() as tmp:
-        
-        path = os.path.join( tmp, 'result.json' )
-        
-        hydrus_driver.run_in_subprocess( os.path.abspath( __file__ ), '--child', path )
-        
-        with open( path ) as f:
-            
-            result = json.load( f )
-            
-        
-    
-    with open( os.path.join( HERE, 'fixtures', 'session_create.json' ), 'w' ) as f:
-        
-        json.dump( result, f, indent = 1, ensure_ascii = False )
-        f.write( '\n' )
-        
-    
-    print( 'wrote session_create.json' )
-    
+    import hydrus_driver
+    result = {}
+    for fixture in ('basic', 'repositories'):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, 'r.json')
+            hydrus_driver.run_in_subprocess(os.path.abspath(__file__), '--child', path, fixture)
+            with open(path) as f:
+                result[fixture] = json.load(f)
+    with open(os.path.join(HERE, 'fixtures', 'session_create.json'), 'w') as f:
+        json.dump(result, f, ensure_ascii=False, indent=1)
+        f.write('\n')
+    print(json.dumps(result, indent=1)[:4000])
+
 
 if __name__ == '__main__':
-    
     main()

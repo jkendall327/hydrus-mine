@@ -164,6 +164,83 @@ fn script_definition_matcher_child_stages_until_parent_apply_and_cancel_discards
     );
     list.invoke_action("cancel".into());
 }
+// leaf: login-credential-definition
+#[test]
+fn an_edited_credential_definition_is_saved_in_its_script_as_the_reference_s_editor_makes_it() {
+    // `oracle/fixtures/login_editors.json` "definition": the real panel opened
+    // on `before` and edited (name, input type, permitted input) to `after`
+    let fixture = hydrus_testkit::fixture_json("login_editors.json");
+    let definition = |vector: &serde_json::Value| {
+        legacy::credential_definition(
+            &SerialisableObject::from_tuple_str(&vector.to_string()).unwrap(),
+        )
+        .unwrap()
+    };
+    let (before, after) = (
+        definition(&fixture["definition"]["before"]),
+        definition(&fixture["definition"]["after"]),
+    );
+    let (_dir, store, original) = store();
+    let _rendered = headless::init();
+    let slots = Slots::default();
+    let index_of = |manager: &LoginManager, name: &str| {
+        manager.scripts[0]
+            .credentials
+            .iter()
+            .position(|c| c.name == name)
+            .unwrap()
+    };
+    assert_eq!(
+        original.scripts[0].credentials[index_of(&original, "username")],
+        before,
+        "the starting point"
+    );
+    let list = windows::open_scripts(&store, &slots).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let script = slots.script.borrow().as_ref().unwrap().clone_strong();
+    script.invoke_credential_clicked(1, false, false);
+    script.invoke_action("edit-credential".into());
+    let child = slots.definition.borrow().as_ref().unwrap().clone_strong();
+    // shown as recorded: its name, normal input, its matcher
+    assert_eq!(child.get_name(), before.name.as_str());
+    assert_eq!(child.get_kind(), 0);
+    assert_eq!(
+        child.get_matcher().as_str(),
+        before.string_match.describe(false, false)
+    );
+    child.invoke_action("matcher".into());
+    let matcher = slots.strings.step.borrow().as_ref().unwrap().clone_strong();
+    // (the recorded matcher: fixed text)
+    let hydrus_core::url::strings::MatchKind::Fixed(fixed) = &after.string_match.kind else {
+        panic!("the recording's matcher is fixed text");
+    };
+    matcher.set_match_type(1);
+    matcher.set_fixed(fixed.as_str().into());
+    matcher.invoke_changed();
+    matcher.invoke_apply();
+    child.set_name(after.name.as_str().into());
+    child.set_kind(i32::from(
+        after.kind == hydrus_parse::login::CredentialKind::Hidden,
+    ));
+    child.invoke_action("apply".into());
+    script.invoke_action("apply".into());
+    script.invoke_action("confirm".into());
+    list.invoke_action("apply".into());
+    let saved = store.read(hydrus_store::logins::load).unwrap();
+    // (what the reference's editor made, but for the original tuple kept
+    // through interchange, which the native editor leaves as it was)
+    let mut made = saved.scripts[0].credentials[index_of(&saved, "account")].clone();
+    made.reference_auxiliary = None;
+    let mut wanted = after.clone();
+    wanted.reference_auxiliary = None;
+    assert_eq!(made, wanted);
+    assert_eq!(
+        saved.scripts[0].credentials[index_of(&saved, "password")],
+        original.scripts[0].credentials[index_of(&original, "password")]
+    );
+}
+
 #[test]
 fn login_exchange_reviews_without_mutating_then_parent_apply_persists_unique_scripts() {
     let (_dir, store, original) = store();
@@ -2483,81 +2560,4 @@ fn delayed_manual_completion_cannot_overwrite_a_successor_login_outcome() {
     );
     assert_eq!(site.requests.lock().unwrap().len(), 2);
     slots.cancel();
-}
-
-// leaf: login-credential-definition
-#[test]
-fn the_credential_definition_editor_holds_and_saves_what_the_reference_did() {
-    // oracle/record_login_editors.py: the reference's editor on a "username"
-    // credential, edited to a hidden "account" that must be "token"
-    let recorded = hydrus_testkit::fixture_json("login_editors.json");
-    let definition = |tuple: &serde_json::Value| {
-        legacy::credential_definition(
-            &SerialisableObject::from_tuple_str(&tuple.to_string()).unwrap(),
-        )
-        .unwrap()
-    };
-    let before = definition(&recorded["definition"]["before"]);
-    let after = definition(&recorded["definition"]["after"]);
-    let (_dir, store, original) = store();
-    let _rendered = headless::init();
-    let slots = Slots::default();
-    let list = windows::open_scripts(&store, &slots).unwrap();
-    list.invoke_row_clicked(0, false, false);
-    list.invoke_action("edit".into());
-    let script = slots.script.borrow().as_ref().unwrap().clone_strong();
-    // the script's credentials list as the reference showed it: its rows are
-    // recorded (name, type, permitted input)
-    let rows: Vec<Vec<String>> = script
-        .get_credentials()
-        .iter()
-        .map(|r| r.cells.iter().map(|c| c.to_string()).collect())
-        .collect();
-    let theirs: Vec<Vec<String>> = recorded["script_rows"]["credentials"]
-        .as_array()
-        .unwrap()
-        .iter()
-        .map(|r| {
-            r.as_array()
-                .unwrap()
-                .iter()
-                .map(|c| c.as_str().unwrap().to_owned())
-                .collect()
-        })
-        .collect();
-    assert_eq!(rows, theirs);
-    script.invoke_credential_clicked(1, false, false);
-    script.invoke_action("edit-credential".into());
-    let child = slots.definition.borrow().as_ref().unwrap().clone_strong();
-    // it opens on the credential: name and input type
-    assert_eq!(child.get_name(), before.name.as_str());
-    assert_eq!(
-        child.get_kind(),
-        i32::from(before.kind == hydrus_parse::login::CredentialKind::Hidden)
-    );
-    child.invoke_action("matcher".into());
-    let matcher = slots.strings.step.borrow().as_ref().unwrap().clone_strong();
-    matcher.set_match_type(1);
-    matcher.set_fixed("token".into());
-    matcher.invoke_changed();
-    matcher.invoke_apply();
-    child.set_name(after.name.as_str().into());
-    child.set_kind(i32::from(
-        after.kind == hydrus_parse::login::CredentialKind::Hidden,
-    ));
-    child.invoke_action("apply".into());
-    script.invoke_action("apply".into());
-    script.invoke_action("confirm".into());
-    list.invoke_action("apply".into());
-    // and what is saved holds the edited credential as the reference's did
-    let saved = store.read(hydrus_store::logins::load).unwrap();
-    let definitions = &saved.scripts[0].credentials;
-    let edited = definitions
-        .iter()
-        .find(|d| d.name == after.name)
-        .expect("the renamed credential");
-    assert_eq!(edited.kind, after.kind);
-    assert_eq!(edited.string_match, after.string_match);
-    assert!(definitions.iter().all(|d| d.name != before.name));
-    assert_eq!(definitions.len(), original.scripts[0].credentials.len());
 }

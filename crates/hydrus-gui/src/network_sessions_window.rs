@@ -124,9 +124,27 @@ struct State {
     ascending: bool,
 }
 fn refresh(window: &NetworkDataWindow, state: &mut State) {
-    let cells = state
+    let mut cells = state
         .data
         .cells(&hydrus_gui_model::gui_format::preferences(&state.store));
+    // (a hydrus service's context is named by the service, as the reference
+    // names it)
+    if let Data::Sessions(rows) = &state.data {
+        let snapshot = state.store.snapshot();
+        debug_assert_eq!(rows.len(), cells.len(), "one row of cells per session");
+        for ((context, _), row) in rows.iter().zip(cells.iter_mut()) {
+            if context.kind == hydrus_core::network::CONTEXT_HYDRUS
+                && let Some(service) = hex::decode(&context.data).ok().and_then(|key| {
+                    snapshot
+                        .services
+                        .by_key(&hydrus_core::ServiceKey::new(key))
+                        .ok()
+                })
+            {
+                row[0] = format!("hydrus service: {}", service.name);
+            }
+        }
+    }
     let filter = window.get_filter().to_lowercase();
     state.order = (0..cells.len())
         .filter(|&i| {

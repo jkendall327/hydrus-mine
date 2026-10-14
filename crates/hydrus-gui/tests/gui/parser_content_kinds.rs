@@ -320,33 +320,34 @@ fn veto_content_toggles_its_polarity_and_edits_its_matcher() {
     assert!(flipped.parse(&context, "<p>blocked</p>").is_ok());
 }
 
-// leaf: content-veto
-#[test]
-fn veto_content_vetoes_as_the_reference_does_under_either_polarity_and_matcher() {
-    let _windows = headless::init();
-    let all = hydrus_testkit::fixture_json("parser_editors.json");
-    let variants = all
-        .as_array()
-        .unwrap()
-        .iter()
-        .find(|c| c["case"] == "veto_variants")
-        .expect("recorded")["variants"]
-        .as_array()
-        .unwrap()
-        .clone();
-    let case = recorded("veto");
+/// A parser from the variants recording (`oracle/record_parser_content_variants.py`).
+fn variant_parser(row: &serde_json::Value) -> ContentParser {
+    let object = SerialisableObject::from_tuple_str(&row["tuple"].to_string()).unwrap();
+    parsers::content_parser(&object).unwrap()
+}
+
+fn post_context() -> ParsingContext {
     let mut context = ParsingContext::new();
     context.insert("url".into(), "https://example.com/post/1".into());
-    let mut vetoes = 0;
-    for variant in &variants {
-        let name = variant.to_string();
-        // the editor: the polarity, and a matcher narrowed to a fixed string
-        let s = open(&case.parser);
-        let polarity = variant["if_match_found"].as_bool().unwrap();
-        if s.field("veto if match found").checked != polarity {
-            s.window.invoke_toggled(9, polarity);
+    context
+}
+
+// leaf: content-veto
+#[test]
+fn edited_veto_content_vetoes_exactly_when_the_reference_s_edited_veto_does() {
+    // the real editor's box and string match edited to each of four
+    // settings, the parser it hands back and what it does with two texts
+    let recorded = hydrus_testkit::fixture_json("parser_content_variants.json");
+    let _windows = headless::init();
+    let start = recorded_veto_start();
+    for row in recorded["veto"].as_array().unwrap() {
+        let polarity = row["if_matches_found"].as_bool().unwrap();
+        let fixed = row["matcher"] == "fixed other";
+        let s = open(&start);
+        if !polarity {
+            s.window.invoke_toggled(9, false);
         }
-        if let Some(fixed) = variant["match"].as_str() {
+        if fixed {
             s.window.invoke_action("match".into());
             let matcher = s
                 .slots
@@ -358,124 +359,118 @@ fn veto_content_vetoes_as_the_reference_does_under_either_polarity_and_matcher()
                 .expect("the matcher opens")
                 .clone_strong();
             matcher.set_match_type(1);
-            matcher.set_fixed(fixed.into());
+            matcher.set_fixed("other".into());
             matcher.invoke_changed();
             matcher.invoke_apply();
         }
-        let saved = s.apply().unwrap();
-        let parsed = saved.parse(
-            &context,
-            &format!("<p>{}</p>", variant["text"].as_str().unwrap()),
-        );
-        match variant["error"].as_str() {
-            Some(error) => {
-                vetoes += 1;
-                assert_eq!(parsed.unwrap_err().to_string(), error, "{name}");
-            }
-            None => {
-                assert!(parsed.unwrap().contents.is_empty(), "{name}");
+        let saved = s.apply().expect("applied");
+        let name = format!("{polarity} {}", row["matcher"]);
+        assert_eq!(saved, variant_parser(row), "{name}: the parser handed back");
+        for result in row["results"].as_array().unwrap() {
+            let text = result["text"].as_str().unwrap();
+            let parsed = saved.parse(&post_context(), &format!("<p>{text}</p>"));
+            if let Some(message) = result["error"].as_str() {
+                let error = parsed.expect_err(&format!("{name}: {text} vetoes"));
+                assert_eq!(error.to_string(), message, "{name}: {text}");
+            } else {
+                let texts: Vec<_> = parsed
+                    .unwrap_or_else(|e| panic!("{name}: {text}: {e}"))
+                    .contents
+                    .into_iter()
+                    .map(|c| c.text)
+                    .collect();
+                assert_eq!(serde_json::json!(texts), result["texts"], "{name}: {text}");
             }
         }
     }
-    assert!(
-        vetoes >= 4 && vetoes < variants.len(),
-        "both outcomes were replayed"
-    );
+}
+
+fn recorded_veto_start() -> ContentParser {
+    recorded("veto").parser
 }
 
 // leaf: content-tags
 #[test]
-fn tag_content_keeps_its_namespace_as_the_reference_does_and_previews_the_cleaned_tags() {
+fn edited_namespace_makes_the_tags_the_reference_s_edited_parser_makes() {
+    let variants = hydrus_testkit::fixture_json("parser_content_variants.json");
     let _windows = headless::init();
-    let all = hydrus_testkit::fixture_json("parser_editors.json");
-    let variants = all
-        .as_array()
-        .unwrap()
-        .iter()
-        .find(|c| c["case"] == "tag_variants")
-        .expect("recorded")["variants"]
-        .as_array()
-        .unwrap()
-        .clone();
-    let case = recorded("tags");
-    for variant in &variants {
-        let name = format!("{} {}", variant["namespace"], variant["text"]);
-        let s = open(&case.parser);
-        // (the document the preview parses)
-        s.window
-            .set_document(format!("<p>{}</p>", variant["text"].as_str().unwrap()).into());
-        let labels = s.labels();
-        let any = labels
-            .iter()
-            .position(|l| l.contains("any namespace"))
-            .unwrap_or_else(|| panic!("{labels:?}"));
-        let any_field = s.window.get_fields().row_data(any).unwrap();
-        match variant["namespace"].as_str() {
-            Some(namespace) => {
-                if any_field.checked {
-                    s.window.invoke_toggled(any_field.id, false);
-                }
-                // (the namespace text is the field after the "any namespace" box)
-                let text_field = s.window.get_fields().row_data(any + 1).unwrap();
-                s.window.invoke_text_edited(text_field.id, namespace.into());
-            }
-            None => {
-                if !any_field.checked {
-                    s.window.invoke_toggled(any_field.id, true);
-                }
-            }
+    let start = recorded("tags").parser;
+    for row in variants["tags"].as_array().unwrap() {
+        let edit = row["edit"].as_str().unwrap();
+        let s = open(&start);
+        match edit {
+            "any namespace" => s.window.invoke_toggled(4, true),
+            "unnamespaced" => s.window.invoke_text_edited(5, "".into()),
+            _ => s.window.invoke_text_edited(5, edit.into()),
         }
-        s.window.invoke_action("test".into());
-        assert_eq!(
-            s.window.get_preview().as_str(),
-            variant["preview"].as_str().unwrap(),
-            "{name}"
-        );
-        // and the parser it hands back holds the namespace as recorded
-        let saved = s.apply().unwrap();
-        match (&saved.kind, variant["additional_info"].as_str()) {
-            (ContentKind::Tag { namespace }, theirs) => {
-                assert_eq!(namespace.as_deref(), theirs, "{name}");
-            }
-            other => panic!("{other:?}"),
+        let saved = s.apply().expect("applied");
+        assert_eq!(saved, variant_parser(row), "{edit}: the parser handed back");
+        for result in row["results"].as_array().unwrap() {
+            let text = result["text"].as_str().unwrap();
+            let post = saved
+                .parse(&post_context(), &format!("<p>{text}</p>"))
+                .unwrap();
+            let tags: Vec<String> = post.tags().into_iter().collect();
+            assert_eq!(serde_json::json!(tags), result["tags"], "{edit}: {text}");
         }
     }
 }
 
+// leaf: parser-context
 #[test]
-fn the_content_test_panel_previews_every_kind_as_the_reference_does() {
+fn the_test_panel_s_context_is_what_the_reference_s_context_is_to_a_test_parse() {
+    // `oracle/fixtures/parser_context.json`, from
+    // `oracle/record_parser_context.py`: the real test panel given a context
+    // dictionary and a document, "test parse" pressed
+    let recorded = hydrus_testkit::fixture_json("parser_context.json");
     let _windows = headless::init();
-    let all = hydrus_testkit::fixture_json("parser_editors.json");
-    let mut seen = 0;
-    for kind in [
-        "urls",
-        "tags",
-        "notes",
-        "file hash",
-        "timestamp",
-        "watcher title",
-        "http headers",
-        "temporary variable",
-        "veto",
-    ] {
-        let theirs = all
-            .as_array()
-            .unwrap()
-            .iter()
-            .find(|c| c["case"] == "content" && c["kind"] == kind)
-            .unwrap();
-        let case = recorded(kind);
-        let s = open(&case.parser);
+    for case in recorded.as_array().unwrap() {
+        let name = case["name"].as_str().unwrap();
+        let object = SerialisableObject::from_tuple_str(&case["tuple"].to_string()).unwrap();
+        let parser = parsers::content_parser(&object).unwrap();
+        let s = open(&parser);
         s.window
-            .set_document(format!("<p>{}</p>", case.text).into());
-        s.window.set_test_url("https://example.com/post/1".into());
-        s.window.invoke_action("test".into());
-        assert_eq!(
-            s.window.get_preview().as_str(),
-            theirs["preview"].as_str().unwrap(),
-            "{kind}"
+            .set_document(case["document"].as_str().unwrap().into());
+        // the window's controls for the dictionary's `url`, `post_index` and
+        // other keys
+        let context = case["context"].as_object().unwrap();
+        s.window.set_test_url(
+            context
+                .get("url")
+                .and_then(|u| u.as_str())
+                .unwrap_or("")
+                .into(),
         );
-        seen += 1;
+        s.window.set_post_index(
+            context
+                .get("post_index")
+                .and_then(|u| u.as_str())
+                .unwrap_or("0")
+                .into(),
+        );
+        s.window.set_variables(
+            context
+                .iter()
+                .filter(|(k, _)| !["url", "post_index"].contains(&k.as_str()))
+                .map(|(k, v)| format!("{k}={}", v.as_str().unwrap()))
+                .collect::<Vec<_>>()
+                .join("\n")
+                .into(),
+        );
+        s.window.invoke_action("test".into());
+        let shown = s.window.get_preview().to_string();
+        // what the reference printed, as the texts it found
+        let reference = case["results"].as_str().unwrap();
+        let wanted: Vec<&str> = reference
+            .lines()
+            .filter(|l| !l.starts_with("***"))
+            .map(|l| l.rsplit_once(": ").map_or(l, |(_, text)| text))
+            .collect();
+        let found: Vec<&str> = shown
+            .lines()
+            .filter(|l| !l.starts_with("Post ") && *l != "No parsed results.")
+            .map(|l| l.split_once(": ").map_or(l, |(_, text)| text))
+            .collect();
+        assert_eq!(found, wanted, "{name}: {shown:?} against {reference:?}");
     }
-    assert_eq!(seen, 9);
 }

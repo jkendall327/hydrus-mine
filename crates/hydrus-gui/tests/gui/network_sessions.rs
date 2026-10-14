@@ -840,6 +840,154 @@ fn automatic_header_answers_reach_an_existing_engine_request() {
     monitor.close();
     server.join().unwrap();
 }
+// (not tagged: native differs from the reference for a domain typed with capitals,
+// one that is not a domain and a hydrus service with none to choose)
+#[test]
+fn create_new_opens_and_makes_sessions_as_the_reference_s_browser_does() {
+    // `oracle/fixtures/session_create.json`, from `oracle/record_session_create.py`:
+    // the real browser's `_Add` with its dialog scripted, on a client with
+    // no repositories and on one with two
+    let recorded = hydrus_testkit::fixture_json("session_create.json");
+    let _rendered = headless::init();
+    for fixture in ["basic", "repositories"] {
+        let services: Vec<String> = recorded[fixture]["cases"][0]["services"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|n| n.as_str().unwrap().to_owned())
+            .collect();
+        for case in recorded[fixture]["cases"].as_array().unwrap() {
+            let name = format!("{fixture}: {}", case["name"].as_str().unwrap());
+            let dir = tempfile::tempdir().unwrap();
+            let store = Store::open(dir.path()).unwrap();
+            // the recorded repositories (the first's key as recorded)
+            let first_key = case["value"][1]
+                .as_str()
+                .filter(|_| case["value"][0] == 1)
+                .map(|hex| hydrus_core::ServiceKey::new(hex::decode(hex).unwrap()));
+            for (i, service) in services.iter().enumerate() {
+                let key = if i == 0 {
+                    first_key
+                        .clone()
+                        .unwrap_or_else(|| hydrus_core::ServiceKey::new(vec![62; 32]))
+                } else {
+                    hydrus_core::ServiceKey::new(vec![63; 32])
+                };
+                let service = service.clone();
+                store
+                    .write_and_refresh(move |ctx| {
+                        hydrus_store::services::insert(
+                            ctx.conn(),
+                            &key,
+                            &service,
+                            &hydrus_store::services::ServiceKind::TagRepository(
+                                hydrus_store::services::RepositoryConfig::default(),
+                            ),
+                        )?;
+                        Ok(())
+                    })
+                    .unwrap();
+            }
+            let slots = Slots::default();
+            let browser = windows::open(&store, &slots, false).unwrap();
+            browser.invoke_add_clicked();
+            let edit = windows::last_edit_opened().unwrap();
+            // what the dialog shows as it opens
+            assert_eq!(
+                edit.get_window_title(),
+                case["title"].as_str().unwrap(),
+                "{name}"
+            );
+            assert_eq!(edit.get_context_type(), 0, "{name}: web domain first");
+            assert_eq!(
+                edit.get_type_info(),
+                case["type_info"].as_str().unwrap(),
+                "{name}"
+            );
+            assert_eq!(
+                edit.get_domain(),
+                case["domain"].as_str().unwrap(),
+                "{name}"
+            );
+            let shown: Vec<String> = (0..edit.get_service_names().row_count())
+                .map(|i| edit.get_service_names().row_data(i).unwrap().to_string())
+                .collect();
+            let mut expected = services.clone();
+            expected.sort();
+            let mut shown_sorted = shown.clone();
+            shown_sorted.sort();
+            assert_eq!(shown_sorted, expected, "{name}: the repositories offered");
+            let made = |store: &Store| -> Vec<(i64, String)> {
+                store
+                    .read(network::sessions)
+                    .unwrap()
+                    .into_iter()
+                    .map(|c| (c.kind, c.data))
+                    .collect()
+            };
+            match case["name"].as_str().unwrap() {
+                "accepted as it opens" => {
+                    edit.invoke_apply_clicked();
+                    assert_eq!(made(&store), [(2, "example.com".to_owned())], "{name}");
+                }
+                "domain typed" => {
+                    // (a difference, in DIFFERENCES.md: domains are kept in
+                    // lower case here, as typed in the reference)
+                    edit.set_domain("Example.com".into());
+                    edit.invoke_apply_clicked();
+                    assert_eq!(made(&store), [(2, "example.com".to_owned())], "{name}");
+                }
+                "domain that is not one" => {
+                    // (a difference: the reference stores an empty domain)
+                    edit.set_domain("not a domain!!".into());
+                    edit.invoke_apply_clicked();
+                    assert_ne!(edit.get_error(), "", "{name}");
+                    assert!(made(&store).is_empty(), "{name}");
+                }
+                "hydrus service chosen" | "hydrus service, none to choose" => {
+                    edit.set_context_type(1);
+                    edit.invoke_type_changed();
+                    assert_eq!(
+                        edit.get_type_info(),
+                        case["type_info_hydrus"].as_str().unwrap(),
+                        "{name}"
+                    );
+                    edit.invoke_apply_clicked();
+                    if let (serde_json::Value::String(_), Some(key)) =
+                        (&case["value"][1], first_key.as_ref())
+                    {
+                        assert_eq!(made(&store), [(1, key.to_hex())], "{name}");
+                    } else {
+                        // (a difference: the reference makes the "default"
+                        // hydrus service context when none is chosen)
+                        assert_ne!(edit.get_error(), "", "{name}");
+                        assert!(made(&store).is_empty(), "{name}");
+                    }
+                }
+                "cancelled" => {
+                    edit.invoke_cancel_clicked();
+                    assert!(made(&store).is_empty(), "{name}");
+                }
+                other => panic!("{other}"),
+            }
+            if !made(&store).is_empty() {
+                // the browser lists it, empty ones shown as the reference does
+                assert!(browser.get_show_empty(), "{name}");
+                let row = browser
+                    .get_rows()
+                    .row_data(0)
+                    .unwrap()
+                    .cells
+                    .row_data(0)
+                    .unwrap();
+                let recorded_row = case["rows"][0][0].as_str().unwrap();
+                if case["name"] != "domain typed" {
+                    assert_eq!(row, recorded_row, "{name}");
+                }
+            }
+        }
+    }
+}
 // leaf: session-create
 #[test]
 fn a_new_session_can_be_a_web_domain_or_a_hydrus_service_as_the_reference_s_editor_offers() {
@@ -925,126 +1073,6 @@ fn a_hydrus_service_session_needs_a_service_to_choose() {
     );
     assert!(store.read(network::sessions).unwrap().is_empty());
     assert!(edit.window().is_visible(), "still open");
-}
-
-// leaf: session-create
-#[test]
-fn the_new_session_editor_offers_and_makes_what_the_references_did() {
-    // oracle/record_session_create.py: the reference's editor as the sessions
-    // review makes it
-    let recorded = hydrus_testkit::fixture_json("session_create.json");
-    let legacy = hydrus_testkit::legacy_fixture("repositories");
-    let native = tempfile::tempdir().unwrap();
-    hydrus_store::import::import_legacy(
-        legacy.path(),
-        &native.path().join(hydrus_store::store::DB_FILE_NAME),
-    )
-    .unwrap();
-    let store = Store::open(native.path()).unwrap();
-    let _rendered = headless::init();
-    let slots = Slots::default();
-    let browser = windows::open(&store, &slots, false).unwrap();
-    browser.invoke_add_clicked();
-    let edit = windows::last_edit_opened().unwrap();
-    // it opens on a web domain, example.com, with the reference's note and
-    // the repositories to choose from
-    assert_eq!(edit.get_window_title(), "enter new network context");
-    assert_eq!(edit.get_context_type(), 0);
-    assert_eq!(
-        edit.get_domain(),
-        recorded["initial"]["domain_text"].as_str().unwrap()
-    );
-    assert_eq!(
-        edit.get_type_info(),
-        recorded["initial"]["note"].as_str().unwrap()
-    );
-    let services: Vec<String> = edit
-        .get_service_names()
-        .iter()
-        .map(|n| n.to_string())
-        .collect();
-    let theirs: Vec<String> = recorded["services"]
-        .as_array()
-        .unwrap()
-        .iter()
-        .map(|s| s.as_str().unwrap().to_owned())
-        .collect();
-    assert_eq!(services, theirs);
-    // the note under each type
-    for (i, per_type) in recorded["per_type"].as_array().unwrap().iter().enumerate() {
-        edit.set_context_type(i32::try_from(i).unwrap());
-        edit.invoke_type_changed();
-        assert_eq!(
-            edit.get_type_info(),
-            per_type["note"].as_str().unwrap(),
-            "type {i}"
-        );
-    }
-    edit.invoke_cancel_clicked();
-    assert!(store.read(network::sessions).unwrap().is_empty());
-    // each service makes the session of its key
-    for (i, value) in recorded["services_values"]
-        .as_array()
-        .unwrap()
-        .iter()
-        .enumerate()
-    {
-        browser.invoke_add_clicked();
-        let edit = windows::last_edit_opened().unwrap();
-        edit.set_context_type(1);
-        edit.invoke_type_changed();
-        edit.set_service_index(i32::try_from(i).unwrap());
-        edit.invoke_apply_clicked();
-        assert_eq!(edit.get_error(), "", "{}", value["name"]);
-        let made = store.read(network::sessions).unwrap();
-        assert!(
-            made.iter()
-                .any(|s| s.kind == value["context"][0].as_i64().unwrap()
-                    && s.data == value["context"][1].as_str().unwrap()),
-            "{}: {made:?}",
-            value["name"]
-        );
-    }
-    // a typed domain makes the session the reference's session manager made
-    // for it: those of the same second-level domain share one (so a host
-    // outside the public suffix list has the empty domain's), compared
-    // after each as the set of domains with a session. The reference took
-    // any text at all and kept the case, here the domain is trimmed,
-    // lower-cased and must look like one (DIFFERENCES.md): what it made
-    // nothing of is refused, and its 'Example.COM' is example.com.
-    let mut refused = 0;
-    for entry in recorded["domains"].as_array().unwrap() {
-        let typed = entry["typed"].as_str().unwrap();
-        browser.invoke_add_clicked();
-        let edit = windows::last_edit_opened().unwrap();
-        edit.set_domain(typed.into());
-        edit.invoke_apply_clicked();
-        if !edit.get_error().is_empty() {
-            refused += 1;
-            edit.invoke_cancel_clicked();
-        }
-        let ours: std::collections::BTreeSet<String> = store
-            .read(network::sessions)
-            .unwrap()
-            .into_iter()
-            .filter(|s| s.kind == hydrus_core::network::CONTEXT_DOMAIN)
-            .map(|s| s.data)
-            .collect();
-        let theirs: std::collections::BTreeSet<String> = entry["contexts_now"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .map(|c| {
-                c.as_str()
-                    .unwrap()
-                    .strip_prefix("web domain: ")
-                    .unwrap()
-                    .to_ascii_lowercase()
-            })
-            .collect();
-        assert_eq!(ours, theirs, "after typing {typed:?}");
-    }
-    assert!(refused > 0 && refused < recorded["domains"].as_array().unwrap().len());
 }
 
 // leaf: audit-network-headers-fields
