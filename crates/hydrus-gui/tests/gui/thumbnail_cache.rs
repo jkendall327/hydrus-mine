@@ -398,3 +398,86 @@ fn staged_exact_byte_units_timeout_policy_clear_reopen_and_incarnation_retiremen
 fn saved_gui(store: &Store) -> settings::GuiSettings {
     store.read(settings::get).unwrap()
 }
+
+/// The options row for "Memory reserved for thumbnail cache:", opened over each
+/// stored policy the reference's panel was recorded with: its amount and unit,
+/// the "(at 150x125, about N thumbnails)" estimate, and what an untouched Apply
+/// saves; then the same bytes entered by hand through the row.
+// leaf: audit-options-speed-and-memory-thumbnail-cache-memory-reserved-for-thumbnail-cache
+#[test]
+fn the_memory_row_shows_the_recorded_amount_unit_and_estimate_and_saves_them() {
+    let fixture = hydrus_testkit::fixture_json("thumbnail_cache.json");
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    ui.show().unwrap();
+    let label = "Memory reserved for thumbnail cache:";
+    for case in fixture["controls"].as_array().unwrap() {
+        let [bytes, timeout] = [0, 1].map(|i| case["input"][i].as_u64().unwrap());
+        let expected_saved = [0, 1].map(|i| case["saved"][i].as_u64().unwrap());
+        store
+            .write(move |ctx| settings::set(ctx.conn(), &ThumbnailCacheSettings { bytes, timeout }))
+            .unwrap();
+        let window = options(&ui, &bound);
+        let at = row(&window, label);
+        let shown = window.get_rows().row_data(at as usize).unwrap();
+        // (the reference separates into an amount and a unit of 1024^n)
+        let unit = 1_u64 << (10 * shown.index);
+        assert_eq!(
+            [i64::from(shown.number), unit as i64],
+            [
+                case["separated"][0].as_i64().unwrap(),
+                case["separated"][1].as_i64().unwrap()
+            ],
+            "{case}"
+        );
+        assert_eq!(shown.text.as_str(), case["estimate"].as_str().unwrap());
+        window.invoke_apply();
+        let now = saved(&store);
+        assert_eq!([now.bytes, now.timeout], expected_saved, "{case}");
+    }
+
+    // a fresh amount and unit by hand: the saved bytes are their product,
+    // and the estimate follows
+    let window = options(&ui, &bound);
+    let at = row(&window, label);
+    window.invoke_number_edited(at, 32);
+    window.invoke_choice_chosen(at, 2);
+    assert_eq!(
+        window
+            .get_rows()
+            .row_data(at as usize)
+            .unwrap()
+            .text
+            .as_str(),
+        fixture["controls"][3]["estimate"].as_str().unwrap()
+    );
+    window.invoke_apply();
+    assert_eq!(saved(&store).bytes, 33_554_432);
+
+    // one byte over the largest amount the control takes loads clamped
+    let raw = fixture["bytes_boundaries"]["raw"].as_u64().unwrap();
+    store
+        .write(move |ctx| {
+            settings::set(
+                ctx.conn(),
+                &ThumbnailCacheSettings {
+                    bytes: raw,
+                    timeout: 86_400,
+                },
+            )
+        })
+        .unwrap();
+    let window = options(&ui, &bound);
+    window.invoke_apply();
+    assert_eq!(
+        saved(&store).bytes,
+        fixture["bytes_boundaries"]["unchanged_apply"]
+            .as_u64()
+            .unwrap()
+    );
+}

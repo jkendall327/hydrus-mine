@@ -132,45 +132,60 @@ impl Package {
 
     /// How the Undo menu names it (`ContentUpdatePackage.ToString`): the
     /// services ("my tags->"), the actions, " tags for" for mappings and the
-    /// number of files. Archive and inbox name no service.
+    /// number of files. As the reference walks the package one service at a
+    /// time, in the order each first appears (archive and inbox changes are
+    /// one service's, "all local media"), reaching an archive or inbox
+    /// change forgets the services named so far, so a service after it is
+    /// still named and one before it is not. (The reference's actions come
+    /// from a set and so in no fixed order; these are sorted.)
     pub fn describe(&self, services: &ServiceRegistry) -> String {
+        // (the service a change is written to, None for the file service)
+        let mut groups: Vec<(Option<ServiceId>, Vec<&Change>)> = Vec::new();
+        for change in &self.0 {
+            let key = match change {
+                Change::Mappings { service, .. } => Some(*service),
+                Change::Archive(_) | Change::Inbox(_) => None,
+            };
+            match groups.iter_mut().find(|(k, _)| *k == key) {
+                Some((_, changes)) => changes.push(change),
+                None => groups.push((key, vec![change])),
+            }
+        }
         let mut actions: Vec<&str> = Vec::new();
         let mut locations: Vec<String> = Vec::new();
         let mut mappings = false;
-        let mut archive_or_inbox = false;
         let mut num_files = 0;
-        for change in &self.0 {
-            let (word, files) = match change {
-                Change::Archive(files) => {
-                    archive_or_inbox = true;
-                    ("archive", files)
-                }
-                Change::Inbox(files) => {
-                    archive_or_inbox = true;
-                    ("inbox", files)
-                }
-                Change::Mappings {
-                    service,
-                    change,
-                    files,
-                    ..
-                } => {
-                    mappings = true;
-                    if let Ok(service) = services.get(*service) {
-                        locations.push(service.name.clone());
+        for (service, changes) in &groups {
+            if let Some(service) = service
+                && let Ok(service) = services.get(*service)
+            {
+                locations.push(service.name.clone());
+            }
+            for change in changes {
+                let (word, files) = match change {
+                    Change::Archive(files) => {
+                        locations.clear();
+                        ("archive", files)
                     }
-                    (change.word(), files)
-                }
-            };
-            actions.push(word);
-            num_files += files.len();
+                    Change::Inbox(files) => {
+                        locations.clear();
+                        ("inbox", files)
+                    }
+                    Change::Mappings { change, files, .. } => {
+                        mappings = true;
+                        (change.word(), files)
+                    }
+                };
+                actions.push(word);
+                num_files += files.len();
+            }
         }
         actions.sort_unstable();
         actions.dedup();
         locations.sort();
         locations.dedup();
         let mut text = String::new();
-        if !locations.is_empty() && !archive_or_inbox {
+        if !locations.is_empty() {
             text.push_str(&locations.join(", "));
             text.push_str("->");
         }

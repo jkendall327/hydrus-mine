@@ -10,6 +10,19 @@ use hydrus_store::Store;
 use hydrus_store::content::tag_relations::{self, RelationAction, RelationUpdate};
 pub use hydrus_store::display::RelationKind;
 
+/// The reference's warning about pairs that lead into a sibling/parent loop already there.
+pub const PRE_EXISTING_LOOP_PROBLEM: &str = "The pair(s) you mean to add seem to connect to one or more sibling/parent loops that already exist in your database! I will add what you wanted to, but please undo these loops manually. The loops appear to be (take a screenshot/write this down now!):";
+
+/// Each tag's successors among `pairs`, as `HydrusData.BuildKeyToListDict` builds them.
+fn successors(pairs: &BTreeSet<Pair>) -> std::collections::BTreeMap<String, Vec<String>> {
+    let mut map: std::collections::BTreeMap<String, Vec<String>> =
+        std::collections::BTreeMap::new();
+    for (a, b) in pairs {
+        map.entry(a.clone()).or_default().push(b.clone());
+    }
+    map
+}
+
 /// The reference's "Loop problem!" warning about self-pairs being added
 /// (`TagPairActionContext.AutoPetitionLoops`), before the pairs themselves.
 pub const LOOP_PROBLEM: &str = "The pair(s) you mean to add include some self-referencing loops, i.e. \"tag->tag\"! I will add what you wanted to, but you almost certainly want to undo this. If you are importing from an external source, is there a misplaced line somewhere? In any case, the loops appear to be (take a screenshot/write this down now!):";
@@ -403,38 +416,69 @@ impl Relationships {
                 .map(|p| format!("{} -> {}", p.0, p.1))
                 .collect()
         };
+        let mut pre_existing: Vec<String> = Vec::new();
         for pair in &pairs {
             service.workspace.extend([pair.0.clone(), pair.1.clone()]);
+        }
+        // `AutoPetitionLoops`: chase every path from the new right tag, breadth first, each
+        // path with its own seen tags. A link back to the new left tag is repealed; a link
+        // back into the path itself is a loop that was already there, which is told after.
+        let mut as_to_bs = successors(&service.state.effective());
+        let addees: Vec<Pair> = {
             let active = service.state.effective();
-            // Repeal the final link of every path back to the new left tag.
-            if pair.0 != pair.1 && !active.contains(pair) {
-                let mut next = vec![pair.1.clone()];
-                let mut seen = BTreeSet::new();
-                while let Some(tag) = next.pop() {
-                    if !seen.insert(tag.clone()) {
+            pairs
+                .iter()
+                .filter(|p| !active.contains(*p))
+                .cloned()
+                .collect()
+        };
+        for pair in &addees {
+            if pair.0 == pair.1 {
+                continue;
+            }
+            let mut to_check = vec![(pair.1.clone(), BTreeSet::new(), Vec::new())];
+            while !to_check.is_empty() {
+                let mut next_to_check = Vec::new();
+                for (tag, mut seen, mut order) in to_check {
+                    seen.insert(tag.clone());
+                    order.push(tag.clone());
+                    let Some(nexts) = as_to_bs.get(&tag).cloned() else {
                         continue;
-                    }
-                    let active = service.state.effective();
-                    for link in active.iter().filter(|p| p.0 == tag) {
-                        if link.1 == pair.0 {
+                    };
+                    for next in nexts {
+                        if seen.contains(&next) {
+                            pre_existing.push(format!("{}->{next}", order.join("->")));
+                        } else if next == pair.0 {
+                            let link = (tag.clone(), next.clone());
                             toggle(
                                 &mut service,
-                                link,
+                                &link,
                                 false,
                                 true,
                                 Some("TO BE AUTO-PETITIONED"),
                                 &mut answer,
                             )?;
+                            as_to_bs = successors(&service.state.effective());
                         } else {
-                            next.push(link.1.clone());
+                            next_to_check.push((next, seen.clone(), order.clone()));
                         }
                     }
                 }
+                to_check = next_to_check;
             }
         }
         if !loops.is_empty() {
             answer.ask(Question {
                 message: format!("{LOOP_PROBLEM}\n\n{}", loops.join("\n")),
+                yes: "OK".into(),
+                no: String::new(),
+                reason: false,
+                suggestions: Vec::new(),
+            })?;
+        }
+        if !pre_existing.is_empty() {
+            answer.ask(Question {
+                message: format!("{PRE_EXISTING_LOOP_PROBLEM}\n\n{}", pre_existing.join("\n")),
                 yes: "OK".into(),
                 no: String::new(),
                 reason: false,

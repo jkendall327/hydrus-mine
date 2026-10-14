@@ -46,6 +46,9 @@ at fixed copy boundaries; dialog replies and worker scheduling are scripted.
 | `make_repository_fixture.py` | `fixtures/legacy_db/repositories.tar.gz` + manifest: `basic` with a tag and a file repository holding pending content |
 | `make_fixture_db.py` | `fixtures/legacy_db/<name>.tar.gz` + `.manifest.json`: a populated reference database |
 | `make_auto_resolution_pending.py` | `fixtures/legacy_db/auto_resolution_pending.tar.gz`: the auto-resolution database with eight more pairs pending in the semi-automatic rule that has two |
+| `record_gallery_wait_options.py` | `fixtures/gallery_wait_options.json`: the reference's `TryToConsumeAGalleryToken` with the three wait options (download pages, subscriptions, watchers) set to different values on a real `ClientOptions`, time held still: which option each kind reads, and the strict `now > last + wait` rule |
+| `record_error_delays.py` | `fixtures/error_delays.json`: the reference's `GalleryImport`, `WatcherImport` and `Subscription` meeting a network error (and a subscription with no import destination) at the default and a changed "Delay time on a ... error" option, time held still: the wait and the reason |
+| `record_gallery_file_limit.py` | `fixtures/gallery_file_limit.json`: what the reference's "stop searching once this many files are found" option becomes in a new gallery page, a new gallery import and a new subscription (its first-sync limit is `min( 100, limit )`) |
 | `record_bandwidth_reset.py` | `fixtures/bandwidth_reset.json`: the real "reset default bandwidth rules" on a manager with custom rules: the question, every context's rules before and after |
 | `record_local_import_pause.py` | `fixtures/local_import_pause.json`: the review-files-to-import panel paused, resumed and stopped while paths wait to be parsed |
 | `record_local_import_queue.py` | `fixtures/local_import_queue.json`: its "import now" (the publication, the new page, the files left or deleted, delete option off and on) |

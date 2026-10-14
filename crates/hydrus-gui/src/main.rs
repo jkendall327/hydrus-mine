@@ -155,6 +155,10 @@ impl Client {
             }
         });
         let bound = bind(&window, pages);
+        // (input outside our windows, as the desktop reports it)
+        bound
+            .session_autosave
+            .set_system_idle(Box::new(hydrus_gui::system_idle::Platform::start()));
         // the last session kept as it changes (the reference saves it every
         // five minutes), and what the Client API asks of the pages done
         let saving = slint::Timer::default();

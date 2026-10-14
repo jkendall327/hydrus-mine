@@ -209,6 +209,93 @@ fn actual_key_and_pointer_events_reset_idle_and_other_startup_stops_autosave() {
     );
 }
 
+/// The desktop's idle time, set by the test.
+struct Desktop(std::rc::Rc<std::cell::Cell<Option<u64>>>);
+
+impl hydrus_gui::system_idle::SystemIdle for Desktop {
+    fn idle_ms(&self) -> Option<u64> {
+        self.0.get()
+    }
+}
+
+/// One run of the idle-only autosave with only the given idle timeouts set.
+fn outside_input_holds_back_the_autosave(user_seconds: Option<u64>, mouse_seconds: Option<u64>) {
+    let (_dirs, store) = store();
+    store
+        .write(move |ctx| {
+            settings::set(
+                ctx.conn(),
+                &GuiSessionSettings {
+                    autosave_minutes: 2,
+                    only_during_idle: true,
+                    ..GuiSessionSettings::default()
+                },
+            )?;
+            settings::set(
+                ctx.conn(),
+                &GuiIdleSettings {
+                    enabled: true,
+                    user_seconds,
+                    mouse_seconds,
+                    api_seconds: None,
+                    busy_cpu_percent: 50,
+                    busy_cpu_count: None,
+                },
+            )
+        })
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let desktop = std::rc::Rc::new(std::cell::Cell::new(None));
+    bound
+        .session_autosave
+        .set_system_idle(Box::new(Desktop(desktop.clone())));
+    let saved = || {
+        store
+            .read(|conn| hydrus_store::session_backups::latest(conn, sessions::LAST_SESSION))
+            .unwrap()
+            .is_some()
+    };
+
+    // nothing in our windows for as long as the autosave has waited, but the
+    // person was typing in another program three seconds ago
+    let due = bound.session_autosave.next().unwrap();
+    desktop.set(Some(3_000));
+    assert!(!bound.session_autosave.poll_at(due).unwrap());
+    assert!(!saved());
+    assert_eq!(bound.session_autosave.next(), Some(due + 60_000));
+    // still moving the mouse a minute later
+    assert!(!bound.session_autosave.poll_at(due + 60_000).unwrap());
+    assert!(!saved());
+    assert_eq!(bound.session_autosave.next(), Some(due + 120_000));
+    // a desktop that can't say counts only our own windows, which have been
+    // quiet: the autosave goes ahead
+    desktop.set(None);
+    assert!(bound.session_autosave.poll_at(due + 120_000).unwrap());
+    assert!(saved());
+
+    // away from the desktop for twenty minutes: idle
+    desktop.set(Some(1_200_000));
+    assert!(bound.session_autosave.idle_at(due + 400_000));
+    // and back at it: not, whatever our own windows saw
+    desktop.set(Some(2_000));
+    assert!(!bound.session_autosave.idle_at(due + 400_000));
+    // and away again
+    desktop.set(Some(1_200_000));
+    assert!(bound.session_autosave.idle_at(due + 400_000 + 600_000));
+}
+
+// leaf: audit-options-gui-sessions-sessions-if-last-session-above-only-autosave-during-idle-time
+#[test]
+fn keyboard_and_mouse_input_outside_our_windows_holds_back_the_idle_only_autosave() {
+    let _windows = headless::init();
+    // (each timeout on its own, so neither can pass for the other)
+    outside_input_holds_back_the_autosave(Some(10), None);
+    outside_input_holds_back_the_autosave(None, Some(10));
+}
+
 #[test]
 fn auxiliary_native_window_events_reset_only_input_idle_and_preserve_autosave_retry() {
     use slint::winit_030::winit::{

@@ -1,0 +1,692 @@
+{
+ "cases": [
+  {
+   "selected": 1,
+   "hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+   ],
+   "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428",
+    "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+    "0518da1419a8af5634e6fc6e0c9906ac72a764533d6dde55b669df80d069d86b",
+    "986c606d464af2a177030189dc08d015c1558e74c726438e511d60ea24989125",
+    "644a8577a079192dd6f9a3f1ae483e4c586d00d1d42436613a4de585a738ba6f"
+   ],
+   "rows": [
+    {
+     "label": "if file is missing, then if has URL try to redownload, else remove record",
+     "asked": [
+      {
+       "message": "THIS IS THE EASY AND QUICK ONE-SHOT WAY TO REPAIR A DATABASE WITH MISSING FILES.\n\nThis checks to see if the file is present in the file system as expected. If it is not, and it has known post/file URLs, the URLs will be automatically added to a new URL downloader.\n\nNote that if a files's URL(s) are now 404, or if they point to slightly different new duplicate files (let's say the server resized them or the CDN optimised their file cache), then hydrus will not recognise that the original file has not been 'filled in' and the broken file record will remain. In this case, you would want to run the alternate simpler 'if file is missing, remove record (leave no delete record)' job after this URL job has completely cleared and its downloader page finished, just to catch any lingering strays.\n\nMissing files with no URLs will have their internal file record in the database completely removed. This is just like a file delete except it does not leave a deletion record, so if a normal import ever sees the file again in future, it will not appear to be 'previously deleted', but completely new.\n\nAll missing files will have their hashes, tags, and URLs exported to a new folder in your database directory for later manual recovery attempts if you wish.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "if file is missing, then if has URL try to redownload",
+     "asked": [
+      {
+       "message": "This checks to see if the file is present in the file system as expected. If it is not, and it has known post/file URLs, the URLs will be automatically added to a new URL downloader.'\n\nNote that if a files's URL(s) are now 404, or if they point to slightly different new duplicate files (let's say the server resized them or the CDN optimised their file cache), then hydrus will not recognise that the original file has not been 'filled in' and the broken file record will remain. In this case, you would want to run the alternate simpler 'if file is missing, remove record (leave no delete record)' job after this URL job has completely cleared and its downloader page finished, just to catch any lingering strays.\n\nAll missing files will have their hashes, tags, and URLs exported to a new folder in your database directory for later manual recovery attempts if you wish.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+     "asked": [
+      {
+       "message": "This does the same check as the 'file is missing' job, and if the file is where it is expected, it ensures its file content, byte-for-byte, is as expected. This discovers hard drive damage or other external interference. This is a heavy job, so be wary. If the file is missing/incorrect _and_ has known post/file URLs, the URLs will be automatically added to a new URL downloader.\n\nMissing/Incorrect files with no URLs will have their internal file record in the database completely removed. This is just like a file delete except it does not leave a deletion record, so if a normal import ever sees the file again in future, it will not appear to be 'previously deleted', but completely new.\n\nNote that if a files's URL(s) are now 404, or if they point to slightly different new duplicate files (let's say the server resized them or the CDN optimised their file cache), then hydrus will not recognise that the original file has not been 'filled in' and the broken file record will remain. In this case, you would want to run the alternate simpler 'if file is missing, remove record (leave no delete record)' job after this URL job has completely cleared and its downloader page finished, just to catch any lingering strays.\n\nAll incorrect files will be exported to a new folder in your database directory for later manual examination if you wish.\n\nAll missing/incorrect files will also have their hashes, tags, and URLs exported to a new folder in your database directory for later manual recovery attempts if you wish.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+     "asked": [
+      {
+       "message": "This does the same check as the 'file is missing' job, and if the file is where it is expected, it ensures its file content, byte-for-byte, is as expected. This discovers hard drive damage or other external interference. This is a heavy job, so be wary. If the file is missing/incorrect _and_ has known post/file URLs, the URLs will be automatically added to a new URL downloader.\n\nNote that if a files's URL(s) are now 404, or if they point to slightly different new duplicate files (let's say the server resized them or the CDN optimised their file cache), then hydrus will not recognise that the original file has not been 'filled in' and the broken file record will remain. In this case, you would want to run the alternate simpler 'if file is missing, remove record (leave no delete record)' job after this URL job has completely cleared and its downloader page finished, just to catch any lingering strays.\n\nAll incorrect files will be exported to a new folder in your database directory for later manual examination if you wish.\n\nAll missing/incorrect files will also have their hashes, tags, and URLs exported to a new folder in your database directory for later manual recovery attempts if you wish.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "if file is missing, remove record (leave no delete record)",
+     "asked": [
+      {
+       "message": "This checks to see if the file is present in the file system as expected. Use this if you have lost a number of files from your file structure, do not think you can recover them, and need hydrus to re-sync with what it actually has.\n\nMissing files will have their internal file record in the database completely removed. This is just like a file delete except it does not leave a deletion record, so if a normal import ever sees the file again in future, it will not appear to be 'previously deleted', but completely new.\n\nAll missing files will have their hashes, tags, and URLs exported to a new folder in your database directory for later manual recovery attempts if you wish.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "if file is missing, remove record (leave a delete record)",
+     "asked": [
+      {
+       "message": "This checks to see if the file is present in the file system as expected. Use this if you have manually deleted a number of files from your file structure, do not want to get them again, and need hydrus to re-sync with what it actually has. Another example of this situation is restoring an old backed-up database to a newer client_files structure--to catch the database up, you want to teach it that any files missing in the newer structure should be deleted, with a record.\n\nMissing files will have their internal file record processed just like a normal file delete. Normal imports that see these files again in future will consider them as 'previously deleted'.\n\nAll missing files will have their hashes, tags, and URLs exported to a new folder in your database directory for later manual recovery attempts if you wish.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "if file is missing/incorrect, move file out and remove record",
+     "asked": [
+      {
+       "message": "This does the same check as the 'file is missing' job, and if the file is where it is expected, it ensures its file content, byte-for-byte, is as expected. This discovers hard drive damage or other external interference. This is a heavy job, so be wary.\n\nMissing/Incorrect files will have their internal file record in the database completely removed. This is just like a file delete except it does not leave a deletion record, so if a normal import ever sees the file again in future, it will not appear to be 'previously deleted', but completely new.\n\nAll incorrect files will be exported to a new folder in your database directory for later manual examination if you wish.\n\nAll missing/incorrect files will also have their hashes, tags, and URLs exported to a new folder in your database directory for later manual recovery attempts if you wish.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "if file is incorrect, move file out",
+     "asked": [
+      {
+       "message": "If the file is where it is expected, this ensures its file content, byte-for-byte, is correct. This is a heavy job, so be wary. If the file is incorrect, it will be exported to your database directory along with its known URLs. The client's file record will not be deleted. This is useful if you have a valid backup and need to clear out invalid files from your live db so you can fill in gaps from your backup with a program like FreeFileSync.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "if file is missing, note it in log",
+     "asked": [
+      {
+       "message": "This checks to see if the file is present in the file system as expected. If it is not, it records the file's hash, tags, and URLs to your database directory, just like the other \"missing file\" jobs, but makes no other action.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "regenerate file metadata",
+     "asked": [
+      {
+       "message": "This will reparse the 1 selected files' metadata.\n\nIf the files were imported before some more recent improvement in the parsing code (such as EXIF rotation or bad video resolution or duration or frame count calculation), this will update them.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "regenerate thumbnail if incorrect size",
+     "asked": [
+      {
+       "message": "This will regenerate the 1 selected files' thumbnails, but only if they are the wrong size.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "regenerate thumbnail",
+     "asked": [
+      {
+       "message": "This will force-regenerate the 1 selected files' thumbnails.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "regenerate blurhash",
+     "asked": [
+      {
+       "message": "This generates a very small version of the file's thumbnail that can be used as a placeholder while the thumbnail loads.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "regenerate pixel hashes",
+     "asked": [
+      {
+       "message": "This generates a fast unique identifier for the pixels in a still image, which is used in duplicate pixel searches.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "regenerate perceptual hashes",
+     "asked": [
+      {
+       "message": "This forces a regeneration of the file's similar-files 'phashes'. If phashes change and are useful, files will be queued into potential duplicate pair search. It is not useful unless you know there is missing data to repair or that the phash generation tech has changed (e.g. it fixes some file rotation), meaning for new phashes if re-generated.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "regenerate file modified time",
+     "asked": [
+      {
+       "message": "This rechecks the file's modified timestamp and saves it to the database.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "regenerate non-standard hashes",
+     "asked": [
+      {
+       "message": "This regenerates hydrus's store of md5, sha1, and sha512 supplementary hashes, which it can use for various external (usually website) lookups.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "check for membership in the potential duplicate pairs search system",
+     "asked": [
+      {
+       "message": "This checks to see if files should be in the search system that looks for potential duplicate pairs, and if they are falsely in or falsely out, it will remove their record or queue them up for a search as appropriate. It is useful to repair database damage.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "determine if the file has transparency",
+     "asked": [
+      {
+       "message": "This loads the file to see if it has an alpha channel with useful data (the strictness of this test is determined in the options). Only works for images and some animations.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "determine if the file has EXIF metadata",
+     "asked": [
+      {
+       "message": "This loads the file to see if it has EXIF metadata, which can be shown in the media viewer and searched with \"system:has exif\".",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "determine if the file has XMP metadata",
+     "asked": [
+      {
+       "message": "This loads the file to see if it has XMP metadata, which can be shown in the media viewer and searched with \"system:has xmp\".",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "determine if the file has IPTC metadata",
+     "asked": [
+      {
+       "message": "This loads the file to see if it has XMP metadata, which can be shown in the media viewer and searched with \"system:has iptc\".",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "determine if the file has human-readable metadata",
+     "asked": [
+      {
+       "message": "This loads the file to see if it has human-readable metadata outside of EXIF and such, things like a stray Artist or Title or Comment label, or something like an AI prompt, which can be shown in the media viewer and searched with \"system:has human-readable metadata\".",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "determine if the file has software/source metadata",
+     "asked": [
+      {
+       "message": "This loads the file to see if it has software/source metadata, which can be shown in the media viewer and searched with \"system:has software/source metadata\".",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "determine if the file has an icc profile",
+     "asked": [
+      {
+       "message": "This loads the file to see if it has an ICC profile, which is generally applied in hydrus and can be searched with \"system:has icc profile\".",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "fix file read/write permissions",
+     "asked": [
+      {
+       "message": "This ensures that files in the file system are readable and writeable. For Linux/macOS users, it specifically sets 644. If you wish to run this job on Linux/macOS, ensure you are first the file owner of all your files.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "delete duplicate neighbours with incorrect file extension",
+     "asked": [
+      {
+       "message": "Sometimes, a file metadata regeneration will mean a new filetype and thus a new file extension. If the existing, incorrectly named file is in use, it must be copied rather than renamed, and so there is a spare duplicate left over after the operation. This jobs cleans up the duplicate at a later time.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "selected": 3,
+   "hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+   ],
+   "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428",
+    "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+    "0518da1419a8af5634e6fc6e0c9906ac72a764533d6dde55b669df80d069d86b",
+    "986c606d464af2a177030189dc08d015c1558e74c726438e511d60ea24989125",
+    "644a8577a079192dd6f9a3f1ae483e4c586d00d1d42436613a4de585a738ba6f"
+   ],
+   "rows": [
+    {
+     "label": "if file is missing, then if has URL try to redownload, else remove record",
+     "asked": [
+      {
+       "message": "THIS IS THE EASY AND QUICK ONE-SHOT WAY TO REPAIR A DATABASE WITH MISSING FILES.\n\nThis checks to see if the file is present in the file system as expected. If it is not, and it has known post/file URLs, the URLs will be automatically added to a new URL downloader.\n\nNote that if a files's URL(s) are now 404, or if they point to slightly different new duplicate files (let's say the server resized them or the CDN optimised their file cache), then hydrus will not recognise that the original file has not been 'filled in' and the broken file record will remain. In this case, you would want to run the alternate simpler 'if file is missing, remove record (leave no delete record)' job after this URL job has completely cleared and its downloader page finished, just to catch any lingering strays.\n\nMissing files with no URLs will have their internal file record in the database completely removed. This is just like a file delete except it does not leave a deletion record, so if a normal import ever sees the file again in future, it will not appear to be 'previously deleted', but completely new.\n\nAll missing files will have their hashes, tags, and URLs exported to a new folder in your database directory for later manual recovery attempts if you wish.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "if file is missing, then if has URL try to redownload",
+     "asked": [
+      {
+       "message": "This checks to see if the file is present in the file system as expected. If it is not, and it has known post/file URLs, the URLs will be automatically added to a new URL downloader.'\n\nNote that if a files's URL(s) are now 404, or if they point to slightly different new duplicate files (let's say the server resized them or the CDN optimised their file cache), then hydrus will not recognise that the original file has not been 'filled in' and the broken file record will remain. In this case, you would want to run the alternate simpler 'if file is missing, remove record (leave no delete record)' job after this URL job has completely cleared and its downloader page finished, just to catch any lingering strays.\n\nAll missing files will have their hashes, tags, and URLs exported to a new folder in your database directory for later manual recovery attempts if you wish.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+     "asked": [
+      {
+       "message": "This does the same check as the 'file is missing' job, and if the file is where it is expected, it ensures its file content, byte-for-byte, is as expected. This discovers hard drive damage or other external interference. This is a heavy job, so be wary. If the file is missing/incorrect _and_ has known post/file URLs, the URLs will be automatically added to a new URL downloader.\n\nMissing/Incorrect files with no URLs will have their internal file record in the database completely removed. This is just like a file delete except it does not leave a deletion record, so if a normal import ever sees the file again in future, it will not appear to be 'previously deleted', but completely new.\n\nNote that if a files's URL(s) are now 404, or if they point to slightly different new duplicate files (let's say the server resized them or the CDN optimised their file cache), then hydrus will not recognise that the original file has not been 'filled in' and the broken file record will remain. In this case, you would want to run the alternate simpler 'if file is missing, remove record (leave no delete record)' job after this URL job has completely cleared and its downloader page finished, just to catch any lingering strays.\n\nAll incorrect files will be exported to a new folder in your database directory for later manual examination if you wish.\n\nAll missing/incorrect files will also have their hashes, tags, and URLs exported to a new folder in your database directory for later manual recovery attempts if you wish.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+     "asked": [
+      {
+       "message": "This does the same check as the 'file is missing' job, and if the file is where it is expected, it ensures its file content, byte-for-byte, is as expected. This discovers hard drive damage or other external interference. This is a heavy job, so be wary. If the file is missing/incorrect _and_ has known post/file URLs, the URLs will be automatically added to a new URL downloader.\n\nNote that if a files's URL(s) are now 404, or if they point to slightly different new duplicate files (let's say the server resized them or the CDN optimised their file cache), then hydrus will not recognise that the original file has not been 'filled in' and the broken file record will remain. In this case, you would want to run the alternate simpler 'if file is missing, remove record (leave no delete record)' job after this URL job has completely cleared and its downloader page finished, just to catch any lingering strays.\n\nAll incorrect files will be exported to a new folder in your database directory for later manual examination if you wish.\n\nAll missing/incorrect files will also have their hashes, tags, and URLs exported to a new folder in your database directory for later manual recovery attempts if you wish.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "if file is missing, remove record (leave no delete record)",
+     "asked": [
+      {
+       "message": "This checks to see if the file is present in the file system as expected. Use this if you have lost a number of files from your file structure, do not think you can recover them, and need hydrus to re-sync with what it actually has.\n\nMissing files will have their internal file record in the database completely removed. This is just like a file delete except it does not leave a deletion record, so if a normal import ever sees the file again in future, it will not appear to be 'previously deleted', but completely new.\n\nAll missing files will have their hashes, tags, and URLs exported to a new folder in your database directory for later manual recovery attempts if you wish.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "if file is missing, remove record (leave a delete record)",
+     "asked": [
+      {
+       "message": "This checks to see if the file is present in the file system as expected. Use this if you have manually deleted a number of files from your file structure, do not want to get them again, and need hydrus to re-sync with what it actually has. Another example of this situation is restoring an old backed-up database to a newer client_files structure--to catch the database up, you want to teach it that any files missing in the newer structure should be deleted, with a record.\n\nMissing files will have their internal file record processed just like a normal file delete. Normal imports that see these files again in future will consider them as 'previously deleted'.\n\nAll missing files will have their hashes, tags, and URLs exported to a new folder in your database directory for later manual recovery attempts if you wish.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "if file is missing/incorrect, move file out and remove record",
+     "asked": [
+      {
+       "message": "This does the same check as the 'file is missing' job, and if the file is where it is expected, it ensures its file content, byte-for-byte, is as expected. This discovers hard drive damage or other external interference. This is a heavy job, so be wary.\n\nMissing/Incorrect files will have their internal file record in the database completely removed. This is just like a file delete except it does not leave a deletion record, so if a normal import ever sees the file again in future, it will not appear to be 'previously deleted', but completely new.\n\nAll incorrect files will be exported to a new folder in your database directory for later manual examination if you wish.\n\nAll missing/incorrect files will also have their hashes, tags, and URLs exported to a new folder in your database directory for later manual recovery attempts if you wish.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "if file is incorrect, move file out",
+     "asked": [
+      {
+       "message": "If the file is where it is expected, this ensures its file content, byte-for-byte, is correct. This is a heavy job, so be wary. If the file is incorrect, it will be exported to your database directory along with its known URLs. The client's file record will not be deleted. This is useful if you have a valid backup and need to clear out invalid files from your live db so you can fill in gaps from your backup with a program like FreeFileSync.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "if file is missing, note it in log",
+     "asked": [
+      {
+       "message": "This checks to see if the file is present in the file system as expected. If it is not, it records the file's hash, tags, and URLs to your database directory, just like the other \"missing file\" jobs, but makes no other action.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "regenerate file metadata",
+     "asked": [
+      {
+       "message": "This will reparse the 3 selected files' metadata.\n\nIf the files were imported before some more recent improvement in the parsing code (such as EXIF rotation or bad video resolution or duration or frame count calculation), this will update them.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "regenerate thumbnail if incorrect size",
+     "asked": [
+      {
+       "message": "This will regenerate the 3 selected files' thumbnails, but only if they are the wrong size.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "regenerate thumbnail",
+     "asked": [
+      {
+       "message": "This will force-regenerate the 3 selected files' thumbnails.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "regenerate blurhash",
+     "asked": [
+      {
+       "message": "This generates a very small version of the file's thumbnail that can be used as a placeholder while the thumbnail loads.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "regenerate pixel hashes",
+     "asked": [
+      {
+       "message": "This generates a fast unique identifier for the pixels in a still image, which is used in duplicate pixel searches.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "regenerate perceptual hashes",
+     "asked": [
+      {
+       "message": "This forces a regeneration of the file's similar-files 'phashes'. If phashes change and are useful, files will be queued into potential duplicate pair search. It is not useful unless you know there is missing data to repair or that the phash generation tech has changed (e.g. it fixes some file rotation), meaning for new phashes if re-generated.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "regenerate file modified time",
+     "asked": [
+      {
+       "message": "This rechecks the file's modified timestamp and saves it to the database.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "regenerate non-standard hashes",
+     "asked": [
+      {
+       "message": "This regenerates hydrus's store of md5, sha1, and sha512 supplementary hashes, which it can use for various external (usually website) lookups.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "check for membership in the potential duplicate pairs search system",
+     "asked": [
+      {
+       "message": "This checks to see if files should be in the search system that looks for potential duplicate pairs, and if they are falsely in or falsely out, it will remove their record or queue them up for a search as appropriate. It is useful to repair database damage.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "determine if the file has transparency",
+     "asked": [
+      {
+       "message": "This loads the file to see if it has an alpha channel with useful data (the strictness of this test is determined in the options). Only works for images and some animations.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "determine if the file has EXIF metadata",
+     "asked": [
+      {
+       "message": "This loads the file to see if it has EXIF metadata, which can be shown in the media viewer and searched with \"system:has exif\".",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "determine if the file has XMP metadata",
+     "asked": [
+      {
+       "message": "This loads the file to see if it has XMP metadata, which can be shown in the media viewer and searched with \"system:has xmp\".",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "determine if the file has IPTC metadata",
+     "asked": [
+      {
+       "message": "This loads the file to see if it has XMP metadata, which can be shown in the media viewer and searched with \"system:has iptc\".",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "determine if the file has human-readable metadata",
+     "asked": [
+      {
+       "message": "This loads the file to see if it has human-readable metadata outside of EXIF and such, things like a stray Artist or Title or Comment label, or something like an AI prompt, which can be shown in the media viewer and searched with \"system:has human-readable metadata\".",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "determine if the file has software/source metadata",
+     "asked": [
+      {
+       "message": "This loads the file to see if it has software/source metadata, which can be shown in the media viewer and searched with \"system:has software/source metadata\".",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "determine if the file has an icc profile",
+     "asked": [
+      {
+       "message": "This loads the file to see if it has an ICC profile, which is generally applied in hydrus and can be searched with \"system:has icc profile\".",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "fix file read/write permissions",
+     "asked": [
+      {
+       "message": "This ensures that files in the file system are readable and writeable. For Linux/macOS users, it specifically sets 644. If you wish to run this job on Linux/macOS, ensure you are first the file owner of all your files.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    },
+    {
+     "label": "delete duplicate neighbours with incorrect file extension",
+     "asked": [
+      {
+       "message": "Sometimes, a file metadata regeneration will mean a new filetype and thus a new file extension. If the existing, incorrectly named file is in use, it must be copied rather than renamed, and so there is a spare duplicate left over after the operation. This jobs cleans up the duplicate at a later time.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

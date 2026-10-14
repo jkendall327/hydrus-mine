@@ -137,19 +137,7 @@ pub fn close_all_question(vetoes: &[(String, String)]) -> Option<String> {
     if vetoes.is_empty() {
         return None;
     }
-    let mut groups: Vec<(&str, Vec<String>)> = Vec::new();
-    for (reason, page) in vetoes {
-        match groups.iter_mut().find(|(r, _)| *r == reason.as_str()) {
-            Some((_, pages)) => pages.push(page.clone()),
-            None => groups.push((reason, vec![page.clone()])),
-        }
-    }
-    for (_, pages) in &mut groups {
-        pages.sort_by_key(|p| hydrus_core::sort::human_sort_key(p));
-    }
-    // (a stable sort, as Python's)
-    groups.sort_by_key(|(_, pages)| pages.len());
-    let blocks: Vec<String> = groups
+    let blocks: Vec<String> = group_vetoes(vetoes)
         .iter()
         .map(|(reason, pages)| match pages.as_slice() {
             [one] => format!("page \"{one}\" says: {reason}"),
@@ -163,6 +151,24 @@ pub fn close_all_question(vetoes: &[(String, String)]) -> Option<String> {
         "Close \"top page notebook\"?\n\n{}",
         blocks.join("\n----\n")
     ))
+}
+
+/// The objections grouped as the reference groups them
+/// (`GetAbleToCloseData`): each reason with the names of the pages giving
+/// it in human order, the reasons with fewest pages first (a stable sort).
+pub fn group_vetoes(vetoes: &[(String, String)]) -> Vec<(String, Vec<String>)> {
+    let mut groups: Vec<(String, Vec<String>)> = Vec::new();
+    for (reason, page) in vetoes {
+        match groups.iter_mut().find(|(r, _)| r == reason) {
+            Some((_, pages)) => pages.push(page.clone()),
+            None => groups.push((reason.clone(), vec![page.clone()])),
+        }
+    }
+    for (_, pages) in &mut groups {
+        pages.sort_by_key(|p| hydrus_core::sort::human_sort_key(p));
+    }
+    groups.sort_by_key(|(_, pages)| pages.len());
+    groups
 }
 
 /// A backup timestamp, as the reference's append-backup menu labels it.

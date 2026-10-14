@@ -126,10 +126,20 @@ fn actual_middle_press_uses_canonical_tag_location_defaults_and_saved_activation
             before + 1,
             "real hover middle press opens one page"
         );
+        // what the reference asks for under the same options (tag_search_new_page.json)
+        let recorded = hydrus_testkit::fixture_json("tag_search_new_page.json");
+        let case = recorded["cases"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|c| c["underscores"] == true && c["activate"] == enabled)
+            .unwrap();
+        let first = &case["calls"][0];
         assert_eq!(
             ui.get_tag_search_activation_requests() - requests,
-            i32::from(enabled)
+            i32::from(first["activate_window"].as_bool().unwrap())
         );
+        assert_eq!(first["activate_window"], enabled);
         let pages = bound.pages.borrow();
         let PageContent::Search { search, .. } = &pages.shown().content else {
             panic!("tag search did not create a search page");
@@ -149,7 +159,8 @@ fn actual_middle_press_uses_canonical_tag_location_defaults_and_saved_activation
                 .unwrap()
                 .tag_service
         );
-        assert_eq!(pages.shown().name, tag.as_str());
+        assert_eq!(pages.shown().name, first["page_name"].as_str().unwrap());
+        assert_eq!(first["predicates"][0], tag.as_str());
     }
     let draft = options(&ui, &bound);
     draft.invoke_check_toggled(row(&draft, ACTIVATE), false);

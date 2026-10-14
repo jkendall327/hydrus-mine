@@ -293,10 +293,12 @@ fn maintenance_jobs_are_listed_asked_and_run_on_the_selected_files() {
 fn force_metadata_refetch_asks_then_opens_a_downloader_page_of_the_urls() {
     use hydrus_core::url::strings::StringMatch;
     use hydrus_core::url::{DomainMask, UrlClass, UrlClassSettings};
-    use hydrus_gui::thumbnail_menu::url_facts;
 
-    let fixture = start();
-    // the fixture's first file has https://example.com/post/0: a class for it
+    // (oracle/record_force_refetch.py: the reference's rows, questions, the
+    // URLs sent to the "forced urls downloader" page and its options, for one
+    // file and for three, each row answered no then yes)
+    let recorded = hydrus_testkit::fixture_json("force_refetch.json");
+    let fixture = start_local();
     let classes = UrlClassSettings {
         url_classes: vec![UrlClass {
             name: "example post".into(),
@@ -305,7 +307,7 @@ fn force_metadata_refetch_asks_then_opens_a_downloader_page_of_the_urls() {
                 (StringMatch::fixed("post"), None),
                 (StringMatch::any(), None),
             ],
-            url_type: hydrus_core::url::UrlType::File,
+            url_type: hydrus_core::url::UrlType::Post,
             ..UrlClass::default()
         }],
         ..UrlClassSettings::default()
@@ -315,74 +317,144 @@ fn force_metadata_refetch_asks_then_opens_a_downloader_page_of_the_urls() {
         .write_and_refresh(move |ctx| hydrus_store::settings::set(ctx.conn(), &classes))
         .unwrap();
     let results = fixture.results();
-    let (index, facts) = results
-        .iter()
-        .enumerate()
-        .map(|(i, &f)| (i, url_facts(&fixture.store, Some(f), &[f])))
-        .find(|(_, facts)| !facts.focus_classes.is_empty())
-        .expect("a file with a recognised URL class");
-    let index = i32::try_from(index).unwrap();
-    fixture.select(index, &[]);
-    let menu = fixture.menu(index);
-    let refetch = group_rows(&menu.urls_refetch);
-    let class = &facts.focus_classes[0];
-    assert_eq!(refetch[0].0, format!("this file's {class} urls"));
-    assert_eq!(class, "example post");
-    let tabs_before = fixture.bound.pages.borrow().tabs()[0].names.len();
-    fixture.ui.invoke_menu_chosen(refetch[0].1);
-    let question = fixture.ui.get_question().to_string();
-    assert!(
-        question.starts_with(
-            "Open a new search page and force metadata redownload for 1 \"example post\" URLs?"
-        ),
-        "{question}"
-    );
-    assert!(
-        question.contains(&format!(" \"{class}\" URLs? This is inefficient and should only be done to fill in known gaps in one-time jobs.\n\nDO NOT USE THIS TO RECHECK TEN THOUSAND URLS EVERY MONTH JUST FOR MAYBE A FEW NEW TAGS.")),
-        "{question}"
-    );
-    // "no": no page
-    fixture.ui.invoke_answer(false);
-    assert_eq!(
-        fixture.bound.pages.borrow().tabs()[0].names.len(),
-        tabs_before
-    );
-    // "yes": a new page, named for the job
-    fixture.ui.invoke_menu_chosen(refetch[0].1);
-    fixture.ui.invoke_answer(true);
-    let names: Vec<String> = fixture
-        .bound
-        .pages
-        .borrow()
-        .session()
-        .pages
-        .iter()
-        .map(|page| page.name.clone())
-        .collect();
-    assert_eq!(names.len(), tabs_before + 1);
-    assert_eq!(names.last().unwrap(), "forced urls downloader");
-    // whose import options fetch metadata even for known URLs and hashes
-    let key = fixture
-        .bound
-        .pages
-        .borrow()
-        .session()
-        .pages
-        .iter()
-        .find(|page| page.name == "forced urls downloader")
-        .unwrap()
-        .key;
-    let downloader = fixture.bound.pages.borrow_mut().page(&key).unwrap();
-    let queue = downloader.borrow().importer().unwrap().queue;
-    let options = fixture
+    let hashes = fixture
         .store
-        .read(|c| hydrus_store::queues::queue(c, queue))
-        .unwrap()
-        .unwrap()
-        .options;
-    let prefetch = options.prefetch.expect("prefetch options");
-    assert!(prefetch.fetch_metadata_even_if_url_recognised_and_file_already_in_db);
-    assert!(prefetch.fetch_metadata_even_if_hash_recognised_and_file_already_in_db);
+        .read(|c| hydrus_store::master::hashes(c, &results))
+        .unwrap();
+    let names: Vec<String> = results.iter().map(|f| hashes[f].to_hex()).collect();
+    let tab_names = |fixture: &Fixture| -> Vec<String> {
+        fixture
+            .bound
+            .pages
+            .borrow()
+            .session()
+            .pages
+            .iter()
+            .map(|page| page.name.clone())
+            .collect()
+    };
+    let requested = |fixture: &Fixture| -> Vec<String> {
+        let key = fixture
+            .bound
+            .pages
+            .borrow()
+            .session()
+            .pages
+            .iter()
+            .find(|page| page.name == "forced urls downloader")
+            .unwrap()
+            .key;
+        let downloader = fixture.bound.pages.borrow_mut().page(&key).unwrap();
+        let queue = downloader.borrow().importer().unwrap().queue;
+        fixture
+            .store
+            .write(move |ctx| hydrus_store::queues::take_url_requests(ctx.conn(), queue))
+            .unwrap()
+    };
+    let mut yes_answers = 0;
+    for case in recorded["cases"].as_array().unwrap() {
+        let picked: Vec<i32> = case["hashes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|h| {
+                i32::try_from(names.iter().position(|n| n == h.as_str().unwrap()).unwrap()).unwrap()
+            })
+            .collect();
+        fixture.select(picked[0], &picked[1..]);
+        let menu = fixture.menu(picked[0]);
+        let refetch = group_rows(&menu.urls_refetch);
+        let theirs: Vec<&str> = case["rows"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|r| r["row"].as_str().unwrap())
+            .collect();
+        // (each row twice in the recording, answered no then yes)
+        let mut offered: Vec<&str> = theirs.clone();
+        offered.dedup();
+        assert_eq!(
+            refetch.iter().map(|(l, _)| l.as_str()).collect::<Vec<_>>(),
+            offered,
+            "{}: the rows",
+            case["selection"]
+        );
+        for row in case["rows"].as_array().unwrap() {
+            let id = refetch
+                .iter()
+                .find(|(l, _)| l == row["row"].as_str().unwrap())
+                .unwrap()
+                .1;
+            let tabs = tab_names(&fixture).len();
+            fixture.ui.invoke_menu_chosen(id);
+            assert_eq!(
+                fixture.ui.get_question(),
+                row["asked"][0]["message"].as_str().unwrap(),
+                "{}: {}",
+                case["selection"],
+                row["row"]
+            );
+            let yes = row["answer"].as_bool().unwrap();
+            fixture.ui.invoke_answer(yes);
+            if !yes {
+                assert_eq!(tab_names(&fixture).len(), tabs, "no: no page");
+                continue;
+            }
+            yes_answers += 1;
+            let page = &row["page"];
+            assert_eq!(
+                tab_names(&fixture).len() - tabs,
+                page["tabs_added"].as_u64().unwrap() as usize,
+                "a new page the first time, the same one after"
+            );
+            assert!(
+                tab_names(&fixture)
+                    .iter()
+                    .any(|n| n == page["name"].as_str().unwrap())
+            );
+            // the URLs the page was sent (requests the page takes up as its
+            // queue), and the options that fetch metadata even for known URLs
+            // and hashes
+            let mut sent: Vec<String> = row["sent"][0]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|u| u.as_str().unwrap().to_owned())
+                .collect();
+            sent.sort();
+            let mut now = requested(&fixture);
+            now.sort();
+            assert_eq!(now, sent, "the URLs sent to the page");
+            let key = fixture
+                .bound
+                .pages
+                .borrow()
+                .session()
+                .pages
+                .iter()
+                .find(|page| page.name == "forced urls downloader")
+                .unwrap()
+                .key;
+            let downloader = fixture.bound.pages.borrow_mut().page(&key).unwrap();
+            let queue = downloader.borrow().importer().unwrap().queue;
+            let options = fixture
+                .store
+                .read(|c| hydrus_store::queues::queue(c, queue))
+                .unwrap()
+                .unwrap()
+                .options;
+            let prefetch = options.prefetch.expect("prefetch options");
+            assert_eq!(
+                prefetch.fetch_metadata_even_if_url_recognised_and_file_already_in_db,
+                page["fetch_even_if_url_known"].as_bool().unwrap()
+            );
+            assert_eq!(
+                prefetch.fetch_metadata_even_if_hash_recognised_and_file_already_in_db,
+                page["fetch_even_if_hash_known"].as_bool().unwrap()
+            );
+        }
+    }
+    assert_eq!(yes_answers, 3);
 }
 
 // leaf: audit-media-context-missing-duplicates

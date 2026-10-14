@@ -53,7 +53,9 @@ fn edit(window: &OptionsWindow, case: &Value) {
             .row_data(usize::try_from(index(window, NAMESPACE)).unwrap())
             .unwrap()
             .enabled,
-        !case["fade"].as_bool().unwrap()
+        case["namespace_enabled"]
+            .as_bool()
+            .unwrap_or(!case["fade"].as_bool().unwrap())
     );
 }
 fn source(window: &WriteTagsWindow, tags: bool, label: &str) {
@@ -64,6 +66,41 @@ fn source(window: &WriteTagsWindow, tags: bool, label: &str) {
 }
 fn rgb(colour: slint::Color) -> [u8; 3] {
     [colour.red(), colour.green(), colour.blue()]
+}
+/// The runs the reference's paint fades (a gradient pen, or a gradient
+/// background if selected): the text, and the colours it fades from and to
+/// (`oracle/record_sibling_fade_paint.py`).
+fn faded(paint: &Value) -> Vec<(String, [u8; 3], [u8; 3])> {
+    let mut runs: Vec<(String, [u8; 3], [u8; 3])> = Vec::new();
+    let rgb = |v: &Value| -> [u8; 3] {
+        let v = v.as_array().unwrap();
+        [
+            u8::try_from(v[0].as_u64().unwrap()).unwrap(),
+            u8::try_from(v[1].as_u64().unwrap()).unwrap(),
+            u8::try_from(v[2].as_u64().unwrap()).unwrap(),
+        ]
+    };
+    for selected in ["unselected", "selected"] {
+        for run in paint[selected].as_array().unwrap() {
+            let stops = if run["pen_gradient"].is_null() {
+                &run["fill_gradient"]
+            } else {
+                &run["pen_gradient"]
+            };
+            if stops.is_null() {
+                continue;
+            }
+            let entry = (
+                run["text"].as_str().unwrap().to_owned(),
+                rgb(&stops[0]),
+                rgb(&stops[1]),
+            );
+            if !runs.contains(&entry) {
+                runs.push(entry);
+            }
+        }
+    }
+    runs
 }
 fn compare(rows: &ModelRc<ListText>, expected: &Value, fade: bool) {
     for expected in expected.as_array().unwrap() {
@@ -90,10 +127,51 @@ fn compare(rows: &ModelRc<ListText>, expected: &Value, fade: bool) {
         }
     }
 }
+fn compare_recorded(rows: &ModelRc<ListText>, expected: &Value, paint: &Value) {
+    let faded = faded(paint);
+    for expected in expected.as_array().unwrap() {
+        let first = expected["rows"][0][0][0].as_str().unwrap();
+        let row = rows.iter().find(|row| row.text.starts_with(first)).unwrap();
+        let actual = if row.parts.row_count() == 0 {
+            json!([[row.text.as_str(), rgb(row.colour)]])
+        } else {
+            json!(
+                row.parts
+                    .iter()
+                    .map(|part| json!([part.text.as_str(), rgb(part.colour)]))
+                    .collect::<Vec<_>>()
+            )
+        };
+        assert_eq!(actual, expected["rows"][0]);
+        // which runs fade, and between which colours, is what the
+        // reference's paint did
+        for part in row.parts.iter() {
+            let theirs = faded.iter().find(|(text, _, _)| text == part.text.as_str());
+            assert_eq!(
+                part.fade,
+                theirs.is_some(),
+                "{}: the run {:?}",
+                row.text,
+                part.text
+            );
+            if let Some((_, from, to)) = theirs {
+                assert_eq!(
+                    (rgb(part.previous_colour), rgb(part.colour)),
+                    (*from, *to),
+                    "{}: the run {:?} fades between these",
+                    row.text,
+                    part.text
+                );
+            }
+        }
+    }
+}
 // leaf: audit-options-tag-presentation-other-rendering-namespace-for-the-colour-of-the-sibling-connecting-string
+// leaf: audit-options-tag-presentation-other-rendering-fade-the-colour-of-the-sibling-connector-string-on-qt6
 #[test]
 fn options_cancel_retired_apply_reopen_and_all_segmented_native_consumers() {
     let recorded = hydrus_testkit::fixture_json("sibling_colours.json");
+    let fade_paint = hydrus_testkit::fixture_json("sibling_fade_paint.json");
     let (_directory, store, files) = fixture::seed(&recorded);
     fixture::set_preferences(
         &store,
@@ -155,7 +233,12 @@ fn options_cancel_retired_apply_reopen_and_all_segmented_native_consumers() {
         assert_eq!(json!(saved.namespace), case["namespace"]);
         ui.invoke_manage_tags_selected();
         let manage = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
-        compare(&manage.get_tags(), &case["storage"], saved.fade);
+        let paint = &fade_paint["cases"][case_index];
+        assert_eq!(
+            (&paint["fade"], &paint["namespace"]),
+            (&case["fade"], &case["namespace"])
+        );
+        compare_recorded(&manage.get_tags(), &case["storage"], &paint["storage"]);
         manage.invoke_cancel();
         let slot = hydrus_gui::write_tag_window::Slot::default();
         let native_index = windows.count();
@@ -173,7 +256,7 @@ fn options_cancel_retired_apply_reopen_and_all_segmented_native_consumers() {
         source(&child, false, &file_label);
         child.invoke_edited(recorded["query"].as_str().unwrap().into());
         child.invoke_fetch();
-        compare(&child.get_suggestions(), &case["write"], saved.fade);
+        compare_recorded(&child.get_suggestions(), &case["write"], &paint["write"]);
         if case_index == 0 || case_index == 2 {
             let native = windows.get(native_index).unwrap();
             let pixels = headless::render(&native, 760, 650);

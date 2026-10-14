@@ -2614,6 +2614,7 @@ dependencies = [
  "tokio",
  "tower",
  "tracing",
+ "x11rb",
  "zbus",
 ]
 
@@ -2936,6 +2937,8 @@ dependencies = [
  "windows-sys 0.61.2",
  "winnow",
  "writeable",
+ "x11rb",
+ "x11rb-protocol",
  "yeslogic-fontconfig-sys",
  "yoke",
  "zerocopy",

@@ -1,12 +1,14 @@
 name: rust
 
-# Every push and pull request that changes code runs the whole Linux check, GUI
-# included. Lint and tests are separate jobs so they run side by side. Windows
+# Every pull request that changes code, and every push to master, runs the whole
+# Linux check, GUI included. (Pushes to working branches run nothing on their
+# own: their pull request's run covers them, and running both doubled the queue
+# when many sessions pushed at once.) Lint and tests are separate jobs so they run side by side. Windows
 # and macOS are deferred (owner, 2026-10-06) and run only when dispatched by
 # hand. Changes to the tracker and the scripts alone run tracker.yml instead.
 on:
   push:
-    branches: [master, 'claude/**', 'codex/**']
+    branches: [master]
     paths: ['crates/**', 'generated/**', 'tools/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.config/**', '.github/workflows/rust.yml']
   pull_request:
     paths: ['crates/**', 'generated/**', 'tools/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.config/**', '.github/workflows/rust.yml']
@@ -91,7 +93,7 @@ jobs:
           # libmpv2 is loaded when first needed (see crates/hydrus-gui/src/mpv.rs),
           # so the video and audio viewer tests run here rather than skip; they
           # give mpv a null audio output, so no sound card is needed
-          sudo apt-get -o Acquire::Retries=3 install -y ffmpeg fontconfig libfontconfig1-dev fonts-noto-cjk libmpv2
+          sudo apt-get -o Acquire::Retries=3 install -y ffmpeg fontconfig libfontconfig1-dev fonts-noto-cjk libmpv2 xvfb dbus
       - name: build the generated UI on its own
         # ~13 GB peak; built alone so it never overlaps the GUI crate (see scripts/dev.sh).
         run: cargo build -p hydrus-gui-ui --locked
@@ -100,6 +102,8 @@ jobs:
           HYDRUS_INTERCHANGE_SCREENSHOTS: ${{ github.workspace }}/target/tmp
           # a test that needs libmpv fails here rather than skip
           HYDRUS_REQUIRE_MPV: '1'
+          # the idle-time tests start Xvfb and dbus-daemon
+          HYDRUS_REQUIRE_DESKTOP: '1'
         run: |
           mkdir -p target/tmp
           cargo test --workspace --locked --no-fail-fast

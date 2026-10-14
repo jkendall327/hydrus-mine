@@ -292,6 +292,26 @@
     "sibling application",
     "parent application"
   ],
+  "application_status_by_switches": [
+    {
+      "idle": true,
+      "active": true,
+      "text": "Siblings and parents are set to sync all the time. Changes will start applying as soon as you ok this dialog.",
+      "object_name": "HydrusValid"
+    },
+    {
+      "idle": true,
+      "active": false,
+      "text": "Siblings and parents are only set to sync during idle time. Changes here will only start to apply when you are not using the client.",
+      "object_name": "HydrusWarning"
+    },
+    {
+      "idle": false,
+      "active": false,
+      "text": "Siblings and parents are not set to sync in the background at any time. If there is sync work to do, you will have to force it to run using the 'review' window under _tags->sync_.",
+      "object_name": "HydrusWarning"
+    }
+  ],
   "application_initial": {
     "siblings": {
       "646f776e6c6f616465722074616773": [
