@@ -5314,6 +5314,27 @@ be diagnosed afterwards. The owner chose always-on crash logging (2026-10-14).
   tooltip (`HydrusDB._current_status`, `ClientGUI._RefreshStatusBarDB`); hydrus-rs's
   database has no job names to show. `audit-options-status-activity` stays untagged for this.
 
+- **Wave 5, group W5-12: what remains** (wound down 2026-10-14; the owner
+  stopped the wave to save usage).
+  - `audit-options-status-activity`: the database field needs job names (the
+    store's reads and writes are closures, not named jobs), a "db committing"
+    state around a write's commit, a "db locked" state while a backup holds
+    the database, and the "current db job" tooltip (a `.slint` change).
+  - `...highlight-the-new-query`: the reference's second site,
+    `PendSubscriptionGapDownloader`, is reached from subscription sync
+    (`ClientImportSubscriptions.py:234`, a popup button when a gap is found)
+    and opens a "subscription gap downloaders" page. None of that is ported,
+    so only the first site is proved.
+  - `audit-network-download-control-cog`: the engine tests on branch
+    `claude/w5-12-2` check the cog's four actions against the recorded
+    `actions.retry` flags (connection wait, server bandwidth wait, domain
+    scrub, gallery token). That branch also renames the jobs list's header
+    approval and engine-slot waits "waiting for validation" and "waiting for
+    free work slot", and sets `audit-network-jobs-waits` to sound. It was
+    pushed without being built or run, and has no pull request.
+  - `...advanced-search-media-menu`: "copy bitmap" and "copy thumbnail bitmap"
+    need the bitmap exchange.
+
 ## Options > file viewing statistics, downloading (recheck notes)
 
 - **Viewing statistics tracking** is proved through the media viewer only
