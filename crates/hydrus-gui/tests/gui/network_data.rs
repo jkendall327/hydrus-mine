@@ -618,6 +618,8 @@ fn the_detail_panel_shows_the_references_usage_and_rule_gauge_rows() {
     let store = Store::open(dir.path()).unwrap();
     let now = TimestampMs::now().millis() / 1000;
     let context = NetworkContext::domain("example.com");
+    // (time held still, so "now" is the second the usage was reported in)
+    windows::hold_now(Some(now));
     // what the recorder reported on example.com, under the rules it set
     let mut tracker = Tracker::new(now);
     tracker.report_data(2048, now);
@@ -681,6 +683,7 @@ fn the_detail_panel_shows_the_references_usage_and_rule_gauge_rows() {
         );
     }
     review.invoke_close_clicked();
+    windows::hold_now(None);
 }
 
 // leaf: audit-network-bandwidth-history
@@ -715,8 +718,6 @@ fn the_usage_in_the_past_column_follows_each_span_as_the_references_does() {
         .unwrap();
     let review = windows::open_bandwidth(store.clone(), &slots).unwrap();
     until(|| review.get_rows().row_count() > 0);
-    // (a context with no use in the span is not listed: filtering is
-    // another leaf's)
     let cell = |name: &str| {
         let rows = review.get_rows();
         let row = rows
@@ -738,17 +739,20 @@ fn the_usage_in_the_past_column_follows_each_span_as_the_references_does() {
         }
         review.invoke_refresh();
         for name in ["recent", "old", "bytes"] {
-            if let Some(shown) = cell(name) {
-                assert_eq!(
-                    shown,
-                    choice["cells"][name].as_str().unwrap(),
-                    "{name} over {choice}"
-                );
-                seen += 1;
-            }
+            // The reference's list shows a context when it made a request in
+            // the span (or under "show all"); its cell is read here as its
+            // formatter gives it for every context, listed or not.
+            let theirs = choice["cells"][name].as_str().unwrap();
+            let listed = choice["span"].is_null() || !theirs.ends_with(" in 0 requests");
+            assert_eq!(
+                cell(name),
+                listed.then(|| theirs.to_owned()),
+                "{name} over {choice}"
+            );
+            seen += usize::from(listed);
         }
     }
-    // (listed: recent under every span, old from 14 days, bytes under all time)
-    assert!(seen >= 6, "{seen}");
+    // (recent in all four spans, old in the last two, bytes under all time)
+    assert_eq!(seen, 7);
     review.invoke_close_clicked();
 }

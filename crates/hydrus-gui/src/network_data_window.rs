@@ -91,8 +91,24 @@ impl Drop for Worker {
         let _ = self.send.send(Operation::Stop);
     }
 }
+/// The second the windows treat as now, when a test holds time still
+/// (`i64::MIN`: the clock).
+static HELD_NOW: std::sync::atomic::AtomicI64 = std::sync::atomic::AtomicI64::new(i64::MIN);
+
+/// Hold the windows' "now" at `seconds` (or let it run again with `None`).
+#[doc(hidden)]
+pub fn hold_now(seconds: Option<i64>) {
+    HELD_NOW.store(
+        seconds.unwrap_or(i64::MIN),
+        std::sync::atomic::Ordering::SeqCst,
+    );
+}
+
 fn now() -> i64 {
-    TimestampMs::now().millis() / 1000
+    match HELD_NOW.load(std::sync::atomic::Ordering::SeqCst) {
+        i64::MIN => TimestampMs::now().millis() / 1000,
+        held => held,
+    }
 }
 fn columns(titles: &[(&str, f32)]) -> ModelRc<TableColumn> {
     ModelRc::new(VecModel::from(
