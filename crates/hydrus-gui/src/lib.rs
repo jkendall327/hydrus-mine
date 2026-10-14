@@ -32,6 +32,8 @@ pub use auto_resolution_review_window::set_popup_delay;
 mod auto_resolution_rules_window;
 mod autocomplete_tabs;
 mod checker_options_window;
+#[doc(hidden)]
+pub use checker_options_window::latest_value as latest_checker_value;
 pub mod client_exit;
 pub mod clipboard_monitor;
 pub mod command_palette_window;
