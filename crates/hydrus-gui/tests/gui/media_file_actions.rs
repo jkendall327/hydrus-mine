@@ -3,7 +3,6 @@
 //! deletion (`ClientGUIMediaMenus`, `ClientGUIMediaActions`).
 
 use hydrus_core::HashId;
-use hydrus_gui::media_actions;
 use slint::{ComponentHandle as _, Model as _};
 
 use super::media_support::*;

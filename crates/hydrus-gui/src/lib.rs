@@ -2271,7 +2271,6 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let weak = window.as_weak();
         let page = page.clone();
         let remove_from = remove_from.clone();
-        let shown = shown.clone();
         let delete_files = delete_files.clone();
         let binding_active = binding_active.clone();
         move |asked: Asked| {

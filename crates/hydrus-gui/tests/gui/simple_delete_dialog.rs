@@ -9,7 +9,6 @@
 use std::collections::BTreeSet;
 use std::sync::Arc;
 
-use serde_json::Value;
 use slint::ComponentHandle as _;
 
 use hydrus_core::HashId;
@@ -251,18 +250,13 @@ fn simple_deletion_opens_the_delete_files_dialog_as_recorded() {
             let recorded = value["saved_action"].as_str();
             match (&saved.last_action, recorded) {
                 (None, None) => {}
-                (Some(DeletionAction::Domain(key)), Some(hex)) => {
-                    let service = store.snapshot().services.by_key(key).unwrap().clone();
+                (Some(DeletionAction::Domain(key)), Some(_)) => {
                     // (the recording names builtin services by their keys' hex)
+                    let remembered = store.snapshot().services.by_key(key).unwrap().name.clone();
+                    let service = updates[0]["service"].as_str().unwrap();
                     assert!(
-                        key.as_bytes()
-                            .iter()
-                            .map(|b| format!("{b:02x}"))
-                            .collect::<String>()
-                            == hex
-                            || service.name == updates[0]["service"].as_str().unwrap()
-                            || updates[0]["service"] == "all local file domains",
-                        "{what}: remembered {key:?}, recorded {hex}"
+                        remembered == service || service == "all local file domains",
+                        "{what}: remembered {remembered}, recorded {service}"
                     );
                 }
                 (saved, recorded) => panic!("{what}: remembered {saved:?}, recorded {recorded:?}"),
