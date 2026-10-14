@@ -4178,9 +4178,24 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   main window's title bar and borders off its size where winit reports them.
   Winit cannot read the pointer outside the application's windows, so "mouse"
   uses where the pointer last was over one of hydrus-rs's windows, else the
-  centre of the main window. Only the main window, the media viewer and the
-  Options window consult their frames. The Options window is placed before it
-  shows, and again once shown when its own size was needed to grow from.
+  centre of the main window. The main window, the media viewer, the Options
+  window, the fourteen windows with frame keys of their own and the choice
+  dialogs (`quick_select_dialog` for a choice among buttons, `quick_yesno_dialog`
+  for one with a "no") consult their frames. The reference's
+  `quick_entry_dialog` and `deeply_nested_dialog` are not told apart from
+  `regular_dialog`: hydrus-rs has no single text-entry dialog or nested-editor
+  frame to hang them on, so editing those two rows reaches nothing. The
+  Options window is placed before it shows, and again once shown when its own
+  size was needed to grow from.
+- The reference's `OpenListButtons` (Go To Page) is a frame that keeps its
+  geometry on any close; hydrus-rs's choice dialogs keep it only when a
+  choice is made, as the reference's `SelectFromListButtons` dialog does.
+- Frame locations editor, not yet proved: the remembered place of a window
+  (a headless window has no readable place, so only the arithmetic of
+  `windows::placement` and the off-screen rescue are tested, not a window
+  opening at it), and the `quick_entry_dialog` and `deeply_nested_dialog`
+  rows, which reach nothing. `audit-options-gui-frame-locations-edit` stays
+  partial and untagged for those reasons.
 
 ## Review vacuum data
 
