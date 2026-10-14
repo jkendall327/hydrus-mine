@@ -1110,3 +1110,153 @@ fn the_editors_paste_empty_search_and_star_buttons_act_as_the_references_do() {
     }
     assert!(differences.is_empty(), "{}", differences.join("\n"));
 }
+
+#[test]
+fn the_editors_tabs_and_or_construction_act_as_the_references_do() {
+    // (`record_favourite_editor_tabs_or.py`: the reference's editor given
+    // Shift+Return and Return on typed text, the OR's rewind and cancel
+    // buttons and Escape, and its favourites and children tabs)
+    let fixture = hydrus_testkit::fixture_json("favourite_editor_tabs_or.json");
+    let seed = json!({
+        "corpus": fixture["corpus"],
+        "siblings": fixture["siblings"],
+        "parents": fixture["parents"],
+        "events": [{ "favourites": fixture["favourites"] }],
+    });
+    let (_dirs, store, _key) = super::read_autocomplete::seeded(&seed);
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    bound
+        .current
+        .borrow()
+        .borrow_mut()
+        .add_predicate("blue eyes");
+    ui.invoke_favourites_menu_requested(10.0, 100.0);
+    let save = pane_lines(&ui, 0)
+        .iter()
+        .position(|l| l == "save this search")
+        .unwrap();
+    ui.invoke_menu_line_clicked(0, i32::try_from(save).unwrap(), 0.0, 0.0, 0.0);
+    let window = bound
+        .favourites
+        .edit
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong)
+        .expect("the edit dialog open");
+    let strs = |model: slint::ModelRc<slint::SharedString>| -> Vec<String> {
+        model.iter().map(|p| p.to_string()).collect()
+    };
+    // moves the list's highlight onto `row`
+    let highlight = |row: i32| {
+        for _ in 0..20 {
+            let at = window.get_suggestion_highlight();
+            if at == row {
+                return;
+            }
+            window.invoke_suggestion_moved(if at < row { 1 } else { -1 });
+        }
+        panic!("could not highlight row {row}");
+    };
+    let mut differences = Vec::new();
+    for step in fixture["steps"].as_array().unwrap() {
+        let what = step["step"].as_array().unwrap();
+        match what[0].as_str().unwrap() {
+            "initial" => {}
+            "type" | "shift type" => {
+                window.invoke_tab_chosen(0);
+                window.set_typed(what[1].as_str().unwrap().into());
+                window.invoke_typed_edited();
+                if what[0] == "shift type" {
+                    window.invoke_or_action(0);
+                } else {
+                    window.invoke_typed_accepted();
+                }
+            }
+            "text" => {
+                window.set_typed(what[1].as_str().unwrap().into());
+                window.invoke_typed_edited();
+            }
+            "or button" => {
+                window.invoke_or_action(3);
+                let child = bound
+                    .favourites
+                    .search_or
+                    .borrow()
+                    .as_ref()
+                    .map(slint::ComponentHandle::clone_strong)
+                    .expect("the OR editor open");
+                // (the editor is blocked while it is open)
+                assert!(window.get_child_open());
+                if let Some(tags) = what[1].as_array() {
+                    child.invoke_tab_chosen(1);
+                    for tag in tags.iter().map(|t| t.as_str().unwrap()) {
+                        let at = child
+                            .get_suggestions()
+                            .iter()
+                            .position(|row| row.text == tag)
+                            .unwrap();
+                        child.invoke_chosen(i32::try_from(at).unwrap());
+                    }
+                    child.invoke_apply();
+                } else {
+                    child.invoke_cancel();
+                }
+                assert!(bound.favourites.search_or.borrow().is_none());
+            }
+            "rewind" => window.invoke_or_action(1),
+            "cancel" => window.invoke_or_action(2),
+            "escape" => {
+                window.invoke_search_escape();
+            }
+            "tab" => window.invoke_tab_chosen(match what[1].as_str().unwrap() {
+                "favourites" => 1,
+                "children" => 2,
+                other => panic!("{other}"),
+            }),
+            "activate row" => {
+                window.invoke_suggestion_chosen(i32::try_from(what[1].as_u64().unwrap()).unwrap());
+            }
+            "shift activate row" => {
+                highlight(i32::try_from(what[1].as_u64().unwrap()).unwrap());
+                window.invoke_or_action(0);
+            }
+            other => panic!("unknown step {other}"),
+        }
+        let want = &step["state"];
+        let mut check = |key: &str, ours: Json| {
+            if ours != want[key] {
+                differences.push(format!("{what:?}: {key} {ours} not {}", want[key]));
+            }
+        };
+        check("shown", json!(strs(window.get_predicates())));
+        check("cancel_shown", json!(window.get_or_active()));
+        check("rewind_shown", json!(window.get_or_rewind_visible()));
+        check("tab", json!(window.get_tab_index()));
+        check("typed_left", json!(window.get_typed().to_string()));
+        let rows = strs(window.get_suggestions());
+        match want["tab"].as_i64().unwrap() {
+            0 => {
+                // the OR being built is the first result
+                if want["construction"].is_null() {
+                    if rows.first().is_some_and(|r| r.contains(" OR ")) {
+                        differences.push(format!("{what:?}: an OR result with none built"));
+                    }
+                } else if rows.first() != want["rows"][0].as_str().map(str::to_owned).as_ref() {
+                    differences.push(format!(
+                        "{what:?}: first result {:?} not {}",
+                        rows.first(),
+                        want["rows"][0]
+                    ));
+                }
+            }
+            _ => {
+                if json!(rows) != want["rows"] {
+                    differences.push(format!("{what:?}: rows {rows:?} not {}", want["rows"]));
+                }
+            }
+        }
+    }
+    assert!(differences.is_empty(), "{}", differences.join("\n"));
+}

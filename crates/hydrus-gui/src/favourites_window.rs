@@ -28,6 +28,8 @@ pub struct Slots {
     pub edit: Rc<RefCell<Option<FavouriteEditWindow>>>,
     /// The system-predicate child, cancelled with its favourite owner.
     pub predicate_editor: Rc<RefCell<Option<crate::PredicateEditorWindow>>>,
+    /// The OR editor the favourite editor's buttons open.
+    pub search_or: crate::search_or_window::Slot,
     /// The open list's searches, for "save this search" to add to.
     open: Rc<RefCell<Option<Opened>>>,
 }
@@ -426,6 +428,10 @@ fn open_edit(
     let autocomplete = Rc::new(RefCell::new(crate::autocomplete::Autocomplete::new(
         words.store.clone(),
     )));
+    // the OR being built (shift+enter), kept apart from the search
+    let or_draft = Rc::new(RefCell::new(
+        hydrus_gui_model::search_or::Construction::default(),
+    ));
     let sort_choices = Rc::new(crate::sort::page_choices(
         &words.store,
         &edit.borrow().sort.by,
@@ -494,6 +500,7 @@ fn open_edit(
         let edit = edit.clone();
         let words = words.clone();
         let autocomplete = autocomplete.clone();
+        let or_draft = or_draft.clone();
         let location_choices = location_choices.clone();
         let tag_choices = tag_choices.clone();
         let sort_choices = sort_choices.clone();
@@ -538,7 +545,27 @@ fn open_edit(
             window.set_collect_tag_index(tag_choices.iter().position(|r| matches!(&r.choice, crate::domains::Choice::Tags(t) if *t == edit.collect.tag_context.service)).and_then(|i| i32::try_from(i).ok()).unwrap_or(-1));
             let mut ac = autocomplete.borrow_mut();
             ac.set_context(&edit.search.location, &edit.search.tags);
-            ac.set_text(window.get_typed().as_str());
+            // (the tabs are kept while the text is as it was: typing returns
+            // to the results)
+            if ac.text() != window.get_typed().as_str() {
+                ac.set_text(window.get_typed().as_str());
+            }
+            ac.set_context_tags(edit.search.predicates.iter().filter_map(|p| {
+                if let hydrus_search::Predicate::Tag { tag, .. } = p {
+                    Some(tag.as_str().to_owned())
+                } else {
+                    None
+                }
+            }));
+            window.set_tab_index(match ac.tab() {
+                hydrus_gui_model::write_autocomplete::Tab::Tags => 0,
+                hydrus_gui_model::write_autocomplete::Tab::Favourites => 1,
+                hydrus_gui_model::write_autocomplete::Tab::Children => 2,
+            });
+            let draft = or_draft.borrow();
+            window.set_or_active(draft.terms().is_some());
+            window.set_or_rewind_visible(draft.terms().is_some_and(|t| t.len() > 1));
+            window.set_advanced_visible(advanced);
             window.set_suggestion_highlight(
                 ac.highlighted()
                     .and_then(|i| i32::try_from(i).ok())
@@ -790,6 +817,34 @@ fn open_edit(
         let show = show.clone();
         move || show()
     });
+    // entering predicates goes through the OR being built, as the
+    // reference's `_BroadcastChoices` does: shift adds to it, a plain
+    // entry commits it with them
+    let enter: Rc<dyn Fn(Vec<hydrus_search::Predicate>, bool)> = Rc::new({
+        let edit = edit.clone();
+        let words = words.clone();
+        let or_draft = or_draft.clone();
+        let autocomplete = autocomplete.clone();
+        move |predicates, shift| {
+            let plain = hydrus_search::TextContext {
+                presentation: None,
+                ..words.text.clone()
+            };
+            let committed = or_draft.borrow_mut().broadcast(predicates, shift, &plain);
+            let label = or_draft
+                .borrow()
+                .predicate()
+                .map(|p| hydrus_search::predicate_text(&p, &words.text));
+            autocomplete.borrow_mut().set_or_draft(label);
+            if !committed.is_empty() {
+                hydrus_search::enter_predicates(
+                    &mut edit.borrow_mut().search.predicates,
+                    &committed,
+                    &words.text,
+                );
+            }
+        }
+    });
     let highlight_moved = Rc::new(Cell::new(false));
     window.on_suggestion_moved({
         let highlight_moved = highlight_moved.clone();
@@ -812,17 +867,18 @@ fn open_edit(
             }
         }
     });
-    let choose_suggestion: Rc<dyn Fn(Option<usize>)> = Rc::new({
+    let choose_suggestion: Rc<dyn Fn(Option<usize>, bool)> = Rc::new({
         let highlight_moved = highlight_moved.clone();
+        let or_draft = or_draft.clone();
+        let enter = enter.clone();
         let weak = window.as_weak();
-        let edit = edit.clone();
         let words = words.clone();
         let autocomplete = autocomplete.clone();
         let child = child.clone();
         let visible_child = visible_child.clone();
         let active = active.clone();
         let show = show.clone();
-        move |index| {
+        move |index, shift| {
             if !active.get() || child.borrow().is_some() {
                 return;
             }
@@ -839,11 +895,20 @@ fn open_edit(
             let typed_wins = index.is_none()
                 && !highlight_moved.replace(false)
                 && !window.get_typed().trim().is_empty();
-            let suggestion = index
-                .or_else(|| ac.highlighted().filter(|_| !typed_wins))
-                .and_then(|i| ac.suggestions().get(i))
-                .cloned();
+            let resolved = index.or_else(|| ac.highlighted().filter(|_| !typed_wins));
+            let own_draft = resolved == Some(0)
+                && ac.tab() == hydrus_gui_model::write_autocomplete::Tab::Tags
+                && !typed_wins;
+            let suggestion = resolved.and_then(|i| ac.suggestions().get(i)).cloned();
             drop(ac);
+            // (the first result is the OR being built, which enters itself)
+            if own_draft && let Some(draft) = or_draft.borrow().predicate() {
+                enter(vec![draft], shift);
+                window.set_typed("".into());
+                window.set_error("".into());
+                show();
+                return;
+            }
             if let Some(blank) = suggestion.as_ref().and_then(|s| s.editor) {
                 let store = words.store.clone();
                 let snapshot = store.snapshot();
@@ -863,8 +928,7 @@ fn open_edit(
                 let editor = crate::predicate_editors::Editor::new(blank, &context);
                 let chosen: Rc<dyn Fn(Vec<hydrus_search::Predicate>)> = Rc::new({
                     let active = active.clone();
-                    let edit = edit.clone();
-                    let words = words.clone();
+                    let enter = enter.clone();
                     let show = show.clone();
                     let weak = weak.clone();
                     let visible_child = visible_child.clone();
@@ -873,11 +937,7 @@ fn open_edit(
                             return;
                         }
                         visible_child.borrow_mut().take();
-                        hydrus_search::enter_predicates(
-                            &mut edit.borrow_mut().search.predicates,
-                            &predicates,
-                            &words.text,
-                        );
+                        enter(predicates, false);
                         if let Some(w) = weak.upgrade() {
                             w.set_child_open(false);
                             w.set_typed("".into());
@@ -922,11 +982,7 @@ fn open_edit(
             }
             match parse_api_search(&serde_json::json!([typed])) {
                 Ok(parsed) => {
-                    hydrus_search::enter_predicates(
-                        &mut edit.borrow_mut().search.predicates,
-                        &parsed,
-                        &words.text,
-                    );
+                    enter(parsed, shift);
                     window.set_typed("".into());
                     window.set_error("".into());
                 }
@@ -940,11 +996,145 @@ fn open_edit(
     });
     window.on_typed_accepted({
         let choose = choose_suggestion.clone();
-        move || choose(None)
+        move || choose(None, false)
     });
     window.on_suggestion_chosen({
+        let choose = choose_suggestion.clone();
+        move |i| choose(usize::try_from(i).ok(), false)
+    });
+    window.on_tab_chosen({
+        let autocomplete = autocomplete.clone();
+        let show = show.clone();
+        let active = active.clone();
+        let child = child.clone();
+        move |tab| {
+            if !active.get() || child.borrow().is_some() {
+                return;
+            }
+            autocomplete.borrow_mut().set_tab(
+                hydrus_gui_model::write_autocomplete::Tab::from_index(
+                    usize::try_from(tab).unwrap_or(0),
+                ),
+            );
+            show();
+        }
+    });
+    // the OR editor the "OR" and "advanced" buttons open
+    let or_slot = slots.search_or.clone();
+    window.on_or_action({
+        let or_slot = or_slot.clone();
+        let edit = edit.clone();
+        let enter = enter.clone();
         let choose = choose_suggestion;
-        move |i| choose(usize::try_from(i).ok())
+        let or_draft = or_draft.clone();
+        let autocomplete = autocomplete.clone();
+        let words = words.clone();
+        let show = show.clone();
+        let active = active.clone();
+        let child = child.clone();
+        let weak = window.as_weak();
+        move |action| {
+            if !active.get() || child.borrow().is_some() {
+                return;
+            }
+            match action {
+                0 => choose(None, true),
+                3 | 4 => {
+                    if action == 4 && !advanced {
+                        return;
+                    }
+                    let Some(w) = weak.upgrade() else { return };
+                    let context = hydrus_search::FileSearchContext {
+                        location: edit.borrow().search.location.clone(),
+                        tags: edit.borrow().search.tags.clone(),
+                        predicates: Vec::new(),
+                    };
+                    let owner: crate::search_or_window::ValidOwner = Rc::new({
+                        let active = active.clone();
+                        let weak = weak.clone();
+                        move || {
+                            active.get()
+                                && weak
+                                    .upgrade()
+                                    .is_some_and(|window| window.window().is_visible())
+                        }
+                    });
+                    let applied: crate::search_or_window::Applied = Rc::new({
+                        let enter = enter.clone();
+                        let owner = owner.clone();
+                        let show = show.clone();
+                        let weak = weak.clone();
+                        move |predicates| {
+                            if owner() {
+                                enter(predicates, false);
+                                if let Some(w) = weak.upgrade() {
+                                    w.set_typed("".into());
+                                }
+                                show();
+                            }
+                        }
+                    });
+                    match crate::search_or_window::open(
+                        words.store.clone(),
+                        context,
+                        action == 4,
+                        &or_slot,
+                        owner,
+                        applied,
+                    ) {
+                        Ok(_) => w.set_child_open(true),
+                        Err(error) => {
+                            w.set_error(format!("could not open the OR editor: {error}").into());
+                        }
+                    }
+                }
+                1 | 2 => {
+                    if action == 1 {
+                        or_draft.borrow_mut().rewind();
+                    } else {
+                        or_draft.borrow_mut().cancel();
+                    }
+                    let label = or_draft
+                        .borrow()
+                        .predicate()
+                        .map(|p| hydrus_search::predicate_text(&p, &words.text));
+                    let mut ac = autocomplete.borrow_mut();
+                    ac.set_or_draft(label);
+                    ac.clear();
+                    drop(ac);
+                    if let Some(w) = weak.upgrade() {
+                        w.set_typed("".into());
+                    }
+                    show();
+                }
+                _ => {}
+            }
+        }
+    });
+    window.on_search_escape({
+        let or_draft = or_draft.clone();
+        let autocomplete = autocomplete.clone();
+        let words = words.clone();
+        let show = show.clone();
+        let active = active.clone();
+        let weak = window.as_weak();
+        move || {
+            // escape in an empty box rewinds the OR being built
+            let Some(w) = weak.upgrade() else {
+                return false;
+            };
+            if !active.get() || or_draft.borrow().terms().is_none() || !w.get_typed().is_empty() {
+                return false;
+            }
+            or_draft.borrow_mut().rewind();
+            let label = or_draft
+                .borrow()
+                .predicate()
+                .map(|p| hydrus_search::predicate_text(&p, &words.text));
+            autocomplete.borrow_mut().set_or_draft(label);
+            show();
+            true
+        }
     });
     let child_timer = Rc::new(slint::Timer::default());
     child_timer.start(
@@ -953,10 +1143,11 @@ fn open_edit(
         {
             let weak = window.as_weak();
             let child = child.clone();
+            let or_slot = or_slot.clone();
             let visible_child = visible_child.clone();
             move || {
                 if let Some(w) = weak.upgrade() {
-                    w.set_child_open(child.borrow().is_some());
+                    w.set_child_open(child.borrow().is_some() || or_slot.borrow().is_some());
                     *visible_child.borrow_mut() = child
                         .borrow()
                         .as_ref()
@@ -1136,6 +1327,7 @@ fn open_edit(
         let child = child.clone();
         let active = active.clone();
         let child_timer = child_timer.clone();
+        let or_slot = or_slot.clone();
         let visible_child = visible_child.clone();
         move || {
             if !active.replace(false) {
@@ -1150,6 +1342,7 @@ fn open_edit(
             if let Some(pred) = pred {
                 pred.invoke_cancel();
             }
+            crate::search_or_window::cancel(&or_slot);
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }

@@ -222,6 +222,15 @@ export component FavouriteEditWindow inherits Window {
     callback suggestion-moved(int);
     // the autocomplete's icon buttons: paste lines of predicates, the
     // star menu (opened at x, y) of favourites to load, empty the search
+    // the autocomplete's tabs (results, favourites, children) and its OR
+    // construction: 0 shift+enter, 1 rewind, 2 cancel, 3 OR, 4 advanced
+    in property <int> tab-index;
+    callback tab-chosen(int);
+    in property <bool> or-active;
+    in property <bool> or-rewind-visible;
+    in property <bool> advanced-visible;
+    callback or-action(int);
+    callback search-escape() -> bool;
     callback paste-search();
     callback clear-search();
     callback favourites-menu(length, length);
@@ -294,6 +303,8 @@ export component FavouriteEditWindow inherits Window {
             FocusScope {
                 height: search-input.preferred-height;
                 capture-key-pressed(event) => {
+                    if root.can-edit && event.text == Key.Return && event.modifiers.shift { root.or-action(0); return accept; }
+                    if root.can-edit && event.text == Key.Escape && root.search-escape() { return accept; }
                     if root.can-edit && event.text == Key.UpArrow { root.suggestion-moved(-1); return accept; }
                     if root.can-edit && event.text == Key.DownArrow { root.suggestion-moved(1); return accept; }
                     reject
@@ -324,6 +335,20 @@ export component FavouriteEditWindow inherits Window {
                         clicked => { root.clear-search(); }
                     }
                 }
+            }
+            HorizontalLayout {
+                spacing: 4px;
+                ComboBox {
+                    horizontal-stretch: 1;
+                    model: ["results", "favourites", "children"];
+                    current-index: root.tab-index;
+                    enabled: root.can-edit;
+                    selected(_) => { root.tab-chosen(self.current-index); }
+                }
+                Btn { text: "OR"; enabled: root.can-edit; clicked => { root.or-action(3); } }
+                if root.advanced-visible: Btn { text: "advanced"; enabled: root.can-edit; clicked => { root.or-action(4); } }
+                if root.or-rewind-visible: Btn { text: "↶"; enabled: root.can-edit; clicked => { root.or-action(1); } }
+                if root.or-active: Btn { text: "cancel OR"; enabled: root.can-edit; clicked => { root.or-action(2); } }
             }
             ScrollView {
                 height: min(root.suggestions.length, 5) * 24px;

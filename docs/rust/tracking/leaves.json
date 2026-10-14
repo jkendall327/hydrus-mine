@@ -8104,7 +8104,7 @@
     "date": "2026-10-14",
     "class": "weak",
     "by": "Claude session (W5-10)",
-    "note": "Adds gui/favourites.rs the_editors_paste_empty_search_and_star_buttons_act_as_the_references_do: the real editor's paste, star menu (nested folders, loads search, sync, sort, collect) and empty search buttons replayed against fixtures/favourite_editor_buttons.json. Untagged: the results/favourites/children tabs and OR construction in the editor are still absent."
+    "note": "Adds gui/favourites.rs tests replaying fixtures/favourite_editor_buttons.json (paste, star menu loading search/sync/sort/collect, empty search) and favourite_editor_tabs_or.json (shift+Return OR construction, rewind, cancel, escape, favourites and children tabs, the OR button), through the real editor. Untagged: counts and context in suggestions and keyboard-highlight Return are not recorded against the reference's list, and its Return acts differently when its list has not caught up with the text (DIFFERENCES.md)."
    }
   },
   {
@@ -8221,7 +8221,7 @@
     "date": "2026-10-14",
     "class": "weak",
     "by": "Claude session (W5-10)",
-    "note": "Same test as before, now replaying 18 recorded steps including 'system:nonsense words' and 'system:' (nothing entered, text kept, no message) and 'sam*' (enters the wildcard) and 'sam' (enters the text as typed); the list as drawn, the text left and the message all equal the recording. The reference's result list had not caught up with the text in the recording, so Return with the list in step is unrecorded. Still untagged: the reference's cog, favourite predicates and fetch/children tabs are absent here."
+    "note": "Same test as before, now replaying 18 recorded steps including 'system:nonsense words' and 'system:' (nothing entered, text kept, no message) and 'sam*' (enters the wildcard) and 'sam' (enters the text as typed); the list as drawn, the text left and the message all equal the recording. The reference's result list had not caught up with the text in the recording, so Return with the list in step is unrecorded. Still untagged: the recording shows the reference's Return acts on its result list when that is in step with the text and on the typed text when it is not (list_in_step), which native, with an always-current list, cannot match in both cases (DIFFERENCES.md). The reference's tabs, OR construction and icon buttons are now present here (see audit-options-favourite-edit-autocomplete)."
    }
   },
   {

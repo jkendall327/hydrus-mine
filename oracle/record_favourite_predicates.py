@@ -112,6 +112,7 @@ def record( session ):
 
             suggestions = None
             before_return = None
+            in_step = None
 
             if step[ 0 ] == 'type':
 
@@ -128,6 +129,8 @@ def record( session ):
                 suggestions = [ term.GetPredicate().ToString( with_count = False ) for term in results._ordered_terms ]
 
                 before_return = [ term.GetPredicate().ToString( with_count = False ) for term in results._selected_terms ]
+
+                in_step = ac._GetParsedAutocompleteText() == ac._current_list_parsed_autocomplete_text
 
                 QtTest.QTest.keyClick( ac._text_ctrl, QC.Qt.Key.Key_Return )
 
@@ -155,7 +158,7 @@ def record( session ):
                 QtTest.QTest.qWait( 50 )
 
 
-            out.append( { 'step' : step, 'predicates' : predicates(), 'shown' : shown(), 'messages' : list( messages ), 'typed_left' : ac._text_ctrl.text(), 'suggestions' : suggestions, 'highlighted' : before_return } )
+            out.append( { 'step' : step, 'predicates' : predicates(), 'shown' : shown(), 'messages' : list( messages ), 'typed_left' : ac._text_ctrl.text(), 'suggestions' : suggestions, 'highlighted' : before_return, 'list_in_step' : in_step } )
 
 
         dlg.reject()

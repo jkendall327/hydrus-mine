@@ -1,0 +1,1408 @@
+{
+ "corpus": [
+  {
+   "hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+   ],
+   "tag": "parity:tabs alpha"
+  },
+  {
+   "hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+   ],
+   "tag": "parity:tabs beta"
+  },
+  {
+   "hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+   ],
+   "tag": "parity:tabs alpha old"
+  }
+ ],
+ "favourites": [
+  "parity:tabs root",
+  "parity:tabs alpha old",
+  "parity:tabs unseen"
+ ],
+ "parents": [
+  [
+   "parity:tabs alpha",
+   "parity:tabs root"
+  ],
+  [
+   "parity:tabs beta",
+   "parity:tabs root"
+  ],
+  [
+   "parity:tabs zero",
+   "parity:tabs root"
+  ],
+  [
+   "parity:tabs deep",
+   "parity:tabs alpha"
+  ]
+ ],
+ "siblings": [
+  [
+   "parity:tabs alpha old",
+   "parity:tabs alpha"
+  ]
+ ],
+ "steps": [
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "predicates": [
+     "blue eyes"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "system:everything",
+     "system:inbox",
+     "system:archive",
+     "system:dimensions",
+     "system:duration",
+     "system:file properties",
+     "system:file relationships",
+     "system:file service",
+     "system:file viewing statistics",
+     "system:filesize",
+     "system:filetype",
+     "system:hash",
+     "system:limit",
+     "system:notes",
+     "system:number of tags",
+     "system:number of words",
+     "system:rating",
+     "system:similar files",
+     "system:tag (advanced)",
+     "system:tag as number",
+     "system:time",
+     "system:urls"
+    ],
+    "shown": [
+     "blue eyes"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": ""
+   },
+   "step": [
+    "initial"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "series:metroid"
+    ],
+    "predicates": [
+     "blue eyes"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "series:metroid",
+     "system:everything",
+     "system:inbox",
+     "system:archive",
+     "system:dimensions",
+     "system:duration",
+     "system:file properties",
+     "system:file relationships",
+     "system:file service",
+     "system:file viewing statistics",
+     "system:filesize",
+     "system:filetype",
+     "system:hash",
+     "system:limit",
+     "system:notes",
+     "system:number of tags",
+     "system:number of words",
+     "system:rating",
+     "system:similar files",
+     "system:tag (advanced)",
+     "system:tag as number",
+     "system:time",
+     "system:urls"
+    ],
+    "shown": [
+     "blue eyes"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": ""
+   },
+   "step": [
+    "shift type",
+    "series:metroid"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "character:samus aran",
+     "series:metroid"
+    ],
+    "predicates": [
+     "blue eyes"
+    ],
+    "rewind_shown": true,
+    "rows": [
+     "character:samus aran OR series:metroid",
+     "system:everything",
+     "system:inbox",
+     "system:archive",
+     "system:dimensions",
+     "system:duration",
+     "system:file properties",
+     "system:file relationships",
+     "system:file service",
+     "system:file viewing statistics",
+     "system:filesize",
+     "system:filetype",
+     "system:hash",
+     "system:limit",
+     "system:notes",
+     "system:number of tags",
+     "system:number of words",
+     "system:rating",
+     "system:similar files",
+     "system:tag (advanced)",
+     "system:tag as number",
+     "system:time",
+     "system:urls"
+    ],
+    "shown": [
+     "blue eyes"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": ""
+   },
+   "step": [
+    "shift type",
+    "character:samus aran"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "character:samus aran",
+     "series:metroid"
+    ],
+    "predicates": [
+     "blue eyes"
+    ],
+    "rewind_shown": true,
+    "rows": [
+     "character:samus aran OR series:metroid",
+     "system:everything",
+     "system:inbox",
+     "system:archive",
+     "system:dimensions",
+     "system:duration",
+     "system:file properties",
+     "system:file relationships",
+     "system:file service",
+     "system:file viewing statistics",
+     "system:filesize",
+     "system:filetype",
+     "system:hash",
+     "system:limit",
+     "system:notes",
+     "system:number of tags",
+     "system:number of words",
+     "system:rating",
+     "system:similar files",
+     "system:tag (advanced)",
+     "system:tag as number",
+     "system:time",
+     "system:urls"
+    ],
+    "shown": [
+     "blue eyes"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": ""
+   },
+   "step": [
+    "shift type",
+    "series:metroid"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "predicates": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "system:everything",
+     "system:inbox",
+     "system:archive",
+     "system:dimensions",
+     "system:duration",
+     "system:file properties",
+     "system:file relationships",
+     "system:file service",
+     "system:file viewing statistics",
+     "system:filesize",
+     "system:filetype",
+     "system:hash",
+     "system:limit",
+     "system:notes",
+     "system:number of tags",
+     "system:number of words",
+     "system:rating",
+     "system:similar files",
+     "system:tag (advanced)",
+     "system:tag as number",
+     "system:time",
+     "system:urls"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": ""
+   },
+   "step": [
+    "type",
+    "creator:someone"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "predicates": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "system:everything",
+     "system:inbox",
+     "system:archive",
+     "system:dimensions",
+     "system:duration",
+     "system:file properties",
+     "system:file relationships",
+     "system:file service",
+     "system:file viewing statistics",
+     "system:filesize",
+     "system:filetype",
+     "system:hash",
+     "system:limit",
+     "system:notes",
+     "system:number of tags",
+     "system:number of words",
+     "system:rating",
+     "system:similar files",
+     "system:tag (advanced)",
+     "system:tag as number",
+     "system:time",
+     "system:urls"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": ""
+   },
+   "step": [
+    "type",
+    "series:metroid"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "one"
+    ],
+    "predicates": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "one",
+     "system:everything",
+     "system:inbox",
+     "system:archive",
+     "system:dimensions",
+     "system:duration",
+     "system:file properties",
+     "system:file relationships",
+     "system:file service",
+     "system:file viewing statistics",
+     "system:filesize",
+     "system:filetype",
+     "system:hash",
+     "system:limit",
+     "system:notes",
+     "system:number of tags",
+     "system:number of words",
+     "system:rating",
+     "system:similar files",
+     "system:tag (advanced)",
+     "system:tag as number",
+     "system:time",
+     "system:urls"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": ""
+   },
+   "step": [
+    "shift type",
+    "one"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "one",
+     "two"
+    ],
+    "predicates": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid"
+    ],
+    "rewind_shown": true,
+    "rows": [
+     "one OR two",
+     "system:everything",
+     "system:inbox",
+     "system:archive",
+     "system:dimensions",
+     "system:duration",
+     "system:file properties",
+     "system:file relationships",
+     "system:file service",
+     "system:file viewing statistics",
+     "system:filesize",
+     "system:filetype",
+     "system:hash",
+     "system:limit",
+     "system:notes",
+     "system:number of tags",
+     "system:number of words",
+     "system:rating",
+     "system:similar files",
+     "system:tag (advanced)",
+     "system:tag as number",
+     "system:time",
+     "system:urls"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": ""
+   },
+   "step": [
+    "shift type",
+    "two"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "one"
+    ],
+    "predicates": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "one",
+     "system:everything",
+     "system:inbox",
+     "system:archive",
+     "system:dimensions",
+     "system:duration",
+     "system:file properties",
+     "system:file relationships",
+     "system:file service",
+     "system:file viewing statistics",
+     "system:filesize",
+     "system:filetype",
+     "system:hash",
+     "system:limit",
+     "system:notes",
+     "system:number of tags",
+     "system:number of words",
+     "system:rating",
+     "system:similar files",
+     "system:tag (advanced)",
+     "system:tag as number",
+     "system:time",
+     "system:urls"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": ""
+   },
+   "step": [
+    "rewind"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "predicates": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "system:everything",
+     "system:inbox",
+     "system:archive",
+     "system:dimensions",
+     "system:duration",
+     "system:file properties",
+     "system:file relationships",
+     "system:file service",
+     "system:file viewing statistics",
+     "system:filesize",
+     "system:filetype",
+     "system:hash",
+     "system:limit",
+     "system:notes",
+     "system:number of tags",
+     "system:number of words",
+     "system:rating",
+     "system:similar files",
+     "system:tag (advanced)",
+     "system:tag as number",
+     "system:time",
+     "system:urls"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": ""
+   },
+   "step": [
+    "rewind"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "one"
+    ],
+    "predicates": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "one",
+     "system:everything",
+     "system:inbox",
+     "system:archive",
+     "system:dimensions",
+     "system:duration",
+     "system:file properties",
+     "system:file relationships",
+     "system:file service",
+     "system:file viewing statistics",
+     "system:filesize",
+     "system:filetype",
+     "system:hash",
+     "system:limit",
+     "system:notes",
+     "system:number of tags",
+     "system:number of words",
+     "system:rating",
+     "system:similar files",
+     "system:tag (advanced)",
+     "system:tag as number",
+     "system:time",
+     "system:urls"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": ""
+   },
+   "step": [
+    "shift type",
+    "one"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "predicates": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "system:everything",
+     "system:inbox",
+     "system:archive",
+     "system:dimensions",
+     "system:duration",
+     "system:file properties",
+     "system:file relationships",
+     "system:file service",
+     "system:file viewing statistics",
+     "system:filesize",
+     "system:filetype",
+     "system:hash",
+     "system:limit",
+     "system:notes",
+     "system:number of tags",
+     "system:number of words",
+     "system:rating",
+     "system:similar files",
+     "system:tag (advanced)",
+     "system:tag as number",
+     "system:time",
+     "system:urls"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": ""
+   },
+   "step": [
+    "cancel"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "solo"
+    ],
+    "predicates": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "solo",
+     "system:everything",
+     "system:inbox",
+     "system:archive",
+     "system:dimensions",
+     "system:duration",
+     "system:file properties",
+     "system:file relationships",
+     "system:file service",
+     "system:file viewing statistics",
+     "system:filesize",
+     "system:filetype",
+     "system:hash",
+     "system:limit",
+     "system:notes",
+     "system:number of tags",
+     "system:number of words",
+     "system:rating",
+     "system:similar files",
+     "system:tag (advanced)",
+     "system:tag as number",
+     "system:time",
+     "system:urls"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": ""
+   },
+   "step": [
+    "shift type",
+    "solo"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "predicates": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "system:everything",
+     "system:inbox",
+     "system:archive",
+     "system:dimensions",
+     "system:duration",
+     "system:file properties",
+     "system:file relationships",
+     "system:file service",
+     "system:file viewing statistics",
+     "system:filesize",
+     "system:filetype",
+     "system:hash",
+     "system:limit",
+     "system:notes",
+     "system:number of tags",
+     "system:number of words",
+     "system:rating",
+     "system:similar files",
+     "system:tag (advanced)",
+     "system:tag as number",
+     "system:time",
+     "system:urls"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": ""
+   },
+   "step": [
+    "type",
+    "tail"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "again"
+    ],
+    "predicates": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "again",
+     "system:everything",
+     "system:inbox",
+     "system:archive",
+     "system:dimensions",
+     "system:duration",
+     "system:file properties",
+     "system:file relationships",
+     "system:file service",
+     "system:file viewing statistics",
+     "system:filesize",
+     "system:filetype",
+     "system:hash",
+     "system:limit",
+     "system:notes",
+     "system:number of tags",
+     "system:number of words",
+     "system:rating",
+     "system:similar files",
+     "system:tag (advanced)",
+     "system:tag as number",
+     "system:time",
+     "system:urls"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": ""
+   },
+   "step": [
+    "shift type",
+    "again"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "again",
+     "again 2"
+    ],
+    "predicates": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "rewind_shown": true,
+    "rows": [
+     "again OR again 2",
+     "system:everything",
+     "system:inbox",
+     "system:archive",
+     "system:dimensions",
+     "system:duration",
+     "system:file properties",
+     "system:file relationships",
+     "system:file service",
+     "system:file viewing statistics",
+     "system:filesize",
+     "system:filetype",
+     "system:hash",
+     "system:limit",
+     "system:notes",
+     "system:number of tags",
+     "system:number of words",
+     "system:rating",
+     "system:similar files",
+     "system:tag (advanced)",
+     "system:tag as number",
+     "system:time",
+     "system:urls"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": ""
+   },
+   "step": [
+    "shift type",
+    "again 2"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "again"
+    ],
+    "predicates": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "again",
+     "system:everything",
+     "system:inbox",
+     "system:archive",
+     "system:dimensions",
+     "system:duration",
+     "system:file properties",
+     "system:file relationships",
+     "system:file service",
+     "system:file viewing statistics",
+     "system:filesize",
+     "system:filetype",
+     "system:hash",
+     "system:limit",
+     "system:notes",
+     "system:number of tags",
+     "system:number of words",
+     "system:rating",
+     "system:similar files",
+     "system:tag (advanced)",
+     "system:tag as number",
+     "system:time",
+     "system:urls"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": ""
+   },
+   "step": [
+    "escape"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "predicates": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "system:everything",
+     "system:inbox",
+     "system:archive",
+     "system:dimensions",
+     "system:duration",
+     "system:file properties",
+     "system:file relationships",
+     "system:file service",
+     "system:file viewing statistics",
+     "system:filesize",
+     "system:filetype",
+     "system:hash",
+     "system:limit",
+     "system:notes",
+     "system:number of tags",
+     "system:number of words",
+     "system:rating",
+     "system:similar files",
+     "system:tag (advanced)",
+     "system:tag as number",
+     "system:time",
+     "system:urls"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": ""
+   },
+   "step": [
+    "escape"
+   ]
+  },
+  {
+   "messages": [],
+   "rows_drawn": [
+    "parity:tabs alpha old",
+    "parity:tabs root",
+    "parity:tabs unseen"
+   ],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "predicates": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha old",
+     "parity:tabs root",
+     "parity:tabs unseen"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "tab": 1,
+    "tab_text": "favourites",
+    "typed_left": ""
+   },
+   "step": [
+    "tab",
+    "favourites"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "predicates": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "parity:tabs alpha old",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha old",
+     "parity:tabs root",
+     "parity:tabs unseen"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "parity:tabs alpha old",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "tab": 1,
+    "tab_text": "favourites",
+    "typed_left": ""
+   },
+   "step": [
+    "activate row",
+    0
+   ]
+  },
+  {
+   "messages": [],
+   "rows_drawn": [
+    "character:samus aran",
+    "parity:tabs deep"
+   ],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "predicates": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "parity:tabs alpha old",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "character:samus aran",
+     "parity:tabs deep"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "parity:tabs alpha old",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "tab": 2,
+    "tab_text": "children",
+    "typed_left": ""
+   },
+   "step": [
+    "tab",
+    "children"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "predicates": [
+     "blue eyes",
+     "character:samus aran",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "parity:tabs alpha old",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs deep"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran",
+     "parity:tabs alpha old",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "tab": 2,
+    "tab_text": "children",
+    "typed_left": ""
+   },
+   "step": [
+    "activate row",
+    0
+   ]
+  },
+  {
+   "messages": [],
+   "rows_drawn": [
+    "parity:tabs deep"
+   ],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "predicates": [
+     "blue eyes",
+     "character:samus aran",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "parity:tabs alpha old",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs deep"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran",
+     "parity:tabs alpha old",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "tab": 2,
+    "tab_text": "children",
+    "typed_left": ""
+   },
+   "step": [
+    "tab",
+    "children"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "predicates": [
+     "blue eyes",
+     "character:samus aran",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "parity:tabs alpha old",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "rewind_shown": false,
+    "rows": [],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran",
+     "parity:tabs alpha old",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": "draft"
+   },
+   "step": [
+    "text",
+    "draft"
+   ]
+  },
+  {
+   "messages": [],
+   "rows_drawn": [
+    "parity:tabs alpha old",
+    "parity:tabs root",
+    "parity:tabs unseen"
+   ],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "predicates": [
+     "blue eyes",
+     "character:samus aran",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "parity:tabs alpha old",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha old",
+     "parity:tabs root",
+     "parity:tabs unseen"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran",
+     "parity:tabs alpha old",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "tab": 1,
+    "tab_text": "favourites",
+    "typed_left": "draft"
+   },
+   "step": [
+    "tab",
+    "favourites"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "parity:tabs root"
+    ],
+    "predicates": [
+     "blue eyes",
+     "character:samus aran",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "parity:tabs alpha old",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha old",
+     "parity:tabs root",
+     "parity:tabs unseen"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran",
+     "parity:tabs alpha old",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "tab": 1,
+    "tab_text": "favourites",
+    "typed_left": ""
+   },
+   "step": [
+    "shift activate row",
+    1
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "parity:tabs root",
+     "parity:tabs unseen"
+    ],
+    "predicates": [
+     "blue eyes",
+     "character:samus aran",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "parity:tabs alpha old",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "rewind_shown": true,
+    "rows": [
+     "parity:tabs alpha old",
+     "parity:tabs root",
+     "parity:tabs unseen"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran",
+     "parity:tabs alpha old",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "tab": 1,
+    "tab_text": "favourites",
+    "typed_left": ""
+   },
+   "step": [
+    "shift activate row",
+    2
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "predicates": [
+     "blue eyes",
+     "character:samus aran",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "parity:tabs alpha old",
+     "parity:tabs alpha old OR parity:tabs root OR parity:tabs unseen",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha old",
+     "parity:tabs root",
+     "parity:tabs unseen"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran",
+     "parity:tabs alpha old",
+     "parity:tabs alpha old OR parity:tabs root OR parity:tabs unseen",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "tab": 1,
+    "tab_text": "favourites",
+    "typed_left": ""
+   },
+   "step": [
+    "activate row",
+    0
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "predicates": [
+     "blue eyes",
+     "character:samus aran",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "parity:tabs alpha old",
+     "parity:tabs alpha old OR parity:tabs root OR parity:tabs unseen",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha old",
+     "parity:tabs root",
+     "parity:tabs unseen"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran",
+     "parity:tabs alpha old",
+     "parity:tabs alpha old OR parity:tabs root OR parity:tabs unseen",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "tab": 1,
+    "tab_text": "favourites",
+    "typed_left": ""
+   },
+   "step": [
+    "or button",
+    null
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "predicates": [
+     "blue eyes",
+     "character:samus aran",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "parity:tabs alpha old",
+     "parity:tabs alpha old OR parity:tabs root OR parity:tabs unseen",
+     "parity:tabs root OR parity:tabs unseen",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha old",
+     "parity:tabs root",
+     "parity:tabs unseen"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR creator:someone OR series:metroid",
+     "character:samus aran",
+     "parity:tabs alpha old",
+     "parity:tabs alpha old OR parity:tabs root OR parity:tabs unseen",
+     "parity:tabs root OR parity:tabs unseen",
+     "series:metroid",
+     "solo OR tail"
+    ],
+    "tab": 1,
+    "tab_text": "favourites",
+    "typed_left": ""
+   },
+   "step": [
+    "or button",
+    [
+     "parity:tabs root",
+     "parity:tabs unseen"
+    ]
+   ]
+  }
+ ]
+}

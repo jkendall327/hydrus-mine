@@ -249,9 +249,12 @@ search.
   current/pending tags, sort and collection controls, and the paste, star
   (favourites to load) and empty-search buttons beside the box
   (`oracle/record_favourite_editor_buttons.py`; the reference's autocomplete has
-  no cog). It does not yet offer the reference's explicit OR-construction
-  buttons or the results/favourites/children tabs, nor the cancel-search and
-  lock-search buttons (the reference's editor hides lock; cancel shows only
+  no cog), the results/favourites/children tabs and explicit OR construction
+  (shift+enter, the OR and advanced buttons, rewind, cancel, escape;
+  `oracle/record_favourite_editor_tabs_or.py`). The OR and advanced editors
+  are the page's, recorded for the page (`read_or_editors.json`); the
+  editor's OR button is recorded with that dialog answered by a script. It
+  lacks the cancel-search and lock-search buttons (the reference's editor hides lock; cancel shows only
   while a search runs). Paste with no text on the clipboard shows a message
   inline where the reference shows a dialog. Multiple/deleted location selection and
   overwrite/delete questions appear inside the owner window. The list sorts
@@ -265,9 +268,14 @@ search.
   wildcard such as "sam*", which Return enters as typed. In the recording the
   reference's result list had not caught up with the text, so Return entered
   the text as typed; here too Return enters typed text as typed unless the
-  user has moved the highlight onto a suggestion. Not recorded: Return with
-  the reference's list in step with the text (which enters the list's
-  highlighted result).
+  user has moved the highlight onto a suggestion. Not matched: the
+  reference's Return acts on its result list's highlighted row when the list
+  has caught up with the text (`list_in_step` in the recording) and on the
+  text as typed when it has not, which depends on how fast its fetch ran
+  (text with no rows that is in step enters nothing there, as "system:" text
+  does; "sam*" and "series:metroid" were not in step). The native list is
+  always in step, so for text with no suggestions the two cannot agree in both
+  cases; native enters the text as typed.
 
 - **Dimensions preset verification** separately tracks nine historical first-pass
   controls. The new Qt recording activates actual buttons through the real modal

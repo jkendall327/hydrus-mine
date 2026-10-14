@@ -2,6 +2,7 @@
  "steps": [
   {
    "highlighted": null,
+   "list_in_step": null,
    "messages": [],
    "predicates": [
     "blue eyes"
@@ -19,6 +20,7 @@
    "highlighted": [
     "system:everything"
    ],
+   "list_in_step": false,
    "messages": [],
    "predicates": [
     "blue eyes",
@@ -62,6 +64,7 @@
    "highlighted": [
     "system:everything"
    ],
+   "list_in_step": false,
    "messages": [],
    "predicates": [
     "blue eyes"
@@ -103,6 +106,7 @@
    "highlighted": [
     "system:everything"
    ],
+   "list_in_step": false,
    "messages": [],
    "predicates": [],
    "shown": [],
@@ -140,6 +144,7 @@
    "highlighted": [
     "system:everything"
    ],
+   "list_in_step": false,
    "messages": [],
    "predicates": [
     "-creator:samus aran"
@@ -179,8 +184,9 @@
   },
   {
    "highlighted": [
-    "system:everything"
+    "zz* (wildcard search)"
    ],
+   "list_in_step": true,
    "messages": [],
    "predicates": [
     "-creator:samus aran",
@@ -195,28 +201,8 @@
     "zz*"
    ],
    "suggestions": [
-    "system:everything",
-    "system:inbox",
-    "system:archive",
-    "system:dimensions",
-    "system:duration",
-    "system:file properties",
-    "system:file relationships",
-    "system:file service",
-    "system:file viewing statistics",
-    "system:filesize",
-    "system:filetype",
-    "system:hash",
-    "system:limit",
-    "system:notes",
-    "system:number of tags",
-    "system:number of words",
-    "system:rating",
-    "system:similar files",
-    "system:tag (advanced)",
-    "system:tag as number",
-    "system:time",
-    "system:urls"
+    "zz* (wildcard search)",
+    "loading full results…"
    ],
    "typed_left": ""
   },
@@ -224,6 +210,7 @@
    "highlighted": [
     "character:*anything*"
    ],
+   "list_in_step": true,
    "messages": [],
    "predicates": [
     "-creator:samus aran",
@@ -248,6 +235,7 @@
    "highlighted": [
     "system:everything"
    ],
+   "list_in_step": false,
    "messages": [],
    "predicates": [
     "-creator:samus aran",
@@ -295,6 +283,7 @@
    "highlighted": [
     "system:limit is 64"
    ],
+   "list_in_step": true,
    "messages": [],
    "predicates": [
     "-creator:samus aran",
@@ -323,6 +312,7 @@
    "highlighted": [
     "system:everything"
    ],
+   "list_in_step": true,
    "messages": [],
    "predicates": [
     "-creator:samus aran",
@@ -351,6 +341,7 @@
   },
   {
    "highlighted": null,
+   "list_in_step": null,
    "messages": [],
    "predicates": [
     "character:*anything*",
@@ -375,6 +366,7 @@
   },
   {
    "highlighted": null,
+   "list_in_step": null,
    "messages": [],
    "predicates": [
     "character:*anything*",
@@ -399,6 +391,7 @@
    "highlighted": [
     "system:everything"
    ],
+   "list_in_step": false,
    "messages": [],
    "predicates": [
     "blue eyes",
@@ -446,6 +439,7 @@
   },
   {
    "highlighted": null,
+   "list_in_step": null,
    "messages": [],
    "predicates": [
     "character:*anything*",
@@ -468,6 +462,7 @@
   },
   {
    "highlighted": [],
+   "list_in_step": true,
    "messages": [],
    "predicates": [
     "character:*anything*",
@@ -490,6 +485,7 @@
   },
   {
    "highlighted": [],
+   "list_in_step": true,
    "messages": [],
    "predicates": [
     "character:*anything*",
@@ -512,6 +508,7 @@
   },
   {
    "highlighted": [],
+   "list_in_step": false,
    "messages": [],
    "predicates": [
     "character:*anything*",
@@ -538,6 +535,7 @@
    "highlighted": [
     "system:everything"
    ],
+   "list_in_step": false,
    "messages": [],
    "predicates": [
     "character:*anything*",
