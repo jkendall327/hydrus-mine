@@ -261,6 +261,24 @@ fn bind_with_timeout(
             let weak = window.as_weak();
             let finished = finished.clone();
             let store_after = store.clone();
+            let then: Rc<dyn Fn()> = Rc::new({
+                let weak = weak.clone();
+                move || {
+                    let Some(window) = weak.upgrade() else {
+                        return;
+                    };
+                    crate::windows::save_named(window.window(), &store_after, "main_gui");
+                    if matches!(mode, ExitMode::Restart | ExitMode::RestoreRestart) {
+                        RESTART.store(true, std::sync::atomic::Ordering::SeqCst);
+                    }
+                    finished();
+                    let _ = window.hide();
+                }
+            });
+            if mode == ExitMode::RestoreRestart {
+                then();
+                return;
+            }
             shutdown_work(
                 &store,
                 mode,
@@ -274,17 +292,7 @@ fn bind_with_timeout(
                                 .is_some_and(|window| window.window().is_visible())
                     }
                 }),
-                Rc::new(move || {
-                    let Some(window) = weak.upgrade() else {
-                        return;
-                    };
-                    crate::windows::save_named(window.window(), &store_after, "main_gui");
-                    if mode == ExitMode::Restart {
-                        RESTART.store(true, std::sync::atomic::Ordering::SeqCst);
-                    }
-                    finished();
-                    let _ = window.hide();
-                }),
+                then,
             );
         }
     });
@@ -316,7 +324,7 @@ fn bind_with_timeout(
             // restart leaves the next close a plain exit)
             let mode = MODE.with(|m| m.replace(ExitMode::Exit));
             let question = mode.question();
-            if confirm {
+            if confirm && mode != ExitMode::RestoreRestart {
                 let close = close.clone();
                 ask(question.into(), Rc::new(move || close(mode)));
                 timer.start(slint::TimerMode::SingleShot, timeout, {

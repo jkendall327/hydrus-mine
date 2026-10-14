@@ -64,7 +64,26 @@ struct State {
     ascending: bool,
 }
 
+/// A scripted clock, for tests: the first time asked is `first`, every later
+/// one is `then`. `None` is the system's.
+static SCRIPTED_CLOCK: std::sync::Mutex<Option<(Option<i64>, i64)>> = std::sync::Mutex::new(None);
+
+#[doc(hidden)]
+pub fn script_clock(script: Option<(i64, i64)>) {
+    *SCRIPTED_CLOCK
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner) =
+        script.map(|(first, then)| (Some(first), then));
+}
+
 fn now() -> i64 {
+    if let Some((first, then)) = SCRIPTED_CLOCK
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner)
+        .as_mut()
+    {
+        return first.take().unwrap_or(*then);
+    }
     hydrus_core::TimestampMs::now().millis() / 1000
 }
 

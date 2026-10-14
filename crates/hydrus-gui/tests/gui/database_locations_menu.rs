@@ -838,6 +838,108 @@ fn move_files_now_asks_for_a_run_time_and_moves_folders_with_a_popup() {
     );
 }
 
+/// "Move files now" with a run time, against the reference's job
+/// (`oracle/record_rebalance_job.py`: the real panel's job run by the real
+/// `Rebalance`): a job whose stop time has passed moves nothing and ends
+/// with "done!"; one with time left moves everything there is to move and
+/// ends the same way, and a second has nothing to move. Through the real
+/// window and its worker; the clock is scripted so that the stop time
+/// ("run for 10 minutes") has passed by the job's first look at it.
+// leaf: audit-media-database-locations-rebalance
+#[test]
+fn move_files_now_stops_at_its_run_time_and_moves_what_the_reference_s_job_does() {
+    let recorded = hydrus_testkit::fixture_json("rebalance_job.json");
+    let run = |name: &str| {
+        recorded["runs"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|r| r["name"] == name)
+            .unwrap()
+            .clone()
+    };
+    let rig = rig();
+    let window = rig.open();
+    let other = tempfile::tempdir().unwrap();
+    rig.pick(other.path());
+    window.invoke_action("add".into());
+    assert!(window.get_can_rebalance());
+    let moves_left = || rig.store.read(locations::next_move).unwrap().is_some();
+    // (a finished job dismisses its popup at once, so there is no "done!"
+    // left to read: the job is given time, and the folders it left are looked at)
+    let wait_for_done = || pump(Duration::from_secs(2));
+
+    // the stop time ("run for 10 minutes") has passed by the first look
+    let passed = run("stop time passed");
+    assert!(passed["work_to_do_before"].as_bool().unwrap() && moves_left());
+    hydrus_gui::database_locations_window::script_clock(Some((1_000_000, 1_000_000 + 601)));
+    window.invoke_action("rebalance".into());
+    runtime_question().unwrap().invoke_chosen(0);
+    wait_for_done();
+    hydrus_gui::database_locations_window::script_clock(None);
+    assert_eq!(passed["moves"].as_array().unwrap().len(), 0);
+    assert_eq!(passed["last"], model::REBALANCE_DONE);
+    assert_eq!(
+        moves_left(),
+        passed["work_to_do_after"].as_bool().unwrap(),
+        "nothing moved"
+    );
+    assert!(
+        rig.review()
+            .locations
+            .iter()
+            .all(|l| l.path != other.path() || l.files_share == 0.0),
+        "nothing was moved to the other location"
+    );
+
+    // with time left, it moves what there is to move, and ends the same way
+    let ten = run("ten minutes");
+    let again = run("ten minutes again, nothing left");
+    let moves = ten["moves"].as_array().unwrap().len() + 4;
+    assert!(ten["work_to_do_before"].as_bool().unwrap());
+    assert_eq!(ten["last"], model::REBALANCE_DONE);
+    window.invoke_action("rebalance".into());
+    runtime_question().unwrap().invoke_chosen(0);
+    let deadline = Instant::now() + Duration::from_secs(120);
+    while moves_left() {
+        assert!(
+            Instant::now() < deadline,
+            "the folders never finished moving"
+        );
+        pump(Duration::from_millis(50));
+    }
+    assert_eq!(moves_left(), ten["work_to_do_after"].as_bool().unwrap());
+    let review = rig.review();
+    let there = review
+        .locations
+        .iter()
+        .find(|l| l.path == other.path())
+        .unwrap();
+    assert!(there.files_share > 0.0);
+    // the folders that moved are the ones now at the other location
+    // (the recording's: those the cancelled run moved and the ten minutes'
+    // rest)
+    let other_path = other.path().to_string_lossy().into_owned();
+    let at_other: i64 = rig
+        .store
+        .read(|c| {
+            c.query_row(
+                "SELECT COUNT(*) FROM storage_subfolders s JOIN storage_locations l USING (location_id) WHERE l.path = ?1",
+                [&other_path],
+                |r| r.get(0),
+            )
+            .map_err(Into::into)
+        })
+        .unwrap();
+    assert_eq!(at_other, i64::try_from(moves).unwrap(), "{there:?}");
+    // a second time there is nothing to move
+    assert!(!again["work_to_do_before"].as_bool().unwrap());
+    window.invoke_action("rebalance".into());
+    runtime_question().unwrap().invoke_chosen(0);
+    pump(Duration::from_millis(300));
+    assert!(!moves_left());
+}
+
 fn granularity_window(
     rig: &Rig,
     window: &DatabaseLocationsWindow,

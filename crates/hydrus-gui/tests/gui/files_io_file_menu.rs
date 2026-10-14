@@ -86,7 +86,7 @@ fn request_close(ui: &MainWindow) {
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);
 }
 
-fn exit_settings(store: &Store, confirm: bool, action: u8, last_done: i64) {
+pub(crate) fn exit_settings(store: &Store, confirm: bool, action: u8, last_done: i64) {
     store
         .write(move |ctx| {
             let mut gui: GuiSettings = settings::get(ctx.conn())?;
@@ -100,12 +100,12 @@ fn exit_settings(store: &Store, confirm: bool, action: u8, last_done: i64) {
         .unwrap();
 }
 
-fn last_done(store: &Store) -> i64 {
+pub(crate) fn last_done(store: &Store) -> i64 {
     store.read(settings::get::<ShutdownWork>).unwrap().last_done
 }
 
 /// The restart flag is process-wide: the tests that set it take turns.
-static RESTART_FLAG: std::sync::Mutex<()> = std::sync::Mutex::new(());
+pub(crate) static RESTART_FLAG: std::sync::Mutex<()> = std::sync::Mutex::new(());
 
 const EXIT_QUESTION: &str =
     "Are you sure you want to exit the client? (Will auto-yes in 15 seconds)";

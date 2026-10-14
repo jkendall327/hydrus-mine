@@ -718,8 +718,8 @@
    "recheck": {
     "date": "2026-10-14",
     "class": "weak",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "Replayed against the same recording: the missing-path warning (now with the location as the reference words it), the run-time question and its choices, 'forget it', the custom time dialog (accepted and cancelled), the dialog closing once the job starts (fixed), and 'move files now' not being on offer while a location is missing (fixed). Not driven: the 10 minute / 30 minute / 1 hour stop times (the reference's job carries a stop time; the recording has it, nothing native shows it), and the popup's content while it runs. oracle/fixtures/locations_panel.json (oracle/record_locations_panel.py drives the reference's real MoveMediaFilesPanel on an empty client). Replayed step by step through the real locations window by crates/hydrus-gui/tests/gui/database_locations_menu.rs the_locations_panel_replays_the_reference_s_steps: the same selection, pick and answers, then every message, question and dialog, the rows, the button states, the thumbnail location, the granularity and rebalance labels and the saved locations compared. Differences it showed are fixed or in DIFFERENCES.md (Database > locations)."
+    "by": "W5-5 session (wave 5)",
+    "note": "tests/gui/database_locations_menu.rs move_files_now_stops_at_its_run_time_and_moves_what_the_reference_s_job_does replays oracle/fixtures/rebalance_job.json (the reference's job run by the real Rebalance): with the stop time passed (scripted clock, 10 minute choice) nothing moves; otherwise the folders move (254, as recorded) and a second run has nothing to move. Still weak: the 30 minute and 1 hour stop times are not distinguished, the cancel-after-n-moves run is not replayed through the popup, and the popup's content while running is not read (it dismisses itself when done)."
    }
   },
   {
@@ -1666,10 +1666,10 @@
     "The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "weak",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "The picker title and the question are now replayed from oracle/fixtures/backup_dialogs.json (cancel, decline, accept) through the real menu entry, and accepting leaves the restart request; but the reference then exits and restarts the client (HG.restart) and that step, and the restore at startup through this path, are not driven in a GUI test. Stale tracker notes (todo()/no command) are false. Test: crates/hydrus-gui/tests/gui/database_backup_menu.rs restoring_replays_the_reference_s_dialogs (untagged)."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-5 session (wave 5)",
+    "note": "tests/gui/database_backup_menu.rs accepting_the_restore_restarts_the_client_and_the_next_start_restores_it: the menu, the recorded dialogs (backup_dialogs.json), then the client exits for a restart with no second question or shutdown jobs (as RestoreDatabase sets do_idle_shutdown_work False); a stand-in program is relaunched with its arguments, and the start it stands for (client_store::open_store) restores the backup. The real process relaunch and the stand-in's start are separate steps."
    }
   },
   {
@@ -2679,10 +2679,10 @@
     "Both ticks persist, but run_search ORs idle/active/work-hard and lacks a GUI activity state. An idle-only setting can therefore still run during normal use."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "phase 2 session (blind agent)",
-    "note": "hydrus-cli main.rs:1129 the_similar_files_loop_holds_and_works_by_the_published_idle_state calls the real similar_files_step the daemon loop uses, with real published idle state, settings and search status table, and asserts held versus searched for the idle-only and normal-only switches including the no-GUI case. Expectations are literals from the reference source, no recording. Work-hard also bypasses the switches and that is not checked against the reference."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-5 session (wave 5)",
+    "note": "hydrus-cli main.rs the_similar_files_loop_works_when_the_reference_s_manager_does replays all 16 idle/switch/work-hard combinations of oracle/fixtures/work_scheduling.json (the reference's PotentialDuplicatesMaintenanceManager) through the daemon's real loop step with the published idle state and the real search: works or holds, the packet, and the rest (floored at 0.1 s). tests/gui/duplicates_lane_page.rs the_sidebar_switches_decide_whether_the_real_daemon_steps_work sets the switches with the sidebar's buttons and checks the real steps against the same recording."
    }
   },
   {
@@ -2731,10 +2731,10 @@
     "Start/stop sets persisted work_hard; run_search treats it as enabling search even when both scheduling switches are off. Can-start is based on remaining files at this distance."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only toggles the persisted work_hard flag and the page's working_hard/can_start display (can_start itself is replayed in the preparation recording). The consumer (hydrus-cli daemon 'pace.allowed |= work_hard' and similar::run_search) is untested, so the flag only round-trips; the reference's work-hard is a runtime manager state. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:1057 working_hard_is_started_and_stopped_and_needs_something_left_to_search"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-5 session (wave 5)",
+    "note": "tests/gui/duplicates_lane_page.rs working_hard_is_started_and_stopped_and_needs_something_left_to_search: the sidebar's button sets work hard with both switches off, and the real worker step (hydrus_store::workers::similar_files_step, what the daemon loop calls) then works in the 0.5 s packet oracle/fixtures/work_scheduling.json records for the reference's manager, until nothing is left, when the flag clears and the page shows it stopped, as the reference clears it. The rest between packets is floored at 0.1 s (DIFFERENCES.md)."
    }
   },
   {
@@ -3026,10 +3026,10 @@
     "Both fields persist and sidebar computes working status from either field, but CLI auto-resolution loop counts itself always active and only gates on during_active. Idle-only rules will not run."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "phase 2 session (blind agent)",
-    "note": "hydrus-cli main.rs:1214 the_auto_resolution_loop_holds_and_works_by_the_published_idle_state drives the real auto_resolution_step with a stub work closure and checks hold versus work, the 100 ms normal and 1000 ms idle budgets and the no-GUI-is-not-idle case. Expectations are literals; the rule work is stubbed and the sidebar's status display is not covered."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-5 session (wave 5)",
+    "note": "hydrus-cli main.rs the_auto_resolution_loop_works_when_the_reference_s_manager_does replays the 16 idle/good-time/switch combinations of oracle/fixtures/work_scheduling.json (the reference's DuplicatesAutoResolutionManager._AbleToWork) through the real loop step: works or holds, the packet, the rest. The rule work is a stand-in taking 0.05 s; the sidebar's switches are driven in the duplicates_lane_page test. The reference's per-rule work hard has no counterpart in the loop."
    }
   },
   {
@@ -3876,10 +3876,10 @@
     "Global/player viewer flags and volume adjust the native playback state; forced mute is stored as an override. Controls are wired in open_viewer. First-pass evidence scope: Reference menu choices plus focused GUI global/viewer/forced-mute and per-viewer/global-volume persistence are asserted; no backend audio-quality claim."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Volume slider/global/viewer mute persistence is driven through the real viewer with typed literals; the recorded menu covers only the default audio state. Forced-mute states ('stop forcing mute' etc.) are typed labels and nothing asserts the forced override's effect on playback (lib.rs:6486 reads it). Tests: crates/hydrus-gui/tests/gui/volume.rs:34; crates/hydrus-gui/tests/gui/viewer_menu.rs:133 (recorded default menu: viewer_menu.rs:22 untagged)"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-5 session (wave 5)",
+    "note": "tests/gui/viewer_mute.rs replays oracle/fixtures/viewer_mute.json (the reference's AddAudioVolumeMenu and container mute for all 24 combinations of global mute, viewer mute, own volume and forced mute) through a real viewer: the forced mute is reached by the menu's own entries (8 states in two steps, the menu offering the opposite force once one is set), and the volume submenu and the mute the viewer hands its player (playing-muted) match. No audio output is checked; no shortcut commands for forcing the mute (DIFFERENCES.md)."
    }
   },
   {
@@ -3952,10 +3952,10 @@
     "Native slideshow menu/timer reads saved settings, asks custom interval and updates file/media-duration scheduling; global and viewer shuffle/once-through toggles are separately persisted. First-pass evidence scope: Direct reference period/menu replay plus actual viewer timer/menu/persisted-setting outcomes establish this finite first pass."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Menu recording is replayed against slideshow_menu/Slideshow, and a GUI test drives start/stop/custom interval/shuffle toggles, but once-through and media-duration period bending are only tested as decision functions (special_period, Slideshow::due), never through the viewer's timer. Tests: crates/hydrus-gui/tests/gui/slideshow.rs:49,109 (period replay at :16 untagged)"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-5 session (wave 5)",
+    "note": "tests/gui/slideshow_run.rs replays oracle/fixtures/slideshow_run.json (the reference's CanvasMediaListBrowser._DoSlideshowWork with a held clock) through the real viewer's timer and menu: plain moves (strictly after the period, wrapping), stop/resume, shuffling, and once-through with a real libmpv file (stays until played through, moves after; with it off, moves at the period). The period bending for files with durations is replayed only as a decision function (slideshow.rs), not through the timer."
    }
   },
   {
@@ -3971,10 +3971,10 @@
     "Context commands call the shared zoom state and fullscreen callback; rendered media coordinates and source image/player shape are retained as zoom changes. First-pass evidence scope: Qt-recorded zoom math and actual viewer zoom/pan/fullscreen callbacks are asserted; whole media rendering/drag-out parity is outside this control."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives real viewer and archive/delete filter zoom keys, wheel, shift-arrow pan and drag with expectations from the Python source (fit math, 1/12 pan step); zoom steps are recorded in hydrus-legacy/tests/viewer_zoom.rs but the pan/drag/max values are not. Zoom-to-max test calls Zoom::new directly (decision function). Tests: crates/hydrus-gui/tests/gui/zoom.rs:216,451"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-5 session (wave 5)",
+    "note": "tests/gui/zoom_recorded.rs replays oracle/fixtures/viewer_pan_zoom.json (the reference's real MediaContainer in an 800x600 canvas) step by step (27 compared; the edge pans and zoom to canvas after a drag are skipped) through the real viewer: zoom in/out, switching between 100% and fit, max, panning by steps, a drag, and fullscreen toggling. Not replayed (no native command): zoom to canvas after a drag, explicit 100%/canvas commands and panning to edges/centres (DIFFERENCES.md)."
    }
   },
   {
@@ -9601,10 +9601,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options row (label, box, default compared as literals; options_dialog.json has the row) and Apply. The tagged test calls windows::save_named, the helper, instead of closing a viewer; the real viewer close with option off/on is in viewer_window.rs (untagged). Expected values are typed from ClientGUICanvasFrame source, no recording of the behaviour. Tests: crates/hydrus-gui/tests/gui/options_gui_misc.rs:63 the_media_viewer_keeps_its_window_geometry_on_close_only_if_the_option_says_so; crates/hydrus-gui/tests/gui/viewer_window.rs:~60-90; crates/hydrus-gui-model/tests/model/frame_locations.rs:231"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-5 session (wave 5)",
+    "note": "tests/gui/viewer_window.rs the_viewer_keeps_its_size_on_close_only_when_the_option_is_on replays oracle/fixtures/viewer_close_geometry.json: a real viewer opened at the remembered size, resized and closed at once keeps the new size only with the option on, as the reference's frame does. The reference also saves a moment after any resize or move whatever the option says; this does not (DIFFERENCES.md). Window position is not compared (headless windows have none)."
    }
   },
   {
@@ -23288,10 +23288,10 @@
     "Sidecar source/exporter/router parent assessments remain Partial for their independent boundaries. Native Rust regressions are authored for root asynchronous CI; reference recording and cached Slint compilation passed locally."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Queue add/edit/up/down/delete/blank-veto and child strings are driven through the real window and replayed step by step against a recording, plus a model replay of the same. The last part of the leaf (saved router reaches the real export worker, merging nested duplicate/newline keys into an existing JSON file and keeping unrelated content) has typed-literal expectations only: no recording of the reference writing a nested-name JSON sidecar exists (router_exchange.json 'consumer' is a TXT urls sidecar). Tracker has no tag; test is untagged (carried). Also omits the reference queue tooltip (noted). Tests: crates/hydrus-gui/tests/gui/sidecars.rs:1624 json_object_names_use_staged_text_children_and_saved_router_worker; crates/hydrus-gui-model/tests/model/sidecar_editors.rs json_object_name_queue_replays_literal_reference_rows_and_exporter_values (fixture sidecar_json_names.json)"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-5 session (wave 5)",
+    "note": "tests/gui/sidecars.rs the_saved_json_router_writes_nested_names_as_the_reference_s_exporter_does enters each object-name list through the destination editor, saves and loads the router, and runs the real manual-export worker over 8 states of the existing sidecar; the file's text (or the failure, with the file untouched) is compared with oracle/fixtures/sidecar_json_export.json, the reference's SingleFileMetadataExporterJSON. Error wording is Python's and is not compared."
    }
   },
   {

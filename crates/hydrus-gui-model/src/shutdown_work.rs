@@ -14,6 +14,10 @@ pub enum ExitMode {
     Exit,
     /// File > restart: start again after exiting.
     Restart,
+    /// Database > backup > restore from a database backup: the question was
+    /// asked; the client exits at once, with no shutdown jobs
+    /// (`HG.do_idle_shutdown_work = False`), to start again and restore.
+    RestoreRestart,
     /// File > exit/force maintenance: run shutdown work whether due or not.
     ForceMaintenance,
 }

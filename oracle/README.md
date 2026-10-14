@@ -38,6 +38,13 @@ at fixed copy boundaries; dialog replies and worker scheduling are scripted.
 | script | output |
 |---|---|
 | `record_namespace_entry_validation.py` | `fixtures/namespace_entry_validation.json` and namespace Add/Delete Qt PNGs: actual empty Apply/Return warning and retained input, subsequent valid entry, distinct whitespace handler path, and mixed protected/custom Delete No/Yes; preserves the earlier handler-level fixture |
+| `record_work_scheduling.py` | `fixtures/work_scheduling.json`: when the reference's similar-files and auto-resolution managers work (idle state, switches, work hard), for how long and how long they rest |
+| `record_slideshow_run.py` | `fixtures/slideshow_run.json`: the viewer's slideshow moving on with a held clock: plain, stopped, shuffled, once-through on a file with a duration |
+| `record_viewer_mute.py` | `fixtures/viewer_mute.json`: the viewer's volume submenu and the mute it hands the player, for the mutes and the forced mute |
+| `record_viewer_pan_zoom.py` | `fixtures/viewer_pan_zoom.json`: the real media container zooming, panning and being dragged in an 800x600 canvas, and the frame going full screen |
+| `record_viewer_close_geometry.py` | `fixtures/viewer_close_geometry.json`: what the viewer's frame keeps of its size on close, with the save-on-close option off and on |
+| `dump_sidecar_json_export.py` | `fixtures/sidecar_json_export.json`: the JSON sidecar exporter's file for nested object names over several existing files |
+| `record_rebalance_job.py` | `fixtures/rebalance_job.json`: the "move files now" job run with its stop time passed, cancelled, and to the end |
 | `dump_constants.py` | `fixtures/constants.json`: file types, service types, enum codes |
 | `dump_tag_cleaning.py` | `fixtures/tag_cleaning.json`: tag cleaning on awkward inputs |
 | `record_predicate_custom_defaults.py` | `fixtures/predicate_custom_defaults.json`: actual Qt star actions across all 40 panel families, 1,600 comparability pairs, explicit-input precedence, immediate reset, owner-close persistence and actual ClientOptions serialization with an interior 3/5 rating for native import |

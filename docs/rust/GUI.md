@@ -1499,7 +1499,13 @@ it fits a part of the period or some seconds, or stops at its end and
 moves on if it is most of the period; one about as long, a little over,
 stops at its end and moves on; one of no known duration stops the
 slideshow; and with playing through on, a file that plays is shown until
-it has played through. Unlike the reference's, a slideshow doesn't wait
+it has played through. (Replayed against the reference's viewer with its clock held still,
+`oracle/record_slideshow_run.py`: the period is passed strictly, the list
+wraps, shuffling moves to another file each period, a stopped slideshow
+stays and resumes a period later, and with playing through on a file that
+plays stays until it has played through, through the real viewer's timer
+and libmpv.) The volume menu's forced mute reaches the player
+(`oracle/record_viewer_mute.py`, for every combination of the mutes). Unlike the reference's, a slideshow doesn't wait
 while a menu is open (Slint doesn't say when one is), so the menu's
 entries act on the file it was opened on, though the slideshow has moved
 on (as does a deletion asked about); it does wait while the viewer asks
@@ -5192,7 +5198,8 @@ backup and mirrors the media directory (copying what differs in size or
 date, deleting what the client no longer has) in a cancellable "backing up
 db" popup ending "backup complete!". "change database backup location"
 picks again. "restore from a database backup" picks a backup, asks, and
-restarts, restoring it before the store opens. A client with media in
+exits at once to restart (no second question and no shutdown jobs, as the
+reference's `RestoreDatabase` sets), restoring it before the store opens. A client with media in
 several locations shows "database is stored in multiple locations", whose
 note explains. The messages and questions of setting up, updating and restoring are replayed against
 `oracle/fixtures/backup_dialogs.json` (the reference's own dialogs, scripted answers) in
