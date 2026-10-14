@@ -134,7 +134,7 @@ pub fn open_with_changed(
                 && let Ok(i) = usize::try_from(w.get_selected())
                 && let Some(row) = rows.borrow().get(i)
             {
-                w.set_database_id(format!("service id: {}", row.id).into());
+                w.set_database_id(format!("The service id is: {}", row.id).into());
             }
         }
     });

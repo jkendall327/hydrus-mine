@@ -1,0 +1,873 @@
+{
+ "reserved_names": [
+  "global",
+  "archive_delete_filter",
+  "duplicate_filter",
+  "media",
+  "thumbnails",
+  "tags_autocomplete",
+  "main_gui",
+  "media_viewer_browser",
+  "media_viewer",
+  "media_viewer_media_window",
+  "preview_media_window"
+ ],
+ "reserved_rows": [
+  [
+   "global",
+   "1"
+  ],
+  [
+   "the main window",
+   "14"
+  ],
+  [
+   "tag autocomplete",
+   "9"
+  ],
+  [
+   "media actions, either thumbnails or the viewer",
+   "9"
+  ],
+  [
+   "thumbnails",
+   "25"
+  ],
+  [
+   "media viewers - all",
+   "18"
+  ],
+  [
+   "media viewers - 'normal' browser",
+   "13"
+  ],
+  [
+   "media viewers - archive/delete filter",
+   "9"
+  ],
+  [
+   "media viewers - duplicate filter",
+   "5"
+  ],
+  [
+   "the actual media in a preview window (mouse only)",
+   "3"
+  ],
+  [
+   "the actual media in a media viewer (mouse only)",
+   "1"
+  ]
+ ],
+ "custom_rows": [],
+ "descriptions": {
+  "global": "Actions for the whole program. Should work in the main gui or a media viewer.",
+  "archive_delete_filter": "Navigation actions for the media viewer during an archive/delete filter. Mouse shortcuts should work.",
+  "duplicate_filter": "Navigation actions for the media viewer during a duplicate filter. Mouse shortcuts should work.",
+  "media": "Actions to alter metadata for media in the media viewer or the thumbnail grid.",
+  "thumbnails": "Actions that interact with the grid of thumbnails in a normal file page.",
+  "main_gui": "Actions to control pages in the main window of the program.",
+  "tags_autocomplete": "Actions to control tag autocomplete when its input text box is focused.",
+  "media_viewer_browser": "Navigation actions for the regular browsable media viewer.",
+  "media_viewer": "Zoom and pan and player actions for any media viewer.",
+  "media_viewer_media_window": "Actions for any video or audio player in a media viewer window. Mouse only!",
+  "preview_media_window": "Actions for any video or audio player in a preview window. Mouse only!"
+ },
+ "edit_reserved": [
+  {
+   "title": "edit shortcuts",
+   "name": "global",
+   "name_enabled": false,
+   "rows": [
+    [
+     "ctrl+g",
+     "global audio: mute/unmute"
+    ]
+   ],
+   "labels": [
+    "Please note the shortcut system does not support multiple commands per shortcut yet. If there are shortcut duplicates in this list, only one command will ever fire.",
+    "name: ",
+    "Actions for the whole program. Should work in the main gui or a media viewer."
+   ],
+   "buttons": [
+    "add",
+    "edit",
+    "export",
+    "import",
+    "remove",
+    "special duplicate"
+   ]
+  },
+  {
+   "title": "edit shortcuts",
+   "name": "main_gui",
+   "name_enabled": false,
+   "rows": [
+    [
+     "ctrl+s",
+     "keyboard focus: to the default text entry of page/dialog"
+    ],
+    [
+     "ctrl+m",
+     "keyboard focus: to the thumbnail grid"
+    ],
+    [
+     "ctrl+page up",
+     "move page selection left (cycles up through page of pages at boundaries)"
+    ],
+    [
+     "ctrl+page down",
+     "move page selection right (cycles up through page of pages at boundaries)"
+    ],
+    [
+     "ctrl+t",
+     "open a new page: choose a page"
+    ],
+    [
+     "f9",
+     "open a new page: choose a page"
+    ],
+    [
+     "ctrl+p",
+     "open the command palette"
+    ],
+    [
+     "ctrl+shift+o",
+     "open the options dialog"
+    ],
+    [
+     "ctrl+w",
+     "pages: close current"
+    ],
+    [
+     "ctrl+u",
+     "pages: unclose the most recently closed"
+    ],
+    [
+     "ctrl+y",
+     "redo (limited support)"
+    ],
+    [
+     "f5",
+     "refresh page search/sort"
+    ],
+    [
+     "ctrl+shift+r",
+     "show/hide the left page panel and preview canvas"
+    ],
+    [
+     "ctrl+z",
+     "undo (limited support)"
+    ]
+   ],
+   "labels": [
+    "Please note the shortcut system does not support multiple commands per shortcut yet. If there are shortcut duplicates in this list, only one command will ever fire.",
+    "name: ",
+    "Actions to control pages in the main window of the program."
+   ],
+   "buttons": [
+    "add",
+    "edit",
+    "export",
+    "import",
+    "remove",
+    "special duplicate"
+   ]
+  },
+  {
+   "title": "edit shortcuts",
+   "name": "tags_autocomplete",
+   "name_enabled": false,
+   "rows": [
+    [
+     "ctrl+space",
+     "force-fetch tag autocomplete results"
+    ],
+    [
+     "page down",
+     "if input & results list are empty and in media viewer manage tags dialog, move to previous media"
+    ],
+    [
+     "page up",
+     "if input & results list are empty and in media viewer manage tags dialog, move to previous media"
+    ],
+    [
+     "up",
+     "if input & results list are empty, move to left one service page"
+    ],
+    [
+     "down",
+     "if input & results list are empty, move to right one service page"
+    ],
+    [
+     "left",
+     "if input is empty, move left one autocomplete dropdown tab"
+    ],
+    [
+     "right",
+     "if input is empty, move right one autocomplete dropdown tab"
+    ],
+    [
+     "insert",
+     "IME-friendly mode: flip on/off (this disables extra shortcut processing so you can do IME popup stuff)"
+    ],
+    [
+     "ctrl+i",
+     "switch between searching a page immediately on new tags and waiting"
+    ]
+   ],
+   "labels": [
+    "Please note the shortcut system does not support multiple commands per shortcut yet. If there are shortcut duplicates in this list, only one command will ever fire.",
+    "name: ",
+    "Actions to control tag autocomplete when its input text box is focused."
+   ],
+   "buttons": [
+    "add",
+    "edit",
+    "export",
+    "import",
+    "remove",
+    "special duplicate"
+   ]
+  },
+  {
+   "title": "edit shortcuts",
+   "name": "media",
+   "name_enabled": false,
+   "rows": [
+    [
+     "f7",
+     "archive file"
+    ],
+    [
+     "ctrl+c",
+     "copy file (selected files)"
+    ],
+    [
+     "delete",
+     "delete file"
+    ],
+    [
+     "shift+f7",
+     "inbox file"
+    ],
+    [
+     "f4",
+     "manage file ratings"
+    ],
+    [
+     "f3",
+     "manage file tags"
+    ],
+    [
+     "ctrl+e",
+     "open file in external program"
+    ],
+    [
+     "ctrl+r",
+     "remove file from current view"
+    ],
+    [
+     "shift+delete",
+     "undelete file"
+    ]
+   ],
+   "labels": [
+    "Please note the shortcut system does not support multiple commands per shortcut yet. If there are shortcut duplicates in this list, only one command will ever fire.",
+    "name: ",
+    "Actions to alter metadata for media in the media viewer or the thumbnail grid."
+   ],
+   "buttons": [
+    "add",
+    "edit",
+    "export",
+    "import",
+    "remove",
+    "special duplicate"
+   ]
+  },
+  {
+   "title": "edit shortcuts",
+   "name": "thumbnails",
+   "name_enabled": false,
+   "rows": [
+    [
+     "f12",
+     "launch the archive/delete filter"
+    ],
+    [
+     "enter",
+     "launch the media viewer"
+    ],
+    [
+     "return",
+     "launch the media viewer"
+    ],
+    [
+     "down",
+     "move the thumbnail focus (move down)"
+    ],
+    [
+     "end",
+     "move the thumbnail focus (move end)"
+    ],
+    [
+     "home",
+     "move the thumbnail focus (move home)"
+    ],
+    [
+     "left",
+     "move the thumbnail focus (move left)"
+    ],
+    [
+     "page down",
+     "move the thumbnail focus (move page down)"
+    ],
+    [
+     "page up",
+     "move the thumbnail focus (move page up)"
+    ],
+    [
+     "right",
+     "move the thumbnail focus (move right)"
+    ],
+    [
+     "up",
+     "move the thumbnail focus (move up)"
+    ],
+    [
+     "shift+down",
+     "move the thumbnail focus (shift-select down)"
+    ],
+    [
+     "shift+end",
+     "move the thumbnail focus (shift-select end)"
+    ],
+    [
+     "shift+home",
+     "move the thumbnail focus (shift-select home)"
+    ],
+    [
+     "shift+left",
+     "move the thumbnail focus (shift-select left)"
+    ],
+    [
+     "shift+page down",
+     "move the thumbnail focus (shift-select page down)"
+    ],
+    [
+     "shift+page up",
+     "move the thumbnail focus (shift-select page up)"
+    ],
+    [
+     "shift+right",
+     "move the thumbnail focus (shift-select right)"
+    ],
+    [
+     "shift+up",
+     "move the thumbnail focus (shift-select up)"
+    ],
+    [
+     "alt+end",
+     "move thumbnails (end)"
+    ],
+    [
+     "alt+home",
+     "move thumbnails (home)"
+    ],
+    [
+     "alt+left",
+     "move thumbnails (left)"
+    ],
+    [
+     "alt+right",
+     "move thumbnails (right)"
+    ],
+    [
+     "ctrl+a",
+     "select files (all)"
+    ],
+    [
+     "escape",
+     "select files (none)"
+    ]
+   ],
+   "labels": [
+    "Please note the shortcut system does not support multiple commands per shortcut yet. If there are shortcut duplicates in this list, only one command will ever fire.",
+    "name: ",
+    "Actions that interact with the grid of thumbnails in a normal file page."
+   ],
+   "buttons": [
+    "add",
+    "edit",
+    "export",
+    "import",
+    "remove",
+    "special duplicate"
+   ]
+  },
+  {
+   "title": "edit shortcuts",
+   "name": "media_viewer",
+   "name_enabled": false,
+   "rows": [
+    [
+     "enter",
+     "close media viewer"
+    ],
+    [
+     "escape",
+     "close media viewer"
+    ],
+    [
+     "return",
+     "close media viewer"
+    ],
+    [
+     "ctrl+b",
+     "move animation one frame back"
+    ],
+    [
+     "ctrl+n",
+     "move animation one frame forward"
+    ],
+    [
+     "shift+down",
+     "pan file down"
+    ],
+    [
+     "shift+left",
+     "pan file left"
+    ],
+    [
+     "shift+right",
+     "pan file right"
+    ],
+    [
+     "shift+up",
+     "pan file up"
+    ],
+    [
+     "space",
+     "pause/play media"
+    ],
+    [
+     "ctrl+left",
+     "seek media (back 2.5 seconds)"
+    ],
+    [
+     "ctrl+right",
+     "seek media (forwards 5 seconds)"
+    ],
+    [
+     "f",
+     "switch between fullscreen borderless and regular framed window"
+    ],
+    [
+     "+",
+     "zoom: in"
+    ],
+    [
+     "ctrl+scroll up",
+     "zoom: in"
+    ],
+    [
+     "-",
+     "zoom: out"
+    ],
+    [
+     "ctrl+scroll down",
+     "zoom: out"
+    ],
+    [
+     "z",
+     "zoom: switch between 100% and canvas fit"
+    ]
+   ],
+   "labels": [
+    "Please note the shortcut system does not support multiple commands per shortcut yet. If there are shortcut duplicates in this list, only one command will ever fire.",
+    "name: ",
+    "Zoom and pan and player actions for any media viewer."
+   ],
+   "buttons": [
+    "add",
+    "edit",
+    "export",
+    "import",
+    "remove",
+    "special duplicate"
+   ]
+  },
+  {
+   "title": "edit shortcuts",
+   "name": "media_viewer_browser",
+   "name_enabled": false,
+   "rows": [
+    [
+     "double left-click",
+     "close media viewer"
+    ],
+    [
+     "middle-click",
+     "close media viewer"
+    ],
+    [
+     "home",
+     "media navigation: first"
+    ],
+    [
+     "end",
+     "media navigation: last"
+    ],
+    [
+     "down",
+     "media navigation: next"
+    ],
+    [
+     "page down",
+     "media navigation: next"
+    ],
+    [
+     "right",
+     "media navigation: next"
+    ],
+    [
+     "scroll down",
+     "media navigation: next"
+    ],
+    [
+     "left",
+     "media navigation: previous"
+    ],
+    [
+     "page up",
+     "media navigation: previous"
+    ],
+    [
+     "scroll up",
+     "media navigation: previous"
+    ],
+    [
+     "up",
+     "media navigation: previous"
+    ],
+    [
+     "release right-click",
+     "show menu"
+    ]
+   ],
+   "labels": [
+    "Please note the shortcut system does not support multiple commands per shortcut yet. If there are shortcut duplicates in this list, only one command will ever fire.",
+    "name: ",
+    "Navigation actions for the regular browsable media viewer."
+   ],
+   "buttons": [
+    "add",
+    "edit",
+    "export",
+    "import",
+    "remove",
+    "special duplicate"
+   ]
+  },
+  {
+   "title": "edit shortcuts",
+   "name": "archive_delete_filter",
+   "name_enabled": false,
+   "rows": [
+    [
+     "backspace",
+     "archive/delete filter: back"
+    ],
+    [
+     "middle-click",
+     "archive/delete filter: back"
+    ],
+    [
+     "delete",
+     "archive/delete filter: delete"
+    ],
+    [
+     "right-click",
+     "archive/delete filter: delete"
+    ],
+    [
+     "double left-click",
+     "archive/delete filter: keep"
+    ],
+    [
+     "f7",
+     "archive/delete filter: keep"
+    ],
+    [
+     "left-click",
+     "archive/delete filter: keep"
+    ],
+    [
+     "up",
+     "archive/delete filter: skip"
+    ],
+    [
+     "f12",
+     "close media viewer"
+    ]
+   ],
+   "labels": [
+    "Please note the shortcut system does not support multiple commands per shortcut yet. If there are shortcut duplicates in this list, only one command will ever fire.",
+    "name: ",
+    "Navigation actions for the media viewer during an archive/delete filter. Mouse shortcuts should work."
+   ],
+   "buttons": [
+    "add",
+    "edit",
+    "export",
+    "import",
+    "remove",
+    "special duplicate"
+   ]
+  },
+  {
+   "title": "edit shortcuts",
+   "name": "duplicate_filter",
+   "name_enabled": false,
+   "rows": [
+    [
+     "middle-click",
+     "duplicate filter: back"
+    ],
+    [
+     "right-click",
+     "duplicate filter: set as alternates"
+    ],
+    [
+     "up",
+     "duplicate filter: skip"
+    ],
+    [
+     "double left-click",
+     "duplicate filter: this is better, delete other"
+    ],
+    [
+     "left-click",
+     "duplicate filter: this is better, delete other"
+    ]
+   ],
+   "labels": [
+    "Please note the shortcut system does not support multiple commands per shortcut yet. If there are shortcut duplicates in this list, only one command will ever fire.",
+    "name: ",
+    "Navigation actions for the media viewer during a duplicate filter. Mouse shortcuts should work."
+   ],
+   "buttons": [
+    "add",
+    "edit",
+    "export",
+    "import",
+    "remove",
+    "special duplicate"
+   ]
+  },
+  {
+   "title": "edit shortcuts",
+   "name": "preview_media_window",
+   "name_enabled": false,
+   "rows": [
+    [
+     "double left-click",
+     "launch the media viewer"
+    ],
+    [
+     "middle-click",
+     "launch the media viewer"
+    ],
+    [
+     "left-click",
+     "pause/play media"
+    ]
+   ],
+   "labels": [
+    "Please note the shortcut system does not support multiple commands per shortcut yet. If there are shortcut duplicates in this list, only one command will ever fire.",
+    "name: ",
+    "Actions for any video or audio player in a preview window. Mouse only!"
+   ],
+   "buttons": [
+    "add",
+    "edit",
+    "export",
+    "import",
+    "remove",
+    "special duplicate"
+   ]
+  },
+  {
+   "title": "edit shortcuts",
+   "name": "media_viewer_media_window",
+   "name_enabled": false,
+   "rows": [
+    [
+     "left-click",
+     "pause/play media"
+    ]
+   ],
+   "labels": [
+    "Please note the shortcut system does not support multiple commands per shortcut yet. If there are shortcut duplicates in this list, only one command will ever fire.",
+    "name: ",
+    "Actions for any video or audio player in a media viewer window. Mouse only!"
+   ],
+   "buttons": [
+    "add",
+    "edit",
+    "export",
+    "import",
+    "remove",
+    "special duplicate"
+   ]
+  }
+ ],
+ "add_cancelled": {
+  "dialogs": [
+   {
+    "title": "edit shortcuts",
+    "name": "new shortcuts",
+    "name_enabled": true,
+    "rows": [],
+    "labels": [
+     "Please note the shortcut system does not support multiple commands per shortcut yet. If there are shortcut duplicates in this list, only one command will ever fire.",
+     "name: "
+    ],
+    "buttons": [
+     "add",
+     "edit",
+     "export",
+     "import",
+     "remove",
+     "special duplicate"
+    ]
+   }
+  ],
+  "custom_rows": []
+ },
+ "add_named": {
+  "typed": [
+   "rating keys",
+   "rating keys",
+   "main_gui",
+   "Rating Keys"
+  ],
+  "vetoes": [
+   null,
+   null,
+   "That name is reserved--please pick another!",
+   null
+  ],
+  "custom_rows": [
+   [
+    "rating keys",
+    "0"
+   ],
+   [
+    "Rating Keys",
+    "0"
+   ],
+   [
+    "rating keys (1)",
+    "0"
+   ]
+  ]
+ },
+ "restore_cancel": [
+  {
+   "kind": "select",
+   "title": "select which default to restore",
+   "choices": [
+    "global",
+    "archive_delete_filter",
+    "duplicate_filter",
+    "media",
+    "tags_autocomplete",
+    "main_gui",
+    "media_viewer_browser",
+    "media_viewer",
+    "media_viewer_media_window",
+    "preview_media_window",
+    "thumbnails"
+   ]
+  }
+ ],
+ "restore_no": {
+  "asked": [
+   {
+    "kind": "select",
+    "title": "select which default to restore",
+    "choices": [
+     "global",
+     "archive_delete_filter",
+     "duplicate_filter",
+     "media",
+     "tags_autocomplete",
+     "main_gui",
+     "media_viewer_browser",
+     "media_viewer",
+     "media_viewer_media_window",
+     "preview_media_window",
+     "thumbnails"
+    ]
+   },
+   {
+    "kind": "yes_no",
+    "text": "Are you certain you want to restore the defaults for \"main_gui\"? Any custom shortcuts you have set will be wiped."
+   }
+  ],
+  "changed": false
+ },
+ "restore_yes": {
+  "asked": [
+   {
+    "kind": "select",
+    "title": "select which default to restore",
+    "choices": [
+     "global",
+     "archive_delete_filter",
+     "duplicate_filter",
+     "media",
+     "tags_autocomplete",
+     "main_gui",
+     "media_viewer_browser",
+     "media_viewer",
+     "media_viewer_media_window",
+     "preview_media_window",
+     "thumbnails"
+    ]
+   },
+   {
+    "kind": "yes_no",
+    "text": "Are you certain you want to restore the defaults for \"main_gui\"? Any custom shortcuts you have set will be wiped."
+   }
+  ],
+  "rows_equal_original": true
+ },
+ "restore_missing": {
+  "asked": [
+   {
+    "kind": "select",
+    "title": "select which default to restore",
+    "choices": [
+     "global",
+     "archive_delete_filter",
+     "duplicate_filter",
+     "media",
+     "tags_autocomplete",
+     "main_gui",
+     "media_viewer_browser",
+     "media_viewer",
+     "media_viewer_media_window",
+     "preview_media_window",
+     "thumbnails"
+    ]
+   },
+   {
+    "kind": "information",
+    "text": "It looks like your client was missing the \"global\" shortcut set! It will now be restored."
+   }
+  ],
+  "reserved_count": 11
+ }
+}
