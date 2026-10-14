@@ -978,6 +978,131 @@ fn open_edit(
             show();
         }
     });
+    // the autocomplete's icon buttons: paste, the star menu, empty search
+    window.on_paste_search({
+        let edit = edit.clone();
+        let words = words.clone();
+        let show = show.clone();
+        let active = active.clone();
+        let child = child.clone();
+        let weak = window.as_weak();
+        move || {
+            if !active.get() || child.borrow().is_some() {
+                return;
+            }
+            let Some(window) = weak.upgrade() else { return };
+            let text = match crate::clipboard_text() {
+                Ok(Some(text)) => text,
+                Ok(None) => {
+                    window.set_error("Problem pasting! No text on the clipboard!".into());
+                    return;
+                }
+                Err(error) => {
+                    window.set_error(format!("Problem pasting! {error}").into());
+                    return;
+                }
+            };
+            // (lines that are no predicate are passed over)
+            let predicates: Vec<hydrus_search::Predicate> = text
+                .lines()
+                .map(str::trim)
+                .filter(|line| !line.is_empty())
+                .filter_map(|line| parse_api_search(&serde_json::json!([line])).ok())
+                .flatten()
+                .collect();
+            if !predicates.is_empty() {
+                hydrus_search::enter_predicates(
+                    &mut edit.borrow_mut().search.predicates,
+                    &predicates,
+                    &words.text,
+                );
+                window.set_error("".into());
+            }
+            show();
+        }
+    });
+    window.on_clear_search({
+        let edit = edit.clone();
+        let words = words.clone();
+        let show = show.clone();
+        let active = active.clone();
+        let child = child.clone();
+        move || {
+            if !active.get() || child.borrow().is_some() {
+                return;
+            }
+            let defaults: hydrus_store::settings::SearchDefaults = words
+                .store
+                .read(hydrus_store::settings::get)
+                .unwrap_or_default();
+            edit.borrow_mut().empty_search(defaults.local_location);
+            show();
+        }
+    });
+    let star_menu = crate::popup_menu::Popup::<usize>::new();
+    let star_favourites = Rc::new(RefCell::new(
+        Vec::<hydrus_core::pages::FavouriteSearch>::new(),
+    ));
+    window.set_favourite_panes(star_menu.model());
+    window.on_favourites_menu({
+        let star_menu = star_menu.clone();
+        let star_favourites = star_favourites.clone();
+        let words = words.clone();
+        let active = active.clone();
+        let child = child.clone();
+        move |x, y| {
+            if !active.get() || child.borrow().is_some() {
+                return;
+            }
+            // (read as the menu opens, as the reference's manager has them)
+            let read: Vec<hydrus_core::pages::FavouriteSearch> = words
+                .store
+                .read(hydrus_store::settings::get::<hydrus_store::settings::FavouriteSearches>)
+                .map(|f| f.0)
+                .unwrap_or_default();
+            let (entries, loads) = favourites::editor_menu(&read);
+            *star_favourites.borrow_mut() = read;
+            if !entries.is_empty() {
+                star_menu.open(entries, loads, x, y);
+            }
+        }
+    });
+    window.on_favourite_line_hovered({
+        let star_menu = star_menu.clone();
+        move |p, l, r, t, left| star_menu.hover(p, l, r, t, left)
+    });
+    window.on_favourite_placed({
+        let star_menu = star_menu.clone();
+        move |p, x, y, w| star_menu.placed(p, x, y, w)
+    });
+    window.on_favourite_dismissed({
+        let star_menu = star_menu.clone();
+        move || star_menu.close()
+    });
+    window.on_favourite_line_clicked({
+        let star_menu = star_menu.clone();
+        let star_favourites = star_favourites.clone();
+        let edit = edit.clone();
+        let words = words.clone();
+        let show = show.clone();
+        let active = active.clone();
+        move |p, l, r, t, left| {
+            let chosen = star_menu.click(p, l, r, t, left);
+            if !active.get() {
+                return;
+            }
+            if let Some(crate::popup_menu::Chosen::Action(index)) = chosen
+                && let Some(row) = star_favourites.borrow().get(index)
+            {
+                let mut edit = edit.borrow_mut();
+                edit.load(row);
+                // (the list sorts what it is given)
+                hydrus_search::enter_predicates(&mut edit.search.predicates, &[], &words.text);
+                drop(edit);
+                show();
+            }
+        }
+    });
     window.on_flip_synchronised({
         let edit = edit.clone();
         let show = show.clone();

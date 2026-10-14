@@ -246,9 +246,14 @@ search.
   a switched page. Remaining list keyboard navigation is unchanged.
 - **Favourite search autocomplete shares the native page's suggestion model**,
   including blank system predicate editors, and has editable file/tag domains,
-  current/pending tags, sort and collection controls. It does not yet offer the
-  reference's autocomplete cog, explicit OR-construction buttons, favourite
-  predicates or fetch/children tabs. Multiple/deleted location selection and
+  current/pending tags, sort and collection controls, and the paste, star
+  (favourites to load) and empty-search buttons beside the box
+  (`oracle/record_favourite_editor_buttons.py`; the reference's autocomplete has
+  no cog). It does not yet offer the reference's explicit OR-construction
+  buttons or the results/favourites/children tabs, nor the cancel-search and
+  lock-search buttons (the reference's editor hides lock; cancel shows only
+  while a search runs). Paste with no text on the clipboard shows a message
+  inline where the reference shows a dialog. Multiple/deleted location selection and
   overwrite/delete questions appear inside the owner window. The list sorts
   names casefolded as lowercase (Python's casefold differs for a few letters,
   such as "ß", which we fold to "ss" as it does).

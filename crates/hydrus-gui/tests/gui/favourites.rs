@@ -923,3 +923,190 @@ fn the_dialogs_save_edit_and_delete_searches() {
         [("example search".to_owned(), "inbox filter".to_owned(), true)]
     );
 }
+
+/// The star menu's lines as the recording writes them: its items, and a
+/// submenu as `[name, lines]`, found by opening each.
+fn editor_menu_json(window: &hydrus_gui::FavouriteEditWindow, pane: usize) -> Json {
+    let lines = window.get_favourite_panes().row_data(pane).unwrap().lines;
+    Json::Array(
+        (0..lines.row_count())
+            .map(|i| {
+                let line = lines.row_data(i).unwrap();
+                if line.kind == 3 {
+                    window.invoke_favourite_line_hovered(
+                        i32::try_from(pane).unwrap(),
+                        i32::try_from(i).unwrap(),
+                        200.0,
+                        100.0,
+                        10.0,
+                    );
+                    json!([line.label.to_string(), editor_menu_json(window, pane + 1)])
+                } else {
+                    json!(line.label.to_string())
+                }
+            })
+            .collect(),
+    )
+}
+
+#[test]
+fn the_editors_paste_empty_search_and_star_buttons_act_as_the_references_do() {
+    // (`record_favourite_editor_buttons.py`: the reference's editor given
+    // lines on the clipboard, the empty search button and its star menu)
+    let fixture = hydrus_testkit::fixture_json("favourite_editor_buttons.json");
+    let (_dirs, store) = store();
+    let base = fixture_favourites(&store)[0].search.clone();
+    let rows: Vec<FavouriteSearch> = fixture["rows"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|row| {
+            let mut search = base.clone();
+            search.predicates = strings(&row[2])
+                .iter()
+                .map(|t| {
+                    hydrus_search::parse_api_search(&json!([t]))
+                        .unwrap()
+                        .remove(0)
+                })
+                .collect();
+            let sort = match &row[4] {
+                Json::Null => None,
+                spec => Some(PageSort {
+                    tag_context: hydrus_core::search::context::TagContext::default(),
+                    by: PageSortBy::System(match spec[0].as_str().unwrap() {
+                        "SORT_FILES_BY_FILESIZE" => SORT_FILES_BY_FILESIZE,
+                        "SORT_FILES_BY_WIDTH" => SORT_FILES_BY_WIDTH,
+                        other => panic!("{other}"),
+                    }),
+                    ascending: spec[1].as_bool().unwrap(),
+                }),
+            };
+            FavouriteSearch {
+                folder: row[0].as_str().map(str::to_owned),
+                name: row[1].as_str().unwrap().to_owned(),
+                search,
+                synchronised: row[3].as_bool().unwrap(),
+                sort,
+                collect: match &row[5] {
+                    Json::Null => None,
+                    spec => Some(PageCollect {
+                        namespaces: strings(spec),
+                        ..PageCollect::default()
+                    }),
+                },
+            }
+        })
+        .collect();
+    store
+        .write(|ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::settings::FavouriteSearches(rows),
+            )
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let clipboard = std::rc::Rc::new(std::cell::RefCell::new(String::new()));
+    hydrus_gui::set_paster({
+        let clipboard = clipboard.clone();
+        move || clipboard.borrow().clone()
+    });
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    bound
+        .current
+        .borrow()
+        .borrow_mut()
+        .add_predicate("blue eyes");
+    // "save this search" opens the editor on the page's search
+    ui.invoke_favourites_menu_requested(10.0, 100.0);
+    let save = pane_lines(&ui, 0)
+        .iter()
+        .position(|l| l == "save this search")
+        .unwrap();
+    ui.invoke_menu_line_clicked(0, i32::try_from(save).unwrap(), 0.0, 0.0, 0.0);
+    let window = bound
+        .favourites
+        .edit
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong)
+        .expect("the edit dialog open");
+    let strs = |model: slint::ModelRc<slint::SharedString>| -> Vec<String> {
+        model.iter().map(|p| p.to_string()).collect()
+    };
+    let mut differences = Vec::new();
+    for step in fixture["steps"].as_array().unwrap() {
+        let what = step["step"].as_array().unwrap();
+        match what[0].as_str().unwrap() {
+            "initial" => {}
+            "paste" => {
+                what[1]
+                    .as_str()
+                    .unwrap()
+                    .clone_into(&mut clipboard.borrow_mut());
+                window.invoke_paste_search();
+            }
+            "status" => {
+                window.invoke_tag_status_ticked(false, what[1].as_bool().unwrap());
+                window.invoke_tag_status_ticked(true, what[2].as_bool().unwrap());
+            }
+            "empty search" => window.invoke_clear_search(),
+            "menu" => {
+                window.invoke_favourites_menu(10.0, 100.0);
+                let ours = editor_menu_json(&window, 0);
+                if ours != step["menu"] {
+                    differences.push(format!("{what:?}: menu {ours} not {}", step["menu"]));
+                }
+                window.invoke_favourite_dismissed();
+            }
+            "load" => {
+                window.invoke_favourites_menu(10.0, 100.0);
+                let mut path: Vec<&str> = what[1]
+                    .as_str()
+                    .map(|f| f.split('/').collect())
+                    .unwrap_or_default();
+                path.push(what[2].as_str().unwrap());
+                for (depth, part) in path.iter().enumerate() {
+                    let lines = window.get_favourite_panes().row_data(depth).unwrap().lines;
+                    let line = (0..lines.row_count())
+                        .position(|i| {
+                            let l = lines.row_data(i).unwrap();
+                            l.label == *part
+                        })
+                        .unwrap_or_else(|| panic!("no entry {part}"));
+                    let (pane, line) =
+                        (i32::try_from(depth).unwrap(), i32::try_from(line).unwrap());
+                    if depth + 1 < path.len() {
+                        window.invoke_favourite_line_hovered(pane, line, 200.0, 100.0, 10.0);
+                    } else {
+                        window.invoke_favourite_line_clicked(pane, line, 0.0, 0.0, 0.0);
+                    }
+                }
+            }
+            other => panic!("unknown step {other}"),
+        }
+        let want = &step["state"];
+        let mut check = |key: &str, ours: Json| {
+            if ours != want[key] {
+                differences.push(format!("{what:?}: {key} {ours} not {}", want[key]));
+            }
+        };
+        check("shown", json!(strs(window.get_predicates())));
+        check("synchronised", json!(window.get_synchronised()));
+        check("sort_widget", json!(window.get_sort_label().to_string()));
+        check(
+            "collect_widget",
+            json!(window.get_collect_label().to_string()),
+        );
+        check("include_current", json!(window.get_include_current()));
+        check("include_pending", json!(window.get_include_pending()));
+        check("location", json!(window.get_location_label().to_string()));
+        check("tag_service", json!(window.get_tags_label().to_string()));
+        if window.get_error().is_empty() != step["messages"].as_array().unwrap().is_empty() {
+            differences.push(format!("{what:?}: message {:?}", window.get_error()));
+        }
+    }
+    assert!(differences.is_empty(), "{}", differences.join("\n"));
+}

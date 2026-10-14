@@ -8103,10 +8103,10 @@
     "Multiple/deleted domain selection and overwrite questions are inline in the owner."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Click-choosing a suggestion, the system:limit child editor (OK adds 'system:limit is 7') and close-cancel of the child are driven and replayed against fixtures/favourite_search_editor.json (suggestion list names only). Not covered: counts/context shown in suggestions, keyboard highlight + Enter. Notes already admit the reference cog, OR construction and tabs are absent. Tests: crates/hydrus-gui/tests/gui/favourite_search_editor.rs:32 favourite_domain_sort_collect_and_autocomplete_widgets_reach_saved_searches; crates/hydrus-gui-model/tests/model/favourite_search_editor.rs:60"
+    "by": "Claude session (W5-10)",
+    "note": "Adds gui/favourites.rs the_editors_paste_empty_search_and_star_buttons_act_as_the_references_do: the real editor's paste, star menu (nested folders, loads search, sync, sort, collect) and empty search buttons replayed against fixtures/favourite_editor_buttons.json. Untagged: the results/favourites/children tabs and OR construction in the editor are still absent."
    }
   },
   {

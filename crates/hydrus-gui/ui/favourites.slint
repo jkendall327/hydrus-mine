@@ -7,6 +7,7 @@ import { Btn } from "btn.slint";
 import { Button, CheckBox, ComboBox, LineEdit, ScrollView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 import { Tick } from "subscriptions.slint";
+import { MenuPane, MenuPanes } from "main_menu.slint";
 
 // A row of the list: its folder, name, search, sort and collect.
 export struct FavouriteListRow {
@@ -219,6 +220,16 @@ export component FavouriteEditWindow inherits Window {
     in property <[string]> suggestions;
     in property <int> suggestion-highlight;
     callback suggestion-moved(int);
+    // the autocomplete's icon buttons: paste lines of predicates, the
+    // star menu (opened at x, y) of favourites to load, empty the search
+    callback paste-search();
+    callback clear-search();
+    callback favourites-menu(length, length);
+    in property <[MenuPane]> favourite-panes;
+    callback favourite-line-hovered(int, int, length, length, length);
+    callback favourite-line-clicked(int, int, length, length, length);
+    callback favourite-placed(int, length, length, length);
+    callback favourite-dismissed();
     in property <bool> child-open;
     out property <bool> can-edit: !root.child-open && !root.selecting-locations && root.question == "";
     callback location-chosen(int);
@@ -287,12 +298,31 @@ export component FavouriteEditWindow inherits Window {
                     if root.can-edit && event.text == Key.DownArrow { root.suggestion-moved(1); return accept; }
                     reject
                 }
-                search-input := LineEdit {
-                    placeholder-text: "search";
-                    text <=> root.typed;
-                    enabled: root.can-edit;
-                    edited => { root.typed-edited(); }
-                    accepted => { root.typed-accepted(); }
+                HorizontalLayout {
+                    spacing: 4px;
+                    search-input := LineEdit {
+                        horizontal-stretch: 1;
+                        placeholder-text: "search";
+                        text <=> root.typed;
+                        enabled: root.can-edit;
+                        edited => { root.typed-edited(); }
+                        accepted => { root.typed-accepted(); }
+                    }
+                    Btn {
+                        text: "paste";
+                        enabled: root.can-edit;
+                        clicked => { root.paste-search(); }
+                    }
+                    star := Btn {
+                        text: "favourites";
+                        enabled: root.can-edit;
+                        clicked => { root.favourites-menu(self.absolute-position.x, self.absolute-position.y + self.height); }
+                    }
+                    Btn {
+                        text: "empty search";
+                        enabled: root.can-edit;
+                        clicked => { root.clear-search(); }
+                    }
                 }
             }
             ScrollView {
@@ -467,5 +497,15 @@ export component FavouriteEditWindow inherits Window {
                 }
             }
         }
+    }
+    if root.favourite-panes.length > 0: MenuPanes {
+        width: root.width;
+        height: root.height;
+        top: 0px;
+        panes: root.favourite-panes;
+        dismiss => { root.favourite-dismissed(); }
+        placed(p, x, y, w) => { root.favourite-placed(p, x, y, w); }
+        line-hovered(p, l, r, t, left) => { root.favourite-line-hovered(p, l, r, t, left); }
+        line-clicked(p, l, r, t, left) => { root.favourite-line-clicked(p, l, r, t, left); }
     }
 }
