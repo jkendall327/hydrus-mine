@@ -212,6 +212,8 @@ fn replay(rig: &Rig, dirs: &Dirs, case: &serde_json::Value, entry: &str) {
             }
             "question" => {
                 assert_eq!(rig.ui.get_question(), wanted.as_str(), "{case}");
+                // (the reference named no button labels: its questions are plain yes and no)
+                assert!(dialog[2].is_null() && dialog[3].is_null(), "{case}");
                 rig.ui.invoke_answer(answers.next().unwrap());
             }
             other => panic!("{other}"),
@@ -522,6 +524,7 @@ fn restoring_replays_the_reference_s_dialogs() {
                 assert_eq!(rig.asked.borrow().last().unwrap(), &wanted);
             } else {
                 assert_eq!(rig.ui.get_question(), wanted.as_str());
+                assert!(dialog[2].is_null() && dialog[3].is_null(), "{case}");
                 rig.ui.invoke_answer(answers.next().unwrap());
             }
         }

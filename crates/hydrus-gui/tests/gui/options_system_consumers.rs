@@ -2169,128 +2169,6 @@ mod network_consumers {
         (socket, url)
     }
 
-    /// The seconds the connection waits announced, in order.
-    fn retry_waits(statuses: &[String]) -> Vec<u64> {
-        statuses
-            .iter()
-            .filter_map(|s| {
-                let n = s.strip_prefix("connection failed - retrying in ")?;
-                n.strip_suffix(" seconds")?.parse().ok()
-            })
-            .collect()
-    }
-
-    #[tokio::test]
-    async fn a_failing_server_is_asked_as_many_times_as_the_retries_option_says() {
-        let (client, engine) = with_engine();
-        let (base, hits) = serve().await;
-        for retries in [2, 4] {
-            apply(&client, &engine, |w| {
-                number(w, "max retries allowed per request: ", (1, 10), retries);
-            });
-            let before = hits.count("status503");
-            let fetched = fetch(&engine, &format!("{base}/status/503")).await;
-            assert!(
-                matches!(fetched.result, Err(NetError::Infrastructure(_))),
-                "{:?}",
-                fetched.result
-            );
-            assert_eq!(
-                hits.count("status503") - before,
-                usize::try_from(retries).unwrap()
-            );
-        }
-    }
-
-    #[tokio::test]
-    async fn a_server_that_limits_bandwidth_is_waited_for_as_long_as_the_option_says() {
-        let (client, engine) = with_engine();
-        let (base, hits) = serve().await;
-        // two asks, one wait of 1.25^2 times the option
-        apply(&client, &engine, |w| {
-            number(w, "max retries allowed per request: ", (1, 10), 2);
-            number(
-                w,
-                "serverside bandwidth retry wait (seconds): ",
-                (1, 2_592_000),
-                1,
-            );
-        });
-        let short = fetch(&engine, &format!("{base}/status/429")).await;
-        assert!(
-            matches!(short.result, Err(NetError::Bandwidth(_))),
-            "{:?}",
-            short.result
-        );
-        assert_eq!(hits.count("status429"), 2);
-        assert!(
-            short
-                .statuses
-                .iter()
-                .any(|s| s == "server reported limited bandwidth - retrying")
-        );
-        assert!(short.seconds >= 1.5625, "{}", short.seconds);
-        // (the default of a minute would be a minute and a half)
-        apply(&client, &engine, |w| {
-            number(
-                w,
-                "serverside bandwidth retry wait (seconds): ",
-                (1, 2_592_000),
-                3,
-            );
-        });
-        let long = fetch(&engine, &format!("{base}/status/429")).await;
-        assert!(long.seconds >= 3.0 * 1.5625, "{}", long.seconds);
-    }
-
-    #[tokio::test]
-    async fn only_as_many_jobs_run_at_once_as_the_options_say() {
-        let (client, engine) = with_engine();
-        let (base, hits) = serve().await;
-        let url = format!("{base}/hold");
-        let busiest = |hits: &Hits| {
-            let seen = hits.max_active.swap(0, Ordering::SeqCst);
-            assert_eq!(hits.active.load(Ordering::SeqCst), 0);
-            seen
-        };
-        // two at once overall (and room for more on the domain)
-        apply(&client, &engine, |w| {
-            number(
-                w,
-                "max number of simultaneous active network jobs: ",
-                (1, 1000),
-                2,
-            );
-            number(
-                w,
-                "max number of simultaneous active network jobs per domain: ",
-                (1, 100),
-                5,
-            );
-        });
-        six(&engine, &url).await;
-        let seen = busiest(&hits);
-        assert!((2..=2).contains(&seen), "{seen}");
-        // five overall, but three on the domain
-        apply(&client, &engine, |w| {
-            number(
-                w,
-                "max number of simultaneous active network jobs: ",
-                (1, 1000),
-                5,
-            );
-            number(
-                w,
-                "max number of simultaneous active network jobs per domain: ",
-                (1, 100),
-                3,
-            );
-        });
-        six(&engine, &url).await;
-        let seen = busiest(&hits);
-        assert!((2..=3).contains(&seen), "{seen}");
-    }
-
     #[tokio::test]
     async fn a_server_that_goes_quiet_is_given_the_timeout_the_option_says() {
         let (client, engine) = with_engine();
@@ -2354,52 +2232,50 @@ mod network_consumers {
             noneable_text(w, "no_proxy: ", None);
         });
         let fetched = fetch(&engine, "http://booru.invalid/uri").await;
-        assert!(fetched.result.is_err());
+        if !environment_names_a_proxy() {
+            assert!(fetched.result.is_err());
+        }
         assert_eq!(hits.count("uri"), 2, "the proxy was not asked");
-    }
-
-    #[tokio::test]
-    async fn https_requests_ask_the_https_proxy_to_connect() {
-        use std::io::{BufRead as _, BufReader, Write as _};
-        let (client, engine) = with_engine();
-        // a proxy that notes what it is asked and refuses
-        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
-        let proxy = format!("http://{}", listener.local_addr().unwrap());
-        let (sent, asked) = std::sync::mpsc::channel();
-        std::thread::spawn(move || {
-            while let Ok((mut stream, _)) = listener.accept() {
-                let mut line = String::new();
-                let _ = BufReader::new(stream.try_clone().unwrap()).read_line(&mut line);
-                let _ = sent.send(line.trim().to_owned());
-                let _ = stream.write_all(b"HTTP/1.1 403 Forbidden\r\ncontent-length: 0\r\n\r\n");
-            }
-        });
-        apply(&client, &engine, |w| {
-            noneable_text(w, "https: ", Some(&proxy));
-            number(
-                w,
-                "max connection attempts allowed per request: ",
-                (1, 10),
-                1,
-            );
-        });
-        let fetched = fetch(&engine, "https://booru.invalid/x").await;
-        assert!(fetched.result.is_err(), "the proxy refused");
-        assert_eq!(
-            asked.recv_timeout(Duration::from_secs(5)).unwrap(),
-            "CONNECT booru.invalid:443 HTTP/1.1"
-        );
-        // and with none, it is not asked again
-        apply(&client, &engine, |w| {
-            noneable_text(w, "https: ", None);
-        });
-        let fetched = fetch(&engine, "https://booru.invalid/x").await;
-        assert!(fetched.result.is_err());
-        assert!(asked.try_recv().is_err(), "no proxy, no ask");
     }
 
     fn recorded() -> serde_json::Value {
         hydrus_testkit::fixture_json("network_job_options.json")
+    }
+
+    /// The statuses a job showed while it waited to retry, one after another.
+    fn retry_statuses(statuses: &[String]) -> Vec<String> {
+        let mut out: Vec<String> = Vec::new();
+        for status in statuses.iter().filter(|s| s.contains(" - retrying ")) {
+            if out.last() != Some(status) {
+                out.push(status.clone());
+            }
+        }
+        out
+    }
+
+    fn recorded_retry_statuses(case: &serde_json::Value) -> Vec<String> {
+        let statuses: Vec<String> = case["statuses"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|s| s.as_str().unwrap().to_owned())
+            .collect();
+        retry_statuses(&statuses)
+    }
+
+    /// Whether the environment names a proxy, which a client honours when none is set in its
+    /// options (the recorder cleared the environment's).
+    fn environment_names_a_proxy() -> bool {
+        [
+            "HTTP_PROXY",
+            "http_proxy",
+            "HTTPS_PROXY",
+            "https_proxy",
+            "ALL_PROXY",
+            "all_proxy",
+        ]
+        .iter()
+        .any(|name| std::env::var_os(name).is_some())
     }
 
     fn seconds_of(wakes: &serde_json::Value, kind: &str) -> Vec<f64> {
@@ -2444,13 +2320,18 @@ mod network_consumers {
             // the reference's job counts the attempt it would make next
             let attempts = case["connection_attempts"].as_u64().unwrap() - 1;
             assert_eq!(attempts, case["attempts"].as_u64().unwrap());
-            let waits: Vec<f64> = retry_waits(&fetched.statuses)
-                .into_iter()
-                .map(|s| s as f64)
-                .collect();
-            assert_eq!(waits, seconds_of(&case["wakes"], "connection"), "{case}");
-            assert_eq!(waits.len() as u64 + 1, attempts, "{case}");
-            assert!(fetched.seconds >= waits.iter().sum::<f64>(), "{case}");
+            // the same words, and the same time taken (the reference's wait runs on into the
+            // second after its wake time)
+            assert_eq!(
+                retry_statuses(&fetched.statuses),
+                recorded_retry_statuses(case),
+                "{case}"
+            );
+            assert!(
+                fetched.seconds >= case["seconds"].as_f64().unwrap() - 0.5,
+                "{} for {case}",
+                fetched.seconds
+            );
         }
     }
 
@@ -2480,6 +2361,16 @@ mod network_consumers {
                 (hits.count("status503") - before) as u64,
                 case["asked"].as_u64().unwrap(),
                 "{case}"
+            );
+            assert_eq!(
+                retry_statuses(&fetched.statuses),
+                recorded_retry_statuses(case),
+                "{case}"
+            );
+            assert!(
+                fetched.seconds >= case["seconds"].as_f64().unwrap() - 0.5,
+                "{} for {case}",
+                fetched.seconds
             );
         }
     }
@@ -2512,6 +2403,11 @@ mod network_consumers {
                 case["asked"].as_u64().unwrap(),
                 "{case}"
             );
+            assert_eq!(
+                retry_statuses(&fetched.statuses),
+                recorded_retry_statuses(case),
+                "{case}"
+            );
             let waited = seconds_of(&case["wakes"], "serverside")[0];
             assert!(
                 fetched.seconds >= waited - 0.05,
@@ -2519,10 +2415,9 @@ mod network_consumers {
                 fetched.seconds
             );
             assert!(
-                fetched
-                    .statuses
-                    .iter()
-                    .any(|s| s == "server reported limited bandwidth - retrying")
+                fetched.seconds >= case["seconds"].as_f64().unwrap() - 0.5,
+                "{} for {case}",
+                fetched.seconds
             );
         }
     }

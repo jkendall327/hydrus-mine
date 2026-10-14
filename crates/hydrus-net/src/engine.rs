@@ -1739,8 +1739,7 @@ impl NetEngine {
                         |s| s as f64,
                     );
                     job.set_wait(WaitReason::ServerBandwidth);
-                    job.set_status("server reported limited bandwidth - retrying");
-                    job.sleep(seconds).await?;
+                    Self::announce_wait(job, "server reported limited bandwidth", seconds).await?;
                 }
                 Failure::Reattempt(message) => {
                     request_attempt += 1;
@@ -1800,11 +1799,32 @@ impl NetEngine {
     ) -> Result<(), NetError> {
         let seconds =
             u64::from(connection_attempt - 1) * self.options.read().connection_error_wait_time;
-        if seconds > 0 {
-            job.set_wait(WaitReason::Connection);
-            job.set_status(format!("{status} - retrying in {seconds} seconds"));
+        job.set_wait(WaitReason::Connection);
+        Self::announce_wait(job, status, seconds as f64).await
+    }
+
+    /// Wait as the reference's `_WaitOnConnectionError` and `_WaitOnServersideBandwidth` do: the
+    /// wake time is the whole second now plus the wait, and the status ("... - retrying now",
+    /// "... - retrying in 4.7 seconds") is renewed each second until now is past it, so a wait
+    /// lasts into the second after its wake time, and even a wait of nothing takes a second.
+    async fn announce_wait(job: &Job, status: &str, seconds: f64) -> Result<(), NetError> {
+        let wake = now() as f64 + seconds;
+        while now() as f64 <= wake {
+            let delta = (wake - now() as f64).abs();
+            let when = if delta <= 3.0 {
+                "now".to_owned()
+            } else {
+                format!("in {}", hydrus_core::time::pretty_time_delta_f64(delta))
+            };
+            job.set_status(format!("{status} - retrying {when}"));
+            let before = std::time::Instant::now();
+            job.sleep(1.0).await?;
+            if before.elapsed() < Duration::from_millis(900) {
+                // (skipped or woken: the wait is over)
+                return Ok(());
+            }
         }
-        job.sleep(seconds as f64).await
+        Ok(())
     }
 
     /// The headers every hop of an attempt sends (cookies are added per
