@@ -340,8 +340,10 @@ fn act(store: &Arc<Store>, state: &mut State, action: &Action, open_files: &Open
                     .into_iter()
                     .filter(|s| s.status == SeedStatus::Deleted)
                     .collect();
+                // (any deleted source that knows its hash asks, whether or not
+                // the client has met the hash: `HasHash`)
                 let hashes = hash_ids(store, &deleted);
-                if !hashes.is_empty() {
+                if deleted.iter().any(|s| s.meta.hash("sha256").is_some()) {
                     state.asking = Some(Asking::EraseRecords(selected_ids, hashes));
                     return;
                 }

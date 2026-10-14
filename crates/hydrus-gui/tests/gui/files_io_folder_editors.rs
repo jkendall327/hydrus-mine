@@ -1047,6 +1047,39 @@ fn an_import_folders_allowed_filetypes_veto_the_other_files_as_the_reference_doe
         .collect();
     assert_eq!(seeds_of(&store), theirs);
 
+    // the log edited in the dialog, then the path changed: the new path's
+    // log is empty (`SetTuple` runs after the dialog's own log is set)
+    {
+        let (list, edit) = edit_first(&ui, &bound);
+        assert!(edit.get_has_file_log());
+        edit.invoke_file_log();
+        let log = bound
+            .folders
+            .log
+            .borrow()
+            .as_ref()
+            .expect("the log opens")
+            .clone_strong();
+        assert!(log.get_rows().row_count() > 0);
+        log.invoke_row_clicked(0, false, false);
+        log.invoke_row_menu(0, 50.0, 50.0);
+        let panes = log.get_menu_panes();
+        let menu = panes.row_data(0).unwrap().lines;
+        let line = (0..menu.row_count())
+            .position(|l| menu.row_data(l).unwrap().label.starts_with("skip"))
+            .expect("skip is offered");
+        let line = i32::try_from(line).unwrap();
+        log.invoke_menu_line_hovered(0, line, 300.0, 100.0, 10.0);
+        log.invoke_menu_line_clicked(0, line, 300.0, 100.0, 10.0);
+        log.invoke_close_window();
+        let elsewhere = tempfile::tempdir().unwrap();
+        edit.set_path(elsewhere.path().to_string_lossy().into_owned().into());
+        edit.invoke_apply();
+        assert!(bound.folders.import_edit.borrow().is_none());
+        list.invoke_apply();
+        assert_eq!(seeds_of(&store), Vec::<(String, i64, String)>::new());
+    }
+
     // the skip period: files modified more recently than it wait
     let skip = &recorded["skip"];
     let watched = tempfile::tempdir().unwrap();

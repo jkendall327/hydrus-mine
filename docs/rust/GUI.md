@@ -316,6 +316,10 @@ copying every source. Retrying failures, deleting whole statuses and
 reversing ask the reference's questions first (retrying ignored files offers
 its four buttons: all, 403s, 404s, blacklisted), and each entry's effect on a
 list holding every status is as `oracle/record_file_log_effects.py` recorded.
+Trying again files that were deleted asks whether to erase their deletion
+records first (and take the files out of the trash); "yes" does, either answer
+(or closing the question) tries the selected files again, as
+`oracle/record_file_log_selected.py` recorded.
 Its actions change the importer at once, as the
 reference's frame does. The rows and menus are as
 `oracle/record_file_log.py` recorded the reference's. Windows' own
@@ -475,7 +479,10 @@ its positive, the list sorted as the reference's, text that doesn't start with
 
 When "apply" saves an import folder, a new path starts a new file log and other
 allowed filetypes forget its ignored files so they are looked at again
-(`ImportFolder.SetTuple`). The folders do their work when their edited
+(`ImportFolder.SetTuple`, which runs after the dialog's own file log is set, so
+the new path's empty log wins over edits made in the dialog; the filetype
+change is recorded in `oracle/record_import_folder_filetypes.py`, the path
+change follows the reference's source and is not recorded). The folders do their work when their edited
 schedule says (`oracle/record_folder_schedule.py`: regular period, run or check
 now, paused, which popups they show, and what they leave of the schedule
 afterwards), skip the files modified more recently than the skip period and

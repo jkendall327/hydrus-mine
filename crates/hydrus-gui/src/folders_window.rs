@@ -263,11 +263,13 @@ fn write_import_folders(store: &Store, open: ImportList) -> hydrus_store::Result
             queues::delete_queue(conn, *id)?;
         }
         for folder in &folders {
+            // (`ImportFolder.SetTuple` runs after the dialog's own log is
+            // set: a new path starts a new log, and other allowed filetypes
+            // forget the ignored files so they are looked at again)
+            let mut fresh_log = false;
+            let mut forget_vetoed = false;
             let id = match folder.id {
                 Some(id) => {
-                    // (`ImportFolder.SetTuple`: a new path starts a new log,
-                    // and other allowed filetypes forget the ignored files so
-                    // they are looked at again)
                     if let Some(old) = import_folders::import_folder(conn, id)? {
                         let manager: hydrus_core::import_options::ImportOptionsManager =
                             settings::get(conn)?;
@@ -278,9 +280,9 @@ fn write_import_folders(store: &Store, open: ImportList) -> hydrus_store::Result
                                 .filetypes
                         };
                         if old.settings.path != folder.settings.path {
-                            queues::replace_file_seeds(conn, id, &[])?;
+                            fresh_log = true;
                         } else if allowed(&old.queue.options) != allowed(&folder.options) {
-                            queues::remove_file_seeds(conn, id, &[queues::SeedStatus::Vetoed])?;
+                            forget_vetoed = true;
                         }
                     }
                     queues::rename_queue(conn, id, &folder.name)?;
@@ -301,6 +303,13 @@ fn write_import_folders(store: &Store, open: ImportList) -> hydrus_store::Result
             if let (Some(id), Some(seeds)) = (id, &folder.file_seeds) {
                 queues::replace_file_seeds(conn, id, seeds)?;
                 queues::nudge(conn, id)?;
+            }
+            if let Some(id) = id {
+                if fresh_log {
+                    queues::replace_file_seeds(conn, id, &[])?;
+                } else if forget_vetoed {
+                    queues::remove_file_seeds(conn, id, &[queues::SeedStatus::Vetoed])?;
+                }
             }
             if id.is_none() {
                 eprintln!(

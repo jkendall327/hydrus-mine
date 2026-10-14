@@ -4947,9 +4947,9 @@
    ],
    "recheck": {
     "date": "2026-10-13",
-    "class": "source-restated",
+    "class": "likely-good",
     "by": "claude, #97 phase 2 (w4-r2)",
-    "note": "The window's URL launches and the reference's >10 'open this many?' question (ClientGUIFileSeedCache.py:816) are driven through the real window, but the question text is the reference's string restated from source, not a recording, and the leaf's other half (opening non-http sources as locations, reference OpenFileLocations; native opens the parent directory) is untested and differs. Test: crates/hydrus-gui/tests/gui/file_log_actions.rs opening_selected_sources_launches_what_the_reference_opened."
+    "note": "oracle/record_file_log_selected.py records the reference's 'open URLs' and 'open files' on the recorded selections: what the browser was given, the 'open this many?' question for more than ten with its words, and the answers. file_log_actions.rs opening_selected_sources_launches_what_the_reference_opened replays every case through the real window and its menu (URL launches and the question text equal the recording; answering no opens nothing). The paths half is a documented difference, not matched: the reference's OpenFileLocations is given the files to select in the file manager, native opens each file's parent folder (twice for two files in one folder; DIFFERENCES.md, The file log window). The test compares native against that parent-folder behaviour, so the leaf's URL and confirmation parts are the ones proved against the reference."
    }
   },
   {
@@ -5124,7 +5124,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "claude, #97 phase 2 (w4-r2)",
-    "note": "oracle/record_import_folder_filetypes.py runs the reference's import folder over a png, a jpeg, a static gif and a bitmap with everything allowed, jpeg and gif only, png only and bitmap only, and records every file seed's status and note ('File was a png, which is not allowed by the File Filtering Import Options.' and so on); the real editor's filetype tree is ticked to the same set and the real worker's seeds must be the recorded. The skip period (a day, then a second, over files an hour and two days old) is replayed the same way, and editing the allowed filetypes of a folder forgets its ignored files and re-checks them, as recorded (ImportFolder.SetTuple), as does a new path starting a new log. Native fix: the manage dialog's apply now does both. Test: files_io_folder_editors.rs an_import_folders_allowed_filetypes_veto_the_other_files_as_the_reference_does."
+    "note": "oracle/record_import_folder_filetypes.py runs the reference's import folder over a png, a jpeg, a static gif and a bitmap with everything allowed, jpeg and gif only, png only and bitmap only, and records every file seed's status and note ('File was a png, which is not allowed by the File Filtering Import Options.' and so on); the real editor's filetype tree is ticked to the same set and the real worker's seeds must be the recorded. The skip period (a day, then a second, over files an hour and two days old) is replayed the same way, and editing the allowed filetypes of a folder forgets its ignored files and re-checks them, as recorded (ImportFolder.SetTuple). Native fix: the manage dialog's apply now does this. A new path starting a new log follows the reference's source (SetTuple, ClientImportLocal.py:1418) and is not recorded; it is tested with an edit made to the log in the dialog first (the new path's empty log wins, as SetTuple runs after the dialog's cache is set). Test: files_io_folder_editors.rs an_import_folders_allowed_filetypes_veto_the_other_files_as_the_reference_does."
    }
   },
   {
