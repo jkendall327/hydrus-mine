@@ -347,11 +347,10 @@ fn add_opens_a_new_call_that_is_named_keyed_and_asked_about_as_recorded() {
     assert!(add["keys_unique"].as_bool().unwrap());
 }
 
-/// Not tagged (audit-options-nested-external-call-input-rules): the rows, the
-/// pipeline description, the vetoes and the string processor buttons' labels
-/// are the recorded ones, but a processor is not edited through the child
-/// editor here (it is put in the store and the editor reopened), so the leaf's
-/// String Processor part is only half shown.
+/// The rows (label, enable flag, token), the pipeline description, the vetoes and the string
+/// processor buttons' labels are the recorded ones. The button's child editor is driven by
+/// `the_rule_rows_string_processor_button_opens_the_child_editor_as_the_reference_does`.
+// leaf: audit-options-nested-external-call-input-rules
 #[test]
 fn the_input_rows_vetoes_and_processor_button_labels_are_the_recorded_ones() {
     use hydrus_core::url::strings::{Conversion, ProcessingStep, StringConverter};

@@ -3121,7 +3121,7 @@ while it runs (the reference turns off only the one clicked). A test call's
 results and errors are the reference's (`Looks good!`, its
 `ExecutableException` and `BadReturnCodeException` texts with Python's list and
 string quoting, and the first 256 characters of the program's output);
-timeouts and cancellation say so in hydrus-rs's words. Cancellation owns/reaps
+a timeout is reported in the reference's words too (W5-2; hydrus-rs stops the call at its timeout, not at the reference's 3-second check), cancellation says so in hydrus-rs's words. Cancellation owns/reaps
 the direct child only; descendant process groups are not claimed. Ordinary
 executable arguments use the process API; batch/shell interpreters retain their
 own quoting semantics.
@@ -5318,6 +5318,10 @@ be diagnosed afterwards. The owner chose always-on crash logging (2026-10-14).
   report is the reference's. A stray child that keeps the pipes open after a
   timeout is not waited for, where the reference waits two seconds and then
   reports a possible zombie in the stderr part.
+- **The rule row's string processor editor starts from the row's test
+  input**, the value typed in the testing box (the parameter's example until
+  it is changed); the reference always starts from the parameter's fixed
+  example value.
 - **Output is quoted as the text flag says**, as in the reference: text mode
   as text (invalid UTF-8 replaced), otherwise as bytes. Hide terminal acts only
   on Windows, as in the reference; deferred.

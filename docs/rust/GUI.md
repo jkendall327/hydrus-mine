@@ -5786,7 +5786,7 @@ panic hook runs first.
 ## External calls and processing steps: what now works (W5-2)
 
 - The external call editor's rule rows open the string processor editor from
-  their button, with the parameter's example as the starting string. A step
+  their button, starting from the row's test input (the parameter's example until it is changed). A step
   applied there shows in the row's button and the command preview; cancelling
   leaves the row alone.
 - A call's timeout, "this can live for a very long time" and output-is-text
