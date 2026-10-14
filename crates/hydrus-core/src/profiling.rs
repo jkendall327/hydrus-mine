@@ -350,19 +350,37 @@ pub fn needs_plan(dir: &Path, query: &str) -> bool {
         .lock()
         .unwrap_or_else(PoisonError::into_inner)
         .as_ref()
-        .is_some_and(|p| {
-            p.by_dir
-                .get(dir)
-                .is_none_or(|(_, planned)| !planned.contains(query))
-        })
+        .is_some_and(|p| p.by_dir.get(dir).is_none_or(|(_, planned)| !planned.contains(query)))
+}
+
+/// A Python `repr` of a string, as the plan rows print.
+fn py_repr(text: &str) -> String {
+    let quote = if text.contains('\'') && !text.contains('"') {
+        '"'
+    } else {
+        '\''
+    };
+    let mut out = String::from(quote);
+    for c in text.chars() {
+        match c {
+            '\\' => out.push_str("\\\\"),
+            '\n' => out.push_str("\\n"),
+            '\r' => out.push_str("\\r"),
+            '\t' => out.push_str("\\t"),
+            c if c == quote => {
+                out.push('\\');
+                out.push(c);
+            }
+            c => out.push(c),
+        }
+    }
+    out.push(quote);
+    out
 }
 
 /// One `EXPLAIN QUERY PLAN` row, as Python prints the row tuple.
 pub fn plan_row(id: i64, parent: i64, not_used: i64, detail: &str) -> String {
-    format!(
-        "({id}, {parent}, {not_used}, {})",
-        crate::pyjson::python_str_repr(detail)
-    )
+    format!("({id}, {parent}, {not_used}, {})", py_repr(detail))
 }
 
 /// `PrintQueryPlan`: count the query, and the first time write it down with

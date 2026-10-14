@@ -182,9 +182,7 @@ fn db_profile_mode_logs_the_slow_jobs_and_counts_the_fast_ones() {
     );
     // each slow job is a line led by the time, then the reference's wording
     let text = std::fs::read_to_string(&found[0]).unwrap();
-    let line =
-        Regex::new(r"(?m)^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d: (?:EXCLUSIVE: )?Profiling db job: (.*)$")
-            .unwrap();
+    let line = Regex::new(r"(?m)^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d: (?:EXCLUSIVE: )?Profiling db job: (.*)$").unwrap();
     let logged: Vec<_> = line.captures_iter(&text).map(|c| c[1].to_owned()).collect();
     assert!(
         logged.iter().any(|job| job.contains("debug_profiling")),
@@ -202,10 +200,7 @@ fn db_profile_mode_logs_the_slow_jobs_and_counts_the_fast_ones() {
     assert!(slow >= 1);
     // (the reference follows each with the profiler's table; here, the time,
     // or for a job that ran beside another being profiled, `EXCLUSIVE ... took`)
-    assert!(
-        text.contains("\n\nTook ") || text.contains("EXCLUSIVE: "),
-        "{text}"
-    );
+    assert!(text.contains("\n\nTook ") || text.contains("EXCLUSIVE: "), "{text}");
 }
 
 // leaf: audit-options-help-debug-action-query-planner-mode
@@ -383,10 +378,7 @@ fn client_api_profile_mode_counts_each_request() {
         alike(&step("threads on (ends client api)").0[0])
     );
     // this database's own requests: one slow, three fast
-    assert_eq!(
-        done[0],
-        "Profiling \"client_api\" done: 1 slow jobs, 3 fast jobs"
-    );
+    assert_eq!(done[0], "Profiling \"client_api\" done: 1 slow jobs, 3 fast jobs");
     // the slow one is logged by the reference's wording, in a log named as its
     let logged = logs(&d, "profile");
     assert_eq!(logged.len(), 1, "{logged:?}");
@@ -397,13 +389,8 @@ fn client_api_profile_mode_counts_each_request() {
         .count();
     assert_eq!(lines, 1, "{text}");
     assert!(
-        Regex::new(
-            &recording["profile_log_name_pattern"]
-                .as_str()
-                .unwrap()
-                .replace("db", "client_api")
-        )
-        .unwrap()
-        .is_match(logged[0].file_name().unwrap().to_str().unwrap())
+        Regex::new(&recording["profile_log_name_pattern"].as_str().unwrap().replace("db", "client_api"))
+            .unwrap()
+            .is_match(logged[0].file_name().unwrap().to_str().unwrap())
     );
 }
