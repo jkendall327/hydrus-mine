@@ -34,6 +34,8 @@ pub type Pair = (String, String);
 /// question has an answer; `None` cancels that part of the operation.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Question {
+    /// The window title the reference gives the message (empty: none).
+    pub title: &'static str,
     pub message: String,
     pub yes: String,
     pub no: String,
@@ -469,6 +471,7 @@ impl Relationships {
         }
         if !loops.is_empty() {
             answer.ask(Question {
+                title: "Loop problem!",
                 message: format!("{LOOP_PROBLEM}\n\n{}", loops.join("\n")),
                 yes: "OK".into(),
                 no: String::new(),
@@ -478,6 +481,7 @@ impl Relationships {
         }
         if !pre_existing.is_empty() {
             answer.ask(Question {
+                title: "Loop problem!",
                 message: format!("{PRE_EXISTING_LOOP_PROBLEM}\n\n{}", pre_existing.join("\n")),
                 yes: "OK".into(),
                 no: String::new(),
@@ -644,6 +648,7 @@ impl Relationships {
     /// The exact OK question if the current input contains a complete pair.
     pub fn apply_question(&self) -> Option<Question> {
         self.can_add().then(|| Question {
+            title: "",
             message: "Are you sure you want to OK? You have an uncommitted pair.".into(),
             yes: "yes".into(),
             no: "no".into(),
@@ -849,6 +854,7 @@ fn toggle_group(
             let mut suggestions = recent_reasons(answers.store, answers.kind, removing);
             suggestions.extend(fixed.iter().cloned());
             let asked = answers.ask(Question {
+                title: "",
                 message: format!("Enter a reason for:\n\n{}\n\n{}", pair_strings(&group, false), if removing { "to be removed. You will see the delete as soon as you upload, but a janitor will review your petition to decide if all users should receive it as well." } else { "To be added. A janitor will review your petition." }),
                 yes: "OK".into(), no: "cancel".into(), reason: true, suggestions,
             })?;
@@ -903,6 +909,7 @@ fn toggle_group(
             )
         };
         let accepted = answers.ask(Question {
+            title: "",
             message,
             yes: if pending {
                 "rescind the pend"

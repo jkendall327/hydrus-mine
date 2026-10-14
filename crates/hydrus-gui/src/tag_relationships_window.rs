@@ -367,6 +367,7 @@ pub(crate) fn open(
                 } => {
                     if answers.is_empty() {
                         Err(Question {
+                            title: "",
                             message: message.clone(),
                             yes: "yes".into(),
                             no: "no".into(),
@@ -416,6 +417,7 @@ pub(crate) fn open(
                 }
             };
             if let Err(Question {
+                title,
                 message,
                 yes,
                 no,
@@ -423,6 +425,7 @@ pub(crate) fn open(
                 suggestions,
             }) = result
             {
+                window.set_question_title(title.into());
                 window.set_question(message.into());
                 window.set_yes_label(yes.into());
                 window.set_no_label(no.into());
@@ -437,6 +440,7 @@ pub(crate) fn open(
             } else {
                 binding.operation = None;
                 binding.answers.clear();
+                window.set_question_title("".into());
                 window.set_question("".into());
             }
             drop(binding);

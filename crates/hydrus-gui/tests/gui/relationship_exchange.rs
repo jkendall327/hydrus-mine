@@ -177,6 +177,7 @@ fn pair_import_and_export_replay_the_reference_on_local_and_repository_services(
                     // only an OK to dismiss it
                     "critical" => {
                         assert!(!w.get_ask_reason(), "{text}");
+                        assert_eq!(w.get_question_title(), question["title"].as_str().unwrap());
                         assert_eq!(w.get_question(), question["message"].as_str().unwrap());
                         assert_eq!(w.get_yes_label(), "OK");
                         assert_eq!(w.get_no_label(), "");
