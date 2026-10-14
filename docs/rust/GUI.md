@@ -5081,7 +5081,9 @@ db" popup ending "backup complete!". "change database backup location"
 picks again. "restore from a database backup" picks a backup, asks, and
 restarts, restoring it before the store opens. A client with media in
 several locations shows "database is stored in multiple locations", whose
-note explains. `tests/model/database_backup.rs` and hydrus-store's
+note explains. The messages and questions of setting up, updating and restoring are replayed against
+`oracle/fixtures/backup_dialogs.json` (the reference's own dialogs, scripted answers) in
+`tests/gui/database_backup_menu.rs`. `tests/model/database_backup.rs` and hydrus-store's
 `backup` tests cover the menu, texts, mirror, backup and restore. Restore rejects
 its own database directory and waits until startup owns the GUI lock; an active
 serving process prevents it. The replacement database is copied before the old
