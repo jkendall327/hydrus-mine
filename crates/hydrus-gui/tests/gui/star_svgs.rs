@@ -675,6 +675,51 @@ fn svg_star_is_drawn_everywhere(service_svg: &str, file: &str) {
             &format!("{service_svg} in the preview window"),
         );
 
+        // the popped-in hover (the same graphic at the popped size), with
+        // the background draw off so that it is the hover that is looked at
+        client.ui.set_preview_draw_top_right(false);
+        let in_pane = |main: &_| {
+            let mut pixels = headless::render(main, width, height);
+            for (i, pixel) in pixels.chunks_exact_mut(4).enumerate() {
+                if i % width as usize >= 400 || i / (width as usize) < 630 {
+                    pixel[3] = 0;
+                }
+            }
+            pixels
+        };
+        let (x, y) = (
+            client.ui.get_preview_hover_x(),
+            client.ui.get_preview_hover_y(),
+        );
+        let (w, h) = (
+            client.ui.get_preview_hover_width(),
+            client.ui.get_preview_hover_height(),
+        );
+        let move_to = |x: f32, y: f32| {
+            client
+                .ui
+                .window()
+                .dispatch_event(slint::platform::WindowEvent::PointerMoved {
+                    position: slint::LogicalPosition::new(x, y),
+                });
+        };
+        move_to(x - 100.0, y + h + 20.0);
+        assert!(!client.ui.get_preview_hover_popped());
+        assert!(
+            star_in(&in_pane(&main), width as usize, size as usize, colours).is_none(),
+            "{service_svg}: nothing is drawn away from the corner with the background draw off"
+        );
+        move_to(x + w / 2.0, y + 3.0);
+        assert!(client.ui.get_preview_hover_popped());
+        check_star(
+            &in_pane(&main),
+            width as usize,
+            size as usize,
+            colours,
+            file,
+            &format!("{service_svg} in the preview window's popped-in hover"),
+        );
+
         // the media viewer
         client.ui.invoke_thumbnail_activated(0);
         let viewer = client
