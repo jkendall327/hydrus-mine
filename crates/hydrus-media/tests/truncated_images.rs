@@ -68,3 +68,67 @@ fn cut_off_images_load_or_are_refused_as_the_reference_decodes_them() {
         "{loaded_cut_off} {refused_cut_off}"
     );
 }
+
+/// A header that claims a huge picture, over a few bytes of data.
+fn bmp_claiming(width: u32, height: u32) -> Vec<u8> {
+    let mut bmp = b"BM".to_vec();
+    bmp.extend_from_slice(&64u32.to_le_bytes());
+    bmp.extend_from_slice(&[0; 4]);
+    bmp.extend_from_slice(&54u32.to_le_bytes());
+    bmp.extend_from_slice(&40u32.to_le_bytes());
+    bmp.extend_from_slice(&width.to_le_bytes());
+    bmp.extend_from_slice(&height.to_le_bytes());
+    bmp.extend_from_slice(&1u16.to_le_bytes());
+    bmp.extend_from_slice(&32u16.to_le_bytes());
+    bmp.extend_from_slice(&[0; 24]);
+    bmp.extend_from_slice(&[7; 10]);
+    bmp
+}
+
+fn png_claiming(width: u32, height: u32) -> Vec<u8> {
+    let mut png = b"\x89PNG\r\n\x1a\n".to_vec();
+    let mut ihdr = Vec::new();
+    ihdr.extend_from_slice(&width.to_be_bytes());
+    ihdr.extend_from_slice(&height.to_be_bytes());
+    ihdr.extend_from_slice(&[8, 2, 0, 0, 0]);
+    for (kind, data) in [(b"IHDR", ihdr), (b"IDAT", vec![0x78, 0x9c, 3, 0])] {
+        png.extend_from_slice(&u32::try_from(data.len()).unwrap().to_be_bytes());
+        png.extend_from_slice(kind);
+        png.extend_from_slice(&data);
+        png.extend_from_slice(&[0; 4]);
+    }
+    png
+}
+
+// A cut-off picture is filled out to its declared size, so a few bytes that
+// claim a huge size must be refused as Pillow's decompression bomb limit
+// refuses them, before anything is allocated for them.
+#[test]
+fn a_tiny_file_claiming_a_huge_picture_is_refused_with_no_allocation() {
+    for (name, bytes) in [
+        ("bmp", bmp_claiming(20_000, 20_000)),
+        ("png", png_claiming(20_000, 20_000)),
+    ] {
+        for allowed in [true, false] {
+            let tools = MediaTools::new().with_truncated_images(allowed);
+            let path = std::env::temp_dir().join(format!("claim-{name}-{allowed}.{name}"));
+            std::fs::write(&path, &bytes).unwrap();
+            let started = std::time::Instant::now();
+            let mime = tools.detect_mime(&path);
+            let loaded = mime.and_then(|mime| tools.load_image(&path, mime));
+            let _ = std::fs::remove_file(&path);
+            let error = loaded.expect_err(name).to_string();
+            assert!(
+                error.contains("decompression bomb") || error.contains("truncated"),
+                "{name}: {error}"
+            );
+            assert!(
+                started.elapsed() < std::time::Duration::from_secs(5),
+                "{name}"
+            );
+            let direct = hydrus_media::decode_image_with_policy(&bytes, true, allowed);
+            let error = direct.expect_err(name).to_string();
+            assert!(error.contains("decompression bomb"), "{name}: {error}");
+        }
+    }
+}

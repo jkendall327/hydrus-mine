@@ -74,6 +74,22 @@ pub(crate) fn open(data: &[u8]) -> Result<Opened> {
 /// `LOAD_TRUNCATED_IMAGES` off.
 const TRUNCATED: &str = "Looks like a truncated file that PIL could not handle!";
 
+/// Pillow's `MAX_IMAGE_PIXELS` (89,478,485): an image of more than twice that
+/// is refused before anything is allocated for it
+/// (`DecompressionBombError`).
+const MAX_IMAGE_PIXELS: u64 = 89_478_485;
+
+fn check_pixel_count(width: u32, height: u32) -> Result<()> {
+    let pixels = u64::from(width) * u64::from(height);
+    if pixels > 2 * MAX_IMAGE_PIXELS {
+        return Err(MediaError::damaged(format!(
+            "Image size ({pixels} pixels) exceeds limit of {} pixels, could be decompression bomb DOS attack.",
+            2 * MAX_IMAGE_PIXELS
+        )));
+    }
+    Ok(())
+}
+
 fn truncated() -> MediaError {
     MediaError::damaged(TRUNCATED)
 }
@@ -640,6 +656,7 @@ fn open_png(data: &[u8], load_truncated: bool) -> Result<Opened> {
         return Err(damaged("bad zlib stream"));
     }
 
+    check_pixel_count(width, height)?;
     let (w, h) = (width as usize, height as usize);
     let bits_pp = samples * usize::from(bit_depth);
     let bpp = bits_pp.div_ceil(8).max(1);
@@ -1066,26 +1083,28 @@ fn decode_dib(
         }
     }
     let pixel_offset = if offset != 0 { offset } else { read_pos };
+    check_pixel_count(width, height)?;
     let (w, h) = (width as usize, height as usize);
     let stride = ((w * usize::from(bits) + 31) >> 3) & !3;
     let src = data.get(pixel_offset..).ok_or_else(bad)?;
     // Cut off: the decoder takes whole lines only, and the lines it never
     // reached are zeros (black, or palette entry 0).
-    let padded;
-    let src = if src.len() < stride * h {
+    let whole_lines = src.len().checked_div(stride).unwrap_or(h);
+    let mut zero_line = Vec::new();
+    if whole_lines < h {
         if !load_truncated {
             return Err(truncated());
         }
-        let whole = src.len() / stride * stride;
-        padded = [&src[..whole], &vec![0; stride * h - whole]].concat();
-        &padded[..]
-    } else {
-        src
-    };
+        zero_line = vec![0; stride];
+    }
     let mut out = Vec::with_capacity(w * h * mode.channels());
     for y in 0..h {
         let sy = if direction_up { h - 1 - y } else { y };
-        let row = &src[sy * stride..(sy + 1) * stride];
+        let row = if sy < whole_lines {
+            &src[sy * stride..(sy + 1) * stride]
+        } else {
+            &zero_line[..]
+        };
         for x in 0..w {
             match raw {
                 Raw::Index(b) => {

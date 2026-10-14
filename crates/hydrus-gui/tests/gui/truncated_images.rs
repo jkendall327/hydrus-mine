@@ -186,6 +186,25 @@ fn viewer_pixels(allowed: bool) -> Vec<(&'static str, Vec<u8>)> {
             shown.push((name, Vec::new()));
         }
     }
+    if allowed {
+        // saved off, the pictures already viewed are dropped from the image
+        // cache (the reference clears its image caches when the option
+        // changes), so the viewer no longer shows the cut-off picture: only
+        // the thumbnail, which is near it and not it
+        let (window, row) = options(&ui, &bound);
+        window.invoke_check_toggled(row, false);
+        window.invoke_apply();
+        assert!(!stored(&store));
+        for (name, id) in ids {
+            let index = refresh_select(&ui, &bound, id);
+            ui.invoke_thumbnail_activated(index);
+            let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+            let want = recorded(name, true).unwrap();
+            wait(|| !rgb(&viewer.get_media()).is_empty());
+            assert_ne!(rgb(&viewer.get_media()), want, "{name}");
+            viewer.invoke_close_requested();
+        }
+    }
     shown
 }
 

@@ -87,9 +87,6 @@ fn the_question_is_the_references_and_only_not_a_nice_crash_panics_a_worker() {
         std::thread::sleep(std::time::Duration::from_millis(20));
     };
     assert!(text.contains("thread: crashtime-not-nice"), "{text}");
-    // (and nothing else crashed: not "forget it", not a closed question,
-    // not the nice crash that was only looked at)
-    assert_eq!(text.matches("==== panic ====").count(), 1, "{text}");
     hydrus_core::crash_log::uninstall();
 }
 

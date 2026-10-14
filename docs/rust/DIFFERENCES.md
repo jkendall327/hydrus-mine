@@ -5343,9 +5343,15 @@ off:
   no thumbnail for it (the reference stores its default one). The viewer,
   preview and archive/delete filter show no picture of such a file; what the
   reference's viewer shows for it was not recorded.
-- The setting is read as each image is opened, not applied process-wide. A
-  picture already in the image cache stays until the cache drops it (the
-  reference does not clear its caches when this option is toggled either).
+- The setting is read as each image is opened, not applied process-wide.
+  Changing it drops the decoded-image cache and repaints open viewers and
+  previews, as the reference's `SetEnableLoadTruncatedImages` clears its image
+  and tile caches.
+- A file is filled out to the size its header declares, so BMP and PNG refuse
+  a header over Pillow's decompression-bomb limit (twice 89,478,485 pixels)
+  before allocating anything, with Pillow's message. A tiny file that claims
+  just under the limit still makes an image of that size, as it does in
+  Pillow.
 - Not compared: truncated TIFF, ICO, QOI and animated GIF/WebP frames (the
   reference never records them here); GIF and BMP follow the same rules.
 - Only the first frame of a GIF follows the setting; frames of an animation
