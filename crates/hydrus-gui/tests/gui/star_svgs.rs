@@ -677,7 +677,11 @@ fn svg_star_is_drawn_everywhere(service_svg: &str, file: &str) {
 
         // the popped-in hover (the same graphic at the popped size), with
         // the background draw off so that it is the hover that is looked at
-        client.ui.set_preview_draw_top_right(false);
+        set_setting::<hydrus_store::reference_options::ReferenceOptions>(&client.store, |o| {
+            o.set_boolean("draw_top_right_hover_in_preview_window_background", false);
+        });
+        client.bound.preview.refresh();
+        assert!(!client.ui.get_preview_draw_top_right());
         let in_pane = |main: &_| {
             let mut pixels = headless::render(main, width, height);
             for (i, pixel) in pixels.chunks_exact_mut(4).enumerate() {
