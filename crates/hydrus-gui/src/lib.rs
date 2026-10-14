@@ -163,6 +163,7 @@ pub mod string_processor_window;
 mod subscription_import;
 mod subscription_quality_control;
 mod subscriptions_window;
+pub mod what_is_this_window;
 pub mod system_tray;
 mod tab_context_window;
 mod tab_drag;
@@ -6239,9 +6240,22 @@ pub(crate) fn clipboard_image() -> Option<ClipboardImage> {
     })
 }
 
+type ClipboardPathsReader = Rc<dyn Fn() -> Vec<std::path::PathBuf>>;
+thread_local! {
+    static CLIPBOARD_PATHS_READER: RefCell<Option<ClipboardPathsReader>> = RefCell::new(None);
+}
+
+/// Substitute the clipboard's file paths on this thread (for tests).
+pub fn set_clipboard_paths_reader(reader: impl Fn() -> Vec<std::path::PathBuf> + 'static) {
+    CLIPBOARD_PATHS_READER.with(|slot| *slot.borrow_mut() = Some(Rc::new(reader)));
+}
+
 /// The file paths on the clipboard (the reference's
 /// `GetClipboardLocalPaths`), none when it holds none.
 pub(crate) fn clipboard_paths() -> Vec<std::path::PathBuf> {
+    if let Some(reader) = CLIPBOARD_PATHS_READER.with(|reader| reader.borrow().clone()) {
+        return reader();
+    }
     if CLIPBOARD_IMAGE_READER.with(|reader| reader.borrow().is_some())
         || CLIPBOARD_READER.with(|reader| reader.borrow().is_some())
         || PASTER.with(|p| p.borrow().is_some())

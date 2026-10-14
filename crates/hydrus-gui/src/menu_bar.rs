@@ -842,6 +842,11 @@ fn run_command(window: &MainWindow, hooks: &Hooks, command: Command) {
                 eprintln!("could not ask the daemon for a snapshot: {e}");
             }
         }
+        Command::DebugWhatIsThisObject => {
+            if let Err(e) = crate::what_is_this_window::open() {
+                eprintln!("could not open the window: {e}");
+            }
+        }
         Command::DebugQueryPlanner => {
             hydrus_core::profiling::flip_query_planner();
             publish_switches(&store);

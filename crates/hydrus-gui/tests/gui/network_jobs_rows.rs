@@ -88,7 +88,13 @@ fn every_request_is_a_row_with_its_typed_wait_speed_bytes_and_contexts() {
         .iter()
         .map(|c| c.title.to_string())
         .collect();
-    assert_eq!(columns, ["position", "url", "status", "speed", "progress"]);
+    let recorded: Vec<String> = hydrus_testkit::fixture_json("network_data.json")["job_columns"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|c| c.as_str().unwrap().to_owned())
+        .collect();
+    assert_eq!(columns, recorded);
     for (i, wait) in waits.iter().enumerate() {
         // (rows may be in any order: find ours by URL)
         let url = format!("https://site{i}.example/file");

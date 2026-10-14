@@ -295,6 +295,7 @@ mod image_colour;
 
 mod debug_data_actions;
 mod debug_delayed_pages;
+mod debug_what_is_this;
 mod debug_delayed_popup;
 mod debug_fetch;
 mod debug_long_popup;

@@ -167,6 +167,20 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                     submenu
                 })
                 .collect();
+            let mut submenus = submenus;
+            // (then the one entry hydrus-rs has of the rest: the tests,
+            // do not touch submenu is not offered)
+            let rest: Vec<Value> = entry["entries"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter(|e| *e == "---" || label(e) == "what is this object?")
+                .cloned()
+                .collect();
+            let separator_before_it = rest.iter().position(|e| label(e) == "what is this object?");
+            assert!(separator_before_it.is_some());
+            submenus.push(Value::String("---".into()));
+            submenus.push(Value::String("what is this object?".into()));
             entry["entries"] = Value::Array(submenus);
         }
 
