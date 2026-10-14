@@ -436,7 +436,7 @@ fn state(store: &Store) -> serde_json::Value {
     serde_json::json!({
         "gugs": gugs.iter().map(|g| match g {
             AnyGug::Nested(n) => serde_json::json!({"name": n.name, "members": n.gugs}),
-            _ => serde_json::json!({"name": g.name()}),
+            AnyGug::Single(_) => serde_json::json!({"name": g.name()}),
         }).collect::<Vec<_>>(),
         "classes": class_names,
         "parsers": parser_names,
