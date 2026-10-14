@@ -5016,6 +5016,12 @@ startup tests cover the competing GUI and a new-store lease.
 
 ## Database > locations
 
+Every step of the reference's locations panel and of its granularity window
+(adding, weighting and removing locations, max sizes, the thumbnail location,
+"move files now" and its questions, both migrations) is replayed against
+recordings of the reference's own panels: `oracle/fixtures/locations_panel.json`
+and `granularity_panel.json`, in `tests/gui/database_locations_menu.rs`.
+
 Database > locations opens the reference's "database locations" window: the
 advanced-use warning, the install, database and media/thumbnail size lines,
 and the media locations list (location, beneath db dir?, disk free space,
@@ -5045,6 +5051,12 @@ alone. hydrus-store's `granularity` tests cover both ways, the scan, and an
 undone cancel.
 
 ## Database > file maintenance > clear orphan files
+
+Its questions, the popup's lines, what is moved or deleted and the cancel are
+replayed against `oracle/fixtures/clear_orphans.json`
+(`tests/gui/database_orphan_files.rs`). The "add new work" tab and the invalid
+tag repair are likewise replayed (`file_maintenance_new.json`,
+`repair_invalid_tags.json`).
 
 "clear orphan files" asks the reference's question with "move them
 somewhere", "delete them" and "forget it"; moving picks a folder. A worker
