@@ -446,10 +446,13 @@ pub fn reset_defaults(store: &Store) -> Result<(), String> {
     store
         .write(|ctx| {
             let mut current = settings::get::<BandwidthSettings>(ctx.conn())?;
+            // (only the contexts the defaults name are reset: the reference
+            // leaves the rest, such as the downloader default, as they are)
+            let defaults = default_rules();
             current
                 .rules
-                .retain(|(c, _)| !c.is_default() && c.kind != CONTEXT_GLOBAL);
-            current.rules.extend(default_rules());
+                .retain(|(c, _)| !defaults.iter().any(|(d, _)| d == c));
+            current.rules.extend(defaults);
             settings::set(ctx.conn(), &current)
         })
         .map_err(|e| e.to_string())
