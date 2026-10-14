@@ -221,6 +221,11 @@ in-scope leaves done on 2026-10-14):
 - **Port to match instead:** the parser test panel's preview formatting
   (#17) and the page editor's URL box, which should keep what was typed after
   a fetch.
+- **Layout settings get measured in tests.** Windows may expose read-only
+  geometry (a widget's measured position and size) so that GUI tests can
+  prove a layout setting takes effect: list heights, column widths, the
+  options search bar's placement, tab alignment, thumbnail borders. Users
+  see no change.
 
 ## Roadmap that follows
 
