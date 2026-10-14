@@ -1,0 +1,681 @@
+{
+ "tags": [
+  {
+   "edit": "any namespace",
+   "tuple": [
+    30,
+    7,
+    [
+     "tags",
+     0,
+     [
+      27,
+      8,
+      [
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           62,
+           3,
+           [
+            0,
+            "p",
+            {},
+            null,
+            null,
+            false,
+            [
+             51,
+             1,
+             [
+              3,
+              "",
+              null,
+              null,
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       1,
+       "href",
+       "",
+       [
+        84,
+        1,
+        [
+         26,
+         3,
+         []
+        ]
+       ]
+      ]
+     ],
+     null
+    ]
+   ],
+   "results": [
+    {
+     "texts": [
+      "Samus"
+     ],
+     "tags": [
+      "samus"
+     ],
+     "error": null,
+     "text": "Samus"
+    },
+    {
+     "texts": [
+      "series: Metroid Prime"
+     ],
+     "tags": [
+      "series:metroid prime"
+     ],
+     "error": null,
+     "text": "series: Metroid Prime"
+    },
+    {
+     "texts": [
+      "Creator:Samus  Aran"
+     ],
+     "tags": [
+      "creator:samus aran"
+     ],
+     "error": null,
+     "text": "Creator:Samus  Aran"
+    },
+    {
+     "texts": [
+      "spaced   out"
+     ],
+     "tags": [
+      "spaced out"
+     ],
+     "error": null,
+     "text": "  spaced   out "
+    }
+   ]
+  },
+  {
+   "edit": "unnamespaced",
+   "tuple": [
+    30,
+    7,
+    [
+     "tags",
+     0,
+     [
+      27,
+      8,
+      [
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           62,
+           3,
+           [
+            0,
+            "p",
+            {},
+            null,
+            null,
+            false,
+            [
+             51,
+             1,
+             [
+              3,
+              "",
+              null,
+              null,
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       1,
+       "href",
+       "",
+       [
+        84,
+        1,
+        [
+         26,
+         3,
+         []
+        ]
+       ]
+      ]
+     ],
+     ""
+    ]
+   ],
+   "results": [
+    {
+     "texts": [
+      "Samus"
+     ],
+     "tags": [
+      "samus"
+     ],
+     "error": null,
+     "text": "Samus"
+    },
+    {
+     "texts": [
+      "series: Metroid Prime"
+     ],
+     "tags": [
+      ":series: metroid prime"
+     ],
+     "error": null,
+     "text": "series: Metroid Prime"
+    },
+    {
+     "texts": [
+      "Creator:Samus  Aran"
+     ],
+     "tags": [
+      ":creator:samus aran"
+     ],
+     "error": null,
+     "text": "Creator:Samus  Aran"
+    },
+    {
+     "texts": [
+      "spaced   out"
+     ],
+     "tags": [
+      "spaced out"
+     ],
+     "error": null,
+     "text": "  spaced   out "
+    }
+   ]
+  },
+  {
+   "edit": "creator",
+   "tuple": [
+    30,
+    7,
+    [
+     "tags",
+     0,
+     [
+      27,
+      8,
+      [
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           62,
+           3,
+           [
+            0,
+            "p",
+            {},
+            null,
+            null,
+            false,
+            [
+             51,
+             1,
+             [
+              3,
+              "",
+              null,
+              null,
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       1,
+       "href",
+       "",
+       [
+        84,
+        1,
+        [
+         26,
+         3,
+         []
+        ]
+       ]
+      ]
+     ],
+     "creator"
+    ]
+   ],
+   "results": [
+    {
+     "texts": [
+      "Samus"
+     ],
+     "tags": [
+      "creator:samus"
+     ],
+     "error": null,
+     "text": "Samus"
+    },
+    {
+     "texts": [
+      "series: Metroid Prime"
+     ],
+     "tags": [
+      "creator:series: metroid prime"
+     ],
+     "error": null,
+     "text": "series: Metroid Prime"
+    },
+    {
+     "texts": [
+      "Creator:Samus  Aran"
+     ],
+     "tags": [
+      "creator:creator:samus aran"
+     ],
+     "error": null,
+     "text": "Creator:Samus  Aran"
+    },
+    {
+     "texts": [
+      "spaced   out"
+     ],
+     "tags": [
+      "creator:spaced out"
+     ],
+     "error": null,
+     "text": "  spaced   out "
+    }
+   ]
+  }
+ ],
+ "veto": [
+  {
+   "if_matches_found": true,
+   "matcher": "match anything",
+   "tuple": [
+    30,
+    7,
+    [
+     "veto",
+     8,
+     [
+      27,
+      8,
+      [
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           62,
+           3,
+           [
+            0,
+            "p",
+            {},
+            null,
+            null,
+            false,
+            [
+             51,
+             1,
+             [
+              3,
+              "",
+              null,
+              null,
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       1,
+       "href",
+       "",
+       [
+        84,
+        1,
+        [
+         26,
+         3,
+         []
+        ]
+       ]
+      ]
+     ],
+     [
+      true,
+      [
+       51,
+       1,
+       [
+        3,
+        "",
+        null,
+        null,
+        "example string"
+       ]
+      ]
+     ]
+    ]
+   ],
+   "results": [
+    {
+     "texts": null,
+     "tags": null,
+     "error": "veto: veto",
+     "text": "blocked"
+    },
+    {
+     "texts": null,
+     "tags": null,
+     "error": "veto: veto",
+     "text": "other"
+    }
+   ]
+  },
+  {
+   "if_matches_found": true,
+   "matcher": "fixed other",
+   "tuple": [
+    30,
+    7,
+    [
+     "veto",
+     8,
+     [
+      27,
+      8,
+      [
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           62,
+           3,
+           [
+            0,
+            "p",
+            {},
+            null,
+            null,
+            false,
+            [
+             51,
+             1,
+             [
+              3,
+              "",
+              null,
+              null,
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       1,
+       "href",
+       "",
+       [
+        84,
+        1,
+        [
+         26,
+         3,
+         []
+        ]
+       ]
+      ]
+     ],
+     [
+      true,
+      [
+       51,
+       1,
+       [
+        0,
+        "other",
+        null,
+        null,
+        "other"
+       ]
+      ]
+     ]
+    ]
+   ],
+   "results": [
+    {
+     "texts": [],
+     "tags": [],
+     "error": null,
+     "text": "blocked"
+    },
+    {
+     "texts": null,
+     "tags": null,
+     "error": "veto: veto",
+     "text": "other"
+    }
+   ]
+  },
+  {
+   "if_matches_found": false,
+   "matcher": "match anything",
+   "tuple": [
+    30,
+    7,
+    [
+     "veto",
+     8,
+     [
+      27,
+      8,
+      [
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           62,
+           3,
+           [
+            0,
+            "p",
+            {},
+            null,
+            null,
+            false,
+            [
+             51,
+             1,
+             [
+              3,
+              "",
+              null,
+              null,
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       1,
+       "href",
+       "",
+       [
+        84,
+        1,
+        [
+         26,
+         3,
+         []
+        ]
+       ]
+      ]
+     ],
+     [
+      false,
+      [
+       51,
+       1,
+       [
+        3,
+        "",
+        null,
+        null,
+        "example string"
+       ]
+      ]
+     ]
+    ]
+   ],
+   "results": [
+    {
+     "texts": [],
+     "tags": [],
+     "error": null,
+     "text": "blocked"
+    },
+    {
+     "texts": [],
+     "tags": [],
+     "error": null,
+     "text": "other"
+    }
+   ]
+  },
+  {
+   "if_matches_found": false,
+   "matcher": "fixed other",
+   "tuple": [
+    30,
+    7,
+    [
+     "veto",
+     8,
+     [
+      27,
+      8,
+      [
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           62,
+           3,
+           [
+            0,
+            "p",
+            {},
+            null,
+            null,
+            false,
+            [
+             51,
+             1,
+             [
+              3,
+              "",
+              null,
+              null,
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       1,
+       "href",
+       "",
+       [
+        84,
+        1,
+        [
+         26,
+         3,
+         []
+        ]
+       ]
+      ]
+     ],
+     [
+      false,
+      [
+       51,
+       1,
+       [
+        0,
+        "other",
+        null,
+        null,
+        "other"
+       ]
+      ]
+     ]
+    ]
+   ],
+   "results": [
+    {
+     "texts": null,
+     "tags": null,
+     "error": "veto: veto",
+     "text": "blocked"
+    },
+    {
+     "texts": [],
+     "tags": [],
+     "error": null,
+     "text": "other"
+    }
+   ]
+  }
+ ],
+ "context": {
+  "url": "https://example.com/post/1"
+ }
+}
