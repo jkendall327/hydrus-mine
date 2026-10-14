@@ -176,6 +176,7 @@ pub mod tag_migration_window;
 pub(crate) mod tag_relationships_window;
 pub mod tag_suggestions_window;
 mod tag_sync_review_window;
+pub use tag_sync_review_window::opened as tag_sync_review_opened;
 mod tag_text;
 pub mod thumbnail_background;
 mod vacuum_review_window;
@@ -311,7 +312,7 @@ pub use hydrus_gui_model::{
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
 pub use playback::live_property as live_mpv_property;
-pub use unlock::unlock_window;
+pub use unlock::{finish_locked, unlock_window};
 pub use viewer::MediaViewer;
 
 /// Pages bound to a window: the pages, the page shown, its grid's rows,

@@ -56,9 +56,16 @@ pub fn tabs(store: &hydrus_store::Store) -> hydrus_store::Result<(Vec<Tab>, usiz
     let default = store
         .read(hydrus_store::settings::get::<hydrus_store::tag_editing::TagEditingSettings>)?
         .default_service;
-    let tabs: Vec<Tab> = snapshot
-        .services
-        .tag_services()
+    // (the reference's order: local tag services, then repositories, each by lowercase name)
+    let mut services: Vec<_> = snapshot.services.tag_services().collect();
+    services.sort_by_key(|service| {
+        (
+            service.service_type() != hydrus_core::ServiceType::LocalTag,
+            service.name.to_lowercase(),
+        )
+    });
+    let tabs: Vec<Tab> = services
+        .into_iter()
         .map(|service| Tab {
             key: service.key.clone(),
             name: service.name.clone(),
