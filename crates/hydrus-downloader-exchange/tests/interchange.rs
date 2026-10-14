@@ -434,3 +434,27 @@ fn packages_mixing_steps_with_other_objects_give_their_steps_and_the_reference_w
         "{refused}"
     );
 }
+
+#[test]
+fn nested_processors_are_taken_a_few_deep_and_refused_when_absurdly_deep() {
+    use hydrus_downloader_exchange::processing;
+    let converter = r#"[55, 2, [[[3, "!"]], "example string"]]"#;
+    let nest = |depth: usize| {
+        let mut text = format!("[84, 1, [26, 3, [[2, {converter}]]]]");
+        for _ in 1..depth {
+            text = format!("[84, 1, [26, 3, [[2, {text}]]]]");
+        }
+        text
+    };
+    // a processor holding processors holding a converter: one nested step
+    let steps = processing::decode_text(&nest(3)).unwrap();
+    assert_eq!(steps.len(), 1);
+    // and it exports as it came
+    assert_eq!(
+        processing::encode_text(&steps).unwrap(),
+        hydrus_core::pyjson::PyJson::parse(&nest(3))
+            .unwrap()
+            .to_python_string()
+    );
+    assert!(processing::decode_text(&nest(200)).is_err());
+}

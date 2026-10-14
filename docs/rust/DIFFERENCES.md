@@ -1016,7 +1016,7 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   reference's "N objects added!" is the review's "Append N processing steps"
   (`oracle/record_processing_exchange_mixed.py`). A string processor is
   appended as one nested step, as the reference does (#185): the list shows
-  its summary ("some filtering"), running it leaves no strings (`ProcessStrings`
+  its summary ("some conversion", for the one holding a converter), running it leaves no strings (`ProcessStrings`
   has no case for it), it exports as it came, and it has no editor (the
   reference's `_Edit` has none for it either).
   "add" lists its kinds' descriptions in

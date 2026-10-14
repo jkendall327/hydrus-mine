@@ -925,13 +925,31 @@ fn processing_exchange_appends_the_steps_of_a_mixed_package_and_warns_as_the_ref
     child.set_text(bare["text"].as_str().unwrap().into());
     child.invoke_action("review".into());
     assert!(child.get_ready());
+    // (the reference's "1 objects added!" is the review's "Append 1 processing steps")
+    let message = bare["messages"][0]["text"].as_str().unwrap();
+    let appended: usize = message.split(' ').next().unwrap().parse().unwrap();
+    assert_eq!(message, format!("{appended} objects added!"));
     assert!(
-        child.get_review().contains("Append 1 processing steps"),
+        child
+            .get_review()
+            .contains(&format!("Append {appended} processing steps")),
         "{}",
         child.get_review()
     );
     child.invoke_action("accept".into());
-    assert_eq!(window.get_steps().row_count(), 2 * added + 1);
+    assert_eq!(window.get_steps().row_count(), 2 * added + appended);
+    // the row says what the step is (`StringProcessor.ToString`: its converter)
+    let last = window.get_steps().row_count() - 1;
+    assert_eq!(
+        window.get_steps().row_data(last).unwrap().cells[0].as_str(),
+        "some conversion"
+    );
+    // and it has no editor: editing it opens nothing
+    window.invoke_row_clicked(i32::try_from(last).unwrap(), false, false);
+    window.invoke_edit();
+    assert!(slots.step.borrow().is_none());
+    assert!(slots.converter.borrow().is_none());
+    assert!(slots.tag_filter.borrow().is_none());
     window.invoke_apply();
     let value = accepted.borrow().clone().unwrap();
     assert_eq!(value.steps.len(), 2 * added + 1);
@@ -941,7 +959,7 @@ fn processing_exchange_appends_the_steps_of_a_mixed_package_and_warns_as_the_ref
     ));
     assert_eq!(
         serde_json::json!(value.process(vec!["a,b".into()]).unwrap()),
-        serde_json::json!([])
+        bare["state"]["processed"]
     );
 }
 

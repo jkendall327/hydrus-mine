@@ -16,6 +16,8 @@ use std::collections::BTreeSet;
 const STEP_CODES: [i64; 8] = [51, 55, 83, 99, 100, 125, 112, PROCESSOR];
 const PROCESSOR: i64 = 84;
 const LIST: i64 = 26;
+/// How deep processors may nest inside one another.
+const MAX_NESTING: usize = 32;
 
 /// An imported package: its processing steps (a processor is one nested step), and the types of the other
 /// objects in it, which the queue does not take.
@@ -92,6 +94,11 @@ pub fn decode_package(text: &str) -> Result<Package> {
             "Expected reference processing-step JSON.".into(),
         ));
     }
+    // (a nested processor is no longer flattened by `collect`, so the
+    // depth of its nesting is bounded here, as the depth of lists is there)
+    if processor_depth(&value) > MAX_NESTING {
+        return Err(Error::Limit);
+    }
     let names = crate::subscription_import::types()?;
     let mut items = Vec::new();
     let mut other_types = BTreeSet::new();
@@ -150,6 +157,17 @@ fn collect(
         }
     }
     Ok(())
+}
+
+/// The most processors inside one another anywhere in `value`.
+fn processor_depth(value: &Value) -> usize {
+    match value {
+        Value::Array(items) => {
+            let inner = items.iter().map(processor_depth).max().unwrap_or(0);
+            inner + usize::from(items.first().and_then(Value::as_i64) == Some(PROCESSOR))
+        }
+        _ => 0,
+    }
 }
 
 fn plain_type(value: &Value) -> &'static str {
