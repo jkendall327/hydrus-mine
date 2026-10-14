@@ -542,3 +542,76 @@ pub fn job_sort_key(job: &hydrus_store::network_runtime::NetworkJob, column: usi
         _ => SortKey::Text(job.wait.label().into()),
     }
 }
+
+/// One line of a job's right-click menu (`ReviewNetworkJobs._GetListCtrlMenu`):
+/// every line is a label that copies its text, and the contexts are a submenu.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum JobMenuLine {
+    Label(String),
+    Submenu(String, Vec<JobMenuLine>),
+}
+
+/// The text above the jobs list.
+pub const JOBS_HINT: &str = "right-click a job for more debug info!";
+
+/// The smallest refresh interval the reference's control allows (seconds).
+pub const MIN_REFRESH_SECONDS: f64 = 0.05;
+/// The interval the control offers when it is switched from manual refresh.
+pub const DEFAULT_REFRESH_SECONDS: f64 = 0.25;
+
+/// The refresh interval typed (seconds), clamped to the control's minimum, or
+/// `None` when it is not a number.
+pub fn parse_refresh_seconds(text: &str) -> Option<f64> {
+    let value: f64 = text.trim().parse().ok()?;
+    value.is_finite().then(|| value.max(MIN_REFRESH_SECONDS))
+}
+
+/// A job's right-click menu: each context with the wait it adds (or
+/// "bandwidth ok"), then the job's flags as the reference words them.
+/// `control` is the engine's per-job state, `None` before the daemon sent it.
+pub fn job_menu(
+    job: &hydrus_store::network_runtime::NetworkJob,
+    control: Option<&hydrus_store::network_runtime::JobControl>,
+) -> Vec<JobMenuLine> {
+    use hydrus_store::network_runtime::WaitReason;
+    let contexts = job
+        .contexts
+        .iter()
+        .enumerate()
+        .map(|(i, context)| {
+            let wait = control
+                .and_then(|c| c.context_waits.get(i))
+                .copied()
+                .unwrap_or(0);
+            let label = context.to_reference_string();
+            JobMenuLine::Label(if wait > 0 {
+                format!(
+                    "{label} ({})",
+                    hydrus_core::time::pretty_time_delta(
+                        i64::try_from(wait).unwrap_or(i64::MAX),
+                        false
+                    )
+                )
+            } else {
+                format!("{label} (bandwidth ok)")
+            })
+        })
+        .collect();
+    let flag = |name: &str, value: bool| {
+        JobMenuLine::Label(format!("{name}: {}", if value { "True" } else { "False" }))
+    };
+    vec![
+        JobMenuLine::Submenu("network contexts".into(), contexts),
+        flag("domain ok", control.is_none_or(|c| c.domain_ok)),
+        flag(
+            "waiting on connection error",
+            job.wait == WaitReason::Connection,
+        ),
+        flag(
+            "waiting on serverside bandwidth",
+            job.wait == WaitReason::ServerBandwidth,
+        ),
+        flag("obeys bandwidth", job.obeys_bandwidth),
+        flag("tokens ok", control.is_none_or(|c| c.tokens_ok)),
+    ]
+}

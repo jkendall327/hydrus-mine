@@ -3,6 +3,7 @@ import { Button, CheckBox, ComboBox, LineEdit, ScrollView, VerticalBox } from "s
 import { ListTable, TableColumn, TableRow } from "@hydrus_ui_core";
 import { DownloadControl, DownloadLine, JobCogMenu } from "@hydrus_ui_core";
 import { Theme } from "@hydrus_ui_core";
+import { MenuPane, MenuPanes } from "@hydrus_ui_core";
 
 export struct MonthlyBandwidthBar { month: string, usage: string, fraction: float }
 export component BandwidthWindow inherits Window {
@@ -180,7 +181,17 @@ export component NetworkJobsWindow inherits Window {
     in property <[TableRow]> rows;
     in-out property <int> sort-column: -1;
     in-out property <bool> ascending: true;
-    in-out property <bool> auto-refresh: true;
+    // the refresh control: "manual refresh" (on to begin with), or every so
+    // many seconds
+    in-out property <bool> manual-refresh: true;
+    in-out property <string> refresh-seconds: "0.25";
+    callback refresh-changed();
+    in property <[MenuPane]> menu-panes;
+    callback row-menu(int, length, length);
+    callback menu-line-hovered(int, int, length, length, length);
+    callback menu-line-clicked(int, int, length, length, length);
+    callback menu-placed(int, length, length, length);
+    callback menu-dismissed();
     in property <string> detail;
     in property <string> status;
     in property <bool> can-act;
@@ -195,10 +206,11 @@ export component NetworkJobsWindow inherits Window {
     callback override-jobs();
     callback close-clicked();
     VerticalBox {
-        Text { text: "Current requests, including subscription and downloader work. Select jobs to see network contexts or cancel them."; wrap: word-wrap; color: Theme.text; }
+        Text { text: "right-click a job for more debug info!"; wrap: word-wrap; color: Theme.text; }
         ListTable { columns: root.columns; rows: root.rows; sort-column: root.sort-column; ascending: root.ascending; vertical-stretch: 1;
             row-clicked(r,c,s) => { root.row-clicked(r,c,s); }
             sort(c,a) => { root.sort(c,a); }
+            row-menu(r,x,y) => { root.row-menu(r,x,y); }
         }
         DownloadControl {
             line: root.download;
@@ -212,12 +224,25 @@ export component NetworkJobsWindow inherits Window {
         HorizontalLayout {
             spacing: 8px;
             Btn { text: "refresh snapshot"; clicked => { root.refresh(); } }
-            CheckBox { text: "auto-refresh"; checked <=> root.auto-refresh; }
+            Text { text: "auto-refresh:"; color: Theme.text; vertical-alignment: center; }
+            LineEdit { text <=> root.refresh-seconds; enabled: !root.manual-refresh; width: 70px; edited => { root.refresh-changed(); } }
+            Text { text: "seconds"; color: Theme.text; vertical-alignment: center; }
+            CheckBox { text: "manual refresh"; checked <=> root.manual-refresh; toggled => { root.refresh-changed(); } }
             Btn { text: "cancel selected"; enabled: root.can-act; clicked => { root.cancel-jobs(); } }
             Btn { text: "override bandwidth"; enabled: root.can-act; clicked => { root.override-jobs(); } }
             Rectangle { horizontal-stretch: 1; }
             Btn { text: "close"; clicked => { root.close-clicked(); } }
         }
         Text { text: root.status; wrap: word-wrap; color: Theme.text; }
+    }
+    if root.menu-panes.length > 0: MenuPanes {
+        width: root.width;
+        height: root.height;
+        panes: root.menu-panes;
+        top: 0px;
+        line-hovered(p, l, right, top, left) => { root.menu-line-hovered(p, l, right, top, left); }
+        line-clicked(p, l, right, top, left) => { root.menu-line-clicked(p, l, right, top, left); }
+        placed(p, x, y, w) => { root.menu-placed(p, x, y, w); }
+        dismiss => { root.menu-dismissed(); }
     }
 }

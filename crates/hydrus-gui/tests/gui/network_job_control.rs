@@ -72,6 +72,7 @@ fn snapshot() -> Snapshot {
             domain_ok: false,
             tokens_ok: false,
             auto_override: false,
+            context_waits: Vec::new(),
         }],
         ..Snapshot::default()
     }
@@ -431,7 +432,11 @@ fn page_override_reaches_live_engine_and_auto_policy_reaches_next_request() {
     assert!(window.get_file_cog().auto_override);
     let monitor_slots = network_data_window::Slots::default();
     let monitor = network_data_window::open_jobs(store.clone(), &monitor_slots).unwrap();
-    until(|| monitor.get_rows().row_count() == 1);
+    // (the review is a snapshot, refreshed by hand until it shows the job)
+    until(|| {
+        monitor.invoke_refresh();
+        monitor.get_rows().row_count() == 1
+    });
     monitor.invoke_row_clicked(0, false, false);
     monitor.invoke_control_action(7);
     assert!(monitor.get_cog().auto_override);
