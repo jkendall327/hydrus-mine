@@ -23069,10 +23069,10 @@
     "Cancel hides the gate without invoking unlocked; main reports the lock was not unlocked and exits."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Cancel hides the window and does not call unlocked, driven via invoke_cancelled; matches ClientController.InitView (cancel raises DBCredentialsException). No recording; main.rs's 'not unlocked' exit path is untested. Tests: hydrus-gui/tests/gui/unlock.rs:13 only_the_password_unlocks_the_client"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r4b)",
+    "note": "gui/unlock.rs cancelling_the_password_dialog_opens_nothing_and_the_process_says_why replays text_entry_checks.json password_cancel (record_text_entry_checks.py --cancel: the reference's real password dialog put up on boot and its cancel button clicked: asked once with the gate's arguments, CancelledException out of the dialog, DBCredentialsException out of the boot, nothing else shown, not booted). The native window shows the recorded question, a blank entry warns and stays (allow_blank false), its cancel button is clicked, the window closes and the client is not opened; then finish_locked (the tail main.rs runs when no client opened) clears the running marker and returns the 'locked' error. Exit status is hydrus-rs's (error, non-zero); the recording does not capture the reference's exit code."
    }
   },
   {
