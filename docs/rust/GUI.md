@@ -185,7 +185,7 @@ as Qt's do; a press anywhere else closes them. What works so far:
 - tags: the siblings and parents editors (below);
 - pending: each repository's content to upload, and forgetting it (asking
   first);
-- help: the help, links and changelog in the browser, and advanced mode
+- help: the help and changelog (from a `help` folder beside the program, or, with none, asking "You do not have a local help!" with the online help or the guide to building one), links in the browser, and advanced mode
   (which adds hydrus's advanced entries).
 
 The subscription exchange codec reads and writes complete modern reference
@@ -1298,7 +1298,10 @@ database; native relative entries resolve against its database directory.
 boundaries. The
 existing sidecar routers editor supplies tags, notes, URLs and timestamps.
 Copies overwrite existing destinations; links are optional. Export runs on a
-worker with progress and cancellation between files. Trashing asks the
+worker with progress and cancellation between files, and a "file export" popup
+in the main window ("Exporting: 3/14", from 0/14, then "Done!" for five seconds;
+cancelling it cancels the export), as the reference's does
+(`oracle/record_flow_export.py`). Trashing asks the
 reference's confirmation and disables links; "export and close" asks "Export
 as shown?" and closes after success. `oracle/record_export_files.py` records
 the reference panel's previews, removal and confirmations, and its export
@@ -3299,9 +3302,19 @@ content-update broadcasting and broader Files and Trash behavior remain Partial.
 
 Files and Trash now saves the confirmation preferences for trash and multi-file
 archive/inbox operations. Thumbnail shortcuts and menu actions read the applied
-preferences; the viewer also skips a simple local deletion question when trash
-confirmation is disabled. Multiple actionable local domains and physical deletion
-continue to ask. Cancelling Options leaves these preferences unchanged.
+preferences; with trash confirmation disabled and one actionable local domain, a
+deletion goes through without the dialog, in the viewer too. Otherwise deleting
+opens "Delete files?" (the reference's `EditDeleteFilesPanel`, also when the
+advanced dialog is off): one action shows as its label ("Send one file from my
+files to trash?"), several as a list starting on the remembered or suggested
+action, and the reason panel is hidden; the reason the hidden panel selects
+(the remembered one, else the default, and a file's earlier reason kept) is
+recorded, as in the reference. Proven by `tests/gui/simple_delete_dialog.rs`
+(replaying `simple_delete_dialog.json`: one and two domains, both files, a
+trashed file, the menu's suggested domain, a remembered action, the bypass of a
+resolved question, and the options each accepted action remembers, by their
+exact keys; a file's earlier reason is the basic fixture's own) and the
+download flow. Cancelling Options leaves these preferences unchanged.
 The real Qt inputs and questions are recorded in `files_trash.json`.
 
 The advanced Files and Trash deletion dialog now lists actionable local domains,
@@ -3876,6 +3889,12 @@ column/keyboard persistence and full process output/error presentation remain
 Partial. `open_externally.json` and its Qt PNG record the list/chooser behavior;
 authored native replays await hosted CI.
 
+The import options editor's external programs page lists the calls to make on
+imported files ("call beta log on all new file imports"), and adds, edits and
+deletes them with the reference's entry editor and notices; imports using the
+options run the programs in order (see DIFFERENCES.md). The migration's
+registered calls are not carried over.
+
 Options > external programs now has a staged registered-call table with name,
 job and command columns. Add/Edit own a detached callable editor and command
 queue; parent Cancel discards accepted child drafts, and parent Apply persists
@@ -3956,7 +3975,9 @@ passes the original wheel result. The failed run and its images remain
 diagnostic evidence and earn no credit.
 
 Supported process calls expose enabled input rules, tokens and the existing
-string-processor child, an ordered command-argument editor, timeout/flags and
+string-processor child (its button lists the processor's steps a line each, or
+says "no string processing", as the reference's does), an ordered
+command-argument editor, timeout/flags and
 preview/test inputs, which start at the reference's example path or URL.
 'test availability!' says whether the program is found; 'test call!' runs the
 call's argument vector in an owned worker and reports as the reference does:
@@ -4602,6 +4623,24 @@ admission. Actual Qt controls and renderer accounting are recorded in
 await hosted execution and inspection.
 
 
+Help → Debug → memory actions → “run fast memory maintenance” makes every cache
+maintain itself, as the reference's pulse does every minute: the decoded-image
+cache and the thumbnail caches drop what has idled past their timeout (and
+anything over their limit, which only a lowered limit leaves). “Run slow memory maintenance” (also every five minutes)
+deletes the closed pages (and their downloads) closed over an hour ago, but only
+when no page has been opened or closed for half an hour. Closed pages are no
+longer forgotten when the undo menu is built or another page closes: they stay
+until the slow maintenance deletes them, as in the reference.
+
+Help → Debug → debug modes → “simulate a wake from sleep” makes the sleep check
+see a wake, as the reference does: with wake-from-system-sleep detection on, a
+cancellable “just woke up from sleep” popup counts down “enabling I/O in N
+seconds” for the wake delay and is dismissed when it ends (cancelling it says
+“enabling I/O now” and enables input and output at once); the idle timer is
+reset; file paths wait out the delay; the daemon is asked to see the wake
+too (its network engine and subscriptions; that half has no end-to-end test). With detection off nothing happens. A real wake
+(a gap of over a minute between the one-second checks) shows the same popup.
+
 Help → Debug → debug modes offers the checked “force idle mode” runtime action.
 It overrides the current main binding’s actual idle Monitor before the boot wait,
 disabled normal-idle setting and recent user/mouse/API checks. Activity continues
@@ -5023,7 +5062,7 @@ mode" (the maintenance daemons starting a pass), "file import report mode"
 (file and thumbnail path requests), "gui report mode" (key and mouse events
 caught as shortcuts), "idle report mode" (why the client is not idle: not
 on for 120s, normal idle work disabled, last user, mouse or Client API
-action, or forced from the debug menu), "network report mode" and its
+action, or forced from the debug menu; and when it turns idle or active), "network report mode" and its
 "(silent)" twin (redirects and errors; silent goes to the console only; the
 two entries share the one mode, as the reference's do: silent turns it on and
 sets silent, the plain entry flips it and clears silent),
@@ -5036,9 +5075,9 @@ query's sync-due test).
 Also in Help > debug: gui actions > "autocomplete delay mode" (every tag
 autocomplete search takes three more seconds), data actions > "scan file
 storage folders" (pick a directory; it says how many storage subfolders it
-found and how long it took, or why it gave up; the picker opens in the database directory), and debug modes > "use
-faulthandler to log crashes" (while on, each panic is written with a
-backtrace to a "client crash" log in the database directory).
+found and how long it took, or why it gave up; the picker opens in the
+database directory), and debug modes > "use faulthandler to log crashes"
+(shown on always: see below; choosing it says where the log is).
 `tests/gui/debug_menu_actions.rs` clicks each debug entry in the real menu
 and reads the effect back; `tests/model/debug_flags.rs` and the
 `debug_*` tests of hydrus-import, hydrus-net, hydrus-download, hydrus-media
@@ -5692,3 +5731,16 @@ of the upcoming pairs is warmed once.
 - Closing importer pages, the preview background and pop-in, the Options
   search and Apply, and thumbnail fades are tested against recordings of the
   reference; each leaf's recheck note names the test.
+
+## Crash log
+
+Every panic, on any thread, in the desktop client, `hydrus serve` and the
+other `hydrus` commands is written to `client crash.log` in the database
+directory: the time (UTC), the version (crate version and `git describe`),
+the program, the thread's name, the panic message and location, and a
+backtrace. The panic's message still goes to stderr, followed by a line
+saying where the log is. The log is capped: before an entry that would take
+it past 512 KiB it is moved to `client crash.log.old` (replacing the earlier
+one), so the two files stay under about 1 MiB. Panics on `serve`'s tokio
+tasks and blocking jobs are logged too: the runtime catches them, but the
+panic hook runs first.

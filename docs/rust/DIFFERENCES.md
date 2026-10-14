@@ -221,7 +221,10 @@ search.
   (`oracle/record_page_close.py`, the last step; #183). So the Pages > weight
   report of a client with no other page says "1 pages open" where the reference's
   says "0 pages open" (the replay in `pages_menu_info.rs` edits the recorded
-  count to match, for that one page).
+  count to match, for that one page). **hydrus-rs always
+  keeps at least one page.** Allowing an empty top-level notebook is a
+  refactor of the main window's current-page type (owner, 2026-10-14: its
+  own issue, for a later wave), not a slice.
 - **Active predicate editing remains Partial.** Represented system values and
   simple tags/namespaces/wildcards can now be edited together, with one atomic
   Apply and separate supplied values for repeated system families. Immutable
@@ -1027,8 +1030,11 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   text/PNG review window. A package mixing steps with other objects gives its
   steps, with the reference's warning about the rest above the review; the
   reference's "N objects added!" is the review's "Append N processing steps"
-  (`oracle/record_processing_exchange_mixed.py`). A string processor is taken
-  as its steps, where the reference appends it as one nested step (#185).
+  (`oracle/record_processing_exchange_mixed.py`). A string processor is
+  appended as one nested step, as the reference does (#185): the list shows
+  its summary ("some conversion", for the one holding a converter), running it leaves no strings (`ProcessStrings`
+  has no case for it), it exports as it came, and it has no editor (the
+  reference's `_Edit` has none for it either).
   "add" lists its kinds' descriptions in
   its question. A sorter's or match's error for a regex that won't
   compile is in hydrus-rs's words, not Python's ("That regex did not
@@ -1211,9 +1217,14 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   merely because an editor is open; the reference subscription manager has
   a separate pause-for-editing state. Concurrent script/import changes still
   use the existing optimistic merge boundaries rather than a global editor lock.
-- **Import options that run a program on each imported file are kept but
-  not run yet.** The migration warns where they are set (which defaults,
-  subscriptions, import folders or downloader pages).
+- **Import options that run a program on each imported file run it, but
+  the calls they name are not migrated.** The registered external calls
+  (Options > external programs) are not carried over from the reference's
+  database, so migrated entries name calls this client does not have until you
+  set them up again and choose them again; the first import to need one
+  pauses the importers, as the reference does for a call it does not have. The
+  migration warns where they are set (which defaults, subscriptions, import
+  folders or downloader pages).
 - **There is no browser impersonation** (the reference's optional
   `curl_cffi` connections); requests are always plain ones.
 
@@ -1605,6 +1616,27 @@ with an empty domain. The dialog's opening state, title, notes, defaults, offere
 services and the sessions made are replayed from
 `oracle/fixtures/session_create.json` (`oracle/record_session_create.py`).
 
+The header editor trims its key and value and refuses a newline in either with
+the reference's words (`oracle/record_headers_fields.py`), and opens on the
+reference's example (`Authorization` for `hostname.com`). It also demands an
+HTTP header name (the reference takes any text: `X Token`, `X-Ünicode` and an
+empty key, which it refuses with its newline words, are refused here with
+"Enter a valid HTTP header name."). The list opens in the reference's order
+(context, key, value, state, reason) but a header added or edited in a
+session stays where it is until the window is reopened, where the reference
+sorts again at once.
+
+The cookie editor's "set expires from now" holds its delta to the reference's
+control's range (a delta below 1200 seconds is raised to it; above 200
+years of 366 days the control keeps the extra seconds of the day it was given
+but stops the days, so +100000 seconds becomes +13600, as recorded) and begins at what is left of
+a coming expiry, else 30 days (`oracle/record_cookie_expiry.py`). It shows
+the expiry as UTC seconds with a "session cookie" box that opens ticked where
+the reference's cookie had no expiry, not the reference's
+"expires in 2 hours" text; typing a UTC second or ticking the box has no
+counterpart in the reference, whose only way to set an expiry is the delta, and refuses an empty name with its own words where
+the reference uses its newline ones.
+
 Cookie and HTTP-header editing uses detached native drafts with Apply/Cancel;
 Qt cookie-list actions take effect immediately, while its header list is staged.
 Changing a cookie's name/domain/path replaces the old identity, while Qt adds the
@@ -1623,8 +1655,8 @@ set until either changes. A changed header must be reviewed anew; Qt's validatio
 process does not guard its answer against concurrent value edits. Requests resume
 on the engine's next approval check (currently up to five seconds).
 
-The browser can inspect imported service sessions and create domain sessions;
-creating new service sessions and drag/drop cookie imports remain deferred.
+The browser can inspect imported service sessions and create domain and
+service sessions; drag/drop cookie imports remain deferred.
 Clipboard export uses the same five-field format as Qt, so secure and other
 attributes are omitted and clipboard imports reset them; Netscape imports preserve
 secure/HttpOnly instead. Cookie-list imports use the existing Apply/Cancel draft.
@@ -2484,11 +2516,14 @@ Invalid ordinary requests wait 60 seconds; subscriptions retain the exact
 reference cancellation note.
 
 Files and Trash confirmation preferences now reach thumbnail and viewer local
-file operations. The native deletion question still presents one action rather
-than the reference's complete service/action picker when advanced mode is off,
-and asks in the main window rather than in a "Delete files?" dialog (#187); where
-the reference has only one action it asks with that action's label ("Send one
-file from my files to trash?"; found by the download flow, `FLOWS.md`).
+file operations. Deleting files opens the reference's "Delete files?" dialog in
+the simple mode too (#187): with one possible action the dialog shows that
+action's label alone, with several the list to choose from, and the reason
+panel is hidden. What the simple dialog does not offer (as the reference's):
+permanent deletion of files not in the trash, and deletion without a record.
+Not ported: the reference also lets the simple dialog delete the client's
+update files and petition files from file repositories (hydrus-rs has neither).
+The Cancel button of the reference's dialog (a `DialogEdit`) is the Cancel here.
 Advanced local-domain, trash and physical/clean deletion now uses the action and
 reason picker with the ordered reason queue and remembered accepted choices.
 Remote repository/IPFS actions are outside this local dialog. Copy/move-domain
@@ -4267,6 +4302,13 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   connection is paused, rather than vacuuming into a copy and swapping it
   in with the connections closed; the effect on the file is the same.
 - The window opens directly, without the "loading database data" popup.
+- The review is replayed against the reference on made-up database sizes
+  (`oracle/fixtures/vacuum_review.json`). The reference writes the names of
+  the chosen files and vacuums each; "do it" here always vacuums the one
+  file, so the file list is not compared. Where "can vacuum?" says no, the
+  reference's vacuum button is off, as it is here; nothing is asked in
+  either. The row order, column headings, button label and window title are
+  not recorded.
 
 ## Delete lock, importers and the trash worker, as rechecked
 
@@ -4719,13 +4761,49 @@ rendered grid.
 
 The `mpv.conf` copy replaces a read-only mpv.conf; recorded as root the reference did too, but run as another user on Linux its mirror keeps the old file (it makes the destination writable only on Windows).
 
+## Import options > external programs
+
+The import options editor's external programs page is the reference's
+(`record_import_external_programs.py`, `import_external_programs.json`): a list
+of "call NAME on WHEN" entries with add, edit (each selected row in turn,
+stopping at a cancel) and delete (after "Remove N selected?"), the entry editor
+with the registered "send single file" calls by name and the four "when"
+choices, and its notices (no calls; a call that is not registered).
+
+Imports run the programs for a new file or one already in the client, in the
+order added, with the file's path, URI and hash; a program that cannot be run,
+times out, returns non-zero, is of the wrong kind or is not registered pauses
+subscriptions, import folders and file queues, as the reference does, and says
+why in the log. A call using the file id fails and pauses them too, as in the
+reference, whose string processing refuses that number (`TypeError`). A file
+the client already has that a downloader does not fetch again runs the
+programs too.
+
+Differences:
+
+- The entry editor is a small window with its own apply and cancel.
+- The reference shows a failure's message as a popup and prints its whole
+  environment; here it is in the log only.
+- The reference runs the programs after the whole import of a file, tags and
+  notes included, and only for file seeds. Here they run in the importer's
+  `import_file`, as soon as the file is stored, so every way into the importer
+  runs them (the Client API, drag and drop), not only file seeds.
+- The "wrong kind" and "only failing entry" cases are from the reference's
+  source, not recordings.
+- The registered calls' OS default launch (`xdg-open` and its kin) is not
+  tested: a test cannot open a program on the machine.
+
 ## Options > external programs
 
 - The job list has "send single file" and "send single URL" only; the
   reference's "send multiple files" job (parameters file paths / file URIs) is
   not ported.
-- The timeout is one seconds box (1 to 3,600,000) with the "this can live for a
-  very long time" checkbox; the reference uses a minutes-and-seconds widget.
+- The timeout is one seconds box (1 to 3,599) with the "this can live for a
+  very long time" checkbox; the reference uses a minutes-and-seconds widget
+  (minutes stop at 59, so it also stops at 59:59). A stored timeout of an hour
+  or more opens as the reference's widget shows it: its minutes held at 59 and
+  its seconds kept (3,600 shows as 3,540)
+  (`oracle/fixtures/external_call_editor.json`).
 - The reference's tooltips on the warning, timeout, hide terminal and text
   controls are not shown (Slint 1.18 has a `Tooltip` element, as the tag filter
   and preview controls now use; these have not been wired).
@@ -4957,12 +5035,16 @@ The `mpv.conf` copy replaces a read-only mpv.conf; recorded as root the referenc
 
 ## Options and shell leftovers (#91, #92)
 
-- **Help pages open online at once.** hydrus-rs ships no local help, so Help >
-  open help, Help > changelog and the help buttons (external programs, import
-  options, ...) open the online page. The reference opens its bundled help,
-  or, where there is none (running from source), first asks "You do not have
-  a local help! ..." with open online help / open how to build guide / forget
-  it (`ClientGUIDialogsDocumentation.OpenDocumentation`; #182).
+- **Help pages.** Help > open help, Help > changelog and the help buttons of
+  the external programs and import options panels go through one helper
+  (`documentation.rs`), as the reference's `OpenDocumentation`: the page from a
+  `help` folder beside the program where it exists (opened as a `file:///` URL,
+  with its `#fragment`), otherwise "You do not have a local help! ..." with
+  open online help / open how to build guide / forget it (#182). hydrus-rs does
+  not ship a help folder, so out of the box it always asks. The reference's
+  other help buttons (subscriptions, sidecars, downloader login, ratings,
+  GUGs, formulae, URL classes, database migration) have no counterpart:
+  those windows have no such button.
 - **The startup password window** is hydrus-rs's own window ("hydrus client"),
   not the reference's "Enter Text" dialog over the splash; its blank-entry
   warning ("Cannot enter blank text here!") shows in the window rather than in
@@ -5072,6 +5154,32 @@ potential duplicates (as the reference does as groups merge), so approving
   finish dialog up; hydrus-rs goes back to its question. Not recorded (the
   recorder's forget-no is the dialog staying open).
 
+## Crash log (`hydrus-core::crash_log`)
+
+A deliberate step beyond the reference, so problems on a real collection can
+be diagnosed afterwards. The owner chose always-on crash logging (2026-10-14).
+
+- The reference logs crashes only while Help > debug > debug modes > "use
+  faulthandler to log crashes" is on (Python's faulthandler writes native
+  tracebacks to a `client crash - <date>.log`; it is off at boot). hydrus-rs
+  logs every Rust panic always, in the GUI client, `hydrus serve` and the
+  other `hydrus` commands, to `client crash.log` (capped, with one rotated
+  `client crash.log.old`) in the database directory.
+- The menu entry stays, **shown on and unable to be turned off**. Choosing
+  it posts a popup saying where the log is. The reference's faulthandler also
+  reports native crashes (a segfault in a library); that needs a signal
+  handler, which is `unsafe` code this workspace denies, so **a native crash
+  (a segfault, an abort from a C library) is not logged**; only panics are.
+  If these turn out to matter, the log could grow a child watcher that notes
+  a missing clean-exit marker (the session-startup marker already exists).
+- What a worker does after a panic is unchanged. The `serve` loops that
+  await a blocking job treat the panic as that pass failing and try again
+  after `AFTER_ERROR` (similar files, file maintenance, auto-resolution);
+  the trash worker logs an error and stops; the desktop client's detached
+  threads (popups, previews, exports) end quietly and their results never
+  arrive. The log is how to find out that this happened.
+- A panic with no database directory (`hydrus --help`) goes to stderr only.
+
 - **The status bar's database field** shows "db writing" and "db reading" but not
   the reference's "db committing" and "db locked", and has no "current db job: <name>"
   tooltip (`HydrusDB._current_status`, `ClientGUI._RefreshStatusBarDB`); hydrus-rs's
@@ -5108,3 +5216,26 @@ potential duplicates (as the reference does as groups merge), so approving
   "save current page's sidebar/preview size now" while hidden) shows nothing, as
   the reference does, but its preview is reported hidden too; the reference's
   preview widget there still reports itself visible, in a column of no width.
+
+## Options > external programs (recheck notes)
+
+- **Process timeout, hide terminal, text mode.** The editor's controls match the
+  reference (`external_call_editor.json`), but no test shows the runtime
+  (`run_process`, `test_call`) enforcing the timeout or text mode, and it kills at
+  the exact timeout where the reference checks every 3 seconds.
+- **Input rules.** A rule's string processor is not edited from the rule row in any
+  test; it is put in the store and the editor reopened.
+
+- **Memory maintenance runs the caches hydrus-rs has.** “Run fast memory
+  maintenance” trims the decoded-image cache and the thumbnail caches; the
+  reference's pulse also reaches its parsing cache, the network connection
+  pools, the API's caches and the main window's menu updater, none of which
+  exist here. “Run slow memory maintenance” does the closed pages;
+  the reference's temp-path cleaning, thread-pool upkeep and Qt canvas-frame
+  references are Python and Qt internals. The schedules (fast every minute, slow
+  every five) start when the window opens, without the reference's ten-second
+  first wait.
+- **Simulating a wake touches this process and the daemon.** The reference has
+  one process; here the client shows the popup and resets its idle timer, and
+  the daemon (which owns the network engine and subscriptions) is asked to see a
+  wake too, within about a second (that request is not tested end to end).

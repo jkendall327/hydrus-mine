@@ -268,8 +268,8 @@ fn a_right_click_shows_the_viewer_s_menu_and_its_entries_act() {
         .unwrap_or_else(|| panic!("{menu:?}"))
         .1;
     viewer.invoke_menu_chosen(delete);
-    assert!(!viewer.get_question().is_empty());
-    viewer.invoke_answer(true);
+    assert!(!super::common::delete_question(&bound).is_empty());
+    super::common::answer_delete(&bound, true);
     assert_ne!(viewer.get_caption().to_string(), caption);
     // remove from view: the next file shown, one fewer
     let menu = right_click();

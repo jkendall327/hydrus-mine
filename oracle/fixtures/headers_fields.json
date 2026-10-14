@@ -1,0 +1,118 @@
+{
+ "rows": [
+  [
+   "global",
+   "User-Agent: Mozilla/5.0 (compatible; Hydrus Client)",
+   "approved - will use it",
+   "This is the default User-Agent identifier."
+  ],
+  [
+   "global",
+   "X-Test: global-value",
+   "pending - will ask the user on next use",
+   ""
+  ],
+  [
+   "web domain: example.com",
+   "Accept: image/png",
+   "approved - will use it",
+   ""
+  ],
+  [
+   "web domain: example.com",
+   "Authorization: token",
+   "denied - will not use it",
+   "login"
+  ],
+  [
+   "web domain: other.example",
+   "Cookie: a=b",
+   "pending - will ask the user on next use",
+   "needs a look"
+  ]
+ ],
+ "add_title": "edit header",
+ "add_defaults": {
+  "context": "web domain: hostname.com",
+  "key": "Authorization",
+  "value": "Basic dXNlcm5hbWU6cGFzc3dvcmQ=",
+  "approved": 1,
+  "reason": "",
+  "reason_placeholder": "Login header--needed for access."
+ },
+ "approvals": [
+  [
+   "approved - will use it",
+   1
+  ],
+  [
+   "denied - will not use it",
+   0
+  ],
+  [
+   "pending - will ask the user on next use",
+   2
+  ]
+ ],
+ "values": [
+  {
+   "key": "  X-Test  ",
+   "value": "  spaced value  ",
+   "result": {
+    "context": "web domain: hostname.com",
+    "key": "X-Test",
+    "value": "spaced value",
+    "approved": 1,
+    "reason": " a reason "
+   }
+  },
+  {
+   "key": "X Token",
+   "value": "v",
+   "result": {
+    "context": "web domain: hostname.com",
+    "key": "X Token",
+    "value": "v",
+    "approved": 1,
+    "reason": " a reason "
+   }
+  },
+  {
+   "key": "X-Test\nMore",
+   "value": "v",
+   "veto": "Hey, it looks like the \"key\" has a newline!"
+  },
+  {
+   "key": "X-Test",
+   "value": "a\nb",
+   "veto": "Hey, it looks like the \"value\" has a newline!"
+  },
+  {
+   "key": "",
+   "value": "",
+   "veto": "Hey, it looks like the \"key\" has a newline!"
+  },
+  {
+   "key": "Authorization",
+   "value": "Basic dXNlcm5hbWU6cGFzc3dvcmQ=",
+   "result": {
+    "context": "web domain: hostname.com",
+    "key": "Authorization",
+    "value": "Basic dXNlcm5hbWU6cGFzc3dvcmQ=",
+    "approved": 1,
+    "reason": " a reason "
+   }
+  },
+  {
+   "key": "X-Ünicode",
+   "value": "välue",
+   "result": {
+    "context": "web domain: hostname.com",
+    "key": "X-Ünicode",
+    "value": "välue",
+    "approved": 1,
+    "reason": " a reason "
+   }
+  }
+ ]
+}

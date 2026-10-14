@@ -61,6 +61,12 @@ fn launched_by(ui: &MainWindow, path: &[&str]) -> Vec<String> {
         let launched = launched.clone();
         move |target| launched.borrow_mut().push(target.to_owned())
     });
+    press(ui, path);
+    launched.borrow().clone()
+}
+
+/// Choose the help menu entry at `path`.
+fn press(ui: &MainWindow, path: &[&str]) {
     open_help(ui);
     for (depth, label) in path.iter().enumerate() {
         if depth + 1 < path.len() {
@@ -69,7 +75,6 @@ fn launched_by(ui: &MainWindow, path: &[&str]) -> Vec<String> {
             choose(ui, depth, label);
         }
     }
-    launched.borrow().clone()
 }
 
 fn bound_window() -> (
@@ -146,21 +151,17 @@ fn every_help_link_opens_the_references_url() {
     }
 }
 
-// Not tagged (audit-options-menu-menu-help-open-help,
-// audit-options-menu-menu-help-changelog): the reference opens its local help,
-// or asks "You do not have a local help!" first; hydrus-rs opens the online
-// page at once (DIFFERENCES.md, #182).
+// leaf: audit-options-menu-menu-help-open-help
+// leaf: audit-options-menu-menu-help-changelog
 #[test]
 fn open_help_and_changelog_launch_their_pages() {
     let (_dirs, _store, ui, _bound) = bound_window();
-    assert_eq!(
-        launched_by(&ui, &["open help"]),
-        ["https://hydrusnetwork.github.io/hydrus/"]
-    );
-    assert_eq!(
-        launched_by(&ui, &["changelog"]),
-        ["https://hydrusnetwork.github.io/hydrus/changelog.html"]
-    );
+    for (label, page) in [
+        ("open help", "index.html"),
+        ("changelog", "changelog.html#version_688"),
+    ] {
+        super::common::help::replay(page, &|| press(&ui, &[label]));
+    }
 }
 
 // leaf: audit-options-menu-menu-help-advanced-mode

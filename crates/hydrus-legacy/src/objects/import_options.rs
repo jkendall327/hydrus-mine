@@ -453,9 +453,7 @@ pub(crate) fn presentation(object: &SerialisableObject) -> DecodeResult<Presenta
 fn external_programs(object: &SerialisableObject) -> DecodeResult<ExternalProgramsOptions> {
     let k = EXTERNAL_PROGRAMS;
     expect(object, k, &[1])?;
-    let entries = nested(k, &object.info(), "entries")?;
-    let empty = matches!(&entries.info(), PyJson::List(items) if items.is_empty());
-    Ok(ExternalProgramsOptions {
-        stored: (!empty).then(|| object.info().to_python_string()),
-    })
+    // (the info is the entries' serialised list)
+    ExternalProgramsOptions::from_serialised(&object.info().to_python_string())
+        .map_err(|e| malformed(k, e))
 }

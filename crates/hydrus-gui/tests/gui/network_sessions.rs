@@ -1074,3 +1074,211 @@ fn a_hydrus_service_session_needs_a_service_to_choose() {
     assert!(store.read(network::sessions).unwrap().is_empty());
     assert!(edit.window().is_visible(), "still open");
 }
+
+// leaf: audit-network-headers-fields
+#[test]
+fn the_header_editor_opens_and_checks_its_fields_as_the_references_does() {
+    // oracle/record_headers_fields.py
+    let recorded = hydrus_testkit::fixture_json("headers_fields.json");
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    // the headers the recorder gave the reference's manager
+    store
+        .write(|ctx| {
+            for context in network::header_contexts(ctx.conn())? {
+                for header in network::headers(ctx.conn(), &context)? {
+                    network::delete_header(ctx.conn(), &context, &header.name)?;
+                }
+            }
+            for (context, name, value, approval, reason) in [
+                (
+                    NetworkContext::global(),
+                    "User-Agent",
+                    "Mozilla/5.0 (compatible; Hydrus Client)",
+                    Approval::Approved,
+                    "This is the default User-Agent identifier.",
+                ),
+                (
+                    NetworkContext::global(),
+                    "X-Test",
+                    "global-value",
+                    Approval::Pending,
+                    "",
+                ),
+                (
+                    NetworkContext::domain("example.com"),
+                    "Authorization",
+                    "token",
+                    Approval::Denied,
+                    "login",
+                ),
+                (
+                    NetworkContext::domain("example.com"),
+                    "Accept",
+                    "image/png",
+                    Approval::Approved,
+                    "",
+                ),
+                (
+                    NetworkContext::domain("other.example"),
+                    "Cookie",
+                    "a=b",
+                    Approval::Pending,
+                    "needs a look",
+                ),
+            ] {
+                network::set_header(
+                    ctx.conn(),
+                    &context,
+                    name,
+                    Some(value),
+                    Some(approval),
+                    Some(reason),
+                )?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    let _rendered = headless::init();
+    let slots = Slots::default();
+    let headers = windows::open(&store, &slots, true).unwrap();
+    // the list's rows, in the list's order
+    let shown: Vec<Vec<String>> = headers
+        .get_rows()
+        .iter()
+        .map(|r| r.cells.iter().map(|c| c.to_string()).collect())
+        .collect();
+    let theirs: Vec<Vec<String>> = recorded["rows"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|r| {
+            r.as_array()
+                .unwrap()
+                .iter()
+                .map(|c| c.as_str().unwrap().to_owned())
+                .collect()
+        })
+        .collect();
+    assert_eq!(shown, theirs);
+    // "add" opens on the reference's example header
+    headers.invoke_add_clicked();
+    let edit = windows::last_edit_opened().unwrap();
+    let defaults = &recorded["add_defaults"];
+    assert_eq!(
+        edit.get_window_title(),
+        recorded["add_title"].as_str().unwrap()
+    );
+    assert_eq!(
+        format!("web domain: {}", edit.get_domain()),
+        defaults["context"].as_str().unwrap()
+    );
+    assert_eq!(edit.get_name(), defaults["key"].as_str().unwrap());
+    assert_eq!(edit.get_value(), defaults["value"].as_str().unwrap());
+    assert_eq!(edit.get_reason(), defaults["reason"].as_str().unwrap());
+    // (approved, denied, pending: the first is the one it opens on)
+    assert_eq!(edit.get_approval(), 0);
+    edit.invoke_cancel_clicked();
+    // the typed fields: trimmed, and a newline refused in the key or value
+    let mut taken = 0;
+    for entry in recorded["values"].as_array().unwrap() {
+        headers.invoke_add_clicked();
+        let edit = windows::last_edit_opened().unwrap();
+        edit.set_name(entry["key"].as_str().unwrap().into());
+        edit.set_value(entry["value"].as_str().unwrap().into());
+        edit.set_reason(" a reason ".into());
+        let before = headers.get_rows().row_count();
+        edit.invoke_apply_clicked();
+        if entry["key"].as_str().unwrap().trim().is_empty() {
+            // (the reference's words for an empty key are its newline ones;
+            // here it says what a header name is)
+            assert!(!edit.get_error().is_empty(), "{entry}");
+            assert_eq!(headers.get_rows().row_count(), before);
+            edit.invoke_cancel_clicked();
+        } else if let Some(message) = entry["veto"].as_str() {
+            assert_eq!(edit.get_error().as_str(), message, "{entry}");
+            assert_eq!(headers.get_rows().row_count(), before);
+            edit.invoke_cancel_clicked();
+        } else if edit.get_error().is_empty() {
+            // (the reference took any key at all; here it must be an HTTP
+            // header name, DIFFERENCES.md)
+            taken += 1;
+            let result = &entry["result"];
+            let text = format!(
+                "{}: {}",
+                result["key"].as_str().unwrap(),
+                result["value"].as_str().unwrap()
+            );
+            let rows = headers.get_rows();
+            let row = (0..rows.row_count())
+                .map(|i| rows.row_data(i).unwrap())
+                .find(|r| r.cells.row_data(1).unwrap() == text)
+                .unwrap_or_else(|| panic!("{text}"));
+            assert_eq!(
+                row.cells.row_data(3).unwrap(),
+                result["reason"].as_str().unwrap()
+            );
+        } else {
+            edit.invoke_cancel_clicked();
+        }
+    }
+    assert!(taken >= 2, "{taken}");
+    // the network context chosen as global: listed as "global", as recorded
+    headers.invoke_add_clicked();
+    let edit = windows::last_edit_opened().unwrap();
+    edit.set_global(true);
+    edit.set_name("X-Everywhere".into());
+    edit.set_value("yes".into());
+    edit.invoke_apply_clicked();
+    assert_eq!(edit.get_error().as_str(), "");
+    let rows = headers.get_rows();
+    let row = (0..rows.row_count())
+        .map(|i| rows.row_data(i).unwrap())
+        .find(|r| r.cells.row_data(1).unwrap() == "X-Everywhere: yes")
+        .expect("the global header");
+    assert_eq!(
+        row.cells.row_data(0).unwrap(),
+        recorded["rows"][0][0].as_str().unwrap()
+    );
+    // each approval choice, in the recorded order, stores the recorded
+    // state and lists with the recorded words
+    for (n, approval) in recorded["approvals"].as_array().unwrap().iter().enumerate() {
+        let words = approval[0].as_str().unwrap();
+        headers.invoke_add_clicked();
+        let edit = windows::last_edit_opened().unwrap();
+        edit.set_name(format!("X-Approval-{n}").into());
+        edit.set_value("v".into());
+        edit.set_approval(i32::try_from(n).unwrap());
+        edit.invoke_apply_clicked();
+        assert_eq!(edit.get_error().as_str(), "", "{words}");
+        let rows = headers.get_rows();
+        let row = (0..rows.row_count())
+            .map(|i| rows.row_data(i).unwrap())
+            .find(|r| r.cells.row_data(1).unwrap() == format!("X-Approval-{n}: v"))
+            .unwrap_or_else(|| panic!("{words}"));
+        assert_eq!(row.cells.row_data(2).unwrap(), words);
+    }
+    // applied, each is stored as recorded
+    headers.invoke_apply_clicked();
+    let stored = store
+        .read(|c| {
+            let mut all = Vec::new();
+            for context in network::header_contexts(c)? {
+                all.extend(network::headers(c, &context)?);
+            }
+            Ok(all)
+        })
+        .unwrap();
+    for (n, approval) in recorded["approvals"].as_array().unwrap().iter().enumerate() {
+        let (words, code) = (approval[0].as_str().unwrap(), approval[1].as_i64().unwrap());
+        let header = stored
+            .iter()
+            .find(|h| h.name.eq_ignore_ascii_case(&format!("X-Approval-{n}")))
+            .unwrap_or_else(|| panic!("{words}: {stored:?}"));
+        assert_eq!(
+            header.approval,
+            Approval::from_code(code).unwrap(),
+            "{words}"
+        );
+    }
+}

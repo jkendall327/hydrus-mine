@@ -861,6 +861,17 @@ fn run_command(window: &MainWindow, hooks: &Hooks, command: Command) {
                 eprintln!("could not ask the daemon for a snapshot: {e}");
             }
         }
+        Command::DebugSimulateWake => {
+            // this process's sleep check sees a wake: the popup is up at once
+            // (the monitor's next tick resets the idle timer), and the
+            // daemon's network engine and file paths see one too
+            if store.simulate_wake() {
+                crate::wake_popup::begin(&store);
+            }
+            if let Err(e) = hydrus_store::debug_switches::request_wake_simulation(&store) {
+                eprintln!("could not ask the daemon to simulate a wake: {e}");
+            }
+        }
         Command::DebugWhatIsThisObject => {
             if let Err(e) = crate::what_is_this_window::open() {
                 eprintln!("could not open the window: {e}");
@@ -948,6 +959,7 @@ fn run_command(window: &MainWindow, hooks: &Hooks, command: Command) {
             );
         }
         Command::OpenUrl(url) => crate::launch(url),
+        Command::OpenHelp(page) => crate::documentation::open(page),
         Command::AdvancedMode => {
             flip::<hydrus_store::settings::AdvancedMode>(&store, |a| a.0 = !a.0);
         }

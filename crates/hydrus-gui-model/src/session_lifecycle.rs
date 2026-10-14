@@ -50,6 +50,8 @@ pub struct Idle {
     user: i64,
     mouse: i64,
     api: i64,
+    /// Whether the last check said idle (`_previously_idle`).
+    previously: bool,
 }
 impl Idle {
     pub fn new(now_ms: i64) -> Self {
@@ -58,6 +60,21 @@ impl Idle {
             user: now_ms,
             mouse: now_ms,
             api: now_ms,
+            previously: false,
+        }
+    }
+    /// When the client started (for the 120 seconds after it that are never idle).
+    pub fn boot(&mut self, now_ms: i64) {
+        self.boot = now_ms;
+    }
+    /// Note this check's answer; what idle report mode says of a change
+    /// (`ClientController.CurrentlyIdle`'s turning on and off).
+    pub fn turning(&mut self, idle: bool) -> Option<&'static str> {
+        let was = std::mem::replace(&mut self.previously, idle);
+        match (was, idle) {
+            (false, true) => Some("IDLE MODE - Turning ON"),
+            (true, false) => Some("IDLE MODE - Turning OFF"),
+            _ => None,
         }
     }
     pub fn user(&mut self, now_ms: i64) {

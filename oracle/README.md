@@ -57,6 +57,7 @@ at fixed copy boundaries; dialog replies and worker scheduling are scripted.
 | `record_parser_fetch_http.py` | `fixtures/parser_fetch_http.json`: the parser test panels' fetch from a url over real HTTP (the page editor's and the generic panel's) with the real engine |
 | `record_session_create.py` | `fixtures/session_create.json`: the session browser's create new (its dialog scripted), with and without repositories |
 | `record_import_folder_example.py` | `fixtures/import_folder_example.json`: the import folder editor's filename tagging dialog: the example path, the output, the duplicate-service warning |
+| `record_external_call_editor.py` | `fixtures/external_call_editor.json`: the reference's external call editor panels: the executable path questions, the PATH message, the input parameter rows and vetoes, the string processor button labels, the timeout control and flags, and Add |
 | `record_cpu_busy.py` | `fixtures/cpu_busy.json`: the reference's `SystemBusy`/`CurrentlyIdle`/`GoodTimeToStartBackgroundWork` on scripted `/proc/stat` loads read by the real psutil |
 | `record_trash_maintenance.py` | `fixtures/trash_maintenance.json`: the reference's `DAEMONMaintainTrash` on generated files of exact sizes trashed at scripted times |
 | `record_shutdown_work.py` | `fixtures/shutdown_work.json`: the reference's `TryToExit` and `DoIdleShutdownWork` under each shutdown option, with the "Maintenance is due" question answered by script |

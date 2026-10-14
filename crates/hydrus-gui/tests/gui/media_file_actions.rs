@@ -3,7 +3,6 @@
 //! deletion (`ClientGUIMediaMenus`, `ClientGUIMediaActions`).
 
 use hydrus_core::HashId;
-use hydrus_gui::media_actions;
 use slint::{ComponentHandle as _, Model as _};
 
 use super::media_support::*;
@@ -87,13 +86,13 @@ fn archive_inbox_delete_undelete_and_physical_delete_from_the_menu() {
     assert!(before.contains(&domain));
     fixture.ui.invoke_menu_chosen(id);
     assert_eq!(
-        fixture.ui.get_question(),
+        super::common::delete_question(&fixture.bound),
         format!("Send one file from {domain} to trash?")
     );
-    fixture.ui.invoke_answer(false);
+    super::common::answer_delete(&fixture.bound, false);
     assert_eq!(domains(&fixture, file), before);
     fixture.ui.invoke_menu_chosen(id);
-    fixture.ui.invoke_answer(true);
+    super::common::answer_delete(&fixture.bound, true);
     let mut after = domains(&fixture, file);
     assert!(
         after.contains(&"trash".to_owned()) && !after.contains(&domain),
@@ -112,7 +111,8 @@ fn archive_inbox_delete_undelete_and_physical_delete_from_the_menu() {
             )
         })
         .unwrap();
-    assert_eq!(reason.as_deref(), Some(media_actions::DELETE_REASON));
+    // (the file was deleted before, and the simple dialog keeps its reason)
+    assert_eq!(reason.as_deref(), Some("Deleted via Client API."));
 
     // in the trash: delete physically now, and undelete
     let menu = fixture.menu(-1);
@@ -143,8 +143,14 @@ fn archive_inbox_delete_undelete_and_physical_delete_from_the_menu() {
         ["from art", "from my files"]
     );
     fixture.ui.invoke_menu_chosen(from[0].1);
-    assert_eq!(fixture.ui.get_question(), "Delete this file from art?");
-    fixture.ui.invoke_answer(true);
+    // (the delete files dialog, on the domain the entry names)
+    let dialog = super::common::delete_dialog(&fixture.bound).unwrap();
+    assert_eq!(dialog.get_selected_action(), 0);
+    assert_eq!(
+        super::common::delete_question(&fixture.bound),
+        "Remove one file from art?\nRemove one file from my files?\nDelete from all local services? (force send to trash)"
+    );
+    super::common::answer_delete(&fixture.bound, true);
     // (one domain left: back to the plain entry)
     let menu = fixture.menu(-1);
     assert_eq!(rows(&menu.delete).len(), 1);
@@ -152,23 +158,23 @@ fn archive_inbox_delete_undelete_and_physical_delete_from_the_menu() {
         .ui
         .invoke_menu_chosen(find(&rows(&menu.delete), "delete from my files"));
     assert_eq!(
-        fixture.ui.get_question(),
+        super::common::delete_question(&fixture.bound),
         "Send one file from my files to trash?"
     );
-    fixture.ui.invoke_answer(true);
+    super::common::answer_delete(&fixture.bound, true);
     assert_eq!(domains(&fixture, file), ["trash"]);
     // and then for good: asked, "no" changing nothing
     let menu = fixture.menu(-1);
     let physically = find(&rows(&menu.trash), "delete physically now");
     fixture.ui.invoke_menu_chosen(physically);
     assert_eq!(
-        fixture.ui.get_question(),
+        super::common::delete_question(&fixture.bound),
         "Permanently delete one trashed file?"
     );
-    fixture.ui.invoke_answer(false);
+    super::common::answer_delete(&fixture.bound, false);
     assert!(domains(&fixture, file).contains(&"trash".to_owned()));
     fixture.ui.invoke_menu_chosen(physically);
-    fixture.ui.invoke_answer(true);
+    super::common::answer_delete(&fixture.bound, true);
     assert!(
         domains(&fixture, file).iter().all(|d| d != "trash"),
         "{:?}",

@@ -22,6 +22,8 @@ fn main() -> Result<()> {
         .filter(|arg| !arg.to_string_lossy().starts_with('-'))
         .ok_or_else(|| anyhow!("usage: hydrus-gui <store directory>"))?
         .into();
+    // every panic, on any thread, goes to the store's crash log
+    hydrus_core::crash_log::install(&dir, "hydrus-gui");
     let (store, open_guard) = open_store(&dir)?;
     let lock: LockPassword = store
         .read(hydrus_store::settings::get)

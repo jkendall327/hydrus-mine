@@ -83,13 +83,20 @@ pub fn open_with_choice(
     if let Some(window) = slot.borrow().as_ref() {
         return Ok(Some(window.clone_strong()));
     }
-    let draft = Draft::load(store, files, suggested, default_reason).map_err(|e| e.to_string())?;
-    if draft.choices.is_empty() {
-        return Err("No valid delete choices!".into());
-    }
     let preferences: hydrus_store::settings::DeletionPreferences = store
         .read(hydrus_store::settings::get)
         .map_err(|e| e.to_string())?;
+    let draft = Draft::load_mode(
+        store,
+        files,
+        suggested,
+        default_reason,
+        preferences.advanced,
+    )
+    .map_err(|e| e.to_string())?;
+    if draft.choices.is_empty() {
+        return Err("No valid delete choices!".into());
+    }
     if draft.already_resolved(preferences.confirm_trash) {
         if guard()
             && let Some(choice) = draft.apply_with_choice(store).map_err(|e| e.to_string())?
@@ -100,8 +107,14 @@ pub fn open_with_choice(
     }
     let window = crate::app_title::new::<crate::DeleteFilesWindow>().map_err(|e| e.to_string())?;
     window.set_custom(draft.custom.as_str().into());
+    window.set_simple(draft.simple);
     show(&window, &draft);
-    let initial_radio = i32::from(draft.choices.len() <= 1);
+    // (the reference focuses the action radios, else the reason ones)
+    let initial_radio = match (draft.choices.len() <= 1, draft.simple) {
+        (false, _) => 0,
+        (true, false) => 1,
+        (true, true) => -1,
+    };
     let draft = Rc::new(RefCell::new(draft));
     let active = Rc::new(Cell::new(true));
     let close: Rc<dyn Fn()> = Rc::new({

@@ -952,7 +952,8 @@ fn open_step(
             }
             return;
         }
-        ProcessingStep::Unsupported { .. } => return,
+        // (the reference has no editor for it either)
+        ProcessingStep::Nested(_) | ProcessingStep::Unsupported { .. } => return,
     };
     if slots.step.borrow().is_some() {
         return;

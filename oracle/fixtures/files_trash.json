@@ -884,5 +884,85 @@
       "before": "clear_delete",
       "after": "physical_delete"
     }
+  ],
+  "delete_lock_dialog": [
+    {
+      "lock": false,
+      "where": "trash",
+      "inbox": true,
+      "actions": [
+        "Permanently delete one trashed file?",
+        "Permanently delete this file and do not save a deletion record?"
+      ],
+      "resolved": false
+    },
+    {
+      "lock": false,
+      "where": "trash",
+      "inbox": false,
+      "actions": [
+        "Permanently delete one trashed file?",
+        "Permanently delete this file and do not save a deletion record?"
+      ],
+      "resolved": false
+    },
+    {
+      "lock": false,
+      "where": "local domain",
+      "inbox": true,
+      "actions": [
+        "Send one file from art to trash?",
+        "Permanently delete one file?",
+        "Permanently delete this file and do not save a deletion record?"
+      ],
+      "resolved": false
+    },
+    {
+      "lock": false,
+      "where": "local domain",
+      "inbox": false,
+      "actions": [
+        "Send one file from art to trash?",
+        "Permanently delete one file?",
+        "Permanently delete this file and do not save a deletion record?"
+      ],
+      "resolved": false
+    },
+    {
+      "lock": true,
+      "where": "trash",
+      "inbox": true,
+      "actions": [
+        "Permanently delete one trashed file?",
+        "Permanently delete this file and do not save a deletion record?"
+      ],
+      "resolved": false
+    },
+    {
+      "lock": true,
+      "where": "trash",
+      "inbox": false,
+      "error": "CancelledException: No valid delete choices!"
+    },
+    {
+      "lock": true,
+      "where": "local domain",
+      "inbox": true,
+      "actions": [
+        "Send one file from art to trash?",
+        "Permanently delete one file?",
+        "Permanently delete this file and do not save a deletion record?"
+      ],
+      "resolved": false
+    },
+    {
+      "lock": true,
+      "where": "local domain",
+      "inbox": false,
+      "actions": [
+        "Send one file from art to trash?"
+      ],
+      "resolved": false
+    }
   ]
 }

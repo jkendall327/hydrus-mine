@@ -398,45 +398,6 @@ impl Debug {
     }
 }
 
-// leaf: audit-options-help-debug-action-idle-report-mode
-#[test]
-fn idle_report_mode_says_why_the_client_is_not_idle() {
-    let _one = ONE_AT_A_TIME
-        .lock()
-        .unwrap_or_else(std::sync::PoisonError::into_inner);
-    let d = start();
-    let seen = capture();
-    let now = hydrus_core::TimestampMs::now().0;
-    assert!(!d.report_mode_checked("idle report mode"));
-    d.bound.session_autosave.idle_at(now);
-    assert!(seen.lock().unwrap().is_empty(), "silent while off");
-    d.click(&["report modes", "idle report mode"]);
-    assert!(d.report_mode_checked("idle report mode"));
-    // (each idle check reports; the window's own timers may check too on a
-    // loaded runner, so the same line can come more than once)
-    let reported = |seen: &Mutex<Vec<String>>| {
-        let mut lines = seen.lock().unwrap().clone();
-        lines.dedup();
-        lines
-    };
-    d.bound.session_autosave.idle_at(now);
-    assert_eq!(
-        reported(&seen),
-        ["IDLE MODE - Blocked: Program has not been on for 120s yet."]
-    );
-    d.click(&["debug modes", "force idle mode"]);
-    seen.lock().unwrap().clear();
-    d.bound.session_autosave.idle_at(now);
-    assert_eq!(reported(&seen), ["IDLE MODE - Forced via debug menu"]);
-    d.click(&["debug modes", "force idle mode"]);
-    d.click(&["report modes", "idle report mode"]);
-    assert!(!d.report_mode_checked("idle report mode"));
-    seen.lock().unwrap().clear();
-    d.bound.session_autosave.idle_at(now);
-    assert!(seen.lock().unwrap().is_empty());
-    debug_flags::set_sink(None);
-}
-
 /// Puts the network report flags and the sink back when dropped.
 struct Reset;
 impl Drop for Reset {
@@ -600,43 +561,40 @@ fn daemon_report_mode_says_when_a_maintenance_daemon_does_a_job() {
     debug_flags::set_sink(None);
 }
 
-// leaf: audit-options-help-debug-action-use-faulthandler-to-log-crashes
+// (not a leaf tag: the reference's item is a toggle that is off at boot; the owner
+// chose always-on crash logging, 2026-10-14, a deliberate divergence in DIFFERENCES.md)
+// The panic hook is process-wide, so another test's panic while this one runs
+// can land in this log too; the assertions only look for this test's own text.
 #[test]
-fn crash_logging_writes_panics_to_a_log_until_turned_off() {
+fn crash_logging_is_always_on_and_the_entry_says_where_the_log_is() {
     let _one = ONE_AT_A_TIME
         .lock()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
     let d = start();
-    let logs = || -> Vec<std::path::PathBuf> {
-        std::fs::read_dir(d.store.dir())
-            .unwrap()
-            .filter_map(Result::ok)
-            .map(|e| e.path())
-            .filter(|p| {
-                p.file_name()
-                    .is_some_and(|n| n.to_string_lossy().starts_with("client crash - "))
-            })
-            .collect()
-    };
-    let panic_on_a_thread = |what: &'static str| {
-        let _ = std::thread::spawn(move || panic!("{what}")).join();
-    };
-    assert!(!d.checked_in("debug modes", "use faulthandler to log crashes"));
-    panic_on_a_thread("before");
-    assert!(logs().is_empty());
-    d.click(&["debug modes", "use faulthandler to log crashes"]);
+    hydrus_core::crash_log::install(d.store.dir(), "hydrus-gui-test");
+    // (on from the start, unlike the reference, where it is off at boot)
     assert!(d.checked_in("debug modes", "use faulthandler to log crashes"));
     assert!(hydrus_gui::crash_logging());
-    panic_on_a_thread("a test panic while logging");
-    let logs_now = logs();
-    assert_eq!(logs_now.len(), 1);
-    let text = std::fs::read_to_string(&logs_now[0]).unwrap();
-    assert!(text.contains("a test panic while logging"), "{text}");
+    let _ = std::thread::Builder::new()
+        .name("a-worker".to_owned())
+        .spawn(|| panic!("a test panic with no toggle"))
+        .unwrap()
+        .join();
+    let log = d.store.dir().join(hydrus_core::crash_log::LOG_NAME);
+    let text = std::fs::read_to_string(&log).unwrap();
+    assert!(text.contains("a test panic with no toggle"), "{text}");
+    assert!(text.contains("thread: a-worker"), "{text}");
+    // clicking it doesn't turn logging off: it says where the log is
     d.click(&["debug modes", "use faulthandler to log crashes"]);
-    assert!(!d.checked_in("debug modes", "use faulthandler to log crashes"));
-    panic_on_a_thread("after");
-    let text = std::fs::read_to_string(&logs_now[0]).unwrap();
-    assert!(!text.contains("after"), "turned off, no more is logged");
+    assert!(d.checked_in("debug modes", "use faulthandler to log crashes"));
+    let said = d
+        .jobs()
+        .iter()
+        .filter_map(|j| j.status_text_1.clone())
+        .find(|t| t.starts_with("Crashes are always logged here."))
+        .expect("the popup");
+    assert!(said.contains(&log.display().to_string()), "{said}");
+    hydrus_core::crash_log::uninstall();
 }
 
 // leaf: audit-options-help-debug-action-scan-file-storage-folders

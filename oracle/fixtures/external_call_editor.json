@@ -1,0 +1,429 @@
+{
+ "add": {
+  "name": "new call",
+  "job": "send single file",
+  "description": "Summary: This tells the client how to open a file in another program.\n\nAvailable input parameters: file path, file URI, file hash (sha256), file id\n\nExpected output parameters: none",
+  "validity": "No executable path is set!",
+  "ok_declined": [
+   false,
+   [
+    "Hey, it looks like something is not quite right here. Are you sure you want to save this?"
+   ]
+  ],
+  "ok_accepted": [
+   true,
+   [
+    "Hey, it looks like something is not quite right here. Are you sure you want to save this?"
+   ]
+  ],
+  "existing_names": [
+   "chrome (file path)",
+   "Default OS File Launch",
+   "firefox (file path)",
+   "gio open (Gnome)",
+   "kioclient exec (KDE)",
+   "xdg-open",
+   "chrome (URL)",
+   "Default OS URL Launch",
+   "firefox (URL)"
+  ],
+  "names_after_each_add": [
+   [
+    "new call"
+   ],
+   [
+    "new call",
+    "new call (1)"
+   ]
+  ],
+  "keys_unique": true,
+  "row": [
+   "new call",
+   "send single file",
+   "no call set!"
+  ]
+ },
+ "command": [
+  {
+   "path": "",
+   "answers": [
+    false
+   ],
+   "asked": [
+    "Hey, you really need to put an exe name/path in the path box. Are you sure you want to save this?"
+   ],
+   "ok": false
+  },
+  {
+   "path": "",
+   "answers": [
+    true,
+    false
+   ],
+   "asked": [
+    "Hey, you really need to put an exe name/path in the path box. Are you sure you want to save this?",
+    "Hey, I looked for the executable path \"\" but did not see it with a \"which\" call. You sure you are good?"
+   ],
+   "ok": false
+  },
+  {
+   "path": "",
+   "answers": [
+    true,
+    true
+   ],
+   "asked": [
+    "Hey, you really need to put an exe name/path in the path box. Are you sure you want to save this?",
+    "Hey, I looked for the executable path \"\" but did not see it with a \"which\" call. You sure you are good?"
+   ],
+   "ok": true
+  },
+  {
+   "path": "no-such-program-anywhere",
+   "answers": [
+    false
+   ],
+   "asked": [
+    "Hey, I looked for the executable path \"no-such-program-anywhere\" but did not see it with a \"which\" call. You sure you are good?"
+   ],
+   "ok": false
+  },
+  {
+   "path": "no-such-program-anywhere",
+   "answers": [
+    true
+   ],
+   "asked": [
+    "Hey, I looked for the executable path \"no-such-program-anywhere\" but did not see it with a \"which\" call. You sure you are good?"
+   ],
+   "ok": true
+  },
+  {
+   "path": "sh",
+   "answers": [],
+   "asked": [],
+   "ok": true
+  }
+ ],
+ "show_path": {
+  "path": "/synthetic/one:/synthetic/two bin",
+  "messages": [
+   "As hydrus sees it, your PATH is as follows. Any executable you specify with just a name, rather than a full path, needs to exist in one of these locations. You should be very very careful in ever editing your PATH. Ask a chatbot if you need to learn more. Recall that if you ever do change it, you need to restart hydrus (in a new terminal if needed) to see the changes here.\n\n/synthetic/one\n/synthetic/two bin"
+  ]
+ },
+ "rules": {
+  "rows": [
+   [
+    "file path",
+    true,
+    "%path%"
+   ],
+   [
+    "file URI",
+    false,
+    "%path_uri%"
+   ],
+   [
+    "file hash (sha256)",
+    false,
+    "%hash%"
+   ],
+   [
+    "file id",
+    false,
+    "%file_id%"
+   ]
+  ],
+  "veto": null,
+  "steps": [
+   {
+    "do": "enable file URI",
+    "rows": [
+     [
+      "file path",
+      true,
+      "%path%"
+     ],
+     [
+      "file URI",
+      true,
+      "%path_uri%"
+     ],
+     [
+      "file hash (sha256)",
+      false,
+      "%hash%"
+     ],
+     [
+      "file id",
+      false,
+      "%file_id%"
+     ]
+    ],
+    "veto": "The replacement string \"%path_uri%\" for input parameter \"file URI\" is not in the command template!"
+   },
+   {
+    "do": "disable file URI",
+    "rows": [
+     [
+      "file path",
+      true,
+      "%path%"
+     ],
+     [
+      "file URI",
+      false,
+      "%path_uri%"
+     ],
+     [
+      "file hash (sha256)",
+      false,
+      "%hash%"
+     ],
+     [
+      "file id",
+      false,
+      "%file_id%"
+     ]
+    ],
+    "veto": null
+   },
+   {
+    "do": "rename the file path token",
+    "rows": [
+     [
+      "file path",
+      true,
+      "%renamed%"
+     ],
+     [
+      "file URI",
+      false,
+      "%path_uri%"
+     ],
+     [
+      "file hash (sha256)",
+      false,
+      "%hash%"
+     ],
+     [
+      "file id",
+      false,
+      "%file_id%"
+     ]
+    ],
+    "veto": "The replacement string \"%renamed%\" for input parameter \"file path\" is not in the command template!"
+   },
+   {
+    "do": "disable every input",
+    "rows": [
+     [
+      "file path",
+      false,
+      "%path%"
+     ],
+     [
+      "file URI",
+      false,
+      "%path_uri%"
+     ],
+     [
+      "file hash (sha256)",
+      false,
+      "%hash%"
+     ],
+     [
+      "file id",
+      false,
+      "%file_id%"
+     ]
+    ],
+    "veto": "No input parameters are being used! This is only appropriate if you just want to send a notification signal every time this event happens."
+   },
+   {
+    "do": "no executable",
+    "rows": [
+     [
+      "file path",
+      true,
+      "%path%"
+     ],
+     [
+      "file URI",
+      false,
+      "%path_uri%"
+     ],
+     [
+      "file hash (sha256)",
+      false,
+      "%hash%"
+     ],
+     [
+      "file id",
+      false,
+      "%file_id%"
+     ]
+    ],
+    "veto": "No executable path is set!"
+   }
+  ],
+  "processor_buttons": [
+   {
+    "parameter": "file path",
+    "default_label": "no string processing",
+    "label_with_a_conversion": "prepend with \"pre-\"",
+    "examples": [
+     "/home/me/hydrus_files/f89/89...jpg"
+    ],
+    "step_count": 1
+   },
+   {
+    "parameter": "file URI",
+    "default_label": "no string processing",
+    "label_with_a_conversion": "prepend with \"pre-\"",
+    "examples": [
+     "file:///home/me/hydrus_files/f89/89...jpg"
+    ],
+    "step_count": 1
+   },
+   {
+    "parameter": "file hash (sha256)",
+    "default_label": "no string processing",
+    "label_with_a_conversion": "prepend with \"pre-\"",
+    "examples": [
+     "896aba496da94160475f7ac956beace2083733b5a2972ffd3053dd3d0ad1d36b"
+    ],
+    "step_count": 1
+   },
+   {
+    "parameter": "file id",
+    "default_label": "no string processing",
+    "label_with_a_conversion": "prepend with \"pre-\"",
+    "examples": [
+     "117621484"
+    ],
+    "step_count": 1
+   }
+  ],
+  "pipeline": "send single file",
+  "parameter_names": [
+   "file path",
+   "file URI",
+   "file hash (sha256)",
+   "file id"
+  ]
+ },
+ "timeouts": {
+  "defaults": {
+   "timeout": 15,
+   "long_lived": false,
+   "hide_terminal": true,
+   "text": true,
+   "widget": 15
+  },
+  "entered": [
+   {
+    "entered": null,
+    "timeout": 15,
+    "long_lived": true,
+    "hide_terminal": true,
+    "text": true,
+    "widget": null
+   },
+   {
+    "entered": 0,
+    "timeout": 1,
+    "long_lived": false,
+    "hide_terminal": true,
+    "text": true,
+    "widget": 1
+   },
+   {
+    "entered": 0.5,
+    "timeout": 1,
+    "long_lived": false,
+    "hide_terminal": true,
+    "text": true,
+    "widget": 1
+   },
+   {
+    "entered": 1,
+    "timeout": 1,
+    "long_lived": false,
+    "hide_terminal": true,
+    "text": true,
+    "widget": 1
+   },
+   {
+    "entered": 15,
+    "timeout": 15,
+    "long_lived": false,
+    "hide_terminal": true,
+    "text": true,
+    "widget": 15
+   },
+   {
+    "entered": 59,
+    "timeout": 59,
+    "long_lived": false,
+    "hide_terminal": true,
+    "text": true,
+    "widget": 59
+   },
+   {
+    "entered": 60,
+    "timeout": 60,
+    "long_lived": false,
+    "hide_terminal": true,
+    "text": true,
+    "widget": 60
+   },
+   {
+    "entered": 75,
+    "timeout": 75,
+    "long_lived": false,
+    "hide_terminal": true,
+    "text": true,
+    "widget": 75
+   },
+   {
+    "entered": 3599,
+    "timeout": 3599,
+    "long_lived": false,
+    "hide_terminal": true,
+    "text": true,
+    "widget": 3599
+   },
+   {
+    "entered": 3600,
+    "timeout": 3540,
+    "long_lived": false,
+    "hide_terminal": true,
+    "text": true,
+    "widget": 3540
+   },
+   {
+    "entered": 7200,
+    "timeout": 3540,
+    "long_lived": false,
+    "hide_terminal": true,
+    "text": true,
+    "widget": 3540
+   }
+  ],
+  "flags_toggled": {
+   "timeout": 3540,
+   "long_lived": false,
+   "hide_terminal": false,
+   "text": false,
+   "widget": 3540
+  },
+  "reopened": {
+   "timeout": 3540,
+   "long_lived": false,
+   "hide_terminal": false,
+   "text": false,
+   "widget": 3540
+  }
+ }
+}

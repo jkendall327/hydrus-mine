@@ -48,12 +48,17 @@ pub mod debug_fetch;
 pub mod debug_long_popup;
 pub mod debug_session_reload;
 pub mod delete_files_window;
+pub mod documentation;
 pub mod domain_mask_entry;
 pub mod downloader_definitions_window;
 pub mod downloader_display_window;
 pub mod downloader_interchange_window;
 pub mod downloader_update_times;
 mod drops;
+mod import_options_programs;
+pub use import_options_programs::{
+    dialog as external_program_dialog, entry_window as external_program_entry_window,
+};
 mod exchange_bitmap;
 pub use drops::deliver_dropped_files;
 pub mod duplicates_filtering_sidebar;
@@ -179,9 +184,11 @@ pub(crate) mod tag_relationships_window;
 pub mod tag_suggestions_window;
 mod tag_sync_review_window;
 pub use tag_sync_review_window::opened as tag_sync_review_opened;
+mod memory_maintenance;
 mod tag_text;
 pub mod thumbnail_background;
 mod vacuum_review_window;
+mod wake_popup;
 pub mod what_is_this_window;
 
 /// Missing-thumbnail recovery, independent of stored image colour policy.
@@ -2279,7 +2286,6 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let weak = window.as_weak();
         let page = page.clone();
         let remove_from = remove_from.clone();
-        let shown = shown.clone();
         let delete_files = delete_files.clone();
         let binding_active = binding_active.clone();
         move |asked: Asked| {
@@ -2289,14 +2295,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let owner = page();
             let removed = remove_from(owner.clone());
             let store = owner.borrow().store().clone();
-            if let Asked::Delete(files, deletion, location) = &asked
-                && store
-                    .read(
-                        hydrus_store::settings::get::<hydrus_store::settings::DeletionPreferences>,
-                    )
-                    .unwrap_or_default()
-                    .advanced
-            {
+            if let Asked::Delete(files, deletion, location) = &asked {
                 let owner = page();
                 let guard: delete_files_window::Guard = Rc::new({
                     let owner = owner.clone();
@@ -2336,20 +2335,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 }
                 return;
             }
-            if let Asked::Delete(files, deletion, _) = &asked
-                && !media_actions::confirm_deletion(&store, files, deletion)
-            {
-                asked.act(&store, &*removed);
-                shown(false);
-                return;
-            }
             if let Some(window) = weak.upgrade() {
-                let question = match &asked {
-                    Asked::Delete(files, deletion, _) => {
-                        media_actions::deletion_question(&store, files, deletion)
-                    }
-                    _ => asked.question(),
-                };
+                let question = asked.question();
                 window.set_question(question.into());
                 *pending.borrow_mut() = Some((asked, removed));
             }
@@ -3092,8 +3079,32 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                             rows.clear_thumbnail_cache();
                         }
                     }),
+                    maintain_caches: Rc::new({
+                        let image_cache = image_cache.clone();
+                        let rows = rows.clone();
+                        move || {
+                            image_cache.maintain();
+                            rows.maintain_cache();
+                        }
+                    }),
                 };
-                Rc::new(move |action| debug_actions::run(&context, action))
+                // (the repeating jobs live as long as this debug-actions hook,
+                // which the menu bar owns for the window's life)
+                let timers = memory_maintenance::start(
+                    context.maintain_caches.clone(),
+                    Rc::new({
+                        let pages = pages.clone();
+                        move || {
+                            if let Ok(mut pages) = pages.try_borrow_mut() {
+                                pages.delete_old_closed_pages();
+                            }
+                        }
+                    }),
+                );
+                Rc::new(move |action| {
+                    let _ = &timers;
+                    debug_actions::run(&context, action);
+                })
             },
             clear_thumbnail_cache: Rc::new({
                 let rows = rows.clone();
@@ -7230,6 +7241,7 @@ fn open_viewer(
         let animator = animator.clone();
         let with_slideshow = with_slideshow.clone();
         let slideshow_settings = slideshow_settings.clone();
+        let viewer_delete = viewer_delete.clone();
         let weak = window.as_weak();
         move || {
             url_ticks.set((url_ticks.get() + 1) % 10);
@@ -7238,9 +7250,12 @@ fn open_viewer(
             }
             // (not while the viewer asks something, as the reference's
             // waits while a menu is open)
-            let asking = weak.upgrade().is_some_and(|w| {
-                !w.get_question().is_empty() || w.get_period_asked() || !w.get_warning().is_empty()
-            });
+            let asking = viewer_delete.borrow().is_some()
+                || weak.upgrade().is_some_and(|w| {
+                    !w.get_question().is_empty()
+                        || w.get_period_asked()
+                        || !w.get_warning().is_empty()
+                });
             let current = slideshow.get();
             if asking && current.running() {
                 return;
@@ -7394,14 +7409,6 @@ fn open_viewer(
             if let Some(window) = weak.upgrade() {
                 if let ViewerAsked::Delete(deletion, file) = &asked {
                     let store = model.borrow().store().clone();
-                    if store
-                        .read(
-                            hydrus_store::settings::get::<
-                                hydrus_store::settings::DeletionPreferences,
-                            >,
-                        )
-                        .unwrap_or_default()
-                        .advanced
                     {
                         let guard: delete_files_window::Guard = Rc::new({
                             let weak = weak.clone();
@@ -7453,24 +7460,15 @@ fn open_viewer(
                     }
                 }
                 let question = match &asked {
-                    ViewerAsked::Delete(deletion, file) => {
-                        media_actions::deletion_question(model.borrow().store(), &[*file], deletion)
-                    }
+                    // (deleting opens the delete files dialog above)
+                    ViewerAsked::Delete(..) => String::new(),
                     ViewerAsked::OpenUrls(urls) => {
                         Asked::OpenUrls(urls.clone(), external_launches.clone()).question()
                     }
                     ViewerAsked::Then(question, _) => question.clone(),
                 };
-                let auto_accept = if let ViewerAsked::Delete(deletion, file) = &asked {
-                    !media_actions::confirm_deletion(model.borrow().store(), &[*file], deletion)
-                } else {
-                    false
-                };
                 window.set_question(question.into());
                 *pending.borrow_mut() = Some(asked);
-                if auto_accept {
-                    window.invoke_answer(true);
-                }
             }
         }
     };

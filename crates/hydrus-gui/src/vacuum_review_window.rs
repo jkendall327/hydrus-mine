@@ -220,7 +220,21 @@ pub(crate) fn open(
         let store = store.clone();
         move || run(store.clone())
     });
-    open_using_with_admission(store, slot, valid, can_accept, accepted)
+    open_using_with_admission(slot, valid, can_accept, accepted, || load_rows(store))
+}
+
+type Rows = Vec<(VacuumData, Option<u64>)>;
+
+/// The store's database files, each with the free space on its disk.
+fn load_rows(store: &Arc<Store>) -> Result<Rows, String> {
+    Ok(vacuum::data(store)
+        .map_err(|error| error.to_string())?
+        .into_iter()
+        .map(|data| {
+            let free = vacuum::free_space(&data.path);
+            (data, free)
+        })
+        .collect())
 }
 
 #[cfg(test)]
@@ -230,15 +244,24 @@ fn open_using(
     valid: Rc<dyn Fn() -> bool>,
     accepted: Rc<dyn Fn()>,
 ) -> Result<(), String> {
-    open_using_with_admission(store, slot, valid, Rc::new(|| true), accepted)
+    open_using_with_admission(slot, valid, Rc::new(|| true), accepted, || load_rows(store))
+}
+
+/// Open the review on made-up files and free space, as the reference's
+/// recording was made.
+#[cfg(test)]
+fn open_with_rows(slot: &Slot, rows: Rows, accepted: Rc<dyn Fn()>) -> Result<(), String> {
+    open_using_with_admission(slot, Rc::new(|| true), Rc::new(|| true), accepted, || {
+        Ok(rows)
+    })
 }
 
 fn open_using_with_admission(
-    store: &Arc<Store>,
     slot: &Slot,
     valid: Rc<dyn Fn() -> bool>,
     can_accept: Rc<dyn Fn() -> bool>,
     accepted: Rc<dyn Fn()>,
+    rows: impl FnOnce() -> Result<Rows, String>,
 ) -> Result<(), String> {
     if !slot.0.live.get() || !valid() {
         return Err("The owning window is no longer active.".into());
@@ -254,14 +277,7 @@ fn open_using_with_admission(
     {
         return window.show().map_err(|error| error.to_string());
     }
-    let rows = vacuum::data(store)
-        .map_err(|error| error.to_string())?
-        .into_iter()
-        .map(|data| {
-            let free = vacuum::free_space(&data.path);
-            (data, free)
-        })
-        .collect();
+    let rows = rows()?;
     let window =
         crate::app_title::new::<crate::VacuumReviewWindow>().map_err(|error| error.to_string())?;
     window.set_info(model::INFO.into());
@@ -397,7 +413,138 @@ mod tests {
         vacuum::data(store).unwrap()[0].last_vacuumed_ms
     }
 
+    /// The reference's panel (`oracle/record_vacuum_review.py`) on made-up
+    /// database sizes: the words, each row's cells, which files may be
+    /// vacuumed and why not, the question and what "do it" and "forget it"
+    /// do. The reference calls `_Vacuum` even where its button is off; the
+    /// window's button is, so those steps check that nothing is asked.
     // leaf: audit-media-database-maintenance-vacuum-run
+    #[test]
+    fn the_review_replays_the_reference_s_rows_and_questions_on_made_up_sizes() {
+        let _windows = crate::headless::init();
+        let recording: serde_json::Value =
+            serde_json::from_str(include_str!("../../../oracle/fixtures/vacuum_review.json"))
+                .unwrap();
+        let (_directory, _store) = store();
+        let free = recording["free"].as_u64().unwrap();
+        let recorded_now = recording["now"].as_i64().unwrap();
+        let shift = (now() - recorded_now) * 1000;
+        let names: Vec<String> = recording["data"]
+            .as_object()
+            .unwrap()
+            .keys()
+            .cloned()
+            .collect();
+        let rows = || -> Rows {
+            names
+                .iter()
+                .map(|name| {
+                    let d = &recording["data"][name];
+                    let data = VacuumData {
+                        name: name.clone(),
+                        path: std::path::PathBuf::from(d["path"].as_str().unwrap()),
+                        page_size: d["page_size"].as_u64().unwrap(),
+                        page_count: d["page_count"].as_u64().unwrap(),
+                        freelist_count: d["freelist_count"].as_u64().unwrap(),
+                        last_vacuumed_ms: d["last_vacuumed_ms"]
+                            .as_i64()
+                            .filter(|ms| *ms != 0)
+                            .map(|ms| ms + shift),
+                    };
+                    (data, Some(free))
+                })
+                .collect()
+        };
+        let slot = Slot::default();
+        let _owner = Owner::new(&slot);
+        let accepted = Rc::new(Cell::new(0_u32));
+        let open = || {
+            let accepted = accepted.clone();
+            open_with_rows(
+                &slot,
+                rows(),
+                Rc::new(move || accepted.set(accepted.get() + 1)),
+            )
+            .unwrap();
+            slot.window().unwrap()
+        };
+        let window = open();
+        assert_eq!(
+            window.get_info().as_str(),
+            recording["texts"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|t| t.as_str().unwrap())
+                .find(|t| t.starts_with("Vacuuming is"))
+                .unwrap()
+        );
+        for (i, name) in names.iter().enumerate() {
+            let cells: Vec<String> = window
+                .get_rows()
+                .row_data(i)
+                .unwrap()
+                .cells
+                .iter()
+                .map(|c| c.to_string())
+                .collect();
+            let recorded: Vec<&str> = recording["rows"][name]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|c| c.as_str().unwrap())
+                .collect();
+            assert_eq!(cells, recorded, "row {name}");
+        }
+        drop(window);
+        let mut asked = 0;
+        for step in recording["steps"].as_array().unwrap() {
+            let label = step["step"].as_str().unwrap();
+            let window = slot.window().unwrap_or_else(open);
+            for (n, picked) in step["selected"].as_array().unwrap().iter().enumerate() {
+                let index = names
+                    .iter()
+                    .position(|name| name == picked.as_str().unwrap())
+                    .unwrap();
+                window.invoke_clicked(i32::try_from(index).unwrap(), n > 0, false);
+            }
+            assert_eq!(
+                window.get_can_vacuum(),
+                step["can_vacuum"].as_bool().unwrap(),
+                "{label}"
+            );
+            let dialogs = step["dialogs"].as_array().unwrap();
+            if !step["step"].as_str().unwrap().starts_with("vacuum") {
+                assert!(dialogs.is_empty(), "{label}");
+                continue;
+            }
+            let question = &dialogs[0];
+            assert_eq!(question[2].as_str().unwrap(), model::YES);
+            assert_eq!(question[3].as_str().unwrap(), model::NO);
+            window.invoke_vacuum_clicked();
+            if !step["can_vacuum"].as_bool().unwrap() {
+                assert!(window.get_question().is_empty(), "{label}");
+                assert_eq!(accepted.get(), asked, "{label}");
+                continue;
+            }
+            assert_eq!(
+                window.get_question().as_str(),
+                question[1].as_str().unwrap(),
+                "{label}"
+            );
+            let wrote = !step["writes"].as_array().unwrap().is_empty();
+            window.invoke_answered(wrote);
+            assert!(window.get_question().is_empty(), "{label}");
+            if wrote {
+                asked += 1;
+                assert!(slot.window().is_none(), "{label}: the window closes");
+            } else {
+                assert!(slot.window().is_some(), "{label}: forgetting it keeps it");
+            }
+            assert_eq!(accepted.get(), asked, "{label}");
+        }
+    }
+
     #[test]
     fn visible_pending_eligible_confirmation_declines_and_runs_real_vacuum_once() {
         let windows = crate::headless::init();
@@ -581,6 +728,7 @@ mod tests {
         window.invoke_menu_line_clicked(1, i32::try_from(review).unwrap(), 0.0, 0.0, 0.0);
     }
 
+    // leaf: audit-media-database-maintenance-vacuum-run
     #[test]
     fn pending_main_exit_blocks_vacuum_then_decline_admits_the_same_question() {
         let _windows = crate::headless::init();

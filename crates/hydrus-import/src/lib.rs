@@ -6,6 +6,7 @@
 //! options' rules, copy it into file storage and record it. Every source of
 //! files (the Client API, import folders, downloaders) goes through here.
 
+mod external_programs;
 pub mod maintenance;
 pub mod options;
 pub mod paths;
@@ -254,6 +255,7 @@ impl FileImporter {
         if result.status == ImportStatus::SuccessfulButRedundant {
             self.update_already_in_db(&hash, options)?;
         }
+        self.run_external_programs(&result, &hash, options);
         report(Flag::FileImportReport, || {
             "File import job is done, now publishing content updates".to_owned()
         });
@@ -488,6 +490,12 @@ impl FileImporter {
     /// they lose more files, and say why.
     fn critical_drive_error(&self, message: String) -> ImportError {
         tracing::error!("{message}");
+        self.pause_importers();
+        ImportError::Io(std::io::Error::other(message))
+    }
+
+    /// Pause import folders, subscriptions and the file queues.
+    fn pause_importers(&self) {
         let paused = self.store.write(|ctx| {
             let conn = ctx.conn();
             let mut folders: hydrus_store::settings::FolderSettings =
@@ -505,7 +513,6 @@ impl FileImporter {
             ),
             Err(e) => tracing::error!(error = %e, "pausing the importers failed"),
         }
-        ImportError::Io(std::io::Error::other(message))
     }
 
     /// `RegenerateThumbnail`, for a thumbnail that has gone missing: make it

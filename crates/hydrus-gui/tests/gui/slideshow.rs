@@ -292,8 +292,8 @@ fn a_slideshow_moving_on_leaves_the_menu_and_questions_with_their_file() {
     let shown = viewer.get_caption().to_string();
     assert_eq!(shown, format!("3/{}", files.len()));
     viewer.invoke_menu_chosen(find(&menu, "delete from "));
-    assert!(!viewer.get_question().is_empty());
-    viewer.invoke_answer(true);
+    assert!(!super::common::delete_question(&bound).is_empty());
+    super::common::answer_delete(&bound, true);
     assert_eq!(viewer.get_caption(), format!("2/{}", files.len() - 1));
     assert!(!page.borrow().results().contains(&files[1]));
     assert!(page.borrow().results().contains(&files[2]));
@@ -313,9 +313,9 @@ fn a_slideshow_moving_on_leaves_the_menu_and_questions_with_their_file() {
     };
     viewer.invoke_menu_chosen(find(&rows(), "very fast"));
     viewer.invoke_delete();
-    assert!(!viewer.get_question().is_empty());
+    assert!(!super::common::delete_question(&bound).is_empty());
     assert!(!run(Duration::from_millis(500)), "moved on while asking");
-    viewer.invoke_answer(false);
+    super::common::answer_delete(&bound, false);
     assert!(run(Duration::from_secs(5)), "never moved on again");
     viewer.invoke_close_requested();
 }

@@ -287,13 +287,13 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Context actions pass explicit service/file scopes to native media-actions and delete prompts; lifecycle writes are real store operations rather than labels. First-pass evidence scope: Recorded lifecycle menu is matched and focused action tests inspect archive/inbox/trash/undelete/physical-delete state and questions; full remote-domain behavior is not claimed."
+    "Context actions pass explicit service/file scopes to native media-actions and the Delete files? dialog (#187) and other prompts; lifecycle writes are real store operations rather than labels. First-pass evidence scope: Recorded lifecycle menu is matched and focused action tests inspect archive/inbox/trash/undelete/physical-delete state and questions; full remote-domain behavior is not claimed."
    ],
    "recheck": {
     "date": "2026-10-08",
     "class": "source-restated",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real thumbnail menu and store: archive/re-inbox, delete from domain, undelete, physical delete, with questions. Menu tree is replayed against thumbnail_menu.json in a separate untagged test, but question texts ('Send 2 files to inbox?', 'Send one file from X to trash?', 'Permanently delete one trashed file?'; the delete ones now the reference's delete files dialog labels, the one-domain case matched against a recording by the download flow, flows::download, 2026-10-13) and state effects are literals from the Python source; remote domains not covered. Tests: crates/hydrus-gui/tests/gui/media_file_actions.rs:44 archive_inbox_delete_undelete_and_physical_delete_from_the_menu; thumbnail_menu.rs the_menu_is_the_reference_s (untagged)"
+    "note": "Real thumbnail menu and store: archive/re-inbox, delete from domain, undelete, physical delete, with questions. Menu tree is replayed against thumbnail_menu.json in a separate untagged test, but question texts ('Send 2 files to inbox?', 'Send one file from X to trash?', 'Permanently delete one trashed file?'; the delete ones now the reference's delete files dialog labels, the one-domain case matched against a recording by the download flow, flows::download, 2026-10-13) and state effects are literals from the Python source; remote domains not covered. Tests: crates/hydrus-gui/tests/gui/media_file_actions.rs:44 archive_inbox_delete_undelete_and_physical_delete_from_the_menu; thumbnail_menu.rs the_menu_is_the_reference_s (untagged) Since #187 the delete questions ('Send one file from X to trash?', 'Permanently delete one trashed file?') are the actions of the Delete files? dialog (tests/gui/common delete_question), not an inline yes/no."
    }
   },
   {
@@ -825,10 +825,10 @@
     "Reference vacuum selection asks a duration/disk-space confirmation before pausing work and vacuuming component DB files; no native GUI flow."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The tagged test replaces the accepted callback by a closure that calls vacuum::vacuum itself, so it alone would be a stand-in; the untagged companion test drives the production menu hook and real off-thread vacuum and checks the 'done!' popup and persisted time. Question text is native model::question and estimates are typed literals from the Python source; no recording. The reference's pause-work/disk-space admission beyond the 'can vacuum' row is not covered. Tag sits on the weaker test. Tracker note ('native has no ...') is stale. Tests: crates/hydrus-gui/src/vacuum_review_window.rs:399 visible_pending_eligible_confirmation_declines_and_runs_real_vacuum_once; same file pending_main_exit_blocks_vacuum_then_decline_admits_the_same_question (untagged, production hook); crates/hydrus-gui-model/tests/model/vacuum_review.rs"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude, #97 phase 2",
+    "note": "Two tagged tests. (1) crates/hydrus-gui/src/vacuum_review_window.rs the_review_replays_the_reference_s_rows_and_questions_on_made_up_sizes opens the real window on the synthetic database sizes and a fixed 11 GB of free space from oracle/fixtures/vacuum_review.json (oracle/record_vacuum_review.py, the reference's ReviewVacuumData) and compares the info text, every cell of four rows (size, free pages, last vacuum, can-vacuum reason incl. the not-enough-disk messages, time estimate), which selections may be vacuumed, the question text and buttons for one and two files, and that 'do it' calls the accept callback and closes the window while 'forget it' keeps it open. The accept callback there is a counter. (2) pending_main_exit_blocks_vacuum_then_decline_admits_the_same_question drives the production menu hook: the question waits while the main window's exit question is pending, then 'do it' runs the real off-thread vacuum, which shows the 'database maintenance - vacuum' popup ending 'done!' and records the time in the store. That popup's title and text are restated from the Python source, not recorded. Not covered: the file list is not compared (the reference vacuums each chosen file, hydrus-rs its one file 'main'); row order, the column headings, the button label, the window title and the 'loading database data' step are not recorded; the pause of other work during the vacuum is only exercised by the store's own tests."
    }
   },
   {
@@ -4352,10 +4352,10 @@
     "UTC seconds are typed, rather than Qt date/time dialogs."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real cookie editor: delta below 1200 s refused, 3600 s fills absolute expiry, bad absolute refused, session checkbox clears expiry, persisted. All expectations restated from the Python source (min=1200); no recording of the expiry editor, and the 200-year maximum and the reference's default 30 days are untested. Native types UTC seconds instead of the reference's delta dialog only. Tests: crates/hydrus-gui/tests/gui/network_bandwidth_actions.rs:204 cookie_editor_expiry_modes_validate_and_persist"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "The reference's cookie editor has one way to set an expiry, 'set expires as a delta from now' (no session box and no typed UTC value; those are native extras, DIFFERENCES.md); its session and absolute modes are what it shows: no expiry as a session cookie, otherwise the UTC timestamp. oracle/record_cookie_expiry.py records it with the clock held, for a cookie with no expiry, one two hours out and one an hour past: the control's default (30 days without an expiry or past one, what is left of a coming one), nine deltas through the range including under 1200 seconds (raised to it), the 200-year edge, +5, +86399 and +100000 seconds (days stop at the edge, the rest of the day's seconds are kept: +100000 becomes +13600), the texts, and the fields' newline vetoes. network_bandwidth_actions.rs the_cookie_editors_delta_and_fields_are_checked_as_the_references_were replays them through the real cookie editor and list: the opening state (session box ticked only where there was no expiry, UTC seconds equal to the recorded ones moved by the clock), the delta's starting value, each delta held as recorded and setting the expiry from now, a newline in any field refused with the reference's words, and fields trimmed. Native fixes: the delta is clamped like the control (it refused under 1200 seconds) and begins at what is left. Shown as UTC seconds, not 'expires in 2 hours'; its own words for an empty name."
    }
   },
   {
@@ -5106,10 +5106,10 @@
     "Header fields are trimmed and newline validation rejects malformed values; approval choices are Approved/Denied/Pending."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real editor tested with typed values: a name with a space is rejected (native-only HTTP-token rule; the reference EditPanel only vetoes newlines, documented in DIFFERENCES), approval index 1 = Denied matches the reference order. Trimming, the newline message and the global/domain context chooser are not asserted here; no recording of the editor. Tests: crates/hydrus-gui/tests/gui/network_sessions.rs:131 headers_validate_duplicate_delete_cancel_reopen_and_persist"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "oracle/record_headers_fields.py records the reference's header manager: the rows over global and per-domain headers (in the order its list opens in), what 'add' opens with (hostname.com, Authorization, a Basic value, approved), the three approval choices with their words and stored states, and the editor's GetValue for typed keys and values (trimmed; a newline in the key or value vetoed with 'Hey, it looks like the \"key\" has a newline!'). network_sessions.rs the_header_editor_opens_and_checks_its_fields_as_the_references_does replays them in the real window: the rows equal the recording in order, add opens on the recorded defaults, each approval choice in the recorded order is applied and its stored state and listed words equal the recorded ones, the trimmed headers are taken, a newline is refused with the same words, a global header lists as 'global'. Native fix: the list now opens in the reference's order. Differences documented: native demands an HTTP header name (the reference takes 'X Token', 'X-Ünicode') and says so in its own words for an empty key; a header added in a session stays unsorted until reopened."
    }
   },
   {
@@ -5774,13 +5774,13 @@
    "native": null,
    "notes": [
     "Import/export selected processing steps in reference single-object/list JSON and compressed PNG. Clipboard/file import reviews atomic appended steps; selected exports retain execution order; accepted imports update draft previews, and parent cancellation invalidates exchange children.",
-    "A package mixing steps with other objects appends its steps and shows the reference's warning in the review. A bare string processor is flattened into its steps, where the reference appends it as one nested step (#185). Native uses a shared text/PNG review window."
+    "A package mixing steps with other objects appends its steps and shows the reference's warning in the review. A bare string processor is appended as one nested step, as the reference does (#185). Native uses a shared text/PNG review window."
    ],
    "recheck": {
-    "date": "2026-10-13",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "Claude session (#165 triage)",
-    "note": "Untagged, state now partial. crates/hydrus-gui/tests/gui/sidecars.rs processing_exchange_appends_the_steps_of_a_mixed_package_and_warns_as_the_reference_does replays oracle/record_processing_exchange_mixed.py through the window: a list mixing steps with a tag filter appends its steps with the reference's warning, a list of nothing permitted shows only the warning, and the PNG opens from a file; interchange.rs checks the codec against the same recording. Still a difference: a bare string processor is one nested step in the reference and is flattened here (#185, DIFFERENCES.md)."
+    "by": "Claude session (#185)",
+    "note": "Untagged. A bare string processor is now one nested step, as the reference appends it (#185): crates/hydrus-gui/tests/gui/sidecars.rs processing_exchange_appends_the_steps_of_a_mixed_package_and_warns_as_the_reference_does replays all of oracle/record_processing_exchange_mixed.py through the window (the mixed list, nothing permitted, the PNG, and the bare processor: 'Append 1 processing steps', then an empty example output), and interchange.rs checks the codec against it, including export of the nested step. Still missing: exporting selected steps through the window is not compared with a recording of the reference's export (the recorder only covers import), and paste is not recorded separately."
    }
   },
   {
@@ -7026,10 +7026,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI toggle only reaches engine.bandwidth_settings().override_on_file_urls_from_posts. The consumer (hydrus-download seeds.rs:440, override_bandwidth_after 3s) is not tested with the option anywhere. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:580 downloading_waits_and_post_url_override_reach_the_running_network_engine"
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "GUI toggle only reaches engine.bandwidth_settings().override_on_file_urls_from_posts. The consumer (hydrus-download seeds.rs:440, override_bandwidth_after 3s) is not tested with the option anywhere. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:580 downloading_waits_and_post_url_override_reach_the_running_network_engine Re-read 2026-10-14 (#97 phase 2, w4-r1b): left weak. Proving the consumer needs a post URL that parses to one file URL under a bandwidth rule that blocks the file fetch, with a timing assertion, and the reference's side (ClientImportFileSeeds.py:1740 -> network_job.OverrideBandwidth(3)) is a source constant with no recording of the override itself; neither was built."
    }
   },
   {
@@ -7046,10 +7046,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the options row and the gallery page: new query is highlighted only when set. Expected behaviour is a typed literal from the Python source; the reference's second site (PendSubscriptionGapDownloader, sidebar line 1297) is not covered. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:720 new_queries_and_watchers_are_highlighted_only_when_the_options_say"
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "Drives the options row and the gallery page: new query is highlighted only when set. Expected behaviour is a typed literal from the Python source; the reference's second site (PendSubscriptionGapDownloader, sidebar line 1297) is not covered. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:720 new_queries_and_watchers_are_highlighted_only_when_the_options_say Re-read 2026-10-14 (#97 phase 2, w4-r1b): left source-restated. A recording is possible (record_downloader_lists.py already drives the real sidebar's _PendQueries and reads _highlighted_gallery_import; it would need the option on and off) but the reference's second site, PendSubscriptionGapDownloader, has no native counterpart because the subscription gap downloader is not ported, so the leaf could not be called whole."
    }
   },
   {
@@ -7923,10 +7923,10 @@
     "Native options registry has no editable 'add' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Add button opens the editor on 'new call', Apply asks the question and appends, Options Apply persists. Name 'new call', the question prefix and 'brand new' are typed from the Python source (no recording of Add); non-dupe naming and fresh key on add are not asserted. Stale tracker note: it says no editable row exists, which is false. Tests: crates/hydrus-gui/tests/gui/external_calls_editor.rs:332 add_creates_a_new_call_and_export_writes_the_selected_calls_as_the_reference_does"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "Add opens the real call editor on the recorded brand new call (name 'new call', job 'send single file', its description text, validity 'No executable path is set!'); Apply asks the recorded 'Hey, it looks like something is not quite right here. Are you sure you want to save this?' (declined keeps the editor open, accepted adds); the added call is listed under the recorded name and row text, a second Add is named 'new call (1)' (non-dupe naming), and the two saved calls have different keys. The older export test in external_calls_editor.rs keeps the export leaf. Reference: oracle/fixtures/external_call_editor.json (record_external_call_editor.py: the reference's real EditProcessCallExecutableAndParametersPanel, EditProcessCallPanel and EditClientExecutableCallablePanel under scripted answers). Test: crates/hydrus-gui/tests/gui/external_call_editor_recorded.rs add_opens_a_new_call_that_is_named_keyed_and_asked_about_as_recorded."
    }
   },
   {
@@ -8071,14 +8071,13 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Reference editor/control 'help for this panel -->' is recorded on 'external programs' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
-    "Native options registry has no editable 'help for this panel -->' control in this page/box path."
+    "The panel's help button opens external_programs.html through documentation::open: the local help, else the 'You do not have a local help!' question (#182)."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "weak",
-    "by": "Claude session (#165 triage)",
-    "note": "Untagged. The help button launches the online external_programs.html; the reference's OpenDocumentation opens a local help file, or asks the 'You do not have a local help!' question first. DIFFERENCES.md; #182."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#182)",
+    "note": "The options panel's help button, pressed through the window, replays documentation.json for external_programs.html: local file when present, else the question and each answer. Test: crates/hydrus-gui/tests/gui/external_calls_editor.rs (help_button_opens_the_external_programs_documentation) via common/help.rs. The older notes here ('No corresponding editable row exists...') are false: the panel has the help button, and this test presses it."
    }
   },
   {
@@ -8831,7 +8830,7 @@
    "native": null,
    "notes": [
     "The actual Add control opens an owned Enter Text child asking Enter the reason with I do not like the file. as default. Accepted text, including empty/duplicate/Unicode text, appends verbatim; cancel leaves rows unchanged. Options Apply is blocked while the child is open; parent Cancel closes descendants and invalidates retained callbacks. Saved suggestions reach the real advanced deletion dialog and actual stored deletion reason.",
-    "Remote repository/IPFS deletion is excluded from this local native dialog. Simple/nonadvanced service-choice picker, undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
+    "Remote repository/IPFS deletion is excluded from this local native dialog. The simple (non-advanced) dialog is the same Delete files? dialog without the reason panel (#187); undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
     "Queue uses existing ListTable/SessionDialog geometry. Recorded selection/add/edit/move/delete behavior and Delete-key route are covered; general ListTable keyboard arrow selection is not expanded by this slice.",
     "Rust model/native/store regressions are authored for root hosted CI; no local Cargo build/test or mutation tests were run."
    ],
@@ -8849,11 +8848,9 @@
    "workstream": "options-system",
    "state": "carried",
    "priority": "normal",
-   "reference": null,
-   "native": null,
    "notes": [
     "The actual Edit/double-click control opens the first selected visual row in an owned Enter Text child with its existing text. Acceptance replaces only that stable row verbatim, including duplicates and blanks; cancellation and closed-parent callbacks preserve the draft/store. Options Apply commits the complete ordered list, reopened deletion dialogs consume the saved suggestion list.",
-    "Remote repository/IPFS deletion is excluded from this local native dialog. Simple/nonadvanced service-choice picker, undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
+    "Remote repository/IPFS deletion is excluded from this local native dialog. The simple (non-advanced) dialog is the same Delete files? dialog without the reason panel (#187); undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
     "Queue uses existing ListTable/SessionDialog geometry. Recorded selection/add/edit/move/delete behavior and Delete-key route are covered; general ListTable keyboard arrow selection is not expanded by this slice.",
     "Rust model/native/store regressions are authored for root hosted CI; no local Cargo build/test or mutation tests were run."
    ],
@@ -8871,11 +8868,9 @@
    "workstream": "options-system",
    "state": "carried",
    "priority": "normal",
-   "reference": null,
-   "native": null,
    "notes": [
     "Exact default-false dependent checkbox persists/imports and recalls the last accepted action when available, otherwise falls back to the suggested domain/first actionable row. Actual accepted local, all-local, physical and clean actions update remembered state; Cancel and stale callbacks do not. Physical-only dialogs preserve a prior 32-byte user-service key or absent value, but short builtin service keys behave like special actions, matching the four actual Qt cases.",
-    "Remote repository/IPFS deletion is excluded from this local native dialog. Simple/nonadvanced service-choice picker, undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
+    "Remote repository/IPFS deletion is excluded from this local native dialog. The simple (non-advanced) dialog is the same Delete files? dialog without the reason panel (#187); undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
     "Queue uses existing ListTable/SessionDialog geometry. Recorded selection/add/edit/move/delete behavior and Delete-key route are covered; general ListTable keyboard arrow selection is not expanded by this slice.",
     "Rust model/native/store regressions are authored for root hosted CI; no local Cargo build/test or mutation tests were run."
    ],
@@ -8897,7 +8892,7 @@
    "native": null,
    "notes": [
     "Exact default-true dependent checkbox persists/imports and initializes listed or custom last reason only when enabled. Existing shared/differing reasons override recalled selection. The last matching duplicate suggestion is selected on initialization, as real Qt BetterRadioBox does. Accepted non-default custom/list reasons are remembered; selecting default clears memory; preserved/existing reasons, clean deletion and Cancel retain it. Runtime memories merge safely with concurrent Options changes.",
-    "Remote repository/IPFS deletion is excluded from this local native dialog. Simple/nonadvanced service-choice picker, undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
+    "Remote repository/IPFS deletion is excluded from this local native dialog. The simple (non-advanced) dialog is the same Delete files? dialog without the reason panel (#187); undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
     "Queue uses existing ListTable/SessionDialog geometry. Recorded selection/add/edit/move/delete behavior and Delete-key route are covered; general ListTable keyboard arrow selection is not expanded by this slice.",
     "Rust model/native/store regressions are authored for root hosted CI; no local Cargo build/test or mutation tests were run."
    ],
@@ -8919,7 +8914,7 @@
    "native": null,
    "notes": [
     "Exact default-false checkbox enables dependent remembered flags/reason queue, stages/persists/imports and switches actual thumbnail/viewer Delete to an owned local action/reason dialog. Local domains and all-local trashing use actual selected membership; unlocked physical and clean deletion reach ContentWriter and cleared records. Existing/shared/differing reasons are preserved as the recorded radio choices; Cancel/closed owner cannot mutate files or memories.",
-    "Remote repository/IPFS deletion is excluded from this local native dialog. Simple/nonadvanced service-choice picker, undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
+    "Remote repository/IPFS deletion is excluded from this local native dialog. The simple (non-advanced) dialog is the same Delete files? dialog without the reason panel (#187); undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
     "Queue uses existing ListTable/SessionDialog geometry. Recorded selection/add/edit/move/delete behavior and Delete-key route are covered; general ListTable keyboard arrow selection is not expanded by this slice.",
     "Rust model/native/store regressions are authored for root hosted CI; no local Cargo build/test or mutation tests were run."
    ],
@@ -8927,7 +8922,7 @@
     "date": "2026-10-08",
     "class": "sound",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Toggle enables the dependents (only the reason row asserted in the GUI; advanced_controls recording not replayed) and switches thumbnail and viewer Delete to the real dialog; action and reason lists replayed from the recording; clean/locked deletion via ContentWriter tested. Minor gap: not all three dependent rows asserted. Tests: crates/hydrus-gui/tests/gui/options_window.rs:5111; crates/hydrus-gui/tests/gui/media_actions.rs:318 closing_viewer_discards_advanced_deletion_and_reopening_recalls_applied_choice; crates/hydrus-gui-model/tests/model/delete_files.rs:34,122,307"
+    "note": "Toggle enables the dependents (only the reason row asserted in the GUI; advanced_controls recording not replayed) and switches thumbnail and viewer Delete to the dialog with the reason panel (since #187 the simple form opens the same dialog without it); action and reason lists replayed from the recording; clean/locked deletion via ContentWriter tested. Minor gap: not all three dependent rows asserted. Tests: crates/hydrus-gui/tests/gui/options_window.rs:5111; crates/hydrus-gui/tests/gui/media_actions.rs:318 closing_viewer_discards_advanced_deletion_and_reopening_recalls_applied_choice; crates/hydrus-gui-model/tests/model/delete_files.rs:34,122,307"
    }
   },
   {
@@ -8990,7 +8985,7 @@
    "notes": [
     "Truth pass (2026-10-08): partial, small. Delete question matches the recording; undelete question missing. Missing: Undelete never asks the reference's 'Undelete this file back to {service}?' (ClientGUIMediaModalActions.py:1629). Evidence: options.rs:2479; options_window.rs:5000-5040; media_actions.rs:98-120; recorded policy test media_actions.rs:239 (files_trash.json)",
     "Exact default-true checkbox stages, persists/reopens and imports legacy confirm_trash. Thumbnail/viewer local delete consumers skip a single-actionable-domain question when false, retain multiple-domain ambiguity and physical questions, and use the remembered selected action in advanced auto-resolution. Undelete still restores immediately, so the original leaf remains Partial.",
-    "Remote repository/IPFS deletion is excluded from this local native dialog. Simple/nonadvanced service-choice picker, undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
+    "Remote repository/IPFS deletion is excluded from this local native dialog. The simple (non-advanced) dialog is the same Delete files? dialog without the reason panel (#187); undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
     "Queue uses existing ListTable/SessionDialog geometry. Recorded selection/add/edit/move/delete behavior and Delete-key route are covered; general ListTable keyboard arrow selection is not expanded by this slice.",
     "Rust model/native/store regressions are authored for root hosted CI; no local Cargo build/test or mutation tests were run."
    ],
@@ -9012,7 +9007,7 @@
    "native": null,
    "notes": [
     "Exact default-true checkbox stages until Apply, imports legacy confirm_archive, persists/reopens and gates real thumbnail/menu/shortcut Archive/Inbox writes. Only multiple actionable files ask Archive N files? or Send N files to inbox?; cancel retains inbox states, accepted questions and disabled confirmation perform the store mutation. Single actionable files never ask.",
-    "Remote repository/IPFS deletion is excluded from this local native dialog. Simple/nonadvanced service-choice picker, undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
+    "Remote repository/IPFS deletion is excluded from this local native dialog. The simple (non-advanced) dialog is the same Delete files? dialog without the reason panel (#187); undelete confirmation, local-domain copy/move and archive-delete/duplicate filtering chooser remain parent limitations; no parent or alias completion is claimed.",
     "Queue uses existing ListTable/SessionDialog geometry. Recorded selection/add/edit/move/delete behavior and Delete-key route are covered; general ListTable keyboard arrow selection is not expanded by this slice.",
     "Rust model/native/store regressions are authored for root hosted CI; no local Cargo build/test or mutation tests were run."
    ],
@@ -9125,10 +9120,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options row toggles the lock and the shared locked() guard is checked with typed expectations; the recording (delete_lock.json) is replayed through API deletes and trash emptying rather than through this GUI test, and no GUI-driven delete/trash is refused. Same shared guard function, so consistent but circular at the GUI level. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:238 (locked()); crates/hydrus-api/tests/delete_lock.rs the_delete_lock_matches_the_reference; trash.rs sql_condition"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "The Options row (with the advanced deletion dialog on) is set in the real window and the real deletion dialog is opened over the recorded file in its four states (in the trash or a local domain; inboxed or archived), with the lock off and on: the deletions offered are the recorded EditDeleteFilesPanel's (an archived trashed file under the lock offers none and the dialog says 'No valid delete choices!'; an archived file in a local domain can only be sent to the trash; an inboxed file is unaffected), recorded as delete_lock_dialog in files_trash.json (record_files_trash.py). The deletes through the Client API and the trash emptying keep their recording replay (delete_lock.json, hydrus-api tests). Test: crates/hydrus-gui/tests/gui/options_delete_lock_dialog.rs the_lock_row_decides_which_deletions_the_dialog_offers_for_archived_files_as_recorded."
    }
   },
   {
@@ -9186,10 +9181,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-09",
+    "date": "2026-10-14",
     "class": "source-restated",
-    "by": "recheck bin E session (claude/recheck-e-dupes)",
-    "note": "Untagged: the reference empties an oversized trash by taking the oldest 256 as a set and deleting in file-id order (CPython set order), hydrus-rs deletes the oldest first, so which files stay differs (DIFFERENCES.md). trash_maintenance.rs replays the recorded size scenarios and agrees on how many files go and in what group sizes, and exactly on the size boundaries (1 MiB stays, 1 MiB + 1 byte goes, 0 MB empties), but the files left in the two ordered scenarios are the hydrus-rs choice, not the reference's."
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "Untagged: the reference empties an oversized trash by taking the oldest 256 as a set and deleting in file-id order (CPython set order), hydrus-rs deletes the oldest first, so which files stay differs (DIFFERENCES.md). trash_maintenance.rs replays the recorded size scenarios and agrees on how many files go and in what group sizes, and exactly on the size boundaries (1 MiB stays, 1 MiB + 1 byte goes, 0 MB empties), but the files left in the two ordered scenarios are the hydrus-rs choice, not the reference's. Re-read 2026-10-14 (#97 phase 2, w4-r1b): left untagged. The only difference is which files go when the trash is over its size: the reference deletes the oldest 256 in CPython set order, which depends on the file ids and the set's table size; matching it would mean reproducing a hash table's iteration order, so hydrus-rs keeps deleting the oldest first (DIFFERENCES.md)."
    }
   },
   {
@@ -9419,6 +9414,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Untagged until the ordinary dialogs share one Dialog helper that owns apply and cancel and saves regular_dialog on apply (owner, 2026-10-14, #154); window positions also can't be observed in the headless tests. See DECISIONS.md and DIFFERENCES.md.",
     "WindowSettings restores remembered dimensions/position, maximised/fullscreen flags; main close captures current WindowState and persists it. It does not fit stale geometry to the current screen or implement reference parent-relative default placement.",
     "No screen fitting or default gravity/position placement.",
     "No GUI frame-location editor (listed under options > gui)."
@@ -11952,10 +11948,11 @@
    "path": "Help > debug > report modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope (owner, 2026-10-14, #184): the reference's report points sit on its subscription manager's polling loop, so a recording holds a timing-dependent number of repeated lines that hydrus-rs's daemon does not produce at the same call sites. The one report ported (the IsSyncDue wording) stays. See DECISIONS.md.",
     "Reference debug action wires 'subscription report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
@@ -11998,7 +11995,7 @@
     "date": "2026-10-08",
     "class": "weak",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu toggle and check state, but the mechanism is a Rust panic hook writing a new 'client crash - N.log' file, tested with a thread panic: not faulthandler (fatal signals, writes into the client log; segfaults not caught). The reference's 'DO NOT PLAY ANYTHING WITH MPV...' popup on enabling is not shown or tested. Stand-in behaviour, documented in DIFFERENCES. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:492 crash_logging_writes_panics_to_a_log_until_turned_off"
+    "note": "Deliberate divergence, not a port: the reference item is a toggle that is off at boot (Python faulthandler, fatal signals). The owner chose always-on crash logging (2026-10-14): a Rust panic hook always writes client crash.log in the database directory, the menu entry is shown on and says where the log is, native crashes (segfaults) are not caught. Documented in DIFFERENCES.md (Crash log). Test crates/hydrus-gui/tests/gui/debug_menu_actions.rs crash_logging_is_always_on_and_the_entry_says_where_the_log_is is untagged because it proves the divergence, not the leaf."
    }
   },
   {
@@ -12245,10 +12242,10 @@
     "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "sound",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window test asserts the launched documentation URL from the fixture and the tl;dr text from recorded step 10. Tests: crates/hydrus-gui/tests/gui/import_options_panel.rs:72,266; crates/hydrus-gui-model/tests/model/import_options_panel.rs:67,209; crates/hydrus-gui-model/tests/model/import_options_editor.rs:~356,~388"
+    "by": "Claude session (#182)",
+    "note": "The panel's help button replays documentation.json for getting_started_import_options.html (local file, else the question and each answer), and the tl;dr text is the recorded step 10. Tests: crates/hydrus-gui/tests/gui/import_options_panel.rs (options_drafts_replay_clear_reset_simple_mode_and_cancel_without_store_changes) via common/help.rs."
    }
   },
   {
@@ -12427,10 +12424,10 @@
     "Scheduling cadence and FIFO fairness, other importing controls, subscriptions, and global pause controls remain outside this five-control slice. Broader Importing/page families remain Partial."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Options and Slots primitive are recorded/replayed, but the only consumer test uses URL-import file queues. The reference uses the misc slot also for simple-downloader gallery jobs (queue.rs:836, QueueKind non-gallery search at 766) and local-import pages; none of those is tested against the setting. Tests: crates/hydrus-gui/tests/gui/import_work_slots.rs:48; work_slots.rs:81; crates/hydrus-download/tests/url_queue.rs:~1002 (QueueKind::Urls file queues only)"
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "Options and Slots primitive are recorded/replayed, but the only consumer test uses URL-import file queues. The reference uses the misc slot also for simple-downloader gallery jobs (queue.rs:836, QueueKind non-gallery search at 766) and local-import pages; none of those is tested against the setting. Tests: crates/hydrus-gui/tests/gui/import_work_slots.rs:48; work_slots.rs:81; crates/hydrus-download/tests/url_queue.rs:~1002 (QueueKind::Urls file queues only) Re-read 2026-10-14 (#97 phase 2, w4-r1b): left weak. The reference gives the misc slot to the URL import page (its files and its simple-downloader gallery jobs, ClientImportSimpleURLs.py:746 and :1445) and to the local import page (ClientImportLocal.py:437); the native consumer test covers only the URL file queues, and the other two jobs' queues were not driven against the setting."
    }
   },
   {
@@ -15196,13 +15193,13 @@
    "native": null,
    "notes": [
     "'changelog' has an exact predefined HTTP URL and routes through the OS launcher. The menu oracle checks labels/placement and the GUI regression verifies the shared URL-launch path.",
-    "Opens the hosted website/changelog; Qt prefers bundled local documentation."
+    "Opens the page from a help folder beside the program, else asks \"You do not have a local help!\" and opens the online page or the guide to building one, as the reference's OpenDocumentation does (#182)."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "weak",
-    "by": "Claude session (#165 triage)",
-    "note": "Untagged. As open help: the reference's OpenDocumentation opens the local changelog or asks the 'You do not have a local help!' question; hydrus-rs opens the online changelog at once. DIFFERENCES.md; #182."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#182)",
+    "note": "As open help, for changelog.html#version_688, the fragment kept in the local file URL. Test: shell_help_menu.rs (open_help_and_changelog_launch_their_pages) via common/help.rs, replaying documentation.json."
    }
   },
   {
@@ -15316,13 +15313,13 @@
    "native": null,
    "notes": [
     "'open help' has an exact predefined HTTP URL and routes through the OS launcher. The menu oracle checks labels/placement and the GUI regression verifies the shared URL-launch path.",
-    "Opens the hosted website/changelog; Qt prefers bundled local documentation."
+    "Opens the page from a help folder beside the program, else asks \"You do not have a local help!\" and opens the online page or the guide to building one, as the reference's OpenDocumentation does (#182)."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "weak",
-    "by": "Claude session (#165 triage)",
-    "note": "Untagged. The reference's OpenDocumentation opens the local help, or with none asks 'You do not have a local help! ...' (open online help / open how to build guide / forget it); hydrus-rs ships no local help and opens the online page at once. Recorded as a difference in DIFFERENCES.md; the owner decides in #182."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#182)",
+    "note": "Help > open help presses through the real menu, with the page in the local help and without it; the opened file URL, the 'You do not have a local help!' question (message, title, choices, 'forget it') and what each answer or a cancel opens replay oracle/fixtures/documentation.json (record_documentation.py). Test: crates/hydrus-gui/tests/gui/shell_help_menu.rs (open_help_and_changelog_launch_their_pages) via common/help.rs."
    }
   },
   {
@@ -15968,10 +15965,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives show PATH and the command window Apply (empty path then which-failure questions, bare name 'sh' asks nothing). The expected strings are literals copied from ExternalProgramsPanel.py (external_calls.json records only the empty-path question, not the which message or show-PATH text); no recording of show PATH. The reference has no file picker beyond a text box, so none is missing. Stale tracker note ('native has no picker/editor path') is false. Tests: crates/hydrus-gui/tests/gui/external_calls_editor.rs:215 executable_path_checks_and_show_path_help_match_the_reference"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "The real call editor's command window is opened for each recorded executable path ('', a name `which` cannot find, 'sh') with each recorded sequence of answers: the questions asked on Apply (empty path, then the 'did not see it with a \"which\" call' question with the path in quotes) are the recorded strings in the recorded order, the window closes or stays exactly when the reference's UserIsOKToOK returns true or false, and a closed window leaves the path at the front of the call's command template; 'show PATH' shows the recorded wording followed by one line per PATH entry (the recording over a known PATH, the native over the real one). Reference: oracle/fixtures/external_call_editor.json (record_external_call_editor.py: the reference's real EditProcessCallExecutableAndParametersPanel, EditProcessCallPanel and EditClientExecutableCallablePanel under scripted answers). The reference has no file picker beyond the text box. Test: crates/hydrus-gui/tests/gui/external_call_editor_recorded.rs the_executable_path_questions_and_the_path_message_are_the_recorded_ones."
    }
   },
   {
@@ -15988,10 +15985,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Rule rows, the veto messages and the token edits are typed literals from the Python source (no recording of the rules panel). The String Processor part is only opened and cancelled; the processor that makes 'pre-x.png' is injected through the store, so editing a processor from the panel is not driven. Stale tracker note ('native has no pipeline rule panels') is false. Tests: crates/hydrus-gui/tests/gui/external_calls_editor.rs:62 input_rules_enable_token_and_string_processor_reach_the_saved_call"
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "Improved but still weak. The rule rows (label, enabled, token), the pipeline description, each veto message for enabling an input whose token is not in the template, renaming a token, enabling none, and an empty executable, and the string processor button's label (no string processing / the steps listed a line each; fixed here, it said 'some conversion') are now compared with the recording (untagged test the_input_rows_vetoes_and_processor_button_labels_are_the_recorded_ones). Still missing: a string processor is not edited through the child editor from the rule row (it is put in the store and the editor reopened), so the String Processor part of the leaf is half shown. Reference: oracle/fixtures/external_call_editor.json (record_external_call_editor.py: the reference's real EditProcessCallExecutableAndParametersPanel, EditProcessCallPanel and EditClientExecutableCallablePanel under scripted answers). Tagged test: external_calls_editor.rs input_rules_enable_token_and_string_processor_reach_the_saved_call. Untagged on review of #225: it stays weak, so no test carries its tag."
    }
   },
   {
@@ -16008,10 +16005,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only a round-trip of timeout/long-lived/hide-terminal/text through Apply with typed values (defaults 15/true/true from Python, set via properties, not the reference's NoneableTimeDelta minute+second control or its min 1). Nothing exercises what reads the flags (timeout enforcement in gui-model external_calls.rs, hide terminal, text mode). No recording. Stale tracker note ('no controls writing these flags') is false. Tests: crates/hydrus-gui/tests/gui/external_calls_editor.rs:175 timeout_long_lived_terminal_and_text_flags_are_saved_on_the_process"
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "The control now matches the recording: defaults (15 s, not long-lived, hide terminal and text on), whole-second entries 1..3599 save as recorded (0 saves 1), 'this can live for a very long time' saves the marker with 15 s, the two flags toggle and reopen, and a stored timeout of an hour or more opens as the reference's widget shows it (3,600 as 3,540) after two small fixes (the box stops at 3,599; a stored hour-plus timeout reopens as the widget holds it). Still weak: the runtime that reads the flags (hydrus-gui-model run_process/test_call) is not tested for timeout enforcement or text mode, and it kills at the exact timeout where the reference checks only every 3 seconds (SubprocessCommunicate). Reference: oracle/fixtures/external_call_editor.json (record_external_call_editor.py: the reference's real EditProcessCallExecutableAndParametersPanel, EditProcessCallPanel and EditClientExecutableCallablePanel under scripted answers). Test: crates/hydrus-gui/tests/gui/external_call_editor_recorded.rs the_timeout_and_process_flags_save_and_reopen_as_the_reference_does. Untagged on review of #225: it stays weak, so no test carries its tag."
    }
   },
   {
@@ -20876,10 +20873,10 @@
     "Native options registry has no editable 'Close the main window to system tray:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "phase 2 session (blind agent)",
-    "note": "system_tray.rs:292 closing_hides_the_window_to_the_icon_instead_of_exiting sets the real Options row and checks that close requests hide the window, the show entry restores it, File > exit and the icon's exit still ask, and the default still asks. The host is a recording stand-in and the expectations are literals from the Python source."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "The Options row is set in the real window (every recorded case: tray available or not, option on or off) and the real main window's close request is dispatched: whether the window hides to the icon, whether the icon is shown and whether the exit question is asked equal the four recorded 'close' cases. Real tray hosts are not exercised on either side: the reference was recorded with QSystemTrayIcon availability and visibility scripted (oracle/record_system_tray.py, system_tray.json), and the native host here is a recording stand-in; the Options row is set in the real window and the real main window's close/start/minimise handling is driven. Test: crates/hydrus-gui/tests/gui/system_tray.rs the_close_button_follows_the_reference_s_recorded_cases."
    }
   },
   {
@@ -20897,10 +20894,10 @@
     "Native options registry has no editable 'Minimise the main window to system tray:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-09",
-    "class": "source-restated",
-    "by": "Claude, options-shell-leftovers",
-    "note": "GUI test system_tray.rs minimising_hides_the_window_to_the_icon_where_the_window_system_reports_it drives the real tray controller (option read, window hidden to the icon, restored with its prior state on show, nothing hidden with no tray) with Slint's own minimised state in the headless platform; winit's is_minimized (X11/Windows/macOS, not Wayland) and a real window manager are not exercised, and the reference's two BUGFIX switches have no counterpart (DIFFERENCES.md, System tray). The expected behaviour follows the reference's source (ClientGUI.changeEvent / _SystemTrayHide); there is no recording of it."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "The four recorded 'minimise' cases without the reference's two workaround switches (bugfix 'none'; the other eight have no native counterpart, DIFFERENCES.md): the option is set in the real window, the maximised window is minimised, and whether it hides to the icon, whether the icon shows and (when hidden) that showing it again from the icon brings it back maximised and not minimised equal the recording. Slint's own minimised state is driven in the headless platform, not winit's is_minimized (Wayland does not answer it). Real tray hosts are not exercised on either side: the reference was recorded with QSystemTrayIcon availability and visibility scripted (oracle/record_system_tray.py, system_tray.json), and the native host here is a recording stand-in; the Options row is set in the real window and the real main window's close/start/minimise handling is driven. Test: crates/hydrus-gui/tests/gui/system_tray.rs minimising_follows_the_reference_s_recorded_cases."
    }
   },
   {
@@ -20918,10 +20915,10 @@
     "Native options registry has no editable 'Start the client minimised to system tray:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "phase 2 session (blind agent)",
-    "note": "system_tray.rs:353 a_client_starts_hidden_in_the_icon_when_told_to_and_a_tray_is_there sets the option through the real Options window, restarts and checks the window starts hidden with the icon, a click shows it, and with no tray or the option off the window is shown. The tray host is a stand-in and the expectations are restated from the source."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "For each of the four recorded 'start' cases the option is set in the real Options window, the client restarted (a new main window on the same store), and whether the window starts hidden, whether it is visible and whether the icon is shown equal the recording. Real tray hosts are not exercised on either side: the reference was recorded with QSystemTrayIcon availability and visibility scripted (oracle/record_system_tray.py, system_tray.json), and the native host here is a recording stand-in; the Options row is set in the real window and the real main window's close/start/minimise handling is driven. Test: crates/hydrus-gui/tests/gui/system_tray.rs starting_follows_the_reference_s_recorded_cases."
    }
   },
   {
@@ -24267,7 +24264,13 @@
     "Low priority by the owner's decision of 2026-10-08: running an external program on imported files is a feature the owner does not use; kept in scope, done last.",
     "Truth pass (2026-10-08): missing, large. Only an opaque pass-through exists. Missing: Typed entry model, add/edit/delete list, the when-to-run chooser, the program choices, and execution after import. Evidence: hydrus-core/src/import_options.rs:430-436 (opaque stored string); import_options_window.rs:201-204 '(not editable here yet)'",
     "External program data can survive migration, but the native editor cannot author commands and the worker does not execute them."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (issue #94 pickup)",
+    "note": "The real import options editor is driven through the external programs page against import_external_programs.json recorded from the reference's EditExternalProgramsImportOptionsPanel and entry panel: the list wording after each add (cancel, default, each 'when'), the entry dialog's programs (sorted by name), 'when' choices and initial choices, edit and cancelled edit, 'Remove N selected?' (no, then yes), the information notice for an entry whose call is not registered, the critical notice when there are no calls, and Apply saving the entries. The saved options are then resolved and an import of a real file runs the registered programs in the order added with the path, URI and hash. The importer tests (crates/hydrus-import/tests/external_programs.rs) replay the recorded runs for new and already-in files and the pause of subscriptions, import folders and file queues when a program is missing, unregistered or of the wrong kind; the entries' serialisation round-trips the reference's tuples (crates/hydrus-downloader-exchange/tests/external_programs_import.rs). Argument fidelity (path, URI and hash given to the program) is proved by crates/hydrus-import/tests/external_programs.rs against the recorded runs; the GUI test compares the first lines of the list wording only. A call using the file id fails and pauses the importers, as recorded. The wrong-kind and only-failing-entry cases come from the reference's source, not a recording. Not matched: the failure message is a popup in the reference and dumps its environment; the OS-default launch is not tested; programs run in import_file, so every importer path runs them, not only file seeds; the registered calls are not migrated (DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/import_external_programs.rs, crates/hydrus-gui-model/tests/model/external_program_entries.rs; crates/hydrus-download/tests/url_queue.rs (a file already in by URL)"
+   }
   },
   {
    "id": "import-favourites",

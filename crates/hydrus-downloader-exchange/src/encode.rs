@@ -150,6 +150,7 @@ pub(super) fn processor(p: &StringProcessor) -> Result<Value> {
                         s.example
                     ]),
                 ),
+                ProcessingStep::Nested(nested) => processor(nested)?,
                 ProcessingStep::Unsupported { type_id } => {
                     return Err(Error::Unsupported(format!(
                         "string processing step {type_id}"

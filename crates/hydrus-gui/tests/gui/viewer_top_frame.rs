@@ -106,7 +106,7 @@ fn the_viewer_s_top_hover_frame() {
     assert_eq!(buttons(&viewer), (false, true, false, false));
     // in the trash: delete completely, and undelete
     viewer.invoke_delete();
-    viewer.invoke_answer(true);
+    super::common::answer_delete(&bound, true);
     assert!(bound.current.borrow().borrow().results().contains(&file));
     assert_eq!(buttons(&viewer), (false, false, true, true));
     viewer.invoke_undelete();

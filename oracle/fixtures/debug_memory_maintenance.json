@@ -1,0 +1,203 @@
+{
+  "fast": {
+    "path": [
+      "help",
+      "debug",
+      "memory actions",
+      "run fast memory maintenance"
+    ],
+    "tooltip": "Tell all the fast caches to maintain themselves."
+  },
+  "slow": {
+    "path": [
+      "help",
+      "debug",
+      "memory actions",
+      "run slow memory maintenance"
+    ],
+    "tooltip": "Tell all the slow caches to maintain themselves."
+  },
+  "caches": [
+    {
+      "name": "primed",
+      "now": 3,
+      "image": {
+        "keys": [
+          "b",
+          "c",
+          "d"
+        ],
+        "bytes": 70
+      },
+      "thumbnail": {
+        "keys": [
+          "b",
+          "c",
+          "d"
+        ],
+        "bytes": 70
+      },
+      "pubs": []
+    },
+    {
+      "name": "after slow",
+      "now": 3,
+      "image": {
+        "keys": [
+          "b",
+          "c",
+          "d"
+        ],
+        "bytes": 70
+      },
+      "thumbnail": {
+        "keys": [
+          "b",
+          "c",
+          "d"
+        ],
+        "bytes": 70
+      },
+      "pubs": []
+    },
+    {
+      "name": "after fast",
+      "now": 3,
+      "image": {
+        "keys": [
+          "b",
+          "c",
+          "d"
+        ],
+        "bytes": 70
+      },
+      "thumbnail": {
+        "keys": [
+          "b",
+          "c",
+          "d"
+        ],
+        "bytes": 70
+      },
+      "pubs": [
+        "memory_maintenance_pulse",
+        "set_status_bar_db_dirty"
+      ]
+    },
+    {
+      "name": "past the timeout, after slow",
+      "now": 302.5,
+      "image": {
+        "keys": [
+          "b",
+          "c",
+          "d"
+        ],
+        "bytes": 70
+      },
+      "thumbnail": {
+        "keys": [
+          "b",
+          "c",
+          "d"
+        ],
+        "bytes": 70
+      },
+      "pubs": []
+    },
+    {
+      "name": "past the timeout, after fast",
+      "now": 302.5,
+      "image": {
+        "keys": [
+          "d"
+        ],
+        "bytes": 10
+      },
+      "thumbnail": {
+        "keys": [
+          "d"
+        ],
+        "bytes": 10
+      },
+      "pubs": [
+        "memory_maintenance_pulse",
+        "set_status_bar_db_dirty",
+        "set_status_bar_db_dirty",
+        "set_status_bar_db_dirty",
+        "set_status_bar_db_dirty"
+      ]
+    }
+  ],
+  "fast_leaves_closed_pages": {
+    "kept": [
+      "closed 90"
+    ],
+    "destroyed": []
+  },
+  "closed_pages": [
+    {
+      "name": "old pages, changed long ago",
+      "closed_minutes_ago": [
+        61,
+        30,
+        90
+      ],
+      "last_change_minutes_ago": 31,
+      "published_delete": true,
+      "kept": [
+        "closed 30"
+      ],
+      "destroyed": [
+        "closed 61",
+        "closed 90"
+      ],
+      "change_touched": true
+    },
+    {
+      "name": "old pages, changed recently",
+      "closed_minutes_ago": [
+        61,
+        30,
+        90
+      ],
+      "last_change_minutes_ago": 29,
+      "published_delete": false,
+      "kept": [
+        "closed 61",
+        "closed 30",
+        "closed 90"
+      ],
+      "destroyed": [],
+      "change_touched": false
+    },
+    {
+      "name": "nothing old enough",
+      "closed_minutes_ago": [
+        59,
+        30
+      ],
+      "last_change_minutes_ago": 31,
+      "published_delete": true,
+      "kept": [
+        "closed 59",
+        "closed 30"
+      ],
+      "destroyed": [],
+      "change_touched": true
+    },
+    {
+      "name": "exactly an hour",
+      "closed_minutes_ago": [
+        60
+      ],
+      "last_change_minutes_ago": 31,
+      "published_delete": true,
+      "kept": [
+        "closed 60"
+      ],
+      "destroyed": [],
+      "change_touched": true
+    }
+  ]
+}

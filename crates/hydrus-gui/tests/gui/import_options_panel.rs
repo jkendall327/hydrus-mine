@@ -99,19 +99,9 @@ fn options_drafts_replay_clear_reset_simple_mode_and_cancel_without_store_change
     let options = bound.options.borrow().as_ref().unwrap().clone_strong();
     page(&options);
     let window = panel::last_opened().unwrap();
-    let launched = std::rc::Rc::new(std::cell::RefCell::new(Vec::new()));
-    hydrus_gui::set_launcher({
-        let launched = launched.clone();
-        move |url| launched.borrow_mut().push(url.to_owned())
-    });
-    window.invoke_action(-1, "help".into());
-    assert_eq!(
-        &*launched.borrow(),
-        &[format!(
-            "https://hydrusnetwork.github.io/hydrus/{}",
-            fixture["documentation"][0].as_str().unwrap()
-        )]
-    );
+    // (the recording of the page the button names, then the help replayed)
+    let help_page = fixture["documentation"][0].as_str().unwrap();
+    super::common::help::replay(help_page, &|| window.invoke_action(-1, "help".into()));
     assert_eq!(
         serde_json::json!(rows(&window, 0)),
         fixture["initial"]["defaults"]
