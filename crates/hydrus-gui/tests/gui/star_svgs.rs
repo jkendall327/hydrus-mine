@@ -644,7 +644,6 @@ fn svg_star_is_drawn_everywhere(service_svg: &str, file: &str) {
         );
 
         // the preview window's top right
-        let before = headless::render(&main, width, height);
         client.bound.preview.refresh();
         client.ui.invoke_thumbnail_clicked(0, false, false);
         let started = std::time::Instant::now();
@@ -660,12 +659,11 @@ fn svg_star_is_drawn_everywhere(service_svg: &str, file: &str) {
             "{service_svg}: the preview's rating rows carry the SVG only when there is one"
         );
         let mut after = headless::render(&main, width, height);
-        // (the grid's thumbnails carry the star too: what the preview adds)
-        let is_coloured =
-            |pixels: &[u8], i: usize| colours.iter().any(|c| near(&pixels[i * 4..i * 4 + 4], *c));
-        for i in 0..after.len() / 4 {
-            if !is_coloured(&after, i) || is_coloured(&before, i) {
-                after[i * 4 + 3] = 0;
+        // (the preview pane is the bottom left corner: the grid's thumbnails
+        // carry the star too)
+        for (i, pixel) in after.chunks_exact_mut(4).enumerate() {
+            if i % width as usize >= 400 || i / (width as usize) < 630 {
+                pixel[3] = 0;
             }
         }
         check_star(
