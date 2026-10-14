@@ -246,20 +246,44 @@ search.
   a switched page. Remaining list keyboard navigation is unchanged.
 - **Favourite search autocomplete shares the native page's suggestion model**,
   including blank system predicate editors, and has editable file/tag domains,
-  current/pending tags, sort and collection controls. It does not yet offer the
-  reference's autocomplete cog, explicit OR-construction buttons, favourite
-  predicates or fetch/children tabs. Multiple/deleted location selection and
+  current/pending tags, sort and collection controls, and the paste, star
+  (favourites to load) and empty-search buttons beside the box
+  (`oracle/record_favourite_editor_buttons.py`; the reference's autocomplete has
+  no cog), the results/favourites/children tabs and explicit OR construction
+  (shift+enter, the OR and advanced buttons, rewind, cancel, escape;
+  `oracle/record_favourite_editor_tabs_or.py`). The OR and advanced editors
+  are the page's, recorded for the page (`read_or_editors.json`); the
+  editor's OR button is recorded with that dialog answered by a script. It
+  lacks the cancel-search and lock-search buttons (the reference's editor hides lock; cancel shows only
+  while a search runs). Paste with no text on the clipboard shows a message
+  inline where the reference shows a dialog. Multiple/deleted location selection and
   overwrite/delete questions appear inside the owner window. The list sorts
   names casefolded as lowercase (Python's casefold differs for a few letters,
   such as "ß", which we fold to "ss" as it does).
   Typed text and double-clicks in the favourite editor are compared with the
-  reference's (`oracle/record_favourite_predicates.py`: entering a tag again
-  removes it, a tag takes `system:everything` out, wildcards and negation,
-  and the list's order). Not matched: text beginning "system:" that is not a
-  system predicate shows an error here where the reference's Return enters
-  `system:everything`, and a wildcard such as "sam*" enters the highlighted first
-  suggestion here where the reference's Return entered the wildcard (seen on
-  the basic fixture); neither is in the recording.
+  reference's (`oracle/record_favourite_predicates.py`, which waits for the
+  reference's result list to catch up with the text and finish loading before
+  pressing Return, as a user who pauses does): Return enters the list's
+  highlighted first result, so a tag that exists enters as itself (or the best
+  match for a partial one), a wildcard such as "sam*" enters the wildcard (put
+  at the top of the list, as `InsertOtherPredicatesForRead` does, in the page's
+  list too), a system predicate such as "system:limit = 64" enters itself, and
+  text with no result ("system:" that is no predicate, a tag the database does
+  not have) enters nothing and stays in the box without a message. The first
+  result and the highlight are compared with the recording. Not covered: Return
+  pressed before the reference's list has caught up (it then enters the text
+  as typed; the native list is always current), and counts and context shown
+  in the results. A bare "*" lists nothing here as with the default options,
+  but the other fetch-all settings are not consulted, and the second wildcard
+  (`*:x*`) the reference adds when unnamespaced searches give any-namespace
+  wildcards is not listed (unrecorded). On the main page, Return with a tag the
+  database does not have and nothing highlighted still enters the typed text
+  (`chosen()`'s fallback in `page.rs`), where the reference enters nothing; the
+  favourite editor enters nothing.
+  Remaining from #253 (not started): `audit-options-search-active-edit`
+  (embedded OR in the active-list edit, sibling/parent editors, favourite
+  tags), the tab and OR recordings for counts and context in the results, and
+  an in-step recording of Return in the tabs.
 
 - **Dimensions preset verification** separately tracks nine historical first-pass
   controls. The new Qt recording activates actual buttons through the real modal

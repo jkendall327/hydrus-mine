@@ -1,0 +1,418 @@
+{
+ "rows": [
+  [
+   null,
+   "by size",
+   [
+    "blue eyes"
+   ],
+   true,
+   [
+    "SORT_FILES_BY_FILESIZE",
+    false
+   ],
+   [
+    "creator"
+   ]
+  ],
+  [
+   null,
+   "paused",
+   [
+    "series:metroid",
+    "samus"
+   ],
+   false,
+   null,
+   null
+  ],
+  [
+   "work",
+   "in a folder",
+   [
+    "character:samus aran"
+   ],
+   true,
+   [
+    "SORT_FILES_BY_WIDTH",
+    true
+   ],
+   null
+  ],
+  [
+   "work/deeper",
+   "nested",
+   [
+    "-bad tag"
+   ],
+   true,
+   null,
+   []
+  ]
+ ],
+ "steps": [
+  {
+   "messages": [],
+   "state": {
+    "collect": null,
+    "collect_widget": "no collections",
+    "include_current": true,
+    "include_pending": true,
+    "location": "my files",
+    "predicates": [
+     "blue eyes"
+    ],
+    "shown": [
+     "blue eyes"
+    ],
+    "sort": null,
+    "sort_widget": "sort by file: filesize, smallest first",
+    "synchronised": true,
+    "tag_service": "all known tags"
+   },
+   "step": [
+    "initial"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "collect": null,
+    "collect_widget": "no collections",
+    "include_current": true,
+    "include_pending": true,
+    "location": "my files",
+    "predicates": [
+     "-creator:samus aran",
+     "sam* (wildcard search)",
+     "series:metroid",
+     "spaced tag",
+     "system:everything"
+    ],
+    "shown": [
+     "-creator:samus aran",
+     "sam* (wildcard search)",
+     "series:metroid",
+     "spaced tag",
+     "system:everything"
+    ],
+    "sort": null,
+    "sort_widget": "sort by file: filesize, smallest first",
+    "synchronised": true,
+    "tag_service": "all known tags"
+   },
+   "step": [
+    "paste",
+    "series:metroid\nsystem:everything\n-creator:samus aran\nblue eyes\n\n  spaced   tag  \nsam*"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "collect": null,
+    "collect_widget": "no collections",
+    "include_current": true,
+    "include_pending": true,
+    "location": "my files",
+    "predicates": [
+     "-creator:samus aran",
+     "sam* (wildcard search)",
+     "series:metroid",
+     "spaced tag",
+     "system:everything"
+    ],
+    "shown": [
+     "-creator:samus aran",
+     "sam* (wildcard search)",
+     "series:metroid",
+     "spaced tag",
+     "system:everything"
+    ],
+    "sort": null,
+    "sort_widget": "sort by file: filesize, smallest first",
+    "synchronised": true,
+    "tag_service": "all known tags"
+   },
+   "step": [
+    "paste",
+    "system:nonsense words"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "collect": null,
+    "collect_widget": "no collections",
+    "include_current": true,
+    "include_pending": true,
+    "location": "my files",
+    "predicates": [
+     "-creator:samus aran",
+     "sam* (wildcard search)",
+     "series:metroid",
+     "spaced tag",
+     "system:everything"
+    ],
+    "shown": [
+     "-creator:samus aran",
+     "sam* (wildcard search)",
+     "series:metroid",
+     "spaced tag",
+     "system:everything"
+    ],
+    "sort": null,
+    "sort_widget": "sort by file: filesize, smallest first",
+    "synchronised": true,
+    "tag_service": "all known tags"
+   },
+   "step": [
+    "paste",
+    ""
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "collect": null,
+    "collect_widget": "no collections",
+    "include_current": true,
+    "include_pending": true,
+    "location": "my files",
+    "predicates": [
+     "-creator:samus aran",
+     "sam* (wildcard search)",
+     "series:metroid",
+     "spaced tag",
+     "system:limit is 64",
+     "zz* (wildcard search)"
+    ],
+    "shown": [
+     "-creator:samus aran",
+     "sam* (wildcard search)",
+     "series:metroid",
+     "spaced tag",
+     "system:limit is 64",
+     "zz* (wildcard search)"
+    ],
+    "sort": null,
+    "sort_widget": "sort by file: filesize, smallest first",
+    "synchronised": true,
+    "tag_service": "all known tags"
+   },
+   "step": [
+    "paste",
+    "system:limit = 64\nzz*"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "collect": null,
+    "collect_widget": "no collections",
+    "include_current": false,
+    "include_pending": false,
+    "location": "my files",
+    "predicates": [
+     "-creator:samus aran",
+     "sam* (wildcard search)",
+     "series:metroid",
+     "spaced tag",
+     "system:limit is 64",
+     "zz* (wildcard search)"
+    ],
+    "shown": [
+     "-creator:samus aran",
+     "sam* (wildcard search)",
+     "series:metroid",
+     "spaced tag",
+     "system:limit is 64",
+     "zz* (wildcard search)"
+    ],
+    "sort": null,
+    "sort_widget": "sort by file: filesize, smallest first",
+    "synchronised": true,
+    "tag_service": "all known tags"
+   },
+   "step": [
+    "status",
+    false,
+    false
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "collect": null,
+    "collect_widget": "no collections",
+    "include_current": true,
+    "include_pending": true,
+    "location": "my files",
+    "predicates": [],
+    "shown": [],
+    "sort": null,
+    "sort_widget": "sort by file: filesize, smallest first",
+    "synchronised": true,
+    "tag_service": "all known tags"
+   },
+   "step": [
+    "empty search"
+   ]
+  },
+  {
+   "menu": [
+    "by size",
+    "paused",
+    [
+     "work",
+     [
+      "in a folder",
+      [
+       "deeper",
+       [
+        "nested"
+       ]
+      ]
+     ]
+    ]
+   ],
+   "messages": [],
+   "state": {
+    "collect": null,
+    "collect_widget": "no collections",
+    "include_current": true,
+    "include_pending": true,
+    "location": "my files",
+    "predicates": [],
+    "shown": [],
+    "sort": null,
+    "sort_widget": "sort by file: filesize, smallest first",
+    "synchronised": true,
+    "tag_service": "all known tags"
+   },
+   "step": [
+    "menu"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "collect": null,
+    "collect_widget": "creator",
+    "include_current": true,
+    "include_pending": true,
+    "location": "my files",
+    "predicates": [
+     "blue eyes"
+    ],
+    "shown": [
+     "blue eyes"
+    ],
+    "sort": null,
+    "sort_widget": "sort by file: filesize, largest first",
+    "synchronised": true,
+    "tag_service": "all known tags"
+   },
+   "step": [
+    "load",
+    null,
+    "by size"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "collect": null,
+    "collect_widget": "creator",
+    "include_current": true,
+    "include_pending": true,
+    "location": "my files",
+    "predicates": [
+     "samus",
+     "series:metroid"
+    ],
+    "shown": [
+     "samus",
+     "series:metroid"
+    ],
+    "sort": null,
+    "sort_widget": "sort by file: filesize, largest first",
+    "synchronised": false,
+    "tag_service": "all known tags"
+   },
+   "step": [
+    "load",
+    null,
+    "paused"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "collect": null,
+    "collect_widget": "creator",
+    "include_current": true,
+    "include_pending": true,
+    "location": "my files",
+    "predicates": [
+     "character:samus aran"
+    ],
+    "shown": [
+     "character:samus aran"
+    ],
+    "sort": null,
+    "sort_widget": "sort by dimensions: width, slimmest first",
+    "synchronised": true,
+    "tag_service": "all known tags"
+   },
+   "step": [
+    "load",
+    "work",
+    "in a folder"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "collect": null,
+    "collect_widget": "no collections",
+    "include_current": true,
+    "include_pending": true,
+    "location": "my files",
+    "predicates": [
+     "-bad tag"
+    ],
+    "shown": [
+     "-bad tag"
+    ],
+    "sort": null,
+    "sort_widget": "sort by dimensions: width, slimmest first",
+    "synchronised": true,
+    "tag_service": "all known tags"
+   },
+   "step": [
+    "load",
+    "work/deeper",
+    "nested"
+   ]
+  },
+  {
+   "messages": [],
+   "state": {
+    "collect": null,
+    "collect_widget": "no collections",
+    "include_current": true,
+    "include_pending": true,
+    "location": "my files",
+    "predicates": [],
+    "shown": [],
+    "sort": null,
+    "sort_widget": "sort by dimensions: width, slimmest first",
+    "synchronised": true,
+    "tag_service": "all known tags"
+   },
+   "step": [
+    "empty search"
+   ]
+  }
+ ]
+}

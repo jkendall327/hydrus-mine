@@ -297,6 +297,11 @@ impl Autocomplete {
         if self.text.trim().is_empty() {
             return self.system_predicates();
         }
+        // text that could be a system predicate lists it if it is one, else
+        // nothing (`ReadFetch`: `IsValidSystemPredicate`, else an empty list)
+        if self.text.trim().starts_with("system:") {
+            return Some(self.typed_predicate().into_iter().collect());
+        }
         let input = AutocompleteInput::parse(&self.text);
         let snapshot = self.store.snapshot();
         let registry = &snapshot.services;
@@ -339,16 +344,48 @@ impl Autocomplete {
         });
         let sign = if input.inclusive() { "" } else { "-" };
         let presentation = self.presentation();
+        // an explicit wildcard or namespace search is put at the top
+        // (`InsertOtherPredicatesForRead`)
+        // (but not a bare "*", which the default options do not search:
+        // `IsAcceptableForTagSearches`; other fetch-all settings are
+        // not consulted)
+        let bare = matches!(self.text.trim().trim_start_matches('-'), "*" | "*:*" | ":*");
+        let wildcard = (self.text.contains('*') && !bare)
+            .then(|| self.typed_predicate())
+            .flatten()
+            .into_iter();
         Some(
-            matches
-                .into_iter()
-                .map(|m| Suggestion {
+            wildcard
+                .chain(matches.into_iter().map(|m| Suggestion {
                     label: format!("{sign}{} {}", presentation.render(&m.tag), m.count.suffix()),
                     predicate: format!("{sign}{}", m.tag),
                     editor: None,
-                })
+                }))
                 .collect(),
         )
+    }
+
+    /// The typed text as the one predicate it enters, if it is one that is
+    /// not a plain tag (a system predicate, a wildcard or a namespace),
+    /// listed as the reference writes it.
+    fn typed_predicate(&self) -> Option<Suggestion> {
+        let typed = self.text.trim();
+        let parsed = hydrus_search::parse_api_search(&serde_json::json!([typed])).ok()?;
+        let [predicate] = parsed.as_slice() else {
+            return None;
+        };
+        if matches!(predicate, hydrus_search::Predicate::Tag { .. }) {
+            return None;
+        }
+        let snapshot = self.store.snapshot();
+        let viewing = self.store.read(hydrus_store::settings::get).ok()?;
+        let mut context = hydrus_search::TextContext::from_store(&snapshot.services, &viewing);
+        context.presentation = Some(self.presentation());
+        Some(Suggestion {
+            label: hydrus_search::predicate_text(predicate, &context),
+            predicate: typed.to_owned(),
+            editor: None,
+        })
     }
 
     fn tab_suggestions(&self) -> Option<Vec<Suggestion>> {

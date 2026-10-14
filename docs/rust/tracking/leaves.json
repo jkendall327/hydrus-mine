@@ -8101,10 +8101,10 @@
     "Multiple/deleted domain selection and overwrite questions are inline in the owner."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Click-choosing a suggestion, the system:limit child editor (OK adds 'system:limit is 7') and close-cancel of the child are driven and replayed against fixtures/favourite_search_editor.json (suggestion list names only). Not covered: counts/context shown in suggestions, keyboard highlight + Enter. Notes already admit the reference cog, OR construction and tabs are absent. Tests: crates/hydrus-gui/tests/gui/favourite_search_editor.rs:32 favourite_domain_sort_collect_and_autocomplete_widgets_reach_saved_searches; crates/hydrus-gui-model/tests/model/favourite_search_editor.rs:60"
+    "by": "Claude session (W5-10)",
+    "note": "Adds gui/favourites.rs tests replaying fixtures/favourite_editor_buttons.json (paste, star menu loading search/sync/sort/collect, empty search) and favourite_editor_tabs_or.json (shift+Return OR construction, rewind, cancel, escape, favourites and children tabs, the OR button, recorded after the reference's list caught up), through the real editor. Untagged: counts and context in suggestions, keyboard-highlight Return in the tabs and the advanced OR dialog from the editor are not recorded."
    }
   },
   {
@@ -8218,10 +8218,10 @@
     "Multiple/deleted domain selection and overwrite questions are inline in the owner."
    ],
    "recheck": {
-    "date": "2026-10-13",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "Claude session (#97 phase 2, w4-r5)",
-    "note": "gui/favourites.rs typed_predicates_and_double_clicks_edit_the_search_as_the_references_editor_does opens the real favourite editor from 'save this search' on a page of 'blue eyes' and replays oracle/fixtures/favourite_predicates.json (record_favourite_predicates.py: the reference's real EditFavouriteSearchPanel with typed text and QTest Return/double-click events): 14 steps of tags, a repeated tag (which removes it), a differently-cased tag, a negated tag, a wildcard, a namespace wildcard, extra spaces, system:limit and system:everything (which a tag takes out), and double-click removals; after each the list as drawn (order included) and the text left in the box equal the recording. Weak, not sound, and untagged: two typed-entry cases differ from the reference and are not recorded (DIFFERENCES.md): text beginning 'system:' that is not a system predicate shows an error here where the reference's Return enters system:everything, and a wildcard such as 'sam*' enters the highlighted first suggestion here where the reference's Return entered the wildcard; and the leaf itself is still partial (the reference's cog, favourite predicates and fetch/children tabs are absent). The stale tracker notes about missing autocomplete and system editors apply to the leaf's other rows."
+    "by": "Claude session (W5-10)",
+    "note": "gui/favourites.rs typed_predicates_and_double_clicks_edit_the_search_as_the_references_editor_does opens the real favourite editor and replays 18 steps of oracle/fixtures/favourite_predicates.json (the reference's real EditFavouriteSearchPanel with typed text, QTest Return and double-clicks, recorded after its result list has caught up and finished loading). Per step it compares the list's first result, the highlight, the predicates as drawn (order included), the text left and any message; this covers tags, repeats, case, negation, wildcards (the wildcard first), namespace wildcards, extra spaces, system:limit/everything, 'system:' text that is no predicate, and removals. Untagged: Return before the reference's list has caught up (it enters the text as typed) is not covered, counts/context in the results are not compared, and the leaf's tracker state is still partial pending a review of the added tabs, OR construction and icon buttons (see audit-options-favourite-edit-autocomplete)."
    }
   },
   {

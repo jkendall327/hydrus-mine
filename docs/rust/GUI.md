@@ -3330,6 +3330,19 @@ and detached write panes, preserving each owner's input. Locked read pages
 consume the pending revision after unlocking; cancelled detached editors stop
 their subscription.
 
+The favourite search editor has the reference autocomplete's icon buttons
+beside its search box: paste (newline-separated predicates from the clipboard,
+lines that are no predicate passed over, ones already there removed), a star
+menu of the saved favourites (folders nesting) whose choice loads its search,
+whether it searches as it changes, and the sort and collect it keeps into the
+controls, and empty search (no predicates, the default file and tag domains).
+Recorded in `favourite_editor_buttons.json`. Beneath the box it has the
+results, favourites and children tabs (a tab is kept until text is typed), and
+explicit OR construction: shift+enter adds a result to the OR being built (shown
+as the first result), a plain entry commits it, "↶" rewinds, "cancel OR" and
+escape in an empty box cancel or rewind, and "OR" and "advanced" open the OR
+editors. Recorded in `favourite_editor_tabs_or.json`.
+
 Downloader HTTP requests now perform domain login admission before acquiring a
 connection slot. Active most-specific login domains use current credentials and
 shared cookies; inactive/already logged-in domains proceed directly. One

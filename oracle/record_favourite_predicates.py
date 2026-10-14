@@ -37,6 +37,10 @@ STEPS = [
     [ 'double click', 2 ],
     [ 'type', 'blue eyes' ],
     [ 'double click', 0 ],
+    [ 'type', 'system:nonsense words' ],
+    [ 'type', 'system:' ],
+    [ 'type', 'sam*' ],
+    [ 'type', 'sam' ],
 ]
 
 
@@ -106,15 +110,41 @@ def record( session ):
 
             del messages[:]
 
+            suggestions = None
+            before_return = None
+            in_step = None
+
             if step[ 0 ] == 'type':
 
                 ac._text_ctrl.setText( step[ 1 ] )
 
-                # (long enough for the suggestions the text finds to be listed, as
-                # they are for a user who pauses before pressing Return)
-                QtTest.QTest.qWait( 800 )
+                # wait until the suggestions the text finds are listed, as they
+                # are for a user who pauses before pressing Return
+                for _ in range( 200 ):
+
+                    QtTest.QTest.qWait( 50 )
+
+                    loading = any( 'loading' in term.GetPredicate().ToString( with_count = False ) for term in ac._search_results_list._ordered_terms )
+
+                    if ac._GetParsedAutocompleteText() == ac._current_list_parsed_autocomplete_text and not loading:
+
+                        break
+
+
+                else:
+
+                    raise Exception( 'the result list never caught up with ' + repr( step[ 1 ] ) )
+
 
                 QW.QApplication.processEvents()
+
+                results = ac._search_results_list
+
+                suggestions = [ term.GetPredicate().ToString( with_count = False ) for term in results._ordered_terms ]
+
+                before_return = [ term.GetPredicate().ToString( with_count = False ) for term in results._selected_terms ]
+
+                in_step = ac._GetParsedAutocompleteText() == ac._current_list_parsed_autocomplete_text
 
                 QtTest.QTest.keyClick( ac._text_ctrl, QC.Qt.Key.Key_Return )
 
@@ -142,7 +172,7 @@ def record( session ):
                 QtTest.QTest.qWait( 50 )
 
 
-            out.append( { 'step' : step, 'predicates' : predicates(), 'shown' : shown(), 'messages' : list( messages ), 'typed_left' : ac._text_ctrl.text() } )
+            out.append( { 'step' : step, 'predicates' : predicates(), 'shown' : shown(), 'messages' : list( messages ), 'typed_left' : ac._text_ctrl.text(), 'suggestions' : suggestions, 'highlighted' : before_return, 'list_in_step' : in_step } )
 
 
         dlg.reject()
