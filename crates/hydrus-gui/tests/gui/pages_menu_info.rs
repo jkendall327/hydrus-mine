@@ -335,3 +335,177 @@ fn clearing_multiwatcher_highlights_clears_each_watcher_page_as_the_reference_do
         }
     }
 }
+
+/// Pages > sessions > clear and load, over pages that are importing: the
+/// window asks first, then asks again with the reference's grouped words
+/// for every page that objects, and a no keeps the pages
+/// (`sessions_menu.json`, `record_sessions_menu.py`: the reference's
+/// `LoadGUISession` with its pages' `CheckAbleToClose` objecting).
+// leaf: audit-options-menu-menu-pages-sessions-clear-and-load-saved-session
+#[test]
+fn clear_and_load_asks_again_for_importing_pages_as_the_reference_does() {
+    use hydrus_core::import_options::ImportOptionsSlice;
+    use hydrus_store::queues::{self, QueueKind};
+
+    use crate::search_pages_menu::{search, tabs};
+
+    let _windows = headless::init();
+    let recorded = hydrus_testkit::fixture_json("sessions_menu.json");
+    // the recording's clear-and-loads that asked again: two importing local
+    // pages (no, then yes), then a watcher page of two watchers (no)
+    let asked_again: Vec<&serde_json::Value> = recorded["steps"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|s| s["do"] == "clear and load" && s["asked"].as_array().unwrap().len() == 2)
+        .collect();
+    assert_eq!(asked_again.len(), 3);
+    let urls_pages = &asked_again[..2];
+    let watcher_page = asked_again[2];
+
+    for (case, steps) in [
+        ("two importing pages", urls_pages),
+        ("a page of two watchers importing", &[watcher_page][..]),
+    ] {
+        let (_dirs, store) = store();
+        let saved = |name: &str, pages: usize| Session {
+            name: name.into(),
+            pages: (0..pages).map(|_| search("files")).collect(),
+        };
+        // the sessions the recording loads: "my session" has one page,
+        // "second session" two
+        store
+            .write({
+                let (mine, second) = (saved("my session", 1), saved("second session", 2));
+                move |ctx| {
+                    sessions::save(ctx.conn(), &mine, 1)?;
+                    sessions::save(ctx.conn(), &second, 1)
+                }
+            })
+            .unwrap();
+        // the pages now open: importers whose files are still to get
+        let importing = if steps.len() == 2 { 2 } else { 1 };
+        let mut pages = Vec::new();
+        for _ in 0..importing {
+            let key = PageKey::random();
+            let (kind, queues_made) = if steps.len() == 2 {
+                let queue = store
+                    .write(move |ctx| {
+                        let conn = ctx.conn();
+                        let queue = queues::create_queue(
+                            conn,
+                            QueueKind::Urls,
+                            "files",
+                            Some(&key.0),
+                            &ImportOptionsSlice::default(),
+                            1,
+                        )?;
+                        queues::add_file_seeds(
+                            conn,
+                            queue,
+                            &[seed("https://files.example/a.jpg")],
+                            false,
+                            1,
+                        )?;
+                        Ok(queue)
+                    })
+                    .unwrap();
+                (DownloaderKind::Urls, vec![queue])
+            } else {
+                let mut made = Vec::new();
+                for thread in 1..=2 {
+                    let queue = match hydrus_store::watchers::add_watcher(
+                        &store,
+                        &hydrus_store::watchers::WatcherPage {
+                            name: "files",
+                            key: Some(&key.0),
+                            queues: &made,
+                            checker: &hydrus_core::subscriptions::CheckerOptions::default(),
+                            options: &ImportOptionsSlice::default(),
+                        },
+                        &format!("https://boards.example/a/thread/{thread}"),
+                        1,
+                    )
+                    .unwrap()
+                    {
+                        hydrus_store::watchers::Watched::New(queue) => queue.id,
+                        _ => panic!("a new watcher"),
+                    };
+                    store
+                        .write(move |ctx| {
+                            queues::add_file_seeds(
+                                ctx.conn(),
+                                queue,
+                                &[seed("https://boards.example/a/file/1.jpg")],
+                                false,
+                                1,
+                            )?;
+                            Ok(())
+                        })
+                        .unwrap();
+                    made.push(queue);
+                }
+                (DownloaderKind::Watchers, made)
+            };
+            pages.push(Page {
+                key,
+                name: "files".into(),
+                content: PageContent::Downloader {
+                    kind,
+                    queues: queues_made,
+                    sort: None,
+                    page: Some(Box::new(DownloaderPageState::default())),
+                },
+            });
+        }
+        let live = Session {
+            name: sessions::LAST_SESSION.into(),
+            pages,
+        };
+        store
+            .write(move |ctx| sessions::save(ctx.conn(), &live, 2))
+            .unwrap();
+        let ui = MainWindow::new().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        // (the pages read their importers' state as time passes; every page
+        // is visited so each has)
+        for index in 0..importing {
+            ui.invoke_tab_chosen(0, index);
+            let next = bound.current.borrow().borrow().next_import_status_time();
+            bound
+                .downloader_updates
+                .set_clock(std::rc::Rc::new(move || next + 0.25));
+            bound.downloader_updates.refresh();
+        }
+
+        let session_menu = |name: &str| {
+            open(&ui, "pages", &["sessions", "clear and load"]);
+            choose(&ui, name);
+        };
+        for step in steps {
+            let name = step["name"].as_str().unwrap();
+            let first = step["asked"][0]["message"].as_str().unwrap();
+            let again = &step["asked"][1];
+            // the asks are the recording's, in its order; the answers too
+            session_menu(name);
+            assert_eq!(ui.get_question().to_string(), first, "{case}");
+            ui.invoke_answer(step["asked"][0]["answer"].as_bool().unwrap());
+            assert_eq!(
+                ui.get_question().to_string(),
+                again["message"].as_str().unwrap(),
+                "{case}: asked again"
+            );
+            let before = tabs(&ui).len();
+            ui.invoke_answer(again["answer"].as_bool().unwrap());
+            assert_eq!(
+                tabs(&ui).len(),
+                step["pages"].as_array().unwrap().len(),
+                "{case}: the pages after answering {}",
+                again["answer"]
+            );
+            if again["answer"] == false {
+                assert_eq!(tabs(&ui).len(), before, "{case}: no keeps the pages");
+            }
+        }
+    }
+}
