@@ -2029,10 +2029,22 @@ its timer renews), and the first request opens the permissions editor with what 
 tool asked for and the key it was given. Permission editors expose all 14 basic permissions,
 full access, the reusable permitted-search-tags filter and explicit key rotation
 with validation/collision refusal. List and nested edits remain detached until
-Apply; Cancel and closing service review cancel their descendants. Real Qt
+Apply; Cancel and closing service review cancel their descendants. The key editor answers a typed key as the reference does (recorded
+in `client_api_admin.json`: spaces around it ignored, upper case kept as the same
+key, "the key you submitted was N characters long" for a wrong length, "did not
+seem to be hexadecimal"), and a key edited onto another entry's is refused with
+its "key collision" words. Real Qt
 controls/questions are recorded in `client_api_admin.json`; actual native-store
 GUI regressions render `client_api_keys.png`, `client_api_permissions.png` and
 `client_api_service.png` during the GUI test batch.
+
+Manage services' add button offers the reference's local kinds in its order
+(local tag domain, local file domain, like/dislike, numerical and inc/dec
+rating services; repositories and the rest are not offered), opening each
+as "new service"; an accepted name that matches another service's ignoring case
+is numbered as the reference does ("MY TAGS (1)", "my tags (2)"), and a rating's
+border and fill colours, and its thumbnail boxes, are saved as set. Recorded in
+`services.json` and replayed through the window.
 
 Manage services edits the built-in API service with the reference's rows and
 labels: "run the client api?:", "local port:", "allow non-local connections:",
@@ -2212,6 +2224,9 @@ current/deleted domain scopes apply through SHA256 even between alternate archiv
 Pair filters can require real current or pending mappings on the left, right or
 either side in a chosen tag service. For siblings, the right test follows its
 chain to the terminal ideal; either-side mode disables the individual tests.
+The window's hash selector, file-domain picker, selected-files box and count gates
+are driven in the GUI tests against the reference's archives (`tag_archives.json`:
+the 40 hash conversions and 16 count cases).
 
 The window shows the reference summary and its second confirmation outside
 advanced mode. Migration runs on a worker in bounded atomic batches, with live
@@ -4070,14 +4085,17 @@ custom sets' shortcuts run after its own set's.
 The page lists the sets as the reference does. "built-in hydrus shortcut sets"
 shows each built-in set the client has, by its pretty name in the reference's
 order, with its number of shortcuts; "edit" (or a double-click) opens that set
-with its description, and "restore defaults" offers every default set: one the
+with its description, and "restore defaults" offers every default set (in the reference's default order,
+global first, not alphabetically): one the
 client lacks is restored after saying so, one it has asks "Are you certain you
 want to restore the defaults for "…"? Any custom shortcuts you have set will be
 wiped." "custom user sets" explains that they are advanced, and adds ("new
 shortcuts"), edits, renames and deletes ("Remove all selected?") custom sets;
 names are made unique as "name (1)", "name (2)", and a custom set cannot take a
 built-in set's name ("That name is reserved--please pick another!", and the
-editor stays open). A "help" button shows the
+editor stays open). The page is replayed against the reference's panel (`shortcuts_panel.json`: lists, the locked
+name of a built-in set, the veto and the unique names, the restore questions).
+A "help" button shows the
 reference's help. A new client starts with the reference's eleven default sets
 (107 shortcuts); a command with data (a seek's distance, a thumbnail focus
 move) is listed with the reference's text.
@@ -4138,6 +4156,11 @@ Pages > sidebar toggles the current sidebar, saves its sizes immediately, toggle
 saving on accepted client exit, or restores saved sizes to every live page.
 Cancelling exit saves nothing. A hidden whole sidebar saves width zero and its
 last inner preview height; a separately collapsed preview keeps the saved height.
+Options > gui pages > "When closing the current tab, move focus" chooses the tab that
+takes focus when the current one closes; every tab of four closed in every selection,
+both choices, edges included (closing the first tab with "left" or the last with
+"right"), is compared with the reference's notebook (`close_focus.json`). Closing a tab
+that is not current leaves focus alone.
 Options > gui pages > preview window stages the global hide preference. Apply
 preserves concurrent size saves and the exit switch; Cancel discards the draft.
 New pages and restore/reveal consume the saved hide flag. Existing accepted preview
@@ -4778,8 +4801,9 @@ vacuum" popup ("vacuuming main", then "done!"), recording the time.
 Tags > sync > "review current sibling/parent sync" opens "tag display sync":
 the reference's explanation, a line saying when sync runs (green when it runs
 all the time, orange otherwise), and a tab (or listbook entry) per tag
-service, opened on the default tag service's and remembering a changed tab
-when the tag dialogs do. Each says "All synced!" and "N rules, all synced!"
+service (local tag services, then repositories, each by lowercase name, as the
+reference lists them), opened on the default tag service's and remembering a
+changed tab when the tag dialogs do. Each says "All synced!" and "N rules, all synced!"
 (sibling lookup rows plus parent ancestry rows, as the reference counts
 them) or "No siblings/parents applying to this service.", with a refresh
 button. Close and window X retire that review's callbacks; a retained older
@@ -4833,7 +4857,9 @@ change forgets what could be redone. `tests/model/content_undo.rs` covers it.
 
 Options > tag presentation > namespace colours now has "edit": each selected
 entry, defaults included, opens the colour picker in turn; OK recolours it in the
-draft, Cancel keeps its colour.
+draft, Cancel keeps its colour. Whichever the answer, the entry is taken out of the
+selection afterwards, as the reference's remove-and-add does (recorded in
+`namespace_colour_controls.json`, `edit_cases`).
 
 Options > media playback > per-filetype handling lists each filetype's media and
 preview show actions and zoom info as the reference does, sorted by column.

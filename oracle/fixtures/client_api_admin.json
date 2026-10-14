@@ -124,6 +124,107 @@
    "Can search: allowing all tags"
   ]
  ],
+ "key_cases": [
+  {
+   "typed": "  abababababababababababababababababababababababababababababababab  ",
+   "key_after": "abababababababababababababababababababababababababababababababab"
+  },
+  {
+   "typed": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+   "title": "did not encode",
+   "message": "Sorry, the key you submitted did not seem to be hexadecimal.",
+   "key_after": "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd"
+  },
+  {
+   "typed": "",
+   "title": "wrong key length",
+   "message": "Sorry, the key you submitted was 0 characters long. It needs to be 64.",
+   "key_after": "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd"
+  },
+  {
+   "typed": "ababababababababababababababababababababababababababababababab",
+   "title": "wrong key length",
+   "message": "Sorry, the key you submitted was 62 characters long. It needs to be 64.",
+   "key_after": "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd"
+  },
+  {
+   "typed": "ABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABAB",
+   "key_after": "ABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABAB"
+  }
+ ],
+ "key_offered": {
+  "default": "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+  "suggestion_count": 1,
+  "suggestion_is_64_hex": true
+ },
+ "collision": {
+  "before": [
+   [
+    "full",
+    "0202020202020202020202020202020202020202020202020202020202020202"
+   ],
+   [
+    "full (1)",
+    "cee67a718c4054f909d2ad9596322a23f927391c47c0c0a469be8c0b9846ce24"
+   ],
+   [
+    "searcher",
+    "0101010101010101010101010101010101010101010101010101010101010101"
+   ],
+   [
+    "searcher (1)",
+    "d6e9a4c3bbe966d1bec1e516ef6a6ee2b03010640237edfb7c1b1584e7f441db"
+   ]
+  ],
+  "after_collision": [
+   [
+    "full",
+    "0202020202020202020202020202020202020202020202020202020202020202"
+   ],
+   [
+    "full (1)",
+    "cee67a718c4054f909d2ad9596322a23f927391c47c0c0a469be8c0b9846ce24"
+   ],
+   [
+    "searcher",
+    "0101010101010101010101010101010101010101010101010101010101010101"
+   ],
+   [
+    "searcher (1)",
+    "d6e9a4c3bbe966d1bec1e516ef6a6ee2b03010640237edfb7c1b1584e7f441db"
+   ]
+  ],
+  "dialogs": [
+   {
+    "title": "key collision!",
+    "message": "You appear to have edited the API Access Key to something that already exists. Either something has gone technically wrong, or there has been a misunderstanding. I will not make any changes."
+   }
+  ],
+  "after_new_key": [
+   [
+    "full",
+    "0202020202020202020202020202020202020202020202020202020202020202"
+   ],
+   [
+    "full (1)",
+    "cee67a718c4054f909d2ad9596322a23f927391c47c0c0a469be8c0b9846ce24"
+   ],
+   [
+    "searcher",
+    "0909090909090909090909090909090909090909090909090909090909090909"
+   ],
+   [
+    "searcher (1)",
+    "d6e9a4c3bbe966d1bec1e516ef6a6ee2b03010640237edfb7c1b1584e7f441db"
+   ]
+  ],
+  "dialogs_after_new_key": [
+   {
+    "title": "key collision!",
+    "message": "You appear to have edited the API Access Key to something that already exists. Either something has gone technically wrong, or there has been a misunderstanding. I will not make any changes."
+   }
+  ]
+ },
  "server": {
   "running": true,
   "port": 45901,
