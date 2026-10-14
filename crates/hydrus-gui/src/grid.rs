@@ -247,10 +247,12 @@ impl ThumbnailRows {
         self.clock.elapsed() + self.clock_skew.get()
     }
     /// Move the cache's clock on, to age what it holds (tests).
+    #[doc(hidden)]
     pub fn advance_cache_clock(&self, by: Duration) {
         self.clock_skew.set(self.clock_skew.get() + by);
     }
     /// The thumbnails the cache holds, least recently used first.
+    #[doc(hidden)]
     pub fn cached_keys(&self) -> Vec<HashId> {
         self.cache.borrow().keys()
     }

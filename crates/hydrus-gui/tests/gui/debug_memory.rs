@@ -175,6 +175,7 @@ fn run_slow_memory_maintenance_deletes_closed_pages_over_an_hour_old_if_pages_ha
     let recording = recording();
     let minutes = |m: u64| Duration::from_secs(m * 60);
     let d = super::debug_menu_actions::start();
+    d.bound.pages.borrow_mut().freeze_clock();
     for scenario in recording["closed_pages"].as_array().unwrap() {
         let name = scenario["name"].as_str().unwrap();
         let ages: Vec<u64> = scenario["closed_minutes_ago"]
@@ -242,4 +243,24 @@ fn run_slow_memory_maintenance_deletes_closed_pages_over_an_hour_old_if_pages_ha
         recording["fast_leaves_closed_pages"]["destroyed"],
         serde_json::json!([])
     );
+}
+
+#[test]
+fn closed_pages_over_an_hour_old_are_still_listed_and_reopen_by_their_place() {
+    let d = super::debug_menu_actions::start();
+    let mut pages = d.bound.pages.borrow_mut();
+    pages.freeze_clock();
+    pages.forget_closed();
+    for _ in 0..2 {
+        pages.new_search_page();
+        pages.close_shown().unwrap();
+    }
+    pages.advance_clock(Duration::from_secs(90 * 60));
+    // until the slow maintenance deletes them, the menu lists them
+    assert_eq!(pages.closed_names().len(), 2);
+    assert_eq!(pages.closed_count(), 2);
+    assert!(pages.unclose_at(0));
+    assert_eq!(pages.closed_names().len(), 1, "only the one reopened went");
+    assert!(pages.unclose());
+    assert!(pages.closed_names().is_empty());
 }

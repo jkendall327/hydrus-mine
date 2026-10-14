@@ -5028,4 +5028,4 @@ potential duplicates (as the reference does as groups merge), so approving
 - **Simulating a wake touches this process and the daemon.** The reference has
   one process; here the client shows the popup and resets its idle timer, and
   the daemon (which owns the network engine and subscriptions) is asked to see a
-  wake too, within about a second.
+  wake too, within about a second (that request is not tested end to end).

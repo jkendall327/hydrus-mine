@@ -4564,8 +4564,8 @@ await hosted execution and inspection.
 
 Help → Debug → memory actions → “run fast memory maintenance” makes every cache
 maintain itself, as the reference's pulse does every minute: the decoded-image
-cache and the thumbnail caches drop what is over their limit and what has idled
-past their timeout. “Run slow memory maintenance” (also every five minutes)
+cache and the thumbnail caches drop what has idled past their timeout (and
+anything over their limit, which only a lowered limit leaves). “Run slow memory maintenance” (also every five minutes)
 deletes the closed pages (and their downloads) closed over an hour ago, but only
 when no page has been opened or closed for half an hour. Closed pages are no
 longer forgotten when the undo menu is built or another page closes: they stay
@@ -4576,8 +4576,8 @@ see a wake, as the reference does: with wake-from-system-sleep detection on, a
 cancellable “just woke up from sleep” popup counts down “enabling I/O in N
 seconds” for the wake delay and is dismissed when it ends (cancelling it says
 “enabling I/O now” and enables input and output at once); the idle timer is
-reset; file paths wait out the delay; the daemon's network engine and
-subscriptions see the wake too. With detection off nothing happens. A real wake
+reset; file paths wait out the delay; the daemon is asked to see the wake
+too (its network engine and subscriptions; that half has no end-to-end test). With detection off nothing happens. A real wake
 (a gap of over a minute between the one-second checks) shows the same popup.
 
 Help → Debug → debug modes offers the checked “force idle mode” runtime action.

@@ -3074,6 +3074,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         }
                     }),
                 };
+                // (the repeating jobs live as long as this debug-actions hook,
+                // which the menu bar owns for the window's life)
                 let timers = memory_maintenance::start(
                     context.maintain_caches.clone(),
                     Rc::new({

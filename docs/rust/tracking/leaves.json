@@ -11651,9 +11651,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "sound",
+    "class": "source-restated",
     "by": "claude (issue #96 session)",
-    "note": "Clicked in the real menu with the image and thumbnail caches primed under held clocks: the fast pulse drops what idled past the timeout and keeps the newest, the slow one leaves them, as oracle/fixtures/debug_memory_maintenance.json records; the pulse also runs every minute."
+    "note": "Driven through the real menu on real image and thumbnail caches with held clocks, and the pulse and its effect (expiry past the timeout, newest kept, slow does nothing) are recorded in oracle/fixtures/debug_memory_maintenance.json; but the recording uses stub entries of 60/40/20/10 bytes and the test cannot replay those against real images, and over-limit trimming is not reachable here, so the expectations restate the reference's rules."
    }
   },
   {
@@ -11901,7 +11901,7 @@
     "date": "2026-10-14",
     "class": "sound",
     "by": "claude (issue #96 session)",
-    "note": "Clicked in the real menu: the popup (title, cancellable, countdown words, dismissal), the idle-timer reset, cancel enabling I/O at once and detection-off all match oracle/fixtures/debug_wake_from_sleep.json; the daemon is asked too."
+    "note": "Clicked in the real menu: the popup (title, cancellable, countdown words, dismissal), the idle-timer reset, cancel enabling I/O at once and detection-off match oracle/fixtures/debug_wake_from_sleep.json. The daemon half (network engine, subscriptions) is requested but not tested end to end."
    }
   },
   {
