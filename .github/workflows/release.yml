@@ -13,7 +13,6 @@ name: release
 on:
   push:
     tags: ['v*']
-    branches: [claude/pensive-darwin-kvjhpq]  # TEMPORARY: test run, remove before merge
   workflow_dispatch:
 
 permissions:
