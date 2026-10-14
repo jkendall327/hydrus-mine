@@ -75,23 +75,23 @@ fn preview_pair_lists_offer_show_selected_pairs_in_a_new_page() {
                     "nothing selected" => {}
                     "first row clicked" => {
                         if passing {
-                            rule.invoke_preview_pass_clicked(0, false, false)
+                            rule.invoke_preview_pass_clicked(0, false, false);
                         } else {
-                            rule.invoke_preview_fail_clicked(0, false, false)
+                            rule.invoke_preview_fail_clicked(0, false, false);
                         }
                     }
                     "second row ctrl-clicked" => {
                         if passing {
-                            rule.invoke_preview_pass_clicked(1, true, false)
+                            rule.invoke_preview_pass_clicked(1, true, false);
                         } else {
-                            rule.invoke_preview_fail_clicked(1, true, false)
+                            rule.invoke_preview_fail_clicked(1, true, false);
                         }
                     }
                     "third row shift-clicked" => {
                         if passing {
-                            rule.invoke_preview_pass_clicked(2, false, true)
+                            rule.invoke_preview_pass_clicked(2, false, true);
                         } else {
-                            rule.invoke_preview_fail_clicked(2, false, true)
+                            rule.invoke_preview_fail_clicked(2, false, true);
                         }
                     }
                     other => panic!("{other}"),
@@ -125,9 +125,9 @@ fn preview_pair_lists_offer_show_selected_pairs_in_a_new_page() {
                 if let Some(shown) = step["shown"].as_array().and_then(|s| s.first()) {
                     let pages_before = bound.pages.borrow().open_pages().len();
                     if passing {
-                        rule.invoke_preview_pass_show()
+                        rule.invoke_preview_pass_show();
                     } else {
-                        rule.invoke_preview_fail_show()
+                        rule.invoke_preview_fail_show();
                     }
                     assert_eq!(
                         bound.pages.borrow().open_pages().len(),
@@ -186,7 +186,13 @@ fn preview_pair_lists_offer_show_selected_pairs_in_a_new_page() {
                         .location()
                         .current()
                         .iter()
-                        .map(|k| k.as_bytes().iter().map(|b| format!("{b:02x}")).collect())
+                        .map(|k| {
+                            k.as_bytes().iter().fold(String::new(), |mut s, b| {
+                                use std::fmt::Write as _;
+                                write!(s, "{b:02x}").unwrap();
+                                s
+                            })
+                        })
                         .collect();
                     let wanted_location: Vec<String> = shown["location"]
                         .as_array()
