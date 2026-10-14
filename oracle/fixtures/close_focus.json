@@ -1,0 +1,389 @@
+{
+ "default": 1,
+ "cases": [
+  {
+   "option": 0,
+   "closed": "a",
+   "selected": "a",
+   "tabs": [
+    "b",
+    "c",
+    "d"
+   ],
+   "current": "b",
+   "current_index": 0
+  },
+  {
+   "option": 0,
+   "closed": "a",
+   "selected": "b",
+   "tabs": [
+    "b",
+    "c",
+    "d"
+   ],
+   "current": "b",
+   "current_index": 0
+  },
+  {
+   "option": 0,
+   "closed": "a",
+   "selected": "c",
+   "tabs": [
+    "b",
+    "c",
+    "d"
+   ],
+   "current": "c",
+   "current_index": 1
+  },
+  {
+   "option": 0,
+   "closed": "a",
+   "selected": "d",
+   "tabs": [
+    "b",
+    "c",
+    "d"
+   ],
+   "current": "d",
+   "current_index": 2
+  },
+  {
+   "option": 0,
+   "closed": "b",
+   "selected": "a",
+   "tabs": [
+    "a",
+    "c",
+    "d"
+   ],
+   "current": "a",
+   "current_index": 0
+  },
+  {
+   "option": 0,
+   "closed": "b",
+   "selected": "b",
+   "tabs": [
+    "a",
+    "c",
+    "d"
+   ],
+   "current": "a",
+   "current_index": 0
+  },
+  {
+   "option": 0,
+   "closed": "b",
+   "selected": "c",
+   "tabs": [
+    "a",
+    "c",
+    "d"
+   ],
+   "current": "c",
+   "current_index": 1
+  },
+  {
+   "option": 0,
+   "closed": "b",
+   "selected": "d",
+   "tabs": [
+    "a",
+    "c",
+    "d"
+   ],
+   "current": "d",
+   "current_index": 2
+  },
+  {
+   "option": 0,
+   "closed": "c",
+   "selected": "a",
+   "tabs": [
+    "a",
+    "b",
+    "d"
+   ],
+   "current": "a",
+   "current_index": 0
+  },
+  {
+   "option": 0,
+   "closed": "c",
+   "selected": "b",
+   "tabs": [
+    "a",
+    "b",
+    "d"
+   ],
+   "current": "b",
+   "current_index": 1
+  },
+  {
+   "option": 0,
+   "closed": "c",
+   "selected": "c",
+   "tabs": [
+    "a",
+    "b",
+    "d"
+   ],
+   "current": "b",
+   "current_index": 1
+  },
+  {
+   "option": 0,
+   "closed": "c",
+   "selected": "d",
+   "tabs": [
+    "a",
+    "b",
+    "d"
+   ],
+   "current": "d",
+   "current_index": 2
+  },
+  {
+   "option": 0,
+   "closed": "d",
+   "selected": "a",
+   "tabs": [
+    "a",
+    "b",
+    "c"
+   ],
+   "current": "a",
+   "current_index": 0
+  },
+  {
+   "option": 0,
+   "closed": "d",
+   "selected": "b",
+   "tabs": [
+    "a",
+    "b",
+    "c"
+   ],
+   "current": "b",
+   "current_index": 1
+  },
+  {
+   "option": 0,
+   "closed": "d",
+   "selected": "c",
+   "tabs": [
+    "a",
+    "b",
+    "c"
+   ],
+   "current": "c",
+   "current_index": 2
+  },
+  {
+   "option": 0,
+   "closed": "d",
+   "selected": "d",
+   "tabs": [
+    "a",
+    "b",
+    "c"
+   ],
+   "current": "c",
+   "current_index": 2
+  },
+  {
+   "option": 1,
+   "closed": "a",
+   "selected": "a",
+   "tabs": [
+    "b",
+    "c",
+    "d"
+   ],
+   "current": "b",
+   "current_index": 0
+  },
+  {
+   "option": 1,
+   "closed": "a",
+   "selected": "b",
+   "tabs": [
+    "b",
+    "c",
+    "d"
+   ],
+   "current": "b",
+   "current_index": 0
+  },
+  {
+   "option": 1,
+   "closed": "a",
+   "selected": "c",
+   "tabs": [
+    "b",
+    "c",
+    "d"
+   ],
+   "current": "c",
+   "current_index": 1
+  },
+  {
+   "option": 1,
+   "closed": "a",
+   "selected": "d",
+   "tabs": [
+    "b",
+    "c",
+    "d"
+   ],
+   "current": "d",
+   "current_index": 2
+  },
+  {
+   "option": 1,
+   "closed": "b",
+   "selected": "a",
+   "tabs": [
+    "a",
+    "c",
+    "d"
+   ],
+   "current": "a",
+   "current_index": 0
+  },
+  {
+   "option": 1,
+   "closed": "b",
+   "selected": "b",
+   "tabs": [
+    "a",
+    "c",
+    "d"
+   ],
+   "current": "c",
+   "current_index": 1
+  },
+  {
+   "option": 1,
+   "closed": "b",
+   "selected": "c",
+   "tabs": [
+    "a",
+    "c",
+    "d"
+   ],
+   "current": "c",
+   "current_index": 1
+  },
+  {
+   "option": 1,
+   "closed": "b",
+   "selected": "d",
+   "tabs": [
+    "a",
+    "c",
+    "d"
+   ],
+   "current": "d",
+   "current_index": 2
+  },
+  {
+   "option": 1,
+   "closed": "c",
+   "selected": "a",
+   "tabs": [
+    "a",
+    "b",
+    "d"
+   ],
+   "current": "a",
+   "current_index": 0
+  },
+  {
+   "option": 1,
+   "closed": "c",
+   "selected": "b",
+   "tabs": [
+    "a",
+    "b",
+    "d"
+   ],
+   "current": "b",
+   "current_index": 1
+  },
+  {
+   "option": 1,
+   "closed": "c",
+   "selected": "c",
+   "tabs": [
+    "a",
+    "b",
+    "d"
+   ],
+   "current": "d",
+   "current_index": 2
+  },
+  {
+   "option": 1,
+   "closed": "c",
+   "selected": "d",
+   "tabs": [
+    "a",
+    "b",
+    "d"
+   ],
+   "current": "d",
+   "current_index": 2
+  },
+  {
+   "option": 1,
+   "closed": "d",
+   "selected": "a",
+   "tabs": [
+    "a",
+    "b",
+    "c"
+   ],
+   "current": "a",
+   "current_index": 0
+  },
+  {
+   "option": 1,
+   "closed": "d",
+   "selected": "b",
+   "tabs": [
+    "a",
+    "b",
+    "c"
+   ],
+   "current": "b",
+   "current_index": 1
+  },
+  {
+   "option": 1,
+   "closed": "d",
+   "selected": "c",
+   "tabs": [
+    "a",
+    "b",
+    "c"
+   ],
+   "current": "c",
+   "current_index": 2
+  },
+  {
+   "option": 1,
+   "closed": "d",
+   "selected": "d",
+   "tabs": [
+    "a",
+    "b",
+    "c"
+   ],
+   "current": "c",
+   "current_index": 2
+  }
+ ]
+}

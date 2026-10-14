@@ -74,14 +74,12 @@ fn edit_offers_the_picker_for_each_selected_namespace_and_a_cancel_keeps_the_col
     );
     second.invoke_cancelled();
     assert_eq!(rgb(&options, "'series' tags"), [170, 0, 170]);
-    // the selection and order are kept
+    // the edited entries leave the selection (the reference removes and re-adds each term)
     assert!(
         options
             .get_namespace_colour_rows()
             .iter()
-            .filter(|row| row.selected)
-            .count()
-            == 2
+            .all(|row| !row.selected)
     );
     assert_eq!(
         store.read::<NamespaceColours>(settings::get).unwrap(),
@@ -127,5 +125,111 @@ fn edit_offers_the_picker_for_each_selected_namespace_and_a_cancel_keeps_the_col
     assert_eq!(sorted(saved), sorted(expected));
     let options = open();
     assert_eq!(rgb(&options, "'character' tags"), [10, 20, 30]);
+    options.invoke_cancel();
+}
+
+// leaf: audit-options-tag-presentation-namespace-colours-edit
+// leaf: audit-options-tag-presentation-namespace-colours-namespace-colours-editor
+#[test]
+fn edit_replays_the_reference_s_list_the_pickers_it_offers_and_what_is_left_selected() {
+    let recorded = hydrus_testkit::fixture_json("namespace_colour_controls.json");
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = hydrus_gui::headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_menu_title_pressed(0, 20.0, 22.0);
+    let lines = ui.get_menu_panes().row_data(0).unwrap().lines;
+    let index = lines
+        .iter()
+        .position(|line| line.label == "options\u{2026}")
+        .unwrap();
+    ui.invoke_menu_line_clicked(0, i32::try_from(index).unwrap(), 0.0, 0.0, 0.0);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    let page = options
+        .get_pages()
+        .iter()
+        .position(|page| page.text == "tag presentation")
+        .unwrap();
+    options.invoke_page_chosen(i32::try_from(page).unwrap());
+    let rows = |options: &hydrus_gui::OptionsWindow| -> Vec<(String, [u8; 3])> {
+        options
+            .get_namespace_colour_rows()
+            .iter()
+            .map(|row| {
+                (
+                    row.label.to_string(),
+                    [row.colour.red(), row.colour.green(), row.colour.blue()],
+                )
+            })
+            .collect()
+    };
+    let recorded_rows = |value: &serde_json::Value| -> Vec<(String, [u8; 3])> {
+        value
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|row| {
+                let rgb: Vec<u8> = row["rgb"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|c| u8::try_from(c.as_u64().unwrap()).unwrap())
+                    .collect();
+                (
+                    row["label"].as_str().unwrap().to_owned(),
+                    [rgb[0], rgb[1], rgb[2]],
+                )
+            })
+            .collect()
+    };
+    // the list as the reference's panel shows it
+    assert_eq!(rows(&options), recorded_rows(&recorded["initial"]));
+    // nothing selected: edit offers nothing
+    options.invoke_namespace_colour_action("edit".into());
+    assert!(hydrus_gui::options_namespace_colours::last_picker().is_none());
+    assert_eq!(
+        recorded["edit_cases"]["nothing_selected_offered"],
+        serde_json::json!([])
+    );
+
+    let edit = &recorded["edit_cases"];
+    for (n, namespace) in edit["selected"].as_array().unwrap().iter().enumerate() {
+        let label = format!("'{}' tags", namespace.as_str().unwrap());
+        let at = options
+            .get_namespace_colour_rows()
+            .iter()
+            .position(|row| row.label == label)
+            .unwrap();
+        options.invoke_namespace_colour_clicked(i32::try_from(at).unwrap(), n > 0, false);
+    }
+    options.invoke_namespace_colour_action("edit".into());
+    // each selected entry is offered its own colour; answered by the colour offered
+    // (the reference's order here comes from a set, so the recording sorts what was offered)
+    let mut offered = Vec::new();
+    while let Some(picker) = hydrus_gui::options_namespace_colours::last_picker()
+        && picker.window().is_visible()
+    {
+        let rgb = [picker.get_red(), picker.get_green(), picker.get_blue()];
+        offered.push(serde_json::json!({"rgb": rgb}));
+        if rgb == [0, 170, 0] {
+            picker.invoke_accepted(10, 20, 30);
+        } else {
+            picker.invoke_cancelled();
+        }
+    }
+    offered.sort_by_key(|o| o["rgb"].to_string());
+    let mut theirs = edit["offered"].as_array().unwrap().clone();
+    theirs.sort_by_key(|o| o["rgb"].to_string());
+    assert_eq!(offered, theirs);
+    assert_eq!(rows(&options), recorded_rows(&edit["rows"]));
+    // and no entry is left selected
+    assert_eq!(edit["selected_after"], serde_json::json!([]));
+    assert!(
+        options
+            .get_namespace_colour_rows()
+            .iter()
+            .all(|row| !row.selected)
+    );
     options.invoke_cancel();
 }
