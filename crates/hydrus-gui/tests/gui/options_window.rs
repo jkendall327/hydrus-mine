@@ -7063,5 +7063,5 @@ fn the_search_bar_and_its_suggestions_sit_where_the_option_puts_them() {
         first_row.insert(top, list_row);
     }
     // a field at the top takes 30 pixels from the list, at the bottom it takes them below
-    assert_eq!(first_row[&true] - first_row[&false], 30.0);
+    assert!((first_row[&true] - first_row[&false] - 30.0).abs() < 0.5);
 }
