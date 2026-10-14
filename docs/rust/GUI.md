@@ -4982,7 +4982,7 @@ query's sync-due test).
 Also in Help > debug: gui actions > "autocomplete delay mode" (every tag
 autocomplete search takes three more seconds), data actions > "scan file
 storage folders" (pick a directory; it says how many storage subfolders it
-found and how long it took, or why it gave up), and debug modes > "use
+found and how long it took, or why it gave up; the picker opens in the database directory), and debug modes > "use
 faulthandler to log crashes" (while on, each panic is written with a
 backtrace to a "client crash" log in the database directory).
 `tests/gui/debug_menu_actions.rs` clicks each debug entry in the real menu
@@ -5010,6 +5010,19 @@ processes write the same logs. `tests/gui/debug_profiling.rs` clicks each in
 the real menu and compares what the popups, the checks and the logs say with
 `oracle/fixtures/debug_profiling.json` and
 `oracle/fixtures/subscription_manager_snapshot.json`.
+
+Help > debug > "what is this object?" opens the reference's window: a picture
+to click (it asks for hydrus PNGs to read) or drop files on, a paste button
+(a bitmap, copied files or text), and two boxes: what each pasted object is
+and the text itself. An object is described as `Serialisable Dictionary
+(21)` with a count of what it holds ("2: <class 'int'>", the descriptions of
+nested objects), a named object with its name, and what is not one says
+"Error:" and why in Python's words. `tests/gui/debug_what_is_this.rs` pastes
+and drops what the reference's own window was given
+(`oracle/fixtures/what_is_this_object.json`), and
+`hydrus-legacy/tests/what_is_this.rs` checks every description and class
+name. Help > debug > network actions > "review current network jobs" opens
+the jobs window titled "review network jobs", as the reference's frame is.
 
 ## Pages > weight report
 

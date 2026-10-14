@@ -14,9 +14,7 @@
         "done": true,
         "had_error": false,
         "has_traceback": false,
-        "traceback_first_lines": [
-          ""
-        ],
+        "traceback": null,
         "files": null,
         "mergable": null,
         "user_callable_label": null,
@@ -37,9 +35,7 @@
         "done": true,
         "had_error": false,
         "has_traceback": false,
-        "traceback_first_lines": [
-          ""
-        ],
+        "traceback": null,
         "files": null,
         "mergable": null,
         "user_callable_label": null,
@@ -60,9 +56,7 @@
         "done": true,
         "had_error": false,
         "has_traceback": false,
-        "traceback_first_lines": [
-          ""
-        ],
+        "traceback": null,
         "files": null,
         "mergable": null,
         "user_callable_label": null,
@@ -83,9 +77,7 @@
         "done": true,
         "had_error": false,
         "has_traceback": false,
-        "traceback_first_lines": [
-          ""
-        ],
+        "traceback": null,
         "files": null,
         "mergable": null,
         "user_callable_label": null,
@@ -106,9 +98,7 @@
         "done": true,
         "had_error": false,
         "has_traceback": false,
-        "traceback_first_lines": [
-          ""
-        ],
+        "traceback": null,
         "files": null,
         "mergable": null,
         "user_callable_label": null,
@@ -129,9 +119,7 @@
         "done": true,
         "had_error": false,
         "has_traceback": false,
-        "traceback_first_lines": [
-          ""
-        ],
+        "traceback": null,
         "files": null,
         "mergable": null,
         "user_callable_label": null,
@@ -152,9 +140,7 @@
         "done": true,
         "had_error": false,
         "has_traceback": false,
-        "traceback_first_lines": [
-          ""
-        ],
+        "traceback": null,
         "files": null,
         "mergable": null,
         "user_callable_label": null,
@@ -175,9 +161,7 @@
         "done": true,
         "had_error": false,
         "has_traceback": false,
-        "traceback_first_lines": [
-          ""
-        ],
+        "traceback": null,
         "files": null,
         "mergable": null,
         "user_callable_label": null,
@@ -198,9 +182,7 @@
         "done": true,
         "had_error": false,
         "has_traceback": false,
-        "traceback_first_lines": [
-          ""
-        ],
+        "traceback": null,
         "files": null,
         "mergable": null,
         "user_callable_label": "cheeki breeki",
@@ -221,9 +203,7 @@
         "done": true,
         "had_error": false,
         "has_traceback": false,
-        "traceback_first_lines": [
-          ""
-        ],
+        "traceback": null,
         "files": {
           "count": 1,
           "label": "go"
@@ -247,9 +227,7 @@
         "done": true,
         "had_error": false,
         "has_traceback": false,
-        "traceback_first_lines": [
-          ""
-        ],
+        "traceback": null,
         "files": {
           "count": 3,
           "label": "cool pics"
@@ -273,9 +251,7 @@
         "done": true,
         "had_error": false,
         "has_traceback": false,
-        "traceback_first_lines": [
-          ""
-        ],
+        "traceback": null,
         "files": {
           "count": 3,
           "label": "cool pics"
@@ -299,9 +275,7 @@
         "done": true,
         "had_error": false,
         "has_traceback": false,
-        "traceback_first_lines": [
-          ""
-        ],
+        "traceback": null,
         "files": null,
         "mergable": null,
         "user_callable_label": "start a new downloader for this to fill in the gap!",
@@ -322,9 +296,7 @@
         "done": true,
         "had_error": false,
         "has_traceback": false,
-        "traceback_first_lines": [
-          ""
-        ],
+        "traceback": null,
         "files": null,
         "mergable": null,
         "user_callable_label": null,
@@ -348,9 +320,7 @@
         "done": false,
         "had_error": false,
         "has_traceback": false,
-        "traceback_first_lines": [
-          ""
-        ],
+        "traceback": null,
         "files": null,
         "mergable": null,
         "user_callable_label": null,
@@ -359,7 +329,7 @@
     },
     {
       "topic": "message",
-      "at_ms": 115,
+      "at_ms": 142,
       "job": {
         "title": "test network control",
         "text_1": "Downloading...",
@@ -374,9 +344,7 @@
         "done": false,
         "had_error": false,
         "has_traceback": false,
-        "traceback_first_lines": [
-          ""
-        ],
+        "traceback": null,
         "files": null,
         "mergable": null,
         "user_callable_label": null,
@@ -385,7 +353,7 @@
     },
     {
       "topic": "message",
-      "at_ms": 124,
+      "at_ms": 151,
       "job": {
         "title": "DataMissing",
         "text_1": "This is a test exception",
@@ -397,9 +365,7 @@
         "done": true,
         "had_error": false,
         "has_traceback": true,
-        "traceback_first_lines": [
-          "================ Exception ================"
-        ],
+        "traceback": "================ Exception ================\nDataMissing: This is a test exception\n================ Traceback ================\nTraceback (most recent call last):\n  File \"/home/user/hydrus-mine/hydrus/client/gui/ClientGUI.py\", line 1580, in _DebugMakeSomePopups\n    raise HydrusExceptions.DataMissing( 'This is a test exception' )\nhydrus.core.HydrusExceptions.DataMissing: This is a test exception\n================== Stack ==================\n  File \"/home/user/hydrus-mine/oracle/record_debug_popups.py\", line 145, in <module>\n    main()\n  File \"/home/user/hydrus-mine/oracle/record_debug_popups.py\", line 134, in main\n    Path(sys.argv[2]).write_text(json.dumps(hydrus_driver.run_client(database, record)))\n  File \"/home/user/hydrus-mine/oracle/hydrus_driver.py\", line 361, in run_client\n    hydrus_client_boot.boot()\n  File \"/home/user/hydrus-mine/hydrus/hydrus_client_boot.py\", line 267, in boot\n    controller.Run()\n  File \"/home/user/hydrus-mine/hydrus/client/ClientController.py\", line 2045, in Run\n    self.app.exec_()\n  File \"/root/pyenv/lib/python3.13/site-packages/qtpy/QtWidgets.py\", line 165, in <lambda>\n    QApplication.exec_ = lambda *args, **kwargs: possibly_static_exec(\n  File \"/root/pyenv/lib/python3.13/site-packages/qtpy/_utils.py\", line 53, in possibly_static_exec\n    return args[0].exec()\n  File \"/home/user/hydrus-mine/hydrus/client/gui/ClientGUICallAfter.py\", line 64, in event\n    event.Execute()\n  File \"/home/user/hydrus-mine/hydrus/client/gui/ClientGUICallAfter.py\", line 29, in Execute\n    self._call()\n  File \"/home/user/hydrus-mine/hydrus/core/HydrusData.py\", line 520, in __call__\n    return self._func( *self._args, **self._kwargs )\n  File \"/home/user/hydrus-mine/hydrus/client/ClientController.py\", line 458, in qt_code\n    result = func( *args, **kwargs )\n  File \"/home/user/hydrus-mine/oracle/record_debug_popups.py\", line 72, in drive\n    find(menu, ['debug', 'gui actions', 'make some popups']).trigger()\n  File \"/home/user/hydrus-mine/hydrus/client/gui/ClientGUIMenus.py\", line 342, in event_callable\n    callable( *args, **kwargs )\n  File \"/home/user/hydrus-mine/hydrus/client/gui/ClientGUI.py\", line 1584, in _DebugMakeSomePopups\n    HydrusData.ShowException( e, do_wait = False )\n  File \"/home/user/hydrus-mine/hydrus/client/ClientData.py\", line 134, in ShowExceptionClient\n    ShowExceptionTupleClient( etype, value, tb, do_wait = do_wait )\n  File \"/home/user/hydrus-mine/hydrus/client/ClientData.py\", line 148, in ShowExceptionTupleClient\n    job_status.SetExceptionTuple( etype, value, tb )\n  File \"/home/user/hydrus-mine/hydrus/client/ClientThreading.py\", line 365, in SetExceptionTuple\n    nice_trace = HydrusData.ConvertExceptionTupleToNiceTrace( etype, value, tb )\n  File \"/home/user/hydrus-mine/hydrus/core/HydrusData.py\", line 328, in ConvertExceptionTupleToNiceTrace\n    stack_list = traceback.format_stack()\n=================== End ===================",
         "files": null,
         "mergable": null,
         "user_callable_label": null,
@@ -408,7 +374,7 @@
     },
     {
       "topic": "message",
-      "at_ms": 717,
+      "at_ms": 715,
       "job": {
         "title": null,
         "text_1": "This is a delayed popup message -- 1",
@@ -420,9 +386,7 @@
         "done": true,
         "had_error": false,
         "has_traceback": false,
-        "traceback_first_lines": [
-          ""
-        ],
+        "traceback": null,
         "files": null,
         "mergable": null,
         "user_callable_label": null,
@@ -431,7 +395,7 @@
     },
     {
       "topic": "message",
-      "at_ms": 1133,
+      "at_ms": 1192,
       "job": {
         "title": null,
         "text_1": "This is a delayed popup message -- 2",
@@ -443,9 +407,7 @@
         "done": true,
         "had_error": false,
         "has_traceback": false,
-        "traceback_first_lines": [
-          ""
-        ],
+        "traceback": null,
         "files": null,
         "mergable": null,
         "user_callable_label": null,
@@ -454,7 +416,7 @@
     },
     {
       "topic": "message",
-      "at_ms": 1672,
+      "at_ms": 1682,
       "job": {
         "title": null,
         "text_1": "This is a delayed popup message -- 3",
@@ -466,9 +428,7 @@
         "done": true,
         "had_error": false,
         "has_traceback": false,
-        "traceback_first_lines": [
-          ""
-        ],
+        "traceback": null,
         "files": null,
         "mergable": null,
         "user_callable_label": null,
@@ -490,7 +450,7 @@
     "events": [
       {
         "topic": "modal_message",
-        "at_ms": 5174,
+        "at_ms": 5173,
         "job": {
           "title": "debug modal job",
           "text_1": null,
@@ -502,9 +462,7 @@
           "done": false,
           "had_error": false,
           "has_traceback": false,
-          "traceback_first_lines": [
-            ""
-          ],
+          "traceback": null,
           "files": null,
           "mergable": null,
           "user_callable_label": null,
@@ -513,7 +471,7 @@
       },
       {
         "topic": "message",
-        "at_ms": 15472,
+        "at_ms": 15482,
         "job": {
           "title": "debug modal job",
           "text_1": "Will auto-dismiss in 1 second.",
@@ -528,9 +486,7 @@
           "done": true,
           "had_error": false,
           "has_traceback": false,
-          "traceback_first_lines": [
-            ""
-          ],
+          "traceback": null,
           "files": null,
           "mergable": null,
           "user_callable_label": null,
@@ -539,10 +495,10 @@
       }
     ],
     "cancel_at_ms": null,
-    "finish_ms": 15477,
+    "finish_ms": 15486,
     "samples": [
       {
-        "at_ms": 5175,
+        "at_ms": 5174,
         "text_1": "Will auto-dismiss in 10 seconds.",
         "gauge_1": [
           0,
@@ -553,7 +509,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 15477,
+        "at_ms": 15486,
         "text_1": "Will auto-dismiss in 1 second.",
         "gauge_1": [
           9,
@@ -569,7 +525,7 @@
     "events": [
       {
         "topic": "modal_message",
-        "at_ms": 5176,
+        "at_ms": 5169,
         "job": {
           "title": "debug modal job",
           "text_1": null,
@@ -581,9 +537,7 @@
           "done": true,
           "had_error": false,
           "has_traceback": false,
-          "traceback_first_lines": [
-            ""
-          ],
+          "traceback": null,
           "files": null,
           "mergable": null,
           "user_callable_label": null,
@@ -592,7 +546,7 @@
       },
       {
         "topic": "message",
-        "at_ms": 5176,
+        "at_ms": 5169,
         "job": {
           "title": "debug modal job",
           "text_1": "Will auto-dismiss in 10 seconds.",
@@ -607,9 +561,7 @@
           "done": true,
           "had_error": false,
           "has_traceback": false,
-          "traceback_first_lines": [
-            ""
-          ],
+          "traceback": null,
           "files": null,
           "mergable": null,
           "user_callable_label": null,
@@ -618,10 +570,10 @@
       }
     ],
     "cancel_at_ms": null,
-    "finish_ms": 5176,
+    "finish_ms": 5169,
     "samples": [
       {
-        "at_ms": 5176,
+        "at_ms": 5169,
         "text_1": "Will auto-dismiss in 10 seconds.",
         "gauge_1": [
           0,
@@ -632,7 +584,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 5681,
+        "at_ms": 5677,
         "text_1": "Will auto-dismiss in 10 seconds.",
         "gauge_1": [
           0,
@@ -643,7 +595,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 6187,
+        "at_ms": 6185,
         "text_1": "Will auto-dismiss in 9 seconds.",
         "gauge_1": [
           0,
@@ -654,7 +606,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 6695,
+        "at_ms": 6692,
         "text_1": "Will auto-dismiss in 9 seconds.",
         "gauge_1": [
           1,
@@ -665,7 +617,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 7203,
+        "at_ms": 7200,
         "text_1": "Will auto-dismiss in 9 seconds.",
         "gauge_1": [
           1,
@@ -676,7 +628,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 7711,
+        "at_ms": 7707,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -687,7 +639,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 8218,
+        "at_ms": 8214,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -698,7 +650,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 8725,
+        "at_ms": 8721,
         "text_1": "Will auto-dismiss in 7 seconds.",
         "gauge_1": [
           3,
@@ -709,7 +661,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 9231,
+        "at_ms": 9229,
         "text_1": "Will auto-dismiss in 7 seconds.",
         "gauge_1": [
           3,
@@ -720,7 +672,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 9742,
+        "at_ms": 9737,
         "text_1": "Will auto-dismiss in 6 seconds.",
         "gauge_1": [
           4,
@@ -731,7 +683,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 10250,
+        "at_ms": 10246,
         "text_1": "Will auto-dismiss in 6 seconds.",
         "gauge_1": [
           4,
@@ -742,7 +694,18 @@
         "cancelled": false
       },
       {
-        "at_ms": 10758,
+        "at_ms": 10754,
+        "text_1": "Will auto-dismiss in 6 seconds.",
+        "gauge_1": [
+          4,
+          10
+        ],
+        "done": true,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 11261,
         "text_1": "Will auto-dismiss in 5 seconds.",
         "gauge_1": [
           5,
@@ -753,7 +716,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 11263,
+        "at_ms": 11768,
         "text_1": "Will auto-dismiss in 5 seconds.",
         "gauge_1": [
           5,
@@ -764,18 +727,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 11769,
-        "text_1": "Will auto-dismiss in 5 seconds.",
-        "gauge_1": [
-          5,
-          10
-        ],
-        "done": true,
-        "dismissed": false,
-        "cancelled": false
-      },
-      {
-        "at_ms": 12275,
+        "at_ms": 12276,
         "text_1": "Will auto-dismiss in 4 seconds.",
         "gauge_1": [
           6,
@@ -786,7 +738,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 12783,
+        "at_ms": 12781,
         "text_1": "Will auto-dismiss in 4 seconds.",
         "gauge_1": [
           6,
@@ -797,7 +749,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 13288,
+        "at_ms": 13291,
         "text_1": "Will auto-dismiss in 3 seconds.",
         "gauge_1": [
           7,
@@ -808,7 +760,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 13796,
+        "at_ms": 13798,
         "text_1": "Will auto-dismiss in 3 seconds.",
         "gauge_1": [
           7,
@@ -819,7 +771,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 14303,
+        "at_ms": 14305,
         "text_1": "Will auto-dismiss in 2 seconds.",
         "gauge_1": [
           8,
@@ -841,10 +793,10 @@
         "cancelled": false
       },
       {
-        "at_ms": 15320,
+        "at_ms": 15321,
         "text_1": "Will auto-dismiss in 1 second.",
         "gauge_1": [
-          9,
+          8,
           10
         ],
         "done": true,
@@ -863,18 +815,18 @@
         "cancelled": false
       },
       {
-        "at_ms": 16335,
+        "at_ms": 16336,
         "text_1": "Will auto-dismiss in 1 second.",
         "gauge_1": [
           9,
           10
         ],
         "done": true,
-        "dismissed": true,
+        "dismissed": false,
         "cancelled": false
       },
       {
-        "at_ms": 16335,
+        "at_ms": 16437,
         "text_1": "Will auto-dismiss in 1 second.",
         "gauge_1": [
           9,
@@ -890,7 +842,7 @@
     "events": [
       {
         "topic": "modal_message",
-        "at_ms": 5174,
+        "at_ms": 5277,
         "job": {
           "title": "debug modal job",
           "text_1": null,
@@ -902,9 +854,7 @@
           "done": false,
           "had_error": false,
           "has_traceback": false,
-          "traceback_first_lines": [
-            ""
-          ],
+          "traceback": null,
           "files": null,
           "mergable": null,
           "user_callable_label": null,
@@ -913,7 +863,7 @@
       },
       {
         "topic": "modal_message",
-        "at_ms": 5682,
+        "at_ms": 5379,
         "job": {
           "title": "debug modal job",
           "text_1": "Will auto-dismiss in 10 seconds.",
@@ -928,9 +878,7 @@
           "done": false,
           "had_error": false,
           "has_traceback": false,
-          "traceback_first_lines": [
-            ""
-          ],
+          "traceback": null,
           "files": null,
           "mergable": null,
           "user_callable_label": null,
@@ -939,7 +887,7 @@
       },
       {
         "topic": "modal_message",
-        "at_ms": 5986,
+        "at_ms": 5684,
         "job": {
           "title": "debug modal job",
           "text_1": "Will auto-dismiss in 10 seconds.",
@@ -954,9 +902,7 @@
           "done": false,
           "had_error": false,
           "has_traceback": false,
-          "traceback_first_lines": [
-            ""
-          ],
+          "traceback": null,
           "files": null,
           "mergable": null,
           "user_callable_label": null,
@@ -965,7 +911,31 @@
       },
       {
         "topic": "modal_message",
-        "at_ms": 6291,
+        "at_ms": 6190,
+        "job": {
+          "title": "debug modal job",
+          "text_1": "Will auto-dismiss in 10 seconds.",
+          "text_2": null,
+          "gauge_1": [
+            0,
+            10
+          ],
+          "gauge_2": null,
+          "pausable": false,
+          "cancellable": true,
+          "done": false,
+          "had_error": false,
+          "has_traceback": false,
+          "traceback": null,
+          "files": null,
+          "mergable": null,
+          "user_callable_label": null,
+          "has_network_job": false
+        }
+      },
+      {
+        "topic": "modal_message",
+        "at_ms": 6698,
         "job": {
           "title": "debug modal job",
           "text_1": "Will auto-dismiss in 9 seconds.",
@@ -980,9 +950,7 @@
           "done": false,
           "had_error": false,
           "has_traceback": false,
-          "traceback_first_lines": [
-            ""
-          ],
+          "traceback": null,
           "files": null,
           "mergable": null,
           "user_callable_label": null,
@@ -991,7 +959,7 @@
       },
       {
         "topic": "modal_message",
-        "at_ms": 6798,
+        "at_ms": 7003,
         "job": {
           "title": "debug modal job",
           "text_1": "Will auto-dismiss in 9 seconds.",
@@ -1006,9 +974,7 @@
           "done": false,
           "had_error": false,
           "has_traceback": false,
-          "traceback_first_lines": [
-            ""
-          ],
+          "traceback": null,
           "files": null,
           "mergable": null,
           "user_callable_label": null,
@@ -1017,65 +983,13 @@
       },
       {
         "topic": "modal_message",
-        "at_ms": 7102,
-        "job": {
-          "title": "debug modal job",
-          "text_1": "Will auto-dismiss in 9 seconds.",
-          "text_2": null,
-          "gauge_1": [
-            1,
-            10
-          ],
-          "gauge_2": null,
-          "pausable": false,
-          "cancellable": true,
-          "done": false,
-          "had_error": false,
-          "has_traceback": false,
-          "traceback_first_lines": [
-            ""
-          ],
-          "files": null,
-          "mergable": null,
-          "user_callable_label": null,
-          "has_network_job": false
-        }
-      },
-      {
-        "topic": "modal_message",
-        "at_ms": 7407,
+        "at_ms": 7510,
         "job": {
           "title": "debug modal job",
           "text_1": "Will auto-dismiss in 8 seconds.",
           "text_2": null,
           "gauge_1": [
             1,
-            10
-          ],
-          "gauge_2": null,
-          "pausable": false,
-          "cancellable": true,
-          "done": false,
-          "had_error": false,
-          "has_traceback": false,
-          "traceback_first_lines": [
-            ""
-          ],
-          "files": null,
-          "mergable": null,
-          "user_callable_label": null,
-          "has_network_job": false
-        }
-      },
-      {
-        "topic": "modal_message",
-        "at_ms": 8015,
-        "job": {
-          "title": "debug modal job",
-          "text_1": "Will auto-dismiss in 8 seconds.",
-          "text_2": null,
-          "gauge_1": [
-            2,
             10
           ],
           "gauge_2": null,
@@ -1084,9 +998,7 @@
           "done": true,
           "had_error": false,
           "has_traceback": false,
-          "traceback_first_lines": [
-            ""
-          ],
+          "traceback": null,
           "files": null,
           "mergable": null,
           "user_callable_label": null,
@@ -1095,13 +1007,13 @@
       },
       {
         "topic": "message",
-        "at_ms": 8015,
+        "at_ms": 7510,
         "job": {
           "title": "debug modal job",
           "text_1": "Will auto-dismiss in 8 seconds.",
           "text_2": null,
           "gauge_1": [
-            2,
+            1,
             10
           ],
           "gauge_2": null,
@@ -1110,9 +1022,7 @@
           "done": true,
           "had_error": false,
           "has_traceback": false,
-          "traceback_first_lines": [
-            ""
-          ],
+          "traceback": null,
           "files": null,
           "mergable": null,
           "user_callable_label": null,
@@ -1121,10 +1031,10 @@
       }
     ],
     "cancel_at_ms": 7500,
-    "finish_ms": 7508,
+    "finish_ms": 7510,
     "samples": [
       {
-        "at_ms": 5174,
+        "at_ms": 5277,
         "text_1": "Will auto-dismiss in 10 seconds.",
         "gauge_1": [
           0,
@@ -1135,7 +1045,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 5681,
+        "at_ms": 5784,
         "text_1": "Will auto-dismiss in 10 seconds.",
         "gauge_1": [
           0,
@@ -1146,7 +1056,18 @@
         "cancelled": false
       },
       {
-        "at_ms": 6189,
+        "at_ms": 6292,
+        "text_1": "Will auto-dismiss in 9 seconds.",
+        "gauge_1": [
+          0,
+          10
+        ],
+        "done": false,
+        "dismissed": false,
+        "cancelled": false
+      },
+      {
+        "at_ms": 6799,
         "text_1": "Will auto-dismiss in 9 seconds.",
         "gauge_1": [
           1,
@@ -1157,7 +1078,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 6696,
+        "at_ms": 7306,
         "text_1": "Will auto-dismiss in 9 seconds.",
         "gauge_1": [
           1,
@@ -1168,18 +1089,7 @@
         "cancelled": false
       },
       {
-        "at_ms": 7203,
-        "text_1": "Will auto-dismiss in 9 seconds.",
-        "gauge_1": [
-          1,
-          10
-        ],
-        "done": false,
-        "dismissed": false,
-        "cancelled": false
-      },
-      {
-        "at_ms": 7711,
+        "at_ms": 7814,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1190,7 +1100,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 8217,
+        "at_ms": 8321,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1201,7 +1111,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 8723,
+        "at_ms": 8828,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1212,7 +1122,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 9228,
+        "at_ms": 9335,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1223,7 +1133,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 9734,
+        "at_ms": 9841,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1234,7 +1144,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 10241,
+        "at_ms": 10348,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1245,7 +1155,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 10746,
+        "at_ms": 10854,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1256,7 +1166,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 11253,
+        "at_ms": 11360,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1267,7 +1177,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 11761,
+        "at_ms": 11868,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1278,7 +1188,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 12267,
+        "at_ms": 12374,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1289,7 +1199,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 12774,
+        "at_ms": 12881,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1300,7 +1210,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 13281,
+        "at_ms": 13387,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1311,7 +1221,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 13788,
+        "at_ms": 13895,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1322,7 +1232,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 14295,
+        "at_ms": 14402,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1333,7 +1243,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 14802,
+        "at_ms": 14921,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1344,7 +1254,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 15309,
+        "at_ms": 15428,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1355,7 +1265,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 15815,
+        "at_ms": 15933,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1366,7 +1276,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 16322,
+        "at_ms": 16441,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,
@@ -1377,7 +1287,7 @@
         "cancelled": true
       },
       {
-        "at_ms": 16526,
+        "at_ms": 16543,
         "text_1": "Will auto-dismiss in 8 seconds.",
         "gauge_1": [
           2,

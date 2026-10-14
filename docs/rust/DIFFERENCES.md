@@ -4384,11 +4384,23 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   "macos anti-flicker test" (Qt widget, stylesheet, mpv widget or macOS
   internals); "review threads" and "show scheduled jobs" (Python threads
   and scheduler); the pympler memory-use entries; "publish some sub files
-  in five seconds" and "what is this object?"; profile mode (threads) (there
+  in five seconds"; profile mode (threads) (there
   is no thread pool of background tasks to time); and the tests, do not
   touch: the ui, client api, server and
   visual duplicates test suites (they drive the Python test harness),
   both self-sigterms and "induce a program crash".
+- "what is this object?" takes drops anywhere on its window (the reference
+  drops on the picture only). A bitmap on the clipboard is read as the
+  reference reads it (the first channel of its pixels, then the payload) but
+  no recorded case exercises it. The tests exercise drops through the
+  window's own `drop_paths` rather than a real winit drop event (a window
+  shown by the test platform gets none). A file that cannot be read says
+  Python's wording for "no such file" and "permission denied" only; other
+  I/O errors use Rust's. Errors about JSON that is not a serialised object
+  are worded as Python words them for the cases recorded (bad JSON, a
+  non-tuple, an unknown type, a future version); other malformed objects
+  give Rust's description of what is wrong. The paste button is a text
+  button (the reference's is an icon with a tooltip).
 - Profile modes log each slow job's summary and how long it took, where the
   reference follows the summary with Python's cProfile table of the calls
   inside it (there is nothing like it for Rust). The job names are Rust's:

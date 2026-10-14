@@ -291,6 +291,8 @@ pub enum Command {
     DebugQueryPlanner,
     /// Help > debug > data actions > subscription manager snapshot.
     DebugSubscriptionSnapshot,
+    /// Help > debug > what is this object?
+    DebugWhatIsThisObject,
     /// Publish the actual delayed message after five seconds.
     DebugDelayedTextPopup,
     Debug(crate::debug_actions::Action),
@@ -1548,6 +1550,8 @@ fn help_menu(facts: &Facts) -> Entry {
                             item("fetch a url", Command::DebugFetchUrl),
                         ],
                     ),
+                    SEP,
+                    item("what is this object?", Command::DebugWhatIsThisObject),
                 ],
             ),
             SEP,
