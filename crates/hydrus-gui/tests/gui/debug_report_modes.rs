@@ -1,7 +1,7 @@
 //! Help > debug > report modes, clicked in the real menu and compared with the
 //! reference's own reports for the same situations (the recordings
 //! `oracle/fixtures/debug_*.json`, made by `oracle/record_debug_*.py`).
-use super::debug_menu_actions::{ONE_AT_A_TIME, Reset, capture, capture_here, start};
+use super::debug_menu_actions::{ONE_AT_A_TIME, Reset, capture_here, start};
 use hydrus_store::settings::{self, GuiIdleSettings};
 use serde_json::Value;
 
