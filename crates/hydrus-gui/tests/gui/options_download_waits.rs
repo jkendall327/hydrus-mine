@@ -174,6 +174,11 @@ async fn each_saved_wait_spaces_that_kinds_page_fetches_in_the_running_engine() 
         fetched.unwrap().unwrap();
     }
     let after = secs();
+    assert!(
+        after - before < 2,
+        "a stalled runner: the first fetches took {}s, so the waits cannot be told apart",
+        after - before
+    );
     // the second fetch of each kind, all at once
     let mut pending = Vec::new();
     for (name, _, _, wait) in chosen {

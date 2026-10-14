@@ -654,6 +654,7 @@ fn the_percentage_row_limits_what_a_viewer_prefetches_as_in_the_recorded_scenari
         let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
         pump_until(|| bound.image_cache.keys().contains(&first));
         let kept = settled_keys(&bound);
+        let held = bound.image_cache.bytes();
         viewer.invoke_close_requested();
         bound.preview.close();
         // (which of the imported files they are, in the page's order)
@@ -664,7 +665,7 @@ fn the_percentage_row_limits_what_a_viewer_prefetches_as_in_the_recorded_scenari
             .map(|(i, _)| i)
             .collect();
         assert!(in_order.contains(&at), "the viewer's own file is cached");
-        in_order
+        (in_order, at, held)
     };
 
     // a, b, c at 30 bytes each, 120 bytes and 50%: the first is cached, then
@@ -674,8 +675,14 @@ fn the_percentage_row_limits_what_a_viewer_prefetches_as_in_the_recorded_scenari
         one_miss["events"].as_array().unwrap().last().unwrap()["keys"],
         serde_json::json!(["a", "b"])
     );
-    let kept = run(&["a.png", "c.png", "d.png"], bytes, percentage, 2);
-    assert_eq!(kept.len(), 2, "{kept:?}");
+    let (kept, at, held) = run(&["a.png", "c.png", "d.png"], bytes, percentage, 2);
+    let next = (at + 1) % 3;
+    assert_eq!(
+        kept,
+        [at.min(next), at.max(next)],
+        "the viewer's file and the next"
+    );
+    assert_eq!(held, 60, "two 30-byte images");
 
     // 100 bytes and 30%: a 30-byte file is cached and the budget of 30 is
     // already met, so the second (27 bytes) is not, though the cache has room
@@ -684,10 +691,12 @@ fn the_percentage_row_limits_what_a_viewer_prefetches_as_in_the_recorded_scenari
         total_equality["events"].as_array().unwrap().last().unwrap()["keys"],
         serde_json::json!(["a"])
     );
-    let kept = run(&["a.png", "small.png"], bytes, percentage, 1);
-    assert_eq!(kept.len(), 1, "{kept:?}");
+    let (kept, at, held) = run(&["a.png", "small.png"], bytes, percentage, 1);
+    assert_eq!(kept, [at], "only the viewer's own file");
+    assert_eq!(held, 30, "one 30-byte image");
 
     // the same pass with a cache twice the size, the budget now 60: it goes in
-    let kept = run(&["a.png", "small.png"], bytes * 2, percentage, 1);
-    assert_eq!(kept.len(), 2, "{kept:?}");
+    let (kept, _, held) = run(&["a.png", "small.png"], bytes * 2, percentage, 1);
+    assert_eq!(kept, [0, 1], "both files");
+    assert_eq!(held, 57, "30 and 27 bytes");
 }

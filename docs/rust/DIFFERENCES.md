@@ -4879,3 +4879,13 @@ a sample limit the same number of pairs, not the same pairs, are shown
 Approving pairs now drops, from every rule's queue, the pairs that are no longer
 potential duplicates (as the reference does as groups merge), so approving
 `A-B` and `B-C` leaves no `A-C` waiting.
+
+## Options > file viewing statistics, downloading (recheck notes)
+
+- **Viewing statistics tracking** is proved through the media viewer only
+  (`options_viewing_tracking.rs`); the preview and duplicate-filter canvases
+  are not driven against the "Enable file viewing statistics tracking?" row.
+- **Default gallery file limit.** The reference also gives a single
+  `GalleryImport` the limit; hydrus-rs has no separate single-gallery-import
+  object, so that recorded value (`gallery_file_limit.json` `gallery import`) is
+  not replayed. A gallery page and a new subscription are.

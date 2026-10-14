@@ -146,6 +146,7 @@ def record(session):
                     out['remember_action'].append({'remember':remember,'selected':index,'label':chosen,'saved_action':saved,'reopened':snapshot(again)['action'],'reopened_label':snapshot(again)['actions'][snapshot(again)['action']]})
                     first.hide();again.hide()
             c.new_options.SetBoolean('remember_last_advanced_file_deletion_special_action',True)
+            c.new_options.SetNoneableString('last_advanced_file_deletion_special_action','clear_delete')
             mixed=[]
             for result,reason in ((single,'alpha'),(double,'different existing')):
                 result=result.Duplicate();result.GetLocationsManager()._local_file_deletion_reason=reason;mixed.append(M.MediaSingle(result))
