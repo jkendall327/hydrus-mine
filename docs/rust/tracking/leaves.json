@@ -4959,10 +4959,10 @@
     "URLs/locations launch externally; more than ten require the reference confirmation."
    ],
    "recheck": {
-    "date": "2026-10-13",
+    "date": "2026-10-14",
     "class": "likely-good",
     "by": "claude, #97 phase 2 (w4-r2)",
-    "note": "oracle/record_file_log_selected.py records the reference's 'open URLs' and 'open files' on the recorded selections: what the browser was given, the 'open this many?' question for more than ten with its words, and the answers. file_log_actions.rs opening_selected_sources_launches_what_the_reference_opened replays every case through the real window and its menu (URL launches and the question text equal the recording; answering no opens nothing). The paths half is a documented difference, not matched: the reference's OpenFileLocations is given the files to select in the file manager, native opens each file's parent folder (twice for two files in one folder; DIFFERENCES.md, The file log window). The test compares native against that parent-folder behaviour, so the leaf's URL and confirmation parts are the ones proved against the reference."
+    "note": "oracle/record_file_log_selected.py records the reference's 'open URLs' and 'open files' on the recorded selections: what the browser was given, the 'open this many?' question for more than ten with its words, and the answers. file_log_actions.rs opening_selected_sources_launches_what_the_reference_opened replays every case through the real window and its menu (URL launches and the question text equal the recording; answering no opens nothing). The paths half is a documented difference, not matched: the reference's OpenFileLocations is given the files to select in the file manager, native opens each file's parent folder (twice for two files in one folder; DIFFERENCES.md, The file log window). The test compares native against that parent-folder behaviour, so the leaf's URL and confirmation parts are the ones proved against the reference. Accepted as a permanent difference (owner, 2026-10-14, DECISIONS.md): the rest matches the recording."
    }
   },
   {
@@ -12022,10 +12022,11 @@
    "path": "Help > debug > debug modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope (owner, 2026-10-14): replaced by always-on crash logging of Rust panics (DECISIONS.md, DIFFERENCES.md 'Crash log'). Logging native crashes would need a signal handler (unsafe code); the owner would allow a small one but not now.",
     "Reference debug action wires 'use faulthandler to log crashes' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
@@ -14238,10 +14239,10 @@
     "Native options registry has no editable 'Pin the duplicates (right, duplicates filter) hover window so it is always visible:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-09",
+    "date": "2026-10-14",
     "class": "likely-good",
     "by": "Claude (recheck bin E, #97 phase 2)",
-    "note": "The pin/unpin rule matches the recording: pinned the hover is always up, unpinned it comes up only with the mouse inside its rectangle (flush right, top at 30% of the window's height), over five window sizes (oracle/fixtures/duplicates_hover_pin.json). Sizes differ (ours is wider, 330 against 224 pixels, and taller; the height is only checked to be above zero) and the mouse points are placed relative to our own rectangle (DIFFERENCES.md). Fixed here: the hover was full height from the top. Tests: crates/hydrus-gui/tests/gui/duplicate_hover_pin.rs the_duplicates_hover_is_pinned_or_pops_in_as_the_reference_does."
+    "note": "The pin/unpin rule matches the recording: pinned the hover is always up, unpinned it comes up only with the mouse inside its rectangle (flush right, top at 30% of the window's height), over five window sizes (oracle/fixtures/duplicates_hover_pin.json). Sizes differ (ours is wider, 330 against 224 pixels, and taller; the height is only checked to be above zero) and the mouse points are placed relative to our own rectangle (DIFFERENCES.md). Fixed here: the hover was full height from the top. Tests: crates/hydrus-gui/tests/gui/duplicate_hover_pin.rs the_duplicates_hover_is_pinned_or_pops_in_as_the_reference_does. Accepted as a permanent difference (owner, 2026-10-14, DECISIONS.md): the rest matches the recording."
    }
   },
   {
@@ -16672,9 +16673,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "source-restated",
+    "class": "likely-good",
     "by": "Claude (recheck w4-r3b, #97 phase 2)",
-    "note": "Eight recorded queries typed in the real Options window: the matches offered equal the reference completer's (as multisets, less the pinned known differences), choosing the first shows its page, a found row and an emptied box; the whole-index comparison is the model test. Order of matches differs (DIFFERENCES.md); inner-tab/box expansion has no native counterpart (rows are not collapsible). Tests: options_window.rs the_search_box_offers_and_goes_to_what_the_references_does; model options_dialog.rs:2234 Source-restated for the gaps: match order differs and inner tabs/boxes have no native counterpart; the known shortfalls are pinned per query (N entries per known difference, nothing else dropped) and the highlighted row's label is checked."
+    "note": "Eight recorded queries typed in the real Options window: the matches offered equal the reference completer's (as multisets, less the pinned known differences), choosing the first shows its page, a found row and an emptied box; the whole-index comparison is the model test. Order of matches differs (DIFFERENCES.md); inner-tab/box expansion has no native counterpart (rows are not collapsible). Tests: options_window.rs the_search_box_offers_and_goes_to_what_the_references_does; model options_dialog.rs:2234 Source-restated for the gaps: match order differs and inner tabs/boxes have no native counterpart; the known shortfalls are pinned per query (N entries per known difference, nothing else dropped) and the highlighted row's label is checked. Accepted as a permanent difference (owner, 2026-10-14, DECISIONS.md): the rest matches the recording."
    }
   },
   {
@@ -18979,10 +18980,10 @@
     "Date/time fields are typed strings with validation instead of Qt calendar and time widgets."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
+    "date": "2026-10-14",
+    "class": "likely-good",
     "by": "phase 2 session",
-    "note": "The recorded date+time scenario now goes through the real editor window (panels_set_in_several_ways_in_the_window...). Still weak: typed date and time text fields replace the reference's calendar and time widgets, a documented difference, so the widgets themselves are not driven."
+    "note": "The recorded date+time scenario now goes through the real editor window (panels_set_in_several_ways_in_the_window...). Still weak: typed date and time text fields replace the reference's calendar and time widgets, a documented difference, so the widgets themselves are not driven. Accepted as a permanent difference (owner, 2026-10-14, DECISIONS.md): the rest matches the recording."
    }
   },
   {
@@ -19114,10 +19115,10 @@
     "Date/time fields are typed strings with validation instead of Qt calendar and time widgets."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
+    "date": "2026-10-14",
+    "class": "likely-good",
     "by": "phase 2 session",
-    "note": "The recorded date+time scenario now goes through the real editor window (panels_set_in_several_ways_in_the_window...). Still weak: typed date and time text fields replace the reference's calendar and time widgets, a documented difference, so the widgets themselves are not driven."
+    "note": "The recorded date+time scenario now goes through the real editor window (panels_set_in_several_ways_in_the_window...). Still weak: typed date and time text fields replace the reference's calendar and time widgets, a documented difference, so the widgets themselves are not driven. Accepted as a permanent difference (owner, 2026-10-14, DECISIONS.md): the rest matches the recording."
    }
   },
   {
@@ -22302,9 +22303,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "source-restated",
+    "class": "likely-good",
     "by": "Claude (recheck w4-r3b, #97 phase 2)",
-    "note": "oracle/record_sibling_fade_paint.py runs the real lists' _Redraw with a recording painter: which runs get a gradient pen or background and between which colours, for eight option cases, storage and write lists (selected and unselected paints are merged: hydrus-rs has one fade flag per run). The real consumers' runs (fade flag, previous and own colour) replayed; the option row's disabled namespace control from the recording. Test: sibling_colours.rs options_cancel_retired_apply_reopen_and_all_segmented_native_consumers Source-restated: the selected and unselected paints are merged (hydrus-rs has one fade flag per run), so the selected-row background fade is not compared separately."
+    "note": "oracle/record_sibling_fade_paint.py runs the real lists' _Redraw with a recording painter: which runs get a gradient pen or background and between which colours, for eight option cases, storage and write lists (selected and unselected paints are merged: hydrus-rs has one fade flag per run). The real consumers' runs (fade flag, previous and own colour) replayed; the option row's disabled namespace control from the recording. Test: sibling_colours.rs options_cancel_retired_apply_reopen_and_all_segmented_native_consumers Source-restated: the selected and unselected paints are merged (hydrus-rs has one fade flag per run), so the selected-row background fade is not compared separately. Accepted as a permanent difference (owner, 2026-10-14, DECISIONS.md): the rest matches the recording."
    }
   },
   {
@@ -24751,10 +24752,10 @@
     "Native refuses what the reference stores as nonsense (a domain that is not one, a hydrus service with none to choose) and lower-cases domains; see DIFFERENCES.md."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
+    "date": "2026-10-14",
+    "class": "likely-good",
     "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Against a recording of the real browser's create new, its edit dialog scripted (oracle/record_session_create.py, fixtures/session_create.json, on a client with no repositories and one with two): the dialog's title, type note, starting domain (example.com), the repositories offered, the sessions made and their rows (including 'hydrus service: <name>', which native listed by key; fixed) and a cancelled dialog are compared in the window. Left because native differs where the reference accepts nonsense: it lower-cases a domain ('Example.com' is kept by the reference), refuses a domain that is not one (the reference makes a session with an empty domain), and refuses a hydrus service with no repository (the reference makes the 'hydrus service default' context); these are now in DIFFERENCES.md and asserted as native behaviour. Tests (the recording-replay test is deliberately untagged): crates/hydrus-gui/tests/gui/network_sessions.rs create_new_opens_and_makes_sessions_as_the_reference_s_browser_does, a_new_session_can_be_a_web_domain_or_a_hydrus_service_as_the_reference_s_editor_offers, a_hydrus_service_session_needs_a_service_to_choose"
+    "note": "Against a recording of the real browser's create new, its edit dialog scripted (oracle/record_session_create.py, fixtures/session_create.json, on a client with no repositories and one with two): the dialog's title, type note, starting domain (example.com), the repositories offered, the sessions made and their rows (including 'hydrus service: <name>', which native listed by key; fixed) and a cancelled dialog are compared in the window. Left because native differs where the reference accepts nonsense: it lower-cases a domain ('Example.com' is kept by the reference), refuses a domain that is not one (the reference makes a session with an empty domain), and refuses a hydrus service with no repository (the reference makes the 'hydrus service default' context); these are now in DIFFERENCES.md and asserted as native behaviour. Tests (the recording-replay test is deliberately untagged): crates/hydrus-gui/tests/gui/network_sessions.rs create_new_opens_and_makes_sessions_as_the_reference_s_browser_does, a_new_session_can_be_a_web_domain_or_a_hydrus_service_as_the_reference_s_editor_offers, a_hydrus_service_session_needs_a_service_to_choose Accepted as a permanent difference (owner, 2026-10-14, DECISIONS.md): the rest matches the recording."
    }
   },
   {
