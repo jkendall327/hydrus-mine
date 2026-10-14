@@ -21,6 +21,7 @@ fn full(slice: ImportOptionsSlice) -> FullImportOptions {
         tags: slice.tags.expect("full"),
         notes: slice.notes.expect("full"),
         presentation: slice.presentation.expect("full"),
+        external_programs: slice.external_programs.expect("full"),
     }
 }
 

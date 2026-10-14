@@ -666,6 +666,7 @@ pub struct FullImportOptions {
     pub tags: TagImportOptions,
     pub notes: NoteImportOptions,
     pub presentation: PresentationOptions,
+    pub external_programs: ExternalProgramsOptions,
 }
 
 /// The client's import option defaults.
@@ -852,6 +853,7 @@ impl ImportOptionsManager {
             tags: result.tags.unwrap_or_default(),
             notes: result.notes.unwrap_or_default(),
             presentation: result.presentation.unwrap_or_default(),
+            external_programs: result.external_programs.unwrap_or_default(),
         }
     }
 }
