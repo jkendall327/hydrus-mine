@@ -312,7 +312,7 @@ pub(crate) use bind_zoom;
 
 // (the workings without the windows, in their own crate, under their
 // names here)
-pub use filter_window::shown_pair;
+pub use filter_window::{open_pairs, shown_pair};
 pub use grid::ThumbnailRows;
 pub use hydrus_gui_model::downloader_definitions;
 pub use hydrus_gui_model::{

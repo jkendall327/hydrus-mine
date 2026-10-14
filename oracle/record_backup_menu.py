@@ -4,8 +4,8 @@
 The real `_InitialiseMenubarGetMenuUpdaterDatabase` runs (its worker and its publish) on the
 real client for each state of the backup options and of the file locations; each scenario
 records which of the submenu's entries are visible, their text, and, for the multiple
-locations note, what clicking it shows. Time is held still (`HydrusTime.GetNow` is a constant); `last_backup_time` is set that many seconds before it.
-relative to now, and the label's age is recorded with the options' value in seconds.
+locations note, what clicking it shows. Time is held still (`HydrusTime.GetNow` is a
+constant), and `last_backup_time` is set a given number of seconds before it.
 """
 import json
 import os

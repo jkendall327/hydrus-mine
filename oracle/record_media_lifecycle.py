@@ -119,8 +119,8 @@ def record(session):
             step('re-inbox one', [a], owner._Inbox)
             step('delete a file from its only domain, declined', [s], lambda: owner._Delete(domain_of(single)), delete=[False])
             step('delete a file from its only domain', [s], lambda: owner._Delete(domain_of(single)), delete=[True])
-            step('undelete it', [s], owner._Undelete, yes=[False])
-            step('undelete it', [s], owner._Undelete, yes=[True])
+            step('undelete it, declined', [s], owner._Undelete, yes=[False])
+            step('undelete it, accepted', [s], owner._Undelete, yes=[True])
             first, second = sorted(local(double))
             step('delete a two-domain file from one domain', [d], lambda: owner._Delete(first), delete=[True])
             step('delete it from the other', [d], lambda: owner._Delete(second), delete=[True])
@@ -131,6 +131,12 @@ def record(session):
             step('delete the single file again', [s], lambda: owner._Delete(domain_of(single)), delete=[True])
             step('delete it physically, declined', [s], lambda: owner._Delete(CC.HYDRUS_LOCAL_FILE_STORAGE_SERVICE_KEY), delete=[False])
             step('delete it physically', [s], lambda: owner._Delete(CC.HYDRUS_LOCAL_FILE_STORAGE_SERVICE_KEY), delete=[True])
+            # "delete trash physically now": with a trashed file and one that is not, only the
+            # trashed one is deleted for good (`only_those_in_file_service_key`)
+            spare = [m for m in flat if m.GetHash() not in (a, b, s, d) and len([k for k in local(m)]) == 1 and CC.TRASH_SERVICE_KEY not in m.GetLocationsManager().GetCurrent()][0]
+            t, u = spare.GetHash(), archived.GetHash()
+            step('delete another file to the trash', [t], lambda: owner._Delete(domain_of(spare)), delete=[True])
+            step('delete trash physically now, with a mixed selection', [t, a], lambda: owner._Delete(CC.HYDRUS_LOCAL_FILE_STORAGE_SERVICE_KEY, only_those_in_file_service_key=CC.TRASH_SERVICE_KEY), delete=[True])
         finally:
             Q.GetYesNo, T.DialogEdit.exec, Q.SelectFromListButtons, HC.options['confirm_archive'], HC.options['confirm_trash'] = old
         return dict(names={k.hex(): v for k, v in names.items()}, steps=steps)

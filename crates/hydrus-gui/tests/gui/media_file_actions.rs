@@ -302,6 +302,10 @@ fn the_lifecycle_actions_replay_the_reference_s_questions_and_state() {
             fixture
                 .ui
                 .invoke_menu_chosen(find(&rows(&menu.trash), "undelete"));
+        } else if what.contains("trash physically now") {
+            fixture
+                .ui
+                .invoke_menu_chosen(find(&rows(&menu.trash), "delete trash physically now"));
         } else if what.contains("physically") {
             fixture
                 .ui
