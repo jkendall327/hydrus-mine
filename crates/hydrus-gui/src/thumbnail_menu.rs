@@ -621,6 +621,7 @@ pub fn open_menu(store: &Store, focused: Option<HashId>, num_selected: usize) ->
                 .iter()
                 .map(|&(name, distance)| Entry::Item(name.into(), Action::OpenSimilar(distance)))
                 .collect();
+            similar.push(Entry::Separator);
             similar.push(Entry::Item("custom".into(), Action::OpenSimilarCustom));
             open.push(Entry::Menu("similar files in a new page".into(), similar));
         }
