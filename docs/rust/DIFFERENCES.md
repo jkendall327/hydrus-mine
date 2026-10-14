@@ -255,11 +255,14 @@ search.
   Typed text and double-clicks in the favourite editor are compared with the
   reference's (`oracle/record_favourite_predicates.py`: entering a tag again
   removes it, a tag takes `system:everything` out, wildcards and negation,
-  and the list's order). Not matched: text beginning "system:" that is not a
-  system predicate shows an error here where the reference's Return enters
-  `system:everything`, and a wildcard such as "sam*" enters the highlighted first
-  suggestion here where the reference's Return entered the wildcard (seen on
-  the basic fixture); neither is in the recording.
+  and the list's order), including (recorded) text beginning "system:" that is
+  no system predicate, which stays in the box without a message, and a
+  wildcard such as "sam*", which Return enters as typed. In the recording the
+  reference's result list had not caught up with the text, so Return entered
+  the text as typed; here too Return enters typed text as typed unless the
+  user has moved the highlight onto a suggestion. Not recorded: Return with
+  the reference's list in step with the text (which enters the list's
+  highlighted result).
 
 - **Dimensions preset verification** separately tracks nine historical first-pass
   controls. The new Qt recording activates actual buttons through the real modal

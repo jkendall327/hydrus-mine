@@ -1,6 +1,7 @@
 {
  "steps": [
   {
+   "highlighted": null,
    "messages": [],
    "predicates": [
     "blue eyes"
@@ -11,9 +12,13 @@
    "step": [
     "initial"
    ],
+   "suggestions": null,
    "typed_left": ""
   },
   {
+   "highlighted": [
+    "system:everything"
+   ],
    "messages": [],
    "predicates": [
     "blue eyes",
@@ -27,9 +32,36 @@
     "type",
     "series:metroid"
    ],
+   "suggestions": [
+    "system:everything",
+    "system:inbox",
+    "system:archive",
+    "system:dimensions",
+    "system:duration",
+    "system:file properties",
+    "system:file relationships",
+    "system:file service",
+    "system:file viewing statistics",
+    "system:filesize",
+    "system:filetype",
+    "system:hash",
+    "system:limit",
+    "system:notes",
+    "system:number of tags",
+    "system:number of words",
+    "system:rating",
+    "system:similar files",
+    "system:tag (advanced)",
+    "system:tag as number",
+    "system:time",
+    "system:urls"
+   ],
    "typed_left": ""
   },
   {
+   "highlighted": [
+    "system:everything"
+   ],
    "messages": [],
    "predicates": [
     "blue eyes"
@@ -41,9 +73,36 @@
     "type",
     "series:metroid"
    ],
+   "suggestions": [
+    "system:everything",
+    "system:inbox",
+    "system:archive",
+    "system:dimensions",
+    "system:duration",
+    "system:file properties",
+    "system:file relationships",
+    "system:file service",
+    "system:file viewing statistics",
+    "system:filesize",
+    "system:filetype",
+    "system:hash",
+    "system:limit",
+    "system:notes",
+    "system:number of tags",
+    "system:number of words",
+    "system:rating",
+    "system:similar files",
+    "system:tag (advanced)",
+    "system:tag as number",
+    "system:time",
+    "system:urls"
+   ],
    "typed_left": ""
   },
   {
+   "highlighted": [
+    "system:everything"
+   ],
    "messages": [],
    "predicates": [],
    "shown": [],
@@ -51,9 +110,36 @@
     "type",
     "Blue Eyes"
    ],
+   "suggestions": [
+    "system:everything",
+    "system:inbox",
+    "system:archive",
+    "system:dimensions",
+    "system:duration",
+    "system:file properties",
+    "system:file relationships",
+    "system:file service",
+    "system:file viewing statistics",
+    "system:filesize",
+    "system:filetype",
+    "system:hash",
+    "system:limit",
+    "system:notes",
+    "system:number of tags",
+    "system:number of words",
+    "system:rating",
+    "system:similar files",
+    "system:tag (advanced)",
+    "system:tag as number",
+    "system:time",
+    "system:urls"
+   ],
    "typed_left": ""
   },
   {
+   "highlighted": [
+    "system:everything"
+   ],
    "messages": [],
    "predicates": [
     "-creator:samus aran"
@@ -65,9 +151,36 @@
     "type",
     "-creator:samus aran"
    ],
+   "suggestions": [
+    "system:everything",
+    "system:inbox",
+    "system:archive",
+    "system:dimensions",
+    "system:duration",
+    "system:file properties",
+    "system:file relationships",
+    "system:file service",
+    "system:file viewing statistics",
+    "system:filesize",
+    "system:filetype",
+    "system:hash",
+    "system:limit",
+    "system:notes",
+    "system:number of tags",
+    "system:number of words",
+    "system:rating",
+    "system:similar files",
+    "system:tag (advanced)",
+    "system:tag as number",
+    "system:time",
+    "system:urls"
+   ],
    "typed_left": ""
   },
   {
+   "highlighted": [
+    "system:everything"
+   ],
    "messages": [],
    "predicates": [
     "-creator:samus aran",
@@ -81,9 +194,36 @@
     "type",
     "zz*"
    ],
+   "suggestions": [
+    "system:everything",
+    "system:inbox",
+    "system:archive",
+    "system:dimensions",
+    "system:duration",
+    "system:file properties",
+    "system:file relationships",
+    "system:file service",
+    "system:file viewing statistics",
+    "system:filesize",
+    "system:filetype",
+    "system:hash",
+    "system:limit",
+    "system:notes",
+    "system:number of tags",
+    "system:number of words",
+    "system:rating",
+    "system:similar files",
+    "system:tag (advanced)",
+    "system:tag as number",
+    "system:time",
+    "system:urls"
+   ],
    "typed_left": ""
   },
   {
+   "highlighted": [
+    "character:*anything*"
+   ],
    "messages": [],
    "predicates": [
     "-creator:samus aran",
@@ -99,9 +239,15 @@
     "type",
     "character:*"
    ],
+   "suggestions": [
+    "character:*anything*"
+   ],
    "typed_left": ""
   },
   {
+   "highlighted": [
+    "system:everything"
+   ],
    "messages": [],
    "predicates": [
     "-creator:samus aran",
@@ -119,9 +265,36 @@
     "type",
     "  spaced   tag  "
    ],
+   "suggestions": [
+    "system:everything",
+    "system:inbox",
+    "system:archive",
+    "system:dimensions",
+    "system:duration",
+    "system:file properties",
+    "system:file relationships",
+    "system:file service",
+    "system:file viewing statistics",
+    "system:filesize",
+    "system:filetype",
+    "system:hash",
+    "system:limit",
+    "system:notes",
+    "system:number of tags",
+    "system:number of words",
+    "system:rating",
+    "system:similar files",
+    "system:tag (advanced)",
+    "system:tag as number",
+    "system:time",
+    "system:urls"
+   ],
    "typed_left": ""
   },
   {
+   "highlighted": [
+    "system:limit is 64"
+   ],
    "messages": [],
    "predicates": [
     "-creator:samus aran",
@@ -141,9 +314,15 @@
     "type",
     "system:limit = 64"
    ],
+   "suggestions": [
+    "system:limit is 64"
+   ],
    "typed_left": ""
   },
   {
+   "highlighted": [
+    "system:everything"
+   ],
    "messages": [],
    "predicates": [
     "-creator:samus aran",
@@ -165,9 +344,13 @@
     "type",
     "system:everything"
    ],
+   "suggestions": [
+    "system:everything"
+   ],
    "typed_left": ""
   },
   {
+   "highlighted": null,
    "messages": [],
    "predicates": [
     "character:*anything*",
@@ -187,9 +370,11 @@
     "double click",
     0
    ],
+   "suggestions": null,
    "typed_left": ""
   },
   {
+   "highlighted": null,
    "messages": [],
    "predicates": [
     "character:*anything*",
@@ -207,9 +392,13 @@
     "double click",
     2
    ],
+   "suggestions": null,
    "typed_left": ""
   },
   {
+   "highlighted": [
+    "system:everything"
+   ],
    "messages": [],
    "predicates": [
     "blue eyes",
@@ -229,9 +418,34 @@
     "type",
     "blue eyes"
    ],
+   "suggestions": [
+    "system:everything",
+    "system:inbox",
+    "system:archive",
+    "system:dimensions",
+    "system:duration",
+    "system:file properties",
+    "system:file relationships",
+    "system:file service",
+    "system:file viewing statistics",
+    "system:filesize",
+    "system:filetype",
+    "system:hash",
+    "system:limit",
+    "system:notes",
+    "system:number of tags",
+    "system:number of words",
+    "system:rating",
+    "system:similar files",
+    "system:tag (advanced)",
+    "system:tag as number",
+    "system:time",
+    "system:urls"
+   ],
    "typed_left": ""
   },
   {
+   "highlighted": null,
    "messages": [],
    "predicates": [
     "character:*anything*",
@@ -248,6 +462,126 @@
    "step": [
     "double click",
     0
+   ],
+   "suggestions": null,
+   "typed_left": ""
+  },
+  {
+   "highlighted": [],
+   "messages": [],
+   "predicates": [
+    "character:*anything*",
+    "spaced tag",
+    "system:limit is 64",
+    "zz* (wildcard search)"
+   ],
+   "shown": [
+    "character:*anything*",
+    "spaced tag",
+    "system:limit is 64",
+    "zz* (wildcard search)"
+   ],
+   "step": [
+    "type",
+    "system:nonsense words"
+   ],
+   "suggestions": [],
+   "typed_left": "system:nonsense words"
+  },
+  {
+   "highlighted": [],
+   "messages": [],
+   "predicates": [
+    "character:*anything*",
+    "spaced tag",
+    "system:limit is 64",
+    "zz* (wildcard search)"
+   ],
+   "shown": [
+    "character:*anything*",
+    "spaced tag",
+    "system:limit is 64",
+    "zz* (wildcard search)"
+   ],
+   "step": [
+    "type",
+    "system:"
+   ],
+   "suggestions": [],
+   "typed_left": "system:"
+  },
+  {
+   "highlighted": [],
+   "messages": [],
+   "predicates": [
+    "character:*anything*",
+    "sam* (wildcard search)",
+    "spaced tag",
+    "system:limit is 64",
+    "zz* (wildcard search)"
+   ],
+   "shown": [
+    "character:*anything*",
+    "sam* (wildcard search)",
+    "spaced tag",
+    "system:limit is 64",
+    "zz* (wildcard search)"
+   ],
+   "step": [
+    "type",
+    "sam*"
+   ],
+   "suggestions": [],
+   "typed_left": ""
+  },
+  {
+   "highlighted": [
+    "system:everything"
+   ],
+   "messages": [],
+   "predicates": [
+    "character:*anything*",
+    "sam",
+    "sam* (wildcard search)",
+    "spaced tag",
+    "system:limit is 64",
+    "zz* (wildcard search)"
+   ],
+   "shown": [
+    "character:*anything*",
+    "sam",
+    "sam* (wildcard search)",
+    "spaced tag",
+    "system:limit is 64",
+    "zz* (wildcard search)"
+   ],
+   "step": [
+    "type",
+    "sam"
+   ],
+   "suggestions": [
+    "system:everything",
+    "system:inbox",
+    "system:archive",
+    "system:dimensions",
+    "system:duration",
+    "system:file properties",
+    "system:file relationships",
+    "system:file service",
+    "system:file viewing statistics",
+    "system:filesize",
+    "system:filetype",
+    "system:hash",
+    "system:limit",
+    "system:notes",
+    "system:number of tags",
+    "system:number of words",
+    "system:rating",
+    "system:similar files",
+    "system:tag (advanced)",
+    "system:tag as number",
+    "system:time",
+    "system:urls"
    ],
    "typed_left": ""
   }

@@ -793,14 +793,17 @@ fn the_dialogs_save_edit_and_delete_searches() {
     );
     assert_eq!(window.get_collect_label(), "no collections");
     // typing adds to its search, a double-click removes from it; what
-    // doesn't parse says why
+    // doesn't parse says why (but "system:" text that is no predicate stays in
+    // the box without a message, as in the reference)
     window.set_typed("series:metroid".into());
     window.invoke_typed_accepted();
     assert_eq!(predicates(&window).last().unwrap(), "series:metroid");
     assert_eq!(window.get_typed(), "");
     window.set_typed("system:nonsense".into());
     window.invoke_typed_accepted();
-    assert!(!window.get_error().is_empty());
+    assert!(window.get_error().is_empty());
+    assert_eq!(window.get_typed(), "system:nonsense");
+    window.set_typed("".into());
     window.invoke_predicate_removed(0);
     assert!(!predicates(&window).contains(&"blue eyes".to_owned()));
     window.invoke_save_collect_ticked(false);

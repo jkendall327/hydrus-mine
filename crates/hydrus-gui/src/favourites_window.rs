@@ -790,7 +790,9 @@ fn open_edit(
         let show = show.clone();
         move || show()
     });
+    let highlight_moved = Rc::new(Cell::new(false));
     window.on_suggestion_moved({
+        let highlight_moved = highlight_moved.clone();
         let ac = autocomplete.clone();
         let weak = window.as_weak();
         let active = active.clone();
@@ -798,6 +800,7 @@ fn open_edit(
             if !active.get() {
                 return;
             }
+            highlight_moved.set(true);
             let mut ac = ac.borrow_mut();
             ac.move_highlight(isize::try_from(by).unwrap_or(0));
             if let Some(w) = weak.upgrade() {
@@ -810,6 +813,7 @@ fn open_edit(
         }
     });
     let choose_suggestion: Rc<dyn Fn(Option<usize>)> = Rc::new({
+        let highlight_moved = highlight_moved.clone();
         let weak = window.as_weak();
         let edit = edit.clone();
         let words = words.clone();
@@ -829,8 +833,14 @@ fn open_edit(
             if ac.text() != window.get_typed().as_str() {
                 ac.set_text(window.get_typed().as_str());
             }
+            // Return on typed text enters the text as typed (a wildcard
+            // included), as the reference does, unless the user has moved the
+            // highlight onto a suggestion
+            let typed_wins = index.is_none()
+                && !highlight_moved.replace(false)
+                && !window.get_typed().trim().is_empty();
             let suggestion = index
-                .or_else(|| ac.highlighted())
+                .or_else(|| ac.highlighted().filter(|_| !typed_wins))
                 .and_then(|i| ac.suggestions().get(i))
                 .cloned();
             drop(ac);
@@ -920,6 +930,9 @@ fn open_edit(
                     window.set_typed("".into());
                     window.set_error("".into());
                 }
+                // (text beginning "system:" that is no system predicate is
+                // left in the box without a message, as the reference does)
+                Err(_) if typed.starts_with("system:") => {}
                 Err(error) => window.set_error(error.to_string().into()),
             }
             show();

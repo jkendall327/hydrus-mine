@@ -37,6 +37,10 @@ STEPS = [
     [ 'double click', 2 ],
     [ 'type', 'blue eyes' ],
     [ 'double click', 0 ],
+    [ 'type', 'system:nonsense words' ],
+    [ 'type', 'system:' ],
+    [ 'type', 'sam*' ],
+    [ 'type', 'sam' ],
 ]
 
 
@@ -106,6 +110,9 @@ def record( session ):
 
             del messages[:]
 
+            suggestions = None
+            before_return = None
+
             if step[ 0 ] == 'type':
 
                 ac._text_ctrl.setText( step[ 1 ] )
@@ -115,6 +122,12 @@ def record( session ):
                 QtTest.QTest.qWait( 800 )
 
                 QW.QApplication.processEvents()
+
+                results = ac._search_results_list
+
+                suggestions = [ term.GetPredicate().ToString( with_count = False ) for term in results._ordered_terms ]
+
+                before_return = [ term.GetPredicate().ToString( with_count = False ) for term in results._selected_terms ]
 
                 QtTest.QTest.keyClick( ac._text_ctrl, QC.Qt.Key.Key_Return )
 
@@ -142,7 +155,7 @@ def record( session ):
                 QtTest.QTest.qWait( 50 )
 
 
-            out.append( { 'step' : step, 'predicates' : predicates(), 'shown' : shown(), 'messages' : list( messages ), 'typed_left' : ac._text_ctrl.text() } )
+            out.append( { 'step' : step, 'predicates' : predicates(), 'shown' : shown(), 'messages' : list( messages ), 'typed_left' : ac._text_ctrl.text(), 'suggestions' : suggestions, 'highlighted' : before_return } )
 
 
         dlg.reject()

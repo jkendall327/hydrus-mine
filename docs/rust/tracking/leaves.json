@@ -8220,10 +8220,10 @@
     "Multiple/deleted domain selection and overwrite questions are inline in the owner."
    ],
    "recheck": {
-    "date": "2026-10-13",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "Claude session (#97 phase 2, w4-r5)",
-    "note": "gui/favourites.rs typed_predicates_and_double_clicks_edit_the_search_as_the_references_editor_does opens the real favourite editor from 'save this search' on a page of 'blue eyes' and replays oracle/fixtures/favourite_predicates.json (record_favourite_predicates.py: the reference's real EditFavouriteSearchPanel with typed text and QTest Return/double-click events): 14 steps of tags, a repeated tag (which removes it), a differently-cased tag, a negated tag, a wildcard, a namespace wildcard, extra spaces, system:limit and system:everything (which a tag takes out), and double-click removals; after each the list as drawn (order included) and the text left in the box equal the recording. Weak, not sound, and untagged: two typed-entry cases differ from the reference and are not recorded (DIFFERENCES.md): text beginning 'system:' that is not a system predicate shows an error here where the reference's Return enters system:everything, and a wildcard such as 'sam*' enters the highlighted first suggestion here where the reference's Return entered the wildcard; and the leaf itself is still partial (the reference's cog, favourite predicates and fetch/children tabs are absent). The stale tracker notes about missing autocomplete and system editors apply to the leaf's other rows."
+    "by": "Claude session (W5-10)",
+    "note": "Same test as before, now replaying 18 recorded steps including 'system:nonsense words' and 'system:' (nothing entered, text kept, no message) and 'sam*' (enters the wildcard) and 'sam' (enters the text as typed); the list as drawn, the text left and the message all equal the recording. The reference's result list had not caught up with the text in the recording, so Return with the list in step is unrecorded. Still untagged: the reference's cog, favourite predicates and fetch/children tabs are absent here."
    }
   },
   {
