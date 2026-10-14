@@ -43,6 +43,7 @@ mod database_backup_window;
 pub mod database_locations_window;
 mod debug_actions;
 mod rule_count;
+pub mod similar_distance_window;
 pub use debug_actions::{
     Wait, crash_logging, debug_printed, message_window, set_environment, set_modal_wait,
 };
@@ -220,6 +221,7 @@ mod thumbnails;
 pub mod undelete;
 mod unlock;
 mod viewer;
+pub use viewer::hold_random as hold_viewer_random;
 pub use viewer::hold_time as hold_viewer_time;
 pub mod system_idle;
 pub mod viewer_closing;
@@ -5292,6 +5294,20 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         }),
                     ));
                 }
+                Action::OpenSimilarCustom => {
+                    let (store, selected, location) = {
+                        let page = page.borrow();
+                        (
+                            page.store().clone(),
+                            page.selected_files(),
+                            page.location().clone(),
+                        )
+                    };
+                    let change_pages = change_pages.clone();
+                    similar_distance_window::open(store, selected, location, move |f| {
+                        change_pages(f);
+                    });
+                }
                 Action::Relationship(act) => {
                     use hydrus_gui_model::file_relationships::{self as relationships, Act};
                     let page_ref = page.borrow();
@@ -5339,10 +5355,18 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                                 .read(hydrus_store::settings::get::<hydrus_store::settings::AdvancedMode>)
                                 .is_ok_and(|a| a.0);
                             drop(page_ref);
-                            if let Err(e) =
-                                relationships::run(&store, act, focused, &selected, advanced)
-                            {
-                                eprintln!("could not change the files' relationships: {e}");
+                            let question =
+                                relationships::question(act, focused, &selected, advanced);
+                            let run = Rc::new(move || {
+                                if let Err(e) =
+                                    relationships::run(&store, act, focused, &selected, advanced)
+                                {
+                                    eprintln!("could not change the files' relationships: {e}");
+                                }
+                            });
+                            match question {
+                                Some(question) => ask(Asked::Then(question, run)),
+                                None => run(),
                             }
                         }
                     }
@@ -7417,6 +7441,8 @@ fn open_viewer(
     window.on_previous(navigate(viewer::MediaViewer::previous));
     window.on_first(navigate(viewer::MediaViewer::first));
     window.on_last(navigate(viewer::MediaViewer::last));
+    window.on_random(navigate(viewer::MediaViewer::random));
+    window.on_undo_random(navigate(viewer::MediaViewer::undo_random));
     window.on_period_answered({
         let weak = window.as_weak();
         let with_slideshow = with_slideshow.clone();
@@ -7854,6 +7880,16 @@ fn open_viewer(
                         media_actions::Deletion::Physically,
                         file,
                     ));
+                }
+                Action::OpenSimilarCustom => {
+                    let (store, location) = {
+                        let model = model.borrow();
+                        (model.store().clone(), model.location().clone())
+                    };
+                    let change_pages = change_pages.clone();
+                    similar_distance_window::open(store, vec![file], location, move |f| {
+                        change_pages(f);
+                    });
                 }
                 _ => {
                     let model = model.borrow();

@@ -152,10 +152,10 @@
     "Shared viewer playback source and generic archive decision regression do not establish archive-specific playback/scanbar/audio/hover actions; those remain a source-supported unverified boundary."
    ],
    "recheck": {
-    "date": "2026-10-09",
-    "class": "source-restated",
-    "by": "Claude, options-shell-leftovers",
-    "note": "GUI test archive_delete_playback.rs drives the real archive/delete window: animation playing, space pause, the frame scanbar with drag-pause, the volume control and mutes, hover frames; the scanbar and volume are compared with the media viewer's for the same file rather than with a recording of the reference's archive/delete canvas (which uses the same player code). mpv itself is not driven."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (W5-7, #255)",
+    "note": "gui/archive_delete_playback.rs replays oracle/record_archive_delete_playback.py's recording of the reference's real archive/delete filter canvas (fixtures/archive_delete_playback.json) over the ugoira, the animated WebP and the fixture's mp3: the animations play frame after frame and the pause-play command (space) leaves them paused, playing, paused as the reference's does, with the scanbar shown and no volume control; the mp3 shows the scanbar and volume control (the reference's mpv widget); the tags of the mp3 listed on the left and the information line at the top equal the reference's (at the recording's time). The scanbar's seeking and drag-pause are compared with the media viewer's, whose player is recorded in animation_playback.json. mpv itself is not driven: the recorder's mpv widget stayed paused offscreen, so a video or audio file's own pause is not compared (DIFFERENCES.md)."
    }
   },
   {
@@ -330,13 +330,13 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Native manage_menu only contains tags/ratings/notes/times/filetype; it omits reference per-file duplicate-group/king/action/reset controls despite backend duplicate support."
+    "Stale (2026-10-14): the manage menu has the reference's file relationships submenu with its king, view, remove, dissolve, reset, false-positive and potential rows, each asking the reference's question; only the custom-merge-options and selected-collections rows are missing (DIFFERENCES.md)."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the menu rows (set better, alternates, potentials, view duplicates, dissolve, clear potentials) against the real store; row labels and outcomes are literals. Question answers are conditional (if question non-empty). Tracker note is stale: the manage menu now has these controls. Tests: crates/hydrus-gui/tests/gui/media_file_actions.rs:375 file_relationship_rows_set_view_and_reset_duplicate_groups"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (W5-7, #255)",
+    "note": "gui/media_file_actions.rs file_relationship_rows_set_view_and_reset_duplicate_groups drives the real thumbnail menu in the real window and store and replays oracle/record_file_relationship_actions.py's recording of the reference's real menu (fixtures/file_relationship_actions.json): over six lone JPEGs, set better, same quality, king, alternates and potential, remove from duplicate and alternate group, dissolve duplicate and alternate groups (focused and selected), schedule a potentials search again, drop potentials, and clear false positives (focused, internal, all). At each step the rows of the file relationships submenu equal the reference's, the question asked equals the reference's and is answered yes (always asked, none conditional), and the king flag and duplicate, alternate, false-positive and potential counts of the six files afterwards, and the files of the pages the view rows open, equal the reference's. The recording turned up the questions hydrus-rs did not ask; they are now asked in the reference's words. Not covered: the reference's 'set a relationship with custom metadata merge options' row (a dialog; not ported, in DIFFERENCES.md), the selected-collections row and the viewer's menu; the yes/no labels of the hundred-pair alternates warning are not ported. The false-positive clears' 'N false positive relationships cleared.' popup is compared with the recording. The tracker note about missing controls is stale."
    }
   },
   {
@@ -425,15 +425,13 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Open action dispatch builds file URLs, launches local paths, creates selected-file/duplicate/similar search pages using current locations and configured duplicate scope. Partial: Grouped browser/file-browser/duplicate-page entrypoints are wired in source, but inspected regressions assert selected/new/similar pages rather than every offered external/URL/duplicate launch payload. Existing regression scope: Menu shape and selected-page/similar-page outcomes are covered.",
-    "File browser is offered outside reference advanced mode; drag-out remains absent.",
-    "Grouped browser/file-browser/duplicate-page entrypoints are wired in source, but inspected regressions assert selected/new/similar pages rather than every offered external/URL/duplicate launch payload."
+    "Stale (2026-10-14): the thumbnail open menu offers new page, duplicate filter page, similar files (with custom), OS launch, web browser and, in advanced mode only, file browser, as recorded; the viewer's menu shares it. Remaining differences are in DIFFERENCES.md (file URL form)."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu: launcher/web browser/file browser payloads, new page, duplicate filter page; similar-files page is tested in an untagged test. Labels and payloads are literals (menu shape is in the recorded menu test). Native offers file browser outside advanced mode, a documented difference. Tests: crates/hydrus-gui/tests/gui/media_file_actions.rs:467 open_rows_launch_the_focused_file_and_open_pages_of_the_selection; thumbnail_menu.rs:307 (similar files, untagged)"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (W5-7, #255)",
+    "note": "gui/media_file_actions.rs open_rows_launch_the_focused_file_and_open_pages_of_the_selection drives the real thumbnail menu and replays oracle/record_open_menu_actions.py's recording of the reference's real open submenu (fixtures/open_menu_actions.json) for two selected JPEGs with advanced mode off and on: the rows offered equal the reference's (the file browser row only in advanced mode, fixed in this change; 'focused file' prefixes), and each row is chosen: the OS launch is sent the focused file's path, the web browser a file URL of it (hydrus-rs writes file:///path escaped where the reference writes file:////path unescaped, noted in DIFFERENCES.md), the file browser the path, a new page opens with the two files, the duplicate filter page with a hash search of them and the name 'duplicates', each similar-files row a page searching 'similar to 2 files with distance of 0/2/4/8', and 'custom' asks its 'choose distance' dialog (10, 0 to 99, steps of 2) and opens the search at the distance answered, or nothing when cancelled. The viewer's open menu shares the submenu and its 'custom' row opens the same dialog (gui/media_viewer_menu tests drive it)."
    }
   },
   {
@@ -3912,10 +3910,10 @@
     "First/previous/last/random/history branches are source-traced but were not found in a focused reference-backed navigation regression; the combined navigation leaf is conservatively partial."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real viewer first/prev/next/last/wrap/remove with typed expectations and no recording; random is only checked loosely (never the file already shown, not always next) and history is untested. Tracker note itself calls it conservatively partial. Tests: crates/hydrus-gui/tests/gui/media_viewer_navigation.rs:11"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (W5-7, #255)",
+    "note": "gui/media_viewer_navigation.rs the_viewer_goes_first_previous_next_last_random_and_removes_from_view opens the real viewer window on the fixture's JPEGs and replays oracle/record_viewer_navigation.py's recording of the reference's real viewer canvas (fixtures/viewer_navigation.json) with real key presses: Home, End, previous, next (round the ends), random and undo random (as shortcut-set commands given keys in the test, with the reference's random.randrange draws scripted, including a draw of the file already shown, which is drawn again; undo goes back through the places randomly left and, with none, stays), ctrl+r removing the file shown (the next takes its place; the last file removed closes the viewer): after every step the viewer's 'n/total' equals the reference's. This change wired first, last, random, undo random and remove file from current view as shortcut commands, which only next and previous were. A shuffled slideshow's random moves are tested separately without recorded draws."
    }
   },
   {
@@ -11299,10 +11297,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "likely-good",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Reclassified likely-good (owner's static-text rule): a fixed title and message shown through the real menu, checked by prefix against the Python literal. Real menu click and real message window; title 'Warning' matches ShowWarning. Expected text is only a starts_with literal of the Python string (the rest is the native const MESSAGE_BOX_TEXT, never compared in full); no recording. Tracker note is stale. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:90 make_a_qmessagebox_shows_the_test_warning"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (W5-7, #255)",
+    "note": "gui/debug_menu_actions.rs make_a_qmessagebox_shows_the_test_warning clicks the real menu entry and compares the message window's title and full text with oracle/record_debug_message_boxes.py's recording (fixtures/debug_message_boxes.json) of the reference's real QAction, whose QMessageBox.warning call was captured."
    }
   },
   {
@@ -11665,9 +11663,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "source-restated",
-    "by": "claude (issue #96 session)",
-    "note": "Driven through the real menu on real image and thumbnail caches with held clocks, and the pulse and its effect (expiry past the timeout, newest kept, slow does nothing) are recorded in oracle/fixtures/debug_memory_maintenance.json; but the recording uses stub entries of 60/40/20/10 bytes and the test cannot replay those against real images, and over-limit trimming is not reachable here, so the expectations restate the reference's rules."
+    "class": "sound",
+    "by": "Claude (W5-7, #255)",
+    "note": "gui/debug_memory.rs run_fast_memory_maintenance_trims_the_image_and_thumbnail_caches_and_slow_does_not clicks the real Help > debug > memory actions menu on real image and thumbnail caches holding four real files (oracle/fixtures/image_cache/w20.png, w14.png, c.png, w3.png, whose byte sizes there, 60, 42, 30 and 9, are the scripted sizes of the reference's four entries in oracle/record_debug_memory_maintenance.py) one second apart under held clocks: after the fourth is cached the same three are left in each cache as in the reference's (and the same byte totals), a slow pulse changes nothing, a fast pulse inside the timeout changes nothing and publishes the reference's pulse, and past the timeout (302.5 s) slow still leaves all three and fast leaves only the newest, in both caches, as recorded."
    }
   },
   {
@@ -12096,10 +12094,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "likely-good",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Reclassified likely-good (owner's static-text rule): a fixed title and message shown through the real menu, checked by prefix against the Python literal. Real menu click, title 'Information' and dismissal checked. Body is compared with the native const PROFILE_MESSAGE (circular) plus a starts_with literal; the model test only checks its ending. The const does equal the Python string, but no test compares the full text to the reference. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:79 profiling_what_is_this_shows_the_profile_information"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (W5-7, #255)",
+    "note": "gui/debug_menu_actions.rs profiling_what_is_this_shows_the_profile_information clicks the real menu entry and compares the message window's title and full text with oracle/record_debug_message_boxes.py's recording (fixtures/debug_message_boxes.json) of the reference's real QAction, whose QMessageBox.information call was captured."
    }
   },
   {
@@ -16820,9 +16818,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "source-restated",
-    "by": "Claude (#97 phase 2, w4-r4)",
-    "note": "Class lowered after review: the click on the cancel button is not driven (icon-only button, no accessible label), only the window's cancel callback. gui/shell_popups.rs cancel_marks_a_cancellable_job_cancelled_and_leaves_others_alone calls the window's cancel callback on a real cancellable job and a non-cancellable one; before and after are compared with the reference's PopupMessage.Cancel states (popup_actions.json 'resume refresh labels' then 'cancel retains callable': cancelled and done flip, a non-cancellable job is untouched). The store flag is what daemon consumers read. The cancel button's click itself is not driven (the button is icon-only, so it cannot be found by label). The native card disappearing at once, where the reference's stays until dismissed, is in DIFFERENCES.md."
+    "class": "sound",
+    "by": "Claude (W5-7, #255)",
+    "note": "gui/shell_popups.rs cancel_marks_a_cancellable_job_cancelled_and_leaves_others_alone clicks the real card's cancel button, now found by its accessible label 'cancel' (the pause and cancel buttons of a card and of a modal popup got accessible labels in this change), through the real window: only the cancellable card has the button (one 'cancel' widget for two cards), and the store flags before and after are compared with the reference's PopupMessage.Cancel states (popup_actions.json 'resume refresh labels' then 'cancel retains callable': cancelled and done flip, buttons disabled). The native card disappearing at once, where the reference's stays until dismissed, is in DIFFERENCES.md."
    }
   },
   {
@@ -21728,9 +21726,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "weak",
-    "by": "Claude (#97 phase 2, w4-r4)",
-    "note": "Class lowered after review: gui/shell_tabs.rs clicking_a_tab_and_ctrl_page_keys_select_pages_and_restore_their_state replays oracle/record_tab_selection.py's recording (tab_selection.json) of the reference's notebook a, n[b, c], d: real clicks on the tabs (found by name) and real Ctrl+PageUp/PageDown key events, after each of ten steps the page shown and the selected tab of the top row and of n's row equal the reference's, including the deepest-notebook-first rule, moving out of n at its end, going back into it, n remembering its page, and the keys stopping at the ends. The leaf also names lazily opening the page and restoring its saved state; that is not asserted (no recording of the reference's unshown-page loading), so the leaf stays weak until it is. The nested row is asserted present exactly while b or c is shown."
+    "class": "sound",
+    "by": "Claude (W5-7, #255)",
+    "note": "gui/shell_tabs.rs clicking_a_tab_and_ctrl_page_keys_select_pages_and_restore_their_state replays oracle/record_tab_selection.py's ten steps of the reference's notebook a, n[b, c], d with real tab clicks and Ctrl+PageUp/PageDown key events (the page shown and the selected tab of each row after each step equal the reference's), and pages_not_yet_shown_carry_their_file_counts_and_open_with_that_many_files replays the recording's 'lazy' section: pages from a saved session (a:3, n[b:5, c:2], d:4 files, none shown) whose tabs read 'a (3)', 'n (7) ↓', 'd (4)' and the nested 'b (5)', 'c (2)', and each page opens with that many files when selected. The reference loads every page of a session in the background (its tabs read 'initialising (N)' until then) where hydrus-rs opens a page when first shown; that is in DIFFERENCES.md. Nothing is restored on selecting in the reference, so there is nothing more to compare."
    }
   },
   {

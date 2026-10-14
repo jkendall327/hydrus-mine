@@ -5084,7 +5084,9 @@ after the reference's questions, then shows another group.
 Help > debug now also has profiling > "what is this?" (the reference's
 explanation), gui actions > "make a modal popup in five seconds" and its
 non-cancellable twin (a "debug modal job" popup counting down ten seconds),
-"make a QMessageBox" (its warning), "make some popups" (the reference's test
+"make a QMessageBox" (its warning; the texts of both message boxes are
+checked against the reference's real menu in
+`oracle/fixtures/debug_message_boxes.json`), "make some popups" (the reference's test
 popups: six numbered messages, the very long message and title, a client API
 file popup, two mergeable file popups, the unicode one, a pausable and
 cancellable job with a gauge, an error, then three delayed messages),
@@ -5188,6 +5190,25 @@ selected" and "advanced: reset for all selected" do so for the selection.
 The manage menu's maintenance and viewing stats submenus now show in the
 thumbnail menu too (they were dropped by its template before).
 `tests/model/file_relationships.rs` checks the menu and its store actions.
+Each action asks the reference's question first (the better-than, same
+quality, alternates, potentials, king, remove, dissolve, false-positive,
+search-again and drop-potentials ones, in its words), and the window test
+replays the reference's real menu and answers from
+`oracle/fixtures/file_relationship_actions.json`: the rows offered, the
+question, the relationships of the six files after each step, and the
+pages the "view" rows open.
+
+## Thumbnail open menu
+
+The thumbnail's "open" submenu offers a new page of the selection, a new
+duplicate filter page, similar files (exact match, very similar, similar,
+speculative, for a still image) and, for the focused file, the OS launch, the
+web browser and, in advanced mode only, the file browser, as the reference's
+does (`oracle/record_open_menu_actions.py`); "custom" asks the distance in a
+"choose distance" dialog (from 10, in steps of 2, 0 to 99) and cancelling it
+opens nothing. The window test chooses each recorded row and compares what it
+launches or opens: the launch path, the web browser's file URL, the file
+browser's path, the pages' names and files and the similar-files searches.
 
 ## Database > backup
 
@@ -5791,6 +5812,29 @@ of the upcoming pairs is warmed once.
 - Closing importer pages, the preview background and pop-in, the Options
   search and Apply, and thumbnail fades are tested against recordings of the
   reference; each leaf's recheck note names the test.
+
+## Source-restated leaves, recorded (W5-7, #255)
+
+- **Media viewer navigation.** First (Home), last (End), previous and next go
+  round the ends, and ctrl+r removes the file shown (the next takes its place;
+  the last file removed closes the viewer), as `oracle/record_viewer_navigation.py`
+  records from the reference's real viewer. "media navigation: random" and
+  "undo random" (and first, last and "remove file from current view") are
+  commands for the media viewer's shortcut set, with no default keys, as in
+  the reference; the test gives them keys and replays the recording's random
+  draws.
+- **Popups.** The pause and cancel buttons of a popup card are labelled for
+  screen readers ("pause" or "resume", "cancel"); the test clicks "cancel"
+  and compares the job's flags with the reference's.
+- **Archive/delete filter playback.** Replays `oracle/fixtures/archive_delete_playback.json`
+  from the reference's real filter canvas: animations play, space pauses and
+  plays (three presses), the scanbar and volume control show as there, and a
+  file with sound lists its tags.
+- **Pages not yet shown.** Their tabs say how many files they hold
+  (`a (3)`, `n (7) ↓`), and each opens with that many (the reference's
+  tabs say `initialising (3)` until its background load, which every page
+  gets, has finished).
+- **Help > debug message boxes** are compared with the reference's.
 
 ## Crash log
 

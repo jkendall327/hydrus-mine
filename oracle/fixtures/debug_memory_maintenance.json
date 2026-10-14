@@ -1,4 +1,22 @@
 {
+  "sizes": {
+    "image": {
+      "a": 60,
+      "b": 42,
+      "c": 30,
+      "d": 9
+    },
+    "thumbnail": {
+      "a": 60,
+      "b": 42,
+      "c": 30,
+      "d": 9
+    }
+  },
+  "limits": {
+    "image": 125,
+    "thumbnail": 125
+  },
   "fast": {
     "path": [
       "help",
@@ -27,7 +45,7 @@
           "c",
           "d"
         ],
-        "bytes": 70
+        "bytes": 81
       },
       "thumbnail": {
         "keys": [
@@ -35,7 +53,7 @@
           "c",
           "d"
         ],
-        "bytes": 70
+        "bytes": 81
       },
       "pubs": []
     },
@@ -48,7 +66,7 @@
           "c",
           "d"
         ],
-        "bytes": 70
+        "bytes": 81
       },
       "thumbnail": {
         "keys": [
@@ -56,7 +74,7 @@
           "c",
           "d"
         ],
-        "bytes": 70
+        "bytes": 81
       },
       "pubs": []
     },
@@ -69,7 +87,7 @@
           "c",
           "d"
         ],
-        "bytes": 70
+        "bytes": 81
       },
       "thumbnail": {
         "keys": [
@@ -77,11 +95,10 @@
           "c",
           "d"
         ],
-        "bytes": 70
+        "bytes": 81
       },
       "pubs": [
-        "memory_maintenance_pulse",
-        "set_status_bar_db_dirty"
+        "memory_maintenance_pulse"
       ]
     },
     {
@@ -93,7 +110,7 @@
           "c",
           "d"
         ],
-        "bytes": 70
+        "bytes": 81
       },
       "thumbnail": {
         "keys": [
@@ -101,9 +118,11 @@
           "c",
           "d"
         ],
-        "bytes": 70
+        "bytes": 81
       },
-      "pubs": []
+      "pubs": [
+        "set_status_bar_db_dirty"
+      ]
     },
     {
       "name": "past the timeout, after fast",
@@ -112,13 +131,13 @@
         "keys": [
           "d"
         ],
-        "bytes": 10
+        "bytes": 9
       },
       "thumbnail": {
         "keys": [
           "d"
         ],
-        "bytes": 10
+        "bytes": 9
       },
       "pubs": [
         "memory_maintenance_pulse",

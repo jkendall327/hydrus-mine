@@ -90,5 +90,75 @@
       "top": 0,
       "nested": 0
     }
-  ]
+  ],
+  "lazy": {
+    "sizes": {
+      "a": 3,
+      "b": 5,
+      "c": 2,
+      "d": 4
+    },
+    "steps": [
+      {
+        "label": "just made",
+        "tabs": [
+          "initialising (3)",
+          "n (7) \u2193",
+          "initialising (4)"
+        ],
+        "inner tabs": [
+          "initialising (5)",
+          "initialising (2)"
+        ],
+        "pages": {
+          "a": {
+            "initialised": false,
+            "files": 3
+          },
+          "b": {
+            "initialised": false,
+            "files": 5
+          },
+          "c": {
+            "initialised": false,
+            "files": 2
+          },
+          "d": {
+            "initialised": false,
+            "files": 4
+          }
+        }
+      },
+      {
+        "label": "after loading",
+        "tabs": [
+          "a (3)",
+          "n (7) \u2193",
+          "d (4)"
+        ],
+        "inner tabs": [
+          "b (5)",
+          "c (2)"
+        ],
+        "pages": {
+          "a": {
+            "initialised": true,
+            "files": 3
+          },
+          "b": {
+            "initialised": true,
+            "files": 5
+          },
+          "c": {
+            "initialised": true,
+            "files": 2
+          },
+          "d": {
+            "initialised": true,
+            "files": 4
+          }
+        }
+      }
+    ]
+  }
 }

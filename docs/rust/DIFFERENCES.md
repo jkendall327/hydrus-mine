@@ -565,16 +565,25 @@ page by file size, which no two files of the fixture share.
 
 ## The media viewer (`hydrus-gui`)
 
+- **Random and undo random are shortcut commands, as in the reference.**
+  "media navigation: random" and "media navigation: undo random" (and first,
+  last, and "remove file from current view") can be given keys in the media
+  viewer's shortcut set, and have none by default, as in the reference; a
+  shuffled slideshow's moves are random too. Undo random goes back to where
+  the last random move came from. Unlike the reference's list of places, which
+  holds indices that go stale when files are removed, ours keeps the place
+  within the files left.
+
 - **The top hover frame's drag button shows the file in your file
   browser instead.** The reference's lets you drag the file out to other
   programs (a chat, a web page); Slint can't start a drag out of its
   window, so the button in that place shows the file, selected, in
   Explorer, Finder or your desktop's file manager (its FileManager1 D-Bus
   service, as the reference's show-in-file-manager package uses, or else
-  the folder opened), from where it can be dragged. For the same reason
-  the open menus offer "in file browser" whether or not hydrus's advanced
-  mode is on (the reference offers it only in advanced mode). Dragging
-  out for real is jkendall327/hydrus-mine#26.
+  the folder opened), from where it can be dragged. The thumbnail's open
+  menu offers "in file browser" only in advanced mode, as the reference's
+  does (`oracle/record_open_menu_actions.py`). Dragging out for real is
+  jkendall327/hydrus-mine#26.
 - **The animation buffer is sized at the file's own resolution.** The
   client's own player (ugoiras, animated WebP) keeps frames as the
   reference's `RasterContainerVideo` does, sized from "Memory for video
@@ -4584,11 +4593,44 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   when asked, so a subscription that has just finished is not held back for
   two minutes in the snapshot as it is in the reference's.
 
+## Thumbnail open menu
+
+- "focused file in web browser" sends the browser a file URL with the path
+  percent-escaped (`file:///home/me/a%20b.jpg`); the reference sends
+  `'file:///' + path` unescaped, which on Linux is four slashes
+  (`oracle/record_open_menu_actions.py`).
+- "similar files in a new page > custom" asks its distance in the shared
+  "edit value" dialog (a spin box, titled `choose distance`), where the
+  reference's is its own `DialogEdit`; the range, start value and step are
+  the same, the look is Slint's.
+
+## Archive/delete filter playback
+
+- The pause command on a file mpv plays (audio, video) is not compared with
+  the reference: its recorded mpv widget stayed paused throughout in the
+  offscreen recorder, so the recording has nothing to compare. The animations
+  (ugoira, animated WebP), which the client's own player shows, are.
+
+## Pages not yet shown
+
+- The reference loads every page of a session in the background and its tab
+  reads `initialising (N)` until that page has loaded; hydrus-rs opens a page
+  when it is first shown and its tab always carries the name and the count
+  the session kept (`oracle/record_tab_selection.py`, `lazy`).
+
 ## Thumbnail manage > file relationships
 
 - "set a relationship with custom metadata merge options" and "set selected
   collections as groups of alternates" aren't offered yet. The viewer's
   menu doesn't have the submenu yet.
+- The questions the reference asks before each action are asked in its
+  words (`oracle/record_file_relationship_actions.py`, from the real menu).
+  Clearing false positives says "N false positive relationships cleared."
+  (or "No false positives to clear!") in a popup, as recorded. Not ported:
+  the yes and no buttons' own labels in its warning for a hundred pairs or
+  more of alternates ("they are all alternates" / "some may be
+  duplicates"), and its separate warning for that many false positives
+  (hydrus-rs sets false positives only in the duplicate filter).
 - A group's "best quality file" is offered when the group has other files in
   the page's domain; the reference counts its members per domain the same
   way, but hydrus-rs doesn't distinguish a king outside the domain.
