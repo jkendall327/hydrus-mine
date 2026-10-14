@@ -517,6 +517,7 @@ fn the_filename_tagging_list_and_its_example_path_follow_the_references_recorded
         }
     };
     let first_examples = &recorded["examples"][0]["example_paths"];
+    let mut previous_rows: Vec<String> = Vec::new();
     for step in recorded["steps"].as_array().unwrap() {
         let name = step["name"].as_str().unwrap();
         let warnings = step["warnings"].as_array().unwrap();
@@ -565,18 +566,26 @@ fn the_filename_tagging_list_and_its_example_path_follow_the_references_recorded
                     "{name}: {}",
                     open.get_example()
                 );
-                // the dialog is for the recorded service (the recorder made
-                // each service's key the hex of its name)
-                let key = theirs["service"].as_str().unwrap();
-                let recorded_name: String = (0..key.len())
-                    .step_by(2)
-                    .map(|i| char::from(u8::from_str_radix(&key[i..i + 2], 16).unwrap()))
-                    .collect();
-                let services = open.get_services();
+                // the dialog is for the service the step added or edited, as
+                // the recorded list names it (the recorded key is the
+                // reference's own, not a name)
+                let wanted = if name == "edit the first" {
+                    step["rows"][0][0].as_str().unwrap().to_owned()
+                } else {
+                    step["rows"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .map(|r| r[0].as_str().unwrap())
+                        .find(|n| !previous_rows.iter().any(|p| p.as_str() == *n))
+                        .unwrap()
+                        .to_owned()
+                };
+                let shown_services = open.get_services();
                 let index = usize::try_from(open.get_service_index()).unwrap();
                 assert_eq!(
-                    services.row_data(index).unwrap().as_str(),
-                    recorded_name,
+                    shown_services.row_data(index).unwrap().as_str(),
+                    wanted,
                     "{name}"
                 );
                 open.invoke_apply();
@@ -601,6 +610,7 @@ fn the_filename_tagging_list_and_its_example_path_follow_the_references_recorded
             .collect();
         theirs.sort();
         assert_eq!(shown, theirs, "{name}");
+        previous_rows = theirs.into_iter().flatten().collect();
     }
     // the example path for other folders: the first importable file by content
     for example in recorded["examples"].as_array().unwrap() {
