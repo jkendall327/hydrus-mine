@@ -13,7 +13,7 @@ use hydrus_store::{
     network_runtime::{JobControl, NetworkJob, Snapshot, WaitReason},
     settings,
 };
-use slint::{ComponentHandle as _, Model as _};
+use slint::Model as _;
 
 /// The daemon's heartbeat is fresh for five seconds, so snapshots are stamped
 /// with the clock (other tests hold the windows' time still, process-wide).
