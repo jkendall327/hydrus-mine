@@ -205,6 +205,28 @@ in-scope leaves done on 2026-10-14):
   a cut-off image, the rest grey, by default; hydrus-rs should too) and
   "induce a program crash" (a way to test the crash log).
 
+- **faulthandler is out of scope.** Always-on crash logging of Rust panics
+  replaces the reference's toggle. Logging native crashes (a segfault in a C
+  library) would need a signal handler, which is `unsafe`; the owner would
+  allow a small one, but not now.
+- **Seven deliberate differences are permanent** (their leaves are
+  likely-good): session create refuses a non-domain and lower-cases it; the
+  file log opens each file's folder rather than selecting the files; the
+  duplicates hover window is wider; options search lists matches in another
+  order; the sibling connector fades once per run; and the date/time
+  predicates use typed date and time fields. **Keep in mind:** the owner may
+  later want the reference's calendar and clock widgets for those predicates
+  (`audit-options-predicate-time-import-agedate-date-time`,
+  `audit-options-predicate-time-last-viewed-lastvieweddate-date-time`).
+- **Port to match instead:** the parser test panel's preview formatting
+  (#17) and the page editor's URL box, which should keep what was typed after
+  a fetch.
+- **Layout settings get measured in tests.** Windows may expose read-only
+  geometry (a widget's measured position and size) so that GUI tests can
+  prove a layout setting takes effect: list heights, column widths, the
+  options search bar's placement, tab alignment, thumbnail borders. Users
+  see no change.
+
 ## Roadmap that follows
 
 1. **Client API parity**, with Hydrus Companion's request patterns checked
