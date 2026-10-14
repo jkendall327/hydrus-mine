@@ -8,7 +8,6 @@ use slint::{ComponentHandle as _, Model as _};
 
 use hydrus_core::import_options::PresentationStatus;
 
-// leaf: import-paste
 #[test]
 fn shared_overwrite_drafts_close_cleanly_and_clipboard_reaches_real_importer() {
     use hydrus_core::import_options::CallerType;

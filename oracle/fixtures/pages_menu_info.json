@@ -1,0 +1,118 @@
+{
+ "close_questions": [
+  "Close \"urls\"?\n\nThis page is still importing.",
+  "Close \"watchers\"?\n\n1 watchers are still importing."
+ ],
+ "history_cleared": [
+  {
+   "enabled": true,
+   "text": "Clear History"
+  }
+ ],
+ "history_empty": [
+  {
+   "enabled": true,
+   "text": "Clear History"
+  }
+ ],
+ "history_filled": [
+  {
+   "enabled": true,
+   "text": "1: one"
+  },
+  {
+   "enabled": true,
+   "text": "2: two"
+  },
+  "---",
+  {
+   "enabled": true,
+   "text": "Clear History"
+  }
+ ],
+ "multiwatcher": {
+  "after": [
+   {
+    "highlighted": null,
+    "panel": null
+   },
+   {
+    "highlighted": null,
+    "panel": null
+   }
+  ],
+  "before": [
+   {
+    "highlighted": "https://boards.example/a/thread/1",
+    "panel": "https://boards.example/a/thread/1"
+   },
+   {
+    "highlighted": "https://boards.example/a/thread/1",
+    "panel": "https://boards.example/a/thread/1"
+   }
+  ],
+  "urls": [
+   "https://boards.example/a/thread/1",
+   "https://boards.example/a/thread/2"
+  ]
+ },
+ "weight": {
+  "files": 5,
+  "steps": [
+   {
+    "counts": [
+     3,
+     5,
+     7,
+     0,
+     0,
+     0
+    ],
+    "report": {
+     "count_label": "3 pages open",
+     "label": "total session weight: 145",
+     "message": "Session weight is a simple representation of your pages combined memory and CPU load. A file counts as 1, and a URL counts as 20.\n\nTry to keep the total below 10 million! It is also generally better to spread it around--have five download pages each of 500k weight rather than one page with 2.5M.\n\nYour 3 open pages' total is: 145\n\nSpecifically, your file weight is 5 and URL weight is 140.\n\nFor extra info, your 0 closed pages (in the undo list) have total weight 0, being file weight 0 and URL weight 0."
+    },
+    "when": "open"
+   },
+   {
+    "counts": [
+     2,
+     0,
+     7,
+     1,
+     5,
+     0
+    ],
+    "report": {
+     "count_label": "2 pages open",
+     "label": "total session weight: 140",
+     "message": "Session weight is a simple representation of your pages combined memory and CPU load. A file counts as 1, and a URL counts as 20.\n\nTry to keep the total below 10 million! It is also generally better to spread it around--have five download pages each of 500k weight rather than one page with 2.5M.\n\nYour 2 open pages' total is: 140\n\nSpecifically, your file weight is 0 and URL weight is 140.\n\nFor extra info, your 1 closed pages (in the undo list) have total weight 5, being file weight 5 and URL weight 0."
+    },
+    "when": "files page closed"
+   },
+   {
+    "counts": [
+     0,
+     0,
+     0,
+     3,
+     5,
+     7
+    ],
+    "report": {
+     "count_label": "0 pages open",
+     "label": "total session weight: 0",
+     "message": "Session weight is a simple representation of your pages combined memory and CPU load. A file counts as 1, and a URL counts as 20.\n\nTry to keep the total below 10 million! It is also generally better to spread it around--have five download pages each of 500k weight rather than one page with 2.5M.\n\nYour 0 open pages' total is: 0\n\nSpecifically, your file weight is 0 and URL weight is 0.\n\nFor extra info, your 3 closed pages (in the undo list) have total weight 145, being file weight 5 and URL weight 140."
+    },
+    "when": "all closed"
+   }
+  ],
+  "urls": [
+   "https://files.example/0.jpg",
+   "https://files.example/1.jpg",
+   "https://files.example/2.jpg"
+  ],
+  "watcher_seeds": 4
+ }
+}

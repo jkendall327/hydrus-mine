@@ -1,0 +1,300 @@
+{
+ "current": [
+  [
+   "goblin",
+   1
+  ],
+  [
+   "series:",
+   1
+  ],
+  [
+   "creator:samus aran",
+   0
+  ],
+  [
+   "blue eyes",
+   0
+  ]
+ ],
+ "exports": [
+  {
+   "label": "this tag filter",
+   "text": "[44, 1, [[\"goblin\", 1], [\"series:\", 1], [\"blue eyes\", 0], [\"creator:samus aran\", 0]]]"
+  },
+  {
+   "label": "zebra",
+   "text": "[44, 1, [[\":\", 1], [\"orc\", 0]]]"
+  },
+  {
+   "label": "apple",
+   "text": "[44, 1, [[\"blue eyes\", 0], [\"creator:\", 1], [\"series:metroid\", 0], [\"\", 1]]]"
+  }
+ ],
+ "favourites": {
+  "apple": [
+   [
+    "blue eyes",
+    0
+   ],
+   [
+    "creator:",
+    1
+   ],
+   [
+    "series:metroid",
+    0
+   ],
+   [
+    "",
+    1
+   ]
+  ],
+  "zebra": [
+   [
+    ":",
+    1
+   ],
+   [
+    "orc",
+    0
+   ]
+  ]
+ },
+ "imports": [
+  {
+   "errors": [
+    {
+     "message": "Sorry, I could not understand what was in the clipboard. I was expecting \"JSON-serialised Tag Filter object\" but received this text:\n\nnot json\n\nMore details have been written to the log, but the general error was:\n\nJSONDecodeError('Expecting value: line 1 column 1 (char 0)')",
+     "title": "Clipboard Error!"
+    }
+   ],
+   "favourites": {
+    "apple": [
+     [
+      "blue eyes",
+      0
+     ],
+     [
+      "creator:",
+      1
+     ],
+     [
+      "series:metroid",
+      0
+     ],
+     [
+      "",
+      1
+     ]
+    ],
+    "zebra": [
+     [
+      ":",
+      1
+     ],
+     [
+      "orc",
+      0
+     ]
+    ]
+   },
+   "text": "not json"
+  },
+  {
+   "errors": [
+    {
+     "message": "Sorry, I could not understand what was in the clipboard. I was expecting \"JSON-serialised Tag Filter object\" but received this text:\n\n\n\nMore details have been written to the log, but the general error was:\n\nJSONDecodeError('Expecting value: line 1 column 1 (char 0)')",
+     "title": "Clipboard Error!"
+    }
+   ],
+   "favourites": {
+    "apple": [
+     [
+      "blue eyes",
+      0
+     ],
+     [
+      "creator:",
+      1
+     ],
+     [
+      "series:metroid",
+      0
+     ],
+     [
+      "",
+      1
+     ]
+    ],
+    "zebra": [
+     [
+      ":",
+      1
+     ],
+     [
+      "orc",
+      0
+     ]
+    ]
+   },
+   "text": ""
+  },
+  {
+   "errors": [
+    {
+     "message": "That object was not a Tag Filter! It seemed to be a \"<class 'hydrus.core.HydrusSerialisable.SerialisableList'>\".",
+     "title": "Error"
+    }
+   ],
+   "favourites": {
+    "apple": [
+     [
+      "blue eyes",
+      0
+     ],
+     [
+      "creator:",
+      1
+     ],
+     [
+      "series:metroid",
+      0
+     ],
+     [
+      "",
+      1
+     ]
+    ],
+    "zebra": [
+     [
+      ":",
+      1
+     ],
+     [
+      "orc",
+      0
+     ]
+    ]
+   },
+   "text": "[26, 3, []]"
+  },
+  {
+   "errors": [
+    {
+     "message": "That object was not a Tag Filter! It seemed to be a \"<class 'hydrus.core.HydrusSerialisable.SerialisableDictionary'>\".",
+     "title": "Error"
+    }
+   ],
+   "favourites": {
+    "apple": [
+     [
+      "blue eyes",
+      0
+     ],
+     [
+      "creator:",
+      1
+     ],
+     [
+      "series:metroid",
+      0
+     ],
+     [
+      "",
+      1
+     ]
+    ],
+    "zebra": [
+     [
+      ":",
+      1
+     ],
+     [
+      "orc",
+      0
+     ]
+    ]
+   },
+   "text": "[21, 2, []]"
+  },
+  {
+   "errors": [
+    {
+     "message": "Sorry, I could not understand what was in the clipboard. I was expecting \"JSON-serialised Tag Filter object\" but received this text:\n\n\"just a string\"\n\nMore details have been written to the log, but the general error was:\n\nValueError('too many values to unpack (expected 4)')",
+     "title": "Clipboard Error!"
+    }
+   ],
+   "favourites": {
+    "apple": [
+     [
+      "blue eyes",
+      0
+     ],
+     [
+      "creator:",
+      1
+     ],
+     [
+      "series:metroid",
+      0
+     ],
+     [
+      "",
+      1
+     ]
+    ],
+    "zebra": [
+     [
+      ":",
+      1
+     ],
+     [
+      "orc",
+      0
+     ]
+    ]
+   },
+   "text": "\"just a string\""
+  },
+  {
+   "errors": [
+    {
+     "message": "Sorry, I could not understand what was in the clipboard. I was expecting \"JSON-serialised Tag Filter object\" but received this text:\n\n{\"a\": 1}\n\nMore details have been written to the log, but the general error was:\n\nValueError('not enough values to unpack (expected 4, got 1)')",
+     "title": "Clipboard Error!"
+    }
+   ],
+   "favourites": {
+    "apple": [
+     [
+      "blue eyes",
+      0
+     ],
+     [
+      "creator:",
+      1
+     ],
+     [
+      "series:metroid",
+      0
+     ],
+     [
+      "",
+      1
+     ]
+    ],
+    "zebra": [
+     [
+      ":",
+      1
+     ],
+     [
+      "orc",
+      0
+     ]
+    ]
+   },
+   "text": "{\"a\": 1}"
+  }
+ ]
+}

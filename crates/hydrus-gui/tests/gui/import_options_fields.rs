@@ -11,21 +11,21 @@ use hydrus_gui::{ImportOptionsWindow, MainWindow, Pages, bind, headless};
 use hydrus_store::queues;
 use slint::{ComponentHandle as _, Model as _};
 
-const PREFETCH: i32 = 0;
-const FILE_FILTERING: i32 = 1;
-const TAGS: i32 = 4;
-const NOTES: i32 = 5;
+pub(crate) const PREFETCH: i32 = 0;
+pub(crate) const FILE_FILTERING: i32 = 1;
+pub(crate) const TAGS: i32 = 4;
+pub(crate) const NOTES: i32 = 5;
 const PRESENTATION: i32 = 7;
 
-struct Setup {
-    ui: MainWindow,
-    bound: hydrus_gui::Bound,
-    store: std::sync::Arc<hydrus_store::Store>,
-    queue: i64,
+pub(crate) struct Setup {
+    pub(crate) ui: MainWindow,
+    pub(crate) bound: hydrus_gui::Bound,
+    pub(crate) store: std::sync::Arc<hydrus_store::Store>,
+    pub(crate) queue: i64,
     _dirs: [tempfile::TempDir; 2],
 }
 
-fn setup() -> Setup {
+pub(crate) fn setup() -> Setup {
     let (dirs, store) = crate::subscriptions::store();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
@@ -43,7 +43,7 @@ fn setup() -> Setup {
 }
 
 impl Setup {
-    fn editor(&self) -> ImportOptionsWindow {
+    pub(crate) fn editor(&self) -> ImportOptionsWindow {
         self.ui.invoke_importer_import_options();
         self.bound
             .folders
@@ -54,7 +54,7 @@ impl Setup {
             .clone_strong()
     }
 
-    fn saved(&self) -> ImportOptionsSlice {
+    pub(crate) fn saved(&self) -> ImportOptionsSlice {
         let queue = self.queue;
         self.store
             .read(move |conn| queues::queue(conn, queue))
@@ -68,14 +68,12 @@ fn labels(editor: &ImportOptionsWindow) -> Vec<String> {
     editor.get_labels().iter().map(|l| l.to_string()).collect()
 }
 
-fn custom(editor: &ImportOptionsWindow, kind: i32) {
+pub(crate) fn custom(editor: &ImportOptionsWindow, kind: i32) {
     editor.invoke_kind_clicked(kind);
     editor.set_custom_index(1);
     editor.invoke_changed();
 }
 
-// leaf: audit-network-options-deleted-bombs
-// leaf: audit-network-options-sizes
 // leaf: audit-network-options-specific-default
 #[test]
 fn file_filtering_checkboxes_and_bounds_reach_the_importers_options() {
@@ -155,7 +153,6 @@ fn file_filtering_checkboxes_and_bounds_reach_the_importers_options() {
     assert!(!s.saved().file_filtering.unwrap().exclude_deleted);
 }
 
-// leaf: audit-network-options-note-conflict
 #[test]
 fn note_conflict_extension_whitelist_and_renames_reach_the_importers_options() {
     let _windows = headless::init();
@@ -201,7 +198,6 @@ fn note_conflict_extension_whitelist_and_renames_reach_the_importers_options() {
     assert_eq!(notes.all_name_override, None);
 }
 
-// leaf: audit-network-options-prefetch
 #[test]
 fn prefetch_checks_fetch_flags_and_the_dispositive_interlock_reach_the_importers_options() {
     let _windows = headless::init();
@@ -283,7 +279,6 @@ fn presentation_status_inbox_and_location_gates_reach_the_importers_options() {
     assert_eq!(presentation.inbox, PresentationInbox::RequireInbox);
 }
 
-// leaf: audit-network-options-tag-fetch
 #[test]
 fn per_service_get_tags_and_new_or_redundant_gates_reach_the_importers_options() {
     let _windows = headless::init();
