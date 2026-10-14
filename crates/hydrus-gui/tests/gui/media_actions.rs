@@ -112,17 +112,33 @@ fn the_viewer_s_shortcuts_archive_inbox_and_delete() {
             name: "my files".into()
         })
     );
+    // (the reference's "Delete files?" dialog, with the one action's label)
     viewer.invoke_delete();
+    let dialog = bound
+        .viewer_deletion
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert!(dialog.get_composed_title().starts_with("Delete files?"));
+    assert!(dialog.get_simple());
+    assert_eq!(dialog.get_selected_action(), 0);
     assert_eq!(
-        viewer.get_question(),
-        "Send one file from my files to trash?"
+        dialog.get_actions().iter().collect::<Vec<_>>(),
+        ["Send one file from my files to trash?"]
     );
-    viewer.invoke_answer(false);
-    assert_eq!(viewer.get_question(), "");
+    dialog.invoke_cancel();
+    assert!(bound.viewer_deletion.borrow().is_none());
     assert_eq!(state(&store, file).1, ["my files"]);
-    // yes sends it to the trash, and it leaves the page and the viewer
+    // accepting sends it to the trash, and it leaves the page and the viewer
     viewer.invoke_delete();
-    viewer.invoke_answer(true);
+    let dialog = bound
+        .viewer_deletion
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    dialog.invoke_accept_deletion();
     assert_eq!(state(&store, file).1, ["trash"]);
     let after = page.borrow().results().to_vec();
     assert_eq!(after.len(), before.len() - 1);
@@ -228,15 +244,78 @@ fn the_viewer_s_shortcuts_archive_inbox_and_delete() {
     assert!(state(&store, selected).0);
     let before = page.borrow().results().len();
     key(slint::platform::Key::Delete);
-    assert_eq!(ui.get_question(), "Send one file from art to trash?");
-    key(slint::platform::Key::Escape);
-    assert_eq!(ui.get_question(), "");
+    let dialog = bound.delete_files.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(
+        dialog.get_actions().iter().collect::<Vec<_>>(),
+        ["Send one file from art to trash?"]
+    );
+    dialog.invoke_cancel();
+    assert!(bound.delete_files.borrow().is_none());
     assert_eq!(page.borrow().results().len(), before);
     key(slint::platform::Key::Delete);
-    key(slint::platform::Key::Return);
-    assert_eq!(ui.get_question(), "");
+    let dialog = bound.delete_files.borrow().as_ref().unwrap().clone_strong();
+    dialog.invoke_accept_deletion();
+    assert!(bound.delete_files.borrow().is_none());
     assert_eq!(state(&store, selected).1, ["trash"]);
     assert_eq!(page.borrow().results().len(), before - 1);
+}
+
+#[test]
+fn the_viewer_skips_the_dialog_when_trash_confirmation_is_off_and_the_file_leaves() {
+    use hydrus_store::settings::DeletionPreferences;
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store: Arc<Store> = Store::open(native.path()).unwrap();
+    store
+        .write(|ctx| {
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::settings::FileViewRemoval {
+                    trashed: true,
+                    ..Default::default()
+                },
+            )?;
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &DeletionPreferences {
+                    confirm_trash: false,
+                    ..DeletionPreferences::default()
+                },
+            )
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    ui.show().unwrap();
+    ui.invoke_search_edited("system:inbox".into());
+    ui.invoke_search_accepted();
+    let page = bound.current.borrow().clone();
+    let before = page.borrow().results().to_vec();
+    let index = before
+        .iter()
+        .position(|&id| state(&store, id).1 == ["my files"])
+        .unwrap();
+    let file = before[index];
+    ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let caption = viewer.get_caption();
+    viewer.invoke_delete();
+    // no dialog (one actionable domain, nothing to confirm): the file is
+    // in the trash and has left the page and the viewer
+    assert!(super::common::delete_dialog(&bound).is_none());
+    assert_eq!(state(&store, file).1, ["trash"]);
+    assert!(!page.borrow().results().contains(&file));
+    assert_eq!(page.borrow().results().len(), before.len() - 1);
+    assert_ne!(viewer.get_caption(), caption);
 }
 
 // leaf: audit-options-files-and-trash-confirm-sending-more-than-one-file-to-archive-or-inbox
@@ -281,16 +360,43 @@ fn confirmation_policy_matches_recorded_actionable_domains_and_counts() {
         store
             .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &preferences))
             .unwrap();
-        assert_eq!(
-            !media_actions::confirm_deletion(&store, &[file], &Deletion::ToTrash),
-            case["resolved"].as_bool().unwrap()
-        );
-        assert!(media_actions::confirm_deletion(
+        // (the dialog's own decision, on the real files)
+        let draft = hydrus_gui_model::delete_files::Draft::load_mode(
             &store,
             &[file],
-            &Deletion::Physically
-        ));
+            None,
+            media_actions::DELETE_REASON,
+            false,
+        )
+        .unwrap();
+        assert_eq!(
+            draft.already_resolved(case["confirm"].as_bool().unwrap()),
+            case["resolved"].as_bool().unwrap()
+        );
     }
+    // a file in the trash offers a permanent delete, so it always asks
+    let trashed = batch
+        .results
+        .iter()
+        .find(|m| {
+            m.current
+                .iter()
+                .filter(|c| roles.local.contains(&c.service))
+                .count()
+                == 1
+        })
+        .unwrap()
+        .hash_id;
+    media_actions::delete(&store, &[trashed], &Deletion::ToTrash).unwrap();
+    let draft = hydrus_gui_model::delete_files::Draft::load_mode(
+        &store,
+        &[trashed],
+        None,
+        media_actions::DELETE_REASON,
+        false,
+    )
+    .unwrap();
+    assert!(!draft.already_resolved(false));
     for case in recording["archive"].as_array().unwrap() {
         let preferences = DeletionPreferences {
             confirm_archive: case["confirm"].as_bool().unwrap(),

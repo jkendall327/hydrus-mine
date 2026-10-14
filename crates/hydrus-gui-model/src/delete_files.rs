@@ -40,6 +40,10 @@ pub struct Draft {
     shared_reason: Option<String>,
     includes_domains: bool,
     local_domain_count: usize,
+    /// The reference's simple dialog (`use_advanced_file_deletion_dialog` off):
+    /// no reason panel, and no unrecorded physical delete.
+    pub simple: bool,
+    spicy_physical: bool,
 }
 
 impl Draft {
@@ -49,6 +53,17 @@ impl Draft {
         files: &[HashId],
         suggested: Option<&DeletionAction>,
         default_reason: &str,
+    ) -> hydrus_store::Result<Self> {
+        Self::load_mode(store, files, suggested, default_reason, true)
+    }
+
+    /// As [`Draft::load`] for the advanced dialog (`advanced`) or the simple one.
+    pub fn load_mode(
+        store: &Store,
+        files: &[HashId],
+        suggested: Option<&DeletionAction>,
+        default_reason: &str,
+        advanced: bool,
     ) -> hydrus_store::Result<Self> {
         let snapshot = store.snapshot();
         let roles = DomainRoles::new(&snapshot.services)?;
@@ -123,10 +138,13 @@ impl Draft {
         };
         let trash = physical(roles.trash);
         let storage = physical(roles.local_file_storage);
+        let mut spicy_physical = false;
         for (files, trashed) in [(&trash, true), (&storage, false)] {
-            if files.is_empty() || (!trashed && *files == trash) {
+            // (the simple dialog offers the trash's files only)
+            if files.is_empty() || (!trashed && (*files == trash || !advanced)) {
                 continue;
             }
+            spicy_physical = true;
             let count = if files.len() == 1 {
                 "one".to_owned()
             } else {
@@ -142,7 +160,7 @@ impl Draft {
                 files: files.clone(),
             });
         }
-        if !storage.is_empty() {
+        if advanced && !storage.is_empty() {
             let count = if storage.len() == 1 {
                 "this file".to_owned()
             } else {
@@ -238,13 +256,16 @@ impl Draft {
             custom,
             default_reason: default_reason.into(),
             shared_reason,
+            simple: !advanced,
+            spicy_physical,
         })
     }
 
     /// The reference bypasses even an advanced dialog for one actionable domain
     /// when trash confirmation is disabled, retaining the selected remembered action.
     pub fn already_resolved(&self, confirm_trash: bool) -> bool {
-        self.local_domain_count == 1 && !confirm_trash
+        // (the simple dialog is never skipped when it would offer a physical delete)
+        self.local_domain_count == 1 && !confirm_trash && !(self.simple && self.spicy_physical)
     }
 
     /// Reason controls are disabled for a clean deletion.
@@ -273,6 +294,9 @@ impl Draft {
         let Some(choice) = self.choices.get(self.action).cloned() else {
             return Ok(None);
         };
+        let simple = self.simple;
+        // (the simple dialog's reason panel is hidden, yet its default selection still
+        // applies, as in the reference, where `_UpdateControls` re-enables the panel)
         let reason = if self.reason_enabled() {
             self.reasons.get(self.reason).and_then(|r| match &r.reason {
                 Reason::Text(t) => Some(t.clone()),
@@ -315,6 +339,7 @@ impl Draft {
                 prefs.last_action = Some(choice.action.clone());
             }
             if prefs.remember_reason
+                && !simple
                 && let Some(reason) = reason.filter(|r| shared_reason.as_ref() != Some(r))
             {
                 prefs.last_reason = (reason != default_reason).then_some(reason);

@@ -182,10 +182,10 @@ fn deleting_and_undeleting_ask_as_recorded() {
         let before = local(&store, file).0;
         select(&[file]);
         ui.invoke_delete_selected();
-        let asked = !ui.get_question().is_empty();
+        let asked = super::common::delete_dialog(&bound).is_some();
         assert_eq!(asked, !case["resolved"].as_bool().unwrap(), "{case}");
         if asked {
-            ui.invoke_answer(false);
+            super::common::answer_delete(&bound, false);
             assert_eq!(local(&store, file).0, before, "no leaves it be");
         } else {
             assert!(local(&store, file).0.is_empty(), "deleted at once");

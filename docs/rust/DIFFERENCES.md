@@ -2484,11 +2484,14 @@ Invalid ordinary requests wait 60 seconds; subscriptions retain the exact
 reference cancellation note.
 
 Files and Trash confirmation preferences now reach thumbnail and viewer local
-file operations. The native deletion question still presents one action rather
-than the reference's complete service/action picker when advanced mode is off,
-and asks in the main window rather than in a "Delete files?" dialog (#187); where
-the reference has only one action it asks with that action's label ("Send one
-file from my files to trash?"; found by the download flow, `FLOWS.md`).
+file operations. Deleting files opens the reference's "Delete files?" dialog in
+the simple mode too (#187): with one possible action the dialog shows that
+action's label alone, with several the list to choose from, and the reason
+panel is hidden. What the simple dialog does not offer (as the reference's):
+permanent deletion of files not in the trash, and deletion without a record.
+Not ported: the reference also lets the simple dialog delete the client's
+update files and petition files from file repositories (hydrus-rs has neither).
+The Cancel button of the reference's dialog (a `DialogEdit`) is the Cancel here.
 Advanced local-domain, trash and physical/clean deletion now uses the action and
 reason picker with the ordered reason queue and remembered accepted choices.
 Remote repository/IPFS actions are outside this local dialog. Copy/move-domain

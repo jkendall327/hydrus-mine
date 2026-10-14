@@ -13,12 +13,7 @@ use super::{Daemon, Known, Normaliser, Site, State, compare, hashes_in_log, inst
 
 /// What this flow shows that the reference does not, each explained in
 /// `docs/rust/DIFFERENCES.md`.
-const KNOWN: &[Known] = &[Known {
-    // the reference opens its delete files dialog, titled; this asks in
-    // the main window (#187)
-    path: "/steps/3(delete)/dialog/title",
-    why: "Files and Trash: the native deletion question, not the reference's dialog",
-}];
+const KNOWN: &[Known] = &[];
 
 #[test]
 fn download_a_url_then_tag_archive_and_delete_it_as_the_reference_does() {
@@ -126,12 +121,17 @@ fn download_a_url_then_tag_archive_and_delete_it_as_the_reference_does() {
 
     // 4. delete, answering what it asks
     ui.invoke_delete_selected();
+    let dialog = super::super::common::delete_dialog(&bound).expect("the delete files dialog");
+    let actions: Vec<String> = dialog.get_actions().iter().map(|a| a.to_string()).collect();
+    let title = dialog.get_composed_title().to_string();
     let seen = json!({
-        "title": null,
-        "description": ui.get_question().as_str(),
-        "actions": null,
+        // (the title without the application's name, which Qt adds to the
+        // window, not to its title)
+        "title": title.strip_suffix(hydrus_gui::app_title::current().as_str()).unwrap_or(&title),
+        "description": if actions.len() == 1 { json!(actions[0]) } else { json!(null) },
+        "actions": if actions.len() == 1 { json!(null) } else { json!(actions) },
     });
-    ui.invoke_answer(true);
+    dialog.invoke_accept_deletion();
     super::wait_until_idle(&daemon, page_done);
     steps.push(step("delete", seen));
 

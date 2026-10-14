@@ -49,6 +49,8 @@ export component DeleteFilesWindow inherits Window {
     in property <int> selected-reason;
     in property <bool> reason-enabled;
     in property <bool> custom-enabled;
+    // the reference's simple dialog: no reason panel
+    in property <bool> simple;
     in-out property <string> custom;
     in property <string> error;
     callback action-selected(int);
@@ -73,7 +75,9 @@ export component DeleteFilesWindow inherits Window {
         ScrollView {
             VerticalLayout {
                 spacing: 6px;
-                for label[i] in root.actions: DeleteRadioButton {
+                // one action is shown as its label alone, as the reference does
+                if root.actions.length == 1: Text {text: root.actions[0]; color: Theme.text; wrap: word-wrap;}
+                if root.actions.length != 1: VerticalLayout { for label[i] in root.actions: DeleteRadioButton {
                     text: label;
                     checked: i == root.selected-action;
                     focus-request: root.radio-focus == 0 && i == root.selected-action;
@@ -83,8 +87,9 @@ export component DeleteFilesWindow inherits Window {
                     toggled=>{root.action-selected(i);}
                     navigate(down)=>{root.action-selected(down ? mod(root.selected-action + 1,root.actions.length) : mod(root.selected-action + root.actions.length - 1,root.actions.length));}
                 }
-                Text {text: "reason"; color: Theme.text;}
-                for label[i] in root.reasons: DeleteRadioButton {
+                } // (the actions)
+                if !root.simple: Text {text: "reason"; color: Theme.text;}
+                if !root.simple: VerticalLayout { for label[i] in root.reasons: DeleteRadioButton {
                     text: label;
                     checked: i == root.selected-reason;
                     focus-request: root.reason-enabled && root.radio-focus == 1 && i == root.selected-reason;
@@ -95,7 +100,8 @@ export component DeleteFilesWindow inherits Window {
                     toggled=>{root.reason-selected(i);}
                     navigate(down)=>{root.reason-selected(down ? mod(root.selected-reason + 1,root.reasons.length) : mod(root.selected-reason + root.reasons.length - 1,root.reasons.length));}
                 }
-                LineEdit {text <=> root.custom; enabled: root.custom-enabled; accepted => {root.accept-deletion();}}
+                } // (the reasons)
+                if !root.simple: LineEdit {text <=> root.custom; enabled: root.custom-enabled; accepted => {root.accept-deletion();}}
             }
         }
         if root.error != "": Text {text:root.error;color:Theme.error;wrap:word-wrap;}

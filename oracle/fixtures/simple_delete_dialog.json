@@ -1,0 +1,606 @@
+{
+  "cases": [
+    {
+      "case": "one domain",
+      "confirm_trash": true,
+      "suggested": null,
+      "panel": {
+        "title": "Delete files?",
+        "resolved": false,
+        "description": "Send one file from art to trash?",
+        "actions": null,
+        "selected": 0,
+        "reason_panel_visible": false
+      },
+      "values": [
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "art",
+              "action": 1,
+              "reason": "Deleted via Client API.",
+              "files": 1
+            }
+          ],
+          "saved_action": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+          "saved_reason": "remembered reason"
+        }
+      ]
+    },
+    {
+      "case": "one domain",
+      "confirm_trash": false,
+      "suggested": null,
+      "panel": {
+        "title": "Delete files?",
+        "resolved": true,
+        "description": "Send one file from art to trash?",
+        "actions": null,
+        "selected": 0,
+        "reason_panel_visible": false
+      },
+      "values": [
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "art",
+              "action": 1,
+              "reason": "Deleted via Client API.",
+              "files": 1
+            }
+          ],
+          "saved_action": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+          "saved_reason": "remembered reason"
+        }
+      ]
+    },
+    {
+      "case": "two domains",
+      "confirm_trash": true,
+      "suggested": null,
+      "panel": {
+        "title": "Delete files?",
+        "resolved": false,
+        "description": null,
+        "actions": [
+          "Remove one file from art?",
+          "Remove one file from my files?",
+          "Delete from all local services? (force send to trash)"
+        ],
+        "selected": 0,
+        "reason_panel_visible": false
+      },
+      "values": [
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "art",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 1
+            }
+          ],
+          "saved_action": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+          "saved_reason": "remembered reason"
+        },
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "my files",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 1
+            }
+          ],
+          "saved_action": "6c6f63616c2066696c6573",
+          "saved_reason": "remembered reason"
+        },
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "all local file domains",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 1
+            }
+          ],
+          "saved_action": "616c6c206c6f63616c206d65646961",
+          "saved_reason": "remembered reason"
+        }
+      ]
+    },
+    {
+      "case": "two domains",
+      "confirm_trash": false,
+      "suggested": null,
+      "panel": {
+        "title": "Delete files?",
+        "resolved": false,
+        "description": null,
+        "actions": [
+          "Remove one file from art?",
+          "Remove one file from my files?",
+          "Delete from all local services? (force send to trash)"
+        ],
+        "selected": 0,
+        "reason_panel_visible": false
+      },
+      "values": [
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "art",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 1
+            }
+          ],
+          "saved_action": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+          "saved_reason": "remembered reason"
+        },
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "my files",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 1
+            }
+          ],
+          "saved_action": "6c6f63616c2066696c6573",
+          "saved_reason": "remembered reason"
+        },
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "all local file domains",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 1
+            }
+          ],
+          "saved_action": "616c6c206c6f63616c206d65646961",
+          "saved_reason": "remembered reason"
+        }
+      ]
+    },
+    {
+      "case": "two domains, suggested my files",
+      "confirm_trash": true,
+      "suggested": "my files",
+      "panel": {
+        "title": "Delete files?",
+        "resolved": false,
+        "description": null,
+        "actions": [
+          "Remove one file from art?",
+          "Remove one file from my files?",
+          "Delete from all local services? (force send to trash)"
+        ],
+        "selected": 1,
+        "reason_panel_visible": false
+      },
+      "values": [
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "art",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 1
+            }
+          ],
+          "saved_action": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+          "saved_reason": "remembered reason"
+        },
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "my files",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 1
+            }
+          ],
+          "saved_action": "6c6f63616c2066696c6573",
+          "saved_reason": "remembered reason"
+        },
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "all local file domains",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 1
+            }
+          ],
+          "saved_action": "616c6c206c6f63616c206d65646961",
+          "saved_reason": "remembered reason"
+        }
+      ]
+    },
+    {
+      "case": "two domains, suggested my files",
+      "confirm_trash": false,
+      "suggested": "my files",
+      "panel": {
+        "title": "Delete files?",
+        "resolved": false,
+        "description": null,
+        "actions": [
+          "Remove one file from art?",
+          "Remove one file from my files?",
+          "Delete from all local services? (force send to trash)"
+        ],
+        "selected": 1,
+        "reason_panel_visible": false
+      },
+      "values": [
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "art",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 1
+            }
+          ],
+          "saved_action": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+          "saved_reason": "remembered reason"
+        },
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "my files",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 1
+            }
+          ],
+          "saved_action": "6c6f63616c2066696c6573",
+          "saved_reason": "remembered reason"
+        },
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "all local file domains",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 1
+            }
+          ],
+          "saved_action": "616c6c206c6f63616c206d65646961",
+          "saved_reason": "remembered reason"
+        }
+      ]
+    },
+    {
+      "case": "both files",
+      "confirm_trash": true,
+      "suggested": null,
+      "panel": {
+        "title": "Delete files?",
+        "resolved": false,
+        "description": null,
+        "actions": [
+          "Remove 2 files from art?",
+          "Remove one file from my files?",
+          "Delete from all local services? (force send to trash)"
+        ],
+        "selected": 0,
+        "reason_panel_visible": false
+      },
+      "values": [
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "art",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 2
+            }
+          ],
+          "saved_action": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+          "saved_reason": "remembered reason"
+        },
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "my files",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 1
+            }
+          ],
+          "saved_action": "6c6f63616c2066696c6573",
+          "saved_reason": "remembered reason"
+        },
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "all local file domains",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 2
+            }
+          ],
+          "saved_action": "616c6c206c6f63616c206d65646961",
+          "saved_reason": "remembered reason"
+        }
+      ]
+    },
+    {
+      "case": "both files",
+      "confirm_trash": false,
+      "suggested": null,
+      "panel": {
+        "title": "Delete files?",
+        "resolved": false,
+        "description": null,
+        "actions": [
+          "Remove 2 files from art?",
+          "Remove one file from my files?",
+          "Delete from all local services? (force send to trash)"
+        ],
+        "selected": 0,
+        "reason_panel_visible": false
+      },
+      "values": [
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "art",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 2
+            }
+          ],
+          "saved_action": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+          "saved_reason": "remembered reason"
+        },
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "my files",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 1
+            }
+          ],
+          "saved_action": "6c6f63616c2066696c6573",
+          "saved_reason": "remembered reason"
+        },
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "all local file domains",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 2
+            }
+          ],
+          "saved_action": "616c6c206c6f63616c206d65646961",
+          "saved_reason": "remembered reason"
+        }
+      ]
+    },
+    {
+      "case": "trashed",
+      "confirm_trash": true,
+      "suggested": null,
+      "panel": {
+        "title": "Delete files?",
+        "resolved": false,
+        "description": "Permanently delete one trashed file?",
+        "actions": null,
+        "selected": 0,
+        "reason_panel_visible": false
+      },
+      "values": [
+        {
+          "physically_deleted": 1,
+          "updates": [
+            {
+              "service": "local file storage",
+              "action": 1,
+              "reason": "Deleted via Client API.",
+              "files": 1
+            }
+          ],
+          "saved_action": null,
+          "saved_reason": "remembered reason"
+        }
+      ]
+    },
+    {
+      "case": "trashed",
+      "confirm_trash": false,
+      "suggested": null,
+      "panel": {
+        "title": "Delete files?",
+        "resolved": false,
+        "description": "Permanently delete one trashed file?",
+        "actions": null,
+        "selected": 0,
+        "reason_panel_visible": false
+      },
+      "values": [
+        {
+          "physically_deleted": 1,
+          "updates": [
+            {
+              "service": "local file storage",
+              "action": 1,
+              "reason": "Deleted via Client API.",
+              "files": 1
+            }
+          ],
+          "saved_action": null,
+          "saved_reason": "remembered reason"
+        }
+      ]
+    },
+    {
+      "case": "last action",
+      "confirm_trash": true,
+      "suggested": null,
+      "panel": {
+        "title": "Delete files?",
+        "resolved": false,
+        "description": null,
+        "actions": [
+          "Remove one file from art?",
+          "Remove one file from my files?",
+          "Delete from all local services? (force send to trash)"
+        ],
+        "selected": 0,
+        "reason_panel_visible": false
+      },
+      "values": [
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "art",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 1
+            }
+          ],
+          "saved_action": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+          "saved_reason": "remembered reason"
+        },
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "my files",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 1
+            }
+          ],
+          "saved_action": "6c6f63616c2066696c6573",
+          "saved_reason": "remembered reason"
+        },
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "all local file domains",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 1
+            }
+          ],
+          "saved_action": "616c6c206c6f63616c206d65646961",
+          "saved_reason": "remembered reason"
+        }
+      ],
+      "last_action": "my files",
+      "remembered": {
+        "title": "Delete files?",
+        "resolved": false,
+        "description": null,
+        "actions": [
+          "Remove one file from art?",
+          "Remove one file from my files?",
+          "Delete from all local services? (force send to trash)"
+        ],
+        "selected": 1,
+        "reason_panel_visible": false
+      }
+    },
+    {
+      "case": "last action",
+      "confirm_trash": false,
+      "suggested": null,
+      "panel": {
+        "title": "Delete files?",
+        "resolved": false,
+        "description": null,
+        "actions": [
+          "Remove one file from art?",
+          "Remove one file from my files?",
+          "Delete from all local services? (force send to trash)"
+        ],
+        "selected": 0,
+        "reason_panel_visible": false
+      },
+      "values": [
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "art",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 1
+            }
+          ],
+          "saved_action": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+          "saved_reason": "remembered reason"
+        },
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "my files",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 1
+            }
+          ],
+          "saved_action": "6c6f63616c2066696c6573",
+          "saved_reason": "remembered reason"
+        },
+        {
+          "physically_deleted": 0,
+          "updates": [
+            {
+              "service": "all local file domains",
+              "action": 1,
+              "reason": "remembered reason",
+              "files": 1
+            }
+          ],
+          "saved_action": "616c6c206c6f63616c206d65646961",
+          "saved_reason": "remembered reason"
+        }
+      ],
+      "last_action": "my files",
+      "remembered": {
+        "title": "Delete files?",
+        "resolved": false,
+        "description": null,
+        "actions": [
+          "Remove one file from art?",
+          "Remove one file from my files?",
+          "Delete from all local services? (force send to trash)"
+        ],
+        "selected": 1,
+        "reason_panel_visible": false
+      }
+    }
+  ]
+}

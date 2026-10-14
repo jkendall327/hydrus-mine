@@ -141,6 +141,7 @@ mod shell_tabs;
 mod shortcut_capture;
 mod shutdown_jobs;
 mod sidecars;
+mod simple_delete_dialog;
 mod simple_downloader;
 mod simple_formulae_list;
 mod slideshow;
