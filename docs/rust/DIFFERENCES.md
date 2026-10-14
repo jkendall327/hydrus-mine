@@ -4883,7 +4883,7 @@ potential duplicates (as the reference does as groups merge), so approving
 ## Crash log (`hydrus-core::crash_log`)
 
 A deliberate step beyond the reference, so problems on a real collection can
-be diagnosed afterwards.
+be diagnosed afterwards. The owner chose always-on crash logging (2026-10-14).
 
 - The reference logs crashes only while Help > debug > debug modes > "use
   faulthandler to log crashes" is on (Python's faulthandler writes native

@@ -11949,7 +11949,7 @@
     "date": "2026-10-08",
     "class": "weak",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu toggle and check state, but the mechanism is a Rust panic hook writing a new 'client crash - N.log' file, tested with a thread panic: not faulthandler (fatal signals, writes into the client log; segfaults not caught). The reference's 'DO NOT PLAY ANYTHING WITH MPV...' popup on enabling is not shown or tested. Stand-in behaviour, documented in DIFFERENCES. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:492 crash_logging_writes_panics_to_a_log_until_turned_off"
+    "note": "Deliberate divergence, not a port: the reference item is a toggle that is off at boot (Python faulthandler, fatal signals). The owner chose always-on crash logging (2026-10-14): a Rust panic hook always writes client crash.log in the database directory, the menu entry is shown on and says where the log is, native crashes (segfaults) are not caught. Documented in DIFFERENCES.md (Crash log). Test crates/hydrus-gui/tests/gui/debug_menu_actions.rs crash_logging_is_always_on_and_the_entry_says_where_the_log_is is untagged because it proves the divergence, not the leaf."
    }
   },
   {

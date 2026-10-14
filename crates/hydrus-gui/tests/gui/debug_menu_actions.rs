@@ -559,7 +559,10 @@ fn daemon_report_mode_says_when_a_maintenance_daemon_does_a_job() {
     debug_flags::set_sink(None);
 }
 
-// leaf: audit-options-help-debug-action-use-faulthandler-to-log-crashes
+// (not a leaf tag: the reference's item is a toggle that is off at boot; the owner
+// chose always-on crash logging, 2026-10-14, a deliberate divergence in DIFFERENCES.md)
+// The panic hook is process-wide, so another test's panic while this one runs
+// can land in this log too; the assertions only look for this test's own text.
 #[test]
 fn crash_logging_is_always_on_and_the_entry_says_where_the_log_is() {
     let _one = ONE_AT_A_TIME

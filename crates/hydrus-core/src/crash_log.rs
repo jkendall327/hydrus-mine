@@ -47,6 +47,10 @@ static HOOKED: std::sync::Once = std::sync::Once::new();
 /// serve`...). Calling it again points the log at the new directory. The
 /// earlier panic hook still runs, so the message still reaches stderr, and
 /// a line after it says where the log is.
+///
+/// The hook is set once per process (a `Once`), taking the hook in place
+/// at the first call, so this must be the last thing that sets a panic hook:
+/// a hook set after it replaces the log, and one set before it is chained.
 pub fn install(dir: &Path, program: &str) {
     *TARGET.lock().unwrap_or_else(PoisonError::into_inner) = Some(Target {
         dir: dir.to_owned(),
@@ -79,6 +83,14 @@ pub fn path() -> Option<PathBuf> {
 }
 
 fn log_panic(info: &PanicHookInfo<'_>) -> Option<PathBuf> {
+    // (a panic inside a panic hook aborts the process: whatever goes wrong
+    // here, the original panic must carry on)
+    std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| log_panic_inner(info)))
+        .ok()
+        .flatten()
+}
+
+fn log_panic_inner(info: &PanicHookInfo<'_>) -> Option<PathBuf> {
     let (dir, program) = {
         let guard = TARGET.lock().unwrap_or_else(PoisonError::into_inner);
         let target = guard.as_ref()?;
@@ -118,7 +130,8 @@ pub fn write_entry(dir: &Path, entry: &str) -> std::io::Result<PathBuf> {
     if size > 0 && size + entry.len() as u64 > MAX_BYTES {
         // (a rename over the old log replaces it; on Windows too)
         let _ = std::fs::remove_file(dir.join(OLD_LOG_NAME));
-        std::fs::rename(&path, dir.join(OLD_LOG_NAME))?;
+        // (if it can't be moved, the entry is still appended)
+        let _ = std::fs::rename(&path, dir.join(OLD_LOG_NAME));
     }
     let mut file = std::fs::OpenOptions::new()
         .create(true)
