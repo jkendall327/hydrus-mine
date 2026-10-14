@@ -2344,6 +2344,19 @@ the clicked page of pages (or, for a media page's tab, in its notebook), named
 as the Pages menu names them ("name - N files", elided), each selecting that
 page. It sits after the close entries, before "select".
 
+Closing several pages from a tab's menu ("close" > other pages, pages to the
+left, pages to the right) asks "Close N pages?" when nothing objects. When a
+closing page has a URL importer holding items or at work, it opens the
+reference's longer dialog (`src/reasons_dialog.rs`): "Are you sure you want to
+close N pages?" over each objecting page's reason ("page "imp1" says: This is
+a urls import page holding 3 import objects.", pages with the same reason
+grouped, fewest first), with "yes" (pressable after 1.2 seconds), "no" and "no,
+but show me the pages", which opens a "Go To Page" list of buttons ("reason:
+page name"), each of which shows its page and leaves the list up. Closing one
+page asks `Close "name"?` with the reason (a page of pages with objecting pages
+inside asks the same longer dialog, listing them). The wording, buttons and results are
+compared with `oracle/fixtures/tab_close_objections.json`.
+
 Pages > sessions > append adds the saved session as a page of pages named after it to the top notebook (not inside the page of pages that is shown), where "new page goes" puts it, and shows it, as the reference does (`oracle/record_sessions_append.py`).
 
 Pages > sessions > append backup groups rolling snapshots by saved-session name

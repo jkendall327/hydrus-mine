@@ -1775,9 +1775,13 @@ settings and file/gallery logs. Early native snapshots without importer-state
 data cannot restore queue-backed pages; snapshots recorded by this implementation
 include that data.
 
-Bulk tab closing groups downloader objections in its confirmation. The reference's
-extra "no, but show me the pages" response on an objection dialog is not exposed;
-the native question offers yes/no. Other context submenus remain deferred.
+Bulk tab closing asks as the reference does when a closing page has an
+importer holding items or at work (`src/reasons_dialog.rs`): the message with
+each objecting page's reason, "yes" (disabled for 1.2 seconds), "no" and "no,
+but show me the pages", which opens a "Go To Page" list with a button for
+each objecting page. The dialog is a plain window of buttons (`ChoiceButtonsWindow`),
+not Qt's dialog: it does not block the main window, and its buttons are in a
+column, not a row. Other context submenus remain deferred.
 
 - Hash clipboard actions honour the booru prefix option, but do not show the
   reference’s missing-digest warning or its transient hashes-copied notification.
@@ -4855,8 +4859,6 @@ The `mpv.conf` copy replaces a read-only mpv.conf; recorded as root the referenc
 
 - **mpv "set null audio device on silent media".** The Options row and the player plan's audio device are tested; mpv itself is not driven (no libmpv), and the leaf is out of scope.
 
-- **Closing tabs while downloaders are running.** Closing other pages, or the pages to the left or right, asks a plain yes/no question with the recorded wording; the reference, when a closing page has a downloader at work, asks a longer question with a statement and a third "no, but show me the pages" button. That path is not implemented or tested, so those three menu leaves stay untagged.
-
 ## Tooltips, petition reasons and the related panel (issue 86 leftovers)
 
 - **Tooltips** use Slint 1.18's `Tooltip` (a popup after the pointer rests half
@@ -5010,6 +5012,14 @@ a sample limit the same number of pairs, not the same pairs, are shown
 Approving pairs now drops, from every rule's queue, the pairs that are no longer
 potential duplicates (as the reference does as groups merge), so approving
 `A-B` and `B-C` leaves no `A-C` waiting.
+
+- **Queuing URLs to a named downloader page** (the force metadata refetch and the
+  missing-files redownloader) does not check that a URL's class has a parser,
+  as the reference's sidebar `PendURL` does not; only `ClientGUI.ImportURL`
+  (drops, the clipboard) does. A URL that cannot be parsed fails when fetched.
+- **Archive/delete filter, "forget" answered no:** the reference leaves its
+  finish dialog up; hydrus-rs goes back to its question. Not recorded (the
+  recorder's forget-no is the dialog staying open).
 
 - **The status bar's database field** shows "db writing" and "db reading" but not
   the reference's "db committing" and "db locked", and has no "current db job: <name>"

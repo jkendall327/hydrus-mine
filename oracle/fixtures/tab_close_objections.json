@@ -1,0 +1,1081 @@
+{
+  "cases": [
+    {
+      "menu": "other pages",
+      "index": 0,
+      "answer": "yes",
+      "before": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no/no",
+          "message": "Are you sure you want to close 4 other pages?\n\npage \"imp1\" says: This is a urls import page holding 3 import objects.\n----\npage \"imp2\" says: This is a urls import page holding 2 import objects.",
+          "title": "Are you sure?",
+          "no_tuples": [
+            [
+              "no",
+              "no"
+            ],
+            [
+              "no, but show me the pages",
+              "show"
+            ]
+          ],
+          "disable_yes_initially": true,
+          "auto_yes_time": null,
+          "panel": {
+            "buttons": [
+              {
+                "text": "yes",
+                "enabled": false
+              },
+              {
+                "text": "no",
+                "enabled": true
+              },
+              {
+                "text": "no, but show me the pages",
+                "enabled": true
+              }
+            ],
+            "label": [
+              "Are you sure you want to close 4 other pages?\n\npage \"imp1\" says: This is a urls import page holding 3 import objects.\n----\npage \"imp2\" says: This is a urls import page holding 2 import objects."
+            ]
+          }
+        }
+      ],
+      "lists": [],
+      "shown": [],
+      "after": [
+        "a"
+      ],
+      "closed_indices": [
+        4,
+        3,
+        2,
+        1
+      ]
+    },
+    {
+      "menu": "other pages",
+      "index": 0,
+      "answer": "no",
+      "before": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no/no",
+          "message": "Are you sure you want to close 4 other pages?\n\npage \"imp1\" says: This is a urls import page holding 3 import objects.\n----\npage \"imp2\" says: This is a urls import page holding 2 import objects.",
+          "title": "Are you sure?",
+          "no_tuples": [
+            [
+              "no",
+              "no"
+            ],
+            [
+              "no, but show me the pages",
+              "show"
+            ]
+          ],
+          "disable_yes_initially": true,
+          "auto_yes_time": null,
+          "panel": {
+            "buttons": [
+              {
+                "text": "yes",
+                "enabled": false
+              },
+              {
+                "text": "no",
+                "enabled": true
+              },
+              {
+                "text": "no, but show me the pages",
+                "enabled": true
+              }
+            ],
+            "label": [
+              "Are you sure you want to close 4 other pages?\n\npage \"imp1\" says: This is a urls import page holding 3 import objects.\n----\npage \"imp2\" says: This is a urls import page holding 2 import objects."
+            ]
+          }
+        }
+      ],
+      "lists": [],
+      "shown": [],
+      "after": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "closed_indices": []
+    },
+    {
+      "menu": "other pages",
+      "index": 0,
+      "answer": "show",
+      "before": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no/no",
+          "message": "Are you sure you want to close 4 other pages?\n\npage \"imp1\" says: This is a urls import page holding 3 import objects.\n----\npage \"imp2\" says: This is a urls import page holding 2 import objects.",
+          "title": "Are you sure?",
+          "no_tuples": [
+            [
+              "no",
+              "no"
+            ],
+            [
+              "no, but show me the pages",
+              "show"
+            ]
+          ],
+          "disable_yes_initially": true,
+          "auto_yes_time": null,
+          "panel": {
+            "buttons": [
+              {
+                "text": "yes",
+                "enabled": false
+              },
+              {
+                "text": "no",
+                "enabled": true
+              },
+              {
+                "text": "no, but show me the pages",
+                "enabled": true
+              }
+            ],
+            "label": [
+              "Are you sure you want to close 4 other pages?\n\npage \"imp1\" says: This is a urls import page holding 3 import objects.\n----\npage \"imp2\" says: This is a urls import page holding 2 import objects."
+            ]
+          }
+        }
+      ],
+      "lists": [
+        {
+          "title": "Go To Page",
+          "message": "",
+          "choices": [
+            [
+              "This is a urls import page holding 3 import objects.: imp1",
+              "Show this page."
+            ],
+            [
+              "This is a urls import page holding 2 import objects.: imp2",
+              "Show this page."
+            ]
+          ]
+        }
+      ],
+      "shown": [
+        "43eec65d49b82c6cc7c55238fe747314236c4a5b36e2edf8bc718655d6bedc20",
+        "7b2c9aa16b53622897049b64b309b0931256ff0cd0b0bc04d95342d578f8d15b"
+      ],
+      "after": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "closed_indices": []
+    },
+    {
+      "menu": "pages to the left",
+      "index": 2,
+      "answer": "yes",
+      "before": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no/no",
+          "message": "Are you sure you want to close 2 pages to the left?\n\npage \"imp1\" says: This is a urls import page holding 3 import objects.",
+          "title": "Are you sure?",
+          "no_tuples": [
+            [
+              "no",
+              "no"
+            ],
+            [
+              "no, but show me the pages",
+              "show"
+            ]
+          ],
+          "disable_yes_initially": true,
+          "auto_yes_time": null,
+          "panel": {
+            "buttons": [
+              {
+                "text": "yes",
+                "enabled": false
+              },
+              {
+                "text": "no",
+                "enabled": true
+              },
+              {
+                "text": "no, but show me the pages",
+                "enabled": true
+              }
+            ],
+            "label": [
+              "Are you sure you want to close 2 pages to the left?\n\npage \"imp1\" says: This is a urls import page holding 3 import objects."
+            ]
+          }
+        }
+      ],
+      "lists": [],
+      "shown": [],
+      "after": [
+        "b",
+        "imp2",
+        "c"
+      ],
+      "closed_indices": [
+        1,
+        0
+      ]
+    },
+    {
+      "menu": "pages to the left",
+      "index": 2,
+      "answer": "no",
+      "before": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no/no",
+          "message": "Are you sure you want to close 2 pages to the left?\n\npage \"imp1\" says: This is a urls import page holding 3 import objects.",
+          "title": "Are you sure?",
+          "no_tuples": [
+            [
+              "no",
+              "no"
+            ],
+            [
+              "no, but show me the pages",
+              "show"
+            ]
+          ],
+          "disable_yes_initially": true,
+          "auto_yes_time": null,
+          "panel": {
+            "buttons": [
+              {
+                "text": "yes",
+                "enabled": false
+              },
+              {
+                "text": "no",
+                "enabled": true
+              },
+              {
+                "text": "no, but show me the pages",
+                "enabled": true
+              }
+            ],
+            "label": [
+              "Are you sure you want to close 2 pages to the left?\n\npage \"imp1\" says: This is a urls import page holding 3 import objects."
+            ]
+          }
+        }
+      ],
+      "lists": [],
+      "shown": [],
+      "after": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "closed_indices": []
+    },
+    {
+      "menu": "pages to the left",
+      "index": 2,
+      "answer": "show",
+      "before": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no/no",
+          "message": "Are you sure you want to close 2 pages to the left?\n\npage \"imp1\" says: This is a urls import page holding 3 import objects.",
+          "title": "Are you sure?",
+          "no_tuples": [
+            [
+              "no",
+              "no"
+            ],
+            [
+              "no, but show me the pages",
+              "show"
+            ]
+          ],
+          "disable_yes_initially": true,
+          "auto_yes_time": null,
+          "panel": {
+            "buttons": [
+              {
+                "text": "yes",
+                "enabled": false
+              },
+              {
+                "text": "no",
+                "enabled": true
+              },
+              {
+                "text": "no, but show me the pages",
+                "enabled": true
+              }
+            ],
+            "label": [
+              "Are you sure you want to close 2 pages to the left?\n\npage \"imp1\" says: This is a urls import page holding 3 import objects."
+            ]
+          }
+        }
+      ],
+      "lists": [
+        {
+          "title": "Go To Page",
+          "message": "",
+          "choices": [
+            [
+              "This is a urls import page holding 3 import objects.: imp1",
+              "Show this page."
+            ]
+          ]
+        }
+      ],
+      "shown": [
+        "88732c84038bb13334cf4588bae00a023ef38b2c7094c59962f0ea1582235150"
+      ],
+      "after": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "closed_indices": []
+    },
+    {
+      "menu": "pages to the right",
+      "index": 2,
+      "answer": "yes",
+      "before": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no/no",
+          "message": "Are you sure you want to close 2 pages to the right?\n\npage \"imp2\" says: This is a urls import page holding 2 import objects.",
+          "title": "Are you sure?",
+          "no_tuples": [
+            [
+              "no",
+              "no"
+            ],
+            [
+              "no, but show me the pages",
+              "show"
+            ]
+          ],
+          "disable_yes_initially": true,
+          "auto_yes_time": null,
+          "panel": {
+            "buttons": [
+              {
+                "text": "yes",
+                "enabled": false
+              },
+              {
+                "text": "no",
+                "enabled": true
+              },
+              {
+                "text": "no, but show me the pages",
+                "enabled": true
+              }
+            ],
+            "label": [
+              "Are you sure you want to close 2 pages to the right?\n\npage \"imp2\" says: This is a urls import page holding 2 import objects."
+            ]
+          }
+        }
+      ],
+      "lists": [],
+      "shown": [],
+      "after": [
+        "a",
+        "imp1",
+        "b"
+      ],
+      "closed_indices": [
+        4,
+        3
+      ]
+    },
+    {
+      "menu": "pages to the right",
+      "index": 2,
+      "answer": "no",
+      "before": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no/no",
+          "message": "Are you sure you want to close 2 pages to the right?\n\npage \"imp2\" says: This is a urls import page holding 2 import objects.",
+          "title": "Are you sure?",
+          "no_tuples": [
+            [
+              "no",
+              "no"
+            ],
+            [
+              "no, but show me the pages",
+              "show"
+            ]
+          ],
+          "disable_yes_initially": true,
+          "auto_yes_time": null,
+          "panel": {
+            "buttons": [
+              {
+                "text": "yes",
+                "enabled": false
+              },
+              {
+                "text": "no",
+                "enabled": true
+              },
+              {
+                "text": "no, but show me the pages",
+                "enabled": true
+              }
+            ],
+            "label": [
+              "Are you sure you want to close 2 pages to the right?\n\npage \"imp2\" says: This is a urls import page holding 2 import objects."
+            ]
+          }
+        }
+      ],
+      "lists": [],
+      "shown": [],
+      "after": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "closed_indices": []
+    },
+    {
+      "menu": "pages to the right",
+      "index": 2,
+      "answer": "show",
+      "before": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no/no",
+          "message": "Are you sure you want to close 2 pages to the right?\n\npage \"imp2\" says: This is a urls import page holding 2 import objects.",
+          "title": "Are you sure?",
+          "no_tuples": [
+            [
+              "no",
+              "no"
+            ],
+            [
+              "no, but show me the pages",
+              "show"
+            ]
+          ],
+          "disable_yes_initially": true,
+          "auto_yes_time": null,
+          "panel": {
+            "buttons": [
+              {
+                "text": "yes",
+                "enabled": false
+              },
+              {
+                "text": "no",
+                "enabled": true
+              },
+              {
+                "text": "no, but show me the pages",
+                "enabled": true
+              }
+            ],
+            "label": [
+              "Are you sure you want to close 2 pages to the right?\n\npage \"imp2\" says: This is a urls import page holding 2 import objects."
+            ]
+          }
+        }
+      ],
+      "lists": [
+        {
+          "title": "Go To Page",
+          "message": "",
+          "choices": [
+            [
+              "This is a urls import page holding 2 import objects.: imp2",
+              "Show this page."
+            ]
+          ]
+        }
+      ],
+      "shown": [
+        "a1776399b6d811f1c6cba54ea62f68245349525e73ea45dc8eb8eda70c762204"
+      ],
+      "after": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "closed_indices": []
+    },
+    {
+      "menu": "pages to the right (nothing objects)",
+      "index": 3,
+      "answer": "yes",
+      "before": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no",
+          "message": "Close 1 pages to the right?",
+          "title": "Are you sure?"
+        }
+      ],
+      "lists": [],
+      "shown": [],
+      "after": [
+        "a",
+        "imp1",
+        "b",
+        "imp2"
+      ],
+      "closed_indices": [
+        4
+      ]
+    },
+    {
+      "menu": "pages to the right (nothing objects)",
+      "index": 3,
+      "answer": "no",
+      "before": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no",
+          "message": "Close 1 pages to the right?",
+          "title": "Are you sure?"
+        }
+      ],
+      "lists": [],
+      "shown": [],
+      "after": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "closed_indices": []
+    },
+    {
+      "menu": "pages to the right (nothing objects)",
+      "index": 3,
+      "answer": "show",
+      "before": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no",
+          "message": "Close 1 pages to the right?",
+          "title": "Are you sure?"
+        }
+      ],
+      "lists": [],
+      "shown": [],
+      "after": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "closed_indices": []
+    },
+    {
+      "menu": "close page",
+      "index": 1,
+      "answer": "yes",
+      "before": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no",
+          "message": "Close \"imp1\"?\n\nThis is a urls import page holding 3 import objects.",
+          "title": "Are you sure?"
+        }
+      ],
+      "lists": [],
+      "shown": [],
+      "after": [
+        "a",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "closed_indices": [
+        1
+      ]
+    },
+    {
+      "menu": "close page",
+      "index": 1,
+      "answer": "no",
+      "before": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no",
+          "message": "Close \"imp1\"?\n\nThis is a urls import page holding 3 import objects.",
+          "title": "Are you sure?"
+        }
+      ],
+      "lists": [],
+      "shown": [],
+      "after": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "closed_indices": []
+    },
+    {
+      "menu": "close page (nothing objects)",
+      "index": 0,
+      "answer": "yes",
+      "before": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "asked": [],
+      "lists": [],
+      "shown": [],
+      "after": [
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "closed_indices": [
+        0
+      ]
+    },
+    {
+      "menu": "close page (nothing objects)",
+      "index": 0,
+      "answer": "no",
+      "before": [
+        "a",
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "asked": [],
+      "lists": [],
+      "shown": [],
+      "after": [
+        "imp1",
+        "b",
+        "imp2",
+        "c"
+      ],
+      "closed_indices": [
+        0
+      ]
+    },
+    {
+      "menu": "nested: close page",
+      "index": 1,
+      "answer": "yes",
+      "before": [
+        "a",
+        "group",
+        "b"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no/no",
+          "message": "Close \"group\"?\n\npage \"nested imp\" says: This is a urls import page holding 4 import objects.",
+          "title": "Are you sure?",
+          "no_tuples": [
+            [
+              "no",
+              "no"
+            ],
+            [
+              "no, but show me the pages",
+              "show"
+            ]
+          ],
+          "disable_yes_initially": true,
+          "auto_yes_time": null,
+          "panel": {
+            "buttons": [
+              {
+                "text": "yes",
+                "enabled": false
+              },
+              {
+                "text": "no",
+                "enabled": true
+              },
+              {
+                "text": "no, but show me the pages",
+                "enabled": true
+              }
+            ],
+            "label": [
+              "Close \"group\"?\n\npage \"nested imp\" says: This is a urls import page holding 4 import objects."
+            ]
+          }
+        }
+      ],
+      "lists": [],
+      "shown": [],
+      "after": [
+        "a",
+        "b"
+      ],
+      "closed_indices": [
+        1
+      ]
+    },
+    {
+      "menu": "nested: close page",
+      "index": 1,
+      "answer": "no",
+      "before": [
+        "a",
+        "group",
+        "b"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no/no",
+          "message": "Close \"group\"?\n\npage \"nested imp\" says: This is a urls import page holding 4 import objects.",
+          "title": "Are you sure?",
+          "no_tuples": [
+            [
+              "no",
+              "no"
+            ],
+            [
+              "no, but show me the pages",
+              "show"
+            ]
+          ],
+          "disable_yes_initially": true,
+          "auto_yes_time": null,
+          "panel": {
+            "buttons": [
+              {
+                "text": "yes",
+                "enabled": false
+              },
+              {
+                "text": "no",
+                "enabled": true
+              },
+              {
+                "text": "no, but show me the pages",
+                "enabled": true
+              }
+            ],
+            "label": [
+              "Close \"group\"?\n\npage \"nested imp\" says: This is a urls import page holding 4 import objects."
+            ]
+          }
+        }
+      ],
+      "lists": [],
+      "shown": [],
+      "after": [
+        "a",
+        "group",
+        "b"
+      ],
+      "closed_indices": []
+    },
+    {
+      "menu": "nested: other pages",
+      "index": 0,
+      "answer": "yes",
+      "before": [
+        "a",
+        "group",
+        "b"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no/no",
+          "message": "Are you sure you want to close 3 other pages?\n\npage \"nested imp\" says: This is a urls import page holding 4 import objects.",
+          "title": "Are you sure?",
+          "no_tuples": [
+            [
+              "no",
+              "no"
+            ],
+            [
+              "no, but show me the pages",
+              "show"
+            ]
+          ],
+          "disable_yes_initially": true,
+          "auto_yes_time": null,
+          "panel": {
+            "buttons": [
+              {
+                "text": "yes",
+                "enabled": false
+              },
+              {
+                "text": "no",
+                "enabled": true
+              },
+              {
+                "text": "no, but show me the pages",
+                "enabled": true
+              }
+            ],
+            "label": [
+              "Are you sure you want to close 3 other pages?\n\npage \"nested imp\" says: This is a urls import page holding 4 import objects."
+            ]
+          }
+        }
+      ],
+      "lists": [],
+      "shown": [],
+      "after": [
+        "a"
+      ],
+      "closed_indices": [
+        2,
+        1
+      ]
+    },
+    {
+      "menu": "nested: other pages",
+      "index": 0,
+      "answer": "no",
+      "before": [
+        "a",
+        "group",
+        "b"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no/no",
+          "message": "Are you sure you want to close 3 other pages?\n\npage \"nested imp\" says: This is a urls import page holding 4 import objects.",
+          "title": "Are you sure?",
+          "no_tuples": [
+            [
+              "no",
+              "no"
+            ],
+            [
+              "no, but show me the pages",
+              "show"
+            ]
+          ],
+          "disable_yes_initially": true,
+          "auto_yes_time": null,
+          "panel": {
+            "buttons": [
+              {
+                "text": "yes",
+                "enabled": false
+              },
+              {
+                "text": "no",
+                "enabled": true
+              },
+              {
+                "text": "no, but show me the pages",
+                "enabled": true
+              }
+            ],
+            "label": [
+              "Are you sure you want to close 3 other pages?\n\npage \"nested imp\" says: This is a urls import page holding 4 import objects."
+            ]
+          }
+        }
+      ],
+      "lists": [],
+      "shown": [],
+      "after": [
+        "a",
+        "group",
+        "b"
+      ],
+      "closed_indices": []
+    },
+    {
+      "menu": "nested: other pages",
+      "index": 0,
+      "answer": "show",
+      "before": [
+        "a",
+        "group",
+        "b"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no/no",
+          "message": "Are you sure you want to close 3 other pages?\n\npage \"nested imp\" says: This is a urls import page holding 4 import objects.",
+          "title": "Are you sure?",
+          "no_tuples": [
+            [
+              "no",
+              "no"
+            ],
+            [
+              "no, but show me the pages",
+              "show"
+            ]
+          ],
+          "disable_yes_initially": true,
+          "auto_yes_time": null,
+          "panel": {
+            "buttons": [
+              {
+                "text": "yes",
+                "enabled": false
+              },
+              {
+                "text": "no",
+                "enabled": true
+              },
+              {
+                "text": "no, but show me the pages",
+                "enabled": true
+              }
+            ],
+            "label": [
+              "Are you sure you want to close 3 other pages?\n\npage \"nested imp\" says: This is a urls import page holding 4 import objects."
+            ]
+          }
+        }
+      ],
+      "lists": [
+        {
+          "title": "Go To Page",
+          "message": "",
+          "choices": [
+            [
+              "This is a urls import page holding 4 import objects.: nested imp",
+              "Show this page."
+            ]
+          ]
+        }
+      ],
+      "shown": [
+        "445d1c92664658c4d0e67d70c23318a085a99c06709696e927553e8d9f62b239"
+      ],
+      "after": [
+        "a",
+        "group",
+        "b"
+      ],
+      "closed_indices": []
+    }
+  ]
+}

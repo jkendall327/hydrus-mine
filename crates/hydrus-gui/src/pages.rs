@@ -87,6 +87,26 @@ fn tab_kind(page: &Page) -> TabKind {
     }
 }
 
+/// A bulk close of tabs frozen before it is asked.
+#[derive(Debug, Clone)]
+pub struct CloseTabs {
+    /// The pages it would close (their notebooks' too).
+    pub keys: Vec<PageKey>,
+    /// The yes/no question when nothing objects, and the dialog's message
+    /// when something does.
+    pub question: String,
+    /// The pages objecting, in the order the reference lists them to go to.
+    pub objections: Vec<Objection>,
+}
+
+/// A page that objects to being closed.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Objection {
+    pub reason: String,
+    pub page: String,
+    pub key: PageKey,
+}
+
 /// One notebook's tabs: its pages' names, and which is shown.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Tabs {
@@ -1522,19 +1542,8 @@ impl Pages {
                 .url_classes
                 .normalise(&encoded, true)
                 .map_err(|e| e.to_string())?;
-            let capability = snapshot.url_classes.parse_capability(&url);
-            if matches!(
-                capability.url_type,
-                hydrus_core::url::UrlType::Post
-                    | hydrus_core::url::UrlType::Gallery
-                    | hydrus_core::url::UrlType::Watchable
-            ) && let Err(error) = &capability.parser
-            {
-                return Err(format!(
-                    "This URL was recognised as a \"{}\" but it cannot be parsed: {}\n\nSince this URL cannot be parsed, a downloader cannot be created for it! Please check your url class links under the 'networking' menu.",
-                    capability.match_name, error
-                ));
-            }
+            // (the sidebar's pend does not ask for a parser, as ClientGUI.ImportURL does:
+            // a URL its class cannot parse is queued and fails when it is fetched)
             normalised.push(url);
         }
         let mut candidates = Vec::new();
@@ -2335,6 +2344,18 @@ impl Pages {
         index: usize,
         side: crate::tab_context::Close,
     ) -> Option<(Vec<PageKey>, String)> {
+        self.close_tabs_plan(depth, index, side)
+            .map(|plan| (plan.keys, plan.question))
+    }
+
+    /// A bulk close frozen before it is asked: the pages it would close,
+    /// the question, and the pages objecting to it (`_ClosePages`).
+    pub fn close_tabs_plan(
+        &mut self,
+        depth: usize,
+        index: usize,
+        side: crate::tab_context::Close,
+    ) -> Option<CloseTabs> {
         fn count(page: &Page) -> usize {
             1 + if let PageContent::Pages(children) = &page.content {
                 children.iter().map(count).sum()
@@ -2350,18 +2371,82 @@ impl Pages {
         }
         let held = targets.iter().map(count).sum();
         let keys = targets.iter().map(|p| p.key).collect();
-        let vetoes = self.close_vetoes(&targets);
-        Some((
+        let objections = self.close_objections(&targets);
+        let vetoes: Vec<(String, String)> = objections
+            .iter()
+            .map(|(reason, name, _)| (reason.clone(), name.clone()))
+            .collect();
+        let listed = Self::listed(objections);
+        Some(CloseTabs {
             keys,
-            crate::session_saving::close_group_question(
+            question: crate::session_saving::close_group_question(
                 held,
                 crate::tab_context::close_description(side),
                 &vetoes,
             ),
-        ))
+            objections: listed,
+        })
+    }
+
+    /// The objecting pages in the order the reference lists them to go to
+    /// (`ShowReasonsAndPagesConfirmationDialog`).
+    fn listed(objections: Vec<(String, String, PageKey)>) -> Vec<Objection> {
+        let vetoes: Vec<(String, String)> = objections
+            .iter()
+            .map(|(reason, name, _)| (reason.clone(), name.clone()))
+            .collect();
+        let mut unlisted = objections;
+        hydrus_gui_model::session_saving::group_vetoes(&vetoes)
+            .into_iter()
+            .flat_map(|(reason, names)| {
+                names
+                    .into_iter()
+                    .filter_map(|name| {
+                        let at = unlisted
+                            .iter()
+                            .position(|(r, n, _)| *r == reason && *n == name)?;
+                        let (_, _, key) = unlisted.remove(at);
+                        Some(Objection {
+                            reason: reason.clone(),
+                            page: name,
+                            key,
+                        })
+                    })
+                    .collect::<Vec<_>>()
+            })
+            .collect()
+    }
+
+    /// Closing a page of pages with objecting pages inside it asks the
+    /// reference's longer dialog too (`AskIfAbleToClose` on a notebook):
+    /// the question and the pages that object.
+    pub fn close_notebook_plan(
+        &mut self,
+        depth: usize,
+        index: usize,
+    ) -> Option<(String, Vec<Objection>)> {
+        let page = self.notebook_at(depth)?.get(index)?.clone();
+        if !matches!(page.content, PageContent::Pages(_)) {
+            return None;
+        }
+        let objections = self.close_objections(std::slice::from_ref(&page));
+        if objections.is_empty() {
+            return None;
+        }
+        let question = self.close_question(depth, index)?;
+        Some((question, Self::listed(objections)))
     }
 
     fn close_vetoes(&mut self, pages: &[Page]) -> Vec<(String, String)> {
+        self.close_objections(pages)
+            .into_iter()
+            .map(|(reason, name, _)| (reason, name))
+            .collect()
+    }
+
+    /// The `(reason, page name, page)` of each page under `pages` that
+    /// objects to being closed.
+    fn close_objections(&mut self, pages: &[Page]) -> Vec<(String, String, PageKey)> {
         fn leaves(pages: &[Page], out: &mut Vec<PageKey>) {
             for page in pages {
                 match &page.content {
@@ -2386,7 +2471,7 @@ impl Pages {
                     .borrow()
                     .close_veto(self.downloader_options.confirm_non_empty_close)
             {
-                vetoes.push((reason, name));
+                vetoes.push((reason, name, key));
             }
         }
         vetoes

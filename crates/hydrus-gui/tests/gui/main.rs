@@ -211,14 +211,17 @@ mod tag_migration_counts;
 mod tag_migration_hash;
 
 mod manage_notes_replay;
+mod regen_questions_replay;
 mod regex_favourites;
 mod regex_options_editor;
 mod sidecar_node_window;
 mod string_converter_window;
 mod string_match_window;
 mod string_processor_window;
+mod tab_close_objections;
 mod tab_context_menu;
 mod tag_filter_favourites;
+mod thumbnail_select_remove_replay;
 
 mod downloader_display;
 mod favourite_search_editor;
@@ -313,6 +316,7 @@ mod debug_what_is_this;
 mod duplicates_progress;
 mod quick_export_directory;
 
+mod archive_delete_filter_replay;
 mod archive_delete_policies;
 
 mod ffmpeg_timeout;
