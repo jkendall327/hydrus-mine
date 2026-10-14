@@ -277,7 +277,6 @@ fn the_video_percentage_picks_the_frame_the_thumbnail_is_made_from() {
     }
 }
 
-// leaf: audit-options-thumbnails-appearance-fade-thumbnails
 #[test]
 #[allow(clippy::float_cmp)] // (opacities set, not computed)
 fn thumbnails_fade_in_only_if_asked_to() {
@@ -344,4 +343,180 @@ fn thumbnails_fade_in_only_if_asked_to() {
             .fade
     );
     assert_eq!(fresh_opacity(), 1.0, "shown at once");
+}
+
+/// "Fade thumbnails" and the renderer a page was made with, through the
+/// Options window and the real grid, against the reference's two thumbnail
+/// panels (oracle/record_thumbnail_fade_option.py): a cell that changes (a
+/// thumbnail clicked) in a new-renderer page, and a thumbnail arriving in an
+/// old-renderer page, with the option on and off, sampled at the recorded
+/// times of a held clock. The renderer option is set while the first page is
+/// open and only the page made afterwards takes it.
+// leaf: audit-options-thumbnails-appearance-fade-thumbnails
+// leaf: audit-options-thumbnails-new-rendering-tech-use-the-new-thumbnail-rendering-tech-only-applies-to-new-pages
+#[test]
+#[allow(clippy::float_cmp)] // (opacities set, not computed)
+fn fade_thumbnails_follows_the_recorded_curve_of_the_renderer_each_page_was_made_with() {
+    use std::{cell::Cell, rc::Rc, time::Duration};
+
+    use slint::Model as _;
+
+    const FADE: &str = "Fade thumbnails: ";
+    const RENDERER: &str = "Use the new thumbnail rendering tech (only applies to new pages): ";
+    let recorded = hydrus_testkit::fixture_json("thumbnail_fade_option.json");
+    assert_eq!(
+        recorded["new_page_type"],
+        "MediaResultsPanelThumbnailsGraphicsViewTest"
+    );
+    assert_eq!(recorded["old_page_type"], "MediaResultsPanelThumbnails");
+    let (dirs, store) = crate::options_gui_support::basic_store();
+    let toggle = |client: &Media, label: &str, on: bool| {
+        let options = client.open_options();
+        show_page(&options, "thumbnails");
+        let (i, found) = row(&options, label);
+        if found.checked != on {
+            options.invoke_check_toggled(i, on);
+        }
+        options.invoke_apply();
+        options.hide().unwrap();
+    };
+    let start = Duration::from_secs(100);
+    let held = |client: &Media| {
+        client.search("system:everything");
+        let native = client.windows.get(0).unwrap();
+        hydrus_gui::headless::render(&native, 850, 700);
+        let now = Rc::new(Cell::new(Duration::ZERO));
+        client.bound.rows.set_paint_clock(Rc::new({
+            let now = now.clone();
+            move || now.get()
+        }));
+        now
+    };
+    let cell = |client: &Media, at: usize| {
+        client
+            .bound
+            .rows
+            .row_data(0)
+            .unwrap()
+            .thumbnails
+            .row_data(at)
+            .unwrap()
+    };
+    let sample = |client: &Media, now: &Cell<Duration>, at: usize, elapsed: f64| {
+        now.set(start + Duration::from_secs_f64(elapsed));
+        client.bound.rows.paint_tick(true, 0, 10);
+        client.bound.rows.row_data(0).unwrap();
+        cell(client, at)
+    };
+    let recorded_samples = |kind: &str, fade: bool| -> Vec<(f64, f64, Option<bool>)> {
+        recorded[kind]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|r| r["fade"] == fade)
+            .unwrap()["samples"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|s| {
+                (
+                    s["elapsed"].as_f64().unwrap(),
+                    s["opacity"].as_f64().unwrap(),
+                    s["old_retained"].as_bool(),
+                )
+            })
+            .collect()
+    };
+
+    // the first page is made under the default (the new renderer): a cell
+    // that changes fades its old picture out over the recorded curve
+    let first = Media::with(dirs, store.clone());
+    let now = held(&first);
+    assert!(
+        first
+            .bound
+            .current
+            .borrow()
+            .borrow()
+            .new_thumbnail_renderer()
+    );
+    for fade in [true, false] {
+        toggle(&first, FADE, fade);
+        // (loaded and drawn)
+        now.set(start);
+        first.bound.rows.paint_tick(true, 0, 10);
+        first.bound.rows.row_data(0).unwrap();
+        first.bound.rows.wait();
+        first.bound.rows.row_data(0).unwrap();
+        assert_eq!(
+            cell(&first, 0).fade_opacity,
+            1.0,
+            "a thumbnail with no earlier picture is shown at once (fade {fade})"
+        );
+        // the click changes the whole cell (it is selected, or not)
+        let clicked = i32::from(!fade);
+        first.ui.invoke_thumbnail_clicked(clicked, false, false);
+        let samples = recorded_samples("new", fade);
+        now.set(start);
+        first.bound.rows.paint_tick(true, 0, 10);
+        first.bound.rows.row_data(0).unwrap();
+        for (elapsed, opacity, retained) in samples {
+            let thumbnail = sample(&first, &now, usize::try_from(clicked).unwrap(), elapsed);
+            assert!(
+                (f64::from(thumbnail.fade_opacity) - opacity).abs() < 0.01,
+                "new renderer, fade {fade}, at {elapsed}: {} vs {opacity}",
+                thumbnail.fade_opacity
+            );
+            assert_eq!(
+                thumbnail.previous.image.size().width > 0,
+                retained.unwrap(),
+                "new renderer, fade {fade}, at {elapsed}: the old picture"
+            );
+        }
+    }
+    // the renderer option is turned off in Options: the open page keeps its
+    // renderer
+    toggle(&first, RENDERER, false);
+    assert!(
+        first
+            .bound
+            .current
+            .borrow()
+            .borrow()
+            .new_thumbnail_renderer()
+    );
+
+    // a page made now takes it: a thumbnail arriving fades in over the old
+    // renderer's curve (the frames drawn so far, as the panel draws them)
+    (first.bound.open_page)(&hydrus_gui_model::page_chooser::NewPage::Search {
+        domain: hydrus_core::ServiceKey::new(hydrus_core::service::builtin_keys::MY_FILES),
+        name: "a page made after".into(),
+    });
+    let second = &first;
+    let now = held(second);
+    assert!(
+        !second
+            .bound
+            .current
+            .borrow()
+            .borrow()
+            .new_thumbnail_renderer()
+    );
+    for fade in [true, false] {
+        toggle(second, FADE, fade);
+        second.bound.rows.clear_thumbnail_cache();
+        now.set(start);
+        second.bound.rows.paint_tick(true, 0, 10);
+        second.bound.rows.row_data(0).unwrap();
+        second.bound.rows.wait();
+        second.bound.rows.row_data(0).unwrap();
+        for (elapsed, opacity, _) in recorded_samples("old", fade) {
+            let thumbnail = sample(second, &now, 0, elapsed);
+            assert!(
+                (f64::from(thumbnail.fade_opacity) - opacity).abs() < 0.02,
+                "old renderer, fade {fade}, at {elapsed}: {} vs {opacity}",
+                thumbnail.fade_opacity
+            );
+        }
+    }
 }

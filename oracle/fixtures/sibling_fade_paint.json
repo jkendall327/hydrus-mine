@@ -1,0 +1,896 @@
+{
+  "cases": [
+    {
+      "fade": true,
+      "namespace": "system",
+      "storage": {
+        "unselected": [
+          {
+            "text": "creator:anonymous artist (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal (2)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ],
+        "selected": [
+          {
+            "text": "creator:anonymous artist (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal (2)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ]
+      },
+      "write": {
+        "unselected": [
+          {
+            "text": "character:parity ideal (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": [
+              [
+                170,
+                0,
+                0
+              ],
+              [
+                0,
+                170,
+                0
+              ]
+            ],
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ],
+        "selected": [
+          {
+            "text": "character:parity ideal (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": [
+              [
+                170,
+                0,
+                0
+              ],
+              [
+                0,
+                170,
+                0
+              ]
+            ]
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ]
+      }
+    },
+    {
+      "fade": false,
+      "namespace": null,
+      "storage": {
+        "unselected": [
+          {
+            "text": "creator:anonymous artist (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal (2)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ],
+        "selected": [
+          {
+            "text": "creator:anonymous artist (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal (2)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ]
+      },
+      "write": {
+        "unselected": [
+          {
+            "text": "character:parity ideal (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ],
+        "selected": [
+          {
+            "text": "character:parity ideal (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ]
+      }
+    },
+    {
+      "fade": false,
+      "namespace": "system",
+      "storage": {
+        "unselected": [
+          {
+            "text": "creator:anonymous artist (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal (2)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ],
+        "selected": [
+          {
+            "text": "creator:anonymous artist (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal (2)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ]
+      },
+      "write": {
+        "unselected": [
+          {
+            "text": "character:parity ideal (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ],
+        "selected": [
+          {
+            "text": "character:parity ideal (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ]
+      }
+    },
+    {
+      "fade": false,
+      "namespace": "character",
+      "storage": {
+        "unselected": [
+          {
+            "text": "creator:anonymous artist (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal (2)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ],
+        "selected": [
+          {
+            "text": "creator:anonymous artist (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal (2)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ]
+      },
+      "write": {
+        "unselected": [
+          {
+            "text": "character:parity ideal (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ],
+        "selected": [
+          {
+            "text": "character:parity ideal (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ]
+      }
+    },
+    {
+      "fade": false,
+      "namespace": "missing namespace",
+      "storage": {
+        "unselected": [
+          {
+            "text": "creator:anonymous artist (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal (2)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ],
+        "selected": [
+          {
+            "text": "creator:anonymous artist (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal (2)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ]
+      },
+      "write": {
+        "unselected": [
+          {
+            "text": "character:parity ideal (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ],
+        "selected": [
+          {
+            "text": "character:parity ideal (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ]
+      }
+    },
+    {
+      "fade": false,
+      "namespace": "",
+      "storage": {
+        "unselected": [
+          {
+            "text": "creator:anonymous artist (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal (2)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ],
+        "selected": [
+          {
+            "text": "creator:anonymous artist (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal (2)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ]
+      },
+      "write": {
+        "unselected": [
+          {
+            "text": "character:parity ideal (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ],
+        "selected": [
+          {
+            "text": "character:parity ideal (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ]
+      }
+    },
+    {
+      "fade": false,
+      "namespace": " character ",
+      "storage": {
+        "unselected": [
+          {
+            "text": "creator:anonymous artist (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal (2)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ],
+        "selected": [
+          {
+            "text": "creator:anonymous artist (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal (2)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ]
+      },
+      "write": {
+        "unselected": [
+          {
+            "text": "character:parity ideal (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ],
+        "selected": [
+          {
+            "text": "character:parity ideal (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ]
+      }
+    },
+    {
+      "fade": true,
+      "namespace": null,
+      "storage": {
+        "unselected": [
+          {
+            "text": "creator:anonymous artist (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal (2)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ],
+        "selected": [
+          {
+            "text": "creator:anonymous artist (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal (2)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ]
+      },
+      "write": {
+        "unselected": [
+          {
+            "text": "character:parity ideal (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": [
+              [
+                170,
+                0,
+                0
+              ],
+              [
+                0,
+                170,
+                0
+              ]
+            ],
+            "fill_gradient": null
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ],
+        "selected": [
+          {
+            "text": "character:parity ideal (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": "creator:parity alias (1)",
+            "pen_gradient": null,
+            "fill_gradient": null
+          },
+          {
+            "text": " → ",
+            "pen_gradient": null,
+            "fill_gradient": [
+              [
+                170,
+                0,
+                0
+              ],
+              [
+                0,
+                170,
+                0
+              ]
+            ]
+          },
+          {
+            "text": "character:parity ideal",
+            "pen_gradient": null,
+            "fill_gradient": null
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -8,11 +8,12 @@ use hydrus_store::related_tags::{Settings as Related, Weights};
 use hydrus_store::settings::{TagAutocompleteTabs, TagSuggestionSettings};
 use slint::{ComponentHandle as _, Model as _};
 
-// leaf: audit-media-tags-missing-suggestions
-#[test]
-fn most_used_related_and_recent_panels_follow_the_recording_in_every_layout_and_page() {
-    let f = hydrus_testkit::fixture_json("suggested_tag_panels.json");
-    let (_dirs, store) = basic_store();
+/// The recorded corpus on "my tags" (its most used and recent tags too): the
+/// files it was recorded over, in order.
+pub fn seed(
+    store: &std::sync::Arc<hydrus_store::Store>,
+    f: &serde_json::Value,
+) -> Vec<hydrus_core::HashId> {
     let files: Vec<hydrus_core::HashId> = store
         .read(|conn| {
             Ok(conn
@@ -76,6 +77,15 @@ fn most_used_related_and_recent_panels_follow_the_recording_in_every_layout_and_
             Ok(())
         })
         .unwrap();
+    files
+}
+
+// leaf: audit-media-tags-missing-suggestions
+#[test]
+fn most_used_related_and_recent_panels_follow_the_recording_in_every_layout_and_page() {
+    let f = hydrus_testkit::fixture_json("suggested_tag_panels.json");
+    let (_dirs, store) = basic_store();
+    let files = seed(&store, &f);
     let _windows = hydrus_gui::headless::init();
     for case in f["cases"].as_array().unwrap() {
         let columns = case["layout"] == "columns";

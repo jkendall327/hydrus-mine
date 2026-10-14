@@ -4944,20 +4944,25 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         |s| usize::from(s.tag_suggestions.columns),
                         |s, v| s.tag_suggestions.columns = v == 1,
                     ),
-                    choice(
-                        "Default notebook page: ",
-                        &["most used", "related", "file_lookup_scripts", "recent"],
-                        |s| {
-                            ["favourites", "related", "file_lookup_scripts", "recent"]
-                                .iter()
-                                .position(|v| *v == s.tag_suggestions.default_page)
-                                .unwrap_or(0)
-                        },
-                        |s, v| {
-                            s.tag_suggestions.default_page =
-                                ["favourites", "related", "file_lookup_scripts", "recent"][v]
-                                    .into();
-                        },
+                    // the reference disables it unless the layout is the notebook
+                    // (`_NotifyLayoutChanged`)
+                    enabled(
+                        choice(
+                            "Default notebook page: ",
+                            &["most used", "related", "file_lookup_scripts", "recent"],
+                            |s| {
+                                ["favourites", "related", "file_lookup_scripts", "recent"]
+                                    .iter()
+                                    .position(|v| *v == s.tag_suggestions.default_page)
+                                    .unwrap_or(0)
+                            },
+                            |s, v| {
+                                s.tag_suggestions.default_page =
+                                    ["favourites", "related", "file_lookup_scripts", "recent"][v]
+                                        .into();
+                            },
+                        ),
+                        |s| !s.tag_suggestions.columns,
                     ),
                     tab(
                         "most used",

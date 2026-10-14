@@ -1,0 +1,230 @@
+{
+  "new": [
+    {
+      "fade": true,
+      "panel_visible": true,
+      "samples": [
+        {
+          "elapsed": 0,
+          "opacity": 0.0,
+          "old_retained": true
+        },
+        {
+          "elapsed": 0.01,
+          "opacity": 0.04615384615386976,
+          "old_retained": true
+        },
+        {
+          "elapsed": 0.043,
+          "opacity": 0.19846153846156783,
+          "old_retained": true
+        },
+        {
+          "elapsed": 0.087,
+          "opacity": 0.4015384615384767,
+          "old_retained": true
+        },
+        {
+          "elapsed": 0.131,
+          "opacity": 0.6046153846153857,
+          "old_retained": true
+        },
+        {
+          "elapsed": 0.2,
+          "opacity": 0.9230769230769361,
+          "old_retained": true
+        },
+        {
+          "elapsed": 0.27,
+          "opacity": 1.0,
+          "old_retained": false
+        },
+        {
+          "elapsed": 0.45,
+          "opacity": 1.0,
+          "old_retained": false
+        },
+        {
+          "elapsed": 0.6,
+          "opacity": 1.0,
+          "old_retained": false
+        }
+      ]
+    },
+    {
+      "fade": false,
+      "panel_visible": true,
+      "samples": [
+        {
+          "elapsed": 0,
+          "opacity": 1.0,
+          "old_retained": false
+        },
+        {
+          "elapsed": 0.01,
+          "opacity": 1.0,
+          "old_retained": false
+        },
+        {
+          "elapsed": 0.043,
+          "opacity": 1.0,
+          "old_retained": false
+        },
+        {
+          "elapsed": 0.087,
+          "opacity": 1.0,
+          "old_retained": false
+        },
+        {
+          "elapsed": 0.131,
+          "opacity": 1.0,
+          "old_retained": false
+        },
+        {
+          "elapsed": 0.2,
+          "opacity": 1.0,
+          "old_retained": false
+        },
+        {
+          "elapsed": 0.27,
+          "opacity": 1.0,
+          "old_retained": false
+        },
+        {
+          "elapsed": 0.45,
+          "opacity": 1.0,
+          "old_retained": false
+        },
+        {
+          "elapsed": 0.6,
+          "opacity": 1.0,
+          "old_retained": false
+        }
+      ]
+    }
+  ],
+  "new_page_type": "MediaResultsPanelThumbnailsGraphicsViewTest",
+  "old": [
+    {
+      "fade": true,
+      "object": "ThumbnailWaitingToBeDrawnAnimated",
+      "samples": [
+        {
+          "elapsed": 0,
+          "due": false,
+          "opacity": 0.0,
+          "complete": false
+        },
+        {
+          "elapsed": 0.01,
+          "due": false,
+          "opacity": 0.0,
+          "complete": false
+        },
+        {
+          "elapsed": 0.043,
+          "due": true,
+          "opacity": 0.1803921568627451,
+          "complete": false
+        },
+        {
+          "elapsed": 0.087,
+          "due": true,
+          "opacity": 0.5019607843137255,
+          "complete": false
+        },
+        {
+          "elapsed": 0.131,
+          "due": true,
+          "opacity": 0.7529411764705882,
+          "complete": false
+        },
+        {
+          "elapsed": 0.2,
+          "due": true,
+          "opacity": 0.9215686274509803,
+          "complete": false
+        },
+        {
+          "elapsed": 0.27,
+          "due": true,
+          "opacity": 1.0,
+          "complete": true
+        },
+        {
+          "elapsed": 0.45,
+          "due": false,
+          "opacity": 1.0,
+          "complete": true
+        },
+        {
+          "elapsed": 0.6,
+          "due": false,
+          "opacity": 1.0,
+          "complete": true
+        }
+      ]
+    },
+    {
+      "fade": false,
+      "object": "ThumbnailWaitingToBeDrawn",
+      "samples": [
+        {
+          "elapsed": 0,
+          "due": true,
+          "opacity": 1.0,
+          "complete": true
+        },
+        {
+          "elapsed": 0.01,
+          "due": true,
+          "opacity": 1.0,
+          "complete": true
+        },
+        {
+          "elapsed": 0.043,
+          "due": true,
+          "opacity": 1.0,
+          "complete": true
+        },
+        {
+          "elapsed": 0.087,
+          "due": true,
+          "opacity": 1.0,
+          "complete": true
+        },
+        {
+          "elapsed": 0.131,
+          "due": true,
+          "opacity": 1.0,
+          "complete": true
+        },
+        {
+          "elapsed": 0.2,
+          "due": true,
+          "opacity": 1.0,
+          "complete": true
+        },
+        {
+          "elapsed": 0.27,
+          "due": true,
+          "opacity": 1.0,
+          "complete": true
+        },
+        {
+          "elapsed": 0.45,
+          "due": true,
+          "opacity": 1.0,
+          "complete": true
+        },
+        {
+          "elapsed": 0.6,
+          "due": true,
+          "opacity": 1.0,
+          "complete": true
+        }
+      ]
+    }
+  ],
+  "old_page_type": "MediaResultsPanelThumbnails"
+}

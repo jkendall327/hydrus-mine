@@ -318,7 +318,6 @@ fn the_audio_label_is_the_text_the_viewer_uses_for_files_with_audio() {
     assert_eq!(after, expected_lines(&client, &saved));
 }
 
-// leaf: audit-options-thumbnails-interaction-when-a-single-thumbnail-is-selected-show-the-media-viewer-s-normal-top-hover-file-text-in-the-status
 #[test]
 fn a_single_selected_thumbnail_shows_the_top_hover_text_in_the_status_bar_if_asked() {
     const LABEL: &str = "When a single thumbnail is selected, show the media viewer's normal top hover file text in the status bar: ";
@@ -358,4 +357,118 @@ fn a_single_selected_thumbnail_shows_the_top_hover_text_in_the_status_bar_if_ask
     let off = status(&client);
     assert!(!off.contains(&line), "{off:?}");
     assert!(off.len() < on.len());
+}
+
+/// The status bar over every file of the recorded "all" page, clicked one at
+/// a time, with the option on and then off through the Options window,
+/// against `oracle/record_status_bar.py` (its "all" page, and "all, no single
+/// file info" with `show_extended_single_file_info_in_status_bar` off).
+// leaf: audit-options-thumbnails-interaction-when-a-single-thumbnail-is-selected-show-the-media-viewer-s-normal-top-hover-file-text-in-the-status
+#[test]
+fn the_status_bar_shows_the_top_hover_text_of_a_clicked_file_as_recorded_and_not_when_off() {
+    struct Release;
+    impl Drop for Release {
+        fn drop(&mut self) {
+            hydrus_gui::hold_viewer_time(None);
+        }
+    }
+    const LABEL: &str = "When a single thumbnail is selected, show the media viewer's normal top hover file text in the status bar: ";
+    let fixture = hydrus_testkit::fixture_json("status_bar.json");
+    let _release = Release;
+    hydrus_gui::hold_viewer_time(Some(fixture["now"].as_i64().unwrap() * 1000));
+    let (dirs, store) = crate::options_gui_support::basic_store();
+    // (the recorded "all" page held the fixture's 36 files, trash and deleted too)
+    let all = fixture["pages"][0]["files"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|h| {
+            let hash: hydrus_core::Sha256 = h.as_str().unwrap().parse().unwrap();
+            store
+                .read(|c| hydrus_store::master::hash_id(c, &hash))
+                .unwrap()
+                .unwrap()
+        })
+        .collect::<Vec<_>>();
+    let windows = hydrus_gui::headless::init();
+    let ui = hydrus_gui::MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = hydrus_gui::bind(
+        &ui,
+        hydrus_gui::Pages::single(hydrus_gui::SearchPage::fixed(
+            store.clone(),
+            "status bar",
+            None,
+            all,
+        )),
+    );
+    let _keep = (&dirs, &windows);
+    let page_of = |name: &str| {
+        fixture["pages"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|p| p["name"] == name)
+            .unwrap()
+            .clone()
+    };
+    let single_clicks = |page: &serde_json::Value| -> Vec<(String, String)> {
+        let results = bound.current.borrow().borrow().results().to_vec();
+        assert_eq!(results.len(), page["files"].as_array().unwrap().len());
+        let mut out = Vec::new();
+        for selection in page["selections"].as_array().unwrap() {
+            let selected = selection["selected"].as_array().unwrap();
+            if selected.len() != 1 {
+                continue;
+            }
+            let hash: hydrus_core::Sha256 = selected[0].as_str().unwrap().parse().unwrap();
+            let id = store
+                .read(|c| hydrus_store::master::hash_id(c, &hash))
+                .unwrap()
+                .unwrap();
+            let at = results.iter().position(|r| *r == id).unwrap();
+            ui.invoke_thumbnail_clicked(at as i32, false, false);
+            out.push((
+                ui.get_status().to_string(),
+                selection["status"].as_str().unwrap().to_owned(),
+            ));
+        }
+        out
+    };
+    // on (the default): every clicked file's line is the recorded one
+    let on = single_clicks(&page_of("all"));
+    let singles = page_of("all")["selections"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|s| s["selected"].as_array().unwrap().len() == 1)
+        .count();
+    assert_eq!(on.len(), singles, "every recorded single click is replayed");
+    for (ours, theirs) in &on {
+        assert_eq!(ours, theirs);
+    }
+
+    crate::options_window::open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "thumbnails");
+    let (i, found) = row(&options, LABEL);
+    assert_eq!((found.kind, found.checked), (1, true));
+    assert_eq!(box_of(&options, LABEL), "interaction");
+    options.invoke_check_toggled(i, false);
+    ui.invoke_thumbnail_clicked(0, false, false);
+    assert!(ui.get_status().contains("imported: "), "not before apply");
+    options.invoke_apply();
+    options.hide().unwrap();
+    assert!(
+        !store
+            .read(hydrus_store::settings::get::<InfoLineSettings>)
+            .unwrap()
+            .single_file_in_status_bar
+    );
+    // off: the recorded "no single file info" page's lines
+    let off = single_clicks(&page_of("all, no single file info"));
+    assert_eq!(off.len(), 5);
+    for (ours, theirs) in &off {
+        assert_eq!(ours, theirs);
+    }
 }
