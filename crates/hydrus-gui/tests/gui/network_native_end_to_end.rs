@@ -538,7 +538,11 @@ fn a_package_imported_in_the_window_matches_the_recorded_import_and_a_stale_revi
         assert_eq!(n.gugs.len(), 1);
         for (key, name) in &n.gugs {
             let member = saved.gugs.gugs.iter().find(|g| g.key() == key);
-            assert_eq!(member.map(|g| g.name()), Some(name.as_str()), "{key}");
+            assert_eq!(
+                member.map(hydrus_core::url::AnyGug::name),
+                Some(name.as_str()),
+                "{key}"
+            );
         }
     }
     let single = saved
