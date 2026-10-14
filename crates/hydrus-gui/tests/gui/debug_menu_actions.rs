@@ -8,15 +8,15 @@ use hydrus_store::{Store, popups, sessions};
 use slint::{ComponentHandle as _, Model as _};
 use std::{sync::Arc, time::Duration};
 
-struct Debug {
+pub(super) struct Debug {
     _dirs: [tempfile::TempDir; 2],
-    store: Arc<Store>,
-    ui: MainWindow,
-    bound: Bound,
+    pub(super) store: Arc<Store>,
+    pub(super) ui: MainWindow,
+    pub(super) bound: Bound,
     _windows: headless::Windows,
 }
 
-fn start() -> Debug {
+pub(super) fn start() -> Debug {
     let (dirs, store) = super::subscriptions::store();
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
@@ -33,7 +33,7 @@ fn start() -> Debug {
 
 impl Debug {
     /// Click `help > debug > ...path`.
-    fn click(&self, path: &[&str]) {
+    pub(super) fn click(&self, path: &[&str]) {
         let help = self
             .ui
             .get_menu_titles()
@@ -53,7 +53,7 @@ impl Debug {
         }
     }
 
-    fn jobs(&self) -> Vec<popups::Job> {
+    pub(super) fn jobs(&self) -> Vec<popups::Job> {
         self.store
             .read(|conn| popups::all(conn, hydrus_core::TimestampMs::now().0 / 1000))
             .unwrap()
@@ -318,7 +318,7 @@ use std::sync::Mutex;
 pub(crate) static ONE_AT_A_TIME: Mutex<()> = Mutex::new(());
 
 /// Send reports to a list, not the popups.
-fn capture() -> std::sync::Arc<Mutex<Vec<String>>> {
+pub(super) fn capture() -> std::sync::Arc<Mutex<Vec<String>>> {
     let seen = std::sync::Arc::new(Mutex::new(Vec::new()));
     let sink = seen.clone();
     debug_flags::set_sink(Some(Box::new(move |text| {
@@ -329,12 +329,12 @@ fn capture() -> std::sync::Arc<Mutex<Vec<String>>> {
 
 impl Debug {
     /// Whether `help > debug > report modes > label` shows checked.
-    fn report_mode_checked(&self, label: &str) -> bool {
+    pub(super) fn report_mode_checked(&self, label: &str) -> bool {
         self.checked_in("report modes", label)
     }
 
     /// Whether `help > debug > submenu > label` shows checked.
-    fn checked_in(&self, submenu: &str, label: &str) -> bool {
+    pub(super) fn checked_in(&self, submenu: &str, label: &str) -> bool {
         let help = self
             .ui
             .get_menu_titles()

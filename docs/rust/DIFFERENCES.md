@@ -4339,9 +4339,9 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   next work time rather than as the reference syncs; the reference's other
   subscription reports are not ported (#184).
 - Report modes are offered only where something in hydrus-rs can report:
-  blurhash, cache, daemon, file, file import, gui, idle, network (and
+  blurhash, cache, daemon, db, file, file import, gui, idle, network (and
   silent), shortcut, similar files metadata generation, subprocess and
-  subscription. Missing: callto, canvas tile borders, db, file sort,
+  subscription. Missing: callto, canvas tile borders, file sort,
   graphics view thumbnail update, hover window, media load, mpv, potential
   duplicates, pubsub and shutdown report modes, and "fake petition mode"
   (there is nothing in hydrus-rs for them to report on or change, or the
@@ -4360,9 +4360,7 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   isn't logged.
 - "autocomplete delay mode" delays the tag autocomplete search only, not the
   media predicates lookup the reference also delays.
-- Not offered: profile modes (client api, db, threads, ui) and query planner
-  mode (they need hooks in every database connection and request path);
-  "thumbnail debug mode" (it lightens alternate canvas pages of Qt's
+- Not offered: "thumbnail debug mode" (it lightens alternate canvas pages of Qt's
   thumbnail painting); the mpv "allow crashy files" modes (they switch
   Python mpv wrapper crash handling); "simulate a wake from sleep" (the GUI
   keeps no shared network engine to wake); run fast/slow memory
@@ -4373,10 +4371,48 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   "macos anti-flicker test" (Qt widget, stylesheet, mpv widget or macOS
   internals); "review threads" and "show scheduled jobs" (Python threads
   and scheduler); the pympler memory-use entries; "publish some sub files
-  in five seconds", "subscription manager snapshot", "what is this
-  object?"; and the tests, do not touch: the ui, client api, server and
+  in five seconds" and "what is this object?"; profile mode (threads) (there
+  is no thread pool of background tasks to time); and the tests, do not
+  touch: the ui, client api, server and
   visual duplicates test suites (they drive the Python test harness),
   both self-sigterms and "induce a program crash".
+- Profile modes log each slow job's summary and how long it took, where the
+  reference follows the summary with Python's cProfile table of the calls
+  inside it (there is nothing like it for Rust). The job names are Rust's:
+  db jobs are named by the closure that ran (`hydrus_gui::foo::{{closure}}`),
+  not the reference's `read nums_pending`; "profile mode (ui)" times menu
+  commands only, not the reference's other Qt events (call-afters, pubsub
+  and timers); "profile mode (client api)" times a request from its arrival
+  to its response, not just the handler's thread. The slow-and-fast count
+  in the message is of the client's own jobs; the daemon times its own and
+  writes to the same log, but its count is not added.
+- Profile and query planner modes count jobs, and plan queries, per database
+  directory: one client has one database, but a process here can hold
+  several, and a job belongs to its own. The profile lock that makes a
+  second concurrent job `EXCLUSIVE` is per database too.
+- A debug switch the client set before the daemon first looked is ignored
+  (it may be left from a client that crashed); only what is set after is
+  followed. The query planner and db report hooks on SQLite connections are
+  registered only while one of those two modes is on.
+- With no downloader (so no subscription manager) the daemon answers
+  "subscription manager snapshot" with a line saying so.
+- "db report mode" reports a job after it has run, not before, and leaves
+  out the jobs that only read or write the popups (reporting those would
+  make a popup of every popup). The client has timers that read the
+  database every moment, so the mode is spammier here than in the
+  reference.
+- Query planner mode plans each statement SQLite runs (as the trace
+  callback reports it), once per distinct text, after the job that ran it;
+  the reference plans the queries its own `_Execute` is given. The plans are
+  SQLite's own, of a different schema.
+- The debug switches follow the client into the daemon through the store, a
+  second behind; the reference is one process. A report the daemon makes
+  arrives as a popup in the client.
+- "subscription manager snapshot" is answered by the daemon (it has the
+  subscriptions manager), a second after the click. The manager here keeps
+  no list of "next work times"; the snapshot works each subscription's out
+  when asked, so a subscription that has just finished is not held back for
+  two minutes in the snapshot as it is in the reference's.
 
 ## Thumbnail manage > file relationships
 

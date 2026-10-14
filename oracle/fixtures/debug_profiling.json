@@ -1,0 +1,162 @@
+{
+  "menu_labels": [
+    "what is this?",
+    "profile mode (client api)",
+    "profile mode (db)",
+    "profile mode (threads)",
+    "profile mode (ui)",
+    "query planner mode"
+  ],
+  "menu_checkable": {
+    "client_api": true,
+    "db": true,
+    "threads": true,
+    "ui": true,
+    "planner": true,
+    "db_report": true
+  },
+  "menu_tooltips": {
+    "client_api": "Run detailed 'profiles' on Client API jobs.",
+    "db": "Run detailed 'profiles' on db jobs.",
+    "threads": "Run detailed 'profiles' on background threaded tasks.",
+    "ui": "Run detailed 'profiles' on some Qt jobs.",
+    "planner": "Run detailed 'query plans'.",
+    "db_report": "Have the db report query information, where supported."
+  },
+  "sequence": [
+    {
+      "step": "db on",
+      "messages": [
+        "Profile mode \"db\" on!"
+      ],
+      "checked": {
+        "client_api": false,
+        "db": true,
+        "threads": false,
+        "ui": false,
+        "planner": false
+      }
+    },
+    {
+      "step": "ui on (ends db)",
+      "messages": [
+        "Profiling \"db\" done: 0 slow jobs, 0 fast jobs",
+        "Profile mode \"ui\" on!"
+      ],
+      "checked": {
+        "client_api": false,
+        "db": false,
+        "threads": false,
+        "ui": true,
+        "planner": false
+      }
+    },
+    {
+      "step": "ui off",
+      "messages": [
+        "Profiling \"ui\" done: 0 slow jobs, 3 fast jobs"
+      ],
+      "checked": {
+        "client_api": false,
+        "db": false,
+        "threads": false,
+        "ui": false,
+        "planner": false
+      }
+    },
+    {
+      "step": "client_api on",
+      "messages": [
+        "Profile mode \"client_api\" on!"
+      ],
+      "checked": {
+        "client_api": true,
+        "db": false,
+        "threads": false,
+        "ui": false,
+        "planner": false
+      }
+    },
+    {
+      "step": "threads on (ends client api)",
+      "messages": [
+        "Profiling \"client_api\" done: 0 slow jobs, 0 fast jobs",
+        "Profile mode \"threads\" on!"
+      ],
+      "checked": {
+        "client_api": false,
+        "db": false,
+        "threads": true,
+        "ui": false,
+        "planner": false
+      }
+    },
+    {
+      "step": "threads off",
+      "messages": [
+        "Profiling \"threads\" done: 0 slow jobs, 0 fast jobs"
+      ],
+      "checked": {
+        "client_api": false,
+        "db": false,
+        "threads": false,
+        "ui": false,
+        "planner": false
+      }
+    }
+  ],
+  "profile_log_names": [
+    "client profile (db) - 2026-10-13 23-22-25.log"
+  ],
+  "profile_log_name_pattern": "^client profile \\(db\\) - \\d{4}-\\d\\d-\\d\\d \\d\\d-\\d\\d-\\d\\d\\.log$",
+  "profile_log_has_stats_framing": true,
+  "profile_log_lines": [
+    "<time>: Profiling test job",
+    "<time>: EXCLUSIVE: Profiling inner job took 30.1 milliseconds",
+    "<time>: Profiling outer job"
+  ],
+  "profile_started_with": [
+    "Profile mode \"db\" on!"
+  ],
+  "profile_stopped_with": [
+    "Profiling \"db\" done: 3 slow jobs, 2 fast jobs"
+  ],
+  "jobs_seen_by_db_profile_summary": [
+    "<time>: Profiling test job",
+    "<time>: EXCLUSIVE: Profiling inner job took 30.1 milliseconds",
+    "<time>: Profiling outer job"
+  ],
+  "planner_on_messages": [
+    "Query Planner mode on!"
+  ],
+  "planner_checked_on": true,
+  "planner_log_names": [
+    "client query planner - 2026-10-13 23-22-25.log"
+  ],
+  "planner_log_name_pattern": "^client query planner - \\d{4}-\\d\\d-\\d\\d \\d\\d-\\d\\d-\\d\\d\\.log$",
+  "planner_block_count": 3,
+  "planner_blocks_are_unique": true,
+  "planner_first_blocks": [
+    "<time>: RELEASE\nRELEASE hydrus_savepoint;",
+    "<time>: SAVEPOINT\nSAVEPOINT hydrus_savepoint;",
+    "<time>: SELECT\nSELECT dump FROM json_dict WHERE name = ?;\n(3, 0, 0, 'SEARCH json_dict USING INDEX sqlite_autoindex_json_dict_1 (name=?)')"
+  ],
+  "planner_queries_planned": 3,
+  "planner_query_count": 3,
+  "planner_off_messages": [
+    "Query Planning done: 3 queries analyzed"
+  ],
+  "planner_checked_off": false,
+  "planner_off_clears_planned": true,
+  "db_report_messages": [
+    "Running db job: read nums_pending",
+    "Running db job: write null"
+  ],
+  "db_report_flag_after": false,
+  "min_job_ms": {
+    "db": 16,
+    "server": 10,
+    "menu": 16
+  },
+  "controller_name": "client"
+}

@@ -135,6 +135,19 @@ record of what was decided, and why the roadmap looks the way it does.
   are not ported. Account/moderator handling for relationship petition
   reasons goes out of scope with the PTR.
 
+## Decided (2026-10-14)
+
+- **Help > debug: `profile mode (ui)` is done for menu commands only.** The
+  reference's ui mode also times Qt call-after events, pubsub topics and ui
+  timers, which have no counterpart here; the narrower scope is written in
+  DIFFERENCES.md.
+- **Out of scope in Help > debug (#96):** `profile mode (threads)` and
+  `callto report mode` (hydrus-rs has no pool of background tasks like
+  `CallToThread` to time or report on), `pubsub report mode` (Python's
+  pubsub), `mpv report mode` (the Python mpv wrapper's debug output),
+  `graphics view thumbnail update report mode` and `canvas tile borders
+  mode` (Qt graphics-view and canvas tile painting).
+
 ## Roadmap that follows
 
 1. **Client API parity**, with Hydrus Companion's request patterns checked

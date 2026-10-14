@@ -10700,7 +10700,8 @@
     "Out of scope by the owner's decision of 2026-10-08 (#95): reports the Python CallTo thread pool. To bring it back, set priority to normal and remove this note.",
     "Truth pass (2026-10-08): not-applicable, small. Reports tasks given to the Python CallTo thread pool, which hydrus-rs does not have. Evidence: Reference ClientGUI.py:3591 reports tasks given to HydrusThreading's Python thread pool; hydrus-rs has no such pool.",
     "Reference debug action wires 'callto report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Out of scope (owner decision 2026-10-14, DECISIONS.md): hydrus-rs has no pool of background tasks like the reference's CallToThread to report on."
    ]
   },
   {
@@ -10716,7 +10717,8 @@
     "Out of scope by the owner's decision of 2026-10-08 (#95): borders on Qt canvas tiles. To bring it back, set priority to normal and remove this note.",
     "Truth pass (2026-10-08): not-applicable, small. Draws borders on the Qt media-canvas tiles; hydrus-rs has no tiled canvas. Evidence: Flag::CanvasTileBorders is defined but nothing reads it; the menu does not offer it.",
     "Reference debug action wires 'canvas tile borders mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Out of scope (owner decision 2026-10-14, DECISIONS.md): It outlines the Qt canvas's image tiles; the viewer here does not paint tiles."
    ]
   },
   {
@@ -10820,7 +10822,13 @@
     "Truth pass (2026-10-08): missing, small. Flag exists but nothing reads it. Missing: Report sites in the store's job loop, the menu entry, a test. Evidence: Flag::DbReport defined in hydrus-core/src/debug_flags.rs; no report sites; not in REPORT_MODES.",
     "Reference debug action wires 'db report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude (issue #96 session)",
+    "note": "Clicks Help > debug > report modes > db report mode in the real menu (checked state read back) and runs real store reads and writes; the 'Running db job: ' wording comes from oracle/fixtures/debug_profiling.json (record_debug_profiling.py, real client). The job names are Rust closure names, not the reference's 'read nums_pending' (DIFFERENCES.md), and the report follows the job; popup traffic is not reported. Test: crates/hydrus-gui/tests/gui/debug_profiling.rs db_report_mode_names_each_job_as_it_runs."
+   }
   },
   {
    "id": "audit-options-help-debug-action-do-self-sigterm",
@@ -11033,7 +11041,8 @@
    "notes": [
     "Not applicable (2026-10-08, help-debug session report): depends only on Qt widgets, stylesheets, icons or mpv widgets of the reference toolkit. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'graphics view thumbnail update report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Out of scope (owner decision 2026-10-14, DECISIONS.md): It reports Qt graphics-view thumbnail updates; Slint paints thumbnails differently."
    ]
   },
   {
@@ -11329,7 +11338,8 @@
    "notes": [
     "Not applicable (2026-10-08, help-debug session report): depends only on Qt widgets, stylesheets, icons or mpv widgets of the reference toolkit. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'mpv report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Out of scope (owner decision 2026-10-14, DECISIONS.md): It reports the Python mpv wrapper's debug output; hydrus-rs uses libmpv directly."
    ]
   },
   {
@@ -11400,7 +11410,13 @@
     "Truth pass (2026-10-08): missing, medium. Needs a timing hook on API request handling. Missing: API request timing hook, toggle, profile log, test. Evidence: No profile mode code or menu entry (main_menu.rs ~1400-1520 has only profiling > 'what is this?').",
     "Reference debug action wires 'profile mode (client api)' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude (issue #96 session)",
+    "note": "Real menu clicks in the recorded order (on, ends the one before, off; messages and checked states compared with the recording) and the real Client API router: each request made while the mode is on is counted (slow ones logged as 'Profiling client api: <path>'), none before. The Client API runs in the daemon, which follows the switch through the store (debug_switches). Tests: crates/hydrus-gui/tests/gui/debug_profiling.rs profile_modes_turn_each_other_off_and_say_how_many_jobs_there_were and client_api_profile_mode_counts_each_request."
+   }
   },
   {
    "id": "audit-options-help-debug-action-profile-mode-db",
@@ -11415,7 +11431,13 @@
     "Truth pass (2026-10-08): missing, medium. rusqlite profile callback or job timing, off the hot path. Missing: SQLite/job timing hook, toggle, profile log, test. Evidence: No profile flag; the store has no per-statement or per-job timing hook.",
     "Reference debug action wires 'profile mode (db)' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude (issue #96 session)",
+    "note": "Real menu click; popups ('Profile mode \"db\" on!', 'Profiling \"db\" done: N slow jobs, M fast jobs'), the log's file name pattern and the 'Profiling db job: ' summary lines are compared with the recording of the reference's own menu; the consumer is the store's real read and write path, with a 60 ms write logged and the slow count equal to the lines logged. The reference's cProfile table is Python's and is replaced by the time taken (DIFFERENCES.md). The mode is also followed by the daemon (crates/hydrus-store/tests/debug_switches.rs). Test: crates/hydrus-gui/tests/gui/debug_profiling.rs db_profile_mode_logs_the_slow_jobs_and_counts_the_fast_ones."
+   }
   },
   {
    "id": "audit-options-help-debug-action-profile-mode-threads",
@@ -11430,7 +11452,8 @@
     "Out of scope by the owner's decision of 2026-10-08 (#95): profiles the Python thread pool. To bring it back, set priority to normal and remove this note.",
     "Truth pass (2026-10-08): not-applicable, small. Profiles Python thread-pool jobs with cProfile. Evidence: The reference profiles its Python thread-pool CallTo jobs; no native equivalent.",
     "Reference debug action wires 'profile mode (threads)' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Out of scope (owner decision 2026-10-14, DECISIONS.md): hydrus-rs has no pool of background tasks like the reference's CallToThread to time."
    ]
   },
   {
@@ -11445,8 +11468,15 @@
    "notes": [
     "Truth pass (2026-10-08): missing, medium. Would time Slint callbacks/timers. Missing: Timing wrapper on UI callbacks, toggle, profile log, test. Evidence: No flag or menu entry; no timing around Slint callbacks.",
     "Reference debug action wires 'profile mode (ui)' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Done for menu commands only (owner decision 2026-10-14, DECISIONS.md): the reference's ui mode also times Qt call-after events, pubsub topics and ui timers; see DIFFERENCES.md."
+   ],
+   "recheck": {
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (issue #96 session)",
+    "note": "Real menu clicks with ui mode on: a menu command is timed, counted slow or fast and logged as 'Profiling menu: <command>'; the on/off messages and checks are compared with the recording of the reference's menu (oracle/fixtures/debug_profiling.json). Scope is menu commands only, by owner decision. Counts are kept per database, so other tests' menu clicks do not count. Test: crates/hydrus-gui/tests/gui/debug_profiling.rs profile_modes_turn_each_other_off_and_say_how_many_jobs_there_were."
+   }
   },
   {
    "id": "audit-options-help-debug-action-publish-some-sub-files-in-five-seconds",
@@ -11475,7 +11505,8 @@
    "notes": [
     "Not applicable (2026-10-08, help-debug session report): depends only on Python runtime internals (threads, scheduler, pubsub, pympler memory accounting). See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'pubsub report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Out of scope (owner decision 2026-10-14, DECISIONS.md): The reference's pubsub is Python's; nothing here to report on."
    ]
   },
   {
@@ -11491,7 +11522,13 @@
     "Truth pass (2026-10-08): missing, medium. Same infrastructure as profile mode (db). Missing: EXPLAIN QUERY PLAN hook in the store, toggle, test. Evidence: No code or menu entry.",
     "Reference debug action wires 'query planner mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude (issue #96 session)",
+    "note": "Real menu click on/off (messages, check state), real store queries run twice: the log is named and framed as the recording shows ('<time>: SELECT', the query, one (id, parent, notused, 'detail') tuple per line), each query written once, and the off message counts what was analysed. The statements planned are SQLite's own, per trace callback, not the reference's _Execute calls (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/debug_profiling.rs query_planner_mode_writes_each_new_query_with_its_plan."
+   }
   },
   {
    "id": "audit-options-help-debug-action-refresh-pages-menu-in-five-seconds",
@@ -11896,7 +11933,13 @@
     "Truth pass (2026-10-08): missing, small. Check the reference's snapshot format first. Missing: Menu entry dumping subscription state to a popup, test. Evidence: No menu entry or code.",
     "Reference debug action wires 'subscription manager snapshot' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude (issue #96 session)",
+    "note": "The real menu entry asks the daemon (store request), the daemon's tick answers through a real SubscriptionRunner on the store, and the report arrives through the report sink; the recording's subscriptions give the same message at the reference's clock (exact) and the same words with a live clock; the empty case is exact too. A running subscription is checked in hydrus-download against a held real sync: its 'N running: name' part has the recorded form. With no manager the daemon says so. Tests: crates/hydrus-gui/tests/gui/debug_profiling.rs subscription_manager_snapshot_is_asked_for_in_the_menu_and_shown_by_the_daemon; crates/hydrus-download/tests/subscriptions.rs the_snapshot_names_the_subscriptions_that_are_running_as_the_reference_does; oracle/fixtures/subscription_manager_snapshot.json."
+   }
   },
   {
    "id": "audit-options-help-debug-action-subscription-report-mode",

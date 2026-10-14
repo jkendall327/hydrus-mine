@@ -57,7 +57,7 @@ tower = "0.5"
 tower-http = { version = "0.7", features = ["cors", "trace", "compression-full", "set-header"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
-rusqlite = { version = "0.40", features = ["bundled", "array", "functions", "blob", "backup", "limits"] }
+rusqlite = { version = "0.40", features = ["bundled", "array", "functions", "blob", "backup", "limits", "trace"] }
 sha2 = "0.11"
 sha1 = "0.11"
 md-5 = "0.11"
