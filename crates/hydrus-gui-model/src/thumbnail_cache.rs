@@ -60,20 +60,32 @@ impl<T> Cache<T> {
     pub fn policy(&self) -> ThumbnailCacheSettings {
         self.policy
     }
+    /// `ConvertValueRangeToBytes` of the cache's size against its limit.
+    fn current_size(&self) -> String {
+        format!(
+            "{}/{}",
+            hydrus_core::numbers::human_bytes(self.bytes),
+            hydrus_core::numbers::human_bytes(self.policy.bytes)
+        )
+    }
+    /// Cache report mode's line for an item taken out (`DataCache._Delete`
+    /// says "specific item", `_DeleteOldestItem` "oldest item").
+    fn report_removed(&self, which: &str, id: HashId, bytes: u64) {
+        hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::CacheReport, || {
+            format!(
+                "Cache \"{}\" removing {which} item \"{id}\", size \"{}\". Current size {}.",
+                self.name,
+                hydrus_core::numbers::human_bytes(bytes),
+                self.current_size()
+            )
+        });
+    }
     fn oldest(&mut self) {
         if let Some(id) = self.order.pop_front()
             && let Some(entry) = self.entries.remove(&id)
         {
             self.bytes -= entry.bytes;
-            hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::CacheReport, || {
-                let size = hydrus_core::numbers::human_bytes(entry.bytes);
-                let current = hydrus_core::numbers::human_bytes(self.bytes);
-                let limit = hydrus_core::numbers::human_bytes(self.policy.bytes);
-                format!(
-                    "Cache \"{}\" removing oldest item \"{id:?}\", size \"{size}\". Current size {current}/{limit}.",
-                    self.name
-                )
-            });
+            self.report_removed("oldest", id, entry.bytes);
         }
     }
     /// A duplicate admission leaves both its value and its access time untouched.
@@ -94,6 +106,14 @@ impl<T> Cache<T> {
         );
         self.order.push_back(id);
         self.bytes += bytes;
+        hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::CacheReport, || {
+            format!(
+                "Cache \"{}\" adding \"{id}\" ({}). Current size {}.",
+                self.name,
+                hydrus_core::numbers::human_bytes(bytes),
+                self.current_size()
+            )
+        });
     }
     /// Access refreshes LRU order; expiry is performed by maintenance, as in Qt.
     pub fn get(&mut self, id: HashId, now: Duration) -> Option<T>
@@ -134,6 +154,7 @@ impl<T> Cache<T> {
         {
             self.bytes -= entry.bytes;
             self.order.retain(|key| *key != id);
+            self.report_removed("specific", id, entry.bytes);
         }
     }
     /// Prefetch frees only finished entries, atomically, and requires strictly

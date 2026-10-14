@@ -242,6 +242,7 @@ impl FileImporter {
             format!("File import job hash: {hash}")
         });
         let (pre, _) = self.known_status(&hash, "file recognised: ")?;
+        say(|| format!("pre-import status: {}", pre.status.text(&pre.note)));
         let should_import = match pre.status {
             ImportStatus::Unknown => true,
             ImportStatus::Deleted => !options.exclude_deleted,
@@ -270,10 +271,20 @@ impl FileImporter {
         options: &FileImportOptions,
     ) -> Result<ImportResult> {
         let snap = self.store.snapshot();
-        if !options.allow_decompression_bombs
-            && let Ok(info) = self.tools.inspect(temp)
+        let bomb_info = if options.allow_decompression_bombs {
+            None
+        } else {
+            self.tools.inspect(temp).ok()
+        };
+        if let Some(info) = &bomb_info
+            && matches!(info.mime, Mime::ImageJpeg | Mime::ImagePng)
+        {
+            say(|| "testing for decompression bomb".to_owned());
+        }
+        if let Some(info) = bomb_info
             && is_decompression_bomb(&info)
         {
+            say(|| "it was a decompression bomb".to_owned());
             // (the reference's job raises this, a veto, from GenerateInfo)
             let note = "Image seems to be a Decompression Bomb!".to_owned();
             return Ok(ImportResult {
@@ -293,6 +304,7 @@ impl FileImporter {
         let mime = analysis.info.mime;
         let formatting: hydrus_store::settings::GuiFormatting =
             self.store.read(hydrus_store::settings::get)?;
+        say(|| "testing if good to import for file import options".to_owned());
         if let Err(note) = options.check_with_figures(&analysis.info, formatting.figures) {
             return Ok(ImportResult {
                 status: ImportStatus::Vetoed,
@@ -323,9 +335,22 @@ impl FileImporter {
         let _claim = self.store.media_claims().claim(hash);
         let file_path = snap
             .storage
-            .file_path(&hash, mime)
+            .expected_file_path(&hash, mime)
             .ok_or_else(|| StoreError::Corrupt(format!("no storage location for {hash}")))?;
         let size = std::fs::metadata(temp)?.len();
+        hydrus_core::debug_flags::report_any(
+            &[
+                hydrus_core::debug_flags::Flag::FileReport,
+                hydrus_core::debug_flags::Flag::FileImportReport,
+            ],
+            || {
+                format!(
+                    "Adding file to client file structure: from {} to {}",
+                    temp.display(),
+                    file_path.display()
+                )
+            },
+        );
         self.check_storage_space(&file_path, &hash, size, free_space(&file_path))?;
         if let Err(e) = write_into_storage(temp, &file_path) {
             return Err(self.critical_drive_error(format!(
@@ -335,8 +360,15 @@ impl FileImporter {
             )));
         }
         if let Some(thumbnail) = analysis.thumbnail.as_ref().filter(|t| !t.is_default)
-            && let Some(thumb_path) = snap.storage.thumbnail_path(&hash)
+            && let Some(thumb_path) = snap.storage.expected_thumbnail_path(&hash)
         {
+            hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::FileReport, || {
+                format!(
+                    "Adding thumbnail: ({}, {})",
+                    thumbnail.bytes.len(),
+                    thumb_path.display()
+                )
+            });
             if let Some(parent) = thumb_path.parent() {
                 std::fs::create_dir_all(parent)?;
             }
@@ -346,6 +378,7 @@ impl FileImporter {
         let archive = options.automatically_archive;
         let record = FileRecord::new(hash, &analysis, modified);
         let status = self.store.write_content(move |w| {
+            say(|| "starting db job".to_owned());
             let id = master::intern_hash(w.conn(), &hash)?;
             // another import of the same file may have won the race
             let already = matches!(
@@ -353,19 +386,41 @@ impl FileImporter {
                 FileState::Imported { .. }
             );
             if already {
+                say(|| {
+                    format!(
+                        "done at db level, final status: {}",
+                        ImportStatus::SuccessfulButRedundant.word()
+                    )
+                });
                 return Ok(ImportStatus::SuccessfulButRedundant);
             }
+            say(|| "adding new file".to_owned());
             record.write(w, id)?;
+            say(|| "adding file to local file domain".to_owned());
             let now = w.now_ms();
             for domain in destinations {
                 w.add_files(domain, &[(id, Some(now))])?;
             }
+            say(|| {
+                if archive {
+                    "archiving new file"
+                } else {
+                    "inboxing new file"
+                }
+                .to_owned()
+            });
             w.conn()
                 .prepare_cached("INSERT OR IGNORE INTO file_inbox (hash_id) VALUES (?1)")?
                 .execute([id])?;
             if archive {
                 w.archive(&[id])?;
             }
+            say(|| {
+                format!(
+                    "done at db level, final status: {}",
+                    ImportStatus::SuccessfulAndNew.word()
+                )
+            });
             Ok(ImportStatus::SuccessfulAndNew)
         })?;
         Ok(ImportResult {
@@ -407,6 +462,13 @@ impl FileImporter {
         })?;
         Ok(())
     }
+}
+
+/// File import report mode: `HydrusData.ShowText( 'File import job ...' )`.
+fn say(message: impl FnOnce() -> String) {
+    hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::FileImportReport, || {
+        format!("File import job {}", message())
+    });
 }
 
 fn unknown(hash: Sha256) -> ImportResult {
@@ -721,12 +783,16 @@ impl FileRecord {
         w: &mut hydrus_store::content::ContentWriter<'_>,
         id: HashId,
     ) -> hydrus_store::Result<()> {
+        say(|| "adding file info row".to_owned());
         w.add_file_info(id, &self.info, true)?;
         let conn = w.conn();
         conn.prepare_cached(
             "INSERT OR REPLACE INTO hash_digests (hash_id, md5, sha1, sha512) VALUES (?1, ?2, ?3, ?4)",
         )?
         .execute(params![id, self.md5, self.sha1, self.sha512])?;
+        if hydrus_media::mimes::has_perceptual_hash(self.info.mime) {
+            say(|| "associating perceptual_hashes".to_owned());
+        }
         // (queued for the similar-files search if they are useful and new)
         hydrus_store::similar::set_perceptual_hashes(conn, id, &self.perceptual_hashes)?;
         Ok(())

@@ -548,16 +548,70 @@ fn daemon_report_mode_says_when_a_maintenance_daemon_does_a_job() {
         let stats = d.bound.maintenance.statistics();
         stats.trash_passes == 1 && stats.deferred_passes == 1
     });
+    // the reference's line for a daemon firing (`DAEMON._DoPreCall`), which it
+    // names for its pool thread: `oracle/record_debug_report_modes.py`
+    let recording = hydrus_testkit::fixture_json("debug_report_modes.json");
+    let recorded = recording["daemon"]["on"][0]["text"].as_str().unwrap();
+    assert_eq!(recording["daemon"]["off"], serde_json::json!([]));
+    let line = |name: &str| recorded.replace("CallToThread", name);
     let mut said = seen.lock().unwrap().clone();
     said.sort();
     assert_eq!(
         said,
         [
-            "deferred_physical_deletes doing a job.",
-            "maintain_trash doing a job."
+            line("deferred_physical_deletes"),
+            line("maintain_trash")
         ]
     );
+    // the reference reports every firing, before the job looks at idle: a
+    // pass the gates turn away (normal-time maintenance off, the user at the
+    // keyboard) is reported too, and does no work
+    let done = d.bound.maintenance.statistics();
+    d.store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &hydrus_store::maintenance_gates::Preferences {
+                    trash_normal: false,
+                    deferred_normal: false,
+                },
+            )?;
+            settings::set(
+                ctx.conn(),
+                &GuiIdleSettings {
+                    enabled: true,
+                    user_seconds: Some(3600),
+                    mouse_seconds: None,
+                    api_seconds: None,
+                    busy_cpu_percent: 50,
+                    busy_cpu_count: None,
+                },
+            )
+        })
+        .unwrap();
+    let later = d
+        .bound
+        .maintenance
+        .deadline(Worker::Trash)
+        .max(d.bound.maintenance.deadline(Worker::Deferred));
+    d.bound.session_autosave.user_at(later);
+    seen.lock().unwrap().clear();
+    d.bound.maintenance.poll_at(later).unwrap();
+    let mut gated = seen.lock().unwrap().clone();
+    gated.sort();
+    assert_eq!(gated, said);
+    let after = d.bound.maintenance.statistics();
+    assert_eq!(
+        (after.trash_passes, after.deferred_passes),
+        (done.trash_passes, done.deferred_passes)
+    );
     d.click(&["report modes", "daemon report mode"]);
+    seen.lock().unwrap().clear();
+    d.bound
+        .maintenance
+        .poll_at(later + 2 * 24 * 3600 * 1000)
+        .unwrap();
+    assert!(seen.lock().unwrap().is_empty(), "off: nothing");
     debug_flags::set_sink(None);
 }
 

@@ -585,6 +585,44 @@ fn http_client(options: &NetOptions) -> Result<reqwest::Client, NetError> {
     builder.build().map_err(failed)
 }
 
+/// A header name as the reference words it in network reports
+/// (`accept-encoding` is `Accept-Encoding`).
+fn pretty_header_name(name: &str) -> String {
+    name.split('-')
+        .map(|part| {
+            let mut chars = part.chars();
+            chars.next().map_or_else(String::new, |first| {
+                first.to_uppercase().chain(chars.flat_map(char::to_lowercase)).collect()
+            })
+        })
+        .collect::<Vec<_>>()
+        .join("-")
+}
+
+/// `key: value` lines, sorted by key, as network report mode lists headers.
+fn header_lines<'a>(headers: impl Iterator<Item = (&'a HeaderName, &'a HeaderValue)>) -> String {
+    let mut rows: Vec<(String, String)> = headers
+        .map(|(name, value)| {
+            (
+                pretty_header_name(name.as_str()),
+                String::from_utf8_lossy(value.as_bytes()).into_owned(),
+            )
+        })
+        .collect();
+    rows.sort();
+    rows.iter()
+        .map(|(key, value)| format!("{key}: {value}"))
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
+fn method_word(method: Method) -> &'static str {
+    match method {
+        Method::Get => "GET",
+        Method::Post => "POST",
+    }
+}
+
 fn set_header(headers: &mut Vec<(String, String)>, name: &str, value: String) {
     headers.retain(|(n, _)| !n.eq_ignore_ascii_case(name));
     headers.push((name.to_owned(), value));
@@ -1254,6 +1292,13 @@ impl NetEngine {
     /// Make a request, retrying as the reference does, and report progress
     /// on `job`.
     pub async fn fetch(&self, request: &Request, job: &Job) -> Result<Response, NetError> {
+        hydrus_core::debug_flags::report_network(|| {
+            format!(
+                "Network Job Added: {}  {}",
+                method_word(request.method),
+                request.url
+            )
+        });
         let id;
         {
             let _control = job.control.lock();
@@ -1301,6 +1346,13 @@ impl NetEngine {
             self.jobs.lock().insert(id, (job.clone(), contexts));
         }
         let _registered = RegisteredJob { engine: self, id };
+        hydrus_core::debug_flags::report_network(|| {
+            format!(
+                "Network Job Starting: {} {}",
+                method_word(request.method),
+                request.url
+            )
+        });
         let result = self.fetch_inner(request, job).await;
         if let Ok(response) = &result
             && response.url != request.url
@@ -1328,9 +1380,9 @@ impl NetEngine {
                 Some(body) if !body.is_empty() => body,
                 _ => error.to_string(),
             };
-            hydrus_core::debug_flags::report_network(|| {
-                format!("Network error should follow:\n{error}\n{text}")
-            });
+            hydrus_core::debug_flags::report_network(|| "Network error should follow:".to_owned());
+            hydrus_core::debug_flags::report_network(|| error.to_string());
+            hydrus_core::debug_flags::report_network(|| text.clone());
             let text = if text.chars().count() > 1024 {
                 tracing::debug!(error_text = %text.chars().take(512 * 1024).collect::<String>(), "server error detail");
                 format!(
@@ -1369,6 +1421,13 @@ impl NetEngine {
             Err(NetError::Cancelled) => "Cancelled!".into(),
             Err(e) => format!("Error: {e}"),
         };
+        hydrus_core::debug_flags::report_network(|| {
+            format!(
+                "Network Job Done: {} {}",
+                method_word(request.method),
+                request.url
+            )
+        });
         result
     }
 
@@ -1876,6 +1935,30 @@ impl NetEngine {
         for (name, value) in &a.request.additional_headers {
             set_header(&mut headers, name, value.clone());
         }
+        hydrus_core::debug_flags::report_network(|| {
+            let used = classes.referral_url(&a.request.url, a.request.referral_url.as_deref());
+            format!(
+                "Network Jobs Referral URLs for {}:\nGiven: {}\nUsed: {}",
+                a.request.url,
+                a.request.referral_url.as_deref().unwrap_or("None"),
+                used.as_deref().unwrap_or("None")
+            )
+        });
+        hydrus_core::debug_flags::report_network(|| {
+            let mut names: Vec<String> = headers
+                .iter()
+                .map(|(name, _)| pretty_header_name(name))
+                .collect();
+            names.sort();
+            if names.is_empty() {
+                "No custom headers set by the network domain manager.".to_owned()
+            } else {
+                format!(
+                    "Request Headers set by the network domain manager: {}",
+                    names.join(", ")
+                )
+            }
+        });
         let mut map = HeaderMap::new();
         for (name, value) in headers {
             let header_name = HeaderName::from_bytes(name.as_bytes())
@@ -1965,6 +2048,7 @@ impl NetEngine {
             {
                 hop_headers.insert(reqwest::header::COOKIE, value);
             }
+            let sent_headers = hop_headers.clone();
             let mut builder = self
                 .client
                 .read()
@@ -1997,6 +2081,13 @@ impl NetEngine {
                 .map(|l| String::from_utf8_lossy(l.as_bytes()).into_owned());
             let Some(location) = location.filter(|_| matches!(status, 301 | 302 | 303 | 307 | 308))
             else {
+                hydrus_core::debug_flags::report_network(|| {
+                    format!(
+                        "Request Headers:\n{}\n\nResponse Headers:\n{}",
+                        header_lines(sent_headers.iter()),
+                        header_lines(response.headers().iter())
+                    )
+                });
                 return Ok((response, url));
             };
             let mut next = if location.starts_with("//") {

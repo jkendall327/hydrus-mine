@@ -175,6 +175,7 @@ fn run_process(process: &Process, inputs: &Inputs) -> Result<(), String> {
             "Problem running external local process! Final call list was \"{cmd:?}\", error was: {error}"
         )
     };
+    hydrus_core::debug_flags::report_subprocess_call(&cmd, process.hide_terminal);
     let mut command = std::process::Command::new(program);
     command.args(arguments);
     #[cfg(windows)]
@@ -214,7 +215,7 @@ fn run_process(process: &Process, inputs: &Inputs) -> Result<(), String> {
     loop {
         match child.try_wait() {
             Ok(Some(status)) => {
-                if status.success() {
+                if status.success() && !hydrus_core::debug_flags::Flag::SubprocessReport.is_on() {
                     return Ok(());
                 }
                 let text = |reader: std::thread::JoinHandle<String>| {
@@ -225,13 +226,16 @@ fn run_process(process: &Process, inputs: &Inputs) -> Result<(), String> {
                         .take(256)
                         .collect::<String>()
                 };
+                let (stdout, stderr) = (text(stdout), text(stderr));
+                hydrus_core::debug_flags::report_subprocess_output(Some(&stdout), Some(&stderr));
+                if status.success() {
+                    return Ok(());
+                }
                 return Err(format!(
-                    "A call to another executable gave a non-zero return code ({})! The call was: {cmd:?}\n\n========== stdout ==========\n{:?}\n========== stderr ==========\n{:?}\n============================\n",
+                    "A call to another executable gave a non-zero return code ({})! The call was: {cmd:?}\n\n========== stdout ==========\n{stdout:?}\n========== stderr ==========\n{stderr:?}\n============================\n",
                     status
                         .code()
                         .map_or_else(|| "none".to_owned(), |c| c.to_string()),
-                    text(stdout),
-                    text(stderr),
                 ));
             }
             Ok(None) if Instant::now() >= deadline => {

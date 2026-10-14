@@ -158,6 +158,22 @@ pub fn set_sink(sink: Option<Sink>) {
     *SINK.lock().unwrap_or_else(PoisonError::into_inner) = sink;
 }
 
+static CONSOLE: Mutex<Option<Sink>> = Mutex::new(None);
+
+/// Where console-only text goes (`HydrusData.Print`); `None` is stderr.
+/// Tests install one to read the console half of silent modes.
+pub fn set_console(console: Option<Sink>) {
+    *CONSOLE.lock().unwrap_or_else(PoisonError::into_inner) = console;
+}
+
+/// `HydrusData.Print`: `text` to the console only.
+pub fn print(text: &str) {
+    match CONSOLE.lock().unwrap_or_else(PoisonError::into_inner).as_ref() {
+        Some(console) => console(text),
+        None => eprintln!("{text}"),
+    }
+}
+
 /// Install `sink` unless one is already installed.
 pub fn set_sink_if_none(sink: Sink) {
     let mut slot = SINK.lock().unwrap_or_else(PoisonError::into_inner);
@@ -206,6 +222,14 @@ pub fn report(flag: Flag, message: impl FnOnce() -> String) {
     }
 }
 
+/// Show `message()` if any of `flags` is on (`file_report_mode or
+/// file_import_report_mode`).
+pub fn report_any(flags: &[Flag], message: impl FnOnce() -> String) {
+    if let Some(flag) = flags.iter().find(|flag| flag.is_on()) {
+        report(*flag, message);
+    }
+}
+
 /// Network report mode (`ClientNetworkingFunctions.NetworkReportMode`): the
 /// message goes to the sink, or only to the console in silent mode.
 pub fn report_network(message: impl FnOnce() -> String) {
@@ -214,8 +238,63 @@ pub fn report_network(message: impl FnOnce() -> String) {
     }
     let text = message();
     if Flag::NetworkReportSilent.is_on() {
-        eprintln!("{text}");
+        print(&text);
     } else {
         report(Flag::NetworkReport, || text);
+    }
+}
+
+/// `HydrusEnvironment.DumpEnv`'s text: every variable by name, path-like ones
+/// (names with PATH or DIRS holding `separator`) one entry per line.
+pub fn env_text(vars: impl IntoIterator<Item = (String, String)>, separator: char) -> String {
+    let mut vars: Vec<(String, String)> = vars.into_iter().collect();
+    vars.sort();
+    let mut rows = Vec::new();
+    for (key, value) in vars {
+        if (key.contains("PATH") || key.contains("DIRS")) && value.contains(separator) {
+            rows.push(format!("{key}:"));
+            rows.extend(value.split(separator).map(|v| format!("    {v}")));
+        } else {
+            rows.push(format!("{key}: {value}"));
+        }
+    }
+    format!("Full environment:\n{}", rows.join("\n"))
+}
+
+/// This process's environment as `DumpEnv` words it.
+pub fn current_env_text() -> String {
+    let separator = if cfg!(windows) { ';' } else { ':' };
+    env_text(std::env::vars(), separator)
+}
+
+/// Subprocess report mode, before a program is run (`GetSubprocessEnv` dumps
+/// the environment, `GetSubprocessKWArgs` says how the call is made).
+/// hydrus-rs makes no Python keyword arguments: it says the program, its
+/// arguments and whether the terminal is hidden.
+pub fn report_subprocess_call(program_and_arguments: &[String], hide_terminal: bool) {
+    if !Flag::SubprocessReport.is_on() {
+        return;
+    }
+    show_text(&current_env_text());
+    show_text(&format!(
+        "KWargs are: args={program_and_arguments:?}, hide_terminal={hide_terminal}"
+    ));
+}
+
+/// Subprocess report mode, once a program has been run and waited for
+/// (`RunSubprocess`): what came back on each pipe, a pipe not read being
+/// `None`.
+pub fn report_subprocess_output(stdout: Option<&str>, stderr: Option<&str>) {
+    if !Flag::SubprocessReport.is_on() {
+        return;
+    }
+    if stdout.is_none() && stderr.is_none() {
+        show_text("No stdout or stderr came back.");
+    }
+    if let Some(stdout) = stdout {
+        show_text(&format!("stdout: {stdout:?}"));
+    }
+    if let Some(stderr) = stderr {
+        show_text(&format!("stderr: {stderr:?}"));
     }
 }

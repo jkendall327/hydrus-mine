@@ -151,12 +151,23 @@ impl FileStorage {
         Some(prefix_dir(base, &prefix))
     }
 
-    /// The path of a media file.
+    /// The path of a media file, asked for (`GetFilePath`); file report mode
+    /// says so.
     pub fn file_path(&self, hash: &Sha256, mime: Mime) -> Option<PathBuf> {
-        self.wait();
         hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::FileReport, || {
-            format!("File path request: ('{}', {mime:?})", hash.to_hex())
+            format!(
+                "File path request: ({}, {})",
+                hash.to_hex(),
+                mime.human_name()
+            )
         });
+        self.expected_file_path(hash, mime)
+    }
+
+    /// Where a media file goes or is (`_GenerateExpectedFilePath`), without a
+    /// request to report: for the code that stores the file.
+    pub fn expected_file_path(&self, hash: &Sha256, mime: Mime) -> Option<PathBuf> {
+        self.wait();
         Some(self.dir_for('f', hash)?.join(format!(
             "{}{}",
             hash.to_hex(),
@@ -164,12 +175,19 @@ impl FileStorage {
         )))
     }
 
-    /// The path of a thumbnail.
+    /// The path of a thumbnail, asked for (`GetThumbnailPath`); file report
+    /// mode says so.
     pub fn thumbnail_path(&self, hash: &Sha256) -> Option<PathBuf> {
-        self.wait();
         hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::FileReport, || {
-            format!("Thumbnail path request: ('{}')", hash.to_hex())
+            format!("Thumbnail path request: ({})", hash.to_hex())
         });
+        self.expected_thumbnail_path(hash)
+    }
+
+    /// Where a thumbnail goes or is, without a request to report: for the
+    /// code that stores it.
+    pub fn expected_thumbnail_path(&self, hash: &Sha256) -> Option<PathBuf> {
+        self.wait();
         Some(
             self.dir_for('t', hash)?
                 .join(format!("{}.thumbnail", hash.to_hex())),

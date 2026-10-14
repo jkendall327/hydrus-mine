@@ -33,37 +33,104 @@ fn a_switch_flips_and_only_reports_while_on() {
     debug_flags::set_sink(None);
 }
 
-// leaf: audit-options-help-debug-action-subprocess-report-mode
 #[test]
-fn subprocess_report_mode_reports_the_call_before_it_is_made() {
+fn a_program_run_says_what_the_reference_says_while_subprocess_report_mode_is_on() {
     let _one = ONE_AT_A_TIME
         .lock()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
     let seen = capture();
-    let process = Process {
-        executable: "true".into(),
-        arguments: vec!["--probe".into()],
-        ..Process::default()
-    };
-    let call = ActualCall::Process(process);
-    test_call(&call, &Inputs::new()).unwrap();
-    assert!(
-        seen.lock().unwrap().is_empty(),
-        "silent while the mode is off"
-    );
-    Flag::SubprocessReport.set(true);
-    test_call(&call, &Inputs::new()).unwrap();
-    Flag::SubprocessReport.set(false);
-    let seen = seen.lock().unwrap();
-    assert_eq!(seen.len(), 1);
-    assert!(seen[0].starts_with("KWargs are: "), "{}", seen[0]);
-    assert!(seen[0].contains("\"true\", \"--probe\""), "{}", seen[0]);
+    let recording = hydrus_testkit::fixture_json("debug_report_modes.json");
+    let recorded_env: Vec<(String, String)> = recording["subprocess"]["environment"]
+        .as_object()
+        .unwrap()
+        .iter()
+        .map(|(k, v)| (k.clone(), v.as_str().unwrap().to_owned()))
+        .collect();
+    for run in recording["subprocess"]["commands"].as_array().unwrap() {
+        let cmd: Vec<String> = run["cmd"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|v| v.as_str().unwrap().to_owned())
+            .collect();
+        let call = ActualCall::Process(Process {
+            executable: cmd[0].clone(),
+            arguments: cmd[1..].to_vec(),
+            ..Process::default()
+        });
+        let on = run["on"] == true;
+        Flag::SubprocessReport.set(on);
+        seen.lock().unwrap().clear();
+        test_call(&call, &Inputs::new()).unwrap();
+        Flag::SubprocessReport.set(false);
+        let said = std::mem::take(&mut *seen.lock().unwrap());
+        let recorded: Vec<&str> = run["messages"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|m| m["text"].as_str().unwrap())
+            .collect();
+        assert_eq!(said.len(), recorded.len(), "{cmd:?}: {said:?}");
+        if !on {
+            continue;
+        }
+        // the environment, as the reference words it (its own text, for the
+        // environment it ran in, is what the formatter must reproduce), then
+        // this process's
+        assert_eq!(
+            hydrus_core::debug_flags::env_text(recorded_env.clone(), ':'),
+            recorded[0]
+        );
+        assert_eq!(said[0], hydrus_core::debug_flags::current_env_text());
+        // how the call is made: the reference's words, its Python
+        // keyword-argument dict being this program's own arguments
+        assert!(recorded[1].starts_with("KWargs are: "));
+        assert!(said[1].starts_with("KWargs are: "), "{}", said[1]);
+        for part in &cmd {
+            assert!(said[1].contains(&format!("{part:?}")), "{}", said[1]);
+        }
+        // what came back: the same words, a Python repr's quotes being Rust's
+        for i in 2..recorded.len() {
+            assert_eq!(said[i], recorded[i].replace('\'', "\""), "{cmd:?}");
+        }
+    }
     debug_flags::set_sink(None);
 }
 
-// leaf: audit-options-help-debug-action-cache-report-mode
+/// What the reference's `DataCache` said for the same run
+/// (`oracle/record_debug_report_modes.py`): its keys were the strings `a` to
+/// `d`; here they are the hash ids 1 to 4.
+fn recorded_cache_steps(which: &str) -> Vec<(String, u64, Vec<String>)> {
+    let recording = hydrus_testkit::fixture_json("debug_report_modes.json");
+    recording["cache"][which]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|step| {
+            let name = step["step"].as_str().unwrap().to_owned();
+            let messages = step["messages"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|m| {
+                    let mut text = m["text"].as_str().unwrap().to_owned();
+                    for (key, id) in [("a", 1), ("b", 2), ("c", 3), ("d", 4)] {
+                        text = text.replace(&format!("\"{key}\""), &format!("\"{id}\""));
+                    }
+                    text.replace("oracle cache", "thumbnail")
+                })
+                .collect();
+            let size = name
+                .split(['(', ' '])
+                .find_map(|part| part.parse::<u64>().ok())
+                .unwrap_or(0);
+            (name, size, messages)
+        })
+        .collect()
+}
+
 #[test]
-fn cache_report_mode_reports_each_eviction_with_the_sizes() {
+fn the_cache_says_what_the_reference_cache_says_while_its_mode_is_on() {
     use hydrus_core::HashId;
     use hydrus_gui_model::thumbnail_cache::Cache;
     use hydrus_store::settings::ThumbnailCacheSettings;
@@ -73,27 +140,26 @@ fn cache_report_mode_reports_each_eviction_with_the_sizes() {
         .lock()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
     let seen = capture();
-    let fill = || {
+    let recording = hydrus_testkit::fixture_json("debug_report_modes.json");
+    let limit = recording["cache"]["size_limit"].as_u64().unwrap();
+    for (mode_on, which) in [(false, "off"), (true, "on")] {
+        Flag::CacheReport.set(mode_on);
         let mut cache = Cache::new(ThumbnailCacheSettings {
-            bytes: 1_000,
-            timeout: 600,
+            bytes: limit,
+            timeout: 1200,
         });
-        cache.insert(HashId(1), (), 2_048, Duration::ZERO);
-        cache.insert(HashId(2), (), 10, Duration::ZERO);
-    };
-    fill();
-    assert!(
-        seen.lock().unwrap().is_empty(),
-        "silent while the mode is off"
-    );
-    Flag::CacheReport.set(true);
-    fill();
+        for (name, size, expected) in recorded_cache_steps(which) {
+            seen.lock().unwrap().clear();
+            if let Some(key) = name.strip_prefix("add ") {
+                let id = HashId(u32::from(key.as_bytes()[0] - b'a') + 1);
+                cache.insert(id, (), size, Duration::ZERO);
+            } else {
+                let id = HashId(u32::from(name.as_bytes()["delete ".len()] - b'a') + 1);
+                cache.remove_if(id, |()| true);
+            }
+            assert_eq!(*seen.lock().unwrap(), expected, "{which}: {name}");
+        }
+    }
     Flag::CacheReport.set(false);
-    assert_eq!(
-        *seen.lock().unwrap(),
-        [
-            "Cache \"thumbnail\" removing oldest item \"HashId(1)\", size \"2 KB\". Current size 0B/1,000B."
-        ]
-    );
     debug_flags::set_sink(None);
 }
