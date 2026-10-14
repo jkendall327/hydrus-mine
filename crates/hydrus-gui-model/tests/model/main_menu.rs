@@ -73,7 +73,7 @@ fn kept(entries: &[Value]) -> Vec<Value> {
             let keep: [(&str, &[&str]); 7] = [
                 (
                     "debug modes",
-                    &["force idle mode", "---", "use faulthandler to log crashes"],
+                    &["force idle mode", "simulate a wake from sleep", "---", "use faulthandler to log crashes"],
                 ),
                 (
                     "profiling",

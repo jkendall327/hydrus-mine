@@ -897,6 +897,14 @@ impl NetEngine {
         self.sleep_check_at(now_ms());
     }
 
+    /// "simulate a wake from sleep" (`SimulateWakeFromSleepEvent`): the last
+    /// check an hour ago, then the check.
+    pub fn simulate_wake(&self) {
+        let now = now_ms();
+        self.wake.lock().0 = Some(now - 3_600_000);
+        self.sleep_check_at(now);
+    }
+
     /// [`Self::sleep_check`] at a given time (ms since the epoch).
     #[doc(hidden)]
     pub fn sleep_check_at(&self, now: i64) {

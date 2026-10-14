@@ -4562,6 +4562,15 @@ admission. Actual Qt controls and renderer accounting are recorded in
 await hosted execution and inspection.
 
 
+Help → Debug → debug modes → “simulate a wake from sleep” makes the sleep check
+see a wake, as the reference does: with wake-from-system-sleep detection on, a
+cancellable “just woke up from sleep” popup counts down “enabling I/O in N
+seconds” for the wake delay and is dismissed when it ends (cancelling it says
+“enabling I/O now” and enables input and output at once); the idle timer is
+reset; file paths wait out the delay; the daemon's network engine and
+subscriptions see the wake too. With detection off nothing happens. A real wake
+(a gap of over a minute between the one-second checks) shows the same popup.
+
 Help → Debug → debug modes offers the checked “force idle mode” runtime action.
 It overrides the current main binding’s actual idle Monitor before the boot wait,
 disabled normal-idle setting and recent user/mouse/API checks. Activity continues

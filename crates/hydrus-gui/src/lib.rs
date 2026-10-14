@@ -183,6 +183,7 @@ mod tag_text;
 pub mod thumbnail_background;
 mod vacuum_review_window;
 pub mod what_is_this_window;
+mod wake_popup;
 
 /// Missing-thumbnail recovery, independent of stored image colour policy.
 pub fn thumbnail_recovery(

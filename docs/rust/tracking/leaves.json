@@ -11878,7 +11878,13 @@
     "Truth pass (2026-10-08): partial, small. The engine can already simulate it. Missing: Menu entry, a GUI handle to the engine, GUI test. Evidence: hydrus-net/src/engine.rs:897-902 NetEngine::sleep_check_at, tested at 2638-2645; the GUI keeps no shared NetEngine.",
     "Reference debug action wires 'simulate a wake from sleep' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude (issue #96 session)",
+    "note": "Clicked in the real menu: the popup (title, cancellable, countdown words, dismissal), the idle-timer reset, cancel enabling I/O at once and detection-off all match oracle/fixtures/debug_wake_from_sleep.json; the daemon is asked too."
+   }
   },
   {
    "id": "audit-options-help-debug-action-simulate-program-exit-signal",

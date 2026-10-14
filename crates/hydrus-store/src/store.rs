@@ -297,11 +297,36 @@ impl Store {
     /// The sleep check (`SleepCheck`): called now and then so a long gap
     /// shows the computer slept. File paths wait after a wake when the
     /// options say so.
-    pub fn sleep_check(&self) {
+    pub fn sleep_check(&self) -> bool {
         let snapshot = self.snapshot();
         snapshot
             .wake_gate
-            .check_at(hydrus_core::time::TimestampMs::now().0, snapshot.wake);
+            .check_at(hydrus_core::time::TimestampMs::now().0, snapshot.wake)
+    }
+
+    /// "simulate a wake from sleep" (`SimulateWakeFromSleepEvent`) for this
+    /// process: the sleep check made as if an hour had passed since the last.
+    /// Whether it noticed a wake (it does not when detection is off).
+    pub fn simulate_wake(&self) -> bool {
+        let snapshot = self.snapshot();
+        snapshot
+            .wake_gate
+            .simulate_at(hydrus_core::time::TimestampMs::now().0, snapshot.wake)
+    }
+
+    /// Whether a wake has been noticed since this was last asked.
+    pub fn take_wake(&self) -> bool {
+        self.snapshot().wake_gate.take_woke()
+    }
+
+    /// When the wake delay ends (ms), while the computer counts as just woken.
+    pub fn wake_ends_at(&self) -> Option<i64> {
+        self.snapshot().wake_gate.awake_at()
+    }
+
+    /// End the wake delay now.
+    pub fn end_wake_delay(&self) {
+        self.snapshot().wake_gate.cancel_wake();
     }
 
     /// What the database is doing now: "db writing", "db reading" or "".
