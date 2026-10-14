@@ -199,6 +199,7 @@ mod tags_sync_review;
 mod network_sessions;
 
 mod network_data;
+mod network_native_end_to_end;
 
 mod domain_metadata;
 mod downloader_interchange;

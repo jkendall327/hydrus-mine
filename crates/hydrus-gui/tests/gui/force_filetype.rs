@@ -218,3 +218,74 @@ fn a_forced_file_is_renamed_or_when_the_media_is_shared_copied_with_its_old_copy
     // and the extra copy is queued for the "delete neighbour dupes" job
     assert!(jobs(&store).contains(&JobType::DeleteNeighbourDupes));
 }
+
+/// Force the fixture's jpeg to png through the thumbnail menu and report the
+/// jpeg's and the png's paths, bytes and modification times as the file
+/// system holds them. `shared` marks the media as shared with another
+/// install, which makes the job copy instead of move.
+fn force_and_read_the_disk(
+    shared: bool,
+) -> (std::path::PathBuf, std::path::PathBuf, impl Sized) {
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store: Arc<Store> = Store::open(native.path()).unwrap();
+    let ownership = hydrus_store::transfer::MediaOwnership {
+        shared_with: shared.then(|| legacy.path().to_path_buf()),
+    };
+    store
+        .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &ownership))
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let results = bound.current.borrow().borrow().results().to_vec();
+    let index = results
+        .iter()
+        .position(|&f| info(&store, f).0.mime == Mime::ImageJpeg)
+        .unwrap();
+    let (_, hash) = info(&store, results[index]);
+    let path = |mime: Mime| store.snapshot().storage.file_path(&hash, mime).unwrap();
+    let (jpeg, png) = (path(Mime::ImageJpeg), path(Mime::ImagePng));
+    // Give the file a modification time no copy would get by accident.
+    let before = std::time::SystemTime::UNIX_EPOCH + std::time::Duration::from_secs(1_500_000_000);
+    std::fs::File::options()
+        .write(true)
+        .open(&jpeg)
+        .unwrap()
+        .set_modified(before)
+        .unwrap();
+    let bytes = std::fs::read(&jpeg).unwrap();
+    let index = i32::try_from(index).unwrap();
+    ui.invoke_thumbnail_clicked(index, false, false);
+    let dialog = open(&ui, &bound, index);
+    dialog.set_chosen(0);
+    dialog.invoke_apply();
+    wait_for_file_work(&bound);
+    assert_eq!(std::fs::read(&png).unwrap(), bytes);
+    assert_eq!(std::fs::metadata(&png).unwrap().modified().unwrap(), before);
+    // the directories live as long as the caller checks the paths
+    (jpeg, png, (native, legacy))
+}
+
+// leaf: audit-media-force-rename
+// Native-only (the reference's forced filetypes are not stored under a new
+// extension): the file system is real, and so are the window, the job and
+// the store.
+#[test]
+fn forcing_a_filetype_moves_the_file_to_its_new_extension_or_copies_shared_media_keeping_its_times()
+ {
+    let (jpeg, png, _dirs) = force_and_read_the_disk(false);
+    assert!(png.is_file());
+    assert!(!jpeg.exists(), "owned media is renamed, not left behind");
+    let (jpeg, png, _dirs) = force_and_read_the_disk(true);
+    assert!(png.is_file());
+    assert!(jpeg.is_file(), "shared media is copied, never moved");
+}
