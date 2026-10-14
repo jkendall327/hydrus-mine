@@ -365,10 +365,21 @@ use std::sync::Mutex;
 /// The flags and the sink are process-wide: one of these tests at a time.
 pub(crate) static ONE_AT_A_TIME: Mutex<()> = Mutex::new(());
 
-/// Send the reports made on this thread to a list, not the popups. (The flags
-/// and the sink are process-wide, so other tests' timers can report too; those
-/// run on their own threads, and are left out.)
+/// Send reports to a list, not the popups.
 pub(super) fn capture() -> std::sync::Arc<Mutex<Vec<String>>> {
+    let seen = std::sync::Arc::new(Mutex::new(Vec::new()));
+    let sink = seen.clone();
+    debug_flags::set_sink(Some(Box::new(move |text| {
+        sink.lock().unwrap().push(text.to_owned());
+    })));
+    seen
+}
+
+/// Send the reports made on this thread to a list, not the popups. For a
+/// report that is made on the calling thread: the flags and the sink are
+/// process-wide, so other tests' timers can report too (on their own
+/// threads), and those are left out.
+pub(super) fn capture_here() -> std::sync::Arc<Mutex<Vec<String>>> {
     let seen = std::sync::Arc::new(Mutex::new(Vec::new()));
     let sink = seen.clone();
     let mine = std::thread::current().id();
