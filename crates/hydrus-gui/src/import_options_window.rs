@@ -142,19 +142,29 @@ fn location_button(
     )
 }
 
-const UNITS: [u64; 4] = [1, 1024, 1024 * 1024, 1024 * 1024 * 1024];
+const UNITS: [u64; 5] = [
+    1,
+    1024,
+    1024 * 1024,
+    1024 * 1024 * 1024,
+    1024 * 1024 * 1024 * 1024,
+];
 
-/// A byte count as a number and the largest unit it is a whole number of.
+/// The byte controls' spin boxes (`BytesControl`: 0 to 1048576) and the
+/// resolution spin boxes' (`NoneableDoubleSpinCtrl`: 0 to 1000000).
+const BYTES_SPIN_MAX: i32 = 1_048_576;
+const RESOLUTION_SPIN_MAX: i32 = 1_000_000;
+
+/// A byte count as a number and a unit (`BytesControl.SetValue`): divided
+/// by 1024 for as long as it is a whole number of them, up to terabytes
+/// (so nothing at all is "0 TB").
 fn size_fields(bytes: u64) -> (i32, i32) {
-    for (i, unit) in UNITS.iter().enumerate().rev() {
-        if bytes >= *unit && bytes.is_multiple_of(*unit) {
-            return (
-                i32::try_from(bytes / unit).unwrap_or(i32::MAX),
-                i32::try_from(i).unwrap_or(0),
-            );
-        }
+    let (mut value, mut unit) = (bytes, 0);
+    while value.is_multiple_of(1024) && unit + 1 < UNITS.len() {
+        value /= 1024;
+        unit += 1;
     }
-    (i32::try_from(bytes).unwrap_or(i32::MAX), 0)
+    (i32::try_from(value).unwrap_or(i32::MAX), unit as i32)
 }
 
 /// The size limits: their labels and the reference's values for a limit
@@ -249,6 +259,21 @@ struct State {
 }
 
 impl State {
+    /// The options as the reference's editor gives them back (`GetValue`):
+    /// a customised tags page has rules for every tag service, a service
+    /// not touched having its default rules (which are not the same as
+    /// none: an importer asks a service with rules whether it applies to
+    /// the file, where one without just gets the tags handed it).
+    fn value(&self) -> ImportOptionsSlice {
+        let mut value = self.editor.value();
+        if let Some(tags) = &mut value.tags {
+            for (key, _) in tag_services(&self.services.services) {
+                service_options(tags, &key);
+            }
+        }
+        value
+    }
+
     fn replace_options(&mut self, options: &ImportOptionsSlice) {
         self.editor = if self.defaults {
             Editor::new_for_defaults(
@@ -699,6 +724,7 @@ fn open_inner(
     } else {
         window.set_description(DESCRIPTION.into());
     }
+    window.set_global_defaults(caller == CallerType::Global);
     window.set_downloader(!matches!(
         caller,
         CallerType::LocalImport | CallerType::LocalImportFolder | CallerType::ClientApi
@@ -1180,8 +1206,9 @@ fn open_inner(
             {
                 let mut state = state.borrow_mut();
                 if let Some(o) = &mut state.editor.values.file_filtering {
-                    let unit = UNITS[usize::try_from(unit).unwrap_or(0).min(3)];
-                    let bytes = on.then(|| u64::try_from(value.max(1)).unwrap_or(1) * unit);
+                    let unit = UNITS[usize::try_from(unit).unwrap_or(0).min(UNITS.len() - 1)];
+                    let bytes = on
+                        .then(|| u64::try_from(value.clamp(0, BYTES_SPIN_MAX)).unwrap_or(0) * unit);
                     match i {
                         0 => o.min_size = bytes,
                         1 => o.max_size = bytes,
@@ -1205,7 +1232,7 @@ fn open_inner(
             {
                 let mut state = state.borrow_mut();
                 if let Some(o) = &mut state.editor.values.file_filtering {
-                    let size = |n: i32| u32::try_from(n.max(1)).unwrap_or(1);
+                    let size = |n: i32| u32::try_from(n.clamp(0, RESOLUTION_SPIN_MAX)).unwrap_or(0);
                     let value = on.then(|| (size(width), size(height)));
                     if i == 0 {
                         o.min_resolution = value;
@@ -1228,7 +1255,7 @@ fn open_inner(
                 if !active.get() {
                     return None;
                 }
-                state.upgrade().map(|state| state.borrow().editor.value())
+                state.upgrade().map(|state| state.borrow().value())
             }
         }),
         Rc::new({
@@ -1312,9 +1339,8 @@ fn open_inner(
             {
                 return;
             }
-            let result = hydrus_downloader_exchange::import_options::encode_text(
-                &state.borrow().editor.value(),
-            );
+            let result =
+                hydrus_downloader_exchange::import_options::encode_text(&state.borrow().value());
             match result {
                 Ok(text) => crate::to_clipboard(&crate::Clip::Text(text)),
                 Err(error) => {
@@ -1330,8 +1356,10 @@ fn open_inner(
         move |index| {
             if !active.get() || state.borrow().tag_filter.borrow().is_some() || state.borrow().write_tags.borrow().is_some() || state.borrow().overwrite.borrow().is_some() || state.borrow().favourites.as_ref().is_some_and(|owner| owner.busy()) { return; }
             let Some(window) = weak.upgrade() else { return; };
-            let result = crate::from_clipboard().and_then(|text| hydrus_downloader_exchange::import_options::decode_text(&text).map_err(|e| e.to_string()));
-            let incoming = match result { Ok(options) => options, Err(error) => { window.set_clipboard_error(format!("Could not understand the clipboard as JSON-serialised Import Options Container.\n\n{error}").into()); return; } };
+            // (`GetPasteObject`: the clipboard's text, read as an import options
+            // container, or the reference's clipboard error)
+            let text = match crate::from_clipboard() { Ok(text) => text, Err(error) => { window.set_clipboard_error(error.into()); return; } };
+            let incoming = match hydrus_downloader_exchange::import_options::decode_text(&text) { Ok(options) => options, Err(error) => { window.set_clipboard_error(hydrus_gui_model::notes_editor::clipboard_parse_error("JSON-serialised Import Options Container", &text, &error.to_string()).into()); return; } };
             if index == 2 && caller == CallerType::Global && Kind::ALL.into_iter().any(|kind| !kind.is_set(&incoming)) {
                 window.set_clipboard_error("Hey, you tried to paste a non-full import options container into the \"global\" entry. Did you mean to do a merge-paste instead?".into());
                 return;
@@ -1346,7 +1374,7 @@ fn open_inner(
                     if let Some(window) = weak.upgrade() { show(&window, &state); show_tag_services(&window, &state); }
                 })
             };
-            let draft = hydrus_gui_model::import_options_overwrite::Overwrite::new(caller, state.borrow().simple, state.borrow().editor.value(), incoming);
+            let draft = hydrus_gui_model::import_options_overwrite::Overwrite::new(caller, state.borrow().simple, state.borrow().value(), incoming);
             if index == 3 {
                 let slot = state.borrow().overwrite.clone();
                 let closed: Rc<dyn Fn()> = { let weak = weak.clone(); Rc::new(move || { if let Some(window) = weak.upgrade() { window.set_overwrite_open(false); } }) };
@@ -1389,7 +1417,7 @@ fn open_inner(
             } else {
                 name
             };
-            done(name, state.borrow().editor.value());
+            done(name, state.borrow().value());
             close();
         }
     });

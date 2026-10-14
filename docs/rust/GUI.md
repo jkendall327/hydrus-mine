@@ -364,6 +364,22 @@ there. "apply" gives the dialog the
 importer's options. As `oracle/record_import_options_editor.py` recorded
 the reference's.
 
+The editor's pages are compared with the reference's own panels in
+`tests/gui/import_options_recorded.rs` (`oracle/record_import_options_fields.py`):
+file filtering's checkboxes and byte limits (B to TB, as `BytesControl` has them,
+shown as the largest unit that divides the saved number exactly, and the spin
+boxes' 0 to 1,048,576 range and resolutions' 0 to 1,000,000), prefetch's two
+choices giving way to each other, notes' conflict choices, whitelist and renames,
+and a tag service's get-tags and cog switches, each read back from the importer's
+saved options and used as an importer uses them (files judged by
+`FileImportOptions`, incoming notes merged by `NoteImportOptions::updates`). Copy
+and paste (`tests/gui/import_options_paste.rs`, `oracle/record_import_options_paste.py`):
+merge-, fill-in-gaps- and replace-paste, the custom chooser, and the clipboard's
+error text are those of the reference; the global defaults' paste menu offers only
+custom paste and merge-paste, as the reference's does. A customised tags page gives
+back rules for every tag service, a service not touched having its default rules,
+as the reference's editor does.
+
 The locations page's "destination file service(s)" and the presentation
 page's location are the reference's file domain button
 (`LocationSearchContextButton`) under the flags its callers set

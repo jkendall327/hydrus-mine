@@ -2,7 +2,9 @@
 //! multiwatcher highlights, replayed against `oracle/fixtures/pages_menu_info.json`
 //! (`record_pages_menu_info.py`) through the real menu bar and pages.
 
-use hydrus_core::pages::{DownloaderKind, DownloaderPageState, Page, PageContent, PageKey, Session};
+use hydrus_core::pages::{
+    DownloaderKind, DownloaderPageState, Page, PageContent, PageKey, Session,
+};
 use hydrus_gui::{MainWindow, Pages, bind, headless};
 use hydrus_store::sessions;
 
@@ -227,8 +229,16 @@ fn the_weight_report_matches_the_references_for_open_and_closed_pages() {
             )
         } else {
             (
-                pages_open(report["count_label"].as_str().unwrap(), "0 pages open", "1 pages open"),
-                pages_open(report["message"].as_str().unwrap(), "Your 0 open pages' total", "Your 1 open pages' total"),
+                pages_open(
+                    report["count_label"].as_str().unwrap(),
+                    "0 pages open",
+                    "1 pages open",
+                ),
+                pages_open(
+                    report["message"].as_str().unwrap(),
+                    "Your 0 open pages' total",
+                    "Your 1 open pages' total",
+                ),
             )
         };
         open(ui, "pages", &["weight"]);

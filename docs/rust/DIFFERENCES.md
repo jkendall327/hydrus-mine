@@ -1133,6 +1133,15 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   typed lines, and note renames use "parser name -> saved name" rather than the
   reference's two-column list.
   The tags page's "set a filter for already-exist test" isn't there.
+  A saved byte limit too big for the reference's spin box (over 1,048,576
+  of its unit) is shown clamped there and written back clamped when the editor
+  is accepted; here it is kept until it is edited. The editor's clipboard error
+  is the reference's text, but ends with the parse error's own text where the
+  reference's has the Python exception (`JSONDecodeError(...)`); the subscription
+  list's paste error is still a shorter message of its own. The prefetch and tag
+  pages' settings are compared with the reference's panels and the importer's
+  gates (`applies_to`), but the importer code that uses them (`predict`,
+  `service_tags`) is not driven from the editor's output.
   The shared location button's flags for local-only, combined-local-only and
   no-multiple choices exist in the model and are replayed against the
   reference's button, but no window uses them yet.
@@ -1152,6 +1161,15 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   repository serverside tag filters in the load menu (remote repositories are
   not functional). Favourite names/save/delete persist
   immediately as in the reference; filter changes reach the owner on Apply.
+  An exported filter is the reference's Tag Filter object in Python's JSON
+  format, but its rules are listed sorted by tag slice where the reference
+  lists the editor's blacklist and then its whitelist (or, for a saved
+  favourite, the order it was made in): a client reads them the same
+  (`oracle/record_tag_filter_favourite_exchange.py`). Text that is not a Tag
+  Filter gets the reference's messages (text it cannot read, a list of another
+  kind of object for the three kinds `HydrusSerialisable` itself defines); for
+  other kinds of object and for the reason a malformed object is rejected the
+  text after "the general error was" is ours, not Python's exception.
 - **"clear and load" a session**: when pages object to closing, the
   question has "yes" and "no" (the reference's also has "no, but show me
   the pages", and its "yes" is only enabled after a moment).

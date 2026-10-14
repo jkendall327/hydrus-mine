@@ -156,10 +156,10 @@ impl Package {
         let mut mappings = false;
         let mut num_files = 0;
         for (service, changes) in &groups {
-            if let Some(service) = service {
-                if let Ok(service) = services.get(*service) {
-                    locations.push(service.name.clone());
-                }
+            if let Some(service) = service
+                && let Ok(service) = services.get(*service)
+            {
+                locations.push(service.name.clone());
             }
             for change in changes {
                 let (word, files) = match change {

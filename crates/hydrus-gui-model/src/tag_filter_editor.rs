@@ -721,17 +721,50 @@ pub fn export_favourite(filter: &TagFilter) -> String {
         .to_python_string()
 }
 
+/// What `_ImportFavourite` expects of the clipboard.
+const EXPECTED: &str = "JSON-serialised Tag Filter object";
+
+/// The reference's class names for the objects every client's `HydrusSerialisable`
+/// itself defines, for "That object was not a Tag Filter!".
+fn serialisable_class(kind: i64) -> Option<&'static str> {
+    Some(match kind {
+        21 => "SerialisableDictionary",
+        26 => "SerialisableList",
+        33 => "SerialisableBytesDictionary",
+        _ => return None,
+    })
+}
+
 /// Decode and clean a single reference Tag Filter, before any draft/settings change.
+/// The errors are the reference's own words where it has them
+/// (`_ImportFavourite`: "Clipboard Error!" for text it can't read, "Error"
+/// for another kind of object).
 pub fn import_favourite(text: &str) -> Result<TagFilter, String> {
     if text.len() > 16 * 1024 * 1024 {
         return Err("Tag filter data exceeds the 16 MiB limit.".into());
     }
-    let value: serde_json::Value = serde_json::from_str(text)
-        .map_err(|e| format!("Could not parse JSON-serialised Tag Filter object: {e}"))?;
+    let parse_error =
+        |error: &str| crate::notes_editor::clipboard_parse_error(EXPECTED, text, error);
+    let value: serde_json::Value = serde_json::from_str(text).map_err(|e| {
+        // (Python's words for the syntax error, where they are known)
+        let message = hydrus_core::pyjson::PyJson::parse(text)
+            .err()
+            .map_or_else(|| e.to_string(), |p| p.message);
+        parse_error(&format!("JSONDecodeError('{message}')"))
+    })?;
     let tuple = value
         .as_array()
         .filter(|v| v.len() == 3)
-        .ok_or_else(|| "That object was not a Tag Filter!".to_owned())?;
+        .ok_or_else(|| parse_error("ValueError('not a serialised object')"))?;
+    if let Some(class) = tuple[0]
+        .as_i64()
+        .filter(|&k| k != 44)
+        .and_then(serialisable_class)
+    {
+        return Err(format!(
+            "That object was not a Tag Filter! It seemed to be a \"<class 'hydrus.core.HydrusSerialisable.{class}'>\"."
+        ));
+    }
     if tuple[0] != 44 || tuple[1] != 1 {
         return Err("That object was not a supported Tag Filter!".into());
     }

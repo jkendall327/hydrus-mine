@@ -97,8 +97,8 @@ fn choose_in_undo_menu(ui: &MainWindow, label: &str) {
 /// A label with its actions in a fixed order: the reference joins them from
 /// a Python set, in no fixed order ("archive, add" and "add, archive" are
 /// both its text), so only their set is compared.
-fn unordered(label: &Option<String>) -> Option<String> {
-    let label = label.as_ref()?;
+fn unordered(label: Option<&String>) -> Option<String> {
+    let label = label?;
     let (verb, rest) = label.split_once(' ')?;
     let (place, rest) = rest.split_once("->").map_or(("", rest), |(p, r)| (p, r));
     let (rest, files) = rest.strip_suffix(" files")?.rsplit_once(' ')?;
@@ -202,15 +202,16 @@ fn the_undo_menu_undoes_and_redoes_content_writes_as_the_references_manager_does
                 // (the reference's Undo and Redo do nothing when there is nothing
                 // to do, and its menu offers no such item)
                 let index = usize::from(kind == "redo");
-                match &before[index] {
-                    Some(label) => choose_in_undo_menu(&ui, label),
-                    None => {
-                        assert!(
-                            !undo_redo_lines(&ui).iter().any(|(l, _)| l.starts_with(kind)),
-                            "step {n}: no {kind} offered"
-                        );
-                        ui.invoke_menu_dismissed();
-                    }
+                if let Some(label) = &before[index] {
+                    choose_in_undo_menu(&ui, label);
+                } else {
+                    assert!(
+                        !undo_redo_lines(&ui)
+                            .iter()
+                            .any(|(l, _)| l.starts_with(kind)),
+                        "step {n}: no {kind} offered"
+                    );
+                    ui.invoke_menu_dismissed();
                 }
             }
             "archive" => store
@@ -257,8 +258,8 @@ fn the_undo_menu_undoes_and_redoes_content_writes_as_the_references_manager_does
 
         let shown = menu_strings(&ui);
         assert_eq!(
-            [unordered(&shown[0]), unordered(&shown[1])],
-            recorded_strings(step).map(|l| unordered(&l)),
+            [unordered(shown[0].as_ref()), unordered(shown[1].as_ref())],
+            recorded_strings(step).map(|l| unordered(l.as_ref())),
             "step {n} {what:?}: the menu's undo and redo entries"
         );
         let want: Vec<(bool, BTreeSet<String>)> = step["files"]
