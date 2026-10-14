@@ -35,6 +35,7 @@ mod checker_options_window;
 #[doc(hidden)]
 pub use checker_options_window::latest_value as latest_checker_value;
 pub mod client_exit;
+pub mod client_store;
 pub mod clipboard_monitor;
 pub mod command_palette_window;
 pub mod daemon;
@@ -42,7 +43,10 @@ mod database_backup_window;
 pub mod database_locations_window;
 mod debug_actions;
 mod rule_count;
-pub use debug_actions::{crash_logging, debug_printed, message_window, set_environment};
+pub mod similar_distance_window;
+pub use debug_actions::{
+    Wait, crash_logging, debug_printed, message_window, set_environment, set_modal_wait,
+};
 pub use orphan_files_window::chooser as orphan_files_chooser;
 pub mod debug_fetch;
 pub mod debug_long_popup;
@@ -217,6 +221,7 @@ mod thumbnails;
 pub mod undelete;
 mod unlock;
 mod viewer;
+pub use viewer::hold_random as hold_viewer_random;
 pub use viewer::hold_time as hold_viewer_time;
 pub mod system_idle;
 pub mod viewer_closing;
@@ -2449,6 +2454,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let asked = pending.borrow_mut().take();
             if let Some(window) = weak.upgrade() {
                 window.set_question(SharedString::new());
+                window.set_question_title(SharedString::new());
+                window.set_question_yes_label("yes".into());
+                window.set_question_no_label("no".into());
             }
             if let Some((asked, removed)) = asked.filter(|_| yes) {
                 if let Asked::LockSearch(_) = asked {
@@ -3086,7 +3094,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         let weak = window.as_weak();
                         move || {
                             crate::client_exit::set_mode(
-                                hydrus_gui_model::shutdown_work::ExitMode::Restart,
+                                hydrus_gui_model::shutdown_work::ExitMode::RestoreRestart,
                             );
                             if let Some(window) = weak.upgrade() {
                                 let _ = window.window().dispatch_event_with_result(
@@ -3514,6 +3522,21 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     }));
+    let exit_pages = client_exit::ExitPages {
+        objections: Rc::new({
+            let pages = pages.clone();
+            move || pages.borrow_mut().exit_objections()
+        }),
+        show: Rc::new({
+            let change_pages = change_pages.clone();
+            move |key| {
+                change_pages(&|pages| {
+                    pages.show(&key);
+                    Ok(())
+                });
+            }
+        }),
+    };
     client_exit::bind(
         window,
         page().borrow().store().clone(),
@@ -3587,6 +3610,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 retire_popups();
             }
         }),
+        Some(exit_pages),
     );
     // a URL downloader page's importer: pausing, and URLs typed or pasted
     window.on_pause_play_files({
@@ -5270,6 +5294,20 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         }),
                     ));
                 }
+                Action::OpenSimilarCustom => {
+                    let (store, selected, location) = {
+                        let page = page.borrow();
+                        (
+                            page.store().clone(),
+                            page.selected_files(),
+                            page.location().clone(),
+                        )
+                    };
+                    let change_pages = change_pages.clone();
+                    similar_distance_window::open(store, selected, location, move |f| {
+                        change_pages(f);
+                    });
+                }
                 Action::Relationship(act) => {
                     use hydrus_gui_model::file_relationships::{self as relationships, Act};
                     let page_ref = page.borrow();
@@ -5317,10 +5355,18 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                                 .read(hydrus_store::settings::get::<hydrus_store::settings::AdvancedMode>)
                                 .is_ok_and(|a| a.0);
                             drop(page_ref);
-                            if let Err(e) =
-                                relationships::run(&store, act, focused, &selected, advanced)
-                            {
-                                eprintln!("could not change the files' relationships: {e}");
+                            let question =
+                                relationships::question(act, focused, &selected, advanced);
+                            let run = Rc::new(move || {
+                                if let Err(e) =
+                                    relationships::run(&store, act, focused, &selected, advanced)
+                                {
+                                    eprintln!("could not change the files' relationships: {e}");
+                                }
+                            });
+                            match question {
+                                Some(question) => ask(Asked::Then(question, run)),
+                                None => run(),
                             }
                         }
                     }
@@ -6783,6 +6829,7 @@ fn open_viewer(
             let muted = forced_mute.get().unwrap_or_else(|| audio.viewer_muted());
             playback.set_audio(audio.current_viewer_volume(), muted);
             if let Some(window) = weak.upgrade() {
+                window.set_playing_muted(muted);
                 window.set_global_muted(audio.global_mute);
                 window.set_viewer_muted(audio.viewer_mute);
                 window.set_volume(i32::from(audio.current_viewer_volume()));
@@ -7297,7 +7344,7 @@ fn open_viewer(
     // the viewer opening: this viewer's shuffling and playing through are
     // the options' to begin with
     let opened = std::time::Instant::now();
-    let now = move || opened.elapsed().as_secs_f64();
+    let now = move || slideshow::held_clock().unwrap_or_else(|| opened.elapsed().as_secs_f64());
     let slideshow_settings = {
         let store = model.borrow().store().clone();
         move || slideshow::settings(&store)
@@ -7346,6 +7393,7 @@ fn open_viewer(
         let viewer_delete = viewer_delete.clone();
         let weak = window.as_weak();
         move || {
+            slideshow::note_tick();
             url_ticks.set((url_ticks.get() + 1) % 10);
             if url_ticks.get() == 0 {
                 show_url_links();
@@ -7397,6 +7445,8 @@ fn open_viewer(
     window.on_previous(navigate(viewer::MediaViewer::previous));
     window.on_first(navigate(viewer::MediaViewer::first));
     window.on_last(navigate(viewer::MediaViewer::last));
+    window.on_random(navigate(viewer::MediaViewer::random));
+    window.on_undo_random(navigate(viewer::MediaViewer::undo_random));
     window.on_period_answered({
         let weak = window.as_weak();
         let with_slideshow = with_slideshow.clone();
@@ -7834,6 +7884,16 @@ fn open_viewer(
                         media_actions::Deletion::Physically,
                         file,
                     ));
+                }
+                Action::OpenSimilarCustom => {
+                    let (store, location) = {
+                        let model = model.borrow();
+                        (model.store().clone(), model.location().clone())
+                    };
+                    let change_pages = change_pages.clone();
+                    similar_distance_window::open(store, vec![file], location, move |f| {
+                        change_pages(f);
+                    });
                 }
                 _ => {
                     let model = model.borrow();

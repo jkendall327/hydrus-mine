@@ -70,6 +70,63 @@ def record(session):
         output += struct.pack('>I', len(data)) + kind + data + struct.pack('>I', zlib.crc32(kind + data))
         offset += length + 12
     (FIXTURES / 'png-short-data.png').write_bytes(output)
+    # More cut-off files: each format cut part-way through its pixel data.
+    # (GIF and PNG are cut at several depths so the fill shows rows, not
+    # only the last few bytes.)
+    (FIXTURES / 'jpeg-half.jpg').write_bytes(jpeg[:len(jpeg) * 2 // 3])
+    (FIXTURES / 'gif-half.gif').write_bytes(gif[:len(gif) - 30])
+    half_png = bytearray(png[:8])
+    offset = 8
+    while offset < len(png):
+        length = struct.unpack('>I', png[offset:offset + 4])[0]
+        kind = png[offset + 4:offset + 8]
+        data = png[offset + 8:offset + 8 + length]
+        if kind == b'IDAT':
+            data = data[:len(data) // 2]
+        half_png += struct.pack('>I', len(data)) + kind + data + struct.pack('>I', zlib.crc32(kind + data))
+        offset += length + 12
+    (FIXTURES / 'png-half-data.png').write_bytes(bytes(half_png))
+    big = Image.new('RGB', (64, 64))
+    big.putdata([((x * 4 + y) % 256, (y * 4 + x * 3) % 256, (x * y) % 256) for y in range(64) for x in range(64)])
+    for lossless, tag in ((True, 'lossless'), (False, 'lossy')):
+        buffer = io.BytesIO(); big.save(buffer, format='WEBP', lossless=lossless, quality=90)
+        data = buffer.getvalue()
+        (FIXTURES / f'webp-{tag}-whole.webp').write_bytes(data)
+        (FIXTURES / f'webp-{tag}-half.webp').write_bytes(data[:len(data) // 2])
+    # 64x64 files cut part-way through the pixel data, so that the part
+    # that did load and the part that did not are both big enough to see
+    # (an 8x8 file is one JPEG block or a few dozen bytes of zlib).
+    for name, fmt, kwargs, cut in (
+        ('jpeg-big-cut.jpg', 'JPEG', dict(quality=90, subsampling=0), 0.75),
+        ('png-big-cut.png', 'PNG', dict(), 0.6),
+        ('gif-big-cut.gif', 'GIF', dict(), 0.6),
+        ('bmp-big-cut.bmp', 'BMP', dict(), 0.6),
+    ):
+        buffer = io.BytesIO(); big.save(buffer, format=fmt, **kwargs)
+        data = buffer.getvalue()
+        if fmt == 'PNG':
+            cut_png = bytearray(data[:8]); offset = 8
+            while offset < len(data):
+                length = struct.unpack('>I', data[offset:offset + 4])[0]
+                kind = data[offset + 4:offset + 8]
+                chunk = data[offset + 8:offset + 8 + length]
+                if kind == b'IDAT':
+                    chunk = chunk[:int(len(chunk) * cut)]
+                cut_png += struct.pack('>I', len(chunk)) + kind + chunk + struct.pack('>I', zlib.crc32(kind + chunk))
+                offset += length + 12
+            data = bytes(cut_png)
+        else:
+            data = data[:int(len(data) * cut)]
+        (FIXTURES / name).write_bytes(data)
+    # a PNG cut at a byte, as a download that stopped, so that it ends in
+    # the middle of its image data chunk with no checksum or end chunk
+    buffer = io.BytesIO(); big.save(buffer, format='PNG')
+    (FIXTURES / 'png-raw-cut.png').write_bytes(buffer.getvalue()[:int(len(buffer.getvalue()) * 0.6)])
+    buffer = io.BytesIO(); image.save(buffer, format='BMP')
+    bmp = buffer.getvalue()
+    (FIXTURES / 'bmp-whole.bmp').write_bytes(bmp)
+    (FIXTURES / 'bmp-short-data.bmp').write_bytes(bmp[:-50])
+    (FIXTURES / 'bmp-half.bmp').write_bytes(bmp[:len(bmp) // 2])
     inputs = sorted(p.name for p in FIXTURES.iterdir() if p.suffix != '.zip')
     c = session.controller
 
@@ -116,7 +173,7 @@ def record(session):
                 rows = []
                 for name in inputs:
                     path = FIXTURES / name
-                    mime = HC.IMAGE_JPEG if name.endswith('.jpg') else HC.IMAGE_GIF if name.endswith('.gif') else HC.IMAGE_WEBP if name.endswith('.webp') else HC.IMAGE_PNG
+                    mime = HC.IMAGE_JPEG if name.endswith('.jpg') else HC.IMAGE_GIF if name.endswith('.gif') else HC.IMAGE_WEBP if name.endswith('.webp') else HC.IMAGE_BMP if name.endswith('.bmp') else HC.IMAGE_PNG
                     try:
                         pixels = H.GenerateNumPyImage(str(path), mime, force_pil=True)
                         rows.append(dict(file=name, ok=True, shape=list(pixels.shape), pixels=list(pixels.tobytes()), pixel_sha256=hashlib.sha256(pixels.tobytes()).hexdigest()))

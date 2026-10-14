@@ -15,6 +15,9 @@ component SuggestionList inherits FocusScope {
     callback key(string,bool,bool,int) -> bool;
     callback menu(int,length,length);
     callback middle(int,bool,bool);
+    callback width-measured(length);
+    init => { root.width-measured(self.width); }
+    changed width => { root.width-measured(self.width); }
     min-width: table.min-width;
     min-height: table.min-height;
     key-pressed(event) => {
@@ -56,6 +59,8 @@ export component TagSuggestionPanels inherits Rectangle {
     callback clicked(int,int,bool,bool);
     callback activated(int,int);
     callback clear-recent();
+    // the laid-out width of a list (panel 0 most used, 1 recent, 2 related)
+    callback list-width(int, length);
     // the lists' own keys (panel, key text, ctrl, shift, rows a page holds):
     // true when the list took the key
     callback list-key(int, string, bool, bool, int) -> bool;
@@ -75,6 +80,7 @@ export component TagSuggestionPanels inherits Rectangle {
             spacing:6px;
             if root.most-used-enabled && (root.columns || root.selected==0): SuggestionList {
                 title:"most used"; column-width:root.column-width; rows:root.most-used; vertical-stretch:1;
+                width-measured(w)=>{root.list-width(0,w);}
                 clicked(i,c,s)=>{root.clicked(0,i,c,s);}
                 activated(i)=>{root.activated(0,i);}
                 key(t,c,s,p)=>{return root.list-key(0,t,c,s,p);}
@@ -93,6 +99,7 @@ export component TagSuggestionPanels inherits Rectangle {
                 TipComboBox {model:["just for my files","all known files"];current-index:root.related-local?0:1;tip:root.related-local-tooltip;selected(i)=>{root.related-local=i==0;root.related-search(root.related-level);}}
                 TipComboBox {model:["siblings/parents","storage tags"];current-index:root.related-display?0:1;tip:root.related-display-tooltip;selected(i)=>{root.related-display=i==0;root.related-search(root.related-level);}}
                 SuggestionList { title:"related"; column-width:root.column-width; rows:root.related; vertical-stretch:1;
+                    width-measured(w)=>{root.list-width(2,w);}
                     clicked(i,c,s)=>{root.clicked(2,i,c,s);} activated(i)=>{root.activated(2,i);}
                     key(t,c,s,p)=>{return root.list-key(2,t,c,s,p);} menu(i,x,y)=>{root.list-menu(2,i,x,y);} middle(i,c,s)=>{root.list-middle(2,i,c,s);}
                 }
@@ -101,6 +108,7 @@ export component TagSuggestionPanels inherits Rectangle {
                 spacing:4px;
                 Btn { text:"clear"; enabled:root.enabled; clicked=>{root.clear-recent();} }
                 SuggestionList { title:"recent"; column-width:root.column-width; rows:root.recent; vertical-stretch:1;
+                    width-measured(w)=>{root.list-width(1,w);}
                     clicked(i,c,s)=>{root.clicked(1,i,c,s);} activated(i)=>{root.activated(1,i);}
                     key(t,c,s,p)=>{return root.list-key(1,t,c,s,p);} menu(i,x,y)=>{root.list-menu(1,i,x,y);} middle(i,c,s)=>{root.list-middle(1,i,c,s);}
                 }

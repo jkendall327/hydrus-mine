@@ -136,7 +136,21 @@ pub enum Action {
     FlipCrashLogging,
     /// data actions > "scan file storage folders"
     ScanStorage,
+    /// tests, do not touch > "induce a program crash"
+    CrashTheProgram,
 }
+
+/// `CrashTheProgram`'s question (`GetYesYesNo`): its message, its title
+/// (`GetYesYesNo`'s default), the two "yes" buttons and the "no".
+pub const CRASH_MESSAGE: &str = "u wot mate I'll hook u in the gabber";
+pub const CRASH_TITLE: &str = "Are you sure?";
+pub const CRASH_NICE: &str = "nice crash";
+pub const CRASH_NOT_NICE: &str = "not a nice crash";
+pub const CRASH_FORGET_IT: &str = "forget it";
+/// What the panic says when "nice crash" is chosen.
+pub const CRASH_PANIC: &str = "induce a program crash: nice crash";
+/// What the worker panics with when "not a nice crash" is chosen.
+pub const CRASH_NOT_NICE_PANIC: &str = "induce a program crash: not a nice crash";
 
 /// The subfolders a directory seems to hold as file storage of this
 /// `granularity` (2: `fxx`/`txx` directly beneath it; 3: one level down), or

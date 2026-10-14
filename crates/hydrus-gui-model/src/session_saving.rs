@@ -134,6 +134,13 @@ pub const CLEAR_AND_LOAD_TITLE: &str = "Clear and load session?";
 /// their names in human order, the reasons fewest pages first
 /// (`GetAbleToCloseData`, `ConvertReasonsAndPagesToStatement`).
 pub fn close_all_question(vetoes: &[(String, String)]) -> Option<String> {
+    let statement = reasons_statement(vetoes)?;
+    Some(format!("Close \"top page notebook\"?\n\n{statement}"))
+}
+
+/// What the pages that object say (`ConvertReasonsAndPagesToStatement`),
+/// each reason with the pages giving it; `None` if no page objects.
+pub fn reasons_statement(vetoes: &[(String, String)]) -> Option<String> {
     if vetoes.is_empty() {
         return None;
     }
@@ -147,10 +154,7 @@ pub fn close_all_question(vetoes: &[(String, String)]) -> Option<String> {
             ),
         })
         .collect();
-    Some(format!(
-        "Close \"top page notebook\"?\n\n{}",
-        blocks.join("\n----\n")
-    ))
+    Some(blocks.join("\n----\n"))
 }
 
 /// The objections grouped as the reference groups them

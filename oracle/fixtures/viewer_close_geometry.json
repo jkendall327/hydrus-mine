@@ -1,0 +1,193 @@
+{
+ "file": "jpeg_00.jpg",
+ "opened_size": [
+  640,
+  480
+ ],
+ "resized_to": [
+  900,
+  650
+ ],
+ "runs": [
+  {
+   "scenario": "closed at once after resizing",
+   "save_on_close": false,
+   "opened": [
+    640,
+    480,
+    {
+     "remember_size": true,
+     "remember_position": true,
+     "last_size": [
+      640,
+      480
+     ],
+     "maximised": false,
+     "fullscreen": false,
+     "has_last_position": true
+    }
+   ],
+   "resized": [
+    900,
+    650,
+    {
+     "remember_size": true,
+     "remember_position": true,
+     "last_size": [
+      640,
+      480
+     ],
+     "maximised": false,
+     "fullscreen": false,
+     "has_last_position": true
+    }
+   ],
+   "closed": {
+    "remember_size": true,
+    "remember_position": true,
+    "last_size": [
+     640,
+     480
+    ],
+    "maximised": false,
+    "fullscreen": false,
+    "has_last_position": true
+   }
+  },
+  {
+   "scenario": "closed at once after resizing",
+   "save_on_close": true,
+   "opened": [
+    640,
+    480,
+    {
+     "remember_size": true,
+     "remember_position": true,
+     "last_size": [
+      640,
+      480
+     ],
+     "maximised": false,
+     "fullscreen": false,
+     "has_last_position": true
+    }
+   ],
+   "resized": [
+    900,
+    650,
+    {
+     "remember_size": true,
+     "remember_position": true,
+     "last_size": [
+      640,
+      480
+     ],
+     "maximised": false,
+     "fullscreen": false,
+     "has_last_position": true
+    }
+   ],
+   "closed": {
+    "remember_size": true,
+    "remember_position": true,
+    "last_size": [
+     900,
+     650
+    ],
+    "maximised": false,
+    "fullscreen": false,
+    "has_last_position": true
+   }
+  },
+  {
+   "scenario": "closed a second after resizing",
+   "save_on_close": false,
+   "opened": [
+    640,
+    480,
+    {
+     "remember_size": true,
+     "remember_position": true,
+     "last_size": [
+      640,
+      480
+     ],
+     "maximised": false,
+     "fullscreen": false,
+     "has_last_position": true
+    }
+   ],
+   "resized": [
+    900,
+    650,
+    {
+     "remember_size": true,
+     "remember_position": true,
+     "last_size": [
+      900,
+      650
+     ],
+     "maximised": false,
+     "fullscreen": false,
+     "has_last_position": true
+    }
+   ],
+   "closed": {
+    "remember_size": true,
+    "remember_position": true,
+    "last_size": [
+     900,
+     650
+    ],
+    "maximised": false,
+    "fullscreen": false,
+    "has_last_position": true
+   }
+  },
+  {
+   "scenario": "closed a second after resizing",
+   "save_on_close": true,
+   "opened": [
+    640,
+    480,
+    {
+     "remember_size": true,
+     "remember_position": true,
+     "last_size": [
+      640,
+      480
+     ],
+     "maximised": false,
+     "fullscreen": false,
+     "has_last_position": true
+    }
+   ],
+   "resized": [
+    900,
+    650,
+    {
+     "remember_size": true,
+     "remember_position": true,
+     "last_size": [
+      900,
+      650
+     ],
+     "maximised": false,
+     "fullscreen": false,
+     "has_last_position": true
+    }
+   ],
+   "closed": {
+    "remember_size": true,
+    "remember_position": true,
+    "last_size": [
+     900,
+     650
+    ],
+    "maximised": false,
+    "fullscreen": false,
+    "has_last_position": true
+   }
+  }
+ ]
+}

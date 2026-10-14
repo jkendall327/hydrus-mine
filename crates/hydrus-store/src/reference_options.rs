@@ -217,6 +217,29 @@ pub struct RecentPetitionReasons {
     pub reasons: BTreeMap<String, Vec<String>>,
 }
 
+/// Options > media playback > system > "Allow loading of truncated images:"
+/// (`enable_truncated_images_pil`, on by default).
+pub const TRUNCATED_IMAGES: &str = "enable_truncated_images_pil";
+
+/// Whether cut-off images are loaded as far as they go; on if the setting
+/// cannot be read.
+pub fn load_truncated_images(store: &crate::Store) -> bool {
+    store
+        .read(crate::settings::get::<ReferenceOptions>)
+        .map_or(true, |options| options.boolean(TRUNCATED_IMAGES))
+}
+
+/// Read the setting afresh per call, without keeping the store alive.
+pub fn truncated_images_reader(
+    store: &crate::Store,
+) -> std::sync::Arc<dyn Fn() -> bool + Send + Sync> {
+    let weak = store.downgrade();
+    std::sync::Arc::new(move || {
+        weak.upgrade()
+            .is_none_or(|store| load_truncated_images(&store))
+    })
+}
+
 impl crate::settings::Setting for RecentPetitionReasons {
     const KEY: &'static str = "recent_petition_reasons";
 }

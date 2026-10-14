@@ -61,12 +61,46 @@ def record(session):
                 option=QW.QStyleOptionTab();bar.initStyleOption(option,index)
                 rect=bar.tabRect(index)
                 paint.append(dict(stored=bar.tabText(index),paint=option.text,tooltip=bar.tabToolTip(index),width=rect.width(),height=rect.height(),shape=option.shape.name))
-            return dict(position=notebook.tabPosition().name,elide=bar.elideMode().name,hidden=bar.isHidden(),selected=bar.currentIndex(),tabs=paint)
+            page=notebook.currentWidget()
+            def box(widget):
+                # (where a child sits in the notebook's own coordinates)
+                top_left=widget.mapTo(notebook,widget.rect().topLeft())
+                return [top_left.x(),top_left.y(),widget.width(),widget.height()]
+            geometry=dict(notebook=[0,0,notebook.width(),notebook.height()],bar=box(bar),page=box(page) if page is not None else None,tab_rects=[[bar.tabRect(i).x(),bar.tabRect(i).y(),bar.tabRect(i).width(),bar.tabRect(i).height()] for i in range(bar.count())])
+            return dict(position=notebook.tabPosition().name,elide=bar.elideMode().name,hidden=bar.isHidden(),selected=bar.currentIndex(),tabs=paint,geometry=geometry)
         alignments=[]
         for choice in choices:
             panel._notebook_tab_alignment.SetValue(choice['value']);apply()
             alignments.append(dict(choice=choice,settings=values(draft),root=snapshot(root),nested=snapshot(nested)))
             root.tabBar().grab().save(str(HERE/'fixtures'/f"tab_presentation_qt_{choice['label']}.png"))
+        # which way a rotated label reads: a bar holding one label with its
+        # ink all at the start ('MMMMMMMM' then dots), painted, and where the
+        # ink lies along the bar (0 = the start of the bar, 1 = its end)
+        ink_notebook=ClientGUIPages.PagesNotebook(c.gui,'recorded ink')
+        ink_notebook.NewPagesNotebook(name='MMMMMMMMMMMMMMM..............................',give_it_a_blank_page=False)
+        ink_notebook.resize(900,450);ink_notebook.show()
+        ink=[]
+        for choice in choices:
+            panel._notebook_tab_alignment.SetValue(choice['value']);panel.UpdateOptions()
+            ink_notebook._UpdateOptions();ink_notebook.UpdateTabVisibility()
+            for index in range(ink_notebook.count()):ink_notebook._RefreshPageName(index)
+            QW.QApplication.processEvents()
+            bar=ink_notebook.tabBar();rect=bar.tabRect(0)
+            image=bar.grab().toImage()
+            vertical=choice['label'] in ('left','right')
+            along=[];total=0.0
+            span=rect.height() if vertical else rect.width()
+            sums=[0.0]*span
+            for i in range(span):
+                for j in range(rect.width() if vertical else rect.height()):
+                    x,y=(rect.x()+j,rect.y()+i) if vertical else (rect.x()+i,rect.y()+j)
+                    colour=image.pixelColor(x,y)
+                    # (the text is dark on a light tab: darkness above the tab's own background)
+                    sums[i]+=max(0,200-colour.lightness())
+            total=sum(sums)
+            centroid=sum(i*v for i,v in enumerate(sums))/total/span if total else None
+            ink.append(dict(label=choice['label'],vertical=vertical,tab=[rect.x(),rect.y(),rect.width(),rect.height()],centroid=centroid))
+        ink_notebook.hide();ink_notebook.deleteLater()
         hide=[]
         panel._notebook_tab_alignment.SetValue(CC.DIRECTION_UP)
         for tree in [None,CC.DIRECTION_LEFT,CC.DIRECTION_RIGHT]:
@@ -85,7 +119,7 @@ def record(session):
         reopened=GUIPagesPanel(c.gui,reopened_options)
         reopened_values=dict(alignment=reopened._notebook_tab_alignment.GetValue(),tree=reopened._treeview_alignment.GetValue(),hide=reopened._treeview_hides_tabs.isChecked(),elide=reopened._elide_page_tab_names.isChecked())
         reopened.deleteLater();panel.deleteLater();root.hide();root.deleteLater()
-        return dict(defaults=before,choices=choices,tree_choices=tree_choices,labels=labels,cancelled=cancelled,names=names,nested_names=nested_names,alignments=alignments,hide=hide,elide=elide,reopened=reopened_values)
+        return dict(defaults=before,choices=choices,tree_choices=tree_choices,labels=labels,cancelled=cancelled,names=names,nested_names=nested_names,alignments=alignments,ink=ink,hide=hide,elide=elide,reopened=reopened_values)
     try:return c.CallBlockingToQt(c.gui,drive)
     finally:c.new_options=original
 

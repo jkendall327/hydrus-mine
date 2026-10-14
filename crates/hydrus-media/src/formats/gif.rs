@@ -287,8 +287,17 @@ fn lzw_decode(data: &[u8], frame: &Frame) -> Result<Vec<u8>> {
         pos: frame.data_offset,
     };
     let mut stream = Vec::new();
-    while let Some(b) = c.sub_block() {
-        stream.extend_from_slice(&b);
+    // (Pillow's GIF decoder takes a sub-block only once all of it is there,
+    // so a cut-off one, and what follows, is never decoded)
+    while let Some(n) = c.byte() {
+        if n == 0 {
+            break;
+        }
+        let block = c.read(usize::from(n));
+        if block.len() < usize::from(n) {
+            break;
+        }
+        stream.extend_from_slice(block);
     }
     let size = frame.lzw_min_code_size;
     if !(1..=12).contains(&size) {
@@ -304,11 +313,13 @@ fn lzw_decode(data: &[u8], frame: &Frame) -> Result<Vec<u8>> {
 }
 
 /// Decode a frame's indices onto a canvas of `w` columns (already filled).
-fn draw_frame(data: &[u8], frame: &Frame, canvas: &mut [u8], w: u32) -> Result<()> {
+/// Says whether the data held every pixel of the frame.
+fn draw_frame(data: &[u8], frame: &Frame, canvas: &mut [u8], w: u32) -> Result<bool> {
     let decoded = lzw_decode(data, frame)?;
     let (x0, y0, x1, y1) = frame.extent;
     let fw = (x1 - x0) as usize;
     let fh = (y1 - y0) as usize;
+    let whole = decoded.len() >= fw * fh;
     let rows: Vec<usize> = if frame.interlaced {
         let mut r = Vec::with_capacity(fh);
         for (start, step) in [(0, 8), (4, 8), (2, 4), (1, 2)] {
@@ -325,10 +336,10 @@ fn draw_frame(data: &[u8], frame: &Frame, canvas: &mut [u8], w: u32) -> Result<(
             canvas[start..start + chunk.len()].copy_from_slice(chunk);
         }
     }
-    Ok(())
+    Ok(whole)
 }
 
-pub(crate) fn first_frame(data: &[u8]) -> Result<FirstFrame> {
+pub(crate) fn first_frame(data: &[u8], load_truncated: bool) -> Result<FirstFrame> {
     let gif = parse(data)?;
     let frame = &gif.frames[0];
     let (w, h) = open_size(&gif);
@@ -339,7 +350,13 @@ pub(crate) fn first_frame(data: &[u8]) -> Result<FirstFrame> {
     };
     let fill = frame.transparency.unwrap_or(0);
     let mut indices = vec![fill; w as usize * h as usize];
-    draw_frame(data, frame, &mut indices, w)?;
+    // (what the data does not reach stays the fill: a cut-off frame is still
+    // loaded, or refused with `LOAD_TRUNCATED_IMAGES` off)
+    if !draw_frame(data, frame, &mut indices, w)? && !load_truncated {
+        return Err(MediaError::damaged(
+            "Looks like a truncated file that PIL could not handle!",
+        ));
+    }
     Ok(FirstFrame {
         width: w,
         height: h,
@@ -371,7 +388,7 @@ pub(crate) fn any_frame_has_useful_alpha(data: &[u8], num_frames: u64) -> Result
     };
     let (w, h) = open_size(&gif);
     let useful = |alpha: &[u8]| crate::imaging::alpha_is_useful(alpha, w, h);
-    let first = first_frame(data)?;
+    let first = first_frame(data, true)?;
     let mut alpha: Vec<u8> = first
         .indices
         .iter()

@@ -85,6 +85,13 @@ export component ManageTagsWindow inherits Window {
     public function normal-paste() { input.normal-paste(); }
     public function focus-input() { input.focus-input(); }
     out property <bool> input-focused: input.editor-focused;
+    out property <length> autocomplete-results-height: input.results-height;
+    out property <length> autocomplete-rows-height: input.rows-height;
+    // the laid-out width of each suggestion list (most used, recent, related)
+    // once it exists, read by tests
+    out property <length> most-used-list-width;
+    out property <length> recent-list-width;
+    out property <length> related-list-width;
     public function select-input(anchor: int, cursor: int) { input.select-input(anchor,cursor); }
     callback service-chosen(int);
     callback text-edited(string);
@@ -274,6 +281,7 @@ export component ManageTagsWindow inherits Window {
                 most-used-enabled:root.most-used-enabled;recent-enabled:root.recent-tags-enabled;
                 related:root.related-tag-rows;related-enabled:root.related-tags-enabled;related-status:root.related-status;
                 related-local<=>root.related-local;related-display<=>root.related-display;related-level<=>root.related-level;related-button-tooltip:root.related-button-tooltip;related-local-tooltip:root.related-local-tooltip;related-display-tooltip:root.related-display-tooltip;related-search(l)=>{root.related-search(l);}
+                list-width(p,w)=>{if p==0 {root.most-used-list-width=w;} else if p==1 {root.recent-list-width=w;} else {root.related-list-width=w;}}
                 columns:root.suggested-columns;column-width:root.suggested-width;selected:root.suggested-page;
                 selected-page(i)=>{root.suggested-page=i;}
                 clicked(p,i,c,s)=>{root.side-clicked(p,i,c,s);}

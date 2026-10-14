@@ -16,6 +16,7 @@ export component EditValueWindow inherits Window {
     in-out property <int> value;
     in property <int> minimum: 0;
     in property <int> maximum: 1000000;
+    in property <int> step-size: 1;
     callback apply();
     callback cancel();
     VerticalLayout {
@@ -24,6 +25,7 @@ export component EditValueWindow inherits Window {
         SpinBox {
             minimum: root.minimum;
             maximum: root.maximum;
+            step-size: root.step-size;
             value <=> root.value;
         }
         HorizontalLayout {

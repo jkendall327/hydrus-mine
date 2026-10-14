@@ -933,7 +933,11 @@ fn rule_identity_and_search_choices_are_staged_then_persisted_on_apply() {
 fn working_hard_is_started_and_stopped_and_needs_something_left_to_search() {
     use hydrus_store::similar::SimilarFilesSettings;
     let Opened {
-        store, ui, bound, ..
+        _dir,
+        _windows,
+        store,
+        ui,
+        bound,
     } = opened();
     let _keep = &bound;
     let written = || -> SimilarFilesSettings { store.read(hydrus_store::settings::get).unwrap() };
@@ -952,6 +956,63 @@ fn working_hard_is_started_and_stopped_and_needs_something_left_to_search() {
     // and stopped again
     ui.invoke_duplicates_action("work hard".into(), 0, false, false);
     assert!(!ui.get_duplicates().working_hard && !written().work_hard);
+
+    // the daemon's loop step does what working hard says
+    // (`oracle/record_work_scheduling.py`: the reference works whatever the
+    // switches say, for half second packets, and stops once nothing is left)
+    let fixture = hydrus_testkit::fixture_json("work_scheduling.json");
+    let hard: Vec<&serde_json::Value> = fixture["search"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|c| c["work_hard"].as_bool().unwrap())
+        .collect();
+    assert!(hard.iter().all(|c| c["permitted"].as_bool().unwrap()));
+    let packet = std::time::Duration::from_secs_f64(hard[0]["work_period"].as_f64().unwrap());
+    // (both switches off: only working hard lets it work)
+    for action in ["search during idle", "search during active"] {
+        ui.invoke_duplicates_action(action.into(), 0, false, false);
+    }
+    let data = ui.get_duplicates();
+    assert!(!data.search_during_idle && !data.search_during_active);
+    hydrus_store::idle_state::publish(
+        store.dir(),
+        false,
+        hydrus_core::time::TimestampMs::now().millis(),
+    )
+    .unwrap();
+    let step = |searched: &std::cell::RefCell<Vec<std::time::Duration>>| {
+        hydrus_store::workers::similar_files_step(
+            &store,
+            &hydrus_store::workers::SystemClock,
+            |store, packet| {
+                searched.borrow_mut().push(packet);
+                hydrus_store::similar::run_search(store, 16)
+            },
+        )
+    };
+    let searched = std::cell::RefCell::new(Vec::new());
+    step(&searched);
+    assert!(searched.borrow().is_empty(), "held with the switches off");
+    ui.invoke_duplicates_action("work hard".into(), 1, false, false);
+    assert!(ui.get_duplicates().working_hard);
+    // it works, in the reference's packet, until nothing is left to search
+    let mut passes = 0;
+    while written().work_hard {
+        step(&searched);
+        passes += 1;
+        assert!(passes < 100, "never finished");
+    }
+    assert!(passes >= 2, "worked then found nothing left: {passes}");
+    assert!(
+        searched.borrow().iter().all(|&p| p == packet),
+        "{searched:?}"
+    );
+    // and the sidebar shows it has stopped, with nothing left to start
+    // (any action shows the page afresh)
+    ui.invoke_duplicates_action("distance".into(), 8, false, false);
+    assert!(!ui.get_duplicates().working_hard);
+    assert!(!ui.get_duplicates().can_start);
 }
 
 // leaf: audit-media-comparator-conditional
@@ -1016,14 +1077,19 @@ fn a_metadata_conditional_comparators_target_and_predicate_lines_are_persisted()
     assert_eq!(c.get_predicates().lines().count(), 2);
 }
 
-// (not tagged audit-media-preparation-scheduling / audit-media-rule-sidebar-scheduling:
-// this replays the daemon's decision, not the daemon; see the review in
-// docs/rust/notes/impl-small-areas.md)
+/// The sidebar's switches, as the reference's two daemons read them
+/// (`oracle/record_work_scheduling.py`): each switch combination is set with
+/// the sidebar's own buttons, the idle state is published as the GUI
+/// publishes it, and the real worker steps the daemon loops call
+/// (`hydrus_store::workers`) either work or hold; the recording says which
+/// each does, and how long it works.
+// leaf: audit-media-preparation-scheduling
+// leaf: audit-media-rule-sidebar-scheduling
 #[test]
-fn the_idle_and_normal_time_switches_gate_the_search_and_the_rules_by_the_published_idle_state() {
-    use hydrus_store::duplicates::auto::AutoResolutionSettings;
+fn the_sidebar_switches_decide_whether_the_real_daemon_steps_work() {
     use hydrus_store::idle_state;
-    use hydrus_store::similar::SimilarFilesSettings;
+    use hydrus_store::workers::{SystemClock, auto_resolution_step, similar_files_step};
+    let fixture = hydrus_testkit::fixture_json("work_scheduling.json");
     let Opened {
         _dir,
         _windows,
@@ -1032,44 +1098,70 @@ fn the_idle_and_normal_time_switches_gate_the_search_and_the_rules_by_the_publis
         bound,
     } = opened();
     let _keep = &bound;
-    let now = 1_000_000;
-    // the daemon's decision: the stored switches, by the state the GUI published
-    let allowed = |idle_published: bool| -> [bool; 2] {
-        idle_state::publish(store.dir(), idle_published, now).unwrap();
-        let idle = idle_state::is_idle(store.dir(), now);
-        assert_eq!(idle, idle_published);
-        let similar: SimilarFilesSettings = store.read(hydrus_store::settings::get).unwrap();
-        let auto: AutoResolutionSettings = store.read(hydrus_store::settings::get).unwrap();
-        // (the daemon also lets "work hard" through, off here)
-        [similar.pace(idle).allowed, auto.pace(idle).allowed]
+    let now = || hydrus_core::time::TimestampMs::now().millis();
+    // each switch is set, whichever way it is now, by its button
+    let set = |action: &str, value: bool, shown: &dyn Fn() -> bool| {
+        if shown() != value {
+            ui.invoke_duplicates_action(action.into(), 0, false, false);
+        }
+        assert_eq!(shown(), value, "{action}");
     };
-    assert_eq!([allowed(true), allowed(false)], [[true; 2], [true; 2]]);
-
-    // idle only: the sidebar's normal-time switches off
-    ui.invoke_duplicates_action("search during active".into(), 0, false, false);
-    ui.invoke_duplicates_action("rules during active".into(), 0, false, false);
-    let data = ui.get_duplicates();
-    assert!(!data.search_during_active && !data.rules_during_active);
-    assert!(data.search_during_idle && data.rules_during_idle);
-    assert_eq!([allowed(true), allowed(false)], [[true; 2], [false; 2]]);
-
-    // normal time only
-    ui.invoke_duplicates_action("search during active".into(), 0, false, false);
-    ui.invoke_duplicates_action("rules during active".into(), 0, false, false);
-    ui.invoke_duplicates_action("search during idle".into(), 0, false, false);
-    ui.invoke_duplicates_action("rules during idle".into(), 0, false, false);
-    assert_eq!([allowed(true), allowed(false)], [[false; 2], [true; 2]]);
-
-    // each independent of the other
-    ui.invoke_duplicates_action("rules during idle".into(), 0, false, false);
-    assert_eq!([allowed(true), allowed(false)], [[false, true], [true; 2]]);
-
-    // a stale published state reads as not idle
-    idle_state::publish(store.dir(), true, now).unwrap();
-    assert!(!idle_state::is_idle(
-        store.dir(),
-        now + idle_state::FRESH_MS + 1
-    ));
+    let mut checked = (0, 0);
+    for case in fixture["search"].as_array().unwrap() {
+        if case["work_hard"].as_bool().unwrap() {
+            continue;
+        }
+        let (idle, during_idle, during_active) = (
+            case["idle"].as_bool().unwrap(),
+            case["during_idle"].as_bool().unwrap(),
+            case["during_active"].as_bool().unwrap(),
+        );
+        set("search during idle", during_idle, &|| {
+            ui.get_duplicates().search_during_idle
+        });
+        set("search during active", during_active, &|| {
+            ui.get_duplicates().search_during_active
+        });
+        idle_state::publish(store.dir(), idle, now()).unwrap();
+        let packets = std::cell::RefCell::new(Vec::new());
+        similar_files_step(&store, &SystemClock, |_, packet| {
+            packets.borrow_mut().push(packet);
+            Ok(1)
+        });
+        let worked = !packets.borrow().is_empty();
+        assert_eq!(worked, case["permitted"].as_bool().unwrap(), "{case}");
+        checked.0 += 1;
+    }
+    for case in fixture["auto_resolution"].as_array().unwrap() {
+        // (the rules' own "work hard", and a busy system, are not the switches')
+        if case["work_hard"].as_bool().unwrap() || !case["good_time"].as_bool().unwrap() {
+            continue;
+        }
+        let (idle, during_idle, during_active) = (
+            case["idle"].as_bool().unwrap(),
+            case["during_idle"].as_bool().unwrap(),
+            case["during_active"].as_bool().unwrap(),
+        );
+        set("rules during idle", during_idle, &|| {
+            ui.get_duplicates().rules_during_idle
+        });
+        set("rules during active", during_active, &|| {
+            ui.get_duplicates().rules_during_active
+        });
+        idle_state::publish(store.dir(), idle, now()).unwrap();
+        let packets = std::cell::RefCell::new(Vec::new());
+        auto_resolution_step(&store, &SystemClock, |_, packet| {
+            packets.borrow_mut().push(packet);
+            Ok(false)
+        });
+        assert_eq!(
+            !packets.borrow().is_empty(),
+            case["able"].as_bool().unwrap(),
+            "{case}"
+        );
+        checked.1 += 1;
+    }
+    assert_eq!(checked, (8, 8));
 }
 
 // leaf: audit-media-rules-exchange
