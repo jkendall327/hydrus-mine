@@ -1401,10 +1401,7 @@ fn help_menu(facts: &Facts) -> Entry {
                     link("patreon", "https://www.patreon.com/hydrus_dev"),
                 ],
             ),
-            item(
-                "changelog",
-                Command::OpenHelp("changelog.html#version_688"),
-            ),
+            item("changelog", Command::OpenHelp("changelog.html#version_688")),
             SEP,
             todo(dots("add the PTR")),
             SEP,

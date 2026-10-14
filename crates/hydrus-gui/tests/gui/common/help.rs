@@ -24,8 +24,11 @@ pub fn replay(page: &str, press: &dyn Fn()) {
         }
         cases += 1;
         let dir = tempfile::tempdir().unwrap();
-        std::fs::write(dir.path().join(page.split('#').next().unwrap()), "<html></html>")
-            .unwrap();
+        std::fs::write(
+            dir.path().join(page.split('#').next().unwrap()),
+            "<html></html>",
+        )
+        .unwrap();
         hydrus_gui::documentation::set_help_dir(Some(dir.path().to_owned()));
         launched.borrow_mut().clear();
         press();
@@ -70,7 +73,10 @@ pub fn replay(page: &str, press: &dyn Fn()) {
             ),
             asked["yes"]
         );
-        assert!(launched.borrow().is_empty(), "nothing opens before the answer");
+        assert!(
+            launched.borrow().is_empty(),
+            "nothing opens before the answer"
+        );
         match case["answer"].as_u64() {
             Some(i) => question.invoke_chosen(i32::try_from(i).unwrap()),
             None => question.invoke_cancelled(),

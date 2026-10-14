@@ -44,7 +44,11 @@ fn help_dir() -> PathBuf {
 
 /// The question window that is open, if any (for tests).
 pub fn last_question() -> Option<ChoiceButtonsWindow> {
-    QUESTION.with(|q| q.borrow().as_ref().map(slint::ComponentHandle::clone_strong))
+    QUESTION.with(|q| {
+        q.borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong)
+    })
 }
 
 /// Open the help page `page` (a path under the help, possibly with a `#fragment`).
