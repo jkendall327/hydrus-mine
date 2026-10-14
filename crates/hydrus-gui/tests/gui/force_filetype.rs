@@ -223,9 +223,7 @@ fn a_forced_file_is_renamed_or_when_the_media_is_shared_copied_with_its_old_copy
 /// jpeg's and the png's paths, bytes and modification times as the file
 /// system holds them. `shared` marks the media as shared with another
 /// install, which makes the job copy instead of move.
-fn force_and_read_the_disk(
-    shared: bool,
-) -> (std::path::PathBuf, std::path::PathBuf, impl Sized) {
+fn force_and_read_the_disk(shared: bool) -> (std::path::PathBuf, std::path::PathBuf, impl Sized) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();
     import_legacy(
@@ -276,15 +274,18 @@ fn force_and_read_the_disk(
 }
 
 // leaf: audit-media-force-rename
-// Native-only (the reference's forced filetypes are not stored under a new
-// extension): the file system is real, and so are the window, the job and
-// the store.
+// Native-only (the reference stores no file under a new extension): the file
+// system is real, and so are the window, the job and the store.
 #[test]
-fn forcing_a_filetype_moves_the_file_to_its_new_extension_or_copies_shared_media_keeping_its_times()
- {
+fn forcing_a_filetype_moves_owned_media_to_its_new_extension_keeping_bytes_and_times() {
     let (jpeg, png, _dirs) = force_and_read_the_disk(false);
     assert!(png.is_file());
     assert!(!jpeg.exists(), "owned media is renamed, not left behind");
+}
+
+// leaf: audit-media-force-rename
+#[test]
+fn forcing_a_filetype_copies_shared_media_keeping_bytes_and_times() {
     let (jpeg, png, _dirs) = force_and_read_the_disk(true);
     assert!(png.is_file());
     assert!(jpeg.is_file(), "shared media is copied, never moved");

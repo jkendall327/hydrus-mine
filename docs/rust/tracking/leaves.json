@@ -1119,10 +1119,10 @@
     "No cancellable rename job; copied fallback source is not queued for cleanup."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Checks the new extension exists, old removed (own media) or kept and queued for DeleteNeighbourDupes (shared media); native-only behaviour with no recording of the rename. Stale tracker note: it says the copied source is not queued for cleanup, but the test asserts it is. No cancellable job remains a difference. Tests: crates/hydrus-gui/tests/gui/force_filetype.rs:158 a_forced_file_is_renamed_or_when_the_media_is_shared_copied_with_its_old_copy_queued_for_cleanup; :61 (rename in plain case)"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-8 session",
+    "note": "Native-only (DECISIONS.md 2026-10-14): the reference has no counterpart, so there is nothing to record; sound because a test drives it end to end. crates/hydrus-gui/tests/gui/force_filetype.rs forcing_a_filetype_moves_owned_media_to_its_new_extension_keeping_bytes_and_times and ..._copies_shared_media_keeping_bytes_and_times: through the thumbnail menu and the metadata job on a real filesystem, the owned file is renamed (bytes and modification time kept, old path gone) and shared media is copied (original kept, queued for cleanup in the older test). Not reproduced: a rename that fails at the file system (cross-device), which needs two mounts; the store test of metadata_jobs covers it with an injected failure. Stale tracker note about the copied source not being queued is false."
    }
   },
   {
@@ -4029,10 +4029,10 @@
     "New subscription/service contexts cannot be authored here, but existing rows can be edited."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window: typed domain opens a rules draft, cancel stores nothing, apply persists the override, stale handle is inert. Expected values are typed literals; no recording of the create-override path (the typed-domain entry is a native addition; reference only offers 'set specific rules' from the detail panel). Tests: crates/hydrus-gui/tests/gui/network_data.rs:36 bandwidth_rules_cancel_apply_reopen_and_render"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-8 session",
+    "note": "Native-only (DECISIONS.md 2026-10-14): the reference has no counterpart, so there is nothing to record; sound because a test drives it end to end. crates/hydrus-gui/tests/gui/network_native_end_to_end.rs a_typed_domain_override_limits_the_engines_next_request_to_that_domain: a domain typed in the bandwidth window is given a requests rule and applied; the running engine reloads it and its next request to that domain (through a loopback proxy, since the window takes no port) waits on bandwidth under that domain's context. The cancel/stale-handle cases are in network_data.rs."
    }
   },
   {
@@ -4543,10 +4543,10 @@
     "Staged import remaps identities and merges exact duplicates; Store save rejects stale snapshots atomically."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model tests import the recorded payload and assert remapped keys, nested members, duplicate merging and stale-save rollback from typed expectations on the native Draft (fixture supplies only duplicate-rule booleans); GUI accept saves once. Conflict-safe save is a native design with no reference recording. Tests: crates/hydrus-gui-model/tests/model/downloader_interchange.rs:235,296; crates/hydrus-gui/tests/gui/downloader_interchange.rs:182"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-8 session",
+    "note": "Native-only (DECISIONS.md 2026-10-14): the reference has no counterpart, so there is nothing to record; sound because a test drives it end to end. crates/hydrus-gui/tests/gui/network_native_end_to_end.rs a_package_imported_in_the_window_saves_new_keys_members_and_links_and_a_stale_review_saves_nothing: a package imported through the real window into a real store gets new keys, nested members that follow them, parser links from the recorded parser_auto_links classes and parsers, adds only what is new on a second import, and a review made stale by another save is refused with nothing written. The reference's duplicate rules stay compared with oracle/fixtures/downloader_interchange.json in the model tests."
    }
   },
   {
@@ -5307,10 +5307,10 @@
     "Commands identify both daemon epoch and request ID; ended/replaced jobs ignore the command."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Unchanged: the reference's ReviewNetworkJobs has no cancel control (only a comment, '# button to stop jobs en-masse'), so this is a native extension with nothing to record; the window enqueues an epoch+job-id Cancel and ignores a replaced daemon, and the engine consuming it is tested separately (untagged). A window-to-engine test through the daemon's IPC is the missing piece. Test: crates/hydrus-gui/tests/gui/network_data.rs jobs_live_progress_commands_and_offline_expiry"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-8 session",
+    "note": "Native-only (DECISIONS.md 2026-10-14): the reference has no counterpart, so there is nothing to record; sound because a test drives it end to end. crates/hydrus-gui/tests/gui/network_native_end_to_end.rs cancelling_a_selected_request_stops_the_engines_fetch_and_clears_the_row: a real NetEngine fetch (held by the network pause) against a loopback server; the real jobs window selects its row and Cancel goes through the store IPC to the engine's heartbeat worker; the fetch ends Cancelled and the row leaves the window. The replaced-daemon and closed-window cases stay in network_data.rs."
    }
   },
   {
@@ -5326,10 +5326,10 @@
     "Five-second heartbeat expiry disables actions; no API listener is required for local runtime snapshots."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Unchanged: a native heartbeat feature with no reference counterpart (nothing to record); the stale-snapshot behaviour is driven in the real window but the five-second boundary is not exercised. Test: crates/hydrus-gui/tests/gui/network_data.rs jobs_live_progress_commands_and_offline_expiry"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-8 session",
+    "note": "Native-only (DECISIONS.md 2026-10-14): the reference has no counterpart, so there is nothing to record; sound because a test drives it end to end. crates/hydrus-gui/tests/gui/network_native_end_to_end.rs a_silent_daemon_disables_the_command_controls_after_five_seconds: the real engine heartbeat is stopped, the window's clock is held at the last heartbeat + 5 s (controls still enabled) and + 6 s (disabled, status offline, Cancel/Override send nothing), and a restarted heartbeat re-enables them on the same request."
    }
   },
   {
@@ -5345,10 +5345,10 @@
     "Live selected requests can bypass their bandwidth gate through daemon IPC."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Unchanged: the reference jobs panel has no override control, so this is a native extension with nothing to record. The window enqueues OverrideBandwidth; the engine consumer is proven in a separate untagged test (crates/hydrus-net/tests/engine.rs runtime_override_releases_a_live_bandwidth_wait_and_counts_usage). Test: crates/hydrus-gui/tests/gui/network_data.rs jobs_live_progress_commands_and_offline_expiry"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-8 session",
+    "note": "Native-only (DECISIONS.md 2026-10-14): the reference has no counterpart, so there is nothing to record; sound because a test drives it end to end. crates/hydrus-gui/tests/gui/network_native_end_to_end.rs overriding_a_selected_request_releases_the_bandwidth_wait_and_counts_usage: a real fetch held by a global requests rule; the window's Override button reaches the engine through the store IPC, the fetch completes and the second request is counted in the saved usage."
    }
   },
   {

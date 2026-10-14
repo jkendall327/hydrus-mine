@@ -1704,6 +1704,8 @@ local database fields, as in the reference.
 
 ## Bandwidth and current network jobs
 
+The reference's jobs panel has no cancel or override, its bandwidth panel takes no typed domain, and its downloader import saves each object as it goes (no conflict-safe save); these are native-only. A typed domain cannot name a port, so a loopback server is reached through a proxy in the tests. Forced-filetype renames are tested on a real filesystem for the plain rename and the shared-media copy; a rename failing at the file system (cross-device) is only tested with an injected failure in the store.
+
 Native bandwidth review uses numeric bytes/requests and seconds with a monthly
 switch in one detached rules window, rather than the reference's nested amount
 and time widgets. Rule usage and monthly charts are inline in the all-context
