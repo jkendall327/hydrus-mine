@@ -13,6 +13,7 @@ pub const REMOTE_HELP: &str = "https://hydrusnetwork.github.io/hydrus";
 pub const ABOUT_DOCS: &str = "about_docs.html";
 /// The reference's pages that hydrus-rs has a button for.
 pub const INDEX: &str = "index.html";
+/// (`HC.DOCUMENTATION_CHANGELOG`, for the reference's version 688)
 pub const CHANGELOG: &str = "changelog.html#version_688";
 pub const EXTERNAL_PROGRAMS: &str = "external_programs.html";
 pub const IMPORT_OPTIONS: &str = "getting_started_import_options.html";
@@ -53,6 +54,11 @@ pub fn last_question() -> Option<ChoiceButtonsWindow> {
 
 /// Open the help page `page` (a path under the help, possibly with a `#fragment`).
 pub fn open(page: &str) {
+    // (the reference's question is modal, so a second press while it is
+    // open cannot ask again)
+    if last_question().is_some() {
+        return;
+    }
     let local = help_dir().join(page.split('#').next().unwrap_or(page));
     if local.is_file() {
         let launch = help_dir().join(page);

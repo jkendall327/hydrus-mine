@@ -1401,6 +1401,9 @@ fn help_menu(facts: &Facts) -> Entry {
                     link("patreon", "https://www.patreon.com/hydrus_dev"),
                 ],
             ),
+            // (the reference's `HC.DOCUMENTATION_CHANGELOG` is
+            // `changelog.html#version_{SOFTWARE_VERSION}`; the reference this
+            // port follows is version 688)
             item("changelog", Command::OpenHelp("changelog.html#version_688")),
             SEP,
             todo(dots("add the PTR")),

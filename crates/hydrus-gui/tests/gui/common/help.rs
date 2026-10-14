@@ -8,9 +8,20 @@ use std::rc::Rc;
 
 use slint::Model as _;
 
+/// Puts the launcher and the help folder back, however the test ends.
+struct Reset;
+
+impl Drop for Reset {
+    fn drop(&mut self) {
+        hydrus_gui::documentation::set_help_dir(None);
+        hydrus_gui::set_launcher(|_| {});
+    }
+}
+
 /// Press `press` (a help button or menu entry for `page`) with the page in the
 /// local help, and without it, answering each way the reference was.
 pub fn replay(page: &str, press: &dyn Fn()) {
+    let _reset = Reset;
     let recording = hydrus_testkit::fixture_json("documentation.json");
     let launched: Rc<RefCell<Vec<String>>> = Rc::default();
     hydrus_gui::set_launcher({
@@ -57,10 +68,13 @@ pub fn replay(page: &str, press: &dyn Fn()) {
             .unwrap_or_else(|| panic!("{page} without a local help asks"));
         let asked = &case["asked"][0];
         assert_eq!(question.get_message(), asked["message"].as_str().unwrap());
-        assert!(
-            question
-                .get_composed_title()
-                .starts_with(asked["title"].as_str().unwrap())
+        // (the title without the application's name, which the window adds)
+        let title = question.get_composed_title();
+        assert_eq!(
+            title
+                .strip_suffix(hydrus_gui::app_title::current().as_str())
+                .unwrap_or(&title),
+            asked["title"].as_str().unwrap()
         );
         assert_eq!(question.get_no_label(), asked["no"].as_str().unwrap());
         assert_eq!(
@@ -90,5 +104,4 @@ pub fn replay(page: &str, press: &dyn Fn()) {
         assert!(hydrus_gui::documentation::last_question().is_none());
     }
     assert_eq!(cases, 4, "{page}: one local and three missing recordings");
-    hydrus_gui::documentation::set_help_dir(None);
 }

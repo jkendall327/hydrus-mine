@@ -8067,14 +8067,13 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Reference editor/control 'help for this panel -->' is recorded on 'external programs' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
-    "Native options registry has no editable 'help for this panel -->' control in this page/box path."
+    "The panel's help button opens external_programs.html through documentation::open: the local help, else the 'You do not have a local help!' question (#182)."
    ],
    "recheck": {
     "date": "2026-10-14",
     "class": "sound",
     "by": "Claude session (#182)",
-    "note": "The options panel's help button, pressed through the window, replays documentation.json for external_programs.html: local file when present, else the question and each answer. Test: crates/hydrus-gui/tests/gui/external_calls_editor.rs (help_button_opens_the_external_programs_documentation) via common/help.rs."
+    "note": "The options panel's help button, pressed through the window, replays documentation.json for external_programs.html: local file when present, else the question and each answer. Test: crates/hydrus-gui/tests/gui/external_calls_editor.rs (help_button_opens_the_external_programs_documentation) via common/help.rs. The older notes here ('No corresponding editable row exists...') are false: the panel has the help button, and this test presses it."
    }
   },
   {
@@ -15141,7 +15140,7 @@
    "native": null,
    "notes": [
     "'changelog' has an exact predefined HTTP URL and routes through the OS launcher. The menu oracle checks labels/placement and the GUI regression verifies the shared URL-launch path.",
-    "Opens the hosted website/changelog; Qt prefers bundled local documentation."
+    "Opens the page from a help folder beside the program, else asks \"You do not have a local help!\" and opens the online page or the guide to building one, as the reference's OpenDocumentation does (#182)."
    ],
    "recheck": {
     "date": "2026-10-14",
@@ -15261,7 +15260,7 @@
    "native": null,
    "notes": [
     "'open help' has an exact predefined HTTP URL and routes through the OS launcher. The menu oracle checks labels/placement and the GUI regression verifies the shared URL-launch path.",
-    "Opens the hosted website/changelog; Qt prefers bundled local documentation."
+    "Opens the page from a help folder beside the program, else asks \"You do not have a local help!\" and opens the online page or the guide to building one, as the reference's OpenDocumentation does (#182)."
    ],
    "recheck": {
     "date": "2026-10-14",
