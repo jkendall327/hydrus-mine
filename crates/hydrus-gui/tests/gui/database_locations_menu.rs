@@ -409,6 +409,9 @@ fn replay_locations_panel(
     differences
 }
 
+// leaf: audit-media-database-locations-paths
+// leaf: audit-media-database-locations-max-size
+// leaf: audit-media-database-locations-thumbnails
 #[test]
 fn the_locations_panel_replays_the_reference_s_steps() {
     let rig = rig();
@@ -867,11 +870,18 @@ fn replay_granularity(offline: bool) {
     ];
     let window = rig.open();
     let g = granularity_window(&rig, &window);
-    let time = regex::Regex::new(r"in \d+(\.\d+)? (micro|milli)?seconds?\.|in (\d+ \w+ ?)+\.").unwrap();
+    let time =
+        regex::Regex::new(r"in \d+(\.\d+)? (micro|milli)?seconds?\.|in (\d+ \w+ ?)+\.").unwrap();
     let norm = |text: &str| {
         let mut text = time.replace_all(text, "in <time>.").into_owned();
-        text = text.replace(&scratch.path().join("offline").display().to_string(), "<offline>");
-        text.replace(&scratch.path().join("empty").display().to_string(), "<empty>")
+        text = text.replace(
+            &scratch.path().join("offline").display().to_string(),
+            "<offline>",
+        );
+        text.replace(
+            &scratch.path().join("empty").display().to_string(),
+            "<empty>",
+        )
     };
     let mut seen = 0;
     for step in recording["steps"].as_array().unwrap() {
@@ -891,22 +901,40 @@ fn replay_granularity(offline: bool) {
             _ => "folder 3to2",
         };
         let inputs = &step["inputs"];
-        let mut answers = inputs["yesno"].as_array().unwrap().iter().map(|a| a.as_bool().unwrap());
+        let mut answers = inputs["yesno"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|a| a.as_bool().unwrap());
         *rig.next.borrow_mut() = inputs["pick"]
             .as_array()
             .unwrap()
             .iter()
             .filter_map(|p| p.as_str())
-            .map(|p| folders.iter().find(|(n, _)| format!("<{n}>") == p).unwrap().1.clone())
+            .map(|p| {
+                folders
+                    .iter()
+                    .find(|(n, _)| format!("<{n}>") == p)
+                    .unwrap()
+                    .1
+                    .clone()
+            })
             .collect();
         g.invoke_action(action.into());
         for dialog in step["dialogs"].as_array().unwrap() {
             match dialog[0].as_str().unwrap() {
                 "question" => {
-                    let q = hydrus_gui::granularity_window::question().filter(|q| q.window().is_visible());
-                    let Some(q) = q else { panic!("{name}: no question {:?}", dialog[2]) };
+                    let q = hydrus_gui::granularity_window::question()
+                        .filter(|q| q.window().is_visible());
+                    let Some(q) = q else {
+                        panic!("{name}: no question {:?}", dialog[2])
+                    };
                     assert_eq!(q.get_window_title(), dialog[1].as_str().unwrap(), "{name}");
-                    assert_eq!(norm(&q.get_message()), dialog[2].as_str().unwrap(), "{name}");
+                    assert_eq!(
+                        norm(&q.get_message()),
+                        dialog[2].as_str().unwrap(),
+                        "{name}"
+                    );
                     let yes: Vec<String> = q.get_choices().iter().map(|c| c.to_string()).collect();
                     assert_eq!(yes, [dialog[3].as_str().unwrap()], "{name}");
                     assert_eq!(q.get_no_label(), dialog[4].as_str().unwrap(), "{name}");
@@ -917,7 +945,11 @@ fn replay_granularity(offline: bool) {
                     }
                 }
                 "pick directory" => {
-                    assert_eq!(rig.asked.borrow().last().unwrap(), dialog[1].as_str().unwrap(), "{name}");
+                    assert_eq!(
+                        rig.asked.borrow().last().unwrap(),
+                        dialog[1].as_str().unwrap(),
+                        "{name}"
+                    );
                 }
                 kind @ ("information" | "critical") => {
                     let deadline = Instant::now() + Duration::from_secs(120);
@@ -926,8 +958,10 @@ fn replay_granularity(offline: bool) {
                         pump(Duration::from_millis(50));
                     }
                     let m = message_window().unwrap();
-                    let wanted = dialog[dialog.as_array().unwrap().len() - 1].as_str().unwrap();
-                    assert_eq!(norm(&m.get_message()), wanted, "{name}");
+                    let wanted = dialog[dialog.as_array().unwrap().len() - 1]
+                        .as_str()
+                        .unwrap();
+                    assert_eq!(norm(&m.get_message()), norm(wanted), "{name}");
                     m.invoke_cancelled();
                 }
                 other => panic!("{other}"),
@@ -959,6 +993,8 @@ fn granularity_of(step: &serde_json::Value) -> String {
     }
 }
 
+// leaf: audit-media-database-locations-granularity-client
+// leaf: audit-media-database-locations-granularity-offline
 #[test]
 fn the_granularity_window_replays_the_reference_s_steps() {
     replay_granularity(false);
