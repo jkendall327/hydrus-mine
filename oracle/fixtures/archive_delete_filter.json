@@ -1,0 +1,3185 @@
+{
+  "order": [
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c"
+  ],
+  "decisions": [
+    {
+      "do": "back",
+      "current": 0,
+      "kept": [],
+      "deleted": [],
+      "skipped": [],
+      "visible": true
+    },
+    {
+      "do": "keep",
+      "current": 1,
+      "kept": [
+        0
+      ],
+      "deleted": [],
+      "skipped": [],
+      "visible": true
+    },
+    {
+      "do": "delete",
+      "current": 2,
+      "kept": [
+        0
+      ],
+      "deleted": [
+        1
+      ],
+      "skipped": [],
+      "visible": true
+    },
+    {
+      "do": "back",
+      "current": 1,
+      "kept": [
+        0
+      ],
+      "deleted": [],
+      "skipped": [],
+      "visible": true
+    },
+    {
+      "do": "delete",
+      "current": 2,
+      "kept": [
+        0
+      ],
+      "deleted": [
+        1
+      ],
+      "skipped": [],
+      "visible": true
+    },
+    {
+      "do": "skip",
+      "current": 3,
+      "kept": [
+        0
+      ],
+      "deleted": [
+        1
+      ],
+      "skipped": [
+        2
+      ],
+      "visible": true
+    },
+    {
+      "do": "back",
+      "current": 2,
+      "kept": [
+        0
+      ],
+      "deleted": [
+        1
+      ],
+      "skipped": [],
+      "visible": true
+    },
+    {
+      "do": "back",
+      "current": 1,
+      "kept": [
+        0
+      ],
+      "deleted": [],
+      "skipped": [],
+      "visible": true
+    },
+    {
+      "do": "back",
+      "current": 0,
+      "kept": [],
+      "deleted": [],
+      "skipped": [],
+      "visible": true
+    },
+    {
+      "do": "back",
+      "current": 0,
+      "kept": [],
+      "deleted": [],
+      "skipped": [],
+      "visible": true
+    },
+    {
+      "do": "keep",
+      "current": 1,
+      "kept": [
+        0
+      ],
+      "deleted": [],
+      "skipped": [],
+      "visible": true
+    },
+    {
+      "do": "keep",
+      "current": 2,
+      "kept": [
+        0,
+        1
+      ],
+      "deleted": [],
+      "skipped": [],
+      "visible": true
+    },
+    {
+      "do": "delete",
+      "current": 3,
+      "kept": [
+        0,
+        1
+      ],
+      "deleted": [
+        2
+      ],
+      "skipped": [],
+      "visible": true
+    },
+    {
+      "do": "skip",
+      "current": 4,
+      "kept": [
+        0,
+        1
+      ],
+      "deleted": [
+        2
+      ],
+      "skipped": [
+        3
+      ],
+      "visible": true
+    },
+    {
+      "do": "keep",
+      "current": 4,
+      "kept": [
+        0,
+        1
+      ],
+      "deleted": [
+        2
+      ],
+      "skipped": [
+        3
+      ],
+      "visible": true
+    }
+  ],
+  "closes": [
+    {
+      "page": "all local files",
+      "plan": "keep one, delete one, skip one",
+      "ops": [
+        "keep",
+        "delete",
+        "skip"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": "keep 1",
+          "options": [
+            {
+              "keys": [
+                "616c6c206c6f63616c206d65646961"
+              ],
+              "label": "delete 1 from combined local file domains, sending directly to trash"
+            },
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 1 from my files"
+            }
+          ],
+          "labels": [
+            "keep 1\n-and-",
+            "delete 1 from combined local file domains, sending directly to trash?",
+            "delete 1 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "kept": [
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+          ],
+          "deleted": [
+            "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+          ]
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "keep one, delete one, skip one",
+      "ops": [
+        "keep",
+        "delete",
+        "skip"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 1,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": "keep 1",
+          "options": [
+            {
+              "keys": [
+                "616c6c206c6f63616c206d65646961"
+              ],
+              "label": "delete 1 from combined local file domains, sending directly to trash"
+            },
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 1 from my files"
+            }
+          ],
+          "labels": [
+            "keep 1\n-and-",
+            "delete 1 from combined local file domains, sending directly to trash?",
+            "delete 1 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [
+            "6c6f63616c2066696c6573"
+          ],
+          "kept": [
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+          ],
+          "deleted": [
+            "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+          ]
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "keep one, delete one, skip one",
+      "ops": [
+        "keep",
+        "delete",
+        "skip"
+      ],
+      "button": "forget",
+      "forget_yes": true,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": "keep 1",
+          "options": [
+            {
+              "keys": [
+                "616c6c206c6f63616c206d65646961"
+              ],
+              "label": "delete 1 from combined local file domains, sending directly to trash"
+            },
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 1 from my files"
+            }
+          ],
+          "labels": [
+            "keep 1\n-and-",
+            "delete 1 from combined local file domains, sending directly to trash?",
+            "delete 1 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": [
+            "Quit filtering now and forget your work?"
+          ]
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 3,
+        "kept": [
+          0
+        ],
+        "deleted": [
+          1
+        ],
+        "skipped": [
+          2
+        ],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "keep one, delete one, skip one",
+      "ops": [
+        "keep",
+        "delete",
+        "skip"
+      ],
+      "button": "back",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": false,
+      "questions": [
+        {
+          "kept": "keep 1",
+          "options": [
+            {
+              "keys": [
+                "616c6c206c6f63616c206d65646961"
+              ],
+              "label": "delete 1 from combined local file domains, sending directly to trash"
+            },
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 1 from my files"
+            }
+          ],
+          "labels": [
+            "keep 1\n-and-",
+            "delete 1 from combined local file domains, sending directly to trash?",
+            "delete 1 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 3,
+        "kept": [
+          0
+        ],
+        "deleted": [
+          1
+        ],
+        "skipped": [
+          2
+        ],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "keep two",
+      "ops": [
+        "keep",
+        "keep"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": "keep 2",
+          "options": [],
+          "labels": [
+            "keep 2?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [],
+          "kept": [
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+            "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+          ],
+          "deleted": []
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "keep two",
+      "ops": [
+        "keep",
+        "keep"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 1,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": "keep 2",
+          "options": [],
+          "labels": [
+            "keep 2?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [],
+          "kept": [
+            "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+          ],
+          "deleted": []
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "keep two",
+      "ops": [
+        "keep",
+        "keep"
+      ],
+      "button": "forget",
+      "forget_yes": true,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": "keep 2",
+          "options": [],
+          "labels": [
+            "keep 2?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": [
+            "Quit filtering now and forget your work?"
+          ]
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 2,
+        "kept": [
+          0,
+          1
+        ],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "keep two",
+      "ops": [
+        "keep",
+        "keep"
+      ],
+      "button": "back",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": false,
+      "questions": [
+        {
+          "kept": "keep 2",
+          "options": [],
+          "labels": [
+            "keep 2?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 2,
+        "kept": [
+          0,
+          1
+        ],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "delete two",
+      "ops": [
+        "delete",
+        "delete"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": null,
+          "options": [
+            {
+              "keys": [
+                "616c6c206c6f63616c206d65646961"
+              ],
+              "label": "delete all 2 from combined local file domains, sending directly to trash"
+            },
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 2 from my files"
+            }
+          ],
+          "labels": [
+            "delete all 2 from combined local file domains, sending directly to trash?",
+            "delete 2 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "kept": [],
+          "deleted": [
+            "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+          ]
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "delete two",
+      "ops": [
+        "delete",
+        "delete"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 1,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": null,
+          "options": [
+            {
+              "keys": [
+                "616c6c206c6f63616c206d65646961"
+              ],
+              "label": "delete all 2 from combined local file domains, sending directly to trash"
+            },
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 2 from my files"
+            }
+          ],
+          "labels": [
+            "delete all 2 from combined local file domains, sending directly to trash?",
+            "delete 2 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [
+            "6c6f63616c2066696c6573"
+          ],
+          "kept": [],
+          "deleted": [
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+            "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+          ]
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "delete two",
+      "ops": [
+        "delete",
+        "delete"
+      ],
+      "button": "forget",
+      "forget_yes": true,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": null,
+          "options": [
+            {
+              "keys": [
+                "616c6c206c6f63616c206d65646961"
+              ],
+              "label": "delete all 2 from combined local file domains, sending directly to trash"
+            },
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 2 from my files"
+            }
+          ],
+          "labels": [
+            "delete all 2 from combined local file domains, sending directly to trash?",
+            "delete 2 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": [
+            "Quit filtering now and forget your work?"
+          ]
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 2,
+        "kept": [],
+        "deleted": [
+          0,
+          1
+        ],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "delete two",
+      "ops": [
+        "delete",
+        "delete"
+      ],
+      "button": "back",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": false,
+      "questions": [
+        {
+          "kept": null,
+          "options": [
+            {
+              "keys": [
+                "616c6c206c6f63616c206d65646961"
+              ],
+              "label": "delete all 2 from combined local file domains, sending directly to trash"
+            },
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 2 from my files"
+            }
+          ],
+          "labels": [
+            "delete all 2 from combined local file domains, sending directly to trash?",
+            "delete 2 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 2,
+        "kept": [],
+        "deleted": [
+          0,
+          1
+        ],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "keep two, delete two, then the last file",
+      "ops": [
+        "keep",
+        "keep",
+        "delete",
+        "delete",
+        "delete"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": true,
+      "returned": null,
+      "questions": [
+        {
+          "kept": "keep 2",
+          "options": [
+            {
+              "keys": [
+                "616c6c206c6f63616c206d65646961"
+              ],
+              "label": "delete all 3 from combined local file domains, sending directly to trash"
+            },
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 3 from my files"
+            }
+          ],
+          "labels": [
+            "keep 2\n-and-",
+            "delete all 3 from combined local file domains, sending directly to trash?",
+            "delete 3 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [
+            "616c6c206c6f63616c206d65646961"
+          ],
+          "kept": [
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+            "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+          ],
+          "deleted": [
+            "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+            "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+            "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c"
+          ]
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": null,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": false
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "keep two, delete two, then the last file",
+      "ops": [
+        "keep",
+        "keep",
+        "delete",
+        "delete",
+        "delete"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 1,
+      "asked_by_the_window": true,
+      "returned": null,
+      "questions": [
+        {
+          "kept": "keep 2",
+          "options": [
+            {
+              "keys": [
+                "616c6c206c6f63616c206d65646961"
+              ],
+              "label": "delete all 3 from combined local file domains, sending directly to trash"
+            },
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 3 from my files"
+            }
+          ],
+          "labels": [
+            "keep 2\n-and-",
+            "delete all 3 from combined local file domains, sending directly to trash?",
+            "delete 3 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [
+            "6c6f63616c2066696c6573"
+          ],
+          "kept": [
+            "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+          ],
+          "deleted": [
+            "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+            "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+            "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c"
+          ]
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": null,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": false
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "keep two, delete two, then the last file",
+      "ops": [
+        "keep",
+        "keep",
+        "delete",
+        "delete",
+        "delete"
+      ],
+      "button": "forget",
+      "forget_yes": true,
+      "pick": 0,
+      "asked_by_the_window": true,
+      "returned": null,
+      "questions": [
+        {
+          "kept": "keep 2",
+          "options": [
+            {
+              "keys": [
+                "616c6c206c6f63616c206d65646961"
+              ],
+              "label": "delete all 3 from combined local file domains, sending directly to trash"
+            },
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 3 from my files"
+            }
+          ],
+          "labels": [
+            "keep 2\n-and-",
+            "delete all 3 from combined local file domains, sending directly to trash?",
+            "delete 3 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": [
+            "Quit filtering now and forget your work?"
+          ]
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": null,
+        "kept": [
+          0,
+          1
+        ],
+        "deleted": [
+          2,
+          3,
+          4
+        ],
+        "skipped": [],
+        "visible": false
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "keep two, delete two, then the last file",
+      "ops": [
+        "keep",
+        "keep",
+        "delete",
+        "delete",
+        "delete"
+      ],
+      "button": "back",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": true,
+      "returned": null,
+      "questions": [
+        {
+          "kept": "keep 2",
+          "options": [
+            {
+              "keys": [
+                "616c6c206c6f63616c206d65646961"
+              ],
+              "label": "delete all 3 from combined local file domains, sending directly to trash"
+            },
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 3 from my files"
+            }
+          ],
+          "labels": [
+            "keep 2\n-and-",
+            "delete all 3 from combined local file domains, sending directly to trash?",
+            "delete 3 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 4,
+        "kept": [
+          0,
+          1
+        ],
+        "deleted": [
+          2,
+          3
+        ],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "keep all five",
+      "ops": [
+        "keep",
+        "keep",
+        "keep",
+        "keep",
+        "keep"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": true,
+      "returned": null,
+      "questions": [
+        {
+          "kept": "keep 5",
+          "options": [],
+          "labels": [
+            "keep 5?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [],
+          "kept": [
+            "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+            "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+            "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+            "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c"
+          ],
+          "deleted": []
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": null,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": false
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "keep all five",
+      "ops": [
+        "keep",
+        "keep",
+        "keep",
+        "keep",
+        "keep"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 1,
+      "asked_by_the_window": true,
+      "returned": null,
+      "questions": [
+        {
+          "kept": "keep 5",
+          "options": [],
+          "labels": [
+            "keep 5?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [],
+          "kept": [
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+            "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+            "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+            "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+            "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c"
+          ],
+          "deleted": []
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": null,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": false
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "keep all five",
+      "ops": [
+        "keep",
+        "keep",
+        "keep",
+        "keep",
+        "keep"
+      ],
+      "button": "forget",
+      "forget_yes": true,
+      "pick": 0,
+      "asked_by_the_window": true,
+      "returned": null,
+      "questions": [
+        {
+          "kept": "keep 5",
+          "options": [],
+          "labels": [
+            "keep 5?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": [
+            "Quit filtering now and forget your work?"
+          ]
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": null,
+        "kept": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "deleted": [],
+        "skipped": [],
+        "visible": false
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "keep all five",
+      "ops": [
+        "keep",
+        "keep",
+        "keep",
+        "keep",
+        "keep"
+      ],
+      "button": "back",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": true,
+      "returned": null,
+      "questions": [
+        {
+          "kept": "keep 5",
+          "options": [],
+          "labels": [
+            "keep 5?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 4,
+        "kept": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "a decision undone",
+      "ops": [
+        "keep",
+        "delete",
+        "back",
+        "back",
+        "keep"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": "keep 1",
+          "options": [],
+          "labels": [
+            "keep 1?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [],
+          "kept": [
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+          ],
+          "deleted": []
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "a decision undone",
+      "ops": [
+        "keep",
+        "delete",
+        "back",
+        "back",
+        "keep"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 1,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": "keep 1",
+          "options": [],
+          "labels": [
+            "keep 1?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [],
+          "kept": [
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+          ],
+          "deleted": []
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "a decision undone",
+      "ops": [
+        "keep",
+        "delete",
+        "back",
+        "back",
+        "keep"
+      ],
+      "button": "forget",
+      "forget_yes": true,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": "keep 1",
+          "options": [],
+          "labels": [
+            "keep 1?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": [
+            "Quit filtering now and forget your work?"
+          ]
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 1,
+        "kept": [
+          0
+        ],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "a decision undone",
+      "ops": [
+        "keep",
+        "delete",
+        "back",
+        "back",
+        "keep"
+      ],
+      "button": "back",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": false,
+      "questions": [
+        {
+          "kept": "keep 1",
+          "options": [],
+          "labels": [
+            "keep 1?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 1,
+        "kept": [
+          0
+        ],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "only skips",
+      "ops": [
+        "skip",
+        "skip"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 2,
+        "kept": [],
+        "deleted": [],
+        "skipped": [
+          0,
+          1
+        ],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "only skips",
+      "ops": [
+        "skip",
+        "skip"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 1,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 2,
+        "kept": [],
+        "deleted": [],
+        "skipped": [
+          0,
+          1
+        ],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "only skips",
+      "ops": [
+        "skip",
+        "skip"
+      ],
+      "button": "forget",
+      "forget_yes": true,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 2,
+        "kept": [],
+        "deleted": [],
+        "skipped": [
+          0,
+          1
+        ],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "only skips",
+      "ops": [
+        "skip",
+        "skip"
+      ],
+      "button": "back",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 2,
+        "kept": [],
+        "deleted": [],
+        "skipped": [
+          0,
+          1
+        ],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "no decisions",
+      "ops": [],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "no decisions",
+      "ops": [],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 1,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "no decisions",
+      "ops": [],
+      "button": "forget",
+      "forget_yes": true,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "all local files",
+      "plan": "no decisions",
+      "ops": [],
+      "button": "back",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "keep one, delete one, skip one",
+      "ops": [
+        "keep",
+        "delete",
+        "skip"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": "keep 1",
+          "options": [
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 1 from my files"
+            }
+          ],
+          "labels": [
+            "keep 1 and delete 1 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [
+            "6c6f63616c2066696c6573"
+          ],
+          "kept": [
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+          ],
+          "deleted": [
+            "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+          ]
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "keep one, delete one, skip one",
+      "ops": [
+        "keep",
+        "delete",
+        "skip"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 1,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": "keep 1",
+          "options": [
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 1 from my files"
+            }
+          ],
+          "labels": [
+            "keep 1 and delete 1 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [
+            "6c6f63616c2066696c6573"
+          ],
+          "kept": [
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+          ],
+          "deleted": [
+            "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+          ]
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "keep one, delete one, skip one",
+      "ops": [
+        "keep",
+        "delete",
+        "skip"
+      ],
+      "button": "forget",
+      "forget_yes": true,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": "keep 1",
+          "options": [
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 1 from my files"
+            }
+          ],
+          "labels": [
+            "keep 1 and delete 1 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": [
+            "Quit filtering now and forget your work?"
+          ]
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 3,
+        "kept": [
+          0
+        ],
+        "deleted": [
+          1
+        ],
+        "skipped": [
+          2
+        ],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "keep one, delete one, skip one",
+      "ops": [
+        "keep",
+        "delete",
+        "skip"
+      ],
+      "button": "back",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": false,
+      "questions": [
+        {
+          "kept": "keep 1",
+          "options": [
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 1 from my files"
+            }
+          ],
+          "labels": [
+            "keep 1 and delete 1 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 3,
+        "kept": [
+          0
+        ],
+        "deleted": [
+          1
+        ],
+        "skipped": [
+          2
+        ],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "keep two",
+      "ops": [
+        "keep",
+        "keep"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": "keep 2",
+          "options": [],
+          "labels": [
+            "keep 2?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [],
+          "kept": [
+            "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+          ],
+          "deleted": []
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "keep two",
+      "ops": [
+        "keep",
+        "keep"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 1,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": "keep 2",
+          "options": [],
+          "labels": [
+            "keep 2?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [],
+          "kept": [
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+            "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+          ],
+          "deleted": []
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "keep two",
+      "ops": [
+        "keep",
+        "keep"
+      ],
+      "button": "forget",
+      "forget_yes": true,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": "keep 2",
+          "options": [],
+          "labels": [
+            "keep 2?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": [
+            "Quit filtering now and forget your work?"
+          ]
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 2,
+        "kept": [
+          0,
+          1
+        ],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "keep two",
+      "ops": [
+        "keep",
+        "keep"
+      ],
+      "button": "back",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": false,
+      "questions": [
+        {
+          "kept": "keep 2",
+          "options": [],
+          "labels": [
+            "keep 2?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 2,
+        "kept": [
+          0,
+          1
+        ],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "delete two",
+      "ops": [
+        "delete",
+        "delete"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": null,
+          "options": [
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 2 from my files"
+            }
+          ],
+          "labels": [
+            "delete 2 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [
+            "6c6f63616c2066696c6573"
+          ],
+          "kept": [],
+          "deleted": [
+            "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+          ]
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "delete two",
+      "ops": [
+        "delete",
+        "delete"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 1,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": null,
+          "options": [
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 2 from my files"
+            }
+          ],
+          "labels": [
+            "delete 2 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [
+            "6c6f63616c2066696c6573"
+          ],
+          "kept": [],
+          "deleted": [
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+            "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+          ]
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "delete two",
+      "ops": [
+        "delete",
+        "delete"
+      ],
+      "button": "forget",
+      "forget_yes": true,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": null,
+          "options": [
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 2 from my files"
+            }
+          ],
+          "labels": [
+            "delete 2 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": [
+            "Quit filtering now and forget your work?"
+          ]
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 2,
+        "kept": [],
+        "deleted": [
+          0,
+          1
+        ],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "delete two",
+      "ops": [
+        "delete",
+        "delete"
+      ],
+      "button": "back",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": false,
+      "questions": [
+        {
+          "kept": null,
+          "options": [
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 2 from my files"
+            }
+          ],
+          "labels": [
+            "delete 2 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 2,
+        "kept": [],
+        "deleted": [
+          0,
+          1
+        ],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "keep two, delete two, then the last file",
+      "ops": [
+        "keep",
+        "keep",
+        "delete",
+        "delete",
+        "delete"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": true,
+      "returned": null,
+      "questions": [
+        {
+          "kept": "keep 2",
+          "options": [
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 3 from my files"
+            }
+          ],
+          "labels": [
+            "keep 2 and delete 3 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [
+            "6c6f63616c2066696c6573"
+          ],
+          "kept": [
+            "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+          ],
+          "deleted": [
+            "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+            "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+            "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c"
+          ]
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": null,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": false
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "keep two, delete two, then the last file",
+      "ops": [
+        "keep",
+        "keep",
+        "delete",
+        "delete",
+        "delete"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 1,
+      "asked_by_the_window": true,
+      "returned": null,
+      "questions": [
+        {
+          "kept": "keep 2",
+          "options": [
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 3 from my files"
+            }
+          ],
+          "labels": [
+            "keep 2 and delete 3 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [
+            "6c6f63616c2066696c6573"
+          ],
+          "kept": [
+            "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+          ],
+          "deleted": [
+            "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+            "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+            "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf"
+          ]
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": null,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": false
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "keep two, delete two, then the last file",
+      "ops": [
+        "keep",
+        "keep",
+        "delete",
+        "delete",
+        "delete"
+      ],
+      "button": "forget",
+      "forget_yes": true,
+      "pick": 0,
+      "asked_by_the_window": true,
+      "returned": null,
+      "questions": [
+        {
+          "kept": "keep 2",
+          "options": [
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 3 from my files"
+            }
+          ],
+          "labels": [
+            "keep 2 and delete 3 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": [
+            "Quit filtering now and forget your work?"
+          ]
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": null,
+        "kept": [
+          0,
+          1
+        ],
+        "deleted": [
+          2,
+          3,
+          4
+        ],
+        "skipped": [],
+        "visible": false
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "keep two, delete two, then the last file",
+      "ops": [
+        "keep",
+        "keep",
+        "delete",
+        "delete",
+        "delete"
+      ],
+      "button": "back",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": true,
+      "returned": null,
+      "questions": [
+        {
+          "kept": "keep 2",
+          "options": [
+            {
+              "keys": [
+                "6c6f63616c2066696c6573"
+              ],
+              "label": "delete 3 from my files"
+            }
+          ],
+          "labels": [
+            "keep 2 and delete 3 from my files?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 4,
+        "kept": [
+          0,
+          1
+        ],
+        "deleted": [
+          2,
+          3
+        ],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "keep all five",
+      "ops": [
+        "keep",
+        "keep",
+        "keep",
+        "keep",
+        "keep"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": true,
+      "returned": null,
+      "questions": [
+        {
+          "kept": "keep 5",
+          "options": [],
+          "labels": [
+            "keep 5?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [],
+          "kept": [
+            "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+            "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+            "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+            "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf"
+          ],
+          "deleted": []
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": null,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": false
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "keep all five",
+      "ops": [
+        "keep",
+        "keep",
+        "keep",
+        "keep",
+        "keep"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 1,
+      "asked_by_the_window": true,
+      "returned": null,
+      "questions": [
+        {
+          "kept": "keep 5",
+          "options": [],
+          "labels": [
+            "keep 5?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [],
+          "kept": [
+            "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+            "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+            "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+            "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf"
+          ],
+          "deleted": []
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": null,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": false
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "keep all five",
+      "ops": [
+        "keep",
+        "keep",
+        "keep",
+        "keep",
+        "keep"
+      ],
+      "button": "forget",
+      "forget_yes": true,
+      "pick": 0,
+      "asked_by_the_window": true,
+      "returned": null,
+      "questions": [
+        {
+          "kept": "keep 5",
+          "options": [],
+          "labels": [
+            "keep 5?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": [
+            "Quit filtering now and forget your work?"
+          ]
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": null,
+        "kept": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "deleted": [],
+        "skipped": [],
+        "visible": false
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "keep all five",
+      "ops": [
+        "keep",
+        "keep",
+        "keep",
+        "keep",
+        "keep"
+      ],
+      "button": "back",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": true,
+      "returned": null,
+      "questions": [
+        {
+          "kept": "keep 5",
+          "options": [],
+          "labels": [
+            "keep 5?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 4,
+        "kept": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "a decision undone",
+      "ops": [
+        "keep",
+        "delete",
+        "back",
+        "back",
+        "keep"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": "keep 1",
+          "options": [],
+          "labels": [
+            "keep 1?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [],
+          "kept": [
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+          ],
+          "deleted": []
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "a decision undone",
+      "ops": [
+        "keep",
+        "delete",
+        "back",
+        "back",
+        "keep"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 1,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": "keep 1",
+          "options": [],
+          "labels": [
+            "keep 1?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [
+        {
+          "keys": [],
+          "kept": [
+            "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+          ],
+          "deleted": []
+        }
+      ],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "a decision undone",
+      "ops": [
+        "keep",
+        "delete",
+        "back",
+        "back",
+        "keep"
+      ],
+      "button": "forget",
+      "forget_yes": true,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [
+        {
+          "kept": "keep 1",
+          "options": [],
+          "labels": [
+            "keep 1?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": [
+            "Quit filtering now and forget your work?"
+          ]
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 1,
+        "kept": [
+          0
+        ],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "a decision undone",
+      "ops": [
+        "keep",
+        "delete",
+        "back",
+        "back",
+        "keep"
+      ],
+      "button": "back",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": false,
+      "questions": [
+        {
+          "kept": "keep 1",
+          "options": [],
+          "labels": [
+            "keep 1?",
+            "-or-"
+          ],
+          "buttons": [
+            "commit",
+            "forget",
+            "back to filtering"
+          ],
+          "forget_questions": []
+        }
+      ],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 1,
+        "kept": [
+          0
+        ],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "only skips",
+      "ops": [
+        "skip",
+        "skip"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 2,
+        "kept": [],
+        "deleted": [],
+        "skipped": [
+          0,
+          1
+        ],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "only skips",
+      "ops": [
+        "skip",
+        "skip"
+      ],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 1,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 2,
+        "kept": [],
+        "deleted": [],
+        "skipped": [
+          0,
+          1
+        ],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "only skips",
+      "ops": [
+        "skip",
+        "skip"
+      ],
+      "button": "forget",
+      "forget_yes": true,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 2,
+        "kept": [],
+        "deleted": [],
+        "skipped": [
+          0,
+          1
+        ],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "only skips",
+      "ops": [
+        "skip",
+        "skip"
+      ],
+      "button": "back",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 2,
+        "kept": [],
+        "deleted": [],
+        "skipped": [
+          0,
+          1
+        ],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "no decisions",
+      "ops": [],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "no decisions",
+      "ops": [],
+      "button": "commit",
+      "forget_yes": null,
+      "pick": 1,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "no decisions",
+      "ops": [],
+      "button": "forget",
+      "forget_yes": true,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    },
+    {
+      "page": "my files",
+      "plan": "no decisions",
+      "ops": [],
+      "button": "back",
+      "forget_yes": null,
+      "pick": 0,
+      "asked_by_the_window": false,
+      "returned": true,
+      "questions": [],
+      "commits": [],
+      "removed": [],
+      "after": {
+        "do": "close",
+        "current": 0,
+        "kept": [],
+        "deleted": [],
+        "skipped": [],
+        "visible": true
+      }
+    }
+  ]
+}

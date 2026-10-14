@@ -112,10 +112,10 @@
     "Close builds counts/question from staged decisions. Commit calls media-actions writes and removes deleted files from the launching page; forget discards the draft; resume shows the same file."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real filter window and store (stop asks, resume, commit archives/deletes and removes from page, forget). The question text 'keep 1 and delete 1 from ..., sending directly to trash?' and caption values are literals from ClientGUICanvas.py; no recording of the filter's close question (archive_delete_policies.json covers only the multi-domain commit panel/settings). Tests: crates/hydrus-gui/tests/gui/archive_delete.rs:29 the_archive_delete_filter_keeps_and_deletes"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (#97 phase 2, w4-r4)",
+    "note": "gui/archive_delete_filter_replay.rs the_finish_question_and_its_answers_are_the_references replays 64 recorded closes (archive_delete_filter.json, from the reference's UserOKToClose with its real finish panel) on a page of all local files and a page of my files, after eight runs of decisions: the question as the window shows it (the kept line over each deletion choice, or one combined sentence, with the reference's labels such as 'delete all 2 from combined local file domains, sending directly to trash'), whether the last file's decision asked by itself, no question with nothing kept or deleted, commit of each choice (kept archived and deleted trashed as many as the reference's commit), forget (the forget question's wording; yes closes with nothing done), and back to filtering (the file and decisions kept, the last file's decision dropped). The commit's domain choice is checked by counts (the fixture's files are in one domain)."
    }
   },
   {
@@ -131,10 +131,10 @@
     "ArchiveDeleteFilter records keep/delete decisions per file and skip leaves it untouched; Back restores the prior staged decision rather than immediately mutating the store."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window keep/delete/skip/back plus store effects and F12 on selection/left click keep, all with typed literals; no recording of the filter exists to compare keep/delete/back behaviour. Tests: crates/hydrus-gui/tests/gui/archive_delete.rs:29 the_archive_delete_filter_keeps_and_deletes"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (#97 phase 2, w4-r4)",
+    "note": "gui/archive_delete_filter_replay.rs keep_delete_skip_and_back_go_where_the_references_do drives the real filter window (F12 on a page of the five recorded files) through the 15 recorded steps of oracle/record_archive_delete_filter.py (archive_delete_filter.json: keep, delete, skip, back, back on the first file, the last file's decision asking and being answered back to filtering): the file shown after each (the caption) equals the reference canvas's current file, and committing at the end archives, trashes and leaves untouched exactly the files the reference held as kept, deleted and skipped. Playback, hover and pause are the separate playback leaf."
    }
   },
   {
@@ -352,10 +352,10 @@
     "The reference enumerates all regeneration job kinds under Manage > maintenance. Native manage_menu has no maintenance-job actions."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu lists all 27 jobs in human order (compared to native HUMAN_ORDER; the submenu labels are also replayed against thumbnail_menu.json), asks, and runs the blurhash job only on the selection. Job question texts are native or literal from Python, not recorded. Stale tracker note ('no maintenance-job actions'). Tests: crates/hydrus-gui/tests/gui/media_file_actions.rs:188 maintenance_jobs_are_listed_asked_and_run_on_the_selected_files; thumbnail_menu.rs (recorded maintenance submenu, untagged)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (#97 phase 2, w4-r4)",
+    "note": "gui/regen_questions_replay.rs every_maintenance_job_asks_what_the_reference_asks replays oracle/record_regen_questions.py's recording (regen_questions.json: the reference's manage > maintenance menu for one and for three selected files, every one of the 27 jobs triggered with the question captured): the jobs and their labels in the reference's order, each question's message (the three that count the selected files included), title and buttons, and 'no' queues nothing. 'Yes' running a job is tested for the blurhash job only (media_file_actions.rs, which also checks only the selected files are touched); what the other jobs do is the maintenance jobs' own leaves."
    }
   },
   {
@@ -390,10 +390,10 @@
     "Native URL context includes manage/open/copy/page only and does not offer the reference fetch-state override or redownload actions."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu: row label, question text, no/yes, new 'forced urls downloader' page whose queue options set both fetch-even-if-known flags. All strings and options are literals from the Python source; not recorded. Stale tracker note ('does not offer ... redownload'). Tests: crates/hydrus-gui/tests/gui/media_file_actions.rs:278 force_metadata_refetch_asks_then_opens_a_downloader_page_of_the_urls"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (#97 phase 2, w4-r4)",
+    "note": "gui/media_file_actions.rs force_metadata_refetch_asks_then_opens_a_downloader_page_of_the_urls replays oracle/record_force_refetch.py's recording (force_refetch.json): the rows for one file and for three ('this file's example post urls', 'these files' example post urls'), each question's wording with its URL count, 'no' opens nothing, 'yes' makes the 'forced urls downloader' page the first time and reuses it after, sends it exactly the recorded URLs, and its options fetch metadata even for known URLs and hashes. Found and fixed: the native pend refused URLs whose class has no parser link (an error only printed), where the reference's sidebar pends them and fails when fetching."
    }
   },
   {
@@ -468,10 +468,10 @@
     "Native menu computes per-domain/filter counts and action matching for all/selected/not-selected/inbox/archive/local/remote; lib dispatch changes selection or removes from view. First-pass evidence scope: Menu branch labels/counts/enabling match recorded selections; action assertion covers inbox selection and remove-selected. Per-domain variants are source-inspected, not separately exercised in this test."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu: every select and remove row's count and effect (art, my files, inbox, archive, selected, not selected). Expected sets are computed from the store by the test, not recorded; local/remote rows not exercised (basic fixture has no remote files). Tests: crates/hydrus-gui/tests/gui/media_selection_menu.rs:47 select_and_remove_rows_count_and_act_on_each_filter_and_domain"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (#97 phase 2, w4-r4)",
+    "note": "gui/thumbnail_select_remove_replay.rs select_and_remove_rows_do_what_the_references_do replays oracle/record_thumbnail_select_remove.py's recording (thumbnail_select_remove.json: the reference's grid menu on a page of all local files (with the trash and files not local) and a page of the inbox files, three selections each, every select and remove row triggered): the rows offered, with their counts, in the menu's order, and for each of the 100 triggers the files selected or left on the page, compared in the real window. The not-local rows are exercised (the page holds three files not in the client)."
    }
   },
   {
@@ -20942,10 +20942,10 @@
     "Close the clicked page through the existing confirmation path; nested downloader objections aggregate and closed pages retain undo. Bulk targets freeze page keys before confirmation; cancellation changes nothing and confirmed close uses the ordinary reverse-order undo stack."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Coordinator correction: not wrong. The reference's 'This is a simple urls import page...' is the simple downloader page's veto (ClientGUISidebarImporters.py:2777, SidebarImporterSimpleDownloader); the URLs import page says 'This is a urls import page...' (line 2966, SidebarImporterURLs), as native does. Still weak: middle-click and Ctrl+W are not driven (tests call invoke_close_page / Pages::close_shown), and the simple downloader page's close veto wording is unchecked. Agent's note follows: Menu 'close page' reaches invoke_close_tab and the confirm-all questions are replayed from page_navigation_options.json, but the importer-objection path uses the native 'urls import page' veto text which contradicts the reference's 'simple urls import page' (page.rs:204), and the notebook/aggregate path has no yes/no/'show me the pages' dialog and no test. Tracker claim of aggregated nested objections is unproved. Tests: crates/hydrus-gui/tests/gui/page_navigation_options.rs:~80 (invoke_close_tab replays recorded confirm-all closes); session.rs:641"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (#97 phase 2, w4-r4)",
+    "note": "gui/tab_close_objections.rs closing_pages_with_importers_asks_as_the_reference_does opens the real tab menu and chooses 'close page' on a URL importer page holding 3 queued URLs and on a search page, against oracle/record_tab_close_objections.py's recording (tab_close_objections.json): the importer asks `Close \"imp1\"?` with the reason 'This is a urls import page holding 3 import objects.' and yes closes it, no keeps it; the search page closes without asking. Middle-click and Ctrl+W are the separate close leaf; the simple downloader page's own veto wording is not recorded."
    }
   },
   {
@@ -20962,10 +20962,10 @@
     "Grouped downloader objections use native yes/no; the extra reference no-but-show-pages response is deferred."
    ],
    "recheck": {
-    "date": "2026-10-09",
-    "class": "weak",
-    "by": "phase 2 session",
-    "note": "gui/tab_context_menu.rs close_other_left_and_right_from_the_tab_menu_ask_and_close_as_the_reference_did drives the menu entries ('close' > other pages / pages to the left / pages to the right) for all six cases of tab_actions.json `close` (question text, decline, accept, remaining pages, undo). Still weak: the reference's longer question when a closing page has a downloader at work is not implemented or tested (DIFFERENCES.md), so the tag is withheld."
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (#97 phase 2, w4-r4)",
+    "note": "gui/tab_close_objections.rs against tab_close_objections.json, through the real tab menu on the first tab (a, imp1, b, imp2, c): 'close other pages' opens the reference's dialog (src/reasons_dialog.rs) with its message listing both importers' reasons, its buttons yes/no/'no, but show me the pages', answered with each: yes closes the other four (the remaining pages are the recorded ones), no leaves them, the third opens the 'Go To Page' list whose buttons ('reason: page') show their pages; the_dialogs_yes_waits_before_it_can_be_pressed checks yes starts disabled and a click on it does nothing (a long delay set on the thread so the check cannot be late; the 1.2 s itself is from the source). The no-objection question is the existing tab_actions.json replay in tab_context_menu.rs."
    }
   },
   {
@@ -20982,10 +20982,10 @@
     "Grouped downloader objections use native yes/no; the extra reference no-but-show-pages response is deferred."
    ],
    "recheck": {
-    "date": "2026-10-09",
-    "class": "weak",
-    "by": "phase 2 session",
-    "note": "gui/tab_context_menu.rs close_other_left_and_right_from_the_tab_menu_ask_and_close_as_the_reference_did drives the menu entries ('close' > other pages / pages to the left / pages to the right) for all six cases of tab_actions.json `close` (question text, decline, accept, remaining pages, undo). Still weak: the reference's longer question when a closing page has a downloader at work is not implemented or tested (DIFFERENCES.md), so the tag is withheld."
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (#97 phase 2, w4-r4)",
+    "note": "gui/tab_close_objections.rs against tab_close_objections.json: 'close' > 'pages to the left' on the third tab asks the reference's dialog for the one objecting importer to its left (message, buttons, yes/no/show with its one-button list), and the pages left after each answer are the recorded ones. The no-objection question and undo are the tab_actions.json replay (tab_context_menu.rs)."
    }
   },
   {
@@ -21002,10 +21002,10 @@
     "Grouped downloader objections use native yes/no; the extra reference no-but-show-pages response is deferred."
    ],
    "recheck": {
-    "date": "2026-10-09",
-    "class": "weak",
-    "by": "phase 2 session",
-    "note": "gui/tab_context_menu.rs close_other_left_and_right_from_the_tab_menu_ask_and_close_as_the_reference_did drives the menu entries ('close' > other pages / pages to the left / pages to the right) for all six cases of tab_actions.json `close` (question text, decline, accept, remaining pages, undo). Still weak: the reference's longer question when a closing page has a downloader at work is not implemented or tested (DIFFERENCES.md), so the tag is withheld."
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (#97 phase 2, w4-r4)",
+    "note": "gui/tab_close_objections.rs against tab_close_objections.json: 'close' > 'pages to the right' on the third tab asks the reference's dialog for the objecting importer to its right, answered yes/no/show with the recorded results; on the fourth tab, with nothing objecting, the plain 'Close 1 pages to the right?' question closes the last page. Undo is the tab_actions.json replay (tab_context_menu.rs)."
    }
   },
   {

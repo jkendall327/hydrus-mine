@@ -193,6 +193,7 @@ pub mod choice_buttons;
 pub mod database_maintenance_window;
 pub mod how_boned_window;
 pub mod options_mpv_devices;
+pub mod reasons_dialog;
 pub mod set_password_window;
 pub mod thumbnail_maintenance_window;
 pub mod thumbnail_menu;

@@ -6,6 +6,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use hydrus_core::numbers::human_int;
+use hydrus_core::pages::PageKey;
 use slint::{ComponentHandle, Model, ModelRc, SharedString, VecModel};
 
 use crate::main_menu::{self, Command, Facts, LineKind, MenuKey, OpenMenus};
@@ -572,16 +573,34 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
             }
         }
         Command::CloseTabs { depth, index, side } => {
-            let prepared = hooks
-                .pages
-                .borrow_mut()
-                .close_tabs_question(depth, index, side);
-            if let Some((keys, question)) = prepared {
+            let prepared = hooks.pages.borrow_mut().close_tabs_plan(depth, index, side);
+            if let Some(plan) = prepared {
                 let change_pages = hooks.change_pages.clone();
-                (hooks.ask)(
-                    question,
-                    Rc::new(move || change_pages(&|pages| pages.close_tab_keys(&keys))),
-                );
+                let keys = plan.keys;
+                let close: Rc<dyn Fn()> =
+                    Rc::new(move || change_pages(&|pages| pages.close_tab_keys(&keys)));
+                if plan.objections.is_empty() {
+                    (hooks.ask)(plan.question, close);
+                } else {
+                    // some page objects: the longer question, with a way to
+                    // look at the pages that do
+                    let change_pages = hooks.change_pages.clone();
+                    let show: Rc<dyn Fn(PageKey)> = Rc::new(move |key| {
+                        change_pages(&|pages| {
+                            pages.show(&key);
+                            Ok(())
+                        });
+                    });
+                    if let Err(error) = crate::reasons_dialog::open(
+                        &plan.question,
+                        plan.objections,
+                        crate::reasons_dialog::yes_delay(),
+                        close,
+                        show,
+                    ) {
+                        eprintln!("could not ask about closing the pages: {error}");
+                    }
+                }
             }
         }
         Command::NavigateTabs { depth, movement } => change_pages(&|pages| {
