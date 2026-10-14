@@ -852,7 +852,7 @@
       "Permanently delete 2 files?",
       "Permanently delete these 2 files and do not save a deletion record?"
     ],
-    "action": 0,
+    "action": 4,
     "reasons": [
       "Deleted from Preview or Media Viewer.",
       "alpha",
@@ -864,7 +864,7 @@
     ],
     "reason": 6,
     "custom": "synthetic custom 日本",
-    "reason_enabled": true,
+    "reason_enabled": false,
     "custom_enabled": false
   },
   "physical_remember": [
