@@ -4595,7 +4595,10 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   reference's source only: its menu is filled by a worker the recorder cannot
   call (`oracle/record_backup_dialogs.py` records the dialogs, not the menu).
   Choosing "restore from a database backup" asks the reference's questions and
-  leaves a restart request; the reference's exit and restart is not exercised.
+  exits the client for a restart at once, with no second question and no
+  shutdown jobs; the restart is driven with a stand-in program and the start it
+  stands for (`client_store::open_store`) restores the backup
+  (`tests/gui/database_backup_menu.rs`).
 
 - Restoring refuses the store's own directory, including aliases. Startup takes
   the GUI lock before restoring or opening the database, and restore refuses an
@@ -5308,3 +5311,27 @@ be diagnosed afterwards. The owner chose always-on crash logging (2026-10-14).
   one process; here the client shows the popup and resets its idle timer, and
   the daemon (which owns the network engine and subscriptions) is asked to see a
   wake too, within about a second (that request is not tested end to end).
+
+## Media viewer, duplicates daemons and the rebalance job (wave 5, W5-5)
+
+- The viewer's window size and place are kept only when it closes with "Save
+  media viewer window size and position on close" on. The reference also
+  saves them a moment after every resize or move whatever that option says
+  (`oracle/record_viewer_close_geometry.py`), so a viewer left a moment after
+  a resize keeps the size there and here it does not.
+- The viewer has no shortcut commands for forcing the mute or unmuting just
+  here (`SIMPLE_PER_PLAYER_AUDIO_MUTE`, `_UNMUTE`, `_FLIP`), for zooming to
+  100% or the canvas apart from switching, or for panning to the edges and
+  centres. The menu offers a force only when it changes what the options say, as the
+  reference's does; the other forced states are shortcut-only there and not
+  reachable here.
+- After a drag, the reference's "zoom to canvas" keeps the dragged place
+  (`oracle/record_viewer_pan_zoom.py`); the nearest command here, switching with
+  z, goes to 100%, and from 100% to a centred fit.
+- The similar-files search never rests less than 0.1 s between packets; the
+  reference rests as little as its percentage computes. Working hard ends,
+  as the reference's does, once nothing is left to search. The auto-resolution
+  loop has no per-rule "work hard" and holds 10 s when it may not work, 60 s
+  when it has no work left (the reference rests 600 s).
+- The rebalance job's popup is dismissed at once when the job ends, so it
+  cannot be read afterwards; the moves are counted from the folders instead.

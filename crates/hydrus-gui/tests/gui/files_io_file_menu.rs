@@ -105,7 +105,7 @@ fn last_done(store: &Store) -> i64 {
 }
 
 /// The restart flag is process-wide: the tests that set it take turns.
-static RESTART_FLAG: std::sync::Mutex<()> = std::sync::Mutex::new(());
+pub(crate) static RESTART_FLAG: std::sync::Mutex<()> = std::sync::Mutex::new(());
 
 const EXIT_QUESTION: &str =
     "Are you sure you want to exit the client? (Will auto-yes in 15 seconds)";

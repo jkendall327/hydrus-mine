@@ -35,6 +35,7 @@ mod checker_options_window;
 #[doc(hidden)]
 pub use checker_options_window::latest_value as latest_checker_value;
 pub mod client_exit;
+pub mod client_store;
 pub mod clipboard_monitor;
 pub mod command_palette_window;
 pub mod daemon;
@@ -3086,7 +3087,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         let weak = window.as_weak();
                         move || {
                             crate::client_exit::set_mode(
-                                hydrus_gui_model::shutdown_work::ExitMode::Restart,
+                                hydrus_gui_model::shutdown_work::ExitMode::RestoreRestart,
                             );
                             if let Some(window) = weak.upgrade() {
                                 let _ = window.window().dispatch_event_with_result(
@@ -6779,6 +6780,7 @@ fn open_viewer(
             let muted = forced_mute.get().unwrap_or_else(|| audio.viewer_muted());
             playback.set_audio(audio.current_viewer_volume(), muted);
             if let Some(window) = weak.upgrade() {
+                window.set_playing_muted(muted);
                 window.set_global_muted(audio.global_mute);
                 window.set_viewer_muted(audio.viewer_mute);
                 window.set_volume(i32::from(audio.current_viewer_volume()));
@@ -7293,7 +7295,7 @@ fn open_viewer(
     // the viewer opening: this viewer's shuffling and playing through are
     // the options' to begin with
     let opened = std::time::Instant::now();
-    let now = move || opened.elapsed().as_secs_f64();
+    let now = move || slideshow::held_clock().unwrap_or_else(|| opened.elapsed().as_secs_f64());
     let slideshow_settings = {
         let store = model.borrow().store().clone();
         move || slideshow::settings(&store)
@@ -7342,6 +7344,7 @@ fn open_viewer(
         let viewer_delete = viewer_delete.clone();
         let weak = window.as_weak();
         move || {
+            slideshow::note_tick();
             url_ticks.set((url_ticks.get() + 1) % 10);
             if url_ticks.get() == 0 {
                 show_url_links();

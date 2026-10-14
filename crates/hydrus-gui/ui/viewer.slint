@@ -297,6 +297,9 @@ export component MediaViewerWindow inherits Window {
     in property <bool> volume-shown;
     in property <bool> global-muted;
     in property <bool> viewer-muted;
+    // whether the player is told to play muted: the viewer's forced mute, or
+    // else either mute (what the volume control's two icons add up to)
+    in property <bool> playing-muted;
     in property <int> volume;
     // whether the volume control is open (the scanbar stays full meanwhile,
     // as the reference's controls bar does while its popup shows)
