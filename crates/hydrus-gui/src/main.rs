@@ -99,11 +99,13 @@ fn main() -> Result<()> {
     drop(client);
     drop(open_guard);
     // File > restart: start again, now this client has let go of the store
-    hydrus_gui::client_exit::relaunch(
-        hydrus_gui::client_exit::RESTART.load(std::sync::atomic::Ordering::SeqCst),
-        &std::env::current_exe().context("finding this program to restart it")?,
-        std::env::args_os().skip(1),
-    )?;
+    if hydrus_gui::client_exit::RESTART.load(std::sync::atomic::Ordering::SeqCst) {
+        let exe = std::env::current_exe().context("finding this program to restart it")?;
+        std::process::Command::new(exe)
+            .args(std::env::args_os().skip(1))
+            .spawn()
+            .context("restarting the client")?;
+    }
     Ok(())
 }
 
