@@ -8071,14 +8071,13 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Reference editor/control 'help for this panel -->' is recorded on 'external programs' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
-    "Native options registry has no editable 'help for this panel -->' control in this page/box path."
+    "The panel's help button opens external_programs.html through documentation::open: the local help, else the 'You do not have a local help!' question (#182)."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "weak",
-    "by": "Claude session (#165 triage)",
-    "note": "Untagged. The help button launches the online external_programs.html; the reference's OpenDocumentation opens a local help file, or asks the 'You do not have a local help!' question first. DIFFERENCES.md; #182."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#182)",
+    "note": "The options panel's help button, pressed through the window, replays documentation.json for external_programs.html: local file when present, else the question and each answer. Test: crates/hydrus-gui/tests/gui/external_calls_editor.rs (help_button_opens_the_external_programs_documentation) via common/help.rs. The older notes here ('No corresponding editable row exists...') are false: the panel has the help button, and this test presses it."
    }
   },
   {
@@ -12245,10 +12244,10 @@
     "Native presents this page as an Options-owned child window; its confirmations and informational messages are inline rather than separate blocking Qt dialogs."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "sound",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window test asserts the launched documentation URL from the fixture and the tl;dr text from recorded step 10. Tests: crates/hydrus-gui/tests/gui/import_options_panel.rs:72,266; crates/hydrus-gui-model/tests/model/import_options_panel.rs:67,209; crates/hydrus-gui-model/tests/model/import_options_editor.rs:~356,~388"
+    "by": "Claude session (#182)",
+    "note": "The panel's help button replays documentation.json for getting_started_import_options.html (local file, else the question and each answer), and the tl;dr text is the recorded step 10. Tests: crates/hydrus-gui/tests/gui/import_options_panel.rs (options_drafts_replay_clear_reset_simple_mode_and_cancel_without_store_changes) via common/help.rs."
    }
   },
   {
@@ -15196,13 +15195,13 @@
    "native": null,
    "notes": [
     "'changelog' has an exact predefined HTTP URL and routes through the OS launcher. The menu oracle checks labels/placement and the GUI regression verifies the shared URL-launch path.",
-    "Opens the hosted website/changelog; Qt prefers bundled local documentation."
+    "Opens the page from a help folder beside the program, else asks \"You do not have a local help!\" and opens the online page or the guide to building one, as the reference's OpenDocumentation does (#182)."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "weak",
-    "by": "Claude session (#165 triage)",
-    "note": "Untagged. As open help: the reference's OpenDocumentation opens the local changelog or asks the 'You do not have a local help!' question; hydrus-rs opens the online changelog at once. DIFFERENCES.md; #182."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#182)",
+    "note": "As open help, for changelog.html#version_688, the fragment kept in the local file URL. Test: shell_help_menu.rs (open_help_and_changelog_launch_their_pages) via common/help.rs, replaying documentation.json."
    }
   },
   {
@@ -15316,13 +15315,13 @@
    "native": null,
    "notes": [
     "'open help' has an exact predefined HTTP URL and routes through the OS launcher. The menu oracle checks labels/placement and the GUI regression verifies the shared URL-launch path.",
-    "Opens the hosted website/changelog; Qt prefers bundled local documentation."
+    "Opens the page from a help folder beside the program, else asks \"You do not have a local help!\" and opens the online page or the guide to building one, as the reference's OpenDocumentation does (#182)."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "weak",
-    "by": "Claude session (#165 triage)",
-    "note": "Untagged. The reference's OpenDocumentation opens the local help, or with none asks 'You do not have a local help! ...' (open online help / open how to build guide / forget it); hydrus-rs ships no local help and opens the online page at once. Recorded as a difference in DIFFERENCES.md; the owner decides in #182."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#182)",
+    "note": "Help > open help presses through the real menu, with the page in the local help and without it; the opened file URL, the 'You do not have a local help!' question (message, title, choices, 'forget it') and what each answer or a cancel opens replay oracle/fixtures/documentation.json (record_documentation.py). Test: crates/hydrus-gui/tests/gui/shell_help_menu.rs (open_help_and_changelog_launch_their_pages) via common/help.rs."
    }
   },
   {

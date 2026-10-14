@@ -185,7 +185,7 @@ as Qt's do; a press anywhere else closes them. What works so far:
 - tags: the siblings and parents editors (below);
 - pending: each repository's content to upload, and forgetting it (asking
   first);
-- help: the help, links and changelog in the browser, and advanced mode
+- help: the help and changelog (from a `help` folder beside the program, or, with none, asking "You do not have a local help!" with the online help or the guide to building one), links in the browser, and advanced mode
   (which adds hydrus's advanced entries).
 
 The subscription exchange codec reads and writes complete modern reference

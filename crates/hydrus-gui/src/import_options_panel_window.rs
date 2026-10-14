@@ -671,9 +671,7 @@ pub fn open(
             }
             match action.as_str() {
                 "tldr" => owner.information(TLDR),
-                "help" => crate::launch(
-                    "https://hydrusnetwork.github.io/hydrus/getting_started_import_options.html",
-                ),
+                "help" => crate::documentation::open(crate::documentation::IMPORT_OPTIONS),
                 _ => {
                     if let Ok(list) = usize::try_from(list)
                         && let Some(list) = List::from_index(list)

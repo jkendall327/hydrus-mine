@@ -1,0 +1,242 @@
+{
+  "local": [
+    {
+      "page": "index.html",
+      "opened": [
+        "file:///<help>/index.html"
+      ],
+      "asked": []
+    },
+    {
+      "page": "changelog.html#version_688",
+      "opened": [
+        "file:///<help>/changelog.html#version_688"
+      ],
+      "asked": []
+    },
+    {
+      "page": "external_programs.html",
+      "opened": [
+        "file:///<help>/external_programs.html"
+      ],
+      "asked": []
+    },
+    {
+      "page": "getting_started_import_options.html",
+      "opened": [
+        "file:///<help>/getting_started_import_options.html"
+      ],
+      "asked": []
+    }
+  ],
+  "missing": [
+    {
+      "page": "index.html",
+      "answer": 0,
+      "asked": [
+        {
+          "message": "You do not have a local help! Are you running from source? Would you like to open the online help or see a guide on how to build your own?",
+          "title": "Are you sure?",
+          "yes": [
+            "open online help",
+            "open how to build guide"
+          ],
+          "no": "forget it"
+        }
+      ],
+      "opened": [
+        "https://hydrusnetwork.github.io/hydrus/index.html"
+      ]
+    },
+    {
+      "page": "index.html",
+      "answer": 1,
+      "asked": [
+        {
+          "message": "You do not have a local help! Are you running from source? Would you like to open the online help or see a guide on how to build your own?",
+          "title": "Are you sure?",
+          "yes": [
+            "open online help",
+            "open how to build guide"
+          ],
+          "no": "forget it"
+        }
+      ],
+      "opened": [
+        "https://hydrusnetwork.github.io/hydrus/about_docs.html"
+      ]
+    },
+    {
+      "page": "index.html",
+      "answer": null,
+      "asked": [
+        {
+          "message": "You do not have a local help! Are you running from source? Would you like to open the online help or see a guide on how to build your own?",
+          "title": "Are you sure?",
+          "yes": [
+            "open online help",
+            "open how to build guide"
+          ],
+          "no": "forget it"
+        }
+      ],
+      "opened": []
+    },
+    {
+      "page": "changelog.html#version_688",
+      "answer": 0,
+      "asked": [
+        {
+          "message": "You do not have a local help! Are you running from source? Would you like to open the online help or see a guide on how to build your own?",
+          "title": "Are you sure?",
+          "yes": [
+            "open online help",
+            "open how to build guide"
+          ],
+          "no": "forget it"
+        }
+      ],
+      "opened": [
+        "https://hydrusnetwork.github.io/hydrus/changelog.html#version_688"
+      ]
+    },
+    {
+      "page": "changelog.html#version_688",
+      "answer": 1,
+      "asked": [
+        {
+          "message": "You do not have a local help! Are you running from source? Would you like to open the online help or see a guide on how to build your own?",
+          "title": "Are you sure?",
+          "yes": [
+            "open online help",
+            "open how to build guide"
+          ],
+          "no": "forget it"
+        }
+      ],
+      "opened": [
+        "https://hydrusnetwork.github.io/hydrus/about_docs.html"
+      ]
+    },
+    {
+      "page": "changelog.html#version_688",
+      "answer": null,
+      "asked": [
+        {
+          "message": "You do not have a local help! Are you running from source? Would you like to open the online help or see a guide on how to build your own?",
+          "title": "Are you sure?",
+          "yes": [
+            "open online help",
+            "open how to build guide"
+          ],
+          "no": "forget it"
+        }
+      ],
+      "opened": []
+    },
+    {
+      "page": "external_programs.html",
+      "answer": 0,
+      "asked": [
+        {
+          "message": "You do not have a local help! Are you running from source? Would you like to open the online help or see a guide on how to build your own?",
+          "title": "Are you sure?",
+          "yes": [
+            "open online help",
+            "open how to build guide"
+          ],
+          "no": "forget it"
+        }
+      ],
+      "opened": [
+        "https://hydrusnetwork.github.io/hydrus/external_programs.html"
+      ]
+    },
+    {
+      "page": "external_programs.html",
+      "answer": 1,
+      "asked": [
+        {
+          "message": "You do not have a local help! Are you running from source? Would you like to open the online help or see a guide on how to build your own?",
+          "title": "Are you sure?",
+          "yes": [
+            "open online help",
+            "open how to build guide"
+          ],
+          "no": "forget it"
+        }
+      ],
+      "opened": [
+        "https://hydrusnetwork.github.io/hydrus/about_docs.html"
+      ]
+    },
+    {
+      "page": "external_programs.html",
+      "answer": null,
+      "asked": [
+        {
+          "message": "You do not have a local help! Are you running from source? Would you like to open the online help or see a guide on how to build your own?",
+          "title": "Are you sure?",
+          "yes": [
+            "open online help",
+            "open how to build guide"
+          ],
+          "no": "forget it"
+        }
+      ],
+      "opened": []
+    },
+    {
+      "page": "getting_started_import_options.html",
+      "answer": 0,
+      "asked": [
+        {
+          "message": "You do not have a local help! Are you running from source? Would you like to open the online help or see a guide on how to build your own?",
+          "title": "Are you sure?",
+          "yes": [
+            "open online help",
+            "open how to build guide"
+          ],
+          "no": "forget it"
+        }
+      ],
+      "opened": [
+        "https://hydrusnetwork.github.io/hydrus/getting_started_import_options.html"
+      ]
+    },
+    {
+      "page": "getting_started_import_options.html",
+      "answer": 1,
+      "asked": [
+        {
+          "message": "You do not have a local help! Are you running from source? Would you like to open the online help or see a guide on how to build your own?",
+          "title": "Are you sure?",
+          "yes": [
+            "open online help",
+            "open how to build guide"
+          ],
+          "no": "forget it"
+        }
+      ],
+      "opened": [
+        "https://hydrusnetwork.github.io/hydrus/about_docs.html"
+      ]
+    },
+    {
+      "page": "getting_started_import_options.html",
+      "answer": null,
+      "asked": [
+        {
+          "message": "You do not have a local help! Are you running from source? Would you like to open the online help or see a guide on how to build your own?",
+          "title": "Are you sure?",
+          "yes": [
+            "open online help",
+            "open how to build guide"
+          ],
+          "no": "forget it"
+        }
+      ],
+      "opened": []
+    }
+  ]
+}

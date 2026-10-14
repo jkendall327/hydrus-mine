@@ -321,6 +321,8 @@ pub enum Command {
     /// Forget a repository's pending content, asking first.
     ForgetPending(ServiceKey),
     OpenUrl(&'static str),
+    /// A help page, from the local help or by asking (`OpenDocumentation`).
+    OpenHelp(&'static str),
     AdvancedMode,
     /// Open the options window.
     Options,
@@ -1383,7 +1385,7 @@ fn help_menu(facts: &Facts) -> Entry {
     menu(
         "&help",
         vec![
-            link("open help", "https://hydrusnetwork.github.io/hydrus/"),
+            item("open help", Command::OpenHelp("index.html")),
             menu(
                 "links",
                 vec![
@@ -1410,10 +1412,10 @@ fn help_menu(facts: &Facts) -> Entry {
                     link("patreon", "https://www.patreon.com/hydrus_dev"),
                 ],
             ),
-            link(
-                "changelog",
-                "https://hydrusnetwork.github.io/hydrus/changelog.html",
-            ),
+            // (the reference's `HC.DOCUMENTATION_CHANGELOG` is
+            // `changelog.html#version_{SOFTWARE_VERSION}`; the reference this
+            // port follows is version 688)
+            item("changelog", Command::OpenHelp("changelog.html#version_688")),
             SEP,
             todo(dots("add the PTR")),
             SEP,

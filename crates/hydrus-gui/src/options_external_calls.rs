@@ -305,7 +305,7 @@ pub(crate) fn bind(
                 return;
             }
             if action == "help" {
-                crate::launch("https://hydrusnetwork.github.io/hydrus/external_programs.html");
+                crate::documentation::open(crate::documentation::EXTERNAL_PROGRAMS);
                 return;
             }
             let Some(w) = weak.upgrade() else {

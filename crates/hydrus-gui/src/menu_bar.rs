@@ -948,6 +948,7 @@ fn run_command(window: &MainWindow, hooks: &Hooks, command: Command) {
             );
         }
         Command::OpenUrl(url) => crate::launch(url),
+        Command::OpenHelp(page) => crate::documentation::open(page),
         Command::AdvancedMode => {
             flip::<hydrus_store::settings::AdvancedMode>(&store, |a| a.0 = !a.0);
         }

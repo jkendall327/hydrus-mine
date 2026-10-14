@@ -6,7 +6,6 @@ use hydrus_core::external_calls::{ActualCall, Parameter, Pipeline};
 use hydrus_core::url::strings::{Conversion, ProcessingStep, StringConverter};
 use hydrus_gui::{MainWindow, Pages, bind, headless};
 use slint::{ComponentHandle as _, Model as _};
-use std::{cell::RefCell, rc::Rc};
 
 fn edit_seeded(
     store: &Arc<hydrus_store::Store>,
@@ -36,27 +35,18 @@ fn wait(child: &hydrus_gui::ExternalCallWindow) {
     }
 }
 
-// Not tagged (audit-options-external-programs-help-for-this-panel): the
-// reference opens its local help, or asks "You do not have a local help!"
-// first; hydrus-rs opens the online page at once (DIFFERENCES.md, #182).
+// leaf: audit-options-external-programs-help-for-this-panel
 #[test]
 fn help_button_opens_the_external_programs_documentation() {
     let (_dirs, store) = store();
     let _windows = headless::init();
-    let launched = Rc::new(RefCell::new(Vec::new()));
-    hydrus_gui::set_launcher({
-        let launched = launched.clone();
-        move |target| launched.borrow_mut().push(target.to_owned())
-    });
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store).unwrap());
     let w = open(&ui, &bound);
     // HC.DOCUMENTATION_EXTERNAL_PROGRAMS = 'external_programs.html'
-    w.invoke_external_call_action("help".into());
-    assert_eq!(
-        launched.borrow().as_slice(),
-        ["https://hydrusnetwork.github.io/hydrus/external_programs.html"]
-    );
+    super::common::help::replay("external_programs.html", &|| {
+        w.invoke_external_call_action("help".into());
+    });
     // Help is not a list edit: nothing was opened or changed.
     assert!(!bound.options_external_calls.has_open());
 }
