@@ -273,5 +273,34 @@ pub(crate) fn run(context: &Context, action: Action) {
             post(&store, vec![Job::text(text, now())]);
         }
         Action::FlipCrashLogging => flip_crash_logging(&store),
+        Action::CrashTheProgram => crash_the_program(),
+    }
+}
+
+/// `CrashTheProgram`: asks `GetYesYesNo`'s question, then "nice crash" ends
+/// the process (the reference's `os.abort`; here a panic on the calling
+/// thread, which the crash log records and which ends the program) and "not
+/// a nice crash" panics a worker (the reference repaints in a loop on a
+/// thread until Qt crashes). "forget it" and closing the question do
+/// nothing.
+fn crash_the_program() {
+    let ask = crate::choice_buttons::Ask {
+        title: model::CRASH_TITLE,
+        message: model::CRASH_MESSAGE,
+        choices: vec![model::CRASH_NICE.into(), model::CRASH_NOT_NICE.into()],
+        no_label: model::CRASH_FORGET_IT,
+    };
+    let answer = |choice: Option<usize>| match choice {
+        Some(0) => panic!("{}", model::CRASH_PANIC),
+        Some(_) => {
+            let _ = std::thread::Builder::new()
+                .name("crashtime-not-nice".to_owned())
+                .spawn(|| panic!("{}", model::CRASH_NOT_NICE_PANIC));
+        }
+        None => {}
+    };
+    match crate::choice_buttons::open(&ask, answer) {
+        Ok(window) => MESSAGE.with(|m| *m.borrow_mut() = window),
+        Err(e) => eprintln!("could not ask about the crash: {e}"),
     }
 }

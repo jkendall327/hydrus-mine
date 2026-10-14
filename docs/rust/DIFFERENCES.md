@@ -1280,16 +1280,15 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   out the post index (a subsidiary parser's sets it to 0); the url, other
   variables and relative-url joining are replayed from
   `oracle/fixtures/parser_context.json`. After a fetch the page parser's url box
-  shows the encoded url the context holds, where the reference keeps what was
-  typed (its fetch texts, requests and cookies are replayed from
+  keeps what was typed, as the reference's does, and the context holds the
+  encoded url (its fetch texts, requests and cookies are replayed from
   `oracle/fixtures/parser_fetch_http.json`).
-- The test panels' result preview reads "Post 1" then "tags: abc" lines, where the
-  reference prints "*** 1 RESULTS BEGIN ***", then one line per result with its own
-  label ("tag: artist:samus" with the namespace joined and the tag cleaned,
-  "downloadable/pursuable url (priority 50): ...", 'note "name":', "sha256 hash:",
-  "source/post time: <date>", "veto: ...") and "*** RESULTS END ***"
-  (`oracle/fixtures/parser_context.json`, `parser_editors.json`). The parsed texts
-  match; the labels and layout do not.
+- The test panels' results read as the reference's do ("*** N RESULTS BEGIN ***",
+  one sorted line per result worded by its kind, posts separated by the
+  reference's break, a veto as its own line; `oracle/fixtures/parser_preview.json`).
+  Not matched: with no document the reference prints "Nothing to parse!" where hydrus-rs parses the empty text (so a static formula still shows its result); the error text of a hash that cannot be decoded (Python's words, e.g. "non-hexadecimal number found in fromhex()"), a tag that cannot be parsed ("unparsable tag, will likely be discarded"),
+  timestamps are shown in UTC (the reference's local time), and a parse error is
+  shown as its message where the reference prints an exception trace.
 - URL classes and single/nested gallery URL generators have native lists and
   rule editors. Their duplicate button creates new keys and unique names.
   Domain lists and regex lists use one rule per line, and nested generators
@@ -3633,12 +3632,7 @@ and playback parents remain Partial. Native regression/render source is authored
 for hosted validation; local checks used the actual Qt recorder, Python/source
 invariants, direct rustfmt and diff inspection only.
 
-“Allow loading of truncated images” remains Missing, with no inert native
-checkbox. Actual PIL accepts the authored short PNG/GIF/JPEG fixtures when enabled
-and reports damaged/truncated-file errors when disabled. The native PNG/GIF and
-other format decoders do not yet implement that shared permissive policy; a saved
-Boolean alone would not provide its real consumer behavior. The scoped evidence
-records this gap with zero completion credit.
+“Allow loading of truncated images” is ported (see Truncated images, below).
 
 The selected collapsed-sibling fade probe measures pixels inside the actual
 painted tag-text rectangle. The outer selection strips use the palette blue and
@@ -4275,7 +4269,7 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   integer locale switch, the hide-page signal, the URL drop page switch (see
   below), mpv's
   legacy mediator, player reuse and setGeometry switches, every QtMediaPlayer
-  row, system FFMPEG, truncated images and PIL (hydrus-rs decodes images its
+  row, system FFMPEG and PIL (hydrus-rs decodes images its
   own way), the other-display popup freeze (hydrus-rs's popups sit inside the
   main window, not in a toaster window of their own that could be frozen from
   another display), the self-sizing media viewer rescue padding (there is no
@@ -4542,7 +4536,7 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   is no thread pool of background tasks to time); and the tests, do not
   touch: the ui, client api, server and
   visual duplicates test suites (they drive the Python test harness),
-  both self-sigterms and "induce a program crash".
+  and both self-sigterms ("induce a program crash" is offered: see Crash log).
 - "what is this object?" takes drops anywhere on its window (the reference
   drops on the picture only). A bitmap on the clipboard is read as the
   reference reads it (the first channel of its pixels, then the payload) but
@@ -4871,8 +4865,13 @@ directory.
 
 The grid's geometry under the thumbnail size, border and margin is replayed
 against the reference (`oracle/record_thumbnail_grid.py`): spans, columns, the
-grid's content height, click hits and the size each thumbnail is shown at. How
-the border is drawn (its colour and drawing) is not tested. Click hits were
+grid's content height, click hits and the size each thumbnail is shown at.
+The border's drawn width on each edge of a thumbnail is compared with the
+reference's own painted thumbnail (`oracle/record_thumbnail_border.py`),
+measured on the rendered pixels; its colour is the theme's, not compared. A
+selected thumbnail at a border of 0 or 1 px is drawn 2 px wide here, where the
+reference draws 0 or 1; selected thumbnails are compared only from 2 px.
+Click hits were
 recorded for the first two columns and rows only, at one viewport per setting,
 and thumbnail positions are the layout's rule rather than read from the
 rendered grid.
@@ -5244,7 +5243,7 @@ The palette's media-menu rows and the effect of activating one are recorded only
 
 The palette's media-menu rows for a page with one and with three files selected, for nine queries, and the effect of activating a row on the selection, are replayed against `palette_media_rows.json`; they match the reference's except the two single-file rows "copy bitmap" and "copy thumbnail bitmap" (the bitmap exchange is not ported).
 
-The options search bar's own position (top or bottom of the options window) is not measured against the reference: the recording holds only the field's index in the layout, and the field exposes no geometry to the tests, which read the suggestions' and the page list's positions instead (the page list sits 30 px lower with the field on top, our own field's height). The leaf is left untagged.
+The options search bar's place (above or below the page list) is compared with the reference's laid-out `_options_search` and `_listbook` geometry. Our field is 30 px high, Qt's 23 px, and ours is 6 px from the list, Qt's flush.
 
 The "open files in a new duplicates filter page" command (shortcut command 154) differs from the reference in two ways. In the media viewer the reference then pauses the video (`_MediaFocusWentToExternalProgram`, `ClientGUICanvas.py`); ours leaves it playing. On the thumbnails with nothing selected the reference still opens a page (with no files); ours does nothing, as the key is taken and ignored.
 
@@ -5332,11 +5331,25 @@ be diagnosed afterwards. The owner chose always-on crash logging (2026-10-14).
 - The preview window's top-right background draws the file's URLs after its
   locations by hydrus-rs's default (every URL class, unmatched URLs too); the
   reference's default shows none of the `basic` file's.
-- Tab alignment: the bar's thickness (28 px a row, 56 px for the two rows; Qt's tabs are 26 px) and the direction of
-  rotated West/East labels are not compared with the reference's Qt tabs.
-- "Width of suggested tags columns" and "Autocomplete list height" are read
-  as properties of the Manage Tags window; the lists' laid-out size is not
-  measured against the reference.
+- Tab alignment: a row of tabs is 28 px thick, Qt's 27 px (compared to within
+  1.5 px, against the recorded bar); the first tab starts 4 px in from the bar's
+  start, Qt's at 0. The direction of rotated West/East labels is compared with
+  the reference (where the ink of a label heavy at its start lies,
+  `oracle/record_tab_presentation.py` `ink`).
+- "Width of suggested tags columns": the lists' laid-out width, with the Manage
+  Tags window squeezed as narrow as its layout lets it, equals the option for
+  240 and 500, as the reference's. At the option's lower limit (20) our list
+  table will not go narrower than its own minimum, so the list is wider than the
+  reference's.
+- "Autocomplete list height" (tag editing, and file search's two lists): the rows
+  a list shows once laid out equal the option, compared with the reference's
+  *size hint* (`rows * text height + 2 * frame`), not its laid-out height: Qt
+  stretches or shrinks a list to fill its parent (the recordings' own laid-out
+  heights, 342/1599/64 px for file search and 1291 px for every tag-edit setting,
+  do not follow the option). The tag-edit recording uses a bare vertical layout
+  as host, not the real Manage Tags dialog. The row is 22 px here and a font
+  height in Qt, and our lists' padding differs from Qt's frame. Our tag-edit
+  list is only as tall as its suggestions (fewer than the option's rows shrinks it).
 
 - **A sidebar saved at width 0 and revealed** (Pages > sidebar > show/hide after
   "save current page's sidebar/preview size now" while hidden) shows nothing, as
@@ -5413,3 +5426,56 @@ be diagnosed afterwards. The owner chose always-on crash logging (2026-10-14).
   when it has no work left (the reference rests 600 s).
 - The rebalance job's popup is dismissed at once when the job ends, so it
   cannot be read afterwards; the moves are counted from the folders instead.
+
+"Induce a program crash" (Help > debug > tests, do not touch) asks the
+reference's question (title "Are you sure?", the text "u wot mate I'll hook u
+in the gabber", buttons "nice crash", "not a nice crash" and "forget it";
+recorded in `oracle/fixtures/crash_question.json`). "Nice crash" panics on the
+window's thread instead of calling `os.abort`: the crash log records the
+panic with a backtrace and the process ends. (An `os.abort`, a signal or a
+segfault in a native library leaves no log entry; a panic does.) "Not a nice
+crash" does not repaint in a loop until Qt gives out; it panics a worker
+thread, which the log records and the process survives. "Forget it" and
+closing the question do nothing, as in the reference. The reference's other
+entries in that submenu (the weekly UI, Client API and server tests, the visual
+duplicates tuning suites, fake petition mode, the self-sigterms) are not
+offered.
+
+## Truncated images
+
+Options > media playback > system > "Allow loading of truncated images" is
+read by the decoders, on by default as in the reference (Pillow's
+`LOAD_TRUNCATED_IMAGES`). Compared with `image_decoder_policies.json`
+(`oracle/record_image_decoder_policies.py`), which holds the reference's
+decoding of cut-off JPEG, PNG, GIF, WebP and BMP files with the option on and
+off:
+
+- On, a cut-off JPEG (libjpeg-turbo's premature-end handling), PNG, GIF or BMP
+  loads what is there and the rest is filled as Pillow fills it: JPEG mid
+  grey, PNG and BMP zeros (black, or palette entry 0), GIF the transparent or
+  first palette index. Only whole scanlines (PNG, BMP) and whole sub-blocks
+  (GIF) count, as in the reference. The pixels equal the recording.
+- Off, those files are refused with the reference's "Looks like a truncated
+  file that PIL could not handle!". A JPEG that only misses its end-of-image
+  marker counts as cut off, as it does in the reference.
+- A cut-off WebP is refused with the option on or off, as the reference does
+  (libwebp does not decode partial files); a JPEG cut inside its header is
+  refused too.
+- The importer's thumbnail comes from the same decode. As in the reference, a
+  file whose thumbnail cannot be made is still imported, but hydrus-rs stores
+  no thumbnail for it (the reference stores its default one). The viewer,
+  preview and archive/delete filter show no picture of such a file; what the
+  reference's viewer shows for it was not recorded.
+- The setting is read as each image is opened, not applied process-wide.
+  Changing it drops the decoded-image cache and repaints open viewers and
+  previews, as the reference's `SetEnableLoadTruncatedImages` clears its image
+  and tile caches.
+- A file is filled out to the size its header declares, so BMP and PNG refuse
+  a header over Pillow's decompression-bomb limit (twice 89,478,485 pixels)
+  before allocating anything, with Pillow's message. A tiny file that claims
+  just under the limit still makes an image of that size, as it does in
+  Pillow.
+- Not compared: truncated TIFF, ICO, QOI and animated GIF/WebP frames (the
+  reference never records them here); GIF and BMP follow the same rules.
+- Only the first frame of a GIF follows the setting; frames of an animation
+  decode as before.

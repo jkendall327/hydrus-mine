@@ -459,18 +459,7 @@ fn the_test_panel_s_context_is_what_the_reference_s_context_is_to_a_test_parse()
         );
         s.window.invoke_action("test".into());
         let shown = s.window.get_preview().to_string();
-        // what the reference printed, as the texts it found
-        let reference = case["results"].as_str().unwrap();
-        let wanted: Vec<&str> = reference
-            .lines()
-            .filter(|l| !l.starts_with("***"))
-            .map(|l| l.rsplit_once(": ").map_or(l, |(_, text)| text))
-            .collect();
-        let found: Vec<&str> = shown
-            .lines()
-            .filter(|l| !l.starts_with("Post ") && *l != "No parsed results.")
-            .map(|l| l.split_once(": ").map_or(l, |(_, text)| text))
-            .collect();
-        assert_eq!(found, wanted, "{name}: {shown:?} against {reference:?}");
+        // the results text, whole, as the reference's panel showed it
+        assert_eq!(shown, case["results"].as_str().unwrap(), "{name}");
     }
 }

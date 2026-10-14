@@ -72,7 +72,14 @@ def record(session):
                 for _ in range(4):
                     QW.QApplication.processEvents()
                 lists = dict(favourites=s._favourite_tags._favourite_tags, related=s._related_tags._related_tags, recent=s._recent_tags._recent_tags)
-                widths.append(dict(layout=layout_name, width=w, minimum_widths={k: v.minimumWidth() for k, v in lists.items()}))
+                wide = {k: v.width() for k, v in lists.items()}
+                # narrowed as far as the layout lets it, the lists have the width the option gave them
+                s.resize(1, 500)
+                for _ in range(4):
+                    QW.QApplication.processEvents()
+                narrow = {k: v.width() for k, v in lists.items()}
+                widths.append(dict(layout=layout_name, width=w, minimum_widths={k: v.minimumWidth() for k, v in lists.items()},
+                                   wide_widths=wide, narrow_widths=narrow, narrow_panel=[s.width(), s.height()]))
                 s.hide()
                 s.deleteLater()
         out['widths'] = widths

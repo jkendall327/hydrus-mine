@@ -8371,10 +8371,10 @@
     "Native text rows use desktop22px spacing; Qt uses its platform font metric. Float overlay clips to available main-window height. Native result UI has the port's existing result list rather than the reference's extra autocomplete notebook tabs."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options row (range 1..128) and the page's captured presentation rows are compared with the recording, but the recording's pixel hints (86 for 6 rows) are not replayed; the only height assertions are list_height >= 28 and <= preferred height, so the rows-to-height mapping (main.slint:575, 22px rows) and overflow scrolling are untested. Row count in the UI property is essentially the setting echoed back. Tests: crates/hydrus-gui/tests/gui/options_window.rs:1966 read_list_sizes_and_float_policy_reach_rendered_new_pages (replays file_search_presentation.json)"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (W5-13, #255)",
+    "note": "options_window.rs the_read_lists_show_as_many_rows_as_the_options_say_...: the option set through the real Options window for each recorded case, a new page rendered tall, and the rows the active-predicates list shows (laid-out room over a measured row's height) equal the setting and the recorded size hint's rows ((hint - 2 frame) / text height; Qt's laid-out heights stretch to fill the parent and do not follow the option). Row height is 22 px, Qt's font height."
    }
   },
   {
@@ -8411,10 +8411,10 @@
     "Native text rows use desktop22px spacing; Qt uses its platform font metric. Float overlay clips to available main-window height. Native result UI has the port's existing result list rather than the reference's extra autocomplete notebook tabs."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Same as the active-predicates height: row counts are compared with the recording (rows 1..128) but the rows-to-pixel height of the results list (main.slint:576) and highlighted-item scrolling are not asserted; the recorded hint heights (310, 16, 1794) are never compared. Only Options range and captured rows are proven. Tests: crates/hydrus-gui/tests/gui/options_window.rs:1966 read_list_sizes_and_float_policy_reach_rendered_new_pages"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (W5-13, #255)",
+    "note": "Same test as the active-predicates height: the rows the results list shows (laid-out room over the laid-out rows' height) equal the setting, for both floating and embedded lists, as the recorded size hint's rows do. Pixel sizes differ from Qt's (22 px rows)."
    }
   },
   {
@@ -9832,10 +9832,10 @@
     "Search covers native controls and their auxiliary labels; absent-page explanatory text is not claimed."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "weak",
-    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
-    "note": "The recorded cases of options_preferences.json (opened page, drop-down index, remembered page) are replayed through the real options window, and the layout is read back from the painted window: with the option on, the search suggestions sit above the page list's rows; off, below them and above the apply row; the list is 30 px lower for a field at the top. The search field itself has no accessible label and no exposed geometry, and the recording holds only the field's index in the layout, not its offscreen geometry, so the field's own place is inferred and the 30 px is our own field height. Left untagged until the recorder saves `_options_search` and `_listbook` geometry and the field's y is exposed read-only. Tests: crates/hydrus-gui/tests/gui/options_window.rs options_open_and_place_the_search_bar_as_the_reference_did, the_search_bar_and_its_suggestions_sit_where_the_option_puts_them."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (W5-13, #255)",
+    "note": "options_window.rs the_options_search_field_is_laid_out_above_or_below_the_page_list_as_the_reference_does: the options window's search field and page list laid out and read through read-only geometry properties, against the recorded _options_search and _listbook geometry for each placement (above or below the list, no overlap). The field's height (30 px, Qt 23) and gap differ."
    }
   },
   {
@@ -10042,9 +10042,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "source-restated",
-    "by": "Claude (recheck w4-r3b, #97 phase 2)",
-    "note": "Real Options and MainWindow replay of oracle/fixtures/tab_presentation.json: root bar side and the nested bar toward the content now compared with the recording. Still not compared: bar thickness (two 28 px rows typed as 56 px; Qt's tabs are 26 px) and the direction of rotated West/East labels (an ink-profile comparison with the Qt PNGs was tried and does not discriminate). Left untagged. Test: crates/hydrus-gui/tests/gui/tab_presentation.rs apply_cancel_reopen_and_four_sides_..."
+    "class": "sound",
+    "by": "Claude (W5-13, #255)",
+    "note": "Real Options and MainWindow replay of oracle/fixtures/tab_presentation.json: the root bar's side and the nested bar toward the content, the bar's thickness per row (28 px, Qt 27, within 1.5 px), the order of tabs along the bar and where the first starts, all against the recorded laid-out geometry; and the direction of rotated West/East labels, from where the ink of a label heavy at its start lies along the tab (recorded from the Qt bar's paint, compared on the rendered pixels). Tests: tab_presentation.rs apply_cancel_reopen_and_four_sides_..., rotated_tab_labels_read_the_way_the_references_do. Tab thickness and the first tab's 4 px inset differ from Qt's by pixels (DIFFERENCES.md)."
    }
   },
   {
@@ -11124,8 +11124,15 @@
     "Back in scope (owner, 2026-10-14): useful for testing the always-on crash log. The reference asks 'nice crash' (os.abort) / 'not a nice crash' / 'forget it' and then crashes. hydrus-rs can ask the same question and panic, which the crash log records; an abort is not logged (DIFFERENCES.md, Crash log).",
     "Not applicable (2026-10-08, help-debug session report): depends only on process-kill and crash tests with no native handler to exercise, or fake data for a petition panel hydrus-rs does not have. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'induce a program crash' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Ported 2026-10-14 (W5-3, #254): Help > debug > tests, do not touch > induce a program crash asks the reference's question (oracle/fixtures/crash_question.json); 'nice crash' panics and the crash log records it. The 'no equivalent diagnostics action' note above is stale."
+   ],
+   "recheck": {
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude W5-3 session",
+    "note": "tests/gui/crash_the_program.rs clicks the real menu entry and compares the question's title, text and button order with oracle/record_crash_question.py's recording of the reference dialog; 'forget it' and a closed question crash nothing; 'not a nice crash' panics a worker thread and the log holds it (the reference repaints until Qt crashes: DIFFERENCES.md, Crash log); 'nice crash' runs in a subprocess (the test binary re-run) that exits badly with `client crash.log` holding the panic, the program name, a backtrace and one entry. Not proved: that the reference's os.abort itself leaves no log (not run); native os.abort is replaced by a panic by the owner's decision."
+   }
   },
   {
    "id": "audit-options-help-debug-action-isolate-existing-mpv-widgets",
@@ -13633,8 +13640,15 @@
     "Back in scope (owner, 2026-10-14): the reference loads a truncated image by default, the missing part filled grey (PIL LOAD_TRUNCATED_IMAGES), and this box turns that off. hydrus-rs stores the box but nothing reads it, and its decoders refuse or drop truncated data per format. Port it: decoders load what they can by default, the box turns it off; compare with recordings of truncated files.",
     "Not applicable: a setting of the reference's Python libraries (PIL, requests, curl_cffi). (triaged 2026-10-08)",
     "Reference editor/control 'Allow loading of truncated images:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
-    "Native options registry has no editable 'Allow loading of truncated images:' control in this page/box path."
-   ]
+    "Native options registry has no editable 'Allow loading of truncated images:' control in this page/box path.",
+    "Ported 2026-10-14 (W5-3, #254): the row is bound to enable_truncated_images_pil, which importers (thumbnails, pixel hashes) and the viewer's full-picture loader read as each image is opened; the 'no editable row' and 'nothing reads it' notes above are stale. See DIFFERENCES.md, Truncated images."
+   ],
+   "recheck": {
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude W5-3 session",
+    "note": "hydrus-media tests/truncated_images.rs replays the reference's recorded decode (image_decoder_policies.json, oracle/record_image_decoder_policies.py) of cut-off JPEG, PNG (chunk-shortened and byte-cut), GIF, WebP and BMP files with the option on and off through MediaTools::load_image and analyse: pixels equal the recording, and the refusals (every format with it off; WebP and a header-cut JPEG both ways) are errors. tests/gui/truncated_images.rs drives the real Options row (cancel, apply, shown again as saved), the importer and the viewer: on, the viewer's pixels equal the recording for PNG, JPEG, GIF and BMP and the stored thumbnail is near it; off, the files import without a thumbnail and the viewer has nothing. Not proved: exact thumbnail pixels (JPEG-compressed, so compared within a tolerance), the viewer's off state is an absence checked after a fixed 500 ms pump, and the toggle's cache clearing is proved through the viewer (a picture viewed, option off, no longer shown). TIFF/ICO/QOI and animation frames are not recorded. A header claiming over the decompression-bomb limit is refused for BMP and PNG (tested)."
+   }
   },
   {
    "id": "audit-options-media-playback-system-apply-image-icc-profile-colour-adjustments",
@@ -21927,9 +21941,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "weak",
-    "by": "Claude (recheck w4-r3b, #97 phase 2)",
-    "note": "Unchanged: the reference only sets the list's height in characters (a layout effect) and the native consumer is read as a window property; the laid-out list was not measured (would need geometry exposed from the Slint layout). Documented in DIFFERENCES.md."
+    "class": "sound",
+    "by": "Claude (W5-13, #255)",
+    "note": "write_autocomplete.rs the_write_autocomplete_list_shows_as_many_rows_...: option set through the real Options window (1, 3, 11, 40), Manage Tags opened with 150 favourites and laid out; rows shown (laid-out room less padding over the laid-out rows' height) equal the setting, as the recorded size hint's rows do (oracle/record_tag_edit_list_height.py, a bare layout host rather than the real Manage Tags dialog; Qt's laid-out list height was 1291 px for every setting, so only the hint follows the option). Our list is only as tall as its suggestions."
    }
   },
   {
@@ -22676,9 +22690,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "weak",
-    "by": "Claude (recheck w4-r3b, #97 phase 2)",
-    "note": "Unchanged: stages/persists/reopens and reaches Manage Tags as a property, but the lists' laid-out width was not compared with the recorded setMinimumWidth (oracle/record_suggestion_options_panel.py records 20/240/500 in both layouts; pixel measurement showed the most-used list stretches). Needs geometry exposed from the Slint layout."
+    "class": "sound",
+    "by": "Claude (W5-13, #255)",
+    "note": "options_gui_tags.rs the_width_option_gives_the_suggestion_lists_the_width_the_reference_lays_out: the width set through Options, Manage Tags squeezed narrow, each list's laid-out width (read through callbacks from the lists) against the recorded narrow widths in both layouts: equal to within 2.5 px for 240 and 500 (our table adds its border). At the lower limit 20 each toolkit has its own floor, so only that the list is at least the option is checked."
    }
   },
   {
@@ -22735,10 +22749,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-09",
-    "class": "likely-good",
-    "by": "Claude (recheck bin E, #97 phase 2)",
-    "note": "The border row (0, 1, 2, 3, 5, 20) set through the real Options window: spans, columns at six viewports, grid content height and which file real clicks hit at the cell edges match the reference's graphics-view panel (oracle/fixtures/thumbnail_grid.json). Tests: crates/hydrus-gui/tests/gui/thumbnail_grid_geometry.rs the_thumbnail_options_lay_out_the_grid_as_the_reference_does. Geometry only: how the border is drawn (its colour and drawing) is untested; hits were recorded for the first two columns and rows at one viewport (DIFFERENCES.md)."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (W5-13, #255)",
+    "note": "thumbnail_grid_geometry.rs: grid geometry replay as before, plus the_thumbnail_border_is_drawn_as_wide_as_the_option_says_...: the border's drawn width on each edge of the first thumbnails, measured on the rendered pixels, against the band measured on the reference's own painted thumbnail (oracle/record_thumbnail_border.py) for borders 0-20; selected ones only from 2 px (a selected thumbnail at 0 or 1 px is drawn 2 px wide here, 0 or 1 in the reference). The border's colour is the theme's and not compared."
    }
   },
   {
@@ -24626,10 +24640,10 @@
     "Typed context rejects invalid/duplicate/reserved variable names and runs real page/content parse previews."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Against a recording of the real test panel (oracle/record_parser_context.py, fixtures/parser_context.json): relative urls resolved against the context's url (two urls, and none), a context variable formula reading a present and an absent variable, and one reading post_index. Through the content editor window's url, post index and variables boxes, 'test' shows the recorded texts (compared as the parsed text on each result line: the native preview's labels and layout, e.g. 'tags: abc' for the reference's 'tag: abc' and its '(priority 50)', are not compared, a known difference); the comparison found native passing post_index to a content parse where the reference's test panel removes it (so the recorded result is empty); fixed. The reference edits the context in a dictionary button, native in three boxes (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/parser_content_kinds.rs the_test_panel_s_context_is_what_the_reference_s_context_is_to_a_test_parse; crates/hydrus-gui-model/tests/model/parser_editors.rs test_context_rejects_invalid_duplicate_and_reserved_variables Class lowered at review: the preview lines are compared by parsed text only, because the native preview's labels and layout differ from the reference's (DIFFERENCES.md); porting its formatter would let full lines be compared."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-2, issue #17)",
+    "note": "The test panel's results text is now the reference's, compared whole (not by parsed text): crates/hydrus-gui/tests/gui/parser_content_kinds.rs the_test_panel_s_context_is_what_the_reference_s_context_is_to_a_test_parse compares the full results of each context case with oracle/fixtures/parser_context.json, and crates/hydrus-gui/tests/gui/parser_preview.rs replays oracle/fixtures/parser_preview.json (oracle/record_parser_preview.py, the reference's content and page parser panels) for every content kind and option, sorted and empty results, two posts with the reference's break, and vetoes, through the editor windows. The context is edited in three boxes where the reference has a dictionary button (DIFFERENCES.md). Not matched: Python's words for an undecodable hash, timestamps in UTC, parse errors as plain messages."
    }
   },
   {
@@ -24646,10 +24660,10 @@
     "Fetch controls use an inline URL field instead of the reference prompt. Window-local jobs show progress in their test panel rather than the daemon jobs review."
    ],
    "recheck": {
-    "date": "2026-10-13",
+    "date": "2026-10-14",
     "class": "source-restated",
     "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Texts, requests and cookies now come from the real reference engine against a local server (oracle/record_parser_fetch_http.py, fixtures/parser_fetch_http.json): the page editor's fetch of 'a b' with a referral (request GET /a%20b with the Referer, text, context url and post index 0, other variables kept), its 404 ('fetch failed: 404: missing' + body, the first response's cookie sent), and the generic panel's success and 404 texts; the native tests compare these. Not tagged: the cancel, hold, close-owner and one-attempt behaviours, the blank-url-takes-the-example behaviour and the progress display are still checked against literals or the stubbed-engine fixture (parser_test_data.json), and the page editor's url box shows the encoded url after a fetch where the reference keeps what was typed (DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/parser_editors.rs content_test_panel_fetches_raw_data_and_hands_it_to_its_formula, fetched_page_examples_use_actual_network_headers_cookies_context_and_child_converter, page_fetch_error_menu_retains_completed_failure_and_clears_at_next_request"
+    "note": "The page editor's url box now keeps what was typed after a fetch while the context holds the encoded url (fetched_page_examples_use_actual_network_headers_cookies_context_and_child_converter compares the box with test_url_after and the child editor's context url with context.url of oracle/fixtures/parser_fetch_http.json). Texts, requests and cookies now come from the real reference engine against a local server (oracle/record_parser_fetch_http.py, fixtures/parser_fetch_http.json): the page editor's fetch of 'a b' with a referral (request GET /a%20b with the Referer, text, context url and post index 0, other variables kept), its 404 ('fetch failed: 404: missing' + body, the first response's cookie sent), and the generic panel's success and 404 texts; the native tests compare these. Not tagged (the page url box difference no longer applies): the cancel, hold, close-owner and one-attempt behaviours, the blank-url-takes-the-example behaviour and the progress display are still checked against literals or the stubbed-engine fixture (parser_test_data.json), the url box difference is fixed. Tests: crates/hydrus-gui/tests/gui/parser_editors.rs content_test_panel_fetches_raw_data_and_hands_it_to_its_formula, fetched_page_examples_use_actual_network_headers_cookies_context_and_child_converter, page_fetch_error_menu_retains_completed_failure_and_clears_at_next_request"
    }
   },
   {
@@ -24846,10 +24860,10 @@
     "Existing first pass; complete Qt parity has not been established."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "phase 2 session",
-    "note": "gui/sidecar_node_window.rs the_sidecar_node_window_works_as_the_references_does opens the real sidecar node window for every recorded importer and exporter case, sets its controls and answers its type and service questions as the recording did, compares what it shows at every step (the same boxes as the reference's) and (second window per step) what apply gives as text and object, or its error, against sidecar_editors.json. Covers the separator choice (newline, four pipes, custom) and its custom text. Weak: whether the custom-text box is enabled (recorded custom_enabled) is the window's own layout and is not readable from a test."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (W5-13, #255)",
+    "note": "gui/sidecar_node_window.rs the_sidecar_node_window_works_as_the_references_does: as before, and now the custom-text box's enabled state is read from the laid-out box (a read-only window property) and compared with the recorded custom_enabled at every step."
    }
   },
   {

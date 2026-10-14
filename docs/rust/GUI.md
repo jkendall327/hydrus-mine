@@ -5130,6 +5130,23 @@ and reads the effect back; `tests/model/debug_flags.rs` and the
 `debug_*` tests of hydrus-import, hydrus-net, hydrus-download, hydrus-media
 and hydrus-store cover the reports their crates make.
 
+Help > debug > tests, do not touch > "induce a program crash" asks "u wot mate
+I'll hook u in the gabber" with "nice crash", "not a nice crash" and "forget
+it". "Nice crash" ends the program with a panic that `client crash.log` in the
+database directory records; "not a nice crash" panics a background thread
+(logged, the client goes on); "forget it" does nothing.
+`tests/gui/crash_the_program.rs` replays the recorded question and runs the
+nice crash in a subprocess, then reads the log.
+
+Options > media playback > system > "Allow loading of truncated images" (on by
+default) decides what happens to an image file that stops early (a download
+that was cut off). On, the importer and the viewer load what is there and fill
+the rest, grey for a JPEG and black for a PNG or BMP, as the reference does;
+off, such a file imports without a thumbnail and the viewer shows nothing of
+it. `tests/gui/truncated_images.rs` drives the options window, the importer and
+the viewer against `image_decoder_policies.json`; the decoders themselves are
+compared in `crates/hydrus-media/tests/truncated_images.rs`.
+
 Help > debug > profiling also has the reference's profile modes (client api,
 db and ui; one on at a time, turning another on ends the one before) and
 "query planner mode". Turning a profile mode on says `Profile mode "db"
@@ -5862,3 +5879,26 @@ panic hook runs first.
   call!' forces a 15-second timeout on a long-lived call.
 - The string processor editor's export puts the selected steps, in queue
   order, on the clipboard or in a PNG; with nothing selected it does nothing.
+
+## Layout geometry for tests (W5-13)
+
+Windows expose read-only measured geometry so tests can prove a layout
+setting takes effect against the reference's laid-out widgets. Users see no
+difference. Proven, each against a recording of the reference: the options
+search bar above or below the page list; the notebook tab bars' side, thickness,
+tab order and rotated-label direction; the rows shown by the active-predicate,
+search-result and tag-edit autocomplete lists (against the reference's recorded
+size hints, as Qt stretches the laid-out lists); the suggested-tag lists' widths;
+the thumbnail border's drawn width; and the sidecar custom-separator box's
+enabled state.
+
+## Parser test panels' results (W5-2 follow-up)
+
+- "test parse" in the content parser and page parser editors prints what the
+  reference prints: "*** N RESULTS BEGIN ***", one line per result worded by its
+  kind (for example "tag: series:foo bar", "downloadable/pursuable url
+  (priority 50): ...", 'note "name":', "sha256 hash: ...", "source/post time:
+  ...", "veto: ..."), sorted, with posts separated by "*** SEPARATE FILE
+  RESULTS BREAK ***".
+- After "fetch example data" the page URL box keeps what you typed; the parse
+  context uses the encoded URL.

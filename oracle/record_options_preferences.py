@@ -30,6 +30,19 @@ def record(session):
             opened = next(book.tabText(i) for i, page in enumerate(book.GetPages()) if page is book.currentWidget())
             layout = panel.widget().layout()
             search_index = next(i for i in range(layout.count()) if layout.itemAt(i).widget() is panel._options_search)
+            host = panel.widget()
+            host.setParent(None)
+            host.resize(1000, 700)
+            host.show()
+            from qtpy import QtWidgets as QW
+            host.layout().activate()
+            for _ in range(4):
+                QW.QApplication.processEvents()
+            def box(widget):
+                at = widget.mapTo(host, widget.rect().topLeft())
+                return [at.x(), at.y(), widget.width(), widget.height()]
+            placed = {'host': [0, 0, host.width(), host.height()], 'search': box(panel._options_search), 'list': box(book)}
+            host.hide()
             book.SelectName('audio')
             remembered = options.GetString('last_options_window_panel')
             suggestions = panel._completer.model().stringList()
@@ -39,7 +52,7 @@ def record(session):
             reopened = ClientGUIManageOptionsPanel.ManageOptionsPanel(session.controller.gui)
             reopened_name = next(reopened._listbook.tabText(i) for i, page in enumerate(reopened._listbook.GetPages()) if page is reopened._listbook.currentWidget())
             reopened.deleteLater()
-            cases.append({'remember': remember, 'last': last, 'top': top, 'opened': opened, 'remembered_after_page_change': remembered, 'reopened': reopened_name, 'search_index': search_index})
+            cases.append({'remember': remember, 'last': last, 'top': top, 'opened': opened, 'remembered_after_page_change': remembered, 'reopened': reopened_name, 'search_index': search_index, 'placed': placed})
         return {'cases': cases, 'suggestions': suggestions, 'gui_items': gui_items}
     return session.controller.CallBlockingToQt(session.controller.gui, qt)
 

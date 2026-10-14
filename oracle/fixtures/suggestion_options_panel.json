@@ -71,7 +71,21 @@
         "favourites": 20,
         "related": 20,
         "recent": 20
-      }
+      },
+      "wide_widths": {
+        "favourites": 1388,
+        "related": 100,
+        "recent": 100
+      },
+      "narrow_widths": {
+        "favourites": 20,
+        "related": 100,
+        "recent": 100
+      },
+      "narrow_panel": [
+        1,
+        500
+      ]
     },
     {
       "layout": "notebook",
@@ -80,7 +94,21 @@
         "favourites": 240,
         "related": 240,
         "recent": 240
-      }
+      },
+      "wide_widths": {
+        "favourites": 1388,
+        "related": 240,
+        "recent": 240
+      },
+      "narrow_widths": {
+        "favourites": 240,
+        "related": 240,
+        "recent": 240
+      },
+      "narrow_panel": [
+        1,
+        500
+      ]
     },
     {
       "layout": "notebook",
@@ -89,7 +117,21 @@
         "favourites": 500,
         "related": 500,
         "recent": 500
-      }
+      },
+      "wide_widths": {
+        "favourites": 1388,
+        "related": 500,
+        "recent": 500
+      },
+      "narrow_widths": {
+        "favourites": 500,
+        "related": 500,
+        "recent": 500
+      },
+      "narrow_panel": [
+        1,
+        500
+      ]
     },
     {
       "layout": "columns",
@@ -98,7 +140,21 @@
         "favourites": 20,
         "related": 20,
         "recent": 20
-      }
+      },
+      "wide_widths": {
+        "favourites": 70,
+        "related": 248,
+        "recent": 80
+      },
+      "narrow_widths": {
+        "favourites": 20,
+        "related": 20,
+        "recent": 20
+      },
+      "narrow_panel": [
+        1,
+        500
+      ]
     },
     {
       "layout": "columns",
@@ -107,7 +163,21 @@
         "favourites": 240,
         "related": 240,
         "recent": 240
-      }
+      },
+      "wide_widths": {
+        "favourites": 240,
+        "related": 248,
+        "recent": 240
+      },
+      "narrow_widths": {
+        "favourites": 240,
+        "related": 240,
+        "recent": 240
+      },
+      "narrow_panel": [
+        1,
+        500
+      ]
     },
     {
       "layout": "columns",
@@ -116,7 +186,21 @@
         "favourites": 500,
         "related": 500,
         "recent": 500
-      }
+      },
+      "wide_widths": {
+        "favourites": 500,
+        "related": 500,
+        "recent": 500
+      },
+      "narrow_widths": {
+        "favourites": 500,
+        "related": 500,
+        "recent": 500
+      },
+      "narrow_panel": [
+        1,
+        500
+      ]
     }
   ]
 }

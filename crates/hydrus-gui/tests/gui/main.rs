@@ -106,6 +106,7 @@ mod pages_menu_info;
 mod pages_menu_new_pages;
 mod pages_menu_refresh;
 mod parser_content_kinds;
+mod parser_preview;
 mod physical_delete_delay;
 mod popup_card_replay;
 mod popup_freeze;
@@ -313,6 +314,7 @@ mod or_connector;
 mod image_cache;
 mod image_colour;
 
+mod crash_the_program;
 mod debug_data_actions;
 mod debug_delayed_pages;
 mod debug_delayed_popup;
@@ -328,6 +330,7 @@ mod debug_wake;
 mod debug_what_is_this;
 mod duplicates_progress;
 mod quick_export_directory;
+mod truncated_images;
 
 mod archive_delete_filter_replay;
 mod archive_delete_policies;
