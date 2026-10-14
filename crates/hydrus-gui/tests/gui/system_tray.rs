@@ -288,7 +288,6 @@ fn there_is_no_icon_where_there_is_no_tray() {
     );
 }
 
-// leaf: audit-options-system-tray-close-the-main-window-to-system-tray
 #[test]
 fn closing_hides_the_window_to_the_icon_instead_of_exiting() {
     let _windows = headless::init();
@@ -349,7 +348,6 @@ fn closing_hides_the_window_to_the_icon_instead_of_exiting() {
     client.ui.invoke_answer(false);
 }
 
-// leaf: audit-options-system-tray-start-the-client-minimised-to-system-tray
 #[test]
 fn a_client_starts_hidden_in_the_icon_when_told_to_and_a_tray_is_there() {
     let _windows = headless::init();
@@ -403,7 +401,6 @@ fn a_client_starts_hidden_in_the_icon_when_told_to_and_a_tray_is_there() {
 
 // (this drives Slint's own minimised state in the headless platform, not
 // winit's `is_minimized`, which Wayland does not answer: DIFFERENCES.md)
-// leaf: audit-options-system-tray-minimise-the-main-window-to-system-tray
 #[test]
 fn minimising_hides_the_window_to_the_icon_where_the_window_system_reports_it() {
     let _windows = headless::init();
@@ -805,4 +802,143 @@ fn file_minimise_to_system_tray_follows_the_reference_s_recorded_cases() {
             assert!(client.ui.window().is_visible());
         }
     }
+}
+
+/// The recorded `close` cases: the Options row and a tray decide whether the
+/// close button hides the client to the icon or asks to exit.
+// leaf: audit-options-system-tray-close-the-main-window-to-system-tray
+#[test]
+fn the_close_button_follows_the_reference_s_recorded_cases() {
+    let recorded = hydrus_testkit::fixture_json("system_tray.json");
+    let _windows = headless::init();
+    for case in recorded["close"].as_array().unwrap() {
+        let client = client(case["available"].as_bool().unwrap());
+        set_options(
+            &client,
+            &[(CLOSE, case["close_to_tray"].as_bool().unwrap())],
+        );
+        request_close(&client.ui);
+        pump(500);
+        assert_eq!(
+            client.bound.tray.hidden(),
+            case["hidden"].as_bool().unwrap(),
+            "{case}"
+        );
+        assert_eq!(
+            client.host.shown(),
+            case["icon"].as_bool().unwrap(),
+            "{case}"
+        );
+        assert_eq!(
+            client
+                .ui
+                .get_question()
+                .starts_with("Are you sure you want to exit"),
+            case["exit_asked"].as_bool().unwrap(),
+            "{case}"
+        );
+        assert_eq!(
+            client.ui.window().is_minimized(),
+            case["minimised"].as_bool().unwrap()
+        );
+    }
+}
+
+/// The recorded `start` cases: with the Options row set in the window and the
+/// client restarted, whether it starts hidden in the icon.
+// leaf: audit-options-system-tray-start-the-client-minimised-to-system-tray
+#[test]
+fn starting_follows_the_reference_s_recorded_cases() {
+    let recorded = hydrus_testkit::fixture_json("system_tray.json");
+    let _windows = headless::init();
+    for case in recorded["start"].as_array().unwrap() {
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::open(dir.path()).unwrap();
+        let first = open(dir, store.clone(), true);
+        set_options(&first, &[(START, case["start_option"].as_bool().unwrap())]);
+        let Client {
+            _dir: dir,
+            ui,
+            bound,
+            ..
+        } = first;
+        drop((ui, bound));
+
+        let ui = MainWindow::new().unwrap();
+        let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+        let host = Recorder::available();
+        host.available.set(case["available"].as_bool().unwrap());
+        bound.tray.set_host(host.clone());
+        bound.tray.start(&ui).unwrap();
+        assert_eq!(
+            bound.tray.hidden(),
+            case["hidden"].as_bool().unwrap(),
+            "{case}"
+        );
+        assert_eq!(
+            ui.window().is_visible(),
+            case["window_visible"].as_bool().unwrap(),
+            "{case}"
+        );
+        assert_eq!(host.shown(), case["icon"].as_bool().unwrap(), "{case}");
+        drop((ui, bound, dir));
+    }
+}
+
+/// The recorded `minimise` cases without the reference's two workaround
+/// switches (`bugfix` "none"; the others have no counterpart here,
+/// DIFFERENCES.md): a window maximised and then minimised, with the Options
+/// row and a tray, and then shown again from the icon.
+// leaf: audit-options-system-tray-minimise-the-main-window-to-system-tray
+#[test]
+fn minimising_follows_the_reference_s_recorded_cases() {
+    let recorded = hydrus_testkit::fixture_json("system_tray.json");
+    let _windows = headless::init();
+    let mut replayed = 0;
+    for case in recorded["minimise"].as_array().unwrap() {
+        if case["bugfix"] != "none" {
+            continue;
+        }
+        let client = client(case["available"].as_bool().unwrap());
+        set_options(
+            &client,
+            &[(MINIMISE, case["minimise_to_tray"].as_bool().unwrap())],
+        );
+        client.ui.window().set_maximized(true);
+        client.ui.window().set_minimized(true);
+        pump(600);
+        assert_eq!(
+            client.bound.tray.hidden(),
+            case["hidden"].as_bool().unwrap(),
+            "{case}"
+        );
+        assert_eq!(
+            client.host.shown(),
+            case["icon"].as_bool().unwrap(),
+            "{case}"
+        );
+        if case["hidden"].as_bool().unwrap() {
+            // shown again from the icon: maximised as it was, not minimised
+            client.bound.tray.flip_show_hide();
+            assert!(client.ui.window().is_visible(), "{case}");
+            assert_eq!(
+                client.ui.window().is_minimized(),
+                case["shown_again_minimised"].as_bool().unwrap(),
+                "{case}"
+            );
+            assert_eq!(
+                client.ui.window().is_maximized(),
+                case["shown_again_maximised"].as_bool().unwrap(),
+                "{case}"
+            );
+        } else {
+            assert_eq!(
+                client.ui.window().is_minimized(),
+                case["minimised"].as_bool().unwrap(),
+                "{case}"
+            );
+        }
+        replayed += 1;
+    }
+    assert_eq!(replayed, 4);
 }

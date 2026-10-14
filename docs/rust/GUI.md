@@ -3875,7 +3875,9 @@ passes the original wheel result. The failed run and its images remain
 diagnostic evidence and earn no credit.
 
 Supported process calls expose enabled input rules, tokens and the existing
-string-processor child, an ordered command-argument editor, timeout/flags and
+string-processor child (its button lists the processor's steps a line each, or
+says "no string processing", as the reference's does), an ordered
+command-argument editor, timeout/flags and
 preview/test inputs, which start at the reference's example path or URL.
 'test availability!' says whether the program is found; 'test call!' runs the
 call's argument vector in an owned worker and reports as the reference does:

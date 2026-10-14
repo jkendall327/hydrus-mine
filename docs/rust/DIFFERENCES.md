@@ -4538,8 +4538,12 @@ The `mpv.conf` copy replaces a read-only mpv.conf; recorded as root the referenc
 - The job list has "send single file" and "send single URL" only; the
   reference's "send multiple files" job (parameters file paths / file URIs) is
   not ported.
-- The timeout is one seconds box (1 to 3,600,000) with the "this can live for a
-  very long time" checkbox; the reference uses a minutes-and-seconds widget.
+- The timeout is one seconds box (1 to 3,599) with the "this can live for a
+  very long time" checkbox; the reference uses a minutes-and-seconds widget
+  (minutes stop at 59, so it also stops at 59:59). A stored timeout of an hour
+  or more opens as the reference's widget shows it: its minutes held at 59 and
+  its seconds kept (3,600 shows as 3,540)
+  (`oracle/fixtures/external_call_editor.json`).
 - The reference's tooltips on the warning, timeout, hide terminal and text
   controls are not shown (Slint 1.18 has a `Tooltip` element, as the tag filter
   and preview controls now use; these have not been wired).

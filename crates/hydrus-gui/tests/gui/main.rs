@@ -267,6 +267,7 @@ mod related_weight_table;
 mod relationship_application;
 mod relationship_exchange;
 
+mod external_call_editor_recorded;
 mod external_call_tests;
 mod external_calls;
 mod external_calls_editor;
@@ -332,6 +333,7 @@ mod media_support;
 mod media_viewer_navigation;
 mod network_bandwidth_actions;
 mod network_pause_menu;
+mod options_delete_lock_dialog;
 mod options_download_waits;
 mod options_file_limit;
 mod options_gui_duplicates;
