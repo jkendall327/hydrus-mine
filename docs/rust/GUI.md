@@ -5543,4 +5543,4 @@ saying where the log is. The log is capped: before an entry that would take
 it past 512 KiB it is moved to `client crash.log.old` (replacing the earlier
 one), so the two files stay under about 1 MiB. Panics on `serve`'s tokio
 tasks and blocking jobs are logged too: the runtime catches them, but the
-panic hook runs first. `docs/rust/REPORTING.md` says what to send.
+panic hook runs first.
