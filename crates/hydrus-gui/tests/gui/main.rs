@@ -104,7 +104,6 @@ mod pages_menu_new_pages;
 mod pages_menu_refresh;
 mod parser_content_kinds;
 mod physical_delete_delay;
-mod popup_cards_replay;
 mod popup_freeze;
 mod popup_job_actions;
 mod popup_width;
@@ -212,8 +211,6 @@ mod string_converter_window;
 mod string_match_window;
 mod string_processor_window;
 mod tab_context_menu;
-mod tab_duplicate_importers;
-mod tab_keys_replay;
 mod tag_filter_favourites;
 
 mod downloader_display;

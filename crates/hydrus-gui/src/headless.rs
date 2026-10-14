@@ -76,29 +76,6 @@ pub fn clipboard_text() -> Option<String> {
     CLIPBOARD_TEXT.with(|clipboard| clipboard.borrow().clone())
 }
 
-thread_local! {
-    static HELD_CLOCK: std::cell::Cell<Option<std::time::Instant>> = const { std::cell::Cell::new(None) };
-}
-
-/// Hold the clock the page-selection keys read (ctrl+page up and down look
-/// back three seconds) still, until `advance_clock` moves it, so tests need
-/// not wait.
-pub fn hold_clock() {
-    HELD_CLOCK.with(|c| c.set(Some(std::time::Instant::now())));
-}
-
-/// Move the held clock on.
-pub fn advance_clock(by: std::time::Duration) {
-    HELD_CLOCK.with(|c| c.set(c.get().map(|at| at + by)));
-}
-
-/// The time the page-selection keys see: the held clock, else the real one.
-pub(crate) fn clock_now() -> std::time::Instant {
-    HELD_CLOCK
-        .with(std::cell::Cell::get)
-        .unwrap_or_else(std::time::Instant::now)
-}
-
 struct Headless {
     registry: Rc<Registry>,
     collector: Weak<Collected>,

@@ -27,6 +27,7 @@ fn now() -> i64 {
     hydrus_core::time::TimestampMs::now().millis() / 1000
 }
 
+// leaf: audit-options-popups-summary
 #[test]
 fn the_summary_bar_collapses_and_expands_the_cards_without_touching_jobs() {
     let (_dirs, store) = store();
@@ -72,6 +73,7 @@ fn the_summary_bar_collapses_and_expands_the_cards_without_touching_jobs() {
     assert_eq!(count(), 12);
 }
 
+// leaf: audit-options-popups-traceback
 #[test]
 fn a_card_shows_and_hides_its_traceback_and_copies_all_of_it() {
     use std::{cell::RefCell, rc::Rc};

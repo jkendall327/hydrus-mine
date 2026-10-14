@@ -48,6 +48,7 @@ fn search(name: &str) -> Page {
     )
 }
 
+// leaf: audit-options-tabs-selection
 #[test]
 fn clicking_a_tab_and_ctrl_page_keys_select_pages_and_restore_their_state() {
     let (_dirs, store) = store();
@@ -127,6 +128,7 @@ fn clicking_a_tab_and_ctrl_page_keys_select_pages_and_restore_their_state() {
     assert_eq!(shown(), "a");
 }
 
+// leaf: audit-options-tabs-context-action-2120-selectable-page
 #[test]
 fn tab_menu_pages_entry_shows_the_chosen_page() {
     let (_dirs, store) = store();

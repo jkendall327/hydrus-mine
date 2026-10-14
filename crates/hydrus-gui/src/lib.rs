@@ -1459,7 +1459,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let change_pages = change_pages.clone();
         move |delta| {
             change_pages(&|pages| {
-                pages.move_selection(delta as isize, headless::clock_now());
+                pages.move_selection(delta as isize, std::time::Instant::now());
                 Ok(())
             });
         }

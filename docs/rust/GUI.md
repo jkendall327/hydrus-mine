@@ -48,7 +48,7 @@ first page, and on the page it showed last when you come back to it, as in
 the reference. As the reference's main window shortcuts have it, ctrl+page
 up and down show the page beside (in the deepest notebook that can move,
 unless a notebook above moved in the last three seconds, so a held key
-runs along the top tabs; checked against `oracle/record_tab_keys.py`), f5 searches the page again (resuming a paused
+runs along the top tabs), f5 searches the page again (resuming a paused
 search; a locked one stays), and ctrl+s and ctrl+m give the keyboard to
 the search box and the thumbnails. A search page opens as it was left: its
 search, its sort and the files it showed, not searched again until its
@@ -89,9 +89,6 @@ in a new page
 it while it runs; a right click dismisses one that is done, and the line
 under them counts them, with "dismiss all" (those done) and an arrow to
 hide or show them. They update four times a second.
-The cards' texts, gauges, pause and stop buttons, "show traceback" and
-"copy traceback information", the yes/no question and the arrow were
-checked against the reference's (`oracle/record_popup_cards.py`).
 A long job can be published as modal (`src/popup_modal.rs`,
 `hydrus-gui-model/src/popup_modal.rs`; Help > debug > "make a modal popup in
 five seconds"), as the reference's `AddModalMessage`: it is kept out of the
