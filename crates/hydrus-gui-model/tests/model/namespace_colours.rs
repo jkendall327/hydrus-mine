@@ -218,5 +218,6 @@ fn edit_recolours_each_selected_entry_in_place() {
     let values = list.values();
     assert!(values.iter().filter(|(_, rgb)| *rgb == [9, 8, 7]).count() == 2);
     assert!(values.contains(&(None, [1, 1, 1])));
-    assert_eq!(list.rows().iter().filter(|r| r.selected).count(), 2);
+    // (as the reference's remove-and-add leaves them: unselected)
+    assert_eq!(list.rows().iter().filter(|r| r.selected).count(), 0);
 }

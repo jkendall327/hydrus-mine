@@ -1,0 +1,87 @@
+{
+ "message": "Figuring out how tags should appear according to sibling and parent application rules takes time. When you set new rules, the changes in presentation and suggestion do not happen immediately--the client catches up to your settings in the background. This work takes a lot of math and can cause lag.\n\nIf there is a lot of work still to do, your tag suggestions and presentation during the interim may be unusual.",
+ "listbook": false,
+ "status_by_switches": [
+  {
+   "idle": true,
+   "active": true,
+   "text": "Siblings and parents are set to sync all the time. If there is work to do here, it should be cleared out in real time as you watch.",
+   "object_name": "HydrusValid"
+  },
+  {
+   "idle": true,
+   "active": false,
+   "text": "Siblings and parents are only set to sync during idle time. If there is work to do here, it should be cleared out when you are not using the client.",
+   "object_name": "HydrusWarning"
+  },
+  {
+   "idle": false,
+   "active": true,
+   "text": "Siblings and parents are set to sync all the time. If there is work to do here, it should be cleared out in real time as you watch.",
+   "object_name": "HydrusValid"
+  },
+  {
+   "idle": false,
+   "active": false,
+   "text": "Siblings and parents are not set to sync in the background at any time. If there is work to do here, you can force it now by clicking 'work now!' button.",
+   "object_name": "HydrusWarning"
+  }
+ ],
+ "tabs": [
+  {
+   "name": "downloader tags",
+   "siblings_and_parents": "All synced!",
+   "progress": "10 rules, all synced!",
+   "work_button_visible": false,
+   "work_button": "work now!"
+  },
+  {
+   "name": "my tags",
+   "siblings_and_parents": "All synced!",
+   "progress": "10 rules, all synced!",
+   "work_button_visible": false,
+   "work_button": "work now!"
+  },
+  {
+   "name": "second tags",
+   "siblings_and_parents": "All synced!",
+   "progress": "1 rules, all synced!",
+   "work_button_visible": false,
+   "work_button": "work now!"
+  }
+ ],
+ "current_tab": 1,
+ "repositories": {
+  "tabs": [
+   {
+    "name": "downloader tags",
+    "siblings_and_parents": "All synced!",
+    "progress": "10 rules, all synced!",
+    "work_button_visible": false,
+    "work_button": "work now!"
+   },
+   {
+    "name": "my tags",
+    "siblings_and_parents": "All synced!",
+    "progress": "10 rules, all synced!",
+    "work_button_visible": false,
+    "work_button": "work now!"
+   },
+   {
+    "name": "second tags",
+    "siblings_and_parents": "All synced!",
+    "progress": "1 rules, all synced!",
+    "work_button_visible": false,
+    "work_button": "work now!"
+   },
+   {
+    "name": "a tag repository",
+    "siblings_and_parents": "All synced!",
+    "progress": "2 rules, all synced!",
+    "work_button_visible": false,
+    "work_button": "work now!"
+   }
+  ],
+  "current_tab": 1
+ }
+}

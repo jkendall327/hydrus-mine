@@ -379,7 +379,12 @@ search.
   lines that mean something for it (the platform and how it was built,
   ffmpeg and SQLite versions, the boot time, the directories, the locale,
   and the store's cache size, journal and synchronous modes and whether
-  its temporary files are in memory, as SQLite reports them); the Python,
+  its temporary files are in memory, as SQLite reports them: the journal
+  mode is written in capitals as the reference does ("WAL"), but the store
+  runs synchronous FULL and keeps temporary tables in memory, so those lines
+  say 2 and True where the reference says its configured 1 and False; the
+  platform line ends "from a release build" or "from a debug build" where the
+  reference's says "from source" or "frozen"); the Python,
   OpenCV, openssl, numpy, Pillow and Qt version lines and the transaction
   commit period (every write commits) aren't there, and the optional
   libraries tab lists hydrus-rs's own optional parts (ffmpeg, mpv,
@@ -891,9 +896,14 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   JSON and PNG without dropping query history or cached header metadata. Legacy
   subscription type3 versions1–10 now import through the actual list. The original transport menus are wired; clipboard text and JSON/PNG import menus now
   add to the staged list directly, as the reference's list control does (all
-  three import choices; only export opens a window). Clipboard PNG
-  image precedence and PNG list drops remain absent (their own leaf,
-  `subscriptions-exchange-bitmap-drop`, low priority). Historical file-cache
+  three import choices; only export opens a window). A bitmap on the
+  clipboard is read before its text, and PNG or JSON files dropped on the
+  list are asked about first, as the reference's list does
+  (`exchange_bitmap_drop.json`); the clipboard's bitmap is read through
+  `arboard`, which on Linux sees an image only when the owning program offers
+  one in a format it knows, and cannot tell "no image" from "could not read
+  it" (the reference's separate "Problem loading from clipboard" is only
+  reached when the PNG encoding fails). The reference's words for a dropped file that is not there are hydrus's own ("Cannot file-mirror ... the source does not exist!"); here the downloader window and the list say the operating system's. The downloader window shows a review of what a paste or drop brought and asks on "import", where the reference asks its final question at once. Not checked against the reference: its "Pasted N items!" notification, its "select objects from list" choice on a paste or drop, and the "problem importing!" dialog title (here a line of the window). Winit's own delivery of a dropped file to these windows is not tested (only the files it would hand over). Historical file-cache
   versions 1–7 now upgrade within the exchange codec, with recorded order,
   timestamp, note, count and example preservation. A repeated seed in a
   historical cache is dropped, first one winning, as the reference does when it
@@ -1176,6 +1186,22 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 
 ## Downloader definition editors
 
+- The parser test panels take their example parsing context from three boxes
+  (url, post index, other variables) where the reference has one dictionary
+  button. Like the reference's, a content or page parser's test parse leaves
+  out the post index (a subsidiary parser's sets it to 0); the url, other
+  variables and relative-url joining are replayed from
+  `oracle/fixtures/parser_context.json`. After a fetch the page parser's url box
+  shows the encoded url the context holds, where the reference keeps what was
+  typed (its fetch texts, requests and cookies are replayed from
+  `oracle/fixtures/parser_fetch_http.json`).
+- The test panels' result preview reads "Post 1" then "tags: abc" lines, where the
+  reference prints "*** 1 RESULTS BEGIN ***", then one line per result with its own
+  label ("tag: artist:samus" with the namespace joined and the tag cleaned,
+  "downloadable/pursuable url (priority 50): ...", 'note "name":', "sha256 hash:",
+  "source/post time: <date>", "veto: ...") and "*** RESULTS END ***"
+  (`oracle/fixtures/parser_context.json`, `parser_editors.json`). The parsed texts
+  match; the labels and layout do not.
 - URL classes and single/nested gallery URL generators have native lists and
   rule editors. Their duplicate button creates new keys and unique names.
   Domain lists and regex lists use one rule per line, and nested generators
@@ -1331,9 +1357,9 @@ native/store/model regression source awaits hosted CI; no Rust runs locally.
   `false` for a numerical or inc/dec rating service (Python counts a bool as
   an int, so the reference stores `true` as one star).
 
-- **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions and repository/IPFS account administration remain unavailable. Local trash clear/undelete, double-confirmed deleted-file-record clearing and all three local rating-clear populations are implemented; bulk rating choices and confirmations use native inline controls rather than Qt popup menus/dialogs. Opening a replacement review retires the previous owner's pending maintenance confirmation.
+- **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh; the id button says "The service id is: N" (the reference's words and ids, recorded) in the window, not in an information dialog. The long service descriptions and repository/IPFS account administration remain unavailable. Local trash clear/undelete, double-confirmed deleted-file-record clearing and all three local rating-clear populations are implemented; bulk rating choices and confirmations use native inline controls rather than Qt popup menus/dialogs. Opening a replacement review retires the previous owner's pending maintenance confirmation.
 
-- **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields with four live, independently interactive rating examples; named SVG configurations are preserved/edited, with rendering subject to the existing SVG support limits. Remote repository/IPFS/account edits remain unavailable here. Client API listener settings are available, including HTTPS, the normie welcome page and the external URL overrides (see the Client API entry below). A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
+- **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields (the reference's colour pickers cannot hold an invalid colour; the recorded colours are applied as given) with four live, independently interactive rating examples; named SVG configurations are preserved/edited, with rendering subject to the existing SVG support limits. Remote repository/IPFS/account edits remain unavailable here. Client API listener settings are available, including HTTPS, the normie welcome page and the external URL overrides (see the Client API entry below). A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
 
 ## Manual file exports
 
@@ -1474,6 +1500,7 @@ results; a stale in-flight search cannot restore them. The database unlock
 endpoint authenticates its cached admin key while the native store is paused.
 The detached GUI model saves a whole key edit only on Apply and rejects stale
 concurrent editor state; Qt service review applies list actions immediately.
+A key edited onto another entry's key is refused with the reference's "key collision" words, shown in the open editor (the reference shows a modal once its editor has closed).
 The access-key window opens separately from service review; the reference
 embeds its list within that panel. "add from api request" opens the
 reference's waiting window and takes the first request the running daemon
@@ -1535,8 +1562,13 @@ The session browser's "create new" offers the reference's two types (web domain,
 hydrus service). The service choice lists the repositories by name; a hydrus
 service session is keyed by the service key's hex, as the existing ones are. With
 no repository "hydrus service" is refused ("Choose a hydrus service for this
-context."). Qt names the service wherever it lists a network context
-("hydrus service: <name>"); native lists the key's hex.
+context."), where Qt makes the "hydrus service default" context. Both name the
+service wherever the browser lists a context ("hydrus service: <name>"). A domain
+is lower-cased and refused if it is not one; Qt keeps what was typed ("Example.com")
+and, for something that is not a domain such as "not a domain!!", makes a session
+with an empty domain. The dialog's opening state, title, notes, defaults, offered
+services and the sessions made are replayed from
+`oracle/fixtures/session_create.json` (`oracle/record_session_create.py`).
 
 Cookie and HTTP-header editing uses detached native drafts with Apply/Cancel;
 Qt cookie-list actions take effect immediately, while its header list is staged.
@@ -1596,6 +1628,18 @@ context/obeys-bandwidth details are inline, and cancel/override controls are
 explicit buttons. Login-script waits remain outside the implemented engine.
 Local snapshots are published by the daemon without requiring its Client API;
 expiry disables stale controls and saved bandwidth history remains available.
+The reference's auto-refresh is a "manual refresh"-or-interval control (at least
+0.05 s, manual to begin with); native has an auto-refresh checkbox, on to begin
+with. The jobs list's position column says "waiting for bandwidth", "waiting for
+login" and "running" as the reference does (its positions "waiting for
+validation" and "waiting for free work slot" have no native counterpart), and
+its other waits are native's own; the speed column is titled "current speed" as
+the reference's is. A job's contexts are shown in the detail under the list, not
+in a right-click menu with each context's waiting estimate.
+
+"Reset default bandwidth rules" resets the global and default contexts the
+reference names (not the downloader default, which it leaves) and keeps every
+specific context (`oracle/fixtures/bandwidth_reset.json`).
 
 ## Tag migration
 
@@ -1650,7 +1694,10 @@ child after the confirmation appears changes only the next job's settings.
 ## Downloader definition interchange
 
 Downloader interchange uses text clipboard contents and selected PNG/text files;
-clipboard bitmap and drag/drop ingestion are not exposed. Exported PNGs carry
+the downloader import window also takes a bitmap on the clipboard and files
+dropped on it (`exchange_bitmap_drop.json`; the other exchange windows do not,
+as the reference's other panels have no drop target of their own). A clipboard
+holding local file paths is not read as the reference's `IngestClipboard` reads it. Exported PNGs carry
 the real reference pixel/payload format with a small plain header. A malformed
 or unsupported item rejects the whole package, with an actionable error, rather
 than the reference importer's partial skips. Payloads/pixels are capped at
@@ -1687,8 +1734,7 @@ leaves the first downloader by name as the default when there is none
 (`downloader_import_selection.json`). Like the reference's bandwidth manager, an import stops adding
 rules at the first package (in domain order) that has none, so a headers-only
 package keeps later packages' rules out until they are imported again
-(recorded in `domain_metadata_packages.json`). Clipboard bitmap and drag/drop
-ingestion are not exposed (low priority).
+(recorded in `domain_metadata_packages.json`).
 
 Tab context menus expose close, select, move-page, sort-pages and send-down submenus,
 rename, duplicate, collapse, grouped close and per-notebook saved-session
@@ -4155,6 +4201,15 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   once, on Options OK.
 - A trash pass deletes in groups of eight, oldest first, including files
   already in the trash when the limit is set.
+- The wait between physical deletes (Options > files and trash) is read at
+  the start of each pass and waited after every file and thumbnail pair, the
+  last included. The reference's maintenance loop decides when a pass runs
+  (idle or normal time); the daemon here keeps its own cadence of up to 1024
+  pairs a pass and ten minutes between passes, so only the waits within a pass
+  are compared with the recording.
+- Typing 0 s 0 ms into that control leaves 0 in the dialog's draft until Apply
+  saves the 20 ms minimum; the reference's field shows 20 ms at once. Other
+  typed values (clamped to 59 s and 999 ms) match its fields exactly.
 
 ## URL drops
 
