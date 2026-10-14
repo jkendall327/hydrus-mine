@@ -370,13 +370,9 @@ fn packages_mixing_steps_with_other_objects_give_their_steps_and_the_reference_w
     );
     // the steps added are the reference's, in its order
     let appended = json!([
-        84,
-        1,
-        [
-            26,
-            3,
-            mixed["state"]["processor"][2][2].as_array().unwrap()[start..].to_vec()
-        ]
+        26,
+        3,
+        mixed["state"]["processor"][2][2].as_array().unwrap()[start..].to_vec()
     ]);
     let theirs = processing::decode_text(&appended.to_string()).unwrap();
     assert_eq!(package.steps, theirs);
@@ -411,7 +407,7 @@ fn packages_mixing_steps_with_other_objects_give_their_steps_and_the_reference_w
     assert_eq!(package.warning(), None);
     // the queue then holds the recorded steps, the nested one last, and
     // running them gives what the reference gave
-    let recorded = json!([84, 1, bare["state"]["processor"][2].clone()]);
+    let recorded = bare["state"]["processor"][2].clone();
     let queue = processing::decode_text(&recorded.to_string()).unwrap();
     assert_eq!(queue.len(), processor_steps(&bare["state"]));
     assert_eq!(queue.last(), package.steps.last());

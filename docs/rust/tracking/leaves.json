@@ -5769,13 +5769,13 @@
    "native": null,
    "notes": [
     "Import/export selected processing steps in reference single-object/list JSON and compressed PNG. Clipboard/file import reviews atomic appended steps; selected exports retain execution order; accepted imports update draft previews, and parent cancellation invalidates exchange children.",
-    "A package mixing steps with other objects appends its steps and shows the reference's warning in the review. A bare string processor is flattened into its steps, where the reference appends it as one nested step (#185). Native uses a shared text/PNG review window."
+    "A package mixing steps with other objects appends its steps and shows the reference's warning in the review. A bare string processor is appended as one nested step, as the reference does (#185). Native uses a shared text/PNG review window."
    ],
    "recheck": {
-    "date": "2026-10-13",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "Claude session (#165 triage)",
-    "note": "Untagged, state now partial. crates/hydrus-gui/tests/gui/sidecars.rs processing_exchange_appends_the_steps_of_a_mixed_package_and_warns_as_the_reference_does replays oracle/record_processing_exchange_mixed.py through the window: a list mixing steps with a tag filter appends its steps with the reference's warning, a list of nothing permitted shows only the warning, and the PNG opens from a file; interchange.rs checks the codec against the same recording. Still a difference: a bare string processor is one nested step in the reference and is flattened here (#185, DIFFERENCES.md)."
+    "by": "Claude session (#185)",
+    "note": "Untagged. A bare string processor is now one nested step, as the reference appends it (#185): crates/hydrus-gui/tests/gui/sidecars.rs processing_exchange_appends_the_steps_of_a_mixed_package_and_warns_as_the_reference_does replays all of oracle/record_processing_exchange_mixed.py through the window (the mixed list, nothing permitted, the PNG, and the bare processor: 'Append 1 processing steps', then an empty example output), and interchange.rs checks the codec against it, including export of the nested step. Still missing: exporting selected steps through the window is not compared with a recording of the reference's export (the recorder only covers import), and paste is not recorded separately."
    }
   },
   {
