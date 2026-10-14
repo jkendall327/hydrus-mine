@@ -70,7 +70,7 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                     .unwrap_or_default()
                     .to_owned()
             };
-            let keep: [(&str, &[&str]); 7] = [
+            let keep: [(&str, &[&str]); 8] = [
                 (
                     "debug modes",
                     &[
@@ -150,6 +150,7 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                     "network actions",
                     &["review current network jobs", "fetch a url"],
                 ),
+                ("tests, do not touch", &["induce a program crash"]),
             ];
             let submenus: Vec<Value> = keep
                 .iter()
@@ -178,8 +179,7 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                 })
                 .collect();
             let mut submenus = submenus;
-            // (then the one entry hydrus-rs has of the rest: the tests,
-            // do not touch submenu is not offered)
+            // (then the one entry hydrus-rs has of the rest)
             let rest: Vec<Value> = entry["entries"]
                 .as_array()
                 .unwrap()

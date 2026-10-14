@@ -234,13 +234,18 @@ pub fn test_call_cancellable(
                         Err(format!("External local process returned {status}."))
                     };
                 };
-                let text = |reader: Option<std::thread::JoinHandle<String>>| {
-                    python_repr_str(&reader.and_then(|r| r.join().ok()).unwrap_or_default())
+                let quoted = |reader: Option<std::sync::mpsc::Receiver<Vec<u8>>>| {
+                    quote_output(
+                        &reader
+                            .and_then(|r| r.recv_timeout(Duration::from_secs(1)).ok())
+                            .unwrap_or_default(),
+                        process.text,
+                    )
                 };
                 return Err(format!(
                     "BadReturnCodeException: A call to another executable gave a non-zero return code ({code})! The call was: {cmd}\n\n========== stdout ==========\n{}\n========== stderr ==========\n{}\n============================\n",
-                    text(stdout),
-                    text(stderr)
+                    quoted(stdout),
+                    quoted(stderr)
                 ));
             }
             Ok(None) => {}
@@ -258,9 +263,21 @@ pub fn test_call_cancellable(
         if started.elapsed() >= timeout {
             let _ = child.kill();
             let _ = child.wait();
+            // what the process wrote before it was stopped; a stray child that keeps the pipes
+            // open is not waited for
+            let quoted = |reader: Option<std::sync::mpsc::Receiver<Vec<u8>>>| {
+                quote_output(
+                    &reader
+                        .and_then(|r| r.recv_timeout(Duration::from_secs(1)).ok())
+                        .unwrap_or_default(),
+                    process.text,
+                )
+            };
             return Err(format!(
-                "External local process timed out after {} seconds.",
-                timeout.as_secs()
+                "ExecutableException: Problem running external local process! Final call list was \"{cmd}\", error was: A call to another executable took too long (over {} seconds) to finish! The call was: {cmd}\n\n========== stdout ==========\n{}\n========== stderr ==========\n{}\n============================\n",
+                human_int(timeout.as_secs()),
+                quoted(stdout),
+                quoted(stderr)
             ));
         }
         std::thread::sleep(Duration::from_millis(5));
@@ -293,10 +310,11 @@ fn python_os_error(error: &std::io::Error, executable: &str) -> String {
     format!("[Errno {code}] {text}: {}", python_repr_str(executable))
 }
 
-/// The first 256 characters a process writes to one of its pipes (what the
-/// reference's report quotes), read to the end on a thread of its own so the
-/// process never blocks on a full pipe.
-fn read_head(mut pipe: impl std::io::Read + Send + 'static) -> std::thread::JoinHandle<String> {
+/// The first bytes a process writes to one of its pipes (what the reference's report quotes),
+/// read to the end on a thread of its own so the process never blocks on a full pipe. The head
+/// is sent when the pipe closes.
+fn read_head(mut pipe: impl std::io::Read + Send + 'static) -> std::sync::mpsc::Receiver<Vec<u8>> {
+    let (sender, receiver) = std::sync::mpsc::channel();
     std::thread::spawn(move || {
         let mut kept = Vec::new();
         let mut buffer = [0_u8; 4096];
@@ -308,6 +326,62 @@ fn read_head(mut pipe: impl std::io::Read + Send + 'static) -> std::thread::Join
                 kept.extend_from_slice(&buffer[..read]);
             }
         }
-        String::from_utf8_lossy(&kept).chars().take(256).collect()
-    })
+        let _ = sender.send(kept);
+    });
+    receiver
+}
+
+/// How the reference quotes a process's output: text mode decodes it as UTF-8 (replacing what is
+/// not) and quotes the first 256 characters; otherwise the first 256 bytes are quoted as bytes.
+fn quote_output(head: &[u8], text: bool) -> String {
+    if text {
+        python_repr_str(
+            &String::from_utf8_lossy(head)
+                .chars()
+                .take(256)
+                .collect::<String>(),
+        )
+    } else {
+        python_repr_bytes(&head[..head.len().min(256)])
+    }
+}
+
+/// Python's `repr` of a bytes object.
+fn python_repr_bytes(bytes: &[u8]) -> String {
+    let quote = if bytes.contains(&b'\'') && !bytes.contains(&b'"') {
+        b'"'
+    } else {
+        b'\''
+    };
+    let mut out = String::from("b");
+    out.push(quote as char);
+    for &byte in bytes {
+        match byte {
+            b'\\' => out.push_str("\\\\"),
+            b'\t' => out.push_str("\\t"),
+            b'\n' => out.push_str("\\n"),
+            b'\r' => out.push_str("\\r"),
+            b if b == quote => {
+                out.push('\\');
+                out.push(b as char);
+            }
+            0x20..=0x7e => out.push(byte as char),
+            _ => out.push_str(&format!("\\x{byte:02x}")),
+        }
+    }
+    out.push(quote as char);
+    out
+}
+
+/// An integer with thousands separators, as the reference words counts of seconds.
+fn human_int(n: u64) -> String {
+    let digits = n.to_string();
+    let mut out = String::new();
+    for (i, c) in digits.chars().enumerate() {
+        if i > 0 && (digits.len() - i).is_multiple_of(3) {
+            out.push(',');
+        }
+        out.push(c);
+    }
+    out
 }

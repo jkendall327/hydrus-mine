@@ -1,0 +1,392 @@
+{
+ "canvas": [
+  800,
+  600
+ ],
+ "file": "dupe_jpeg_02.png",
+ "resolution": [
+  640,
+  480
+ ],
+ "fullscreen": {
+  "before": false,
+  "after full": true,
+  "after normal": false
+ },
+ "steps": [
+  {
+   "zoom": 1.25,
+   "at_max": false,
+   "rect": [
+    0,
+    0,
+    800,
+    600
+   ],
+   "step": "fitted"
+  },
+  {
+   "zoom": 1.5,
+   "at_max": false,
+   "rect": [
+    -80,
+    -60,
+    960,
+    720
+   ],
+   "step": "zoom in 1"
+  },
+  {
+   "zoom": 2.0,
+   "at_max": false,
+   "rect": [
+    -240,
+    -180,
+    1280,
+    960
+   ],
+   "step": "zoom in 2"
+  },
+  {
+   "zoom": 3.0,
+   "at_max": false,
+   "rect": [
+    -560,
+    -420,
+    1920,
+    1440
+   ],
+   "step": "zoom in 3"
+  },
+  {
+   "zoom": 2.0,
+   "at_max": false,
+   "rect": [
+    -240,
+    -180,
+    1280,
+    960
+   ],
+   "step": "zoom out 1"
+  },
+  {
+   "zoom": 1.5,
+   "at_max": false,
+   "rect": [
+    -80,
+    -60,
+    960,
+    720
+   ],
+   "step": "zoom out 2"
+  },
+  {
+   "zoom": 1.25,
+   "at_max": false,
+   "rect": [
+    0,
+    0,
+    800,
+    600
+   ],
+   "step": "zoom out 3"
+  },
+  {
+   "zoom": 1.2,
+   "at_max": false,
+   "rect": [
+    16,
+    12,
+    768,
+    576
+   ],
+   "step": "zoom out 4"
+  },
+  {
+   "zoom": 1.0,
+   "at_max": false,
+   "rect": [
+    80,
+    60,
+    640,
+    480
+   ],
+   "step": "switch"
+  },
+  {
+   "zoom": 1.25,
+   "at_max": false,
+   "rect": [
+    0,
+    0,
+    800,
+    600
+   ],
+   "step": "switch again"
+  },
+  {
+   "zoom": 1.0,
+   "at_max": false,
+   "rect": [
+    80,
+    60,
+    640,
+    480
+   ],
+   "step": "100%"
+  },
+  {
+   "zoom": 1.25,
+   "at_max": false,
+   "rect": [
+    0,
+    0,
+    800,
+    600
+   ],
+   "step": "canvas"
+  },
+  {
+   "zoom": 1.25,
+   "at_max": false,
+   "rect": [
+    0,
+    0,
+    800,
+    600
+   ],
+   "step": "default"
+  },
+  {
+   "zoom": 20.0,
+   "at_max": true,
+   "rect": [
+    -6000,
+    -4500,
+    12800,
+    9600
+   ],
+   "step": "max"
+  },
+  {
+   "zoom": 20.0,
+   "at_max": true,
+   "rect": [
+    -6000,
+    -4500,
+    12800,
+    9600
+   ],
+   "step": "zoom in at max"
+  },
+  {
+   "zoom": 10.0,
+   "at_max": false,
+   "rect": [
+    -2800,
+    -2100,
+    6400,
+    4800
+   ],
+   "step": "out from max"
+  },
+  {
+   "zoom": 1.0,
+   "at_max": false,
+   "rect": [
+    80,
+    60,
+    640,
+    480
+   ],
+   "step": "100% again"
+  },
+  {
+   "zoom": 1.1,
+   "at_max": false,
+   "rect": [
+    48,
+    36,
+    704,
+    528
+   ],
+   "step": "zoom in for panning"
+  },
+  {
+   "zoom": 1.1,
+   "at_max": false,
+   "rect": [
+    106,
+    36,
+    704,
+    528
+   ],
+   "step": "pan right"
+  },
+  {
+   "zoom": 1.1,
+   "at_max": false,
+   "rect": [
+    164,
+    36,
+    704,
+    528
+   ],
+   "step": "pan right again"
+  },
+  {
+   "zoom": 1.1,
+   "at_max": false,
+   "rect": [
+    106,
+    36,
+    704,
+    528
+   ],
+   "step": "pan left"
+  },
+  {
+   "zoom": 1.1,
+   "at_max": false,
+   "rect": [
+    106,
+    80,
+    704,
+    528
+   ],
+   "step": "pan down"
+  },
+  {
+   "zoom": 1.1,
+   "at_max": false,
+   "rect": [
+    106,
+    36,
+    704,
+    528
+   ],
+   "step": "pan up"
+  },
+  {
+   "zoom": 1.1,
+   "at_max": false,
+   "rect": [
+    106,
+    -8,
+    704,
+    528
+   ],
+   "step": "pan up again"
+  },
+  {
+   "zoom": 1.1,
+   "at_max": false,
+   "rect": [
+    164,
+    36,
+    704,
+    528
+   ],
+   "step": "pan diagonally"
+  },
+  {
+   "zoom": 1.1,
+   "at_max": false,
+   "rect": [
+    0,
+    36,
+    704,
+    528
+   ],
+   "step": "to the left edge"
+  },
+  {
+   "zoom": 1.1,
+   "at_max": false,
+   "rect": [
+    96,
+    36,
+    704,
+    528
+   ],
+   "step": "to the right edge"
+  },
+  {
+   "zoom": 1.1,
+   "at_max": false,
+   "rect": [
+    96,
+    0,
+    704,
+    528
+   ],
+   "step": "to the top edge"
+  },
+  {
+   "zoom": 1.1,
+   "at_max": false,
+   "rect": [
+    96,
+    72,
+    704,
+    528
+   ],
+   "step": "to the bottom edge"
+  },
+  {
+   "zoom": 1.1,
+   "at_max": false,
+   "rect": [
+    48,
+    72,
+    704,
+    528
+   ],
+   "step": "to the horizontal centre"
+  },
+  {
+   "zoom": 1.1,
+   "at_max": false,
+   "rect": [
+    48,
+    36,
+    704,
+    528
+   ],
+   "step": "to the vertical centre"
+  },
+  {
+   "zoom": 1.1,
+   "at_max": false,
+   "rect": [
+    18,
+    66,
+    704,
+    528
+   ],
+   "step": "dragged"
+  },
+  {
+   "zoom": 1.2,
+   "at_max": false,
+   "rect": [
+    -16,
+    45,
+    768,
+    576
+   ],
+   "step": "zoom in after dragging"
+  },
+  {
+   "zoom": 1.25,
+   "at_max": false,
+   "rect": [
+    -33,
+    35,
+    800,
+    600
+   ],
+   "step": "canvas after dragging"
+  }
+ ]
+}

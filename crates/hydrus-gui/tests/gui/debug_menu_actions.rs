@@ -94,22 +94,29 @@ impl Debug {
 // leaf: audit-options-help-debug-action-what-is-this
 #[test]
 fn profiling_what_is_this_shows_the_profile_information() {
+    // the reference's message, recorded by oracle/record_debug_message_boxes.py
+    // from its real Help menu's QAction
+    let recorded = hydrus_testkit::fixture_json("debug_message_boxes.json");
+    let shown = recorded["what is this?"].as_array().unwrap();
+    assert_eq!(shown.len(), 1);
     let d = start();
     d.click(&["profiling", "what is this?"]);
     let (title, text) = d.ok();
-    assert_eq!(title, "Information");
-    assert_eq!(text, model::PROFILE_MESSAGE);
-    assert!(text.starts_with("If something is running slow, you can turn on a profile mode"));
+    assert_eq!(title, shown[0]["title"].as_str().unwrap());
+    assert_eq!(text, shown[0]["text"].as_str().unwrap());
 }
 
 // leaf: audit-options-help-debug-action-make-a-qmessagebox
 #[test]
 fn make_a_qmessagebox_shows_the_test_warning() {
+    let recorded = hydrus_testkit::fixture_json("debug_message_boxes.json");
+    let shown = recorded["make a QMessageBox"].as_array().unwrap();
+    assert_eq!(shown.len(), 1);
     let d = start();
     d.click(&["gui actions", "make a QMessageBox"]);
     let (title, text) = d.ok();
-    assert_eq!(title, "Warning");
-    assert!(text.starts_with("This is a test message!\n\nI have a second line of information"));
+    assert_eq!(title, shown[0]["title"].as_str().unwrap());
+    assert_eq!(text, shown[0]["text"].as_str().unwrap());
 }
 
 // leaf: audit-options-help-debug-action-make-some-popups

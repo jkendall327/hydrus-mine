@@ -77,9 +77,13 @@ fn run(name: &str) -> (Value, Seen) {
 
     d.click(&["debug modes", "simulate a wake from sleep"]);
     let started = Instant::now();
-    let cancel_at = run["cancel_at_ms"]
+    // (a run that was cancelled is cancelled when its popup shows the last
+    // words the recording's countdown had, not after a wait on the real
+    // clock; the countdown moves only inside `pump`, so it cannot move on
+    // between seeing those words and cancelling)
+    let cancel_on = run["cancel_at_ms"]
         .as_f64()
-        .map(|ms| Duration::from_secs_f64(ms / 1000.0));
+        .and_then(|_| recorded_countdown(&run).pop());
     let mut seen = Seen {
         first: None,
         texts: Vec::new(),
@@ -95,9 +99,9 @@ fn run(name: &str) -> (Value, Seen) {
             seen.first.get_or_insert_with(|| job.clone());
             seen.texts.extend(job.status_text_1.clone());
             seen.woke_during |= d.store.wake_ends_at().is_some();
-            if let Some(at) = cancel_at
-                && seen.cancelled_after.is_none()
-                && started.elapsed() >= at
+            if seen.cancelled_after.is_none()
+                && cancel_on.is_some()
+                && cancel_on == job.status_text_1
             {
                 seen.cancelled_after = Some(started.elapsed());
                 let key = job.key;

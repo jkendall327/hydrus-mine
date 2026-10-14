@@ -210,6 +210,12 @@ export component OptionsWindow inherits Window {
     in property <string> search-placeholder;
     in property <bool> search-at-top: true;
     in property <int> shown: 10;
+    // where the search field and the page list were laid out (the window's
+    // own coordinates), read by tests
+    out property <length> search-field-y: search.absolute-position.y;
+    out property <length> search-field-height: search.height;
+    out property <length> page-list-y: page-list.absolute-position.y;
+    out property <length> page-list-height: page-list.height;
     in-out property <string> search-text;
     in property <[string]> matches;
     in-out property <int> match-highlighted: -1;
