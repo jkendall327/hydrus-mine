@@ -1,4 +1,4 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 // The session saving dialog (`src/session_dialog.rs`, driven by
 // hydrus-gui-model's session_saving): a name asked, as the reference's
 // text entry asks it (after a warning, for a name that can't be had), or a
@@ -6,9 +6,9 @@ import { Btn } from "btn.slint";
 
 import { Button, LineEdit } from "std-widgets.slint";
 import { RegexTools } from "regex_tools.slint";
-import { MenuPane, MenuPanes } from "main_menu.slint";
-import { Theme } from "theme.slint";
-import { MenuChoiceFrame } from "menu_choice_wheel.slint";
+import { MenuPane, MenuPanes } from "@hydrus_ui_core";
+import { Theme } from "@hydrus_ui_core";
+import { MenuChoiceFrame } from "@hydrus_ui_core";
 
 export component SessionDialog inherits Window {
     in property <string> window-title: "Enter Text";

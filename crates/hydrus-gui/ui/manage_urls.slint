@@ -1,4 +1,4 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 // The "manage urls" dialog for some files (the reference's
 // `EditURLsPanel`, opened by a thumbnail's or the viewer's "urls >
 // manage"; its workings are hydrus-gui-model's `urls_editor`, bound by
@@ -7,9 +7,9 @@ import { Btn } from "btn.slint";
 // double-click to remove them.
 
 import { Button, LineEdit } from "std-widgets.slint";
-import { Theme } from "theme.slint";
-import { Asking } from "subscriptions.slint";
-import { ListTable, TableColumn, TableRow } from "list_table.slint";
+import { Theme } from "@hydrus_ui_core";
+import { Asking } from "@hydrus_ui_core";
+import { ListTable, TableColumn, TableRow } from "@hydrus_ui_core";
 
 export component ManageUrlsWindow inherits Window {
     in property <string> window-title: "manage urls";

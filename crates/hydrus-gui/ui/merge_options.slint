@@ -1,4 +1,4 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 // The duplicate metadata merge options editor (the reference's
 // `EditDuplicateContentMergeOptionsWidget`; its workings are
 // hydrus-gui-model's `merge_options_editor`, bound by
@@ -6,9 +6,9 @@ import { Btn } from "btn.slint";
 // merges between duplicates, and what else syncs.
 
 import { Button, CheckBox, ComboBox } from "std-widgets.slint";
-import { Theme } from "theme.slint";
-import { Asking } from "subscriptions.slint";
-import { ListTable, TableRow } from "list_table.slint";
+import { Theme } from "@hydrus_ui_core";
+import { Asking } from "@hydrus_ui_core";
+import { ListTable, TableRow } from "@hydrus_ui_core";
 
 component Box inherits Rectangle {
     in property <string> title;

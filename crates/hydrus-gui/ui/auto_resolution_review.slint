@@ -1,4 +1,4 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 // The "review actions" window for a duplicates auto-resolution rule (the
 // reference's `ReviewActionsPanel`; its words are hydrus-gui-model's
 // `auto_resolution_review`, bound by `src/auto_resolution_review_window.rs`):
@@ -7,8 +7,8 @@ import { Btn } from "btn.slint";
 // was or would be done.
 
 import { Button, CheckBox, ScrollView, SpinBox } from "std-widgets.slint";
-import { Theme } from "theme.slint";
-import { Asking } from "subscriptions.slint";
+import { Theme } from "@hydrus_ui_core";
+import { Asking } from "@hydrus_ui_core";
 
 // a pair: its two files' thumbnails and the third column's text
 export struct PairRow {

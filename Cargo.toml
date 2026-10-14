@@ -144,10 +144,9 @@ debug = "line-tables-only"
 opt-level = 2
 debug = false
 
-# The generated Slint UI is ~87 MB of Rust, built as three crates (core: the
-# main window and the shared components; options: the Options dialog group; the
-# facade re-exporting them). Each of the two big ones is compiled alone by
-# rustc, which with line tables or incremental state would exceed the memory of
+# The generated Slint UI is ~87 MB of Rust, built as several crates (core: the
+# main window and the shared components; options and dialogs-1..4: groups of
+# windows; the facade re-exporting them). Each is compiled alone by rustc, which with line tables or incremental state would exceed the memory of
 # a 16 GB machine; incremental compilation also gains nothing, since any .slint
 # edit regenerates the whole file.
 [profile.dev.package.hydrus-gui-ui]
@@ -168,6 +167,30 @@ opt-level = 0
 strip = false
 
 [profile.dev.package.hydrus-gui-ui-options]
+debug = false
+incremental = false
+opt-level = 0
+strip = false
+
+[profile.dev.package.hydrus-gui-ui-dialogs-1]
+debug = false
+incremental = false
+opt-level = 0
+strip = false
+
+[profile.dev.package.hydrus-gui-ui-dialogs-2]
+debug = false
+incremental = false
+opt-level = 0
+strip = false
+
+[profile.dev.package.hydrus-gui-ui-dialogs-3]
+debug = false
+incremental = false
+opt-level = 0
+strip = false
+
+[profile.dev.package.hydrus-gui-ui-dialogs-4]
 debug = false
 incremental = false
 opt-level = 0

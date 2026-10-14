@@ -1,6 +1,6 @@
 [package]
 name = "hydrus-gui-ui"
-description = "The generated Slint UI for the hydrus-rs desktop client: re-exports the crates it is split into (hydrus-gui-ui-core, hydrus-gui-ui-options)."
+description = "The generated Slint UI for the hydrus-rs desktop client: re-exports the crates it is split into (hydrus-gui-ui-core, hydrus-gui-ui-options, hydrus-gui-ui-dialogs-1..4)."
 # Not a workspace member (see the root Cargo.toml), so nothing is inherited;
 # keep these in step with the workspace.
 version = "0.1.0"
@@ -19,4 +19,8 @@ doctest = false
 slint = { version = "=1.18.1", default-features = false, features = ["std", "compat-1-2", "backend-winit", "renderer-software", "unstable-winit-030", "system-tray"] }
 hydrus-gui-ui-core = { path = "../hydrus-gui-ui-core" }
 hydrus-gui-ui-options = { path = "../hydrus-gui-ui-options" }
+hydrus-gui-ui-dialogs-1 = { path = "../hydrus-gui-ui-dialogs-1" }
+hydrus-gui-ui-dialogs-2 = { path = "../hydrus-gui-ui-dialogs-2" }
+hydrus-gui-ui-dialogs-3 = { path = "../hydrus-gui-ui-dialogs-3" }
+hydrus-gui-ui-dialogs-4 = { path = "../hydrus-gui-ui-dialogs-4" }
 hydrus-workspace-hack = { version = "0.1", path = "../../crates/hydrus-workspace-hack" }

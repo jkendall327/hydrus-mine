@@ -5,4 +5,8 @@
 //! re-exports, so that users name everything as `hydrus_gui_ui::Name`.
 
 pub use hydrus_gui_ui_core::*;
+pub use hydrus_gui_ui_dialogs_1::*;
+pub use hydrus_gui_ui_dialogs_2::*;
+pub use hydrus_gui_ui_dialogs_3::*;
+pub use hydrus_gui_ui_dialogs_4::*;
 pub use hydrus_gui_ui_options::*;

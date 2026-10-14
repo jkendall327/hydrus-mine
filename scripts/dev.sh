@@ -15,8 +15,8 @@
 #                                   if it (or anything it uses) changed
 #
 # Why the UI crates are built on their own: the UI is ~87 MB of generated Rust,
-# split over several crates (hydrus-gui-ui-core, hydrus-gui-ui-options, ...,
-# re-exported by hydrus-gui-ui) because one rustc run over all of it peaks near
+# split over several crates (generated/hydrus-gui-ui-core, -options,
+# -dialogs-N, re-exported by hydrus-gui-ui) because one rustc run over all of it peaks near
 # 13 GB. Cargo starts compiling hydrus-gui while a UI crate's code generation is
 # still running, and the two together do not fit in 16 GB. Building them first,
 # one at a time, avoids the overlap. The hydrus-workspace-hack crate makes those
@@ -62,11 +62,14 @@ slint_check() {
 }
 
 build_ui() {
-  # (each alone, in order: the core crate first, as the others import it)
-  local crate
-  for crate in hydrus-gui-ui-core hydrus-gui-ui-options hydrus-gui-ui; do
-    cargo_ build -p "$crate"
+  # (each alone, in order: the core crate first, as the others import it, and
+  # the facade last)
+  local dir
+  cargo_ build -p hydrus-gui-ui-core
+  for dir in generated/hydrus-gui-ui-*; do
+    [ "$dir" = generated/hydrus-gui-ui-core ] || cargo_ build -p "${dir#generated/}"
   done
+  cargo_ build -p hydrus-gui-ui
 }
 
 base_commit() {

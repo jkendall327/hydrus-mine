@@ -1,10 +1,10 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 // A choice among buttons (the reference's `SelectFromListButtons`, and
 // `GetYesYesNo`): a message over a column of buttons, one per choice, and
 // optionally a "no" button. Driven by `src/choice_buttons.rs`.
 
 import { Button } from "std-widgets.slint";
-import { Theme } from "theme.slint";
+import { Theme } from "@hydrus_ui_core";
 
 export component ChoiceButtonsWindow inherits Window {
     in property <string> window-title: "Select";

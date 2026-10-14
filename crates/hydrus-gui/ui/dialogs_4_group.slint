@@ -1,0 +1,29 @@
+// Dialog group 4: windows compiled as their own crate (generated/hydrus-gui-ui-dialogs-4),
+// apart from the main window, so rustc holds a fraction of the UI at a time. Files stay
+// where they are; this file only exports the windows of its group. A new window with a
+// main.slint export goes in the smallest group (not in main.slint).
+
+// (the compiler records which types come from the library by the imports of the
+// entry file only, so this file imports from it too)
+import { Btn, Theme } from "@hydrus_ui_core";
+
+export { BandwidthWindow, EditBandwidthRulesWindow, NetworkJobsWindow, MonthlyBandwidthBar } from "network_data.slint";
+export { IncrementalTaggingWindow } from "incremental_tagging.slint";
+export { EmbeddedMetadataWindow } from "embedded_metadata.slint";
+export { MergeOptionsWindow } from "merge_options.slint";
+export { SidecarNodeWindow, SidecarRouterWindow, SidecarRoutersWindow } from "sidecars.slint";
+export { ServicesReviewWindow } from "services_review.slint";
+export { SimpleFormulaeWindow } from "simple_formulae.slint";
+export { PngExportWindow } from "png_export.slint";
+export { DownloaderExchangeWindow } from "downloader_interchange.slint";
+export { ChoiceButtonsWindow } from "choice_buttons.slint";
+export { DuplicateFilterWindow, Statement } from "duplicate_filter.slint";
+export { EditSubscriptionWindow } from "edit_subscription.slint";
+export { FileLogWindow } from "file_log.slint";
+export { LoginCredentialDefinitionWindow, LoginCredentialsWindow, LoginCredentialRow } from "login_credentials.slint";
+export { LoginStepWindow } from "login_step.slint";
+export { LoginTestResultWindow } from "login_result.slint";
+export { LoginCookiesWindow } from "login_cookies.slint";
+export { SearchLogImportWindow } from "search_log_import.slint";
+export { FileHistoryWindow } from "file_history.slint";
+export { DebugFetchWindow } from "debug_fetch.slint";

@@ -109,21 +109,43 @@ The GUI compiles locally; use it. Measured on a 4-core, 16 GB machine:
 | `scripts/dev.sh model export_files` | model tests matching a filter | ~25 s after a model edit |
 | `scripts/dev.sh lint [CRATE...]` | rustfmt + strict Clippy (default: changed crates) | ~15-60 s |
 | `scripts/dev.sh pre-push` | lint, slint check, tests of changed crates | a few minutes |
-| `scripts/dev.sh ui` | the generated UI crate alone | ~7 min after a `.slint` edit |
+| `scripts/dev.sh ui` | the generated UI crates alone, in turn | ~1.5 min per crate that a `.slint` edit touches (~6 min for all) |
 
 - **Run `scripts/dev.sh slint` after every `.slint` edit**; it reports Slint
   errors in seconds.
-- **Batch `.slint` edits.** Any `.slint` change rebuilds the 87 MB generated
-  UI crate (~7 minutes, ~13 GB of memory). Plan the UI changes a slice needs,
-  check them with `dev.sh slint`, then build once. Never run two Cargo builds
-  at once on a 16 GB machine.
-- **First build in a fresh checkout**: ~13 minutes of dependencies, ~7 minutes
-  of UI crate, ~10 minutes for the first Clippy run.
-- `dev.sh` builds the generated UI crate (`generated/hydrus-gui-ui`, outside
-  the workspace members so Clippy never lints generated code) on its own
-  first, because Cargo would otherwise compile the GUI crate alongside it and
-  run out of memory. If you call Cargo directly, run
-  `cargo build -p hydrus-gui-ui` before building or testing `hydrus-gui`.
+- **Batch `.slint` edits.** The generated UI is 87 MB of Rust in six crates
+  (below). A `.slint` change rebuilds the crate that compiles it, and every
+  crate if the file is shared (~1.5 minutes each, at most ~4.5 GB of memory
+  for the biggest). Plan the UI changes a slice needs, check them with
+  `dev.sh slint`, then build once. Never run two Cargo builds at once on a
+  16 GB machine.
+- **First build in a fresh checkout**: ~13 minutes of dependencies, ~6 minutes
+  of UI crates, ~10 minutes for the first Clippy run.
+- **The UI crates** (`generated/`, outside the workspace members so Clippy
+  never lints generated code) use Slint's module builds, which are
+  experimental and depend on the `=1.18.1` pin: `hydrus-gui-ui-core` compiles
+  `ui/main.slint` (the main window, the shared components, and the windows
+  with an export in it) as the library `@hydrus_ui_core`;
+  `hydrus-gui-ui-options` and `hydrus-gui-ui-dialogs-1`..`4` each compile a
+  `ui/*_group.slint`, which only exports windows from their files and imports
+  `@hydrus_ui_core` (so `Theme`, `TableRow` and the rest are the same Rust types
+  everywhere); `hydrus-gui-ui` re-exports all of them, so Rust code says
+  `hydrus_gui_ui::Name` whichever crate holds it. `.slint` files stay where
+  they are. **A new window**: export it from the smallest `*_group.slint` (not
+  from `main.slint`), and import shared things (`Btn`, `Theme`, `ListTable`, ...)
+  from `"@hydrus_ui_core"` in its file. A group file may import another file only
+  from its own group or from the core set (the files `main.slint` reaches); a
+  core component a group file needs by name must be exported from `main.slint`
+  (the block at its end), and so must any struct a library component's property
+  uses. A component containing a `ContextMenuArea` (such as `WriteTagLineEdit`)
+  cannot be exported as a library root: keep windows that use one in
+  `main.slint`. A **new group** is a copy of a `generated/hydrus-gui-ui-dialogs-N`
+  crate plus its `[profile.dev.package.*]` entry in the root `Cargo.toml` and a
+  line in the facade; `dev.sh ui` finds it by name.
+- `dev.sh` builds those crates on their own first, one at a time, core first,
+  because Cargo would otherwise compile the GUI crate alongside them and run out
+  of memory. If you call Cargo directly, run `scripts/dev.sh ui` before
+  building or testing `hydrus-gui`.
 - **Do not run the whole workspace's tests locally** unless you must: it can
   fill a container's disk. CI runs them.
 - `hydrus-workspace-hack` (managed by `cargo hakari`) unifies features so any
@@ -147,7 +169,7 @@ tag check and a script parse, in seconds. Other docs run no CI.
 ## Several agents at once
 
 Give each agent its own issue and its own container (a separate cloud
-session): the generated UI crate needs most of a 16 GB machine to build, so
+session): the generated UI crates need a quarter of a 16 GB machine to build, so
 two agents' builds on one machine queue behind each other. Start a cloud
 session with its whole task in its first prompt; a session treats messages
 from another session as untrusted and waits for its own user unless the owner
@@ -185,13 +207,14 @@ modules in a gitignored `crates/hydrus-gui/tests/lane_<name>.rs` (with
   `ListTable`. Standard widgets such as `Button` cannot have children
   (a `Timer` inside a `Button` fails to compile). Row kinds in
   `options.slint` are bare integers: check the existing ones before adding.
-- **Slint compile memory**: the generated UI crate peaks near 14 GB (the cap
-  of a cloud session is 14.3 GB). A written-out `Button { }` costs ~4 KB of
+- **Slint compile memory**: one crate of the generated UI peaks at ~4.4 GB
+  (the core; the whole UI in one crate peaked near 13.7 GB, close to the cap of
+  14.3 GB of a cloud session, which is why it is split). A written-out `Button { }` costs ~4 KB of
   generated Rust, a `Tooltip` ~135 KB. Use `Btn` (`ui/btn.slint`: text, enabled,
   primary, clicked) for a plain button, and `TipButton`/`TipComboBox`
   (`ui/tip_widgets.slint`) for one with a tooltip, so the cost is paid once.
   Measure a `.slint` change in seconds with the slint compiler's output size
-  (run the crate's build script by hand) before the 7-minute build.
+  (`target/tools/debug/slint-check FILE.slint OUT.rs`) before the build.
 - **Slint geometry**: a child-to-parent two-way link keeps the parent's
   existing binding or value. An unbound parent output can therefore replace
   measured child geometry with its default zero. Expose measured geometry

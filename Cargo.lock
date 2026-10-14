@@ -2652,6 +2652,10 @@ name = "hydrus-gui-ui"
 version = "0.1.0"
 dependencies = [
  "hydrus-gui-ui-core",
+ "hydrus-gui-ui-dialogs-1",
+ "hydrus-gui-ui-dialogs-2",
+ "hydrus-gui-ui-dialogs-3",
+ "hydrus-gui-ui-dialogs-4",
  "hydrus-gui-ui-options",
  "hydrus-workspace-hack",
  "slint",
@@ -2661,6 +2665,46 @@ dependencies = [
 name = "hydrus-gui-ui-core"
 version = "0.1.0"
 dependencies = [
+ "hydrus-workspace-hack",
+ "slint",
+ "slint-build",
+]
+
+[[package]]
+name = "hydrus-gui-ui-dialogs-1"
+version = "0.1.0"
+dependencies = [
+ "hydrus-gui-ui-core",
+ "hydrus-workspace-hack",
+ "slint",
+ "slint-build",
+]
+
+[[package]]
+name = "hydrus-gui-ui-dialogs-2"
+version = "0.1.0"
+dependencies = [
+ "hydrus-gui-ui-core",
+ "hydrus-workspace-hack",
+ "slint",
+ "slint-build",
+]
+
+[[package]]
+name = "hydrus-gui-ui-dialogs-3"
+version = "0.1.0"
+dependencies = [
+ "hydrus-gui-ui-core",
+ "hydrus-workspace-hack",
+ "slint",
+ "slint-build",
+]
+
+[[package]]
+name = "hydrus-gui-ui-dialogs-4"
+version = "0.1.0"
+dependencies = [
+ "hydrus-gui-ui-core",
  "hydrus-workspace-hack",
  "slint",
  "slint-build",

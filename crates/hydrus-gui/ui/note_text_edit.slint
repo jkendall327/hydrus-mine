@@ -1,7 +1,7 @@
 // A multiline native input whose actual byte cursor/anchor can be retained when
 // one note tab replaces another. State belongs to the dialog, not a global.
 import { ScrollView } from "std-widgets.slint";
-import { Theme } from "theme.slint";
+import { Theme } from "@hydrus_ui_core";
 export component NoteTextEdit inherits Rectangle {
     in-out property <string> text;
     in property <bool> enabled: true;
