@@ -10732,10 +10732,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Clicks the real menu and checks thumbnail cached_bytes becomes 0, but never asserts the image cache was populated first, so its keys().is_empty() is vacuous; reference also clears image tiles and the graphics-view thumbnail cache. No recording. Stale tracker notes. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:271 clear_all_rendering_caches_empties_the_thumbnail_and_image_caches"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude (issue #96 session)",
+    "note": "Real menu click after both caches are checked to be full (a thumbnail grid's cached bytes, and an image opened in the viewer into the image cache); afterwards both are empty (bytes and keys). The reference also clears its image tiles and graphics-view thumbnail caches (Qt painting, no counterpart). Test: crates/hydrus-gui/tests/gui/debug_menu_actions.rs clear_all_rendering_caches_empties_the_thumbnail_and_image_caches."
    }
   },
   {
@@ -11178,10 +11178,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu click, waits ~5s real time, checks title/pausable/cancellable and a 'Will auto-dismiss in ' prefix only. Reference publishes 'modal_message' (a modal dialog); native posts an ordinary toaster popup, which the test and DIFFERENCES do not call out. Countdown values, gauge, 10 s dismissal, cancel stopping the loop are untested; no recording. Stale tracker notes. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:145 modal_popups_arrive_after_five_seconds_counting_down_and_only_one_can_be_cancelled"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude (issue #96 session)",
+    "note": "Real menu click, real five-second wait and countdown against oracle/fixtures/debug_popups.json (the reference's own 'modal_message' job, sampled every 100 ms): published after five seconds, the countdown text and gauge each second, ten seconds to the end and gone; cancelling through the dialog's close and the cancel question stops the countdown at the text it had and dismisses within about a second. The modal dialog is the real PopupModalWindow. Tests: crates/hydrus-gui/tests/gui/debug_popups.rs modal_popups_count_down_ten_seconds_and_a_cancelled_one_stops and cancelling_the_modal_popup_stops_its_countdown."
    }
   },
   {
@@ -11222,10 +11222,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu click and real 5 s wait, but the reference's job is a modal dialog (modal_message); native posts an ordinary toast popup (DIFFERENCES says so). Test only checks title, not pausable, one of two cancellable and a text prefix: no gauge, no countdown progression, no cancel-stops-it, and the non-cancellable job is only inferred from the count. Tracker note ('no equivalent action') is stale. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:146 modal_popups_arrive_after_five_seconds_counting_down_and_only_one_can_be_cancelled"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude (issue #96 session)",
+    "note": "Real menu click against the recorded non-cancellable run (oracle/fixtures/debug_popups.json): not pausable or cancellable, done from the start so it goes straight to the popups instead of holding a dialog, with the same ten-step countdown text and gauge as the cancellable one. Test: crates/hydrus-gui/tests/gui/debug_popups.rs modal_popups_count_down_ten_seconds_and_a_cancelled_one_stops (both menu entries are clicked together)."
    }
   },
   {
@@ -11301,10 +11301,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-13",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Native leaves out the user-call, auto-account, gap-downloader and network-job popups (DIFFERENCES). Tests check the six numbered, long text, gauge, error and three delayed texts by typed literals (count of delayed ones, not the 0.5 s spacing); title/file/merge/unicode popups are only partly checked in the model test and not through the menu. No recording. Tracker note is stale. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:100 make_some_popups_throws_the_reference_s_varied_popups_then_three_delayed_ones; crates/hydrus-gui-model/tests/model/debug_actions.rs:10 some_popups_are_the_reference_s_less_its_callbacks"
+    "by": "claude (issue #96 session)",
+    "note": "Real menu click; every popup the reference makes that hydrus-rs makes is compared field by field with oracle/fixtures/debug_popups.json (record_debug_popups.py: title, texts, gauge, pausable/cancellable, files and label, merge flag, the exception's text framing, order, the three delayed ones about half a second apart). Still weak because three of the reference's popups are not made: 'user call test' (a button that calls back), 'sub gap downloader test' (a button that opens a gap downloader) and 'test network control' (a popup holding a network job), and the 'test job' sub-job does not start pulsing after two seconds (DIFFERENCES.md). Python's traceback frames have no counterpart; the framing lines and first two lines match. Test: crates/hydrus-gui/tests/gui/debug_popups.rs make_some_popups_makes_the_reference_s_popups_in_its_order_less_three_that_call_back."
    }
   },
   {
@@ -11576,10 +11576,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only the question text is shown and answered no (compared with the native const RESET_COLUMNS_QUESTION, circular). The yes path does nothing because hydrus-rs saves no column widths (DIFFERENCES), and is untested. Tracker note is stale. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:178 reset_multi_column_list_settings_asks_the_reference_s_question"
+    "date": "2026-10-13",
+    "class": "likely-good",
+    "by": "claude (issue #96 session)",
+    "note": "Static question: the real menu entry's question is compared with the literal read from the reference's ClientGUI._DebugResetColumnListManager source at test time (not a copy of the native constant); yes and no both close it. Yes has nothing to reset because hydrus-rs keeps no column widths (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/debug_data_actions.rs reset_multi_column_list_settings_asks_the_question_in_the_reference_s_source."
    }
   },
   {
@@ -11736,10 +11736,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu click and real store, but only asserts the 'last session' row exists with non-empty pages; the saved content is not compared with the open pages or the reference's session (changed-page-data, clean-data fleshing). Presence only. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:188 save_last_session_writes_the_current_pages_now"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude (issue #96 session)",
+    "note": "Real menu click on a store whose 'last session' row has been deleted: the row is saved again at once with every open page as it was (names, nesting, keys and searches equal to the session the window opened from). The reference's own saved container format is not compared (hydrus-rs keeps sessions in its own tables). Test: crates/hydrus-gui/tests/gui/debug_data_actions.rs save_last_session_writes_the_pages_that_are_open_now."
    }
   },
   {
@@ -11756,10 +11756,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real menu, picker title 'Select directory', cancel path and result text; native scan logic matches TryToGetPresumptiveSubfolderPathsBeneathLocation line by line. Expected values are typed literals (3 subfolders, limits, 'Too many files!'), no recording; initial picker directory (DB dir) not checked. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:531 scan_file_storage_folders_asks_for_a_directory_and_says_what_it_found; crates/hydrus-gui-model/tests/model/debug_actions.rs:68 scan_file_storage_folders_finds_the_prefix_folders_or_gives_up_quickly"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude (issue #96 session)",
+    "note": "Real menu click with the picker scripted: its title, and the directory it opens in (the database directory), and the popup text for nine directory shapes (empty, three prefixes, 16 and 17 files, 600 and 601 dirs, 20 and 21 second-level dirs, 17 second-level files) at the store's granularity, all compared with oracle/fixtures/debug_scan_storage.json (record_debug_scan_storage.py, the real client at both granularities); the time is the only part not compared. A cancelled picker says nothing, as recorded. Test: crates/hydrus-gui/tests/gui/debug_data_actions.rs scan_file_storage_folders_says_what_the_reference_says_of_each_tree."
    }
   },
   {
@@ -11796,10 +11796,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu click; popup text checked against the live process environment and a typed model case for DumpEnv's sort/PATH/DIRS splitting. Native env_text matches DumpEnv; expected values are typed from the source, no recording. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:242 show_env_prints_and_pops_up_the_environment; crates/hydrus-gui-model/tests/model/debug_actions.rs:51 modal_countdown_and_env_dump_read_as_the_reference_s"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude (issue #96 session)",
+    "note": "Real menu click with the shown environment replaced (the test cannot change the process's own): five environments (plain, PATH/DIRS splitting, only names containing PATH or DIRS split, unicode and spaces, empty) give the text oracle/fixtures/debug_show_env.json has from the real client's DumpEnv (record_debug_show_env.py), and it is also printed. Test: crates/hydrus-gui/tests/gui/debug_data_actions.rs show_env_dumps_each_recorded_environment_as_the_reference_does."
    }
   },
   {

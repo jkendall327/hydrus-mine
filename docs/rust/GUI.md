@@ -4931,7 +4931,7 @@ query's sync-due test).
 Also in Help > debug: gui actions > "autocomplete delay mode" (every tag
 autocomplete search takes three more seconds), data actions > "scan file
 storage folders" (pick a directory; it says how many storage subfolders it
-found and how long it took, or why it gave up), and debug modes > "use
+found and how long it took, or why it gave up; the picker opens in the database directory), and debug modes > "use
 faulthandler to log crashes" (while on, each panic is written with a
 backtrace to a "client crash" log in the database directory).
 `tests/gui/debug_menu_actions.rs` clicks each debug entry in the real menu

@@ -40,7 +40,7 @@ mod database_backup_window;
 pub mod database_locations_window;
 mod debug_actions;
 mod rule_count;
-pub use debug_actions::{crash_logging, debug_printed, message_window};
+pub use debug_actions::{crash_logging, debug_printed, message_window, set_environment};
 pub use orphan_files_window::chooser as orphan_files_chooser;
 pub mod debug_fetch;
 pub mod debug_long_popup;
@@ -6102,6 +6102,30 @@ pub(crate) fn pick(kind: Pick, title: &str) -> Vec<std::path::PathBuf> {
         return picker(kind, title);
     }
     let dialog = rfd::FileDialog::new().set_title(title);
+    match kind {
+        Pick::Files => dialog.pick_files().unwrap_or_default(),
+        Pick::Folder => dialog.pick_folder().into_iter().collect(),
+    }
+}
+
+thread_local! {
+    /// The directory the last [`pick_in`] opened the picker in.
+    static LAST_PICK_DIR: RefCell<Option<std::path::PathBuf>> = const { RefCell::new(None) };
+}
+
+/// The directory the last folder picker opened in (for tests of
+/// `PickDirectory( .., default_path )`).
+pub fn last_pick_directory() -> Option<std::path::PathBuf> {
+    LAST_PICK_DIR.with(|d| d.borrow().clone())
+}
+
+/// [`pick`], opening in `start` (`PickDirectory`'s default path).
+pub(crate) fn pick_in(kind: Pick, title: &str, start: &std::path::Path) -> Vec<std::path::PathBuf> {
+    LAST_PICK_DIR.with(|d| *d.borrow_mut() = Some(start.to_owned()));
+    if let Some(picker) = PICKER.with(|p| p.borrow().clone()) {
+        return picker(kind, title);
+    }
+    let dialog = rfd::FileDialog::new().set_title(title).set_directory(start);
     match kind {
         Pick::Files => dialog.pick_files().unwrap_or_default(),
         Pick::Folder => dialog.pick_folder().into_iter().collect(),

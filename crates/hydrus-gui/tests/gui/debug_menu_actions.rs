@@ -32,6 +32,23 @@ pub(super) fn start() -> Debug {
 }
 
 impl Debug {
+    /// A harness over a window the test made itself.
+    pub(super) fn from_parts(
+        dirs: [tempfile::TempDir; 2],
+        store: Arc<Store>,
+        ui: MainWindow,
+        bound: Bound,
+        windows: headless::Windows,
+    ) -> Debug {
+        Debug {
+            _dirs: dirs,
+            store,
+            ui,
+            bound,
+            _windows: windows,
+        }
+    }
+
     /// Click `help > debug > ...path`.
     pub(super) fn click(&self, path: &[&str]) {
         let help = self
@@ -287,7 +304,30 @@ fn clear_all_rendering_caches_empties_the_thumbnail_and_image_caches() {
         bound.rows.row_data(i).unwrap();
     }
     bound.rows.wait();
+    // open an image (its decoded pixels go in the image cache), then close
+    // the viewer: both caches are full before the action
+    let image_files = (0..bound.rows.row_count().min(5)).find_map(|i| {
+        ui.invoke_thumbnail_activated(i32::try_from(i).unwrap());
+        let viewer = bound
+            .viewer
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong)?;
+        let started = std::time::Instant::now();
+        while bound.image_cache.keys().is_empty() && started.elapsed().as_secs() < 5 {
+            slint::platform::update_timers_and_animations();
+            std::thread::sleep(Duration::from_millis(10));
+        }
+        let warmed = !bound.image_cache.keys().is_empty();
+        viewer.invoke_close_requested();
+        warmed.then_some(i)
+    });
+    assert!(
+        image_files.is_some(),
+        "an image is opened into the image cache"
+    );
     assert!(bound.rows.cached_bytes() > 0);
+    assert!(!bound.image_cache.keys().is_empty());
     let d = Debug {
         _dirs: dirs,
         store,
@@ -298,6 +338,7 @@ fn clear_all_rendering_caches_empties_the_thumbnail_and_image_caches() {
     d.click(&["memory actions", "clear all rendering caches"]);
     assert_eq!(d.bound.rows.cached_bytes(), 0);
     assert!(d.bound.image_cache.keys().is_empty());
+    assert_eq!(d.bound.image_cache.bytes(), 0);
 }
 
 // leaf: audit-options-help-debug-action-review-current-network-jobs

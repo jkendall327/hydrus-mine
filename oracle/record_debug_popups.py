@@ -27,7 +27,7 @@ def describe(job):
         gauge_1=job.GetGauge(1), gauge_2=job.GetGauge(2),
         pausable=job.IsPausable(), cancellable=job.IsCancellable(), done=job.IsDone(),
         had_error=job.HadError(), has_traceback=job.GetTraceback() is not None,
-        traceback_first_lines=(job.GetTraceback() or '').split('\n')[:1],
+        traceback=job.GetTraceback(),
         files=None if files is None else dict(count=len(files[0]), label=files[1]),
         mergable=job.GetIfHasVariable('attached_files_mergable'),
         user_callable_label=None if callable_ is None else callable_.GetLabel(),
