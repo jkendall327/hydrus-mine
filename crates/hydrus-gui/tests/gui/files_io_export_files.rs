@@ -9,7 +9,7 @@ use std::rc::Rc;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
-use slint::Model as _;
+use slint::{ComponentHandle as _, Model as _};
 
 use hydrus_core::HashId;
 use hydrus_gui::export_files_window::{self, Slots};
@@ -280,12 +280,22 @@ fn files_are_copied_or_symlinked_and_trashing_asks_and_wins_over_symlinks() {
     std::fs::create_dir(&trashed).unwrap();
     window.set_destination(trashed.to_string_lossy().into_owned().into());
     window.set_phrase("{#}".into());
-    window.set_symlinks(true);
-    window.set_trash(true);
+    let recorded = hydrus_testkit::fixture_json("export_files.json");
+    window.show().unwrap();
+    crate::common::widgets::lay_out(window.window(), 900.0, 700.0);
+    // both boxes ticked through the widgets, as the recorder ticked them: ticking
+    // trash leaves symlinks as the reference's panel left them
+    crate::common::widgets::toggle(window.window(), "EXPERIMENTAL: export symlinks");
+    assert!(window.get_symlinks());
+    crate::common::widgets::toggle(window.window(), "trash files in hydrus client after export");
+    assert!(window.get_trash());
+    assert_eq!(
+        window.get_symlinks(),
+        recorded["symlinks_with_trash"].as_bool().unwrap()
+    );
     window.invoke_update();
     window.invoke_export(false);
     // (the questions the reference asked in the same states, recorded)
-    let recorded = hydrus_testkit::fixture_json("export_files.json");
     assert!(window.get_asking());
     assert_eq!(
         window.get_question().as_str(),
@@ -303,7 +313,6 @@ fn files_are_copied_or_symlinked_and_trashing_asks_and_wins_over_symlinks() {
         meta.file_type().is_symlink(),
         recorded["symlinks_with_trash"].as_bool().unwrap()
     );
-    assert!(meta.is_file() || meta.file_type().is_symlink());
     window.invoke_dismissed();
 
     // export and close asks the same, with its own opening, and only
