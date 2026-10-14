@@ -132,12 +132,6 @@ fn duplicating_an_importer_page_copies_its_queue_and_keeps_the_two_apart() {
     ui.invoke_menu_line_clicked(0, i32::try_from(line).unwrap(), 200.0, 100.0, 10.0);
     // the copy is beside the original, shown, with its name
     assert_eq!(names(&ui), strings(&duplicated["names"]));
-    assert_eq!(
-        bound.pages.borrow().shown().name,
-        "my importer",
-        "the copy is shown (recorded tab {})",
-        duplicated["selected"]
-    );
     bound.pages.borrow_mut().sync(2).unwrap();
     let pages = bound.pages.borrow().session().pages.clone();
     let (
@@ -150,6 +144,9 @@ fn duplicating_an_importer_page_copies_its_queue_and_keeps_the_two_apart() {
         panic!("two importer pages");
     };
     assert_ne!(pages[at as usize].key, pages[at as usize + 1].key);
+    // the copy is the page shown (the recorded `selected` tab is the copy's)
+    assert_eq!(duplicated["selected"].as_i64().unwrap(), i64::from(at) + 1);
+    assert_eq!(bound.pages.borrow().shown().key, pages[at as usize + 1].key);
     assert_eq!((original.len(), copy.len()), (1, 1));
     let (original, copy) = (original[0], copy[0]);
     assert_ne!(original, copy, "its own queue");

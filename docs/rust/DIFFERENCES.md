@@ -382,7 +382,9 @@ search.
   its temporary files are in memory, as SQLite reports them: the journal
   mode is written in capitals as the reference does ("WAL"), but the store
   runs synchronous FULL and keeps temporary tables in memory, so those lines
-  say 2 and True where the reference says its configured 1 and False); the Python,
+  say 2 and True where the reference says its configured 1 and False; the
+  platform line ends "from a release build" or "from a debug build" where the
+  reference's says "from source" or "frozen"); the Python,
   OpenCV, openssl, numpy, Pillow and Qt version lines and the transaction
   commit period (every write commits) aren't there, and the optional
   libraries tab lists hydrus-rs's own optional parts (ffmpeg, mpv,

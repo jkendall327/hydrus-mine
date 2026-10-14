@@ -401,12 +401,12 @@
    "label": "Clear selected viewing statistics",
    "path": "Media files, metadata and viewing",
    "workstream": "media",
-   "state": "missing",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
-    "Native info menu reports viewing statistics but does not expose the reference selected-file clearing action."
+    "Manage > viewing stats > clear asks 'Clear the file viewing count/duration and 'last viewed time' for this file / these N files?' and deletes only the selected files' records."
    ],
    "recheck": {
     "date": "2026-10-13",
@@ -479,20 +479,19 @@
    "label": "Export/copy files, paths, file IDs and digest/blurhash/pixel hashes",
    "path": "Media files, metadata and viewing",
    "workstream": "media",
-   "state": "partial",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
-    "Selection/local-file facts determine share commands; actual hash/path readers and lib clipboard dispatch implement each offered kind. Partial: No inspected scoped assertion verifies menu-selected file-ID/digest/blurhash/pixel-hash payloads or each export/copy variant; production readers/dispatch support them but cannot alone satisfy this grouped leaf’s regression claim. Existing regression scope: Reference share menu structure and shared file clipboard payload are checked.",
-    "Manual export is the separately audited shared export window.",
-    "No inspected scoped assertion verifies menu-selected file-ID/digest/blurhash/pixel-hash payloads or each export/copy variant; production readers/dispatch support them but cannot alone satisfy this grouped leaf’s regression claim."
+    "Selection/local-file facts determine share commands; the copy hashes, file ids, paths and files rows copy what the reference's do.",
+    "Manual export is the separately audited shared export window."
    ],
    "recheck": {
     "date": "2026-10-13",
     "class": "sound",
     "by": "Claude (#97 phase 2, w4-r4)",
-    "note": "gui/media_selection_menu.rs share_rows_copy_what_the_reference_copies_for_the_same_files selects the recorded files in the real window (a pair, a single file, and six) and chooses each share row: sha256, md5, sha1, sha512, blurhash and pixel hash text, file ids, paths and the copied files, compared with oracle/record_share_copies.py's recording of the reference's CopyHashesToClipboard/CopyFileIdsToClipboard/CopyFilePathsToClipboard (share_copies.json), per file in thumbnail order; the blurhash and pixel hash rows are offered only when a file has one, as the reference's are; a lone file uses the focused file's rows. Paths and copied files are compared by file name (the directory is the client's own). Export files opens the separately audited export window."
+    "note": "gui/media_selection_menu.rs share_rows_copy_what_the_reference_copies_for_the_same_files selects the recorded files in the real window (a pair, a single file, and six) and chooses each share row: sha256, md5, sha1, sha512, blurhash and pixel hash text, file ids, paths and the copied files, compared with oracle/record_share_copies.py's recording of the reference's CopyHashesToClipboard/CopyFileIdsToClipboard/CopyFilePathsToClipboard (share_copies.json), per file in thumbnail order; the blurhash and pixel hash rows are offered only when a file has one, as the reference's are; a lone file uses the focused file's rows. Paths and copied files are compared by file name (the directory is the client's own). Export files opens the separately audited export window. The share menu's row labels are named in the test from the source (the menu's shape is replayed in thumbnail_menu.rs against thumbnail_menu.json), not recorded here."
    }
   },
   {
@@ -3717,7 +3716,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "Claude (#97 phase 2, w4-r4)",
-    "note": "gui/manage_tags_cog.rs typing_a_tag_or_activating_a_row_toggles_it_as_the_reference_does opens the real Manage Tags window on the recorded three files and corpus and replays every recorded single-tag case of manage_tags_cog.json (typed tag + Enter, and a tag row activated, with 'allow remove on input' on and off): the reference's question and its buttons when only some files have the tag, answered with its first, second or neither button, and the store after Apply equals the reference's staged adds and deletes (nothing is written before Apply). Several tags at once and the only_add flag come from the suggestion lists and paste, covered by the model test and the suggestion tests, not this leaf."
+    "note": "gui/manage_tags_cog.rs typing_a_tag_or_activating_a_row_toggles_it_as_the_reference_does opens the real Manage Tags window on the recorded three files and corpus and replays every recorded single-tag case of manage_tags_cog.json (typed tag + Enter, and a tag row activated, with 'allow remove on input' on and off): the reference's question and its buttons when only some files have the tag, answered with its first, second or neither button, and the store after Apply equals the reference's staged adds and deletes (nothing is written before Apply). Several tags at once and the only_add flag come from the suggestion lists and paste, covered by the model test and the suggestion tests, not this leaf. Replayed: 13 of the recorded cases; the add_many, only_add and 'cleaned tags' cases are not replayed through the window (model test only)."
    }
   },
   {
@@ -6238,13 +6237,13 @@
    "label": "Description: platform, ffmpeg/SQLite, boot and directories",
    "path": "Help > About the client",
    "workstream": "shell",
-   "state": "partial",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
     "Reads platform/executable/store/temp paths and SQLite version/cache/journal/synchronous pragmas for the live description.",
-    "Python/Qt/other Python libraries, locale and commit details omitted."
+    "Python/Qt/other Python libraries and the commit period are omitted."
    ],
    "recheck": {
     "date": "2026-10-13",
@@ -16723,7 +16722,7 @@
    "label": "Cancel a cancellable job",
    "path": "Popup message manager",
    "workstream": "shell",
-   "state": "partial",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
@@ -16939,7 +16938,7 @@
    "label": "Yes/No question and answer variable",
    "path": "Popup message manager",
    "workstream": "shell",
-   "state": "carried",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
@@ -21013,13 +21012,12 @@
    "label": "{selectable page}",
    "path": "Notebook tabs and page lifecycle > Tab right-click menu > pages",
    "workstream": "shell",
-   "state": "missing",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
-    "This reference action is wired in _ShowMenuForTabIndex to self.ShowPage. Native has no tab-context-menu callback for it.",
-    "No native action/editor path for this reference workflow."
+    "Tab right-click has the 'pages' submenu (every media page of the clicked notebook, or of a media tab's notebook, named 'name - N files'); choosing one shows it."
    ],
    "recheck": {
     "date": "2026-10-13",
@@ -21243,7 +21241,7 @@
    "label": "duplicate page",
    "path": "Notebook tabs and page lifecycle > Tab right-click menu",
    "workstream": "shell",
-   "state": "carried",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
@@ -21254,7 +21252,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "Claude (#97 phase 2, w4-r4)",
-    "note": "Two menu-driven GUI tests: session.rs duplicate_and_collapse_menus_replay_real_ordered_media_and_cancellation (a page and a notebook against tab_harvest.json: fresh keys, the media copied and surviving the original's deletion) and the new tab_duplicate_importer.rs, against oracle/record_tab_duplicate_importer.py's recording of the reference's _DuplicatePage on a URL importer: the copy sits next to the original with its name, its queued URLs in order, paused as the original was, and a URL pended to either is not seen by the other."
+    "note": "Two menu-driven GUI tests: session.rs duplicate_and_collapse_menus_replay_real_ordered_media_and_cancellation (a page and a notebook against tab_harvest.json: fresh keys, the media copied and surviving the original's deletion) and the new tab_duplicate_importer.rs, against oracle/record_tab_duplicate_importer.py's recording of the reference's _DuplicatePage on a URL importer: the copy sits next to the original with its name, its queued URLs in order, paused as the original was, and a URL pended to either is not seen by the other. The copy being the page shown is checked by its key and the recorded selected tab. The 'pended to either does not reach the other' check writes to the stores' queues directly (it checks the two are separate queues), not through a page's input."
    }
   },
   {
@@ -21496,7 +21494,7 @@
    "label": "refresh this page",
    "path": "Notebook tabs and page lifecycle > Tab right-click menu",
    "workstream": "shell",
-   "state": "carried",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
@@ -21644,10 +21642,10 @@
     "Selects the requested notebook depth/index or adjacent page, lazily opens it, restores its saved state and switches the active view."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "sound",
+    "date": "2026-10-14",
+    "class": "weak",
     "by": "Claude (#97 phase 2, w4-r4)",
-    "note": "gui/shell_tabs.rs clicking_a_tab_and_ctrl_page_keys_select_pages_and_restore_their_state replays oracle/record_tab_selection.py's recording (tab_selection.json) of the reference's notebook a, n[b, c], d: real clicks on the tabs (found by name) and real Ctrl+PageUp/PageDown key events, after each of ten steps the page shown and the selected tab of the top row and of n's row equal the reference's, including the deepest-notebook-first rule, moving out of n at its end, going back into it, n remembering its page, and the keys stopping at the ends. Lazy opening of an unshown page is not asserted."
+    "note": "Class lowered after review: gui/shell_tabs.rs clicking_a_tab_and_ctrl_page_keys_select_pages_and_restore_their_state replays oracle/record_tab_selection.py's recording (tab_selection.json) of the reference's notebook a, n[b, c], d: real clicks on the tabs (found by name) and real Ctrl+PageUp/PageDown key events, after each of ten steps the page shown and the selected tab of the top row and of n's row equal the reference's, including the deepest-notebook-first rule, moving out of n at its end, going back into it, n remembering its page, and the keys stopping at the ends. The leaf also names lazily opening the page and restoring its saved state; that is not asserted (no recording of the reference's unshown-page loading), so the leaf stays weak until it is. The nested row is asserted present exactly while b or c is shown."
    }
   },
   {

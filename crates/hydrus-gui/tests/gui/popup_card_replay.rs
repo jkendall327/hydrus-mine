@@ -192,6 +192,16 @@ fn a_card_shows_what_the_references_shows_for_the_same_job() {
         assert_eq!(ui.get_popups().row_count(), 1, "{label}");
         assert_card_is(&ui, state(&recorded, label), label);
         if label == "all" {
+            // and the card as drawn: the texts the reference's labels show
+            widgets::lay_out(ui.window(), 1100.0, 760.0);
+            widgets::settle();
+            let want = state(&recorded, label);
+            for key in ["title", "text_1", "text_2"] {
+                let text = want[key].as_str().unwrap();
+                assert!(widgets::shows(ui.window(), text), "{text} is drawn");
+            }
+        }
+        if label == "all" {
             // paused and played again, the pause button's click
             ui.invoke_popup_pause_play(0);
             assert_card_is(&ui, state(&recorded, "paused"), "paused");

@@ -579,5 +579,5 @@ fn typing_a_tag_or_activating_a_row_toggles_it_as_the_reference_does() {
         assert_eq!(current_tags(&o.store, &o.files), expected, "{name}");
         ran += 1;
     }
-    assert!(ran >= 12, "{ran} recorded cases replayed");
+    assert_eq!(ran, 13, "recorded cases replayed");
 }

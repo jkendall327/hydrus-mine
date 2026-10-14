@@ -3,8 +3,8 @@
 (sha256, md5, sha1, sha512, blurhash, pixel hashes), copy file ids and copy
 paths, as the clipboard text the reference publishes for each (the real
 `CopyHashesToClipboard`, `CopyFileIdsToClipboard` and
-`CopyFilePathsToClipboard` on the real media), and the share menu's rows
-for that selection.
+`CopyFilePathsToClipboard` on the real media). (The share menu's rows are
+in thumbnail_menu.json; the test picks the rows by the labels it names.)
 
 Usage: QT_QPA_PLATFORM=offscreen ~/pyenv/bin/python oracle/record_share_copies.py
        (writes fixtures/share_copies.json)

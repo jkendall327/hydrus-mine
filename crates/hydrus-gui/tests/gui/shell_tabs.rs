@@ -137,15 +137,19 @@ fn clicking_a_tab_and_ctrl_page_keys_select_pages_and_restore_their_state() {
             step["top"].as_i64().unwrap(),
             "after {do_:?}: top tab"
         );
-        if rows.row_count() == 2 {
+        // (the row of n's tabs is there exactly while one of its pages is shown)
+        let in_n = step["shown"] == "b" || step["shown"] == "c";
+        assert_eq!(
+            rows.row_count(),
+            if in_n { 2 } else { 1 },
+            "after {do_:?}: rows"
+        );
+        if in_n {
             assert_eq!(
                 i64::from(rows.row_data(1).unwrap().selected),
                 step["nested"].as_i64().unwrap(),
                 "after {do_:?}: n's tab"
             );
-        } else {
-            // (the row of n's tabs is shown only while n is)
-            assert!(step["shown"] == "a" || step["shown"] == "d");
         }
     }
 }
