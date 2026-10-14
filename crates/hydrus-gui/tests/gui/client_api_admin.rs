@@ -909,3 +909,67 @@ fn applied_key_edits_reach_the_running_api_and_collisions_are_refused_as_recorde
     assert_eq!(api_status(&router, &[1; 32]), 403);
     assert_eq!(api_status(&router, &[2; 32]), 200);
 }
+
+// leaf: audit-media-api-copy
+#[test]
+fn opening_the_base_url_launches_or_warns_as_the_reference_does_with_no_daemon_overriding() {
+    let recorded = hydrus_testkit::fixture_json("client_api_admin.json");
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let _windows = headless::init();
+    let id = store.snapshot().services.by_name("client api").unwrap().id;
+    let _parent = review(&store);
+    let keys = api::last_opened().unwrap();
+    let launched = Rc::new(RefCell::new(Vec::new()));
+    hydrus_gui::set_launcher({
+        let launched = launched.clone();
+        move |url| launched.borrow_mut().push(url.to_owned())
+    });
+    // copy: one selected key is copied as hex (`_CopyAPIAccessKey`); two selected copy nothing
+    add(&keys, "first", 7);
+    add(&keys, "second", 8);
+    let copied = Rc::new(RefCell::new(Vec::new()));
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| copied.borrow_mut().push(clip.clone())
+    });
+    keys.invoke_row_clicked(0, false, false);
+    keys.invoke_copy_key();
+    keys.invoke_row_clicked(1, true, false);
+    keys.invoke_copy_key();
+    assert_eq!(
+        copied.borrow().as_slice(),
+        [hydrus_gui::Clip::Text(hex::encode([7; 32]))]
+    );
+    for case in recorded["base_url"].as_array().unwrap() {
+        let port = case["port"].as_u64().map(|p| u16::try_from(p).unwrap());
+        let https = case["https"].as_bool().unwrap();
+        store
+            .write_and_refresh(move |ctx| {
+                hydrus_store::services::update_config(
+                    ctx.conn(),
+                    id,
+                    &ServiceKind::ClientApi(ServerConfig {
+                        port,
+                        use_https: https,
+                        ..ServerConfig::default()
+                    }),
+                )
+            })
+            .unwrap();
+        launched.borrow_mut().clear();
+        keys.set_error("".into());
+        keys.invoke_open_base_url();
+        let expected: Vec<String> = case["launched"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|u| u.as_str().unwrap().to_owned())
+            .collect();
+        assert_eq!(*launched.borrow(), expected, "{case}");
+        match case["warned"].as_array().unwrap().first() {
+            Some(warning) => assert_eq!(keys.get_error(), warning.as_str().unwrap(), "{case}"),
+            None => assert!(keys.get_error().is_empty(), "{case}"),
+        }
+    }
+}

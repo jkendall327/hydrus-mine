@@ -43,6 +43,7 @@ fn activate(window: &CommandPaletteWindow, name: &str) {
     window.invoke_activate(i32::try_from(index).unwrap());
 }
 
+// leaf: audit-options-command-palette-command-palette-open-favourite-searches-in-a-new-page
 #[test]
 fn ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions() {
     let directory = tempfile::tempdir().unwrap();
@@ -68,14 +69,7 @@ fn ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions() {
     bound.pages.borrow_mut().new_search_page();
     bound.pages.borrow_mut().rename_shown("Palette Beta");
     ui.invoke_tab_chosen(0, 1);
-    let favourite = FavouriteSearch {
-        folder: Some("Palette Folder".into()),
-        name: "Favourite Alpha".into(),
-        search: hydrus_core::search::context::FileSearchContext::default(),
-        synchronised: false,
-        sort: None,
-        collect: None,
-    };
+    let favourite = sorted_favourite("Favourite Alpha", Some("Palette Folder"), false);
     let written = favourite.clone();
     store
         .write(move |ctx| {
@@ -176,6 +170,20 @@ fn ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions() {
         favourite.search
     );
     assert!(!bound.current.borrow().borrow().synchronised());
+    // the favourite's sort and collect are applied to the page, as in the recording
+    assert_eq!(new_page["page"]["sort"], new_page["page"]["favourite_sort"]);
+    assert_eq!(
+        new_page["page"]["collect_namespaces"],
+        serde_json::json!(["series"])
+    );
+    assert_eq!(
+        bound.current.borrow().borrow().sort(),
+        favourite.sort.as_ref().unwrap()
+    );
+    assert_eq!(
+        bound.current.borrow().borrow().collect(),
+        favourite.collect.as_ref().unwrap()
+    );
     ui.invoke_command_palette_requested();
     let palette = bound
         .command_palette
@@ -380,18 +388,12 @@ fn asynchronous_calculator_ignores_page_threshold_and_activation_keeps_owner_ope
 
 // leaf: audit-options-command-palette-command-palette-max-favourite-searches-to-show
 // leaf: audit-options-command-palette-command-palette-max-page-results-to-show
+// leaf: audit-options-command-palette-command-palette-open-favourite-searches-in-a-new-page
 #[test]
 fn saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palette() {
     let directory = tempfile::tempdir().unwrap();
     let store = Store::open(directory.path()).unwrap();
-    let favourite = FavouriteSearch {
-        name: "Favourite Beta".into(),
-        folder: None,
-        search: hydrus_core::search::context::FileSearchContext::default(),
-        synchronised: false,
-        sort: None,
-        collect: None,
-    };
+    let favourite = sorted_favourite("Favourite Beta", None, false);
     let saved = favourite.clone();
     store
         .write(move |ctx| {
@@ -440,8 +442,25 @@ fn saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palet
         bound.pages.borrow().shown().key == original,
         same_page["same_page"].as_bool().unwrap()
     );
-    // (the recorded page already carried the favourite's name; ours keeps its own)
+    // the shown page keeps its own name, as the recorded one did
+    assert!(same_page["name_unchanged"].as_bool().unwrap());
     assert_eq!(bound.pages.borrow().shown().name, "Palette Beta");
+    assert_eq!(
+        same_page["page"]["sort"],
+        same_page["page"]["favourite_sort"]
+    );
+    assert_eq!(
+        same_page["page"]["collect_namespaces"],
+        serde_json::json!(["series"])
+    );
+    assert_eq!(
+        bound.current.borrow().borrow().sort(),
+        favourite.sort.as_ref().unwrap()
+    );
+    assert_eq!(
+        bound.current.borrow().borrow().collect(),
+        favourite.collect.as_ref().unwrap()
+    );
     assert_eq!(
         bound.pages.borrow().page_count(),
         count + usize::try_from(same_page["new_pages"].as_u64().unwrap()).unwrap()
@@ -817,4 +836,114 @@ fn a_page_of_pages_row_shows_when_the_setting_is_on_and_opens_its_remembered_pag
             .as_str()
             .unwrap()
     );
+}
+/// A favourite with a sort and a collect to apply (the recording's: number of tags,
+/// descending, collecting by `series`).
+fn sorted_favourite(name: &str, folder: Option<&str>, synchronised: bool) -> FavouriteSearch {
+    FavouriteSearch {
+        folder: folder.map(Into::into),
+        name: name.into(),
+        search: hydrus_core::search::context::FileSearchContext::default(),
+        synchronised,
+        sort: Some(hydrus_core::pages::PageSort {
+            tag_context: hydrus_core::search::context::TagContext::default(),
+            by: hydrus_core::pages::PageSortBy::System(9),
+            ascending: false,
+        }),
+        collect: Some(hydrus_core::pages::PageCollect {
+            namespaces: vec!["series".into()],
+            ..Default::default()
+        }),
+    }
+}
+
+/// The main-menu rows the palette shows for `query`: (text, menu path).
+fn menu_rows(window: &CommandPaletteWindow, query: &str) -> Vec<(String, String)> {
+    window.invoke_query_edited(query.into());
+    for _ in 0..200 {
+        window.invoke_poll();
+        std::thread::sleep(Duration::from_millis(2));
+    }
+    let rows = window.get_rows();
+    (0..rows.row_count())
+        .map(|i| rows.row_data(i).unwrap())
+        .filter(|r| !r.heading)
+        .map(|r| (r.primary.to_string(), r.secondary.to_string()))
+        .collect()
+}
+
+// leaf: audit-options-command-palette-command-palette-advanced-search-main-menubar
+#[test]
+fn the_main_menu_rows_are_the_reference_s_flattened_menubar_and_the_setting_gates_them() {
+    let recorded = hydrus_testkit::fixture_json("command_palette.json");
+    // Entries the reference's menubar holds that the palette lists but the native
+    // menu has no counterpart for (DIFFERENCES.md): the backup items it hides until a
+    // backup location is set up, and a Help > debug action.
+    let known_missing = [
+        ("update database backup", "database | backup"),
+        ("change database backup location…", "database | backup"),
+        ("review threads", "help | debug | data actions"),
+    ];
+    let _windows = headless::init();
+    for shown in [true, false] {
+        let directory = tempfile::tempdir().unwrap();
+        let store = Store::open(directory.path()).unwrap();
+        store
+            .write(move |ctx| {
+                hydrus_store::settings::set(
+                    ctx.conn(),
+                    &CommandPaletteSettings {
+                        show_main_menu: shown,
+                        ..Default::default()
+                    },
+                )
+            })
+            .unwrap();
+        let ui = MainWindow::new().unwrap();
+        let bound = bind(&ui, Pages::open(store).unwrap());
+        ui.invoke_command_palette_requested();
+        let window = bound
+            .command_palette
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        if shown {
+            for case in recorded["main_menu_real"].as_array().unwrap() {
+                let strip = |s: &str| {
+                    s.replace("<b>", "")
+                        .replace("</b>", "")
+                        .replace("&#x27;", "'")
+                };
+                let expected: Vec<(String, String)> = case["rows"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|r| {
+                        (
+                            strip(r["text"][0].as_str().unwrap()),
+                            r["text"][1].as_str().unwrap().to_owned(),
+                        )
+                    })
+                    .filter(|(a, b)| !known_missing.contains(&(a.as_str(), b.as_str())))
+                    .collect();
+                assert_eq!(
+                    menu_rows(&window, case["query"].as_str().unwrap()),
+                    expected,
+                    "{}",
+                    case["query"]
+                );
+            }
+        } else {
+            for case in recorded["main_menu_off"].as_array().unwrap() {
+                assert!(case["rows"].as_array().unwrap().is_empty());
+                assert_eq!(
+                    menu_rows(&window, case["query"].as_str().unwrap()),
+                    Vec::<(String, String)>::new(),
+                    "{}",
+                    case["query"]
+                );
+            }
+        }
+    }
 }

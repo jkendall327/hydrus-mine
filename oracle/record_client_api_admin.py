@@ -81,6 +81,28 @@ def record(session):
         finally:
             S.ClientGUITopLevelWindowsPanels.DialogEdit = old_dialog
             M.ShowCritical = oldm
+        # "open client api base url": what the real handler launches or warns, by the
+        # service's port and https setting
+        from hydrus.client.gui.executables import ClientGUIExecutableActions as EX
+        launched=[];warned=[]
+        old_open,old_warn=EX.OpenExternallyURLDefault,M.ShowWarning
+        EX.OpenExternallyURLDefault=lambda win,url:launched.append(url)
+        M.ShowWarning=lambda win,text:warned.append(text)
+        base_cases=[]
+        try:
+            for port,https in [(None,False),(None,True),(45869,False),(45869,True),(1,False),(65535,True)]:
+                class FakeService:
+                    def GetPort(self):return port
+                    def UseHTTPS(self):return https
+                    def GetServiceKey(self):return service.GetServiceKey()
+                    def GetName(self):return service.GetName()
+                panel._service=FakeService()
+                del launched[:];del warned[:]
+                panel._OpenBaseURL()
+                base_cases.append(dict(port=port,https=https,launched=list(launched),warned=list(warned)))
+        finally:
+            EX.OpenExternallyURLDefault,M.ShowWarning=old_open,old_warn
+        out['base_url']=base_cases
         server=S.EditServiceClientServerSubPanel(c.gui,HC.CLIENT_API_SERVICE, service.GetSerialisableDictionary())
         out['server']={'running':server._run_the_service.isChecked(),'port':server._port.value(),'port_range':[server._port.minimum(),server._port.maximum()], 'fields':server.GetValue()}
         out['server']['fields']={k:v for k,v in out['server']['fields'].items() if k!='bandwidth_rules'}

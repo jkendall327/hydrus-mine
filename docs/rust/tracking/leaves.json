@@ -34,10 +34,10 @@
     "Exactly-one selected key is copied in hex and base URL is generated from configured listener, including disabled/imported settings handling."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Hex copy of the single selected key is driven through the window and matches ClientGUIClientsideServices._CopyAPIAccessKey. The open-base-URL half deliberately differs from the reference: it opens the daemon's reported listening address (asserts http://127.0.0.1:45990/ even when the configured port is None, where the reference only warns 'not running'), and refuses HTTPS rather than using https://. Documented in GUI.md, but not compared with a recording. Tests: crates/hydrus-gui/tests/gui/client_api_admin.rs:125; crates/hydrus-gui-model/tests/model/client_api_admin.rs:68 (reference rows only)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "Copy: one selected key is copied as hex and two selected copy nothing (the reference's _CopyAPIAccessKey). Open base URL: all six recorded cases (client_api_admin.json base_url, from the reference's real _OpenBaseURL: no port warns 'The service is not running, so you cannot view it in a web browser!', a port launches http or https://127.0.0.1:port/) are replayed through the window with no daemon status. When a running daemon reports its own address that wins, so command-line --port/--bind overrides work (not in the reference; DIFFERENCES.md); the earlier note that https was refused was stale. Test: crates/hydrus-gui/tests/gui/client_api_admin.rs opening_the_base_url_launches_or_warns_as_the_reference_does_with_no_daemon_overriding."
    }
   },
   {
@@ -6450,10 +6450,10 @@
     "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Palette query rows with show_main_menu on are replayed from command_palette.json (events 4,5,17,18) against palette::query; the window test (setting on) activates 'options…' through the real main-menu dispatcher. The off gate, independence from provider order and the history requirement are only asserted with typed values in each_live_provider_policy (no recording of show_main_menu=false), and the recording uses a synthetic menu rather than the flattened native menubar. Tests: crates/hydrus-gui-model/tests/model/command_palette.rs:98 providers_match_real_qt_order_limits_and_thresholds; :242 each_live_provider_policy_reaches_its_results_and_preferences_persist; crates/hydrus-gui/tests/gui/command_palette.rs:47 ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions; crates/hydrus-gui/tests/gui/options_window.rs:4469 command_palette_options_stage_queue_changes_and_persist_only_on_apply"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The real palette is opened with the setting on and off and compared with command_palette.json (main_menu_real and main_menu_off, recorded from the reference's real menubar provider): six queries over the whole menubar give the reference's rows and menu paths in order, and with the setting off the provider gives none. Native lacks three entries the reference lists (two backup items its menubar hides until a location is set, and Help > debug > review threads): listed in the test and DIFFERENCES.md. Test: crates/hydrus-gui/tests/gui/command_palette.rs the_main_menu_rows_are_the_reference_s_flattened_menubar_and_the_setting_gates_them."
    }
   },
   {
@@ -6630,10 +6630,10 @@
     "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
    ],
    "recheck": {
-    "date": "2026-10-09",
-    "class": "weak",
-    "by": "phase 2 session",
-    "note": "Both settings drive the real palette; the new-page count (selected.favourite) and, for the off case, the new-page count and same_page (selected.favourite_current) are read from the recording. Missing: favourite sort/collect are not recorded and not compared (DIFFERENCES.md); the recorded page's name was already the favourite's, so the off case's name is not comparable. Tests: command_palette.rs ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions; saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palette."
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "Both settings drive the real palette against command_palette.json: on opens one new page named for the favourite, off searches the shown page and leaves its name (recorded name_unchanged), and in both the favourite's sort and collect (recorded: number of tags descending, collect by series) are applied and its synchronised flag kept. Compared as relations for the sort because the reference and native number sort types differently. Tests: crates/hydrus-gui/tests/gui/command_palette.rs ctrl_p_async_palette_launches_real_pages_favourites_and_main_menu_actions, saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palette."
    }
   },
   {
