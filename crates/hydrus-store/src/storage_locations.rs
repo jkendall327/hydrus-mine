@@ -501,6 +501,8 @@ mod tests {
     fn a_second_location_takes_half_and_thumbnails_follow() {
         let (home, other) = (tempfile::tempdir().unwrap(), tempfile::tempdir().unwrap());
         let store = crate::Store::open(home.path()).unwrap();
+        // (the reference moves nothing while a location is missing)
+        std::fs::create_dir_all(home.path().join("client_files")).unwrap();
         assert_eq!(store.read(next_move).unwrap(), None);
         let second = other.path().to_path_buf();
         store
