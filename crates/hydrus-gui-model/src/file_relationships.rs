@@ -573,7 +573,10 @@ pub fn cleared_text(cleared: usize) -> String {
     if cleared == 0 {
         "No false positives to clear!".to_owned()
     } else {
-        format!("{} false positive relationships cleared.", human_int(cleared as u64))
+        format!(
+            "{} false positive relationships cleared.",
+            human_int(cleared as u64)
+        )
     }
 }
 

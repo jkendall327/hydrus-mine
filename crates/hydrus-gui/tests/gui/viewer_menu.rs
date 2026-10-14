@@ -285,7 +285,7 @@ fn a_right_click_shows_the_viewer_s_menu_and_its_entries_act() {
 #[test]
 fn the_viewer_s_similar_files_custom_row_asks_a_distance_and_opens_the_search() {
     use hydrus_gui::{MainWindow, Pages, SearchPage, bind, headless};
-    use slint::{ComponentHandle as _, Model as _};
+    use slint::Model as _;
 
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();
@@ -326,7 +326,12 @@ fn the_viewer_s_similar_files_custom_row_asks_a_distance_and_opens_the_search() 
     let dialog = hydrus_gui::similar_distance_window::editor().expect("the dialog opens");
     assert_eq!(dialog.get_window_title(), "choose distance");
     assert_eq!(
-        (dialog.get_value(), dialog.get_minimum(), dialog.get_maximum(), dialog.get_step_size()),
+        (
+            dialog.get_value(),
+            dialog.get_minimum(),
+            dialog.get_maximum(),
+            dialog.get_step_size()
+        ),
         (10, 0, 99, 2)
     );
     dialog.set_value(6);

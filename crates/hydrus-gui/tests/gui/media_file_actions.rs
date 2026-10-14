@@ -607,9 +607,7 @@ fn file_relationship_rows_set_view_and_reset_duplicate_groups() {
         let popup_texts = || -> Vec<String> {
             fixture
                 .store
-                .read(|c| {
-                    hydrus_store::popups::all(c, hydrus_core::TimestampMs::now().0 / 1000)
-                })
+                .read(|c| hydrus_store::popups::all(c, hydrus_core::TimestampMs::now().0 / 1000))
                 .unwrap()
                 .into_iter()
                 .filter_map(|job| job.status_text_1)
