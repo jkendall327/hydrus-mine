@@ -100,7 +100,8 @@ five seconds"), as the reference's `AddModalMessage`: it is kept out of the
 popups and thrown up in a dialog of its own, titled with the job's title
 ("important job" without one), with the job's texts, gauges, download and
 pause and stop buttons, and a close button only if the job can be cancelled.
-It waits (one retried at a time) while the main window is minimised or not
+As it opens, every playing video or audio file is paused and the other
+secondary windows are hidden until the job is released. It waits (one retried at a time) while the main window is minimised or not
 the active one, or another modal is up. Closing a running job asks "Cancel/stop
 job?" (yes cancels it); closing one that cannot be cancelled says so and the
 dialog stays; a job that finishes closes its dialog by itself. Either way the
@@ -1814,8 +1815,13 @@ so the definition can be closed or edited again without abandoned windows.
 Network > downloaders > gallery url generators has single and nested lists,
 with add/edit/duplicate/delete, template and replacement controls, search term
 separator, initial/example searches, raw/request URL previews and matched
-classes. Nested generators select existing single generators; missing members
-are reported in the list and repaired on Apply, as in the reference. Deleting
+classes. A nested generator's members are a list (gug name, available?, sorted
+by either heading) with the reference's `add` and `delete` buttons: `add` opens
+a "choose gugs" list of the single generators not already members, in the
+chooser's order, to tick, or warns "No remaining gugs available!" when none is
+left; `delete` asks "Remove all selected?". A member whose generator is gone is
+listed "no" and dropped on Apply, one found by name is re-keyed
+(`oracle/record_nested_gug_members.py`). Deleting
 generators asks "Remove all selected?", then, for each one a nested generator
 uses, the reference's warning naming those (a "no" stops there, the ones
 before it already gone). Parser and URL link
@@ -5066,7 +5072,11 @@ non-cancellable twin (a "debug modal job" popup counting down ten seconds),
 "make a QMessageBox" (its warning), "make some popups" (the reference's test
 popups: six numbered messages, the very long message and title, a client API
 file popup, two mergeable file popups, the unicode one, a pausable and
-cancellable job with a gauge, an error, then three delayed messages),
+cancellable job with a gauge that gets a pulsing sub-job two seconds in, a
+network-job popup, an error, then three delayed messages; the "user call
+test" popup's button shows a text popup, and the "sub gap downloader test"
+popup's opens (or makes) the "subscription gap downloaders" gallery page and
+pends its search there, saying so if the downloader is not found),
 "reset multi-column list settings to default" (its question) and "save 'last
 session' gui session"; data actions > "flush log", "force database commit",
 "show env" (every environment variable in a popup and the log) and "simulate

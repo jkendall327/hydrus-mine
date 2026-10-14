@@ -2181,10 +2181,10 @@
     "Direct buttons replace reference import/export menus; no reference add-only autocomplete context option."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "likely-good",
-    "by": "Claude session (#165 triage)",
-    "note": "crates/hydrus-gui/tests/gui/relationship_exchange.rs pair_import_and_export_replay_the_reference_on_local_and_repository_services replays oracle/record_relationship_exchange.py through the real window with no steps filtered: self-pairs are staged after the reference's 'Loop problem!' message (OK only), a batch looping within itself is staged as the reference stages it; rows, questions, reasons, exports and the committed rows after Apply compared on a local service and a repository. Tag moved off the model tests. The message has no window title (DIFFERENCES.md). Not sound: the reference's second 'Loop problem!' warning, for pairs that join loops already in the database (ClientGUITagActions.py:187-194), is not raised on this import path, and the recording has no step for it (DIFFERENCES.md)."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-11)",
+    "note": "crates/hydrus-gui/tests/gui/relationship_exchange.rs pair_import_and_export_replay_the_reference_on_local_and_repository_services replays oracle/record_relationship_exchange.py through the real window with no steps filtered: rows, questions, reasons, both 'Loop problem!' messages (self-pairs, and a pair that joins a loop already there, step 8 of the recording) with the reference's window title and text, exports and the committed rows after Apply, on a local service and a repository. The title is now shown over the message (question_title). Direct import/export buttons replace the reference's menus (DIFFERENCES.md); the order in which several pre-existing loops list follows hydrus-rs's list order, not a Python set's."
    }
   },
   {
@@ -3425,10 +3425,10 @@
     "Direct buttons replace reference import/export menus; no reference add-only autocomplete context option."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "likely-good",
-    "by": "Claude session (#165 triage)",
-    "note": "crates/hydrus-gui/tests/gui/relationship_exchange.rs pair_import_and_export_replay_the_reference_on_local_and_repository_services replays oracle/record_relationship_exchange.py through the real window with no steps filtered: self-pairs are staged after the reference's 'Loop problem!' message (OK only), a sibling batch giving one tag two ideals and a batch looping within itself are staged as the reference stages them; rows, questions, reasons, exports and the committed rows after Apply compared on a local service and a repository. The message has no window title (DIFFERENCES.md). Not sound: the reference's second 'Loop problem!' warning, for pairs that join loops already in the database (ClientGUITagActions.py:187-194), is not raised on this import path, and the recording has no step for it (DIFFERENCES.md)."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-11)",
+    "note": "crates/hydrus-gui/tests/gui/relationship_exchange.rs pair_import_and_export_replay_the_reference_on_local_and_repository_services replays oracle/record_relationship_exchange.py through the real window with no steps filtered: rows, questions, reasons, a sibling batch giving one tag two ideals, both 'Loop problem!' messages (self-pairs, and a pair that joins a loop already there) with the reference's window title and text, exports and the committed rows after Apply, on a local service and a repository. The title is now shown over the message (question_title). Direct buttons replace the reference's menus (DIFFERENCES.md); the order in which several pre-existing loops list follows hydrus-rs's list order, not a Python set's. The earlier note that the second warning is not raised was stale: it is, and the recording has the step."
    }
   },
   {
@@ -11319,10 +11319,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "weak",
-    "by": "claude (issue #96 session)",
-    "note": "Real menu click; every popup the reference makes that hydrus-rs makes is compared field by field with oracle/fixtures/debug_popups.json (record_debug_popups.py: title, texts, gauge, pausable/cancellable, files and label, merge flag, the exception's text framing, order, the three delayed ones about half a second apart). Still weak because three of the reference's popups are not made: 'user call test' (a button that calls back), 'sub gap downloader test' (a button that opens a gap downloader) and 'test network control' (a popup holding a network job), and the 'test job' sub-job does not start pulsing after two seconds (DIFFERENCES.md). Python's traceback frames have no counterpart; the framing lines and first two lines match. Test: crates/hydrus-gui/tests/gui/debug_popups.rs make_some_popups_makes_the_reference_s_popups_in_its_order_less_three_that_call_back."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-11)",
+    "note": "crates/hydrus-gui/tests/gui/debug_popups.rs: the real Help menu entry makes all 19 popups of oracle/fixtures/debug_popups.json in the recorded order, field by field (title, texts, gauges, pausable/cancellable, files, merge flag, the button's label, whether it holds a network job, the exception's framing), the three delayed ones about half a second apart; a second test clicks the 'user call test' and 'sub gap downloader test' buttons through the popup control and compares the popups and the pages they leave with the recorded user_calls (a text popup 'iv damke'; the 'subscription gap downloaders' gallery page and the reference's 'Could not find a Gallery URL Generator' text); and the test job's pulsing sub-job arrives two seconds in, as recorded. The auto-account popup is made only with a tag repository, which the recorded client and hydrus-rs lack. Python's traceback frames have no counterpart."
    }
   },
   {
@@ -13235,10 +13235,10 @@
     "Native options registry has no editable 'Permit idle mode if your mouse cursor has not been moved in the past:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The control, saved seconds and gate arithmetic are recorded and replayed soundly, but the reference tooltip says the timer follows the mouse anywhere on the system, and native only observes cursor movement over its own windows (DIFFERENCES.md ~1772 says so), so the setting does not do what the leaf names. The GUI test also uses mouse_at() directly rather than a cursor event. Stale tracker note says no editable row exists; it does. Tests: crates/hydrus-gui/tests/gui/idle_timeout_options.rs:49 staged_timeouts_change_live_browsing_mouse_api_and_autosave_gates_only_after_apply; crates/hydrus-gui-model/tests/model/idle_timeout_options.rs (recording replays)"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-11)",
+    "note": "crates/hydrus-gui/tests/gui/idle_timeout_options.rs: the control, its saved seconds and the gate arithmetic are recorded and replayed (staged_timeouts_change_live_browsing_mouse_api_and_autosave_gates_only_after_apply, idle_timeout_options.json). the_mouse_timeout_counts_the_cursor_moving_anywhere_on_the_desktop sets only the mouse timeout in the Options row, applies it, and feeds the live gate the desktop's idle time (a stand-in for GNOME's IdleMonitor / the X screensaver extension): input seen elsewhere on the desktop holds idle mode back, a quiet desktop permits it, with the reference's strict boundary. The old note that native sees only its own windows is stale (DIFFERENCES.md, 'Idle from input outside hydrus-rs's windows'). Limits, written there: the desktop cannot say mouse from keyboard, so typing elsewhere also counts, and a Wayland compositor without GNOME's monitor has no source."
    }
   },
   {
@@ -16959,10 +16959,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Lifecycle (dialog, title, close button, ask/warn, wait while minimised/inactive/another dialog, self-close, release) is driven through the window and the model replays popup_modal.json. But Effect::PauseAllMedia (pause_all_media pub, in the recording) is not performed by the GUI, other windows are not hidden, and the dialog does not block the main window (DIFFERENCES); the hide-main-GUI recorded case is replayed by no test. Part of the recorded lifecycle is uncovered. Tests: crates/hydrus-gui-model/tests/model/popup_modal.rs:110,213; crates/hydrus-gui/tests/gui/shell_modal_popups.rs:104,166,199"
+    "by": "Claude session (wave 5, W5-11)",
+    "note": "Lifecycle (dialog, title, close button, ask/warn, waiting while minimised/inactive/another dialog, self-close, release) is driven through the window and the model replays popup_modal.json; since 2026-10-14 the dialog also pauses playing media as it opens (viewer_playback.rs a_modal_popup_pauses_the_playing_media_as_it_opens, a real mpv player) and hides the other windows while it is up, restoring them on release (shell_modal_popups.rs, the recorded 'other windows hidden, main kept' case). Still weak: the dialog does not block the main window, and the recorded 'main window hidden too' case (a panel made with hide_main_gui, used only by the reference's file migration dialogs) is replayed by no test (DIFFERENCES.md)."
    }
   },
   {
@@ -24242,10 +24242,10 @@
     "Checked generator identities form the nested set; list Apply owns persistence."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "weak",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Unchanged: the reference's nested generator editor has a members list with an 'add' button (choose gugs, multi-select), a 'No remaining gugs available!' warning and an 'available' yes/no column; native has a checklist, none of which is tested or recorded. Porting the list needs .slint work (a recording of the reference's panel, then the editor); left for a slice of its own. Test: crates/hydrus-gui/tests/gui/downloader_definitions.rs single_nested_generators_roundtrip_delete_and_cancel"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-11)",
+    "note": "crates/hydrus-gui/tests/gui/downloader_definitions.rs the_nested_generators_members_list_adds_through_a_chooser_and_deletes_as_the_reference_does opens the nested editor on the generators oracle/record_nested_gug_members.py used and replays oracle/fixtures/nested_gug_members.json through the real window: the rows and 'available?' by key or name, the add button's chooser (the generators offered in the chooser's own order, none ticked, cancel, two ticked, the rest), the selection after adding, 'No remaining gugs available!' when none is left, delete's 'Remove all selected?' declined and accepted, and the members the list stores on Apply (a gone generator dropped, one found by name re-keyed). The chooser is an overlay of tick boxes in the editor and the warning an inline notice with ok, rather than Qt dialogs (DIFFERENCES.md)."
    }
   },
   {
