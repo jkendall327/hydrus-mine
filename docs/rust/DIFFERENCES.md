@@ -1176,6 +1176,22 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 
 ## Downloader definition editors
 
+- The parser test panels take their example parsing context from three boxes
+  (url, post index, other variables) where the reference has one dictionary
+  button. Like the reference's, a content or page parser's test parse leaves
+  out the post index (a subsidiary parser's sets it to 0); the url, other
+  variables and relative-url joining are replayed from
+  `oracle/fixtures/parser_context.json`. After a fetch the page parser's url box
+  shows the encoded url the context holds, where the reference keeps what was
+  typed (its fetch texts, requests and cookies are replayed from
+  `oracle/fixtures/parser_fetch_http.json`).
+- The test panels' result preview reads "Post 1" then "tags: abc" lines, where the
+  reference prints "*** 1 RESULTS BEGIN ***", then one line per result with its own
+  label ("tag: artist:samus" with the namespace joined and the tag cleaned,
+  "downloadable/pursuable url (priority 50): ...", 'note "name":', "sha256 hash:",
+  "source/post time: <date>", "veto: ...") and "*** RESULTS END ***"
+  (`oracle/fixtures/parser_context.json`, `parser_editors.json`). The parsed texts
+  match; the labels and layout do not.
 - URL classes and single/nested gallery URL generators have native lists and
   rule editors. Their duplicate button creates new keys and unique names.
   Domain lists and regex lists use one rule per line, and nested generators
@@ -1331,9 +1347,9 @@ native/store/model regression source awaits hosted CI; no Rust runs locally.
   `false` for a numerical or inc/dec rating service (Python counts a bool as
   an int, so the reference stores `true` as one star).
 
-- **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions and repository/IPFS account administration remain unavailable. Local trash clear/undelete, double-confirmed deleted-file-record clearing and all three local rating-clear populations are implemented; bulk rating choices and confirmations use native inline controls rather than Qt popup menus/dialogs. Opening a replacement review retires the previous owner's pending maintenance confirmation.
+- **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh; the id button says "The service id is: N" (the reference's words and ids, recorded) in the window, not in an information dialog. The long service descriptions and repository/IPFS account administration remain unavailable. Local trash clear/undelete, double-confirmed deleted-file-record clearing and all three local rating-clear populations are implemented; bulk rating choices and confirmations use native inline controls rather than Qt popup menus/dialogs. Opening a replacement review retires the previous owner's pending maintenance confirmation.
 
-- **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields with four live, independently interactive rating examples; named SVG stars are chosen from the list of installed and user SVGs and drawn in the editor's examples, the viewer and the preview window; Qt and resvg rasterise differently, so the outline is a ring of copies of the SVG rather than the reference's stamped feather, and the tests compare what is painted (over 65% overlap with Qt's) rather than its pixels. The thumbnail overlay still draws an SVG-chosen service as the default star, as the reference does for an SVG it does not have. The reference hides the choice when it finds no SVGs; here the installed ones are built in, so it is always offered. Remote repository/IPFS/account edits remain unavailable here. Client API listener settings are available, including HTTPS, the normie welcome page and the external URL overrides (see the Client API entry below). A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
+- **Local service management** uses an add-kind dropdown and inline confirmation text rather than Qt popup menus/modal questions. Rating colours use validated #RRGGBB text fields (the reference's colour pickers cannot hold an invalid colour; the recorded colours are applied as given) with four live, independently interactive rating examples; named SVG stars are chosen from the list of installed and user SVGs and drawn in the editor's examples, the viewer and the preview window; Qt and resvg rasterise differently, so the outline is a ring of copies of the SVG rather than the reference's stamped feather, and the tests compare what is painted (over 65% overlap with Qt's) rather than its pixels. The thumbnail overlay still draws an SVG-chosen service as the default star, as the reference does for an SVG it does not have. The reference hides the choice when it finds no SVGs; here the installed ones are built in, so it is always offered. Remote repository/IPFS/account edits remain unavailable here. Client API listener settings are available, including HTTPS, the normie welcome page and the external URL overrides (see the Client API entry below). A concurrent registry change rejects Apply and asks the user to reopen the editor; expensive full count rebuilds run inside the atomic service transaction. Successful Apply refreshes displayed selection/viewer tags after source-service deletion, including a locked page whose files stay fixed.
 
 ## Manual file exports
 
@@ -1474,6 +1490,7 @@ results; a stale in-flight search cannot restore them. The database unlock
 endpoint authenticates its cached admin key while the native store is paused.
 The detached GUI model saves a whole key edit only on Apply and rejects stale
 concurrent editor state; Qt service review applies list actions immediately.
+A key edited onto another entry's key is refused with the reference's "key collision" words, shown in the open editor (the reference shows a modal once its editor has closed).
 The access-key window opens separately from service review; the reference
 embeds its list within that panel. "add from api request" opens the
 reference's waiting window and takes the first request the running daemon
@@ -1535,8 +1552,13 @@ The session browser's "create new" offers the reference's two types (web domain,
 hydrus service). The service choice lists the repositories by name; a hydrus
 service session is keyed by the service key's hex, as the existing ones are. With
 no repository "hydrus service" is refused ("Choose a hydrus service for this
-context."). Qt names the service wherever it lists a network context
-("hydrus service: <name>"); native lists the key's hex.
+context."), where Qt makes the "hydrus service default" context. Both name the
+service wherever the browser lists a context ("hydrus service: <name>"). A domain
+is lower-cased and refused if it is not one; Qt keeps what was typed ("Example.com")
+and, for something that is not a domain such as "not a domain!!", makes a session
+with an empty domain. The dialog's opening state, title, notes, defaults, offered
+services and the sessions made are replayed from
+`oracle/fixtures/session_create.json` (`oracle/record_session_create.py`).
 
 Cookie and HTTP-header editing uses detached native drafts with Apply/Cancel;
 Qt cookie-list actions take effect immediately, while its header list is staged.
@@ -1596,6 +1618,18 @@ context/obeys-bandwidth details are inline, and cancel/override controls are
 explicit buttons. Login-script waits remain outside the implemented engine.
 Local snapshots are published by the daemon without requiring its Client API;
 expiry disables stale controls and saved bandwidth history remains available.
+The reference's auto-refresh is a "manual refresh"-or-interval control (at least
+0.05 s, manual to begin with); native has an auto-refresh checkbox, on to begin
+with. The jobs list's position column says "waiting for bandwidth", "waiting for
+login" and "running" as the reference does (its positions "waiting for
+validation" and "waiting for free work slot" have no native counterpart), and
+its other waits are native's own; the speed column is titled "current speed" as
+the reference's is. A job's contexts are shown in the detail under the list, not
+in a right-click menu with each context's waiting estimate.
+
+"Reset default bandwidth rules" resets the global and default contexts the
+reference names (not the downloader default, which it leaves) and keeps every
+specific context (`oracle/fixtures/bandwidth_reset.json`).
 
 ## Tag migration
 
