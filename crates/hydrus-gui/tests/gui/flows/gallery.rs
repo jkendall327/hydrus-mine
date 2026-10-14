@@ -49,7 +49,12 @@ fn search_a_gallery_with_a_file_limit_as_the_reference_does() {
             .borrow()
             .borrow()
             .gallery()
-            .map(|g| g.queries.iter().map(|q| (q.queue, q.query.clone())).collect())
+            .map(|g| {
+                g.queries
+                    .iter()
+                    .map(|q| (q.queue, q.query.clone()))
+                    .collect()
+            })
             .unwrap_or_default()
     };
     let shown = || bound.current.borrow().borrow().files().len();
