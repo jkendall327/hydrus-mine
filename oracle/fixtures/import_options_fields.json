@@ -1,0 +1,2523 @@
+{
+ "file_filtering": {
+  "control_defaults": {
+   "max_gif_size": [
+    32,
+    1048576
+   ],
+   "max_resolution": [
+    8192,
+    8192
+   ],
+   "max_size": [
+    100,
+    1048576
+   ],
+   "min_resolution": [
+    50,
+    50
+   ],
+   "min_size": [
+    5,
+    1024
+   ]
+  },
+  "displays": [
+   {
+    "max_gif_size": {
+     "none": true,
+     "unit": 1048576,
+     "value": 32
+    },
+    "max_resolution": {
+     "height": 8192,
+     "none": true,
+     "width": 8192
+    },
+    "max_size": {
+     "none": true,
+     "unit": 1048576,
+     "value": 100
+    },
+    "min_resolution": {
+     "height": 50,
+     "none": true,
+     "width": 50
+    },
+    "min_size": {
+     "none": true,
+     "unit": 1024,
+     "value": 5
+    },
+    "saved": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ]
+   },
+   {
+    "max_gif_size": {
+     "none": false,
+     "unit": 1048576,
+     "value": 32
+    },
+    "max_resolution": {
+     "height": 8192,
+     "none": false,
+     "width": 8192
+    },
+    "max_size": {
+     "none": false,
+     "unit": 1048576,
+     "value": 100
+    },
+    "min_resolution": {
+     "height": 50,
+     "none": false,
+     "width": 50
+    },
+    "min_size": {
+     "none": false,
+     "unit": 1024,
+     "value": 5
+    },
+    "saved": [
+     5120,
+     104857600,
+     33554432,
+     [
+      50,
+      50
+     ],
+     [
+      8192,
+      8192
+     ]
+    ]
+   },
+   {
+    "max_gif_size": {
+     "none": false,
+     "unit": 1073741824,
+     "value": 3
+    },
+    "max_resolution": {
+     "height": 3000,
+     "none": false,
+     "width": 4000
+    },
+    "max_size": {
+     "none": false,
+     "unit": 1,
+     "value": 1000
+    },
+    "min_resolution": {
+     "height": 480,
+     "none": false,
+     "width": 640
+    },
+    "min_size": {
+     "none": false,
+     "unit": 1,
+     "value": 1536
+    },
+    "saved": [
+     1536,
+     1000,
+     3221225472,
+     [
+      640,
+      480
+     ],
+     [
+      4000,
+      3000
+     ]
+    ]
+   },
+   {
+    "max_gif_size": {
+     "none": false,
+     "unit": 1024,
+     "value": 1536
+    },
+    "max_resolution": {
+     "height": 1000000,
+     "none": false,
+     "width": 1
+    },
+    "max_size": {
+     "none": false,
+     "unit": 1099511627776,
+     "value": 1
+    },
+    "min_resolution": {
+     "height": 0,
+     "none": false,
+     "width": 0
+    },
+    "min_size": {
+     "none": false,
+     "unit": 1099511627776,
+     "value": 0
+    },
+    "saved": [
+     0,
+     1099511627776,
+     1572864,
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      1000000
+     ]
+    ]
+   }
+  ],
+  "scenarios": [
+   {
+    "name": "defaults",
+    "ops": [],
+    "probes": [
+     {
+      "error": null,
+      "height": 100,
+      "mime": 1,
+      "size": 1000,
+      "width": 100
+     },
+     {
+      "error": null,
+      "height": 480,
+      "mime": 1,
+      "size": 4096,
+      "width": 640
+     },
+     {
+      "error": null,
+      "height": 480,
+      "mime": 1,
+      "size": 3072,
+      "width": 640
+     },
+     {
+      "error": null,
+      "height": 480,
+      "mime": 1,
+      "size": 3071,
+      "width": 640
+     },
+     {
+      "error": null,
+      "height": 3000,
+      "mime": 1,
+      "size": 5242880,
+      "width": 4000
+     },
+     {
+      "error": null,
+      "height": 3000,
+      "mime": 1,
+      "size": 5242880,
+      "width": 4001
+     },
+     {
+      "error": null,
+      "height": 100,
+      "mime": 1,
+      "size": 5242880,
+      "width": 5000
+     },
+     {
+      "error": null,
+      "height": 480,
+      "mime": 1,
+      "size": 5242880,
+      "width": 639
+     },
+     {
+      "error": null,
+      "height": 600,
+      "mime": 3,
+      "size": 2097152,
+      "width": 800
+     },
+     {
+      "error": null,
+      "height": 600,
+      "mime": 3,
+      "size": 2097153,
+      "width": 800
+     },
+     {
+      "error": null,
+      "height": 600,
+      "mime": 2,
+      "size": 2097153,
+      "width": 800
+     },
+     {
+      "error": null,
+      "height": 768,
+      "mime": 1,
+      "size": 104857600,
+      "width": 1024
+     },
+     {
+      "error": null,
+      "height": 768,
+      "mime": 1,
+      "size": 4294967296,
+      "width": 1024
+     },
+     {
+      "error": null,
+      "height": 768,
+      "mime": 1,
+      "size": 10737418240,
+      "width": 1024
+     },
+     {
+      "error": null,
+      "height": null,
+      "mime": 14,
+      "size": 5000,
+      "width": null
+     },
+     {
+      "error": null,
+      "height": null,
+      "mime": 11,
+      "size": 5000,
+      "width": null
+     }
+    ],
+    "value": {
+     "bombs": true,
+     "exclude_deleted": true,
+     "max_gif_size": null,
+     "max_resolution": null,
+     "max_size": null,
+     "min_resolution": null,
+     "min_size": null
+    }
+   },
+   {
+    "name": "checkboxes off",
+    "ops": [
+     [
+      "exclude_deleted",
+      false
+     ],
+     [
+      "bombs",
+      false
+     ]
+    ],
+    "probes": [
+     {
+      "error": null,
+      "height": 100,
+      "mime": 1,
+      "size": 1000,
+      "width": 100
+     },
+     {
+      "error": null,
+      "height": 480,
+      "mime": 1,
+      "size": 4096,
+      "width": 640
+     },
+     {
+      "error": null,
+      "height": 480,
+      "mime": 1,
+      "size": 3072,
+      "width": 640
+     },
+     {
+      "error": null,
+      "height": 480,
+      "mime": 1,
+      "size": 3071,
+      "width": 640
+     },
+     {
+      "error": null,
+      "height": 3000,
+      "mime": 1,
+      "size": 5242880,
+      "width": 4000
+     },
+     {
+      "error": null,
+      "height": 3000,
+      "mime": 1,
+      "size": 5242880,
+      "width": 4001
+     },
+     {
+      "error": null,
+      "height": 100,
+      "mime": 1,
+      "size": 5242880,
+      "width": 5000
+     },
+     {
+      "error": null,
+      "height": 480,
+      "mime": 1,
+      "size": 5242880,
+      "width": 639
+     },
+     {
+      "error": null,
+      "height": 600,
+      "mime": 3,
+      "size": 2097152,
+      "width": 800
+     },
+     {
+      "error": null,
+      "height": 600,
+      "mime": 3,
+      "size": 2097153,
+      "width": 800
+     },
+     {
+      "error": null,
+      "height": 600,
+      "mime": 2,
+      "size": 2097153,
+      "width": 800
+     },
+     {
+      "error": null,
+      "height": 768,
+      "mime": 1,
+      "size": 104857600,
+      "width": 1024
+     },
+     {
+      "error": null,
+      "height": 768,
+      "mime": 1,
+      "size": 4294967296,
+      "width": 1024
+     },
+     {
+      "error": null,
+      "height": 768,
+      "mime": 1,
+      "size": 10737418240,
+      "width": 1024
+     },
+     {
+      "error": null,
+      "height": null,
+      "mime": 14,
+      "size": 5000,
+      "width": null
+     },
+     {
+      "error": null,
+      "height": null,
+      "mime": 11,
+      "size": 5000,
+      "width": null
+     }
+    ],
+    "value": {
+     "bombs": false,
+     "exclude_deleted": false,
+     "max_gif_size": null,
+     "max_resolution": null,
+     "max_size": null,
+     "min_resolution": null,
+     "min_size": null
+    }
+   },
+   {
+    "name": "the editor test",
+    "ops": [
+     [
+      "exclude_deleted",
+      false
+     ],
+     [
+      "bombs",
+      false
+     ],
+     [
+      "size",
+      "min",
+      false,
+      3,
+      "KB"
+     ],
+     [
+      "size",
+      "max",
+      true,
+      1,
+      "MB"
+     ],
+     [
+      "size",
+      "gif",
+      false,
+      2,
+      "MB"
+     ],
+     [
+      "resolution",
+      "min",
+      false,
+      640,
+      480
+     ],
+     [
+      "resolution",
+      "max",
+      false,
+      4000,
+      3000
+     ]
+    ],
+    "probes": [
+     {
+      "error": "File was 1,000B but the lower limit in the File Filtering Import Options is 3 KB.",
+      "height": 100,
+      "mime": 1,
+      "size": 1000,
+      "width": 100
+     },
+     {
+      "error": null,
+      "height": 480,
+      "mime": 1,
+      "size": 4096,
+      "width": 640
+     },
+     {
+      "error": null,
+      "height": 480,
+      "mime": 1,
+      "size": 3072,
+      "width": 640
+     },
+     {
+      "error": "File was 3 KB but the lower limit in the File Filtering Import Options is 3 KB.",
+      "height": 480,
+      "mime": 1,
+      "size": 3071,
+      "width": 640
+     },
+     {
+      "error": null,
+      "height": 3000,
+      "mime": 1,
+      "size": 5242880,
+      "width": 4000
+     },
+     {
+      "error": "File had resolution 4,001x3,000 but the upper limit in the File Filtering Import Options is 4,000x3,000",
+      "height": 3000,
+      "mime": 1,
+      "size": 5242880,
+      "width": 4001
+     },
+     {
+      "error": "File had resolution 5,000x100 but the lower limit in the File Filtering Import Options is 480p",
+      "height": 100,
+      "mime": 1,
+      "size": 5242880,
+      "width": 5000
+     },
+     {
+      "error": "File had resolution 639x480 but the lower limit in the File Filtering Import Options is 480p",
+      "height": 480,
+      "mime": 1,
+      "size": 5242880,
+      "width": 639
+     },
+     {
+      "error": null,
+      "height": 600,
+      "mime": 3,
+      "size": 2097152,
+      "width": 800
+     },
+     {
+      "error": "File was 2 MB but the upper limit for gifs in the File Filtering Import Options is 2 MB.",
+      "height": 600,
+      "mime": 3,
+      "size": 2097153,
+      "width": 800
+     },
+     {
+      "error": null,
+      "height": 600,
+      "mime": 2,
+      "size": 2097153,
+      "width": 800
+     },
+     {
+      "error": null,
+      "height": 768,
+      "mime": 1,
+      "size": 104857600,
+      "width": 1024
+     },
+     {
+      "error": null,
+      "height": 768,
+      "mime": 1,
+      "size": 4294967296,
+      "width": 1024
+     },
+     {
+      "error": null,
+      "height": 768,
+      "mime": 1,
+      "size": 10737418240,
+      "width": 1024
+     },
+     {
+      "error": null,
+      "height": null,
+      "mime": 14,
+      "size": 5000,
+      "width": null
+     },
+     {
+      "error": null,
+      "height": null,
+      "mime": 11,
+      "size": 5000,
+      "width": null
+     }
+    ],
+    "value": {
+     "bombs": false,
+     "exclude_deleted": false,
+     "max_gif_size": 2097152,
+     "max_resolution": [
+      4000,
+      3000
+     ],
+     "max_size": null,
+     "min_resolution": [
+      640,
+      480
+     ],
+     "min_size": 3072
+    }
+   },
+   {
+    "name": "minimum above maximum",
+    "ops": [
+     [
+      "size",
+      "min",
+      false,
+      10,
+      "MB"
+     ],
+     [
+      "size",
+      "max",
+      false,
+      1,
+      "MB"
+     ],
+     [
+      "resolution",
+      "min",
+      false,
+      5000,
+      5000
+     ],
+     [
+      "resolution",
+      "max",
+      false,
+      100,
+      100
+     ]
+    ],
+    "probes": [
+     {
+      "error": "File was 1,000B but the lower limit in the File Filtering Import Options is 10 MB.",
+      "height": 100,
+      "mime": 1,
+      "size": 1000,
+      "width": 100
+     },
+     {
+      "error": "File was 4 KB but the lower limit in the File Filtering Import Options is 10 MB.",
+      "height": 480,
+      "mime": 1,
+      "size": 4096,
+      "width": 640
+     },
+     {
+      "error": "File was 3 KB but the lower limit in the File Filtering Import Options is 10 MB.",
+      "height": 480,
+      "mime": 1,
+      "size": 3072,
+      "width": 640
+     },
+     {
+      "error": "File was 3 KB but the lower limit in the File Filtering Import Options is 10 MB.",
+      "height": 480,
+      "mime": 1,
+      "size": 3071,
+      "width": 640
+     },
+     {
+      "error": "File was 5 MB but the lower limit in the File Filtering Import Options is 10 MB.",
+      "height": 3000,
+      "mime": 1,
+      "size": 5242880,
+      "width": 4000
+     },
+     {
+      "error": "File was 5 MB but the lower limit in the File Filtering Import Options is 10 MB.",
+      "height": 3000,
+      "mime": 1,
+      "size": 5242880,
+      "width": 4001
+     },
+     {
+      "error": "File was 5 MB but the lower limit in the File Filtering Import Options is 10 MB.",
+      "height": 100,
+      "mime": 1,
+      "size": 5242880,
+      "width": 5000
+     },
+     {
+      "error": "File was 5 MB but the lower limit in the File Filtering Import Options is 10 MB.",
+      "height": 480,
+      "mime": 1,
+      "size": 5242880,
+      "width": 639
+     },
+     {
+      "error": "File was 2 MB but the lower limit in the File Filtering Import Options is 10 MB.",
+      "height": 600,
+      "mime": 3,
+      "size": 2097152,
+      "width": 800
+     },
+     {
+      "error": "File was 2 MB but the lower limit in the File Filtering Import Options is 10 MB.",
+      "height": 600,
+      "mime": 3,
+      "size": 2097153,
+      "width": 800
+     },
+     {
+      "error": "File was 2 MB but the lower limit in the File Filtering Import Options is 10 MB.",
+      "height": 600,
+      "mime": 2,
+      "size": 2097153,
+      "width": 800
+     },
+     {
+      "error": "File was 100 MB but the upper limit in the File Filtering Import Options is 1 MB.",
+      "height": 768,
+      "mime": 1,
+      "size": 104857600,
+      "width": 1024
+     },
+     {
+      "error": "File was 4 GB but the upper limit in the File Filtering Import Options is 1 MB.",
+      "height": 768,
+      "mime": 1,
+      "size": 4294967296,
+      "width": 1024
+     },
+     {
+      "error": "File was 10 GB but the upper limit in the File Filtering Import Options is 1 MB.",
+      "height": 768,
+      "mime": 1,
+      "size": 10737418240,
+      "width": 1024
+     },
+     {
+      "error": "File was 4.88 KB but the lower limit in the File Filtering Import Options is 10 MB.",
+      "height": null,
+      "mime": 14,
+      "size": 5000,
+      "width": null
+     },
+     {
+      "error": "File was 4.88 KB but the lower limit in the File Filtering Import Options is 10 MB.",
+      "height": null,
+      "mime": 11,
+      "size": 5000,
+      "width": null
+     }
+    ],
+    "value": {
+     "bombs": true,
+     "exclude_deleted": true,
+     "max_gif_size": null,
+     "max_resolution": [
+      100,
+      100
+     ],
+     "max_size": 1048576,
+     "min_resolution": [
+      5000,
+      5000
+     ],
+     "min_size": 10485760
+    }
+   },
+   {
+    "name": "every unit",
+    "ops": [
+     [
+      "size",
+      "min",
+      false,
+      7,
+      "B"
+     ],
+     [
+      "size",
+      "max",
+      false,
+      3,
+      "GB"
+     ],
+     [
+      "size",
+      "gif",
+      false,
+      1,
+      "TB"
+     ]
+    ],
+    "probes": [
+     {
+      "error": null,
+      "height": 100,
+      "mime": 1,
+      "size": 1000,
+      "width": 100
+     },
+     {
+      "error": null,
+      "height": 480,
+      "mime": 1,
+      "size": 4096,
+      "width": 640
+     },
+     {
+      "error": null,
+      "height": 480,
+      "mime": 1,
+      "size": 3072,
+      "width": 640
+     },
+     {
+      "error": null,
+      "height": 480,
+      "mime": 1,
+      "size": 3071,
+      "width": 640
+     },
+     {
+      "error": null,
+      "height": 3000,
+      "mime": 1,
+      "size": 5242880,
+      "width": 4000
+     },
+     {
+      "error": null,
+      "height": 3000,
+      "mime": 1,
+      "size": 5242880,
+      "width": 4001
+     },
+     {
+      "error": null,
+      "height": 100,
+      "mime": 1,
+      "size": 5242880,
+      "width": 5000
+     },
+     {
+      "error": null,
+      "height": 480,
+      "mime": 1,
+      "size": 5242880,
+      "width": 639
+     },
+     {
+      "error": null,
+      "height": 600,
+      "mime": 3,
+      "size": 2097152,
+      "width": 800
+     },
+     {
+      "error": null,
+      "height": 600,
+      "mime": 3,
+      "size": 2097153,
+      "width": 800
+     },
+     {
+      "error": null,
+      "height": 600,
+      "mime": 2,
+      "size": 2097153,
+      "width": 800
+     },
+     {
+      "error": null,
+      "height": 768,
+      "mime": 1,
+      "size": 104857600,
+      "width": 1024
+     },
+     {
+      "error": "File was 4 GB but the upper limit in the File Filtering Import Options is 3 GB.",
+      "height": 768,
+      "mime": 1,
+      "size": 4294967296,
+      "width": 1024
+     },
+     {
+      "error": "File was 10 GB but the upper limit in the File Filtering Import Options is 3 GB.",
+      "height": 768,
+      "mime": 1,
+      "size": 10737418240,
+      "width": 1024
+     },
+     {
+      "error": null,
+      "height": null,
+      "mime": 14,
+      "size": 5000,
+      "width": null
+     },
+     {
+      "error": null,
+      "height": null,
+      "mime": 11,
+      "size": 5000,
+      "width": null
+     }
+    ],
+    "value": {
+     "bombs": true,
+     "exclude_deleted": true,
+     "max_gif_size": 1099511627776,
+     "max_resolution": null,
+     "max_size": 3221225472,
+     "min_resolution": null,
+     "min_size": 7
+    }
+   },
+   {
+    "name": "the spin boxes' limits",
+    "ops": [
+     [
+      "size",
+      "min",
+      false,
+      2000000,
+      "B"
+     ],
+     [
+      "size",
+      "max",
+      false,
+      0,
+      "KB"
+     ],
+     [
+      "resolution",
+      "min",
+      false,
+      2000000,
+      0
+     ],
+     [
+      "resolution",
+      "max",
+      false,
+      1000000,
+      999999
+     ]
+    ],
+    "probes": [
+     {
+      "error": "File was 1,000B but the lower limit in the File Filtering Import Options is 1 MB.",
+      "height": 100,
+      "mime": 1,
+      "size": 1000,
+      "width": 100
+     },
+     {
+      "error": "File was 4 KB but the lower limit in the File Filtering Import Options is 1 MB.",
+      "height": 480,
+      "mime": 1,
+      "size": 4096,
+      "width": 640
+     },
+     {
+      "error": "File was 3 KB but the lower limit in the File Filtering Import Options is 1 MB.",
+      "height": 480,
+      "mime": 1,
+      "size": 3072,
+      "width": 640
+     },
+     {
+      "error": "File was 3 KB but the lower limit in the File Filtering Import Options is 1 MB.",
+      "height": 480,
+      "mime": 1,
+      "size": 3071,
+      "width": 640
+     },
+     {
+      "error": "File was 5 MB but the upper limit in the File Filtering Import Options is 0B.",
+      "height": 3000,
+      "mime": 1,
+      "size": 5242880,
+      "width": 4000
+     },
+     {
+      "error": "File was 5 MB but the upper limit in the File Filtering Import Options is 0B.",
+      "height": 3000,
+      "mime": 1,
+      "size": 5242880,
+      "width": 4001
+     },
+     {
+      "error": "File was 5 MB but the upper limit in the File Filtering Import Options is 0B.",
+      "height": 100,
+      "mime": 1,
+      "size": 5242880,
+      "width": 5000
+     },
+     {
+      "error": "File was 5 MB but the upper limit in the File Filtering Import Options is 0B.",
+      "height": 480,
+      "mime": 1,
+      "size": 5242880,
+      "width": 639
+     },
+     {
+      "error": "File was 2 MB but the upper limit in the File Filtering Import Options is 0B.",
+      "height": 600,
+      "mime": 3,
+      "size": 2097152,
+      "width": 800
+     },
+     {
+      "error": "File was 2 MB but the upper limit in the File Filtering Import Options is 0B.",
+      "height": 600,
+      "mime": 3,
+      "size": 2097153,
+      "width": 800
+     },
+     {
+      "error": "File was 2 MB but the upper limit in the File Filtering Import Options is 0B.",
+      "height": 600,
+      "mime": 2,
+      "size": 2097153,
+      "width": 800
+     },
+     {
+      "error": "File was 100 MB but the upper limit in the File Filtering Import Options is 0B.",
+      "height": 768,
+      "mime": 1,
+      "size": 104857600,
+      "width": 1024
+     },
+     {
+      "error": "File was 4 GB but the upper limit in the File Filtering Import Options is 0B.",
+      "height": 768,
+      "mime": 1,
+      "size": 4294967296,
+      "width": 1024
+     },
+     {
+      "error": "File was 10 GB but the upper limit in the File Filtering Import Options is 0B.",
+      "height": 768,
+      "mime": 1,
+      "size": 10737418240,
+      "width": 1024
+     },
+     {
+      "error": "File was 4.88 KB but the lower limit in the File Filtering Import Options is 1 MB.",
+      "height": null,
+      "mime": 14,
+      "size": 5000,
+      "width": null
+     },
+     {
+      "error": "File was 4.88 KB but the lower limit in the File Filtering Import Options is 1 MB.",
+      "height": null,
+      "mime": 11,
+      "size": 5000,
+      "width": null
+     }
+    ],
+    "value": {
+     "bombs": true,
+     "exclude_deleted": true,
+     "max_gif_size": null,
+     "max_resolution": [
+      1000000,
+      999999
+     ],
+     "max_size": 0,
+     "min_resolution": [
+      1000000,
+      0
+     ],
+     "min_size": 1048576
+    }
+   },
+   {
+    "name": "everything off again",
+    "ops": [
+     [
+      "size",
+      "min",
+      false,
+      3,
+      "KB"
+     ],
+     [
+      "size",
+      "min",
+      true,
+      3,
+      "KB"
+     ],
+     [
+      "resolution",
+      "max",
+      false,
+      800,
+      600
+     ],
+     [
+      "resolution",
+      "max",
+      true,
+      800,
+      600
+     ]
+    ],
+    "probes": [
+     {
+      "error": null,
+      "height": 100,
+      "mime": 1,
+      "size": 1000,
+      "width": 100
+     },
+     {
+      "error": null,
+      "height": 480,
+      "mime": 1,
+      "size": 4096,
+      "width": 640
+     },
+     {
+      "error": null,
+      "height": 480,
+      "mime": 1,
+      "size": 3072,
+      "width": 640
+     },
+     {
+      "error": null,
+      "height": 480,
+      "mime": 1,
+      "size": 3071,
+      "width": 640
+     },
+     {
+      "error": null,
+      "height": 3000,
+      "mime": 1,
+      "size": 5242880,
+      "width": 4000
+     },
+     {
+      "error": null,
+      "height": 3000,
+      "mime": 1,
+      "size": 5242880,
+      "width": 4001
+     },
+     {
+      "error": null,
+      "height": 100,
+      "mime": 1,
+      "size": 5242880,
+      "width": 5000
+     },
+     {
+      "error": null,
+      "height": 480,
+      "mime": 1,
+      "size": 5242880,
+      "width": 639
+     },
+     {
+      "error": null,
+      "height": 600,
+      "mime": 3,
+      "size": 2097152,
+      "width": 800
+     },
+     {
+      "error": null,
+      "height": 600,
+      "mime": 3,
+      "size": 2097153,
+      "width": 800
+     },
+     {
+      "error": null,
+      "height": 600,
+      "mime": 2,
+      "size": 2097153,
+      "width": 800
+     },
+     {
+      "error": null,
+      "height": 768,
+      "mime": 1,
+      "size": 104857600,
+      "width": 1024
+     },
+     {
+      "error": null,
+      "height": 768,
+      "mime": 1,
+      "size": 4294967296,
+      "width": 1024
+     },
+     {
+      "error": null,
+      "height": 768,
+      "mime": 1,
+      "size": 10737418240,
+      "width": 1024
+     },
+     {
+      "error": null,
+      "height": null,
+      "mime": 14,
+      "size": 5000,
+      "width": null
+     },
+     {
+      "error": null,
+      "height": null,
+      "mime": 11,
+      "size": 5000,
+      "width": null
+     }
+    ],
+    "value": {
+     "bombs": true,
+     "exclude_deleted": true,
+     "max_gif_size": null,
+     "max_resolution": null,
+     "max_size": null,
+     "min_resolution": null,
+     "min_size": null
+    }
+   }
+  ],
+  "units": [
+   "B",
+   "KB",
+   "MB",
+   "GB",
+   "TB"
+  ]
+ },
+ "notes": {
+  "conflict_choices": [
+   "replace the existing note",
+   "do not add the new note",
+   "append the new note to the end of the existing note",
+   "add the new note under a new name"
+  ],
+  "conflict_codes": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "scenarios": [
+   {
+    "name": "defaults",
+    "ops": [],
+    "probes": [
+     {
+      "existing": {
+       "source": "abc"
+      },
+      "incoming": [
+       [
+        "source",
+        "abc def"
+       ],
+       [
+        "source2",
+        "zzz"
+       ],
+       [
+        "artist notes",
+        "n1"
+       ],
+       [
+        "old name",
+        "renamed note"
+       ],
+       [
+        "second",
+        "2nd note"
+       ]
+      ],
+      "updates": {
+       "artist notes": "n1",
+       "old name": "renamed note",
+       "second": "2nd note",
+       "source": "abc def",
+       "source2": "zzz"
+      }
+     },
+     {
+      "existing": {
+       "source": "abc"
+      },
+      "incoming": [
+       [
+        "source",
+        "xyz"
+       ]
+      ],
+      "updates": {
+       "source (1)": "xyz"
+      }
+     },
+     {
+      "existing": {
+       "source": "abc",
+       "source (1)": "abc more"
+      },
+      "incoming": [
+       [
+        "source",
+        "abc more and more"
+       ]
+      ],
+      "updates": {
+       "source": "abc more and more"
+      }
+     },
+     {
+      "existing": {},
+      "incoming": [
+       [
+        "a",
+        "1"
+       ],
+       [
+        "b",
+        "2"
+       ],
+       [
+        "old name",
+        "x"
+       ]
+      ],
+      "updates": {
+       "a": "1",
+       "b": "2",
+       "old name": "x"
+      }
+     },
+     {
+      "existing": {
+       "a": "1"
+      },
+      "incoming": [
+       [
+        "a",
+        "1"
+       ],
+       [
+        "b",
+        "1"
+       ]
+      ],
+      "updates": {}
+     }
+    ],
+    "value": {
+     "all_override": null,
+     "conflict": 3,
+     "extend": true,
+     "get_notes": true,
+     "renames": [],
+     "whitelist": []
+    }
+   },
+   {
+    "name": "the editor test",
+    "ops": [
+     [
+      "get_notes",
+      true
+     ],
+     [
+      "extend",
+      true
+     ],
+     [
+      "conflict",
+      2
+     ],
+     [
+      "whitelist",
+      [
+       "source",
+       "artist notes"
+      ]
+     ],
+     [
+      "renames",
+      [
+       [
+        "old name",
+        "new name"
+       ],
+       [
+        "second",
+        "2nd"
+       ]
+      ]
+     ],
+     [
+      "all_override",
+      "imported"
+     ]
+    ],
+    "probes": [
+     {
+      "existing": {
+       "source": "abc"
+      },
+      "incoming": [
+       [
+        "source",
+        "abc def"
+       ],
+       [
+        "source2",
+        "zzz"
+       ],
+       [
+        "artist notes",
+        "n1"
+       ],
+       [
+        "old name",
+        "renamed note"
+       ],
+       [
+        "second",
+        "2nd note"
+       ]
+      ],
+      "updates": {
+       "imported": "n1\n\nabc def"
+      }
+     },
+     {
+      "existing": {
+       "source": "abc"
+      },
+      "incoming": [
+       [
+        "source",
+        "xyz"
+       ]
+      ],
+      "updates": {
+       "imported": "xyz"
+      }
+     },
+     {
+      "existing": {
+       "source": "abc",
+       "source (1)": "abc more"
+      },
+      "incoming": [
+       [
+        "source",
+        "abc more and more"
+       ]
+      ],
+      "updates": {
+       "imported": "abc more and more"
+      }
+     },
+     {
+      "existing": {},
+      "incoming": [
+       [
+        "a",
+        "1"
+       ],
+       [
+        "b",
+        "2"
+       ],
+       [
+        "old name",
+        "x"
+       ]
+      ],
+      "updates": {}
+     },
+     {
+      "existing": {
+       "a": "1"
+      },
+      "incoming": [
+       [
+        "a",
+        "1"
+       ],
+       [
+        "b",
+        "1"
+       ]
+      ],
+      "updates": {}
+     }
+    ],
+    "value": {
+     "all_override": "imported",
+     "conflict": 2,
+     "extend": true,
+     "get_notes": true,
+     "renames": [
+      [
+       "old name",
+       "new name"
+      ],
+      [
+       "second",
+       "2nd"
+      ]
+     ],
+     "whitelist": [
+      "artist notes",
+      "source"
+     ]
+    }
+   },
+   {
+    "name": "replace, no extend",
+    "ops": [
+     [
+      "extend",
+      false
+     ],
+     [
+      "conflict",
+      0
+     ]
+    ],
+    "probes": [
+     {
+      "existing": {
+       "source": "abc"
+      },
+      "incoming": [
+       [
+        "source",
+        "abc def"
+       ],
+       [
+        "source2",
+        "zzz"
+       ],
+       [
+        "artist notes",
+        "n1"
+       ],
+       [
+        "old name",
+        "renamed note"
+       ],
+       [
+        "second",
+        "2nd note"
+       ]
+      ],
+      "updates": {
+       "artist notes": "n1",
+       "old name": "renamed note",
+       "second": "2nd note",
+       "source": "abc def",
+       "source2": "zzz"
+      }
+     },
+     {
+      "existing": {
+       "source": "abc"
+      },
+      "incoming": [
+       [
+        "source",
+        "xyz"
+       ]
+      ],
+      "updates": {
+       "source": "xyz"
+      }
+     },
+     {
+      "existing": {
+       "source": "abc",
+       "source (1)": "abc more"
+      },
+      "incoming": [
+       [
+        "source",
+        "abc more and more"
+       ]
+      ],
+      "updates": {
+       "source": "abc more and more"
+      }
+     },
+     {
+      "existing": {},
+      "incoming": [
+       [
+        "a",
+        "1"
+       ],
+       [
+        "b",
+        "2"
+       ],
+       [
+        "old name",
+        "x"
+       ]
+      ],
+      "updates": {
+       "a": "1",
+       "b": "2",
+       "old name": "x"
+      }
+     },
+     {
+      "existing": {
+       "a": "1"
+      },
+      "incoming": [
+       [
+        "a",
+        "1"
+       ],
+       [
+        "b",
+        "1"
+       ]
+      ],
+      "updates": {}
+     }
+    ],
+    "value": {
+     "all_override": null,
+     "conflict": 0,
+     "extend": false,
+     "get_notes": true,
+     "renames": [],
+     "whitelist": []
+    }
+   },
+   {
+    "name": "ignore",
+    "ops": [
+     [
+      "conflict",
+      1
+     ]
+    ],
+    "probes": [
+     {
+      "existing": {
+       "source": "abc"
+      },
+      "incoming": [
+       [
+        "source",
+        "abc def"
+       ],
+       [
+        "source2",
+        "zzz"
+       ],
+       [
+        "artist notes",
+        "n1"
+       ],
+       [
+        "old name",
+        "renamed note"
+       ],
+       [
+        "second",
+        "2nd note"
+       ]
+      ],
+      "updates": {
+       "artist notes": "n1",
+       "old name": "renamed note",
+       "second": "2nd note",
+       "source": "abc def",
+       "source2": "zzz"
+      }
+     },
+     {
+      "existing": {
+       "source": "abc"
+      },
+      "incoming": [
+       [
+        "source",
+        "xyz"
+       ]
+      ],
+      "updates": {}
+     },
+     {
+      "existing": {
+       "source": "abc",
+       "source (1)": "abc more"
+      },
+      "incoming": [
+       [
+        "source",
+        "abc more and more"
+       ]
+      ],
+      "updates": {
+       "source": "abc more and more"
+      }
+     },
+     {
+      "existing": {},
+      "incoming": [
+       [
+        "a",
+        "1"
+       ],
+       [
+        "b",
+        "2"
+       ],
+       [
+        "old name",
+        "x"
+       ]
+      ],
+      "updates": {
+       "a": "1",
+       "b": "2",
+       "old name": "x"
+      }
+     },
+     {
+      "existing": {
+       "a": "1"
+      },
+      "incoming": [
+       [
+        "a",
+        "1"
+       ],
+       [
+        "b",
+        "1"
+       ]
+      ],
+      "updates": {}
+     }
+    ],
+    "value": {
+     "all_override": null,
+     "conflict": 1,
+     "extend": true,
+     "get_notes": true,
+     "renames": [],
+     "whitelist": []
+    }
+   },
+   {
+    "name": "rename, mass-rename off",
+    "ops": [
+     [
+      "conflict",
+      3
+     ],
+     [
+      "all_override",
+      "imported"
+     ],
+     [
+      "all_override",
+      null
+     ]
+    ],
+    "probes": [
+     {
+      "existing": {
+       "source": "abc"
+      },
+      "incoming": [
+       [
+        "source",
+        "abc def"
+       ],
+       [
+        "source2",
+        "zzz"
+       ],
+       [
+        "artist notes",
+        "n1"
+       ],
+       [
+        "old name",
+        "renamed note"
+       ],
+       [
+        "second",
+        "2nd note"
+       ]
+      ],
+      "updates": {
+       "artist notes": "n1",
+       "old name": "renamed note",
+       "second": "2nd note",
+       "source": "abc def",
+       "source2": "zzz"
+      }
+     },
+     {
+      "existing": {
+       "source": "abc"
+      },
+      "incoming": [
+       [
+        "source",
+        "xyz"
+       ]
+      ],
+      "updates": {
+       "source (1)": "xyz"
+      }
+     },
+     {
+      "existing": {
+       "source": "abc",
+       "source (1)": "abc more"
+      },
+      "incoming": [
+       [
+        "source",
+        "abc more and more"
+       ]
+      ],
+      "updates": {
+       "source": "abc more and more"
+      }
+     },
+     {
+      "existing": {},
+      "incoming": [
+       [
+        "a",
+        "1"
+       ],
+       [
+        "b",
+        "2"
+       ],
+       [
+        "old name",
+        "x"
+       ]
+      ],
+      "updates": {
+       "a": "1",
+       "b": "2",
+       "old name": "x"
+      }
+     },
+     {
+      "existing": {
+       "a": "1"
+      },
+      "incoming": [
+       [
+        "a",
+        "1"
+       ],
+       [
+        "b",
+        "1"
+       ]
+      ],
+      "updates": {}
+     }
+    ],
+    "value": {
+     "all_override": null,
+     "conflict": 3,
+     "extend": true,
+     "get_notes": true,
+     "renames": [],
+     "whitelist": []
+    }
+   },
+   {
+    "name": "get notes off",
+    "ops": [
+     [
+      "get_notes",
+      false
+     ]
+    ],
+    "probes": [
+     {
+      "existing": {
+       "source": "abc"
+      },
+      "incoming": [
+       [
+        "source",
+        "abc def"
+       ],
+       [
+        "source2",
+        "zzz"
+       ],
+       [
+        "artist notes",
+        "n1"
+       ],
+       [
+        "old name",
+        "renamed note"
+       ],
+       [
+        "second",
+        "2nd note"
+       ]
+      ],
+      "updates": {}
+     },
+     {
+      "existing": {
+       "source": "abc"
+      },
+      "incoming": [
+       [
+        "source",
+        "xyz"
+       ]
+      ],
+      "updates": {}
+     },
+     {
+      "existing": {
+       "source": "abc",
+       "source (1)": "abc more"
+      },
+      "incoming": [
+       [
+        "source",
+        "abc more and more"
+       ]
+      ],
+      "updates": {}
+     },
+     {
+      "existing": {},
+      "incoming": [
+       [
+        "a",
+        "1"
+       ],
+       [
+        "b",
+        "2"
+       ],
+       [
+        "old name",
+        "x"
+       ]
+      ],
+      "updates": {}
+     },
+     {
+      "existing": {
+       "a": "1"
+      },
+      "incoming": [
+       [
+        "a",
+        "1"
+       ],
+       [
+        "b",
+        "1"
+       ]
+      ],
+      "updates": {}
+     }
+    ],
+    "value": {
+     "all_override": null,
+     "conflict": 3,
+     "extend": true,
+     "get_notes": false,
+     "renames": [],
+     "whitelist": []
+    }
+   }
+  ]
+ },
+ "prefetch": {
+  "hash_choices": [
+   "do not check",
+   "check",
+   "check - and matches are dispositive"
+  ],
+  "scenarios": [
+   {
+    "name": "defaults",
+    "ops": [],
+    "states": [
+     {
+      "fetch_hash": false,
+      "fetch_url": false,
+      "hash": 2,
+      "hash_check_type": 2,
+      "neighbour": true,
+      "neighbour_enabled": true,
+      "url": 1,
+      "url_check_type": 1
+     }
+    ]
+   },
+   {
+    "name": "hash dispositive then url dispositive",
+    "ops": [
+     [
+      "hash",
+      2
+     ],
+     [
+      "url",
+      2
+     ],
+     [
+      "fetch_hash",
+      true
+     ],
+     [
+      "fetch_url",
+      true
+     ],
+     [
+      "neighbour",
+      false
+     ]
+    ],
+    "states": [
+     {
+      "fetch_hash": false,
+      "fetch_url": false,
+      "hash": 2,
+      "hash_check_type": 2,
+      "neighbour": true,
+      "neighbour_enabled": true,
+      "url": 1,
+      "url_check_type": 1
+     },
+     {
+      "fetch_hash": false,
+      "fetch_url": false,
+      "hash": 2,
+      "hash_check_type": 2,
+      "neighbour": true,
+      "neighbour_enabled": true,
+      "url": 1,
+      "url_check_type": 1
+     },
+     {
+      "fetch_hash": false,
+      "fetch_url": false,
+      "hash": 1,
+      "hash_check_type": 1,
+      "neighbour": true,
+      "neighbour_enabled": true,
+      "url": 2,
+      "url_check_type": 2
+     },
+     {
+      "fetch_hash": true,
+      "fetch_url": false,
+      "hash": 1,
+      "hash_check_type": 1,
+      "neighbour": true,
+      "neighbour_enabled": true,
+      "url": 2,
+      "url_check_type": 2
+     },
+     {
+      "fetch_hash": true,
+      "fetch_url": true,
+      "hash": 1,
+      "hash_check_type": 1,
+      "neighbour": true,
+      "neighbour_enabled": true,
+      "url": 2,
+      "url_check_type": 2
+     },
+     {
+      "fetch_hash": true,
+      "fetch_url": true,
+      "hash": 1,
+      "hash_check_type": 1,
+      "neighbour": false,
+      "neighbour_enabled": true,
+      "url": 2,
+      "url_check_type": 2
+     }
+    ]
+   },
+   {
+    "name": "url dispositive then hash dispositive",
+    "ops": [
+     [
+      "url",
+      2
+     ],
+     [
+      "hash",
+      2
+     ],
+     [
+      "hash",
+      1
+     ],
+     [
+      "hash",
+      2
+     ]
+    ],
+    "states": [
+     {
+      "fetch_hash": false,
+      "fetch_url": false,
+      "hash": 2,
+      "hash_check_type": 2,
+      "neighbour": true,
+      "neighbour_enabled": true,
+      "url": 1,
+      "url_check_type": 1
+     },
+     {
+      "fetch_hash": false,
+      "fetch_url": false,
+      "hash": 1,
+      "hash_check_type": 1,
+      "neighbour": true,
+      "neighbour_enabled": true,
+      "url": 2,
+      "url_check_type": 2
+     },
+     {
+      "fetch_hash": false,
+      "fetch_url": false,
+      "hash": 2,
+      "hash_check_type": 2,
+      "neighbour": true,
+      "neighbour_enabled": true,
+      "url": 1,
+      "url_check_type": 1
+     },
+     {
+      "fetch_hash": false,
+      "fetch_url": false,
+      "hash": 1,
+      "hash_check_type": 1,
+      "neighbour": true,
+      "neighbour_enabled": true,
+      "url": 1,
+      "url_check_type": 1
+     },
+     {
+      "fetch_hash": false,
+      "fetch_url": false,
+      "hash": 2,
+      "hash_check_type": 2,
+      "neighbour": true,
+      "neighbour_enabled": true,
+      "url": 1,
+      "url_check_type": 1
+     }
+    ]
+   },
+   {
+    "name": "no url check",
+    "ops": [
+     [
+      "neighbour",
+      true
+     ],
+     [
+      "url",
+      0
+     ],
+     [
+      "neighbour",
+      false
+     ],
+     [
+      "url",
+      1
+     ],
+     [
+      "hash",
+      0
+     ],
+     [
+      "fetch_url",
+      true
+     ]
+    ],
+    "states": [
+     {
+      "fetch_hash": false,
+      "fetch_url": false,
+      "hash": 2,
+      "hash_check_type": 2,
+      "neighbour": true,
+      "neighbour_enabled": true,
+      "url": 1,
+      "url_check_type": 1
+     },
+     {
+      "fetch_hash": false,
+      "fetch_url": false,
+      "hash": 2,
+      "hash_check_type": 2,
+      "neighbour": true,
+      "neighbour_enabled": true,
+      "url": 1,
+      "url_check_type": 1
+     },
+     {
+      "fetch_hash": false,
+      "fetch_url": false,
+      "hash": 2,
+      "hash_check_type": 2,
+      "neighbour": true,
+      "neighbour_enabled": false,
+      "url": 0,
+      "url_check_type": 0
+     },
+     {
+      "fetch_hash": false,
+      "fetch_url": false,
+      "hash": 2,
+      "hash_check_type": 2,
+      "neighbour": false,
+      "neighbour_enabled": false,
+      "url": 0,
+      "url_check_type": 0
+     },
+     {
+      "fetch_hash": false,
+      "fetch_url": false,
+      "hash": 2,
+      "hash_check_type": 2,
+      "neighbour": false,
+      "neighbour_enabled": true,
+      "url": 1,
+      "url_check_type": 1
+     },
+     {
+      "fetch_hash": false,
+      "fetch_url": false,
+      "hash": 0,
+      "hash_check_type": 0,
+      "neighbour": false,
+      "neighbour_enabled": true,
+      "url": 1,
+      "url_check_type": 1
+     },
+     {
+      "fetch_hash": false,
+      "fetch_url": true,
+      "hash": 0,
+      "hash_check_type": 0,
+      "neighbour": false,
+      "neighbour_enabled": true,
+      "url": 1,
+      "url_check_type": 1
+     }
+    ]
+   }
+  ],
+  "url_choices": [
+   "do not check",
+   "check",
+   "check - and matches are dispositive"
+  ]
+ },
+ "tags": {
+  "additional": [
+   "extra"
+  ],
+  "deleted": [
+   "blue eyes"
+  ],
+  "filterable": [
+   "blue eyes",
+   "character:samus aran",
+   "series:metroid"
+  ],
+  "fresh": {
+   "get_tags": false,
+   "to_already_in_archive": true,
+   "to_already_in_inbox": true,
+   "to_new_files": true
+  },
+  "scenarios": [
+   {
+    "name": "defaults",
+    "ops": [],
+    "outcomes": {
+     "archive": [
+      "extra"
+     ],
+     "inbox": [
+      "extra"
+     ],
+     "new": [
+      "extra"
+     ]
+    },
+    "value": {
+     "additional_tags_overwrite_deleted": false,
+     "get_tags": false,
+     "get_tags_overwrite_deleted": false,
+     "only_add_existing_tags": false,
+     "to_already_in_archive": true,
+     "to_already_in_inbox": true,
+     "to_new_files": true,
+     "worth_fetching_tags": false
+    }
+   },
+   {
+    "name": "the editor test",
+    "ops": [
+     [
+      "get_tags",
+      true
+     ],
+     [
+      "cog",
+      "_to_new_files",
+      true
+     ],
+     [
+      "cog",
+      "_to_already_in_inbox",
+      false
+     ],
+     [
+      "cog",
+      "_to_already_in_archive",
+      false
+     ],
+     [
+      "cog",
+      "_get_tags_overwrite_deleted",
+      true
+     ]
+    ],
+    "outcomes": {
+     "archive": [],
+     "inbox": [],
+     "new": [
+      "blue eyes",
+      "character:samus aran",
+      "extra",
+      "series:metroid"
+     ]
+    },
+    "value": {
+     "additional_tags_overwrite_deleted": false,
+     "get_tags": true,
+     "get_tags_overwrite_deleted": true,
+     "only_add_existing_tags": false,
+     "to_already_in_archive": false,
+     "to_already_in_inbox": false,
+     "to_new_files": true,
+     "worth_fetching_tags": true
+    }
+   },
+   {
+    "name": "inbox only",
+    "ops": [
+     [
+      "get_tags",
+      true
+     ],
+     [
+      "cog",
+      "_to_new_files",
+      false
+     ],
+     [
+      "cog",
+      "_to_already_in_archive",
+      false
+     ]
+    ],
+    "outcomes": {
+     "archive": [],
+     "inbox": [
+      "character:samus aran",
+      "extra",
+      "series:metroid"
+     ],
+     "new": []
+    },
+    "value": {
+     "additional_tags_overwrite_deleted": false,
+     "get_tags": true,
+     "get_tags_overwrite_deleted": false,
+     "only_add_existing_tags": false,
+     "to_already_in_archive": false,
+     "to_already_in_inbox": true,
+     "to_new_files": false,
+     "worth_fetching_tags": true
+    }
+   },
+   {
+    "name": "archive only, additional overwrite",
+    "ops": [
+     [
+      "cog",
+      "_to_new_files",
+      false
+     ],
+     [
+      "cog",
+      "_to_already_in_inbox",
+      false
+     ],
+     [
+      "cog",
+      "_additional_tags_overwrite_deleted",
+      true
+     ]
+    ],
+    "outcomes": {
+     "archive": [
+      "extra"
+     ],
+     "inbox": [],
+     "new": []
+    },
+    "value": {
+     "additional_tags_overwrite_deleted": true,
+     "get_tags": false,
+     "get_tags_overwrite_deleted": false,
+     "only_add_existing_tags": false,
+     "to_already_in_archive": true,
+     "to_already_in_inbox": false,
+     "to_new_files": false,
+     "worth_fetching_tags": false
+    }
+   },
+   {
+    "name": "nothing applies",
+    "ops": [
+     [
+      "get_tags",
+      true
+     ],
+     [
+      "cog",
+      "_to_new_files",
+      false
+     ],
+     [
+      "cog",
+      "_to_already_in_inbox",
+      false
+     ],
+     [
+      "cog",
+      "_to_already_in_archive",
+      false
+     ]
+    ],
+    "outcomes": {
+     "archive": [],
+     "inbox": [],
+     "new": []
+    },
+    "value": {
+     "additional_tags_overwrite_deleted": false,
+     "get_tags": true,
+     "get_tags_overwrite_deleted": false,
+     "only_add_existing_tags": false,
+     "to_already_in_archive": false,
+     "to_already_in_inbox": false,
+     "to_new_files": false,
+     "worth_fetching_tags": true
+    }
+   }
+  ]
+ }
+}

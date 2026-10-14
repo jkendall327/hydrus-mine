@@ -58,6 +58,16 @@ def record(session):
         select(two);two.SetSplitterPositions(460,-280);snap('resize second')
         select(one);snap('return first retains sizes')
         c.gui._SaveSplitterPositions();snap('save current now')
+        # real double clicks on the handles (the pages' `EventUnsplit` and
+        # `EventPreviewUnsplit`) while both panes are shown, each put back after
+        def dclick(split):
+            handle=split.handle(1)
+            QtTest.QTest.mouseDClick(handle,QC.Qt.MouseButton.LeftButton,pos=handle.rect().center())
+            settle()
+        dclick(one._management_preview_split);snap('preview double click collapse')
+        one.SetSplitterPositions(470,-295);settle()
+        dclick(one._sidebar_media_split);snap('sidebar double click collapse')
+        one.SetSplitterPositions(470,-295);settle();snap('collapse put back')
         three=root.NewPageQuery(context,page_name='three',select_page=True);settle();three.PageShown();settle()
         new_page=state(three)
         select(one);c.gui._ShowHideSplitters();snap('hide sidebar')

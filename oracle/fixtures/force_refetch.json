@@ -1,0 +1,168 @@
+{
+ "cases": [
+  {
+   "selection": "one file",
+   "hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+   ],
+   "urls": [
+    [
+     "https://danbooru.donmai.us/posts/1000",
+     "https://example.com/post/0",
+     "https://gelbooru.com/index.php?page=post&s=view&id=2000"
+    ]
+   ],
+   "rows": [
+    {
+     "row": "this file's example post urls",
+     "answer": false,
+     "asked": [
+      {
+       "message": "Open a new search page and force metadata redownload for 1 \"example post\" URLs? This is inefficient and should only be done to fill in known gaps in one-time jobs.\n\nDO NOT USE THIS TO RECHECK TEN THOUSAND URLS EVERY MONTH JUST FOR MAYBE A FEW NEW TAGS.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ],
+     "sent": [],
+     "page": null
+    },
+    {
+     "row": "this file's example post urls",
+     "answer": true,
+     "asked": [
+      {
+       "message": "Open a new search page and force metadata redownload for 1 \"example post\" URLs? This is inefficient and should only be done to fill in known gaps in one-time jobs.\n\nDO NOT USE THIS TO RECHECK TEN THOUSAND URLS EVERY MONTH JUST FOR MAYBE A FEW NEW TAGS.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ],
+     "sent": [
+      [
+       "https://example.com/post/0"
+      ]
+     ],
+     "page": {
+      "name": "forced urls downloader",
+      "queued": [
+       "https://example.com/post/0"
+      ],
+      "fetch_even_if_url_known": true,
+      "fetch_even_if_hash_known": true,
+      "tabs_added": 1
+     }
+    }
+   ]
+  },
+  {
+   "selection": "three files",
+   "hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+   ],
+   "urls": [
+    [
+     "https://danbooru.donmai.us/posts/1000",
+     "https://example.com/post/0",
+     "https://gelbooru.com/index.php?page=post&s=view&id=2000"
+    ],
+    [
+     "https://danbooru.donmai.us/posts/1001",
+     "https://example.com/post/1"
+    ],
+    [
+     "https://danbooru.donmai.us/posts/1002",
+     "https://example.com/post/2"
+    ]
+   ],
+   "rows": [
+    {
+     "row": "this file's example post urls",
+     "answer": false,
+     "asked": [
+      {
+       "message": "Open a new search page and force metadata redownload for 1 \"example post\" URLs? This is inefficient and should only be done to fill in known gaps in one-time jobs.\n\nDO NOT USE THIS TO RECHECK TEN THOUSAND URLS EVERY MONTH JUST FOR MAYBE A FEW NEW TAGS.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ],
+     "sent": [],
+     "page": null
+    },
+    {
+     "row": "this file's example post urls",
+     "answer": true,
+     "asked": [
+      {
+       "message": "Open a new search page and force metadata redownload for 1 \"example post\" URLs? This is inefficient and should only be done to fill in known gaps in one-time jobs.\n\nDO NOT USE THIS TO RECHECK TEN THOUSAND URLS EVERY MONTH JUST FOR MAYBE A FEW NEW TAGS.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ],
+     "sent": [
+      [
+       "https://example.com/post/0"
+      ]
+     ],
+     "page": {
+      "name": "forced urls downloader",
+      "queued": [
+       "https://example.com/post/0"
+      ],
+      "fetch_even_if_url_known": true,
+      "fetch_even_if_hash_known": true,
+      "tabs_added": 0
+     }
+    },
+    {
+     "row": "these files' example post urls",
+     "answer": false,
+     "asked": [
+      {
+       "message": "Open a new search page and force metadata redownload for 3 \"example post\" URLs? This is inefficient and should only be done to fill in known gaps in one-time jobs.\n\nDO NOT USE THIS TO RECHECK TEN THOUSAND URLS EVERY MONTH JUST FOR MAYBE A FEW NEW TAGS.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ],
+     "sent": [],
+     "page": null
+    },
+    {
+     "row": "these files' example post urls",
+     "answer": true,
+     "asked": [
+      {
+       "message": "Open a new search page and force metadata redownload for 3 \"example post\" URLs? This is inefficient and should only be done to fill in known gaps in one-time jobs.\n\nDO NOT USE THIS TO RECHECK TEN THOUSAND URLS EVERY MONTH JUST FOR MAYBE A FEW NEW TAGS.",
+       "title": "Are you sure?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ],
+     "sent": [
+      [
+       "https://example.com/post/0",
+       "https://example.com/post/1",
+       "https://example.com/post/2"
+      ]
+     ],
+     "page": {
+      "name": "forced urls downloader",
+      "queued": [
+       "https://example.com/post/0",
+       "https://example.com/post/1",
+       "https://example.com/post/2"
+      ],
+      "fetch_even_if_url_known": true,
+      "fetch_even_if_hash_known": true,
+      "tabs_added": 0
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -18,6 +18,8 @@ export component ChoiceButtonsWindow inherits Window {
     in property <[string]> choices;
     // empty: no "no" button
     in property <string> no-label;
+    // which choices can be pressed (all of them, past the end of this)
+    in property <[bool]> choices-enabled;
     callback chosen(int);
     callback cancelled();
 
@@ -36,6 +38,7 @@ export component ChoiceButtonsWindow inherits Window {
             }
             for choice[i] in root.choices: Btn {
                 text: choice;
+                enabled: i < root.choices-enabled.length ? root.choices-enabled[i] : true;
                 clicked => { root.chosen(i); }
             }
             if root.no-label != "": Btn {

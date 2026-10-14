@@ -2476,6 +2476,7 @@ dependencies = [
  "hydrus-testkit",
  "hydrus-workspace-hack",
  "rand 0.10.3",
+ "rusqlite",
  "rustls",
  "serde_json",
  "tempfile",
@@ -2503,6 +2504,7 @@ dependencies = [
  "serde_json",
  "sha1",
  "sha2",
+ "tempfile",
  "thiserror 2.0.21",
  "unicode-normalization",
  "web_atoms",
@@ -2614,6 +2616,7 @@ dependencies = [
  "tokio",
  "tower",
  "tracing",
+ "x11rb",
  "zbus",
 ]
 
@@ -3000,6 +3003,8 @@ dependencies = [
  "windows-sys 0.61.2",
  "winnow",
  "writeable",
+ "x11rb",
+ "x11rb-protocol",
  "yeslogic-fontconfig-sys",
  "yoke",
  "zerocopy",

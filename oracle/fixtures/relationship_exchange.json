@@ -95,6 +95,10 @@
         "one"
       ],
       [
+        "x2",
+        "one"
+      ],
+      [
         "p",
         "q"
       ],
@@ -1087,6 +1091,229 @@
       },
       {
         "how": "clipboard",
+        "text": "x2\none",
+        "asked": [
+          {
+            "kind": "critical",
+            "title": "Loop problem!",
+            "message": "The pair(s) you mean to add seem to connect to one or more sibling/parent loops that already exist in your database! I will add what you wanted to, but please undo these loops manually. The loops appear to be (take a screenshot/write this down now!):\n\none->two->one"
+          }
+        ],
+        "rows": [
+          [
+            "(-) ",
+            "a",
+            "b",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "one",
+            "two",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "p",
+            "q",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "p",
+            "r",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "two",
+            "one",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x2",
+            "one",
+            "Reason: added by user"
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "a",
+              "new ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "c",
+              "cousin"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "one",
+              "two"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "p",
+              "q"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "p",
+              "r"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "self",
+              "self"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "two",
+              "one"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "upper case",
+              "lower"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "x",
+              "y"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "x2",
+              "one"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "a",
+              "b"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "new ideal",
+          "one",
+          "p",
+          "q",
+          "r",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "two",
+          "upper case",
+          "x",
+          "x2",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
         "text": "a\nb",
         "asked": [
           {
@@ -1176,6 +1403,12 @@
             "x",
             "y",
             "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x2",
+            "one",
+            "Reason: added by user"
           ]
         ],
         "updates": [
@@ -1252,6 +1485,14 @@
             "No reason given."
           ],
           [
+            0,
+            [
+              "x2",
+              "one"
+            ],
+            "No reason given."
+          ],
+          [
             1,
             [
               "b",
@@ -1277,6 +1518,7 @@
           "two",
           "upper case",
           "x",
+          "x2",
           "y"
         ]
       },
@@ -1428,6 +1670,12 @@
             "x",
             "y",
             "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x2",
+            "one",
+            "Reason: added by user"
           ]
         ],
         "updates": [
@@ -1600,6 +1848,14 @@
             "No reason given."
           ],
           [
+            0,
+            [
+              "x2",
+              "one"
+            ],
+            "No reason given."
+          ],
+          [
             1,
             [
               "b",
@@ -1638,6 +1894,7 @@
           "two",
           "upper case",
           "x",
+          "x2",
           "y"
         ]
       },
@@ -1789,6 +2046,12 @@
             "x",
             "y",
             "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x2",
+            "one",
+            "Reason: added by user"
           ]
         ],
         "updates": [
@@ -1961,6 +2224,14 @@
             "No reason given."
           ],
           [
+            0,
+            [
+              "x2",
+              "one"
+            ],
+            "No reason given."
+          ],
+          [
             1,
             [
               "b",
@@ -1999,6 +2270,7 @@
           "two",
           "upper case",
           "x",
+          "x2",
           "y"
         ]
       }
@@ -2136,6 +2408,10 @@
         "one"
       ],
       [
+        "x2",
+        "one"
+      ],
+      [
         "p",
         "q"
       ],
@@ -3088,8 +3364,14 @@
       },
       {
         "how": "clipboard",
-        "text": "a\nb",
-        "asked": [],
+        "text": "x2\none",
+        "asked": [
+          {
+            "kind": "critical",
+            "title": "Loop problem!",
+            "message": "The pair(s) you mean to add seem to connect to one or more sibling/parent loops that already exist in your database! I will add what you wanted to, but please undo these loops manually. The loops appear to be (take a screenshot/write this down now!):\n\none->two->one"
+          }
+        ],
         "rows": [
           [
             "",
@@ -3167,6 +3449,12 @@
             "(+) ",
             "x",
             "y",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x2",
+            "one",
             "Reason: added by user"
           ]
         ],
@@ -3252,6 +3540,14 @@
             "No reason given."
           ],
           [
+            0,
+            [
+              "x2",
+              "one"
+            ],
+            "No reason given."
+          ],
+          [
             1,
             [
               "b",
@@ -3277,6 +3573,216 @@
           "two",
           "upper case",
           "x",
+          "x2",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "a\nb",
+        "asked": [],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: added by user"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "one",
+            "two",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "p",
+            "q",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "p",
+            "r",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "two",
+            "one",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x2",
+            "one",
+            "Reason: added by user"
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "a",
+              "new ideal"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "c",
+              "cousin"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "one",
+              "two"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "p",
+              "q"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "p",
+              "r"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "self",
+              "self"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "two",
+              "one"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "upper case",
+              "lower"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "x",
+              "y"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "x2",
+              "one"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "new ideal",
+          "one",
+          "p",
+          "q",
+          "r",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "two",
+          "upper case",
+          "x",
+          "x2",
           "y"
         ]
       },
@@ -3434,6 +3940,12 @@
             "x",
             "y",
             "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x2",
+            "one",
+            "Reason: added by user"
           ]
         ],
         "updates": [
@@ -3614,6 +4126,14 @@
             "No reason given."
           ],
           [
+            0,
+            [
+              "x2",
+              "one"
+            ],
+            "No reason given."
+          ],
+          [
             1,
             [
               "b",
@@ -3652,6 +4172,7 @@
           "two",
           "upper case",
           "x",
+          "x2",
           "y"
         ]
       },
@@ -3809,6 +4330,12 @@
             "x",
             "y",
             "Reason: added by user"
+          ],
+          [
+            "(+) ",
+            "x2",
+            "one",
+            "Reason: added by user"
           ]
         ],
         "updates": [
@@ -3989,6 +4516,14 @@
             "No reason given."
           ],
           [
+            0,
+            [
+              "x2",
+              "one"
+            ],
+            "No reason given."
+          ],
+          [
             1,
             [
               "b",
@@ -4027,6 +4562,7 @@
           "two",
           "upper case",
           "x",
+          "x2",
           "y"
         ]
       }
@@ -4157,6 +4693,10 @@
       ],
       [
         "two",
+        "one"
+      ],
+      [
+        "x2",
         "one"
       ],
       [
@@ -5224,6 +5764,239 @@
       },
       {
         "how": "clipboard",
+        "text": "x2\none",
+        "asked": [
+          {
+            "kind": "critical",
+            "title": "Loop problem!",
+            "message": "The pair(s) you mean to add seem to connect to one or more sibling/parent loops that already exist in your database! I will add what you wanted to, but please undo these loops manually. The loops appear to be (take a screenshot/write this down now!):\n\none->two->one"
+          },
+          {
+            "kind": "reason",
+            "message": "Enter a reason for:\n\nx2->one\n\nTo be added. A janitor will review your petition.",
+            "suggestions": [
+              "oracle reason",
+              "merging underscores/typos/phrasing/unnamespaced to a single uncontroversial good tag",
+              "rewording/namespacing based on preference"
+            ],
+            "answer": "oracle reason"
+          }
+        ],
+        "rows": [
+          [
+            "(-) ",
+            "a",
+            "b",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "one",
+            "two",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "p",
+            "q",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "p",
+            "r",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "two",
+            "one",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x2",
+            "one",
+            "Reason: oracle reason"
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "a",
+              "new ideal"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            2,
+            [
+              "c",
+              "cousin"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            2,
+            [
+              "one",
+              "two"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "p",
+              "q"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "p",
+              "r"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "self",
+              "self"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "two",
+              "one"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "upper case",
+              "lower"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "x",
+              "y"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "x2",
+              "one"
+            ],
+            "oracle reason"
+          ],
+          [
+            4,
+            [
+              "a",
+              "b"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "new ideal",
+          "one",
+          "p",
+          "q",
+          "r",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "two",
+          "upper case",
+          "x",
+          "x2",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
         "text": "a\nb",
         "asked": [
           {
@@ -5313,6 +6086,12 @@
             "x",
             "y",
             "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x2",
+            "one",
+            "Reason: oracle reason"
           ]
         ],
         "updates": [
@@ -5389,6 +6168,14 @@
             "oracle reason"
           ],
           [
+            2,
+            [
+              "x2",
+              "one"
+            ],
+            "oracle reason"
+          ],
+          [
             4,
             [
               "b",
@@ -5414,6 +6201,7 @@
           "two",
           "upper case",
           "x",
+          "x2",
           "y"
         ]
       },
@@ -5576,6 +6364,12 @@
             "x",
             "y",
             "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x2",
+            "one",
+            "Reason: oracle reason"
           ]
         ],
         "updates": [
@@ -5748,6 +6542,14 @@
             "oracle reason"
           ],
           [
+            2,
+            [
+              "x2",
+              "one"
+            ],
+            "oracle reason"
+          ],
+          [
             4,
             [
               "b",
@@ -5786,6 +6588,7 @@
           "two",
           "upper case",
           "x",
+          "x2",
           "y"
         ]
       },
@@ -5937,6 +6740,12 @@
             "x",
             "y",
             "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x2",
+            "one",
+            "Reason: oracle reason"
           ]
         ],
         "updates": [
@@ -6109,6 +6918,14 @@
             "oracle reason"
           ],
           [
+            2,
+            [
+              "x2",
+              "one"
+            ],
+            "oracle reason"
+          ],
+          [
             4,
             [
               "b",
@@ -6147,6 +6964,7 @@
           "two",
           "upper case",
           "x",
+          "x2",
           "y"
         ]
       }
@@ -6284,6 +7102,10 @@
         "one"
       ],
       [
+        "x2",
+        "one"
+      ],
+      [
         "p",
         "q"
       ],
@@ -7308,8 +8130,24 @@
       },
       {
         "how": "clipboard",
-        "text": "a\nb",
-        "asked": [],
+        "text": "x2\none",
+        "asked": [
+          {
+            "kind": "critical",
+            "title": "Loop problem!",
+            "message": "The pair(s) you mean to add seem to connect to one or more sibling/parent loops that already exist in your database! I will add what you wanted to, but please undo these loops manually. The loops appear to be (take a screenshot/write this down now!):\n\none->two->one"
+          },
+          {
+            "kind": "reason",
+            "message": "Enter a reason for:\n\nx2->one\n\nTo be added. A janitor will review your petition.",
+            "suggestions": [
+              "oracle reason",
+              "obvious by definition (a sword is a weapon)",
+              "character/series/studio/etc... belonging (character x belongs to series y)"
+            ],
+            "answer": "oracle reason"
+          }
+        ],
         "rows": [
           [
             "",
@@ -7387,6 +8225,12 @@
             "(+) ",
             "x",
             "y",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x2",
+            "one",
             "Reason: oracle reason"
           ]
         ],
@@ -7472,6 +8316,14 @@
             "oracle reason"
           ],
           [
+            2,
+            [
+              "x2",
+              "one"
+            ],
+            "oracle reason"
+          ],
+          [
             4,
             [
               "b",
@@ -7497,6 +8349,216 @@
           "two",
           "upper case",
           "x",
+          "x2",
+          "y"
+        ]
+      },
+      {
+        "how": "clipboard",
+        "text": "a\nb",
+        "asked": [],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "a",
+            "new ideal",
+            "Reason: oracle reason"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "c",
+            "cousin",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "one",
+            "two",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "p",
+            "q",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "p",
+            "r",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "self",
+            "self",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "series:foo bar",
+            "series:foo",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "two",
+            "one",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "upper case",
+            "lower",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x",
+            "y",
+            "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x2",
+            "one",
+            "Reason: oracle reason"
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "a",
+              "new ideal"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "c",
+              "cousin"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            2,
+            [
+              "one",
+              "two"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "p",
+              "q"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "p",
+              "r"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "self",
+              "self"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "series:foo bar",
+              "series:foo"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "two",
+              "one"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "upper case",
+              "lower"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "x",
+              "y"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "x2",
+              "one"
+            ],
+            "oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "workspace": [
+          "a",
+          "b",
+          "c",
+          "cousin",
+          "lower",
+          "new ideal",
+          "one",
+          "p",
+          "q",
+          "r",
+          "self",
+          "series:foo",
+          "series:foo bar",
+          "two",
+          "upper case",
+          "x",
+          "x2",
           "y"
         ]
       },
@@ -7665,6 +8727,12 @@
             "x",
             "y",
             "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x2",
+            "one",
+            "Reason: oracle reason"
           ]
         ],
         "updates": [
@@ -7845,6 +8913,14 @@
             "oracle reason"
           ],
           [
+            2,
+            [
+              "x2",
+              "one"
+            ],
+            "oracle reason"
+          ],
+          [
             4,
             [
               "b",
@@ -7883,6 +8959,7 @@
           "two",
           "upper case",
           "x",
+          "x2",
           "y"
         ]
       },
@@ -8040,6 +9117,12 @@
             "x",
             "y",
             "Reason: oracle reason"
+          ],
+          [
+            "(+) ",
+            "x2",
+            "one",
+            "Reason: oracle reason"
           ]
         ],
         "updates": [
@@ -8220,6 +9303,14 @@
             "oracle reason"
           ],
           [
+            2,
+            [
+              "x2",
+              "one"
+            ],
+            "oracle reason"
+          ],
+          [
             4,
             [
               "b",
@@ -8258,6 +9349,7 @@
           "two",
           "upper case",
           "x",
+          "x2",
           "y"
         ]
       }

@@ -1,0 +1,300 @@
+{
+ "now": 1800000000,
+ "deltas": [
+  1,
+  1199,
+  1200,
+  3600,
+  2592000,
+  6324480000,
+  6324480005,
+  6324566399,
+  6324580000
+ ],
+ "cases": [
+  {
+   "name": "no expiry",
+   "expires": null,
+   "start_text": "does not expire",
+   "start_utc": "None",
+   "button": "set expires as a delta from now",
+   "sets": [
+    {
+     "delta": 1,
+     "control_value": 1200,
+     "expires": 1800001200,
+     "text": "expires in 20 minutes",
+     "utc": "1800001200"
+    },
+    {
+     "delta": 1199,
+     "control_value": 1200,
+     "expires": 1800001200,
+     "text": "expires in 20 minutes",
+     "utc": "1800001200"
+    },
+    {
+     "delta": 1200,
+     "control_value": 1200,
+     "expires": 1800001200,
+     "text": "expires in 20 minutes",
+     "utc": "1800001200"
+    },
+    {
+     "delta": 3600,
+     "control_value": 3600,
+     "expires": 1800003600,
+     "text": "expires in 1 hour",
+     "utc": "1800003600"
+    },
+    {
+     "delta": 2592000,
+     "control_value": 2592000,
+     "expires": 1802592000,
+     "text": "expires in 30 days",
+     "utc": "1802592000"
+    },
+    {
+     "delta": 6324480000,
+     "control_value": 6324480000,
+     "expires": 8124480000,
+     "text": "expires in 200 years 4 months",
+     "utc": "8124480000"
+    },
+    {
+     "delta": 6324480005,
+     "control_value": 6324480005,
+     "expires": 8124480005,
+     "text": "expires in 200 years 4 months",
+     "utc": "8124480005"
+    },
+    {
+     "delta": 6324566399,
+     "control_value": 6324566399,
+     "expires": 8124566399,
+     "text": "expires in 200 years 4 months",
+     "utc": "8124566399"
+    },
+    {
+     "delta": 6324580000,
+     "control_value": 6324493600,
+     "expires": 8124493600,
+     "text": "expires in 200 years 4 months",
+     "utc": "8124493600"
+    }
+   ],
+   "default": 2592000,
+   "dialog_title": "edit time delta"
+  },
+  {
+   "name": "expires in two hours",
+   "expires": 1800007200,
+   "start_text": "expires in 2 hours",
+   "start_utc": "1800007200",
+   "button": "set expires as a delta from now",
+   "sets": [
+    {
+     "delta": 1,
+     "control_value": 1200,
+     "expires": 1800001200,
+     "text": "expires in 20 minutes",
+     "utc": "1800001200"
+    },
+    {
+     "delta": 1199,
+     "control_value": 1200,
+     "expires": 1800001200,
+     "text": "expires in 20 minutes",
+     "utc": "1800001200"
+    },
+    {
+     "delta": 1200,
+     "control_value": 1200,
+     "expires": 1800001200,
+     "text": "expires in 20 minutes",
+     "utc": "1800001200"
+    },
+    {
+     "delta": 3600,
+     "control_value": 3600,
+     "expires": 1800003600,
+     "text": "expires in 1 hour",
+     "utc": "1800003600"
+    },
+    {
+     "delta": 2592000,
+     "control_value": 2592000,
+     "expires": 1802592000,
+     "text": "expires in 30 days",
+     "utc": "1802592000"
+    },
+    {
+     "delta": 6324480000,
+     "control_value": 6324480000,
+     "expires": 8124480000,
+     "text": "expires in 200 years 4 months",
+     "utc": "8124480000"
+    },
+    {
+     "delta": 6324480005,
+     "control_value": 6324480005,
+     "expires": 8124480005,
+     "text": "expires in 200 years 4 months",
+     "utc": "8124480005"
+    },
+    {
+     "delta": 6324566399,
+     "control_value": 6324566399,
+     "expires": 8124566399,
+     "text": "expires in 200 years 4 months",
+     "utc": "8124566399"
+    },
+    {
+     "delta": 6324580000,
+     "control_value": 6324493600,
+     "expires": 8124493600,
+     "text": "expires in 200 years 4 months",
+     "utc": "8124493600"
+    }
+   ],
+   "default": 7200,
+   "dialog_title": "edit time delta"
+  },
+  {
+   "name": "expired an hour ago",
+   "expires": 1799996400,
+   "start_text": "expired 1 hour ago",
+   "start_utc": "1799996400",
+   "button": "set expires as a delta from now",
+   "sets": [
+    {
+     "delta": 1,
+     "control_value": 1200,
+     "expires": 1800001200,
+     "text": "expires in 20 minutes",
+     "utc": "1800001200"
+    },
+    {
+     "delta": 1199,
+     "control_value": 1200,
+     "expires": 1800001200,
+     "text": "expires in 20 minutes",
+     "utc": "1800001200"
+    },
+    {
+     "delta": 1200,
+     "control_value": 1200,
+     "expires": 1800001200,
+     "text": "expires in 20 minutes",
+     "utc": "1800001200"
+    },
+    {
+     "delta": 3600,
+     "control_value": 3600,
+     "expires": 1800003600,
+     "text": "expires in 1 hour",
+     "utc": "1800003600"
+    },
+    {
+     "delta": 2592000,
+     "control_value": 2592000,
+     "expires": 1802592000,
+     "text": "expires in 30 days",
+     "utc": "1802592000"
+    },
+    {
+     "delta": 6324480000,
+     "control_value": 6324480000,
+     "expires": 8124480000,
+     "text": "expires in 200 years 4 months",
+     "utc": "8124480000"
+    },
+    {
+     "delta": 6324480005,
+     "control_value": 6324480005,
+     "expires": 8124480005,
+     "text": "expires in 200 years 4 months",
+     "utc": "8124480005"
+    },
+    {
+     "delta": 6324566399,
+     "control_value": 6324566399,
+     "expires": 8124566399,
+     "text": "expires in 200 years 4 months",
+     "utc": "8124566399"
+    },
+    {
+     "delta": 6324580000,
+     "control_value": 6324493600,
+     "expires": 8124493600,
+     "text": "expires in 200 years 4 months",
+     "utc": "8124493600"
+    }
+   ],
+   "default": 2592000,
+   "dialog_title": "edit time delta"
+  }
+ ],
+ "values": [
+  {
+   "fields": [
+    " sid ",
+    " v ",
+    " example.com ",
+    " / "
+   ],
+   "result": [
+    "sid",
+    "v",
+    "example.com",
+    "/",
+    null
+   ]
+  },
+  {
+   "fields": [
+    "a\nb",
+    "v",
+    "example.com",
+    "/"
+   ],
+   "veto": "Hey, it looks like the \"name\" has a newline!"
+  },
+  {
+   "fields": [
+    "sid",
+    "a\nb",
+    "example.com",
+    "/"
+   ],
+   "veto": "Hey, it looks like the \"value\" has a newline!"
+  },
+  {
+   "fields": [
+    "sid",
+    "v",
+    "a\nb",
+    "/"
+   ],
+   "veto": "Hey, it looks like the \"domain\" has a newline!"
+  },
+  {
+   "fields": [
+    "sid",
+    "v",
+    "example.com",
+    "a\nb"
+   ],
+   "veto": "Hey, it looks like the \"path\" has a newline!"
+  },
+  {
+   "fields": [
+    "",
+    "v",
+    "example.com",
+    "/"
+   ],
+   "veto": "Hey, it looks like the \"name\" has a newline!"
+  }
+ ]
+}

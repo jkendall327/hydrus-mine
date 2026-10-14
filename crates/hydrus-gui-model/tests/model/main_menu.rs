@@ -73,7 +73,12 @@ fn kept(entries: &[Value]) -> Vec<Value> {
             let keep: [(&str, &[&str]); 7] = [
                 (
                     "debug modes",
-                    &["force idle mode", "---", "use faulthandler to log crashes"],
+                    &[
+                        "force idle mode",
+                        "simulate a wake from sleep",
+                        "---",
+                        "use faulthandler to log crashes",
+                    ],
                 ),
                 (
                     "profiling",
@@ -134,7 +139,12 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                 ),
                 (
                     "memory actions",
-                    &["clear all rendering caches", "clear thumbnail cache"],
+                    &[
+                        "run fast memory maintenance",
+                        "run slow memory maintenance",
+                        "clear all rendering caches",
+                        "clear thumbnail cache",
+                    ],
                 ),
                 (
                     "network actions",
@@ -312,7 +322,6 @@ fn repositories_add_their_pages_and_pending_menu() {
 /// Before any page has been shown the history menu is the reference's single
 /// plain label (`AppendMenuLabel( ..., 'no tab history', ..., no_copy = True )`);
 /// once there is a history it is replaced by the entries and "Clear History".
-// leaf: audit-options-menu-menu-pages-no-tab-history
 #[test]
 fn the_history_menu_is_a_plain_label_until_there_is_a_history() {
     let recorded = hydrus_testkit::fixture_json("main_menu.json");

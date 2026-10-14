@@ -519,3 +519,119 @@ fn speed_memory_helpers_own_wrapped_space_at_preferred_and_capture_sizes() {
         "preferred-width capture must actually exercise a wrapped warning"
     );
 }
+
+/// "Image cache timeout:" edited in the real options row (days, hours, minutes),
+/// applied, and met by the live cache holding a real preview decode: an entry
+/// idle for exactly the timeout stays and one idle a moment longer goes, the
+/// recording's "maintain exact timeout" / "maintain past timeout" and
+/// "exact extended timeout" / "past extended timeout" steps.
+// leaf: audit-options-speed-and-memory-image-cache-image-cache-timeout
+#[test]
+fn the_image_cache_timeout_row_sets_how_long_an_idle_decode_is_kept() {
+    let fixture = hydrus_testkit::fixture_json("image_cache.json");
+    let (_dirs, store) = crate::subscriptions::store();
+    let importer = FileImporter::new(store.clone(), MediaTools::new());
+    let files: Vec<_> = ["a.png", "b.png"]
+        .map(|name| {
+            let result = importer
+                .import_path(
+                    &hydrus_testkit::fixture_path(format!("image_cache/{name}")),
+                    &FileImportOptions::default(),
+                )
+                .unwrap();
+            store
+                .read(|conn| hydrus_store::master::hash_id(conn, &result.hash.unwrap()))
+                .unwrap()
+                .unwrap()
+        })
+        .into();
+    store
+        .write_and_refresh(|ctx| {
+            let mut layout = hydrus_store::page_layout::load(ctx.conn())?;
+            layout.hide_preview = false;
+            layout.vpos = -240;
+            settings::set(ctx.conn(), &layout)
+        })
+        .unwrap();
+    assert_eq!(
+        store.read(image_cache::load).unwrap().timeout,
+        fixture["initial"][1].as_u64().unwrap()
+    );
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    let cache = bound.image_cache.clone();
+    let clock = Arc::new(AtomicU64::new(0));
+    cache.set_clock(Arc::new({
+        let clock = clock.clone();
+        move || Duration::from_millis(clock.load(Ordering::Acquire))
+    }));
+    let adapter = windows.get(0).unwrap();
+    for _ in 0..3 {
+        headless::render(&adapter, 1400, 1000);
+    }
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+
+    let set_timeout = |minutes: i32| {
+        let window = options(&ui, &bound);
+        let at = row(&window, TIMEOUT);
+        window.invoke_field_edited(at, 0, 0);
+        window.invoke_field_edited(at, 1, 0);
+        window.invoke_field_edited(at, 2, minutes);
+        window.invoke_apply();
+        store.read(image_cache::load).unwrap().timeout
+    };
+    let idle = |ms: u64| {
+        clock.store(ms, Ordering::Release);
+        cache.refresh();
+    };
+
+    // five minutes: the recorded 300-second policy
+    let five = fixture["cache"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|step| step["action"] == "maintain exact timeout")
+        .unwrap()["policy"][1]
+        .as_u64()
+        .unwrap();
+    assert_eq!(set_timeout(5), five);
+    select(&ui, &bound, files[0]);
+    settle(&ui, &bound);
+    assert_eq!(cache.keys(), vec![files[0]]);
+    idle(five * 1000);
+    assert_eq!(cache.keys(), vec![files[0]], "exactly the timeout: kept");
+    idle(five * 1000 + 1);
+    assert!(cache.keys().is_empty(), "a moment past it: gone");
+
+    // below the minimum, an edited timeout is five minutes
+    assert_eq!(
+        set_timeout(1),
+        fixture["raw"]["edited_minimum"].as_u64().unwrap()
+    );
+
+    // ten minutes: the recorded extended policy
+    let extended = fixture["cache"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|step| step["action"] == "exact extended timeout")
+        .unwrap()["policy"][1]
+        .as_u64()
+        .unwrap();
+    assert_eq!(set_timeout(10), extended);
+    let start = 1_000_000;
+    clock.store(start, Ordering::Release);
+    select(&ui, &bound, files[1]);
+    settle(&ui, &bound);
+    assert_eq!(cache.keys(), vec![files[1]]);
+    idle(start + extended * 1000);
+    assert_eq!(cache.keys(), vec![files[1]], "exactly the timeout: kept");
+    idle(start + extended * 1000 + 1);
+    assert!(cache.keys().is_empty(), "a moment past it: gone");
+}

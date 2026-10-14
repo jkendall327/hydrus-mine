@@ -456,6 +456,138 @@
       }
     },
     {
+      "action": "preview double click collapse",
+      "current": "one",
+      "saved": [
+        470,
+        -295
+      ],
+      "hide_preview": false,
+      "save_on_exit": true,
+      "one": {
+        "sash": [
+          470,
+          -295
+        ],
+        "horizontal": [
+          470,
+          918
+        ],
+        "vertical": [
+          925,
+          0
+        ],
+        "sidebar_visible": true,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      },
+      "two": {
+        "sash": [
+          460,
+          -280
+        ],
+        "horizontal": [
+          460,
+          928
+        ],
+        "vertical": [
+          641,
+          280
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
+      "action": "sidebar double click collapse",
+      "current": "one",
+      "saved": [
+        470,
+        -295
+      ],
+      "hide_preview": false,
+      "save_on_exit": true,
+      "one": {
+        "sash": [
+          0,
+          -295
+        ],
+        "horizontal": [
+          0,
+          1392
+        ],
+        "vertical": [
+          626,
+          295
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      },
+      "two": {
+        "sash": [
+          460,
+          -280
+        ],
+        "horizontal": [
+          460,
+          928
+        ],
+        "vertical": [
+          641,
+          280
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
+      "action": "collapse put back",
+      "current": "one",
+      "saved": [
+        470,
+        -295
+      ],
+      "hide_preview": false,
+      "save_on_exit": true,
+      "one": {
+        "sash": [
+          470,
+          -295
+        ],
+        "horizontal": [
+          470,
+          918
+        ],
+        "vertical": [
+          626,
+          295
+        ],
+        "sidebar_visible": true,
+        "preview_visible": true,
+        "preview_splitter_hidden": false
+      },
+      "two": {
+        "sash": [
+          460,
+          -280
+        ],
+        "horizontal": [
+          460,
+          928
+        ],
+        "vertical": [
+          641,
+          280
+        ],
+        "sidebar_visible": false,
+        "preview_visible": false,
+        "preview_splitter_hidden": false
+      }
+    },
+    {
       "action": "hide sidebar",
       "current": "one",
       "saved": [

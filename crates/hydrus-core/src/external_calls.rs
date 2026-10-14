@@ -210,6 +210,10 @@ impl Callable {
             call: ActualCall::Process(Process::default()),
         }
     }
+    /// The call's key, in hex.
+    pub fn key_hex(&self) -> String {
+        hex::encode(self.key)
+    }
     /// Replace an added/imported/duplicated call's identity.
     pub fn regenerate_key(&mut self) {
         self.key = rand::random();

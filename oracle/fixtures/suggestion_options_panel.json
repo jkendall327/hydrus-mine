@@ -1,0 +1,122 @@
+{
+  "initial": {
+    "width": 300,
+    "minimum": 20,
+    "maximum": 65535,
+    "layout": "notebook",
+    "default": "related",
+    "default_enabled": true,
+    "layout_labels": [
+      "notebook",
+      "side-by-side"
+    ],
+    "default_labels": [
+      "most used",
+      "related",
+      "file_lookup_scripts",
+      "recent"
+    ],
+    "default_values": [
+      "favourites",
+      "related",
+      "file_lookup_scripts",
+      "recent"
+    ]
+  },
+  "layout_steps": [
+    {
+      "layout": "columns",
+      "default_enabled": false
+    },
+    {
+      "layout": "notebook",
+      "default_enabled": true
+    },
+    {
+      "layout": "columns",
+      "default_enabled": false
+    }
+  ],
+  "applied": [
+    {
+      "layout": "notebook",
+      "default": "recent",
+      "width": 240,
+      "saved_layout": "notebook",
+      "saved_default": "recent",
+      "saved_width": 240
+    },
+    {
+      "layout": "columns",
+      "default": "related",
+      "width": 500,
+      "saved_layout": "columns",
+      "saved_default": "related",
+      "saved_width": 500
+    },
+    {
+      "layout": "notebook",
+      "default": "file_lookup_scripts",
+      "width": 20,
+      "saved_layout": "notebook",
+      "saved_default": "file_lookup_scripts",
+      "saved_width": 20
+    }
+  ],
+  "widths": [
+    {
+      "layout": "notebook",
+      "width": 20,
+      "minimum_widths": {
+        "favourites": 20,
+        "related": 20,
+        "recent": 20
+      }
+    },
+    {
+      "layout": "notebook",
+      "width": 240,
+      "minimum_widths": {
+        "favourites": 240,
+        "related": 240,
+        "recent": 240
+      }
+    },
+    {
+      "layout": "notebook",
+      "width": 500,
+      "minimum_widths": {
+        "favourites": 500,
+        "related": 500,
+        "recent": 500
+      }
+    },
+    {
+      "layout": "columns",
+      "width": 20,
+      "minimum_widths": {
+        "favourites": 20,
+        "related": 20,
+        "recent": 20
+      }
+    },
+    {
+      "layout": "columns",
+      "width": 240,
+      "minimum_widths": {
+        "favourites": 240,
+        "related": 240,
+        "recent": 240
+      }
+    },
+    {
+      "layout": "columns",
+      "width": 500,
+      "minimum_widths": {
+        "favourites": 500,
+        "related": 500,
+        "recent": 500
+      }
+    }
+  ]
+}

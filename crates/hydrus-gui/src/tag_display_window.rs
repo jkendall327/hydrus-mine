@@ -16,6 +16,20 @@ pub(crate) fn open(
     window.set_application(application);
     if application {
         model.application_only();
+        window
+            .set_application_warning(hydrus_gui_model::tag_sync_review::APPLICATION_WARNING.into());
+        window
+            .set_application_message(hydrus_gui_model::tag_sync_review::APPLICATION_MESSAGE.into());
+        let work = model
+            .store()
+            .read(hydrus_store::settings::get::<hydrus_store::settings::BackgroundWork>)
+            .unwrap_or_default();
+        let (status, valid) = hydrus_gui_model::tag_sync_review::application_status(
+            work.tag_display_during_idle,
+            work.tag_display_during_active,
+        );
+        window.set_application_sync_status(status.into());
+        window.set_application_sync_valid(valid);
     }
     let model = Rc::new(RefCell::new(model));
     if application {

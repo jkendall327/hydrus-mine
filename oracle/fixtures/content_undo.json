@@ -1,0 +1,989 @@
+{
+ "files": [
+  0,
+  1,
+  2
+ ],
+ "steps": [
+  {
+   "files": [
+    {
+     "inbox": false,
+     "tags": []
+    },
+    {
+     "inbox": true,
+     "tags": []
+    },
+    {
+     "inbox": false,
+     "tags": []
+    }
+   ],
+   "menu": {
+    "redo_label": "initialising",
+    "redo_visible": true,
+    "strings": [
+     null,
+     null
+    ],
+    "undo_label": "initialising",
+    "undo_visible": true
+   },
+   "step": [
+    "undo"
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": false,
+     "tags": []
+    },
+    {
+     "inbox": true,
+     "tags": []
+    },
+    {
+     "inbox": false,
+     "tags": []
+    }
+   ],
+   "menu": {
+    "redo_label": "initialising",
+    "redo_visible": true,
+    "strings": [
+     null,
+     null
+    ],
+    "undo_label": "initialising",
+    "undo_visible": true
+   },
+   "step": [
+    "redo"
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": false,
+     "tags": []
+    },
+    {
+     "inbox": false,
+     "tags": []
+    },
+    {
+     "inbox": false,
+     "tags": []
+    }
+   ],
+   "menu": {
+    "redo_label": "initialising",
+    "redo_visible": false,
+    "strings": [
+     "undo archive 2 files",
+     null
+    ],
+    "undo_label": "undo archive 2 files",
+    "undo_visible": true
+   },
+   "step": [
+    "archive",
+    [
+     0,
+     1
+    ]
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": true,
+     "tags": []
+    },
+    {
+     "inbox": true,
+     "tags": []
+    },
+    {
+     "inbox": false,
+     "tags": []
+    }
+   ],
+   "menu": {
+    "redo_label": "redo archive 2 files",
+    "redo_visible": true,
+    "strings": [
+     null,
+     "redo archive 2 files"
+    ],
+    "undo_label": "undo archive 2 files",
+    "undo_visible": false
+   },
+   "step": [
+    "undo"
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": false,
+     "tags": []
+    },
+    {
+     "inbox": false,
+     "tags": []
+    },
+    {
+     "inbox": false,
+     "tags": []
+    }
+   ],
+   "menu": {
+    "redo_label": "redo archive 2 files",
+    "redo_visible": false,
+    "strings": [
+     "undo archive 2 files",
+     null
+    ],
+    "undo_label": "undo archive 2 files",
+    "undo_visible": true
+   },
+   "step": [
+    "redo"
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": true,
+     "tags": []
+    },
+    {
+     "inbox": true,
+     "tags": []
+    },
+    {
+     "inbox": false,
+     "tags": []
+    }
+   ],
+   "menu": {
+    "redo_label": "redo archive 2 files",
+    "redo_visible": true,
+    "strings": [
+     null,
+     "redo archive 2 files"
+    ],
+    "undo_label": "undo archive 2 files",
+    "undo_visible": false
+   },
+   "step": [
+    "undo"
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": true,
+     "tags": []
+    },
+    {
+     "inbox": true,
+     "tags": []
+    },
+    {
+     "inbox": false,
+     "tags": []
+    }
+   ],
+   "menu": {
+    "redo_label": "redo archive 2 files",
+    "redo_visible": true,
+    "strings": [
+     null,
+     "redo archive 2 files"
+    ],
+    "undo_label": "undo archive 2 files",
+    "undo_visible": false
+   },
+   "step": [
+    "undo"
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": false,
+     "tags": []
+    },
+    {
+     "inbox": false,
+     "tags": []
+    },
+    {
+     "inbox": false,
+     "tags": []
+    }
+   ],
+   "menu": {
+    "redo_label": "redo archive 2 files",
+    "redo_visible": false,
+    "strings": [
+     "undo archive 2 files",
+     null
+    ],
+    "undo_label": "undo archive 2 files",
+    "undo_visible": true
+   },
+   "step": [
+    "redo"
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": false,
+     "tags": []
+    },
+    {
+     "inbox": false,
+     "tags": []
+    },
+    {
+     "inbox": false,
+     "tags": []
+    }
+   ],
+   "menu": {
+    "redo_label": "redo archive 2 files",
+    "redo_visible": false,
+    "strings": [
+     "undo archive 2 files",
+     null
+    ],
+    "undo_label": "undo archive 2 files",
+    "undo_visible": true
+   },
+   "step": [
+    "archive",
+    [
+     0,
+     1
+    ]
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": true,
+     "tags": []
+    },
+    {
+     "inbox": false,
+     "tags": []
+    },
+    {
+     "inbox": false,
+     "tags": []
+    }
+   ],
+   "menu": {
+    "redo_label": "redo archive 2 files",
+    "redo_visible": false,
+    "strings": [
+     "undo inbox 1 files",
+     null
+    ],
+    "undo_label": "undo inbox 1 files",
+    "undo_visible": true
+   },
+   "step": [
+    "inbox",
+    [
+     0
+    ]
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": true,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": false,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": false,
+     "tags": [
+      "oracle:undo"
+     ]
+    }
+   ],
+   "menu": {
+    "redo_label": "redo archive 2 files",
+    "redo_visible": false,
+    "strings": [
+     "undo my tags->add tags for 3 files",
+     null
+    ],
+    "undo_label": "undo my tags->add tags for 3 files",
+    "undo_visible": true
+   },
+   "step": [
+    "add_tag",
+    "oracle:undo",
+    [
+     0,
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": true,
+     "tags": []
+    },
+    {
+     "inbox": false,
+     "tags": []
+    },
+    {
+     "inbox": false,
+     "tags": []
+    }
+   ],
+   "menu": {
+    "redo_label": "redo my tags->add tags for 3 files",
+    "redo_visible": true,
+    "strings": [
+     "undo inbox 1 files",
+     "redo my tags->add tags for 3 files"
+    ],
+    "undo_label": "undo inbox 1 files",
+    "undo_visible": true
+   },
+   "step": [
+    "undo"
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": false,
+     "tags": []
+    },
+    {
+     "inbox": false,
+     "tags": []
+    },
+    {
+     "inbox": false,
+     "tags": []
+    }
+   ],
+   "menu": {
+    "redo_label": "redo inbox 1 files",
+    "redo_visible": true,
+    "strings": [
+     "undo archive 2 files",
+     "redo inbox 1 files"
+    ],
+    "undo_label": "undo archive 2 files",
+    "undo_visible": true
+   },
+   "step": [
+    "undo"
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": true,
+     "tags": []
+    },
+    {
+     "inbox": false,
+     "tags": []
+    },
+    {
+     "inbox": false,
+     "tags": []
+    }
+   ],
+   "menu": {
+    "redo_label": "redo my tags->add tags for 3 files",
+    "redo_visible": true,
+    "strings": [
+     "undo inbox 1 files",
+     "redo my tags->add tags for 3 files"
+    ],
+    "undo_label": "undo inbox 1 files",
+    "undo_visible": true
+   },
+   "step": [
+    "redo"
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": true,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": false,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": false,
+     "tags": [
+      "oracle:undo"
+     ]
+    }
+   ],
+   "menu": {
+    "redo_label": "redo my tags->add tags for 3 files",
+    "redo_visible": false,
+    "strings": [
+     "undo my tags->add tags for 3 files",
+     null
+    ],
+    "undo_label": "undo my tags->add tags for 3 files",
+    "undo_visible": true
+   },
+   "step": [
+    "redo"
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": true,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": false,
+     "tags": []
+    },
+    {
+     "inbox": false,
+     "tags": [
+      "oracle:undo"
+     ]
+    }
+   ],
+   "menu": {
+    "redo_label": "redo my tags->add tags for 3 files",
+    "redo_visible": false,
+    "strings": [
+     "undo my tags->delete tags for 1 files",
+     null
+    ],
+    "undo_label": "undo my tags->delete tags for 1 files",
+    "undo_visible": true
+   },
+   "step": [
+    "delete_tag",
+    "oracle:undo",
+    [
+     1
+    ]
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": true,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": false,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": false,
+     "tags": [
+      "oracle:undo"
+     ]
+    }
+   ],
+   "menu": {
+    "redo_label": "redo my tags->delete tags for 1 files",
+    "redo_visible": true,
+    "strings": [
+     "undo my tags->add tags for 3 files",
+     "redo my tags->delete tags for 1 files"
+    ],
+    "undo_label": "undo my tags->add tags for 3 files",
+    "undo_visible": true
+   },
+   "step": [
+    "undo"
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": true,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": false,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": false,
+     "tags": [
+      "oracle:both",
+      "oracle:undo"
+     ]
+    }
+   ],
+   "menu": {
+    "redo_label": "redo my tags->delete tags for 1 files",
+    "redo_visible": false,
+    "strings": [
+     "undo my tags->add, archive tags for 2 files",
+     null
+    ],
+    "undo_label": "undo my tags->add, archive tags for 2 files",
+    "undo_visible": true
+   },
+   "step": [
+    "archive_and_tag",
+    "oracle:both",
+    [
+     2
+    ]
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": true,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": false,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": true,
+     "tags": [
+      "oracle:undo"
+     ]
+    }
+   ],
+   "menu": {
+    "redo_label": "redo my tags->add, archive tags for 2 files",
+    "redo_visible": true,
+    "strings": [
+     "undo my tags->add tags for 3 files",
+     "redo my tags->add, archive tags for 2 files"
+    ],
+    "undo_label": "undo my tags->add tags for 3 files",
+    "undo_visible": true
+   },
+   "step": [
+    "undo"
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": true,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": false,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": false,
+     "tags": [
+      "oracle:both",
+      "oracle:undo"
+     ]
+    }
+   ],
+   "menu": {
+    "redo_label": "redo my tags->add, archive tags for 2 files",
+    "redo_visible": false,
+    "strings": [
+     "undo my tags->add, archive tags for 2 files",
+     null
+    ],
+    "undo_label": "undo my tags->add, archive tags for 2 files",
+    "undo_visible": true
+   },
+   "step": [
+    "redo"
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": true,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": false,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": false,
+     "tags": [
+      "oracle:both",
+      "oracle:reverse",
+      "oracle:undo"
+     ]
+    }
+   ],
+   "menu": {
+    "redo_label": "redo my tags->add, archive tags for 2 files",
+    "redo_visible": false,
+    "strings": [
+     "undo add, archive tags for 2 files",
+     null
+    ],
+    "undo_label": "undo add, archive tags for 2 files",
+    "undo_visible": true
+   },
+   "step": [
+    "tag_and_archive",
+    "oracle:reverse",
+    [
+     2
+    ]
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": true,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": false,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": true,
+     "tags": [
+      "oracle:both",
+      "oracle:undo"
+     ]
+    }
+   ],
+   "menu": {
+    "redo_label": "redo add, archive tags for 2 files",
+    "redo_visible": true,
+    "strings": [
+     "undo my tags->add, archive tags for 2 files",
+     "redo add, archive tags for 2 files"
+    ],
+    "undo_label": "undo my tags->add, archive tags for 2 files",
+    "undo_visible": true
+   },
+   "step": [
+    "undo"
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": true,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": false,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": true,
+     "tags": [
+      "oracle:both",
+      "oracle:undo"
+     ]
+    }
+   ],
+   "menu": {
+    "redo_label": "redo add, archive tags for 2 files",
+    "redo_visible": false,
+    "strings": [
+     "undo archive 1 files",
+     null
+    ],
+    "undo_label": "undo archive 1 files",
+    "undo_visible": true
+   },
+   "step": [
+    "archive",
+    [
+     1
+    ]
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": true,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": true,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": true,
+     "tags": [
+      "oracle:both",
+      "oracle:undo"
+     ]
+    }
+   ],
+   "menu": {
+    "redo_label": "redo archive 1 files",
+    "redo_visible": true,
+    "strings": [
+     "undo my tags->add, archive tags for 2 files",
+     "redo archive 1 files"
+    ],
+    "undo_label": "undo my tags->add, archive tags for 2 files",
+    "undo_visible": true
+   },
+   "step": [
+    "undo"
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": true,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": true,
+     "tags": [
+      "oracle:undo"
+     ]
+    },
+    {
+     "inbox": true,
+     "tags": [
+      "oracle:undo"
+     ]
+    }
+   ],
+   "menu": {
+    "redo_label": "redo my tags->add, archive tags for 2 files",
+    "redo_visible": true,
+    "strings": [
+     "undo my tags->add tags for 3 files",
+     "redo my tags->add, archive tags for 2 files"
+    ],
+    "undo_label": "undo my tags->add tags for 3 files",
+    "undo_visible": true
+   },
+   "step": [
+    "undo"
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": true,
+     "tags": []
+    },
+    {
+     "inbox": true,
+     "tags": []
+    },
+    {
+     "inbox": true,
+     "tags": []
+    }
+   ],
+   "menu": {
+    "redo_label": "redo my tags->add tags for 3 files",
+    "redo_visible": true,
+    "strings": [
+     "undo inbox 1 files",
+     "redo my tags->add tags for 3 files"
+    ],
+    "undo_label": "undo inbox 1 files",
+    "undo_visible": true
+   },
+   "step": [
+    "undo"
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": false,
+     "tags": []
+    },
+    {
+     "inbox": true,
+     "tags": []
+    },
+    {
+     "inbox": true,
+     "tags": []
+    }
+   ],
+   "menu": {
+    "redo_label": "redo inbox 1 files",
+    "redo_visible": true,
+    "strings": [
+     "undo archive 2 files",
+     "redo inbox 1 files"
+    ],
+    "undo_label": "undo archive 2 files",
+    "undo_visible": true
+   },
+   "step": [
+    "undo"
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": true,
+     "tags": []
+    },
+    {
+     "inbox": true,
+     "tags": []
+    },
+    {
+     "inbox": true,
+     "tags": []
+    }
+   ],
+   "menu": {
+    "redo_label": "redo archive 2 files",
+    "redo_visible": true,
+    "strings": [
+     "undo archive 2 files",
+     "redo archive 2 files"
+    ],
+    "undo_label": "undo archive 2 files",
+    "undo_visible": true
+   },
+   "step": [
+    "undo"
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": true,
+     "tags": []
+    },
+    {
+     "inbox": true,
+     "tags": []
+    },
+    {
+     "inbox": true,
+     "tags": []
+    }
+   ],
+   "menu": {
+    "redo_label": "redo archive 2 files",
+    "redo_visible": true,
+    "strings": [
+     null,
+     "redo archive 2 files"
+    ],
+    "undo_label": "undo archive 2 files",
+    "undo_visible": false
+   },
+   "step": [
+    "undo"
+   ]
+  },
+  {
+   "files": [
+    {
+     "inbox": true,
+     "tags": []
+    },
+    {
+     "inbox": true,
+     "tags": []
+    },
+    {
+     "inbox": true,
+     "tags": []
+    }
+   ],
+   "menu": {
+    "redo_label": "redo archive 2 files",
+    "redo_visible": true,
+    "strings": [
+     null,
+     "redo archive 2 files"
+    ],
+    "undo_label": "undo archive 2 files",
+    "undo_visible": false
+   },
+   "step": [
+    "undo"
+   ]
+  }
+ ],
+ "tag": "my tags"
+}

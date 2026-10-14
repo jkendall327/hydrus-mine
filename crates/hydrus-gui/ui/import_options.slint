@@ -11,7 +11,7 @@ import { TipButton, TipComboBox } from "tip_widgets.slint";
 import { Button, CheckBox, ComboBox, LineEdit, ScrollView, SpinBox, TextEdit } from "std-widgets.slint";
 import { Theme } from "@hydrus_ui_core";
 import { EditorTreeRow, FiletypeTree } from "filetype_tree.slint";
-import { ImportFavouriteRow, ImportFavouritesButton } from "@hydrus_ui_core";
+import { ImportFavouriteRow, ImportFavouritesButton, ListTable, TableColumn, TableRow } from "@hydrus_ui_core";
 
 // a file size limit: whether there is one, its number and unit (B, KB,
 // MB, GB)
@@ -85,6 +85,13 @@ export component ImportOptionsWindow inherits Window {
     in property <bool> default-choice-enabled: true;
     // (a kind with no editor here yet: its options' summary)
     in property <string> summary;
+    // external programs: the list (add, edit, delete) of the calls to make
+    in property <[TableColumn]> program-columns;
+    in property <[TableRow]> program-rows;
+    in property <bool> program-child-open;
+    in property <bool> program-any-selected;
+    callback program-clicked(int, bool, bool);
+    callback program-action(string);
     // presentation
     in property <[string]> status-choices;
     in-out property <int> status-index;
@@ -128,6 +135,8 @@ export component ImportOptionsWindow inherits Window {
     // "even for 'already in db' files?" needs auto-archive ticked
     out property <bool> archive-already-enabled: root.archive;
     in property <bool> downloader;
+    // editing the global defaults, whose paste menu has no fill-in or replace
+    in property <bool> global-defaults;
     in-out property <bool> primary-urls;
     in-out property <bool> source-urls;
     // notes
@@ -335,14 +344,14 @@ export component ImportOptionsWindow inherits Window {
                             }
                             SpinBox {
                                 enabled: size.on;
-                                minimum: 1;
-                                maximum: 1000000;
+                                minimum: 0;
+                                maximum: 1048576;
                                 value: size.value;
                                 edited(v) => { root.size-edited(i, size.on, v, size.unit); }
                             }
                             ComboBox {
                                 enabled: size.on;
-                                model: ["B", "KB", "MB", "GB"];
+                                model: ["B", "KB", "MB", "GB", "TB"];
                                 current-index: size.unit;
                                 selected => { root.size-edited(i, size.on, size.value, self.current-index); }
                             }
@@ -355,16 +364,16 @@ export component ImportOptionsWindow inherits Window {
                             }
                             SpinBox {
                                 enabled: res.on;
-                                minimum: 1;
-                                maximum: 100000;
+                                minimum: 0;
+                                maximum: 1000000;
                                 value: res.width;
                                 edited(v) => { root.resolution-edited(i, res.on, v, res.height); }
                             }
                             Label { text: "x"; }
                             SpinBox {
                                 enabled: res.on;
-                                minimum: 1;
-                                maximum: 100000;
+                                minimum: 0;
+                                maximum: 1000000;
                                 value: res.height;
                                 edited(v) => { root.resolution-edited(i, res.on, res.width, v); }
                             }
@@ -383,7 +392,7 @@ export component ImportOptionsWindow inherits Window {
                             HorizontalLayout {
                                 spacing: 6px;
                                 ComboBox {
-                                    enabled: !root.location-child-open;
+                                    enabled: !root.location-child-open && !root.program-child-open;
                                     model: root.destination-choices;
                                     current-index <=> root.destination-index;
                                     selected => { root.location-picked("destination", self.current-index); }
@@ -574,6 +583,23 @@ export component ImportOptionsWindow inherits Window {
                             }
                         }
                     }
+                    if root.custom-index == 1 && root.kind == "external programs": VerticalLayout {
+                        spacing: 6px;
+                        ListTable {
+                            height: 150px;
+                            columns: root.program-columns;
+                            rows: root.program-rows;
+                            row-clicked(row, ctrl, shift) => { root.program-clicked(row, ctrl, shift); }
+                            row-activated(row) => { root.program-clicked(row, false, false); root.program-action("edit"); }
+                            delete-pressed => { root.program-action("delete"); }
+                        }
+                        HorizontalLayout {
+                            spacing: 6px;
+                            Btn { horizontal-stretch: 1; text: "add"; enabled: !root.program-child-open; clicked => { root.program-action("add"); } }
+                            Btn { horizontal-stretch: 1; text: "edit"; enabled: !root.program-child-open && root.program-any-selected; clicked => { root.program-action("edit"); } }
+                            Btn { horizontal-stretch: 1; text: "delete"; enabled: !root.program-child-open && root.program-any-selected; clicked => { root.program-action("delete"); } }
+                        }
+                    }
                     if root.custom-index == 1 && root.summary != "": Label {
                         text: root.summary;
                     }
@@ -587,19 +613,19 @@ export component ImportOptionsWindow inherits Window {
             ImportFavouritesButton {
                 rows: root.favourites;
                 edit-allowed: !root.favourite-editor;
-                enabled: !root.favourite-child-open && !root.overwrite-open && !root.tag-child-open && !root.location-child-open;
+                enabled: !root.favourite-child-open && !root.overwrite-open && !root.tag-child-open && !root.location-child-open && !root.program-child-open;
                 refresh => { root.refresh-favourites(); }
                 selected(action, name) => { root.favourite(action, name); }
             }
-            Btn { text: "copy"; enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open && !root.location-child-open; clicked => { root.copy-options(); } }
+            Btn { text: "copy"; enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open && !root.location-child-open && !root.program-child-open; clicked => { root.copy-options(); } }
             Rectangle {
                 width: 66px;
                 height: 28px;
-                Btn { width: parent.width; height: parent.height; text: "paste"; enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open && !root.location-child-open; clicked => { clipboard-menu.show(); } }
+                Btn { width: parent.width; height: parent.height; text: "paste"; enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open && !root.location-child-open && !root.program-child-open; clicked => { clipboard-menu.show(); } }
                 clipboard-menu := PopupWindow {
                     y: parent.height;
                     width: 320px;
-                    height: 148px;
+                    height: root.global-defaults ? 90px : 148px;
                     Rectangle {
                         background: Theme.panel;
                         border-color: Theme.border;
@@ -610,15 +636,16 @@ export component ImportOptionsWindow inherits Window {
                             Btn { text: "custom paste: choose what you want"; clicked => { clipboard-menu.close(); root.paste-options(3); } }
                             Rectangle { height: 1px; background: Theme.border; }
                             Btn { text: "merge-paste"; clicked => { clipboard-menu.close(); root.paste-options(0); } }
-                            Btn { text: "fill-in-gaps-paste"; clicked => { clipboard-menu.close(); root.paste-options(1); } }
-                            Btn { text: "replace-paste"; clicked => { clipboard-menu.close(); root.paste-options(2); } }
+                            // (the global defaults are only merged into)
+                            if !root.global-defaults: Btn { text: "fill-in-gaps-paste"; clicked => { clipboard-menu.close(); root.paste-options(1); } }
+                            if !root.global-defaults: Btn { text: "replace-paste"; clicked => { clipboard-menu.close(); root.paste-options(2); } }
                         }
                     }
                 }
             }
             Btn {
                 text: "apply";
-                enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open && !root.location-child-open;
+                enabled: !root.overwrite-open && !root.tag-child-open && !root.favourite-child-open && !root.location-child-open && !root.program-child-open;
                 clicked => { root.apply(); }
             }
             Btn {

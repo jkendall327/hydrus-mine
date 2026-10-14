@@ -848,6 +848,15 @@ fn edit_value(
         window.set_secure(c.secure);
         window.set_session_cookie(c.expires.is_none());
         window.set_expires(c.expires.map(|n| n.to_string()).unwrap_or_default().into());
+        // (the delta begins at what is left of a coming expiry, else 30 days)
+        window.set_expiry_delta(
+            match c.expires {
+                Some(at) if at > now() => at - now(),
+                _ => 30 * 86400,
+            }
+            .to_string()
+            .into(),
+        );
     } else if let Data::Headers(d) = &data {
         let row = index.map_or_else(
             || HeaderRow {
@@ -936,8 +945,19 @@ fn edit_value(
         let weak = window.as_weak();
         move || {
             if let Some(w) = weak.upgrade() {
+                // (the delta control holds a time to its range: at least 1200
+                // seconds, its days at most 200 years of 366 days)
                 match w.get_expiry_delta().trim().parse::<i64>() {
-                    Ok(delta) if (1200..=366 * 200 * 86400).contains(&delta) => {
+                    Ok(delta) => {
+                        // (the control's days stop at 200 years of 366 days and
+                        // its other fields keep what they were given)
+                        let max_days = 366 * 200;
+                        let delta = if delta / 86400 > max_days {
+                            max_days * 86400 + delta % 86400
+                        } else {
+                            delta.max(1200)
+                        };
+                        w.set_expiry_delta(delta.to_string().into());
                         w.set_expires((now() + delta).to_string().into());
                         w.set_session_cookie(false);
                         w.set_error("".into());

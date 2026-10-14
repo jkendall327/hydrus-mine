@@ -113,7 +113,7 @@ export component ExternalCallWindow inherits Window {
                         CheckBox{text:"use this parameter: ";checked:row.enabled;enabled:!root.child-open;toggled=>{root.rule-enabled(i,self.checked);}}
                     }
                     HorizontalLayout { Text{text:"command template: ";} LineEdit{text:root.command-template;read-only:true;} Button{text:"edit";enabled:!root.child-open;clicked=>{root.command-edit();}} }
-                    HorizontalLayout {Text{text:"timeout: ";}SpinBox{value<=>root.timeout;minimum:1;maximum:3600000;enabled:!root.long-lived && !root.child-open;edited=>{root.changed();}}CheckBox{text:"this can live for a very long time";checked<=>root.long-lived;enabled:!root.child-open;toggled=>{root.changed();}}}
+                    HorizontalLayout {Text{text:"timeout: ";}SpinBox{value<=>root.timeout;minimum:1;maximum:3599;enabled:!root.long-lived && !root.child-open;edited=>{root.changed();}}CheckBox{text:"this can live for a very long time";checked<=>root.long-lived;enabled:!root.child-open;toggled=>{root.changed();}}}
                     CheckBox{text:"hide terminal: ";checked<=>root.hide-terminal;enabled:!root.child-open;toggled=>{root.changed();}}
                     CheckBox{text:"output is text: ";checked<=>root.output-text;enabled:!root.child-open;toggled=>{root.changed();}}
                 }

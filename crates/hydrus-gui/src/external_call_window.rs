@@ -574,7 +574,7 @@ fn read(w: &ExternalCallWindow, state: &State) -> Callable {
         process.timeout_seconds = if w.get_long_lived() {
             15
         } else {
-            u64::try_from(w.get_timeout()).unwrap_or(15).max(1)
+            u64::try_from(w.get_timeout()).unwrap_or(15).clamp(1, 3599)
         };
         process.long_lived = w.get_long_lived();
         process.hide_terminal = w.get_hide_terminal();
@@ -643,7 +643,7 @@ fn show(w: &ExternalCallWindow, state: &State) {
                             (Pipeline::File, Parameter::Path) | (Pipeline::Url, Parameter::Url)
                         ),
                 token: r.rule.token.as_str().into(),
-                summary: r.rule.processor.summary().into(),
+                summary: r.rule.processor.button_label().into(),
                 value: r.input.as_str().into(),
             })
             .collect::<Vec<_>>(),
@@ -671,7 +671,9 @@ pub fn open(
     } else {
         Process::default()
     };
-    w.set_timeout(i32::try_from(process.timeout_seconds).unwrap_or(15));
+    // (the reference's minutes-and-seconds widget holds its minutes at 59)
+    let held = process.timeout_seconds;
+    w.set_timeout(i32::try_from((held / 60).min(59) * 60 + held % 60).unwrap_or(15));
     w.set_long_lived(process.long_lived);
     w.set_hide_terminal(process.hide_terminal);
     w.set_output_text(process.text);

@@ -778,6 +778,10 @@ pub enum ProcessingStep {
     /// unnamespaced rules applying to namespaced tags too) and sort them
     /// in human order (`StringTagFilter`).
     TagFilter(TagFilterStep),
+    /// A string processor as a step (`StringProcessor` is itself a
+    /// `StringProcessingStep`). The reference's `ProcessStrings` has no case
+    /// for it, so it leaves no strings.
+    Nested(Box<StringProcessor>),
     /// A step hydrus-rs doesn't run, kept as the reference's type id.
     Unsupported {
         type_id: u16,
@@ -958,6 +962,7 @@ impl StringProcessor {
                 m.min_chars.is_some() || m.max_chars.is_some() || m.kind != MatchKind::Any
             }
             ProcessingStep::Slice { start, end } => start.is_some() || end.is_some(),
+            ProcessingStep::Nested(nested) => nested.makes_changes(),
             _ => true,
         })
     }
@@ -977,7 +982,9 @@ impl StringProcessor {
             ProcessingStep::Split { .. } => Some(3),
             ProcessingStep::Sort { .. } => Some(4),
             ProcessingStep::Slice { .. } => Some(5),
-            ProcessingStep::TagFilter(_) | ProcessingStep::Unsupported { .. } => None,
+            ProcessingStep::TagFilter(_)
+            | ProcessingStep::Nested(_)
+            | ProcessingStep::Unsupported { .. } => None,
         };
         let present: std::collections::BTreeSet<usize> =
             self.steps.iter().filter_map(kind).collect();
@@ -1038,6 +1045,8 @@ impl ProcessingStep {
                 regex,
             } => sort_strings(&current, *kind, *ascending, regex.as_ref()).unwrap_or(current),
             ProcessingStep::TagFilter(step) => filter_tags(&current, &step.filter),
+            // (no case for it in `ProcessStrings`: nothing comes out)
+            ProcessingStep::Nested(_) => Vec::new(),
             ProcessingStep::Unsupported { type_id } => {
                 return Err(format!(
                     "string processing step type {type_id} is not supported yet"

@@ -32,6 +32,10 @@ export component TagDisplayWindow inherits Window {
     in property <bool> bare-fetch-enabled: true;
     in property <bool> namespace-fetch-enabled: true;
     in-out property <bool> fetch-all;
+    in property <string> application-warning;
+    in property <string> application-message;
+    in property <string> application-sync-status;
+    in property <bool> application-sync-valid;
     in property <[string]> source-services;
     in-out property <int> source-index;
     in property <[TableRow]> sibling-rows;
@@ -71,7 +75,9 @@ export component TagDisplayWindow inherits Window {
             }
             if root.application: VerticalLayout {
                 spacing: 6px;
-                Text { text: "Services at the top have precedence. Siblings apply first, then parents. An empty list disables that relationship kind. Changes apply when you accept."; wrap: word-wrap; color: Theme.text; }
+                Text { text: root.application-warning; horizontal-alignment: center; color: Theme.warning; }
+                Text { text: root.application-message; wrap: word-wrap; color: Theme.text; }
+                Text { text: root.application-sync-status; wrap: word-wrap; color: root.application-sync-valid ? Theme.valid : Theme.warning; }
                 ComboBox { enabled: !root.child-open; model: root.source-services; current-index <=> root.source-index; }
                 Text { text: "sibling application"; color: Theme.text; }
                 ListTable { vertical-stretch: 1; columns: [{title: "service (priority order)", width: 600px, stretch: true}]; rows: root.sibling-rows; row-clicked(i, ctrl, shift) => { root.source-click(false, i); } }

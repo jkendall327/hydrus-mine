@@ -185,7 +185,7 @@ as Qt's do; a press anywhere else closes them. What works so far:
 - tags: the siblings and parents editors (below);
 - pending: each repository's content to upload, and forgetting it (asking
   first);
-- help: the help, links and changelog in the browser, and advanced mode
+- help: the help and changelog (from a `help` folder beside the program, or, with none, asking "You do not have a local help!" with the online help or the guide to building one), links in the browser, and advanced mode
   (which adds hydrus's advanced entries).
 
 The subscription exchange codec reads and writes complete modern reference
@@ -368,6 +368,22 @@ cog menu's switches; a warning if it gets no tags) and notes are edited
 there. "apply" gives the dialog the
 importer's options. As `oracle/record_import_options_editor.py` recorded
 the reference's.
+
+The editor's pages are compared with the reference's own panels in
+`tests/gui/import_options_recorded.rs` (`oracle/record_import_options_fields.py`):
+file filtering's checkboxes and byte limits (B to TB, as `BytesControl` has them,
+shown as the largest unit that divides the saved number exactly, and the spin
+boxes' 0 to 1,048,576 range and resolutions' 0 to 1,000,000), prefetch's two
+choices giving way to each other, notes' conflict choices, whitelist and renames,
+and a tag service's get-tags and cog switches, each read back from the importer's
+saved options and used as an importer uses them (files judged by
+`FileImportOptions`, incoming notes merged by `NoteImportOptions::updates`). Copy
+and paste (`tests/gui/import_options_paste.rs`, `oracle/record_import_options_paste.py`):
+merge-, fill-in-gaps- and replace-paste, the custom chooser, and the clipboard's
+error text are those of the reference; the global defaults' paste menu offers only
+custom paste and merge-paste, as the reference's does. A customised tags page gives
+back rules for every tag service, a service not touched having its default rules,
+as the reference's editor does.
 
 The locations page's "destination file service(s)" and the presentation
 page's location are the reference's file domain button
@@ -624,7 +640,8 @@ running reference's dialog, recorded by `oracle/record_options_dialog.py`).
 It has the options hydrus-rs honours, so far on twenty-five pages: audio,
 connection (retries, timeouts, job limits, the halt on a domain's errors,
 HTTPS checks and proxies), downloading (gallery, subscription and watcher
-waits, the default file limit, highlighting, the pause and stop
+waits, the default file limit (which a new subscription's first sync
+also follows when lower than its usual 100 files), highlighting, the pause and stop
 characters, short summaries' counts, the waits after errors, two
 debug switches, and the default subscription and watcher checker
 options), duplicates (the duplicate filter's batches and its
@@ -1281,7 +1298,10 @@ database; native relative entries resolve against its database directory.
 boundaries. The
 existing sidecar routers editor supplies tags, notes, URLs and timestamps.
 Copies overwrite existing destinations; links are optional. Export runs on a
-worker with progress and cancellation between files. Trashing asks the
+worker with progress and cancellation between files, and a "file export" popup
+in the main window ("Exporting: 3/14", from 0/14, then "Done!" for five seconds;
+cancelling it cancels the export), as the reference's does
+(`oracle/record_flow_export.py`). Trashing asks the
 reference's confirmation and disables links; "export and close" asks "Export
 as shown?" and closes after success. `oracle/record_export_files.py` records
 the reference panel's previews, removal and confirmations, and its export
@@ -1955,7 +1975,8 @@ cover the implementation.
 Recorded against the reference (bin E of #97): pair import from the clipboard
 or a .txt file (uneven lines, cleaning, blank lines, pre-existing and pending
 pairs, sibling conflicts, loops, self-pairs staged after the "Loop problem!"
-message, a batch looping within itself or giving one tag two ideals,
+message, a pair leading into a loop already there (its path listed in a second
+"Loop problem!" message), a batch looping within itself or giving one tag two ideals,
 re-imported petitions, more than ten pairs on a repository) and selected-pair export to the clipboard or a .txt file
 (`oracle/record_relationship_exchange.py`); the default service tab and saving
 it on change, shared with Manage tags, whose tabs read "name (tags)" with " *"
@@ -1981,7 +2002,11 @@ file/tag domains. Domain changes use the native location selector, including all
 known files and existing combined domains outside advanced mode. Ctrl+Space
 fetches search/manage-tags suggestions manually. The advanced `manage where tag
 siblings and parents apply` window edits ordered source queues in ListTable;
-empty queues disable that relationship kind. Both dialogs stage changes until
+empty queues disable that relationship kind. The window opens with the reference's
+"THIS IS COMPLICATED, THINK CAREFULLY" heading, its explanation and its sync line
+(green when sync runs all the time, orange otherwise, by the two sync switches), as
+recorded in `tag_display.json`; the recorded queue states (services in order,
+reversed, emptied) are reached with the add, up and remove buttons. Both dialogs stage changes until
 Apply, disable parent editing while a nested editor is open, close owned nested
 editors on cancel and preserve unrelated settings.
 Applying updates selection tags on all open pages (including locked pages),
@@ -2343,6 +2368,19 @@ the clicked page of pages (or, for a media page's tab, in its notebook), named
 as the Pages menu names them ("name - N files", elided), each selecting that
 page. It sits after the close entries, before "select".
 
+Closing several pages from a tab's menu ("close" > other pages, pages to the
+left, pages to the right) asks "Close N pages?" when nothing objects. When a
+closing page has a URL importer holding items or at work, it opens the
+reference's longer dialog (`src/reasons_dialog.rs`): "Are you sure you want to
+close N pages?" over each objecting page's reason ("page "imp1" says: This is
+a urls import page holding 3 import objects.", pages with the same reason
+grouped, fewest first), with "yes" (pressable after 1.2 seconds), "no" and "no,
+but show me the pages", which opens a "Go To Page" list of buttons ("reason:
+page name"), each of which shows its page and leaves the list up. Closing one
+page asks `Close "name"?` with the reason (a page of pages with objecting pages
+inside asks the same longer dialog, listing them). The wording, buttons and results are
+compared with `oracle/fixtures/tab_close_objections.json`.
+
 Pages > sessions > append adds the saved session as a page of pages named after it to the top notebook (not inside the page of pages that is shown), where "new page goes" puts it, and shows it, as the reference does (`oracle/record_sessions_append.py`).
 
 Pages > sessions > append backup groups rolling snapshots by saved-session name
@@ -2609,7 +2647,12 @@ saves retry in sixty seconds; eligible saves use the configured one-to-1440-minu
 period. Unchanged session data, including selection-only changes, creates no new
 backup. Main-window key/pointer activity and page commands from the Client API
 feed the imported user/mouse/API idle timeouts, including the initial two-minute
-boot guard. Switching the startup preference away from last session stops the
+boot guard. Keyboard and mouse input in other programs counts too, from the
+desktop's own idle time (GNOME's idle monitor, or the X server's screensaver
+extension on X11), so typing elsewhere holds back the idle-only autosave and
+the other idle work that reads the same state: the maintenance workers'
+idle-time gates and the idle state published to the daemons. Switching the
+startup preference away from last session stops the
 scheduled save chain after its next eligible tick. The real controller's cadence,
 unchanged hash suppression, history and idle boundaries are recorded in
 `oracle/record_session_autosave.py`.
@@ -3259,9 +3302,19 @@ content-update broadcasting and broader Files and Trash behavior remain Partial.
 
 Files and Trash now saves the confirmation preferences for trash and multi-file
 archive/inbox operations. Thumbnail shortcuts and menu actions read the applied
-preferences; the viewer also skips a simple local deletion question when trash
-confirmation is disabled. Multiple actionable local domains and physical deletion
-continue to ask. Cancelling Options leaves these preferences unchanged.
+preferences; with trash confirmation disabled and one actionable local domain, a
+deletion goes through without the dialog, in the viewer too. Otherwise deleting
+opens "Delete files?" (the reference's `EditDeleteFilesPanel`, also when the
+advanced dialog is off): one action shows as its label ("Send one file from my
+files to trash?"), several as a list starting on the remembered or suggested
+action, and the reason panel is hidden; the reason the hidden panel selects
+(the remembered one, else the default, and a file's earlier reason kept) is
+recorded, as in the reference. Proven by `tests/gui/simple_delete_dialog.rs`
+(replaying `simple_delete_dialog.json`: one and two domains, both files, a
+trashed file, the menu's suggested domain, a remembered action, the bypass of a
+resolved question, and the options each accepted action remembers, by their
+exact keys; a file's earlier reason is the basic fixture's own) and the
+download flow. Cancelling Options leaves these preferences unchanged.
 The real Qt inputs and questions are recorded in `files_trash.json`.
 
 The advanced Files and Trash deletion dialog now lists actionable local domains,
@@ -3836,6 +3889,12 @@ column/keyboard persistence and full process output/error presentation remain
 Partial. `open_externally.json` and its Qt PNG record the list/chooser behavior;
 authored native replays await hosted CI.
 
+The import options editor's external programs page lists the calls to make on
+imported files ("call beta log on all new file imports"), and adds, edits and
+deletes them with the reference's entry editor and notices; imports using the
+options run the programs in order (see DIFFERENCES.md). The migration's
+registered calls are not carried over.
+
 Options > external programs now has a staged registered-call table with name,
 job and command columns. Add/Edit own a detached callable editor and command
 queue; parent Cancel discards accepted child drafts, and parent Apply persists
@@ -3916,7 +3975,9 @@ passes the original wheel result. The failed run and its images remain
 diagnostic evidence and earn no credit.
 
 Supported process calls expose enabled input rules, tokens and the existing
-string-processor child, an ordered command-argument editor, timeout/flags and
+string-processor child (its button lists the processor's steps a line each, or
+says "no string processing", as the reference's does), an ordered
+command-argument editor, timeout/flags and
 preview/test inputs, which start at the reference's example path or URL.
 'test availability!' says whether the program is found; 'test call!' runs the
 call's argument vector in an owned worker and reports as the reference does:
@@ -4562,6 +4623,24 @@ admission. Actual Qt controls and renderer accounting are recorded in
 await hosted execution and inspection.
 
 
+Help → Debug → memory actions → “run fast memory maintenance” makes every cache
+maintain itself, as the reference's pulse does every minute: the decoded-image
+cache and the thumbnail caches drop what has idled past their timeout (and
+anything over their limit, which only a lowered limit leaves). “Run slow memory maintenance” (also every five minutes)
+deletes the closed pages (and their downloads) closed over an hour ago, but only
+when no page has been opened or closed for half an hour. Closed pages are no
+longer forgotten when the undo menu is built or another page closes: they stay
+until the slow maintenance deletes them, as in the reference.
+
+Help → Debug → debug modes → “simulate a wake from sleep” makes the sleep check
+see a wake, as the reference does: with wake-from-system-sleep detection on, a
+cancellable “just woke up from sleep” popup counts down “enabling I/O in N
+seconds” for the wake delay and is dismissed when it ends (cancelling it says
+“enabling I/O now” and enables input and output at once); the idle timer is
+reset; file paths wait out the delay; the daemon is asked to see the wake
+too (its network engine and subscriptions; that half has no end-to-end test). With detection off nothing happens. A real wake
+(a gap of over a minute between the one-second checks) shows the same popup.
+
 Help → Debug → debug modes offers the checked “force idle mode” runtime action.
 It overrides the current main binding’s actual idle Monitor before the boot wait,
 disabled normal-idle setting and recent user/mouse/API checks. Activity continues
@@ -4878,7 +4957,19 @@ The undo menu now starts with "undo …" and "redo …" for the client's content
 changes: archive/inbox and Manage Tags' applied tag changes, named as the
 reference names them ("undo archive 2 files", "redo my tags->add tags for 3
 files"). Undoing writes the inverse change, redoing the change again; a new
-change forgets what could be redone. `tests/model/content_undo.rs` covers it.
+change forgets what could be redone. `tests/model/content_undo.rs` covers it;
+`tests/gui/content_undo.rs` replays `oracle/fixtures/content_undo.json` (the
+reference's UndoManager over archive, inbox, tag and mixed packages) through the
+Undo menu. A package naming a tag service and an archive is labelled as the
+reference labels it ("undo my tags->add, archive tags for 2 files" when the tags
+come second, no service when they come first); the reference's order of the
+action words is a Python set's and so is sorted here.
+
+Pages > history shows only "Clear History" until pages have been shown (the
+reference's "no tab history" label is replaced before the menu can be seen);
+Pages > weight, Pages > clear > all multiwatcher highlights and the weight report
+are checked against `oracle/fixtures/pages_menu_info.json` in
+`tests/gui/pages_menu_info.rs`.
 
 ## Namespace colour edit and per-filetype media handling
 
@@ -4971,7 +5062,7 @@ mode" (the maintenance daemons starting a pass), "file import report mode"
 (file and thumbnail path requests), "gui report mode" (key and mouse events
 caught as shortcuts), "idle report mode" (why the client is not idle: not
 on for 120s, normal idle work disabled, last user, mouse or Client API
-action, or forced from the debug menu), "network report mode" and its
+action, or forced from the debug menu; and when it turns idle or active), "network report mode" and its
 "(silent)" twin (redirects and errors; silent goes to the console only; the
 two entries share the one mode, as the reference's do: silent turns it on and
 sets silent, the plain entry flips it and clears silent),
@@ -4984,9 +5075,9 @@ query's sync-due test).
 Also in Help > debug: gui actions > "autocomplete delay mode" (every tag
 autocomplete search takes three more seconds), data actions > "scan file
 storage folders" (pick a directory; it says how many storage subfolders it
-found and how long it took, or why it gave up; the picker opens in the database directory), and debug modes > "use
-faulthandler to log crashes" (while on, each panic is written with a
-backtrace to a "client crash" log in the database directory).
+found and how long it took, or why it gave up; the picker opens in the
+database directory), and debug modes > "use faulthandler to log crashes"
+(shown on always: see below; choosing it says where the log is).
 `tests/gui/debug_menu_actions.rs` clicks each debug entry in the real menu
 and reads the effect back; `tests/model/debug_flags.rs` and the
 `debug_*` tests of hydrus-import, hydrus-net, hydrus-download, hydrus-media
@@ -5627,3 +5718,29 @@ the pairs prefetched ahead are replayed against the reference's canvas from
 direction and group chooser and the "quick and dirty processing" buttons from
 `oracle/fixtures/duplicates_quick_processing.json`. A file that is in several
 of the upcoming pairs is warmed once.
+
+
+## Options recheck additions (#97 phase 2)
+
+- Options > tag suggestions: "Default notebook page" is greyed out while the
+  layout is side-by-side, as in the reference.
+- Choosing from any Options dropdown now updates which other rows are enabled.
+- With "show the top hover text in the status bar" on, the status line of a
+  single selected file counts "imported ... ago" from the same clock the
+  viewer uses.
+- Closing importer pages, the preview background and pop-in, the Options
+  search and Apply, and thumbnail fades are tested against recordings of the
+  reference; each leaf's recheck note names the test.
+
+## Crash log
+
+Every panic, on any thread, in the desktop client, `hydrus serve` and the
+other `hydrus` commands is written to `client crash.log` in the database
+directory: the time (UTC), the version (crate version and `git describe`),
+the program, the thread's name, the panic message and location, and a
+backtrace. The panic's message still goes to stderr, followed by a line
+saying where the log is. The log is capped: before an entry that would take
+it past 512 KiB it is moved to `client crash.log.old` (replacing the earlier
+one), so the two files stay under about 1 MiB. Panics on `serve`'s tokio
+tasks and blocking jobs are logged too: the runtime catches them, but the
+panic hook runs first.

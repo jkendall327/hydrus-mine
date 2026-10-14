@@ -36,7 +36,15 @@ def record(session):
         gamma=notebook.NewPageQuery(location,page_name='Palette Gamma',select_page=False)
         for p in (alpha,beta,gamma):gui.ShowPage(p.GetPageKey())
         QW.QApplication.processEvents()
-        favourites=[('Palette Folder','Favourite Alpha',ClientSearchFileSearchContext.FileSearchContext(location_context=location),False,None,None),(None,'Favourite Beta',ClientSearchFileSearchContext.FileSearchContext(location_context=location),True,None,None)]
+        from hydrus.client.media import ClientMediaSort,ClientMediaCollect
+        from record_media_collect import sort_facts
+        fav_sort=ClientMediaSort.MediaSort(('system',CC.SORT_FILES_BY_NUM_TAGS),CC.SORT_DESC)
+        fav_collect=ClientMediaCollect.MediaCollect(namespaces=['series'])
+        favourites=[('Palette Folder','Favourite Alpha',ClientSearchFileSearchContext.FileSearchContext(location_context=location),False,fav_sort,fav_collect),(None,'Favourite Beta',ClientSearchFileSearchContext.FileSearchContext(location_context=location),True,fav_sort,fav_collect)]
+        def page_facts(page):
+            sidebar=page.GetSidebar()
+            collect=sidebar._media_collect_widget.GetValue()
+            return dict(sort=sort_facts(sidebar._media_sort_widget.GetSort()),collect_namespaces=list(collect.namespaces),favourite_sort=sort_facts(fav_sort))
         old_favourites=session.controller.favourite_search_manager.GetFavouriteSearchRows()
         session.controller.favourite_search_manager.SetFavouriteSearchRows(favourites)
         menu=QW.QMenu('Palette Synthetic',gui);action=menu.addAction('Palette &Launch');calls=[];action.triggered.connect(lambda:calls.append('launch'))
@@ -56,6 +64,11 @@ def record(session):
         for code,text in ((3,'Palette'),(4,'Palette'),(5,'Favourite'),(5,'Palette Folder'),(1,'Palette'),(1,'pa'),(0,'2+3*4'),(0,'sqrt(16)'),(0,'pow(2,3)'),(0,'1/0')):
             events.append(snap(code,text))
         options.SetBoolean('command_palette_show_page_of_pages',True);events.append(snap(3,'Palette'))
+        # the real main menu bar, flattened; and the same queries with the setting off
+        main_menu_real=[snap(1,q) for q in ('options','backup','review','import','tags','stats')]
+        options.SetBoolean('command_palette_show_main_menu',False)
+        main_menu_off=[snap(1,q) for q in ('Palette','options','review')]
+        options.SetBoolean('command_palette_show_main_menu',True)
         for code,key in ((3,'limit_page_results'),(4,'limit_history_results'),(5,'limit_favourite_searches_results')):
             options.SetNoneableInteger('command_palette_'+key,1)
             events.append(snap(code,'Palette' if code!=5 else 'Favourite'))
@@ -96,13 +109,14 @@ def record(session):
         selected={'page':notebook.GetCurrentMediaPage().GetName()}
         p,rows=query(1,'Palette Launch');p.resultSelected(rows[0].id);selected['menu_calls']=calls
         p,rows=query(5,'Favourite Alpha');before=notebook.count();p.resultSelected(rows[0].id)
-        selected['favourite']={'name':notebook.GetCurrentMediaPage().GetName(),'new_pages':notebook.count()-before}
+        selected['favourite']={'name':notebook.GetCurrentMediaPage().GetName(),'new_pages':notebook.count()-before,'page':page_facts(notebook.GetCurrentMediaPage())}
         options.SetBoolean('command_palette_fav_searches_open_new_page',False)
-        before=notebook.count();original_key=notebook.GetCurrentMediaPage().GetPageKey()
+        gui.ShowPage(gamma.GetPageKey());QW.QApplication.processEvents()
+        before=notebook.count();original_key=notebook.GetCurrentMediaPage().GetPageKey();original_name=notebook.GetCurrentMediaPage().GetName()
         p,rows=query(5,'Favourite Beta');p.resultSelected(rows[0].id)
         selected['favourite_current']={'name':notebook.GetCurrentMediaPage().GetName(),
             'new_pages':notebook.count()-before,
-            'same_page':notebook.GetCurrentMediaPage().GetPageKey()==original_key}
+            'same_page':notebook.GetCurrentMediaPage().GetPageKey()==original_key,'name_unchanged':notebook.GetCurrentMediaPage().GetName()==original_name,'page':page_facts(notebook.GetCurrentMediaPage())}
         options.SetBoolean('command_palette_fav_searches_open_new_page',True)
         from hydrus.client import ClientApplicationCommand as CAC
         widget=gui._locator_widget;widget.updateOptions()
@@ -155,7 +169,7 @@ def record(session):
             ClientGUIDialogsQuick.GetYesNo=old_yesno;ClientGUIDialogsQuick.SelectFromListButtons=old_select
             session.controller.favourite_search_manager.SetFavouriteSearchRows(old_favourites)
             gui._menubar.removeAction(menu.menuAction());menu.deleteLater();panel.deleteLater()
-        return {'initial':initial,'events':events,'empty_events':empty_events,'selected':selected,'window_route':window_route,'media_events':media_events,'media_events_off':media_off,'calculator_events':calculator_events,'unicode_events':unicode_events,'queue_events':queue_events,'questions':questions,'persisted':persisted}
+        return {'main_menu_real':main_menu_real,'main_menu_off':main_menu_off,'initial':initial,'events':events,'empty_events':empty_events,'selected':selected,'window_route':window_route,'media_events':media_events,'media_events_off':media_off,'calculator_events':calculator_events,'unicode_events':unicode_events,'queue_events':queue_events,'questions':questions,'persisted':persisted}
     return session.controller.CallBlockingToQt(session.controller.gui,qt)
 
 def main():

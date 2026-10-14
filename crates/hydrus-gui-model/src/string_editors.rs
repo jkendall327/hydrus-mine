@@ -82,7 +82,7 @@ pub fn kind_of(step: &ProcessingStep) -> Option<StepKind> {
         ProcessingStep::Join { .. } => StepKind::Joiner,
         ProcessingStep::Sort { .. } => StepKind::Sorter,
         ProcessingStep::TagFilter(_) => StepKind::TagFilter,
-        ProcessingStep::Unsupported { .. } => return None,
+        ProcessingStep::Nested(_) | ProcessingStep::Unsupported { .. } => return None,
     })
 }
 

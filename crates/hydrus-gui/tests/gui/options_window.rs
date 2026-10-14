@@ -340,7 +340,6 @@ fn most_used_child_stages_each_service_cancels_descendants_and_persists_options(
     ui.hide().unwrap();
 }
 
-// leaf: audit-options-options-apply
 #[test]
 fn the_options_window_applies_its_changes() {
     let (_dirs, store) = store();
@@ -7010,4 +7009,244 @@ fn the_suggested_tags_layout_chosen_in_options_reaches_manage_tags_as_the_refere
         }
         manage.invoke_cancel();
     }
+}
+
+/// The options window's search and Apply/Cancel, replayed from
+/// `oracle/record_options_apply_search.py` (the real `ManageOptionsPanel`).
+fn known_prefixes(key: &str) -> Vec<(usize, String)> {
+    let known = hydrus_testkit::fixture_json("options_search_known_differences.json");
+    known[key]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|v| {
+            let entry = v["entry"].as_str().unwrap();
+            // ("N x text", the text cut to sixty characters)
+            let (n, text) = entry.split_once(" x ").unwrap();
+            (n.parse().unwrap(), text.to_owned())
+        })
+        .collect()
+}
+
+// leaf: audit-options-options-search
+#[test]
+fn the_search_box_offers_and_goes_to_what_the_references_does() {
+    let recorded = hydrus_testkit::fixture_json("options_apply_search.json");
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let options = || bound.options.borrow().as_ref().unwrap().clone_strong();
+    let (missing, extra) = (known_prefixes("missing"), known_prefixes("extra"));
+    let listed = |window: &OptionsWindow| -> Vec<String> {
+        (0..window.get_matches().row_count())
+            .map(|i| window.get_matches().row_data(i).unwrap().to_string())
+            .collect()
+    };
+    for (n, search) in recorded["searches"].as_array().unwrap().iter().enumerate() {
+        let query = search["query"].as_str().unwrap();
+        open(&ui);
+        let window = options();
+        // it opens on the page the reference does (then on the last shown)
+        if n == 0 {
+            assert_eq!(
+                page_names(&window)[usize::try_from(window.get_page()).unwrap()],
+                recorded["opens_on"].as_str().unwrap()
+            );
+        }
+        window.set_search_text(query.into());
+        window.invoke_search_edited(query.into());
+        // (the reference's matches less those hydrus-rs has no control for,
+        // the native ones less those the reference has no text for)
+        let offered = listed(&window);
+        let all_theirs: Vec<String> = search["matches"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|m| m.as_str().unwrap().to_owned())
+            .collect();
+        // (each known difference is up to N entries starting with its text:
+        // the reference's less those hydrus-rs has no control for, hydrus-rs's
+        // less those the reference has no text for; nothing else is dropped)
+        let without = |list: &[String], known: &[(usize, String)]| -> Vec<String> {
+            let mut left: Vec<usize> = known.iter().map(|(n, _)| *n).collect();
+            list.iter()
+                .filter(|m| {
+                    for (at, (_, prefix)) in known.iter().enumerate() {
+                        if left[at] > 0 && m.starts_with(prefix.as_str()) {
+                            left[at] -= 1;
+                            return false;
+                        }
+                    }
+                    true
+                })
+                .cloned()
+                .collect()
+        };
+        let theirs = without(&all_theirs, &missing);
+        let ours = without(&offered, &extra);
+        let mut sorted_theirs = theirs;
+        let mut sorted_ours = ours;
+        sorted_theirs.sort();
+        sorted_ours.sort();
+        // (the reference lists matches in the order Qt finds its widgets, the
+        // order they were made in; hydrus-rs in the order they are laid out)
+        assert_eq!(sorted_ours, sorted_theirs, "{query:?}");
+        if let Some(first) = search["first"].as_str() {
+            // choosing its first match shows its page, its row found and
+            // the box emptied
+            let at = offered
+                .iter()
+                .position(|m| m == first)
+                .unwrap_or_else(|| panic!("{first:?} is offered"));
+            for _ in 0..=at {
+                window.invoke_move_match(1);
+            }
+            window.invoke_search_chosen(window.get_match_highlighted());
+            assert_eq!(
+                page_names(&window)[usize::try_from(window.get_page()).unwrap()],
+                search["page"].as_str().unwrap(),
+                "{query:?}"
+            );
+            assert!(search["highlighted"].as_bool().unwrap());
+            // the row highlighted is the one the match names
+            let wanted = first
+                .rsplit_once(" (")
+                .map_or(first, |(label, _)| label)
+                .trim()
+                .to_owned();
+            // (a unit or dropdown text names no row of its own: then the row
+            // that holds it is the one highlighted)
+            let rows: Vec<_> = (0..window.get_rows().row_count())
+                .map(|i| window.get_rows().row_data(i).unwrap())
+                .collect();
+            if rows.iter().any(|row| row.label.trim() == wanted) {
+                assert!(
+                    rows.iter()
+                        .any(|row| row.found && row.label.trim() == wanted),
+                    "{query:?}: the row {wanted:?} is highlighted"
+                );
+            } else {
+                assert!(
+                    rows.iter().any(|row| row.found),
+                    "{query:?}: a row holding {wanted:?} is highlighted"
+                );
+            }
+            assert_eq!(
+                window.get_search_text().as_str(),
+                search["search_text_after"].as_str().unwrap()
+            );
+        } else {
+            assert!(listed(&window).is_empty());
+        }
+        window.invoke_cancel();
+    }
+}
+
+// leaf: audit-options-options-apply
+#[test]
+fn applying_and_cancelling_change_what_the_references_ok_and_cancel_do() {
+    // (the reference's list also has Qt's "style" page, which has no counterpart)
+    const QT_STYLE_PAGES: usize = 1;
+    let recorded = hydrus_testkit::fixture_json("options_apply_search.json");
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let options = || bound.options.borrow().as_ref().unwrap().clone_strong();
+    let settings = || store.read(hydrus_gui::options::Settings::load).unwrap();
+    // the recorded read-back of the same options, from the native settings
+    let current = || {
+        let s = settings();
+        serde_json::json!({
+            "delete_to_recycle_bin": s.folders.delete_to_recycle_bin,
+            "trash_max_size": s.trash.max_size_mb,
+            "trash_max_age": s.trash.max_age_hours,
+            "max_page_name_chars": s.page_names.max_chars,
+            "slideshow": s.slideshow.durations.clone(),
+            "http_proxy": s.network.http_proxy,
+            "score_has_audio": s.duplicate_filter.scores.has_audio,
+        })
+    };
+    assert_eq!(
+        page_names(&{
+            open(&ui);
+            options()
+        })
+        .len()
+            + QT_STYLE_PAGES,
+        recorded["pages"].as_array().unwrap().len(),
+        "(the reference also has Qt's style page)"
+    );
+    options().invoke_cancel();
+    let edit = |window: &OptionsWindow| {
+        show_page(window, "files and trash");
+        let (i, _) = row(window, "Maximum size of trash (MB): ");
+        window.invoke_none_toggled(i, true);
+        let (i, recycle) = row(
+            window,
+            "When physically deleting files or folders, send them to the OS's recycle bin: ",
+        );
+        window.invoke_check_toggled(i, !recycle.checked);
+        show_page(window, "gui pages");
+        let (i, _) = row(window, "Max characters to display in a page name: ");
+        window.invoke_number_edited(i, 2);
+        show_page(window, "media viewer");
+        let (i, _) = row(window, "Slideshow durations:");
+        window.invoke_text_edited(i, "1.0,soon".into());
+        show_page(window, "connection");
+        let (i, _) = row(window, "http: ");
+        window.invoke_text_edited(i, "http://127.0.0.1:8080".into());
+        window.invoke_none_toggled(i, false);
+        show_page(window, "duplicates");
+        let (i, _) = row(window, "Score for file with audio:");
+        window.invoke_number_edited(i, -30);
+    };
+    // (read at one moment; the popups were made within the last minute)
+    let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
+    let popups = || {
+        store
+            .read(|conn| hydrus_store::popups::all(conn, now))
+            .unwrap()
+            .iter()
+            .map(|p| p.status_text_1.clone().unwrap_or_default())
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(
+        current(),
+        recorded["before"],
+        "the defaults are the reference's"
+    );
+    let as_strings = |value: &serde_json::Value| -> Vec<String> {
+        serde_json::from_value(value.clone()).unwrap()
+    };
+    assert_eq!(tabs(&ui), as_strings(&recorded["tab_names_before"]));
+
+    // cancel: nothing changes, nothing is said
+    open(&ui);
+    let window = options();
+    edit(&window);
+    assert_eq!(current(), recorded["before"], "nothing before OK");
+    window.invoke_cancel();
+    assert!(bound.options.borrow().is_none());
+    assert_eq!(current(), recorded["after_cancel"]);
+    assert_eq!(tabs(&ui), as_strings(&recorded["tab_names_after_cancel"]));
+    assert_eq!(
+        popups(),
+        serde_json::from_value::<Vec<String>>(recorded["popups_after_cancel"].clone()).unwrap()
+    );
+
+    // OK: the valid values are kept, the slideshow one is left and said
+    open(&ui);
+    let window = options();
+    edit(&window);
+    window.invoke_apply();
+    assert!(bound.options.borrow().is_none());
+    assert_eq!(current(), recorded["after_apply"]);
+    // (the consumers: the tab names are made again with the new length)
+    assert_eq!(tabs(&ui), as_strings(&recorded["tab_names_after_apply"]));
+    assert_eq!(
+        popups(),
+        serde_json::from_value::<Vec<String>>(recorded["popups_after_apply"].clone()).unwrap()
+    );
 }

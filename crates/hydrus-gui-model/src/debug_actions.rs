@@ -128,6 +128,10 @@ pub enum Action {
     /// "simulate program exit signal"
     Exit,
     ClearRenderingCaches,
+    /// memory actions > "run fast memory maintenance"
+    MaintainMemoryFast,
+    /// memory actions > "run slow memory maintenance"
+    MaintainMemorySlow,
     /// debug modes > "use faulthandler to log crashes"
     FlipCrashLogging,
     /// data actions > "scan file storage folders"

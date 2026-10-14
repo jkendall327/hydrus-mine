@@ -134,6 +134,14 @@ lto = "thin"
 codegen-units = 4
 debug = "line-tables-only"
 
+[profile.release.package.hydrus-gui-ui]
+# The generated Slint UI (see profile.dev below) can't be optimised within a
+# 16 GB machine, which is also what GitHub's runners have (release.yml).
+# Unoptimised, it is what every dev build and test already runs.
+opt-level = 0
+debug = false
+incremental = false
+
 [profile.dev]
 # Full debug info makes target/ many gigabytes; line tables keep backtraces.
 debug = "line-tables-only"
@@ -155,6 +163,10 @@ incremental = false
 # (they are not workspace members, so the `"*"` override above would otherwise
 # optimise them, which runs out of memory)
 opt-level = 0
+# (no assertion or overflow-check code in the generated arithmetic: less MIR
+# for rustc to hold)
+debug-assertions = false
+overflow-checks = false
 # Cargo strips debuginfo when the *root* of a build has none, so a solo
 # `cargo build -p hydrus-gui-ui` would otherwise differ from the same crates
 # built under hydrus-gui, and their artifacts would not be reused.

@@ -46,6 +46,9 @@ at fixed copy boundaries; dialog replies and worker scheduling are scripted.
 | `make_repository_fixture.py` | `fixtures/legacy_db/repositories.tar.gz` + manifest: `basic` with a tag and a file repository holding pending content |
 | `make_fixture_db.py` | `fixtures/legacy_db/<name>.tar.gz` + `.manifest.json`: a populated reference database |
 | `make_auto_resolution_pending.py` | `fixtures/legacy_db/auto_resolution_pending.tar.gz`: the auto-resolution database with eight more pairs pending in the semi-automatic rule that has two |
+| `record_gallery_wait_options.py` | `fixtures/gallery_wait_options.json`: the reference's `TryToConsumeAGalleryToken` with the three wait options (download pages, subscriptions, watchers) set to different values on a real `ClientOptions`, time held still: which option each kind reads, and the strict `now > last + wait` rule |
+| `record_error_delays.py` | `fixtures/error_delays.json`: the reference's `GalleryImport`, `WatcherImport` and `Subscription` meeting a network error (and a subscription with no import destination) at the default and a changed "Delay time on a ... error" option, time held still: the wait and the reason |
+| `record_gallery_file_limit.py` | `fixtures/gallery_file_limit.json`: what the reference's "stop searching once this many files are found" option becomes in a new gallery page, a new gallery import and a new subscription (its first-sync limit is `min( 100, limit )`) |
 | `record_bandwidth_reset.py` | `fixtures/bandwidth_reset.json`: the real "reset default bandwidth rules" on a manager with custom rules: the question, every context's rules before and after |
 | `record_local_import_pause.py` | `fixtures/local_import_pause.json`: the review-files-to-import panel paused, resumed and stopped while paths wait to be parsed |
 | `record_local_import_queue.py` | `fixtures/local_import_queue.json`: its "import now" (the publication, the new page, the files left or deleted, delete option off and on) |
@@ -54,6 +57,7 @@ at fixed copy boundaries; dialog replies and worker scheduling are scripted.
 | `record_parser_fetch_http.py` | `fixtures/parser_fetch_http.json`: the parser test panels' fetch from a url over real HTTP (the page editor's and the generic panel's) with the real engine |
 | `record_session_create.py` | `fixtures/session_create.json`: the session browser's create new (its dialog scripted), with and without repositories |
 | `record_import_folder_example.py` | `fixtures/import_folder_example.json`: the import folder editor's filename tagging dialog: the example path, the output, the duplicate-service warning |
+| `record_external_call_editor.py` | `fixtures/external_call_editor.json`: the reference's external call editor panels: the executable path questions, the PATH message, the input parameter rows and vetoes, the string processor button labels, the timeout control and flags, and Add |
 | `record_cpu_busy.py` | `fixtures/cpu_busy.json`: the reference's `SystemBusy`/`CurrentlyIdle`/`GoodTimeToStartBackgroundWork` on scripted `/proc/stat` loads read by the real psutil |
 | `record_trash_maintenance.py` | `fixtures/trash_maintenance.json`: the reference's `DAEMONMaintainTrash` on generated files of exact sizes trashed at scripted times |
 | `record_shutdown_work.py` | `fixtures/shutdown_work.json`: the reference's `TryToExit` and `DoIdleShutdownWork` under each shutdown option, with the "Maintenance is due" question answered by script |

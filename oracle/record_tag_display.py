@@ -51,6 +51,18 @@ def record(session):
         application = A.EditTagDisplayApplication(controller.gui, {keys[0]: keys}, {keys[0]: []})
         first = application._tag_services.widget(0)
         out['application_labels'] = [x.text() for x in application.findChildren(QW.QLabel)]
+        # the sync line under each combination of the two sync switches
+        status_cases = []
+        options = controller.new_options
+        for idle, active in [(True, True), (True, False), (False, False)]:
+            options.SetBoolean('tag_display_maintenance_during_idle', idle)
+            options.SetBoolean('tag_display_maintenance_during_active', active)
+            other = A.EditTagDisplayApplication(controller.gui, {}, {})
+            status_cases.append({'idle': idle, 'active': active, 'text': other._sync_status.text(), 'object_name': other._sync_status.objectName()})
+            other.deleteLater()
+        options.SetBoolean('tag_display_maintenance_during_idle', True)
+        options.SetBoolean('tag_display_maintenance_during_active', True)
+        out['application_status_by_switches'] = status_cases
         def value():
             siblings, parents = application.GetValue()
             return {'siblings': {k.hex(): [x.hex() for x in v] for k,v in siblings.items()}, 'parents': {k.hex(): [x.hex() for x in v] for k,v in parents.items()}}

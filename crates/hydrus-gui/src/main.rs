@@ -22,6 +22,8 @@ fn main() -> Result<()> {
         .filter(|arg| !arg.to_string_lossy().starts_with('-'))
         .ok_or_else(|| anyhow!("usage: hydrus-gui <store directory>"))?
         .into();
+    // every panic, on any thread, goes to the store's crash log
+    hydrus_core::crash_log::install(&dir, "hydrus-gui");
     let (store, open_guard) = open_store(&dir)?;
     let lock: LockPassword = store
         .read(hydrus_store::settings::get)
@@ -155,6 +157,10 @@ impl Client {
             }
         });
         let bound = bind(&window, pages);
+        // (input outside our windows, as the desktop reports it)
+        bound
+            .session_autosave
+            .set_system_idle(Box::new(hydrus_gui::system_idle::Platform::start()));
         // the last session kept as it changes (the reference saves it every
         // five minutes), and what the Client API asks of the pages done
         let saving = slint::Timer::default();

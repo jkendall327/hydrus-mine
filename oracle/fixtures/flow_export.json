@@ -1,0 +1,1714 @@
+{
+ "domain_manager": [
+  53,
+  7,
+  [
+   [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       69,
+       "local booru tag search",
+       1,
+       [
+        "4fd23776a58af0c64a5053a8e9f0fd757595c83a54f533024057bdd87e0afed8",
+        "http://127.0.0.1:46014/search/%tags%/1",
+        "%tags%",
+        "+",
+        "tag",
+        "blue_eyes"
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    "4fd23776a58af0c64a5053a8e9f0fd757595c83a54f533024057bdd87e0afed8"
+   ],
+   [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       50,
+       "local booru post",
+       15,
+       [
+        "7c4f1127e4ab046c16b994c540cb86245eac1675ef5e9a8046a7565ef7a547c5",
+        0,
+        "http",
+        [
+         139,
+         1,
+         [
+          [
+           "127.0.0.1:46014"
+          ],
+          [],
+          false,
+          false
+         ]
+        ],
+        [
+         true,
+         false,
+         false,
+         true,
+         false,
+         true,
+         false
+        ],
+        [
+         [
+          [
+           51,
+           1,
+           [
+            0,
+            "post",
+            null,
+            null,
+            "post"
+           ]
+          ],
+          null
+         ],
+         [
+          [
+           51,
+           1,
+           [
+            3,
+            "",
+            null,
+            null,
+            "example string"
+           ]
+          ],
+          null
+         ]
+        ],
+        [
+         26,
+         3,
+         []
+        ],
+        false,
+        [
+         51,
+         1,
+         [
+          3,
+          "",
+          null,
+          null,
+          "example string"
+         ]
+        ],
+        [],
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        0,
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        null,
+        null,
+        1,
+        "http://127.0.0.1:46014/post/1"
+       ]
+      ]
+     ],
+     [
+      2,
+      [
+       50,
+       "local booru search",
+       15,
+       [
+        "f2613db28acf0afe7a0e0d41e06ceed8d3a50ff0a5ea02ab5b83512d1d5d0293",
+        3,
+        "http",
+        [
+         139,
+         1,
+         [
+          [
+           "127.0.0.1:46014"
+          ],
+          [],
+          false,
+          false
+         ]
+        ],
+        [
+         true,
+         false,
+         false,
+         true,
+         false,
+         true,
+         false
+        ],
+        [
+         [
+          [
+           51,
+           1,
+           [
+            0,
+            "search",
+            null,
+            null,
+            "search"
+           ]
+          ],
+          null
+         ],
+         [
+          [
+           51,
+           1,
+           [
+            3,
+            "",
+            null,
+            null,
+            "example string"
+           ]
+          ],
+          null
+         ],
+         [
+          [
+           51,
+           1,
+           [
+            3,
+            "",
+            null,
+            null,
+            "example string"
+           ]
+          ],
+          null
+         ]
+        ],
+        [
+         26,
+         3,
+         []
+        ],
+        false,
+        [
+         51,
+         1,
+         [
+          3,
+          "",
+          null,
+          null,
+          "example string"
+         ]
+        ],
+        [],
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        0,
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        null,
+        null,
+        1,
+        "http://127.0.0.1:46014/search/blue_eyes/1"
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    "7c4f1127e4ab046c16b994c540cb86245eac1675ef5e9a8046a7565ef7a547c5"
+   ],
+   [
+    33,
+    1,
+    [
+     [
+      "7c4f1127e4ab046c16b994c540cb86245eac1675ef5e9a8046a7565ef7a547c5",
+      "7ebdd197efa637825ed1a77559faae2fab9a94af9e7e13dc5eb9883b6b637070"
+     ],
+     [
+      "f2613db28acf0afe7a0e0d41e06ceed8d3a50ff0a5ea02ab5b83512d1d5d0293",
+      "0ca6c0ac228cd4c45f518b0f9f6579b834f351247b72798e5fc0d76a63d2ef3f"
+     ]
+    ]
+   ],
+   [
+    [
+     6,
+     9,
+     [
+      false,
+      false,
+      [
+       150,
+       1,
+       [
+        [
+         44,
+         1,
+         []
+        ],
+        []
+       ]
+      ],
+      [
+       151,
+       1,
+       [
+        [
+         "646f776e6c6f616465722074616773",
+         [
+          65,
+          4,
+          [
+           true,
+           [
+            44,
+            1,
+            []
+           ],
+           [],
+           true,
+           true,
+           true,
+           false,
+           [
+            44,
+            1,
+            []
+           ],
+           false,
+           false
+          ]
+         ]
+        ]
+       ]
+      ],
+      false
+     ]
+    ],
+    [
+     6,
+     9,
+     [
+      false,
+      false,
+      [
+       150,
+       1,
+       [
+        [
+         44,
+         1,
+         []
+        ],
+        []
+       ]
+      ],
+      [
+       151,
+       1,
+       []
+      ],
+      false
+     ]
+    ],
+    []
+   ],
+   [
+    [
+     82,
+     2,
+     [
+      [
+       153,
+       1,
+       [
+        true,
+        true,
+        3,
+        [],
+        null,
+        []
+       ]
+      ],
+      false
+     ]
+    ],
+    [
+     82,
+     2,
+     [
+      [
+       153,
+       1,
+       [
+        true,
+        true,
+        3,
+        [],
+        null,
+        []
+       ]
+      ],
+      false
+     ]
+    ],
+    []
+   ],
+   [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       58,
+       "local booru post parser",
+       3,
+       [
+        "local booru post parser",
+        "7ebdd197efa637825ed1a77559faae2fab9a94af9e7e13dc5eb9883b6b637070",
+        [
+         55,
+         2,
+         [
+          [],
+          "example string"
+         ]
+        ],
+        [
+         26,
+         3,
+         []
+        ],
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            30,
+            7,
+            [
+             "file",
+             7,
+             [
+              27,
+              8,
+              [
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   62,
+                   3,
+                   [
+                    0,
+                    "img",
+                    {
+                     "id": "image"
+                    },
+                    null,
+                    null,
+                    false,
+                    [
+                     51,
+                     1,
+                     [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ],
+               0,
+               "src",
+               "",
+               [
+                84,
+                1,
+                [
+                 26,
+                 3,
+                 []
+                ]
+               ]
+              ]
+             ],
+             [
+              7,
+              50
+             ]
+            ]
+           ]
+          ],
+          [
+           2,
+           [
+            30,
+            7,
+            [
+             "source",
+             7,
+             [
+              27,
+              8,
+              [
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   62,
+                   3,
+                   [
+                    0,
+                    "a",
+                    {
+                     "class": "source"
+                    },
+                    null,
+                    null,
+                    false,
+                    [
+                     51,
+                     1,
+                     [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ],
+               0,
+               "href",
+               "",
+               [
+                84,
+                1,
+                [
+                 26,
+                 3,
+                 []
+                ]
+               ]
+              ]
+             ],
+             [
+              8,
+              50
+             ]
+            ]
+           ]
+          ],
+          [
+           2,
+           [
+            30,
+            7,
+            [
+             "tags",
+             0,
+             [
+              27,
+              8,
+              [
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   62,
+                   3,
+                   [
+                    0,
+                    "li",
+                    {
+                     "class": "tag"
+                    },
+                    null,
+                    null,
+                    false,
+                    [
+                     51,
+                     1,
+                     [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ],
+               1,
+               "href",
+               "",
+               [
+                84,
+                1,
+                [
+                 26,
+                 3,
+                 []
+                ]
+               ]
+              ]
+             ],
+             null
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         "http://127.0.0.1:46014/post/1"
+        ],
+        {
+         "url": "https://example.com/posts/index.php?id=123456"
+        }
+       ]
+      ]
+     ],
+     [
+      2,
+      [
+       58,
+       "local booru search parser",
+       3,
+       [
+        "local booru search parser",
+        "0ca6c0ac228cd4c45f518b0f9f6579b834f351247b72798e5fc0d76a63d2ef3f",
+        [
+         55,
+         2,
+         [
+          [],
+          "example string"
+         ]
+        ],
+        [
+         26,
+         3,
+         []
+        ],
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            30,
+            7,
+            [
+             "next page",
+             7,
+             [
+              27,
+              8,
+              [
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   62,
+                   3,
+                   [
+                    0,
+                    "a",
+                    {
+                     "class": "next"
+                    },
+                    null,
+                    null,
+                    false,
+                    [
+                     51,
+                     1,
+                     [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ],
+               0,
+               "href",
+               "",
+               [
+                84,
+                1,
+                [
+                 26,
+                 3,
+                 []
+                ]
+               ]
+              ]
+             ],
+             [
+              6,
+              50
+             ]
+            ]
+           ]
+          ],
+          [
+           2,
+           [
+            30,
+            7,
+            [
+             "posts",
+             7,
+             [
+              27,
+              8,
+              [
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   62,
+                   3,
+                   [
+                    0,
+                    "a",
+                    {
+                     "class": "thumb"
+                    },
+                    null,
+                    null,
+                    false,
+                    [
+                     51,
+                     1,
+                     [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ],
+               0,
+               "href",
+               "",
+               [
+                84,
+                1,
+                [
+                 26,
+                 3,
+                 []
+                ]
+               ]
+              ]
+             ],
+             [
+              7,
+              50
+             ]
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         "http://127.0.0.1:46014/search/blue_eyes/1"
+        ],
+        {
+         "url": "https://example.com/posts/index.php?id=123456"
+        }
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    [
+     [
+      47,
+      2,
+      [
+       0,
+       null
+      ]
+     ],
+     [
+      [
+       "User-Agent",
+       [
+        "Mozilla/5.0 (compatible; Hydrus Client)",
+        1,
+        "This is the default User-Agent identifier for the client for all network connections."
+       ]
+      ],
+      [
+       "Accept",
+       [
+        "image/jpeg,image/png,image/*;q=0.9,*/*;q=0.8",
+        1,
+        "Prefers jpeg/png over webp, but provides graceful fallback."
+       ]
+      ],
+      [
+       "Cache-Control",
+       [
+        "no-transform",
+        1,
+        "Tells CDNs not to deliver \"optimised\" versions of files. May not be honoured."
+       ]
+      ]
+     ]
+    ]
+   ]
+  ]
+ ],
+ "site": {
+  "phases": [
+   {
+    "files": {},
+    "pages": {}
+   }
+  ],
+  "port": 46014
+ },
+ "steps": [
+  {
+   "asked": [],
+   "dialog": {
+    "file numbers": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14
+    ],
+    "phrase starts as": "{hash}",
+    "sidecars start as": "no sidecars",
+    "symlinks": false,
+    "thumbnails": 14,
+    "title": "export files",
+    "trash after export": false
+   },
+   "exported": {},
+   "hits": [],
+   "popups": [],
+   "step": "open"
+  },
+  {
+   "asked": [],
+   "dialog": {
+    "rows": [
+     {
+      "pattern": "[creator] [character]",
+      "rows": [
+       [
+        "1",
+        "png",
+        "INVALID, above destination directory: Sorry, it looks like the export filename would be too long! Try shortening the export phrase or directory!"
+       ],
+       [
+        "2",
+        "jpeg",
+        "INVALID, above destination directory: Sorry, it looks like the export filename would be too long! Try shortening the export phrase or directory!"
+       ],
+       [
+        "3",
+        "png",
+        "EXPORT/someone else link, samus aran.png"
+       ],
+       [
+        "4",
+        "apng",
+        "INVALID, above destination directory: Sorry, it looks like the export filename would be too long! Try shortening the export phrase or directory!"
+       ],
+       [
+        "5",
+        "png",
+        "EXPORT/someone else link.png"
+       ],
+       [
+        "6",
+        "jpeg",
+        "EXPORT/someone else link, samus aran.jpg"
+       ],
+       [
+        "7",
+        "jpeg",
+        "INVALID, above destination directory: Sorry, it looks like the export filename would be too long! Try shortening the export phrase or directory!"
+       ],
+       [
+        "8",
+        "bitmap",
+        "EXPORT/samus aran.bmp"
+       ],
+       [
+        "9",
+        "jpeg",
+        "EXPORT/samus aran.jpg"
+       ],
+       [
+        "10",
+        "jpeg",
+        "EXPORT/someone else.jpg"
+       ],
+       [
+        "11",
+        "jpeg",
+        "EXPORT/samus aran (1).jpg"
+       ],
+       [
+        "12",
+        "mp3",
+        "INVALID, above destination directory: Sorry, it looks like the export filename would be too long! Try shortening the export phrase or directory!"
+       ],
+       [
+        "13",
+        "animated gif",
+        "EXPORT/someone else link, samus aran.gif"
+       ],
+       [
+        "14",
+        "tiff",
+        "INVALID, above destination directory: Sorry, it looks like the export filename would be too long! Try shortening the export phrase or directory!"
+       ]
+      ]
+     },
+     {
+      "pattern": "{#} - [character] - {hash}",
+      "rows": [
+       [
+        "1",
+        "png",
+        "EXPORT/1 -  - d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68.png"
+       ],
+       [
+        "2",
+        "jpeg",
+        "EXPORT/2 -  - 91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29.jpg"
+       ],
+       [
+        "3",
+        "png",
+        "EXPORT/3 - link, samus aran - 32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c.png"
+       ],
+       [
+        "4",
+        "apng",
+        "EXPORT/4 -  - 03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b.png"
+       ],
+       [
+        "5",
+        "png",
+        "EXPORT/5 - link - c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce.png"
+       ],
+       [
+        "6",
+        "jpeg",
+        "EXPORT/6 - link, samus aran - bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc.jpg"
+       ],
+       [
+        "7",
+        "jpeg",
+        "EXPORT/7 -  - 92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5.jpg"
+       ],
+       [
+        "8",
+        "bitmap",
+        "EXPORT/8 - samus aran - 5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a.bmp"
+       ],
+       [
+        "9",
+        "jpeg",
+        "EXPORT/9 - samus aran - f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6.jpg"
+       ],
+       [
+        "10",
+        "jpeg",
+        "EXPORT/10 -  - 9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c.jpg"
+       ],
+       [
+        "11",
+        "jpeg",
+        "EXPORT/11 - samus aran - a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf.jpg"
+       ],
+       [
+        "12",
+        "mp3",
+        "EXPORT/12 -  - 65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b.mp3"
+       ],
+       [
+        "13",
+        "animated gif",
+        "EXPORT/13 - link, samus aran - 2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726.gif"
+       ],
+       [
+        "14",
+        "tiff",
+        "EXPORT/14 -  - 9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2.tiff"
+       ]
+      ]
+     }
+    ]
+   },
+   "exported": {},
+   "hits": [],
+   "popups": [],
+   "step": "pattern"
+  },
+  {
+   "asked": [],
+   "dialog": {
+    "router rows": [
+     "Taking notes from media, applying some sorting, sending to .json sidecar (notes).",
+     "Taking urls from media, applying some sorting, sending to .json sidecar (urls).",
+     "Taking \"downloader tags\" stored tags, applying some sorting, sending to .json sidecar (tags>storage>downloader tags).",
+     "Taking \"downloader tags\" display tags, applying some sorting, sending to .json sidecar (tags>display>downloader tags).",
+     "Taking \"my tags\" stored tags, applying some sorting, sending to .json sidecar (tags>storage>my tags).",
+     "Taking \"my tags\" display tags, applying some sorting, sending to .json sidecar (tags>display>my tags).",
+     "Taking \"second tags\" stored tags, applying some sorting, sending to .json sidecar (tags>storage>second tags).",
+     "Taking \"second tags\" display tags, applying some sorting, sending to .json sidecar (tags>display>second tags).",
+     "Taking archived time from media, applying some sorting, sending to .json sidecar (times>archived).",
+     "Taking \"hydrus local file storage\" imported time from media, applying some sorting, sending to .json sidecar (times>imported).",
+     "Taking media viewer last viewed time from media, applying some sorting, sending to .json sidecar (times>last_viewed_media_viewer).",
+     "Taking preview viewer last viewed time from media, applying some sorting, sending to .json sidecar (times>last_viewed_preview_viewer)."
+    ],
+    "sidecars end as": "12 sidecar actions",
+    "templates": [
+     "easy one-click JSON that covers the basics"
+    ]
+   },
+   "exported": {},
+   "hits": [],
+   "popups": [],
+   "step": "sidecars"
+  },
+  {
+   "asked": [],
+   "dialog": {
+    "rows": [
+     [
+      "1",
+      "png",
+      "EXPORT/1 -  - d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68.png"
+     ],
+     [
+      "2",
+      "jpeg",
+      "EXPORT/2 -  - 91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29.jpg"
+     ],
+     [
+      "3",
+      "png",
+      "EXPORT/3 - link, samus aran - 32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c.png"
+     ],
+     [
+      "4",
+      "apng",
+      "EXPORT/4 -  - 03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b.png"
+     ],
+     [
+      "5",
+      "png",
+      "EXPORT/5 - link - c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce.png"
+     ],
+     [
+      "6",
+      "jpeg",
+      "EXPORT/6 - link, samus aran - bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc.jpg"
+     ],
+     [
+      "7",
+      "jpeg",
+      "EXPORT/7 -  - 92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5.jpg"
+     ],
+     [
+      "8",
+      "bitmap",
+      "EXPORT/8 - samus aran - 5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a.bmp"
+     ],
+     [
+      "9",
+      "jpeg",
+      "EXPORT/9 - samus aran - f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6.jpg"
+     ],
+     [
+      "10",
+      "jpeg",
+      "EXPORT/10 -  - 9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c.jpg"
+     ],
+     [
+      "11",
+      "jpeg",
+      "EXPORT/11 - samus aran - a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf.jpg"
+     ],
+     [
+      "12",
+      "mp3",
+      "EXPORT/12 -  - 65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b.mp3"
+     ],
+     [
+      "13",
+      "animated gif",
+      "EXPORT/13 - link, samus aran - 2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726.gif"
+     ],
+     [
+      "14",
+      "tiff",
+      "EXPORT/14 -  - 9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2.tiff"
+     ]
+    ]
+   },
+   "exported": {
+    "1 -  - d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68.png": "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "1 -  - d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68.png.json": {
+     "tags": {
+      "display": {
+       "downloader tags": [
+        "filename:png_01",
+        "source:fixture"
+       ],
+       "my tags": [
+        "blue eyes",
+        "page:1",
+        "page:10",
+        "safe",
+        "volume:3",
+        "キャラクター:初音ミク"
+       ]
+      },
+      "storage": {
+       "downloader tags": [
+        "filename:png_01",
+        "source:fixture"
+       ],
+       "my tags": [
+        "blue eyes",
+        "page:1",
+        "page:10",
+        "safe",
+        "volume:3",
+        "キャラクター:初音ミク"
+       ]
+      }
+     },
+     "times": {
+      "archived": [
+       "1790707137"
+      ],
+      "imported": [
+       "1790707136"
+      ]
+     }
+    },
+    "10 -  - 9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c.jpg": "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "10 -  - 9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c.jpg.json": {
+     "tags": {
+      "display": {
+       "my tags": [
+        "creator:someone else",
+        "format:jpeg",
+        "safe"
+       ]
+      },
+      "storage": {
+       "my tags": [
+        "creator:someone else",
+        "format:jpeg",
+        "safe"
+       ]
+      }
+     },
+     "times": {
+      "imported": [
+       "1790707135"
+      ]
+     }
+    },
+    "11 - samus aran - a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf.jpg": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "11 - samus aran - a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf.jpg.json": {
+     "tags": {
+      "display": {
+       "my tags": [
+        "blue eyes",
+        "character:samus aran",
+        "format:jpeg",
+        "safe",
+        "series:metroid",
+        "smile",
+        "studio:nintendo"
+       ],
+       "second tags": [
+        "blue eyes",
+        "second:canonical"
+       ]
+      },
+      "storage": {
+       "my tags": [
+        "blue_eyes",
+        "format:jpeg",
+        "safe",
+        "samus",
+        "smile"
+       ],
+       "second tags": [
+        "blue eyes",
+        "second:tag"
+       ]
+      }
+     },
+     "times": {
+      "imported": [
+       "1790707135"
+      ]
+     }
+    },
+    "12 -  - 65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b.mp3": "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "12 -  - 65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b.mp3.json": {
+     "notes": [
+      "comment: another note"
+     ],
+     "tags": {
+      "display": {
+       "my tags": [
+        "blue eyes",
+        "page:10",
+        "safe",
+        "volume:3",
+        "キャラクター:初音ミク"
+       ]
+      },
+      "storage": {
+       "my tags": [
+        "blue eyes",
+        "page:10",
+        "safe",
+        "volume:3",
+        "キャラクター:初音ミク"
+       ]
+      }
+     },
+     "times": {
+      "imported": [
+       "1790707134"
+      ],
+      "last_viewed_media_viewer": [
+       "1700000000"
+      ],
+      "last_viewed_preview_viewer": [
+       "1700000100"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1003",
+      "https://example.com/post/3",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2003"
+     ]
+    },
+    "13 - link, samus aran - 2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726.gif": "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "13 - link, samus aran - 2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726.gif.json": {
+     "tags": {
+      "display": {
+       "my tags": [
+        "character:link",
+        "character:samus aran",
+        "creator:someone else",
+        "indoors",
+        "red hair",
+        "safe",
+        "series:metroid",
+        "series:the legend of zelda",
+        "studio:nintendo"
+       ],
+       "second tags": [
+        "blue eyes",
+        "second:canonical"
+       ]
+      },
+      "storage": {
+       "my tags": [
+        "character:link",
+        "character:samus aran",
+        "creator:someone else",
+        "indoors",
+        "red hair",
+        "safe"
+       ],
+       "second tags": [
+        "blue eyes",
+        "second:tag"
+       ]
+      }
+     },
+     "times": {
+      "imported": [
+       "1790707135"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1009",
+      "https://example.com/post/9",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2009"
+     ]
+    },
+    "14 -  - 9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2.tiff": "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "14 -  - 9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2.tiff.json": {
+     "tags": {
+      "display": {
+       "downloader tags": [
+        "filename:tiff_image",
+        "source:fixture"
+       ],
+       "my tags": [
+        "blue eyes",
+        "safe"
+       ]
+      },
+      "storage": {
+       "downloader tags": [
+        "filename:tiff_image",
+        "source:fixture"
+       ],
+       "my tags": [
+        "blue eyes",
+        "safe"
+       ]
+      }
+     },
+     "times": {
+      "archived": [
+       "1790707137"
+      ],
+      "imported": [
+       "1790707136"
+      ]
+     }
+    },
+    "2 -  - 91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29.jpg": "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "2 -  - 91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29.jpg.json": {
+     "tags": {
+      "display": {
+       "my tags": [
+        "blue eyes",
+        "format:jpeg",
+        "safe",
+        "キャラクター:初音ミク"
+       ],
+       "second tags": [
+        "blue eyes",
+        "second:canonical"
+       ]
+      },
+      "storage": {
+       "my tags": [
+        "blue eyes",
+        "format:jpeg",
+        "safe",
+        "キャラクター:初音ミク"
+       ],
+       "second tags": [
+        "blue eyes",
+        "second:tag"
+       ]
+      }
+     },
+     "times": {
+      "imported": [
+       "1790707136"
+      ]
+     }
+    },
+    "3 - link, samus aran - 32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c.png": "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "3 - link, samus aran - 32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c.png.json": {
+     "tags": {
+      "display": {
+       "my tags": [
+        "character:link",
+        "character:samus aran",
+        "creator:someone else",
+        "safe",
+        "series:metroid",
+        "series:the legend of zelda",
+        "studio:nintendo"
+       ]
+      },
+      "storage": {
+       "my tags": [
+        "character:link",
+        "character:samus aran",
+        "creator:someone else",
+        "safe"
+       ]
+      }
+     },
+     "times": {
+      "imported": [
+       "1790707136"
+      ]
+     }
+    },
+    "4 -  - 03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b.png": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "4 -  - 03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b.png.json": {
+     "tags": {
+      "display": {
+       "downloader tags": [
+        "filename:apng_animated",
+        "source:fixture"
+       ],
+       "my tags": [
+        "safe"
+       ]
+      },
+      "storage": {
+       "downloader tags": [
+        "filename:apng_animated",
+        "source:fixture"
+       ],
+       "my tags": [
+        "safe"
+       ]
+      }
+     },
+     "times": {
+      "archived": [
+       "1790707137"
+      ],
+      "imported": [
+       "1790707134"
+      ],
+      "last_viewed_media_viewer": [
+       "1700000000"
+      ],
+      "last_viewed_preview_viewer": [
+       "1700000100"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1000",
+      "https://example.com/post/0",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2000"
+     ]
+    },
+    "5 - link - c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce.png": "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+    "5 - link - c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce.png.json": {
+     "tags": {
+      "display": {
+       "downloader tags": [
+        "filename:dupe_jpeg_02",
+        "source:fixture"
+       ],
+       "my tags": [
+        "character:link",
+        "creator:someone else",
+        "safe",
+        "series:the legend of zelda",
+        "studio:nintendo"
+       ]
+      },
+      "storage": {
+       "downloader tags": [
+        "filename:dupe_jpeg_02",
+        "source:fixture"
+       ],
+       "my tags": [
+        "character:link",
+        "creator:someone else",
+        "safe"
+       ]
+      }
+     },
+     "times": {
+      "archived": [
+       "1790707137"
+      ],
+      "imported": [
+       "1790707134"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1006",
+      "https://example.com/post/6",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2006"
+     ]
+    },
+    "6 - link, samus aran - bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc.jpg": "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "6 - link, samus aran - bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc.jpg.json": {
+     "tags": {
+      "display": {
+       "downloader tags": [
+        "filename:jpeg_07",
+        "source:fixture"
+       ],
+       "my tags": [
+        "character:link",
+        "character:samus aran",
+        "creator:someone else",
+        "format:jpeg",
+        "indoors",
+        "safe",
+        "series:metroid",
+        "series:the legend of zelda",
+        "studio:nintendo"
+       ]
+      },
+      "storage": {
+       "downloader tags": [
+        "filename:jpeg_07",
+        "source:fixture"
+       ],
+       "my tags": [
+        "character:link",
+        "character:samus aran",
+        "creator:someone else",
+        "format:jpeg",
+        "indoors",
+        "safe"
+       ]
+      }
+     },
+     "times": {
+      "archived": [
+       "1790707137"
+      ],
+      "imported": [
+       "1790707135"
+      ]
+     }
+    },
+    "7 -  - 92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5.jpg": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "7 -  - 92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5.jpg.json": {
+     "tags": {
+      "display": {
+       "downloader tags": [
+        "filename:jpeg_01",
+        "source:fixture"
+       ],
+       "my tags": [
+        "blue eyes",
+        "format:jpeg",
+        "safe",
+        "volume:3",
+        "キャラクター:初音ミク"
+       ]
+      },
+      "storage": {
+       "downloader tags": [
+        "filename:jpeg_01",
+        "source:fixture"
+       ],
+       "my tags": [
+        "blue eyes",
+        "format:jpeg",
+        "safe",
+        "volume:3",
+        "キャラクター:初音ミク"
+       ]
+      }
+     },
+     "times": {
+      "archived": [
+       "1790707137"
+      ],
+      "imported": [
+       "1790707135"
+      ]
+     }
+    },
+    "8 - samus aran - 5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a.bmp": "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "8 - samus aran - 5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a.bmp.json": {
+     "tags": {
+      "display": {
+       "downloader tags": [
+        "filename:bitmap",
+        "source:fixture"
+       ],
+       "my tags": [
+        "blue eyes",
+        "character:samus aran",
+        "safe",
+        "series:metroid",
+        "smile",
+        "studio:nintendo",
+        "éclair"
+       ]
+      },
+      "storage": {
+       "downloader tags": [
+        "filename:bitmap",
+        "source:fixture"
+       ],
+       "my tags": [
+        "blue_eyes",
+        "safe",
+        "samus",
+        "smile",
+        "éclair"
+       ]
+      }
+     },
+     "times": {
+      "archived": [
+       "1790707137"
+      ],
+      "imported": [
+       "1790707134"
+      ],
+      "last_viewed_media_viewer": [
+       "1700000000"
+      ],
+      "last_viewed_preview_viewer": [
+       "1700000100"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1004",
+      "https://example.com/post/4"
+     ]
+    },
+    "9 - samus aran - f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6.jpg": "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "9 - samus aran - f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6.jpg.json": {
+     "tags": {
+      "display": {
+       "downloader tags": [
+        "filename:jpeg_11",
+        "source:fixture"
+       ],
+       "my tags": [
+        "character:samus aran",
+        "format:jpeg",
+        "safe",
+        "series:metroid",
+        "smile",
+        "studio:nintendo"
+       ]
+      },
+      "storage": {
+       "downloader tags": [
+        "filename:jpeg_11",
+        "source:fixture"
+       ],
+       "my tags": [
+        "format:jpeg",
+        "safe",
+        "samus",
+        "smile"
+       ]
+      }
+     },
+     "times": {
+      "archived": [
+       "1790707137"
+      ],
+      "imported": [
+       "1790707136"
+      ]
+     }
+    }
+   },
+   "hits": [],
+   "popups": [
+    {
+     "error": false,
+     "files": null,
+     "text_1": "Done!",
+     "text_2": "",
+     "title": "file export"
+    }
+   ],
+   "step": "export"
+  }
+ ]
+}

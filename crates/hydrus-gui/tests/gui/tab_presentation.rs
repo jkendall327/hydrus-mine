@@ -252,6 +252,28 @@ fn apply_cancel_reopen_and_four_sides_preserve_real_nested_selection_and_full_na
             "East"
         };
         assert_eq!(observed, step["root"]["position"].as_str().unwrap());
+        // The nested notebook's bar sits on the same side as the root's, as
+        // the reference's does (`nested.position` is the root's), toward the
+        // content from it.
+        assert_eq!(step["nested"]["position"], step["root"]["position"]);
+        {
+            let PageContent::Pages(children) = &original.pages[1].content else {
+                panic!("nested notebook")
+            };
+            let frames = tab_frames.borrow();
+            let (rx, ry, ..) = frames[&original.pages[1].key.to_hex()];
+            let (nx, ny, ..) = frames[&children[0].key.to_hex()];
+            let toward_content = match alignment {
+                TabAlignment::Top => ny > ry,
+                TabAlignment::Bottom => ny < ry,
+                TabAlignment::Left => nx > rx,
+                TabAlignment::Right => nx < rx,
+            };
+            assert!(
+                toward_content,
+                "{alignment:?}: the nested bar ({nx}, {ny}) lies toward the content from the root's ({rx}, {ry})"
+            );
+        }
         match alignment {
             TabAlignment::Top => {
                 dimension(height, 56.0);

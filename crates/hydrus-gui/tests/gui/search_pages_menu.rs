@@ -13,7 +13,7 @@ use hydrus_search::FileSearchContext;
 use hydrus_store::import::import_legacy;
 use hydrus_store::{Store, sessions};
 
-fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
+pub(crate) fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();
     import_legacy(
@@ -25,7 +25,7 @@ fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
     ([legacy, native], store)
 }
 
-fn titles(ui: &MainWindow) -> Vec<(String, bool)> {
+pub(crate) fn titles(ui: &MainWindow) -> Vec<(String, bool)> {
     let titles = ui.get_menu_titles();
     (0..titles.row_count())
         .map(|i| {
@@ -36,7 +36,7 @@ fn titles(ui: &MainWindow) -> Vec<(String, bool)> {
 }
 
 /// The open menus' lines: (label, usable), separators as "---".
-fn panes(ui: &MainWindow) -> Vec<Vec<(String, bool)>> {
+pub(crate) fn panes(ui: &MainWindow) -> Vec<Vec<(String, bool)>> {
     let panes = ui.get_menu_panes();
     (0..panes.row_count())
         .map(|p| {
@@ -56,11 +56,11 @@ fn panes(ui: &MainWindow) -> Vec<Vec<(String, bool)>> {
         .collect()
 }
 
-fn labels(ui: &MainWindow, pane: usize) -> Vec<String> {
+pub(crate) fn labels(ui: &MainWindow, pane: usize) -> Vec<String> {
     panes(ui)[pane].iter().map(|l| l.0.clone()).collect()
 }
 
-fn line(ui: &MainWindow, label: &str) -> (i32, i32) {
+pub(crate) fn line(ui: &MainWindow, label: &str) -> (i32, i32) {
     let panes = panes(ui);
     let p = panes.len() - 1;
     let i = panes[p]
@@ -70,7 +70,7 @@ fn line(ui: &MainWindow, label: &str) -> (i32, i32) {
     (p as i32, i as i32)
 }
 
-fn hover(ui: &MainWindow, label: &str) {
+pub(crate) fn hover(ui: &MainWindow, label: &str) {
     let (p, i) = line(ui, label);
     ui.invoke_menu_line_hovered(
         p,
@@ -81,13 +81,13 @@ fn hover(ui: &MainWindow, label: &str) {
     );
 }
 
-fn choose(ui: &MainWindow, label: &str) {
+pub(crate) fn choose(ui: &MainWindow, label: &str) {
     let (p, i) = line(ui, label);
     ui.invoke_menu_line_clicked(p, i, 0.0, 0.0, 0.0);
 }
 
 /// Open top-level menu `title`, then hover down the `path` of submenus.
-fn open(ui: &MainWindow, title: &str, path: &[&str]) {
+pub(crate) fn open(ui: &MainWindow, title: &str, path: &[&str]) {
     let at = titles(ui).iter().position(|(t, _)| t == title).unwrap() as i32;
     ui.invoke_menu_title_pressed(at, 80.0, 22.0);
     for step in path {
@@ -95,14 +95,14 @@ fn open(ui: &MainWindow, title: &str, path: &[&str]) {
     }
 }
 
-fn tabs(ui: &MainWindow) -> Vec<String> {
+pub(crate) fn tabs(ui: &MainWindow) -> Vec<String> {
     let row = ui.get_tab_rows().row_data(0).unwrap();
     (0..row.names.row_count())
         .map(|i| row.names.row_data(i).unwrap().to_string())
         .collect()
 }
 
-fn search(name: &str) -> Page {
+pub(crate) fn search(name: &str) -> Page {
     Page {
         key: PageKey::random(),
         name: name.into(),
@@ -117,7 +117,7 @@ fn search(name: &str) -> Page {
 }
 
 /// A client whose last session is the named search pages.
-fn client(
+pub(crate) fn client(
     names: &[&str],
 ) -> (
     [tempfile::TempDir; 2],
@@ -358,8 +358,6 @@ fn saved_sessions_append_as_a_page_of_pages_and_delete_after_asking() {
     );
 }
 
-// leaf: audit-options-undo-manager-undo-last-content-operation
-// leaf: audit-options-undo-manager-redo-last-content-operation
 #[test]
 fn the_undo_menu_undoes_and_redoes_the_last_content_change() {
     let _windows = headless::init();
@@ -488,7 +486,6 @@ fn the_download_and_special_menus_make_each_kind_of_page_named_as_the_reference_
     );
 }
 
-// leaf: audit-options-menu-menu-pages-all-multiwatcher-highlights
 #[test]
 fn clear_all_multiwatcher_highlights_clears_every_watcher_page() {
     let _windows = headless::init();
@@ -527,7 +524,6 @@ fn clear_all_multiwatcher_highlights_clears_every_watcher_page() {
     }
 }
 
-// leaf: audit-options-weight-detail
 #[test]
 fn total_session_weight_explains_the_number_with_open_and_closed_file_and_url_weights() {
     use hydrus_core::import_options::ImportOptionsSlice;

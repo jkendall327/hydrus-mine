@@ -14,6 +14,7 @@ use hydrus_store::store::DB_FILE_NAME;
 use hydrus_store::transfer::{TransferMode, transfer_media};
 
 mod api_keys;
+mod bench;
 mod client_api_listener;
 mod duplicates;
 mod folder_wait;
@@ -130,6 +131,10 @@ enum Command {
         #[command(subcommand)]
         action: duplicates::Action,
     },
+    /// Time what the client does on your collection (open, searches,
+    /// autocomplete, thumbnails, tag relations, duplicates) and print a
+    /// report to paste. Strictly read-only: the store is not changed.
+    Bench(bench::Options),
     /// Pause subscriptions, the network or the downloader queues, as
     /// hydrus's "network > pause" menu does (your pauses come across from
     /// hydrus). With nothing to pause, says what is paused.
@@ -190,6 +195,30 @@ impl From<FilesMode> for TransferMode {
     }
 }
 
+impl Command {
+    /// The store directory the command works on, where its crash log goes.
+    /// The store a command works on, for its crash log; `bench` only reads its
+    /// store, so it writes no log there either.
+    fn store_dir(&self) -> Option<&Path> {
+        Some(match self {
+            Command::Bench(_) => return None,
+            Command::ImportLegacy { dest, .. } => dest,
+            Command::Serve { dir, .. }
+            | Command::Maintenance { dir, .. }
+            | Command::Purge { dir }
+            | Command::Gallery { dir, .. }
+            | Command::Subscriptions { dir, .. }
+            | Command::ImportFolders { dir, .. }
+            | Command::ExportFolders { dir, .. }
+            | Command::ApiKeys { dir, .. }
+            | Command::Queues { dir, .. }
+            | Command::Duplicates { dir, .. }
+            | Command::Pause { dir, .. }
+            | Command::Resume { dir, .. } => dir,
+        })
+    }
+}
+
 fn main() -> Result<()> {
     tracing_subscriber::fmt()
         .with_env_filter(
@@ -197,7 +226,12 @@ fn main() -> Result<()> {
                 .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("info")),
         )
         .init();
-    match Cli::parse().command {
+    let command = Cli::parse().command;
+    // every panic, on any thread, goes to the store's crash log
+    if let Some(dir) = command.store_dir() {
+        hydrus_core::crash_log::install(dir, "hydrus");
+    }
+    match command {
         Command::ImportLegacy {
             source,
             dest,
@@ -272,6 +306,7 @@ fn main() -> Result<()> {
             }
             duplicates::run(&dir, action)
         }
+        Command::Bench(options) => bench::run(&options),
         Command::Pause { dir, what } => pauses::run(&dir, what, true),
         Command::Resume { dir, what } => pauses::run(&dir, Some(what), false),
         Command::Maintenance {

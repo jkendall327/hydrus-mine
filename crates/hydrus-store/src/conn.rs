@@ -260,6 +260,49 @@ impl Db {
         Ok(paused)
     }
 
+    /// Open an existing database that is already at [`SCHEMA_VERSION`]
+    /// strictly read-only: no migration, no journal-mode change, no writer
+    /// thread (so every write fails with [`StoreError::WriterGone`]), and
+    /// connections the database itself refuses writes on.
+    pub fn open_read_only(path: &Path, num_readers: usize) -> Result<Self> {
+        let flags = OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX;
+        let num_readers = num_readers.max(1);
+        let (give_back, take) = crossbeam_channel::bounded(num_readers);
+        for _ in 0..num_readers {
+            let reader = Connection::open_with_flags(path, flags)?;
+            schema::configure_read_only(&reader)?;
+            give_back.send(reader).map_err(|_| StoreError::WriterGone)?;
+        }
+        let version: u32 = {
+            let reader = take.recv().map_err(|_| StoreError::WriterGone)?;
+            let version = reader.query_row("PRAGMA user_version", [], |r| r.get(0))?;
+            give_back.send(reader).map_err(|_| StoreError::WriterGone)?;
+            version
+        };
+        if version < schema::SCHEMA_VERSION {
+            return Err(StoreError::Invalid(format!(
+                "the database is at schema version {version}, older than the {} this build reads: open it with the client once to migrate it",
+                schema::SCHEMA_VERSION
+            )));
+        }
+        if version > schema::SCHEMA_VERSION {
+            return Err(StoreError::Invalid(format!(
+                "the database is at schema version {version}, newer than the {} this build reads: use a newer build",
+                schema::SCHEMA_VERSION
+            )));
+        }
+        Ok(Self {
+            activity: std::sync::Arc::default(),
+            path: path.to_path_buf(),
+            writer: Writer {
+                jobs: None,
+                thread: None,
+            },
+            readers: ReaderPool { take, give_back },
+            num_readers,
+        })
+    }
+
     pub fn path(&self) -> &Path {
         &self.path
     }

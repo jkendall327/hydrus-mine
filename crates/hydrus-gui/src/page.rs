@@ -3036,7 +3036,7 @@ impl SearchPage {
             &media,
             &snapshot.services,
             &settings,
-            hydrus_core::TimestampMs::now().0,
+            crate::viewer::now_ms(),
             &hydrus_gui_model::gui_format::preferences(&self.store),
         ))
     }

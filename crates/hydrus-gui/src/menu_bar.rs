@@ -6,6 +6,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use hydrus_core::numbers::human_int;
+use hydrus_core::pages::PageKey;
 use slint::{ComponentHandle, Model, ModelRc, SharedString, VecModel};
 
 use crate::main_menu::{self, Command, Facts, LineKind, MenuKey, OpenMenus};
@@ -595,16 +596,34 @@ fn run_command(window: &MainWindow, hooks: &Hooks, command: Command) {
             }
         }
         Command::CloseTabs { depth, index, side } => {
-            let prepared = hooks
-                .pages
-                .borrow_mut()
-                .close_tabs_question(depth, index, side);
-            if let Some((keys, question)) = prepared {
+            let prepared = hooks.pages.borrow_mut().close_tabs_plan(depth, index, side);
+            if let Some(plan) = prepared {
                 let change_pages = hooks.change_pages.clone();
-                (hooks.ask)(
-                    question,
-                    Rc::new(move || change_pages(&|pages| pages.close_tab_keys(&keys))),
-                );
+                let keys = plan.keys;
+                let close: Rc<dyn Fn()> =
+                    Rc::new(move || change_pages(&|pages| pages.close_tab_keys(&keys)));
+                if plan.objections.is_empty() {
+                    (hooks.ask)(plan.question, close);
+                } else {
+                    // some page objects: the longer question, with a way to
+                    // look at the pages that do
+                    let change_pages = hooks.change_pages.clone();
+                    let show: Rc<dyn Fn(PageKey)> = Rc::new(move |key| {
+                        change_pages(&|pages| {
+                            pages.show(&key);
+                            Ok(())
+                        });
+                    });
+                    if let Err(error) = crate::reasons_dialog::open(
+                        &plan.question,
+                        plan.objections,
+                        crate::reasons_dialog::yes_delay(),
+                        close,
+                        show,
+                    ) {
+                        eprintln!("could not ask about closing the pages: {error}");
+                    }
+                }
             }
         }
         Command::NavigateTabs { depth, movement } => change_pages(&|pages| {
@@ -842,6 +861,17 @@ fn run_command(window: &MainWindow, hooks: &Hooks, command: Command) {
                 eprintln!("could not ask the daemon for a snapshot: {e}");
             }
         }
+        Command::DebugSimulateWake => {
+            // this process's sleep check sees a wake: the popup is up at once
+            // (the monitor's next tick resets the idle timer), and the
+            // daemon's network engine and file paths see one too
+            if store.simulate_wake() {
+                crate::wake_popup::begin(&store);
+            }
+            if let Err(e) = hydrus_store::debug_switches::request_wake_simulation(&store) {
+                eprintln!("could not ask the daemon to simulate a wake: {e}");
+            }
+        }
         Command::DebugWhatIsThisObject => {
             if let Err(e) = crate::what_is_this_window::open() {
                 eprintln!("could not open the window: {e}");
@@ -929,6 +959,7 @@ fn run_command(window: &MainWindow, hooks: &Hooks, command: Command) {
             );
         }
         Command::OpenUrl(url) => crate::launch(url),
+        Command::OpenHelp(page) => crate::documentation::open(page),
         Command::AdvancedMode => {
             flip::<hydrus_store::settings::AdvancedMode>(&store, |a| a.0 = !a.0);
         }
