@@ -1,0 +1,174 @@
+{
+  "menu_path": [
+    "help",
+    "debug",
+    "report modes"
+  ],
+  "commands": {
+    "78": "refresh page search/sort",
+    "7": "pages: close current",
+    "56": "open a new page: choose a page",
+    "6": "close media viewer",
+    "99": "media navigation: next",
+    "100": "media navigation: previous",
+    "101": "zoom: in",
+    "102": "zoom: out",
+    "92": "switch between fullscreen borderless and regular framed window"
+  },
+  "keys": [
+    {
+      "name": "j",
+      "off": [],
+      "shortcut": [
+        "Key shortcut \"j\" passing through <main window>. I am in a state to catch it."
+      ],
+      "gui": [
+        "key event caught: Shortcut: j"
+      ]
+    },
+    {
+      "name": "f5",
+      "off": [],
+      "shortcut": [
+        "Key shortcut \"f5\" passing through <main window>. I am in a state to catch it.",
+        "Shortcut \"f5\" matched on \"main_gui\" set to \"refresh page search/sort\" command.",
+        "Shortcut \"f5\" matched to command \"refresh page search/sort\" on <main window>. It was processed."
+      ],
+      "gui": [
+        "key event caught: Shortcut: f5",
+        "Setting a virtual size on <hydrus.client.gui.pages.ClientGUISidebarCore.ListBoxTagsMediaSidebar(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 0, Text height: 15, Total Positional Rows: 0, My Height: 225, Ideal Height: 0"
+      ]
+    },
+    {
+      "name": "shift+j",
+      "off": [],
+      "shortcut": [
+        "Key shortcut \"shift+j\" passing through <main window>. I am in a state to catch it."
+      ],
+      "gui": [
+        "key event caught: Shortcut: shift+j"
+      ]
+    },
+    {
+      "name": "ctrl+j",
+      "off": [],
+      "shortcut": [
+        "Key shortcut \"ctrl+j\" passing through <main window>. I am in a state to catch it."
+      ],
+      "gui": [
+        "key event caught: Shortcut: ctrl+j"
+      ]
+    },
+    {
+      "name": "alt+j",
+      "off": [],
+      "shortcut": [
+        "Key shortcut \"alt+j\" passing through <main window>. I am in a state to catch it."
+      ],
+      "gui": [
+        "key event caught: Shortcut: alt+j"
+      ]
+    },
+    {
+      "name": "ctrl+f5",
+      "off": [],
+      "shortcut": [
+        "Key shortcut \"ctrl+f5\" passing through <main window>. I am in a state to catch it."
+      ],
+      "gui": [
+        "key event caught: Shortcut: ctrl+f5"
+      ]
+    },
+    {
+      "name": "numpad 5",
+      "off": [],
+      "shortcut": [
+        "Key shortcut \"5 (on numpad)\" passing through <main window>. I am in a state to catch it."
+      ],
+      "gui": [
+        "key event caught: Shortcut: 5 (on numpad)"
+      ]
+    },
+    {
+      "name": "return",
+      "off": [],
+      "shortcut": [
+        "Key shortcut \"return\" passing through <main window>. I am in a state to catch it."
+      ],
+      "gui": [
+        "key event caught: Shortcut: return"
+      ]
+    },
+    {
+      "name": "space",
+      "off": [],
+      "shortcut": [
+        "Key shortcut \"space\" passing through <main window>. I am in a state to catch it."
+      ],
+      "gui": [
+        "key event caught: Shortcut: space"
+      ]
+    },
+    {
+      "name": "escape",
+      "off": [],
+      "shortcut": [
+        "Key shortcut \"escape\" passing through <main window>. I am in a state to catch it."
+      ],
+      "gui": [
+        "key event caught: Shortcut: escape"
+      ]
+    }
+  ],
+  "manage_tags": {
+    "off": [],
+    "gui": [
+      "Opening manage tags on these services: [<service>, <service>, <service>]",
+      "Opening manage tags panel on <service>, downloader tags, 646f776e6c6f616465722074616773",
+      "Setting a virtual size on <hydrus.client.gui.search.ClientGUIACDropdown.ListBoxTagsStringsAC(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 0, Text height: 15, Total Positional Rows: 0, My Height: 28, Ideal Height: 0",
+      "Setting a virtual size on <hydrus.client.gui.lists.ClientGUIListBoxes.ListBoxTagsMediaTagsDialog(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 0, Text height: 15, Total Positional Rows: 0, My Height: 28, Ideal Height: 0",
+      "Setting a virtual size on <hydrus.client.gui.lists.ClientGUIListBoxes.ListBoxTagsMediaTagsDialog(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 0, Text height: 15, Total Positional Rows: 0, My Height: 28, Ideal Height: 0",
+      "Setting a virtual size on <hydrus.client.gui.lists.ClientGUIListBoxes.ListBoxTagsMediaTagsDialog(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 2, Text height: 15, Total Positional Rows: 2, My Height: 28, Ideal Height: 30",
+      "Setting a virtual size on <hydrus.client.gui.ClientGUITagSuggestions.ListBoxTagsSuggestionsFavourites(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 0, Text height: 15, Total Positional Rows: 0, My Height: 28, Ideal Height: 0",
+      "Setting a virtual size on <hydrus.client.gui.ClientGUITagSuggestions.ListBoxTagsSuggestionsFavourites(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 0, Text height: 15, Total Positional Rows: 0, My Height: 0, Ideal Height: 0",
+      "Opening manage tags panel on <service>, my tags, 6c6f63616c2074616773",
+      "Setting a virtual size on <hydrus.client.gui.search.ClientGUIACDropdown.ListBoxTagsStringsAC(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 0, Text height: 15, Total Positional Rows: 0, My Height: 28, Ideal Height: 0",
+      "Setting a virtual size on <hydrus.client.gui.lists.ClientGUIListBoxes.ListBoxTagsMediaTagsDialog(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 0, Text height: 15, Total Positional Rows: 0, My Height: 28, Ideal Height: 0",
+      "Setting a virtual size on <hydrus.client.gui.lists.ClientGUIListBoxes.ListBoxTagsMediaTagsDialog(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 0, Text height: 15, Total Positional Rows: 0, My Height: 28, Ideal Height: 0",
+      "Setting a virtual size on <hydrus.client.gui.lists.ClientGUIListBoxes.ListBoxTagsMediaTagsDialog(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 2, Text height: 15, Total Positional Rows: 2, My Height: 28, Ideal Height: 30",
+      "Setting a virtual size on <hydrus.client.gui.ClientGUITagSuggestions.ListBoxTagsSuggestionsFavourites(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 0, Text height: 15, Total Positional Rows: 0, My Height: 28, Ideal Height: 0",
+      "Setting a virtual size on <hydrus.client.gui.ClientGUITagSuggestions.ListBoxTagsSuggestionsFavourites(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 0, Text height: 15, Total Positional Rows: 0, My Height: 0, Ideal Height: 0",
+      "Opening manage tags panel on <service>, second tags, 5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0",
+      "Setting a virtual size on <hydrus.client.gui.search.ClientGUIACDropdown.ListBoxTagsStringsAC(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 0, Text height: 15, Total Positional Rows: 0, My Height: 28, Ideal Height: 0",
+      "Setting a virtual size on <hydrus.client.gui.lists.ClientGUIListBoxes.ListBoxTagsMediaTagsDialog(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 0, Text height: 15, Total Positional Rows: 0, My Height: 28, Ideal Height: 0",
+      "Setting a virtual size on <hydrus.client.gui.lists.ClientGUIListBoxes.ListBoxTagsMediaTagsDialog(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 0, Text height: 15, Total Positional Rows: 0, My Height: 28, Ideal Height: 0",
+      "Setting a virtual size on <hydrus.client.gui.lists.ClientGUIListBoxes.ListBoxTagsMediaTagsDialog(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 2, Text height: 15, Total Positional Rows: 2, My Height: 28, Ideal Height: 30",
+      "Setting a virtual size on <hydrus.client.gui.ClientGUITagSuggestions.ListBoxTagsSuggestionsFavourites(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 0, Text height: 15, Total Positional Rows: 0, My Height: 28, Ideal Height: 0",
+      "Setting a virtual size on <hydrus.client.gui.ClientGUITagSuggestions.ListBoxTagsSuggestionsFavourites(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 0, Text height: 15, Total Positional Rows: 0, My Height: 0, Ideal Height: 0",
+      "Opening manage tags panel, notebook tab count is 3",
+      "Setting a virtual size on <hydrus.client.gui.lists.ClientGUIListBoxes.ListBoxTagsMediaTagsDialog(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 2, Text height: 15, Total Positional Rows: 2, My Height: 30, Ideal Height: 30",
+      "Setting a virtual size on <hydrus.client.gui.lists.ClientGUIListBoxes.ListBoxTagsMediaTagsDialog(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 2, Text height: 15, Total Positional Rows: 4, My Height: 30, Ideal Height: 60",
+      "Setting a virtual size on <hydrus.client.gui.lists.ClientGUIListBoxes.ListBoxTagsMediaTagsDialog(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 2, Text height: 15, Total Positional Rows: 2, My Height: 30, Ideal Height: 30",
+      "Setting a virtual size on <hydrus.client.gui.ClientGUITagSuggestions.ListBoxTagsSuggestionsFavourites(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 0, Text height: 15, Total Positional Rows: 0, My Height: 28, Ideal Height: 0",
+      "Setting a virtual size on <hydrus.client.gui.ClientGUITagSuggestions.ListBoxTagsSuggestionsFavourites(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 0, Text height: 15, Total Positional Rows: 0, My Height: 28, Ideal Height: 0",
+      "Setting a virtual size on <hydrus.client.gui.ClientGUITagSuggestions.ListBoxTagsSuggestionsFavourites(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 0, Text height: 15, Total Positional Rows: 0, My Height: 28, Ideal Height: 0",
+      "Setting a virtual size on <hydrus.client.gui.ClientGUITagSuggestions.ListBoxTagsSuggestionsFavourites(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 0, Text height: 15, Total Positional Rows: 0, My Height: 28, Ideal Height: 0",
+      "Setting a virtual size on <hydrus.client.gui.ClientGUITagSuggestions.ListBoxTagsSuggestionsFavourites(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 0, Text height: 15, Total Positional Rows: 0, My Height: 28, Ideal Height: 0",
+      "Setting a virtual size on <hydrus.client.gui.ClientGUITagSuggestions.ListBoxTagsSuggestionsFavourites(0x_, name=\"HydrusTagList\") at 0x_>. Num terms: 0, Text height: 15, Total Positional Rows: 0, My Height: 28, Ideal Height: 0"
+    ]
+  },
+  "tag_services": [
+    {
+      "name": "downloader tags",
+      "key": "646f776e6c6f616465722074616773"
+    },
+    {
+      "name": "my tags",
+      "key": "6c6f63616c2074616773"
+    },
+    {
+      "name": "second tags",
+      "key": "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0"
+    }
+  ]
+}
