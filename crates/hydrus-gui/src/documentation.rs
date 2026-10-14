@@ -5,8 +5,6 @@
 use std::cell::RefCell;
 use std::path::PathBuf;
 
-use slint::ComponentHandle as _;
-
 use crate::ChoiceButtonsWindow;
 
 /// The online help (`HC.REMOTE_HELP`).
@@ -46,7 +44,7 @@ fn help_dir() -> PathBuf {
 
 /// The question window that is open, if any (for tests).
 pub fn last_question() -> Option<ChoiceButtonsWindow> {
-    QUESTION.with(|q| q.borrow().clone())
+    QUESTION.with(|q| q.borrow().as_ref().map(slint::ComponentHandle::clone_strong))
 }
 
 /// Open the help page `page` (a path under the help, possibly with a `#fragment`).

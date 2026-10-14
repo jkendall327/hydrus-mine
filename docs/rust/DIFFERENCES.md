@@ -4774,12 +4774,16 @@ The `mpv.conf` copy replaces a read-only mpv.conf; recorded as root the referenc
 
 ## Options and shell leftovers (#91, #92)
 
-- **Help pages open online at once.** hydrus-rs ships no local help, so Help >
-  open help, Help > changelog and the help buttons (external programs, import
-  options, ...) open the online page. The reference opens its bundled help,
-  or, where there is none (running from source), first asks "You do not have
-  a local help! ..." with open online help / open how to build guide / forget
-  it (`ClientGUIDialogsDocumentation.OpenDocumentation`; #182).
+- **Help pages.** Help > open help, Help > changelog and the help buttons of
+  the external programs and import options panels go through one helper
+  (`documentation.rs`), as the reference's `OpenDocumentation`: the page from a
+  `help` folder beside the program where it exists (opened as a `file:///` URL,
+  with its `#fragment`), otherwise "You do not have a local help! ..." with
+  open online help / open how to build guide / forget it (#182). hydrus-rs does
+  not ship a help folder, so out of the box it always asks. The reference's
+  other help buttons (subscriptions, sidecars, downloader login, ratings,
+  GUGs, formulae, URL classes, database migration) have no counterpart:
+  those windows have no such button.
 - **The startup password window** is hydrus-rs's own window ("hydrus client"),
   not the reference's "Enter Text" dialog over the splash; its blank-entry
   warning ("Cannot enter blank text here!") shows in the window rather than in

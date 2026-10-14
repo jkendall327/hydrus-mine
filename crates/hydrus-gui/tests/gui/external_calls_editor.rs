@@ -6,7 +6,6 @@ use hydrus_core::external_calls::{ActualCall, Parameter, Pipeline};
 use hydrus_core::url::strings::{Conversion, ProcessingStep, StringConverter};
 use hydrus_gui::{MainWindow, Pages, bind, headless};
 use slint::{ComponentHandle as _, Model as _};
-use std::{cell::RefCell, rc::Rc};
 
 fn edit_seeded(
     store: &Arc<hydrus_store::Store>,

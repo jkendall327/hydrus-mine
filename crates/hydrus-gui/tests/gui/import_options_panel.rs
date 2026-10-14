@@ -100,8 +100,8 @@ fn options_drafts_replay_clear_reset_simple_mode_and_cancel_without_store_change
     page(&options);
     let window = panel::last_opened().unwrap();
     // (the recording of the page the button names, then the help replayed)
-    let page = fixture["documentation"][0].as_str().unwrap();
-    super::common::help::replay(page, &|| window.invoke_action(-1, "help".into()));
+    let help_page = fixture["documentation"][0].as_str().unwrap();
+    super::common::help::replay(help_page, &|| window.invoke_action(-1, "help".into()));
     assert_eq!(
         serde_json::json!(rows(&window, 0)),
         fixture["initial"]["defaults"]

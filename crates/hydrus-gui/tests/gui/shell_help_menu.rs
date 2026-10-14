@@ -61,6 +61,13 @@ fn launched_by(ui: &MainWindow, path: &[&str]) -> Vec<String> {
         let launched = launched.clone();
         move |target| launched.borrow_mut().push(target.to_owned())
     });
+    press(ui, path);
+    let launched = launched.borrow().clone();
+    launched
+}
+
+/// Choose the help menu entry at `path`.
+fn press(ui: &MainWindow, path: &[&str]) {
     open_help(ui);
     for (depth, label) in path.iter().enumerate() {
         if depth + 1 < path.len() {
@@ -69,7 +76,6 @@ fn launched_by(ui: &MainWindow, path: &[&str]) -> Vec<String> {
             choose(ui, depth, label);
         }
     }
-    launched.borrow().clone()
 }
 
 fn bound_window() -> (
@@ -155,9 +161,7 @@ fn open_help_and_changelog_launch_their_pages() {
         ("open help", "index.html"),
         ("changelog", "changelog.html#version_688"),
     ] {
-        super::common::help::replay(page, &|| {
-            launched_by(&ui, &[label]);
-        });
+        super::common::help::replay(page, &|| press(&ui, &[label]));
     }
 }
 
