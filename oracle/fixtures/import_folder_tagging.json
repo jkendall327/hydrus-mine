@@ -1,0 +1,168 @@
+{
+ "services": [
+  "downloader tags",
+  "my tags",
+  "second tags"
+ ],
+ "steps": [
+  {
+   "name": "add the first service",
+   "rows": [
+    [
+     "downloader tags"
+    ]
+   ],
+   "warnings": [],
+   "dialogs": [
+    {
+     "title": "edit filename tagging options",
+     "example_path": "/tmp/hydrus_tagging_2yt1zpja/tmp4k4ctmwh/e.gif",
+     "service": "646f776e6c6f616465722074616773"
+    }
+   ]
+  },
+  {
+   "name": "add it again",
+   "rows": [
+    [
+     "downloader tags"
+    ]
+   ],
+   "warnings": [
+    "You already have an entry for that service key! Please try editing it instead!"
+   ],
+   "dialogs": []
+  },
+  {
+   "name": "add the second service",
+   "rows": [
+    [
+     "downloader tags"
+    ],
+    [
+     "my tags"
+    ]
+   ],
+   "warnings": [],
+   "dialogs": [
+    {
+     "title": "edit filename tagging options",
+     "example_path": "/tmp/hydrus_tagging_2yt1zpja/tmp4k4ctmwh/e.gif",
+     "service": "6c6f63616c2074616773"
+    }
+   ]
+  },
+  {
+   "name": "cancel the service choice",
+   "rows": [
+    [
+     "downloader tags"
+    ],
+    [
+     "my tags"
+    ]
+   ],
+   "warnings": [],
+   "dialogs": []
+  },
+  {
+   "name": "edit the first",
+   "rows": [
+    [
+     "downloader tags"
+    ],
+    [
+     "my tags"
+    ]
+   ],
+   "warnings": [],
+   "dialogs": [
+    {
+     "title": "edit filename tagging options",
+     "example_path": "/tmp/hydrus_tagging_2yt1zpja/tmp4k4ctmwh/e.gif",
+     "service": "646f776e6c6f616465722074616773"
+    }
+   ]
+  },
+  {
+   "name": "delete the first",
+   "rows": [
+    [
+     "my tags"
+    ]
+   ],
+   "warnings": [],
+   "dialogs": []
+  }
+ ],
+ "examples": [
+  {
+   "name": "a text file, a one-byte jpeg, a png, a folder and a gif",
+   "listing": [
+    "a.txt",
+    "b.jpg",
+    "c.png",
+    "d",
+    "e.gif"
+   ],
+   "example_paths": [
+    "c.png",
+    "e.gif"
+   ],
+   "dialog_example": "e.gif"
+  },
+  {
+   "name": "nothing importable",
+   "listing": [
+    "a.txt",
+    "b.jpg",
+    "d"
+   ],
+   "example_paths": [],
+   "dialog_example": ""
+  },
+  {
+   "name": "twenty-six texts before the png",
+   "listing": [
+    "00.txt",
+    "01.txt",
+    "02.txt",
+    "03.txt",
+    "04.txt",
+    "05.txt",
+    "06.txt",
+    "07.txt",
+    "08.txt",
+    "09.txt",
+    "10.txt",
+    "11.txt",
+    "12.txt",
+    "13.txt",
+    "14.txt",
+    "15.txt",
+    "16.txt",
+    "17.txt",
+    "18.txt",
+    "19.txt",
+    "20.txt",
+    "21.txt",
+    "22.txt",
+    "23.txt",
+    "24.txt",
+    "25.txt",
+    "zz.png"
+   ],
+   "example_paths": [
+    "zz.png"
+   ],
+   "dialog_example": "zz.png"
+  },
+  {
+   "name": "an empty folder",
+   "listing": [],
+   "example_paths": [],
+   "dialog_example": ""
+  }
+ ],
+ "start": []
+}

@@ -5189,10 +5189,10 @@
     "Selected service opens canonical filename options mode; accepted defaults join the folder draft."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real editor: add for a service, duplicate-service refusal (reference string), edit reopens with saved values, delete, persisted with the folder. The worker consumer (filename_tags) is replayed against the recorded import_folder_run which has filename tagging. The add/edit/delete dialog behaviour itself is not recorded (folders_dialogs.json records an empty list) so its strings and flow are restated from the source. Edit path only cancels, never applies. Tests: crates/hydrus-gui/tests/gui/folders.rs:302 an_import_folders_filename_tagging_is_added_edited_and_deleted; crates/hydrus-download/tests/import_folder.rs:80"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude, #97 phase 2 (w4-r2)",
+    "note": "oracle/record_import_folder_tagging.py scripts the reference's real EditImportFolderPanel (service chooser, tagging dialog and warning replaced by scripted FakeDialogs; the real tagging panel never runs): adding a service lists it, adding the same service again shows 'You already have an entry for that service key! Please try editing it instead!' and changes nothing, a second service is listed, editing opens the tagging dialog titled 'edit filename tagging options', deleting removes the entry, and the services offered are the tag services. folders.rs the_filename_tagging_list_and_its_example_path_follow_the_references_recorded_steps replays each step in the real window and compares the list, the warning, the dialog title, the service each dialog is for and the choices with the recording, and the example path for each recorded folder except the 26-texts one (which entries make the 25-entry cut depends on the file system, DIFFERENCES.md). The recorder's dialog always accepts, so 'cancel on add adds nothing' is neither recorded nor replayed and 'accepted defaults join the draft' is covered on the accept path only. Not compared: what an apply with changes stores (not recorded; the tagging dialog's contents are the filename tagging leaves'), and which of two importable files is the example (the reference takes the file system's first). The service is chosen in a box beside the add button, not a chooser dialog, so the cancelled-choice step has no counterpart (DIFFERENCES.md). The worker's use of the tagging against the recorded import_folder_run is tested before in hydrus-download."
    }
   },
   {
