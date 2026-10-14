@@ -53,20 +53,14 @@ fn debug_print(line: &str) {
 /// Send the report modes' messages to the console and a popup in `store`
 /// (`HydrusData.ShowText`), unless something already receives them.
 pub(crate) fn install_report_sink(store: &std::sync::Arc<Store>) {
-    // (a report can be made from inside a database job, so the popup is
-    // written by a thread of its own rather than waited for)
-    let (lines, queue) = std::sync::mpsc::channel::<String>();
-    let store = std::sync::Arc::downgrade(store);
-    std::thread::spawn(move || {
-        for text in queue {
-            let Some(store) = store.upgrade() else { break };
-            post(&store, vec![Job::text(text, now())]);
-        }
-    });
+    let popup = hydrus_store::debug_switches::report_to_popups(store);
     hydrus_core::debug_flags::set_sink_if_none(Box::new(move |text| {
         debug_print(text);
-        let _ = lines.send(text.to_owned());
+        popup(text);
     }));
+    // (the switches are not kept between runs, and the daemon follows the
+    // ones set here)
+    let _ = hydrus_store::debug_switches::publish(store);
 }
 
 /// Whether panics are logged: always (the reference logs crashes only
@@ -92,6 +86,17 @@ fn flip_crash_logging(store: &Store) {
             now(),
         )],
     );
+}
+
+thread_local! {
+    /// The environment "show env" shows in place of the process's own.
+    static ENVIRONMENT: RefCell<Option<Vec<(String, String)>>> = const { RefCell::new(None) };
+}
+
+/// Show `variables` in "show env" rather than the process's environment (for
+/// tests, which cannot change it), on this thread; `None` puts it back.
+pub fn set_environment(variables: Option<Vec<(String, String)>>) {
+    ENVIRONMENT.with(|e| *e.borrow_mut() = variables);
 }
 
 /// What the actions work with.
@@ -216,7 +221,10 @@ pub(crate) fn run(context: &Context, action: Action) {
         }
         Action::ShowEnv => {
             let separator = if cfg!(windows) { ';' } else { ':' };
-            let text = model::env_text(std::env::vars(), separator);
+            let vars = ENVIRONMENT
+                .with(|e| e.borrow().clone())
+                .unwrap_or_else(|| std::env::vars().collect());
+            let text = model::env_text(vars, separator);
             debug_print(&text);
             post(&store, vec![Job::text(text, now())]);
         }
@@ -226,7 +234,7 @@ pub(crate) fn run(context: &Context, action: Action) {
         }
         Action::ClearRenderingCaches => (context.clear_caches)(),
         Action::ScanStorage => {
-            let Some(path) = crate::pick(crate::Pick::Folder, "Select directory")
+            let Some(path) = crate::pick_in(crate::Pick::Folder, "Select directory", store.dir())
                 .into_iter()
                 .next()
             else {

@@ -69,7 +69,8 @@ pub fn some_popups(now: f64, mut random: impl FnMut() -> Sha256) -> Vec<Job> {
     let mut job = text("This is a test exception");
     job.status_title = Some("DataMissing".into());
     job.had_error = true;
-    job.traceback = Some("DataMissing: This is a test exception".into());
+    // (Python's frames have no counterpart; the framing is the reference's)
+    job.traceback = Some("================ Exception ================\nDataMissing: This is a test exception\n================ Traceback ================\nDataMissing: This is a test exception\n================== Stack ==================\n=================== End ===================".into());
     out.push(job);
     out
 }

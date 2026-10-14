@@ -396,3 +396,188 @@ fn empty_input_keys_move_the_autocomplete_and_service_tabs_as_the_reference_does
         "the reference ignores them there too"
     );
 }
+
+/// The recorded corpus on "my tags" and the three recorded files (in the
+/// recorded order), the Manage Tags window open on all three.
+struct Recorded {
+    _dirs: [tempfile::TempDir; 2],
+    store: std::sync::Arc<hydrus_store::Store>,
+    files: Vec<hydrus_core::HashId>,
+    _ui: MainWindow,
+    _bound: hydrus_gui::Bound,
+    manage: ManageTagsWindow,
+}
+
+fn open_recorded(recorded: &serde_json::Value, allow_remove: bool, confirm: bool) -> Recorded {
+    let (dirs, store) = crate::subscriptions::store();
+    let hashes: Vec<hydrus_core::Sha256> = recorded["files"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|h| h.as_str().unwrap().parse().unwrap())
+        .collect();
+    let files = store
+        .read(|conn| {
+            let ids = hydrus_store::master::hash_ids(conn, &hashes)?;
+            Ok(hashes.iter().map(|h| ids[h]).collect::<Vec<_>>())
+        })
+        .unwrap();
+    let service = store.snapshot().services.by_name("my tags").unwrap().id;
+    let corpus = recorded["corpus"].clone();
+    let seeded = files.clone();
+    store
+        .write_content(move |writer| {
+            for row in corpus.as_array().unwrap() {
+                let [tag, indexes] = row.as_array().unwrap().as_slice() else {
+                    panic!("corpus row");
+                };
+                let tag = hydrus_store::master::intern_tag(
+                    writer.conn(),
+                    &Tag::new(tag.as_str().unwrap()).unwrap(),
+                )?;
+                let on: Vec<_> = indexes
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|i| seeded[usize::try_from(i.as_u64().unwrap()).unwrap()])
+                    .collect();
+                writer.update_mappings(service, &MappingAction::Add, tag, &on)?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    set_cog(&store, move |o| {
+        o.allow_remove_on_input = allow_remove;
+        o.confirm_remove = confirm;
+        o.default_service =
+            hydrus_core::ServiceKey::new(hydrus_core::service::builtin_keys::MY_TAGS.to_vec());
+    });
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(crate::common::all_local_page(store.clone())),
+    );
+    ui.invoke_search_accepted();
+    let page = bound.current.borrow().clone();
+    page.borrow_mut().select_files(&files);
+    ui.invoke_manage_tags_selected();
+    let manage = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    let mine = manage
+        .get_service_names()
+        .iter()
+        .position(|s| s == "my tags")
+        .unwrap();
+    manage.invoke_service_chosen(i32::try_from(mine).unwrap());
+    Recorded {
+        _dirs: dirs,
+        store,
+        files,
+        _ui: ui,
+        _bound: bound,
+        manage,
+    }
+}
+
+/// Each file's current tags on "my tags".
+fn current_tags(
+    store: &hydrus_store::Store,
+    files: &[hydrus_core::HashId],
+) -> Vec<std::collections::BTreeSet<String>> {
+    let service = store.snapshot().services.by_name("my tags").unwrap().id;
+    let snapshot = store.snapshot();
+    let batch = store
+        .read(|c| hydrus_store::media::load(c, &snapshot.services, None, files))
+        .unwrap();
+    (0..files.len())
+        .map(|n| {
+            batch.results[n].tags[&service]
+                .by_status
+                .get(&hydrus_core::ContentStatus::Current)
+                .into_iter()
+                .flatten()
+                .map(|id| batch.tags[id].to_string())
+                .collect()
+        })
+        .collect()
+}
+
+// leaf: audit-media-tags-toggle
+#[test]
+fn typing_a_tag_or_activating_a_row_toggles_it_as_the_reference_does() {
+    let _windows = headless::init();
+    let recorded = hydrus_testkit::fixture_json("manage_tags_cog.json");
+    let mut ran = 0;
+    for case in recorded["cases"].as_array().unwrap() {
+        let name = case["name"].as_str().unwrap();
+        let call = &case["calls"][0];
+        let tags: Vec<&str> = call["args"][0]
+            .as_array()
+            .map(|a| a.iter().map(|t| t.as_str().unwrap()).collect())
+            .unwrap_or_default();
+        // (typing enters one tag at a time and never with only_add, which is
+        // how the suggestion lists add)
+        let typed = name.starts_with("add_")
+            && tags.len() == 1
+            && call["kwargs"]["only_add"].as_bool() != Some(true);
+        let activated = name.starts_with("list_activate");
+        if !typed && !activated {
+            continue;
+        }
+        let allow = case["allow_remove"].as_bool().unwrap();
+        let o = open_recorded(&recorded, allow, case["confirm"].as_bool().unwrap());
+        let m = &o.manage;
+        let before = current_tags(&o.store, &o.files);
+        if activated {
+            m.invoke_tag_activated(row_of(m, tags[0]));
+        } else {
+            m.set_text(tags[0].into());
+            m.invoke_text_edited(tags[0].into());
+            m.invoke_entered();
+        }
+        // the reference's question (several files have the tag, some not),
+        // answered as it was: its first button, its second, or neither
+        let prompts = case["choices_asked"].as_array().unwrap();
+        if let Some(prompt) = prompts.first() {
+            assert_eq!(
+                m.get_tag_menu_question().as_str(),
+                prompt["message"].as_str().unwrap(),
+                "{name}: question"
+            );
+            let buttons: Vec<&str> = prompt["choices"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|c| c["text"].as_str().unwrap())
+                .collect();
+            assert_eq!(m.get_tag_menu_yes_label().as_str(), buttons[0], "{name}");
+            assert_eq!(m.get_tag_menu_no_label().as_str(), buttons[1], "{name}");
+            match case["choice_index"].as_u64() {
+                Some(0) => m.invoke_tag_menu_answered(true),
+                Some(1) => m.invoke_tag_menu_answered(false),
+                _ => m.invoke_tag_menu_dismissed(),
+            }
+        } else {
+            assert!(m.get_tag_menu_question().is_empty(), "{name}: no question");
+        }
+        // nothing is written until the window is applied; then the store
+        // has the reference's staged changes, and only those
+        assert_eq!(current_tags(&o.store, &o.files), before, "{name}: staged");
+        let mut expected = before.clone();
+        for change in case["staged"].as_array().unwrap() {
+            for file in change["files"].as_array().unwrap() {
+                let tag = change["tag"].as_str().unwrap().to_owned();
+                let set = &mut expected[usize::try_from(file.as_u64().unwrap()).unwrap()];
+                if change["action"] == "add" {
+                    set.insert(tag);
+                } else {
+                    set.remove(&tag);
+                }
+            }
+        }
+        m.invoke_apply();
+        assert_eq!(current_tags(&o.store, &o.files), expected, "{name}");
+        ran += 1;
+    }
+    assert_eq!(ran, 13, "recorded cases replayed");
+}

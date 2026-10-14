@@ -1,0 +1,36 @@
+import { Btn } from "btn.slint";
+import { TextEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+// Help > debug > what is this object? (`ReviewWhatIsThisObject`): the
+// reference's picture to click or drop files on, a paste button, a box that
+// says what each object is and a box with the text pasted.
+export component WhatIsThisWindow inherits Window {
+    in property <string> window-title: "what is this?";
+    in property <string> title-suffix: "";
+    title: root.window-title + root.title-suffix;
+    preferred-width: 520px; preferred-height: 760px;
+    background: Theme.window;
+    in-out property <string> description;
+    in-out property <string> json-content;
+    // the micro-notification by the paste button ("Pasted 1 items!")
+    in property <string> notice;
+    in property <string> paste-tooltip: "Paste paths/bitmaps/JSON from clipboard!";
+    callback paste();
+    callback picture-clicked();
+    VerticalLayout {
+        padding: 8px; spacing: 6px;
+        TouchArea {
+            height: 346px;
+            mouse-cursor: pointer;
+            clicked => { root.picture-clicked(); }
+            Image { source: @image-url("../../../static/question_mark_on_head.jpg"); image-fit: contain; }
+        }
+        HorizontalLayout {
+            alignment: end; spacing: 8px;
+            Text { text: root.notice; color: Theme.text; vertical-alignment: center; }
+            Btn { text: "paste"; clicked => { root.paste(); } }
+        }
+        TextEdit { vertical-stretch: 1; text <=> root.description; }
+        TextEdit { vertical-stretch: 1; text <=> root.json-content; }
+    }
+}

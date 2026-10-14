@@ -537,8 +537,31 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
         hydrus_store::settings::apply_network_boot_pause(&store)?;
     }
     let state = AppState::new(store.clone())?;
+    // Help > debug's switches, flipped in the client: reports from here go to
+    // its popups
+    hydrus_core::debug_flags::set_sink_if_none(hydrus_store::debug_switches::report_to_popups(
+        &store,
+    ));
     let runtime = tokio::runtime::Runtime::new()?;
     runtime.block_on(async move {
+        let switches = store.clone();
+        let manager = state.subscriptions.clone();
+        tokio::spawn(async move {
+            loop {
+                let store = switches.clone();
+                let manager = manager.clone();
+                let _ = tokio::task::spawn_blocking(move || {
+                    if let Err(e) = hydrus_download::subscriptions::answer_debug_requests(
+                        &store,
+                        manager.as_deref(),
+                    ) {
+                        tracing::error!(error = %e, "reading the debug switches failed");
+                    }
+                })
+                .await;
+                tokio::time::sleep(Duration::from_secs(1)).await;
+            }
+        });
         // An owned worker wakes between-pair waits on signal or early exit.
         let physical_deletes = physical_deletes::Worker::start(store.clone());
         // leftovers in the scratch folder: at the start, then hourly

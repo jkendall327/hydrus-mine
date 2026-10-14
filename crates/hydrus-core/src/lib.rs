@@ -22,6 +22,7 @@ pub mod notes;
 pub mod numbers;
 pub mod open_externally;
 pub mod pages;
+pub mod profiling;
 pub mod pybytes;
 pub mod pyhtml;
 pub mod pyjson;

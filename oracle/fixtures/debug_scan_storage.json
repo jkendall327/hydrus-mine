@@ -1,0 +1,241 @@
+{
+  "db_dir": "<db dir>",
+  "real_granularity": 2,
+  "cases": [
+    {
+      "granularity": 2,
+      "shape": "three prefixes",
+      "messages": [
+        "It found 3 subfolders and took 331 microseconds"
+      ],
+      "picks": [
+        {
+          "message": "Select directory",
+          "default_path_is_db_dir": true
+        }
+      ]
+    },
+    {
+      "granularity": 2,
+      "shape": "empty",
+      "messages": [
+        "It found 0 subfolders and took 260 microseconds"
+      ],
+      "picks": [
+        {
+          "message": "Select directory",
+          "default_path_is_db_dir": true
+        }
+      ]
+    },
+    {
+      "granularity": 2,
+      "shape": "sixteen files",
+      "messages": [
+        "It found 0 subfolders and took 94 microseconds"
+      ],
+      "picks": [
+        {
+          "message": "Select directory",
+          "default_path_is_db_dir": true
+        }
+      ]
+    },
+    {
+      "granularity": 2,
+      "shape": "seventeen files",
+      "messages": [
+        "It cancelled: Too many files!"
+      ],
+      "picks": [
+        {
+          "message": "Select directory",
+          "default_path_is_db_dir": true
+        }
+      ]
+    },
+    {
+      "granularity": 2,
+      "shape": "six hundred dirs",
+      "messages": [
+        "It found 600 subfolders and took 796 microseconds"
+      ],
+      "picks": [
+        {
+          "message": "Select directory",
+          "default_path_is_db_dir": true
+        }
+      ]
+    },
+    {
+      "granularity": 2,
+      "shape": "six hundred and one dirs",
+      "messages": [
+        "It cancelled: Too many subdirs!"
+      ],
+      "picks": [
+        {
+          "message": "Select directory",
+          "default_path_is_db_dir": true
+        }
+      ]
+    },
+    {
+      "granularity": 2,
+      "shape": "twenty second level dirs",
+      "messages": [
+        "It found 1 subfolders and took 109 microseconds"
+      ],
+      "picks": [
+        {
+          "message": "Select directory",
+          "default_path_is_db_dir": true
+        }
+      ]
+    },
+    {
+      "granularity": 2,
+      "shape": "twenty-one second level dirs",
+      "messages": [
+        "It found 1 subfolders and took 56 microseconds"
+      ],
+      "picks": [
+        {
+          "message": "Select directory",
+          "default_path_is_db_dir": true
+        }
+      ]
+    },
+    {
+      "granularity": 2,
+      "shape": "seventeen second level files",
+      "messages": [
+        "It found 1 subfolders and took 82 microseconds"
+      ],
+      "picks": [
+        {
+          "message": "Select directory",
+          "default_path_is_db_dir": true
+        }
+      ]
+    },
+    {
+      "granularity": 3,
+      "shape": "three prefixes",
+      "messages": [
+        "It found 3 subfolders and took 167 microseconds"
+      ],
+      "picks": [
+        {
+          "message": "Select directory",
+          "default_path_is_db_dir": true
+        }
+      ]
+    },
+    {
+      "granularity": 3,
+      "shape": "empty",
+      "messages": [
+        "It found 0 subfolders and took 58 microseconds"
+      ],
+      "picks": [
+        {
+          "message": "Select directory",
+          "default_path_is_db_dir": true
+        }
+      ]
+    },
+    {
+      "granularity": 3,
+      "shape": "sixteen files",
+      "messages": [
+        "It found 0 subfolders and took 95 microseconds"
+      ],
+      "picks": [
+        {
+          "message": "Select directory",
+          "default_path_is_db_dir": true
+        }
+      ]
+    },
+    {
+      "granularity": 3,
+      "shape": "seventeen files",
+      "messages": [
+        "It cancelled: Too many files!"
+      ],
+      "picks": [
+        {
+          "message": "Select directory",
+          "default_path_is_db_dir": true
+        }
+      ]
+    },
+    {
+      "granularity": 3,
+      "shape": "six hundred dirs",
+      "messages": [
+        "It found 0 subfolders and took 5.24 milliseconds"
+      ],
+      "picks": [
+        {
+          "message": "Select directory",
+          "default_path_is_db_dir": true
+        }
+      ]
+    },
+    {
+      "granularity": 3,
+      "shape": "six hundred and one dirs",
+      "messages": [
+        "It cancelled: Too many subdirs!"
+      ],
+      "picks": [
+        {
+          "message": "Select directory",
+          "default_path_is_db_dir": true
+        }
+      ]
+    },
+    {
+      "granularity": 3,
+      "shape": "twenty second level dirs",
+      "messages": [
+        "It found 20 subfolders and took 94 microseconds"
+      ],
+      "picks": [
+        {
+          "message": "Select directory",
+          "default_path_is_db_dir": true
+        }
+      ]
+    },
+    {
+      "granularity": 3,
+      "shape": "twenty-one second level dirs",
+      "messages": [
+        "It cancelled: Too many subdirs!"
+      ],
+      "picks": [
+        {
+          "message": "Select directory",
+          "default_path_is_db_dir": true
+        }
+      ]
+    },
+    {
+      "granularity": 3,
+      "shape": "seventeen second level files",
+      "messages": [
+        "It cancelled: Too many files!"
+      ],
+      "picks": [
+        {
+          "message": "Select directory",
+          "default_path_is_db_dir": true
+        }
+      ]
+    }
+  ],
+  "cancelled_messages": []
+}
