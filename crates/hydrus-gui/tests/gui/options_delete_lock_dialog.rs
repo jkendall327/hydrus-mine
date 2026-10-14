@@ -64,9 +64,13 @@ fn the_lock_row_decides_which_deletions_the_dialog_offers_for_archived_files_as_
             );
             match (case["error"].as_str(), opened) {
                 (Some(error), Err(message)) => {
-                    assert!(error.ends_with(&message), "{case}: {message}");
+                    assert_eq!(message, "No valid delete choices!", "{case}");
+                    assert!(error.ends_with(&message), "{case}");
                 }
                 (None, Ok(Some(dialog))) => {
+                    // (the recorded dialog was asked, not resolved: `resolved` is false
+                    // and the advanced dialog was on, as here)
+                    assert_eq!(case["resolved"], false, "{case}");
                     let offered: Vec<String> =
                         dialog.get_actions().iter().map(|a| a.to_string()).collect();
                     let recorded: Vec<String> = case["actions"]

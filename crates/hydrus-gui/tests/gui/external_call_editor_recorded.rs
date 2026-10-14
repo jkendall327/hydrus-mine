@@ -58,7 +58,8 @@ fn the_executable_path_questions_and_the_path_message_are_the_recorded_ones() {
     let _windows = headless::init();
     let (_ui, bound, w, child) = edit_seeded(&store);
 
-    // show PATH: the recorded wording, then one line per PATH entry
+    // show PATH: the recorded wording (verified as wording only: the PATH itself
+    // differs by machine), then one line per PATH entry
     let shown = rec["show_path"]["messages"][0].as_str().unwrap();
     let (words, recorded_entries) = shown.split_once("\n\n").unwrap();
     assert_eq!(
@@ -119,7 +120,8 @@ fn the_executable_path_questions_and_the_path_message_are_the_recorded_ones() {
     w.invoke_cancel();
 }
 
-// leaf: audit-options-nested-external-call-process-timeout
+// (Not tagged for audit-options-nested-external-call-process-timeout: the control matches the
+// recording, but nothing tests the runtime enforcing the timeout or text mode; DIFFERENCES.md.)
 #[test]
 fn the_timeout_and_process_flags_save_and_reopen_as_the_reference_does() {
     let rec = recording();
@@ -149,11 +151,13 @@ fn the_timeout_and_process_flags_save_and_reopen_as_the_reference_does() {
     w.invoke_cancel();
 
     // what each entered timeout (whole seconds a user can type) saves as
-    let mut state = (ui, bound);
+    let state = (ui, bound);
     for entered in flags["entered"].as_array().unwrap() {
         let seconds = &entered["entered"];
+        // none (long-lived) is below; a half second cannot be typed into a whole-second
+        // box, and the recorded clamp for 0 and 0.5 (both save 1) is shown by 0
         let Some(seconds) = seconds.as_i64() else {
-            continue; // none (long-lived), and the half second
+            continue;
         };
         if seconds >= 3600 {
             continue; // not enterable: minutes stop at 59 (loaded values, below)
@@ -162,6 +166,7 @@ fn the_timeout_and_process_flags_save_and_reopen_as_the_reference_does() {
         w.invoke_external_call_clicked(named(&w, "synthetic call"), false, false);
         w.invoke_external_call_action("edit".into());
         let child = call(&state.1);
+        // (set directly, so a 0 here shows the clamp on save, not the box's own minimum)
         child.set_timeout(i32::try_from(seconds).unwrap());
         child.invoke_changed();
         child.invoke_apply();
@@ -225,7 +230,6 @@ fn the_timeout_and_process_flags_save_and_reopen_as_the_reference_does() {
             toggled["text"].as_bool().unwrap()
         )
     );
-    state = (state.0, state.1);
 
     // a stored timeout the control cannot hold reopens as the reference's does
     for entered in flags["entered"].as_array().unwrap() {

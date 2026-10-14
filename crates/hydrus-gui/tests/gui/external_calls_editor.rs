@@ -61,7 +61,8 @@ fn help_button_opens_the_external_programs_documentation() {
     assert!(!bound.options_external_calls.has_open());
 }
 
-// leaf: audit-options-nested-external-call-input-rules
+// (Not tagged for audit-options-nested-external-call-input-rules: the String Processor is put
+// in the store, not edited from the rule row; DIFFERENCES.md.)
 #[test]
 fn input_rules_enable_token_and_string_processor_reach_the_saved_call() {
     let (_dirs, store) = store();

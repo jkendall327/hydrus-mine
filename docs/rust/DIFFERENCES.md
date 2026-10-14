@@ -4893,3 +4893,12 @@ potential duplicates (as the reference does as groups merge), so approving
   `GalleryImport` the limit; hydrus-rs has no separate single-gallery-import
   object, so that recorded value (`gallery_file_limit.json` `gallery import`) is
   not replayed. A gallery page and a new subscription are.
+
+## Options > external programs (recheck notes)
+
+- **Process timeout, hide terminal, text mode.** The editor's controls match the
+  reference (`external_call_editor.json`), but no test shows the runtime
+  (`run_process`, `test_call`) enforcing the timeout or text mode, and it kills at
+  the exact timeout where the reference checks every 3 seconds.
+- **Input rules.** A rule's string processor is not edited from the rule row in any
+  test; it is put in the store and the editor reopened.

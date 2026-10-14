@@ -131,6 +131,16 @@ fn pump(millis: u64) {
     }
 }
 
+/// Poll until `done`, up to three seconds (a state the window system reaches a
+/// moment after the request).
+fn pump_until(done: impl Fn() -> bool, what: &str) {
+    let end = Instant::now() + Duration::from_secs(3);
+    while !done() {
+        assert!(Instant::now() < end, "never reached: {what}");
+        pump(10);
+    }
+}
+
 /// Options > system tray, the switches ticked as given (by label), applied.
 fn set_options(client: &Client, ticks: &[(&str, bool)]) {
     client.ui.invoke_menu_title_pressed(0, 20., 22.);
