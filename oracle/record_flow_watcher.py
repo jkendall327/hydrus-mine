@@ -25,6 +25,7 @@ Usage: QT_QPA_PLATFORM=offscreen ~/pyenv/bin/python oracle/record_flow_watcher.p
 
 import os
 import sys
+import time
 
 HERE = os.path.dirname( os.path.abspath( __file__ ) )
 sys.path.insert( 0, HERE )
@@ -90,7 +91,9 @@ def record( session, site ):
         log = w.GetGallerySeedLog()
         cache = w.GetFileSeedCache()
 
-        return log.GetGallerySeedCount() == n and log.GetGallerySeedCount( CC.STATUS_UNKNOWN ) == 0 and cache.GetFileSeedCount( CC.STATUS_UNKNOWN ) == 0 and not w.CurrentlyWorking()
+        shown = qt( lambda: len( media_panel().GetSortedMedia() ) )
+
+        return log.GetGallerySeedCount() == n and log.GetGallerySeedCount( CC.STATUS_UNKNOWN ) == 0 and cache.GetFileSeedCount( CC.STATUS_UNKNOWN ) == 0 and not w.CurrentlyWorking() and shown == len( flows.hashes_in_log( flows.file_log_state( cache, normalise ) ) )
 
 
     def texts():
@@ -100,7 +103,24 @@ def record( session, site ):
         w = watcher()
         panel = sidebar._highlighted_watcher_panel
 
-        sidebar._UpdateImportStatusNow()
+        # (the list's totals come from a cached status that is refreshed as
+        # the file logs change, a moment after; wait for it to catch up)
+        count = len( w.GetFileSeedCache().GetFileSeeds() )
+        deadline = time.time() + 15
+
+        while True:
+
+            multiple._SetDirty()
+            sidebar._UpdateImportStatusNow()
+
+            if sidebar._watchers_status_st_top.text() == f'1 watchers - {count}/{count}' or time.time() > deadline:
+
+                break
+
+
+            time.sleep( 0.2 )
+
+
         panel._UpdateStatus()
         panel._file_seed_cache_control._Update()
         panel._gallery_seed_log_control._Update()

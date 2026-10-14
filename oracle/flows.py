@@ -318,13 +318,13 @@ def definitions( site ):
     return ( url_classes, parsers, gugs )
 
 
-def install( controller, site, definitions_ = None ):
+def install( controller, site, make_definitions = None ):
     """Give the client the site's downloader and let it reach the network
     (the fixture was made with new traffic paused). Returns the domain
     manager as serialised, for hydrus-rs to install as a migration would.
-    `definitions_` is `definitions` unless a flow has other sites' kinds."""
+    `make_definitions` is `definitions` unless a flow has other sites' kinds."""
 
-    ( url_classes, parsers, gugs ) = ( definitions_ or definitions )( site )
+    ( url_classes, parsers, gugs ) = ( make_definitions or definitions )( site )
 
     domain_manager = controller.network_engine.domain_manager
 
