@@ -188,29 +188,6 @@ fn shown_fields(fields: &slint::ModelRc<hydrus_gui::DurationField>) -> Vec<(Stri
         .collect()
 }
 
-/// The window's fields against the recorded ones; a field typed in may
-/// still show its old number (see the test), but then the widget holds what
-/// was typed, which must be the recorded number.
-fn check_fields(
-    typed: &mut std::collections::HashMap<(&str, String), (i64, i64)>,
-    key: &'static str,
-    shown: &[(String, i64)],
-    recorded: &serde_json::Value,
-    at: &str,
-) {
-    for (label, value) in shown {
-        let theirs = recorded[label.as_str()].as_i64().unwrap();
-        if *value == theirs {
-            continue;
-        }
-        let (old, typed) = typed
-            .get(&(key, label.clone()))
-            .copied()
-            .unwrap_or_else(|| panic!("{at}: {key} {label} is {value}, theirs {theirs}"));
-        assert_eq!((*value, theirs), (old, typed), "{at}: {key} {label}");
-    }
-}
-
 // leaf: audit-network-checker-mode
 #[test]
 fn the_checker_window_follows_the_references_edits_between_reactive_and_static_checking() {
@@ -221,11 +198,6 @@ fn the_checker_window_follows_the_references_edits_between_reactive_and_static_c
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let mut flat_seen = (false, false);
-    // A field the user typed in is left as typed by the window (its widget
-    // holds the number), so its model keeps the old number until the editor
-    // changes that time otherwise: (time, unit) -> (old, typed).
-    let mut typed: std::collections::HashMap<(&str, String), (i64, i64)> =
-        std::collections::HashMap::default();
     for run in recorded["steps"].as_array().unwrap() {
         let given = &run["given"];
         let given = CheckerOptions {
@@ -252,7 +224,6 @@ fn the_checker_window_follows_the_references_edits_between_reactive_and_static_c
             .as_ref()
             .unwrap()
             .clone_strong();
-        typed.clear();
         for step in run["steps"].as_array().unwrap() {
             let edit = &step["edit"];
             let field_index = |fields: slint::ModelRc<hydrus_gui::DurationField>, name: &Json| {
@@ -274,14 +245,6 @@ fn the_checker_window_follows_the_references_edits_between_reactive_and_static_c
                         other => panic!("{other}"),
                     };
                     let at = field_index(fields.clone(), &edit[2]);
-                    let key = ["faster", "slower", "flat_period"][time as usize];
-                    typed.insert(
-                        (key, edit[2].as_str().unwrap().to_owned()),
-                        (
-                            i64::from(fields.row_data(at as usize).unwrap().value),
-                            edit[3].as_i64().unwrap(),
-                        ),
-                    );
                     editor.invoke_field_edited(time, at, edit[3].as_i64().unwrap() as i32);
                 }
                 "intended" => {
@@ -296,13 +259,6 @@ fn the_checker_window_follows_the_references_edits_between_reactive_and_static_c
                     if !edit[2].is_null() {
                         let fields = editor.get_velocity_fields();
                         let i = field_index(fields.clone(), &edit[2]);
-                        typed.insert(
-                            ("velocity", edit[2].as_str().unwrap().to_owned()),
-                            (
-                                i64::from(fields.row_data(i as usize).unwrap().value),
-                                edit[3].as_i64().unwrap(),
-                            ),
-                        );
                         editor.invoke_field_edited(3, i, edit[3].as_i64().unwrap() as i32);
                     }
                 }
@@ -318,34 +274,64 @@ fn the_checker_window_follows_the_references_edits_between_reactive_and_static_c
             } else {
                 flat_seen.0 = true;
             }
-            for (key, fields) in [
-                ("faster", editor.get_faster_fields()),
-                ("slower", editor.get_slower_fields()),
-                ("flat_period", editor.get_period_fields()),
-            ] {
-                check_fields(&mut typed, key, &shown_fields(&fields), &step[key], &at);
-            }
-            // (a typed number is shown as typed: 2.345 for the spin box's
-            // 2.35, 0.1 for the 0.15 it holds it to)
-            let intended = editor.get_intended().parse::<f64>().unwrap();
-            let (least, most) = hydrus_gui::checker_options::INTENDED_RANGE;
-            let held = (intended.clamp(least, most) * 100.0).round() / 100.0;
-            assert!(
-                (held - step["intended"].as_f64().unwrap()).abs() < 1e-9,
-                "{at}: {intended}"
-            );
+            // what the editor would apply is exactly what the reference's
+            // panel held, whichever way the box shows it
+            let held = hydrus_gui::latest_checker_value().unwrap();
+            let theirs = &step["value"];
             assert_eq!(
-                editor.get_velocity_files().parse::<i64>().unwrap(),
-                step["velocity"][0].as_i64().unwrap(),
+                (
+                    held.intended_files_per_check,
+                    held.never_faster_than,
+                    held.never_slower_than,
+                    held.death_file_velocity
+                ),
+                (
+                    theirs[0].as_f64().unwrap(),
+                    theirs[1].as_i64().unwrap(),
+                    theirs[2].as_i64().unwrap(),
+                    (
+                        theirs[3][0].as_i64().unwrap(),
+                        theirs[3][1].as_i64().unwrap()
+                    )
+                ),
                 "{at}"
             );
-            check_fields(
-                &mut typed,
-                "velocity",
-                &shown_fields(&editor.get_velocity_fields()),
-                &step["velocity"][1],
-                &at,
-            );
+            // after a preset or the mode switch the whole window is shown
+            // again, and then its fields are the recorded ones too (a
+            // typed field keeps the number typed, which the value above has)
+            if matches!(edit[0].as_str().unwrap(), "preset" | "flat") {
+                for (key, fields) in [
+                    ("faster", editor.get_faster_fields()),
+                    ("slower", editor.get_slower_fields()),
+                    ("flat_period", editor.get_period_fields()),
+                    ("velocity", editor.get_velocity_fields()),
+                ] {
+                    let want = if key == "velocity" {
+                        &step[key][1]
+                    } else {
+                        &step[key]
+                    };
+                    for (label, value) in shown_fields(&fields) {
+                        assert_eq!(
+                            value,
+                            want[label.as_str()].as_i64().unwrap(),
+                            "{at}: {key} {label}"
+                        );
+                    }
+                }
+                assert!(
+                    (editor.get_intended().parse::<f64>().unwrap()
+                        - step["intended"].as_f64().unwrap())
+                    .abs()
+                        < 1e-9,
+                    "{at}"
+                );
+                assert_eq!(
+                    editor.get_velocity_files().parse::<i64>().unwrap(),
+                    step["velocity"][0].as_i64().unwrap(),
+                    "{at}"
+                );
+            }
         }
         editor.invoke_cancel();
         options.invoke_cancel();
