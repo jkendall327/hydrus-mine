@@ -10649,7 +10649,7 @@
     "date": "2026-10-08",
     "class": "weak",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Sets Flag::AutocompleteDelay directly and times search_tags; the Help > debug > gui actions menu entry is never clicked (only the menu model lists the label), and nothing checks the checked state. Reference skips the delay when exact_match and also delays GetMediaPredicates; native delays every search and the test only uses a wildcard query. Tracker notes ('no equivalent diagnostics action') are stale. Tests: crates/hydrus-store/tests/debug_autocomplete_delay.rs:14 autocomplete_delay_mode_makes_each_search_take_three_seconds"
+    "note": "Sets Flag::AutocompleteDelay directly and times search_tags; the Help > debug > gui actions menu entry is never clicked (only the menu model lists the label), and nothing checks the checked state. Reference skips the delay when exact_match and also delays GetMediaPredicates; native delays every search and the test only uses a wildcard query. Tracker notes ('no equivalent diagnostics action') are stale. Tests: crates/hydrus-store/tests/debug_autocomplete_delay.rs:14 autocomplete_delay_mode_makes_each_search_take_three_seconds 2026-10-14 (#96): not made sound yet. Needs a recording of the reference's wildcard and exact-match searches timed through the real autocomplete path, a GUI test typing into the search box with the menu entry on, and the exact-match skip and the media-predicates delay ported. The daemon-side switch channel (debug_switches) now exists."
    }
   },
   {
@@ -10669,7 +10669,7 @@
     "date": "2026-10-08",
     "class": "weak",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Flips the flag directly on the thumbnail loader; no menu click or checked state. Expected pixels come from the native recovery() function (circular), no recording. Reference also applies it in the second ClientCaches site (line 1218); not covered. Tracker notes are stale. Tests: crates/hydrus-gui/src/thumbnails.rs:336 blurhash_mode_draws_the_blurhash_in_place_of_the_stored_thumbnail"
+    "note": "Flips the flag directly on the thumbnail loader; no menu click or checked state. Expected pixels come from the native recovery() function (circular), no recording. Reference also applies it in the second ClientCaches site (line 1218); not covered. Tracker notes are stale. Tests: crates/hydrus-gui/src/thumbnails.rs:336 blurhash_mode_draws_the_blurhash_in_place_of_the_stored_thumbnail 2026-10-14 (#96): not made sound yet. Needs a recorder that renders the reference's blurhash bitmap (HydrusBlurhash) for fixture hashes so the pixels are compared with the recording rather than with the native recovery function, a menu-driven test, and the second ClientCaches site."
    }
   },
   {
@@ -10689,7 +10689,7 @@
     "date": "2026-10-08",
     "class": "weak",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Typed-literal message for one eviction on the thumbnail Cache; no menu path. Reference has three messages (adding, removing specific, removing oldest) and covers image and thumb caches; native tests only 'removing oldest' and the size format uses 'X/Y' human bytes rather than the reference's ConvertValueRangeToBytes. Stale tracker notes. Tests: crates/hydrus-gui-model/tests/model/debug_flags.rs:64 cache_report_mode_reports_each_eviction_with_the_sizes"
+    "note": "Typed-literal message for one eviction on the thumbnail Cache; no menu path. Reference has three messages (adding, removing specific, removing oldest) and covers image and thumb caches; native tests only 'removing oldest' and the size format uses 'X/Y' human bytes rather than the reference's ConvertValueRangeToBytes. Stale tracker notes. Tests: crates/hydrus-gui-model/tests/model/debug_flags.rs:64 cache_report_mode_reports_each_eviction_with_the_sizes 2026-10-14 (#96): not made sound yet. Needs a recording of the reference's three messages (adding, removing specific, removing oldest) from the real image and thumbnail caches, the size format of ConvertValueRangeToBytes, and a menu-driven test."
    }
   },
   {
@@ -10811,7 +10811,7 @@
     "date": "2026-10-08",
     "class": "weak",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the menu toggle and the real maintenance runtime, but expected strings are typed literals. Reference reports in DAEMON._DoPreCall on every firing before the job checks idle; native reports only after its gates allow, and only for the two ported daemons. No recording. Stale tracker notes. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:415 daemon_report_mode_says_when_a_maintenance_daemon_does_a_job"
+    "note": "Drives the menu toggle and the real maintenance runtime, but expected strings are typed literals. Reference reports in DAEMON._DoPreCall on every firing before the job checks idle; native reports only after its gates allow, and only for the two ported daemons. No recording. Stale tracker notes. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:415 daemon_report_mode_says_when_a_maintenance_daemon_does_a_job 2026-10-14 (#96): not made sound yet. The reference reports in DAEMON._DoPreCall on every firing, before the job checks idle, for every daemon; native reports only after its gates allow and for the two ported daemons. Needs a recording of the firing messages and the report moved before the gates."
    }
   },
   {
@@ -10921,7 +10921,7 @@
     "date": "2026-10-08",
     "class": "weak",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Sets the flag directly on FileImporter; no menu. Only 4 of the ~25 reference messages (ClientImportFiles and ClientDB 'File import job ...') are emitted/tested, order differs (hash/done), typed literals. Stale tracker notes. Tests: crates/hydrus-import/tests/debug_reports.rs:11 file_import_report_mode_reports_the_import_job_as_it_goes"
+    "note": "Sets the flag directly on FileImporter; no menu. Only 4 of the ~25 reference messages (ClientImportFiles and ClientDB 'File import job ...') are emitted/tested, order differs (hash/done), typed literals. Stale tracker notes. Tests: crates/hydrus-import/tests/debug_reports.rs:11 file_import_report_mode_reports_the_import_job_as_it_goes 2026-10-14 (#96): not made sound yet. The importer runs in the daemon: the switch now reaches it (debug_switches), but ~21 of the reference's ~25 messages are not emitted, and none is recorded. Needs the messages ported and a recording of an import's reports."
    }
   },
   {
@@ -10941,7 +10941,7 @@
     "date": "2026-10-08",
     "class": "weak",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Sets the flag directly; no menu. Covers 2 messages; native formats hash as hex and mime as Debug name and omits the mime from the thumbnail request, unlike the reference str((hash, mime)); reference's 'Adding thumbnail', 'Adding file from string', 'Changing file ext', 'Adding file to client file structure' reports are absent. Stale tracker notes. Tests: crates/hydrus-store/tests/debug_file_report.rs:10 file_report_mode_reports_file_and_thumbnail_path_requests"
+    "note": "Sets the flag directly; no menu. Covers 2 messages; native formats hash as hex and mime as Debug name and omits the mime from the thumbnail request, unlike the reference str((hash, mime)); reference's 'Adding thumbnail', 'Adding file from string', 'Changing file ext', 'Adding file to client file structure' reports are absent. Stale tracker notes. Tests: crates/hydrus-store/tests/debug_file_report.rs:10 file_report_mode_reports_file_and_thumbnail_path_requests 2026-10-14 (#96): not made sound yet. Native formats hash and mime differently from str((hash, mime)) and lacks four of the reference's reports; needs those ported, a recording, and a menu-driven test."
    }
   },
   {
@@ -10950,13 +10950,14 @@
    "path": "Help > debug > report modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
     "Truth pass (2026-10-08): missing, small. Flag only. Missing: Report sites in the media sort code, the menu entry, a test. Evidence: Flag::FileSortReport defined, never reported to.",
     "Reference debug action wires 'file sort report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Out of scope (owner decision 2026-10-14): this report mode reports Python/Qt internals that have no hydrus-rs counterpart."
    ]
   },
   {
@@ -11067,7 +11068,7 @@
     "date": "2026-10-08",
     "class": "weak",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu toggle and key events, but typed literals and only key events; reference gui_report_mode also reports mouse events, manage-tags panel opening and list-box virtual size, none tested or ported. Stale tracker notes. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:576 gui_report_mode_says_which_key_events_it_caught"
+    "note": "Real menu toggle and key events, but typed literals and only key events; reference gui_report_mode also reports mouse events, manage-tags panel opening and list-box virtual size, none tested or ported. Stale tracker notes. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:576 gui_report_mode_says_which_key_events_it_caught 2026-10-14 (#96): not made sound yet. The reference's gui report mode reports Qt key and mouse events (key ints, modifiers), the manage-tags panel and list-box sizes; only key events are ported and none is recorded. The Qt-specific event details have no counterpart; needs an owner decision on scope."
    }
   },
   {
@@ -11076,13 +11077,14 @@
    "path": "Help > debug > report modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
     "Truth pass (2026-10-08): missing, small. Flag only. Missing: Report calls in the canvas hover show/hide code, the menu entry, a test. Evidence: Flag::HoverWindowReport defined, never reported to. Reference ClientGUICanvasHoverFrames.py:494,516,730,740,758.",
     "Reference debug action wires 'hover window report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Out of scope (owner decision 2026-10-14): this report mode reports Python/Qt internals that have no hydrus-rs counterpart."
    ]
   },
   {
@@ -11099,10 +11101,10 @@
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu toggle, but typed literals and only two reasons are tested (120s boot block, forced). Reference also reports shutting down, user/mouse/API action blocked, options disabled, Turning ON/OFF; blocked_reasons has no 'Turning ON/OFF' and those paths are untested. The forced-off case maps to a 'shutting down' string. Stale tracker notes. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:358 idle_report_mode_says_why_the_client_is_not_idle"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "claude (issue #96 session)",
+    "note": "Real menu click turns the mode on; the checks of 19 situations (boot under and over 120 s, user/mouse/Client API activity alone and together, a period set to none, normal idle disabled, forced from the menu, closing the program, and each change between idle and active: Turning ON/OFF) say exactly what the real client's CurrentlyIdle says, in order, with the same answer (oracle/fixtures/debug_idle_report.json, record_debug_idle_report.py, the clock held). The mode says nothing off. Test: crates/hydrus-gui/tests/gui/debug_report_modes.rs idle_report_mode_says_what_the_reference_says_in_each_situation."
    }
   },
   {
@@ -11322,13 +11324,14 @@
    "path": "Help > debug > report modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
     "Truth pass (2026-10-08): missing, small. Flag only. Missing: Report sites in the media loader, the menu entry, a test. Evidence: Flag::MediaLoadReport defined, never reported to.",
     "Reference debug action wires 'media load report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Out of scope (owner decision 2026-10-14): this report mode reports Python/Qt internals that have no hydrus-rs counterpart."
    ]
   },
   {
@@ -11364,7 +11367,7 @@
     "date": "2026-10-08",
     "class": "weak",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Sets the flag directly (no menu click), drives the real engine against a local server and checks the redirect line and an error prefix against typed strings. Reference also reports domain-manager headers, request/response headers and URL class lookups; native does not (DIFFERENCES). The menu entry's reference semantics (clearing silent) are not mirrored by menu_bar's plain flip(). Tests: crates/hydrus-net/tests/debug_reports.rs:14 network_report_mode_reports_redirects_and_errors_unless_silent"
+    "note": "Sets the flag directly (no menu click), drives the real engine against a local server and checks the redirect line and an error prefix against typed strings. Reference also reports domain-manager headers, request/response headers and URL class lookups; native does not (DIFFERENCES). The menu entry's reference semantics (clearing silent) are not mirrored by menu_bar's plain flip(). Tests: crates/hydrus-net/tests/debug_reports.rs:14 network_report_mode_reports_redirects_and_errors_unless_silent 2026-10-14 (#96): not made sound yet. The network engine runs in the daemon: the switch now reaches it. The reference also reports domain-manager headers, request and response headers and URL class lookups; those are not ported and nothing is recorded."
    }
   },
   {
@@ -11384,7 +11387,7 @@
     "date": "2026-10-08",
     "class": "source-restated",
     "by": "fix session",
-    "note": "Expected values are restated from the Python source (veto string, importable-mime filter, _SwitchBoolean), not recorded. The two network report entries now share the mode as ClientGUI._SwitchBoolean does (silent turns it on and sets silent, the plain entry flips it and clears silent), driven through the real help > debug > report modes menu, with the consumer (report_network) checked for the sink. Test: crates/hydrus-gui/tests/gui/debug_menu_actions.rs network_report_mode_entries_share_the_mode_as_the_reference_does The console half of silent mode is not observed (only that nothing reaches the popup sink)."
+    "note": "Expected values are restated from the Python source (veto string, importable-mime filter, _SwitchBoolean), not recorded. The two network report entries now share the mode as ClientGUI._SwitchBoolean does (silent turns it on and sets silent, the plain entry flips it and clears silent), driven through the real help > debug > report modes menu, with the consumer (report_network) checked for the sink. Test: crates/hydrus-gui/tests/gui/debug_menu_actions.rs network_report_mode_entries_share_the_mode_as_the_reference_does The console half of silent mode is not observed (only that nothing reaches the popup sink). 2026-10-14 (#96): not made sound yet; as network-report-mode: needs a recording of the reference's reports in silent mode and the console half observed."
    }
   },
   {
@@ -11393,13 +11396,14 @@
    "path": "Help > debug > report modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
     "Truth pass (2026-10-08): missing, small. Flag only. Missing: Report sites in the potential-duplicates search, the menu entry, a test. Evidence: Flag::PotentialDuplicatesReport defined, never reported to.",
     "Reference debug action wires 'potential duplicates report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Out of scope (owner decision 2026-10-14): this report mode reports Python/Qt internals that have no hydrus-rs counterpart."
    ]
   },
   {
@@ -11495,7 +11499,8 @@
    "notes": [
     "Truth pass (2026-10-08): missing, small. Sits next to the existing delayed-popup debug actions. Missing: Menu entry, five-second delayed publish of real files, test. Evidence: No entry; the popup job model supports files via set_files (hydrus-gui-model/src/debug_actions.rs).",
     "Reference debug action wires 'publish some sub files in five seconds' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Blocked, not out of scope (2026-10-14, owner/coordinator): the reference publishes subscription files to a named page; this needs the daemon's subscriptions to publish to a named page, which hydrus-rs has no way to do yet. Do the leaf when it has."
    ]
   },
   {
@@ -11648,7 +11653,13 @@
     "Truth pass (2026-10-08): partial, small. Cache maintenance exists but has no debug entry. Missing: Menu entry calling cache maintenance; test with an over-limit cache. Evidence: No menu entry; thumbnail_cache.rs:169 maintain(now) exists.",
     "Reference debug action wires 'run fast memory maintenance' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-14",
+    "class": "source-restated",
+    "by": "claude (issue #96 session)",
+    "note": "Driven through the real menu on real image and thumbnail caches with held clocks, and the pulse and its effect (expiry past the timeout, newest kept, slow does nothing) are recorded in oracle/fixtures/debug_memory_maintenance.json; but the recording uses stub entries of 60/40/20/10 bytes and the test cannot replay those against real images, and over-limit trimming is not reachable here, so the expectations restate the reference's rules."
+   }
   },
   {
    "id": "audit-options-help-debug-action-run-slow-memory-maintenance",
@@ -11663,7 +11674,13 @@
     "Truth pass (2026-10-08): partial, small. As fast maintenance, covering the slower caches. Missing: Menu entry maintaining all native caches; test. Evidence: No menu entry; the same maintain() exists.",
     "Reference debug action wires 'run slow memory maintenance' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (issue #96 session)",
+    "note": "Clicked in the real menu: closed pages over an hour old are deleted only when no page changed for half an hour, in each of the recorded situations (oracle/fixtures/debug_memory_maintenance.json); the fast one leaves them; it also runs every five minutes. Temp-path cleaning, the thread pool and Qt canvas-frame references are Python/Qt internals."
+   }
   },
   {
    "id": "audit-options-help-debug-action-run-the-client-api-test",
@@ -11797,7 +11814,7 @@
     "date": "2026-10-08",
     "class": "weak",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Toggles via the real menu and presses real keys. Unmatched line and 'matched on \"main_gui\" set to' prefix are typed; the command is printed as a number rather than the reference's repr(command), only the GetCommand-level messages exist (not the passing-through/parent/key-ord reports), and the unmatched text omits the reference's variants. Partial coverage, no recording. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:390 shortcut_report_mode_says_what_a_shortcut_matched"
+    "note": "Toggles via the real menu and presses real keys. Unmatched line and 'matched on \"main_gui\" set to' prefix are typed; the command is printed as a number rather than the reference's repr(command), only the GetCommand-level messages exist (not the passing-through/parent/key-ord reports), and the unmatched text omits the reference's variants. Partial coverage, no recording. Tests: crates/hydrus-gui/tests/gui/debug_menu_actions.rs:390 shortcut_report_mode_says_what_a_shortcut_matched 2026-10-14 (#96): not made sound yet. The reference reports Qt key ords and repr(command) in several places; native prints a command number and lacks the pass-through and parent reports. Needs a recording of the reference's reports for a few shortcuts and the missing reports ported."
    }
   },
   {
@@ -11841,13 +11858,14 @@
    "path": "Help > debug > report modes",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "low",
+   "priority": "out-of-scope",
    "reference": null,
    "native": null,
    "notes": [
     "Truth pass (2026-10-08): missing, small. Flag only. Missing: Report calls as workers and daemons stop, the menu entry, a test. Evidence: Flag::ShutdownReport defined, never reported to. Reference hydrus_client_boot.py:288, ClientDaemons.py:243,252.",
     "Reference debug action wires 'shutdown report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
-    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
+    "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
+    "Out of scope (owner decision 2026-10-14): this report mode reports Python/Qt internals that have no hydrus-rs counterpart."
    ]
   },
   {
@@ -11867,7 +11885,7 @@
     "date": "2026-10-08",
     "class": "source-restated",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Calls perceptual_hash with the flag set directly (no menu) and compares the eight lines with typed strings from ClientImagePerceptualHashes. Native omits the reference's 'loading image' line and shapes come from the native raster; no recording of the reference. Tests: crates/hydrus-media/tests/debug_reports.rs:10 phash_generation_report_mode_reports_each_stage"
+    "note": "Calls perceptual_hash with the flag set directly (no menu) and compares the eight lines with typed strings from ClientImagePerceptualHashes. Native omits the reference's 'loading image' line and shapes come from the native raster; no recording of the reference. Tests: crates/hydrus-media/tests/debug_reports.rs:10 phash_generation_report_mode_reports_each_stage 2026-10-14 (#96): not made sound yet. Needs the reference's reports recorded for a generated hash (ClientImagePerceptualHashes), compared with the native stages, and a menu-driven test; the generation runs in the daemon, which the switch now reaches."
    }
   },
   {
@@ -11883,7 +11901,13 @@
     "Truth pass (2026-10-08): partial, small. The engine can already simulate it. Missing: Menu entry, a GUI handle to the engine, GUI test. Evidence: hydrus-net/src/engine.rs:897-902 NetEngine::sleep_check_at, tested at 2638-2645; the GUI keeps no shared NetEngine.",
     "Reference debug action wires 'simulate a wake from sleep' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude (issue #96 session)",
+    "note": "Clicked in the real menu: the popup (title, cancellable, countdown words, dismissal), the idle-timer reset, cancel enabling I/O at once and detection-off match oracle/fixtures/debug_wake_from_sleep.json. The daemon half (network engine, subscriptions) is requested but not tested end to end."
+   }
   },
   {
    "id": "audit-options-help-debug-action-simulate-program-exit-signal",
@@ -11922,7 +11946,7 @@
     "date": "2026-10-08",
     "class": "weak",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Calls the model's test_call with the flag set directly and checks a loose 'KWargs are: ' prefix and a substring. Native prints a Rust arg list, not Python kwargs, and omits the env dump and the 'stdout:/stderr:/No stdout or stderr came back.' reports (DIFFERENCES). Not driven through the menu; no recording. Tests: crates/hydrus-gui-model/tests/model/debug_flags.rs:36 subprocess_report_mode_reports_the_call_before_it_is_made"
+    "note": "Calls the model's test_call with the flag set directly and checks a loose 'KWargs are: ' prefix and a substring. Native prints a Rust arg list, not Python kwargs, and omits the env dump and the 'stdout:/stderr:/No stdout or stderr came back.' reports (DIFFERENCES). Not driven through the menu; no recording. Tests: crates/hydrus-gui-model/tests/model/debug_flags.rs:36 subprocess_report_mode_reports_the_call_before_it_is_made 2026-10-14 (#96): not made sound yet. The reference prints Python keyword arguments, an environment dump and stdout/stderr reports; native prints a Rust argument list and lacks the others. Needs a recording and a decision on whether to print Python-shaped text."
    }
   },
   {
