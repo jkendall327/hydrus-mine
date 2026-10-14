@@ -10,9 +10,9 @@ use hydrus_gui::string_processor_window::{Slots, open};
 use hydrus_legacy::objects::domain::string_processor;
 use hydrus_legacy::serialisable::SerialisableObject;
 use serde_json::{Value, json};
-use slint::Model as _;
+use slint::{ComponentHandle as _, Model as _};
 
-use crate::sidecars::store;
+use crate::subscriptions::store;
 use hydrus_gui::headless;
 
 fn processor(value: &Value) -> StringProcessor {
@@ -157,6 +157,7 @@ fn selected_steps_export_and_paste_as_the_reference_queue_does() {
             child.invoke_action("accept".into());
         } else {
             assert_eq!(recorded_steps, before, "{name}: nothing was added");
+            eprintln!("PASTE {name}: error={:?} exch_err={:?}", child.get_error(), e.window.get_exchange_error());
             child.invoke_action("cancel".into());
         }
         assert_eq!(e.window.get_steps().row_count(), recorded_steps, "{name}");

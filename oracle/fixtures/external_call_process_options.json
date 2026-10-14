@@ -3,6 +3,7 @@
     {
       "name": "times out",
       "call": {
+        "kind": "process",
         "executable": "sh",
         "arguments": [
           "-c",
@@ -20,19 +21,20 @@
       "box": {
         "interim": "Testing…",
         "output": "ExecutableException: Problem running external local process! Final call list was \"['sh', '-c', 'echo started; exec sleep 30', '/synthetic/file.png']\", error was: A call to another executable took too long (over 1 seconds) to finish! The call was: ['sh', '-c', 'echo started; exec sleep 30', '/synthetic/file.png']\n\n========== stdout ==========\n'started\\n'\n========== stderr ==========\n''\n============================\n",
-        "seconds": 3.0665876865386963
+        "seconds": 3.051439046859741
       },
       "launch": {
         "error": {
           "type": "ExecutableException",
           "text": "Problem running external local process! Final call list was \"['sh', '-c', 'echo started; exec sleep 30', '/synthetic/file.png']\", error was: A call to another executable took too long (over 1 seconds) to finish! The call was: ['sh', '-c', 'echo started; exec sleep 30', '/synthetic/file.png']\n\n========== stdout ==========\n'started\\n'\n========== stderr ==========\n''\n============================\n"
         },
-        "seconds": 3.007927179336548
+        "seconds": 3.006828784942627
       }
     },
     {
       "name": "inside its timeout",
       "call": {
+        "kind": "process",
         "executable": "sh",
         "arguments": [
           "-c",
@@ -50,16 +52,17 @@
       "box": {
         "interim": "Testing…",
         "output": "Looks good!",
-        "seconds": 0.06517148017883301
+        "seconds": 0.0661625862121582
       },
       "launch": {
         "error": null,
-        "seconds": 0.004830360412597656
+        "seconds": 0.0036051273345947266
       }
     },
     {
       "name": "bad bytes, text",
       "call": {
+        "kind": "process",
         "executable": "sh",
         "arguments": [
           "-c",
@@ -77,19 +80,20 @@
       "box": {
         "interim": "Testing…",
         "output": "BadReturnCodeException: A call to another executable gave a non-zero return code (2)! The call was: ['sh', '-c', \"printf 'caf\\\\303\\\\251 \\\\377'; printf 'err \\\\303\\\\251' >&2; exit 2\", '/synthetic/file.png']\n\n========== stdout ==========\n'café �'\n========== stderr ==========\n'err é'\n============================\n",
-        "seconds": 0.06224226951599121
+        "seconds": 0.06376504898071289
       },
       "launch": {
         "error": {
           "type": "BadReturnCodeException",
           "text": "A call to another executable gave a non-zero return code (2)! The call was: ['sh', '-c', \"printf 'caf\\\\303\\\\251 \\\\377'; printf 'err \\\\303\\\\251' >&2; exit 2\", '/synthetic/file.png']\n\n========== stdout ==========\n'café �'\n========== stderr ==========\n'err é'\n============================\n"
         },
-        "seconds": 0.002724885940551758
+        "seconds": 0.0041806697845458984
       }
     },
     {
       "name": "bad bytes, not text",
       "call": {
+        "kind": "process",
         "executable": "sh",
         "arguments": [
           "-c",
@@ -107,19 +111,20 @@
       "box": {
         "interim": "Testing…",
         "output": "BadReturnCodeException: A call to another executable gave a non-zero return code (2)! The call was: ['sh', '-c', \"printf 'caf\\\\303\\\\251 \\\\377'; printf 'err \\\\303\\\\251' >&2; exit 2\", '/synthetic/file.png']\n\n========== stdout ==========\nb'caf\\xc3\\xa9 \\xff'\n========== stderr ==========\nb'err \\xc3\\xa9'\n============================\n",
-        "seconds": 0.06205391883850098
+        "seconds": 0.06292319297790527
       },
       "launch": {
         "error": {
           "type": "BadReturnCodeException",
           "text": "A call to another executable gave a non-zero return code (2)! The call was: ['sh', '-c', \"printf 'caf\\\\303\\\\251 \\\\377'; printf 'err \\\\303\\\\251' >&2; exit 2\", '/synthetic/file.png']\n\n========== stdout ==========\nb'caf\\xc3\\xa9 \\xff'\n========== stderr ==========\nb'err \\xc3\\xa9'\n============================\n"
         },
-        "seconds": 0.0066318511962890625
+        "seconds": 0.0031681060791015625
       }
     },
     {
       "name": "terminal shown",
       "call": {
+        "kind": "process",
         "executable": "sh",
         "arguments": [
           "-c",
@@ -137,16 +142,17 @@
       "box": {
         "interim": "Testing…",
         "output": "Looks good!",
-        "seconds": 0.06256961822509766
+        "seconds": 0.06341886520385742
       },
       "launch": {
         "error": null,
-        "seconds": 0.004928112030029297
+        "seconds": 0.0032806396484375
       }
     },
     {
       "name": "long lived, fails",
       "call": {
+        "kind": "process",
         "executable": "sh",
         "arguments": [
           "-c",
@@ -164,16 +170,17 @@
       "box": {
         "interim": "Testing… (forcing a 15 second timeout for testing purposes)",
         "output": "BadReturnCodeException: A call to another executable gave a non-zero return code (3)! The call was: ['sh', '-c', 'exit 3', '/synthetic/file.png']\n\n========== stdout ==========\n''\n========== stderr ==========\n''\n============================\n",
-        "seconds": 0.06258440017700195
+        "seconds": 0.0633707046508789
       },
       "launch": {
         "error": null,
-        "seconds": 0.0068776607513427734
+        "seconds": 0.0018537044525146484
       }
     },
     {
       "name": "long lived, runs past its timeout",
       "call": {
+        "kind": "process",
         "executable": "sh",
         "arguments": [
           "-c",
@@ -191,16 +198,16 @@
       "box": {
         "interim": "Testing… (forcing a 15 second timeout for testing purposes)",
         "output": "Looks good!",
-        "seconds": 2.057451009750366
+        "seconds": 2.068817138671875
       },
       "launch": {
         "error": null,
-        "seconds": 0.00576019287109375
+        "seconds": 0.0013761520385742188
       }
     }
   ],
   "late": {
-    "returned_in": 0.0077097415924072266,
+    "returned_in": 0.0012259483337402344,
     "existed_at_return": false,
     "existed_later": true
   }

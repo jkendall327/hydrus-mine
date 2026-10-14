@@ -54,7 +54,7 @@ def record(session):
         return call
 
     def describe(call):
-        return dict(executable=call.GetExecutablePath(), arguments=call.GetExecutableParameterTemplates(),
+        return dict(kind='process', executable=call.GetExecutablePath(), arguments=call.GetExecutableParameterTemplates(),
                     parameters=[r.parameter_type for r in call.GetInputParameterProcessingRules()],
                     long_lived=call.GetThisIsAPotentiallyLongLivedExternalGuy(), timeout=call.GetTimeout(),
                     hide_terminal=call.GetHideTerminal(), text=call.GetText())

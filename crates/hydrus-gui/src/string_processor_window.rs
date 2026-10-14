@@ -240,6 +240,10 @@ pub fn open(
             } else {
                 state.borrow().editor.export_steps()
             };
+            // (the reference's export button is enabled only on a selection)
+            if !importing && steps.is_empty() {
+                return;
+            }
             let applied = Rc::new({
                 let state = state.clone();
                 let active = active.clone();
