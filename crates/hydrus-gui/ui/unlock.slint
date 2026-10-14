@@ -1,11 +1,11 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 // Asked for before the client opens when a lock password is set, as the
 // reference asks: until the password is right, or the window is closed. A
 // wrong password is asked for again with nothing said; a blank one is warned
 // about, as the reference's text dialog warns.
 
 import { Button, LineEdit } from "std-widgets.slint";
-import { Theme } from "theme.slint";
+import { Theme } from "@hydrus_ui_core";
 
 export component UnlockWindow inherits Window {
     in property <string> title-suffix: "";

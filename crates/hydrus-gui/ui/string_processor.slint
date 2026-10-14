@@ -1,4 +1,4 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 import { TipButton, TipComboBox } from "tip_widgets.slint";
 // The string processor editor (the reference's `EditStringProcessorPanel`,
 // bound by `src/string_processor_window.rs`; its workings are
@@ -8,11 +8,11 @@ import { TipButton, TipComboBox } from "tip_widgets.slint";
 // and the editor of a splitter, joiner, selector/slicer or sorter step.
 
 import { Button, CheckBox, ComboBox, LineEdit, SpinBox } from "std-widgets.slint";
-import { Theme } from "theme.slint";
-import { Asking } from "subscriptions.slint";
-import { ListTable, TableRow } from "list_table.slint";
+import { Theme } from "@hydrus_ui_core";
+import { Asking } from "@hydrus_ui_core";
+import { ListTable, TableRow } from "@hydrus_ui_core";
 import { RegexTools } from "regex_tools.slint";
-import { MenuPane, MenuPanes } from "main_menu.slint";
+import { MenuPane, MenuPanes } from "@hydrus_ui_core";
 
 component Box inherits Rectangle {
     in property <string> title;

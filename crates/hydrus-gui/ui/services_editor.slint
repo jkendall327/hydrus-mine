@@ -1,9 +1,9 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 import { TipCheckBox } from "tip_widgets.slint";
 import { Button, CheckBox, ComboBox, LineEdit, SpinBox, ScrollView, VerticalBox, HorizontalBox } from "std-widgets.slint";
-import { TableColumn, TableRow, ListTable } from "list_table.slint";
-import { RatingRow, RatingGraphic } from "viewer.slint";
-import { Theme } from "theme.slint";
+import { TableColumn, TableRow, ListTable } from "@hydrus_ui_core";
+import { RatingRow, RatingGraphic } from "@hydrus_ui_core";
+import { Theme } from "@hydrus_ui_core";
 export struct ServiceRatingExampleRow { label: string, graphic: RatingRow, icon-size: length, incdec-height: length, outline: length, counter-width: length, fraction: string, fraction-placement: int }
 export struct ServiceColourRow { label: string, border: string, fill: string }
 // One hit area includes the fraction, stars and trailing widget space, as Qt.

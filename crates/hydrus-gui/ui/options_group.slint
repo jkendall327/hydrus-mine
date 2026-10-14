@@ -1,0 +1,19 @@
+// The options group: Options and the dialogs it shares files with. Compiled as its
+// own crate (generated/hydrus-gui-ui-options), apart from the main window, so rustc
+// holds a fraction of the UI at a time.
+
+// (the compiler records which types come from the library by the imports of the
+// entry file only, so this file imports from it too)
+import { Btn, Theme } from "@hydrus_ui_core";
+
+export { OpenFileCallsWindow, ExternalRoutingChoiceWindow } from "open_externally.slint";
+export { ExternalCallWindow, ExternalCommandWindow, ExternalRule, ExternalDefaultsWindow } from "external_calls.slint";
+export { FrameLocationWindow } from "frame_locations.slint";
+export { ExportFilesWindow } from "export_files.slint";
+export { ServicesEditorWindow, EditServiceWindow, ServiceColourRow, ServiceRatingExampleRow } from "services_editor.slint";
+export { GuiColourPickerWindow, GuiColourRow } from "gui_coloursets.slint";
+export { DurationField, OptionRow, OptionsWindow, SortCogItem } from "options.slint";
+export { CheckerOptionsWindow, CheckerTexts } from "checker_options.slint";
+export { MediaViewWindow } from "media_views.slint";
+export { ExportFolderWindow, FolderActionRow, FoldersWindow, ImportFolderWindow } from "folders.slint";
+export { ShortcutSetWindow, ShortcutCommandWindow } from "shortcuts.slint";

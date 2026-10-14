@@ -1,4 +1,4 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 import { TipButton, TipComboBox } from "tip_widgets.slint";
 // The tag filter editor (the reference's `EditTagFilterPanel`, opened by a
 // "tag filter" button; its workings are hydrus-gui-model's
@@ -7,9 +7,9 @@ import { TipButton, TipComboBox } from "tip_widgets.slint";
 // to test tags against it.
 
 import { Button, CheckBox, LineEdit, TextEdit } from "std-widgets.slint";
-import { Theme } from "theme.slint";
-import { Asking, Tick } from "subscriptions.slint";
-import { ListTable, TableRow } from "list_table.slint";
+import { Theme } from "@hydrus_ui_core";
+import { Asking, Tick } from "@hydrus_ui_core";
+import { ListTable, TableRow } from "@hydrus_ui_core";
 
 component Tab inherits Rectangle {
     in property <string> text;

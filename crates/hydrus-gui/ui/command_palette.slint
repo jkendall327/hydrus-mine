@@ -1,6 +1,6 @@
 // Owner-bound command palette: fixed-height provider headings and suggestions.
 import { LineEdit, ScrollView } from "std-widgets.slint";
-import { Theme } from "theme.slint";
+import { Theme } from "@hydrus_ui_core";
 export struct PaletteRow { primary:string, secondary:string, heading:bool, enabled:bool, checked:int }
 export component CommandPaletteWindow inherits Window {
     in property <string> title-suffix: "";

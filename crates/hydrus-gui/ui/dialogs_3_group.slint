@@ -1,0 +1,30 @@
+// Dialog group 3: windows compiled as their own crate (generated/hydrus-gui-ui-dialogs-3),
+// apart from the main window, so rustc holds a fraction of the UI at a time. Files stay
+// where they are; this file only exports the windows of its group. A new window with a
+// main.slint export goes in the smallest group (not in main.slint).
+
+// (the compiler records which types come from the library by the imports of the
+// entry file only, so this file imports from it too)
+import { Btn, Theme } from "@hydrus_ui_core";
+
+export { HydrusTray } from "system_tray.slint";
+export { NamespaceSortsWindow } from "namespace_sorts.slint";
+export { ArchiveDeleteWindow } from "archive_delete.slint";
+export { ManageNotesWindow } from "manage_notes.slint";
+export { ManageUrlsWindow } from "manage_urls.slint";
+export { EditValueWindow } from "edit_value.slint";
+export { DefinitionField, DownloaderDefinitionEditWindow, DownloaderDefinitionsWindow } from "downloader_definitions.slint";
+export { ForceFiletypeWindow } from "force_filetype.slint";
+export { FormulaWindow, FormulaRuleWindow } from "formula_editors.slint";
+export { QuickTagEntryWindow } from "quick_tag_entry.slint";
+export { BonesRow, HowBonedWindow } from "how_boned.slint";
+export { LocationTick, LocationsWindow } from "domains.slint";
+export { ParserListWindow, ParserEditWindow, ParserPickerWindow } from "parser_editors.slint";
+export { NetworkDataWindow, EditNetworkValueWindow, CookieImportWindow, HeaderApprovalWindow } from "network_sessions.slint";
+export { DownloaderDisplayWindow } from "downloader_display.slint";
+export { ImportOptionsOverwriteWindow, ImportOverwriteRow } from "import_options_overwrite.slint";
+export { LoginExampleDomainWindow } from "login_example.slint";
+export { GallerySourceWindow } from "gallery_source.slint";
+export { ImportOptionsPanelWindow } from "import_options_panel.slint";
+export { TagBannerWindow } from "tag_banner.slint";
+export { FileMaintenanceWindow } from "file_maintenance_current.slint";

@@ -1,4 +1,4 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 // The "manage times" dialog for some files (the reference's
 // `EditFileTimestampsPanel`, opened by a thumbnail's or the viewer's
 // "manage > times"; its workings are hydrus-gui-model's `times_editor`,
@@ -9,9 +9,9 @@ import { Btn } from "btn.slint";
 // (one file) and paste of every time; apply and cancel.
 
 import { Button, LineEdit } from "std-widgets.slint";
-import { Theme } from "theme.slint";
-import { Asking } from "subscriptions.slint";
-import { ListTable, TableColumn, TableRow } from "list_table.slint";
+import { Theme } from "@hydrus_ui_core";
+import { Asking } from "@hydrus_ui_core";
+import { ListTable, TableColumn, TableRow } from "@hydrus_ui_core";
 
 // one of the grid's times
 export struct TimeRow {

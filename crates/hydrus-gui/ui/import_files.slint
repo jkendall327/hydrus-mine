@@ -1,4 +1,4 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 // The "review files to import" window (file > import files, or files
 // dropped on the main window; `src/local_import.rs`), as the reference's
 // `ReviewLocalFileImports`: the paths given, each parsed (#, path,
@@ -6,7 +6,7 @@ import { Btn } from "btn.slint";
 // and stop buttons, whether to delete the originals, and "import now".
 
 import { Button, CheckBox, LineEdit, ListView, ProgressIndicator } from "std-widgets.slint";
-import { Theme } from "theme.slint";
+import { Theme } from "@hydrus_ui_core";
 
 // a row of the list: its cells (#, path, filetype, size), whether it is
 // selected, and whether parsing found a problem with it

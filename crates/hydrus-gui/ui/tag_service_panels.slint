@@ -1,7 +1,7 @@
 // The service notebook and listbook share the same retained service drafts.
 // Changing this default alters navigation geometry, not the selected service.
 import { ListView } from "std-widgets.slint";
-import { Theme } from "theme.slint";
+import { Theme } from "@hydrus_ui_core";
 
 export component TagServicePanels inherits Rectangle {
     in property <[string]> names;

@@ -3,9 +3,9 @@
 // tag (a press applies it), a line holding the newest one (selected), and
 // apply/cancel. A blank or whitespace line is refused with a message. Driven
 // by `src/quick_tag_entry.rs`.
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 import { LineEdit } from "std-widgets.slint";
-import { Theme } from "theme.slint";
+import { Theme } from "@hydrus_ui_core";
 
 export component QuickTagEntryWindow inherits Window {
     in property <string> title-suffix: "";

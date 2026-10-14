@@ -1,8 +1,8 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 import { TipButton, TipComboBox } from "tip_widgets.slint";
 import { Button, CheckBox, LineEdit, ScrollView, VerticalBox, HorizontalBox } from "std-widgets.slint";
-import { ListTable, TableColumn, TableRow } from "list_table.slint";
-import { Theme } from "theme.slint";
+import { ListTable, TableColumn, TableRow } from "@hydrus_ui_core";
+import { Theme } from "@hydrus_ui_core";
 export struct ApiPermissionRow { code:int, label:string, checked:bool }
 export component ClientApiKeysWindow inherits Window {
     in property <string> title-suffix: "";

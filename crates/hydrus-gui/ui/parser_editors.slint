@@ -1,10 +1,10 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 // Native parser definitions, content nodes and direct URL-class associations.
 import { Button, CheckBox, ComboBox, LineEdit, ScrollView, TextEdit } from "std-widgets.slint";
-import { Theme } from "theme.slint";
-import { ListTable, TableColumn, TableRow } from "list_table.slint";
+import { Theme } from "@hydrus_ui_core";
+import { ListTable, TableColumn, TableRow } from "@hydrus_ui_core";
 import { DefinitionField } from "downloader_definitions.slint";
-import { Question } from "favourites.slint";
+import { Question } from "@hydrus_ui_core";
 export component ParserListWindow inherits Window {
     in property <bool> links;
     in-out property <int> links-tab;

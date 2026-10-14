@@ -1,0 +1,22 @@
+// Dialog group 1: windows compiled as their own crate (generated/hydrus-gui-ui-dialogs-1),
+// apart from the main window, so rustc holds a fraction of the UI at a time. Files stay
+// where they are; this file only exports the windows of its group. A new window with a
+// main.slint export goes in the smallest group (not in main.slint).
+
+// (the compiler records which types come from the library by the imports of the
+// entry file only, so this file imports from it too)
+import { Btn, Theme } from "@hydrus_ui_core";
+
+export { MostUsedTagsWindow } from "tag_suggestions.slint";
+export { TagDisplayWindow } from "tag_display.slint";
+export { TagRelationshipsWindow } from "tag_relationships.slint";
+export { TagMigrationWindow, TagMigrationProgressWindow } from "tag_migration.slint";
+export { ManageTagsWindow } from "manage_tags.slint";
+export { TagSyncReviewWindow } from "tag_sync_review.slint";
+export { TagFilterWindow } from "tag_filter.slint";
+export { ConversionWindow, StringConverterWindow, StringProcessorWindow, StringStepWindow } from "string_processor.slint";
+export { SessionDialog } from "session_dialog.slint";
+export { EditorField, EditorPanel, PredicateEditorWindow } from "predicate_editor.slint";
+export { EditorTreeRow } from "filetype_tree.slint";
+export { ImportOptionsWindow, SizeLimit, ResolutionLimit, TagServiceRow } from "import_options.slint";
+export { ClientApiKeysWindow, EditApiPermissionsWindow, ApiPermissionRow, ApiRequestWindow } from "client_api_admin.slint";

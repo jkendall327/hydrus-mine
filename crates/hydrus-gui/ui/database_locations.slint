@@ -1,4 +1,4 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 // Database > locations (the reference's `MoveMediaFilesPanel`; its rows
 // and words are hydrus-gui-model's `database_locations`, bound by
 // `src/database_locations_window.rs`): the database's parts, the media
@@ -6,8 +6,8 @@ import { Btn } from "btn.slint";
 // override, and "move files now".
 
 import { Button, CheckBox, ComboBox, SpinBox } from "std-widgets.slint";
-import { ListTable, TableRow } from "list_table.slint";
-import { Theme } from "theme.slint";
+import { ListTable, TableRow } from "@hydrus_ui_core";
+import { Theme } from "@hydrus_ui_core";
 
 export component DatabaseLocationsWindow inherits Window {
     in property <string> window-title: "database locations";
