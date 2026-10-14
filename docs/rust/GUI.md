@@ -3246,7 +3246,11 @@ files to trash?"), several as a list starting on the remembered or suggested
 action, and the reason panel is hidden; the reason the hidden panel selects
 (the remembered one, else the default, and a file's earlier reason kept) is
 recorded, as in the reference. Proven by `tests/gui/simple_delete_dialog.rs`
-(replaying `simple_delete_dialog.json`) and the download flow. Cancelling Options leaves these preferences unchanged.
+(replaying `simple_delete_dialog.json`: one and two domains, both files, a
+trashed file, the menu's suggested domain, a remembered action, the bypass of a
+resolved question, and the options each accepted action remembers, by their
+exact keys; a file's earlier reason is the basic fixture's own) and the
+download flow. Cancelling Options leaves these preferences unchanged.
 The real Qt inputs and questions are recorded in `files_trash.json`.
 
 The advanced Files and Trash deletion dialog now lists actionable local domains,

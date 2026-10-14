@@ -161,8 +161,7 @@ fn prepare(case: &str, confirm_trash: bool, via: &Via<'_>) -> Opened {
     let files = case_files(&store, case, &all);
     set_preferences(&store, confirm_trash);
     if let Via::Remembered(name) = via {
-        let mut preferences: DeletionPreferences =
-            store.read(hydrus_store::settings::get).unwrap();
+        let mut preferences: DeletionPreferences = store.read(hydrus_store::settings::get).unwrap();
         preferences.last_action = Some(DeletionAction::Domain(key_of(&store, name)));
         store
             .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &preferences))
@@ -187,10 +186,8 @@ impl Opened {
                 self.ui.invoke_thumbnail_menu_requested(-1);
                 let menu = self.ui.get_thumbnail_menu();
                 let from = super::media_support::rows(&menu.delete_menu);
-                self.ui.invoke_menu_chosen(super::media_support::find(
-                    &from,
-                    &format!("from {name}"),
-                ));
+                self.ui
+                    .invoke_menu_chosen(super::media_support::find(&from, &format!("from {name}")));
             }
             Via::Plain | Via::Remembered(_) => self.ui.invoke_delete_selected(),
         }
@@ -213,7 +210,11 @@ fn check_outcome(opening: &Opened, before: &[BTreeSet<String>], value: &Value, w
         let expected: BTreeSet<String> = match service {
             "all local file domains" => BTreeSet::new(),
             "local file storage" => was.clone(),
-            domain => was.iter().filter(|d| d.as_str() != domain).cloned().collect(),
+            domain => was
+                .iter()
+                .filter(|d| d.as_str() != domain)
+                .cloned()
+                .collect(),
         };
         if now != *was || (physical && !in_storage(store, file)) {
             changed += 1;
@@ -295,13 +296,15 @@ fn simple_deletion_opens_the_delete_files_dialog_as_recorded() {
         // the case's file selection, less its description ("two domains,
         // suggested my files" is "two domains")
         let files = name.split(',').next().unwrap();
-        let files = if files == "last action" { "two domains" } else { files };
+        let files = if files == "last action" {
+            "two domains"
+        } else {
+            files
+        };
         let confirm = case["confirm_trash"].as_bool().unwrap();
         let what = format!("{name}, confirm {confirm}");
         // (reached by the menu entry of the suggested domain, or plainly)
-        let via = case["suggested"]
-            .as_str()
-            .map_or(Via::Plain, Via::Menu);
+        let via = case["suggested"].as_str().map_or(Via::Plain, Via::Menu);
         let panel = &case["panel"];
         let opening = prepare(files, confirm, &via);
         let before = domains_before(&opening);
@@ -326,7 +329,11 @@ fn simple_deletion_opens_the_delete_files_dialog_as_recorded() {
             remembered_cases += 1;
             let remembered = prepare(files, confirm, &Via::Remembered(last));
             remembered.start(&Via::Remembered(last));
-            check_panel(&remembered, &case["remembered"], &format!("{what}, remembered"));
+            check_panel(
+                &remembered,
+                &case["remembered"],
+                &format!("{what}, remembered"),
+            );
             super::common::answer_delete(&remembered.bound, false);
         }
         drop(opening);
