@@ -71,19 +71,12 @@ fn editor(fixture: &Value) -> (tempfile::TempDir, Arc<Store>, TagFilterWindow) {
     (dir, store, window)
 }
 
-fn head(message: &str) -> &str {
-    match message.find("the general error was:\n\n") {
-        Some(at) => &message[..at + "the general error was:\n\n".len()],
-        None => message,
-    }
-}
-
 // leaf: audit-shared-tag-favourite-export
 #[test]
 fn the_export_menu_copies_what_the_reference_copies() {
     let _windows = headless::init();
     let fixture = hydrus_testkit::fixture_json("tag_filter_favourite_exchange.json");
-    let (_dir, _store, w) = editor(&fixture);
+    let (dir, _store, w) = editor(&fixture);
     let clip = Rc::new(RefCell::new(Vec::<Clip>::new()));
     set_clipper({
         let clip = clip.clone();
@@ -103,27 +96,42 @@ fn the_export_menu_copies_what_the_reference_copies() {
         let Clip::Text(text) = clip.borrow().last().cloned().unwrap() else {
             panic!("text export");
         };
-        // the same object, in Python's JSON format: a filter's rules are a set to
-        // the reference, which lists them in the order it holds them (the
-        // editor's blacklist then whitelist, or as a favourite was made) where
-        // ours are sorted by tag slice
+        // the reference lists the rules in the order its set holds them (the
+        // editor's blacklist then whitelist, or as a favourite was made); ours
+        // are sorted by tag slice. So: the reference's text is exactly its
+        // rules written as Python's `json.dumps` writes them, and ours is
+        // exactly the same rules, sorted, written the same way.
         let reference = export["text"].as_str().unwrap();
-        let python = |text: &str| {
-            hydrus_core::pyjson::PyJson::parse(text)
+        let written = |value: &Value| {
+            let rules: Vec<String> = value[2]
+                .as_array()
                 .unwrap()
-                .to_python_string()
+                .iter()
+                .map(|r| format!("[{}, {}]", r[0], r[1]))
+                .collect();
+            format!("[44, 1, [{}]]", rules.join(", "))
         };
+        let theirs: Value = serde_json::from_str(reference).unwrap();
         assert_eq!(
-            python(&text),
-            text,
-            "{}: Python's JSON format",
+            written(&theirs),
+            reference,
+            "{}: the format",
             export["label"]
         );
-        assert_eq!(python(reference), reference);
         assert_eq!(
-            rules_of(&text),
-            rules_of(reference),
-            "{}: the rules",
+            text,
+            written(&rules_of(reference)),
+            "{}: our text",
+            export["label"]
+        );
+        // and "export to a file" writes the same text
+        let path = dir.path().join(format!("export {n}.json"));
+        w.set_exchange_path(path.to_string_lossy().as_ref().into());
+        w.invoke_exchange_action("save".into());
+        assert_eq!(
+            std::fs::read_to_string(&path).unwrap(),
+            text,
+            "{}: the file",
             export["label"]
         );
         w.invoke_cancelled();
@@ -149,12 +157,7 @@ fn importing_what_is_not_a_tag_filter_says_what_the_reference_says() {
         let shown = w.get_exchange_error().to_string();
         let reference = import["errors"][0]["message"].as_str().unwrap();
         assert!(!w.get_favourite_naming(), "{text:?} asks no name");
-        // Python's own words for what went wrong inside a malformed object
-        // are not ours; what comes before them is
-        assert_eq!(head(&shown), head(reference), "{text:?}");
-        if !reference.contains("the general error was") {
-            assert_eq!(shown, reference, "{text:?}");
-        }
+        assert_eq!(shown, reference, "{text:?}");
         assert_eq!(
             FavouriteTagFilters::load(&store).unwrap(),
             before,

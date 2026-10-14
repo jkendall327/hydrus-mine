@@ -218,7 +218,10 @@ search.
 - **Closing the last page** (Ctrl+W or a middle click on the only tab)
   leaves the reference's main notebook empty; hydrus-rs's top notebook
   always holds a page, so a new search page ("files") takes its place
-  (`oracle/record_page_close.py`, the last step; #183).
+  (`oracle/record_page_close.py`, the last step; #183). So the Pages > weight
+  report of a client with no other page says "1 pages open" where the reference's
+  says "0 pages open" (the replay in `pages_menu_info.rs` edits the recorded
+  count to match, for that one page).
 - **Active predicate editing remains Partial.** Represented system values and
   simple tags/namespaces/wildcards can now be edited together, with one atomic
   Apply and separate supplied values for repeated system families. Immutable

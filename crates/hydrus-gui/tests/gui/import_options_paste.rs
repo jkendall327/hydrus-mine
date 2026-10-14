@@ -38,15 +38,6 @@ fn sorted(mut tuple: Value) -> Value {
     tuple
 }
 
-/// The text of the reference's clipboard error up to its Python exception.
-fn error_head(message: &str) -> &str {
-    let at = message
-        .find("the general error was:\n\n")
-        .expect("a clipboard error")
-        + "the general error was:\n\n".len();
-    &message[..at]
-}
-
 /// The editor of a specific importer, whose options are `current`.
 fn editor_of(s: &Setup, current: &ImportOptionsSlice) -> hydrus_gui::ImportOptionsWindow {
     let (queue, options) = (s.queue, current.clone());
@@ -151,12 +142,7 @@ fn pasting_what_is_not_import_options_says_what_the_reference_says() {
         editor.invoke_paste_options(2);
         let shown = editor.get_clipboard_error().to_string();
         let reference = error["criticals"][0]["message"].as_str().unwrap();
-        if text.is_empty() {
-            // (an empty clipboard has no text to read: the transport's own error)
-            assert!(!shown.is_empty());
-        } else {
-            assert_eq!(error_head(&shown), error_head(reference), "pasted {text:?}");
-        }
+        assert_eq!(shown, reference, "pasted {text:?}");
         // and nothing changes
         editor.invoke_apply();
         assert_eq!(
@@ -219,6 +205,20 @@ fn the_global_defaults_editor_pastes_as_the_references_does() {
         window.invoke_clicked(0, row as i32, false, false);
         window.invoke_action(0, "edit".into());
         let editor = panel::editing_window().unwrap();
+        // the reference's global editor offers custom paste and merge-paste
+        // only; a specific importer's offers fill-in and replace as well
+        let menu = |key: &str| -> Vec<String> {
+            fixture[key]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|e| e.as_str().unwrap().to_owned())
+                .collect()
+        };
+        assert!(!menu("global_menu").contains(&"replace-paste".to_owned()));
+        assert!(!menu("global_menu").contains(&"fill-in-gaps-paste".to_owned()));
+        assert!(menu("specific_menu").contains(&"replace-paste".to_owned()));
+        assert!(editor.get_global_defaults(), "the paste menu hides them");
         paste_with(containers[pasted].to_string());
         editor.invoke_paste_options(if how == "merge-paste" { 0 } else { 2 });
         let information = scenario["information"].as_array().unwrap();

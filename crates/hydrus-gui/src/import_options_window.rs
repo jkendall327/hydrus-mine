@@ -1359,7 +1359,7 @@ fn open_inner(
             // (`GetPasteObject`: the clipboard's text, read as an import options
             // container, or the reference's clipboard error)
             let text = match crate::from_clipboard() { Ok(text) => text, Err(error) => { window.set_clipboard_error(error.into()); return; } };
-            let incoming = match hydrus_downloader_exchange::import_options::decode_text(&text) { Ok(options) => options, Err(error) => { window.set_clipboard_error(hydrus_gui_model::notes_editor::clipboard_parse_error("JSON-serialised Import Options Container", &text, &error.to_string()).into()); return; } };
+            let incoming = match hydrus_downloader_exchange::import_options::decode_text(&text) { Ok(options) => options, Err(error) => { window.set_clipboard_error(hydrus_gui_model::notes_editor::clipboard_parse_error("JSON-serialised Import Options Container", &text, &python_error(&text, &error.to_string())).into()); return; } };
             if index == 2 && caller == CallerType::Global && Kind::ALL.into_iter().any(|kind| !kind.is_set(&incoming)) {
                 window.set_clipboard_error("Hey, you tried to paste a non-full import options container into the \"global\" entry. Did you mean to do a merge-paste instead?".into());
                 return;
@@ -1436,4 +1436,18 @@ fn open_inner(
     show_tag_services(&window, &state.borrow());
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
+}
+
+/// The reference's words for text that is not an import options container:
+/// Python's own error for text that is not JSON, and the loader's
+/// exception for JSON of another kind of object (`error` is ours, kept for
+/// what Python has no words for).
+fn python_error(text: &str, error: &str) -> String {
+    match hydrus_core::pyjson::PyJson::parse(text) {
+        Err(parse) => format!("JSONDecodeError('{}')", parse.python_message(text)),
+        Ok(_) if error.contains("expected a import_options_container (143) object") => {
+            "Exception('Not an Import options Container!')".to_owned()
+        }
+        Ok(_) => error.to_owned(),
+    }
 }

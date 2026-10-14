@@ -5490,7 +5490,7 @@
     "date": "2026-10-13",
     "class": "source-restated",
     "by": "Claude session (#97 phase 2, w4-r5)",
-    "note": "gui/import_options_recorded.rs now replays import_options_fields.json step by step (the reference's EditPrefetchImportOptionsPanel: each choice, flag and the dispositive checks giving way to each other in both directions, with the saved options equal at the end), so the expected values are recorded, not typed. Still not driven: the importer code that reads them (hydrus-download predict.rs, private, with no test of its hash/URL outcomes), and whether the neighbour-spam box is disabled (the .slint enables it from the URL choice; not readable from a test)."
+    "note": "The editor's prefetch panel values are compared with the reference's panel step by step (import_options_fields.json), but the importer code that reads them (hydrus-download predict.rs, private) has no test of its hash/URL outcomes."
    }
   },
   {
@@ -5564,9 +5564,9 @@
    ],
    "recheck": {
     "date": "2026-10-13",
-    "class": "sound",
+    "class": "source-restated",
     "by": "Claude session (#97 phase 2, w4-r5)",
-    "note": "gui/import_options_recorded.rs replays import_options_fields.json through the real window: a tag service's get-tags box and the cog's new/inbox/archive, parsed- and additional-overwrite switches for 5 scenarios, the saved rules equal the reference panel's ServiceTagImportOptions, a service never touched has the default rules, and the kinds of file the rules apply to (applies_to, which the importer asks) are exactly those for which ServiceTagImportOptions.GetTags returns tags in the recording. The editor's value now names every tag service, a service not touched having its default rules, as the reference's does (an importer treats a service with no entry differently). Not driven: the filtering of parsed tags by the get-tags filter and the deleted-tag overwrite inside the importer (hydrus-download content.rs service_tags, private; covered by its subscription tests on typed options)."
+    "note": "The editor's tag service panel values are compared with the reference's panel step by step (import_options_fields.json), but the code that reads them (hydrus-download content.rs service_tags, the get-tags filter and the deleted-tag overwrite) is not driven from the editor's output, so the setting's consumer is untested."
    }
   },
   {
@@ -23493,7 +23493,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "Claude session (#97 phase 2, w4-r5)",
-    "note": "gui/tag_filter_favourite_exchange.rs replays tag_filter_favourite_exchange.json (record_tag_filter_favourite_exchange.py: the reference's real _ExportFavourite menu on a filter with four rules and two favourites): the menu's entries ('this tag filter', zebra, apple) equal the recording, and the text put on the clipboard by each is the same Tag Filter object in Python's JSON format with the same rules. The rules are listed sorted here where the reference lists the editor's blacklist then whitelist, or a favourite in the order it was made (DIFFERENCES.md); exporting to a file is the same text and was already covered by the earlier round-trip test."
+    "note": "gui/tag_filter_favourite_exchange.rs replays tag_filter_favourite_exchange.json (record_tag_filter_favourite_exchange.py: the reference's real _ExportFavourite menu on a filter with four rules and two favourites): the menu's entries equal the recording, the reference's text is shown to be its rules written as Python's json.dumps writes them, and the text each entry puts on the clipboard is byte for byte the same format with the same rules, sorted by tag slice (the reference lists the editor's blacklist then whitelist, or a favourite in the order it was made: DIFFERENCES.md). Export to a file writes the same text for every entry (driven in the same test)."
    }
   },
   {
@@ -23513,7 +23513,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "Claude session (#97 phase 2, w4-r5)",
-    "note": "gui/tag_filter_favourite_exchange.rs, two replays through the window. (1) tag_filter_favourite_exchange.json: text that is not JSON, empty text, a SerialisableList, a SerialisableDictionary, a JSON string and a JSON object are imported; the error shown has the reference's text (the 'Sorry, I could not understand what was in the clipboard...' message with Python's JSONDecodeError for the unreadable ones, 'That object was not a Tag Filter! It seemed to be a \"<class ...>\".' for the two lists), up to Python's own wording of why a malformed object failed; no name is asked and the favourites do not change. (2) the four import events of tag_filter_favourites.json (cancel at the naming prompt, no at the overwrite, a new name, yes at the overwrite) with an untidy clipboard payload: the prompts' text, the favourites after each step and the draft (the cleaned filter) equal the recording. File import and the inline text/file panel before the naming prompt are ours (DIFFERENCES.md)."
+    "note": "gui/tag_filter_favourite_exchange.rs, two replays through the window. (1) tag_filter_favourite_exchange.json: text that is not JSON, empty text, a SerialisableList, a SerialisableDictionary, a JSON string and a JSON object are imported; the whole error shown equals the reference's, Python's exception text included (JSONDecodeError, 'too many values to unpack', 'not enough values to unpack'); no name is asked and the favourites do not change. (2) the four import events of tag_filter_favourites.json (cancel at the naming prompt, no at the overwrite, a new name, yes at the overwrite) with an untidy clipboard payload: the prompts' text, the favourites after each step and the draft equal the recording. Python's exception text for other malformed JSON, and for a list of the wrong length, is approximate. File import and the inline text/file panel before the naming prompt are ours (DIFFERENCES.md)."
    }
   },
   {
@@ -24270,7 +24270,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "Claude session (#97 phase 2, w4-r5)",
-    "note": "gui/import_options_paste.rs replays import_options_paste.json (record_import_options_paste.py: the reference's container editor panels given a clipboard): for a specific importer 18 merge/fill-in/replace pastes of three containers over two current ones, the custom-paste chooser reached through the editor (3 presets and cancel against subscription_import_options.json), copy (what is put on the clipboard reads back as the same container), the clipboard errors (the reference's text up to Python's exception) and the global defaults editor's paste (merge and the non-full replace warning, with the saved global default compared), each read back from what the editor saves. The global editor's paste menu now offers only custom paste and merge-paste, as the reference's. The recording found the tags page differing, fixed here (every tag service named in the value). The reference's Python exception text and the subscription window's own shorter paste error are not matched."
+    "note": "gui/import_options_paste.rs replays import_options_paste.json (record_import_options_paste.py: the reference's container editor panels given a clipboard): for a specific importer 18 merge/fill-in/replace pastes of three containers over two current ones, copy (what is put on the clipboard reads back as the same container), the clipboard errors (the reference's whole message, Python's exception text included, for text that is not JSON, empty text, and JSON of another object kind), and the global defaults editor's paste (merge and the non-full replace warning, with the saved global default compared; its menu hides fill-in and replace as the recorded menu does), each read back from what the editor saves. The custom-paste chooser (3 presets and cancel) is replayed against subscription_import_options.json, the recording of the reference's chooser made for the subscription editor, not a case in import_options_paste.json. The recording found the tags page differing, fixed here (every tag service named in the value). Python's exception text for JSON that is malformed in ways other than the recorded ones is approximate (pyjson python_message)."
    }
   },
   {

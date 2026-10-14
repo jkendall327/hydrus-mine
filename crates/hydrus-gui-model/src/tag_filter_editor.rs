@@ -735,6 +735,28 @@ fn serialisable_class(kind: i64) -> Option<&'static str> {
     })
 }
 
+/// Python's words for unpacking `value` into the four parts of a serialised
+/// object (what the reference's loader says of JSON that is not one).
+fn unpack_error(value: &serde_json::Value) -> String {
+    use serde_json::Value;
+    let count = match value {
+        Value::String(s) => s.chars().count(),
+        Value::Object(o) => o.len(),
+        Value::Array(a) => a.len(),
+        Value::Null => return "TypeError(\"cannot unpack non-iterable NoneType object\")".into(),
+        Value::Bool(_) => return "TypeError(\"cannot unpack non-iterable bool object\")".into(),
+        Value::Number(n) => {
+            let kind = if n.is_f64() { "float" } else { "int" };
+            return format!("TypeError(\"cannot unpack non-iterable {kind} object\")");
+        }
+    };
+    if count > 4 {
+        "ValueError('too many values to unpack (expected 4)')".into()
+    } else {
+        format!("ValueError('not enough values to unpack (expected 4, got {count})')")
+    }
+}
+
 /// Decode and clean a single reference Tag Filter, before any draft/settings change.
 /// The errors are the reference's own words where it has them
 /// (`_ImportFavourite`: "Clipboard Error!" for text it can't read, "Error"
@@ -749,13 +771,13 @@ pub fn import_favourite(text: &str) -> Result<TagFilter, String> {
         // (Python's words for the syntax error, where they are known)
         let message = hydrus_core::pyjson::PyJson::parse(text)
             .err()
-            .map_or_else(|| e.to_string(), |p| p.message);
+            .map_or_else(|| e.to_string(), |p| p.python_message(text));
         parse_error(&format!("JSONDecodeError('{message}')"))
     })?;
     let tuple = value
         .as_array()
         .filter(|v| v.len() == 3)
-        .ok_or_else(|| parse_error("ValueError('not a serialised object')"))?;
+        .ok_or_else(|| parse_error(&unpack_error(&value)))?;
     if let Some(class) = tuple[0]
         .as_i64()
         .filter(|&k| k != 44)

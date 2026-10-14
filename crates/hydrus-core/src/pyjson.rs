@@ -45,6 +45,34 @@ pub struct JsonError {
     pub message: String,
 }
 
+impl JsonError {
+    /// The text of Python's `JSONDecodeError` for this failure in `text`
+    /// ("Expecting value: line 1 column 1 (char 0)"), for the failures whose
+    /// wording is known; others keep ours.
+    #[must_use]
+    pub fn python_message(&self, text: &str) -> String {
+        let what = match self.message.as_str() {
+            "expected a value" | "unexpected end of document" => "Expecting value",
+            "trailing characters after the document" => "Extra data",
+            "expected ',' or ']'" | "expected ',' or '}'" => "Expecting ',' delimiter",
+            "expected ':'" => "Expecting ':' delimiter",
+            "expected a string key" => "Expecting property name enclosed in double quotes",
+            _ => return self.message.clone(),
+        };
+        let at = text
+            .get(..self.offset)
+            .map_or(0, |before| before.chars().count());
+        let before: String = text.chars().take(at).collect();
+        let line = before.matches('\n').count() + 1;
+        let column = at
+            - before
+                .rfind('\n')
+                .map_or(0, |n| before[..=n].chars().count())
+            + 1;
+        format!("{what}: line {line} column {column} (char {at})")
+    }
+}
+
 impl PyJson {
     /// Parse a document the way `json.loads` does.
     pub fn parse(text: &str) -> Result<PyJson, JsonError> {
