@@ -784,6 +784,9 @@ pub struct DefinitionEditor {
     pub domain_regex_values: Vec<String>,
     pub domain_raw_selection: ListSelection<usize>,
     pub domain_regex_selection: ListSelection<usize>,
+    /// The nested generator's members list (`nested_gug_members`).
+    pub members: crate::nested_gug_members::Members,
+    pub member_selection: ListSelection<usize>,
 }
 
 impl DefinitionEditor {
@@ -819,7 +822,9 @@ impl DefinitionEditor {
             ),
             _ => (Vec::new(), Vec::new()),
         };
-        Self {
+        let mut editor = Self {
+            members: crate::nested_gug_members::Members::default(),
+            member_selection: ListSelection::default(),
             domain_raw_values,
             domain_regex_values,
             domain_raw_selection: ListSelection::default(),
@@ -836,7 +841,9 @@ impl DefinitionEditor {
             gallery_position,
             gallery_identifier,
             gallery_delta,
-        }
+        };
+        editor.members_sorted();
+        editor
     }
 
     /// Apply a text control edit to the typed draft.

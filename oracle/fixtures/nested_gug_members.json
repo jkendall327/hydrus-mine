@@ -111,6 +111,7 @@
           "no"
         ]
       ],
+      "selected": [],
       "chooser": 1,
       "warnings": 0
     },
@@ -137,6 +138,9 @@
           "missing search",
           "no"
         ]
+      ],
+      "selected": [
+        "Gamma 2"
       ],
       "chooser": 2,
       "warnings": 0
@@ -169,6 +173,9 @@
           "no"
         ]
       ],
+      "selected": [
+        "Gamma 10"
+      ],
       "chooser": 3,
       "warnings": 0
     },
@@ -199,6 +206,9 @@
           "missing search",
           "no"
         ]
+      ],
+      "selected": [
+        "Gamma 10"
       ],
       "chooser": 3,
       "warnings": 1

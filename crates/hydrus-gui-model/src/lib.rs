@@ -71,6 +71,7 @@ pub mod menu_choice_wheel;
 pub mod merge_options_editor;
 pub mod merge_summary;
 pub mod namespace_colours;
+pub mod nested_gug_members;
 pub mod notes_editor;
 pub mod open_externally;
 pub mod options;

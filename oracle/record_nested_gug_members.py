@@ -70,6 +70,10 @@ def record(session):
         def rows():
             return [list(panel._ConvertGUGDataToDisplayTuple(d)) for d in ctrl.GetData()]
 
+        def selected():
+            chosen = ctrl.GetData(only_selected=True)
+            return [d[1] for d in ctrl.GetData() if d in chosen]
+
         def value():
             v = panel.GetValue()
             return {
@@ -118,18 +122,18 @@ def record(session):
             # a cancelled chooser changes nothing
             script.append(None)
             panel._AddGUGButtonClick()
-            steps.append({'step': 'add, cancelled', 'rows': rows(), 'chooser': len(choosers), 'warnings': len(warnings)})
+            steps.append({'step': 'add, cancelled', 'rows': rows(), 'selected': selected(), 'chooser': len(choosers), 'warnings': len(warnings)})
             # two picked (they come back in the chooser's order)
             script.append(['Gamma 2', 'delta search'])
             panel._AddGUGButtonClick()
-            steps.append({'step': 'add two', 'rows': rows(), 'chooser': len(choosers), 'warnings': len(warnings)})
+            steps.append({'step': 'add two', 'rows': rows(), 'selected': selected(), 'chooser': len(choosers), 'warnings': len(warnings)})
             # the rest
             script.append(['Gamma 10'])
             panel._AddGUGButtonClick()
-            steps.append({'step': 'add the last', 'rows': rows(), 'chooser': len(choosers), 'warnings': len(warnings)})
+            steps.append({'step': 'add the last', 'rows': rows(), 'selected': selected(), 'chooser': len(choosers), 'warnings': len(warnings)})
             # nothing left: a warning, and no chooser
             panel._AddGUGButtonClick()
-            steps.append({'step': 'add with none left', 'rows': rows(), 'chooser': len(choosers), 'warnings': len(warnings)})
+            steps.append({'step': 'add with none left', 'rows': rows(), 'selected': selected(), 'chooser': len(choosers), 'warnings': len(warnings)})
         finally:
             ClientGUIDialogsQuick.SelectMultipleFromList = orig_chooser
             ClientGUIDialogsMessage.ShowWarning = orig_warning
