@@ -4692,7 +4692,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "claude, #97 phase 2 (w4-r2)",
-    "note": "The phrase is covered by the older test and the recorded dialog replay. oracle/record_export_folder_overwrite.py runs the reference's recorded 'regular' export folder (a tags .txt sidecar and a URLs .json one per file) into fresh folders with stale sidecars in place, under no option, 'overwrite on next run' (spent by the run: a second run leaves stale sidecars) and 'always'; files_io_folder_editors.rs an_export_folders_sidecar_overwrite_options_decide_what_its_worker_writes_as_the_reference_did sets the options in the real editor and compares the sidecars the real worker leaves, run by run, and the stored flags, with the recording."
+    "note": "Two tagged tests. The phrase and schedule: files_io_folder_editors.rs an_export_folders_search_phrase_schedule_and_overwrites_are_what_its_worker_does (the older test, with the recorded dialog replay). The sidecar overwrite options: oracle/record_export_folder_overwrite.py runs the reference's recorded 'regular' export folder (a tags .txt sidecar and a URLs .json one per file) into fresh folders with stale sidecars in place, under no option, 'overwrite on next run' (spent by the run) and 'always'; an_export_folders_sidecar_overwrite_options_decide_what_its_worker_writes_as_the_reference_did sets the options in the real editor and compares the sidecars the real worker leaves, run by run, and the stored flags, with the recording."
    }
   },
   {
@@ -4947,9 +4947,9 @@
    ],
    "recheck": {
     "date": "2026-10-13",
-    "class": "sound",
+    "class": "source-restated",
     "by": "claude, #97 phase 2 (w4-r2)",
-    "note": "oracle/record_file_log_selected.py drives the reference's _OpenSelectedFileSeedData: three URLs open without asking, twelve ask the recorded 'You have many objects selected' question and open all on yes and none on no, and path sources are handed to OpenFileLocations. file_log_actions.rs opening_selected_sources_launches_what_the_reference_opened replays each through the real window's menu: the same URLs are launched in the same order, and for paths each file's folder is opened where the reference shows the files in the file manager (a documented difference, DIFFERENCES.md; the reference does nothing at all on Linux without its optional showinfm)."
+    "note": "The window's URL launches and the reference's >10 'open this many?' question (ClientGUIFileSeedCache.py:816) are driven through the real window, but the question text is the reference's string restated from source, not a recording, and the leaf's other half (opening non-http sources as locations, reference OpenFileLocations; native opens the parent directory) is untested and differs. Test: crates/hydrus-gui/tests/gui/file_log_actions.rs opening_selected_sources_launches_what_the_reference_opened."
    }
   },
   {

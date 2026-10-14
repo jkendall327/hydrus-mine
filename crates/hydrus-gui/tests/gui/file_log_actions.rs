@@ -496,7 +496,16 @@ fn trying_selected_rows_again_or_skipping_them_asks_and_erases_as_the_reference_
         .map(|c| (c["name"].as_str().unwrap().to_owned(), c, "try again"))
         .collect();
     cases.push(("skip".into(), &recorded["skip"], "skip"));
+    // each question is also dismissed instead of answered "no": the
+    // reference's yes/no dialog returns "no" when closed
+    let mut runs = Vec::new();
     for (name, case, entry) in cases {
+        runs.push((name.clone(), case, entry, false));
+        if !case["asked"].as_array().unwrap().is_empty() && !case["answer"].as_bool().unwrap() {
+            runs.push((format!("{name} (dismissed)"), case, entry, true));
+        }
+    }
+    for (name, case, entry, dismiss) in runs {
         delete_it(&store);
         start(&store);
         assert_eq!(rows_of(&store, queue), recorded_rows(&recorded["start"]));
@@ -522,7 +531,11 @@ fn trying_selected_rows_again_or_skipping_them_asks_and_erases_as_the_reference_
                 recorded_rows(&recorded["start"]),
                 "{name}: unchanged until answered"
             );
-            log.invoke_chosen(i32::from(!case["answer"].as_bool().unwrap()));
+            if dismiss {
+                log.invoke_cancelled();
+            } else {
+                log.invoke_chosen(i32::from(!case["answer"].as_bool().unwrap()));
+            }
         }
         assert_eq!(
             rows_of(&store, queue),

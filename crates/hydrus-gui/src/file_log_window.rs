@@ -943,11 +943,20 @@ fn open_source(
         let state = state.clone();
         let refresh = refresh.clone();
         let alive = alive.clone();
+        let weak = window.as_weak();
         move || {
             if !alive.get() {
                 return;
             }
 
+            // (a cancelled erase question is the reference's "no": the
+            // selected are still tried again)
+            if matches!(state.borrow().asking, Some(Asking::EraseRecords(_, _)))
+                && let Some(window) = weak.upgrade()
+            {
+                window.invoke_chosen(1);
+                return;
+            }
             state.borrow_mut().asking = None;
             refresh(false);
         }

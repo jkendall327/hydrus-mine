@@ -73,8 +73,12 @@ fn edit_first(ui: &MainWindow, bound: &Bound) -> (FoldersWindow, ImportFolderWin
 }
 
 fn saved(store: &Store) -> hydrus_store::import_folders::ImportFolder {
+    saved_as(store, "drop box")
+}
+
+fn saved_as(store: &Store, name: &'static str) -> hydrus_store::import_folders::ImportFolder {
     store
-        .read(|c| import_folders::find_import_folder(c, "drop box"))
+        .read(move |c| import_folders::find_import_folder(c, name))
         .unwrap()
         .unwrap()
 }
@@ -325,6 +329,7 @@ fn stored_export(store: &Store, name: &str) -> hydrus_parse::folders::ExportFold
     folders.0.into_iter().find(|f| f.name == name).unwrap()
 }
 
+// leaf: audit-network-export-folder-filename
 #[test]
 fn an_export_folders_search_phrase_schedule_and_overwrites_are_what_its_worker_does() {
     let (_dirs, store) = crate::subscriptions::store();
@@ -762,6 +767,8 @@ fn an_import_folder_checks_and_shows_popups_when_its_edited_schedule_says_as_the
             .set_modified(std::time::SystemTime::now() - Duration::from_secs(1_000_000))
             .unwrap();
         let (list, edit) = edit_first(&ui, &bound);
+        // (named as the recorder named it, which its popups are titled by)
+        edit.set_name("schedule".into());
         edit.set_path(watched.path().to_string_lossy().into_owned().into());
         edit.set_check_regularly(options["check_regularly"].as_bool().unwrap_or(true));
         edit.set_paused(options["paused"].as_bool().unwrap_or(false));
@@ -787,7 +794,7 @@ fn an_import_folder_checks_and_shows_popups_when_its_edited_schedule_says_as_the
             edit.get_asking_message()
         );
         list.invoke_apply();
-        let folder = saved(&store);
+        let folder = saved_as(&store, "schedule");
         assert_eq!(folder.settings.period, recorded["period"].as_i64().unwrap());
         let id = folder.id();
         let before = now() - case["age"].as_i64().unwrap();
@@ -808,13 +815,12 @@ fn an_import_folder_checks_and_shows_popups_when_its_edited_schedule_says_as_the
             case["worked"].as_bool().unwrap(),
             "{name}: checked"
         );
-        // (the work's own popup is titled by the folder: "drop box" here)
-        let ours: Vec<(String, bool)> = popups_since(&store)
-            .into_iter()
-            .map(|(title, files)| (title.replace("drop box", "schedule"), files))
-            .collect();
-        assert_eq!(ours, recorded_popups(case), "{name}: popups");
-        let after = saved(&store);
+        assert_eq!(
+            popups_since(&store),
+            recorded_popups(case),
+            "{name}: popups"
+        );
+        let after = saved_as(&store, "schedule");
         assert_eq!(
             after.paused(),
             case["paused_after"].as_bool().unwrap(),
