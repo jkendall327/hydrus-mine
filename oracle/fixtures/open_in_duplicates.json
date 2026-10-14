@@ -1,0 +1,159 @@
+{
+ "page_location": [
+  "6c6f63616c2066696c6573"
+ ],
+ "combined": [
+  "616c6c206c6f63616c206d65646961"
+ ],
+ "hashes": [
+  "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+  "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+  "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf"
+ ],
+ "cases": [
+  {
+   "where": "thumbnails",
+   "combined_option": true,
+   "activate_option": false,
+   "calls": [
+    {
+     "current": [
+      "616c6c206c6f63616c206d65646961"
+     ],
+     "deleted": [],
+     "name": "duplicates",
+     "predicates": [
+      "system:hash is in 3 hashes"
+     ],
+     "activate_window": false
+    }
+   ]
+  },
+  {
+   "where": "viewer",
+   "combined_option": true,
+   "activate_option": false,
+   "calls": [
+    {
+     "current": [
+      "616c6c206c6f63616c206d65646961"
+     ],
+     "deleted": [],
+     "name": "duplicates",
+     "predicates": [
+      "system:hash is 663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+     ],
+     "activate_window": false
+    }
+   ]
+  },
+  {
+   "where": "thumbnails",
+   "combined_option": false,
+   "activate_option": false,
+   "calls": [
+    {
+     "current": [
+      "6c6f63616c2066696c6573"
+     ],
+     "deleted": [],
+     "name": "duplicates",
+     "predicates": [
+      "system:hash is in 3 hashes"
+     ],
+     "activate_window": false
+    }
+   ]
+  },
+  {
+   "where": "viewer",
+   "combined_option": false,
+   "activate_option": false,
+   "calls": [
+    {
+     "current": [
+      "6c6f63616c2066696c6573"
+     ],
+     "deleted": [],
+     "name": "duplicates",
+     "predicates": [
+      "system:hash is 663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+     ],
+     "activate_window": false
+    }
+   ]
+  },
+  {
+   "where": "thumbnails",
+   "combined_option": true,
+   "activate_option": true,
+   "calls": [
+    {
+     "current": [
+      "616c6c206c6f63616c206d65646961"
+     ],
+     "deleted": [],
+     "name": "duplicates",
+     "predicates": [
+      "system:hash is in 3 hashes"
+     ],
+     "activate_window": true
+    }
+   ]
+  },
+  {
+   "where": "viewer",
+   "combined_option": true,
+   "activate_option": true,
+   "calls": [
+    {
+     "current": [
+      "616c6c206c6f63616c206d65646961"
+     ],
+     "deleted": [],
+     "name": "duplicates",
+     "predicates": [
+      "system:hash is 663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+     ],
+     "activate_window": true
+    }
+   ]
+  },
+  {
+   "where": "thumbnails",
+   "combined_option": false,
+   "activate_option": true,
+   "calls": [
+    {
+     "current": [
+      "6c6f63616c2066696c6573"
+     ],
+     "deleted": [],
+     "name": "duplicates",
+     "predicates": [
+      "system:hash is in 3 hashes"
+     ],
+     "activate_window": true
+    }
+   ]
+  },
+  {
+   "where": "viewer",
+   "combined_option": false,
+   "activate_option": true,
+   "calls": [
+    {
+     "current": [
+      "6c6f63616c2066696c6573"
+     ],
+     "deleted": [],
+     "name": "duplicates",
+     "predicates": [
+      "system:hash is 663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+     ],
+     "activate_window": true
+    }
+   ]
+  }
+ ]
+}

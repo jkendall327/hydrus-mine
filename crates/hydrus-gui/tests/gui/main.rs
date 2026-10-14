@@ -387,6 +387,7 @@ mod options_remember_action;
 mod options_shortcut_sets;
 mod options_system_consumers;
 mod options_viewing_tracking;
+mod palette_media;
 mod preview_audio;
 mod search_pages_favourites;
 mod search_pages_menu;

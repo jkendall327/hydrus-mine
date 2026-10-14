@@ -1269,7 +1269,7 @@ search" page on all my files); open → in a new page (locked to the files,
 with the page's sort and collect), in a
 new duplicate filter page (a duplicates page searching a `system:hash` of
 them, on all my files unless hydrus's
-`open_files_to_duplicate_filter_uses_all_my_files` was off), similar
+`open_files_to_duplicate_filter_uses_all_my_files` was off; with "switch to main window when creating new file search page from media viewer" on, the main window comes forward; the "open files in a new duplicates filter page" shortcut command does the same for the selected thumbnails and, in the media viewer, for the file shown, as recorded in `open_in_duplicates.json`), similar
 files in a new page (for a focused still
 image: a new page searching `system:similar to` the selected still images
 at the reference's exact match, very similar, similar or speculative

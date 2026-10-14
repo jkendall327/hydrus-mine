@@ -1,0 +1,284 @@
+{
+ "queries": [
+  "select",
+  "archive",
+  "copy",
+  "open",
+  "manage",
+  "share",
+  "tags",
+  "delete",
+  "inbox"
+ ],
+ "hashes": [
+  "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+  "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+  "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf"
+ ],
+ "selections": [
+  {
+   "label": "none",
+   "count": 0,
+   "rows": {
+    "select": [],
+    "archive": [
+     [
+      "<b>archive</b> (1)",
+      "select"
+     ],
+     [
+      "<b>archive</b> (1)",
+      "remove"
+     ],
+     [
+      "<b>archive</b>/delete filter",
+      ""
+     ]
+    ],
+    "copy": [],
+    "open": [],
+    "manage": [],
+    "share": [],
+    "tags": [],
+    "delete": [
+     [
+      "archive/<b>delete</b> filter",
+      ""
+     ]
+    ],
+    "inbox": [
+     [
+      "<b>inbox</b> (2)",
+      "select"
+     ],
+     [
+      "<b>inbox</b> (2)",
+      "remove"
+     ]
+    ]
+   }
+  },
+  {
+   "label": "one",
+   "count": 1,
+   "rows": {
+    "select": [
+     [
+      "not <b>select</b>ed (2)",
+      "select"
+     ],
+     [
+      "<b>select</b>ed (1)",
+      "remove"
+     ],
+     [
+      "not <b>select</b>ed (2)",
+      "remove"
+     ]
+    ],
+    "archive": [
+     [
+      "<b>archive</b> (1)",
+      "select"
+     ],
+     [
+      "<b>archive</b> (1)",
+      "remove"
+     ],
+     [
+      "<b>archive</b>/delete filter",
+      ""
+     ],
+     [
+      "<b>archive</b>",
+      ""
+     ]
+    ],
+    "copy": [
+     [
+      "<b>copy</b> file",
+      "share"
+     ],
+     [
+      "<b>copy</b> path",
+      "share"
+     ],
+     [
+      "<b>copy</b> file id (17)",
+      "share"
+     ],
+     [
+      "<b>copy</b> bitmap",
+      "share"
+     ],
+     [
+      "<b>copy</b> thumbnail bitmap",
+      "share"
+     ]
+    ],
+    "open": [],
+    "manage": [
+     [
+      "<b>manage</b>",
+      "urls"
+     ]
+    ],
+    "share": [],
+    "tags": [
+     [
+      "<b>tags</b>",
+      "manage"
+     ]
+    ],
+    "delete": [
+     [
+      "archive/<b>delete</b> filter",
+      ""
+     ],
+     [
+      "<b>delete</b> from my files",
+      ""
+     ],
+     [
+      "if file is missing, remove record (leave no <b>delete</b> record)",
+      "manage | maintenance"
+     ],
+     [
+      "if file is missing, remove record (leave a <b>delete</b> record)",
+      "manage | maintenance"
+     ],
+     [
+      "<b>delete</b> duplicate neighbours with incorrect file extension",
+      "manage | maintenance"
+     ]
+    ],
+    "inbox": [
+     [
+      "<b>inbox</b> (2)",
+      "select"
+     ],
+     [
+      "<b>inbox</b> (2)",
+      "remove"
+     ]
+    ]
+   }
+  },
+  {
+   "label": "three",
+   "count": 3,
+   "rows": {
+    "select": [
+     [
+      "archive <b>select</b>ed",
+      ""
+     ],
+     [
+      "re-inbox <b>select</b>ed",
+      ""
+     ]
+    ],
+    "archive": [
+     [
+      "<b>archive</b> (1)",
+      "select"
+     ],
+     [
+      "<b>archive</b> (1)",
+      "remove"
+     ],
+     [
+      "<b>archive</b>/delete filter",
+      ""
+     ],
+     [
+      "<b>archive</b> selected",
+      ""
+     ]
+    ],
+    "copy": [
+     [
+      "<b>copy</b> files",
+      "share"
+     ],
+     [
+      "<b>copy</b> paths",
+      "share"
+     ],
+     [
+      "<b>copy</b> file ids",
+      "share"
+     ]
+    ],
+    "open": [],
+    "manage": [
+     [
+      "<b>manage</b>",
+      "urls"
+     ]
+    ],
+    "share": [],
+    "tags": [
+     [
+      "<b>tags</b>",
+      "manage"
+     ]
+    ],
+    "delete": [
+     [
+      "archive/<b>delete</b> filter",
+      ""
+     ],
+     [
+      "<b>delete</b> from my files",
+      ""
+     ],
+     [
+      "if file is missing, remove record (leave no <b>delete</b> record)",
+      "manage | maintenance"
+     ],
+     [
+      "if file is missing, remove record (leave a <b>delete</b> record)",
+      "manage | maintenance"
+     ],
+     [
+      "<b>delete</b> duplicate neighbours with incorrect file extension",
+      "manage | maintenance"
+     ]
+    ],
+    "inbox": [
+     [
+      "<b>inbox</b> (2)",
+      "select"
+     ],
+     [
+      "<b>inbox</b> (2)",
+      "remove"
+     ],
+     [
+      "re-<b>inbox</b> selected",
+      ""
+     ]
+    ]
+   }
+  }
+ ],
+ "activations": [
+  {
+   "query": "archive",
+   "row": [
+    "<b>archive</b> (1)",
+    "select"
+   ],
+   "selected": 1
+  },
+  {
+   "query": "inbox",
+   "row": [
+    "<b>inbox</b> (2)",
+    "select"
+   ],
+   "selected": 2
+  }
+ ]
+}

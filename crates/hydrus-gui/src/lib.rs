@@ -1319,8 +1319,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     let grid_content: shortcut_runtime::GridContent = Rc::default();
-    let shortcuts =
-        shortcut_runtime::main(window, pages.borrow().store().clone(), grid_content.clone());
+    let grid_simple: shortcut_runtime::GridSimple = Rc::default();
+    let shortcuts = shortcut_runtime::main(
+        window,
+        pages.borrow().store().clone(),
+        grid_content.clone(),
+        grid_simple.clone(),
+    );
     let mut shortcut_events = shortcuts.observer();
     let mut drop_events = drops::file_handler({
         let review_files = review_files.clone();
@@ -2207,6 +2212,34 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    // "open files in a new duplicates filter page" (command 154) on the thumbnails selected
+    *grid_simple.borrow_mut() = Some(Rc::new({
+        let page = page.clone();
+        let change_pages = change_pages.clone();
+        let weak = window.as_weak();
+        move |action| {
+            if action != 154 {
+                return false;
+            }
+            let (store, location, files) = {
+                let page = page();
+                let page = page.borrow();
+                (
+                    page.store().clone(),
+                    page.location().clone(),
+                    page.selected_files(),
+                )
+            };
+            if !files.is_empty() {
+                open_in_duplicates_page(&store, &location, &files, &change_pages, &|| {
+                    if let Some(window) = weak.upgrade() {
+                        main_identity::activate_if_inactive(&window);
+                    }
+                });
+            }
+            true
+        }
+    }));
     // tag and rating shortcuts apply to the thumbnails selected
     *grid_content.borrow_mut() = Some(Rc::new({
         let page = page.clone();
@@ -4462,6 +4495,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 embedded_metadata: open_embedded_metadata.clone(),
                 change_pages: change_pages.clone(),
                 edit_shortcuts: open_options.clone(),
+                activate_main: Rc::new({
+                    let weak = weak_main.clone();
+                    move || {
+                        if let Some(window) = weak.upgrade() {
+                            main_identity::activate_if_inactive(&window);
+                        }
+                    }
+                }),
             };
             match open_viewer(model, &viewer, hooks) {
                 Ok(window) => *viewer.borrow_mut() = Some(window),
@@ -4534,6 +4575,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 embedded_metadata: open_embedded_metadata.clone(),
                 change_pages: change_pages.clone(),
                 edit_shortcuts: open_options.clone(),
+                activate_main: Rc::new({
+                    let weak = weak_main.clone();
+                    move || {
+                        if let Some(window) = weak.upgrade() {
+                            main_identity::activate_if_inactive(&window);
+                        }
+                    }
+                }),
             };
             match open_viewer(model, &viewer, hooks) {
                 Ok(window) => *viewer.borrow_mut() = Some(window),
@@ -5288,9 +5337,21 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         collect: Some(page.collect().clone()),
                     };
                     let state = menu_state.borrow();
-                    shared_menu_action(action, &label, &menu, &state.2, &change_pages, &|urls| {
-                        ask(Asked::OpenUrls(urls, external_launches.clone()));
-                    });
+                    shared_menu_action(
+                        action,
+                        &label,
+                        &menu,
+                        &state.2,
+                        &change_pages,
+                        &|urls| {
+                            ask(Asked::OpenUrls(urls, external_launches.clone()));
+                        },
+                        &|| {
+                            if let Some(window) = weak.upgrade() {
+                                main_identity::activate_if_inactive(&window);
+                            }
+                        },
+                    );
                 }
             }
         }
@@ -5564,17 +5625,53 @@ type ViewerMenuState = Rc<
     )>,
 >;
 
+/// A change made to the pages, as `change_pages` runs it.
+type PagesChange<'a> = dyn Fn(&dyn Fn(&mut Pages) -> Result<(), String>) + 'a;
+
 /// What the thumbnails' and the viewer's menus both do: copying,
 /// opening externally, the urls submenu's, and opening new pages
 /// (`ask_urls` asks before opening several URLs).
 #[allow(clippy::type_complexity)]
+/// "Open files in a new duplicates filter page" (the thumbnail menu's entry, and the
+/// command of that name on the thumbnails and in the viewer): a duplicates page searching
+/// `files`, in "combined local file domains" if the option says so, else in the domain the
+/// files came from; the main window is brought forward if "switch to main window" is on
+/// (`ShowFilesInNewDuplicatesFilterPage`; recorded in `open_in_duplicates.json`).
+fn open_in_duplicates_page(
+    store: &hydrus_store::Store,
+    page_location: &hydrus_search::LocationContext,
+    files: &[HashId],
+    change_pages: &PagesChange<'_>,
+    activate_main: &dyn Fn(),
+) {
+    let settings: hydrus_store::settings::PageSettings =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    let location = if settings.duplicate_filter_uses_all_my_files {
+        hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+            hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
+        ))
+    } else {
+        page_location.clone()
+    };
+    change_pages(&|pages| {
+        pages.open_duplicates(location.clone(), files);
+        Ok(())
+    });
+    let activation: hydrus_store::settings::TagSearchActivation =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    if activation.activate_main {
+        activate_main();
+    }
+}
+
 fn shared_menu_action(
     action: thumbnail_menu::Action,
     label: &str,
     target: &MenuTarget<'_>,
     url_facts: &thumbnail_menu::UrlFacts,
-    change_pages: &dyn Fn(&dyn Fn(&mut Pages) -> Result<(), String>),
+    change_pages: &PagesChange<'_>,
     ask_urls: &dyn Fn(Vec<String>),
+    activate_main: &dyn Fn(),
 ) {
     use thumbnail_menu::Action;
     let store = target.store;
@@ -5665,20 +5762,13 @@ fn shared_menu_action(
             }
         }
         Action::OpenInDuplicateFilterPage => {
-            let settings: hydrus_store::settings::PageSettings =
-                store.read(hydrus_store::settings::get).unwrap_or_default();
-            let location = if settings.duplicate_filter_uses_all_my_files {
-                hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
-                    hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
-                ))
-            } else {
-                target.location.clone()
-            };
-            let files = target.selected.clone();
-            change_pages(&|pages| {
-                pages.open_duplicates(location.clone(), &files);
-                Ok(())
-            });
+            open_in_duplicates_page(
+                store,
+                target.location,
+                &target.selected,
+                change_pages,
+                activate_main,
+            );
         }
         Action::OpenSimilar(distance) => {
             let location = target.location.clone();
@@ -6502,6 +6592,8 @@ struct ViewerHooks {
     change_pages: ChangePages,
     /// Opens the options (the keyboard button's "edit shortcuts").
     edit_shortcuts: Rc<dyn Fn()>,
+    /// Brings the main window forward ("switch to main window ...").
+    activate_main: Rc<dyn Fn()>,
 }
 
 /// The media viewer while one is open, as the Client API's
@@ -6553,7 +6645,11 @@ fn open_viewer(
         embedded_metadata,
         change_pages,
         edit_shortcuts,
+        activate_main,
     } = hooks;
+    // (kept for the duplicates command; the menu's closure takes the originals)
+    let command_change_pages = change_pages.clone();
+    let command_activate_main = activate_main.clone();
     delete_files_window::cancel(&viewer_delete);
     let window = crate::app_title::new::<crate::MediaViewerWindow>()?;
     let owner_valid: Rc<dyn Fn() -> bool> = Rc::new({
@@ -7756,6 +7852,7 @@ fn open_viewer(
                         &|urls| {
                             ask(ViewerAsked::OpenUrls(urls));
                         },
+                        &*activate_main,
                     );
                 }
             }
@@ -8060,12 +8157,35 @@ fn open_viewer(
             true
         }
     });
+    // the simple commands the application handles: "open files in a new duplicates filter
+    // page" opens the file shown
+    let simple: Rc<dyn Fn(i32) -> bool> = Rc::new({
+        let model = model.clone();
+        let change_pages = command_change_pages;
+        let activate_main = command_activate_main;
+        move |action| {
+            if action != 154 {
+                return false;
+            }
+            let (store, location, file) = {
+                let model = model.borrow();
+                (
+                    model.store().clone(),
+                    model.location().clone(),
+                    model.current(),
+                )
+            };
+            open_in_duplicates_page(&store, &location, &[file], &*change_pages, &*activate_main);
+            true
+        }
+    });
     let shortcuts = shortcut_runtime::viewer(
         &window,
         model.borrow().store().clone(),
         viewing_stats.clone(),
         &content,
         &active_custom,
+        &simple,
     );
     windows::watch_named_events(
         window.window(),

@@ -51,6 +51,48 @@ impl Client {
         }
     }
 
+    /// Give the thumbnails the keyboard as a user would: a rendered click in the search
+    /// box, then ctrl+m.
+    pub fn focus_thumbnails(&self) {
+        use slint::platform::{Key, PointerEventButton, WindowEvent};
+        let _image = headless::render(&self.collector.get(0).unwrap(), 1000, 700);
+        let position = slint::LogicalPosition::new(
+            self.ui.get_autocomplete_anchor_x() + 24.0,
+            self.ui.get_autocomplete_anchor_y() - 12.0,
+        );
+        self.ui
+            .window()
+            .dispatch_event(WindowEvent::PointerMoved { position });
+        for event in [
+            WindowEvent::PointerPressed {
+                position,
+                button: PointerEventButton::Left,
+            },
+            WindowEvent::PointerReleased {
+                position,
+                button: PointerEventButton::Left,
+            },
+        ] {
+            self.ui.window().dispatch_event(event);
+        }
+        assert!(self.ui.get_search_focused());
+        for text in [slint::SharedString::from(Key::Control), "m".into()] {
+            self.ui
+                .window()
+                .dispatch_event(WindowEvent::KeyPressed { text });
+        }
+        for text in [slint::SharedString::from("m"), Key::Control.into()] {
+            self.ui
+                .window()
+                .dispatch_event(WindowEvent::KeyReleased { text });
+        }
+        slint::platform::update_timers_and_animations();
+        assert!(
+            self.ui.get_grid_focused(),
+            "ctrl+m gives the thumbnails the keyboard"
+        );
+    }
+
     /// file > options…
     pub fn open_options(&self) -> OptionsWindow {
         self.ui.invoke_menu_title_pressed(0, 20.0, 22.0);

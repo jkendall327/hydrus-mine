@@ -5179,7 +5179,13 @@ Differences:
 
 ### Command palette: unrecorded cases
 
-The palette's media-menu rows and the effect of activating one are recorded only for a page with no files (`oracle/fixtures/command_palette.json`); rows for selected files are checked against the thumbnail menu's own code, not a recording. Favourite searches opened from the palette are compared for page count, synchronisation, sort, collect and (with the option off) the shown page's unchanged name. The palette lists the reference's whole menubar, including actions the menubar hides until a backup location is set ("update database backup", "change database backup location…") and the Help > debug action "review threads"; native has neither. Which of several children a page-of-pages row shows is not recorded either (the recording has one child).
+The palette's media-menu rows and the effect of activating one are recorded only for a page with no files (`oracle/fixtures/command_palette.json`); rows for selected files are replayed against `palette_media_rows.json` (below). Favourite searches opened from the palette are compared for page count, synchronisation, sort, collect and (with the option off) the shown page's unchanged name. The palette lists the reference's whole menubar, including actions the menubar hides until a backup location is set ("update database backup", "change database backup location…") and the Help > debug action "review threads"; native has neither. Which of several children a page-of-pages row shows is not recorded either (the recording has one child).
+
+The palette's media-menu rows for a page with one and with three files selected, for nine queries, and the effect of activating a row on the selection, are replayed against `palette_media_rows.json`; they match the reference's except the two single-file rows "copy bitmap" and "copy thumbnail bitmap" (the bitmap exchange is not ported).
+
+The options search bar's own position (top or bottom of the options window) is not measured against the reference: the recording holds only the field's index in the layout, and the field exposes no geometry to the tests, which read the suggestions' and the page list's positions instead (the page list sits 30 px lower with the field on top, our own field's height). The leaf is left untagged.
+
+The "open files in a new duplicates filter page" command (shortcut command 154) differs from the reference in two ways. In the media viewer the reference then pauses the video (`_MediaFocusWentToExternalProgram`, `ClientGUICanvas.py`); ours leaves it playing. On the thumbnails with nothing selected the reference still opens a page (with no files); ours does nothing, as the key is taken and ignored.
 
 ### Downloading misc options: unrecorded cases
 
