@@ -288,6 +288,18 @@ fn fetched_page_examples_use_actual_network_headers_cookies_context_and_child_co
     page.set_example(1);
     page.invoke_example_chosen();
     assert_eq!(page.get_document(), "<p>fetched café</p>");
+    // switching examples stored the encoded url, not the typed text, as the context's
+    page.invoke_row_clicked(0, false, false);
+    page.invoke_action("edit-content".into());
+    let content = child(&slots.content);
+    assert_eq!(
+        content.get_test_url(),
+        first["context"]["url"]
+            .as_str()
+            .unwrap()
+            .replace("<base>", &server.base)
+    );
+    content.invoke_action("cancel".into());
     page.set_test_url(format!("{}/error", server.base).into());
     page.invoke_fetch();
     until_fetch(|| !page.get_fetching());

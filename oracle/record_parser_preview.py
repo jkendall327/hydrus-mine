@@ -18,6 +18,8 @@ import os
 import sys
 import tempfile
 
+# (timestamps are shown in the machine's local time: the recording is in UTC, as hydrus-rs shows)
+os.environ['TZ'] = 'UTC'
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 OUT = os.path.join(HERE, 'fixtures', 'parser_preview.json')

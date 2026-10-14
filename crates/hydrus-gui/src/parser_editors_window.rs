@@ -308,16 +308,21 @@ fn show_editor(
     }
     w.set_selected(e.selected.is_some());
 }
+/// The context's url for the page URL box: the encoded one a fetch made, while the box still
+/// holds what was typed for it, else the box's text.
+fn context_url(w: &ParserEditWindow, e: &Editor) -> String {
+    let typed = w.get_test_url().to_string();
+    match &e.typed_url {
+        Some((box_text, context_url)) if *box_text == typed => context_url.clone(),
+        _ => typed,
+    }
+}
 fn test_data(
     w: &ParserEditWindow,
     e: &Editor,
     collapse_newlines: bool,
 ) -> Result<FormulaTestData, String> {
-    let typed = w.get_test_url().to_string();
-    let url = match &e.typed_url {
-        Some((box_text, context_url)) if *box_text == typed => context_url.clone(),
-        _ => typed,
-    };
+    let url = context_url(w, e);
     let context = TestContext::parse(url, w.get_post_index().as_str(), w.get_variables().as_str())?;
     let mut test = e.test.clone();
     test.context = context.values();
@@ -859,9 +864,10 @@ fn open_editor(
             }
             if let Some(w) = weak.upgrade() {
                 let mut e = state.borrow_mut();
-                e.test
-                    .context
-                    .insert("url".into(), w.get_test_url().to_string());
+                let url = context_url(&w, &e);
+                e.test.context.insert("url".into(), url);
+                // (the box is about to show the next example's url, not what was typed)
+                e.typed_url = None;
                 let old = e.example;
                 e.test.remember_example(old, w.get_document().to_string());
                 let next = usize::try_from(w.get_example()).unwrap_or(0);
@@ -1048,7 +1054,7 @@ fn open_editor(
                 }
                 "add-example" | "remove-example" => {
                     let mut e = state.borrow_mut();
-                    e.test.context.insert("url".into(),w.get_test_url().to_string());
+                    let url = context_url(&w, &e); e.test.context.insert("url".into(),url); e.typed_url = None;
                     let old = e.example;e.test.remember_example(old,w.get_document().to_string());
                     e.example = if action == "add-example" { let url = e.test.context.get("url").cloned();e.test.add_example(String::new(),url) } else { if e.test.examples.len()>1 {e.raw_mimes.remove(old);} e.test.remove_example(old) };
                     w.set_document(e.test.text.as_str().into());

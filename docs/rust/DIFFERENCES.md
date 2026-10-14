@@ -1273,7 +1273,7 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 - The test panels' results read as the reference's do ("*** N RESULTS BEGIN ***",
   one sorted line per result worded by its kind, posts separated by the
   reference's break, a veto as its own line; `oracle/fixtures/parser_preview.json`).
-  Not matched: the error text of a hash that cannot be decoded (Python's words),
+  Not matched: with no document the reference prints "Nothing to parse!" where hydrus-rs parses the empty text (so a static formula still shows its result); the error text of a hash that cannot be decoded (Python's words, e.g. "non-hexadecimal number found in fromhex()"), a tag that cannot be parsed ("unparsable tag, will likely be discarded"),
   timestamps are shown in UTC (the reference's local time), and a parse error is
   shown as its message where the reference prints an exception trace.
 - URL classes and single/nested gallery URL generators have native lists and
