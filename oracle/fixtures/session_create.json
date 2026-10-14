@@ -1,0 +1,134 @@
+{
+ "types": [
+  "web domain",
+  "hydrus service"
+ ],
+ "initial": {
+  "type": 2,
+  "domain_text": "example.com",
+  "note": "Network traffic going to or from a web domain (or a subdomain)."
+ },
+ "services": [
+  "a tag repository",
+  "a file repository"
+ ],
+ "default_box_hidden": true,
+ "per_type": [
+  {
+   "note": "Network traffic going to or from a web domain (or a subdomain).",
+   "domain_enabled": true,
+   "services_enabled": false
+  },
+  {
+   "note": "Network traffic going to or from a hydrus service.",
+   "domain_enabled": false,
+   "services_enabled": true
+  }
+ ],
+ "domains": [
+  {
+   "typed": "example.com",
+   "context": [
+    2,
+    "example.com"
+   ],
+   "session": true,
+   "contexts_now": [
+    "web domain: example.com"
+   ]
+  },
+  {
+   "typed": "Example.COM",
+   "context": [
+    2,
+    "Example.COM"
+   ],
+   "session": true,
+   "contexts_now": [
+    "web domain: Example.COM",
+    "web domain: example.com"
+   ]
+  },
+  {
+   "typed": "  spaced.example  ",
+   "context": [
+    2,
+    "  spaced.example  "
+   ],
+   "session": true,
+   "contexts_now": [
+    "web domain: ",
+    "web domain: Example.COM",
+    "web domain: example.com"
+   ]
+  },
+  {
+   "typed": "not a domain!!",
+   "context": [
+    2,
+    "not a domain!!"
+   ],
+   "session": true,
+   "contexts_now": [
+    "web domain: ",
+    "web domain: Example.COM",
+    "web domain: example.com"
+   ]
+  },
+  {
+   "typed": "",
+   "context": [
+    2,
+    ""
+   ],
+   "session": true,
+   "contexts_now": [
+    "web domain: ",
+    "web domain: Example.COM",
+    "web domain: example.com"
+   ]
+  },
+  {
+   "typed": "sub.domain.example:8080",
+   "context": [
+    2,
+    "sub.domain.example:8080"
+   ],
+   "session": true,
+   "contexts_now": [
+    "web domain: ",
+    "web domain: Example.COM",
+    "web domain: example.com"
+   ]
+  },
+  {
+   "typed": "http://example.com/path",
+   "context": [
+    2,
+    "http://example.com/path"
+   ],
+   "session": true,
+   "contexts_now": [
+    "web domain: ",
+    "web domain: Example.COM",
+    "web domain: example.com"
+   ]
+  }
+ ],
+ "services_values": [
+  {
+   "name": "a tag repository",
+   "context": [
+    1,
+    "7a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67"
+   ]
+  },
+  {
+   "name": "a file repository",
+   "context": [
+    1,
+    "f11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11e"
+   ]
+  }
+ ]
+}

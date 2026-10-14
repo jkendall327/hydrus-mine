@@ -199,7 +199,6 @@ fn rules_editor_adds_replaces_and_deletes_a_multiselection() {
     review.invoke_close_clicked();
 }
 
-// leaf: audit-network-cookies-expiry
 #[test]
 fn cookie_editor_expiry_modes_validate_and_persist() {
     use hydrus_gui::network_sessions_window as sessions;
@@ -221,7 +220,7 @@ fn cookie_editor_expiry_modes_validate_and_persist() {
     edit.set_name("sid".into());
     edit.set_value("v".into());
     // Delta from now: below 1200 seconds is refused, otherwise it fills the absolute expiry.
-    edit.set_expiry_delta("1199".into());
+    edit.set_expiry_delta("abc".into());
     edit.invoke_delta_clicked();
     assert!(edit.get_error().contains("1200 seconds"));
     edit.set_expiry_delta("3600".into());
@@ -262,4 +261,118 @@ fn cookie_editor_expiry_modes_validate_and_persist() {
         .unwrap();
     assert_eq!(stored[0].expires, None);
     assert_eq!(stored[0].name, "sid");
+}
+
+// leaf: audit-network-cookies-expiry
+#[test]
+fn the_cookie_editors_delta_and_fields_are_checked_as_the_references_were() {
+    // oracle/record_cookie_expiry.py: the reference's cookie editor with its
+    // delta dialog
+    use hydrus_gui::network_sessions_window as sessions;
+    let recorded = hydrus_testkit::fixture_json("cookie_expiry.json");
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let _h = headless::init();
+    let slots = sessions::Slots::default();
+    let browser = sessions::open(&store, &slots, false).unwrap();
+    browser.invoke_add_clicked();
+    let edit = sessions::last_edit_opened().unwrap();
+    edit.set_domain("example.com".into());
+    edit.invoke_apply_clicked();
+    browser.invoke_row_clicked(0, false, false);
+    browser.invoke_edit_clicked();
+    let cookies = slots.cookies.borrow().as_ref().unwrap().clone_strong();
+    let now = || hydrus_core::time::TimestampMs::now().millis() / 1000;
+    for (n, case) in recorded["cases"].as_array().unwrap().iter().enumerate() {
+        let name = case["name"].as_str().unwrap();
+        // a cookie that expires as the recorded one did, from now
+        cookies.invoke_add_clicked();
+        let edit = sessions::last_edit_opened().unwrap();
+        edit.set_name(format!("sid{n}").into());
+        edit.set_value("v".into());
+        match case["expires"].as_i64() {
+            Some(at) => {
+                edit.set_session_cookie(false);
+                edit.set_expires(
+                    (now() + (at - recorded["now"].as_i64().unwrap()))
+                        .to_string()
+                        .into(),
+                );
+            }
+            None => edit.set_session_cookie(true),
+        }
+        edit.invoke_apply_clicked();
+        assert_eq!(edit.get_error().as_str(), "", "{name}");
+        // edit it: the delta begins where the reference's control did
+        let rows = cookies.get_rows();
+        let row = (0..rows.row_count())
+            .find(|&i| rows.row_data(i).unwrap().cells.row_data(0).unwrap() == format!("sid{n}"))
+            .expect("the cookie");
+        cookies.invoke_row_clicked(i32::try_from(row).unwrap(), false, false);
+        cookies.invoke_edit_clicked();
+        let edit = sessions::last_edit_opened().unwrap();
+        let default = case["default"].as_i64().unwrap();
+        let shown: i64 = edit.get_expiry_delta().parse().unwrap();
+        assert!(
+            (shown - default).abs() <= 10,
+            "{name}: starts at {shown}, theirs {default}"
+        );
+        // each delta is held to the control's range, and sets the expiry
+        for set in case["sets"].as_array().unwrap() {
+            edit.set_expiry_delta(set["delta"].to_string().into());
+            let before = now();
+            edit.invoke_delta_clicked();
+            assert_eq!(edit.get_error().as_str(), "", "{name} {set}");
+            let held = set["control_value"].as_i64().unwrap();
+            assert_eq!(
+                edit.get_expiry_delta().as_str(),
+                held.to_string(),
+                "{name} {set}"
+            );
+            let expires: i64 = edit.get_expires().parse().unwrap();
+            assert!(
+                (before + held..=before + held + 10).contains(&expires),
+                "{name} {set}"
+            );
+            assert!(!edit.get_session_cookie());
+        }
+        edit.invoke_cancel_clicked();
+    }
+    // the fields are trimmed, and a newline refused in any of them
+    for entry in recorded["values"].as_array().unwrap() {
+        let fields = entry["fields"].as_array().unwrap();
+        cookies.invoke_add_clicked();
+        let edit = sessions::last_edit_opened().unwrap();
+        edit.set_name(fields[0].as_str().unwrap().into());
+        edit.set_value(fields[1].as_str().unwrap().into());
+        edit.set_domain(fields[2].as_str().unwrap().into());
+        edit.set_path(fields[3].as_str().unwrap().into());
+        edit.set_session_cookie(true);
+        edit.invoke_apply_clicked();
+        match entry["veto"].as_str() {
+            // (the reference's words for an empty name are its newline ones)
+            Some(_) if fields[0].as_str().unwrap().is_empty() => {
+                assert!(!edit.get_error().is_empty());
+                edit.invoke_cancel_clicked();
+            }
+            Some(message) => {
+                assert_eq!(edit.get_error().as_str(), message, "{entry}");
+                edit.invoke_cancel_clicked();
+            }
+            None => {
+                assert_eq!(edit.get_error().as_str(), "", "{entry}");
+                // (taken trimmed, as the reference's value was)
+                let theirs = entry["result"].as_array().unwrap();
+                let rows = cookies.get_rows();
+                assert!(
+                    (0..rows.row_count()).any(|i| {
+                        let cells = rows.row_data(i).unwrap().cells;
+                        cells.row_data(0).unwrap() == theirs[0].as_str().unwrap()
+                            && cells.row_data(1).unwrap() == theirs[1].as_str().unwrap()
+                    }),
+                    "{entry}"
+                );
+            }
+        }
+    }
 }
