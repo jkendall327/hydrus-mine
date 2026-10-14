@@ -1,0 +1,352 @@
+{
+ "before": [
+  {
+   "context": [
+    0,
+    null
+   ],
+   "rules": [
+    [
+     1,
+     60,
+     1
+    ]
+   ]
+  },
+  {
+   "context": [
+    1,
+    null
+   ],
+   "rules": []
+  },
+  {
+   "context": [
+    2,
+    "a.example.com"
+   ],
+   "rules": [
+    [
+     1,
+     60,
+     5
+    ]
+   ]
+  },
+  {
+   "context": [
+    2,
+    "b.example.com"
+   ],
+   "rules": [
+    [
+     0,
+     86400,
+     123
+    ]
+   ]
+  },
+  {
+   "context": [
+    2,
+    null
+   ],
+   "rules": [
+    [
+     0,
+     3600,
+     100
+    ]
+   ]
+  },
+  {
+   "context": [
+    3,
+    null
+   ],
+   "rules": [
+    [
+     1,
+     600,
+     7
+    ]
+   ]
+  },
+  {
+   "context": [
+    4,
+    null
+   ],
+   "rules": []
+  },
+  {
+   "context": [
+    5,
+    null
+   ],
+   "rules": []
+  },
+  {
+   "context": [
+    6,
+    null
+   ],
+   "rules": [
+    [
+     1,
+     600,
+     3
+    ]
+   ]
+  }
+ ],
+ "cases": [
+  {
+   "answer": "no",
+   "questions": [
+    {
+     "message": "Reset your 'default' and 'global' bandwidth rules to default?",
+     "kwargs": {}
+    }
+   ],
+   "after": [
+    {
+     "context": [
+      0,
+      null
+     ],
+     "rules": [
+      [
+       1,
+       60,
+       1
+      ]
+     ]
+    },
+    {
+     "context": [
+      1,
+      null
+     ],
+     "rules": []
+    },
+    {
+     "context": [
+      2,
+      "a.example.com"
+     ],
+     "rules": [
+      [
+       1,
+       60,
+       5
+      ]
+     ]
+    },
+    {
+     "context": [
+      2,
+      "b.example.com"
+     ],
+     "rules": [
+      [
+       0,
+       86400,
+       123
+      ]
+     ]
+    },
+    {
+     "context": [
+      2,
+      null
+     ],
+     "rules": [
+      [
+       0,
+       3600,
+       100
+      ]
+     ]
+    },
+    {
+     "context": [
+      3,
+      null
+     ],
+     "rules": [
+      [
+       1,
+       600,
+       7
+      ]
+     ]
+    },
+    {
+     "context": [
+      4,
+      null
+     ],
+     "rules": []
+    },
+    {
+     "context": [
+      5,
+      null
+     ],
+     "rules": []
+    },
+    {
+     "context": [
+      6,
+      null
+     ],
+     "rules": [
+      [
+       1,
+       600,
+       3
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "answer": "yes",
+   "questions": [
+    {
+     "message": "Reset your 'default' and 'global' bandwidth rules to default?",
+     "kwargs": {}
+    }
+   ],
+   "after": [
+    {
+     "context": [
+      0,
+      null
+     ],
+     "rules": [
+      [
+       0,
+       86400,
+       17179869184
+      ],
+      [
+       1,
+       1,
+       5
+      ]
+     ]
+    },
+    {
+     "context": [
+      1,
+      null
+     ],
+     "rules": [
+      [
+       0,
+       86400,
+       2147483648
+      ]
+     ]
+    },
+    {
+     "context": [
+      2,
+      "a.example.com"
+     ],
+     "rules": [
+      [
+       1,
+       60,
+       5
+      ]
+     ]
+    },
+    {
+     "context": [
+      2,
+      "b.example.com"
+     ],
+     "rules": [
+      [
+       0,
+       86400,
+       123
+      ]
+     ]
+    },
+    {
+     "context": [
+      2,
+      null
+     ],
+     "rules": [
+      [
+       0,
+       86400,
+       8589934592
+      ],
+      [
+       1,
+       1,
+       1
+      ]
+     ]
+    },
+    {
+     "context": [
+      3,
+      null
+     ],
+     "rules": [
+      [
+       1,
+       600,
+       7
+      ]
+     ]
+    },
+    {
+     "context": [
+      4,
+      null
+     ],
+     "rules": [
+      [
+       0,
+       300,
+       1073741824
+      ]
+     ]
+    },
+    {
+     "context": [
+      5,
+      null
+     ],
+     "rules": [
+      [
+       0,
+       86400,
+       1073741824
+      ],
+      [
+       1,
+       86400,
+       1000
+      ]
+     ]
+    },
+    {
+     "context": [
+      6,
+      null
+     ],
+     "rules": []
+    }
+   ]
+  }
+ ]
+}
