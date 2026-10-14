@@ -116,6 +116,8 @@ impl Drop for Completion {
 struct Data {
     cache: Cache<Arc<Loading>>,
     normalise_icc: bool,
+    /// "Allow loading of truncated images" when the entries were made.
+    load_truncated: bool,
     retired: bool,
 }
 struct Shared {
@@ -168,7 +170,7 @@ impl Handle {
         data.retired = true;
         data.cache.clear();
     }
-    fn refresh(&self, policy: Policy, normalise_icc: bool) {
+    fn refresh(&self, policy: Policy, normalise_icc: bool, load_truncated: bool) {
         let now = self.now();
         let mut data = self
             .0
@@ -178,9 +180,12 @@ impl Handle {
         if data.retired {
             return;
         }
-        if data.normalise_icc != normalise_icc {
+        // (the reference clears the image and tile caches when either of
+        // these two options changes)
+        if data.normalise_icc != normalise_icc || data.load_truncated != load_truncated {
             data.cache.clear();
             data.normalise_icc = normalise_icc;
+            data.load_truncated = load_truncated;
         }
         if data.cache.policy() != policy {
             data.cache.set_policy(policy, now);
@@ -328,7 +333,11 @@ impl Handle {
     pub(crate) fn refresh_saved(&self, store: &Store) -> Option<()> {
         let policy = store.read(hydrus_store::image_cache::load).ok()?;
         let colour = store.read(hydrus_store::image_colour::load).ok()?;
-        self.refresh(policy, colour.normalise_icc);
+        self.refresh(
+            policy,
+            colour.normalise_icc,
+            hydrus_store::reference_options::load_truncated_images(store),
+        );
         Some(())
     }
     pub(crate) fn standalone(store: &Store) -> Self {
@@ -342,6 +351,7 @@ impl Handle {
             data: Mutex::new(Data {
                 cache: Cache::new(policy),
                 normalise_icc: colour.normalise_icc,
+                load_truncated: hydrus_store::reference_options::load_truncated_images(store),
                 retired: false,
             }),
             started: Instant::now(),
@@ -362,7 +372,11 @@ impl Handle {
     pub(crate) fn load_saved(&self, store: &Store, id: HashId) -> Option<Arc<Raster>> {
         let policy = store.read(hydrus_store::image_cache::load).ok()?;
         let colour = store.read(hydrus_store::image_colour::load).ok()?;
-        self.refresh(policy, colour.normalise_icc);
+        self.refresh(
+            policy,
+            colour.normalise_icc,
+            hydrus_store::reference_options::load_truncated_images(store),
+        );
         self.load(store, id, colour.normalise_icc)
     }
     /// Current GUI rendering shares ready pixels, but never waits on warm work.
@@ -525,7 +539,11 @@ impl State {
             ))
         }) {
             Ok((policy, colour)) => {
-                self.cache.refresh(policy, colour.normalise_icc);
+                self.cache.refresh(
+                    policy,
+                    colour.normalise_icc,
+                    hydrus_store::reference_options::load_truncated_images(&store),
+                );
                 self.cache.maintain();
             }
             Err(error) => eprintln!("could not refresh decoded-image cache: {error}"),
@@ -857,7 +875,7 @@ mod tests {
         });
         wait.recv_timeout(Duration::from_secs(5)).unwrap();
         let policy = cache.0.data.lock().unwrap().cache.policy();
-        cache.refresh(policy, false);
+        cache.refresh(policy, false, true);
         let current = cache
             .render(HashId(1), 30, false, None, || Some(raster(3)))
             .unwrap();
@@ -871,7 +889,7 @@ mod tests {
         assert!(Arc::ptr_eq(&current, &retained));
         assert!(!Arc::ptr_eq(&old, &retained));
         cache.retire();
-        cache.refresh(policy, true);
+        cache.refresh(policy, true, true);
         assert!(cache.0.data.lock().unwrap().cache.keys().is_empty());
         assert!(
             cache
@@ -900,7 +918,7 @@ mod tests {
         });
         wait.recv_timeout(Duration::from_secs(5)).unwrap();
         let policy = cache.0.data.lock().unwrap().cache.policy();
-        cache.refresh(policy, false);
+        cache.refresh(policy, false, true);
         let successor = cache
             .render(HashId(1), 30, false, None, || Some(raster(3)))
             .unwrap();

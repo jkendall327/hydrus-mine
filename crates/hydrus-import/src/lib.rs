@@ -90,6 +90,9 @@ impl FileImporter {
                 }
             }
         }));
+        let tools = tools.with_truncated_reader(
+            hydrus_store::reference_options::truncated_images_reader(&store),
+        );
         let tools = tools.with_ffmpeg_timeout_reader(hydrus_store::ffmpeg_policy::reader(&store));
         Self {
             store,
