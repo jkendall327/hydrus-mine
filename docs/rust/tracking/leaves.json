@@ -507,10 +507,10 @@
     "Reference backup location workflow chooses and validates destination before saving; native menu action is disabled."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "sound",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "Replays every scenario of oracle/fixtures/backup_dialogs.json (oracle/record_backup_dialogs.py runs the reference's ClientGUI._SetupBackupPath with scripted dialogs): cancel, the database's own directory, empty / has files / has client.db / missing directory each declined, the same directory again, change with an existing location, and accepted with the create-now offer taken and declined. The real menu entry, picker and questions are driven; every message and question is compared in order and words with the recording, and the saved location and the backup made are checked. Test: crates/hydrus-gui/tests/gui/database_backup_menu.rs setting_up_a_backup_location_replays_the_reference_s_dialogs."
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Drives the real menu, picker, questions and persistence (cancel, same-as-db refusal, empty/has-files/missing directory, decline, unchanged). Expected strings are the native model:: constants (they match ClientGUI._SetupBackupPath when I compared them), and there is no oracle recording of the backup flow. The has-client.db branch is not driven. Tracker note ('native has no ...') is stale. Tests: crates/hydrus-gui/tests/gui/database_backup_menu.rs:124 setting_up_a_backup_location_asks_validates_and_keeps_the_directory"
    }
   },
   {
@@ -526,10 +526,10 @@
     "Reference backup submenu dynamically offers update/change backup or a multiple-storage explanation. Native only has disabled initial-setup/restore placeholders; these states are absent."
    ],
    "recheck": {
-    "date": "2026-10-13",
+    "date": "2026-10-08",
     "class": "source-restated",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "The recorded update scenarios (Create a new / Update the existing question, the missing path made with its message, declined, accepted: backup made and time remembered) are replayed through the real menu entry and compared in order and words (oracle/fixtures/backup_dialogs.json). 'No backup path is set!' cannot be reached from the menu in either client (the entry is hidden) and the '(last N ago)' label is not recorded (the reference fills its menu from a worker the recorder could not call), so those stay restated from the source. Test: crates/hydrus-gui/tests/gui/database_backup_menu.rs updating_the_backup_replays_the_reference_s_dialogs."
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu: entries follow the saved location, decline writes nothing, accept backs up with popup and remembers 'did one recently', 'Update the existing' question, missing path is created, multiple-locations note. Expected text comes from native model:: constants (they match _BackupDatabase); no recording. The '(last N ago)' label branch and the 'No backup path is set!' warning are not driven. Tracker note ('native has no ...') is stale. Tests: crates/hydrus-gui/tests/gui/database_backup_menu.rs:206 updating_the_backup_asks_backs_up_with_a_popup_and_the_menu_remembers"
    }
   },
   {
@@ -1666,10 +1666,10 @@
     "The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage."
    ],
    "recheck": {
-    "date": "2026-10-13",
+    "date": "2026-10-08",
     "class": "weak",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "The picker title and the question are now replayed from oracle/fixtures/backup_dialogs.json (cancel, decline, accept) through the real menu entry, and accepting leaves the restart request; but the reference then exits and restarts the client (HG.restart) and that step, and the restore at startup through this path, are not driven in a GUI test. Stale tracker notes (todo()/no command) are false. Test: crates/hydrus-gui/tests/gui/database_backup_menu.rs restoring_replays_the_reference_s_dialogs (untagged)."
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Checks picker title and question via native consts model::PICK_TITLE/restore_question (restated from ClientController.RestoreDatabase, no recording) and that accepting writes a restore request file. The reference's 'gui shuts down and restarts' step (context.restart callback) is not exercised in the test, and the restore at startup is only tested in store/main.rs unit tests, not through this leaf's path. Tracker notes saying the menu entry is todo()/no command are stale. Tests: crates/hydrus-gui/tests/gui/database_backup_menu.rs:312 restoring_picks_a_backup_asks_and_requests_the_restore"
    }
   },
   {
@@ -1716,10 +1716,10 @@
     "Persists during_idle, but the daemon loop reads during_active and has no GUI idle-state scheduler; the tick is editable without reference idle execution semantics."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "sound",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "The real Database > file maintenance check items are chosen (and the menu's state asserted) to set the saved flags to those of each case recorded in oracle/fixtures/maintenance_pace.json; the recorded file maintenance passes for idle and normal time are then run through the production FileImporter::file_maintenance_pass, the throttle and the held clock, and match the recorded traces (jobs run, waits). The hydrus-cli loop that calls the pass is not run (the GUI process has none; DIFFERENCES.md, Database maintenance entries), and the menu item's label is only checked as a string. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs the_database_menu_switches_decide_when_file_maintenance_works."
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Menu check item flips FileMaintenanceSettings.during_idle, shows checked state, persists across reopen. No test shows anything reading it; the consumer is hydrus-cli's loop (main.rs:613 settings.allowance(idle) with is_idle marker), untested here. Tracker note is stale: the daemon does read during_idle via allowance(idle); but there is no GUI-side file-maintenance loop (see database_toggles.rs header). Tests: crates/hydrus-gui/tests/gui/database_toggles.rs:102 (flips_only_its_own_option(0)); options_system_consumers.rs:1224 checks allowance(true) only after Options apply"
    }
   },
   {
@@ -1737,10 +1737,10 @@
     "Source traces menu tick to saved during_active and daemon gate/budget; no inspected focused regression toggles this action and verifies saved setting/worker scheduling. The menu-tree checkbox comparison alone is narrower than this behavior."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "sound",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "As for idle time: the same test sets the normal-time flag through the real menu item and the recorded normal-time passes (maintenance_pace.json) follow it. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs the_database_menu_switches_decide_when_file_maintenance_works."
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Same as idle: flips and persists during_active and menu state is checked, but the consumer (hydrus-cli loop reading allowance(idle=false)) is not exercised, and no recording of the reference menu item. Tracker's 'no inspected focused regression' note is stale (this test exists) though its conclusion about the consumer stands. Tests: crates/hydrus-gui/tests/gui/database_toggles.rs:108 (flips_only_its_own_option(1))"
    }
   },
   {
@@ -6694,10 +6694,10 @@
     "Bounds use the mode saved when opening the dialog; changing advanced mode takes effect after Apply and reopening, as Qt constructs its controls."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "sound",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "A refused connection is retried with the waits the reference's job set (1 s then 2 s for three attempts at 1; 2 s for two at 2), as recorded. Each option is changed in the real options window (advanced mode on) and applied; the test then reloads a real NetEngine with engine.reload_settings() (the app's poll itself is not driven), with the engine's bandwidth rules off. The expected values are from oracle/fixtures/network_job_options.json, recorded by oracle/record_network_job_options.py from the reference's own NetworkJob run on its network engine against a loopback server. Timing is bounded below only. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::refused_connections_are_attempted_and_waited_for_as_the_reference_does. The job's retry status words (\"... - retrying now\", \"... - retrying in 4.7 seconds\") and the time taken are compared with the recording too; the recording showed hydrus-net's wait status and length differing from the reference's, which is fixed."
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "phase 2 session",
+    "note": "The wait after the nth failed connection is n times the option, as the job announces it: with the option at 1 the waits are 1 s then 2 s, and with the option at 2 (two attempts) the one wait is 2 s. Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::failed_connections_are_retried_as_often_and_as_slowly_as_the_options_say."
    }
   },
   {
@@ -6714,10 +6714,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "sound",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "Against a self-signed HTTPS server (the Client API's own certificate maker) the job fails with a connection error while the option is off and fetches the page once it is ticked in the real Options row, as the recorded reference job did. Each option is changed in the real options window (advanced mode on) and applied; the test then reloads a real NetEngine with engine.reload_settings() (the app's poll itself is not driven), with the engine's bandwidth rules off. The expected values are from oracle/fixtures/network_job_options.json, recorded by oracle/record_network_job_options.py from the reference's own NetworkJob run on its network engine against a loopback server. Timing is bounded below only. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::a_self_signed_https_server_is_refused_or_accepted_as_the_reference_does."
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "GUI toggle reaches NetEngine.options().verify_https after reload, but nothing tests that http_client (engine.rs:564 tls_danger_accept_invalid_certs) actually accepts or rejects certificates; only the option snapshot is checked. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:133 connection_options_reach_the_running_network_engine (Untagged from connection_options_reach_the_running_network_engine, which only reads the engine's option snapshot.)"
    }
   },
   {
@@ -6749,10 +6749,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "sound",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "One dropped connection tried three times halts the domain at 2 or 3 errors needed and not at 0 (never wait), the next job waiting with the domain wait status; three 500s do not count. The recording showed that the reference counts each failed connection attempt (and each 429 wait) and the final failure, not statuses it only records, and that errors are kept per host and port; hydrus-net now does the same (it counted one error per failed job, and 5xx statuses). Each option is changed in the real options window (advanced mode on) and applied; the test then reloads a real NetEngine with engine.reload_settings() (the app's poll itself is not driven), with the engine's bandwidth rules off. The expected values are from oracle/fixtures/network_job_options.json, recorded by oracle/record_network_job_options.py from the reference's own NetworkJob run on its network engine against a loopback server. Timing is bounded below only. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::a_domain_with_enough_errors_is_left_alone_as_the_reference_leaves_it."
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "phase 2 session",
+    "note": "Two server errors within twenty minutes (the window set through the velocity row, not the default ten) halt the domain: the next request's job waits with the domain wait reason; at three errors needed a request goes through, and at 0 (never wait) it does even with the errors still counted. Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::a_domain_with_enough_errors_is_left_alone_for_as_long_as_the_options_say."
    }
   },
   {
@@ -6769,10 +6769,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "sound",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "The recorded job made the option's number of attempts and ended in a connection error; the native job makes as many and announces as many waits. Each option is changed in the real options window (advanced mode on) and applied; the test then reloads a real NetEngine with engine.reload_settings() (the app's poll itself is not driven), with the engine's bandwidth rules off. The expected values are from oracle/fixtures/network_job_options.json, recorded by oracle/record_network_job_options.py from the reference's own NetworkJob run on its network engine against a loopback server. Timing is bounded below only. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::refused_connections_are_attempted_and_waited_for_as_the_reference_does. The job's retry status words (\"... - retrying now\", \"... - retrying in 4.7 seconds\") and the time taken are compared with the recording too; the recording showed hydrus-net's wait status and length differing from the reference's, which is fixed."
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "phase 2 session",
+    "note": "A refused connection is retried: with the option at 3 the job announces waits of 1 s and 2 s (two retries), with 2 one wait of 1 s. Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::failed_connections_are_retried_as_often_and_as_slowly_as_the_options_say."
    }
   },
   {
@@ -6789,10 +6789,10 @@
     "Bounds use the mode saved when opening the dialog; changing advanced mode takes effect after Apply and reopening, as Qt constructs its controls."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "sound",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "Six requests held by a server run two at once with the option at 2, as the reference's engine ran them. Each option is changed in the real options window (advanced mode on) and applied; the test then reloads a real NetEngine with engine.reload_settings() (the app's poll itself is not driven), with the engine's bandwidth rules off. The expected values are from oracle/fixtures/network_job_options.json, recorded by oracle/record_network_job_options.py from the reference's own NetworkJob run on its network engine against a loopback server. Timing is bounded below only. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::as_many_jobs_run_at_once_as_the_reference_runs."
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "phase 2 session",
+    "note": "Six concurrent requests to a server that holds each: exactly 2 in flight with the option at 2 (and room on the domain). Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::only_as_many_jobs_run_at_once_as_the_options_say."
    }
   },
   {
@@ -6809,10 +6809,10 @@
     "Bounds use the mode saved when opening the dialog; changing advanced mode takes effect after Apply and reopening, as Qt constructs its controls."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "sound",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "With 5 overall and 3 per domain six requests to one domain run three at once, as recorded. Each option is changed in the real options window (advanced mode on) and applied; the test then reloads a real NetEngine with engine.reload_settings() (the app's poll itself is not driven), with the engine's bandwidth rules off. The expected values are from oracle/fixtures/network_job_options.json, recorded by oracle/record_network_job_options.py from the reference's own NetworkJob run on its network engine against a loopback server. Timing is bounded below only. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::as_many_jobs_run_at_once_as_the_reference_runs."
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "phase 2 session",
+    "note": "With 5 overall and 3 per domain, six concurrent requests to one domain are never more than 3 in flight (and more than one). Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::only_as_many_jobs_run_at_once_as_the_options_say."
    }
   },
   {
@@ -6829,10 +6829,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "sound",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "A server that always answers 503 is asked as many times as the reference's job asked it (2 and 4) and the job ends in an infrastructure error. Each option is changed in the real options window (advanced mode on) and applied; the test then reloads a real NetEngine with engine.reload_settings() (the app's poll itself is not driven), with the engine's bandwidth rules off. The expected values are from oracle/fixtures/network_job_options.json, recorded by oracle/record_network_job_options.py from the reference's own NetworkJob run on its network engine against a loopback server. Timing is bounded below only. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::a_failing_server_is_asked_as_often_as_the_reference_asks_it. The job's retry status words (\"... - retrying now\", \"... - retrying in 4.7 seconds\") and the time taken are compared with the recording too; the recording showed hydrus-net's wait status and length differing from the reference's, which is fixed."
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "phase 2 session",
+    "note": "A server that always answers 503 is asked 2 times with the option at 2 and 4 times at 4 (counted by the server). Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::a_failing_server_is_asked_as_many_times_as_the_retries_option_says."
    }
   },
   {
@@ -6849,10 +6849,10 @@
     "Bounds use the mode saved when opening the dialog; changing advanced mode takes effect after Apply and reopening, as Qt constructs its controls."
    ],
    "recheck": {
-    "date": "2026-10-13",
+    "date": "2026-10-09",
     "class": "weak",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "The quiet-server half agrees with the recording (a stall with the option at 1 ends in a stream timeout after at least six seconds, as the reference's job did: 6.01 s) in network_consumers::a_server_that_goes_quiet_is_given_the_timeout_the_option_says (untagged). The connect half (the option itself) is not driven: it needs an address that never answers, which the sandbox cannot give."
+    "by": "phase 2 session",
+    "note": "A server that goes quiet is given at least six times the option to answer (1 s: an error after at least 6 s; the default of ten would be a minute and the test gives up at forty seconds) through the real options window and engine (options_system_consumers.rs network_consumers::a_server_that_goes_quiet_is_given_the_timeout_the_option_says, untagged). The connect half of the timeout (the option itself) is not driven: it needs an address that never answers. Left untagged."
    }
   },
   {
@@ -6869,10 +6869,10 @@
     "Bounds use the mode saved when opening the dialog; changing advanced mode takes effect after Apply and reopening, as Qt constructs its controls."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "sound",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "A server answering 429 is asked twice and waited for 1.25^2 times the option (1.5625 s and 4.6875 s, the recorded wake times) before the bandwidth error. Each option is changed in the real options window (advanced mode on) and applied; the test then reloads a real NetEngine with engine.reload_settings() (the app's poll itself is not driven), with the engine's bandwidth rules off. The expected values are from oracle/fixtures/network_job_options.json, recorded by oracle/record_network_job_options.py from the reference's own NetworkJob run on its network engine against a loopback server. Timing is bounded below only. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::a_server_that_limits_bandwidth_is_waited_for_as_the_reference_waits. The job's retry status words (\"... - retrying now\", \"... - retrying in 4.7 seconds\") and the time taken are compared with the recording too; the recording showed hydrus-net's wait status and length differing from the reference's, which is fixed."
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "phase 2 session",
+    "note": "A server answering 429 with no retry-after is asked twice and waited for at least 1.25^2 times the option (1 s: at least 1.56 s; 3 s: at least 4.7 s) before the bandwidth error; the job says it is waiting on the server's bandwidth. Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::a_server_that_limits_bandwidth_is_waited_for_as_long_as_the_option_says."
    }
   },
   {
@@ -6904,10 +6904,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "sound",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "With the local server as http proxy a request for another host is asked of it with the whole URL, as the recorded reference job's was; with the proxy cleared it is not asked and the connection fails. Each option is changed in the real options window (advanced mode on) and applied; the test then reloads a real NetEngine with engine.reload_settings() (the app's poll itself is not driven), with the engine's bandwidth rules off. The expected values are from oracle/fixtures/network_job_options.json, recorded by oracle/record_network_job_options.py from the reference's own NetworkJob run on its network engine against a loopback server. Timing is bounded below only. The reference ignores its no_proxy option, which is a separate leaf. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::the_http_proxy_gets_the_requests_it_got_from_the_reference."
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "phase 2 session",
+    "note": "With the local server as http proxy a request for another host is asked of it with the whole URL (the server counts it); hosts in no_proxy (the default has the local host) are asked directly; with the host named in no_proxy, or the proxy cleared, the proxy's count does not rise. Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::the_http_proxy_and_the_hosts_it_is_not_used_for_decide_where_requests_go."
    }
   },
   {
@@ -6924,10 +6924,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "sound",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "An https request asks the https proxy to 'CONNECT booru.invalid:443 HTTP/1.1', the recorded line; with the proxy cleared it asks nothing. Each option is changed in the real options window (advanced mode on) and applied; the test then reloads a real NetEngine with engine.reload_settings() (the app's poll itself is not driven), with the engine's bandwidth rules off. The expected values are from oracle/fixtures/network_job_options.json, recorded by oracle/record_network_job_options.py from the reference's own NetworkJob run on its network engine against a loopback server. Timing is bounded below only. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::the_https_proxy_is_asked_to_connect_as_the_reference_asks_it."
+    "date": "2026-10-09",
+    "class": "source-restated",
+    "by": "phase 2 session",
+    "note": "An https request asks the https proxy to CONNECT (the proxy, a raw listener, reads 'CONNECT booru.invalid:443 HTTP/1.1'); with the proxy cleared it is not asked. Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::https_requests_ask_the_https_proxy_to_connect."
    }
   },
   {
@@ -6944,10 +6944,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-13",
+    "date": "2026-10-09",
     "class": "source-restated",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "The recording (oracle/fixtures/network_job_options.json) shows that the reference does not apply this option (its own panel says \"NO_PROXY DOES NOT WORK UNLESS YOU HAVE A CUSTOM BUILD OF REQUESTS\"): with an http proxy set, requests to a host named in no_proxy, and to the local host, still went through the proxy, because requests reads no_proxy only from the environment, not from the session's proxies dictionary. hydrus-rs honours it (hosts named in it go direct, tested in network_consumers::the_http_proxy_and_the_hosts_it_is_not_used_for_decide_where_requests_go, untagged). DIFFERENCES.md has the line; making the leaf sound would mean copying the reference's bug, which is the owner's call."
+    "by": "phase 2 session",
+    "note": "Naming a host in no_proxy sends its requests direct though an http proxy is set (the proxy's count stays); the default's local host is asked directly. Each option is changed in the real options window (advanced mode on, so waits and timeouts may be a second) and applied; the test then reloads a real NetEngine with engine.reload_settings() (as the app's poll does; the poll itself is not driven) and asks a local axum server, a held socket that refuses connections, or a raw proxy listener. The engine's bandwidth rules are off (the default rules space out local requests), and, like the app's, it honours proxies named in the environment. The expected values are worked out from the reference's NetworkJob (hydrus/client/networking/) and not recorded from it: running the reference's job against the same server is not done, hence source-restated. Timing is bounded below only, and attempts and waits are read from the job's own status text and the server's counts. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs network_consumers::the_http_proxy_and_the_hosts_it_is_not_used_for_decide_where_requests_go."
    }
   },
   {
