@@ -828,7 +828,17 @@ fn the_close_button_follows_the_reference_s_recorded_cases() {
             &[(CLOSE, case["close_to_tray"].as_bool().unwrap())],
         );
         request_close(&client.ui);
-        pump(500);
+        // (hidden to the icon, or asked to exit: one or the other)
+        pump_until(
+            || {
+                client.bound.tray.hidden()
+                    || client
+                        .ui
+                        .get_question()
+                        .starts_with("Are you sure you want to exit")
+            },
+            "the window hid or asked to exit",
+        );
         assert_eq!(
             client.bound.tray.hidden(),
             case["hidden"].as_bool().unwrap(),
@@ -916,7 +926,13 @@ fn minimising_follows_the_reference_s_recorded_cases() {
         );
         client.ui.window().set_maximized(true);
         client.ui.window().set_minimized(true);
-        pump(600);
+        if case["hidden"].as_bool().unwrap() {
+            pump_until(|| client.bound.tray.hidden(), "the window hid to the icon");
+        } else {
+            pump_until(|| client.ui.window().is_minimized(), "the window minimised");
+            // (an absence cannot be polled for: give it a moment to wrongly hide)
+            pump(400);
+        }
         assert_eq!(
             client.bound.tray.hidden(),
             case["hidden"].as_bool().unwrap(),
