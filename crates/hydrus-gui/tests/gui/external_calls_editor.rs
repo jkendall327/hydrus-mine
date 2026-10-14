@@ -153,7 +153,7 @@ fn input_rules_enable_token_and_string_processor_reach_the_saved_call() {
     let child = call(&bound);
     assert_eq!(
         child.get_rules().row_data(0).unwrap().summary,
-        "some conversion"
+        "prepend with \"pre-\""
     );
     child.invoke_test_input(0, "x.png".into());
     assert!(

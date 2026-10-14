@@ -337,7 +337,7 @@ fn add_opens_a_new_call_that_is_named_keyed_and_asked_about_as_recorded() {
     let keys: std::collections::BTreeSet<_> = calls
         .iter()
         .filter(|c| c.name.starts_with("new call"))
-        .map(|c| c.key.clone())
+        .map(|c| c.key)
         .collect();
     assert_eq!(keys.len(), 2, "{}", add["keys_unique"]);
     assert!(add["keys_unique"].as_bool().unwrap());
