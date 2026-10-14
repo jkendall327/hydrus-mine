@@ -1,0 +1,214 @@
+{
+  "cases": [
+    {
+      "name": "times out",
+      "call": {
+        "kind": "process",
+        "executable": "sh",
+        "arguments": [
+          "-c",
+          "echo started; exec sleep 30",
+          "%path%"
+        ],
+        "parameters": [
+          0
+        ],
+        "long_lived": false,
+        "timeout": 1,
+        "hide_terminal": true,
+        "text": true
+      },
+      "box": {
+        "interim": "Testing…",
+        "output": "ExecutableException: Problem running external local process! Final call list was \"['sh', '-c', 'echo started; exec sleep 30', '/synthetic/file.png']\", error was: A call to another executable took too long (over 1 seconds) to finish! The call was: ['sh', '-c', 'echo started; exec sleep 30', '/synthetic/file.png']\n\n========== stdout ==========\n'started\\n'\n========== stderr ==========\n''\n============================\n",
+        "seconds": 3.051439046859741
+      },
+      "launch": {
+        "error": {
+          "type": "ExecutableException",
+          "text": "Problem running external local process! Final call list was \"['sh', '-c', 'echo started; exec sleep 30', '/synthetic/file.png']\", error was: A call to another executable took too long (over 1 seconds) to finish! The call was: ['sh', '-c', 'echo started; exec sleep 30', '/synthetic/file.png']\n\n========== stdout ==========\n'started\\n'\n========== stderr ==========\n''\n============================\n"
+        },
+        "seconds": 3.006828784942627
+      }
+    },
+    {
+      "name": "inside its timeout",
+      "call": {
+        "kind": "process",
+        "executable": "sh",
+        "arguments": [
+          "-c",
+          "echo fine",
+          "%path%"
+        ],
+        "parameters": [
+          0
+        ],
+        "long_lived": false,
+        "timeout": 5,
+        "hide_terminal": true,
+        "text": true
+      },
+      "box": {
+        "interim": "Testing…",
+        "output": "Looks good!",
+        "seconds": 0.0661625862121582
+      },
+      "launch": {
+        "error": null,
+        "seconds": 0.0036051273345947266
+      }
+    },
+    {
+      "name": "bad bytes, text",
+      "call": {
+        "kind": "process",
+        "executable": "sh",
+        "arguments": [
+          "-c",
+          "printf 'caf\\303\\251 \\377'; printf 'err \\303\\251' >&2; exit 2",
+          "%path%"
+        ],
+        "parameters": [
+          0
+        ],
+        "long_lived": false,
+        "timeout": 15,
+        "hide_terminal": true,
+        "text": true
+      },
+      "box": {
+        "interim": "Testing…",
+        "output": "BadReturnCodeException: A call to another executable gave a non-zero return code (2)! The call was: ['sh', '-c', \"printf 'caf\\\\303\\\\251 \\\\377'; printf 'err \\\\303\\\\251' >&2; exit 2\", '/synthetic/file.png']\n\n========== stdout ==========\n'café �'\n========== stderr ==========\n'err é'\n============================\n",
+        "seconds": 0.06376504898071289
+      },
+      "launch": {
+        "error": {
+          "type": "BadReturnCodeException",
+          "text": "A call to another executable gave a non-zero return code (2)! The call was: ['sh', '-c', \"printf 'caf\\\\303\\\\251 \\\\377'; printf 'err \\\\303\\\\251' >&2; exit 2\", '/synthetic/file.png']\n\n========== stdout ==========\n'café �'\n========== stderr ==========\n'err é'\n============================\n"
+        },
+        "seconds": 0.0041806697845458984
+      }
+    },
+    {
+      "name": "bad bytes, not text",
+      "call": {
+        "kind": "process",
+        "executable": "sh",
+        "arguments": [
+          "-c",
+          "printf 'caf\\303\\251 \\377'; printf 'err \\303\\251' >&2; exit 2",
+          "%path%"
+        ],
+        "parameters": [
+          0
+        ],
+        "long_lived": false,
+        "timeout": 15,
+        "hide_terminal": true,
+        "text": false
+      },
+      "box": {
+        "interim": "Testing…",
+        "output": "BadReturnCodeException: A call to another executable gave a non-zero return code (2)! The call was: ['sh', '-c', \"printf 'caf\\\\303\\\\251 \\\\377'; printf 'err \\\\303\\\\251' >&2; exit 2\", '/synthetic/file.png']\n\n========== stdout ==========\nb'caf\\xc3\\xa9 \\xff'\n========== stderr ==========\nb'err \\xc3\\xa9'\n============================\n",
+        "seconds": 0.06292319297790527
+      },
+      "launch": {
+        "error": {
+          "type": "BadReturnCodeException",
+          "text": "A call to another executable gave a non-zero return code (2)! The call was: ['sh', '-c', \"printf 'caf\\\\303\\\\251 \\\\377'; printf 'err \\\\303\\\\251' >&2; exit 2\", '/synthetic/file.png']\n\n========== stdout ==========\nb'caf\\xc3\\xa9 \\xff'\n========== stderr ==========\nb'err \\xc3\\xa9'\n============================\n"
+        },
+        "seconds": 0.0031681060791015625
+      }
+    },
+    {
+      "name": "terminal shown",
+      "call": {
+        "kind": "process",
+        "executable": "sh",
+        "arguments": [
+          "-c",
+          "echo fine",
+          "%path%"
+        ],
+        "parameters": [
+          0
+        ],
+        "long_lived": false,
+        "timeout": 5,
+        "hide_terminal": false,
+        "text": true
+      },
+      "box": {
+        "interim": "Testing…",
+        "output": "Looks good!",
+        "seconds": 0.06341886520385742
+      },
+      "launch": {
+        "error": null,
+        "seconds": 0.0032806396484375
+      }
+    },
+    {
+      "name": "long lived, fails",
+      "call": {
+        "kind": "process",
+        "executable": "sh",
+        "arguments": [
+          "-c",
+          "exit 3",
+          "%path%"
+        ],
+        "parameters": [
+          0
+        ],
+        "long_lived": true,
+        "timeout": 1,
+        "hide_terminal": true,
+        "text": true
+      },
+      "box": {
+        "interim": "Testing… (forcing a 15 second timeout for testing purposes)",
+        "output": "BadReturnCodeException: A call to another executable gave a non-zero return code (3)! The call was: ['sh', '-c', 'exit 3', '/synthetic/file.png']\n\n========== stdout ==========\n''\n========== stderr ==========\n''\n============================\n",
+        "seconds": 0.0633707046508789
+      },
+      "launch": {
+        "error": null,
+        "seconds": 0.0018537044525146484
+      }
+    },
+    {
+      "name": "long lived, runs past its timeout",
+      "call": {
+        "kind": "process",
+        "executable": "sh",
+        "arguments": [
+          "-c",
+          "sleep 2; echo done",
+          "%path%"
+        ],
+        "parameters": [
+          0
+        ],
+        "long_lived": true,
+        "timeout": 1,
+        "hide_terminal": true,
+        "text": true
+      },
+      "box": {
+        "interim": "Testing… (forcing a 15 second timeout for testing purposes)",
+        "output": "Looks good!",
+        "seconds": 2.068817138671875
+      },
+      "launch": {
+        "error": null,
+        "seconds": 0.0013761520385742188
+      }
+    }
+  ],
+  "late": {
+    "returned_in": 0.0012259483337402344,
+    "existed_at_return": false,
+    "existed_later": true
+  }
+}

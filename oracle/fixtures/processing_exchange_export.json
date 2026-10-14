@@ -1,0 +1,778 @@
+{
+ "start": {
+  "processor": [
+   84,
+   1,
+   [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       83,
+       2,
+       [
+        ",",
+        null
+       ]
+      ]
+     ],
+     [
+      2,
+      [
+       55,
+       2,
+       [
+        [
+         [
+          3,
+          "!"
+         ]
+        ],
+        "example string"
+       ]
+      ]
+     ],
+     [
+      2,
+      [
+       55,
+       2,
+       [
+        [
+         [
+          2,
+          ">"
+         ]
+        ],
+        "example string"
+       ]
+      ]
+     ]
+    ]
+   ]
+  ],
+  "processed": [
+   ">a!",
+   ">b!"
+  ],
+  "selected": []
+ },
+ "exports": [
+  {
+   "selected": [],
+   "clipboard": "sentinel"
+  },
+  {
+   "selected": [
+    1
+   ],
+   "clipboard": [
+    55,
+    2,
+    [
+     [
+      [
+       3,
+       "!"
+      ]
+     ],
+     "example string"
+    ]
+   ]
+  },
+  {
+   "selected": [
+    2,
+    0
+   ],
+   "clipboard": [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       83,
+       2,
+       [
+        ",",
+        null
+       ]
+      ]
+     ],
+     [
+      2,
+      [
+       55,
+       2,
+       [
+        [
+         [
+          2,
+          ">"
+         ]
+        ],
+        "example string"
+       ]
+      ]
+     ]
+    ]
+   ]
+  },
+  {
+   "selected": [
+    0,
+    1,
+    2
+   ],
+   "clipboard": [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       83,
+       2,
+       [
+        ",",
+        null
+       ]
+      ]
+     ],
+     [
+      2,
+      [
+       55,
+       2,
+       [
+        [
+         [
+          3,
+          "!"
+         ]
+        ],
+        "example string"
+       ]
+      ]
+     ],
+     [
+      2,
+      [
+       55,
+       2,
+       [
+        [
+         [
+          2,
+          ">"
+         ]
+        ],
+        "example string"
+       ]
+      ]
+     ]
+    ]
+   ]
+  }
+ ],
+ "png": {
+  "dialog": "export to png",
+  "class": "PNGExportPanel",
+  "title": "A list of 1 String Splitter, 1 String Converter - 82B",
+  "payload_description": "A list of 1 String Splitter, 1 String Converter - 82B",
+  "description": "",
+  "width": 512,
+  "path": "",
+  "payload_enabled": false,
+  "button_after": "done!",
+  "png_file": "steps.png",
+  "png_payload": [
+   26,
+   3,
+   [
+    [
+     2,
+     [
+      83,
+      2,
+      [
+       ",",
+       null
+      ]
+     ]
+    ],
+    [
+     2,
+     [
+      55,
+      2,
+      [
+       [
+        [
+         2,
+         ">"
+        ]
+       ],
+       "example string"
+      ]
+     ]
+    ]
+   ]
+  ],
+  "last_png_export_dir_set": true
+ },
+ "png_none_selected_opens_panel": false,
+ "pastes": [
+  {
+   "name": "a list of two steps",
+   "text": "[26, 3, [[2, [55, 2, [[[3, \"?\"]], \"example string\"]]], [2, [83, 2, [\";\", null]]]]]",
+   "messages": [
+    {
+     "kind": "information",
+     "text": "2 objects added!"
+    }
+   ],
+   "state": {
+    "processor": [
+     84,
+     1,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ",",
+          null
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "!"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            2,
+            ">"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "?"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ";",
+          null
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "processed": [
+     ">a!?",
+     ">b!?"
+    ],
+    "selected": []
+   }
+  },
+  {
+   "name": "one step",
+   "text": "[55, 2, [[[3, \"?\"]], \"example string\"]]",
+   "messages": [
+    {
+     "kind": "information",
+     "text": "1 objects added!"
+    }
+   ],
+   "state": {
+    "processor": [
+     84,
+     1,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ",",
+          null
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "!"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            2,
+            ">"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "?"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ";",
+          null
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "?"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "processed": [
+     ">a!??",
+     ">b!??"
+    ],
+    "selected": []
+   }
+  },
+  {
+   "name": "nothing on the clipboard",
+   "text": null,
+   "messages": [
+    {
+     "kind": "critical",
+     "title": "Problem pasting!",
+     "text": "There was no text on the clipboard!"
+    }
+   ],
+   "state": {
+    "processor": [
+     84,
+     1,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ",",
+          null
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "!"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            2,
+            ">"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "?"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ";",
+          null
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "?"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "processed": [
+     ">a!??",
+     ">b!??"
+    ],
+    "selected": []
+   }
+  },
+  {
+   "name": "not a package",
+   "text": "not valid JSON",
+   "messages": [
+    {
+     "kind": "clipboard parse error"
+    }
+   ],
+   "state": {
+    "processor": [
+     84,
+     1,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ",",
+          null
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "!"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            2,
+            ">"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "?"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ";",
+          null
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "?"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "processed": [
+     ">a!??",
+     ">b!??"
+    ],
+    "selected": []
+   }
+  },
+  {
+   "name": "empty text",
+   "text": "",
+   "messages": [
+    {
+     "kind": "clipboard parse error"
+    }
+   ],
+   "state": {
+    "processor": [
+     84,
+     1,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ",",
+          null
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "!"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            2,
+            ">"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "?"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ";",
+          null
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "?"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "processed": [
+     ">a!??",
+     ">b!??"
+    ],
+    "selected": []
+   }
+  }
+ ]
+}

@@ -73,6 +73,7 @@ pub struct Analysis {
 pub struct MediaTools {
     ffmpeg: Ffmpeg,
     icc_reader: std::sync::Arc<dyn Fn() -> bool + Send + Sync>,
+    truncated_reader: std::sync::Arc<dyn Fn() -> bool + Send + Sync>,
 }
 impl std::fmt::Debug for MediaTools {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -86,6 +87,7 @@ impl Default for MediaTools {
         Self {
             ffmpeg: Ffmpeg::default(),
             icc_reader: std::sync::Arc::new(|| true),
+            truncated_reader: std::sync::Arc::new(|| true),
         }
     }
 }
@@ -146,8 +148,31 @@ impl MediaTools {
         self
     }
 
+    /// Use a fixed "allow loading of truncated images" policy (on by default,
+    /// as the reference's `enable_truncated_images_pil` is).
+    #[must_use]
+    pub fn with_truncated_images(self, enabled: bool) -> Self {
+        self.with_truncated_reader(std::sync::Arc::new(move || enabled))
+    }
+
+    /// Read the owned "allow loading of truncated images" policy before each
+    /// image conversion; it is held unchanged throughout that conversion.
+    #[must_use]
+    pub fn with_truncated_reader(
+        mut self,
+        reader: std::sync::Arc<dyn Fn() -> bool + Send + Sync>,
+    ) -> Self {
+        self.truncated_reader = reader;
+        self
+    }
+
     fn raster_from_bytes(&self, bytes: &[u8], strip_alpha: bool) -> Result<Raster> {
-        raster_from_bytes_with_icc(bytes, strip_alpha, (self.icc_reader)())
+        raster_from_bytes_with_policy(
+            bytes,
+            strip_alpha,
+            (self.icc_reader)(),
+            (self.truncated_reader)(),
+        )
     }
 
     /// Supply the saved deadline before each ffmpeg process, keeping explicitly
@@ -919,7 +944,16 @@ pub(crate) fn raster_from_bytes_with_icc(
     strip_useless_alpha: bool,
     normalise_icc: bool,
 ) -> Result<Raster> {
-    decode::open(data)?
+    raster_from_bytes_with_policy(data, strip_useless_alpha, normalise_icc, true)
+}
+
+pub(crate) fn raster_from_bytes_with_policy(
+    data: &[u8],
+    strip_useless_alpha: bool,
+    normalise_icc: bool,
+    load_truncated: bool,
+) -> Result<Raster> {
+    decode::open_with(data, load_truncated)?
         .image
         .normalise_with_icc(normalise_icc)?
         .into_raster(strip_useless_alpha)

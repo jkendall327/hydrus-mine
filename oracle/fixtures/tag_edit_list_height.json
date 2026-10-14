@@ -1,0 +1,51 @@
+{
+  "initial": 11,
+  "minimum": 1,
+  "maximum": 128,
+  "heights": [
+    {
+      "rows": 1,
+      "hint": 17,
+      "height": 1291,
+      "text_height": 15,
+      "frame": 1,
+      "host": [
+        700,
+        1400
+      ]
+    },
+    {
+      "rows": 3,
+      "hint": 47,
+      "height": 1291,
+      "text_height": 15,
+      "frame": 1,
+      "host": [
+        700,
+        1400
+      ]
+    },
+    {
+      "rows": 11,
+      "hint": 167,
+      "height": 1291,
+      "text_height": 15,
+      "frame": 1,
+      "host": [
+        700,
+        1400
+      ]
+    },
+    {
+      "rows": 40,
+      "hint": 602,
+      "height": 1291,
+      "text_height": 15,
+      "frame": 1,
+      "host": [
+        700,
+        1400
+      ]
+    }
+  ]
+}

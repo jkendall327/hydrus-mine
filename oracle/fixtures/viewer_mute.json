@@ -1,0 +1,573 @@
+{
+ "file": "audio.mp3",
+ "cases": [
+  {
+   "global_mute": false,
+   "viewer_mute": false,
+   "viewer_uses_its_own_volume": false,
+   "forced": null,
+   "plays_muted": false,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "mute global",
+      "---",
+      "mute media viewer",
+      "force mute just here",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": false,
+   "viewer_mute": false,
+   "viewer_uses_its_own_volume": false,
+   "forced": true,
+   "plays_muted": true,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "mute global",
+      "---",
+      "mute media viewer",
+      "force unmute just here",
+      "stop forcing mute",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": false,
+   "viewer_mute": false,
+   "viewer_uses_its_own_volume": false,
+   "forced": false,
+   "plays_muted": false,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "mute global",
+      "---",
+      "mute media viewer",
+      "force mute just here",
+      "stop forcing unmute",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": false,
+   "viewer_mute": false,
+   "viewer_uses_its_own_volume": true,
+   "forced": null,
+   "plays_muted": false,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "mute global",
+      "---",
+      "mute media viewer",
+      "force mute just here",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": false,
+   "viewer_mute": false,
+   "viewer_uses_its_own_volume": true,
+   "forced": true,
+   "plays_muted": true,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "mute global",
+      "---",
+      "mute media viewer",
+      "force unmute just here",
+      "stop forcing mute",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": false,
+   "viewer_mute": false,
+   "viewer_uses_its_own_volume": true,
+   "forced": false,
+   "plays_muted": false,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "mute global",
+      "---",
+      "mute media viewer",
+      "force mute just here",
+      "stop forcing unmute",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": false,
+   "viewer_mute": true,
+   "viewer_uses_its_own_volume": false,
+   "forced": null,
+   "plays_muted": true,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "mute global",
+      "---",
+      "unmute media viewer",
+      "force unmute just here",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": false,
+   "viewer_mute": true,
+   "viewer_uses_its_own_volume": false,
+   "forced": true,
+   "plays_muted": true,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "mute global",
+      "---",
+      "unmute media viewer",
+      "force unmute just here",
+      "stop forcing mute",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": false,
+   "viewer_mute": true,
+   "viewer_uses_its_own_volume": false,
+   "forced": false,
+   "plays_muted": false,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "mute global",
+      "---",
+      "unmute media viewer",
+      "force mute just here",
+      "stop forcing unmute",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": false,
+   "viewer_mute": true,
+   "viewer_uses_its_own_volume": true,
+   "forced": null,
+   "plays_muted": true,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "mute global",
+      "---",
+      "unmute media viewer",
+      "force unmute just here",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": false,
+   "viewer_mute": true,
+   "viewer_uses_its_own_volume": true,
+   "forced": true,
+   "plays_muted": true,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "mute global",
+      "---",
+      "unmute media viewer",
+      "force unmute just here",
+      "stop forcing mute",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": false,
+   "viewer_mute": true,
+   "viewer_uses_its_own_volume": true,
+   "forced": false,
+   "plays_muted": false,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "mute global",
+      "---",
+      "unmute media viewer",
+      "force mute just here",
+      "stop forcing unmute",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": true,
+   "viewer_mute": false,
+   "viewer_uses_its_own_volume": false,
+   "forced": null,
+   "plays_muted": true,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "unmute global",
+      "---",
+      "mute media viewer",
+      "force unmute just here",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": true,
+   "viewer_mute": false,
+   "viewer_uses_its_own_volume": false,
+   "forced": true,
+   "plays_muted": true,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "unmute global",
+      "---",
+      "mute media viewer",
+      "force unmute just here",
+      "stop forcing mute",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": true,
+   "viewer_mute": false,
+   "viewer_uses_its_own_volume": false,
+   "forced": false,
+   "plays_muted": false,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "unmute global",
+      "---",
+      "mute media viewer",
+      "force mute just here",
+      "stop forcing unmute",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": true,
+   "viewer_mute": false,
+   "viewer_uses_its_own_volume": true,
+   "forced": null,
+   "plays_muted": true,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "unmute global",
+      "---",
+      "mute media viewer",
+      "force unmute just here",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": true,
+   "viewer_mute": false,
+   "viewer_uses_its_own_volume": true,
+   "forced": true,
+   "plays_muted": true,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "unmute global",
+      "---",
+      "mute media viewer",
+      "force unmute just here",
+      "stop forcing mute",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": true,
+   "viewer_mute": false,
+   "viewer_uses_its_own_volume": true,
+   "forced": false,
+   "plays_muted": false,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "unmute global",
+      "---",
+      "mute media viewer",
+      "force mute just here",
+      "stop forcing unmute",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": true,
+   "viewer_mute": true,
+   "viewer_uses_its_own_volume": false,
+   "forced": null,
+   "plays_muted": true,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "unmute global",
+      "---",
+      "unmute media viewer",
+      "force unmute just here",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": true,
+   "viewer_mute": true,
+   "viewer_uses_its_own_volume": false,
+   "forced": true,
+   "plays_muted": true,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "unmute global",
+      "---",
+      "unmute media viewer",
+      "force unmute just here",
+      "stop forcing mute",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": true,
+   "viewer_mute": true,
+   "viewer_uses_its_own_volume": false,
+   "forced": false,
+   "plays_muted": false,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "unmute global",
+      "---",
+      "unmute media viewer",
+      "force mute just here",
+      "stop forcing unmute",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": true,
+   "viewer_mute": true,
+   "viewer_uses_its_own_volume": true,
+   "forced": null,
+   "plays_muted": true,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "unmute global",
+      "---",
+      "unmute media viewer",
+      "force unmute just here",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": true,
+   "viewer_mute": true,
+   "viewer_uses_its_own_volume": true,
+   "forced": true,
+   "plays_muted": true,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "unmute global",
+      "---",
+      "unmute media viewer",
+      "force unmute just here",
+      "stop forcing mute",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "global_mute": true,
+   "viewer_mute": true,
+   "viewer_uses_its_own_volume": true,
+   "forced": false,
+   "plays_muted": false,
+   "menu": [
+    {
+     "menu": "volume",
+     "entries": [
+      "unmute global",
+      "---",
+      "unmute media viewer",
+      "force mute just here",
+      "stop forcing unmute",
+      "---",
+      {
+       "slider": "volume",
+       "value": 70
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

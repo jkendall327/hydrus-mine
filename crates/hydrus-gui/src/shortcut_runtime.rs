@@ -303,8 +303,13 @@ pub(crate) fn viewer(
             };
             match action {
                 6 => window.invoke_close_requested(),
+                97 => window.invoke_first(),
+                98 => window.invoke_last(),
                 99 => window.invoke_next(),
                 100 => window.invoke_previous(),
+                186 => window.invoke_random(),
+                187 => window.invoke_undo_random(),
+                81 => window.invoke_remove_from_view(),
                 101 => window.invoke_zoom(1, false, 0.0, 0.0),
                 102 => window.invoke_zoom(-1, false, 0.0, 0.0),
                 92 => window.invoke_toggle_fullscreen(),

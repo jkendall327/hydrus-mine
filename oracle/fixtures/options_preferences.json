@@ -7,7 +7,27 @@
       "opened": "gui",
       "remembered_after_page_change": "audio",
       "reopened": "gui",
-      "search_index": 0
+      "search_index": 0,
+      "placed": {
+        "host": [
+          0,
+          0,
+          1240,
+          1145
+        ],
+        "search": [
+          2,
+          2,
+          1236,
+          23
+        ],
+        "list": [
+          2,
+          27,
+          1236,
+          1116
+        ]
+      }
     },
     {
       "remember": true,
@@ -16,7 +36,27 @@
       "opened": "connection",
       "remembered_after_page_change": "audio",
       "reopened": "audio",
-      "search_index": 0
+      "search_index": 0,
+      "placed": {
+        "host": [
+          0,
+          0,
+          1240,
+          1145
+        ],
+        "search": [
+          2,
+          2,
+          1236,
+          23
+        ],
+        "list": [
+          2,
+          27,
+          1236,
+          1116
+        ]
+      }
     },
     {
       "remember": true,
@@ -25,7 +65,27 @@
       "opened": "gui",
       "remembered_after_page_change": "audio",
       "reopened": "audio",
-      "search_index": 1
+      "search_index": 1,
+      "placed": {
+        "host": [
+          0,
+          0,
+          1240,
+          1145
+        ],
+        "search": [
+          2,
+          1120,
+          1236,
+          23
+        ],
+        "list": [
+          2,
+          2,
+          1236,
+          1116
+        ]
+      }
     }
   ],
   "suggestions": [
@@ -359,7 +419,7 @@
     "% on  (maintenance and processing)",
     "ignore cpu usage (maintenance and processing)",
     "cores (maintenance and processing)",
-    "(you appear to have 5 cores) (maintenance and processing)",
+    "(you appear to have 4 cores) (maintenance and processing)",
     "shutdown (maintenance and processing)",
     "Run jobs on shutdown:  (maintenance and processing)",
     "run jobs on shutdown if needed, but ask first (maintenance and processing)",

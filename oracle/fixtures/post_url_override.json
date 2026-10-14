@@ -1,0 +1,16 @@
+{
+ "off": {
+  "file_after_post_seconds": null,
+  "file_seen": false,
+  "option_on": false,
+  "post_seen": true,
+  "watched_seconds": 15
+ },
+ "on": {
+  "file_after_post_seconds": 3.43,
+  "file_seen": true,
+  "option_on": true,
+  "post_seen": true,
+  "watched_seconds": 15
+ }
+}

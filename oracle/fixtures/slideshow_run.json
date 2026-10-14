@@ -1,0 +1,291 @@
+{
+ "names": [
+  "jpeg_00.jpg",
+  "jpeg_01.jpg",
+  "jpeg_02.jpg",
+  "jpeg_03.jpg"
+ ],
+ "scenarios": [
+  {
+   "name": "plain",
+   "period": 10.0,
+   "offsets": [
+    0.0,
+    5.0,
+    9.9,
+    10.0,
+    10.5,
+    19.9,
+    20.0,
+    29.0,
+    30.0,
+    40.0,
+    50.0
+   ],
+   "ticks": [
+    {
+     "at": 0.0,
+     "shown": "jpeg_00.jpg"
+    },
+    {
+     "at": 5.0,
+     "shown": "jpeg_00.jpg"
+    },
+    {
+     "at": 9.9,
+     "shown": "jpeg_00.jpg"
+    },
+    {
+     "at": 10.0,
+     "shown": "jpeg_00.jpg"
+    },
+    {
+     "at": 10.5,
+     "shown": "jpeg_01.jpg"
+    },
+    {
+     "at": 19.9,
+     "shown": "jpeg_01.jpg"
+    },
+    {
+     "at": 20.0,
+     "shown": "jpeg_01.jpg"
+    },
+    {
+     "at": 29.0,
+     "shown": "jpeg_02.jpg"
+    },
+    {
+     "at": 30.0,
+     "shown": "jpeg_02.jpg"
+    },
+    {
+     "at": 40.0,
+     "shown": "jpeg_03.jpg"
+    },
+    {
+     "at": 50.0,
+     "shown": "jpeg_03.jpg"
+    }
+   ]
+  },
+  {
+   "name": "stopped and resumed",
+   "stopped": [
+    {
+     "at": 0.0,
+     "shown": "jpeg_03.jpg"
+    },
+    {
+     "at": 10.0,
+     "shown": "jpeg_03.jpg"
+    },
+    {
+     "at": 100.0,
+     "shown": "jpeg_03.jpg"
+    }
+   ],
+   "resumed_from": "jpeg_03.jpg",
+   "resumed": [
+    {
+     "at": 0.0,
+     "shown": "jpeg_03.jpg"
+    },
+    {
+     "at": 9.9,
+     "shown": "jpeg_03.jpg"
+    },
+    {
+     "at": 10.0,
+     "shown": "jpeg_03.jpg"
+    }
+   ]
+  },
+  {
+   "name": "shuffle",
+   "period": 10.0,
+   "ticks": [
+    {
+     "moved_before_period": false,
+     "from": "jpeg_00.jpg",
+     "to": "jpeg_01.jpg"
+    },
+    {
+     "moved_before_period": false,
+     "from": "jpeg_01.jpg",
+     "to": "jpeg_00.jpg"
+    },
+    {
+     "moved_before_period": false,
+     "from": "jpeg_00.jpg",
+     "to": "jpeg_03.jpg"
+    },
+    {
+     "moved_before_period": false,
+     "from": "jpeg_03.jpg",
+     "to": "jpeg_02.jpg"
+    },
+    {
+     "moved_before_period": false,
+     "from": "jpeg_02.jpg",
+     "to": "jpeg_00.jpg"
+    },
+    {
+     "moved_before_period": false,
+     "from": "jpeg_00.jpg",
+     "to": "jpeg_01.jpg"
+    },
+    {
+     "moved_before_period": false,
+     "from": "jpeg_01.jpg",
+     "to": "jpeg_02.jpg"
+    },
+    {
+     "moved_before_period": false,
+     "from": "jpeg_02.jpg",
+     "to": "jpeg_00.jpg"
+    },
+    {
+     "moved_before_period": false,
+     "from": "jpeg_00.jpg",
+     "to": "jpeg_03.jpg"
+    },
+    {
+     "moved_before_period": false,
+     "from": "jpeg_03.jpg",
+     "to": "jpeg_02.jpg"
+    },
+    {
+     "moved_before_period": false,
+     "from": "jpeg_02.jpg",
+     "to": "jpeg_01.jpg"
+    },
+    {
+     "moved_before_period": false,
+     "from": "jpeg_01.jpg",
+     "to": "jpeg_02.jpg"
+    },
+    {
+     "moved_before_period": false,
+     "from": "jpeg_02.jpg",
+     "to": "jpeg_01.jpg"
+    },
+    {
+     "moved_before_period": false,
+     "from": "jpeg_01.jpg",
+     "to": "jpeg_00.jpg"
+    },
+    {
+     "moved_before_period": false,
+     "from": "jpeg_00.jpg",
+     "to": "jpeg_01.jpg"
+    },
+    {
+     "moved_before_period": false,
+     "from": "jpeg_01.jpg",
+     "to": "jpeg_00.jpg"
+    },
+    {
+     "moved_before_period": false,
+     "from": "jpeg_00.jpg",
+     "to": "jpeg_01.jpg"
+    },
+    {
+     "moved_before_period": false,
+     "from": "jpeg_01.jpg",
+     "to": "jpeg_03.jpg"
+    },
+    {
+     "moved_before_period": false,
+     "from": "jpeg_03.jpg",
+     "to": "jpeg_02.jpg"
+    },
+    {
+     "moved_before_period": false,
+     "from": "jpeg_02.jpg",
+     "to": "jpeg_01.jpg"
+    }
+   ]
+  },
+  {
+   "name": "file with a duration",
+   "period": 10.0,
+   "files": [
+    "audio.mp3",
+    "jpeg_00.jpg"
+   ],
+   "runs": [
+    {
+     "once_through": true,
+     "ticks": [
+      {
+       "at": 0.0,
+       "played_once_through": false,
+       "shown": "audio.mp3"
+      },
+      {
+       "at": 9.9,
+       "played_once_through": false,
+       "shown": "audio.mp3"
+      },
+      {
+       "at": 10.5,
+       "played_once_through": false,
+       "shown": "audio.mp3"
+      },
+      {
+       "at": 25.0,
+       "played_once_through": false,
+       "shown": "audio.mp3"
+      },
+      {
+       "at": 300.0,
+       "played_once_through": false,
+       "shown": "audio.mp3"
+      },
+      {
+       "at": 301.0,
+       "played_once_through": true,
+       "shown": "jpeg_00.jpg"
+      }
+     ]
+    },
+    {
+     "once_through": false,
+     "ticks": [
+      {
+       "at": 0.0,
+       "played_once_through": false,
+       "shown": "audio.mp3"
+      },
+      {
+       "at": 9.9,
+       "played_once_through": false,
+       "shown": "audio.mp3"
+      },
+      {
+       "at": 10.5,
+       "played_once_through": false,
+       "shown": "jpeg_00.jpg"
+      },
+      {
+       "at": 25.0,
+       "played_once_through": false,
+       "shown": "audio.mp3"
+      },
+      {
+       "at": 300.0,
+       "played_once_through": false,
+       "shown": "jpeg_00.jpg"
+      },
+      {
+       "at": 301.0,
+       "played_once_through": true,
+       "shown": "jpeg_00.jpg"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

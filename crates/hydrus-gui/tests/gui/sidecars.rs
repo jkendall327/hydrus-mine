@@ -1987,6 +1987,161 @@ fn json_object_names_use_staged_text_children_and_saved_router_worker() {
     );
 }
 
+/// The object names are entered in the destination editor (each through its
+/// own text window, as a user does), the router is saved and loaded, and the
+/// real manual-export worker writes the sidecar over each state of the file
+/// that was there; what it leaves is what the reference's exporter leaves
+/// (`oracle/dump_sidecar_json_export.py`: the same names, the same file
+/// beforehand, the same rows, the file's text afterwards or its error).
+// leaf: audit-shared-sidecar-destination-json
+#[test]
+fn the_saved_json_router_writes_nested_names_as_the_reference_s_exporter_does() {
+    use hydrus_core::url::strings::StringProcessor;
+    use hydrus_gui::{
+        sidecar_editors::Context,
+        sidecars_window::{self, Node, Slots},
+    };
+    use hydrus_parse::sidecar::{Importer, Router, SidecarNaming};
+    use std::{cell::RefCell, rc::Rc, sync::atomic::AtomicBool};
+    let fixture = hydrus_testkit::fixture_json("sidecar_json_export.json");
+    let cases = fixture["cases"].as_array().unwrap();
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let file = hydrus_core::HashId(1);
+    let urls: Vec<String> = cases[0]["rows"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|u| u.as_str().unwrap().to_owned())
+        .collect();
+    {
+        let urls = urls.clone();
+        // (the fixture's own urls for the file are not rows of this recording)
+        store
+            .write_content(move |writer| {
+                writer.delete_urls(
+                    &[file],
+                    &[
+                        "https://danbooru.donmai.us/posts/1000".to_owned(),
+                        "https://example.com/post/0".to_owned(),
+                        "https://gelbooru.com/index.php?page=post&s=view&id=2000".to_owned(),
+                    ],
+                )?;
+                writer.add_urls(&[file], &urls)
+            })
+            .unwrap();
+    }
+    let mut names_lists: Vec<Vec<String>> = Vec::new();
+    for case in cases {
+        let names: Vec<String> = case["names"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|n| n.as_str().unwrap().to_owned())
+            .collect();
+        if !names_lists.contains(&names) {
+            names_lists.push(names);
+        }
+    }
+    let (mut wrote, mut failed) = (0, 0);
+    for names in &names_lists {
+        // the names, entered in the destination editor
+        let slots = Slots::default();
+        let accepted = Rc::new(RefCell::new(None));
+        let node = sidecars_window::open_node(
+            &store,
+            Context::Export,
+            &Node::Destination(Exporter::Json {
+                naming: SidecarNaming {
+                    remove_actual_filename_ext: false,
+                    suffix: String::new(),
+                    filename_converter: hydrus_core::url::strings::StringConverter::default(),
+                },
+                nested_object_names: Vec::new(),
+            }),
+            &slots,
+            Rc::new({
+                let accepted = accepted.clone();
+                move |value| *accepted.borrow_mut() = Some(value)
+            }),
+        )
+        .unwrap();
+        let _node_window = windows.get(windows.count() - 1).unwrap();
+        *slots.node.borrow_mut() = Some(node.clone_strong());
+        for name in names {
+            node.invoke_nested_action("add".into());
+            json_object_name_child(&slots).invoke_name_entered(name.as_str().into());
+        }
+        node.invoke_apply();
+        let Node::Destination(exporter) = accepted.borrow_mut().take().unwrap() else {
+            panic!("JSON exporter");
+        };
+        // saved with the router, and loaded again
+        let router = Router {
+            importers: vec![Importer {
+                processor: StringProcessor::default(),
+                source: Source::MediaUrls,
+            }],
+            processor: StringProcessor::default(),
+            exporter,
+        };
+        let persisted = hydrus_gui_model::export_files::Preferences {
+            routers: vec![router],
+            ..hydrus_gui_model::export_files::Preferences::default()
+        };
+        store
+            .write(move |ctx| settings::set(ctx.conn(), &persisted))
+            .unwrap();
+        let saved: hydrus_gui_model::export_files::Preferences = store.read(settings::get).unwrap();
+        for case in cases.iter().filter(|c| {
+            c["names"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|n| n.as_str().unwrap())
+                .eq(names.iter().map(String::as_str))
+        }) {
+            let directory = tempfile::tempdir().unwrap();
+            let plan = hydrus_gui_model::export_files::Plan {
+                directory: directory.path().to_owned(),
+                rows: hydrus_gui_model::export_files::preview(
+                    &store,
+                    &[file],
+                    directory.path().to_str().unwrap(),
+                    "{file_id}",
+                )
+                .unwrap(),
+                routers: saved.routers.clone(),
+                trash: false,
+                symlinks: false,
+            };
+            let Exporter::Json { naming, .. } = &plan.routers[0].exporter else {
+                panic!("JSON exporter");
+            };
+            let path = naming.path(plan.rows[0].destination.to_str().unwrap(), "json");
+            if let Some(before) = case["existing"].as_str() {
+                std::fs::write(&path, before).unwrap();
+            }
+            let result =
+                hydrus_gui_model::export_files::run(&store, &plan, &AtomicBool::new(false), |_| {});
+            let after = std::fs::read_to_string(&path).unwrap_or_default();
+            if let Some(expected) = case["result"].as_str() {
+                assert!(result.error.is_none(), "{:?} {case}", result.error);
+                assert_eq!(after, expected, "{case}");
+                wrote += 1;
+            } else {
+                // (the reference's error is Python's wording; what matters
+                // is that the export fails and the file is left as it was)
+                assert!(result.error.is_some(), "no error: {case}");
+                assert_eq!(after, case["left"].as_str().unwrap(), "{case}");
+                failed += 1;
+            }
+        }
+    }
+    assert_eq!(wrote + failed, cases.len());
+    assert!(wrote > 20 && failed > 10, "{wrote} {failed}");
+}
+
 // leaf: audit-shared-sidecar-export
 #[test]
 fn the_router_list_exports_its_selected_routers_and_duplicates_them() {

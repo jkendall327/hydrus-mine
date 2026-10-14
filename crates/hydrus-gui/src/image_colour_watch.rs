@@ -5,6 +5,7 @@ use std::{cell::Cell, rc::Rc, sync::Arc, time::Duration};
 struct State {
     store: Arc<Store>,
     normalise_icc: Cell<bool>,
+    load_truncated: Cell<bool>,
     alive: Cell<bool>,
     timer: slint::Timer,
 }
@@ -14,7 +15,12 @@ impl State {
             return false;
         }
         match self.store.read(hydrus_store::image_colour::load) {
-            Ok(policy) => self.normalise_icc.replace(policy.normalise_icc) != policy.normalise_icc,
+            Ok(policy) => {
+                // (both options make the pictures be loaded again)
+                let truncated = hydrus_store::reference_options::load_truncated_images(&self.store);
+                let icc = self.normalise_icc.replace(policy.normalise_icc) != policy.normalise_icc;
+                self.load_truncated.replace(truncated) != truncated || icc
+            }
             Err(error) => {
                 eprintln!("could not refresh image ICC policy: {error}");
                 false
@@ -37,9 +43,11 @@ impl Watch {
         let policy = store
             .read(hydrus_store::image_colour::load)
             .unwrap_or_default();
+        let load_truncated = hydrus_store::reference_options::load_truncated_images(&store);
         Self(Rc::new(State {
             store,
             normalise_icc: Cell::new(policy.normalise_icc),
+            load_truncated: Cell::new(load_truncated),
             alive: Cell::new(true),
             timer: slint::Timer::default(),
         }))
