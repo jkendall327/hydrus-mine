@@ -187,6 +187,7 @@ mod parser_editors;
 mod tag_display;
 mod tag_display_replay;
 mod tags_sync_menu;
+mod tags_sync_review;
 
 mod network_sessions;
 
@@ -202,6 +203,8 @@ mod suggested_tag_panels;
 mod suggestion_options_consumers;
 mod tag_filter_tooltips;
 mod tag_migration;
+mod tag_migration_counts;
+mod tag_migration_hash;
 
 mod manage_notes_replay;
 mod regex_favourites;
@@ -332,6 +335,7 @@ mod media_support;
 mod media_viewer_navigation;
 mod network_bandwidth_actions;
 mod network_pause_menu;
+mod options_close_focus;
 mod options_download_waits;
 mod options_file_limit;
 mod options_gui_duplicates;
