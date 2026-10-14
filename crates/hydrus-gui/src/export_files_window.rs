@@ -579,8 +579,21 @@ pub fn open(
                 // the reference's "file export" popup: how far it has got,
                 // then "Done!" for five seconds
                 let popup = hydrus_download::popups::Working::new(&store, "file export", true);
+                // (finished, and gone, however the thread ends: `Working`'s
+                // drop does it, a panic included)
                 popup.show();
                 let total = plan.rows.len();
+                #[allow(clippy::cast_possible_wrap)] // (a count of files)
+                let gauge = |done: usize| Some((done as i64, total as i64));
+                let say = |done: usize| {
+                    popup.set_text(Some(format!(
+                        "Exporting: {}",
+                        hydrus_core::numbers::value_range(done as u64, total as u64)
+                    )));
+                    popup.set_gauge(gauge(done));
+                };
+                // (before each file, from "0 of N", as the reference does)
+                say(0);
                 export_files::run(&store, &plan, &cancel, |progress| {
                     if popup.is_cancelled() {
                         cancel.store(true, Ordering::Release);
@@ -590,16 +603,8 @@ pub fn open(
                         popup.set_text(Some("Done!".into()));
                         popup.finish_and_dismiss_after(5);
                         popup.flush();
-                    } else {
-                        popup.set_text(Some(format!(
-                            "Exporting: {}",
-                            hydrus_core::numbers::value_range(
-                                progress.completed as u64,
-                                total as u64
-                            )
-                        )));
-                        #[allow(clippy::cast_possible_wrap)] // (a count of files)
-                        popup.set_gauge(Some((progress.completed as i64, total as i64)));
+                    } else if progress.completed < total {
+                        say(progress.completed);
                     }
                     let _ = sender.send(progress);
                 });

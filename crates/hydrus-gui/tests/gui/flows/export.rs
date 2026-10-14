@@ -11,7 +11,7 @@ use slint::{ComponentHandle as _, Model as _};
 
 use hydrus_gui::{MainWindow, Pages, SearchPage, bind, headless};
 
-use super::{Known, Normaliser, Site, State, compare, install};
+use super::{Known, Normaliser, Site, compare, install};
 
 /// What this flow shows that the reference does not, each explained in
 /// `docs/rust/DIFFERENCES.md`.
@@ -65,6 +65,44 @@ fn rows(window: &hydrus_gui::ExportFilesWindow, n: &Normaliser) -> Json {
     )
 }
 
+/// The popups the client's popup queue holds, as the recorder's
+/// `popups_shown` reads them from the reference's. The main window shows the
+/// queue on a timer of its own; read from the store, a flow does not depend
+/// on that timer beating the popup's own dismissal.
+fn queued_popups(store: &hydrus_store::Store, n: &Normaliser) -> Json {
+    let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
+    let jobs = store
+        .read(|conn| hydrus_store::popups::all(conn, now))
+        .unwrap();
+    Json::Array(
+        jobs.iter()
+            .map(|job| {
+                json!({
+                    "title": n.text(job.status_title.as_deref().unwrap_or("")),
+                    "text_1": n.text(job.status_text_1.as_deref().unwrap_or("")),
+                    "text_2": n.text(job.status_text_2.as_deref().unwrap_or("")),
+                    "files": job.files.as_ref().map(|(hashes, label)| {
+                        format!(
+                            "{} - show {} files",
+                            label.as_deref().unwrap_or(""),
+                            hashes.len()
+                        )
+                    }),
+                    "error": job.had_error,
+                })
+            })
+            .collect(),
+    )
+}
+
+/// What a dialog asked when it was applied, if it did (the recorder notes
+/// the reference's warnings and questions).
+fn note(asked: &mut Vec<Json>, asking: bool, message: &str, n: &Normaliser) {
+    if asking {
+        asked.push(json!({"kind": "asking", "message": n.text(message)}));
+    }
+}
+
 #[test]
 fn files_are_exported_with_a_pattern_and_sidecars_as_the_reference_does() {
     let recording = hydrus_testkit::fixture_json("flow_export.json");
@@ -79,20 +117,13 @@ fn files_are_exported_with_a_pattern_and_sidecars_as_the_reference_does() {
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
-    let state = State {
-        store: &store,
-        ui: &ui,
-        site: &site,
-        n: &n,
-    };
-    let step = |name: &str, dialog: Json| -> Json {
+    let step = |name: &str, dialog: Json, asked: Vec<Json>| -> Json {
         json!({
             "step": name,
             "dialog": dialog,
-            // (nothing was asked or warned of: checked where it could be)
-            "asked": [],
+            "asked": asked,
             "exported": contents(&destination),
-            "popups": state.popups(),
+            "popups": queued_popups(&store, &n),
             "hits": site.take_hits(),
         })
     };
@@ -131,7 +162,7 @@ fn files_are_exported_with_a_pattern_and_sidecars_as_the_reference_does() {
         "file numbers": numbers,
         "thumbnails": window.get_rows().row_count(),
     });
-    steps.push(step("open", seen));
+    steps.push(step("open", seen, Vec::new()));
 
     // 2. pattern: a destination, two patterns, "update" after each
     let mut shown = Vec::new();
@@ -141,7 +172,7 @@ fn files_are_exported_with_a_pattern_and_sidecars_as_the_reference_does() {
         window.invoke_update();
         shown.push(json!({"pattern": pattern, "rows": rows(&window, &n)}));
     }
-    steps.push(step("pattern", json!({"rows": shown})));
+    steps.push(step("pattern", json!({"rows": shown}), Vec::new()));
 
     // 3. sidecars: the sidecars button, the JSON template, apply
     window.invoke_edit_sidecars();
@@ -171,32 +202,55 @@ fn files_are_exported_with_a_pattern_and_sidecars_as_the_reference_does() {
         })
         .collect();
     routers.invoke_apply();
+    let mut asked = Vec::new();
+    note(
+        &mut asked,
+        routers.get_asking(),
+        &routers.get_asking_message(),
+        &n,
+    );
     let seen = json!({
         "templates": offered,
         "router rows": router_rows,
         "sidecars end as": window.get_sidecars().as_str(),
     });
-    steps.push(step("sidecars", seen));
+    steps.push(step("sidecars", seen, asked));
 
     // 4. export: the button, until it is done
     window.set_phrase("{#} - [character] - {hash}".into());
     window.invoke_export(false);
+    let mut asked = Vec::new();
+    note(&mut asked, window.get_asking(), &window.get_question(), &n);
+    assert!(
+        !window.get_asking(),
+        "step 4 (export): the window asked before exporting: {}",
+        window.get_question()
+    );
     let started = std::time::Instant::now();
     while window.get_working() && started.elapsed() < std::time::Duration::from_secs(60) {
         std::thread::sleep(std::time::Duration::from_millis(20));
         slint::platform::update_timers_and_animations();
     }
-    assert!(!window.get_working());
-    // the main window shows the popup's last words on its next look at the
-    // store (its timer), not at once
-    let shown = |state: &State<'_>| state.popups()[0]["text_1"] == json!("Done!");
+    assert!(
+        !window.get_working(),
+        "step 4 (export): the export had not finished after 60 seconds (status {:?})",
+        window.get_status()
+    );
+    assert_eq!(window.get_status(), "done!", "step 4 (export): its status");
+    // the popup says "Done!" once the worker has finished with it
     let started = std::time::Instant::now();
-    while !shown(&state) && started.elapsed() < std::time::Duration::from_secs(30) {
+    while queued_popups(&store, &n)[0]["text_1"] != json!("Done!")
+        && started.elapsed() < std::time::Duration::from_secs(30)
+    {
         std::thread::sleep(std::time::Duration::from_millis(20));
-        slint::platform::update_timers_and_animations();
     }
+    assert_eq!(
+        queued_popups(&store, &n)[0]["text_1"],
+        json!("Done!"),
+        "step 4 (export): the file export popup never said Done! within 30 seconds"
+    );
     let seen = json!({"rows": rows(&window, &n)});
-    steps.push(step("export", seen));
+    steps.push(step("export", seen, asked));
 
     compare(&steps, &recording, KNOWN);
 }

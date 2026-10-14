@@ -1280,7 +1280,7 @@ boundaries. The
 existing sidecar routers editor supplies tags, notes, URLs and timestamps.
 Copies overwrite existing destinations; links are optional. Export runs on a
 worker with progress and cancellation between files, and a "file export" popup
-in the main window ("Exporting: 3 of 14", then "Done!" for five seconds;
+in the main window ("Exporting: 3/14", from 0/14, then "Done!" for five seconds;
 cancelling it cancels the export), as the reference's does
 (`oracle/record_flow_export.py`). Trashing asks the
 reference's confirmation and disables links; "export and close" asks "Export
