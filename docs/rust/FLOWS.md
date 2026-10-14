@@ -62,7 +62,7 @@ What a flow does not compare:
 - **All of `hydrus serve`.** The in-process `Daemon` runs the download
   queues, the subscription runner and the nudge loop. It leaves out the
   network runtime publisher (`publish_runtime`, the client's network jobs
-  panel), the live-status publisher, import and export folders and the
+  panel), the live-status publisher, export folders and the
   Client API listener; a flow needing one adds it.
 
 Each flow's site has its own port (`flows::PORTS`, checked against the
