@@ -295,6 +295,7 @@ async fn a_local_import_with_delete_after_success_deletes_what_the_reference_del
     let recorded = hydrus_testkit::fixture_json("local_import_queue.json");
     let dir = tempfile::tempdir().unwrap();
     let store = Arc::new(Store::open(dir.path()).unwrap());
+    // (deleted for good: the recycle-bin path is not tested here or recorded)
     store
         .write(|ctx| {
             let mut folders: FolderSettings = settings::get(ctx.conn())?;

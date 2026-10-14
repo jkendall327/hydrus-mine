@@ -131,6 +131,7 @@ fn refresh(window: &NetworkDataWindow, state: &mut State) {
     // names it)
     if let Data::Sessions(rows) = &state.data {
         let snapshot = state.store.snapshot();
+        debug_assert_eq!(rows.len(), cells.len(), "one row of cells per session");
         for ((context, _), row) in rows.iter().zip(cells.iter_mut()) {
             if context.kind == hydrus_core::network::CONTEXT_HYDRUS
                 && let Some(service) = hex::decode(&context.data).ok().and_then(|key| {

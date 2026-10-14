@@ -828,9 +828,10 @@ the selected rows out (asking first), and "delete original files after
 successful import" says, in the reference's red, that they will be
 deleted. "import now" opens an "import" page of the good files, in the
 list's order, which deletes each original once it is in the database (new or
-already there) if the box was ticked (`oracle/fixtures/local_import_queue.json`). Paths go in through the box over the list (enter adds one,
-a file or folder, as typed or pasted with a file manager's quotes) in
-place of the reference's "add files"/"add folder" pickers.
+already there) if the box was ticked (`oracle/fixtures/local_import_queue.json`).
+Paths go in through the box over the list (enter adds one, a file or folder,
+as typed or pasted with a file manager's quotes) in place of the reference's
+"add files"/"add folder" pickers.
 
 "add tags/urls with the import >>" opens the "filename tagging" dialog
 (`src/filename_tagging_window.rs`, `hydrus-gui-model/src/filename_tagging.rs`),

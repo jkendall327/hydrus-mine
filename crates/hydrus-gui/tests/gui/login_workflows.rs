@@ -211,8 +211,12 @@ fn an_edited_credential_definition_is_saved_in_its_script_as_the_reference_s_edi
     );
     child.invoke_action("matcher".into());
     let matcher = slots.strings.step.borrow().as_ref().unwrap().clone_strong();
+    // (the recorded matcher: fixed text)
+    let hydrus_core::url::strings::MatchKind::Fixed(fixed) = &after.string_match.kind else {
+        panic!("the recording's matcher is fixed text");
+    };
     matcher.set_match_type(1);
-    matcher.set_fixed("token".into());
+    matcher.set_fixed(fixed.as_str().into());
     matcher.invoke_changed();
     matcher.invoke_apply();
     child.set_name(after.name.as_str().into());

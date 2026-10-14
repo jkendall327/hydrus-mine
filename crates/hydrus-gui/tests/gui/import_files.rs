@@ -227,8 +227,14 @@ fn import_now_makes_the_page_the_reference_makes_from_the_good_paths() {
             window().set_delete_after_success(true);
             window().invoke_delete_toggled(true);
         }
+        let tabs = || -> usize { bound.pages.borrow().tab_labels().iter().map(Vec::len).sum() };
+        let tabs_before = tabs();
         window().invoke_import_now();
         assert!(bound.review_imports.borrow().is_none(), "closed");
+        assert_eq!(
+            tabs() - tabs_before,
+            run["pages_added"].as_u64().unwrap() as usize
+        );
         // a new page, named as the reference names it
         assert_eq!(bound.pages.borrow().shown().name, run["page_name"]);
         let queue = bound
@@ -266,6 +272,19 @@ fn import_now_makes_the_page_the_reference_makes_from_the_good_paths() {
             })
             .collect();
         assert_eq!(serde_json::json!(seeds), publication["paths"]);
+        // no tags to add with any of them
+        assert!(
+            publication["additional_tags"]
+                .as_object()
+                .unwrap()
+                .is_empty()
+        );
+        let tagged = store
+            .read(move |c| queues::file_seeds(c, queue))
+            .unwrap()
+            .into_iter()
+            .all(|s| s.meta.external_additional_tags.is_empty());
+        assert!(tagged);
     }
 }
 

@@ -140,7 +140,6 @@ fn every_request_is_a_row_with_its_typed_wait_speed_bytes_and_contexts() {
     }
 }
 
-// leaf: audit-network-jobs-waits
 #[test]
 fn rows_for_the_waits_the_reference_names_read_as_its_jobs_panel_reads() {
     // `oracle/fixtures/network_data.json` "job_rows": the real jobs panel on
