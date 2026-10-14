@@ -50,6 +50,34 @@ def record(session):
             return [dict(namespace=k,rgb=list(v)) for k,v in sorted(HC.options['namespace_colours'].items(),key=lambda item:'' if item[0] is None else item[0])]
         try:
             panel=Module.TagPresentationPanel(c.gui,draft);initial=rows(panel);events=[]
+            # "edit": the picker is offered each selected namespace's colour in turn; accepting
+            # changes it, cancelling returns the colour it was given (scripted pickers).
+            edit_panel=Module.TagPresentationPanel(c.gui,draft)
+            from qtpy import QtGui as QG
+            # (the selected namespaces come out of a set, so the order they are offered in is
+            # not fixed: the script answers by the colour offered, not by the turn)
+            offered=[]
+            def pick(win,colour):
+                rgb=[colour.red(),colour.green(),colour.blue()]
+                offered.append(dict(rgb=rgb))
+                return QG.QColor(10,20,30) if rgb==[0,170,0] else colour
+            old_pick=Module.ClientGUIColourPicker.EditColour
+            Module.ClientGUIColourPicker.EditColour=pick
+            try:
+                lb=edit_panel._namespace_colours
+                lb._DeselectAll()
+                for namespace,ctrl in [('character',False),('series',True)]:
+                    index=next(i for i,t in enumerate(lb._ordered_terms) if t.GetNamespace()==namespace)
+                    lb._Hit(False,ctrl,index)
+                selected_before=[t.GetNamespace() for t in lb._ordered_terms if t in lb._selected_terms]
+                edit_panel._EditNamespaceColour()
+                edit_cases=dict(selected=selected_before,offered=sorted(offered,key=lambda o:o['rgb']),rows=rows(edit_panel),selected_after=[t.GetNamespace() for t in lb._ordered_terms if t in lb._selected_terms],durable_unchanged=values()==[dict(namespace=k,rgb=list(v)) for k,v in sorted(old_colours.items(),key=lambda item:'' if item[0] is None else item[0])])
+                lb._DeselectAll();offered.clear()
+                edit_panel._EditNamespaceColour()
+                edit_cases['nothing_selected_offered']=list(offered)
+            finally:
+                Module.ClientGUIColourPicker.EditColour=old_pick
+            edit_panel.deleteLater()
             for text,cancel in [('unused',True),('',False),(':',False),(' SYSTEM: ',False),(' -Parity Artists::: ',False),('parity artists',False),('::::',False),(' Artist:Inner: ',False),('\u001c:\u001c',False),('\u001c \u001f',False),('series:\u001c',False)]:
                 answer.update(text=text,cancel=cancel);questions.clear();warnings.clear();warning_dialogs.clear();panel._AddNamespaceColour()
                 events.append(dict(action='add',input=text,cancel=cancel,questions=list(questions),warnings=list(warnings),warning_dialogs=list(warning_dialogs),rows=rows(panel),durable=values(),delete_enabled=panel._delete_namespace_colour.isEnabled()))
@@ -107,7 +135,7 @@ def record(session):
                 selection_cases.append(dict(mode=mode,events=selection_events))
             labels=[label.text() for label in reopened.findChildren(QW.QLabel) if label.text()=='Namespace for the OR top row: ']
             reopened.deleteLater()
-            return dict(initial=initial,events=events,cancelled_rows=cancelled_rows,saved=saved,reopened_rows=reopened_rows,colour_cases=colour_cases,selection_cases=selection_cases,labels=labels,random_rgb=[12,34,56])
+            return dict(initial=initial,edit_cases=edit_cases,events=events,cancelled_rows=cancelled_rows,saved=saved,reopened_rows=reopened_rows,colour_cases=colour_cases,selection_cases=selection_cases,labels=labels,random_rgb=[12,34,56])
         finally:
             c.new_options=original;HC.options['namespace_colours']=old_colours
             Quick.EnterText=old_enter;Quick.GetYesNo=old_yes;Message.ShowWarning=old_warning;Module.random.randint=old_random

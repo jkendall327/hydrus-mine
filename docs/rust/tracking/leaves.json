@@ -15,10 +15,10 @@
     "Apply compares original stored keys, persists accepted staged list atomically and advances permission revision consumed by API auth; cancellation leaves all persisted keys unchanged."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI and model tests drive Apply, cancel, collision, stale-editor refusal and persistence with typed values; the reference has no parent Apply (it saves each edit at once), so there is no recording of it. The GUI collision check is only a substring ('already exists'), COLLISION is compared to itself, and no GUI test asserts the revision advance; the API-side revision effect is tested separately in hydrus-api through auth::save_key, not through the editor. Tests: crates/hydrus-gui/tests/gui/client_api_admin.rs:125 sorted_selection_crud_copy_base_url_persistence_and_stale_apply; crates/hydrus-gui-model/tests/model/client_api_admin.rs:68 staged_keys_cancel_persist_collision_and_stale_apply; crates/hydrus-api/tests/api_keys.rs:86"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The reference has no parent Apply (it saves each edit at once), so what is compared is what it does: an edit onto an existing key is refused with its exact 'key collision' message and changes nothing (the reference shows it in a modal after its editor closes, native in the open editor: DIFFERENCES.md), and the applied list reaches the running API (a request with the old key is refused, the new key works) through the real window and hydrus-api's router. The native stale-editor refusal has no reference counterpart and is not claimed. Test: crates/hydrus-gui/tests/gui/client_api_admin.rs applied_key_edits_reach_the_running_api_and_collisions_are_refused_as_recorded. An edit onto a new key makes the old key stop and the new one work in the running API."
    }
   },
   {
@@ -1785,10 +1785,10 @@
     "This entry is todo()/a checkbox without a command in tags_menu; no native main-menu workflow runs it."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Stale tracker note: the entry exists (Command::TagSyncReview opens tag_sync_review_window). The tagged test only checks the entry's label/position and that a window count rises by one; window content (status lines, 'All synced!') is checked in an untagged model test only, with no GUI test of the window and no recording. Presence instead of content. Tests: crates/hydrus-gui/tests/gui/tags_sync_menu.rs:33 the_sync_submenu_has_the_reference_entries_and_they_act; crates/hydrus-gui-model/tests/model/tag_sync_review.rs (untagged)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The real 'review current sibling/parent sync' window is opened from the Tags menu and compared with tag_sync_review.json (the reference's ReviewTagDisplayMaintenancePanel): message, status line and colour under each combination of the two sync switches, the tabs (the recording showed native listed them in database order; now local tag services then repositories by lowercase name, as the reference does), the tab opened on, and each tab's 'All synced!' and rule count. Native applies sibling/parent changes as it writes, so it never shows unsynced work or the work-now button (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/tags_sync_review.rs. Repositories listed after local services is recorded from the 'repositories' fixture (tag_sync_review.json repositories) and replayed in the_review_lists_repositories_after_local_services_as_the_reference_does."
    }
   },
   {
@@ -2605,10 +2605,10 @@
     "Existing key change warns integrations lose access, validates 64 hex characters, provides random key and rejects duplicate staged keys."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI tests check the 64-hex error (contains '3 characters long') and the duplicate-key error. The model test replays the warning and error strings from the recording, but no GUI test asserts the change-key warning text, and the random-key button is not tested anywhere through the window. Tests: crates/hydrus-gui/tests/gui/client_api_admin.rs:50, :125; crates/hydrus-gui-model/tests/model/client_api_admin.rs reference_rows_permissions_questions_and_duplicates"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The key editor is driven through the window and compared with client_api_admin.json: the change-key question word for word, the random-key button giving a fresh 64-hex key that is accepted, and the reference's typed cases (surrounding spaces ignored, upper case accepted, a wrong length and non-hex refused with the reference's messages, key left alone). Duplicate keys are refused with the reference's 'key collision' words (see audit-media-api-apply). Test: crates/hydrus-gui/tests/gui/client_api_admin.rs changing_an_access_key_asks_and_checks_what_was_typed_as_the_reference_does."
    }
   },
   {
@@ -3082,10 +3082,10 @@
     "Builds ListenerEdit and native config; daemon watches revision and restarts only API listener. CLI port/bind overrides take precedence."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI drives the real service editor (cancel, bad port, apply, persisted config); a daemon test shows service edits reach the running API. Port range and field values are typed literals although the recording's 'server' block (fields, port_range) exists and is never compared; revision-restart of only the listener is not directly tested. Tests: crates/hydrus-gui/tests/gui/client_api_admin.rs:281 supported_service_listener_fields_stage_cancel_and_persist; hydrus-gui-model/tests/model/client_api_admin.rs listener_settings_...; hydrus-cli/tests/serve.rs:117"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The real service editor is driven (cancel, ports outside and inside the range, apply, reopen) with the field set, defaults and port range taken from client_api_admin.json's server block, and now the allow-non-local box too; the consumer is exercised by the daemon reads the saved ServerConfig in crates/hydrus-cli/src/client_api_listener.rs:32, exercised by crates/hydrus-cli/tests/client_api_https.rs:261 (non-local and normie combinations) and crates/hydrus-cli/tests/serve.rs client_api_listener_reconfigures_recovers_and_preserves_daemon_state (a service edit restarts only the listener); these are separate tests from the window's. Test: crates/hydrus-gui/tests/gui/client_api_admin.rs supported_service_listener_fields_stage_cancel_and_persist."
    }
   },
   {
@@ -3101,10 +3101,10 @@
     "Empty names are refused and casefold collisions get numbered suffixes when the staged child is accepted; cancel leaves persisted service unchanged."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Empty-name error is replayed from the services.json recording and the GUI shows 'Please enter a name!'. The casefold-collision suffix ('MY TAGS (1)') is a typed literal tested only at model level, not through the window, and not recorded although the reference (SetNonDupeName do_casefold) could be. Tests: crates/hydrus-gui/tests/gui/services_editor.rs:161 staged_rating_config_applies_and_cancel_writes_nothing; crates/hydrus-gui-model/tests/model/services_editor.rs:27,145"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The Add path is driven through the real Manage services window and compared with services.json (add_collisions, from the reference's panel._Add with a scripted edit dialog): 'MY TAGS' -> 'MY TAGS (1)', 'my tags' -> 'my tags (2)', 'FAVOURITES (1)', 'Art (1)', and nothing is written until the parent Apply. The empty-name message stays replayed from the recording. Test: crates/hydrus-gui/tests/gui/services_editor.rs the_add_button_names_and_unique_names_replay_the_recorded_add_path."
    }
   },
   {
@@ -3139,10 +3139,10 @@
     "Copies per-kind rating config, validates #RRGGBB fields and updates show-in-thumbnail/null controls without losing unedited configuration."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only one valid colour (like brush) and the show-thumbnail/null toggles are set. No invalid-#RRGGBB case, no check that other kinds/colours stay unchanged, and the recorded rating_defaults colours are replayed only in an untagged model test. Tests: crates/hydrus-gui/tests/gui/services_editor.rs:161 (colour_edited '#123456' at :249)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "A like/dislike service's four border/fill colour pairs and both thumbnail toggles are set through the real editor window and the saved configuration is compared with services.json (rating_colours_edited, set through the reference's colour pickers); the unedited appearance stays the kind's default. The native #RRGGBB validation (an invalid colour refused) has no counterpart in the reference's pickers and is not claimed (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/services_editor.rs rating_colours_and_thumbnail_toggles_replay_the_recorded_colour_pickers."
    }
   },
   {
@@ -3174,10 +3174,10 @@
     "The add-kind chooser creates staged local service with a generated key and opens its editor; names are casefold-unique and no write occurs before parent Apply."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Adds a numerical rating service and opens a kind-0 editor then cancels. The chooser's list of kinds (file/tag/like/star/inc-dec) is not compared with the reference and most kinds are never added through the window; generated-key claim is not asserted. Tests: crates/hydrus-gui/tests/gui/services_editor.rs:161 (invoke_add_clicked(3), (0))"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The add button's kinds are compared with the reference's menu (services.json add_menu, local kinds only: repositories, server admin and IPFS are not offered, DIFFERENCES.md), each opens 'new service' of that kind as the reference's panel._Add does, cancelling adds nothing, and an accepted name goes into the staged list and is written only by the parent Apply. Test: crates/hydrus-gui/tests/gui/services_editor.rs the_add_button_names_and_unique_names_replay_the_recorded_add_path. All five local kinds are accepted (tag, file, like, numerical and inc/dec) and each saved service has a generated key of the recorded length (32 bytes) and its kind."
    }
   },
   {
@@ -3252,10 +3252,10 @@
     "Copy uses actual service key, show-id displays native ID and refresh reloads registry/counts; existing test changes service name and observes refreshed text."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Copy key and refresh are driven through the window, but show-id only asserts the text starts with 'service id: ' (the id value is never compared) and the reference shows 'The service id is: N' in an information dialog, a difference not noted. No recording. Tests: crates/hydrus-gui/tests/gui/services_review.rs:14 services_menu_opens_review_and_refreshes"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The id button is driven for every service of the basic fixture and shows the reference's words with the reference's own database id (services.json service_id, read with Read('service_id')); native shows it in the window rather than an information dialog (DIFFERENCES.md). Copy key (the service key's hex) and refresh were already driven through the window. Test: crates/hydrus-gui/tests/gui/services_review.rs services_menu_opens_review_and_refreshes."
    }
   },
   {
@@ -10295,10 +10295,10 @@
     "Sibling selection and nested close behavior are consumed by the pages agent implementation; pending option drafts are discarded on Cancel."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The Options row (label, choices, default, import) is checked against the options_dialog and tab_actions recordings, and the GUI tests drive the choice then close a tab through the real Pages::close with typed expected selection (left of closed / right of closed). The close-focus behaviour itself was never recorded (tab_actions.json only records default_close_focus), so the expected neighbour is restated from ClientGUIPages._ClosePage. Edge cases (closing the first tab with 'left', last tab with 'right') are untested. Tests: crates/hydrus-gui/tests/gui/options_window.rs:1360 notebook_focus_option_changes_the_next_tab_close; crates/hydrus-gui/tests/gui/session.rs:~1955 (left/right close loop); crates/hydrus-gui-model/tests/model/options_dialog.rs:892 notebook_navigation_preferences_match_recorded_controls; crates/hydrus-gui-model/tests/model/tab_context.rs:~133 (default only)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The option is chosen in the real Options window and applied, then all 16 (closed tab, selected tab) cases of four tabs are run for each of the two choices through the real tab close and compared with close_focus.json (the reference's notebook _ClosePage, edges included: closing the first tab with 'left' and the last with 'right', and closing a tab that is not current). The default choice is the recorded one. Test: crates/hydrus-gui/tests/gui/options_close_focus.rs."
    }
   },
   {
@@ -20113,10 +20113,10 @@
     "Fresh6b Options and builtin-editor images were actually inspected: visible names/counts, immutable main_gui name, default rows and footer are readable; not all reserved/default rows or the added Ctrl+Shift+q binding are visible at the captured scroll position, and long command text elides within its cell. Historical7d86 stills were not used as current artifact proof."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Carried, untagged. The list names/order/default contents are checked against a dump of the reference and the reserved editor is opened and edited, but no test asserts the reserved name field is locked or that the set's description is shown (get_name_enabled/get_description only asserted for custom sets), nor the list counts after edit against the reference. Tests: crates/hydrus-gui/tests/gui/shortcut_capture.rs:25 edit_set (opens reserved editor, name equals set); options_shortcut_sets.rs:206 and :237 (adds a key to main_gui); crates/hydrus-gui-model/tests/model/shortcut_sets.rs:22,:44 (names/order/defaults vs shortcut_sets.json dump)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "Through the real Options > shortcuts page and the set editor, compared with shortcuts_panel.json (the reference's ShortcutsPanel): the built-in list (pretty names, counts, order), the editor on all 11 built-in sets, each with its name locked, its description and every shortcut/command row. (The recording showed the restore chooser's order was alphabetical in native; fixed, see restore-defaults.) Adding a key to a set was already driven (options_shortcut_sets.rs). Test: crates/hydrus-gui/tests/gui/options_shortcut_sets.rs the_shortcuts_page_lists_edits_adds_and_restores_sets_as_the_reference_s_panel_does."
    }
   },
   {
@@ -20133,10 +20133,10 @@
     "Native options registry has no editable 'restore defaults' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Stale note: the button exists. Real Options flow driven (choose list, cancel, 'Are you certain...' yes/no, missing-set info), but question strings and sequence are typed from ShortcutsPanel._RestoreDefaults rather than recorded; the default set contents come from the native default_sets (compared to a dump fixture in a separate model test). Tests: crates/hydrus-gui/tests/gui/options_shortcut_sets.rs:207 restore_defaults_asks_which_set_then_confirms_or_says_it_was_missing; crates/hydrus-gui-model/tests/model/shortcut_sets.rs:96"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The restore chooser, the confirmation and the missing-set message are compared word for word with shortcuts_panel.json (restore_cancel/no/yes/missing, recorded from the reference's _RestoreDefaults). The recording showed the chooser listed the defaults alphabetically; the reference lists them in GetDefaultShortcuts order (global first): fixed in shortcut_sets::default_names. Restoring to the original contents and 'nothing saved before OK' are covered by restore_defaults_asks_which_set_then_confirms_or_says_it_was_missing in the same file. Test: crates/hydrus-gui/tests/gui/options_shortcut_sets.rs the_shortcuts_page_lists_edits_adds_and_restores_sets_as_the_reference_s_panel_does. The same test now does the 'yes' restore: a set altered through its editor is restored to its recorded contents (restore_yes), and 'no' keeps the edit."
    }
   },
   {
@@ -20153,10 +20153,10 @@
     "Native options registry has no editable 'add' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "fix session",
-    "note": "Expected values are restated from the Python source (veto string, importable-mime filter, _SwitchBoolean), not recorded. A custom set named after a built-in one is refused with the reference's 'That name is reserved--please pick another!' and the editor stays open (GetValue's VetoException); the window test drives add, the veto (also on rename), cancel and Options OK. Tests: crates/hydrus-gui/tests/gui/options_shortcut_sets.rs custom_sets_are_added_edited_renamed_deleted_and_saved_only_by_options_ok; crates/hydrus-gui-model/tests/model/shortcut_sets.rs"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "Add is driven through the real page and compared with shortcuts_panel.json: the editor opens as 'new shortcuts' with its name editable and no rows, cancelling adds nothing, a built-in name is vetoed with 'That name is reserved--please pick another!', and same-named sets are named apart ('rating keys', 'rating keys (1)', case-sensitively: 'Rating Keys' is kept) exactly as the reference's _Add produced. Test: crates/hydrus-gui/tests/gui/options_shortcut_sets.rs the_shortcuts_page_lists_edits_adds_and_restores_sets_as_the_reference_s_panel_does."
    }
   },
   {
@@ -22050,10 +22050,10 @@
     "Native options registry has no editable 'edit' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Tracker note ('no editable row exists in native options::pages') is stale: the test drives the real Options Edit button: picker opened per selected namespace, accept changes the colour, cancel keeps it, protected rows editable, staged until Apply and persisted. But there is no recording of _EditNamespaceColour or the colour picker; the start colours (0,170,0 etc.) and accepted values are typed literals, and the picker is a native window, not the reference's EditColour dialog. Tests: crates/hydrus-gui/tests/gui/options_namespace_edit.rs:8 edit_offers_the_picker_for_each_selected_namespace_and_a_cancel_keeps_the_colour"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The real Options > tag presentation page is driven and compared with namespace_colour_controls.json (edit_cases, recorded from the reference's panel with a scripted colour picker): the list as the reference shows it (every row's label and colour), the pickers offered for the two selected entries (each its own current colour; the reference's order comes out of a set so the recording compares them sorted), an accepted colour applied, a cancelled picker leaving the colour, nothing selected offering nothing, and no entry left selected afterwards (the recording showed native kept the selection; fixed). The start colours and accepted values are the recorded ones. The native picker is its own window, not QColorDialog (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/options_namespace_edit.rs edit_replays_the_reference_s_list_the_pickers_it_offers_and_what_is_left_selected."
    }
   },
   {
@@ -22070,10 +22070,10 @@
     "Native options registry has no editable 'Namespace colours editor' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Tracker note ('no editable row exists in native options::pages') is stale: the tag sits on the Edit test only, but the recorded namespace_colour_controls/namespace_sorts replays elsewhere cover the list rows, selection/sort and Add/Delete. The Edit half (colour picker) has no recording, so the editor as a whole is source-restated; the picker widget itself is not compared with the reference. Tests: crates/hydrus-gui/tests/gui/options_namespace_edit.rs:9; crates/hydrus-gui/tests/gui/namespace_colours.rs:75,:584 (untagged recording replays)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The editor as a whole: the list rows and Edit are replayed from namespace_colour_controls.json in options_namespace_edit.rs (see namespace-colours-edit), and Add/Delete, input normalisation, selection and sort are replayed from the same recording and tagged on their own leaves (crates/hydrus-gui/tests/gui/namespace_colours.rs). Tracker note 'no editable row exists' was stale. This leaf is the list and Edit; Add and Delete are separate leaves with their own tagged tests, which this note relies on."
    }
   },
   {
@@ -23064,10 +23064,10 @@
     "Cancel hides the gate without invoking unlocked; main reports the lock was not unlocked and exits."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Cancel hides the window and does not call unlocked, driven via invoke_cancelled; matches ClientController.InitView (cancel raises DBCredentialsException). No recording; main.rs's 'not unlocked' exit path is untested. Tests: hydrus-gui/tests/gui/unlock.rs:13 only_the_password_unlocks_the_client"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r4b)",
+    "note": "gui/unlock.rs cancelling_the_password_dialog_opens_nothing_and_the_process_says_why replays text_entry_checks.json password_cancel (record_text_entry_checks.py --cancel: the reference's real password dialog put up on boot and its cancel button clicked: asked once with the gate's arguments, CancelledException out of the dialog, DBCredentialsException out of the boot, nothing else shown, not booted). The native window shows the recorded question, a blank entry warns and stays (allow_blank false), its cancel button is clicked, the window closes and the client is not opened; then finish_locked (the tail main.rs runs when no client opened) clears the running marker and returns the 'locked' error. Exit status is hydrus-rs's (error, non-zero); the recording does not capture the reference's exit code."
    }
   },
   {
@@ -24399,10 +24399,10 @@
     "Remote repository uploading and IPFS are outside the authorized scope."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The 40 recorded conversion cases (16 kind pairs x selected/domain) run through the real worker and compare to the recording, which is strong. But no test selects the destination hash kind in the window (only the md5 lock is checked on the model), so the selectors and a conversion launched from the UI are not exercised. Tests: crates/hydrus-store/tests/tag_migration.rs:606 actual_python_archives_import_convert_scope_filter_and_reopen; crates/hydrus-gui-model/tests/model/tag_migration.rs:256"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "All 40 recorded conversions (tag_archives.json conversion: every source/destination hash kind pair, selected files and current/deleted file domains) are launched from the real migration window: archive paths chosen, the destination hash selector set, filter edited, Go and both confirmations answered, then the written archive or service mappings are compared with the recording and the source archive is checked unchanged. Test: crates/hydrus-gui/tests/gui/tag_migration_hash.rs; the worker-level replay stays in crates/hydrus-store/tests/tag_migration.rs."
    }
   },
   {
@@ -24418,10 +24418,10 @@
     "Selected-file scope freezes the launching IDs or file-domain scope selects through nested LocationContext. Mappings and pair scope are handled according to native request content."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI proves the selected-files scope through the real worker (delete for the launching file). File-domain scope: the model sets model.location directly (no nested LocationContext picker driven in the window) and the recording covers the confirmation for 'my files' and the run with all known files only; domain filtering is otherwise store-level. Tests: crates/hydrus-gui-model/tests/model/tag_migration.rs:73 reference_database_pending_outcomes; crates/hydrus-gui/tests/gui/tag_migration.rs:112 manage_tags_launches_selected_scope_and_refreshes_after_background_delete"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The same window test sets the scope as a user does: the selected-files box, and the nested file-domain picker for all known files and for my files current and deleted, and compares the written mappings with the recording for each (tag_archives.json conversion incl. domain cases). Test: crates/hydrus-gui/tests/gui/tag_migration_hash.rs; plus manage_tags_launches_selected_scope_and_refreshes_after_background_delete."
    }
   },
   {
@@ -24461,10 +24461,10 @@
     "Remote repository uploading and IPFS are outside the authorized scope."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The 16 recorded count cases and dynamic between-batch counts run through the real worker for archive and service sources into archive destinations. Not covered: native-destination output, the selectable count service, and the window's gate checkboxes (only count_either confirmation text and model count_right summary). Tests: crates/hydrus-store/tests/tag_migration.rs:830 pair_count_gates_replay_real_current_pending_and_terminal_ideal_counts; :1008; crates/hydrus-gui/tests/gui/tag_migration.rs:302 (count_either only)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "All 16 recorded count cases (tag_archives.json counts: siblings and parents, local and repository count service, left/right/either) are run from the real window, from an archive source and from a service source, choosing the check boxes and the 'in service' selector, confirming, and comparing the pairs written to the archive destination with the recording; the confirmation names the chosen service. The recording has archive destinations only, so native-service output of the gates is not compared. Test: crates/hydrus-gui/tests/gui/tag_migration_counts.rs."
    }
   },
   {
