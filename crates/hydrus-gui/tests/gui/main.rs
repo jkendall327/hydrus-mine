@@ -343,6 +343,7 @@ mod files_io_folder_editors;
 mod files_io_import_review;
 mod formula_exchange;
 mod import_additional_tags;
+mod import_external_programs;
 mod import_locations;
 mod import_options_fields;
 mod import_options_paste;

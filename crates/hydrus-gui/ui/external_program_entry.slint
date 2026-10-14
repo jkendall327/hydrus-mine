@@ -1,0 +1,36 @@
+import { Btn } from "btn.slint";
+import { ComboBox } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+
+// The reference's "Edit external program call": which registered call to
+// make, and on which imports.
+export component ExternalProgramEntryWindow inherits Window {
+    in property <string> window-title: "Edit external program call";
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: (root.window-title) + root.title-suffix;
+    preferred-width: 560px;
+    background: Theme.window;
+    in property <[string]> programs;
+    in-out property <int> program-index;
+    in property <[string]> whens;
+    in-out property <int> when-index;
+    callback accepted();
+    callback cancelled();
+    VerticalLayout {
+        padding: 12px;
+        spacing: 8px;
+        HorizontalLayout {
+            spacing: 6px;
+            ComboBox { horizontal-stretch: 1; model: root.programs; current-index <=> root.program-index; }
+            ComboBox { horizontal-stretch: 1; model: root.whens; current-index <=> root.when-index; }
+        }
+        HorizontalLayout {
+            alignment: end;
+            spacing: 6px;
+            Btn { text: "apply"; clicked => { root.accepted(); } }
+            Btn { text: "cancel"; clicked => { root.cancelled(); } }
+        }
+    }
+}

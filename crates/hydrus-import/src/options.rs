@@ -31,6 +31,8 @@ pub struct FileImportOptions {
     pub archive_already_in_db: bool,
     /// Import JPEGs and PNGs of more than Pillow's pixel limit.
     pub allow_decompression_bombs: bool,
+    /// Programs to run on each file imported, in order.
+    pub external_programs: Vec<hydrus_core::import_options::ExternalProgramEntry>,
 }
 
 impl Default for FileImportOptions {
@@ -48,6 +50,7 @@ impl Default for FileImportOptions {
             destinations_for_already_in_db: false,
             archive_already_in_db: true,
             allow_decompression_bombs: true,
+            external_programs: Vec::new(),
         }
     }
 }
@@ -99,6 +102,7 @@ impl FileImportOptions {
             destinations_for_already_in_db: locations.destinations_for_already_in_db,
             archive_already_in_db: locations.archive_already_in_db,
             allow_decompression_bombs: filtering.allow_decompression_bombs,
+            external_programs: full.external_programs.entries.clone(),
         }
     }
 

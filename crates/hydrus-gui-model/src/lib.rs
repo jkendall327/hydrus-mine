@@ -39,6 +39,7 @@ pub mod embedded_metadata;
 pub mod export_files;
 pub mod external_calls;
 pub mod external_command;
+pub mod external_program_entries;
 pub mod favourites;
 pub mod file_log;
 pub mod file_maintenance_current;

@@ -169,10 +169,8 @@ pub fn tuple(slice: &ImportOptionsSlice) -> Result<Value> {
         );
     }
     if let Some(o) = &slice.external_programs {
-        let entries: Value = o.stored.as_ref().map_or_else(
-            || Ok(json!([26, 3, []])),
-            |text| serde_json::from_str(text).map_err(|e| Error::Invalid(e.to_string())),
-        )?;
+        let entries: Value =
+            serde_json::from_str(&o.serialised()).map_err(|e| Error::Invalid(e.to_string()))?;
         add(7, json!([162, 1, entries]));
     }
     Ok(json!([143, 1, [21, 2, rows]]))

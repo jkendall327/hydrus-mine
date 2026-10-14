@@ -24264,7 +24264,13 @@
     "Low priority by the owner's decision of 2026-10-08: running an external program on imported files is a feature the owner does not use; kept in scope, done last.",
     "Truth pass (2026-10-08): missing, large. Only an opaque pass-through exists. Missing: Typed entry model, add/edit/delete list, the when-to-run chooser, the program choices, and execution after import. Evidence: hydrus-core/src/import_options.rs:430-436 (opaque stored string); import_options_window.rs:201-204 '(not editable here yet)'",
     "External program data can survive migration, but the native editor cannot author commands and the worker does not execute them."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude (issue #94 pickup)",
+    "note": "The real import options editor is driven through the external programs page against import_external_programs.json recorded from the reference's EditExternalProgramsImportOptionsPanel and entry panel: the list wording after each add (cancel, default, each 'when'), the entry dialog's programs (sorted by name), 'when' choices and initial choices, edit and cancelled edit, 'Remove N selected?' (no, then yes), the information notice for an entry whose call is not registered, the critical notice when there are no calls, and Apply saving the entries. The saved options are then resolved and an import of a real file runs the registered programs in the order added with the path, URI and hash. The importer tests (crates/hydrus-import/tests/external_programs.rs) replay the recorded runs for new and already-in files and the pause of subscriptions, import folders and file queues when a program is missing, unregistered or of the wrong kind; the entries' serialisation round-trips the reference's tuples (crates/hydrus-downloader-exchange/tests/external_programs_import.rs). Argument fidelity (path, URI and hash given to the program) is proved by crates/hydrus-import/tests/external_programs.rs against the recorded runs; the GUI test compares the first lines of the list wording only. A call using the file id fails and pauses the importers, as recorded. The wrong-kind and only-failing-entry cases come from the reference's source, not a recording. Not matched: the failure message is a popup in the reference and dumps its environment; the OS-default launch is not tested; programs run in import_file, so every importer path runs them, not only file seeds; the registered calls are not migrated (DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/import_external_programs.rs, crates/hydrus-gui-model/tests/model/external_program_entries.rs; crates/hydrus-download/tests/url_queue.rs (a file already in by URL)"
+   }
   },
   {
    "id": "import-favourites",

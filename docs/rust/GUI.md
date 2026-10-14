@@ -3889,6 +3889,12 @@ column/keyboard persistence and full process output/error presentation remain
 Partial. `open_externally.json` and its Qt PNG record the list/chooser behavior;
 authored native replays await hosted CI.
 
+The import options editor's external programs page lists the calls to make on
+imported files ("call beta log on all new file imports"), and adds, edits and
+deletes them with the reference's entry editor and notices; imports using the
+options run the programs in order (see DIFFERENCES.md). The migration's
+registered calls are not carried over.
+
 Options > external programs now has a staged registered-call table with name,
 job and command columns. Add/Edit own a detached callable editor and command
 queue; parent Cancel discards accepted child drafts, and parent Apply persists

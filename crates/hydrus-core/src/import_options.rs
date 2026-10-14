@@ -426,12 +426,151 @@ impl Default for PresentationOptions {
     }
 }
 
-/// External programs run per imported file. Not supported: kept as the
-/// reference stored them.
+/// One call to make on imported files: which registered external call, and
+/// on which imports (`ExternalProgramsImportOptionsSingleEntry`).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ExternalProgramEntry {
+    /// The registered call's key, in hex (the reference's `IdAndName` id).
+    pub key: String,
+    /// The call's name when this was chosen.
+    pub name: String,
+    /// Run it for each new file.
+    pub on_new: bool,
+    /// Run it for each file already in the client.
+    pub on_already_in: bool,
+}
+
+impl Default for ExternalProgramEntry {
+    /// The reference's blank entry: an unknown call (`b'abcd'`), for new files.
+    fn default() -> Self {
+        Self {
+            key: hex::encode(b"abcd"),
+            name: "unknown".into(),
+            on_new: true,
+            on_already_in: false,
+        }
+    }
+}
+
+impl ExternalProgramEntry {
+    /// `GetSummary`.
+    pub fn summary(&self) -> String {
+        let when = match (self.on_new, self.on_already_in) {
+            (true, true) => "all file imports",
+            (true, false) => "all new file imports",
+            (false, true) => "all \"already in db\" imports",
+            (false, false) => "no imports (will do nothing!)",
+        };
+        format!("call {} on {when}", self.name)
+    }
+
+    /// `ShouldFire`: whether a file imported as new (`already_in` false) or
+    /// found already in the client runs the call.
+    pub fn should_fire(&self, already_in: bool) -> bool {
+        if already_in {
+            self.on_already_in
+        } else {
+            self.on_new
+        }
+    }
+}
+
+/// External programs run per imported file
+/// (`ExternalProgramsImportOptions`), in the order they were added.
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(from = "StoredExternalPrograms")]
 pub struct ExternalProgramsOptions {
-    /// The reference's serialised form, if anything is set.
-    pub stored: Option<String>,
+    pub entries: Vec<ExternalProgramEntry>,
+}
+
+/// What is saved: the entries, or (from before they were understood) the
+/// reference's serialised form as it was kept.
+#[derive(Deserialize)]
+struct StoredExternalPrograms {
+    #[serde(default)]
+    entries: Vec<ExternalProgramEntry>,
+    #[serde(default)]
+    stored: Option<String>,
+}
+
+impl From<StoredExternalPrograms> for ExternalProgramsOptions {
+    fn from(saved: StoredExternalPrograms) -> Self {
+        let from_old = saved
+            .stored
+            .as_deref()
+            .and_then(|text| Self::from_serialised(text).ok());
+        Self {
+            entries: from_old.map_or(saved.entries, |old| old.entries),
+        }
+    }
+}
+
+impl ExternalProgramsOptions {
+    /// `GetSummary`: the entries' summaries, sorted, joined; nothing for none.
+    pub fn summary(&self) -> String {
+        let mut statements: Vec<String> = self
+            .entries
+            .iter()
+            .map(ExternalProgramEntry::summary)
+            .collect();
+        statements.sort();
+        statements.join(", ")
+    }
+
+    /// The reference's serialised info of the options (a list of entries, each
+    /// a call's id and name and its two flags), as JSON text.
+    pub fn serialised(&self) -> String {
+        let entries: Vec<serde_json::Value> = self
+            .entries
+            .iter()
+            .map(|e| {
+                serde_json::json!([
+                    2,
+                    [
+                        163,
+                        1,
+                        [[158, 1, [e.key, e.name]], e.on_new, e.on_already_in]
+                    ]
+                ])
+            })
+            .collect();
+        serde_json::json!([26, 3, entries]).to_string()
+    }
+
+    /// Read the reference's serialised info, as JSON text.
+    pub fn from_serialised(text: &str) -> Result<Self, String> {
+        let bad = || "Invalid external programs import options.".to_owned();
+        let value: serde_json::Value = serde_json::from_str(text).map_err(|e| e.to_string())?;
+        let list = value
+            .as_array()
+            .filter(|a| a.len() == 3 && a[0] == 26 && a[1] == 3)
+            .and_then(|a| a[2].as_array())
+            .ok_or_else(bad)?;
+        let mut entries = Vec::new();
+        for item in list {
+            let entry = item
+                .as_array()
+                .filter(|a| a.len() == 2 && a[0] == 2)
+                .and_then(|a| a[1].as_array())
+                .filter(|a| a.len() == 3 && a[0] == 163 && a[1] == 1)
+                .and_then(|a| a[2].as_array())
+                .filter(|a| a.len() == 3)
+                .ok_or_else(bad)?;
+            let id = entry[0]
+                .as_array()
+                .filter(|a| a.len() == 3 && a[0] == 158 && a[1] == 1)
+                .and_then(|a| a[2].as_array())
+                .filter(|a| a.len() == 2)
+                .ok_or_else(bad)?;
+            entries.push(ExternalProgramEntry {
+                key: id[0].as_str().ok_or_else(bad)?.to_owned(),
+                name: id[1].as_str().ok_or_else(bad)?.to_owned(),
+                on_new: entry[1].as_bool().ok_or_else(bad)?,
+                on_already_in: entry[2].as_bool().ok_or_else(bad)?,
+            });
+        }
+        Ok(Self { entries })
+    }
 }
 
 /// Any of the eight kinds of options.
@@ -534,6 +673,7 @@ pub struct FullImportOptions {
     pub tags: TagImportOptions,
     pub notes: NoteImportOptions,
     pub presentation: PresentationOptions,
+    pub external_programs: ExternalProgramsOptions,
 }
 
 /// The client's import option defaults.
@@ -720,6 +860,7 @@ impl ImportOptionsManager {
             tags: result.tags.unwrap_or_default(),
             notes: result.notes.unwrap_or_default(),
             presentation: result.presentation.unwrap_or_default(),
+            external_programs: result.external_programs.unwrap_or_default(),
         }
     }
 }

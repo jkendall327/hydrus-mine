@@ -256,6 +256,8 @@ struct State {
     /// The shared "multiple/deleted locations" list, from a location button.
     locations: Rc<RefCell<Option<LocationsWindow>>>,
     favourites: Option<Rc<crate::import_options_favourites_window::Controller>>,
+    /// The external programs page's list and dialogs.
+    programs: Rc<crate::import_options_programs::Programs>,
 }
 
 impl State {
@@ -308,15 +310,11 @@ fn show(window: &ImportOptionsWindow, state: &State) {
     ]));
     window.set_custom_index(i32::from(editor.is_custom(kind)));
     let values = &editor.values;
-    window.set_summary(
-        match kind {
-            Kind::ExternalPrograms => format!(
-                "{} (not editable here yet)",
-                crate::import_options_editor::summary_with_format(kind, values, &name, &formatting)
-            ),
-            _ => String::new(),
-        }
-        .into(),
+    window.set_summary(SharedString::new());
+    crate::import_options_programs::show(
+        window,
+        &state.programs,
+        values.external_programs.as_ref(),
     );
     if let Some(o) = &values.presentation {
         window.set_status_choices(strings(
@@ -743,6 +741,7 @@ fn open_inner(
         overwrite: Rc::default(),
         locations: Rc::default(),
         favourites: None,
+        programs: Rc::default(),
     }));
     let close = {
         let active = active.clone();
@@ -758,6 +757,7 @@ fn open_inner(
                 favourites.close();
             }
             crate::locations_window::cancel(&state.borrow().locations);
+            state.borrow().programs.cancel();
             let overwrite = state.borrow().overwrite.borrow_mut().take();
             if let Some(overwrite) = overwrite {
                 overwrite.invoke_cancel();
@@ -1084,10 +1084,76 @@ fn open_inner(
             if window.get_favourite_child_open()
                 || window.get_tag_child_open()
                 || window.get_location_child_open()
+                || window.get_program_child_open()
             {
                 return;
             }
             read(&window, &mut state.borrow_mut());
+            show(&window, &state.borrow());
+        }
+    });
+    window.on_program_clicked({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let active = active.clone();
+        move |row, ctrl, shift| {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if !active.get() || window.get_program_child_open() {
+                return;
+            }
+            let Ok(row) = usize::try_from(row) else {
+                return;
+            };
+            {
+                let state = state.borrow();
+                let count = state
+                    .editor
+                    .values
+                    .external_programs
+                    .as_ref()
+                    .map_or(0, |o| o.entries.len());
+                state
+                    .programs
+                    .list
+                    .borrow_mut()
+                    .click(count, row, ctrl, shift);
+            }
+            show(&window, &state.borrow());
+        }
+    });
+    window.on_program_action({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = store.clone();
+        let active = active.clone();
+        move |action| {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if !active.get()
+                || window.get_favourite_child_open()
+                || window.get_tag_child_open()
+                || window.get_overwrite_open()
+                || window.get_location_child_open()
+                || window.get_program_child_open()
+            {
+                return;
+            }
+            let refresh: Rc<dyn Fn()> = Rc::new({
+                let weak = weak.clone();
+                let state = state.clone();
+                move || {
+                    if let Some(window) = weak.upgrade() {
+                        show(&window, &state.borrow());
+                    }
+                }
+            });
+            let result = program_action(&state, &store, action.as_str(), &refresh);
+            if let Err(error) = result {
+                eprintln!("could not open the external programs editor: {error}");
+            }
             show(&window, &state.borrow());
         }
     });
@@ -1450,4 +1516,131 @@ fn python_error(text: &str, error: &str) -> String {
         }
         Ok(_) => error.to_owned(),
     }
+}
+/// The external programs page's add, edit and delete (the reference's
+/// `AddEditDeleteListBox`): an edit goes through the selected rows in turn,
+/// stopping at the first cancelled.
+fn program_action(
+    state: &Rc<RefCell<State>>,
+    store: &Arc<Store>,
+    action: &str,
+    refresh: &Rc<dyn Fn()>,
+) -> Result<(), String> {
+    use hydrus_gui_model::external_program_entries as model;
+    let programs = state.borrow().programs.clone();
+    let count = |state: &State| {
+        state
+            .editor
+            .values
+            .external_programs
+            .as_ref()
+            .map_or(0, |o| o.entries.len())
+    };
+    let choices = || {
+        model::choices(
+            &store
+                .read(hydrus_store::settings::get::<hydrus_core::external_calls::Manager>)
+                .unwrap_or_default(),
+        )
+    };
+    match action {
+        "add" => {
+            let choices = choices();
+            let entry = model::new_entry(&choices);
+            let done: Rc<dyn Fn(Option<hydrus_core::import_options::ExternalProgramEntry>)> =
+                Rc::new({
+                    let state = state.clone();
+                    let refresh = refresh.clone();
+                    move |edited| {
+                        if let Some(edited) = edited
+                            && let Some(options) =
+                                state.borrow_mut().editor.values.external_programs.as_mut()
+                        {
+                            options.entries.push(edited);
+                        }
+                        refresh();
+                    }
+                });
+            crate::import_options_programs::edit_entry(&programs, &choices, &entry, done)
+        }
+        "edit" => {
+            let rows = programs.list.borrow().selected(count(&state.borrow()));
+            edit_rows(state, &programs, &choices(), rows, refresh)
+        }
+        "delete" => {
+            let rows = programs.list.borrow().selected(count(&state.borrow()));
+            if rows.is_empty() {
+                return Ok(());
+            }
+            let answered: Rc<dyn Fn(bool)> = Rc::new({
+                let state = state.clone();
+                let refresh = refresh.clone();
+                let rows = rows.clone();
+                move |yes| {
+                    if yes {
+                        let mut state = state.borrow_mut();
+                        if let Some(options) = state.editor.values.external_programs.as_mut() {
+                            for row in rows.iter().rev() {
+                                if *row < options.entries.len() {
+                                    options.entries.remove(*row);
+                                }
+                            }
+                        }
+                        state.programs.list.borrow_mut().clear();
+                    }
+                    refresh();
+                }
+            });
+            crate::import_options_programs::ask_delete(&programs, rows.len(), answered)
+        }
+        _ => Ok(()),
+    }
+}
+
+/// Edit the entries of `rows` one after the other.
+fn edit_rows(
+    state: &Rc<RefCell<State>>,
+    programs: &Rc<crate::import_options_programs::Programs>,
+    choices: &[hydrus_gui_model::external_program_entries::Choice],
+    mut rows: Vec<usize>,
+    refresh: &Rc<dyn Fn()>,
+) -> Result<(), String> {
+    if rows.is_empty() {
+        refresh();
+        return Ok(());
+    }
+    let row = rows.remove(0);
+    let Some(entry) = state
+        .borrow()
+        .editor
+        .values
+        .external_programs
+        .as_ref()
+        .and_then(|o| o.entries.get(row).cloned())
+    else {
+        refresh();
+        return Ok(());
+    };
+    let done: Rc<dyn Fn(Option<hydrus_core::import_options::ExternalProgramEntry>)> = Rc::new({
+        let state = state.clone();
+        let programs = programs.clone();
+        let choices = choices.to_vec();
+        let refresh = refresh.clone();
+        move |edited| {
+            let Some(edited) = edited else {
+                // (a cancel stops the rest)
+                refresh();
+                return;
+            };
+            if let Some(options) = state.borrow_mut().editor.values.external_programs.as_mut()
+                && let Some(slot) = options.entries.get_mut(row)
+            {
+                *slot = edited;
+            }
+            if let Err(error) = edit_rows(&state, &programs, &choices, rows.clone(), &refresh) {
+                eprintln!("could not open the external programs editor: {error}");
+            }
+        }
+    });
+    crate::import_options_programs::edit_entry(programs, choices, &entry, done)
 }
