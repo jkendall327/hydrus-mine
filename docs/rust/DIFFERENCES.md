@@ -4155,6 +4155,15 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   once, on Options OK.
 - A trash pass deletes in groups of eight, oldest first, including files
   already in the trash when the limit is set.
+- The wait between physical deletes (Options > files and trash) is read at
+  the start of each pass and waited after every file and thumbnail pair, the
+  last included. The reference's maintenance loop decides when a pass runs
+  (idle or normal time); the daemon here keeps its own cadence of up to 1024
+  pairs a pass and ten minutes between passes, so only the waits within a pass
+  are compared with the recording.
+- Typing 0 s 0 ms into that control leaves 0 in the dialog's draft until Apply
+  saves the 20 ms minimum; the reference's field shows 20 ms at once. Other
+  typed values (clamped to 59 s and 999 ms) match its fields exactly.
 
 ## URL drops
 

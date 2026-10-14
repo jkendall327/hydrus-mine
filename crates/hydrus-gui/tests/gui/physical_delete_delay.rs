@@ -41,6 +41,9 @@ fn values(w: &OptionsWindow, row: i32) -> Vec<i32> {
 /// The reference's control, recorded for each raw delay: what its two fields
 /// show, what typing into them leaves, and what Apply (or Cancel) saves and
 /// the reopened dialog shows. Here the same steps are made in the real window.
+/// (The window does not refresh a row while it is typed into, so the fields as
+/// typed are compared in the model test; here the clamped result is seen in
+/// what Apply saves and what the reopened dialog shows.)
 // leaf: audit-options-files-and-trash-when-maintenance-physically-deletes-files-wait-this-long-between-each-delete
 #[test]
 fn recorded_raw_delays_typed_fields_apply_cancel_and_reopen_match_the_reference() {

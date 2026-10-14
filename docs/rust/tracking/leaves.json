@@ -9381,7 +9381,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "claude/flakes session (carried-leaf recheck)",
-    "note": "Tagged recorded_raw_delays_typed_fields_apply_cancel_and_reopen_match_the_reference (gui/physical_delete_delay.rs: the 16 recorded controls cases through the real Options window: fields, typing and clamping, Apply/Cancel, saved milliseconds, reopened fields), and the two store maintenance tests that read the delay (captured_wait_follows_committed_pairs..., missing_file_still_waits...), which compare the waits with the recorded passes. The successor pass's wait is the delay the recorded first pass left saved (the recording has no wait of its own for it); the daemon's pass cadence differs (DIFFERENCES.md)."
+    "note": "Tagged recorded_raw_delays_typed_fields_apply_cancel_and_reopen_match_the_reference (gui/physical_delete_delay.rs: the 16 recorded controls cases through the real Options window: fields, typing and clamping, Apply/Cancel, saved milliseconds, reopened fields), and the two store maintenance tests that read the delay (captured_wait_follows_committed_pairs..., missing_file_still_waits...), which compare the waits with the recorded passes. The successor pass's wait is the delay the recorded first pass left saved (the recording has no wait of its own for it); the daemon's pass cadence differs (DIFFERENCES.md, 'Delete lock, importers and the trash worker'). The typed-field values are compared in the model test (the window does not refresh a row while it is typed into); one case differs, the 20 ms minimum shown at once (DIFFERENCES.md)."
    }
   },
   {
@@ -10259,7 +10259,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "claude/flakes session (carried-leaf recheck)",
-    "note": "Tagged checkbox_drafts_cancel_apply_reopen_and_choose_exact_reference_locations (gui/page_chooser_options.rs): the four recorded flags (storage top is the fourth) are driven through the Options window for the 2-domain recorded steps, and the real chooser's labels are compared with the recording; the 1- and 10-domain steps (nine-entry cap) are replayed by the model tests."
+    "note": "Tagged checkbox_drafts_cancel_apply_reopen_and_choose_exact_reference_locations (gui/page_chooser_options.rs): the four recorded flags (storage top is the fourth) are driven through the Options window for the 2-domain recorded steps, and the real chooser's labels are compared with the recording; the 1- and 10-domain steps, including the nine-entry cap, are covered only by the PageChooser model test (not through the window)."
    }
   },
   {
