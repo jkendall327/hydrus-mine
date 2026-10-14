@@ -1,0 +1,1170 @@
+{
+  "add_events": [
+    {
+      "label": "add-cancel-raised",
+      "error": "CancelledException"
+    },
+    {
+      "label": "add-cancel",
+      "list": [],
+      "value": [
+        162,
+        1,
+        [
+          26,
+          3,
+          []
+        ]
+      ],
+      "seen": {
+        "title": "Edit external program call",
+        "programs": [
+          [
+            "Alpha 日本 log",
+            "0303030303030303030303030303030303030303030303030303030303030303"
+          ],
+          [
+            "Default OS File Launch",
+            "0505050505050505050505050505050505050505050505050505050505050505"
+          ],
+          [
+            "beta log",
+            "0202020202020202020202020202020202020202020202020202020202020202"
+          ],
+          [
+            "broken",
+            "0404040404040404040404040404040404040404040404040404040404040404"
+          ],
+          [
+            "gamma file id",
+            "0606060606060606060606060606060606060606060606060606060606060606"
+          ]
+        ],
+        "whens": [
+          [
+            "all file imports",
+            [
+              true,
+              true
+            ]
+          ],
+          [
+            "all new file imports",
+            [
+              true,
+              false
+            ]
+          ],
+          [
+            "all \"already in db\" imports",
+            [
+              false,
+              true
+            ]
+          ],
+          [
+            "no imports (will do nothing!)",
+            [
+              false,
+              false
+            ]
+          ]
+        ],
+        "initial": {
+          "program": "0303030303030303030303030303030303030303030303030303030303030303",
+          "when": [
+            true,
+            false
+          ]
+        }
+      }
+    },
+    {
+      "label": "add-default",
+      "list": [
+        "call Alpha 日本 log on all new file imports"
+      ],
+      "value": [
+        162,
+        1,
+        [
+          26,
+          3,
+          [
+            [
+              2,
+              [
+                163,
+                1,
+                [
+                  [
+                    158,
+                    1,
+                    [
+                      "0303030303030303030303030303030303030303030303030303030303030303",
+                      "Alpha 日本 log"
+                    ]
+                  ],
+                  true,
+                  false
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      "seen": {
+        "title": "Edit external program call",
+        "programs": [
+          [
+            "Alpha 日本 log",
+            "0303030303030303030303030303030303030303030303030303030303030303"
+          ],
+          [
+            "Default OS File Launch",
+            "0505050505050505050505050505050505050505050505050505050505050505"
+          ],
+          [
+            "beta log",
+            "0202020202020202020202020202020202020202020202020202020202020202"
+          ],
+          [
+            "broken",
+            "0404040404040404040404040404040404040404040404040404040404040404"
+          ],
+          [
+            "gamma file id",
+            "0606060606060606060606060606060606060606060606060606060606060606"
+          ]
+        ],
+        "whens": [
+          [
+            "all file imports",
+            [
+              true,
+              true
+            ]
+          ],
+          [
+            "all new file imports",
+            [
+              true,
+              false
+            ]
+          ],
+          [
+            "all \"already in db\" imports",
+            [
+              false,
+              true
+            ]
+          ],
+          [
+            "no imports (will do nothing!)",
+            [
+              false,
+              false
+            ]
+          ]
+        ],
+        "initial": {
+          "program": "0303030303030303030303030303030303030303030303030303030303030303",
+          "when": [
+            true,
+            false
+          ]
+        }
+      }
+    },
+    {
+      "label": "add-all-new-beta",
+      "list": [
+        "call Alpha 日本 log on all new file imports",
+        "call beta log on all new file imports"
+      ],
+      "value": [
+        162,
+        1,
+        [
+          26,
+          3,
+          [
+            [
+              2,
+              [
+                163,
+                1,
+                [
+                  [
+                    158,
+                    1,
+                    [
+                      "0303030303030303030303030303030303030303030303030303030303030303",
+                      "Alpha 日本 log"
+                    ]
+                  ],
+                  true,
+                  false
+                ]
+              ]
+            ],
+            [
+              2,
+              [
+                163,
+                1,
+                [
+                  [
+                    158,
+                    1,
+                    [
+                      "0202020202020202020202020202020202020202020202020202020202020202",
+                      "beta log"
+                    ]
+                  ],
+                  true,
+                  false
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      "seen": {
+        "title": "Edit external program call",
+        "programs": [
+          [
+            "Alpha 日本 log",
+            "0303030303030303030303030303030303030303030303030303030303030303"
+          ],
+          [
+            "Default OS File Launch",
+            "0505050505050505050505050505050505050505050505050505050505050505"
+          ],
+          [
+            "beta log",
+            "0202020202020202020202020202020202020202020202020202020202020202"
+          ],
+          [
+            "broken",
+            "0404040404040404040404040404040404040404040404040404040404040404"
+          ],
+          [
+            "gamma file id",
+            "0606060606060606060606060606060606060606060606060606060606060606"
+          ]
+        ],
+        "whens": [
+          [
+            "all file imports",
+            [
+              true,
+              true
+            ]
+          ],
+          [
+            "all new file imports",
+            [
+              true,
+              false
+            ]
+          ],
+          [
+            "all \"already in db\" imports",
+            [
+              false,
+              true
+            ]
+          ],
+          [
+            "no imports (will do nothing!)",
+            [
+              false,
+              false
+            ]
+          ]
+        ],
+        "initial": {
+          "program": "0303030303030303030303030303030303030303030303030303030303030303",
+          "when": [
+            true,
+            false
+          ]
+        }
+      }
+    },
+    {
+      "label": "add-already-in-alpha",
+      "list": [
+        "call Alpha 日本 log on all new file imports",
+        "call beta log on all new file imports",
+        "call Alpha 日本 log on all \"already in db\" imports"
+      ],
+      "value": [
+        162,
+        1,
+        [
+          26,
+          3,
+          [
+            [
+              2,
+              [
+                163,
+                1,
+                [
+                  [
+                    158,
+                    1,
+                    [
+                      "0303030303030303030303030303030303030303030303030303030303030303",
+                      "Alpha 日本 log"
+                    ]
+                  ],
+                  true,
+                  false
+                ]
+              ]
+            ],
+            [
+              2,
+              [
+                163,
+                1,
+                [
+                  [
+                    158,
+                    1,
+                    [
+                      "0202020202020202020202020202020202020202020202020202020202020202",
+                      "beta log"
+                    ]
+                  ],
+                  true,
+                  false
+                ]
+              ]
+            ],
+            [
+              2,
+              [
+                163,
+                1,
+                [
+                  [
+                    158,
+                    1,
+                    [
+                      "0303030303030303030303030303030303030303030303030303030303030303",
+                      "Alpha 日本 log"
+                    ]
+                  ],
+                  false,
+                  true
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      "seen": {
+        "title": "Edit external program call",
+        "programs": [
+          [
+            "Alpha 日本 log",
+            "0303030303030303030303030303030303030303030303030303030303030303"
+          ],
+          [
+            "Default OS File Launch",
+            "0505050505050505050505050505050505050505050505050505050505050505"
+          ],
+          [
+            "beta log",
+            "0202020202020202020202020202020202020202020202020202020202020202"
+          ],
+          [
+            "broken",
+            "0404040404040404040404040404040404040404040404040404040404040404"
+          ],
+          [
+            "gamma file id",
+            "0606060606060606060606060606060606060606060606060606060606060606"
+          ]
+        ],
+        "whens": [
+          [
+            "all file imports",
+            [
+              true,
+              true
+            ]
+          ],
+          [
+            "all new file imports",
+            [
+              true,
+              false
+            ]
+          ],
+          [
+            "all \"already in db\" imports",
+            [
+              false,
+              true
+            ]
+          ],
+          [
+            "no imports (will do nothing!)",
+            [
+              false,
+              false
+            ]
+          ]
+        ],
+        "initial": {
+          "program": "0303030303030303030303030303030303030303030303030303030303030303",
+          "when": [
+            true,
+            false
+          ]
+        }
+      }
+    },
+    {
+      "label": "add-all-os",
+      "list": [
+        "call Alpha 日本 log on all new file imports",
+        "call beta log on all new file imports",
+        "call Alpha 日本 log on all \"already in db\" imports",
+        "call Default OS File Launch on all file imports"
+      ],
+      "value": [
+        162,
+        1,
+        [
+          26,
+          3,
+          [
+            [
+              2,
+              [
+                163,
+                1,
+                [
+                  [
+                    158,
+                    1,
+                    [
+                      "0303030303030303030303030303030303030303030303030303030303030303",
+                      "Alpha 日本 log"
+                    ]
+                  ],
+                  true,
+                  false
+                ]
+              ]
+            ],
+            [
+              2,
+              [
+                163,
+                1,
+                [
+                  [
+                    158,
+                    1,
+                    [
+                      "0202020202020202020202020202020202020202020202020202020202020202",
+                      "beta log"
+                    ]
+                  ],
+                  true,
+                  false
+                ]
+              ]
+            ],
+            [
+              2,
+              [
+                163,
+                1,
+                [
+                  [
+                    158,
+                    1,
+                    [
+                      "0303030303030303030303030303030303030303030303030303030303030303",
+                      "Alpha 日本 log"
+                    ]
+                  ],
+                  false,
+                  true
+                ]
+              ]
+            ],
+            [
+              2,
+              [
+                163,
+                1,
+                [
+                  [
+                    158,
+                    1,
+                    [
+                      "0505050505050505050505050505050505050505050505050505050505050505",
+                      "Default OS File Launch"
+                    ]
+                  ],
+                  true,
+                  true
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      "seen": {
+        "title": "Edit external program call",
+        "programs": [
+          [
+            "Alpha 日本 log",
+            "0303030303030303030303030303030303030303030303030303030303030303"
+          ],
+          [
+            "Default OS File Launch",
+            "0505050505050505050505050505050505050505050505050505050505050505"
+          ],
+          [
+            "beta log",
+            "0202020202020202020202020202020202020202020202020202020202020202"
+          ],
+          [
+            "broken",
+            "0404040404040404040404040404040404040404040404040404040404040404"
+          ],
+          [
+            "gamma file id",
+            "0606060606060606060606060606060606060606060606060606060606060606"
+          ]
+        ],
+        "whens": [
+          [
+            "all file imports",
+            [
+              true,
+              true
+            ]
+          ],
+          [
+            "all new file imports",
+            [
+              true,
+              false
+            ]
+          ],
+          [
+            "all \"already in db\" imports",
+            [
+              false,
+              true
+            ]
+          ],
+          [
+            "no imports (will do nothing!)",
+            [
+              false,
+              false
+            ]
+          ]
+        ],
+        "initial": {
+          "program": "0303030303030303030303030303030303030303030303030303030303030303",
+          "when": [
+            true,
+            false
+          ]
+        }
+      }
+    },
+    {
+      "label": "add-none-broken",
+      "list": [
+        "call Alpha 日本 log on all new file imports",
+        "call beta log on all new file imports",
+        "call Alpha 日本 log on all \"already in db\" imports",
+        "call Default OS File Launch on all file imports",
+        "call broken on no imports (will do nothing!)"
+      ],
+      "value": [
+        162,
+        1,
+        [
+          26,
+          3,
+          [
+            [
+              2,
+              [
+                163,
+                1,
+                [
+                  [
+                    158,
+                    1,
+                    [
+                      "0303030303030303030303030303030303030303030303030303030303030303",
+                      "Alpha 日本 log"
+                    ]
+                  ],
+                  true,
+                  false
+                ]
+              ]
+            ],
+            [
+              2,
+              [
+                163,
+                1,
+                [
+                  [
+                    158,
+                    1,
+                    [
+                      "0202020202020202020202020202020202020202020202020202020202020202",
+                      "beta log"
+                    ]
+                  ],
+                  true,
+                  false
+                ]
+              ]
+            ],
+            [
+              2,
+              [
+                163,
+                1,
+                [
+                  [
+                    158,
+                    1,
+                    [
+                      "0303030303030303030303030303030303030303030303030303030303030303",
+                      "Alpha 日本 log"
+                    ]
+                  ],
+                  false,
+                  true
+                ]
+              ]
+            ],
+            [
+              2,
+              [
+                163,
+                1,
+                [
+                  [
+                    158,
+                    1,
+                    [
+                      "0505050505050505050505050505050505050505050505050505050505050505",
+                      "Default OS File Launch"
+                    ]
+                  ],
+                  true,
+                  true
+                ]
+              ]
+            ],
+            [
+              2,
+              [
+                163,
+                1,
+                [
+                  [
+                    158,
+                    1,
+                    [
+                      "0404040404040404040404040404040404040404040404040404040404040404",
+                      "broken"
+                    ]
+                  ],
+                  false,
+                  false
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      "seen": {
+        "title": "Edit external program call",
+        "programs": [
+          [
+            "Alpha 日本 log",
+            "0303030303030303030303030303030303030303030303030303030303030303"
+          ],
+          [
+            "Default OS File Launch",
+            "0505050505050505050505050505050505050505050505050505050505050505"
+          ],
+          [
+            "beta log",
+            "0202020202020202020202020202020202020202020202020202020202020202"
+          ],
+          [
+            "broken",
+            "0404040404040404040404040404040404040404040404040404040404040404"
+          ],
+          [
+            "gamma file id",
+            "0606060606060606060606060606060606060606060606060606060606060606"
+          ]
+        ],
+        "whens": [
+          [
+            "all file imports",
+            [
+              true,
+              true
+            ]
+          ],
+          [
+            "all new file imports",
+            [
+              true,
+              false
+            ]
+          ],
+          [
+            "all \"already in db\" imports",
+            [
+              false,
+              true
+            ]
+          ],
+          [
+            "no imports (will do nothing!)",
+            [
+              false,
+              false
+            ]
+          ]
+        ],
+        "initial": {
+          "program": "0303030303030303030303030303030303030303030303030303030303030303",
+          "when": [
+            true,
+            false
+          ]
+        }
+      }
+    }
+  ],
+  "summary": "call Alpha 日本 log on all \"already in db\" imports, call Alpha 日本 log on all new file imports, call Default OS File Launch on all file imports, call beta log on all new file imports, call broken on no imports (will do nothing!)",
+  "edit": {
+    "seen": {
+      "title": "Edit external program call",
+      "programs": [
+        [
+          "Alpha 日本 log",
+          "0303030303030303030303030303030303030303030303030303030303030303"
+        ],
+        [
+          "Default OS File Launch",
+          "0505050505050505050505050505050505050505050505050505050505050505"
+        ],
+        [
+          "beta log",
+          "0202020202020202020202020202020202020202020202020202020202020202"
+        ],
+        [
+          "broken",
+          "0404040404040404040404040404040404040404040404040404040404040404"
+        ],
+        [
+          "gamma file id",
+          "0606060606060606060606060606060606060606060606060606060606060606"
+        ]
+      ],
+      "whens": [
+        [
+          "all file imports",
+          [
+            true,
+            true
+          ]
+        ],
+        [
+          "all new file imports",
+          [
+            true,
+            false
+          ]
+        ],
+        [
+          "all \"already in db\" imports",
+          [
+            false,
+            true
+          ]
+        ],
+        [
+          "no imports (will do nothing!)",
+          [
+            false,
+            false
+          ]
+        ]
+      ],
+      "initial": {
+        "program": "0303030303030303030303030303030303030303030303030303030303030303",
+        "when": [
+          true,
+          false
+        ]
+      }
+    },
+    "before": "call Alpha 日本 log on all new file imports",
+    "after": "call Alpha 日本 log on all file imports",
+    "after_value": [
+      163,
+      1,
+      [
+        [
+          158,
+          1,
+          [
+            "0303030303030303030303030303030303030303030303030303030303030303",
+            "Alpha 日本 log"
+          ]
+        ],
+        true,
+        true
+      ]
+    ]
+  },
+  "edit_cancel": "CancelledException",
+  "edit_missing": {
+    "messages": [
+      [
+        "information",
+        "Hey, just so you know, I do not see the entry's external call in the currently list of available calls. If you are fixing that now, great."
+      ]
+    ],
+    "seen": {
+      "title": "Edit external program call",
+      "programs": [
+        [
+          "Alpha 日本 log",
+          "0303030303030303030303030303030303030303030303030303030303030303"
+        ],
+        [
+          "Default OS File Launch",
+          "0505050505050505050505050505050505050505050505050505050505050505"
+        ],
+        [
+          "beta log",
+          "0202020202020202020202020202020202020202020202020202020202020202"
+        ],
+        [
+          "broken",
+          "0404040404040404040404040404040404040404040404040404040404040404"
+        ],
+        [
+          "gamma file id",
+          "0606060606060606060606060606060606060606060606060606060606060606"
+        ]
+      ],
+      "whens": [
+        [
+          "all file imports",
+          [
+            true,
+            true
+          ]
+        ],
+        [
+          "all new file imports",
+          [
+            true,
+            false
+          ]
+        ],
+        [
+          "all \"already in db\" imports",
+          [
+            false,
+            true
+          ]
+        ],
+        [
+          "no imports (will do nothing!)",
+          [
+            false,
+            false
+          ]
+        ]
+      ],
+      "initial": {
+        "program": "0303030303030303030303030303030303030303030303030303030303030303",
+        "when": [
+          true,
+          false
+        ]
+      }
+    },
+    "summary": "call gone program on all new file imports"
+  },
+  "no_calls": {
+    "raised": "CancelledException",
+    "messages": [
+      [
+        "critical",
+        "No external calls!",
+        "Hey, there do not seem to be any \"send single file\" external program calls set! If you are in the options dialog and only just added some, please apply and re-open."
+      ]
+    ]
+  },
+  "empty_summary": "",
+  "should_fire": {
+    "True,True": {
+      "0": false,
+      "1": true,
+      "2": true,
+      "3": false,
+      "4": false,
+      "5": false,
+      "6": false,
+      "7": false,
+      "8": false,
+      "9": false
+    },
+    "True,False": {
+      "0": false,
+      "1": true,
+      "2": false,
+      "3": false,
+      "4": false,
+      "5": false,
+      "6": false,
+      "7": false,
+      "8": false,
+      "9": false
+    },
+    "False,True": {
+      "0": false,
+      "1": false,
+      "2": true,
+      "3": false,
+      "4": false,
+      "5": false,
+      "6": false,
+      "7": false,
+      "8": false,
+      "9": false
+    },
+    "False,False": {
+      "0": false,
+      "1": false,
+      "2": false,
+      "3": false,
+      "4": false,
+      "5": false,
+      "6": false,
+      "7": false,
+      "8": false,
+      "9": false
+    }
+  },
+  "default_entry": [
+    163,
+    1,
+    [
+      [
+        158,
+        1,
+        [
+          "61626364",
+          "unknown"
+        ]
+      ],
+      true,
+      false
+    ]
+  ],
+  "sorted_programs": [
+    [
+      "Alpha 日本 log",
+      "0303030303030303030303030303030303030303030303030303030303030303"
+    ],
+    [
+      "Default OS File Launch",
+      "0505050505050505050505050505050505050505050505050505050505050505"
+    ],
+    [
+      "beta log",
+      "0202020202020202020202020202020202020202020202020202020202020202"
+    ],
+    [
+      "broken",
+      "0404040404040404040404040404040404040404040404040404040404040404"
+    ],
+    [
+      "gamma file id",
+      "0606060606060606060606060606060606060606060606060606060606060606"
+    ]
+  ],
+  "file": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "id": 17
+  },
+  "runs": [
+    {
+      "label": "new-all",
+      "lines": [
+        [
+          "beta",
+          "{db}/client_files/f66/663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea.jpg",
+          "file://{db}/client_files/f66/663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea.jpg",
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ]
+      ],
+      "shown": [],
+      "paused": [
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "label": "redundant-all",
+      "lines": [
+        [
+          "beta",
+          "{db}/client_files/f66/663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea.jpg",
+          "file://{db}/client_files/f66/663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea.jpg",
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ]
+      ],
+      "shown": [],
+      "paused": [
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "label": "new-only-on-redundant",
+      "lines": [],
+      "shown": [],
+      "paused": [
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "label": "already-only-on-new",
+      "lines": [],
+      "shown": [],
+      "paused": [
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "label": "two-in-order",
+      "lines": [
+        [
+          "alpha",
+          "{db}/client_files/f66/663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea.jpg"
+        ],
+        [
+          "beta",
+          "{db}/client_files/f66/663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea.jpg",
+          "file://{db}/client_files/f66/663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea.jpg",
+          "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+        ]
+      ],
+      "shown": [],
+      "paused": [
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "label": "deleted",
+      "lines": [],
+      "shown": [],
+      "paused": [
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "label": "none",
+      "lines": [],
+      "shown": [],
+      "paused": [
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "label": "file-id-parameter",
+      "lines": [],
+      "shown": [
+        "Failed to run \"gamma file id\" on file with hash \"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"! All importers--subscriptions, import folders, and paged file import queues--have been paused. Once the issue is clear, restart the client and resume your imports under the file and network menus!",
+        "EXCEPTION TypeError"
+      ],
+      "paused": [
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "label": "broken-first",
+      "lines": [],
+      "shown": [
+        "Got a file not found on this external program call: ['{work}/no-such-program', '{db}/client_files/f66/663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea.jpg']",
+        "Failed to run \"broken\" on file with hash \"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"! All importers--subscriptions, import folders, and paged file import queues--have been paused. Once the issue is clear, restart the client and resume your imports under the file and network menus!",
+        "EXCEPTION ExecutableException"
+      ],
+      "paused": [
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "label": "program-missing",
+      "lines": [],
+      "shown": [
+        "Failed to run \"beta log\" on file with hash \"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"! All importers--subscriptions, import folders, and paged file import queues--have been paused. Once the issue is clear, restart the client and resume your imports under the file and network menus!",
+        "EXCEPTION ExecutableException"
+      ],
+      "paused": [
+        true,
+        true,
+        true
+      ]
+    }
+  ],
+  "work": "{work}",
+  "db": "{db}",
+  "pause_flags": [
+    "pause_import_folders_sync",
+    "pause_subs_sync",
+    "pause_all_file_queues"
+  ]
+}
