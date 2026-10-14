@@ -1,0 +1,61 @@
+{
+  "steps": [
+    {
+      "label": "duplicated",
+      "importer_index": 1,
+      "names_before": [
+        "before",
+        "my importer",
+        "after"
+      ],
+      "names": [
+        "before",
+        "my importer",
+        "my importer",
+        "after"
+      ],
+      "original_urls": [
+        "https://files.example/0.jpg",
+        "https://files.example/1.jpg",
+        "https://files.example/2.jpg"
+      ],
+      "copy_urls": [
+        "https://files.example/0.jpg",
+        "https://files.example/1.jpg",
+        "https://files.example/2.jpg"
+      ],
+      "original_paused": true,
+      "copy_paused": true,
+      "selected": 2
+    },
+    {
+      "label": "pended to the original",
+      "original_urls": [
+        "https://files.example/0.jpg",
+        "https://files.example/1.jpg",
+        "https://files.example/2.jpg",
+        "https://files.example/original-only.jpg"
+      ],
+      "copy_urls": [
+        "https://files.example/0.jpg",
+        "https://files.example/1.jpg",
+        "https://files.example/2.jpg"
+      ]
+    },
+    {
+      "label": "pended to the copy",
+      "original_urls": [
+        "https://files.example/0.jpg",
+        "https://files.example/1.jpg",
+        "https://files.example/2.jpg",
+        "https://files.example/original-only.jpg"
+      ],
+      "copy_urls": [
+        "https://files.example/0.jpg",
+        "https://files.example/1.jpg",
+        "https://files.example/2.jpg",
+        "https://files.example/copy-only.jpg"
+      ]
+    }
+  ]
+}

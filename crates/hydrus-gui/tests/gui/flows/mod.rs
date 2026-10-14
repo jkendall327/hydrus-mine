@@ -19,6 +19,7 @@ mod duplicates;
 mod export;
 mod import_folder;
 mod subscription;
+mod watcher;
 
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::sync::Arc;
@@ -98,6 +99,7 @@ pub const PORTS: &[(&str, u16)] = &[
     ("flow_export.json", 46014),
     ("flow_duplicates.json", 46015),
     ("flow_import_folder.json", 46013),
+    ("flow_watcher.json", 46031),
 ];
 
 /// Whether a request to `http://127.0.0.1` goes straight there, whatever

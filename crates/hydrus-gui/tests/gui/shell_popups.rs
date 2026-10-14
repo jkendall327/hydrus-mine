@@ -57,7 +57,6 @@ fn window(store: &Arc<Store>) -> (MainWindow, hydrus_gui::Bound) {
     (ui, bound)
 }
 
-// leaf: audit-options-popups-content
 // leaf: audit-options-popups-pause
 #[test]
 fn cards_show_title_texts_and_gauges_and_pausing_hides_them() {
@@ -140,9 +139,41 @@ fn cancel_marks_a_cancellable_job_cancelled_and_leaves_others_alone() {
         "not cancellable: nothing happens"
     );
 
+    // the reference's card before and after its cancel button
+    // (popup_actions.json: 'resume refresh labels' then 'cancel retains
+    // callable'): a live job becomes cancelled and done, with its pause and
+    // cancel buttons disabled
+    let recorded = hydrus_testkit::fixture_json("popup_actions.json");
+    let state = |label: &str| {
+        recorded["states"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|s| s["label"] == label)
+            .unwrap_or_else(|| panic!("{label} is recorded"))
+    };
+    let (before, after) = (
+        state("resume refresh labels"),
+        state("cancel retains callable"),
+    );
+    let job = stored(&store, cancellable.key).unwrap();
+    assert_eq!(
+        (job.cancelled, job.done),
+        (
+            before["cancelled"].as_bool().unwrap(),
+            before["done"].as_bool().unwrap()
+        )
+    );
     ui.invoke_popup_cancel(0);
     let job = stored(&store, cancellable.key).unwrap();
-    assert!(job.cancelled && job.done, "the producer sees the flag");
+    assert_eq!(
+        (job.cancelled, job.done),
+        (
+            after["cancelled"].as_bool().unwrap(),
+            after["done"].as_bool().unwrap()
+        ),
+        "the producer sees the flag"
+    );
     assert!(!job.cancellable && !job.pausable);
 }
 

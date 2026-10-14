@@ -1,0 +1,20 @@
+{
+ "dialogs": [
+  {
+   "title": "edit filename tagging options",
+   "example_path": "pic 1.png",
+   "example_in_folder": true,
+   "output_as_opened": "",
+   "output_edited": "filename:pic 1, imported",
+   "namespace_default": "filename"
+  }
+ ],
+ "warnings": [
+  "You already have an entry for that service key! Please try editing it instead!"
+ ],
+ "rows": [
+  [
+   "my tags"
+  ]
+ ]
+}

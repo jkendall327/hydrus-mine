@@ -96,14 +96,30 @@ fn clearing_selected_viewing_stats_asks_then_clears_only_the_selection() {
     // two selected: the question counts them; "no" changes nothing
     page.borrow_mut().select_files(&files[..2]);
     choose_clear(&ui);
+    // (the reference's question and its writes, for two files and for one:
+    // oracle/record_clear_viewing_stats.py -> clear_viewing_stats.json)
+    let recorded = hydrus_testkit::fixture_json("clear_viewing_stats.json");
+    let step = |files: u64, answer: bool| {
+        recorded["steps"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|s| s["files"] == files && s["answer"] == answer)
+            .unwrap()
+            .clone()
+    };
+    let (two_no, two_yes) = (step(2, false), step(2, true));
+    let (one_no, one_yes) = (step(1, false), step(1, true));
     let question = thumbnail_maintenance_window::question().expect("a question");
-    assert_eq!(question.get_window_title(), "Are you sure?");
+    let asked = &two_no["questions"][0];
     assert_eq!(
-        question.get_message(),
-        "Clear the file viewing count/duration and 'last viewed time' for these 2 files?"
+        question.get_window_title(),
+        asked["title"].as_str().unwrap()
     );
-    assert_eq!(question.get_yes_label(), "yes");
-    assert_eq!(question.get_no_label(), "no");
+    assert_eq!(question.get_message(), asked["message"].as_str().unwrap());
+    assert_eq!(question.get_yes_label(), asked["yes"].as_str().unwrap());
+    assert_eq!(question.get_no_label(), asked["no"].as_str().unwrap());
+    assert_eq!(two_no["writes"].as_array().unwrap().len(), 0, "no writes");
     question.invoke_answered(false);
     assert_eq!(viewed(&store), all);
 
@@ -120,6 +136,9 @@ fn clearing_selected_viewing_stats_asks_then_clears_only_the_selection() {
         .unwrap()
         .invoke_answered(true);
     assert_eq!(viewed(&store), [i64::from(files[2].0)]);
+    // (the reference's yes is one delete write of the selected files' hashes
+    // and nothing else: native deleted just the selected files' rows)
+    assert_eq!(two_yes["writes"].as_array().unwrap().len(), 1);
 
     // one selected: "this file"
     page.borrow_mut().select_files(&files[2..3]);
@@ -127,8 +146,10 @@ fn clearing_selected_viewing_stats_asks_then_clears_only_the_selection() {
     let question = thumbnail_maintenance_window::question().unwrap();
     assert_eq!(
         question.get_message(),
-        "Clear the file viewing count/duration and 'last viewed time' for this file?"
+        one_no["questions"][0]["message"].as_str().unwrap()
     );
+    assert_eq!(one_no["writes"].as_array().unwrap().len(), 0);
     question.invoke_answered(true);
     assert!(viewed(&store).is_empty());
+    assert_eq!(one_yes["writes"].as_array().unwrap().len(), 1);
 }

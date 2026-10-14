@@ -22,6 +22,31 @@ impl Queue {
     pub(crate) fn from_mode(mode: i32) -> Self {
         let mut queue = Self::default();
         if mode == 3 {
+            // (a bitmap on the clipboard is a hydrus PNG, as the reference reads it)
+            if let Some(png) = crate::exchange_bitmap::clipboard_png() {
+                match png.and_then(|bytes| {
+                    codec::decode_png_at(&bytes, now()).map_err(|error| {
+                        let text = error.to_string();
+                        match (crate::exchange_bitmap::not_a_hydrus_png(&text), error) {
+                            (Some(text), _) => {
+                                format!("I could not understand what was in the clipboard: {text}")
+                            }
+                            (None, Error::Unsupported(error)) => {
+                                format!("Problem loading that object: {error}")
+                            }
+                            (None, _) => {
+                                format!("I could not understand what was in the clipboard: {text}")
+                            }
+                        }
+                    })
+                }) {
+                    Ok(package) => queue.package(package),
+                    Err(error) => queue
+                        .events
+                        .push_back(Event::Notice("Problem loading!".into(), error)),
+                }
+                return queue;
+            }
             match crate::from_clipboard().and_then(|text| {
                 codec::decode_text_at(&text, now()).map_err(|error| error.to_string())
             }) {
@@ -43,6 +68,25 @@ impl Queue {
                     .map(|path| Event::File(path, png)),
             );
         }
+        queue
+    }
+
+    /// The files dropped on the list (after the yes), PNGs first and then
+    /// the rest as JSON, as the reference's `ImportFromDragDrop` does.
+    pub(crate) fn from_paths(paths: &[String]) -> Self {
+        // (the reference's test is a case-sensitive `endswith('.png')`)
+        #[allow(clippy::case_sensitive_file_extension_comparisons)]
+        let (pngs, jsons): (Vec<_>, Vec<_>) = paths.iter().partition(|p| p.ends_with(".png"));
+        let mut queue = Self::default();
+        queue.events.extend(
+            pngs.into_iter()
+                .map(|p| Event::File(PathBuf::from(p), true))
+                .chain(
+                    jsons
+                        .into_iter()
+                        .map(|p| Event::File(PathBuf::from(p), false)),
+                ),
+        );
         queue
     }
 
@@ -122,9 +166,12 @@ impl Queue {
                 }
                 Err(error) => {
                     self.events.clear();
+                    let text = error.to_string();
                     return Some(Event::Notice(
                         "Problem importing!".into(),
-                        error.to_string(),
+                        crate::exchange_bitmap::not_a_hydrus_png(&text)
+                            .filter(|_| png)
+                            .unwrap_or(text),
                     ));
                 }
             }
