@@ -42,14 +42,16 @@ pub fn open(
             .map(SharedString::from)
             .collect::<Vec<_>>(),
     )));
-    // (`SelectFromListButtons`'s `quick_select_dialog` frame, or
-    // `GetYesYesNo`'s `quick_yesno_dialog` where there is a "no"; kept when a
-    // choice is made, as the reference's dialog does when accepted)
-    let frame = crate::windows::dialog_frame(if ask.no_label.is_empty() {
-        "quick_select_dialog"
-    } else {
-        "quick_yesno_dialog"
-    });
+    // (`SelectFromListButtons`'s `quick_select_dialog` frame with buttons and no
+    // "no", or `GetYesNo`/`GetYesYesNo`'s `quick_yesno_dialog` with a "no"
+    // too; a message with no choices is not one of those dialogs and has no
+    // frame of its own. Kept when a choice is made, as the reference's
+    // dialog does when accepted.)
+    let frame = match (ask.choices.is_empty(), ask.no_label.is_empty()) {
+        (true, _) => None,
+        (false, true) => crate::windows::dialog_frame("quick_select_dialog"),
+        (false, false) => crate::windows::dialog_frame("quick_yesno_dialog"),
+    };
     if let Some(frame) = &frame {
         frame.place(&window);
     }

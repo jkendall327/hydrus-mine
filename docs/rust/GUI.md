@@ -5190,14 +5190,17 @@ size and place as the reference's do: a frame as it closes, a dialog when it
 is applied (never when cancelled) (`tests/gui/frame_geometry.rs`, replaying
 `frame_state.json` through each). Every other window opens by the ordinary
 dialogs' frame (`regular_dialog`: the main window's top-left, its own size),
-except the choice dialogs, which open by `quick_select_dialog` (a choice among
-buttons) or `quick_yesno_dialog` (one with a "no") and keep their size when a
-choice is made. Editing any of these frames' gravity, default position, size,
-maximised or fullscreen in the frame locations editor reaches each of those
-windows the next time it opens (`tests/gui/frame_geometry.rs`, through the
-Options window). Proven by `tests/model/frame_placement.rs` (the formulae worked from the
-reference's source) and `options_gui_frames.rs` (editing the Options window's
-own frame through the frames editor).
+except the choice dialogs with choices, which open by `quick_select_dialog`
+(buttons only) or `quick_yesno_dialog` (a "no" too) and keep their size when a
+choice is made, never when cancelled; a message with no choices takes neither.
+Editing a frame's remembered size, maximised, fullscreen, gravity or default
+position in the frame locations editor reaches each of those windows the next
+time it opens, for its size and its maximised and fullscreen state (headless
+windows have no readable place, so a place is proved only through the
+arithmetic of `windows::placement`; `tests/gui/frame_geometry.rs`, through the
+Options window). Proven by `tests/model/frame_placement.rs` (the formulae
+worked from the reference's source) and `options_gui_frames.rs` (editing the
+Options window's own frame through the frames editor).
 
 **Preview window.** The preview pane draws the file's ratings at the sizes
 from Options > ratings > preview window (rounded, as the reference's

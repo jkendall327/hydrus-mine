@@ -4141,6 +4141,15 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   frame to hang them on, so editing those two rows reaches nothing. The
   Options window is placed before it shows, and again once shown when its own
   size was needed to grow from.
+- The reference's `OpenListButtons` (Go To Page) is a frame that keeps its
+  geometry on any close; hydrus-rs's choice dialogs keep it only when a
+  choice is made, as the reference's `SelectFromListButtons` dialog does.
+- Frame locations editor, not yet proved: the remembered place of a window
+  (a headless window has no readable place, so only the arithmetic of
+  `windows::placement` and the off-screen rescue are tested, not a window
+  opening at it), and the `quick_entry_dialog` and `deeply_nested_dialog`
+  rows, which reach nothing. `audit-options-gui-frame-locations-edit` stays
+  partial and untagged for those reasons.
 
 ## Review vacuum data
 

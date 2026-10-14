@@ -9481,24 +9481,15 @@
    "label": "edit",
    "path": "File > Options window > gui > frame locations > Remembered/default frame locations table",
    "workstream": "options-gui",
-   "state": "implemented",
+   "state": "partial",
    "priority": "low",
    "reference": null,
    "native": null,
    "notes": [
-    "Deferred (owner, 2026-10-08): the remaining ~25 windows' saved size and position.",
-    "Truth pass (2026-10-08): partial, medium. Table and editor done and recorded; only 3 of ~28 frames use the saved size/position. Missing: ~25 other named frames never consult their frame location; no absolute desktop position adapter or screen fitting. Evidence: windows.rs:115-160 place_named, used by main_gui, manage_options_dialog, media_viewer only",
-    "The live owned geometry child edits both remember flags, noneable dimensions/coordinates with exact bounds and retained values, x/y gravity, default position, maximised/fullscreen. Child Apply replaces only the parent draft; child Cancel discards; parent Cancel force-closes/inactivates; child blocks parent Apply. Parent Apply persists/reopens and reaches existing supported placement. Gravity/default-position and other named-owner consumers remain unfinished, so editor stays Partial.",
-    "Placement consumers use remembered size/position and maximised/fullscreen for main_gui, media_viewer and manage_options_dialog. Other named owners, default gravity/parent-cursor positioning, screen fitting and offscreen rescue remain parent limitations; no parent or geometry-editor completion claimed.",
-    "Native MinimalSoftwareWindow supports size/state but does not implement native-position adapter. Coordinate persistence and actual placement dispatch are covered; no rendered absolute desktop-position assertion is claimed.",
-    "Rust model/native/store regressions authored for hosted CI only; no local Cargo builds, tests or mutations run. General ListTable arrow-key navigation remains outside this slice."
-   ],
-   "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "claude (issue 94 session)",
-    "note": "frame_geometry.rs the_frame_editor_decides_how_each_named_window_next_opens edits each of the 14 keyed windows' frames in the real Options frame editor child (remember size, size, maximised, fullscreen, x/y gravity, default position) and applies through the Options window, then opens the window as a user does and checks its size/maximised/fullscreen and the placement it is given. Expected sizes are the frame_placement.json formulae (main less 24 a side) restated, not a new recording. A software window has no place to read, so position is checked through windows::placement. quick_select/quick_yesno are consulted by choice_buttons (own test); quick_entry_dialog and deeply_nested_dialog have no hydrus-rs window to open, listed in DIFFERENCES. regular_dialog is the other session's."
-   }
+    "Deferred (owner, 2026-10-08): the remaining windows' saved size and position. Picked up 2026-10-13 (issue 94).",
+    "Done: the table and editor are recorded (frame_locations.json); the main window, media viewer, Options window and the fourteen windows with their own frame keys open and keep their frames; the choice dialogs with choices open by quick_select_dialog / quick_yesno_dialog and keep them when a choice is made; frame_geometry.rs edits each keyed window's size, maximised, fullscreen and gravity through the real editor and opens it.",
+    "Missing: a window's remembered place and default position are proved only through windows::placement (headless windows have no readable place), not by a window opening there; quick_entry_dialog and deeply_nested_dialog rows reach nothing (no hydrus-rs window for them); regular_dialog saving is issue 154's. See DIFFERENCES.md."
+   ]
   },
   {
    "id": "audit-options-gui-frame-locations-flip-remember-position",
