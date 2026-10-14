@@ -122,24 +122,6 @@ fn pending_pairs_are_fetched_selected_approved_and_denied_as_the_reference_does(
             .map(|t| t.as_str().unwrap().to_owned())
             .filter(|t| t != "approve" && t != "deny")
             .collect();
-        // Slow the store's writer, so that the work is seen at each chunk: a
-        // job that holds it for a moment (the window looks at the work every
-        // tenth of a second), again and again, between the work's
-        // own writes.
-        let stop = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
-        let gate = (!declined).then(|| {
-            let (store, stop) = (o.store.clone(), stop.clone());
-            std::thread::spawn(move || {
-                while !stop.load(std::sync::atomic::Ordering::Acquire) {
-                    store
-                        .write(|_| {
-                            std::thread::sleep(std::time::Duration::from_millis(150));
-                            Ok(())
-                        })
-                        .unwrap();
-                }
-            })
-        });
         // the rows selected, and the button
         window.invoke_tab_chosen(0);
         // The same pairs the reference had selected (its list is in the order
@@ -173,6 +155,61 @@ fn pending_pairs_are_fetched_selected_approved_and_denied_as_the_reference_does(
             .collect();
         for (n, row) in rows.iter().enumerate() {
             window.invoke_row_clicked(*row as i32, n > 0, false);
+        }
+        // Hold the store's writer so that the work is seen at each chunk.
+        // The window looks at the work's progress every tenth of a second,
+        // on this thread; a hold lasts until this thread has looked twice
+        // since the hold began, so a chunk's progress that is on the button
+        // while a hold is on cannot go by unseen, however slowly this
+        // thread, or the thread holding, is scheduled. Two threads take
+        // turns, so that a hold is always waiting behind the one on, and
+        // each of the work's writes waits through a whole hold that began
+        // after it set its progress.
+        let stop = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+        let looked = std::sync::Arc::new(std::sync::atomic::AtomicU64::new(0));
+        let base = std::time::Instant::now();
+        let holding = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+        let gate: Option<Vec<std::thread::JoinHandle<()>>> = (!declined).then(|| {
+            (0..2)
+                .map(|_| {
+                    let (store, stop) = (o.store.clone(), stop.clone());
+                    let (looked, holding) = (looked.clone(), holding.clone());
+                    std::thread::spawn(move || {
+                        use std::sync::atomic::Ordering::{Acquire, Release};
+                        while !stop.load(Acquire) {
+                            let (stop, looked, holding) =
+                                (stop.clone(), looked.clone(), holding.clone());
+                            store
+                                .write(move |_| {
+                                    holding.store(true, Release);
+                                    let began = base.elapsed().as_millis() as u64;
+                                    // (a hold gives up after two seconds, so
+                                    // that a stopped loop cannot hold the
+                                    // writer for good)
+                                    while !stop.load(Acquire)
+                                        && looked.load(Acquire) < began + 205
+                                        && (base.elapsed().as_millis() as u64) < began + 2000
+                                    {
+                                        std::thread::sleep(std::time::Duration::from_millis(1));
+                                    }
+                                    Ok(())
+                                })
+                                .unwrap();
+                        }
+                    })
+                })
+                .collect()
+        });
+        if gate.is_some() {
+            // (both holders are queued before the work can begin)
+            while !holding.load(std::sync::atomic::Ordering::Acquire) {
+                looked.store(
+                    base.elapsed().as_millis() as u64,
+                    std::sync::atomic::Ordering::Release,
+                );
+                std::thread::sleep(std::time::Duration::from_millis(1));
+            }
+            std::thread::sleep(std::time::Duration::from_millis(30));
         }
         if approve {
             window.invoke_approve();
@@ -209,6 +246,10 @@ fn pending_pairs_are_fetched_selected_approved_and_denied_as_the_reference_does(
             let deadline = std::time::Instant::now() + std::time::Duration::from_secs(30);
             loop {
                 slint::platform::update_timers_and_animations();
+                looked.store(
+                    base.elapsed().as_millis() as u64,
+                    std::sync::atomic::Ordering::Release,
+                );
                 let text = button(&window);
                 if texts.last() != Some(&text) && text != "approve" && text != "deny" {
                     texts.push(text);
@@ -216,13 +257,17 @@ fn pending_pairs_are_fetched_selected_approved_and_denied_as_the_reference_does(
                 if !texts.is_empty() && !window.get_working() {
                     break;
                 }
-                assert!(std::time::Instant::now() < deadline, "{texts:?}");
+                assert!(
+                    std::time::Instant::now() < deadline,
+                    "{step}: the progress seen: {texts:?}, working: {}",
+                    window.get_working()
+                );
                 std::thread::sleep(std::time::Duration::from_millis(2));
             }
         }
         stop.store(true, std::sync::atomic::Ordering::Release);
-        if let Some(gate) = gate {
-            gate.join().unwrap();
+        for holder in gate.into_iter().flatten() {
+            holder.join().unwrap();
         }
         settle(&window);
         assert_eq!(texts, recorded_texts, "the button's progress");
