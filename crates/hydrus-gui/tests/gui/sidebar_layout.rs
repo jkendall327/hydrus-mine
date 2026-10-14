@@ -4,6 +4,7 @@ use hydrus_store::{
     page_layout::{self, PageLayout},
     settings,
 };
+use serde_json::Value;
 use slint::{ComponentHandle as _, Model as _};
 use std::{
     cell::{Cell, RefCell},
@@ -828,4 +829,244 @@ fn rebind_retires_preview_under_predecessor_splitter_before_successor_hides_it()
         (1, 1000),
         "replayed old close cannot duplicate the durable interval"
     );
+}
+
+/// A double click (two presses and releases) at a place in the window.
+fn double_click(
+    native: &slint::platform::software_renderer::MinimalSoftwareWindow,
+    x: f32,
+    y: f32,
+) {
+    use slint::platform::{PointerEventButton as B, WindowEvent as E};
+    let position = slint::LogicalPosition::new(x, y);
+    native.dispatch_event(E::PointerMoved { position });
+    for _ in 0..2 {
+        native.dispatch_event(E::PointerPressed {
+            position,
+            button: B::Left,
+        });
+        native.dispatch_event(E::PointerReleased {
+            position,
+            button: B::Left,
+        });
+    }
+}
+
+// leaf: audit-options-sidebar-splitters
+#[test]
+fn the_splitters_save_restore_and_hide_as_the_reference_did_step_by_step() {
+    // replays all nineteen steps of the reference's
+    // (`oracle/fixtures/sidebar_layout.json`, `oracle/record_sidebar_layout.py`):
+    // real drags of both handles, the Pages > sidebar menu entries, the hide
+    // preference through the Options window (cancelled, then applied), a real
+    // double click on the preview handle and the exit-save toggle; after each
+    // step the saved sizes and preferences, and the shown page's sidebar width
+    // and preview height (the reference's sash positions) compared. The panes'
+    // pixel splits differ by window size and handle metrics (DIFFERENCES.md).
+    use hydrus_core::pages::{Page, PageContent, PageKey, Session};
+    let recorded = hydrus_testkit::fixture_json("sidebar_layout.json");
+    let (_dirs, store) = crate::subscriptions::store();
+    let search = |name: &str| Page {
+        key: PageKey::random(),
+        name: name.into(),
+        content: PageContent::Search {
+            search: hydrus_search::FileSearchContext::default(),
+            synchronised: false,
+            sort: None,
+            lock: None,
+            collect: None,
+        },
+    };
+    let session = Session {
+        name: hydrus_store::sessions::LAST_SESSION.into(),
+        pages: vec![search("one"), search("two")],
+    };
+    store
+        .write(move |ctx| hydrus_store::sessions::save(ctx.conn(), &session, 0))
+        .unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let native = windows.get(0).unwrap();
+    render(&native);
+    let show = |tab: i32| {
+        ui.invoke_tab_chosen(0, tab);
+        render(&native);
+    };
+    let layout = || store.read(page_layout::load).unwrap();
+    // the shown page's sash: the sidebar's width (0 hidden) and the preview's height
+    let sash = || {
+        let width = if ui.get_sidebar_hidden() {
+            0.0
+        } else {
+            ui.get_sidebar_actual_width()
+        };
+        (width, ui.get_preview_actual_height())
+    };
+    let steps = recorded["steps"].as_array().unwrap();
+    let check = |step: &Value, who: &str| {
+        let action = step["action"].as_str().unwrap();
+        let saved = layout();
+        assert_eq!(
+            serde_json::json!([saved.hpos, saved.vpos]),
+            step["saved"],
+            "saved: {action}"
+        );
+        assert_eq!(saved.hide_preview, step["hide_preview"], "{action}");
+        assert_eq!(saved.save_on_exit, step["save_on_exit"], "{action}");
+        let page = &step[who];
+        let (width, height) = sash();
+        let visible = !ui.get_sidebar_hidden();
+        assert_eq!(visible, page["sidebar_visible"], "sidebar shown: {action}");
+        if visible {
+            dim(width, page["sash"][0].as_f64().unwrap() as f32);
+        }
+        // (a sidebar of no width, as "reveal uses saved" leaves it after a
+        // save while hidden, shows nothing, though Qt's preview widget there
+        // still reports itself visible)
+        if page["sash"][0] != 0 {
+            let vertical = page["vertical"][1].as_f64().unwrap() as f32;
+            if visible {
+                dim(height, vertical);
+            }
+            assert_eq!(
+                height > 0.0,
+                page["preview_visible"],
+                "preview shown: {action}"
+            );
+        }
+    };
+    // the other page seen without leaving it: its width and preview height
+    let peek = |tab: i32, back: i32, step: &Value| {
+        show(tab);
+        let page = &step["two"];
+        dim(
+            ui.get_sidebar_actual_width(),
+            page["sash"][0].as_f64().unwrap() as f32,
+        );
+        dim(
+            ui.get_preview_actual_height(),
+            page["sash"][1].as_f64().unwrap().abs() as f32
+                * if step["hide_preview"] == true {
+                    0.0
+                } else {
+                    1.0
+                },
+        );
+        show(back);
+    };
+    let step = |name: &str| -> &Value { steps.iter().find(|s| s["action"] == name).unwrap() };
+    check(step("initial"), "one");
+
+    gesture(
+        &native,
+        ui.get_sidebar_handle_x() + 3.0,
+        ui.get_sidebar_handle_y() + 150.0,
+        70.0,
+        0.0,
+    );
+    render(&native);
+    check(step("drag sidebar"), "one");
+    gesture(
+        &native,
+        ui.get_preview_handle_x() + 100.0,
+        ui.get_preview_handle_y() + 3.0,
+        0.0,
+        -55.0,
+    );
+    render(&native);
+    check(step("drag preview"), "one");
+    sidebar(&ui, TOGGLE);
+    render(&native);
+    check(step("hide unsaved preview"), "one");
+    sidebar(&ui, SAVE);
+    check(step("save hidden unsaved preview"), "one");
+
+    // (the recorder sets its options straight, sizes page one and then two)
+    store
+        .write(|ctx| settings::set(ctx.conn(), &PageLayout::default()))
+        .unwrap();
+    sidebar(&ui, RESTORE);
+    sidebar(&ui, TOGGLE);
+    render(&native);
+    let (first, epoch) = (ui.get_layout_page_key(), ui.get_layout_epoch());
+    ui.invoke_sidebar_resized(first.clone(), epoch, false, 470.0);
+    ui.invoke_sidebar_resized(first, epoch, true, 295.0);
+    show(1);
+    ui.invoke_sidebar_resized(
+        ui.get_layout_page_key(),
+        ui.get_layout_epoch(),
+        false,
+        460.0,
+    );
+    ui.invoke_sidebar_resized(ui.get_layout_page_key(), ui.get_layout_epoch(), true, 280.0);
+    render(&native);
+    store
+        .write(|ctx| settings::set(ctx.conn(), &PageLayout::default()))
+        .unwrap();
+    check(step("resize second"), "two");
+    show(0);
+    check(step("return first retains sizes"), "one");
+    peek(1, 0, step("return first retains sizes"));
+    sidebar(&ui, SAVE);
+    check(step("save current now"), "one");
+    sidebar(&ui, TOGGLE);
+    render(&native);
+    check(step("hide sidebar"), "one");
+    sidebar(&ui, SAVE);
+    check(step("save while hidden"), "one");
+    sidebar(&ui, TOGGLE);
+    render(&native);
+    check(step("reveal uses saved"), "one");
+
+    store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &PageLayout {
+                    hpos: 420,
+                    vpos: -260,
+                    ..Default::default()
+                },
+            )
+        })
+        .unwrap();
+    sidebar(&ui, RESTORE);
+    render(&native);
+    check(step("restore all"), "one");
+    peek(1, 0, step("restore all"));
+    let w = options(&ui, &bound);
+    hide(&w, true);
+    w.invoke_cancel();
+    check(step("cancel hide preference"), "one");
+    let w = options(&ui, &bound);
+    hide(&w, true);
+    w.invoke_apply();
+    render(&native);
+    check(step("apply hide preference retains existing split"), "one");
+    sidebar(&ui, RESTORE);
+    render(&native);
+    check(step("restore obeys hide preference"), "one");
+    // the preview handle double clicked, as the reference's recorder did
+    // (its `EventPreviewUnsplit`); the other page is seen too
+    double_click(
+        &native,
+        ui.get_preview_handle_x() + 100.0,
+        ui.get_preview_handle_y() + 3.0,
+    );
+    render(&native);
+    check(step("preview double click clear"), "one");
+    peek(1, 0, step("preview double click clear"));
+    let w = options(&ui, &bound);
+    hide(&w, false);
+    w.invoke_apply();
+    sidebar(&ui, RESTORE);
+    render(&native);
+    check(step("restore visible preview"), "one");
+    peek(1, 0, step("restore visible preview"));
+    assert!(sidebar(&ui, EXIT));
+    check(step("disable exit save"), "one");
+    assert!(!sidebar(&ui, EXIT));
+    check(step("enable exit save"), "one");
 }

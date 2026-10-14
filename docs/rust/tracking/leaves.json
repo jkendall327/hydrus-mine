@@ -20260,10 +20260,10 @@
     "Physical horizontal/vertical drag is replayed. Double-click collapse is supported by PageSplitter.slint handler plus direct native sidebar_collapsed callback; Qt recorder invokes EventPreviewUnsplit. Neither assigned suite dispatches physical double-click, so do not describe this as an executed double-click gesture replay."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real pointer drags of both handles, per-page sizes, close/reopen, restore and exit all driven through the window; but sizes are typed literals mirroring sidebar_layout.json with only the 'save current now' value read from it, and the recorded 'preview double click clear' step is never replayed (only invoke_sidebar_collapsed callbacks; tracker note admits no physical double-click). Part of the splitter behaviour is not covered. Tests: crates/hydrus-gui/tests/gui/sidebar_layout.rs:96 real_drag_menu_saved_defaults_per_page_reopen_restore_options_and_exit_ownership (tagged for another leaf), :350, :573, :688"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r4b)",
+    "note": "gui/sidebar_layout.rs the_splitters_save_restore_and_hide_as_the_reference_did_step_by_step replays all nineteen steps of sidebar_layout.json through the real window: real pointer drags of both handles, the Pages > sidebar menu entries (hide/show, save now, restore all, exit save), the hide preference through the Options window (cancel, then apply) and a pointer double click on the preview handle; after each step the saved sizes and preferences and the shown page's sidebar width and preview height (the reference's sash positions) are compared with the recording's, and the other page's sizes are looked at for the steps where the recording records them. The panes' pixel splits (window size, handle metrics) are not compared (DIFFERENCES.md). The recorded double click changes nothing (the preview is already hidden), so it does not prove the collapse itself; a sidebar saved at width 0 shows nothing in either client, though Qt's preview widget there still reports itself visible."
    }
   },
   {

@@ -4880,3 +4880,8 @@ a sample limit the same number of pairs, not the same pairs, are shown
 Approving pairs now drops, from every rule's queue, the pairs that are no longer
 potential duplicates (as the reference does as groups merge), so approving
 `A-B` and `B-C` leaves no `A-C` waiting.
+
+- **A sidebar saved at width 0 and revealed** (Pages > sidebar > show/hide after
+  "save current page's sidebar/preview size now" while hidden) shows nothing, as
+  the reference does, but its preview is reported hidden too; the reference's
+  preview widget there still reports itself visible, in a column of no width.
