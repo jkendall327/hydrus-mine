@@ -52,6 +52,8 @@ fn strings(value: &Value) -> Vec<String> {
 
 // leaf: audit-media-siblings-exchange
 // leaf: audit-media-parents-exchange
+// leaf: audit-media-siblings-pairs
+// leaf: audit-media-parents-pairs
 #[test]
 fn pair_import_and_export_replay_the_reference_on_local_and_repository_services() {
     let recording = hydrus_testkit::fixture_json("relationship_exchange.json");

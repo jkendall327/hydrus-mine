@@ -1403,9 +1403,10 @@ repository uploader's existing capabilities. Self-pairs are staged after the ref
 one sibling two ideals, is staged as it is, as the reference stages them (its
 repairs look only at the pairs already there; the display graph ignores the
 pairs that would loop or give a second ideal, as the reference's does). The
-message shows without the reference's "Loop problem!" window title. Already corrupt
-reference graph cycles are traversed safely, but do not raise its detailed
-pre-existing-loop warning. Manual background sibling/parent synchronization
+message shows without the reference's "Loop problem!" window title. A pair that leads into a loop
+already there (staged or stored) raises the reference's second "Loop problem!" message,
+listing the path ("one->two->one"); native chases the paths one list order, where the
+reference's follows a Python set's, so several loops may list in another order. Manual background sibling/parent synchronization
 remains separate future work.
 
 ## Detailed embedded file metadata (`hydrus-gui`, `hydrus-media`)

@@ -2203,9 +2203,9 @@
    ],
    "recheck": {
     "date": "2026-10-13",
-    "class": "weak",
-    "by": "Claude session (#165 triage)",
-    "note": "Untagged (2026-10-13): Model replays tag_relationships.json (rows, questions, conflict/loop repairs); self_pairs_cycles_and_two_ideals_in_one_batch_are_staged_as_the_reference_stages_them (crates/hydrus-gui-model/tests/model/tag_relationships.rs) now checks the reference's staging of self-pairs and in-batch loops against relationship_exchange.json (batches are no longer rejected). Still weak: the reference's pre-existing-loop warning is absent (DIFFERENCES.md), and the model test stands in for the window."
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "As audit-media-siblings-pairs, for the parents window: pair entry and preview, conflict and loop repairs, self-pairs, a loop inside one batch, and a pair leading into a loop already there (second 'Loop problem!' message), on a local service and a repository, replayed through the window against tag_relationships.json and relationship_exchange.json. Tests: crates/hydrus-gui/tests/gui/relationship_exchange.rs, tag_relationships_replay.rs."
    }
   },
   {
@@ -3439,9 +3439,9 @@
    ],
    "recheck": {
     "date": "2026-10-13",
-    "class": "weak",
-    "by": "Claude session (#165 triage)",
-    "note": "Untagged (2026-10-13): Model replays tag_relationships.json (conflict repair, rows, updates, questions); self_pairs_cycles_and_two_ideals_in_one_batch_are_staged_as_the_reference_stages_them now checks self-pairs, in-batch loops and two ideals against relationship_exchange.json (batches are no longer rejected). Still weak: the pre-existing-loop warning is absent and write autocomplete in pair entry is missing; the model test stands in for the window."
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "Pair entry, the staged-rows preview and the graph repairs run through the real siblings window (typed and autocompleted tags, add/delete, the questions answered with their buttons, rows compared after each step) against tag_relationships.json and relationship_exchange.json: ordinary conflicts auto-petitioned, a pair closing a loop repealed, self-pairs, a loop inside one batch, two ideals, and (new, recorded and implemented) a pair leading into a loop already there, which raises the reference's second 'Loop problem!' message listing the path. Local service and repository. Several pre-existing loops may list in a different order from the reference's (a Python set's): DIFFERENCES.md. Tests: crates/hydrus-gui/tests/gui/relationship_exchange.rs, tag_relationships_replay.rs."
    }
   },
   {
@@ -9679,10 +9679,10 @@
     "Native options registry has no editable 'Switch to main window when creating new file search page from media viewer:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options row and real viewer middle-press; the activation consumer (activate_if_inactive) is observed only through a request counter, and expected page/predicate values are typed, not recorded. Tracker note 'no editable row exists' is stale. Tests: crates/hydrus-gui/tests/gui/main_identity.rs:46 actual_middle_press_uses_canonical_tag_location_defaults_and_saved_activation"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The real Options row and a real middle press on a viewer tag now compare the new page's name, predicate and whether the main window is asked to come forward (first page only) with tag_search_new_page.json, recorded from the reference's ListBoxTags._NewSearchPages with the option off and on and with a connector and underscore replacement set. The activation itself is observed as a request counter on the main window (the headless platform has no window manager). Test: crates/hydrus-gui/tests/gui/main_identity.rs actual_middle_press_uses_canonical_tag_location_defaults_and_saved_activation."
    }
   },
   {

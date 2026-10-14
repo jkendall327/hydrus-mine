@@ -1944,7 +1944,8 @@ cover the implementation.
 Recorded against the reference (bin E of #97): pair import from the clipboard
 or a .txt file (uneven lines, cleaning, blank lines, pre-existing and pending
 pairs, sibling conflicts, loops, self-pairs staged after the "Loop problem!"
-message, a batch looping within itself or giving one tag two ideals,
+message, a pair leading into a loop already there (its path listed in a second
+"Loop problem!" message), a batch looping within itself or giving one tag two ideals,
 re-imported petitions, more than ten pairs on a repository) and selected-pair export to the clipboard or a .txt file
 (`oracle/record_relationship_exchange.py`); the default service tab and saving
 it on change, shared with Manage tags, whose tabs read "name (tags)" with " *"
