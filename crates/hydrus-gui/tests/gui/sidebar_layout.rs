@@ -1011,6 +1011,29 @@ fn the_splitters_save_restore_and_hide_as_the_reference_did_step_by_step() {
     peek(1, 0, step("return first retains sizes"));
     sidebar(&ui, SAVE);
     check(step("save current now"), "one");
+    // real double clicks on each handle while both panes are shown (the
+    // reference's `EventPreviewUnsplit` and `EventUnsplit`), each put back
+    double_click(
+        &native,
+        ui.get_preview_handle_x() + 100.0,
+        ui.get_preview_handle_y() + 3.0,
+    );
+    render(&native);
+    check(step("preview double click collapse"), "one");
+    let (key, epoch) = (ui.get_layout_page_key(), ui.get_layout_epoch());
+    ui.invoke_sidebar_resized(key.clone(), epoch, true, 295.0);
+    render(&native);
+    double_click(
+        &native,
+        ui.get_sidebar_handle_x() + 3.0,
+        ui.get_sidebar_handle_y() + 150.0,
+    );
+    render(&native);
+    check(step("sidebar double click collapse"), "one");
+    ui.invoke_sidebar_resized(key.clone(), epoch, false, 470.0);
+    ui.invoke_sidebar_resized(key, epoch, true, 295.0);
+    render(&native);
+    check(step("collapse put back"), "one");
     sidebar(&ui, TOGGLE);
     render(&native);
     check(step("hide sidebar"), "one");
