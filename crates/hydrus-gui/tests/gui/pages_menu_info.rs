@@ -495,16 +495,59 @@ fn clear_and_load_asks_again_for_importing_pages_as_the_reference_does() {
                 again["message"].as_str().unwrap(),
                 "{case}: asked again"
             );
-            let before = tabs(&ui).len();
+            let old_keys: Vec<PageKey> = bound
+                .pages
+                .borrow()
+                .session()
+                .all_pages()
+                .iter()
+                .map(|page| page.key)
+                .collect();
             ui.invoke_answer(again["answer"].as_bool().unwrap());
+            // (the tabs name their pages, with a progress count for an
+            // importer)
+            let names: Vec<String> = tabs(&ui)
+                .iter()
+                .map(|tab| tab.split(" (").next().unwrap().to_owned())
+                .collect();
+            let recorded_names: Vec<&str> = step["pages"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|name| name.as_str().unwrap())
+                .collect();
             assert_eq!(
-                tabs(&ui).len(),
-                step["pages"].as_array().unwrap().len(),
+                names, recorded_names,
                 "{case}: the pages after answering {}",
                 again["answer"]
             );
-            if again["answer"] == false {
-                assert_eq!(tabs(&ui).len(), before, "{case}: no keeps the pages");
+            // (the session's page and the old ones are all "files": which
+            // pages are open is told by their keys)
+            let now: Vec<PageKey> = bound
+                .pages
+                .borrow()
+                .session()
+                .all_pages()
+                .iter()
+                .map(|page| page.key)
+                .collect();
+            if again["answer"] == true {
+                assert!(
+                    now.iter().all(|key| !old_keys.contains(key)),
+                    "{case}: every importing page is closed"
+                );
+                assert!(
+                    !bound
+                        .pages
+                        .borrow()
+                        .session()
+                        .all_pages()
+                        .iter()
+                        .any(|page| matches!(page.content, PageContent::Downloader { .. })),
+                    "{case}: none of the pages is an importer"
+                );
+            } else {
+                assert_eq!(now, old_keys, "{case}: no keeps the same pages");
             }
         }
     }
