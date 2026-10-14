@@ -139,7 +139,10 @@ as Qt's do; a press anywhere else closes them. What works so far:
   running an export folder now, opening the installation and database
   directories, the options, and exit, restart and exit/force maintenance
   (declining a restart leaves the next window close a plain exit, as the
-  reference's per-request flag does), and minimise to system tray where the
+  reference's per-request flag does; they warn first when the database drive
+  is nearly full, and when pages are still importing they ask in the pages'
+  dialog, which says importers will save and continue on the next start; the
+  exit question answers itself yes after 15 seconds), and minimise to system tray where the
   desktop has a tray (see the system tray section);
 - undo: the pages closed in the last hour, latest first, to reopen any of
   them, or forget them all (asking first); searching additions and removals,

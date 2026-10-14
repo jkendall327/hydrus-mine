@@ -68,6 +68,19 @@ pub fn open(
     yes: Rc<dyn Fn()>,
     show: Rc<dyn Fn(PageKey)>,
 ) -> Result<ChoiceButtonsWindow, String> {
+    open_with_auto_yes(message, objections, yes_delay, None, yes, show)
+}
+
+/// [`open`], answering yes by itself after `auto_yes` (`auto_yes_time`),
+/// even if "yes" is still disabled.
+pub fn open_with_auto_yes(
+    message: &str,
+    objections: Vec<Objection>,
+    yes_delay: Duration,
+    auto_yes: Option<Duration>,
+    yes: Rc<dyn Fn()>,
+    show: Rc<dyn Fn(PageKey)>,
+) -> Result<ChoiceButtonsWindow, String> {
     let window =
         crate::app_title::new::<crate::ChoiceButtonsWindow>().map_err(|e| e.to_string())?;
     window.set_window_title(TITLE.into());
@@ -89,16 +102,35 @@ pub fn open(
             }
         });
     }
+    let auto_timer = Rc::new(Timer::default());
     let done = Rc::new({
         let weak = window.as_weak();
         let timer = timer.clone();
+        let auto_timer = auto_timer.clone();
         move || {
             timer.stop();
+            auto_timer.stop();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
         }
     });
+    if let Some(auto_yes) = auto_yes {
+        auto_timer.start(TimerMode::SingleShot, auto_yes, {
+            // (weakly: the handlers own `done`, which owns this timer)
+            let done = Rc::downgrade(&done);
+            let yes = yes.clone();
+            let weak = window.as_weak();
+            move || {
+                if let Some(done) = done.upgrade()
+                    && weak.upgrade().is_some_and(|w| w.window().is_visible())
+                {
+                    done();
+                    yes();
+                }
+            }
+        });
+    }
     window.on_chosen({
         let done = done.clone();
         let weak = window.as_weak();

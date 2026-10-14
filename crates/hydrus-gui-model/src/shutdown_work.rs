@@ -34,6 +34,46 @@ impl ExitMode {
     }
 }
 
+/// How long the exit question waits before answering itself yes.
+pub const AUTO_YES_SECONDS: u64 = 15;
+
+/// The title of the exit and restart questions (the quick dialogs' default).
+pub const QUESTION_TITLE: &str = "Are you sure?";
+
+/// The low-free-space question's buttons.
+pub const LOW_SPACE_YES: &str = "try exiting now";
+pub const LOW_SPACE_NO: &str = "back out";
+
+/// How much room the exit needs to save its data
+/// (`GetSafeTransactionDiskSpaceAndCurrentFreeSpace`): half the database,
+/// at most 5GB, at least 64MB.
+pub fn space_wanted(total_db_size: u64) -> u64 {
+    const MB: u64 = 1_048_576;
+    (total_db_size / 2).clamp(64 * MB, 5 * 1024 * MB)
+}
+
+/// The question asked when there is less room than that.
+pub fn low_space_question(free: u64, wanted: u64) -> String {
+    format!(
+        "You currently have very little free space ({}) on your hydrus database drive partition. I think you should really have at least {} in order to save your exit data correctly. I recommend you free up disk space NOW.",
+        hydrus_core::numbers::human_bytes(free),
+        hydrus_core::numbers::human_bytes(wanted)
+    )
+}
+
+/// The confirmation when pages object to the session closing: the exit
+/// question, the importers' paragraph if any reason mentions import, and
+/// what the pages say.
+pub fn objection_question(mode: ExitMode, statement: &str) -> String {
+    let mut text = mode.question().to_owned();
+    if statement.contains("import") {
+        text.push_str("\n\nImporters will save and continue their work on the next start.");
+    }
+    text.push_str("\n\n");
+    text.push_str(statement);
+    text
+}
+
 /// The run-jobs-on-shutdown choices, in the reference's order
 /// (`idle_string_lookup`).
 pub const ACTIONS: [&str; 3] = [

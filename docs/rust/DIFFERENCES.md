@@ -458,8 +458,8 @@ search.
   reaches the main-window title; secondary window titles still use their existing
   captions. Regex favourites open in a child list editor rather than embedding
   that list on the options page; their changes still wait for the parent Apply.
-  Exit confirmation honors the switch and auto-accept timeout; importer
-  activity reasons and shutdown-maintenance questions are not yet included. Search position and
+  Exit confirmation honors the switch and auto-accept timeout (see Shutdown
+  maintenance for the exit questions). Search position and
   remembering the last panel are editable. Connection/error-delay ranges follow the saved advanced mode
   when opening the window; changing that mode takes effect on reopening, as in
   the reference. Two options with the same label each go to their own
@@ -4431,11 +4431,19 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   the reference); FTS virtual tables are never analysed.
 - Restart is offered on every platform (the reference hides it for frozen
   Linux builds).
-- Exit asks the reference's question (`oracle/record_file_menu_exit.py`) but
-  not its other two: the extra paragraph naming the pages that hold importers
-  ("Importers will save and continue their work on the next start.") and the
-  "very little free space" prompt before saving the exit data. The exit
-  question is asked whenever confirmation is on.
+- Exit asks what the reference asks (`oracle/record_file_menu_exit.py`): the
+  "very little free space" question first (the database drive's free space
+  against half the database size, between 64MB and 5GB), then the exit
+  question, which becomes the pages' dialog (with the "Importers will save
+  and continue their work on the next start." paragraph) when a downloader
+  page is still importing. The exit question's 15-second auto-yes is a timer
+  in the window; the reference also counts it down in the dialog's title,
+  which hydrus-rs does not. The question is shown over the main window rather
+  than in a dialog, with the recorded title above its text and the recorded
+  button labels. The exit's free-space sum counts the `*.db` files in the
+  database directory, as the reference counts its own.
+- Restart is proven by a stand-in program started with the client's
+  arguments, not by relaunching the real binary (DECISIONS.md, 2026-10-14).
 
 ## Content undo
 

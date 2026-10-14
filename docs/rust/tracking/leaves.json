@@ -14897,14 +14897,13 @@
    "reference": null,
    "native": null,
    "notes": [
-    "Dispatches Slint CloseRequested; main.rs keeps frame geometry, then after the event loop saves the last session, forgets closed-page queues and stops the daemon.",
-    "No reference exit-confirmation flow or shutdown-maintenance/restart options."
+    "File > exit asks as TryToExit does (low free space, then the exit question or the pages' dialog), runs due shutdown maintenance, then closes the window; main.rs saves the last session and stops the daemon."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "weak",
-    "by": "claude, #97 phase 2 (w4-r2)",
-    "note": "oracle/record_file_menu_exit.py triggers the reference's real File > exit and records every question and whether the client exits (confirmation on declined/accepted, off, shutdown work due or not); exit_restart_and_force_maintenance_replay_the_references_questions_and_outcomes replays each through the real menu and window. Not class sound because two parts of the reference's exit are not ported: the 'Importers will save...' paragraph for pages with importers and the low-free-space prompt before saving exit data (both in DIFFERENCES.md); the replay does not check the dialog title, button labels or the 15 s auto-yes."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude, wave 5 W5-1",
+    "note": "oracle/record_file_menu_exit.py triggers the reference's real File > exit and records every question TryToExit asks (text, title, button labels, auto-yes time, whether 'yes' starts disabled) and whether the client exits: confirmation on/off, declined/accepted, shutdown work due or not, little free space (backed out, tried, then confirmed), pages that are still importing (the 'Importers will save...' paragraph, the pages' reasons, one or two pages) and paused ones (nothing asked). exit_restart_and_force_maintenance_replay_the_references_questions_and_outcomes replays each through the real menu and window: text, title and button labels of the plain question and of the pages' dialog compared with the recording, 'yes' disabled until the pages' dialog's delay has passed, answers by button, and every accepted question again by waiting out its 15 s auto-yes in the headless platform's advanced clock (nothing answers early). Not covered: the reference's dialog title counting down to the auto-yes, and 'no, but show me the pages' (covered by the page-close replay)."
    }
   },
   {
@@ -14917,14 +14916,13 @@
    "reference": null,
    "native": null,
    "notes": [
-    "'exit/force maintenance' is emitted as a disabled todo()/command-less entry. No callback executes its reference workflow.",
-    "No native Command for 'exit/force maintenance'."
+    "Exits like File > exit, with the shutdown maintenance forced whatever the options."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "weak",
-    "by": "claude, #97 phase 2 (w4-r2)",
-    "note": "oracle/record_file_menu_exit.py triggers the reference's File > exit/force maintenance: confirmation off exits unasked with shutdown work forced; confirmation on asks the exit question. The same replay test drives it through the real menu. Weak, not sound, for the same two unported parts as plain exit (importer paragraph, low-free-space prompt; DIFFERENCES.md); button labels and auto-yes are not compared."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude, wave 5 W5-1",
+    "note": "Same recording and replay as plain exit: the entry with confirmation off exits unasked with the shutdown work forced whatever the options; with confirmation on it asks the exit question (title, buttons and auto-yes compared with the recording) and then forces the work. Asking about little free space or importing pages is shared with exit."
    }
   },
   {
@@ -15100,14 +15098,13 @@
    "reference": null,
    "native": null,
    "notes": [
-    "'restart' is emitted as a disabled todo()/command-less entry. No callback executes its reference workflow.",
-    "No native Command for 'restart'."
+    "Exits like File > exit, then starts the client again with its arguments (client_exit::relaunch_if_requested)."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "weak",
-    "by": "claude, #97 phase 2 (w4-r2)",
-    "note": "oracle/record_file_menu_exit.py triggers the reference's File > restart (question with confirmation on, declined stays, accepted exits with the restart flag; unasked with confirmation off); the replay test drives the same through the real menu and the relaunch hook. Weak, not sound: the importer paragraph and low-free-space prompt shared with exit are not ported (DIFFERENCES.md), and the relaunch itself is a stand-in client script, not the real binary."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "claude, wave 5 W5-1",
+    "note": "Same recording and replay as plain exit, for the restart entry: the restart question (text, title, buttons, auto-yes), declined stays, accepted exits with the restart flag, unasked with confirmation off, little free space and importing pages asked first. The relaunch is a stand-in client script rather than the real binary, which DECISIONS.md (2026-10-14) accepts as proof of restart. The arguments the real client passes to the relaunch (current_exe and args_os minus the first, main.rs) are not driven: the test supplies its own, and that part is checked by reading the code."
    }
   },
   {
