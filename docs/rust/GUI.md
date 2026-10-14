@@ -2310,7 +2310,8 @@ a urls import page holding 3 import objects.", pages with the same reason
 grouped, fewest first), with "yes" (pressable after 1.2 seconds), "no" and "no,
 but show me the pages", which opens a "Go To Page" list of buttons ("reason:
 page name"), each of which shows its page and leaves the list up. Closing one
-page asks `Close "name"?` with the reason. The wording, buttons and results are
+page asks `Close "name"?` with the reason (a page of pages with objecting pages
+inside asks the same longer dialog, listing them). The wording, buttons and results are
 compared with `oracle/fixtures/tab_close_objections.json`.
 
 Pages > sessions > append adds the saved session as a page of pages named after it to the top notebook (not inside the page of pages that is shown), where "new page goes" puts it, and shows it, as the reference does (`oracle/record_sessions_append.py`).

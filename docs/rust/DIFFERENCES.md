@@ -4881,3 +4881,11 @@ a sample limit the same number of pairs, not the same pairs, are shown
 Approving pairs now drops, from every rule's queue, the pairs that are no longer
 potential duplicates (as the reference does as groups merge), so approving
 `A-B` and `B-C` leaves no `A-C` waiting.
+
+- **Queuing URLs to a named downloader page** (the force metadata refetch and the
+  missing-files redownloader) does not check that a URL's class has a parser,
+  as the reference's sidebar `PendURL` does not; only `ClientGUI.ImportURL`
+  (drops, the clipboard) does. A URL that cannot be parsed fails when fetched.
+- **Archive/delete filter, "forget" answered no:** the reference leaves its
+  finish dialog up; hydrus-rs goes back to its question. Not recorded (the
+  recorder's forget-no is the dialog staying open).

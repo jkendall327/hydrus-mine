@@ -89,6 +89,20 @@ def record(session):
         return top
     cases = []
 
+    def build_nested():
+        top = ClientGUIPages.PagesNotebook(gui, 'close objections nested')
+        top.NewPageQuery(context, page_name='a', forced_insertion_index=0)
+        group = top.NewPagesNotebook(name='group', forced_insertion_index=1, give_it_a_blank_page=False)
+        manager = ClientGUIPageManager.CreatePageManagerImportURLs(page_name='nested imp')
+        page = group.NewPage(manager, forced_insertion_index=0)
+        urls = page.GetPageManager().GetVariable('urls_import')
+        if not urls.IsPaused():
+            urls.PausePlay()
+        urls.PendURLs(['https://files.example/nested-%d.jpg' % i for i in range(4)])
+        top.NewPageQuery(context, page_name='b', forced_insertion_index=2)
+        top.setCurrentIndex(0)
+        return top
+
     def drive():
         for label, method, index in (('other pages', '_CloseOtherPages', 0), ('pages to the left', '_CloseLeftPages', 2),
                 ('pages to the right', '_CloseRightPages', 2), ('pages to the right (nothing objects)', '_CloseRightPages', 3),
@@ -103,7 +117,25 @@ def record(session):
                 getattr(top, method)(index)
                 QW.QApplication.processEvents()
                 cases.append(dict(menu=label, index=index, answer=choice, before=before, asked=list(asked), lists=list(lists),
-                    shown=list(shown), after=[top.widget(i).GetName() for i in range(top.count())]))
+                    shown=list(shown), after=[top.widget(i).GetName() for i in range(top.count())],
+                    closed_indices=[i for i, key in top._closed_pages]))
+        # a page of pages holding an importer: its tab's close page, and the
+        # first tab's close other pages
+        for label, method, index in (('nested: close page', '_ClosePage', 1), ('nested: other pages', '_CloseOtherPages', 0)):
+            for choice in ('yes', 'no', 'show'):
+                if method == '_ClosePage' and choice == 'show':
+                    continue
+                top = build_nested()
+                answer[0] = choice
+                asked.clear()
+                lists.clear()
+                shown.clear()
+                before = [top.widget(i).GetName() for i in range(top.count())]
+                getattr(top, method)(index)
+                QW.QApplication.processEvents()
+                cases.append(dict(menu=label, index=index, answer=choice, before=before, asked=list(asked), lists=list(lists),
+                    shown=list(shown), after=[top.widget(i).GetName() for i in range(top.count())],
+                    closed_indices=[i for i, key in top._closed_pages]))
         return cases
     try:
         return controller.CallBlockingToQt(gui, drive)

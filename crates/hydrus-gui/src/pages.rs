@@ -2376,9 +2376,27 @@ impl Pages {
             .iter()
             .map(|(reason, name, _)| (reason.clone(), name.clone()))
             .collect();
-        // the objecting pages in the order the reference lists them to go to
+        let listed = Self::listed(objections);
+        Some(CloseTabs {
+            keys,
+            question: crate::session_saving::close_group_question(
+                held,
+                crate::tab_context::close_description(side),
+                &vetoes,
+            ),
+            objections: listed,
+        })
+    }
+
+    /// The objecting pages in the order the reference lists them to go to
+    /// (`ShowReasonsAndPagesConfirmationDialog`).
+    fn listed(objections: Vec<(String, String, PageKey)>) -> Vec<Objection> {
+        let vetoes: Vec<(String, String)> = objections
+            .iter()
+            .map(|(reason, name, _)| (reason.clone(), name.clone()))
+            .collect();
         let mut unlisted = objections;
-        let listed = hydrus_gui_model::session_saving::group_vetoes(&vetoes)
+        hydrus_gui_model::session_saving::group_vetoes(&vetoes)
             .into_iter()
             .flat_map(|(reason, names)| {
                 names
@@ -2396,16 +2414,27 @@ impl Pages {
                     })
                     .collect::<Vec<_>>()
             })
-            .collect();
-        Some(CloseTabs {
-            keys,
-            question: crate::session_saving::close_group_question(
-                held,
-                crate::tab_context::close_description(side),
-                &vetoes,
-            ),
-            objections: listed,
-        })
+            .collect()
+    }
+
+    /// Closing a page of pages with objecting pages inside it asks the
+    /// reference's longer dialog too (`AskIfAbleToClose` on a notebook):
+    /// the question and the pages that object.
+    pub fn close_notebook_plan(
+        &mut self,
+        depth: usize,
+        index: usize,
+    ) -> Option<(String, Vec<Objection>)> {
+        let page = self.notebook_at(depth)?.get(index)?.clone();
+        if !matches!(page.content, PageContent::Pages(_)) {
+            return None;
+        }
+        let objections = self.close_objections(std::slice::from_ref(&page));
+        if objections.is_empty() {
+            return None;
+        }
+        let question = self.close_question(depth, index)?;
+        Some((question, Self::listed(objections)))
     }
 
     fn close_vetoes(&mut self, pages: &[Page]) -> Vec<(String, String)> {

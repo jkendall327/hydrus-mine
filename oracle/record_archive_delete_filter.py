@@ -110,6 +110,13 @@ def record(session):
             except RuntimeError:
                 return False  # (closed and deleted)
 
+        def is_gone(frame):
+            try:
+                frame.isVisible()
+                return False
+            except RuntimeError:
+                return True
+
         def state(canvas, frame, do):
             order = [m.GetHash().hex() for m in canvas._media_list.GetSortedMedia()]
             cur = canvas._current_media
@@ -162,6 +169,13 @@ def record(session):
                             asked_by_the_window=asked_by_the_window, returned=ok,
                             questions=list(questions), commits=list(commits), removed=list(removed),
                             after=state(canvas, frame, 'close')))
+                        again = None
+                        if button == 'back' and not is_gone(frame):
+                            # asked again: the decisions that are left
+                            questions.clear()
+                            canvas.UserOKToClose()
+                            again = list(questions)
+                        out['closes'][-1]['again'] = again
                         try:
                             canvas._kept = set()
                             canvas._deleted = set()

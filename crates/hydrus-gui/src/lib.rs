@@ -2452,6 +2452,33 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let change_pages = change_pages.clone();
         let ask = ask.clone();
         move |depth: usize, index: usize| {
+            // a page of pages with objecting pages inside: the longer dialog
+            let plan = pages.borrow_mut().close_notebook_plan(depth, index);
+            if let Some((question, objections)) = plan {
+                let yes: Rc<dyn Fn()> = Rc::new({
+                    let change_pages = change_pages.clone();
+                    move || change_pages(&|pages| pages.close(depth, index))
+                });
+                let show: Rc<dyn Fn(hydrus_core::pages::PageKey)> = Rc::new({
+                    let change_pages = change_pages.clone();
+                    move |key| {
+                        change_pages(&|pages| {
+                            pages.show(&key);
+                            Ok(())
+                        });
+                    }
+                });
+                if let Err(error) = reasons_dialog::open(
+                    &question,
+                    objections,
+                    reasons_dialog::yes_delay(),
+                    yes,
+                    show,
+                ) {
+                    eprintln!("could not ask about closing the page: {error}");
+                }
+                return;
+            }
             let question = pages.borrow_mut().close_question(depth, index);
             match question {
                 Some(question) => ask(Asked::ClosePage(depth, index, question)),

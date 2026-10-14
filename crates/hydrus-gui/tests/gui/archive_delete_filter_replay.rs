@@ -293,15 +293,25 @@ fn the_finish_question_and_its_answers_are_the_references() {
                     format!("{}/{total}", after["current"].as_u64().unwrap() + 1),
                     "{label}"
                 );
-                // ask again: the same question as the decisions left
+                // asked again, the question is the reference's for the
+                // decisions left
                 window.invoke_close_requested();
-                let again = after["kept"].as_array().unwrap().len();
-                let deleted = after["deleted"].as_array().unwrap().len();
-                let q = window.get_question().to_string();
-                if again > 0 {
-                    assert!(q.starts_with(&format!("keep {again}")), "{label}: {q}");
+                let again = case["again"].as_array().unwrap();
+                if let Some(q) = again.first() {
+                    let mut shown: Vec<String> = Vec::new();
+                    let header = window.get_finish_header().to_string();
+                    if !header.is_empty() {
+                        shown.push(header);
+                    }
+                    shown.extend(window.get_commit_labels().iter().map(|l| l.to_string()));
+                    shown.push("-or-".into());
+                    assert_eq!(shown, strings(&q["labels"]), "{label}: asked again");
+                } else {
+                    assert!(
+                        o.bound.archive_delete.borrow().is_none(),
+                        "{label}: nothing left"
+                    );
                 }
-                assert_eq!(q.contains("delete"), deleted > 0, "{label}: {q}");
             }
         }
     }

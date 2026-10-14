@@ -53,6 +53,12 @@
       "shown": [],
       "after": [
         "a"
+      ],
+      "closed_indices": [
+        4,
+        3,
+        2,
+        1
       ]
     },
     {
@@ -112,7 +118,8 @@
         "b",
         "imp2",
         "c"
-      ]
+      ],
+      "closed_indices": []
     },
     {
       "menu": "other pages",
@@ -180,8 +187,8 @@
         }
       ],
       "shown": [
-        "54b5eacb3b4361374ef52f7913a821e8d1ff2bb2d1f9180e0d27d3de78f2e4a6",
-        "0e67066cb997ecf06fd218b65e82249c963fd0ab4b321f72ad918e2147242b31"
+        "43eec65d49b82c6cc7c55238fe747314236c4a5b36e2edf8bc718655d6bedc20",
+        "7b2c9aa16b53622897049b64b309b0931256ff0cd0b0bc04d95342d578f8d15b"
       ],
       "after": [
         "a",
@@ -189,7 +196,8 @@
         "b",
         "imp2",
         "c"
-      ]
+      ],
+      "closed_indices": []
     },
     {
       "menu": "pages to the left",
@@ -246,6 +254,10 @@
         "b",
         "imp2",
         "c"
+      ],
+      "closed_indices": [
+        1,
+        0
       ]
     },
     {
@@ -305,7 +317,8 @@
         "b",
         "imp2",
         "c"
-      ]
+      ],
+      "closed_indices": []
     },
     {
       "menu": "pages to the left",
@@ -369,7 +382,7 @@
         }
       ],
       "shown": [
-        "737e0e2b301c4de0ca5014c9dccb07492a155bf45cb0259cc91cd0862d1d64c7"
+        "88732c84038bb13334cf4588bae00a023ef38b2c7094c59962f0ea1582235150"
       ],
       "after": [
         "a",
@@ -377,7 +390,8 @@
         "b",
         "imp2",
         "c"
-      ]
+      ],
+      "closed_indices": []
     },
     {
       "menu": "pages to the right",
@@ -434,6 +448,10 @@
         "a",
         "imp1",
         "b"
+      ],
+      "closed_indices": [
+        4,
+        3
       ]
     },
     {
@@ -493,7 +511,8 @@
         "b",
         "imp2",
         "c"
-      ]
+      ],
+      "closed_indices": []
     },
     {
       "menu": "pages to the right",
@@ -557,7 +576,7 @@
         }
       ],
       "shown": [
-        "bd6da691b14e432568f598c1a51f6d1db1be40c96810218fa45ee06ed7c825e6"
+        "a1776399b6d811f1c6cba54ea62f68245349525e73ea45dc8eb8eda70c762204"
       ],
       "after": [
         "a",
@@ -565,7 +584,8 @@
         "b",
         "imp2",
         "c"
-      ]
+      ],
+      "closed_indices": []
     },
     {
       "menu": "pages to the right (nothing objects)",
@@ -592,6 +612,9 @@
         "imp1",
         "b",
         "imp2"
+      ],
+      "closed_indices": [
+        4
       ]
     },
     {
@@ -620,7 +643,8 @@
         "b",
         "imp2",
         "c"
-      ]
+      ],
+      "closed_indices": []
     },
     {
       "menu": "pages to the right (nothing objects)",
@@ -648,7 +672,8 @@
         "b",
         "imp2",
         "c"
-      ]
+      ],
+      "closed_indices": []
     },
     {
       "menu": "close page",
@@ -675,6 +700,9 @@
         "b",
         "imp2",
         "c"
+      ],
+      "closed_indices": [
+        1
       ]
     },
     {
@@ -703,7 +731,8 @@
         "b",
         "imp2",
         "c"
-      ]
+      ],
+      "closed_indices": []
     },
     {
       "menu": "close page (nothing objects)",
@@ -724,6 +753,9 @@
         "b",
         "imp2",
         "c"
+      ],
+      "closed_indices": [
+        0
       ]
     },
     {
@@ -745,7 +777,305 @@
         "b",
         "imp2",
         "c"
+      ],
+      "closed_indices": [
+        0
       ]
+    },
+    {
+      "menu": "nested: close page",
+      "index": 1,
+      "answer": "yes",
+      "before": [
+        "a",
+        "group",
+        "b"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no/no",
+          "message": "Close \"group\"?\n\npage \"nested imp\" says: This is a urls import page holding 4 import objects.",
+          "title": "Are you sure?",
+          "no_tuples": [
+            [
+              "no",
+              "no"
+            ],
+            [
+              "no, but show me the pages",
+              "show"
+            ]
+          ],
+          "disable_yes_initially": true,
+          "auto_yes_time": null,
+          "panel": {
+            "buttons": [
+              {
+                "text": "yes",
+                "enabled": false
+              },
+              {
+                "text": "no",
+                "enabled": true
+              },
+              {
+                "text": "no, but show me the pages",
+                "enabled": true
+              }
+            ],
+            "label": [
+              "Close \"group\"?\n\npage \"nested imp\" says: This is a urls import page holding 4 import objects."
+            ]
+          }
+        }
+      ],
+      "lists": [],
+      "shown": [],
+      "after": [
+        "a",
+        "b"
+      ],
+      "closed_indices": [
+        1
+      ]
+    },
+    {
+      "menu": "nested: close page",
+      "index": 1,
+      "answer": "no",
+      "before": [
+        "a",
+        "group",
+        "b"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no/no",
+          "message": "Close \"group\"?\n\npage \"nested imp\" says: This is a urls import page holding 4 import objects.",
+          "title": "Are you sure?",
+          "no_tuples": [
+            [
+              "no",
+              "no"
+            ],
+            [
+              "no, but show me the pages",
+              "show"
+            ]
+          ],
+          "disable_yes_initially": true,
+          "auto_yes_time": null,
+          "panel": {
+            "buttons": [
+              {
+                "text": "yes",
+                "enabled": false
+              },
+              {
+                "text": "no",
+                "enabled": true
+              },
+              {
+                "text": "no, but show me the pages",
+                "enabled": true
+              }
+            ],
+            "label": [
+              "Close \"group\"?\n\npage \"nested imp\" says: This is a urls import page holding 4 import objects."
+            ]
+          }
+        }
+      ],
+      "lists": [],
+      "shown": [],
+      "after": [
+        "a",
+        "group",
+        "b"
+      ],
+      "closed_indices": []
+    },
+    {
+      "menu": "nested: other pages",
+      "index": 0,
+      "answer": "yes",
+      "before": [
+        "a",
+        "group",
+        "b"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no/no",
+          "message": "Are you sure you want to close 3 other pages?\n\npage \"nested imp\" says: This is a urls import page holding 4 import objects.",
+          "title": "Are you sure?",
+          "no_tuples": [
+            [
+              "no",
+              "no"
+            ],
+            [
+              "no, but show me the pages",
+              "show"
+            ]
+          ],
+          "disable_yes_initially": true,
+          "auto_yes_time": null,
+          "panel": {
+            "buttons": [
+              {
+                "text": "yes",
+                "enabled": false
+              },
+              {
+                "text": "no",
+                "enabled": true
+              },
+              {
+                "text": "no, but show me the pages",
+                "enabled": true
+              }
+            ],
+            "label": [
+              "Are you sure you want to close 3 other pages?\n\npage \"nested imp\" says: This is a urls import page holding 4 import objects."
+            ]
+          }
+        }
+      ],
+      "lists": [],
+      "shown": [],
+      "after": [
+        "a"
+      ],
+      "closed_indices": [
+        2,
+        1
+      ]
+    },
+    {
+      "menu": "nested: other pages",
+      "index": 0,
+      "answer": "no",
+      "before": [
+        "a",
+        "group",
+        "b"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no/no",
+          "message": "Are you sure you want to close 3 other pages?\n\npage \"nested imp\" says: This is a urls import page holding 4 import objects.",
+          "title": "Are you sure?",
+          "no_tuples": [
+            [
+              "no",
+              "no"
+            ],
+            [
+              "no, but show me the pages",
+              "show"
+            ]
+          ],
+          "disable_yes_initially": true,
+          "auto_yes_time": null,
+          "panel": {
+            "buttons": [
+              {
+                "text": "yes",
+                "enabled": false
+              },
+              {
+                "text": "no",
+                "enabled": true
+              },
+              {
+                "text": "no, but show me the pages",
+                "enabled": true
+              }
+            ],
+            "label": [
+              "Are you sure you want to close 3 other pages?\n\npage \"nested imp\" says: This is a urls import page holding 4 import objects."
+            ]
+          }
+        }
+      ],
+      "lists": [],
+      "shown": [],
+      "after": [
+        "a",
+        "group",
+        "b"
+      ],
+      "closed_indices": []
+    },
+    {
+      "menu": "nested: other pages",
+      "index": 0,
+      "answer": "show",
+      "before": [
+        "a",
+        "group",
+        "b"
+      ],
+      "asked": [
+        {
+          "dialog": "yes/no/no",
+          "message": "Are you sure you want to close 3 other pages?\n\npage \"nested imp\" says: This is a urls import page holding 4 import objects.",
+          "title": "Are you sure?",
+          "no_tuples": [
+            [
+              "no",
+              "no"
+            ],
+            [
+              "no, but show me the pages",
+              "show"
+            ]
+          ],
+          "disable_yes_initially": true,
+          "auto_yes_time": null,
+          "panel": {
+            "buttons": [
+              {
+                "text": "yes",
+                "enabled": false
+              },
+              {
+                "text": "no",
+                "enabled": true
+              },
+              {
+                "text": "no, but show me the pages",
+                "enabled": true
+              }
+            ],
+            "label": [
+              "Are you sure you want to close 3 other pages?\n\npage \"nested imp\" says: This is a urls import page holding 4 import objects."
+            ]
+          }
+        }
+      ],
+      "lists": [
+        {
+          "title": "Go To Page",
+          "message": "",
+          "choices": [
+            [
+              "This is a urls import page holding 4 import objects.: nested imp",
+              "Show this page."
+            ]
+          ]
+        }
+      ],
+      "shown": [
+        "445d1c92664658c4d0e67d70c23318a085a99c06709696e927553e8d9f62b239"
+      ],
+      "after": [
+        "a",
+        "group",
+        "b"
+      ],
+      "closed_indices": []
     }
   ]
 }

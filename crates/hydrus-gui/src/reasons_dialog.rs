@@ -73,17 +73,22 @@ pub fn open(
     window.set_window_title(TITLE.into());
     window.set_message(message.into());
     window.set_choices(strings(["yes", "no", SHOW_PAGES].map(str::to_owned)));
-    window.set_choices_enabled(ModelRc::new(VecModel::from(vec![false, true, true])));
     // (kept alive by the window's handlers)
     let timer = Rc::new(Timer::default());
-    timer.start(TimerMode::SingleShot, yes_delay, {
-        let weak = window.as_weak();
-        move || {
-            if let Some(window) = weak.upgrade() {
-                window.set_choices_enabled(ModelRc::new(VecModel::from(vec![true, true, true])));
+    if yes_delay.is_zero() {
+        window.set_choices_enabled(ModelRc::new(VecModel::from(vec![true, true, true])));
+    } else {
+        window.set_choices_enabled(ModelRc::new(VecModel::from(vec![false, true, true])));
+        timer.start(TimerMode::SingleShot, yes_delay, {
+            let weak = window.as_weak();
+            move || {
+                if let Some(window) = weak.upgrade() {
+                    window
+                        .set_choices_enabled(ModelRc::new(VecModel::from(vec![true, true, true])));
+                }
             }
-        }
-    });
+        });
+    }
     let done = Rc::new({
         let weak = window.as_weak();
         let timer = timer.clone();

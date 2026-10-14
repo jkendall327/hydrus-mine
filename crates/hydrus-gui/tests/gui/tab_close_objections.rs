@@ -123,15 +123,34 @@ fn choose(ui: &MainWindow, pane: usize, label: &str) {
 
 /// The notebook as the recorder built it: a, imp1 (3 URLs), b, imp2 (2), c.
 fn open(store: &Arc<Store>) -> (MainWindow, hydrus_gui::Bound) {
-    let session = Session {
-        name: LAST_SESSION.into(),
-        pages: vec![
+    open_layout(store, false)
+}
+
+/// Or a, a page of pages `group` holding the importer `nested imp` (4 URLs),
+/// b.
+fn open_layout(store: &Arc<Store>, nested: bool) -> (MainWindow, hydrus_gui::Bound) {
+    let pages = if nested {
+        vec![
+            search("a"),
+            Page {
+                key: PageKey::random(),
+                name: "group".into(),
+                content: PageContent::Pages(vec![importer(store, "nested imp", 4)]),
+            },
+            search("b"),
+        ]
+    } else {
+        vec![
             search("a"),
             importer(store, "imp1", 3),
             search("b"),
             importer(store, "imp2", 2),
             search("c"),
-        ],
+        ]
+    };
+    let session = Session {
+        name: LAST_SESSION.into(),
+        pages,
     };
     store
         .write(move |ctx| sessions::save(ctx.conn(), &session, 100))
@@ -145,7 +164,7 @@ fn open(store: &Arc<Store>) -> (MainWindow, hydrus_gui::Bound) {
 fn run(menu: &str) -> (&'static str, Vec<&'static str>) {
     match menu {
         // (on the first tab there is no left to close: the entry is on the menu itself)
-        "other pages" => ("close other pages", vec![]),
+        "other pages" | "nested: other pages" => ("close other pages", vec![]),
         "pages to the left" => ("close", vec!["pages to the left"]),
         "pages to the right" | "pages to the right (nothing objects)" => {
             ("close", vec!["pages to the right"])
@@ -169,8 +188,9 @@ fn closing_pages_with_importers_asks_as_the_reference_does() {
         let answer = case["answer"].as_str().unwrap();
         let index = i32::try_from(case["index"].as_u64().unwrap()).unwrap();
         let asked = case["asked"].as_array().unwrap();
-        let (ui, bound) = open(&store);
+        let (ui, bound) = open_layout(&store, menu.starts_with("nested"));
         assert_eq!(names(&ui), strings(&case["before"]), "{menu}");
+        let original = bound.pages.borrow().session().pages.clone();
         let (entry, sub) = run(menu);
         // (the dialog's yes waits; the check that it does is below, with
         // a long wait; here it is short so that the answer can be given)
@@ -238,20 +258,34 @@ fn closing_pages_with_importers_asks_as_the_reference_does() {
                     let got: Vec<String> =
                         list.get_choices().iter().map(|c| c.to_string()).collect();
                     assert_eq!(got, want, "{label}: the list");
-                    // each button goes to its page, and the list stays
+                    // each button goes to its page (the reference's list showed
+                    // one page a button), and the list stays
+                    assert_eq!(want.len(), case["shown"].as_array().unwrap().len());
                     for (n, text) in want.iter().enumerate() {
                         widgets::click(list.window(), text);
                         let page = text.rsplit(": ").next().unwrap();
                         assert_eq!(bound.pages.borrow().shown().name, page, "{label} #{n}");
-                        assert!(reasons_dialog::list().is_some());
                     }
                 }
             }
         }
         assert_eq!(names(&ui), strings(&case["after"]), "{label}");
+        // closed, each page is undoable (the recorded closed indices), and
+        // undone they are back as they were
+        assert_eq!(
+            bound.pages.borrow_mut().closed_names().len(),
+            case["closed_indices"].as_array().unwrap().len(),
+            "{label}: closed pages"
+        );
+        while bound.pages.borrow_mut().unclose() {}
+        assert_eq!(
+            bound.pages.borrow().session().pages,
+            original,
+            "{label}: undone"
+        );
         reasons_dialog::set_yes_delay(None);
     }
-    assert!(with_dialog >= 9, "{with_dialog}");
+    assert_eq!(with_dialog, 14, "cases with the dialog");
 }
 
 // leaf: audit-options-tabs-context-action-2074-close-other-page-s
@@ -292,5 +326,20 @@ fn the_dialogs_yes_waits_before_it_can_be_pressed() {
     widgets::click(dialog.window(), "yes");
     assert_eq!(names(&ui).len(), 5);
     assert!(reasons_dialog::dialog().is_some());
+    // after a short wait it can be pressed (a wait only bounds from one side)
+    dialog.hide().unwrap();
+    reasons_dialog::set_yes_delay(Some(Duration::from_millis(30)));
+    ui.invoke_tab_menu_requested(0, 0, 30.0, 55.0);
+    choose(&ui, 0, "close other pages");
+    let dialog = reasons_dialog::dialog().unwrap();
+    widgets::lay_out(dialog.window(), 480.0, 300.0);
+    let start = std::time::Instant::now();
+    while !widgets::enabled(dialog.window(), "yes") {
+        assert!(
+            start.elapsed() < Duration::from_secs(10),
+            "yes never enabled"
+        );
+        widgets::settle();
+    }
     reasons_dialog::set_yes_delay(None);
 }
