@@ -120,20 +120,7 @@ pub fn pruned(entries: &[Value]) -> Vec<Value> {
                                 })
                             })
                     })
-                    .map(|x| match x["menu"].as_str() {
-                        // (less the distance chooser)
-                        Some(sub @ "similar files in a new page") => {
-                            let inner: Vec<Value> = x["entries"]
-                                .as_array()
-                                .unwrap()
-                                .iter()
-                                .filter(|y| *y != "custom")
-                                .cloned()
-                                .collect();
-                            json!({ "menu": sub, "entries": tidy(inner) })
-                        }
-                        _ => x.clone(),
-                    })
+                    .cloned()
                     .collect();
                 // (a menu left with nothing hydrus-rs has isn't shown)
                 let inner = tidy(inner);

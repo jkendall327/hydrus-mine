@@ -22,14 +22,16 @@
       "view": {
         "active": {
           "rows": 6,
-          "hint": 86,
-          "text_height": 14,
+          "hint": 92,
+          "height": 92,
+          "text_height": 15,
           "frame": 1
         },
         "autocomplete": {
           "rows": 22,
-          "hint": 310,
-          "text_height": 14,
+          "hint": 332,
+          "height": 334,
+          "text_height": 15,
           "frame": 1
         },
         "floating": true,
@@ -38,14 +40,16 @@
       "first_view": {
         "active": {
           "rows": 6,
-          "hint": 86,
-          "text_height": 14,
+          "hint": 92,
+          "height": 92,
+          "text_height": 15,
           "frame": 1
         },
         "autocomplete": {
           "rows": 22,
-          "hint": 310,
-          "text_height": 14,
+          "hint": 332,
+          "height": 334,
+          "text_height": 15,
           "frame": 1
         },
         "floating": true,
@@ -59,14 +63,16 @@
       "view": {
         "active": {
           "rows": 6,
-          "hint": 86,
-          "text_height": 14,
+          "hint": 92,
+          "height": 89,
+          "text_height": 15,
           "frame": 1
         },
         "autocomplete": {
           "rows": 22,
-          "hint": 310,
-          "text_height": 14,
+          "hint": 332,
+          "height": 337,
+          "text_height": 15,
           "frame": 1
         },
         "floating": false,
@@ -75,14 +81,16 @@
       "first_view": {
         "active": {
           "rows": 6,
-          "hint": 86,
-          "text_height": 14,
+          "hint": 92,
+          "height": 92,
+          "text_height": 15,
           "frame": 1
         },
         "autocomplete": {
           "rows": 22,
-          "hint": 310,
-          "text_height": 14,
+          "hint": 332,
+          "height": 334,
+          "text_height": 15,
           "frame": 1
         },
         "floating": true,
@@ -96,14 +104,16 @@
       "view": {
         "active": {
           "rows": 1,
-          "hint": 16,
-          "text_height": 14,
+          "hint": 17,
+          "height": 342,
+          "text_height": 15,
           "frame": 1
         },
         "autocomplete": {
           "rows": 128,
-          "hint": 1794,
-          "text_height": 14,
+          "hint": 1922,
+          "height": 1599,
+          "text_height": 15,
           "frame": 1
         },
         "floating": false,
@@ -112,14 +122,16 @@
       "first_view": {
         "active": {
           "rows": 6,
-          "hint": 86,
-          "text_height": 14,
+          "hint": 92,
+          "height": 92,
+          "text_height": 15,
           "frame": 1
         },
         "autocomplete": {
           "rows": 22,
-          "hint": 310,
-          "text_height": 14,
+          "hint": 332,
+          "height": 334,
+          "text_height": 15,
           "frame": 1
         },
         "floating": true,
@@ -133,14 +145,16 @@
       "view": {
         "active": {
           "rows": 128,
-          "hint": 1794,
-          "text_height": 14,
+          "hint": 1922,
+          "height": 1922,
+          "text_height": 15,
           "frame": 1
         },
         "autocomplete": {
           "rows": 1,
-          "hint": 16,
-          "text_height": 14,
+          "hint": 17,
+          "height": 64,
+          "text_height": 15,
           "frame": 1
         },
         "floating": true,
@@ -149,14 +163,16 @@
       "first_view": {
         "active": {
           "rows": 6,
-          "hint": 86,
-          "text_height": 14,
+          "hint": 92,
+          "height": 92,
+          "text_height": 15,
           "frame": 1
         },
         "autocomplete": {
           "rows": 22,
-          "hint": 310,
-          "text_height": 14,
+          "hint": 332,
+          "height": 334,
+          "text_height": 15,
           "frame": 1
         },
         "floating": true,

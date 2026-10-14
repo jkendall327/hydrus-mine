@@ -80,27 +80,67 @@
             "stored": "alpha with a very long title and a distinct end ALPHA ↓",
             "paint": "alpha with a very long title and a distinct end ALPHA ↓",
             "tooltip": "alpha with a very long title and a distinct end ALPHA",
-            "width": 323,
-            "height": 26,
+            "width": 333,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "nested notebook ↓",
             "paint": "nested notebook ↓",
             "tooltip": "nested notebook",
-            "width": 128,
-            "height": 26,
+            "width": 133,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "omega with a very long title and a distinct end OMEGA ↓",
             "paint": "omega with a very long title and a distinct end OMEGA ↓",
             "tooltip": "omega with a very long title and a distinct end OMEGA",
-            "width": 336,
-            "height": 26,
+            "width": 346,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            900,
+            450
+          ],
+          "bar": [
+            0,
+            0,
+            812,
+            27
+          ],
+          "page": [
+            2,
+            27,
+            896,
+            421
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              333,
+              27
+            ],
+            [
+              333,
+              0,
+              133,
+              27
+            ],
+            [
+              466,
+              0,
+              346,
+              27
+            ]
+          ]
+        }
       },
       "nested": {
         "position": "North",
@@ -112,19 +152,53 @@
             "stored": "beta with a very long title and a distinct end BETA",
             "paint": "beta with a very long title and a distinct end BETA",
             "tooltip": "",
-            "width": 297,
-            "height": 26,
+            "width": 305,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "gamma with a very long title and a distinct end GAMMA",
             "paint": "gamma with a very long title and a distinct end GAMMA",
             "tooltip": "",
-            "width": 331,
-            "height": 26,
+            "width": 339,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            896,
+            421
+          ],
+          "bar": [
+            0,
+            0,
+            644,
+            27
+          ],
+          "page": [
+            2,
+            27,
+            892,
+            392
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              305,
+              27
+            ],
+            [
+              305,
+              0,
+              339,
+              27
+            ]
+          ]
+        }
       }
     },
     {
@@ -148,27 +222,67 @@
             "stored": "alpha with a very long title and a distinct end ALPHA ↓",
             "paint": "alpha with a …t end ALPHA ↓",
             "tooltip": "alpha with a very long title and a distinct end ALPHA",
-            "width": 26,
-            "height": 194,
+            "width": 27,
+            "height": 192,
             "shape": "RoundedWest"
           },
           {
             "stored": "nested notebook ↓",
             "paint": "n…↓",
             "tooltip": "nested notebook",
-            "width": 26,
-            "height": 49,
+            "width": 27,
+            "height": 52,
             "shape": "RoundedWest"
           },
           {
             "stored": "omega with a very long title and a distinct end OMEGA ↓",
             "paint": "omega with a …t end OMEGA ↓",
             "tooltip": "omega with a very long title and a distinct end OMEGA",
-            "width": 26,
-            "height": 207,
+            "width": 27,
+            "height": 206,
             "shape": "RoundedWest"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            900,
+            450
+          ],
+          "bar": [
+            0,
+            0,
+            27,
+            450
+          ],
+          "page": [
+            27,
+            2,
+            871,
+            446
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              27,
+              192
+            ],
+            [
+              0,
+              192,
+              27,
+              52
+            ],
+            [
+              0,
+              244,
+              27,
+              206
+            ]
+          ]
+        }
       },
       "nested": {
         "position": "West",
@@ -178,21 +292,55 @@
         "tabs": [
           {
             "stored": "beta with a very long title and a distinct end BETA",
-            "paint": "beta with a ver…stinct end BETA",
+            "paint": "beta with a ve…tinct end BETA",
             "tooltip": "",
-            "width": 26,
+            "width": 27,
             "height": 206,
             "shape": "RoundedWest"
           },
           {
             "stored": "gamma with a very long title and a distinct end GAMMA",
-            "paint": "gamma with a ver…stinct end GAMMA",
+            "paint": "gamma with a ve…tinct end GAMMA",
             "tooltip": "",
-            "width": 26,
+            "width": 27,
             "height": 240,
             "shape": "RoundedWest"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            871,
+            446
+          ],
+          "bar": [
+            0,
+            0,
+            27,
+            446
+          ],
+          "page": [
+            27,
+            2,
+            842,
+            442
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              27,
+              206
+            ],
+            [
+              0,
+              206,
+              27,
+              240
+            ]
+          ]
+        }
       }
     },
     {
@@ -216,27 +364,67 @@
             "stored": "alpha with a very long title and a distinct end ALPHA ↓",
             "paint": "alpha with a …t end ALPHA ↓",
             "tooltip": "alpha with a very long title and a distinct end ALPHA",
-            "width": 26,
-            "height": 194,
+            "width": 27,
+            "height": 192,
             "shape": "RoundedEast"
           },
           {
             "stored": "nested notebook ↓",
             "paint": "n…↓",
             "tooltip": "nested notebook",
-            "width": 26,
-            "height": 49,
+            "width": 27,
+            "height": 52,
             "shape": "RoundedEast"
           },
           {
             "stored": "omega with a very long title and a distinct end OMEGA ↓",
             "paint": "omega with a …t end OMEGA ↓",
             "tooltip": "omega with a very long title and a distinct end OMEGA",
-            "width": 26,
-            "height": 207,
+            "width": 27,
+            "height": 206,
             "shape": "RoundedEast"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            900,
+            450
+          ],
+          "bar": [
+            873,
+            0,
+            27,
+            450
+          ],
+          "page": [
+            2,
+            2,
+            871,
+            446
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              27,
+              192
+            ],
+            [
+              0,
+              192,
+              27,
+              52
+            ],
+            [
+              0,
+              244,
+              27,
+              206
+            ]
+          ]
+        }
       },
       "nested": {
         "position": "East",
@@ -246,21 +434,55 @@
         "tabs": [
           {
             "stored": "beta with a very long title and a distinct end BETA",
-            "paint": "beta with a ver…stinct end BETA",
+            "paint": "beta with a ve…tinct end BETA",
             "tooltip": "",
-            "width": 26,
+            "width": 27,
             "height": 206,
             "shape": "RoundedEast"
           },
           {
             "stored": "gamma with a very long title and a distinct end GAMMA",
-            "paint": "gamma with a ver…stinct end GAMMA",
+            "paint": "gamma with a ve…tinct end GAMMA",
             "tooltip": "",
-            "width": 26,
+            "width": 27,
             "height": 240,
             "shape": "RoundedEast"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            871,
+            446
+          ],
+          "bar": [
+            844,
+            0,
+            27,
+            446
+          ],
+          "page": [
+            2,
+            2,
+            842,
+            442
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              27,
+              206
+            ],
+            [
+              0,
+              206,
+              27,
+              240
+            ]
+          ]
+        }
       }
     },
     {
@@ -284,27 +506,67 @@
             "stored": "alpha with a very long title and a distinct end ALPHA ↓",
             "paint": "alpha with a very long title and a distinct end ALPHA ↓",
             "tooltip": "alpha with a very long title and a distinct end ALPHA",
-            "width": 323,
-            "height": 26,
+            "width": 333,
+            "height": 27,
             "shape": "RoundedSouth"
           },
           {
             "stored": "nested notebook ↓",
             "paint": "nested notebook ↓",
             "tooltip": "nested notebook",
-            "width": 128,
-            "height": 26,
+            "width": 133,
+            "height": 27,
             "shape": "RoundedSouth"
           },
           {
             "stored": "omega with a very long title and a distinct end OMEGA ↓",
             "paint": "omega with a very long title and a distinct end OMEGA ↓",
             "tooltip": "omega with a very long title and a distinct end OMEGA",
-            "width": 336,
-            "height": 26,
+            "width": 346,
+            "height": 27,
             "shape": "RoundedSouth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            900,
+            450
+          ],
+          "bar": [
+            0,
+            423,
+            812,
+            27
+          ],
+          "page": [
+            2,
+            2,
+            896,
+            421
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              333,
+              27
+            ],
+            [
+              333,
+              0,
+              133,
+              27
+            ],
+            [
+              466,
+              0,
+              346,
+              27
+            ]
+          ]
+        }
       },
       "nested": {
         "position": "South",
@@ -316,20 +578,100 @@
             "stored": "beta with a very long title and a distinct end BETA",
             "paint": "beta with a very long title and a distinct end BETA",
             "tooltip": "",
-            "width": 297,
-            "height": 26,
+            "width": 305,
+            "height": 27,
             "shape": "RoundedSouth"
           },
           {
             "stored": "gamma with a very long title and a distinct end GAMMA",
             "paint": "gamma with a very long title and a distinct end GAMMA",
             "tooltip": "",
-            "width": 331,
-            "height": 26,
+            "width": 339,
+            "height": 27,
             "shape": "RoundedSouth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            896,
+            421
+          ],
+          "bar": [
+            0,
+            394,
+            644,
+            27
+          ],
+          "page": [
+            2,
+            2,
+            892,
+            392
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              305,
+              27
+            ],
+            [
+              305,
+              0,
+              339,
+              27
+            ]
+          ]
+        }
       }
+    }
+  ],
+  "ink": [
+    {
+      "label": "top",
+      "vertical": false,
+      "tab": [
+        0,
+        0,
+        304,
+        27
+      ],
+      "centroid": 0.3652679726304733
+    },
+    {
+      "label": "left",
+      "vertical": true,
+      "tab": [
+        0,
+        0,
+        27,
+        304
+      ],
+      "centroid": 0.6357038774664721
+    },
+    {
+      "label": "right",
+      "vertical": true,
+      "tab": [
+        0,
+        0,
+        27,
+        304
+      ],
+      "centroid": 0.3596656645163584
+    },
+    {
+      "label": "bottom",
+      "vertical": false,
+      "tab": [
+        0,
+        0,
+        304,
+        27
+      ],
+      "centroid": 0.3651645434914804
     }
   ],
   "hide": [
@@ -350,27 +692,67 @@
             "stored": "alpha with a very long title and a distinct end ALPHA ↓",
             "paint": "alpha with a very long title and a distinct end ALPHA ↓",
             "tooltip": "alpha with a very long title and a distinct end ALPHA",
-            "width": 323,
-            "height": 26,
+            "width": 333,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "nested notebook ↓",
             "paint": "nested notebook ↓",
             "tooltip": "nested notebook",
-            "width": 128,
-            "height": 26,
+            "width": 133,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "omega with a very long title and a distinct end OMEGA ↓",
             "paint": "omega with a very long title and a distinct end OMEGA ↓",
             "tooltip": "omega with a very long title and a distinct end OMEGA",
-            "width": 336,
-            "height": 26,
+            "width": 346,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            900,
+            450
+          ],
+          "bar": [
+            0,
+            0,
+            812,
+            27
+          ],
+          "page": [
+            2,
+            27,
+            896,
+            421
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              333,
+              27
+            ],
+            [
+              333,
+              0,
+              133,
+              27
+            ],
+            [
+              466,
+              0,
+              346,
+              27
+            ]
+          ]
+        }
       },
       "nested": {
         "position": "North",
@@ -382,19 +764,53 @@
             "stored": "beta with a very long title and a distinct end BETA",
             "paint": "beta with a very long title and a distinct end BETA",
             "tooltip": "",
-            "width": 297,
-            "height": 26,
+            "width": 305,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "gamma with a very long title and a distinct end GAMMA",
             "paint": "gamma with a very long title and a distinct end GAMMA",
             "tooltip": "",
-            "width": 331,
-            "height": 26,
+            "width": 339,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            896,
+            421
+          ],
+          "bar": [
+            0,
+            0,
+            644,
+            27
+          ],
+          "page": [
+            2,
+            27,
+            892,
+            392
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              305,
+              27
+            ],
+            [
+              305,
+              0,
+              339,
+              27
+            ]
+          ]
+        }
       }
     },
     {
@@ -414,27 +830,67 @@
             "stored": "alpha with a very long title and a distinct end ALPHA ↓",
             "paint": "alpha with a very long title and a distinct end ALPHA ↓",
             "tooltip": "alpha with a very long title and a distinct end ALPHA",
-            "width": 323,
-            "height": 26,
+            "width": 333,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "nested notebook ↓",
             "paint": "nested notebook ↓",
             "tooltip": "nested notebook",
-            "width": 128,
-            "height": 26,
+            "width": 133,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "omega with a very long title and a distinct end OMEGA ↓",
             "paint": "omega with a very long title and a distinct end OMEGA ↓",
             "tooltip": "omega with a very long title and a distinct end OMEGA",
-            "width": 336,
-            "height": 26,
+            "width": 346,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            900,
+            450
+          ],
+          "bar": [
+            0,
+            0,
+            812,
+            27
+          ],
+          "page": [
+            2,
+            27,
+            896,
+            421
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              333,
+              27
+            ],
+            [
+              333,
+              0,
+              133,
+              27
+            ],
+            [
+              466,
+              0,
+              346,
+              27
+            ]
+          ]
+        }
       },
       "nested": {
         "position": "North",
@@ -446,19 +902,53 @@
             "stored": "beta with a very long title and a distinct end BETA",
             "paint": "beta with a very long title and a distinct end BETA",
             "tooltip": "",
-            "width": 297,
-            "height": 26,
+            "width": 305,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "gamma with a very long title and a distinct end GAMMA",
             "paint": "gamma with a very long title and a distinct end GAMMA",
             "tooltip": "",
-            "width": 331,
-            "height": 26,
+            "width": 339,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            896,
+            421
+          ],
+          "bar": [
+            0,
+            0,
+            644,
+            27
+          ],
+          "page": [
+            2,
+            27,
+            892,
+            392
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              305,
+              27
+            ],
+            [
+              305,
+              0,
+              339,
+              27
+            ]
+          ]
+        }
       }
     },
     {
@@ -478,27 +968,67 @@
             "stored": "alpha with a very long title and a distinct end ALPHA ↓",
             "paint": "alpha with a very long title and a distinct end ALPHA ↓",
             "tooltip": "alpha with a very long title and a distinct end ALPHA",
-            "width": 323,
-            "height": 26,
+            "width": 333,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "nested notebook ↓",
             "paint": "nested notebook ↓",
             "tooltip": "nested notebook",
-            "width": 128,
-            "height": 26,
+            "width": 133,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "omega with a very long title and a distinct end OMEGA ↓",
             "paint": "omega with a very long title and a distinct end OMEGA ↓",
             "tooltip": "omega with a very long title and a distinct end OMEGA",
-            "width": 336,
-            "height": 26,
+            "width": 346,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            900,
+            450
+          ],
+          "bar": [
+            0,
+            0,
+            812,
+            27
+          ],
+          "page": [
+            2,
+            27,
+            896,
+            421
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              333,
+              27
+            ],
+            [
+              333,
+              0,
+              133,
+              27
+            ],
+            [
+              466,
+              0,
+              346,
+              27
+            ]
+          ]
+        }
       },
       "nested": {
         "position": "North",
@@ -510,19 +1040,53 @@
             "stored": "beta with a very long title and a distinct end BETA",
             "paint": "beta with a very long title and a distinct end BETA",
             "tooltip": "",
-            "width": 297,
-            "height": 26,
+            "width": 305,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "gamma with a very long title and a distinct end GAMMA",
             "paint": "gamma with a very long title and a distinct end GAMMA",
             "tooltip": "",
-            "width": 331,
-            "height": 26,
+            "width": 339,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            896,
+            421
+          ],
+          "bar": [
+            0,
+            0,
+            644,
+            27
+          ],
+          "page": [
+            2,
+            27,
+            892,
+            392
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              305,
+              27
+            ],
+            [
+              305,
+              0,
+              339,
+              27
+            ]
+          ]
+        }
       }
     },
     {
@@ -542,27 +1106,67 @@
             "stored": "alpha with a very long title and a distinct end ALPHA ↓",
             "paint": "alpha with a very long title and a distinct end ALPHA ↓",
             "tooltip": "alpha with a very long title and a distinct end ALPHA",
-            "width": 323,
-            "height": 26,
+            "width": 333,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "nested notebook ↓",
             "paint": "nested notebook ↓",
             "tooltip": "nested notebook",
-            "width": 128,
-            "height": 26,
+            "width": 133,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "omega with a very long title and a distinct end OMEGA ↓",
             "paint": "omega with a very long title and a distinct end OMEGA ↓",
             "tooltip": "omega with a very long title and a distinct end OMEGA",
-            "width": 336,
-            "height": 26,
+            "width": 346,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            900,
+            450
+          ],
+          "bar": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "page": [
+            2,
+            2,
+            896,
+            446
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              333,
+              27
+            ],
+            [
+              333,
+              0,
+              133,
+              27
+            ],
+            [
+              466,
+              0,
+              346,
+              27
+            ]
+          ]
+        }
       },
       "nested": {
         "position": "North",
@@ -574,19 +1178,53 @@
             "stored": "beta with a very long title and a distinct end BETA",
             "paint": "beta with a very long title and a distinct end BETA",
             "tooltip": "",
-            "width": 297,
-            "height": 26,
+            "width": 305,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "gamma with a very long title and a distinct end GAMMA",
             "paint": "gamma with a very long title and a distinct end GAMMA",
             "tooltip": "",
-            "width": 331,
-            "height": 26,
+            "width": 339,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            896,
+            446
+          ],
+          "bar": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "page": [
+            2,
+            2,
+            892,
+            442
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              305,
+              27
+            ],
+            [
+              305,
+              0,
+              339,
+              27
+            ]
+          ]
+        }
       }
     },
     {
@@ -606,27 +1244,67 @@
             "stored": "alpha with a very long title and a distinct end ALPHA ↓",
             "paint": "alpha with a very long title and a distinct end ALPHA ↓",
             "tooltip": "alpha with a very long title and a distinct end ALPHA",
-            "width": 323,
-            "height": 26,
+            "width": 333,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "nested notebook ↓",
             "paint": "nested notebook ↓",
             "tooltip": "nested notebook",
-            "width": 128,
-            "height": 26,
+            "width": 133,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "omega with a very long title and a distinct end OMEGA ↓",
             "paint": "omega with a very long title and a distinct end OMEGA ↓",
             "tooltip": "omega with a very long title and a distinct end OMEGA",
-            "width": 336,
-            "height": 26,
+            "width": 346,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            900,
+            450
+          ],
+          "bar": [
+            0,
+            0,
+            812,
+            27
+          ],
+          "page": [
+            2,
+            27,
+            896,
+            421
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              333,
+              27
+            ],
+            [
+              333,
+              0,
+              133,
+              27
+            ],
+            [
+              466,
+              0,
+              346,
+              27
+            ]
+          ]
+        }
       },
       "nested": {
         "position": "North",
@@ -638,19 +1316,53 @@
             "stored": "beta with a very long title and a distinct end BETA",
             "paint": "beta with a very long title and a distinct end BETA",
             "tooltip": "",
-            "width": 297,
-            "height": 26,
+            "width": 305,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "gamma with a very long title and a distinct end GAMMA",
             "paint": "gamma with a very long title and a distinct end GAMMA",
             "tooltip": "",
-            "width": 331,
-            "height": 26,
+            "width": 339,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            896,
+            421
+          ],
+          "bar": [
+            0,
+            0,
+            644,
+            27
+          ],
+          "page": [
+            2,
+            27,
+            892,
+            392
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              305,
+              27
+            ],
+            [
+              305,
+              0,
+              339,
+              27
+            ]
+          ]
+        }
       }
     },
     {
@@ -670,27 +1382,67 @@
             "stored": "alpha with a very long title and a distinct end ALPHA ↓",
             "paint": "alpha with a very long title and a distinct end ALPHA ↓",
             "tooltip": "alpha with a very long title and a distinct end ALPHA",
-            "width": 323,
-            "height": 26,
+            "width": 333,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "nested notebook ↓",
             "paint": "nested notebook ↓",
             "tooltip": "nested notebook",
-            "width": 128,
-            "height": 26,
+            "width": 133,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "omega with a very long title and a distinct end OMEGA ↓",
             "paint": "omega with a very long title and a distinct end OMEGA ↓",
             "tooltip": "omega with a very long title and a distinct end OMEGA",
-            "width": 336,
-            "height": 26,
+            "width": 346,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            900,
+            450
+          ],
+          "bar": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "page": [
+            2,
+            2,
+            896,
+            446
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              333,
+              27
+            ],
+            [
+              333,
+              0,
+              133,
+              27
+            ],
+            [
+              466,
+              0,
+              346,
+              27
+            ]
+          ]
+        }
       },
       "nested": {
         "position": "North",
@@ -702,19 +1454,53 @@
             "stored": "beta with a very long title and a distinct end BETA",
             "paint": "beta with a very long title and a distinct end BETA",
             "tooltip": "",
-            "width": 297,
-            "height": 26,
+            "width": 305,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "gamma with a very long title and a distinct end GAMMA",
             "paint": "gamma with a very long title and a distinct end GAMMA",
             "tooltip": "",
-            "width": 331,
-            "height": 26,
+            "width": 339,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            896,
+            446
+          ],
+          "bar": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "page": [
+            2,
+            2,
+            892,
+            442
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              305,
+              27
+            ],
+            [
+              305,
+              0,
+              339,
+              27
+            ]
+          ]
+        }
       }
     }
   ],
@@ -737,27 +1523,67 @@
             "stored": "alpha with a very long title and a distinct end ALPHA ↓",
             "paint": "alpha with a very long title and a distinct end ALPHA ↓",
             "tooltip": "alpha with a very long title and a distinct end ALPHA",
-            "width": 323,
-            "height": 26,
+            "width": 333,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "nested notebook ↓",
             "paint": "nested notebook ↓",
             "tooltip": "nested notebook",
-            "width": 128,
-            "height": 26,
+            "width": 133,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "omega with a very long title and a distinct end OMEGA ↓",
             "paint": "omega with a very long title and a distinct end OMEGA ↓",
             "tooltip": "omega with a very long title and a distinct end OMEGA",
-            "width": 336,
-            "height": 26,
+            "width": 346,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            230,
+            450
+          ],
+          "bar": [
+            0,
+            0,
+            230,
+            27
+          ],
+          "page": [
+            2,
+            27,
+            226,
+            421
+          ],
+          "tab_rects": [
+            [
+              -325,
+              0,
+              333,
+              27
+            ],
+            [
+              8,
+              0,
+              133,
+              27
+            ],
+            [
+              141,
+              0,
+              346,
+              27
+            ]
+          ]
+        }
       },
       "nested": {
         "position": "North",
@@ -769,19 +1595,53 @@
             "stored": "beta with a very long title and a distinct end BETA",
             "paint": "beta with a very long title and a distinct end BETA",
             "tooltip": "",
-            "width": 297,
-            "height": 26,
+            "width": 305,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "gamma with a very long title and a distinct end GAMMA",
             "paint": "gamma with a very long title and a distinct end GAMMA",
             "tooltip": "",
-            "width": 331,
-            "height": 26,
+            "width": 339,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            226,
+            421
+          ],
+          "bar": [
+            0,
+            0,
+            226,
+            27
+          ],
+          "page": [
+            2,
+            27,
+            222,
+            392
+          ],
+          "tab_rects": [
+            [
+              -449,
+              0,
+              305,
+              27
+            ],
+            [
+              -144,
+              0,
+              339,
+              27
+            ]
+          ]
+        }
       }
     },
     {
@@ -802,27 +1662,67 @@
             "stored": "alpha with a very long title and a distinct end ALPHA ↓",
             "paint": "alp…A ↓",
             "tooltip": "alpha with a very long title and a distinct end ALPHA",
-            "width": 84,
-            "height": 26,
+            "width": 82,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "nested notebook ↓",
             "paint": "n…↓",
             "tooltip": "nested notebook",
-            "width": 49,
-            "height": 26,
+            "width": 52,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "omega with a very long title and a distinct end OMEGA ↓",
-            "paint": "omeg…GA ↓",
+            "paint": "ome…A ↓",
             "tooltip": "omega with a very long title and a distinct end OMEGA",
-            "width": 97,
-            "height": 26,
+            "width": 96,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            230,
+            450
+          ],
+          "bar": [
+            0,
+            0,
+            230,
+            27
+          ],
+          "page": [
+            2,
+            27,
+            226,
+            421
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              82,
+              27
+            ],
+            [
+              82,
+              0,
+              52,
+              27
+            ],
+            [
+              134,
+              0,
+              96,
+              27
+            ]
+          ]
+        }
       },
       "nested": {
         "position": "North",
@@ -832,10 +1732,10 @@
         "tabs": [
           {
             "stored": "beta with a very long title and a distinct end BETA",
-            "paint": "beta … BETA",
+            "paint": "beta…BETA",
             "tooltip": "",
             "width": 96,
-            "height": 26,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
@@ -843,10 +1743,44 @@
             "paint": "gamma … GAMMA",
             "tooltip": "",
             "width": 130,
-            "height": 26,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            226,
+            421
+          ],
+          "bar": [
+            0,
+            0,
+            226,
+            27
+          ],
+          "page": [
+            2,
+            27,
+            222,
+            392
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              96,
+              27
+            ],
+            [
+              96,
+              0,
+              130,
+              27
+            ]
+          ]
+        }
       }
     },
     {
@@ -867,27 +1801,67 @@
             "stored": "alpha with a very long title and a distinct end ALPHA ↓",
             "paint": "alpha with a very long title and a distinct end ALPHA ↓",
             "tooltip": "alpha with a very long title and a distinct end ALPHA",
-            "width": 323,
-            "height": 26,
+            "width": 333,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "nested notebook ↓",
             "paint": "nested notebook ↓",
             "tooltip": "nested notebook",
-            "width": 128,
-            "height": 26,
+            "width": 133,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "omega with a very long title and a distinct end OMEGA ↓",
             "paint": "omega with a very long title and a distinct end OMEGA ↓",
             "tooltip": "omega with a very long title and a distinct end OMEGA",
-            "width": 336,
-            "height": 26,
+            "width": 346,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            420,
+            450
+          ],
+          "bar": [
+            0,
+            0,
+            420,
+            27
+          ],
+          "page": [
+            2,
+            27,
+            416,
+            421
+          ],
+          "tab_rects": [
+            [
+              -77,
+              0,
+              333,
+              27
+            ],
+            [
+              256,
+              0,
+              133,
+              27
+            ],
+            [
+              389,
+              0,
+              346,
+              27
+            ]
+          ]
+        }
       },
       "nested": {
         "position": "North",
@@ -899,19 +1873,53 @@
             "stored": "beta with a very long title and a distinct end BETA",
             "paint": "beta with a very long title and a distinct end BETA",
             "tooltip": "",
-            "width": 297,
-            "height": 26,
+            "width": 305,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "gamma with a very long title and a distinct end GAMMA",
             "paint": "gamma with a very long title and a distinct end GAMMA",
             "tooltip": "",
-            "width": 331,
-            "height": 26,
+            "width": 339,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            416,
+            421
+          ],
+          "bar": [
+            0,
+            0,
+            416,
+            27
+          ],
+          "page": [
+            2,
+            27,
+            412,
+            392
+          ],
+          "tab_rects": [
+            [
+              -259,
+              0,
+              305,
+              27
+            ],
+            [
+              46,
+              0,
+              339,
+              27
+            ]
+          ]
+        }
       }
     },
     {
@@ -930,29 +1938,69 @@
         "tabs": [
           {
             "stored": "alpha with a very long title and a distinct end ALPHA ↓",
-            "paint": "alpha with a… end ALPHA ↓",
+            "paint": "alpha with …end ALPHA ↓",
             "tooltip": "alpha with a very long title and a distinct end ALPHA",
-            "width": 179,
-            "height": 26,
+            "width": 177,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "nested notebook ↓",
             "paint": "n…↓",
             "tooltip": "nested notebook",
-            "width": 49,
-            "height": 26,
+            "width": 52,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "omega with a very long title and a distinct end OMEGA ↓",
-            "paint": "omega with a… end OMEGA ↓",
+            "paint": "omega with …end OMEGA ↓",
             "tooltip": "omega with a very long title and a distinct end OMEGA",
-            "width": 192,
-            "height": 26,
+            "width": 191,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            420,
+            450
+          ],
+          "bar": [
+            0,
+            0,
+            420,
+            27
+          ],
+          "page": [
+            2,
+            27,
+            416,
+            421
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              177,
+              27
+            ],
+            [
+              177,
+              0,
+              52,
+              27
+            ],
+            [
+              229,
+              0,
+              191,
+              27
+            ]
+          ]
+        }
       },
       "nested": {
         "position": "North",
@@ -965,7 +2013,7 @@
             "paint": "beta with a v…inct end BETA",
             "tooltip": "",
             "width": 191,
-            "height": 26,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
@@ -973,10 +2021,44 @@
             "paint": "gamma with a v…inct end GAMMA",
             "tooltip": "",
             "width": 225,
-            "height": 26,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            416,
+            421
+          ],
+          "bar": [
+            0,
+            0,
+            416,
+            27
+          ],
+          "page": [
+            2,
+            27,
+            412,
+            392
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              191,
+              27
+            ],
+            [
+              191,
+              0,
+              225,
+              27
+            ]
+          ]
+        }
       }
     },
     {
@@ -997,27 +2079,67 @@
             "stored": "alpha with a very long title and a distinct end ALPHA ↓",
             "paint": "alpha with a very long title and a distinct end ALPHA ↓",
             "tooltip": "alpha with a very long title and a distinct end ALPHA",
-            "width": 323,
-            "height": 26,
+            "width": 333,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "nested notebook ↓",
             "paint": "nested notebook ↓",
             "tooltip": "nested notebook",
-            "width": 128,
-            "height": 26,
+            "width": 133,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "omega with a very long title and a distinct end OMEGA ↓",
             "paint": "omega with a very long title and a distinct end OMEGA ↓",
             "tooltip": "omega with a very long title and a distinct end OMEGA",
-            "width": 336,
-            "height": 26,
+            "width": 346,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            1000,
+            450
+          ],
+          "bar": [
+            0,
+            0,
+            812,
+            27
+          ],
+          "page": [
+            2,
+            27,
+            996,
+            421
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              333,
+              27
+            ],
+            [
+              333,
+              0,
+              133,
+              27
+            ],
+            [
+              466,
+              0,
+              346,
+              27
+            ]
+          ]
+        }
       },
       "nested": {
         "position": "North",
@@ -1029,19 +2151,53 @@
             "stored": "beta with a very long title and a distinct end BETA",
             "paint": "beta with a very long title and a distinct end BETA",
             "tooltip": "",
-            "width": 297,
-            "height": 26,
+            "width": 305,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "gamma with a very long title and a distinct end GAMMA",
             "paint": "gamma with a very long title and a distinct end GAMMA",
             "tooltip": "",
-            "width": 331,
-            "height": 26,
+            "width": 339,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            996,
+            421
+          ],
+          "bar": [
+            0,
+            0,
+            644,
+            27
+          ],
+          "page": [
+            2,
+            27,
+            992,
+            392
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              305,
+              27
+            ],
+            [
+              305,
+              0,
+              339,
+              27
+            ]
+          ]
+        }
       }
     },
     {
@@ -1062,27 +2218,67 @@
             "stored": "alpha with a very long title and a distinct end ALPHA ↓",
             "paint": "alpha with a very long title and a distinct end ALPHA ↓",
             "tooltip": "alpha with a very long title and a distinct end ALPHA",
-            "width": 323,
-            "height": 26,
+            "width": 333,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "nested notebook ↓",
             "paint": "nested notebook ↓",
             "tooltip": "nested notebook",
-            "width": 128,
-            "height": 26,
+            "width": 133,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "omega with a very long title and a distinct end OMEGA ↓",
             "paint": "omega with a very long title and a distinct end OMEGA ↓",
             "tooltip": "omega with a very long title and a distinct end OMEGA",
-            "width": 336,
-            "height": 26,
+            "width": 346,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            1000,
+            450
+          ],
+          "bar": [
+            0,
+            0,
+            812,
+            27
+          ],
+          "page": [
+            2,
+            27,
+            996,
+            421
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              333,
+              27
+            ],
+            [
+              333,
+              0,
+              133,
+              27
+            ],
+            [
+              466,
+              0,
+              346,
+              27
+            ]
+          ]
+        }
       },
       "nested": {
         "position": "North",
@@ -1094,19 +2290,53 @@
             "stored": "beta with a very long title and a distinct end BETA",
             "paint": "beta with a very long title and a distinct end BETA",
             "tooltip": "",
-            "width": 297,
-            "height": 26,
+            "width": 305,
+            "height": 27,
             "shape": "RoundedNorth"
           },
           {
             "stored": "gamma with a very long title and a distinct end GAMMA",
             "paint": "gamma with a very long title and a distinct end GAMMA",
             "tooltip": "",
-            "width": 331,
-            "height": 26,
+            "width": 339,
+            "height": 27,
             "shape": "RoundedNorth"
           }
-        ]
+        ],
+        "geometry": {
+          "notebook": [
+            0,
+            0,
+            996,
+            421
+          ],
+          "bar": [
+            0,
+            0,
+            644,
+            27
+          ],
+          "page": [
+            2,
+            27,
+            992,
+            392
+          ],
+          "tab_rects": [
+            [
+              0,
+              0,
+              305,
+              27
+            ],
+            [
+              305,
+              0,
+              339,
+              27
+            ]
+          ]
+        }
       }
     }
   ],

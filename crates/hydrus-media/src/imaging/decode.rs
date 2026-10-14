@@ -67,13 +67,44 @@ pub(crate) fn sniff(data: &[u8]) -> Option<Format> {
 
 /// `RawOpenPILImage` + `load()` for the formats we decode natively.
 pub(crate) fn open(data: &[u8]) -> Result<Opened> {
+    open_with(data, true)
+}
+
+/// What Pillow says when a cut-off file is loaded with
+/// `LOAD_TRUNCATED_IMAGES` off.
+const TRUNCATED: &str = "Looks like a truncated file that PIL could not handle!";
+
+/// Pillow's `MAX_IMAGE_PIXELS` (89,478,485): an image of more than twice that
+/// is refused before anything is allocated for it
+/// (`DecompressionBombError`).
+const MAX_IMAGE_PIXELS: u64 = 89_478_485;
+
+fn check_pixel_count(width: u32, height: u32) -> Result<()> {
+    let pixels = u64::from(width) * u64::from(height);
+    if pixels > 2 * MAX_IMAGE_PIXELS {
+        return Err(MediaError::damaged(format!(
+            "Image size ({pixels} pixels) exceeds limit of {} pixels, could be decompression bomb DOS attack.",
+            2 * MAX_IMAGE_PIXELS
+        )));
+    }
+    Ok(())
+}
+
+fn truncated() -> MediaError {
+    MediaError::damaged(TRUNCATED)
+}
+
+/// [`open`] with "allow loading of truncated images": on, a cut-off file
+/// loads what it holds and the rest is filled as Pillow fills it; off, it is
+/// refused.
+pub(crate) fn open_with(data: &[u8], load_truncated: bool) -> Result<Opened> {
     match sniff(data) {
-        Some(Format::Jpeg) => open_jpeg(data),
-        Some(Format::Png) => open_png(data),
-        Some(Format::Gif) => open_gif(data),
+        Some(Format::Jpeg) => open_jpeg(data, load_truncated),
+        Some(Format::Png) => open_png(data, load_truncated),
+        Some(Format::Gif) => open_gif(data, load_truncated),
         Some(Format::Webp) => open_webp(data),
-        Some(Format::Bmp) => open_bmp(data),
-        Some(Format::Ico) => open_ico(data),
+        Some(Format::Bmp) => open_bmp(data, load_truncated),
+        Some(Format::Ico) => open_ico(data, load_truncated),
         Some(Format::Tiff) => open_tiff(data),
         Some(Format::Qoi) => open_qoi(data),
         _ => Err(MediaError::damaged(
@@ -257,7 +288,41 @@ fn jpeg_icc(mut chunks: Vec<Vec<u8>>) -> Option<Vec<u8>> {
     )
 }
 
-fn open_jpeg(data: &[u8]) -> Result<Opened> {
+/// libjpeg-turbo's decode of `data`. When the data ends early libjpeg
+/// warns ("Premature end of JPEG file", "premature end of data segment")
+/// and, as Pillow's `LOAD_TRUNCATED_IMAGES` does, goes on with zeroed
+/// blocks (mid grey); the turbojpeg binding reports that warning as an
+/// error but has still filled the buffer.
+fn decompress_jpeg(
+    data: &[u8],
+    format: turbojpeg::PixelFormat,
+    load_truncated: bool,
+) -> Result<turbojpeg::Image<Vec<u8>>> {
+    let mut decompressor = turbojpeg::Decompressor::new().map_err(|e| damaged(&e.to_string()))?;
+    let header = decompressor
+        .read_header(data)
+        .map_err(|e| damaged(&e.to_string()))?;
+    let pitch = header.width * format.size();
+    let mut image = turbojpeg::Image {
+        pixels: vec![0; header.height * pitch],
+        width: header.width,
+        pitch,
+        height: header.height,
+        format,
+    };
+    if let Err(e) = decompressor.decompress(data, image.as_deref_mut()) {
+        let said = e.to_string();
+        if !said.to_ascii_lowercase().contains("premature end") {
+            return Err(damaged(&said));
+        }
+        if !load_truncated {
+            return Err(truncated());
+        }
+    }
+    Ok(image)
+}
+
+fn open_jpeg(data: &[u8], load_truncated: bool) -> Result<Opened> {
     let header = jpeg_header(data)?;
     let (mode, format) = match header.components {
         1 => (Mode::L, turbojpeg::PixelFormat::GRAY),
@@ -265,7 +330,7 @@ fn open_jpeg(data: &[u8]) -> Result<Opened> {
         4 => (Mode::Cmyk, turbojpeg::PixelFormat::CMYK),
         _ => return Err(damaged("unsupported JPEG component count")),
     };
-    let img = turbojpeg::decompress(data, format).map_err(|e| damaged(&e.to_string()))?;
+    let img = decompress_jpeg(data, format, load_truncated)?;
     let mut pixels = img.pixels;
     if mode == Mode::Cmyk {
         // Pillow assumes Adobe's inverted CMYK ("CMYK;I")
@@ -311,6 +376,13 @@ fn png_chunks(data: &[u8]) -> Vec<PngChunk<'_>> {
         let len = u32::from_be_bytes([data[i], data[i + 1], data[i + 2], data[i + 3]]) as usize;
         let kind = [data[i + 4], data[i + 5], data[i + 6], data[i + 7]];
         let Some(chunk) = data.get(i + 8..i + 8 + len) else {
+            // a cut-off image data chunk still holds what it holds
+            if &kind == b"IDAT" {
+                out.push(PngChunk {
+                    kind,
+                    data: &data[i + 8..],
+                });
+            }
             break;
         };
         out.push(PngChunk { kind, data: chunk });
@@ -460,7 +532,7 @@ fn sample(row: &[u8], x: usize, bit_depth: u8) -> u16 {
     }
 }
 
-fn open_png(data: &[u8]) -> Result<Opened> {
+fn open_png(data: &[u8], load_truncated: bool) -> Result<Opened> {
     let chunks = png_chunks(data);
     let ihdr = chunks
         .first()
@@ -575,21 +647,63 @@ fn open_png(data: &[u8]) -> Result<Opened> {
     if idat.is_empty() {
         return Err(damaged("no image data"));
     }
-    let raw = zlib_inflate(&idat).or_else(|e| {
-        // a truncated stream still yields what was decompressed so far
-        if e.kind() == std::io::ErrorKind::UnexpectedEof {
-            Ok(Vec::new())
-        } else {
-            Err(e)
-        }
-    });
-    let raw = raw.map_err(|_| damaged("bad zlib stream"))?;
+    // (what a cut-off stream held is kept: whether that is every row is
+    // decided below)
+    let mut raw = Vec::new();
+    if let Err(e) = ZlibDecoder::new(&idat[..]).read_to_end(&mut raw)
+        && e.kind() != std::io::ErrorKind::UnexpectedEof
+    {
+        return Err(damaged("bad zlib stream"));
+    }
 
+    check_pixel_count(width, height)?;
     let (w, h) = (width as usize, height as usize);
     let bits_pp = samples * usize::from(bit_depth);
     let bpp = bits_pp.div_ceil(8).max(1);
     // unfiltered rows for the full image, row_bytes each
     let row_bytes = (w * bits_pp).div_ceil(8);
+    // the filtered scanlines of each pass (one, unless interlaced), by their
+    // byte length and row length
+    let pass_shapes: Vec<(usize, usize)> = if interlaced {
+        [
+            (0, 0, 8, 8),
+            (4, 0, 8, 8),
+            (0, 4, 4, 8),
+            (2, 0, 4, 4),
+            (0, 2, 2, 4),
+            (1, 0, 2, 2),
+            (0, 1, 1, 2),
+        ]
+        .into_iter()
+        .filter_map(|(x0, y0, dx, dy)| {
+            let pw = if w > x0 { (w - x0).div_ceil(dx) } else { 0 };
+            let ph = if h > y0 { (h - y0).div_ceil(dy) } else { 0 };
+            (pw > 0 && ph > 0).then(|| ((pw * bits_pp).div_ceil(8) + 1, ph))
+        })
+        .collect()
+    } else {
+        vec![(row_bytes + 1, h)]
+    };
+    let expected: usize = pass_shapes.iter().map(|(line, rows)| line * rows).sum();
+    if raw.len() < expected {
+        // Cut off. The decoder takes whole scanlines only, and what it
+        // never reached is zeros (black, or palette entry 0).
+        if !load_truncated {
+            return Err(truncated());
+        }
+        let mut whole = 0;
+        let mut left = raw.len();
+        for (line, rows) in &pass_shapes {
+            let done = (left / line).min(*rows);
+            whole += done * line;
+            left = left.saturating_sub(done * line);
+            if done < *rows {
+                break;
+            }
+        }
+        raw.truncate(whole);
+        raw.resize(expected, 0);
+    }
     let full = if interlaced {
         let passes = [
             (0, 0, 8, 8),
@@ -706,8 +820,8 @@ fn decode_hex(s: &str) -> Option<Vec<u8>> {
 // ---------------------------------------------------------------------- GIF
 
 /// Frame 0 of a GIF as Pillow's `GifImageFile` opens it.
-fn open_gif(data: &[u8]) -> Result<Opened> {
-    let frame = crate::formats::gif::first_frame(data)?;
+fn open_gif(data: &[u8], load_truncated: bool) -> Result<Opened> {
+    let frame = crate::formats::gif::first_frame(data, load_truncated)?;
     let mut image = base_image(
         Format::Gif,
         if frame.palette.is_some() {
@@ -839,6 +953,7 @@ fn decode_dib(
     header_at: usize,
     file_offset: usize,
     height_halved: bool,
+    load_truncated: bool,
 ) -> Result<Dib> {
     let bad = || damaged("bad BMP header");
     let header_size = le32(data, header_at).ok_or_else(bad)? as usize;
@@ -968,16 +1083,28 @@ fn decode_dib(
         }
     }
     let pixel_offset = if offset != 0 { offset } else { read_pos };
+    check_pixel_count(width, height)?;
     let (w, h) = (width as usize, height as usize);
     let stride = ((w * usize::from(bits) + 31) >> 3) & !3;
     let src = data.get(pixel_offset..).ok_or_else(bad)?;
-    if src.len() < stride * h {
-        return Err(damaged("image file is truncated"));
+    // Cut off: the decoder takes whole lines only, and the lines it never
+    // reached are zeros (black, or palette entry 0).
+    let whole_lines = src.len().checked_div(stride).unwrap_or(h);
+    let mut zero_line = Vec::new();
+    if whole_lines < h {
+        if !load_truncated {
+            return Err(truncated());
+        }
+        zero_line = vec![0; stride];
     }
     let mut out = Vec::with_capacity(w * h * mode.channels());
     for y in 0..h {
         let sy = if direction_up { h - 1 - y } else { y };
-        let row = &src[sy * stride..(sy + 1) * stride];
+        let row = if sy < whole_lines {
+            &src[sy * stride..(sy + 1) * stride]
+        } else {
+            &zero_line[..]
+        };
         for x in 0..w {
             match raw {
                 Raw::Index(b) => {
@@ -1036,14 +1163,16 @@ fn decode_dib(
     })
 }
 
-fn open_bmp(data: &[u8]) -> Result<Opened> {
+fn open_bmp(data: &[u8], load_truncated: bool) -> Result<Opened> {
     let offset = le32(data, 10).ok_or_else(|| damaged("bad BMP header"))? as usize;
-    Ok(plain(decode_dib(data, 14, offset, false)?.image))
+    Ok(plain(
+        decode_dib(data, 14, offset, false, load_truncated)?.image,
+    ))
 }
 
 // ---------------------------------------------------------------------- ICO
 
-fn open_ico(data: &[u8]) -> Result<Opened> {
+fn open_ico(data: &[u8], load_truncated: bool) -> Result<Opened> {
     struct Entry {
         width: u32,
         height: u32,
@@ -1082,9 +1211,9 @@ fn open_ico(data: &[u8]) -> Result<Opened> {
     let e = entries.first().ok_or_else(bad)?;
     let body = data.get(e.offset..).ok_or_else(bad)?;
     let mut image = if body.starts_with(b"\x89PNG\r\n\x1a\n") {
-        open_png(body)?.image
+        open_png(body, load_truncated)?.image
     } else {
-        let dib = decode_dib(data, e.offset, 0, true)?;
+        let dib = decode_dib(data, e.offset, 0, true, load_truncated)?;
         let mut im = dib.image;
         let (w, h) = (im.width as usize, im.height as usize);
         let alpha: Option<Vec<u8>> = if e.bpp == 32 {

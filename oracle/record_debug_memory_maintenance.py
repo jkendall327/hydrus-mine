@@ -18,6 +18,19 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 MINUTE = 60
+# The scripted entries, a to d, one second apart: their sizes in each cache
+# and each cache's limit (bytes). They are the sizes of
+# oracle/fixtures/image_cache/w20.png, w14.png, c.png and w3.png (20, 14, 10 and
+# 3 pixels wide, one high) as hydrus-rs accounts them in both its image cache
+# (the pre-decode RGB estimate, width x height x 3) and its thumbnail cache
+# (the thumbnail's RGB bytes), so that the GUI test can replay the recording
+# with real files. The limit lets the first three entries sit together, the
+# fourth push the oldest out, and the three left stay under it.
+SIZES = {
+    'image': dict(a=60, b=42, c=30, d=9),
+    'thumbnail': dict(a=60, b=42, c=30, d=9),
+}
+LIMITS = {'image': 125, 'thumbnail': 125}
 
 
 def record(session):
@@ -59,6 +72,7 @@ def record(session):
         fast = find(menu, ['debug', 'memory actions', 'run fast memory maintenance'])
         slow = find(menu, ['debug', 'memory actions', 'run slow memory maintenance'])
         out = dict(
+            sizes=SIZES, limits=LIMITS,
             fast=dict(path=[label.replace('&', ''), 'debug', 'memory actions', fast.text()], tooltip=fast.toolTip()),
             slow=dict(path=[label.replace('&', ''), 'debug', 'memory actions', slow.text()], tooltip=slow.toolTip()),
         )
@@ -83,13 +97,13 @@ def record(session):
         try:
             c.pub = pub
             Base.time = types.SimpleNamespace(monotonic=lambda: clock[0])
-            for cache in caches.values():
+            for name, cache in caches.items():
                 cache.Clear()
-                cache.SetCacheSizeAndTimeout(100, 300)
-            for key, size, at in [('a', 60, 0), ('b', 40, 1), ('c', 20, 2), ('d', 10, 3)]:
+                cache.SetCacheSizeAndTimeout(LIMITS[name], 300)
+            for key, at in [('a', 0), ('b', 1), ('c', 2), ('d', 3)]:
                 clock[0] = at
-                for cache in caches.values():
-                    cache.AddData(key, Stub(size))
+                for name, cache in caches.items():
+                    cache.AddData(key, Stub(SIZES[name][key]))
             steps = [state('primed')]
             steps[-1]['pubs'] = []
             for name, action in [('slow', slow), ('fast', fast)]:

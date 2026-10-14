@@ -2173,6 +2173,122 @@ fn read_list_sizes_and_float_policy_reach_rendered_new_pages() {
     }
 }
 
+// How many rows each list shows once laid out, set through the real Options
+// window and measured on the rendered page, against the reference's lists
+// (oracle/fixtures/file_search_presentation.json: a `ListBoxTags` is
+// `rows * text_height + 2 * frame` high, so its rows are
+// `(hint - 2 * frame) / text_height`). The row height is each toolkit's own
+// (Qt's font height, 22 px here), so rows are compared, not pixels.
+// leaf: audit-options-file-search-file-search-autocomplete-active-search-predicates-list-height
+// leaf: audit-options-file-search-file-search-autocomplete-autocomplete-list-height
+#[test]
+fn the_read_lists_show_as_many_rows_as_the_options_say_when_laid_out_as_the_reference_does() {
+    use hydrus_core::ServiceKey;
+    use hydrus_core::service::builtin_keys;
+    use hydrus_gui::page_chooser::NewPage;
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let fixture = hydrus_testkit::fixture_json("file_search_presentation.json");
+    // (a list the reference laid out with room to spare, at its hint)
+    let their_rows = |list: &serde_json::Value| {
+        let frame = list["frame"].as_i64().unwrap();
+        let rows = (list["hint"].as_i64().unwrap() - 2 * frame) as f64
+            / list["text_height"].as_f64().unwrap();
+        assert!(
+            (rows - rows.round()).abs() < 1e-9,
+            "a whole number of rows: {rows}"
+        );
+        rows.round() as i64
+    };
+    for event in fixture["events"].as_array().unwrap() {
+        let (active_rows, autocomplete_rows) = (
+            event["active_rows"].as_i64().unwrap(),
+            event["autocomplete_rows"].as_i64().unwrap(),
+        );
+        let floating = event["floating"].as_bool().unwrap();
+        assert_eq!(their_rows(&event["view"]["active"]), active_rows);
+        assert_eq!(
+            their_rows(&event["view"]["autocomplete"]),
+            autocomplete_rows
+        );
+
+        // (a new main window for each case: the measured values start at
+        // nothing, so one left by an earlier case cannot pass for this one)
+        let ui = MainWindow::new().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        ui.show().unwrap();
+        let main = windows.get(windows.count() - 1).unwrap();
+        main.dispatch_event(slint::platform::WindowEvent::WindowActiveChanged(true));
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        show_page(&window, "file search");
+        let (active_row, _) = row(&window, "Active Search Predicates list height:");
+        let (suggestion_row, _) = row(&window, "Autocomplete list height:");
+        let (float_row, _) = row(
+            &window,
+            "Autocomplete dropdown floats over file search pages:",
+        );
+        window.invoke_number_edited(active_row, active_rows as i32);
+        window.invoke_number_edited(suggestion_row, autocomplete_rows as i32);
+        window.invoke_check_toggled(float_row, floating);
+        window.invoke_apply();
+        (bound.open_page)(&NewPage::Search {
+            domain: ServiceKey::new(builtin_keys::MY_FILES.to_vec()),
+            name: "synthetic search presentation recording".into(),
+        });
+        // one active predicate, to measure a row by; and suggestions to show
+        ui.invoke_search_edited("system:everything".into());
+        ui.invoke_search_accepted();
+        ui.invoke_search_edited("".into());
+        assert!(ui.get_suggestions().row_count() > 0);
+        ui.set_search_focus_requests(ui.get_search_focus_requests() + 1);
+        if floating {
+            ui.set_search_focused(true);
+        }
+        // (tall enough for 128 rows of either list)
+        for _ in 0..3 {
+            headless::render(&main, 1100, 7000);
+            slint::platform::update_timers_and_animations();
+        }
+        let what = format!("{event}");
+
+        // the active predicates: the room shown over the height of one row
+        let predicates = ui.get_predicates().row_count() as f32;
+        assert!(predicates >= 1.0, "{what}");
+        let pitch = ui.get_active_predicate_content_height() / predicates;
+        let shown = ui.get_active_predicate_view_height() / pitch;
+        assert!(
+            (shown - active_rows as f32).abs() < 0.01,
+            "{what}: the active predicates list shows {shown} rows of {pitch}"
+        );
+
+        // the autocomplete results: the room shown over the height of one row
+        let suggestions = ui.get_suggestions().row_count() as f32;
+        // (the rows' height and the room, of the list that is shown)
+        let rows_height = if floating {
+            ui.get_read_rows_height()
+        } else {
+            ui.get_read_embedded_rows_height()
+        };
+        let view_height = if floating {
+            ui.get_read_overlay_view_height()
+        } else {
+            ui.get_read_embedded_view_height()
+        };
+        assert!(
+            rows_height > 0.0 && view_height > 0.0,
+            "{what}: the results list was laid out"
+        );
+        let pitch = rows_height / suggestions;
+        let shown = view_height / pitch;
+        assert!(
+            (shown - autocomplete_rows as f32).abs() < 0.01,
+            "{what}: the results list shows {shown} rows of {pitch}"
+        );
+        ui.set_search_focused(false);
+    }
+}
+
 // leaf: audit-options-file-search-file-search-if-explicit-system-limit-then-refresh-search-when-file-sort-changes
 // leaf: audit-options-file-search-file-search-implicit-system-limit-for-all-searches
 #[test]
@@ -7063,6 +7179,76 @@ fn the_search_bar_and_its_suggestions_sit_where_the_option_puts_them() {
     }
     // a field at the top takes 30 pixels from the list, at the bottom it takes them below
     assert!((first_row[&true] - first_row[&false] - 30.0).abs() < 0.5);
+}
+
+// The search field's place against the page list's, measured from the laid-out
+// window, for each placement the reference recorded
+// (oracle/fixtures/options_preferences.json `placed`: the reference's
+// `_options_search` and `_listbook` geometry in the panel). Qt's field is 23 px
+// high and ours 30, so what is compared is which side of the list the field
+// is on and that it does not overlap the list.
+// leaf: audit-options-gui-misc-put-the-options-search-bar-at-the
+#[test]
+fn the_options_search_field_is_laid_out_above_or_below_the_page_list_as_the_reference_does() {
+    use hydrus_store::settings::OptionsPreferences;
+    let recorded = hydrus_testkit::fixture_json("options_preferences.json");
+    let windows = headless::init();
+    for case in recorded["cases"].as_array().unwrap() {
+        let top = case["top"].as_bool().unwrap();
+        let placed = &case["placed"];
+        let (_dirs, store) = store();
+        let seeded = OptionsPreferences {
+            remember_panel: false,
+            last_panel: "gui".into(),
+            search_at_top: top,
+        };
+        store
+            .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &seeded))
+            .unwrap();
+        let ui = MainWindow::new().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        open(&ui);
+        let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+        crate::common::widgets::lay_out(window.window(), 1000.0, 700.0);
+        let _image = headless::render(&windows.get(windows.count() - 1).unwrap(), 1000, 700);
+        let (ours_field_y, ours_field_h) = (
+            window.get_search_field_y(),
+            window.get_search_field_height(),
+        );
+        let (ours_list_y, ours_list_h) = (window.get_page_list_y(), window.get_page_list_height());
+        let (their_field_y, their_field_h) = (
+            placed["search"][1].as_f64().unwrap(),
+            placed["search"][3].as_f64().unwrap(),
+        );
+        let (their_list_y, their_list_h) = (
+            placed["list"][1].as_f64().unwrap(),
+            placed["list"][3].as_f64().unwrap(),
+        );
+        let ours_above = ours_field_y + ours_field_h <= ours_list_y + 0.5;
+        let ours_below = ours_field_y >= ours_list_y + ours_list_h - 0.5;
+        let theirs_above = their_field_y + their_field_h <= their_list_y;
+        let theirs_below = their_field_y >= their_list_y + their_list_h;
+        assert_eq!(
+            (theirs_above, theirs_below),
+            (top, !top),
+            "case {case}: the recording"
+        );
+        assert_eq!(
+            (ours_above, ours_below),
+            (theirs_above, theirs_below),
+            "case {case}: field at {ours_field_y}+{ours_field_h}, list at {ours_list_y}+{ours_list_h}"
+        );
+        // the list gives up the field's height and no more: the field is
+        // close to the list's edge (within 8 px: ours is 6 px from it, Qt's
+        // flush)
+        let gap = if top {
+            ours_list_y - (ours_field_y + ours_field_h)
+        } else {
+            ours_field_y - (ours_list_y + ours_list_h)
+        };
+        assert!(gap.abs() <= 8.0, "case {case}: gap {gap}");
+        window.invoke_cancel();
+    }
 }
 
 /// The options window's search and Apply/Cancel, replayed from

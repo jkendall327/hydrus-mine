@@ -139,7 +139,10 @@ as Qt's do; a press anywhere else closes them. What works so far:
   running an export folder now, opening the installation and database
   directories, the options, and exit, restart and exit/force maintenance
   (declining a restart leaves the next window close a plain exit, as the
-  reference's per-request flag does), and minimise to system tray where the
+  reference's per-request flag does; they warn first when the database drive
+  is nearly full, and when pages are still importing they ask in the pages'
+  dialog, which says importers will save and continue on the next start; the
+  exit question answers itself yes after 15 seconds), and minimise to system tray where the
   desktop has a tray (see the system tray section);
 - undo: the pages closed in the last hour, latest first, to reopen any of
   them, or forget them all (asking first); searching additions and removals,
@@ -1499,7 +1502,13 @@ it fits a part of the period or some seconds, or stops at its end and
 moves on if it is most of the period; one about as long, a little over,
 stops at its end and moves on; one of no known duration stops the
 slideshow; and with playing through on, a file that plays is shown until
-it has played through. Unlike the reference's, a slideshow doesn't wait
+it has played through. (Replayed against the reference's viewer with its clock held still,
+`oracle/record_slideshow_run.py`: the period is passed strictly, the list
+wraps, shuffling moves to another file each period, a stopped slideshow
+stays and resumes a period later, and with playing through on a file that
+plays stays until it has played through, through the real viewer's timer
+and libmpv.) The volume menu's forced mute reaches the player
+(`oracle/record_viewer_mute.py`, for every combination of the mutes). Unlike the reference's, a slideshow doesn't wait
 while a menu is open (Slint doesn't say when one is), so the menu's
 entries act on the file it was opened on, though the slideshow has moved
 on (as does a deletion asked about); it does wait while the viewer asks
@@ -4105,6 +4114,18 @@ consume a work slot. Watcher checks and files now run independently, so a
 checker waiting for its own slot does not prevent that watcher's file imports.
 URL and simple-downloader file/page work and local-import files share the other
 paged-job pool. These limits are separate from network connection semaphores.
+Tests hold URL-queue gallery pages, simple-downloader pages and local-import
+files at the "other paged importer jobs" limit (1, then 2) through the queue
+runner (`paged_importers.rs`).
+
+The three "additional fixed time to wait between gallery page fetches" options
+(downloader pages, subscriptions, watchers) are met by a real URL queue, a real
+subscription and real watchers fetching from one site: a kind's second page
+comes no sooner than its own saved wait after the first, whatever the other
+two are. "Force file downloads to occur quickly after Post URL fetches" lets a
+post's file past a used-up bandwidth rule about 3 seconds after the post page;
+off, the file keeps waiting (`post_url_override.rs`, timing recorded from the
+reference's client).
 
 Database > clear now opens the original clear-all and cull-viewing-statistics
 questions with “do it”/“forget it” choices and the original completion notices.
@@ -5071,7 +5092,9 @@ after the reference's questions, then shows another group.
 Help > debug now also has profiling > "what is this?" (the reference's
 explanation), gui actions > "make a modal popup in five seconds" and its
 non-cancellable twin (a "debug modal job" popup counting down ten seconds),
-"make a QMessageBox" (its warning), "make some popups" (the reference's test
+"make a QMessageBox" (its warning; the texts of both message boxes are
+checked against the reference's real menu in
+`oracle/fixtures/debug_message_boxes.json`), "make some popups" (the reference's test
 popups: six numbered messages, the very long message and title, a client API
 file popup, two mergeable file popups, the unicode one, a pausable and
 cancellable job with a gauge, an error, then three delayed messages),
@@ -5114,6 +5137,23 @@ database directory), and debug modes > "use faulthandler to log crashes"
 and reads the effect back; `tests/model/debug_flags.rs` and the
 `debug_*` tests of hydrus-import, hydrus-net, hydrus-download, hydrus-media
 and hydrus-store cover the reports their crates make.
+
+Help > debug > tests, do not touch > "induce a program crash" asks "u wot mate
+I'll hook u in the gabber" with "nice crash", "not a nice crash" and "forget
+it". "Nice crash" ends the program with a panic that `client crash.log` in the
+database directory records; "not a nice crash" panics a background thread
+(logged, the client goes on); "forget it" does nothing.
+`tests/gui/crash_the_program.rs` replays the recorded question and runs the
+nice crash in a subprocess, then reads the log.
+
+Options > media playback > system > "Allow loading of truncated images" (on by
+default) decides what happens to an image file that stops early (a download
+that was cut off). On, the importer and the viewer load what is there and fill
+the rest, grey for a JPEG and black for a PNG or BMP, as the reference does;
+off, such a file imports without a thumbnail and the viewer shows nothing of
+it. `tests/gui/truncated_images.rs` drives the options window, the importer and
+the viewer against `image_decoder_policies.json`; the decoders themselves are
+compared in `crates/hydrus-media/tests/truncated_images.rs`.
 
 Help > debug > profiling also has the reference's profile modes (client api,
 db and ui; one on at a time, turning another on ends the one before) and
@@ -5175,6 +5215,25 @@ selected" and "advanced: reset for all selected" do so for the selection.
 The manage menu's maintenance and viewing stats submenus now show in the
 thumbnail menu too (they were dropped by its template before).
 `tests/model/file_relationships.rs` checks the menu and its store actions.
+Each action asks the reference's question first (the better-than, same
+quality, alternates, potentials, king, remove, dissolve, false-positive,
+search-again and drop-potentials ones, in its words), and the window test
+replays the reference's real menu and answers from
+`oracle/fixtures/file_relationship_actions.json`: the rows offered, the
+question, the relationships of the six files after each step, and the
+pages the "view" rows open.
+
+## Thumbnail open menu
+
+The thumbnail's "open" submenu offers a new page of the selection, a new
+duplicate filter page, similar files (exact match, very similar, similar,
+speculative, for a still image) and, for the focused file, the OS launch, the
+web browser and, in advanced mode only, the file browser, as the reference's
+does (`oracle/record_open_menu_actions.py`); "custom" asks the distance in a
+"choose distance" dialog (from 10, in steps of 2, 0 to 99) and cancelling it
+opens nothing. The window test chooses each recorded row and compares what it
+launches or opens: the launch path, the web browser's file URL, the file
+browser's path, the pages' names and files and the similar-files searches.
 
 ## Database > backup
 
@@ -5188,7 +5247,8 @@ backup and mirrors the media directory (copying what differs in size or
 date, deleting what the client no longer has) in a cancellable "backing up
 db" popup ending "backup complete!". "change database backup location"
 picks again. "restore from a database backup" picks a backup, asks, and
-restarts, restoring it before the store opens. A client with media in
+exits at once to restart (no second question and no shutdown jobs, as the
+reference's `RestoreDatabase` sets), restoring it before the store opens. A client with media in
 several locations shows "database is stored in multiple locations", whose
 note explains. The messages and questions of setting up, updating and restoring are replayed against
 `oracle/fixtures/backup_dialogs.json` (the reference's own dialogs, scripted answers) in
@@ -5778,6 +5838,29 @@ of the upcoming pairs is warmed once.
   search and Apply, and thumbnail fades are tested against recordings of the
   reference; each leaf's recheck note names the test.
 
+## Source-restated leaves, recorded (W5-7, #255)
+
+- **Media viewer navigation.** First (Home), last (End), previous and next go
+  round the ends, and ctrl+r removes the file shown (the next takes its place;
+  the last file removed closes the viewer), as `oracle/record_viewer_navigation.py`
+  records from the reference's real viewer. "media navigation: random" and
+  "undo random" (and first, last and "remove file from current view") are
+  commands for the media viewer's shortcut set, with no default keys, as in
+  the reference; the test gives them keys and replays the recording's random
+  draws.
+- **Popups.** The pause and cancel buttons of a popup card are labelled for
+  screen readers ("pause" or "resume", "cancel"); the test clicks "cancel"
+  and compares the job's flags with the reference's.
+- **Archive/delete filter playback.** Replays `oracle/fixtures/archive_delete_playback.json`
+  from the reference's real filter canvas: animations play, space pauses and
+  plays (three presses), the scanbar and volume control show as there, and a
+  file with sound lists its tags.
+- **Pages not yet shown.** Their tabs say how many files they hold
+  (`a (3)`, `n (7) ↓`), and each opens with that many (the reference's
+  tabs say `initialising (3)` until its background load, which every page
+  gets, has finished).
+- **Help > debug message boxes** are compared with the reference's.
+
 ## Crash log
 
 Every panic, on any thread, in the desktop client, `hydrus serve` and the
@@ -5790,3 +5873,40 @@ it past 512 KiB it is moved to `client crash.log.old` (replacing the earlier
 one), so the two files stay under about 1 MiB. Panics on `serve`'s tokio
 tasks and blocking jobs are logged too: the runtime catches them, but the
 panic hook runs first.
+
+## External calls and processing steps: what now works (W5-2)
+
+- The external call editor's rule rows open the string processor editor from
+  their button, starting from the row's test input (the parameter's example until it is changed). A step
+  applied there shows in the row's button and the command preview; cancelling
+  leaves the row alone.
+- A call's timeout, "this can live for a very long time" and output-is-text
+  settings act as in the reference: a call that outlives its timeout is
+  stopped and reported with the reference's words, output is quoted as text or
+  bytes, a long-lived launch returns at once and is left running, and 'test
+  call!' forces a 15-second timeout on a long-lived call.
+- The string processor editor's export puts the selected steps, in queue
+  order, on the clipboard or in a PNG; with nothing selected it does nothing.
+
+## Layout geometry for tests (W5-13)
+
+Windows expose read-only measured geometry so tests can prove a layout
+setting takes effect against the reference's laid-out widgets. Users see no
+difference. Proven, each against a recording of the reference: the options
+search bar above or below the page list; the notebook tab bars' side, thickness,
+tab order and rotated-label direction; the rows shown by the active-predicate,
+search-result and tag-edit autocomplete lists (against the reference's recorded
+size hints, as Qt stretches the laid-out lists); the suggested-tag lists' widths;
+the thumbnail border's drawn width; and the sidecar custom-separator box's
+enabled state.
+
+## Parser test panels' results (W5-2 follow-up)
+
+- "test parse" in the content parser and page parser editors prints what the
+  reference prints: "*** N RESULTS BEGIN ***", one line per result worded by its
+  kind (for example "tag: series:foo bar", "downloadable/pursuable url
+  (priority 50): ...", 'note "name":', "sha256 hash: ...", "source/post time:
+  ...", "veto: ..."), sorted, with posts separated by "*** SEPARATE FILE
+  RESULTS BREAK ***".
+- After "fetch example data" the page URL box keeps what you typed; the parse
+  context uses the encoded URL.

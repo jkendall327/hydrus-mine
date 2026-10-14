@@ -135,6 +135,11 @@ fn the_viewer_s_top_hover_frame() {
 
     // and the open menu has it too, after "in web browser", as the
     // reference's has it in advanced mode
+    store
+        .write_and_refresh(|ctx| {
+            hydrus_store::settings::set(ctx.conn(), &hydrus_store::settings::AdvancedMode(true))
+        })
+        .unwrap();
     let labels: Vec<String> = open_menu(&store, Some(file), 1)
         .into_iter()
         .filter_map(|e| match e {

@@ -97,6 +97,92 @@ fn the_viewer_opens_fullscreen_and_f_switches() {
     assert!(bound.viewer.borrow().is_none());
 }
 
+/// "Save media viewer window size and position on close", off and on, as the
+/// reference's frame keeps them (`oracle/record_viewer_close_geometry.py`: a
+/// real media viewer frame remembering its size, opened at 640x480, resized,
+/// and closed at once, before its own delayed save can run): the real
+/// viewer is opened and closed the same way, and the frame location it leaves
+/// is the recorded one. (A viewer left a moment after the resize has already
+/// kept it in the reference; hydrus-rs keeps the size only on close, see
+/// DIFFERENCES.md.)
+// leaf: audit-options-gui-frame-locations-save-media-viewer-window-size-and-position-on-close
+#[test]
+fn the_viewer_keeps_its_size_on_close_only_when_the_option_is_on() {
+    let fixture = hydrus_testkit::fixture_json("viewer_close_geometry.json");
+    let resized = fixture["resized_to"].as_array().unwrap();
+    let resized = slint::LogicalSize::new(
+        resized[0].as_f64().unwrap() as f32,
+        resized[1].as_f64().unwrap() as f32,
+    );
+    let _windows = headless::init();
+    let mut seen = 0;
+    for run in fixture["runs"].as_array().unwrap() {
+        if run["scenario"] != "closed at once after resizing" {
+            continue;
+        }
+        let save_on_close = run["save_on_close"].as_bool().unwrap();
+        let legacy = hydrus_testkit::legacy_fixture("basic");
+        let native = tempfile::tempdir().unwrap();
+        import_legacy(
+            legacy.path(),
+            &native.path().join(hydrus_store::store::DB_FILE_NAME),
+        )
+        .unwrap();
+        let store = Store::open(native.path()).unwrap();
+        let kept = || -> WindowSettings { store.read(hydrus_store::settings::get).unwrap() };
+        // as the recording started: a window remembering its size, at 640x480
+        let opened = &run["opened"];
+        let size = |size: &serde_json::Value| -> Option<(i32, i32)> {
+            let a = size.as_array()?;
+            Some((a[0].as_i64()? as i32, a[1].as_i64()? as i32))
+        };
+        let windowed = WindowSettings {
+            media_viewer: FrameLocation {
+                maximised: false,
+                fullscreen: false,
+                last_size: size(&opened[2]["last_size"]),
+                ..FrameLocation::media_viewer()
+            },
+            save_media_viewer_on_close: save_on_close,
+            ..WindowSettings::default()
+        };
+        let saved = windowed.clone();
+        store
+            .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &saved))
+            .unwrap();
+        let ui = MainWindow::new().unwrap();
+        let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+        ui.invoke_search_edited("system:everything".into());
+        ui.invoke_search_accepted();
+        ui.invoke_thumbnail_activated(0);
+        let shown = bound
+            .viewer
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong)
+            .unwrap();
+        let scale = shown.window().scale_factor();
+        let opened_size = shown.window().size().to_logical(scale);
+        assert_eq!(
+            (opened_size.width as u64, opened_size.height as u64),
+            (opened[0].as_u64().unwrap(), opened[1].as_u64().unwrap()),
+            "opens at the remembered size"
+        );
+        shown.window().set_size(resized);
+        shown.invoke_close_requested();
+        assert!(bound.viewer.borrow().is_none());
+        assert_eq!(
+            kept().media_viewer.last_size,
+            size(&run["closed"]["last_size"]),
+            "{run}"
+        );
+        assert_eq!(kept().media_viewer.maximised, run["closed"]["maximised"]);
+        assert_eq!(kept().media_viewer.fullscreen, run["closed"]["fullscreen"]);
+        seen += 1;
+    }
+    assert_eq!(seen, 2);
+}
+
 #[test]
 fn the_viewer_s_browsing_shortcuts() {
     use slint::platform::{Key, PointerEventButton, WindowEvent};

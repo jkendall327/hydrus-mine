@@ -245,7 +245,7 @@ fn the_sidecar_node_window_works_as_the_references_does() {
     )
     .unwrap();
     let store = Store::open(dir.path()).unwrap();
-    let _windows = headless::init();
+    let windows = headless::init();
     let namer = |key: &str| recorded["names"][key].as_str().map(str::to_owned);
     let my_tags = hex::encode(hydrus_core::service::builtin_keys::MY_TAGS);
     let mut checked = 0;
@@ -300,7 +300,19 @@ fn the_sidecar_node_window_works_as_the_references_does() {
                 }
             }
             let theirs = &states[upto]["state"];
-            let ours = shown(&window, destination);
+            // (laid out and painted, as on screen: whether the custom box
+            // is enabled is read off the laid-out box)
+            for _ in 0..2 {
+                headless::render(&windows.get(windows.count() - 1).unwrap(), 700, 700);
+                slint::platform::update_timers_and_animations();
+            }
+            let mut ours = shown(&window, destination);
+            if let Some(separator) = ours["separator"].as_object_mut() {
+                separator.insert(
+                    "custom_enabled".into(),
+                    json!(window.get_custom_separator_enabled()),
+                );
+            }
             // (the same boxes are shown as the reference's, bar its final value)
             let mut theirs_keys: Vec<&String> = theirs.as_object().unwrap().keys().collect();
             theirs_keys.retain(|k| *k != "value");
@@ -309,14 +321,7 @@ fn the_sidecar_node_window_works_as_the_references_does() {
             ours_keys.sort();
             assert_eq!(ours_keys, theirs_keys, "{at_state}");
             for key in ours.as_object().unwrap().keys() {
-                let mut ours_key = ours[key].clone();
-                let mut theirs_key = theirs[key].clone();
-                if key == "separator" && !ours_key.is_null() {
-                    // (whether the custom box is enabled is the window's own layout)
-                    theirs_key.as_object_mut().unwrap().remove("custom_enabled");
-                    ours_key.as_object_mut().unwrap().remove("custom_enabled");
-                }
-                assert_eq!(ours_key, theirs_key, "{at_state}: {key}");
+                assert_eq!(ours[key], theirs[key], "{at_state}: {key}");
             }
             window.invoke_cancel();
 
