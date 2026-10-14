@@ -22217,9 +22217,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "sound",
+    "class": "source-restated",
     "by": "Claude (recheck w4-r3b, #97 phase 2)",
-    "note": "oracle/record_sibling_fade_paint.py runs the real lists' _Redraw with a recording painter: which runs get a gradient pen or background and between which colours, for eight option cases, storage and write lists (selected and unselected paints are merged: hydrus-rs has one fade flag per run). The real consumers' runs (fade flag, previous and own colour) replayed; the option row's disabled namespace control from the recording. Test: sibling_colours.rs options_cancel_retired_apply_reopen_and_all_segmented_native_consumers"
+    "note": "oracle/record_sibling_fade_paint.py runs the real lists' _Redraw with a recording painter: which runs get a gradient pen or background and between which colours, for eight option cases, storage and write lists (selected and unselected paints are merged: hydrus-rs has one fade flag per run). The real consumers' runs (fade flag, previous and own colour) replayed; the option row's disabled namespace control from the recording. Test: sibling_colours.rs options_cancel_retired_apply_reopen_and_all_segmented_native_consumers Source-restated: the selected and unselected paints are merged (hydrus-rs has one fade flag per run), so the selected-row background fade is not compared separately."
    }
   },
   {
