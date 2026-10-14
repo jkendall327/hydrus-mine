@@ -262,13 +262,18 @@ fn clearing_orphan_files_replays_the_reference_s_runs_and_its_cancel() {
                     // the lines it said, but for the scan's own "checking ..." lines (the
                     // folders, sampled) and the moves one by one, are the ones the reference
                     // said, in the same order
+                    // (the one-by-one "deleting ...: n/m" lines go by too fast to be sampled
+                    // here; the worker's own lines are compared below)
                     let kept = |t: &&String| {
                         !t.starts_with("checking ")
                             && t.as_str() != "preparing"
                             && !t.starts_with("moving orphan")
+                            && !t.starts_with("deleting orphan")
                     };
                     let said: Vec<&String> = seen.iter().filter(kept).collect();
-                    let recorded_kept: Vec<&String> = recorded.iter().filter(kept).collect();
+                    let mut recorded_kept: Vec<&String> = recorded.iter().filter(kept).collect();
+                    // (the popup shows a repeated line once)
+                    recorded_kept.dedup();
                     assert_eq!(said, recorded_kept, "{name}");
                     if wait_for.is_empty() {
                         assert_eq!(seen.last(), recorded.last(), "{name}");
@@ -281,6 +286,30 @@ fn clearing_orphan_files_replays_the_reference_s_runs_and_its_cancel() {
                     }
                 }
             }
+        }
+        if name == "delete" {
+            // the worker's own lines, one by one, as the reference said them
+            self::strays(&media);
+            let found =
+                hydrus_store::orphan_files::scan(&store, &mut |_, _| {}, &|| false).unwrap();
+            let mut said = Vec::new();
+            hydrus_store::orphan_files::clear(
+                &store,
+                &found,
+                None,
+                hydrus_store::orphan_files::Waits::NONE,
+                &mut |text| said.push(text),
+                &|| false,
+            )
+            .unwrap();
+            let wanted_lines: Vec<String> = step["statuses"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|s| s[0].as_str().unwrap().to_owned())
+                .filter(|t| t.starts_with("found ") || t.starts_with("deleting "))
+                .collect();
+            assert_eq!(said, wanted_lines, "{name}");
         }
         let place = |base: &Path| tree(base).into_iter().collect::<Vec<_>>();
         assert_eq!(place(&media), wanted("default_files"), "{name}");

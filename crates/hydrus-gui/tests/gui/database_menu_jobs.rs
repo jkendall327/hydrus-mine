@@ -354,15 +354,9 @@ fn fix_invalid_tags_repairs_the_tags_the_reference_repaired_the_same_way() {
             "{text:?} not in {statuses:?}"
         );
     }
-    // the repair said each tag it fixed, in the reference's order, and the summary
-    let fixing = |lines: &[String]| -> Vec<String> {
-        lines
-            .iter()
-            .filter(|t| t.starts_with("Fixing bad tags"))
-            .cloned()
-            .collect()
-    };
-    assert_eq!(fixing(&seen), fixing(&statuses));
+    // (the reference also says "Scanning tags: 60/60 ..." and "Fixing bad tags: n/6" while it
+    // works; the native repair is one transaction and says only how it ended: DIFFERENCES.md)
+    assert_eq!(seen.last(), statuses.last());
     let wanted: Vec<(String, String)> = recording["after_shutdown"]
         .as_array()
         .unwrap()

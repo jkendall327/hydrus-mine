@@ -4095,6 +4095,8 @@ manual save-last-session action and wider debug GUI/style families remain unclai
   Resyncing tag counts reports "N desynced tag counts in SERVICE!" per tag
   service, where the reference reports surplus or missing files per
   file/tag-service cache. Fixed invalid tags aren't written to a log.
+  The popup does not count tags while it works ("Scanning tags: 60/60", "Fixing bad tags: n/6" in the
+  reference); it shows only the closing line, which matches the reference.
 - The jobs show their result popups but no step-by-step progress text, and
   can't be cancelled once started.
 
