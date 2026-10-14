@@ -6,6 +6,7 @@ use std::cell::RefCell;
 use std::sync::Arc;
 
 use hydrus_core::HashId;
+use slint::ComponentHandle as _;
 use hydrus_store::Store;
 
 use crate::{EditValueWindow, Pages, app_title, thumbnail_menu};
@@ -16,7 +17,7 @@ thread_local! {
 
 /// The dialog while one is open.
 pub fn editor() -> Option<EditValueWindow> {
-    EDITOR.with(|slot| slot.borrow().clone())
+    EDITOR.with(|slot| slot.borrow().as_ref().map(slint::ComponentHandle::clone_strong))
 }
 
 fn close() {
