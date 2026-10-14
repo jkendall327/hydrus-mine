@@ -6960,10 +6960,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI applies (1..3600 limits asserted as literals; also in options_dialog.json) and the engine's bandwidth_settings() shows the new gallery page wait; the wait loop itself is not run with the saved value (engine test sets 3600 directly). Test also covers the subscriptions and watchers waits, which are other leaves. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:580 downloading_waits_and_post_url_override_reach_the_running_network_engine; engine.rs wait_for_gallery_token"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "The real Options row (limits 1..3600 asserted) is set to 2, 3 and 4 seconds for pages, subscriptions and watchers, applied, and met by a running NetEngine fetching a local server twice per kind with that kind's gallery token: the second fetch of each kind waits (WaitReason::Gallery), its status names exactly first-fetch time + that kind's own wait (read as ISO text; the three waits are told apart), and it does not go until the second after that, as the reference's TryToConsumeAGalleryToken (now > last + delay). The kind-to-option mapping and the strict '>' rule come from oracle/fixtures/gallery_wait_options.json (record_gallery_wait_options.py: the real NetworkBandwidthManager with the three real options set to 7/11/13, time held still), replayed on hydrus-core's manager. The test itself calls engine.reload_settings() where the CLI's one-second poll does (the poll is not driven) and sets the store's per-domain limits aside. Callers choosing the token kind (queue.rs, subscriptions.rs) are not part of this test. Test: crates/hydrus-gui/tests/gui/options_download_waits.rs each_saved_wait_spaces_that_kinds_page_fetches_in_the_running_engine (and the_recorded_reference_token_rule_holds_for_the_engines_manager)."
    }
   },
   {
@@ -6980,10 +6980,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real options row and a new gallery page, checking the limit it gets (2000, 345, no limit) across Apply and reopen. Expected values are typed literals, not a recording; the subscription/search consumers are not checked. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:636 the_default_file_limit_is_the_new_gallery_pages_and_searches"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "The real Options row (noneable 1..1,000,000, 'no limit', reference default 2000) is set to each of the nine limits the reference was recorded with (oracle/fixtures/gallery_file_limit.json, record_gallery_file_limit.py: 2000, 345, 100, 99, 101, 50, 1, 1,000,000 and no limit) and applied; a new gallery downloader page then gets the recorded limit, and a subscription added through network > subscriptions > add opens with the recorded first-sync limit (min(100, limit), or 100 with no limit) and periodic limit 100. This found a real difference, fixed here: the add button ignored the option and always started at 100. The reference's GalleryImport (a single import) takes the same limit; native has no separate single-import object, so that recorded value is not replayed. Test: crates/hydrus-gui/tests/gui/options_file_limit.rs the_default_file_limit_is_the_recorded_limit_of_new_pages_and_the_first_sync_of_new_subscriptions."
    }
   },
   {
@@ -7103,10 +7103,10 @@
     "Bounds use the saved mode when opening, matching Qt construction."
    ],
    "recheck": {
-    "date": "2026-10-09",
-    "class": "source-restated",
-    "by": "phase 2 session",
-    "note": "A gallery search whose page cannot be reached (a connection refused by a held socket that was never listened on) waits ninety minutes by default and 3 h 20 m 5 s once changed, read from the queue runner's delayed_until; a watcher whose thread check fails the same way waits the same, read from its state's no_work_until. The option is changed in the real options window (advanced mode on; days/hours/minutes/seconds fields) and applied; the test then has the real downloader reload its settings as the CLI's one-second poll does (the poll itself is not driven). The expected waits are the option values by the reference's _DelayWork rules, not recorded from the reference (source-restated). Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs error_delays::a_search_or_a_watcher_that_meets_a_network_error_waits_as_long_as_the_option_says."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "A gallery search whose page cannot be reached, and a watcher whose thread check fails the same way, wait the recorded default (5400 s) and the recorded changed value (12005 s) read from the queue runner's delayed_until / the watcher state's no_work_until. The option is changed in the real options window (advanced mode on; days/hours/minutes/seconds fields) to the value the reference was recorded with and applied; the test then has the real downloader reload its settings, as the CLI's one-second poll does (the poll itself is not driven). Expected values are from oracle/fixtures/error_delays.json (record_error_delays.py): the reference's real GalleryImport/WatcherImport/Subscription run their real error handling with time held still, at the default and at a changed option; the recording raises a NetworkException from the fetch (the native tests use a real refused connection), and what is compared is the wait and, where noted, the reason. The reason text of the gallery/watcher is not compared. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs error_delays::a_search_or_a_watcher_that_meets_a_network_error_waits_as_long_as_the_option_says."
    }
   },
   {
@@ -7124,10 +7124,10 @@
     "Bounds use the saved mode when opening, matching Qt construction."
    ],
    "recheck": {
-    "date": "2026-10-09",
-    "class": "source-restated",
-    "by": "phase 2 session",
-    "note": "A subscription whose search cannot be reached (the same refused connection) waits twelve hours by default, then 1 d 2 h 1 m once changed, with reason 'network error: ...', read from its no_work_until. The option is changed in the real options window (advanced mode on; days/hours/minutes/seconds fields) and applied; the test then has the real downloader reload its settings as the CLI's one-second poll does (the poll itself is not driven). The expected waits are the option values by the reference's _DelayWork rules, not recorded from the reference (source-restated). Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs error_delays::a_subscription_that_meets_a_network_error_waits_as_long_as_the_option_says."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "A subscription whose search cannot be reached waits the recorded default (43200 s) and the recorded changed value (93660 s) with a reason starting 'network error: ', as recorded, read from its no_work_until. The option is changed in the real options window (advanced mode on; days/hours/minutes/seconds fields) to the value the reference was recorded with and applied; the test then has the real downloader reload its settings, as the CLI's one-second poll does (the poll itself is not driven). Expected values are from oracle/fixtures/error_delays.json (record_error_delays.py): the reference's real GalleryImport/WatcherImport/Subscription run their real error handling with time held still, at the default and at a changed option; the recording raises a NetworkException from the fetch (the native tests use a real refused connection), and what is compared is the wait and, where noted, the reason. Only the reason's prefix is compared (the rest is the error's own text). Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs error_delays::a_subscription_that_meets_a_network_error_waits_as_long_as_the_option_says."
    }
   },
   {
@@ -7145,10 +7145,10 @@
     "Bounds use the saved mode when opening, matching Qt construction."
    ],
    "recheck": {
-    "date": "2026-10-09",
-    "class": "source-restated",
-    "by": "phase 2 session",
-    "note": "A subscription whose query is already synced and holds a file to fetch, with an empty list of import destinations, fails CheckReadyToImport (no import destination): it waits thirty-six hours by default, then 2 d 1 h once changed, with reason 'error: ...', read from its no_work_until. No connection is made. The option is changed in the real options window (advanced mode on; days/hours/minutes/seconds fields) and applied; the test then has the real downloader reload its settings as the CLI's one-second poll does (the poll itself is not driven). The expected waits are the option values by the reference's _DelayWork rules, not recorded from the reference (source-restated). Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs error_delays::a_subscription_that_meets_another_error_waits_as_long_as_the_option_says."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "A subscription with a file to fetch and no import destination fails the CheckReadyToImport step: it waits the recorded default (129600 s) and the recorded changed value (176400 s) with the recorded reason 'error: There is no import destination set in the Location Import Options!' (compared exactly), read from its no_work_until; no connection is made. The option is changed in the real options window (advanced mode on; days/hours/minutes/seconds fields) to the value the reference was recorded with and applied; the test then has the real downloader reload its settings, as the CLI's one-second poll does (the poll itself is not driven). Expected values are from oracle/fixtures/error_delays.json (record_error_delays.py): the reference's real GalleryImport/WatcherImport/Subscription run their real error handling with time held still, at the default and at a changed option; the recording raises a NetworkException from the fetch (the native tests use a real refused connection), and what is compared is the wait and, where noted, the reason. Test: crates/hydrus-gui/tests/gui/options_system_consumers.rs error_delays::a_subscription_that_meets_another_error_waits_as_long_as_the_option_says."
    }
   },
   {
@@ -7245,10 +7245,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The GUI test sets the row, applies and checks only NetEngine::bandwidth_settings().gallery_page_wait_subscriptions (a settings copy). Nothing shows wait_for_gallery_token with GalleryTokenKind::Subscription actually spacing fetches by this value; the only engine wait test uses DownloadPage. The reader hop is untested. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:576 downloading_waits_and_post_url_override_reach_the_running_network_engine; crates/hydrus-net/src/engine.rs:2451 (gallery page kind only)"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "The real Options row (limits 1..3600 asserted) is set to 2, 3 and 4 seconds for pages, subscriptions and watchers, applied, and met by a running NetEngine fetching a local server twice per kind with that kind's gallery token: the second fetch of each kind waits (WaitReason::Gallery), its status names exactly first-fetch time + that kind's own wait (read as ISO text; the three waits are told apart), and it does not go until the second after that, as the reference's TryToConsumeAGalleryToken (now > last + delay). The kind-to-option mapping and the strict '>' rule come from oracle/fixtures/gallery_wait_options.json (record_gallery_wait_options.py: the real NetworkBandwidthManager with the three real options set to 7/11/13, time held still), replayed on hydrus-core's manager. The test itself calls engine.reload_settings() where the CLI's one-second poll does (the poll is not driven) and sets the store's per-domain limits aside. Callers choosing the token kind (queue.rs, subscriptions.rs) are not part of this test. Test: crates/hydrus-gui/tests/gui/options_download_waits.rs each_saved_wait_spaces_that_kinds_page_fetches_in_the_running_engine (and the_recorded_reference_token_rule_holds_for_the_engines_manager)."
    }
   },
   {
@@ -7353,10 +7353,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Same as the subscription gallery wait: the test only reads NetEngine::bandwidth_settings().watcher_page_wait after reload; no test shows the Watcher-kind gallery token wait using it. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:577 downloading_waits_and_post_url_override_reach_the_running_network_engine"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "The real Options row (limits 1..3600 asserted) is set to 2, 3 and 4 seconds for pages, subscriptions and watchers, applied, and met by a running NetEngine fetching a local server twice per kind with that kind's gallery token: the second fetch of each kind waits (WaitReason::Gallery), its status names exactly first-fetch time + that kind's own wait (read as ISO text; the three waits are told apart), and it does not go until the second after that, as the reference's TryToConsumeAGalleryToken (now > last + delay). The kind-to-option mapping and the strict '>' rule come from oracle/fixtures/gallery_wait_options.json (record_gallery_wait_options.py: the real NetworkBandwidthManager with the three real options set to 7/11/13, time held still), replayed on hydrus-core's manager. The test itself calls engine.reload_settings() where the CLI's one-second poll does (the poll is not driven) and sets the store's per-domain limits aside. Callers choosing the token kind (queue.rs, subscriptions.rs) are not part of this test. Test: crates/hydrus-gui/tests/gui/options_download_waits.rs each_saved_wait_spaces_that_kinds_page_fetches_in_the_running_engine (and the_recorded_reference_token_rule_holds_for_the_engines_manager)."
    }
   },
   {
@@ -8666,10 +8666,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The real Options row is driven, but the consumer is a bare model Tracker built in the test, not the media viewer, preview or filters that own CanvasTracker; no GUI test turns tracking off and views a file. The recorded canvas_events (active false/true) in viewing_statistics_options.json are never replayed; expected counts are typed. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:1292 the_tracking_option_decides_whether_viewing_a_file_is_recorded; crates/hydrus-gui-model/tests/model/viewing_statistics.rs tracker_counts_once_on_change_or_close_reads_live_policy_and_preserves_latest_start"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "The real Options row is turned off and on (on by default, as the reference); each time a real media viewer is opened on the recorded file for just over a second (media min time none, cap one second, set through the real rows) and closed: with tracking off the store gains no view, with it on it gains one view of 1000 ms on the media viewer's canvas, the recording's canvas_events (viewing_statistics_options.json, a real CanvasMediaListBrowser). The viewer uses the wall clock, so the elapsed time is real, capped at the recorded 1000 ms; the preview, archive/delete and duplicate-filter canvases are separate leaves/tests. Test: crates/hydrus-gui/tests/gui/options_viewing_tracking.rs the_tracking_row_decides_whether_the_real_media_viewer_records_a_view_as_recorded."
    }
   },
   {
@@ -8854,10 +8854,10 @@
     "Rust model/native/store regressions are authored for root hosted CI; no local Cargo build/test or mutation tests were run."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "The window test never asserts the Edit child's prefilled existing text nor accepts an edit through the window (only a stale callback after Cancel); double-click route untested. Replacement of the stable row is only checked at ReasonQueue model level against the recording. Missing: GUI-level edit prefill and accept. Tests: crates/hydrus-gui/tests/gui/options_window.rs:5111 (only calls invoke_reason_action(\"edit\") then a stale callback); crates/hydrus-gui-model/tests/model/delete_files.rs:203 (queue.click/replace)"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "The real Options window (advanced deletion on, reasons alpha/beta/beta/'' stored) is driven through the whole sequence the reference's QueueListBox was recorded with (files_trash.json reason_queue): add cancelled and answered, Edit on the second row opens the Enter Text child with the row's own text as the default ('beta') and the answer 'edited beta' replaces that row in place (compared with the recorded rows), a cancelled Edit changes nothing, up/down, a declined and an accepted Remove, Apply, and the reopened list equals the recorded one; double-clicking a row opens the same Edit (the reference connects itemDoubleClicked to _Edit). Test: crates/hydrus-gui/tests/gui/options_reason_edit.rs editing_a_reason_asks_with_its_text_replaces_it_in_place_and_survives_apply."
    }
   },
   {
@@ -8876,10 +8876,10 @@
     "Rust model/native/store regressions are authored for root hosted CI; no local Cargo build/test or mutation tests were run."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only the four physical_remember cases are replayed from the recording. The recorded action_cases (local, all-local, physical, clean accepted actions and their recall into the dialog) and advanced_controls are not used by any test; the recall of a previously saved last_action is never asserted against the reference, and :116 compares to the draft's own choice (circular). Tests: crates/hydrus-gui-model/tests/model/delete_files.rs:269 physical_only_dialog_remembers_*, :34 (self-derived last_action assert at :116); crates/hydrus-gui/tests/gui/options_window.rs:5227,5310"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "The real Options window sets 'Remember the last action' (off by default) with the advanced dialog on; the real native deletion dialog is then opened on the recorded pair of files (one in a single local domain, one in two), each of its five actions is accepted in turn, and the action saved (Domain key / physical / clean) equals the recorded saved_action with the option on and is not saved with it off; the dialog opened again over those saved options (on a fresh store, as the accepted deletion removes the files) is on the recorded action when remembered and on the first when not (new recorded 'remember_action' in files_trash.json, record_files_trash.py). The four physical-only cases remain replayed by the model test physical_only_dialog_remembers_*. Test: crates/hydrus-gui/tests/gui/options_remember_action.rs the_remember_row_decides_whether_the_accepted_action_is_saved_and_recalled_as_recorded."
    }
   },
   {
@@ -20380,10 +20380,10 @@
     "Failed full-image and non-image thumbnail/poster fallback remain uncached; decoder injection keeps the public preview Decoder contract and bypasses the production cache. Existing worker bounds and late-publication generation guards are retained. Imported partial resolution falls back to100x100 exactly; real media metadata/ICC identity displaces stale cached sources."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Expiry (strict, exact threshold kept, extend timeout) is replayed from image_cache.json against Cache and a native cache test, but the Options row itself is never successfully edited: the GUI test only edits TIMEOUT in rejected/hidden paths, the model 'controls' test never touches the timeout (it compares case['saved'] to case['reopened'] from the fixture itself, and asserts fixture edited_minimum == 300 literally). Untested through this row: days/hours/minutes staging, 300 s minimum once edited, saved timeout reaching the cache. Tests: crates/hydrus-gui/tests/gui/image_cache.rs:81 real_saved_policy_preserves_current_media_and_intervals_then_retires_final_bound_owner; crates/hydrus-gui-model/tests/model/image_cache.rs:11,142,194; crates/hydrus-gui/src/image_cache.rs:754 (in-src tests)"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "The real Options row (days/hours/minutes) is edited through the window, applied, and met by the live image cache holding a real preview decode on an injected clock: with 5 minutes saved (the recorded 300 s policy) an entry idle for exactly 300 s stays and one idle 1 ms longer is dropped (the recording's 'maintain exact timeout' / 'maintain past timeout'); 1 minute entered saves 300 s (recorded edited_minimum); 10 minutes saves the recorded 600 s and an idle entry stays at exactly 600 s and goes 1 ms later ('exact extended timeout' / 'past extended timeout'). Test: crates/hydrus-gui/tests/gui/image_cache.rs the_image_cache_timeout_row_sets_how_long_an_idle_decode_is_kept."
    }
   },
   {
@@ -20428,10 +20428,10 @@
     "Current image prefix and circular wrap duplicates count their ready actual bytes exactly as Qt. Unknown-resolution misses abort; refusal blocks later small candidates. Total/single prefetch thresholds allow equality, cache admission remains strict, and an uncached successful equality decode repeats on readiness. Atomic easy-space flushing scans only finished entries and deletes none when strict free-space > incoming estimate cannot be reached."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model replays recorded caption/warning, Budget one-miss/equality traces and atomic flush. In the GUI tests the percentage is only seeded (50) or edited in rejected/hidden Options paths; no test saves a new percentage through the row or shows it limiting a real viewer pass (the duplicate-filter test asserts only len>2). Worker consumption of the saved value is thus untested at the limit. Tests: crates/hydrus-gui/tests/gui/viewer_prefetch.rs:72,252,319; crates/hydrus-gui-model/tests/model/viewer_prefetch.rs:31,83,166,195"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "The real Options row is set (and the saved value read back) and a real media viewer warms its neighbours over real 30-byte and 27-byte images: the reference's 'one miss and pending blocks' scenario (120-byte cache, 50%: the viewer's file and one more are cached, the third is not) and 'total equality permits' scenario (100 bytes, 30%: the budget of 30 is met by the first file, the 27-byte second is not cached although the cache has room) end with the recorded cached sets; the same pass at twice the cache (budget 60) admits the second, which is not a recorded case but shows the percentage is read live. The caption, warning and the Budget's separate traces are replayed by the model tests (viewer_prefetch.rs in gui-model); an Options Apply reaching an already-open viewer is covered by the older test in the same file. Test: crates/hydrus-gui/tests/gui/viewer_prefetch.rs the_percentage_row_limits_what_a_viewer_prefetches_as_in_the_recorded_scenarios."
    }
   },
   {
@@ -20521,10 +20521,10 @@
     "Current image prefix and circular wrap duplicates count their ready actual bytes exactly as Qt. Unknown-resolution misses abort; refusal blocks later small candidates. Total/single prefetch thresholds allow equality, cache admission remains strict, and an uncached successful equality decode repeats on readiness. Atomic easy-space flushing scans only finished entries and deletes none when strict free-space > incoming estimate cannot be reached."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Previous count is only edited in rejected/hidden paths or applied at the end (reopened.invoke_number_edited PREVIOUS=1) with no assertion of the saved value or of any previous neighbour being warmed; the effect is covered only by the model replay of neighbours() (a planning function). No GUI observation of the previous-direction prefetch. Tests: crates/hydrus-gui/tests/gui/viewer_prefetch.rs:72 options_cancel_hidden_modal_save_reopen_and_live_hidden_viewer_warming_leave_current_pixels_unchanged; crates/hydrus-gui/tests/gui/viewer_prefetch.rs:252; crates/hydrus-gui-model/tests/model/viewer_prefetch.rs:31 all_actual_circular_next_first_neighbour_orders_and_controls"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "The real Options rows for the previous and next counts are set and applied (saved values read back), and a real media viewer is opened on each file of a three-file page: after its warm worker has settled the image cache holds the viewer's own file and exactly the neighbours the reference chose, for all 18 recorded cases for three files (index 0..2 x previous/next of 0/0, 2/3, 1/0, 0/1, 50/50, 3/1; oracle/fixtures/viewer_prefetch.json 'neighbours'), including the circular wrap and previous-before-next order effects on which files are included. The rows' default (2) is compared with the recording. The archive/delete and duplicate-filter consumers keep their own tests. Test: crates/hydrus-gui/tests/gui/viewer_prefetch.rs the_viewer_warms_the_recorded_neighbours_for_the_previous_and_next_counts_in_the_rows."
    }
   },
   {
@@ -20593,10 +20593,10 @@
     "Linux-only validation at the exact source/run/artifact; Windows and macOS are deferred. Approval covers this original leaf only, with no broader parent, alias or unrelated completion credit."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Bytes/unit staging, 0 B to TB reopen, cache emptied on Apply and unit decomposition vs recording are covered, but the estimate caption '(at 150x125, about N thumbnails)' (computed in options_window.rs, not a model function) is only checked with contains('about 0 thumbnails'); recorded non-zero estimates (596, 20,496,382,304,121) are never compared. 1,048,577 -> 1,048,576 clamp is replayed only via combined(). Tests: crates/hydrus-gui/tests/gui/thumbnail_cache.rs:155 staged_exact_byte_units_timeout_policy_clear_reopen_and_incarnation_retirement; crates/hydrus-gui-model/tests/model/thumbnail_cache.rs:7,67,85,123"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "The real Options row is opened over each of the five stored policies the reference's panel was recorded with (oracle/fixtures/thumbnail_cache.json 'controls', including 2^60 bytes): its amount and 1024^n unit, and the '(at 150x125, about N thumbnails)' caption (0, 596 and 20,496,382,304,121) equal the recording; an untouched Apply saves the recorded bytes; 32 and the MB unit entered by hand give the recorded caption and save 33,554,432; a stored 1,048,577 loads clamped and saves 1,048,576 (bytes_boundaries). The cache consuming the saved value is covered by staged_exact_byte_units_timeout_policy_clear_reopen_and_incarnation_retirement in the same file (not part of this tag). Test: crates/hydrus-gui/tests/gui/thumbnail_cache.rs the_memory_row_shows_the_recorded_amount_unit_and_estimate_and_saves_them."
    }
   },
   {

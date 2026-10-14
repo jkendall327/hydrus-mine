@@ -1193,12 +1193,22 @@ pub(crate) fn open(
                     )
                     .map(|d| d.subscriptions)
                     .unwrap_or_default();
+                // (as the reference's new subscription: the first sync stops
+                // at 100 files, or at the gallery file limit if that is lower)
+                let initial_file_limit = store_for_edit
+                    .read(
+                        hydrus_store::settings::get::<hydrus_core::subscriptions::GalleryDefaults>,
+                    )
+                    .ok()
+                    .and_then(|d| d.file_limit)
+                    .map_or(100, |limit| limit.min(100));
                 edit(
                     None,
                     SubscriptionSettings {
                         gug_key,
                         gug_name,
                         checker,
+                        initial_file_limit: Some(initial_file_limit),
                         ..SubscriptionSettings::default()
                     },
                 );

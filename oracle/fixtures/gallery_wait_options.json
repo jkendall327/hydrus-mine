@@ -1,0 +1,161 @@
+{
+ "waits": {
+  "download page": 7,
+  "subscription": 11,
+  "watcher": 13
+ },
+ "options": {
+  "download page": "gallery_page_wait_period_pages",
+  "subscription": "gallery_page_wait_period_subscriptions",
+  "watcher": "watcher_page_wait_period"
+ },
+ "steps": [
+  {
+   "kind": "download page",
+   "sld": "site.example",
+   "now": 1010000,
+   "consumed": true,
+   "next": 0
+  },
+  {
+   "kind": "download page",
+   "sld": "site.example",
+   "now": 1010006,
+   "consumed": false,
+   "next": 1010007
+  },
+  {
+   "kind": "download page",
+   "sld": "site.example",
+   "now": 1010007,
+   "consumed": false,
+   "next": 1010007
+  },
+  {
+   "kind": "download page",
+   "sld": "site.example",
+   "now": 1010008,
+   "consumed": true,
+   "next": 0
+  },
+  {
+   "kind": "download page",
+   "sld": "other.example",
+   "now": 1010008,
+   "consumed": true,
+   "next": 0
+  },
+  {
+   "kind": "subscription",
+   "sld": "site.example",
+   "now": 1011000,
+   "consumed": true,
+   "next": 0
+  },
+  {
+   "kind": "subscription",
+   "sld": "site.example",
+   "now": 1011010,
+   "consumed": false,
+   "next": 1011011
+  },
+  {
+   "kind": "subscription",
+   "sld": "site.example",
+   "now": 1011011,
+   "consumed": false,
+   "next": 1011011
+  },
+  {
+   "kind": "subscription",
+   "sld": "site.example",
+   "now": 1011012,
+   "consumed": true,
+   "next": 0
+  },
+  {
+   "kind": "subscription",
+   "sld": "other.example",
+   "now": 1011012,
+   "consumed": true,
+   "next": 0
+  },
+  {
+   "kind": "watcher",
+   "sld": "site.example",
+   "now": 1012000,
+   "consumed": true,
+   "next": 0
+  },
+  {
+   "kind": "watcher",
+   "sld": "site.example",
+   "now": 1012012,
+   "consumed": false,
+   "next": 1012013
+  },
+  {
+   "kind": "watcher",
+   "sld": "site.example",
+   "now": 1012013,
+   "consumed": false,
+   "next": 1012013
+  },
+  {
+   "kind": "watcher",
+   "sld": "site.example",
+   "now": 1012014,
+   "consumed": true,
+   "next": 0
+  },
+  {
+   "kind": "watcher",
+   "sld": "other.example",
+   "now": 1012014,
+   "consumed": true,
+   "next": 0
+  },
+  {
+   "kind": "download page",
+   "sld": "shared.example",
+   "now": 1015000,
+   "consumed": true,
+   "next": 0
+  },
+  {
+   "kind": "subscription",
+   "sld": "shared.example",
+   "now": 1015000,
+   "consumed": true,
+   "next": 0
+  },
+  {
+   "kind": "watcher",
+   "sld": "shared.example",
+   "now": 1015000,
+   "consumed": true,
+   "next": 0
+  },
+  {
+   "kind": "download page",
+   "sld": "shared.example",
+   "now": 1015001,
+   "consumed": false,
+   "next": 1015007
+  },
+  {
+   "kind": "subscription",
+   "sld": "shared.example",
+   "now": 1015001,
+   "consumed": false,
+   "next": 1015011
+  },
+  {
+   "kind": "watcher",
+   "sld": "shared.example",
+   "now": 1015001,
+   "consumed": false,
+   "next": 1015013
+  }
+ ]
+}
