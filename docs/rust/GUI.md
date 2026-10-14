@@ -4987,6 +4987,27 @@ and reads the effect back; `tests/model/debug_flags.rs` and the
 `debug_*` tests of hydrus-import, hydrus-net, hydrus-download, hydrus-media
 and hydrus-store cover the reports their crates make.
 
+Help > debug > profiling also has the reference's profile modes (client api,
+db and ui; one on at a time, turning another on ends the one before) and
+"query planner mode". Turning a profile mode on says `Profile mode "db"
+on!`; turning it off says how many slow and fast jobs there were. A job
+slower than the mode's minimum (db 16 ms, client api 10 ms, a menu click
+16 ms) is written, led by the time, to a `client profile (db) - <start>.log`
+in the database directory; db mode times each read and write job, client
+api mode each request, ui mode each menu command. Query planner mode writes
+each new query and its `EXPLAIN QUERY PLAN` rows to `client query planner -
+<start>.log` and says how many it analysed when turned off. Report modes
+gains "db report mode" (each db job, by name, as it finishes), and data
+actions gains "subscription manager snapshot" (the subscriptions there are,
+those running, those that cannot run and when the others next want to).
+The daemon does the Client API and most database work, so the client passes
+every debug switch on to it through the store (the daemon follows within a
+second), the daemon's reports and the snapshot arrive as popups, and both
+processes write the same logs. `tests/gui/debug_profiling.rs` clicks each in
+the real menu and compares what the popups, the checks and the logs say with
+`oracle/fixtures/debug_profiling.json` and
+`oracle/fixtures/subscription_manager_snapshot.json`.
+
 ## Pages > weight report
 
 Pages > weight > "total session weight: N" now explains the number as the
@@ -5237,9 +5258,18 @@ has been laid out where its frame grows it from its own size, and keeps its
 size and place as the reference's do: a frame as it closes, a dialog when it
 is applied (never when cancelled) (`tests/gui/frame_geometry.rs`, replaying
 `frame_state.json` through each). Every other window opens by the ordinary
-dialogs' frame (`regular_dialog`: the main window's top-left, its own size). Proven by `tests/model/frame_placement.rs` (the formulae worked from the
-reference's source) and `options_gui_frames.rs` (editing the Options window's
-own frame through the frames editor).
+dialogs' frame (`regular_dialog`: the main window's top-left, its own size),
+except the choice dialogs with choices, which open by `quick_select_dialog`
+(buttons only) or `quick_yesno_dialog` (a "no" too) and keep their size when a
+choice is made, never when cancelled; a message with no choices takes neither.
+Editing a frame's remembered size, maximised, fullscreen, gravity or default
+position in the frame locations editor reaches each of those windows the next
+time it opens, for its size and its maximised and fullscreen state (headless
+windows have no readable place, so a place is proved only through the
+arithmetic of `windows::placement`; `tests/gui/frame_geometry.rs`, through the
+Options window). Proven by `tests/model/frame_placement.rs` (the formulae
+worked from the reference's source) and `options_gui_frames.rs` (editing the
+Options window's own frame through the frames editor).
 
 **Preview window.** The preview pane draws the file's ratings at the sizes
 from Options > ratings > preview window (rounded, as the reference's
