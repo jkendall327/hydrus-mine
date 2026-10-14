@@ -5188,7 +5188,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "claude, #97 phase 2 (w4-r2)",
-    "note": "oracle/record_import_folder_tagging.py scripts the reference's real EditImportFolderPanel (service chooser, tagging dialog and warning replaced): adding a service lists it, adding the same service again shows 'You already have an entry for that service key! Please try editing it instead!' and changes nothing, a second service is listed, editing opens the tagging dialog titled 'edit filename tagging options', deleting removes the entry, and the services offered are the tag services. folders.rs the_filename_tagging_list_and_its_example_path_follow_the_references_recorded_steps replays each step in the real window and compares the list, the warning, the dialog title and the choices with the recording. The service is chosen in a box beside the add button, not a chooser dialog (the cancelled-choice step has no counterpart); what the tagging options dialog holds is the filename tagging leaves'. The worker's use of the tagging against the recorded import_folder_run is tested before in hydrus-download."
+    "note": "oracle/record_import_folder_tagging.py scripts the reference's real EditImportFolderPanel (service chooser, tagging dialog and warning replaced by scripted FakeDialogs; the real tagging panel never runs): adding a service lists it, adding the same service again shows 'You already have an entry for that service key! Please try editing it instead!' and changes nothing, a second service is listed, editing opens the tagging dialog titled 'edit filename tagging options', deleting removes the entry, and the services offered are the tag services. folders.rs the_filename_tagging_list_and_its_example_path_follow_the_references_recorded_steps replays each step in the real window and compares the list, the warning, the dialog title, the service each dialog is for and the choices with the recording, and the example path for every recorded folder (including the 26 texts before the png). Not compared: what an apply with changes stores (not recorded; the tagging dialog's contents are the filename tagging leaves'), and which of two importable files is the example (the reference takes the file system's first). The service is chosen in a box beside the add button, not a chooser dialog, so the cancelled-choice step has no counterpart (DIFFERENCES.md). The worker's use of the tagging against the recorded import_folder_run is tested before in hydrus-download."
    }
   },
   {
@@ -5223,10 +5223,10 @@
     "Paths from real platform pickers and typed/drop sources join the single review queue."
    ],
    "recheck": {
-    "date": "2026-10-13",
+    "date": "2026-10-08",
     "class": "source-restated",
-    "by": "claude, #97 phase 2 (w4-r2)",
-    "note": "Unchanged in class. The typed path through the window (the 'path_entered' route every entry point ends in, with the folder searched with and without its subfolders) is now replayed from oracle/fixtures/local_import_dialog.json in import_files.rs the_references_recorded_paths_are_reviewed_and_handed_to_an_import_page_as_it_did (rows, progress, buttons, import page). Still restated from the source: the dropped-files route and the pickers' titles ('Select the files to add.' / 'Select a folder to add.'), through a stand-in picker; the typed-path box and quotes are native-only."
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real window: typed (quoted) folder path, dropped files (new window then added to the open one), and add files/add folder through a stand-in picker with titles 'Select the files to add.' / 'Select a folder to add.' (reference strings). All expectations are literals; the real platform picker is stubbed and nothing is recorded for these entry points (the reference has no typed-path box, so that part is native-only). Tests: crates/hydrus-gui/tests/gui/import_files.rs:80 files_given_are_reviewed_then_imported; crates/hydrus-gui/tests/gui/import_files.rs:438 files_and_folders_picked_are_reviewed"
    }
   },
   {

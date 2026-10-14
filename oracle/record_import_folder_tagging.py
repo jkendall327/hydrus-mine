@@ -13,6 +13,11 @@ whose content is a filetype hydrus imports. Folders are given with a text
 file, a one-byte `.jpg`, a png, a subfolder and a gif (in that order of
 names), and with more than 25 entries before the first importable file.
 
+The tagging dialog and the service chooser are replaced by `FakeDialog`s that
+record what they were given and answer as scripted: the real
+`EditFilenameTaggingOptionPanel` is never run, so what an "apply" with
+changes would store is not recorded (the replay does not compare it).
+
 Usage: QT_QPA_PLATFORM=offscreen python oracle/record_import_folder_tagging.py
        (writes fixtures/import_folder_tagging.json)
 """
@@ -244,10 +249,10 @@ def record( session ):
             
             T.DialogEdit = real
             
+            shutil.rmtree( work, ignore_errors = True )
+            
         
         panel.deleteLater()
-        
-        shutil.rmtree( work, ignore_errors = True )
         
         return out
         

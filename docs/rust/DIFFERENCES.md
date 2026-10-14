@@ -1078,7 +1078,8 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   hydrus-rs's words too where Python's says more.
 - **The import and export folders dialogs**: an import folder's filename
   tagging is added for a tag service chosen from a list beside "add" (the
-  reference asks which in a dialog), and edited in the "filename tagging"
+  reference asks which in a dialog, which can be cancelled; there is no such
+  step here), and edited in the "filename tagging"
   dialog's boxes (see "review files to import"). An export folder's
   query is typed as the Client API's tags rather than through the search
   autocomplete. Its example refresh now queries actual stored media and supplies

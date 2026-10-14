@@ -557,10 +557,27 @@ fn the_filename_tagging_list_and_its_example_path_follow_the_references_recorded
                     theirs["title"].as_str().unwrap(),
                     "{name}"
                 );
+                // (the reference lists a folder's files in the file system's
+                // order and takes the first importable; the folder here has two,
+                // so either of them is the example, as in the recording's set)
                 assert!(
                     example_is_recorded(&open.get_example(), first_examples),
                     "{name}: {}",
                     open.get_example()
+                );
+                // the dialog is for the recorded service (the recorder made
+                // each service's key the hex of its name)
+                let key = theirs["service"].as_str().unwrap();
+                let recorded_name: String = (0..key.len())
+                    .step_by(2)
+                    .map(|i| char::from(u8::from_str_radix(&key[i..i + 2], 16).unwrap()))
+                    .collect();
+                let services = open.get_services();
+                let index = usize::try_from(open.get_service_index()).unwrap();
+                assert_eq!(
+                    services.row_data(index).unwrap().as_str(),
+                    recorded_name,
+                    "{name}"
                 );
                 open.invoke_apply();
             }
@@ -588,11 +605,6 @@ fn the_filename_tagging_list_and_its_example_path_follow_the_references_recorded
     // the example path for other folders: the first importable file by content
     for example in recorded["examples"].as_array().unwrap() {
         let name = example["name"].as_str().unwrap();
-        if name.starts_with("twenty-six") {
-            // (which files are among a directory's first 25 depends on the
-            // file system's order of entries, so it is not replayed)
-            continue;
-        }
         let files: Vec<(String, &str)> = example["listing"]
             .as_array()
             .unwrap()
