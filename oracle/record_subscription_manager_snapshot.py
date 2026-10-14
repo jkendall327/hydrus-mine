@@ -53,12 +53,20 @@ def record(session):
             out = dict(menu_path=[label.replace('&', ''), 'debug', 'data actions', action.text()],
                        tooltip=action.toolTip(), now=base.NOW)
             cases = []
-            for when in ('with subscriptions', 'with none'):
-                if when == 'with subscriptions':
-                    subs = [base.make_subscription(case)[0] for case in base.SUBSCRIPTIONS]
-                else:
+            from hydrus.client import ClientThreading
+            for when in ('with subscriptions', 'with one running', 'with none'):
+                if when == 'with none':
                     subs = []
+                else:
+                    subs = [base.make_subscription(case)[0] for case in base.SUBSCRIPTIONS]
                 manager.SetSubscriptions(subs)
+                running_job = None
+                if when == 'with one running':
+                    # (a running job is not made here: the manager's own record of one is, as the
+                    # snapshot reads only its names)
+                    running_job = ClientThreading.JobStatus()
+                    with manager._lock:
+                        manager._names_to_running_subscription_info['artist one'] = (running_job, subs[0])
                 shown.clear()
                 action.trigger()
                 T.QTest.qWait(100)
@@ -69,6 +77,10 @@ def record(session):
                         not_runnable=sorted(manager._names_that_cannot_run),
                         next_work_times={n: t - base.NOW for n, t in manager._names_to_next_work_time.items()},
                         running=sorted(manager._names_to_running_subscription_info)))
+                if running_job is not None:
+                    with manager._lock:
+                        manager._names_to_running_subscription_info.pop('artist one', None)
+                    running_job.FinishAndDismiss()
             out['cases'] = cases
             return out
         finally:

@@ -7,7 +7,7 @@
 //! Turning a mode off says how many of each there were. Query planner mode
 //! writes the `EXPLAIN QUERY PLAN` of each distinct query to a `client query
 //! planner - <start>.log`. Both say so with a popup, as `ShowText` does.
-use std::collections::HashSet;
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::io::Write as _;
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -54,18 +54,41 @@ struct State {
     mode: Option<Mode>,
     /// Seconds since the epoch.
     start_time: i64,
-    slow: u64,
-    fast: u64,
+    /// Slow and fast jobs, by the database directory they belong to. The
+    /// reference is one client with one database; here the process may hold
+    /// several (the tests do), and a job counts for its own.
+    counts: BTreeMap<PathBuf, (u64, u64)>,
 }
 
 static STATE: Mutex<State> = Mutex::new(State {
     mode: None,
     start_time: 0,
-    slow: 0,
-    fast: 0,
+    counts: BTreeMap::new(),
 });
-/// `CURRENT_PROFILE_LOCK`: only one job is profiled at a time.
-static CURRENT: Mutex<()> = Mutex::new(());
+/// `CURRENT_PROFILE_LOCK`: only one job is profiled at a time, per database.
+static CURRENT: Mutex<BTreeSet<PathBuf>> = Mutex::new(BTreeSet::new());
+
+/// Holds a database's profile lock while alive.
+struct Current(PathBuf);
+
+impl Current {
+    fn try_take(dir: &Path) -> Option<Self> {
+        CURRENT
+            .lock()
+            .unwrap_or_else(PoisonError::into_inner)
+            .insert(dir.to_owned())
+            .then(|| Self(dir.to_owned()))
+    }
+}
+
+impl Drop for Current {
+    fn drop(&mut self) {
+        CURRENT
+            .lock()
+            .unwrap_or_else(PoisonError::into_inner)
+            .remove(&self.0);
+    }
+}
 
 fn state() -> MutexGuard<'static, State> {
     STATE.lock().unwrap_or_else(PoisonError::into_inner)
@@ -139,11 +162,11 @@ pub fn current_mode() -> Option<Mode> {
 }
 
 /// `FlipProfileMode`: turn `mode` on, or off if it is on; turning another on
-/// ends the one before.
-pub fn flip_mode(mode: Mode) {
+/// ends the one before. The counts said are those of the database in `dir`.
+pub fn flip_mode(dir: &Path, mode: Mode) {
     let running = state().mode;
     if let Some(running) = running {
-        stop_mode();
+        stop_mode(dir);
         if running == mode {
             return;
         }
@@ -169,8 +192,7 @@ pub fn adopt_mode(mode: Option<Mode>, start_time: i64) {
     *s = State {
         mode,
         start_time,
-        slow: 0,
-        fast: 0,
+        counts: BTreeMap::new(),
     };
 }
 
@@ -205,19 +227,22 @@ fn start_mode(mode: Mode) {
         *s = State {
             mode: Some(mode),
             start_time: now_seconds(),
-            slow: 0,
-            fast: 0,
+            counts: BTreeMap::new(),
         };
     }
+    // HydrusProfiling.py, StartProfileMode: `HydrusData.ShowText( f'Profile mode "{name}" on!' )`
     show_text(&format!("Profile mode \"{}\" on!", mode.name()));
 }
 
-fn stop_mode() {
+fn stop_mode(dir: &Path) {
     let (name, slow, fast) = {
         let mut s = state();
         let name = s.mode.take().map_or("", Mode::name);
-        (name, s.slow, s.fast)
+        let (slow, fast) = s.counts.get(dir).copied().unwrap_or_default();
+        (name, slow, fast)
     };
+    // HydrusProfiling.py, StopProfileMode: `HydrusData.ShowText( f'Profiling "{old_name}" done:
+    // {slow} slow jobs, {fast} fast jobs' )`
     show_text(&format!(
         "Profiling \"{name}\" done: {} slow jobs, {} fast jobs",
         crate::numbers::human_int(slow),
@@ -225,18 +250,21 @@ fn stop_mode() {
     ));
 }
 
+fn count(dir: &Path, slow: bool) {
+    let mut s = state();
+    let (slow_count, fast_count) = s.counts.entry(dir.to_owned()).or_default();
+    if slow {
+        *slow_count += 1;
+    } else {
+        *fast_count += 1;
+    }
+}
+
 /// A job that took `took`, counted as slow or fast; a slow one is logged
 /// with `summary`.
 pub fn record(dir: &Path, summary: &str, took: Duration, min_ms: u64) {
     let slow = took.as_millis() > u128::from(min_ms);
-    {
-        let mut s = state();
-        if slow {
-            s.slow += 1;
-        } else {
-            s.fast += 1;
-        }
-    }
+    count(dir, slow);
     if slow {
         // (the reference follows its summary with Python's cProfile table,
         // which has no counterpart here; the time the job took stands in)
@@ -256,30 +284,22 @@ fn pretty_took(took: Duration) -> String {
 /// profiled already this one is written as `EXCLUSIVE` (the reference can
 /// run one profiler at a time) and counted all the same.
 pub fn profile<R>(dir: &Path, summary: &str, min_ms: u64, f: impl FnOnce() -> R) -> R {
-    let held = CURRENT.try_lock();
+    let held = Current::try_take(dir);
     let started = Instant::now();
     let result = f();
     let took = started.elapsed();
-    match held {
-        Ok(_guard) => record(dir, summary, took, min_ms),
-        Err(std::sync::TryLockError::Poisoned(_guard)) => record(dir, summary, took, min_ms),
-        Err(std::sync::TryLockError::WouldBlock) => {
-            let slow = took.as_millis() > u128::from(min_ms);
-            {
-                let mut s = state();
-                if slow {
-                    s.slow += 1;
-                } else {
-                    s.fast += 1;
-                }
-            }
-            print_profile(
-                dir,
-                &format!("EXCLUSIVE: {summary} took {}\n\n", pretty_took(took)),
-                None,
-            );
-        }
+    if held.is_some() {
+        record(dir, summary, took, min_ms);
+    } else {
+        // HydrusProfiling.py, Profile: `PrintProfile( f'EXCLUSIVE: {summary} took ...\n\n')`
+        count(dir, took.as_millis() > u128::from(min_ms));
+        print_profile(
+            dir,
+            &format!("EXCLUSIVE: {summary} took {}\n\n", pretty_took(took)),
+            None,
+        );
     }
+    drop(held);
     result
 }
 
@@ -290,8 +310,8 @@ static PLANNER_ON: AtomicBool = AtomicBool::new(false);
 #[derive(Default)]
 struct Planner {
     start_time: i64,
-    count: u64,
-    planned: HashSet<String>,
+    /// By database directory: the queries counted, and those written down.
+    by_dir: HashMap<PathBuf, (u64, std::collections::HashSet<String>)>,
 }
 
 static PLANNER: Mutex<Option<Planner>> = Mutex::new(None);
@@ -301,15 +321,16 @@ pub fn query_planner_on() -> bool {
     PLANNER_ON.load(Ordering::Relaxed)
 }
 
-/// `FlipQueryPlannerMode`.
-pub fn flip_query_planner() {
+/// `FlipQueryPlannerMode`; the count said is that of the database in `dir`.
+pub fn flip_query_planner(dir: &Path) {
     let mut slot = PLANNER.lock().unwrap_or_else(PoisonError::into_inner);
     if let Some(planner) = slot.take() {
         PLANNER_ON.store(false, Ordering::Relaxed);
         drop(slot);
+        // (same function: 'Query Planning done: {} queries analyzed')
         show_text(&format!(
             "Query Planning done: {} queries analyzed",
-            crate::numbers::human_int(planner.count)
+            crate::numbers::human_int(planner.by_dir.get(dir).map_or(0, |(count, _)| *count))
         ));
     } else {
         *slot = Some(Planner {
@@ -318,17 +339,18 @@ pub fn flip_query_planner() {
         });
         PLANNER_ON.store(true, Ordering::Relaxed);
         drop(slot);
+        // HydrusProfiling.py, FlipQueryPlannerMode: `HydrusData.ShowText( 'Query Planner mode on!' )`
         show_text("Query Planner mode on!");
     }
 }
 
 /// Whether `query` is one the planner has yet to write down.
-pub fn needs_plan(query: &str) -> bool {
+pub fn needs_plan(dir: &Path, query: &str) -> bool {
     PLANNER
         .lock()
         .unwrap_or_else(PoisonError::into_inner)
         .as_ref()
-        .is_some_and(|p| !p.planned.contains(query))
+        .is_some_and(|p| p.by_dir.get(dir).is_none_or(|(_, planned)| !planned.contains(query)))
 }
 
 /// A Python `repr` of a string, as the plan rows print.
@@ -367,8 +389,9 @@ pub fn print_query_plan(dir: &Path, query: &str, plan_lines: &[String]) {
     let start = {
         let mut slot = PLANNER.lock().unwrap_or_else(PoisonError::into_inner);
         let Some(planner) = slot.as_mut() else { return };
-        planner.count += 1;
-        if !planner.planned.insert(query.to_owned()) {
+        let (count, planned) = planner.by_dir.entry(dir.to_owned()).or_default();
+        *count += 1;
+        if !planned.insert(query.to_owned()) {
             return;
         }
         planner.start_time

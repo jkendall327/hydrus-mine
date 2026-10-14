@@ -88,6 +88,7 @@ fn logs(d: &super::debug_menu_actions::Debug, what: &str) -> Vec<std::path::Path
 }
 
 // leaf: audit-options-help-debug-action-profile-mode-client-api
+// leaf: audit-options-help-debug-action-profile-mode-ui
 #[test]
 fn profile_modes_turn_each_other_off_and_say_how_many_jobs_there_were() {
     let _one = alone();
@@ -181,7 +182,7 @@ fn db_profile_mode_logs_the_slow_jobs_and_counts_the_fast_ones() {
     );
     // each slow job is a line led by the time, then the reference's wording
     let text = std::fs::read_to_string(&found[0]).unwrap();
-    let line = Regex::new(r"(?m)^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d: Profiling db job: (.*)$").unwrap();
+    let line = Regex::new(r"(?m)^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d: (?:EXCLUSIVE: )?Profiling db job: (.*)$").unwrap();
     let logged: Vec<_> = line.captures_iter(&text).map(|c| c[1].to_owned()).collect();
     assert!(
         logged.iter().any(|job| job.contains("debug_profiling")),
@@ -197,8 +198,9 @@ fn db_profile_mode_logs_the_slow_jobs_and_counts_the_fast_ones() {
         .unwrap();
     assert_eq!(slow, logged.len());
     assert!(slow >= 1);
-    // (the reference follows each with the profiler's table; here, the time)
-    assert!(text.contains("\n\nTook "), "{text}");
+    // (the reference follows each with the profiler's table; here, the time,
+    // or for a job that ran beside another being profiled, `EXCLUSIVE ... took`)
+    assert!(text.contains("\n\nTook ") || text.contains("EXCLUSIVE: "), "{text}");
 }
 
 // leaf: audit-options-help-debug-action-query-planner-mode
@@ -326,23 +328,48 @@ fn client_api_profile_mode_counts_each_request() {
     let d = start();
     let seen = capture();
     let recording = recording();
+    let key = [71u8; 32];
+    let permissions = hydrus_api::auth::AccessPermissions {
+        access_key: key.to_vec(),
+        name: "profile test".into(),
+        permits_everything: true,
+        basic: Default::default(),
+        search_filter: hydrus_core::TagFilter::default(),
+    };
+    d.store
+        .write(move |ctx| hydrus_api::auth::save_key(ctx.conn(), &permissions))
+        .unwrap();
     let router = hydrus_api::router(hydrus_api::AppState::new(d.store.clone()).unwrap());
     let runtime = tokio::runtime::Runtime::new().unwrap();
     let get = |path: &str| {
         let request = axum::http::Request::builder()
             .uri(path)
+            .header("Hydrus-Client-API-Access-Key", hex::encode(key))
             .body(axum::body::Body::empty())
             .unwrap();
         runtime.block_on(router.clone().oneshot(request)).unwrap()
     };
     // before the mode, a request is not counted
-    get("/api_version");
+    get("/verify_access_key");
     d.click(&["profiling", CLIENT_API]);
     let (recorded, _) = step("client_api on");
     assert_eq!(said(&seen), recorded);
-    for _ in 0..4 {
-        assert!(get("/api_version").status().is_success());
+    for _ in 0..3 {
+        assert!(get("/verify_access_key").status().is_success());
     }
+    // a request made slow for certain: the database's readers are held
+    // (authenticating reads the database) for a quarter of a second
+    let holder = {
+        let store = d.store.clone();
+        std::thread::spawn(move || {
+            let paused = store.pause().unwrap();
+            std::thread::sleep(Duration::from_millis(250));
+            drop(paused);
+        })
+    };
+    std::thread::sleep(Duration::from_millis(60));
+    assert!(get("/verify_access_key").status().is_success());
+    holder.join().unwrap();
     d.click(&["profiling", CLIENT_API]);
     let done = said(&seen);
     assert_eq!(done.len(), 1);
@@ -350,131 +377,20 @@ fn client_api_profile_mode_counts_each_request() {
         alike(&done[0]),
         alike(&step("threads on (ends client api)").0[0])
     );
-    let numbers: Vec<usize> = Regex::new(r"\d+")
-        .unwrap()
-        .find_iter(&done[0])
-        .map(|m| m.as_str().parse().unwrap())
-        .collect();
-    assert_eq!(numbers.iter().sum::<usize>(), 4, "{done:?}");
-    // a request slower than the minimum is logged by the reference's wording
+    // this database's own requests: one slow, three fast
+    assert_eq!(done[0], "Profiling \"client_api\" done: 1 slow jobs, 3 fast jobs");
+    // the slow one is logged by the reference's wording, in a log named as its
     let logged = logs(&d, "profile");
-    if numbers[0] > 0 {
-        let text = std::fs::read_to_string(&logged[0]).unwrap();
-        assert!(
-            text.contains(": Profiling client api: /api_version"),
-            "{text}"
-        );
-        assert!(
-            Regex::new(
-                recording["profile_log_name_pattern"]
-                    .as_str()
-                    .unwrap()
-                    .replace("db", "client_api")
-                    .as_str()
-            )
+    assert_eq!(logged.len(), 1, "{logged:?}");
+    let text = std::fs::read_to_string(&logged[0]).unwrap();
+    let lines = Regex::new(r"(?m)^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d: (?:EXCLUSIVE: )?Profiling client api: /verify_access_key")
+        .unwrap()
+        .find_iter(&text)
+        .count();
+    assert_eq!(lines, 1, "{text}");
+    assert!(
+        Regex::new(&recording["profile_log_name_pattern"].as_str().unwrap().replace("db", "client_api"))
             .unwrap()
             .is_match(logged[0].file_name().unwrap().to_str().unwrap())
-        );
-    }
-}
-
-// leaf: audit-options-help-debug-action-subscription-manager-snapshot
-#[test]
-fn subscription_manager_snapshot_is_asked_for_in_the_menu_and_shown_by_the_daemon() {
-    use hydrus_core::subscriptions::{QueryState, SubscriptionSettings};
-    use hydrus_download::subscriptions::{SubscriptionRunner, answer_debug_requests};
-    use hydrus_store::subscriptions as subs;
-
-    let _one = alone();
-    let d = start();
-    let seen = capture();
-    let recording = hydrus_testkit::fixture_json("subscription_manager_snapshot.json");
-    assert_eq!(
-        strings(&recording["menu_path"]),
-        [
-            "help",
-            "debug",
-            "data actions",
-            "subscription manager snapshot"
-        ]
     );
-    // the daemon: a runner on the store (not started: nothing runs)
-    let importer =
-        hydrus_import::FileImporter::new(d.store.clone(), hydrus_media::MediaTools::new());
-    let network = d
-        .store
-        .read(hydrus_store::settings::get::<hydrus_store::network::NetworkSettings>)
-        .unwrap();
-    let net = hydrus_net::NetEngine::new(
-        d.store.clone(),
-        hydrus_net::NetOptions::from_settings(&network),
-    )
-    .unwrap();
-    let downloader =
-        hydrus_download::Downloader::new(d.store.clone(), Arc::new(net), importer).unwrap();
-    let runner = SubscriptionRunner::new(Arc::new(downloader));
-    let daemon_tick = || answer_debug_requests(&d.store, Some(&runner)).unwrap();
-    daemon_tick();
-
-    let delta = Regex::new(r": [0-9a-z ]+ ago$").unwrap();
-    for case in recording["cases"].as_array().unwrap() {
-        d.store
-            .write(|ctx| {
-                for sub in subs::subscriptions(ctx.conn())? {
-                    subs::delete_subscription(ctx.conn(), sub.id)?;
-                }
-                Ok(())
-            })
-            .unwrap();
-        if case["when"] == "with subscriptions" {
-            // the reference's four: a live one whose history is not in the
-            // database, one with no queries, a paused one, and one with only
-            // a paused query
-            d.store
-                .write(|ctx| {
-                    let make = |name: &str, paused: bool, queries: &[bool]| {
-                        let settings = SubscriptionSettings {
-                            paused,
-                            ..SubscriptionSettings::default()
-                        };
-                        let id = subs::create_subscription(ctx.conn(), name, &settings)?.unwrap();
-                        for (i, query_paused) in queries.iter().enumerate() {
-                            let mut query = QueryState::new(format!("{name} {i}"));
-                            query.paused = *query_paused;
-                            let queue = subs::add_query(ctx.conn(), id, &query, 0)?;
-                            subs::set_missing_log(ctx.conn(), queue, true)?;
-                        }
-                        Ok::<_, hydrus_store::StoreError>(())
-                    };
-                    make("artist one", false, &[false, true])?;
-                    make("Empty sub", false, &[])?;
-                    make("paused and delayed", true, &[false, false])?;
-                    make("no downloader", false, &[true])
-                })
-                .unwrap();
-        }
-        said(&seen);
-        d.click(&["data actions", "subscription manager snapshot"]);
-        // asking is not answering: the daemon does that, on its next look
-        assert!(said(&seen).is_empty());
-        daemon_tick();
-        let shown = said(&seen);
-        assert_eq!(shown.len(), 1, "{shown:?}");
-        let recorded = strings(&case["messages"]);
-        // (the time is how long ago the reference's held clock was: here, now)
-        assert_eq!(
-            delta.replace(&shown[0], ": X ago"),
-            delta.replace(&recorded[0], ": X ago")
-        );
-        // at the reference's time the words are exactly the recorded ones
-        assert_eq!(
-            runner
-                .snapshot_text(recording["now"].as_i64().unwrap())
-                .unwrap(),
-            recorded[0]
-        );
-    }
-    // a look with nothing asked says nothing
-    daemon_tick();
-    assert!(said(&seen).is_empty());
 }

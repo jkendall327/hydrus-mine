@@ -16,9 +16,15 @@ thread_local! {
     static TOUCHED_POPUPS: Cell<bool> = const { Cell::new(false) };
 }
 
-/// Have `conn` tell [`note`] about each statement it runs.
-pub(crate) fn instrument(conn: &Connection) {
-    conn.trace_v2(TraceEventCodes::SQLITE_TRACE_STMT, Some(on_trace));
+/// Have `conn` tell [`note`] about each statement it runs, while a mode that
+/// reads them is on (the callback costs a call per statement, so it is
+/// registered only then, at the start of each job).
+fn watch(conn: &Connection) {
+    if profiling::query_planner_on() || Flag::DbReport.is_on() {
+        conn.trace_v2(TraceEventCodes::SQLITE_TRACE_STMT, Some(on_trace));
+    } else {
+        conn.trace_v2(TraceEventCodes::empty(), None);
+    }
 }
 
 // (a `fn` pointer, so it takes the event by value)
@@ -47,9 +53,6 @@ fn note(sql: &str) {
     {
         return;
     }
-    if !profiling::needs_plan(sql) {
-        return;
-    }
     PENDING.with(|p| {
         let mut p = p.borrow_mut();
         if !p.iter().any(|q| q == sql) {
@@ -61,7 +64,11 @@ fn note(sql: &str) {
 /// `query planner mode`'s `EXPLAIN QUERY PLAN` of each query the job ran.
 fn plan_pending(conn: &Connection) {
     let pending = PENDING.with(|p| std::mem::take(&mut *p.borrow_mut()));
+    let Some(dir) = database_dir(conn) else { return };
     for query in pending {
+        if !profiling::needs_plan(&dir, &query) {
+            continue;
+        }
         let plan = (|| -> rusqlite::Result<Vec<String>> {
             let mut stmt = conn.prepare(&format!("EXPLAIN QUERY PLAN {query}"))?;
             let nulls = std::iter::repeat_n(Null, stmt.parameter_count());
@@ -76,9 +83,7 @@ fn plan_pending(conn: &Connection) {
             rows.collect()
         })()
         .unwrap_or_default();
-        if let Some(dir) = database_dir(conn) {
-            profiling::print_query_plan(&dir, &query, &plan);
-        }
+        profiling::print_query_plan(&dir, &query, &plan);
     }
 }
 
@@ -90,6 +95,7 @@ fn database_dir(conn: &Connection) -> Option<std::path::PathBuf> {
 /// Run one job (`f`, named `name`) with the debug modes' hooks: the report,
 /// the profile and the plans. `quiet` jobs are not reported.
 pub(crate) fn run<R>(conn: &Connection, name: &str, quiet: bool, f: impl FnOnce() -> R) -> R {
+    watch(conn);
     TOUCHED_POPUPS.with(|t| t.set(false));
     let result = if let (true, Some(dir)) = (profiling::is_mode(Mode::Db), database_dir(conn)) {
         profiling::profile(
