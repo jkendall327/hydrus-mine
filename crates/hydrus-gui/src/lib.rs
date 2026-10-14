@@ -8030,8 +8030,7 @@ pub(crate) fn rating_row(control: &ratings::Control) -> RatingRow {
     };
     let svg = control.svg.as_deref().and_then(star_images::image);
     RatingRow {
-        has_svg: svg.is_some(),
-        svg: svg.unwrap_or_default(),
+        svg: ModelRc::new(VecModel::from(svg.into_iter().collect::<Vec<_>>())),
         kind,
         shape: shape.into(),
         shapes: ModelRc::new(VecModel::from(shapes)),
