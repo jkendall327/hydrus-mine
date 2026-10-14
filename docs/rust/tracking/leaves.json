@@ -20703,10 +20703,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-09",
+    "date": "2026-10-13",
     "class": "source-restated",
-    "by": "Claude, options-shell-followups",
-    "note": "tests/gui/status_app_busy.rs drives the real status bar through the maintenance poll with held time: the app-busy thresholds (3/8), the ten-second look (strictly more than ten seconds, at 11), the tooltip, a stale daemon, a real client maintenance pass counted while it runs (a held writer keeps it in flight), and 'db writing' while a store write is in flight. hydrus-cli tests/serve.rs checks that the real daemon publishes jobs while a real download is in flight and 0 after it is cancelled. Idle and CPU-busy tooltips are asserted in options_system_consumers.rs. Expected values restate the reference's ClientGUI._RefreshStatusBar and HydrusThreading.GetThreadPoolBusyStatus; the counted jobs are hydrus-rs's (DIFFERENCES.md). The GUI reads the daemon's count from the store, which the status tests write directly."
+    "by": "Claude session (#97 phase 2, w4-r4b)",
+    "note": "Left source-restated after a closer look. Idle and CPU busy are replayed against cpu_busy.json (cpu_busy.rs). The application-busy thresholds, ten-second look and tooltip are checked by status_app_busy.rs with values typed from HydrusThreading.GetThreadPoolBusyStatus (no recording of them; the count is hydrus-rs's jobs, DIFFERENCES.md). The database field shows 'db writing'/'db reading' but not the reference's 'db committing'/'db locked', and has no 'current db job: <name>' tooltip (HydrusDB._current_status / ClientGUI._RefreshStatusBarDB), so the leaf cannot be sound until those are added; not done here because a new tooltip is a .slint change and the UI crate build is at the container's memory limit."
    }
   },
   {
@@ -20929,10 +20929,10 @@
     "Pages::sync persists page tree/current page/displayed files/selected files into session tables; the GUI poll consumes queued API page operations and refreshes the window."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window sync writes files, selection and shown page to the session tables and the page commands (add files, focus, refresh) are consumed, but expected values are typed by the test; no recording of the reference's page tree/selection for the API beyond the one-page conformance case. Tests: crates/hydrus-gui/tests/gui/session.rs:499 the_pages_are_kept_for_the_client_api_and_do_what_it_asks; crates/hydrus-api/tests/pages.rs"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r4b)",
+    "note": "gui/pages_api_replay.rs replays oracle/fixtures/pages_api.json (record_pages_api.py: the reference's real Client API asked of its live pages): a page a, a notebook nb of b and c, and a page d; fourteen steps of pages shown by tab, files selected and cleared (select all/none), a page opened, a page renamed and pages closed (the shown one, so the selection moves), the store kept in step by the window's sync, and the real hydrus-api router asked for get_pages and every media page's get_page_info(simple=false); the whole bodies equal the reference's after each step (page keys by name; selected files as a set, as the reference lists them in set order). Not through clicks: tab shows and select all/none are the window's callbacks, the page is opened and renamed through Pages (the rename dialog is not driven), close is the tab menu's 'close page'. The pages' files are seeded into the store directly; saving displayed files is covered by session.rs the_pages_are_kept_for_the_client_api_and_do_what_it_asks, which also covers the page commands the API queues (add files, focus, refresh), as does hydrus-api/tests/pages.rs."
    }
   },
   {
