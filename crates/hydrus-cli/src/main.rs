@@ -197,8 +197,11 @@ impl From<FilesMode> for TransferMode {
 
 impl Command {
     /// The store directory the command works on, where its crash log goes.
-    fn store_dir(&self) -> &Path {
-        match self {
+    /// The store a command works on, for its crash log; `bench` only reads its
+    /// store, so it writes no log there either.
+    fn store_dir(&self) -> Option<&Path> {
+        Some(match self {
+            Command::Bench(_) => return None,
             Command::ImportLegacy { dest, .. } => dest,
             Command::Serve { dir, .. }
             | Command::Maintenance { dir, .. }
@@ -212,7 +215,7 @@ impl Command {
             | Command::Duplicates { dir, .. }
             | Command::Pause { dir, .. }
             | Command::Resume { dir, .. } => dir,
-        }
+        })
     }
 }
 
@@ -225,7 +228,9 @@ fn main() -> Result<()> {
         .init();
     let command = Cli::parse().command;
     // every panic, on any thread, goes to the store's crash log
-    hydrus_core::crash_log::install(command.store_dir(), "hydrus");
+    if let Some(dir) = command.store_dir() {
+        hydrus_core::crash_log::install(dir, "hydrus");
+    }
     match command {
         Command::ImportLegacy {
             source,
