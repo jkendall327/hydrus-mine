@@ -8,7 +8,10 @@ change made in the window:
 
 * `start`: as built;
 * `show <name>`: that page made the one shown (its tabs selected);
-* `select all` / `select none`: the shown page's files all selected, or none.
+* `select all` / `select none`: the shown page's files all selected, or none;
+* `open <name>`: a new search page of that name opened (beside the one shown);
+* `rename <name> <new>`: that page renamed through the tab menu's rename;
+* `close <name>`: that page closed (`_ClosePage`).
 
 After each step, `/manage_pages/get_pages` and, for each media page,
 `/manage_pages/get_page_info?simple=false`, with the random page keys
@@ -41,6 +44,10 @@ STEPS = [
     [ 'show', 'nb' ],
     [ 'show', 'a' ],
     [ 'select all' ],
+    [ 'open', 'e' ],
+    [ 'rename', 'd', 'dd' ],
+    [ 'close', 'a' ],
+    [ 'close', 'e' ],
 ]
 
 
@@ -67,6 +74,12 @@ def record( session ):
     location = ClientLocation.LocationContext.STATICCreateSimple( CC.LOCAL_FILE_SERVICE_KEY )
 
     notebook = gui._notebook
+
+    from hydrus.client.gui import ClientGUIDialogsQuick
+
+    answers = []
+
+    ClientGUIDialogsQuick.EnterText = lambda window, message, default = '', **kwargs: answers.pop( 0 )
 
     layout = [
         { 'name' : 'a', 'hashes' : [ hashes[0].hex(), hashes[1].hex() ] },
@@ -233,6 +246,32 @@ def record( session ):
         if step[0] == 'show':
 
             qt( lambda: show( step[1] ) )
+
+        elif step[0] == 'open':
+
+            qt( lambda: notebook.NewPageQuery( location, page_name = step[1] ) )
+
+        elif step[0] == 'rename':
+
+            def rename():
+
+                ( node, i, widget ) = find( step[1] )
+
+                answers.append( step[2] )
+
+                node._RenamePage( i )
+
+            qt( rename )
+
+        elif step[0] == 'close':
+
+            def close():
+
+                ( node, i, widget ) = find( step[1] )
+
+                node._ClosePage( i )
+
+            qt( close )
 
         elif step[0] == 'select all':
 

@@ -4880,3 +4880,8 @@ a sample limit the same number of pairs, not the same pairs, are shown
 Approving pairs now drops, from every rule's queue, the pairs that are no longer
 potential duplicates (as the reference does as groups merge), so approving
 `A-B` and `B-C` leaves no `A-C` waiting.
+
+- **The status bar's database field** shows "db writing" and "db reading" but not
+  the reference's "db committing" and "db locked", and has no "current db job: <name>"
+  tooltip (`HydrusDB._current_status`, `ClientGUI._RefreshStatusBarDB`); hydrus-rs's
+  database has no job names to show. `audit-options-status-activity` stays untagged for this.

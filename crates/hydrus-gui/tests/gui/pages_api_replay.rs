@@ -199,11 +199,71 @@ fn the_api_sees_the_live_pages_their_files_and_selection_as_the_reference_does()
                     })
                 };
                 let (r, at) = place(&ui).unwrap_or_else(|| {
-                    ui.invoke_tab_chosen(0, 1);
+                    // (a page inside a notebook that is not shown: that notebook first)
+                    let notebook = recorded["layout"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .position(|row| {
+                            row["children"]
+                                .as_array()
+                                .is_some_and(|c| c.iter().any(|child| child["name"] == name))
+                        })
+                        .unwrap();
+                    ui.invoke_tab_chosen(0, i32::try_from(notebook).unwrap());
                     headless::render(&windows.get(0).unwrap(), 1100, 700);
                     place(&ui).unwrap()
                 });
                 ui.invoke_tab_chosen(i32::try_from(r).unwrap(), i32::try_from(at).unwrap());
+            }
+            "open" => {
+                // a new search page, named (the reference opens it by name)
+                bound.pages.borrow_mut().new_search_page();
+                let key = bound.pages.borrow().shown().key;
+                bound
+                    .pages
+                    .borrow_mut()
+                    .rename_key(&key, action[1].as_str().unwrap());
+            }
+            "rename" => {
+                let (from, to) = (action[1].as_str().unwrap(), action[2].as_str().unwrap());
+                let key = bound
+                    .pages
+                    .borrow()
+                    .session()
+                    .all_pages()
+                    .into_iter()
+                    .find(|p| p.name == from)
+                    .unwrap()
+                    .key;
+                bound.pages.borrow_mut().rename_key(&key, to);
+            }
+            "close" => {
+                // the tab's right-click menu, "close page"
+                let name = action[1].as_str().unwrap();
+                let tabs = ui.get_tab_rows();
+                let (r, at) = (0..tabs.row_count())
+                    .find_map(|r| {
+                        let at = tabs
+                            .row_data(r)
+                            .unwrap()
+                            .full_names
+                            .iter()
+                            .position(|n| n == name)?;
+                        Some((r, at))
+                    })
+                    .unwrap();
+                ui.invoke_tab_menu_requested(
+                    i32::try_from(r).unwrap(),
+                    i32::try_from(at).unwrap(),
+                    30.0,
+                    55.0,
+                );
+                let lines = ui.get_menu_panes().row_data(0).unwrap().lines;
+                let line = (0..lines.row_count())
+                    .position(|i| lines.row_data(i).unwrap().label == "close page")
+                    .unwrap();
+                ui.invoke_menu_line_clicked(0, i32::try_from(line).unwrap(), 200.0, 100.0, 10.0);
             }
             "select all" => ui.invoke_select_all(),
             "select none" => ui.invoke_select_none(),
