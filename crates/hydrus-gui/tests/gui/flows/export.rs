@@ -30,8 +30,15 @@ fn contents(dir: &Path) -> Json {
                 continue;
             }
             let data = std::fs::read(&path).unwrap();
-            let relative = path.strip_prefix(dir).unwrap().to_string_lossy().into_owned();
-            let value = if relative.ends_with(".json") {
+            let relative = path
+                .strip_prefix(dir)
+                .unwrap()
+                .to_string_lossy()
+                .into_owned();
+            let value = if path
+                .extension()
+                .is_some_and(|ext| ext.eq_ignore_ascii_case("json"))
+            {
                 serde_json::from_slice(&data).unwrap()
             } else {
                 json!(hydrus_media::hash_bytes(&data).sha256.to_hex())
