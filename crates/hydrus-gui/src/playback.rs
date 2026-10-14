@@ -67,6 +67,19 @@ pub fn live_property(name: &str) -> Vec<(u64, Option<String>)> {
     })
 }
 
+/// Pause every player on this thread that is playing a file: the reference's
+/// `pub( 'pause_all_media' )`, which each canvas media container answers by
+/// pausing its player if it is presenting media with a duration.
+pub fn pause_all() {
+    LIVE.with(|live| {
+        for playback in live.borrow().iter().filter_map(std::rc::Weak::upgrade) {
+            if playback.target.borrow().is_some() {
+                playback.set_paused(true);
+            }
+        }
+    });
+}
+
 /// Going back to within this many milliseconds of the start is a restart
 /// (the reference counts seeks to under a tenth of a second; seen every
 /// 10 milliseconds or so, a little more).

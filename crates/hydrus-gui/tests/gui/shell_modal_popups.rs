@@ -258,3 +258,52 @@ fn a_modal_job_waits_while_the_main_window_is_minimised_or_inactive_or_a_dialog_
     assert!(controller.dialog().is_none());
     assert_eq!(controller.pending(), 0);
 }
+
+// leaf: audit-options-popups-modal
+#[test]
+fn a_modal_dialog_hides_the_other_windows_while_it_is_up_and_not_the_main_one() {
+    let m = start();
+    let controller = m.bound.popup_modal.clone();
+    // the recorded case: a review window is up
+    let recorded = hydrus_testkit::fixture_json("popup_modal.json");
+    let case = recorded["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["label"] == "other windows hidden, main kept")
+        .unwrap();
+    // another window of the client: the Options window, from its menu
+    m.ui.invoke_menu_title_pressed(0, 20.0, 22.0);
+    let lines = m.ui.get_menu_panes().row_data(0).unwrap().lines;
+    let at = lines
+        .iter()
+        .position(|line| line.label == "options\u{2026}")
+        .unwrap();
+    m.ui.invoke_menu_line_clicked(0, i32::try_from(at).unwrap(), 0.0, 0.0, 0.0);
+    let other = m.bound.options.borrow().as_ref().unwrap().clone_strong();
+    assert!(other.window().is_visible());
+    assert!(m.ui.window().is_visible());
+
+    let key = m.publish(Modal::running(Some("migrating files"), true));
+    pump_until("the dialog opens", || controller.dialog().is_some());
+    // hidden during: the other window, not the main one
+    assert_eq!(
+        !other.window().is_visible(),
+        case["hidden_during"]["extra"].as_bool().unwrap()
+    );
+    assert_eq!(
+        !m.ui.window().is_visible(),
+        case["hidden_during"]["main"].as_bool().unwrap()
+    );
+    // released: they are back
+    m.change(key, Job::finish);
+    pump_until("the dialog closes", || controller.dialog().is_none());
+    assert_eq!(
+        other.window().is_visible(),
+        case["restored_after"]["extra"].as_bool().unwrap()
+    );
+    assert_eq!(
+        m.ui.window().is_visible(),
+        case["restored_after"]["main"].as_bool().unwrap()
+    );
+}
