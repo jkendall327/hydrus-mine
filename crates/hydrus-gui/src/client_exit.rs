@@ -34,6 +34,19 @@ thread_local! {
 /// Whether the client should start again once it has exited.
 pub static RESTART: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 
+/// File > restart, once the client has exited and let go of the store: start
+/// `exe` again with `args`, if a restart was asked for. Returns whether it did.
+pub fn relaunch_if_requested(
+    exe: &std::path::Path,
+    args: impl IntoIterator<Item = std::ffi::OsString>,
+) -> std::io::Result<bool> {
+    if !RESTART.load(std::sync::atomic::Ordering::SeqCst) {
+        return Ok(false);
+    }
+    std::process::Command::new(exe).args(args).spawn()?;
+    Ok(true)
+}
+
 /// Make the next close request exit this way (reset if it is backed out of).
 pub fn set_mode(mode: ExitMode) {
     MODE.with(|m| m.set(mode));

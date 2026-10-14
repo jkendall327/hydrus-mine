@@ -340,3 +340,325 @@ fn advanced_weight_counts_repeated_media_and_both_seed_logs_and_copies_exact_lab
             .files_paused
     );
 }
+
+// leaf: audit-options-tabs-context-action-2120-selectable-page
+#[test]
+fn the_pages_menu_lists_and_shows_each_page_with_the_references_labels() {
+    use hydrus_core::{
+        import_options::ImportOptionsSlice,
+        pages::{DownloaderKind, DownloaderPageState},
+    };
+    use hydrus_store::queues::{
+        self, FileSeedMeta, GallerySeedMeta, NewFileSeed, NewGallerySeed, QueueKind, SeedType,
+    };
+    let _windows = headless::init();
+    let (_dirs, store) = store();
+    let fixture = hydrus_testkit::fixture_json("tab_refresh.json");
+    let hashes: Vec<HashId> = fixture["weights"]["hashes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|hash| {
+            store
+                .read(|conn| {
+                    hydrus_store::master::hash_id(conn, &hash.as_str().unwrap().parse().unwrap())
+                })
+                .unwrap()
+                .unwrap()
+        })
+        .collect();
+    let a = search("files a");
+    let b = search("files b");
+    let importer_key = PageKey::random();
+    let queue = store
+        .write(move |ctx| {
+            let queue = queues::create_queue(
+                ctx.conn(),
+                QueueKind::Urls,
+                "weighted importer",
+                Some(&importer_key.0),
+                &ImportOptionsSlice::default(),
+                1,
+            )?;
+            queues::set_paused(ctx.conn(), queue, Some(true), Some(true))?;
+            let files: Vec<_> = (0..54)
+                .map(|i| NewFileSeed {
+                    seed_type: SeedType::Url,
+                    data: format!("https://files.example/{i}.jpg"),
+                    data_for_comparison: format!("https://files.example/{i}.jpg"),
+                    source_time: None,
+                    referral_url: None,
+                    meta: FileSeedMeta::default(),
+                })
+                .collect();
+            queues::add_file_seeds(ctx.conn(), queue, &files, false, 1)?;
+            queues::add_gallery_seeds(
+                ctx.conn(),
+                queue,
+                &[NewGallerySeed {
+                    url: "https://gallery.example/page/1".into(),
+                    can_generate_more_pages: true,
+                    referral_url: None,
+                    meta: GallerySeedMeta::default(),
+                }],
+                None,
+                1,
+            )?;
+            Ok(queue)
+        })
+        .unwrap();
+    let importer = Page {
+        key: importer_key,
+        name: "weighted importer".into(),
+        content: PageContent::Downloader {
+            kind: DownloaderKind::Urls,
+            queues: vec![queue],
+            sort: None,
+            page: Some(Box::new(DownloaderPageState::default())),
+        },
+    };
+    let leaf_keys = [a.key, b.key, importer_key];
+    let group = notebook("weighted group", vec![a, b, importer]);
+    let group_key = group.key;
+    let session = Session {
+        name: sessions::LAST_SESSION.into(),
+        pages: vec![group],
+    };
+    store
+        .write(move |ctx| {
+            sessions::save(ctx.conn(), &session, 1)?;
+            sessions::set_page_files(ctx.conn(), &leaf_keys[0], &hashes[..2])?;
+            sessions::set_page_files(ctx.conn(), &leaf_keys[1], &hashes[1..])
+        })
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let _ = (group_key, queue);
+    // right-click the notebook's tab: its "pages" submenu lists the media
+    // pages under it, named with their file counts and import progress as
+    // the reference's `GetNameForMenu` does (the recording's pages menu)
+    let recorded: Vec<String> = fixture["weights"]["menus"][0]["entries"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|e| e["menu"] == "pages")
+        .unwrap()["entries"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|e| e.as_str().unwrap().to_owned())
+        .collect();
+    assert_eq!(recorded.len(), 3);
+    ui.invoke_tab_menu_requested(0, 0, 30.0, 55.0);
+    choose(&ui, "pages");
+    let lines = ui.get_menu_panes().row_data(1).unwrap().lines;
+    let labels: Vec<String> = (0..lines.row_count())
+        .map(|i| lines.row_data(i).unwrap().label.to_string())
+        .collect();
+    assert_eq!(labels, recorded);
+    // choosing one shows that page (`ShowPage`)
+    for (n, key) in leaf_keys.iter().enumerate().rev() {
+        ui.invoke_tab_menu_requested(0, 0, 30.0, 55.0);
+        choose(&ui, "pages");
+        ui.invoke_menu_line_clicked(1, i32::try_from(n).unwrap(), 200.0, 100.0, 10.0);
+        assert_eq!(bound.pages.borrow().shown().key, *key, "{}", recorded[n]);
+        assert_eq!(ui.get_menu_panes().row_count(), 0, "the menu closed");
+    }
+}
+
+// leaf: audit-options-tabs-context-action-2249-refresh-this-page
+#[test]
+fn refresh_this_page_resumes_a_paused_search_and_resorts_an_importer_as_the_reference_does() {
+    use hydrus_core::{
+        import_options::ImportOptionsSlice,
+        pages::{DownloaderKind, DownloaderPageState},
+    };
+    use hydrus_store::queues::{
+        self, FileSeedMeta, GallerySeedMeta, NewFileSeed, NewGallerySeed, QueueKind, SeedType,
+    };
+    let _windows = headless::init();
+    let (_dirs, store) = store();
+    let fixture = hydrus_testkit::fixture_json("tab_refresh.json");
+    let hashes: Vec<HashId> = fixture["weights"]["hashes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|hash| {
+            store
+                .read(|conn| {
+                    hydrus_store::master::hash_id(conn, &hash.as_str().unwrap().parse().unwrap())
+                })
+                .unwrap()
+                .unwrap()
+        })
+        .collect();
+    let a = search("files a");
+    let b = search("files b");
+    let importer_key = PageKey::random();
+    let queue = store
+        .write(move |ctx| {
+            let queue = queues::create_queue(
+                ctx.conn(),
+                QueueKind::Urls,
+                "weighted importer",
+                Some(&importer_key.0),
+                &ImportOptionsSlice::default(),
+                1,
+            )?;
+            queues::set_paused(ctx.conn(), queue, Some(true), Some(true))?;
+            let files: Vec<_> = (0..54)
+                .map(|i| NewFileSeed {
+                    seed_type: SeedType::Url,
+                    data: format!("https://files.example/{i}.jpg"),
+                    data_for_comparison: format!("https://files.example/{i}.jpg"),
+                    source_time: None,
+                    referral_url: None,
+                    meta: FileSeedMeta::default(),
+                })
+                .collect();
+            queues::add_file_seeds(ctx.conn(), queue, &files, false, 1)?;
+            queues::add_gallery_seeds(
+                ctx.conn(),
+                queue,
+                &[NewGallerySeed {
+                    url: "https://gallery.example/page/1".into(),
+                    can_generate_more_pages: true,
+                    referral_url: None,
+                    meta: GallerySeedMeta::default(),
+                }],
+                None,
+                1,
+            )?;
+            Ok(queue)
+        })
+        .unwrap();
+    let importer = Page {
+        key: importer_key,
+        name: "weighted importer".into(),
+        content: PageContent::Downloader {
+            kind: DownloaderKind::Urls,
+            queues: vec![queue],
+            sort: None,
+            page: Some(Box::new(DownloaderPageState::default())),
+        },
+    };
+    let leaf_keys = [a.key, b.key, importer_key];
+    let group = notebook("weighted group", vec![a, b, importer]);
+    let group_key = group.key;
+    let session = Session {
+        name: sessions::LAST_SESSION.into(),
+        pages: vec![group],
+    };
+    store
+        .write(move |ctx| {
+            sessions::save(ctx.conn(), &session, 1)?;
+            sessions::set_page_files(ctx.conn(), &leaf_keys[0], &hashes[..2])?;
+            sessions::set_page_files(ctx.conn(), &leaf_keys[1], &hashes[1..])
+        })
+        .unwrap();
+    let _ = (group_key, queue);
+    // the reference's single-page refresh of a paused search page (the
+    // recording of RefreshAllPages' per-page RefreshQuery): searched again
+    // and synchronised, its files the whole of the local files
+    let searches = hydrus_testkit::fixture_json("tab_refresh.json");
+    let recorded = hydrus_testkit::fixture_json("tab_refresh_importer.json");
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.invoke_tab_menu_requested(1, 0, 30.0, 55.0);
+    choose(&ui, "refresh this page");
+    let first = bound.pages.borrow_mut().page(&leaf_keys[0]).unwrap();
+    assert_eq!(
+        first.borrow().synchronised(),
+        searches["refresh"]["after_sync"][0].as_bool().unwrap()
+    );
+    assert!(!searches["refresh"]["before_sync"][0].as_bool().unwrap());
+    assert_eq!(
+        first.borrow().files().len() as u64,
+        searches["refresh"]["counts"][0].as_u64().unwrap()
+    );
+    // a page locked to its hashes with its sync paused: refreshed, it keeps
+    // its files and stays paused (the recorded `locked`)
+    let kept = &recorded["locked"];
+    assert_eq!(kept["before"]["files"], kept["after"]["files"]);
+    assert!(kept["before"]["hash_locked"].as_bool().unwrap());
+    let locked = bound.pages.borrow_mut().page(&leaf_keys[1]).unwrap();
+    locked.borrow_mut().lock_search();
+    locked
+        .borrow_mut()
+        .set_synchronised(kept["before"]["synchronised"].as_bool().unwrap());
+    let files = locked.borrow().files();
+    ui.invoke_tab_menu_requested(1, 1, 30.0, 55.0);
+    choose(&ui, "refresh this page");
+    assert_eq!(locked.borrow().files(), files);
+    assert_eq!(
+        locked.borrow().synchronised(),
+        kept["after"]["synchronised"].as_bool().unwrap()
+    );
+    // the importer: its files sorted by file size, one selected and moved to
+    // the end by hand, then refreshed from its tab
+    let order = |hashes: &serde_json::Value| -> Vec<HashId> {
+        hashes
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|hash| {
+                store
+                    .read(|conn| {
+                        hydrus_store::master::hash_id(
+                            conn,
+                            &hash.as_str().unwrap().parse().unwrap(),
+                        )
+                    })
+                    .unwrap()
+                    .unwrap()
+            })
+            .collect()
+    };
+    let in_page = order(&recorded["hashes"]);
+    store
+        .write(move |ctx| sessions::set_page_files(ctx.conn(), &importer_key, &in_page))
+        .unwrap();
+    let mut pages = Pages::open(store.clone()).unwrap();
+    let importer = pages.page(&importer_key).unwrap();
+    importer
+        .borrow_mut()
+        .set_sort_by(hydrus_search::SortBy::FileSize);
+    assert_eq!(importer.borrow().files(), order(&recorded["sorted"]));
+    importer.borrow_mut().select(0);
+    assert_eq!(
+        importer.borrow().selected_files(),
+        order(&recorded["moved"]["selected"])
+    );
+    importer
+        .borrow_mut()
+        .rearrange(hydrus_gui::thumbnail_menu::Rearrange::End);
+    assert_eq!(
+        importer.borrow().files(),
+        order(&recorded["moved"]["order"])
+    );
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, pages);
+    let shown = bound.pages.borrow().shown().key;
+    ui.invoke_tab_menu_requested(1, 2, 30.0, 55.0);
+    choose(&ui, "refresh this page");
+    let after = &recorded["refreshed"];
+    assert_eq!(importer.borrow().files(), order(&after["order"]));
+    assert_eq!(
+        importer.borrow().selected_files(),
+        order(&after["selected"])
+    );
+    assert_eq!(
+        bound.pages.borrow().shown().key,
+        shown,
+        "{}",
+        after["shown"]
+    );
+    assert_eq!(
+        store
+            .read(|conn| queues::queue(conn, queue))
+            .unwrap()
+            .unwrap()
+            .files_paused,
+        after["paused"].as_bool().unwrap()
+    );
+}

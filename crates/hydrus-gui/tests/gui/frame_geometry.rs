@@ -616,3 +616,269 @@ fn other_windows_open_by_the_ordinary_dialogs_frame() {
         "its own width, grown to the main window's height"
     );
 }
+
+/// A frame key's row edited in Options > gui > frame locations (the editor
+/// child, then the options window's apply), as a user does.
+fn edit_in_options(client: &Client, key: &str, change: &dyn Fn(&hydrus_gui::FrameLocationWindow)) {
+    main_menu::choose(&client.ui, &["file"], "options\u{2026}");
+    let options = client
+        .bound
+        .options
+        .borrow()
+        .as_ref()
+        .expect("the options window")
+        .clone_strong();
+    crate::options_gui_support::show_page(&options, "gui");
+    let rows = options.get_frame_rows();
+    let at = (0..rows.row_count())
+        .position(|i| rows.row_data(i).unwrap().cells.row_data(0).unwrap() == key)
+        .unwrap_or_else(|| panic!("a row for {key}"));
+    options.invoke_frame_clicked(at as i32, false, false);
+    options.invoke_frame_action("edit".into());
+    let child = client
+        .bound
+        .options_frame_child
+        .borrow()
+        .as_ref()
+        .expect("the editor opens")
+        .clone_strong();
+    assert!(
+        child
+            .get_message()
+            .starts_with(&format!("Setting frame location info for {key}.")),
+        "{key}: {}",
+        child.get_message()
+    );
+    change(&child);
+    child.invoke_apply();
+    options.invoke_apply();
+}
+
+/// Close a window as the user does: a frame by its close button, a dialog
+/// by cancelling it.
+fn dismiss(shown: &dyn Shown) {
+    shown
+        .win()
+        .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+}
+
+#[test]
+#[allow(clippy::cast_possible_truncation)]
+fn the_frame_editor_decides_how_each_named_window_next_opens() {
+    let _windows = headless::init();
+    let placement = hydrus_testkit::fixture_json("frame_placement.json");
+    let case_both = placement["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| {
+            c["frame"]["gravity"] == serde_json::json!([1, 1])
+                && c["frame"]["position"] == "topleft"
+                && c["frame"]["remember_size"] == false
+        })
+        .unwrap();
+    for (key, open, _) in windows() {
+        let client = Client::new();
+        // (the recorded main window's client area; a window is grown to it
+        // less the padding, which the display would also bound if there were
+        // one)
+        let main = &placement["main_client"];
+        let (main_width, main_height) = (
+            main[0].as_f64().unwrap() as f32,
+            main[1].as_f64().unwrap() as f32,
+        );
+        let both = (main_width - 48.0, main_height - 48.0);
+        assert_eq!(
+            both.1,
+            case_both["size"][1].as_f64().unwrap() as f32,
+            "the recorded height of a window grown on both axes"
+        );
+        client
+            .ui
+            .window()
+            .set_size(slint::LogicalSize::new(main_width, main_height));
+        let size_of = |window: &slint::Window| {
+            let size = window.size().to_logical(window.scale_factor());
+            (size.width, size.height)
+        };
+
+        // a size remembered, neither maximised nor fullscreen
+        edit_in_options(&client, key, &|child| {
+            child.set_remember_size(true);
+            child.set_size_none(false);
+            child.set_last_width(700);
+            child.set_last_height(500);
+            child.set_maximised(false);
+            child.set_fullscreen(false);
+        });
+        assert_eq!(client.frame(key).last_size, Some((700, 500)), "{key}");
+        let shown = open(&client);
+        assert_eq!(size_of(shown.win()), (700.0, 500.0), "{key}: its size");
+        assert!(
+            !shown.win().is_maximized() && !shown.win().is_fullscreen(),
+            "{key}"
+        );
+        dismiss(&*shown);
+
+        // started maximised
+        edit_in_options(&client, key, &|child| {
+            child.set_remember_size(true);
+            child.set_maximised(true);
+            child.set_fullscreen(false);
+        });
+        let shown = open(&client);
+        assert!(
+            shown.win().is_maximized() && !shown.win().is_fullscreen(),
+            "{key}: maximised"
+        );
+        dismiss(&*shown);
+
+        // started fullscreen
+        edit_in_options(&client, key, &|child| {
+            child.set_maximised(false);
+            child.set_fullscreen(true);
+        });
+        let shown = open(&client);
+        assert!(shown.win().is_fullscreen(), "{key}: fullscreen");
+        dismiss(&*shown);
+
+        // no size of its own, grown by its gravity to the main window less
+        // the padding on both axes
+        edit_in_options(&client, key, &|child| {
+            child.set_remember_size(false);
+            child.set_maximised(false);
+            child.set_fullscreen(false);
+            child.set_gravity_x(0);
+            child.set_gravity_y(0);
+        });
+        assert_eq!(client.frame(key).default_gravity, (1, 1), "{key}");
+        let shown = open(&client);
+        if shown.win().size().width == 0 {
+            shown.win().set_size(slint::LogicalSize::new(400.0, 300.0));
+        }
+        let started = std::time::Instant::now();
+        while size_of(shown.win()) != both && started.elapsed() < std::time::Duration::from_secs(5)
+        {
+            slint::platform::update_timers_and_animations();
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        }
+        assert_eq!(size_of(shown.win()), both, "{key}: grown");
+        dismiss(&*shown);
+
+        // width only: its own height is kept
+        edit_in_options(&client, key, &|child| child.set_gravity_y(1));
+        assert_eq!(client.frame(key).default_gravity, (1, -1), "{key}");
+        let shown = open(&client);
+        if shown.win().size().width == 0 {
+            shown.win().set_size(slint::LogicalSize::new(400.0, 300.0));
+        }
+        let started = std::time::Instant::now();
+        while size_of(shown.win()).0 != main_width - 48.0
+            && started.elapsed() < std::time::Duration::from_secs(5)
+        {
+            slint::platform::update_timers_and_animations();
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        }
+        assert_eq!(
+            size_of(shown.win()),
+            (main_width - 48.0, 300.0),
+            "{key}: width only"
+        );
+
+        // centred on the main window (a software window has no place to
+        // read, so the place it is given is the one worked out for it)
+        edit_in_options(&client, key, &|child| {
+            child.set_remember_position(false);
+            child.set_default_position(1);
+        });
+        let frame = client.frame(key);
+        assert_eq!(frame.default_position, "center", "{key}");
+        let placed = hydrus_gui::windows::placement(shown.win(), &frame, false);
+        let (width, height) = placed.size;
+        assert_eq!(
+            placed.position,
+            Some((
+                (main_width as i32 - 1) / 2 - (width - 1) / 2,
+                (main_height as i32 - 1) / 2 - (height - 1) / 2
+            )),
+            "{key}: centred"
+        );
+        dismiss(&*shown);
+    }
+}
+
+#[test]
+fn the_choice_dialogs_open_by_the_quick_select_and_yes_no_frames_and_keep_them_when_a_choice_is_made()
+ {
+    let _windows = headless::init();
+    let client = Client::new();
+    // (with no "no", the reference's `SelectFromListButtons`; with one, `GetYesYesNo`)
+    for (key, no_label) in [("quick_select_dialog", ""), ("quick_yesno_dialog", "no")] {
+        let ask = |title: &'static str| hydrus_gui::choice_buttons::Ask {
+            title,
+            message: "pick",
+            choices: vec!["a".into(), "b".into()],
+            no_label,
+        };
+        edit_in_options(&client, key, &|child| {
+            child.set_remember_size(true);
+            child.set_size_none(false);
+            child.set_last_width(500);
+            child.set_last_height(400);
+        });
+        let shown = hydrus_gui::choice_buttons::open(&ask("first"), |_| ())
+            .unwrap()
+            .expect("shown");
+        let size = shown
+            .window()
+            .size()
+            .to_logical(shown.window().scale_factor());
+        assert_eq!((size.width, size.height), (500.0, 400.0), "{key}");
+        // cancelled, it keeps nothing
+        shown
+            .window()
+            .set_size(slint::LogicalSize::new(450.0, 350.0));
+        shown.invoke_cancelled();
+        assert_eq!(client.frame(key).last_size, Some((500, 400)), "{key}");
+        // a choice keeps its size
+        let shown = hydrus_gui::choice_buttons::open(&ask("second"), |_| ())
+            .unwrap()
+            .expect("shown");
+        shown
+            .window()
+            .set_size(slint::LogicalSize::new(450.0, 350.0));
+        shown.invoke_chosen(1);
+        assert_eq!(client.frame(key).last_size, Some((450, 350)), "{key}");
+    }
+
+    // a message with no choices is neither dialog: it takes neither frame
+    // (the reference shows those through its message dialogs) and keeps nothing
+    let message = hydrus_gui::choice_buttons::Ask {
+        title: "Information",
+        message: "a message",
+        choices: Vec::new(),
+        no_label: "OK",
+    };
+    let shown = hydrus_gui::choice_buttons::open(&message, |_| ())
+        .unwrap()
+        .expect("shown");
+    assert_ne!(
+        shown
+            .window()
+            .size()
+            .to_logical(shown.window().scale_factor())
+            .width,
+        500.0,
+        "not opened by a quick frame"
+    );
+    shown
+        .window()
+        .set_size(slint::LogicalSize::new(333.0, 222.0));
+    shown.invoke_cancelled();
+    shown
+        .window()
+        .set_size(slint::LogicalSize::new(333.0, 222.0));
+    for key in ["quick_select_dialog", "quick_yesno_dialog"] {
+        assert_eq!(client.frame(key).last_size, Some((450, 350)), "{key}");
+    }
+}

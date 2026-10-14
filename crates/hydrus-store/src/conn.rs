@@ -278,7 +278,7 @@ impl Db {
     }
 
     /// Run `f` on a pooled connection inside a read transaction.
-    pub fn read<R>(&self, f: impl FnOnce(&Connection) -> Result<R>) -> Result<R> {
+    pub fn read<R, F: FnOnce(&Connection) -> Result<R>>(&self, f: F) -> Result<R> {
         let _reading = ActivityGuard::enter(&self.activity, false);
         let conn = self
             .readers
@@ -291,7 +291,8 @@ impl Db {
         };
         let conn = guard.conn.as_ref().expect("present until drop");
         conn.execute_batch("BEGIN")?;
-        let result = f(conn);
+        let quiet = hydrus_core::debug_flags::is_quiet();
+        let result = crate::job_debug::run(conn, std::any::type_name::<F>(), quiet, || f(conn));
         // A read transaction has nothing to commit; ending it releases the snapshot.
         conn.execute_batch("COMMIT")?;
         result
@@ -299,35 +300,40 @@ impl Db {
 
     /// Run `f` on the writer thread, inside its own savepoint, and wait until
     /// the batch containing it has committed.
-    pub fn write<R: Send + 'static>(
+    pub fn write<R: Send + 'static, F: FnOnce(&mut WriteCtx<'_>) -> Result<R> + Send + 'static>(
         &self,
-        f: impl FnOnce(&mut WriteCtx<'_>) -> Result<R> + Send + 'static,
+        f: F,
     ) -> Result<R> {
         self.submit(f, false)
     }
 
     /// Like [`Db::write`], but the write commits in a batch of its own, and
     /// its post-commit effects have run before any later write starts.
-    pub fn write_alone<R: Send + 'static>(
+    pub fn write_alone<
+        R: Send + 'static,
+        F: FnOnce(&mut WriteCtx<'_>) -> Result<R> + Send + 'static,
+    >(
         &self,
-        f: impl FnOnce(&mut WriteCtx<'_>) -> Result<R> + Send + 'static,
+        f: F,
     ) -> Result<R> {
         self.submit(f, true)
     }
 
-    fn submit<R: Send + 'static>(
+    fn submit<R: Send + 'static, F: FnOnce(&mut WriteCtx<'_>) -> Result<R> + Send + 'static>(
         &self,
-        f: impl FnOnce(&mut WriteCtx<'_>) -> Result<R> + Send + 'static,
+        f: F,
         barrier: bool,
     ) -> Result<R> {
         let _writing = ActivityGuard::enter(&self.activity, true);
         let (reply_tx, reply_rx) = crossbeam_channel::bounded::<Result<R>>(1);
+        let quiet = hydrus_core::debug_flags::is_quiet();
         let run = Box::new(move |conn: &Connection| {
             let mut ctx = WriteCtx {
                 conn,
                 effects: Vec::new(),
             };
-            let result = f(&mut ctx);
+            let result =
+                crate::job_debug::run(conn, std::any::type_name::<F>(), quiet, || f(&mut ctx));
             let succeeded = result.is_ok();
             let effects = if succeeded { ctx.effects } else { Vec::new() };
             JobOutcome {
