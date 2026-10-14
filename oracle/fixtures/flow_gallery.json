@@ -1,0 +1,1752 @@
+{
+ "domain_manager": [
+  53,
+  7,
+  [
+   [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       69,
+       "local booru tag search",
+       1,
+       [
+        "d5cf99f00fa053f44b0d81dcf201d16db40ad2aeda3a329bf3fcf6f1de08f8e7",
+        "http://127.0.0.1:46033/search/%tags%/1",
+        "%tags%",
+        "+",
+        "tag",
+        "blue_eyes"
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    "d5cf99f00fa053f44b0d81dcf201d16db40ad2aeda3a329bf3fcf6f1de08f8e7"
+   ],
+   [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       50,
+       "local booru post",
+       15,
+       [
+        "0b8c7f801d6eee96b179ed576ac669ac84cfd40818ecba90c65e48b47e43798a",
+        0,
+        "http",
+        [
+         139,
+         1,
+         [
+          [
+           "127.0.0.1:46033"
+          ],
+          [],
+          false,
+          false
+         ]
+        ],
+        [
+         true,
+         false,
+         false,
+         true,
+         false,
+         true,
+         false
+        ],
+        [
+         [
+          [
+           51,
+           1,
+           [
+            0,
+            "post",
+            null,
+            null,
+            "post"
+           ]
+          ],
+          null
+         ],
+         [
+          [
+           51,
+           1,
+           [
+            3,
+            "",
+            null,
+            null,
+            "example string"
+           ]
+          ],
+          null
+         ]
+        ],
+        [
+         26,
+         3,
+         []
+        ],
+        false,
+        [
+         51,
+         1,
+         [
+          3,
+          "",
+          null,
+          null,
+          "example string"
+         ]
+        ],
+        [],
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        0,
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        null,
+        null,
+        1,
+        "http://127.0.0.1:46033/post/1"
+       ]
+      ]
+     ],
+     [
+      2,
+      [
+       50,
+       "local booru search",
+       15,
+       [
+        "107b10a59e0b101c7eeeda47cbe8f163090ab8c433436f6af310e28ebcfa22e9",
+        3,
+        "http",
+        [
+         139,
+         1,
+         [
+          [
+           "127.0.0.1:46033"
+          ],
+          [],
+          false,
+          false
+         ]
+        ],
+        [
+         true,
+         false,
+         false,
+         true,
+         false,
+         true,
+         false
+        ],
+        [
+         [
+          [
+           51,
+           1,
+           [
+            0,
+            "search",
+            null,
+            null,
+            "search"
+           ]
+          ],
+          null
+         ],
+         [
+          [
+           51,
+           1,
+           [
+            3,
+            "",
+            null,
+            null,
+            "example string"
+           ]
+          ],
+          null
+         ],
+         [
+          [
+           51,
+           1,
+           [
+            3,
+            "",
+            null,
+            null,
+            "example string"
+           ]
+          ],
+          null
+         ]
+        ],
+        [
+         26,
+         3,
+         []
+        ],
+        false,
+        [
+         51,
+         1,
+         [
+          3,
+          "",
+          null,
+          null,
+          "example string"
+         ]
+        ],
+        [],
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        0,
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        null,
+        null,
+        1,
+        "http://127.0.0.1:46033/search/blue_eyes/1"
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    "0b8c7f801d6eee96b179ed576ac669ac84cfd40818ecba90c65e48b47e43798a"
+   ],
+   [
+    33,
+    1,
+    [
+     [
+      "0b8c7f801d6eee96b179ed576ac669ac84cfd40818ecba90c65e48b47e43798a",
+      "53f8d3eaafb531a3c01fbe6307e3c9c4190fe3c823dfcf33af0e12f47bb94a63"
+     ],
+     [
+      "107b10a59e0b101c7eeeda47cbe8f163090ab8c433436f6af310e28ebcfa22e9",
+      "0ff4480405fa48c214c8ad1035384120e2525701f6e188d5064c177fe47bc844"
+     ]
+    ]
+   ],
+   [
+    [
+     6,
+     9,
+     [
+      false,
+      false,
+      [
+       150,
+       1,
+       [
+        [
+         44,
+         1,
+         []
+        ],
+        []
+       ]
+      ],
+      [
+       151,
+       1,
+       [
+        [
+         "646f776e6c6f616465722074616773",
+         [
+          65,
+          4,
+          [
+           true,
+           [
+            44,
+            1,
+            []
+           ],
+           [],
+           true,
+           true,
+           true,
+           false,
+           [
+            44,
+            1,
+            []
+           ],
+           false,
+           false
+          ]
+         ]
+        ]
+       ]
+      ],
+      false
+     ]
+    ],
+    [
+     6,
+     9,
+     [
+      false,
+      false,
+      [
+       150,
+       1,
+       [
+        [
+         44,
+         1,
+         []
+        ],
+        []
+       ]
+      ],
+      [
+       151,
+       1,
+       []
+      ],
+      false
+     ]
+    ],
+    []
+   ],
+   [
+    [
+     82,
+     2,
+     [
+      [
+       153,
+       1,
+       [
+        true,
+        true,
+        3,
+        [],
+        null,
+        []
+       ]
+      ],
+      false
+     ]
+    ],
+    [
+     82,
+     2,
+     [
+      [
+       153,
+       1,
+       [
+        true,
+        true,
+        3,
+        [],
+        null,
+        []
+       ]
+      ],
+      false
+     ]
+    ],
+    []
+   ],
+   [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       58,
+       "local booru post parser",
+       3,
+       [
+        "local booru post parser",
+        "53f8d3eaafb531a3c01fbe6307e3c9c4190fe3c823dfcf33af0e12f47bb94a63",
+        [
+         55,
+         2,
+         [
+          [],
+          "example string"
+         ]
+        ],
+        [
+         26,
+         3,
+         []
+        ],
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            30,
+            7,
+            [
+             "file",
+             7,
+             [
+              27,
+              8,
+              [
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   62,
+                   3,
+                   [
+                    0,
+                    "img",
+                    {
+                     "id": "image"
+                    },
+                    null,
+                    null,
+                    false,
+                    [
+                     51,
+                     1,
+                     [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ],
+               0,
+               "src",
+               "",
+               [
+                84,
+                1,
+                [
+                 26,
+                 3,
+                 []
+                ]
+               ]
+              ]
+             ],
+             [
+              7,
+              50
+             ]
+            ]
+           ]
+          ],
+          [
+           2,
+           [
+            30,
+            7,
+            [
+             "source",
+             7,
+             [
+              27,
+              8,
+              [
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   62,
+                   3,
+                   [
+                    0,
+                    "a",
+                    {
+                     "class": "source"
+                    },
+                    null,
+                    null,
+                    false,
+                    [
+                     51,
+                     1,
+                     [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ],
+               0,
+               "href",
+               "",
+               [
+                84,
+                1,
+                [
+                 26,
+                 3,
+                 []
+                ]
+               ]
+              ]
+             ],
+             [
+              8,
+              50
+             ]
+            ]
+           ]
+          ],
+          [
+           2,
+           [
+            30,
+            7,
+            [
+             "tags",
+             0,
+             [
+              27,
+              8,
+              [
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   62,
+                   3,
+                   [
+                    0,
+                    "li",
+                    {
+                     "class": "tag"
+                    },
+                    null,
+                    null,
+                    false,
+                    [
+                     51,
+                     1,
+                     [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ],
+               1,
+               "href",
+               "",
+               [
+                84,
+                1,
+                [
+                 26,
+                 3,
+                 []
+                ]
+               ]
+              ]
+             ],
+             null
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         "http://127.0.0.1:46033/post/1"
+        ],
+        {
+         "url": "https://example.com/posts/index.php?id=123456"
+        }
+       ]
+      ]
+     ],
+     [
+      2,
+      [
+       58,
+       "local booru search parser",
+       3,
+       [
+        "local booru search parser",
+        "0ff4480405fa48c214c8ad1035384120e2525701f6e188d5064c177fe47bc844",
+        [
+         55,
+         2,
+         [
+          [],
+          "example string"
+         ]
+        ],
+        [
+         26,
+         3,
+         []
+        ],
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            30,
+            7,
+            [
+             "next page",
+             7,
+             [
+              27,
+              8,
+              [
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   62,
+                   3,
+                   [
+                    0,
+                    "a",
+                    {
+                     "class": "next"
+                    },
+                    null,
+                    null,
+                    false,
+                    [
+                     51,
+                     1,
+                     [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ],
+               0,
+               "href",
+               "",
+               [
+                84,
+                1,
+                [
+                 26,
+                 3,
+                 []
+                ]
+               ]
+              ]
+             ],
+             [
+              6,
+              50
+             ]
+            ]
+           ]
+          ],
+          [
+           2,
+           [
+            30,
+            7,
+            [
+             "posts",
+             7,
+             [
+              27,
+              8,
+              [
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   62,
+                   3,
+                   [
+                    0,
+                    "a",
+                    {
+                     "class": "thumb"
+                    },
+                    null,
+                    null,
+                    false,
+                    [
+                     51,
+                     1,
+                     [
+                      3,
+                      "",
+                      null,
+                      null,
+                      "example string"
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ],
+               0,
+               "href",
+               "",
+               [
+                84,
+                1,
+                [
+                 26,
+                 3,
+                 []
+                ]
+               ]
+              ]
+             ],
+             [
+              7,
+              50
+             ]
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         "http://127.0.0.1:46033/search/blue_eyes/1"
+        ],
+        {
+         "url": "https://example.com/posts/index.php?id=123456"
+        }
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    [
+     [
+      47,
+      2,
+      [
+       0,
+       null
+      ]
+     ],
+     [
+      [
+       "User-Agent",
+       [
+        "Mozilla/5.0 (compatible; Hydrus Client)",
+        1,
+        "This is the default User-Agent identifier for the client for all network connections."
+       ]
+      ],
+      [
+       "Accept",
+       [
+        "image/jpeg,image/png,image/*;q=0.9,*/*;q=0.8",
+        1,
+        "Prefers jpeg/png over webp, but provides graceful fallback."
+       ]
+      ],
+      [
+       "Cache-Control",
+       [
+        "no-transform",
+        1,
+        "Tells CDNs not to deliver \"optimised\" versions of files. May not be honoured."
+       ]
+      ]
+     ]
+    ]
+   ]
+  ]
+ ],
+ "site": {
+  "phases": [
+   {
+    "files": {
+     "/files/p1.jpg": "jpeg_420.jpg",
+     "/files/p10.jpg": "jpeg_orient6.jpg",
+     "/files/p2.jpg": "jpeg_422.jpg",
+     "/files/p3.jpg": "jpeg_444_q95.jpg",
+     "/files/p4.jpg": "jpeg_flat.jpg",
+     "/files/p5.jpg": "jpeg_gray.jpg",
+     "/files/p6.jpg": "jpeg_orient2.jpg",
+     "/files/p7.jpg": "jpeg_orient3.jpg",
+     "/files/p8.jpg": "jpeg_orient4.jpg",
+     "/files/p9.jpg": "jpeg_orient5.jpg"
+    },
+    "pages": {
+     "/post/1": "<html><head><title>post 1</title></head><body><ul id=\"tags\"><li class=\"tag\">post 1</li><li class=\"tag\">creator:someone</li><li class=\"tag\">blue eyes</li></ul><img id=\"image\" src=\"/files/p1.jpg\"><a class=\"source\" href=\"https://elsewhere.example/art/1\">source</a></body></html>",
+     "/post/10": "<html><head><title>post 10</title></head><body><ul id=\"tags\"><li class=\"tag\">post 10</li><li class=\"tag\">creator:someone</li><li class=\"tag\">red hair</li></ul><img id=\"image\" src=\"/files/p10.jpg\"><a class=\"source\" href=\"https://elsewhere.example/art/10\">source</a></body></html>",
+     "/post/2": "<html><head><title>post 2</title></head><body><ul id=\"tags\"><li class=\"tag\">post 2</li><li class=\"tag\">creator:someone</li><li class=\"tag\">blue eyes</li></ul><img id=\"image\" src=\"/files/p2.jpg\"><a class=\"source\" href=\"https://elsewhere.example/art/2\">source</a></body></html>",
+     "/post/3": "<html><head><title>post 3</title></head><body><ul id=\"tags\"><li class=\"tag\">post 3</li><li class=\"tag\">creator:someone</li><li class=\"tag\">blue eyes</li><li class=\"tag\">red hair</li></ul><img id=\"image\" src=\"/files/p3.jpg\"><a class=\"source\" href=\"https://elsewhere.example/art/3\">source</a></body></html>",
+     "/post/4": "<html><head><title>post 4</title></head><body><ul id=\"tags\"><li class=\"tag\">post 4</li><li class=\"tag\">creator:someone</li><li class=\"tag\">blue eyes</li></ul><img id=\"image\" src=\"/files/p4.jpg\"><a class=\"source\" href=\"https://elsewhere.example/art/4\">source</a></body></html>",
+     "/post/5": "<html><head><title>post 5</title></head><body><ul id=\"tags\"><li class=\"tag\">post 5</li><li class=\"tag\">creator:someone</li><li class=\"tag\">blue eyes</li></ul><img id=\"image\" src=\"/files/p5.jpg\"><a class=\"source\" href=\"https://elsewhere.example/art/5\">source</a></body></html>",
+     "/post/6": "<html><head><title>post 6</title></head><body><ul id=\"tags\"><li class=\"tag\">post 6</li><li class=\"tag\">creator:someone</li><li class=\"tag\">blue eyes</li></ul><img id=\"image\" src=\"/files/p6.jpg\"><a class=\"source\" href=\"https://elsewhere.example/art/6\">source</a></body></html>",
+     "/post/7": "<html><head><title>post 7</title></head><body><ul id=\"tags\"><li class=\"tag\">post 7</li><li class=\"tag\">creator:someone</li><li class=\"tag\">blue eyes</li></ul><img id=\"image\" src=\"/files/p7.jpg\"><a class=\"source\" href=\"https://elsewhere.example/art/7\">source</a></body></html>",
+     "/post/8": "<html><head><title>post 8</title></head><body><ul id=\"tags\"><li class=\"tag\">post 8</li><li class=\"tag\">creator:someone</li><li class=\"tag\">blue eyes</li></ul><img id=\"image\" src=\"/files/p8.jpg\"><a class=\"source\" href=\"https://elsewhere.example/art/8\">source</a></body></html>",
+     "/post/9": "<html><head><title>post 9</title></head><body><ul id=\"tags\"><li class=\"tag\">post 9</li><li class=\"tag\">creator:someone</li><li class=\"tag\">red hair</li></ul><img id=\"image\" src=\"/files/p9.jpg\"><a class=\"source\" href=\"https://elsewhere.example/art/9\">source</a></body></html>",
+     "/search/blue_eyes/1": "<html><body><a class=\"thumb\" href=\"/post/8\">post 8</a><a class=\"thumb\" href=\"/post/7\">post 7</a><a class=\"thumb\" href=\"/post/6\">post 6</a><a class=\"next\" href=\"/search/blue_eyes/2\">next</a></body></html>",
+     "/search/blue_eyes/2": "<html><body><a class=\"thumb\" href=\"/post/5\">post 5</a><a class=\"thumb\" href=\"/post/4\">post 4</a><a class=\"thumb\" href=\"/post/3\">post 3</a><a class=\"next\" href=\"/search/blue_eyes/3\">next</a></body></html>",
+     "/search/blue_eyes/3": "<html><body><a class=\"thumb\" href=\"/post/2\">post 2</a><a class=\"thumb\" href=\"/post/1\">post 1</a></body></html>",
+     "/search/red_hair/1": "<html><body><a class=\"thumb\" href=\"/post/10\">post 10</a><a class=\"thumb\" href=\"/post/9\">post 9</a><a class=\"thumb\" href=\"/post/3\">post 3</a></body></html>"
+    }
+   }
+  ],
+  "port": 46033
+ },
+ "steps": [
+  {
+   "dialog": {},
+   "files": {
+    "1ebba84c5d3e9bda468be7bb9889e80ed5d86f10a78d8eb8c11e42bbc32214a5": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 4"
+      ]
+     },
+     "urls": [
+      "BASE/files/p4.jpg",
+      "BASE/post/4",
+      "BASE/search/blue_eyes/2",
+      "https://elsewhere.example/art/4"
+     ]
+    },
+    "3560e1fa1a059fd7ba6f2a1a9bf86c9fe389e750e2b3a1e1247d38c83ec5679c": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 6"
+      ]
+     },
+     "urls": [
+      "BASE/files/p6.jpg",
+      "BASE/post/6",
+      "BASE/search/blue_eyes/1",
+      "https://elsewhere.example/art/6"
+     ]
+    },
+    "7cc262d587ece5b4cc901db2ec2efddd8ce15c6f4c82595f5872000bf71924da": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 8"
+      ]
+     },
+     "urls": [
+      "BASE/files/p8.jpg",
+      "BASE/post/8",
+      "BASE/search/blue_eyes/1",
+      "https://elsewhere.example/art/8"
+     ]
+    },
+    "95702ba0537e3cbc72e4d062a2d28c415e6d62bb930bd5d6edca4ec4844395d1": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 5"
+      ]
+     },
+     "urls": [
+      "BASE/files/p5.jpg",
+      "BASE/post/5",
+      "BASE/search/blue_eyes/2",
+      "https://elsewhere.example/art/5"
+     ]
+    },
+    "aed64e94c1be6800e547b03d1ac9901ee46d7af1599b810a4bff2fd73a954e4a": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 7"
+      ]
+     },
+     "urls": [
+      "BASE/files/p7.jpg",
+      "BASE/post/7",
+      "BASE/search/blue_eyes/1",
+      "https://elsewhere.example/art/7"
+     ]
+    }
+   },
+   "hits": [
+    "/files/p4.jpg",
+    "/files/p5.jpg",
+    "/files/p6.jpg",
+    "/files/p7.jpg",
+    "/files/p8.jpg",
+    "/post/4",
+    "/post/5",
+    "/post/6",
+    "/post/7",
+    "/post/8",
+    "/search/blue_eyes/1",
+    "/search/blue_eyes/2"
+   ],
+   "page": {
+    "queries": [
+     {
+      "files": [
+       {
+        "data": "BASE/post/8",
+        "note": "",
+        "sha256": "7cc262d587ece5b4cc901db2ec2efddd8ce15c6f4c82595f5872000bf71924da",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 8"
+        ]
+       },
+       {
+        "data": "BASE/post/7",
+        "note": "",
+        "sha256": "aed64e94c1be6800e547b03d1ac9901ee46d7af1599b810a4bff2fd73a954e4a",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 7"
+        ]
+       },
+       {
+        "data": "BASE/post/6",
+        "note": "",
+        "sha256": "3560e1fa1a059fd7ba6f2a1a9bf86c9fe389e750e2b3a1e1247d38c83ec5679c",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 6"
+        ]
+       },
+       {
+        "data": "BASE/post/5",
+        "note": "",
+        "sha256": "95702ba0537e3cbc72e4d062a2d28c415e6d62bb930bd5d6edca4ec4844395d1",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 5"
+        ]
+       },
+       {
+        "data": "BASE/post/4",
+        "note": "",
+        "sha256": "1ebba84c5d3e9bda468be7bb9889e80ed5d86f10a78d8eb8c11e42bbc32214a5",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 4"
+        ]
+       }
+      ],
+      "files finished": true,
+      "finished": true,
+      "searches": [
+       {
+        "note": "3 new urls found - 1 next gallery pages found",
+        "status": 1,
+        "url": "BASE/search/blue_eyes/1"
+       },
+       {
+        "note": "2 new urls found - hit file limit",
+        "status": 1,
+        "url": "BASE/search/blue_eyes/2"
+       }
+      ],
+      "source": "local booru tag search",
+      "text": "blue_eyes"
+     }
+    ],
+    "texts": {
+     "bottom": "5 successful",
+     "file log progress": "5/5",
+     "file log summary": "5 successful",
+     "files status": "",
+     "query": "blue_eyes",
+     "rows": [
+      [
+       "* blue_eyes",
+       "local booru tag search",
+       "⏹",
+       "⏹",
+       "DONE",
+       "5",
+       "DELTA"
+      ]
+     ],
+     "search log summary": "2 successful",
+     "search status": "hit file limit",
+     "top": "1 queries - 5/5"
+    },
+    "thumbnails": 5
+   },
+   "popups": [],
+   "step": "search"
+  },
+  {
+   "dialog": {},
+   "files": {
+    "1ebba84c5d3e9bda468be7bb9889e80ed5d86f10a78d8eb8c11e42bbc32214a5": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 4"
+      ]
+     },
+     "urls": [
+      "BASE/files/p4.jpg",
+      "BASE/post/4",
+      "BASE/search/blue_eyes/2",
+      "https://elsewhere.example/art/4"
+     ]
+    },
+    "3560e1fa1a059fd7ba6f2a1a9bf86c9fe389e750e2b3a1e1247d38c83ec5679c": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 6"
+      ]
+     },
+     "urls": [
+      "BASE/files/p6.jpg",
+      "BASE/post/6",
+      "BASE/search/blue_eyes/1",
+      "https://elsewhere.example/art/6"
+     ]
+    },
+    "7be488e1b7471773fb6dd9698bc71f96a2d5696f4f6477dc048e042eec59ae0a": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 3",
+       "red hair"
+      ]
+     },
+     "urls": [
+      "BASE/files/p3.jpg",
+      "BASE/post/3",
+      "BASE/search/red_hair/1",
+      "https://elsewhere.example/art/3"
+     ]
+    },
+    "7cc262d587ece5b4cc901db2ec2efddd8ce15c6f4c82595f5872000bf71924da": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 8"
+      ]
+     },
+     "urls": [
+      "BASE/files/p8.jpg",
+      "BASE/post/8",
+      "BASE/search/blue_eyes/1",
+      "https://elsewhere.example/art/8"
+     ]
+    },
+    "95702ba0537e3cbc72e4d062a2d28c415e6d62bb930bd5d6edca4ec4844395d1": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 5"
+      ]
+     },
+     "urls": [
+      "BASE/files/p5.jpg",
+      "BASE/post/5",
+      "BASE/search/blue_eyes/2",
+      "https://elsewhere.example/art/5"
+     ]
+    },
+    "aed64e94c1be6800e547b03d1ac9901ee46d7af1599b810a4bff2fd73a954e4a": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 7"
+      ]
+     },
+     "urls": [
+      "BASE/files/p7.jpg",
+      "BASE/post/7",
+      "BASE/search/blue_eyes/1",
+      "https://elsewhere.example/art/7"
+     ]
+    },
+    "b3c6ce7daf6954e17646d256809e7fd752102dd5615ba73ea75a9342cebdcb25": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "creator:someone",
+       "post 9",
+       "red hair"
+      ]
+     },
+     "urls": [
+      "BASE/files/p9.jpg",
+      "BASE/post/9",
+      "BASE/search/red_hair/1",
+      "https://elsewhere.example/art/9"
+     ]
+    },
+    "ebaf32c3362f85bf6af790fcb6599babf6d6a16ec16e2ffe132d44af9e08c47d": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "creator:someone",
+       "post 10",
+       "red hair"
+      ]
+     },
+     "urls": [
+      "BASE/files/p10.jpg",
+      "BASE/post/10",
+      "BASE/search/red_hair/1",
+      "https://elsewhere.example/art/10"
+     ]
+    }
+   },
+   "hits": [
+    "/files/p10.jpg",
+    "/files/p3.jpg",
+    "/files/p9.jpg",
+    "/post/10",
+    "/post/3",
+    "/post/9",
+    "/search/red_hair/1"
+   ],
+   "page": {
+    "queries": [
+     {
+      "files": [
+       {
+        "data": "BASE/post/8",
+        "note": "",
+        "sha256": "7cc262d587ece5b4cc901db2ec2efddd8ce15c6f4c82595f5872000bf71924da",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 8"
+        ]
+       },
+       {
+        "data": "BASE/post/7",
+        "note": "",
+        "sha256": "aed64e94c1be6800e547b03d1ac9901ee46d7af1599b810a4bff2fd73a954e4a",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 7"
+        ]
+       },
+       {
+        "data": "BASE/post/6",
+        "note": "",
+        "sha256": "3560e1fa1a059fd7ba6f2a1a9bf86c9fe389e750e2b3a1e1247d38c83ec5679c",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 6"
+        ]
+       },
+       {
+        "data": "BASE/post/5",
+        "note": "",
+        "sha256": "95702ba0537e3cbc72e4d062a2d28c415e6d62bb930bd5d6edca4ec4844395d1",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 5"
+        ]
+       },
+       {
+        "data": "BASE/post/4",
+        "note": "",
+        "sha256": "1ebba84c5d3e9bda468be7bb9889e80ed5d86f10a78d8eb8c11e42bbc32214a5",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 4"
+        ]
+       }
+      ],
+      "files finished": true,
+      "finished": true,
+      "searches": [
+       {
+        "note": "3 new urls found - 1 next gallery pages found",
+        "status": 1,
+        "url": "BASE/search/blue_eyes/1"
+       },
+       {
+        "note": "2 new urls found - hit file limit",
+        "status": 1,
+        "url": "BASE/search/blue_eyes/2"
+       }
+      ],
+      "source": "local booru tag search",
+      "text": "blue_eyes"
+     },
+     {
+      "files": [
+       {
+        "data": "BASE/post/10",
+        "note": "",
+        "sha256": "ebaf32c3362f85bf6af790fcb6599babf6d6a16ec16e2ffe132d44af9e08c47d",
+        "status": 1,
+        "tags": [
+         "creator:someone",
+         "post 10",
+         "red hair"
+        ]
+       },
+       {
+        "data": "BASE/post/9",
+        "note": "",
+        "sha256": "b3c6ce7daf6954e17646d256809e7fd752102dd5615ba73ea75a9342cebdcb25",
+        "status": 1,
+        "tags": [
+         "creator:someone",
+         "post 9",
+         "red hair"
+        ]
+       },
+       {
+        "data": "BASE/post/3",
+        "note": "",
+        "sha256": "7be488e1b7471773fb6dd9698bc71f96a2d5696f4f6477dc048e042eec59ae0a",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 3",
+         "red hair"
+        ]
+       }
+      ],
+      "files finished": true,
+      "finished": true,
+      "searches": [
+       {
+        "note": "3 new urls found",
+        "status": 1,
+        "url": "BASE/search/red_hair/1"
+       }
+      ],
+      "source": "local booru tag search",
+      "text": "red_hair"
+     }
+    ],
+    "texts": {
+     "bottom": "8 successful",
+     "file log progress": "5/5",
+     "file log summary": "5 successful",
+     "files status": "",
+     "query": "blue_eyes",
+     "rows": [
+      [
+       "* blue_eyes",
+       "local booru tag search",
+       "⏹",
+       "⏹",
+       "DONE",
+       "5",
+       "DELTA"
+      ],
+      [
+       "red_hair",
+       "local booru tag search",
+       "⏹",
+       "⏹",
+       "DONE",
+       "3",
+       "DELTA"
+      ]
+     ],
+     "search log summary": "2 successful",
+     "search status": "hit file limit",
+     "top": "2 queries - 8/8"
+    },
+    "thumbnails": 5
+   },
+   "popups": [],
+   "step": "second search"
+  },
+  {
+   "dialog": {},
+   "files": {
+    "1ebba84c5d3e9bda468be7bb9889e80ed5d86f10a78d8eb8c11e42bbc32214a5": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 4"
+      ]
+     },
+     "urls": [
+      "BASE/files/p4.jpg",
+      "BASE/post/4",
+      "BASE/search/blue_eyes/2",
+      "https://elsewhere.example/art/4"
+     ]
+    },
+    "3560e1fa1a059fd7ba6f2a1a9bf86c9fe389e750e2b3a1e1247d38c83ec5679c": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 6"
+      ]
+     },
+     "urls": [
+      "BASE/files/p6.jpg",
+      "BASE/post/6",
+      "BASE/search/blue_eyes/1",
+      "https://elsewhere.example/art/6"
+     ]
+    },
+    "7be488e1b7471773fb6dd9698bc71f96a2d5696f4f6477dc048e042eec59ae0a": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 3",
+       "red hair"
+      ]
+     },
+     "urls": [
+      "BASE/files/p3.jpg",
+      "BASE/post/3",
+      "BASE/search/red_hair/1",
+      "https://elsewhere.example/art/3"
+     ]
+    },
+    "7cc262d587ece5b4cc901db2ec2efddd8ce15c6f4c82595f5872000bf71924da": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 8"
+      ]
+     },
+     "urls": [
+      "BASE/files/p8.jpg",
+      "BASE/post/8",
+      "BASE/search/blue_eyes/1",
+      "https://elsewhere.example/art/8"
+     ]
+    },
+    "95702ba0537e3cbc72e4d062a2d28c415e6d62bb930bd5d6edca4ec4844395d1": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 5"
+      ]
+     },
+     "urls": [
+      "BASE/files/p5.jpg",
+      "BASE/post/5",
+      "BASE/search/blue_eyes/2",
+      "https://elsewhere.example/art/5"
+     ]
+    },
+    "aed64e94c1be6800e547b03d1ac9901ee46d7af1599b810a4bff2fd73a954e4a": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "blue eyes",
+       "creator:someone",
+       "post 7"
+      ]
+     },
+     "urls": [
+      "BASE/files/p7.jpg",
+      "BASE/post/7",
+      "BASE/search/blue_eyes/1",
+      "https://elsewhere.example/art/7"
+     ]
+    },
+    "b3c6ce7daf6954e17646d256809e7fd752102dd5615ba73ea75a9342cebdcb25": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "creator:someone",
+       "post 9",
+       "red hair"
+      ]
+     },
+     "urls": [
+      "BASE/files/p9.jpg",
+      "BASE/post/9",
+      "BASE/search/red_hair/1",
+      "https://elsewhere.example/art/9"
+     ]
+    },
+    "ebaf32c3362f85bf6af790fcb6599babf6d6a16ec16e2ffe132d44af9e08c47d": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "creator:someone",
+       "post 10",
+       "red hair"
+      ]
+     },
+     "urls": [
+      "BASE/files/p10.jpg",
+      "BASE/post/10",
+      "BASE/search/red_hair/1",
+      "https://elsewhere.example/art/10"
+     ]
+    }
+   },
+   "hits": [],
+   "page": {
+    "queries": [
+     {
+      "files": [
+       {
+        "data": "BASE/post/8",
+        "note": "",
+        "sha256": "7cc262d587ece5b4cc901db2ec2efddd8ce15c6f4c82595f5872000bf71924da",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 8"
+        ]
+       },
+       {
+        "data": "BASE/post/7",
+        "note": "",
+        "sha256": "aed64e94c1be6800e547b03d1ac9901ee46d7af1599b810a4bff2fd73a954e4a",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 7"
+        ]
+       },
+       {
+        "data": "BASE/post/6",
+        "note": "",
+        "sha256": "3560e1fa1a059fd7ba6f2a1a9bf86c9fe389e750e2b3a1e1247d38c83ec5679c",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 6"
+        ]
+       },
+       {
+        "data": "BASE/post/5",
+        "note": "",
+        "sha256": "95702ba0537e3cbc72e4d062a2d28c415e6d62bb930bd5d6edca4ec4844395d1",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 5"
+        ]
+       },
+       {
+        "data": "BASE/post/4",
+        "note": "",
+        "sha256": "1ebba84c5d3e9bda468be7bb9889e80ed5d86f10a78d8eb8c11e42bbc32214a5",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 4"
+        ]
+       }
+      ],
+      "files finished": true,
+      "finished": true,
+      "searches": [
+       {
+        "note": "3 new urls found - 1 next gallery pages found",
+        "status": 1,
+        "url": "BASE/search/blue_eyes/1"
+       },
+       {
+        "note": "2 new urls found - hit file limit",
+        "status": 1,
+        "url": "BASE/search/blue_eyes/2"
+       }
+      ],
+      "source": "local booru tag search",
+      "text": "blue_eyes"
+     },
+     {
+      "files": [
+       {
+        "data": "BASE/post/10",
+        "note": "",
+        "sha256": "ebaf32c3362f85bf6af790fcb6599babf6d6a16ec16e2ffe132d44af9e08c47d",
+        "status": 1,
+        "tags": [
+         "creator:someone",
+         "post 10",
+         "red hair"
+        ]
+       },
+       {
+        "data": "BASE/post/9",
+        "note": "",
+        "sha256": "b3c6ce7daf6954e17646d256809e7fd752102dd5615ba73ea75a9342cebdcb25",
+        "status": 1,
+        "tags": [
+         "creator:someone",
+         "post 9",
+         "red hair"
+        ]
+       },
+       {
+        "data": "BASE/post/3",
+        "note": "",
+        "sha256": "7be488e1b7471773fb6dd9698bc71f96a2d5696f4f6477dc048e042eec59ae0a",
+        "status": 1,
+        "tags": [
+         "blue eyes",
+         "creator:someone",
+         "post 3",
+         "red hair"
+        ]
+       }
+      ],
+      "files finished": true,
+      "finished": true,
+      "searches": [
+       {
+        "note": "3 new urls found",
+        "status": 1,
+        "url": "BASE/search/red_hair/1"
+       }
+      ],
+      "source": "local booru tag search",
+      "text": "red_hair"
+     }
+    ],
+    "texts": {
+     "bottom": "8 successful",
+     "file log progress": "5/5",
+     "file log summary": "5 successful",
+     "files status": "",
+     "query": "blue_eyes",
+     "rows": [
+      [
+       "* blue_eyes",
+       "local booru tag search",
+       "⏹",
+       "⏹",
+       "DONE",
+       "5",
+       "DELTA"
+      ],
+      [
+       "red_hair",
+       "local booru tag search",
+       "⏹",
+       "⏹",
+       "DONE",
+       "3",
+       "DELTA"
+      ]
+     ],
+     "search log summary": "2 successful",
+     "search status": "",
+     "top": "2 queries - 8/8"
+    },
+    "thumbnails": 5
+   },
+   "popups": [],
+   "step": "raise the limit"
+  }
+ ]
+}

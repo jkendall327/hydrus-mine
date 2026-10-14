@@ -899,7 +899,9 @@ or resume each selected search's files or its search, retry their ignored
 or failed files, and remove them, asking first as the reference does
 ("Remove the 2 selected queries?", saying how many are still working and
 that the page will be cleared if the one shown is among them). Each
-search keeps the file limit and import options it was made with; while a
+search keeps the file limit and import options it was made with (a search
+that has reached its limit says "hit file limit" in the shown search's
+status, as the reference's does, until the limit is raised); while a
 selected one's differ from the page's, "update selected with current
 options" shows under the file limit, and gives them the page's, asking
 first as the reference does. Queries typed into its box
