@@ -54,6 +54,8 @@ enum Asking {
     Message(String),
     /// Information with only "ok".
     Information(String),
+    /// Files dropped on the list, before the yes that imports them.
+    DropImport(Vec<String>),
     Reset,
     Lowercase,
     RetryIgnored,
@@ -591,6 +593,10 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
                 choices: vec!["ok".into()],
             },
             false,
+        )),
+        Some(Asking::DropImport(paths)) => yes_no(&format!(
+            "Try to import the {} dropped files to this list? I am expecting json or png files.",
+            hydrus_core::numbers::human_int(paths.len() as u64)
         )),
         Some(Asking::Reset) => yes_no(RESET_QUESTION),
         Some(Asking::Lowercase) => yes_no(LOWERCASE_QUESTION),
@@ -1297,6 +1303,14 @@ pub(crate) fn open(
                         open.dialog.clear_import_options(&keys);
                     }
                 }
+                Some(Asking::DropImport(paths)) => {
+                    if index == 0 {
+                        direct_import_next(
+                            open,
+                            crate::subscription_import::Queue::from_paths(&paths),
+                        );
+                    }
+                }
                 Some(Asking::Reset) => {
                     if index == 0 {
                         open.dialog.reset_selected(now());
@@ -1843,6 +1857,28 @@ pub(crate) fn open(
     }
     show(&window, &state.borrow());
     frame.place(&window);
+    // (files dropped on the list ask first, as the reference's list does;
+    // the filter composes with the frame's)
+    crate::windows::watch_named_events(
+        window.window(),
+        store,
+        "manage_subscriptions_dialog",
+        crate::drops::file_handler_for(window.window(), {
+            let active = active.clone();
+            let exchange = exchange.clone();
+            let change = change.clone();
+            move |paths| {
+                if !active.get() || exchange.has_open() {
+                    return;
+                }
+                change(&|open| {
+                    if open.asking.is_none() {
+                        open.asking = Some(Asking::DropImport(paths.clone()));
+                    }
+                });
+            }
+        }),
+    );
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }
