@@ -80,11 +80,8 @@ pub fn crash_logging() -> bool {
 /// signals; a handler for those would need `unsafe`, which this workspace
 /// denies.)
 fn flip_crash_logging(store: &Store) {
-    let path = hydrus_core::crash_log::path().unwrap_or_else(|| {
-        store
-            .dir()
-            .join(hydrus_core::crash_log::LOG_NAME)
-    });
+    let path = hydrus_core::crash_log::path()
+        .unwrap_or_else(|| store.dir().join(hydrus_core::crash_log::LOG_NAME));
     post(
         store,
         vec![Job::text(

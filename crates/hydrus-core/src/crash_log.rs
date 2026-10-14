@@ -41,6 +41,7 @@ struct Target {
 static TARGET: Mutex<Option<Target>> = Mutex::new(None);
 // (one entry is written at a time, so rotation and appends never interleave)
 static WRITING: Mutex<()> = Mutex::new(());
+static HOOKED: std::sync::Once = std::sync::Once::new();
 
 /// Log panics to `dir` from now on, as `program` (`hydrus-gui`, `hydrus
 /// serve`...). Calling it again points the log at the new directory. The
@@ -51,7 +52,6 @@ pub fn install(dir: &Path, program: &str) {
         dir: dir.to_owned(),
         program: program.to_owned(),
     });
-    static HOOKED: std::sync::Once = std::sync::Once::new();
     HOOKED.call_once(|| {
         let earlier = std::panic::take_hook();
         std::panic::set_hook(Box::new(move |info| {
@@ -96,7 +96,13 @@ fn log_panic(info: &PanicHookInfo<'_>) -> Option<PathBuf> {
 }
 
 /// One log entry.
-pub fn format_entry(time: &str, program: &str, thread: &str, panic: &str, backtrace: &str) -> String {
+pub fn format_entry(
+    time: &str,
+    program: &str,
+    thread: &str,
+    panic: &str,
+    backtrace: &str,
+) -> String {
     format!(
         "==== panic ====\ntime: {time}\nversion: {}\nprogram: {program}\nthread: {thread}\n{panic}\nbacktrace:\n{backtrace}\n\n",
         version()

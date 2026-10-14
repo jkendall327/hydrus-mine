@@ -13,7 +13,9 @@ fn log(dir: &std::path::Path) -> String {
 
 #[test]
 fn a_panic_on_the_main_path_is_logged_with_its_fields() {
-    let _one = ONE_AT_A_TIME.lock().unwrap_or_else(|e| e.into_inner());
+    let _one = ONE_AT_A_TIME
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
     let dir = tempfile::tempdir().unwrap();
     crash_log::install(dir.path(), "hydrus-test");
     let _ = catch_unwind(AssertUnwindSafe(|| panic!("main path failure")));
@@ -38,7 +40,9 @@ fn a_panic_on_the_main_path_is_logged_with_its_fields() {
 
 #[test]
 fn a_panic_on_a_worker_thread_is_logged_and_the_process_carries_on() {
-    let _one = ONE_AT_A_TIME.lock().unwrap_or_else(|e| e.into_inner());
+    let _one = ONE_AT_A_TIME
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
     let dir = tempfile::tempdir().unwrap();
     crash_log::install(dir.path(), "hydrus-test");
     let worker = std::thread::Builder::new()
@@ -54,7 +58,9 @@ fn a_panic_on_a_worker_thread_is_logged_and_the_process_carries_on() {
 
 #[test]
 fn the_log_is_rotated_so_it_cannot_grow_without_bound() {
-    let _one = ONE_AT_A_TIME.lock().unwrap_or_else(|e| e.into_inner());
+    let _one = ONE_AT_A_TIME
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
     let dir = tempfile::tempdir().unwrap();
     let entry = "x".repeat(100 * 1024);
     for _ in 0..40 {
@@ -68,7 +74,9 @@ fn the_log_is_rotated_so_it_cannot_grow_without_bound() {
 
 #[test]
 fn without_a_directory_nothing_is_written_and_the_panic_still_unwinds() {
-    let _one = ONE_AT_A_TIME.lock().unwrap_or_else(|e| e.into_inner());
+    let _one = ONE_AT_A_TIME
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
     crash_log::uninstall();
     assert!(crash_log::path().is_none());
     assert!(catch_unwind(|| panic!("nowhere to log")).is_err());
