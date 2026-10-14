@@ -9831,9 +9831,9 @@
    ],
    "recheck": {
     "date": "2026-10-13",
-    "class": "sound",
+    "class": "weak",
     "by": "Claude, #97 phase 2 (recheck-w4-r3)",
-    "note": "The three recorded cases of options_preferences.json are replayed through the real options window as before (opened page, drop-down index, remembered page), and now the layout is read back: with the field at the top the search suggestions drop below it above the page list's first rows, at the bottom they rise above it and above the apply row, and the page list is 30 px lower for a field at the top than at the bottom, read from the painted window's item positions. The field itself has no accessible label to measure, so its own position is inferred from these (a rendered check of the bottom case showed it at the bottom). Tests: crates/hydrus-gui/tests/gui/options_window.rs options_open_and_place_the_search_bar_as_the_reference_did, the_search_bar_and_its_suggestions_sit_where_the_option_puts_them."
+    "note": "The recorded cases of options_preferences.json (opened page, drop-down index, remembered page) are replayed through the real options window, and the layout is read back from the painted window: with the option on, the search suggestions sit above the page list's rows; off, below them and above the apply row; the list is 30 px lower for a field at the top. The search field itself has no accessible label and no exposed geometry, and the recording holds only the field's index in the layout, not its offscreen geometry, so the field's own place is inferred and the 30 px is our own field height. Left untagged until the recorder saves `_options_search` and `_listbook` geometry and the field's y is exposed read-only. Tests: crates/hydrus-gui/tests/gui/options_window.rs options_open_and_place_the_search_bar_as_the_reference_did, the_search_bar_and_its_suggestions_sit_where_the_option_puts_them."
    }
   },
   {

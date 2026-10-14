@@ -7012,7 +7012,7 @@ fn the_suggested_tags_layout_chosen_in_options_reaches_manage_tags_as_the_refere
     }
 }
 
-// leaf: audit-options-gui-misc-put-the-options-search-bar-at-the
+// (untagged: the search field's own position is not measured, see DIFFERENCES.md)
 #[test]
 fn the_search_bar_and_its_suggestions_sit_where_the_option_puts_them() {
     use crate::common::widgets;

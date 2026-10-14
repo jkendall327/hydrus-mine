@@ -5583,13 +5583,13 @@ type ViewerMenuState = Rc<
     )>,
 >;
 
+/// A change made to the pages, as `change_pages` runs it.
+type PagesChange<'a> = dyn Fn(&dyn Fn(&mut Pages) -> Result<(), String>) + 'a;
+
 /// What the thumbnails' and the viewer's menus both do: copying,
 /// opening externally, the urls submenu's, and opening new pages
 /// (`ask_urls` asks before opening several URLs).
 #[allow(clippy::type_complexity)]
-/// A change made to the pages, as `change_pages` runs it.
-type PagesChange<'a> = dyn Fn(&dyn Fn(&mut Pages) -> Result<(), String>) + 'a;
-
 /// "Open files in a new duplicates filter page" (the thumbnail menu's entry, and the
 /// command of that name on the thumbnails and in the viewer): a duplicates page searching
 /// `files`, in "combined local file domains" if the option says so, else in the domain the

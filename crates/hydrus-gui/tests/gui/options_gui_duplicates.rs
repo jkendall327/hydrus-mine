@@ -473,19 +473,51 @@ fn the_shortcut_command_and_the_viewer_open_duplicates_pages_as_the_reference_do
             hydrus_store::settings::set(ctx.conn(), &settings)
         })
         .unwrap();
-    let client = Client::with(dirs, store);
+    let client = Client::with(dirs, store.clone());
     client.ui.invoke_search_edited("system:everything".into());
     client.ui.invoke_search_accepted();
+    // the recorded files, by their sha256, on that search page
+    let wanted: Vec<hydrus_core::Sha256> = recorded["hashes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|h| h.as_str().unwrap().parse().unwrap())
+        .collect();
+    let files: Vec<HashId> = store
+        .read(|conn| {
+            wanted
+                .iter()
+                .map(|h| Ok(hydrus_store::master::hash_id(conn, h)?.unwrap()))
+                .collect::<hydrus_store::Result<Vec<_>>>()
+        })
+        .unwrap();
+    let source_tab = 0;
     let page = client.bound.current.borrow().clone();
+    assert!(files.iter().all(|f| page.borrow().results().contains(f)));
     let page_location = page.borrow().location().clone();
     let combined = hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
         hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
     ));
+    let keys_hex = |location: &hydrus_search::LocationContext| -> Vec<String> {
+        location
+            .current()
+            .iter()
+            .map(hydrus_core::ServiceKey::to_hex)
+            .collect()
+    };
+    let recorded_keys = |v: &serde_json::Value| -> Vec<String> {
+        v.as_array()
+            .unwrap()
+            .iter()
+            .map(|k| k.as_str().unwrap().to_owned())
+            .collect()
+    };
+    // the recording's own locations are the ones the page and the option name
     assert_eq!(
-        recorded["combined"][0].as_str().unwrap(),
-        combined.current().iter().next().unwrap().to_hex()
+        keys_hex(&page_location),
+        recorded_keys(&recorded["page_location"])
     );
-    let files: Vec<HashId> = page.borrow().results()[..3].to_vec();
+    assert_eq!(keys_hex(&combined), recorded_keys(&recorded["combined"]));
     let newest = |client: &Client| {
         let pages = client.bound.pages.borrow();
         pages
@@ -511,12 +543,13 @@ fn the_shortcut_command_and_the_viewer_open_duplicates_pages_as_the_reference_do
                 hydrus_store::settings::set(ctx.conn(), &search)
             })
             .unwrap();
-        client.ui.invoke_tab_chosen(0, 0);
+        client.ui.invoke_tab_chosen(0, source_tab);
         let before = client.bound.pages.borrow().page_count();
         let requests = client.ui.get_tag_search_activation_requests();
-        let expected_files = if case["where"] == "thumbnails" {
+        if case["where"] == "thumbnails" {
             page.borrow_mut().select_files(&files);
             client.focus_thumbnails();
+            assert!(client.ui.get_grid_focused(), "{case}");
             client
                 .ui
                 .window()
@@ -525,7 +558,6 @@ fn the_shortcut_command_and_the_viewer_open_duplicates_pages_as_the_reference_do
                 .ui
                 .window()
                 .dispatch_event(slint::platform::WindowEvent::KeyReleased { text: "y".into() });
-            3
         } else {
             let at = page
                 .borrow()
@@ -545,8 +577,7 @@ fn the_shortcut_command_and_the_viewer_open_duplicates_pages_as_the_reference_do
                 .clone_strong();
             assert!(viewer.invoke_shortcut_key("y".into(), 0), "{case}");
             viewer.invoke_close_requested();
-            1
-        };
+        }
         assert_eq!(
             client.bound.pages.borrow().page_count(),
             before + 1,
@@ -558,14 +589,27 @@ fn the_shortcut_command_and_the_viewer_open_duplicates_pages_as_the_reference_do
             unreachable!()
         };
         let search = &duplicates.search.search_1;
-        let location = if combined_option {
-            &combined
-        } else {
-            &page_location
-        };
-        assert_eq!(&search.location, location, "{case}");
-        // the page's files, as the recording's predicate ("is in 3 hashes", or one hash)
-        let hashes = search
+        // the location the recording shows the reference's page searching
+        assert_eq!(
+            keys_hex(&search.location),
+            recorded_keys(&call["current"]),
+            "{case}"
+        );
+        assert!(search.location.deleted().is_empty(), "{case}");
+        assert_eq!(
+            keys_hex(&search.location),
+            keys_hex(if combined_option {
+                &combined
+            } else {
+                &page_location
+            }),
+            "{case}"
+        );
+        // the page's files: the recording's own hashes (the thumbnails' whole selection, or the
+        // viewer's one shown file), not just how many
+        assert_eq!(call["predicates"].as_array().unwrap().len(), 1);
+        assert_eq!(search.predicates.len(), 1, "{case}");
+        let opened_hashes: Vec<String> = search
             .predicates
             .iter()
             .find_map(|p| match p {
@@ -574,14 +618,33 @@ fn the_shortcut_command_and_the_viewer_open_duplicates_pages_as_the_reference_do
                         hashes: hydrus_core::search::predicate::FileHashes::Sha256(h),
                         ..
                     },
-                ) => Some(h.len()),
+                ) => Some(h.iter().map(ToString::to_string).collect()),
                 _ => None,
             })
             .expect("a system:hash predicate");
-        assert_eq!(hashes, expected_files, "{case}");
-        let recorded_count = if case["where"] == "thumbnails" { 3 } else { 1 };
-        assert_eq!(call["predicates"].as_array().unwrap().len(), 1);
-        assert_eq!(hashes, recorded_count);
+        let recorded_hashes: Vec<String> = if case["where"] == "thumbnails" {
+            assert_eq!(call["predicates"][0], "system:hash is in 3 hashes");
+            recorded["hashes"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|h| h.as_str().unwrap().to_owned())
+                .collect()
+        } else {
+            vec![
+                call["predicates"][0]
+                    .as_str()
+                    .unwrap()
+                    .strip_prefix("system:hash is ")
+                    .unwrap()
+                    .to_owned(),
+            ]
+        };
+        let mut opened_sorted = opened_hashes;
+        opened_sorted.sort();
+        let mut recorded_sorted = recorded_hashes;
+        recorded_sorted.sort();
+        assert_eq!(opened_sorted, recorded_sorted, "{case}");
         assert_eq!(
             client.ui.get_tag_search_activation_requests() - requests,
             i32::from(call["activate_window"].as_bool().unwrap()),
