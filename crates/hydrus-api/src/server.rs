@@ -92,6 +92,29 @@ async fn log_request(
     response
 }
 
+/// Client API profile mode (`HydrusServerResources._profileJob`): each
+/// request is timed as a job named `Profiling client api: <path>`.
+pub(crate) async fn profile_request(
+    axum::extract::State(state): axum::extract::State<Arc<AppState>>,
+    request: axum::extract::Request,
+    next: axum::middleware::Next,
+) -> axum::response::Response {
+    use hydrus_core::profiling::{self, Mode};
+    if !profiling::is_mode(Mode::ClientApi) {
+        return next.run(request).await;
+    }
+    let summary = format!("Profiling client api: {}", request.uri().path());
+    let started = std::time::Instant::now();
+    let response = next.run(request).await;
+    profiling::record(
+        state.store.dir(),
+        &summary,
+        started.elapsed(),
+        profiling::CLIENT_API_MIN_MS,
+    );
+    response
+}
+
 /// The reference records activity before authenticating or refusing busy routes.
 /// Use timestamp-only filesystem IPC so database lock_on cannot block this path.
 pub(crate) async fn note_activity(

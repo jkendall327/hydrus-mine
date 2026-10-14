@@ -144,6 +144,8 @@ fn owned_facts(hooks: &Hooks, weigh: bool) -> Facts {
         .into_iter()
         .filter(|flag| flag.is_on())
         .collect();
+    facts.profile_mode = hydrus_core::profiling::current_mode();
+    facts.query_planner = hydrus_core::profiling::query_planner_on();
     facts
 }
 
@@ -478,6 +480,13 @@ pub(crate) fn bind(
     titles
 }
 
+/// Tell the daemon the debug switches now set (`debug_switches`).
+fn publish_switches(store: &hydrus_store::Store) {
+    if let Err(e) = hydrus_store::debug_switches::publish(store) {
+        eprintln!("could not pass the debug switches on to the daemon: {e}");
+    }
+}
+
 /// Flip a setting in the store.
 fn flip<S: hydrus_store::settings::Setting + Send + 'static>(
     store: &hydrus_store::Store,
@@ -493,8 +502,22 @@ fn flip<S: hydrus_store::settings::Setting + Send + 'static>(
     }
 }
 
-/// Do what an entry does.
+/// Do what an entry does; in ui profile mode, timed
+/// (`ClientGUIMenus.GetEventCallable`).
 fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
+    use hydrus_core::profiling::{self, Mode};
+    if profiling::is_mode(Mode::Ui) {
+        let summary = format!("Profiling menu: {command:?}");
+        let store = hooks.pages.borrow().store().clone();
+        profiling::profile(store.dir(), &summary, profiling::MENU_MIN_MS, || {
+            run_command(window, hooks, command);
+        });
+    } else {
+        run_command(window, hooks, command);
+    }
+}
+
+fn run_command(window: &MainWindow, hooks: &Hooks, command: Command) {
     let store = hooks.pages.borrow().store().clone();
     let change_pages = &hooks.change_pages;
     match command {
@@ -807,6 +830,26 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         }
         Command::DebugFlag(flag) => {
             flag.switch();
+            publish_switches(&store);
+        }
+        Command::DebugProfile(mode) => {
+            hydrus_core::profiling::flip_mode(store.dir(), mode);
+            publish_switches(&store);
+        }
+        Command::DebugSubscriptionSnapshot => {
+            // (the daemon has the subscriptions manager)
+            if let Err(e) = hydrus_store::debug_switches::request_subscription_snapshot(&store) {
+                eprintln!("could not ask the daemon for a snapshot: {e}");
+            }
+        }
+        Command::DebugWhatIsThisObject => {
+            if let Err(e) = crate::what_is_this_window::open() {
+                eprintln!("could not open the window: {e}");
+            }
+        }
+        Command::DebugQueryPlanner => {
+            hydrus_core::profiling::flip_query_planner(store.dir());
+            publish_switches(&store);
         }
         Command::DebugDelayedTextPopup => hooks.debug_long_popup.start_delayed_popup(),
         Command::DebugDelayedNewPage(location) => {

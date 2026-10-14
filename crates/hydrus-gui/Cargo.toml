@@ -22,6 +22,7 @@ hydrus-download.workspace = true
 tokio.workspace = true
 tracing.workspace = true
 hydrus-downloader-exchange = { path = "../hydrus-downloader-exchange" }
+hydrus-legacy.workspace = true
 rusqlite.workspace = true
 hydrus-search.workspace = true
 hydrus-duplicates.workspace = true
@@ -52,7 +53,6 @@ zbus = { version = "5", default-features = false, features = ["async-io", "block
 hydrus-api.workspace = true
 axum.workspace = true
 tower.workspace = true
-hydrus-legacy.workspace = true
 hydrus-testkit.workspace = true
 regex.workspace = true
 

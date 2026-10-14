@@ -32,6 +32,8 @@ pub use auto_resolution_review_window::set_popup_delay;
 mod auto_resolution_rules_window;
 mod autocomplete_tabs;
 mod checker_options_window;
+#[doc(hidden)]
+pub use checker_options_window::latest_value as latest_checker_value;
 pub mod client_exit;
 pub mod clipboard_monitor;
 pub mod command_palette_window;
@@ -40,7 +42,7 @@ mod database_backup_window;
 pub mod database_locations_window;
 mod debug_actions;
 mod rule_count;
-pub use debug_actions::{crash_logging, debug_printed, message_window};
+pub use debug_actions::{crash_logging, debug_printed, message_window, set_environment};
 pub use orphan_files_window::chooser as orphan_files_chooser;
 pub mod debug_fetch;
 pub mod debug_long_popup;
@@ -52,6 +54,8 @@ pub mod downloader_display_window;
 pub mod downloader_interchange_window;
 pub mod downloader_update_times;
 mod drops;
+mod exchange_bitmap;
+pub use drops::deliver_dropped_files;
 pub mod duplicates_filtering_sidebar;
 mod duplicates_sidebar;
 mod edit_subscription_window;
@@ -179,6 +183,7 @@ pub use tag_sync_review_window::opened as tag_sync_review_opened;
 mod tag_text;
 pub mod thumbnail_background;
 mod vacuum_review_window;
+pub mod what_is_this_window;
 
 /// Missing-thumbnail recovery, independent of stored image colour policy.
 pub fn thumbnail_recovery(
@@ -6111,6 +6116,30 @@ pub(crate) fn pick(kind: Pick, title: &str) -> Vec<std::path::PathBuf> {
     }
 }
 
+thread_local! {
+    /// The directory the last [`pick_in`] opened the picker in.
+    static LAST_PICK_DIR: RefCell<Option<std::path::PathBuf>> = const { RefCell::new(None) };
+}
+
+/// The directory the last folder picker opened in (for tests of
+/// `PickDirectory( .., default_path )`).
+pub fn last_pick_directory() -> Option<std::path::PathBuf> {
+    LAST_PICK_DIR.with(|d| d.borrow().clone())
+}
+
+/// [`pick`], opening in `start` (`PickDirectory`'s default path).
+pub(crate) fn pick_in(kind: Pick, title: &str, start: &std::path::Path) -> Vec<std::path::PathBuf> {
+    LAST_PICK_DIR.with(|d| *d.borrow_mut() = Some(start.to_owned()));
+    if let Some(picker) = PICKER.with(|p| p.borrow().clone()) {
+        return picker(kind, title);
+    }
+    let dialog = rfd::FileDialog::new().set_title(title).set_directory(start);
+    match kind {
+        Pick::Files => dialog.pick_files().unwrap_or_default(),
+        Pick::Folder => dialog.pick_folder().into_iter().collect(),
+    }
+}
+
 /// Pick several reference exchange files with the original format filter.
 pub(crate) fn pick_exchange_files(title: &str, extension: &str) -> Vec<std::path::PathBuf> {
     if let Some(picker) = PICKER.with(|p| p.borrow().clone()) {
@@ -6210,6 +6239,12 @@ pub(crate) fn clipboard_image() -> Option<ClipboardImage> {
     if let Some(reader) = CLIPBOARD_IMAGE_READER.with(|reader| reader.borrow().clone()) {
         return reader();
     }
+    // (a test that substitutes the clipboard's text has no bitmap there)
+    if CLIPBOARD_READER.with(|reader| reader.borrow().is_some())
+        || PASTER.with(|p| p.borrow().is_some())
+    {
+        return None;
+    }
     let image = arboard::Clipboard::new().ok()?.get_image().ok()?;
     Some(ClipboardImage {
         width: image.width,
@@ -6218,9 +6253,22 @@ pub(crate) fn clipboard_image() -> Option<ClipboardImage> {
     })
 }
 
+type ClipboardPathsReader = Rc<dyn Fn() -> Vec<std::path::PathBuf>>;
+thread_local! {
+    static CLIPBOARD_PATHS_READER: RefCell<Option<ClipboardPathsReader>> = RefCell::new(None);
+}
+
+/// Substitute the clipboard's file paths on this thread (for tests).
+pub fn set_clipboard_paths_reader(reader: impl Fn() -> Vec<std::path::PathBuf> + 'static) {
+    CLIPBOARD_PATHS_READER.with(|slot| *slot.borrow_mut() = Some(Rc::new(reader)));
+}
+
 /// The file paths on the clipboard (the reference's
 /// `GetClipboardLocalPaths`), none when it holds none.
 pub(crate) fn clipboard_paths() -> Vec<std::path::PathBuf> {
+    if let Some(reader) = CLIPBOARD_PATHS_READER.with(|reader| reader.borrow().clone()) {
+        return reader();
+    }
     if CLIPBOARD_IMAGE_READER.with(|reader| reader.borrow().is_some())
         || CLIPBOARD_READER.with(|reader| reader.borrow().is_some())
         || PASTER.with(|p| p.borrow().is_some())

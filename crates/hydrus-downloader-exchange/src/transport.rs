@@ -36,6 +36,13 @@ pub fn decode_payload(bytes: &[u8]) -> Result<String> {
         .chunks_exact(channels)
         .map(|p| p[0])
         .collect::<Vec<_>>();
+    decode_pixels(&data, width)
+}
+
+/// The reference's `LoadFromNumPyImage` and the decompression after it, for
+/// the first channel of an image's pixels, row by row, `width` to a row (a
+/// bitmap copied to the clipboard, or a decoded PNG).
+pub fn decode_pixels(data: &[u8], width: usize) -> Result<String> {
     if data.len() < 2 || width < 2 {
         return Err(Error::Invalid("PNG header is missing.".into()));
     }
