@@ -1,0 +1,104 @@
+{
+  "cases": [
+    {
+      "press": "nice crash",
+      "dialog": {
+        "title": "Are you sure?",
+        "text": [
+          "u wot mate I'll hook u in the gabber"
+        ],
+        "buttons": [
+          {
+            "label": "nice crash",
+            "object_name": "HydrusAccept"
+          },
+          {
+            "label": "not a nice crash",
+            "object_name": "HydrusAccept"
+          },
+          {
+            "label": "forget it",
+            "object_name": "HydrusCancel"
+          }
+        ]
+      },
+      "calls": [
+        "os.abort"
+      ]
+    },
+    {
+      "press": "not a nice crash",
+      "dialog": {
+        "title": "Are you sure?",
+        "text": [
+          "u wot mate I'll hook u in the gabber"
+        ],
+        "buttons": [
+          {
+            "label": "nice crash",
+            "object_name": "HydrusAccept"
+          },
+          {
+            "label": "not a nice crash",
+            "object_name": "HydrusAccept"
+          },
+          {
+            "label": "forget it",
+            "object_name": "HydrusCancel"
+          }
+        ]
+      },
+      "calls": [
+        "CallToThread:crashtime_not_nice"
+      ]
+    },
+    {
+      "press": "forget it",
+      "dialog": {
+        "title": "Are you sure?",
+        "text": [
+          "u wot mate I'll hook u in the gabber"
+        ],
+        "buttons": [
+          {
+            "label": "nice crash",
+            "object_name": "HydrusAccept"
+          },
+          {
+            "label": "not a nice crash",
+            "object_name": "HydrusAccept"
+          },
+          {
+            "label": "forget it",
+            "object_name": "HydrusCancel"
+          }
+        ]
+      },
+      "calls": []
+    },
+    {
+      "press": "closed",
+      "dialog": {
+        "title": "Are you sure?",
+        "text": [
+          "u wot mate I'll hook u in the gabber"
+        ],
+        "buttons": [
+          {
+            "label": "nice crash",
+            "object_name": "HydrusAccept"
+          },
+          {
+            "label": "not a nice crash",
+            "object_name": "HydrusAccept"
+          },
+          {
+            "label": "forget it",
+            "object_name": "HydrusCancel"
+          }
+        ]
+      },
+      "calls": []
+    }
+  ]
+}

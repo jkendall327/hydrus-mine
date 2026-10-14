@@ -1593,6 +1593,13 @@ fn help_menu(facts: &Facts) -> Entry {
                             item("fetch a url", Command::DebugFetchUrl),
                         ],
                     ),
+                    menu(
+                        "tests, do not touch",
+                        vec![item(
+                            "induce a program crash",
+                            debug(DebugAction::CrashTheProgram),
+                        )],
+                    ),
                     SEP,
                     item("what is this object?", Command::DebugWhatIsThisObject),
                 ],

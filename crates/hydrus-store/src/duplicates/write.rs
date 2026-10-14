@@ -177,7 +177,7 @@ impl<'c> RelationshipWriter<'c> {
     /// groups: with any group, or (`internal`) only between each other
     /// (`ClearAllFalsePositiveRelations` / `ClearInternalFalsePositiveRelations`);
     /// the files involved are searched again.
-    pub fn clear_false_positives(&self, hash_ids: &[HashId], internal: bool) -> Result<()> {
+    pub fn clear_false_positives(&self, hash_ids: &[HashId], internal: bool) -> Result<usize> {
         let mut alts = BTreeSet::new();
         for &hash_id in hash_ids {
             if let Some(group) = super::group_of(self.conn, hash_id)?
@@ -187,7 +187,7 @@ impl<'c> RelationshipWriter<'c> {
             }
         }
         if alts.is_empty() {
-            return Ok(());
+            return Ok(0);
         }
         super::cache::changed(self.conn)?;
         let pairs: Vec<(AltGroupId, AltGroupId)> = {
@@ -198,6 +198,7 @@ impl<'c> RelationshipWriter<'c> {
             rows.collect::<rusqlite::Result<_>>()?
         };
         let mut touched = BTreeSet::new();
+        let mut cleared = 0;
         let mut delete = self.conn.prepare_cached(
             "DELETE FROM false_positive_pairs WHERE smaller_alt_group_id = ? AND larger_alt_group_id = ?",
         )?;
@@ -208,7 +209,7 @@ impl<'c> RelationshipWriter<'c> {
                 alts.contains(&a) || alts.contains(&b)
             };
             if hit {
-                delete.execute(params![a, b])?;
+                cleared += delete.execute(params![a, b])?;
                 touched.insert(a);
                 touched.insert(b);
             }
@@ -218,7 +219,7 @@ impl<'c> RelationshipWriter<'c> {
                 self.reset_search(&super::members_of(self.conn, group)?)?;
             }
         }
-        Ok(())
+        Ok(cleared)
     }
 
     /// Search `hash_ids` for similar files again, keeping what was found

@@ -21,7 +21,11 @@ fn embedded_policy_preserves_gamma_fallback_and_real_png_jpeg_webp_pixels() {
         policy.store(enabled, Ordering::Release);
         for row in case["decode"].as_array().unwrap() {
             let name = row["file"].as_str().unwrap();
-            if name.contains("short") || name.contains("no-eoi") {
+            // (the cut-off files are tests/truncated_images.rs's)
+            if ["short", "no-eoi", "half", "big-cut", "raw-cut"]
+                .iter()
+                .any(|part| name.contains(part))
+            {
                 continue;
             }
             let path = hydrus_testkit::fixture_path(format!("image_decoder_policies/{name}"));

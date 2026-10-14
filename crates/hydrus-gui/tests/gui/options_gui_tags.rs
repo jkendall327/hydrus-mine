@@ -534,3 +534,83 @@ fn the_layout_enables_the_default_page_and_manage_tags_opens_on_it_as_recorded()
         manage.invoke_cancel();
     }
 }
+
+/// The width the suggested-tags option gives the suggestion lists, set
+/// through the Options window and measured on the laid-out Manage Tags
+/// dialog squeezed as narrow as its layout lets it, against the reference's
+/// real `SuggestedTagsPanel` squeezed the same way
+/// (`narrow_widths` in oracle/fixtures/suggestion_options_panel.json, recorded
+/// by oracle/record_suggestion_options_panel.py).
+// leaf: audit-options-tag-suggestions-suggested-tags-width-of-suggested-tags-columns
+#[test]
+fn the_width_option_gives_the_suggestion_lists_the_width_the_reference_lays_out() {
+    let options_fixture = hydrus_testkit::fixture_json("suggestion_options_panel.json");
+    let panels = hydrus_testkit::fixture_json("suggested_tag_panels.json");
+    let (dirs, store) = crate::options_gui_support::basic_store();
+    let files = crate::suggested_tag_panels::seed(&store, &panels);
+    let client = Client::with(dirs, store);
+    client.ui.invoke_search_edited("system:everything".into());
+    client.ui.invoke_search_accepted();
+    client
+        .bound
+        .current
+        .borrow()
+        .borrow_mut()
+        .select_files(&files[..2]);
+    // (the lists the reference's panel and ours have in common, by their
+    // keys in the recording and their numbers here)
+    let lists = [("favourites", 0), ("recent", 1), ("related", 2)];
+    for entry in options_fixture["widths"].as_array().unwrap() {
+        let columns = entry["layout"] == "columns";
+        let width = i32::try_from(entry["width"].as_i64().unwrap()).unwrap();
+        let options = client.open_options();
+        show_page(&options, "tag suggestions");
+        options.invoke_number_edited(row(&options, "Width of suggested tags columns: ").0, width);
+        options.invoke_choice_chosen(row(&options, "Column layout: ").0, i32::from(columns));
+        options.invoke_apply();
+        client.ui.invoke_manage_tags_selected();
+        let manage = client
+            .bound
+            .manage_tags
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        let mine = manage
+            .get_service_names()
+            .iter()
+            .position(|n| n == "my tags")
+            .unwrap();
+        manage.invoke_service_chosen(i32::try_from(mine).unwrap());
+        let shown = client.windows().get(client.windows().count() - 1).unwrap();
+        for (key, number) in lists {
+            if !columns {
+                // (a notebook shows one list at a time)
+                manage.set_suggested_page(number);
+            }
+            for _ in 0..3 {
+                hydrus_gui::headless::render(&shown, 50, 800);
+                slint::platform::update_timers_and_animations();
+            }
+            let ours = match number {
+                0 => manage.get_most_used_list_width(),
+                1 => manage.get_recent_list_width(),
+                _ => manage.get_related_list_width(),
+            };
+            assert!(ours > 0.0, "the {key} list was laid out");
+            let theirs = entry["narrow_widths"][key].as_f64().unwrap() as f32;
+            let what = format!(
+                "{key} list, {} layout, width {width}: ours {ours}, theirs {theirs}",
+                entry["layout"]
+            );
+            if width == 20 {
+                // the option's lower limit: our list table will not go
+                // narrower than its own minimum (DIFFERENCES.md)
+                assert!(ours >= width as f32 - 0.5, "{what}");
+            } else {
+                assert!((ours - theirs).abs() <= 2.5, "{what}");
+            }
+        }
+        manage.invoke_cancel();
+    }
+}
