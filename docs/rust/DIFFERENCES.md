@@ -1185,6 +1185,13 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   shows the encoded url the context holds, where the reference keeps what was
   typed (its fetch texts, requests and cookies are replayed from
   `oracle/fixtures/parser_fetch_http.json`).
+- The test panels' result preview reads "Post 1" then "tags: abc" lines, where the
+  reference prints "*** 1 RESULTS BEGIN ***", then one line per result with its own
+  label ("tag: artist:samus" with the namespace joined and the tag cleaned,
+  "downloadable/pursuable url (priority 50): ...", 'note "name":', "sha256 hash:",
+  "source/post time: <date>", "veto: ...") and "*** RESULTS END ***"
+  (`oracle/fixtures/parser_context.json`, `parser_editors.json`). The parsed texts
+  match; the labels and layout do not.
 - URL classes and single/nested gallery URL generators have native lists and
   rule editors. Their duplicate button creates new keys and unique names.
   Domain lists and regex lists use one rule per line, and nested generators
