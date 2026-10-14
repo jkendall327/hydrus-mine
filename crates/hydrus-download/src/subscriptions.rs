@@ -1095,6 +1095,14 @@ pub fn answer_debug_requests(
     manager: Option<&SubscriptionRunner>,
 ) -> Result<(), hydrus_store::StoreError> {
     let asked = hydrus_store::debug_switches::apply(store)?;
+    if asked.wake {
+        match manager {
+            Some(manager) => manager.simulate_wake(),
+            None => {
+                store.simulate_wake();
+            }
+        }
+    }
     if asked.subscription_snapshot {
         match manager {
             Some(manager) => manager.show_snapshot(),
@@ -1278,6 +1286,13 @@ impl SubscriptionRunner {
             human(next_times.len()),
             next_times_text.join(", "),
         ))
+    }
+
+    /// "simulate a wake from sleep" for the daemon: its network engine's
+    /// sleep check and its store's (file paths) both see a wake.
+    pub fn simulate_wake(&self) {
+        self.downloader.net.simulate_wake();
+        self.downloader.store.simulate_wake();
     }
 
     /// "subscription manager snapshot": say what the manager is doing, as

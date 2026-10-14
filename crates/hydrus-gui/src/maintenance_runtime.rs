@@ -178,6 +178,12 @@ impl Control {
     /// seconds) and show it, with the CPU-busy check, in the status bar.
     fn publish_idle(&self, window: &MainWindow, store: &Store, now_ms: i64) {
         store.sleep_check();
+        if store.take_wake() {
+            // as the reference does on a wake: the idle timer is reset, and the
+            // user is told when input and output come back
+            self.0.monitor.user_at(now_ms);
+            crate::wake_popup::begin(store);
+        }
         self.check_busy(store, now_ms);
         let idle = self.0.monitor.idle_at(now_ms);
         // Background work wants idle and a system that is not busy

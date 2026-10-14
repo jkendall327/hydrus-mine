@@ -162,6 +162,10 @@ record of what was decided, and why the roadmap looks the way it does.
   share one `Dialog` helper that owns apply and cancel, and saves
   `regular_dialog` on apply (#154); doing it per handler (62 sites) would be
   neither testable nor honest to tag.
+- **Also out of scope in Help > debug (#96):** `file sort report mode`,
+  `media load report mode`, `hover window report mode`, `potential duplicates
+  report mode` and `shutdown report mode` report Python/Qt internals with no
+  hydrus-rs counterpart.
 
 ## Roadmap that follows
 

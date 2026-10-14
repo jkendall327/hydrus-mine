@@ -32,6 +32,8 @@ pub struct DebugSwitches {
     /// How many times "subscription manager snapshot" has been chosen; the
     /// daemon, which has the manager, answers each.
     pub subscription_snapshots: u64,
+    /// The same for "simulate a wake from sleep".
+    pub wake_simulations: u64,
     /// Counts each change, so that a daemon started long after the client
     /// set them (or left them set, if it crashed) can tell they are old.
     pub generation: u64,
@@ -41,6 +43,7 @@ pub struct DebugSwitches {
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct Requests {
     pub subscription_snapshot: bool,
+    pub wake: bool,
 }
 
 impl Setting for DebugSwitches {
@@ -62,6 +65,7 @@ pub fn current() -> DebugSwitches {
         query_planner,
         planner_started,
         subscription_snapshots: 0,
+        wake_simulations: 0,
         generation: 0,
     }
 }
@@ -74,6 +78,7 @@ pub fn publish(store: &Store) -> Result<()> {
         let stored = crate::settings::get::<DebugSwitches>(ctx.conn())?;
         let now = DebugSwitches {
             subscription_snapshots: stored.subscription_snapshots,
+            wake_simulations: stored.wake_simulations,
             generation: stored.generation,
             ..current()
         };
@@ -85,6 +90,15 @@ pub fn publish(store: &Store) -> Result<()> {
             crate::settings::set(ctx.conn(), &now)?;
         }
         Ok(())
+    })
+}
+
+/// Ask the daemon to simulate a wake from sleep.
+pub fn request_wake_simulation(store: &Store) -> Result<()> {
+    store.write(move |ctx| {
+        let mut stored = crate::settings::get::<DebugSwitches>(ctx.conn())?;
+        stored.wake_simulations += 1;
+        crate::settings::set(ctx.conn(), &stored)
     })
 }
 
@@ -116,12 +130,15 @@ pub fn apply(store: &Store) -> Result<Requests> {
     }
     // (what was asked before this process looked is not answered)
     let before = SEEN_SNAPSHOTS.swap(wanted.subscription_snapshots, Ordering::Relaxed);
+    let woke = SEEN_WAKES.swap(wanted.wake_simulations, Ordering::Relaxed);
     Ok(Requests {
         subscription_snapshot: before != u64::MAX && wanted.subscription_snapshots > before,
+        wake: woke != u64::MAX && wanted.wake_simulations > woke,
     })
 }
 
 static SEEN_SNAPSHOTS: AtomicU64 = AtomicU64::new(u64::MAX);
+static SEEN_WAKES: AtomicU64 = AtomicU64::new(u64::MAX);
 static SEEN_GENERATION: AtomicU64 = AtomicU64::new(u64::MAX);
 
 /// Send reports (`HydrusData.ShowText`) to the console and the popups in

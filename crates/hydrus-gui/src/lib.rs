@@ -184,9 +184,11 @@ pub(crate) mod tag_relationships_window;
 pub mod tag_suggestions_window;
 mod tag_sync_review_window;
 pub use tag_sync_review_window::opened as tag_sync_review_opened;
+mod memory_maintenance;
 mod tag_text;
 pub mod thumbnail_background;
 mod vacuum_review_window;
+mod wake_popup;
 pub mod what_is_this_window;
 
 /// Missing-thumbnail recovery, independent of stored image colour policy.
@@ -3077,8 +3079,32 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                             rows.clear_thumbnail_cache();
                         }
                     }),
+                    maintain_caches: Rc::new({
+                        let image_cache = image_cache.clone();
+                        let rows = rows.clone();
+                        move || {
+                            image_cache.maintain();
+                            rows.maintain_cache();
+                        }
+                    }),
                 };
-                Rc::new(move |action| debug_actions::run(&context, action))
+                // (the repeating jobs live as long as this debug-actions hook,
+                // which the menu bar owns for the window's life)
+                let timers = memory_maintenance::start(
+                    context.maintain_caches.clone(),
+                    Rc::new({
+                        let pages = pages.clone();
+                        move || {
+                            if let Ok(mut pages) = pages.try_borrow_mut() {
+                                pages.delete_old_closed_pages();
+                            }
+                        }
+                    }),
+                );
+                Rc::new(move |action| {
+                    let _ = &timers;
+                    debug_actions::run(&context, action);
+                })
             },
             clear_thumbnail_cache: Rc::new({
                 let rows = rows.clone();

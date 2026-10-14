@@ -293,6 +293,8 @@ pub enum Command {
     DebugSubscriptionSnapshot,
     /// Help > debug > what is this object?
     DebugWhatIsThisObject,
+    /// Help > debug > debug modes > simulate a wake from sleep.
+    DebugSimulateWake,
     /// Publish the actual delayed message after five seconds.
     DebugDelayedTextPopup,
     Debug(crate::debug_actions::Action),
@@ -1433,6 +1435,7 @@ fn help_menu(facts: &Facts) -> Entry {
                                 Some(Command::DebugForceIdleMode),
                                 facts.force_idle,
                             ),
+                            item("simulate a wake from sleep", Command::DebugSimulateWake),
                             SEP,
                             check(
                                 "use faulthandler to log crashes",
@@ -1538,6 +1541,14 @@ fn help_menu(facts: &Facts) -> Entry {
                     menu(
                         "memory actions",
                         vec![
+                            item(
+                                "run fast memory maintenance",
+                                debug(DebugAction::MaintainMemoryFast),
+                            ),
+                            item(
+                                "run slow memory maintenance",
+                                debug(DebugAction::MaintainMemorySlow),
+                            ),
                             item(
                                 "clear all rendering caches",
                                 debug(DebugAction::ClearRenderingCaches),

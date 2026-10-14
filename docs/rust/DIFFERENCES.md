@@ -5225,3 +5225,17 @@ be diagnosed afterwards. The owner chose always-on crash logging (2026-10-14).
   the exact timeout where the reference checks every 3 seconds.
 - **Input rules.** A rule's string processor is not edited from the rule row in any
   test; it is put in the store and the editor reopened.
+
+- **Memory maintenance runs the caches hydrus-rs has.** “Run fast memory
+  maintenance” trims the decoded-image cache and the thumbnail caches; the
+  reference's pulse also reaches its parsing cache, the network connection
+  pools, the API's caches and the main window's menu updater, none of which
+  exist here. “Run slow memory maintenance” does the closed pages;
+  the reference's temp-path cleaning, thread-pool upkeep and Qt canvas-frame
+  references are Python and Qt internals. The schedules (fast every minute, slow
+  every five) start when the window opens, without the reference's ten-second
+  first wait.
+- **Simulating a wake touches this process and the daemon.** The reference has
+  one process; here the client shows the popup and resets its idle timer, and
+  the daemon (which owns the network engine and subscriptions) is asked to see a
+  wake too, within about a second (that request is not tested end to end).

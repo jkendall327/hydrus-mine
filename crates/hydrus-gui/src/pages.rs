@@ -128,8 +128,15 @@ pub struct Pages {
     path: Vec<usize>,
     /// Pages opened so far, by key.
     open: HashMap<PageKey, Rc<RefCell<SearchPage>>>,
-    /// Pages closed in the last hour, oldest first, to reopen.
+    /// Pages closed and not yet deleted (the slow memory maintenance deletes
+    /// those closed over an hour ago), oldest first, to reopen.
     closed: Vec<Closed>,
+    /// When pages were last opened or closed (`last_page_change`), and how
+    /// far a test has moved this struct's clock on.
+    last_changed: std::time::Instant,
+    skew: std::time::Duration,
+    /// A held instant standing for "now" (tests).
+    frozen: Option<std::time::Instant>,
     /// The pages shown, the latest last, with their names for menus as
     /// they were then (the reference's `PagesHistory`).
     history: Vec<(PageKey, String)>,
@@ -268,6 +275,9 @@ impl Pages {
             path: Vec::new(),
             open: HashMap::new(),
             closed: Vec::new(),
+            last_changed: std::time::Instant::now(),
+            skew: std::time::Duration::ZERO,
+            frozen: None,
             history: Vec::new(),
             predicate_history: Rc::default(),
             new_page_depth: None,
@@ -360,6 +370,9 @@ impl Pages {
             path: vec![0],
             open: HashMap::new(),
             closed: Vec::new(),
+            last_changed: std::time::Instant::now(),
+            skew: std::time::Duration::ZERO,
+            frozen: None,
             history: Vec::new(),
             predicate_history: Rc::default(),
             new_page_depth: None,
@@ -1894,6 +1907,7 @@ impl Pages {
         let pages = self.notebook_mut(depth);
         let index = insertion.unwrap_or_else(|| policy.index(selected, pages.len()));
         pages.insert(index, page);
+        self.last_changed = self.now();
         self.path.truncate(depth);
         self.select(depth, index);
     }
@@ -1946,8 +1960,8 @@ impl Pages {
             .collect();
         let queues = closable_queues(&closed);
         self.close_queues(&queues, true);
-        self.forget_old_closed();
-        let now = std::time::Instant::now();
+        let now = self.now();
+        self.last_changed = now;
         self.closed.push(Closed {
             at: now,
             notebook: notebook.flatten(),
@@ -2001,14 +2015,10 @@ impl Pages {
 
     /// How many closed pages can be reopened.
     pub fn closed_count(&self) -> usize {
-        let now = std::time::Instant::now();
-        self.closed
-            .iter()
-            .filter(|c| now.duration_since(c.at) < CLOSED_PAGE_TIMEOUT)
-            .count()
+        self.closed.len()
     }
 
-    /// Reopen the page closed most recently (in the last hour), where it
+    /// Reopen the page closed most recently (however long ago), where it
     /// was, as it was, and show it (the reference's "unclose page"); its
     /// notebook gone, it goes in the top one. Whether there was one.
     /// Mark downloader queues' pages closed (they wait), or open again.
@@ -2027,14 +2037,60 @@ impl Pages {
         }
     }
 
+    fn now(&self) -> std::time::Instant {
+        self.frozen.unwrap_or_else(std::time::Instant::now) + self.skew
+    }
+
+    /// Hold this struct's clock still (tests), so ages are exact.
+    #[doc(hidden)]
+    pub fn freeze_clock(&mut self) {
+        self.frozen = Some(std::time::Instant::now());
+    }
+
+    /// Move this struct's clock on (tests: closed pages age an hour in no time).
+    #[doc(hidden)]
+    pub fn advance_clock(&mut self, by: std::time::Duration) {
+        self.skew += by;
+    }
+
+    /// Pretend the last page change was `ago` before now (tests).
+    #[doc(hidden)]
+    pub fn set_last_page_change_ago(&mut self, ago: std::time::Duration) {
+        self.last_changed = self.now().checked_sub(ago).unwrap_or_else(|| self.now());
+    }
+
+    /// How long ago each closed page still held in memory was closed, oldest
+    /// first (hidden from the menu or not).
+    #[doc(hidden)]
+    pub fn held_closed_ages(&self) -> Vec<std::time::Duration> {
+        let now = self.now();
+        self.closed
+            .iter()
+            .map(|c| now.duration_since(c.at))
+            .collect()
+    }
+
+    /// Help > debug > memory actions > run slow memory maintenance, the part
+    /// that is the pages' (`ClientController.MaintainMemorySlow`): when no page
+    /// has been opened or closed for half an hour, the pages closed over an
+    /// hour ago are deleted.
+    pub fn delete_old_closed_pages(&mut self) {
+        let now = self.now();
+        // (whole seconds, as the reference's clock is)
+        if now.duration_since(self.last_changed).as_secs() > 30 * 60 {
+            self.forget_old_closed();
+            self.last_changed = now;
+        }
+    }
+
     /// Forget pages closed over an hour ago, as the reference does: their
     /// downloads go with them.
     fn forget_old_closed(&mut self) {
-        let now = std::time::Instant::now();
+        let now = self.now();
         let (old, kept): (Vec<Closed>, Vec<Closed>) = self
             .closed
             .drain(..)
-            .partition(|c| now.duration_since(c.at) >= CLOSED_PAGE_TIMEOUT);
+            .partition(|c| now.duration_since(c.at).as_secs() > CLOSED_PAGE_TIMEOUT.as_secs());
         self.closed = kept;
         self.delete_queues(old.iter().flat_map(|c| closable_queues(&c.page)).collect());
     }
@@ -2977,14 +3033,13 @@ impl Pages {
     }
 
     pub fn unclose(&mut self) -> bool {
-        self.forget_old_closed();
         match self.closed.len().checked_sub(1) {
             Some(last) => self.unclose_at(last),
             None => false,
         }
     }
 
-    /// Reopen the `index`th page closed in the last hour (oldest first),
+    /// Reopen the `index`th page closed and not yet deleted (oldest first),
     /// as [`Pages::unclose`] does the latest (the reference's undo menu's
     /// closed pages). Whether there was one.
     pub fn unclose_at(&mut self, index: usize) -> bool {
@@ -3002,7 +3057,6 @@ impl Pages {
             }
             None
         }
-        self.forget_old_closed();
         if index >= self.closed.len() {
             return false;
         }
@@ -3195,10 +3249,9 @@ impl Pages {
         self.history.clear();
     }
 
-    /// The pages closed in the last hour, oldest first: their names for
-    /// menus.
-    pub fn closed_names(&mut self) -> Vec<String> {
-        self.forget_old_closed();
+    /// The pages closed and not yet deleted (an hour on, by the slow memory
+    /// maintenance), oldest first: their names for menus.
+    pub fn closed_names(&self) -> Vec<String> {
         self.closed
             .iter()
             .map(|closed| {

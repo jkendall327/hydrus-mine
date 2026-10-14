@@ -591,6 +591,11 @@ impl Control {
     pub fn refresh(&self) {
         self.0.refresh();
     }
+    /// Drop what is over the limit and what has idled past the timeout
+    /// (the memory pulse's `MaintainCache`).
+    pub fn maintain(&self) {
+        self.0.cache.maintain();
+    }
     /// Forget every cached image, keeping the cache live.
     pub fn clear(&self) {
         self.0.cache.clear();

@@ -1,0 +1,735 @@
+{
+  "delay_seconds": 4,
+  "runs": {
+    "detection on": {
+      "detect": true,
+      "cancel_at_ms": null,
+      "jobs": 1,
+      "title": "just woke up from sleep",
+      "cancellable": true,
+      "idle_timer_reset": true,
+      "samples": [
+        {
+          "at_ms": 101,
+          "just_woke": true,
+          "text": "enabling I/O in 4 seconds",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 303,
+          "just_woke": true,
+          "text": "enabling I/O in 4 seconds",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 505,
+          "just_woke": true,
+          "text": "enabling I/O in 4 seconds",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 706,
+          "just_woke": true,
+          "text": "enabling I/O in 4 seconds",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 908,
+          "just_woke": true,
+          "text": "enabling I/O in 4 seconds",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 1110,
+          "just_woke": true,
+          "text": "enabling I/O in 4 seconds",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 1312,
+          "just_woke": true,
+          "text": "enabling I/O in 3 seconds",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 1518,
+          "just_woke": true,
+          "text": "enabling I/O in 3 seconds",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 1720,
+          "just_woke": true,
+          "text": "enabling I/O in 2 seconds",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 1922,
+          "just_woke": true,
+          "text": "enabling I/O in 2 seconds",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 2125,
+          "just_woke": true,
+          "text": "enabling I/O in 2 seconds",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 2326,
+          "just_woke": true,
+          "text": "enabling I/O in 2 seconds",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 2528,
+          "just_woke": true,
+          "text": "enabling I/O in 2 seconds",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 2730,
+          "just_woke": true,
+          "text": "enabling I/O in 2 seconds",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 2932,
+          "just_woke": true,
+          "text": "enabling I/O in 2 seconds",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 3134,
+          "just_woke": true,
+          "text": "enabling I/O in 1 second",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 3336,
+          "just_woke": true,
+          "text": "enabling I/O in 1 second",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 3537,
+          "just_woke": true,
+          "text": "enabling I/O in 1 second",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 3738,
+          "just_woke": true,
+          "text": "enabling I/O in 1 second",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 3940,
+          "just_woke": true,
+          "text": "enabling I/O in 1 second",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 4141,
+          "just_woke": false,
+          "text": "enabling I/O in 1 second",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 4342,
+          "just_woke": false,
+          "text": "enabling I/O in 1 second",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 4544,
+          "just_woke": false,
+          "text": "enabling I/O in 1 second",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 4747,
+          "just_woke": false,
+          "text": "enabling I/O in 1 second",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 4949,
+          "just_woke": false,
+          "text": "enabling I/O in 1 second",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 5151,
+          "just_woke": false,
+          "text": "enabling I/O in 1 second",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 5354,
+          "just_woke": false,
+          "text": "enabling I/O in 1 second",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 5556,
+          "just_woke": false,
+          "text": "enabling I/O in 1 second",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 5759,
+          "just_woke": false,
+          "text": "enabling I/O in 1 second",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 5960,
+          "just_woke": false,
+          "text": "enabling I/O in 1 second",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 6162,
+          "just_woke": false,
+          "text": "enabling I/O in 1 second",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 6364,
+          "just_woke": false,
+          "text": "enabling I/O in 1 second",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 6566,
+          "just_woke": false,
+          "text": "enabling I/O in 1 second",
+          "done": true,
+          "dismissed": true
+        }
+      ]
+    },
+    "cancelled": {
+      "detect": true,
+      "cancel_at_ms": 1500,
+      "jobs": 1,
+      "title": "just woke up from sleep",
+      "cancellable": true,
+      "idle_timer_reset": true,
+      "samples": [
+        {
+          "at_ms": 101,
+          "just_woke": true,
+          "text": "enabling I/O in 4 seconds",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 303,
+          "just_woke": true,
+          "text": "enabling I/O in 4 seconds",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 505,
+          "just_woke": true,
+          "text": "enabling I/O in 4 seconds",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 708,
+          "just_woke": true,
+          "text": "enabling I/O in 4 seconds",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 909,
+          "just_woke": true,
+          "text": "enabling I/O in 4 seconds",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 1111,
+          "just_woke": true,
+          "text": "enabling I/O in 4 seconds",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 1313,
+          "just_woke": true,
+          "text": "enabling I/O in 4 seconds",
+          "done": false,
+          "dismissed": false
+        },
+        {
+          "at_ms": 1514,
+          "just_woke": true,
+          "text": "enabling I/O in 3 seconds",
+          "done": true,
+          "dismissed": false
+        },
+        {
+          "at_ms": 1716,
+          "just_woke": true,
+          "text": "enabling I/O in 3 seconds",
+          "done": true,
+          "dismissed": false
+        },
+        {
+          "at_ms": 1918,
+          "just_woke": true,
+          "text": "enabling I/O in 3 seconds",
+          "done": true,
+          "dismissed": false
+        },
+        {
+          "at_ms": 2120,
+          "just_woke": true,
+          "text": "enabling I/O in 3 seconds",
+          "done": true,
+          "dismissed": false
+        },
+        {
+          "at_ms": 2322,
+          "just_woke": false,
+          "text": "enabling I/O now",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 2525,
+          "just_woke": false,
+          "text": "enabling I/O now",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 2726,
+          "just_woke": false,
+          "text": "enabling I/O now",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 2928,
+          "just_woke": false,
+          "text": "enabling I/O now",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 3130,
+          "just_woke": false,
+          "text": "enabling I/O now",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 3332,
+          "just_woke": false,
+          "text": "enabling I/O now",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 3535,
+          "just_woke": false,
+          "text": "enabling I/O now",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 3736,
+          "just_woke": false,
+          "text": "enabling I/O now",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 3938,
+          "just_woke": false,
+          "text": "enabling I/O now",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 4141,
+          "just_woke": false,
+          "text": "enabling I/O now",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 4342,
+          "just_woke": false,
+          "text": "enabling I/O now",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 4543,
+          "just_woke": false,
+          "text": "enabling I/O now",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 4745,
+          "just_woke": false,
+          "text": "enabling I/O now",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 4946,
+          "just_woke": false,
+          "text": "enabling I/O now",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 5147,
+          "just_woke": false,
+          "text": "enabling I/O now",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 5349,
+          "just_woke": false,
+          "text": "enabling I/O now",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 5549,
+          "just_woke": false,
+          "text": "enabling I/O now",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 5750,
+          "just_woke": false,
+          "text": "enabling I/O now",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 5952,
+          "just_woke": false,
+          "text": "enabling I/O now",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 6153,
+          "just_woke": false,
+          "text": "enabling I/O now",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 6354,
+          "just_woke": false,
+          "text": "enabling I/O now",
+          "done": true,
+          "dismissed": true
+        },
+        {
+          "at_ms": 6556,
+          "just_woke": false,
+          "text": "enabling I/O now",
+          "done": true,
+          "dismissed": true
+        }
+      ]
+    },
+    "detection off": {
+      "detect": false,
+      "cancel_at_ms": null,
+      "jobs": 0,
+      "title": null,
+      "cancellable": null,
+      "idle_timer_reset": false,
+      "samples": [
+        {
+          "at_ms": 100,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 301,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 503,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 705,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 908,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 1108,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 1310,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 1512,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 1714,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 1915,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 2117,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 2320,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 2522,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 2723,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 2925,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 3126,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 3328,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 3530,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 3731,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 3940,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 4144,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 4346,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 4548,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 4751,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 4953,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 5155,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 5357,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 5559,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 5762,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 5963,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 6165,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 6368,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        },
+        {
+          "at_ms": 6571,
+          "just_woke": false,
+          "text": null,
+          "done": null,
+          "dismissed": null
+        }
+      ]
+    }
+  },
+  "menu_path": [
+    "help",
+    "debug",
+    "debug modes",
+    "simulate a wake from sleep"
+  ],
+  "tooltip": "Tell the controller to pretend that it just woke up from sleep."
+}
