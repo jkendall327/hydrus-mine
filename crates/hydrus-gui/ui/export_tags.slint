@@ -1,7 +1,7 @@
 // Read-only ListBoxTagsMedia sidebar within the existing manual-export window.
-import { WheelMenuChoice, MenuChoiceFrame } from "menu_choice_wheel.slint";
+import { WheelMenuChoice, MenuChoiceFrame } from "@hydrus_ui_core";
 import { ScrollView } from "std-widgets.slint";
-import { ListText, Theme } from "theme.slint";
+import { ListText, Theme } from "@hydrus_ui_core";
 export component ExportTags inherits FocusScope {
     in property <[ListText]> rows;
     in property <[bool]> selected;

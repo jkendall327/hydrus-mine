@@ -1,6 +1,6 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 import { Button, CheckBox, ComboBox, LineEdit, ScrollView, SpinBox } from "std-widgets.slint";
-import { ListTable, TableRow } from "list_table.slint";
+import { ListTable, TableRow } from "@hydrus_ui_core";
 export struct ExternalRule { label:string, enabled:bool, token:string, summary:string, value:string }
 export component ExternalCallsTable inherits Rectangle {
     in property <string> error;

@@ -2651,6 +2651,26 @@ dependencies = [
 name = "hydrus-gui-ui"
 version = "0.1.0"
 dependencies = [
+ "hydrus-gui-ui-core",
+ "hydrus-gui-ui-options",
+ "hydrus-workspace-hack",
+ "slint",
+]
+
+[[package]]
+name = "hydrus-gui-ui-core"
+version = "0.1.0"
+dependencies = [
+ "hydrus-workspace-hack",
+ "slint",
+ "slint-build",
+]
+
+[[package]]
+name = "hydrus-gui-ui-options"
+version = "0.1.0"
+dependencies = [
+ "hydrus-gui-ui-core",
  "hydrus-workspace-hack",
  "slint",
  "slint-build",

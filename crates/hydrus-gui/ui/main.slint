@@ -2,10 +2,7 @@ import { Btn } from "btn.slint";
 import { WheelMenuChoice, MenuChoiceFrame } from "menu_choice_wheel.slint";
 export { HydrusTray } from "system_tray.slint";
 export { MenuChoicePolicy } from "menu_choice_wheel.slint";
-export { OpenFileCallsWindow, ExternalRoutingChoiceWindow } from "open_externally.slint";
-export { ExternalCallWindow, ExternalCommandWindow, ExternalRule, ExternalDefaultsWindow } from "external_calls.slint";
 export { LocalTransferWindow } from "local_transfer.slint";
-export { FrameLocationWindow } from "frame_locations.slint";
 export { RelatedWeightsWindow } from "related_weights.slint";
 export { MostUsedTagsWindow } from "tag_suggestions.slint";
 export { SearchOrWindow } from "search_or.slint";
@@ -65,14 +62,12 @@ export { VacuumReviewWindow } from "vacuum_review.slint";
 export { TagSyncReviewWindow } from "tag_sync_review.slint";
 export { DatabaseLocationsWindow, GranularityWindow, LocationMaxSizeWindow } from "database_locations.slint";
 export { DateTimeEditorWindow, ManageTimesWindow, TimeRow } from "manage_times.slint";
-export { ExportFilesWindow } from "export_files.slint";
 export { EmbeddedMetadataWindow } from "embedded_metadata.slint";
 export { DefinitionField, DownloaderDefinitionEditWindow, DownloaderDefinitionsWindow } from "downloader_definitions.slint";
 export { ForceFiletypeWindow } from "force_filetype.slint";
 export { TagFilterWindow } from "tag_filter.slint";
 export { MergeOptionsWindow } from "merge_options.slint";
 export { SidecarNodeWindow, SidecarRouterWindow, SidecarRoutersWindow } from "sidecars.slint";
-export { ServicesEditorWindow, EditServiceWindow, ServiceColourRow, ServiceRatingExampleRow } from "services_editor.slint";
 export { ServicesReviewWindow } from "services_review.slint";
 export { AboutWindow } from "about.slint";
 export { PopupModalWindow } from "popup_modal.slint";
@@ -82,15 +77,11 @@ export { DownloaderExchangeWindow } from "downloader_interchange.slint";
 export { FormulaWindow, FormulaRuleWindow } from "formula_editors.slint";
 export { ConversionWindow, StringConverterWindow, StringProcessorWindow, StringStepWindow } from "string_processor.slint";
 export { AutoResolutionReviewWindow, PairRow } from "auto_resolution_review.slint";
-export { GuiColourPickerWindow, GuiColourRow } from "gui_coloursets.slint";
-export { DurationField, OptionRow, OptionsWindow, SortCogItem } from "options.slint";
 export { CommandPaletteWindow, PaletteRow } from "command_palette.slint";
-export { CheckerOptionsWindow, CheckerTexts } from "checker_options.slint";
 export { SessionDialog } from "session_dialog.slint";
 export { ChoiceButtonsWindow } from "choice_buttons.slint";
 export { QuickTagEntryWindow } from "quick_tag_entry.slint";
 export { BonesRow, HowBonedWindow } from "how_boned.slint";
-export { MediaViewWindow } from "media_views.slint";
 export { TableColumn, TableRow }
 export { LocationTick, LocationsWindow } from "domains.slint";
 export { FavouriteEditWindow, FavouriteListRow, FavouritesWindow } from "favourites.slint";
@@ -105,7 +96,6 @@ export { FileLogWindow } from "file_log.slint";
 export { AutoResolutionRulesWindow, AutoResolutionRuleWindow, ComparatorWindow } from "auto_resolution_rules.slint";
 export { FilenameTaggingWindow, MiscRow } from "filename_tagging.slint";
 export { ImportOptionsWindow, SizeLimit, ResolutionLimit, TagServiceRow } from "import_options.slint";
-export { ExportFolderWindow, FolderActionRow, FoldersWindow, ImportFolderWindow } from "folders.slint";
 
 import { ThumbnailCellPaint, ThumbnailPaint, Thumbnail } from "thumbnail_paint.slint";
 export { ThumbIcon, ThumbRating, ThumbBox, Thumbnail, ThumbnailPaint } from "thumbnail_paint.slint";
@@ -2513,7 +2503,17 @@ export { ArchiveRepairWindow } from "archive_repair.slint";
 
 export { FileHistoryWindow } from "file_history.slint";
 export { FileMaintenanceWindow } from "file_maintenance_current.slint";
-export { ShortcutSetWindow, ShortcutCommandWindow } from "shortcuts.slint";
 
 export { DebugFetchWindow } from "debug_fetch.slint";
 export { WhatIsThisWindow } from "what_is_this.slint";
+
+// Components the dialog crates import from this one (`@hydrus_ui_core`) that
+// the Rust side does not otherwise use by name.
+export { Btn } from "btn.slint";
+export { Question } from "favourites.slint";
+export { ListTable } from "list_table.slint";
+export { MenuChoiceFrame, WheelMenuChoice } from "menu_choice_wheel.slint";
+export { SortCollectCog } from "sort_collect_cog.slint";
+export { Asking } from "subscriptions.slint";
+export { RatingGraphic } from "viewer.slint";
+export { TagMenuOverlay } from "write_autocomplete.slint";

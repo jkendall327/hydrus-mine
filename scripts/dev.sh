@@ -2,8 +2,8 @@
 # The local development loop. Fast enough to run after every change.
 #
 #   scripts/dev.sh slint            compile the .slint files only (~10 s)
-#   scripts/dev.sh ui               build the generated UI crate on its own
-#                                   (no-op when fresh; ~7 min after a .slint edit)
+#   scripts/dev.sh ui               build the generated UI crates on their own, in
+#                                   turn (no-op when fresh; minutes after a .slint edit)
 #   scripts/dev.sh gui [FILTER...]  GUI tests whose names match a filter, e.g.
 #                                   `export_files::` (~20 s after a Rust edit)
 #   scripts/dev.sh model [FILTER]   hydrus-gui-model tests matching FILTER
@@ -14,12 +14,14 @@
 #                                   changed crates; the GUI crate's whole suite
 #                                   if it (or anything it uses) changed
 #
-# Why the UI crate is built on its own: it is ~87 MB of generated Rust and
-# rustc peaks near 13 GB compiling it. Cargo starts compiling hydrus-gui while
-# the UI crate's code generation is still running, and the two together do not
-# fit in 16 GB. Building it first, alone, avoids the overlap. The
-# hydrus-workspace-hack crate makes that solo build resolve the same features
-# as the full graph, so the artifact is reused.
+# Why the UI crates are built on their own: the UI is ~87 MB of generated Rust,
+# split over several crates (hydrus-gui-ui-core, hydrus-gui-ui-options, ...,
+# re-exported by hydrus-gui-ui) because one rustc run over all of it peaks near
+# 13 GB. Cargo starts compiling hydrus-gui while a UI crate's code generation is
+# still running, and the two together do not fit in 16 GB. Building them first,
+# one at a time, avoids the overlap. The hydrus-workspace-hack crate makes those
+# solo builds resolve the same features as the full graph, so the artifacts are
+# reused.
 #
 # Environment: DEV_JOBS (default 4) is the Cargo job count. DEV_LANE names a
 # GUI test lane (crates/hydrus-gui/tests/lane_<name>.rs) for `gui` and `lint`
@@ -60,7 +62,11 @@ slint_check() {
 }
 
 build_ui() {
-  cargo_ build -p hydrus-gui-ui
+  # (each alone, in order: the core crate first, as the others import it)
+  local crate
+  for crate in hydrus-gui-ui-core hydrus-gui-ui-options hydrus-gui-ui; do
+    cargo_ build -p "$crate"
+  done
 }
 
 base_commit() {

@@ -1,7 +1,7 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 // The two legacy coloursets share thirteen RGB roles; edits belong to Options.
 import { Button, LineEdit, SpinBox } from "std-widgets.slint";
-import { Theme } from "theme.slint";
+import { Theme } from "@hydrus_ui_core";
 export struct GuiColourRow { label: string, first: int, colours: [color], hex: [string] }
 export component GuiColoursets {
     in property <[GuiColourRow]> rows;

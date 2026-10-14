@@ -144,19 +144,33 @@ debug = "line-tables-only"
 opt-level = 2
 debug = false
 
+# The generated Slint UI is ~87 MB of Rust, built as three crates (core: the
+# main window and the shared components; options: the Options dialog group; the
+# facade re-exporting them). Each of the two big ones is compiled alone by
+# rustc, which with line tables or incremental state would exceed the memory of
+# a 16 GB machine; incremental compilation also gains nothing, since any .slint
+# edit regenerates the whole file.
 [profile.dev.package.hydrus-gui-ui]
-# The generated Slint UI is ~87 MB of Rust in one crate. With line tables or
-# incremental state, rustc exceeds ~14 GB compiling it and a 16 GB machine
-# kills it; without them it peaks at ~13 GB. Incremental compilation also gains
-# nothing: any .slint edit regenerates the whole file.
 debug = false
 incremental = false
-# (it is not a workspace member, so the `"*"` override below would otherwise
-# optimise it, which runs out of memory)
+# (they are not workspace members, so the `"*"` override above would otherwise
+# optimise them, which runs out of memory)
 opt-level = 0
 # Cargo strips debuginfo when the *root* of a build has none, so a solo
-# `cargo build -p hydrus-gui-ui` would otherwise differ from the same crate
-# built under hydrus-gui, and its artifact would not be reused.
+# `cargo build -p hydrus-gui-ui` would otherwise differ from the same crates
+# built under hydrus-gui, and their artifacts would not be reused.
+strip = false
+
+[profile.dev.package.hydrus-gui-ui-core]
+debug = false
+incremental = false
+opt-level = 0
+strip = false
+
+[profile.dev.package.hydrus-gui-ui-options]
+debug = false
+incremental = false
+opt-level = 0
 strip = false
 
 [profile.dev.package.hydrus-media]

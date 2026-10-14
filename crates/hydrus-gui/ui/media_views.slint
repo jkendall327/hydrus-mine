@@ -1,11 +1,11 @@
-import { Btn } from "btn.slint";
+import { Btn } from "@hydrus_ui_core";
 // Options > media playback > per-filetype handling (`src/options_media_views.rs`,
 // hydrus-gui-model's media_view_options): the list with add/edit/delete, and
 // the "media view options information" editor.
 
 import { Button, CheckBox, ComboBox } from "std-widgets.slint";
-import { ListTable, TableRow } from "list_table.slint";
-import { Theme } from "theme.slint";
+import { ListTable, TableRow } from "@hydrus_ui_core";
+import { Theme } from "@hydrus_ui_core";
 
 export component MediaViewTable inherits Rectangle {
     in property <[TableRow]> rows;
