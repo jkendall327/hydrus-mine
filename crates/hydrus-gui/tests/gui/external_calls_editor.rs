@@ -51,7 +51,8 @@ fn help_button_opens_the_external_programs_documentation() {
     assert!(!bound.options_external_calls.has_open());
 }
 
-// leaf: audit-options-nested-external-call-input-rules
+// (Not tagged for audit-options-nested-external-call-input-rules: the String Processor is put
+// in the store, not edited from the rule row; DIFFERENCES.md.)
 #[test]
 fn input_rules_enable_token_and_string_processor_reach_the_saved_call() {
     let (_dirs, store) = store();
@@ -143,7 +144,7 @@ fn input_rules_enable_token_and_string_processor_reach_the_saved_call() {
     let child = call(&bound);
     assert_eq!(
         child.get_rules().row_data(0).unwrap().summary,
-        "some conversion"
+        "prepend with \"pre-\""
     );
     child.invoke_test_input(0, "x.png".into());
     assert!(
@@ -164,7 +165,6 @@ fn input_rules_enable_token_and_string_processor_reach_the_saved_call() {
     assert_eq!(p.rules[0].token, "%path%");
 }
 
-// leaf: audit-options-nested-external-call-process-timeout
 #[test]
 fn timeout_long_lived_terminal_and_text_flags_are_saved_on_the_process() {
     let (_dirs, store) = store();
@@ -204,7 +204,6 @@ fn timeout_long_lived_terminal_and_text_flags_are_saved_on_the_process() {
     assert_eq!((p.timeout_seconds, p.long_lived), (15, true));
 }
 
-// leaf: audit-options-nested-external-call-command-path
 #[test]
 fn executable_path_checks_and_show_path_help_match_the_reference() {
     let (_dirs, store) = store();
@@ -320,7 +319,6 @@ fn without_keys(value: &serde_json::Value) -> serde_json::Value {
 }
 
 // leaf: audit-options-external-programs-external-calls-export
-// leaf: audit-options-external-programs-external-calls-add
 #[test]
 fn add_creates_a_new_call_and_export_writes_the_selected_calls_as_the_reference_does() {
     let (_dirs, store) = store();

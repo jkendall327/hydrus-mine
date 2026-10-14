@@ -7026,10 +7026,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI toggle only reaches engine.bandwidth_settings().override_on_file_urls_from_posts. The consumer (hydrus-download seeds.rs:440, override_bandwidth_after 3s) is not tested with the option anywhere. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:580 downloading_waits_and_post_url_override_reach_the_running_network_engine"
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "GUI toggle only reaches engine.bandwidth_settings().override_on_file_urls_from_posts. The consumer (hydrus-download seeds.rs:440, override_bandwidth_after 3s) is not tested with the option anywhere. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:580 downloading_waits_and_post_url_override_reach_the_running_network_engine Re-read 2026-10-14 (#97 phase 2, w4-r1b): left weak. Proving the consumer needs a post URL that parses to one file URL under a bandwidth rule that blocks the file fetch, with a timing assertion, and the reference's side (ClientImportFileSeeds.py:1740 -> network_job.OverrideBandwidth(3)) is a source constant with no recording of the override itself; neither was built."
    }
   },
   {
@@ -7046,10 +7046,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the options row and the gallery page: new query is highlighted only when set. Expected behaviour is a typed literal from the Python source; the reference's second site (PendSubscriptionGapDownloader, sidebar line 1297) is not covered. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:720 new_queries_and_watchers_are_highlighted_only_when_the_options_say"
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "Drives the options row and the gallery page: new query is highlighted only when set. Expected behaviour is a typed literal from the Python source; the reference's second site (PendSubscriptionGapDownloader, sidebar line 1297) is not covered. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:720 new_queries_and_watchers_are_highlighted_only_when_the_options_say Re-read 2026-10-14 (#97 phase 2, w4-r1b): left source-restated. A recording is possible (record_downloader_lists.py already drives the real sidebar's _PendQueries and reads _highlighted_gallery_import; it would need the option on and off) but the reference's second site, PendSubscriptionGapDownloader, has no native counterpart because the subscription gap downloader is not ported, so the leaf could not be called whole."
    }
   },
   {
@@ -7923,10 +7923,10 @@
     "Native options registry has no editable 'add' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Add button opens the editor on 'new call', Apply asks the question and appends, Options Apply persists. Name 'new call', the question prefix and 'brand new' are typed from the Python source (no recording of Add); non-dupe naming and fresh key on add are not asserted. Stale tracker note: it says no editable row exists, which is false. Tests: crates/hydrus-gui/tests/gui/external_calls_editor.rs:332 add_creates_a_new_call_and_export_writes_the_selected_calls_as_the_reference_does"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "Add opens the real call editor on the recorded brand new call (name 'new call', job 'send single file', its description text, validity 'No executable path is set!'); Apply asks the recorded 'Hey, it looks like something is not quite right here. Are you sure you want to save this?' (declined keeps the editor open, accepted adds); the added call is listed under the recorded name and row text, a second Add is named 'new call (1)' (non-dupe naming), and the two saved calls have different keys. The older export test in external_calls_editor.rs keeps the export leaf. Reference: oracle/fixtures/external_call_editor.json (record_external_call_editor.py: the reference's real EditProcessCallExecutableAndParametersPanel, EditProcessCallPanel and EditClientExecutableCallablePanel under scripted answers). Test: crates/hydrus-gui/tests/gui/external_call_editor_recorded.rs add_opens_a_new_call_that_is_named_keyed_and_asked_about_as_recorded."
    }
   },
   {
@@ -9120,10 +9120,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real Options row toggles the lock and the shared locked() guard is checked with typed expectations; the recording (delete_lock.json) is replayed through API deletes and trash emptying rather than through this GUI test, and no GUI-driven delete/trash is refused. Same shared guard function, so consistent but circular at the GUI level. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:238 (locked()); crates/hydrus-api/tests/delete_lock.rs the_delete_lock_matches_the_reference; trash.rs sql_condition"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "The Options row (with the advanced deletion dialog on) is set in the real window and the real deletion dialog is opened over the recorded file in its four states (in the trash or a local domain; inboxed or archived), with the lock off and on: the deletions offered are the recorded EditDeleteFilesPanel's (an archived trashed file under the lock offers none and the dialog says 'No valid delete choices!'; an archived file in a local domain can only be sent to the trash; an inboxed file is unaffected), recorded as delete_lock_dialog in files_trash.json (record_files_trash.py). The deletes through the Client API and the trash emptying keep their recording replay (delete_lock.json, hydrus-api tests). Test: crates/hydrus-gui/tests/gui/options_delete_lock_dialog.rs the_lock_row_decides_which_deletions_the_dialog_offers_for_archived_files_as_recorded."
    }
   },
   {
@@ -9181,10 +9181,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-09",
+    "date": "2026-10-14",
     "class": "source-restated",
-    "by": "recheck bin E session (claude/recheck-e-dupes)",
-    "note": "Untagged: the reference empties an oversized trash by taking the oldest 256 as a set and deleting in file-id order (CPython set order), hydrus-rs deletes the oldest first, so which files stay differs (DIFFERENCES.md). trash_maintenance.rs replays the recorded size scenarios and agrees on how many files go and in what group sizes, and exactly on the size boundaries (1 MiB stays, 1 MiB + 1 byte goes, 0 MB empties), but the files left in the two ordered scenarios are the hydrus-rs choice, not the reference's."
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "Untagged: the reference empties an oversized trash by taking the oldest 256 as a set and deleting in file-id order (CPython set order), hydrus-rs deletes the oldest first, so which files stay differs (DIFFERENCES.md). trash_maintenance.rs replays the recorded size scenarios and agrees on how many files go and in what group sizes, and exactly on the size boundaries (1 MiB stays, 1 MiB + 1 byte goes, 0 MB empties), but the files left in the two ordered scenarios are the hydrus-rs choice, not the reference's. Re-read 2026-10-14 (#97 phase 2, w4-r1b): left untagged. The only difference is which files go when the trash is over its size: the reference deletes the oldest 256 in CPython set order, which depends on the file ids and the set's table size; matching it would mean reproducing a hash table's iteration order, so hydrus-rs keeps deleting the oldest first (DIFFERENCES.md)."
    }
   },
   {
@@ -12424,10 +12424,10 @@
     "Scheduling cadence and FIFO fairness, other importing controls, subscriptions, and global pause controls remain outside this five-control slice. Broader Importing/page families remain Partial."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Options and Slots primitive are recorded/replayed, but the only consumer test uses URL-import file queues. The reference uses the misc slot also for simple-downloader gallery jobs (queue.rs:836, QueueKind non-gallery search at 766) and local-import pages; none of those is tested against the setting. Tests: crates/hydrus-gui/tests/gui/import_work_slots.rs:48; work_slots.rs:81; crates/hydrus-download/tests/url_queue.rs:~1002 (QueueKind::Urls file queues only)"
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "Options and Slots primitive are recorded/replayed, but the only consumer test uses URL-import file queues. The reference uses the misc slot also for simple-downloader gallery jobs (queue.rs:836, QueueKind non-gallery search at 766) and local-import pages; none of those is tested against the setting. Tests: crates/hydrus-gui/tests/gui/import_work_slots.rs:48; work_slots.rs:81; crates/hydrus-download/tests/url_queue.rs:~1002 (QueueKind::Urls file queues only) Re-read 2026-10-14 (#97 phase 2, w4-r1b): left weak. The reference gives the misc slot to the URL import page (its files and its simple-downloader gallery jobs, ClientImportSimpleURLs.py:746 and :1445) and to the local import page (ClientImportLocal.py:437); the native consumer test covers only the URL file queues, and the other two jobs' queues were not driven against the setting."
    }
   },
   {
@@ -15965,10 +15965,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives show PATH and the command window Apply (empty path then which-failure questions, bare name 'sh' asks nothing). The expected strings are literals copied from ExternalProgramsPanel.py (external_calls.json records only the empty-path question, not the which message or show-PATH text); no recording of show PATH. The reference has no file picker beyond a text box, so none is missing. Stale tracker note ('native has no picker/editor path') is false. Tests: crates/hydrus-gui/tests/gui/external_calls_editor.rs:215 executable_path_checks_and_show_path_help_match_the_reference"
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "The real call editor's command window is opened for each recorded executable path ('', a name `which` cannot find, 'sh') with each recorded sequence of answers: the questions asked on Apply (empty path, then the 'did not see it with a \"which\" call' question with the path in quotes) are the recorded strings in the recorded order, the window closes or stays exactly when the reference's UserIsOKToOK returns true or false, and a closed window leaves the path at the front of the call's command template; 'show PATH' shows the recorded wording followed by one line per PATH entry (the recording over a known PATH, the native over the real one). Reference: oracle/fixtures/external_call_editor.json (record_external_call_editor.py: the reference's real EditProcessCallExecutableAndParametersPanel, EditProcessCallPanel and EditClientExecutableCallablePanel under scripted answers). The reference has no file picker beyond the text box. Test: crates/hydrus-gui/tests/gui/external_call_editor_recorded.rs the_executable_path_questions_and_the_path_message_are_the_recorded_ones."
    }
   },
   {
@@ -15985,10 +15985,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Rule rows, the veto messages and the token edits are typed literals from the Python source (no recording of the rules panel). The String Processor part is only opened and cancelled; the processor that makes 'pre-x.png' is injected through the store, so editing a processor from the panel is not driven. Stale tracker note ('native has no pipeline rule panels') is false. Tests: crates/hydrus-gui/tests/gui/external_calls_editor.rs:62 input_rules_enable_token_and_string_processor_reach_the_saved_call"
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "Improved but still weak. The rule rows (label, enabled, token), the pipeline description, each veto message for enabling an input whose token is not in the template, renaming a token, enabling none, and an empty executable, and the string processor button's label (no string processing / the steps listed a line each; fixed here, it said 'some conversion') are now compared with the recording (untagged test the_input_rows_vetoes_and_processor_button_labels_are_the_recorded_ones). Still missing: a string processor is not edited through the child editor from the rule row (it is put in the store and the editor reopened), so the String Processor part of the leaf is half shown. Reference: oracle/fixtures/external_call_editor.json (record_external_call_editor.py: the reference's real EditProcessCallExecutableAndParametersPanel, EditProcessCallPanel and EditClientExecutableCallablePanel under scripted answers). Tagged test: external_calls_editor.rs input_rules_enable_token_and_string_processor_reach_the_saved_call. Untagged on review of #225: it stays weak, so no test carries its tag."
    }
   },
   {
@@ -16005,10 +16005,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Only a round-trip of timeout/long-lived/hide-terminal/text through Apply with typed values (defaults 15/true/true from Python, set via properties, not the reference's NoneableTimeDelta minute+second control or its min 1). Nothing exercises what reads the flags (timeout enforcement in gui-model external_calls.rs, hide terminal, text mode). No recording. Stale tracker note ('no controls writing these flags') is false. Tests: crates/hydrus-gui/tests/gui/external_calls_editor.rs:175 timeout_long_lived_terminal_and_text_flags_are_saved_on_the_process"
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "The control now matches the recording: defaults (15 s, not long-lived, hide terminal and text on), whole-second entries 1..3599 save as recorded (0 saves 1), 'this can live for a very long time' saves the marker with 15 s, the two flags toggle and reopen, and a stored timeout of an hour or more opens as the reference's widget shows it (3,600 as 3,540) after two small fixes (the box stops at 3,599; a stored hour-plus timeout reopens as the widget holds it). Still weak: the runtime that reads the flags (hydrus-gui-model run_process/test_call) is not tested for timeout enforcement or text mode, and it kills at the exact timeout where the reference checks only every 3 seconds (SubprocessCommunicate). Reference: oracle/fixtures/external_call_editor.json (record_external_call_editor.py: the reference's real EditProcessCallExecutableAndParametersPanel, EditProcessCallPanel and EditClientExecutableCallablePanel under scripted answers). Test: crates/hydrus-gui/tests/gui/external_call_editor_recorded.rs the_timeout_and_process_flags_save_and_reopen_as_the_reference_does. Untagged on review of #225: it stays weak, so no test carries its tag."
    }
   },
   {
@@ -20873,10 +20873,10 @@
     "Native options registry has no editable 'Close the main window to system tray:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "phase 2 session (blind agent)",
-    "note": "system_tray.rs:292 closing_hides_the_window_to_the_icon_instead_of_exiting sets the real Options row and checks that close requests hide the window, the show entry restores it, File > exit and the icon's exit still ask, and the default still asks. The host is a recording stand-in and the expectations are literals from the Python source."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "The Options row is set in the real window (every recorded case: tray available or not, option on or off) and the real main window's close request is dispatched: whether the window hides to the icon, whether the icon is shown and whether the exit question is asked equal the four recorded 'close' cases. Real tray hosts are not exercised on either side: the reference was recorded with QSystemTrayIcon availability and visibility scripted (oracle/record_system_tray.py, system_tray.json), and the native host here is a recording stand-in; the Options row is set in the real window and the real main window's close/start/minimise handling is driven. Test: crates/hydrus-gui/tests/gui/system_tray.rs the_close_button_follows_the_reference_s_recorded_cases."
    }
   },
   {
@@ -20894,10 +20894,10 @@
     "Native options registry has no editable 'Minimise the main window to system tray:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-09",
-    "class": "source-restated",
-    "by": "Claude, options-shell-leftovers",
-    "note": "GUI test system_tray.rs minimising_hides_the_window_to_the_icon_where_the_window_system_reports_it drives the real tray controller (option read, window hidden to the icon, restored with its prior state on show, nothing hidden with no tray) with Slint's own minimised state in the headless platform; winit's is_minimized (X11/Windows/macOS, not Wayland) and a real window manager are not exercised, and the reference's two BUGFIX switches have no counterpart (DIFFERENCES.md, System tray). The expected behaviour follows the reference's source (ClientGUI.changeEvent / _SystemTrayHide); there is no recording of it."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "The four recorded 'minimise' cases without the reference's two workaround switches (bugfix 'none'; the other eight have no native counterpart, DIFFERENCES.md): the option is set in the real window, the maximised window is minimised, and whether it hides to the icon, whether the icon shows and (when hidden) that showing it again from the icon brings it back maximised and not minimised equal the recording. Slint's own minimised state is driven in the headless platform, not winit's is_minimized (Wayland does not answer it). Real tray hosts are not exercised on either side: the reference was recorded with QSystemTrayIcon availability and visibility scripted (oracle/record_system_tray.py, system_tray.json), and the native host here is a recording stand-in; the Options row is set in the real window and the real main window's close/start/minimise handling is driven. Test: crates/hydrus-gui/tests/gui/system_tray.rs minimising_follows_the_reference_s_recorded_cases."
    }
   },
   {
@@ -20915,10 +20915,10 @@
     "Native options registry has no editable 'Start the client minimised to system tray:' control in this page/box path."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "phase 2 session (blind agent)",
-    "note": "system_tray.rs:353 a_client_starts_hidden_in_the_icon_when_told_to_and_a_tray_is_there sets the option through the real Options window, restarts and checks the window starts hidden with the icon, a click shows it, and with no tray or the option off the window is shown. The tray host is a stand-in and the expectations are restated from the source."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (#97 phase 2, w4-r1b)",
+    "note": "For each of the four recorded 'start' cases the option is set in the real Options window, the client restarted (a new main window on the same store), and whether the window starts hidden, whether it is visible and whether the icon is shown equal the recording. Real tray hosts are not exercised on either side: the reference was recorded with QSystemTrayIcon availability and visibility scripted (oracle/record_system_tray.py, system_tray.json), and the native host here is a recording stand-in; the Options row is set in the real window and the real main window's close/start/minimise handling is driven. Test: crates/hydrus-gui/tests/gui/system_tray.rs starting_follows_the_reference_s_recorded_cases."
    }
   },
   {

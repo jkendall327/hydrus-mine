@@ -159,6 +159,29 @@ def record(session):
                 physical=E.EditDeleteFilesPanel(c.gui,[M.MediaSingle(result)],'Deleted from Preview or Media Viewer.');panels.append(physical)
                 physical._action_radio.Select(0);physical._UpdateControls();physical.GetValue()
                 out['physical_remember'].append({'before':previous,'after':c.new_options.GetNoneableString('last_advanced_file_deletion_special_action')})
+            # the archived-file delete lock: which deletions the dialog offers for an
+            # archived or an inboxed file, in the trash and in a local domain
+            out['delete_lock_dialog']=[]
+            old_lock=c.new_options.GetBoolean('delete_lock_for_archived_files')
+            try:
+                for lock in (False,True):
+                    c.new_options.SetBoolean('delete_lock_for_archived_files',lock)
+                    for where in ('trash','local domain'):
+                        for inbox in (True,False):
+                            result=single.Duplicate();lm=result.GetLocationsManager();lm.inbox=inbox
+                            if where=='trash': lm._current={CC.TRASH_SERVICE_KEY,CC.HYDRUS_LOCAL_FILE_STORAGE_SERVICE_KEY}
+                            item={'lock':lock,'where':where,'inbox':inbox}
+                            try:
+                                locked_dialog=E.EditDeleteFilesPanel(c.gui,[M.MediaSingle(result)],'Deleted from Preview or Media Viewer.');panels.append(locked_dialog)
+                                locked_dialog.show();QW.QApplication.processEvents()
+                                item['actions']=[b.text() for b in locked_dialog._action_radio._radio_buttons]
+                                item['resolved']=locked_dialog.QuestionIsAlreadyResolved()
+                                locked_dialog.hide()
+                            except Exception as e:
+                                item['error']=type(e).__name__+': '+str(e)
+                            out['delete_lock_dialog'].append(item)
+            finally:
+                c.new_options.SetBoolean('delete_lock_for_archived_files',old_lock)
             mixed_dialog.hide()
             dialog.grab().save(os.path.join(HERE,'fixtures/files_trash_delete.png'));dialog.hide()
             panel.resize(1150,850); panel.show(); QW.QApplication.processEvents()
