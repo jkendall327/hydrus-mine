@@ -862,8 +862,9 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   the `NO_PROXY` environment variable), so with an http proxy set its requests
   to every host, a host named in the option and the local host included, go
   through the proxy (`oracle/record_network_job_options.py`). hydrus-rs keeps
-  those hosts direct, as the label says. The leaf is left as it was for that
-  reason.
+  those hosts direct, as the label says. The owner decided (2026-10-14) that
+  ours stands; the leaf is tagged on the test that replays the rest of the
+  recording and asserts this difference.
 - **Retry waits read as the reference's do.** A wait before a retry (a failed
   connection, a 503, a 429) shows "... - retrying now" or "... - retrying in
   4.7 seconds", renewed each second, and runs on into the second after its
@@ -3123,7 +3124,7 @@ while it runs (the reference turns off only the one clicked). A test call's
 results and errors are the reference's (`Looks good!`, its
 `ExecutableException` and `BadReturnCodeException` texts with Python's list and
 string quoting, and the first 256 characters of the program's output);
-timeouts and cancellation say so in hydrus-rs's words. Cancellation owns/reaps
+a timeout is reported in the reference's words too (W5-2; hydrus-rs stops the call at its timeout, not at the reference's 3-second check), cancellation says so in hydrus-rs's words. Cancellation owns/reaps
 the direct child only; descendant process groups are not claimed. Ordinary
 executable arguments use the process API; batch/shell interpreters retain their
 own quoting semantics.
@@ -5311,3 +5312,29 @@ be diagnosed afterwards. The owner chose always-on crash logging (2026-10-14).
   one process; here the client shows the popup and resets its idle timer, and
   the daemon (which owns the network engine and subscriptions) is asked to see a
   wake too, within about a second (that request is not tested end to end).
+
+## External call process options and the processor editor (W5-2, 2026-10-14)
+
+- **A call is stopped at its timeout.** The reference checks every 3 seconds
+  (`SubprocessCommunicate`), so a call is stopped between its timeout and 3
+  seconds after; hydrus-rs stops it at the timeout (the owner kept that). The
+  report is the reference's. A stray child that keeps the pipes open after a
+  timeout is not waited for, where the reference waits two seconds and then
+  reports a possible zombie in the stderr part.
+- **The rule row's string processor editor starts from the row's test
+  input**, the value typed in the testing box (the parameter's example until
+  it is changed); the reference always starts from the parameter's fixed
+  example value.
+- **Output is quoted as the text flag says**, as in the reference: text mode
+  as text (invalid UTF-8 replaced), otherwise as bytes. Hide terminal acts only
+  on Windows, as in the reference; deferred.
+- **The maximum size of the trash** is trimmed oldest first; the reference's
+  oldest 256 are deleted in CPython set order, so which files stay differs
+  (the owner decided ours stands, 2026-10-14).
+- **Processing steps: export to PNG and paste.** Export to PNG is the shared
+  exchange window (a path and save), not the reference's `PNGExportPanel` with
+  title, description and width fields. Paste opens a review before adding, and
+  failures show inline in it (the reference adds at once, says "N objects
+  added!", and shows a "Problem pasting!" or "Clipboard Error!" dialog). The
+  string processor's export button does nothing without a selection, as in the
+  reference.

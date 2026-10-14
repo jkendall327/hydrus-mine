@@ -5787,8 +5787,8 @@
    "recheck": {
     "date": "2026-10-14",
     "class": "weak",
-    "by": "Claude session (#185)",
-    "note": "Untagged. A bare string processor is now one nested step, as the reference appends it (#185): crates/hydrus-gui/tests/gui/sidecars.rs processing_exchange_appends_the_steps_of_a_mixed_package_and_warns_as_the_reference_does replays all of oracle/record_processing_exchange_mixed.py through the window (the mixed list, nothing permitted, the PNG, and the bare processor: 'Append 1 processing steps', then an empty example output), and interchange.rs checks the codec against it, including export of the nested step. Still missing: exporting selected steps through the window is not compared with a recording of the reference's export (the recorder only covers import), and paste is not recorded separately."
+    "by": "Claude session (wave 5, W5-2)",
+    "note": "Untagged. crates/hydrus-gui/tests/gui/processing_exchange.rs replays oracle/fixtures/processing_exchange_export.json (oracle/record_processing_exchange_export.py) through the window: exporting no step does nothing, one, two selected out of order, and all give the reference's clipboard JSON in queue order; the PNG of a selection decodes to the reference's objects; and pastes of a list and a single step, an empty clipboard and text that is not a package leave the queue and the example output as recorded. Still missing: the reference's PNG export panel (title, description and width fields, path remembered) is a shared window here, and paste adds after a review step with its own wording where the reference adds at once ('N objects added!'); the failure messages (the 'Problem pasting!' and 'Clipboard Error!' dialogs) are not ported."
    }
   },
   {
@@ -6952,10 +6952,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "The recording (oracle/fixtures/network_job_options.json) shows that the reference does not apply this option (its own panel says \"NO_PROXY DOES NOT WORK UNLESS YOU HAVE A CUSTOM BUILD OF REQUESTS\"): with an http proxy set, requests to a host named in no_proxy, and to the local host, still went through the proxy, because requests reads no_proxy only from the environment, not from the session's proxies dictionary. hydrus-rs honours it (hosts named in it go direct, tested in network_consumers::the_http_proxy_and_the_hosts_it_is_not_used_for_decide_where_requests_go, untagged). DIFFERENCES.md has the line; making the leaf sound would mean copying the reference's bug, which is the owner's call."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-2)",
+    "note": "A recorded difference, not a copy of the reference's bug (DECISIONS.md 2026-10-14): the reference ignores no_proxy (requests reads it only from the environment) and hydrus-rs honours it. crates/hydrus-gui/tests/gui/options_system_consumers.rs no_proxy_hosts_go_direct_where_the_reference_sent_them_through_the_proxy replays the 'proxy' cases of oracle/fixtures/network_job_options.json through the options window and a real NetEngine: a host not in no_proxy goes through the proxy as recorded, and the host named in no_proxy and the local host go direct where the reference asked the proxy. The control and Apply are covered by the earlier Qt-recording comparison."
    }
   },
   {
@@ -9190,9 +9190,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "source-restated",
-    "by": "Claude session (#97 phase 2, w4-r1b)",
-    "note": "Untagged: the reference empties an oversized trash by taking the oldest 256 as a set and deleting in file-id order (CPython set order), hydrus-rs deletes the oldest first, so which files stay differs (DIFFERENCES.md). trash_maintenance.rs replays the recorded size scenarios and agrees on how many files go and in what group sizes, and exactly on the size boundaries (1 MiB stays, 1 MiB + 1 byte goes, 0 MB empties), but the files left in the two ordered scenarios are the hydrus-rs choice, not the reference's. Re-read 2026-10-14 (#97 phase 2, w4-r1b): left untagged. The only difference is which files go when the trash is over its size: the reference deletes the oldest 256 in CPython set order, which depends on the file ids and the set's table size; matching it would mean reproducing a hash table's iteration order, so hydrus-rs keeps deleting the oldest first (DIFFERENCES.md)."
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-2)",
+    "note": "A recorded difference (DECISIONS.md 2026-10-14): the reference trims an oversized trash with the oldest 256 taken as a set and deleted in CPython set order; hydrus-rs deletes the oldest first. crates/hydrus-gui/tests/gui/trash_maintenance.rs trash_limits_delete_what_the_reference_deletes replays all nine scenarios of oracle/fixtures/trash_maintenance.json through the real options window and maintenance runtime: how many files are deleted and left in each scenario, and the size boundaries (1 MiB stays, 1 MiB + 1 byte goes, 0 MB empties) agree with the recording (the group sizes of the two ordered scenarios are checked against literals taken from it), and in the two scenarios where it shows, the files left are asserted to differ from the reference's."
    }
   },
   {
@@ -16027,9 +16027,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "weak",
-    "by": "Claude session (#97 phase 2, w4-r1b)",
-    "note": "Improved but still weak. The rule rows (label, enabled, token), the pipeline description, each veto message for enabling an input whose token is not in the template, renaming a token, enabling none, and an empty executable, and the string processor button's label (no string processing / the steps listed a line each; fixed here, it said 'some conversion') are now compared with the recording (untagged test the_input_rows_vetoes_and_processor_button_labels_are_the_recorded_ones). Still missing: a string processor is not edited through the child editor from the rule row (it is put in the store and the editor reopened), so the String Processor part of the leaf is half shown. Reference: oracle/fixtures/external_call_editor.json (record_external_call_editor.py: the reference's real EditProcessCallExecutableAndParametersPanel, EditProcessCallPanel and EditClientExecutableCallablePanel under scripted answers). Tagged test: external_calls_editor.rs input_rules_enable_token_and_string_processor_reach_the_saved_call. Untagged on review of #225: it stays weak, so no test carries its tag."
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-2)",
+    "note": "The rule row's string processor button is driven through the real child editor for each of the four rows of 'send single file' (crates/hydrus-gui/tests/gui/external_call_editor_recorded.rs the_rule_rows_string_processor_button_opens_the_child_editor_as_the_reference_does): it opens with the parameter's example value as the starting string and no steps, cancelling leaves the row's label, a step applied reaches the row's button label, and a step added then cancelled changes nothing; compared with rules.child_editor of oracle/fixtures/external_call_editor.json (oracle/record_external_call_editor.py, the reference's own StringProcessorButton dialog scripted). The step is put in through the editor's import where the recording adds it directly to the queue. Rows (label, enable flag, token), vetoes and button labels are proved by the_input_rows_vetoes_and_processor_button_labels_are_the_recorded_ones (also tagged), against the same recording. Difference (DIFFERENCES.md): the child editor starts from the row's test input here, where the reference always starts from the parameter's fixed example value."
    }
   },
   {
@@ -16047,9 +16047,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "weak",
-    "by": "Claude session (#97 phase 2, w4-r1b)",
-    "note": "The control now matches the recording: defaults (15 s, not long-lived, hide terminal and text on), whole-second entries 1..3599 save as recorded (0 saves 1), 'this can live for a very long time' saves the marker with 15 s, the two flags toggle and reopen, and a stored timeout of an hour or more opens as the reference's widget shows it (3,600 as 3,540) after two small fixes (the box stops at 3,599; a stored hour-plus timeout reopens as the widget holds it). Still weak: the runtime that reads the flags (hydrus-gui-model run_process/test_call) is not tested for timeout enforcement or text mode, and it kills at the exact timeout where the reference checks only every 3 seconds (SubprocessCommunicate). Reference: oracle/fixtures/external_call_editor.json (record_external_call_editor.py: the reference's real EditProcessCallExecutableAndParametersPanel, EditProcessCallPanel and EditClientExecutableCallablePanel under scripted answers). Test: crates/hydrus-gui/tests/gui/external_call_editor_recorded.rs the_timeout_and_process_flags_save_and_reopen_as_the_reference_does. Untagged on review of #225: it stays weak, so no test carries its tag."
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-2)",
+    "note": "The process options at work, through the real editor's test box and the real launch path (crates/hydrus-gui/tests/gui/external_call_tests.rs the_process_options_decide_how_a_call_runs_as_the_reference_does), compared with oracle/fixtures/external_call_process_options.json (oracle/record_external_call_process_options.py: the reference's TestCallablePanel and ExecutableLocalProcessCall.Call on sh scripts): a call outliving its timeout is stopped with the reference's exact report (hydrus-rs stops it at the timeout, the reference at its 3-second check; the test accepts t to t+3 s as the owner decided), output quoted as text with replacement characters, or as bytes when text mode is off, the box's forced 15-second timeout and 'forcing' interim text for a long-lived call, a failing long-lived call reported in the box, a long-lived launch returning at once and left running, and the terminal flag changing nothing on Linux. Not claimed: hide terminal's effect on Windows (deferred); a stray child that keeps the pipes open after a timeout is not waited for, where the reference reports a zombie message."
    }
   },
   {

@@ -2644,6 +2644,72 @@ mod network_consumers {
         );
     }
 
+    // leaf: audit-options-connection-proxy-settings-no-proxy
+    // The reference ignores this option (requests reads no_proxy only from the environment), and
+    // hydrus-rs honours it: a recorded difference (DECISIONS.md, 2026-10-14). The test replays the
+    // recording's proxy cases through the options window and asserts both sides of the difference:
+    // what the reference did (from the recording) and what hydrus-rs does instead.
+    #[tokio::test]
+    async fn no_proxy_hosts_go_direct_where_the_reference_sent_them_through_the_proxy() {
+        let (client, engine) = with_engine();
+        let (base, hits) = serve().await;
+        let recording = recorded();
+        let cases = recording["proxy"].as_array().unwrap();
+        let named = |name: &str| cases.iter().find(|c| c["case"] == name).unwrap();
+        let other = named("http proxy, other host");
+        let listed = named("http proxy, host in no_proxy");
+        let local = named("http proxy, host in default no_proxy");
+        // the reference sent the host named in no_proxy, and the local host, through the proxy
+        assert_eq!(listed["proxy_asked"], 1);
+        assert_eq!(listed["text"], "http://booru.invalid/uri");
+        assert_eq!(local["direct_asked"], 0);
+
+        // a host not in no_proxy goes through the proxy, as recorded
+        apply(&client, &engine, |w| {
+            noneable_text(w, "http: ", Some(&base));
+            noneable_text(w, "no_proxy: ", Some("127.0.0.1,example.invalid"));
+        });
+        let text = engine
+            .fetch(&Request::get("http://booru.invalid/uri"), &Job::new())
+            .await
+            .unwrap()
+            .text();
+        assert_eq!(text, other["text"].as_str().unwrap());
+        assert_eq!(
+            hits.count("uri") as u64,
+            other["proxy_asked"].as_u64().unwrap()
+        );
+
+        // the local host in no_proxy: the reference still used the proxy (the recorded text is the
+        // whole URL and the host was not asked); hydrus-rs asks the host itself
+        let direct = engine
+            .fetch(&Request::get(format!("{base}/uri")), &Job::new())
+            .await
+            .unwrap()
+            .text();
+        assert!(local["text"].as_str().unwrap().starts_with("http://"));
+        assert_eq!(direct, "/uri", "hydrus-rs asked the host, not the proxy");
+
+        // the named host: the reference asked the proxy (proxy_asked 1); hydrus-rs does not
+        apply(&client, &engine, |w| {
+            noneable_text(w, "no_proxy: ", Some("booru.invalid"));
+            number(
+                w,
+                "max connection attempts allowed per request: ",
+                (1, 10),
+                1,
+            );
+        });
+        let before = hits.count("uri");
+        let fetched = fetch(&engine, "http://booru.invalid/uri").await;
+        assert!(
+            matches!(fetched.result, Err(NetError::Connection(_))),
+            "{:?}",
+            fetched.result
+        );
+        assert_eq!(hits.count("uri"), before, "the proxy was not asked");
+    }
+
     // leaf: audit-options-connection-proxy-settings-https
     #[tokio::test]
     async fn the_https_proxy_is_asked_to_connect_as_the_reference_asks_it() {

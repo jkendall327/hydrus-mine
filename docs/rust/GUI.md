@@ -5794,3 +5794,17 @@ it past 512 KiB it is moved to `client crash.log.old` (replacing the earlier
 one), so the two files stay under about 1 MiB. Panics on `serve`'s tokio
 tasks and blocking jobs are logged too: the runtime catches them, but the
 panic hook runs first.
+
+## External calls and processing steps: what now works (W5-2)
+
+- The external call editor's rule rows open the string processor editor from
+  their button, starting from the row's test input (the parameter's example until it is changed). A step
+  applied there shows in the row's button and the command preview; cancelling
+  leaves the row alone.
+- A call's timeout, "this can live for a very long time" and output-is-text
+  settings act as in the reference: a call that outlives its timeout is
+  stopped and reported with the reference's words, output is quoted as text or
+  bytes, a long-lived launch returns at once and is left running, and 'test
+  call!' forces a 15-second timeout on a long-lived call.
+- The string processor editor's export puts the selected steps, in queue
+  order, on the clipboard or in a PNG; with nothing selected it does nothing.
