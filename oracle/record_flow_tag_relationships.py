@@ -349,6 +349,11 @@ def record( session ):
 
         ac = page.GetSidebar()._tag_autocomplete
 
+        # (cleared first, so the rows read are for this text and not the last)
+        qt( lambda: ac._text_ctrl.setText( '' ) )
+
+        time.sleep( 2.0 )
+
         qt( lambda: ac._text_ctrl.setText( text ) )
 
         # (the dropdown fetches after a pause, in a thread; a sibling's old tag
@@ -359,7 +364,7 @@ def record( session ):
 
             box = ac._search_results_list
 
-            return [ { 'predicate' : t.GetPredicate().ToString( with_count = True ), 'rows' : [ ''.join( x[0] for x in row ) for row in t.GetRowsOfPresentationTextsWithNamespaces( True, box._show_sibling_decorators, ' → ', None, box._show_parent_decorators, box._show_parent_decorators and box._extra_parent_rows_allowed ) ] } for t in box._ordered_terms if any( word in t.GetPredicate().ToString( with_count = False ) for word in MINE ) ]
+            return [ { 'predicate' : t.GetPredicate().ToString( with_count = True ), 'rows' : [ ''.join( x[0] for x in row ) for row in t.GetRowsOfPresentationTextsWithNamespaces( True, box._show_sibling_decorators, ' → ', None, box._show_parent_decorators, box._show_parent_decorators and box._extra_parent_rows_allowed ) ] } for t in box._ordered_terms if t.GetPredicate().ToString( with_count = False ) in MINE ]
 
 
         return qt( rows )

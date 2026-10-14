@@ -25,7 +25,7 @@ const KNOWN: &[Known] = &[Known {
     // synced", "set to sync all the time in the background"); hydrus-rs
     // applies them as it writes
     path: "/dialog/sync status",
-    why: "Tags > sync: the siblings and parents windows' status line",
+    why: "Tags > sync",
 }];
 
 /// tags > siblings or parents, opened through the menu.
@@ -217,11 +217,9 @@ fn siblings_and_parents_reach_tags_and_search_as_the_reference_does() {
         let suggestions = manage.get_suggestions();
         let exact = suggestions
             .iter()
-            .position(|s| s.text == tag || s.text.starts_with(&format!("{tag} \u{2192} ")));
-        match exact {
-            Some(i) => manage.invoke_suggestion_chosen(i32::try_from(i).unwrap()),
-            None => manage.invoke_entered(),
-        }
+            .position(|s| s.text == tag || s.text.starts_with(&format!("{tag} \u{2192} ")))
+            .expect("a suggestion for the tag itself");
+        manage.invoke_suggestion_chosen(i32::try_from(exact).unwrap());
         manage.invoke_apply();
         widgets::settle();
     }
@@ -243,19 +241,31 @@ fn siblings_and_parents_reach_tags_and_search_as_the_reference_does() {
         );
     }
     let mut typed = serde_json::Map::new();
+    // this flow's rows among the suggestions: the tag, without its count
+    let ours = |ui: &MainWindow| -> Vec<String> {
+        ui.get_suggestions()
+            .iter()
+            .map(|r| r.text.to_string())
+            .filter(|t| mine_tags.contains(&t.split(" (").next().unwrap()))
+            .collect()
+    };
     for text in ["dog", "doggo", "ani"] {
+        // the list cleared first, so the rows read are for this text
+        ui.invoke_search_edited("".into());
+        let until = std::time::Instant::now() + std::time::Duration::from_secs(5);
+        while !ours(&ui).is_empty() && std::time::Instant::now() < until {
+            widgets::settle();
+        }
+        assert!(ours(&ui).is_empty(), "the dropdown cleared before {text}");
         ui.invoke_search_edited(text.into());
         // (the dropdown fetches after a short pause, as the reference's does)
         let until = std::time::Instant::now() + std::time::Duration::from_secs(5);
-        while ui.get_suggestions().row_count() == 0 && std::time::Instant::now() < until {
+        while ours(&ui).is_empty() && std::time::Instant::now() < until {
             widgets::settle();
         }
         widgets::settle();
-        let rows: Vec<Json> = ui
-            .get_suggestions()
-            .iter()
-            .map(|r| r.text.to_string())
-            .filter(|t| mine_tags.iter().any(|m| t.starts_with(m)))
+        let rows: Vec<Json> = ours(&ui)
+            .into_iter()
             .map(|t| json!({"predicate": t, "rows": [t]}))
             .collect();
         typed.insert(text.to_owned(), Json::Array(rows));

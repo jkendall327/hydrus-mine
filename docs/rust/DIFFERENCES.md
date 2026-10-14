@@ -1085,6 +1085,14 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   rather than in background work. Their boxes lack the reference's one-line
   explanations, aren't collapsible, and aren't imported from a legacy
   client's options.
+- **Tags > autocomplete for one or two characters**: the search dropdown
+  lists only exact matches for text of up to the "do-not-autocomplete
+  threshold" (two characters), so `d` and `do` list nothing for a tag
+  `dog`. The reference's dropdown listed `dog` for both in
+  `record_flow_tag_relationships.py`, though its own exact-match database
+  search for them returns nothing and its threshold says the same; the
+  recorder could not find why (a stale list is the likeliest). Texts longer
+  than the threshold match as the reference's do.
 - **Tags > sync**: hydrus-rs applies siblings and parents as it writes, so
   "sync now" always finds nothing to do, and its idle/normal switches are
   kept without a background-work consumer. The review reports each service's
