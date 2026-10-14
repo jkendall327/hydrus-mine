@@ -29,14 +29,16 @@ pub enum WaitReason {
 }
 
 impl WaitReason {
-    /// The phase shown in the current-jobs list. Bandwidth, login and running
-    /// are the reference's own words (`job_status_str_lookup`); the others
-    /// are states the reference has no position for.
+    /// The phase shown in the current-jobs list. The reference's five
+    /// positions (`job_status_str_lookup`) are native phases too: waiting for
+    /// a free work slot (before the engine takes the job), for validation
+    /// (the header approval question), for bandwidth, for login and running.
+    /// The others are states the reference has no position for.
     pub const fn label(self) -> &'static str {
         match self {
-            Self::Engine => "waiting for engine",
+            Self::Engine => "waiting for free work slot",
             Self::Paused => "network paused",
-            Self::Headers => "header approval",
+            Self::Headers => "waiting for validation",
             Self::Wake => "computer waking",
             Self::Bandwidth => "waiting for bandwidth",
             Self::Domain => "domain errors",

@@ -2678,7 +2678,13 @@ mod reload_tests {
             .await
             .unwrap()
             .unwrap();
-        assert!(engine.domain_ok(url));
+        // (the reference's job passed `DomainOK` after the cog's scrub:
+        // `network_job_control.json` actions.retry[2])
+        let recorded = hydrus_testkit::fixture_json("network_job_control.json");
+        assert_eq!(
+            engine.domain_ok(url),
+            recorded["actions"]["retry"][2].as_bool().unwrap()
+        );
         assert!(!engine.domain_ok("https://other.example.net/unrelated"));
     }
 

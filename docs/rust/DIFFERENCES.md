@@ -1748,10 +1748,13 @@ expiry disables stale controls and saved bandwidth history remains available.
 The jobs window's refresh control is the reference's: "manual refresh" to begin
 with, or a snapshot every so many seconds (never under 0.05; the reference's
 interval is minutes, seconds and milliseconds boxes, native's one number of
-seconds). The jobs list's position column says "waiting for bandwidth", "waiting for
-login" and "running" as the reference does (its positions "waiting for
-validation" and "waiting for free work slot" have no native counterpart), and
-its other waits are native's own; the speed column is titled "current speed" as
+seconds). The jobs list's position column says "waiting for validation" (a job at the
+header approval question), "waiting for bandwidth", "waiting for login",
+"waiting for free work slot" (before the engine takes the job) and "running" as
+the reference does, all five replayed against `network_data.json`; native's other
+waits (paused, waking, domain errors, gallery token, connection retry, server
+bandwidth) are its own, where the reference shows those jobs at "waiting for
+bandwidth"; the speed column is titled "current speed" as
 the reference's is. A job's right-click menu is the reference's (recorded in
 `oracle/fixtures/network_jobs_panel.json`), with these differences: a job has one
 typed wait, so "waiting on connection error" and "waiting on serverside bandwidth"

@@ -140,12 +140,14 @@ fn every_request_is_a_row_with_its_typed_wait_speed_bytes_and_contexts() {
     }
 }
 
+// leaf: audit-network-jobs-waits
 #[test]
 fn rows_for_the_waits_the_reference_names_read_as_its_jobs_panel_reads() {
     // `oracle/fixtures/network_data.json` "job_rows": the real jobs panel on
     // jobs at each of its five positions, one at 2 KB/s with 2 KB of 4 KB
-    // read. The native engine's waits for bandwidth, login and running are
-    // those positions; its other waits are its own (DIFFERENCES.md).
+    // read. The native engine's waits for validation (header approval), a
+    // free work slot, bandwidth, login and running are those positions; its
+    // other waits are its own (DIFFERENCES.md).
     let recorded = hydrus_testkit::fixture_json("network_data.json");
     let _headless = headless::init();
     let slots = windows::Slots::default();
@@ -153,8 +155,10 @@ fn rows_for_the_waits_the_reference_names_read_as_its_jobs_panel_reads() {
     let store = Store::open(dir.path()).unwrap();
     let now = TimestampMs::now().millis() / 1000;
     let mapped = [
+        (0, WaitReason::Headers),
         (1, WaitReason::Bandwidth),
         (2, WaitReason::Login),
+        (3, WaitReason::Engine),
         (4, WaitReason::Downloading),
     ];
     let jobs: Vec<NetworkJob> = mapped

@@ -1216,6 +1216,11 @@ async fn runtime_cog_server_retry_domain_scrub_and_retained_error() {
         !s.engine
             .runtime_command(&command(JobAction::OverrideConnectionWait))
     );
+    // the reference's job reported waiting on serverside bandwidth before the
+    // cog's action and not after (`network_job_control.json` actions.retry[1])
+    let recorded = hydrus_testkit::fixture_json("network_job_control.json");
+    let after = |i: usize| recorded["actions"]["retry"][i].as_bool().unwrap();
+    assert!(job.state().wait == WaitReason::ServerBandwidth);
     assert!(
         s.engine
             .runtime_command(&command(JobAction::OverrideServerBandwidthWait))
@@ -1224,6 +1229,7 @@ async fn runtime_cog_server_retry_domain_scrub_and_retained_error() {
         .await
         .unwrap()
         .unwrap();
+    assert_eq!(job.state().wait == WaitReason::ServerBandwidth, after(1));
     assert_eq!(s.server.hits.lock().get("429long"), Some(&2));
     assert!(!s.engine.runtime_command(&command(JobAction::Cancel)));
 
@@ -1298,11 +1304,26 @@ async fn runtime_cog_gallery_override_does_not_release_other_gallery_waiters() {
     assert_eq!(snapshot.jobs.len(), 2);
     assert!(snapshot.jobs.iter().all(|j| j.wait == WaitReason::Gallery));
     assert!(snapshot.controls.iter().all(|c| c.gallery));
+    // tokens were not ok before the cog's action (the recorded 'waiting' menu)
+    // and are after it (`network_job_control.json` actions.retry[3])
+    let recorded = hydrus_testkit::fixture_json("network_job_control.json");
+    assert!(snapshot.controls.iter().all(|c| !c.tokens_ok));
+    let overridden = snapshot.jobs[0].id;
     assert!(engine.runtime_command(&Command {
         epoch: snapshot.epoch.clone(),
-        job: snapshot.jobs[0].id,
+        job: overridden,
         action: JobAction::OverrideGalleryWait
     }));
+    assert_eq!(
+        engine
+            .runtime_snapshot()
+            .controls
+            .iter()
+            .find(|c| c.id == overridden)
+            .unwrap()
+            .tokens_ok,
+        recorded["actions"]["retry"][3].as_bool().unwrap()
+    );
     // IDs are insertion-ordered in the registry. The override goes to one request.
     let completed = tokio::time::timeout(std::time::Duration::from_secs(1), async {
         tokio::select! { result = &mut fetch => result, result = &mut waiting => result }
@@ -1371,17 +1392,24 @@ async fn runtime_cog_connection_override_releases_only_the_current_retry() {
         assert!(start.elapsed() < std::time::Duration::from_secs(2));
     }
     let snapshot = engine.runtime_snapshot();
+    let recorded = hydrus_testkit::fixture_json("network_job_control.json");
     assert!(engine.runtime_command(&Command {
         epoch: snapshot.epoch,
         job: snapshot.jobs[0].id,
         action: JobAction::OverrideConnectionWait
     }));
+    // (the reference's job no longer waited on its connection error after
+    // the cog's action: `network_job_control.json` actions.retry[0])
     let result = tokio::time::timeout(std::time::Duration::from_secs(1), fetch).await;
     peer.abort();
     let error = result
         .expect("connection override must release the retry before its 60-second delay")
         .unwrap_err();
     assert!(matches!(error, NetError::Connection(_)));
+    assert_eq!(
+        job.state().wait == WaitReason::Connection,
+        recorded["actions"]["retry"][0].as_bool().unwrap()
+    );
     assert_eq!(
         attempts.load(Ordering::SeqCst),
         2,

@@ -5381,10 +5381,10 @@
     "Rows reflect all engine requests; selected detail reports contexts and bandwidth obedience."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Recorded rows (network_data.json, the real jobs panel) now compared through the real window: the position words for bandwidth, login and running are the reference's ('waiting for bandwidth', 'waiting for login', 'running'; native's labels were different, fixed), the speed column is titled 'current speed' as recorded (was 'speed'), and the speed/progress cells match for 2 KB/s with 2 KB of 4 KB. The reference's positions 'waiting for validation' and 'waiting for free work slot' have no native wait, and native's other eight waits are an extension with nothing to record; those and the selected-job contexts are still checked only against native values. Tests: crates/hydrus-gui/tests/gui/network_jobs_rows.rs every_request_is_a_row_with_its_typed_wait_speed_bytes_and_contexts (tagged); rows_for_the_waits_the_reference_names_read_as_its_jobs_panel_reads (untagged: three of the reference's five positions) W5-12 2026-10-14: the selected job's contexts are now compared with the reference's menu (network_jobs_panel.json); the two reference positions without a native wait remain, so the class is unchanged."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "W5-12 session (wave 5)",
+    "note": "All five of the reference's positions (waiting for validation, bandwidth, login, free work slot, running) are now native waits (Headers and Engine renamed to the reference's words) and their rows, with the 2 KB/s speed and 2 KB of 4 KB progress cells, are replayed against network_data.json (the real jobs panel). The selected job's contexts are replayed against network_jobs_panel.json (the job menu; see network-job-actions). Native's other six waits are an extension with no reference counterpart; every_request_is_a_row... drives them through the real window (native-only, DECISIONS.md 2026-10-14). Tests: crates/hydrus-gui/tests/gui/network_jobs_rows.rs rows_for_the_waits_the_reference_names_read_as_its_jobs_panel_reads, every_request_is_a_row_with_its_typed_wait_speed_bytes_and_contexts."
    }
   },
   {
