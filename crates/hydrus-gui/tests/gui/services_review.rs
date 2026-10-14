@@ -56,8 +56,31 @@ fn services_menu_opens_review_and_refreshes() {
     assert!(window.get_trash_service());
     window.invoke_selected_service(i32::try_from(index).unwrap());
     assert!(window.get_unavailable().is_empty());
-    window.invoke_show_id();
-    assert!(window.get_database_id().starts_with("service id: "));
+    // The id button shows each service's database id in the reference's words; the ids are
+    // the reference's own (services.json, read from its database).
+    let recorded = hydrus_testkit::fixture_json("services.json");
+    let before = window.get_selected();
+    let mut matched = 0;
+    for row in recorded["rows"].as_array().unwrap() {
+        let name = row["row"][0].as_str().unwrap();
+        let Some(position) = window
+            .get_services()
+            .iter()
+            .position(|s| s.ends_with(&format!(": {name}")))
+        else {
+            continue;
+        };
+        matched += 1;
+        window.invoke_selected_service(i32::try_from(position).unwrap());
+        window.invoke_show_id();
+        assert_eq!(
+            window.get_database_id(),
+            format!("The service id is: {}", row["service_id"]).as_str(),
+            "{name}"
+        );
+    }
+    assert!(matched >= 10, "only {matched} recorded services compared");
+    window.invoke_selected_service(before);
     let copied = std::rc::Rc::new(std::cell::RefCell::new(Vec::new()));
     hydrus_gui::set_clipper({
         let copied = copied.clone();

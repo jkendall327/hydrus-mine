@@ -104,7 +104,65 @@ def child_gate(db_dir, out):
         json.dump({'events': events, 'unanswered': answers, **booted}, f)
 
 
+def child_cancel(db_dir, out):
+    # the same boot, the real password dialog put up and its real cancel
+    # button clicked (`EnterText` then raises `CancelledException`, which
+    # `InitView` turns into a `DBCredentialsException`, ending the boot)
+    import hydrus_driver
+    from qtpy import QtCore as C
+    from qtpy import QtWidgets as W
+    from hydrus.client import ClientController
+    from hydrus.client.gui import ClientGUIDialogsQuick as Q
+    from hydrus.client.gui import ClientGUIDialogsMessage as M
+    events = []
+    for kind in ('ShowCritical', 'ShowWarning', 'ShowInformation'):
+        setattr(M, kind, lambda parent, *args, kind=kind: events.append({'shown': kind, 'args': list(args)}))
+
+    real_enter_text = Q.EnterText
+
+    def click_cancel():
+        for widget in W.QApplication.topLevelWidgets():
+            if widget.isVisible() and hasattr(widget, '_cancel'):
+                widget._cancel.click()
+                return
+        C.QTimer.singleShot(50, click_cancel)
+
+    def enter_text(win, message, **kwargs):
+        event = {'asked': message, 'kwargs': kwargs}
+        events.append(event)
+        C.QTimer.singleShot(200, click_cancel)
+        try:
+            return real_enter_text(win, message, **kwargs)
+        except BaseException as e:
+            event['raised'] = type(e).__name__
+            raise
+
+    Q.EnterText = enter_text
+
+    outcome = {}
+    real_init_view = ClientController.Controller.InitView
+
+    def init_view(self):
+        try:
+            return real_init_view(self)
+        except BaseException as e:
+            outcome['boot_raised'] = type(e).__name__
+            raise
+
+    ClientController.Controller.InitView = init_view
+    reached_hook = []
+    try:
+        hydrus_driver.run_client(db_dir, lambda session: reached_hook.append(True))
+    except Exception:
+        pass
+    with open(out, 'w') as f:
+        json.dump({'events': events, 'booted': bool(reached_hook), **outcome}, f)
+
+
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == '--cancel':
+        child_cancel(sys.argv[2], sys.argv[3])
+        return
     if len(sys.argv) > 1 and sys.argv[1] == '--dialog':
         child_dialog(sys.argv[2], sys.argv[3])
         return
@@ -118,12 +176,16 @@ def main():
         gate = os.path.join(d, 'gate.json')
         hydrus_driver.run_in_subprocess(os.path.abspath(__file__), '--dialog', db_dir, dialog)
         hydrus_driver.run_in_subprocess(os.path.abspath(__file__), '--gate', db_dir, gate)
+        cancel = os.path.join(d, 'cancel.json')
+        hydrus_driver.run_in_subprocess(os.path.abspath(__file__), '--cancel', db_dir, cancel)
         with open(dialog) as f:
             dialogs = json.load(f)
         with open(gate) as f:
             gate = json.load(f)
+        with open(cancel) as f:
+            cancel = json.load(f)
     with open(OUT, 'w') as f:
-        json.dump({'dialogs': dialogs, 'password_gate': gate}, f, indent=2, ensure_ascii=False)
+        json.dump({'dialogs': dialogs, 'password_gate': gate, 'password_cancel': cancel}, f, indent=2, ensure_ascii=False)
         f.write('\n')
     print('wrote', OUT)
 
