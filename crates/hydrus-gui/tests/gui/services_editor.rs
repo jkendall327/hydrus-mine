@@ -914,6 +914,16 @@ fn numerical_examples_drag_and_fraction_text_use_the_whole_widget_hit_area() {
         for _ in 0..3 {
             headless::render(&window, 640, 1000);
         }
+        // (the editor is long: the examples are below its fold, as the
+        // other examples tests scroll to them)
+        edit.window().dispatch_event(WindowEvent::PointerScrolled {
+            position: slint::LogicalPosition::new(24.0, 500.0),
+            delta_x: 0.0,
+            delta_y: -10000.0,
+        });
+        for _ in 0..3 {
+            headless::render(&window, 640, 1000);
+        }
         // A paint settles layout after the event-loop change callbacks. Hit
         // geometry must describe that paint immediately, not the previous size.
         headless::render(&window, 680, 1000);
@@ -944,6 +954,15 @@ fn numerical_examples_drag_and_fraction_text_use_the_whole_widget_hit_area() {
         assert_eq!(edit.get_first_preview_height().to_bits(), 0.0f32.to_bits());
         edit.set_example_expanded(true);
         headless::render(&window, 640, 1000);
+        // (collapsing let the scroll position fall back to the top)
+        edit.window().dispatch_event(WindowEvent::PointerScrolled {
+            position: slint::LogicalPosition::new(24.0, 500.0),
+            delta_x: 0.0,
+            delta_y: -10000.0,
+        });
+        for _ in 0..3 {
+            headless::render(&window, 640, 1000);
+        }
         assert_eq!(edit.get_first_preview_width().to_bits(), width.to_bits());
         assert_eq!(
             (edit.get_first_preview_y() + edit.get_first_preview_height() / 2.0).to_bits(),
