@@ -116,6 +116,12 @@ fn dimension(actual: f32, expected: f32) {
         "actual {actual}, expected {expected}"
     );
 }
+fn dimension_within(actual: f32, expected: f32, tolerance: f32) {
+    assert!(
+        (actual - expected).abs() <= tolerance,
+        "actual {actual}, expected {expected} (within {tolerance})"
+    );
+}
 fn click(window: &slint::platform::software_renderer::MinimalSoftwareWindow, x: f32, y: f32) {
     use slint::platform::{PointerEventButton, WindowEvent};
     let position = slint::LogicalPosition::new(x, y);
@@ -291,6 +297,44 @@ fn apply_cancel_reopen_and_four_sides_preserve_real_nested_selection_and_full_na
                 dimension(width, 56.0);
                 dimension(x, ui.get_page_content_x() + ui.get_page_content_width());
             }
+        }
+        // The bar's thickness for one row of tabs, and the order the tabs
+        // run in along it, against the reference's laid-out bar
+        // (`geometry`). Qt's tabs are 27 px thick and ours 28, so the sizes
+        // are compared to within a pixel.
+        {
+            let vertical = matches!(alignment, TabAlignment::Left | TabAlignment::Right);
+            let theirs = &step["root"]["geometry"];
+            let thickness = |rect: &serde_json::Value| rect[if vertical { 2 } else { 3 }].as_f64().unwrap() as f32;
+            dimension_within(
+                (if vertical { width } else { height }) / 2.0,
+                thickness(&theirs["bar"]),
+                1.5,
+            );
+            let frames = tab_frames.borrow();
+            let along: Vec<f32> = original
+                .pages
+                .iter()
+                .map(|page| {
+                    let (fx, fy, ..) = frames[&page.key.to_hex()];
+                    if vertical { fy } else { fx }
+                })
+                .collect();
+            let recorded: Vec<f64> = theirs["tab_rects"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|rect| rect[if vertical { 1 } else { 0 }].as_f64().unwrap())
+                .collect();
+            assert!(
+                along.windows(2).all(|w| w[0] < w[1]) && recorded.windows(2).all(|w| w[0] < w[1]),
+                "{alignment:?}: the tabs run the same way along the bar: ours {along:?}, theirs {recorded:?}"
+            );
+            // the first tab starts at the bar's start, in both
+            let (fx, fy, ..) = frames[&original.pages[0].key.to_hex()];
+            let start = if vertical { fy - y } else { fx - x };
+            assert!(start.abs() < 3.0, "{alignment:?}: the first tab starts the bar ({start})");
+            assert!(recorded[0].abs() < 1.0);
         }
         if matches!(alignment, TabAlignment::Left | TabAlignment::Right) {
             let (x, y, width, height) = tab_frames.borrow()[&original.pages[0].key.to_hex()];
@@ -594,4 +638,90 @@ fn selected_glyph_measurement_triggers_elision_at_the_actual_near_fit_boundary()
         600,
     )
     .unwrap();
+}
+
+// Which way a rotated label reads, against the reference's painted tab bar
+// (`ink` in oracle/fixtures/tab_presentation.json: where the ink of a label
+// that is heavy at its start lies along the tab, 0 the bar's start and 1 its
+// end): West labels start at the bottom, East labels at the top.
+#[test]
+fn rotated_tab_labels_read_the_way_the_references_do() {
+    let windows = headless::init();
+    let fixture = hydrus_testkit::fixture_json("tab_presentation.json");
+    let name = "MMMMMMMMMMMMMMM..............................";
+    for entry in fixture["ink"].as_array().unwrap() {
+        let alignment = match entry["label"].as_str().unwrap() {
+            "top" => TabAlignment::Top,
+            "left" => TabAlignment::Left,
+            "right" => TabAlignment::Right,
+            _ => TabAlignment::Bottom,
+        };
+        let vertical = entry["vertical"].as_bool().unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::open(dir.path()).unwrap();
+        let session = Session {
+            name: sessions::LAST_SESSION.into(),
+            pages: vec![notebook(name, vec![])],
+        };
+        seed(&store, &session);
+        let ui = MainWindow::new().unwrap();
+        let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+        let frames = std::rc::Rc::new(std::cell::RefCell::new(std::collections::HashMap::new()));
+        ui.on_tab_geometry_measured({
+            let frames = frames.clone();
+            move |key, _, _, _, x, y, width, height| {
+                if !key.is_empty() {
+                    frames.borrow_mut().insert(key.to_string(), (x, y, width, height));
+                }
+            }
+        });
+        ui.show().unwrap();
+        let options = open(&ui, &bound);
+        choose(
+            &options,
+            TabPresentationSettings {
+                alignment,
+                ..TabPresentationSettings::default()
+            },
+        );
+        options.invoke_apply();
+        let pixels = settle(&windows.get(0).unwrap());
+        let (x, y, width, height) = frames.borrow()[&session.pages[0].key.to_hex()];
+        // the ink along the tab: how far each pixel differs from the tab's
+        // own background (its most common colour), summed across the tab
+        let (x0, y0, x1, y1) = (
+            x as usize + 3,
+            y as usize + 3,
+            (x + width) as usize - 3,
+            (y + height) as usize - 3,
+        );
+        let luminance = |px: usize, py: usize| {
+            let p = &pixels[(py * 900 + px) * 4..][..3];
+            (u32::from(p[0]) * 299 + u32::from(p[1]) * 587 + u32::from(p[2]) * 114) / 1000
+        };
+        let mut counts = std::collections::HashMap::new();
+        for py in y0..y1 {
+            for px in x0..x1 {
+                *counts.entry(luminance(px, py)).or_insert(0_u32) += 1;
+            }
+        }
+        let background = counts.into_iter().max_by_key(|&(_, n)| n).unwrap().0;
+        let span = if vertical { y1 - y0 } else { x1 - x0 };
+        let mut sums = vec![0.0_f64; span];
+        for py in y0..y1 {
+            for px in x0..x1 {
+                let at = if vertical { py - y0 } else { px - x0 };
+                sums[at] += f64::from(luminance(px, py).abs_diff(background));
+            }
+        }
+        let total: f64 = sums.iter().sum();
+        assert!(total > 0.0, "{alignment:?}: the label paints");
+        let centroid = sums.iter().enumerate().map(|(i, v)| i as f64 * v).sum::<f64>() / total / span as f64;
+        let theirs = entry["centroid"].as_f64().unwrap();
+        assert_eq!(
+            centroid < 0.5,
+            theirs < 0.5,
+            "{alignment:?}: the label's ink lies at {centroid} of the tab along the bar, theirs at {theirs}"
+        );
+    }
 }

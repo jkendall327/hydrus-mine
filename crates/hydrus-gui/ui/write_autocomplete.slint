@@ -32,6 +32,9 @@ export component WriteTagInput inherits FocusScope {
     out property <length> results-x: result-keys.absolute-position.x;
     out property <length> results-y: result-keys.absolute-position.y;
     out property <length> results-width: result-keys.width;
+    out property <length> results-height: result-keys.height;
+    // the height the rows take as laid out (less the list's padding), read by tests
+    out property <length> rows-height: rows-layout.preferred-height - 4px;
     public function escape-results() -> bool { root.enabled && result-keys.has-focus && root.results-action(3) }
     public function focus-results() { result-keys.focus(); }
     public function focus-input() { input.focus(); }
@@ -110,7 +113,7 @@ export component WriteTagInput inherits FocusScope {
                 scroll := ScrollView {
                     Rectangle {
                         min-height: root.suggestions.length * 22px + 4px;
-                        VerticalLayout {
+                        rows-layout := VerticalLayout {
                             padding: 2px;
                             alignment: start;
                             for suggestion[i] in root.suggestions: Rectangle {

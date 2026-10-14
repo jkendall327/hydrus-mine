@@ -18,6 +18,8 @@ export component ReadSuggestions inherits Rectangle {
     background: Theme.tags-background;
     min-height: 26px;
     out property <bool> has-focus: keys.has-focus;
+    // the height the rows take as laid out, read by tests
+    out property <length> rows-height: rows-layout.preferred-height;
     out property <length> results-x: touch.absolute-position.x;
     out property <length> results-y: touch.absolute-position.y;
     callback scroll-geometry(length,length,length);
@@ -57,7 +59,7 @@ export component ReadSuggestions inherits Rectangle {
             content-height: max(root.suggestions.length * 22px, self.visible-height);
             Rectangle {
                 height: root.suggestions.length * 22px;
-                VerticalLayout {
+                rows-layout := VerticalLayout {
                     alignment: start;
                     for suggestion[i] in root.suggestions: Rectangle {
                         height: 22px;

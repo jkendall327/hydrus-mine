@@ -10,7 +10,7 @@ use std::sync::Arc;
 use slint::platform::{PointerEventButton, WindowEvent};
 use slint::{ComponentHandle as _, Model as _};
 
-use hydrus_gui::{MainWindow, OptionsWindow, Pages, bind, headless};
+use hydrus_gui::{MainWindow, OptionsWindow, Pages, Theme, bind, headless};
 use hydrus_store::Store;
 
 fn open_options(ui: &MainWindow, bound: &hydrus_gui::Bound) -> OptionsWindow {
@@ -247,5 +247,145 @@ fn the_thumbnail_options_lay_out_the_grid_as_the_reference_does() {
                 "{what}: {hash}"
             );
         }
+    }
+}
+
+// The border drawn round each thumbnail, as wide as the option says, against
+// the reference's own painting of its thumbnails
+// (oracle/fixtures/thumbnail_border.json: the width of the border-coloured
+// band along each edge of an image the reference painted with
+// `Thumbnail.GetQtImage`, and its size). The grid is rendered and the band
+// measured on the pixels. The reference's colours are its own, so the band is
+// the run of the theme's border colour. A selected thumbnail is compared from
+// a 2 px border (ours is at least 2 px wide, DIFFERENCES.md).
+// leaf: audit-options-thumbnails-appearance-thumbnail-border
+#[test]
+fn the_thumbnail_border_is_drawn_as_wide_as_the_option_says_as_the_reference_draws_it() {
+    let recorded: serde_json::Value = hydrus_testkit::fixture_json("thumbnail_border.json");
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    hydrus_store::import::import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store: Arc<Store> = Store::open(native.path()).unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let main_window = windows.get(0).unwrap();
+    let page = bound.current.borrow().clone();
+    let files = page.borrow().results().to_vec();
+    let hashes: Vec<String> = files
+        .iter()
+        .map(|&id| {
+            store
+                .read(|c| hydrus_store::master::hash(c, id))
+                .unwrap()
+                .unwrap()
+                .to_hex()
+        })
+        .collect();
+    let (thumbnail_width, thumbnail_height) = (
+        int(&recorded["thumbnail"][0]),
+        int(&recorded["thumbnail"][1]),
+    );
+    for entry in recorded["borders"].as_array().unwrap() {
+        let border = int(&entry["border"]);
+        let options = open_options(&ui, &bound);
+        set(&options, "Thumbnail width: ", (20, 2048), thumbnail_width);
+        set(&options, "Thumbnail height: ", (20, 2048), thumbnail_height);
+        set(&options, "Thumbnail border: ", (0, 20), border);
+        set(&options, "Thumbnail margin: ", (0, 20), 2);
+        options.invoke_apply();
+        let theme = ui.global::<Theme<'_>>();
+        for selected in [false, true] {
+            if selected {
+                ui.invoke_select_all();
+            }
+            let width = 1100_u32;
+            let height = 700_u32;
+            headless::render(&main_window, width, height);
+            slint::platform::update_timers_and_animations();
+            bound.rows.wait();
+            headless::render(&main_window, width, height);
+            let pixels = headless::render_snapshot(&main_window, width, height);
+            let colour = theme
+                .invoke_thumbnail_border(true, selected)
+                .color();
+            let at = |x: i64, y: i64| -> bool {
+                let i = (y as usize * width as usize + x as usize) * 4;
+                pixels[i] == colour.red()
+                    && pixels[i + 1] == colour.green()
+                    && pixels[i + 2] == colour.blue()
+            };
+            let margin = ui.get_thumbnail_margin().round() as i64;
+            let span = (
+                (ui.get_thumbnail_width() + 2.0 * ui.get_thumbnail_margin()).round() as i64,
+                (ui.get_thumbnail_height() + 2.0 * ui.get_thumbnail_margin()).round() as i64,
+            );
+            let columns = i64::from(ui.get_grid_columns());
+            let origin = (
+                ui.get_grid_origin_x().round() as i64,
+                ui.get_grid_origin_y().round() as i64,
+            );
+            for (k, hash) in recorded["media"].as_array().unwrap().iter().enumerate() {
+                let index = hashes
+                    .iter()
+                    .position(|h| h == hash.as_str().unwrap())
+                    .unwrap() as i64;
+                let (cell_x, cell_y) = (
+                    origin.0 + (index % columns) * span.0 + margin,
+                    origin.1 + (index / columns) * span.1 + margin,
+                );
+                let theirs = entry["images"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .filter(|i| i["selected"].as_bool().unwrap() == selected)
+                    .nth(k)
+                    .unwrap();
+                let (w, h) = (int(&theirs["size"][0]), int(&theirs["size"][1]));
+                let what = format!("border {border}, selected {selected}, file {k}");
+                assert_eq!(
+                    (
+                        ui.get_thumbnail_width().round() as i64,
+                        ui.get_thumbnail_height().round() as i64
+                    ),
+                    (w, h),
+                    "{what}: the cell is the thumbnail box and its border"
+                );
+                if selected && border < 2 {
+                    continue;
+                }
+                let run = |points: Vec<(i64, i64)>| {
+                    points.into_iter().take_while(|&(x, y)| at(x, y)).count() as i64
+                };
+                let measured = [
+                    ("left", run((0..w).map(|x| (cell_x + x, cell_y + h / 2)).collect())),
+                    ("right", run((0..w).map(|x| (cell_x + w - 1 - x, cell_y + h / 2)).collect())),
+                    ("top", run((0..h).map(|y| (cell_x + w / 2, cell_y + y)).collect())),
+                    ("bottom", run((0..h).map(|y| (cell_x + w / 2, cell_y + h - 1 - y)).collect())),
+                ];
+                for (side, ours) in measured {
+                    let theirs = int(&theirs[side]);
+                    // (a picture can have the border's colour at its edge:
+                    // a side that is wider than the border in the reference
+                    // is the picture, not the border)
+                    if theirs != border {
+                        continue;
+                    }
+                    assert_eq!(ours, theirs, "{what}: the {side} band");
+                }
+            }
+        }
+        // (the selection, put back for the next border)
+        ui.invoke_select_none();
     }
 }

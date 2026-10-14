@@ -1786,3 +1786,88 @@ fn replacement_history_replays_real_keys_typing_undo_redo_and_independent_owners
     assert_eq!(other.get_text(), "untouched draft");
     other.invoke_cancel();
 }
+
+// How many rows Manage Tags' autocomplete list shows once laid out, set
+// through the real Options window and measured on the rendered dialog,
+// against the reference's write-autocomplete list
+// (oracle/fixtures/tag_edit_list_height.json: its hint is
+// `rows * text_height + 2 * frame`). The row height is each toolkit's own
+// (Qt's font height, 22 px here), so rows are compared, not pixels.
+// leaf: audit-options-tag-editing-tag-edit-autocomplete-autocomplete-list-height
+#[test]
+fn the_write_autocomplete_list_shows_as_many_rows_as_the_option_says_as_the_reference_lays_it_out() {
+    let recorded = hydrus_testkit::fixture_json("tag_edit_list_height.json");
+    let (_dirs, store) = crate::subscriptions::store();
+    // more favourites than the biggest list can show, so every list is full
+    store
+        .write(|ctx| {
+            settings::set(
+                ctx.conn(),
+                &settings::FavouriteTags((0..150).map(|i| format!("parity:fav {i:03}")).collect()),
+            )
+        })
+        .unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    ui.invoke_select_all();
+    let limits = (
+        recorded["minimum"].as_i64().unwrap(),
+        recorded["maximum"].as_i64().unwrap(),
+    );
+    for entry in recorded["heights"].as_array().unwrap() {
+        let rows = entry["rows"].as_i64().unwrap();
+        // the reference's list: a whole number of text rows in its hint
+        let frame = entry["frame"].as_i64().unwrap();
+        let theirs = (entry["hint"].as_i64().unwrap() - 2 * frame) as f64
+            / entry["text_height"].as_f64().unwrap();
+        assert!((theirs - rows as f64).abs() < 1e-9, "{entry}");
+
+        ui.invoke_menu_title_pressed(0, 20.0, 22.0);
+        let pane = ui.get_menu_panes().row_data(0).unwrap();
+        let index = pane
+            .lines
+            .iter()
+            .position(|row| row.label == "options\u{2026}")
+            .unwrap();
+        ui.invoke_menu_line_clicked(0, i32::try_from(index).unwrap(), 0.0, 0.0, 0.0);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        let page = options
+            .get_pages()
+            .iter()
+            .position(|row| row.text == "tag editing")
+            .unwrap();
+        options.invoke_page_chosen(i32::try_from(page).unwrap());
+        let row = options
+            .get_rows()
+            .iter()
+            .position(|row| row.label == "Autocomplete list height: ")
+            .unwrap();
+        let control = options.get_rows().row_data(row).unwrap();
+        assert_eq!((i64::from(control.minimum), i64::from(control.maximum)), limits);
+        options.invoke_number_edited(i32::try_from(row).unwrap(), i32::try_from(rows).unwrap());
+        options.invoke_apply();
+
+        ui.invoke_manage_tags_selected();
+        let w = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+        w.invoke_tab_chosen(1);
+        let suggestions = w.get_suggestions().row_count() as f32;
+        assert_eq!(suggestions, 150.0);
+        let shown = windows.get(windows.count() - 1).unwrap();
+        for _ in 0..3 {
+            headless::render(&shown, 900, 4000);
+            slint::platform::update_timers_and_animations();
+        }
+        // the room the list has (less its 2 px padding) over a row's height
+        let pitch = w.get_autocomplete_rows_height() / suggestions;
+        let visible = (w.get_autocomplete_results_height() - 4.0) / pitch;
+        assert!(
+            (visible - rows as f32).abs() < 0.01,
+            "{entry}: the list shows {visible} rows of {pitch}"
+        );
+        w.invoke_cancel();
+    }
+}
