@@ -6474,10 +6474,10 @@
     "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
    ],
    "recheck": {
-    "date": "2026-10-09",
+    "date": "2026-10-13",
     "class": "weak",
-    "by": "phase 2 session",
-    "note": "Setting off (no rows) and on (the recorded 'refresh' row; empty 'select' on a page with no files) replayed through the window (command_palette.rs media_menu_results_follow_the_setting_and_the_page_shown_as_the_reference_did); media actions run through the real thumbnail dispatcher (media_provider_uses_the_actual_thumbnail_dispatcher_and_rejects_a_changed_page). Missing: rows and an activated entry's effect for a page with files selected are not recorded (DIFFERENCES.md)."
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "Rows for a page with no files, with one and with three files selected (nine queries each) and the effect of activating a row on the selection are replayed through the real palette against command_palette.json and palette_media_rows.json (recorded from the reference's real MediaMenuSearchProvider); they match except the two single-file rows 'copy bitmap' and 'copy thumbnail bitmap' (bitmap exchange not ported, DIFFERENCES.md), which the test filters. Stays weak for that reason. Setting off gives no rows (command_palette.rs). Tests: crates/hydrus-gui/tests/gui/palette_media.rs; command_palette.rs media_menu_results_follow_the_setting_and_the_page_shown_as_the_reference_did."
    }
   },
   {
@@ -7753,10 +7753,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives the real checkbox and the thumbnail-menu 'in a new duplicate filter page' action (lib.rs:5551), but expected behaviour (combined domain when ticked, page domain when not) is typed from source, not recorded. The reference reads this option at three sites (ClientGUICanvas.py:1131 viewer, ClientGUIMediaResultsPanel.py:2536 and :5432 shortcut/command); the native has only the menu consumer, the 'open files in a new duplicates filter page' command (simple_command_names.json id 154) has no handler, so the viewer and shortcut consumers are absent and untested. Tests: crates/hydrus-gui/tests/gui/options_gui_duplicates.rs:412 opening_files_in_a_duplicates_page_uses_combined_local_file_domains_only_if_asked"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "All three of the reference's consumers now exist and are replayed against open_in_duplicates.json (recorded from the reference's real thumbnail panel and media viewer canvas with the option on and off): the thumbnail menu entry (the older test), the 'open files in a new duplicates filter page' shortcut command on the focused thumbnails (all selected files) and in the media viewer (the file shown; both newly handled), each opening a page named 'duplicates' with a system:hash of those files, in combined local file domains if ticked else the page's domain, and bringing the main window forward when 'switch to main window ...' is on. The Options row itself and its apply are driven by the older test. Tests: crates/hydrus-gui/tests/gui/options_gui_duplicates.rs opening_files_in_a_duplicates_page_uses_combined_local_file_domains_only_if_asked, the_shortcut_command_and_the_viewer_open_duplicates_pages_as_the_reference_does."
    }
   },
   {
@@ -9639,10 +9639,10 @@
     "Native title suffix uses the Rust package version rather than the reference 688 version."
    ],
    "recheck": {
-    "date": "2026-10-09",
+    "date": "2026-10-13",
     "class": "source-restated",
-    "by": "Claude, options-shell-followups",
-    "note": "tests/gui/options_window.rs gui_identity_and_exit_confirmation_reach_the_main_window applies each recorded display name (gui_settings.json) and checks the main title, that the window just applied and the next Options window carry ' - {name} {version}' (and the composed title); tests/gui/window_titles.rs reads the composed title of windows of different files and that changing the name retitles open ones, as UpdateAppDisplayName does. Qt composes the title in the platform plugin, so the ' - ' form is from Qt's documentation, not a recording."
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "Unchanged: the names are applied as recorded (gui_settings.json) and the composed ' - name version' titles are checked, but the composition is done by the windowing system, which offscreen Qt does not do, so it cannot be recorded; it is from Qt's documented behaviour. Tests: crates/hydrus-gui/tests/gui/options_window.rs gui_identity_and_exit_confirmation_reach_the_main_window; window_titles.rs."
    }
   },
   {
@@ -9830,10 +9830,10 @@
     "Search covers native controls and their auxiliary labels; absent-page explanatory text is not claimed."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "phase 2 session",
-    "note": "gui/options_window.rs options_open_and_place_the_search_bar_as_the_reference_did replays the three cases of options_preferences.json (saved remember/last page/side seeded, opened page, placement drop-down index, last panel kept, reopened page) through the real options window. Still weak: the actual top/bottom position of the search field and its suggestions is a Slint layout and is not read back."
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
+    "note": "The three recorded cases of options_preferences.json are replayed through the real options window as before (opened page, drop-down index, remembered page), and now the layout is read back: with the field at the top the search suggestions drop below it above the page list's first rows, at the bottom they rise above it and above the apply row, and the page list is 30 px lower for a field at the top than at the bottom, read from the painted window's item positions. The field itself has no accessible label to measure, so its own position is inferred from these (a rendered check of the bottom case showed it at the bottom). Tests: crates/hydrus-gui/tests/gui/options_window.rs options_open_and_place_the_search_bar_as_the_reference_did, the_search_bar_and_its_suggestions_sit_where_the_option_puts_them."
    }
   },
   {

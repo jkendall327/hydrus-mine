@@ -365,6 +365,7 @@ mod options_media_zoom;
 mod options_namespace_edit;
 mod options_shortcut_sets;
 mod options_system_consumers;
+mod palette_media;
 mod preview_audio;
 mod search_pages_favourites;
 mod search_pages_menu;
