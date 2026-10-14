@@ -41,6 +41,9 @@ enum Asking {
     DeleteStatuses(Vec<SeedStatus>),
     /// Reversing the log.
     Reverse,
+    /// Trying the selected again, some having been refused as previously
+    /// deleted: whether to erase those files' deletion records first.
+    EraseRecords(Vec<i64>, Vec<HashId>),
 }
 
 #[derive(Clone)]
@@ -205,6 +208,9 @@ fn show(window: &FileLogWindow, state: &State) {
             Some(crate::file_log::delete_statuses_question(statuses))
         }
         Some(Asking::Reverse) => Some(crate::file_log::REVERSE_QUESTION.to_owned()),
+        Some(Asking::EraseRecords(_, _)) => {
+            Some(crate::file_log::ERASE_DELETION_RECORDS_QUESTION.to_owned())
+        }
     };
     window.set_asking(question.is_some());
     window.set_busy(state.exports.has_open());
@@ -326,6 +332,22 @@ fn act(store: &Arc<Store>, state: &mut State, action: &Action, open_files: &Open
             }
         }
         Action::TryAgain | Action::Skip => {
+            if *action == Action::TryAgain {
+                // (previously deleted files will be refused again unless their
+                // deletion records go: ask first)
+                let deleted: Vec<&FileSeed> = state
+                    .selected()
+                    .into_iter()
+                    .filter(|s| s.status == SeedStatus::Deleted)
+                    .collect();
+                // (any deleted source that knows its hash asks, whether or not
+                // the client has met the hash: `HasHash`)
+                let hashes = hash_ids(store, &deleted);
+                if deleted.iter().any(|s| s.meta.hash("sha256").is_some()) {
+                    state.asking = Some(Asking::EraseRecords(selected_ids, hashes));
+                    return;
+                }
+            }
             let status = if *action == Action::TryAgain {
                 SeedStatus::Unknown
             } else {
@@ -790,7 +812,32 @@ fn open_source(
             }
 
             let asking = state.borrow_mut().asking.take();
-            if matches!(asking, Some(Asking::RetryIgnored)) {
+            if let Some(Asking::EraseRecords(ids, hashes)) = asking {
+                // yes: the files come out of the trash and their deletion
+                // records go; either way the selected are tried again
+                if index == 0
+                    && let Err(e) = store.write_content(move |w| {
+                        let in_trash = w.filter_current(w.roles().trash, &hashes)?;
+                        w.undelete_files(w.roles().trash, &in_trash)?;
+                        w.clear_local_delete_records(Some(&hashes))
+                    })
+                {
+                    eprintln!("could not erase the deletion records: {e}");
+                }
+                let (source, queue) = {
+                    let state = state.borrow();
+                    (state.source.clone(), state.queue)
+                };
+                let now = now();
+                if let Err(e) = source.change(
+                    queue,
+                    Box::new(move |c| {
+                        queues::set_file_seed_statuses(c, &ids, SeedStatus::Unknown, now)
+                    }),
+                ) {
+                    eprintln!("could not change the file log: {e}");
+                }
+            } else if matches!(asking, Some(Asking::RetryIgnored)) {
                 let (source, queue, ids) = {
                     let state = state.borrow();
                     let ids: Vec<i64> = state
@@ -885,7 +932,10 @@ fn open_source(
                             ));
                         }
                     }
-                    Some(Asking::Error(_, _) | Asking::RetryIgnored) | None => {}
+                    Some(
+                        Asking::Error(_, _) | Asking::RetryIgnored | Asking::EraseRecords(_, _),
+                    )
+                    | None => {}
                 }
             }
             refresh(true);
@@ -895,11 +945,20 @@ fn open_source(
         let state = state.clone();
         let refresh = refresh.clone();
         let alive = alive.clone();
+        let weak = window.as_weak();
         move || {
             if !alive.get() {
                 return;
             }
 
+            // (a cancelled erase question is the reference's "no": the
+            // selected are still tried again)
+            if matches!(state.borrow().asking, Some(Asking::EraseRecords(_, _)))
+                && let Some(window) = weak.upgrade()
+            {
+                window.invoke_chosen(1);
+                return;
+            }
             state.borrow_mut().asking = None;
             refresh(false);
         }

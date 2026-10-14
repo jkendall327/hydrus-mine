@@ -1,0 +1,281 @@
+{
+ "start": [
+  [
+   "https://example.com/post/1",
+   3,
+   "Previously deleted"
+  ],
+  [
+   "https://example.com/post/2",
+   4,
+   "Error: 500"
+  ],
+  [
+   "https://example.com/post/3",
+   7,
+   "veto: blacklisted!"
+  ],
+  [
+   "https://example.com/post/4",
+   0,
+   ""
+  ]
+ ],
+ "try_again": [
+  {
+   "name": "deleted and failed, no",
+   "selected": [
+    0,
+    1
+   ],
+   "answer": false,
+   "asked": [
+    "One or more of these files did not import due to being previously deleted. They will likely fail again unless you erase those deletion records. Would you like to do this now?"
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/4",
+     0,
+     ""
+    ]
+   ],
+   "file_before": {
+    "trashed": true,
+    "deleted_record": true,
+    "current_services": 3
+   },
+   "file_after": {
+    "trashed": true,
+    "deleted_record": true,
+    "current_services": 3
+   }
+  },
+  {
+   "name": "deleted and failed, yes",
+   "selected": [
+    0,
+    1
+   ],
+   "answer": true,
+   "asked": [
+    "One or more of these files did not import due to being previously deleted. They will likely fail again unless you erase those deletion records. Would you like to do this now?"
+   ],
+   "after": [
+    [
+     "https://example.com/post/1",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/2",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     7,
+     "veto: blacklisted!"
+    ],
+    [
+     "https://example.com/post/4",
+     0,
+     ""
+    ]
+   ],
+   "file_before": {
+    "trashed": true,
+    "deleted_record": true,
+    "current_services": 3
+   },
+   "file_after": {
+    "trashed": false,
+    "deleted_record": false,
+    "current_services": 4
+   }
+  },
+  {
+   "name": "failed and ignored",
+   "selected": [
+    1,
+    2
+   ],
+   "answer": false,
+   "asked": [],
+   "after": [
+    [
+     "https://example.com/post/1",
+     3,
+     "Previously deleted"
+    ],
+    [
+     "https://example.com/post/2",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/3",
+     0,
+     ""
+    ],
+    [
+     "https://example.com/post/4",
+     0,
+     ""
+    ]
+   ],
+   "file_before": {
+    "trashed": true,
+    "deleted_record": true,
+    "current_services": 3
+   },
+   "file_after": {
+    "trashed": true,
+    "deleted_record": true,
+    "current_services": 3
+   }
+  }
+ ],
+ "open": [
+  {
+   "name": "few urls",
+   "sources": [
+    "https://example.com/post/0",
+    "https://example.com/post/1",
+    "https://example.com/post/2"
+   ],
+   "answer": false,
+   "asked": [],
+   "urls": [
+    "https://example.com/post/0",
+    "https://example.com/post/1",
+    "https://example.com/post/2"
+   ],
+   "locations": []
+  },
+  {
+   "name": "many urls, no",
+   "sources": [
+    "https://example.com/post/0",
+    "https://example.com/post/1",
+    "https://example.com/post/2",
+    "https://example.com/post/3",
+    "https://example.com/post/4",
+    "https://example.com/post/5",
+    "https://example.com/post/6",
+    "https://example.com/post/7",
+    "https://example.com/post/8",
+    "https://example.com/post/9",
+    "https://example.com/post/10",
+    "https://example.com/post/11"
+   ],
+   "answer": false,
+   "asked": [
+    "You have many objects selected--are you sure you want to open them all?"
+   ],
+   "urls": [],
+   "locations": []
+  },
+  {
+   "name": "many urls, yes",
+   "sources": [
+    "https://example.com/post/0",
+    "https://example.com/post/1",
+    "https://example.com/post/2",
+    "https://example.com/post/3",
+    "https://example.com/post/4",
+    "https://example.com/post/5",
+    "https://example.com/post/6",
+    "https://example.com/post/7",
+    "https://example.com/post/8",
+    "https://example.com/post/9",
+    "https://example.com/post/10",
+    "https://example.com/post/11"
+   ],
+   "answer": true,
+   "asked": [
+    "You have many objects selected--are you sure you want to open them all?"
+   ],
+   "urls": [
+    "https://example.com/post/0",
+    "https://example.com/post/1",
+    "https://example.com/post/2",
+    "https://example.com/post/3",
+    "https://example.com/post/4",
+    "https://example.com/post/5",
+    "https://example.com/post/6",
+    "https://example.com/post/7",
+    "https://example.com/post/8",
+    "https://example.com/post/9",
+    "https://example.com/post/10",
+    "https://example.com/post/11"
+   ],
+   "locations": []
+  },
+  {
+   "name": "paths",
+   "sources": [
+    "/tmp/hydrus_file_log/a.png",
+    "/tmp/hydrus_file_log/sub/b.jpg"
+   ],
+   "answer": false,
+   "asked": [],
+   "urls": [],
+   "locations": [
+    [
+     "/tmp/hydrus_file_log/a.png",
+     "/tmp/hydrus_file_log/sub/b.jpg"
+    ]
+   ]
+  }
+ ],
+ "skip": {
+  "selected": [
+   0,
+   1,
+   3
+  ],
+  "asked": [],
+  "after": [
+   [
+    "https://example.com/post/1",
+    8,
+    ""
+   ],
+   [
+    "https://example.com/post/2",
+    8,
+    ""
+   ],
+   [
+    "https://example.com/post/3",
+    7,
+    "veto: blacklisted!"
+   ],
+   [
+    "https://example.com/post/4",
+    8,
+    ""
+   ]
+  ],
+  "file_after": {
+   "trashed": true,
+   "deleted_record": true,
+   "current_services": 3
+  }
+ }
+}

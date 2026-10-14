@@ -13,7 +13,7 @@ use std::sync::Arc;
 
 use slint::{ComponentHandle as _, Model as _, ModelRc, SharedString, VecModel};
 
-use hydrus_core::import_options::ImportOptionsSlice;
+use hydrus_core::import_options::{CallerType, ImportOptionsSlice};
 use hydrus_parse::folders::{ExportFolder, ExportType, FolderAction};
 use hydrus_search::{TextContext, parse_api_search, predicate_text};
 use hydrus_store::Store;
@@ -263,8 +263,28 @@ fn write_import_folders(store: &Store, open: ImportList) -> hydrus_store::Result
             queues::delete_queue(conn, *id)?;
         }
         for folder in &folders {
+            // (`ImportFolder.SetTuple` runs after the dialog's own log is
+            // set: a new path starts a new log, and other allowed filetypes
+            // forget the ignored files so they are looked at again)
+            let mut fresh_log = false;
+            let mut forget_vetoed = false;
             let id = match folder.id {
                 Some(id) => {
+                    if let Some(old) = import_folders::import_folder(conn, id)? {
+                        let manager: hydrus_core::import_options::ImportOptionsManager =
+                            settings::get(conn)?;
+                        let allowed = |own: &ImportOptionsSlice| {
+                            manager
+                                .full(CallerType::LocalImportFolder, Some(own), &[])
+                                .file_filtering
+                                .filetypes
+                        };
+                        if old.settings.path != folder.settings.path {
+                            fresh_log = true;
+                        } else if allowed(&old.queue.options) != allowed(&folder.options) {
+                            forget_vetoed = true;
+                        }
+                    }
                     queues::rename_queue(conn, id, &folder.name)?;
                     queues::set_paused(conn, id, Some(folder.paused), None)?;
                     import_folders::set_settings(conn, id, &folder.settings)?;
@@ -283,6 +303,13 @@ fn write_import_folders(store: &Store, open: ImportList) -> hydrus_store::Result
             if let (Some(id), Some(seeds)) = (id, &folder.file_seeds) {
                 queues::replace_file_seeds(conn, id, seeds)?;
                 queues::nudge(conn, id)?;
+            }
+            if let Some(id) = id {
+                if fresh_log {
+                    queues::replace_file_seeds(conn, id, &[])?;
+                } else if forget_vetoed {
+                    queues::remove_file_seeds(conn, id, &[queues::SeedStatus::Vetoed])?;
+                }
             }
             if id.is_none() {
                 eprintln!(

@@ -1,0 +1,253 @@
+{
+ "period": 3600,
+ "export": [
+  {
+   "name": "regular, not yet due",
+   "options": {
+    "run_regularly": true
+   },
+   "age": 1800,
+   "worked": false,
+   "popups": [],
+   "run_now_after": false,
+   "run_regularly_after": true,
+   "last_checked_moved": false
+  },
+  {
+   "name": "regular, due",
+   "options": {
+    "run_regularly": true
+   },
+   "age": 3601,
+   "worked": true,
+   "popups": [],
+   "run_now_after": false,
+   "run_regularly_after": true,
+   "last_checked_moved": true
+  },
+  {
+   "name": "regular, due, popup",
+   "options": {
+    "run_regularly": true,
+    "show_working_popup": true
+   },
+   "age": 3601,
+   "worked": true,
+   "popups": [
+    {
+     "title": "export folder - schedule",
+     "has_files": false
+    }
+   ],
+   "run_now_after": false,
+   "run_regularly_after": true,
+   "last_checked_moved": true
+  },
+  {
+   "name": "not regular, long ago",
+   "options": {
+    "run_regularly": false
+   },
+   "age": 36000,
+   "worked": false,
+   "popups": [],
+   "run_now_after": false,
+   "run_regularly_after": false,
+   "last_checked_moved": false
+  },
+  {
+   "name": "not regular, run now",
+   "options": {
+    "run_regularly": false,
+    "run_now": true
+   },
+   "age": 36000,
+   "worked": true,
+   "popups": [
+    {
+     "title": "export folder - schedule",
+     "has_files": false
+    }
+   ],
+   "run_now_after": false,
+   "run_regularly_after": false,
+   "last_checked_moved": true
+  },
+  {
+   "name": "regular, run now, no popup asked for",
+   "options": {
+    "run_regularly": true,
+    "run_now": true,
+    "show_working_popup": false
+   },
+   "age": 10,
+   "worked": true,
+   "popups": [
+    {
+     "title": "export folder - schedule",
+     "has_files": false
+    }
+   ],
+   "run_now_after": false,
+   "run_regularly_after": true,
+   "last_checked_moved": true
+  }
+ ],
+ "import": [
+  {
+   "name": "regular, not yet due",
+   "options": {
+    "check_regularly": true
+   },
+   "age": 1800,
+   "worked": false,
+   "statuses": [],
+   "popups": [],
+   "paused_after": false,
+   "check_now_after": false,
+   "last_checked_moved": false
+  },
+  {
+   "name": "regular, due",
+   "options": {
+    "check_regularly": true,
+    "show_working_popup": false,
+    "publish_files_to_popup_button": false
+   },
+   "age": 3601,
+   "worked": true,
+   "statuses": [
+    [
+     1,
+     ""
+    ]
+   ],
+   "popups": [],
+   "paused_after": false,
+   "check_now_after": false,
+   "last_checked_moved": true
+  },
+  {
+   "name": "regular, due, popup, files published",
+   "options": {
+    "check_regularly": true,
+    "show_working_popup": true,
+    "publish_files_to_popup_button": true
+   },
+   "age": 3601,
+   "worked": true,
+   "statuses": [
+    [
+     1,
+     ""
+    ]
+   ],
+   "popups": [
+    {
+     "title": "import folder - schedule",
+     "has_files": false
+    },
+    {
+     "title": null,
+     "has_files": true
+    }
+   ],
+   "paused_after": false,
+   "check_now_after": false,
+   "last_checked_moved": true
+  },
+  {
+   "name": "regular, due, popup, files not published",
+   "options": {
+    "check_regularly": true,
+    "show_working_popup": true,
+    "publish_files_to_popup_button": false
+   },
+   "age": 3601,
+   "worked": true,
+   "statuses": [
+    [
+     1,
+     ""
+    ]
+   ],
+   "popups": [
+    {
+     "title": "import folder - schedule",
+     "has_files": false
+    }
+   ],
+   "paused_after": false,
+   "check_now_after": false,
+   "last_checked_moved": true
+  },
+  {
+   "name": "not regular, long ago",
+   "options": {
+    "check_regularly": false
+   },
+   "age": 36000,
+   "worked": false,
+   "statuses": [],
+   "popups": [],
+   "paused_after": false,
+   "check_now_after": false,
+   "last_checked_moved": false
+  },
+  {
+   "name": "not regular, check now, no popup asked for",
+   "options": {
+    "check_regularly": false,
+    "check_now": true,
+    "show_working_popup": false,
+    "publish_files_to_popup_button": false
+   },
+   "age": 36000,
+   "worked": true,
+   "statuses": [
+    [
+     1,
+     ""
+    ]
+   ],
+   "popups": [
+    {
+     "title": "import folder - schedule",
+     "has_files": false
+    }
+   ],
+   "paused_after": false,
+   "check_now_after": false,
+   "last_checked_moved": true
+  },
+  {
+   "name": "paused, check now",
+   "options": {
+    "check_regularly": true,
+    "paused": true,
+    "check_now": true
+   },
+   "age": 36000,
+   "worked": false,
+   "statuses": [],
+   "popups": [],
+   "paused_after": true,
+   "check_now_after": true,
+   "last_checked_moved": false
+  },
+  {
+   "name": "paused, due",
+   "options": {
+    "check_regularly": true,
+    "paused": true
+   },
+   "age": 36000,
+   "worked": false,
+   "statuses": [],
+   "popups": [],
+   "paused_after": true,
+   "check_now_after": false,
+   "last_checked_moved": false
+  }
+ ]
+}
