@@ -2034,14 +2034,17 @@ impl Pages {
 
     /// Pretend the last page change was `ago` before now (tests).
     pub fn set_last_page_change_ago(&mut self, ago: std::time::Duration) {
-        self.last_changed = self.now() - ago;
+        self.last_changed = self.now().checked_sub(ago).unwrap_or_else(|| self.now());
     }
 
     /// How long ago each closed page still held in memory was closed, oldest
     /// first (hidden from the menu or not).
     pub fn held_closed_ages(&self) -> Vec<std::time::Duration> {
         let now = self.now();
-        self.closed.iter().map(|c| now.duration_since(c.at)).collect()
+        self.closed
+            .iter()
+            .map(|c| now.duration_since(c.at))
+            .collect()
     }
 
     /// Help > debug > memory actions > run slow memory maintenance, the part

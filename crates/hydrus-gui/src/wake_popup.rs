@@ -26,7 +26,10 @@ fn text(ends_ms: i64, now_ms: i64) -> String {
     if ends <= now {
         "enabling I/O now".to_owned()
     } else {
-        format!("enabling I/O in {}", hydrus_core::time::pretty_time_delta(ends - now, false))
+        format!(
+            "enabling I/O in {}",
+            hydrus_core::time::pretty_time_delta(ends - now, false)
+        )
     }
 }
 
@@ -51,41 +54,45 @@ pub(crate) fn begin(store: &Store) {
     }
     let weak = store.downgrade();
     let timer = slint::Timer::default();
-    timer.start(slint::TimerMode::Repeated, Duration::from_millis(500), move || {
-        let Some(store) = weak.upgrade() else {
-            WATCH.with(|w| *w.borrow_mut() = None);
-            return;
-        };
-        let now_ms = hydrus_core::TimestampMs::now().0;
-        let ends = store.wake_ends_at();
-        #[allow(clippy::cast_possible_truncation)] // (seconds)
-        let at = now() as i64;
-        let outcome = store.write(move |ctx| {
-            popups::update(ctx.conn(), &key, at, |job| {
-                if job.cancelled {
-                    job.status_text_1 = Some("enabling I/O now".into());
-                    job.finish_and_dismiss(None, at);
-                    Some(true)
-                } else if let Some(ends) = ends.filter(|e| *e > now_ms) {
-                    job.status_text_1 = Some(text(ends, now_ms));
-                    None
-                } else {
-                    job.finish_and_dismiss(None, at);
-                    Some(false)
-                }
-            })
-        });
-        match outcome {
-            Ok(Some(Some(cancelled))) => {
-                if cancelled {
-                    store.end_wake_delay();
-                }
+    timer.start(
+        slint::TimerMode::Repeated,
+        Duration::from_millis(500),
+        move || {
+            let Some(store) = weak.upgrade() else {
                 WATCH.with(|w| *w.borrow_mut() = None);
+                return;
+            };
+            let now_ms = hydrus_core::TimestampMs::now().0;
+            let ends = store.wake_ends_at();
+            #[allow(clippy::cast_possible_truncation)] // (seconds)
+            let at = now() as i64;
+            let outcome = store.write(move |ctx| {
+                popups::update(ctx.conn(), &key, at, |job| {
+                    if job.cancelled {
+                        job.status_text_1 = Some("enabling I/O now".into());
+                        job.finish_and_dismiss(None, at);
+                        Some(true)
+                    } else if let Some(ends) = ends.filter(|e| *e > now_ms) {
+                        job.status_text_1 = Some(text(ends, now_ms));
+                        None
+                    } else {
+                        job.finish_and_dismiss(None, at);
+                        Some(false)
+                    }
+                })
+            });
+            match outcome {
+                Ok(Some(Some(cancelled))) => {
+                    if cancelled {
+                        store.end_wake_delay();
+                    }
+                    WATCH.with(|w| *w.borrow_mut() = None);
+                }
+                Ok(Some(None)) => {}
+                // gone (dismissed by hand): the delay runs its course
+                _ => WATCH.with(|w| *w.borrow_mut() = None),
             }
-            Ok(Some(None)) => {}
-            // gone (dismissed by hand): the delay runs its course
-            _ => WATCH.with(|w| *w.borrow_mut() = None),
-        }
-    });
+        },
+    );
     WATCH.with(|w| *w.borrow_mut() = Some(timer));
 }

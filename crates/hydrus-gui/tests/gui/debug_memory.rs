@@ -5,11 +5,11 @@
 use super::debug_menu_actions::Debug;
 use hydrus_core::HashId;
 use hydrus_gui::{MainWindow, Pages, bind, headless};
-use hydrus_store::settings::ThumbnailCacheSettings;
 use hydrus_import::{FileImportOptions, FileImporter};
 use hydrus_media::MediaTools;
 use hydrus_store::image_cache::Policy;
 use hydrus_store::settings;
+use hydrus_store::settings::ThumbnailCacheSettings;
 use serde_json::Value;
 use slint::{ComponentHandle as _, Model as _};
 use std::sync::Arc;
@@ -48,7 +48,11 @@ fn run_fast_memory_maintenance_trims_the_image_and_thumbnail_caches_and_slow_doe
     );
     assert!(step("after slow")["pubs"].as_array().unwrap().is_empty());
     assert_eq!(keys_in_order(&aged_slow["image"]), 3, "slow leaves them");
-    assert_eq!(keys_in_order(&aged_fast["image"]), 1, "only the newest left");
+    assert_eq!(
+        keys_in_order(&aged_fast["image"]),
+        1,
+        "only the newest left"
+    );
     assert_eq!(aged_fast["image"], aged_fast["thumbnail"]);
 
     let (dirs, store) = super::subscriptions::store();
@@ -119,7 +123,9 @@ fn run_fast_memory_maintenance_trims_the_image_and_thumbnail_caches_and_slow_doe
     for (file, seconds) in [(0, 1), (1, 3)] {
         let i = ids.iter().position(|id| *id == files[file]).unwrap();
         clock.store(seconds * 1000, Ordering::Release);
-        bound.rows.advance_cache_clock(Duration::from_secs(if file == 0 { 1 } else { 2 }));
+        bound
+            .rows
+            .advance_cache_clock(Duration::from_secs(if file == 0 { 1 } else { 2 }));
         bound.rows.row_data(i).unwrap();
         bound.rows.wait();
         ui.invoke_thumbnail_clicked(i32::try_from(i).unwrap(), false, false);
@@ -139,12 +145,17 @@ fn run_fast_memory_maintenance_trims_the_image_and_thumbnail_caches_and_slow_doe
     for entry in ["run slow memory maintenance", "run fast memory maintenance"] {
         d.click(&["memory actions", entry]);
         assert_eq!(d.bound.image_cache.keys().len(), 2, "{entry}");
-        assert!(has(&d.bound.rows, older) && has(&d.bound.rows, newest), "{entry}");
+        assert!(
+            has(&d.bound.rows, older) && has(&d.bound.rows, newest),
+            "{entry}"
+        );
     }
     // past the timeout (the oldest by 1.5 s, the newest not yet): slow still
     // leaves them, fast drops the idle one
     clock.store(301_500, Ordering::Release);
-    d.bound.rows.advance_cache_clock(Duration::from_millis(298_500));
+    d.bound
+        .rows
+        .advance_cache_clock(Duration::from_millis(298_500));
     d.click(&["memory actions", "run slow memory maintenance"]);
     assert_eq!(d.bound.image_cache.keys().len(), 2);
     assert!(has(&d.bound.rows, older) && has(&d.bound.rows, newest));
@@ -152,7 +163,10 @@ fn run_fast_memory_maintenance_trims_the_image_and_thumbnail_caches_and_slow_doe
     assert_eq!(d.bound.image_cache.keys(), vec![newest]);
     assert!(!has(&d.bound.rows, older), "the idle thumbnail goes");
     assert!(has(&d.bound.rows, newest), "the newest stays");
-    assert_eq!(d.bound.image_cache.keys().len(), keys_in_order(&aged_fast["image"]));
+    assert_eq!(
+        d.bound.image_cache.keys().len(),
+        keys_in_order(&aged_fast["image"])
+    );
 }
 
 // leaf: audit-options-help-debug-action-run-slow-memory-maintenance
@@ -201,7 +215,13 @@ fn run_slow_memory_maintenance_deletes_closed_pages_over_an_hour_old_if_pages_ha
             .as_array()
             .unwrap()
             .iter()
-            .map(|n| n.as_str().unwrap().trim_start_matches("closed ").parse().unwrap())
+            .map(|n| {
+                n.as_str()
+                    .unwrap()
+                    .trim_start_matches("closed ")
+                    .parse()
+                    .unwrap()
+            })
             .collect();
         let mut expected = recorded_kept.clone();
         expected.sort_unstable_by(|a, b| b.cmp(a));
@@ -218,5 +238,8 @@ fn run_slow_memory_maintenance_deletes_closed_pages_over_an_hour_old_if_pages_ha
     }
     d.click(&["memory actions", "run fast memory maintenance"]);
     assert_eq!(d.bound.pages.borrow().held_closed_ages().len(), 1);
-    assert_eq!(recording["fast_leaves_closed_pages"]["destroyed"], serde_json::json!([]));
+    assert_eq!(
+        recording["fast_leaves_closed_pages"]["destroyed"],
+        serde_json::json!([])
+    );
 }

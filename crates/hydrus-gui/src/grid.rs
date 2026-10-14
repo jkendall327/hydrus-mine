@@ -239,9 +239,7 @@ impl ThumbnailRows {
     /// Enforce saved preferences immediately, without changing decode generations.
     pub fn set_cache_policy(&self, policy: ThumbnailCacheSettings) {
         if self.active.get() {
-            self.cache
-                .borrow_mut()
-                .set_policy(policy, self.cache_now());
+            self.cache.borrow_mut().set_policy(policy, self.cache_now());
         }
     }
     /// The cache's monotonic clock.

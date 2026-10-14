@@ -100,7 +100,7 @@ fn run(name: &str) -> (Value, Seen) {
                 && started.elapsed() >= at
             {
                 seen.cancelled_after = Some(started.elapsed());
-                let key = job.key.clone();
+                let key = job.key;
                 d.store
                     .write(move |ctx| popups::update(ctx.conn(), &key, 0, popups::Job::cancel))
                     .unwrap();
@@ -166,7 +166,10 @@ fn cancelling_the_just_woke_popup_enables_input_and_output_at_once() {
     // and it goes about as soon as the reference's does (0.8 s of its thread
     // waking), the delay no longer running
     let gone = seen.gone_after.expect("it goes");
-    assert!(gone - cancelled < Duration::from_millis(1500), "{gone:?}");
+    assert!(
+        gone.saturating_sub(cancelled) < Duration::from_millis(1500),
+        "{gone:?}"
+    );
     assert!(!seen.woke_after);
 }
 

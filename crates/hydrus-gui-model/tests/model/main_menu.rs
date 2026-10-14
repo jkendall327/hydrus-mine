@@ -73,7 +73,12 @@ fn kept(entries: &[Value]) -> Vec<Value> {
             let keep: [(&str, &[&str]); 7] = [
                 (
                     "debug modes",
-                    &["force idle mode", "simulate a wake from sleep", "---", "use faulthandler to log crashes"],
+                    &[
+                        "force idle mode",
+                        "simulate a wake from sleep",
+                        "---",
+                        "use faulthandler to log crashes",
+                    ],
                 ),
                 (
                     "profiling",
@@ -134,7 +139,12 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                 ),
                 (
                     "memory actions",
-                    &["run fast memory maintenance", "run slow memory maintenance", "clear all rendering caches", "clear thumbnail cache"],
+                    &[
+                        "run fast memory maintenance",
+                        "run slow memory maintenance",
+                        "clear all rendering caches",
+                        "clear thumbnail cache",
+                    ],
                 ),
                 (
                     "network actions",

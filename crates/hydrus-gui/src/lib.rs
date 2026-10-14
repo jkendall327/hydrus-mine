@@ -179,12 +179,12 @@ pub(crate) mod tag_relationships_window;
 pub mod tag_suggestions_window;
 mod tag_sync_review_window;
 pub use tag_sync_review_window::opened as tag_sync_review_opened;
+mod memory_maintenance;
 mod tag_text;
 pub mod thumbnail_background;
 mod vacuum_review_window;
-pub mod what_is_this_window;
-mod memory_maintenance;
 mod wake_popup;
+pub mod what_is_this_window;
 
 /// Missing-thumbnail recovery, independent of stored image colour policy.
 pub fn thumbnail_recovery(
