@@ -1168,9 +1168,14 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   merely because an editor is open; the reference subscription manager has
   a separate pause-for-editing state. Concurrent script/import changes still
   use the existing optimistic merge boundaries rather than a global editor lock.
-- **Import options that run a program on each imported file are kept but
-  not run yet.** The migration warns where they are set (which defaults,
-  subscriptions, import folders or downloader pages).
+- **Import options that run a program on each imported file run it, but
+  the calls they name are not migrated.** The registered external calls
+  (Options > external programs) are not carried over from the reference's
+  database, so migrated entries name calls this client does not have until you
+  set them up again and choose them again; the first import to need one
+  pauses the importers, as the reference does for a call it does not have. The
+  migration warns where they are set (which defaults, subscriptions, import
+  folders or downloader pages).
 - **There is no browser impersonation** (the reference's optional
   `curl_cffi` connections); requests are always plain ones.
 
@@ -4533,6 +4538,27 @@ rendered grid.
 ## Options > media playback
 
 The `mpv.conf` copy replaces a read-only mpv.conf; recorded as root the reference did too, but run as another user on Linux its mirror keeps the old file (it makes the destination writable only on Windows).
+
+## Import options > external programs
+
+The import options editor's external programs page is the reference's
+(`record_import_external_programs.py`, `import_external_programs.json`): a list
+of "call NAME on WHEN" entries with add, edit (each selected row in turn,
+stopping at a cancel) and delete (after "Remove N selected?"), the entry editor
+with the registered "send single file" calls by name and the four "when"
+choices, and its notices (no calls; a call that is not registered). Differences:
+the entry editor is a small window with its own apply and cancel. Imports run the programs for a new file or one
+already in the client, in the order added, with the file's path, URI and hash;
+a program that cannot be run, times out, returns non-zero, or is not
+registered, pauses subscriptions, import folders and file queues, as the
+reference does, and says why in the log (the reference also shows the message
+as a popup, and prints its whole environment). A file the client already has
+that a downloader does not fetch again runs them too. The reference passes
+the file id parameter as a number, which its own string processing refuses
+(`TypeError`), so a call using the file id fails there and pauses the importers;
+here the number is passed as text and the call runs. The reference runs them
+after the whole import of a file, tags and notes included; here as soon as the
+file is stored.
 
 ## Options > external programs
 

@@ -106,7 +106,8 @@ impl Downloader {
                 // (a file already in the client, not fetched again, still has
                 // its programs run, as the reference's does)
                 if predicted.status == ImportStatus::SuccessfulButRedundant {
-                    self.importer.fire_external_programs(&hash, true, &file_options);
+                    self.importer
+                        .fire_external_programs(&hash, true, &file_options);
                 }
             }
         }

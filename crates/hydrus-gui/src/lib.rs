@@ -52,6 +52,10 @@ pub mod downloader_display_window;
 pub mod downloader_interchange_window;
 pub mod downloader_update_times;
 mod drops;
+mod import_options_programs;
+pub use import_options_programs::{
+    dialog as external_program_dialog, entry_window as external_program_entry_window,
+};
 pub mod duplicates_filtering_sidebar;
 mod duplicates_sidebar;
 mod edit_subscription_window;

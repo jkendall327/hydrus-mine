@@ -9,7 +9,7 @@ use hydrus_core::Sha256;
 use hydrus_core::external_calls::{ActualCall, Inputs, Manager, Parameter, Pipeline, Process};
 use hydrus_core::import_options::ExternalProgramEntry;
 
-use crate::{FileImporter, FileImportOptions, ImportResult, ImportStatus};
+use crate::{FileImportOptions, FileImporter, ImportResult, ImportStatus};
 
 /// `Path.as_uri()`: the file's `file://` URI, escaped as Python escapes it.
 fn file_uri(path: &Path) -> String {
@@ -70,7 +70,10 @@ impl FileImporter {
         if entries.is_empty() {
             return;
         }
-        let manager: Manager = self.store.read(hydrus_store::settings::get).unwrap_or_default();
+        let manager: Manager = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
         let target = self.external_program_target(hash);
         for entry in entries {
             let outcome = target
@@ -133,10 +136,7 @@ fn send_single_file(
     let call = manager
         .calls
         .iter()
-        .find(|call| {
-            call.key.iter().map(|b| format!("{b:02x}")).collect::<String>()
-                == entry.key.to_lowercase()
-        })
+        .find(|call| call.key_hex() == entry.key.to_lowercase())
         .ok_or_else(missing)?;
     if call.pipeline != Pipeline::File {
         return Err(format!(
@@ -217,11 +217,18 @@ fn run_process(process: &Process, inputs: &Inputs) -> Result<(), String> {
                     return Ok(());
                 }
                 let text = |reader: std::thread::JoinHandle<String>| {
-                    reader.join().unwrap_or_default().chars().take(256).collect::<String>()
+                    reader
+                        .join()
+                        .unwrap_or_default()
+                        .chars()
+                        .take(256)
+                        .collect::<String>()
                 };
                 return Err(format!(
                     "A call to another executable gave a non-zero return code ({})! The call was: {cmd:?}\n\n========== stdout ==========\n{:?}\n========== stderr ==========\n{:?}\n============================\n",
-                    status.code().map_or_else(|| "none".to_owned(), |c| c.to_string()),
+                    status
+                        .code()
+                        .map_or_else(|| "none".to_owned(), |c| c.to_string()),
                     text(stdout),
                     text(stderr),
                 ));

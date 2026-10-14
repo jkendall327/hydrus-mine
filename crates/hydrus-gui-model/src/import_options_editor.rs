@@ -446,7 +446,13 @@ pub fn summary_with_format(
                 parts.push("not adding notes".into());
             }
         }
-        Kind::ExternalPrograms => return String::new(),
+        Kind::ExternalPrograms => {
+            return slice
+                .external_programs
+                .as_ref()
+                .map(hydrus_core::import_options::ExternalProgramsOptions::summary)
+                .unwrap_or_default();
+        }
         Kind::Presentation => {
             return slice
                 .presentation

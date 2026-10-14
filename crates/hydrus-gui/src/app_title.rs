@@ -109,6 +109,7 @@ titled!(
     EditBandwidthRulesWindow,
     EditNetworkValueWindow,
     EditServiceWindow,
+    ExternalProgramEntryWindow,
     EditSubscriptionWindow,
     EditValueWindow,
     EmbeddedMetadataWindow,

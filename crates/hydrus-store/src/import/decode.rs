@@ -1999,7 +1999,7 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     let callers = external_program_users(&input);
     if !callers.is_empty() {
         input.warnings.push(format!(
-            "Some import options run a program on each imported file, which hydrus-rs doesn't do yet, so they won't run: {} (the options are kept)",
+            "Some import options run a program on each imported file. hydrus-rs runs them through the calls in Options > external programs, which are not migrated: set those calls up again and choose them again in these options, or the first import to need one pauses the importers, as hydrus does for a call it does not have: {} (the options are kept)",
             callers.join("; ")
         ));
     }

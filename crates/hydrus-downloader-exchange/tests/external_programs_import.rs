@@ -25,8 +25,17 @@ fn the_references_serialised_options_decode_summarise_and_encode_unchanged() {
             "{}",
             event["label"]
         );
-        for (entry, text) in decoded.entries.iter().zip(event["list"].as_array().unwrap()) {
-            assert_eq!(entry.summary(), text.as_str().unwrap(), "{}", event["label"]);
+        for (entry, text) in decoded
+            .entries
+            .iter()
+            .zip(event["list"].as_array().unwrap())
+        {
+            assert_eq!(
+                entry.summary(),
+                text.as_str().unwrap(),
+                "{}",
+                event["label"]
+            );
         }
         let again: serde_json::Value = serde_json::from_str(&decoded.serialised()).unwrap();
         assert_eq!(again, value[2], "{}", event["label"]);
@@ -39,12 +48,7 @@ fn the_references_serialised_options_decode_summarise_and_encode_unchanged() {
         assert_eq!(import_options::decode_text(&text).unwrap(), slice);
     }
     // the list's summary: the entries', sorted, joined
-    let last = fixture["add_events"]
-        .as_array()
-        .unwrap()
-        .last()
-        .unwrap()["value"][2]
-        .to_string();
+    let last = fixture["add_events"].as_array().unwrap().last().unwrap()["value"][2].to_string();
     let options = ExternalProgramsOptions::from_serialised(&last).unwrap();
     assert_eq!(options.summary(), fixture["summary"].as_str().unwrap());
     assert_eq!(ExternalProgramsOptions::default().summary(), "");

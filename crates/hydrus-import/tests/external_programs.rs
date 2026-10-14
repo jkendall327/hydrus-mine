@@ -8,7 +8,9 @@
 
 use std::sync::Arc;
 
-use hydrus_core::external_calls::{ActualCall, Callable, Manager, Parameter, Pipeline, Process, Rule};
+use hydrus_core::external_calls::{
+    ActualCall, Callable, Manager, Parameter, Pipeline, Process, Rule,
+};
 use hydrus_core::import_options::ExternalProgramEntry;
 use hydrus_import::{FileImportOptions, FileImporter, ImportStatus};
 use hydrus_media::MediaTools;
@@ -29,7 +31,11 @@ fn entry(n: u8, name: &str, on_new: bool, on_already_in: bool) -> ExternalProgra
 }
 
 fn hex(bytes: &[u8]) -> String {
-    bytes.iter().map(|b| format!("{b:02x}")).collect()
+    use std::fmt::Write as _;
+    bytes.iter().fold(String::new(), |mut text, b| {
+        let _ = write!(text, "{b:02x}");
+        text
+    })
 }
 
 /// A program that appends each argument it is given, then a line of dashes.
@@ -63,7 +69,7 @@ fn callable(n: u8, name: &str, pipeline: Pipeline, call: ActualCall) -> Callable
 }
 
 struct World {
-    _dir: tempfile::TempDir,
+    dir: tempfile::TempDir,
     store: Arc<Store>,
     log: std::path::PathBuf,
     importer: FileImporter,
@@ -120,7 +126,7 @@ fn world() -> World {
         .unwrap();
     let importer = FileImporter::new(Arc::clone(&store), MediaTools::new());
     World {
-        _dir: dir,
+        dir,
         store,
         log,
         importer,
@@ -132,7 +138,7 @@ fn import(
     seed: u32,
     entries: Vec<ExternalProgramEntry>,
 ) -> (ImportStatus, hydrus_core::Sha256) {
-    let source = world._dir.path().join(format!("source_{seed}.bmp"));
+    let source = world.dir.path().join(format!("source_{seed}.bmp"));
     std::fs::write(&source, hydrus_testkit::bmp(seed, 20000)).unwrap();
     let options = FileImportOptions {
         external_programs: entries,
@@ -155,7 +161,11 @@ fn calls(world: &World) -> Vec<Vec<String>> {
 fn paused(world: &World) -> [bool; 3] {
     let pauses: Pauses = world.store.read(hydrus_store::settings::get).unwrap();
     let folders: FolderSettings = world.store.read(hydrus_store::settings::get).unwrap();
-    [pauses.subscriptions, pauses.file_queues, folders.pause_import_folders]
+    [
+        pauses.subscriptions,
+        pauses.file_queues,
+        folders.pause_import_folders,
+    ]
 }
 
 fn recorded(label: &str) -> serde_json::Value {
@@ -209,7 +219,11 @@ fn imports_run_the_programs_the_reference_runs_on_new_and_already_in_files() {
     let w = world();
     let cases: [(&str, Vec<ExternalProgramEntry>, bool); 6] = [
         ("new-all", vec![entry(2, "beta log", true, true)], false),
-        ("redundant-all", vec![entry(2, "beta log", true, true)], true),
+        (
+            "redundant-all",
+            vec![entry(2, "beta log", true, true)],
+            true,
+        ),
         (
             "new-only-on-redundant",
             vec![entry(2, "beta log", true, false)],
@@ -264,7 +278,10 @@ fn a_program_that_cannot_be_run_pauses_every_importer_and_stops_the_rest() {
     let (_, hash) = import(
         &w,
         50,
-        vec![entry(4, "broken", true, true), entry(2, "beta log", true, true)],
+        vec![
+            entry(4, "broken", true, true),
+            entry(2, "beta log", true, true),
+        ],
     );
     let run = recorded("broken-first");
     assert!(run["lines"].as_array().unwrap().is_empty());
@@ -276,11 +293,13 @@ fn a_program_that_cannot_be_run_pauses_every_importer_and_stops_the_rest() {
     let w = world();
     let (_, _) = import(&w, 51, vec![entry(9, "gone", true, true)]);
     assert_eq!(paused(&w), [true; 3]);
-    assert!(recorded("program-missing")["paused"]
-        .as_array()
-        .unwrap()
-        .iter()
-        .all(|p| p == true));
+    assert!(
+        recorded("program-missing")["paused"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|p| p == true)
+    );
     // a program of the wrong kind
     let w = world();
     import(&w, 52, vec![entry(1, "Zulu URL", true, true)]);

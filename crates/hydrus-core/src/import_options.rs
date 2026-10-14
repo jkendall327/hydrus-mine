@@ -508,8 +508,11 @@ impl From<StoredExternalPrograms> for ExternalProgramsOptions {
 impl ExternalProgramsOptions {
     /// `GetSummary`: the entries' summaries, sorted, joined; nothing for none.
     pub fn summary(&self) -> String {
-        let mut statements: Vec<String> =
-            self.entries.iter().map(ExternalProgramEntry::summary).collect();
+        let mut statements: Vec<String> = self
+            .entries
+            .iter()
+            .map(ExternalProgramEntry::summary)
+            .collect();
         statements.sort();
         statements.join(", ")
     }
@@ -523,7 +526,11 @@ impl ExternalProgramsOptions {
             .map(|e| {
                 serde_json::json!([
                     2,
-                    [163, 1, [[158, 1, [e.key, e.name]], e.on_new, e.on_already_in]]
+                    [
+                        163,
+                        1,
+                        [[158, 1, [e.key, e.name]], e.on_new, e.on_already_in]
+                    ]
                 ])
             })
             .collect();
