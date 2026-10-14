@@ -157,6 +157,7 @@ fn clipboard_and_repeatable_current_callable_reach_real_native_controls_and_stor
     ui.invoke_popup_copy_payload(row.key, row.action_owner, row.gui_owner);
     assert_eq!(headless::clipboard_text().as_deref(), Some("retired"));
 }
+// leaf: audit-options-popups-yes-no
 #[test]
 fn yes_and_no_dismiss_the_popup_and_reach_the_retained_producer_once() {
     let (_directories, store) = crate::subscriptions::store();
@@ -184,18 +185,37 @@ fn yes_and_no_dismiss_the_popup_and_reach_the_retained_producer_once() {
             .unwrap();
             pixels
         });
-        ui.invoke_popup_answer(
-            row.key.clone(),
-            row.action_owner.clone(),
-            row.question_token.clone(),
-            row.gui_owner.clone(),
-            answer,
-        );
+        // the reference's card before and after its yes or no
+        // (popup_actions.json 'answer before/after True/False')
+        let recorded = hydrus_testkit::fixture_json("popup_actions.json");
+        let state = |when: &str| {
+            let label = format!("answer {when} {}", if answer { "True" } else { "False" });
+            recorded["states"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|s| s["label"] == label.as_str())
+                .unwrap_or_else(|| panic!("{label} is recorded"))
+                .clone()
+        };
+        let (before, after) = (state("before"), state("after"));
+        assert_eq!(before["question"], row.question.as_str());
+        assert_eq!(before["yes_hidden"], false);
+        assert_eq!(before["no_hidden"], false);
+        assert_eq!(before["dismissed"], false);
+        assert_eq!(before["answer"], serde_json::Value::Null);
+        assert_eq!(producer.question_answer(), None);
+        // a real click on the card's button
+        crate::common::widgets::lay_out(ui.window(), 1100.0, 700.0);
+        crate::common::widgets::click(ui.window(), if answer { "yes" } else { "no" });
         assert_eq!(
             ui.get_popups().row_count(),
             0,
             "answer immediately finishes and dismisses"
         );
+        assert_eq!(after["dismissed"], true);
+        assert_eq!(after["done"], true);
+        assert_eq!(after["answer"], answer);
         assert!(store.read(|conn| popups::all(conn, 0)).unwrap().is_empty());
         if let Some(before) = question_pixels {
             let after = headless::render(&windows.get(0).unwrap(), 1100, 700);

@@ -130,7 +130,8 @@ pub fn facts(store: &Store) -> Facts {
         db_dir: store.dir().to_string_lossy().into_owned(),
         temp_dir: std::env::temp_dir().to_string_lossy().into_owned(),
         cache_mb,
-        journal_mode,
+        // (the reference prints the configured name: WAL)
+        journal_mode: journal_mode.to_uppercase(),
         synchronous,
     }
 }

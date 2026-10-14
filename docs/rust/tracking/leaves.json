@@ -401,18 +401,18 @@
    "label": "Clear selected viewing statistics",
    "path": "Media files, metadata and viewing",
    "workstream": "media",
-   "state": "missing",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
-    "Native info menu reports viewing statistics but does not expose the reference selected-file clearing action."
+    "Manage > viewing stats > clear asks 'Clear the file viewing count/duration and 'last viewed time' for this file / these N files?' and deletes only the selected files' records."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real menu, question ('Are you sure?', plural/singular messages, yes/no) and store deletes of only the selected files; wording is a literal from ClientGUIMediaModalActions.py (line 306), no recording. Stale tracker note. Tests: crates/hydrus-gui/tests/gui/selected_viewing_stats.rs:63 clearing_selected_viewing_stats_asks_then_clears_only_the_selection"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (#97 phase 2, w4-r4)",
+    "note": "gui/selected_viewing_stats.rs drives the real thumbnail menu's manage > viewing stats > clear. The question's wording for two files and for one, its title and its yes/no buttons, that 'no' writes nothing and 'yes' writes one delete of just the selected files are compared with oracle/record_clear_viewing_stats.py's recording of DoClearFileViewingStats (clear_viewing_stats.json); the native store deletes only the selected files' records on both canvases. Closing the question counts as no."
    }
   },
   {
@@ -479,20 +479,19 @@
    "label": "Export/copy files, paths, file IDs and digest/blurhash/pixel hashes",
    "path": "Media files, metadata and viewing",
    "workstream": "media",
-   "state": "partial",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
-    "Selection/local-file facts determine share commands; actual hash/path readers and lib clipboard dispatch implement each offered kind. Partial: No inspected scoped assertion verifies menu-selected file-ID/digest/blurhash/pixel-hash payloads or each export/copy variant; production readers/dispatch support them but cannot alone satisfy this grouped leaf’s regression claim. Existing regression scope: Reference share menu structure and shared file clipboard payload are checked.",
-    "Manual export is the separately audited shared export window.",
-    "No inspected scoped assertion verifies menu-selected file-ID/digest/blurhash/pixel-hash payloads or each export/copy variant; production readers/dispatch support them but cannot alone satisfy this grouped leaf’s regression claim."
+    "Selection/local-file facts determine share commands; the copy hashes, file ids, paths and files rows copy what the reference's do.",
+    "Manual export is the separately audited shared export window."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Checks file ids, sha256, paths, copy files and focused-file payloads, but md5/sha1/sha512 only by length/hex form, blurhash only non-empty, pixel hashes only line count and length: presence instead of content. No recording of payloads; export variants are not covered. Tests: crates/hydrus-gui/tests/gui/media_selection_menu.rs:180 share_rows_copy_the_selected_files_paths_hashes_and_ids"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (#97 phase 2, w4-r4)",
+    "note": "gui/media_selection_menu.rs share_rows_copy_what_the_reference_copies_for_the_same_files selects the recorded files in the real window (a pair, a single file, and six) and chooses each share row: sha256, md5, sha1, sha512, blurhash and pixel hash text, file ids, paths and the copied files, compared with oracle/record_share_copies.py's recording of the reference's CopyHashesToClipboard/CopyFileIdsToClipboard/CopyFilePathsToClipboard (share_copies.json), per file in thumbnail order; the blurhash and pixel hash rows are offered only when a file has one, as the reference's are; a lone file uses the focused file's rows. Paths and copied files are compared by file name (the directory is the client's own). Export files opens the separately audited export window. The share menu's row labels are named in the test from the source (the menu's shape is replayed in thumbnail_menu.rs against thumbnail_menu.json), not recorded here."
    }
   },
   {
@@ -3714,10 +3713,10 @@
     "Cleaned tags add to files lacking them, or remove when every selected file has the tag. Apply writes only affected mapping rows; this does not cover repository petitions."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test enters tags in the window with typed literals; the recorded add_/list_activate cases are replayed only at model level. Row activation (on_tag_activated in manage_tags_window.rs) is never driven through the window, so part of the leaf (row activation) is untested at GUI level. Tests: crates/hydrus-gui/tests/gui/manage_tags.rs:358; crates/hydrus-gui-model/tests/model/manage_tags_cog.rs:264 (untagged for this leaf)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (#97 phase 2, w4-r4)",
+    "note": "gui/manage_tags_cog.rs typing_a_tag_or_activating_a_row_toggles_it_as_the_reference_does opens the real Manage Tags window on the recorded three files and corpus and replays every recorded single-tag case of manage_tags_cog.json (typed tag + Enter, and a tag row activated, with 'allow remove on input' on and off): the reference's question and its buttons when only some files have the tag, answered with its first, second or neither button, and the store after Apply equals the reference's staged adds and deletes (nothing is written before Apply). Several tags at once and the only_add flag come from the suggestion lists and paste, covered by the model test and the suggestion tests, not this leaf. Replayed: 13 of the recorded cases; the add_many, only_add and 'cleaned tags' cases are not replayed through the window (model test only)."
    }
   },
   {
@@ -6243,19 +6242,19 @@
    "label": "Description: platform, ffmpeg/SQLite, boot and directories",
    "path": "Help > About the client",
    "workstream": "shell",
-   "state": "partial",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
     "Reads platform/executable/store/temp paths and SQLite version/cache/journal/synchronous pragmas for the live description.",
-    "Python/Qt/other Python libraries, locale and commit details omitted."
+    "Python/Qt/other Python libraries and the commit period are omitted."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model test replays the recorded line labels/order against about() with typed Facts; GUI test only checks real store-dir/journal/cache lines and that every label is a reference label. Not covered: values/forms - the GUI test asserts 'db journal mode: wal' while the reference prints the configured 'WAL' (recorded), and the platform/ffmpeg/boot lines gathered by facts() are never checked against anything. Tag sits on the model test only. Tests: crates/hydrus-gui-model/tests/model/about.rs:172 the_description_has_the_references_lines_in_its_order_and_forms; crates/hydrus-gui/tests/gui/about.rs:19"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (#97 phase 2, w4-r4)",
+    "note": "Help > about is opened through the real menu (gui/about.rs help_about_opens_the_about_window). Its description's lines are each one of the recording's by label and in its order (the model test replays the order against about_window.json), and their values are checked against the recording's: db cache size per file and db journal mode equal it exactly (the journal mode was lower-case 'wal' and is now the reference's 'WAL', fixed), the boot time has the recorded 'N seconds ago (date time.ms)' form ('now' in the first second), db dir and temp dir are the store's and the system's, the platform line begins with the recorded 'running on x86_64 Linux' (on x86_64 Linux), and FFMPEG and sqlite lines are there. Not compared with the recording because they are facts of the machine: the ffmpeg and sqlite versions, install dir and locale. Known differences (DIFFERENCES.md): db synchronous mode and memory-temp are the store's own (2 and True, the reference's configured 1 and False), and the Python/Qt version lines and commit period are absent."
    }
   },
   {
@@ -16728,7 +16727,7 @@
    "label": "Cancel a cancellable job",
    "path": "Popup message manager",
    "workstream": "shell",
-   "state": "partial",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
@@ -16737,10 +16736,10 @@
     "Native removes cancelled popup immediately rather than Qt next message refresh; UI has no additional cancel confirmation."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-14",
     "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the popup cancel callback; expects cancelled+done and not cancellable/pausable (matches JobStatus.Cancel -> Finish) and no-op for non-cancellable, but the values are typed from source though popup_actions.json already records the cancel state. 'Daemon consumers observe cancellation' only means the store flag; the native removing the card at once vs reference keeping it is a documented difference. Tests: crates/hydrus-gui/tests/gui/shell_popups.rs:120 cancel_marks_a_cancellable_job_cancelled_and_leaves_others_alone"
+    "by": "Claude (#97 phase 2, w4-r4)",
+    "note": "Class lowered after review: the click on the cancel button is not driven (icon-only button, no accessible label), only the window's cancel callback. gui/shell_popups.rs cancel_marks_a_cancellable_job_cancelled_and_leaves_others_alone calls the window's cancel callback on a real cancellable job and a non-cancellable one; before and after are compared with the reference's PopupMessage.Cancel states (popup_actions.json 'resume refresh labels' then 'cancel retains callable': cancelled and done flip, a non-cancellable job is untouched). The store flag is what daemon consumers read. The cancel button's click itself is not driven (the button is icon-only, so it cannot be found by label). The native card disappearing at once, where the reference's stays until dismissed, is in DIFFERENCES.md."
    }
   },
   {
@@ -16777,10 +16776,10 @@
     "Job fields map to two gauges/text blocks; pause hides both gauges and second text and replaces first text with paused. Long second-text/traceback strings truncate at 1024 characters."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real window with typed values restated from PopupMessage.UpdateMessage (title, two texts, two gauges, paused hides gauges/text2 and shows 'paused', 1024-char cutoff text); no recording of the card content though one could be made. Does not check the hidden states when title/text/gauge are absent. Tests: shell_popups.rs:57 cards_show_title_texts_and_gauges_and_pausing_hides_them"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (#97 phase 2, w4-r4)",
+    "note": "gui/popup_card_replay.rs a_card_shows_what_the_references_shows_for_the_same_job builds the same jobs as the new recorder oracle/record_popup_content.py ran against the reference's PopupMessage (fixtures/popup_content.json) and compares the main window's card for each, piece by piece: title, text 1, text 2, gauge 1 and 2 (filled, with value/range, or pulsing), the pause and cancel buttons, a pausable job paused ('paused' replaces text 1, the gauges and text 2 go) and played again, empty/title-only/text-only/gauge-only jobs (what is hidden), texts past 1,024 characters (text 1 uncut, text 2 cut with the reference's prefix) and a traceback's cut. The card is read from the window's rows, not pixels."
    }
   },
   {
@@ -16913,10 +16912,10 @@
     "Shows oldest IN_VIEW jobs, total job count and local collapse/expand; hiding cards does not cancel or delete jobs."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real pointer click on the collapse arrow, '12 messages' text and 10 rows are asserted, but the collapse is proved only by 'render differs from expanded' and 're-expand renders equal' (presence/change of pixels, not that the cards are hidden), and the ten-oldest order is in a separate untagged test with typed values. No recording. Tests: crates/hydrus-gui/tests/gui/popups_collapse.rs:30 the_summary_bar_collapses_and_expands_the_cards_without_touching_jobs; shell_popups.rs only_the_ten_oldest_cards_show_and_the_line_counts_them_all (untagged)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (#97 phase 2, w4-r4)",
+    "note": "gui/popups_collapse.rs the_summary_bar_collapses_and_expands_the_cards_without_touching_jobs replays oracle/record_popup_summary.py's recording (popup_summary.json) of the reference's manager with twelve messages: the ten oldest cards in order, the bar's '12 messages' (and '1 message' for one, a second test), the arrow's glyph (fixed here from ▾/▴ to the reference's ▼/▲), a real click on the arrow hides the cards (checked by looking for each card's text in the window, not by pixel changes) and a second click shows the same ten, with all twelve jobs unchanged in the store."
    }
   },
   {
@@ -16933,10 +16932,10 @@
     "Copied header identifies hydrus-rs rather than frozen/source Qt runtime."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Show/hide is found by brute-force clicking until the render changes, never checking the 'show traceback'/'hide traceback' text or that the traceback text appears; copy is checked against Job::nice_string (the native function) with only a version-contains check on the header (documented difference from the reference's 'v<ver>, <platform>, source|frozen'). Presence-only toggle, circular copy text. Tests: crates/hydrus-gui/tests/gui/popups_collapse.rs:76 a_card_shows_and_hides_its_traceback_and_copies_all_of_it; shell_popups.rs copy_traceback_puts_version_system_and_the_whole_job_on_the_clipboard (untagged)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (#97 phase 2, w4-r4)",
+    "note": "gui/popup_card_replay.rs the_traceback_button_shows_hides_and_copies_as_the_references_does, against oracle/record_popup_content.py's recording of the reference's card: the 'show traceback' button, its label turning to 'hide traceback' and back with real clicks, the traceback text (cut at 1,024 characters) shown only while shown, and 'copy traceback information' copying the job's title, texts and traceback exactly as the reference's ToString does, for a long and a short traceback. Only the first line differs: the reference's 'v688, linux, source' header, ours names hydrus-rs and its version (DIFFERENCES.md)."
    }
   },
   {
@@ -16944,7 +16943,7 @@
    "label": "Yes/No question and answer variable",
    "path": "Popup message manager",
    "workstream": "shell",
-   "state": "carried",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
@@ -16954,10 +16953,10 @@
     "Popup download/cancel, modal/freeze, producer-family breadth and parent/alias completeness are outside these three leaf claims and receive zero credit."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Answer path is driven through the window callback (not a button click) with typed expectations (answer variable, finish-and-dismiss, buttons gone); popup_actions.json has recorded 'answer after True/False' states but only its question visibility/labels/cutoff are replayed (against view(), in a src unit test), not the answer outcome. Tracker note is a long narrative with no tag. Tests: crates/hydrus-gui/tests/gui/popup_job_actions.rs:159 yes_and_no_dismiss_the_popup_and_reach_the_retained_producer_once, :226 removed_question_tokens_and_retired_producers_cannot_answer_successors; crates/hydrus-gui/src/popups.rs:592 actual_qt_action_visibility_labels_and_question_cutoff_replay (unit test)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (#97 phase 2, w4-r4)",
+    "note": "gui/popup_job_actions.rs yes_and_no_dismiss_the_popup_and_reach_the_retained_producer_once puts a real question job in the window and clicks its 'yes' and 'no' buttons (found by label, a real pointer click); the question text, both buttons shown, no answer yet, and the outcome (job done and dismissed, answer True/False) are compared with popup_actions.json's 'answer before/after True/False' states of the reference's card. The producer receives the answer once, a later answer is ignored, and the token/owner guards are the same test and removed_question_tokens_and_retired_producers_cannot_answer_successors."
    }
   },
   {
@@ -21018,19 +21017,18 @@
    "label": "{selectable page}",
    "path": "Notebook tabs and page lifecycle > Tab right-click menu > pages",
    "workstream": "shell",
-   "state": "missing",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
-    "This reference action is wired in _ShowMenuForTabIndex to self.ShowPage. Native has no tab-context-menu callback for it.",
-    "No native action/editor path for this reference workflow."
+    "Tab right-click has the 'pages' submenu (every media page of the clicked notebook, or of a media tab's notebook, named 'name - N files'); choosing one shows it."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Drives the real tab menu and ShowPage, with reference-matching scope (notebook tab lists its descendants, media tab lists the notebook's), but names/expected pages are typed and the entry labels ('name - N files') are only prefix-matched, not compared with a recording. Tracker note 'native has no tab-context-menu callback' is stale. Tests: crates/hydrus-gui/tests/gui/shell_tabs.rs:131 tab_menu_pages_entry_shows_the_chosen_page"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (#97 phase 2, w4-r4)",
+    "note": "gui/notebook_refresh.rs the_pages_menu_lists_and_shows_each_page_with_the_references_labels right-clicks a notebook's tab and compares its 'pages' submenu with the recording's (tab_refresh.json: 'files a - 2 files', 'files b - 2 files', 'weighted importer - 0/54': the file count and import progress in the label), then chooses each entry and checks the page shown; shell_tabs.rs tab_menu_pages_entry_shows_the_chosen_page covers which pages a notebook's tab and a media tab list."
    }
   },
   {
@@ -21248,7 +21246,7 @@
    "label": "duplicate page",
    "path": "Notebook tabs and page lifecycle > Tab right-click menu",
    "workstream": "shell",
-   "state": "carried",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
@@ -21256,10 +21254,10 @@
     "Duplicate clicked page/notebook beside original with fresh page identities, media and importer queues; selected copied notebook starts on its first child. Media survives deleting original."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Menu-driven GUI test against recorded tree/hashes for a page and a notebook, fresh keys, and media surviving deletion of the original: good. But the leaf also names importer queues, and no duplicate test has an importer page (record_tab_harvest says importers are 'covered independently' by session_importers, which only exercises append/load of sessions, not duplicate_tab). Duplicated importer queue independence is untested. Tests: crates/hydrus-gui/tests/gui/session.rs:2485 duplicate_and_collapse_menus_replay_real_ordered_media_and_cancellation (tab_harvest.json duplicate)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (#97 phase 2, w4-r4)",
+    "note": "Two menu-driven GUI tests: session.rs duplicate_and_collapse_menus_replay_real_ordered_media_and_cancellation (a page and a notebook against tab_harvest.json: fresh keys, the media copied and surviving the original's deletion) and the new tab_duplicate_importer.rs, against oracle/record_tab_duplicate_importer.py's recording of the reference's _DuplicatePage on a URL importer: the copy sits next to the original with its name, its queued URLs in order, paused as the original was, and a URL pended to either is not seen by the other. The copy being the page shown is checked by its key and the recorded selected tab. The 'pended to either does not reach the other' check writes to the stores' queues directly (it checks the two are separate queues), not through a page's input."
    }
   },
   {
@@ -21501,7 +21499,7 @@
    "label": "refresh this page",
    "path": "Notebook tabs and page lifecycle > Tab right-click menu",
    "workstream": "shell",
-   "state": "carried",
+   "state": "implemented",
    "priority": "normal",
    "reference": null,
    "native": null,
@@ -21510,10 +21508,10 @@
     "Duplicate sidebar numbers are read on active-page render rather than independent background sidebar jobs."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Menu click 'refresh this page' is driven in the window; paused-search resume is only checked as synchronised()==true, and importer sort re-apply/selection/pause state is asserted from typed expectations (the recording's 'events' list for the importer is never compared). Hash-locked case is tested by calling Pages::refresh_tab_tree directly, not through the menu. Tests: hydrus-gui/tests/gui/notebook_refresh.rs:68 notebook_refresh_resumes_initialized_descendants_and_preserves_background_selection, :158 advanced_weight_counts_repeated_media... (second half: importer refresh)"
+    "date": "2026-10-13",
+    "class": "sound",
+    "by": "Claude (#97 phase 2, w4-r4)",
+    "note": "gui/notebook_refresh.rs refresh_this_page_resumes_a_paused_search_and_resorts_an_importer_as_the_reference_does: the menu's 'refresh this page' on a paused search page (synchronised again, its files the recorded 30), a hash-locked page with its sync paused (files kept, still paused) and a URL importer page (oracle/record_tab_refresh_importer.py: files sorted by file size, one selected and moved to the end by hand, refreshed: back in sorted order, selection kept, queue still paused, the shown page unchanged) all compared with the reference's recorded results."
    }
   },
   {
@@ -21649,10 +21647,10 @@
     "Selects the requested notebook depth/index or adjacent page, lazily opens it, restores its saved state and switches the active view."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI test drives tab chosen and real Ctrl+PageUp/Down key events, but expectations are typed from the source (no recording of key navigation; tab_actions 'navigation' is the menu 'select' submenu). Lazy opening of the page is not asserted; 'then out of it' in the comment is not exercised. Tests: hydrus-gui/tests/gui/shell_tabs.rs:51 clicking_a_tab_and_ctrl_page_keys_select_pages_and_restore_their_state"
+    "date": "2026-10-14",
+    "class": "weak",
+    "by": "Claude (#97 phase 2, w4-r4)",
+    "note": "Class lowered after review: gui/shell_tabs.rs clicking_a_tab_and_ctrl_page_keys_select_pages_and_restore_their_state replays oracle/record_tab_selection.py's recording (tab_selection.json) of the reference's notebook a, n[b, c], d: real clicks on the tabs (found by name) and real Ctrl+PageUp/PageDown key events, after each of ten steps the page shown and the selected tab of the top row and of n's row equal the reference's, including the deepest-notebook-first rule, moving out of n at its end, going back into it, n remembering its page, and the keys stopping at the ends. The leaf also names lazily opening the page and restoring its saved state; that is not asserted (no recording of the reference's unshown-page loading), so the leaf stays weak until it is. The nested row is asserted present exactly while b or c is shown."
    }
   },
   {
