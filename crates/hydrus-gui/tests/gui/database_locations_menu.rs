@@ -821,8 +821,15 @@ fn move_files_now_asks_for_a_run_time_and_moves_folders_with_a_popup() {
         assert!(Instant::now() < deadline, "the files never finished moving");
         pump(Duration::from_millis(50));
     }
-    // (the finished popup dismisses itself, so there is none left to read)
-    assert!(shown(&rig.store).is_empty());
+    // (the finished popup dismisses itself, once the job's thread has written
+    // that, which is after the last move)
+    while !shown(&rig.store).is_empty() {
+        assert!(
+            Instant::now() < deadline,
+            "the popup never dismissed itself"
+        );
+        pump(Duration::from_millis(50));
+    }
     // every location now holds folders
     let moved = rig.review();
     assert!(

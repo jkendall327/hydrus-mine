@@ -337,20 +337,53 @@ fn cancelling_the_modal_popup_stops_its_countdown() {
     let d = start();
     let recording = recording();
     let cancelled = &recording["cancellable_cancelled"];
-    let at0 = cancelled["events"][0]["at_ms"].as_f64().unwrap();
-    let cancel_after = (cancelled["cancel_at_ms"].as_f64().unwrap() - at0) / 1000.0;
+    // The popup's thread waits for the test to release each of its waits (the
+    // five seconds, then each second of the countdown), so the countdown is
+    // where the recording was at the cancel, however the machine is loaded.
+    let (release, waits) = std::sync::mpsc::channel::<()>();
+    let waits = std::sync::Mutex::new(waits);
+    hydrus_gui::set_modal_wait(Some(std::sync::Arc::new(move |_| {
+        let _ = waits.lock().unwrap().recv();
+    })));
+    // the last text the reference's job showed before the cancel
+    let cancel_at = cancelled["cancel_at_ms"].as_f64().unwrap();
+    let before = cancelled["samples"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .take_while(|s| s["at_ms"].as_f64().unwrap() <= cancel_at)
+        .last()
+        .unwrap();
+    let text_at_cancel = before["text_1"].as_str().unwrap().to_owned();
+    let gauge_at_cancel = (
+        before["gauge_1"][0].as_i64().unwrap(),
+        before["gauge_1"][1].as_i64().unwrap(),
+    );
+    let ticks = (0..10)
+        .find(|&i| hydrus_gui_model::debug_actions::modal_text(i) == text_at_cancel)
+        .unwrap();
     d.click(&["gui actions", "make a modal popup in five seconds"]);
-    let published = wait_for("its dialog opens", 15, || {
-        d.bound.popup_modal.dialog().is_some()
-    });
-    while published.elapsed().as_secs_f64() < cancel_after {
-        pump(50);
+    // (the five seconds, then each second until the countdown is where it
+    // was when the reference was cancelled)
+    for _ in 0..=ticks {
+        release.send(()).unwrap();
     }
+    let held = || {
+        d.store
+            .read(|c| popups::held(c, hydrus_core::TimestampMs::now().0 / 1000))
+            .unwrap()
+            .into_iter()
+            .next()
+    };
+    wait_for("its dialog opens", 30, || {
+        d.bound.popup_modal.dialog().is_some()
+            && held().is_some_and(|job| job.status_text_1.as_deref() == Some(&text_at_cancel))
+    });
     let dialog = d.bound.popup_modal.dialog().unwrap();
     dialog.invoke_close_clicked();
     d.bound.popup_modal.question().unwrap().invoke_chosen(0);
     // cancelled: released to the popups, the countdown stops where it was, and
-    // the job is dismissed within a second or two, as recorded
+    // the job is dismissed on the thread's next second, as recorded
     let read = || {
         d.store
             .read(|c| popups::all(c, hydrus_core::TimestampMs::now().0 / 1000))
@@ -360,36 +393,32 @@ fn cancelling_the_modal_popup_stops_its_countdown() {
     };
     let first = read().expect("it is in the popups, cancelled");
     assert!(first.cancelled);
-    let text_at_cancel = first.status_text_1.clone().unwrap();
-    assert!(
-        countdown_texts(cancel_after).contains(&text_at_cancel),
-        "{text_at_cancel}"
+    assert_eq!(
+        first.status_text_1.as_deref(),
+        Some(text_at_cancel.as_str())
     );
-    let stopped = Instant::now();
-    let mut samples = 1;
-    while let Some(job) = read() {
+    assert_eq!(first.popup_gauge_1, Some(gauge_at_cancel));
+    // (the thread is waiting on its next second: nothing moves until then)
+    for _ in 0..20 {
+        pump(10);
+        let job = read().expect("still there until the next second");
         assert_eq!(
             job.status_text_1.as_deref(),
             Some(text_at_cancel.as_str()),
             "frozen"
         );
         assert_eq!(job.popup_gauge_1, first.popup_gauge_1, "frozen");
-        samples += 1;
-        assert!(stopped.elapsed() < Duration::from_secs(4), "dismissed");
-        pump(50);
     }
-    let _ = samples;
+    release.send(()).unwrap();
+    wait_for("dismissed", 30, || read().is_none());
+    // the reference dismissed it by its next second too
     let recorded_gap = cancelled["samples"]
         .as_array()
         .unwrap()
         .iter()
         .find(|s| s["dismissed"].as_bool().unwrap())
-        .map(|s| s["at_ms"].as_f64().unwrap() - cancelled["cancel_at_ms"].as_f64().unwrap())
+        .map(|s| s["at_ms"].as_f64().unwrap() - cancel_at)
         .unwrap();
     assert!(recorded_gap < 1600.0);
-    assert!(
-        stopped.elapsed() < Duration::from_secs(3),
-        "dismissed {:?} after",
-        stopped.elapsed()
-    );
+    hydrus_gui::set_modal_wait(None);
 }

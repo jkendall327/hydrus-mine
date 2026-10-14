@@ -42,7 +42,9 @@ mod database_backup_window;
 pub mod database_locations_window;
 mod debug_actions;
 mod rule_count;
-pub use debug_actions::{crash_logging, debug_printed, message_window, set_environment};
+pub use debug_actions::{
+    Wait, crash_logging, debug_printed, message_window, set_environment, set_modal_wait,
+};
 pub use orphan_files_window::chooser as orphan_files_chooser;
 pub mod debug_fetch;
 pub mod debug_long_popup;

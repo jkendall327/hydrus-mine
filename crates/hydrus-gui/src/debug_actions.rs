@@ -6,7 +6,7 @@
 use std::cell::RefCell;
 use std::io::Write as _;
 use std::rc::Rc;
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use hydrus_core::Sha256;
@@ -17,9 +17,20 @@ use hydrus_store::popups::{self, Job};
 use crate::ChoiceButtonsWindow;
 use slint::ComponentHandle as _;
 
+/// How the modal popup's thread waits out the five seconds and each second.
+pub type Wait = Arc<dyn Fn(Duration) + Send + Sync>;
+
 thread_local! {
     /// The message shown, kept open until answered.
     static MESSAGE: RefCell<Option<ChoiceButtonsWindow>> = const { RefCell::new(None) };
+    /// A test's way to wait, for the modal popups made from this thread.
+    static MODAL_WAIT: RefCell<Option<Wait>> = const { RefCell::new(None) };
+}
+
+/// Make the modal popups made from this thread wait this way instead of
+/// sleeping, so a test can release each second itself.
+pub fn set_modal_wait(wait: Option<Wait>) {
+    MODAL_WAIT.with(|w| *w.borrow_mut() = wait);
 }
 
 /// The message window now shown, if any (for tests of the actions that say
@@ -151,8 +162,12 @@ pub(crate) fn message_then(title: &str, text: &str, then: Box<dyn FnOnce()>) {
 /// `_DebugMakeDelayedModalPopup`'s thread: after five seconds, ten seconds
 /// counting down (stopping if cancelled), then gone.
 #[allow(clippy::cast_possible_truncation)] // (seconds)
-fn modal(store: &Store, cancellable: bool) {
-    std::thread::sleep(Duration::from_secs(5));
+fn modal(store: &Store, cancellable: bool, wait: Option<Wait>) {
+    let wait = move |time: Duration| match &wait {
+        Some(wait) => wait(time),
+        None => std::thread::sleep(time),
+    };
+    wait(Duration::from_secs(5));
     let mut job = Job::new(false, cancellable, now());
     job.status_title = Some(model::MODAL_TITLE.into());
     // (`pub( 'modal_message' )`: held for its dialog)
@@ -175,7 +190,7 @@ fn modal(store: &Store, cancellable: bool) {
         if cancelled {
             break;
         }
-        std::thread::sleep(Duration::from_secs(1));
+        wait(Duration::from_secs(1));
     }
     let at = now() as i64;
     let _ = store.write(move |ctx| {
@@ -201,7 +216,8 @@ pub(crate) fn run(context: &Context, action: Action) {
             }
         }
         Action::ModalPopup { cancellable } => {
-            std::thread::spawn(move || modal(&store, cancellable));
+            let wait = MODAL_WAIT.with(|w| w.borrow().clone());
+            std::thread::spawn(move || modal(&store, cancellable, wait));
         }
         // (hydrus-rs keeps no column widths to reset)
         Action::ResetColumns => (context.ask)(model::RESET_COLUMNS_QUESTION.into(), Rc::new(|| {})),
