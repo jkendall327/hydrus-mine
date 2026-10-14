@@ -16731,10 +16731,10 @@
     "Native removes cancelled popup immediately rather than Qt next message refresh; UI has no additional cancel confirmation."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "sound",
+    "date": "2026-10-14",
+    "class": "source-restated",
     "by": "Claude (#97 phase 2, w4-r4)",
-    "note": "gui/shell_popups.rs cancel_marks_a_cancellable_job_cancelled_and_leaves_others_alone calls the window's cancel callback on a real cancellable job and a non-cancellable one; before and after are compared with the reference's PopupMessage.Cancel states (popup_actions.json 'resume refresh labels' then 'cancel retains callable': cancelled and done flip, a non-cancellable job is untouched). The store flag is what daemon consumers read. The cancel button's click itself is not driven (the button is icon-only, so it cannot be found by label). The native card disappearing at once, where the reference's stays until dismissed, is in DIFFERENCES.md."
+    "note": "Class lowered after review: the click on the cancel button is not driven (icon-only button, no accessible label), only the window's cancel callback. gui/shell_popups.rs cancel_marks_a_cancellable_job_cancelled_and_leaves_others_alone calls the window's cancel callback on a real cancellable job and a non-cancellable one; before and after are compared with the reference's PopupMessage.Cancel states (popup_actions.json 'resume refresh labels' then 'cancel retains callable': cancelled and done flip, a non-cancellable job is untouched). The store flag is what daemon consumers read. The cancel button's click itself is not driven (the button is icon-only, so it cannot be found by label). The native card disappearing at once, where the reference's stays until dismissed, is in DIFFERENCES.md."
    }
   },
   {
