@@ -84,19 +84,29 @@ fn what_is_this_object_opens_the_reference_s_window_and_describes_what_is_pasted
         assert_eq!(window.get_json_content(), payload, "{name}");
         assert_eq!(window.get_notice(), "Pasted 1 items!", "{name}");
     }
-    // and what is not one
+    // and what is not one: each recorded payload, several at once too, as files
+    // (the payloads of "nothing" are no files at all)
+    let dir = tempfile::tempdir().unwrap();
     for (name, case) in recording["errors"].as_object().unwrap() {
         let payloads = strings(&case["payloads"]);
-        let Some(text) = payloads.first().filter(|_| payloads.len() == 1) else {
-            continue;
-        };
-        clipboard_text(text);
-        window.invoke_paste();
+        let paths: Vec<PathBuf> = payloads
+            .iter()
+            .enumerate()
+            .map(|(i, text)| {
+                let path = dir.path().join(format!("{}-{i}.json", name.replace(' ', "-")));
+                std::fs::write(&path, text).unwrap();
+                path
+            })
+            .collect();
+        window.set_description("".into());
+        window.set_json_content("".into());
+        hydrus_gui::what_is_this_window::drop_paths(window, &paths);
         assert_eq!(
             window.get_description(),
             case["description"].as_str().unwrap(),
             "{name}"
         );
+        assert_eq!(window.get_json_content(), payloads.join("\n\n"), "{name}");
     }
 }
 

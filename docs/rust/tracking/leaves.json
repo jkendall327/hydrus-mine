@@ -11188,7 +11188,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "claude (issue #96 session)",
-    "note": "Real menu click, real five-second wait and countdown against oracle/fixtures/debug_popups.json (the reference's own 'modal_message' job, sampled every 100 ms): published after five seconds, the countdown text and gauge each second, ten seconds to the end and gone; cancelling through the dialog's close and the cancel question stops the countdown at the text it had and dismisses within about a second. The modal dialog is the real PopupModalWindow. Tests: crates/hydrus-gui/tests/gui/debug_popups.rs modal_popups_count_down_ten_seconds_and_a_cancelled_one_stops and cancelling_the_modal_popup_stops_its_countdown."
+    "note": "Real menu click, real five-second wait and countdown against oracle/fixtures/debug_popups.json (the reference's own 'modal_message' job, sampled every 100 ms): published after five seconds, the countdown text and gauge each second, ten seconds to the end and gone; cancelling through the dialog's close and the cancel question leaves the countdown frozen at the text and gauge it had (sampled until the job goes) and dismisses it within about a second or two. The modal dialog is the real PopupModalWindow. Tests: crates/hydrus-gui/tests/gui/debug_popups.rs modal_popups_count_down_ten_seconds_and_a_cancelled_one_stops and cancelling_the_modal_popup_stops_its_countdown."
    }
   },
   {
@@ -11755,7 +11755,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "claude (issue #96 session)",
-    "note": "Real menu click on a store whose 'last session' row has been deleted: the row is saved again at once with every open page as it was (names, nesting, keys and searches equal to the session the window opened from). The reference's own saved container format is not compared (hydrus-rs keeps sessions in its own tables). Test: crates/hydrus-gui/tests/gui/debug_data_actions.rs save_last_session_writes_the_pages_that_are_open_now."
+    "note": "Real menu click on a store whose 'last session' row has been deleted, after a page was opened through the pages menu: the row is saved again at once with every open page as it is now, the new one too (compared with the live session). The reference's own saved container format is not compared (hydrus-rs keeps sessions in its own tables). Test: crates/hydrus-gui/tests/gui/debug_data_actions.rs save_last_session_writes_the_pages_that_are_open_now."
    }
   },
   {
@@ -12082,7 +12082,7 @@
     "date": "2026-10-13",
     "class": "sound",
     "by": "claude (issue #96 session)",
-    "note": "Real menu click opens the window (title, two boxes, paste tooltip as recorded); the constructed objects (dictionaries, lists, nested, bytes dictionary, named, list of named), and every kind of non-object (25 JSON and tuple errors worded as Python words them, a future version) give the text the real window gives (oracle/fixtures/what_is_this_object.json, record_what_is_this_object.py, the window's own _ImportPayloads), pasted as clipboard text, files (JSON and hydrus PNG) and several files, with the 'Pasted N items!' notice; a missing path or non-UTF-8 file is the reference's problem dialog; the PNG chooser and a drop use the same ingest. A bitmap on the clipboard is read as the reference reads it but has no recorded case. The whole window takes drops, not only the picture (DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/debug_what_is_this.rs; crates/hydrus-legacy/tests/what_is_this.rs."
+    "note": "Real menu click opens the window (title, two boxes, paste tooltip as recorded); the constructed objects (dictionaries, lists, nested, bytes dictionary, named, list of named), and every kind of non-object (25 JSON and tuple errors worded as Python words them, a future version) give the text the real window gives (oracle/fixtures/what_is_this_object.json, record_what_is_this_object.py, the window's own _ImportPayloads), pasted as clipboard text, files (JSON and hydrus PNG) and several files, with the 'Pasted N items!' notice; a missing path or non-UTF-8 file is the reference's problem dialog; the PNG chooser and a drop use the same ingest. DIFFERENCES.md lists what is not exact: the whole window takes drops (the reference's picture only), the clipboard bitmap path has no recorded case, drops are exercised through drop_paths rather than a winit event, and only no-such-file and permission-denied are worded as Python's. Tests: crates/hydrus-gui/tests/gui/debug_what_is_this.rs; crates/hydrus-legacy/tests/what_is_this.rs."
    }
   },
   {

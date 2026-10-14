@@ -5008,6 +5008,19 @@ the real menu and compares what the popups, the checks and the logs say with
 `oracle/fixtures/debug_profiling.json` and
 `oracle/fixtures/subscription_manager_snapshot.json`.
 
+Help > debug > "what is this object?" opens the reference's window: a picture
+to click (it asks for hydrus PNGs to read) or drop files on, a paste button
+(a bitmap, copied files or text), and two boxes: what each pasted object is
+and the text itself. An object is described as `Serialisable Dictionary
+(21)` with a count of what it holds ("2: <class 'int'>", the descriptions of
+nested objects), a named object with its name, and what is not one says
+"Error:" and why in Python's words. `tests/gui/debug_what_is_this.rs` pastes
+and drops what the reference's own window was given
+(`oracle/fixtures/what_is_this_object.json`), and
+`hydrus-legacy/tests/what_is_this.rs` checks every description and class
+name. Help > debug > network actions > "review current network jobs" opens
+the jobs window titled "review network jobs", as the reference's frame is.
+
 ## Pages > weight report
 
 Pages > weight > "total session weight: N" now explains the number as the
