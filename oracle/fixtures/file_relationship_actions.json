@@ -1,0 +1,2319 @@
+{
+ "initial": {
+  "jpeg_03.jpg": {
+   "is_king": true,
+   "counts": {}
+  },
+  "jpeg_04.jpg": {
+   "is_king": true,
+   "counts": {}
+  },
+  "jpeg_05.jpg": {
+   "is_king": true,
+   "counts": {}
+  },
+  "jpeg_06.jpg": {
+   "is_king": true,
+   "counts": {}
+  },
+  "jpeg_08.jpg": {
+   "is_king": true,
+   "counts": {}
+  },
+  "jpeg_09.jpg": {
+   "is_king": true,
+   "counts": {}
+  }
+ },
+ "steps": [
+  {
+   "selection": [
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c"
+   ],
+   "path": [
+    "set this file as better than the 1 other selected"
+   ],
+   "offered": true,
+   "menu": [
+    "this file has no duplicate relationships",
+    "set this file as better than the 1 other selected",
+    "set all selected as same quality duplicates",
+    "set all selected as alternates",
+    "set a relationship with custom metadata merge options",
+    {
+     "menu": "edit default duplicate metadata merge options",
+     "entries": [
+      "for this is a better duplicate",
+      "for same quality"
+     ]
+    },
+    "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "schedule this file to be searched for potentials again"
+     ]
+    },
+    {
+     "menu": "remove for all selected",
+     "entries": [
+      "delete all false-positive relationships these files' alternate groups have between each other"
+     ]
+    },
+    {
+     "menu": "advanced: reset for all selected",
+     "entries": [
+      "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+      "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+      "delete all false-positive relationships these files' alternate groups have with other groups",
+      "schedule these files to be searched for potentials again",
+      "delete these files' potential relationships"
+     ]
+    }
+   ],
+   "asked": [
+    {
+     "message": "Are you sure you want to set the focused file as better than the 1 other files in the selection?",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "popups": [],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {
+      "duplicates": 1
+     }
+    },
+    "jpeg_04.jpg": {
+     "is_king": false,
+     "counts": {
+      "duplicates": 1
+     }
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c"
+   ],
+   "path": [
+    "view 1 duplicates"
+   ],
+   "offered": true,
+   "menu": [
+    "this file is in a duplicate file group",
+    "this is the best quality file of its group",
+    "view 1 duplicates",
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "DUPLICATE WIPE: dissolve this file's duplicate group",
+      "schedule this file to be searched for potentials again"
+     ]
+    }
+   ],
+   "asked": [],
+   "popups": [],
+   "page": {
+    "name": "files",
+    "tabs_added": 1,
+    "hashes": [
+     "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c"
+    ]
+   },
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {
+      "duplicates": 1
+     }
+    },
+    "jpeg_04.jpg": {
+     "is_king": false,
+     "counts": {
+      "duplicates": 1
+     }
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c"
+   ],
+   "path": [
+    "view 1 duplicates"
+   ],
+   "offered": true,
+   "menu": [
+    "this file is in a duplicate file group",
+    "show the best quality file of this file's group",
+    "view 1 duplicates",
+    "set this file as the best quality of its group",
+    {
+     "menu": "remove for this file",
+     "entries": [
+      "remove this file from its duplicate group"
+     ]
+    },
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "DUPLICATE WIPE: dissolve this file's duplicate group",
+      "schedule this file to be searched for potentials again"
+     ]
+    }
+   ],
+   "asked": [],
+   "popups": [],
+   "page": {
+    "name": "files",
+    "tabs_added": 1,
+    "hashes": [
+     "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c"
+    ]
+   },
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {
+      "duplicates": 1
+     }
+    },
+    "jpeg_04.jpg": {
+     "is_king": false,
+     "counts": {
+      "duplicates": 1
+     }
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c"
+   ],
+   "path": [
+    "set all selected as same quality duplicates"
+   ],
+   "offered": true,
+   "menu": [
+    "this file is in a duplicate file group",
+    "show the best quality file of this file's group",
+    "view 1 duplicates",
+    "set this file as the best quality of its group",
+    "set this file as better than the 1 other selected",
+    "set all selected as same quality duplicates",
+    "set all selected as alternates",
+    "set a relationship with custom metadata merge options",
+    {
+     "menu": "edit default duplicate metadata merge options",
+     "entries": [
+      "for this is a better duplicate",
+      "for same quality"
+     ]
+    },
+    "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+    {
+     "menu": "remove for this file",
+     "entries": [
+      "remove this file from its duplicate group"
+     ]
+    },
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "DUPLICATE WIPE: dissolve this file's duplicate group",
+      "schedule this file to be searched for potentials again"
+     ]
+    },
+    {
+     "menu": "remove for all selected",
+     "entries": [
+      "delete all false-positive relationships these files' alternate groups have between each other"
+     ]
+    },
+    {
+     "menu": "advanced: reset for all selected",
+     "entries": [
+      "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+      "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+      "delete all false-positive relationships these files' alternate groups have with other groups",
+      "schedule these files to be searched for potentials again",
+      "delete these files' potential relationships"
+     ]
+    }
+   ],
+   "asked": [
+    {
+     "message": "Are you sure you want to apply \"same quality\" (with default duplicate metadata merge options) for the 2 selected files?",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "popups": [],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {
+      "duplicates": 1
+     }
+    },
+    "jpeg_04.jpg": {
+     "is_king": false,
+     "counts": {
+      "duplicates": 1
+     }
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c"
+   ],
+   "path": [
+    "set this file as the best quality of its group"
+   ],
+   "offered": false,
+   "menu": [
+    "this file is in a duplicate file group",
+    "this is the best quality file of its group",
+    "view 1 duplicates",
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "DUPLICATE WIPE: dissolve this file's duplicate group",
+      "schedule this file to be searched for potentials again"
+     ]
+    }
+   ],
+   "asked": [],
+   "popups": [],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {
+      "duplicates": 1
+     }
+    },
+    "jpeg_04.jpg": {
+     "is_king": false,
+     "counts": {
+      "duplicates": 1
+     }
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c"
+   ],
+   "path": [
+    "set this file as the best quality of its group"
+   ],
+   "offered": true,
+   "menu": [
+    "this file is in a duplicate file group",
+    "show the best quality file of this file's group",
+    "view 1 duplicates",
+    "set this file as the best quality of its group",
+    {
+     "menu": "remove for this file",
+     "entries": [
+      "remove this file from its duplicate group"
+     ]
+    },
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "DUPLICATE WIPE: dissolve this file's duplicate group",
+      "schedule this file to be searched for potentials again"
+     ]
+    }
+   ],
+   "asked": [
+    {
+     "message": "Are you sure you want to set the focused file as the best file of its duplicate group?",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "popups": [],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": false,
+     "counts": {
+      "duplicates": 1
+     }
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {
+      "duplicates": 1
+     }
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c"
+   ],
+   "path": [
+    "remove for this file",
+    "remove this file from its duplicate group"
+   ],
+   "offered": true,
+   "menu": [
+    "this file is in a duplicate file group",
+    "show the best quality file of this file's group",
+    "view 1 duplicates",
+    "set this file as the best quality of its group",
+    {
+     "menu": "remove for this file",
+     "entries": [
+      "remove this file from its duplicate group"
+     ]
+    },
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "DUPLICATE WIPE: dissolve this file's duplicate group",
+      "schedule this file to be searched for potentials again"
+     ]
+    }
+   ],
+   "asked": [
+    {
+     "message": "Are you sure you want to remove this file from its duplicate group?\n\nThe remaining group will be otherwise unaffected and will keep its alternate relationships.\n\nThe removed file will be queued up for another potential duplicates search, so you will likely see it again in the duplicate filter.",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "popups": [],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c"
+   ],
+   "path": [
+    "set this file as better than the 1 other selected"
+   ],
+   "offered": true,
+   "menu": [
+    "this file has no duplicate relationships",
+    "set this file as better than the 1 other selected",
+    "set all selected as same quality duplicates",
+    "set all selected as alternates",
+    "set a relationship with custom metadata merge options",
+    {
+     "menu": "edit default duplicate metadata merge options",
+     "entries": [
+      "for this is a better duplicate",
+      "for same quality"
+     ]
+    },
+    "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "schedule this file to be searched for potentials again"
+     ]
+    },
+    {
+     "menu": "remove for all selected",
+     "entries": [
+      "delete all false-positive relationships these files' alternate groups have between each other"
+     ]
+    },
+    {
+     "menu": "advanced: reset for all selected",
+     "entries": [
+      "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+      "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+      "delete all false-positive relationships these files' alternate groups have with other groups",
+      "schedule these files to be searched for potentials again",
+      "delete these files' potential relationships"
+     ]
+    }
+   ],
+   "asked": [
+    {
+     "message": "Are you sure you want to set the focused file as better than the 1 other files in the selection?",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "popups": [],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {
+      "duplicates": 1
+     }
+    },
+    "jpeg_04.jpg": {
+     "is_king": false,
+     "counts": {
+      "duplicates": 1
+     }
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c"
+   ],
+   "path": [
+    "reset for this file",
+    "DUPLICATE WIPE: dissolve this file's duplicate group"
+   ],
+   "offered": true,
+   "menu": [
+    "this file is in a duplicate file group",
+    "this is the best quality file of its group",
+    "view 1 duplicates",
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "DUPLICATE WIPE: dissolve this file's duplicate group",
+      "schedule this file to be searched for potentials again"
+     ]
+    }
+   ],
+   "asked": [
+    {
+     "message": "Are you sure you want to dissolve this file's duplicate group?\n\nThis will split the duplicates group back into individual files and remove any alternate relations they have. They will be queued back up in the duplicate filter for reprocessing.\n\nThis could be a big change that throws away many previous decisions and cannot be undone. If you can achieve your result just by removing one or two members, do that instead.",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "popups": [],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c"
+   ],
+   "path": [
+    "set this file as better than the 1 other selected"
+   ],
+   "offered": true,
+   "menu": [
+    "this file has no duplicate relationships",
+    "set this file as better than the 1 other selected",
+    "set all selected as same quality duplicates",
+    "set all selected as alternates",
+    "set a relationship with custom metadata merge options",
+    {
+     "menu": "edit default duplicate metadata merge options",
+     "entries": [
+      "for this is a better duplicate",
+      "for same quality"
+     ]
+    },
+    "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "schedule this file to be searched for potentials again"
+     ]
+    },
+    {
+     "menu": "remove for all selected",
+     "entries": [
+      "delete all false-positive relationships these files' alternate groups have between each other"
+     ]
+    },
+    {
+     "menu": "advanced: reset for all selected",
+     "entries": [
+      "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+      "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+      "delete all false-positive relationships these files' alternate groups have with other groups",
+      "schedule these files to be searched for potentials again",
+      "delete these files' potential relationships"
+     ]
+    }
+   ],
+   "asked": [
+    {
+     "message": "Are you sure you want to set the focused file as better than the 1 other files in the selection?",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "popups": [],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {
+      "duplicates": 1
+     }
+    },
+    "jpeg_04.jpg": {
+     "is_king": false,
+     "counts": {
+      "duplicates": 1
+     }
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c"
+   ],
+   "path": [
+    "advanced: reset for all selected",
+    "DUPLICATE WIPE: completely dissolve these files' duplicate groups"
+   ],
+   "offered": true,
+   "menu": [
+    "this file is in a duplicate file group",
+    "this is the best quality file of its group",
+    "view 1 duplicates",
+    "set this file as better than the 1 other selected",
+    "set all selected as same quality duplicates",
+    "set all selected as alternates",
+    "set a relationship with custom metadata merge options",
+    {
+     "menu": "edit default duplicate metadata merge options",
+     "entries": [
+      "for this is a better duplicate",
+      "for same quality"
+     ]
+    },
+    "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "DUPLICATE WIPE: dissolve this file's duplicate group",
+      "schedule this file to be searched for potentials again"
+     ]
+    },
+    {
+     "menu": "remove for all selected",
+     "entries": [
+      "delete all false-positive relationships these files' alternate groups have between each other"
+     ]
+    },
+    {
+     "menu": "advanced: reset for all selected",
+     "entries": [
+      "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+      "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+      "delete all false-positive relationships these files' alternate groups have with other groups",
+      "schedule these files to be searched for potentials again",
+      "delete these files' potential relationships"
+     ]
+    }
+   ],
+   "asked": [
+    {
+     "message": "Are you sure you want to dissolve these 2 files' duplicate groups?\n\nThis will split all the files' duplicates groups back into individual files and remove any alternate relations they have. They will all be queued back up in the duplicate filter for reprocessing.\n\nThis could be a huge change that throws away many previous decisions and cannot be undone. If you can achieve your result just by removing some members, do that instead.",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "popups": [],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c"
+   ],
+   "path": [
+    "set all selected as alternates"
+   ],
+   "offered": true,
+   "menu": [
+    "this file has no duplicate relationships",
+    "set this file as better than the 1 other selected",
+    "set all selected as same quality duplicates",
+    "set all selected as alternates",
+    "set a relationship with custom metadata merge options",
+    {
+     "menu": "edit default duplicate metadata merge options",
+     "entries": [
+      "for this is a better duplicate",
+      "for same quality"
+     ]
+    },
+    "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "schedule this file to be searched for potentials again"
+     ]
+    },
+    {
+     "menu": "remove for all selected",
+     "entries": [
+      "delete all false-positive relationships these files' alternate groups have between each other"
+     ]
+    },
+    {
+     "menu": "advanced: reset for all selected",
+     "entries": [
+      "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+      "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+      "delete all false-positive relationships these files' alternate groups have with other groups",
+      "schedule these files to be searched for potentials again",
+      "delete these files' potential relationships"
+     ]
+    }
+   ],
+   "asked": [
+    {
+     "message": "Are you sure you want to apply \"alternates\" for the 2 selected files?",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "popups": [],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {
+      "alternates": 1,
+      "confirmed alternates": 1
+     }
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {
+      "alternates": 1,
+      "confirmed alternates": 1
+     }
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457"
+   ],
+   "path": [
+    "view 1 alternates"
+   ],
+   "offered": true,
+   "menu": [
+    "view 1 alternates",
+    {
+     "menu": "remove for this file",
+     "entries": [
+      "remove this file's duplicate group from its alternate group"
+     ]
+    },
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "EVEN BIGGER WIPE: dissolve this file's alternate group",
+      "schedule this file to be searched for potentials again"
+     ]
+    }
+   ],
+   "asked": [],
+   "popups": [],
+   "page": {
+    "name": "files",
+    "tabs_added": 1,
+    "hashes": [
+     "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457"
+    ]
+   },
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {
+      "alternates": 1,
+      "confirmed alternates": 1
+     }
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {
+      "alternates": 1,
+      "confirmed alternates": 1
+     }
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457"
+   ],
+   "path": [
+    "remove for this file",
+    "remove this file's duplicate group from its alternate group"
+   ],
+   "offered": true,
+   "menu": [
+    "view 1 alternates",
+    {
+     "menu": "remove for this file",
+     "entries": [
+      "remove this file's duplicate group from its alternate group"
+     ]
+    },
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "EVEN BIGGER WIPE: dissolve this file's alternate group",
+      "schedule this file to be searched for potentials again"
+     ]
+    }
+   ],
+   "asked": [
+    {
+     "message": "Are you sure you want to remove this file from its alternates group?\n\nAlternate relationships are stored between duplicate groups, so this will pull any duplicates of your file with it.\n\nThe removed file (and any duplicates) will be queued up for another potential duplicates search, so you will likely see at least one again in the duplicate filter.",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "popups": [],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c"
+   ],
+   "path": [
+    "set all selected as alternates"
+   ],
+   "offered": true,
+   "menu": [
+    "this file has no duplicate relationships",
+    "set this file as better than the 1 other selected",
+    "set all selected as same quality duplicates",
+    "set all selected as alternates",
+    "set a relationship with custom metadata merge options",
+    {
+     "menu": "edit default duplicate metadata merge options",
+     "entries": [
+      "for this is a better duplicate",
+      "for same quality"
+     ]
+    },
+    "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "schedule this file to be searched for potentials again"
+     ]
+    },
+    {
+     "menu": "remove for all selected",
+     "entries": [
+      "delete all false-positive relationships these files' alternate groups have between each other"
+     ]
+    },
+    {
+     "menu": "advanced: reset for all selected",
+     "entries": [
+      "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+      "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+      "delete all false-positive relationships these files' alternate groups have with other groups",
+      "schedule these files to be searched for potentials again",
+      "delete these files' potential relationships"
+     ]
+    }
+   ],
+   "asked": [
+    {
+     "message": "Are you sure you want to apply \"alternates\" for the 2 selected files?",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "popups": [],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {
+      "alternates": 1,
+      "confirmed alternates": 1
+     }
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {
+      "alternates": 1,
+      "confirmed alternates": 1
+     }
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457"
+   ],
+   "path": [
+    "reset for this file",
+    "EVEN BIGGER WIPE: dissolve this file's alternate group"
+   ],
+   "offered": true,
+   "menu": [
+    "view 1 alternates",
+    {
+     "menu": "remove for this file",
+     "entries": [
+      "remove this file's duplicate group from its alternate group"
+     ]
+    },
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "EVEN BIGGER WIPE: dissolve this file's alternate group",
+      "schedule this file to be searched for potentials again"
+     ]
+    }
+   ],
+   "asked": [
+    {
+     "message": "Are you sure you want to dissolve this file's entire alternates group?\n\nThis will completely remove all duplicate, alternate, and false-positive relations for all files in the group and set them to come up again in the duplicate filter.\n\nThis is a potentially big change that throws away many previous decisions and cannot be undone. If you can achieve your result just by removing some alternate members, do that instead.",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "popups": [],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c"
+   ],
+   "path": [
+    "set all selected as alternates"
+   ],
+   "offered": true,
+   "menu": [
+    "this file has no duplicate relationships",
+    "set this file as better than the 1 other selected",
+    "set all selected as same quality duplicates",
+    "set all selected as alternates",
+    "set a relationship with custom metadata merge options",
+    {
+     "menu": "edit default duplicate metadata merge options",
+     "entries": [
+      "for this is a better duplicate",
+      "for same quality"
+     ]
+    },
+    "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "schedule this file to be searched for potentials again"
+     ]
+    },
+    {
+     "menu": "remove for all selected",
+     "entries": [
+      "delete all false-positive relationships these files' alternate groups have between each other"
+     ]
+    },
+    {
+     "menu": "advanced: reset for all selected",
+     "entries": [
+      "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+      "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+      "delete all false-positive relationships these files' alternate groups have with other groups",
+      "schedule these files to be searched for potentials again",
+      "delete these files' potential relationships"
+     ]
+    }
+   ],
+   "asked": [
+    {
+     "message": "Are you sure you want to apply \"alternates\" for the 2 selected files?",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "popups": [],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {
+      "alternates": 1,
+      "confirmed alternates": 1
+     }
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {
+      "alternates": 1,
+      "confirmed alternates": 1
+     }
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c"
+   ],
+   "path": [
+    "advanced: reset for all selected",
+    "EVEN BIGGER WIPE: completely dissolve these files' alternate groups"
+   ],
+   "offered": true,
+   "menu": [
+    "view 1 alternates",
+    "set this file as better than the 1 other selected",
+    "set all selected as same quality duplicates",
+    "set all selected as alternates",
+    "set a relationship with custom metadata merge options",
+    {
+     "menu": "edit default duplicate metadata merge options",
+     "entries": [
+      "for this is a better duplicate",
+      "for same quality"
+     ]
+    },
+    "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+    {
+     "menu": "remove for this file",
+     "entries": [
+      "remove this file's duplicate group from its alternate group"
+     ]
+    },
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "EVEN BIGGER WIPE: dissolve this file's alternate group",
+      "schedule this file to be searched for potentials again"
+     ]
+    },
+    {
+     "menu": "remove for all selected",
+     "entries": [
+      "delete all false-positive relationships these files' alternate groups have between each other"
+     ]
+    },
+    {
+     "menu": "advanced: reset for all selected",
+     "entries": [
+      "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+      "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+      "delete all false-positive relationships these files' alternate groups have with other groups",
+      "schedule these files to be searched for potentials again",
+      "delete these files' potential relationships"
+     ]
+    }
+   ],
+   "asked": [
+    {
+     "message": "Are you sure you want to dissolve these 2 files' entire alternates groups?\n\nThis will completely remove all duplicate, alternate, and false-positive relations for all alternate groups of all files selected and set them to come up again in the duplicate filter.\n\nThis is a potentially huge change that throws away many previous decisions and cannot be undone. If you can achieve your result just by removing some alternate members, do that instead.",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "popups": [],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341"
+   ],
+   "path": [
+    "set all possible pair combinations as 'potential' duplicates for the duplicates filter."
+   ],
+   "offered": true,
+   "menu": [
+    "this file has no duplicate relationships",
+    "set this file as better than the 1 other selected",
+    "set all selected as same quality duplicates",
+    "set all selected as alternates",
+    "set a relationship with custom metadata merge options",
+    {
+     "menu": "edit default duplicate metadata merge options",
+     "entries": [
+      "for this is a better duplicate",
+      "for same quality"
+     ]
+    },
+    "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "schedule this file to be searched for potentials again"
+     ]
+    },
+    {
+     "menu": "remove for all selected",
+     "entries": [
+      "delete all false-positive relationships these files' alternate groups have between each other"
+     ]
+    },
+    {
+     "menu": "advanced: reset for all selected",
+     "entries": [
+      "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+      "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+      "delete all false-positive relationships these files' alternate groups have with other groups",
+      "schedule these files to be searched for potentials again",
+      "delete these files' potential relationships"
+     ]
+    }
+   ],
+   "asked": [
+    {
+     "message": "Are you sure you want to queue all possible and valid pair combinations into the duplicate filter for the 2 selected files?",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "popups": [],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {
+      "potential duplicates": 1
+     }
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {
+      "potential duplicates": 1
+     }
+    }
+   }
+  },
+  {
+   "selection": [
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7"
+   ],
+   "path": [
+    "view 1 potential duplicates"
+   ],
+   "offered": true,
+   "menu": [
+    "view 1 potential duplicates",
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "schedule this file to be searched for potentials again",
+      "delete all this file's potential relationships"
+     ]
+    }
+   ],
+   "asked": [],
+   "popups": [],
+   "page": {
+    "name": "files",
+    "tabs_added": 1,
+    "hashes": [
+     "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+     "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341"
+    ]
+   },
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {
+      "potential duplicates": 1
+     }
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {
+      "potential duplicates": 1
+     }
+    }
+   }
+  },
+  {
+   "selection": [
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7"
+   ],
+   "path": [
+    "reset for this file",
+    "schedule this file to be searched for potentials again"
+   ],
+   "offered": true,
+   "menu": [
+    "view 1 potential duplicates",
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "schedule this file to be searched for potentials again",
+      "delete all this file's potential relationships"
+     ]
+    }
+   ],
+   "asked": [
+    {
+     "message": "Are you sure you want to search this file for potential duplicates again?\n\nThis will not remove any existing potential pairs, and will typically not find any new relationships unless an error has occured.",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "popups": [],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {
+      "potential duplicates": 1
+     }
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {
+      "potential duplicates": 1
+     }
+    }
+   }
+  },
+  {
+   "selection": [
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7"
+   ],
+   "path": [
+    "reset for this file",
+    "delete all this file's potential relationships"
+   ],
+   "offered": true,
+   "menu": [
+    "view 1 potential duplicates",
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "schedule this file to be searched for potentials again",
+      "delete all this file's potential relationships"
+     ]
+    }
+   ],
+   "asked": [
+    {
+     "message": "Are you sure you want to remove all of this file's potentials?\n\nThis will mean it (or any of its duplicates) will not appear in the duplicate filter unless new potentials are found with new files. Use this command if the file has accidentally received many false positive potential relationships.",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "popups": [],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7"
+   ],
+   "path": [
+    "view 1 potential duplicates"
+   ],
+   "offered": false,
+   "menu": [
+    "this file has no duplicate relationships",
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "schedule this file to be searched for potentials again"
+     ]
+    }
+   ],
+   "asked": [],
+   "popups": [],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341"
+   ],
+   "path": [
+    "set all possible pair combinations as 'potential' duplicates for the duplicates filter."
+   ],
+   "offered": true,
+   "menu": [
+    "this file has no duplicate relationships",
+    "set this file as better than the 1 other selected",
+    "set all selected as same quality duplicates",
+    "set all selected as alternates",
+    "set a relationship with custom metadata merge options",
+    {
+     "menu": "edit default duplicate metadata merge options",
+     "entries": [
+      "for this is a better duplicate",
+      "for same quality"
+     ]
+    },
+    "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "schedule this file to be searched for potentials again"
+     ]
+    },
+    {
+     "menu": "remove for all selected",
+     "entries": [
+      "delete all false-positive relationships these files' alternate groups have between each other"
+     ]
+    },
+    {
+     "menu": "advanced: reset for all selected",
+     "entries": [
+      "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+      "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+      "delete all false-positive relationships these files' alternate groups have with other groups",
+      "schedule these files to be searched for potentials again",
+      "delete these files' potential relationships"
+     ]
+    }
+   ],
+   "asked": [
+    {
+     "message": "Are you sure you want to queue all possible and valid pair combinations into the duplicate filter for the 2 selected files?",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "popups": [],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {
+      "potential duplicates": 1
+     }
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {
+      "potential duplicates": 1
+     }
+    }
+   }
+  },
+  {
+   "selection": [
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341"
+   ],
+   "path": [
+    "advanced: reset for all selected",
+    "delete these files' potential relationships"
+   ],
+   "offered": true,
+   "menu": [
+    "view 1 potential duplicates",
+    "set this file as better than the 1 other selected",
+    "set all selected as same quality duplicates",
+    "set all selected as alternates",
+    "set a relationship with custom metadata merge options",
+    {
+     "menu": "edit default duplicate metadata merge options",
+     "entries": [
+      "for this is a better duplicate",
+      "for same quality"
+     ]
+    },
+    "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "schedule this file to be searched for potentials again",
+      "delete all this file's potential relationships"
+     ]
+    },
+    {
+     "menu": "remove for all selected",
+     "entries": [
+      "delete all false-positive relationships these files' alternate groups have between each other"
+     ]
+    },
+    {
+     "menu": "advanced: reset for all selected",
+     "entries": [
+      "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+      "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+      "delete all false-positive relationships these files' alternate groups have with other groups",
+      "schedule these files to be searched for potentials again",
+      "delete these files' potential relationships"
+     ]
+    }
+   ],
+   "asked": [
+    {
+     "message": "Are you sure you want to remove all of these 2 files' potentials?\n\nThis will mean they (or any of their duplicates) will not appear in the duplicate filter unless new potentials are found with new files. Use this command if the files have accidentally received many false positive potential relationships.",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "popups": [],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "setup": "false positive",
+   "selection": [
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c"
+   ],
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {
+      "not related/false positive": 1
+     }
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {
+      "not related/false positive": 1
+     }
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457"
+   ],
+   "path": [
+    "view 1 not related/false positive"
+   ],
+   "offered": true,
+   "menu": [
+    "view 1 not related/false positive",
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "delete all false-positive relationships this file's alternate group has with other groups",
+      "schedule this file to be searched for potentials again"
+     ]
+    }
+   ],
+   "asked": [],
+   "popups": [],
+   "page": {
+    "name": "files",
+    "tabs_added": 1,
+    "hashes": [
+     "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457"
+    ]
+   },
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {
+      "not related/false positive": 1
+     }
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {
+      "not related/false positive": 1
+     }
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457"
+   ],
+   "path": [
+    "reset for this file",
+    "delete all false-positive relationships this file's alternate group has with other groups"
+   ],
+   "offered": true,
+   "menu": [
+    "view 1 not related/false positive",
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "delete all false-positive relationships this file's alternate group has with other groups",
+      "schedule this file to be searched for potentials again"
+     ]
+    }
+   ],
+   "asked": [
+    {
+     "message": "Are you sure you want to clear this file of all its false-positive relations?\n\nFalse-positive relations are recorded between alternate groups, so this change will also affect any files this file is alternate to.\n\nAll files will be queued up for another potential duplicates search, so you will likely see at least one of them again in the duplicate filter.",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "popups": [
+    "1 false positive relationships cleared."
+   ],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "setup": "false positive",
+   "selection": [
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c"
+   ],
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {
+      "not related/false positive": 1
+     }
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {
+      "not related/false positive": 1
+     }
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c"
+   ],
+   "path": [
+    "remove for all selected",
+    "delete all false-positive relationships these files' alternate groups have between each other"
+   ],
+   "offered": true,
+   "menu": [
+    "view 1 not related/false positive",
+    "set this file as better than the 1 other selected",
+    "set all selected as same quality duplicates",
+    "set all selected as alternates",
+    "set a relationship with custom metadata merge options",
+    {
+     "menu": "edit default duplicate metadata merge options",
+     "entries": [
+      "for this is a better duplicate",
+      "for same quality"
+     ]
+    },
+    "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "delete all false-positive relationships this file's alternate group has with other groups",
+      "schedule this file to be searched for potentials again"
+     ]
+    },
+    {
+     "menu": "remove for all selected",
+     "entries": [
+      "delete all false-positive relationships these files' alternate groups have between each other"
+     ]
+    },
+    {
+     "menu": "advanced: reset for all selected",
+     "entries": [
+      "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+      "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+      "delete all false-positive relationships these files' alternate groups have with other groups",
+      "schedule these files to be searched for potentials again",
+      "delete these files' potential relationships"
+     ]
+    }
+   ],
+   "asked": [
+    {
+     "message": "Are you sure you want to clear these 2 files of any false-positive relations between them?\n\nFalse-positive relations are recorded between alternate groups, so this change will affect all alternate files to your selection. If all these files share the same alternates group, this action does nothing.\n\nAll files will be queued up for another potential duplicates search, so you will likely see some of them again in the duplicate filter.",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "popups": [
+    "1 false positive relationships cleared."
+   ],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "setup": "false positive",
+   "selection": [
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c"
+   ],
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {
+      "not related/false positive": 1
+     }
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {
+      "not related/false positive": 1
+     }
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  },
+  {
+   "selection": [
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c"
+   ],
+   "path": [
+    "advanced: reset for all selected",
+    "delete all false-positive relationships these files' alternate groups have with other groups"
+   ],
+   "offered": true,
+   "menu": [
+    "view 1 not related/false positive",
+    "set this file as better than the 1 other selected",
+    "set all selected as same quality duplicates",
+    "set all selected as alternates",
+    "set a relationship with custom metadata merge options",
+    {
+     "menu": "edit default duplicate metadata merge options",
+     "entries": [
+      "for this is a better duplicate",
+      "for same quality"
+     ]
+    },
+    "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+    {
+     "menu": "reset for this file",
+     "entries": [
+      "delete all false-positive relationships this file's alternate group has with other groups",
+      "schedule this file to be searched for potentials again"
+     ]
+    },
+    {
+     "menu": "remove for all selected",
+     "entries": [
+      "delete all false-positive relationships these files' alternate groups have between each other"
+     ]
+    },
+    {
+     "menu": "advanced: reset for all selected",
+     "entries": [
+      "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+      "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+      "delete all false-positive relationships these files' alternate groups have with other groups",
+      "schedule these files to be searched for potentials again",
+      "delete these files' potential relationships"
+     ]
+    }
+   ],
+   "asked": [
+    {
+     "message": "Are you sure you want to clear these 2 files of all their false-positive relations?\n\nFalse-positive relations are recorded between alternate groups, so this change will also affect all alternate files to your selection.\n\nAll files will be queued up for another potential duplicates search, so you will likely see some of them again in the duplicate filter.",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "popups": [
+    "1 false positive relationships cleared."
+   ],
+   "page": null,
+   "after": {
+    "jpeg_03.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_04.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_05.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_06.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_08.jpg": {
+     "is_king": true,
+     "counts": {}
+    },
+    "jpeg_09.jpg": {
+     "is_king": true,
+     "counts": {}
+    }
+   }
+  }
+ ],
+ "names": {
+  "apng_animated.png": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+  "archive.zip": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+  "audio.flac": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+  "audio.mp3": "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+  "bitmap.bmp": "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+  "document.pdf": "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+  "dupe_jpeg_02.png": "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+  "dupe_jpeg_02_q60.jpg": "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+  "dupe_jpeg_02_small.jpg": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+  "gif_animated.gif": "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+  "gif_static.gif": "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+  "jpeg_00.jpg": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+  "jpeg_01.jpg": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+  "jpeg_02.jpg": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+  "jpeg_03.jpg": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+  "jpeg_04.jpg": "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+  "jpeg_05.jpg": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+  "jpeg_06.jpg": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+  "jpeg_07.jpg": "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+  "jpeg_08.jpg": "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+  "jpeg_09.jpg": "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+  "jpeg_10.jpg": "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+  "jpeg_11.jpg": "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+  "png_00.png": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+  "png_01.png": "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+  "png_02.png": "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+  "png_03.png": "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+  "png_alpha_00.png": "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+  "png_alpha_01.png": "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+  "png_alpha_02.png": "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+  "tiff_image.tiff": "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+  "video_silent.webm": "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428",
+  "video_with_audio.mp4": "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+  "webp_alpha.webp": "0518da1419a8af5634e6fc6e0c9906ac72a764533d6dde55b669df80d069d86b",
+  "webp_animated.webp": "986c606d464af2a177030189dc08d015c1558e74c726438e511d60ea24989125",
+  "webp_static.webp": "644a8577a079192dd6f9a3f1ae483e4c586d00d1d42436613a4de585a738ba6f"
+ }
+}

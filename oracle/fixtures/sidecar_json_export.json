@@ -1,0 +1,835 @@
+{
+ "cases": [
+  {
+   "names": [
+    "files"
+   ],
+   "existing": null,
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"files\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}"
+  },
+  {
+   "names": [
+    "files"
+   ],
+   "existing": "{\"keep\":{\"unknown\":true},\"files\":{\"other\":\"preserved\"}}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"keep\": {\"unknown\": true}, \"files\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}"
+  },
+  {
+   "names": [
+    "files"
+   ],
+   "existing": "{\"files\":{\"files\":{\"line\\nbreak\":[\"old\"]}},\"files \":1}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"files\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"], \"files \": 1}"
+  },
+  {
+   "names": [
+    "files"
+   ],
+   "existing": "{\"meta\":{\"tags\":[\"old\"],\"other\":[1,2]},\"top\":null}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"meta\": {\"tags\": [\"old\"], \"other\": [1, 2]}, \"top\": null, \"files\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}"
+  },
+  {
+   "names": [
+    "files"
+   ],
+   "existing": "[1,2]",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "Could not read the existing JSON at <dir>/image.jpg.json!\nThe existing JSON file was not a JSON Object!",
+   "left": "[1,2]"
+  },
+  {
+   "names": [
+    "files"
+   ],
+   "existing": "{\"files\":5}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"files\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}"
+  },
+  {
+   "names": [
+    "files"
+   ],
+   "existing": "not json at all",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "Could not read the existing JSON at <dir>/image.jpg.json!\nExpecting value: line 1 column 1 (char 0)",
+   "left": "not json at all"
+  },
+  {
+   "names": [
+    "files"
+   ],
+   "existing": "",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "Could not read the existing JSON at <dir>/image.jpg.json!\nExpecting value: line 1 column 1 (char 0)",
+   "left": ""
+  },
+  {
+   "names": [
+    "files",
+    "files"
+   ],
+   "existing": null,
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"files\": {\"files\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}}"
+  },
+  {
+   "names": [
+    "files",
+    "files"
+   ],
+   "existing": "{\"keep\":{\"unknown\":true},\"files\":{\"other\":\"preserved\"}}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"keep\": {\"unknown\": true}, \"files\": {\"other\": \"preserved\", \"files\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}}"
+  },
+  {
+   "names": [
+    "files",
+    "files"
+   ],
+   "existing": "{\"files\":{\"files\":{\"line\\nbreak\":[\"old\"]}},\"files \":1}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"files\": {\"files\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}, \"files \": 1}"
+  },
+  {
+   "names": [
+    "files",
+    "files"
+   ],
+   "existing": "{\"meta\":{\"tags\":[\"old\"],\"other\":[1,2]},\"top\":null}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"meta\": {\"tags\": [\"old\"], \"other\": [1, 2]}, \"top\": null, \"files\": {\"files\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}}"
+  },
+  {
+   "names": [
+    "files",
+    "files"
+   ],
+   "existing": "[1,2]",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "Could not read the existing JSON at <dir>/image.jpg.json!\nThe existing JSON file was not a JSON Object!",
+   "left": "[1,2]"
+  },
+  {
+   "names": [
+    "files",
+    "files"
+   ],
+   "existing": "{\"files\":5}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "'int' object does not support item assignment",
+   "left": "{\"files\":5}"
+  },
+  {
+   "names": [
+    "files",
+    "files"
+   ],
+   "existing": "not json at all",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "Could not read the existing JSON at <dir>/image.jpg.json!\nExpecting value: line 1 column 1 (char 0)",
+   "left": "not json at all"
+  },
+  {
+   "names": [
+    "files",
+    "files"
+   ],
+   "existing": "",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "Could not read the existing JSON at <dir>/image.jpg.json!\nExpecting value: line 1 column 1 (char 0)",
+   "left": ""
+  },
+  {
+   "names": [
+    "meta",
+    "tags"
+   ],
+   "existing": null,
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"meta\": {\"tags\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}}"
+  },
+  {
+   "names": [
+    "meta",
+    "tags"
+   ],
+   "existing": "{\"keep\":{\"unknown\":true},\"files\":{\"other\":\"preserved\"}}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"keep\": {\"unknown\": true}, \"files\": {\"other\": \"preserved\"}, \"meta\": {\"tags\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}}"
+  },
+  {
+   "names": [
+    "meta",
+    "tags"
+   ],
+   "existing": "{\"files\":{\"files\":{\"line\\nbreak\":[\"old\"]}},\"files \":1}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"files\": {\"files\": {\"line\\nbreak\": [\"old\"]}}, \"files \": 1, \"meta\": {\"tags\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}}"
+  },
+  {
+   "names": [
+    "meta",
+    "tags"
+   ],
+   "existing": "{\"meta\":{\"tags\":[\"old\"],\"other\":[1,2]},\"top\":null}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"meta\": {\"tags\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"], \"other\": [1, 2]}, \"top\": null}"
+  },
+  {
+   "names": [
+    "meta",
+    "tags"
+   ],
+   "existing": "[1,2]",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "Could not read the existing JSON at <dir>/image.jpg.json!\nThe existing JSON file was not a JSON Object!",
+   "left": "[1,2]"
+  },
+  {
+   "names": [
+    "meta",
+    "tags"
+   ],
+   "existing": "{\"files\":5}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"files\": 5, \"meta\": {\"tags\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}}"
+  },
+  {
+   "names": [
+    "meta",
+    "tags"
+   ],
+   "existing": "not json at all",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "Could not read the existing JSON at <dir>/image.jpg.json!\nExpecting value: line 1 column 1 (char 0)",
+   "left": "not json at all"
+  },
+  {
+   "names": [
+    "meta",
+    "tags"
+   ],
+   "existing": "",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "Could not read the existing JSON at <dir>/image.jpg.json!\nExpecting value: line 1 column 1 (char 0)",
+   "left": ""
+  },
+  {
+   "names": [
+    " tags ",
+    "   "
+   ],
+   "existing": null,
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\" tags \": {\"   \": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}}"
+  },
+  {
+   "names": [
+    " tags ",
+    "   "
+   ],
+   "existing": "{\"keep\":{\"unknown\":true},\"files\":{\"other\":\"preserved\"}}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"keep\": {\"unknown\": true}, \"files\": {\"other\": \"preserved\"}, \" tags \": {\"   \": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}}"
+  },
+  {
+   "names": [
+    " tags ",
+    "   "
+   ],
+   "existing": "{\"files\":{\"files\":{\"line\\nbreak\":[\"old\"]}},\"files \":1}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"files\": {\"files\": {\"line\\nbreak\": [\"old\"]}}, \"files \": 1, \" tags \": {\"   \": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}}"
+  },
+  {
+   "names": [
+    " tags ",
+    "   "
+   ],
+   "existing": "{\"meta\":{\"tags\":[\"old\"],\"other\":[1,2]},\"top\":null}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"meta\": {\"tags\": [\"old\"], \"other\": [1, 2]}, \"top\": null, \" tags \": {\"   \": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}}"
+  },
+  {
+   "names": [
+    " tags ",
+    "   "
+   ],
+   "existing": "[1,2]",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "Could not read the existing JSON at <dir>/image.jpg.json!\nThe existing JSON file was not a JSON Object!",
+   "left": "[1,2]"
+  },
+  {
+   "names": [
+    " tags ",
+    "   "
+   ],
+   "existing": "{\"files\":5}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"files\": 5, \" tags \": {\"   \": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}}"
+  },
+  {
+   "names": [
+    " tags ",
+    "   "
+   ],
+   "existing": "not json at all",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "Could not read the existing JSON at <dir>/image.jpg.json!\nExpecting value: line 1 column 1 (char 0)",
+   "left": "not json at all"
+  },
+  {
+   "names": [
+    " tags ",
+    "   "
+   ],
+   "existing": "",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "Could not read the existing JSON at <dir>/image.jpg.json!\nExpecting value: line 1 column 1 (char 0)",
+   "left": ""
+  },
+  {
+   "names": [
+    "line\nbreak"
+   ],
+   "existing": null,
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"line\\nbreak\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}"
+  },
+  {
+   "names": [
+    "line\nbreak"
+   ],
+   "existing": "{\"keep\":{\"unknown\":true},\"files\":{\"other\":\"preserved\"}}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"keep\": {\"unknown\": true}, \"files\": {\"other\": \"preserved\"}, \"line\\nbreak\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}"
+  },
+  {
+   "names": [
+    "line\nbreak"
+   ],
+   "existing": "{\"files\":{\"files\":{\"line\\nbreak\":[\"old\"]}},\"files \":1}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"files\": {\"files\": {\"line\\nbreak\": [\"old\"]}}, \"files \": 1, \"line\\nbreak\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}"
+  },
+  {
+   "names": [
+    "line\nbreak"
+   ],
+   "existing": "{\"meta\":{\"tags\":[\"old\"],\"other\":[1,2]},\"top\":null}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"meta\": {\"tags\": [\"old\"], \"other\": [1, 2]}, \"top\": null, \"line\\nbreak\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}"
+  },
+  {
+   "names": [
+    "line\nbreak"
+   ],
+   "existing": "[1,2]",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "Could not read the existing JSON at <dir>/image.jpg.json!\nThe existing JSON file was not a JSON Object!",
+   "left": "[1,2]"
+  },
+  {
+   "names": [
+    "line\nbreak"
+   ],
+   "existing": "{\"files\":5}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"files\": 5, \"line\\nbreak\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}"
+  },
+  {
+   "names": [
+    "line\nbreak"
+   ],
+   "existing": "not json at all",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "Could not read the existing JSON at <dir>/image.jpg.json!\nExpecting value: line 1 column 1 (char 0)",
+   "left": "not json at all"
+  },
+  {
+   "names": [
+    "line\nbreak"
+   ],
+   "existing": "",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "Could not read the existing JSON at <dir>/image.jpg.json!\nExpecting value: line 1 column 1 (char 0)",
+   "left": ""
+  },
+  {
+   "names": [
+    "files",
+    " renamed ",
+    "files",
+    "line\nbreak"
+   ],
+   "existing": null,
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"files\": {\" renamed \": {\"files\": {\"line\\nbreak\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}}}}"
+  },
+  {
+   "names": [
+    "files",
+    " renamed ",
+    "files",
+    "line\nbreak"
+   ],
+   "existing": "{\"keep\":{\"unknown\":true},\"files\":{\"other\":\"preserved\"}}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"keep\": {\"unknown\": true}, \"files\": {\"other\": \"preserved\", \" renamed \": {\"files\": {\"line\\nbreak\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}}}}"
+  },
+  {
+   "names": [
+    "files",
+    " renamed ",
+    "files",
+    "line\nbreak"
+   ],
+   "existing": "{\"files\":{\"files\":{\"line\\nbreak\":[\"old\"]}},\"files \":1}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"files\": {\"files\": {\"line\\nbreak\": [\"old\"]}, \" renamed \": {\"files\": {\"line\\nbreak\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}}}, \"files \": 1}"
+  },
+  {
+   "names": [
+    "files",
+    " renamed ",
+    "files",
+    "line\nbreak"
+   ],
+   "existing": "{\"meta\":{\"tags\":[\"old\"],\"other\":[1,2]},\"top\":null}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"meta\": {\"tags\": [\"old\"], \"other\": [1, 2]}, \"top\": null, \"files\": {\" renamed \": {\"files\": {\"line\\nbreak\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}}}}"
+  },
+  {
+   "names": [
+    "files",
+    " renamed ",
+    "files",
+    "line\nbreak"
+   ],
+   "existing": "[1,2]",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "Could not read the existing JSON at <dir>/image.jpg.json!\nThe existing JSON file was not a JSON Object!",
+   "left": "[1,2]"
+  },
+  {
+   "names": [
+    "files",
+    " renamed ",
+    "files",
+    "line\nbreak"
+   ],
+   "existing": "{\"files\":5}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "argument of type 'int' is not iterable",
+   "left": "{\"files\":5}"
+  },
+  {
+   "names": [
+    "files",
+    " renamed ",
+    "files",
+    "line\nbreak"
+   ],
+   "existing": "not json at all",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "Could not read the existing JSON at <dir>/image.jpg.json!\nExpecting value: line 1 column 1 (char 0)",
+   "left": "not json at all"
+  },
+  {
+   "names": [
+    "files",
+    " renamed ",
+    "files",
+    "line\nbreak"
+   ],
+   "existing": "",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "Could not read the existing JSON at <dir>/image.jpg.json!\nExpecting value: line 1 column 1 (char 0)",
+   "left": ""
+  },
+  {
+   "names": [
+    "x",
+    "y",
+    "x",
+    "y",
+    "x"
+   ],
+   "existing": null,
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"x\": {\"y\": {\"x\": {\"y\": {\"x\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}}}}}"
+  },
+  {
+   "names": [
+    "x",
+    "y",
+    "x",
+    "y",
+    "x"
+   ],
+   "existing": "{\"keep\":{\"unknown\":true},\"files\":{\"other\":\"preserved\"}}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"keep\": {\"unknown\": true}, \"files\": {\"other\": \"preserved\"}, \"x\": {\"y\": {\"x\": {\"y\": {\"x\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}}}}}"
+  },
+  {
+   "names": [
+    "x",
+    "y",
+    "x",
+    "y",
+    "x"
+   ],
+   "existing": "{\"files\":{\"files\":{\"line\\nbreak\":[\"old\"]}},\"files \":1}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"files\": {\"files\": {\"line\\nbreak\": [\"old\"]}}, \"files \": 1, \"x\": {\"y\": {\"x\": {\"y\": {\"x\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}}}}}"
+  },
+  {
+   "names": [
+    "x",
+    "y",
+    "x",
+    "y",
+    "x"
+   ],
+   "existing": "{\"meta\":{\"tags\":[\"old\"],\"other\":[1,2]},\"top\":null}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"meta\": {\"tags\": [\"old\"], \"other\": [1, 2]}, \"top\": null, \"x\": {\"y\": {\"x\": {\"y\": {\"x\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}}}}}"
+  },
+  {
+   "names": [
+    "x",
+    "y",
+    "x",
+    "y",
+    "x"
+   ],
+   "existing": "[1,2]",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "Could not read the existing JSON at <dir>/image.jpg.json!\nThe existing JSON file was not a JSON Object!",
+   "left": "[1,2]"
+  },
+  {
+   "names": [
+    "x",
+    "y",
+    "x",
+    "y",
+    "x"
+   ],
+   "existing": "{\"files\":5}",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "result": "{\"files\": 5, \"x\": {\"y\": {\"x\": {\"y\": {\"x\": [\"https://sidecar-keys.example/a\", \"https://sidecar-keys.example/b?x=1\", \"https://sidecar-keys.example/c\"]}}}}}"
+  },
+  {
+   "names": [
+    "x",
+    "y",
+    "x",
+    "y",
+    "x"
+   ],
+   "existing": "not json at all",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "Could not read the existing JSON at <dir>/image.jpg.json!\nExpecting value: line 1 column 1 (char 0)",
+   "left": "not json at all"
+  },
+  {
+   "names": [
+    "x",
+    "y",
+    "x",
+    "y",
+    "x"
+   ],
+   "existing": "",
+   "rows": [
+    "https://sidecar-keys.example/a",
+    "https://sidecar-keys.example/b?x=1",
+    "https://sidecar-keys.example/c"
+   ],
+   "sidecar": "image.jpg.json",
+   "error": "Could not read the existing JSON at <dir>/image.jpg.json!\nExpecting value: line 1 column 1 (char 0)",
+   "left": ""
+  }
+ ]
+}

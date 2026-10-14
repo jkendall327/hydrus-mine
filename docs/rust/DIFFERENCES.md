@@ -458,8 +458,8 @@ search.
   reaches the main-window title; secondary window titles still use their existing
   captions. Regex favourites open in a child list editor rather than embedding
   that list on the options page; their changes still wait for the parent Apply.
-  Exit confirmation honors the switch and auto-accept timeout; importer
-  activity reasons and shutdown-maintenance questions are not yet included. Search position and
+  Exit confirmation honors the switch and auto-accept timeout (see Shutdown
+  maintenance for the exit questions). Search position and
   remembering the last panel are editable. Connection/error-delay ranges follow the saved advanced mode
   when opening the window; changing that mode takes effect on reopening, as in
   the reference. Two options with the same label each go to their own
@@ -565,16 +565,25 @@ page by file size, which no two files of the fixture share.
 
 ## The media viewer (`hydrus-gui`)
 
+- **Random and undo random are shortcut commands, as in the reference.**
+  "media navigation: random" and "media navigation: undo random" (and first,
+  last, and "remove file from current view") can be given keys in the media
+  viewer's shortcut set, and have none by default, as in the reference; a
+  shuffled slideshow's moves are random too. Undo random goes back to where
+  the last random move came from. Unlike the reference's list of places, which
+  holds indices that go stale when files are removed, ours keeps the place
+  within the files left.
+
 - **The top hover frame's drag button shows the file in your file
   browser instead.** The reference's lets you drag the file out to other
   programs (a chat, a web page); Slint can't start a drag out of its
   window, so the button in that place shows the file, selected, in
   Explorer, Finder or your desktop's file manager (its FileManager1 D-Bus
   service, as the reference's show-in-file-manager package uses, or else
-  the folder opened), from where it can be dragged. For the same reason
-  the open menus offer "in file browser" whether or not hydrus's advanced
-  mode is on (the reference offers it only in advanced mode). Dragging
-  out for real is jkendall327/hydrus-mine#26.
+  the folder opened), from where it can be dragged. The thumbnail's open
+  menu offers "in file browser" only in advanced mode, as the reference's
+  does (`oracle/record_open_menu_actions.py`). Dragging out for real is
+  jkendall327/hydrus-mine#26.
 - **The animation buffer is sized at the file's own resolution.** The
   client's own player (ugoiras, animated WebP) keeps frames as the
   reference's `RasterContainerVideo` does, sized from "Memory for video
@@ -862,8 +871,9 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   the `NO_PROXY` environment variable), so with an http proxy set its requests
   to every host, a host named in the option and the local host included, go
   through the proxy (`oracle/record_network_job_options.py`). hydrus-rs keeps
-  those hosts direct, as the label says. The leaf is left as it was for that
-  reason.
+  those hosts direct, as the label says. The owner decided (2026-10-14) that
+  ours stands; the leaf is tagged on the test that replays the rest of the
+  recording and asserts this difference.
 - **Retry waits read as the reference's do.** A wait before a retry (a failed
   connection, a 503, a 429) shows "... - retrying now" or "... - retrying in
   4.7 seconds", renewed each second, and runs on into the second after its
@@ -1201,9 +1211,12 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   is the reference's text, but ends with the parse error's own text where the
   reference's has the Python exception (`JSONDecodeError(...)`); the subscription
   list's paste error is still a shorter message of its own. The prefetch and tag
-  pages' settings are compared with the reference's panels and the importer's
-  gates (`applies_to`), but the importer code that uses them (`predict`,
-  `service_tags`) is not driven from the editor's output.
+  pages' settings are compared with the reference's panels, and the editor's
+  output is run through a URL queue (prefetch: which pages the site is asked
+  for, the seed's status and note) and a local-import queue (tags of a new, an
+  inbox and an archived file) against recordings of the reference's engine
+  (`import_options_consumers.rs`). Not driven: prefetch by sha1 or sha512 (md5 is driven)
+  hashes, and in gallery, watcher and subscription importers (same code).
   The shared location button's flags for local-only, combined-local-only and
   no-multiple choices exist in the model and are replayed against the
   reference's button, but no window uses them yet.
@@ -3120,7 +3133,7 @@ while it runs (the reference turns off only the one clicked). A test call's
 results and errors are the reference's (`Looks good!`, its
 `ExecutableException` and `BadReturnCodeException` texts with Python's list and
 string quoting, and the first 256 characters of the program's output);
-timeouts and cancellation say so in hydrus-rs's words. Cancellation owns/reaps
+a timeout is reported in the reference's words too (W5-2; hydrus-rs stops the call at its timeout, not at the reference's 3-second check), cancellation says so in hydrus-rs's words. Cancellation owns/reaps
 the direct child only; descendant process groups are not claimed. Ordinary
 executable arguments use the process API; batch/shell interpreters retain their
 own quoting semantics.
@@ -4427,11 +4440,19 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   the reference); FTS virtual tables are never analysed.
 - Restart is offered on every platform (the reference hides it for frozen
   Linux builds).
-- Exit asks the reference's question (`oracle/record_file_menu_exit.py`) but
-  not its other two: the extra paragraph naming the pages that hold importers
-  ("Importers will save and continue their work on the next start.") and the
-  "very little free space" prompt before saving the exit data. The exit
-  question is asked whenever confirmation is on.
+- Exit asks what the reference asks (`oracle/record_file_menu_exit.py`): the
+  "very little free space" question first (the database drive's free space
+  against half the database size, between 64MB and 5GB), then the exit
+  question, which becomes the pages' dialog (with the "Importers will save
+  and continue their work on the next start." paragraph) when a downloader
+  page is still importing. The exit question's 15-second auto-yes is a timer
+  in the window; the reference also counts it down in the dialog's title,
+  which hydrus-rs does not. The question is shown over the main window rather
+  than in a dialog, with the recorded title above its text and the recorded
+  button labels. The exit's free-space sum counts the `*.db` files in the
+  database directory, as the reference counts its own.
+- Restart is proven by a stand-in program started with the client's
+  arguments, not by relaunching the real binary (DECISIONS.md, 2026-10-14).
 
 ## Content undo
 
@@ -4572,11 +4593,44 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   when asked, so a subscription that has just finished is not held back for
   two minutes in the snapshot as it is in the reference's.
 
+## Thumbnail open menu
+
+- "focused file in web browser" sends the browser a file URL with the path
+  percent-escaped (`file:///home/me/a%20b.jpg`); the reference sends
+  `'file:///' + path` unescaped, which on Linux is four slashes
+  (`oracle/record_open_menu_actions.py`).
+- "similar files in a new page > custom" asks its distance in the shared
+  "edit value" dialog (a spin box, titled `choose distance`), where the
+  reference's is its own `DialogEdit`; the range, start value and step are
+  the same, the look is Slint's.
+
+## Archive/delete filter playback
+
+- The pause command on a file mpv plays (audio, video) is not compared with
+  the reference: its recorded mpv widget stayed paused throughout in the
+  offscreen recorder, so the recording has nothing to compare. The animations
+  (ugoira, animated WebP), which the client's own player shows, are.
+
+## Pages not yet shown
+
+- The reference loads every page of a session in the background and its tab
+  reads `initialising (N)` until that page has loaded; hydrus-rs opens a page
+  when it is first shown and its tab always carries the name and the count
+  the session kept (`oracle/record_tab_selection.py`, `lazy`).
+
 ## Thumbnail manage > file relationships
 
 - "set a relationship with custom metadata merge options" and "set selected
   collections as groups of alternates" aren't offered yet. The viewer's
   menu doesn't have the submenu yet.
+- The questions the reference asks before each action are asked in its
+  words (`oracle/record_file_relationship_actions.py`, from the real menu).
+  Clearing false positives says "N false positive relationships cleared."
+  (or "No false positives to clear!") in a popup, as recorded. Not ported:
+  the yes and no buttons' own labels in its warning for a hundred pairs or
+  more of alternates ("they are all alternates" / "some may be
+  duplicates"), and its separate warning for that many false positives
+  (hydrus-rs sets false positives only in the duplicate filter).
 - A group's "best quality file" is offered when the group has other files in
   the page's domain; the reference counts its members per domain the same
   way, but hydrus-rs doesn't distinguish a king outside the domain.
@@ -4595,7 +4649,10 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   reference's source only: its menu is filled by a worker the recorder cannot
   call (`oracle/record_backup_dialogs.py` records the dialogs, not the menu).
   Choosing "restore from a database backup" asks the reference's questions and
-  leaves a restart request; the reference's exit and restart is not exercised.
+  exits the client for a restart at once, with no second question and no
+  shutdown jobs; the restart is driven with a stand-in program and the start it
+  stands for (`client_store::open_store`) restores the backup
+  (`tests/gui/database_backup_menu.rs`).
 
 - Restoring refuses the store's own directory, including aliases. Startup takes
   the GUI lock before restoring or opening the database, and restore refuses an
@@ -5308,3 +5365,51 @@ be diagnosed afterwards. The owner chose always-on crash logging (2026-10-14).
   one process; here the client shows the popup and resets its idle timer, and
   the daemon (which owns the network engine and subscriptions) is asked to see a
   wake too, within about a second (that request is not tested end to end).
+
+## External call process options and the processor editor (W5-2, 2026-10-14)
+
+- **A call is stopped at its timeout.** The reference checks every 3 seconds
+  (`SubprocessCommunicate`), so a call is stopped between its timeout and 3
+  seconds after; hydrus-rs stops it at the timeout (the owner kept that). The
+  report is the reference's. A stray child that keeps the pipes open after a
+  timeout is not waited for, where the reference waits two seconds and then
+  reports a possible zombie in the stderr part.
+- **The rule row's string processor editor starts from the row's test
+  input**, the value typed in the testing box (the parameter's example until
+  it is changed); the reference always starts from the parameter's fixed
+  example value.
+- **Output is quoted as the text flag says**, as in the reference: text mode
+  as text (invalid UTF-8 replaced), otherwise as bytes. Hide terminal acts only
+  on Windows, as in the reference; deferred.
+- **The maximum size of the trash** is trimmed oldest first; the reference's
+  oldest 256 are deleted in CPython set order, so which files stay differs
+  (the owner decided ours stands, 2026-10-14).
+- **Processing steps: export to PNG and paste.** Export to PNG is the shared
+  exchange window (a path and save), not the reference's `PNGExportPanel` with
+  title, description and width fields. Paste opens a review before adding, and
+  failures show inline in it (the reference adds at once, says "N objects
+  added!", and shows a "Problem pasting!" or "Clipboard Error!" dialog). The
+  string processor's export button does nothing without a selection, as in the
+  reference.
+
+## Media viewer, duplicates daemons and the rebalance job (wave 5, W5-5)
+
+- The viewer's window size and place are kept only when it closes with "Save
+  media viewer window size and position on close" on. The reference also
+  saves them a moment after every resize or move whatever that option says
+  (`oracle/record_viewer_close_geometry.py`), so a viewer left a moment after
+  a resize keeps the size there and here it does not.
+- The viewer has no shortcut commands for forcing the mute or unmuting just
+  here (`SIMPLE_PER_PLAYER_AUDIO_MUTE`, `_UNMUTE`, `_FLIP`), for zooming to
+  100% or the canvas apart from switching, or for panning to the edges and
+  centres. The forced mute is reached by the volume menu, as in the reference.
+- After a drag, the reference's "zoom to canvas" keeps the dragged place
+  (`oracle/record_viewer_pan_zoom.py`); the nearest command here, switching with
+  z, goes to 100%, and from 100% to a centred fit.
+- The similar-files search never rests less than 0.1 s between packets; the
+  reference rests as little as its percentage computes. Working hard ends,
+  as the reference's does, once nothing is left to search. The auto-resolution
+  loop has no per-rule "work hard" and holds 10 s when it may not work, 60 s
+  when it has no work left (the reference rests 600 s).
+- The rebalance job's popup is dismissed at once when the job ends, so it
+  cannot be read afterwards; the moves are counted from the folders instead.

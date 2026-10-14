@@ -268,6 +268,9 @@ component SidebarButtonPair inherits Rectangle {
 // Read-only observation never supplies widget geometry or changes admission.
 component MainQuestionPanel inherits Rectangle {
     in property <string> message;
+    in property <string> title;
+    in property <string> yes-label: "yes";
+    in property <string> no-label: "no";
     in property <bool> measure-controls: false;
     callback answered(bool);
     callback controls-measured(MenuChoiceFrame,MenuChoiceFrame,MenuChoiceFrame,MenuChoiceFrame);
@@ -282,6 +285,12 @@ component MainQuestionPanel inherits Rectangle {
     content := VerticalLayout {
         padding: 12px;
         spacing: 8px;
+        if root.title != "": Text {
+            text: root.title;
+            color: Theme.text;
+            font-weight: 700;
+            horizontal-alignment: center;
+        }
         prompt := Text {
             text: root.message;
             color: Theme.text;
@@ -297,8 +306,8 @@ component MainQuestionPanel inherits Rectangle {
         HorizontalLayout {
             spacing: 8px;
             Rectangle { horizontal-stretch: 1; }
-            yes := Btn { text: "yes"; clicked => { root.answered(true); } }
-            no := Btn { text: "no"; clicked => { root.answered(false); } }
+            yes := Btn { text: root.yes-label; clicked => { root.answered(true); } }
+            no := Btn { text: root.no-label; clicked => { root.answered(false); } }
         }
     }
     Timer {
@@ -752,6 +761,10 @@ export component MainWindow inherits Window {
     callback answer(bool);
     // a question to answer (a deletion): enter is yes, escape no
     in property <string> question;
+    // the question's title and button labels, when it has its own
+    in property <string> question-title;
+    in property <string> question-yes-label: "yes";
+    in property <string> question-no-label: "no";
     in property <bool> measure-sidebar-buttons: false;
     callback sidebar-buttons-measured(int,MenuChoiceFrame,MenuChoiceFrame,MenuChoiceFrame,length,length);
     in property <bool> measure-question-controls: false;
@@ -2324,6 +2337,9 @@ export component MainWindow inherits Window {
                 x: (parent.width - self.width) / 2;
                 y: (parent.height - self.height) / 2;
                 message: root.question;
+                title: root.question-title;
+                yes-label: root.question-yes-label;
+                no-label: root.question-no-label;
                 measure-controls: root.measure-question-controls;
                 answered(yes) => { root.answer(yes); }
                 controls-measured(p,t,y,n) => { root.question-controls-measured(p,t,y,n); }

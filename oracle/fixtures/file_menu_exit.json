@@ -17,6 +17,8 @@
    "answer": false,
    "idle_shutdown": 0,
    "work_due": false,
+   "space": null,
+   "pages": null,
    "asked": [
     {
      "text": "Are you sure you want to exit the client? (Will auto-yes in 15 seconds)",
@@ -36,6 +38,8 @@
    "answer": true,
    "idle_shutdown": 0,
    "work_due": false,
+   "space": null,
+   "pages": null,
    "asked": [
     {
      "text": "Are you sure you want to exit the client? (Will auto-yes in 15 seconds)",
@@ -60,6 +64,8 @@
    "answer": false,
    "idle_shutdown": 0,
    "work_due": false,
+   "space": null,
+   "pages": null,
    "asked": [
     {
      "text": "Are you sure you want to restart the client? (Will auto-yes in 15 seconds)",
@@ -79,6 +85,8 @@
    "answer": true,
    "idle_shutdown": 0,
    "work_due": false,
+   "space": null,
+   "pages": null,
    "asked": [
     {
      "text": "Are you sure you want to restart the client? (Will auto-yes in 15 seconds)",
@@ -103,6 +111,8 @@
    "answer": false,
    "idle_shutdown": 0,
    "work_due": false,
+   "space": null,
+   "pages": null,
    "asked": [],
    "exited": [
     {
@@ -118,6 +128,8 @@
    "answer": false,
    "idle_shutdown": 0,
    "work_due": false,
+   "space": null,
+   "pages": null,
    "asked": [],
    "exited": [
     {
@@ -133,6 +145,8 @@
    "answer": false,
    "idle_shutdown": 0,
    "work_due": false,
+   "space": null,
+   "pages": null,
    "asked": [],
    "exited": [
     {
@@ -148,6 +162,8 @@
    "answer": true,
    "idle_shutdown": 0,
    "work_due": false,
+   "space": null,
+   "pages": null,
    "asked": [
     {
      "text": "Are you sure you want to exit the client? (Will auto-yes in 15 seconds)",
@@ -172,6 +188,8 @@
    "answer": false,
    "idle_shutdown": 1,
    "work_due": true,
+   "space": null,
+   "pages": null,
    "asked": [],
    "exited": [
     {
@@ -187,7 +205,363 @@
    "answer": false,
    "idle_shutdown": 1,
    "work_due": false,
+   "space": null,
+   "pages": null,
    "asked": [],
+   "exited": [
+    {
+     "restart": false,
+     "idle_work": false
+    }
+   ]
+  },
+  {
+   "name": "low space backed out",
+   "entry": "exit",
+   "confirm": false,
+   "answer": false,
+   "idle_shutdown": 0,
+   "work_due": false,
+   "space": [
+    5242880,
+    1048576
+   ],
+   "pages": null,
+   "asked": [
+    {
+     "text": "You currently have very little free space (1 MB) on your hydrus database drive partition. I think you should really have at least 5 MB in order to save your exit data correctly. I recommend you free up disk space NOW.",
+     "title": "Are you sure?",
+     "yes_label": "try exiting now",
+     "no_label": "back out",
+     "auto_yes_time": null,
+     "auto_no_time": null
+    }
+   ],
+   "exited": []
+  },
+  {
+   "name": "low space tried",
+   "entry": "exit",
+   "confirm": false,
+   "answer": true,
+   "idle_shutdown": 0,
+   "work_due": false,
+   "space": [
+    5242880,
+    1048576
+   ],
+   "pages": null,
+   "asked": [
+    {
+     "text": "You currently have very little free space (1 MB) on your hydrus database drive partition. I think you should really have at least 5 MB in order to save your exit data correctly. I recommend you free up disk space NOW.",
+     "title": "Are you sure?",
+     "yes_label": "try exiting now",
+     "no_label": "back out",
+     "auto_yes_time": null,
+     "auto_no_time": null
+    }
+   ],
+   "exited": [
+    {
+     "restart": false,
+     "idle_work": false
+    }
+   ]
+  },
+  {
+   "name": "low space then confirmed",
+   "entry": "exit",
+   "confirm": true,
+   "answer": true,
+   "idle_shutdown": 0,
+   "work_due": false,
+   "space": [
+    5242880,
+    1048576
+   ],
+   "pages": null,
+   "asked": [
+    {
+     "text": "You currently have very little free space (1 MB) on your hydrus database drive partition. I think you should really have at least 5 MB in order to save your exit data correctly. I recommend you free up disk space NOW.",
+     "title": "Are you sure?",
+     "yes_label": "try exiting now",
+     "no_label": "back out",
+     "auto_yes_time": null,
+     "auto_no_time": null
+    },
+    {
+     "text": "Are you sure you want to exit the client? (Will auto-yes in 15 seconds)",
+     "title": "Are you sure?",
+     "yes_label": "yes",
+     "no_label": "no",
+     "auto_yes_time": 15,
+     "auto_no_time": null
+    }
+   ],
+   "exited": [
+    {
+     "restart": false,
+     "idle_work": false
+    }
+   ]
+  },
+  {
+   "name": "low space restart backed out",
+   "entry": "restart",
+   "confirm": true,
+   "answer": false,
+   "idle_shutdown": 0,
+   "work_due": false,
+   "space": [
+    5242880,
+    1048576
+   ],
+   "pages": null,
+   "asked": [
+    {
+     "text": "You currently have very little free space (1 MB) on your hydrus database drive partition. I think you should really have at least 5 MB in order to save your exit data correctly. I recommend you free up disk space NOW.",
+     "title": "Are you sure?",
+     "yes_label": "try exiting now",
+     "no_label": "back out",
+     "auto_yes_time": null,
+     "auto_no_time": null
+    }
+   ],
+   "exited": []
+  },
+  {
+   "name": "low space enough",
+   "entry": "exit",
+   "confirm": false,
+   "answer": false,
+   "idle_shutdown": 0,
+   "work_due": false,
+   "space": [
+    5242880,
+    5242880
+   ],
+   "pages": null,
+   "asked": [],
+   "exited": [
+    {
+     "restart": false,
+     "idle_work": false
+    }
+   ]
+  },
+  {
+   "name": "urls declined",
+   "entry": "exit",
+   "confirm": false,
+   "answer": false,
+   "idle_shutdown": 0,
+   "work_due": false,
+   "space": null,
+   "pages": [
+    "urls"
+   ],
+   "asked": [
+    {
+     "text": "Are you sure you want to exit the client? (Will auto-yes in 15 seconds)\n\nImporters will save and continue their work on the next start.\n\npage \"url import\" says: This page is still importing.",
+     "title": "Are you sure?",
+     "yes_label": "yes",
+     "no_labels": [
+      "no",
+      "no, but show me the pages"
+     ],
+     "auto_yes_time": 15,
+     "auto_no_time": null,
+     "disable_yes_initially": true,
+     "kind": "yes_no_no"
+    }
+   ],
+   "exited": []
+  },
+  {
+   "name": "urls accepted",
+   "entry": "exit",
+   "confirm": false,
+   "answer": true,
+   "idle_shutdown": 0,
+   "work_due": false,
+   "space": null,
+   "pages": [
+    "urls"
+   ],
+   "asked": [
+    {
+     "text": "Are you sure you want to exit the client? (Will auto-yes in 15 seconds)\n\nImporters will save and continue their work on the next start.\n\npage \"url import\" says: This page is still importing.",
+     "title": "Are you sure?",
+     "yes_label": "yes",
+     "no_labels": [
+      "no",
+      "no, but show me the pages"
+     ],
+     "auto_yes_time": 15,
+     "auto_no_time": null,
+     "disable_yes_initially": true,
+     "kind": "yes_no_no"
+    }
+   ],
+   "exited": [
+    {
+     "restart": false,
+     "idle_work": false
+    }
+   ]
+  },
+  {
+   "name": "urls restart accepted",
+   "entry": "restart",
+   "confirm": true,
+   "answer": true,
+   "idle_shutdown": 0,
+   "work_due": false,
+   "space": null,
+   "pages": [
+    "urls"
+   ],
+   "asked": [
+    {
+     "text": "Are you sure you want to restart the client? (Will auto-yes in 15 seconds)\n\nImporters will save and continue their work on the next start.\n\npage \"url import\" says: This page is still importing.",
+     "title": "Are you sure?",
+     "yes_label": "yes",
+     "no_labels": [
+      "no",
+      "no, but show me the pages"
+     ],
+     "auto_yes_time": 15,
+     "auto_no_time": null,
+     "disable_yes_initially": true,
+     "kind": "yes_no_no"
+    }
+   ],
+   "exited": [
+    {
+     "restart": true,
+     "idle_work": false
+    }
+   ]
+  },
+  {
+   "name": "urls and simple accepted",
+   "entry": "exit",
+   "confirm": true,
+   "answer": true,
+   "idle_shutdown": 0,
+   "work_due": false,
+   "space": null,
+   "pages": [
+    "urls",
+    "simple"
+   ],
+   "asked": [
+    {
+     "text": "Are you sure you want to exit the client? (Will auto-yes in 15 seconds)\n\nImporters will save and continue their work on the next start.\n\npages\n\nsimple downloader\nurl import\n\nsay: This page is still importing.",
+     "title": "Are you sure?",
+     "yes_label": "yes",
+     "no_labels": [
+      "no",
+      "no, but show me the pages"
+     ],
+     "auto_yes_time": 15,
+     "auto_no_time": null,
+     "disable_yes_initially": true,
+     "kind": "yes_no_no"
+    }
+   ],
+   "exited": [
+    {
+     "restart": false,
+     "idle_work": false
+    }
+   ]
+  },
+  {
+   "name": "paused urls",
+   "entry": "exit",
+   "confirm": false,
+   "answer": true,
+   "idle_shutdown": 0,
+   "work_due": false,
+   "space": null,
+   "pages": [
+    "urls",
+    "paused"
+   ],
+   "asked": [],
+   "exited": [
+    {
+     "restart": false,
+     "idle_work": false
+    }
+   ]
+  },
+  {
+   "name": "simple declined",
+   "entry": "exit/force maintenance",
+   "confirm": false,
+   "answer": false,
+   "idle_shutdown": 0,
+   "work_due": false,
+   "space": null,
+   "pages": [
+    "simple"
+   ],
+   "asked": [
+    {
+     "text": "Are you sure you want to exit the client? (Will auto-yes in 15 seconds)\n\nImporters will save and continue their work on the next start.\n\npage \"simple downloader\" says: This page is still importing.",
+     "title": "Are you sure?",
+     "yes_label": "yes",
+     "no_labels": [
+      "no",
+      "no, but show me the pages"
+     ],
+     "auto_yes_time": 15,
+     "auto_no_time": null,
+     "disable_yes_initially": true,
+     "kind": "yes_no_no"
+    }
+   ],
+   "exited": []
+  },
+  {
+   "name": "low space and urls",
+   "entry": "exit",
+   "confirm": true,
+   "answer": true,
+   "idle_shutdown": 0,
+   "work_due": false,
+   "space": [
+    5242880,
+    1048576
+   ],
+   "pages": [
+    "urls"
+   ],
+   "asked": [
+    {
+     "text": "You currently have very little free space (1 MB) on your hydrus database drive partition. I think you should really have at least 5 MB in order to save your exit data correctly. I recommend you free up disk space NOW.",
+     "title": "Are you sure?",
+     "yes_label": "try exiting now",
+     "no_label": "back out",
+     "auto_yes_time": null,
+     "auto_no_time": null
+    },
+    {
+     "text": "Are you sure you want to exit the client? (Will auto-yes in 15 seconds)\n\nImporters will save and continue their work on the next start.\n\npage \"url import\" says: This page is still importing.",
+     "title": "Are you sure?",
+     "yes_label": "yes",
+     "no_labels": [
+      "no",
+      "no, but show me the pages"
+     ],
+     "auto_yes_time": 15,
+     "auto_no_time": null,
+     "disable_yes_initially": true,
+     "kind": "yes_no_no"
+    }
+   ],
    "exited": [
     {
      "restart": false,
