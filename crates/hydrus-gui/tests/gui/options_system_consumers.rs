@@ -2778,7 +2778,7 @@ mod network_consumers {
         tokio::spawn(async move {
             axum::serve(TlsListener::new(tcp, config).unwrap(), app)
                 .await
-                .unwrap()
+                .unwrap();
         });
         for case in recorded()["verify"].as_array().unwrap() {
             let verify = case["verify"].as_bool().unwrap();
