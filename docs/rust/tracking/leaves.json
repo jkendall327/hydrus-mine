@@ -4244,10 +4244,10 @@
     "Locale date phrases use English/C forms. Platform-specific strftime extensions such as %s remain outside the supported grammar."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "Claude session (#97 phase 2, w4-r5)",
-    "note": "Carried, untagged. The reference's converter was recorded under five system zones (New York, Kolkata, Lord Howe, Auckland, UTC; date_encode_local.json) with winter and summer timestamps and the offset then in force, and string_dates.rs local_encode_adds_the_current_offset_as_the_reference_does_in_other_zones compares the native encode, given that offset, with them (including naive %z/%Z). That test hands the offset to encode_at; it does not drive the production path that reads the machine's clock (encode), and the editor's live preview is only compared under UTC (string_date_editor.json), so the leaf's 'current local offset' behaviour stays restated, not proved, and the test carries no tag."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-4)",
+    "note": "crates/hydrus-gui-model/tests/date_encode_machine_zone.rs runs the test binary as a child under each of the recorded zones (TZ set to New York, Kolkata, Lord Howe, Auckland, UTC) so that the production path reads the machine's clock and zone itself (encode, not encode_at), and compares StringConverter::convert and the conversion editor's live preview with the reference's converter recorded under the same zones (date_encode_local.json), including naive %z/%Z. A zone's recorded cases apply only while its offset today equals the recorded one (checked with the system's date); UTC always applies, so in some seasons fewer zones are compared."
    }
   },
   {
@@ -5500,10 +5500,10 @@
     "Known hash/URL handling and neighbour-spam flags populate the prefetch slice."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "Claude session (#97 phase 2, w4-r5)",
-    "note": "The editor's prefetch panel values are compared with the reference's panel step by step (import_options_fields.json), but the importer code that reads them (hydrus-download predict.rs, private) has no test of its hash/URL outcomes."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-4)",
+    "note": "crates/hydrus-gui/tests/gui/import_options_consumers.rs prefetch_choices_from_the_editor_decide_what_a_url_queue_fetches: for each of 17 scenarios the editor's prefetch and file-filtering pages are set (hash/URL check, neighbour spam, both 'fetch metadata anyway' boxes, exclude previously deleted), applied, and the saved options given to a real URL queue run by the QueueRunner against a loopback booru, with the file's history staged (known URL, a second URL for the same file, file in trash, hash known on the seed, a parsed sha256 or a parsed md5). The pages the site was asked for, the seed's status and its note are compared with the reference's real client doing the same steps (oracle/record_prefetch_outcomes.py -> fixtures/prefetch_outcomes.json). Not covered: sha1 and sha512 hashes (md5 is driven), and prefetch in gallery, watcher and subscription importers (same predict code, not driven)."
    }
   },
   {
@@ -5576,10 +5576,10 @@
     "Get-tags controls and new/redundant statuses decide which parsed/additional tags each service receives."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "Claude session (#97 phase 2, w4-r5)",
-    "note": "The editor's tag service panel values are compared with the reference's panel step by step (import_options_fields.json), but the code that reads them (hydrus-download content.rs service_tags, the get-tags filter and the deleted-tag overwrite) is not driven from the editor's output, so the setting's consumer is untested."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-4)",
+    "note": "crates/hydrus-gui/tests/gui/import_options_consumers.rs tag_service_rules_from_the_editor_decide_the_tags_an_imported_file_gets: for each recorded scenario the tag service rules are set in the editor (get tags, the three new/inbox/archive gates, the two overwrite-deleted boxes), applied, and given to a real local-import queue whose seed carries parsed and additional tags, for a new file, one in the inbox and one archived, each with a tag deleted from it before. The tags the files end with equal what the reference's ServiceTagImportOptions.GetTags gave (import_options_fields.json outcomes); that reference side is GetTags called on stub media results (record_import_options_fields.py:435-480), not a real reference import. The only-add-existing gate is driven by the existing saved_existing_tag_filter_reaches_real_file_importer_for_parsed_and_additional_tags (existing_tags_filter.json), not by these scenarios."
    }
   },
   {
@@ -6973,9 +6973,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "source-restated",
-    "by": "Claude session (#97 phase 2, w4-r1b)",
-    "note": "The real Options row (limits 1..3600 asserted) is set to 2, 3 and 4 seconds for pages, subscriptions and watchers, applied, and met by a running NetEngine fetching a local server twice per kind with that kind's gallery token: the second fetch of each kind waits (WaitReason::Gallery), its status names exactly first-fetch time + that kind's own wait (read as ISO text; the three waits are told apart), and it does not go until the second after that, as the reference's TryToConsumeAGalleryToken (now > last + delay). The kind-to-option mapping and the strict '>' rule come from oracle/fixtures/gallery_wait_options.json (record_gallery_wait_options.py: the real NetworkBandwidthManager with the three real options set to 7/11/13, time held still), replayed on hydrus-core's manager. The test itself calls engine.reload_settings() where the CLI's one-second poll does (the poll is not driven) and sets the store's per-domain limits aside. The test hands the engine each GalleryTokenKind itself; no real gallery page, subscription or watcher run is shown asking for its own kind (queue.rs:1461/1466, subscriptions.rs:261, from source), so this stays source-restated until one is driven. Test: crates/hydrus-gui/tests/gui/options_download_waits.rs each_saved_wait_spaces_that_kinds_page_fetches_in_the_running_engine (and the_recorded_reference_token_rule_holds_for_the_engines_manager)."
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-4)",
+    "note": "crates/hydrus-download/tests/paged_importers.rs a_downloader_page_waits_its_own_option_between_gallery_pages: a real URL queue is given two gallery pages of one site through the real NetEngine with the saved option at 2 s and the other two kinds' options at an hour; the second page reaches the server no sooner than 2 s after the first. Which option each kind reads, and the 'now > last + wait' rule, are the reference recording gallery_wait_options.json, replayed by options_download_waits.rs. The importer's kind (queue.rs bandwidth_scope) is exercised, not restated. Only the lower bound of the gap is asserted."
    }
   },
   {
@@ -7035,9 +7035,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "weak",
-    "by": "Claude session (#97 phase 2, w4-r1b)",
-    "note": "GUI toggle only reaches engine.bandwidth_settings().override_on_file_urls_from_posts. The consumer (hydrus-download seeds.rs:440, override_bandwidth_after 3s) is not tested with the option anywhere. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:580 downloading_waits_and_post_url_override_reach_the_running_network_engine Re-read 2026-10-14 (#97 phase 2, w4-r1b): left weak. Proving the consumer needs a post URL that parses to one file URL under a bandwidth rule that blocks the file fetch, with a timing assertion, and the reference's side (ClientImportFileSeeds.py:1740 -> network_job.OverrideBandwidth(3)) is a source constant with no recording of the override itself; neither was built."
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-4)",
+    "note": "crates/hydrus-download/tests/post_url_override.rs drives a real URL queue against a loopback booru under a bandwidth rule (one request a day) that the post page uses up, with the saved option on and off, through the real NetEngine. The expected timing is a recording of the reference's own client doing the same (oracle/record_post_url_override.py -> fixtures/post_url_override.json: file asked for 3.43 s after the post page with the option on; not within 15 s with it off). Lower bound is the recorded whole seconds, upper bound the recorded watch; the option row's own editor test is the earlier options_system_consumers one. Not covered: the same override for a subscription's or watcher's file fetches (the reference's WorkOnURL gives the same 3 seconds to every importer; one path is driven)."
    }
   },
   {
@@ -7258,9 +7258,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "source-restated",
-    "by": "Claude session (#97 phase 2, w4-r1b)",
-    "note": "The real Options row (limits 1..3600 asserted) is set to 2, 3 and 4 seconds for pages, subscriptions and watchers, applied, and met by a running NetEngine fetching a local server twice per kind with that kind's gallery token: the second fetch of each kind waits (WaitReason::Gallery), its status names exactly first-fetch time + that kind's own wait (read as ISO text; the three waits are told apart), and it does not go until the second after that, as the reference's TryToConsumeAGalleryToken (now > last + delay). The kind-to-option mapping and the strict '>' rule come from oracle/fixtures/gallery_wait_options.json (record_gallery_wait_options.py: the real NetworkBandwidthManager with the three real options set to 7/11/13, time held still), replayed on hydrus-core's manager. The test itself calls engine.reload_settings() where the CLI's one-second poll does (the poll is not driven) and sets the store's per-domain limits aside. The test hands the engine each GalleryTokenKind itself; no real gallery page, subscription or watcher run is shown asking for its own kind (queue.rs:1461/1466, subscriptions.rs:261, from source), so this stays source-restated until one is driven. Test: crates/hydrus-gui/tests/gui/options_download_waits.rs each_saved_wait_spaces_that_kinds_page_fetches_in_the_running_engine (and the_recorded_reference_token_rule_holds_for_the_engines_manager)."
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-4)",
+    "note": "crates/hydrus-download/tests/paged_importers.rs a_subscription_waits_its_own_option_between_search_pages: a real subscription sync reads two search pages of one site through the real NetEngine with its saved option at 2 s and the other kinds' at an hour; the second page reaches the server no sooner than 2 s after the first. Option mapping and rule from the recording gallery_wait_options.json (options_download_waits.rs); the subscription's own token kind (subscriptions.rs) is exercised. Only the lower bound of the gap is asserted."
    }
   },
   {
@@ -7366,9 +7366,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "source-restated",
-    "by": "Claude session (#97 phase 2, w4-r1b)",
-    "note": "The real Options row (limits 1..3600 asserted) is set to 2, 3 and 4 seconds for pages, subscriptions and watchers, applied, and met by a running NetEngine fetching a local server twice per kind with that kind's gallery token: the second fetch of each kind waits (WaitReason::Gallery), its status names exactly first-fetch time + that kind's own wait (read as ISO text; the three waits are told apart), and it does not go until the second after that, as the reference's TryToConsumeAGalleryToken (now > last + delay). The kind-to-option mapping and the strict '>' rule come from oracle/fixtures/gallery_wait_options.json (record_gallery_wait_options.py: the real NetworkBandwidthManager with the three real options set to 7/11/13, time held still), replayed on hydrus-core's manager. The test itself calls engine.reload_settings() where the CLI's one-second poll does (the poll is not driven) and sets the store's per-domain limits aside. The test hands the engine each GalleryTokenKind itself; no real gallery page, subscription or watcher run is shown asking for its own kind (queue.rs:1461/1466, subscriptions.rs:261, from source), so this stays source-restated until one is driven. Test: crates/hydrus-gui/tests/gui/options_download_waits.rs each_saved_wait_spaces_that_kinds_page_fetches_in_the_running_engine (and the_recorded_reference_token_rule_holds_for_the_engines_manager)."
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-4)",
+    "note": "crates/hydrus-download/tests/paged_importers.rs watchers_wait_their_own_option_between_checks_of_one_site: two real watchers of one site are run by the QueueRunner through the real NetEngine with the saved option at 2 s and the other kinds' at an hour; the second check reaches the server no sooner than 2 s after the first. Option mapping and rule from the recording gallery_wait_options.json (options_download_waits.rs); the watcher's token kind (queue.rs) is exercised. Only the lower bound of the gap is asserted."
    }
   },
   {
@@ -12464,9 +12464,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "weak",
-    "by": "Claude session (#97 phase 2, w4-r1b)",
-    "note": "Options and Slots primitive are recorded/replayed, but the only consumer test uses URL-import file queues. The reference uses the misc slot also for simple-downloader gallery jobs (queue.rs:836, QueueKind non-gallery search at 766) and local-import pages; none of those is tested against the setting. Tests: crates/hydrus-gui/tests/gui/import_work_slots.rs:48; work_slots.rs:81; crates/hydrus-download/tests/url_queue.rs:~1002 (QueueKind::Urls file queues only) Re-read 2026-10-14 (#97 phase 2, w4-r1b): left weak. The reference gives the misc slot to the URL import page (its files and its simple-downloader gallery jobs, ClientImportSimpleURLs.py:746 and :1445) and to the local import page (ClientImportLocal.py:437); the native consumer test covers only the URL file queues, and the other two jobs' queues were not driven against the setting."
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-4)",
+    "note": "crates/hydrus-download/tests/paged_importers.rs drives the misc slot through the real QueueRunner for the jobs the reference gives it to: URL queue gallery pages (url_queue_gallery_jobs_use_the_misc_slot), simple-downloader pages (simple_downloader_jobs_use_the_misc_slot) and local-import files (local_import_files_use_the_misc_slot, with the store's writer held so the first import stays running: one let in at 1, two at 2), the simple-downloader and URL-queue tests start at 1 and raise the saved option with a runner reload, while the local-import test builds a separate setup at 1 and at 2; the URL queue's file jobs were already driven by url_queue.rs. The slot primitive is replayed from import_work_slots.json; which jobs use the misc slot comes from the reference source (ClientImportSimpleURLs.py, ClientImportLocal.py), not a recording. Not driven: simple-downloader file jobs (ClientImportSimpleURLs.py:746, which use the misc slot; the url_queue.rs file test covers URL-queue files only)."
    }
   },
   {

@@ -1,0 +1,363 @@
+{
+ "pages": [
+  "/post/1",
+  "/post/2",
+  "/post/3",
+  "/post/90",
+  "/post/91"
+ ],
+ "scenarios": [
+  {
+   "hits": [],
+   "name": "defaults, a known post url",
+   "options": {
+    "exclude_deleted": true,
+    "fetch_hash": false,
+    "fetch_url": false,
+    "hash_check": 2,
+    "neighbour_spam": true,
+    "url_check": 1
+   },
+   "path": "/post/1",
+   "seed": {
+    "note": "url recognised: Imported at TIME, which was AGO before this check.",
+    "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+    "status": 2
+   },
+   "setup": null
+  },
+  {
+   "hits": [
+    "/files/p1.jpg",
+    "/post/1"
+   ],
+   "name": "url check off, a known post url",
+   "options": {
+    "exclude_deleted": true,
+    "fetch_hash": false,
+    "fetch_url": false,
+    "hash_check": 2,
+    "neighbour_spam": true,
+    "url_check": 0
+   },
+   "path": "/post/1",
+   "seed": {
+    "note": "file recognised: Imported at TIME, which was AGO before this check.",
+    "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+    "status": 2
+   },
+   "setup": null
+  },
+  {
+   "hits": [
+    "/post/1"
+   ],
+   "name": "url check on, fetch metadata anyway",
+   "options": {
+    "exclude_deleted": true,
+    "fetch_hash": false,
+    "fetch_url": true,
+    "hash_check": 2,
+    "neighbour_spam": true,
+    "url_check": 1
+   },
+   "path": "/post/1",
+   "seed": {
+    "note": "url recognised: Imported at TIME, which was AGO before this check.",
+    "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+    "status": 2
+   },
+   "setup": null
+  },
+  {
+   "hits": [],
+   "name": "url matches dispositive",
+   "options": {
+    "exclude_deleted": true,
+    "fetch_hash": false,
+    "fetch_url": false,
+    "hash_check": 1,
+    "neighbour_spam": true,
+    "url_check": 2
+   },
+   "path": "/post/1",
+   "seed": {
+    "note": "url recognised: Imported at TIME, which was AGO before this check.",
+    "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+    "status": 2
+   },
+   "setup": null
+  },
+  {
+   "hits": [
+    "/post/90"
+   ],
+   "name": "a parsed hash known, hash check on",
+   "options": {
+    "exclude_deleted": true,
+    "fetch_hash": false,
+    "fetch_url": false,
+    "hash_check": 1,
+    "neighbour_spam": true,
+    "url_check": 0
+   },
+   "path": "/post/90",
+   "seed": {
+    "note": "sha256 hash recognised: Imported at TIME, which was AGO before this check.",
+    "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+    "status": 2
+   },
+   "setup": null
+  },
+  {
+   "hits": [
+    "/post/90"
+   ],
+   "name": "a parsed hash known, hash check dispositive",
+   "options": {
+    "exclude_deleted": true,
+    "fetch_hash": false,
+    "fetch_url": false,
+    "hash_check": 2,
+    "neighbour_spam": true,
+    "url_check": 0
+   },
+   "path": "/post/90",
+   "seed": {
+    "note": "sha256 hash recognised: Imported at TIME, which was AGO before this check.",
+    "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+    "status": 2
+   },
+   "setup": null
+  },
+  {
+   "hits": [
+    "/files/p90.jpg",
+    "/post/90"
+   ],
+   "name": "a parsed hash known, hash check off",
+   "options": {
+    "exclude_deleted": true,
+    "fetch_hash": false,
+    "fetch_url": false,
+    "hash_check": 0,
+    "neighbour_spam": true,
+    "url_check": 0
+   },
+   "path": "/post/90",
+   "seed": {
+    "note": "file recognised: Imported at TIME, which was AGO before this check.",
+    "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+    "status": 2
+   },
+   "setup": null
+  },
+  {
+   "hits": [
+    "/post/91"
+   ],
+   "name": "a parsed md5 known, hash check on",
+   "options": {
+    "exclude_deleted": true,
+    "fetch_hash": false,
+    "fetch_url": false,
+    "hash_check": 1,
+    "neighbour_spam": true,
+    "url_check": 0
+   },
+   "path": "/post/91",
+   "seed": {
+    "note": "md5 hash recognised: Imported at TIME, which was AGO before this check.",
+    "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+    "status": 2
+   },
+   "setup": null
+  },
+  {
+   "hits": [
+    "/files/p91.jpg",
+    "/post/91"
+   ],
+   "name": "a parsed md5 known, hash check off",
+   "options": {
+    "exclude_deleted": true,
+    "fetch_hash": false,
+    "fetch_url": false,
+    "hash_check": 0,
+    "neighbour_spam": true,
+    "url_check": 0
+   },
+   "path": "/post/91",
+   "seed": {
+    "note": "file recognised: Imported at TIME, which was AGO before this check.",
+    "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+    "status": 2
+   },
+   "setup": null
+  },
+  {
+   "hits": [],
+   "name": "the seed already has the hash, hash check on",
+   "options": {
+    "exclude_deleted": true,
+    "fetch_hash": false,
+    "fetch_url": false,
+    "hash_check": 1,
+    "neighbour_spam": true,
+    "url_check": 0
+   },
+   "path": "/post/90",
+   "seed": {
+    "note": "sha256 hash recognised: Imported at TIME, which was AGO before this check.",
+    "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+    "status": 2
+   },
+   "setup": "preset_hash"
+  },
+  {
+   "hits": [
+    "/post/90"
+   ],
+   "name": "the seed already has the hash, hash check on, fetch metadata anyway",
+   "options": {
+    "exclude_deleted": true,
+    "fetch_hash": true,
+    "fetch_url": false,
+    "hash_check": 1,
+    "neighbour_spam": true,
+    "url_check": 0
+   },
+   "path": "/post/90",
+   "seed": {
+    "note": "sha256 hash recognised: Imported at TIME, which was AGO before this check.",
+    "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+    "status": 2
+   },
+   "setup": "preset_hash"
+  },
+  {
+   "hits": [],
+   "name": "the seed already has the hash, hash dispositive",
+   "options": {
+    "exclude_deleted": true,
+    "fetch_hash": false,
+    "fetch_url": false,
+    "hash_check": 2,
+    "neighbour_spam": true,
+    "url_check": 0
+   },
+   "path": "/post/90",
+   "seed": {
+    "note": "sha256 hash recognised: Imported at TIME, which was AGO before this check.",
+    "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+    "status": 2
+   },
+   "setup": "preset_hash"
+  },
+  {
+   "hits": [
+    "/files/p90.jpg",
+    "/post/90"
+   ],
+   "name": "the seed already has the hash, hash check off",
+   "options": {
+    "exclude_deleted": true,
+    "fetch_hash": false,
+    "fetch_url": false,
+    "hash_check": 0,
+    "neighbour_spam": true,
+    "url_check": 0
+   },
+   "path": "/post/90",
+   "seed": {
+    "note": "file recognised: Imported at TIME, which was AGO before this check.",
+    "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+    "status": 2
+   },
+   "setup": "preset_hash"
+  },
+  {
+   "hits": [
+    "/files/p1.jpg",
+    "/post/1"
+   ],
+   "name": "neighbour spam check on, a file with two post urls",
+   "options": {
+    "exclude_deleted": true,
+    "fetch_hash": false,
+    "fetch_url": false,
+    "hash_check": 2,
+    "neighbour_spam": true,
+    "url_check": 1
+   },
+   "path": "/post/1",
+   "seed": {
+    "note": "file recognised: Imported at TIME, which was AGO before this check.",
+    "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+    "status": 2
+   },
+   "setup": "extra_url"
+  },
+  {
+   "hits": [],
+   "name": "neighbour spam check off, a file with two post urls",
+   "options": {
+    "exclude_deleted": true,
+    "fetch_hash": false,
+    "fetch_url": false,
+    "hash_check": 2,
+    "neighbour_spam": false,
+    "url_check": 1
+   },
+   "path": "/post/1",
+   "seed": {
+    "note": "url recognised: Imported at TIME, which was AGO before this check.",
+    "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+    "status": 2
+   },
+   "setup": "extra_url"
+  },
+  {
+   "hits": [],
+   "name": "a deleted file, deleted files excluded",
+   "options": {
+    "exclude_deleted": true,
+    "fetch_hash": false,
+    "fetch_url": false,
+    "hash_check": 2,
+    "neighbour_spam": true,
+    "url_check": 1
+   },
+   "path": "/post/2",
+   "seed": {
+    "note": "url recognised: Currently in trash (Unknown deletion reason.). Sent there at TIME, which was AGO before this check.",
+    "sha256": "b5db2dde9ab28f632a19dc5bfd32be14f57b9b2c2dfdd824d00828487be735fe",
+    "status": 3
+   },
+   "setup": "delete"
+  },
+  {
+   "hits": [
+    "/files/p2.jpg",
+    "/post/2"
+   ],
+   "name": "a deleted file, deleted files not excluded",
+   "options": {
+    "exclude_deleted": false,
+    "fetch_hash": false,
+    "fetch_url": false,
+    "hash_check": 2,
+    "neighbour_spam": true,
+    "url_check": 1
+   },
+   "path": "/post/2",
+   "seed": {
+    "note": "",
+    "sha256": "b5db2dde9ab28f632a19dc5bfd32be14f57b9b2c2dfdd824d00828487be735fe",
+    "status": 1
+   },
+   "setup": "delete"
+  }
+ ],
+ "site_port": 45987
+}

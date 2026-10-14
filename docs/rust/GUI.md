@@ -4097,6 +4097,18 @@ consume a work slot. Watcher checks and files now run independently, so a
 checker waiting for its own slot does not prevent that watcher's file imports.
 URL and simple-downloader file/page work and local-import files share the other
 paged-job pool. These limits are separate from network connection semaphores.
+Tests hold URL-queue gallery pages, simple-downloader pages and local-import
+files at the "other paged importer jobs" limit (1, then 2) through the queue
+runner (`paged_importers.rs`).
+
+The three "additional fixed time to wait between gallery page fetches" options
+(downloader pages, subscriptions, watchers) are met by a real URL queue, a real
+subscription and real watchers fetching from one site: a kind's second page
+comes no sooner than its own saved wait after the first, whatever the other
+two are. "Force file downloads to occur quickly after Post URL fetches" lets a
+post's file past a used-up bandwidth rule about 3 seconds after the post page;
+off, the file keeps waiting (`post_url_override.rs`, timing recorded from the
+reference's client).
 
 Database > clear now opens the original clear-all and cull-viewing-statistics
 questions with “do it”/“forget it” choices and the original completion notices.
