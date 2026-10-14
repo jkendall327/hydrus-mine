@@ -88,6 +88,9 @@ pub enum Action {
     /// Open a page searching for files that look like the selected ones,
     /// within this hamming distance.
     OpenSimilar(u64),
+    /// As the others, within a distance asked of a small dialog
+    /// ("custom").
+    OpenSimilarCustom,
     /// Open the focused file as the OS opens it, or in a web browser, or
     /// show it in the OS's file browser.
     OpenExternally,
@@ -614,11 +617,11 @@ pub fn open_menu(store: &Store, focused: Option<HashId>, num_selected: usize) ->
     ];
     if let Some(focused) = focused {
         if !perceptual_hashed(store, &[focused]).is_empty() {
-            // (less the reference's "custom", which asks for the distance)
-            let similar = SIMILAR_DISTANCES
+            let mut similar: Vec<Entry> = SIMILAR_DISTANCES
                 .iter()
                 .map(|&(name, distance)| Entry::Item(name.into(), Action::OpenSimilar(distance)))
                 .collect();
+            similar.push(Entry::Item("custom".into(), Action::OpenSimilarCustom));
             open.push(Entry::Menu("similar files in a new page".into(), similar));
         }
         separate(&mut open);
@@ -635,7 +638,7 @@ pub fn open_menu(store: &Store, focused: Option<HashId>, num_selected: usize) ->
             format!("{prefix}in web browser"),
             Action::OpenInWebBrowser,
         ));
-        if !paths(store, &[focused]).is_empty() {
+        if crate::import_options_window::advanced_mode(store) && !paths(store, &[focused]).is_empty() {
             open.push(Entry::Item(
                 format!("{prefix}in file browser"),
                 Action::OpenInFileBrowser,

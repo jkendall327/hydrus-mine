@@ -20,10 +20,6 @@ fn recording() -> Value {
     hydrus_testkit::fixture_json("debug_memory_maintenance.json")
 }
 
-fn keys_in_order(value: &Value) -> usize {
-    value["keys"].as_array().unwrap().len()
-}
-
 // leaf: audit-options-help-debug-action-run-fast-memory-maintenance
 #[test]
 fn run_fast_memory_maintenance_trims_the_image_and_thumbnail_caches_and_slow_does_not() {
@@ -34,30 +30,21 @@ fn run_fast_memory_maintenance_trims_the_image_and_thumbnail_caches_and_slow_doe
             ["help", "debug", "memory actions"]
         );
     }
+    // The reference's caches, scripted with four entries a to d one second
+    // apart, sizes and limits chosen so that these real files give the same
+    // sizes (`oracle/record_debug_memory_maintenance.py`): the fourth pushes
+    // the oldest out, what is over the limit goes at once, a slow pulse
+    // changes nothing, and a fast one drops what has idled past the timeout,
+    // but not the newest.
     let steps = recording["caches"].as_array().unwrap();
     let step = |name: &str| steps.iter().find(|s| s["name"] == name).unwrap();
-    // the reference's caches after a fast pulse: nothing goes while everything
-    // is inside the timeout; later, what has idled past it (but not the newest)
-    let aged_fast = step("past the timeout, after fast");
-    let aged_slow = step("past the timeout, after slow");
-    assert!(
-        step("after fast")["pubs"]
-            .as_array()
-            .unwrap()
-            .contains(&Value::from("memory_maintenance_pulse"))
-    );
-    assert!(step("after slow")["pubs"].as_array().unwrap().is_empty());
-    assert_eq!(keys_in_order(&aged_slow["image"]), 3, "slow leaves them");
-    assert_eq!(
-        keys_in_order(&aged_fast["image"]),
-        1,
-        "only the newest left"
-    );
-    assert_eq!(aged_fast["image"], aged_fast["thumbnail"]);
-
+    let letters = ["a", "b", "c", "d"];
+    let limit = |cache: &str| recording["limits"][cache].as_u64().unwrap();
+    // (the files of the recording's a, b, c and d: 20, 14, 10 and 3 pixels wide)
+    let names = ["w20.png", "w14.png", "c.png", "w3.png"];
     let (dirs, store) = super::subscriptions::store();
     let importer = FileImporter::new(store.clone(), MediaTools::new());
-    let files: Vec<HashId> = ["a.png", "b.png"]
+    let files: Vec<HashId> = names
         .map(|name| {
             let result = importer
                 .import_path(
@@ -71,12 +58,13 @@ fn run_fast_memory_maintenance_trims_the_image_and_thumbnail_caches_and_slow_doe
                 .unwrap()
         })
         .into();
+    let image_limit = limit("image");
     store
-        .write_and_refresh(|ctx| {
+        .write_and_refresh(move |ctx| {
             settings::set(
                 ctx.conn(),
                 &Policy {
-                    bytes: 100,
+                    bytes: image_limit,
                     timeout: 300,
                     percentage: 50,
                 },
@@ -105,7 +93,7 @@ fn run_fast_memory_maintenance_trims_the_image_and_thumbnail_caches_and_slow_doe
         move || Duration::from_millis(clock.load(Ordering::Acquire))
     }));
     bound.rows.set_cache_policy(ThumbnailCacheSettings {
-        bytes: 1 << 20,
+        bytes: limit("thumbnail"),
         timeout: 300,
     });
     let adapter = windows.get(0).unwrap();
@@ -114,18 +102,18 @@ fn run_fast_memory_maintenance_trims_the_image_and_thumbnail_caches_and_slow_doe
     }
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
-    // the images are cached one second apart and two seconds, as in the
-    // recording, and so are the thumbnails
     bound.rows.set_columns(1);
     bound.rows.wait();
     bound.rows.clear_thumbnail_cache();
     let ids = bound.current.borrow().borrow().results().to_vec();
-    for (file, seconds) in [(0, 1), (1, 3)] {
-        let i = ids.iter().position(|id| *id == files[file]).unwrap();
-        clock.store(seconds * 1000, Ordering::Release);
-        bound
-            .rows
-            .advance_cache_clock(Duration::from_secs(if file == 0 { 1 } else { 2 }));
+    // the images and thumbnails are cached one second apart, in the order
+    // of the recording
+    for (n, file) in files.iter().enumerate() {
+        let i = ids.iter().position(|id| id == file).unwrap();
+        clock.store(n as u64 * 1000, Ordering::Release);
+        if n > 0 {
+            bound.rows.advance_cache_clock(Duration::from_secs(1));
+        }
         bound.rows.row_data(i).unwrap();
         bound.rows.wait();
         ui.invoke_thumbnail_clicked(i32::try_from(i).unwrap(), false, false);
@@ -136,36 +124,89 @@ fn run_fast_memory_maintenance_trims_the_image_and_thumbnail_caches_and_slow_doe
             std::thread::yield_now();
         }
     }
-    assert_eq!(bound.image_cache.keys().len(), 2);
-    let has = |rows: &hydrus_gui::ThumbnailRows, file: HashId| rows.cached_keys().contains(&file);
-    assert!(has(&bound.rows, files[0]) && has(&bound.rows, files[1]));
-    let (older, newest) = (files[0], files[1]);
+    let letter_of = |file: HashId| {
+        letters[files.iter().position(|f| *f == file).unwrap()].to_owned()
+    };
+    let image_keys = |bound: &hydrus_gui::Bound| -> Vec<String> {
+        let mut keys: Vec<String> = bound.image_cache.keys().into_iter().map(letter_of).collect();
+        keys.sort();
+        keys
+    };
+    let thumbnail_keys = |bound: &hydrus_gui::Bound| -> Vec<String> {
+        let mut keys: Vec<String> = bound
+            .rows
+            .cached_keys()
+            .into_iter()
+            .map(letter_of)
+            .collect();
+        keys.sort();
+        keys
+    };
+    let recorded_keys = |name: &str, cache: &str| -> Vec<String> {
+        let mut keys: Vec<String> = step(name)[cache]["keys"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|k| k.as_str().unwrap().to_owned())
+            .collect();
+        keys.sort();
+        keys
+    };
+    // the sizes the files have here are the recording's
+    assert_eq!(
+        bound.rows.cached_bytes(),
+        step("primed")["thumbnail"]["bytes"].as_u64().unwrap()
+    );
+    assert_eq!(
+        bound.image_cache.bytes(),
+        step("primed")["image"]["bytes"].as_u64().unwrap()
+    );
+    // the fourth pushed the first out as it came in
+    assert_eq!(image_keys(&bound), recorded_keys("primed", "image"));
+    assert_eq!(thumbnail_keys(&bound), recorded_keys("primed", "thumbnail"));
     let d = Debug::from_parts(dirs, store, ui, bound, windows);
-    // inside the timeout: neither action drops anything
-    for entry in ["run slow memory maintenance", "run fast memory maintenance"] {
+    // inside the timeout, neither action drops anything
+    for (entry, after) in [
+        ("run slow memory maintenance", "after slow"),
+        ("run fast memory maintenance", "after fast"),
+    ] {
         d.click(&["memory actions", entry]);
-        assert_eq!(d.bound.image_cache.keys().len(), 2, "{entry}");
-        assert!(
-            has(&d.bound.rows, older) && has(&d.bound.rows, newest),
+        assert_eq!(image_keys(&d.bound), recorded_keys(after, "image"), "{entry}");
+        assert_eq!(
+            thumbnail_keys(&d.bound),
+            recorded_keys(after, "thumbnail"),
             "{entry}"
         );
     }
-    // past the timeout (the oldest by 1.5 s, the newest not yet): slow still
-    // leaves them, fast drops the idle one
-    clock.store(301_500, Ordering::Release);
-    d.bound
-        .rows
-        .advance_cache_clock(Duration::from_millis(298_500));
+    assert!(
+        step("after fast")["pubs"]
+            .as_array()
+            .unwrap()
+            .contains(&Value::from("memory_maintenance_pulse"))
+    );
+    assert!(step("after slow")["pubs"].as_array().unwrap().is_empty());
+    // past the timeout (the reference's 302.5 s): slow still leaves them, fast
+    // drops what has idled, keeping the newest
+    let late = (step("past the timeout, after slow")["now"].as_f64().unwrap() * 1000.0) as u64;
+    clock.store(late, Ordering::Release);
+    d.bound.rows.advance_cache_clock(Duration::from_millis(late - 3000));
     d.click(&["memory actions", "run slow memory maintenance"]);
-    assert_eq!(d.bound.image_cache.keys().len(), 2);
-    assert!(has(&d.bound.rows, older) && has(&d.bound.rows, newest));
-    d.click(&["memory actions", "run fast memory maintenance"]);
-    assert_eq!(d.bound.image_cache.keys(), vec![newest]);
-    assert!(!has(&d.bound.rows, older), "the idle thumbnail goes");
-    assert!(has(&d.bound.rows, newest), "the newest stays");
     assert_eq!(
-        d.bound.image_cache.keys().len(),
-        keys_in_order(&aged_fast["image"])
+        image_keys(&d.bound),
+        recorded_keys("past the timeout, after slow", "image")
+    );
+    assert_eq!(
+        thumbnail_keys(&d.bound),
+        recorded_keys("past the timeout, after slow", "thumbnail")
+    );
+    d.click(&["memory actions", "run fast memory maintenance"]);
+    assert_eq!(
+        image_keys(&d.bound),
+        recorded_keys("past the timeout, after fast", "image")
+    );
+    assert_eq!(
+        thumbnail_keys(&d.bound),
+        recorded_keys("past the timeout, after fast", "thumbnail")
     );
 }
 

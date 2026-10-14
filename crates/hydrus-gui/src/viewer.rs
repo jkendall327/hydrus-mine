@@ -9,6 +9,22 @@ thread_local! {
     /// The time the info line counts "ago" from, held still for tests and
     /// recordings (else the clock).
     static HELD_NOW: std::cell::Cell<Option<i64>> = const { std::cell::Cell::new(None) };
+    /// The indices `random` draws instead of random ones, for tests and
+    /// recordings (latest last; empty means really random).
+    static HELD_RANDOM: std::cell::RefCell<std::collections::VecDeque<usize>> =
+        const { std::cell::RefCell::new(std::collections::VecDeque::new()) };
+}
+
+/// Make `random` draw these indices in turn (as `random.randrange` does in
+/// the reference) before it goes back to real randomness, on this thread.
+pub fn hold_random(draws: &[usize]) {
+    HELD_RANDOM.with(|held| *held.borrow_mut() = draws.iter().copied().collect());
+}
+
+fn draw(count: usize) -> usize {
+    HELD_RANDOM
+        .with(|held| held.borrow_mut().pop_front())
+        .unwrap_or_else(|| rand::random_range(0..count))
 }
 
 /// Hold the viewer's clock still, in milliseconds since the epoch, on this
@@ -172,7 +188,7 @@ impl MediaViewer {
         }
         self.random_history.push(self.index);
         loop {
-            let index = rand::random_range(0..count);
+            let index = draw(count);
             if index != self.index {
                 self.index = index;
                 return;

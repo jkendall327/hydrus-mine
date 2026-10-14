@@ -318,6 +318,10 @@ export component MediaViewerWindow inherits Window {
     // home and end: the first file and the last
     callback first();
     callback last();
+    // the shortcut-only commands: a random other file, and back to where the
+    // last random one came from
+    callback random();
+    callback undo-random();
     // a frame back (-1) or on (1)
     callback frame-step(int);
     // ctrl+r: the file leaves the viewer (and its page); ctrl+e: it opens

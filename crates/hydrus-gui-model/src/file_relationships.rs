@@ -355,6 +355,159 @@ pub fn menu(
     out
 }
 
+/// What the reference asks before `act` (`ClientGUIDuplicateActions`, and
+/// `_SetDuplicates*` of the media results panel): its question, none when
+/// the entry does not ask. `selected` is what is selected, the focused file
+/// among it; `advanced` is advanced mode, which puts the default merge
+/// options on alternates too.
+pub fn question(act: Act, focused: HashId, selected: &[HashId], advanced: bool) -> Option<String> {
+    let files = |whose: Whose| match whose {
+        Whose::Focused => 1,
+        Whose::Selected => selected.len(),
+    };
+    let paragraphs = |parts: &[&str]| parts.join("\n\n");
+    let n = |count: usize| human_int(count as u64);
+    let applying = |status: &str, default_options: bool| {
+        let others = selected.len();
+        let pairs = others * others.saturating_sub(1) / 2;
+        let text = if default_options {
+            format!("apply \"{status}\" (with default duplicate metadata merge options)")
+        } else {
+            format!("apply \"{status}\"")
+        };
+        let mut message = format!(
+            "Are you sure you want to {text} for the {} selected files?",
+            n(others)
+        );
+        if pairs > 1 && status == "alternates" {
+            message = if pairs > 100 {
+                paragraphs(&[
+                    &format!(
+                        "Are you certain all these {} files are alternates with every other member of the selection, and that none are duplicates?",
+                        n(others)
+                    ),
+                    "If some of them may be duplicates, I recommend you either deselect the possible duplicates and try again, or just leave this group to be processed in the normal duplicate filter.",
+                ])
+            } else {
+                format!(
+                    "Are you sure you want to {text} for the {} selected files? The relationship will be applied between every pair combination in the file selection ({} pairs).",
+                    n(others),
+                    n(pairs)
+                )
+            };
+        }
+        message
+    };
+    Some(match act {
+        Act::SetKing => {
+            "Are you sure you want to set the focused file as the best file of its duplicate group?"
+                .to_owned()
+        }
+        Act::SetBetter => format!(
+            "Are you sure you want to set the focused file as better than the {} other files in the selection?",
+            n(selected.iter().filter(|h| **h != focused).count())
+        ),
+        Act::SetSameQuality => applying("same quality", true),
+        Act::SetAlternates => applying("alternates", advanced),
+        Act::SetPotential => format!(
+            "Are you sure you want to queue all possible and valid pair combinations into the duplicate filter for the {} selected files?",
+            n(selected.len())
+        ),
+        Act::RemoveFromDuplicates => paragraphs(&[
+            "Are you sure you want to remove this file from its duplicate group?",
+            "The remaining group will be otherwise unaffected and will keep its alternate relationships.",
+            "The removed file will be queued up for another potential duplicates search, so you will likely see it again in the duplicate filter.",
+        ]),
+        Act::RemoveFromAlternates => paragraphs(&[
+            "Are you sure you want to remove this file from its alternates group?",
+            "Alternate relationships are stored between duplicate groups, so this will pull any duplicates of your file with it.",
+            "The removed file (and any duplicates) will be queued up for another potential duplicates search, so you will likely see at least one again in the duplicate filter.",
+        ]),
+        Act::DissolveDuplicates(whose) => match files(whose) {
+            1 => paragraphs(&[
+                "Are you sure you want to dissolve this file's duplicate group?",
+                "This will split the duplicates group back into individual files and remove any alternate relations they have. They will be queued back up in the duplicate filter for reprocessing.",
+                "This could be a big change that throws away many previous decisions and cannot be undone. If you can achieve your result just by removing one or two members, do that instead.",
+            ]),
+            count => paragraphs(&[
+                &format!(
+                    "Are you sure you want to dissolve these {} files' duplicate groups?",
+                    n(count)
+                ),
+                "This will split all the files' duplicates groups back into individual files and remove any alternate relations they have. They will all be queued back up in the duplicate filter for reprocessing.",
+                "This could be a huge change that throws away many previous decisions and cannot be undone. If you can achieve your result just by removing some members, do that instead.",
+            ]),
+        },
+        Act::DissolveAlternates(whose) => match files(whose) {
+            1 => paragraphs(&[
+                "Are you sure you want to dissolve this file's entire alternates group?",
+                "This will completely remove all duplicate, alternate, and false-positive relations for all files in the group and set them to come up again in the duplicate filter.",
+                "This is a potentially big change that throws away many previous decisions and cannot be undone. If you can achieve your result just by removing some alternate members, do that instead.",
+            ]),
+            count => paragraphs(&[
+                &format!(
+                    "Are you sure you want to dissolve these {} files' entire alternates groups?",
+                    n(count)
+                ),
+                "This will completely remove all duplicate, alternate, and false-positive relations for all alternate groups of all files selected and set them to come up again in the duplicate filter.",
+                "This is a potentially huge change that throws away many previous decisions and cannot be undone. If you can achieve your result just by removing some alternate members, do that instead.",
+            ]),
+        },
+        Act::ClearFalsePositives(whose) => match files(whose) {
+            1 => paragraphs(&[
+                "Are you sure you want to clear this file of all its false-positive relations?",
+                "False-positive relations are recorded between alternate groups, so this change will also affect any files this file is alternate to.",
+                "All files will be queued up for another potential duplicates search, so you will likely see at least one of them again in the duplicate filter.",
+            ]),
+            count => paragraphs(&[
+                &format!(
+                    "Are you sure you want to clear these {} files of all their false-positive relations?",
+                    n(count)
+                ),
+                "False-positive relations are recorded between alternate groups, so this change will also affect all alternate files to your selection.",
+                "All files will be queued up for another potential duplicates search, so you will likely see some of them again in the duplicate filter.",
+            ]),
+        },
+        Act::ClearInternalFalsePositives => paragraphs(&[
+            &format!(
+                "Are you sure you want to clear these {} files of any false-positive relations between them?",
+                n(selected.len())
+            ),
+            "False-positive relations are recorded between alternate groups, so this change will affect all alternate files to your selection. If all these files share the same alternates group, this action does nothing.",
+            "All files will be queued up for another potential duplicates search, so you will likely see some of them again in the duplicate filter.",
+        ]),
+        Act::ResetSearch(whose) => match files(whose) {
+            1 => paragraphs(&[
+                "Are you sure you want to search this file for potential duplicates again?",
+                "This will not remove any existing potential pairs, and will typically not find any new relationships unless an error has occured.",
+            ]),
+            count => paragraphs(&[
+                &format!(
+                    "Are you sure you want to search these {} files for potential duplicates again?",
+                    n(count)
+                ),
+                "This will not remove any existing potential pairs, and will typically not find any new relationships unless an error has occured.",
+            ]),
+        },
+        Act::RemovePotentials(whose) => match files(whose) {
+            1 => paragraphs(&[
+                "Are you sure you want to remove all of this file's potentials?",
+                "This will mean it (or any of its duplicates) will not appear in the duplicate filter unless new potentials are found with new files. Use this command if the file has accidentally received many false positive potential relationships.",
+            ]),
+            count => paragraphs(&[
+                &format!(
+                    "Are you sure you want to remove all of these {} files' potentials?",
+                    n(count)
+                ),
+                "This will mean they (or any of their duplicates) will not appear in the duplicate filter unless new potentials are found with new files. Use this command if the files have accidentally received many false positive potential relationships.",
+            ]),
+        },
+        Act::Label | Act::ShowKing { .. } | Act::View { .. } | Act::MergeOptions(_) => {
+            return None;
+        }
+    })
+}
+
 /// Do an entry's work on `focused` and `selected` (the merge options and
 /// views are the window's); what it says on failure is the caller's.
 pub fn run(

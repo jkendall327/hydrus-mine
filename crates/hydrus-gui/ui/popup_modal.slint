@@ -58,10 +58,12 @@ export component PopupModalWindow inherits Window {
             alignment: end;
             spacing: 2px;
             if root.popup.pausable: Button {
+                accessible-label: root.popup.paused ? "resume" : "pause";
                 icon: root.popup.paused ? @image-url("../../../static/play.png") : @image-url("../../../static/pause.png");
                 clicked => { root.pause-play(); }
             }
             if root.popup.cancellable: Button {
+                accessible-label: "cancel";
                 icon: @image-url("../../../static/stop.png");
                 clicked => { root.cancel(); }
             }

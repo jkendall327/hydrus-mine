@@ -154,6 +154,130 @@ fn clicking_a_tab_and_ctrl_page_keys_select_pages_and_restore_their_state() {
     }
 }
 
+/// A page locked to the first `n` of `files`.
+fn locked_page(
+    store: &Arc<Store>,
+    name: &str,
+    files: &[hydrus_core::HashId],
+    n: usize,
+) -> Page {
+    use hydrus_core::search::predicate::{FileHashes, Predicate, SystemPredicate};
+    let hashes = store
+        .read(|c| hydrus_store::master::hashes(c, &files[..n]))
+        .unwrap();
+    let mut search = FileSearchContext::default();
+    search.predicates = vec![Predicate::System(SystemPredicate::Hash {
+        hashes: FileHashes::Sha256(hashes.values().copied().collect()),
+        inclusive: true,
+    })];
+    page(
+        name,
+        PageContent::Search {
+            search,
+            synchronised: true,
+            sort: None,
+            lock: Some(hydrus_core::pages::HashLock::default()),
+            collect: None,
+        },
+    )
+}
+
+// leaf: audit-options-tabs-selection
+#[test]
+fn pages_not_yet_shown_carry_their_file_counts_and_open_with_that_many_files() {
+    // oracle/record_tab_selection.py: file pages loaded from a session (a:3,
+    // n[b:5, c:2], d:4 files), none shown: the reference's tabs say what they
+    // will hold, and every page does hold that many once loaded
+    let recorded = hydrus_testkit::fixture_json("tab_selection.json");
+    let lazy = &recorded["lazy"];
+    let size = |name: &str| lazy["sizes"][name].as_u64().unwrap() as usize;
+    let loaded = &lazy["steps"][1];
+    let (_dirs, store) = store();
+    let manifest: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(hydrus_testkit::fixture_path(
+            "legacy_db/basic.manifest.json",
+        ))
+        .unwrap(),
+    )
+    .unwrap();
+    let files: Vec<hydrus_core::HashId> = manifest["files"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|f| f["name"].as_str().unwrap().ends_with(".jpg"))
+        .take(5)
+        .map(|f| {
+            let hash: hydrus_core::Sha256 = f["hash"].as_str().unwrap().parse().unwrap();
+            store
+                .read(|c| hydrus_store::master::hash_id(c, &hash))
+                .unwrap()
+                .unwrap()
+        })
+        .collect();
+    let (a, b, c, d) = (
+        locked_page(&store, "a", &files, size("a")),
+        locked_page(&store, "b", &files, size("b")),
+        locked_page(&store, "c", &files, size("c")),
+        locked_page(&store, "d", &files, size("d")),
+    );
+    let keys = [a.key, b.key, c.key, d.key];
+    let counts = ["a", "b", "c", "d"].map(size);
+    let session = Session {
+        name: LAST_SESSION.into(),
+        pages: vec![
+            a,
+            page("n", PageContent::Pages(vec![b, c])),
+            d,
+        ],
+    };
+    store
+        .write(move |ctx| {
+            sessions::save(ctx.conn(), &session, 0)?;
+            // (what the session kept of each page's files when it was saved)
+            for (key, n) in keys.iter().zip(counts) {
+                sessions::set_page_files(ctx.conn(), key, &files[..n])?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store).unwrap());
+    let names = |row: usize| -> Vec<String> {
+        ui.get_tab_rows()
+            .row_data(row)
+            .unwrap()
+            .names
+            .iter()
+            .map(|n| n.to_string())
+            .collect()
+    };
+    // the tabs of the loaded session carry the reference's counts and
+    // names (n sums its pages and says it holds more)
+    assert_eq!(names(0), loaded["tabs"].as_array().unwrap().iter().map(|t| t.as_str().unwrap().to_owned()).collect::<Vec<_>>());
+    // selecting each opens it with that many files
+    for (tab, name) in [(0, "a"), (2, "d")] {
+        ui.invoke_tab_chosen(0, tab);
+        assert_eq!(bound.pages.borrow().shown().name, name);
+        assert_eq!(
+            bound.current.borrow().borrow().results().len(),
+            loaded["pages"][name]["files"].as_u64().unwrap() as usize,
+            "{name}"
+        );
+    }
+    ui.invoke_tab_chosen(0, 1);
+    for (tab, name) in [(0, "b"), (1, "c")] {
+        ui.invoke_tab_chosen(1, tab);
+        assert_eq!(bound.pages.borrow().shown().name, name);
+        assert_eq!(
+            bound.current.borrow().borrow().results().len(),
+            loaded["pages"][name]["files"].as_u64().unwrap() as usize,
+            "{name}"
+        );
+    }
+    assert_eq!(names(1), loaded["inner tabs"].as_array().unwrap().iter().map(|t| t.as_str().unwrap().to_owned()).collect::<Vec<_>>());
+}
+
 // leaf: audit-options-tabs-context-action-2120-selectable-page
 #[test]
 fn tab_menu_pages_entry_shows_the_chosen_page() {
