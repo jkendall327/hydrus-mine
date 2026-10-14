@@ -3620,12 +3620,7 @@ and playback parents remain Partial. Native regression/render source is authored
 for hosted validation; local checks used the actual Qt recorder, Python/source
 invariants, direct rustfmt and diff inspection only.
 
-“Allow loading of truncated images” remains Missing, with no inert native
-checkbox. Actual PIL accepts the authored short PNG/GIF/JPEG fixtures when enabled
-and reports damaged/truncated-file errors when disabled. The native PNG/GIF and
-other format decoders do not yet implement that shared permissive policy; a saved
-Boolean alone would not provide its real consumer behavior. The scoped evidence
-records this gap with zero completion credit.
+“Allow loading of truncated images” is ported (see Truncated images, below).
 
 The selected collapsed-sibling fade probe measures pixels inside the actual
 painted tag-text rectangle. The outer selection strips use the palette blue and
@@ -4262,7 +4257,7 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   integer locale switch, the hide-page signal, the URL drop page switch (see
   below), mpv's
   legacy mediator, player reuse and setGeometry switches, every QtMediaPlayer
-  row, system FFMPEG, truncated images and PIL (hydrus-rs decodes images its
+  row, system FFMPEG and PIL (hydrus-rs decodes images its
   own way), the other-display popup freeze (hydrus-rs's popups sit inside the
   main window, not in a toaster window of their own that could be frozen from
   another display), the self-sizing media viewer rescue padding (there is no
@@ -4521,7 +4516,7 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   is no thread pool of background tasks to time); and the tests, do not
   touch: the ui, client api, server and
   visual duplicates test suites (they drive the Python test harness),
-  both self-sigterms and "induce a program crash".
+  and both self-sigterms ("induce a program crash" is offered: see Crash log).
 - "what is this object?" takes drops anywhere on its window (the reference
   drops on the picture only). A bitmap on the clipboard is read as the
   reference reads it (the first channel of its pixels, then the payload) but
@@ -5308,3 +5303,50 @@ be diagnosed afterwards. The owner chose always-on crash logging (2026-10-14).
   one process; here the client shows the popup and resets its idle timer, and
   the daemon (which owns the network engine and subscriptions) is asked to see a
   wake too, within about a second (that request is not tested end to end).
+
+"Induce a program crash" (Help > debug > tests, do not touch) asks the
+reference's question (title "Are you sure?", the text "u wot mate I'll hook u
+in the gabber", buttons "nice crash", "not a nice crash" and "forget it";
+recorded in `oracle/fixtures/crash_question.json`). "Nice crash" panics on the
+window's thread instead of calling `os.abort`: the crash log records the
+panic with a backtrace and the process ends. (An `os.abort`, a signal or a
+segfault in a native library leaves no log entry; a panic does.) "Not a nice
+crash" does not repaint in a loop until Qt gives out; it panics a worker
+thread, which the log records and the process survives. "Forget it" and
+closing the question do nothing, as in the reference. The reference's other
+entries in that submenu (the weekly UI, Client API and server tests, the visual
+duplicates tuning suites, fake petition mode, the self-sigterms) are not
+offered.
+
+## Truncated images
+
+Options > media playback > system > "Allow loading of truncated images" is
+read by the decoders, on by default as in the reference (Pillow's
+`LOAD_TRUNCATED_IMAGES`). Compared with `image_decoder_policies.json`
+(`oracle/record_image_decoder_policies.py`), which holds the reference's
+decoding of cut-off JPEG, PNG, GIF, WebP and BMP files with the option on and
+off:
+
+- On, a cut-off JPEG (libjpeg-turbo's premature-end handling), PNG, GIF or BMP
+  loads what is there and the rest is filled as Pillow fills it: JPEG mid
+  grey, PNG and BMP zeros (black, or palette entry 0), GIF the transparent or
+  first palette index. Only whole scanlines (PNG, BMP) and whole sub-blocks
+  (GIF) count, as in the reference. The pixels equal the recording.
+- Off, those files are refused with the reference's "Looks like a truncated
+  file that PIL could not handle!". A JPEG that only misses its end-of-image
+  marker counts as cut off, as it does in the reference.
+- A cut-off WebP is refused with the option on or off, as the reference does
+  (libwebp does not decode partial files); a JPEG cut inside its header is
+  refused too.
+- The importer's thumbnail comes from the same decode. As in the reference, a
+  file whose thumbnail cannot be made is still imported, but hydrus-rs stores
+  no thumbnail for it (the reference stores its default one). The viewer,
+  preview and archive/delete filter show no picture of such a file; what the
+  reference's viewer shows for it was not recorded.
+- The setting is read as each image is opened, not applied process-wide. A
+  picture already in the image cache stays until the cache drops it (the
+  reference does not clear its caches when this option is toggled either).
+- Not compared: truncated TIFF, ICO, QOI and animated GIF/WebP frames (the
+  reference never records them here); GIF and BMP follow the same rules.
+- Only the first frame of a GIF follows the setting; frames of an animation
+  decode as before.

@@ -508,7 +508,14 @@ pub(crate) fn full_still_with_icc(
         .snapshot()
         .storage
         .file_path(&result.hash, info.mime)?;
-    hydrus_media::decode_image_with_icc(&std::fs::read(path).ok()?, normalise_icc).ok()
+    // (the setting is read as the image is opened, as the reference's
+    // `LOAD_TRUNCATED_IMAGES` is for each PIL load)
+    hydrus_media::decode_image_with_policy(
+        &std::fs::read(path).ok()?,
+        normalise_icc,
+        hydrus_store::reference_options::load_truncated_images(store),
+    )
+    .ok()
 }
 pub(crate) fn thumbnail_still_with_icc(
     store: &Store,

@@ -5107,6 +5107,23 @@ and reads the effect back; `tests/model/debug_flags.rs` and the
 `debug_*` tests of hydrus-import, hydrus-net, hydrus-download, hydrus-media
 and hydrus-store cover the reports their crates make.
 
+Help > debug > tests, do not touch > "induce a program crash" asks "u wot mate
+I'll hook u in the gabber" with "nice crash", "not a nice crash" and "forget
+it". "Nice crash" ends the program with a panic that `client crash.log` in the
+database directory records; "not a nice crash" panics a background thread
+(logged, the client goes on); "forget it" does nothing.
+`tests/gui/crash_the_program.rs` replays the recorded question and runs the
+nice crash in a subprocess, then reads the log.
+
+Options > media playback > system > "Allow loading of truncated images" (on by
+default) decides what happens to an image file that stops early (a download
+that was cut off). On, the importer and the viewer load what is there and fill
+the rest, grey for a JPEG and black for a PNG or BMP, as the reference does;
+off, such a file imports without a thumbnail and the viewer shows nothing of
+it. `tests/gui/truncated_images.rs` drives the options window, the importer and
+the viewer against `image_decoder_policies.json`; the decoders themselves are
+compared in `crates/hydrus-media/tests/truncated_images.rs`.
+
 Help > debug > profiling also has the reference's profile modes (client api,
 db and ui; one on at a time, turning another on ends the one before) and
 "query planner mode". Turning a profile mode on says `Profile mode "db"

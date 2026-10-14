@@ -71,6 +71,18 @@ pub fn decode_image_with_icc(data: &[u8], normalise_icc: bool) -> error::Result<
     tools::raster_from_bytes_with_icc(data, true, normalise_icc)
 }
 
+/// Decode with both captured image policies: the embedded ICC profile switch
+/// and "allow loading of truncated images" (`LOAD_TRUNCATED_IMAGES`), which
+/// is on by default. With it off a cut-off file is refused; with it on, what
+/// loads is kept and the missing part is filled as Pillow fills it.
+pub fn decode_image_with_policy(
+    data: &[u8],
+    normalise_icc: bool,
+    load_truncated: bool,
+) -> error::Result<Raster> {
+    tools::raster_from_bytes_with_policy(data, true, normalise_icc, load_truncated)
+}
+
 /// OpenCV-exact resizes, exposed for tests and callers that need the
 /// reference's exact resampling (`cv2.resize` on u8 images).
 pub mod resample {
