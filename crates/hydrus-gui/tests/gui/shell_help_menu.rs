@@ -62,8 +62,7 @@ fn launched_by(ui: &MainWindow, path: &[&str]) -> Vec<String> {
         move |target| launched.borrow_mut().push(target.to_owned())
     });
     press(ui, path);
-    let launched = launched.borrow().clone();
-    launched
+    launched.borrow().clone()
 }
 
 /// Choose the help menu entry at `path`.
