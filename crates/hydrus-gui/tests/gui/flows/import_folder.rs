@@ -245,8 +245,8 @@ fn an_import_folder_with_sidecars_is_set_up_run_and_checked_again_as_the_referen
             .filter(|h| {
                 store
                     .read(|conn| {
-                        let sha = hydrus_core::Sha256::from_slice(&hex::decode(h).unwrap())
-                            .unwrap();
+                        let sha =
+                            hydrus_core::Sha256::from_slice(&hex::decode(h).unwrap()).unwrap();
                         hydrus_store::master::hash_id(conn, &sha)
                     })
                     .unwrap()
@@ -259,8 +259,7 @@ fn an_import_folder_with_sidecars_is_set_up_run_and_checked_again_as_the_referen
         for (hash, file) in map.iter_mut() {
             let notes = store
                 .read(|conn| {
-                    let sha = hydrus_core::Sha256::from_slice(&hex::decode(hash).unwrap())
-                        .unwrap();
+                    let sha = hydrus_core::Sha256::from_slice(&hex::decode(hash).unwrap()).unwrap();
                     let id = hydrus_store::master::hash_id(conn, &sha)?.unwrap();
                     hydrus_store::media::notes(conn, id)
                 })
@@ -320,16 +319,16 @@ fn an_import_folder_with_sidecars_is_set_up_run_and_checked_again_as_the_referen
         .expect("the edit import folder dialog")
         .clone_strong();
     seen.insert("name starts as".into(), json!(edit.get_name().as_str()));
-    seen.insert(
-        "check regularly".into(),
-        json!(edit.get_check_regularly()),
-    );
+    seen.insert("check regularly".into(), json!(edit.get_check_regularly()));
     seen.insert(
         "search subdirectories".into(),
         json!(edit.get_search_subdirectories()),
     );
     seen.insert("check on ok".into(), json!(edit.get_check_now()));
-    seen.insert("sidecars start as".into(), json!(edit.get_sidecars().as_str()));
+    seen.insert(
+        "sidecars start as".into(),
+        json!(edit.get_sidecars().as_str()),
+    );
     edit.set_name("drop box".into());
     edit.set_path(watch.to_string_lossy().into_owned().into());
     // new files are moved (the choices: delete, leave, move)
@@ -341,13 +340,22 @@ fn an_import_folder_with_sidecars_is_set_up_run_and_checked_again_as_the_referen
         "actions".into(),
         json!(
             (0..actions.row_count())
-                .map(|i| choices[usize::try_from(actions.row_data(i).unwrap().action).unwrap()].clone())
+                .map(
+                    |i| choices[usize::try_from(actions.row_data(i).unwrap().action).unwrap()]
+                        .clone()
+                )
                 .collect::<Vec<_>>()
         ),
     );
     edit.invoke_edit_sidecars();
     add_router(&bound, "", false, None, &mut seen);
-    add_router(&bound, "urls", false, Some(("a file's URLs", None)), &mut seen);
+    add_router(
+        &bound,
+        "urls",
+        false,
+        Some(("a file's URLs", None)),
+        &mut seen,
+    );
     add_router(
         &bound,
         "notes",
@@ -365,7 +373,10 @@ fn an_import_folder_with_sidecars_is_set_up_run_and_checked_again_as_the_referen
         .clone_strong();
     seen.insert("router rows".into(), json!(labels(&routers.get_rows())));
     routers.invoke_apply();
-    seen.insert("sidecars end as".into(), json!(edit.get_sidecars().as_str()));
+    seen.insert(
+        "sidecars end as".into(),
+        json!(edit.get_sidecars().as_str()),
+    );
     edit.invoke_apply();
     assert!(!edit.get_asking(), "{}", edit.get_asking_message());
     seen.insert("rows at apply".into(), rows(&list, &n));
@@ -389,7 +400,11 @@ fn an_import_folder_with_sidecars_is_set_up_run_and_checked_again_as_the_referen
     let before = listing(&watch).as_object().unwrap().len();
     file_menu(
         &ui,
-        &["import/export folders", "check import folder now", "drop box"],
+        &[
+            "import/export folders",
+            "check import folder now",
+            "drop box",
+        ],
     );
     super::wait_until_idle(&daemon, || {
         settled(&|| listing(&watch).as_object().unwrap().len() < before)

@@ -457,7 +457,8 @@ impl Normaliser {
 
     /// A directory the flow made, named `name` in the recording.
     pub fn place(mut self, path: &std::path::Path, name: &'static str) -> Self {
-        self.places.push((path.to_string_lossy().into_owned(), name));
+        self.places
+            .push((path.to_string_lossy().into_owned(), name));
         self
     }
 
@@ -465,7 +466,9 @@ impl Normaliser {
         let text = self
             .places
             .iter()
-            .fold(text.to_owned(), |text, (path, name)| text.replace(path, name));
+            .fold(text.to_owned(), |text, (path, name)| {
+                text.replace(path, name)
+            });
         let text = text.replace(&self.base, "BASE");
         let text = self.date_time.replace_all(&text, "TIME");
         let text = self.delta.replace_all(&text, "DELTA");

@@ -804,8 +804,13 @@ impl ImportFolderSchedule {
         for f in &folders {
             if f.paused() {
                 self.due.remove(&f.id());
-            } else if !self.started || f.settings.check_now {
+            } else if !self.started {
                 self.due.insert(f.id(), now);
+            } else if f.settings.check_now {
+                // due from the first time it was seen so: setting it afresh
+                // on every pass would never let `now` pass it
+                let due = self.due.entry(f.id()).or_insert(now);
+                *due = (*due).min(now);
             } else if !self.due.contains_key(&f.id())
                 && let Some(next) = f.settings.next_work_time(false, now)
             {
