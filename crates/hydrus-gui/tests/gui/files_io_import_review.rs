@@ -245,6 +245,7 @@ fn ctrl_and_shift_click_sequences_select_as_the_reference_s_list_does() {
     }
 }
 
+// leaf: audit-network-import-pause-stop
 #[test]
 fn pausing_holds_the_paths_still_to_parse_and_stop_drops_them_but_keeps_the_parsed() {
     // replayed against the reference's real panel
@@ -401,70 +402,4 @@ fn files_are_numbered_from_a_base_by_a_step_and_the_numbers_are_cleaned_and_kept
     dialog.set_number_namespace("".into());
     dialog.invoke_changed();
     assert_eq!(tags(&dialog), ["", "only this", ""]);
-}
-
-// leaf: audit-network-import-pause-stop
-#[test]
-fn pause_and_stop_step_through_the_references_progress_and_buttons() {
-    let recorded = hydrus_testkit::fixture_json("local_import_dialog.json");
-    let (_dirs, store) = store();
-    let _windows = headless::init();
-    let ui = MainWindow::new().unwrap();
-    let bound = bind(&ui, Pages::open(store).unwrap());
-    let window = open(&ui, &bound);
-    let work = tempfile::tempdir().unwrap();
-    let first = place(work.path(), "bmp_24.bmp");
-    let second = place(work.path(), "gif_static.gif");
-    let third = place(work.path(), "apng_rgba.png");
-    let fourth = place(work.path(), "gif_anim.gif");
-    for step in recorded["pause_stop"].as_array().unwrap() {
-        let name = step["name"].as_str().unwrap();
-        match name {
-            "paused" | "resumed" | "paused again" | "resumed after the stop" => {
-                window.invoke_pause_play();
-            }
-            "a path given while paused" => window.invoke_path_entered(first.clone().into()),
-            "two paths given while paused" => {
-                window.invoke_path_entered(second.clone().into());
-                window.invoke_path_entered(third.clone().into());
-            }
-            "stopped" => window.invoke_stop(),
-            "a path given after the stop" => window.invoke_path_entered(fourth.clone().into()),
-            other => panic!("{other}"),
-        }
-        // (let anything that will be parsed be)
-        tick(Duration::from_millis(600));
-        let enabled = &step["enabled"];
-        assert_eq!(
-            window.get_progress(),
-            step["progress"].as_str().unwrap(),
-            "{name}"
-        );
-        assert_eq!(
-            window.get_paused(),
-            step["paused"].as_bool().unwrap(),
-            "{name}"
-        );
-        assert_eq!(
-            rows(&window).len() as u64,
-            step["rows"].as_u64().unwrap(),
-            "{name}"
-        );
-        assert_eq!(
-            window.get_can_import(),
-            enabled["import now"].as_bool().unwrap(),
-            "{name}"
-        );
-        assert_eq!(
-            window.get_working(),
-            enabled["pause"].as_bool().unwrap(),
-            "{name}: pause"
-        );
-        assert_eq!(
-            window.get_working(),
-            enabled["stop"].as_bool().unwrap(),
-            "{name}: stop"
-        );
-    }
-    window.invoke_cancel();
 }

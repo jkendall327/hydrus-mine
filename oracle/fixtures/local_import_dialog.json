@@ -125,36 +125,7 @@
     "<folder>/recent.png",
     "<folder>/sub/c.png",
     "<folder>/sub/deeper/d.bmp"
-   ],
-   "page": {
-    "delete_after_success": false,
-    "seeds": [
-     [
-      "<folder>/a.png",
-      1600000010
-     ],
-     [
-      "<folder>/b p12.jpg",
-      1600000050
-     ],
-     [
-      "<folder>/dupe.gif",
-      1600000080
-     ],
-     [
-      "<folder>/recent.png",
-      1600000120
-     ],
-     [
-      "<folder>/sub/c.png",
-      1600000130
-     ],
-     [
-      "<folder>/sub/deeper/d.bmp",
-      1600000150
-     ]
-    ]
-   }
+   ]
   },
   {
    "search_subdirectories": false,
@@ -261,28 +232,7 @@
     "<folder>/b p12.jpg",
     "<folder>/dupe.gif",
     "<folder>/recent.png"
-   ],
-   "page": {
-    "delete_after_success": true,
-    "seeds": [
-     [
-      "<folder>/a.png",
-      1600000010
-     ],
-     [
-      "<folder>/b p12.jpg",
-      1600000050
-     ],
-     [
-      "<folder>/dupe.gif",
-      1600000080
-     ],
-     [
-      "<folder>/recent.png",
-      1600000120
-     ]
-    ]
-   }
+   ]
   },
   {
    "search_subdirectories": true,
@@ -327,36 +277,9 @@
    },
    "imported": [
     "<folder>/a.png"
-   ],
-   "page": {
-    "delete_after_success": false,
-    "seeds": [
-     [
-      "<folder>/a.png",
-      1600000010
-     ]
-    ]
-   }
+   ]
   }
  ],
- "mtimes": {
-  "Thumbs.db": 1600000000,
-  "a.png": 1600000010,
-  "a.png.json": 1600000020,
-  "a.png.time.txt": 1600000030,
-  "a.png.txt": 1600000040,
-  "b p12.jpg": 1600000050,
-  "b p12.jpg.txt": 1600000060,
-  "b p12.notes.txt": 1600000070,
-  "dupe.gif": 1600000080,
-  "dupe.gif.txt": 1600000090,
-  "empty.png": 1600000100,
-  "notes.txt": 1600000110,
-  "recent.png": 1600000120,
-  "sub/c.png": 1600000130,
-  "sub/c.png.txt": 1600000140,
-  "sub/deeper/d.bmp": 1600000150
- },
  "empty": {
   "progress": "waiting for paths to parse.",
   "enabled": {
@@ -366,103 +289,5 @@
    "stop": false
   }
  },
- "delete_warning": "YOUR ORIGINAL FILES WILL BE DELETED",
- "pause_stop": [
-  {
-   "name": "paused",
-   "progress": "waiting for paths to parse.",
-   "enabled": {
-    "import now": false,
-    "add tags/urls with the import >>": false,
-    "pause": false,
-    "stop": false
-   },
-   "rows": 0,
-   "paused": true
-  },
-  {
-   "name": "a path given while paused",
-   "progress": "0/1 files parsed.",
-   "enabled": {
-    "import now": false,
-    "add tags/urls with the import >>": false,
-    "pause": true,
-    "stop": true
-   },
-   "rows": 0,
-   "paused": true
-  },
-  {
-   "name": "resumed",
-   "progress": "1 files parsed.",
-   "enabled": {
-    "import now": true,
-    "add tags/urls with the import >>": true,
-    "pause": false,
-    "stop": false
-   },
-   "rows": 1,
-   "paused": false
-  },
-  {
-   "name": "paused again",
-   "progress": "1 files parsed.",
-   "enabled": {
-    "import now": true,
-    "add tags/urls with the import >>": true,
-    "pause": false,
-    "stop": false
-   },
-   "rows": 1,
-   "paused": true
-  },
-  {
-   "name": "two paths given while paused",
-   "progress": "1/3 files parsed.",
-   "enabled": {
-    "import now": true,
-    "add tags/urls with the import >>": true,
-    "pause": true,
-    "stop": true
-   },
-   "rows": 1,
-   "paused": true
-  },
-  {
-   "name": "stopped",
-   "progress": "1 files parsed.",
-   "enabled": {
-    "import now": true,
-    "add tags/urls with the import >>": true,
-    "pause": false,
-    "stop": false
-   },
-   "rows": 1,
-   "paused": false
-  },
-  {
-   "name": "resumed after the stop",
-   "progress": "1 files parsed.",
-   "enabled": {
-    "import now": true,
-    "add tags/urls with the import >>": true,
-    "pause": false,
-    "stop": false
-   },
-   "rows": 1,
-   "paused": true
-  },
-  {
-   "name": "a path given after the stop",
-   "progress": "1/2 files parsed.",
-   "enabled": {
-    "import now": true,
-    "add tags/urls with the import >>": true,
-    "pause": true,
-    "stop": true
-   },
-   "rows": 1,
-   "paused": true
-  }
- ]
+ "delete_warning": "YOUR ORIGINAL FILES WILL BE DELETED"
 }
