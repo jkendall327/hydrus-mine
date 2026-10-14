@@ -1,0 +1,314 @@
+[
+ {
+  "name": "relative url, post url as the url",
+  "tuple": [
+   30,
+   7,
+   [
+    "urls",
+    7,
+    [
+     27,
+     8,
+     [
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          62,
+          3,
+          [
+           0,
+           "p",
+           {},
+           null,
+           null,
+           false,
+           [
+            51,
+            1,
+            [
+             3,
+             "",
+             null,
+             null,
+             "example string"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      1,
+      "href",
+      "",
+      [
+       84,
+       1,
+       [
+        26,
+        3,
+        []
+       ]
+      ]
+     ]
+    ],
+    [
+     7,
+     50
+    ]
+   ]
+  ],
+  "context": {
+   "url": "https://example.com/post/1"
+  },
+  "document": "<p>../image.png</p>",
+  "results": "*** 1 RESULTS BEGIN ***\ndownloadable/pursuable url (priority 50): https://example.com/image.png\n*** RESULTS END ***"
+ },
+ {
+  "name": "relative url, another url",
+  "tuple": [
+   30,
+   7,
+   [
+    "urls",
+    7,
+    [
+     27,
+     8,
+     [
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          62,
+          3,
+          [
+           0,
+           "p",
+           {},
+           null,
+           null,
+           false,
+           [
+            51,
+            1,
+            [
+             3,
+             "",
+             null,
+             null,
+             "example string"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      1,
+      "href",
+      "",
+      [
+       84,
+       1,
+       [
+        26,
+        3,
+        []
+       ]
+      ]
+     ]
+    ],
+    [
+     7,
+     50
+    ]
+   ]
+  ],
+  "context": {
+   "url": "https://other.example/a/b/c/d"
+  },
+  "document": "<p>../image.png</p>",
+  "results": "*** 1 RESULTS BEGIN ***\ndownloadable/pursuable url (priority 50): https://other.example/a/b/image.png\n*** RESULTS END ***"
+ },
+ {
+  "name": "relative url, no url",
+  "tuple": [
+   30,
+   7,
+   [
+    "urls",
+    7,
+    [
+     27,
+     8,
+     [
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          62,
+          3,
+          [
+           0,
+           "p",
+           {},
+           null,
+           null,
+           false,
+           [
+            51,
+            1,
+            [
+             3,
+             "",
+             null,
+             null,
+             "example string"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      1,
+      "href",
+      "",
+      [
+       84,
+       1,
+       [
+        26,
+        3,
+        []
+       ]
+      ]
+     ]
+    ],
+    [
+     7,
+     50
+    ]
+   ]
+  ],
+  "context": {},
+  "document": "<p>../image.png</p>",
+  "results": "*** 1 RESULTS BEGIN ***\ndownloadable/pursuable url (priority 50): ../image.png\n*** RESULTS END ***"
+ },
+ {
+  "name": "variable present",
+  "tuple": [
+   30,
+   7,
+   [
+    "token",
+    0,
+    [
+     60,
+     3,
+     [
+      "token",
+      "",
+      [
+       84,
+       1,
+       [
+        26,
+        3,
+        []
+       ]
+      ]
+     ]
+    ],
+    ""
+   ]
+  ],
+  "context": {
+   "url": "https://example.com/post/1",
+   "token": "abc"
+  },
+  "document": "<p>ignored</p>",
+  "results": "*** 1 RESULTS BEGIN ***\ntag: abc\n*** RESULTS END ***"
+ },
+ {
+  "name": "variable absent",
+  "tuple": [
+   30,
+   7,
+   [
+    "token",
+    0,
+    [
+     60,
+     3,
+     [
+      "token",
+      "",
+      [
+       84,
+       1,
+       [
+        26,
+        3,
+        []
+       ]
+      ]
+     ]
+    ],
+    ""
+   ]
+  ],
+  "context": {
+   "url": "https://example.com/post/1"
+  },
+  "document": "<p>ignored</p>",
+  "results": "*** 0 RESULTS BEGIN ***\n*** RESULTS END ***"
+ },
+ {
+  "name": "post index named",
+  "tuple": [
+   30,
+   7,
+   [
+    "index",
+    0,
+    [
+     60,
+     3,
+     [
+      "post_index",
+      "",
+      [
+       84,
+       1,
+       [
+        26,
+        3,
+        []
+       ]
+      ]
+     ]
+    ],
+    ""
+   ]
+  ],
+  "context": {
+   "url": "https://example.com/post/1",
+   "post_index": "3"
+  },
+  "document": "<p>ignored</p>",
+  "results": "*** 0 RESULTS BEGIN ***\n*** RESULTS END ***"
+ }
+]
