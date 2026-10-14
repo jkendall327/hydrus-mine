@@ -167,6 +167,44 @@ record of what was decided, and why the roadmap looks the way it does.
   report mode` and `shutdown report mode` report Python/Qt internals with no
   hydrus-rs counterpart.
 
+## Decided (2026-10-14, the not-done report)
+
+From the owner's answers to the report of what is not done (1,139 of 1,157
+in-scope leaves done on 2026-10-14):
+
+- **Drag-out and URL drops stay deferred** (5 leaves) until Slint or winit can
+  start a drag and deliver dropped URLs; hand-written X11/Wayland code is not
+  worth it now.
+- **Where the reference has a bug, ours stands.** `no_proxy` (the reference
+  ignores it; hydrus-rs honours it) and the trash size limit (the reference
+  trims in CPython set order; hydrus-rs deletes oldest first) are recorded
+  differences, and their leaves may be tagged on tests that replay the rest
+  of the recording.
+- **Window geometry, after #154:** `windows::placement` tests count as proof
+  of a window's position, since headless windows have none. The
+  `quick_entry_dialog` and `deeply_nested_dialog` frame rows, which no
+  hydrus-rs window uses, are out of scope.
+- **Restart** is proved with a stand-in relaunch, once the importers'
+  paragraph and the low-free-space prompt are ported.
+- **External programs' timeout:** hydrus-rs kills at the exact timeout (the
+  reference checks every 3 seconds); a test accepts a kill between t and
+  t + 3 s.
+- **Help > debug report modes are hydrus-rs-shaped:** the reference's wording,
+  reported where hydrus-rs has the event, not Python- or Qt-shaped messages.
+- **The search autocomplete tools** (the cog, OR construction, favourite
+  predicates, fetch/children tabs) get their own issue now.
+- **A native-only feature** (no reference counterpart) counts as sound once a
+  test drives it end to end.
+- **Out of scope, signed off:** the 79 leaves triaged on 2026-10-08 (Qt
+  toolkit and widget debug entries, Qt-embedded mpv and QtMediaPlayer, Python
+  library switches, caches and deferred deletes the native store does not
+  keep, background sibling/parent sync pacing) and the 15 for tag
+  repositories, the PTR, IPFS and remote services. Qt style and stylesheets
+  stay out of scope.
+- **Back in scope:** "allow loading of truncated images" (the reference shows
+  a cut-off image, the rest grey, by default; hydrus-rs should too) and
+  "induce a program crash" (a way to test the crash log).
+
 ## Roadmap that follows
 
 1. **Client API parity**, with Hydrus Companion's request patterns checked

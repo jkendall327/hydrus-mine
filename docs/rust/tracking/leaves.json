@@ -2257,6 +2257,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope (owner, 2026-10-14): tag repositories, the PTR, IPFS and remote services are not used (DECISIONS.md 2026-09-29 and 2026-10-14); their data is still imported verbatim.",
     "Pending backend counts repository pending/petitioned mappings, relations and files; menu totals/sorts nonzero repositories from those persisted counts. Partial: Source counts every repository content category and builds sorted totals, but no inspected reference-backed regression checks mixed pending/petitioned mappings/pairs/files across service rows.",
     "Source counts every repository content category and builds sorted totals, but no inspected reference-backed regression checks mixed pending/petitioned mappings/pairs/files across service rows."
    ]
@@ -2271,6 +2272,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope (owner, 2026-10-14): tag repositories, the PTR, IPFS and remote services are not used (DECISIONS.md 2026-09-29 and 2026-10-14); their data is still imported verbatim.",
     "Named-service question gates pending::forget; backend removes repository pending/petitioned content and refreshes derived state after confirmation. Partial: Source transaction deletes pending/petitioned mappings/pairs/files and rebuilds derived state; no inspected reference-backed regression compares the full confirmed-forget outcome or cancellation.",
     "Forgets all pending/petitioned content on the repository, not a selected subset.",
     "Source transaction deletes pending/petitioned mappings/pairs/files and rebuilds derived state; no inspected reference-backed regression compares the full confirmed-forget outcome or cancellation."
@@ -2286,6 +2288,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope (owner, 2026-10-14): tag repositories, the PTR, IPFS and remote services are not used (DECISIONS.md 2026-09-29 and 2026-10-14); their data is still imported verbatim.",
     "Native commit menu is todo(); API commit_pending also rejects absent repository upload. No GUI uploader/progress workflow exists.",
     "No native repository uploader. commit_pending API validates then refuses; pending counts and forgetting are separate implemented paths."
    ]
@@ -3381,6 +3384,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope (owner, 2026-10-14): tag repositories, the PTR, IPFS and remote services are not used (DECISIONS.md 2026-09-29 and 2026-10-14); their data is still imported verbatim.",
     "Native review/editor explicitly reports remote synchronization, IPFS/account settings unavailable. This audit records the absent entrypoint without expanding remote administration work."
    ]
   },
@@ -10954,6 +10958,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope (owner, 2026-10-14, #96): reports Python/Qt internals with no hydrus-rs counterpart (DECISIONS.md).",
     "Truth pass (2026-10-08): missing, small. Flag only. Missing: Report sites in the media sort code, the menu entry, a test. Evidence: Flag::FileSortReport defined, never reported to.",
     "Reference debug action wires 'file sort report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
@@ -11081,6 +11086,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope (owner, 2026-10-14, #96): reports Python/Qt internals with no hydrus-rs counterpart (DECISIONS.md).",
     "Truth pass (2026-10-08): missing, small. Flag only. Missing: Report calls in the canvas hover show/hide code, the menu entry, a test. Evidence: Flag::HoverWindowReport defined, never reported to. Reference ClientGUICanvasHoverFrames.py:494,516,730,740,758.",
     "Reference debug action wires 'hover window report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
@@ -11113,10 +11119,11 @@
    "path": "Help > debug > tests, do not touch",
    "workstream": "help-debug",
    "state": "missing",
-   "priority": "out-of-scope",
+   "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Back in scope (owner, 2026-10-14): useful for testing the always-on crash log. The reference asks 'nice crash' (os.abort) / 'not a nice crash' / 'forget it' and then crashes. hydrus-rs can ask the same question and panic, which the crash log records; an abort is not logged (DIFFERENCES.md, Crash log).",
     "Not applicable (2026-10-08, help-debug session report): depends only on process-kill and crash tests with no native handler to exercise, or fake data for a petition panel hydrus-rs does not have. See docs/rust/notes/impl-help-debug.md.",
     "Reference debug action wires 'induce a program crash' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools."
@@ -11328,6 +11335,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope (owner, 2026-10-14, #96): reports Python/Qt internals with no hydrus-rs counterpart (DECISIONS.md).",
     "Truth pass (2026-10-08): missing, small. Flag only. Missing: Report sites in the media loader, the menu entry, a test. Evidence: Flag::MediaLoadReport defined, never reported to.",
     "Reference debug action wires 'media load report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
@@ -11400,6 +11408,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope (owner, 2026-10-14, #96): reports Python/Qt internals with no hydrus-rs counterpart (DECISIONS.md).",
     "Truth pass (2026-10-08): missing, small. Flag only. Missing: Report sites in the potential-duplicates search, the menu entry, a test. Evidence: Flag::PotentialDuplicatesReport defined, never reported to.",
     "Reference debug action wires 'potential duplicates report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
@@ -11862,6 +11871,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope (owner, 2026-10-14, #96): reports Python/Qt internals with no hydrus-rs counterpart (DECISIONS.md).",
     "Truth pass (2026-10-08): missing, small. Flag only. Missing: Report calls as workers and daemons stop, the menu entry, a test. Evidence: Flag::ShutdownReport defined, never reported to. Reference hydrus_client_boot.py:288, ClientDaemons.py:243,252.",
     "Reference debug action wires 'shutdown report mode' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
@@ -13617,10 +13627,11 @@
    "path": "File > Options window > media playback > system",
    "workstream": "options-media",
    "state": "missing",
-   "priority": "out-of-scope",
+   "priority": "normal",
    "reference": null,
    "native": null,
    "notes": [
+    "Back in scope (owner, 2026-10-14): the reference loads a truncated image by default, the missing part filled grey (PIL LOAD_TRUNCATED_IMAGES), and this box turns that off. hydrus-rs stores the box but nothing reads it, and its decoders refuse or drop truncated data per format. Port it: decoders load what they can by default, the box turns it off; compare with recordings of truncated files.",
     "Not applicable: a setting of the reference's Python libraries (PIL, requests, curl_cffi). (triaged 2026-10-08)",
     "Reference editor/control 'Allow loading of truncated images:' is recorded on 'media playback' and defined by the referenced options panel. No corresponding editable row exists in native options::pages; this is a missing GUI editing path, even if a setting is imported or consumed elsewhere.",
     "Native options registry has no editable 'Allow loading of truncated images:' control in this page/box path."
@@ -15187,6 +15198,7 @@
    "reference": null,
    "native": null,
    "notes": [
+    "Out of scope (owner, 2026-10-14): tag repositories, the PTR, IPFS and remote services are not used (DECISIONS.md 2026-09-29 and 2026-10-14); their data is still imported verbatim.",
     "'add the PTR…' is emitted as a disabled todo()/command-less entry. No callback executes its reference workflow.",
     "No native Command for 'add the PTR…'."
    ]
@@ -24707,6 +24719,7 @@
    "reference": "hydrus/client/gui/services/ClientGUIClientsideServices.py:3565",
    "native": null,
    "notes": [
+    "Out of scope (owner, 2026-10-14): tag repositories, the PTR, IPFS and remote services are not used (DECISIONS.md 2026-09-29 and 2026-10-14); their data is still imported verbatim.",
     "Native review/editor explicitly reports remote synchronization, IPFS/account settings unavailable. This audit records the absent entrypoint without expanding remote administration work."
    ]
   },
@@ -24720,6 +24733,7 @@
    "reference": "hydrus/client/gui/services/ClientGUIClientsideServices.py:2881",
    "native": null,
    "notes": [
+    "Out of scope (owner, 2026-10-14): tag repositories, the PTR, IPFS and remote services are not used (DECISIONS.md 2026-09-29 and 2026-10-14); their data is still imported verbatim.",
     "Native review/editor explicitly reports remote synchronization, IPFS/account settings unavailable. This audit records the absent entrypoint without expanding remote administration work."
    ]
   },
