@@ -91,8 +91,24 @@ impl Drop for Worker {
         let _ = self.send.send(Operation::Stop);
     }
 }
+/// The second the windows treat as now, when a test holds time still
+/// (`i64::MIN`: the clock).
+static HELD_NOW: std::sync::atomic::AtomicI64 = std::sync::atomic::AtomicI64::new(i64::MIN);
+
+/// Hold the windows' "now" at `seconds` (or let it run again with `None`).
+#[doc(hidden)]
+pub fn hold_now(seconds: Option<i64>) {
+    HELD_NOW.store(
+        seconds.unwrap_or(i64::MIN),
+        std::sync::atomic::Ordering::SeqCst,
+    );
+}
+
 fn now() -> i64 {
-    TimestampMs::now().millis() / 1000
+    match HELD_NOW.load(std::sync::atomic::Ordering::SeqCst) {
+        i64::MIN => TimestampMs::now().millis() / 1000,
+        held => held,
+    }
 }
 fn columns(titles: &[(&str, f32)]) -> ModelRc<TableColumn> {
     ModelRc::new(VecModel::from(
@@ -310,6 +326,8 @@ impl Bandwidth {
                 .is_some_and(|c| !c.is_default() && c.kind != 0 && !review.inherits(c)),
         );
         self.window.set_detail("".into());
+        self.window.set_usage_text("".into());
+        self.window.set_edit_label("edit rules".into());
         self.window.set_chart_context("".into());
         self.window.set_monthly_bars(ModelRc::default());
         if let Some(context) = selected.as_ref() {
@@ -326,35 +344,54 @@ impl Bandwidth {
                     })
                     .collect::<Vec<_>>(),
             )));
-            let rules = review
-                .rules(context)
-                .rules()
-                .iter()
-                .map(|r| {
-                    let cells = model::rule_row_with_format(*r, &formatting);
-                    let used = tracker.usage(r.kind, r.time_delta, now());
-                    format!(
-                        "{} every {} ({} used)",
-                        cells[0],
-                        cells[1],
-                        if r.kind == BandwidthType::Data {
-                            hydrus_gui_model::gui_format::bytes(&formatting, used)
-                        } else {
-                            hydrus_core::numbers::human_int(used)
-                        }
-                    )
-                })
-                .collect::<Vec<_>>()
-                .join("\n");
+            let rules =
+                model::rule_gauge_rows(&review.rules(context), &mut tracker, now(), &formatting)
+                    .into_iter()
+                    .map(|(text, _, _)| text)
+                    .collect::<Vec<_>>()
+                    .join("\n");
+            // the reference's "[data|requests] in the past [time]: usage"
+            let used = self
+                .window
+                .get_usage_seconds()
+                .trim()
+                .parse::<u64>()
+                .ok()
+                .map(|seconds| {
+                    if self.window.get_usage_type() == 0 {
+                        hydrus_gui_model::gui_format::bytes(
+                            &formatting,
+                            tracker.usage(BandwidthType::Data, Some(seconds), now()),
+                        )
+                    } else {
+                        hydrus_core::numbers::human_int(tracker.usage(
+                            BandwidthType::Requests,
+                            Some(seconds),
+                            now(),
+                        ))
+                    }
+                });
+            self.window
+                .set_usage_text(used.map_or_else(String::new, |u| format!(": {u}")).into());
+            // (the button begins specific rules for a context on the defaults)
+            self.window.set_edit_label(
+                if review.inherits(context) {
+                    "set specific rules"
+                } else {
+                    "edit rules"
+                }
+                .into(),
+            );
             self.window.set_detail(
                 format!(
-                    "{} — {}\nAll time usage: {}\n{}",
+                    "{} — {}\nCurrent usage: {}/s\nAll time usage: {}\n{}",
                     context.to_human_string(),
                     if review.inherits(context) {
                         "uses default rules"
                     } else {
                         "has its own rules"
                     },
+                    hydrus_gui_model::gui_format::bytes(&formatting, tracker.current_speed(now())),
                     model::all_usage_text_with_format(&tracker, &formatting),
                     rules
                 )
@@ -689,6 +726,14 @@ pub fn open_bandwidth(store: Arc<Store>, slots: &Slots) -> Result<BandwidthWindo
             if let Some(s) = state.upgrade() {
                 s.window.set_sort_column(c);
                 s.window.set_ascending(a);
+                s.show();
+            }
+        }
+    });
+    window.on_usage_changed({
+        let state = Rc::downgrade(&state);
+        move || {
+            if let Some(s) = state.upgrade() {
                 s.show();
             }
         }

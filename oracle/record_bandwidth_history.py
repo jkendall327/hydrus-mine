@@ -45,6 +45,12 @@ def record(session):
             panel._Update()
             out['filters'].append({'span': span, 'include_rules': include_rules,
                 'contexts': sorted(c.ToString() for c in panel._bandwidths.GetData())})
+        # the "usage in the past" column under each span the panel can be given
+        out['span_usage'] = []
+        for span in [86400, 7 * 86400, 14 * 86400, None]:
+            panel._history_time_delta_none.setChecked(span is None)
+            if span is not None: panel._history_time_delta_threshold.SetValue(span)
+            out['span_usage'].append({'span': span, 'cells': {name: panel._ConvertNetworkContextsToDisplayTuple(contexts[name])[4] for name in ['recent', 'old', 'bytes']}})
         out['months'] = manager.GetTracker(contexts['recent']).GetMonthlyDataUsage()
         out['sort_rows'] = {name: panel._ConvertNetworkContextsToSortTuple(contexts[name]) for name in ['recent', 'old', 'bytes']}
         from hydrus.core import HydrusExceptions
