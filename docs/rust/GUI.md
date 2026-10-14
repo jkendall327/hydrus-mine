@@ -2011,12 +2011,6 @@ closing an owner cancels every descendant. Content editors support URLs, tags, n
 titles, headers, temporary variables and vetoes, reusing the six-kind formula
 and string-match editors. Test panels accept the document, page URL, post
 index and validated key=value context variables, and run the live parser engine.
-A content parser's own test panel words its results as the reference's do, one
-line for each described by its kind, sorted, between the lines counting them
-(`tag: artist:samus`, `note "note":`, `veto: veto: veto`; every kind recorded in
-`oracle/fixtures/parser_editors.json`), and a tag parser's namespace ("any
-namespace", none or given) and a veto's polarity and matcher act as recorded.
-The page parser's test panel keeps its own post-by-post format.
 Parser and formula test panels keep multiple editable examples, with add/remove
 and selection controls. Switching documents restores their source URL. Page
 children receive every converted example with the selected document first;

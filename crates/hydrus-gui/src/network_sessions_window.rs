@@ -946,10 +946,17 @@ fn edit_value(
         move || {
             if let Some(w) = weak.upgrade() {
                 // (the delta control holds a time to its range: at least 1200
-                // seconds, at most 200 years of 366 days and a day's seconds)
+                // seconds, its days at most 200 years of 366 days)
                 match w.get_expiry_delta().trim().parse::<i64>() {
                     Ok(delta) => {
-                        let delta = delta.clamp(1200, 366 * 200 * 86400 + 86399);
+                        // (the control's days stop at 200 years of 366 days and
+                        // its other fields keep what they were given)
+                        let max_days = 366 * 200;
+                        let delta = if delta / 86400 > max_days {
+                            max_days * 86400 + delta % 86400
+                        } else {
+                            delta.max(1200)
+                        };
                         w.set_expiry_delta(delta.to_string().into());
                         w.set_expires((now() + delta).to_string().into());
                         w.set_session_cookie(false);

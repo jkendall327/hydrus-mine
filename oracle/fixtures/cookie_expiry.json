@@ -7,7 +7,9 @@
   3600,
   2592000,
   6324480000,
-  6324480005
+  6324480005,
+  6324566399,
+  6324580000
  ],
  "cases": [
   {
@@ -65,6 +67,20 @@
      "expires": 8124480005,
      "text": "expires in 200 years 4 months",
      "utc": "8124480005"
+    },
+    {
+     "delta": 6324566399,
+     "control_value": 6324566399,
+     "expires": 8124566399,
+     "text": "expires in 200 years 4 months",
+     "utc": "8124566399"
+    },
+    {
+     "delta": 6324580000,
+     "control_value": 6324493600,
+     "expires": 8124493600,
+     "text": "expires in 200 years 4 months",
+     "utc": "8124493600"
     }
    ],
    "default": 2592000,
@@ -125,6 +141,20 @@
      "expires": 8124480005,
      "text": "expires in 200 years 4 months",
      "utc": "8124480005"
+    },
+    {
+     "delta": 6324566399,
+     "control_value": 6324566399,
+     "expires": 8124566399,
+     "text": "expires in 200 years 4 months",
+     "utc": "8124566399"
+    },
+    {
+     "delta": 6324580000,
+     "control_value": 6324493600,
+     "expires": 8124493600,
+     "text": "expires in 200 years 4 months",
+     "utc": "8124493600"
     }
    ],
    "default": 7200,
@@ -185,6 +215,20 @@
      "expires": 8124480005,
      "text": "expires in 200 years 4 months",
      "utc": "8124480005"
+    },
+    {
+     "delta": 6324566399,
+     "control_value": 6324566399,
+     "expires": 8124566399,
+     "text": "expires in 200 years 4 months",
+     "utc": "8124566399"
+    },
+    {
+     "delta": 6324580000,
+     "control_value": 6324493600,
+     "expires": 8124493600,
+     "text": "expires in 200 years 4 months",
+     "utc": "8124493600"
     }
    ],
    "default": 2592000,

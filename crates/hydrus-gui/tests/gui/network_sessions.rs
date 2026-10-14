@@ -1240,4 +1240,45 @@ fn the_header_editor_opens_and_checks_its_fields_as_the_references_does() {
         row.cells.row_data(0).unwrap(),
         recorded["rows"][0][0].as_str().unwrap()
     );
+    // each approval choice, in the recorded order, stores the recorded
+    // state and lists with the recorded words
+    for (n, approval) in recorded["approvals"].as_array().unwrap().iter().enumerate() {
+        let (words, code) = (approval[0].as_str().unwrap(), approval[1].as_i64().unwrap());
+        headers.invoke_add_clicked();
+        let edit = windows::last_edit_opened().unwrap();
+        edit.set_name(format!("X-Approval-{n}").into());
+        edit.set_value("v".into());
+        edit.set_approval(i32::try_from(n).unwrap());
+        edit.invoke_apply_clicked();
+        assert_eq!(edit.get_error().as_str(), "", "{words}");
+        let rows = headers.get_rows();
+        let row = (0..rows.row_count())
+            .map(|i| rows.row_data(i).unwrap())
+            .find(|r| r.cells.row_data(1).unwrap() == format!("X-Approval-{n}: v"))
+            .unwrap_or_else(|| panic!("{words}"));
+        assert_eq!(row.cells.row_data(2).unwrap(), words);
+    }
+    // applied, each is stored as recorded
+    headers.invoke_apply_clicked();
+    let stored = store
+        .read(|c| {
+            let mut all = Vec::new();
+            for context in network::header_contexts(c)? {
+                all.extend(network::headers(c, &context)?);
+            }
+            Ok(all)
+        })
+        .unwrap();
+    for (n, approval) in recorded["approvals"].as_array().unwrap().iter().enumerate() {
+        let (words, code) = (approval[0].as_str().unwrap(), approval[1].as_i64().unwrap());
+        let header = stored
+            .iter()
+            .find(|h| h.name.eq_ignore_ascii_case(&format!("X-Approval-{n}")))
+            .unwrap_or_else(|| panic!("{words}: {stored:?}"));
+        assert_eq!(
+            header.approval,
+            Approval::from_code(code).unwrap(),
+            "{words}"
+        );
+    }
 }

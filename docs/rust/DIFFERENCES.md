@@ -1571,11 +1571,14 @@ session stays where it is until the window is reopened, where the reference
 sorts again at once.
 
 The cookie editor's "set expires from now" holds its delta to the reference's
-control's range (a delta below 1200 seconds is raised to it, one above 200
-years of 366 days and a day is lowered to it) and begins at what is left of
+control's range (a delta below 1200 seconds is raised to it; above 200
+years of 366 days the control keeps the extra seconds of the day it was given
+but stops the days, so +100000 seconds becomes +13600, as recorded) and begins at what is left of
 a coming expiry, else 30 days (`oracle/record_cookie_expiry.py`). It shows
-the expiry as UTC seconds with a "session cookie" box, not the reference's
-"expires in 2 hours" text, and refuses an empty name with its own words where
+the expiry as UTC seconds with a "session cookie" box that opens ticked where
+the reference's cookie had no expiry, not the reference's
+"expires in 2 hours" text; typing a UTC second or ticking the box has no
+counterpart in the reference, whose only way to set an expiry is the delta, and refuses an empty name with its own words where
 the reference uses its newline ones.
 
 Cookie and HTTP-header editing uses detached native drafts with Apply/Cancel;

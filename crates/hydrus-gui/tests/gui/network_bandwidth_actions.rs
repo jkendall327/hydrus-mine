@@ -379,6 +379,20 @@ fn the_cookie_editors_delta_and_fields_are_checked_as_the_references_were() {
             (shown - default).abs() <= 10,
             "{name}: starts at {shown}, theirs {default}"
         );
+        // the expiry it opens on: a session cookie where the reference's
+        // had none ("None"), else the same moment, as UTC seconds
+        let started = case["start_utc"].as_str().unwrap();
+        if started == "None" {
+            assert!(edit.get_session_cookie(), "{name}");
+        } else {
+            assert!(!edit.get_session_cookie(), "{name}");
+            let moved = now() - recorded["now"].as_i64().unwrap();
+            let opened: i64 = edit.get_expires().parse().unwrap();
+            assert!(
+                (opened - (started.parse::<i64>().unwrap() + moved)).abs() <= 10,
+                "{name}: {opened} against {started}"
+            );
+        }
         // each delta is held to the control's range, and sets the expiry
         for set in case["sets"].as_array().unwrap() {
             edit.set_expiry_delta(set["delta"].to_string().into());
