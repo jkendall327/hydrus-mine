@@ -1,4 +1,5 @@
 import { Btn } from "btn.slint";
+import { TipCheckBox } from "tip_widgets.slint";
 import { Button, CheckBox, ComboBox, LineEdit, SpinBox, ScrollView, VerticalBox, HorizontalBox } from "std-widgets.slint";
 import { TableColumn, TableRow, ListTable } from "list_table.slint";
 import { RatingRow, RatingGraphic } from "viewer.slint";
@@ -239,11 +240,11 @@ export component EditServiceWindow inherits Window {
                     Text { text: "client api options"; color: Theme.text; font-weight: 700; }
                     CheckBox { text: "run the client api?:"; checked <=> root.api-running; }
                     HorizontalBox { Text { text: "local port:"; color: Theme.text; } SpinBox { minimum: 1; maximum: 65535; value <=> root.api-port; enabled: root.api-controls-enabled; } }
-                    CheckBox { text: "allow non-local connections:"; checked <=> root.api-non-local; enabled: root.api-controls-enabled; Tooltip { text: @markdown("\{root.api-tooltip-non-local}"); } }
-                    CheckBox { text: "use https"; checked <=> root.api-https; enabled: root.api-controls-enabled; Tooltip { text: @markdown("\{root.api-tooltip-https}"); } }
-                    CheckBox { text: "support CORS headers"; checked <=> root.api-cors; enabled: root.api-controls-enabled; Tooltip { text: @markdown("\{root.api-tooltip-cors}"); } }
-                    CheckBox { text: "log requests"; checked <=> root.api-logs; enabled: root.api-controls-enabled; Tooltip { text: @markdown("\{root.api-tooltip-logs}"); } }
-                    CheckBox { text: "normie-friendly welcome page"; checked <=> root.api-normie; enabled: root.api-controls-enabled; Tooltip { text: @markdown("\{root.api-tooltip-normie}"); } }
+                    TipCheckBox { text: "allow non-local connections:"; checked <=> root.api-non-local; enabled: root.api-controls-enabled; tip: root.api-tooltip-non-local; }
+                    TipCheckBox { text: "use https"; checked <=> root.api-https; enabled: root.api-controls-enabled; tip: root.api-tooltip-https; }
+                    TipCheckBox { text: "support CORS headers"; checked <=> root.api-cors; enabled: root.api-controls-enabled; tip: root.api-tooltip-cors; }
+                    TipCheckBox { text: "log requests"; checked <=> root.api-logs; enabled: root.api-controls-enabled; tip: root.api-tooltip-logs; }
+                    TipCheckBox { text: "normie-friendly welcome page"; checked <=> root.api-normie; enabled: root.api-controls-enabled; tip: root.api-tooltip-normie; }
                     if root.api-advanced: VerticalBox {
                         HorizontalBox {
                             Text { text: "scheme (http/https) override when copying external links"; color: Theme.text; wrap: word-wrap; }
