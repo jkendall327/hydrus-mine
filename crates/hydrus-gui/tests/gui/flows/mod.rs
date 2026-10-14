@@ -15,6 +15,7 @@
 //! differs fails the flow too, so the list stays true.
 
 mod download;
+mod duplicates;
 mod export;
 mod gallery;
 mod import_folder;
@@ -99,6 +100,7 @@ pub const PORTS: &[(&str, u16)] = &[
     ("flow_download.json", 46012),
     ("flow_gallery.json", 46033),
     ("flow_export.json", 46014),
+    ("flow_duplicates.json", 46015),
     ("flow_import_folder.json", 46013),
     ("flow_watcher.json", 46031),
 ];
