@@ -33,6 +33,54 @@ def record(session):
         panel._permissions_list.SelectDatas(keys)
         panel._Duplicate()
         out['duplicates']=[panel._ConvertDataToDisplayTuple(k) for k in c.client_api_manager.GetAllPermissions()]
+        # The access key editor on typed answers: stripped, wrong length, not hex, and the
+        # random suggestion offered; then the review panel's collision refusal on a real edit.
+        key_cases = []
+        offered = []
+        M.ShowCritical = lambda parent, title, text: key_cases[-1].update({'title': title, 'message': text})
+        def ask(parent, text, default = None, suggestions = None, **kw):
+            offered.append({'default': default, 'suggestions': suggestions})
+            return current_answer[0]
+        Q.EnterText = ask
+        current_answer = [None]
+        for typed in ['  ' + 'ab' * 32 + '  ', 'z' * 64, '', 'ab' * 31, 'AB' * 32]:
+            current_answer[0] = typed
+            editor._access_key.setText('cd' * 32)
+            key_cases.append({'typed': typed})
+            editor._EditAccessKey()
+            key_cases[-1]['key_after'] = editor._access_key.text()
+        out['key_cases'] = key_cases
+        out['key_offered'] = {'default': offered[0]['default'], 'suggestion_count': len(offered[0]['suggestions']), 'suggestion_is_64_hex': all(len(x) == 64 and bytes.fromhex(x) is not None for x in offered[0]['suggestions'])}
+        Q.EnterText, M.ShowCritical = olde, oldm
+        from hydrus.client.gui import ClientGUITopLevelWindowsPanels as TLW
+        class ScriptedDialog(QW.QDialog):
+            script = None
+            def __init__(self, parent, title): super().__init__(parent)
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+            def SetPanel(self, p): self._panel = p
+            def exec(self):
+                ScriptedDialog.script(self._panel)
+                return QW.QDialog.DialogCode.Accepted
+        collisions = []
+        old_dialog = S.ClientGUITopLevelWindowsPanels.DialogEdit
+        S.ClientGUITopLevelWindowsPanels.DialogEdit = ScriptedDialog
+        M.ShowCritical = lambda parent, title, text: collisions.append({'title': title, 'message': text})
+        try:
+            def keys_now(): return sorted((k.GetName(), k.GetAccessKey().hex()) for k in c.client_api_manager.GetAllPermissions())
+            out['collision'] = {'before': keys_now()}
+            panel._permissions_list.SelectDatas([keys[0]], deselect_others=True)
+            ScriptedDialog.script = lambda p: p._access_key.setText((bytes([2]) * 32).hex())
+            panel._Edit()
+            out['collision']['after_collision'] = keys_now()
+            out['collision']['dialogs'] = list(collisions)
+            ScriptedDialog.script = lambda p: p._access_key.setText((bytes([9]) * 32).hex())
+            panel._Edit()
+            out['collision']['after_new_key'] = keys_now()
+            out['collision']['dialogs_after_new_key'] = list(collisions)
+        finally:
+            S.ClientGUITopLevelWindowsPanels.DialogEdit = old_dialog
+            M.ShowCritical = oldm
         server=S.EditServiceClientServerSubPanel(c.gui,HC.CLIENT_API_SERVICE, service.GetSerialisableDictionary())
         out['server']={'running':server._run_the_service.isChecked(),'port':server._port.value(),'port_range':[server._port.minimum(),server._port.maximum()], 'fields':server.GetValue()}
         out['server']['fields']={k:v for k,v in out['server']['fields'].items() if k!='bandwidth_rules'}

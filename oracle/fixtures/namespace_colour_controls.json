@@ -82,6 +82,114 @@
       ]
     }
   ],
+  "edit_cases": {
+    "selected": [
+      "character",
+      "series"
+    ],
+    "offered": [
+      {
+        "rgb": [
+          0,
+          170,
+          0
+        ]
+      },
+      {
+        "rgb": [
+          170,
+          0,
+          170
+        ]
+      }
+    ],
+    "rows": [
+      {
+        "namespace": "character",
+        "label": "'character' tags",
+        "rgb": [
+          10,
+          20,
+          30
+        ]
+      },
+      {
+        "namespace": "creator",
+        "label": "'creator' tags",
+        "rgb": [
+          170,
+          0,
+          0
+        ]
+      },
+      {
+        "namespace": "meta",
+        "label": "'meta' tags",
+        "rgb": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "namespace": "person",
+        "label": "'person' tags",
+        "rgb": [
+          0,
+          128,
+          0
+        ]
+      },
+      {
+        "namespace": "series",
+        "label": "'series' tags",
+        "rgb": [
+          170,
+          0,
+          170
+        ]
+      },
+      {
+        "namespace": "studio",
+        "label": "'studio' tags",
+        "rgb": [
+          128,
+          0,
+          0
+        ]
+      },
+      {
+        "namespace": "system",
+        "label": "'system' tags",
+        "rgb": [
+          153,
+          101,
+          21
+        ]
+      },
+      {
+        "namespace": null,
+        "label": "namespaced tags",
+        "rgb": [
+          114,
+          160,
+          193
+        ]
+      },
+      {
+        "namespace": "",
+        "label": "unnamespaced tags",
+        "rgb": [
+          0,
+          111,
+          250
+        ]
+      }
+    ],
+    "selected_after": [],
+    "durable_unchanged": true,
+    "nothing_selected_offered": []
+  },
   "events": [
     {
       "action": "add",
