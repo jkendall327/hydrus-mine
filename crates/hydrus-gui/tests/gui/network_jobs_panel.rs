@@ -15,7 +15,11 @@ use hydrus_store::{
 };
 use slint::{ComponentHandle as _, Model as _};
 
-const NOW: i64 = 1_770_000_000;
+/// The daemon's heartbeat is fresh for five seconds, so snapshots are stamped
+/// with the clock (other tests hold the windows' time still, process-wide).
+fn stamp() -> i64 {
+    hydrus_core::time::TimestampMs::now().millis() / 1000
+}
 
 fn until(mut condition: impl FnMut() -> bool) {
     let start = std::time::Instant::now();
@@ -112,7 +116,7 @@ fn right_click(
     let slots = windows::Slots::default();
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
-    publish(&store, NOW, &[job]);
+    publish(&store, stamp(), &[job]);
     let window = windows::open_jobs(store.clone(), &slots).unwrap();
     until(|| window.get_rows().row_count() == 1);
     window.invoke_row_menu(0, 120.0, 80.0);
@@ -124,7 +128,6 @@ fn right_click(
 fn a_jobs_right_click_menu_is_the_reference_s_network_contexts_and_flags() {
     let recorded_menus = hydrus_testkit::fixture_json("network_jobs_panel.json");
     let _windows = headless::init();
-    windows::hold_now(Some(NOW));
     let cases = [
         ("plain", WaitReason::Downloading, true, true, true),
         (
@@ -208,7 +211,7 @@ fn a_jobs_right_click_menu_is_the_reference_s_network_contexts_and_flags() {
         domain_ok: true,
         tokens_ok: true,
     };
-    publish(&store, NOW, &[job(), job()]);
+    publish(&store, stamp(), &[job(), job()]);
     let window = windows::open_jobs(store, &slots).unwrap();
     until(|| window.get_rows().row_count() == 2);
     window.invoke_row_clicked(0, false, false);
@@ -232,7 +235,6 @@ fn a_jobs_right_click_menu_is_the_reference_s_network_contexts_and_flags() {
         "{:?}",
         copied.borrow()
     );
-    windows::hold_now(None);
     window.invoke_close_clicked();
 }
 
@@ -241,7 +243,6 @@ fn a_jobs_right_click_menu_is_the_reference_s_network_contexts_and_flags() {
 fn the_refresh_control_is_manual_to_begin_with_or_an_interval_as_the_reference_s_is() {
     let recorded = hydrus_testkit::fixture_json("network_jobs_panel.json");
     let _windows = headless::init();
-    windows::hold_now(Some(NOW));
     let slots = windows::Slots::default();
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
@@ -251,7 +252,7 @@ fn the_refresh_control_is_manual_to_begin_with_or_an_interval_as_the_reference_s
         domain_ok: true,
         tokens_ok: true,
     };
-    publish(&store, NOW, &[job()]);
+    publish(&store, stamp(), &[job()]);
     let window = windows::open_jobs(store.clone(), &slots).unwrap();
     until(|| window.get_rows().row_count() == 1);
 
@@ -270,7 +271,7 @@ fn the_refresh_control_is_manual_to_begin_with_or_an_interval_as_the_reference_s
     assert_eq!(slots.jobs_refresh_interval(), None);
 
     // in manual mode a new snapshot does not reach the list by itself
-    publish(&store, NOW, &[job(), job()]);
+    publish(&store, stamp(), &[job(), job()]);
     for _ in 0..80 {
         slint::platform::update_timers_and_animations();
         std::thread::sleep(Duration::from_millis(10));
@@ -296,11 +297,10 @@ fn the_refresh_control_is_manual_to_begin_with_or_an_interval_as_the_reference_s
     }
 
     // an interval refreshes by itself
-    publish(&store, NOW, &[job()]);
+    publish(&store, stamp(), &[job()]);
     window.set_manual_refresh(false);
     window.set_refresh_seconds("0.05".into());
     window.invoke_refresh_changed();
     until(|| window.get_rows().row_count() == 1);
-    windows::hold_now(None);
     window.invoke_close_clicked();
 }
