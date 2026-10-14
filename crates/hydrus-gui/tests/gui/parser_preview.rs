@@ -23,7 +23,10 @@ fn same(shown: &str, recorded: &str, name: &str) {
         let head = "*** 1 RESULTS BEGIN ***\nsha256 hash: Could not decode a hash from zz: ";
         assert!(shown.starts_with(head), "{name}: {shown:?}");
         assert!(recorded.starts_with(head), "{name}: {recorded:?}");
-        assert!(shown.ends_with("\n*** RESULTS END ***"), "{name}: {shown:?}");
+        assert!(
+            shown.ends_with("\n*** RESULTS END ***"),
+            "{name}: {shown:?}"
+        );
     } else {
         assert_eq!(shown, recorded, "{name}");
     }

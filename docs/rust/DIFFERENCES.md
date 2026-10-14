@@ -1267,16 +1267,15 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   out the post index (a subsidiary parser's sets it to 0); the url, other
   variables and relative-url joining are replayed from
   `oracle/fixtures/parser_context.json`. After a fetch the page parser's url box
-  shows the encoded url the context holds, where the reference keeps what was
-  typed (its fetch texts, requests and cookies are replayed from
+  keeps what was typed, as the reference's does, and the context holds the
+  encoded url (its fetch texts, requests and cookies are replayed from
   `oracle/fixtures/parser_fetch_http.json`).
-- The test panels' result preview reads "Post 1" then "tags: abc" lines, where the
-  reference prints "*** 1 RESULTS BEGIN ***", then one line per result with its own
-  label ("tag: artist:samus" with the namespace joined and the tag cleaned,
-  "downloadable/pursuable url (priority 50): ...", 'note "name":', "sha256 hash:",
-  "source/post time: <date>", "veto: ...") and "*** RESULTS END ***"
-  (`oracle/fixtures/parser_context.json`, `parser_editors.json`). The parsed texts
-  match; the labels and layout do not.
+- The test panels' results read as the reference's do ("*** N RESULTS BEGIN ***",
+  one sorted line per result worded by its kind, posts separated by the
+  reference's break, a veto as its own line; `oracle/fixtures/parser_preview.json`).
+  Not matched: the error text of a hash that cannot be decoded (Python's words),
+  timestamps are shown in UTC (the reference's local time), and a parse error is
+  shown as its message where the reference prints an exception trace.
 - URL classes and single/nested gallery URL generators have native lists and
   rule editors. Their duplicate button creates new keys and unique names.
   Domain lists and regex lists use one rule per line, and nested generators

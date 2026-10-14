@@ -318,11 +318,7 @@ fn test_data(
         Some((box_text, context_url)) if *box_text == typed => context_url.clone(),
         _ => typed,
     };
-    let context = TestContext::parse(
-        url,
-        w.get_post_index().as_str(),
-        w.get_variables().as_str(),
-    )?;
+    let context = TestContext::parse(url, w.get_post_index().as_str(), w.get_variables().as_str())?;
     let mut test = e.test.clone();
     test.context = context.values();
     test.collapse_newlines = collapse_newlines;
@@ -1039,7 +1035,7 @@ fn open_editor(
                     let applied=Rc::new({let state=state.clone();let refresh=refresh.clone();move |mut definitions:Vec<Definition>| {let definition=definitions.pop().ok_or("No parser to import.")?;let mut e=state.borrow_mut();match (page,definition.native){(true,Native::Page(p))=>e.value=Value::Page(Box::new(p)),(false,Native::Content(c))=>{let test=if let Value::Content(old)=&e.value{old.test.clone()}else{FormulaTestData::default()};e.value=Value::Content(Box::new(ContentEditor::new(&c,test)));},_=>return Err("Import one matching parser.".into())}e.errors.clear();e.selected=None;e.subsidiary_selected=None;e.subsidiary_selection=ListSelection::default();drop(e);refresh();Ok(())}});
                     let child=crate::downloader_interchange_window::open(&slots.exchange,action=="import",&[Definition::new(native)],preview,applied)?; let refresh=refresh.clone(); child.on_closed(move||refresh());
                 }
-                "test" => { if state.borrow().raw_mimes.get(state.borrow().example,w.get_document().as_str()).is_some() {return Ok(());} let mut test = test_data(&w,&state.borrow(),true)?; /* (the reference's test parse drops post_index; a subsidiary sets it to 0) */ test.context.remove("post_index"); let mut e = state.borrow_mut();let subsidiary=e.subsidiary.clone();let parsed = match &mut e.value { Value::Page(p) => {if let Some(details)=subsidiary {test.context.insert("post_index".into(),"0".into());details.borrow().preview(p,&mut test.context,&test.text)}else{p.parse(&mut test.context,&test.text)}}, Value::Content(c) => { c.test = test; w.set_preview(model::parser_preview::content_preview(c.preview()).into()); return Ok(()); } }; w.set_preview(model::parser_preview::page_preview(parsed).into()); }
+                "test" => { if state.borrow().raw_mimes.get(state.borrow().example,w.get_document().as_str()).is_some() {return Ok(());} let mut test = test_data(&w,&state.borrow(),true)?; /* (the reference's test parse drops post_index; a subsidiary sets it to 0) */ test.context.remove("post_index"); let mut e = state.borrow_mut();let subsidiary=e.subsidiary.clone();let parsed = match &mut e.value { Value::Page(p) => {if let Some(details)=subsidiary {test.context.insert("post_index".into(),"0".into());details.borrow().preview(p,&mut test.context,&test.text)}else{p.parse(&mut test.context,&test.text)}}, Value::Content(c) => { c.test = test; w.set_preview(hydrus_gui_model::parser_preview::content_preview(c.preview()).into()); return Ok(()); } }; w.set_preview(hydrus_gui_model::parser_preview::page_preview(parsed).into()); }
                 "delete-content" => { let mut e = state.borrow_mut(); if let Some(index) = e.selected.take() && let Value::Page(p) = &mut e.value && index < p.content_parsers.len() { p.content_parsers.remove(index); } }
                 "add-content"|"edit-content" => {
                     let test = child_test_data(&w,&state.borrow(),true)?;

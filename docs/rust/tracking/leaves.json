@@ -24631,10 +24631,10 @@
     "Typed context rejects invalid/duplicate/reserved variable names and runs real page/content parse previews."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Against a recording of the real test panel (oracle/record_parser_context.py, fixtures/parser_context.json): relative urls resolved against the context's url (two urls, and none), a context variable formula reading a present and an absent variable, and one reading post_index. Through the content editor window's url, post index and variables boxes, 'test' shows the recorded texts (compared as the parsed text on each result line: the native preview's labels and layout, e.g. 'tags: abc' for the reference's 'tag: abc' and its '(priority 50)', are not compared, a known difference); the comparison found native passing post_index to a content parse where the reference's test panel removes it (so the recorded result is empty); fixed. The reference edits the context in a dictionary button, native in three boxes (DIFFERENCES.md). Test: crates/hydrus-gui/tests/gui/parser_content_kinds.rs the_test_panel_s_context_is_what_the_reference_s_context_is_to_a_test_parse; crates/hydrus-gui-model/tests/model/parser_editors.rs test_context_rejects_invalid_duplicate_and_reserved_variables Class lowered at review: the preview lines are compared by parsed text only, because the native preview's labels and layout differ from the reference's (DIFFERENCES.md); porting its formatter would let full lines be compared."
+    "date": "2026-10-14",
+    "class": "sound",
+    "by": "Claude session (wave 5, W5-2, issue #17)",
+    "note": "The test panel's results text is now the reference's, compared whole (not by parsed text): crates/hydrus-gui/tests/gui/parser_content_kinds.rs the_test_panel_s_context_is_what_the_reference_s_context_is_to_a_test_parse compares the full results of each context case with oracle/fixtures/parser_context.json, and crates/hydrus-gui/tests/gui/parser_preview.rs replays oracle/fixtures/parser_preview.json (oracle/record_parser_preview.py, the reference's content and page parser panels) for every content kind and option, sorted and empty results, two posts with the reference's break, and vetoes, through the editor windows. The context is edited in three boxes where the reference has a dictionary button (DIFFERENCES.md). Not matched: Python's words for an undecodable hash, timestamps in UTC, parse errors as plain messages."
    }
   },
   {
@@ -24651,10 +24651,10 @@
     "Fetch controls use an inline URL field instead of the reference prompt. Window-local jobs show progress in their test panel rather than the daemon jobs review."
    ],
    "recheck": {
-    "date": "2026-10-13",
+    "date": "2026-10-14",
     "class": "source-restated",
     "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Texts, requests and cookies now come from the real reference engine against a local server (oracle/record_parser_fetch_http.py, fixtures/parser_fetch_http.json): the page editor's fetch of 'a b' with a referral (request GET /a%20b with the Referer, text, context url and post index 0, other variables kept), its 404 ('fetch failed: 404: missing' + body, the first response's cookie sent), and the generic panel's success and 404 texts; the native tests compare these. Not tagged: the cancel, hold, close-owner and one-attempt behaviours, the blank-url-takes-the-example behaviour and the progress display are still checked against literals or the stubbed-engine fixture (parser_test_data.json), and the page editor's url box shows the encoded url after a fetch where the reference keeps what was typed (DIFFERENCES.md). Tests: crates/hydrus-gui/tests/gui/parser_editors.rs content_test_panel_fetches_raw_data_and_hands_it_to_its_formula, fetched_page_examples_use_actual_network_headers_cookies_context_and_child_converter, page_fetch_error_menu_retains_completed_failure_and_clears_at_next_request"
+    "note": "The page editor's url box now keeps what was typed after a fetch while the context holds the encoded url (fetched_page_examples_use_actual_network_headers_cookies_context_and_child_converter compares the box with test_url_after and the child editor's context url with context.url of oracle/fixtures/parser_fetch_http.json). Texts, requests and cookies now come from the real reference engine against a local server (oracle/record_parser_fetch_http.py, fixtures/parser_fetch_http.json): the page editor's fetch of 'a b' with a referral (request GET /a%20b with the Referer, text, context url and post index 0, other variables kept), its 404 ('fetch failed: 404: missing' + body, the first response's cookie sent), and the generic panel's success and 404 texts; the native tests compare these. Not tagged: the cancel, hold, close-owner and one-attempt behaviours, the blank-url-takes-the-example behaviour and the progress display are still checked against literals or the stubbed-engine fixture (parser_test_data.json), (the url box difference is fixed). Tests: crates/hydrus-gui/tests/gui/parser_editors.rs content_test_panel_fetches_raw_data_and_hands_it_to_its_formula, fetched_page_examples_use_actual_network_headers_cookies_context_and_child_converter, page_fetch_error_menu_retains_completed_failure_and_clears_at_next_request"
    }
   },
   {

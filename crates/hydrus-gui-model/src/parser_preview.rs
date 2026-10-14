@@ -89,7 +89,9 @@ fn hash_text(encoding: &str, text: &str) -> String {
 pub fn content_line(content: &ParsedContent) -> String {
     let text = &content.text;
     match &content.kind {
-        ContentKind::Url { url_type, priority } => format!("{} (priority {priority}): {text}", url_wording(*url_type)),
+        ContentKind::Url { url_type, priority } => {
+            format!("{} (priority {priority}): {text}", url_wording(*url_type))
+        }
         ContentKind::Tag { namespace } => {
             let combined = match namespace {
                 None => text.clone(),
