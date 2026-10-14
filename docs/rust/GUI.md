@@ -2180,8 +2180,7 @@ Apply preserves unrelated context edits and pacing settings; Cancel leaves them
 untouched. Default/global rules can be edited by kind or reset with the reference
 confirmation (global and every default context the reference names are reset;
 specific domains and the downloader default stay), and specific domains can
-inherit their defaults again. A selected context lists each rule's usage as the
-reference words it ("used 1/10 requests in the past 1 day").
+inherit their defaults again.
 
 Current jobs show every active engine request, including subscriptions, with
 URL, status, typed wait reason, speed and progress. Extended selection supports
@@ -4825,12 +4824,7 @@ finishes; "due" means more than one period since then (exactly one period is
 not). All of this is replayed from `oracle/fixtures/shutdown_work.json`
 (`tests/gui/shutdown_jobs.rs`). File > exit/force maintenance
 runs it whatever the schedule, and File > restart asks the restart question,
-exits, and starts the client again once it has let go of the store. The three
-entries' questions (asked only with "confirm client exit" on), whether the client
-exits and whether the shutdown work is flagged are replayed from
-`oracle/fixtures/file_menu.json` (`oracle/record_file_menu.py`, the real menu),
-which also records File > open > database directory opening the database
-directory.
+exits, and starts the client again once it has let go of the store.
 
 ## Content undo and redo
 

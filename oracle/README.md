@@ -46,9 +46,7 @@ at fixed copy boundaries; dialog replies and worker scheduling are scripted.
 | `make_repository_fixture.py` | `fixtures/legacy_db/repositories.tar.gz` + manifest: `basic` with a tag and a file repository holding pending content |
 | `make_fixture_db.py` | `fixtures/legacy_db/<name>.tar.gz` + `.manifest.json`: a populated reference database |
 | `make_auto_resolution_pending.py` | `fixtures/legacy_db/auto_resolution_pending.tar.gz`: the auto-resolution database with eight more pairs pending in the semi-automatic rule that has two |
-| `record_file_menu.py` | `fixtures/file_menu.json`: the real File menu's exit, restart and exit/force maintenance (the exit question with "confirm client exit" on and off, answered yes and no; whether the client exits, restarts, runs shutdown work) and open > installation/database directory |
 | `record_bandwidth_reset.py` | `fixtures/bandwidth_reset.json`: the real "reset default bandwidth rules" on a manager with custom rules: the question, every context's rules before and after |
-| `record_bandwidth_usage_text.py` | `fixtures/bandwidth_usage_text.json`: `GetBandwidthStringsAndGaugeTuples` (the per-rule usage lines) on trackers with scripted usage at a held time |
 | `record_local_import_pause.py` | `fixtures/local_import_pause.json`: the review-files-to-import panel paused, resumed and stopped while paths wait to be parsed |
 | `record_local_import_queue.py` | `fixtures/local_import_queue.json`: its "import now" (the publication, the new page, the files left or deleted, delete option off and on) |
 | `record_parser_content_variants.py` | `fixtures/parser_content_variants.json`: the content parser editor edited to other tag namespaces and veto settings, the parser it hands back and what it parses |

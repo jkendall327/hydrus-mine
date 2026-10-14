@@ -439,10 +439,8 @@ search.
   reaches the main-window title; secondary window titles still use their existing
   captions. Regex favourites open in a child list editor rather than embedding
   that list on the options page; their changes still wait for the parent Apply.
-  Exit confirmation honors the switch and auto-accept timeout, and the shutdown
-  maintenance question is asked (see Shutdown maintenance); the question that
-  names pages with importers or other reasons not to close ("no, but show me the
-  pages") and the low-disk-space prompt before it are not yet included. Search position and
+  Exit confirmation honors the switch and auto-accept timeout; importer
+  activity reasons and shutdown-maintenance questions are not yet included. Search position and
   remembering the last panel are editable. Connection/error-delay ranges follow the saved advanced mode
   when opening the window; changing that mode takes effect on reopening, as in
   the reference. Two options with the same label each go to their own
@@ -1621,12 +1619,9 @@ its other waits are native's own; the speed column is titled "current speed" as
 the reference's is. A job's contexts are shown in the detail under the list, not
 in a right-click menu with each context's waiting estimate.
 
-A selected context's rules read as the reference's do ("used 1/10 requests in
-the past 1 day", "used 2 KB/4 KB this month", sorted by span, a rule allowing
-nothing left out; `oracle/fixtures/bandwidth_usage_text.json`). "Reset default
-bandwidth rules" resets the global and default contexts the reference names (not
-the downloader default, which it leaves) and keeps every specific context
-(`oracle/fixtures/bandwidth_reset.json`).
+"Reset default bandwidth rules" resets the global and default contexts the
+reference names (not the downloader default, which it leaves) and keeps every
+specific context (`oracle/fixtures/bandwidth_reset.json`).
 
 ## Tag migration
 

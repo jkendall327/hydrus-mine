@@ -14788,10 +14788,10 @@
     "Installation directory means the Rust executable parent, not the Python source installation path."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "sound",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Real menu click through a substituted launcher; the reference's File > open > database directory recorded with the real menu (oracle/record_file_menu.py, fixtures/file_menu.json): it launches controller.GetDBDir, as the native one launches the store's directory. Test: crates/hydrus-gui/tests/gui/files_io_file_menu.rs open_entries_launch_directories_and_manage_entries_open_the_folder_lists"
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu click launches store.dir() through a substituted launcher; menu labels are in the recorded main_menu.json, but the target (reference GetDBDir) is asserted from source. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:179 open_entries_launch_directories_and_manage_entries_open_the_folder_lists"
    }
   },
   {
@@ -14805,13 +14805,13 @@
    "native": null,
    "notes": [
     "Dispatches Slint CloseRequested; main.rs keeps frame geometry, then after the event loop saves the last session, forgets closed-page queues and stops the daemon.",
-    "The exit confirmation (asked when 'confirm client exit' is on) and the shutdown-maintenance question are implemented; the question naming pages with importers and the low-disk-space prompt are not."
+    "No reference exit-confirmation flow or shutdown-maintenance/restart options."
    ],
    "recheck": {
-    "date": "2026-10-13",
+    "date": "2026-10-08",
     "class": "source-restated",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "The real File > exit and the close button now replay the reference's real menu action (oracle/record_file_menu.py, fixtures/file_menu.json): with confirm on the exit question asked with the recorded text and 15-second auto-yes, no keeps the client, yes closes; with confirm off nothing is asked. Left because TryToExit's other questions are not ported (DIFFERENCES.md): the one that names pages with importers and offers 'no, but show me the pages', and the low-disk-space prompt. Test: crates/hydrus-gui/tests/gui/files_io_file_menu.rs exit_restart_and_force_maintenance_replay_the_reference_s_file_menu"
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu and close path: confirmation question (typed from ClientGUI.TryToExit), decline keeps client, accept closes, plain exit leaves shutdown work alone. Question text and flow are restated from source, not recorded; the page-with-importers variant and low-disk-space prompt are not covered. Stale note says there is no exit-confirmation flow. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:112 exit_restart_and_force_maintenance_ask_as_the_reference_does_and_close_the_client"
    }
   },
   {
@@ -14824,13 +14824,14 @@
    "reference": null,
    "native": null,
    "notes": [
-    "'exit/force maintenance' (Command::ExitForceMaintenance) closes the client with the shutdown work run whatever the options say; with 'confirm client exit' on it asks the exit question first."
+    "'exit/force maintenance' is emitted as a disabled todo()/command-less entry. No callback executes its reference workflow.",
+    "No native Command for 'exit/force maintenance'."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "sound",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "The real menu entry replayed against the reference's (oracle/record_file_menu.py, fixtures/file_menu.json): with confirm on it asks the exit question (yes closes and flags the shutdown work, no keeps the client and does nothing), with confirm off it closes at once flagging the work; the native shutdown work really runs (last-done registered although the option is off and it was done a moment ago), and the work itself is replayed in shutdown_jobs.rs. Test: crates/hydrus-gui/tests/gui/files_io_file_menu.rs exit_restart_and_force_maintenance_replay_the_reference_s_file_menu"
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "The test runs exit/force maintenance with the option off and recently done and asserts last_done advances and the window closes, so the shutdown work really runs. Expectations restated from source. Stale note says it is a disabled todo/command-less entry and has no Command; it is implemented (Command::ExitForceMaintenance). Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:114 same test (force-maintenance section)"
    }
   },
   {
@@ -14905,10 +14906,10 @@
     "Installation directory means the Rust executable parent, not the Python source installation path."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "sound",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Real menu click through a substituted launcher; the reference's File > open > installation directory recorded with the real menu (oracle/record_file_menu.py, fixtures/file_menu.json): it launches HC.BASE_DIR, the directory of the program's files, which for the Rust client is its executable's directory (the intentional difference in DIFFERENCES.md). The test asserts the executable's directory, not a path from the recording. Test: crates/hydrus-gui/tests/gui/files_io_file_menu.rs open_entries_launch_directories_and_manage_entries_open_the_folder_lists"
+    "date": "2026-10-08",
+    "class": "source-restated",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Real menu click launches the executable's parent via a substituted launcher; reference opens HC.BASE_DIR, so the target is a documented intentional difference asserted from source, not recorded. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:180 open_entries_launch_directories_and_manage_entries_open_the_folder_lists"
    }
   },
   {
@@ -15006,13 +15007,14 @@
    "reference": null,
    "native": null,
    "notes": [
-    "'restart' (Command::Restart) asks the restart question, closes the client and starts the program again with the same arguments once the store is released."
+    "'restart' is emitted as a disabled todo()/command-less entry. No callback executes its reference workflow.",
+    "No native Command for 'restart'."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "sound",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "The real menu entry replayed against the reference's (oracle/record_file_menu.py, fixtures/file_menu.json): the restart question with the recorded text, no keeps the client (and the next plain close is an exit), yes (or no confirm) closes and flags the restart, no shutdown work. The consumer that starts the program again, previously untested in main.rs, is now client_exit::relaunch: a test shows an ordinary exit starts nothing and a requested restart starts the program with its arguments (a script standing in for the executable) and errors if it cannot. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs exit_restart_and_force_maintenance_replay_the_reference_s_file_menu, a_requested_restart_starts_the_client_again_with_its_arguments"
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Question flow and the RESTART flag are asserted, but the consumer that actually relaunches the process (hydrus-gui/src/main.rs:102) is untested, so a flag stands in for the restart. Question text is restated from source. Stale note says it is a disabled todo with no Command; it is implemented. Tests: crates/hydrus-gui/tests/gui/files_io_file_menu.rs:113 exit_restart_and_force_maintenance_ask_as_the_reference_does_and_close_the_client"
    }
   },
   {
@@ -23732,10 +23734,10 @@
     "List selection stages rule replacement/removal without changing persisted settings."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "sound",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Three tests: rules add/replace/delete (typed values; the persisted rules); the editor's displayed rows against the recorded rule rows for the three recorded rules (network_data.json, '100 MB per month', '4 KB 1 day', '20 requests 1 minute'); and the context detail's usage lines against a recording of GetBandwidthStringsAndGaugeTuples (oracle/record_bandwidth_usage_text.py, fixtures/bandwidth_usage_text.json: data and request rules over a minute to a month, rules of zero, usage over the allowance, no usage), which found native's wording ('10 requests every 1 day (1 used)') and ordering differing from the reference's ('used 1/10 requests in the past 1 day', by span); fixed, and the window's clock can be held for the replay. Tests: crates/hydrus-gui/tests/gui/network_bandwidth_actions.rs rules_editor_adds_replaces_and_deletes_a_multiselection, the_rules_editor_lists_rules_as_the_reference_s_rows_read, the_context_detail_words_each_rule_s_usage_as_the_reference_does"
+    "date": "2026-10-08",
+    "class": "weak",
+    "by": "blind Sonnet agent, #97 phase 1",
+    "note": "Add/replace/delete is driven and rule_row text is replayed against the recording, but the GUI never reads the displayed rule rows. 'Usage text': the detail panel shows '10 requests every 1 day (1 used)' which differs from the reference's 'used 1/10 requests in the past 1 day' (GetBandwidthStringsAndGaugeTuples, which also skips rules of 600 s or less) and the test pins the native wording; flag for audit-network-bandwidth-detail too. Tests: crates/hydrus-gui/tests/gui/network_bandwidth_actions.rs:135 rules_editor_adds_replaces_and_deletes_a_multiselection; crates/hydrus-gui-model/tests/model/network_data.rs:15 replay_qt_bandwidth_rows_rules_and_questions; crates/hydrus-gui/tests/gui/network_data.rs:431"
    }
   },
   {

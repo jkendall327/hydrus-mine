@@ -535,11 +535,7 @@ fn bandwidth_history_columns_sort_detail_and_default_kind_routing() {
             .get_detail()
             .contains("All time usage: 14 KB in 3 requests")
     );
-    assert!(
-        review
-            .get_detail()
-            .contains("used 2 KB/8 GB in the past 1 day")
-    );
+    assert!(review.get_detail().contains("2 KB used"));
     assert!(!review.get_can_revert());
     store
         .write(|ctx| {
@@ -557,7 +553,7 @@ fn bandwidth_history_columns_sort_detail_and_default_kind_routing() {
     assert!(
         review
             .get_detail()
-            .contains("used 1/10 requests in the past 1 day")
+            .contains("10 requests every 1 day (1 used)")
     );
     let f = hydrus_testkit::fixture_json("bandwidth_history.json");
     let kinds = [0, 2, 1, 4, 5, 6];

@@ -305,46 +305,6 @@ pub fn rule_row_with_format(rule: Rule, formatting: &GuiFormatting) -> [String; 
     ]
 }
 
-/// The usage line of each rule, as `GetBandwidthStringsAndGaugeTuples` (with
-/// the context panel's threshold of 0) words it: rules sorted by span (the
-/// month first), rules allowing nothing left out, `used 1/10 requests in the
-/// past 1 day`, `used 2 MB/4 MB this month`.
-pub fn rule_usage_lines(
-    rules: &Rules,
-    tracker: &mut Tracker,
-    now: i64,
-    formatting: &GuiFormatting,
-) -> Vec<String> {
-    let mut sorted: Vec<Rule> = rules.rules().to_vec();
-    sorted.sort_by_key(|r| {
-        r.time_delta
-            .map_or(-1, |t| i64::try_from(t).unwrap_or(i64::MAX))
-    });
-    sorted
-        .into_iter()
-        .filter(|r| r.time_delta != Some(0) && r.max_allowed != 0)
-        .map(|r| {
-            let used = tracker.usage(r.kind, r.time_delta, now);
-            let amount = match r.kind {
-                BandwidthType::Data => format!(
-                    "{}/{}",
-                    crate::gui_format::bytes(formatting, used),
-                    crate::gui_format::bytes(formatting, r.max_allowed)
-                ),
-                BandwidthType::Requests => format!(
-                    "{}/{} requests",
-                    human_int(used.min(r.max_allowed)),
-                    human_int(r.max_allowed)
-                ),
-            };
-            match r.time_delta {
-                None => format!("used {amount} this month"),
-                Some(t) => format!("used {amount} in the past {}", duration(t)),
-            }
-        })
-        .collect()
-}
-
 /// Data and requests over a rolling period, or this calendar month.
 pub fn usage_text(tracker: &mut Tracker, span: Option<u64>, now: i64) -> String {
     usage_text_with_format(tracker, span, now, &GuiFormatting::default())
