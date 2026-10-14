@@ -776,6 +776,21 @@ pub(crate) fn configure(conn: &Connection) -> Result<()> {
     Ok(())
 }
 
+/// Connection setup for a database opened read-only: the pragmas that read
+/// or tune memory, none that write the file (`journal_mode = WAL` does).
+pub(crate) fn configure_read_only(conn: &Connection) -> Result<()> {
+    conn.execute_batch(
+        "PRAGMA foreign_keys = OFF;
+         PRAGMA temp_store = MEMORY;
+         PRAGMA cache_size = -262144;
+         PRAGMA mmap_size = 268435456;
+         PRAGMA busy_timeout = 30000;
+         PRAGMA query_only = ON;",
+    )?;
+    rusqlite::vtab::array::load_module(conn)?;
+    Ok(())
+}
+
 /// Bring the schema up to [`SCHEMA_VERSION`], applying each missing migration
 /// in its own transaction.
 pub(crate) fn migrate(conn: &mut Connection) -> Result<()> {

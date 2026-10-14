@@ -2476,6 +2476,7 @@ dependencies = [
  "hydrus-testkit",
  "hydrus-workspace-hack",
  "rand 0.10.3",
+ "rusqlite",
  "rustls",
  "serde_json",
  "tempfile",
