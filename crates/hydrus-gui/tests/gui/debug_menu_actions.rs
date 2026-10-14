@@ -398,45 +398,6 @@ impl Debug {
     }
 }
 
-// leaf: audit-options-help-debug-action-idle-report-mode
-#[test]
-fn idle_report_mode_says_why_the_client_is_not_idle() {
-    let _one = ONE_AT_A_TIME
-        .lock()
-        .unwrap_or_else(std::sync::PoisonError::into_inner);
-    let d = start();
-    let seen = capture();
-    let now = hydrus_core::TimestampMs::now().0;
-    assert!(!d.report_mode_checked("idle report mode"));
-    d.bound.session_autosave.idle_at(now);
-    assert!(seen.lock().unwrap().is_empty(), "silent while off");
-    d.click(&["report modes", "idle report mode"]);
-    assert!(d.report_mode_checked("idle report mode"));
-    // (each idle check reports; the window's own timers may check too on a
-    // loaded runner, so the same line can come more than once)
-    let reported = |seen: &Mutex<Vec<String>>| {
-        let mut lines = seen.lock().unwrap().clone();
-        lines.dedup();
-        lines
-    };
-    d.bound.session_autosave.idle_at(now);
-    assert_eq!(
-        reported(&seen),
-        ["IDLE MODE - Blocked: Program has not been on for 120s yet."]
-    );
-    d.click(&["debug modes", "force idle mode"]);
-    seen.lock().unwrap().clear();
-    d.bound.session_autosave.idle_at(now);
-    assert_eq!(reported(&seen), ["IDLE MODE - Forced via debug menu"]);
-    d.click(&["debug modes", "force idle mode"]);
-    d.click(&["report modes", "idle report mode"]);
-    assert!(!d.report_mode_checked("idle report mode"));
-    seen.lock().unwrap().clear();
-    d.bound.session_autosave.idle_at(now);
-    assert!(seen.lock().unwrap().is_empty());
-    debug_flags::set_sink(None);
-}
-
 /// Puts the network report flags and the sink back when dropped.
 struct Reset;
 impl Drop for Reset {

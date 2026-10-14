@@ -1,0 +1,233 @@
+{
+  "now_ms": 1800000000000,
+  "scenarios": [
+    {
+      "name": "booted a minute ago",
+      "boot": 60,
+      "user": 9999,
+      "mouse": 9999,
+      "api": 9999,
+      "result": false,
+      "messages": [
+        "IDLE MODE - Blocked: Program has not been on for 120s yet."
+      ]
+    },
+    {
+      "name": "all quiet",
+      "boot": 9999,
+      "user": 9999,
+      "mouse": 9999,
+      "api": 9999,
+      "result": true,
+      "messages": [
+        "IDLE MODE - Turning ON"
+      ]
+    },
+    {
+      "name": "user acted 5 seconds ago",
+      "boot": 9999,
+      "user": 5,
+      "mouse": 9999,
+      "api": 9999,
+      "result": false,
+      "messages": [
+        "IDLE MODE - Blocked: Last user action was 5 seconds ago."
+      ]
+    },
+    {
+      "name": "mouse moved 90 seconds ago",
+      "boot": 9999,
+      "user": 9999,
+      "mouse": 90,
+      "api": 9999,
+      "result": false,
+      "messages": [
+        "IDLE MODE - Blocked: Last mouse move was 1 minute 30 seconds ago."
+      ]
+    },
+    {
+      "name": "api used 7 seconds ago",
+      "boot": 9999,
+      "user": 9999,
+      "mouse": 9999,
+      "api": 7,
+      "api_timeout": 60,
+      "result": false,
+      "messages": [
+        "IDLE MODE - Blocked: Last Client API action was 7 seconds ago."
+      ]
+    },
+    {
+      "name": "all three recent",
+      "boot": 9999,
+      "user": 5,
+      "mouse": 90,
+      "api": 7,
+      "api_timeout": 60,
+      "result": false,
+      "messages": [
+        "IDLE MODE - Blocked: Last user action was 5 seconds ago.",
+        "IDLE MODE - Blocked: Last mouse move was 1 minute 30 seconds ago.",
+        "IDLE MODE - Blocked: Last Client API action was 7 seconds ago."
+      ]
+    },
+    {
+      "name": "user period none",
+      "boot": 9999,
+      "user": 5,
+      "mouse": 9999,
+      "api": 9999,
+      "user_period": null,
+      "result": true,
+      "messages": [
+        "IDLE MODE - Turning ON"
+      ]
+    },
+    {
+      "name": "mouse period none",
+      "boot": 9999,
+      "user": 9999,
+      "mouse": 5,
+      "api": 9999,
+      "mouse_period": null,
+      "result": true,
+      "messages": [
+        "IDLE MODE - Turning ON"
+      ]
+    },
+    {
+      "name": "idle disabled",
+      "boot": 9999,
+      "user": 9999,
+      "mouse": 9999,
+      "api": 9999,
+      "normal": false,
+      "result": false,
+      "messages": [
+        "IDLE MODE - Blocked: Options have disabled normal idle work."
+      ]
+    },
+    {
+      "name": "forced",
+      "boot": 60,
+      "user": 5,
+      "mouse": 5,
+      "api": 5,
+      "force": true,
+      "result": true,
+      "messages": [
+        "IDLE MODE - Forced via debug menu"
+      ]
+    },
+    {
+      "name": "shutting down",
+      "boot": 9999,
+      "user": 9999,
+      "mouse": 9999,
+      "api": 9999,
+      "shutting_down": true,
+      "result": false,
+      "messages": [
+        "IDLE MODE - Blocked: Program shutting down."
+      ]
+    },
+    {
+      "name": "was idle, now active",
+      "boot": 9999,
+      "user": 5,
+      "mouse": 9999,
+      "api": 9999,
+      "was_idle": true,
+      "result": false,
+      "messages": [
+        "IDLE MODE - Blocked: Last user action was 5 seconds ago.",
+        "IDLE MODE - Turning OFF"
+      ]
+    },
+    {
+      "name": "was idle, still idle",
+      "boot": 9999,
+      "user": 9999,
+      "mouse": 9999,
+      "api": 9999,
+      "was_idle": true,
+      "result": true,
+      "messages": []
+    },
+    {
+      "name": "was active, now idle",
+      "boot": 9999,
+      "user": 9999,
+      "mouse": 9999,
+      "api": 9999,
+      "was_idle": false,
+      "result": true,
+      "messages": [
+        "IDLE MODE - Turning ON"
+      ]
+    },
+    {
+      "name": "was active, still active",
+      "boot": 9999,
+      "user": 5,
+      "mouse": 9999,
+      "api": 9999,
+      "was_idle": false,
+      "result": false,
+      "messages": [
+        "IDLE MODE - Blocked: Last user action was 5 seconds ago."
+      ]
+    },
+    {
+      "name": "exactly at the user period",
+      "boot": 9999,
+      "user": 1800,
+      "mouse": 9999,
+      "api": 9999,
+      "result": false,
+      "messages": [
+        "IDLE MODE - Blocked: Last user action was 30 minutes ago."
+      ]
+    },
+    {
+      "name": "just past the user period",
+      "boot": 9999,
+      "user": 1801,
+      "mouse": 9999,
+      "api": 9999,
+      "result": true,
+      "messages": [
+        "IDLE MODE - Turning ON"
+      ]
+    },
+    {
+      "name": "exactly 120s since boot",
+      "boot": 120,
+      "user": 9999,
+      "mouse": 9999,
+      "api": 9999,
+      "result": false,
+      "messages": [
+        "IDLE MODE - Blocked: Program has not been on for 120s yet."
+      ]
+    },
+    {
+      "name": "121s since boot",
+      "boot": 121,
+      "user": 9999,
+      "mouse": 9999,
+      "api": 9999,
+      "result": true,
+      "messages": [
+        "IDLE MODE - Turning ON"
+      ]
+    }
+  ],
+  "menu_path": [
+    "help",
+    "debug",
+    "report modes",
+    "idle report mode"
+  ],
+  "silent_when_off": []
+}

@@ -351,16 +351,26 @@ impl Monitor {
             self.0.api_seen.set(at);
             self.api_at(at);
         }
-        let idle = self.0.idle.borrow();
-        for reason in hydrus_core::debug_flags::Flag::IdleReport
+        let reasons = hydrus_core::debug_flags::Flag::IdleReport
             .is_on()
-            .then(|| idle.blocked_reasons(now_ms, &config))
-            .into_iter()
-            .flatten()
-        {
+            .then(|| self.0.idle.borrow().blocked_reasons(now_ms, &config));
+        for reason in reasons.into_iter().flatten() {
             hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::IdleReport, || reason);
         }
-        idle.eligible(now_ms, &config)
+        let eligible = self.0.idle.borrow().eligible(now_ms, &config);
+        if let Some(turning) = self.0.idle.borrow_mut().turning(eligible) {
+            hydrus_core::debug_flags::report(hydrus_core::debug_flags::Flag::IdleReport, || {
+                turning.to_owned()
+            });
+        }
+        eligible
+    }
+    /// Say what the last idle check answered (for the tests of its reports).
+    pub fn set_previously_idle(&self, was: bool) {
+        let _ = self.0.idle.borrow_mut().turning(was);
+    }
+    pub fn boot_at(&self, now_ms: i64) {
+        self.0.idle.borrow_mut().boot(now_ms);
     }
 
     /// Check the live session's computed weight and publish its one-boot warning.

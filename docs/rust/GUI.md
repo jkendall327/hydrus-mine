@@ -4918,7 +4918,7 @@ mode" (the maintenance daemons starting a pass), "file import report mode"
 (file and thumbnail path requests), "gui report mode" (key and mouse events
 caught as shortcuts), "idle report mode" (why the client is not idle: not
 on for 120s, normal idle work disabled, last user, mouse or Client API
-action, or forced from the debug menu), "network report mode" and its
+action, or forced from the debug menu; and when it turns idle or active), "network report mode" and its
 "(silent)" twin (redirects and errors; silent goes to the console only; the
 two entries share the one mode, as the reference's do: silent turns it on and
 sets silent, the plain entry flips it and clears silent),
