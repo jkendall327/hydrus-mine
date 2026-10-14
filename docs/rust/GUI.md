@@ -5646,3 +5646,16 @@ the pairs prefetched ahead are replayed against the reference's canvas from
 direction and group chooser and the "quick and dirty processing" buttons from
 `oracle/fixtures/duplicates_quick_processing.json`. A file that is in several
 of the upcoming pairs is warmed once.
+
+
+## Options recheck additions (#97 phase 2)
+
+- Options > tag suggestions: "Default notebook page" is greyed out while the
+  layout is side-by-side, as in the reference.
+- Choosing from any Options dropdown now updates which other rows are enabled.
+- With "show the top hover text in the status bar" on, the status line of a
+  single selected file counts "imported ... ago" from the same clock the
+  viewer uses.
+- Closing importer pages, the preview background and pop-in, the Options
+  search and Apply, and thumbnail fades are tested against recordings of the
+  reference; each leaf's recheck note names the test.

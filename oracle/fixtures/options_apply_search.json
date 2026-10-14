@@ -1,0 +1,265 @@
+{
+  "pages": [
+    "audio",
+    "colours",
+    "command palette",
+    "connection",
+    "downloading",
+    "duplicates",
+    "exporting",
+    "external programs",
+    "file search",
+    "file sort/collect",
+    "file viewing statistics",
+    "files and trash",
+    "gui",
+    "gui pages",
+    "gui sessions",
+    "import options",
+    "importing",
+    "maintenance and processing",
+    "media playback",
+    "media viewer",
+    "media viewer hovers",
+    "notes",
+    "open externally",
+    "popup notifications",
+    "ratings",
+    "regex favourites",
+    "shortcuts",
+    "speed and memory",
+    "style",
+    "system",
+    "system tray",
+    "tag autocomplete tabs",
+    "tag editing",
+    "tag presentation",
+    "tag sort",
+    "tag suggestions",
+    "thumbnails",
+    "advanced"
+  ],
+  "opens_on": "gui",
+  "searches": [
+    {
+      "query": "TRASH",
+      "matches": [
+        "seconds (files and trash)",
+        "ms (files and trash)",
+        "no age limit (files and trash)",
+        "no size limit (files and trash)",
+        "delete lock (files and trash)",
+        "Do not permit archived files to be deleted from the trash:  (files and trash)",
+        "After archive/delete filter, ensure deletees are inboxed before delete:  (files and trash)",
+        "After duplicate filter, ensure deletees are inboxed before delete:  (files and trash)",
+        "In duplicates auto-resolution, ensure deletees are inboxed before delete:  (files and trash)",
+        "advanced file deletion and custom reasons (files and trash)",
+        "Use the advanced file deletion dialog:  (files and trash)",
+        "Remember the last action:  (files and trash)",
+        "Remember the last reason:  (files and trash)",
+        "If you set the default export directory blank, the client will use 'hydrus_export' under the current user's home directory. (files and trash)",
+        "When copying file hashes, prefix with booru-friendly hash type:  (files and trash)",
+        "Confirm sending files to trash:  (files and trash)",
+        "Confirm sending more than one file to archive or inbox:  (files and trash)",
+        "Confirm when copying files across local file domains:  (files and trash)",
+        "Confirm when moving files across local file domains:  (files and trash)",
+        "When physically deleting files or folders, send them to the OS's recycle bin:  (files and trash)",
+        "When maintenance physically deletes files, wait this long between each delete:  (files and trash)",
+        "When finishing archive/delete filtering, always delete from all possible domains:  (files and trash)",
+        "When finishing archive/delete filtering, delay activation of multiple deletion choice buttons:  (files and trash)",
+        "Remove files from view when they are archive/delete filtered:  (files and trash)",
+        "--even skipped files:  (files and trash)",
+        "Remove files from view when they are sent to the trash:  (files and trash)",
+        "Remove files from view when they are moved to another local file domain:  (files and trash)",
+        "Number of hours a file will stay in the trash before being deleted:  (files and trash)",
+        "Maximum size of trash (MB):  (files and trash)",
+        "Allow trash maintenance during normal time:  (files and trash)",
+        "Allow deferred file deletes during normal time:  (files and trash)",
+        "TEST: Import local files directly from source, do not copy to temp dir beforehand. (files and trash)",
+        "ADVANCED: Do not do chmod when copying files (files and trash)",
+        "Show file trash times:  (media viewer hovers)",
+        "Show file trash reasons:  (media viewer hovers)"
+      ],
+      "first": "seconds (files and trash)",
+      "page": "files and trash",
+      "highlighted": true,
+      "search_text_after": ""
+    },
+    {
+      "query": "zoom",
+      "matches": [
+        "zoom and position (media playback)",
+        "Centerpoint for media zooming: (media playback)",
+        "Media zooms: (media playback)",
+        "Media Viewer default zoom: (media playback)",
+        "Preview Viewer default zoom: (media playback)",
+        "Zoom switch button switches between: (media viewer hovers)",
+        "Important if you do a lot of zooming in and out on the same image or a small number of comparison images. (speed and memory)"
+      ],
+      "first": "zoom and position (media playback)",
+      "page": "media playback",
+      "highlighted": true,
+      "search_text_after": ""
+    },
+    {
+      "query": "audio",
+      "matches": [
+        "The preview window has its own volume:  (audio)",
+        "Label for files with audio:  (audio)",
+        "Score for file with audio: (duplicates)",
+        "Preferred audio output device: (media playback)",
+        "--Fetch list of mpv audio device strings: (media playback)",
+        "DEBUG: Set null audio device on silent media: (media playback)",
+        "Preferred audio output device: (media playback)",
+        "DEBUG: Set null audio device on silent media: (media playback)",
+        "animation/audio seek bar (media viewer)"
+      ],
+      "first": "The preview window has its own volume:  (audio)",
+      "page": "audio",
+      "highlighted": true,
+      "search_text_after": ""
+    },
+    {
+      "query": "recycle",
+      "matches": [
+        "When physically deleting files or folders, send them to the OS's recycle bin:  (files and trash)"
+      ],
+      "first": "When physically deleting files or folders, send them to the OS's recycle bin:  (files and trash)",
+      "page": "files and trash",
+      "highlighted": true,
+      "search_text_after": ""
+    },
+    {
+      "query": "slideshow dur",
+      "matches": [
+        "Slideshow durations: (media viewer)"
+      ],
+      "first": "Slideshow durations: (media viewer)",
+      "page": "media viewer",
+      "highlighted": true,
+      "search_text_after": ""
+    },
+    {
+      "query": "http",
+      "matches": [
+        "DEBUG: do not verify regular https traffic: (connection)",
+        "http:  (connection)",
+        "https:  (connection)"
+      ],
+      "first": "DEBUG: do not verify regular https traffic: (connection)",
+      "page": "connection",
+      "highlighted": true,
+      "search_text_after": ""
+    },
+    {
+      "query": "no such option anywhere",
+      "matches": []
+    },
+    {
+      "query": "gui pages",
+      "matches": [
+        "preview window (gui pages)",
+        "Hide the bottom-left preview window:  (gui pages)",
+        "opening and closing (gui pages)",
+        "Put new page tabs on:  (gui pages)",
+        "the far right (gui pages)",
+        "In new page chooser, show \"combined local file domains\" if appropriate: (gui pages)",
+        "  Put it at the top: (gui pages)",
+        "In new page chooser, show \"hydrus local file storage\": (gui pages)",
+        "  Put it at the top: (gui pages)",
+        "When closing the current tab, move focus:  (gui pages)",
+        "right of the closed page tab (gui pages)",
+        "Confirm when closing any page:  (gui pages)",
+        "Confirm when closing a non-empty importer page:  (gui pages)",
+        "BUGFIX: Force 'hide page' signal when creating a new page:  (gui pages)",
+        "navigation and drag-and-drop (gui pages)",
+        "Notebook tab alignment:  (gui pages)",
+        "top (gui pages)",
+        "Maximum entries to show in page navigation history:  (gui pages)",
+        "When switching to pages, move keyboard focus to any text input field:  (gui pages)",
+        "Selection chases dropped page after drag and drop:  (gui pages)",
+        "  With shift held down?:  (gui pages)",
+        "Navigate tabs during drag and drop:  (gui pages)",
+        "  With shift held down?:  (gui pages)",
+        "EXPERIMENTAL: Mouse wheel scrolls tab bar, not page selection:  (gui pages)",
+        "BUGFIX: Disable all page tab drag and drop:  (gui pages)",
+        "EXPERIMENTAL: Show tab tree view:  (gui pages)",
+        "disable (gui pages)",
+        "EXPERIMENTAL: Hide main page navigation tabs:  (gui pages)",
+        "page tab names (gui pages)",
+        "If you have enough pages in a row, left/right arrows will appear to navigate them back and forth.\nDue to an unfortunate Qt issue, the tab bar will scroll so the current tab is right-most visible whenever you change page or a page is renamed. This is very annoying to live with.\nTherefore, do not put import pages in a long row of tabs, as it will reset scroll position on every progress update. Try to avoid long rows in general.\nJust make some nested 'page of pages' so they are not all in the same row. (gui pages)",
+        "Max characters to display in a page name:  (gui pages)",
+        "When there are too many tabs to fit, '...' elide their names so they fit:  (gui pages)",
+        "Show page file count after its name:  (gui pages)",
+        "for all pages, but only if greater than zero (gui pages)",
+        "Show import page x/y progress after its name:  (gui pages)",
+        "Automatically prompt to rename new 'page of pages' after creation:  (gui pages)",
+        "  Also automatically prompt when sending some pages to one:  (gui pages)",
+        "Suffix 'page of pages' tab names with a decorator string:  (gui pages)",
+        "  Decorator string:  (gui pages)"
+      ],
+      "first": "preview window (gui pages)",
+      "page": "gui pages",
+      "highlighted": true,
+      "search_text_after": ""
+    }
+  ],
+  "before": {
+    "delete_to_recycle_bin": true,
+    "trash_max_size": 2048,
+    "trash_max_age": 72,
+    "max_page_name_chars": 20,
+    "slideshow": [
+      1.0,
+      5.0,
+      10.0,
+      30.0,
+      60.0
+    ],
+    "http_proxy": null,
+    "score_has_audio": 20
+  },
+  "tab_names_before": [
+    "files"
+  ],
+  "after_cancel": {
+    "delete_to_recycle_bin": true,
+    "trash_max_size": 2048,
+    "trash_max_age": 72,
+    "max_page_name_chars": 20,
+    "slideshow": [
+      1.0,
+      5.0,
+      10.0,
+      30.0,
+      60.0
+    ],
+    "http_proxy": null,
+    "score_has_audio": 20
+  },
+  "tab_names_after_cancel": [
+    "files"
+  ],
+  "popups_after_cancel": [],
+  "after_apply": {
+    "delete_to_recycle_bin": false,
+    "trash_max_size": null,
+    "trash_max_age": 72,
+    "max_page_name_chars": 2,
+    "slideshow": [
+      1.0,
+      5.0,
+      10.0,
+      30.0,
+      60.0
+    ],
+    "http_proxy": "http://127.0.0.1:8080",
+    "score_has_audio": -30
+  },
+  "tab_names_after_apply": [
+    "f…"
+  ],
+  "popups_after_apply": [
+    "Could not parse those slideshow durations, so they were not saved!"
+  ]
+}

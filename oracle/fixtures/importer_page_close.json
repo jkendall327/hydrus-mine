@@ -1,0 +1,513 @@
+{
+  "items": 3,
+  "records": [
+    {
+      "option": true,
+      "kind": "search",
+      "for_session": false,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "search",
+      "for_session": false,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "search",
+      "for_session": true,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "search",
+      "for_session": true,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "urls",
+      "for_session": false,
+      "answer_yes": true,
+      "questions": [
+        "Close \"url import\"?\n\nThis is a urls import page holding 3 import objects."
+      ],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "urls",
+      "for_session": false,
+      "answer_yes": false,
+      "questions": [
+        "Close \"url import\"?\n\nThis is a urls import page holding 3 import objects."
+      ],
+      "vetoed": ""
+    },
+    {
+      "option": true,
+      "kind": "urls",
+      "for_session": true,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "urls",
+      "for_session": true,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "simple",
+      "for_session": false,
+      "answer_yes": true,
+      "questions": [
+        "Close \"simple downloader\"?\n\nThis is a simple urls import page holding 3 import objects."
+      ],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "simple",
+      "for_session": false,
+      "answer_yes": false,
+      "questions": [
+        "Close \"simple downloader\"?\n\nThis is a simple urls import page holding 3 import objects."
+      ],
+      "vetoed": ""
+    },
+    {
+      "option": true,
+      "kind": "simple",
+      "for_session": true,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "simple",
+      "for_session": true,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "gallery",
+      "for_session": false,
+      "answer_yes": true,
+      "questions": [
+        "Close \"gallery\"?\n\nThis is a gallery downloader page holding 3 import objects."
+      ],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "gallery",
+      "for_session": false,
+      "answer_yes": false,
+      "questions": [
+        "Close \"gallery\"?\n\nThis is a gallery downloader page holding 3 import objects."
+      ],
+      "vetoed": ""
+    },
+    {
+      "option": true,
+      "kind": "gallery",
+      "for_session": true,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "gallery",
+      "for_session": true,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "watcher",
+      "for_session": false,
+      "answer_yes": true,
+      "questions": [
+        "Close \"watcher\"?\n\nThis is a watcher page holding 3 import objects."
+      ],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "watcher",
+      "for_session": false,
+      "answer_yes": false,
+      "questions": [
+        "Close \"watcher\"?\n\nThis is a watcher page holding 3 import objects."
+      ],
+      "vetoed": ""
+    },
+    {
+      "option": true,
+      "kind": "watcher",
+      "for_session": true,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "watcher",
+      "for_session": true,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "local",
+      "for_session": false,
+      "answer_yes": true,
+      "questions": [
+        "Close \"import\"?\n\nThis is a local import page holding 3 import objects."
+      ],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "local",
+      "for_session": false,
+      "answer_yes": false,
+      "questions": [
+        "Close \"import\"?\n\nThis is a local import page holding 3 import objects."
+      ],
+      "vetoed": ""
+    },
+    {
+      "option": true,
+      "kind": "local",
+      "for_session": true,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "local",
+      "for_session": true,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "empty urls",
+      "for_session": false,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "empty urls",
+      "for_session": false,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "empty urls",
+      "for_session": true,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "empty urls",
+      "for_session": true,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "search",
+      "for_session": false,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "search",
+      "for_session": false,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "search",
+      "for_session": true,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "search",
+      "for_session": true,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "urls",
+      "for_session": false,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "urls",
+      "for_session": false,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "urls",
+      "for_session": true,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "urls",
+      "for_session": true,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "simple",
+      "for_session": false,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "simple",
+      "for_session": false,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "simple",
+      "for_session": true,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "simple",
+      "for_session": true,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "gallery",
+      "for_session": false,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "gallery",
+      "for_session": false,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "gallery",
+      "for_session": true,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "gallery",
+      "for_session": true,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "watcher",
+      "for_session": false,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "watcher",
+      "for_session": false,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "watcher",
+      "for_session": true,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "watcher",
+      "for_session": true,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "local",
+      "for_session": false,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "local",
+      "for_session": false,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "local",
+      "for_session": true,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "local",
+      "for_session": true,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "empty urls",
+      "for_session": false,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "empty urls",
+      "for_session": false,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "empty urls",
+      "for_session": true,
+      "answer_yes": true,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "empty urls",
+      "for_session": true,
+      "answer_yes": false,
+      "questions": [],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "urls still importing",
+      "for_session": false,
+      "answer_yes": true,
+      "questions": [
+        "Close \"url import\"?\n\nThis page is still importing."
+      ],
+      "vetoed": null
+    },
+    {
+      "option": true,
+      "kind": "urls still importing",
+      "for_session": false,
+      "answer_yes": false,
+      "questions": [
+        "Close \"url import\"?\n\nThis page is still importing."
+      ],
+      "vetoed": ""
+    },
+    {
+      "option": false,
+      "kind": "urls still importing",
+      "for_session": false,
+      "answer_yes": true,
+      "questions": [
+        "Close \"url import\"?\n\nThis page is still importing."
+      ],
+      "vetoed": null
+    },
+    {
+      "option": false,
+      "kind": "urls still importing",
+      "for_session": false,
+      "answer_yes": false,
+      "questions": [
+        "Close \"url import\"?\n\nThis page is still importing."
+      ],
+      "vetoed": ""
+    }
+  ]
+}

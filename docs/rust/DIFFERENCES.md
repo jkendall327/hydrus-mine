@@ -5063,3 +5063,20 @@ potential duplicates (as the reference does as groups merge), so approving
   `GalleryImport` the limit; hydrus-rs has no separate single-gallery-import
   object, so that recorded value (`gallery_file_limit.json` `gallery import`) is
   not replayed. A gallery page and a new subscription are.
+
+
+## Options: search order, namespace colour selection, preview URL lines (#97)
+
+- Options search lists the same matches as the reference's completer for the
+  recorded queries (less the entries pinned in
+  `oracle/fixtures/options_search_known_differences.json`) but in layout
+  order; the reference lists them in the order Qt finds the widgets (the
+  order they were made in).
+- The preview window's top-right background draws the file's URLs after its
+  locations by hydrus-rs's default (every URL class, unmatched URLs too); the
+  reference's default shows none of the `basic` file's.
+- Tab alignment: the bar's thickness (28 px a row, 56 px for the two rows; Qt's tabs are 26 px) and the direction of
+  rotated West/East labels are not compared with the reference's Qt tabs.
+- "Width of suggested tags columns" and "Autocomplete list height" are read
+  as properties of the Manage Tags window; the lists' laid-out size is not
+  measured against the reference.
