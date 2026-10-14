@@ -894,7 +894,9 @@ fn menu_rows(window: &CommandPaletteWindow, query: &str, any: bool) -> Vec<(Stri
     }
 }
 
-// (not tagged for the main-menubar leaf: "review threads" is missing natively)
+// "review threads" is missing natively: the leaf `audit-options-help-debug-action-review-threads`
+// is out of scope (Python runtime internals; DECISIONS.md 2026-10-14, the 79 signed off)
+// leaf: audit-options-command-palette-command-palette-advanced-search-main-menubar
 #[test]
 fn the_main_menu_rows_are_the_reference_s_flattened_menubar_and_the_setting_gates_them() {
     let recorded = hydrus_testkit::fixture_json("command_palette.json");

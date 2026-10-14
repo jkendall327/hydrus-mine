@@ -6463,9 +6463,9 @@
    ],
    "recheck": {
     "date": "2026-10-14",
-    "class": "weak",
+    "class": "sound",
     "by": "W5-12 session (wave 5)",
-    "note": "The hidden backup entries ('update database backup', 'change database backup location…', the multiple-locations note) are now listed as the reference's QAction walk lists them, and activating the hidden update row with no location warns 'No backup path is set!' (command_palette.rs a_hidden_backup_row_is_listed_and_runs_as_the_reference_s_action_does; the recorded main_menu_real rows now replay without filtering them). Still weak: Help > debug > data actions > 'review threads' (Python threads and job schedulers, ReviewThreads) has no native counterpart and the test filters that row; DIFFERENCES.md. Not tagged."
+    "note": "Six queries replay the reference's flattened menubar rows and menu paths in order (command_palette.json main_menu_real, now including the backup rows the menubar hides, which the reference's QAction walk lists), and with the setting off none; activating the hidden update row with no location warns 'No backup path is set!'. The one reference row absent natively is Help > debug > data actions > 'review threads' (Python threads and schedulers), whose leaf audit-options-help-debug-action-review-threads is out of scope (DECISIONS.md 2026-10-14: the 79 signed off); the test filters that row only. Tests: crates/hydrus-gui/tests/gui/command_palette.rs the_main_menu_rows_are_the_reference_s_flattened_menubar_and_the_setting_gates_them, a_hidden_backup_row_is_listed_and_runs_as_the_reference_s_action_does."
    }
   },
   {
