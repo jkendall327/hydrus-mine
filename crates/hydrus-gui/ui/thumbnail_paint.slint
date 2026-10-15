@@ -115,25 +115,38 @@ export component ThumbnailCellPaint inherits Rectangle {
                     height: parent.height - 2 * root.paint.border;
                     clip: true;
                     if root.paint.top != "": Rectangle {
+                        property <length> text-width: max(0px, min(top-text.preferred-width, 30000px));
+                        property <length> text-height: max(0px, min(top-text.preferred-height, 1000px));
                         y: 0;
-                        height: top-text.preferred-height + 2px;
+                        height: self.text-height + 2px;
                         background: root.paint.banner-top-background;
                         top-text := Text {
-                            x: (parent.width - self.preferred-width) / 2;
+                            x: (parent.width - self.width) / 2;
                             y: 1px;
+                            width: parent.text-width;
+                            height: parent.text-height;
                             text: root.paint.top;
                             color: root.paint.banner-top-text;
                         }
                     }
+                    // (a banner wider than the thumbnail runs off its left
+                    // edge, its end showing, as the reference's does; the
+                    // box is cut to the thumbnail, and a text the renderer
+                    // measures as infinite or NaN taken as wide, since a
+                    // non-finite box crashed the software renderer)
                     if root.paint.bottom != "": Rectangle {
-                        width: bottom-text.preferred-width + 2px;
-                        height: bottom-text.preferred-height + 2px;
+                        property <length> text-width: max(0px, min(bottom-text.preferred-width, 30000px));
+                        property <length> text-height: max(0px, min(bottom-text.preferred-height, 1000px));
+                        width: min(self.text-width, parent.width) + 2px;
+                        height: self.text-height + 2px;
                         x: parent.width - self.width;
-                        y: parent.height - bottom-text.preferred-height;
+                        y: parent.height - self.text-height;
                         background: root.paint.banner-bottom-background;
                         bottom-text := Text {
-                            x: 1px;
+                            x: parent.width - 1px - self.width;
                             y: 1px;
+                            width: parent.text-width;
+                            height: parent.text-height;
                             text: root.paint.bottom;
                             color: root.paint.banner-bottom-text;
                         }
