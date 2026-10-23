@@ -609,8 +609,11 @@ fn a_rule_typed_in_the_editor_exports_as_the_reference_s() {
     assert_eq!(said(), Vec::<Value>::new(), "exported without a problem");
     let text = copied.borrow().get(before).cloned().expect("copied");
     let (mut ours, mut theirs) = (normal(&text), normal(&recorded_text));
-    // (the comparator's predicates in the order its search keeps them, as
-    // the reference's editor's list does; the recording set them directly)
+    // (the comparator's predicates compared as a set: the reference's editor
+    // gives them back as one, its `GetPredicates` returning the search's
+    // `set`, which the serialiser writes in its iteration order, following
+    // Python's per-process string hashes, so no order of the reference's can
+    // be recorded)
     for value in [&mut ours, &mut theirs] {
         if let Some(predicates) = value[3][5][2][2][0][1][2][1][2][2][3].as_array_mut() {
             predicates.sort_by_key(ToString::to_string);
