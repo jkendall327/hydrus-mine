@@ -1596,7 +1596,11 @@ keys; deleting selected rows asks the recorded confirmation. Invalid/mixed-type
 packages are rejected atomically instead of partially importing valid rows.
 Test-data
 URL fetches use a window-local downloader engine: progress appears in the test panel
-rather than the daemon job review. The page editor's fetch control has the
+rather than the daemon job review. Closing an editor or the formula test panel
+leaves its request to finish and drops the result, as the reference does; while a
+fetch runs, hydrus-rs disables the editor's fetch controls, so a second fetch
+cannot be started over the first (the reference lets both run and shows whichever
+finishes last). The page editor's fetch control has the
 reference's texts and gauge but no cog menu, and an invalid url's message is shown
 in the editor rather than in an error dialog. Its requests use the same headers, cookies,
 network settings and accounting machinery, and their usage is merged safely with
@@ -5345,8 +5349,8 @@ Differences:
   process, so its work is not shown), with the tooltip "current db job: <job>"
   as the reference's (`oracle/fixtures/status_db.json`). The reference names a
   job by its database action ("write import_file"); hydrus-rs's jobs are
-  closures, so a job is named by the Rust path of the function it is written
-  in ("write hydrus_gui::maintenance_runtime::..."). Several reads can
+  closures, so a job is named by the function it is written in ("write
+  set_statuses"), hydrus-rs's own names. Several reads can
   run at once here; the tooltip names the writer's job, else the latest read's.
 - **`audit-options-importing-drag-and-drop-when-dnding-a-url-onto-the-program-switch-to-the-page-where-it-lands`
   stays untagged.** winit 0.30 delivers `DroppedFile` for dropped files on

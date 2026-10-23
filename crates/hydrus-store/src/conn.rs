@@ -332,8 +332,9 @@ impl Db {
     }
 
     /// The job the database is doing, as the reference names its jobs
-    /// ("read media_results"): "read" or "write", then where the job is
-    /// written; the writer's (or the commit's) first, else the latest read's.
+    /// ("read media_results"): "read" or "write", then the function the job
+    /// is written in; the writer's (or the commit's) first, else the latest
+    /// read's.
     pub fn current_job(&self) -> Option<String> {
         if let Some(name) = self.activity.writer_job.lock().clone() {
             return Some(name);
@@ -466,14 +467,34 @@ struct Activity {
 }
 
 /// A job's name for the status bar's tooltip, as the reference's
-/// `JobDatabase.ToString` gives "write import_file": its kind, then where
-/// the job is written (`f`'s type, without its closures).
+/// `JobDatabase.ToString` gives "write import_file": its kind, then the name
+/// of the function the job is written in (`f`'s type, without its
+/// closures, generics and module path), the nearest thing hydrus-rs has to
+/// the reference's database actions.
 fn job_name(kind: &str, type_name: &str) -> String {
     let mut path = type_name;
     while let Some(outer) = path.strip_suffix("::{{closure}}") {
         path = outer;
     }
-    format!("{kind} {path}")
+    // (a generic function's own parameters: `load<T>`)
+    if path.ends_with('>') {
+        let mut depth = 0;
+        for (at, c) in path.char_indices().rev() {
+            match c {
+                '>' => depth += 1,
+                '<' => {
+                    depth -= 1;
+                    if depth == 0 {
+                        path = &path[..at];
+                        break;
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+    let function = path.rsplit("::").next().unwrap_or(path);
+    format!("{kind} {function}")
 }
 
 /// Names one running read while alive.
@@ -644,6 +665,24 @@ fn run_job(conn: &Connection, job: WriteJob, activity: &Activity) -> JobOutcome 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_job_is_named_by_the_function_it_is_written_in() {
+        assert_eq!(
+            job_name(
+                "write",
+                "hydrus_store::queues::set_statuses::{{closure}}::{{closure}}"
+            ),
+            "write set_statuses"
+        );
+        assert_eq!(
+            job_name(
+                "read",
+                "hydrus_gui::page::Page::refresh<alloc::string::String>::{{closure}}"
+            ),
+            "read refresh"
+        );
+    }
 
     #[test]
     fn the_writer_empties_the_log_every_quarter_hour() {

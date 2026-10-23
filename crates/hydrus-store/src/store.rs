@@ -360,7 +360,7 @@ impl Store {
     }
 
     /// The job the database is doing now, named as the status bar's tooltip
-    /// names it ("write " and the path of the function the job is written in), if any.
+    /// names it ("write " and the function the job is written in), if any.
     pub fn db_current_job(&self) -> Option<String> {
         self.db.current_job()
     }

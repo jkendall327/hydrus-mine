@@ -3,7 +3,7 @@
 //! the database is doing (reading, writing, committing, locked, nothing),
 //! and "current db job: <the job>" while it has one. The reference names a
 //! job by its action ("read status_test"); hydrus-rs's jobs are closures,
-//! named by where they are written.
+//! named by the function they are written in.
 
 use serde_json::Value;
 
@@ -44,11 +44,8 @@ fn the_database_field_says_what_the_database_does_and_its_job_as_the_reference_d
             seen = shown();
         }
     };
-    // (a job is named by where it is written: this test)
-    let here = format!(
-        "{}::the_database_field_says_what_the_database_does_and_its_job_as_the_reference_does",
-        module_path!()
-    );
+    // (a job is named by the function it is written in: this test)
+    let here = "the_database_field_says_what_the_database_does_and_its_job_as_the_reference_does";
 
     // nothing
     let idle = &recorded["idle"];
@@ -109,7 +106,10 @@ fn the_database_field_says_what_the_database_does_and_its_job_as_the_reference_d
         ),
     );
 
-    // its commit held: committing, the job still named
+    // its commit held: committing, the job still named. (The tooltip names
+    // the batch's last job: a write of the client's own joining this batch
+    // would be named instead, so the comparison waits until ours is shown;
+    // the client's timers are not pumped here, so none is expected.)
     let hold = client.store.hold_next_commit();
     release.send(()).unwrap();
     let committing = &recorded["committing"];

@@ -1,7 +1,7 @@
 //! The download control's cog acting on a live engine's job, as the
 //! reference's `NetworkJobControl` acts on its job: the entries each wait
 //! offers, and the job's flags after "override forced gallery wait times",
-//! "reattempt request now", "reattempt connection now" and "scrub domain
+//! "reattempt connection now", "reattempt request now" and "scrub domain
 //! errors" (`actions.retry` of oracle/fixtures/network_job_control.json).
 use hydrus_core::{bandwidth::GalleryTokenKind, network::NetworkContext};
 use hydrus_gui::{MainWindow, headless, network_data_window, network_job_control as gui};
@@ -104,44 +104,33 @@ fn the_cog_s_retry_scrub_and_token_entries_clear_a_live_job_s_waits_as_the_refer
             )
         })
         .unwrap();
-    // The site, the recording's example.com, reached through the local
-    // server as its http proxy (scrubbing clears a second-level domain's
-    // errors, and an IP address has none): a first gallery page (taking the site's token); then, for
-    // the job under test, "509" (a serverside bandwidth wait), a connection
-    // dropped before any answer (a connection error wait), and a request
-    // held open until the test is done.
+    // The site, the recording's example.com, reached through a local server
+    // as its http proxy (scrubbing clears a second-level domain's errors,
+    // and an IP address has none). The proxy answers a first gallery page
+    // (which takes the site's token), then stops listening, so the job under
+    // test cannot connect (a connection error wait of a whole retry period);
+    // listening again on the same port, it answers "509" (a serverside
+    // bandwidth wait) and then holds the request open until the test is done.
     let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
-    let proxy = format!("http://{}", listener.local_addr().unwrap());
+    let address = listener.local_addr().unwrap();
+    let proxy = format!("http://{address}");
     let base = "http://example.com";
-    let (release, released) = std::sync::mpsc::channel::<()>();
-    let (holding, held) = std::sync::mpsc::channel::<()>();
-    let server = std::thread::spawn(move || {
-        let read = |stream: &mut std::net::TcpStream| {
-            let mut request = [0; 4096];
-            assert!(stream.read(&mut request).unwrap() > 0);
-        };
+    let read = |stream: &mut std::net::TcpStream| {
+        let mut request = [0; 4096];
+        assert!(stream.read(&mut request).unwrap() > 0);
+    };
+    let (closed, proxy_closed) = std::sync::mpsc::channel::<()>();
+    let first = std::thread::spawn(move || {
         let (mut first, _) = listener.accept().unwrap();
         read(&mut first);
         first
             .write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\nConnection: close\r\n\r\nok")
             .unwrap();
-        drop(first);
-        let (mut limited, _) = listener.accept().unwrap();
-        read(&mut limited);
-        limited
-            .write_all(b"HTTP/1.1 509 Bandwidth Limit Exceeded\r\nContent-Length: 4\r\nConnection: close\r\n\r\nslow")
-            .unwrap();
-        drop(limited);
-        let (mut dropped, _) = listener.accept().unwrap();
-        read(&mut dropped);
-        drop(dropped);
-        let (mut kept, _) = listener.accept().unwrap();
-        read(&mut kept);
-        holding.send(()).unwrap();
-        released.recv().unwrap();
-        let _ =
-            kept.write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\nConnection: close\r\n\r\nok");
+        drop(listener);
+        closed.send(()).unwrap();
     });
+    let (release, released) = std::sync::mpsc::channel::<()>();
+    let (holding, held) = std::sync::mpsc::channel::<()>();
     // (one serious error marks the domain, as the reference's scenario has
     // the domain at its error limit)
     let engine = Arc::new(
@@ -193,16 +182,24 @@ fn the_cog_s_retry_scrub_and_token_entries_clear_a_live_job_s_waits_as_the_refer
         slots,
     );
 
+    // Each wait is ended by its entry well before it would end by itself:
+    // the token's 15 seconds, the connection retry's 15 (its second
+    // attempt), the server's 60 and more.
+    let soon = std::time::Duration::from_secs(8);
+
     // The second page waits on the token the first took.
     until("the token wait", || {
         live(&store).is_some_and(|(j, c)| j.wait == WaitReason::Gallery && !c.tokens_ok)
     });
+    let waiting = std::time::Instant::now();
+    proxy_closed.recv().unwrap();
+    first.join().unwrap();
     click(&window, model::GALLERY_LABEL);
-    until("the serverside bandwidth wait", || {
-        live(&store).is_some_and(|(j, c)| {
-            j.wait == WaitReason::ServerBandwidth && c.waiting_on_serverside_bandwidth
-        })
+    until("the connection error wait", || {
+        live(&store)
+            .is_some_and(|(j, c)| j.wait == WaitReason::Connection && c.waiting_on_connection_error)
     });
+    assert!(waiting.elapsed() < soon, "the token wait ended by itself");
     assert_eq!(live(&store).unwrap().1.tokens_ok, retry[3]);
     until("the token entry to go", || {
         !entries(&window)
@@ -210,29 +207,56 @@ fn the_cog_s_retry_scrub_and_token_entries_clear_a_live_job_s_waits_as_the_refer
             .any(|(l, _)| l == model::GALLERY_LABEL)
     });
 
-    click(&window, model::SERVER_LABEL);
-    until("the connection error wait", || {
-        live(&store)
-            .is_some_and(|(j, c)| j.wait == WaitReason::Connection && c.waiting_on_connection_error)
+    // (the proxy listening again, on the same port)
+    let listener = std::net::TcpListener::bind(address).unwrap();
+    let second = std::thread::spawn(move || {
+        let (mut limited, _) = listener.accept().unwrap();
+        read(&mut limited);
+        limited
+            .write_all(b"HTTP/1.1 509 Bandwidth Limit Exceeded\r\nContent-Length: 4\r\nConnection: close\r\n\r\nslow")
+            .unwrap();
+        drop(limited);
+        let (mut kept, _) = listener.accept().unwrap();
+        read(&mut kept);
+        holding.send(()).unwrap();
+        released.recv().unwrap();
+        let _ =
+            kept.write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\nConnection: close\r\n\r\nok");
     });
-    assert_eq!(
-        live(&store).unwrap().1.waiting_on_serverside_bandwidth,
-        retry[1]
-    );
-
+    let waiting = std::time::Instant::now();
     click(&window, model::CONNECTION_LABEL);
-    until("the held request", || held.try_recv().is_ok());
-    until("the running job", || {
+    until("the serverside bandwidth wait", || {
         live(&store).is_some_and(|(j, c)| {
-            j.wait == WaitReason::Downloading && !c.waiting_on_connection_error
+            j.wait == WaitReason::ServerBandwidth && c.waiting_on_serverside_bandwidth
         })
     });
+    assert!(
+        waiting.elapsed() < soon,
+        "the connection wait ended by itself"
+    );
     assert_eq!(
         live(&store).unwrap().1.waiting_on_connection_error,
         retry[0]
     );
 
-    // (the 509 and the dropped connection were serious errors on its domain)
+    let waiting = std::time::Instant::now();
+    click(&window, model::SERVER_LABEL);
+    until("the held request", || held.try_recv().is_ok());
+    until("the running job", || {
+        live(&store).is_some_and(|(j, c)| {
+            j.wait == WaitReason::Downloading && !c.waiting_on_serverside_bandwidth
+        })
+    });
+    assert!(
+        waiting.elapsed() < soon,
+        "the server's wait ended by itself"
+    );
+    assert_eq!(
+        live(&store).unwrap().1.waiting_on_serverside_bandwidth,
+        retry[1]
+    );
+
+    // (the refused connection and the 509 were serious errors on its domain)
     until("the domain errors", || {
         live(&store).is_some_and(|(_, c)| !c.domain_ok)
     });
@@ -267,5 +291,5 @@ fn the_cog_s_retry_scrub_and_token_entries_clear_a_live_job_s_waits_as_the_refer
     let results = worker.join().unwrap();
     assert_eq!(results.len(), 2);
     assert!(results.iter().all(Result::is_ok), "{results:?}");
-    server.join().unwrap();
+    second.join().unwrap();
 }
