@@ -68,6 +68,7 @@ mod large_store;
 mod list_drag;
 mod login_script_controls;
 mod login_workflows;
+mod long_text_selection;
 mod main_identity;
 mod main_shortcuts;
 mod manage_notes;

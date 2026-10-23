@@ -202,6 +202,15 @@ search.
   finish before the page is shown again, so it is never seen searching.
 - **One client at a time on a store**, as the reference allows one client
   on its database; a second says the store is already open.
+- **Very long lines in text inputs can crash the client.** Slint 1.18.1's
+  software renderer draws a text input's selection as one rectangle the
+  width of the selected text and casts it to 16-bit device pixels, so
+  selecting all of a line wider than 32767 device pixels (a ~4800-character
+  URL pasted into the search box, then Ctrl+A) panics; Qt copes. This is
+  upstream (`fill_rectangle` in i-slint-renderer-software); hydrus-rs has
+  no fix of its own yet. `long_text_selection.rs` reproduces it (ignored
+  until it is fixed). Thumbnail tag banners, which crashed the same way,
+  are fixed: their boxes are bounded (`thumbnail_banner_width.rs`).
 
 ## Pages (`hydrus-gui`)
 
