@@ -267,3 +267,177 @@ pub fn open_described(
     w.show().map_err(|e| e.to_string())?;
     Ok(w)
 }
+
+/// The "to pngs" panel's window, while it is open.
+#[derive(Clone, Default)]
+pub struct PngsSlots(pub Rc<RefCell<Option<crate::PngsExportWindow>>>);
+impl std::fmt::Debug for PngsSlots {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_tuple("PngsSlots").field(&self.has_open()).finish()
+    }
+}
+impl PngsSlots {
+    pub fn has_open(&self) -> bool {
+        self.0.borrow().is_some()
+    }
+    pub fn window(&self) -> Option<crate::PngsExportWindow> {
+        self.0
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong)
+    }
+    pub fn cancel(&self) {
+        if let Some(w) = self.window() {
+            w.invoke_action("close".into());
+        }
+    }
+}
+
+/// One object of a "to pngs" export: its name (the png's title and file
+/// name), its payload description and its serialised text.
+#[derive(Debug, Clone)]
+pub struct Named {
+    pub name: String,
+    pub summary: String,
+    pub payload: String,
+}
+
+/// Export named objects each to its own png in a directory, as the
+/// reference's `PNGsExportPanel` does: `{directory}/{name}.png`, titled by
+/// the name, with no description; the directory is remembered as the last
+/// png export folder, and the panel starts there.
+pub fn open_many(
+    slots: &PngsSlots,
+    store: &Arc<Store>,
+    objects: Vec<Named>,
+) -> Result<crate::PngsExportWindow, String> {
+    if let Some(w) = slots.window() {
+        return Ok(w);
+    }
+    let w = crate::app_title::new::<crate::PngsExportWindow>().map_err(|e| e.to_string())?;
+    let directory = store
+        .read(settings::get::<model::Directory>)
+        .map_err(|e| e.to_string())?;
+    if let Some(directory) = directory.0 {
+        w.set_path(directory.into());
+    }
+    let alive = Rc::new(Cell::new(true));
+    let close = Rc::new({
+        let weak = w.as_weak();
+        let slot = Rc::downgrade(&slots.0);
+        let alive = alive.clone();
+        move || {
+            if !alive.replace(false) {
+                return;
+            }
+            if let Some(w) = weak.upgrade() {
+                let _ = w.hide();
+            }
+            if let Some(slot) = slot.upgrade() {
+                slot.borrow_mut().take();
+            }
+        }
+    });
+    let update = Rc::new({
+        let weak = w.as_weak();
+        move || {
+            if let Some(w) = weak.upgrade() {
+                // (`_Update`: only a path is needed)
+                if w.get_path().is_empty() {
+                    w.set_export_label("select a path".into());
+                    w.set_can_export(false);
+                } else {
+                    w.set_export_label("export".into());
+                    w.set_can_export(true);
+                }
+            }
+        }
+    });
+    w.on_action({
+        let weak = w.as_weak();
+        let store = store.clone();
+        let alive = alive.clone();
+        let close = close.clone();
+        let update = update.clone();
+        move |action| {
+            if !alive.get() {
+                return;
+            }
+            let Some(w) = weak.upgrade() else {
+                return;
+            };
+            let result = (|| -> Result<(), String> {
+                match action.as_str() {
+                    "close" => close(),
+                    "update" => {
+                        w.set_done(false);
+                        update();
+                    }
+                    "browse" => {
+                        if let Some(path) = rfd::FileDialog::new()
+                            .set_title("select a path")
+                            .pick_folder()
+                        {
+                            w.set_path(path.to_string_lossy().as_ref().into());
+                            w.set_done(false);
+                            update();
+                        }
+                    }
+                    "export" => {
+                        let directory = PathBuf::from(w.get_path().as_str());
+                        if directory.as_os_str().is_empty() {
+                            return Err("select a path".into());
+                        }
+                        let width = u32::try_from(w.get_png_width()).map_err(|e| e.to_string())?;
+                        let setting =
+                            model::Directory(Some(directory.to_string_lossy().into_owned()));
+                        store
+                            .write(move |ctx| settings::set(ctx.conn(), &setting))
+                            .map_err(|e| e.to_string())?;
+                        for object in &objects {
+                            let data = model::encode_with_summary(
+                                &object.payload,
+                                width,
+                                &object.name,
+                                &object.summary,
+                                "",
+                            )?;
+                            let mut path = directory.join(&object.name).into_os_string();
+                            if !path.to_string_lossy().ends_with(".png") {
+                                path.push(".png");
+                            }
+                            std::fs::write(&path, &data).map_err(|e| e.to_string())?;
+                        }
+                        w.set_error("".into());
+                        w.set_done(true);
+                        let weak = w.as_weak();
+                        let alive = alive.clone();
+                        slint::Timer::single_shot(std::time::Duration::from_secs(2), move || {
+                            if alive.get()
+                                && let Some(w) = weak.upgrade()
+                            {
+                                w.set_done(false);
+                            }
+                        });
+                    }
+                    _ => {}
+                }
+                Ok(())
+            })();
+            if let Err(error) = result {
+                w.set_error(error.into());
+            }
+        }
+    });
+    w.window().on_close_requested({
+        let close = close.clone();
+        move || {
+            close();
+            slint::CloseRequestResponse::HideWindow
+        }
+    });
+    *slots.0.borrow_mut() = Some(w.clone_strong());
+    update();
+    w.show().map_err(|e| e.to_string())?;
+    Ok(w)
+}

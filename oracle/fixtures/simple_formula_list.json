@@ -56,7 +56,8 @@
      true
     ]
    ],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": null
   },
   {
    "step": "add one with the same name",
@@ -88,7 +89,8 @@
      true
     ]
    ],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": null
   },
   {
    "step": "cancel the name",
@@ -116,7 +118,8 @@
      null
     ]
    ],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": null
   },
   {
    "step": "cancel the formula editor",
@@ -148,7 +151,8 @@
      false
     ]
    ],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": null
   },
   {
    "step": "select a row",
@@ -171,7 +175,8 @@
     "add defaults": true
    },
    "dialogs": [],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": null
   },
   {
    "step": "edit it",
@@ -205,7 +210,8 @@
      true
     ]
    ],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": null
   },
   {
    "step": "edit, cancel the name",
@@ -235,7 +241,8 @@
      null
     ]
    ],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": null
   },
   {
    "step": "edit, cancel the formula editor",
@@ -269,7 +276,8 @@
      false
     ]
    ],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": null
   },
   {
    "step": "edit, keep the name",
@@ -303,7 +311,8 @@
      true
     ]
    ],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": null
   },
   {
    "step": "delete, say no",
@@ -332,7 +341,8 @@
      false
     ]
    ],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": null
   },
   {
    "step": "delete, say yes",
@@ -358,7 +368,8 @@
      true
     ]
    ],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": null
   },
   {
    "step": "delete with nothing selected",
@@ -378,7 +389,8 @@
     "add defaults": true
    },
    "dialogs": [],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": null
   },
   {
    "step": "add them all",
@@ -400,7 +412,8 @@
     "add defaults": true
    },
    "dialogs": [],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": null
   },
   {
    "step": "add them all again",
@@ -424,7 +437,8 @@
     "add defaults": true
    },
    "dialogs": [],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": null
   },
   {
    "step": "select from a list, cancel",
@@ -462,7 +476,8 @@
      null
     ]
    ],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": null
   },
   {
    "step": "select from a list, none ticked",
@@ -500,7 +515,8 @@
      []
     ]
    ],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": null
   },
   {
    "step": "select from a list, one ticked",
@@ -541,7 +557,8 @@
      ]
     ]
    ],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": null
   },
   {
    "step": "select two rows",
@@ -569,7 +586,8 @@
     "add defaults": true
    },
    "dialogs": [],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": null
   },
   {
    "step": "delete two",
@@ -598,7 +616,8 @@
      true
     ]
    ],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": null
   }
  ],
  "exchange": [
@@ -640,7 +659,8 @@
     "add defaults": true
    },
    "dialogs": [],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": null
   },
   {
    "step": "export to clipboard",
@@ -663,7 +683,8 @@
    "dialogs": [],
    "clipboard": [
     "[63, \"all files linked by images in page\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"a\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, \"img\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [1, \"a\", null, null, 1, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"href\", \"\", [84, 1, [26, 3, []]]]]]"
-   ]
+   ],
+   "pasted": null
   },
   {
    "step": "import it from the clipboard",
@@ -691,7 +712,8 @@
      "1 objects added!"
     ]
    ],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": "[63, \"all files linked by images in page\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"a\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, \"img\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [1, \"a\", null, null, 1, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"href\", \"\", [84, 1, [26, 3, []]]]]]"
   },
   {
    "step": "duplicate",
@@ -723,7 +745,8 @@
      "2 objects added!"
     ]
    ],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": "[63, \"all files linked by images in page\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"a\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, \"img\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [1, \"a\", null, null, 1, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"href\", \"\", [84, 1, [26, 3, []]]]]]"
   },
   {
    "step": "select two rows",
@@ -748,7 +771,8 @@
     "add defaults": true
    },
    "dialogs": [],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": "[63, \"all files linked by images in page\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"a\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, \"img\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [1, \"a\", null, null, 1, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"href\", \"\", [84, 1, [26, 3, []]]]]]"
   },
   {
    "step": "export two to clipboard",
@@ -775,7 +799,8 @@
    "dialogs": [],
    "clipboard": [
     "[26, 3, [[2, [63, \"all files linked by images in page\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"a\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, \"img\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [1, \"a\", null, null, 1, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"href\", \"\", [84, 1, [26, 3, []]]]]]], [2, [63, \"all images embedded in page\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"img\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"src\", \"\", [84, 1, [26, 3, []]]]]]]]]"
-   ]
+   ],
+   "pasted": "[63, \"all files linked by images in page\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"a\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, \"img\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [1, \"a\", null, null, 1, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"href\", \"\", [84, 1, [26, 3, []]]]]]"
   },
   {
    "step": "import both from the clipboard",
@@ -809,7 +834,8 @@
      "2 objects added!"
     ]
    ],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": "[26, 3, [[2, [63, \"all files linked by images in page\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"a\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, \"img\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [1, \"a\", null, null, 1, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"href\", \"\", [84, 1, [26, 3, []]]]]]], [2, [63, \"all images embedded in page\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"img\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"src\", \"\", [84, 1, [26, 3, []]]]]]]]]"
   },
   {
    "step": "import something that is not a formula",
@@ -843,7 +869,8 @@
      "The imported objects included these types:\n\nStringMatch\n\nWhereas this control only allows:\n\nSimpleDownloaderParsingFormula"
     ]
    ],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": "[26, 3, [[2, [51, 1, [0, \"a\", null, null, \"a\"]]]]]"
   },
   {
    "step": "import text that is not an object",
@@ -878,7 +905,8 @@
      "Sorry, I could not understand what was in the clipboard. I was expecting \"JSON-serialised Hydrus Object(s)\" but received this text:\n\nnot json at all\n\nMore details have been written to the log, but the general error was:\n\nJSONDecodeError('Expecting value: line 1 column 1 (char 0)')"
     ]
    ],
-   "clipboard": []
+   "clipboard": [],
+   "pasted": "not json at all"
   },
   {
    "step": "import a formula and something else",
@@ -918,7 +946,244 @@
      "1 objects added!"
     ]
    ],
+   "clipboard": [],
+   "pasted": "[26, 3, [[2, [63, \"all images embedded in page\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"img\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"src\", \"\", [84, 1, [26, 3, []]]]]]], [2, [51, 1, [0, \"a\", null, null, \"a\"]]]]]"
+  }
+ ],
+ "pngs": [
+  {
+   "step": "opened",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page"
+   ],
+   "selected": [],
+   "buttons": {
+    "add": true,
+    "edit": false,
+    "delete": false,
+    "export": false,
+    "import": true,
+    "duplicate": false,
+    "add defaults": true
+   },
+   "dialogs": [],
    "clipboard": []
+  },
+  {
+   "step": "select the first row",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page"
+   ],
+   "selected": [
+    0
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true
+   },
+   "dialogs": [],
+   "clipboard": [],
+   "pasted": "[26, 3, [[2, [63, \"all images embedded in page\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"img\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"src\", \"\", [84, 1, [26, 3, []]]]]]], [2, [51, 1, [0, \"a\", null, null, \"a\"]]]]]"
+  },
+  {
+   "step": "export to png",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page"
+   ],
+   "selected": [
+    0
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true,
+    "browse": true,
+    "done!": true
+   },
+   "dialogs": [
+    [
+     "png export",
+     {
+      "dialog": "export to png",
+      "title": "all files linked by images in page",
+      "payload_description": "Simple Downloader Parsing Formula - 390B",
+      "width": 512
+     },
+     [
+      {
+       "written": "single.png",
+       "fixture": "simple_formula_list_single.png",
+       "text": "[63, \"all files linked by images in page\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"a\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, \"img\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [1, \"a\", null, null, 1, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"href\", \"\", [84, 1, [26, 3, []]]]]]"
+      }
+     ]
+    ]
+   ],
+   "clipboard": [],
+   "pasted": "[26, 3, [[2, [63, \"all images embedded in page\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"img\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"src\", \"\", [84, 1, [26, 3, []]]]]]], [2, [51, 1, [0, \"a\", null, null, \"a\"]]]]]"
+  },
+  {
+   "step": "select two rows",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page"
+   ],
+   "selected": [
+    0,
+    1
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true,
+    "browse": true,
+    "done!": true
+   },
+   "dialogs": [],
+   "clipboard": [],
+   "pasted": "[26, 3, [[2, [63, \"all images embedded in page\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"img\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"src\", \"\", [84, 1, [26, 3, []]]]]]], [2, [51, 1, [0, \"a\", null, null, \"a\"]]]]]"
+  },
+  {
+   "step": "export to pngs",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page"
+   ],
+   "selected": [
+    0,
+    1
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true,
+    "browse": true,
+    "done!": true
+   },
+   "dialogs": [
+    [
+     "png export",
+     {
+      "dialog": "export to pngs",
+      "width": 512,
+      "directory": "/tmp/tmp4mpjrvu5"
+     },
+     [
+      {
+       "written": "all files linked by images in page.png",
+       "fixture": "simple_formula_list_all_files_linked_by_images_in_page.png",
+       "text": "[63, \"all files linked by images in page\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"a\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, \"img\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [1, \"a\", null, null, 1, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"href\", \"\", [84, 1, [26, 3, []]]]]]"
+      },
+      {
+       "written": "all images embedded in page.png",
+       "fixture": "simple_formula_list_all_images_embedded_in_page.png",
+       "text": "[63, \"all images embedded in page\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"img\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"src\", \"\", [84, 1, [26, 3, []]]]]]"
+      }
+     ]
+    ]
+   ],
+   "clipboard": [],
+   "pasted": "[26, 3, [[2, [63, \"all images embedded in page\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"img\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"src\", \"\", [84, 1, [26, 3, []]]]]]], [2, [51, 1, [0, \"a\", null, null, \"a\"]]]]]"
+  },
+  {
+   "step": "import both from pngs",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "all files linked by images in page (1)",
+    "all images embedded in page (1)"
+   ],
+   "selected": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true,
+    "browse": true,
+    "done!": true
+   },
+   "dialogs": [
+    [
+     "pick files",
+     "select the png or pngs with the encoded data"
+    ],
+    [
+     "information",
+     "1 objects added!"
+    ],
+    [
+     "information",
+     "1 objects added!"
+    ]
+   ],
+   "clipboard": [],
+   "pasted": "[26, 3, [[2, [63, \"all images embedded in page\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"img\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"src\", \"\", [84, 1, [26, 3, []]]]]]], [2, [51, 1, [0, \"a\", null, null, \"a\"]]]]]"
+  },
+  {
+   "step": "import a file that is no png",
+   "rows": [
+    "all files linked by images in page",
+    "all images embedded in page",
+    "all files linked by images in page (1)",
+    "all images embedded in page (1)"
+   ],
+   "selected": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "buttons": {
+    "add": true,
+    "edit": true,
+    "delete": true,
+    "export": true,
+    "import": true,
+    "duplicate": true,
+    "add defaults": true,
+    "browse": true,
+    "done!": true
+   },
+   "dialogs": [
+    [
+     "pick files",
+     "select the png or pngs with the encoded data"
+    ],
+    [
+     "critical",
+     "Problem importing!",
+     "\"/tmp/tmp4mpjrvu5/bad.png\" did not appear to be a valid image!"
+    ]
+   ],
+   "clipboard": [],
+   "pasted": "[26, 3, [[2, [63, \"all images embedded in page\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"img\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"src\", \"\", [84, 1, [26, 3, []]]]]]], [2, [51, 1, [0, \"a\", null, null, \"a\"]]]]]"
   }
  ],
  "commit": {

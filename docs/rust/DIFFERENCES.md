@@ -4295,16 +4295,9 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 
 ## Simple downloader formula list
 
-- The list's import and export go through the shared downloader exchange window
-  (a text box and PNG paths, reviewed before they join the draft) rather than the
-  reference's import/export menus (from clipboard, from pngs; to clipboard, to
-  png, to pngs) and "duplicate" button, which hydrus-rs lacks. The reference adds
-  what it accepts at once and says "N objects added!", with a warning listing the
-  types it refused ("The imported objects included these types: ... Whereas this
-  control only allows: SimpleDownloaderParsingFormula"); this window refuses a
-  package holding anything else, in its own words, and adds nothing. Only the
-  exported text is compared with the reference's (`simple_formula_list.json`),
-  and a tag rule with no attributes is `{}` here and `null` there.
+- The "to pngs" panel names each png by its formula's name as the reference's
+  does, without making the name safe for the filesystem (a name with a `/` in
+  it fails to write, as it would in the reference).
 - The defaults' order in the reference follows its static folder's listing, which
   the filesystem decides; hydrus-rs's is fixed.
 

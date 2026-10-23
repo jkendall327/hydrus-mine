@@ -6019,10 +6019,10 @@
     "Imports accept named simple formulas only and remain in the formula list draft."
    ],
    "recheck": {
-    "date": "2026-10-14",
-    "class": "source-restated",
-    "by": "wave 5 session (W5-6)",
-    "note": "The text a single selected formula exports as is now compared with what the reference's _ExportToClipboard wrote for it (oracle/fixtures/simple_formula_list.json; a tag rule with no attributes is {} here, null there). The rest is not recorded-and-matching: the reference's clipboard/png menus, 'N objects added!', its warning listing the types refused, the duplicate button and its PNG dialogs differ from this list's shared import window (DIFFERENCES.md, Simple downloader formula list); the refusal strings are native. Not raised. Tests: crates/hydrus-gui/tests/gui/simple_formulae_list.rs (simple_formula_list_defaults_exchange_and_apply, exporting_a_formula_writes_the_reference_s_serialisation)."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (wave 6, W6-2)",
+    "note": "crates/hydrus-gui/tests/gui/simple_formulae_list.rs the_list_exchange_replays_the_reference_s_clipboard_and_png_menus replays oracle/fixtures/simple_formula_list.json's exchange and pngs runs (oracle/record_simple_formula_list.py, the reference's real _EditFormulae list with AddImportExportButtons) step by step through the real list window: export > to clipboard of one and of two formulae gives the reference's text byte for byte (the ancestor tag rule's attributes are now null, as the reference writes them); import > from clipboard of one, of two, of a string match, of text that is not JSON and of a formula with something else, and duplicate, give the reference's messages (N objects added!, its refused-types warning, Clipboard Error!), rows (unique names, (1), (1) (1)) and selection (the added selected with the rows already selected); export > to png opens the panel with the reference's title, payload description and width and writes the reference's text; export > to pngs writes one png per formula named by it in the folder of the last png export, each with the reference's text (the reference's own pngs carry the same); import > from pngs of those pngs adds them, saying 1 objects added! for each, with the reference's picker title, and a file that is no png gets its Problem importing! text. Not compared: the png bytes (the payloads are)."
    }
   },
   {

@@ -790,6 +790,11 @@ a formula without renaming it does too, as the reference's does), and rows stay
 in the order they were added. Selected formulae edit in sequence; cancelling a child stops the
 remaining edits. Each formula's name is entered before its reusable editor;
 Apply saves the list and refreshes the chooser, while Cancel discards it.
+"export" (to the clipboard, to a png, to pngs, one png per formula named by
+it), "import" (from the clipboard, from pngs) and "duplicate" are the
+reference's: exports are its serialised text, and what comes in is added at
+once under unique names and selected, saying "N objects added!", warning of
+the types refused, or "Clipboard Error!" (replayed from the same recording).
 
 The reusable formula editor (`formula_window.rs`,
 `ui/formula_editors.slint`) edits ordered rules with add/edit/remove/up/down,

@@ -108,6 +108,7 @@ pub mod shutdown_work;
 pub mod sidecar_editors;
 pub mod sidecars;
 pub mod simple_downloader;
+pub mod simple_formula_exchange;
 pub mod sort;
 pub mod status;
 pub mod string_editors;

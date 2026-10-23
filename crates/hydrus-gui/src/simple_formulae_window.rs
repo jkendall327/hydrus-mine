@@ -13,6 +13,9 @@ pub struct Slots {
     pub exchange: crate::downloader_interchange_window::Slots,
     pub list: Rc<RefCell<Option<SimpleFormulaeWindow>>>,
     pub formula: crate::formula_window::Slots,
+    /// "export > to png" and "export > to pngs".
+    pub png: crate::png_export_window::Slots,
+    pub pngs: crate::png_export_window::PngsSlots,
 }
 impl std::fmt::Debug for Slots {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -104,80 +107,115 @@ pub fn open(
             }
         }
     });
+    // `AddImportExportButtons`: "export" (0 to the clipboard, 1 to a png, 2
+    // to pngs), "import" (3 from the clipboard, 4 from pngs) and "duplicate"
+    // (5); what comes in is appended, named apart and selected
     w.on_exchange({
         let state = state.clone();
         let slots = slots.clone();
         let refresh = refresh.clone();
-        let weak = w.as_weak();
-        move |importing| {
-            use hydrus_gui_model::downloader_interchange::{Definition, Native};
+        let store = store.clone();
+        move |mode| {
+            use hydrus_gui_model::auto_resolution_exchange::ListImport;
+            use hydrus_gui_model::simple_formula_exchange as ex;
             if state.borrow().child_open
                 || state.borrow().editing.is_some()
                 || state.borrow().deleting
             {
                 return;
             }
-            let s = state.borrow();
-            let definitions: Vec<_> = s
-                .selection
-                .in_order(&(0..s.values.formulae.len()).collect::<Vec<_>>())
-                .into_iter()
-                .map(|i| Definition::new(Native::Simple(s.values.formulae[i].clone())))
-                .collect();
-            drop(s);
-            let preview = Rc::new(|definitions: Vec<Definition>| {
-                if definitions
-                    .iter()
-                    .any(|d| !matches!(d.native, Native::Simple(_)))
+            let selected: Vec<SimpleFormula> = {
+                let s = state.borrow();
+                s.selection
+                    .in_order(&(0..s.values.formulae.len()).collect::<Vec<_>>())
+                    .into_iter()
+                    .map(|i| s.values.formulae[i].clone())
+                    .collect()
+            };
+            let take = |import: ListImport<SimpleFormula>| {
                 {
-                    return Err("Import named simple downloader formulas into this list.".into());
+                    let mut s = state.borrow_mut();
+                    let mut keep = s
+                        .selection
+                        .in_order(&(0..s.values.formulae.len()).collect::<Vec<_>>());
+                    for f in import.added {
+                        put(&mut s, None, f);
+                        keep.push(s.values.formulae.len() - 1);
+                    }
+                    s.selection.select_many(&keep);
                 }
-                Ok(format!(
-                    "Add {} simple downloader formula(s):\n{}",
-                    definitions.len(),
-                    definitions
+                refresh();
+                crate::debug_actions::messages(import.messages);
+            };
+            let problem = |e: String| crate::debug_actions::message("Problem exporting!", &e);
+            let formatting = hydrus_gui_model::gui_format::preferences(&store);
+            let described = |text: &str| {
+                hydrus_gui_model::png_export::serialised_payload_description(text, &formatting)
+                    .ok_or_else(|| "the export is not a serialised object".to_owned())
+            };
+            let to_png = || -> Result<(), String> {
+                let text = ex::export_text(&selected)?;
+                let (summary, title) = described(&text)?;
+                crate::png_export_window::open_described(
+                    &slots.png,
+                    &store,
+                    text,
+                    summary,
+                    title,
+                    Rc::new(|| {}),
+                )
+                .map(|_| ())
+            };
+            match mode {
+                0 if !selected.is_empty() => match ex::export_text(&selected) {
+                    Ok(text) => crate::copy_to_clipboard(&text),
+                    Err(e) => problem(e),
+                },
+                1 if !selected.is_empty() => {
+                    if let Err(e) = to_png() {
+                        problem(e);
+                    }
+                }
+                // (one alone is "to png", as the reference's `_ExportToPNGs`)
+                2 if selected.len() == 1 => {
+                    if let Err(e) = to_png() {
+                        problem(e);
+                    }
+                }
+                2 if !selected.is_empty() => {
+                    let objects = selected
                         .iter()
-                        .map(Definition::name)
-                        .collect::<Vec<_>>()
-                        .join("\n")
-                ))
-            });
-            let applied = Rc::new({
-                let state = state.clone();
-                move |definitions: Vec<Definition>| {
-                    let mut next = state.borrow().values.clone();
-                    for d in definitions {
-                        let Native::Simple(f) = d.native else {
-                            return Err("Import named simple downloader formulas.".into());
-                        };
-                        crate::formula_editors::put_simple_formula(&mut next.formulae, None, f);
-                    }
-                    state.borrow_mut().values = next;
-                    Ok(())
-                }
-            });
-            match crate::downloader_interchange_window::open(
-                &slots.exchange,
-                importing,
-                &definitions,
-                preview,
-                applied,
-            ) {
-                Ok(child) => {
-                    state.borrow_mut().child_open = true;
-                    let state = state.clone();
-                    let child_closed = refresh.clone();
-                    child.on_closed(move || {
-                        state.borrow_mut().child_open = false;
-                        child_closed();
-                    });
-                    refresh();
-                }
-                Err(error) => {
-                    if let Some(w) = weak.upgrade() {
-                        w.set_error(error.into());
+                        .map(|f| {
+                            let payload = ex::export_text(std::slice::from_ref(f))?;
+                            let (summary, _) = described(&payload)?;
+                            Ok(crate::png_export_window::Named {
+                                name: f.name.clone(),
+                                summary,
+                                payload,
+                            })
+                        })
+                        .collect::<Result<Vec<_>, String>>();
+                    if let Err(e) = objects.and_then(|objects| {
+                        crate::png_export_window::open_many(&slots.pngs, &store, objects)
+                    }) {
+                        problem(e);
                     }
                 }
+                3 => take(ex::from_clipboard(crate::clipboard_text())),
+                4 => {
+                    let files: Vec<_> = crate::pick(crate::Pick::Files, ex::PNG_PICKER_TITLE)
+                        .into_iter()
+                        .map(|path| {
+                            let data = std::fs::read(&path).map_err(|e| e.to_string());
+                            (path, data)
+                        })
+                        .collect();
+                    if !files.is_empty() {
+                        take(ex::from_pngs(&files));
+                    }
+                }
+                5 if !selected.is_empty() => take(ex::duplicated(&selected)),
+                _ => {}
             }
         }
     });
@@ -460,6 +498,8 @@ pub fn open(
         let slots = slots.clone();
         move || {
             slots.exchange.cancel();
+            slots.png.cancel();
+            slots.pngs.cancel();
             slots.formula.cancel();
             if let Some(w) = weak.upgrade() {
                 let _ = w.hide();

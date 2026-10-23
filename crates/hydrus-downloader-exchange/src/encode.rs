@@ -196,7 +196,8 @@ fn html_rule(r: &HtmlRule) -> Value {
             json!(s.index),
             Value::Null,
         ),
-        HtmlWalk::Ancestor { depth } => (1, json!({}), Value::Null, json!(depth)),
+        // (the reference's editor gives an ancestor rule no attributes: null)
+        HtmlWalk::Ancestor { depth } => (1, Value::Null, Value::Null, json!(depth)),
     };
     object(
         62,

@@ -547,7 +547,7 @@ fn open_comparator(
                 show_comparator(&window, state);
                 messages
             };
-            show_messages(messages);
+            crate::debug_actions::messages(messages);
         }
     });
     // (the sub-comparators' own editors, each giving back into this one)
@@ -1085,7 +1085,7 @@ fn open_rule(
                 show_rule(&window, state, false);
                 messages
             };
-            show_messages(messages);
+            crate::debug_actions::messages(messages);
         }
     });
     // the preview: the rule as edited, or why it can't be had
@@ -1606,16 +1606,6 @@ fn export_png(
         .map(|_| ())
 }
 
-/// Messages one after another, each shown once the one before is dismissed,
-/// as the reference's modal dialogs come.
-fn show_messages(messages: Vec<hydrus_gui_model::auto_resolution_exchange::Message>) {
-    let mut messages = messages.into_iter();
-    if let Some((title, text)) = messages.next() {
-        let rest: Vec<_> = messages.collect();
-        crate::debug_actions::message_then(&title, &text, Box::new(move || show_messages(rest)));
-    }
-}
-
 /// The list's export (0-2), import (3-5) and duplicate (6) buttons.
 fn exchange(store: &Arc<Store>, slots: &Slots, state: &Rc<RefCell<ListState>>, mode: i32) {
     use hydrus_gui_model::auto_resolution_exchange as ex;
@@ -1662,7 +1652,7 @@ fn exchange(store: &Arc<Store>, slots: &Slots, state: &Rc<RefCell<ListState>>, m
             state.list.selection.select_many(&keys);
         }
         drop(state);
-        show_messages(messages);
+        crate::debug_actions::messages(messages);
     };
     let load = |text: &str, from_file: bool| match ex::import_text(text, &scales(store)) {
         Ok(imported) => {
