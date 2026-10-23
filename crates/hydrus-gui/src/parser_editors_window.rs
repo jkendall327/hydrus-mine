@@ -654,7 +654,16 @@ fn open_editor(
                 raw
             };
             if let Err(error) = hydrus_core::url::functions::check_full_url(&url) {
-                w.set_error(error.to_string().into());
+                // (the reference's `CheckLooksLikeAFullURL` says this whatever
+                // is wrong, its own messages being caught by its catch-all)
+                w.set_error(
+                    if example_url {
+                        format!("Could not parse \"{url}\" at all!")
+                    } else {
+                        error.to_string()
+                    }
+                    .into(),
+                );
                 return;
             }
             {
@@ -684,11 +693,11 @@ fn open_editor(
             let progress = Rc::new({
                 let weak = weak.clone();
                 let active = active.clone();
-                move |status: String| {
+                move |line: hydrus_store::live::JobLine| {
                     if active.get()
                         && let Some(w) = weak.upgrade()
                     {
-                        w.set_fetch_status(status.into());
+                        show_fetch_line(&w, &line);
                     }
                 }
             });
@@ -736,7 +745,8 @@ fn open_editor(
                         w.set_test_url(url.as_str().into());
                     }
                     w.set_post_index("0".into());
-                    w.set_fetch_status("fetch finished".into());
+                    // (the reference's job control is cleared once it is done)
+                    show_fetch_line(&w, &hydrus_store::live::JobLine::default());
                     if let Some(error) = outcome.accounting_error {
                         w.set_error(format!("Could not save bandwidth usage: {error}").into());
                     }
@@ -1707,4 +1717,13 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
     w.show().map_err(|e| e.to_string())?;
     *slot.borrow_mut() = Some(w.clone_strong());
     Ok(w)
+}
+
+/// The example fetch's network job control: its status, what it has read,
+/// and its gauge (`NetworkJobControl._Update`).
+fn show_fetch_line(w: &ParserEditWindow, line: &hydrus_store::live::JobLine) {
+    w.set_fetch_status(line.left.as_str().into());
+    w.set_fetch_right(line.right.as_str().into());
+    w.set_fetch_gauge_value(i32::try_from(line.gauge.0).unwrap_or(i32::MAX));
+    w.set_fetch_gauge_range(i32::try_from(line.gauge.1).unwrap_or(i32::MAX));
 }

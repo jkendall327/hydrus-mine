@@ -252,6 +252,7 @@ mod highlight_new_query;
 mod network_job_control;
 mod network_job_positions;
 mod network_job_retry_flags;
+mod parser_fetch_controls;
 
 mod gallery_source;
 

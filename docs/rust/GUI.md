@@ -827,7 +827,13 @@ headers and cookies. Response charsets are decoded by the downloader engine;
 failed page fetches retain the server document. Fetches preserve context variables
 and reset the post index to zero. Fetched documents remain selectable alongside
 pasted examples, and selected data reaches child parsers through the page converter.
-Closing an owner cancels its request and discards late results. Bandwidth usage is
+The page parser editor's example fetch shows the reference's network job control:
+the job's status, what it has read (and how fast) and a gauge, blank again once it
+is done; its cancel gives "fetch cancelled"; it tries its connection once; a blank
+url box takes the first example url without asking anything; an invalid url says
+'Could not parse "invalid" at all!' (`oracle/record_parser_fetch_controls.py`).
+Closing an editor discards late results but leaves its request to finish, as the
+reference leaves its job in the engine. Bandwidth usage is
 merged with other engines rather than replacing their traffic.
 `oracle/record_parser_test_data.py` records these request and context semantics.
 

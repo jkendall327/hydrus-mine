@@ -1596,7 +1596,9 @@ keys; deleting selected rows asks the recorded confirmation. Invalid/mixed-type
 packages are rejected atomically instead of partially importing valid rows.
 Test-data
 URL fetches use a window-local downloader engine: progress appears in the test panel
-rather than the daemon job review. Its requests use the same headers, cookies,
+rather than the daemon job review. The page editor's fetch control has the
+reference's texts and gauge but no cog menu, and an invalid url's message is shown
+in the editor rather than in an error dialog. Its requests use the same headers, cookies,
 network settings and accounting machinery, and their usage is merged safely with
 the daemon. All six native formula kinds and subsidiary parsers
 can be imported/exported; their editor-only reference data is preserved.
