@@ -257,7 +257,10 @@ struct Run<'a> {
 
 fn drive(run: &Run<'_>) {
     let sizes = run.sizes;
-    let (_dir, store, odd) = step("generating the store", || large_store(run.files, run.inbox));
+    // (generating is not the GUI's work, so it has no limit)
+    let start = Instant::now();
+    let (_dir, store, odd) = large_store(run.files, run.inbox);
+    eprintln!("generating the store: {:?}", start.elapsed());
     let windows = headless::init();
     for &search in run.searches {
         let ui = MainWindow::new().unwrap();
