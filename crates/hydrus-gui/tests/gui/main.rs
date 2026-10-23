@@ -253,6 +253,7 @@ mod network_job_control;
 mod network_job_positions;
 mod network_job_retry_flags;
 mod parser_fetch_controls;
+mod status_db;
 
 mod gallery_source;
 

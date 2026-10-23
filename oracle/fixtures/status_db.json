@@ -1,0 +1,82 @@
+{
+ "idle": {
+  "text": "",
+  "tooltip": ""
+ },
+ "reading": {
+  "text": "db reading",
+  "tooltip": "current db job: read status_test"
+ },
+ "writing": {
+  "text": "db writing",
+  "tooltip": "current db job: write status_test"
+ },
+ "committing": {
+  "text": "db committing",
+  "tooltip": "current db job: write status_commit"
+ },
+ "locked": {
+  "text": "db locked",
+  "tooltip": "db locked"
+ },
+ "after": {
+  "text": "",
+  "tooltip": ""
+ },
+ "app_busy": [
+  {
+   "second": 0,
+   "working": 2,
+   "text": "",
+   "tooltip": "There were 2 threads doing jobs at last check."
+  },
+  {
+   "second": 5,
+   "working": 9,
+   "text": "",
+   "tooltip": "There were 2 threads doing jobs at last check."
+  },
+  {
+   "second": 10,
+   "working": 9,
+   "text": "",
+   "tooltip": "There were 2 threads doing jobs at last check."
+  },
+  {
+   "second": 11,
+   "working": 9,
+   "text": "busy",
+   "tooltip": "There were 9 threads doing jobs at last check."
+  },
+  {
+   "second": 100,
+   "working": 3,
+   "text": "",
+   "tooltip": "There were 3 threads doing jobs at last check."
+  },
+  {
+   "second": 120,
+   "working": 4,
+   "text": "working",
+   "tooltip": "There were 4 threads doing jobs at last check."
+  },
+  {
+   "second": 140,
+   "working": 8,
+   "text": "working",
+   "tooltip": "There were 8 threads doing jobs at last check."
+  },
+  {
+   "second": 160,
+   "working": 9,
+   "text": "busy",
+   "tooltip": "There were 9 threads doing jobs at last check."
+  },
+  {
+   "second": 180,
+   "working": 1,
+   "text": "",
+   "tooltip": "There were 1 threads doing jobs at last check."
+  }
+ ]
+}

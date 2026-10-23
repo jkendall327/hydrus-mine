@@ -129,6 +129,8 @@ struct WriteJob {
     /// Commit in a batch of its own. For writes whose post-commit effects
     /// (e.g. publishing a new in-memory snapshot) later writes must see.
     barrier: bool,
+    /// What the status bar's tooltip calls it ([`job_name`]).
+    name: String,
 }
 
 struct PauseRequest {
@@ -210,12 +212,16 @@ impl Db {
         }
 
         let (jobs_tx, jobs_rx) = crossbeam_channel::unbounded::<Job>();
+        let activity = std::sync::Arc::<Activity>::default();
         let thread = std::thread::Builder::new()
             .name("hydrus-db-writer".into())
-            .spawn(move || writer_loop(&conn, &jobs_rx))?;
+            .spawn({
+                let activity = activity.clone();
+                move || writer_loop(&conn, &jobs_rx, &activity)
+            })?;
 
         Ok(Self {
-            activity: std::sync::Arc::default(),
+            activity,
             path: path.to_path_buf(),
             writer: Writer {
                 jobs: Some(jobs_tx),
@@ -308,16 +314,40 @@ impl Db {
     }
 
     /// What this process's database is doing now (the reference's
-    /// `GetDBStatus`: "db writing", "db reading", else nothing).
+    /// `GetDBStatus`): "db locked" while paused, "db committing" while a
+    /// batch commits, "db writing", "db reading", else nothing.
     pub fn activity(&self) -> &'static str {
         use std::sync::atomic::Ordering::Relaxed;
-        if self.activity.writes.load(Relaxed) > 0 {
+        if self.activity.locked.load(Relaxed) {
+            "db locked"
+        } else if self.activity.committing.load(Relaxed) {
+            "db committing"
+        } else if self.activity.writes.load(Relaxed) > 0 {
             "db writing"
         } else if self.activity.reads.load(Relaxed) > 0 {
             "db reading"
         } else {
             ""
         }
+    }
+
+    /// The job the database is doing, as the reference names its jobs
+    /// ("read media_results"): "read" or "write", then where the job is
+    /// written; the writer's (or the commit's) first, else the latest read's.
+    pub fn current_job(&self) -> Option<String> {
+        if let Some(name) = self.activity.writer_job.lock().clone() {
+            return Some(name);
+        }
+        self.activity.reader_jobs.lock().last().cloned()
+    }
+
+    /// Hold the next batch's commit until the sender is sent to or dropped,
+    /// so a test can see the database committing.
+    #[doc(hidden)]
+    pub fn hold_next_commit(&self) -> Sender<()> {
+        let (release, gate) = crossbeam_channel::bounded(1);
+        *self.activity.commit_gate.lock() = Some(gate);
+        release
     }
 
     /// Run `f` on a pooled connection inside a read transaction.
@@ -333,6 +363,7 @@ impl Db {
             pool: &self.readers.give_back,
         };
         let conn = guard.conn.as_ref().expect("present until drop");
+        let _named = ReaderJob::enter(&self.activity, job_name("read", std::any::type_name::<F>()));
         conn.execute_batch("BEGIN")?;
         let quiet = hydrus_core::debug_flags::is_quiet();
         let result = crate::job_debug::run(conn, std::any::type_name::<F>(), quiet, || f(conn));
@@ -394,7 +425,8 @@ impl Db {
                 }),
             }
         });
-        let job = Job::Write(WriteJob { run, barrier });
+        let name = job_name("write", std::any::type_name::<F>());
+        let job = Job::Write(WriteJob { run, barrier, name });
         self.writer
             .jobs
             .as_ref()
@@ -415,11 +447,52 @@ impl Drop for Db {
     }
 }
 
-/// How many reads and writes are running or waiting, for the status bar.
+/// How many reads and writes are running or waiting, for the status bar,
+/// what the writer is doing, and the jobs running.
 #[derive(Debug, Default)]
 struct Activity {
     reads: std::sync::atomic::AtomicUsize,
     writes: std::sync::atomic::AtomicUsize,
+    /// A batch is committing.
+    committing: std::sync::atomic::AtomicBool,
+    /// The writer is paused (a backup, say), the database not to be touched.
+    locked: std::sync::atomic::AtomicBool,
+    /// The write job running, or the last of a batch until it commits.
+    writer_job: parking_lot::Mutex<Option<String>>,
+    /// The read jobs running, in the order they started.
+    reader_jobs: parking_lot::Mutex<Vec<String>>,
+    /// Holds the next commit until sent to or dropped (tests).
+    commit_gate: parking_lot::Mutex<Option<Receiver<()>>>,
+}
+
+/// A job's name for the status bar's tooltip, as the reference's
+/// `JobDatabase.ToString` gives "write import_file": its kind, then where
+/// the job is written (`f`'s type, without its closures).
+fn job_name(kind: &str, type_name: &str) -> String {
+    let mut path = type_name;
+    while let Some(outer) = path.strip_suffix("::{{closure}}") {
+        path = outer;
+    }
+    format!("{kind} {path}")
+}
+
+/// Names one running read while alive.
+struct ReaderJob<'a>(&'a Activity, String);
+
+impl<'a> ReaderJob<'a> {
+    fn enter(activity: &'a Activity, name: String) -> Self {
+        activity.reader_jobs.lock().push(name.clone());
+        Self(activity, name)
+    }
+}
+
+impl Drop for ReaderJob<'_> {
+    fn drop(&mut self) {
+        let mut jobs = self.0.reader_jobs.lock();
+        if let Some(at) = jobs.iter().rposition(|n| *n == self.1) {
+            jobs.remove(at);
+        }
+    }
 }
 
 /// Counts one read or write while alive.
@@ -465,7 +538,8 @@ impl Drop for PooledReader<'_> {
     }
 }
 
-fn writer_loop(conn: &Connection, jobs: &Receiver<Job>) {
+fn writer_loop(conn: &Connection, jobs: &Receiver<Job>, activity: &Activity) {
+    use std::sync::atomic::Ordering::Relaxed;
     let mut upkeep = Upkeep::new(Instant::now());
     // a barrier job that arrived while a batch was open waits for the next one
     let mut carried: Option<Job> = None;
@@ -484,9 +558,11 @@ fn writer_loop(conn: &Connection, jobs: &Receiver<Job>) {
                             "the write-ahead log could not be checkpointed".into(),
                         )),
                     });
+                activity.locked.store(true, Relaxed);
                 let _ = request.paused.send(checkpointed);
                 // until released, or the guard is dropped
                 let _ = request.release.recv();
+                activity.locked.store(false, Relaxed);
                 continue;
             }
         };
@@ -495,17 +571,20 @@ fn writer_loop(conn: &Connection, jobs: &Receiver<Job>) {
 
         if let Err(e) = conn.execute_batch("BEGIN IMMEDIATE") {
             let message: Arc<str> = e.to_string().into();
-            let outcome = run_job(conn, first);
+            let outcome = run_job(conn, first, activity);
+            *activity.writer_job.lock() = None;
             (outcome.reply)(Some(message));
             continue;
         }
 
         let alone = first.barrier;
-        outcomes.push(run_job(conn, first));
+        outcomes.push(run_job(conn, first, activity));
         while !alone && outcomes.len() < MAX_BATCH_JOBS && batch_started.elapsed() < MAX_BATCH_TIME
         {
             match jobs.try_recv() {
-                Ok(Job::Write(job)) if !job.barrier => outcomes.push(run_job(conn, job)),
+                Ok(Job::Write(job)) if !job.barrier => {
+                    outcomes.push(run_job(conn, job, activity));
+                }
                 Ok(job) => {
                     carried = Some(job);
                     break;
@@ -514,7 +593,14 @@ fn writer_loop(conn: &Connection, jobs: &Receiver<Job>) {
             }
         }
 
-        let commit_error: Option<Arc<str>> = match conn.execute_batch("COMMIT") {
+        activity.committing.store(true, Relaxed);
+        if let Some(gate) = activity.commit_gate.lock().take() {
+            let _ = gate.recv();
+        }
+        let committed = conn.execute_batch("COMMIT");
+        activity.committing.store(false, Relaxed);
+        *activity.writer_job.lock() = None;
+        let commit_error: Option<Arc<str>> = match committed {
             Ok(()) => None,
             Err(e) => {
                 tracing::error!(error = %e, "batch commit failed; rolling back");
@@ -538,7 +624,8 @@ fn writer_loop(conn: &Connection, jobs: &Receiver<Job>) {
 }
 
 /// Run one job inside its own savepoint.
-fn run_job(conn: &Connection, job: WriteJob) -> JobOutcome {
+fn run_job(conn: &Connection, job: WriteJob, activity: &Activity) -> JobOutcome {
+    *activity.writer_job.lock() = Some(job.name);
     if let Err(e) = conn.execute_batch("SAVEPOINT job") {
         tracing::error!(error = %e, "could not open savepoint");
     }

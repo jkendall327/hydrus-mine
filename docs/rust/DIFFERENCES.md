@@ -5340,9 +5340,14 @@ Differences:
   at last check.") but counts hydrus-rs's own work: the daemon's downloads in
   flight (files and gallery pages, as it last said, if within ten seconds)
   plus the client's running maintenance passes, not Python threads. The **database**
-  field says "db writing" or "db reading" while this window's connection is
-  busy (the daemon is another process, so its work is not shown); there are
-  no job names, so no "current db job" tooltip.
+  field says "db reading", "db writing", "db committing" or "db locked" (paused,
+  as for a backup) for this window's connection (the daemon is another
+  process, so its work is not shown), with the tooltip "current db job: <job>"
+  as the reference's (`oracle/fixtures/status_db.json`). The reference names a
+  job by its database action ("write import_file"); hydrus-rs's jobs are
+  closures, so a job is named by the Rust path of the function it is written
+  in ("write hydrus_gui::maintenance_runtime::..."). Several reads can
+  run at once here; the tooltip names the writer's job, else the latest read's.
 - **`audit-options-importing-drag-and-drop-when-dnding-a-url-onto-the-program-switch-to-the-page-where-it-lands`
   stays untagged.** winit 0.30 delivers `DroppedFile` for dropped files on
   X11 only, and its X11 drop parser rejects every non-`file://` URI
@@ -5427,22 +5432,18 @@ be diagnosed afterwards. The owner chose always-on crash logging (2026-10-14).
   arrive. The log is how to find out that this happened.
 - A panic with no database directory (`hydrus --help`) goes to stderr only.
 
-- **The status bar's database field** shows "db writing" and "db reading" but not
-  the reference's "db committing" and "db locked", and has no "current db job: <name>"
-  tooltip (`HydrusDB._current_status`, `ClientGUI._RefreshStatusBarDB`); hydrus-rs's
-  database has no job names to show. `audit-options-status-activity` stays untagged for this.
-
 - **Wave 5, group W5-12: what remains** (wound down 2026-10-14; the owner
   stopped the wave to save usage).
-  - `audit-options-status-activity`: the database field needs job names (the
-    store's reads and writes are closures, not named jobs), a "db committing"
-    state around a write's commit, a "db locked" state while a backup holds
-    the database, and the "current db job" tooltip (a `.slint` change).
-  - `...highlight-the-new-query`: the reference's second site,
-    `PendSubscriptionGapDownloader`, is reached from subscription sync
-    (`ClientImportSubscriptions.py:234`, a popup button when a gap is found)
-    and opens a "subscription gap downloaders" page. None of that is ported,
-    so only the first site is proved.
+  - (W6-3, 2026-10-23: the database field and the highlight's second site are
+    done; see the status bar and the subscription gap notice below.)
+- **A subscription's gap notice has no button.** When a query hits its
+  periodic file limit without meeting a file it had seen, the reference's
+  popup offers "start a new downloader for this to fill in the gap!", which
+  opens the "subscription gap downloaders" page with the query pended
+  (`ClientImportSubscriptions.py:234`). hydrus-rs's subscriptions run in the
+  daemon, another process, so its notice is text only; the gap downloader
+  itself (and its highlight) is reached from Help > debug's "sub gap
+  downloader test" popup, as in the reference.
   - `audit-network-download-control-cog`: the engine tests on branch
     `claude/w5-12-2` check the cog's four actions against the recorded
     `actions.retry` flags (connection wait, server bandwidth wait, domain

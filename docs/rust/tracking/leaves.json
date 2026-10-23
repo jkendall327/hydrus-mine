@@ -7055,7 +7055,7 @@
     "date": "2026-10-23",
     "class": "sound",
     "by": "Claude session (#276 W6-3)",
-    "note": "Both reference sites are replayed against oracle/fixtures/highlight_new_query.json (record_highlight_new_query.py: the real _PendQueries and CreateNewSubscriptionGapDownloader, option on and off, two entries each): tests/gui/highlight_new_query.rs a_new_query_is_highlighted_at_both_of_the_reference_s_sites_only_when_the_option_says sets the option in File > options > downloading, enters two queries on a new gallery page, then clicks the 'sub gap downloader test' popup's button twice (the reference's own way to reach the gap downloader), and compares page name, queries with file limits and the highlighted query's index after each step. The note's 'not ported' for the gap downloader was stale (page.rs pend_gap_downloader). The older options_system_consumers.rs test still covers the watcher option's independence."
+    "note": "Both reference sites are replayed against oracle/fixtures/highlight_new_query.json (record_highlight_new_query.py: the real _PendQueries and CreateNewSubscriptionGapDownloader, option on and off, two entries each): tests/gui/highlight_new_query.rs a_new_query_is_highlighted_at_both_of_the_reference_s_sites_only_when_the_option_says sets the option in File > options > downloading, enters two queries on a new gallery page, then clicks the 'sub gap downloader test' popup's button twice (the reference's own way to reach the gap downloader), and compares page name, queries with file limits and the highlighted query's index after each step. The note's 'not ported' for the gap downloader was stale (page.rs pend_gap_downloader). The older options_system_consumers.rs test still covers the watcher option's independence. The reference also reaches the gap downloader from a subscription's gap notice (a popup button); hydrus-rs's subscriptions run in the daemon, so that notice is text only (DIFFERENCES.md); the site itself, CreateNewSubscriptionGapDownloader's page and pend, is the same one the debug popup's button drives."
    }
   },
   {
@@ -20758,10 +20758,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "Claude session (#97 phase 2, w4-r4b)",
-    "note": "Left source-restated after a closer look. Idle and CPU busy are replayed against cpu_busy.json (cpu_busy.rs). The application-busy thresholds, ten-second look and tooltip are checked by status_app_busy.rs with values typed from HydrusThreading.GetThreadPoolBusyStatus (no recording of them; the count is hydrus-rs's jobs, DIFFERENCES.md). The database field shows 'db writing'/'db reading' but not the reference's 'db committing'/'db locked', and has no 'current db job: <name>' tooltip (HydrusDB._current_status / ClientGUI._RefreshStatusBarDB), so the leaf cannot be sound until those are added; not done here because a new tooltip is a .slint change and the UI crate build is at the container's memory limit."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (#276 W6-3)",
+    "note": "Every field is now replayed from a recording through the real main window's status bar poll. Database: oracle/record_status_db.py holds the reference's database thread in a read, a write, a commit and PauseAndDisconnect and reads the real _RefreshStatusBarDB cell; tests/gui/status_db.rs the_database_field_says_what_the_database_does_and_its_job_as_the_reference_does holds hydrus-rs's store the same way (a read, a write, its batch's commit held by a test hook, Store::pause) and compares field and tooltip: '', 'db reading', 'db writing', 'db committing' (with the write's job still named), 'db locked' (tooltip the text) and '' after. hydrus-rs's store now tracks committing, paused and the running jobs' names; the poll no longer blocks on a read while the store is paused. Job names: the reference's are database actions ('read status_test'); hydrus-rs's jobs are closures, named 'read'/'write' plus the Rust path of the function they are written in, so the tooltip's wording is the reference's and its job part is hydrus-rs-shaped (DIFFERENCES.md; raised with the owner in the W6-3 PR as an analogue of the 2026-10-14 report-mode decision). Application busy: the same recorder stands in for the thread pool's working threads with the clock held and records _RefreshStatusBar's field and tooltip at nine steps; status_app_busy.rs the_application_busy_field_says_how_many_jobs_run_as_the_reference_does replays them with the daemon's job count (DECISIONS.md 2026-10-09: it counts hydrus-rs's jobs). Idle and CPU busy are replayed against cpu_busy.json (cpu_busy.rs)."
    }
   },
   {

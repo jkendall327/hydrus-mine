@@ -5871,7 +5871,10 @@ The idle and "CPU busy" fields of the status bar have the reference's
 tooltips ("client is idle, it can do maintenance work", "this computer has been
 doing work recently, so some hydrus maintenance will not start"), shown after
 half a second under the pointer. A new field at the right of them says "db
-writing" or "db reading" while this window's database connection is busy.
+reading", "db writing", "db committing" or "db locked" (paused, as for a backup)
+while this window's database connection is busy, and its tooltip names the job:
+"current db job: write" or "read", then the Rust path of the function the job is
+written in (`oracle/record_status_db.py`).
 
 ### Options search: help text, and window titles with the name
 
