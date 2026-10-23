@@ -2281,15 +2281,23 @@ specific domains and the downloader default stay), and specific domains can
 inherit their defaults again.
 
 Current jobs show every active engine request, including subscriptions, with
-URL, status, typed wait reason, speed and progress. Extended selection supports
+URL, status, speed and progress, and the reference engine's position for what
+it waits on: "waiting for validation" (new, or a custom header awaiting
+approval), "waiting for bandwidth" (also while new traffic is paused),
+"waiting for login", "waiting for free work slot" (a slot, the domain's slots,
+a gallery token, domain errors, the computer just woke) or "running" (also
+while retrying a connection or a server's low bandwidth); a job waiting for
+another on its domain says "waiting for other jobs on this domain to finish"
+(`oracle/record_network_job_waits.py`). Extended selection supports
 cancel and bandwidth override, with selected-job context details. As in the
 reference, the list is a snapshot: "manual refresh" is checked to begin with and
 "refresh snapshot" takes one; unchecking it asks for a snapshot every so many
 seconds (0.25 to begin with, never under 0.05). A right-click on a job selects it
 and opens the reference's menu: "network contexts" (each context with the wait it
 adds, or "bandwidth ok") and the lines "domain ok", "waiting on connection
-error", "waiting on serverside bandwidth", "obeys bandwidth" and "tokens ok",
-each of which copies itself when chosen (`oracle/record_network_jobs_panel.py`). The daemon publishes usage and jobs through typed local store IPC,
+error", "waiting on serverside bandwidth" (the job's retry wait has not ended; the
+engine keeps both wake times, as the reference's job does), "obeys bandwidth"
+and "tokens ok", each of which copies itself when chosen (`oracle/record_network_jobs_panel.py`). The daemon publishes usage and jobs through typed local store IPC,
 independent of the Client API listener. Heartbeats expire after five seconds;
 offline bandwidth review falls back to saved history. Commands identify the
 reviewed daemon and request, so finished jobs or replacement daemons ignore them.
@@ -2626,7 +2634,10 @@ original URL, and its bandwidth-rules submenu opens the existing detached rule
 editor directly. Default contexts appear once; temporary page instances never
 get their own rule editor. Applicable actions reattempt a connection or a server
 bandwidth wait, scrub domain errors, override this job's bandwidth, or skip this
-job's gallery wait. The five-second automatic override belongs to that page's
+job's gallery wait; each entry is offered while the job waits on it and goes
+once it acts, as on a live engine job the reference's do
+(`oracle/fixtures/network_job_control.json`, replayed in
+`tests/gui/network_job_retry_flags.rs`). The five-second automatic override belongs to that page's
 file/search control and survives changing the highlighted query. Closing a page
 retires its policy; accepted overrides remain in effect for the current job.
 
@@ -5140,7 +5151,9 @@ cancellable job with a gauge that gets a pulsing sub-job two seconds in, a
 network-job popup, an error, then three delayed messages; the "user call
 test" popup's button shows a text popup, and the "sub gap downloader test"
 popup's opens (or makes) the "subscription gap downloaders" gallery page and
-pends its search there, saying so if the downloader is not found),
+pends its search there, highlighting it when the page shows none and the
+"highlight the new query" option is on, as a page's own query entry does
+(`oracle/record_highlight_new_query.py`), saying so if the downloader is not found),
 "reset multi-column list settings to default" (its question) and "save 'last
 session' gui session"; data actions > "flush log", "force database commit",
 "show env" (every environment variable in a popup and the log) and "simulate

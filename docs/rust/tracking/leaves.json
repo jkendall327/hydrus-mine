@@ -4501,10 +4501,10 @@
     "Native rule UI uses detached apply/cancel rather than Qt modal editors."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "Claude session (#97 phase 2, w4-r5)",
-    "note": "Stale in the triage note: the recorded 'rules' (cancelled and accepted drafts), 'clipboard' and 'messages' ARE read by gui/network_job_control.rs, the 'waiting' menu's labels by model/network_job_control.rs, and 'auto_at_five'/'auto_after_five'/'obeys_after_override' by hydrus-net's engine test. Still typed: the window-to-engine commands the four retry/scrub/override entries send (the expected JobActions), and the recorded 'retry' flags (what the reference's job reports after those four actions) are not replayed because hydrus-net's runtime does not keep the reference's per-job wake-time flags to compare with."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (#276 W6-3)",
+    "note": "The cog's four job entries are now driven on a live engine job through the page's download control (tests/gui/network_job_retry_flags.rs the_cog_s_retry_scrub_and_token_entries_clear_a_live_job_s_waits_as_the_reference_s_do): one gallery job on example.com (via a loopback proxy) waits on the token a first page took, then gets a 509 (serverside bandwidth wait), then a dropped connection (connection error wait), then a held request with its domain at the error limit; each entry is offered while its wait lasts, clicked in the window, reaches the engine through store IPC, and the job's flags afterwards equal actions.retry of oracle/fixtures/network_job_control.json ([False, False, True, True]), all four together at the end. The engine now keeps the reference's per-job connection-error and serverside-bandwidth wake times (JobControl.waiting_on_*), which the cog and the jobs menu read. The menu's labels, rules submenu, clipboard, messages, accepted/cancelled rule drafts and five-second policy were already replayed (network_job_control.rs, model/network_job_control.rs, hydrus-net engine tests). Not covered: nothing the leaf names; the reference has no debug entry."
    }
   },
   {
@@ -5381,10 +5381,10 @@
     "Rows reflect all engine requests; selected detail reports contexts and bandwidth obedience."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Recorded rows (network_data.json, the real jobs panel) now compared through the real window: the position words for bandwidth, login and running are the reference's ('waiting for bandwidth', 'waiting for login', 'running'; native's labels were different, fixed), the speed column is titled 'current speed' as recorded (was 'speed'), and the speed/progress cells match for 2 KB/s with 2 KB of 4 KB. The reference's positions 'waiting for validation' and 'waiting for free work slot' have no native wait, and native's other eight waits are an extension with nothing to record; those and the selected-job contexts are still checked only against native values. Tests: crates/hydrus-gui/tests/gui/network_jobs_rows.rs every_request_is_a_row_with_its_typed_wait_speed_bytes_and_contexts (tagged); rows_for_the_waits_the_reference_names_read_as_its_jobs_panel_reads (untagged: three of the reference's five positions) W5-12 2026-10-14: the selected job's contexts are now compared with the reference's menu (network_jobs_panel.json); the two reference positions without a native wait remain, so the class is unchanged."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (#276 W6-3)",
+    "note": "Positions are now replayed for real engine jobs: oracle/record_network_job_waits.py holds real jobs in the reference's running engine (custom header pending, traffic paused, bandwidth used up, running, a second job on a one-slot domain, a gallery token taken, domain errors, just woke, a refused connection) and records GetJobsSnapshot's position and status; tests/gui/network_job_positions.rs real_jobs_are_listed_at_the_reference_engine_s_position_for_their_wait drives hydrus-net's engine into each wait against loopback servers and reads the jobs window's position column (all nine equal the recording) and, where hydrus-rs words the status as the reference does (paused, domain slot, domain errors, woke), the status. Native waits now map onto the reference's five positions (WaitReason::position); a new Slot wait replaces Engine for slot waits, and a domain-slot wait says 'waiting for other jobs on this domain to finish'. Speed and progress cells (network_data.json) and every position word are compared in network_jobs_rows.rs; the selected job's contexts against network_jobs_panel.json (network_jobs_panel.rs). Differences in DIFFERENCES.md: the engine's gate order (wake and domain errors are checked before bandwidth), and header approval waits for the Client API rather than a popup (status differs, position the same)."
    }
   },
   {
@@ -7052,10 +7052,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-14",
-    "class": "source-restated",
-    "by": "Claude session (#97 phase 2, w4-r1b)",
-    "note": "Drives the options row and the gallery page: new query is highlighted only when set. Expected behaviour is a typed literal from the Python source; the reference's second site (PendSubscriptionGapDownloader, sidebar line 1297) is not covered. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:720 new_queries_and_watchers_are_highlighted_only_when_the_options_say Re-read 2026-10-14 (#97 phase 2, w4-r1b): left source-restated. A recording is possible (record_downloader_lists.py already drives the real sidebar's _PendQueries and reads _highlighted_gallery_import; it would need the option on and off) but the reference's second site, PendSubscriptionGapDownloader, has no native counterpart because the subscription gap downloader is not ported, so the leaf could not be called whole."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (#276 W6-3)",
+    "note": "Both reference sites are replayed against oracle/fixtures/highlight_new_query.json (record_highlight_new_query.py: the real _PendQueries and CreateNewSubscriptionGapDownloader, option on and off, two entries each): tests/gui/highlight_new_query.rs a_new_query_is_highlighted_at_both_of_the_reference_s_sites_only_when_the_option_says sets the option in File > options > downloading, enters two queries on a new gallery page, then clicks the 'sub gap downloader test' popup's button twice (the reference's own way to reach the gap downloader), and compares page name, queries with file limits and the highlighted query's index after each step. The note's 'not ported' for the gap downloader was stale (page.rs pend_gap_downloader). The older options_system_consumers.rs test still covers the watcher option's independence."
    }
   },
   {

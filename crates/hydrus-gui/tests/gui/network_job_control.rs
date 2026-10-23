@@ -72,6 +72,8 @@ fn snapshot() -> Snapshot {
             domain_ok: false,
             tokens_ok: false,
             auto_override: false,
+            waiting_on_connection_error: true,
+            waiting_on_serverside_bandwidth: false,
             context_waits: Vec::new(),
         }],
         ..Snapshot::default()
@@ -593,6 +595,8 @@ fn current_jobs_cog_retries_uses_rules_and_retains_finished_error() {
     let store = Store::open(dir.path()).unwrap();
     let mut s = snapshot();
     s.jobs[0].wait = WaitReason::ServerBandwidth;
+    s.controls[0].waiting_on_connection_error = false;
+    s.controls[0].waiting_on_serverside_bandwidth = true;
     store
         .write(move |ctx| settings::set(ctx.conn(), &s))
         .unwrap();

@@ -26,26 +26,39 @@ pub enum WaitReason {
     ServerBandwidth,
     Downloading,
     Login,
+    /// Waiting for a free request slot, overall or on its domain.
+    Slot,
 }
 
+/// The reference engine's job positions (`job_status_str_lookup`), in its order.
+pub const POSITIONS: [&str; 5] = [
+    "waiting for validation",
+    "waiting for bandwidth",
+    "waiting for login",
+    "waiting for free work slot",
+    "running",
+];
+
 impl WaitReason {
-    /// The phase shown in the current-jobs list. Bandwidth, login and running
-    /// are the reference's own words (`job_status_str_lookup`); the others
-    /// are states the reference has no position for.
-    pub const fn label(self) -> &'static str {
+    /// Where the reference's engine would hold a job at this point, as an
+    /// index into [`POSITIONS`]: a new job and one whose custom header awaits
+    /// approval are being validated; paused traffic waits in the bandwidth
+    /// queue; the wake, domain-error, gallery-token and slot checks are the
+    /// ready queue's; connection and serverside-bandwidth retries happen
+    /// while the job runs.
+    pub const fn position(self) -> usize {
         match self {
-            Self::Engine => "waiting for engine",
-            Self::Paused => "network paused",
-            Self::Headers => "header approval",
-            Self::Wake => "computer waking",
-            Self::Bandwidth => "waiting for bandwidth",
-            Self::Domain => "domain errors",
-            Self::Gallery => "gallery token",
-            Self::Connection => "connection retry",
-            Self::ServerBandwidth => "server bandwidth",
-            Self::Downloading => "running",
-            Self::Login => "waiting for login",
+            Self::Engine | Self::Headers => 0,
+            Self::Paused | Self::Bandwidth => 1,
+            Self::Login => 2,
+            Self::Wake | Self::Domain | Self::Gallery | Self::Slot => 3,
+            Self::Connection | Self::ServerBandwidth | Self::Downloading => 4,
         }
+    }
+
+    /// The position shown in the current-jobs list (the reference's words).
+    pub const fn label(self) -> &'static str {
+        POSITIONS[self.position()]
     }
 }
 
@@ -72,6 +85,14 @@ pub struct JobControl {
     pub domain_ok: bool,
     pub tokens_ok: bool,
     pub auto_override: bool,
+    /// Its connection-error retry wait has not passed
+    /// (`CurrentlyWaitingOnConnectionError`).
+    #[serde(default)]
+    pub waiting_on_connection_error: bool,
+    /// Its serverside-bandwidth retry wait has not passed
+    /// (`CurrentlyWaitingOnServersideBandwidth`).
+    #[serde(default)]
+    pub waiting_on_serverside_bandwidth: bool,
     /// Seconds each of the job's contexts (in the job's order) would make it
     /// wait for bandwidth now (`GetWaitingEstimateAndContext` of each alone).
     #[serde(default)]

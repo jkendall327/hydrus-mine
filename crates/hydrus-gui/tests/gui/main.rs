@@ -248,7 +248,10 @@ mod unselected_tag_cap;
 mod write_autocomplete;
 mod write_autocomplete_leaves;
 
+mod highlight_new_query;
 mod network_job_control;
+mod network_job_positions;
+mod network_job_retry_flags;
 
 mod gallery_source;
 

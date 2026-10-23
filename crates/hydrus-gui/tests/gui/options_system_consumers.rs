@@ -74,7 +74,7 @@ impl Client {
     }
 }
 
-fn show_page(options: &OptionsWindow, name: &str) {
+pub(crate) fn show_page(options: &OptionsWindow, name: &str) {
     let pages = options.get_pages();
     let i = (0..pages.row_count())
         .position(|i| pages.row_data(i).unwrap().text == name)

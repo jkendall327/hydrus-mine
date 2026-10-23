@@ -1773,24 +1773,25 @@ gauges. Its "[data|requests] in the past [seconds]" line takes the span in
 seconds rather than the reference's days, hours, minutes and seconds buttons, and
 the usage-age choice has "this month" besides the reference's span and "all time".
 
-Native typed wait reasons distinguish pauses, header approval, wake,
-bandwidth, domain, gallery, connection and server waits from transfers; Qt's
-engine-position strings use different categories. Selected-job context and
-obeys-bandwidth details are also inline, and cancel/override controls are
-explicit buttons. Login-script waits remain outside the implemented engine.
+The engine keeps a typed wait for each job, and the jobs list shows it at the
+position the reference's engine would hold the job (validation, bandwidth,
+login, free work slot, running), replayed for real jobs against
+`oracle/fixtures/network_job_waits.json`. The order of the engine's gates
+differs: hydrus-rs checks a just-woken computer and domain errors before
+bandwidth and login, the reference only once a job is ready for a slot, so a
+job held by both is listed where hydrus-rs first holds it. A job waiting for a
+custom header's approval waits for the Client API to approve it (its status
+says so) where the reference asks in a popup ("waiting in user validation
+queue"). Selected-job context and obeys-bandwidth details are also inline, and
+cancel/override controls are explicit buttons. Login-script waits remain outside the implemented engine.
 Local snapshots are published by the daemon without requiring its Client API;
 expiry disables stale controls and saved bandwidth history remains available.
 The jobs window's refresh control is the reference's: "manual refresh" to begin
 with, or a snapshot every so many seconds (never under 0.05; the reference's
 interval is minutes, seconds and milliseconds boxes, native's one number of
-seconds). The jobs list's position column says "waiting for bandwidth", "waiting for
-login" and "running" as the reference does (its positions "waiting for
-validation" and "waiting for free work slot" have no native counterpart), and
-its other waits are native's own; the speed column is titled "current speed" as
-the reference's is. A job's right-click menu is the reference's (recorded in
-`oracle/fixtures/network_jobs_panel.json`), with these differences: a job has one
-typed wait, so "waiting on connection error" and "waiting on serverside bandwidth"
-cannot both read True as they can in the reference; a hydrus-service context
+seconds). The speed column is titled "current speed" as the reference's is. A
+job's right-click menu is the reference's (recorded in
+`oracle/fixtures/network_jobs_panel.json`), with these differences: a hydrus-service context
 is named by its key, where the reference looks its service's name up; and the
 contexts are also listed in the detail under the list, which the reference lacks.
 

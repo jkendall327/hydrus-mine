@@ -1,0 +1,56 @@
+{
+ "positions": {
+  "0": "waiting for validation",
+  "1": "waiting for bandwidth",
+  "2": "waiting for login",
+  "3": "waiting for free work slot",
+  "4": "running"
+ },
+ "scenarios": {
+  "headers": {
+   "url": "https://headers.example.com/file",
+   "position": "waiting for validation",
+   "status": "waiting in user validation queue…"
+  },
+  "paused": {
+   "url": "https://paused.example.com/file",
+   "position": "waiting for bandwidth",
+   "status": "all new network traffic is paused…"
+  },
+  "bandwidth": {
+   "url": "https://bandwidth.example.com/file",
+   "position": "waiting for bandwidth",
+   "status": "bandwidth free in 1 hour… (global)"
+  },
+  "running": {
+   "url": "http://127.0.0.1:56985/held",
+   "position": "running",
+   "status": "sending request…"
+  },
+  "domain_slot": {
+   "url": "http://127.0.0.1:56985/held2",
+   "position": "waiting for free work slot",
+   "status": "waiting for other jobs on this domain to finish"
+  },
+  "gallery_token": {
+   "url": "https://gallery.example.org/page",
+   "position": "waiting for free work slot",
+   "status": "waiting to start: 15 seconds"
+  },
+  "domain_errors": {
+   "url": "https://errors.example.net/file",
+   "position": "waiting for free work slot",
+   "status": "This domain has had several serious errors recently. Waiting a bit."
+  },
+  "woke": {
+   "url": "https://woke.example.com/file",
+   "position": "waiting for free work slot",
+   "status": "looks like computer just woke up, waiting a bit"
+  },
+  "connection": {
+   "url": "http://127.0.0.1:53847/refused",
+   "position": "running",
+   "status": "connection failed - retrying in 15 seconds"
+  }
+ }
+}
