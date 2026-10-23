@@ -1272,3 +1272,102 @@ fn owned_sort_contexts_replay_default_fallback_cogs_for_files_and_collections() 
         selected
     );
 }
+
+/// Collecting thousands of collections under a sort that reads the database
+/// (a rating's) stays quick: each collection's files were sorted with their
+/// own reads, which took 20 s for a page of 36000 files.
+#[test]
+fn collecting_many_collections_sorts_their_files_together() {
+    use hydrus_core::pages::{PageCollect, PageMedia, PageSort, PageSortBy};
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let library = hydrus_store::synth::populate(
+        &store,
+        hydrus_store::synth::SynthSpec {
+            files: 6_000,
+            // (no creator tags of their own)
+            tags: 3,
+            tags_per_file: 1,
+            siblings: 0,
+            parents: 0,
+            batch: 6_000,
+            ..hydrus_store::synth::SynthSpec::default()
+        },
+    )
+    .unwrap();
+    let files: Vec<HashId> = library.hashes.iter().map(|(id, _)| *id).collect();
+    // a creator for every pair of files: 3000 collections of two
+    let service = library.tag_service;
+    let pairs = files.clone();
+    store
+        .write_content(move |w| {
+            for (i, pair) in pairs.chunks(2).enumerate() {
+                let tag = Tag::new(&format!("creator:artist {i}")).unwrap();
+                let tag = hydrus_store::master::intern_tag(w.conn(), &tag)?;
+                w.update_mappings(
+                    service,
+                    &hydrus_store::content::MappingAction::Add,
+                    tag,
+                    pair,
+                )?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    let snapshot = store.snapshot();
+    let my_files = snapshot.services.builtin(builtin_keys::MY_FILES).unwrap();
+    let search = FileSearchContext {
+        location: LocationContext::single(my_files.key.clone()),
+        ..FileSearchContext::default()
+    };
+    let collect = PageCollect {
+        namespaces: vec!["creator".into()],
+        ratings: Vec::new(),
+        collect_unmatched: true,
+        tag_context: TagContext::default(),
+    };
+    let sort = PageSort {
+        tag_context: TagContext::default(),
+        by: PageSortBy::Rating(key(builtin_keys::FAVOURITES)),
+        ascending: false,
+    };
+    let timed = |collect: &PageCollect| {
+        let start = std::time::Instant::now();
+        let media = store
+            .read(|conn| {
+                Ok(super::collect_page_files(
+                    conn,
+                    &snapshot,
+                    &search,
+                    &files,
+                    collect,
+                    &sort,
+                    None,
+                    &Clock::system(),
+                ))
+            })
+            .unwrap()
+            .unwrap();
+        (media, start.elapsed())
+    };
+    // (sorted as one collection of every file: the same reads, once; each
+    // the quickest of three, so a stall can't decide it)
+    let quickest = |collect: &PageCollect| {
+        (0..3)
+            .map(|_| timed(collect))
+            .min_by_key(|(_, took)| *took)
+            .unwrap()
+    };
+    let (_, once) = quickest(&PageCollect {
+        namespaces: vec!["nothing".into()],
+        ..collect.clone()
+    });
+    let (media, took) = quickest(&collect);
+    assert_eq!(media.len(), 3_000);
+    assert!(
+        media
+            .iter()
+            .all(|m| matches!(m, PageMedia::Collection(files) if files.len() == 2))
+    );
+    assert!(took < once * 4, "{took:?}, against {once:?} sorted once");
+}

@@ -113,16 +113,32 @@ pub(crate) fn collect_and_sort(
             collections.push(members);
         }
     }
+    // Each collection's files sorted among themselves: the page's files are
+    // sorted once, and each collection takes its files in that order. (The
+    // sorts are stable and key each file alone, so that is each collection
+    // sorted on its own; sorting each on its own read the database once per
+    // collection, which took 20 s for a page of 36000 files.)
+    let rank: HashMap<HashId, usize> = if collections.is_empty() {
+        HashMap::new()
+    } else {
+        let mut order: Vec<u32> = files.iter().map(|h| h.0).collect();
+        for sort in fallback.into_iter().chain([sort]) {
+            order = page_sort::sort_page(env, &order, sort)?;
+        }
+        order
+            .into_iter()
+            .enumerate()
+            .map(|(i, id)| (HashId(id), i))
+            .collect()
+    };
     for members in collections {
         // (its first file, as collected, gives its ratings and breaks
         // resolution ties; then its files are sorted)
         let first = members[0];
-        let mut order: Vec<u32> = members.iter().map(|h| h.0).collect();
-        for sort in fallback.into_iter().chain([sort]) {
-            order = page_sort::sort_page(env, &order, sort)?;
-        }
+        let mut sorted = members.clone();
+        sorted.sort_by_key(|file| rank.get(file).copied().unwrap_or(usize::MAX));
         items.push(Item::Collection {
-            files: order.into_iter().map(HashId).collect(),
+            files: sorted,
             as_collected: members,
             first,
         });
