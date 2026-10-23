@@ -4325,13 +4325,14 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 - A metadata comparator's predicates that can't be tested on a file are kept
   and exported; the reference's drops them when it is set
   (`MetadataConditional.SetFileSearchContext`).
-- The rule editor shows a rule's predicates as text and reads them back on
-  OK, and some of its text doesn't read back as the same predicate: a
-  namespace ("series:*anything*") comes back a wildcard, a wildcard keeps
-  its "(wildcard search)" suffix, an OR becomes a tag, and "≈ 600 ±15%",
-  file relationship counts, "similar to" and "no character tags" don't parse.
-  So OK on a pasted reference rule holding those changes it or is refused
-  (the rule editor's own leaves, not this exchange).
+- The rule editor shows a rule's predicates as text, a line each, where the
+  reference has search widgets. A line left as shown keeps its predicate as
+  it was, so OK on a rule leaves it as it was; only a line typed or changed
+  is read. Some lines as shown don't read as the same predicate if typed
+  again: a namespace ("series:*anything*") reads as a wildcard, a wildcard's
+  "(wildcard search)" note becomes part of it, an OR line reads as a tag, and
+  "≈ 600 ±15%", file relationship counts, "similar to 1 files" and "no
+  character tags" don't parse. Type them as the Client API takes them.
 - Imports also read the hydrus-rs JSON earlier versions exported.
 - The comparator lists (a rule's, an OR's and an AND's) take several rows,
   as the reference's do; "edit" edits the first selected rather than each in

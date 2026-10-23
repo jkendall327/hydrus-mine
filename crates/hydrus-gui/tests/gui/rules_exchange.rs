@@ -601,3 +601,169 @@ fn a_rule_typed_in_the_editor_exports_as_the_reference_s() {
     );
     hydrus_gui::clear_clipboard_reader();
 }
+
+/// Open the rule named in the editor, apply each of its metadata
+/// comparators' editors and then the rule's, changing nothing (`edit` may
+/// change the editor's fields first).
+fn ok_unchanged(
+    opened: &Opened,
+    list: &AutoResolutionRulesWindow,
+    name: &str,
+    edit: &dyn Fn(&hydrus_gui::AutoResolutionRuleWindow),
+) {
+    select_rules(list, &[Value::from(name)]);
+    list.invoke_edit();
+    let rule = opened
+        .bound
+        .auto_resolution
+        .rule
+        .borrow()
+        .as_ref()
+        .expect("the rule editor opens")
+        .clone_strong();
+    for row in 0..rule.get_comparators().row_count() {
+        rule.invoke_comparator_clicked(i32::try_from(row).unwrap(), false, false);
+        rule.invoke_comparator_edit();
+        // (a two-file test has no editor, as the reference's has none)
+        let Some(editor) = opened
+            .bound
+            .auto_resolution
+            .comparators
+            .borrow()
+            .last()
+            .map(|(_, w)| w.clone_strong())
+        else {
+            continue;
+        };
+        // (only the metadata comparators' editors, whose predicates are
+        // lines; the others' choices are the reference's, which can't hold
+        // every value a rule can, a visual duplicates confidence of 40 say)
+        if editor.get_kind() != "search" {
+            editor.invoke_cancel();
+            continue;
+        }
+        editor.invoke_apply();
+        assert!(
+            opened.bound.auto_resolution.comparators.borrow().is_empty(),
+            "{name}, comparator {row}: {}",
+            editor.get_errors()
+        );
+    }
+    edit(&rule);
+    rule.invoke_apply();
+    assert!(
+        opened.bound.auto_resolution.rule.borrow().is_none(),
+        "{name}: {}",
+        rule.get_errors()
+    );
+}
+
+fn export_of(opened: &Opened, list: &AutoResolutionRulesWindow, name: &str) -> Value {
+    select_rules(list, &[Value::from(name)]);
+    let before = opened.copied.borrow().len();
+    list.invoke_exchange(0);
+    assert_eq!(
+        said(),
+        Vec::<Value>::new(),
+        "{name}: exported without a problem"
+    );
+    normal(&opened.copied.borrow().get(before).cloned().expect("copied"))
+}
+
+fn same(ours: &Value, theirs: &Value, what: &str) {
+    assert!(
+        ours == theirs,
+        "{what}: {}",
+        hydrus_testkit::serialised::first_difference(ours, theirs).unwrap_or_default()
+    );
+}
+
+// OK on a reference rule, changing nothing, leaves it as it was: its
+// predicates' lines read back as the predicates they showed (some lines,
+// such as a namespace's, an OR's or an approximate number's, would not
+// parse back to the same predicate)
+// leaf: audit-media-rules-list, audit-media-duplicate-search-predicates
+#[test]
+fn every_recorded_rule_comes_back_from_the_editor_unchanged() {
+    let rec = recorded();
+    let (opened, list) = opened();
+    let singles: Vec<&Value> = rec["exports"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|e| e["names"].as_array().unwrap().len() == 1)
+        .collect();
+    for export in &singles {
+        paste(export["text"].as_str());
+        list.invoke_exchange(3);
+        said();
+    }
+    assert_eq!(rules(&list).0.len(), singles.len());
+    for export in &singles {
+        let name = export["names"][0].as_str().unwrap();
+        // ("worse" is a "B is better" action, which the editor's action
+        // choices don't hold, as the reference's don't: OK makes it "better"
+        // there too)
+        if name == "worse" {
+            continue;
+        }
+        ok_unchanged(&opened, &list, name, &|_| {});
+        same(
+            &export_of(&opened, &list, name),
+            &normal(export["text"].as_str().unwrap()),
+            name,
+        );
+    }
+    hydrus_gui::clear_clipboard_reader();
+}
+
+// An edit of the lines: the lines kept are their predicates as they were, a
+// line taken out goes, and a line typed is read as the reference reads it
+// (`system:has audio`, as the recording's typed rule has it)
+// leaf: audit-media-rules-list, audit-media-duplicate-search-predicates
+#[test]
+fn an_edited_search_keeps_the_lines_not_edited() {
+    let rec = recorded();
+    let (opened, list) = opened();
+    let export = |name: &str| {
+        rec["exports"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|e| e["names"] == serde_json::json!([name]))
+            .unwrap()["text"]
+            .as_str()
+            .unwrap()
+            .to_owned()
+    };
+    let wide = export("wide");
+    paste(Some(&wide));
+    list.invoke_exchange(3);
+    said();
+    // what the reference's parser made of "system:has audio"
+    let typed = normal(&export("typed"));
+    let typed_lines = rec["typed_lines"]["comparator"].as_array().unwrap();
+    let at = typed_lines
+        .iter()
+        .position(|l| l == "system:has audio")
+        .unwrap();
+    let has_audio = typed[3][5][2][2][0][1][2][1][2][2][3][at].clone();
+    ok_unchanged(&opened, &list, "wide", &|rule| {
+        let text = rule.get_search_1().to_string();
+        let mut lines: Vec<&str> = text.lines().collect();
+        lines.remove(0);
+        lines.push("system:has audio");
+        rule.set_search_1(lines.join("\n").into());
+        rule.invoke_changed();
+    });
+    let mut expected = normal(&wide);
+    let predicates = expected[3][4][2][0][2][3].as_array_mut().unwrap();
+    predicates.remove(0);
+    predicates.push(has_audio);
+    same(
+        &export_of(&opened, &list, "wide"),
+        &expected,
+        "wide, edited",
+    );
+    hydrus_gui::clear_clipboard_reader();
+}

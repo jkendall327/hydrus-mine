@@ -23,8 +23,8 @@ use crate::auto_resolution_rules::{
     OPERATION_CHOICES, PAIR_SEARCH_CHOICES, PIXEL_CHOICES, PROPERTIES, RULES_ORDER_NOTE,
     RULES_WARNING, RuleEdit, SEARCH_TEXT, VISUAL_CHOICES, action_text, comparator_choices,
     comparator_summary, looking_choices, new_rule, operator_choices, operator_label,
-    parse_predicate_lines, predicate_lines, property_text, row, rule_can_determine_better,
-    same_operator, visual_text,
+    predicate_lines, property_text, reread_predicate_lines, row, rule_can_determine_better,
+    same_operator, shown_predicate_lines, visual_text,
 };
 use crate::folders::Named;
 use crate::{AutoResolutionRuleWindow, AutoResolutionRulesWindow, ComparatorWindow, TableRow};
@@ -368,7 +368,9 @@ fn read_comparator(window: &ComparatorWindow, state: &mut ComparatorState) -> bo
             {
                 *looking_at = c.1;
             }
-            match parse_predicate_lines(&window.get_predicates()) {
+            // (a line as shown is its predicate as it was)
+            let shown = shown_predicate_lines(predicates, &state.context);
+            match reread_predicate_lines(&window.get_predicates(), &shown) {
                 Ok(p) => *predicates = p,
                 Err(e) => state.errors.push(e),
             }
@@ -779,7 +781,9 @@ fn read_rule(window: &AutoResolutionRuleWindow, store: &Store, state: &mut RuleS
             "the second search",
         ),
     ] {
-        match parse_predicate_lines(&text) {
+        // (a line as shown is its predicate as it was)
+        let shown = shown_predicate_lines(&search.predicates, &state.context);
+        match reread_predicate_lines(&text, &shown) {
             Ok(predicates) => search.predicates = predicates,
             Err(e) => state.errors.push(format!("Problem with {which}: {e}")),
         }
