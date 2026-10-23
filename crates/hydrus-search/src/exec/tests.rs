@@ -1350,12 +1350,19 @@ fn collecting_many_collections_sorts_their_files_together() {
             .unwrap();
         (media, start.elapsed())
     };
-    // (sorted as one collection of every file: the same reads, once)
-    let (_, once) = timed(&PageCollect {
+    // (sorted as one collection of every file: the same reads, once; each
+    // the quickest of three, so a stall can't decide it)
+    let quickest = |collect: &PageCollect| {
+        (0..3)
+            .map(|_| timed(collect))
+            .min_by_key(|(_, took)| *took)
+            .unwrap()
+    };
+    let (_, once) = quickest(&PageCollect {
         namespaces: vec!["nothing".into()],
         ..collect.clone()
     });
-    let (media, took) = timed(&collect);
+    let (media, took) = quickest(&collect);
     assert_eq!(media.len(), 3_000);
     assert!(
         media
