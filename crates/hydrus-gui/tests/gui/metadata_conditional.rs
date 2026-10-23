@@ -444,17 +444,16 @@ fn the_metadata_conditional_editor_searches_as_the_references_does() {
     rule.invoke_comparator_clicked(0);
     rule.invoke_comparator_edit();
     let c = newest_comparator(&bound);
-    differ(
-        &json!("reopened"),
-        "shown",
-        json!(
-            c.get_search_predicates()
-                .iter()
-                .map(|s| s.to_string())
-                .collect::<Vec<_>>()
-        ),
-        &last["shown"],
-    );
+    // (what was kept: those that can't be tested on one file, limit and
+    // filesize, were dropped as the reference's `SetFileSearchContext` drops
+    // them)
+    let mut reopened: Vec<String> = c
+        .get_search_predicates()
+        .iter()
+        .map(|s| s.to_string())
+        .collect();
+    reopened.sort();
+    differ(&json!("reopened"), "shown", json!(reopened), &last["saved"]);
     differ(
         &json!("reopened"),
         "summary",

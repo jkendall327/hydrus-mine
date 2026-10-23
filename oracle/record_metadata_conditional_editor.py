@@ -69,6 +69,7 @@ STEPS = [
     [ 'or button', [ 'blue', 'series:metroid' ] ],
     [ 'shift activate row', 1, None ],
     [ 'or button', [ 'system:width > 100', 'sam*' ] ],
+    [ 'paste', 'system:limit = 5\nsystem:filesize < 5MB\nsystem:has exif' ],
     [ 'looking at', 0 ]
 ]
 

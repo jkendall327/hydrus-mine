@@ -2811,6 +2811,88 @@
     "highlighted": [
      0
     ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "blue eyes OR series:metroid",
+     "sam* (wildcard search) OR system:archive",
+     "series:metroid OR system:has audio",
+     "system:archive OR system:height < 50",
+     "system:has duration OR system:width = 1,920",
+     "system:has exif",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "shown": [
+     "blue eyes OR series:metroid",
+     "sam* (wildcard search) OR system:archive",
+     "series:metroid OR system:has audio",
+     "system:archive OR system:height < 50",
+     "system:filesize < 5MB",
+     "system:has duration OR system:width = 1,920",
+     "system:has exif",
+     "system:inbox",
+     "system:limit is 5",
+     "system:untagged"
+    ],
+    "summary": "either will match: 8 predicates",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "paste",
+    "system:limit = 5\nsystem:filesize < 5MB\nsystem:has exif"
+   ]
+  },
+  {
+   "listed": null,
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
     "looking_at": 0,
     "looking_at_choices": [
      "A will match these",
@@ -2856,6 +2938,7 @@
      "series:metroid OR system:has audio",
      "system:archive OR system:height < 50",
      "system:has duration OR system:width = 1,920",
+     "system:has exif",
      "system:inbox",
      "system:untagged"
     ],
@@ -2864,11 +2947,14 @@
      "sam* (wildcard search) OR system:archive",
      "series:metroid OR system:has audio",
      "system:archive OR system:height < 50",
+     "system:filesize < 5MB",
      "system:has duration OR system:width = 1,920",
+     "system:has exif",
      "system:inbox",
+     "system:limit is 5",
      "system:untagged"
     ],
-    "summary": "A will match: 7 predicates",
+    "summary": "A will match: 8 predicates",
     "tab": 0,
     "tabs": [
      "results"

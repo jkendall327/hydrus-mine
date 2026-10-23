@@ -1235,6 +1235,11 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   can't, and stay unlisted, as in the reference) and searches tags whether or
   not an OR is being built (DECISIONS.md, "where the reference has a bug,
   ours stands"); the test asserts its own listing on those recorded steps.
+  Predicates that can't be tested on one file (limit, filesize), pasted or
+  kept, stay in its list but are dropped from the comparator it gives back,
+  without a word, as the reference's `MetadataConditional.SetFileSearchContext`
+  drops them; a conditional read back from a saved rule keeps what it held,
+  as the reference's deserialisation does.
   Its results have no favourites tab, as the reference's. The OR button's
   editor lists as a metadata conditional does, but its tabs selector still
   offers favourites and children.
