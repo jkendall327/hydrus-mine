@@ -1,0 +1,1475 @@
+{
+ "cases": [
+  {
+   "menu": [
+    {
+     "copy": [
+      "series:active alpha",
+      "active alpha",
+      "active_alpha",
+      "---",
+      "all tags",
+      "all subtags"
+     ]
+    },
+    {
+     "2 siblings": [
+      "add siblings to series:active alpha",
+      "---",
+      "--downloader tags, my tags--",
+      "series:active old",
+      "series:active older"
+     ]
+    },
+    {
+     "1 parents, 1 children": [
+      "add parents to series:active alpha",
+      "---",
+      "--downloader tags, my tags--",
+      "parent: series:active root",
+      "child: series:active kid"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for series:active alpha",
+      "---",
+      "open a new duplicate filter page for series:active alpha"
+     ]
+    },
+    {
+     "search": [
+      "edit series:active alpha",
+      "---",
+      "remove series:active alpha from current search",
+      "invert: add -series:active alpha to current search",
+      "---",
+      "start an OR predicate with series:active alpha",
+      "---",
+      "exclude series:*anything* from the current search"
+     ]
+    },
+    {
+     "select": [
+      "files with \"series:active alpha\""
+     ]
+    },
+    {
+     "favourites": [
+      "add \"series:active alpha\" to favourites",
+      "---",
+      "add \"series:active alpha\" to most used for \"downloader tags\"",
+      "remove \"series:active alpha\" from most used for \"my tags\"",
+      "add \"series:active alpha\" to most used for \"second tags\""
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "name": "tag with siblings and parents",
+   "selected": [
+    "series:active alpha"
+   ]
+  },
+  {
+   "menu": [
+    {
+     "copy": [
+      "series:active beta",
+      "active beta",
+      "active_beta",
+      "---",
+      "all tags",
+      "all subtags"
+     ]
+    },
+    {
+     "no siblings": [
+      "add siblings to series:active beta"
+     ]
+    },
+    {
+     "no parents": [
+      "add parents to series:active beta"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for series:active beta",
+      "---",
+      "open a new duplicate filter page for series:active beta"
+     ]
+    },
+    {
+     "search": [
+      "edit series:active beta",
+      "---",
+      "remove series:active beta from current search",
+      "invert: add -series:active beta to current search",
+      "---",
+      "start an OR predicate with series:active beta",
+      "---",
+      "exclude series:*anything* from the current search"
+     ]
+    },
+    {
+     "select": [
+      "files with \"series:active beta\""
+     ]
+    },
+    {
+     "favourites": [
+      "remove \"series:active beta\" from favourites",
+      "---",
+      "add \"series:active beta\" to most used for \"downloader tags\"",
+      "add \"series:active beta\" to most used for \"my tags\"",
+      "add \"series:active beta\" to most used for \"second tags\""
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "name": "favourite tag",
+   "selected": [
+    "series:active beta"
+   ]
+  },
+  {
+   "menu": [
+    {
+     "copy": [
+      "series:active root",
+      "active root",
+      "active_root",
+      "---",
+      "all tags",
+      "all subtags"
+     ]
+    },
+    {
+     "no siblings": [
+      "add siblings to series:active root"
+     ]
+    },
+    {
+     "0 parents, 2 children": [
+      "add parents to series:active root",
+      "---",
+      "--downloader tags, my tags--",
+      "child: series:active alpha",
+      "child: series:active kid"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for series:active root",
+      "---",
+      "open a new duplicate filter page for series:active root"
+     ]
+    },
+    {
+     "search": [
+      "edit series:active root",
+      "---",
+      "remove series:active root from current search",
+      "invert: add -series:active root to current search",
+      "---",
+      "start an OR predicate with series:active root",
+      "---",
+      "exclude series:*anything* from the current search"
+     ]
+    },
+    {
+     "select": [
+      "files with \"series:active root\""
+     ]
+    },
+    {
+     "favourites": [
+      "add \"series:active root\" to favourites",
+      "---",
+      "add \"series:active root\" to most used for \"downloader tags\"",
+      "add \"series:active root\" to most used for \"my tags\"",
+      "add \"series:active root\" to most used for \"second tags\""
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "name": "parent tag",
+   "selected": [
+    "series:active root"
+   ]
+  },
+  {
+   "menu": [
+    {
+     "copy": [
+      "2 selected",
+      "2 selected subtags",
+      "2 selected subtags with underscores",
+      "---",
+      "all tags",
+      "all subtags"
+     ]
+    },
+    {
+     "siblings": [
+      "add siblings to selection"
+     ]
+    },
+    {
+     "parents": [
+      "add parents to selection"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for 2 selected",
+      "open a new OR search page for 2 selected",
+      "open new search pages for each in selection",
+      "---",
+      "open a new duplicate filter page for 2 selected"
+     ]
+    },
+    {
+     "search": [
+      "edit 2 search terms",
+      "---",
+      "remove selected from current search",
+      "invert selected and add to current search",
+      "---",
+      "replace selected with their OR",
+      "start an OR predicate with selected",
+      "---",
+      "exclude series:*anything* from the current search"
+     ]
+    },
+    {
+     "select": [
+      "files with all of \"series:active alpha, series:active beta\"",
+      "files with any of \"series:active alpha, series:active beta\""
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "name": "two tags",
+   "selected": [
+    "series:active alpha",
+    "series:active beta"
+   ]
+  },
+  {
+   "menu": [
+    {
+     "copy": [
+      "system:inbox",
+      "inbox",
+      "---",
+      "all tags",
+      "all subtags"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for system:inbox",
+      "---",
+      "open a new duplicate filter page for system:inbox"
+     ]
+    },
+    {
+     "search": [
+      "remove system:inbox from current search",
+      "invert: add system:archive to current search",
+      "---",
+      "start an OR predicate with system:inbox"
+     ]
+    }
+   ],
+   "name": "system predicate",
+   "selected": [
+    "system:inbox"
+   ]
+  },
+  {
+   "menu": [
+    {
+     "copy": [
+      "2 selected",
+      "2 selected subtags",
+      "2 selected subtags with underscores",
+      "---",
+      "1 selected, with OR predicates collapsed",
+      "---",
+      "all tags",
+      "all subtags"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for 1 selected, with OR predicates collapsed",
+      "---",
+      "open a new duplicate filter page for 1 selected, with OR predicates collapsed"
+     ]
+    },
+    {
+     "search": [
+      "edit series:active alpha OR series:active beta",
+      "---",
+      "remove series:active alpha OR series:active beta from current search",
+      "---",
+      "dissolve series:active alpha OR series:active beta into single predicates"
+     ]
+    }
+   ],
+   "name": "OR predicate",
+   "selected": [
+    "series:active alpha OR series:active beta"
+   ]
+  },
+  {
+   "menu": [
+    {
+     "copy": [
+      "series:*",
+      "*",
+      "---",
+      "all tags",
+      "all subtags"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for series:*",
+      "---",
+      "open a new duplicate filter page for series:*"
+     ]
+    },
+    {
+     "search": [
+      "edit series:*anything*",
+      "---",
+      "remove series:*anything* from current search",
+      "invert: add -series:*anything* to current search",
+      "---",
+      "start an OR predicate with series:*anything*"
+     ]
+    }
+   ],
+   "name": "namespace",
+   "selected": [
+    "series:*anything*"
+   ]
+  },
+  {
+   "menu": [
+    {
+     "copy": [
+      "2 selected",
+      "2 selected subtags",
+      "2 selected subtags with underscores",
+      "---",
+      "all tags",
+      "all subtags"
+     ]
+    },
+    {
+     "2 siblings": [
+      "add siblings to series:active alpha",
+      "---",
+      "--downloader tags, my tags--",
+      "series:active old",
+      "series:active older"
+     ]
+    },
+    {
+     "1 parents, 1 children": [
+      "add parents to series:active alpha",
+      "---",
+      "--downloader tags, my tags--",
+      "parent: series:active root",
+      "child: series:active kid"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for 2 selected",
+      "open a new OR search page for 2 selected",
+      "open new search pages for each in selection",
+      "---",
+      "open a new duplicate filter page for 2 selected"
+     ]
+    },
+    {
+     "search": [
+      "edit 2 search terms",
+      "---",
+      "remove selected from current search",
+      "invert selected and add to current search",
+      "---",
+      "replace selected with their OR",
+      "start an OR predicate with selected"
+     ]
+    },
+    {
+     "select": [
+      "files with \"series:active alpha\""
+     ]
+    },
+    {
+     "favourites": [
+      "add \"series:active alpha\" to favourites",
+      "---",
+      "add \"series:active alpha\" to most used for \"downloader tags\"",
+      "remove \"series:active alpha\" from most used for \"my tags\"",
+      "add \"series:active alpha\" to most used for \"second tags\""
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "name": "tag and system predicate",
+   "selected": [
+    "series:active alpha",
+    "system:inbox"
+   ]
+  }
+ ],
+ "corpus": [
+  {
+   "hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+   ],
+   "tag": "series:active alpha"
+  },
+  {
+   "hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+   ],
+   "tag": "series:active beta"
+  },
+  {
+   "hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+   ],
+   "tag": "series:active root"
+  }
+ ],
+ "favourites": [
+  "series:active beta"
+ ],
+ "most_used": [
+  "series:active alpha"
+ ],
+ "parents": [
+  [
+   "series:active alpha",
+   "series:active root"
+  ],
+  [
+   "series:active kid",
+   "series:active alpha"
+  ]
+ ],
+ "siblings": [
+  [
+   "series:active old",
+   "series:active alpha"
+  ],
+  [
+   "series:active older",
+   "series:active alpha"
+  ]
+ ],
+ "triggers": [
+  {
+   "case": "favourite tag",
+   "clipboard": [],
+   "dialogs": [],
+   "favourite_tags": [],
+   "menu_after": [
+    {
+     "copy": [
+      "series:active beta",
+      "active beta",
+      "active_beta",
+      "---",
+      "all tags",
+      "all subtags"
+     ]
+    },
+    {
+     "no siblings": [
+      "add siblings to series:active beta"
+     ]
+    },
+    {
+     "no parents": [
+      "add parents to series:active beta"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for series:active beta",
+      "---",
+      "open a new duplicate filter page for series:active beta"
+     ]
+    },
+    {
+     "search": [
+      "edit series:active beta",
+      "---",
+      "remove series:active beta from current search",
+      "invert: add -series:active beta to current search",
+      "---",
+      "start an OR predicate with series:active beta",
+      "---",
+      "exclude series:*anything* from the current search"
+     ]
+    },
+    {
+     "select": [
+      "files with \"series:active beta\""
+     ]
+    },
+    {
+     "favourites": [
+      "add \"series:active beta\" to favourites",
+      "---",
+      "add \"series:active beta\" to most used for \"downloader tags\"",
+      "add \"series:active beta\" to most used for \"my tags\"",
+      "add \"series:active beta\" to most used for \"second tags\""
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "most_used": [
+    "series:active alpha"
+   ],
+   "path": [
+    "favourites",
+    "remove \"series:active beta\" from favourites"
+   ],
+   "questions": [
+    {
+     "message": "Remove \"series:active beta\" from the favourites list?",
+     "no": "no",
+     "title": "Are you sure?",
+     "yes": "yes"
+    }
+   ],
+   "shown": [
+    "series:*anything*",
+    "series:active alpha",
+    "series:active alpha OR series:active beta",
+    "series:active beta",
+    "series:active root",
+    "system:inbox"
+   ],
+   "writes": []
+  },
+  {
+   "case": "tag with siblings and parents",
+   "clipboard": [],
+   "dialogs": [],
+   "favourite_tags": [
+    "series:active alpha"
+   ],
+   "menu_after": [
+    {
+     "copy": [
+      "series:active alpha",
+      "active alpha",
+      "active_alpha",
+      "---",
+      "all tags",
+      "all subtags"
+     ]
+    },
+    {
+     "2 siblings": [
+      "add siblings to series:active alpha",
+      "---",
+      "--downloader tags, my tags--",
+      "series:active old",
+      "series:active older"
+     ]
+    },
+    {
+     "1 parents, 1 children": [
+      "add parents to series:active alpha",
+      "---",
+      "--downloader tags, my tags--",
+      "parent: series:active root",
+      "child: series:active kid"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for series:active alpha",
+      "---",
+      "open a new duplicate filter page for series:active alpha"
+     ]
+    },
+    {
+     "search": [
+      "edit series:active alpha",
+      "---",
+      "remove series:active alpha from current search",
+      "invert: add -series:active alpha to current search",
+      "---",
+      "start an OR predicate with series:active alpha",
+      "---",
+      "exclude series:*anything* from the current search"
+     ]
+    },
+    {
+     "select": [
+      "files with \"series:active alpha\""
+     ]
+    },
+    {
+     "favourites": [
+      "remove \"series:active alpha\" from favourites",
+      "---",
+      "add \"series:active alpha\" to most used for \"downloader tags\"",
+      "remove \"series:active alpha\" from most used for \"my tags\"",
+      "add \"series:active alpha\" to most used for \"second tags\""
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "most_used": [
+    "series:active alpha"
+   ],
+   "path": [
+    "favourites",
+    "add \"series:active alpha\" to favourites"
+   ],
+   "questions": [],
+   "shown": [
+    "series:*anything*",
+    "series:active alpha",
+    "series:active alpha OR series:active beta",
+    "series:active beta",
+    "series:active root",
+    "system:inbox"
+   ],
+   "writes": []
+  },
+  {
+   "case": "tag with siblings and parents",
+   "clipboard": [],
+   "dialogs": [],
+   "favourite_tags": [
+    "series:active alpha"
+   ],
+   "menu_after": [
+    {
+     "copy": [
+      "series:active alpha",
+      "active alpha",
+      "active_alpha",
+      "---",
+      "all tags",
+      "all subtags"
+     ]
+    },
+    {
+     "2 siblings": [
+      "add siblings to series:active alpha",
+      "---",
+      "--downloader tags, my tags--",
+      "series:active old",
+      "series:active older"
+     ]
+    },
+    {
+     "1 parents, 1 children": [
+      "add parents to series:active alpha",
+      "---",
+      "--downloader tags, my tags--",
+      "parent: series:active root",
+      "child: series:active kid"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for series:active alpha",
+      "---",
+      "open a new duplicate filter page for series:active alpha"
+     ]
+    },
+    {
+     "search": [
+      "edit series:active alpha",
+      "---",
+      "remove series:active alpha from current search",
+      "invert: add -series:active alpha to current search",
+      "---",
+      "start an OR predicate with series:active alpha",
+      "---",
+      "exclude series:*anything* from the current search"
+     ]
+    },
+    {
+     "select": [
+      "files with \"series:active alpha\""
+     ]
+    },
+    {
+     "favourites": [
+      "remove \"series:active alpha\" from favourites",
+      "---",
+      "add \"series:active alpha\" to most used for \"downloader tags\"",
+      "add \"series:active alpha\" to most used for \"my tags\"",
+      "add \"series:active alpha\" to most used for \"second tags\""
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "most_used": [],
+   "path": [
+    "favourites",
+    "remove \"series:active alpha\" from most used for \"my tags\""
+   ],
+   "questions": [
+    {
+     "message": "Remove \"series:active alpha\" from the most used list for \"my tags\"?",
+     "no": "no",
+     "title": "Are you sure?",
+     "yes": "yes"
+    }
+   ],
+   "shown": [
+    "series:*anything*",
+    "series:active alpha",
+    "series:active alpha OR series:active beta",
+    "series:active beta",
+    "series:active root",
+    "system:inbox"
+   ],
+   "writes": []
+  },
+  {
+   "case": "parent tag",
+   "clipboard": [],
+   "dialogs": [],
+   "favourite_tags": [
+    "series:active alpha"
+   ],
+   "menu_after": [
+    {
+     "copy": [
+      "series:active root",
+      "active root",
+      "active_root",
+      "---",
+      "all tags",
+      "all subtags"
+     ]
+    },
+    {
+     "no siblings": [
+      "add siblings to series:active root"
+     ]
+    },
+    {
+     "0 parents, 2 children": [
+      "add parents to series:active root",
+      "---",
+      "--downloader tags, my tags--",
+      "child: series:active alpha",
+      "child: series:active kid"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for series:active root",
+      "---",
+      "open a new duplicate filter page for series:active root"
+     ]
+    },
+    {
+     "search": [
+      "edit series:active root",
+      "---",
+      "remove series:active root from current search",
+      "invert: add -series:active root to current search",
+      "---",
+      "start an OR predicate with series:active root",
+      "---",
+      "exclude series:*anything* from the current search"
+     ]
+    },
+    {
+     "select": [
+      "files with \"series:active root\""
+     ]
+    },
+    {
+     "favourites": [
+      "add \"series:active root\" to favourites",
+      "---",
+      "add \"series:active root\" to most used for \"downloader tags\"",
+      "remove \"series:active root\" from most used for \"my tags\"",
+      "add \"series:active root\" to most used for \"second tags\""
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "most_used": [
+    "series:active root"
+   ],
+   "path": [
+    "favourites",
+    "add \"series:active root\" to most used for \"my tags\""
+   ],
+   "questions": [],
+   "shown": [
+    "series:*anything*",
+    "series:active alpha",
+    "series:active alpha OR series:active beta",
+    "series:active beta",
+    "series:active root",
+    "system:inbox"
+   ],
+   "writes": []
+  },
+  {
+   "case": "tag with siblings and parents",
+   "clipboard": [],
+   "dialogs": [
+    {
+     "panel": "ManageTagSiblings",
+     "title": "manage tag siblings"
+    }
+   ],
+   "favourite_tags": [
+    "series:active alpha"
+   ],
+   "menu_after": [
+    {
+     "copy": [
+      "series:active alpha",
+      "active alpha",
+      "active_alpha",
+      "---",
+      "all tags",
+      "all subtags"
+     ]
+    },
+    {
+     "2 siblings": [
+      "add siblings to series:active alpha",
+      "---",
+      "--downloader tags, my tags--",
+      "series:active old",
+      "series:active older"
+     ]
+    },
+    {
+     "1 parents, 1 children": [
+      "add parents to series:active alpha",
+      "---",
+      "--downloader tags, my tags--",
+      "parent: series:active root",
+      "child: series:active kid"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for series:active alpha",
+      "---",
+      "open a new duplicate filter page for series:active alpha"
+     ]
+    },
+    {
+     "search": [
+      "edit series:active alpha",
+      "---",
+      "remove series:active alpha from current search",
+      "invert: add -series:active alpha to current search",
+      "---",
+      "start an OR predicate with series:active alpha",
+      "---",
+      "exclude series:*anything* from the current search"
+     ]
+    },
+    {
+     "select": [
+      "files with \"series:active alpha\""
+     ]
+    },
+    {
+     "favourites": [
+      "remove \"series:active alpha\" from favourites",
+      "---",
+      "add \"series:active alpha\" to most used for \"downloader tags\"",
+      "add \"series:active alpha\" to most used for \"my tags\"",
+      "add \"series:active alpha\" to most used for \"second tags\""
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "most_used": [
+    "series:active root"
+   ],
+   "path": [
+    "2 siblings",
+    "add siblings to series:active alpha"
+   ],
+   "questions": [],
+   "shown": [
+    "series:*anything*",
+    "series:active alpha",
+    "series:active alpha OR series:active beta",
+    "series:active beta",
+    "series:active root",
+    "system:inbox"
+   ],
+   "writes": []
+  },
+  {
+   "case": "tag with siblings and parents",
+   "clipboard": [
+    {
+     "text": "series:active old",
+     "type": "text"
+    }
+   ],
+   "dialogs": [],
+   "favourite_tags": [
+    "series:active alpha"
+   ],
+   "menu_after": [
+    {
+     "copy": [
+      "series:active alpha",
+      "active alpha",
+      "active_alpha",
+      "---",
+      "all tags",
+      "all subtags"
+     ]
+    },
+    {
+     "2 siblings": [
+      "add siblings to series:active alpha",
+      "---",
+      "--downloader tags, my tags--",
+      "series:active old",
+      "series:active older"
+     ]
+    },
+    {
+     "1 parents, 1 children": [
+      "add parents to series:active alpha",
+      "---",
+      "--downloader tags, my tags--",
+      "parent: series:active root",
+      "child: series:active kid"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for series:active alpha",
+      "---",
+      "open a new duplicate filter page for series:active alpha"
+     ]
+    },
+    {
+     "search": [
+      "edit series:active alpha",
+      "---",
+      "remove series:active alpha from current search",
+      "invert: add -series:active alpha to current search",
+      "---",
+      "start an OR predicate with series:active alpha",
+      "---",
+      "exclude series:*anything* from the current search"
+     ]
+    },
+    {
+     "select": [
+      "files with \"series:active alpha\""
+     ]
+    },
+    {
+     "favourites": [
+      "remove \"series:active alpha\" from favourites",
+      "---",
+      "add \"series:active alpha\" to most used for \"downloader tags\"",
+      "add \"series:active alpha\" to most used for \"my tags\"",
+      "add \"series:active alpha\" to most used for \"second tags\""
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "most_used": [
+    "series:active root"
+   ],
+   "path": [
+    "2 siblings",
+    "series:active old"
+   ],
+   "questions": [],
+   "shown": [
+    "series:*anything*",
+    "series:active alpha",
+    "series:active alpha OR series:active beta",
+    "series:active beta",
+    "series:active root",
+    "system:inbox"
+   ],
+   "writes": []
+  },
+  {
+   "case": "tag with siblings and parents",
+   "clipboard": [
+    {
+     "text": "series:active kid",
+     "type": "text"
+    }
+   ],
+   "dialogs": [],
+   "favourite_tags": [
+    "series:active alpha"
+   ],
+   "menu_after": [
+    {
+     "copy": [
+      "series:active alpha",
+      "active alpha",
+      "active_alpha",
+      "---",
+      "all tags",
+      "all subtags"
+     ]
+    },
+    {
+     "2 siblings": [
+      "add siblings to series:active alpha",
+      "---",
+      "--downloader tags, my tags--",
+      "series:active old",
+      "series:active older"
+     ]
+    },
+    {
+     "1 parents, 1 children": [
+      "add parents to series:active alpha",
+      "---",
+      "--downloader tags, my tags--",
+      "parent: series:active root",
+      "child: series:active kid"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for series:active alpha",
+      "---",
+      "open a new duplicate filter page for series:active alpha"
+     ]
+    },
+    {
+     "search": [
+      "edit series:active alpha",
+      "---",
+      "remove series:active alpha from current search",
+      "invert: add -series:active alpha to current search",
+      "---",
+      "start an OR predicate with series:active alpha",
+      "---",
+      "exclude series:*anything* from the current search"
+     ]
+    },
+    {
+     "select": [
+      "files with \"series:active alpha\""
+     ]
+    },
+    {
+     "favourites": [
+      "remove \"series:active alpha\" from favourites",
+      "---",
+      "add \"series:active alpha\" to most used for \"downloader tags\"",
+      "add \"series:active alpha\" to most used for \"my tags\"",
+      "add \"series:active alpha\" to most used for \"second tags\""
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "most_used": [
+    "series:active root"
+   ],
+   "path": [
+    "1 parents, 1 children",
+    "child: series:active kid"
+   ],
+   "questions": [],
+   "shown": [
+    "series:*anything*",
+    "series:active alpha",
+    "series:active alpha OR series:active beta",
+    "series:active beta",
+    "series:active root",
+    "system:inbox"
+   ],
+   "writes": []
+  },
+  {
+   "case": "two tags",
+   "clipboard": [],
+   "dialogs": [
+    {
+     "panel": "ManageTagParents",
+     "title": "manage tag parents"
+    }
+   ],
+   "favourite_tags": [
+    "series:active alpha"
+   ],
+   "menu_after": [
+    {
+     "copy": [
+      "2 selected",
+      "2 selected subtags",
+      "2 selected subtags with underscores",
+      "---",
+      "all tags",
+      "all subtags"
+     ]
+    },
+    {
+     "siblings": [
+      "add siblings to selection"
+     ]
+    },
+    {
+     "parents": [
+      "add parents to selection"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for 2 selected",
+      "open a new OR search page for 2 selected",
+      "open new search pages for each in selection",
+      "---",
+      "open a new duplicate filter page for 2 selected"
+     ]
+    },
+    {
+     "search": [
+      "edit 2 search terms",
+      "---",
+      "remove selected from current search",
+      "invert selected and add to current search",
+      "---",
+      "replace selected with their OR",
+      "start an OR predicate with selected",
+      "---",
+      "exclude series:*anything* from the current search"
+     ]
+    },
+    {
+     "select": [
+      "files with all of \"series:active alpha, series:active beta\"",
+      "files with any of \"series:active alpha, series:active beta\""
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "most_used": [
+    "series:active root"
+   ],
+   "path": [
+    "parents",
+    "add parents to selection"
+   ],
+   "questions": [],
+   "shown": [
+    "series:*anything*",
+    "series:active alpha",
+    "series:active alpha OR series:active beta",
+    "series:active beta",
+    "series:active root",
+    "system:inbox"
+   ],
+   "writes": []
+  },
+  {
+   "case": "two tags",
+   "clipboard": [],
+   "dialogs": [],
+   "favourite_tags": [
+    "series:active alpha"
+   ],
+   "menu_after": [
+    {
+     "copy": [
+      "2 selected",
+      "2 selected subtags",
+      "2 selected subtags with underscores",
+      "---",
+      "all tags",
+      "all subtags"
+     ]
+    },
+    {
+     "siblings": [
+      "add siblings to selection"
+     ]
+    },
+    {
+     "parents": [
+      "add parents to selection"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for 2 selected",
+      "open a new OR search page for 2 selected",
+      "open new search pages for each in selection",
+      "---",
+      "open a new duplicate filter page for 2 selected"
+     ]
+    },
+    {
+     "search": [
+      "edit 2 search terms",
+      "---",
+      "remove selected from current search",
+      "invert selected and add to current search",
+      "---",
+      "replace selected with their OR",
+      "start an OR predicate with selected",
+      "---",
+      "exclude series:*anything* from the current search"
+     ]
+    },
+    {
+     "select": [
+      "files with all of \"series:active alpha, series:active beta\"",
+      "files with any of \"series:active alpha, series:active beta\""
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "most_used": [
+    "series:active root"
+   ],
+   "path": [
+    "maintenance",
+    "regenerate tag display"
+   ],
+   "questions": [
+    {
+     "message": "!!WARNING EXPERIMENTAL!!\n\nThis will delete and then regenerate all the display calculations for the selected tags and their siblings and parents, with the intention of fixing bad autocomplete counts or sibling/parent presentation. It is functionally similar to the 'tag storage mappings cache' regeneration job, but just for these tags.\n\nIt might take a while to run, perhaps many minutes for a heavily-siblinged/-parented/-mapped tag, during which the database will be locked. Doing it on a thousand tags is going to completely gonk you. Also, any sibling or parent rules will be reset, and they will have to be recalculated, which will probably occur in a few seconds in the background after the regeneration job completes.",
+     "no": "forget it",
+     "title": "Regen tags?",
+     "yes": "let's go"
+    }
+   ],
+   "shown": [
+    "series:*anything*",
+    "series:active alpha",
+    "series:active alpha OR series:active beta",
+    "series:active beta",
+    "series:active root",
+    "system:inbox"
+   ],
+   "writes": [
+    {
+     "action": "regenerate_tag_mappings_tags",
+     "tags": [
+      "series:active alpha",
+      "series:active beta"
+     ]
+    }
+   ]
+  },
+  {
+   "case": "tag with siblings and parents",
+   "clipboard": [],
+   "dialogs": [],
+   "favourite_tags": [
+    "series:active alpha"
+   ],
+   "menu_after": [
+    {
+     "copy": [
+      "series:active alpha",
+      "active alpha",
+      "active_alpha",
+      "---",
+      "all tags",
+      "all subtags"
+     ]
+    },
+    {
+     "2 siblings": [
+      "add siblings to series:active alpha",
+      "---",
+      "--downloader tags, my tags--",
+      "series:active old",
+      "series:active older"
+     ]
+    },
+    {
+     "1 parents, 1 children": [
+      "add parents to series:active alpha",
+      "---",
+      "--downloader tags, my tags--",
+      "parent: series:active root",
+      "child: series:active kid"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for series:active alpha",
+      "---",
+      "open a new duplicate filter page for series:active alpha"
+     ]
+    },
+    {
+     "search": [
+      "edit series:active alpha",
+      "---",
+      "remove series:active alpha from current search",
+      "invert: add -series:active alpha to current search",
+      "---",
+      "start an OR predicate with series:active alpha",
+      "---",
+      "exclude series:*anything* from the current search"
+     ]
+    },
+    {
+     "select": [
+      "files with \"series:active alpha\""
+     ]
+    },
+    {
+     "favourites": [
+      "remove \"series:active alpha\" from favourites",
+      "---",
+      "add \"series:active alpha\" to most used for \"downloader tags\"",
+      "add \"series:active alpha\" to most used for \"my tags\"",
+      "add \"series:active alpha\" to most used for \"second tags\""
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "most_used": [
+    "series:active root"
+   ],
+   "path": [
+    "select",
+    "files with \"series:active alpha\""
+   ],
+   "questions": [],
+   "shown": [
+    "series:*anything*",
+    "series:active alpha",
+    "series:active alpha OR series:active beta",
+    "series:active beta",
+    "series:active root",
+    "system:inbox"
+   ],
+   "writes": []
+  }
+ ]
+}

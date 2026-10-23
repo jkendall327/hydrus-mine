@@ -82,6 +82,9 @@ pub enum Action {
         remove: bool,
         question: Option<String>,
     },
+    /// One of the menu's own entries for the list that opened it (by its
+    /// id there), done by that list.
+    Owner(i32),
 }
 impl Action {
     pub fn question(&self) -> Option<&str> {

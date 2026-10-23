@@ -3488,8 +3488,16 @@ changed-page/query, accepted-close and rebound owners. `active_predicate_routes.
 records fourteen real Qt selections, their clipboard/new-page publications, and a
 real new-page consumer. Authored native transport and ownership replay awaits
 hosted execution. The active list’s inherited “select files” method is a no-op
-in Qt (the media tag list owns the working override); it is not represented here
-as a new file-selection action.
+in Qt (the media tag list owns the working override); its "select" entry is
+there and does nothing, as the reference's.
+
+Right-clicking the active list opens its whole menu, as the reference builds
+it: copy, the selected tag's siblings and parents (with their counts, its
+siblings, parents and children by service, each copied when chosen, and "add
+siblings/parents to" opening the siblings or parents editor on the selection),
+open, search, select, favourites (add or remove it from the favourites and
+each service's most used tags, asking before a removal) and maintenance
+(regenerate tag display, asking first). Recorded in `active_predicate_menu.json`.
 
 The file-size editor displays `<`, `≈`, `=`, `≠` and `>` as five radio choices,
 with bounded arrow navigation, Space and default Enter acceptance. Its amount

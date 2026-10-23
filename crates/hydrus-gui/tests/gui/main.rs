@@ -341,6 +341,7 @@ mod archive_delete_policies;
 mod ffmpeg_timeout;
 mod radio_return;
 
+mod active_predicate_menu;
 mod database_backup_menu;
 mod database_file_maintenance_new;
 mod database_locations_menu;

@@ -120,6 +120,10 @@ fn permits_input(window: &MainWindow) -> bool {
         && window.get_chooser_labels().row_count() == 0
 }
 
+/// Where the main window's shared tag menu is put once it is made; the
+/// active list's right-click menu opens in it.
+pub(crate) type MenuSlot = Rc<RefCell<Option<Rc<crate::write_tag_menu::TagMenu>>>>;
+
 /// Install the active list without owning the MainWindow or a page back-edge.
 pub(crate) fn bind(
     window: &MainWindow,
@@ -129,7 +133,8 @@ pub(crate) fn bind(
     shown: impl Fn(bool) + Clone + 'static,
     active: Rc<dyn Fn() -> bool>,
     launch: Launch,
-) {
+) -> MenuSlot {
+    let menu_slot = MenuSlot::default();
     let state = Rc::new(RefCell::new(State::default()));
     let binding_active = active.clone();
     let valid: Rc<dyn Fn() -> bool> = Rc::new({
@@ -556,5 +561,52 @@ pub(crate) fn bind(
             }
         }
     });
+    // the whole menu, the reference's with the entries the list inherits
+    // from tag lists, opened in the shared tag menu; the list's own entries
+    // come back through `active-predicate-menu-chosen`
+    window.on_active_predicate_menu_requested({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let page = page.clone();
+        let valid = valid.clone();
+        let menu_slot = menu_slot.clone();
+        move |_, x, y| {
+            if !valid() {
+                return;
+            }
+            let Some(menu) = menu_slot.borrow().clone() else {
+                return;
+            };
+            let entries = {
+                let state = state.borrow();
+                let own: Vec<_> = state
+                    .menu
+                    .iter()
+                    .map(|(action, label)| match action {
+                        Action::Route(route) => {
+                            active_predicates::menu::Own::Route(*route, label.clone())
+                        }
+                        Action::Search(command) => {
+                            active_predicates::menu::Own::Search(*command, label.clone())
+                        }
+                    })
+                    .collect();
+                let store = page().borrow().store().clone();
+                active_predicates::menu::context_menu(&store, &state.captured, &own)
+            };
+            let weak = weak.clone();
+            menu.open_owned(
+                &entries,
+                x,
+                y,
+                Rc::new(move |id| {
+                    if let Some(window) = weak.upgrade() {
+                        window.invoke_active_predicate_menu_chosen(id);
+                    }
+                }),
+            );
+        }
+    });
     window.invoke_active_predicates_refreshed();
+    menu_slot
 }
