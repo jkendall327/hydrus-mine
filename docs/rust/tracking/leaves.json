@@ -657,10 +657,10 @@
     "Reference offline backup-folder migration chooses a directory and rewrites folder granularity. Native locations UI absent."
    ],
    "recheck": {
-    "date": "2026-10-14",
-    "class": "source-restated",
-    "by": "wave 5 session (W5-6)",
-    "note": "As before, plus the mixed folder (granularity 2 files beside a granularity 3 one, a stray file) recorded in oracle/fixtures/granularity_panel.json and replayed through the real window: the 'already granularity 2, mixed' question, declining it, and moving on to the 2-to-3 result with the files' places. The cancel and error messages of the job are still restated from the source (not recorded), so the class is not raised."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "W6-4 session (wave 6, claude/w6-4)",
+    "note": "tests/gui/database_locations_menu.rs the_granularity_window_replays_the_reference_s_steps replays every step of oracle/fixtures/granularity_panel.json (oracle/record_granularity_panel.py, the real ReviewGranularityPanel with its reference job) through the real window: the ready check, picker and scan questions in order and words (unknown, already-the-target and mixed folders, declined and accepted), each folder's files afterwards, and now the two job endings: a job cancelled from its popup (the test presses the popup's cancel button while the worker waits at its first status; the recorder cancels the reference's job just before it starts; neither moves a file) says the reference's 'You cancelled the job...' message, and a job stopped by an errant file 'f3a/b' where the folder must go shows the reference's critical 'Oh no!' with hydrus's own 'Cannot create the directory ... because it already exists as a normal file!' text. Not covered: the job's pause button (paused jobs are not recorded)."
    }
   },
   {
@@ -714,10 +714,10 @@
     "Reference rebalance calculates storage need, asks run duration and runs cancellable move/progress work. Native Database > locations remains disabled."
    ],
    "recheck": {
-    "date": "2026-10-14",
-    "class": "weak",
-    "by": "W5-5 session (wave 5)",
-    "note": "tests/gui/database_locations_menu.rs move_files_now_stops_at_its_run_time_and_moves_what_the_reference_s_job_does replays oracle/fixtures/rebalance_job.json (the reference's job run by the real Rebalance): with the stop time passed (scripted clock, 10 minute choice) nothing moves; otherwise the folders move (254, as recorded) and a second run has nothing to move. Still weak: the 30 minute and 1 hour stop times are not distinguished, the cancel-after-n-moves run is not replayed through the popup, and the popup's content while running is not read (it dismisses itself when done)."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "W6-4 session (wave 6, claude/w6-4)",
+    "note": "tests/gui/database_locations_menu.rs move_files_now_stops_at_its_run_time_and_moves_what_the_reference_s_job_does replays oracle/fixtures/rebalance_job.json (oracle/record_rebalance_job.py: the real MoveMediaFilesPanel makes each job with HydrusTime.GetNow held still, the real client_files_manager.Rebalance runs it) through the real window, run-time question and worker, the clock scripted as recorded: for 10 minutes, 30 minutes, 1 hour and the custom time (its window's default, in minutes, times 60 equals the recorded 7200 s), a job one second past its stop time moves nothing and one at its stop time still moves; the user presses the popup's cancel button as the recorded move (the fourth, or the first) is shown, and it stops after that move; 'run indefinitely' moves the rest (files then thumbnails) and again nothing. Every status the worker shows equals the recording's in order (Moving \"file XX at <default>/fXX\" to \"file XX at <a>/fXX\"., the hex the reference's random pick, written alike; 'done!' last), each read from the popup as it is shown (the runs of up to 5 statuses); the folders at the new location number the recorded moves; and the window opens again after each job, as the reference's DoFileStorageRebalance does (after_the_job). Not covered: the popup showing 'done!' (the job dismisses it at once; the status is compared from the worker)."
    }
   },
   {
@@ -5229,10 +5229,10 @@
     "Paths from real platform pickers and typed/drop sources join the single review queue."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window: typed (quoted) folder path, dropped files (new window then added to the open one), and add files/add folder through a stand-in picker with titles 'Select the files to add.' / 'Select a folder to add.' (reference strings). All expectations are literals; the real platform picker is stubbed and nothing is recorded for these entry points (the reference has no typed-path box, so that part is native-only). Tests: crates/hydrus-gui/tests/gui/import_files.rs:80 files_given_are_reviewed_then_imported; crates/hydrus-gui/tests/gui/import_files.rs:438 files_and_folders_picked_are_reviewed"
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "W6-4 session (wave 6, claude/w6-4)",
+    "note": "tests/gui/import_paths.rs the_pickers_and_drops_give_the_window_the_reference_s_paths replays oracle/fixtures/import_paths.json (oracle/record_import_paths.py: the reference's file > import files window with its FileDialog and PickDirectory replaced by scripted answers, and real QDropEvents handed to the window's and the main window's FileDropTargets): what each picker is asked (title; several existing files, or a folder), the rows [#, path, filetype, size] and progress text after add files, add folder, each cancelled, a drop on the window (the recording's web URL has no winit counterpart; only files are dropped) and a drop on the main window. The main-window drop while the window is open joins its list where the reference opens a second window (DIFFERENCES.md); its rows are compared as following the first's, without the progress text (not recorded for the two lists together). The pickers are a stand-in (set_picker) for the desktop portal, and drops are handed to the windows' drop handlers (deliver_dropped_files, Bound::drop_files), not through winit. The typed-path box is native-only and driven end to end in tests/gui/import_files.rs files_given_are_reviewed_then_imported."
    }
   },
   {

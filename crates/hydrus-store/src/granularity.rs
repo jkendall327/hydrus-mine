@@ -73,6 +73,19 @@ pub struct Progress<'a> {
     pub cancelled: &'a dyn Fn() -> bool,
 }
 
+/// `HydrusPaths.MakeSureDirectoryExists`: a file in the way is an error in the
+/// reference's words.
+fn make_sure_directory_exists(path: &Path) -> Result<()> {
+    match std::fs::metadata(path) {
+        Ok(meta) if meta.is_dir() => Ok(()),
+        Ok(_) => Err(StoreError::Invalid(format!(
+            "Cannot create the directory \"{}\" because it already exists as a normal file!",
+            path.display()
+        ))),
+        Err(_) => Ok(std::fs::create_dir_all(path)?),
+    }
+}
+
 /// Move every file of `kinds` under `bases` from prefix folders of
 /// `from` hex characters to those of `to` (`RegranulariseFileStorage`).
 pub fn regranularise(
@@ -135,7 +148,7 @@ fn regranularise_recorded(
                 .prefixes
                 .entry(target.clone())
                 .or_insert_with(|| base.clone());
-            std::fs::create_dir_all(prefix_dir(&outcome.prefixes[target], target))?;
+            make_sure_directory_exists(&prefix_dir(&outcome.prefixes[target], target))?;
         }
         let source = prefix_dir(base, prefix);
         let mut jobs: Vec<(PathBuf, PathBuf)> = Vec::new();

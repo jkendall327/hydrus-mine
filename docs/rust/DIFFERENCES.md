@@ -4783,17 +4783,17 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
 - "manage granularity" runs its progress in an ordinary popup rather than
   a modal dialog, and its questions in button windows.
 - The prefix folder moved first is the first in order, not a random one.
-- The offline-folder granularity scan of a folder holding both layouts is
-  recorded and replayed (`oracle/record_granularity_panel.py`, the mixed
-  folder steps). The cancel and error messages of the jobs are not recorded
-  (the jobs end too quickly to cancel from a test, and an error needs a broken
-  folder), so that leaf stays at source-restated.
+- The offline-folder granularity jobs' cancel and error messages are recorded
+  and replayed (`oracle/record_granularity_panel.py`); the cancel is pressed
+  on the job's popup after its first status, where the recording cancels the
+  reference's job just before it starts (neither has moved a file). The
+  client migration's own cancel and error messages are not recorded.
 - The list selects one location; it sorts by location only.
-- The rebalance runs from a non-modal popup, and closes the panel once it has
-  started, as the reference does (the reference's progress is a modal dialog;
-  its stop times (10 minutes to 1 hour) are not observable in tests, so that
-  leaf stays weak). The custom run time is asked in minutes ("set time to run
-  (minutes)"), not hours and minutes.
+- The rebalance runs from a non-modal popup (the reference's progress is a
+  modal dialog), closes the panel once it has started and opens it again when
+  it is done, as the reference does. Its stop is looked at before each move
+  (the reference's job looks at most once a second). The custom run time is
+  asked in minutes ("set time to run (minutes)"), not hours and minutes.
 - Removing the last weighted location: the reference warns that it cannot be
   emptied and then asks to remove it anyway (the warning has no `return`);
   hydrus-rs stops at the warning.

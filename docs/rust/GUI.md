@@ -883,9 +883,10 @@ successful import" says, in the reference's red, that they will be
 deleted. "import now" opens an "import" page of the good files, in the
 list's order, which deletes each original once it is in the database (new or
 already there) if the box was ticked (`oracle/fixtures/local_import_queue.json`).
-Paths go in through the box over the list (enter adds one, a file or folder,
-as typed or pasted with a file manager's quotes) in place of the reference's
-"add files"/"add folder" pickers.
+Paths also go in through a box over the list (enter adds one, a file or
+folder, as typed or pasted with a file manager's quotes). The pickers, their
+cancelling, and drops on the window and on the main window give the list the
+reference's rows (`oracle/fixtures/import_paths.json`).
 
 "add tags/urls with the import >>" opens the "filename tagging" dialog
 (`src/filename_tagging_window.rs`, `hydrus-gui-model/src/filename_tagging.rs`),
@@ -5349,7 +5350,11 @@ rebalancer chooses them (over-limit and removed locations first, then
 overweight ones to the most-free starving ones; thumbnails then follow their
 files or go to the override). hydrus-store's `storage_locations` tests cover
 the shares and a full rebalance; `tests/model/database_locations.rs` the
-rows and buttons.
+rows and buttons. Each run time stops the job exactly where the reference's
+does (still moving at its stop time, not a second after), a cancel from the
+popup stops it after the move it is on, the popup shows the reference's
+"Moving "file 3a at …" to "file 3a at …"." lines, and the window opens again
+once the job is done (`oracle/fixtures/rebalance_job.json`).
 
 "manage granularity" opens the reference's granularity window: this client's
 line and its "I AM READY TO GO FROM 2 TO 3" (or back) button, and the
@@ -5359,8 +5364,10 @@ have a backup and I am ready"), then moves every file and thumbnail between
 a cancelled or failed one is undone. The offline migration asks, picks the
 folder, says what granularity it looks like, and moves it likewise. Both
 report the files moved, the time, and any weird files or folders left
-alone. hydrus-store's `granularity` tests cover both ways, the scan, and an
-undone cancel.
+alone. A cancelled offline job says the folder is likely in a mixed state; one
+stopped by an errant file where a folder has to go says so in the reference's
+words, as an "Oh no!" message (`granularity_panel.json`). hydrus-store's
+`granularity` tests cover both ways, the scan, and an undone cancel.
 
 ## Database > file maintenance > clear orphan files
 

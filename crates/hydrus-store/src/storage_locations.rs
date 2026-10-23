@@ -456,10 +456,23 @@ pub fn rebalance(
         let Some(step) = store.read(next_move)? else {
             break;
         };
+        // (a subfolder as the reference writes one: "file 3a at <its path>")
+        let subfolder = |base: &Path| {
+            let kind = match step.prefix.chars().next() {
+                Some('f') => "file",
+                Some('t') => "thumbnail",
+                _ => "unknown",
+            };
+            format!(
+                "{kind} {} at {}",
+                step.prefix.get(1..).unwrap_or_default(),
+                crate::storage::prefix_dir(base, &step.prefix).display()
+            )
+        };
         say(format!(
             "Moving \"{}\" to \"{}\".",
-            crate::storage::prefix_dir(&step.from, &step.prefix).display(),
-            crate::storage::prefix_dir(&step.to, &step.prefix).display()
+            subfolder(&step.from),
+            subfolder(&step.to)
         ));
         apply_move(store, &step)?;
         moved += 1;

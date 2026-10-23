@@ -25,6 +25,7 @@ def record(session):
         from hydrus.client.gui import ClientGUIDialogsMessage as M, ClientGUIDialogsQuick as Q
         from hydrus.client.gui import ClientGUITopLevelWindowsPanels as T
         from hydrus.client.gui.panels import ClientGUIFilesPhysicalStoragePanels as P
+        from hydrus.client.files import ClientFilesPhysical as FP
         root = tempfile.mkdtemp()
         names = {}
         default = next(iter(c.Read('ideal_client_files_locations')[0])).path
@@ -118,6 +119,23 @@ def record(session):
             mixed = folder('mixed', ['f3a/b/3ab4567.png', 'f4c/4c12345.png', 'f5d/5d12345.png', 'stray.txt'])
             step('offline 3 to 2 of a mixed folder (mostly 2), decline', panel._MigrateFolder3To2, [True, False], [mixed], where=mixed, panel=panel)
             step('offline 2 to 3 of a mixed folder (mostly 2), go', panel._MigrateFolder2To3, [True, True], [mixed], where=mixed, panel=panel)
+            # the user cancels the job before its first move (its job status, as the
+            # dialog's cancel button does, set before the reference's own job looks at it)
+            cancel = folder('cancel', ['f3a/3ab4567.png'])
+            real = FP.RegranulariseFileStorage
+
+            def cancelled_first(paths, prefix_types, start, end, job_status):
+                job_status.Cancel()
+                return real(paths, prefix_types, start, end, job_status)
+
+            FP.RegranulariseFileStorage = cancelled_first
+            try:
+                step('offline 2 to 3, cancelled', panel._MigrateFolder2To3, [True, True], [cancel], where=cancel, panel=panel)
+            finally:
+                FP.RegranulariseFileStorage = real
+            # an errant file called "b" where the granularity 3 folder f3a/b has to go
+            errant = folder('errant', ['f3a/3ab4567.png', 'f3a/b'])
+            step('offline 2 to 3, an errant file in the way, error', panel._MigrateFolder2To3, [True, True], [errant], where=errant, panel=panel)
         finally:
             M.ShowInformation, M.ShowCritical, Q.GetYesNo, Q.PickDirectory, T.DialogNullipotent.exec = old
         return dict(steps=steps)

@@ -5,7 +5,6 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
-use std::sync::atomic::{AtomicBool, Ordering};
 
 use hydrus_gui_model::database_locations::{self as model, Disk};
 use hydrus_gui_model::list_selection::ListSelection;
@@ -24,6 +23,8 @@ pub(crate) struct Slot {
     runtime: Option<crate::ChoiceButtonsWindow>,
     custom: Option<crate::EditValueWindow>,
     granularity: crate::granularity_window::Slots,
+    /// Waits for a "move files now" job to end, to open the window again.
+    job: Option<slint::Timer>,
 }
 
 pub(crate) type Slots = Rc<RefCell<Slot>>;
@@ -72,6 +73,16 @@ type Clock = std::sync::Arc<std::sync::Mutex<(Option<i64>, i64)>>;
 
 thread_local! {
     static SCRIPTED_CLOCK: RefCell<Option<Clock>> = const { RefCell::new(None) };
+    // (what the next job's worker tells of each status it shows, for tests)
+    static WATCH: RefCell<Option<crate::granularity_window::Watch>> = const { RefCell::new(None) };
+}
+
+/// Have the next "move files now" job this thread starts tell `watch` of each
+/// status it shows, once that status is in its popup (for tests, to act as the
+/// job goes).
+#[doc(hidden)]
+pub fn watch_next_job(watch: crate::granularity_window::Watch) {
+    WATCH.with(|w| *w.borrow_mut() = Some(watch));
 }
 
 #[doc(hidden)]
@@ -604,38 +615,52 @@ fn custom_runtime(state: &Rc<RefCell<State>>, slots: &Slots) {
 
 #[allow(clippy::cast_precision_loss)] // (seconds)
 fn start(state: &Rc<RefCell<State>>, slots: &Slots, seconds: Option<i64>) {
-    let store = state.borrow().store.clone();
+    let (store, ask) = {
+        let state = state.borrow();
+        (state.store.clone(), state.ask.clone())
+    };
     let clock = scripted_clock();
     let stop_at = seconds.map(|s| now(clock.as_ref()) + s);
+    let mut watch = WATCH.with(|w| w.borrow_mut().take());
+    let ended = Arc::new(std::sync::atomic::AtomicBool::new(false));
+    let job_ended = ended.clone();
+    let job_store = store.clone();
     std::thread::spawn(move || {
+        let store = job_store;
         let mut job = Job::new(false, true, now(clock.as_ref()) as f64);
         job.status_title = Some(model::REBALANCE_TITLE.into());
         let key = job.key;
         let at = now(clock.as_ref());
         let _ = store.write(move |ctx| popups::add(ctx.conn(), &job, at));
-        let cancelled = Arc::new(AtomicBool::new(false));
         let mut say = |text: String| {
             let at = now(clock.as_ref());
-            let flag = cancelled.clone();
+            let shown = text.clone();
             let _ = store.write(move |ctx| {
-                popups::update(ctx.conn(), &key, at, |job| {
-                    job.status_text_1 = Some(text);
-                    if job.cancelled {
-                        flag.store(true, Ordering::Relaxed);
-                    }
-                })
-                .map(|_| ())
+                popups::update(ctx.conn(), &key, at, |job| job.status_text_1 = Some(text))
+                    .map(|_| ())
             });
+            if let Some(watch) = watch.as_mut() {
+                watch(&shown);
+            }
         };
-        let result = storage::rebalance(&store, &mut say, &|| {
-            cancelled.load(Ordering::Relaxed) || stop_at.is_some_and(|t| now(clock.as_ref()) >= t)
-        });
+        // (cancelled from its popup, or its stop time passed, as `JobStatus.IsCancelled` asks)
+        let cancelled = || {
+            let at = now(clock.as_ref());
+            let from_popup = store
+                .read(|conn| popups::get(conn, &key, at))
+                .ok()
+                .flatten()
+                .is_some_and(|job| job.cancelled);
+            from_popup || stop_at.is_some_and(|t| now(clock.as_ref()) > t)
+        };
+        let result = storage::rebalance(&store, &mut say, &cancelled);
         let text = match result {
             Ok(_) => model::REBALANCE_DONE.to_owned(),
             Err(e) => format!("could not move the files: {e}"),
         };
         let at = now(clock.as_ref());
         let failed = text != model::REBALANCE_DONE;
+        let shown = text.clone();
         let _ = store.write(move |ctx| {
             popups::update(ctx.conn(), &key, at, |job| {
                 job.status_text_1 = Some(text);
@@ -647,7 +672,35 @@ fn start(state: &Rc<RefCell<State>>, slots: &Slots, seconds: Option<i64>) {
             })
             .map(|_| ())
         });
+        job_ended.store(true, std::sync::atomic::Ordering::Release);
+        if let Some(watch) = watch.as_mut() {
+            watch(&shown);
+        }
     });
     // (the reference closes the dialog once the job is started; the popup shows the rest)
     close(slots);
+    // ... and opens it again once the job is done (`DoFileStorageRebalance`)
+    let timer = slint::Timer::default();
+    timer.start(
+        slint::TimerMode::Repeated,
+        std::time::Duration::from_millis(250),
+        {
+            let slots = Rc::downgrade(slots);
+            move || {
+                if !ended.load(std::sync::atomic::Ordering::Acquire) {
+                    return;
+                }
+                let Some(slots) = slots.upgrade() else {
+                    return;
+                };
+                if let Some(timer) = slots.borrow_mut().job.take() {
+                    timer.stop();
+                }
+                if let Err(e) = open(&store, ask.clone(), &slots) {
+                    eprintln!("could not open the locations window again: {e}");
+                }
+            }
+        },
+    );
+    slots.borrow_mut().job = Some(timer);
 }
