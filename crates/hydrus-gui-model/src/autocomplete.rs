@@ -33,6 +33,17 @@ pub struct Suggestion {
     pub editor: Option<Blank>,
 }
 
+/// A key that moves the list's highlight.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Navigation {
+    Up,
+    Down,
+    Home,
+    End,
+    PageUp,
+    PageDown,
+}
+
 pub struct Autocomplete {
     store: Arc<Store>,
     presentation_settings: hydrus_store::settings::FileSearchSettings,
@@ -147,6 +158,30 @@ impl Autocomplete {
             self.highlighted = self.highlighted.saturating_add_signed(by).min(last);
             self.selections[self.tab.index()].reset(Some(self.highlighted));
         }
+    }
+
+    /// A key pressed in the box moves the highlight as the reference's tag
+    /// lists do: up and down wrap round, home and end go to the ends, and
+    /// page up and down move by the list's rows, stopping at the ends. A list
+    /// of one row keeps its highlight.
+    pub fn navigate(&mut self, key: Navigation) {
+        let count = self.suggestions.len();
+        if count <= 1 {
+            return;
+        }
+        let page = usize::try_from(self.presentation_settings.autocomplete_rows)
+            .unwrap_or(1)
+            .max(1);
+        let at = self.highlighted.min(count - 1);
+        self.highlighted = match key {
+            Navigation::Up => (at + count - 1) % count,
+            Navigation::Down => (at + 1) % count,
+            Navigation::Home => 0,
+            Navigation::End => count - 1,
+            Navigation::PageUp => at.saturating_sub(page),
+            Navigation::PageDown => (at + page).min(count - 1),
+        };
+        self.selections[self.tab.index()].reset(Some(self.highlighted));
     }
 
     /// Shared Qt tag-list selection: Ctrl toggles, Shift adds a reversible range.

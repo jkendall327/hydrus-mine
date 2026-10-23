@@ -3341,7 +3341,11 @@ results, favourites and children tabs (a tab is kept until text is typed), and
 explicit OR construction: shift+enter adds a result to the OR being built (shown
 as the first result), a plain entry commits it, "↶" rewinds, "cancel OR" and
 escape in an empty box cancel or rewind, and "OR" and "advanced" open the OR
-editors. Recorded in `favourite_editor_tabs_or.json`.
+editors. Recorded in `favourite_editor_tabs_or.json`. Keys pressed in the box
+move the current tab's highlight as the reference's lists do (Up and Down wrap
+round; Home, End, Page Up, Page Down), and Return or Shift+Return enters or
+adds to the OR the highlighted row; results show their counts; "advanced"
+takes a typed search string. Recorded in `favourite_editor_rows.json`.
 
 Downloader HTTP requests now perform domain login admission before acquiring a
 connection slot. Active most-specific login domains use current credentials and

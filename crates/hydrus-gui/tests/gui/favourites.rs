@@ -1153,6 +1153,7 @@ fn the_editors_paste_empty_search_and_star_buttons_act_as_the_references_do() {
     assert!(differences.is_empty(), "{}", differences.join("\n"));
 }
 
+// leaf: audit-options-favourite-edit-autocomplete
 #[test]
 fn the_editors_tabs_and_or_construction_act_as_the_references_do() {
     // (`record_favourite_editor_tabs_or.py`: the reference's editor given
@@ -1286,6 +1287,168 @@ fn the_editors_tabs_and_or_construction_act_as_the_references_do() {
         check("predicates", json!(saved));
         if json!(rows) != want["rows"] {
             differences.push(format!("{what:?}: rows {rows:?} not {}", want["rows"]));
+        }
+    }
+    assert!(differences.is_empty(), "{}", differences.join("\n"));
+}
+
+/// Presses `key` (with Shift held, if `shift`) in the favourite editor.
+fn editor_key(window: &hydrus_gui::FavouriteEditWindow, key: slint::platform::Key, shift: bool) {
+    use slint::ComponentHandle as _;
+    use slint::platform::{Key, WindowEvent};
+    let native = window.window();
+    if shift {
+        native.dispatch_event(WindowEvent::KeyPressed {
+            text: Key::Shift.into(),
+        });
+    }
+    native.dispatch_event(WindowEvent::KeyPressed { text: key.into() });
+    native.dispatch_event(WindowEvent::KeyReleased { text: key.into() });
+    if shift {
+        native.dispatch_event(WindowEvent::KeyReleased {
+            text: Key::Shift.into(),
+        });
+    }
+}
+
+// leaf: audit-options-favourite-edit-autocomplete
+#[test]
+fn the_editors_rows_keys_and_advanced_or_act_as_the_references_do() {
+    // (`record_favourite_editor_rows.py`: the reference's editor with typed
+    // text, its rows as drawn, counts included; its favourites and children
+    // tabs driven by keys pressed in the text box; and the advanced OR
+    // dialog, cancelled or given a string)
+    use slint::platform::Key;
+    let fixture = hydrus_testkit::fixture_json("favourite_editor_rows.json");
+    let seed = json!({
+        "corpus": fixture["corpus"],
+        "siblings": fixture["siblings"],
+        "parents": fixture["parents"],
+        "events": [{ "favourites": fixture["favourites"] }],
+    });
+    let (_dirs, store, _key) = super::read_autocomplete::seeded(&seed);
+    store
+        .write(|ctx| {
+            hydrus_store::settings::set(ctx.conn(), &hydrus_store::settings::AdvancedMode(true))
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    bound
+        .current
+        .borrow()
+        .borrow_mut()
+        .add_predicate("blue eyes");
+    ui.invoke_favourites_menu_requested(10.0, 100.0);
+    let save = pane_lines(&ui, 0)
+        .iter()
+        .position(|l| l == "save this search")
+        .unwrap();
+    ui.invoke_menu_line_clicked(0, i32::try_from(save).unwrap(), 0.0, 0.0, 0.0);
+    let window = bound
+        .favourites
+        .edit
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong)
+        .expect("the edit dialog open");
+    slint::ComponentHandle::show(&window).unwrap();
+    // (the user clicks into the search box)
+    window.invoke_focus_search();
+    let strs = |model: slint::ModelRc<slint::SharedString>| -> Vec<String> {
+        model.iter().map(|p| p.to_string()).collect()
+    };
+    let mut differences = Vec::new();
+    for step in fixture["steps"].as_array().unwrap() {
+        let what = step["step"].as_array().unwrap();
+        let mut dialogs = Vec::new();
+        let mut previews = Vec::new();
+        match what[0].as_str().unwrap() {
+            "initial" => {}
+            "text" => {
+                window.invoke_tab_chosen(0);
+                window.set_typed(what[1].as_str().unwrap().into());
+                window.invoke_typed_edited();
+            }
+            "tab" => window.invoke_tab_chosen(match what[1].as_str().unwrap() {
+                "favourites" => 1,
+                "children" => 2,
+                other => panic!("{other}"),
+            }),
+            "key" => {
+                let (key, shift) = match what[1].as_str().unwrap() {
+                    "down" => (Key::DownArrow, false),
+                    "up" => (Key::UpArrow, false),
+                    "end" => (Key::End, false),
+                    "home" => (Key::Home, false),
+                    "page down" => (Key::PageDown, false),
+                    "return" => (Key::Return, false),
+                    "shift return" => (Key::Return, true),
+                    "escape" => (Key::Escape, false),
+                    other => panic!("{other}"),
+                };
+                editor_key(&window, key, shift);
+            }
+            "advanced" => {
+                window.invoke_or_action(4);
+                let child = bound
+                    .favourites
+                    .search_or
+                    .borrow()
+                    .as_ref()
+                    .map(slint::ComponentHandle::clone_strong)
+                    .expect("the advanced OR editor open");
+                dialogs.push(child.get_window_title().to_string());
+                if let Some(text) = what[1].as_str() {
+                    child.set_input(text.into());
+                    child.invoke_edited(text.into());
+                    previews.push(child.get_preview().to_string());
+                    child.invoke_apply();
+                } else {
+                    child.invoke_cancel();
+                }
+                assert!(bound.favourites.search_or.borrow().is_none());
+            }
+            other => panic!("unknown step {other}"),
+        }
+        let want = &step["state"];
+        let mut check = |key: &str, ours: Json| {
+            if ours != want[key] {
+                differences.push(format!("{what:?}: {key} {ours} not {}", want[key]));
+            }
+        };
+        check("shown", json!(strs(window.get_predicates())));
+        check("cancel_shown", json!(window.get_or_active()));
+        check("rewind_shown", json!(window.get_or_rewind_visible()));
+        check("tab", json!(window.get_tab_index()));
+        check("typed_left", json!(window.get_typed().to_string()));
+        // every row as drawn: counts, and nothing else beside them
+        let drawn: Vec<Vec<String>> = strs(window.get_suggestions())
+            .into_iter()
+            .map(|r| vec![r])
+            .collect();
+        check("rows_drawn", json!(drawn));
+        let highlight = window.get_suggestion_highlight();
+        check(
+            "highlighted",
+            json!(if highlight < 0 {
+                vec![]
+            } else {
+                vec![highlight]
+            }),
+        );
+        if json!(dialogs) != step["dialogs"] {
+            differences.push(format!(
+                "{what:?}: dialogs {dialogs:?} not {}",
+                step["dialogs"]
+            ));
+        }
+        if json!(previews) != step["previews"] {
+            differences.push(format!(
+                "{what:?}: previews {previews:?} not {}",
+                step["previews"]
+            ));
         }
     }
     assert!(differences.is_empty(), "{}", differences.join("\n"));

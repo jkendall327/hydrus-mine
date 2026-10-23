@@ -219,7 +219,11 @@ export component FavouriteEditWindow inherits Window {
     in property <bool> selecting-locations;
     in property <[string]> suggestions;
     in property <int> suggestion-highlight;
+    // a key moving the highlight: -1 up, 1 down, 2 home, 3 end, 4 page up,
+    // 5 page down
     callback suggestion-moved(int);
+    // the user clicks into the search box
+    public function focus-search() { search-input.focus(); }
     // the autocomplete's icon buttons: paste lines of predicates, the
     // star menu (opened at x, y) of favourites to load, empty the search
     // the autocomplete's tabs (results, favourites, children) and its OR
@@ -307,6 +311,10 @@ export component FavouriteEditWindow inherits Window {
                     if root.can-edit && event.text == Key.Escape && root.search-escape() { return accept; }
                     if root.can-edit && event.text == Key.UpArrow { root.suggestion-moved(-1); return accept; }
                     if root.can-edit && event.text == Key.DownArrow { root.suggestion-moved(1); return accept; }
+                    if root.can-edit && event.text == Key.Home { root.suggestion-moved(2); return accept; }
+                    if root.can-edit && event.text == Key.End { root.suggestion-moved(3); return accept; }
+                    if root.can-edit && event.text == Key.PageUp { root.suggestion-moved(4); return accept; }
+                    if root.can-edit && event.text == Key.PageDown { root.suggestion-moved(5); return accept; }
                     reject
                 }
                 HorizontalLayout {

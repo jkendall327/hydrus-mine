@@ -272,18 +272,21 @@ search.
   not have) enters nothing and stays in the box without a message. The first
   result and the highlight are compared with the recording. Not covered: Return
   pressed before the reference's list has caught up (it then enters the text
-  as typed; the native list is always current), and counts and context shown
-  in the results. A bare "*" lists nothing here as with the default options,
+  as typed; the native list is always current, so a user always gets what the
+  reference gives one who pauses). The rows as drawn (counts included), keys
+  in the tabs (Up and Down wrap round, Home, End, Page Up and Page Down; Page
+  Up and Down move by the "autocomplete rows" setting where the reference
+  moves by the rows its list shows), and the advanced OR dialog are compared
+  with `oracle/record_favourite_editor_rows.py`. The page's own result list
+  still stops at its ends where the reference wraps round. A bare "*" lists nothing here as with the default options,
   but the other fetch-all settings are not consulted, and the second wildcard
   (`*:x*`) the reference adds when unnamespaced searches give any-namespace
   wildcards is not listed (unrecorded). On the main page, Return with a tag the
   database does not have and nothing highlighted still enters the typed text
   (`chosen()`'s fallback in `page.rs`), where the reference enters nothing; the
   favourite editor enters nothing.
-  Remaining from #253 (not started): `audit-options-search-active-edit`
-  (embedded OR in the active-list edit, sibling/parent editors, favourite
-  tags), the tab and OR recordings for counts and context in the results, and
-  an in-step recording of Return in the tabs.
+  Remaining from #253: `audit-options-search-active-edit` (embedded OR in the
+  active-list edit, sibling/parent editors, favourite tags).
 
 - **Dimensions preset verification** separately tracks nine historical first-pass
   controls. The new Qt recording activates actual buttons through the real modal
