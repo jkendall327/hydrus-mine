@@ -1093,10 +1093,8 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   are not yet supplied as media examples (manual exports are).
 - **The string processor editor** receives starting strings from the sidecar
   owner's first example, including source processors before their own processing.
-  Import/export/paste use a shared
-  text/PNG review window. A package mixing steps with other objects gives its
-  steps, with the reference's warning about the rest above the review; the
-  reference's "N objects added!" is the review's "Append N processing steps"
+  A package mixing steps with other objects gives its steps, with the
+  reference's warning about the rest
   (`oracle/record_processing_exchange_mixed.py`). A string processor is
   appended as one nested step, as the reference does (#185): the list shows
   its summary ("some conversion", for the one holding a converter), running it leaves no strings (`ProcessStrings`
@@ -5547,13 +5545,9 @@ be diagnosed afterwards. The owner chose always-on crash logging (2026-10-14).
 - **The maximum size of the trash** is trimmed oldest first; the reference's
   oldest 256 are deleted in CPython set order, so which files stay differs
   (the owner decided ours stands, 2026-10-14).
-- **Processing steps: export to PNG and paste.** Export to PNG is the shared
-  exchange window (a path and save), not the reference's `PNGExportPanel` with
-  title, description and width fields. Paste opens a review before adding, and
-  failures show inline in it (the reference adds at once, says "N objects
-  added!", and shows a "Problem pasting!" or "Clipboard Error!" dialog). The
-  string processor's export button does nothing without a selection, as in the
-  reference.
+- **Processing steps: export.** A step hydrus-rs can't write in the
+  reference's form (none it imports) says why under the step list; the
+  reference's export never fails.
 
 ## Media viewer, duplicates daemons and the rebalance job (wave 5, W5-5)
 

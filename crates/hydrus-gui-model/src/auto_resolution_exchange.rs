@@ -406,3 +406,51 @@ pub fn comparators_from_png(decoded: Clipboard, scales: Scales<'_>) -> ListImpor
         },
     }
 }
+
+/// A png file picked for an import: its path, and its bytes or why they
+/// could not be read.
+pub type PngFile = (std::path::PathBuf, Result<Vec<u8>, String>);
+
+/// Png files imported into a list box (`_ImportFromPNG`): each file's text
+/// is an import of its own (`read` gives what it adds and says, or `None`
+/// if it is not an object); the first file that can't be read stops the
+/// rest, with the reference's "Problem importing!".
+pub fn from_png_files<T>(
+    files: &[PngFile],
+    read: impl Fn(&str) -> Option<ListImport<T>>,
+) -> ListImport<T> {
+    let mut out = ListImport {
+        added: Vec::new(),
+        messages: Vec::new(),
+    };
+    let problem = |text: String| ("Problem importing!".to_owned(), text);
+    for (path, data) in files {
+        let text = match data {
+            Ok(data) => hydrus_downloader_exchange::text_png::decode(data).map_err(|e| {
+                if data.starts_with(b"\x89PNG\r\n\x1a\n") {
+                    e.to_string()
+                } else {
+                    // (`LoadFromPNG`, when the file is no image)
+                    format!("\"{}\" did not appear to be a valid image!", path.display())
+                }
+            }),
+            Err(e) => Err(e.clone()),
+        };
+        let text = match text {
+            Ok(text) => text,
+            Err(e) => {
+                out.messages.push(problem(e));
+                break;
+            }
+        };
+        let Some(one) = read(&text) else {
+            out.messages.push(problem(
+                "I could not understand what was encoded in the png!".into(),
+            ));
+            break;
+        };
+        out.added.extend(one.added);
+        out.messages.extend(one.messages);
+    }
+    out
+}

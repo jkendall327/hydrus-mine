@@ -40,6 +40,8 @@ pub struct Slots {
     pub converter: Rc<RefCell<Option<StringConverterWindow>>>,
     pub conversion: Rc<RefCell<Option<ConversionWindow>>>,
     pub exchange: crate::downloader_interchange_window::Slots,
+    /// The step queue's "export > to png".
+    pub png: crate::png_export_window::Slots,
     pub favourites: crate::regex_favourites_window::Slot,
     preference_store: Rc<RefCell<Option<Arc<Store>>>>,
 }
@@ -68,6 +70,7 @@ impl Slots {
     /// Unfinished step, converter, conversion or tag-filter drafts.
     pub fn has_processor_children(&self) -> bool {
         self.exchange.has_open()
+            || self.png.has_open()
             || self.step.borrow().is_some()
             || self.converter.borrow().is_some()
             || self.has_converter_children()
@@ -91,6 +94,7 @@ impl Slots {
     /// Discard all processor descendants before disposing of the processor.
     pub fn cancel_processor_children(&self) {
         self.exchange.cancel();
+        self.png.cancel();
         self.cancel_step_children();
         self.cancel_converter_children();
         cancel_slot(&self.step, StringStepWindow::invoke_cancel);
@@ -223,60 +227,79 @@ pub fn open(
             }
         }
     });
+    // the queue's "export" (to clipboard, to png), "import" (from clipboard,
+    // from pngs) and "duplicate", as `QueueListBox` gives the reference's:
+    // what comes in is appended at once
     window.on_exchange({
         let weak = window.as_weak();
         let state = state.clone();
         let slots = slots.clone();
-        let active = active.clone();
+        let store = store.clone();
         let refresh = refresh.clone();
         let blocked = blocked.clone();
         move |action| {
+            use hydrus_gui_model::processing_exchange as ex;
             if blocked() {
                 return;
             }
-            let importing = action != "export";
-            let steps = if importing {
-                Vec::new()
-            } else {
-                state.borrow().editor.export_steps()
-            };
-            // (the reference's export button is enabled only on a selection)
-            if !importing && steps.is_empty() {
-                return;
-            }
-            let applied = Rc::new({
-                let state = state.clone();
-                let active = active.clone();
-                let refresh = refresh.clone();
-                move |steps: Vec<ProcessingStep>| {
-                    if !active.get() {
-                        return Err("This processor editor has closed.".into());
-                    }
-                    for step in steps {
+            let selected = state.borrow().editor.export_steps();
+            let take =
+                |import: hydrus_gui_model::auto_resolution_exchange::ListImport<ProcessingStep>| {
+                    for step in import.added {
                         state.borrow_mut().editor.add(step);
                     }
                     refresh();
+                    crate::debug_actions::messages(import.messages);
+                };
+            let result = match action.as_str() {
+                // (the reference's export is enabled only on a selection)
+                "to clipboard" if !selected.is_empty() => {
+                    ex::export_text(&selected).map(|text| crate::copy_to_clipboard(&text))
+                }
+                "to png" if !selected.is_empty() => ex::export_text(&selected).and_then(|text| {
+                    let formatting = hydrus_gui_model::gui_format::preferences(&store);
+                    let (summary, title) =
+                        hydrus_gui_model::png_export::serialised_payload_description(
+                            &text,
+                            &formatting,
+                        )
+                        .ok_or("the export is not a serialised object")?;
+                    let refresh = refresh.clone();
+                    crate::png_export_window::open_described(
+                        &slots.png,
+                        &store,
+                        text,
+                        summary,
+                        title,
+                        Rc::new(move || refresh()),
+                    )
+                    .map(|_| ())
+                }),
+                "from clipboard" => {
+                    take(ex::from_clipboard(crate::clipboard_text()));
                     Ok(())
                 }
-            });
-            let result = crate::downloader_interchange_window::open_steps(
-                &slots.exchange,
-                importing,
-                &steps,
-                applied,
-            );
-            if let Some(window) = weak.upgrade() {
-                match result {
-                    Ok(child) => {
-                        let refresh = refresh.clone();
-                        child.on_closed(move || refresh());
-                        window.set_exchange_error("".into());
-                        if action == "paste" {
-                            child.invoke_action("paste".into());
-                        }
+                "from pngs" => {
+                    let files: Vec<_> = crate::pick(crate::Pick::Files, ex::PNG_PICKER_TITLE)
+                        .into_iter()
+                        .map(|path| {
+                            let data = std::fs::read(&path).map_err(|e| e.to_string());
+                            (path, data)
+                        })
+                        .collect();
+                    if !files.is_empty() {
+                        take(ex::from_pngs(&files));
                     }
-                    Err(error) => window.set_exchange_error(error.into()),
+                    Ok(())
                 }
+                "duplicate" if !selected.is_empty() => {
+                    take(ex::duplicated(&selected));
+                    Ok(())
+                }
+                _ => Ok(()),
+            };
+            if let Some(window) = weak.upgrade() {
+                window.set_exchange_error(result.err().unwrap_or_default().into());
             }
             refresh();
         }

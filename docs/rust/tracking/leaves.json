@@ -5783,10 +5783,10 @@
     "A package mixing steps with other objects appends its steps and shows the reference's warning in the review. A bare string processor is appended as one nested step, as the reference does (#185). Native uses a shared text/PNG review window."
    ],
    "recheck": {
-    "date": "2026-10-14",
-    "class": "weak",
-    "by": "Claude session (wave 5, W5-2)",
-    "note": "Untagged. crates/hydrus-gui/tests/gui/processing_exchange.rs replays oracle/fixtures/processing_exchange_export.json (oracle/record_processing_exchange_export.py) through the window: exporting no step does nothing, one, two selected out of order, and all give the reference's clipboard JSON in queue order; the PNG of a selection decodes to the reference's objects; and pastes of a list and a single step, an empty clipboard and text that is not a package leave the queue and the example output as recorded. Still missing: the reference's PNG export panel (title, description and width fields, path remembered) is a shared window here, and paste adds after a review step with its own wording where the reference adds at once ('N objects added!'); the failure messages (the 'Problem pasting!' and 'Clipboard Error!' dialogs) are not ported."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (wave 6, W6-2)",
+    "note": "crates/hydrus-gui/tests/gui/processing_exchange.rs replays oracle/fixtures/processing_exchange_export.json (oracle/record_processing_exchange_export.py, the reference's real QueueListBox in EditStringProcessorPanel) through the real string processor editor: export > to clipboard of no step (nothing), one, two selected out of order and all gives the reference's text in queue order; export > to png opens the png panel with the reference's title, payload description, description, width and path, and the png carries the reference's objects (the reference's own png decodes the same); on one queue, import > from clipboard of a list, one step, an unreadable clipboard, text that is not JSON and empty text appends at once with the reference's messages (N objects added!, Problem pasting!, Clipboard Error! with its JSONDecodeError text), example output and selection; duplicate of two selected steps appends them, keeps the selection and says 2 objects added!; import > from pngs of the reference's png and of a file that is no png gives its messages, with its picker title; the queue applied at the end is the reference's. sidecars.rs replays processing_exchange_mixed.json's messages (mixed lists, a bare processor, nothing permitted, a mixed png). Not covered: an export that fails (hydrus-rs only; DIFFERENCES.md)."
    }
   },
   {

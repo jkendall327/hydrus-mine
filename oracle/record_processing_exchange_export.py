@@ -7,7 +7,9 @@ opens: its fields, then 'export' to a path) and `_ImportFromClipboard`
 one, for two that are not next to each other (in queue order whatever order
 they were selected in) and for all; the panel's defaults and the PNG it
 writes; and each paste's messages and resulting queue (a list, one step, an
-empty clipboard, text that is not a package).
+empty clipboard, text that is not a package, with the reference's own
+"Clipboard Error!" text); "duplicate" of two selected steps; and "from
+pngs" of the png it wrote and of a file that is no png.
 """
 import json
 import os
@@ -58,7 +60,6 @@ def record(session):
         ClientGUIDialogsMessage.ShowInformation = lambda parent, text, **kwargs: messages.append({'kind': 'information', 'text': text})
         ClientGUIDialogsMessage.ShowWarning = lambda parent, text, **kwargs: messages.append({'kind': 'warning', 'text': text})
         ClientGUIDialogsMessage.ShowCritical = lambda parent, title, text, **kwargs: messages.append({'kind': 'critical', 'title': title, 'text': text})
-        ClientGUIDialogsQuick.PresentClipboardParseError = lambda *args, **kwargs: messages.append({'kind': 'clipboard parse error'})
 
         def state():
             value = panel.GetValue()
@@ -135,6 +136,48 @@ def record(session):
             clipboard[0] = text
             queue._ImportFromClipboard()
             out['pastes'].append({'name': name, 'text': text, 'messages': list(messages), 'state': state()})
+
+        # duplicate: the selected steps again, at the end
+        del messages[:]
+        select([0, 2])
+        queue._Duplicate()
+        out['duplicate'] = {'selected': [0, 2], 'messages': list(messages), 'state': state()}
+
+        # from pngs: the png written above, and a file that is no png
+        from hydrus.client.gui import ClientGUIDialogsFiles
+        picked = [[]]
+
+        class FileDialog:
+            def __init__(self, parent, message, *args, **kwargs):
+                self.message = message
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return False
+
+            def exec(self):
+                out['png_picker_title'] = self.message
+                return QW.QDialog.DialogCode.Accepted
+
+            def GetPaths(self):
+                return picked[0]
+
+        original_file_dialog = ClientGUIDialogsFiles.FileDialog
+        ClientGUIDialogsFiles.FileDialog = FileDialog
+        out['png_imports'] = []
+        with tempfile.TemporaryDirectory() as folder:
+            bad = os.path.join(folder, 'bad.png')
+            with open(bad, 'wb') as fh:
+                fh.write(b'not a png')
+            for (name, paths) in [('the png of two steps', [PNG]), ('a file that is no png', [bad])]:
+                del messages[:]
+                select([])
+                picked[0] = paths
+                queue._ImportFromPNG()
+                out['png_imports'].append({'name': name, 'messages': list(messages), 'state': state()})
+        ClientGUIDialogsFiles.FileDialog = original_file_dialog
         return out
     return controller.CallBlockingToQt(gui, qt)
 

@@ -625,12 +625,14 @@ and falls back to preserved reference options.
 `oracle/record_string_conversion_preference.py` records acceptance, child Cancel
 and option serialization/reload across fresh parent editors.
 
-The processor step list has import, export selected, and paste controls. Its
-exchange window reads bounded reference JSON/PNG, reviews appended steps, copies
-selected entries in execution order, and saves reference PNGs. Import updates
-per-step/final previews in the draft; parent Cancel closes and invalidates the
-exchange child. `oracle/record_processing_exchange.py` records real Qt single/
-multiple selection exports, clipboard append, invalid input and a reference PNG.
+The processor step list has the reference's "export" (to the clipboard, to a
+png), "import" (from the clipboard, from pngs) and "duplicate": the selected
+steps go out in execution order as the reference's serialised text, the png
+panel starts as the reference's, and what comes in is appended at once,
+saying "N objects added!", "Problem pasting!", "Clipboard Error!" or "Problem
+importing!" as the reference does (`oracle/record_processing_exchange_export.py`).
+Imports update per-step/final previews in the draft; parent Cancel closes the
+png export.
 A package mixing steps with other objects appends its steps, with the
 reference's warning about the rest (`record_processing_exchange_mixed.py`).
 
