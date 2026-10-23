@@ -913,8 +913,6 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   gives up), as does each wait on a server's 429; a status the job only records
   (a 500, a 451) counts for nothing. Errors are kept per host and port, and a
   scrub of a bare IP address clears nothing, as in the reference.
-- **The network timeout's connect half is not exercised in tests.** It needs an
-  address that never answers.
 - **Pages are decoded with the web's own decoders.** A charset the server
   states is used as the reference uses it; otherwise, where the reference
   asks chardet, we take valid UTF-8 as UTF-8, then a `<meta>` charset, then

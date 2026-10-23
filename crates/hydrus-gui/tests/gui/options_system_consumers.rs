@@ -2201,6 +2201,7 @@ mod network_consumers {
         (socket, url)
     }
 
+    // leaf: audit-options-connection-general-network-timeout-seconds
     #[tokio::test]
     async fn a_server_that_goes_quiet_is_given_the_timeout_the_option_says() {
         let (client, engine) = with_engine();
@@ -2218,6 +2219,62 @@ mod network_consumers {
             fetched.result
         );
         assert!(fetched.seconds >= 6.0, "{}", fetched.seconds);
+    }
+
+    /// A loopback listener whose accept queue is full, so the kernel drops
+    /// the next connection request and a connect to it never opens (as the
+    /// recorder's), with the sockets that fill it.
+    fn full_listener() -> (tokio::net::TcpListener, Vec<std::net::TcpStream>, String) {
+        let socket = tokio::net::TcpSocket::new_v4().unwrap();
+        socket.bind("127.0.0.1:0".parse().unwrap()).unwrap();
+        let listener = socket.listen(0).unwrap();
+        let address = listener.local_addr().unwrap();
+        let mut fillers = Vec::new();
+        while let Ok(stream) =
+            std::net::TcpStream::connect_timeout(&address, Duration::from_millis(500))
+        {
+            fillers.push(stream);
+            assert!(fillers.len() < 64, "the queue never filled");
+        }
+        (listener, fillers, format!("http://{address}/x"))
+    }
+
+    // leaf: audit-options-connection-general-network-timeout-seconds
+    #[tokio::test]
+    async fn a_connection_that_never_opens_is_given_up_after_the_timeout_the_option_says() {
+        let recorded = hydrus_testkit::fixture_json("network_connect_timeout.json");
+        let (client, engine) = with_engine();
+        let (_listener, _fillers, url) = full_listener();
+        let runs = recorded["runs"].as_array().unwrap();
+        let mut took = Vec::new();
+        for run in runs {
+            let timeout = i32::try_from(run["timeout"].as_i64().unwrap()).unwrap();
+            apply(&client, &engine, |w| {
+                number(w, "network timeout (seconds): ", (1, 2_592_000), timeout);
+                number(
+                    w,
+                    "max connection attempts allowed per request: ",
+                    (1, 10),
+                    1,
+                );
+            });
+            let fetched = fetch(&engine, &url).await;
+            // (the reference's job: a ConnectionException, "Could not connect!")
+            let Err(NetError::Connection(text)) = &fetched.result else {
+                panic!("{:?}", fetched.result)
+            };
+            assert_eq!(text, run["error"].as_str().unwrap());
+            assert!(
+                fetched.seconds >= f64::from(timeout),
+                "{} < {timeout}",
+                fetched.seconds
+            );
+            took.push(fetched.seconds);
+        }
+        // the shorter timeout gives up before the longer one would (the
+        // reference's 1.01 s against 3.02 s), not after the default ten
+        let longer = runs[1]["timeout"].as_f64().unwrap();
+        assert!(took[0] < longer, "{took:?}");
     }
 
     #[tokio::test]

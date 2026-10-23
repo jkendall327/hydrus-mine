@@ -6855,10 +6855,10 @@
     "Bounds use the mode saved when opening the dialog; changing advanced mode takes effect after Apply and reopening, as Qt constructs its controls."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "weak",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "The quiet-server half agrees with the recording (a stall with the option at 1 ends in a stream timeout after at least six seconds, as the reference's job did: 6.01 s) in network_consumers::a_server_that_goes_quiet_is_given_the_timeout_the_option_says (untagged). The connect half (the option itself) is not driven: it needs an address that never answers, which the sandbox cannot give."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (#276 W6-3)",
+    "note": "Both halves are now driven through File > options > connection and the real engine. Connect: oracle/record_network_connect_timeout.py records the reference's job against a loopback listener whose accept queue is full (a connect that never opens) at timeouts 1 and 3 (1.01 s and 3.02 s, ConnectionException 'Could not connect!', one attempt allowed); options_system_consumers.rs a_connection_that_never_opens_is_given_up_after_the_timeout_the_option_says sets each value in the options window, fetches the same kind of listener, and checks the error text equals the recording's, the time is at least the timeout, and the 1-second run ends before the 3-second one would (so the option, not the default ten, is read). Read: a_server_that_goes_quiet_is_given_the_timeout_the_option_says (a stall with the option at 1 ends in a stream timeout after at least six seconds, as the reference's job did: network_job_options.json timeout, 6.01 s). The option's bounds and clamping are replayed against oracle/fixtures/options_ranges.json in the model test tests/model/options_dialog.rs; the GUI tests check the advanced-mode row's bounds (1..2592000) as typed values."
    }
   },
   {
