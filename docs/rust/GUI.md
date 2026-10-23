@@ -4649,6 +4649,13 @@ without changing its dismissal pruning or delayed/long-text publications.
 Actual Qt hidden/minimized delivery is recorded in `debug_delayed_pages.json`;
 authored native query and lifecycle regressions await hosted execution.
 
+"publish some sub files in five seconds" publishes five random hashes, five
+seconds on, to the page named "example sub files", as a subscription publishes
+its files: with no such page, a page opens in the current notebook searching
+all local media for a locked `system:hash` of them; once it exists, it takes
+the new hashes and any of them the client has
+(`oracle/fixtures/debug_sub_files.json`, `tests/gui/debug_sub_files.rs`).
+
 Options > gui now stages the default-enabled “Mouse wheel can "scroll" through
 menu buttons” preference. Saved changes reach already open represented menu
 choices: the main/file-default media type and order, both Options tag sorts, both

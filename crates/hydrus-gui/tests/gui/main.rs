@@ -330,6 +330,7 @@ mod debug_popups;
 mod debug_profiling;
 mod debug_report_modes;
 mod debug_session_reload;
+mod debug_sub_files;
 mod debug_wake;
 mod debug_what_is_this;
 mod duplicates_progress;

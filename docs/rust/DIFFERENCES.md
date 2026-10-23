@@ -4650,12 +4650,18 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   "isolate existing mpv widgets", "make a parentless text ctrl dialog" and
   "macos anti-flicker test" (Qt widget, stylesheet, mpv widget or macOS
   internals); "review threads" and "show scheduled jobs" (Python threads
-  and scheduler); the pympler memory-use entries; "publish some sub files
-  in five seconds"; profile mode (threads) (there
+  and scheduler); the pympler memory-use entries; profile mode (threads) (there
   is no thread pool of background tasks to time); and the tests, do not
   touch: the ui, client api, server and
   visual duplicates test suites (they drive the Python test harness),
   and both self-sigterms ("induce a program crash" is offered: see Crash log).
+- "publish some sub files in five seconds" publishes its five random hashes
+  to the "example sub files" page as the reference does
+  (`oracle/fixtures/debug_sub_files.json`), but once the page exists the
+  reference shows the hashes it does not have as files (phantom thumbnails:
+  its `AddMediaResults` makes media of unknown hashes), and hydrus-rs pages
+  show only files in the store. The page's `system:hash` takes every hash in
+  both. Waiting on an owner decision, so the leaf is untagged.
 - "what is this object?" takes drops anywhere on its window (the reference
   drops on the picture only). A bitmap on the clipboard is read as the
   reference reads it (the first channel of its pixels, then the payload) but

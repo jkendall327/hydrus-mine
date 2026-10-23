@@ -318,6 +318,9 @@ pub enum Command {
     SessionWeightReport,
     /// Freeze the Help menu's default location for a delayed real query page.
     DebugDelayedNewPage(hydrus_core::search::context::LocationContext),
+    /// Five random hashes published to the "example sub files" page, five
+    /// seconds on, as a subscription publishes its files.
+    DebugDelayedSubFiles,
     CullViewingStatistics,
     FileHistory,
     /// Forget a repository's pending content, asking first.
@@ -1541,6 +1544,10 @@ fn help_menu(facts: &Facts) -> Entry {
                             ),
                             item("make a QMessageBox", debug(DebugAction::MessageBox)),
                             item("make some popups", debug(DebugAction::SomePopups)),
+                            item(
+                                "publish some sub files in five seconds",
+                                Command::DebugDelayedSubFiles,
+                            ),
                             item(
                                 "reset multi-column list settings to default",
                                 debug(DebugAction::ResetColumns),

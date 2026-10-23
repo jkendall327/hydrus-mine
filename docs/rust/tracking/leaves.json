@@ -11506,7 +11506,7 @@
    "label": "publish some sub files in five seconds",
    "path": "Help > debug > gui actions",
    "workstream": "help-debug",
-   "state": "missing",
+   "state": "implemented",
    "priority": "low",
    "reference": null,
    "native": null,
@@ -11514,7 +11514,8 @@
     "Truth pass (2026-10-08): missing, small. Sits next to the existing delayed-popup debug actions. Missing: Menu entry, five-second delayed publish of real files, test. Evidence: No entry; the popup job model supports files via set_files (hydrus-gui-model/src/debug_actions.rs).",
     "Reference debug action wires 'publish some sub files in five seconds' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
-    "Blocked, not out of scope (2026-10-14, owner/coordinator): the reference publishes subscription files to a named page; this needs the daemon's subscriptions to publish to a named page, which hydrus-rs has no way to do yet. Do the leaf when it has."
+    "Blocked, not out of scope (2026-10-14, owner/coordinator): the reference publishes subscription files to a named page; this needs the daemon's subscriptions to publish to a named page, which hydrus-rs has no way to do yet. Do the leaf when it has.",
+    "2026-10-23 (W6-4, claude/w6-4): ported and replayed against oracle/fixtures/debug_sub_files.json (record_debug_sub_files.py: the real QAction, real CallLater/pub): tests/gui/debug_sub_files.rs drives the menu with the debug producer's clock held still (nothing at 4.5 s; at 5 s a page 'example sub files' in the current notebook, shown, searching all local media for a locked 'system:hash is in 5 hashes'; again, 'is in 10 hashes' and no new page; the client's own files published to the name join it, 'is in 13 hashes'). Left untagged for an owner decision: when hashes are added to the existing page, the reference shows the random hashes it does not have as files (10 phantom thumbnails after the second run); hydrus-rs pages show only files in the store. Pages::present_files is also the GUI side a subscription's 'publish to page' would use; the daemon does not call it yet."
    ]
   },
   {
