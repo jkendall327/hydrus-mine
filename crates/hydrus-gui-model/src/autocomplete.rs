@@ -33,6 +33,17 @@ pub struct Suggestion {
     pub editor: Option<Blank>,
 }
 
+/// A key that moves the list's highlight.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Navigation {
+    Up,
+    Down,
+    Home,
+    End,
+    PageUp,
+    PageDown,
+}
+
 pub struct Autocomplete {
     store: Arc<Store>,
     presentation_settings: hydrus_store::settings::FileSearchSettings,
@@ -47,6 +58,8 @@ pub struct Autocomplete {
     selections: [Selection; 3],
     tab_rows: [Vec<String>; 3],
     context_tags: BTreeSet<String>,
+    /// Listing for a metadata conditional ([`Self::metadata_conditional`]).
+    conditional: bool,
 }
 
 impl std::fmt::Debug for Autocomplete {
@@ -80,7 +93,30 @@ impl Autocomplete {
             selections: std::array::from_fn(|_| Selection::default()),
             tab_rows: std::array::from_fn(|_| Vec::new()),
             context_tags: BTreeSet::new(),
+            conditional: false,
         }
+    }
+
+    /// Lists as a metadata conditional's search does
+    /// (`ClientGUIMetadataConditional.ResultsFetch`): only the results tab;
+    /// before anything is typed, ten system predicates that can be tested on
+    /// one file, without counts; and typed system predicate text only if it
+    /// can be tested on one file.
+    #[must_use]
+    pub fn metadata_conditional(mut self) -> Self {
+        self.set_metadata_conditional();
+        self
+    }
+    /// Whether it lists as a metadata conditional's search does.
+    pub fn is_metadata_conditional(&self) -> bool {
+        self.conditional
+    }
+    /// As [`Self::metadata_conditional`], in place.
+    pub fn set_metadata_conditional(&mut self) {
+        self.conditional = true;
+        self.tab = Tab::Tags;
+        self.suggestions = self.search(false);
+        self.reset_highlight();
     }
 
     /// Read lists capture their sizing and float policy when created, as the
@@ -100,6 +136,9 @@ impl Autocomplete {
         self.tab
     }
     pub fn set_tab(&mut self, tab: Tab) {
+        if self.conditional {
+            return;
+        }
         self.tab_highlights[self.tab.index()] = self.highlighted;
         self.tab = tab;
         self.suggestions = self.search(false);
@@ -147,6 +186,30 @@ impl Autocomplete {
             self.highlighted = self.highlighted.saturating_add_signed(by).min(last);
             self.selections[self.tab.index()].reset(Some(self.highlighted));
         }
+    }
+
+    /// A key pressed in the box moves the highlight as the reference's tag
+    /// lists do: up and down wrap round, home and end go to the ends, and
+    /// page up and down move by the list's rows, stopping at the ends. A list
+    /// of one row keeps its highlight.
+    pub fn navigate(&mut self, key: Navigation) {
+        let count = self.suggestions.len();
+        if count <= 1 {
+            return;
+        }
+        let page = usize::try_from(self.presentation_settings.autocomplete_rows)
+            .unwrap_or(1)
+            .max(1);
+        let at = self.highlighted.min(count - 1);
+        self.highlighted = match key {
+            Navigation::Up => (at + count - 1) % count,
+            Navigation::Down => (at + 1) % count,
+            Navigation::Home => 0,
+            Navigation::End => count - 1,
+            Navigation::PageUp => at.saturating_sub(page),
+            Navigation::PageDown => (at + page).min(count - 1),
+        };
+        self.selections[self.tab.index()].reset(Some(self.highlighted));
     }
 
     /// Shared Qt tag-list selection: Ctrl toggles, Shift adds a reversible range.
@@ -295,12 +358,31 @@ impl Autocomplete {
             return self.tab_suggestions();
         }
         if self.text.trim().is_empty() {
-            return self.system_predicates();
+            return if self.conditional {
+                Some(self.conditional_system_predicates())
+            } else {
+                self.system_predicates()
+            };
         }
         // text that could be a system predicate lists it if it is one, else
         // nothing (`ReadFetch`: `IsValidSystemPredicate`, else an empty list)
+        // (a metadata conditional lists it only if it can be tested on one
+        // file, and searches tags as anywhere, OR or not; the reference's
+        // `ResultsFetch` falls through, listing nothing for system text with no
+        // OR being built and nothing for tags while one is, which is not
+        // copied: DIFFERENCES.md)
         if self.text.trim().starts_with("system:") {
-            return Some(self.typed_predicate().into_iter().collect());
+            let testable = |s: &Suggestion| {
+                !self.conditional
+                    || hydrus_search::parse_api_search(&serde_json::json!([s.predicate]))
+                        .is_ok_and(|p| p.iter().all(hydrus_search::media::can_test))
+            };
+            return Some(
+                self.typed_predicate()
+                    .into_iter()
+                    .filter(testable)
+                    .collect(),
+            );
         }
         let input = AutocompleteInput::parse(&self.text);
         let snapshot = self.store.snapshot();
@@ -465,6 +547,33 @@ impl Autocomplete {
                 })
                 .collect(),
         )
+    }
+
+    /// What a metadata conditional lists before anything is typed: inbox
+    /// and archive, then eight that open an editor, in the reference's order.
+    fn conditional_system_predicates(&self) -> Vec<Suggestion> {
+        let presentation = self.presentation();
+        let plain = ["system:inbox", "system:archive"].map(|predicate| Suggestion {
+            label: presentation.render(predicate),
+            predicate: predicate.to_owned(),
+            editor: None,
+        });
+        let blanks = [
+            Blank::Duration,
+            Blank::FileProperties,
+            Blank::Filetype,
+            Blank::Dimensions,
+            Blank::NumTags,
+            Blank::TagAdvanced,
+            Blank::Time,
+            Blank::Urls,
+        ]
+        .map(|blank| Suggestion {
+            label: presentation.render(blank.text()),
+            predicate: blank.text().to_owned(),
+            editor: Some(blank),
+        });
+        plain.into_iter().chain(blanks).collect()
     }
 
     /// `system:everything`, `system:inbox` and `system:archive`, with how

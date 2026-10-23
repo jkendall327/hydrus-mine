@@ -23,11 +23,15 @@ pub(super) fn until_fetch(mut condition: impl FnMut() -> bool) {
         std::thread::sleep(std::time::Duration::from_millis(10));
     }
 }
-/// Loopback-only HTTP boundary; /hold retains the socket until owner cancellation.
+/// Loopback-only HTTP boundary; /hold retains the socket until owner
+/// cancellation, /slow answers its headers (4096 bytes to come) and holds,
+/// /drop closes without an answer.
 #[derive(Debug)]
 pub(super) struct TestDocuments {
     pub base: String,
     pub requests: std::sync::Arc<std::sync::Mutex<Vec<String>>>,
+    /// The sockets held (/hold, /slow), in the order asked.
+    pub held: std::sync::Arc<std::sync::Mutex<Vec<std::net::TcpStream>>>,
     stop: std::sync::Arc<std::sync::atomic::AtomicBool>,
     thread: Option<std::thread::JoinHandle<()>>,
 }
@@ -46,11 +50,12 @@ impl TestDocuments {
         listener.set_nonblocking(true).unwrap();
         let stop = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
         let requests = std::sync::Arc::new(std::sync::Mutex::new(Vec::new()));
+        let held = std::sync::Arc::new(std::sync::Mutex::new(Vec::new()));
         let thread = std::thread::spawn({
             let stop = stop.clone();
             let requests = requests.clone();
+            let held = held.clone();
             move || {
-                let mut held = Vec::new();
                 while !stop.load(std::sync::atomic::Ordering::Relaxed) {
                     let Ok((mut stream, _)) = listener.accept() else {
                         std::thread::sleep(std::time::Duration::from_millis(10));
@@ -78,11 +83,23 @@ impl TestDocuments {
                     }
                     let request = String::from_utf8_lossy(&bytes[..count]).into_owned();
                     let hold = request.starts_with("GET /hold ");
+                    let slow = request.starts_with("GET /slow ");
+                    let drop_it = request.starts_with("GET /drop ");
                     let error = request.starts_with("GET /error ");
                     let image_request = request.starts_with("GET /png ");
                     requests.lock().unwrap().push(request);
                     if hold {
-                        held.push(stream);
+                        held.lock().unwrap().push(stream);
+                        continue;
+                    }
+                    if slow {
+                        let _ = stream.write_all(
+                            b"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 4096\r\n\r\n",
+                        );
+                        held.lock().unwrap().push(stream);
+                        continue;
+                    }
+                    if drop_it {
                         continue;
                     }
                     let (status, body): (&str, &[u8]) = if image_request {
@@ -109,6 +126,7 @@ impl TestDocuments {
         Self {
             base,
             requests,
+            held,
             stop,
             thread: Some(thread),
         }
@@ -179,6 +197,7 @@ fn content_test_panel_fetches_raw_data_and_hands_it_to_its_formula() {
     list.invoke_action("cancel".into());
     assert_eq!(definitions(&store), original);
 }
+// leaf: parser-fetch
 #[test]
 fn fetched_page_examples_use_actual_network_headers_cookies_context_and_child_converter() {
     use hydrus_core::{
@@ -428,10 +447,12 @@ fn page_fetch_error_menu_retains_completed_failure_and_clears_at_next_request() 
     list.invoke_action("cancel".into());
     assert_eq!(definitions(&store), original);
 }
-fn child(slot: &std::rc::Rc<std::cell::RefCell<Option<ParserEditWindow>>>) -> ParserEditWindow {
+pub(super) fn child(
+    slot: &std::rc::Rc<std::cell::RefCell<Option<ParserEditWindow>>>,
+) -> ParserEditWindow {
     slot.borrow().as_ref().unwrap().clone_strong()
 }
-fn setup() -> (tempfile::TempDir, std::sync::Arc<Store>, Slots) {
+pub(super) fn setup() -> (tempfile::TempDir, std::sync::Arc<Store>, Slots) {
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
     let mut page = new_page();
@@ -473,7 +494,7 @@ fn setup() -> (tempfile::TempDir, std::sync::Arc<Store>, Slots) {
         .unwrap();
     (dir, store, Slots::default())
 }
-fn definitions(store: &Store) -> Downloaders {
+pub(super) fn definitions(store: &Store) -> Downloaders {
     store.read(settings::get).unwrap()
 }
 #[test]

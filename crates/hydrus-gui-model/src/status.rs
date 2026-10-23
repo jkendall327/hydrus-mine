@@ -350,6 +350,18 @@ pub fn activity(idle: bool, cpu_busy: bool) -> (&'static str, &'static str) {
     )
 }
 
+/// The database field and its tooltip (`ClientGUI._RefreshStatusBarDB`):
+/// what the database is doing, and "current db job: <its job>" while it has
+/// one; with none, the tooltip is the field's text, as Qt's status bar sets
+/// a cell's tooltip when given none.
+pub fn db_field(activity: &str, job: Option<&str>) -> (String, String) {
+    let tip = match job {
+        Some(job) if !job.is_empty() => format!("current db job: {job}"),
+        _ => activity.to_owned(),
+    };
+    (activity.to_owned(), tip)
+}
+
 #[cfg(test)]
 mod bandwidth_tests {
     use hydrus_store::live::DaemonLive;

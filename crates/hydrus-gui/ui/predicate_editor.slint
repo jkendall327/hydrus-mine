@@ -189,7 +189,13 @@ export component PredicateEditorWindow inherits Window {
     in property <string> title-suffix: "";
     // the title as composed, for tests and the platform
     out property <string> composed-title: root.title;
-    title: (root.editing-existing ? "edit predicates" : "input predicate") + root.title-suffix;
+    title: (root.heading != "" ? root.heading : root.editing-existing ? "edit predicates" : "input predicate") + root.title-suffix;
+    // a mixed edit's own title ("edit OR predicate"), if not empty
+    in property <string> heading;
+    // the mixed edit's OR predicates, each as written, edited in the OR editor
+    in property <[string]> or-texts;
+    in property <bool> or-open;
+    callback or-edit(int);
     in property <bool> editing-existing;
     in property <bool> batch-mode;
     in property <[string]> simple-texts;
@@ -355,7 +361,22 @@ export component PredicateEditorWindow inherits Window {
                         clicked => { root.invertible-clicked(i); }
                     }
                     for row in root.edit-order: VerticalLayout {
-                    if row < 0: LineEdit {
+                    if row <= -1000000: HorizontalLayout {
+                        spacing: 4px;
+                        Text {
+                            horizontal-stretch: 1;
+                            text: root.or-texts[-1000000 - row];
+                            vertical-alignment: center;
+                            wrap: word-wrap;
+                            color: Theme.text;
+                        }
+                        Btn {
+                            text: "edit OR…";
+                            enabled: root.question == "" && !root.notice-open && !root.or-open;
+                            clicked => { root.or-edit(-1000000 - row); }
+                        }
+                    }
+                    if row < 0 && row > -1000000: LineEdit {
                         property <string> draft: root.simple-texts[-1 - row];
                         text <=> self.draft;
                         enabled: root.question == "" && !root.notice-open;
@@ -503,7 +524,7 @@ export component PredicateEditorWindow inherits Window {
                 alignment: end;
                 if root.batch-mode: Btn {
                     text: "apply";
-                    enabled: root.question == "" && !root.notice-open;
+                    enabled: root.question == "" && !root.notice-open && !root.or-open;
                     clicked => { root.ok(0); }
                 }
                 Btn {

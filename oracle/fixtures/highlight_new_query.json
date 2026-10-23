@@ -1,0 +1,122 @@
+{
+ "queries": [
+  {
+   "option": true,
+   "steps": [
+    {
+     "page": "gallery",
+     "queries": [
+      [
+       "blue_eyes",
+       2000
+      ]
+     ],
+     "highlighted": 0
+    },
+    {
+     "page": "gallery",
+     "queries": [
+      [
+       "blue_eyes",
+       2000
+      ],
+      [
+       "red_eyes",
+       2000
+      ]
+     ],
+     "highlighted": 0
+    }
+   ]
+  },
+  {
+   "option": false,
+   "steps": [
+    {
+     "page": "gallery",
+     "queries": [
+      [
+       "blue_eyes",
+       2000
+      ]
+     ],
+     "highlighted": null
+    },
+    {
+     "page": "gallery",
+     "queries": [
+      [
+       "blue_eyes",
+       2000
+      ],
+      [
+       "red_eyes",
+       2000
+      ]
+     ],
+     "highlighted": null
+    }
+   ]
+  }
+ ],
+ "gap": [
+  {
+   "option": true,
+   "steps": [
+    {
+     "page": "subscription gap downloaders",
+     "queries": [
+      [
+       "skirt",
+       2
+      ]
+     ],
+     "highlighted": 0
+    },
+    {
+     "page": "subscription gap downloaders",
+     "queries": [
+      [
+       "skirt",
+       2
+      ],
+      [
+       "skirt",
+       2
+      ]
+     ],
+     "highlighted": 0
+    }
+   ]
+  },
+  {
+   "option": false,
+   "steps": [
+    {
+     "page": "subscription gap downloaders",
+     "queries": [
+      [
+       "skirt",
+       2
+      ]
+     ],
+     "highlighted": null
+    },
+    {
+     "page": "subscription gap downloaders",
+     "queries": [
+      [
+       "skirt",
+       2
+      ],
+      [
+       "skirt",
+       2
+      ]
+     ],
+     "highlighted": null
+    }
+   ]
+  }
+ ]
+}

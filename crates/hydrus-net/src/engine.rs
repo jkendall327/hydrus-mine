@@ -220,6 +220,11 @@ pub struct Job {
     override_gallery: Arc<AtomicBool>,
     auto_override_at: Arc<std::sync::atomic::AtomicI64>,
     auto_override_owners: Arc<Mutex<std::collections::HashSet<u64>>>,
+    /// When its connection-error and serverside-bandwidth retry waits end
+    /// (the reference's `_connection_error_wake_time` and
+    /// `_serverside_bandwidth_wake_time`; 0 when overridden or never set).
+    connection_error_wake: Arc<std::sync::atomic::AtomicI64>,
+    serverside_bandwidth_wake: Arc<std::sync::atomic::AtomicI64>,
 }
 
 /// What a job is doing.
@@ -366,14 +371,32 @@ impl Job {
 
     /// Skip only the current connection/server retry delay, leaving future retries intact.
     pub fn override_retry_wait(&self, reason: WaitReason) -> bool {
-        if !matches!(reason, WaitReason::Connection | WaitReason::ServerBandwidth)
-            || self.state.lock().wait != reason
-        {
+        let Some(wake) = self.retry_wake(reason) else {
+            return false;
+        };
+        if self.state.lock().wait != reason {
             return false;
         }
+        // (`OverrideConnectionErrorWait` and `OverrideServersideBandwidthWait`)
+        wake.store(0, Ordering::Relaxed);
         *self.skip_wait.lock() = Some(reason);
         self.wake.notify_one();
         true
+    }
+
+    fn retry_wake(&self, reason: WaitReason) -> Option<&std::sync::atomic::AtomicI64> {
+        match reason {
+            WaitReason::Connection => Some(&self.connection_error_wake),
+            WaitReason::ServerBandwidth => Some(&self.serverside_bandwidth_wake),
+            _ => None,
+        }
+    }
+
+    /// Whether its `reason` retry wait has not passed at `at`
+    /// (`CurrentlyWaitingOnConnectionError`, `...OnServersideBandwidth`).
+    pub fn waiting_on_retry(&self, reason: WaitReason, at: i64) -> bool {
+        self.retry_wake(reason)
+            .is_some_and(|wake| at <= wake.load(Ordering::Relaxed))
     }
     /// Force this request past the gallery token gate without consuming a token.
     pub fn override_gallery_wait(&self) {
@@ -667,6 +690,10 @@ impl NetEngine {
                     domain_ok: state.one_shot || self.domain_ok(&state.url),
                     tokens_ok: state.tokens_ok || job.override_gallery.load(Ordering::Relaxed),
                     auto_override: job.auto_override_at.load(Ordering::Relaxed) > 0,
+                    waiting_on_connection_error: job
+                        .waiting_on_retry(WaitReason::Connection, now()),
+                    waiting_on_serverside_bandwidth: job
+                        .waiting_on_retry(WaitReason::ServerBandwidth, now()),
                     context_waits: {
                         let mut bandwidth = self.bandwidth.lock();
                         contexts
@@ -1346,6 +1373,8 @@ impl NetEngine {
             job.auto_override_at.store(0, Ordering::Relaxed);
             job.auto_override_owners.lock().clear();
             job.skip_wait.lock().take();
+            job.connection_error_wake.store(0, Ordering::Relaxed);
+            job.serverside_bandwidth_wake.store(0, Ordering::Relaxed);
             job.set_wait(WaitReason::Engine);
             id = self.next_job.fetch_add(1, Ordering::Relaxed);
             let mut contexts = Self::contexts_for(&request.url);
@@ -1762,7 +1791,7 @@ impl NetEngine {
             .gallery_token
             .filter(|_| request.gallery_page && self.options.read().obey_bandwidth);
 
-        job.set_wait(WaitReason::Engine);
+        job.set_wait(WaitReason::Slot);
         job.set_status("waiting for a slot");
         let _slot = tokio::select! {
             slot = Arc::clone(&self.slots.read()).acquire_owned() => slot.expect("never closed"),
@@ -1778,9 +1807,14 @@ impl NetEngine {
                     ))
                 }),
         );
-        let _domain_slot = tokio::select! {
-            slot = domain_slots.acquire_owned() => slot.expect("never closed"),
-            () = job.cancel.cancelled() => return Err(NetError::Cancelled),
+        let _domain_slot = if let Ok(slot) = Arc::clone(&domain_slots).try_acquire_owned() {
+            slot
+        } else {
+            job.set_status("waiting for other jobs on this domain to finish");
+            tokio::select! {
+                slot = domain_slots.acquire_owned() => slot.expect("never closed"),
+                () = job.cancel.cancelled() => return Err(NetError::Cancelled),
+            }
         };
 
         if let Some(kind) = gallery_token {
@@ -1894,6 +1928,10 @@ impl NetEngine {
     /// lasts into the second after its wake time, and even a wait of nothing takes a second.
     async fn announce_wait(job: &Job, status: &str, seconds: f64) -> Result<(), NetError> {
         let wake = now() as f64 + seconds;
+        if let Some(at) = job.retry_wake(job.state.lock().wait) {
+            #[allow(clippy::cast_possible_truncation)]
+            at.store(wake.ceil() as i64, Ordering::Relaxed);
+        }
         while now() as f64 <= wake {
             let delta = (wake - now() as f64).abs();
             let when = if delta <= 3.0 {

@@ -853,8 +853,17 @@ fn open_edit(
             if !active.get() {
                 return;
             }
+            let key = match by {
+                -1 => crate::autocomplete::Navigation::Up,
+                1 => crate::autocomplete::Navigation::Down,
+                2 => crate::autocomplete::Navigation::Home,
+                3 => crate::autocomplete::Navigation::End,
+                4 => crate::autocomplete::Navigation::PageUp,
+                5 => crate::autocomplete::Navigation::PageDown,
+                _ => return,
+            };
             let mut ac = ac.borrow_mut();
-            ac.move_highlight(isize::try_from(by).unwrap_or(0));
+            ac.navigate(key);
             if let Some(w) = weak.upgrade() {
                 w.set_suggestion_highlight(
                     ac.highlighted()

@@ -506,7 +506,8 @@ pub fn reset_defaults(store: &Store) -> Result<(), String> {
         .map_err(|e| e.to_string())
 }
 
-/// The current-job review columns, with explicit native wait reasons.
+/// The current-job review columns: the reference engine's position for the
+/// job's wait, then its URL, status, speed and progress.
 pub fn job_row(job: &hydrus_store::network_runtime::NetworkJob) -> [String; 5] {
     job_row_with_format(job, &GuiFormatting::default())
 }
@@ -539,7 +540,7 @@ pub fn job_sort_key(job: &hydrus_store::network_runtime::NetworkJob, column: usi
         2 => SortKey::Text(job.status.clone()),
         3 => SortKey::Counts(job.speed, 0),
         4 => SortKey::Counts(job.bytes_read, job.bytes_total.unwrap_or(0)),
-        _ => SortKey::Text(job.wait.label().into()),
+        _ => SortKey::Counts(job.wait.position() as u64, 0),
     }
 }
 
@@ -573,7 +574,6 @@ pub fn job_menu(
     job: &hydrus_store::network_runtime::NetworkJob,
     control: Option<&hydrus_store::network_runtime::JobControl>,
 ) -> Vec<JobMenuLine> {
-    use hydrus_store::network_runtime::WaitReason;
     let contexts = job
         .contexts
         .iter()
@@ -605,11 +605,11 @@ pub fn job_menu(
         flag("domain ok", control.is_none_or(|c| c.domain_ok)),
         flag(
             "waiting on connection error",
-            job.wait == WaitReason::Connection,
+            control.is_some_and(|c| c.waiting_on_connection_error),
         ),
         flag(
             "waiting on serverside bandwidth",
-            job.wait == WaitReason::ServerBandwidth,
+            control.is_some_and(|c| c.waiting_on_serverside_bandwidth),
         ),
         flag("obeys bandwidth", job.obeys_bandwidth),
         flag("tokens ok", control.is_none_or(|c| c.tokens_ok)),

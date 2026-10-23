@@ -37,6 +37,8 @@ struct Job {
     obeys: bool,
     domain_ok: bool,
     tokens_ok: bool,
+    /// Its connection-error and serverside-bandwidth retry waits are on.
+    retrying: bool,
 }
 
 fn publish(store: &Store, at: i64, jobs: &[Job]) {
@@ -73,6 +75,8 @@ fn publish(store: &Store, at: i64, jobs: &[Job]) {
                 domain_ok: job.domain_ok,
                 tokens_ok: job.tokens_ok,
                 auto_override: false,
+                waiting_on_connection_error: job.retrying,
+                waiting_on_serverside_bandwidth: job.retrying,
                 context_waits: vec![60, 0, 0, 0],
             })
             .collect(),
@@ -148,38 +152,18 @@ fn a_jobs_right_click_menu_is_the_reference_s_network_contexts_and_flags() {
         ),
         ("domain_errors", WaitReason::Downloading, true, false, true),
         // (the reference had a connection error wait and a serverside bandwidth
-        // wait together; a native job has one typed wait, so each is replayed
-        // on its own, the other flag reading False)
+        // wait together; the engine keeps both wake times, as its job does)
         ("waiting", WaitReason::Connection, true, true, true),
-        ("waiting", WaitReason::ServerBandwidth, true, true, true),
     ];
     for (name, wait, obeys, domain_ok, tokens_ok) in cases {
         let case = &recorded_menus["menus"][name];
-        let (contexts, mut flags) = recorded(case);
-        if name == "waiting" {
-            let (keep, drop) = if wait == WaitReason::Connection {
-                (
-                    "waiting on connection error",
-                    "waiting on serverside bandwidth",
-                )
-            } else {
-                (
-                    "waiting on serverside bandwidth",
-                    "waiting on connection error",
-                )
-            };
-            assert!(flags.contains(&format!("{keep}: True")), "{name}");
-            for flag in &mut flags {
-                if flag.starts_with(drop) {
-                    *flag = format!("{drop}: False");
-                }
-            }
-        }
+        let (contexts, flags) = recorded(case);
         let (window, _slots, _store, _dir) = right_click(Job {
             wait,
             obeys,
             domain_ok,
             tokens_ok,
+            retrying: name == "waiting",
         });
         let panes = menu(&window);
         assert_eq!(panes[0], flags, "{name} {wait:?}");
@@ -210,6 +194,7 @@ fn a_jobs_right_click_menu_is_the_reference_s_network_contexts_and_flags() {
         obeys: true,
         domain_ok: true,
         tokens_ok: true,
+        retrying: false,
     };
     publish(&store, stamp(), &[job(), job()]);
     let window = windows::open_jobs(store, &slots).unwrap();
@@ -252,6 +237,7 @@ fn the_refresh_control_is_manual_to_begin_with_or_an_interval_as_the_reference_s
         obeys: true,
         domain_ok: true,
         tokens_ok: true,
+        retrying: false,
     };
     publish(&store, stamp(), &[job()]);
     let window = windows::open_jobs(store.clone(), &slots).unwrap();

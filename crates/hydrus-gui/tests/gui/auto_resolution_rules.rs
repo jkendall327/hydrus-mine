@@ -134,8 +134,8 @@ fn rules_are_added_edited_deleted_and_written() {
         comparator().get_window_title(),
         "edit one-file metadata conditional comparator"
     );
-    comparator().set_predicates("system:inbox".into());
-    comparator().invoke_changed();
+    // (the first of the empty box's results is system:inbox)
+    comparator().invoke_search_chosen(0, false);
     assert_eq!(comparator().get_summary(), "A will match: system:inbox");
     comparator().invoke_apply();
     assert!(bound.auto_resolution.comparators.borrow().is_empty());
