@@ -76,6 +76,7 @@ fn draw_first_thumbnail(
     windows: &headless::Windows,
     store: &Arc<Store>,
     scales: &[f32],
+    want_top: &str,
     want_bottom: &str,
 ) -> Vec<Drawing> {
     let ui = MainWindow::new().unwrap();
@@ -94,13 +95,14 @@ fn draw_first_thumbnail(
             .row_data(0)
             .unwrap()
     };
+    assert!(first().top.contains(want_top), "{}", first().top.len());
     assert!(
         first().bottom.ends_with(want_bottom),
         "{:?}",
         &first().bottom[first().bottom.len().saturating_sub(80)..]
     );
     for _ in 0..50 {
-        if first().paint.bottom == first().bottom {
+        if first().paint.bottom == first().bottom && first().paint.top == first().top {
             break;
         }
         bound.rows.paint_tick(true, 0, 10);
@@ -108,6 +110,7 @@ fn draw_first_thumbnail(
         slint::platform::update_timers_and_animations();
     }
     assert_eq!(first().paint.bottom, first().bottom);
+    assert_eq!(first().paint.top, first().top);
     scales
         .iter()
         .map(|&scale_factor| {
@@ -146,7 +149,13 @@ fn a_very_long_bottom_banner_is_drawn() {
     let (_dirs, store) = store();
     tag_first_file(&store, pages(1..=120));
     let windows = headless::init();
-    draw_first_thumbnail(&windows, &store, &[1.0, 1.25, 1.5, 2.0, 3.0], "zoosyn_120");
+    draw_first_thumbnail(
+        &windows,
+        &store,
+        &[1.0, 1.25, 1.5, 2.0, 3.0],
+        "",
+        "zoosyn_120",
+    );
 }
 
 /// Past the 16-bit range at every scale factor: ~4000 page tags make a
@@ -158,9 +167,9 @@ fn a_banner_wider_than_the_renderer_can_address_shows_its_end() {
     let windows = headless::init();
     let scales = [1.0, 2.0];
     tag_first_file(&store, pages(3_700..=4_000));
-    let short = draw_first_thumbnail(&windows, &store, &scales, "zoosyn_4000");
+    let short = draw_first_thumbnail(&windows, &store, &scales, "", "zoosyn_4000");
     tag_first_file(&store, pages(1..=3_699));
-    let long = draw_first_thumbnail(&windows, &store, &scales, "zoosyn_4000");
+    let long = draw_first_thumbnail(&windows, &store, &scales, "", "zoosyn_4000");
     for (scale, (short, long)) in scales.iter().zip(short.iter().zip(&long)) {
         // the end of the banner, as the reference shows it: the same, up to
         // how glyphs half a million pixels from the origin round (much
@@ -174,5 +183,22 @@ fn a_banner_wider_than_the_renderer_can_address_shows_its_end() {
             rows.is_empty() || changed * 2.0 < moved,
             "the drawing changed at {scale}: by {changed} in {rows:?}, against {moved}"
         );
+    }
+}
+
+/// The top banner, centred, as wide: ~4000 series make a banner hundreds of
+/// thousands of pixels wide, drawn with its middle on the thumbnail.
+#[test]
+fn a_top_banner_wider_than_the_renderer_can_address_is_drawn() {
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    tag_first_file(
+        &store,
+        (1..=4_000).map(|i| format!("series:saga {i}")).collect(),
+    );
+    let drawn = draw_first_thumbnail(&windows, &store, &[1.0, 1.5, 2.0, 3.0], "saga 4000", "");
+    // (its background spans the thumbnail's width)
+    for d in &drawn {
+        assert!(d.pixels.iter().any(|&p| p != 0));
     }
 }
