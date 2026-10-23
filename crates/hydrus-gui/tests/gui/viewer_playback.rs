@@ -2,8 +2,8 @@
 //! still decoded whole to the reference's pixels (`render.json`), with no
 //! bar or volume; a GIF, an APNG and webms played through libmpv, with
 //! the reference's frames and times on the bar (`media.json`), moving and
-//! looping; an audio file's embedded cover art shown as its picture, as
-//! hydrus's `default_mpv.conf` asks (`audio-display=embedded-first`); and
+//! looping; an audio file's embedded cover art shown as its picture, the
+//! one the reference's mpv picks (`mpv_cover_art.json`); and
 //! the volume and mute the reference's viewer plays at
 //! (`GetCorrectCurrentVolume`/`GetCorrectCurrentMute`, `preview_audio.json`)
 //! reaching the playing player, from the options as it opens and as they
@@ -321,19 +321,24 @@ fn gif_apng_and_webm_play_through_mpv_with_the_reference_s_bar() {
     }
 }
 
+/// What the reference's mpv, set up by its own `UpdateConfAndCoreOptions` and
+/// loading through its own `LoadFile`, picks for each file
+/// (`oracle/fixtures/mpv_cover_art.json`): the attached picture and its size, and
+/// the tracks selected. The viewer's player is compared with it; that the
+/// picture is then drawn in the viewer, squared between bars, is the native
+/// viewer's own (the reference's player needs a display to draw).
 // leaf: audit-media-viewer-playback
 #[test]
 fn embedded_cover_art_is_an_audio_file_s_picture() {
     if mpv::skip_without_libmpv() {
         return;
     }
+    let recorded = hydrus_testkit::fixture_json("mpv_cover_art.json");
     let client = Client::basic();
     client.import(&["flac.flac", "flac_cover.flac", "mp3_cover.mp3"]);
-    for (name, cover) in [
-        ("flac_cover.flac", true),
-        ("mp3_cover.mp3", true),
-        ("flac.flac", false),
-    ] {
+    for file in recorded["files"].as_array().unwrap() {
+        let name = file["file"].as_str().unwrap();
+        let cover = file["albumart"] == "yes";
         let (sha256, _) = reference_info(name);
         let viewer = client.view(&sha256);
         let thumbnail = picture(&viewer);
@@ -359,10 +364,13 @@ fn embedded_cover_art_is_an_audio_file_s_picture() {
             // reads the fixtures' attached pictures)...
             assert_eq!(
                 (
-                    property(player, "video-params/w").as_deref(),
-                    property(player, "video-params/h").as_deref()
+                    property(player, "video-params/w"),
+                    property(player, "video-params/h")
                 ),
-                (Some("60"), Some("60")),
+                (
+                    file["width"].as_str().map(str::to_owned),
+                    file["height"].as_str().map(str::to_owned)
+                ),
                 "{name}"
             );
             // ...and the frame shown holds it square, centred between bars
@@ -387,6 +395,23 @@ fn embedded_cover_art_is_an_audio_file_s_picture() {
             assert!(!album_art(), "{name}");
             assert!(!shown_other(), "{name}: its thumbnail stays");
         }
+        // the tracks, as the reference's mpv lists them: (type, attached picture, selected)
+        let count: usize = property(player, "track-list/count")
+            .unwrap()
+            .parse()
+            .unwrap();
+        let mut tracks: Vec<serde_json::Value> = (0..count)
+            .map(|i| {
+                let of = |key: &str| property(player, &format!("track-list/{i}/{key}"));
+                serde_json::json!([
+                    of("type").unwrap(),
+                    of("albumart").as_deref() == Some("yes"),
+                    of("selected").as_deref() == Some("yes")
+                ])
+            })
+            .collect();
+        tracks.sort_by_key(ToString::to_string);
+        assert_eq!(serde_json::Value::from(tracks), file["tracks"], "{name}");
         viewer.invoke_close_requested();
     }
 }

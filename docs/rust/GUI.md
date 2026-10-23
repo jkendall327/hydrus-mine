@@ -1651,7 +1651,8 @@ a thread of their own (`src/mpv.rs`); that is slower than the reference's
 embedded mpv window for large videos. Other files show their thumbnail.
 GIFs, APNGs, webms and the rest show the reference's frame and time on
 the bar and loop; a still shows the file decoded whole, with no bar or
-volume; an audio file with embedded cover art shows the cover; and a
+volume; an audio file with embedded cover art shows the cover, the picture the
+reference's mpv picks (`oracle/fixtures/mpv_cover_art.json`); and a
 playing file follows the volume and mutes as they change, from the
 viewer's own control or anywhere else (`tests/gui/viewer_playback.rs`).
 A duplicates page (a migrated session's, with its search, pair sort and

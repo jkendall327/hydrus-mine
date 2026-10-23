@@ -634,11 +634,13 @@ page by file size, which no two files of the fixture share.
   reference's `AnimationBar` in `scanbar.rs`), and loop; and the volume and
   mute a playing player gets follow `preview_audio.json` (the reference's
   `GetCorrectCurrentVolume`/`GetCorrectCurrentMute`) as the viewer opens, as
-  the options change and from its own control. The reference's own mpv was
-  not recorded (its player needs a real display): embedded cover art is
-  checked as mpv choosing the file's album art and showing it in place of the
-  thumbnail (as hydrus's `default_mpv.conf`, `audio-display=embedded-first`,
-  asks), not pixel for pixel. Recorded but not replayed text for text: the
+  the options change and from its own control. For embedded cover art, the
+  reference's mpv set up and loaded by the reference's own code
+  (`oracle/record_mpv_cover_art.py`, with no video output: its embedded player
+  needs a real display) picks the attached picture at its size, and the
+  viewer's player picks the same; how the viewer then draws it (in place of
+  the thumbnail, squared between bars) is not compared with the reference's
+  pixels. Recorded but not replayed text for text: the
   seek-by-time steps made while *playing* (the recording freezes the clock,
   the viewer runs in real time, so the test checks only that a seek leaves it
   playing), the `GotoFrame` entries made while playing (they are the bar drag
