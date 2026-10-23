@@ -306,11 +306,20 @@ fn drive(run: &Run<'_>) {
             let at = i32::try_from(collect).unwrap();
             step(&format!("{search}: collect by {name}"), || {
                 ui.invoke_collect_toggled(at, true);
+            });
+            step(&format!("{search}: collected by {name}, drawn"), || {
                 ui.set_grid_scroll(0.0);
                 settle(&ui, &bound);
                 draw_all(&windows, &sizes[..1]);
-                ui.invoke_select_all();
-                draw_all(&windows, &sizes[..1]);
+            });
+            step(
+                &format!("{search}: collected by {name}, select all"),
+                || {
+                    ui.invoke_select_all();
+                    draw_all(&windows, &sizes[..1]);
+                },
+            );
+            step(&format!("{search}: no longer collected by {name}"), || {
                 ui.invoke_collect_toggled(at, false);
             });
         }
