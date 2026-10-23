@@ -1,0 +1,181 @@
+{
+ "exports": [
+  {
+   "formula": "[27, 8, [[26, 3, [[2, [62, 3, [0, \"a\", {\"rel\": \"next\"}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, null, {\"rel\": \"next\"}, 1, null, false, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]], [2, [62, 3, [3, \"div\", {\"href\": \"page.html\"}, 2, null, false, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]]]], 2, \"class\", \"\", [84, 1, [26, 3, [[2, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]]]]]",
+   "clipboard": "[27, 8, [[26, 3, [[2, [62, 3, [0, \"a\", {\"rel\": \"next\"}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, null, {\"rel\": \"next\"}, 1, null, false, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]], [2, [62, 3, [3, \"div\", {\"href\": \"page.html\"}, 2, null, false, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]]]], 2, \"class\", \"\", [84, 1, [26, 3, [[2, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]]]]]",
+   "description": "--HTML--\nsearch descendants for every <a> tag with attributes rel=next\nand then search descendants for the 2nd tag with attributes rel=next\nand then search previous siblings for the 3rd <div> tag with attributes href=page.html\nand then get the html of those tags\nand then any number of characters, matching regex \"^[a-z ]+$\""
+  },
+  {
+   "formula": "[31, 4, [[[0, [51, 1, [0, \"posts\", null, null, \"example string\"]]], [5, [51, 1, [3, \"\", null, null, \"example string\"]]], [0, [51, 1, [0, \"posts\", null, null, \"example string\"]]]], 0, \"\", [84, 1, [26, 3, [[2, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]]]",
+   "clipboard": "[31, 4, [[[0, [51, 1, [0, \"posts\", null, null, \"example string\"]]], [5, [51, 1, [3, \"\", null, null, \"example string\"]]], [0, [51, 1, [0, \"posts\", null, null, \"example string\"]]]], 0, \"\", [84, 1, [26, 3, [[2, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]]]",
+   "description": "--JSON--\nget the entries that have keys matching \"posts\"\nand then get the values that match \"any number of characters\"\nand then get the entries that have keys matching \"posts\"\nand then get final data content, converting to strings as needed\nand then any number of characters"
+  },
+  {
+   "formula": "[59, 3, [[26, 3, [[2, [27, 8, [[26, 3, [[2, [62, 3, [0, \"div\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"title\", \"\", [84, 1, [26, 3, []]]]]], [2, [27, 8, [[26, 3, [[2, [62, 3, [0, \"title\", {}, null, null, false, [51, 1, [0, \"blue eyes\", null, null, \"example string\"]]]]], [2, [62, 3, [1, \"title\", null, null, 2, true, [51, 1, [0, \"thumb\", null, null, \"example string\"]]]]], [2, [62, 3, [0, \"div\", {}, null, null, false, [51, 1, [2, \"e\", null, null, \"example string\"]]]]]]], 1, \"html\", \"\", [84, 1, [26, 3, []]]]]], [2, [27, 8, [[26, 3, [[2, [62, 3, [0, \"head\", {\"rel\": \"next\"}, -1, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, \"body\", {}, -1, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 1, \"html\", \"\", [84, 1, [26, 3, [[2, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]]]]]], \"\\\\1\", \"\", [84, 1, [26, 3, [[2, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]]]",
+   "clipboard": "[59, 3, [[26, 3, [[2, [27, 8, [[26, 3, [[2, [62, 3, [0, \"div\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"title\", \"\", [84, 1, [26, 3, []]]]]], [2, [27, 8, [[26, 3, [[2, [62, 3, [0, \"title\", {}, null, null, false, [51, 1, [0, \"blue eyes\", null, null, \"example string\"]]]]], [2, [62, 3, [1, \"title\", null, null, 2, true, [51, 1, [0, \"thumb\", null, null, \"example string\"]]]]], [2, [62, 3, [0, \"div\", {}, null, null, false, [51, 1, [2, \"e\", null, null, \"example string\"]]]]]]], 1, \"html\", \"\", [84, 1, [26, 3, []]]]]], [2, [27, 8, [[26, 3, [[2, [62, 3, [0, \"head\", {\"rel\": \"next\"}, -1, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, \"body\", {}, -1, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 1, \"html\", \"\", [84, 1, [26, 3, [[2, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]]]]]], \"\\\\1\", \"\", [84, 1, [26, 3, [[2, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]]]",
+   "description": "--ZIPPER--\n\n--HTML--\nsearch descendants for every <div> tag\nand then get the title attribute of those tags\n\n--HTML--\nsearch descendants for every <title> tag\nand then walk back up ancestors to the 2nd <title> tag with strings that match thumb\nand then search descendants for every <div> tag\nand then get the text content of those tags\n\n--HTML--\nsearch descendants for the last <head> tag with attributes rel=next\nand then search descendants for the last <body> tag\nand then get the text content of those tags\nand then any number of characters\n\nand substitute into \\1"
+  },
+  {
+   "formula": "[60, 3, [\"post_index\", \"\", [84, 1, [26, 3, [[2, [51, 1, [0, \"blue eyes\", null, null, \"example string\"]]]]]]]]",
+   "clipboard": "[60, 3, [\"post_index\", \"\", [84, 1, [26, 3, [[2, [51, 1, [0, \"blue eyes\", null, null, \"example string\"]]]]]]]]",
+   "description": "--CONTEXT VARIABLE--\n\nfetch the \"post_index\" variable from the parsing context"
+  },
+  {
+   "formula": "[133, 2, [[27, 8, [[26, 3, [[2, [62, 3, [3, \"title\", {}, null, null, false, [51, 1, [2, \"\\\\d+\", null, null, \"example string\"]]]]]]], 2, \"href\", \"\", [84, 1, [26, 3, []]]]], [27, 8, [[26, 3, [[2, [62, 3, [0, \"li\", {\"class\": \"thumb\"}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [3, \"li\", {}, null, null, true, [51, 1, [0, \"x\", null, null, \"example string\"]]]]], [2, [62, 3, [0, null, {\"class\": \"thumb\"}, 0, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 1, \"id\", \"\", [84, 1, [26, 3, [[2, [51, 1, [0, \"thumb\", null, null, \"example string\"]]]]]]]], \"\", [84, 1, [26, 3, [[2, [55, 2, [[[2, \"pre:\"]], \"example string\"]]]]]]]]",
+   "clipboard": "[133, 2, [[27, 8, [[26, 3, [[2, [62, 3, [3, \"title\", {}, null, null, false, [51, 1, [2, \"\\\\d+\", null, null, \"example string\"]]]]]]], 2, \"href\", \"\", [84, 1, [26, 3, []]]]], [27, 8, [[26, 3, [[2, [62, 3, [0, \"li\", {\"class\": \"thumb\"}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [3, \"li\", {}, null, null, true, [51, 1, [0, \"x\", null, null, \"example string\"]]]]], [2, [62, 3, [0, null, {\"class\": \"thumb\"}, 0, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 1, \"id\", \"\", [84, 1, [26, 3, [[2, [51, 1, [0, \"thumb\", null, null, \"example string\"]]]]]]]], \"\", [84, 1, [26, 3, [[2, [55, 2, [[[2, \"pre:\"]], \"example string\"]]]]]]]]",
+   "description": "--NESTED--\n\n--HTML--\nsearch previous siblings for every <title> tag\nand then get the html of those tags\n->\n--HTML--\nsearch descendants for every <li> tag with attributes class=thumb\nand then search previous siblings for every <li> tag with strings that match x\nand then search descendants for the 1st tag with attributes class=thumb\nand then get the text content of those tags\nand then thumb"
+  },
+  {
+   "formula": "[136, 1, [\"example text\", 1, \"\", [84, 1, [26, 3, [[2, [51, 1, [0, \"blue eyes\", null, null, \"example string\"]]]]]]]]",
+   "clipboard": "[136, 1, [\"example text\", 1, \"\", [84, 1, [26, 3, [[2, [51, 1, [0, \"blue eyes\", null, null, \"example string\"]]]]]]]]",
+   "description": "--STATIC--\n\nalways output: 1x example text"
+  }
+ ],
+ "imports": [
+  {
+   "name": "a formula (27)",
+   "text": "[27, 8, [[26, 3, [[2, [62, 3, [0, \"a\", {\"rel\": \"next\"}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, null, {\"rel\": \"next\"}, 1, null, false, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]], [2, [62, 3, [3, \"div\", {\"href\": \"page.html\"}, 2, null, false, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]]]], 2, \"class\", \"\", [84, 1, [26, 3, [[2, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]]]]]",
+   "messages": [],
+   "formula": "[27, 8, [[26, 3, [[2, [62, 3, [0, \"a\", {\"rel\": \"next\"}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, null, {\"rel\": \"next\"}, 1, null, false, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]], [2, [62, 3, [3, \"div\", {\"href\": \"page.html\"}, 2, null, false, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]]]], 2, \"class\", \"\", [84, 1, [26, 3, [[2, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]]]]]",
+   "description": "--HTML--\nsearch descendants for every <a> tag with attributes rel=next\nand then search descendants for the 2nd tag with attributes rel=next\nand then search previous siblings for the 3rd <div> tag with attributes href=page.html\nand then get the html of those tags\nand then any number of characters, matching regex \"^[a-z ]+$\""
+  },
+  {
+   "name": "a formula (31)",
+   "text": "[31, 4, [[[0, [51, 1, [0, \"posts\", null, null, \"example string\"]]], [5, [51, 1, [3, \"\", null, null, \"example string\"]]], [0, [51, 1, [0, \"posts\", null, null, \"example string\"]]]], 0, \"\", [84, 1, [26, 3, [[2, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]]]",
+   "messages": [],
+   "formula": "[31, 4, [[[0, [51, 1, [0, \"posts\", null, null, \"example string\"]]], [5, [51, 1, [3, \"\", null, null, \"example string\"]]], [0, [51, 1, [0, \"posts\", null, null, \"example string\"]]]], 0, \"\", [84, 1, [26, 3, [[2, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]]]",
+   "description": "--JSON--\nget the entries that have keys matching \"posts\"\nand then get the values that match \"any number of characters\"\nand then get the entries that have keys matching \"posts\"\nand then get final data content, converting to strings as needed\nand then any number of characters"
+  },
+  {
+   "name": "a formula (59)",
+   "text": "[59, 3, [[26, 3, [[2, [27, 8, [[26, 3, [[2, [62, 3, [0, \"div\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"title\", \"\", [84, 1, [26, 3, []]]]]], [2, [27, 8, [[26, 3, [[2, [62, 3, [0, \"title\", {}, null, null, false, [51, 1, [0, \"blue eyes\", null, null, \"example string\"]]]]], [2, [62, 3, [1, \"title\", null, null, 2, true, [51, 1, [0, \"thumb\", null, null, \"example string\"]]]]], [2, [62, 3, [0, \"div\", {}, null, null, false, [51, 1, [2, \"e\", null, null, \"example string\"]]]]]]], 1, \"html\", \"\", [84, 1, [26, 3, []]]]]], [2, [27, 8, [[26, 3, [[2, [62, 3, [0, \"head\", {\"rel\": \"next\"}, -1, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, \"body\", {}, -1, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 1, \"html\", \"\", [84, 1, [26, 3, [[2, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]]]]]], \"\\\\1\", \"\", [84, 1, [26, 3, [[2, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]]]",
+   "messages": [],
+   "formula": "[59, 3, [[26, 3, [[2, [27, 8, [[26, 3, [[2, [62, 3, [0, \"div\", {}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 0, \"title\", \"\", [84, 1, [26, 3, []]]]]], [2, [27, 8, [[26, 3, [[2, [62, 3, [0, \"title\", {}, null, null, false, [51, 1, [0, \"blue eyes\", null, null, \"example string\"]]]]], [2, [62, 3, [1, \"title\", null, null, 2, true, [51, 1, [0, \"thumb\", null, null, \"example string\"]]]]], [2, [62, 3, [0, \"div\", {}, null, null, false, [51, 1, [2, \"e\", null, null, \"example string\"]]]]]]], 1, \"html\", \"\", [84, 1, [26, 3, []]]]]], [2, [27, 8, [[26, 3, [[2, [62, 3, [0, \"head\", {\"rel\": \"next\"}, -1, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, \"body\", {}, -1, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 1, \"html\", \"\", [84, 1, [26, 3, [[2, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]]]]]], \"\\\\1\", \"\", [84, 1, [26, 3, [[2, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]]]",
+   "description": "--ZIPPER--\n\n--HTML--\nsearch descendants for every <div> tag\nand then get the title attribute of those tags\n\n--HTML--\nsearch descendants for every <title> tag\nand then walk back up ancestors to the 2nd <title> tag with strings that match thumb\nand then search descendants for every <div> tag\nand then get the text content of those tags\n\n--HTML--\nsearch descendants for the last <head> tag with attributes rel=next\nand then search descendants for the last <body> tag\nand then get the text content of those tags\nand then any number of characters\n\nand substitute into \\1"
+  },
+  {
+   "name": "a formula (60)",
+   "text": "[60, 3, [\"post_index\", \"\", [84, 1, [26, 3, [[2, [51, 1, [0, \"blue eyes\", null, null, \"example string\"]]]]]]]]",
+   "messages": [],
+   "formula": "[60, 3, [\"post_index\", \"\", [84, 1, [26, 3, [[2, [51, 1, [0, \"blue eyes\", null, null, \"example string\"]]]]]]]]",
+   "description": "--CONTEXT VARIABLE--\n\nfetch the \"post_index\" variable from the parsing context"
+  },
+  {
+   "name": "a formula (133)",
+   "text": "[133, 2, [[27, 8, [[26, 3, [[2, [62, 3, [3, \"title\", {}, null, null, false, [51, 1, [2, \"\\\\d+\", null, null, \"example string\"]]]]]]], 2, \"href\", \"\", [84, 1, [26, 3, []]]]], [27, 8, [[26, 3, [[2, [62, 3, [0, \"li\", {\"class\": \"thumb\"}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [3, \"li\", {}, null, null, true, [51, 1, [0, \"x\", null, null, \"example string\"]]]]], [2, [62, 3, [0, null, {\"class\": \"thumb\"}, 0, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 1, \"id\", \"\", [84, 1, [26, 3, [[2, [51, 1, [0, \"thumb\", null, null, \"example string\"]]]]]]]], \"\", [84, 1, [26, 3, [[2, [55, 2, [[[2, \"pre:\"]], \"example string\"]]]]]]]]",
+   "messages": [],
+   "formula": "[133, 2, [[27, 8, [[26, 3, [[2, [62, 3, [3, \"title\", {}, null, null, false, [51, 1, [2, \"\\\\d+\", null, null, \"example string\"]]]]]]], 2, \"href\", \"\", [84, 1, [26, 3, []]]]], [27, 8, [[26, 3, [[2, [62, 3, [0, \"li\", {\"class\": \"thumb\"}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [3, \"li\", {}, null, null, true, [51, 1, [0, \"x\", null, null, \"example string\"]]]]], [2, [62, 3, [0, null, {\"class\": \"thumb\"}, 0, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]], 1, \"id\", \"\", [84, 1, [26, 3, [[2, [51, 1, [0, \"thumb\", null, null, \"example string\"]]]]]]]], \"\", [84, 1, [26, 3, [[2, [55, 2, [[[2, \"pre:\"]], \"example string\"]]]]]]]]",
+   "description": "--NESTED--\n\n--HTML--\nsearch previous siblings for every <title> tag\nand then get the html of those tags\n->\n--HTML--\nsearch descendants for every <li> tag with attributes class=thumb\nand then search previous siblings for every <li> tag with strings that match x\nand then search descendants for the 1st tag with attributes class=thumb\nand then get the text content of those tags\nand then thumb"
+  },
+  {
+   "name": "a formula (136)",
+   "text": "[136, 1, [\"example text\", 1, \"\", [84, 1, [26, 3, [[2, [51, 1, [0, \"blue eyes\", null, null, \"example string\"]]]]]]]]",
+   "messages": [],
+   "formula": "[136, 1, [\"example text\", 1, \"\", [84, 1, [26, 3, [[2, [51, 1, [0, \"blue eyes\", null, null, \"example string\"]]]]]]]]",
+   "description": "--STATIC--\n\nalways output: 1x example text"
+  },
+  {
+   "name": "a string match",
+   "text": "[51, 1, [0, \"x\", null, null, \"x\"]]",
+   "messages": [
+    {
+     "kind": "warning",
+     "text": "That was not a formula--it was a: StringMatch"
+    }
+   ],
+   "formula": "[136, 1, [\"example text\", 1, \"\", [84, 1, [26, 3, [[2, [51, 1, [0, \"blue eyes\", null, null, \"example string\"]]]]]]]]",
+   "description": "--STATIC--\n\nalways output: 1x example text"
+  },
+  {
+   "name": "a list of two formulae",
+   "text": "[26, 3, [[2, [27, 8, [[26, 3, [[2, [62, 3, [0, \"a\", {\"rel\": \"next\"}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, null, {\"rel\": \"next\"}, 1, null, false, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]], [2, [62, 3, [3, \"div\", {\"href\": \"page.html\"}, 2, null, false, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]]]], 2, \"class\", \"\", [84, 1, [26, 3, [[2, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]]]]]], [2, [31, 4, [[[0, [51, 1, [0, \"posts\", null, null, \"example string\"]]], [5, [51, 1, [3, \"\", null, null, \"example string\"]]], [0, [51, 1, [0, \"posts\", null, null, \"example string\"]]]], 0, \"\", [84, 1, [26, 3, [[2, [51, 1, [3, \"\", null, null, \"example string\"]]]]]]]]]]]",
+   "messages": [
+    {
+     "kind": "warning",
+     "text": "That was not a formula--it was a: SerialisableList"
+    }
+   ],
+   "formula": "[136, 1, [\"example text\", 1, \"\", [84, 1, [26, 3, [[2, [51, 1, [0, \"blue eyes\", null, null, \"example string\"]]]]]]]]",
+   "description": "--STATIC--\n\nalways output: 1x example text"
+  },
+  {
+   "name": "a simple downloader formula",
+   "text": "[63, \"simple\", 1, [27, 8, [[26, 3, [[2, [62, 3, [0, \"a\", {\"rel\": \"next\"}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, null, {\"rel\": \"next\"}, 1, null, false, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]], [2, [62, 3, [3, \"div\", {\"href\": \"page.html\"}, 2, null, false, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]]]], 2, \"class\", \"\", [84, 1, [26, 3, [[2, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]]]]]]",
+   "messages": [
+    {
+     "kind": "warning",
+     "text": "That was not a formula--it was a: SimpleDownloaderParsingFormula"
+    }
+   ],
+   "formula": "[136, 1, [\"example text\", 1, \"\", [84, 1, [26, 3, [[2, [51, 1, [0, \"blue eyes\", null, null, \"example string\"]]]]]]]]",
+   "description": "--STATIC--\n\nalways output: 1x example text"
+  },
+  {
+   "name": "text that is not an object",
+   "text": "not a formula",
+   "messages": [
+    {
+     "kind": "critical",
+     "title": "Clipboard Error!",
+     "text": "Sorry, I could not understand what was in the clipboard. I was expecting \"JSON-serialised Formula\" but received this text:\n\nnot a formula\n\nMore details have been written to the log, but the general error was:\n\nJSONDecodeError('Expecting value: line 1 column 1 (char 0)')"
+    }
+   ],
+   "formula": "[136, 1, [\"example text\", 1, \"\", [84, 1, [26, 3, [[2, [51, 1, [0, \"blue eyes\", null, null, \"example string\"]]]]]]]]",
+   "description": "--STATIC--\n\nalways output: 1x example text"
+  },
+  {
+   "name": "an empty clipboard",
+   "text": "",
+   "messages": [
+    {
+     "kind": "critical",
+     "title": "Clipboard Error!",
+     "text": "Sorry, I could not understand what was in the clipboard. I was expecting \"JSON-serialised Formula\" but received this text:\n\n\n\nMore details have been written to the log, but the general error was:\n\nJSONDecodeError('Expecting value: line 1 column 1 (char 0)')"
+    }
+   ],
+   "formula": "[136, 1, [\"example text\", 1, \"\", [84, 1, [26, 3, [[2, [51, 1, [0, \"blue eyes\", null, null, \"example string\"]]]]]]]]",
+   "description": "--STATIC--\n\nalways output: 1x example text"
+  }
+ ],
+ "png_imports": [
+  {
+   "name": "the reference's png",
+   "file": "formula_exchange.png",
+   "messages": [],
+   "formula": "[27, 8, [[26, 3, [[2, [62, 3, [0, \"a\", {\"rel\": \"next\"}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, null, {\"rel\": \"next\"}, 1, null, false, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]], [2, [62, 3, [3, \"div\", {\"href\": \"page.html\"}, 2, null, false, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]]]], 2, \"class\", \"\", [84, 1, [26, 3, [[2, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]]]]]"
+  },
+  {
+   "name": "a png of a string match",
+   "file": "formula_exchange_string_match.png",
+   "messages": [
+    {
+     "kind": "warning",
+     "text": "That was not a formula--it was a: StringMatch"
+    }
+   ],
+   "formula": "[136, 1, [\"example text\", 1, \"\", [84, 1, [26, 3, [[2, [51, 1, [0, \"blue eyes\", null, null, \"example string\"]]]]]]]]"
+  },
+  {
+   "name": "a file that is no png",
+   "file": null,
+   "messages": [
+    {
+     "kind": "critical",
+     "title": "Problem loading!",
+     "text": "\"/tmp/tmp9lfa4k1m/bad.png\" did not appear to be a valid image!"
+    }
+   ],
+   "formula": "[136, 1, [\"example text\", 1, \"\", [84, 1, [26, 3, [[2, [51, 1, [0, \"blue eyes\", null, null, \"example string\"]]]]]]]]"
+  }
+ ],
+ "png": {
+  "dialog": "export to png",
+  "title": "HTML Parsing Formula - 463B",
+  "payload_description": "HTML Parsing Formula - 463B",
+  "description": "",
+  "width": 512,
+  "file": "formula_exchange.png",
+  "text": "[27, 8, [[26, 3, [[2, [62, 3, [0, \"a\", {\"rel\": \"next\"}, null, null, false, [51, 1, [3, \"\", null, null, \"example string\"]]]]], [2, [62, 3, [0, null, {\"rel\": \"next\"}, 1, null, false, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]], [2, [62, 3, [3, \"div\", {\"href\": \"page.html\"}, 2, null, false, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]]]], 2, \"class\", \"\", [84, 1, [26, 3, [[2, [51, 1, [2, \"^[a-z ]+$\", null, null, \"example string\"]]]]]]]]"
+ },
+ "png_picker_title": "select the png with the encoded formula"
+}

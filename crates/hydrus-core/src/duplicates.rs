@@ -27,6 +27,15 @@ impl PairSearchKind {
             _ => return None,
         })
     }
+
+    /// The reference's `DUPE_SEARCH_*` code.
+    pub const fn code(self) -> i64 {
+        match self {
+            Self::OneFileMatchesOneSearch => 0,
+            Self::BothFilesMatchOneSearch => 1,
+            Self::BothFilesMatchDifferentSearches => 2,
+        }
+    }
 }
 
 /// Whether pairs whose files have identical pixels are wanted.
@@ -49,6 +58,15 @@ impl PixelDuplicates {
             2 => Self::Excluded,
             _ => return None,
         })
+    }
+
+    /// The reference's `SIMILAR_FILES_PIXEL_DUPES_*` code.
+    pub const fn code(self) -> i64 {
+        match self {
+            Self::Required => 0,
+            Self::Allowed => 1,
+            Self::Excluded => 2,
+        }
     }
 }
 

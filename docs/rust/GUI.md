@@ -625,12 +625,14 @@ and falls back to preserved reference options.
 `oracle/record_string_conversion_preference.py` records acceptance, child Cancel
 and option serialization/reload across fresh parent editors.
 
-The processor step list has import, export selected, and paste controls. Its
-exchange window reads bounded reference JSON/PNG, reviews appended steps, copies
-selected entries in execution order, and saves reference PNGs. Import updates
-per-step/final previews in the draft; parent Cancel closes and invalidates the
-exchange child. `oracle/record_processing_exchange.py` records real Qt single/
-multiple selection exports, clipboard append, invalid input and a reference PNG.
+The processor step list has the reference's "export" (to the clipboard, to a
+png), "import" (from the clipboard, from pngs) and "duplicate": the selected
+steps go out in execution order as the reference's serialised text, the png
+panel starts as the reference's, and what comes in is appended at once,
+saying "N objects added!", "Problem pasting!", "Clipboard Error!" or "Problem
+importing!" as the reference does (`oracle/record_processing_exchange_export.py`).
+Imports update per-step/final previews in the draft; parent Cancel closes the
+png export.
 A package mixing steps with other objects appends its steps, with the
 reference's warning about the rest (`record_processing_exchange_mixed.py`).
 
@@ -790,6 +792,11 @@ a formula without renaming it does too, as the reference's does), and rows stay
 in the order they were added. Selected formulae edit in sequence; cancelling a child stops the
 remaining edits. Each formula's name is entered before its reusable editor;
 Apply saves the list and refreshes the chooser, while Cancel discards it.
+"export" (to the clipboard, to a png, to pngs, one png per formula named by
+it), "import" (from the clipboard, from pngs) and "duplicate" are the
+reference's: exports are its serialised text, and what comes in is added at
+once under unique names and selected, saying "N objects added!", warning of
+the types refused, or "Clipboard Error!" (replayed from the same recording).
 
 The reusable formula editor (`formula_window.rs`,
 `ui/formula_editors.slint`) edits ordered rules with add/edit/remove/up/down,
@@ -809,6 +816,12 @@ Context-variable and static formula controls edit names, variable keys, text and
 output counts (1–65,535), with the same parsing context, newline policy and
 string processor preview as HTML/JSON. Type changes create fresh reference
 defaults and reset the old name/processor. Edits remain isolated until Apply.
+Its "export" (to the clipboard, to a png) and "import" (from the clipboard,
+from a png) are the reference's formula panel's: the formula goes out as the
+reference's serialised text, a formula coming in replaces the one edited at
+once, and anything else gets the reference's "That was not a formula--it was
+a: ...", "Clipboard Error!" or "Problem loading!"
+(`oracle/record_formula_exchange.py`).
 `oracle/record_recursive_formula_editors.py` records these scalar controls and
 the recursive formula workflows. Nested formula editors open a staged first
 formula and a second formula whose examples come from the first formula's parsed
@@ -1741,17 +1754,20 @@ boundaries; authored store/model/native regressions await hosted execution.
 search, comparison, action, progress and operation, its warning, and
 "add suggested" (the reference's suggested rules), "add", "edit",
 "delete" (asking first), "export" (to the clipboard, a json file or a png),
-"import" (from the clipboard, json files or pngs: hydrus-rs's exports or the
-reference's own serialised rules, one or a list, saying "N objects added!",
-and warning of anything that isn't a rule) and "duplicate"; imported and
-duplicated rules are named apart from the others; "apply" writes them (a changed rule starting its
+"import" (from the clipboard, json files or pngs: the reference's own
+serialised rules, one or a list, or hydrus-rs's older exports, saying "N
+objects added!", warning of anything that isn't a rule, and with the
+reference's "Clipboard Error!" for text that isn't an object) and
+"duplicate"; exports are the reference's serialised text, so the reference
+imports them; imported and duplicated rules are named apart from the others
+and selected; "apply" writes them (a changed rule starting its
 work over, as the reference's does). The rule editor sets the name,
 paused, operation and most pending pairs, and has tabs for the search
 (which pairs, the location both searches search, chosen in the
-"multiple/deleted locations" list, the searches typed a term a line, the
-distance and pixel
-duplicates), the comparison (the comparators, added by kind and edited
-in their own editors: a search for A, B or either, made in the reference's
+"multiple/deleted locations" list, the searches typed a term a line (a
+line left as shown keeps its predicate, so OK on a rule, changing nothing,
+leaves it as it was), the distance and pixel duplicates), the comparison
+(the comparators, added by kind and edited in their own editors: a search for A, B or either, made in the reference's
 metadata conditional search (a box with paste and empty-search buttons, the
 OR buttons, its results and the predicates made, a double-click removing
 one; empty, it offers inbox, archive and eight system predicates that open
@@ -1762,8 +1778,10 @@ lists of comparators, each edited in an editor of its own) and the
 action (which, deleting A or B, and default or custom merge options,
 starting from the client's for the action and edited in the merge options
 editor).
-A rule's comparator list can export one to the clipboard or a png, import from
-the clipboard or pngs, and duplicate. "apply" refuses a "better" rule whose comparators can't tell A from B,
+A rule's comparator list, and an OR's or AND's, select several rows and can
+export them to the clipboard or a png (in the reference's serialised form),
+import from the clipboard or pngs, and duplicate them, with the reference's
+messages (`oracle/record_rules_exchange.py`). "apply" refuses a "better" rule whose comparators can't tell A from B,
 with the reference's words. Its "preview" tab searches the rule as
 edited for a sample of its pairs ("only sample this many", or all) and
 tests each, off the UI thread: "47 pairs searched; 10 matched", the

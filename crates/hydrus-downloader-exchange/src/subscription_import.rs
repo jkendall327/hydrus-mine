@@ -29,6 +29,12 @@ pub(crate) fn types() -> Result<BTreeMap<String, String>> {
         .map_err(|e| Error::Invalid(e.to_string()))
 }
 
+/// The reference's Python class name for a serialisable type, as its import
+/// warnings name refused objects (`HydrusData.GetTypeName`).
+pub fn type_name(code: u16) -> Option<String> {
+    types().ok()?.remove(&code.to_string())
+}
+
 fn check(
     object: &SerialisableObject,
     names: &BTreeMap<String, String>,

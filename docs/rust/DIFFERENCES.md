@@ -202,6 +202,15 @@ search.
   finish before the page is shown again, so it is never seen searching.
 - **One client at a time on a store**, as the reference allows one client
   on its database; a second says the store is already open.
+- **Very long lines in text inputs can crash the client.** Slint 1.18.1's
+  software renderer draws a text input's selection as one rectangle the
+  width of the selected text and casts it to 16-bit device pixels, so
+  selecting all of a line wider than 32767 device pixels (a ~4800-character
+  URL pasted into the search box, then Ctrl+A) panics; Qt copes. This is
+  upstream (`fill_rectangle` in i-slint-renderer-software); hydrus-rs has
+  no fix of its own yet. `long_text_selection.rs` reproduces it (ignored
+  until it is fixed). Thumbnail tag banners, which crashed the same way,
+  are fixed: their boxes are bounded (`thumbnail_banner_width.rs`).
 
 ## Pages (`hydrus-gui`)
 
@@ -1096,10 +1105,8 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   are not yet supplied as media examples (manual exports are).
 - **The string processor editor** receives starting strings from the sidecar
   owner's first example, including source processors before their own processing.
-  Import/export/paste use a shared
-  text/PNG review window. A package mixing steps with other objects gives its
-  steps, with the reference's warning about the rest above the review; the
-  reference's "N objects added!" is the review's "Append N processing steps"
+  A package mixing steps with other objects gives its steps, with the
+  reference's warning about the rest
   (`oracle/record_processing_exchange_mixed.py`). A string processor is
   appended as one nested step, as the reference does (#185): the list shows
   its summary ("some conversion", for the one holding a converter), running it leaves no strings (`ProcessStrings`
@@ -1971,11 +1978,9 @@ the native default local search domain (my files). The broader reference default
 local-location preference is still deferred. An accepted collapse freezes the media shown when its confirmation
 opened; if its source keys have left their shared notebook, it does nothing.
 
-A formula editor's import of something that is not one parsing formula (a
-page parser, or a package of two definitions) shows "Import one parsing formula
-into this editor." where the reference says "That was not a formula--it was a:
-<type>". Importing a formula from a clipboard bitmap is not supported; PNG
-files and text are.
+A formula editor's "import" of a png that is an image but carries no formula
+is refused with hydrus-rs's error under the reference's "Problem loading!"
+title.
 
 ## Downloader and URL display
 
@@ -4326,29 +4331,58 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 
 ## Simple downloader formula list
 
-- The list's import and export go through the shared downloader exchange window
-  (a text box and PNG paths, reviewed before they join the draft) rather than the
-  reference's import/export menus (from clipboard, from pngs; to clipboard, to
-  png, to pngs) and "duplicate" button, which hydrus-rs lacks. The reference adds
-  what it accepts at once and says "N objects added!", with a warning listing the
-  types it refused ("The imported objects included these types: ... Whereas this
-  control only allows: SimpleDownloaderParsingFormula"); this window refuses a
-  package holding anything else, in its own words, and adds nothing. Only the
-  exported text is compared with the reference's (`simple_formula_list.json`),
-  and a tag rule with no attributes is `{}` here and `null` there.
+- The "to pngs" panel names each png by its formula's name as the reference's
+  does, without making the name safe for the filesystem (a name with a `/` in
+  it fails to write, as it would in the reference).
 - The defaults' order in the reference follows its static folder's listing, which
   the filesystem decides; hydrus-rs's is fixed.
 
 ## Auto-resolution rule export and import
 
-- Rules export as hydrus-rs JSON, not the reference's serialised form (an
-  encoder for it is not written yet), so the reference can't import them;
-  hydrus-rs imports both. A rule's comparator
-  list exports a comparator to the clipboard or a png, imports from the
-  clipboard or pngs (hydrus-rs JSON or the reference's serialised comparator,
-  alone or in a list) and duplicates one; the lists inside OR/AND comparators
-  don't have those buttons. An image on the clipboard isn't read (use "from
-  png files").
+- Rules and comparators export in the reference's serialised form, as its
+  lists write them (replayed against `oracle/fixtures/rules_exchange.json`).
+  Where hydrus-rs keeps less than the reference, the reference's defaults
+  are written: a file search's search type and "search complete" flag, a
+  metadata conditional's location and tag context (combined local file
+  domains, all known tags), merge options without the services that merge
+  nothing, and note import options' unused settings. A rule's id is its
+  database id, or a negative number for a rule not yet saved (the reference
+  replaces it on import). An OR predicate keeps its members in the order
+  hydrus-rs holds them; the reference sorts a new OR by its text.
+- What a typed predicate leaves open is settled as the reference's parser
+  settles it: a service named is written by its key, viewing stats on the
+  default canvases name the "interesting" canvases, "rated" and "not rated"
+  on an inc/dec service are "> 0" and "= 0". An age's minutes and seconds
+  (which hydrus-rs's parser takes and a hydrus without `dateparser` does
+  not) join its hours, rounded, as the reference's `dateparser` path rounds
+  them.
+- Two predicates are not exported: a URL class rule (hydrus-rs keeps the
+  class's name, the reference the class) and one naming a service the client
+  doesn't have. The export says "Problem exporting!" and why (hydrus-rs
+  only); the reference never fails here.
+- The rule editor shows a rule's two searches as text, a line each, where
+  the reference has search widgets (the metadata comparators have the
+  reference's search). A line left as shown keeps its predicate as it was,
+  so OK on a rule leaves it as it was; only a line typed or changed is read.
+  Some lines as shown don't read as the same predicate if typed again: a
+  namespace ("series:*anything*") reads as a wildcard, a wildcard's
+  "(wildcard search)" note becomes part of it, an OR line reads as a tag, and
+  "≈ 600 ±15%", file relationship counts, "similar to 1 files" and "no
+  character tags" don't parse. Type them as the Client API takes them: a
+  namespace as `series:*`, a wildcard as `character:sam*`. Lines that read
+  the same (two "similar to 1 files" with different files) are told apart
+  only by their order: taking the first out keeps the first's predicate and
+  drops the second's.
+- Imports also read the hydrus-rs JSON earlier versions exported.
+- The comparator lists (a rule's, an OR's and an AND's) take several rows,
+  as the reference's do; "edit" edits the first selected rather than each in
+  turn, and "delete" deletes the selected without asking "Remove N
+  selected?".
+- An image on the clipboard isn't read (use "from png files"; the
+  clipboard-bitmap exchange is deferred, DECISIONS.md 2026-10-08).
+- A clipboard that can't be read at all (not an empty one) is said under
+  the reference's `DataMissing` title with hydrus-rs's error; Qt never gives
+  the reference that case.
 
 ## Options kept but not used
 
@@ -5569,13 +5603,9 @@ be diagnosed afterwards. The owner chose always-on crash logging (2026-10-14).
 - **The maximum size of the trash** is trimmed oldest first; the reference's
   oldest 256 are deleted in CPython set order, so which files stay differs
   (the owner decided ours stands, 2026-10-14).
-- **Processing steps: export to PNG and paste.** Export to PNG is the shared
-  exchange window (a path and save), not the reference's `PNGExportPanel` with
-  title, description and width fields. Paste opens a review before adding, and
-  failures show inline in it (the reference adds at once, says "N objects
-  added!", and shows a "Problem pasting!" or "Clipboard Error!" dialog). The
-  string processor's export button does nothing without a selection, as in the
-  reference.
+- **Processing steps: export.** A step hydrus-rs can't write in the
+  reference's form (none it imports) says why under the step list; the
+  reference's export never fails.
 
 ## Media viewer, duplicates daemons and the rebalance job (wave 5, W5-5)
 

@@ -139,3 +139,44 @@ pub fn encode_with_summary(
     let header: Vec<u8> = raster.data().chunks_exact(4).map(|p| p[0]).collect();
     hydrus_downloader_exchange::text_png::encode(payload, width, &header).map_err(|e| e.to_string())
 }
+
+/// What `PNGExportPanel` starts with for a serialised object's text: its
+/// payload description (`GetPayloadDescriptionAndBytes`: the object's
+/// serialisable name, or "A list of" counts of them, and the text's
+/// length) and its title (a named object's name, else that description).
+/// `None` if the text is not a serialised object.
+pub fn serialised_payload_description(
+    payload: &str,
+    formatting: &GuiFormatting,
+) -> Option<(String, String)> {
+    use hydrus_legacy::serialisable::{Body, Meta, SerialisableObject, class_name};
+    let object = SerialisableObject::from_tuple_str(payload).ok()?;
+    let kind = match &object.body {
+        Body::List(items) if object.kind.0 == 26 => {
+            // (`collections.Counter`: by first appearance)
+            let mut counts: Vec<(&str, u64)> = Vec::new();
+            for item in items {
+                let name = match item {
+                    Meta::Object(o) => class_name(o.kind.0)?,
+                    _ => return None,
+                };
+                match counts.iter_mut().find(|(n, _)| *n == name) {
+                    Some((_, count)) => *count += 1,
+                    None => counts.push((name, 1)),
+                }
+            }
+            let listed: Vec<String> = counts
+                .iter()
+                .map(|(name, count)| format!("{} {name}", hydrus_core::numbers::human_int(*count)))
+                .collect();
+            format!("A list of {}", listed.join(", "))
+        }
+        _ => class_name(object.kind.0)?.to_owned(),
+    };
+    let description = format!(
+        "{kind} - {}",
+        crate::gui_format::bytes(formatting, payload.chars().count() as u64)
+    );
+    let title = object.name.clone().unwrap_or_else(|| description.clone());
+    Some((description, title))
+}

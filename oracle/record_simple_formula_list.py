@@ -6,7 +6,11 @@ dialog, its `AddEditDeleteListBoxUniqueNamedObjects` and the formula editor it o
 the real ones; only the dialogs' answers are scripted (the name asked for, accepting or
 cancelling the formula editor, the yes/no questions, the clipboard). After each step the
 list's rows, selection and which buttons are enabled are recorded, with every message
-and question shown (in order), and the clipboard text the export wrote.
+and question shown (in order), the clipboard text the export wrote and the
+clipboard text an import would read (`pasted`). The
+png menus ("to png", "to pngs", "from pngs") are recorded too: the export
+panels' starting fields and the pngs they write (kept beside the fixture as
+`simple_formula_list_*.png`, with the text each carries).
 
 Usage: QT_QPA_PLATFORM=offscreen ~/pyenv/bin/python oracle/record_simple_formula_list.py
        (writes fixtures/simple_formula_list.json)
@@ -103,7 +107,7 @@ def record(session):
             QW.QApplication.processEvents()
             control = script['control']
             steps.append(dict(step=name, rows=rows(control), selected=selected(control), buttons=buttons(control),
-                              dialogs=list(log), clipboard=list(clipboard_out)))
+                              dialogs=list(log), clipboard=list(clipboard_out), pasted=script['clipboard']))
 
         def session_run(outer, apply=False):
             script['outer'] = outer
@@ -182,6 +186,89 @@ def record(session):
         session_run(outer_two)
         out['exchange'] = list(steps)
         del steps[:]
+
+        # the png menus: "to png" (`PNGExportPanel`), "to pngs" (`PNGsExportPanel`)
+        # and "from pngs"; the pngs written are kept beside the fixture
+        import shutil
+        from hydrus.core import HydrusCompression
+        from hydrus.client import ClientSerialisable
+        from hydrus.client.gui import ClientGUIDialogsFiles as DF
+        pngs = {}
+        work_dir = tempfile.mkdtemp()
+
+        class Nullipotent(QW.QDialog):
+            def __init__(self, parent, title, *a, **k):
+                super().__init__(parent)
+                self.title = title
+            def __enter__(self):
+                return self
+            def __exit__(self, *a):
+                return False
+            def SetPanel(self, panel):
+                self.panel = panel
+            def exec(self):
+                p = self.panel
+                if hasattr(p, '_filepicker'):
+                    started = dict(dialog=self.title, title=p._title.text(), payload_description=p._payload_description.text(), width=p._width.value())
+                    p._filepicker.SetPath(os.path.join(work_dir, 'single'))
+                    p._Update()
+                    p._export.click()
+                    written = ['single.png']
+                else:
+                    started = dict(dialog=self.title, width=p._width.value(), directory=p._directory_picker.GetPath())
+                    folder = os.path.join(work_dir, 'many')
+                    os.makedirs(folder, exist_ok=True)
+                    p._directory_picker.SetPath(folder)
+                    p._Update()
+                    p._export.click()
+                    written = sorted(os.listdir(folder))
+                    written = [os.path.join('many', w) for w in written]
+                files = []
+                for w in written:
+                    path = os.path.join(work_dir, w)
+                    name = 'simple_formula_list_' + os.path.basename(w).replace(' ', '_')
+                    shutil.copy(path, os.path.join(HERE, 'fixtures', name))
+                    payload = ClientSerialisable.LoadFromPNG(path)
+                    files.append(dict(written=os.path.basename(w), fixture=name, text=HydrusCompression.DecompressBytesToString(payload)))
+                log.append(['png export', started, files])
+                return 0
+
+        class FileDialog:
+            def __init__(self, parent, message, *a, **k):
+                self.message = message
+            def __enter__(self):
+                return self
+            def __exit__(self, *a):
+                return False
+            def exec(self):
+                log.append(['pick files', self.message])
+                return QW.QDialog.DialogCode.Accepted
+            def GetPaths(self):
+                return script['png_paths']
+
+        old_dialogs = (T.DialogNullipotent, DF.FileDialog)
+        T.DialogNullipotent, DF.FileDialog = Nullipotent, FileDialog
+
+        def outer_four(control):
+            steps.append(dict(step='opened', rows=rows(control), selected=selected(control), buttons=buttons(control), dialogs=[], clipboard=[]))
+            step('select the first row', lambda c_: select(c_, 0))
+            step('export to png', lambda c_: c_._ExportToPNG())
+            step('select two rows', lambda c_: select(c_, 0, 1))
+            step('export to pngs', lambda c_: c_._ExportToPNGs())
+            many = [f['written'] for f in steps[-1]['dialogs'][0][2]]
+            script['png_paths'] = [os.path.join(work_dir, 'many', m) for m in many]
+            step('import both from pngs', lambda c_: c_._ImportFromPNG())
+            bad = os.path.join(work_dir, 'bad.png')
+            with open(bad, 'wb') as fh:
+                fh.write(b'not a png')
+            script['png_paths'] = [bad]
+            step('import a file that is no png', lambda c_: c_._ImportFromPNG())
+
+        session_run(outer_four)
+        out['pngs'] = list(steps)
+        del steps[:]
+        T.DialogNullipotent, DF.FileDialog = old_dialogs
+        shutil.rmtree(work_dir)
 
         # the dialog's result: cancel leaves the saved formulae, apply replaces them
         def outer_three(control):

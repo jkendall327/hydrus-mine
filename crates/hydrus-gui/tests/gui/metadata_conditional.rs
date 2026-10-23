@@ -441,7 +441,7 @@ fn the_metadata_conditional_editor_searches_as_the_references_does() {
     list.invoke_row_clicked(0, false, false);
     list.invoke_edit();
     let rule = rule_window(&bound);
-    rule.invoke_comparator_clicked(0);
+    rule.invoke_comparator_clicked(0, false, false);
     rule.invoke_comparator_edit();
     let c = newest_comparator(&bound);
     // (what was kept: those that can't be tested on one file, limit and

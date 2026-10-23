@@ -785,7 +785,7 @@ fn date_conversion_fields_preview_and_cancel_reach_the_converter() {
 }
 
 #[test]
-fn processing_exchange_reviews_append_and_parent_cancel_invalidates_children() {
+fn processing_exchange_pastes_at_once_and_parent_cancel_closes_its_png_export() {
     use hydrus_core::url::strings::StringProcessor;
     use hydrus_gui::string_processor_window::{Slots, open};
     use std::{cell::RefCell, rc::Rc};
@@ -805,33 +805,45 @@ fn processing_exchange_reviews_append_and_parent_cancel_invalidates_children() {
     )
     .unwrap();
     let fixture = hydrus_testkit::fixture_json("processing_exchange.json");
-    window.invoke_exchange("import".into());
-    let child = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
-    assert!(window.get_child_open());
-    child.set_text("not JSON".into());
-    child.invoke_action("review".into());
-    assert!(!child.get_ready());
-    assert!(!child.get_error().is_empty());
+    let copied: Rc<RefCell<Vec<String>>> = Rc::default();
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| {
+            if let hydrus_gui::Clip::Text(text) = clip {
+                copied.borrow_mut().push(text.clone());
+            }
+        }
+    });
+    // not a package: refused, nothing added
+    crate::rules_exchange::paste(Some("not JSON"));
+    window.invoke_exchange("from clipboard".into());
+    let said = crate::rules_exchange::said();
+    assert_eq!(said.len(), 1);
+    assert_eq!(said[0]["title"], "Clipboard Error!");
     assert_eq!(window.get_steps().row_count(), 0);
-    child.set_text(fixture["multiple"].to_string().into());
-    child.invoke_action("review".into());
-    assert!(child.get_ready());
-    assert!(child.get_review().contains("Append 2 processing steps"));
-    assert_eq!(window.get_steps().row_count(), 0);
-    child.invoke_action("accept".into());
-    assert_eq!(window.get_steps().row_count(), 2);
-    assert!(!window.get_child_open());
-    window.invoke_row_clicked(1, false, false);
-    window.invoke_exchange("export".into());
-    let export = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
+    // a package: added at once
+    let multiple = fixture["multiple"].to_string();
+    crate::rules_exchange::paste(Some(&multiple));
+    window.invoke_exchange("from clipboard".into());
     assert_eq!(
-        serde_json::from_str::<serde_json::Value>(export.get_text().as_str()).unwrap(),
+        serde_json::json!(crate::rules_exchange::said()),
+        serde_json::json!([{"kind": "information", "text": "2 objects added!"}])
+    );
+    assert_eq!(window.get_steps().row_count(), 2);
+    hydrus_gui::clear_clipboard_reader();
+    window.invoke_row_clicked(1, false, false);
+    window.invoke_exchange("to clipboard".into());
+    assert_eq!(
+        serde_json::from_str::<serde_json::Value>(copied.borrow().last().unwrap()).unwrap(),
         fixture["single"]
     );
+    // the png export is a child: cancelling the editor closes it
+    window.invoke_exchange("to png".into());
+    let export = slots.png.window().expect("the png export opens");
+    assert!(slots.has_open());
     window.invoke_cancel();
     assert!(!slots.has_open());
     assert!(!export.window().is_visible());
-    child.invoke_action("accept".into());
     window.invoke_apply();
     assert!(accepted.borrow().is_none());
 }
@@ -840,17 +852,23 @@ fn processing_exchange_reviews_append_and_parent_cancel_invalidates_children() {
 fn processing_exchange_appends_the_steps_of_a_mixed_package_and_warns_as_the_reference_does() {
     // `oracle/record_processing_exchange_mixed.py`: the reference's queue
     // appends a mixed list's steps and warns about the rest; a package of
-    // nothing permitted only warns
-    use hydrus_core::url::strings::StringProcessor;
+    // nothing permitted only warns; a bare processor is one nested step
     use hydrus_gui::string_processor_window::{Slots, open};
+    use hydrus_legacy::serialisable::SerialisableObject;
     use std::{cell::RefCell, rc::Rc};
     let (_dirs, store) = store();
     let _windows = headless::init();
+    let fixture = hydrus_testkit::fixture_json("processing_exchange_mixed.json");
+    let steps = fixture["steps"].as_array().unwrap();
+    let start = hydrus_legacy::objects::domain::string_processor(
+        &SerialisableObject::from_tuple_str(&steps[0]["start"]["processor"].to_string()).unwrap(),
+    )
+    .unwrap();
     let slots = Slots::default();
     let accepted = Rc::new(RefCell::new(None));
     let window = open(
         &store,
-        &StringProcessor::default(),
+        &start,
         vec!["a,b".into()],
         &slots,
         Rc::new({
@@ -859,91 +877,57 @@ fn processing_exchange_appends_the_steps_of_a_mixed_package_and_warns_as_the_ref
         }),
     )
     .unwrap();
-    let fixture = hydrus_testkit::fixture_json("processing_exchange_mixed.json");
-    let steps = fixture["steps"].as_array().unwrap();
-    let step = |name: &str| steps.iter().find(|s| s["name"] == name).unwrap().clone();
-    let warning = |s: &serde_json::Value| {
-        s["messages"]
-            .as_array()
-            .unwrap()
+    hydrus_gui::set_picker(|_, _| {
+        vec![hydrus_testkit::fixture_path(
+            "processing_exchange_mixed.png",
+        )]
+    });
+    let processed = || -> Vec<String> {
+        window
+            .get_processed()
             .iter()
-            .find(|m| m["kind"] == "warning")
-            .map(|m| m["text"].as_str().unwrap().to_owned())
-            .unwrap()
+            .map(|r| r.cells.row_data(0).unwrap().to_string())
+            .collect()
     };
-    let start = steps[0]["start"]["processor"][2][2]
+    for step in &steps[1..] {
+        let name = step["name"].as_str().unwrap();
+        if step["how"] == "png" {
+            window.invoke_exchange("from pngs".into());
+        } else {
+            crate::rules_exchange::paste(step["text"].as_str());
+            window.invoke_exchange("from clipboard".into());
+        }
+        assert_eq!(
+            serde_json::json!(crate::rules_exchange::said()),
+            step["messages"],
+            "{name}"
+        );
+        assert_eq!(
+            window.get_steps().row_count(),
+            step["state"]["processor"][2][2].as_array().unwrap().len(),
+            "{name}"
+        );
+        assert_eq!(
+            serde_json::json!(processed()),
+            step["state"]["processed"],
+            "{name}"
+        );
+    }
+    hydrus_gui::clear_clipboard_reader();
+    // the bare processor's row says what it is (`StringProcessor.ToString`:
+    // its converter), and it has no editor: editing it opens nothing
+    let bare = steps
+        .iter()
+        .position(|s| s["name"] == "bare processor")
+        .unwrap();
+    let row = steps[bare - 1]["state"]["processor"][2][2]
         .as_array()
         .unwrap()
         .len();
-    let mixed = step("mixed list");
-    let added = mixed["state"]["processor"][2][2].as_array().unwrap().len() - start;
-
-    window.invoke_exchange("import".into());
-    let child = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
-    child.set_text(mixed["text"].as_str().unwrap().into());
-    child.invoke_action("review".into());
-    assert!(child.get_ready());
-    let review = child.get_review().to_string();
-    assert!(review.starts_with(&warning(&mixed)), "{review}");
-    assert!(
-        review.contains(&format!("Append {added} processing steps")),
-        "{review}"
-    );
-    child.invoke_action("accept".into());
-    assert_eq!(window.get_steps().row_count(), added);
-
-    // nothing permitted: the warning, and nothing appended
-    let nothing = step("nothing permitted");
-    window.invoke_exchange("import".into());
-    let child = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
-    child.set_text(nothing["text"].as_str().unwrap().into());
-    child.invoke_action("review".into());
-    assert!(!child.get_ready());
-    assert_eq!(child.get_error().as_str(), warning(&nothing));
-    child.invoke_action("cancel".into());
-    assert_eq!(window.get_steps().row_count(), added);
-
-    // the PNG of the mixed list, opened from a file
-    let png = step("mixed png");
-    window.invoke_exchange("import".into());
-    let child = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
-    child.set_path(
-        hydrus_testkit::fixture_path("processing_exchange_mixed.png")
-            .to_string_lossy()
-            .as_ref()
-            .into(),
-    );
-    child.invoke_action("open".into());
-    assert!(child.get_review().starts_with(&warning(&png)));
-    child.invoke_action("accept".into());
-    assert_eq!(window.get_steps().row_count(), 2 * added);
-
-    // a bare processor: one nested step, after which the example gives nothing
-    let bare = step("bare processor");
-    window.invoke_exchange("import".into());
-    let child = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
-    child.set_text(bare["text"].as_str().unwrap().into());
-    child.invoke_action("review".into());
-    assert!(child.get_ready());
-    // (the reference's "1 objects added!" is the review's "Append 1 processing steps")
-    let message = bare["messages"][0]["text"].as_str().unwrap();
-    let appended: usize = message.split(' ').next().unwrap().parse().unwrap();
-    assert_eq!(message, format!("{appended} objects added!"));
-    assert!(
-        child
-            .get_review()
-            .contains(&format!("Append {appended} processing steps")),
-        "{}",
-        child.get_review()
-    );
-    child.invoke_action("accept".into());
-    assert_eq!(window.get_steps().row_count(), 2 * added + appended);
-    // the row says what the step is (`StringProcessor.ToString`: its converter)
-    let last = window.get_steps().row_count() - 1;
     assert_eq!(
         window
             .get_steps()
-            .row_data(last)
+            .row_data(row)
             .unwrap()
             .cells
             .row_data(0)
@@ -951,23 +935,17 @@ fn processing_exchange_appends_the_steps_of_a_mixed_package_and_warns_as_the_ref
             .as_str(),
         "some conversion"
     );
-    // and it has no editor: editing it opens nothing
-    window.invoke_row_clicked(i32::try_from(last).unwrap(), false, false);
+    window.invoke_row_clicked(i32::try_from(row).unwrap(), false, false);
     window.invoke_edit();
     assert!(slots.step.borrow().is_none());
     assert!(slots.converter.borrow().is_none());
     assert!(slots.tag_filter.borrow().is_none());
     window.invoke_apply();
     let value = accepted.borrow().clone().unwrap();
-    assert_eq!(value.steps.len(), 2 * added + 1);
     assert!(matches!(
-        value.steps.last(),
-        Some(hydrus_core::url::strings::ProcessingStep::Nested(_))
+        value.steps[row],
+        hydrus_core::url::strings::ProcessingStep::Nested(_)
     ));
-    assert_eq!(
-        serde_json::json!(value.process(vec!["a,b".into()]).unwrap()),
-        bare["state"]["processed"]
-    );
 }
 
 fn test_table(rows: &slint::ModelRc<hydrus_gui::TableRow>) -> Vec<Vec<String>> {

@@ -347,11 +347,12 @@ fn formula_buttons_keep_imported_auxiliary_through_child_apply() {
         }),
     )
     .unwrap();
-    w.invoke_exchange(true);
-    let import = slots.exchange.0.borrow().as_ref().unwrap().clone_strong();
-    import.set_text("[27, 8, [[26, 3, []], 1, \"inert preserved attribute\", \"imported\", [84, 1, [26, 3, []]]]]".into());
-    import.invoke_action("review".into());
-    import.invoke_action("accept".into());
+    // "import > from clipboard" replaces the formula at once
+    hydrus_gui::set_clipboard_reader(|| {
+        Ok(Some("[27, 8, [[26, 3, []], 1, \"inert preserved attribute\", \"imported\", [84, 1, [26, 3, []]]]]".into()))
+    });
+    w.invoke_exchange(2);
+    hydrus_gui::clear_clipboard_reader();
     assert_eq!(w.get_name(), "imported");
     w.set_name("native edited".into());
     w.invoke_changed();

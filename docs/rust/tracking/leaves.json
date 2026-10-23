@@ -964,7 +964,7 @@
     "date": "2026-10-08",
     "class": "sound",
     "by": "issue 88 session",
-    "note": "Sound for what the searches find: tests/gui/duplicates_search_settings.rs every_search_setting_finds_the_pairs_the_reference_finds sets a jpeg search and a png search (typed as predicate lines, the native difference from the reference's two search widgets, in DIFFERENCES.md) across every search type, pixel preference and distance, and the counts match the reference's. The file domain is the page's, shown in the filtering tab by the page; choosing it in the rule editor is tested in auto_resolution_rules.rs."
+    "note": "Sound for what the searches find: tests/gui/duplicates_search_settings.rs every_search_setting_finds_the_pairs_the_reference_finds sets a jpeg search and a png search (typed as predicate lines, the native difference from the reference's two search widgets, in DIFFERENCES.md) across every search type, pixel preference and distance, and the counts match the reference's. The file domain is the page's, shown in the filtering tab by the page; choosing it in the rule editor is tested in auto_resolution_rules.rs. Update 2026-10-23 (W6-2 follow-up): crates/hydrus-gui/tests/gui/rules_exchange.rs every_recorded_rule_comes_back_from_the_editor_unchanged pastes each recorded reference rule (oracle/fixtures/rules_exchange.json), opens it, applies its metadata comparators' editors and the rule's OK changing nothing, and exports it as the recording (namespace, wildcard, OR, approximate and other predicates whose lines would not parse back now stay as they were: a line left as the editor first showed it keeps its predicate); a_line_edited_and_edited_back_keeps_its_predicate changes each line of both searches and changes it back, reading the rule at every step as a keystroke does, and the export is still the recording; an_edited_search_keeps_the_lines_not_edited removes a line and types one, and the export is the recording without the first and with the reference's parse of the typed line. A metadata comparator's predicates are compared as a set, because the reference's editor gives them back as a Python set (ClientGUIMetadataConditional GetPredicates), so its order can't be recorded. The 'worse' rule comes back 'better', as the reference's: its action choice has no 'worse' entry, so its BetterChoice.SetValue falls back to the first item. Not covered: two lines with the same text (two 'similar to 1 files' with different files) are told apart only by their order (DIFFERENCES.md)."
    }
   },
   {
@@ -3044,10 +3044,10 @@
     "Native rule list has no serialized interchange/duplicate callbacks; reference reusable list buttons preserve entire rule/comparator graphs."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Import of the reference's serialised rules/comparators is checked against the reference's stored JSON and the GUI drives clipboard export/import/duplicate for rules and comparators, but export writes hydrus-rs JSON, not the reference's serialised form (DIFFERENCES.md 'Auto-resolution rule export and import'), so the reference could not read it and the export half is not compared with the reference; png paths and OR/AND inner lists untested. Tracker notes saying there is no interchange are stale. Tests: crates/hydrus-gui-model/tests/model/auto_resolution_exchange.rs (the_reference_s_serialised_rules_import, comparators_export_and_import_alone_in_lists_and_from_the_reference:55); crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:1264 rules_and_comparators_are_exported_imported_and_duplicated_whole Update: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs rules_and_comparators_go_out_and_come_in_as_pngs round-trips pngs, but they carry hydrus-rs JSON; no reference png is replayed."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (wave 6, W6-2)",
+    "note": "crates/hydrus-gui/tests/gui/rules_exchange.rs replays oracle/fixtures/rules_exchange.json (oracle/record_rules_exchange.py, the basic fixture imported for its rating services) through the real edit rules list, rule editor and OR/AND comparator editors: the eight suggested rules (added with add suggested) and four recorded rules (every comparator type, OR/AND nested, ~60 system predicates parsed by the reference's own parser, tag/namespace/wildcard/OR predicates, custom merge options, every search type and pixel preference) export to the clipboard, a json file and a png as the reference's serialised text, alone and as lists in the list's order; comparators export singly and in lists from the rule's list and from an OR's and an AND's. Compared after a normalisation (testkit serialised.rs): rule ids zeroed (the reference replaces them on import) and lists the reference builds from Python sets (location context keys, hash lists) sorted. Paste (eight rules, a refused type, a mix, text that is not JSON, an empty clipboard) and duplicate give the reference's messages (N objects added!, its refused-types warning with class names, Clipboard Error! with its JSONDecodeError text), and the list's rows and selection as recorded; the reference's own pngs of a rule and a comparator import, and our png panel starts with its title. A rule written in the editor (rules_exchange.rs a_rule_typed_in_the_editor_exports_as_the_reference_s: the recording's typed lines, parsed by the reference without dateparser as DECISIONS.md has us match, retyped into the rule's search box and entered one by one into the metadata comparator's embedded search, OK; that comparator's predicates are compared in either order, as its search keeps its own) exports as the reference's: services named by the text parser are written by key, viewing stats without canvases name the options' interesting canvases, inc/dec rated/not rated are > 0 / = 0. Remaining export refusals (Problem exporting!, DIFFERENCES.md): a system:has url with class predicate (no URL class in the basic fixture to record) and a service name the client lacks. Not compared with a recording: an age typed with minutes or seconds, rounded into hours as the reference's dateparser path does (the reference without dateparser can't parse it). Other differences: edit of several selected comparators edits the first and delete does not ask (other leaves); the clipboard-image import is deferred (DECISIONS.md 2026-10-08)."
    }
   },
   {
@@ -3066,7 +3066,7 @@
     "date": "2026-10-08",
     "class": "sound",
     "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Model tests replay auto_resolution_summaries.json (list rows, suggested rules, add-comparator choices); GUI tests drive add suggested, new rule, edit, delete with 'Remove all selected?' and show that cancel writes nothing and apply writes via the store. Delete is in the untagged sibling test, and the 'Select which to add' title is a string only. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:860 rule_identity_and_search_choices_are_staged_then_persisted_on_apply; crates/hydrus-gui/tests/gui/auto_resolution_rules.rs:43 rules_are_added_edited_deleted_and_written (untagged); crates/hydrus-gui-model/tests/model/auto_resolution_rules.rs"
+    "note": "Model tests replay auto_resolution_summaries.json (list rows, suggested rules, add-comparator choices); GUI tests drive add suggested, new rule, edit, delete with 'Remove all selected?' and show that cancel writes nothing and apply writes via the store. Delete is in the untagged sibling test, and the 'Select which to add' title is a string only. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:860 rule_identity_and_search_choices_are_staged_then_persisted_on_apply; crates/hydrus-gui/tests/gui/auto_resolution_rules.rs:43 rules_are_added_edited_deleted_and_written (untagged); crates/hydrus-gui-model/tests/model/auto_resolution_rules.rs."
    }
   },
   {
@@ -5783,10 +5783,10 @@
     "A package mixing steps with other objects appends its steps and shows the reference's warning in the review. A bare string processor is appended as one nested step, as the reference does (#185). Native uses a shared text/PNG review window."
    ],
    "recheck": {
-    "date": "2026-10-14",
-    "class": "weak",
-    "by": "Claude session (wave 5, W5-2)",
-    "note": "Untagged. crates/hydrus-gui/tests/gui/processing_exchange.rs replays oracle/fixtures/processing_exchange_export.json (oracle/record_processing_exchange_export.py) through the window: exporting no step does nothing, one, two selected out of order, and all give the reference's clipboard JSON in queue order; the PNG of a selection decodes to the reference's objects; and pastes of a list and a single step, an empty clipboard and text that is not a package leave the queue and the example output as recorded. Still missing: the reference's PNG export panel (title, description and width fields, path remembered) is a shared window here, and paste adds after a review step with its own wording where the reference adds at once ('N objects added!'); the failure messages (the 'Problem pasting!' and 'Clipboard Error!' dialogs) are not ported."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (wave 6, W6-2)",
+    "note": "crates/hydrus-gui/tests/gui/processing_exchange.rs replays oracle/fixtures/processing_exchange_export.json (oracle/record_processing_exchange_export.py, the reference's real QueueListBox in EditStringProcessorPanel) through the real string processor editor: export > to clipboard of no step (nothing), one, two selected out of order and all gives the reference's text in queue order; export > to png opens the png panel with the reference's title, payload description, description, width and path, and the png carries the reference's objects (the reference's own png decodes the same); on one queue, import > from clipboard of a list, one step, an unreadable clipboard, text that is not JSON and empty text appends at once with the reference's messages (N objects added!, Problem pasting!, Clipboard Error! with its JSONDecodeError text), example output and selection; duplicate of two selected steps appends them, keeps the selection and says 2 objects added!; import > from pngs of the reference's png and of a file that is no png gives its messages, with its picker title; the queue applied at the end is the reference's. sidecars.rs replays processing_exchange_mixed.json's messages (mixed lists, a bare processor, nothing permitted, a mixed png). Not covered: an export that fails (hydrus-rs only; DIFFERENCES.md)."
    }
   },
   {
@@ -6019,10 +6019,10 @@
     "Imports accept named simple formulas only and remain in the formula list draft."
    ],
    "recheck": {
-    "date": "2026-10-14",
-    "class": "source-restated",
-    "by": "wave 5 session (W5-6)",
-    "note": "The text a single selected formula exports as is now compared with what the reference's _ExportToClipboard wrote for it (oracle/fixtures/simple_formula_list.json; a tag rule with no attributes is {} here, null there). The rest is not recorded-and-matching: the reference's clipboard/png menus, 'N objects added!', its warning listing the types refused, the duplicate button and its PNG dialogs differ from this list's shared import window (DIFFERENCES.md, Simple downloader formula list); the refusal strings are native. Not raised. Tests: crates/hydrus-gui/tests/gui/simple_formulae_list.rs (simple_formula_list_defaults_exchange_and_apply, exporting_a_formula_writes_the_reference_s_serialisation)."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (wave 6, W6-2)",
+    "note": "crates/hydrus-gui/tests/gui/simple_formulae_list.rs the_list_exchange_replays_the_reference_s_clipboard_and_png_menus replays oracle/fixtures/simple_formula_list.json's exchange and pngs runs (oracle/record_simple_formula_list.py, the reference's real _EditFormulae list with AddImportExportButtons) step by step through the real list window: export > to clipboard of one and of two formulae gives the reference's text byte for byte (the ancestor tag rule's attributes are now null, as the reference writes them); import > from clipboard of one, of two, of a string match, of text that is not JSON and of a formula with something else, and duplicate, give the reference's messages (N objects added!, its refused-types warning, Clipboard Error!), rows (unique names, (1), (1) (1)) and selection (the added selected with the rows already selected); export > to png opens the panel with the reference's title, payload description and width and writes the reference's text; export > to pngs writes one png per formula named by it in the folder of the last png export, each with the reference's text (the reference's own pngs carry the same); import > from pngs of those pngs adds them, saying 1 objects added! for each, with the reference's picker title, and a file that is no png gets its Problem importing! text. Not compared: the png bytes (the payloads are)."
    }
   },
   {
@@ -24154,10 +24154,10 @@
     "Clipboard bitmap/drop ingestion is absent; unsupported processing steps are rejected."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window export (text, PNG) and import (PNG, refusals of a non-formula and of two formulae) are driven, but exports are only round-tripped through the native encoder and the refusals are checked as non-empty error strings, not against reference text or a recording of this formula-level exchange. Clipboard bitmap and drop ingestion are absent (tracker note says so), so part of the leaf is uncovered. Tests: crates/hydrus-gui/tests/gui/formula_exchange.rs:13 a_formula_exports_as_text_and_png_and_imports_exactly_one_formula"
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (wave 6, W6-2)",
+    "note": "crates/hydrus-gui/tests/gui/formula_exchange.rs replays oracle/fixtures/formula_exchange.json (oracle/record_formula_exchange.py: the reference's EditFormulaPanel on a formula of each of the six kinds, the longest of each in fixtures/formulas.json) through the real formula window: export > to clipboard gives the reference's text byte for byte for each kind; export > to png opens the png panel with the reference's title, payload description and width, and the png carries the reference's text; import > from clipboard of each kind replaces the formula at once (exported again as the reference's text, and handed on by apply), and a string match, a list of two formulae, a simple downloader formula, text that is not an object and an empty clipboard leave it, with the reference's messages (That was not a formula--it was a: <class>, Clipboard Error! with its JSONDecodeError text); import > from png of the reference's own png replaces it, a png of a string match is refused with the reference's warning, and a file that is no png gets its Problem loading! text, with the reference's picker title. Not compared: the error text for a png that is an image but carries no payload (hydrus-rs's own, DIFFERENCES.md)."
    }
   },
   {

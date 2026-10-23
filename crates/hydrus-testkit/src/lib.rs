@@ -7,6 +7,8 @@
 //! Fixtures live in `oracle/fixtures/` and are produced by the scripts in
 //! `oracle/` from the reference implementation (see `oracle/README.md`).
 
+pub mod serialised;
+
 use std::fs::File;
 use std::path::{Path, PathBuf};
 

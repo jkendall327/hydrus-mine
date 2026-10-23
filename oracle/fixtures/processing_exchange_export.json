@@ -555,7 +555,9 @@
    "text": "not valid JSON",
    "messages": [
     {
-     "kind": "clipboard parse error"
+     "kind": "critical",
+     "title": "Clipboard Error!",
+     "text": "Sorry, I could not understand what was in the clipboard. I was expecting \"JSON-serialised Hydrus Object(s)\" but received this text:\n\nnot valid JSON\n\nMore details have been written to the log, but the general error was:\n\nJSONDecodeError('Expecting value: line 1 column 1 (char 0)')"
     }
    ],
    "state": {
@@ -667,7 +669,9 @@
    "text": "",
    "messages": [
     {
-     "kind": "clipboard parse error"
+     "kind": "critical",
+     "title": "Clipboard Error!",
+     "text": "Sorry, I could not understand what was in the clipboard. I was expecting \"JSON-serialised Hydrus Object(s)\" but received this text:\n\n\n\nMore details have been written to the log, but the general error was:\n\nJSONDecodeError('Expecting value: line 1 column 1 (char 0)')"
     }
    ],
    "state": {
@@ -774,5 +778,486 @@
     "selected": []
    }
   }
- ]
+ ],
+ "duplicate": {
+  "selected": [
+   0,
+   2
+  ],
+  "messages": [
+   {
+    "kind": "information",
+    "text": "2 objects added!"
+   }
+  ],
+  "state": {
+   "processor": [
+    84,
+    1,
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        83,
+        2,
+        [
+         ",",
+         null
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        55,
+        2,
+        [
+         [
+          [
+           3,
+           "!"
+          ]
+         ],
+         "example string"
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        55,
+        2,
+        [
+         [
+          [
+           2,
+           ">"
+          ]
+         ],
+         "example string"
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        55,
+        2,
+        [
+         [
+          [
+           3,
+           "?"
+          ]
+         ],
+         "example string"
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        83,
+        2,
+        [
+         ";",
+         null
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        55,
+        2,
+        [
+         [
+          [
+           3,
+           "?"
+          ]
+         ],
+         "example string"
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        83,
+        2,
+        [
+         ",",
+         null
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        55,
+        2,
+        [
+         [
+          [
+           2,
+           ">"
+          ]
+         ],
+         "example string"
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "processed": [
+    ">>a!??",
+    ">>b!??"
+   ],
+   "selected": [
+    0,
+    2
+   ]
+  }
+ },
+ "png_imports": [
+  {
+   "name": "the png of two steps",
+   "messages": [
+    {
+     "kind": "information",
+     "text": "2 objects added!"
+    }
+   ],
+   "state": {
+    "processor": [
+     84,
+     1,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ",",
+          null
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "!"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            2,
+            ">"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "?"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ";",
+          null
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "?"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ",",
+          null
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            2,
+            ">"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ",",
+          null
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            2,
+            ">"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "processed": [
+     ">>>a!??",
+     ">>>b!??"
+    ],
+    "selected": []
+   }
+  },
+  {
+   "name": "a file that is no png",
+   "messages": [
+    {
+     "kind": "critical",
+     "title": "Problem importing!",
+     "text": "\"/tmp/tmp6nlbl5cy/bad.png\" did not appear to be a valid image!"
+    }
+   ],
+   "state": {
+    "processor": [
+     84,
+     1,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ",",
+          null
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "!"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            2,
+            ">"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "?"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ";",
+          null
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            3,
+            "?"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ",",
+          null
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            2,
+            ">"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         83,
+         2,
+         [
+          ",",
+          null
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         55,
+         2,
+         [
+          [
+           [
+            2,
+            ">"
+           ]
+          ],
+          "example string"
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "processed": [
+     ">>>a!??",
+     ">>>b!??"
+    ],
+    "selected": []
+   }
+  }
+ ],
+ "png_picker_title": "select the png or pngs with the encoded data"
 }

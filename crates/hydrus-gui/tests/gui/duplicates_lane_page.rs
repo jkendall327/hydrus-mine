@@ -498,7 +498,7 @@ fn edited_comparators_are_accepted_and_persisted_with_their_summaries() {
     child.invoke_changed();
     child.invoke_apply();
     assert_eq!(and.get_subs().row_count(), 2);
-    and.invoke_sub_clicked(0);
+    and.invoke_sub_clicked(0, false, false);
     and.invoke_sub_delete();
     assert_eq!(and.get_subs().row_count(), 1);
     and.invoke_apply();
@@ -556,7 +556,7 @@ fn edited_comparators_are_accepted_and_persisted_with_their_summaries() {
     list.invoke_row_clicked(row as i32, false, false);
     list.invoke_edit();
     let rule = rule_window(&bound);
-    rule.invoke_comparator_clicked(1);
+    rule.invoke_comparator_clicked(1, false, false);
     rule.invoke_comparator_edit();
     let relative = newest_comparator(&bound);
     assert_eq!(relative.get_multiplier(), "2.50");
@@ -1102,7 +1102,7 @@ fn the_sidebar_switches_decide_whether_the_real_daemon_steps_work() {
     assert_eq!(checked, (8, 8));
 }
 
-// leaf: audit-media-rules-exchange
+// (the replay of the reference's lists is `rules_exchange`)
 #[test]
 fn rules_and_comparators_are_exported_imported_and_duplicated_whole() {
     use std::cell::RefCell;
@@ -1183,7 +1183,7 @@ fn rules_and_comparators_are_exported_imported_and_duplicated_whole() {
     let count = || rule.get_comparators().row_count();
     let start = count();
     assert!(start >= 1);
-    rule.invoke_comparator_clicked(0);
+    rule.invoke_comparator_clicked(0, false, false);
     rule.invoke_comparator_exchange(4);
     assert_eq!(count(), start + 1);
     assert_eq!(
@@ -1191,10 +1191,13 @@ fn rules_and_comparators_are_exported_imported_and_duplicated_whole() {
         rule.get_comparators().row_data(start),
         "the whole comparator is copied"
     );
-    rule.invoke_comparator_clicked(0);
+    rule.invoke_comparator_clicked(0, false, false);
     rule.invoke_comparator_exchange(0);
     let text = copied.borrow().last().cloned().unwrap();
-    assert!(text.contains("comparators"));
+    assert!(
+        text.starts_with('['),
+        "the reference's serialised form: {text}"
+    );
     *pasted.borrow_mut() = text.clone();
     rule.invoke_comparator_exchange(2);
     assert_eq!(count(), start + 2);
@@ -1203,8 +1206,7 @@ fn rules_and_comparators_are_exported_imported_and_duplicated_whole() {
     assert_eq!(count(), start + 2);
 }
 
-// The pngs carry hydrus-rs JSON (DIFFERENCES.md): no reference png is replayed.
-// leaf: audit-media-rules-exchange
+// (the reference's own pngs are replayed in `rules_exchange`)
 #[test]
 fn rules_and_comparators_go_out_and_come_in_as_pngs() {
     use std::cell::RefCell;
@@ -1304,7 +1306,7 @@ fn rules_and_comparators_go_out_and_come_in_as_pngs() {
         .clone_strong();
     let count = || rule.get_comparators().row_count();
     let start = count();
-    rule.invoke_comparator_clicked(0);
+    rule.invoke_comparator_clicked(0, false, false);
     rule.invoke_comparator_exchange(1);
     let comparator_png = temp.path().join("comparator.png");
     export(&comparator_png);

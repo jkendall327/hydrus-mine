@@ -147,6 +147,16 @@ pub(crate) fn message(title: &str, text: &str) {
     message_then(title, text, Box::new(|| {}));
 }
 
+/// Messages (title, text) one after another, each shown once the one before
+/// is dismissed, as the reference's modal dialogs come.
+pub(crate) fn messages(messages: Vec<(String, String)>) {
+    let mut messages = messages.into_iter();
+    if let Some((title, text)) = messages.next() {
+        let rest: Vec<_> = messages.collect();
+        message_then(&title, &text, Box::new(move || self::messages(rest)));
+    }
+}
+
 /// A message with an "ok" button; `then` runs once it is dismissed.
 pub(crate) fn message_then(title: &str, text: &str, then: Box<dyn FnOnce()>) {
     let ask = crate::choice_buttons::Ask {

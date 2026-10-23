@@ -660,6 +660,48 @@ pub fn predicate_lines(
         .join("\n")
 }
 
+/// Predicates as the editor shows them: each one's line, kept with it so an
+/// unchanged line reads back as the very predicate it showed.
+pub fn shown_predicate_lines(
+    predicates: &[hydrus_core::search::predicate::Predicate],
+    context: &TextContext,
+) -> Vec<(String, hydrus_core::search::predicate::Predicate)> {
+    predicates
+        .iter()
+        .map(|p| (predicate_text(p, context), p.clone()))
+        .collect()
+}
+
+/// The predicates of a box of lines the editor showed (`shown`): a line as
+/// it was shown is its predicate as it was (the text of some predicates
+/// does not read back as the same predicate), and only a line typed or
+/// changed is read, as [`parse_predicate_lines`] reads it. In the lines'
+/// order; an error names the lines that could not be read.
+pub fn reread_predicate_lines(
+    text: &str,
+    shown: &[(String, hydrus_core::search::predicate::Predicate)],
+) -> Result<Vec<hydrus_core::search::predicate::Predicate>, String> {
+    let mut unused: Vec<bool> = vec![true; shown.len()];
+    let mut out = Vec::new();
+    let mut errors = Vec::new();
+    for line in text.lines().map(str::trim).filter(|l| !l.is_empty()) {
+        if let Some(i) = (0..shown.len()).find(|&i| unused[i] && shown[i].0 == line) {
+            unused[i] = false;
+            out.push(shown[i].1.clone());
+            continue;
+        }
+        match parse_predicate_lines(line) {
+            Ok(predicates) => out.extend(predicates),
+            Err(e) => errors.push(e),
+        }
+    }
+    if errors.is_empty() {
+        Ok(out)
+    } else {
+        Err(errors.join("\n"))
+    }
+}
+
 /// Predicates typed a line each (as the Client API's search reads tags
 /// and system predicates), or what is wrong.
 pub fn parse_predicate_lines(
