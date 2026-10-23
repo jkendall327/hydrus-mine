@@ -179,12 +179,12 @@ fn a_formula_goes_to_and_comes_from_the_reference_s_pngs() {
         assert_eq!(Value::from(said()), expected, "{name}");
         assert_eq!(e.exported(), import["formula"].as_str().unwrap(), "{name}");
     }
-    assert!(
-        titles
-            .borrow()
-            .iter()
-            .all(|t| t == rec["png_picker_title"].as_str().unwrap()),
-        "{:?}",
-        titles.borrow()
+    // the picker, once for each import, with the reference's title
+    assert_eq!(
+        *titles.borrow(),
+        vec![
+            rec["png_picker_title"].as_str().unwrap();
+            rec["png_imports"].as_array().unwrap().len()
+        ]
     );
 }

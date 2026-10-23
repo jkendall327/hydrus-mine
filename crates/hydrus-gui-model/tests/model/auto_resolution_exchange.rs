@@ -8,10 +8,20 @@ use hydrus_gui_model::auto_resolution_exchange::{
 };
 use hydrus_store::duplicates::auto::suggested_rules;
 
+/// What the encoder looks up, in a client with no services.
+fn plain() -> hydrus_gui_model::auto_resolution_exchange::Context<'static> {
+    hydrus_gui_model::auto_resolution_exchange::Context {
+        scales: &|_| None,
+        service_key: &|_| None,
+        service_type: &|_| None,
+        default_canvases: &[],
+    }
+}
+
 #[test]
 fn exported_rules_import_again() {
     let rules = suggested_rules();
-    let text = export_text(&[(None, &rules[0]), (Some(7), &rules[1])], &|_| None).unwrap();
+    let text = export_text(&[(None, &rules[0]), (Some(7), &rules[1])], &plain()).unwrap();
     let imported = import_text(&text, &|_| None).unwrap();
     assert_eq!(imported.rules, rules[..2]);
     assert!(imported.refused.is_empty());
@@ -100,7 +110,7 @@ fn comparators_export_and_import_alone_in_lists_and_from_the_reference() {
     let rules = suggested_rules();
     let comparators: Vec<_> = rules.iter().flat_map(|r| r.comparators.clone()).collect();
     assert!(comparators.len() >= 2);
-    let text = export_comparators_text(&comparators[..2], &|_| None).unwrap();
+    let text = export_comparators_text(&comparators[..2], &plain()).unwrap();
     let back = import_comparators_text(&text, &|_| None).unwrap();
     assert_eq!(back.comparators, comparators[..2]);
     assert!(import_comparators_text("nonsense", &|_| None).is_err());
@@ -144,6 +154,16 @@ fn fixture_scales(key: &hydrus_core::ServiceKey) -> Option<(u64, bool)> {
     (key.to_hex() == "57a2".repeat(16)).then_some((5, true))
 }
 
+/// What the encoder looks up in the basic fixture: its "stars" scale.
+fn fixture() -> hydrus_gui_model::auto_resolution_exchange::Context<'static> {
+    hydrus_gui_model::auto_resolution_exchange::Context {
+        scales: &fixture_scales,
+        service_key: &|_| None,
+        service_type: &|_| None,
+        default_canvases: &[],
+    }
+}
+
 #[test]
 fn rules_and_comparators_read_from_the_reference_export_as_it_does() {
     use hydrus_gui_model::auto_resolution_exchange::{
@@ -160,7 +180,7 @@ fn rules_and_comparators_read_from_the_reference_export_as_it_does() {
         assert_eq!(serde_json::json!(names), export["selected_in_order"]);
         let ours = export_text(
             &rules.iter().map(|r| (None, r)).collect::<Vec<_>>(),
-            &fixture_scales,
+            &fixture(),
         )
         .unwrap();
         assert_eq!(normal(&ours), normal(text), "{names:?}");
@@ -170,7 +190,7 @@ fn rules_and_comparators_read_from_the_reference_export_as_it_does() {
         let comparators = import_comparators_text(text, &fixture_scales)
             .unwrap()
             .comparators;
-        let ours = export_comparators_text(&comparators, &fixture_scales).unwrap();
+        let ours = export_comparators_text(&comparators, &fixture()).unwrap();
         assert_eq!(normal(&ours), normal(text), "{}", export["rows"]);
     }
 }

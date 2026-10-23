@@ -173,17 +173,19 @@ fn comparator_exchange(
     };
     let scales = scales(store);
     match mode {
-        0 | 1 if !selected.is_empty() => match ex::export_comparators_text(&selected, &scales) {
-            Ok(text) if mode == 0 => {
-                crate::copy_to_clipboard(&text);
-                Vec::new()
+        0 | 1 if !selected.is_empty() => {
+            match with_encode_context(store, |ctx| ex::export_comparators_text(&selected, ctx)) {
+                Ok(text) if mode == 0 => {
+                    crate::copy_to_clipboard(&text);
+                    Vec::new()
+                }
+                Ok(text) => match export_png(png, store, text) {
+                    Ok(()) => Vec::new(),
+                    Err(e) => vec![(ex::PROBLEM_TITLE.into(), e)],
+                },
+                Err(e) => vec![(ex::EXPORT_PROBLEM_TITLE.into(), e)],
             }
-            Ok(text) => match export_png(png, store, text) {
-                Ok(()) => Vec::new(),
-                Err(e) => vec![(ex::PROBLEM_TITLE.into(), e)],
-            },
-            Err(e) => vec![(ex::EXPORT_PROBLEM_TITLE.into(), e)],
-        },
+        }
         2 => append(ex::comparators_from_clipboard(
             crate::clipboard_text(),
             &scales,
@@ -1583,6 +1585,41 @@ fn scales(store: &Store) -> impl Fn(&hydrus_core::ServiceKey) -> Option<(u64, bo
     }
 }
 
+/// Run `f` with what the reference-form encoder looks up in the client: the
+/// services' keys by name and the rating services' scales (from the store's
+/// services), and the "interesting" viewing canvases (from the options).
+fn with_encode_context<R>(
+    store: &Store,
+    f: impl FnOnce(&hydrus_gui_model::auto_resolution_exchange::Context<'_>) -> R,
+) -> R {
+    use hydrus_core::CanvasType;
+    use hydrus_core::search::predicate::ViewCanvas;
+    let snapshot = store.snapshot();
+    let scales = scales(store);
+    let service_key = |name: &str| snapshot.services.by_name(name).map(|s| s.key.clone());
+    let service_type = |key: &hydrus_core::ServiceKey| {
+        snapshot.services.by_key(key).ok().map(|s| s.service_type())
+    };
+    let viewing: hydrus_store::settings::FileViewingStatistics =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    let canvases: Vec<ViewCanvas> = viewing
+        .interesting_canvases
+        .iter()
+        .filter_map(|c| match c {
+            CanvasType::MediaViewer => Some(ViewCanvas::MediaViewer),
+            CanvasType::Preview => Some(ViewCanvas::Preview),
+            CanvasType::ClientApi => Some(ViewCanvas::ClientApi),
+            _ => None,
+        })
+        .collect();
+    f(&hydrus_gui_model::auto_resolution_exchange::Context {
+        scales: &scales,
+        service_key: &service_key,
+        service_type: &service_type,
+        default_canvases: &canvases,
+    })
+}
+
 /// Say why an import could not be read, in the wording of the source: files
 /// (`_ImportJSONs`, `_ImportPNGs`) or the clipboard.
 fn import_failed(from_file: bool, error: &str) {
@@ -1623,7 +1660,7 @@ fn exchange(store: &Arc<Store>, slots: &Slots, state: &Rc<RefCell<ListState>>, m
     // the reference's serialised form; a rule it can't be written for is said
     let exported = || {
         let rules: Vec<(Option<i64>, &Rule)> = selected.iter().map(|(id, r)| (*id, r)).collect();
-        ex::export_text(&rules, &scales(store)).map_err(|e| {
+        with_encode_context(store, |ctx| ex::export_text(&rules, ctx)).map_err(|e| {
             crate::debug_actions::message(ex::EXPORT_PROBLEM_TITLE, &e);
         })
     };

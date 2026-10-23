@@ -3,14 +3,16 @@
 //! [`crate::objects::predicates`], for exporting what the reference can read.
 //!
 //! The tuple is `[14, 8, [predicate type, value, inclusive]]`, with the value
-//! shaped as the reference's editors and parser make it. What the native
-//! predicate does not hold cannot be written: a rating between the ends of a
-//! numerical scale needs the service's "allow zero" setting (given by
-//! `scales`), a URL class rule needs the URL class object, and a service
-//! named rather than keyed (as the text parser leaves it) needs its key.
-//! Those are errors.
+//! shaped as the reference's editors and parser make it. What the text
+//! parser leaves open is settled from the client, as the reference's parser
+//! settles it ([`Context`]): a service named is written by its key, viewing
+//! stats on the default canvases name the "interesting" canvases, and a
+//! star rating is a fraction of its service's scale. An age's minutes and
+//! seconds join its hours, rounded, as the reference's parser rounds a
+//! relative date. A URL class rule can't be written (it needs the URL class
+//! object, which the predicate does not hold), nor a service name the client
+//! does not have: those are errors.
 
-use hydrus_core::ServiceKey;
 use hydrus_core::search::number::{NumberOp, NumberTest, RatingOp};
 use hydrus_core::search::predicate::{
     FileHashes, FileProperty, NumericProperty, Predicate, RatingLogic, RatingTest, ServiceRef,
@@ -18,6 +20,7 @@ use hydrus_core::search::predicate::{
     ViewingStat,
 };
 use hydrus_core::search::time::{TimeKind, TimeTest};
+use hydrus_core::{ServiceKey, ServiceType};
 
 use crate::objects::predicates::StarScale;
 use crate::pyjson::PyJson;
@@ -46,13 +49,46 @@ fn list(items: Vec<PyJson>) -> PyJson {
     PyJson::List(items)
 }
 
-fn key(service: &ServiceRef) -> Result<PyJson, String> {
-    match service {
-        ServiceRef::Key(key) => Ok(str(key.to_hex())),
-        ServiceRef::Name(name) => Err(format!(
-            "the service \"{name}\" is named, not known by its key"
-        )),
+/// What the encoder looks up in the client.
+pub struct Context<'a> {
+    /// A numerical rating service's scale, for star ratings.
+    pub scales: &'a dyn Fn(&ServiceKey) -> Option<StarScale>,
+    /// A service's key from its name, for predicates naming services.
+    pub service_key: &'a dyn Fn(&str) -> Option<ServiceKey>,
+    /// A service's type, for ratings on an inc/dec service.
+    pub service_type: &'a dyn Fn(&ServiceKey) -> Option<ServiceType>,
+    /// The "interesting" canvases (`file_viewing_stats_interesting_canvas_types`),
+    /// in the options' order, for viewing stats on the default canvases.
+    pub default_canvases: &'a [ViewCanvas],
+}
+
+impl std::fmt::Debug for Context<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Context")
+            .field("default_canvases", &self.default_canvases)
+            .finish_non_exhaustive()
     }
+}
+
+fn service_key(service: &ServiceRef, ctx: &Context<'_>) -> Result<ServiceKey, String> {
+    match service {
+        ServiceRef::Key(key) => Ok(key.clone()),
+        ServiceRef::Name(name) => {
+            (ctx.service_key)(name).ok_or_else(|| format!("there is no service \"{name}\""))
+        }
+    }
+}
+
+fn key(service: &ServiceRef, ctx: &Context<'_>) -> Result<PyJson, String> {
+    Ok(str(service_key(service, ctx)?.to_hex()))
+}
+
+fn canvas_name(c: ViewCanvas) -> PyJson {
+    str(match c {
+        ViewCanvas::MediaViewer => "media",
+        ViewCanvas::Preview => "preview",
+        ViewCanvas::ClientApi => "client api",
+    })
 }
 
 /// A `NumberTest` object (`[93, 2, [operator, value, extra]]`).
@@ -128,7 +164,10 @@ fn stars_to_rating(stars: u64, out_of: u64, allow_zero: bool) -> f64 {
     }
 }
 
-fn service_selection(selection: Option<&ServiceSelection>) -> Result<PyJson, String> {
+fn service_selection(
+    selection: Option<&ServiceSelection>,
+    ctx: &Context<'_>,
+) -> Result<PyJson, String> {
     let (types, keys) = match selection {
         None => (Vec::new(), Vec::new()),
         Some(ServiceSelection::Types(types)) => {
@@ -140,8 +179,13 @@ fn service_selection(selection: Option<&ServiceSelection>) -> Result<PyJson, Str
             Vec::new(),
             keys.iter().map(|k: &ServiceKey| str(k.to_hex())).collect(),
         ),
-        Some(ServiceSelection::Names(_)) => {
-            return Err("rating services named, not known by their keys".into());
+        Some(ServiceSelection::Names(names)) => {
+            let mut keys = names
+                .iter()
+                .map(|n| service_key(&ServiceRef::Name(n.clone()), ctx).map(|k| k.to_hex()))
+                .collect::<Result<Vec<_>, _>>()?;
+            keys.sort();
+            (Vec::new(), keys.into_iter().map(str).collect())
         }
     };
     Ok(list(vec![
@@ -151,17 +195,14 @@ fn service_selection(selection: Option<&ServiceSelection>) -> Result<PyJson, Str
     ]))
 }
 
-/// A predicate in the reference's serialised form. `scales` gives each
-/// numerical rating service's scale, for star ratings.
+/// A predicate in the reference's serialised form, with what it leaves open
+/// looked up in `ctx`.
 ///
 /// # Errors
 /// If the predicate holds something the reference's form needs and the
 /// native one does not keep (see the module notes).
 #[allow(clippy::too_many_lines)]
-pub fn predicate(
-    p: &Predicate,
-    scales: &dyn Fn(&ServiceKey) -> Option<StarScale>,
-) -> Result<PyJson, String> {
+pub fn predicate(p: &Predicate, ctx: &Context<'_>) -> Result<PyJson, String> {
     use SystemPredicate as S;
     Ok(match p {
         Predicate::Tag { tag, inclusive } => wrap(0, str(tag.as_str()), *inclusive),
@@ -173,7 +214,7 @@ pub fn predicate(
         Predicate::Or(members) => {
             let members = members
                 .iter()
-                .map(|m| Ok(list(vec![int(2), predicate(m, scales)?])))
+                .map(|m| Ok(list(vec![int(2), predicate(m, ctx)?])))
                 .collect::<Result<Vec<_>, String>>()?;
             wrap(30, list(vec![int(LIST), int(3), list(members)]), true)
         }
@@ -297,7 +338,7 @@ pub fn predicate(
                 list(vec![
                     PyJson::Bool(*is_in),
                     int(status.code()),
-                    key(service)?,
+                    key(service, ctx)?,
                 ]),
                 true,
             ),
@@ -321,19 +362,19 @@ pub fn predicate(
                 op,
                 value,
             } => {
-                let ViewCanvases::Specific(canvases) = canvases else {
-                    return Err("viewing stats on the default canvases".into());
+                // (the default: the "interesting" canvases, as the
+                // reference's parser fills them in)
+                let canvases = match canvases {
+                    ViewCanvases::Specific(canvases) => {
+                        canvases.iter().copied().map(canvas_name).collect()
+                    }
+                    ViewCanvases::Default => ctx
+                        .default_canvases
+                        .iter()
+                        .copied()
+                        .map(canvas_name)
+                        .collect(),
                 };
-                let canvases = canvases
-                    .iter()
-                    .map(|c| {
-                        str(match c {
-                            ViewCanvas::MediaViewer => "media",
-                            ViewCanvas::Preview => "preview",
-                            ViewCanvas::ClientApi => "client api",
-                        })
-                    })
-                    .collect();
                 let (kind, value) = match stat {
                     ViewingStat::Views => ("views", count(*value)?),
                     ViewingStat::ViewTime => ("viewtime", count(*value)?),
@@ -407,18 +448,21 @@ pub fn predicate(
                 wrap(40, list(vec![PyJson::Bool(*has), str(name.as_str())]), true)
             }
             S::Rating { service, test } => {
-                let service_key = key(service)?;
+                let resolved = service_key(service, ctx)?;
+                let service_key = str(resolved.to_hex());
+                // (on an inc/dec service the reference's parser writes
+                // "rated" as "> 0" and "not rated" as "= 0")
+                let incdec = (ctx.service_type)(&resolved) == Some(ServiceType::LocalRatingIncDec);
                 let (op, value) = match test {
+                    RatingTest::Rated if incdec => (">", int(0)),
+                    RatingTest::NotRated if incdec => ("=", int(0)),
                     RatingTest::Rated => ("=", str("rated")),
                     RatingTest::NotRated => ("=", str("not rated")),
                     RatingTest::Liked => ("=", PyJson::Float(1.0)),
                     RatingTest::Disliked => ("=", PyJson::Float(0.0)),
                     RatingTest::Count { op, value } => (rating_op(*op), count(*value)?),
                     RatingTest::Stars { op, stars, out_of } => {
-                        let ServiceRef::Key(k) = service else {
-                            unreachable!("checked above")
-                        };
-                        let (_, allow_zero) = scales(k)
+                        let (_, allow_zero) = (ctx.scales)(&resolved)
                             .ok_or_else(|| "a star rating needs its service's scale".to_owned())?;
                         (
                             rating_op(*op),
@@ -442,8 +486,8 @@ pub fn predicate(
                     66,
                     list(vec![
                         int(code),
-                        service_selection(Some(services))?,
-                        service_selection(secondary)?,
+                        service_selection(Some(services), ctx)?,
+                        service_selection(secondary, ctx)?,
                         PyJson::Bool(*rated),
                     ]),
                     true,
@@ -463,7 +507,7 @@ pub fn predicate(
                     list(vec![
                         match service {
                             None => PyJson::Null,
-                            Some(s) => key(s)?,
+                            Some(s) => key(s, ctx)?,
                         },
                         int(match display {
                             TagDisplayType::Storage => 0,
@@ -482,17 +526,26 @@ pub fn predicate(
 fn time_test(test: &TimeTest) -> Result<PyJson, String> {
     Ok(match test {
         TimeTest::Relative { op, age } => {
-            if age.minutes != 0 || age.seconds != 0 {
-                return Err("an age in minutes or seconds".into());
-            }
+            // (the reference keeps whole hours: its parser rounds a relative
+            // date's time of day to them, `round( seconds / 3600 )`)
+            let (days, hours) = if age.minutes == 0 && age.seconds == 0 {
+                (u64::from(age.days), i64::from(age.hours))
+            } else {
+                let seconds = u64::from(age.hours) * 3600
+                    + u64::from(age.minutes) * 60
+                    + u64::from(age.seconds);
+                #[allow(clippy::cast_precision_loss, clippy::cast_possible_truncation)]
+                let hours = ((seconds % 86_400) as f64 / 3600.0).round_ties_even() as i64;
+                (u64::from(age.days) + seconds / 86_400, hours)
+            };
             list(vec![
                 str(op.symbol()),
                 str("delta"),
                 list(vec![
                     int(age.years),
                     int(age.months),
-                    int(age.days),
-                    int(age.hours),
+                    count(days)?,
+                    int(hours),
                 ]),
             ])
         }

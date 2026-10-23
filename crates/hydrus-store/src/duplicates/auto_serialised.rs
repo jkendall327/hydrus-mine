@@ -16,14 +16,14 @@ use hydrus_core::search::context::{FileSearchContext, LocationContext, TagContex
 use hydrus_core::service::builtin_keys;
 use hydrus_core::tag_filter::FilterRule;
 use hydrus_legacy::objects::predicate_encode;
-use hydrus_legacy::objects::predicates::StarScale;
 use hydrus_legacy::pyjson::PyJson;
 
 use super::auto::{Comparator, LookingAt, OneFileTest, OperationMode, PairTest, Rule};
 use super::merge::{ArchiveSync, MergeAction, MergeOptions, SyncAction};
 
-/// What gives a numerical rating service's scale, for star ratings.
-pub type Scales<'a> = &'a dyn Fn(&ServiceKey) -> Option<StarScale>;
+/// What the encoder looks up in the client (services' keys and scales, the
+/// default viewing canvases).
+pub use predicate_encode::Context;
 
 const LIST: i64 = 26;
 
@@ -81,11 +81,11 @@ fn file_search(
     location_context: PyJson,
     tags: PyJson,
     predicates: &[hydrus_core::search::predicate::Predicate],
-    scales: Scales<'_>,
+    ctx: &Context<'_>,
 ) -> Result<PyJson, String> {
     let predicates = predicates
         .iter()
-        .map(|p| predicate_encode::predicate(p, scales))
+        .map(|p| predicate_encode::predicate(p, ctx))
         .collect::<Result<Vec<_>, _>>()?;
     Ok(object(
         15,
@@ -101,12 +101,12 @@ fn file_search(
     ))
 }
 
-fn search_context(f: &FileSearchContext, scales: Scales<'_>) -> Result<PyJson, String> {
+fn search_context(f: &FileSearchContext, ctx: &Context<'_>) -> Result<PyJson, String> {
     file_search(
         location(&f.location),
         tag_context(&f.tags),
         &f.predicates,
-        scales,
+        ctx,
     )
 }
 
@@ -123,7 +123,7 @@ fn looking_at(l: LookingAt) -> PyJson {
 /// # Errors
 /// If one of its predicates can't be written (see
 /// [`predicate_encode::predicate`]).
-pub fn comparator(c: &Comparator, scales: Scales<'_>) -> Result<PyJson, String> {
+pub fn comparator(c: &Comparator, ctx: &Context<'_>) -> Result<PyJson, String> {
     Ok(match c {
         Comparator::OneFileMetadata {
             looking_at: l,
@@ -135,7 +135,7 @@ pub fn comparator(c: &Comparator, scales: Scales<'_>) -> Result<PyJson, String> 
                 location(&LocationContext::single(any_file)),
                 tag_context(&TagContext::new(all_tags, true, true)),
                 predicates,
-                scales,
+                ctx,
             )?;
             object(
                 130,
@@ -193,16 +193,16 @@ pub fn comparator(c: &Comparator, scales: Scales<'_>) -> Result<PyJson, String> 
                 141
             },
             1,
-            comparator_list(members, scales)?,
+            comparator_list(members, ctx)?,
         ),
     })
 }
 
-fn comparator_list(comparators: &[Comparator], scales: Scales<'_>) -> Result<PyJson, String> {
+fn comparator_list(comparators: &[Comparator], ctx: &Context<'_>) -> Result<PyJson, String> {
     Ok(serialisable_list(
         comparators
             .iter()
-            .map(|c| comparator(c, scales))
+            .map(|c| comparator(c, ctx))
             .collect::<Result<_, _>>()?,
     ))
 }
@@ -313,13 +313,13 @@ fn merge_options(o: &MergeOptions) -> PyJson {
 ///
 /// # Errors
 /// If one of its predicates can't be written.
-pub fn rule(r: &Rule, id: i64, scales: Scales<'_>) -> Result<PyJson, String> {
+pub fn rule(r: &Rule, id: i64, ctx: &Context<'_>) -> Result<PyJson, String> {
     let search = object(
         134,
         1,
         PyJson::List(vec![
-            search_context(&r.search.search_1, scales)?,
-            search_context(&r.search.search_2, scales)?,
+            search_context(&r.search.search_1, ctx)?,
+            search_context(&r.search.search_2, ctx)?,
             int(r.search.kind.code()),
             int(r.search.pixel_duplicates.code()),
             int(r.search.max_hamming_distance),
@@ -338,7 +338,7 @@ pub fn rule(r: &Rule, id: i64, scales: Scales<'_>) -> Result<PyJson, String> {
             }),
             r.max_pending_pairs.map_or(PyJson::Null, int),
             search,
-            object(129, 1, comparator_list(&r.comparators, scales)?),
+            object(129, 1, comparator_list(&r.comparators, ctx)?),
             int(r.action.duplicate_type().code()),
             PyJson::Bool(r.delete_a),
             PyJson::Bool(r.delete_b),

@@ -37,6 +37,8 @@ pub fn import_failure(from_file: bool, error: &str) -> (&'static str, String) {
 /// predicate it can't put in the reference's form).
 pub const EXPORT_PROBLEM_TITLE: &str = "Problem exporting!";
 
+pub use hydrus_store::duplicates::auto_serialised::Context;
+
 /// The numerical rating services' scales, for star rating predicates.
 pub type Scales<'a> =
     &'a dyn Fn(&hydrus_core::ServiceKey) -> Option<hydrus_legacy::objects::predicates::StarScale>;
@@ -54,7 +56,7 @@ const LIST_TYPE: u16 = 26;
 ///
 /// # Errors
 /// If a rule holds a predicate the reference's form can't be written for.
-pub fn export_text(rules: &[(Option<i64>, &Rule)], scales: Scales<'_>) -> Result<String, String> {
+pub fn export_text(rules: &[(Option<i64>, &Rule)], ctx: &Context<'_>) -> Result<String, String> {
     let mut new_id = 0;
     let objects = rules
         .iter()
@@ -63,7 +65,7 @@ pub fn export_text(rules: &[(Option<i64>, &Rule)], scales: Scales<'_>) -> Result
                 new_id -= 1;
                 new_id
             });
-            hydrus_store::duplicates::auto_serialised::rule(rule, id, scales)
+            hydrus_store::duplicates::auto_serialised::rule(rule, id, ctx)
                 .map_err(|e| format!("\"{}\" could not be exported: {e}", rule.name))
         })
         .collect::<Result<Vec<_>, _>>()?;
@@ -114,11 +116,11 @@ pub const COMPARATOR_TYPE: &str = "PairComparator";
 /// for.
 pub fn export_comparators_text(
     comparators: &[Comparator],
-    scales: Scales<'_>,
+    ctx: &Context<'_>,
 ) -> Result<String, String> {
     let objects = comparators
         .iter()
-        .map(|c| hydrus_store::duplicates::auto_serialised::comparator(c, scales))
+        .map(|c| hydrus_store::duplicates::auto_serialised::comparator(c, ctx))
         .collect::<Result<Vec<_>, _>>()?;
     Ok(hydrus_store::duplicates::auto_serialised::export_text(
         objects,

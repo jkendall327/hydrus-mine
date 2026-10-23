@@ -76,3 +76,32 @@ fn normalise(value: &mut Value) {
         normalise(item);
     }
 }
+
+/// Where two JSON values first differ (a path of indices and keys, and the
+/// two values there), for an assertion's message; `None` if they are equal.
+pub fn first_difference(a: &Value, b: &Value) -> Option<String> {
+    fn walk(a: &Value, b: &Value, path: &mut Vec<String>) -> Option<String> {
+        match (a, b) {
+            (Value::Array(x), Value::Array(y)) => {
+                for (i, (p, q)) in x.iter().zip(y).enumerate() {
+                    path.push(i.to_string());
+                    if let Some(d) = walk(p, q, path) {
+                        return Some(d);
+                    }
+                    path.pop();
+                }
+                (x.len() != y.len()).then(|| {
+                    format!(
+                        "at /{}: {} items against {}",
+                        path.join("/"),
+                        x.len(),
+                        y.len()
+                    )
+                })
+            }
+            _ if a == b => None,
+            _ => Some(format!("at /{}: {a} against {b}", path.join("/"))),
+        }
+    }
+    walk(a, b, &mut Vec::new())
+}

@@ -10,11 +10,14 @@ clipboard text is what the reference exports (`DumpToString`, the same text
   all together (a `SerialisableList`);
 - `wide`: a rule built as the reference's editors would build it, with
   system predicates parsed from text by the reference's own parser
-  (`ParseSystemPredicateStringsToPredicates`) and tag, namespace, wildcard
+  (`ParseSystemPredicateStringsToPredicates`, without `dateparser`, as
+  DECISIONS.md has hydrus-rs match) and tag, namespace, wildcard
   and OR predicates, every comparator type (OR and AND nested), paused,
   fully automatic, both deletes and custom metadata merge options;
 - `searches`: the other dupe search types and pixel preferences, and a
-  location context of two domains and a deleted one.
+  location context of two domains and a deleted one;
+- `typed`: a rule whose search and metadata comparator are the system
+  predicates as typed (`typed_lines`), for a rule written in an editor.
 
 The rule editor's comparator list (`EditComparatorList`, a list box) is
 exported too: one comparator, and two (a list). A rule and a comparator are
@@ -150,6 +153,10 @@ def record(session):
         for service in c.services_manager.GetServices():
             out['services'].append({'key': service.GetServiceKey().hex(), 'name': service.GetName(), 'type': service.GetServiceType()})
 
+        # (as a hydrus install without `dateparser`, which hydrus-rs matches:
+        # DECISIONS.md, "Date parsing matches a hydrus install without dateparser")
+        from hydrus.external import SystemPredicateParser
+        SystemPredicateParser.DATEPARSER_OK = False
         parsed = []
         for text in SYSTEM:
             try:
@@ -265,6 +272,20 @@ def record(session):
                  False, AR.DUPLICATES_AUTO_RESOLUTION_RULE_OPERATION_MODE_WORK_BUT_NO_ACTION, 1, (True, False), None),
         ]
 
+        # typed: a rule whose search and metadata comparator are system
+        # predicates as typed (the lines kept), as a user writes a rule
+        half = len(SYSTEM) // 2
+        typed_lines = {'search': [t for t in SYSTEM[half:] if t not in [r['text'] for r in out['refused']]],
+                       'comparator': [t for t in SYSTEM[:half] if t not in [r['text'] for r in out['refused']]]}
+        typed_parse = lambda lines: ClientSearchParseSystemPredicates.ParseSystemPredicateStringsToPredicates(lines)
+        # (a metadata conditional keeps only what it can test on a file)
+        typed_lines['comparator'] = [t for t in typed_lines['comparator'] if typed_parse([t])[0].CanTestMediaResult()]
+        typed = rule('typed', search(typed_parse(typed_lines['search'])), search([]), ClientDuplicates.DUPE_SEARCH_ONE_FILE_MATCHES_ONE_SEARCH,
+                     ClientDuplicates.SIMILAR_FILES_PIXEL_DUPES_ALLOWED, 4, [conditional(C.LOOKING_AT_A, typed_parse(typed_lines['comparator']))],
+                     HC.DUPLICATE_BETTER, False, AR.DUPLICATES_AUTO_RESOLUTION_RULE_OPERATION_MODE_WORK_BUT_NO_ACTION, 500, (False, True), None)
+        out['typed_lines'] = typed_lines
+        searches.append(typed)
+
         suggested = AR.GetDefaultRuleSuggestions()
         rules = suggested + [wide] + searches
         # as saved rules have: their database ids (some suggestions are
@@ -340,7 +361,7 @@ def record(session):
                     written = os.path.join(folder, 'export.png')
                     shutil.copy(written, target)
                     payload = ClientSerialisable.LoadFromPNG(written)
-                    pngs.append({'dialog': self.title, 'file': PNGS[len(pngs)], 'title': title, 'payload': payload.hex()})
+                    pngs.append({'dialog': self.title, 'file': PNGS[len(pngs)], 'title': title, 'payload_description': p._payload_description.text(), 'payload': payload.hex()})
                 return 0
 
         original_dialog = ClientGUITopLevelWindowsPanels.DialogNullipotent

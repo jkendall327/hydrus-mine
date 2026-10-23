@@ -4311,11 +4311,27 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   database id, or a negative number for a rule not yet saved (the reference
   replaces it on import). An OR predicate keeps its members in the order
   hydrus-rs holds them; the reference sorts a new OR by its text.
-- A predicate the reference's form needs more for is not exported: a URL
-  class rule (hydrus-rs keeps its name, the reference the class), a service
-  named rather than keyed, an age in minutes or seconds, or viewing stats on
-  the default canvases. The export says "Problem exporting!" and why
-  (hydrus-rs only); the reference never fails here.
+- What a typed predicate leaves open is settled as the reference's parser
+  settles it: a service named is written by its key, viewing stats on the
+  default canvases name the "interesting" canvases, "rated" and "not rated"
+  on an inc/dec service are "> 0" and "= 0". An age's minutes and seconds
+  (which hydrus-rs's parser takes and a hydrus without `dateparser` does
+  not) join its hours, rounded, as the reference's `dateparser` path rounds
+  them.
+- Two predicates are not exported: a URL class rule (hydrus-rs keeps the
+  class's name, the reference the class) and one naming a service the client
+  doesn't have. The export says "Problem exporting!" and why (hydrus-rs
+  only); the reference never fails here.
+- A metadata comparator's predicates that can't be tested on a file are kept
+  and exported; the reference's drops them when it is set
+  (`MetadataConditional.SetFileSearchContext`).
+- The rule editor shows a rule's predicates as text and reads them back on
+  OK, and some of its text doesn't read back as the same predicate: a
+  namespace ("series:*anything*") comes back a wildcard, a wildcard keeps
+  its "(wildcard search)" suffix, an OR becomes a tag, and "≈ 600 ±15%",
+  file relationship counts, "similar to" and "no character tags" don't parse.
+  So OK on a pasted reference rule holding those changes it or is refused
+  (the rule editor's own leaves, not this exchange).
 - Imports also read the hydrus-rs JSON earlier versions exported.
 - The comparator lists (a rule's, an OR's and an AND's) take several rows,
   as the reference's do; "edit" edits the first selected rather than each in

@@ -214,11 +214,12 @@ fn rules_and_comparators_export_import_and_duplicate_as_the_reference_s_lists_do
     let custom = exports.last().unwrap();
     paste(custom["text"].as_str());
     list.invoke_exchange(3);
+    let pasted = custom["names"].as_array().unwrap().len();
     assert_eq!(
         serde_json::json!(said()),
-        serde_json::json!([{"kind": "information", "text": "4 objects added!"}])
+        serde_json::json!([{"kind": "information", "text": format!("{pasted} objects added!")}])
     );
-    assert_eq!(rules(&list).0.len(), 12);
+    assert_eq!(rules(&list).0.len(), 8 + pasted);
 
     // export: one rule, the suggestions together, the recorded ones
     // together; in the list's order, as the reference's text
@@ -452,11 +453,12 @@ fn rules_and_comparators_go_to_and_come_from_the_reference_s_pngs_and_json_files
     let (title, description, text) = png_exported(&temp.path().join("rule.png"));
     assert_eq!(normal(&text), normal(pngs[0]["text"].as_str().unwrap()));
     assert_eq!(title, pngs[0]["title"].as_str().unwrap());
-    // (its length differs with the rule's id: the reference's was its
-    // database id, ours a new rule's)
-    assert!(
-        description.starts_with("Duplicates Auto-Resolution Rule - "),
-        "{description}"
+    // (the text is a byte longer than the reference's, ours a new rule's id
+    // "-1" where its was a database id "9", which "5.78 KB" doesn't show)
+    assert_eq!(text.len(), pngs[0]["text"].as_str().unwrap().len() + 1);
+    assert_eq!(
+        description,
+        pngs[0]["payload_description"].as_str().unwrap()
     );
 
     // a json file carries the same text (`_ExportToJSON` writes
@@ -513,4 +515,89 @@ fn rules_and_comparators_go_to_and_come_from_the_reference_s_pngs_and_json_files
     assert_eq!(said.len(), 1);
     assert_eq!(said[0]["title"], "Problem importing!");
     assert_eq!(rule.get_comparators().row_count(), before + 1);
+}
+
+// A rule written in the editor: its search and its metadata comparator's
+// predicates typed as the recording's lines (the reference parsed the same
+// lines), then OK, export as the reference's. The lines name rating and file
+// services and leave view canvases to the options, as typed predicates do.
+// leaf: audit-media-rules-exchange
+#[test]
+fn a_rule_typed_in_the_editor_exports_as_the_reference_s() {
+    let rec = recorded();
+    let (opened, list) = opened();
+    let copied = opened.copied.clone();
+    let recorded_text = rec["exports"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|e| e["names"] == serde_json::json!(["typed"]))
+        .unwrap()["text"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let lines = |which: &str| -> String {
+        rec["typed_lines"][which]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|l| l.as_str().unwrap())
+            .collect::<Vec<_>>()
+            .join("\n")
+    };
+    // the rule's other settings, as the reference's (pasted), then its
+    // predicates typed over in the editor
+    paste(Some(&recorded_text));
+    list.invoke_exchange(3);
+    said();
+    select_rules(&list, &[Value::from("typed")]);
+    list.invoke_edit();
+    let rule = opened
+        .bound
+        .auto_resolution
+        .rule
+        .borrow()
+        .as_ref()
+        .expect("the rule editor opens")
+        .clone_strong();
+    rule.set_search_1(lines("search").into());
+    rule.invoke_changed();
+    rule.invoke_comparator_clicked(0, false, false);
+    rule.invoke_comparator_edit();
+    let editor = opened
+        .bound
+        .auto_resolution
+        .comparators
+        .borrow()
+        .last()
+        .expect("the comparator editor opens")
+        .1
+        .clone_strong();
+    assert_eq!(editor.get_kind(), "search");
+    editor.set_predicates(lines("comparator").into());
+    editor.invoke_changed();
+    editor.invoke_apply();
+    assert!(
+        opened.bound.auto_resolution.comparators.borrow().is_empty(),
+        "{}",
+        editor.get_errors()
+    );
+    rule.invoke_apply();
+    assert!(
+        opened.bound.auto_resolution.rule.borrow().is_none(),
+        "{}",
+        rule.get_errors()
+    );
+    select_rules(&list, &[Value::from("typed")]);
+    let before = copied.borrow().len();
+    list.invoke_exchange(0);
+    assert_eq!(said(), Vec::<Value>::new(), "exported without a problem");
+    let text = copied.borrow().get(before).cloned().expect("copied");
+    let (ours, theirs) = (normal(&text), normal(&recorded_text));
+    assert!(
+        ours == theirs,
+        "{}",
+        hydrus_testkit::serialised::first_difference(&ours, &theirs).unwrap_or_default()
+    );
+    hydrus_gui::clear_clipboard_reader();
 }
