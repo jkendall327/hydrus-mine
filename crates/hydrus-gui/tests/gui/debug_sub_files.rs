@@ -35,8 +35,7 @@ fn pages(pages: &[Page], parent: Option<&str>, out: &mut Vec<serde_json::Value>)
     }
 }
 
-// (untagged: the leaf waits on an owner decision on the random hashes the reference
-// shows as files; see DIFFERENCES.md)
+// leaf: audit-options-help-debug-action-publish-some-sub-files-in-five-seconds
 #[test]
 fn sub_files_are_published_to_their_named_page_five_seconds_on() {
     let recorded = hydrus_testkit::fixture_json("debug_sub_files.json");

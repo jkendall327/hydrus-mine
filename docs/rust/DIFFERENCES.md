@@ -4661,7 +4661,8 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   reference shows the hashes it does not have as files (phantom thumbnails:
   its `AddMediaResults` makes media of unknown hashes), and hydrus-rs pages
   show only files in the store. The page's `system:hash` takes every hash in
-  both. Waiting on an owner decision, so the leaf is untagged.
+  both. A Help > debug action is hydrus-rs-shaped (DECISIONS.md 2026-10-14,
+  the report modes), so the phantom thumbnails are not copied.
 - "what is this object?" takes drops anywhere on its window (the reference
   drops on the picture only). A bitmap on the clipboard is read as the
   reference reads it (the first channel of its pixels, then the payload) but
