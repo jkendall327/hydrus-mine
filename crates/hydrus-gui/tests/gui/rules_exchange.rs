@@ -609,8 +609,11 @@ fn a_rule_typed_in_the_editor_exports_as_the_reference_s() {
     assert_eq!(said(), Vec::<Value>::new(), "exported without a problem");
     let text = copied.borrow().get(before).cloned().expect("copied");
     let (mut ours, mut theirs) = (normal(&text), normal(&recorded_text));
-    // (the comparator's predicates in the order its search keeps them, as
-    // the reference's editor's list does; the recording set them directly)
+    // (the comparator's predicates compared as a set: the reference's editor
+    // gives them back as one, its `GetPredicates` returning the search's
+    // `set`, which the serialiser writes in its iteration order, following
+    // Python's per-process string hashes, so no order of the reference's can
+    // be recorded)
     for value in [&mut ours, &mut theirs] {
         if let Some(predicates) = value[3][5][2][2][0][1][2][1][2][2][3].as_array_mut() {
             predicates.sort_by_key(ToString::to_string);
@@ -694,9 +697,11 @@ fn export_of(opened: &Opened, list: &AutoResolutionRulesWindow, name: &str) -> V
 }
 
 fn same(ours: &Value, theirs: &Value, what: &str) {
-    // a metadata comparator's predicates come back in its search's own
-    // order (the reference's editor list keeps its own order too), so they
-    // are compared as sets
+    // a metadata comparator's predicates are compared as a set: the
+    // reference's editor gives them back as one (its `GetPredicates` returns
+    // the search's `set`, which `SetPredicates` stores and the serialiser
+    // writes in its iteration order, which follows Python's per-process
+    // string hashes), so no order of the reference's can be recorded
     let sorted = |v: &Value| {
         let mut v = v.clone();
         if let Some(Value::Array(rows)) = v.pointer_mut("/3/5/2/2") {
@@ -720,7 +725,7 @@ fn same(ours: &Value, theirs: &Value, what: &str) {
 // predicates' lines read back as the predicates they showed (some lines,
 // such as a namespace's, an OR's or an approximate number's, would not
 // parse back to the same predicate)
-// leaf: audit-media-rules-list, audit-media-duplicate-search-predicates
+// leaf: audit-media-duplicate-search-predicates
 #[test]
 fn every_recorded_rule_comes_back_from_the_editor_unchanged() {
     let rec = recorded();
@@ -739,26 +744,81 @@ fn every_recorded_rule_comes_back_from_the_editor_unchanged() {
     assert_eq!(rules(&list).0.len(), singles.len());
     for export in &singles {
         let name = export["names"][0].as_str().unwrap();
-        // ("worse" is a "B is better" action, which the editor's action
-        // choices don't hold, as the reference's don't: OK makes it "better"
-        // there too)
+        let mut expected = normal(export["text"].as_str().unwrap());
+        // ("worse" is a "B is better" action, DUPLICATE_WORSE, which the
+        // reference's action choice doesn't hold: its BetterChoice.SetValue
+        // falls back to the first choice, so OK makes it "better",
+        // DUPLICATE_BETTER, and so it does here)
         if name == "worse" {
-            continue;
+            assert_eq!(expected[3][6], 7);
+            expected[3][6] = Value::from(4);
         }
         ok_unchanged(&opened, &list, name, &|_| {});
-        same(
-            &export_of(&opened, &list, name),
-            &normal(export["text"].as_str().unwrap()),
-            name,
-        );
+        same(&export_of(&opened, &list, name), &expected, name);
     }
+    hydrus_gui::clear_clipboard_reader();
+}
+
+// Lines typed in and taken back out, the editor reading the rule at every
+// step as it does on each keystroke: a line back as it was shown is its
+// predicate as it was, whatever the steps between made of it (a namespace
+// line with a letter more reads as a wildcard)
+// leaf: audit-media-duplicate-search-predicates
+#[test]
+fn a_line_edited_and_edited_back_keeps_its_predicate() {
+    let rec = recorded();
+    let (opened, list) = opened();
+    let wide = rec["exports"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|e| e["names"] == serde_json::json!(["wide"]))
+        .unwrap()["text"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    paste(Some(&wide));
+    list.invoke_exchange(3);
+    said();
+    ok_unchanged(&opened, &list, "wide", &|rule| {
+        for which in 0..2 {
+            let get = || {
+                if which == 0 {
+                    rule.get_search_1()
+                } else {
+                    rule.get_search_2()
+                }
+                .to_string()
+            };
+            let set = |text: &str| {
+                if which == 0 {
+                    rule.set_search_1(text.into());
+                } else {
+                    rule.set_search_2(text.into());
+                }
+                rule.invoke_changed();
+            };
+            let lines: Vec<String> = get().lines().map(str::to_owned).collect();
+            for i in 0..lines.len() {
+                let mut edited = lines.clone();
+                edited[i].push('x');
+                set(&edited.join("\n"));
+                set(&lines.join("\n"));
+            }
+        }
+    });
+    same(
+        &export_of(&opened, &list, "wide"),
+        &normal(&wide),
+        "wide, edited and edited back",
+    );
     hydrus_gui::clear_clipboard_reader();
 }
 
 // An edit of the lines: the lines kept are their predicates as they were, a
 // line taken out goes, and a line typed is read as the reference reads it
 // (`system:has audio`, as the recording's typed rule has it)
-// leaf: audit-media-rules-list, audit-media-duplicate-search-predicates
+// leaf: audit-media-duplicate-search-predicates
 #[test]
 fn an_edited_search_keeps_the_lines_not_edited() {
     let rec = recorded();

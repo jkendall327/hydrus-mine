@@ -715,6 +715,10 @@ struct RuleState {
     /// The decision the custom merge options are for: they start again
     /// from the client's when the action changes (`_UpdateActionControls`).
     merge_for: Option<hydrus_store::duplicates::PairRelationship>,
+    /// The two searches' lines as the editor first showed them, each with
+    /// its predicate: a line that reads as shown is that predicate, however
+    /// often the text was edited since.
+    shown: [Vec<(String, hydrus_core::search::predicate::Predicate)>; 2],
 }
 
 fn show_rule(window: &AutoResolutionRuleWindow, state: &RuleState, fields: bool) {
@@ -804,21 +808,22 @@ fn read_rule(window: &AutoResolutionRuleWindow, store: &Store, state: &mut RuleS
     {
         rule.search.kind = c.1;
     }
-    for (text, search, which) in [
+    for (text, search, shown, which) in [
         (
             window.get_search_1(),
             &mut rule.search.search_1,
+            &state.shown[0],
             "the search",
         ),
         (
             window.get_search_2(),
             &mut rule.search.search_2,
+            &state.shown[1],
             "the second search",
         ),
     ] {
         // (a line as shown is its predicate as it was)
-        let shown = shown_predicate_lines(&search.predicates, &state.context);
-        match reread_predicate_lines(&text, &shown) {
+        match reread_predicate_lines(&text, shown) {
             Ok(predicates) => search.predicates = predicates,
             Err(e) => state.errors.push(format!("Problem with {which}: {e}")),
         }
@@ -890,12 +895,18 @@ fn open_rule(
         .custom_merge
         .is_some()
         .then(|| relationship(rule.action));
+    let context = text_context(store);
+    let shown = [
+        shown_predicate_lines(&rule.search.search_1.predicates, &context),
+        shown_predicate_lines(&rule.search.search_2.predicates, &context),
+    ];
     let state = Rc::new(RefCell::new(RuleState {
         rule,
-        context: text_context(store),
+        context,
         errors: Vec::new(),
         rows: Rows::default(),
         merge_for,
+        shown,
     }));
     // the pair count of the rule's search, as the reference's panel shows it
     let count =

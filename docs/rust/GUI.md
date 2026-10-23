@@ -1764,11 +1764,10 @@ and selected; "apply" writes them (a changed rule starting its
 work over, as the reference's does). The rule editor sets the name,
 paused, operation and most pending pairs, and has tabs for the search
 (which pairs, the location both searches search, chosen in the
-"multiple/deleted locations" list, the searches typed a term a line (a line left as shown keeps its predicate,
-so OK on a rule, changing nothing, leaves it as it was), the
-distance and pixel
-duplicates), the comparison (the comparators, added by kind and edited
-in their own editors: a search for A, B or either, made in the reference's
+"multiple/deleted locations" list, the searches typed a term a line (a
+line left as shown keeps its predicate, so OK on a rule, changing nothing,
+leaves it as it was), the distance and pixel duplicates), the comparison
+(the comparators, added by kind and edited in their own editors: a search for A, B or either, made in the reference's
 metadata conditional search (a box with paste and empty-search buttons, the
 OR buttons, its results and the predicates made, a double-click removing
 one; empty, it offers inbox, archive and eight system predicates that open

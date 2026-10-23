@@ -4359,7 +4359,11 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
   namespace ("series:*anything*") reads as a wildcard, a wildcard's
   "(wildcard search)" note becomes part of it, an OR line reads as a tag, and
   "≈ 600 ±15%", file relationship counts, "similar to 1 files" and "no
-  character tags" don't parse. Type them as the Client API takes them.
+  character tags" don't parse. Type them as the Client API takes them: a
+  namespace as `series:*`, a wildcard as `character:sam*`. Lines that read
+  the same (two "similar to 1 files" with different files) are told apart
+  only by their order: taking the first out keeps the first's predicate and
+  drops the second's.
 - Imports also read the hydrus-rs JSON earlier versions exported.
 - The comparator lists (a rule's, an OR's and an AND's) take several rows,
   as the reference's do; "edit" edits the first selected rather than each in
