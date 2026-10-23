@@ -40,6 +40,8 @@ pub struct Slots {
     /// The comparator editors open, innermost last, each with its own
     /// number.
     pub comparators: ComparatorStack,
+    /// The child editors of a metadata conditional comparator's search.
+    pub conditional: crate::metadata_conditional_search::Children,
     /// A rule's custom merge options' editor.
     pub merge_options: crate::merge_options_window::Slot,
     /// The rule's searches' location list.
@@ -59,6 +61,7 @@ impl std::fmt::Debug for Slots {
             .field("rule", &self.rule.borrow().is_some())
             .field("png", &self.png.has_open())
             .field("comparators", &self.comparators.borrow().len())
+            .field("conditional", &self.conditional)
             .field("merge_options", &self.merge_options.borrow().is_some())
             .field("locations", &self.locations.borrow().is_some())
             .field("preview_filter", &self.preview_filter.borrow().is_some())
@@ -94,6 +97,7 @@ fn edit_comparator(
     store: &Arc<Store>,
     comparator: Comparator,
     stack: &ComparatorStack,
+    children: &crate::metadata_conditional_search::Children,
     done: Rc<dyn Fn(Comparator)>,
 ) {
     if matches!(comparator, Comparator::Pair(_)) {
@@ -101,7 +105,7 @@ fn edit_comparator(
         return;
     }
     let number = stack.borrow().last().map_or(0, |(n, _)| n + 1);
-    match open_comparator(store, comparator, number, stack, done) {
+    match open_comparator(store, comparator, number, stack, children, done) {
         Ok(window) => stack.borrow_mut().push((number, window)),
         Err(e) => eprintln!("could not open the comparator editor: {e}"),
     }
@@ -109,6 +113,8 @@ fn edit_comparator(
 
 struct ComparatorState {
     comparator: Comparator,
+    /// A metadata conditional's search.
+    search: Option<Rc<RefCell<hydrus_gui_model::metadata_conditional::ConditionalSearch>>>,
     context: TextContext,
     errors: Vec<String>,
     /// An OR's or AND's selected comparator.
@@ -136,8 +142,9 @@ fn show_comparator(window: &ComparatorWindow, state: &mut ComparatorState) {
             window.set_looking(index(
                 choices.iter().position(|c| c.1 == *looking_at).unwrap_or(0),
             ));
-            if window.get_predicates().is_empty() {
-                window.set_predicates(predicate_lines(predicates, context).into());
+            let _ = predicates;
+            if let Some(search) = &state.search {
+                crate::metadata_conditional_search::show(window, &search.borrow(), context);
             }
         }
         Comparator::OneFileHardcoded { looking_at, test } => {
@@ -275,9 +282,8 @@ fn read_comparator(window: &ComparatorWindow, state: &mut ComparatorState) -> bo
             {
                 *looking_at = c.1;
             }
-            match parse_predicate_lines(&window.get_predicates()) {
-                Ok(p) => *predicates = p,
-                Err(e) => state.errors.push(e),
+            if let Some(search) = &state.search {
+                *predicates = search.borrow().predicates();
             }
         }
         Comparator::OneFileHardcoded { looking_at, test } => {
@@ -387,13 +393,25 @@ fn open_comparator(
     comparator: Comparator,
     number: u64,
     stack: &ComparatorStack,
+    children: &crate::metadata_conditional_search::Children,
     done: Rc<dyn Fn(Comparator)>,
 ) -> Result<ComparatorWindow, String> {
     let window = crate::app_title::new::<crate::ComparatorWindow>().map_err(|e| e.to_string())?;
     window.set_window_title(comparator_title(&comparator).into());
     window.set_kind(comparator_kind(&comparator).into());
+    let search = match &comparator {
+        Comparator::OneFileMetadata { predicates, .. } => Some(Rc::new(RefCell::new(
+            hydrus_gui_model::metadata_conditional::ConditionalSearch::new(
+                store.clone(),
+                predicates,
+                text_context(store),
+            ),
+        ))),
+        _ => None,
+    };
     let state = Rc::new(RefCell::new(ComparatorState {
         comparator,
+        search: search.clone(),
         context: text_context(store),
         errors: Vec::new(),
         selected: None,
@@ -423,6 +441,23 @@ fn open_comparator(
             }
         }
     });
+    if let Some(search) = &search {
+        crate::metadata_conditional_search::bind(
+            &window,
+            store,
+            search,
+            &text_context(store),
+            children,
+            Rc::new({
+                let weak = window.as_weak();
+                move || {
+                    if let Some(window) = weak.upgrade() {
+                        window.invoke_changed();
+                    }
+                }
+            }),
+        );
+    }
     window.on_sub_clicked({
         let weak = window.as_weak();
         let state = state.clone();
@@ -462,6 +497,7 @@ fn open_comparator(
         let weak = window.as_weak();
         let store = store.clone();
         let stack = stack.clone();
+        let children = children.clone();
         let sub_done = sub_done.clone();
         move || {
             let Some(window) = weak.upgrade() else {
@@ -473,13 +509,14 @@ fn open_comparator(
             else {
                 return;
             };
-            edit_comparator(&store, comparator, &stack, sub_done(None));
+            edit_comparator(&store, comparator, &stack, &children, sub_done(None));
         }
     });
     window.on_sub_edit({
         let state = state.clone();
         let store = store.clone();
         let stack = stack.clone();
+        let children = children.clone();
         let sub_done = sub_done.clone();
         move || {
             let chosen = {
@@ -492,7 +529,7 @@ fn open_comparator(
                 })
             };
             if let Some((i, comparator)) = chosen {
-                edit_comparator(&store, comparator, &stack, sub_done(Some(i)));
+                edit_comparator(&store, comparator, &stack, &children, sub_done(Some(i)));
             }
         }
     });
@@ -885,6 +922,7 @@ fn open_rule(
         let weak = window.as_weak();
         let store = store.clone();
         let stack = slots.comparators.clone();
+        let children = slots.conditional.clone();
         let comparator_done = comparator_done.clone();
         move || {
             let Some(window) = weak.upgrade() else {
@@ -894,7 +932,7 @@ fn open_rule(
                 .ok()
                 .and_then(|i| comparator_choices().into_iter().nth(i))
             {
-                edit_comparator(&store, comparator, &stack, comparator_done(None));
+                edit_comparator(&store, comparator, &stack, &children, comparator_done(None));
             }
         }
     });
@@ -902,6 +940,7 @@ fn open_rule(
         let state = state.clone();
         let store = store.clone();
         let stack = slots.comparators.clone();
+        let children = slots.conditional.clone();
         let comparator_done = comparator_done.clone();
         move || {
             let chosen = {
@@ -911,7 +950,13 @@ fn open_rule(
                     .and_then(|i| state.rule.comparators.get(i).cloned().map(|c| (i, c)))
             };
             if let Some((i, comparator)) = chosen {
-                edit_comparator(&store, comparator, &stack, comparator_done(Some(i)));
+                edit_comparator(
+                    &store,
+                    comparator,
+                    &stack,
+                    &children,
+                    comparator_done(Some(i)),
+                );
             }
         }
     });

@@ -1751,7 +1751,11 @@ paused, operation and most pending pairs, and has tabs for the search
 "multiple/deleted locations" list, the searches typed a term a line, the
 distance and pixel
 duplicates), the comparison (the comparators, added by kind and edited
-in their own editors: a search for A, B or either; A or B's progressive
+in their own editors: a search for A, B or either, made in the reference's
+metadata conditional search (a box with paste and empty-search buttons, the
+OR buttons, its results and the predicates made, a double-click removing
+one; empty, it offers inbox, archive and eight system predicates that open
+their editors; recorded in `metadata_conditional_editor.json`); A or B's progressive
 jpeg test; a relative test of a file property with its operator,
 multiplier and delta; a pair test; visual duplicates; and OR and AND
 lists of comparators, each edited in an editor of its own) and the
@@ -3358,7 +3362,11 @@ results, favourites and children tabs (a tab is kept until text is typed), and
 explicit OR construction: shift+enter adds a result to the OR being built (shown
 as the first result), a plain entry commits it, "↶" rewinds, "cancel OR" and
 escape in an empty box cancel or rewind, and "OR" and "advanced" open the OR
-editors. Recorded in `favourite_editor_tabs_or.json`.
+editors. Recorded in `favourite_editor_tabs_or.json`. Keys pressed in the box
+move the current tab's highlight as the reference's lists do (Up and Down wrap
+round; Home, End, Page Up, Page Down), and Return or Shift+Return enters or
+adds to the OR the highlighted row; results show their counts; "advanced"
+takes a typed search string. Recorded in `favourite_editor_rows.json`.
 
 Downloader HTTP requests now perform domain login admission before acquiring a
 connection slot. Active most-specific login domains use current credentials and
@@ -3497,8 +3505,19 @@ changed-page/query, accepted-close and rebound owners. `active_predicate_routes.
 records fourteen real Qt selections, their clipboard/new-page publications, and a
 real new-page consumer. Authored native transport and ownership replay awaits
 hosted execution. The active list’s inherited “select files” method is a no-op
-in Qt (the media tag list owns the working override); it is not represented here
-as a new file-selection action.
+in Qt (the media tag list owns the working override); its "select" entry is
+there and does nothing, as the reference's.
+
+Right-clicking the active list opens its whole menu, as the reference builds
+it: copy, the selected tag's siblings and parents (with their counts, its
+siblings, parents and children by service, each copied when chosen, and "add
+siblings/parents to" opening the siblings or parents editor on the selection),
+open, search, select, favourites (add or remove it from the favourites and
+each service's most used tags, asking before a removal) and maintenance
+(regenerate tag display, asking first). Recorded in `active_predicate_menu.json`.
+An edit selects what it made; a mixed edit with an OR shows the OR as a row
+whose "edit OR…" button opens the OR editor on it. Recorded in
+`active_predicate_selection.json`.
 
 The file-size editor displays `<`, `≈`, `=`, `≠` and `>` as five radio choices,
 with bounded arrow navigation, Space and default Enter acceptance. Its amount

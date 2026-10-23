@@ -346,6 +346,8 @@ mod archive_delete_policies;
 mod ffmpeg_timeout;
 mod radio_return;
 
+mod active_predicate_menu;
+mod active_predicate_selection;
 mod database_backup_menu;
 mod database_file_maintenance_new;
 mod database_locations_menu;
@@ -373,6 +375,7 @@ mod media_ratings_counter;
 mod media_selection_menu;
 mod media_support;
 mod media_viewer_navigation;
+mod metadata_conditional;
 mod network_bandwidth_actions;
 mod network_pause_menu;
 mod options_close_focus;

@@ -192,10 +192,10 @@
     "Reference reusable metadata-conditional predicate panel, nested search widgets and autocomplete are not available here."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window test drives target B and two predicate lines, an invalid line, apply, persist, reopen; the summary is only prefix-checked ('B will match: '), and recorded summaries are replayed in the model test. Native uses a text-lines box instead of the reference's metadata-conditional panel with search widgets (documented as absent), so the editor the leaf names is not tested against the reference. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:1083 a_metadata_conditional_comparators_target_and_predicate_lines_are_persisted; crates/hydrus-gui-model/tests/model/auto_resolution_rules.rs"
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (W6-1)",
+    "note": "gui/metadata_conditional.rs the_metadata_conditional_editor_searches_as_the_references_does drives the real comparator editor (rules list > add > 'test A or B using search terms') and replays every step of oracle/record_metadata_conditional_editor.py, the reference's real EditPairComparatorOneFileMetadataConditionalPanel: the A/B/either choice and the summary after each step; text typed and Return or Shift+Return pressed as real key events (tags, a negated tag, wildcards, a namespace, system predicates with and without an OR being built, text with no result); the list as drawn and its highlight before each Return, the OR being built drawn as 'OR:' over its terms; double-click removal; paste of lines with a bad one, and of limit and filesize, which stay listed but are dropped from what the editor gives back and from its summary, as the reference's SetFileSearchContext drops them; empty search; Escape; the empty box's ten rows chosen by keys, those that need a value opening the real predicate editor (its title and fixed-predicate buttons compared, then cancelled, OK on a panel, or a fixed predicate's button); and the OR button's editor, cancelled or given typed terms. It then applies, checks the stored predicates against the reference's GetValue and reopens the editor. Where the reference's ResultsFetch falls through (typed system text listing nothing with no OR being built, typed tags listing nothing while one is), hydrus-rs lists the testable system predicate and searches tags, and the test asserts its own listing on those recorded steps, that Shift+Return there starts an OR with the predicate, and that Return enters a typed system predicate (DECISIONS.md, 'where the reference has a bug, ours stands', applied by the coordinator 2026-10-23; DIFFERENCES.md). The OR editor's tabs selector still offers favourites/children (not recorded)."
    }
   },
   {
@@ -8101,10 +8101,10 @@
     "Multiple/deleted domain selection and overwrite questions are inline in the owner."
    ],
    "recheck": {
-    "date": "2026-10-14",
-    "class": "weak",
-    "by": "Claude session (W5-10)",
-    "note": "Adds gui/favourites.rs tests replaying fixtures/favourite_editor_buttons.json (paste, star menu loading search/sync/sort/collect, empty search) and favourite_editor_tabs_or.json (shift+Return OR construction, rewind, cancel, escape, favourites and children tabs, the OR button, recorded after the reference's list caught up), through the real editor. Untagged: counts and context in suggestions, keyboard-highlight Return in the tabs and the advanced OR dialog from the editor are not recorded."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (W6-1)",
+    "note": "Three tests through the real favourite editor, each against a recording of the reference's EditFavouriteSearchPanel: gui/favourites.rs the_editors_rows_keys_and_advanced_or_act_as_the_references_do (oracle/record_favourite_editor_rows.py: every result row as drawn, counts included, for typed tags, a sibling, a wildcard, a system predicate and empty text; the favourites and children tabs driven by real key events in the box, Down/Up wrapping round, End, Home, Page Down, Return and Shift+Return; the advanced OR button's dialog cancelled or given a string, merging into an OR being built), the_editors_tabs_and_or_construction_act_as_the_references_do (favourite_editor_tabs_or.json: clicks in the tabs, OR construction, rewind, cancel, escape, the OR button) and gui/favourite_search_editor.rs favourite_domain_sort_collect_and_autocomplete_widgets_reach_saved_searches (favourite_search_editor.json: a blank system predicate's editor opened from the results and its value added). The tracker note 'cog, explicit OR construction, favourite predicates and fetch/children tabs remain absent' is stale: the reference has no cog, and the rest is ported."
    }
   },
   {
@@ -8218,10 +8218,10 @@
     "Multiple/deleted domain selection and overwrite questions are inline in the owner."
    ],
    "recheck": {
-    "date": "2026-10-14",
-    "class": "weak",
-    "by": "Claude session (W5-10)",
-    "note": "gui/favourites.rs typed_predicates_and_double_clicks_edit_the_search_as_the_references_editor_does opens the real favourite editor and replays 18 steps of oracle/fixtures/favourite_predicates.json (the reference's real EditFavouriteSearchPanel with typed text, QTest Return and double-clicks, recorded after its result list has caught up and finished loading). Per step it compares the list's first result, the highlight, the predicates as drawn (order included), the text left and any message; this covers tags, repeats, case, negation, wildcards (the wildcard first), namespace wildcards, extra spaces, system:limit/everything, 'system:' text that is no predicate, and removals. Untagged: Return before the reference's list has caught up (it enters the text as typed) is not covered, counts/context in the results are not compared, and the leaf's tracker state is still partial pending a review of the added tabs, OR construction and icon buttons (see audit-options-favourite-edit-autocomplete)."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (W6-1)",
+    "note": "gui/favourites.rs typed_predicates_and_double_clicks_edit_the_search_as_the_references_editor_does opens the real favourite editor and replays all 18 steps of oracle/fixtures/favourite_predicates.json (the reference's real EditFavouriteSearchPanel, typed text and QTest Return after its result list has caught up, and double-clicks): per step the first result, the highlight, the predicates as drawn in order, the text left and any message; and the_editors_rows_keys_and_advanced_or_act_as_the_references_do compares the result rows as drawn, counts included (favourite_editor_rows.json). The reference's window where Return is pressed before its threaded list catches up (it then enters the text as typed) has no counterpart: hydrus-rs's list is never behind the text, a recorded difference in DIFFERENCES.md (coordinator's decision, 2026-10-23, the owner told)."
    }
   },
   {
@@ -19756,10 +19756,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI tests drive the real active list, editor window, invert and copy/open menus against recordings, but DIFFERENCES.md itself says active editing remains Partial (embedded OR in mixed edit, sibling/parent editors, favourite tags, Qt selection of edited terms missing), so the leaf is not fully covered. Tracker notes (\"no native action/editor path\", \"does not open a populated editor\") are stale. Tests: crates/hydrus-gui/tests/gui/active_predicates.rs:93,190,912 (+ mixed/or tests); oracle/fixtures/active_predicate_edit.json, active_predicate_routes.json"
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (W6-1)",
+    "note": "Five tests through the real search page and its active list: gui/active_predicates.rs (existing: populated editors, invert, OR, copy/open against active_predicate_edit/mixed/or/routes.json), gui/active_predicate_menu.rs (new: the whole right-click menu for eight selections compared with oracle/record_active_predicate_menu.py, the reference's real ListBoxTagsActiveSearchPredicates menu after its sibling/parent lookup, and its inherited entries chosen through the shared tag menu: favourites and most-used add/remove with their questions, sibling/parent copy and the siblings/parents editors, regenerate tag display's question and its job (the recorded tags' corrupted counts repaired, an unrelated tag's left), select's no-op) and gui/active_predicate_selection.rs (new: oracle/record_active_predicate_selection.py, twelve edits and entries through the real dialog: the rows selected afterwards, the dialog's title and invertible buttons, and a mixed edit's OR edited in the OR editor with typed and removed terms, applied or cancelled). Recorded differences (DIFFERENCES.md): the mixed edit's OR is edited in the OR editor opened from its row, where the reference embeds the autocomplete; the list has no arrow-key navigation (not named by the leaf)."
    }
   },
   {

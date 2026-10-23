@@ -225,25 +225,28 @@ search.
   keeps at least one page.** Allowing an empty top-level notebook is a
   refactor of the main window's current-page type (owner, 2026-10-14: its
   own issue, for a later wave), not a slice.
-- **Active predicate editing remains Partial.** Represented system values and
-  simple tags/namespaces/wildcards can now be edited together, with one atomic
-  Apply and separate supplied values for repeated system families. Immutable
-  terms are preserved and invertible terms have flip buttons. Active-list
-  remove/invert/OR merge or dissolve/namespace commands reach the query. Populated
-  OR controls embedded in a mixed edit, inherited sibling/parent editors and
-  their asynchronous relationship information, favourite/most-used tags and
-  maintenance branches remain missing. The edit/invert leaf
-  (`audit-options-search-active-edit`) is tagged for what the recordings
-  cover: the populated editors, invert, OR, and the copy/open commands; the
-  sibling/parent entries the active list inherits from the tag list are
-  tracked with the tag-relationship windows. Inherited copy/open transports now work, including collapsed OR copying
-  and real AND/OR/per-predicate/duplicate-filter pages. Per-predicate pages open
-  in native list order; Qt iterates its selected-term set. Qt’s active-list file
-  selection handler is an inherited no-op, distinct from its media-list handler.
-  Single system editors keep their existing per-panel OK/star topology. Selection
-  is cleared when query terms change, whereas Qt selects newly edited terms. A
-  page transition cancels the child rather than retaining a modal editor behind
-  a switched page. Remaining list keyboard navigation is unchanged.
+- **Active predicate editing** (`audit-options-search-active-edit`):
+  represented system values and simple tags/namespaces/wildcards are edited
+  together, with one atomic Apply and separate supplied values for repeated
+  system families; immutable terms are preserved and invertible terms have
+  flip buttons. An OR among them is a row of the mixed dialog with an "edit
+  OR…" button opening the OR editor on its terms (whose result takes the
+  row's place on Apply), where the reference embeds the OR's autocomplete
+  in the dialog; the dialog is "edit OR predicate" when that OR is its one
+  editable term, as the reference names it
+  (`oracle/record_active_predicate_selection.py`). After an edit the list
+  selects what the edit made and keeps the selected rows that remain; an
+  entered predicate that replaces a selected one it excludes becomes the only
+  one selected, as the reference's list does (the same recording). The whole
+  right-click menu is the reference's, inherited tag-list entries included
+  (`oracle/record_active_predicate_menu.py`); "select files with" does
+  nothing there, as in the reference, and regenerate tag display is
+  checked by its question and by the counts it repairs. Single system editors
+  keep their existing per-panel OK/star topology. Per-predicate
+  pages open in native list order; Qt iterates its selected-term set. A page
+  transition cancels the child rather than retaining a modal editor behind a
+  switched page. The list's own keys are Return and Delete; arrow keys do not
+  move through it.
 - **Favourite search autocomplete shares the native page's suggestion model**,
   including blank system predicate editors, and has editable file/tag domains,
   current/pending tags, sort and collection controls, and the paste, star
@@ -270,20 +273,22 @@ search.
   list too), a system predicate such as "system:limit = 64" enters itself, and
   text with no result ("system:" that is no predicate, a tag the database does
   not have) enters nothing and stays in the box without a message. The first
-  result and the highlight are compared with the recording. Not covered: Return
-  pressed before the reference's list has caught up (it then enters the text
-  as typed; the native list is always current), and counts and context shown
-  in the results. A bare "*" lists nothing here as with the default options,
+  result and the highlight are compared with the recording. The native list is never behind the text, so
+  Return always enters the highlighted result, as the reference does once its
+  list has caught up; the reference's threaded search has a window, before
+  its list catches up, where Return enters the text as typed, which hydrus-rs
+  has no counterpart for. The rows as drawn (counts included), keys
+  in the tabs (Up and Down wrap round, Home, End, Page Up and Page Down; Page
+  Up and Down move by the "autocomplete rows" setting where the reference
+  moves by the rows its list shows), and the advanced OR dialog are compared
+  with `oracle/record_favourite_editor_rows.py`. The page's own result list
+  still stops at its ends where the reference wraps round. A bare "*" lists nothing here as with the default options,
   but the other fetch-all settings are not consulted, and the second wildcard
   (`*:x*`) the reference adds when unnamespaced searches give any-namespace
   wildcards is not listed (unrecorded). On the main page, Return with a tag the
   database does not have and nothing highlighted still enters the typed text
   (`chosen()`'s fallback in `page.rs`), where the reference enters nothing; the
   favourite editor enters nothing.
-  Remaining from #253 (not started): `audit-options-search-active-edit`
-  (embedded OR in the active-list edit, sibling/parent editors, favourite
-  tags), the tab and OR recordings for counts and context in the results, and
-  an in-step recording of Return in the tabs.
 
 - **Dimensions preset verification** separately tracks nine historical first-pass
   controls. The new Qt recording activates actual buttons through the real modal
@@ -1217,6 +1222,25 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   with the reason as the reference does, though not its separate text for a
   payload that decodes but can't be understood (whose `{path}` the reference
   never fills in). A hydrus-rs rules png given to the comparator list is a read error there, where the reference would warn which object types it refused.
+- **The "test A or B using search terms" comparator's search** is the
+  reference's metadata conditional search
+  (`oracle/record_metadata_conditional_editor.py`), less a bug in its
+  `ResultsFetch`, which falls through in two ways: with no OR being built,
+  typed system predicate text lists nothing (its system results are
+  overwritten by a tag search, which finds nothing for it); while one is
+  being built, typed tags list nothing (the tag search is skipped). hydrus-rs
+  lists typed system text that can be tested on one file (filesize and limit
+  can't, and stay unlisted, as in the reference) and searches tags whether or
+  not an OR is being built (DECISIONS.md, "where the reference has a bug,
+  ours stands"); the test asserts its own listing on those recorded steps.
+  Predicates that can't be tested on one file (limit, filesize), pasted or
+  kept, stay in its list but are dropped from the comparator it gives back,
+  without a word, as the reference's `MetadataConditional.SetFileSearchContext`
+  drops them; a conditional read back from a saved rule keeps what it held,
+  as the reference's deserialisation does.
+  Its results have no favourites tab, as the reference's. The OR button's
+  editor lists as a metadata conditional does, but its tabs selector still
+  offers favourites and children.
 - **The file log window**'s "additional urls" don't show the URL a URL class
   would actually fetch or refer from; "open files' locations" for path
   sources opens each file's folder rather than selecting the file in the file
