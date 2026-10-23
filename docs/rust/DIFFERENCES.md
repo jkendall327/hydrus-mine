@@ -4312,14 +4312,31 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 
 ## Auto-resolution rule export and import
 
-- Rules export as hydrus-rs JSON, not the reference's serialised form (an
-  encoder for it is not written yet), so the reference can't import them;
-  hydrus-rs imports both. A rule's comparator
-  list exports a comparator to the clipboard or a png, imports from the
-  clipboard or pngs (hydrus-rs JSON or the reference's serialised comparator,
-  alone or in a list) and duplicates one; the lists inside OR/AND comparators
-  don't have those buttons. An image on the clipboard isn't read (use "from
-  png files").
+- Rules and comparators export in the reference's serialised form, as its
+  lists write them (replayed against `oracle/fixtures/rules_exchange.json`).
+  Where hydrus-rs keeps less than the reference, the reference's defaults
+  are written: a file search's search type and "search complete" flag, a
+  metadata conditional's location and tag context (combined local file
+  domains, all known tags), merge options without the services that merge
+  nothing, and note import options' unused settings. A rule's id is its
+  database id, or a negative number for a rule not yet saved (the reference
+  replaces it on import). An OR predicate keeps its members in the order
+  hydrus-rs holds them; the reference sorts a new OR by its text.
+- A predicate the reference's form needs more for is not exported: a URL
+  class rule (hydrus-rs keeps its name, the reference the class), a service
+  named rather than keyed, an age in minutes or seconds, or viewing stats on
+  the default canvases. The export says "Problem exporting!" and why
+  (hydrus-rs only); the reference never fails here.
+- Imports also read the hydrus-rs JSON earlier versions exported.
+- The comparator lists (a rule's, an OR's and an AND's) take several rows,
+  as the reference's do; "edit" edits the first selected rather than each in
+  turn, and "delete" deletes the selected without asking "Remove N
+  selected?".
+- An image on the clipboard isn't read (use "from png files"; the
+  clipboard-bitmap exchange is deferred, DECISIONS.md 2026-10-08).
+- A clipboard that can't be read at all (not an empty one) is said under
+  the reference's `DataMissing` title with hydrus-rs's error; Qt never gives
+  the reference that case.
 
 ## Options kept but not used
 

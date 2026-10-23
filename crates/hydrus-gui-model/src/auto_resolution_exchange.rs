@@ -1,8 +1,8 @@
 //! The duplicates auto-resolution rules list's export, import and
 //! duplicate buttons (`AddImportExportButtons`, `_ImportRule`): rules go out
-//! as hydrus-rs JSON, and come in as that or as the reference's own
-//! serialised rules (one, or a list); the list names them apart from the
-//! rules already there, ignoring case.
+//! in the reference's own serialised form (one, or a list), and come in as
+//! that or as the hydrus-rs JSON earlier versions exported; the list names
+//! them apart from the rules already there, ignoring case.
 
 use std::collections::BTreeSet;
 
@@ -33,20 +33,43 @@ pub fn import_failure(from_file: bool, error: &str) -> (&'static str, String) {
     }
 }
 
-/// The key hydrus-rs exports rules under.
+/// The title for an export that could not be written (hydrus-rs only: a
+/// predicate it can't put in the reference's form).
+pub const EXPORT_PROBLEM_TITLE: &str = "Problem exporting!";
+
+/// The numerical rating services' scales, for star rating predicates.
+pub type Scales<'a> =
+    &'a dyn Fn(&hydrus_core::ServiceKey) -> Option<hydrus_legacy::objects::predicates::StarScale>;
+
+/// The key earlier hydrus-rs versions exported rules under.
 const NATIVE_KEY: &str = "hydrus_rs_duplicates_auto_resolution_rules";
 
 /// The serialised types of the reference's rule and list.
 const RULE_TYPE: u16 = 128;
 const LIST_TYPE: u16 = 26;
 
-/// The text the selected rules export as.
+/// The text the selected rules export as: the reference's serialised rule,
+/// or a list of them. A rule's id is its database id, or for a rule not yet
+/// saved a negative one, as the reference numbers new rules.
 ///
-/// # Panics
-/// Never: rules always serialise.
-pub fn export_text(rules: &[Rule]) -> String {
-    serde_json::to_string_pretty(&serde_json::json!({ NATIVE_KEY: rules }))
-        .expect("rules serialise")
+/// # Errors
+/// If a rule holds a predicate the reference's form can't be written for.
+pub fn export_text(rules: &[(Option<i64>, &Rule)], scales: Scales<'_>) -> Result<String, String> {
+    let mut new_id = 0;
+    let objects = rules
+        .iter()
+        .map(|(id, rule)| {
+            let id = id.unwrap_or_else(|| {
+                new_id -= 1;
+                new_id
+            });
+            hydrus_store::duplicates::auto_serialised::rule(rule, id, scales)
+                .map_err(|e| format!("\"{}\" could not be exported: {e}", rule.name))
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    Ok(hydrus_store::duplicates::auto_serialised::export_text(
+        objects,
+    ))
 }
 
 /// "N objects added!"
@@ -77,19 +100,29 @@ pub fn refused_message_for(refused: &BTreeSet<String>, allowed: &str) -> String 
     )
 }
 
-/// The key hydrus-rs exports comparators under.
+/// The key earlier hydrus-rs versions exported comparators under.
 const COMPARATOR_KEY: &str = "hydrus_rs_duplicates_auto_resolution_comparators";
 
 /// What the rule editor's comparator list allows (`PairComparator`).
 pub const COMPARATOR_TYPE: &str = "PairComparator";
 
-/// The text some comparators export as.
+/// The text some comparators export as: the reference's serialised
+/// comparator, or a list of them.
 ///
-/// # Panics
-/// Never: comparators always serialise.
-pub fn export_comparators_text(comparators: &[Comparator]) -> String {
-    serde_json::to_string_pretty(&serde_json::json!({ COMPARATOR_KEY: comparators }))
-        .expect("comparators serialise")
+/// # Errors
+/// If a comparator holds a predicate the reference's form can't be written
+/// for.
+pub fn export_comparators_text(
+    comparators: &[Comparator],
+    scales: Scales<'_>,
+) -> Result<String, String> {
+    let objects = comparators
+        .iter()
+        .map(|c| hydrus_store::duplicates::auto_serialised::comparator(c, scales))
+        .collect::<Result<Vec<_>, _>>()?;
+    Ok(hydrus_store::duplicates::auto_serialised::export_text(
+        objects,
+    ))
 }
 
 /// What an import into the comparator list found.
@@ -127,6 +160,12 @@ pub fn import_comparators_text(
     Ok(out)
 }
 
+/// A refused object's type, as the reference names it (its class).
+fn type_name(kind: u16) -> String {
+    hydrus_downloader_exchange::subscription_import::type_name(kind)
+        .unwrap_or_else(|| format!("serialisable type {kind}"))
+}
+
 /// The serialised types of the reference's pair comparators.
 pub const COMPARATOR_TYPES: [u16; 7] = [130, 131, 137, 138, 140, 141, 152];
 
@@ -158,7 +197,7 @@ fn take_comparators(
                 )?);
         }
         (kind, _) => {
-            out.refused.insert(format!("serialisable type {kind}"));
+            out.refused.insert(type_name(kind));
         }
     }
     Ok(())
@@ -219,8 +258,151 @@ fn take(
                 .push(hydrus_store::import::auto_resolution_rule(&legacy, scales)?);
         }
         (kind, _) => {
-            out.refused.insert(format!("serialisable type {kind}"));
+            out.refused.insert(type_name(kind));
         }
     }
     Ok(())
+}
+
+/// What the clipboard import is expecting, in its error (`_ImportFromClipboard`).
+pub const CLIPBOARD_EXPECTED: &str = "JSON-serialised Hydrus Object(s)";
+
+/// A message for the user: its title and text.
+pub type Message = (String, String);
+
+/// What an import from the clipboard (or a duplicate) brings into a list:
+/// what it adds, and the messages to show, in order.
+#[derive(Debug)]
+pub struct ListImport<T> {
+    pub added: Vec<T>,
+    pub messages: Vec<Message>,
+}
+
+/// The error the reference shows for text it can't read as an object: its
+/// `json.loads` error where the text is not JSON (as Python words it),
+/// else ours.
+fn clipboard_error(text: &str, error: &str) -> Message {
+    let error = hydrus_legacy::serialisable::python_json_error(text).map_or_else(
+        || error.to_owned(),
+        |json| {
+            format!(
+                "JSONDecodeError({})",
+                hydrus_core::pyjson::python_str_repr(&json)
+            )
+        },
+    );
+    (
+        "Clipboard Error!".into(),
+        crate::notes_editor::clipboard_parse_error(CLIPBOARD_EXPECTED, text, &error),
+    )
+}
+
+/// The messages after an import: the refused types, then the count added.
+fn import_messages(refused: &BTreeSet<String>, allowed: &str, added_count: usize) -> Vec<Message> {
+    let mut messages = Vec::new();
+    if !refused.is_empty() {
+        messages.push(("Warning".into(), refused_message_for(refused, allowed)));
+    }
+    if added_count > 0 {
+        messages.push(("Information".into(), added(added_count)));
+    }
+    messages
+}
+
+/// Clipboard text read: `Ok(None)` is an empty clipboard (Qt's `''`), an
+/// error a clipboard that could not be read (the reference's `DataMissing`,
+/// shown under `missing_title`).
+pub type Clipboard = Result<Option<String>, String>;
+
+/// Comparators pasted into a comparator list (the rule editor's, an OR's or
+/// an AND's: `EditComparatorList`, a list box).
+pub fn comparators_from_clipboard(
+    clipboard: Clipboard,
+    scales: Scales<'_>,
+) -> ListImport<Comparator> {
+    let text = match clipboard {
+        Ok(text) => text.unwrap_or_default(),
+        Err(e) => {
+            return ListImport {
+                added: Vec::new(),
+                messages: vec![("Problem pasting!".into(), e)],
+            };
+        }
+    };
+    match import_comparators_text(&text, scales) {
+        Ok(imported) => ListImport {
+            messages: import_messages(
+                &imported.refused,
+                COMPARATOR_TYPE,
+                imported.comparators.len(),
+            ),
+            added: imported.comparators,
+        },
+        Err(e) => ListImport {
+            added: Vec::new(),
+            messages: vec![clipboard_error(&text, &e)],
+        },
+    }
+}
+
+/// Rules pasted into the rules list (a list control).
+pub fn rules_from_clipboard(clipboard: Clipboard, scales: Scales<'_>) -> ListImport<Rule> {
+    let text = match clipboard {
+        Ok(text) => text.unwrap_or_default(),
+        Err(e) => {
+            return ListImport {
+                added: Vec::new(),
+                messages: vec![("Problem importing!".into(), e)],
+            };
+        }
+    };
+    match import_text(&text, scales) {
+        Ok(imported) => ListImport {
+            messages: import_messages(
+                &imported.refused,
+                "DuplicatesAutoResolutionRule",
+                imported.rules.len(),
+            ),
+            added: imported.rules,
+        },
+        Err(e) => ListImport {
+            added: Vec::new(),
+            messages: vec![clipboard_error(&text, &e)],
+        },
+    }
+}
+
+/// A duplicate of the selected (`_Duplicate`): copies, said as an import.
+pub fn duplicated<T: Clone>(selected: &[T]) -> ListImport<T> {
+    ListImport {
+        added: selected.to_vec(),
+        messages: import_messages(&BTreeSet::new(), "", selected.len()),
+    }
+}
+
+/// Comparators from png files into a comparator list (`_ImportFromPNG`):
+/// `decoded` is the png's text, `Ok(None)` if no file was picked.
+pub fn comparators_from_png(decoded: Clipboard, scales: Scales<'_>) -> ListImport<Comparator> {
+    let failed = |text: String| ListImport {
+        added: Vec::new(),
+        messages: vec![("Problem importing!".into(), text)],
+    };
+    match decoded {
+        Ok(None) => ListImport {
+            added: Vec::new(),
+            messages: Vec::new(),
+        },
+        Err(e) => failed(e),
+        Ok(Some(text)) => match import_comparators_text(&text, scales) {
+            Ok(imported) => ListImport {
+                messages: import_messages(
+                    &imported.refused,
+                    COMPARATOR_TYPE,
+                    imported.comparators.len(),
+                ),
+                added: imported.comparators,
+            },
+            Err(_) => failed("I could not understand what was encoded in the png!".into()),
+        },
+    }
 }

@@ -171,7 +171,7 @@ fn and_and_or_groups_are_built_edited_and_nested_to_read_as_the_references() {
     relative(&child, Comparable::Size, NumberOp::Less, "1", 0, 0);
     child.invoke_apply();
     assert_eq!(subs(&and), ["A has \"system:filesize\" < B"]);
-    and.invoke_sub_clicked(0);
+    and.invoke_sub_clicked(0, false, false);
     and.invoke_sub_edit();
     let child = newest_comparator(&o.bound);
     assert_eq!(child.get_summary(), "A has \"system:filesize\" < B");
@@ -187,7 +187,7 @@ fn and_and_or_groups_are_built_edited_and_nested_to_read_as_the_references() {
     and.set_sub_kind(kind_index_sub(&and, "A and B have the same filetype"));
     and.invoke_sub_add();
     assert_eq!(subs(&and).len(), 3);
-    and.invoke_sub_clicked(2);
+    and.invoke_sub_clicked(2, false, false);
     and.invoke_sub_delete();
     assert_eq!(subs(&and).len(), 2);
     and.invoke_apply();
@@ -237,11 +237,11 @@ fn and_and_or_groups_are_built_edited_and_nested_to_read_as_the_references() {
     assert_eq!(or.get_summary(), theirs);
     // the group, opened again from the list, shows what it was made of
     or.invoke_apply();
-    rule.invoke_comparator_clicked(1);
+    rule.invoke_comparator_clicked(1, false, false);
     rule.invoke_comparator_edit();
     let or = newest_comparator(&o.bound);
     assert_eq!(or.get_summary(), theirs);
-    or.invoke_sub_clicked(0);
+    or.invoke_sub_clicked(0, false, false);
     or.invoke_sub_edit();
     let and = newest_comparator(&o.bound);
     assert_eq!(subs(&and).len(), 2);

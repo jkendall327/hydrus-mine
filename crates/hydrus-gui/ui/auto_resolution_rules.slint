@@ -51,13 +51,16 @@ component Tab inherits Rectangle {
 // (of a kind chosen), edit and delete
 export component ComparatorList inherits VerticalLayout {
     in property <[string]> rows;
+    // the first selected row (what edit edits), and every row's selection
     in property <int> selected: -1;
+    in property <[bool]> picked;
     in property <[string]> kinds;
     in-out property <int> kind;
     // export (0 to clipboard, 1 to png), import (2 from clipboard, 3 from
     // pngs) and duplicate (4), for the lists that offer them
     in property <bool> exchanging: false;
-    callback clicked(int);
+    // a row clicked, with control and shift held or not
+    callback clicked(int, bool, bool);
     callback add();
     callback edit();
     callback delete();
@@ -73,19 +76,23 @@ export component ComparatorList inherits VerticalLayout {
                 alignment: start;
                 for row[i] in root.rows: Rectangle {
                     height: 24px;
-                    background: i == root.selected ? Theme.highlight : transparent;
+                    background: root.picked[i] ? Theme.highlight : transparent;
                     Text {
                         x: 4px;
                         width: parent.width - 8px;
                         text: row;
                         overflow: elide;
                         vertical-alignment: center;
-                        color: i == root.selected ? Theme.highlight-text : Theme.text;
+                        color: root.picked[i] ? Theme.highlight-text : Theme.text;
                     }
                     TouchArea {
-                        clicked => { root.clicked(i); }
+                        pointer-event(event) => {
+                            if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                                root.clicked(i, event.modifiers.control, event.modifiers.shift);
+                            }
+                        }
                         double-clicked => {
-                            root.clicked(i);
+                            root.clicked(i, false, false);
                             root.edit();
                         }
                     }
@@ -297,6 +304,7 @@ export component AutoResolutionRuleWindow inherits Window {
     in property <string> comparison-text;
     in property <[string]> comparators;
     in property <int> comparator-selected: -1;
+    in property <[bool]> comparator-picked;
     in property <[string]> comparator-kinds;
     in-out property <int> comparator-kind;
     // action
@@ -311,7 +319,7 @@ export component AutoResolutionRuleWindow inherits Window {
     // what is wrong
     in property <string> errors;
     callback changed();
-    callback comparator-clicked(int);
+    callback comparator-clicked(int, bool, bool);
     callback comparator-add();
     callback comparator-edit();
     callback comparator-delete();
@@ -525,9 +533,10 @@ export component AutoResolutionRuleWindow inherits Window {
                 vertical-stretch: 1;
                 rows: root.comparators;
                 selected: root.comparator-selected;
+                picked: root.comparator-picked;
                 kinds: root.comparator-kinds;
                 kind <=> root.comparator-kind;
-                clicked(i) => { root.comparator-clicked(i); }
+                clicked(i, control, shift) => { root.comparator-clicked(i, control, shift); }
                 add => { root.comparator-add(); }
                 edit => { root.comparator-edit(); }
                 delete => { root.comparator-delete(); }
@@ -720,11 +729,14 @@ export component ComparatorWindow inherits Window {
     // an OR's or AND's
     in property <[string]> subs;
     in property <int> sub-selected: -1;
+    in property <[bool]> sub-picked;
     in property <[string]> sub-kinds;
     in-out property <int> sub-kind;
     in property <string> errors;
     callback changed();
-    callback sub-clicked(int);
+    callback sub-clicked(int, bool, bool);
+    // the list's export, import and duplicate, as `ComparatorList.exchange`
+    callback sub-exchange(int);
     callback sub-add();
     callback sub-edit();
     callback sub-delete();
@@ -818,12 +830,15 @@ export component ComparatorWindow inherits Window {
             vertical-stretch: 1;
             rows: root.subs;
             selected: root.sub-selected;
+            picked: root.sub-picked;
             kinds: root.sub-kinds;
             kind <=> root.sub-kind;
-            clicked(i) => { root.sub-clicked(i); }
+            clicked(i, control, shift) => { root.sub-clicked(i, control, shift); }
             add => { root.sub-add(); }
             edit => { root.sub-edit(); }
             delete => { root.sub-delete(); }
+            exchanging: true;
+            exchange(mode) => { root.sub-exchange(mode); }
         }
         // (the room left, above the summary, unless a list takes it)
         if root.kind != "list" && root.kind != "search": Rectangle { vertical-stretch: 1; }

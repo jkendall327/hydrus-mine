@@ -26,6 +26,7 @@ use crate::master::id_array;
 use crate::store::Snapshot;
 
 pub mod auto;
+pub mod auto_serialised;
 pub mod cache;
 pub mod merge;
 pub mod write;

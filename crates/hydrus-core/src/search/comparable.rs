@@ -21,6 +21,26 @@ pub enum Comparable {
 }
 
 impl Comparable {
+    /// The reference's predicate type code for the property.
+    pub const fn predicate_type(self) -> i64 {
+        match self {
+            Comparable::Size => 10,
+            Comparable::Width => 13,
+            Comparable::Height => 14,
+            Comparable::NumPixels => 24,
+            Comparable::Ratio => 15,
+            Comparable::Duration => 16,
+            Comparable::Framerate => 36,
+            Comparable::NumFrames => 37,
+            Comparable::NumTags => 8,
+            Comparable::NumUrls => 52,
+            Comparable::ImportTime => 11,
+            Comparable::ModifiedTime => 35,
+            Comparable::LastViewedTime => 43,
+            Comparable::ArchivedTime => 47,
+        }
+    }
+
     /// The reference's predicate type code.
     pub const fn from_predicate_type(code: i64) -> Option<Self> {
         Some(match code {

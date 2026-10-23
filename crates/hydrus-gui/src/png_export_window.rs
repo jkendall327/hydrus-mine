@@ -89,12 +89,27 @@ pub fn open_with_summary(
     summary: String,
     closed: Rc<dyn Fn()>,
 ) -> Result<PngExportWindow, String> {
+    let title = summary.clone();
+    open_described(slots, store, payload, summary, title, closed)
+}
+
+/// Export a payload with its reference object summary and the title the
+/// panel starts with (a named object's name, as `PNGExportPanel` takes it,
+/// else the summary), which also names the file.
+pub fn open_described(
+    slots: &Slots,
+    store: &Arc<Store>,
+    payload: String,
+    summary: String,
+    title: String,
+    closed: Rc<dyn Fn()>,
+) -> Result<PngExportWindow, String> {
     if let Some(w) = slots.window() {
         return Ok(w);
     }
     let w = crate::app_title::new::<crate::PngExportWindow>().map_err(|e| e.to_string())?;
-    let summary: slint::SharedString = summary.into();
-    w.set_payload_description(summary.clone());
+    w.set_payload_description(summary.into());
+    let summary: slint::SharedString = title.into();
     w.set_png_title(summary.clone());
     let directory = store
         .read(settings::get::<model::Directory>)

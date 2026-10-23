@@ -123,6 +123,7 @@ mod preview_viewing;
 mod rating_sizes;
 mod ratings;
 mod recent_predicates;
+mod rules_exchange;
 mod scanbar;
 mod search_domains;
 mod search_lock;

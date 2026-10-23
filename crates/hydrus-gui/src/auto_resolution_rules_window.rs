@@ -107,12 +107,102 @@ fn edit_comparator(
     }
 }
 
+/// A comparator list's selection: several rows, as the reference's list box
+/// (extended selection) allows.
+#[derive(Default)]
+struct Rows(hydrus_gui_model::list_selection::ListSelection<usize>);
+
+impl Rows {
+    fn click(&mut self, len: usize, row: i32, ctrl: bool, shift: bool) {
+        if let Ok(row) = usize::try_from(row)
+            && row < len
+        {
+            let order: Vec<usize> = (0..len).collect();
+            self.0.click(&order, row, ctrl, shift);
+        }
+    }
+
+    /// The selected rows, in the list's order.
+    fn selected(&self, len: usize) -> Vec<usize> {
+        let order: Vec<usize> = (0..len).collect();
+        self.0.in_order(&order)
+    }
+
+    /// The first selected row (what edit edits).
+    fn first(&self, len: usize) -> Option<usize> {
+        self.selected(len).first().copied()
+    }
+
+    fn picked(&self, len: usize) -> slint::ModelRc<bool> {
+        let picked: Vec<bool> = (0..len).map(|i| self.0.is_selected(i)).collect();
+        slint::ModelRc::new(slint::VecModel::from(picked))
+    }
+
+    fn clear(&mut self) {
+        self.0 = hydrus_gui_model::list_selection::ListSelection::default();
+    }
+}
+
+/// A comparator list's export (0 to the clipboard, 1 to a png), import (2
+/// from the clipboard, 3 from pngs) and duplicate (4), as the reference's
+/// list box (`AddImportExportButtons`) does them: what comes in is appended
+/// and selected. The messages to show, in order.
+fn comparator_exchange(
+    store: &Arc<Store>,
+    png: &crate::png_export_window::Slots,
+    list: &mut Vec<Comparator>,
+    rows: &mut Rows,
+    mode: i32,
+) -> Vec<hydrus_gui_model::auto_resolution_exchange::Message> {
+    use hydrus_gui_model::auto_resolution_exchange as ex;
+    let selected: Vec<Comparator> = rows
+        .selected(list.len())
+        .into_iter()
+        .map(|i| list[i].clone())
+        .collect();
+    let mut append = |import: ex::ListImport<Comparator>| {
+        let ex::ListImport { added, messages } = import;
+        // (selected as they come, `Append( select = True )`, with the rest)
+        let mut keep = rows.selected(list.len());
+        for comparator in added {
+            list.push(comparator);
+            keep.push(list.len() - 1);
+        }
+        rows.0.select_many(&keep);
+        messages
+    };
+    let scales = scales(store);
+    match mode {
+        0 | 1 if !selected.is_empty() => match ex::export_comparators_text(&selected, &scales) {
+            Ok(text) if mode == 0 => {
+                crate::copy_to_clipboard(&text);
+                Vec::new()
+            }
+            Ok(text) => match export_png(png, store, text) {
+                Ok(()) => Vec::new(),
+                Err(e) => vec![(ex::PROBLEM_TITLE.into(), e)],
+            },
+            Err(e) => vec![(ex::EXPORT_PROBLEM_TITLE.into(), e)],
+        },
+        2 => append(ex::comparators_from_clipboard(
+            crate::clipboard_text(),
+            &scales,
+        )),
+        3 => append(ex::comparators_from_png(
+            crate::png_export_window::import_text_with_title(ex::PNG_PICKER_TITLE),
+            &scales,
+        )),
+        4 => append(ex::duplicated(&selected)),
+        _ => Vec::new(),
+    }
+}
+
 struct ComparatorState {
     comparator: Comparator,
     context: TextContext,
     errors: Vec<String>,
-    /// An OR's or AND's selected comparator.
-    selected: Option<usize>,
+    /// An OR's or AND's selected comparators.
+    rows: Rows,
 }
 
 fn subs(comparator: &mut Comparator) -> Option<&mut Vec<Comparator>> {
@@ -238,7 +328,8 @@ fn show_comparator(window: &ComparatorWindow, state: &mut ComparatorState) {
                     .map(|c| comparator_summary(c, context))
                     .collect(),
             ));
-            window.set_sub_selected(state.selected.map_or(-1, index));
+            window.set_sub_selected(state.rows.first(list.len()).map_or(-1, index));
+            window.set_sub_picked(state.rows.picked(list.len()));
             window.set_sub_kinds(strings(kind_labels()));
         }
         Comparator::Pair(_) => {}
@@ -396,7 +487,7 @@ fn open_comparator(
         comparator,
         context: text_context(store),
         errors: Vec::new(),
-        selected: None,
+        rows: Rows::default(),
     }));
     let close = {
         let weak = window.as_weak();
@@ -426,13 +517,37 @@ fn open_comparator(
     window.on_sub_clicked({
         let weak = window.as_weak();
         let state = state.clone();
-        move |i| {
+        move |i, ctrl, shift| {
             let Some(window) = weak.upgrade() else {
                 return;
             };
             let mut state = state.borrow_mut();
-            state.selected = usize::try_from(i).ok();
-            show_comparator(&window, &mut state);
+            let state = &mut *state;
+            let len = subs(&mut state.comparator).map_or(0, |l| l.len());
+            state.rows.click(len, i, ctrl, shift);
+            show_comparator(&window, state);
+        }
+    });
+    window.on_sub_exchange({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = store.clone();
+        let png = crate::png_export_window::Slots::default();
+        move |mode| {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let messages = {
+                let mut state = state.borrow_mut();
+                let state = &mut *state;
+                let Some(list) = subs(&mut state.comparator) else {
+                    return;
+                };
+                let messages = comparator_exchange(&store, &png, list, &mut state.rows, mode);
+                show_comparator(&window, state);
+                messages
+            };
+            show_messages(messages);
         }
     });
     // (the sub-comparators' own editors, each giving back into this one)
@@ -484,11 +599,10 @@ fn open_comparator(
         move || {
             let chosen = {
                 let mut state = state.borrow_mut();
-                let at = state.selected;
-                at.and_then(|i| {
-                    subs(&mut state.comparator)
-                        .and_then(|l| l.get(i).cloned())
-                        .map(|c| (i, c))
+                let state = &mut *state;
+                subs(&mut state.comparator).and_then(|l| {
+                    let at = state.rows.first(l.len())?;
+                    l.get(at).cloned().map(|c| (at, c))
                 })
             };
             if let Some((i, comparator)) = chosen {
@@ -504,13 +618,14 @@ fn open_comparator(
                 return;
             };
             let mut state = state.borrow_mut();
-            let at = state.selected.take();
-            if let (Some(i), Some(list)) = (at, subs(&mut state.comparator))
-                && i < list.len()
-            {
-                list.remove(i);
+            let state = &mut *state;
+            if let Some(list) = subs(&mut state.comparator) {
+                for i in state.rows.selected(list.len()).into_iter().rev() {
+                    list.remove(i);
+                }
             }
-            show_comparator(&window, &mut state);
+            state.rows.clear();
+            show_comparator(&window, state);
         }
     });
     window.on_apply({
@@ -556,7 +671,8 @@ struct RuleState {
     rule: Rule,
     context: TextContext,
     errors: Vec<String>,
-    selected: Option<usize>,
+    /// The comparator list's selection.
+    rows: Rows,
     /// The decision the custom merge options are for: they start again
     /// from the client's when the action changes (`_UpdateActionControls`).
     merge_for: Option<hydrus_store::duplicates::PairRelationship>,
@@ -573,7 +689,9 @@ fn show_rule(window: &AutoResolutionRuleWindow, state: &RuleState, fields: bool)
     // (in the rule's order, as the reference's list keeps them)
     comparators.truncate(rule.comparators.len());
     window.set_comparators(strings(comparators));
-    window.set_comparator_selected(state.selected.map_or(-1, index));
+    let len = rule.comparators.len();
+    window.set_comparator_selected(state.rows.first(len).map_or(-1, index));
+    window.set_comparator_picked(state.rows.picked(len));
     window.set_errors(state.errors.join("\n").into());
     if !fields {
         return;
@@ -735,7 +853,7 @@ fn open_rule(
         rule,
         context: text_context(store),
         errors: Vec::new(),
-        selected: None,
+        rows: Rows::default(),
         merge_for,
     }));
     // the pair count of the rule's search, as the reference's panel shows it
@@ -849,12 +967,13 @@ fn open_rule(
     window.on_comparator_clicked({
         let weak = window.as_weak();
         let state = state.clone();
-        move |i| {
+        move |i, ctrl, shift| {
             let Some(window) = weak.upgrade() else {
                 return;
             };
             let mut state = state.borrow_mut();
-            state.selected = usize::try_from(i).ok();
+            let len = state.rule.comparators.len();
+            state.rows.click(len, i, ctrl, shift);
             show_rule(&window, &state, false);
         }
     });
@@ -907,7 +1026,8 @@ fn open_rule(
             let chosen = {
                 let state = state.borrow();
                 state
-                    .selected
+                    .rows
+                    .first(state.rule.comparators.len())
                     .and_then(|i| state.rule.comparators.get(i).cloned().map(|c| (i, c)))
             };
             if let Some((i, comparator)) = chosen {
@@ -923,12 +1043,17 @@ fn open_rule(
                 return;
             };
             let mut state = state.borrow_mut();
-            if let Some(i) = state.selected.take()
-                && i < state.rule.comparators.len()
+            let state = &mut *state;
+            for i in state
+                .rows
+                .selected(state.rule.comparators.len())
+                .into_iter()
+                .rev()
             {
                 state.rule.comparators.remove(i);
             }
-            show_rule(&window, &state, false);
+            state.rows.clear();
+            show_rule(&window, state, false);
         }
     });
     // the list's export (0 clipboard, 1 png), import (2 clipboard, 3 pngs)
@@ -939,82 +1064,28 @@ fn open_rule(
         let store = store.clone();
         let slots = slots.clone();
         move |mode| {
-            use hydrus_gui_model::auto_resolution_exchange as ex;
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            let selected = {
-                let state = state.borrow();
-                state
-                    .selected
-                    .and_then(|i| state.rule.comparators.get(i).cloned())
-            };
-            let add = |comparators: Vec<Comparator>, say: bool| {
-                let n = comparators.len();
-                {
-                    let mut state = state.borrow_mut();
+            let messages = {
+                let mut state = state.borrow_mut();
+                let state = &mut *state;
+                let before = state.rule.comparators.len();
+                let messages = comparator_exchange(
+                    &store,
+                    &slots.png,
+                    &mut state.rule.comparators,
+                    &mut state.rows,
+                    mode,
+                );
+                if state.rule.comparators.len() != before {
+                    // (what was wrong may be put right)
                     state.errors.clear();
-                    state.rule.comparators.extend(comparators);
-                    state.selected = state.rule.comparators.len().checked_sub(1);
-                    show_rule(&window, &state, false);
                 }
-                if say && n > 0 {
-                    crate::debug_actions::message("Information", &ex::added(n));
-                }
+                show_rule(&window, state, false);
+                messages
             };
-            let load = |text: &str, from_file: bool| match ex::import_comparators_text(
-                text,
-                &scales(&store),
-            ) {
-                Ok(imported) => {
-                    if !imported.refused.is_empty() {
-                        crate::debug_actions::message(
-                            "Warning",
-                            &ex::refused_message_for(&imported.refused, ex::COMPARATOR_TYPE),
-                        );
-                    }
-                    add(imported.comparators, true);
-                }
-                Err(e) => import_failed(from_file, &e),
-            };
-            match mode {
-                0 => {
-                    if let Some(c) = selected {
-                        crate::copy_to_clipboard(&ex::export_comparators_text(&[c]));
-                    }
-                }
-                1 => {
-                    if let Some(c) = selected
-                        && let Err(e) = crate::png_export_window::open(
-                            &slots.png,
-                            &store,
-                            ex::export_comparators_text(&[c]),
-                            Rc::new(|| {}),
-                        )
-                    {
-                        crate::debug_actions::message(ex::PROBLEM_TITLE, &e);
-                    }
-                }
-                2 => match crate::clipboard_text() {
-                    Ok(Some(text)) => load(&text, false),
-                    Ok(None) => {}
-                    Err(e) => crate::debug_actions::message(
-                        ex::PROBLEM_TITLE,
-                        &format!("Problem loading from clipboard: {e}"),
-                    ),
-                },
-                3 => match crate::png_export_window::import_text_with_title(ex::PNG_PICKER_TITLE) {
-                    Ok(Some(text)) => load(&text, true),
-                    Ok(None) => {}
-                    Err(e) => import_failed(true, &e),
-                },
-                4 => {
-                    if let Some(c) = selected {
-                        add(vec![c], false);
-                    }
-                }
-                _ => {}
-            }
+            show_messages(messages);
         }
     });
     // the preview: the rule as edited, or why it can't be had
@@ -1520,10 +1591,35 @@ fn import_failed(from_file: bool, error: &str) {
     crate::debug_actions::message(title, &message);
 }
 
+/// The png export of serialised text, described and titled as the
+/// reference's `PNGExportPanel` describes the object.
+fn export_png(
+    png: &crate::png_export_window::Slots,
+    store: &Arc<Store>,
+    text: String,
+) -> Result<(), String> {
+    let formatting = hydrus_gui_model::gui_format::preferences(store);
+    let (summary, title) =
+        hydrus_gui_model::png_export::serialised_payload_description(&text, &formatting)
+            .ok_or("the export is not a serialised object")?;
+    crate::png_export_window::open_described(png, store, text, summary, title, Rc::new(|| {}))
+        .map(|_| ())
+}
+
+/// Messages one after another, each shown once the one before is dismissed,
+/// as the reference's modal dialogs come.
+fn show_messages(messages: Vec<hydrus_gui_model::auto_resolution_exchange::Message>) {
+    let mut messages = messages.into_iter();
+    if let Some((title, text)) = messages.next() {
+        let rest: Vec<_> = messages.collect();
+        crate::debug_actions::message_then(&title, &text, Box::new(move || show_messages(rest)));
+    }
+}
+
 /// The list's export (0-2), import (3-5) and duplicate (6) buttons.
 fn exchange(store: &Arc<Store>, slots: &Slots, state: &Rc<RefCell<ListState>>, mode: i32) {
     use hydrus_gui_model::auto_resolution_exchange as ex;
-    let selected: Vec<Rule> = {
+    let selected: Vec<(Option<i64>, Rule)> = {
         let state = state.borrow();
         let order = state.list.order();
         state
@@ -1531,12 +1627,20 @@ fn exchange(store: &Arc<Store>, slots: &Slots, state: &Rc<RefCell<ListState>>, m
             .selection
             .in_order(&order)
             .into_iter()
-            .filter_map(|key| state.list.get(key).map(|e| e.rule.clone()))
+            .filter_map(|key| state.list.get(key).map(|e| (e.id, e.rule.clone())))
             .collect()
+    };
+    // the reference's serialised form; a rule it can't be written for is said
+    let exported = || {
+        let rules: Vec<(Option<i64>, &Rule)> = selected.iter().map(|(id, r)| (*id, r)).collect();
+        ex::export_text(&rules, &scales(store)).map_err(|e| {
+            crate::debug_actions::message(ex::EXPORT_PROBLEM_TITLE, &e);
+        })
     };
     let add = |rules: Vec<Rule>, say: bool| {
         let n = rules.len();
         let mut state = state.borrow_mut();
+        // (as `_ImportRule`: what came in is selected, alone)
         state.list.selection = hydrus_gui_model::list_selection::ListSelection::default();
         for rule in rules {
             state.list.add(RuleEdit { id: None, rule });
@@ -1545,6 +1649,20 @@ fn exchange(store: &Arc<Store>, slots: &Slots, state: &Rc<RefCell<ListState>>, m
         if say && n > 0 {
             crate::debug_actions::message("Information", &ex::added(n));
         }
+    };
+    let take = |import: ex::ListImport<Rule>| {
+        let ex::ListImport { added, messages } = import;
+        let mut state = state.borrow_mut();
+        if !added.is_empty() {
+            // (as `_ImportRule`: what came in is selected, alone)
+            let keys: Vec<u64> = added
+                .into_iter()
+                .map(|rule| state.list.add(RuleEdit { id: None, rule }))
+                .collect();
+            state.list.selection.select_many(&keys);
+        }
+        drop(state);
+        show_messages(messages);
     };
     let load = |text: &str, from_file: bool| match ex::import_text(text, &scales(store)) {
         Ok(imported) => {
@@ -1556,32 +1674,30 @@ fn exchange(store: &Arc<Store>, slots: &Slots, state: &Rc<RefCell<ListState>>, m
         Err(e) => import_failed(from_file, &e),
     };
     match mode {
-        0 if !selected.is_empty() => crate::copy_to_clipboard(&ex::export_text(&selected)),
+        0 if !selected.is_empty() => {
+            if let Ok(text) = exported() {
+                crate::copy_to_clipboard(&text);
+            }
+        }
         1 if !selected.is_empty() => {
-            if let Some(path) = crate::pick_exchange_export()
-                && let Err(e) = std::fs::write(&path, ex::export_text(&selected))
+            if let Ok(text) = exported()
+                && let Some(path) = crate::pick_exchange_export()
+                && let Err(e) = std::fs::write(&path, text)
             {
                 crate::debug_actions::message(ex::PROBLEM_TITLE, &e.to_string());
             }
         }
         2 if !selected.is_empty() => {
-            if let Err(e) = crate::png_export_window::open(
-                &slots.png,
-                store,
-                ex::export_text(&selected),
-                Rc::new(|| {}),
-            ) {
+            if let Ok(text) = exported()
+                && let Err(e) = export_png(&slots.png, store, text)
+            {
                 crate::debug_actions::message(ex::PROBLEM_TITLE, &e);
             }
         }
-        3 => match crate::clipboard_text() {
-            Ok(Some(text)) => load(&text, false),
-            Ok(None) => {}
-            Err(e) => crate::debug_actions::message(
-                ex::PROBLEM_TITLE,
-                &format!("Problem loading from clipboard: {e}"),
-            ),
-        },
+        3 => take(ex::rules_from_clipboard(
+            crate::clipboard_text(),
+            &scales(store),
+        )),
         4 => {
             for path in crate::pick_exchange_files("select the json files", "json") {
                 match std::fs::read_to_string(&path) {
@@ -1598,7 +1714,9 @@ fn exchange(store: &Arc<Store>, slots: &Slots, state: &Rc<RefCell<ListState>>, m
             Ok(None) => {}
             Err(e) => import_failed(true, &e),
         },
-        6 => add(selected, false),
+        6 => take(ex::duplicated(
+            &selected.into_iter().map(|(_, r)| r).collect::<Vec<_>>(),
+        )),
         _ => {}
     }
 }

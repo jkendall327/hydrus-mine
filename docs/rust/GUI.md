@@ -1735,10 +1735,13 @@ boundaries; authored store/model/native regressions await hosted execution.
 search, comparison, action, progress and operation, its warning, and
 "add suggested" (the reference's suggested rules), "add", "edit",
 "delete" (asking first), "export" (to the clipboard, a json file or a png),
-"import" (from the clipboard, json files or pngs: hydrus-rs's exports or the
-reference's own serialised rules, one or a list, saying "N objects added!",
-and warning of anything that isn't a rule) and "duplicate"; imported and
-duplicated rules are named apart from the others; "apply" writes them (a changed rule starting its
+"import" (from the clipboard, json files or pngs: the reference's own
+serialised rules, one or a list, or hydrus-rs's older exports, saying "N
+objects added!", warning of anything that isn't a rule, and with the
+reference's "Clipboard Error!" for text that isn't an object) and
+"duplicate"; exports are the reference's serialised text, so the reference
+imports them; imported and duplicated rules are named apart from the others
+and selected; "apply" writes them (a changed rule starting its
 work over, as the reference's does). The rule editor sets the name,
 paused, operation and most pending pairs, and has tabs for the search
 (which pairs, the location both searches search, chosen in the
@@ -1752,8 +1755,10 @@ lists of comparators, each edited in an editor of its own) and the
 action (which, deleting A or B, and default or custom merge options,
 starting from the client's for the action and edited in the merge options
 editor).
-A rule's comparator list can export one to the clipboard or a png, import from
-the clipboard or pngs, and duplicate. "apply" refuses a "better" rule whose comparators can't tell A from B,
+A rule's comparator list, and an OR's or AND's, select several rows and can
+export them to the clipboard or a png (in the reference's serialised form),
+import from the clipboard or pngs, and duplicate them, with the reference's
+messages (`oracle/record_rules_exchange.py`). "apply" refuses a "better" rule whose comparators can't tell A from B,
 with the reference's words. Its "preview" tab searches the rule as
 edited for a sample of its pairs ("only sample this many", or all) and
 tests each, off the UI thread: "47 pairs searched; 10 matched", the

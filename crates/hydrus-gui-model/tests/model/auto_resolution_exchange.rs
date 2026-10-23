@@ -1,6 +1,8 @@
-//! The auto-resolution rules list's export and import: hydrus-rs JSON round
-//! trips, and the reference's own serialised rules (its suggested rules)
-//! are read, alone or in a list.
+//! The auto-resolution rules list's export and import: exports are the
+//! reference's serialised form (compared with its own exports,
+//! `oracle/fixtures/rules_exchange.json`) and import again, and the
+//! reference's own serialised rules (its suggested rules) are read, alone or
+//! in a list.
 use hydrus_gui_model::auto_resolution_exchange::{
     added, export_text, import_text, refused_message,
 };
@@ -9,7 +11,7 @@ use hydrus_store::duplicates::auto::suggested_rules;
 #[test]
 fn exported_rules_import_again() {
     let rules = suggested_rules();
-    let text = export_text(&rules[..2]);
+    let text = export_text(&[(None, &rules[0]), (Some(7), &rules[1])], &|_| None).unwrap();
     let imported = import_text(&text, &|_| None).unwrap();
     assert_eq!(imported.rules, rules[..2]);
     assert!(imported.refused.is_empty());
@@ -90,7 +92,6 @@ fn first_comparators(value: &serde_json::Value, out: &mut Vec<serde_json::Value>
     }
 }
 
-// leaf: audit-media-rules-exchange
 #[test]
 fn comparators_export_and_import_alone_in_lists_and_from_the_reference() {
     use hydrus_gui_model::auto_resolution_exchange::{
@@ -99,7 +100,7 @@ fn comparators_export_and_import_alone_in_lists_and_from_the_reference() {
     let rules = suggested_rules();
     let comparators: Vec<_> = rules.iter().flat_map(|r| r.comparators.clone()).collect();
     assert!(comparators.len() >= 2);
-    let text = export_comparators_text(&comparators[..2]);
+    let text = export_comparators_text(&comparators[..2], &|_| None).unwrap();
     let back = import_comparators_text(&text, &|_| None).unwrap();
     assert_eq!(back.comparators, comparators[..2]);
     assert!(import_comparators_text("nonsense", &|_| None).is_err());
@@ -132,7 +133,44 @@ fn comparators_export_and_import_alone_in_lists_and_from_the_reference() {
     assert_eq!(
         refused_message_for(&rule.refused, COMPARATOR_TYPE),
         format!(
-            "The imported objects included these types:\n\nserialisable type 128\n\nWhereas this control only allows:\n\nPairComparator"
+            "The imported objects included these types:\n\nDuplicatesAutoResolutionRule\n\nWhereas this control only allows:\n\nPairComparator"
         )
     );
+}
+
+/// The basic fixture's numerical rating service "stars" (5 stars, zero
+/// allowed), as `oracle/make_fixture_db.py` makes it.
+fn fixture_scales(key: &hydrus_core::ServiceKey) -> Option<(u64, bool)> {
+    (key.to_hex() == "57a2".repeat(16)).then_some((5, true))
+}
+
+#[test]
+fn rules_and_comparators_read_from_the_reference_export_as_it_does() {
+    use hydrus_gui_model::auto_resolution_exchange::{
+        export_comparators_text, import_comparators_text,
+    };
+    use hydrus_testkit::serialised::normalised_rule_export as normal;
+    let rec = hydrus_testkit::fixture_json("rules_exchange.json");
+    for export in rec["exports"].as_array().unwrap() {
+        let text = export["text"].as_str().unwrap();
+        let rules = import_text(text, &fixture_scales)
+            .unwrap_or_else(|e| panic!("{}: {e}", export["names"]))
+            .rules;
+        let names: Vec<&str> = rules.iter().map(|r| r.name.as_str()).collect();
+        assert_eq!(serde_json::json!(names), export["selected_in_order"]);
+        let ours = export_text(
+            &rules.iter().map(|r| (None, r)).collect::<Vec<_>>(),
+            &fixture_scales,
+        )
+        .unwrap();
+        assert_eq!(normal(&ours), normal(text), "{names:?}");
+    }
+    for export in rec["comparators"].as_array().unwrap() {
+        let text = export["text"].as_str().unwrap();
+        let comparators = import_comparators_text(text, &fixture_scales)
+            .unwrap()
+            .comparators;
+        let ours = export_comparators_text(&comparators, &fixture_scales).unwrap();
+        assert_eq!(normal(&ours), normal(text), "{}", export["rows"]);
+    }
 }
