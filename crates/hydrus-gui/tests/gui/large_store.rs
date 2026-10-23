@@ -404,3 +404,49 @@ fn a_large_store_is_browsed_quickly_and_drawn_without_failing() {
         viewer_sizes: 5,
     });
 }
+
+/// The duplicate filter over files with the awkward tags, thousands of page
+/// tags and very long URLs: every pair, both files, drawn at several sizes
+/// and scales.
+#[test]
+fn the_duplicate_filter_draws_awkward_files() {
+    let windows = headless::init();
+    let o = crate::auto_resolution_review::opened();
+    let files: Vec<HashId> = o.hex.keys().copied().collect();
+    let own = o.store.snapshot().services.by_name("my tags").unwrap().id;
+    o.store
+        .write_content(move |w| {
+            let mut tags = awkward_tags();
+            tags.extend((1..=3_000).map(|page| format!("page:chapter {page} part")));
+            for text in tags {
+                let Some(tag) = Tag::new(&text) else {
+                    continue;
+                };
+                let tag = hydrus_store::master::intern_tag(w.conn(), &tag)?;
+                w.update_mappings(own, &MappingAction::Add, tag, &files)?;
+            }
+            w.add_urls(
+                &files,
+                &[format!("https://example.com/{}", "a".repeat(20_000))],
+            )?;
+            Ok(())
+        })
+        .unwrap();
+    o.ui.invoke_launch_filter();
+    let window = o
+        .bound
+        .filter
+        .borrow()
+        .as_ref()
+        .expect("the filter opens")
+        .clone_strong();
+    let sizes = [(1100, 700, 1.0), (1920, 1080, 2.0), (800, 600, 1.5)];
+    for pair in 0..4 {
+        step(&format!("duplicate filter: pair {pair}"), || {
+            draw_all(&windows, &sizes);
+            window.invoke_switch_media();
+            draw_all(&windows, &sizes);
+            window.invoke_decide("skip".into());
+        });
+    }
+}
