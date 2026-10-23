@@ -62,6 +62,7 @@ mod import_files;
 mod import_folder_log;
 mod import_options;
 mod import_options_panel;
+mod import_paths;
 mod importer_list_menu;
 mod info_lines;
 mod list_drag;
