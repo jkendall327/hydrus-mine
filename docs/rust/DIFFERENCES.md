@@ -272,10 +272,11 @@ search.
   list too), a system predicate such as "system:limit = 64" enters itself, and
   text with no result ("system:" that is no predicate, a tag the database does
   not have) enters nothing and stays in the box without a message. The first
-  result and the highlight are compared with the recording. Not covered: Return
-  pressed before the reference's list has caught up (it then enters the text
-  as typed; the native list is always current, so a user always gets what the
-  reference gives one who pauses). The rows as drawn (counts included), keys
+  result and the highlight are compared with the recording. The native list is never behind the text, so
+  Return always enters the highlighted result, as the reference does once its
+  list has caught up; the reference's threaded search has a window, before
+  its list catches up, where Return enters the text as typed, which hydrus-rs
+  has no counterpart for. The rows as drawn (counts included), keys
   in the tabs (Up and Down wrap round, Home, End, Page Up and Page Down; Page
   Up and Down move by the "autocomplete rows" setting where the reference
   moves by the rows its list shows), and the advanced OR dialog are compared
@@ -287,8 +288,6 @@ search.
   database does not have and nothing highlighted still enters the typed text
   (`chosen()`'s fallback in `page.rs`), where the reference enters nothing; the
   favourite editor enters nothing.
-  Remaining from #253: `audit-options-search-active-edit` (embedded OR in the
-  active-list edit, sibling/parent editors, favourite tags).
 
 - **Dimensions preset verification** separately tracks nine historical first-pass
   controls. The new Qt recording activates actual buttons through the real modal
@@ -1225,14 +1224,19 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   payload that decodes but can't be understood (whose `{path}` the reference
   never fills in). A hydrus-rs rules png given to the comparator list is a read error there, where the reference would warn which object types it refused.
 - **The "test A or B using search terms" comparator's search** is the
-  reference's metadata conditional search, quirks included
-  (`oracle/record_metadata_conditional_editor.py`): typed system predicate
-  text lists nothing unless an OR is being built, and while one is, typed
-  tags list nothing (`ResultsFetch` overwrites its system results with a tag
-  search in the one case and skips the tag search in the other). Its results
-  have no favourites tab, as the reference's. The OR button's editor lists as
-  a metadata conditional does, but its tabs selector still offers favourites
-  and children.
+  reference's metadata conditional search
+  (`oracle/record_metadata_conditional_editor.py`), less a bug in its
+  `ResultsFetch`, which falls through in two ways: with no OR being built,
+  typed system predicate text lists nothing (its system results are
+  overwritten by a tag search, which finds nothing for it); while one is
+  being built, typed tags list nothing (the tag search is skipped). hydrus-rs
+  lists typed system text that can be tested on one file (filesize and limit
+  can't, and stay unlisted, as in the reference) and searches tags whether or
+  not an OR is being built (DECISIONS.md, "where the reference has a bug,
+  ours stands"); the test asserts its own listing on those recorded steps.
+  Its results have no favourites tab, as the reference's. The OR button's
+  editor lists as a metadata conditional does, but its tabs selector still
+  offers favourites and children.
 - **The file log window**'s "additional urls" don't show the URL a URL class
   would actually fetch or refer from; "open files' locations" for path
   sources opens each file's folder rather than selecting the file in the file

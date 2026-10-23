@@ -100,9 +100,8 @@ impl Autocomplete {
     /// Lists as a metadata conditional's search does
     /// (`ClientGUIMetadataConditional.ResultsFetch`): only the results tab;
     /// before anything is typed, ten system predicates that can be tested on
-    /// one file, without counts; typed system predicate text only while an
-    /// OR is being built (and then nothing else), and only if it can be
-    /// tested on one file.
+    /// one file, without counts; and typed system predicate text only if it
+    /// can be tested on one file.
     #[must_use]
     pub fn metadata_conditional(mut self) -> Self {
         self.set_metadata_conditional();
@@ -367,28 +366,23 @@ impl Autocomplete {
         }
         // text that could be a system predicate lists it if it is one, else
         // nothing (`ReadFetch`: `IsValidSystemPredicate`, else an empty list)
-        if self.conditional {
-            // (as the reference's `ResultsFetch` does: while an OR is being
-            // built, typed system predicate text lists the predicate if it can
-            // be tested on one file, and anything else lists nothing; with no
-            // OR, system predicate text lists nothing, and tags are searched)
-            let system = self.text.trim().starts_with("system:");
-            if self.or_draft.is_some() || system {
-                let testable = |s: &Suggestion| {
-                    system
-                        && self.or_draft.is_some()
-                        && hydrus_search::parse_api_search(&serde_json::json!([s.predicate]))
-                            .is_ok_and(|p| p.iter().all(hydrus_search::media::can_test))
-                };
-                return Some(
-                    self.typed_predicate()
-                        .into_iter()
-                        .filter(testable)
-                        .collect(),
-                );
-            }
-        } else if self.text.trim().starts_with("system:") {
-            return Some(self.typed_predicate().into_iter().collect());
+        // (a metadata conditional lists it only if it can be tested on one
+        // file, and searches tags as anywhere, OR or not; the reference's
+        // `ResultsFetch` falls through, listing nothing for system text with no
+        // OR being built and nothing for tags while one is, which is not
+        // copied: DIFFERENCES.md)
+        if self.text.trim().starts_with("system:") {
+            let testable = |s: &Suggestion| {
+                !self.conditional
+                    || hydrus_search::parse_api_search(&serde_json::json!([s.predicate]))
+                        .is_ok_and(|p| p.iter().all(hydrus_search::media::can_test))
+            };
+            return Some(
+                self.typed_predicate()
+                    .into_iter()
+                    .filter(testable)
+                    .collect(),
+            );
         }
         let input = AutocompleteInput::parse(&self.text);
         let snapshot = self.store.snapshot();

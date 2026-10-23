@@ -667,6 +667,7 @@ fn star_menu_entries_load_search_sort_and_collect_as_the_reference_does() {
     assert!(differences.is_empty(), "{}", differences.join("\n"));
 }
 
+// leaf: audit-options-favourites-edit-predicates
 #[test]
 fn typed_predicates_and_double_clicks_edit_the_search_as_the_references_editor_does() {
     // (`record_favourite_predicates.py`: the reference's editor on a search of
@@ -1312,6 +1313,7 @@ fn editor_key(window: &hydrus_gui::FavouriteEditWindow, key: slint::platform::Ke
 }
 
 // leaf: audit-options-favourite-edit-autocomplete
+// leaf: audit-options-favourites-edit-predicates
 #[test]
 fn the_editors_rows_keys_and_advanced_or_act_as_the_references_do() {
     // (`record_favourite_editor_rows.py`: the reference's editor with typed

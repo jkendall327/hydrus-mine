@@ -89,6 +89,40 @@ fn highlighted(window: &ComparatorWindow) -> Json {
     json!(if at < 0 { vec![] } else { vec![at] })
 }
 
+/// Where hydrus-rs lists otherwise than the reference, on purpose
+/// (DIFFERENCES.md; DECISIONS.md, "where the reference has a bug, ours
+/// stands"): the reference's `ResultsFetch` lists nothing for typed system
+/// text while no OR is being built, and nothing for typed tags while one is;
+/// hydrus-rs lists a system predicate that can be tested on one file, and
+/// searches tags, either way. (the typed text, whether an OR is being built,
+/// the rows hydrus-rs lists, its highlighted row)
+const OURS: &[(&str, bool, &[&[&str]], i64)] = &[
+    ("system:inbox", false, &[&["system:inbox"]], 0),
+    ("system:width > 100", false, &[&["system:width > 100"]], 0),
+    (
+        "system:filetype is image",
+        false,
+        &[&["system:filetype is image"]],
+        0,
+    ),
+    ("system:archive", false, &[&["system:archive"]], 0),
+    ("system:has audio", false, &[&["system:has audio"]], 0),
+    ("system:height < 50", false, &[&["system:height < 50"]], 0),
+    (
+        "blue",
+        true,
+        &[&["OR:", "    system:inbox"], &["blue eyes (11-19)"]],
+        1,
+    ),
+];
+
+/// [`OURS`]' listing for `text`, if it is one of them.
+fn ours(text: &str, or_active: bool) -> Option<(Json, Json)> {
+    OURS.iter()
+        .find(|(typed, or, _, _)| *typed == text && *or == or_active)
+        .map(|(_, _, rows, at)| (json!(rows), json!([at])))
+}
+
 // leaf: audit-media-comparator-conditional
 #[test]
 fn the_metadata_conditional_editor_searches_as_the_references_does() {
@@ -124,6 +158,8 @@ fn the_metadata_conditional_editor_searches_as_the_references_does() {
             differences.push(format!("{what}: {key} {ours} not {want}"));
         }
     };
+    // our listing for text a deliberate difference left in the box
+    let mut left: Option<(String, Json, Json)> = None;
     for step in fixture["steps"].as_array().unwrap() {
         let what = &step["step"];
         let listed = &step["listed"];
@@ -131,18 +167,34 @@ fn the_metadata_conditional_editor_searches_as_the_references_does() {
             "initial" => {}
             kind @ ("type" | "shift type") => {
                 let text = what[1].as_str().unwrap();
+                let or_active = c.get_search_or_active();
                 c.set_search_typed(text.into());
                 c.invoke_search_edited();
                 // (the list as it is when Return is pressed)
-                differ(what, "listed rows", rows_drawn(&c), &listed["rows_drawn"]);
-                differ(
-                    what,
-                    "listed highlight",
-                    highlighted(&c),
-                    &listed["highlighted"],
-                );
-                if !text.is_empty() {
-                    press(&c, Key::Return, kind == "shift type");
+                left = None;
+                if let Some((rows, at)) = ours(text, or_active) {
+                    // a deliberate difference: what hydrus-rs lists, then
+                    // what the reference's Return did (nothing with nothing
+                    // listed; with only its OR listed, it entered the OR)
+                    differ(what, "our listed rows", rows_drawn(&c), &rows);
+                    differ(what, "our listed highlight", highlighted(&c), &at);
+                    if or_active {
+                        c.invoke_search_chosen(0, kind == "shift type");
+                    } else {
+                        // (the text stays, and so does our listing for it)
+                        left = Some((text.to_owned(), rows, at));
+                    }
+                } else {
+                    differ(what, "listed rows", rows_drawn(&c), &listed["rows_drawn"]);
+                    differ(
+                        what,
+                        "listed highlight",
+                        highlighted(&c),
+                        &listed["highlighted"],
+                    );
+                    if !text.is_empty() {
+                        press(&c, Key::Return, kind == "shift type");
+                    }
                 }
             }
             "double click" => {
@@ -187,8 +239,14 @@ fn the_metadata_conditional_editor_searches_as_the_references_does() {
                             .iter()
                             .map(|row| vec![row.text.to_string()])
                             .collect();
-                        differ(what, "OR editor rows", json!(rows), &typing["rows_drawn"]);
-                        child.invoke_enter(false);
+                        if let Some((ours, _)) = ours(text, false) {
+                            // (a deliberate difference, as above: the
+                            // reference's Return did nothing)
+                            differ(what, "OR editor our rows", json!(rows), &ours);
+                        } else {
+                            differ(what, "OR editor rows", json!(rows), &typing["rows_drawn"]);
+                            child.invoke_enter(false);
+                        }
                         let shown: Vec<String> = child
                             .get_predicates()
                             .iter()
@@ -284,8 +342,16 @@ fn the_metadata_conditional_editor_searches_as_the_references_does() {
             json!(c.get_looking()),
             &want["looking_at"],
         );
-        differ(what, "rows_drawn", rows_drawn(&c), &want["rows_drawn"]);
-        differ(what, "highlighted", highlighted(&c), &want["highlighted"]);
+        match &left {
+            Some((typed, rows, at)) if c.get_search_typed() == typed.as_str() => {
+                differ(what, "our rows_drawn", rows_drawn(&c), rows);
+                differ(what, "our highlighted", highlighted(&c), at);
+            }
+            _ => {
+                differ(what, "rows_drawn", rows_drawn(&c), &want["rows_drawn"]);
+                differ(what, "highlighted", highlighted(&c), &want["highlighted"]);
+            }
+        }
         differ(
             what,
             "shown",
@@ -362,6 +428,19 @@ fn the_metadata_conditional_editor_searches_as_the_references_does() {
         "summary",
         json!(c.get_summary().to_string()),
         &last["summary"],
+    );
+    // and Return on typed system text enters it (where the reference's
+    // listed nothing)
+    c.invoke_focus_search();
+    c.set_search_typed("system:width > 100".into());
+    c.invoke_search_edited();
+    press(&c, Key::Return, false);
+    assert!(
+        c.get_search_predicates()
+            .iter()
+            .any(|p| p == "system:width > 100"),
+        "{:?}",
+        c.get_search_predicates().iter().collect::<Vec<_>>()
     );
     assert!(differences.is_empty(), "{}", differences.join("\n"));
 }
