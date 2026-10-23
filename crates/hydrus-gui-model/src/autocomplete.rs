@@ -58,6 +58,8 @@ pub struct Autocomplete {
     selections: [Selection; 3],
     tab_rows: [Vec<String>; 3],
     context_tags: BTreeSet<String>,
+    /// Listing for a metadata conditional ([`Self::metadata_conditional`]).
+    conditional: bool,
 }
 
 impl std::fmt::Debug for Autocomplete {
@@ -91,7 +93,31 @@ impl Autocomplete {
             selections: std::array::from_fn(|_| Selection::default()),
             tab_rows: std::array::from_fn(|_| Vec::new()),
             context_tags: BTreeSet::new(),
+            conditional: false,
         }
+    }
+
+    /// Lists as a metadata conditional's search does
+    /// (`ClientGUIMetadataConditional.ResultsFetch`): only the results tab;
+    /// before anything is typed, ten system predicates that can be tested on
+    /// one file, without counts; typed system predicate text only while an
+    /// OR is being built (and then nothing else), and only if it can be
+    /// tested on one file.
+    #[must_use]
+    pub fn metadata_conditional(mut self) -> Self {
+        self.set_metadata_conditional();
+        self
+    }
+    /// Whether it lists as a metadata conditional's search does.
+    pub fn is_metadata_conditional(&self) -> bool {
+        self.conditional
+    }
+    /// As [`Self::metadata_conditional`], in place.
+    pub fn set_metadata_conditional(&mut self) {
+        self.conditional = true;
+        self.tab = Tab::Tags;
+        self.suggestions = self.search(false);
+        self.reset_highlight();
     }
 
     /// Read lists capture their sizing and float policy when created, as the
@@ -111,6 +137,9 @@ impl Autocomplete {
         self.tab
     }
     pub fn set_tab(&mut self, tab: Tab) {
+        if self.conditional {
+            return;
+        }
         self.tab_highlights[self.tab.index()] = self.highlighted;
         self.tab = tab;
         self.suggestions = self.search(false);
@@ -330,11 +359,35 @@ impl Autocomplete {
             return self.tab_suggestions();
         }
         if self.text.trim().is_empty() {
-            return self.system_predicates();
+            return if self.conditional {
+                Some(self.conditional_system_predicates())
+            } else {
+                self.system_predicates()
+            };
         }
         // text that could be a system predicate lists it if it is one, else
         // nothing (`ReadFetch`: `IsValidSystemPredicate`, else an empty list)
-        if self.text.trim().starts_with("system:") {
+        if self.conditional {
+            // (as the reference's `ResultsFetch` does: while an OR is being
+            // built, typed system predicate text lists the predicate if it can
+            // be tested on one file, and anything else lists nothing; with no
+            // OR, system predicate text lists nothing, and tags are searched)
+            let system = self.text.trim().starts_with("system:");
+            if self.or_draft.is_some() || system {
+                let testable = |s: &Suggestion| {
+                    system
+                        && self.or_draft.is_some()
+                        && hydrus_search::parse_api_search(&serde_json::json!([s.predicate]))
+                            .is_ok_and(|p| p.iter().all(hydrus_search::media::can_test))
+                };
+                return Some(
+                    self.typed_predicate()
+                        .into_iter()
+                        .filter(testable)
+                        .collect(),
+                );
+            }
+        } else if self.text.trim().starts_with("system:") {
             return Some(self.typed_predicate().into_iter().collect());
         }
         let input = AutocompleteInput::parse(&self.text);
@@ -500,6 +553,33 @@ impl Autocomplete {
                 })
                 .collect(),
         )
+    }
+
+    /// What a metadata conditional lists before anything is typed: inbox
+    /// and archive, then eight that open an editor, in the reference's order.
+    fn conditional_system_predicates(&self) -> Vec<Suggestion> {
+        let presentation = self.presentation();
+        let plain = ["system:inbox", "system:archive"].map(|predicate| Suggestion {
+            label: presentation.render(predicate),
+            predicate: predicate.to_owned(),
+            editor: None,
+        });
+        let blanks = [
+            Blank::Duration,
+            Blank::FileProperties,
+            Blank::Filetype,
+            Blank::Dimensions,
+            Blank::NumTags,
+            Blank::TagAdvanced,
+            Blank::Time,
+            Blank::Urls,
+        ]
+        .map(|blank| Suggestion {
+            label: presentation.render(blank.text()),
+            predicate: blank.text().to_owned(),
+            editor: Some(blank),
+        });
+        plain.into_iter().chain(blanks).collect()
     }
 
     /// `system:everything`, `system:inbox` and `system:archive`, with how

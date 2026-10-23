@@ -120,6 +120,7 @@ mod manage_urls_window;
 mod menu_bar;
 mod menu_choice_wheel;
 pub mod merge_options_window;
+pub mod metadata_conditional_search;
 mod metadata_file_jobs;
 pub mod mpv;
 pub mod network_header_approval;

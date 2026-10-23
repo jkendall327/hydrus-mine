@@ -1745,7 +1745,11 @@ paused, operation and most pending pairs, and has tabs for the search
 "multiple/deleted locations" list, the searches typed a term a line, the
 distance and pixel
 duplicates), the comparison (the comparators, added by kind and edited
-in their own editors: a search for A, B or either; A or B's progressive
+in their own editors: a search for A, B or either, made in the reference's
+metadata conditional search (a box with paste and empty-search buttons, the
+OR buttons, its results and the predicates made, a double-click removing
+one; empty, it offers inbox, archive and eight system predicates that open
+their editors; recorded in `metadata_conditional_editor.json`); A or B's progressive
 jpeg test; a relative test of a file property with its operator,
 multiplier and delta; a pair test; visual duplicates; and OR and AND
 lists of comparators, each edited in an editor of its own) and the

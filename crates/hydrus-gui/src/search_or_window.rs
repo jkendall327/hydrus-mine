@@ -205,6 +205,30 @@ pub fn open(
     owner: ValidOwner,
     applied: Applied,
 ) -> Result<SearchOrWindow, slint::PlatformError> {
+    open_with(store, context, advanced_input, false, slot, owner, applied)
+}
+
+/// As [`open`], for an OR inside a metadata conditional's search
+/// (`for_metadata_conditional`): its results are a metadata conditional's.
+pub fn open_conditional(
+    store: Arc<Store>,
+    context: FileSearchContext,
+    slot: &Slot,
+    owner: ValidOwner,
+    applied: Applied,
+) -> Result<SearchOrWindow, slint::PlatformError> {
+    open_with(store, context, false, true, slot, owner, applied)
+}
+
+fn open_with(
+    store: Arc<Store>,
+    context: FileSearchContext,
+    advanced_input: bool,
+    conditional: bool,
+    slot: &Slot,
+    owner: ValidOwner,
+    applied: Applied,
+) -> Result<SearchOrWindow, slint::PlatformError> {
     if let Some(window) = slot.borrow().as_ref() {
         return Ok(window.clone_strong());
     }
@@ -235,13 +259,13 @@ pub fn open(
     );
     let state = Rc::new(State {
         window: window.as_weak(),
-        page: RefCell::new(SearchPage::restored(
-            store,
-            context,
-            false,
-            None,
-            Vec::new(),
-        )),
+        page: RefCell::new({
+            let mut page = SearchPage::restored(store, context, false, None, Vec::new());
+            if conditional {
+                page.set_metadata_conditional();
+            }
+            page
+        }),
         text,
         active: Rc::new(Cell::new(true)),
         owner,

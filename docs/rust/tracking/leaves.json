@@ -192,10 +192,10 @@
     "Reference reusable metadata-conditional predicate panel, nested search widgets and autocomplete are not available here."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window test drives target B and two predicate lines, an invalid line, apply, persist, reopen; the summary is only prefix-checked ('B will match: '), and recorded summaries are replayed in the model test. Native uses a text-lines box instead of the reference's metadata-conditional panel with search widgets (documented as absent), so the editor the leaf names is not tested against the reference. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:1083 a_metadata_conditional_comparators_target_and_predicate_lines_are_persisted; crates/hydrus-gui-model/tests/model/auto_resolution_rules.rs"
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (W6-1)",
+    "note": "gui/metadata_conditional.rs the_metadata_conditional_editor_searches_as_the_references_does drives the real comparator editor (rules list > add > 'test A or B using search terms') and replays every step of oracle/record_metadata_conditional_editor.py, the reference's real EditPairComparatorOneFileMetadataConditionalPanel: the A/B/either choice and the summary after each step; text typed and Return or Shift+Return pressed as real key events (tags, a negated tag, wildcards, a namespace, system predicates with and without an OR being built, text with no result); the list as drawn and its highlight before each Return, the OR being built drawn as 'OR:' over its terms; double-click removal; paste of lines with a bad one; empty search; Escape; the empty box's ten rows chosen by keys, those that need a value opening the real predicate editor (its title and fixed-predicate buttons compared, then cancelled, OK on a panel, or a fixed predicate's button); and the OR button's editor, cancelled or given typed terms. It then applies, checks the stored predicates against the reference's GetValue and reopens the editor. It copies the reference's ResultsFetch quirks (typed system text lists only while an OR is built; tags list nothing then), written in DIFFERENCES.md; the owner was asked whether to keep them. The OR editor's tabs selector still offers favourites/children (not recorded)."
    }
   },
   {

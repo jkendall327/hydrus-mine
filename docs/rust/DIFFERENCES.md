@@ -1222,6 +1222,15 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   with the reason as the reference does, though not its separate text for a
   payload that decodes but can't be understood (whose `{path}` the reference
   never fills in). A hydrus-rs rules png given to the comparator list is a read error there, where the reference would warn which object types it refused.
+- **The "test A or B using search terms" comparator's search** is the
+  reference's metadata conditional search, quirks included
+  (`oracle/record_metadata_conditional_editor.py`): typed system predicate
+  text lists nothing unless an OR is being built, and while one is, typed
+  tags list nothing (`ResultsFetch` overwrites its system results with a tag
+  search in the one case and skips the tag search in the other). Its results
+  have no favourites tab, as the reference's. The OR button's editor lists as
+  a metadata conditional does, but its tabs selector still offers favourites
+  and children.
 - **The file log window**'s "additional urls" don't show the URL a URL class
   would actually fetch or refer from; "open files' locations" for path
   sources opens each file's folder rather than selecting the file in the file

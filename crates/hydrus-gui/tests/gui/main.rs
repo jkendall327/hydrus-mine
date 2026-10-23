@@ -368,6 +368,7 @@ mod media_ratings_counter;
 mod media_selection_menu;
 mod media_support;
 mod media_viewer_navigation;
+mod metadata_conditional;
 mod network_bandwidth_actions;
 mod network_pause_menu;
 mod options_close_focus;
