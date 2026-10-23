@@ -18,6 +18,8 @@ pub struct Slots {
     /// Separate child slots at each depth retain arbitrary recursive editors.
     pub child: Rc<RefCell<Option<Box<Slots>>>>,
     pub strings: crate::string_processor_window::Slots,
+    /// The formula's png export ("export > to png").
+    pub png: crate::png_export_window::Slots,
 }
 impl std::fmt::Debug for Slots {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -46,6 +48,7 @@ impl Slots {
             || self.rule.borrow().is_some()
             || self.strings.has_open()
             || self.exchange.has_open()
+            || self.png.has_open()
     }
     fn cancel_children(&self) {
         let child = self.child.borrow_mut().take();
@@ -53,6 +56,7 @@ impl Slots {
             child.cancel();
         }
         self.exchange.cancel();
+        self.png.cancel();
         self.strings.cancel_all();
         let rule = self
             .rule
@@ -387,58 +391,77 @@ pub fn open(
             refresh();
         }
     });
+    // "export" (0 to the clipboard, 1 to a png) and "import" (2 from the
+    // clipboard, 3 from a png), as the reference's formula panel: what comes
+    // in replaces the formula at once
     w.on_exchange({
         let weak = w.as_weak();
+        let store = store.clone();
         let slots = slots.clone();
         let state = state.clone();
         let refresh = refresh.clone();
         let blocked = blocked.clone();
-        move |importing| {
-            use hydrus_gui_model::downloader_interchange::{Definition, Native};
+        move |mode| {
+            use hydrus_gui_model::formula_exchange as ex;
             if blocked() {
                 return;
             }
-            let definitions = [Definition::new(Native::Formula(
-                state.borrow().formula.clone(),
-            ))];
-            let preview = Rc::new(|definitions: Vec<Definition>| {
-                if definitions.len() != 1 || !matches!(definitions[0].native, Native::Formula(_)) {
-                    return Err("Import one parsing formula into this editor.".into());
-                }
-                Ok(format!(
-                    "Replace this draft with formula: {}",
-                    definitions[0].name()
-                ))
-            });
-            let applied = Rc::new({
-                let state = state.clone();
-                let refresh = refresh.clone();
-                move |mut definitions: Vec<Definition>| {
-                    let definition = definitions.pop().ok_or("No formula to import.")?;
-                    let Native::Formula(formula) = definition.native else {
-                        return Err("Import one parsing formula.".into());
-                    };
+            let formula = state.borrow().formula.clone();
+            let said = |(title, text): hydrus_gui_model::auto_resolution_exchange::Message| {
+                crate::debug_actions::message(&title, &text);
+            };
+            let replace = |result: Result<Formula, _>| match result {
+                Ok(formula) => {
                     state.borrow_mut().formula = formula;
                     refresh();
-                    Ok(())
                 }
-            });
-            match crate::downloader_interchange_window::open(
-                &slots.exchange,
-                importing,
-                &definitions,
-                preview,
-                applied,
-            ) {
-                Ok(child) => {
-                    let refresh = refresh.clone();
-                    child.on_closed(move || refresh());
-                }
-                Err(e) => {
-                    if let Some(w) = weak.upgrade() {
-                        w.set_veto(e.into());
+                Err(message) => said(message),
+            };
+            match mode {
+                0 => match ex::export_text(&formula) {
+                    Ok(text) => crate::copy_to_clipboard(&text),
+                    Err(e) => said(("Problem exporting!".into(), e)),
+                },
+                1 => {
+                    let opened = ex::export_text(&formula).and_then(|text| {
+                        let formatting = hydrus_gui_model::gui_format::preferences(&store);
+                        let (summary, title) =
+                            hydrus_gui_model::png_export::serialised_payload_description(
+                                &text,
+                                &formatting,
+                            )
+                            .ok_or("the export is not a serialised object")?;
+                        let refresh = refresh.clone();
+                        crate::png_export_window::open_described(
+                            &slots.png,
+                            &store,
+                            text,
+                            summary,
+                            title,
+                            Rc::new(move || refresh()),
+                        )
+                    });
+                    if let Err(e) = opened {
+                        said(("Problem exporting!".into(), e));
                     }
                 }
+                2 => replace(ex::from_clipboard(crate::clipboard_text())),
+                3 => {
+                    let Some(path) = crate::pick(crate::Pick::Files, ex::PNG_PICKER_TITLE)
+                        .into_iter()
+                        .next()
+                    else {
+                        return;
+                    };
+                    match std::fs::read(&path) {
+                        Ok(data) => replace(ex::from_png(&path, &data)),
+                        Err(e) => said(("Problem loading!".into(), e.to_string())),
+                    }
+                }
+                _ => {}
+            }
+            if let Some(w) = weak.upgrade() {
+                w.set_veto(SharedString::new());
             }
             refresh();
         }

@@ -1,6 +1,6 @@
 import { Btn } from "@hydrus_ui_core";
 import { Button, CheckBox, ComboBox, LineEdit, SpinBox, TextEdit } from "std-widgets.slint";
-import { Asking } from "@hydrus_ui_core";
+import { Asking, SubscriptionExchangeButton } from "@hydrus_ui_core";
 import { Theme } from "@hydrus_ui_core";
 import { ListTable, TableRow } from "@hydrus_ui_core";
 
@@ -51,7 +51,7 @@ export component FormulaWindow inherits Window {
     callback edit-processing(); callback test(); callback apply(); callback cancel();
     callback closed(bool);
     callback fetch(); callback cancel-fetch();
-    callback exchange(bool); callback member-exchange(bool); callback edit-child(bool); callback example-chosen(); callback add-example(); callback remove-example();
+    callback exchange(int); callback member-exchange(bool); callback edit-child(bool); callback example-chosen(); callback add-example(); callback remove-example();
     VerticalLayout {
         padding: 10px; spacing: 6px;
         HorizontalLayout {
@@ -106,9 +106,12 @@ export component FormulaWindow inherits Window {
                         SpinBox { value <=> root.output-count; minimum: 1; maximum: 65535; enabled: !root.child-open; edited => { root.changed(); } }
                     }
                 }
+                // the formula panel's "export" (0 to clipboard, 1 to png) and
+                // "import" (2 from clipboard, 3 from png)
                 HorizontalLayout {
-                    Btn { text: "import formula"; enabled: !root.child-open && !root.deleting; clicked => { root.exchange(true); } }
-                    Btn { text: "export formula"; enabled: !root.child-open && !root.deleting; clicked => { root.exchange(false); } }
+                    spacing: 4px;
+                    SubscriptionExchangeButton { label: "export"; choices: ["to clipboard", "to png"]; available: !root.child-open && !root.deleting; selected(mode) => { root.exchange(mode); } }
+                    SubscriptionExchangeButton { label: "import"; choices: ["from clipboard", "from png"]; available: !root.child-open && !root.deleting; selected(mode) => { root.exchange(mode + 2); } }
                 }
                 Text { text: root.newline-note; wrap: word-wrap; color: Theme.text; }
                 Btn { text: root.processing; enabled: root.supported && !root.deleting && !root.child-open; clicked => { root.edit-processing(); } }

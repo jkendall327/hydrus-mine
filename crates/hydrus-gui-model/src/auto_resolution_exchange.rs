@@ -281,7 +281,7 @@ pub struct ListImport<T> {
 /// The error the reference shows for text it can't read as an object: its
 /// `json.loads` error where the text is not JSON (as Python words it),
 /// else ours.
-fn clipboard_error(text: &str, error: &str) -> Message {
+pub fn clipboard_error(expected: &str, text: &str, error: &str) -> Message {
     let error = hydrus_legacy::serialisable::python_json_error(text).map_or_else(
         || error.to_owned(),
         |json| {
@@ -293,7 +293,7 @@ fn clipboard_error(text: &str, error: &str) -> Message {
     );
     (
         "Clipboard Error!".into(),
-        crate::notes_editor::clipboard_parse_error(CLIPBOARD_EXPECTED, text, &error),
+        crate::notes_editor::clipboard_parse_error(expected, text, &error),
     )
 }
 
@@ -340,7 +340,7 @@ pub fn comparators_from_clipboard(
         },
         Err(e) => ListImport {
             added: Vec::new(),
-            messages: vec![clipboard_error(&text, &e)],
+            messages: vec![clipboard_error(CLIPBOARD_EXPECTED, &text, &e)],
         },
     }
 }
@@ -367,7 +367,7 @@ pub fn rules_from_clipboard(clipboard: Clipboard, scales: Scales<'_>) -> ListImp
         },
         Err(e) => ListImport {
             added: Vec::new(),
-            messages: vec![clipboard_error(&text, &e)],
+            messages: vec![clipboard_error(CLIPBOARD_EXPECTED, &text, &e)],
         },
     }
 }

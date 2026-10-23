@@ -101,14 +101,14 @@ fn opened() -> (Opened, AutoResolutionRulesWindow) {
     )
 }
 
-fn paste(text: Option<&str>) {
+pub(crate) fn paste(text: Option<&str>) {
     let text = text.map(str::to_owned);
     hydrus_gui::set_clipboard_reader(move || Ok(text.clone()));
 }
 
 /// Every message shown, oldest first, each dismissed in turn (the next
 /// comes once the one before is), as the recording writes them.
-fn said() -> Vec<Value> {
+pub(crate) fn said() -> Vec<Value> {
     let mut out = Vec::new();
     while let Some(window) = hydrus_gui::message_window() {
         if !window.window().is_visible() {

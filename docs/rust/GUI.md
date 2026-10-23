@@ -809,6 +809,12 @@ Context-variable and static formula controls edit names, variable keys, text and
 output counts (1–65,535), with the same parsing context, newline policy and
 string processor preview as HTML/JSON. Type changes create fresh reference
 defaults and reset the old name/processor. Edits remain isolated until Apply.
+Its "export" (to the clipboard, to a png) and "import" (from the clipboard,
+from a png) are the reference's formula panel's: the formula goes out as the
+reference's serialised text, a formula coming in replaces the one edited at
+once, and anything else gets the reference's "That was not a formula--it was
+a: ...", "Clipboard Error!" or "Problem loading!"
+(`oracle/record_formula_exchange.py`).
 `oracle/record_recursive_formula_editors.py` records these scalar controls and
 the recursive formula workflows. Nested formula editors open a staged first
 formula and a second formula whose examples come from the first formula's parsed

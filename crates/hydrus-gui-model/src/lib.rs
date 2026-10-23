@@ -53,6 +53,7 @@ pub mod folder_runs;
 pub mod folders;
 pub mod force_filetype;
 pub mod formula_editors;
+pub mod formula_exchange;
 pub mod how_boned;
 pub mod image_cache;
 pub mod import_options_editor;

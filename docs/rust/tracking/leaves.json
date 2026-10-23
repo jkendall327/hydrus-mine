@@ -24154,10 +24154,10 @@
     "Clipboard bitmap/drop ingestion is absent; unsupported processing steps are rejected."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window export (text, PNG) and import (PNG, refusals of a non-formula and of two formulae) are driven, but exports are only round-tripped through the native encoder and the refusals are checked as non-empty error strings, not against reference text or a recording of this formula-level exchange. Clipboard bitmap and drop ingestion are absent (tracker note says so), so part of the leaf is uncovered. Tests: crates/hydrus-gui/tests/gui/formula_exchange.rs:13 a_formula_exports_as_text_and_png_and_imports_exactly_one_formula"
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (wave 6, W6-2)",
+    "note": "crates/hydrus-gui/tests/gui/formula_exchange.rs replays oracle/fixtures/formula_exchange.json (oracle/record_formula_exchange.py: the reference's EditFormulaPanel on a formula of each of the six kinds, the longest of each in fixtures/formulas.json) through the real formula window: export > to clipboard gives the reference's text byte for byte for each kind; export > to png opens the png panel with the reference's title, payload description and width, and the png carries the reference's text; import > from clipboard of each kind replaces the formula at once (exported again as the reference's text, and handed on by apply), and a string match, a list of two formulae, a simple downloader formula, text that is not an object and an empty clipboard leave it, with the reference's messages (That was not a formula--it was a: <class>, Clipboard Error! with its JSONDecodeError text); import > from png of the reference's own png replaces it, a png of a string match is refused with the reference's warning, and a file that is no png gets its Problem loading! text, with the reference's picker title. Not compared: the error text for a png that is an image but carries no payload (hydrus-rs's own, DIFFERENCES.md)."
    }
   },
   {
