@@ -31,6 +31,7 @@ fn service(store: &Store, name: &str) -> ServiceKey {
 // leaf: audit-options-favourite-edit-collect
 // leaf: audit-options-favourite-edit-domains
 // leaf: audit-options-favourite-edit-sort
+// leaf: audit-options-favourite-edit-autocomplete
 #[test]
 fn favourite_domain_sort_collect_and_autocomplete_widgets_reach_saved_searches() {
     let f = hydrus_testkit::fixture_json("favourite_search_editor.json");

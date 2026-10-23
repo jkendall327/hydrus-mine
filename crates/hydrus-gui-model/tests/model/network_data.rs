@@ -318,6 +318,8 @@ fn a_job_menu_lists_each_context_with_its_wait_then_the_flags_as_the_reference_d
         domain_ok: true,
         tokens_ok: true,
         auto_override: false,
+        waiting_on_connection_error: false,
+        waiting_on_serverside_bandwidth: false,
         context_waits: vec![60, 0, 0, 0],
     };
     let lines = model::job_menu(&job, Some(&control));

@@ -44,18 +44,35 @@ struct State {
     selection: ListSelection<usize>,
     menu: Vec<(Action, String)>,
     captured: Vec<Predicate>,
+    /// What an edit made, selected when the search next changes
+    /// (`_EditPredicates` selects the terms it adds).
+    edited: Vec<Predicate>,
 }
 impl State {
     fn refresh(&mut self, page: &Rc<RefCell<SearchPage>>) {
-        if !self
+        let same_page = self
             .page
             .upgrade()
-            .is_some_and(|old| Rc::ptr_eq(&old, page))
-            || self.predicates != page.borrow().active_predicates()
-        {
+            .is_some_and(|old| Rc::ptr_eq(&old, page));
+        if !same_page || self.predicates != page.borrow().active_predicates() {
+            let new = page.borrow().active_predicates().to_vec();
+            let text = page.borrow().text_context();
+            let edited = std::mem::take(&mut self.edited);
+            let selected: Vec<Predicate> = if same_page {
+                reselected(&self.predicates, &self.selected(), &new, &edited, &text)
+            } else {
+                Vec::new()
+            };
             self.page = Rc::downgrade(page);
-            self.predicates = page.borrow().active_predicates().to_vec();
+            self.predicates = new;
             self.selection = ListSelection::default();
+            let rows: Vec<usize> = (0..self.predicates.len())
+                .filter(|&i| selected.contains(&self.predicates[i]))
+                .collect();
+            self.selection.select_many(&rows);
+            if let [one] = rows.as_slice() {
+                self.selection.set_anchor(Some(*one));
+            }
             self.menu.clear();
             self.captured.clear();
         }
@@ -98,6 +115,41 @@ impl State {
         window.set_active_predicate_menu(ModelRc::new(VecModel::from(actions)));
     }
 }
+/// The rows selected once the search has changed from `old` to `new`, as the
+/// reference's list keeps them: selected rows that are still there stay
+/// selected, with what an edit made (`_EditPredicates`); else a row that
+/// replaced a selected one it excludes (inbox for archive, say) becomes the
+/// only one selected (`_EnterPredicates`' `_Hit`).
+fn reselected(
+    old: &[Predicate],
+    selected: &[Predicate],
+    new: &[Predicate],
+    edited: &[Predicate],
+    text: &hydrus_search::TextContext,
+) -> Vec<Predicate> {
+    let mut kept: Vec<Predicate> = selected
+        .iter()
+        .filter(|p| new.contains(p))
+        .cloned()
+        .collect();
+    if !edited.is_empty() {
+        kept.extend(edited.iter().filter(|p| new.contains(p)).cloned());
+        return kept;
+    }
+    let is_incdec =
+        |s: &hydrus_core::search::predicate::ServiceRef| hydrus_search::entry::is_incdec(s, text);
+    let removed: Vec<&Predicate> = selected.iter().filter(|p| !new.contains(p)).collect();
+    let replacing = new.iter().find(|p| {
+        !old.contains(p)
+            && removed
+                .iter()
+                .any(|r| r.is_mutually_exclusive(p, &is_incdec))
+    });
+    match replacing {
+        Some(p) => vec![p.clone()],
+        None => kept,
+    }
+}
 fn context(page: &SearchPage) -> Context {
     let snapshot = page.store().snapshot();
     Context::new(
@@ -120,6 +172,10 @@ fn permits_input(window: &MainWindow) -> bool {
         && window.get_chooser_labels().row_count() == 0
 }
 
+/// Where the main window's shared tag menu is put once it is made; the
+/// active list's right-click menu opens in it.
+pub(crate) type MenuSlot = Rc<RefCell<Option<Rc<crate::write_tag_menu::TagMenu>>>>;
+
 /// Install the active list without owning the MainWindow or a page back-edge.
 pub(crate) fn bind(
     window: &MainWindow,
@@ -129,7 +185,8 @@ pub(crate) fn bind(
     shown: impl Fn(bool) + Clone + 'static,
     active: Rc<dyn Fn() -> bool>,
     launch: Launch,
-) {
+) -> MenuSlot {
+    let menu_slot = MenuSlot::default();
     let state = Rc::new(RefCell::new(State::default()));
     let binding_active = active.clone();
     let valid: Rc<dyn Fn() -> bool> = Rc::new({
@@ -204,6 +261,7 @@ pub(crate) fn bind(
         }
     });
     let execute: Rc<dyn Fn(Command, Vec<Predicate>)> = Rc::new({
+        let state = state.clone();
         let weak = window.as_weak();
         let page = page.clone();
         let shown = shown.clone();
@@ -249,6 +307,7 @@ pub(crate) fn bind(
                     }
                 });
                 let applied: crate::search_or_window::Applied = Rc::new({
+                    let state = state.clone();
                     let owner = owner.clone();
                     let store = current.borrow().store().clone();
                     let current = Rc::downgrade(&current);
@@ -267,6 +326,7 @@ pub(crate) fn bind(
                             }) {
                                 eprintln!("could not keep edited OR predicates: {error}");
                             }
+                            state.borrow_mut().edited.clone_from(&edited);
                             current
                                 .borrow_mut()
                                 .edit_active_predicates(&selected, &edited);
@@ -340,6 +400,7 @@ pub(crate) fn bind(
                         .unwrap_or_else(|| p.clone())
                     })
                     .collect::<Vec<_>>();
+                state.borrow_mut().edited.clone_from(&edited);
                 current
                     .borrow_mut()
                     .edit_active_predicates(&selected, &edited);
@@ -372,6 +433,7 @@ pub(crate) fn bind(
                 }
             });
             let chosen: Rc<dyn Fn(Vec<Predicate>)> = Rc::new({
+                let state = state.clone();
                 let current = Rc::downgrade(&current);
                 let owner = owner.clone();
                 let shown = shown.clone();
@@ -379,6 +441,7 @@ pub(crate) fn bind(
                     if owner()
                         && let Some(current) = current.upgrade()
                     {
+                        state.borrow_mut().edited.clone_from(&edited);
                         current
                             .borrow_mut()
                             .edit_active_predicates(&selected, &edited);
@@ -386,7 +449,12 @@ pub(crate) fn bind(
                     }
                 }
             });
-            if let Err(error) = crate::predicate_editor_window::open(
+            let search = hydrus_search::FileSearchContext {
+                location: current.borrow().location().clone(),
+                tags: current.borrow().tag_context().clone(),
+                predicates: Vec::new(),
+            };
+            if let Err(error) = crate::predicate_editor_window::open_with_or(
                 &slot,
                 &store,
                 editor,
@@ -394,6 +462,8 @@ pub(crate) fn bind(
                 text,
                 chosen,
                 Some(owner),
+                &or_slot,
+                search,
             ) {
                 eprintln!("could not edit the active predicate: {error}");
             }
@@ -556,5 +626,52 @@ pub(crate) fn bind(
             }
         }
     });
+    // the whole menu, the reference's with the entries the list inherits
+    // from tag lists, opened in the shared tag menu; the list's own entries
+    // come back through `active-predicate-menu-chosen`
+    window.on_active_predicate_menu_requested({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let page = page.clone();
+        let valid = valid.clone();
+        let menu_slot = menu_slot.clone();
+        move |_, x, y| {
+            if !valid() {
+                return;
+            }
+            let Some(menu) = menu_slot.borrow().clone() else {
+                return;
+            };
+            let entries = {
+                let state = state.borrow();
+                let own: Vec<_> = state
+                    .menu
+                    .iter()
+                    .map(|(action, label)| match action {
+                        Action::Route(route) => {
+                            active_predicates::menu::Own::Route(*route, label.clone())
+                        }
+                        Action::Search(command) => {
+                            active_predicates::menu::Own::Search(*command, label.clone())
+                        }
+                    })
+                    .collect();
+                let store = page().borrow().store().clone();
+                active_predicates::menu::context_menu(&store, &state.captured, &own)
+            };
+            let weak = weak.clone();
+            menu.open_owned(
+                &entries,
+                x,
+                y,
+                Rc::new(move |id| {
+                    if let Some(window) = weak.upgrade() {
+                        window.invoke_active_predicate_menu_chosen(id);
+                    }
+                }),
+            );
+        }
+    });
     window.invoke_active_predicates_refreshed();
+    menu_slot
 }

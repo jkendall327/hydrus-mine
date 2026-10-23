@@ -1,0 +1,2970 @@
+{
+ "steps": [
+  {
+   "listed": null,
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 0,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [],
+    "shown": [],
+    "summary": "A will match: allows all files",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "initial"
+   ]
+  },
+  {
+   "listed": {
+    "highlighted": [],
+    "rows_drawn": []
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [],
+    "looking_at": 0,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [],
+    "saved": [],
+    "shown": [],
+    "summary": "A will match: allows all files",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": "system:inbox"
+   },
+   "step": [
+    "type",
+    "system:inbox"
+   ]
+  },
+  {
+   "listed": {
+    "highlighted": [],
+    "rows_drawn": []
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [],
+    "looking_at": 0,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [],
+    "saved": [],
+    "shown": [],
+    "summary": "A will match: allows all files",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": "system:width > 100"
+   },
+   "step": [
+    "type",
+    "system:width > 100"
+   ]
+  },
+  {
+   "listed": {
+    "highlighted": [],
+    "rows_drawn": []
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [],
+    "looking_at": 0,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [],
+    "saved": [],
+    "shown": [],
+    "summary": "A will match: allows all files",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": "system:filesize < 5MB"
+   },
+   "step": [
+    "type",
+    "system:filesize < 5MB"
+   ]
+  },
+  {
+   "listed": {
+    "highlighted": [],
+    "rows_drawn": []
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [],
+    "looking_at": 0,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [],
+    "saved": [],
+    "shown": [],
+    "summary": "A will match: allows all files",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": "system:limit = 5"
+   },
+   "step": [
+    "type",
+    "system:limit = 5"
+   ]
+  },
+  {
+   "listed": {
+    "highlighted": [],
+    "rows_drawn": []
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [],
+    "looking_at": 0,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [],
+    "saved": [],
+    "shown": [],
+    "summary": "A will match: allows all files",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": "system:filetype is image"
+   },
+   "step": [
+    "type",
+    "system:filetype is image"
+   ]
+  },
+  {
+   "listed": {
+    "highlighted": [
+     0
+    ],
+    "rows_drawn": [
+     [
+      "blue eyes (11-19)"
+     ]
+    ]
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 0,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "blue eyes"
+    ],
+    "shown": [
+     "blue eyes"
+    ],
+    "summary": "A will match: blue eyes",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "type",
+    "blue"
+   ]
+  },
+  {
+   "listed": {
+    "highlighted": [
+     0
+    ],
+    "rows_drawn": [
+     [
+      "series:metroid (10)"
+     ]
+    ]
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 0,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "blue eyes",
+     "series:metroid"
+    ],
+    "shown": [
+     "blue eyes",
+     "series:metroid"
+    ],
+    "summary": "A will match: blue eyes, series:metroid",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "type",
+    "series:metroid"
+   ]
+  },
+  {
+   "listed": {
+    "highlighted": [
+     0
+    ],
+    "rows_drawn": [
+     [
+      "sam* (wildcard search)"
+     ],
+     [
+      "character:samus aran (8)"
+     ]
+    ]
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 0,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "blue eyes",
+     "sam* (wildcard search)",
+     "series:metroid"
+    ],
+    "shown": [
+     "blue eyes",
+     "sam* (wildcard search)",
+     "series:metroid"
+    ],
+    "summary": "A will match: blue eyes, sam* (wildcard search), series:metroid",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "type",
+    "sam*"
+   ]
+  },
+  {
+   "listed": {
+    "highlighted": [
+     0
+    ],
+    "rows_drawn": [
+     [
+      "series:*anything*"
+     ]
+    ]
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 0,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "blue eyes",
+     "sam* (wildcard search)",
+     "series:*anything*",
+     "series:metroid"
+    ],
+    "shown": [
+     "blue eyes",
+     "sam* (wildcard search)",
+     "series:*anything*",
+     "series:metroid"
+    ],
+    "summary": "A will match: 4 predicates",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "type",
+    "series:*"
+   ]
+  },
+  {
+   "listed": {
+    "highlighted": [
+     0
+    ],
+    "rows_drawn": [
+     [
+      "-character:samus aran (8)"
+     ]
+    ]
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 0,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "-character:samus aran",
+     "blue eyes",
+     "sam* (wildcard search)",
+     "series:*anything*",
+     "series:metroid"
+    ],
+    "shown": [
+     "-character:samus aran",
+     "blue eyes",
+     "sam* (wildcard search)",
+     "series:*anything*",
+     "series:metroid"
+    ],
+    "summary": "A will match: 5 predicates",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "type",
+    "-character:samus aran"
+   ]
+  },
+  {
+   "listed": {
+    "highlighted": [],
+    "rows_drawn": []
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [],
+    "looking_at": 0,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [],
+    "saved": [
+     "-character:samus aran",
+     "blue eyes",
+     "sam* (wildcard search)",
+     "series:*anything*",
+     "series:metroid"
+    ],
+    "shown": [
+     "-character:samus aran",
+     "blue eyes",
+     "sam* (wildcard search)",
+     "series:*anything*",
+     "series:metroid"
+    ],
+    "summary": "A will match: 5 predicates",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": "nothing here at all"
+   },
+   "step": [
+    "type",
+    "nothing here at all"
+   ]
+  },
+  {
+   "listed": {
+    "highlighted": [],
+    "rows_drawn": []
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [],
+    "looking_at": 0,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [],
+    "saved": [
+     "-character:samus aran",
+     "blue eyes",
+     "sam* (wildcard search)",
+     "series:*anything*",
+     "series:metroid"
+    ],
+    "shown": [
+     "-character:samus aran",
+     "blue eyes",
+     "sam* (wildcard search)",
+     "series:*anything*",
+     "series:metroid"
+    ],
+    "summary": "A will match: 5 predicates",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": "system:archive"
+   },
+   "step": [
+    "shift type",
+    "system:archive"
+   ]
+  },
+  {
+   "listed": {
+    "highlighted": [],
+    "rows_drawn": []
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [],
+    "looking_at": 0,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [],
+    "saved": [
+     "-character:samus aran",
+     "blue eyes",
+     "sam* (wildcard search)",
+     "series:*anything*",
+     "series:metroid"
+    ],
+    "shown": [
+     "-character:samus aran",
+     "blue eyes",
+     "sam* (wildcard search)",
+     "series:*anything*",
+     "series:metroid"
+    ],
+    "summary": "A will match: 5 predicates",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": "system:has audio"
+   },
+   "step": [
+    "shift type",
+    "system:has audio"
+   ]
+  },
+  {
+   "listed": {
+    "highlighted": [],
+    "rows_drawn": []
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [],
+    "looking_at": 0,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [],
+    "saved": [
+     "-character:samus aran",
+     "blue eyes",
+     "sam* (wildcard search)",
+     "series:*anything*",
+     "series:metroid"
+    ],
+    "shown": [
+     "-character:samus aran",
+     "blue eyes",
+     "sam* (wildcard search)",
+     "series:*anything*",
+     "series:metroid"
+    ],
+    "summary": "A will match: 5 predicates",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": "system:height < 50"
+   },
+   "step": [
+    "type",
+    "system:height < 50"
+   ]
+  },
+  {
+   "listed": null,
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [],
+    "looking_at": 0,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [],
+    "saved": [
+     "blue eyes",
+     "sam* (wildcard search)",
+     "series:*anything*",
+     "series:metroid"
+    ],
+    "shown": [
+     "blue eyes",
+     "sam* (wildcard search)",
+     "series:*anything*",
+     "series:metroid"
+    ],
+    "summary": "A will match: 4 predicates",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": "system:height < 50"
+   },
+   "step": [
+    "double click",
+    0
+   ]
+  },
+  {
+   "listed": null,
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [],
+    "looking_at": 0,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [],
+    "saved": [
+     "sam* (wildcard search)",
+     "series:*anything*",
+     "series:metroid"
+    ],
+    "shown": [
+     "sam* (wildcard search)",
+     "series:*anything*",
+     "series:metroid"
+    ],
+    "summary": "A will match: sam* (wildcard search), series:*anything*, series:metroid",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": "system:height < 50"
+   },
+   "step": [
+    "double click",
+    0
+   ]
+  },
+  {
+   "listed": null,
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [],
+    "looking_at": 1,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [],
+    "saved": [
+     "sam* (wildcard search)",
+     "series:*anything*",
+     "series:metroid"
+    ],
+    "shown": [
+     "sam* (wildcard search)",
+     "series:*anything*",
+     "series:metroid"
+    ],
+    "summary": "B will match: sam* (wildcard search), series:*anything*, series:metroid",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": "system:height < 50"
+   },
+   "step": [
+    "looking at",
+    1
+   ]
+  },
+  {
+   "listed": null,
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 1,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "nonsense:here",
+     "sam* (wildcard search)",
+     "series:*anything*",
+     "series:metroid",
+     "system:inbox",
+     "system:width = 50"
+    ],
+    "shown": [
+     "nonsense:here",
+     "sam* (wildcard search)",
+     "series:*anything*",
+     "series:metroid",
+     "system:inbox",
+     "system:width = 50"
+    ],
+    "summary": "B will match: 6 predicates",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "paste",
+    "system:inbox\nsystem:width = 50\nnonsense:here\nsystem:not a thing"
+   ]
+  },
+  {
+   "listed": null,
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "nonsense:here",
+     "sam* (wildcard search)",
+     "series:*anything*",
+     "series:metroid",
+     "system:inbox",
+     "system:width = 50"
+    ],
+    "shown": [
+     "nonsense:here",
+     "sam* (wildcard search)",
+     "series:*anything*",
+     "series:metroid",
+     "system:inbox",
+     "system:width = 50"
+    ],
+    "summary": "either will match: 6 predicates",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "looking at",
+    2
+   ]
+  },
+  {
+   "listed": null,
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [],
+    "shown": [],
+    "summary": "either will match: allows all files",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "empty search"
+   ]
+  },
+  {
+   "listed": {
+    "highlighted": [
+     0
+    ],
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ]
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [],
+    "shown": [],
+    "summary": "either will match: allows all files",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "type",
+    ""
+   ]
+  },
+  {
+   "listed": {
+    "activated": "system:inbox",
+    "editors": []
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "system:inbox"
+    ],
+    "shown": [
+     "system:inbox"
+    ],
+    "summary": "either will match: system:inbox",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "activate row",
+    0,
+    null
+   ]
+  },
+  {
+   "listed": {
+    "activated": "system:archive",
+    "editors": []
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "system:archive"
+    ],
+    "shown": [
+     "system:archive"
+    ],
+    "summary": "either will match: system:archive",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "activate row",
+    1,
+    null
+   ]
+  },
+  {
+   "listed": {
+    "activated": "system:duration",
+    "editors": [
+     {
+      "ok_buttons": 3,
+      "static_buttons": [
+       "system:has duration",
+       "system:no duration",
+       "system:framerate ≈ 30fps ±1fps",
+       "system:framerate ≈ 60fps ±1fps"
+      ],
+      "title": "input predicate"
+     }
+    ]
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "system:has duration"
+    ],
+    "highlighted": [
+     1
+    ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "OR:",
+      "    system:has duration"
+     ],
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "system:archive"
+    ],
+    "shown": [
+     "system:archive"
+    ],
+    "summary": "either will match: system:archive",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "shift activate row",
+    2,
+    0
+   ]
+  },
+  {
+   "listed": {
+    "activated": "system:dimensions",
+    "editors": [
+     {
+      "ok_buttons": 4,
+      "static_buttons": [
+       "system:ratio = 16:9",
+       "system:ratio = 9:16",
+       "system:ratio = 4:3",
+       "system:ratio is square",
+       "system:ratio is portrait",
+       "system:ratio is landscape"
+      ],
+      "title": "input predicate"
+     }
+    ]
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "system:has duration",
+     "system:width = 1,920"
+    ],
+    "highlighted": [
+     1
+    ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": true,
+    "rows_drawn": [
+     [
+      "OR:",
+      "    system:has duration",
+      "    system:width = 1,920"
+     ],
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "system:archive"
+    ],
+    "shown": [
+     "system:archive"
+    ],
+    "summary": "either will match: system:archive",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "shift activate row",
+    6,
+    0
+   ]
+  },
+  {
+   "listed": {
+    "activated": "OR:",
+    "editors": []
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "system:archive",
+     "system:has duration OR system:width = 1,920"
+    ],
+    "shown": [
+     "system:archive",
+     "system:has duration OR system:width = 1,920"
+    ],
+    "summary": "either will match: system:archive, system:has duration OR system:width = 1,920",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "activate row",
+    0,
+    null
+   ]
+  },
+  {
+   "listed": {
+    "activated": "system:filetype",
+    "editors": [
+     {
+      "ok_buttons": 1,
+      "static_buttons": [],
+      "title": "input predicate"
+     }
+    ]
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     4
+    ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "system:archive",
+     "system:has duration OR system:width = 1,920"
+    ],
+    "shown": [
+     "system:archive",
+     "system:has duration OR system:width = 1,920"
+    ],
+    "summary": "either will match: system:archive, system:has duration OR system:width = 1,920",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "activate row",
+    4,
+    "cancel"
+   ]
+  },
+  {
+   "listed": {
+    "activated": "system:number of tags",
+    "editors": [
+     {
+      "ok_buttons": 1,
+      "static_buttons": [
+       "system:has tags",
+       "system:untagged"
+      ],
+      "title": "input predicate"
+     }
+    ]
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "system:archive",
+     "system:has duration OR system:width = 1,920",
+     "system:untagged"
+    ],
+    "shown": [
+     "system:archive",
+     "system:has duration OR system:width = 1,920",
+     "system:untagged"
+    ],
+    "summary": "either will match: system:archive, system:has duration OR system:width = 1,920, system:untagged",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "activate row",
+    6,
+    "system:untagged"
+   ]
+  },
+  {
+   "listed": {
+    "activated": "system:inbox",
+    "editors": []
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "system:inbox"
+    ],
+    "highlighted": [
+     1
+    ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "OR:",
+      "    system:inbox"
+     ],
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "system:archive",
+     "system:has duration OR system:width = 1,920",
+     "system:untagged"
+    ],
+    "shown": [
+     "system:archive",
+     "system:has duration OR system:width = 1,920",
+     "system:untagged"
+    ],
+    "summary": "either will match: system:archive, system:has duration OR system:width = 1,920, system:untagged",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "shift activate row",
+    0,
+    null
+   ]
+  },
+  {
+   "listed": {
+    "highlighted": [
+     0
+    ],
+    "rows_drawn": [
+     [
+      "OR:",
+      "    system:inbox"
+     ]
+    ]
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "shown": [
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "summary": "either will match: system:has duration OR system:width = 1,920, system:inbox, system:untagged",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "type",
+    "blue"
+   ]
+  },
+  {
+   "listed": {
+    "highlighted": [],
+    "rows_drawn": []
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [],
+    "saved": [
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "shown": [
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "summary": "either will match: system:has duration OR system:width = 1,920, system:inbox, system:untagged",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": "system:width > 100"
+   },
+   "step": [
+    "shift type",
+    "system:width > 100"
+   ]
+  },
+  {
+   "listed": {
+    "highlighted": [
+     0
+    ],
+    "rows_drawn": [
+     [
+      "series:metroid (10)"
+     ]
+    ]
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "series:metroid"
+    ],
+    "highlighted": [
+     1
+    ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "OR:",
+      "    series:metroid"
+     ],
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "shown": [
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "summary": "either will match: system:has duration OR system:width = 1,920, system:inbox, system:untagged",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "shift type",
+    "series:metroid"
+   ]
+  },
+  {
+   "listed": {
+    "highlighted": [
+     1
+    ],
+    "rows_drawn": [
+     [
+      "OR:",
+      "    series:metroid"
+     ],
+     [
+      "system:has audio"
+     ]
+    ]
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "series:metroid OR system:has audio",
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "shown": [
+     "series:metroid OR system:has audio",
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "summary": "either will match: 4 predicates",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "type",
+    "system:has audio"
+   ]
+  },
+  {
+   "listed": {
+    "highlighted": [],
+    "rows_drawn": []
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [],
+    "saved": [
+     "series:metroid OR system:has audio",
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "shown": [
+     "series:metroid OR system:has audio",
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "summary": "either will match: 4 predicates",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": "system:limit = 5"
+   },
+   "step": [
+    "type",
+    "system:limit = 5"
+   ]
+  },
+  {
+   "listed": null,
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "series:metroid OR system:has audio",
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "shown": [
+     "series:metroid OR system:has audio",
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "summary": "either will match: 4 predicates",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "escape"
+   ]
+  },
+  {
+   "listed": {
+    "activated": "system:archive",
+    "editors": []
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "system:archive"
+    ],
+    "highlighted": [
+     1
+    ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "OR:",
+      "    system:archive"
+     ],
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "series:metroid OR system:has audio",
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "shown": [
+     "series:metroid OR system:has audio",
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "summary": "either will match: 4 predicates",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "shift activate row",
+    1,
+    null
+   ]
+  },
+  {
+   "listed": {
+    "highlighted": [
+     1
+    ],
+    "rows_drawn": [
+     [
+      "OR:",
+      "    system:archive"
+     ],
+     [
+      "system:height < 50"
+     ]
+    ]
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "series:metroid OR system:has audio",
+     "system:archive OR system:height < 50",
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "shown": [
+     "series:metroid OR system:has audio",
+     "system:archive OR system:height < 50",
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "summary": "either will match: 5 predicates",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "type",
+    "system:height < 50"
+   ]
+  },
+  {
+   "listed": {
+    "title": "edit OR predicate"
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "series:metroid OR system:has audio",
+     "system:archive OR system:height < 50",
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "shown": [
+     "series:metroid OR system:has audio",
+     "system:archive OR system:height < 50",
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "summary": "either will match: 5 predicates",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "or button",
+    null
+   ]
+  },
+  {
+   "listed": {
+    "kind": "AutoCompleteDropdownMetadataConditional",
+    "title": "edit OR predicate",
+    "typed": [
+     {
+      "rows_drawn": [
+       [
+        "blue eyes (11-19)"
+       ]
+      ],
+      "shown": [
+       "blue eyes"
+      ],
+      "text": "blue"
+     },
+     {
+      "rows_drawn": [
+       [
+        "series:metroid (10)"
+       ]
+      ],
+      "shown": [
+       "blue eyes",
+       "series:metroid"
+      ],
+      "text": "series:metroid"
+     }
+    ],
+    "value": [
+     "blue eyes OR series:metroid"
+    ]
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "blue eyes OR series:metroid",
+     "series:metroid OR system:has audio",
+     "system:archive OR system:height < 50",
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "shown": [
+     "blue eyes OR series:metroid",
+     "series:metroid OR system:has audio",
+     "system:archive OR system:height < 50",
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "summary": "either will match: 6 predicates",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "or button",
+    [
+     "blue",
+     "series:metroid"
+    ]
+   ]
+  },
+  {
+   "listed": {
+    "activated": "system:archive",
+    "editors": []
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "system:archive"
+    ],
+    "highlighted": [
+     1
+    ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "OR:",
+      "    system:archive"
+     ],
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "blue eyes OR series:metroid",
+     "series:metroid OR system:has audio",
+     "system:archive OR system:height < 50",
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "shown": [
+     "blue eyes OR series:metroid",
+     "series:metroid OR system:has audio",
+     "system:archive OR system:height < 50",
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "summary": "either will match: 6 predicates",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "shift activate row",
+    1,
+    null
+   ]
+  },
+  {
+   "listed": {
+    "kind": "AutoCompleteDropdownMetadataConditional",
+    "title": "edit OR predicate",
+    "typed": [
+     {
+      "rows_drawn": [],
+      "shown": [],
+      "text": "system:width > 100"
+     },
+     {
+      "rows_drawn": [
+       [
+        "sam* (wildcard search)"
+       ],
+       [
+        "character:samus aran (8)"
+       ]
+      ],
+      "shown": [
+       "sam* (wildcard search)"
+      ],
+      "text": "sam*"
+     }
+    ],
+    "value": [
+     "sam* (wildcard search)"
+    ]
+   },
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "blue eyes OR series:metroid",
+     "sam* (wildcard search) OR system:archive",
+     "series:metroid OR system:has audio",
+     "system:archive OR system:height < 50",
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "shown": [
+     "blue eyes OR series:metroid",
+     "sam* (wildcard search) OR system:archive",
+     "series:metroid OR system:has audio",
+     "system:archive OR system:height < 50",
+     "system:has duration OR system:width = 1,920",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "summary": "either will match: 7 predicates",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "or button",
+    [
+     "system:width > 100",
+     "sam*"
+    ]
+   ]
+  },
+  {
+   "listed": null,
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 2,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "blue eyes OR series:metroid",
+     "sam* (wildcard search) OR system:archive",
+     "series:metroid OR system:has audio",
+     "system:archive OR system:height < 50",
+     "system:has duration OR system:width = 1,920",
+     "system:has exif",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "shown": [
+     "blue eyes OR series:metroid",
+     "sam* (wildcard search) OR system:archive",
+     "series:metroid OR system:has audio",
+     "system:archive OR system:height < 50",
+     "system:filesize < 5MB",
+     "system:has duration OR system:width = 1,920",
+     "system:has exif",
+     "system:inbox",
+     "system:limit is 5",
+     "system:untagged"
+    ],
+    "summary": "either will match: 8 predicates",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "paste",
+    "system:limit = 5\nsystem:filesize < 5MB\nsystem:has exif"
+   ]
+  },
+  {
+   "listed": null,
+   "messages": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "looking_at": 0,
+    "looking_at_choices": [
+     "A will match these",
+     "B will match these",
+     "either will match these"
+    ],
+    "rewind_shown": false,
+    "rows_drawn": [
+     [
+      "system:inbox"
+     ],
+     [
+      "system:archive"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "saved": [
+     "blue eyes OR series:metroid",
+     "sam* (wildcard search) OR system:archive",
+     "series:metroid OR system:has audio",
+     "system:archive OR system:height < 50",
+     "system:has duration OR system:width = 1,920",
+     "system:has exif",
+     "system:inbox",
+     "system:untagged"
+    ],
+    "shown": [
+     "blue eyes OR series:metroid",
+     "sam* (wildcard search) OR system:archive",
+     "series:metroid OR system:has audio",
+     "system:archive OR system:height < 50",
+     "system:filesize < 5MB",
+     "system:has duration OR system:width = 1,920",
+     "system:has exif",
+     "system:inbox",
+     "system:limit is 5",
+     "system:untagged"
+    ],
+    "summary": "A will match: 8 predicates",
+    "tab": 0,
+    "tabs": [
+     "results"
+    ],
+    "typed_left": ""
+   },
+   "step": [
+    "looking at",
+    0
+   ]
+  }
+ ]
+}

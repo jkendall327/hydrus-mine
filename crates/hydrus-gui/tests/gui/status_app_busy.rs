@@ -1,7 +1,8 @@
 //! The status bar's application-busy field: the reference's thread-pool
 //! wording and thresholds ("working" above 3 jobs, "busy" above 8, looked
 //! at most every ten seconds, with the tooltip "There were N threads doing
-//! jobs at last check."), counting the daemon's running downloader queues.
+//! jobs at last check."), replayed from oracle/fixtures/status_db.json,
+//! counting the daemon's running downloader queues.
 
 use hydrus_store::live::DaemonLive;
 
@@ -85,48 +86,22 @@ fn the_application_busy_field_says_how_many_jobs_run_as_the_reference_does() {
         )
     };
 
-    // quiet: nothing shown, but the tooltip has the count
-    daemon_says(&client, 2, at(0));
-    poll(0);
-    assert_eq!(
-        shown(),
-        (
-            String::new(),
-            "There were 2 threads doing jobs at last check.".into()
-        )
-    );
-    // (looked at once in ten seconds: busy now, but not yet seen)
-    daemon_says(&client, 9, at(5));
-    poll(5);
-    assert_eq!(shown().0, "");
-    poll(10);
-    assert_eq!(shown().0, "", "ten seconds is not more than ten");
-    poll(11);
-    assert_eq!(
-        shown(),
-        (
-            "busy".into(),
-            "There were 9 threads doing jobs at last check.".into()
-        )
-    );
-    // the thresholds: 3 is quiet, 4 to 8 working, 9 busy
-    for (i, (jobs, wanted)) in [
-        (3, ""),
-        (4, "working"),
-        (8, "working"),
-        (9, "busy"),
-        (1, ""),
-    ]
-    .into_iter()
-    .enumerate()
-    {
-        let step = 100 + i64::try_from(i).unwrap() * 20;
-        daemon_says(&client, jobs, at(step));
-        poll(step);
-        assert_eq!(shown().0, wanted, "{jobs} jobs");
+    // the reference's field, its threads stood in for, the clock held
+    // (oracle/fixtures/status_db.json `app_busy`): quiet up to 3, "working"
+    // to 8, "busy" above, looked at again only once ten seconds have passed
+    let recorded = hydrus_testkit::fixture_json("status_db.json");
+    for step in recorded["app_busy"].as_array().unwrap() {
+        let second = step["second"].as_i64().unwrap();
+        let working = u32::try_from(step["working"].as_u64().unwrap()).unwrap();
+        daemon_says(&client, working, at(second));
+        poll(second);
         assert_eq!(
-            shown().1,
-            format!("There were {jobs} threads doing jobs at last check.")
+            shown(),
+            (
+                step["text"].as_str().unwrap().to_owned(),
+                step["tooltip"].as_str().unwrap().to_owned()
+            ),
+            "{working} jobs at {second} s"
         );
     }
     // a daemon that has not said anything lately (it has stopped) runs none

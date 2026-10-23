@@ -280,6 +280,9 @@ def record(session):
         typed_parse = lambda lines: ClientSearchParseSystemPredicates.ParseSystemPredicateStringsToPredicates(lines)
         # (a metadata conditional keeps only what it can test on a file)
         typed_lines['comparator'] = [t for t in typed_lines['comparator'] if typed_parse([t])[0].CanTestMediaResult()]
+        # (and a search takes one of a pair that rule each other out: entering
+        # "system:archive" replaces "system:inbox", "no audio" "has audio")
+        typed_lines['comparator'] = [t for t in typed_lines['comparator'] if t not in ('system:archive', 'system:no audio')]
         typed = rule('typed', search(typed_parse(typed_lines['search'])), search([]), ClientDuplicates.DUPE_SEARCH_ONE_FILE_MATCHES_ONE_SEARCH,
                      ClientDuplicates.SIMILAR_FILES_PIXEL_DUPES_ALLOWED, 4, [conditional(C.LOOKING_AT_A, typed_parse(typed_lines['comparator']))],
                      HC.DUPLICATE_BETTER, False, AR.DUPLICATES_AUTO_RESOLUTION_RULE_OPERATION_MODE_WORK_BUT_NO_ACTION, 500, (False, True), None)

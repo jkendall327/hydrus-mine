@@ -1,0 +1,98 @@
+{
+ "blank": {
+  "text": "previous",
+  "context": {
+   "url": "https://test-docs.example/original",
+   "post_index": "12"
+  },
+  "test_url": "<base>/a b",
+  "asked": 0
+ },
+ "progress": {
+  "text": "fetch cancelled",
+  "context": {
+   "url": "<base>/slow",
+   "post_index": "0"
+  },
+  "test_url": "<base>/slow",
+  "holding": {
+   "left": "downloading…",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  "after": {
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  }
+ },
+ "cancel": {
+  "text": "fetch cancelled",
+  "context": {
+   "url": "<base>/hold",
+   "post_index": "0"
+  },
+  "test_url": "<base>/hold",
+  "holding": {
+   "left": "sending request…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  "after": {
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  }
+ },
+ "once": {
+  "text": "fetch failed: Could not connect!",
+  "context": {
+   "url": "<base>/drop",
+   "post_index": "0"
+  },
+  "test_url": "<base>/drop",
+  "asked": 1,
+  "error_shown": true,
+  "after": {
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  }
+ },
+ "invalid": {
+  "raised": "URLClassException",
+  "message": "Could not parse \"invalid\" at all!",
+  "text": "fetch failed: Could not connect!",
+  "context": {
+   "url": "<base>/drop",
+   "post_index": "0"
+  },
+  "test_url": "invalid",
+  "asked": 0
+ },
+ "close": {
+  "cancelled": false,
+  "done": false,
+  "in_engine": true
+ }
+}

@@ -48,7 +48,7 @@ pub(crate) fn results_action(
 pub(crate) struct TagMenu {
     pub popup: Rc<Popup<Action>>,
     pending: RefCell<Option<Action>>,
-    relationships: Rc<RefCell<Option<crate::TagRelationshipsWindow>>>,
+    pub relationships: Rc<RefCell<Option<crate::TagRelationshipsWindow>>>,
     locations: Rc<RefCell<Option<crate::LocationsWindow>>>,
     store: Arc<Store>,
     editable: Rc<dyn Fn() -> bool>,
@@ -56,7 +56,11 @@ pub(crate) struct TagMenu {
     refresh: Rc<dyn Fn()>,
     question: Rc<dyn Fn(&str)>,
     error: Rc<dyn Fn(&str)>,
+    /// Does the [`Action::Owner`] entries of the list that opened the menu.
+    owner: RefCell<Option<OwnerAction>>,
 }
+/// What does an [`Action::Owner`] entry, given its id.
+pub(crate) type OwnerAction = Rc<dyn Fn(i32)>;
 impl TagMenu {
     pub fn new(
         store: Arc<Store>,
@@ -77,9 +81,25 @@ impl TagMenu {
             refresh,
             question,
             error,
+            owner: RefCell::default(),
         })
     }
+    /// Open `entries`, whose [`Action::Owner`] entries `owner` does.
+    pub fn open_owned(&self, entries: &[Entry], x: f32, y: f32, owner: OwnerAction) {
+        if !(self.editable)() || self.busy() {
+            return;
+        }
+        self.show(entries, x, y);
+        *self.owner.borrow_mut() = Some(owner);
+    }
     pub fn open(&self, entries: &[Entry], x: f32, y: f32) {
+        if !(self.editable)() || self.busy() {
+            return;
+        }
+        self.show(entries, x, y);
+        self.owner.borrow_mut().take();
+    }
+    fn show(&self, entries: &[Entry], x: f32, y: f32) {
         fn ticks(shown: &mut [main_menu::Entry], entries: &[Entry]) {
             for (shown, entry) in shown.iter_mut().zip(entries) {
                 match entry {
@@ -100,9 +120,6 @@ impl TagMenu {
                     _ => {}
                 }
             }
-        }
-        if !(self.editable)() || self.busy() {
-            return;
         }
         let (mut shown, actions) = main_menu::popup(entries, &|entry| match entry {
             Entry::Item(label, action) | Entry::Check(label, action, _) => {
@@ -249,6 +266,12 @@ impl TagMenu {
             Action::Favourite { .. } | Action::Regenerate { .. } => {
                 if let Err(e) = action.persist(&self.store) {
                     (self.error)(&format!("could not complete tag action: {e}"));
+                }
+            }
+            Action::Owner(id) => {
+                let owner = self.owner.borrow().clone();
+                if let Some(owner) = owner {
+                    owner(id);
                 }
             }
         }

@@ -1,0 +1,1593 @@
+{
+ "corpus": [
+  {
+   "hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+   ],
+   "tag": "parity:tabs alpha"
+  },
+  {
+   "hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+   ],
+   "tag": "parity:tabs beta"
+  },
+  {
+   "hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+   ],
+   "tag": "parity:tabs alpha old"
+  }
+ ],
+ "favourites": [
+  "parity:tabs root",
+  "parity:tabs alpha old",
+  "parity:tabs unseen"
+ ],
+ "parents": [
+  [
+   "parity:tabs alpha",
+   "parity:tabs root"
+  ],
+  [
+   "parity:tabs beta",
+   "parity:tabs root"
+  ],
+  [
+   "parity:tabs zero",
+   "parity:tabs root"
+  ],
+  [
+   "parity:tabs deep",
+   "parity:tabs alpha"
+  ]
+ ],
+ "siblings": [
+  [
+   "parity:tabs alpha old",
+   "parity:tabs alpha"
+  ]
+ ],
+ "steps": [
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "predicates": [
+     "blue eyes"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "system:everything",
+     "system:inbox",
+     "system:archive",
+     "system:dimensions",
+     "system:duration",
+     "system:file properties",
+     "system:file relationships",
+     "system:file service",
+     "system:file viewing statistics",
+     "system:filesize",
+     "system:filetype",
+     "system:hash",
+     "system:limit",
+     "system:notes",
+     "system:number of tags",
+     "system:number of words",
+     "system:rating",
+     "system:similar files",
+     "system:tag (advanced)",
+     "system:tag as number",
+     "system:time",
+     "system:urls"
+    ],
+    "rows_drawn": [
+     [
+      "system:everything (30)"
+     ],
+     [
+      "system:inbox (14)"
+     ],
+     [
+      "system:archive (16)"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:file relationships"
+     ],
+     [
+      "system:file service"
+     ],
+     [
+      "system:file viewing statistics"
+     ],
+     [
+      "system:filesize"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:hash"
+     ],
+     [
+      "system:limit"
+     ],
+     [
+      "system:notes"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:number of words"
+     ],
+     [
+      "system:rating"
+     ],
+     [
+      "system:similar files"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:tag as number"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "shown": [
+     "blue eyes"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": ""
+   },
+   "step": [
+    "initial"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "predicates": [
+     "blue eyes"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha",
+     "parity:tabs root",
+     "parity:tabs beta"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha (2)"
+     ],
+     [
+      "parity:tabs root (2)"
+     ],
+     [
+      "parity:tabs beta (1)"
+     ]
+    ],
+    "shown": [
+     "blue eyes"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": "parity:tabs"
+   },
+   "step": [
+    "text",
+    "parity:tabs"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "predicates": [
+     "blue eyes"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha (2)"
+     ]
+    ],
+    "shown": [
+     "blue eyes"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": "parity:tabs alpha old"
+   },
+   "step": [
+    "text",
+    "parity:tabs alpha old"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "predicates": [
+     "blue eyes"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs a* (wildcard search)",
+     "parity:tabs alpha"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs a* (wildcard search)"
+     ],
+     [
+      "parity:tabs alpha (2)"
+     ]
+    ],
+    "shown": [
+     "blue eyes"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": "parity:tabs a*"
+   },
+   "step": [
+    "text",
+    "parity:tabs a*"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "predicates": [
+     "blue eyes"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "blue eyes"
+    ],
+    "rows_drawn": [
+     [
+      "blue eyes (11-18)"
+     ]
+    ],
+    "shown": [
+     "blue eyes"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": "blue"
+   },
+   "step": [
+    "text",
+    "blue"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "predicates": [
+     "blue eyes"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "system:limit is 5"
+    ],
+    "rows_drawn": [
+     [
+      "system:limit is 5"
+     ]
+    ],
+    "shown": [
+     "blue eyes"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": "system:limit = 5"
+   },
+   "step": [
+    "text",
+    "system:limit = 5"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "predicates": [
+     "blue eyes"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "system:everything",
+     "system:inbox",
+     "system:archive",
+     "system:dimensions",
+     "system:duration",
+     "system:file properties",
+     "system:file relationships",
+     "system:file service",
+     "system:file viewing statistics",
+     "system:filesize",
+     "system:filetype",
+     "system:hash",
+     "system:limit",
+     "system:notes",
+     "system:number of tags",
+     "system:number of words",
+     "system:rating",
+     "system:similar files",
+     "system:tag (advanced)",
+     "system:tag as number",
+     "system:time",
+     "system:urls"
+    ],
+    "rows_drawn": [
+     [
+      "system:everything (30)"
+     ],
+     [
+      "system:inbox (14)"
+     ],
+     [
+      "system:archive (16)"
+     ],
+     [
+      "system:dimensions"
+     ],
+     [
+      "system:duration"
+     ],
+     [
+      "system:file properties"
+     ],
+     [
+      "system:file relationships"
+     ],
+     [
+      "system:file service"
+     ],
+     [
+      "system:file viewing statistics"
+     ],
+     [
+      "system:filesize"
+     ],
+     [
+      "system:filetype"
+     ],
+     [
+      "system:hash"
+     ],
+     [
+      "system:limit"
+     ],
+     [
+      "system:notes"
+     ],
+     [
+      "system:number of tags"
+     ],
+     [
+      "system:number of words"
+     ],
+     [
+      "system:rating"
+     ],
+     [
+      "system:similar files"
+     ],
+     [
+      "system:tag (advanced)"
+     ],
+     [
+      "system:tag as number"
+     ],
+     [
+      "system:time"
+     ],
+     [
+      "system:urls"
+     ]
+    ],
+    "shown": [
+     "blue eyes"
+    ],
+    "tab": 0,
+    "tab_text": "results",
+    "typed_left": ""
+   },
+   "step": [
+    "text",
+    ""
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     0
+    ],
+    "predicates": [
+     "blue eyes"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha old",
+     "parity:tabs root",
+     "parity:tabs unseen"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha old"
+     ],
+     [
+      "parity:tabs root"
+     ],
+     [
+      "parity:tabs unseen"
+     ]
+    ],
+    "shown": [
+     "blue eyes"
+    ],
+    "tab": 1,
+    "tab_text": "favourites",
+    "typed_left": ""
+   },
+   "step": [
+    "tab",
+    "favourites"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     1
+    ],
+    "predicates": [
+     "blue eyes"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha old",
+     "parity:tabs root",
+     "parity:tabs unseen"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha old"
+     ],
+     [
+      "parity:tabs root"
+     ],
+     [
+      "parity:tabs unseen"
+     ]
+    ],
+    "shown": [
+     "blue eyes"
+    ],
+    "tab": 1,
+    "tab_text": "favourites",
+    "typed_left": ""
+   },
+   "step": [
+    "key",
+    "down"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     1
+    ],
+    "predicates": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha old",
+     "parity:tabs root",
+     "parity:tabs unseen"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha old"
+     ],
+     [
+      "parity:tabs root"
+     ],
+     [
+      "parity:tabs unseen"
+     ]
+    ],
+    "shown": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "tab": 1,
+    "tab_text": "favourites",
+    "typed_left": ""
+   },
+   "step": [
+    "key",
+    "return"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     1
+    ],
+    "predicates": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha old",
+     "parity:tabs root",
+     "parity:tabs unseen"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha old"
+     ],
+     [
+      "parity:tabs root"
+     ],
+     [
+      "parity:tabs unseen"
+     ]
+    ],
+    "shown": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "tab": 1,
+    "tab_text": "favourites",
+    "typed_left": ""
+   },
+   "step": [
+    "tab",
+    "favourites"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     2
+    ],
+    "predicates": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha old",
+     "parity:tabs root",
+     "parity:tabs unseen"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha old"
+     ],
+     [
+      "parity:tabs root"
+     ],
+     [
+      "parity:tabs unseen"
+     ]
+    ],
+    "shown": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "tab": 1,
+    "tab_text": "favourites",
+    "typed_left": ""
+   },
+   "step": [
+    "key",
+    "end"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     1
+    ],
+    "predicates": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha old",
+     "parity:tabs root",
+     "parity:tabs unseen"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha old"
+     ],
+     [
+      "parity:tabs root"
+     ],
+     [
+      "parity:tabs unseen"
+     ]
+    ],
+    "shown": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "tab": 1,
+    "tab_text": "favourites",
+    "typed_left": ""
+   },
+   "step": [
+    "key",
+    "up"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "parity:tabs root"
+    ],
+    "highlighted": [
+     1
+    ],
+    "predicates": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha old",
+     "parity:tabs root",
+     "parity:tabs unseen"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha old"
+     ],
+     [
+      "parity:tabs root"
+     ],
+     [
+      "parity:tabs unseen"
+     ]
+    ],
+    "shown": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "tab": 1,
+    "tab_text": "favourites",
+    "typed_left": ""
+   },
+   "step": [
+    "key",
+    "shift return"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "parity:tabs root"
+    ],
+    "highlighted": [
+     0
+    ],
+    "predicates": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha old",
+     "parity:tabs root",
+     "parity:tabs unseen"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha old"
+     ],
+     [
+      "parity:tabs root"
+     ],
+     [
+      "parity:tabs unseen"
+     ]
+    ],
+    "shown": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "tab": 1,
+    "tab_text": "favourites",
+    "typed_left": ""
+   },
+   "step": [
+    "key",
+    "home"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "parity:tabs root"
+    ],
+    "highlighted": [
+     2
+    ],
+    "predicates": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha old",
+     "parity:tabs root",
+     "parity:tabs unseen"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha old"
+     ],
+     [
+      "parity:tabs root"
+     ],
+     [
+      "parity:tabs unseen"
+     ]
+    ],
+    "shown": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "tab": 1,
+    "tab_text": "favourites",
+    "typed_left": ""
+   },
+   "step": [
+    "key",
+    "up"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "parity:tabs root"
+    ],
+    "highlighted": [
+     0
+    ],
+    "predicates": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha old",
+     "parity:tabs root",
+     "parity:tabs unseen"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha old"
+     ],
+     [
+      "parity:tabs root"
+     ],
+     [
+      "parity:tabs unseen"
+     ]
+    ],
+    "shown": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "tab": 1,
+    "tab_text": "favourites",
+    "typed_left": ""
+   },
+   "step": [
+    "key",
+    "down"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "parity:tabs alpha old",
+     "parity:tabs root"
+    ],
+    "highlighted": [
+     0
+    ],
+    "predicates": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "rewind_shown": true,
+    "rows": [
+     "parity:tabs alpha old",
+     "parity:tabs root",
+     "parity:tabs unseen"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha old"
+     ],
+     [
+      "parity:tabs root"
+     ],
+     [
+      "parity:tabs unseen"
+     ]
+    ],
+    "shown": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "tab": 1,
+    "tab_text": "favourites",
+    "typed_left": ""
+   },
+   "step": [
+    "key",
+    "shift return"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "parity:tabs alpha old"
+    ],
+    "highlighted": [
+     0
+    ],
+    "predicates": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha old",
+     "parity:tabs root",
+     "parity:tabs unseen"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha old"
+     ],
+     [
+      "parity:tabs root"
+     ],
+     [
+      "parity:tabs unseen"
+     ]
+    ],
+    "shown": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "tab": 1,
+    "tab_text": "favourites",
+    "typed_left": ""
+   },
+   "step": [
+    "key",
+    "escape"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "parity:tabs alpha old"
+    ],
+    "highlighted": [
+     0
+    ],
+    "predicates": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha",
+     "parity:tabs beta",
+     "parity:tabs deep",
+     "parity:tabs zero"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha"
+     ],
+     [
+      "parity:tabs beta"
+     ],
+     [
+      "parity:tabs deep"
+     ],
+     [
+      "parity:tabs zero"
+     ]
+    ],
+    "shown": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "tab": 2,
+    "tab_text": "children",
+    "typed_left": ""
+   },
+   "step": [
+    "tab",
+    "children"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "parity:tabs alpha old"
+    ],
+    "highlighted": [
+     1
+    ],
+    "predicates": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha",
+     "parity:tabs beta",
+     "parity:tabs deep",
+     "parity:tabs zero"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha"
+     ],
+     [
+      "parity:tabs beta"
+     ],
+     [
+      "parity:tabs deep"
+     ],
+     [
+      "parity:tabs zero"
+     ]
+    ],
+    "shown": [
+     "blue eyes",
+     "parity:tabs root"
+    ],
+    "tab": 2,
+    "tab_text": "children",
+    "typed_left": ""
+   },
+   "step": [
+    "key",
+    "down"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     1
+    ],
+    "predicates": [
+     "blue eyes",
+     "parity:tabs alpha old OR parity:tabs beta",
+     "parity:tabs root"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha",
+     "parity:tabs beta",
+     "parity:tabs deep",
+     "parity:tabs zero"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha"
+     ],
+     [
+      "parity:tabs beta"
+     ],
+     [
+      "parity:tabs deep"
+     ],
+     [
+      "parity:tabs zero"
+     ]
+    ],
+    "shown": [
+     "blue eyes",
+     "parity:tabs alpha old OR parity:tabs beta",
+     "parity:tabs root"
+    ],
+    "tab": 2,
+    "tab_text": "children",
+    "typed_left": ""
+   },
+   "step": [
+    "key",
+    "return"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     1
+    ],
+    "predicates": [
+     "blue eyes",
+     "parity:tabs alpha old OR parity:tabs beta",
+     "parity:tabs root"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha",
+     "parity:tabs beta",
+     "parity:tabs deep",
+     "parity:tabs zero"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha"
+     ],
+     [
+      "parity:tabs beta"
+     ],
+     [
+      "parity:tabs deep"
+     ],
+     [
+      "parity:tabs zero"
+     ]
+    ],
+    "shown": [
+     "blue eyes",
+     "parity:tabs alpha old OR parity:tabs beta",
+     "parity:tabs root"
+    ],
+    "tab": 2,
+    "tab_text": "children",
+    "typed_left": ""
+   },
+   "step": [
+    "tab",
+    "children"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     3
+    ],
+    "predicates": [
+     "blue eyes",
+     "parity:tabs alpha old OR parity:tabs beta",
+     "parity:tabs root"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha",
+     "parity:tabs beta",
+     "parity:tabs deep",
+     "parity:tabs zero"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha"
+     ],
+     [
+      "parity:tabs beta"
+     ],
+     [
+      "parity:tabs deep"
+     ],
+     [
+      "parity:tabs zero"
+     ]
+    ],
+    "shown": [
+     "blue eyes",
+     "parity:tabs alpha old OR parity:tabs beta",
+     "parity:tabs root"
+    ],
+    "tab": 2,
+    "tab_text": "children",
+    "typed_left": ""
+   },
+   "step": [
+    "key",
+    "page down"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "parity:tabs zero"
+    ],
+    "highlighted": [
+     3
+    ],
+    "predicates": [
+     "blue eyes",
+     "parity:tabs alpha old OR parity:tabs beta",
+     "parity:tabs root"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha",
+     "parity:tabs beta",
+     "parity:tabs deep",
+     "parity:tabs zero"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha"
+     ],
+     [
+      "parity:tabs beta"
+     ],
+     [
+      "parity:tabs deep"
+     ],
+     [
+      "parity:tabs zero"
+     ]
+    ],
+    "shown": [
+     "blue eyes",
+     "parity:tabs alpha old OR parity:tabs beta",
+     "parity:tabs root"
+    ],
+    "tab": 2,
+    "tab_text": "children",
+    "typed_left": ""
+   },
+   "step": [
+    "key",
+    "shift return"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     3
+    ],
+    "predicates": [
+     "blue eyes",
+     "parity:tabs alpha old OR parity:tabs beta",
+     "parity:tabs root",
+     "parity:tabs zero"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha",
+     "parity:tabs beta",
+     "parity:tabs deep",
+     "parity:tabs zero"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha"
+     ],
+     [
+      "parity:tabs beta"
+     ],
+     [
+      "parity:tabs deep"
+     ],
+     [
+      "parity:tabs zero"
+     ]
+    ],
+    "shown": [
+     "blue eyes",
+     "parity:tabs alpha old OR parity:tabs beta",
+     "parity:tabs root",
+     "parity:tabs zero"
+    ],
+    "tab": 2,
+    "tab_text": "children",
+    "typed_left": ""
+   },
+   "step": [
+    "key",
+    "return"
+   ]
+  },
+  {
+   "dialogs": [],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "parity:tabs zero"
+    ],
+    "highlighted": [
+     3
+    ],
+    "predicates": [
+     "blue eyes",
+     "parity:tabs alpha old OR parity:tabs beta",
+     "parity:tabs root",
+     "parity:tabs zero"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha",
+     "parity:tabs beta",
+     "parity:tabs deep",
+     "parity:tabs zero"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha"
+     ],
+     [
+      "parity:tabs beta"
+     ],
+     [
+      "parity:tabs deep"
+     ],
+     [
+      "parity:tabs zero"
+     ]
+    ],
+    "shown": [
+     "blue eyes",
+     "parity:tabs alpha old OR parity:tabs beta",
+     "parity:tabs root",
+     "parity:tabs zero"
+    ],
+    "tab": 2,
+    "tab_text": "children",
+    "typed_left": ""
+   },
+   "step": [
+    "key",
+    "shift return"
+   ]
+  },
+  {
+   "dialogs": [
+    "parse advanced predicate string"
+   ],
+   "messages": [],
+   "previews": [],
+   "state": {
+    "cancel_shown": true,
+    "construction": [
+     "parity:tabs zero"
+    ],
+    "highlighted": [
+     3
+    ],
+    "predicates": [
+     "blue eyes",
+     "parity:tabs alpha old OR parity:tabs beta",
+     "parity:tabs root",
+     "parity:tabs zero"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha",
+     "parity:tabs beta",
+     "parity:tabs deep",
+     "parity:tabs zero"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha"
+     ],
+     [
+      "parity:tabs beta"
+     ],
+     [
+      "parity:tabs deep"
+     ],
+     [
+      "parity:tabs zero"
+     ]
+    ],
+    "shown": [
+     "blue eyes",
+     "parity:tabs alpha old OR parity:tabs beta",
+     "parity:tabs root",
+     "parity:tabs zero"
+    ],
+    "tab": 2,
+    "tab_text": "children",
+    "typed_left": ""
+   },
+   "step": [
+    "advanced",
+    null
+   ]
+  },
+  {
+   "dialogs": [
+    "parse advanced predicate string"
+   ],
+   "messages": [],
+   "previews": [
+    "parity:tabs alpha OR parity:tabs beta"
+   ],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     3
+    ],
+    "predicates": [
+     "blue eyes",
+     "parity:tabs alpha OR parity:tabs beta OR parity:tabs zero",
+     "parity:tabs alpha old OR parity:tabs beta",
+     "parity:tabs root",
+     "parity:tabs zero"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha",
+     "parity:tabs beta",
+     "parity:tabs deep",
+     "parity:tabs zero"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha"
+     ],
+     [
+      "parity:tabs beta"
+     ],
+     [
+      "parity:tabs deep"
+     ],
+     [
+      "parity:tabs zero"
+     ]
+    ],
+    "shown": [
+     "blue eyes",
+     "parity:tabs alpha old OR parity:tabs beta",
+     "parity:tabs alpha OR parity:tabs beta OR parity:tabs zero",
+     "parity:tabs root",
+     "parity:tabs zero"
+    ],
+    "tab": 2,
+    "tab_text": "children",
+    "typed_left": ""
+   },
+   "step": [
+    "advanced",
+    "parity:tabs alpha || parity:tabs beta"
+   ]
+  },
+  {
+   "dialogs": [
+    "parse advanced predicate string"
+   ],
+   "messages": [],
+   "previews": [
+    "-character:samus aran OR series:metroid\n-character:samus aran OR parity:tabs beta"
+   ],
+   "state": {
+    "cancel_shown": false,
+    "construction": null,
+    "highlighted": [
+     3
+    ],
+    "predicates": [
+     "-character:samus aran OR parity:tabs beta",
+     "-character:samus aran OR series:metroid",
+     "blue eyes",
+     "parity:tabs alpha OR parity:tabs beta OR parity:tabs zero",
+     "parity:tabs alpha old OR parity:tabs beta",
+     "parity:tabs root",
+     "parity:tabs zero"
+    ],
+    "rewind_shown": false,
+    "rows": [
+     "parity:tabs alpha",
+     "parity:tabs beta",
+     "parity:tabs deep",
+     "parity:tabs zero"
+    ],
+    "rows_drawn": [
+     [
+      "parity:tabs alpha"
+     ],
+     [
+      "parity:tabs beta"
+     ],
+     [
+      "parity:tabs deep"
+     ],
+     [
+      "parity:tabs zero"
+     ]
+    ],
+    "shown": [
+     "-character:samus aran OR series:metroid",
+     "-character:samus aran OR parity:tabs beta",
+     "blue eyes",
+     "parity:tabs alpha old OR parity:tabs beta",
+     "parity:tabs alpha OR parity:tabs beta OR parity:tabs zero",
+     "parity:tabs root",
+     "parity:tabs zero"
+    ],
+    "tab": 2,
+    "tab_text": "children",
+    "typed_left": ""
+   },
+   "step": [
+    "advanced",
+    "( series:metroid && parity:tabs beta ) || -character:samus aran"
+   ]
+  }
+ ]
+}

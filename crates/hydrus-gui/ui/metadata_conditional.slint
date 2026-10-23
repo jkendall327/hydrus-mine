@@ -1,0 +1,126 @@
+// The search inside the "test A or B using search terms" comparator's editor
+// (the reference's `EditMetadataConditionalPanel`): a search box with paste
+// and empty-search buttons, the OR construction's buttons, the results, and
+// the predicates it has made (a double-click removes one). The workings are
+// hydrus-gui-model's `metadata_conditional`, bound in
+// `src/auto_resolution_rules_window.rs`.
+
+import { LineEdit, ScrollView } from "std-widgets.slint";
+import { Btn, Theme } from "@hydrus_ui_core";
+
+export component ConditionalSearch inherits VerticalLayout {
+    in-out property <string> typed;
+    // each result as drawn, its lines apart by "\n"
+    in property <[string]> suggestions;
+    in property <int> highlighted: -1;
+    in property <[string]> predicates;
+    in property <bool> or-active;
+    in property <bool> or-rewind-visible;
+    in property <bool> enabled: true;
+    callback edited();
+    // a key in the box: -1 up, 1 down, 2 home, 3 end, 4 page up, 5 page down
+    callback moved(int);
+    // a result chosen (-1: the highlighted one, Return), shift held
+    callback chosen(int, bool);
+    callback removed(int);
+    callback paste();
+    callback empty();
+    // 1 rewind, 2 cancel, 3 OR
+    callback or-action(int);
+    callback escape() -> bool;
+    // (raised to put the focus in the box)
+    in property <int> focus-ticket;
+    changed focus-ticket => { input.focus(); }
+    spacing: 4px;
+    Text {
+        text: "metadata conditional";
+        font-weight: 700;
+        color: Theme.text;
+    }
+    FocusScope {
+        height: input.preferred-height;
+        capture-key-pressed(event) => {
+            if !root.enabled { return reject; }
+            if event.text == Key.Return { root.chosen(-1, event.modifiers.shift); return accept; }
+            if event.text == Key.Escape && root.escape() { return accept; }
+            if event.text == Key.UpArrow { root.moved(-1); return accept; }
+            if event.text == Key.DownArrow { root.moved(1); return accept; }
+            if event.text == Key.Home { root.moved(2); return accept; }
+            if event.text == Key.End { root.moved(3); return accept; }
+            if event.text == Key.PageUp { root.moved(4); return accept; }
+            if event.text == Key.PageDown { root.moved(5); return accept; }
+            reject
+        }
+        HorizontalLayout {
+            spacing: 4px;
+            input := LineEdit {
+                horizontal-stretch: 1;
+                placeholder-text: "search";
+                text <=> root.typed;
+                enabled: root.enabled;
+                edited => { root.edited(); }
+            }
+            Btn { text: "paste"; enabled: root.enabled; clicked => { root.paste(); } }
+            Btn { text: "empty search"; enabled: root.enabled; clicked => { root.empty(); } }
+        }
+    }
+    HorizontalLayout {
+        spacing: 4px;
+        alignment: start;
+        Btn { text: "OR"; enabled: root.enabled; clicked => { root.or-action(3); } }
+        if root.or-active: Btn { text: "cancel OR"; enabled: root.enabled; clicked => { root.or-action(2); } }
+        if root.or-rewind-visible: Btn { text: "↶"; enabled: root.enabled; clicked => { root.or-action(1); } }
+    }
+    ScrollView {
+        min-height: 3 * 22px;
+        vertical-stretch: 1;
+        VerticalLayout {
+            alignment: start;
+            for suggestion[i] in root.suggestions: Rectangle {
+                background: root.highlighted == i ? Theme.highlight : transparent;
+                VerticalLayout {
+                    padding-left: 4px;
+                    Text {
+                        min-height: 22px;
+                        text: suggestion;
+                        vertical-alignment: center;
+                        color: root.highlighted == i ? Theme.highlight-text : Theme.text;
+                    }
+                }
+                TouchArea { enabled: root.enabled; clicked => { root.chosen(i, false); } }
+            }
+        }
+    }
+    Rectangle {
+        border-width: 1px;
+        border-color: Theme.border;
+        background: Theme.panel;
+        min-height: 3 * 22px + 6px;
+        vertical-stretch: 1;
+        ScrollView {
+            x: 3px;
+            y: 3px;
+            width: parent.width - 6px;
+            height: parent.height - 6px;
+            VerticalLayout {
+                alignment: start;
+                for predicate[i] in root.predicates: Rectangle {
+                    height: 22px;
+                    background: remove-touch.has-hover ? Theme.hover : transparent;
+                    Text {
+                        x: 4px;
+                        width: parent.width - 8px;
+                        vertical-alignment: center;
+                        text: predicate;
+                        overflow: elide;
+                        color: Theme.text;
+                    }
+                    remove-touch := TouchArea {
+                        enabled: root.enabled;
+                        double-clicked => { root.removed(i); }
+                    }
+                }
+            }
+        }
+    }
+}

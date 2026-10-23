@@ -233,8 +233,7 @@ impl Control {
         };
         window.set_status_app_busy(app_text.into());
         window.set_status_app_busy_tip(app_tip.into());
-        // (the reference's job name has no counterpart here, so no tooltip)
-        window.set_status_db(store.db_activity().into());
+        publish_db(window, store);
     }
     /// Read the cores' times from `stat` (the text of a `/proc/stat`)
     /// instead of the system's, so tests can say how busy each core was.
@@ -300,6 +299,11 @@ impl Control {
             self.retire();
             return Ok(());
         };
+        if store.db_activity() == "db locked" {
+            // (paused, as for a backup: every read would wait until it ends)
+            publish_db(&window, &store);
+            return Ok(());
+        }
         self.publish_idle(&window, &store, now_ms);
         for worker in [Worker::Trash, Worker::Deferred] {
             let slot = &self.0.pending[index(worker)];
@@ -391,4 +395,12 @@ impl Control {
         }
         Ok(())
     }
+}
+
+/// The status bar's database field and its tooltip.
+fn publish_db(window: &MainWindow, store: &Store) {
+    let (text, tip) =
+        hydrus_gui_model::status::db_field(store.db_activity(), store.db_current_job().as_deref());
+    window.set_status_db(text.into());
+    window.set_status_db_tip(tip.into());
 }
