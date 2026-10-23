@@ -64,6 +64,7 @@ mod import_options;
 mod import_options_panel;
 mod importer_list_menu;
 mod info_lines;
+mod large_store;
 mod list_drag;
 mod login_script_controls;
 mod login_workflows;
