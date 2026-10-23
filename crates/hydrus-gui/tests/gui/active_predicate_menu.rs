@@ -190,10 +190,71 @@ fn the_active_lists_whole_menu_and_its_inherited_entries_act_as_the_references_d
                 .unwrap_or_default()
         )
     };
+    // a tag's stored count in all files, and setting it wrong, to see which
+    // tags "regenerate tag display" repairs
+    let snapshot = store.snapshot();
+    let my_tags_id = snapshot.services.by_key(&my_tags).unwrap().id;
+    let all_files = snapshot
+        .services
+        .of_type(hydrus_core::ServiceType::CombinedFile)
+        .next()
+        .unwrap()
+        .id;
+    let tag_id = |tag: &str| {
+        let tag = hydrus_core::Tag::new(tag).unwrap();
+        store
+            .read(move |conn| hydrus_store::master::tag_id(conn, &tag))
+            .unwrap()
+            .unwrap()
+    };
+    let count = |tag: &str| {
+        let id = tag_id(tag);
+        store
+            .read(move |conn| hydrus_store::counts::count(conn, my_tags_id, all_files, id, false))
+            .unwrap()
+            .current
+    };
+    let corrupt = |tag: &str| {
+        let id = tag_id(tag);
+        store
+            .write(move |ctx| {
+                let tables = hydrus_store::schema::MappingTables::new(my_tags_id);
+                for table in [tables.counts, tables.display_counts] {
+                    ctx.conn().execute(
+                        &format!("UPDATE {table} SET current=77 WHERE tag_id=?1 AND domain_id=?2"),
+                        rusqlite::params![id, all_files],
+                    )?;
+                }
+                Ok(())
+            })
+            .unwrap();
+        assert_eq!(count(tag), 77, "{tag} not corrupted");
+    };
     for trigger in fixture["triggers"].as_array().unwrap() {
         let name = trigger["case"].as_str().unwrap();
         let path = trigger["path"].as_array().unwrap();
         copies.borrow_mut().clear();
+        // (the tags the reference's job is given, with their real counts,
+        // and a tag unrelated to them; the job also rebuilds their siblings
+        // and parents, as the reference's does)
+        let regenerated: Vec<(String, u64)> = trigger["writes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .flat_map(|write| write["tags"].as_array().unwrap().iter())
+            .map(|tag| {
+                let tag = tag.as_str().unwrap().to_owned();
+                let real = count(&tag);
+                (tag, real)
+            })
+            .collect();
+        let untouched = "series:metroid";
+        if !regenerated.is_empty() {
+            corrupt(untouched);
+            for (tag, _) in &regenerated {
+                corrupt(tag);
+            }
+        }
         open(name);
         choose(&ui, path);
         let what = format!("{name} {path:?}");
@@ -220,6 +281,14 @@ fn the_active_lists_whole_menu_and_its_inherited_entries_act_as_the_references_d
             asked
         };
         differ("questions", questions);
+        // the job ran on the recorded tags (their counts repaired), and on
+        // no other
+        if !regenerated.is_empty() {
+            for (tag, real) in &regenerated {
+                assert_eq!(count(tag), *real, "{what}: {tag} not regenerated");
+            }
+            assert_eq!(count(untouched), 77, "{what}: {untouched} regenerated");
+        }
         let dialog = bound
             .tag_menu_relationships
             .borrow()

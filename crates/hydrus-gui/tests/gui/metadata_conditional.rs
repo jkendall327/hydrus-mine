@@ -94,33 +94,40 @@ fn highlighted(window: &ComparatorWindow) -> Json {
 /// stands"): the reference's `ResultsFetch` lists nothing for typed system
 /// text while no OR is being built, and nothing for typed tags while one is;
 /// hydrus-rs lists a system predicate that can be tested on one file, and
-/// searches tags, either way. (the typed text, whether an OR is being built,
-/// the rows hydrus-rs lists, its highlighted row)
-const OURS: &[(&str, bool, &[&[&str]], i64)] = &[
-    ("system:inbox", false, &[&["system:inbox"]], 0),
-    ("system:width > 100", false, &[&["system:width > 100"]], 0),
-    (
-        "system:filetype is image",
-        false,
-        &[&["system:filetype is image"]],
-        0,
-    ),
-    ("system:archive", false, &[&["system:archive"]], 0),
-    ("system:has audio", false, &[&["system:has audio"]], 0),
-    ("system:height < 50", false, &[&["system:height < 50"]], 0),
-    (
-        "blue",
-        true,
-        &[&["OR:", "    system:inbox"], &["blue eyes (11-19)"]],
-        1,
-    ),
+/// searches tags, either way. Typed system text the reference listed nothing
+/// for, which hydrus-rs lists as itself.
+const SYSTEM_LISTED: &[&str] = &[
+    "system:inbox",
+    "system:width > 100",
+    "system:filetype is image",
+    "system:archive",
+    "system:has audio",
+    "system:height < 50",
 ];
 
-/// [`OURS`]' listing for `text`, if it is one of them.
-fn ours(text: &str, or_active: bool) -> Option<(Json, Json)> {
-    OURS.iter()
-        .find(|(typed, or, _, _)| *typed == text && *or == or_active)
-        .map(|(_, _, rows, at)| (json!(rows), json!([at])))
+/// What hydrus-rs lists, and highlights, where the reference's listing for
+/// `step` differs on purpose: a system predicate as itself; tags, while an
+/// OR is being built, after the OR (the OR's rows from this step's
+/// recording, the tags' from the recording of the same text with no OR).
+fn ours(steps: &[Json], step: &Json, or_active: bool) -> Option<(Json, Json)> {
+    let text = step["step"][1].as_str()?;
+    if !or_active && SYSTEM_LISTED.contains(&text) {
+        return Some((json!([[text]]), json!([0])));
+    }
+    if or_active && !text.starts_with("system:") && !text.is_empty() {
+        let tags = steps.iter().find(|other| {
+            other["step"][1] == step["step"][1]
+                && other["listed"]["rows_drawn"]
+                    .as_array()
+                    .is_some_and(|rows| !rows.is_empty() && rows[0][0] != "OR:")
+        })?["listed"]["rows_drawn"]
+            .as_array()?
+            .clone();
+        let mut rows = step["listed"]["rows_drawn"].as_array()?.clone();
+        rows.extend(tags);
+        return Some((json!(rows), json!([1])));
+    }
+    None
 }
 
 // leaf: audit-media-comparator-conditional
@@ -160,7 +167,8 @@ fn the_metadata_conditional_editor_searches_as_the_references_does() {
     };
     // our listing for text a deliberate difference left in the box
     let mut left: Option<(String, Json, Json)> = None;
-    for step in fixture["steps"].as_array().unwrap() {
+    let steps = fixture["steps"].as_array().unwrap();
+    for step in steps {
         let what = &step["step"];
         let listed = &step["listed"];
         match what[0].as_str().unwrap() {
@@ -172,16 +180,39 @@ fn the_metadata_conditional_editor_searches_as_the_references_does() {
                 c.invoke_search_edited();
                 // (the list as it is when Return is pressed)
                 left = None;
-                if let Some((rows, at)) = ours(text, or_active) {
-                    // a deliberate difference: what hydrus-rs lists, then
-                    // what the reference's Return did (nothing with nothing
-                    // listed; with only its OR listed, it entered the OR)
+                if let Some((rows, at)) = ours(steps, step, or_active) {
+                    // a deliberate difference: what hydrus-rs lists
                     differ(what, "our listed rows", rows_drawn(&c), &rows);
                     differ(what, "our listed highlight", highlighted(&c), &at);
                     if or_active {
+                        // (the reference's Return, with only its OR listed,
+                        // entered the OR: so does choosing our OR row)
                         c.invoke_search_chosen(0, kind == "shift type");
+                    } else if kind == "shift type" {
+                        // Shift+Return starts an OR with the predicate (the
+                        // reference's did nothing); it is then cancelled and
+                        // the text typed again, to go on from the reference's
+                        // state
+                        press(&c, Key::Return, true);
+                        differ(
+                            what,
+                            "our OR started",
+                            rows_drawn(&c)[0].clone(),
+                            &json!(["OR:", format!("    {text}")]),
+                        );
+                        differ(
+                            what,
+                            "our OR shown",
+                            json!(c.get_search_or_active()),
+                            &json!(true),
+                        );
+                        c.invoke_search_or_action(2);
+                        c.set_search_typed(text.into());
+                        c.invoke_search_edited();
+                        left = Some((text.to_owned(), rows, at));
                     } else {
-                        // (the text stays, and so does our listing for it)
+                        // (the reference's Return did nothing: the text
+                        // stays, and so does our listing for it)
                         left = Some((text.to_owned(), rows, at));
                     }
                 } else {
@@ -239,7 +270,8 @@ fn the_metadata_conditional_editor_searches_as_the_references_does() {
                             .iter()
                             .map(|row| vec![row.text.to_string()])
                             .collect();
-                        if let Some((ours, _)) = ours(text, false) {
+                        if SYSTEM_LISTED.contains(&text) {
+                            let ours = json!([[text]]);
                             // (a deliberate difference, as above: the
                             // reference's Return did nothing)
                             differ(what, "OR editor our rows", json!(rows), &ours);

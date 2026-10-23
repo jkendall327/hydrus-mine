@@ -240,8 +240,9 @@ search.
   one selected, as the reference's list does (the same recording). The whole
   right-click menu is the reference's, inherited tag-list entries included
   (`oracle/record_active_predicate_menu.py`); "select files with" does
-  nothing there, as in the reference, and regenerate tag display is checked
-  by its question only (the store job it starts is the shared one). Per-predicate
+  nothing there, as in the reference, and regenerate tag display is
+  checked by its question and by the counts it repairs. Single system editors
+  keep their existing per-panel OK/star topology. Per-predicate
   pages open in native list order; Qt iterates its selected-term set. A page
   transition cancels the child rather than retaining a modal editor behind a
   switched page. The list's own keys are Return and Delete; arrow keys do not
