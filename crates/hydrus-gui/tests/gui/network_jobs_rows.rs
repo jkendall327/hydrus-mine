@@ -39,6 +39,7 @@ fn every_request_is_a_row_with_its_typed_wait_speed_bytes_and_contexts() {
         WaitReason::ServerBandwidth,
         WaitReason::Downloading,
         WaitReason::Login,
+        WaitReason::Slot,
     ];
     let jobs: Vec<NetworkJob> = waits
         .iter()
@@ -113,11 +114,14 @@ fn every_request_is_a_row_with_its_typed_wait_speed_bytes_and_contexts() {
             "{wait:?}"
         );
     }
-    // (every wait is its own phase)
-    let mut labels: Vec<_> = waits.iter().map(|w| w.label()).collect();
-    labels.sort_unstable();
-    labels.dedup();
-    assert_eq!(labels.len(), waits.len());
+    // (every wait is listed at one of the reference engine's five positions)
+    let phases: Vec<&str> = recorded["job_phases"]
+        .as_object()
+        .unwrap()
+        .values()
+        .map(|v| v.as_str().unwrap())
+        .collect();
+    assert!(waits.iter().all(|w| phases.contains(&w.label())));
     // the selected job's detail: its contexts and whether it obeys bandwidth
     for i in [0, 1, 4] {
         let url = format!("https://site{i}.example/file");
@@ -140,12 +144,13 @@ fn every_request_is_a_row_with_its_typed_wait_speed_bytes_and_contexts() {
     }
 }
 
+// leaf: audit-network-jobs-waits
 #[test]
 fn rows_for_the_waits_the_reference_names_read_as_its_jobs_panel_reads() {
     // `oracle/fixtures/network_data.json` "job_rows": the real jobs panel on
     // jobs at each of its five positions, one at 2 KB/s with 2 KB of 4 KB
-    // read. The native engine's waits for bandwidth, login and running are
-    // those positions; its other waits are its own (DIFFERENCES.md).
+    // read. (Which native wait is at which position is replayed against
+    // the reference engine in network_job_positions.rs.)
     let recorded = hydrus_testkit::fixture_json("network_data.json");
     let _headless = headless::init();
     let slots = windows::Slots::default();
@@ -153,8 +158,10 @@ fn rows_for_the_waits_the_reference_names_read_as_its_jobs_panel_reads() {
     let store = Store::open(dir.path()).unwrap();
     let now = TimestampMs::now().millis() / 1000;
     let mapped = [
+        (0, WaitReason::Headers),
         (1, WaitReason::Bandwidth),
         (2, WaitReason::Login),
+        (3, WaitReason::Slot),
         (4, WaitReason::Downloading),
     ];
     let jobs: Vec<NetworkJob> = mapped

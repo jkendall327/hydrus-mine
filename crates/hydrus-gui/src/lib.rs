@@ -120,6 +120,7 @@ mod manage_urls_window;
 mod menu_bar;
 mod menu_choice_wheel;
 pub mod merge_options_window;
+pub mod metadata_conditional_search;
 mod metadata_file_jobs;
 pub mod mpv;
 pub mod network_header_approval;
@@ -486,6 +487,8 @@ pub struct Bound {
     _predicate_editor_owner: Rc<predicate_editor_window::Owner>,
     pub search_or: search_or_window::Slot,
     _autocomplete_tabs: Rc<slint::Timer>,
+    /// The siblings or parents editor the main window's tag menus open.
+    pub tag_menu_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
     /// Files dropped on the main window: the "review files to import"
     /// window with them (they join its list if it is open).
     pub drop_files: Rc<dyn Fn(Vec<String>)>,
@@ -1264,7 +1267,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
-    active_predicates::bind(
+    let active_menu = active_predicates::bind(
         window,
         &predicate_editor,
         &search_or,
@@ -1491,7 +1494,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             });
         }
     });
-    let autocomplete_tabs = autocomplete_tabs::bind(window, page.clone(), shown.clone());
+    let (autocomplete_tabs, tag_menu) =
+        autocomplete_tabs::bind(window, page.clone(), shown.clone());
+    active_menu.replace(Some(tag_menu.clone()));
     window.on_autocomplete_tab_chosen({
         let page = page.clone();
         let shown = shown.clone();
@@ -5626,6 +5631,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         locations,
         favourites: favourite_dialogs,
         _autocomplete_tabs: autocomplete_tabs,
+        tag_menu_relationships: tag_menu.relationships.clone(),
         predicate_editor,
         _predicate_editor_owner: predicate_editor_owner,
         search_or,

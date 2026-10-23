@@ -192,10 +192,10 @@
     "Reference reusable metadata-conditional predicate panel, nested search widgets and autocomplete are not available here."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Window test drives target B and two predicate lines, an invalid line, apply, persist, reopen; the summary is only prefix-checked ('B will match: '), and recorded summaries are replayed in the model test. Native uses a text-lines box instead of the reference's metadata-conditional panel with search widgets (documented as absent), so the editor the leaf names is not tested against the reference. Tests: crates/hydrus-gui/tests/gui/duplicates_lane_page.rs:1083 a_metadata_conditional_comparators_target_and_predicate_lines_are_persisted; crates/hydrus-gui-model/tests/model/auto_resolution_rules.rs"
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (W6-1)",
+    "note": "gui/metadata_conditional.rs the_metadata_conditional_editor_searches_as_the_references_does drives the real comparator editor (rules list > add > 'test A or B using search terms') and replays every step of oracle/record_metadata_conditional_editor.py, the reference's real EditPairComparatorOneFileMetadataConditionalPanel: the A/B/either choice and the summary after each step; text typed and Return or Shift+Return pressed as real key events (tags, a negated tag, wildcards, a namespace, system predicates with and without an OR being built, text with no result); the list as drawn and its highlight before each Return, the OR being built drawn as 'OR:' over its terms; double-click removal; paste of lines with a bad one, and of limit and filesize, which stay listed but are dropped from what the editor gives back and from its summary, as the reference's SetFileSearchContext drops them; empty search; Escape; the empty box's ten rows chosen by keys, those that need a value opening the real predicate editor (its title and fixed-predicate buttons compared, then cancelled, OK on a panel, or a fixed predicate's button); and the OR button's editor, cancelled or given typed terms. It then applies, checks the stored predicates against the reference's GetValue and reopens the editor. Where the reference's ResultsFetch falls through (typed system text listing nothing with no OR being built, typed tags listing nothing while one is), hydrus-rs lists the testable system predicate and searches tags, and the test asserts its own listing on those recorded steps, that Shift+Return there starts an OR with the predicate, and that Return enters a typed system predicate (DECISIONS.md, 'where the reference has a bug, ours stands', applied by the coordinator 2026-10-23; DIFFERENCES.md). The OR editor's tabs selector still offers favourites/children (not recorded)."
    }
   },
   {
@@ -4501,10 +4501,10 @@
     "Native rule UI uses detached apply/cancel rather than Qt modal editors."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "Claude session (#97 phase 2, w4-r5)",
-    "note": "Stale in the triage note: the recorded 'rules' (cancelled and accepted drafts), 'clipboard' and 'messages' ARE read by gui/network_job_control.rs, the 'waiting' menu's labels by model/network_job_control.rs, and 'auto_at_five'/'auto_after_five'/'obeys_after_override' by hydrus-net's engine test. Still typed: the window-to-engine commands the four retry/scrub/override entries send (the expected JobActions), and the recorded 'retry' flags (what the reference's job reports after those four actions) are not replayed because hydrus-net's runtime does not keep the reference's per-job wake-time flags to compare with."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (#276 W6-3)",
+    "note": "The cog's four job entries are now driven on a live engine job through the page's download control (tests/gui/network_job_retry_flags.rs the_cog_s_retry_scrub_and_token_entries_clear_a_live_job_s_waits_as_the_reference_s_do): one gallery job on example.com (via a loopback proxy) waits on the token a first page took, then finds the proxy not listening (a connection error wait of a whole 15-second period), then a 509 (serverside bandwidth wait, 60 s and more), then a held request with its domain at the error limit; each wait is ended by its entry in under 8 seconds, well before it would end by itself (review of PR #277); each entry is offered while its wait lasts, clicked in the window, reaches the engine through store IPC, and the job's flags afterwards equal actions.retry of oracle/fixtures/network_job_control.json ([False, False, True, True]), all four together at the end. The engine now keeps the reference's per-job connection-error and serverside-bandwidth wake times (JobControl.waiting_on_*), which the cog and the jobs menu read. The menu's labels, rules submenu, clipboard, messages, accepted/cancelled rule drafts and five-second policy were already replayed (network_job_control.rs, model/network_job_control.rs, hydrus-net engine tests). Not covered: nothing the leaf names; the reference has no debug entry."
    }
   },
   {
@@ -4957,10 +4957,10 @@
     "URLs/locations launch externally; more than ten require the reference confirmation."
    ],
    "recheck": {
-    "date": "2026-10-14",
+    "date": "2026-10-23",
     "class": "likely-good",
-    "by": "claude, #97 phase 2 (w4-r2)",
-    "note": "oracle/record_file_log_selected.py records the reference's 'open URLs' and 'open files' on the recorded selections: what the browser was given, the 'open this many?' question for more than ten with its words, and the answers. file_log_actions.rs opening_selected_sources_launches_what_the_reference_opened replays every case through the real window and its menu (URL launches and the question text equal the recording; answering no opens nothing). The paths half is a documented difference, not matched: the reference's OpenFileLocations is given the files to select in the file manager, native opens each file's parent folder (twice for two files in one folder; DIFFERENCES.md, The file log window). The test compares native against that parent-folder behaviour, so the leaf's URL and confirmation parts are the ones proved against the reference. Accepted as a permanent difference (owner, 2026-10-14, DECISIONS.md): the rest matches the recording."
+    "by": "Claude session (#276 W6-3)",
+    "note": "oracle/record_file_log_selected.py records the reference's 'open URLs' and 'open files' on the recorded selections: what the browser was given, the 'open this many?' question for more than ten with its words, and the answers. file_log_actions.rs opening_selected_sources_launches_what_the_reference_opened replays every case through the real window and its menu (URL launches and the question text equal the recording; answering no opens nothing). The paths half is a documented difference, not matched: the reference's OpenFileLocations is given the files to select in the file manager, native opens each file's parent folder (twice for two files in one folder; DIFFERENCES.md, The file log window). The test compares native against that parent-folder behaviour, so the leaf's URL and confirmation parts are the ones proved against the reference. Accepted as a permanent difference (owner, 2026-10-14, DECISIONS.md): the rest matches the recording. W6-3 2026-10-23: re-read; the URL launches and the many-URL question are replayed from file_log_selected.json through the real window and menu, and the paths half is the owner's permanent difference (each file's folder opened rather than the files selected). The class stays likely-good, as DECISIONS.md (2026-10-14) sets for leaves with a permanent difference; nothing else is left to record."
    }
   },
   {
@@ -5381,10 +5381,10 @@
     "Rows reflect all engine requests; selected detail reports contexts and bandwidth obedience."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Recorded rows (network_data.json, the real jobs panel) now compared through the real window: the position words for bandwidth, login and running are the reference's ('waiting for bandwidth', 'waiting for login', 'running'; native's labels were different, fixed), the speed column is titled 'current speed' as recorded (was 'speed'), and the speed/progress cells match for 2 KB/s with 2 KB of 4 KB. The reference's positions 'waiting for validation' and 'waiting for free work slot' have no native wait, and native's other eight waits are an extension with nothing to record; those and the selected-job contexts are still checked only against native values. Tests: crates/hydrus-gui/tests/gui/network_jobs_rows.rs every_request_is_a_row_with_its_typed_wait_speed_bytes_and_contexts (tagged); rows_for_the_waits_the_reference_names_read_as_its_jobs_panel_reads (untagged: three of the reference's five positions) W5-12 2026-10-14: the selected job's contexts are now compared with the reference's menu (network_jobs_panel.json); the two reference positions without a native wait remain, so the class is unchanged."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (#276 W6-3)",
+    "note": "Positions are now replayed for real engine jobs: oracle/record_network_job_waits.py holds real jobs in the reference's running engine (custom header pending, traffic paused, bandwidth used up, running, a second job on a one-slot domain, a gallery token taken, domain errors, just woke, a refused connection) and records GetJobsSnapshot's position and status; tests/gui/network_job_positions.rs real_jobs_are_listed_at_the_reference_engine_s_position_for_their_wait drives hydrus-net's engine into each wait against loopback servers and reads the jobs window's position column (all nine equal the recording) and, where hydrus-rs words the status as the reference does (paused, domain slot, domain errors, woke), the status. Native waits now map onto the reference's five positions (WaitReason::position); a new Slot wait replaces Engine for slot waits, and a domain-slot wait says 'waiting for other jobs on this domain to finish'. Speed and progress cells (network_data.json) and every position word are compared in network_jobs_rows.rs; the selected job's contexts against network_jobs_panel.json (network_jobs_panel.rs). Differences in DIFFERENCES.md: the engine's gate order (wake and domain errors are checked before bandwidth), and header approval waits for the Client API rather than a popup (status differs, position the same)."
    }
   },
   {
@@ -6855,10 +6855,10 @@
     "Bounds use the mode saved when opening the dialog; changing advanced mode takes effect after Apply and reopening, as Qt constructs its controls."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "weak",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "The quiet-server half agrees with the recording (a stall with the option at 1 ends in a stream timeout after at least six seconds, as the reference's job did: 6.01 s) in network_consumers::a_server_that_goes_quiet_is_given_the_timeout_the_option_says (untagged). The connect half (the option itself) is not driven: it needs an address that never answers, which the sandbox cannot give."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (#276 W6-3)",
+    "note": "Both halves are now driven through File > options > connection and the real engine. Connect: oracle/record_network_connect_timeout.py records the reference's job against a loopback listener whose accept queue is full (a connect that never opens) at timeouts 1 and 3 (1.01 s and 3.02 s, ConnectionException 'Could not connect!', one attempt allowed); options_system_consumers.rs a_connection_that_never_opens_is_given_up_after_the_timeout_the_option_says sets each value in the options window, fetches the same kind of listener, and checks the error text equals the recording's, the time is at least the timeout, and the 1-second run ends before the 3-second one would (so the option, not the default ten, is read). Read: a_server_that_goes_quiet_is_given_the_timeout_the_option_says (a stall with the option at 1 ends in a stream timeout after at least six seconds, as the reference's job did: network_job_options.json timeout, 6.01 s). The option's bounds and clamping are replayed against oracle/fixtures/options_ranges.json in the model test tests/model/options_dialog.rs; the GUI tests check the advanced-mode row's bounds (1..2592000) as typed values."
    }
   },
   {
@@ -7052,10 +7052,10 @@
     "Assessment covers this editable control and shared Apply/Cancel, not every control on its containing reference page or every background consumer."
    ],
    "recheck": {
-    "date": "2026-10-14",
-    "class": "source-restated",
-    "by": "Claude session (#97 phase 2, w4-r1b)",
-    "note": "Drives the options row and the gallery page: new query is highlighted only when set. Expected behaviour is a typed literal from the Python source; the reference's second site (PendSubscriptionGapDownloader, sidebar line 1297) is not covered. Tests: crates/hydrus-gui/tests/gui/options_system_consumers.rs:720 new_queries_and_watchers_are_highlighted_only_when_the_options_say Re-read 2026-10-14 (#97 phase 2, w4-r1b): left source-restated. A recording is possible (record_downloader_lists.py already drives the real sidebar's _PendQueries and reads _highlighted_gallery_import; it would need the option on and off) but the reference's second site, PendSubscriptionGapDownloader, has no native counterpart because the subscription gap downloader is not ported, so the leaf could not be called whole."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (#276 W6-3)",
+    "note": "Both reference sites are replayed against oracle/fixtures/highlight_new_query.json (record_highlight_new_query.py: the real _PendQueries and CreateNewSubscriptionGapDownloader, option on and off, two entries each): tests/gui/highlight_new_query.rs a_new_query_is_highlighted_at_both_of_the_reference_s_sites_only_when_the_option_says sets the option in File > options > downloading, enters two queries on a new gallery page, then clicks the 'sub gap downloader test' popup's button twice (the reference's own way to reach the gap downloader), and compares page name, queries with file limits and the highlighted query's index after each step. The note's 'not ported' for the gap downloader was stale (page.rs pend_gap_downloader). The older options_system_consumers.rs test still covers the watcher option's independence. The reference also reaches the gap downloader from a subscription's gap notice (a popup button); hydrus-rs's subscriptions run in the daemon, so that notice is text only (DIFFERENCES.md); the site itself, CreateNewSubscriptionGapDownloader's page and pend, is the same one the debug popup's button drives."
    }
   },
   {
@@ -8101,10 +8101,10 @@
     "Multiple/deleted domain selection and overwrite questions are inline in the owner."
    ],
    "recheck": {
-    "date": "2026-10-14",
-    "class": "weak",
-    "by": "Claude session (W5-10)",
-    "note": "Adds gui/favourites.rs tests replaying fixtures/favourite_editor_buttons.json (paste, star menu loading search/sync/sort/collect, empty search) and favourite_editor_tabs_or.json (shift+Return OR construction, rewind, cancel, escape, favourites and children tabs, the OR button, recorded after the reference's list caught up), through the real editor. Untagged: counts and context in suggestions, keyboard-highlight Return in the tabs and the advanced OR dialog from the editor are not recorded."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (W6-1)",
+    "note": "Three tests through the real favourite editor, each against a recording of the reference's EditFavouriteSearchPanel: gui/favourites.rs the_editors_rows_keys_and_advanced_or_act_as_the_references_do (oracle/record_favourite_editor_rows.py: every result row as drawn, counts included, for typed tags, a sibling, a wildcard, a system predicate and empty text; the favourites and children tabs driven by real key events in the box, Down/Up wrapping round, End, Home, Page Down, Return and Shift+Return; the advanced OR button's dialog cancelled or given a string, merging into an OR being built), the_editors_tabs_and_or_construction_act_as_the_references_do (favourite_editor_tabs_or.json: clicks in the tabs, OR construction, rewind, cancel, escape, the OR button) and gui/favourite_search_editor.rs favourite_domain_sort_collect_and_autocomplete_widgets_reach_saved_searches (favourite_search_editor.json: a blank system predicate's editor opened from the results and its value added). The tracker note 'cog, explicit OR construction, favourite predicates and fetch/children tabs remain absent' is stale: the reference has no cog, and the rest is ported."
    }
   },
   {
@@ -8218,10 +8218,10 @@
     "Multiple/deleted domain selection and overwrite questions are inline in the owner."
    ],
    "recheck": {
-    "date": "2026-10-14",
-    "class": "weak",
-    "by": "Claude session (W5-10)",
-    "note": "gui/favourites.rs typed_predicates_and_double_clicks_edit_the_search_as_the_references_editor_does opens the real favourite editor and replays 18 steps of oracle/fixtures/favourite_predicates.json (the reference's real EditFavouriteSearchPanel with typed text, QTest Return and double-clicks, recorded after its result list has caught up and finished loading). Per step it compares the list's first result, the highlight, the predicates as drawn (order included), the text left and any message; this covers tags, repeats, case, negation, wildcards (the wildcard first), namespace wildcards, extra spaces, system:limit/everything, 'system:' text that is no predicate, and removals. Untagged: Return before the reference's list has caught up (it enters the text as typed) is not covered, counts/context in the results are not compared, and the leaf's tracker state is still partial pending a review of the added tabs, OR construction and icon buttons (see audit-options-favourite-edit-autocomplete)."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (W6-1)",
+    "note": "gui/favourites.rs typed_predicates_and_double_clicks_edit_the_search_as_the_references_editor_does opens the real favourite editor and replays all 18 steps of oracle/fixtures/favourite_predicates.json (the reference's real EditFavouriteSearchPanel, typed text and QTest Return after its result list has caught up, and double-clicks): per step the first result, the highlight, the predicates as drawn in order, the text left and any message; and the_editors_rows_keys_and_advanced_or_act_as_the_references_do compares the result rows as drawn, counts included (favourite_editor_rows.json). The reference's window where Return is pressed before its threaded list catches up (it then enters the text as typed) has no counterpart: hydrus-rs's list is never behind the text, a recorded difference in DIFFERENCES.md (coordinator's decision, 2026-10-23, the owner told)."
    }
   },
   {
@@ -19756,10 +19756,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI tests drive the real active list, editor window, invert and copy/open menus against recordings, but DIFFERENCES.md itself says active editing remains Partial (embedded OR in mixed edit, sibling/parent editors, favourite tags, Qt selection of edited terms missing), so the leaf is not fully covered. Tracker notes (\"no native action/editor path\", \"does not open a populated editor\") are stale. Tests: crates/hydrus-gui/tests/gui/active_predicates.rs:93,190,912 (+ mixed/or tests); oracle/fixtures/active_predicate_edit.json, active_predicate_routes.json"
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (W6-1)",
+    "note": "Five tests through the real search page and its active list: gui/active_predicates.rs (existing: populated editors, invert, OR, copy/open against active_predicate_edit/mixed/or/routes.json), gui/active_predicate_menu.rs (new: the whole right-click menu for eight selections compared with oracle/record_active_predicate_menu.py, the reference's real ListBoxTagsActiveSearchPredicates menu after its sibling/parent lookup, and its inherited entries chosen through the shared tag menu: favourites and most-used add/remove with their questions, sibling/parent copy and the siblings/parents editors, regenerate tag display's question and its job (the recorded tags' corrupted counts repaired, an unrelated tag's left), select's no-op) and gui/active_predicate_selection.rs (new: oracle/record_active_predicate_selection.py, twelve edits and entries through the real dialog: the rows selected afterwards, the dialog's title and invertible buttons, and a mixed edit's OR edited in the OR editor with typed and removed terms, applied or cancelled). Recorded differences (DIFFERENCES.md): the mixed edit's OR is edited in the OR editor opened from its row, where the reference embeds the autocomplete; the list has no arrow-key navigation (not named by the leaf)."
    }
   },
   {
@@ -20758,10 +20758,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "Claude session (#97 phase 2, w4-r4b)",
-    "note": "Left source-restated after a closer look. Idle and CPU busy are replayed against cpu_busy.json (cpu_busy.rs). The application-busy thresholds, ten-second look and tooltip are checked by status_app_busy.rs with values typed from HydrusThreading.GetThreadPoolBusyStatus (no recording of them; the count is hydrus-rs's jobs, DIFFERENCES.md). The database field shows 'db writing'/'db reading' but not the reference's 'db committing'/'db locked', and has no 'current db job: <name>' tooltip (HydrusDB._current_status / ClientGUI._RefreshStatusBarDB), so the leaf cannot be sound until those are added; not done here because a new tooltip is a .slint change and the UI crate build is at the container's memory limit."
+    "date": "2026-10-23",
+    "class": "likely-good",
+    "by": "Claude session (#276 W6-3)",
+    "note": "Every field is now replayed from a recording through the real main window's status bar poll. Database: oracle/record_status_db.py holds the reference's database thread in a read, a write, a commit and PauseAndDisconnect and reads the real _RefreshStatusBarDB cell; tests/gui/status_db.rs the_database_field_says_what_the_database_does_and_its_job_as_the_reference_does holds hydrus-rs's store the same way (a read, a write, its batch's commit held by a test hook, Store::pause) and compares field and tooltip: '', 'db reading', 'db writing', 'db committing' (with the write's job still named), 'db locked' (tooltip the text) and '' after. hydrus-rs's store now tracks committing, paused and the running jobs' names; the poll no longer blocks on a read while the store is paused. Job names: the reference's are database actions ('read status_test'); hydrus-rs's jobs are closures, named 'read'/'write' plus the function they are written in (hydrus-rs's own names), so the states and the tooltip's wording replay the recording and the job part does not; the class is likely-good for that (review of PR #277; the naming is with the owner). Application busy: the same recorder stands in for the thread pool's working threads with the clock held and records _RefreshStatusBar's field and tooltip at nine steps; status_app_busy.rs the_application_busy_field_says_how_many_jobs_run_as_the_reference_does replays them with the daemon's job count (DECISIONS.md 2026-10-09: it counts hydrus-rs's jobs). Idle and CPU busy are replayed against cpu_busy.json (cpu_busy.rs)."
    }
   },
   {
@@ -24660,10 +24660,10 @@
     "Fetch controls use an inline URL field instead of the reference prompt. Window-local jobs show progress in their test panel rather than the daemon jobs review."
    ],
    "recheck": {
-    "date": "2026-10-14",
-    "class": "source-restated",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "The page editor's url box now keeps what was typed after a fetch while the context holds the encoded url (fetched_page_examples_use_actual_network_headers_cookies_context_and_child_converter compares the box with test_url_after and the child editor's context url with context.url of oracle/fixtures/parser_fetch_http.json). Texts, requests and cookies now come from the real reference engine against a local server (oracle/record_parser_fetch_http.py, fixtures/parser_fetch_http.json): the page editor's fetch of 'a b' with a referral (request GET /a%20b with the Referer, text, context url and post index 0, other variables kept), its 404 ('fetch failed: 404: missing' + body, the first response's cookie sent), and the generic panel's success and 404 texts; the native tests compare these. Not tagged (the page url box difference no longer applies): the cancel, hold, close-owner and one-attempt behaviours, the blank-url-takes-the-example behaviour and the progress display are still checked against literals or the stubbed-engine fixture (parser_test_data.json), the url box difference is fixed. Tests: crates/hydrus-gui/tests/gui/parser_editors.rs content_test_panel_fetches_raw_data_and_hands_it_to_its_formula, fetched_page_examples_use_actual_network_headers_cookies_context_and_child_converter, page_fetch_error_menu_retains_completed_failure_and_clears_at_next_request"
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (#276 W6-3)",
+    "note": "The behaviours left on literals are now recorded: oracle/record_parser_fetch_controls.py drives the real EditPageParserPanel's _FetchExampleData against a local server (blank url box, /slow headers held, /hold held then cancelled from its NetworkJobControl, /drop, 'invalid', the editor closed mid-fetch). tests/gui/parser_fetch_controls.rs the_page_editor_s_fetch_controls_act_as_the_reference_s_do replays each through the real editor and engine: the box taking the first example with nothing asked, the control's left/right texts, gauge and cancel while held and blank afterwards, 'fetch cancelled' with the url and post index 0, one request for a dropped connection and its 'fetch failed: Could not connect!' with the error menu, the invalid url's message with nothing asked, and the held request left open (not cancelled) two seconds after closing, as the reference's job stays in its engine. Fixed on the way: the native progress line ('status — N bytes'), 'fetch finished', the invalid-url wording, and closing cancelling the request. The texts, requests, cookies and contexts of successful and failed fetches stay compared with parser_fetch_http.json (parser_editors.rs fetched_page_examples_use_actual_network_headers_cookies_context_and_child_converter, also tagged). Differences (DIFFERENCES.md): no cog menu on the editor's control; the invalid-url message is in the editor rather than an error dialog; the fetch runs on a window-local engine, so it is not in the jobs window."
    }
   },
   {
@@ -24761,10 +24761,10 @@
     "Native refuses what the reference stores as nonsense (a domain that is not one, a hydrus service with none to choose) and lower-cases domains; see DIFFERENCES.md."
    ],
    "recheck": {
-    "date": "2026-10-14",
+    "date": "2026-10-23",
     "class": "likely-good",
-    "by": "phase 2 session (recheck w4-r2b)",
-    "note": "Against a recording of the real browser's create new, its edit dialog scripted (oracle/record_session_create.py, fixtures/session_create.json, on a client with no repositories and one with two): the dialog's title, type note, starting domain (example.com), the repositories offered, the sessions made and their rows (including 'hydrus service: <name>', which native listed by key; fixed) and a cancelled dialog are compared in the window. Left because native differs where the reference accepts nonsense: it lower-cases a domain ('Example.com' is kept by the reference), refuses a domain that is not one (the reference makes a session with an empty domain), and refuses a hydrus service with no repository (the reference makes the 'hydrus service default' context); these are now in DIFFERENCES.md and asserted as native behaviour. Tests (the recording-replay test is deliberately untagged): crates/hydrus-gui/tests/gui/network_sessions.rs create_new_opens_and_makes_sessions_as_the_reference_s_browser_does, a_new_session_can_be_a_web_domain_or_a_hydrus_service_as_the_reference_s_editor_offers, a_hydrus_service_session_needs_a_service_to_choose Accepted as a permanent difference (owner, 2026-10-14, DECISIONS.md): the rest matches the recording."
+    "by": "Claude session (#276 W6-3)",
+    "note": "Against a recording of the real browser's create new, its edit dialog scripted (oracle/record_session_create.py, fixtures/session_create.json, on a client with no repositories and one with two): the dialog's title, type note, starting domain (example.com), the repositories offered, the sessions made and their rows (including 'hydrus service: <name>', which native listed by key; fixed) and a cancelled dialog are compared in the window. Left because native differs where the reference accepts nonsense: it lower-cases a domain ('Example.com' is kept by the reference), refuses a domain that is not one (the reference makes a session with an empty domain), and refuses a hydrus service with no repository (the reference makes the 'hydrus service default' context); these are now in DIFFERENCES.md and asserted as native behaviour. Tests (the recording-replay test is deliberately untagged): crates/hydrus-gui/tests/gui/network_sessions.rs create_new_opens_and_makes_sessions_as_the_reference_s_browser_does, a_new_session_can_be_a_web_domain_or_a_hydrus_service_as_the_reference_s_editor_offers, a_hydrus_service_session_needs_a_service_to_choose Accepted as a permanent difference (owner, 2026-10-14, DECISIONS.md): the rest matches the recording. W6-3 2026-10-23: the recording-replay test (create_new_opens_and_makes_sessions_as_the_reference_s_browser_does) is now tagged too, since the three cases where it asserts native behaviour are the owner's accepted differences. The class stays likely-good, as DECISIONS.md (2026-10-14) sets for leaves with a permanent difference; nothing else is left to record."
    }
   },
   {

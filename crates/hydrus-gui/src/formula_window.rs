@@ -333,11 +333,11 @@ pub fn open(
             let progress = Rc::new({
                 let weak = weak.clone();
                 let active = active.clone();
-                move |status: String| {
+                move |line: hydrus_store::live::JobLine| {
                     if active.get()
                         && let Some(w) = weak.upgrade()
                     {
-                        w.set_fetch_status(status.into());
+                        w.set_fetch_status(line.left.into());
                     }
                 }
             });
