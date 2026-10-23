@@ -3498,6 +3498,9 @@ siblings/parents to" opening the siblings or parents editor on the selection),
 open, search, select, favourites (add or remove it from the favourites and
 each service's most used tags, asking before a removal) and maintenance
 (regenerate tag display, asking first). Recorded in `active_predicate_menu.json`.
+An edit selects what it made; a mixed edit with an OR shows the OR as a row
+whose "edit OR…" button opens the OR editor on it. Recorded in
+`active_predicate_selection.json`.
 
 The file-size editor displays `<`, `≈`, `=`, `≠` and `>` as five radio choices,
 with bounded arrow navigation, Space and default Enter acceptance. Its amount

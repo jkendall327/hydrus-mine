@@ -19756,10 +19756,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "weak",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "GUI tests drive the real active list, editor window, invert and copy/open menus against recordings, but DIFFERENCES.md itself says active editing remains Partial (embedded OR in mixed edit, sibling/parent editors, favourite tags, Qt selection of edited terms missing), so the leaf is not fully covered. Tracker notes (\"no native action/editor path\", \"does not open a populated editor\") are stale. Tests: crates/hydrus-gui/tests/gui/active_predicates.rs:93,190,912 (+ mixed/or tests); oracle/fixtures/active_predicate_edit.json, active_predicate_routes.json"
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "Claude session (W6-1)",
+    "note": "Five tests through the real search page and its active list: gui/active_predicates.rs (existing: populated editors, invert, OR, copy/open against active_predicate_edit/mixed/or/routes.json), gui/active_predicate_menu.rs (new: the whole right-click menu for eight selections compared with oracle/record_active_predicate_menu.py, the reference's real ListBoxTagsActiveSearchPredicates menu after its sibling/parent lookup, and its inherited entries chosen through the shared tag menu: favourites and most-used add/remove with their questions, sibling/parent copy and the siblings/parents editors, regenerate tag display's question, select's no-op) and gui/active_predicate_selection.rs (new: oracle/record_active_predicate_selection.py, twelve edits and entries through the real dialog: the rows selected afterwards, the dialog's title and invertible buttons, and a mixed edit's OR edited in the OR editor with typed and removed terms, applied or cancelled). Recorded differences (DIFFERENCES.md): the mixed edit's OR is edited in the OR editor opened from its row, where the reference embeds the autocomplete; regenerate's store job is not compared; the list has no arrow-key navigation (not named by the leaf)."
    }
   },
   {

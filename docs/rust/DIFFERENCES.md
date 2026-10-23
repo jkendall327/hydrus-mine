@@ -225,25 +225,27 @@ search.
   keeps at least one page.** Allowing an empty top-level notebook is a
   refactor of the main window's current-page type (owner, 2026-10-14: its
   own issue, for a later wave), not a slice.
-- **Active predicate editing remains Partial.** Represented system values and
-  simple tags/namespaces/wildcards can now be edited together, with one atomic
-  Apply and separate supplied values for repeated system families. Immutable
-  terms are preserved and invertible terms have flip buttons. Active-list
-  remove/invert/OR merge or dissolve/namespace commands reach the query. Populated
-  OR controls embedded in a mixed edit, inherited sibling/parent editors and
-  their asynchronous relationship information, favourite/most-used tags and
-  maintenance branches remain missing. The edit/invert leaf
-  (`audit-options-search-active-edit`) is tagged for what the recordings
-  cover: the populated editors, invert, OR, and the copy/open commands; the
-  sibling/parent entries the active list inherits from the tag list are
-  tracked with the tag-relationship windows. Inherited copy/open transports now work, including collapsed OR copying
-  and real AND/OR/per-predicate/duplicate-filter pages. Per-predicate pages open
-  in native list order; Qt iterates its selected-term set. Qt’s active-list file
-  selection handler is an inherited no-op, distinct from its media-list handler.
-  Single system editors keep their existing per-panel OK/star topology. Selection
-  is cleared when query terms change, whereas Qt selects newly edited terms. A
-  page transition cancels the child rather than retaining a modal editor behind
-  a switched page. Remaining list keyboard navigation is unchanged.
+- **Active predicate editing** (`audit-options-search-active-edit`):
+  represented system values and simple tags/namespaces/wildcards are edited
+  together, with one atomic Apply and separate supplied values for repeated
+  system families; immutable terms are preserved and invertible terms have
+  flip buttons. An OR among them is a row of the mixed dialog with an "edit
+  OR…" button opening the OR editor on its terms (whose result takes the
+  row's place on Apply), where the reference embeds the OR's autocomplete
+  in the dialog; the dialog is "edit OR predicate" when that OR is its one
+  editable term, as the reference names it
+  (`oracle/record_active_predicate_selection.py`). After an edit the list
+  selects what the edit made and keeps the selected rows that remain; an
+  entered predicate that replaces a selected one it excludes becomes the only
+  one selected, as the reference's list does (the same recording). The whole
+  right-click menu is the reference's, inherited tag-list entries included
+  (`oracle/record_active_predicate_menu.py`); "select files with" does
+  nothing there, as in the reference, and regenerate tag display is checked
+  by its question only (the store job it starts is the shared one). Per-predicate
+  pages open in native list order; Qt iterates its selected-term set. A page
+  transition cancels the child rather than retaining a modal editor behind a
+  switched page. The list's own keys are Return and Delete; arrow keys do not
+  move through it.
 - **Favourite search autocomplete shares the native page's suggestion model**,
   including blank system predicate editors, and has editable file/tag domains,
   current/pending tags, sort and collection controls, and the paste, star
