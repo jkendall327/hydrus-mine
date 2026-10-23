@@ -291,13 +291,39 @@ fn drive(run: &Run<'_>) {
             ui.invoke_select_all();
             draw_all(&windows, &sizes[..1]);
         });
+        // what sorting and collecting must keep: the page's files
+        let files: std::collections::BTreeSet<HashId> =
+            page.borrow().files().iter().copied().collect();
+        let same_files = |what: &str| {
+            let now: std::collections::BTreeSet<HashId> =
+                page.borrow().files().iter().copied().collect();
+            assert!(now == files, "{search}: {what} changed the page's files");
+        };
+        let has_odd = files.iter().any(|f| odd.files.contains(f));
         let sorts = ui.get_sort_names().row_count();
-        for sort in (0..sorts).step_by(run.every) {
+        let filesize = (0..sorts)
+            .find(|&i| ui.get_sort_names().row_data(i).unwrap() == "file: filesize")
+            .expect("a filesize sort");
+        for sort in (0..sorts)
+            .step_by(run.every)
+            .chain(std::iter::once(filesize))
+        {
             let name = ui.get_sort_names().row_data(sort).unwrap();
             step(&format!("{search}: sort {name}"), || {
                 ui.invoke_sort_chosen(i32::try_from(sort).unwrap());
                 settle(&ui, &bound);
                 draw_all(&windows, &sizes[..1]);
+                same_files(&format!("sort {name}"));
+                // (the awkward files' sizes are the page's smallest, 1000
+                // bytes, and largest, u64::MAX / 2: either way one comes
+                // first)
+                if sort == filesize && has_odd {
+                    let first = page.borrow().results()[0];
+                    assert!(
+                        odd.files.contains(&first),
+                        "{search}: {first:?} first by size"
+                    );
+                }
             });
         }
         let collects = ui.get_collect_choices().row_count();
@@ -319,9 +345,16 @@ fn drive(run: &Run<'_>) {
                     draw_all(&windows, &sizes[..1]);
                 },
             );
+            same_files(&format!("collect by {name}"));
             step(&format!("{search}: no longer collected by {name}"), || {
                 ui.invoke_collect_toggled(at, false);
             });
+            same_files(&format!("uncollect by {name}"));
+            assert_eq!(
+                page.borrow().results().len(),
+                files.len(),
+                "{search}: uncollected"
+            );
         }
         // the awkward files in the media viewer, and manage tags on them
         let indices: Vec<usize> = {
@@ -342,10 +375,9 @@ fn drive(run: &Run<'_>) {
                     .viewer
                     .borrow()
                     .as_ref()
-                    .map(slint::ComponentHandle::clone_strong);
-                if let Some(viewer) = viewer {
-                    viewer.invoke_close_requested();
-                }
+                    .map(slint::ComponentHandle::clone_strong)
+                    .expect("the media viewer opens");
+                viewer.invoke_close_requested();
             });
             // (the awkward files all have the same tags)
             if n > 0 {
@@ -359,10 +391,9 @@ fn drive(run: &Run<'_>) {
                     .manage_tags
                     .borrow()
                     .as_ref()
-                    .map(slint::ComponentHandle::clone_strong);
-                if let Some(tags) = tags {
-                    tags.invoke_cancel();
-                }
+                    .map(slint::ComponentHandle::clone_strong)
+                    .expect("manage tags opens");
+                tags.invoke_cancel();
             });
         }
         ui.hide().unwrap();
@@ -443,8 +474,15 @@ fn the_duplicate_filter_draws_awkward_files() {
     let sizes = [(1100, 700, 1.0), (1920, 1080, 2.0), (800, 600, 1.5)];
     for pair in 0..4 {
         step(&format!("duplicate filter: pair {pair}"), || {
+            let (a, b) = hydrus_gui::shown_pair().expect("a pair is shown");
+            assert!(
+                window.get_index_text().contains(&format!(" {}/", pair + 1)),
+                "{}",
+                window.get_index_text()
+            );
             draw_all(&windows, &sizes);
             window.invoke_switch_media();
+            assert_eq!(hydrus_gui::shown_pair(), Some((b, a)));
             draw_all(&windows, &sizes);
             window.invoke_decide("skip".into());
         });
