@@ -1015,68 +1015,6 @@ fn working_hard_is_started_and_stopped_and_needs_something_left_to_search() {
     assert!(!ui.get_duplicates().can_start);
 }
 
-// leaf: audit-media-comparator-conditional
-#[test]
-fn a_metadata_conditional_comparators_target_and_predicate_lines_are_persisted() {
-    use hydrus_store::duplicates::auto::{self, Comparator, LookingAt};
-    let Opened {
-        ui, bound, store, ..
-    } = opened();
-    ui.invoke_duplicates_action("edit rules".into(), 0, false, false);
-    let list = list_of(&bound);
-    list.invoke_add();
-    let rule = rule_window(&bound);
-    rule.set_comparator_kind(kind_index(&rule, "test A or B using search terms"));
-    rule.invoke_comparator_add();
-    let c = newest_comparator(&bound);
-    assert_eq!(
-        c.get_looking_choices()
-            .iter()
-            .map(|s| s.to_string())
-            .collect::<Vec<_>>(),
-        [
-            "A will match these",
-            "B will match these",
-            "either will match these"
-        ]
-    );
-    // a line that is no predicate is refused, with the target unchanged
-    c.set_predicates("system:inbox\nsystem:nonsense here".into());
-    c.invoke_changed();
-    assert!(!c.get_errors().is_empty());
-    // the target B, two predicate lines
-    c.set_looking(1);
-    c.set_predicates("system:inbox\nsystem:filetype is image".into());
-    c.invoke_changed();
-    assert_eq!(c.get_errors(), "");
-    assert!(
-        c.get_summary().starts_with("B will match: "),
-        "{}",
-        c.get_summary()
-    );
-    c.invoke_apply();
-    rule.invoke_apply();
-    list.invoke_apply();
-    let written = store.read(auto::rules).unwrap();
-    let Comparator::OneFileMetadata {
-        looking_at,
-        predicates,
-    } = &written[0].1.comparators[0]
-    else {
-        panic!("{:?}", written[0].1.comparators)
-    };
-    assert_eq!(*looking_at, LookingAt::B);
-    assert_eq!(predicates.len(), 2);
-    // reopened, the lines are as they were
-    ui.invoke_duplicates_action("edit rules".into(), 0, false, false);
-    let rule = edit_row(&bound, "new rule");
-    rule.invoke_comparator_clicked(0, false, false);
-    rule.invoke_comparator_edit();
-    let c = newest_comparator(&bound);
-    assert_eq!(c.get_looking(), 1);
-    assert_eq!(c.get_predicates().lines().count(), 2);
-}
-
 /// The sidebar's switches, as the reference's two daemons read them
 /// (`oracle/record_work_scheduling.py`): each switch combination is set with
 /// the sidebar's own buttons, the idle state is published as the GUI

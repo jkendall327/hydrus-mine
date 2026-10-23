@@ -38,6 +38,10 @@ fn meta(id: u64, now: i64) -> JobControl {
         domain_ok: false,
         tokens_ok: false,
         auto_override: false,
+        // (the recording's job waits on a connection error and on serverside
+        // bandwidth at once)
+        waiting_on_connection_error: true,
+        waiting_on_serverside_bandwidth: true,
         context_waits: Vec::new(),
     }
 }
@@ -95,7 +99,6 @@ fn cog_replays_actual_qt_context_submenu_and_phase_actions() {
                 && *s != "edit bandwidth rules"
                 && *s != job.url
                 && *s != model::AUTO_LABEL
-                && *s != model::SERVER_LABEL
         })
         .collect::<Vec<_>>();
     assert_eq!(
@@ -105,7 +108,8 @@ fn cog_replays_actual_qt_context_submenu_and_phase_actions() {
             .collect::<Vec<_>>(),
         expected
     );
-    job.wait = WaitReason::ServerBandwidth;
+    let mut meta = meta;
+    meta.waiting_on_connection_error = false;
     let menu = model::cog(&review, Some((&job, &meta)), true, now);
     assert!(menu.actions.iter().any(|r| r.label == model::SERVER_LABEL));
     assert!(

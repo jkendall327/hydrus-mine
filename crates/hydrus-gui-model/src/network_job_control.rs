@@ -1,9 +1,7 @@
 //! The reference's per-control cog and retained error state, independent of widgets.
 use crate::network_data::{Review, duration};
 use hydrus_core::network::NetworkContext;
-use hydrus_store::network_runtime::{
-    Command, JobAction, JobControl, NetworkJob, Snapshot, WaitReason,
-};
+use hydrus_store::network_runtime::{Command, JobAction, JobControl, NetworkJob, Snapshot};
 
 pub const AUTO_LABEL: &str = "auto-override bandwidth rules for all jobs here after five seconds";
 pub const CONNECTION_LABEL: &str = "reattempt connection now";
@@ -109,13 +107,13 @@ pub fn cog(
     }
     for (include, label, action) in [
         (
-            job.wait == WaitReason::Connection,
+            meta.waiting_on_connection_error,
             CONNECTION_LABEL,
             JobAction::OverrideConnectionWait,
         ),
         (!meta.domain_ok, DOMAIN_LABEL, JobAction::ScrubDomainErrors),
         (
-            job.wait == WaitReason::ServerBandwidth,
+            meta.waiting_on_serverside_bandwidth,
             SERVER_LABEL,
             JobAction::OverrideServerBandwidthWait,
         ),

@@ -812,6 +812,7 @@ export component MainWindow inherits Window {
     callback active-predicate-activated(bool,bool);
     callback active-predicate-menu-opened(int);
     callback active-predicate-menu-chosen(int);
+    callback active-predicate-menu-requested(int, length, length);
     callback tag-activated(int);
     callback launch-filter();
     // the page chooser: its buttons' labels by number - 1 (as on a number
@@ -1435,6 +1436,7 @@ export component MainWindow inherits Window {
                             activated(ctrl,shift)=>{root.active-predicate-activated(ctrl,shift);}
                             menu-opened(i)=>{root.active-predicate-menu-opened(i);}
                             menu-chosen(id)=>{root.active-predicate-menu-chosen(id);}
+                            menu-requested(i,x,y)=>{root.active-predicate-menu-requested(i,x,y);}
                         }
                     }
                     search-anchor := FocusScope {

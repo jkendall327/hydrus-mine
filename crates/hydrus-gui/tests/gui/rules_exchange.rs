@@ -517,9 +517,9 @@ fn rules_and_comparators_go_to_and_come_from_the_reference_s_pngs_and_json_files
     assert_eq!(rule.get_comparators().row_count(), before + 1);
 }
 
-// A rule written in the editor: its search and its metadata comparator's
-// predicates typed as the recording's lines (the reference parsed the same
-// lines), then OK, export as the reference's. The lines name rating and file
+// A rule written in the editor: its search's lines and its metadata
+// comparator's search entries typed as the recording's lines (the reference
+// parsed the same lines), then OK, export as the reference's. The lines name rating and file
 // services and leave view canvases to the options, as typed predicates do.
 // leaf: audit-media-rules-exchange
 #[test]
@@ -574,8 +574,23 @@ fn a_rule_typed_in_the_editor_exports_as_the_reference_s() {
         .1
         .clone_strong();
     assert_eq!(editor.get_kind(), "search");
-    editor.set_predicates(lines("comparator").into());
-    editor.invoke_changed();
+    // the comparator's search (the reference's metadata conditional search):
+    // what the paste brought taken out, then each line typed and entered
+    while editor.get_search_predicates().row_count() > 0 {
+        editor.invoke_search_removed(0);
+    }
+    let mut not_entered = Vec::new();
+    for line in rec["typed_lines"]["comparator"].as_array().unwrap() {
+        let line = line.as_str().unwrap();
+        let before = editor.get_search_predicates().row_count();
+        editor.set_search_typed(line.into());
+        editor.invoke_search_edited();
+        editor.invoke_search_chosen(0, false);
+        if editor.get_search_predicates().row_count() != before + 1 {
+            not_entered.push(line);
+        }
+    }
+    assert!(not_entered.is_empty(), "not entered: {not_entered:?}");
     editor.invoke_apply();
     assert!(
         opened.bound.auto_resolution.comparators.borrow().is_empty(),
@@ -593,7 +608,14 @@ fn a_rule_typed_in_the_editor_exports_as_the_reference_s() {
     list.invoke_exchange(0);
     assert_eq!(said(), Vec::<Value>::new(), "exported without a problem");
     let text = copied.borrow().get(before).cloned().expect("copied");
-    let (ours, theirs) = (normal(&text), normal(&recorded_text));
+    let (mut ours, mut theirs) = (normal(&text), normal(&recorded_text));
+    // (the comparator's predicates in the order its search keeps them, as
+    // the reference's editor's list does; the recording set them directly)
+    for value in [&mut ours, &mut theirs] {
+        if let Some(predicates) = value[3][5][2][2][0][1][2][1][2][2][3].as_array_mut() {
+            predicates.sort_by_key(ToString::to_string);
+        }
+    }
     assert!(
         ours == theirs,
         "{}",

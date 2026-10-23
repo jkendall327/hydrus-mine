@@ -5,16 +5,15 @@ use hydrus_store::{Store, network::NetworkSettings, settings};
 use slint::{Timer, TimerMode};
 use std::{cell::RefCell, rc::Rc, sync::Arc, time::Duration};
 
+/// A request in flight. Dropping it (its window closed, or a new fetch
+/// started) leaves the request to finish and drops its result, as the
+/// reference's editor leaves its job in the engine; only [`Slot::cancel`]
+/// cancels it.
 struct Running {
     job: Arc<Job>,
     _timer: Timer,
 }
-impl Drop for Running {
-    fn drop(&mut self) {
-        self.job.cancel();
-    }
-}
-/// A window's single request, retained until completion or owner cancellation.
+/// A window's single request, retained until completion or cancellation.
 #[derive(Clone, Default)]
 pub(crate) struct Slot(Rc<RefCell<Option<Running>>>);
 #[derive(Debug)]
@@ -46,7 +45,7 @@ impl Slot {
         &self,
         store: Arc<Store>,
         mut request: Request,
-        progress: Rc<dyn Fn(String)>,
+        progress: Rc<dyn Fn(hydrus_store::live::JobLine)>,
         completed: Rc<dyn Fn(Outcome)>,
     ) {
         self.stop();
@@ -133,8 +132,17 @@ impl Slot {
                         });
                     }
                     Err(crossbeam_channel::TryRecvError::Empty) => {
+                        // (the reference's network job control, `_Update`)
                         let state = job.state();
-                        progress(format!("{} — {} bytes", state.status, state.bytes_read));
+                        progress(hydrus_store::live::network_job_line_with_figures(
+                            &state.status,
+                            state.speed,
+                            Some(state.bytes_read),
+                            state.bytes_total,
+                            state.error,
+                            state.done,
+                            3,
+                        ));
                     }
                 }
             }
