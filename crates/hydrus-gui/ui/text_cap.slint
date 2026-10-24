@@ -1,15 +1,14 @@
-// How wide a single line a text input takes (CappedLineEdit,
-// WriteTagLineEdit). Slint's software renderer casts a selection to 16-bit
-// device pixels and panics past 32767 (DIFFERENCES.md, "Text inputs that take
-// pasted lines"): 8000px is 24000 device pixels at a scale factor of 3,
-// leaving room for where the input sits in the window and how far it is
-// scrolled; at higher scale factors the cap is 24000 device pixels. At the
-// default font that is about 1200 characters of a URL; of the widest glyphs
-// in common fonts (~2.7em, Inter's arrows) about 250 (long_text_selection.rs).
-// (a global knows no scale factor: an input takes the lesser of `width` and
-// `device-pixels` device pixels)
+// How wide a single line a text input lets an edit make it (CappedLineEdit,
+// WriteTagLineEdit). Slint's software renderer casts a text input's
+// selection to 16-bit device pixels and panics past 32767 (DIFFERENCES.md,
+// "Text inputs that take pasted lines"). The cap is in device pixels, as
+// the limit is: 26000, leaving 6767 (26%) for a measurement that differs
+// from what the input draws (the measuring text has the input's font family,
+// size and style; a weight or fallback-font difference moves a line by a few
+// percent) and for the selection's own rounding. At the default font that
+// is about 4000 characters of a URL at a scale factor of 1, 2000 at 2, 1300
+// at 3 (long_text_selection.rs).
 export global TextCap {
-    out property <length> width: 8000px;
-    out property <float> device-pixels: 24000;
+    out property <float> device-pixels: 26000;
     out property <string> notice: "too long to enter here";
 }

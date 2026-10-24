@@ -24,10 +24,14 @@ export component WriteTagLineEdit inherits Rectangle {
     callback accepted(string);
     out property <bool> has-focus: editor.has-focus;
     out property <bool> has-selected-text: editor.anchor-position-byte-offset != editor.cursor-position-byte-offset;
-    // the last edit made the line too wide for the renderer (TextCap) and
-    // was undone, until the next edit that fits
-    out property <bool> refused;
-    property <length> cap: min(TextCap.width, TextCap.device-pixels * 1phx);
+    // the last edit would have grown the line past the cap (TextCap) and was
+    // undone (until the text changes), or the line is over the cap (put
+    // there by the program, or grown past it by a higher scale factor)
+    out property <bool> refused: (root.refusal && root.text == root.refused-text) || root.over;
+    out property <bool> over: editor.preferred-width > root.cap;
+    property <length> cap: TextCap.device-pixels * 1phx;
+    property <bool> refusal;
+    property <string> refused-text;
     property <bool> pasting;
     property <length> scroll-x;
     property <TagTextHistoryState> history;
@@ -62,17 +66,21 @@ export component WriteTagLineEdit inherits Rectangle {
         root.history = TagTextHistory.record(root.history,root.before-edit,root.snapshot(),0,root.typing-group);
         root.before-edit = root.snapshot();
     }
-    // An edit that made the line wider than the cap is undone (nothing is
-    // cut): the text and selection go back to before it, and the input says
-    // it was too long.
+    // An edit that left the line over the cap and longer than it was is
+    // undone (nothing is cut): the text and selection go back to before it,
+    // and the input says it was too long. One that shortens a line over the
+    // cap goes through.
     function refuse-if-too-wide() -> bool {
-        if editor.preferred-width <= root.cap {
-            root.refused = false;
+        // (longer than it was by characters: an edit that shortens a line
+        // takes characters away)
+        if editor.preferred-width <= root.cap || root.text.character-count <= root.before-edit.text.character-count {
+            root.refusal = false;
             return false;
         }
         root.text = root.before-edit.text;
         editor.set-selection-offsets(root.before-edit.anchor,root.before-edit.cursor);
-        root.refused = true;
+        root.refusal = true;
+        root.refused-text = root.text;
         true
     }
     function restore-history() {
@@ -108,7 +116,12 @@ export component WriteTagLineEdit inherits Rectangle {
     accessible-value <=> root.text;
     accessible-enabled: root.enabled;
     accessible-placeholder-text: root.placeholder-text;
-    accessible-action-set-value(value) => { root.text=value; root.edited(value); }
+    accessible-action-set-value(value) => {
+        root.ensure-history();
+        root.before-edit = root.snapshot();
+        root.text = value;
+        if !root.refuse-if-too-wide() { root.edited(value); }
+    }
     accessible-action-set-selection-offsets(anchor,cursor) => { editor.set-selection-offsets(anchor,cursor); }
     if root.text == "": Text {
         x: 6px;
@@ -156,8 +169,10 @@ export component WriteTagLineEdit inherits Rectangle {
                 height: parent.height;
                 vertical-alignment: center;
                 color: Theme.text;
-                selection-background-color: Theme.highlight;
-                selection-foreground-color: Theme.highlight-text;
+                // (no selection rectangle for a line over the cap, which the
+                // renderer cannot draw: its text stays as it is)
+                selection-background-color: root.over ? transparent : Theme.highlight;
+                selection-foreground-color: root.over ? Theme.text : Theme.highlight-text;
                 accessible-role: none;
                 cursor-position-changed(position) => {
                     if !root.pasting && !root.replaying-history && root.text == root.before-edit.text {
@@ -180,7 +195,7 @@ export component WriteTagLineEdit inherits Rectangle {
                     }
                     root.edited(self.text);
                 }
-                accepted => { root.accepted(self.text); }
+                accepted => { root.refusal = false; root.accepted(self.text); }
             }
         }
     }
