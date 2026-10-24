@@ -4860,6 +4860,9 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   on the job's popup after its first status, where the recording cancels the
   reference's job just before it starts (neither has moved a file). The
   client migration's own cancel and error messages are not recorded.
+- The offline-folder granularity job can be paused from its popup, as the
+  reference's (`JobStatus(pausable=True)`); pausing it is not recorded or
+  tested.
 - The list selects one location; it sorts by location only.
 - The rebalance runs from a non-modal popup (the reference's progress is a
   modal dialog), closes the panel once it has started and opens it again when
