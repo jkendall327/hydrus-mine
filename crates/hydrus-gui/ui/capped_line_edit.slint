@@ -1,0 +1,80 @@
+// A LineEdit that refuses a line too wide for the software renderer.
+//
+// Slint 1.18.1's software renderer draws a text input's selection as one
+// rectangle the width of the selected text and casts it to 16-bit device
+// pixels, panicking past 32767 (upstream; DIFFERENCES.md, "Text inputs
+// that take pasted lines"). An edit (typing or a paste) that would make the line
+// wider than `TextCap.width` is undone and the box says so; nothing is cut
+// and sent. For the inputs that take URLs, queries and other pasteable
+// single lines; WriteTagLineEdit applies the same cap.
+//
+// (only std widgets and Slint's Palette here: group files import this
+// directly, so it must not bring a Theme of its own)
+import { LineEdit, Palette } from "std-widgets.slint";
+import { TextCap } from "text_cap.slint";
+
+export component CappedLineEdit {
+    in-out property <string> text <=> edit.text;
+    in property <string> placeholder-text <=> edit.placeholder-text;
+    in property <bool> enabled <=> edit.enabled;
+    in property <bool> read-only <=> edit.read-only;
+    out property <bool> has-focus: edit.has-focus;
+    // the last edit was refused as too long, until the next edit that fits
+    out property <bool> refused;
+    callback edited(string);
+    callback accepted(string);
+    public function select-all() { edit.select-all(); }
+    property <length> cap: min(TextCap.width, TextCap.device-pixels * 1phx);
+    // the text before the edit being made: the last one that fitted
+    property <string> fitting;
+    changed text => {
+        if measure.preferred-width <= root.cap { root.fitting = root.text; }
+    }
+    init => { root.fitting = root.text; }
+    forward-focus: edit;
+    min-width: edit.min-width;
+    min-height: edit.min-height;
+    preferred-width: edit.preferred-width;
+    preferred-height: edit.preferred-height;
+    max-height: edit.max-height;
+    horizontal-stretch: 1;
+    vertical-stretch: 0;
+    measure := Text {
+        visible: false;
+        text: edit.text;
+        font-size: edit.font-size;
+        accessible-role: none;
+    }
+    edit := LineEdit {
+        width: 100%;
+        height: 100%;
+        edited(text) => {
+            if measure.preferred-width > root.cap {
+                self.text = root.fitting;
+                root.refused = true;
+            } else {
+                root.fitting = text;
+                root.refused = false;
+                root.edited(text);
+            }
+        }
+        accepted(text) => { root.accepted(text); }
+    }
+    if root.refused: Rectangle {
+        x: parent.width - self.width - 4px;
+        y: 3px;
+        width: min(parent.width - 8px, notice.preferred-width + 8px);
+        height: parent.height - 6px;
+        background: Palette.background;
+        border-radius: 2px;
+        notice := Text {
+            x: 4px;
+            width: parent.width - 8px;
+            height: parent.height;
+            vertical-alignment: center;
+            overflow: elide;
+            text: TextCap.notice;
+            color: Palette.color-scheme == ColorScheme.dark ? #ff8a94 : #b00020;
+        }
+    }
+}

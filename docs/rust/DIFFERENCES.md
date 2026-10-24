@@ -202,15 +202,30 @@ search.
   finish before the page is shown again, so it is never seen searching.
 - **One client at a time on a store**, as the reference allows one client
   on its database; a second says the store is already open.
-- **Very long lines in text inputs can crash the client.** Slint 1.18.1's
-  software renderer draws a text input's selection as one rectangle the
-  width of the selected text and casts it to 16-bit device pixels, so
-  selecting all of a line wider than 32767 device pixels (a ~4800-character
-  URL pasted into the search box, then Ctrl+A) panics; Qt copes. This is
-  upstream (`fill_rectangle` in i-slint-renderer-software); hydrus-rs has
-  no fix of its own yet. `long_text_selection.rs` reproduces it (ignored
-  until it is fixed). Thumbnail tag banners, which crashed the same way,
-  are fixed: their boxes are bounded (`thumbnail_banner_width.rs`).
+- **Text inputs that take pasted lines refuse one too wide to draw.**
+  Slint 1.18.1's software renderer draws a text input's selection as one
+  rectangle the width of the selected text and casts it to 16-bit device
+  pixels, panicking past 32767: selecting all of a ~4800-character URL
+  pasted into the search box crashed the client (upstream, `fill_rectangle`
+  in i-slint-renderer-software; the report is drafted in PR #280). So an
+  edit, typed or pasted, that would make the line wider than 8000px (24000
+  device pixels at a scale factor of 3; at higher ones, 24000 device pixels)
+  is undone, and the input says "too long to enter here"; nothing is cut,
+  and nothing is sent until the line fits. That is about 1200 characters of
+  a URL, or 250 of the widest glyphs found in common fonts (Inter's arrows,
+  ~2.7em); a cap by characters safe for those would refuse realistic URLs.
+  The reference takes any length. The cap (`ui/text_cap.slint`) is on the
+  search, OR and tag inputs (`WriteTagLineEdit`: the main search box,
+  manage tags and the other tag entry boxes) and the URL and query inputs
+  (`CappedLineEdit`: the URL import, simple downloader, watcher and gallery
+  boxes, manage URLs, the parser editor's fetch, test and referral URLs, the
+  formula editor's fetch URL, the URL class editor's test URL and the debug
+  fetch URL). Other plain `LineEdit`s are not capped and remain exposed, as
+  are lines put into an input by the program rather than typed or pasted.
+  `long_text_selection.rs` checks the refusal, the notice, that a fitting URL
+  is sent whole, and that the widest line taken draws selected at scale 3.
+  Thumbnail tag banners, which crashed the same way, are fixed: their boxes
+  are bounded (`thumbnail_banner_width.rs`).
 
 ## Pages (`hydrus-gui`)
 

@@ -1,3 +1,4 @@
+import { CappedLineEdit } from "capped_line_edit.slint";
 import { Button, LineEdit } from "std-widgets.slint";
 import { Theme } from "@hydrus_ui_core";
 export component DebugFetchWindow inherits Window {
@@ -25,7 +26,7 @@ export component DebugFetchWindow inherits Window {
         VerticalLayout {
             padding: 10px; spacing: 8px;
             Text { text: root.message; wrap: word-wrap; color: Theme.text; }
-            url := LineEdit {
+            url := CappedLineEdit {
                 visible: root.input-mode;
                 height: root.input-mode ? self.preferred-height : 0px;
                 text <=> root.url;

@@ -1,3 +1,4 @@
+import { CappedLineEdit } from "capped_line_edit.slint";
 import { Btn } from "btn.slint";
 // A watcher downloader page's sidebar (the reference's
 // SidebarImporterMultipleWatcher): the "watchers" box with its watchers'
@@ -189,7 +190,7 @@ export component WatcherSidebar inherits VerticalLayout {
             }
             HorizontalLayout {
                 spacing: 4px;
-                input-box := LineEdit {
+                input-box := CappedLineEdit {
                     changed has-focus => { root.input-focus-changed(self.has-focus); }
                     horizontal-stretch: 1;
                     placeholder-text: "watcher url";

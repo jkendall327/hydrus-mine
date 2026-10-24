@@ -1,3 +1,4 @@
+import { CappedLineEdit } from "capped_line_edit.slint";
 import { Btn } from "btn.slint";
 import { WheelMenuChoice, MenuChoiceFrame } from "menu_choice_wheel.slint";
 export { MenuChoicePolicy } from "menu_choice_wheel.slint";
@@ -1257,7 +1258,7 @@ export component MainWindow inherits Window {
                     }
                     HorizontalLayout {
                         spacing: 4px;
-                        url-box := LineEdit {
+                        url-box := CappedLineEdit {
                             changed has-focus => { root.page-input-focused = self.has-focus; }
                             horizontal-stretch: 1;
                             placeholder-text: "any url hydrus recognises, or a raw file url";

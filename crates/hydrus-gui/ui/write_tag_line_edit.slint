@@ -4,6 +4,7 @@
 // Qt also retains raw newlines from normal paste. Permit those for the paste
 // operation, then resume one-line input.
 import { Theme } from "theme.slint";
+import { TextCap } from "text_cap.slint";
 
 export struct TagTextState { text: string, anchor: int, cursor: int }
 export struct TagTextEdit { before: TagTextState, after: TagTextState, kind: int, group: int }
@@ -23,6 +24,10 @@ export component WriteTagLineEdit inherits Rectangle {
     callback accepted(string);
     out property <bool> has-focus: editor.has-focus;
     out property <bool> has-selected-text: editor.anchor-position-byte-offset != editor.cursor-position-byte-offset;
+    // the last edit made the line too wide for the renderer (TextCap) and
+    // was undone, until the next edit that fits
+    out property <bool> refused;
+    property <length> cap: min(TextCap.width, TextCap.device-pixels * 1phx);
     property <bool> pasting;
     property <length> scroll-x;
     property <TagTextHistoryState> history;
@@ -51,8 +56,24 @@ export component WriteTagLineEdit inherits Rectangle {
         root.pasting = true;
         editor.paste();
         root.pasting = false;
+        if root.refuse-if-too-wide() { return; }
+        // (edited only now: a paste too wide is never sent)
+        root.edited(root.text);
         root.history = TagTextHistory.record(root.history,root.before-edit,root.snapshot(),0,root.typing-group);
         root.before-edit = root.snapshot();
+    }
+    // An edit that made the line wider than the cap is undone (nothing is
+    // cut): the text and selection go back to before it, and the input says
+    // it was too long.
+    function refuse-if-too-wide() -> bool {
+        if editor.preferred-width <= root.cap {
+            root.refused = false;
+            return false;
+        }
+        root.text = root.before-edit.text;
+        editor.set-selection-offsets(root.before-edit.anchor,root.before-edit.cursor);
+        root.refused = true;
+        true
     }
     function restore-history() {
         root.replaying-history = true;
@@ -151,7 +172,9 @@ export component WriteTagLineEdit inherits Rectangle {
                     }
                 }
                 edited => {
-                    if !root.pasting && !root.replaying-history {
+                    if root.pasting { return; }
+                    if !root.replaying-history && root.refuse-if-too-wide() { return; }
+                    if !root.replaying-history {
                         root.history=TagTextHistory.record(root.history,root.before-edit,root.snapshot(),root.edit-kind,root.typing-group);
                         root.before-edit=root.snapshot();
                     }
@@ -159,6 +182,22 @@ export component WriteTagLineEdit inherits Rectangle {
                 }
                 accepted => { root.accepted(self.text); }
             }
+        }
+    }
+    if root.refused: Rectangle {
+        x: parent.width - self.width - 4px;
+        y: 4px;
+        width: min(parent.width - 8px, notice.preferred-width + 8px);
+        height: parent.height - 8px;
+        background: Theme.autocomplete-background;
+        notice := Text {
+            x: 4px;
+            width: parent.width - 8px;
+            height: parent.height;
+            vertical-alignment: center;
+            overflow: elide;
+            text: TextCap.notice;
+            color: Theme.error;
         }
     }
 }
