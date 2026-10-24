@@ -657,10 +657,10 @@
     "Reference offline backup-folder migration chooses a directory and rewrites folder granularity. Native locations UI absent."
    ],
    "recheck": {
-    "date": "2026-10-14",
-    "class": "source-restated",
-    "by": "wave 5 session (W5-6)",
-    "note": "As before, plus the mixed folder (granularity 2 files beside a granularity 3 one, a stray file) recorded in oracle/fixtures/granularity_panel.json and replayed through the real window: the 'already granularity 2, mixed' question, declining it, and moving on to the 2-to-3 result with the files' places. The cancel and error messages of the job are still restated from the source (not recorded), so the class is not raised."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "W6-4 session (wave 6, claude/w6-4)",
+    "note": "tests/gui/database_locations_menu.rs the_granularity_window_replays_the_reference_s_steps replays every step of oracle/fixtures/granularity_panel.json (oracle/record_granularity_panel.py, the real ReviewGranularityPanel with its reference job) through the real window: the ready check, picker and scan questions in order and words (unknown, already-the-target and mixed folders, declined and accepted), each folder's files afterwards, and now the two job endings: a job cancelled from its popup (the test presses the popup's cancel button while the worker waits at its first status; the recorder cancels the reference's job just before it starts; neither moves a file) says the reference's 'You cancelled the job...' message, and a job stopped by an errant file 'f3a/b' where the folder must go shows the reference's critical 'Oh no!' with hydrus's own 'Cannot create the directory ... because it already exists as a normal file!' text. Not covered: the job's pause button (paused jobs are not recorded)."
    }
   },
   {
@@ -714,10 +714,10 @@
     "Reference rebalance calculates storage need, asks run duration and runs cancellable move/progress work. Native Database > locations remains disabled."
    ],
    "recheck": {
-    "date": "2026-10-14",
-    "class": "weak",
-    "by": "W5-5 session (wave 5)",
-    "note": "tests/gui/database_locations_menu.rs move_files_now_stops_at_its_run_time_and_moves_what_the_reference_s_job_does replays oracle/fixtures/rebalance_job.json (the reference's job run by the real Rebalance): with the stop time passed (scripted clock, 10 minute choice) nothing moves; otherwise the folders move (254, as recorded) and a second run has nothing to move. Still weak: the 30 minute and 1 hour stop times are not distinguished, the cancel-after-n-moves run is not replayed through the popup, and the popup's content while running is not read (it dismisses itself when done)."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "W6-4 session (wave 6, claude/w6-4)",
+    "note": "tests/gui/database_locations_menu.rs move_files_now_stops_at_its_run_time_and_moves_what_the_reference_s_job_does replays oracle/fixtures/rebalance_job.json (oracle/record_rebalance_job.py: the real MoveMediaFilesPanel makes each job with HydrusTime.GetNow held still, the real client_files_manager.Rebalance runs it) through the real window, run-time question and worker, the clock scripted as recorded: for 10 minutes, 30 minutes, 1 hour and the custom time (its window's default, in minutes, times 60 equals the recorded 7200 s), a job one second past its stop time moves nothing and one at its stop time still moves; the user presses the popup's cancel button as the recorded move (the fourth, or the first) is shown, and it stops after that move; 'run indefinitely' moves the rest (files then thumbnails) and again nothing. Every status the worker shows equals the recording's in order (Moving \"file XX at <default>/fXX\" to \"file XX at <a>/fXX\"., the hex the reference's random pick, written alike; 'done!' last), each read from the popup as it is shown (the runs of up to 5 statuses); the folders at the new location number the recorded moves; and the window opens again after each job, as the reference's DoFileStorageRebalance does (after_the_job). Not covered: the popup showing 'done!' (the job dismisses it at once; the status is compared from the worker)."
    }
   },
   {
@@ -3931,10 +3931,10 @@
     "2026-10-09 (viewer playback follow-up, PR 145): untagged, partial. Covered: ugoira and animated WebP in the viewer against oracle/fixtures/animation_playback.json (the reference's real Animation and AnimationBar on a frozen clock: play through two loops, GotoFrame, SeekDelta paused and playing, the container's frame step, bar press/drag/release, StopForSlideshow; tests/gui/animation.rs); an mp4 and flac files through libmpv in the viewer (scanbar moves, holds when paused, seeks where clicked, volume control shown; tests/gui/scanbar.rs, viewer_audio.rs), run in CI with libmpv installed; the mpv property round trip for volume and mute (tests/gui/mpv.rs). Not covered: stills in the viewer as part of this leaf; GIF, APNG, webm and other codecs through mpv; embedded cover art; volume and mute reaching playing audio; any recorded mpv session of the reference (the video and audio expected times come from the native Scanbar arithmetic). Tag when those are tested. Recorded but not replayed text for text: seek-by-time steps made while playing, GotoFrame entries made while playing, and the status after a scan released while playing (the test checks a seek leaves it playing, a frame step pauses, and a released drag plays on)."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "claude/issue-154-viewer-drop",
-    "note": "Tagged on tests/gui/viewer_playback.rs (stills, GIF/APNG/webm through mpv, embedded cover art, volume and mute) with animation.rs, scanbar.rs and viewer_audio.rs already covering ugoira/WebP, mp4 and flac. Stills compare the viewer's picture with the reference's own render pixels (render.json); bar text and frames come from the reference's metadata (media.json) through the Scanbar arithmetic replayed against the reference's AnimationBar; volume and mute on the playing player replay preview_audio.json's GetCorrectCurrentVolume/Mute cases. Cover art has no recording (the reference's mpv needs a display): it is checked as mpv picking the album art and showing it in place of the thumbnail, as default_mpv.conf's audio-display=embedded-first asks, hence source-restated."
+    "date": "2026-10-24",
+    "class": "sound",
+    "by": "W6-4 session (wave 6, claude/w6-4) ; narrowed by the coordinator after review",
+    "note": "Tagged on tests/gui/viewer_playback.rs (stills, GIF/APNG/webm through mpv, embedded cover art, volume and mute), animation.rs (ugoira, animated WebP), scanbar.rs (mp4) and viewer_audio.rs (flac). Stills compare the viewer's picture with the reference's own render pixels (render.json); bar text and frames come from the reference's metadata (media.json) through the Scanbar arithmetic replayed against the reference's AnimationBar; ugoira/WebP replay animation_playback.json; volume and mute on the playing player replay preview_audio.json. Cover art now replays oracle/fixtures/mpv_cover_art.json (oracle/record_mpv_cover_art.py: a real libmpv player set up by the reference's own MPVWidget.UpdateConfAndCoreOptions with the default mpv.conf and loaded through MPVMediatorPolite.LoadFile, with no video output since the reference's embedded player needs a display): the viewer's player picks the attached picture with the recorded 60x60 size and the recorded tracks (type, attached picture, selected) for a flac and an mp3 with covers, and none for a plain flac. Not compared with the reference: how the viewer draws the cover (in place of the thumbnail, squared between bars: native drawing, checked for itself), and the animation recording's goes made while playing: which frame they land on depends on when they are made (the native player runs on real-time timers where the recording froze the clock), so they are checked as states. A seek leaves it playing, and a released drag plays on. A frame step while playing ends paused, as the recording's goto with play_first and pause_afterwards does, on a frame showing the text the reference shows for that frame paused. The recording's two play_first goes without pause_afterwards are not replayed."
    }
   },
   {
@@ -5229,10 +5229,10 @@
     "Paths from real platform pickers and typed/drop sources join the single review queue."
    ],
    "recheck": {
-    "date": "2026-10-08",
-    "class": "source-restated",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "Real window: typed (quoted) folder path, dropped files (new window then added to the open one), and add files/add folder through a stand-in picker with titles 'Select the files to add.' / 'Select a folder to add.' (reference strings). All expectations are literals; the real platform picker is stubbed and nothing is recorded for these entry points (the reference has no typed-path box, so that part is native-only). Tests: crates/hydrus-gui/tests/gui/import_files.rs:80 files_given_are_reviewed_then_imported; crates/hydrus-gui/tests/gui/import_files.rs:438 files_and_folders_picked_are_reviewed"
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "W6-4 session (wave 6, claude/w6-4)",
+    "note": "tests/gui/import_paths.rs the_pickers_and_drops_give_the_window_the_reference_s_paths replays oracle/fixtures/import_paths.json (oracle/record_import_paths.py: the reference's file > import files window with its FileDialog and PickDirectory replaced by scripted answers, and real QDropEvents handed to the window's and the main window's FileDropTargets): what each picker is asked (title; several existing files, or a folder), the rows [#, path, filetype, size] and progress text after add files, add folder, each cancelled, a drop on the window (the recording's web URL has no winit counterpart; only files are dropped) and a drop on the main window. The main-window drop while the window is open joins its list where the reference opens a second window (DIFFERENCES.md); its rows are compared as following the first's, without the progress text (not recorded for the two lists together). The pickers are a stand-in (set_picker) for the desktop portal, and drops are handed to the windows' drop handlers (deliver_dropped_files, Bound::drop_files), not through winit. The typed-path box is native-only and driven end to end in tests/gui/import_files.rs files_given_are_reviewed_then_imported."
    }
   },
   {
@@ -10543,10 +10543,10 @@
     "Consume the applied idle-only checkbox on the historical autosave timer; active sessions retry after 60 seconds. Reference boot guard and independent user/mouse/API timeouts are driven by input across all native auxiliary/main windows and atomic timestamp-only IPC from every recognized API request before authentication or busy refusal. Rejected and read-only API requests also postpone idle saves."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "claude (issue 94 session)",
-    "note": "session_autosave.rs keyboard_and_mouse_input_outside_our_windows_holds_back_the_idle_only_autosave drives the real Monitor::poll_at with an injected SystemIdle: desktop input 3s ago holds the save back and it retries every 60s; a desktop that can't say counts only our windows; 20 minutes away is idle. tests/system_idle.rs runs the real Platform source against Xvfb (XTEST input resets the screensaver idle time) and a private dbus-daemon serving org.gnome.Mutter.IdleMonitor. The owner chose the platform idle time over the reference's cursor polling (2026-10-08), so there is no recording to compare; the user/mouse timers themselves are those of record_session_autosave.py. The main.rs wiring that installs Platform on the running client is untested (tests inject the source). Wayland without the Mutter monitor: own windows and API only, see DIFFERENCES."
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "W6-4 session (wave 6, claude/w6-4)",
+    "note": "Native-only part (the owner chose the desktop's idle time over the reference's cursor polling, 2026-10-08, so there is no reference behaviour to record for it), now driven end to end: tests/system_idle.rs input_on_the_desktop_holds_back_the_running_client_s_idle_only_autosave binds the main window to a store with the idle-only autosave on, has it watch a real X server (Xvfb) through SessionAutosave::watch_the_desktop, the call main.rs makes as the client opens (with Desktop::from_env), presses a key there through XTEST, and the autosave is held back and retried after the reference's 'auto session save wait loop' delay (60 s, read from oracle/fixtures/session_autosave.json); once the desktop has been left alone past the user idle time the save goes ahead and the last session is in the store. session_autosave.rs keyboard_and_mouse_input_outside_our_windows_holds_back_the_idle_only_autosave covers each idle timeout alone and a desktop that can't say (own windows only); the GNOME idle monitor source is driven against a private dbus-daemon. The reference parts (the idle timers' eligibility, the retry, unchanged-save suppression) replay oracle/fixtures/session_autosave.json in hydrus-gui-model tests/model/session_lifecycle.rs and hydrus-store session_backups. Not driven: main.rs itself (one line calling watch_the_desktop with the process's environment), and a Wayland compositor without the Mutter monitor (no source, see DIFFERENCES)."
    }
   },
   {
@@ -11506,7 +11506,7 @@
    "label": "publish some sub files in five seconds",
    "path": "Help > debug > gui actions",
    "workstream": "help-debug",
-   "state": "missing",
+   "state": "implemented",
    "priority": "low",
    "reference": null,
    "native": null,
@@ -11514,8 +11514,15 @@
     "Truth pass (2026-10-08): missing, small. Sits next to the existing delayed-popup debug actions. Missing: Menu entry, five-second delayed publish of real files, test. Evidence: No entry; the popup job model supports files via set_files (hydrus-gui-model/src/debug_actions.rs).",
     "Reference debug action wires 'publish some sub files in five seconds' to the client diagnostics callback at this AppendMenu entry. The native Help/Command registry exposes no equivalent diagnostics action.",
     "This is absent GUI diagnostics workflow; Rust backend diagnostics may exist through CLI tools.",
-    "Blocked, not out of scope (2026-10-14, owner/coordinator): the reference publishes subscription files to a named page; this needs the daemon's subscriptions to publish to a named page, which hydrus-rs has no way to do yet. Do the leaf when it has."
-   ]
+    "Blocked, not out of scope (2026-10-14, owner/coordinator): the reference publishes subscription files to a named page; this needs the daemon's subscriptions to publish to a named page, which hydrus-rs has no way to do yet. Do the leaf when it has.",
+    "2026-10-23 (W6-4, claude/w6-4): ported and replayed against oracle/fixtures/debug_sub_files.json (record_debug_sub_files.py: the real QAction, real CallLater/pub): tests/gui/debug_sub_files.rs drives the menu with the debug producer's clock held still (nothing at 4.5 s; at 5 s a page 'example sub files' in the current notebook, shown, searching all local media for a locked 'system:hash is in 5 hashes'; again, 'is in 10 hashes' and no new page; the client's own files published to the name join it, 'is in 13 hashes'). When hashes are added to the existing page, the reference shows the random hashes it does not have as files (10 phantom thumbnails after the second run); hydrus-rs pages show only files in the store. Pages::present_files is also the GUI side a subscription's 'publish to page' would use; the daemon does not call it yet. Tagged at the coordinator's direction (2026-10-23), the owner may overrule."
+   ],
+   "recheck": {
+    "date": "2026-10-23",
+    "class": "sound",
+    "by": "W6-4 session (wave 6, claude/w6-4)",
+    "note": "tests/gui/debug_sub_files.rs sub_files_are_published_to_their_named_page_five_seconds_on replays oracle/fixtures/debug_sub_files.json (record_debug_sub_files.py: the reference's real QAction, CallLater and pub) through the real Help menu, the debug producer's clock held still: nothing at 4.5 s; at 5 s the page 'example sub files' in the current notebook, shown, all local media, 'system:hash is in 5 hashes', the page list as recorded; again, 'is in 10 hashes' and no new page; the client's own files published to that name join it ('is in 13 hashes'). The reference also shows the random hashes it does not have as files once the page exists; hydrus-rs pages hold only files in the store, and a Help > debug action is hydrus-rs-shaped (DECISIONS.md 2026-10-14, the report modes), so the files compared are those the client has (DIFFERENCES.md)."
+   }
   },
   {
    "id": "audit-options-help-debug-action-pubsub-report-mode",

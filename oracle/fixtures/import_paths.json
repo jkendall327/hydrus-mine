@@ -1,0 +1,285 @@
+{
+ "steps": [
+  {
+   "step": "file > import files",
+   "given": [],
+   "asked": [],
+   "windows": [
+    {
+     "rows": [],
+     "progress": "waiting for paths to parse."
+    }
+   ]
+  },
+  {
+   "step": "add files",
+   "given": [
+    "<folder>/a.png",
+    "<folder>/b p12.jpg"
+   ],
+   "asked": [
+    [
+     "file dialog",
+     "Select the files to add.",
+     "ExistingFiles"
+    ]
+   ],
+   "windows": [
+    {
+     "rows": [
+      [
+       "1",
+       "<folder>/a.png",
+       "png",
+       "7.89 KB"
+      ],
+      [
+       "2",
+       "<folder>/b p12.jpg",
+       "jpeg",
+       "3.88 KB"
+      ]
+     ],
+     "progress": "2 files parsed."
+    }
+   ]
+  },
+  {
+   "step": "add files, cancelled",
+   "given": [],
+   "asked": [
+    [
+     "file dialog",
+     "Select the files to add.",
+     "ExistingFiles"
+    ]
+   ],
+   "windows": [
+    {
+     "rows": [
+      [
+       "1",
+       "<folder>/a.png",
+       "png",
+       "7.89 KB"
+      ],
+      [
+       "2",
+       "<folder>/b p12.jpg",
+       "jpeg",
+       "3.88 KB"
+      ]
+     ],
+     "progress": "2 files parsed."
+    }
+   ]
+  },
+  {
+   "step": "add folder",
+   "given": [
+    "<folder>/sub"
+   ],
+   "asked": [
+    [
+     "pick directory",
+     "Select a folder to add."
+    ]
+   ],
+   "windows": [
+    {
+     "rows": [
+      [
+       "1",
+       "<folder>/a.png",
+       "png",
+       "7.89 KB"
+      ],
+      [
+       "2",
+       "<folder>/b p12.jpg",
+       "jpeg",
+       "3.88 KB"
+      ],
+      [
+       "3",
+       "<folder>/sub/c.png.txt",
+       "sidecar",
+       "12B"
+      ],
+      [
+       "4",
+       "<folder>/sub/c.png",
+       "png",
+       "10.3 KB"
+      ],
+      [
+       "5",
+       "<folder>/sub/deeper/d.bmp",
+       "bitmap",
+       "75.1 KB"
+      ]
+     ],
+     "progress": "5 files parsed - and looks like 1 txt/json/xml sidecars."
+    }
+   ]
+  },
+  {
+   "step": "add folder, cancelled",
+   "given": [],
+   "asked": [
+    [
+     "pick directory",
+     "Select a folder to add."
+    ]
+   ],
+   "windows": [
+    {
+     "rows": [
+      [
+       "1",
+       "<folder>/a.png",
+       "png",
+       "7.89 KB"
+      ],
+      [
+       "2",
+       "<folder>/b p12.jpg",
+       "jpeg",
+       "3.88 KB"
+      ],
+      [
+       "3",
+       "<folder>/sub/c.png.txt",
+       "sidecar",
+       "12B"
+      ],
+      [
+       "4",
+       "<folder>/sub/c.png",
+       "png",
+       "10.3 KB"
+      ],
+      [
+       "5",
+       "<folder>/sub/deeper/d.bmp",
+       "bitmap",
+       "75.1 KB"
+      ]
+     ],
+     "progress": "5 files parsed - and looks like 1 txt/json/xml sidecars."
+    }
+   ]
+  },
+  {
+   "step": "dropped on the window, with a web URL",
+   "given": [
+    "<folder>/dupe.gif"
+   ],
+   "asked": [],
+   "windows": [
+    {
+     "rows": [
+      [
+       "1",
+       "<folder>/a.png",
+       "png",
+       "7.89 KB"
+      ],
+      [
+       "2",
+       "<folder>/b p12.jpg",
+       "jpeg",
+       "3.88 KB"
+      ],
+      [
+       "3",
+       "<folder>/sub/c.png.txt",
+       "sidecar",
+       "12B"
+      ],
+      [
+       "4",
+       "<folder>/sub/c.png",
+       "png",
+       "10.3 KB"
+      ],
+      [
+       "5",
+       "<folder>/sub/deeper/d.bmp",
+       "bitmap",
+       "75.1 KB"
+      ],
+      [
+       "6",
+       "<folder>/dupe.gif",
+       "static gif",
+       "3.24 KB"
+      ]
+     ],
+     "progress": "6 files parsed - and looks like 1 txt/json/xml sidecars."
+    }
+   ]
+  },
+  {
+   "step": "dropped on the main window",
+   "given": [
+    "<folder>/recent.png"
+   ],
+   "asked": [],
+   "windows": [
+    {
+     "rows": [
+      [
+       "1",
+       "<folder>/a.png",
+       "png",
+       "7.89 KB"
+      ],
+      [
+       "2",
+       "<folder>/b p12.jpg",
+       "jpeg",
+       "3.88 KB"
+      ],
+      [
+       "3",
+       "<folder>/sub/c.png.txt",
+       "sidecar",
+       "12B"
+      ],
+      [
+       "4",
+       "<folder>/sub/c.png",
+       "png",
+       "10.3 KB"
+      ],
+      [
+       "5",
+       "<folder>/sub/deeper/d.bmp",
+       "bitmap",
+       "75.1 KB"
+      ],
+      [
+       "6",
+       "<folder>/dupe.gif",
+       "static gif",
+       "3.24 KB"
+      ]
+     ],
+     "progress": "6 files parsed - and looks like 1 txt/json/xml sidecars."
+    },
+    {
+     "rows": [
+      [
+       "1",
+       "<folder>/recent.png",
+       "png",
+       "10.4 KB"
+      ]
+     ],
+     "progress": "1 files parsed."
+    }
+   ]
+  }
+ ]
+}

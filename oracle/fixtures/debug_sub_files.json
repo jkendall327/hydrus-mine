@@ -1,0 +1,226 @@
+{
+ "menu_path": [
+  "help",
+  "debug",
+  "gui actions",
+  "publish some sub files in five seconds"
+ ],
+ "schedule": [
+  {
+   "at_ms": 0,
+   "delay_seconds": 5
+  },
+  {
+   "at_ms": 0,
+   "delay_seconds": 5
+  }
+ ],
+ "published": [
+  {
+   "at_ms": 5139,
+   "hashes": 5,
+   "page_name": "example sub files"
+  },
+  {
+   "at_ms": 5058,
+   "hashes": 5,
+   "page_name": "example sub files"
+  },
+  {
+   "at_ms": 6534,
+   "hashes": 3,
+   "page_name": "example sub files"
+  }
+ ],
+ "before": {
+  "pages": [
+   {
+    "name": "files",
+    "notebook": null,
+    "index": 0,
+    "is_notebook": false
+   },
+   {
+    "name": "nested",
+    "notebook": null,
+    "index": 1,
+    "is_notebook": true
+   },
+   {
+    "name": "inner",
+    "notebook": "nested",
+    "index": 0,
+    "is_notebook": false
+   }
+  ],
+  "current": "inner",
+  "named": null
+ },
+ "at_four_and_a_half_seconds": {
+  "published": 0,
+  "named": false
+ },
+ "after_first": {
+  "pages": [
+   {
+    "name": "files",
+    "notebook": null,
+    "index": 0,
+    "is_notebook": false
+   },
+   {
+    "name": "nested",
+    "notebook": null,
+    "index": 1,
+    "is_notebook": true
+   },
+   {
+    "name": "inner",
+    "notebook": "nested",
+    "index": 0,
+    "is_notebook": false
+   },
+   {
+    "name": "example sub files",
+    "notebook": "nested",
+    "index": 1,
+    "is_notebook": false
+   }
+  ],
+  "current": "example sub files",
+  "named": {
+   "location": {
+    "current": [
+     "616c6c206c6f63616c206d65646961"
+    ],
+    "deleted": []
+   },
+   "predicates": [
+    "system:hash is in 5 hashes"
+   ],
+   "files": [
+    "16a8378f73434004bf708b2ebfd5ac82697b5991801c99fa595128226d3c5088",
+    "8b0efee014b6ed64723918988c9e61c4b296c85b5a796459b1fe7537b171a9e9",
+    "aeca0557679f6b6870f71add064c6ace34c5ced017fae2ec2740263d5d6d1e67",
+    "cc35e91db24a80c85259b87a622598ba0967157e9ce3ca6b389c6ef666e51568",
+    "f647edecd01da490ca79687429d905d6ab846a4499557590646949e0c89fbfb6"
+   ],
+   "current": true
+  },
+  "named_files": 5
+ },
+ "after_second": {
+  "pages": [
+   {
+    "name": "files",
+    "notebook": null,
+    "index": 0,
+    "is_notebook": false
+   },
+   {
+    "name": "nested",
+    "notebook": null,
+    "index": 1,
+    "is_notebook": true
+   },
+   {
+    "name": "inner",
+    "notebook": "nested",
+    "index": 0,
+    "is_notebook": false
+   },
+   {
+    "name": "example sub files",
+    "notebook": "nested",
+    "index": 1,
+    "is_notebook": false
+   }
+  ],
+  "current": "example sub files",
+  "named": {
+   "location": {
+    "current": [
+     "616c6c206c6f63616c206d65646961"
+    ],
+    "deleted": []
+   },
+   "predicates": [
+    "system:hash is in 10 hashes"
+   ],
+   "files": [
+    "16a8378f73434004bf708b2ebfd5ac82697b5991801c99fa595128226d3c5088",
+    "22d480e67feb5455ddbab58a400aa8a7eef007cd0b6a30d99393ab32e665e70c",
+    "3d12ed9dc40e0e7be39629bedeedac7ab6c83db8cdf01256f08bbb5d98ffe089",
+    "43649dd6684406272c14373d3317c8dc81933cd50a3d3b6573789c833b5d153d",
+    "8b0efee014b6ed64723918988c9e61c4b296c85b5a796459b1fe7537b171a9e9",
+    "aeca0557679f6b6870f71add064c6ace34c5ced017fae2ec2740263d5d6d1e67",
+    "af5c76445684ab4656646ceddff2a61a49d8bfb0df362e801ae3df20c78fd799",
+    "cc35e91db24a80c85259b87a622598ba0967157e9ce3ca6b389c6ef666e51568",
+    "eb58fc53b5a30fbb26ae59b2b18c9667f0628145b6e197c14c79d65bad622200",
+    "f647edecd01da490ca79687429d905d6ab846a4499557590646949e0c89fbfb6"
+   ],
+   "current": true
+  }
+ },
+ "real_files_published": [
+  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+ ],
+ "after_real_files": {
+  "pages": [
+   {
+    "name": "files",
+    "notebook": null,
+    "index": 0,
+    "is_notebook": false
+   },
+   {
+    "name": "nested",
+    "notebook": null,
+    "index": 1,
+    "is_notebook": true
+   },
+   {
+    "name": "inner",
+    "notebook": "nested",
+    "index": 0,
+    "is_notebook": false
+   },
+   {
+    "name": "example sub files",
+    "notebook": "nested",
+    "index": 1,
+    "is_notebook": false
+   }
+  ],
+  "current": "example sub files",
+  "named": {
+   "location": {
+    "current": [
+     "616c6c206c6f63616c206d65646961"
+    ],
+    "deleted": []
+   },
+   "predicates": [
+    "system:hash is in 13 hashes"
+   ],
+   "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "16a8378f73434004bf708b2ebfd5ac82697b5991801c99fa595128226d3c5088",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "22d480e67feb5455ddbab58a400aa8a7eef007cd0b6a30d99393ab32e665e70c",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "3d12ed9dc40e0e7be39629bedeedac7ab6c83db8cdf01256f08bbb5d98ffe089",
+    "43649dd6684406272c14373d3317c8dc81933cd50a3d3b6573789c833b5d153d",
+    "8b0efee014b6ed64723918988c9e61c4b296c85b5a796459b1fe7537b171a9e9",
+    "aeca0557679f6b6870f71add064c6ace34c5ced017fae2ec2740263d5d6d1e67",
+    "af5c76445684ab4656646ceddff2a61a49d8bfb0df362e801ae3df20c78fd799",
+    "cc35e91db24a80c85259b87a622598ba0967157e9ce3ca6b389c6ef666e51568",
+    "eb58fc53b5a30fbb26ae59b2b18c9667f0628145b6e197c14c79d65bad622200",
+    "f647edecd01da490ca79687429d905d6ab846a4499557590646949e0c89fbfb6"
+   ],
+   "current": true
+  }
+ }
+}

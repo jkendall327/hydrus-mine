@@ -885,6 +885,7 @@ fn run_command(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::DebugDelayedNewPage(location) => {
             hooks.debug_long_popup.start_delayed_page(location);
         }
+        Command::DebugDelayedSubFiles => hooks.debug_long_popup.start_delayed_sub_files(),
         Command::ClearViewingStatistics => (hooks.viewing_maintenance)(false),
         Command::CullViewingStatistics => (hooks.viewing_maintenance)(true),
         Command::DatabaseMaintenance(job) => (hooks.database_maintenance)(job),

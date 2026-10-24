@@ -648,11 +648,13 @@ page by file size, which no two files of the fixture share.
   reference's `AnimationBar` in `scanbar.rs`), and loop; and the volume and
   mute a playing player gets follow `preview_audio.json` (the reference's
   `GetCorrectCurrentVolume`/`GetCorrectCurrentMute`) as the viewer opens, as
-  the options change and from its own control. The reference's own mpv was
-  not recorded (its player needs a real display): embedded cover art is
-  checked as mpv choosing the file's album art and showing it in place of the
-  thumbnail (as hydrus's `default_mpv.conf`, `audio-display=embedded-first`,
-  asks), not pixel for pixel. Recorded but not replayed text for text: the
+  the options change and from its own control. For embedded cover art, the
+  reference's mpv set up and loaded by the reference's own code
+  (`oracle/record_mpv_cover_art.py`, with no video output: its embedded player
+  needs a real display) picks the attached picture at its size, and the
+  viewer's player picks the same; how the viewer then draws it (in place of
+  the thumbnail, squared between bars) is not compared with the reference's
+  pixels. Recorded but not replayed text for text: the
   seek-by-time steps made while *playing* (the recording freezes the clock,
   the viewer runs in real time, so the test checks only that a seek leaves it
   playing), the `GotoFrame` entries made while playing (they are the bar drag
@@ -4711,12 +4713,19 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   "isolate existing mpv widgets", "make a parentless text ctrl dialog" and
   "macos anti-flicker test" (Qt widget, stylesheet, mpv widget or macOS
   internals); "review threads" and "show scheduled jobs" (Python threads
-  and scheduler); the pympler memory-use entries; "publish some sub files
-  in five seconds"; profile mode (threads) (there
+  and scheduler); the pympler memory-use entries; profile mode (threads) (there
   is no thread pool of background tasks to time); and the tests, do not
   touch: the ui, client api, server and
   visual duplicates test suites (they drive the Python test harness),
   and both self-sigterms ("induce a program crash" is offered: see Crash log).
+- "publish some sub files in five seconds" publishes its five random hashes
+  to the "example sub files" page as the reference does
+  (`oracle/fixtures/debug_sub_files.json`), but once the page exists the
+  reference shows the hashes it does not have as files (phantom thumbnails:
+  its `AddMediaResults` makes media of unknown hashes), and hydrus-rs pages
+  show only files in the store. The page's `system:hash` takes every hash in
+  both. A Help > debug action is hydrus-rs-shaped (DECISIONS.md 2026-10-14,
+  the report modes), so the phantom thumbnails are not copied.
 - "what is this object?" takes drops anywhere on its window (the reference
   drops on the picture only). A bitmap on the clipboard is read as the
   reference reads it (the first channel of its pixels, then the payload) but
@@ -4846,17 +4855,20 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
 - "manage granularity" runs its progress in an ordinary popup rather than
   a modal dialog, and its questions in button windows.
 - The prefix folder moved first is the first in order, not a random one.
-- The offline-folder granularity scan of a folder holding both layouts is
-  recorded and replayed (`oracle/record_granularity_panel.py`, the mixed
-  folder steps). The cancel and error messages of the jobs are not recorded
-  (the jobs end too quickly to cancel from a test, and an error needs a broken
-  folder), so that leaf stays at source-restated.
+- The offline-folder granularity jobs' cancel and error messages are recorded
+  and replayed (`oracle/record_granularity_panel.py`); the cancel is pressed
+  on the job's popup after its first status, where the recording cancels the
+  reference's job just before it starts (neither has moved a file). The
+  client migration's own cancel and error messages are not recorded.
+- The offline-folder granularity job can be paused from its popup, as the
+  reference's (`JobStatus(pausable=True)`); pausing it is not recorded or
+  tested.
 - The list selects one location; it sorts by location only.
-- The rebalance runs from a non-modal popup, and closes the panel once it has
-  started, as the reference does (the reference's progress is a modal dialog;
-  its stop times (10 minutes to 1 hour) are not observable in tests, so that
-  leaf stays weak). The custom run time is asked in minutes ("set time to run
-  (minutes)"), not hours and minutes.
+- The rebalance runs from a non-modal popup (the reference's progress is a
+  modal dialog), closes the panel once it has started and opens it again when
+  it is done, as the reference does. Its stop is looked at before each move
+  (the reference's job looks at most once a second). The custom run time is
+  asked in minutes ("set time to run (minutes)"), not hours and minutes.
 - Removing the last weighted location: the reference warns that it cannot be
   emptied and then asks to remove it anyway (the warning has no `return`);
   hydrus-rs stops at the warning.

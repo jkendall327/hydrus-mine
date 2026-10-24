@@ -121,6 +121,7 @@ fn kept(entries: &[Value]) -> Vec<Value> {
                         "make a popup in five seconds",
                         "make a QMessageBox",
                         "make some popups",
+                        "publish some sub files in five seconds",
                         "reset multi-column list settings to default",
                         "save 'last session' gui session",
                     ],

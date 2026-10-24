@@ -184,3 +184,137 @@ fn a_desktop_with_neither_says_nothing() {
     std::thread::sleep(Duration::from_millis(1500));
     assert_eq!(platform.idle_ms(), None);
 }
+
+/// The running client's idle-only "last session" autosave, end to end: the
+/// main window bound to a store, watching a real X server's idle time as the
+/// client does as it opens (`watch_the_desktop`). A key pressed on the
+/// desktop, outside any of the client's windows, holds the save back, to be
+/// tried again after the reference's wait (`oracle/fixtures/session_autosave.json`,
+/// its "auto session save wait loop"); once the desktop has been left alone
+/// for longer than the user idle time, the save goes ahead.
+// leaf: audit-options-gui-sessions-sessions-if-last-session-above-only-autosave-during-idle-time
+#[test]
+fn input_on_the_desktop_holds_back_the_running_client_s_idle_only_autosave() {
+    use hydrus_gui::{MainWindow, Pages, bind, headless};
+    use hydrus_store::settings::{self, GuiIdleSettings, GuiSessionSettings};
+    use hydrus_store::{Store, sessions};
+    use x11rb::connection::Connection as _;
+    use x11rb::protocol::xproto::ConnectionExt as _;
+    use x11rb::protocol::xtest::ConnectionExt as _;
+
+    let recorded = hydrus_testkit::fixture_json("session_autosave.json");
+    let wait = recorded["steps"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|s| s["only_idle"] == true && s["idle"] == false)
+        .unwrap()["calls"][0]
+        .clone();
+    assert_eq!(wait["label"], "auto session save wait loop");
+    let wait_ms = wait["delay"].as_i64().unwrap() * 1000;
+
+    let Some((_xvfb, number)) = start(
+        "Xvfb",
+        &[
+            "-displayfd",
+            "1",
+            "-screen",
+            "0",
+            "64x64x8",
+            "-nolisten",
+            "tcp",
+        ],
+    ) else {
+        return;
+    };
+    let display = format!(":{number}");
+
+    let _windows = headless::init();
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    hydrus_store::import::import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    store
+        .write(move |ctx| {
+            settings::set(
+                ctx.conn(),
+                &GuiSessionSettings {
+                    autosave_minutes: 2,
+                    only_during_idle: true,
+                    ..GuiSessionSettings::default()
+                },
+            )?;
+            settings::set(
+                ctx.conn(),
+                &GuiIdleSettings {
+                    enabled: true,
+                    // (two seconds of the desktop left alone is idle)
+                    user_seconds: Some(2),
+                    mouse_seconds: None,
+                    api_seconds: None,
+                    busy_cpu_percent: 50,
+                    busy_cpu_count: None,
+                },
+            )
+        })
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    bound.session_autosave.watch_the_desktop(Desktop {
+        // (no session bus here: only the X server can answer)
+        bus: Some("unix:path=/nonexistent/bus".into()),
+        display: Some(display.clone()),
+        wayland: false,
+    });
+    let autosave = &bound.session_autosave;
+    let saved = || {
+        store
+            .read(|conn| hydrus_store::session_backups::latest(conn, sessions::LAST_SESSION))
+            .unwrap()
+            .is_some()
+    };
+    // booted, and our own windows quiet, since long ago (past the reference's
+    // two minutes after boot that are never idle)
+    autosave.boot_at(0);
+    autosave.user_at(0);
+    autosave.mouse_at(0);
+    let due = autosave.next().unwrap();
+    // (the client's clock runs on from the save's due time, with the desktop's)
+    let started = Instant::now();
+    let clock = |offset: i64| due + offset + i64::try_from(started.elapsed().as_millis()).unwrap();
+    let wait_until = |offset: i64, idle: bool, what: &str| loop {
+        let now = clock(offset);
+        if autosave.idle_at(now) == idle {
+            return now;
+        }
+        assert!(started.elapsed() < Duration::from_secs(30), "{what}");
+        std::thread::sleep(Duration::from_millis(50));
+    };
+    // (the new desktop left alone long enough to be idle first)
+    wait_until(0, true, "the desktop never went idle");
+
+    // a key pressed on the desktop, outside any of our windows
+    let (connection, _) = x11rb::connect(Some(&display)).unwrap();
+    let keycode = connection.setup().min_keycode.max(10);
+    for kind in [2u8, 3u8] {
+        connection
+            .xtest_fake_input(kind, keycode, 0, 0, 0, 0, 0)
+            .unwrap();
+    }
+    connection.get_input_focus().unwrap().reply().unwrap();
+    let now = wait_until(0, false, "the key press never reached the client");
+    assert!(!autosave.poll_at(now).unwrap());
+    assert!(!saved());
+    assert_eq!(autosave.next(), Some(now + wait_ms));
+
+    // the desktop left alone past the user idle time: idle, and saved
+    let now = wait_until(wait_ms, true, "the desktop never went idle again");
+    assert!(autosave.poll_at(now).unwrap());
+    assert!(saved());
+}

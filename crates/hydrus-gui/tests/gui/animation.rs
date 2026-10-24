@@ -289,8 +289,9 @@ fn animations_play_in_the_viewer_with_the_client_s_own_player() {
         // going to frames one after another, paused, as the reference's
         // `GotoFrame` does (to the same frame, the ends, round again): each
         // shows its frame and leaves it paused. (The recorded goes made
-        // while playing are the bar's drag and the frame step, replayed
-        // above and below, and a seek, which leaves it playing.)
+        // while playing land on a frame that depends on when they are made:
+        // the bar's drag, replayed above, and the frame step below, which
+        // is checked as a state against the reference's paused texts)
         for step in case["goto"]
             .as_array()
             .unwrap()
@@ -344,18 +345,38 @@ fn animations_play_in_the_viewer_with_the_client_s_own_player() {
             watch(&viewer, Duration::from_millis(1000)).len() >= 2,
             "{name}: seeking leaves it playing"
         );
+        // (the reference, playing, goes to a frame with `pause_afterwards`
+        // and is left paused at that frame's start: its recorded
+        // `play_first` goto. Which frame a step from a playing animation
+        // lands on depends on when it is pressed, so here: whichever it is,
+        // it is paused there, showing the text the reference shows for that
+        // frame paused)
+        let played_and_paused = case["goto"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|step| {
+                step["play_first"].as_bool().unwrap() && step["pause_afterwards"].as_bool().unwrap()
+            })
+            .expect("the recording goes to a frame while playing, pausing");
+        assert!(
+            played_and_paused["paused"].as_bool().unwrap(),
+            "{name}: the reference's goto while playing pauses"
+        );
+        let paused_texts: HashSet<&str> = case["goto"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|step| step["paused"].as_bool().unwrap())
+            .map(|step| step["text"].as_str().unwrap())
+            .collect();
         viewer.invoke_frame_step(1);
         watch(&viewer, Duration::from_millis(100));
         let shown = viewer.get_scanbar_text().to_string();
         stays(&viewer, &shown, &format!("{name} a frame step pauses"));
         assert!(
-            frames > 1
-                && case["frame_step"]
-                    .as_array()
-                    .unwrap()
-                    .iter()
-                    .all(|s| s["paused"].as_bool().unwrap()),
-            "{name}: the reference's frame step pauses"
+            paused_texts.contains(shown.as_str()),
+            "{name}: {shown:?} is not a frame the reference shows paused: {paused_texts:?}"
         );
         viewer.invoke_toggle_pause();
         assert!(

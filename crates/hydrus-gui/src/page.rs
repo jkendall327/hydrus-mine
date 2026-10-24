@@ -1889,6 +1889,22 @@ impl SearchPage {
         true
     }
 
+    /// Files published to the page (`PresentImportedFilesToPage` on a page
+    /// already open): `files` added as `add_files` adds them, and a search
+    /// locked to its files and following new ones takes every published hash,
+    /// as the reference's lock takes the media its `AddMediaResults` made of
+    /// them.
+    pub fn present(&mut self, hashes: &[hydrus_core::Sha256], files: &[HashId]) {
+        if self.locked
+            && self.lock_syncs.syncs_new
+            && let Some(mut locked) = self.lock_hashes()
+        {
+            locked.extend(hashes.iter().copied());
+            self.set_lock_hashes(locked);
+        }
+        self.add_files(files);
+    }
+
     /// Take files off the page (deleted from its domain, say), as the
     /// reference's pages drop them, out of their collections (one left
     /// empty goes); a locked search lets go of them too, if it follows

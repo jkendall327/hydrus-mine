@@ -19,6 +19,10 @@ const WORDS: [&str; 5] = ["test", "a", "longish", "statictext", "m8"];
 type Clock = Rc<dyn Fn() -> Duration>;
 type Word = Rc<dyn Fn() -> usize>;
 type NewPage = Rc<dyn Fn(hydrus_core::search::context::LocationContext)>;
+/// Files published to the page of a name (`imported_files_to_page`).
+pub type PublishFiles = Rc<dyn Fn(Vec<hydrus_core::Sha256>, &str)>;
+/// The page "publish some sub files in five seconds" publishes to.
+pub const SUB_FILES_PAGE: &str = "example sub files";
 struct PageRequest {
     due: Duration,
     location: hydrus_core::search::context::LocationContext,
@@ -43,6 +47,8 @@ struct State {
     delayed: RefCell<Vec<Duration>>,
     pages: RefCell<Vec<PageRequest>>,
     new_page: RefCell<NewPage>,
+    sub_files: RefCell<Vec<Duration>>,
+    publish_files: RefCell<PublishFiles>,
     published: RefCell<Rc<dyn Fn()>>,
 }
 impl State {
@@ -56,6 +62,8 @@ impl State {
         self.delayed.borrow_mut().clear();
         self.pages.borrow_mut().clear();
         *self.new_page.borrow_mut() = Rc::new(|_| {});
+        self.sub_files.borrow_mut().clear();
+        *self.publish_files.borrow_mut() = Rc::new(|_, _| {});
     }
     // One weak single-shot timer follows the earliest owned deadline across
     // all producers; admitting another launch never postpones existing work.
@@ -73,6 +81,7 @@ impl State {
             .map(|update| update.due)
             .chain(self.delayed.borrow().iter().copied())
             .chain(self.pages.borrow().iter().map(|request| request.due))
+            .chain(self.sub_files.borrow().iter().copied())
             .min();
         let Some(next) = next else {
             self.timer.stop();
@@ -136,6 +145,23 @@ impl State {
                 return;
             }
             new_page(request.location);
+        }
+        let (sub_files_due, sub_files_pending): (Vec<_>, Vec<_>) =
+            std::mem::take(&mut *self.sub_files.borrow_mut())
+                .into_iter()
+                .partition(|due| *due <= now);
+        *self.sub_files.borrow_mut() = sub_files_pending;
+        let publish_files = self.publish_files.borrow().clone();
+        for _ in sub_files_due {
+            if !self.live() {
+                self.retire();
+                return;
+            }
+            // (five new random hashes, `HydrusData.GenerateKey`)
+            let hashes = (0..5)
+                .map(|_| hydrus_core::Sha256(rand::random()))
+                .collect();
+            publish_files(hashes, SUB_FILES_PAGE);
         }
         // A consumer callback can retire/rebind this owner synchronously.
         if !self.live() {
@@ -240,11 +266,16 @@ impl Control {
             delayed: RefCell::default(),
             pages: RefCell::default(),
             new_page: RefCell::new(Rc::new(|_| {})),
+            sub_files: RefCell::default(),
+            publish_files: RefCell::new(Rc::new(|_, _| {})),
             published: RefCell::new(Rc::new(|| {})),
         }))
     }
     pub(crate) fn set_published(&self, published: Rc<dyn Fn()>) {
         *self.0.published.borrow_mut() = published;
+    }
+    pub(crate) fn set_publish_files(&self, publish: PublishFiles) {
+        *self.0.publish_files.borrow_mut() = publish;
     }
     pub(crate) fn set_new_page(&self, new_page: NewPage) {
         *self.0.new_page.borrow_mut() = new_page;
@@ -303,6 +334,19 @@ impl Control {
             .borrow_mut()
             .push(PageRequest { due, location });
         self.0.arm();
+    }
+    /// "publish some sub files in five seconds": five random hashes published
+    /// to the "example sub files" page at the deadline.
+    pub fn start_delayed_sub_files(&self) {
+        if !self.0.live() {
+            return;
+        }
+        let due = (self.0.clock.borrow().clone())() + DELAY;
+        self.0.sub_files.borrow_mut().push(due);
+        self.0.arm();
+    }
+    pub fn pending_sub_files(&self) -> usize {
+        self.0.sub_files.borrow().len()
     }
     /// The requests retained by this binding, not pages created prematurely.
     pub fn pending_pages(&self) -> usize {
