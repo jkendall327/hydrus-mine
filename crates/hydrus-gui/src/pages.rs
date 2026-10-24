@@ -1161,6 +1161,81 @@ impl Pages {
         self.add(page);
     }
 
+    /// Files published to the page named `name` (`PresentImportedFilesToPage`,
+    /// as a subscription publishes its files): the first page of that name
+    /// that is not a notebook, depth first, takes those the client has; with
+    /// none, a page of them is opened, named so, searching all local files
+    /// for a locked `system:hash` of every hash given, in the current notebook.
+    pub fn present_files(
+        &mut self,
+        hashes: &[hydrus_core::Sha256],
+        name: &str,
+    ) -> Result<(), String> {
+        fn named(pages: &[Page], name: &str) -> Option<PageKey> {
+            pages.iter().find_map(|page| match &page.content {
+                PageContent::Pages(children) => named(children, name),
+                _ if page.name == name => Some(page.key),
+                _ => None,
+            })
+        }
+        let location = hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+            hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
+        ));
+        let known: Vec<HashId> = self
+            .store
+            .read(|conn| {
+                let mut ids = Vec::new();
+                for hash in hashes {
+                    if let Some(id) = hydrus_store::master::hash_id(conn, hash)? {
+                        ids.push(id);
+                    }
+                }
+                Ok(ids)
+            })
+            .map_err(|e| e.to_string())?;
+        let files = crate::media_actions::still_in(&self.store, &location, &known);
+        if let Some(key) = named(&self.session.pages, name) {
+            if let Some(page) = self.page(&key) {
+                page.borrow_mut().present(hashes, &files);
+            }
+            return Ok(());
+        }
+        let mut page = new_search_page_on(&self.store, location);
+        name.clone_into(&mut page.name);
+        let PageContent::Search {
+            search,
+            synchronised,
+            lock,
+            collect,
+            ..
+        } = &mut page.content
+        else {
+            unreachable!("a search page");
+        };
+        search.predicates = vec![hydrus_search::Predicate::System(
+            hydrus_core::search::predicate::SystemPredicate::Hash {
+                hashes: hydrus_core::search::predicate::FileHashes::Sha256(
+                    hashes.iter().copied().collect(),
+                ),
+                inclusive: true,
+            },
+        )];
+        *lock = Some(hydrus_core::pages::HashLock::default());
+        let mut opened = SearchPage::restored(
+            self.store.clone(),
+            search.clone(),
+            *synchronised,
+            None,
+            files,
+        )
+        .with_lock(*lock)
+        .with_collect(collect.clone());
+        opened.attach_predicate_history(self.predicate_history.clone());
+        self.open.insert(page.key, Rc::new(RefCell::new(opened)));
+        self.add(page);
+        Ok(())
+    }
+
     /// Open a new page named `name` searching `location` for `predicates`,
     /// at the far right of the current notebook, and show it; it searches
     /// at once (the reference's `NewPageQuery` with initial predicates).

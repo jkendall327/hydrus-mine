@@ -5,13 +5,20 @@ On an empty client with a second media location of the same weight, the real
 panel is asked to move files now with its run-time question answered by
 script, and the job it hands the client (`do_file_storage_rebalance`) is run
 by the real `client_files_manager.Rebalance`, as the GUI's thread would. The
-status text it sets before each move is recorded, with the job's end:
+clock (`HydrusTime.GetNow`) is held at a fixed time while the panel makes the
+job, so its stop time is recorded as seconds after that, for each run-time
+choice ("run for custom time" with its dialog accepted as it opens); then each
+job is run with the clock held at its stop time, or one second past it, and the
+status texts it sets are recorded with the job's end:
 
-- a job whose stop time has passed (the job as the panel makes it for "run
-  for 10 minutes", its stop time then moved back): it moves nothing;
-- a job the user cancels after its third move: it stops there;
-- "run for 10 minutes" (its stop time in the future): it moves the rest;
-- again, with nothing left: it moves nothing.
+- one second past its stop time, a job moves nothing;
+- at its stop time it still moves; the user cancels it as a chosen move
+  begins (the fourth, or the first), and it stops after that move;
+- "run indefinitely" moves the rest, and again has nothing to move.
+
+Last, a job is handed to the main window's own handler
+(`DoFileStorageRebalance`): its popup title, and whether the locations
+dialog opens again once the job is done (`after_the_job`).
 
 Every run ends with the status text "done!" and the job finished and
 dismissed. Directories the run made are written as `<name>`.
@@ -35,6 +42,8 @@ def record(session):
 
     from hydrus.core import HydrusTime
     from hydrus.client.gui import ClientGUIDialogsMessage as M, ClientGUIDialogsQuick as Q
+    from qtpy import QtWidgets as QW
+    from hydrus.client.gui import ClientGUITopLevelWindowsPanels as T
     from hydrus.client.gui.panels import ClientGUIFilesPhysicalStoragePanels as P
     from hydrus.client.files import ClientFilesPhysical as FP
 
@@ -66,7 +75,20 @@ def record(session):
 
     c.pub = pub
     old_yyn = Q.GetYesYesNo
-    Q.GetYesYesNo = lambda parent, text, yes_tuples=None, no_label='no', **k: dict(yes_tuples)['run for 10 minutes']
+    old_exec = T.DialogEdit.exec
+    old_now = HydrusTime.GetNow
+    choice = {'label': None}
+    asked = []
+    Q.GetYesYesNo = lambda parent, text, yes_tuples=None, no_label='no', **k: dict(yes_tuples)[choice['label']]
+
+    def custom_exec(dialog):
+        # "run for custom time": its dialog, accepted as it opens
+        asked.append(dialog.windowTitle())
+        return QW.QDialog.DialogCode.Accepted
+
+    T.DialogEdit.exec = custom_exec
+
+    MADE = 1_000_000_000
 
     runs = []
     try:
@@ -74,28 +96,48 @@ def record(session):
             captured.clear()
             panel = P.MoveMediaFilesPanel(c.gui, c)
             panel._OKParent = lambda: None
-            panel._Rebalance()
+            HydrusTime.GetNow = lambda: MADE
+            try:
+                panel._Rebalance()
+            finally:
+                HydrusTime.GetNow = old_now
             panel.deleteLater()
             return captured[0]
 
-        def run(name, tweak):
+        def run(name, label, at, cancel_at_move=None):
+            # the job made with `label` chosen at MADE, run with the clock at MADE + `at`
+            # (None: the real clock), the user cancelling it as move `cancel_at_move` begins
+            choice['label'] = label
+            asked.clear()
             job = qt(make_job)
-            stop_in = None if job._stop_time is None else job._stop_time - HydrusTime.GetNow()
+            stop_in = None if job._stop_time is None else job._stop_time - MADE
             texts = []
-            tweak(job, texts)
             real = job.SetStatusText
+            n = {'moves': 0}
 
             def say(text, *a, **k):
                 texts.append(norm(text))
+                if text.startswith('Moving'):
+                    n['moves'] += 1
+                    if n['moves'] == cancel_at_move:
+                        job.Cancel()
                 return real(text, *a, **k)
 
             job.SetStatusText = say
             before = c.client_files_manager.RebalanceWorkToDo()
-            c.client_files_manager.Rebalance(job)
+            if at is not None:
+                HydrusTime.GetNow = lambda: MADE + at
+            try:
+                c.client_files_manager.Rebalance(job)
+            finally:
+                HydrusTime.GetNow = old_now
             runs.append(dict(
                 name=name,
+                choice=label,
+                custom_dialog=list(asked),
+                clock_after_made=at,
                 work_to_do_before=before,
-                stop_in_when_made=round(stop_in) if stop_in is not None else None,
+                stop_in_when_made=stop_in,
                 texts=texts,
                 moves=[t for t in texts if t.startswith('Moving')],
                 last=texts[-1] if texts else None,
@@ -104,30 +146,35 @@ def record(session):
                 work_to_do_after=c.client_files_manager.RebalanceWorkToDo(),
             ))
 
-        def stop_passed(job, texts):
-            job._stop_time = HydrusTime.GetNow() - 1
+        run('10 minutes, one second past its stop time', 'run for 10 minutes', 601)
+        run('10 minutes, at its stop time, cancelled at the fourth move', 'run for 10 minutes', 600, 4)
+        run('30 minutes, one second past its stop time', 'run for 30 minutes', 1801)
+        run('30 minutes, at its stop time, cancelled at the first move', 'run for 30 minutes', 1800, 1)
+        run('1 hour, one second past its stop time', 'run for 1 hour', 3601)
+        run('1 hour, at its stop time, cancelled at the first move', 'run for 1 hour', 3600, 1)
+        run('custom time, one second past its stop time', 'run for custom time', 7201)
+        run('custom time, at its stop time, cancelled at the first move', 'run for custom time', 7200, 1)
+        run('indefinitely', 'run indefinitely', None)
+        run('indefinitely again, nothing left', 'run indefinitely', None)
 
-        def cancel_after_three(job, texts):
-            real = job.SetStatusText
-            n = {'moves': 0}
-
-            def wrapped(text, *a, **k):
-                if text.startswith('Moving'):
-                    n['moves'] += 1
-                    if n['moves'] == 4:
-                        job.Cancel()
-                return real(text, *a, **k)
-
-            job.SetStatusText = wrapped
-
-        run('stop time passed', stop_passed)
-        run('cancelled at the fourth move', cancel_after_three)
-        run('ten minutes', lambda job, texts: None)
-        run('ten minutes again, nothing left', lambda job, texts: None)
+        # the main window's own handler, as the panel's publication reaches it: the job
+        # runs in its dialog, and once it is done the locations dialog opens again
+        reopened = []
+        old_move = c.gui._MoveMediaFiles
+        c.gui._MoveMediaFiles = lambda: reopened.append(True)
+        try:
+            choice['label'] = 'run indefinitely'
+            job = qt(make_job)
+            qt(lambda: c.gui.DoFileStorageRebalance(job))
+        finally:
+            c.gui._MoveMediaFiles = old_move
+        after = dict(title=job.GetStatusTitle(), finished=job.IsDone(), reopened_locations=len(reopened))
     finally:
         c.pub = old_pub
         Q.GetYesYesNo = old_yyn
-    return dict(runs=runs)
+        T.DialogEdit.exec = old_exec
+        HydrusTime.GetNow = old_now
+    return dict(runs=runs, after_the_job=after)
 
 
 def main():
@@ -143,8 +190,6 @@ def main():
         hydrus_driver.run_in_subprocess(os.path.abspath(__file__), '--child', path)
         with open(path) as f:
             value = json.load(f)
-    for run in value['runs']:
-        run.pop('texts', None)
     with open(os.path.join(HERE, 'fixtures', 'rebalance_job.json'), 'w') as f:
         json.dump(value, f, indent=1, ensure_ascii=False)
         f.write('\n')

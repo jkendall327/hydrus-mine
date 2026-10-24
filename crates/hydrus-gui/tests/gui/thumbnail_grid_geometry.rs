@@ -314,7 +314,27 @@ fn the_thumbnail_border_is_drawn_as_wide_as_the_option_says_as_the_reference_dra
             headless::render(&main_window, width, height);
             slint::platform::update_timers_and_animations();
             bound.rows.wait();
-            headless::render(&main_window, width, height);
+            // (selecting starts each cell's fade from its unselected paint: the
+            // frame is taken once every cell in view has finished fading)
+            let started = std::time::Instant::now();
+            loop {
+                headless::render(&main_window, width, height);
+                let rows = ui.get_thumbnail_rows();
+                let fading = rows.iter().any(|row| {
+                    row.thumbnails
+                        .iter()
+                        .any(|thumbnail| thumbnail.fade_opacity < 1.0)
+                });
+                if !fading {
+                    break;
+                }
+                assert!(
+                    started.elapsed() < std::time::Duration::from_secs(10),
+                    "the selection fade never finished"
+                );
+                std::thread::sleep(std::time::Duration::from_millis(10));
+                slint::platform::update_timers_and_animations();
+            }
             let pixels = headless::render_snapshot(&main_window, width, height);
             // (the border's colour is translucent: what it gives over the
             // thumbnail's fill)

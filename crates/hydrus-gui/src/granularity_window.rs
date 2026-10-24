@@ -29,6 +29,18 @@ thread_local! {
     // (the window and question most recently opened, for tests to drive)
     static OPENED: RefCell<slint::Weak<GranularityWindow>> = RefCell::new(slint::Weak::default());
     static QUESTION: RefCell<slint::Weak<crate::ChoiceButtonsWindow>> = RefCell::new(slint::Weak::default());
+    // (what the next job's worker tells of each status it shows, for tests)
+    static WATCH: RefCell<Option<Watch>> = const { RefCell::new(None) };
+}
+
+/// Told, on the job's worker, of each first-line status it has just shown.
+pub type Watch = Box<dyn FnMut(&str) + Send>;
+
+/// Have the next job this thread starts tell `watch` of each status it shows,
+/// once that status is in its popup (for tests, to act as the job goes).
+#[doc(hidden)]
+pub fn watch_next_job(watch: Watch) {
+    WATCH.with(|w| *w.borrow_mut() = Some(watch));
 }
 
 /// The granularity window most recently opened, while it exists.
@@ -182,7 +194,8 @@ enum Job {
 /// Do the migration on a worker; when it ends, say how it went.
 #[allow(clippy::cast_precision_loss)] // (seconds)
 fn run(store: &Arc<Store>, slots: &Slots, changed: Rc<dyn Fn()>, job: Job, from: usize, to: usize) {
-    let report: Arc<Mutex<Option<String>>> = Arc::default();
+    let report: Arc<Mutex<Option<(&'static str, String)>>> = Arc::default();
+    let mut watch = WATCH.with(|w| w.borrow_mut().take());
     let thread_report = report.clone();
     let thread_store = store.clone();
     let title = match &job {
@@ -203,6 +216,7 @@ fn run(store: &Arc<Store>, slots: &Slots, changed: Rc<dyn Fn()>, job: Job, from:
         let mut say = |one: Option<String>, two: Option<String>| {
             let at = now();
             let (p, c) = (paused.clone(), cancelled.clone());
+            let shown = one.clone();
             let _ = store.write(move |ctx| {
                 popups::update(ctx.conn(), &key, at, |job| {
                     if one.is_some() {
@@ -216,6 +230,9 @@ fn run(store: &Arc<Store>, slots: &Slots, changed: Rc<dyn Fn()>, job: Job, from:
                 })
                 .map(|_| ())
             });
+            if let (Some(watch), Some(shown)) = (watch.as_mut(), shown) {
+                watch(&shown);
+            }
         };
         let (is_paused, is_cancelled) = (
             || paused.load(Ordering::Relaxed),
@@ -239,17 +256,22 @@ fn run(store: &Arc<Store>, slots: &Slots, changed: Rc<dyn Fn()>, job: Job, from:
         };
         let seconds = i64::try_from(started.elapsed().as_secs()).unwrap_or(i64::MAX);
         let was_cancelled = cancelled.load(Ordering::Relaxed);
+        // (an error is the reference's critical "Oh no!", the rest information)
         let text = match (&job, result) {
-            (Job::Client, Ok(o)) => {
-                model::client_done(from, to, o.moved, seconds, o.weird_dirs, o.weird_files)
+            (Job::Client, Ok(o)) => (
+                "Information",
+                model::client_done(from, to, o.moved, seconds, o.weird_dirs, o.weird_files),
+            ),
+            (Job::Folder(_), Ok(o)) => (
+                "Information",
+                model::folder_done(to, o.moved, seconds, o.weird_dirs, o.weird_files),
+            ),
+            (Job::Client, Err(_)) if was_cancelled => ("Information", model::CANCELLED.to_owned()),
+            (Job::Folder(_), Err(_)) if was_cancelled => {
+                ("Information", model::FOLDER_CANCELLED.to_owned())
             }
-            (Job::Folder(_), Ok(o)) => {
-                model::folder_done(to, o.moved, seconds, o.weird_dirs, o.weird_files)
-            }
-            (Job::Client, Err(_)) if was_cancelled => model::CANCELLED.to_owned(),
-            (Job::Folder(_), Err(_)) if was_cancelled => model::FOLDER_CANCELLED.to_owned(),
-            (Job::Client, Err(e)) => model::client_error(&e.to_string()),
-            (Job::Folder(_), Err(e)) => model::folder_error(&e.to_string()),
+            (Job::Client, Err(e)) => ("Oh no!", model::client_error(&e.to_string())),
+            (Job::Folder(_), Err(e)) => ("Oh no!", model::folder_error(&e.to_string())),
         };
         let at = now();
         let _ = store.write(move |ctx| {
@@ -277,7 +299,7 @@ fn run(store: &Arc<Store>, slots: &Slots, changed: Rc<dyn Fn()>, job: Job, from:
                 let Some(slots) = slots.upgrade() else {
                     return;
                 };
-                let Some(text) = report
+                let Some((title, text)) = report
                     .lock()
                     .unwrap_or_else(std::sync::PoisonError::into_inner)
                     .take()
@@ -288,7 +310,7 @@ fn run(store: &Arc<Store>, slots: &Slots, changed: Rc<dyn Fn()>, job: Job, from:
                     window.set_busy(false);
                     show(window, &store);
                 }
-                crate::debug_actions::message("Information", &text);
+                crate::debug_actions::message(title, &text);
                 changed();
             }
         },

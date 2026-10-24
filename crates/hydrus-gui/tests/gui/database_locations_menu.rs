@@ -838,103 +838,167 @@ fn move_files_now_asks_for_a_run_time_and_moves_folders_with_a_popup() {
     );
 }
 
-/// "Move files now" with a run time, against the reference's job
+/// "Move files now" with each run time, against the reference's job
 /// (`oracle/record_rebalance_job.py`: the real panel's job run by the real
-/// `Rebalance`): a job whose stop time has passed moves nothing and ends
-/// with "done!"; one with time left moves everything there is to move and
-/// ends the same way, and a second has nothing to move. Through the real
-/// window and its worker; the clock is scripted so that the stop time
-/// ("run for 10 minutes") has passed by the job's first look at it.
+/// `Rebalance`, the clock held still): through the real window and its worker,
+/// the clock scripted as recorded (the job made at one time, run at its stop
+/// time or a second past it). Each run's statuses, in its popup as they are
+/// shown, are the recording's, moves written alike; a job one second past its
+/// stop time moves nothing, one at its stop time still moves, and the user
+/// presses the popup's cancel button as the recorded move begins, after which
+/// it stops. "Run indefinitely" moves the rest, and again has nothing to move.
 // leaf: audit-media-database-locations-rebalance
 #[test]
 fn move_files_now_stops_at_its_run_time_and_moves_what_the_reference_s_job_does() {
+    const MADE: i64 = 1_000_000_000;
     let recorded = hydrus_testkit::fixture_json("rebalance_job.json");
-    let run = |name: &str| {
-        recorded["runs"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .find(|r| r["name"] == name)
-            .unwrap()
-            .clone()
-    };
     let rig = rig();
-    let window = rig.open();
+    let mut window = rig.open();
     let other = tempfile::tempdir().unwrap();
     rig.pick(other.path());
     window.invoke_action("add".into());
     assert!(window.get_can_rebalance());
     let moves_left = || rig.store.read(locations::next_move).unwrap().is_some();
-    // (a finished job dismisses its popup at once, so there is no "done!"
-    // left to read: the job is given time, and the folders it left are looked at)
-    // The job's popup appears when the worker starts and goes when it ends, so wait for it
-    // to be seen and gone (a job that finished between two looks is given a few seconds).
-    let wait_for_done = || {
-        let started = Instant::now();
-        let mut seen = false;
-        loop {
-            pump(Duration::from_millis(20));
-            let showing = !shown(&rig.store).is_empty();
-            seen |= showing;
-            if (seen && !showing) || started.elapsed() > Duration::from_secs(10) {
-                break;
-            }
-            if !seen && started.elapsed() > Duration::from_secs(3) {
-                break;
-            }
-        }
-    };
-
-    // the stop time ("run for 10 minutes") has passed by the first look
-    let passed = run("stop time passed");
-    assert!(passed["work_to_do_before"].as_bool().unwrap() && moves_left());
-    hydrus_gui::database_locations_window::script_clock(Some((1_000_000, 1_000_000 + 601)));
-    window.invoke_action("rebalance".into());
-    runtime_question().unwrap().invoke_chosen(0);
-    wait_for_done();
-    hydrus_gui::database_locations_window::script_clock(None);
-    assert_eq!(passed["moves"].as_array().unwrap().len(), 0);
-    assert_eq!(passed["last"], model::REBALANCE_DONE);
-    assert_eq!(
-        moves_left(),
-        passed["work_to_do_after"].as_bool().unwrap(),
-        "nothing moved"
-    );
-    assert!(
-        rig.review()
-            .locations
+    let default = rig.home.path().join("client_files").display().to_string();
+    let other_text = other.path().display().to_string();
+    // (which folder moves first is the reference's random pick: the hex is written alike)
+    let hex =
+        regex::Regex::new(r"(file|thumbnail) [0-9a-f]{2} at (<\w+>)/([ft])[0-9a-f]{2}").unwrap();
+    let same_prefix = regex::Regex::new(
+        r#"^Moving "\w+ (\w\w) at [^"]*/[ft](\w\w)" to "\w+ (\w\w) at [^"]*/[ft](\w\w)"\.$"#,
+    )
+    .unwrap();
+    let alike = |text: &str| hex.replace_all(text, "$1 XX at $2/${3}XX").into_owned();
+    let mut moved = 0;
+    for run in recorded["runs"].as_array().unwrap() {
+        let name = run["name"].as_str().unwrap();
+        let choice = model::RUNTIMES
             .iter()
-            .all(|l| l.path != other.path() || l.files_share == 0.0),
-        "nothing was moved to the other location"
-    );
-
-    // with time left, it moves what there is to move, and ends the same way
-    let ten = run("ten minutes");
-    let again = run("ten minutes again, nothing left");
-    let moves = ten["moves"].as_array().unwrap().len() + 4;
-    assert!(ten["work_to_do_before"].as_bool().unwrap());
-    assert_eq!(ten["last"], model::REBALANCE_DONE);
-    window.invoke_action("rebalance".into());
-    runtime_question().unwrap().invoke_chosen(0);
-    let deadline = Instant::now() + Duration::from_secs(120);
-    while moves_left() {
-        assert!(
-            Instant::now() < deadline,
-            "the folders never finished moving"
+            .position(|(label, _)| *label == run["choice"].as_str().unwrap())
+            .unwrap();
+        assert_eq!(
+            moves_left(),
+            run["work_to_do_before"].as_bool().unwrap(),
+            "{name}"
         );
+        let wanted: Vec<String> = run["texts"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|t| alike(t.as_str().unwrap()))
+            .collect();
+        let cancel_at = run["cancelled"]
+            .as_bool()
+            .unwrap()
+            .then(|| run["moves"].as_array().unwrap().len());
+        hydrus_gui::database_locations_window::script_clock(
+            run["clock_after_made"].as_i64().map(|at| (MADE, MADE + at)),
+        );
+        // the worker tells of each status once it is in the popup, and waits for the go
+        let (told, statuses) = std::sync::mpsc::channel::<String>();
+        let (go, gone) = std::sync::mpsc::channel::<()>();
+        hydrus_gui::database_locations_window::watch_next_job(Box::new(move |status| {
+            let _ = told.send(status.to_owned());
+            let _ = gone.recv();
+        }));
+        window.invoke_action("rebalance".into());
+        runtime_question()
+            .unwrap()
+            .invoke_chosen(i32::try_from(choice).unwrap());
+        if choice == 3 {
+            // "run for custom time": its window, accepted as it opens (in minutes)
+            let custom = hydrus_gui::database_locations_window::custom_runtime_window().unwrap();
+            assert_eq!(run["custom_dialog"][0], "set time to run");
+            assert_eq!(
+                i64::from(custom.get_value()) * 60,
+                run["stop_in_when_made"].as_i64().unwrap(),
+                "{name}"
+            );
+            custom.invoke_apply();
+        } else {
+            assert_eq!(
+                model::RUNTIMES[choice].1,
+                run["stop_in_when_made"].as_i64(),
+                "{name}"
+            );
+        }
+        let mut seen: Vec<String> = Vec::new();
+        let deadline = Instant::now() + Duration::from_secs(120);
+        loop {
+            let status = loop {
+                if let Ok(status) = statuses.try_recv() {
+                    break status;
+                }
+                assert!(
+                    Instant::now() < deadline,
+                    "{name}: the job stalled after {seen:?}"
+                );
+                pump(Duration::from_millis(5));
+            };
+            let shown = status
+                .replace(&default, "<default>")
+                .replace(&other_text, "<a>");
+            seen.push(alike(&shown));
+            if status == model::REBALANCE_DONE {
+                go.send(()).unwrap();
+                break;
+            }
+            let prefixes = same_prefix
+                .captures(&status)
+                .unwrap_or_else(|| panic!("{name}: not a move: {status}"));
+            assert!(
+                (1..4).all(|i| prefixes[i] == prefixes[i + 1]),
+                "{name}: {status}"
+            );
+            if cancel_at.is_some() || wanted.len() <= 5 {
+                // read from the popup as it is shown
+                let row = loop {
+                    let popups = rig.ui.get_popups();
+                    let found = (0..popups.row_count()).find(|&i| {
+                        let p = popups.row_data(i).unwrap();
+                        p.title == model::REBALANCE_TITLE && p.text_1 == status.as_str()
+                    });
+                    if let Some(row) = found {
+                        break row;
+                    }
+                    assert!(
+                        Instant::now() < deadline,
+                        "{name}: {status} not in the popup"
+                    );
+                    pump(Duration::from_millis(20));
+                };
+                if cancel_at == Some(seen.len()) {
+                    rig.ui.invoke_popup_cancel(i32::try_from(row).unwrap());
+                }
+            }
+            go.send(()).unwrap();
+        }
+        hydrus_gui::database_locations_window::script_clock(None);
+        assert_eq!(seen, wanted, "{name}");
+        moved += wanted.len() - 1;
+        // (the job's end is written just before it says "done!")
         pump(Duration::from_millis(50));
+        assert_eq!(
+            moves_left(),
+            run["work_to_do_after"].as_bool().unwrap(),
+            "{name}"
+        );
+        // the locations window opens again once the job is done
+        let after = &recorded["after_the_job"];
+        assert_eq!(after["reopened_locations"], 1);
+        assert_eq!(after["title"], model::REBALANCE_TITLE);
+        window = loop {
+            if let Some(w) = opened().filter(|w| w.window().is_visible()) {
+                break w;
+            }
+            assert!(
+                Instant::now() < deadline,
+                "{name}: the window did not open again"
+            );
+            pump(Duration::from_millis(20));
+        };
     }
-    assert_eq!(moves_left(), ten["work_to_do_after"].as_bool().unwrap());
-    let review = rig.review();
-    let there = review
-        .locations
-        .iter()
-        .find(|l| l.path == other.path())
-        .unwrap();
-    assert!(there.files_share > 0.0);
     // the folders that moved are the ones now at the other location
-    // (the recording's: those the cancelled run moved and the ten minutes'
-    // rest)
     let other_path = other.path().to_string_lossy().into_owned();
     let at_other: i64 = rig
         .store
@@ -947,13 +1011,7 @@ fn move_files_now_stops_at_its_run_time_and_moves_what_the_reference_s_job_does(
             .map_err(Into::into)
         })
         .unwrap();
-    assert_eq!(at_other, i64::try_from(moves).unwrap(), "{there:?}");
-    // a second time there is nothing to move
-    assert!(!again["work_to_do_before"].as_bool().unwrap());
-    window.invoke_action("rebalance".into());
-    runtime_question().unwrap().invoke_chosen(0);
-    pump(Duration::from_millis(300));
-    assert!(!moves_left());
+    assert_eq!(at_other, i64::try_from(moved).unwrap());
 }
 
 fn granularity_window(
@@ -1026,6 +1084,9 @@ fn replay_granularity() {
                 ],
             ),
         ),
+        ("cancel", make("cancel", &["f3a/3ab4567.png"])),
+        // (an errant file called "b" where the folder f3a/b has to go)
+        ("errant", make("errant", &["f3a/3ab4567.png", "f3a/b"])),
     ];
     let window = rig.open();
     let g = granularity_window(&rig, &window);
@@ -1033,18 +1094,13 @@ fn replay_granularity() {
         regex::Regex::new(r"in \d+(\.\d+)? (micro|milli)?seconds?\.|in (\d+ \w+ ?)+\.").unwrap();
     let norm = |text: &str| {
         let mut text = time.replace_all(text, "in <time>.").into_owned();
-        text = text.replace(
-            &scratch.path().join("offline").display().to_string(),
-            "<offline>",
-        );
-        text = text.replace(
-            &scratch.path().join("mixed").display().to_string(),
-            "<mixed>",
-        );
-        text.replace(
-            &scratch.path().join("empty").display().to_string(),
-            "<empty>",
-        )
+        for name in ["offline", "mixed", "empty", "cancel", "errant"] {
+            text = text.replace(
+                &scratch.path().join(name).display().to_string(),
+                &format!("<{name}>"),
+            );
+        }
+        text
     };
     let mut seen = 0;
     for step in recording["steps"].as_array().unwrap() {
@@ -1080,6 +1136,20 @@ fn replay_granularity() {
                     .clone()
             })
             .collect();
+        // a job the user cancels: its worker waits at its first status for the popup's
+        // cancel button to be pressed
+        let (told, waiting) = std::sync::mpsc::channel::<String>();
+        let (go, gone) = std::sync::mpsc::channel::<()>();
+        let cancelling = name.ends_with("cancelled");
+        if cancelling {
+            let mut first = true;
+            hydrus_gui::granularity_window::watch_next_job(Box::new(move |status| {
+                if std::mem::take(&mut first) {
+                    let _ = told.send(status.to_owned());
+                    let _ = gone.recv();
+                }
+            }));
+        }
         g.invoke_action(action.into());
         for dialog in step["dialogs"].as_array().unwrap() {
             match dialog[0].as_str().unwrap() {
@@ -1112,6 +1182,32 @@ fn replay_granularity() {
                     );
                 }
                 kind @ ("information" | "critical") => {
+                    if cancelling {
+                        let deadline = Instant::now() + Duration::from_secs(60);
+                        let status = loop {
+                            if let Ok(status) = waiting.try_recv() {
+                                break status;
+                            }
+                            assert!(Instant::now() < deadline, "{name}: the job never began");
+                            pump(Duration::from_millis(20));
+                        };
+                        // the popup shows it; its cancel button is pressed
+                        let row = loop {
+                            let popups = rig.ui.get_popups();
+                            let found = (0..popups.row_count()).find(|&i| {
+                                let p = popups.row_data(i).unwrap();
+                                p.title == hydrus_gui_model::database_granularity::FOLDER_TITLE
+                                    && p.text_1 == status.as_str()
+                            });
+                            if let Some(row) = found {
+                                break row;
+                            }
+                            assert!(Instant::now() < deadline, "{name}: no popup");
+                            pump(Duration::from_millis(20));
+                        };
+                        rig.ui.invoke_popup_cancel(i32::try_from(row).unwrap());
+                        go.send(()).unwrap();
+                    }
                     let deadline = Instant::now() + Duration::from_secs(120);
                     while message_window().is_none_or(|m| !m.window().is_visible()) {
                         assert!(Instant::now() < deadline, "{name}: no {kind} message");
@@ -1122,21 +1218,20 @@ fn replay_granularity() {
                         .as_str()
                         .unwrap();
                     assert_eq!(norm(&m.get_message()), norm(wanted), "{name}");
+                    if kind == "critical" {
+                        assert_eq!(m.get_window_title(), dialog[1].as_str().unwrap(), "{name}");
+                    }
                     m.invoke_cancelled();
                 }
                 other => panic!("{other}"),
             }
         }
         pump(Duration::from_millis(200));
-        let place = if inputs["pick"].to_string().contains("<empty>") {
-            &folders[1].1
-        } else if inputs["pick"].to_string().contains("<mixed>") {
-            &folders[2].1
-        } else if is_offline {
-            &folders[0].1
-        } else {
-            &media
-        };
+        let picked = inputs["pick"].to_string();
+        let place = folders
+            .iter()
+            .find(|(n, _)| picked.contains(&format!("<{n}>")))
+            .map_or(if is_offline { &folders[0].1 } else { &media }, |(_, p)| p);
         assert_eq!(tree(place), strings(&step["files"]), "{name}");
         assert_eq!(g.get_client_label(), granularity_of(step), "{name}");
         seen += 1;

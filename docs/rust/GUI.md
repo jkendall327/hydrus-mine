@@ -902,9 +902,10 @@ successful import" says, in the reference's red, that they will be
 deleted. "import now" opens an "import" page of the good files, in the
 list's order, which deletes each original once it is in the database (new or
 already there) if the box was ticked (`oracle/fixtures/local_import_queue.json`).
-Paths go in through the box over the list (enter adds one, a file or folder,
-as typed or pasted with a file manager's quotes) in place of the reference's
-"add files"/"add folder" pickers.
+Paths also go in through a box over the list (enter adds one, a file or
+folder, as typed or pasted with a file manager's quotes). The pickers, their
+cancelling, and drops on the window and on the main window give the list the
+reference's rows (`oracle/fixtures/import_paths.json`).
 
 "add tags/urls with the import >>" opens the "filename tagging" dialog
 (`src/filename_tagging_window.rs`, `hydrus-gui-model/src/filename_tagging.rs`),
@@ -1673,7 +1674,8 @@ a thread of their own (`src/mpv.rs`); that is slower than the reference's
 embedded mpv window for large videos. Other files show their thumbnail.
 GIFs, APNGs, webms and the rest show the reference's frame and time on
 the bar and loop; a still shows the file decoded whole, with no bar or
-volume; an audio file with embedded cover art shows the cover; and a
+volume; an audio file with embedded cover art shows the cover, the picture the
+reference's mpv picks (`oracle/fixtures/mpv_cover_art.json`); and a
 playing file follows the volume and mutes as they change, from the
 viewer's own control or anywhere else (`tests/gui/viewer_playback.rs`).
 A duplicates page (a migrated session's, with its search, pair sort and
@@ -4705,6 +4707,13 @@ without changing its dismissal pruning or delayed/long-text publications.
 Actual Qt hidden/minimized delivery is recorded in `debug_delayed_pages.json`;
 authored native query and lifecycle regressions await hosted execution.
 
+"publish some sub files in five seconds" publishes five random hashes, five
+seconds on, to the page named "example sub files", as a subscription publishes
+its files: with no such page, a page opens in the current notebook searching
+all local media for a locked `system:hash` of them; once it exists, it takes
+the new hashes and any of them the client has
+(`oracle/fixtures/debug_sub_files.json`, `tests/gui/debug_sub_files.rs`).
+
 Options > gui now stages the default-enabled “Mouse wheel can "scroll" through
 menu buttons” preference. Saved changes reach already open represented menu
 choices: the main/file-default media type and order, both Options tag sorts, both
@@ -5409,7 +5418,11 @@ rebalancer chooses them (over-limit and removed locations first, then
 overweight ones to the most-free starving ones; thumbnails then follow their
 files or go to the override). hydrus-store's `storage_locations` tests cover
 the shares and a full rebalance; `tests/model/database_locations.rs` the
-rows and buttons.
+rows and buttons. Each run time stops the job exactly where the reference's
+does (still moving at its stop time, not a second after), a cancel from the
+popup stops it after the move it is on, the popup shows the reference's
+"Moving "file 3a at …" to "file 3a at …"." lines, and the window opens again
+once the job is done (`oracle/fixtures/rebalance_job.json`).
 
 "manage granularity" opens the reference's granularity window: this client's
 line and its "I AM READY TO GO FROM 2 TO 3" (or back) button, and the
@@ -5419,8 +5432,10 @@ have a backup and I am ready"), then moves every file and thumbnail between
 a cancelled or failed one is undone. The offline migration asks, picks the
 folder, says what granularity it looks like, and moves it likewise. Both
 report the files moved, the time, and any weird files or folders left
-alone. hydrus-store's `granularity` tests cover both ways, the scan, and an
-undone cancel.
+alone. A cancelled offline job says the folder is likely in a mixed state; one
+stopped by an errant file where a folder has to go says so in the reference's
+words, as an "Oh no!" message (`granularity_panel.json`). hydrus-store's
+`granularity` tests cover both ways, the scan, and an undone cancel.
 
 ## Database > file maintenance > clear orphan files
 

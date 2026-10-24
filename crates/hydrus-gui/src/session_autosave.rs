@@ -306,6 +306,11 @@ impl Monitor {
     pub fn api_at(&self, now_ms: i64) {
         self.0.idle.borrow_mut().api(now_ms);
     }
+    /// Count keyboard and mouse input anywhere on `desktop` (the client's own,
+    /// `Desktop::from_env`, as it opens) toward the idle timers.
+    pub fn watch_the_desktop(&self, desktop: crate::system_idle::Desktop) {
+        self.set_system_idle(Box::new(crate::system_idle::Platform::start_at(desktop)));
+    }
     /// Take the desktop's idle time from `source` (a test's, or none).
     pub fn set_system_idle(&self, source: Box<dyn crate::system_idle::SystemIdle>) {
         *self.0.system_idle.borrow_mut() = source;

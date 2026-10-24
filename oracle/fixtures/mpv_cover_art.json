@@ -1,0 +1,56 @@
+{
+ "files": [
+  {
+   "file": "flac_cover.flac",
+   "audio-display": "embedded-first",
+   "albumart": "yes",
+   "width": "60",
+   "height": "60",
+   "tracks": [
+    [
+     "audio",
+     false,
+     true
+    ],
+    [
+     "video",
+     true,
+     true
+    ]
+   ]
+  },
+  {
+   "file": "mp3_cover.mp3",
+   "audio-display": "embedded-first",
+   "albumart": "yes",
+   "width": "60",
+   "height": "60",
+   "tracks": [
+    [
+     "audio",
+     false,
+     true
+    ],
+    [
+     "video",
+     true,
+     true
+    ]
+   ]
+  },
+  {
+   "file": "flac.flac",
+   "audio-display": "embedded-first",
+   "albumart": null,
+   "width": null,
+   "height": null,
+   "tracks": [
+    [
+     "audio",
+     false,
+     true
+    ]
+   ]
+  }
+ ]
+}

@@ -1206,6 +1206,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             });
         }
     }));
+    debug_long_popup.set_publish_files(Rc::new({
+        let change_pages = change_pages.clone();
+        move |hashes, name| change_pages(&|pages| pages.present_files(&hashes, name))
+    }));
     let open_page: Rc<dyn Fn(&page_chooser::NewPage)> = Rc::new({
         let change_pages = change_pages.clone();
         move |choice: &page_chooser::NewPage| change_pages(&|pages| pages.new_page(choice))
