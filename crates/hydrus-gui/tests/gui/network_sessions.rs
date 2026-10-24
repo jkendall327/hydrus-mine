@@ -840,8 +840,10 @@ fn automatic_header_answers_reach_an_existing_engine_request() {
     monitor.close();
     server.join().unwrap();
 }
-// (not tagged: native differs from the reference for a domain typed with capitals,
-// one that is not a domain and a hydrus service with none to choose)
+// (native differs from the reference for a domain typed with capitals, one
+// that is not a domain and a hydrus service with none to choose: permanent
+// differences, DECISIONS.md 2026-10-14; the rest is the recording's)
+// leaf: session-create
 #[test]
 fn create_new_opens_and_makes_sessions_as_the_reference_s_browser_does() {
     // `oracle/fixtures/session_create.json`, from `oracle/record_session_create.py`:

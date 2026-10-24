@@ -237,6 +237,7 @@ titled!(
     ParserListWindow,
     ParserPickerWindow,
     PngExportWindow,
+    PngsExportWindow,
     PopupModalWindow,
     PredicateEditorWindow,
     RegexFavouritesWindow,

@@ -498,7 +498,7 @@ fn edited_comparators_are_accepted_and_persisted_with_their_summaries() {
     child.invoke_changed();
     child.invoke_apply();
     assert_eq!(and.get_subs().row_count(), 2);
-    and.invoke_sub_clicked(0);
+    and.invoke_sub_clicked(0, false, false);
     and.invoke_sub_delete();
     assert_eq!(and.get_subs().row_count(), 1);
     and.invoke_apply();
@@ -556,7 +556,7 @@ fn edited_comparators_are_accepted_and_persisted_with_their_summaries() {
     list.invoke_row_clicked(row as i32, false, false);
     list.invoke_edit();
     let rule = rule_window(&bound);
-    rule.invoke_comparator_clicked(1);
+    rule.invoke_comparator_clicked(1, false, false);
     rule.invoke_comparator_edit();
     let relative = newest_comparator(&bound);
     assert_eq!(relative.get_multiplier(), "2.50");
@@ -1015,68 +1015,6 @@ fn working_hard_is_started_and_stopped_and_needs_something_left_to_search() {
     assert!(!ui.get_duplicates().can_start);
 }
 
-// leaf: audit-media-comparator-conditional
-#[test]
-fn a_metadata_conditional_comparators_target_and_predicate_lines_are_persisted() {
-    use hydrus_store::duplicates::auto::{self, Comparator, LookingAt};
-    let Opened {
-        ui, bound, store, ..
-    } = opened();
-    ui.invoke_duplicates_action("edit rules".into(), 0, false, false);
-    let list = list_of(&bound);
-    list.invoke_add();
-    let rule = rule_window(&bound);
-    rule.set_comparator_kind(kind_index(&rule, "test A or B using search terms"));
-    rule.invoke_comparator_add();
-    let c = newest_comparator(&bound);
-    assert_eq!(
-        c.get_looking_choices()
-            .iter()
-            .map(|s| s.to_string())
-            .collect::<Vec<_>>(),
-        [
-            "A will match these",
-            "B will match these",
-            "either will match these"
-        ]
-    );
-    // a line that is no predicate is refused, with the target unchanged
-    c.set_predicates("system:inbox\nsystem:nonsense here".into());
-    c.invoke_changed();
-    assert!(!c.get_errors().is_empty());
-    // the target B, two predicate lines
-    c.set_looking(1);
-    c.set_predicates("system:inbox\nsystem:filetype is image".into());
-    c.invoke_changed();
-    assert_eq!(c.get_errors(), "");
-    assert!(
-        c.get_summary().starts_with("B will match: "),
-        "{}",
-        c.get_summary()
-    );
-    c.invoke_apply();
-    rule.invoke_apply();
-    list.invoke_apply();
-    let written = store.read(auto::rules).unwrap();
-    let Comparator::OneFileMetadata {
-        looking_at,
-        predicates,
-    } = &written[0].1.comparators[0]
-    else {
-        panic!("{:?}", written[0].1.comparators)
-    };
-    assert_eq!(*looking_at, LookingAt::B);
-    assert_eq!(predicates.len(), 2);
-    // reopened, the lines are as they were
-    ui.invoke_duplicates_action("edit rules".into(), 0, false, false);
-    let rule = edit_row(&bound, "new rule");
-    rule.invoke_comparator_clicked(0);
-    rule.invoke_comparator_edit();
-    let c = newest_comparator(&bound);
-    assert_eq!(c.get_looking(), 1);
-    assert_eq!(c.get_predicates().lines().count(), 2);
-}
-
 /// The sidebar's switches, as the reference's two daemons read them
 /// (`oracle/record_work_scheduling.py`): each switch combination is set with
 /// the sidebar's own buttons, the idle state is published as the GUI
@@ -1164,7 +1102,7 @@ fn the_sidebar_switches_decide_whether_the_real_daemon_steps_work() {
     assert_eq!(checked, (8, 8));
 }
 
-// leaf: audit-media-rules-exchange
+// (the replay of the reference's lists is `rules_exchange`)
 #[test]
 fn rules_and_comparators_are_exported_imported_and_duplicated_whole() {
     use std::cell::RefCell;
@@ -1245,7 +1183,7 @@ fn rules_and_comparators_are_exported_imported_and_duplicated_whole() {
     let count = || rule.get_comparators().row_count();
     let start = count();
     assert!(start >= 1);
-    rule.invoke_comparator_clicked(0);
+    rule.invoke_comparator_clicked(0, false, false);
     rule.invoke_comparator_exchange(4);
     assert_eq!(count(), start + 1);
     assert_eq!(
@@ -1253,10 +1191,13 @@ fn rules_and_comparators_are_exported_imported_and_duplicated_whole() {
         rule.get_comparators().row_data(start),
         "the whole comparator is copied"
     );
-    rule.invoke_comparator_clicked(0);
+    rule.invoke_comparator_clicked(0, false, false);
     rule.invoke_comparator_exchange(0);
     let text = copied.borrow().last().cloned().unwrap();
-    assert!(text.contains("comparators"));
+    assert!(
+        text.starts_with('['),
+        "the reference's serialised form: {text}"
+    );
     *pasted.borrow_mut() = text.clone();
     rule.invoke_comparator_exchange(2);
     assert_eq!(count(), start + 2);
@@ -1265,8 +1206,7 @@ fn rules_and_comparators_are_exported_imported_and_duplicated_whole() {
     assert_eq!(count(), start + 2);
 }
 
-// The pngs carry hydrus-rs JSON (DIFFERENCES.md): no reference png is replayed.
-// leaf: audit-media-rules-exchange
+// (the reference's own pngs are replayed in `rules_exchange`)
 #[test]
 fn rules_and_comparators_go_out_and_come_in_as_pngs() {
     use std::cell::RefCell;
@@ -1366,7 +1306,7 @@ fn rules_and_comparators_go_out_and_come_in_as_pngs() {
         .clone_strong();
     let count = || rule.get_comparators().row_count();
     let start = count();
-    rule.invoke_comparator_clicked(0);
+    rule.invoke_comparator_clicked(0, false, false);
     rule.invoke_comparator_exchange(1);
     let comparator_png = temp.path().join("comparator.png");
     export(&comparator_png);

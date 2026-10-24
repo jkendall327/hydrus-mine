@@ -2,7 +2,7 @@ import { Btn } from "@hydrus_ui_core";
 import { Button, LineEdit } from "std-widgets.slint";
 import { Theme } from "@hydrus_ui_core";
 import { ListTable, TableRow } from "@hydrus_ui_core";
-import { Asking, Tick } from "@hydrus_ui_core";
+import { Asking, SubscriptionExchangeButton, Tick } from "@hydrus_ui_core";
 export component SimpleFormulaeWindow inherits Window {
     in property <string> title-suffix: "";
     // the title as composed, for tests and the platform
@@ -25,15 +25,18 @@ export component SimpleFormulaeWindow inherits Window {
     callback add(); callback edit(); callback delete(); callback defaults();
     callback named(); callback name-cancelled(); callback chosen(int); callback cancelled();
     callback apply(); callback cancel();
-    callback exchange(bool);
+    callback exchange(int);
     VerticalLayout { padding: 10px; spacing: 6px;
         ListTable { vertical-stretch: 1; columns: [{title: "formula", width: 600px, stretch: true}]; rows: root.rows; row-clicked(r,c,s) => { if !root.naming && !root.deleting && !root.editing-formula && root.defaults-step == 0 { root.row-clicked(r,c,s); } } row-activated(r) => { if !root.naming && !root.deleting && !root.editing-formula && root.defaults-step == 0 { root.row-activated(r); } } }
         HorizontalLayout { spacing: 6px;
             Btn { text: "add"; enabled: !root.naming && !root.deleting && !root.editing-formula && root.defaults-step == 0; clicked => { root.add(); } }
             Btn { text: "edit"; enabled: root.selected && !root.naming && !root.deleting && !root.editing-formula && root.defaults-step == 0; clicked => { root.edit(); } }
             Btn { text: "delete"; enabled: root.selected && !root.naming && !root.deleting && !root.editing-formula && root.defaults-step == 0; clicked => { root.delete(); } }
-            Btn { text: "import"; enabled: !root.naming && !root.deleting && !root.editing-formula && root.defaults-step == 0; clicked => { root.exchange(true); } }
-            Btn { text: "export"; enabled: root.selected && !root.naming && !root.deleting && !root.editing-formula && root.defaults-step == 0; clicked => { root.exchange(false); } }
+            // `AddImportExportButtons`: "export" (0 to clipboard, 1 to png, 2 to
+            // pngs), "import" (3 from clipboard, 4 from pngs), "duplicate" (5)
+            SubscriptionExchangeButton { label: "export"; choices: ["to clipboard", "to png", "to pngs"]; available: root.selected && !root.naming && !root.deleting && !root.editing-formula && root.defaults-step == 0; selected(mode) => { root.exchange(mode); } }
+            SubscriptionExchangeButton { label: "import"; choices: ["from clipboard", "from pngs"]; available: !root.naming && !root.deleting && !root.editing-formula && root.defaults-step == 0; selected(mode) => { root.exchange(mode + 3); } }
+            Btn { text: "duplicate"; enabled: root.selected && !root.naming && !root.deleting && !root.editing-formula && root.defaults-step == 0; clicked => { root.exchange(5); } }
             Btn { text: "add defaults"; enabled: !root.naming && !root.deleting && !root.editing-formula && root.defaults-step == 0; clicked => { root.defaults(); } }
         }
         if root.naming: VerticalLayout {

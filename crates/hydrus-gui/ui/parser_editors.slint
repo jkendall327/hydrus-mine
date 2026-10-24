@@ -1,6 +1,6 @@
 import { Btn } from "@hydrus_ui_core";
 // Native parser definitions, content nodes and direct URL-class associations.
-import { Button, CheckBox, ComboBox, LineEdit, ScrollView, TextEdit } from "std-widgets.slint";
+import { Button, CheckBox, ComboBox, LineEdit, ProgressIndicator, ScrollView, TextEdit } from "std-widgets.slint";
 import { Theme } from "@hydrus_ui_core";
 import { ListTable, TableColumn, TableRow } from "@hydrus_ui_core";
 import { DefinitionField } from "downloader_definitions.slint";
@@ -105,6 +105,11 @@ export component ParserEditWindow inherits Window {
     in-out property <string> referral-url;
     in property <bool> fetching;
     in property <string> fetch-status;
+    // the example fetch's network job control: how much it has read (and how
+    // fast), and its gauge (value of range)
+    in property <string> fetch-right;
+    in property <int> fetch-gauge-value;
+    in property <int> fetch-gauge-range: 1;
     in property <bool> fetch-has-error;
     callback fetch-error-action(int);
     in-out property <string> post-index: "0";
@@ -228,7 +233,14 @@ export component ParserEditWindow inherits Window {
                         }
                     }
                 }
-                if root.fetch-status != "": Text { text: root.fetch-status; color: Theme.text; wrap: word-wrap; }
+                if root.fetch-status != "" || root.fetch-right != "": HorizontalLayout {
+                    spacing: 6px;
+                    Text { text: root.fetch-status; color: Theme.text; wrap: word-wrap; horizontal-stretch: 1; }
+                    if root.fetch-right != "": Text { text: root.fetch-right; color: Theme.text; }
+                }
+                if root.fetching: ProgressIndicator {
+                    progress: root.fetch-gauge-range > 0 ? root.fetch-gauge-value / root.fetch-gauge-range : 0;
+                }
                 Text { text: "context variables (one key=value per line)"; color: Theme.text; }
                 TextEdit { height: 60px; text <=> root.variables; enabled: !root.child-open; }
                 Btn { text: "test parse"; enabled: root.parse-enabled && !root.child-open; clicked => { root.action("test"); } }

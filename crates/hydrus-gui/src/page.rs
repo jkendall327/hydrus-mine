@@ -2401,6 +2401,11 @@ impl SearchPage {
         self.error.as_deref()
     }
 
+    /// List as a metadata conditional's search does (an OR inside one).
+    pub fn set_metadata_conditional(&mut self) {
+        self.autocomplete.set_metadata_conditional();
+    }
+
     pub fn autocomplete(&self) -> &Autocomplete {
         &self.autocomplete
     }
@@ -2493,6 +2498,14 @@ impl SearchPage {
     }
     /// Shift+Enter accumulates without changing the active search.
     pub fn enter_or(&mut self, shift: bool) {
+        // (a metadata conditional's Return goes to its list alone:
+        // `_ShouldBroadcastCurrentInputOnEnterKey` is false)
+        if self.autocomplete.is_metadata_conditional() {
+            if let Some(index) = self.autocomplete.highlighted() {
+                self.choose_or(index, shift);
+            }
+            return;
+        }
         if self.autocomplete.tab() != hydrus_gui_model::write_autocomplete::Tab::Tags {
             self.activate_suggestions(shift);
             return;

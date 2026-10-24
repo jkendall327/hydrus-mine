@@ -625,12 +625,14 @@ and falls back to preserved reference options.
 `oracle/record_string_conversion_preference.py` records acceptance, child Cancel
 and option serialization/reload across fresh parent editors.
 
-The processor step list has import, export selected, and paste controls. Its
-exchange window reads bounded reference JSON/PNG, reviews appended steps, copies
-selected entries in execution order, and saves reference PNGs. Import updates
-per-step/final previews in the draft; parent Cancel closes and invalidates the
-exchange child. `oracle/record_processing_exchange.py` records real Qt single/
-multiple selection exports, clipboard append, invalid input and a reference PNG.
+The processor step list has the reference's "export" (to the clipboard, to a
+png), "import" (from the clipboard, from pngs) and "duplicate": the selected
+steps go out in execution order as the reference's serialised text, the png
+panel starts as the reference's, and what comes in is appended at once,
+saying "N objects added!", "Problem pasting!", "Clipboard Error!" or "Problem
+importing!" as the reference does (`oracle/record_processing_exchange_export.py`).
+Imports update per-step/final previews in the draft; parent Cancel closes the
+png export.
 A package mixing steps with other objects appends its steps, with the
 reference's warning about the rest (`record_processing_exchange_mixed.py`).
 
@@ -790,6 +792,11 @@ a formula without renaming it does too, as the reference's does), and rows stay
 in the order they were added. Selected formulae edit in sequence; cancelling a child stops the
 remaining edits. Each formula's name is entered before its reusable editor;
 Apply saves the list and refreshes the chooser, while Cancel discards it.
+"export" (to the clipboard, to a png, to pngs, one png per formula named by
+it), "import" (from the clipboard, from pngs) and "duplicate" are the
+reference's: exports are its serialised text, and what comes in is added at
+once under unique names and selected, saying "N objects added!", warning of
+the types refused, or "Clipboard Error!" (replayed from the same recording).
 
 The reusable formula editor (`formula_window.rs`,
 `ui/formula_editors.slint`) edits ordered rules with add/edit/remove/up/down,
@@ -809,6 +816,12 @@ Context-variable and static formula controls edit names, variable keys, text and
 output counts (1–65,535), with the same parsing context, newline policy and
 string processor preview as HTML/JSON. Type changes create fresh reference
 defaults and reset the old name/processor. Edits remain isolated until Apply.
+Its "export" (to the clipboard, to a png) and "import" (from the clipboard,
+from a png) are the reference's formula panel's: the formula goes out as the
+reference's serialised text, a formula coming in replaces the one edited at
+once, and anything else gets the reference's "That was not a formula--it was
+a: ...", "Clipboard Error!" or "Problem loading!"
+(`oracle/record_formula_exchange.py`).
 `oracle/record_recursive_formula_editors.py` records these scalar controls and
 the recursive formula workflows. Nested formula editors open a staged first
 formula and a second formula whose examples come from the first formula's parsed
@@ -827,7 +840,13 @@ headers and cookies. Response charsets are decoded by the downloader engine;
 failed page fetches retain the server document. Fetches preserve context variables
 and reset the post index to zero. Fetched documents remain selectable alongside
 pasted examples, and selected data reaches child parsers through the page converter.
-Closing an owner cancels its request and discards late results. Bandwidth usage is
+The page parser editor's example fetch shows the reference's network job control:
+the job's status, what it has read (and how fast) and a gauge, blank again once it
+is done; its cancel gives "fetch cancelled"; it tries its connection once; a blank
+url box takes the first example url without asking anything; an invalid url says
+'Could not parse "invalid" at all!' (`oracle/record_parser_fetch_controls.py`).
+Closing an editor discards late results but leaves its request to finish, as the
+reference leaves its job in the engine. Bandwidth usage is
 merged with other engines rather than replacing their traffic.
 `oracle/record_parser_test_data.py` records these request and context semantics.
 
@@ -1737,25 +1756,34 @@ boundaries; authored store/model/native regressions await hosted execution.
 search, comparison, action, progress and operation, its warning, and
 "add suggested" (the reference's suggested rules), "add", "edit",
 "delete" (asking first), "export" (to the clipboard, a json file or a png),
-"import" (from the clipboard, json files or pngs: hydrus-rs's exports or the
-reference's own serialised rules, one or a list, saying "N objects added!",
-and warning of anything that isn't a rule) and "duplicate"; imported and
-duplicated rules are named apart from the others; "apply" writes them (a changed rule starting its
+"import" (from the clipboard, json files or pngs: the reference's own
+serialised rules, one or a list, or hydrus-rs's older exports, saying "N
+objects added!", warning of anything that isn't a rule, and with the
+reference's "Clipboard Error!" for text that isn't an object) and
+"duplicate"; exports are the reference's serialised text, so the reference
+imports them; imported and duplicated rules are named apart from the others
+and selected; "apply" writes them (a changed rule starting its
 work over, as the reference's does). The rule editor sets the name,
 paused, operation and most pending pairs, and has tabs for the search
 (which pairs, the location both searches search, chosen in the
-"multiple/deleted locations" list, the searches typed a term a line, the
-distance and pixel
-duplicates), the comparison (the comparators, added by kind and edited
-in their own editors: a search for A, B or either; A or B's progressive
+"multiple/deleted locations" list, the searches typed a term a line (a
+line left as shown keeps its predicate, so OK on a rule, changing nothing,
+leaves it as it was), the distance and pixel duplicates), the comparison
+(the comparators, added by kind and edited in their own editors: a search for A, B or either, made in the reference's
+metadata conditional search (a box with paste and empty-search buttons, the
+OR buttons, its results and the predicates made, a double-click removing
+one; empty, it offers inbox, archive and eight system predicates that open
+their editors; recorded in `metadata_conditional_editor.json`); A or B's progressive
 jpeg test; a relative test of a file property with its operator,
 multiplier and delta; a pair test; visual duplicates; and OR and AND
 lists of comparators, each edited in an editor of its own) and the
 action (which, deleting A or B, and default or custom merge options,
 starting from the client's for the action and edited in the merge options
 editor).
-A rule's comparator list can export one to the clipboard or a png, import from
-the clipboard or pngs, and duplicate. "apply" refuses a "better" rule whose comparators can't tell A from B,
+A rule's comparator list, and an OR's or AND's, select several rows and can
+export them to the clipboard or a png (in the reference's serialised form),
+import from the clipboard or pngs, and duplicate them, with the reference's
+messages (`oracle/record_rules_exchange.py`). "apply" refuses a "better" rule whose comparators can't tell A from B,
 with the reference's words. Its "preview" tab searches the rule as
 edited for a sample of its pairs ("only sample this many", or all) and
 tests each, off the UI thread: "47 pairs searched; 10 matched", the
@@ -2283,15 +2311,23 @@ specific domains and the downloader default stay), and specific domains can
 inherit their defaults again.
 
 Current jobs show every active engine request, including subscriptions, with
-URL, status, typed wait reason, speed and progress. Extended selection supports
+URL, status, speed and progress, and the reference engine's position for what
+it waits on: "waiting for validation" (new, or a custom header awaiting
+approval), "waiting for bandwidth" (also while new traffic is paused),
+"waiting for login", "waiting for free work slot" (a slot, the domain's slots,
+a gallery token, domain errors, the computer just woke) or "running" (also
+while retrying a connection or a server's low bandwidth); a job waiting for
+another on its domain says "waiting for other jobs on this domain to finish"
+(`oracle/record_network_job_waits.py`). Extended selection supports
 cancel and bandwidth override, with selected-job context details. As in the
 reference, the list is a snapshot: "manual refresh" is checked to begin with and
 "refresh snapshot" takes one; unchecking it asks for a snapshot every so many
 seconds (0.25 to begin with, never under 0.05). A right-click on a job selects it
 and opens the reference's menu: "network contexts" (each context with the wait it
 adds, or "bandwidth ok") and the lines "domain ok", "waiting on connection
-error", "waiting on serverside bandwidth", "obeys bandwidth" and "tokens ok",
-each of which copies itself when chosen (`oracle/record_network_jobs_panel.py`). The daemon publishes usage and jobs through typed local store IPC,
+error", "waiting on serverside bandwidth" (the job's retry wait has not ended; the
+engine keeps both wake times, as the reference's job does), "obeys bandwidth"
+and "tokens ok", each of which copies itself when chosen (`oracle/record_network_jobs_panel.py`). The daemon publishes usage and jobs through typed local store IPC,
 independent of the Client API listener. Heartbeats expire after five seconds;
 offline bandwidth review falls back to saved history. Commands identify the
 reviewed daemon and request, so finished jobs or replacement daemons ignore them.
@@ -2628,7 +2664,10 @@ original URL, and its bandwidth-rules submenu opens the existing detached rule
 editor directly. Default contexts appear once; temporary page instances never
 get their own rule editor. Applicable actions reattempt a connection or a server
 bandwidth wait, scrub domain errors, override this job's bandwidth, or skip this
-job's gallery wait. The five-second automatic override belongs to that page's
+job's gallery wait; each entry is offered while the job waits on it and goes
+once it acts, as on a live engine job the reference's do
+(`oracle/fixtures/network_job_control.json`, replayed in
+`tests/gui/network_job_retry_flags.rs`). The five-second automatic override belongs to that page's
 file/search control and survives changing the highlighted query. Closing a page
 retires its policy; accepted overrides remain in effect for the current job.
 
@@ -3343,7 +3382,11 @@ results, favourites and children tabs (a tab is kept until text is typed), and
 explicit OR construction: shift+enter adds a result to the OR being built (shown
 as the first result), a plain entry commits it, "↶" rewinds, "cancel OR" and
 escape in an empty box cancel or rewind, and "OR" and "advanced" open the OR
-editors. Recorded in `favourite_editor_tabs_or.json`.
+editors. Recorded in `favourite_editor_tabs_or.json`. Keys pressed in the box
+move the current tab's highlight as the reference's lists do (Up and Down wrap
+round; Home, End, Page Up, Page Down), and Return or Shift+Return enters or
+adds to the OR the highlighted row; results show their counts; "advanced"
+takes a typed search string. Recorded in `favourite_editor_rows.json`.
 
 Downloader HTTP requests now perform domain login admission before acquiring a
 connection slot. Active most-specific login domains use current credentials and
@@ -3482,8 +3525,19 @@ changed-page/query, accepted-close and rebound owners. `active_predicate_routes.
 records fourteen real Qt selections, their clipboard/new-page publications, and a
 real new-page consumer. Authored native transport and ownership replay awaits
 hosted execution. The active list’s inherited “select files” method is a no-op
-in Qt (the media tag list owns the working override); it is not represented here
-as a new file-selection action.
+in Qt (the media tag list owns the working override); its "select" entry is
+there and does nothing, as the reference's.
+
+Right-clicking the active list opens its whole menu, as the reference builds
+it: copy, the selected tag's siblings and parents (with their counts, its
+siblings, parents and children by service, each copied when chosen, and "add
+siblings/parents to" opening the siblings or parents editor on the selection),
+open, search, select, favourites (add or remove it from the favourites and
+each service's most used tags, asking before a removal) and maintenance
+(regenerate tag display, asking first). Recorded in `active_predicate_menu.json`.
+An edit selects what it made; a mixed edit with an OR shows the OR as a row
+whose "edit OR…" button opens the OR editor on it. Recorded in
+`active_predicate_selection.json`.
 
 The file-size editor displays `<`, `≈`, `=`, `≠` and `>` as five radio choices,
 with bounded arrow navigation, Space and default Enter acceptance. Its amount
@@ -5149,7 +5203,9 @@ cancellable job with a gauge that gets a pulsing sub-job two seconds in, a
 network-job popup, an error, then three delayed messages; the "user call
 test" popup's button shows a text popup, and the "sub gap downloader test"
 popup's opens (or makes) the "subscription gap downloaders" gallery page and
-pends its search there, saying so if the downloader is not found),
+pends its search there, highlighting it when the page shows none and the
+"highlight the new query" option is on, as a page's own query entry does
+(`oracle/record_highlight_new_query.py`), saying so if the downloader is not found),
 "reset multi-column list settings to default" (its question) and "save 'last
 session' gui session"; data actions > "flush log", "force database commit",
 "show env" (every environment variable in a popup and the log) and "simulate
@@ -5867,7 +5923,10 @@ The idle and "CPU busy" fields of the status bar have the reference's
 tooltips ("client is idle, it can do maintenance work", "this computer has been
 doing work recently, so some hydrus maintenance will not start"), shown after
 half a second under the pointer. A new field at the right of them says "db
-writing" or "db reading" while this window's database connection is busy.
+reading", "db writing", "db committing" or "db locked" (paused, as for a backup)
+while this window's database connection is busy, and its tooltip names the job:
+"current db job: write" or "read", then the name of the function the job is
+written in (`oracle/record_status_db.py`).
 
 ### Options search: help text, and window titles with the name
 

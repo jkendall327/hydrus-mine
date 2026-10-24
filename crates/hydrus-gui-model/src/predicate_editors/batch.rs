@@ -9,8 +9,28 @@ pub struct Batch {
     pub simple: Vec<String>,
     pub invertible: Vec<Predicate>,
     pub unchanged: Vec<Predicate>,
-    /// System panel indices and negative simple-text indices, in Qt row order.
+    /// The OR predicates, each edited in the OR editor (the reference's
+    /// embedded `ORPredicateControl`): what each now gives.
+    pub ors: Vec<Vec<Predicate>>,
+    /// System panel indices, negative simple-text indices and OR indices
+    /// below [`OR_ROWS`], in Qt row order.
     pub order: Vec<i32>,
+}
+
+/// Where the OR rows' indices start in [`Batch::order`]: OR `k` is
+/// `OR_ROWS - k`.
+pub const OR_ROWS: i32 = -1_000_000;
+
+impl Batch {
+    /// The dialog's title: "edit OR predicate" when its one editable
+    /// predicate is an OR, as the reference's `EditPredicates` names it.
+    pub fn title(&self, panels: usize) -> &'static str {
+        if panels == 0 && self.simple.is_empty() && self.ors.len() == 1 {
+            "edit OR predicate"
+        } else {
+            "edit predicates"
+        }
+    }
 }
 
 /// The reference's simple tag text syntax, without autocomplete cleaning.
@@ -79,6 +99,11 @@ impl Editor {
                     .order
                     .push(-1 - i32::try_from(batch.simple.len()).unwrap_or(i32::MAX - 1));
                 batch.simple.push(simple);
+            } else if let Predicate::Or(_) = &p {
+                batch
+                    .order
+                    .push(OR_ROWS - i32::try_from(batch.ors.len()).unwrap_or(0));
+                batch.ors.push(vec![p]);
             } else if let Some(editor) = Self::existing(&p, context) {
                 batch
                     .order
@@ -93,7 +118,11 @@ impl Editor {
                 batch.unchanged.push(p);
             }
         }
-        if panels.is_empty() && batch.simple.is_empty() && batch.invertible.is_empty() {
+        if panels.is_empty()
+            && batch.simple.is_empty()
+            && batch.invertible.is_empty()
+            && batch.ors.is_empty()
+        {
             return None;
         }
         let mut editor = Self::new(Blank::Filesize, context);
@@ -116,6 +145,7 @@ impl Editor {
         };
         let mut made = batch.unchanged.clone();
         made.extend(batch.invertible.clone());
+        made.extend(batch.ors.iter().flatten().cloned());
         for simple in &batch.simple {
             made.push(simple_predicate(simple)?);
         }

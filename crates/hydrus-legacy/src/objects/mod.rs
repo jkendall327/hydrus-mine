@@ -43,6 +43,7 @@ mod legacy_options;
 mod location;
 pub mod logins;
 pub mod parsers;
+pub mod predicate_encode;
 pub mod predicates;
 mod services;
 mod sessions;

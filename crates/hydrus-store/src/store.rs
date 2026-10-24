@@ -359,6 +359,18 @@ impl Store {
         self.db.activity()
     }
 
+    /// The job the database is doing now, named as the status bar's tooltip
+    /// names it ("write " and the function the job is written in), if any.
+    pub fn db_current_job(&self) -> Option<String> {
+        self.db.current_job()
+    }
+
+    /// See [`Db::hold_next_commit`].
+    #[doc(hidden)]
+    pub fn hold_next_commit(&self) -> crossbeam_channel::Sender<()> {
+        self.db.hold_next_commit()
+    }
+
     /// Run a read against a consistent database snapshot.
     pub fn read<R>(&self, f: impl FnOnce(&Connection) -> Result<R>) -> Result<R> {
         self.db.read(f)

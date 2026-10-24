@@ -504,11 +504,11 @@ fn the_rule_rows_string_processor_button_opens_the_child_editor_as_the_reference
         // the step added and accepted
         child.invoke_rule_process(index);
         let e = editor();
-        e.invoke_exchange("import".into());
-        let exchange = strings.exchange.0.borrow().as_ref().unwrap().clone_strong();
-        exchange.set_text(r#"[55, 2, [[[2, "pre-"]], "example string"]]"#.into());
-        exchange.invoke_action("review".into());
-        exchange.invoke_action("accept".into());
+        // (pasted: "import > from clipboard" adds it at once)
+        crate::rules_exchange::paste(Some(r#"[55, 2, [[[2, "pre-"]], "example string"]]"#));
+        e.invoke_exchange("from clipboard".into());
+        crate::rules_exchange::said();
+        hydrus_gui::clear_clipboard_reader();
         assert_eq!(
             column(e.get_processed()),
             serde_json::from_value::<Vec<String>>(case["processed_strings"].clone()).unwrap(),
@@ -533,11 +533,11 @@ fn the_rule_rows_string_processor_button_opens_the_child_editor_as_the_reference
             column(e.get_steps()).len(),
             case["cancelled_opened_with"].as_array().unwrap().len()
         );
-        e.invoke_exchange("import".into());
-        let exchange = strings.exchange.0.borrow().as_ref().unwrap().clone_strong();
-        exchange.set_text(r#"[55, 2, [[[3, "-post"]], "example string"]]"#.into());
-        exchange.invoke_action("review".into());
-        exchange.invoke_action("accept".into());
+        // (pasted: "import > from clipboard" adds it at once)
+        crate::rules_exchange::paste(Some(r#"[55, 2, [[[3, "-post"]], "example string"]]"#));
+        e.invoke_exchange("from clipboard".into());
+        crate::rules_exchange::said();
+        hydrus_gui::clear_clipboard_reader();
         assert_eq!(column(e.get_steps()).len(), 2);
         e.invoke_cancel();
         assert_eq!(

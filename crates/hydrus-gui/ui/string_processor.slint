@@ -9,7 +9,7 @@ import { TipButton, TipComboBox } from "tip_widgets.slint";
 
 import { Button, CheckBox, ComboBox, LineEdit, SpinBox } from "std-widgets.slint";
 import { Theme } from "@hydrus_ui_core";
-import { Asking } from "@hydrus_ui_core";
+import { Asking, SubscriptionExchangeButton } from "@hydrus_ui_core";
 import { ListTable, TableRow } from "@hydrus_ui_core";
 import { RegexTools } from "regex_tools.slint";
 import { MenuPane, MenuPanes } from "@hydrus_ui_core";
@@ -167,9 +167,10 @@ export component StringProcessorWindow inherits Window {
         }
         HorizontalLayout {
             spacing: 6px;
-            Btn { text: "import"; enabled: !root.asking && !root.child-open; clicked => { root.exchange("import"); } }
-            Btn { text: "export selected"; enabled: root.any-selected && !root.asking && !root.child-open; clicked => { root.exchange("export"); } }
-            Btn { text: "paste"; enabled: !root.asking && !root.child-open; clicked => { root.exchange("paste"); } }
+            // the queue's `AddImportExportButtons`
+            SubscriptionExchangeButton { label: "export"; choices: ["to clipboard", "to png"]; available: root.any-selected && !root.asking && !root.child-open; selected(mode) => { root.exchange(mode == 0 ? "to clipboard" : "to png"); } }
+            SubscriptionExchangeButton { label: "import"; choices: ["from clipboard", "from pngs"]; available: !root.asking && !root.child-open; selected(mode) => { root.exchange(mode == 0 ? "from clipboard" : "from pngs"); } }
+            Btn { text: "duplicate"; enabled: root.any-selected && !root.asking && !root.child-open; clicked => { root.exchange("duplicate"); } }
         }
         if root.exchange-error != "": Text { text: root.exchange-error; color: Theme.error; wrap: word-wrap; }
         Box {

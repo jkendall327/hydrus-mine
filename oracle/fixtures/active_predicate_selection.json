@@ -1,0 +1,499 @@
+{
+ "cases": [
+  {
+   "accepted": true,
+   "after": {
+    "selected": [
+     "series:edited"
+    ],
+    "shown": [
+     "blue eyes",
+     "series:edited",
+     "system:inbox"
+    ]
+   },
+   "before": {
+    "selected": [
+     "series:metroid"
+    ],
+    "shown": [
+     "blue eyes",
+     "series:metroid",
+     "system:inbox"
+    ]
+   },
+   "edit": true,
+   "enter": [],
+   "invertible_after": [],
+   "invertible_before": [],
+   "name": "edit a tag",
+   "panels": [
+    "PanelPredicateSimpleTagTypes"
+   ],
+   "simple": [
+    "series:edited"
+   ],
+   "title": "edit predicates",
+   "value": [
+    "series:edited"
+   ]
+  },
+  {
+   "accepted": true,
+   "after": {
+    "selected": [
+     "series:one",
+     "series:two"
+    ],
+    "shown": [
+     "series:one",
+     "series:two",
+     "system:inbox"
+    ]
+   },
+   "before": {
+    "selected": [
+     "blue eyes",
+     "series:metroid"
+    ],
+    "shown": [
+     "blue eyes",
+     "series:metroid",
+     "system:inbox"
+    ]
+   },
+   "edit": true,
+   "enter": [],
+   "invertible_after": [],
+   "invertible_before": [],
+   "name": "edit two tags",
+   "panels": [
+    "PanelPredicateSimpleTagTypes",
+    "PanelPredicateSimpleTagTypes"
+   ],
+   "simple": [
+    "series:one",
+    "series:two"
+   ],
+   "title": "edit predicates",
+   "value": [
+    "series:one",
+    "series:two"
+   ]
+  },
+  {
+   "accepted": true,
+   "after": {
+    "selected": [
+     "blue eyes",
+     "series:changed"
+    ],
+    "shown": [
+     "blue eyes",
+     "series:changed",
+     "system:inbox"
+    ]
+   },
+   "before": {
+    "selected": [
+     "blue eyes",
+     "series:metroid"
+    ],
+    "shown": [
+     "blue eyes",
+     "series:metroid",
+     "system:inbox"
+    ]
+   },
+   "edit": true,
+   "enter": [],
+   "invertible_after": [],
+   "invertible_before": [],
+   "name": "edit a tag, the other unchanged",
+   "panels": [
+    "PanelPredicateSimpleTagTypes",
+    "PanelPredicateSimpleTagTypes"
+   ],
+   "simple": [
+    "blue eyes",
+    "series:changed"
+   ],
+   "title": "edit predicates",
+   "value": [
+    "blue eyes",
+    "series:changed"
+   ]
+  },
+  {
+   "accepted": true,
+   "after": {
+    "selected": [
+     "series:other",
+     "system:archive"
+    ],
+    "shown": [
+     "blue eyes",
+     "series:other",
+     "system:archive"
+    ]
+   },
+   "before": {
+    "selected": [
+     "series:metroid",
+     "system:inbox"
+    ],
+    "shown": [
+     "blue eyes",
+     "series:metroid",
+     "system:inbox"
+    ]
+   },
+   "edit": true,
+   "enter": [],
+   "flip": true,
+   "invertible_after": [
+    "system:archive"
+   ],
+   "invertible_before": [
+    "system:inbox"
+   ],
+   "name": "edit a tag and flip inbox",
+   "panels": [
+    "PanelPredicateSimpleTagTypes"
+   ],
+   "simple": [
+    "series:other"
+   ],
+   "title": "edit predicates",
+   "value": [
+    "series:other",
+    "system:archive"
+   ]
+  },
+  {
+   "accepted": false,
+   "after": {
+    "selected": [
+     "series:metroid"
+    ],
+    "shown": [
+     "blue eyes",
+     "series:metroid",
+     "system:inbox"
+    ]
+   },
+   "before": {
+    "selected": [
+     "series:metroid"
+    ],
+    "shown": [
+     "blue eyes",
+     "series:metroid",
+     "system:inbox"
+    ]
+   },
+   "edit": true,
+   "enter": [],
+   "invertible_after": [],
+   "invertible_before": [],
+   "name": "edit cancelled",
+   "panels": [
+    "PanelPredicateSimpleTagTypes"
+   ],
+   "simple": [
+    "series:never"
+   ],
+   "title": "edit predicates",
+   "value": [
+    "series:never"
+   ]
+  },
+  {
+   "after": {
+    "selected": [
+     "system:archive"
+    ],
+    "shown": [
+     "blue eyes",
+     "system:archive"
+    ]
+   },
+   "before": {
+    "selected": [
+     "system:inbox"
+    ],
+    "shown": [
+     "blue eyes",
+     "system:inbox"
+    ]
+   },
+   "enter": [
+    "system:archive"
+   ],
+   "name": "enter what replaces a selected row"
+  },
+  {
+   "after": {
+    "selected": [
+     "blue eyes"
+    ],
+    "shown": [
+     "blue eyes",
+     "system:archive"
+    ]
+   },
+   "before": {
+    "selected": [
+     "blue eyes"
+    ],
+    "shown": [
+     "blue eyes",
+     "system:inbox"
+    ]
+   },
+   "enter": [
+    "system:archive"
+   ],
+   "name": "enter what replaces an unselected row"
+  },
+  {
+   "after": {
+    "selected": [
+     "blue eyes"
+    ],
+    "shown": [
+     "blue eyes",
+     "series:metroid",
+     "system:inbox"
+    ]
+   },
+   "before": {
+    "selected": [
+     "blue eyes"
+    ],
+    "shown": [
+     "blue eyes",
+     "system:inbox"
+    ]
+   },
+   "enter": [
+    "series:metroid"
+   ],
+   "name": "enter a new row"
+  },
+  {
+   "accepted": true,
+   "after": {
+    "selected": [
+     "blue eyes OR character:samus aran",
+     "system:archive"
+    ],
+    "shown": [
+     "blue eyes",
+     "blue eyes OR character:samus aran",
+     "system:archive"
+    ]
+   },
+   "before": {
+    "selected": [
+     "character:samus aran OR series:metroid",
+     "system:inbox"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR series:metroid",
+     "system:inbox"
+    ]
+   },
+   "edit": true,
+   "enter": [],
+   "flip": true,
+   "invertible_after": [
+    "system:archive"
+   ],
+   "invertible_before": [
+    "system:inbox"
+   ],
+   "name": "mixed edit with an OR",
+   "or_after": [
+    "blue eyes",
+    "character:samus aran"
+   ],
+   "or_before": [
+    "character:samus aran",
+    "series:metroid"
+   ],
+   "or_remove": [
+    "series:metroid"
+   ],
+   "or_type": [
+    "blue eyes"
+   ],
+   "panels": [
+    "ORPredicateControl"
+   ],
+   "title": "edit OR predicate",
+   "value": [
+    "blue eyes OR character:samus aran",
+    "system:archive"
+   ]
+  },
+  {
+   "accepted": true,
+   "after": {
+    "selected": [
+     "character:samus aran OR series:metroid",
+     "system:archive"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR series:metroid",
+     "system:archive"
+    ]
+   },
+   "before": {
+    "selected": [
+     "character:samus aran OR series:metroid",
+     "system:inbox"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR series:metroid",
+     "system:inbox"
+    ]
+   },
+   "edit": true,
+   "enter": [],
+   "flip": true,
+   "invertible_after": [
+    "system:archive"
+   ],
+   "invertible_before": [
+    "system:inbox"
+   ],
+   "name": "mixed edit with an OR, the OR unchanged",
+   "or_after": [
+    "character:samus aran",
+    "series:metroid"
+   ],
+   "or_before": [
+    "character:samus aran",
+    "series:metroid"
+   ],
+   "panels": [
+    "ORPredicateControl"
+   ],
+   "title": "edit OR predicate",
+   "value": [
+    "character:samus aran OR series:metroid",
+    "system:archive"
+   ]
+  },
+  {
+   "accepted": false,
+   "after": {
+    "selected": [
+     "character:samus aran OR series:metroid",
+     "system:inbox"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR series:metroid",
+     "system:inbox"
+    ]
+   },
+   "before": {
+    "selected": [
+     "character:samus aran OR series:metroid",
+     "system:inbox"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR series:metroid",
+     "system:inbox"
+    ]
+   },
+   "edit": true,
+   "enter": [],
+   "flip": true,
+   "invertible_after": [
+    "system:archive"
+   ],
+   "invertible_before": [
+    "system:inbox"
+   ],
+   "name": "mixed edit with an OR, cancelled",
+   "or_after": [
+    "blue eyes",
+    "character:samus aran",
+    "series:metroid"
+   ],
+   "or_before": [
+    "character:samus aran",
+    "series:metroid"
+   ],
+   "or_type": [
+    "blue eyes"
+   ],
+   "panels": [
+    "ORPredicateControl"
+   ],
+   "title": "edit OR predicate",
+   "value": [
+    "blue eyes OR character:samus aran OR series:metroid",
+    "system:archive"
+   ]
+  },
+  {
+   "accepted": true,
+   "after": {
+    "selected": [
+     "series:metroid",
+     "series:new"
+    ],
+    "shown": [
+     "series:metroid",
+     "series:new"
+    ]
+   },
+   "before": {
+    "selected": [
+     "blue eyes",
+     "character:samus aran OR series:metroid"
+    ],
+    "shown": [
+     "blue eyes",
+     "character:samus aran OR series:metroid",
+     "series:metroid"
+    ]
+   },
+   "edit": true,
+   "enter": [],
+   "invertible_after": [],
+   "invertible_before": [],
+   "name": "mixed edit with a tag and an OR",
+   "or_after": [
+    "series:metroid"
+   ],
+   "or_before": [
+    "character:samus aran",
+    "series:metroid"
+   ],
+   "or_remove": [
+    "character:samus aran"
+   ],
+   "panels": [
+    "PanelPredicateSimpleTagTypes",
+    "ORPredicateControl"
+   ],
+   "simple": [
+    "series:new"
+   ],
+   "title": "edit predicates",
+   "value": [
+    "series:metroid",
+    "series:new"
+   ]
+  }
+ ]
+}

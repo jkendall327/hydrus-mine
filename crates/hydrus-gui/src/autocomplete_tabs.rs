@@ -14,7 +14,7 @@ pub(crate) fn bind(
     window: &MainWindow,
     page: impl Fn() -> Page + Clone + 'static,
     shown: impl Fn(bool) + Clone + 'static,
-) -> Rc<slint::Timer> {
+) -> (Rc<slint::Timer>, Rc<TagMenu>) {
     let store = page().borrow().store().clone();
     let captured: Rc<RefCell<Option<Page>>> = Rc::default();
     let valid = Rc::new({
@@ -70,6 +70,7 @@ pub(crate) fn bind(
         }),
     );
     crate::write_tag_menu::bind!(window, menu);
+    let shared = menu.clone();
     window.on_suggestion_selection_clicked({
         let weak = window.as_weak();
         let page = page.clone();
@@ -217,7 +218,7 @@ pub(crate) fn bind(
         shown(false);
         menu.open(&entries, x, y);
     });
-    updates
+    (updates, shared)
 }
 
 /// One owner-held settings subscription, shared by embedded read and detached write panes.

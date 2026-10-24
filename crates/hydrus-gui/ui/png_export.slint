@@ -53,3 +53,41 @@ export component PngExportWindow inherits Window {
         }
     }
 }
+
+// The reference's PNGsExportPanel ("to pngs"): each selected named object to
+// its own png, named by its name, in one directory.
+export component PngsExportWindow inherits Window {
+    in property <string> title-suffix: "";
+    // the title as composed, for tests and the platform
+    out property <string> composed-title: root.title;
+    title: ("export to pngs") + root.title-suffix;
+    preferred-width: 690px;
+    preferred-height: 180px;
+    background: Theme.window;
+    in-out property <string> path;
+    in-out property <int> png-width: 512;
+    in property <string> error;
+    in property <bool> done;
+    in property <string> export-label: "select a path";
+    in property <bool> can-export;
+    callback action(string);
+    VerticalLayout {
+        padding: 12px;
+        spacing: 8px;
+        HorizontalLayout {
+            Text { text: "export path:"; color: Theme.text; vertical-alignment: center; }
+            LineEdit { text <=> root.path; horizontal-stretch: 1; edited(text) => { root.action("update"); } }
+            Btn { text: "browse…"; clicked => { root.action("browse"); } }
+        }
+        HorizontalLayout {
+            Text { text: "png width:"; color: Theme.text; vertical-alignment: center; }
+            SpinBox { minimum: 100; maximum: 4096; value <=> root.png-width; edited => { root.action("update"); } }
+        }
+        Text { text: root.error; color: Theme.text; wrap: word-wrap; }
+        HorizontalLayout {
+            alignment: end;
+            Btn { text: root.done ? "done!" : root.export-label; enabled: root.can-export; clicked => { root.action("export"); } }
+            Btn { text: "close"; clicked => { root.action("close"); } }
+        }
+    }
+}

@@ -1,0 +1,26 @@
+{
+ "filled": 1,
+ "runs": [
+  {
+   "timeout": 1,
+   "seconds": 1.01,
+   "statuses": [
+    "initialising…",
+    "sending request…"
+   ],
+   "error": "Could not connect!",
+   "exception": "ConnectionException"
+  },
+  {
+   "timeout": 3,
+   "seconds": 3.02,
+   "statuses": [
+    "initialising…",
+    "sending request…",
+    "Error: Could not connect!"
+   ],
+   "error": "Could not connect!",
+   "exception": "ConnectionException"
+  }
+ ]
+}

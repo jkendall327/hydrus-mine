@@ -13,7 +13,7 @@ use std::time::Duration;
 use slint::{ComponentHandle as _, Model as _, ModelRc, SharedString, VecModel};
 
 use hydrus_core::search::recent::RecentPredicates;
-use hydrus_search::{Predicate, SystemPredicate, TextContext, predicate_text};
+use hydrus_search::{FileSearchContext, Predicate, SystemPredicate, TextContext, predicate_text};
 use hydrus_store::Store;
 
 pub use crate::predicate_editors::button_label;
@@ -340,11 +340,38 @@ fn change_recent(store: &Store, change: impl FnOnce(&mut RecentPredicates)) {
 pub(crate) fn open(
     slot: &Rc<RefCell<Option<PredicateEditorWindow>>>,
     store: &Arc<Store>,
+    editor: Editor,
+    context: Context,
+    text: TextContext,
+    chosen: Rc<dyn Fn(Vec<Predicate>)>,
+    owner: Option<Rc<dyn Fn() -> bool>>,
+) -> Result<(), String> {
+    open_with_or(
+        slot,
+        store,
+        editor,
+        context,
+        text,
+        chosen,
+        owner,
+        &crate::search_or_window::Slot::default(),
+        FileSearchContext::default(),
+    )
+}
+
+/// As [`open`], for a mixed edit whose OR predicates are each edited in the
+/// OR editor (kept in `or_slot`, searching `search`'s domains) from their row.
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn open_with_or(
+    slot: &Rc<RefCell<Option<PredicateEditorWindow>>>,
+    store: &Arc<Store>,
     mut editor: Editor,
     context: Context,
     text: TextContext,
     chosen: Rc<dyn Fn(Vec<Predicate>)>,
     owner: Option<Rc<dyn Fn() -> bool>>,
+    or_slot: &crate::search_or_window::Slot,
+    search: FileSearchContext,
 ) -> Result<(), String> {
     let old = slot.borrow_mut().take();
     if let Some(old) = old {
@@ -373,6 +400,9 @@ pub(crate) fn open(
                 .map(|p| SharedString::from(predicate_text(p, &text)))
                 .collect::<Vec<_>>(),
         )));
+        let panels: usize = editor.pages.iter().map(|page| page.panels.len()).sum();
+        window.set_heading(batch.title(panels).into());
+        window.set_or_texts(or_texts(batch, &text));
     }
     let closed = Rc::new(Cell::new(false));
     let valid: Rc<dyn Fn() -> bool> = Rc::new({
@@ -948,6 +978,7 @@ pub(crate) fn open(
             if weak.upgrade().is_none_or(|window| {
                 !window.window().is_visible()
                     || (!window.get_question().is_empty() || window.get_notice_open())
+                    || window.get_or_open()
             }) {
                 return;
             }
@@ -979,13 +1010,94 @@ pub(crate) fn open(
             }
         }
     });
+    // a mixed edit's OR row: its OR editor, whose predicates take its place
+    window.on_or_edit({
+        let valid = valid.clone();
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = Arc::clone(store);
+        let or_slot = or_slot.clone();
+        let text = text.clone();
+        move |k| {
+            if !valid() || or_slot.borrow().is_some() {
+                return;
+            }
+            let Some(window) = weak.upgrade() else { return };
+            let Ok(k) = usize::try_from(k) else { return };
+            let terms = {
+                let state = state.borrow();
+                let Some(given) = state.editor.batch.as_ref().and_then(|b| b.ors.get(k)) else {
+                    return;
+                };
+                given
+                    .iter()
+                    .flat_map(|p| match p {
+                        Predicate::Or(terms) => terms.clone(),
+                        other => vec![other.clone()],
+                    })
+                    .collect()
+            };
+            let owned: crate::search_or_window::ValidOwner = Rc::new({
+                let valid = valid.clone();
+                let weak = weak.clone();
+                move || valid() && weak.upgrade().is_some_and(|w| w.window().is_visible())
+            });
+            let applied: crate::search_or_window::Applied = Rc::new({
+                let state = state.clone();
+                let weak = weak.clone();
+                let text = text.clone();
+                move |made| {
+                    let mut state = state.borrow_mut();
+                    if let Some(batch) = state.editor.batch.as_mut()
+                        && let Some(given) = batch.ors.get_mut(k)
+                    {
+                        *given = made;
+                        if let Some(window) = weak.upgrade() {
+                            window.set_or_texts(or_texts(batch, &text));
+                        }
+                    }
+                }
+            });
+            let context = FileSearchContext {
+                predicates: terms,
+                ..search.clone()
+            };
+            match crate::search_or_window::open(
+                store.clone(),
+                context,
+                false,
+                &or_slot,
+                owned,
+                applied,
+            ) {
+                Ok(child) => {
+                    window.set_or_open(true);
+                    let weak = weak.clone();
+                    child.on_closed(move || {
+                        if let Some(window) = weak.upgrade() {
+                            window.set_or_open(false);
+                        }
+                    });
+                }
+                Err(error) => window.set_error(error.to_string().into()),
+            }
+        }
+    });
     window.on_cancel({
         let close = close.clone();
-        move || close()
+        let or_slot = or_slot.clone();
+        move || {
+            crate::search_or_window::cancel(&or_slot);
+            close();
+        }
     });
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
+    window.window().on_close_requested({
+        let or_slot = or_slot.clone();
+        move || {
+            crate::search_or_window::cancel(&or_slot);
+            close();
+            slint::CloseRequestResponse::HideWindow
+        }
     });
     window.show().map_err(|e| e.to_string())?;
     window.set_comparison_focus(filesize);
@@ -1022,4 +1134,25 @@ pub(crate) fn tree_rows(groups: &[crate::predicate_editors::TreeGroup]) -> Model
         }
     }
     ModelRc::new(VecModel::from(rows))
+}
+
+/// A mixed edit's OR rows as written: what each OR editor now gives.
+fn or_texts(
+    batch: &crate::predicate_editors::batch::Batch,
+    text: &TextContext,
+) -> ModelRc<SharedString> {
+    ModelRc::new(VecModel::from(
+        batch
+            .ors
+            .iter()
+            .map(|made| {
+                SharedString::from(
+                    made.iter()
+                        .map(|p| predicate_text(p, text))
+                        .collect::<Vec<_>>()
+                        .join(", "),
+                )
+            })
+            .collect::<Vec<_>>(),
+    ))
 }

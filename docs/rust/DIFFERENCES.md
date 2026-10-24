@@ -202,6 +202,15 @@ search.
   finish before the page is shown again, so it is never seen searching.
 - **One client at a time on a store**, as the reference allows one client
   on its database; a second says the store is already open.
+- **Very long lines in text inputs can crash the client.** Slint 1.18.1's
+  software renderer draws a text input's selection as one rectangle the
+  width of the selected text and casts it to 16-bit device pixels, so
+  selecting all of a line wider than 32767 device pixels (a ~4800-character
+  URL pasted into the search box, then Ctrl+A) panics; Qt copes. This is
+  upstream (`fill_rectangle` in i-slint-renderer-software); hydrus-rs has
+  no fix of its own yet. `long_text_selection.rs` reproduces it (ignored
+  until it is fixed). Thumbnail tag banners, which crashed the same way,
+  are fixed: their boxes are bounded (`thumbnail_banner_width.rs`).
 
 ## Pages (`hydrus-gui`)
 
@@ -225,25 +234,28 @@ search.
   keeps at least one page.** Allowing an empty top-level notebook is a
   refactor of the main window's current-page type (owner, 2026-10-14: its
   own issue, for a later wave), not a slice.
-- **Active predicate editing remains Partial.** Represented system values and
-  simple tags/namespaces/wildcards can now be edited together, with one atomic
-  Apply and separate supplied values for repeated system families. Immutable
-  terms are preserved and invertible terms have flip buttons. Active-list
-  remove/invert/OR merge or dissolve/namespace commands reach the query. Populated
-  OR controls embedded in a mixed edit, inherited sibling/parent editors and
-  their asynchronous relationship information, favourite/most-used tags and
-  maintenance branches remain missing. The edit/invert leaf
-  (`audit-options-search-active-edit`) is tagged for what the recordings
-  cover: the populated editors, invert, OR, and the copy/open commands; the
-  sibling/parent entries the active list inherits from the tag list are
-  tracked with the tag-relationship windows. Inherited copy/open transports now work, including collapsed OR copying
-  and real AND/OR/per-predicate/duplicate-filter pages. Per-predicate pages open
-  in native list order; Qt iterates its selected-term set. Qt’s active-list file
-  selection handler is an inherited no-op, distinct from its media-list handler.
-  Single system editors keep their existing per-panel OK/star topology. Selection
-  is cleared when query terms change, whereas Qt selects newly edited terms. A
-  page transition cancels the child rather than retaining a modal editor behind
-  a switched page. Remaining list keyboard navigation is unchanged.
+- **Active predicate editing** (`audit-options-search-active-edit`):
+  represented system values and simple tags/namespaces/wildcards are edited
+  together, with one atomic Apply and separate supplied values for repeated
+  system families; immutable terms are preserved and invertible terms have
+  flip buttons. An OR among them is a row of the mixed dialog with an "edit
+  OR…" button opening the OR editor on its terms (whose result takes the
+  row's place on Apply), where the reference embeds the OR's autocomplete
+  in the dialog; the dialog is "edit OR predicate" when that OR is its one
+  editable term, as the reference names it
+  (`oracle/record_active_predicate_selection.py`). After an edit the list
+  selects what the edit made and keeps the selected rows that remain; an
+  entered predicate that replaces a selected one it excludes becomes the only
+  one selected, as the reference's list does (the same recording). The whole
+  right-click menu is the reference's, inherited tag-list entries included
+  (`oracle/record_active_predicate_menu.py`); "select files with" does
+  nothing there, as in the reference, and regenerate tag display is
+  checked by its question and by the counts it repairs. Single system editors
+  keep their existing per-panel OK/star topology. Per-predicate
+  pages open in native list order; Qt iterates its selected-term set. A page
+  transition cancels the child rather than retaining a modal editor behind a
+  switched page. The list's own keys are Return and Delete; arrow keys do not
+  move through it.
 - **Favourite search autocomplete shares the native page's suggestion model**,
   including blank system predicate editors, and has editable file/tag domains,
   current/pending tags, sort and collection controls, and the paste, star
@@ -270,20 +282,22 @@ search.
   list too), a system predicate such as "system:limit = 64" enters itself, and
   text with no result ("system:" that is no predicate, a tag the database does
   not have) enters nothing and stays in the box without a message. The first
-  result and the highlight are compared with the recording. Not covered: Return
-  pressed before the reference's list has caught up (it then enters the text
-  as typed; the native list is always current), and counts and context shown
-  in the results. A bare "*" lists nothing here as with the default options,
+  result and the highlight are compared with the recording. The native list is never behind the text, so
+  Return always enters the highlighted result, as the reference does once its
+  list has caught up; the reference's threaded search has a window, before
+  its list catches up, where Return enters the text as typed, which hydrus-rs
+  has no counterpart for. The rows as drawn (counts included), keys
+  in the tabs (Up and Down wrap round, Home, End, Page Up and Page Down; Page
+  Up and Down move by the "autocomplete rows" setting where the reference
+  moves by the rows its list shows), and the advanced OR dialog are compared
+  with `oracle/record_favourite_editor_rows.py`. The page's own result list
+  still stops at its ends where the reference wraps round. A bare "*" lists nothing here as with the default options,
   but the other fetch-all settings are not consulted, and the second wildcard
   (`*:x*`) the reference adds when unnamespaced searches give any-namespace
   wildcards is not listed (unrecorded). On the main page, Return with a tag the
   database does not have and nothing highlighted still enters the typed text
   (`chosen()`'s fallback in `page.rs`), where the reference enters nothing; the
   favourite editor enters nothing.
-  Remaining from #253 (not started): `audit-options-search-active-edit`
-  (embedded OR in the active-list edit, sibling/parent editors, favourite
-  tags), the tab and OR recordings for counts and context in the results, and
-  an in-step recording of Return in the tabs.
 
 - **Dimensions preset verification** separately tracks nine historical first-pass
   controls. The new Qt recording activates actual buttons through the real modal
@@ -915,8 +929,6 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   gives up), as does each wait on a server's 429; a status the job only records
   (a 500, a 451) counts for nothing. Errors are kept per host and port, and a
   scrub of a bare IP address clears nothing, as in the reference.
-- **The network timeout's connect half is not exercised in tests.** It needs an
-  address that never answers.
 - **Pages are decoded with the web's own decoders.** A charset the server
   states is used as the reference uses it; otherwise, where the reference
   asks chardet, we take valid UTF-8 as UTF-8, then a `<meta>` charset, then
@@ -1095,10 +1107,8 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   are not yet supplied as media examples (manual exports are).
 - **The string processor editor** receives starting strings from the sidecar
   owner's first example, including source processors before their own processing.
-  Import/export/paste use a shared
-  text/PNG review window. A package mixing steps with other objects gives its
-  steps, with the reference's warning about the rest above the review; the
-  reference's "N objects added!" is the review's "Append N processing steps"
+  A package mixing steps with other objects gives its steps, with the
+  reference's warning about the rest
   (`oracle/record_processing_exchange_mixed.py`). A string processor is
   appended as one nested step, as the reference does (#185): the list shows
   its summary ("some conversion", for the one holding a converter), running it leaves no strings (`ProcessStrings`
@@ -1221,6 +1231,25 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   with the reason as the reference does, though not its separate text for a
   payload that decodes but can't be understood (whose `{path}` the reference
   never fills in). A hydrus-rs rules png given to the comparator list is a read error there, where the reference would warn which object types it refused.
+- **The "test A or B using search terms" comparator's search** is the
+  reference's metadata conditional search
+  (`oracle/record_metadata_conditional_editor.py`), less a bug in its
+  `ResultsFetch`, which falls through in two ways: with no OR being built,
+  typed system predicate text lists nothing (its system results are
+  overwritten by a tag search, which finds nothing for it); while one is
+  being built, typed tags list nothing (the tag search is skipped). hydrus-rs
+  lists typed system text that can be tested on one file (filesize and limit
+  can't, and stay unlisted, as in the reference) and searches tags whether or
+  not an OR is being built (DECISIONS.md, "where the reference has a bug,
+  ours stands"); the test asserts its own listing on those recorded steps.
+  Predicates that can't be tested on one file (limit, filesize), pasted or
+  kept, stay in its list but are dropped from the comparator it gives back,
+  without a word, as the reference's `MetadataConditional.SetFileSearchContext`
+  drops them; a conditional read back from a saved rule keeps what it held,
+  as the reference's deserialisation does.
+  Its results have no favourites tab, as the reference's. The OR button's
+  editor lists as a metadata conditional does, but its tabs selector still
+  offers favourites and children.
 - **The file log window**'s "additional urls" don't show the URL a URL class
   would actually fetch or refer from; "open files' locations" for path
   sources opens each file's folder rather than selecting the file in the file
@@ -1600,7 +1629,13 @@ keys; deleting selected rows asks the recorded confirmation. Invalid/mixed-type
 packages are rejected atomically instead of partially importing valid rows.
 Test-data
 URL fetches use a window-local downloader engine: progress appears in the test panel
-rather than the daemon job review. Its requests use the same headers, cookies,
+rather than the daemon job review. Closing an editor or the formula test panel
+leaves its request to finish and drops the result, as the reference does; while a
+fetch runs, hydrus-rs disables the editor's fetch controls, so a second fetch
+cannot be started over the first (the reference lets both run and shows whichever
+finishes last). The page editor's fetch control has the
+reference's texts and gauge but no cog menu, and an invalid url's message is shown
+in the editor rather than in an error dialog. Its requests use the same headers, cookies,
 network settings and accounting machinery, and their usage is merged safely with
 the daemon. All six native formula kinds and subsidiary parsers
 can be imported/exported; their editor-only reference data is preserved.
@@ -1775,24 +1810,25 @@ gauges. Its "[data|requests] in the past [seconds]" line takes the span in
 seconds rather than the reference's days, hours, minutes and seconds buttons, and
 the usage-age choice has "this month" besides the reference's span and "all time".
 
-Native typed wait reasons distinguish pauses, header approval, wake,
-bandwidth, domain, gallery, connection and server waits from transfers; Qt's
-engine-position strings use different categories. Selected-job context and
-obeys-bandwidth details are also inline, and cancel/override controls are
-explicit buttons. Login-script waits remain outside the implemented engine.
+The engine keeps a typed wait for each job, and the jobs list shows it at the
+position the reference's engine would hold the job (validation, bandwidth,
+login, free work slot, running), replayed for real jobs against
+`oracle/fixtures/network_job_waits.json`. The order of the engine's gates
+differs: hydrus-rs checks a just-woken computer and domain errors before
+bandwidth and login, the reference only once a job is ready for a slot, so a
+job held by both is listed where hydrus-rs first holds it. A job waiting for a
+custom header's approval waits for the Client API to approve it (its status
+says so) where the reference asks in a popup ("waiting in user validation
+queue"). Selected-job context and obeys-bandwidth details are also inline, and
+cancel/override controls are explicit buttons. Login-script waits remain outside the implemented engine.
 Local snapshots are published by the daemon without requiring its Client API;
 expiry disables stale controls and saved bandwidth history remains available.
 The jobs window's refresh control is the reference's: "manual refresh" to begin
 with, or a snapshot every so many seconds (never under 0.05; the reference's
 interval is minutes, seconds and milliseconds boxes, native's one number of
-seconds). The jobs list's position column says "waiting for bandwidth", "waiting for
-login" and "running" as the reference does (its positions "waiting for
-validation" and "waiting for free work slot" have no native counterpart), and
-its other waits are native's own; the speed column is titled "current speed" as
-the reference's is. A job's right-click menu is the reference's (recorded in
-`oracle/fixtures/network_jobs_panel.json`), with these differences: a job has one
-typed wait, so "waiting on connection error" and "waiting on serverside bandwidth"
-cannot both read True as they can in the reference; a hydrus-service context
+seconds). The speed column is titled "current speed" as the reference's is. A
+job's right-click menu is the reference's (recorded in
+`oracle/fixtures/network_jobs_panel.json`), with these differences: a hydrus-service context
 is named by its key, where the reference looks its service's name up; and the
 contexts are also listed in the detail under the list, which the reference lacks.
 
@@ -1944,11 +1980,9 @@ the native default local search domain (my files). The broader reference default
 local-location preference is still deferred. An accepted collapse freezes the media shown when its confirmation
 opened; if its source keys have left their shared notebook, it does nothing.
 
-A formula editor's import of something that is not one parsing formula (a
-page parser, or a package of two definitions) shows "Import one parsing formula
-into this editor." where the reference says "That was not a formula--it was a:
-<type>". Importing a formula from a clipboard bitmap is not supported; PNG
-files and text are.
+A formula editor's "import" of a png that is an image but carries no formula
+is refused with hydrus-rs's error under the reference's "Problem loading!"
+title.
 
 ## Downloader and URL display
 
@@ -4299,29 +4333,58 @@ change nothing). They are marked out of scope in `docs/rust/tracking/`.
 
 ## Simple downloader formula list
 
-- The list's import and export go through the shared downloader exchange window
-  (a text box and PNG paths, reviewed before they join the draft) rather than the
-  reference's import/export menus (from clipboard, from pngs; to clipboard, to
-  png, to pngs) and "duplicate" button, which hydrus-rs lacks. The reference adds
-  what it accepts at once and says "N objects added!", with a warning listing the
-  types it refused ("The imported objects included these types: ... Whereas this
-  control only allows: SimpleDownloaderParsingFormula"); this window refuses a
-  package holding anything else, in its own words, and adds nothing. Only the
-  exported text is compared with the reference's (`simple_formula_list.json`),
-  and a tag rule with no attributes is `{}` here and `null` there.
+- The "to pngs" panel names each png by its formula's name as the reference's
+  does, without making the name safe for the filesystem (a name with a `/` in
+  it fails to write, as it would in the reference).
 - The defaults' order in the reference follows its static folder's listing, which
   the filesystem decides; hydrus-rs's is fixed.
 
 ## Auto-resolution rule export and import
 
-- Rules export as hydrus-rs JSON, not the reference's serialised form (an
-  encoder for it is not written yet), so the reference can't import them;
-  hydrus-rs imports both. A rule's comparator
-  list exports a comparator to the clipboard or a png, imports from the
-  clipboard or pngs (hydrus-rs JSON or the reference's serialised comparator,
-  alone or in a list) and duplicates one; the lists inside OR/AND comparators
-  don't have those buttons. An image on the clipboard isn't read (use "from
-  png files").
+- Rules and comparators export in the reference's serialised form, as its
+  lists write them (replayed against `oracle/fixtures/rules_exchange.json`).
+  Where hydrus-rs keeps less than the reference, the reference's defaults
+  are written: a file search's search type and "search complete" flag, a
+  metadata conditional's location and tag context (combined local file
+  domains, all known tags), merge options without the services that merge
+  nothing, and note import options' unused settings. A rule's id is its
+  database id, or a negative number for a rule not yet saved (the reference
+  replaces it on import). An OR predicate keeps its members in the order
+  hydrus-rs holds them; the reference sorts a new OR by its text.
+- What a typed predicate leaves open is settled as the reference's parser
+  settles it: a service named is written by its key, viewing stats on the
+  default canvases name the "interesting" canvases, "rated" and "not rated"
+  on an inc/dec service are "> 0" and "= 0". An age's minutes and seconds
+  (which hydrus-rs's parser takes and a hydrus without `dateparser` does
+  not) join its hours, rounded, as the reference's `dateparser` path rounds
+  them.
+- Two predicates are not exported: a URL class rule (hydrus-rs keeps the
+  class's name, the reference the class) and one naming a service the client
+  doesn't have. The export says "Problem exporting!" and why (hydrus-rs
+  only); the reference never fails here.
+- The rule editor shows a rule's two searches as text, a line each, where
+  the reference has search widgets (the metadata comparators have the
+  reference's search). A line left as shown keeps its predicate as it was,
+  so OK on a rule leaves it as it was; only a line typed or changed is read.
+  Some lines as shown don't read as the same predicate if typed again: a
+  namespace ("series:*anything*") reads as a wildcard, a wildcard's
+  "(wildcard search)" note becomes part of it, an OR line reads as a tag, and
+  "≈ 600 ±15%", file relationship counts, "similar to 1 files" and "no
+  character tags" don't parse. Type them as the Client API takes them: a
+  namespace as `series:*`, a wildcard as `character:sam*`. Lines that read
+  the same (two "similar to 1 files" with different files) are told apart
+  only by their order: taking the first out keeps the first's predicate and
+  drops the second's.
+- Imports also read the hydrus-rs JSON earlier versions exported.
+- The comparator lists (a rule's, an OR's and an AND's) take several rows,
+  as the reference's do; "edit" edits the first selected rather than each in
+  turn, and "delete" deletes the selected without asking "Remove N
+  selected?".
+- An image on the clipboard isn't read (use "from png files"; the
+  clipboard-bitmap exchange is deferred, DECISIONS.md 2026-10-08).
+- A clipboard that can't be read at all (not an empty one) is said under
+  the reference's `DataMissing` title with hydrus-rs's error; Qt never gives
+  the reference that case.
 
 ## Options kept but not used
 
@@ -5348,9 +5411,14 @@ Differences:
   at last check.") but counts hydrus-rs's own work: the daemon's downloads in
   flight (files and gallery pages, as it last said, if within ten seconds)
   plus the client's running maintenance passes, not Python threads. The **database**
-  field says "db writing" or "db reading" while this window's connection is
-  busy (the daemon is another process, so its work is not shown); there are
-  no job names, so no "current db job" tooltip.
+  field says "db reading", "db writing", "db committing" or "db locked" (paused,
+  as for a backup) for this window's connection (the daemon is another
+  process, so its work is not shown), with the tooltip "current db job: <job>"
+  as the reference's (`oracle/fixtures/status_db.json`). The reference names a
+  job by its database action ("write import_file"); hydrus-rs's jobs are
+  closures, so a job is named by the function it is written in ("write
+  set_statuses"), hydrus-rs's own names. Several reads can
+  run at once here; the tooltip names the writer's job, else the latest read's.
 - **`audit-options-importing-drag-and-drop-when-dnding-a-url-onto-the-program-switch-to-the-page-where-it-lands`
   stays untagged.** winit 0.30 delivers `DroppedFile` for dropped files on
   X11 only, and its X11 drop parser rejects every non-`file://` URI
@@ -5435,22 +5503,18 @@ be diagnosed afterwards. The owner chose always-on crash logging (2026-10-14).
   arrive. The log is how to find out that this happened.
 - A panic with no database directory (`hydrus --help`) goes to stderr only.
 
-- **The status bar's database field** shows "db writing" and "db reading" but not
-  the reference's "db committing" and "db locked", and has no "current db job: <name>"
-  tooltip (`HydrusDB._current_status`, `ClientGUI._RefreshStatusBarDB`); hydrus-rs's
-  database has no job names to show. `audit-options-status-activity` stays untagged for this.
-
 - **Wave 5, group W5-12: what remains** (wound down 2026-10-14; the owner
   stopped the wave to save usage).
-  - `audit-options-status-activity`: the database field needs job names (the
-    store's reads and writes are closures, not named jobs), a "db committing"
-    state around a write's commit, a "db locked" state while a backup holds
-    the database, and the "current db job" tooltip (a `.slint` change).
-  - `...highlight-the-new-query`: the reference's second site,
-    `PendSubscriptionGapDownloader`, is reached from subscription sync
-    (`ClientImportSubscriptions.py:234`, a popup button when a gap is found)
-    and opens a "subscription gap downloaders" page. None of that is ported,
-    so only the first site is proved.
+  - (W6-3, 2026-10-23: the database field and the highlight's second site are
+    done; see the status bar and the subscription gap notice below.)
+- **A subscription's gap notice has no button.** When a query hits its
+  periodic file limit without meeting a file it had seen, the reference's
+  popup offers "start a new downloader for this to fill in the gap!", which
+  opens the "subscription gap downloaders" page with the query pended
+  (`ClientImportSubscriptions.py:234`). hydrus-rs's subscriptions run in the
+  daemon, another process, so its notice is text only; the gap downloader
+  itself (and its highlight) is reached from Help > debug's "sub gap
+  downloader test" popup, as in the reference.
   - `audit-network-download-control-cog`: the engine tests on branch
     `claude/w5-12-2` check the cog's four actions against the recorded
     `actions.retry` flags (connection wait, server bandwidth wait, domain
@@ -5548,13 +5612,9 @@ be diagnosed afterwards. The owner chose always-on crash logging (2026-10-14).
 - **The maximum size of the trash** is trimmed oldest first; the reference's
   oldest 256 are deleted in CPython set order, so which files stay differs
   (the owner decided ours stands, 2026-10-14).
-- **Processing steps: export to PNG and paste.** Export to PNG is the shared
-  exchange window (a path and save), not the reference's `PNGExportPanel` with
-  title, description and width fields. Paste opens a review before adding, and
-  failures show inline in it (the reference adds at once, says "N objects
-  added!", and shows a "Problem pasting!" or "Clipboard Error!" dialog). The
-  string processor's export button does nothing without a selection, as in the
-  reference.
+- **Processing steps: export.** A step hydrus-rs can't write in the
+  reference's form (none it imports) says why under the step list; the
+  reference's export never fails.
 
 ## Media viewer, duplicates daemons and the rebalance job (wave 5, W5-5)
 
