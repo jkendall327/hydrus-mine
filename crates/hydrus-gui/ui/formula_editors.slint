@@ -1,3 +1,4 @@
+import { CappedLineEdit } from "capped_line_edit.slint";
 import { Btn } from "@hydrus_ui_core";
 import { Button, CheckBox, ComboBox, LineEdit, SpinBox, TextEdit } from "std-widgets.slint";
 import { Asking, SubscriptionExchangeButton } from "@hydrus_ui_core";
@@ -92,7 +93,7 @@ export component FormulaWindow inherits Window {
                         Btn { text: "export selected"; enabled: root.selected && !root.child-open && !root.deleting; clicked => { root.member-exchange(false); } }
                     }
                     Text { text: "substitution phrase (\\1, \\2, …):"; color: Theme.text; }
-                    LineEdit { text <=> root.phrase; enabled: !root.child-open && !root.deleting; edited => { root.changed(); } }
+                    CappedLineEdit { text <=> root.phrase; enabled: !root.child-open && !root.deleting; edited => { root.changed(); } }
                 }
                 if root.kind == 4: HorizontalLayout {
                     Text { text: "variable name:"; color: Theme.text; vertical-alignment: center; }
@@ -100,7 +101,7 @@ export component FormulaWindow inherits Window {
                 }
                 if root.kind == 5: VerticalLayout {
                     Text { text: "static text:"; color: Theme.text; }
-                    LineEdit { text <=> root.static-text; enabled: !root.child-open; edited => { root.changed(); } }
+                    CappedLineEdit { text <=> root.static-text; enabled: !root.child-open; edited => { root.changed(); } }
                     HorizontalLayout {
                         Text { text: "number to output:"; color: Theme.text; vertical-alignment: center; }
                         SpinBox { value <=> root.output-count; minimum: 1; maximum: 65535; enabled: !root.child-open; edited => { root.changed(); } }
@@ -120,7 +121,7 @@ export component FormulaWindow inherits Window {
                 horizontal-stretch: 1; spacing: 6px;
                 Text { text: "test — example document"; font-weight: 700; color: Theme.text; }
                 HorizontalLayout {
-                    LineEdit { text <=> root.fetch-url; placeholder-text: "URL to fetch"; enabled: !root.child-open; }
+                    CappedLineEdit { text <=> root.fetch-url; placeholder-text: "URL to fetch"; enabled: !root.child-open; }
                     Btn { text: "fetch from URL"; enabled: !root.child-open; clicked => { root.fetch(); } }
                     Btn { text: "cancel fetch"; enabled: root.fetching; clicked => { root.cancel-fetch(); } }
                 }

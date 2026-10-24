@@ -1135,6 +1135,10 @@ saved without becoming a number-of-tags default. All 40 panel families and 1,600
 comparability pairs are recorded by `oracle/record_predicate_custom_defaults.py`.
 Imported defaults use the same typed store setting, including actual numerical
 rating service scales. Reset remains durable when the store is reopened.
+A line typed or pasted into the search, tag or URL boxes that is too wide to
+draw (about 4000 characters of a URL at 100%, 2000 at 200%) is refused, and
+the box says "too long to enter here" (DIFFERENCES.md, "Text inputs that take
+pasted lines").
 Typing in the search box lists
 the matching tags with their counts (display tags, in the page's file domains
 and tag service; the exact match first, then the most used), up and down move the

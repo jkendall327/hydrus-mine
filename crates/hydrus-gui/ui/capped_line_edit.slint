@@ -1,0 +1,98 @@
+// A LineEdit that refuses to grow a line too wide for the software renderer.
+//
+// Slint 1.18.1's software renderer draws a text input's selection as one
+// rectangle the width of the selected text and casts it to 16-bit device
+// pixels, panicking past 32767 (upstream; DIFFERENCES.md, "Text inputs
+// that take pasted lines"). An edit (typing or a paste) that would leave
+// the line wider than the cap (TextCap) and longer than it was is undone and
+// the box says so; nothing is cut and sent. An edit that shortens a line
+// already over the cap (one the program put there, or one that grew past it
+// when the window moved to a higher scale factor) goes through, and the box
+// says the line is too long while it is. For the inputs that take URLs,
+// queries and other pasteable single lines; WriteTagLineEdit applies the
+// same cap.
+//
+// (only std widgets and Slint's Palette here: group files import this
+// directly, so it must not bring a Theme of its own)
+import { LineEdit, Palette } from "std-widgets.slint";
+import { TextCap } from "text_cap.slint";
+
+export component CappedLineEdit {
+    in-out property <string> text <=> edit.text;
+    in property <string> placeholder-text <=> edit.placeholder-text;
+    in property <bool> enabled <=> edit.enabled;
+    in property <bool> read-only <=> edit.read-only;
+    out property <bool> has-focus: edit.has-focus;
+    // the last edit was refused as too long (until the text changes), or
+    // the line is over the cap
+    out property <bool> refused: (root.refusal && root.text == root.refused-text) || root.over;
+    out property <bool> over: measure.preferred-width > root.cap;
+    callback edited(string);
+    callback accepted(string);
+    public function select-all() { edit.select-all(); }
+    property <length> cap: TextCap.device-pixels * 1phx;
+    // the text before the edit being made (any change, edit or not)
+    property <string> before;
+    property <bool> refusal;
+    property <string> refused-text;
+    changed text => { root.before = root.text; }
+    init => { root.before = root.text; }
+    forward-focus: edit;
+    min-width: edit.min-width;
+    min-height: edit.min-height;
+    preferred-width: edit.preferred-width;
+    preferred-height: edit.preferred-height;
+    max-height: edit.max-height;
+    horizontal-stretch: 1;
+    vertical-stretch: 0;
+    // (in the LineEdit's font: it sets no weight of its own; in a box of no
+    // size, so the measurement doesn't widen the input)
+    Rectangle {
+        width: 0px;
+        height: 0px;
+        clip: true;
+        measure := Text {
+            visible: false;
+            text: edit.text;
+            font-size: edit.font-size;
+            font-family: edit.font-family;
+            font-italic: edit.font-italic;
+            accessible-role: none;
+        }
+    }
+    edit := LineEdit {
+        width: 100%;
+        height: 100%;
+        edited(text) => {
+            // (longer than it was by characters: an edit that shortens a
+            // line takes characters away)
+            if measure.preferred-width > root.cap && text.character-count > root.before.character-count {
+                self.text = root.before;
+                root.refusal = true;
+                root.refused-text = root.before;
+            } else {
+                root.before = text;
+                root.refusal = false;
+                root.edited(text);
+            }
+        }
+        accepted(text) => { root.refusal = false; root.accepted(text); }
+    }
+    if root.refused: Rectangle {
+        x: parent.width - self.width - 4px;
+        y: 3px;
+        width: min(parent.width - 8px, notice.preferred-width + 8px);
+        height: parent.height - 6px;
+        background: Palette.background;
+        border-radius: 2px;
+        notice := Text {
+            x: 4px;
+            width: parent.width - 8px;
+            height: parent.height;
+            vertical-alignment: center;
+            overflow: elide;
+            text: TextCap.notice;
+            color: Palette.color-scheme == ColorScheme.dark ? #ff8a94 : #b00020;
+        }
+    }
+}

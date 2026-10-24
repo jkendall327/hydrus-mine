@@ -202,15 +202,38 @@ search.
   finish before the page is shown again, so it is never seen searching.
 - **One client at a time on a store**, as the reference allows one client
   on its database; a second says the store is already open.
-- **Very long lines in text inputs can crash the client.** Slint 1.18.1's
-  software renderer draws a text input's selection as one rectangle the
-  width of the selected text and casts it to 16-bit device pixels, so
-  selecting all of a line wider than 32767 device pixels (a ~4800-character
-  URL pasted into the search box, then Ctrl+A) panics; Qt copes. This is
-  upstream (`fill_rectangle` in i-slint-renderer-software); hydrus-rs has
-  no fix of its own yet. `long_text_selection.rs` reproduces it (ignored
-  until it is fixed). Thumbnail tag banners, which crashed the same way,
-  are fixed: their boxes are bounded (`thumbnail_banner_width.rs`).
+- **Text inputs that take pasted lines refuse to grow one too wide to draw.**
+  Slint 1.18.1's software renderer draws a text input's selection as one
+  rectangle the width of the selected text and casts it to 16-bit device
+  pixels, panicking past 32767: selecting all of a ~4800-character URL
+  pasted into the search box crashed the client (upstream, `fill_rectangle`
+  in i-slint-renderer-software; the report is drafted in PR #280). So an
+  edit, typed or pasted, that would leave the line wider than 26000 device
+  pixels and longer than it was is undone, and the input says "too long to
+  enter here"; nothing is cut, and nothing is sent until the line fits. At
+  the default font that is about 4000 characters of a URL at 100%, 2000 at
+  200% and 1300 at 300%; a cap by characters safe for the widest glyphs
+  found in common fonts (Inter's arrows, ~2.7em) would refuse realistic
+  URLs. The 6767 device pixels left under the limit cover a measurement
+  that differs from what the input draws. A line already over the cap (put
+  there by the program, or grown past it when the window moved to a higher
+  scale factor) can be shortened, and the input says it is too long while
+  it is. The reference takes any length. The cap (`ui/text_cap.slint`) is
+  on the search, OR and tag inputs (`WriteTagLineEdit`: the main search
+  box, manage tags and the other tag entry boxes), which also draw no
+  selection rectangle for a line over the cap, and on the URL, query and
+  pattern inputs (`CappedLineEdit`): the URL import, simple downloader,
+  watcher and gallery boxes; manage URLs; the parser editor's fetch, test
+  and referral URLs; the formula editor's fetch URL, substitution phrase and
+  static text; the downloader definitions window's "test a URL"; the
+  filename tagging example path, regex and rule regex; and the debug fetch
+  URL. Other plain `LineEdit`s are not capped and remain exposed, and so
+  does a `CappedLineEdit` holding a line over the cap if it is selected
+  (its std `LineEdit` takes no selection colour). `long_text_selection.rs`
+  checks the refusal typed and pasted, the notice, the limits at each scale
+  factor, that a 2000-character URL is sent whole, and shortening a line
+  over the cap. Thumbnail tag banners, which crashed the same way, are
+  fixed: their boxes are bounded (`thumbnail_banner_width.rs`).
 
 ## Pages (`hydrus-gui`)
 

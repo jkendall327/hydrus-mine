@@ -1,3 +1,4 @@
+import { CappedLineEdit } from "capped_line_edit.slint";
 import { Btn } from "@hydrus_ui_core";
 // The "filename tagging" dialog for files about to be imported from disk
 // (the reference's `EditLocalImportFilenameTaggingPanel`, opened by "review
@@ -160,7 +161,7 @@ export component FilenameTaggingWindow inherits Window {
         }
         if root.options-mode: VerticalLayout {
             spacing: 4px;
-            LineEdit {
+            CappedLineEdit {
                 placeholder-text: "enter example path here";
                 text <=> root.example;
                 edited => { root.changed(); }
@@ -305,7 +306,7 @@ export component FilenameTaggingWindow inherits Window {
                 }
                 HorizontalLayout {
                     spacing: 4px;
-                    LineEdit {
+                    CappedLineEdit {
                         horizontal-stretch: 1;
                         text <=> root.regex-input;
                         placeholder-text: "enter regex here";
@@ -371,7 +372,7 @@ export component FilenameTaggingWindow inherits Window {
             spacing: 6px;
             LineEdit { horizontal-stretch: 1; text <=> root.rule-namespace; placeholder-text: "namespace"; }
             Label { text: ":"; }
-            LineEdit { horizontal-stretch: 2; enabled: !root.regex-child-open; text <=> root.rule-regex; placeholder-text: "regex"; accepted => { root.rule-entered(); } }
+            CappedLineEdit { horizontal-stretch: 2; enabled: !root.regex-child-open; text <=> root.rule-regex; placeholder-text: "regex"; accepted => { root.rule-entered(); } }
             child-regex-button := Btn { text: ".*"; enabled: !root.regex-child-open; clicked => { root.regex-menu(child-regex-button.absolute-position.x / 1px, (child-regex-button.absolute-position.y + child-regex-button.height) / 1px); } }
         }
         if root.errors != "": Label { text: root.errors; color: Theme.error; }
