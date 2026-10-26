@@ -1,3 +1,4 @@
+import { CappedLineEdit } from "capped_line_edit.slint";
 import { Btn } from "@hydrus_ui_core";
 // The "manage urls" dialog for some files (the reference's
 // `EditURLsPanel`, opened by a thumbnail's or the viewer's "urls >
@@ -56,7 +57,7 @@ export component ManageUrlsWindow inherits Window {
             row-activated(row) => { root.row-activated(row); }
             delete-pressed => { root.delete-pressed(); }
         }
-        LineEdit {
+        CappedLineEdit {
             enabled: !root.asking;
             text <=> root.input;
             accepted => { root.entered(); }

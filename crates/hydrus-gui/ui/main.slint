@@ -1,3 +1,4 @@
+import { CappedLineEdit } from "capped_line_edit.slint";
 import { Btn } from "btn.slint";
 import { WheelMenuChoice, MenuChoiceFrame } from "menu_choice_wheel.slint";
 export { MenuChoicePolicy } from "menu_choice_wheel.slint";
@@ -689,6 +690,9 @@ export component MainWindow inherits Window {
     in property <bool> daemon-retry;
     callback start-daemon-again();
     in-out property <string> search-text;
+    // the search box refused an edit as too wide, or holds a line over the cap
+    out property <bool> search-refused: search.refused;
+    out property <bool> search-over: search.over;
     // whether the page has a search, to save or load a favourite into
     in property <bool> can-favourite;
     // a page's search locked to a system:hash of its files, in place of
@@ -1257,7 +1261,7 @@ export component MainWindow inherits Window {
                     }
                     HorizontalLayout {
                         spacing: 4px;
-                        url-box := LineEdit {
+                        url-box := CappedLineEdit {
                             changed has-focus => { root.page-input-focused = self.has-focus; }
                             horizontal-stretch: 1;
                             placeholder-text: "any url hydrus recognises, or a raw file url";

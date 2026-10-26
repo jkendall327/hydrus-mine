@@ -1,3 +1,4 @@
+import { CappedLineEdit } from "capped_line_edit.slint";
 import { Btn } from "@hydrus_ui_core";
 // Native downloader lists and typed rule editors. Fields are individual
 // controls, never a serialized definition or free-form JSON editor.
@@ -77,7 +78,7 @@ export component DownloaderDefinitionsWindow inherits Window {
             Btn { text: "nested gallery url generators"; enabled: root.tab != 1; clicked => { root.tab-chosen(1); } }
         }
         if !root.generators: HorizontalLayout {
-            LineEdit { text <=> root.test-url; placeholder-text: "test a URL"; edited(text) => { root.test-edited(text); } }
+            CappedLineEdit { text <=> root.test-url; placeholder-text: "test a URL"; edited(text) => { root.test-edited(text); } }
             Text { text: root.test-result; color: Theme.text; vertical-alignment: center; }
         }
         ListTable {
