@@ -537,10 +537,6 @@ impl std::fmt::Debug for Bound {
 /// The "review files to import" window while it is open, and its list.
 pub type ReviewSlot = Rc<RefCell<Option<(ReviewImportsWindow, Rc<RefCell<local_import::Review>>)>>>;
 
-/// Two presses this close together are a double click (where Slint's own
-/// double click can't be had: list rows, and middle clicks).
-const DOUBLE_CLICK: std::time::Duration = std::time::Duration::from_millis(400);
-
 /// A decoded image as Slint shows it.
 pub fn image(raster: &hydrus_media::Raster) -> slint::Image {
     thumbnails::Pixels::new(raster).image()
@@ -1442,19 +1438,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let chooser = chooser.clone();
         let pages = pages.clone();
         let show_chooser = show_chooser.clone();
-        let last: Rc<Cell<Option<(i32, bool, std::time::Instant)>>> = Rc::default();
-        move |level, middle| {
-            let now = std::time::Instant::now();
-            let double = last.get().is_some_and(|(l, m, at)| {
-                l == level && m == middle && now.duration_since(at) < DOUBLE_CLICK
-            });
-            // (a middle click needs no second one: the reference's notebook
-            // chooses on its release)
-            if !double && !middle {
-                last.set(Some((level, middle, now)));
-                return;
-            }
-            last.set(None);
+        // (called for a left double-click or a middle click, which the
+        // tab rows tell apart)
+        move |level, _middle| {
             let store = {
                 let mut pages = pages.borrow_mut();
                 pages.new_page_in(usize::try_from(level).ok());

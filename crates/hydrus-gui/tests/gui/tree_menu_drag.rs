@@ -160,7 +160,7 @@ fn the_trees_right_click_menu_acts_on_a_rows_notebook_as_the_references_does() {
     // alpha shown: the nested notebook is no longer on the way to it, and
     // its menu's actions act on it without showing it
     double_click(
-        &strip.native,
+        strip.ui.window(),
         row(&strip, "alpha"),
         PointerEventButton::Left,
     );
@@ -183,7 +183,7 @@ fn the_trees_right_click_menu_acts_on_a_rows_notebook_as_the_references_does() {
     compare(&strip, &recorded, "its close page", false);
     // (the notebook kept what its menu chose: shown, it shows inner two)
     double_click(
-        &strip.native,
+        strip.ui.window(),
         row(&strip, "nested"),
         PointerEventButton::Left,
     );
@@ -196,7 +196,7 @@ fn the_trees_right_click_menu_acts_on_a_rows_notebook_as_the_references_does() {
 fn the_trees_rename_from_its_menu_renames_a_page_in_a_notebook_not_shown() {
     let (_dirs, store, strip) = open();
     double_click(
-        &strip.native,
+        strip.ui.window(),
         row(&strip, "alpha"),
         PointerEventButton::Left,
     );
