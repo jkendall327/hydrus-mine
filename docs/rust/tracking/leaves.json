@@ -25526,7 +25526,7 @@
    "native": null,
    "notes": [
     "Reference: hydrus/client/gui/canvas/ClientGUICanvasMedia.py:1471-1473 EmbedButton, left press runs EventEmbedButton, used when a media kind's 'start with embed button' view option is set.",
-    "Native: DIFFERENCES.md says hydrus-rs has no embed button; such kinds play nothing (preview_start_with_embed)."
+    "Native: EmbedButton (ui/embed_button.slint) in the media viewer and the preview, recorded by oracle/record_embed_button.py."
    ]
   },
   {

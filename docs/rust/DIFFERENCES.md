@@ -5359,11 +5359,13 @@ Differences:
   pressed: a touch area laid over it takes the clicks (so that a middle
   click can clear collecting, which a std button does not report), and the
   button only draws whether its choices are open.
-- A kind whose preview starts behind an embed button (`preview_start_with_embed`)
-  plays nothing, since hydrus-rs has no embed button yet; the reference plays
-  it after a click. The media viewer's "start with embed button"
-  (`media_start_with_embed`) is not ported either: the file plays at once.
-  (`interaction-embed-button`, #290.)
+- The embed button (a kind set to "start with embed button", in the media
+  viewer or the preview) is drawn as the reference draws it, but the area
+  around the thumbnail is the canvas's own background rather than the
+  button's painted background colour. In the media viewer the pointer over it
+  is the viewer's arrow, not the reference's pointing hand, as the viewer's
+  own pointer area takes the press (so that its other buttons do there what
+  they do anywhere on the canvas).
 - The reference's preview control is a pop-up window that appears when the
   pointer is on the global mute button; here it is drawn in the pane, at the
   bottom right of the media, and opens in the same way. Its look (icons are

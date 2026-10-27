@@ -5914,6 +5914,14 @@ window has its own volume** is on (it is, by default), else the global
 volume; it is muted if either its own mute or the global mute is on. ctrl+g,
 the Options window and the control all take effect on the playing file.
 
+A kind set to start "with embed button" (**File > Options > media playback**,
+for the media viewer and the preview apart) waits behind it, as in the
+reference: the file's thumbnail, scaled to the button's width, with a play
+circle in the middle, in the place the file takes. A left press on it starts
+the file, drawn or played; in the media viewer a right press opens the
+viewer's menu as anywhere else, and the file still waits. Coming back to the
+file shows the button again (`oracle/record_embed_button.py`).
+
 A file with sound has the reference's volume control at the bottom right of
 the preview: the global mute button, and with the pointer on it the volume
 slider (moving the preview's own volume or the global one, whichever applies)

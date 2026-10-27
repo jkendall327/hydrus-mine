@@ -1,0 +1,60 @@
+// The embed button (the reference's `EmbedButton`): a file whose kind starts
+// "with embed button" waits behind it, in the place the file takes, until a
+// left press starts it. It draws the file's thumbnail scaled to its width,
+// a circle with a play triangle in the middle, and a border. In the media
+// viewer the viewer's own pointer area takes the press (so that its other
+// buttons keep doing what they do there); in the preview, the button does.
+export component EmbedButton inherits Rectangle {
+    in property <image> thumbnail;
+    // whether the button takes the left press itself
+    in property <bool> takes-clicks: true;
+    callback clicked();
+    accessible-role: button;
+    accessible-label: "embed button";
+    clip: true;
+    property <length> radius: max(0px, min(50px, self.width / 2, self.height / 2) - 5px);
+    property <length> side: self.radius * 0.8;
+    if root.thumbnail.width > 0: Image {
+        x: 0;
+        y: 0;
+        width: root.width;
+        height: root.width * root.thumbnail.height / max(1, root.thumbnail.width);
+        source: root.thumbnail;
+        image-fit: fill;
+    }
+    Rectangle {
+        x: root.width / 2 - root.radius;
+        y: root.height / 2 - root.radius;
+        width: root.radius * 2;
+        height: root.radius * 2;
+        border-radius: root.radius;
+        background: #e0e0e0;
+        border-width: 1px;
+        border-color: #000000;
+    }
+    // (an equilateral triangle, a third of its width left of the centre)
+    Path {
+        x: root.width / 2 - root.side * 0.866 / 3;
+        y: root.height / 2 - root.side / 2;
+        width: root.side * 0.866;
+        height: root.side;
+        viewbox-width: 1;
+        viewbox-height: 1;
+        commands: "M 0 0 L 1 0.5 L 0 1 Z";
+        fill: #f6f6f6;
+        stroke: #000000;
+        stroke-width: 1px;
+    }
+    Rectangle {
+        border-width: 1px;
+        border-color: #000000;
+    }
+    if root.takes-clicks: TouchArea {
+        mouse-cursor: pointer;
+        pointer-event(event) => {
+            if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                root.clicked();
+            }
+        }
+    }
+}
