@@ -154,11 +154,14 @@ pub fn place(window: &slint::Window, frame: &FrameLocation) {
 }
 
 /// After `window` (placed by `frame`) is shown, keep asking for its
-/// maximised or fullscreen state for half a second, or until the user
-/// switches it themselves (F). Slint takes the state from the first events of a
-/// new native window, and an X11 window manager maximises a moment after
-/// the window maps, so those events can say "not maximised" and Slint then
-/// takes the maximise back.
+/// maximised state until the native window reports it (two seconds at
+/// most), or until the user switches it themselves (F). Slint takes the
+/// state from the first events of a new native window, and an X11 window
+/// manager maximises a moment after the window maps, so those events can
+/// say "not maximised" and Slint then takes the maximise back. (Fullscreen
+/// is held the same way, though winit keeps that state itself, so it isn't
+/// known to be taken back.) With no native window (the headless tests) the
+/// state is held for half a second.
 pub fn hold_state_after_show<C: slint::ComponentHandle + 'static>(
     component: &C,
     frame: &FrameLocation,
@@ -186,13 +189,21 @@ pub fn hold_state_after_show<C: slint::ComponentHandle + 'static>(
                 return;
             };
             let window = component.window();
+            // (what the windowing system itself says, where there is one)
+            let native = window.with_winit_window(|w| {
+                if fullscreen {
+                    w.fullscreen().is_some()
+                } else {
+                    w.is_maximized()
+                }
+            });
             let reached = if fullscreen {
                 window.is_fullscreen()
             } else {
                 window.is_maximized()
             };
-            // (asked again whenever it doesn't hold, for the half second,
-            // so an early event taking it back is undone)
+            // (asked again whenever it doesn't hold, so an early event
+            // taking it back is undone)
             if !reached {
                 if fullscreen {
                     window.set_fullscreen(true);
@@ -200,7 +211,14 @@ pub fn hold_state_after_show<C: slint::ComponentHandle + 'static>(
                     window.set_maximized(true);
                 }
             }
-            if started.elapsed() > std::time::Duration::from_millis(500) {
+            // done once the windowing system has it: later changes are the
+            // user's own
+            let cap = if native.is_some() {
+                std::time::Duration::from_secs(2)
+            } else {
+                std::time::Duration::from_millis(500)
+            };
+            if (native == Some(true) && reached) || started.elapsed() > cap {
                 stop();
             }
         },
