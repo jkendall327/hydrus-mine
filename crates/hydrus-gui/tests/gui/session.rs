@@ -1450,10 +1450,10 @@ fn a_double_click_on_a_tab_rows_empty_space_chooses_a_page_for_it() {
     let (top, inner) = (row(0), row(1));
     let chooser_open = || ui.get_chooser_labels().row_count() > 0;
 
-    // one press is nothing; two on the top row's space: the chooser, and
-    // the page chosen goes in the top notebook
-    ui.invoke_tab_space_pressed(0, false);
-    assert!(!chooser_open());
+    // the top row's space double-clicked (the row tells a double-click,
+    // by Slint's own count, from one click; the pointer below, and
+    // tab_strip_clicks.rs, show that): the chooser, and the page chosen
+    // goes in the top notebook
     ui.invoke_tab_space_pressed(0, false);
     assert!(chooser_open());
     ui.invoke_chooser_enter();
@@ -1474,9 +1474,6 @@ fn a_double_click_on_a_tab_rows_empty_space_chooses_a_page_for_it() {
     let mut expected = inner.clone();
     expected.push("files".into());
     assert_eq!(row(1), expected);
-    // (one left press is still nothing)
-    ui.invoke_tab_space_pressed(1, false);
-    assert!(!chooser_open());
 
     // a chooser dismissed leaves new pages where they go by default
     // (the presses made by the pointer, on the top row's empty space)
@@ -1499,8 +1496,9 @@ fn a_double_click_on_a_tab_rows_empty_space_chooses_a_page_for_it() {
             ui.window().dispatch_event(event);
         }
     };
-    // (under the menu bar)
+    // (under the menu bar; one click is nothing)
     press(600.0, 22.0 + 14.0);
+    assert!(!chooser_open(), "one click");
     press(600.0, 22.0 + 14.0);
     assert!(chooser_open(), "the top row's empty space double-clicked");
     ui.invoke_chooser_cancel();

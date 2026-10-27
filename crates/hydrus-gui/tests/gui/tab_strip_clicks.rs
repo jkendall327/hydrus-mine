@@ -155,16 +155,15 @@ pub(crate) fn click(
     release(native, at, button);
 }
 
-/// Two clicks in quick succession, the window drawn once between them (well
-/// inside the double-click interval).
+/// A double-click: two clicks sent back to back (the shared helper, which
+/// lets any click before it go by on Slint's clock first), so how long a
+/// frame takes to draw cannot split them.
 pub(crate) fn double_click(
-    native: &MinimalSoftwareWindow,
+    window: &slint::Window,
     at: LogicalPosition,
     button: PointerEventButton,
 ) {
-    click(native, at, button);
-    headless::render(native, 900, 600);
-    click(native, at, button);
+    widgets::double_click_at(window, at, button, widgets::Mods::NONE);
 }
 
 pub(crate) struct Strip {
@@ -399,7 +398,7 @@ fn tab_strip_clicks_replay_the_references_notebook_with_real_pointer_events() {
             Some("renamed nested"),
         ),
     ] {
-        double_click(&native, strip.tab(name), Left);
+        double_click(strip.ui.window(), strip.tab(name), Left);
         settle(&native);
         let asked = strip.rename(answer);
         assert_eq!(asked, step(&recorded, action)["texts"], "{action}");
@@ -407,7 +406,7 @@ fn tab_strip_clicks_replay_the_references_notebook_with_real_pointer_events() {
     }
     // a nested notebook's tab: its row is the second
     let action = "left double-click inner tab inner two";
-    double_click(&native, strip.tab("inner two"), Left);
+    double_click(strip.ui.window(), strip.tab("inner two"), Left);
     settle(&native);
     assert_eq!(
         strip.rename(Some("renamed two")),
@@ -442,7 +441,7 @@ fn tab_strip_clicks_replay_the_references_notebook_with_real_pointer_events() {
         menu(&strip).as_ref(),
         strip.chooser().as_deref(),
     );
-    double_click(&native, top, Left);
+    double_click(strip.ui.window(), top, Left);
     compare(
         &strip,
         &recorded,
@@ -460,7 +459,7 @@ fn tab_strip_clicks_replay_the_references_notebook_with_real_pointer_events() {
     );
     // (a middle double-click: the first opens the chooser, which the second
     // lands on)
-    double_click(&native, top, Middle);
+    double_click(strip.ui.window(), top, Middle);
     compare(
         &strip,
         &recorded,
@@ -547,7 +546,7 @@ fn tab_strip_clicks_replay_the_references_notebook_with_real_pointer_events() {
         menu(&strip).as_ref(),
         None,
     );
-    double_click(&native, inner, Left);
+    double_click(strip.ui.window(), inner, Left);
     let chose = strip.chooser();
     compare(
         &strip,
