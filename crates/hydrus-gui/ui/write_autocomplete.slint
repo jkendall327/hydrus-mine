@@ -8,6 +8,8 @@ import { MenuPane, MenuPanes } from "main_menu.slint";
 import { ListText, Theme } from "theme.slint";
 
 export component WriteTagInput inherits FocusScope {
+    // The input wants its own height; spare height goes to the list beside it.
+    vertical-stretch: 0;
     in-out property <string> text;
     in property <[ListText]> suggestions;
     in property <int> highlighted: -1;
