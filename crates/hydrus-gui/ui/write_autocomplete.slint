@@ -72,6 +72,8 @@ export component WriteTagInput inherits FocusScope {
     }
     VerticalLayout {
         spacing: 4px;
+        // Spare height goes below the rows, not into the buttons and combo box.
+        alignment: start;
         HorizontalLayout {
             spacing: 4px;
             input := WriteTagLineEdit {
@@ -90,6 +92,7 @@ export component WriteTagInput inherits FocusScope {
             Btn {text:root.tag-label;enabled:root.enabled;clicked=>{root.domain-menu(true,self.absolute-position.x,self.absolute-position.y+self.height);} }
         }
         ComboBox {
+            max-height: self.preferred-height;
             enabled: root.enabled;
             model: ["tags", "favourites", "children"];
             current-index <=> root.tab-index;
