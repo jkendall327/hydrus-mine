@@ -26,6 +26,7 @@ mod archive_delete_window;
 pub mod archive_repair_window;
 mod auto_resolution_preview_window;
 mod auto_resolution_review_window;
+mod selection_tags;
 #[doc(hidden)]
 pub use animation::{decoders_running, frames_decoded};
 pub use auto_resolution_review_window::set_popup_delay;
@@ -1043,26 +1044,22 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             if !window.window().is_visible() {
                 return;
             }
-            // OR groups keep their structure in the search. Visit their tags
-            // only to name the new page, just as for top-level AND predicates.
-            let mut pending = predicates.iter().collect::<Vec<_>>();
-            let mut names = Vec::new();
-            while let Some(predicate) = pending.pop() {
-                match predicate {
-                    hydrus_core::search::predicate::Predicate::Tag { tag, .. } => {
-                        names.push(tag.as_str().to_owned());
-                    }
-                    hydrus_core::search::predicate::Predicate::Or(children) => {
-                        pending.extend(children);
-                    }
-                    _ => (),
-                }
-            }
-            if names.is_empty() {
+            if predicates.is_empty() {
                 return;
             }
-            names.sort();
-            let name = names.join(", ");
+            // as `_NewSearchPages` names it: each predicate written out
+            // (an OR as "a OR b"), sorted and joined
+            let viewing: hydrus_store::settings::FileViewingStatistics = pages
+                .borrow()
+                .store()
+                .read(hydrus_store::settings::get)
+                .unwrap_or_default();
+            let text = hydrus_search::TextContext::from_store(
+                &pages.borrow().store().snapshot().services,
+                &viewing,
+            );
+            let name =
+                hydrus_gui_model::active_predicates::routes::page_name(&predicates, &text, false);
             let previous = pages.borrow().shown().key;
             scrolls
                 .borrow_mut()
@@ -1282,7 +1279,20 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let live = predicate_editor_live.clone();
             move || active.get() && live()
         }),
+        active_search_launcher.clone(),
+    );
+    selection_tags::bind(
+        window,
+        page.clone(),
+        shown.clone(),
+        active_menu.clone(),
         active_search_launcher,
+        &search_or,
+        &(Rc::new({
+            let active = binding_active.clone();
+            let live = predicate_editor_live.clone();
+            move || active.get() && live()
+        }) as Rc<dyn Fn() -> bool>),
     );
 
     let review_files: Rc<dyn Fn(Vec<String>)> = Rc::new({
@@ -1755,16 +1765,6 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 .choose(usize::try_from(index).unwrap_or(usize::MAX));
             shown(true);
             open_editor(page());
-        }
-    });
-    window.on_tag_activated({
-        let page = page.clone();
-        let shown = shown.clone();
-        move |index| {
-            page()
-                .borrow_mut()
-                .activate_tag(usize::try_from(index).unwrap_or(usize::MAX));
-            shown(true);
         }
     });
     window.on_remove_predicate({
@@ -8748,7 +8748,16 @@ fn refresh(window: &MainWindow, page: &SearchPage) {
         .zip(page.tag_colours(&colours))
         .map(|(text, rgb)| list_text(text, rgb))
         .collect();
-    window.set_tags(ModelRc::new(VecModel::from(tags)));
+    // (the same rows keep their model: a new one would make the rows anew,
+    // and the row under the pointer would lose a double-click's first click)
+    let same = |a: &ListText, b: &ListText| {
+        a.text == b.text && a.colour == b.colour && a.parts.iter().eq(b.parts.iter())
+    };
+    let shown = window.get_tags();
+    if shown.row_count() != tags.len() || !shown.iter().zip(&tags).all(|(a, b)| same(&a, b)) {
+        window.set_tags(ModelRc::new(VecModel::from(tags)));
+    }
+    selection_tags::show(window, page);
     window.set_selection_tags_title(page.tag_list_title().into());
     window.set_error(page.error().unwrap_or_default().into());
     window.set_status(page.status().into());

@@ -156,6 +156,31 @@ impl TagListBox {
         }
     }
 
+    /// New rows for a media tag list (`ListBoxTagsMedia._UpdateTerms`): the
+    /// selected tags still listed stay selected; where a hit or a range
+    /// started is forgotten once any row has gone.
+    pub fn replace_rows(&mut self, rows: Vec<Row>) {
+        let selected = self.selected_tags();
+        let removed = self
+            .rows
+            .iter()
+            .any(|old| !rows.iter().any(|new| new.tag == old.tag));
+        self.rows = rows;
+        self.selected = (0..self.rows.len())
+            .filter(|&i| selected.contains(&self.rows[i].tag))
+            .collect();
+        if removed {
+            self.last_hit = None;
+            self.shift_start = None;
+            self.selected_this_shift.clear();
+            self.deselected_this_shift.clear();
+        }
+        let n = self.rows.len();
+        for at in [&mut self.last_hit, &mut self.shift_start] {
+            *at = at.filter(|&i| i < n);
+        }
+    }
+
     /// The selected tags, in the list's order.
     pub fn selected_tags(&self) -> Vec<String> {
         self.selected

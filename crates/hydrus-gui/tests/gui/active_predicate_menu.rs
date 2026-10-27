@@ -15,8 +15,9 @@ use hydrus_store::settings;
 
 /// The open tag menu as the recorder writes it: labels, "---" for a
 /// separator, a submenu as {title: entries}, a greyed-out line as
-/// ["label", text]; each submenu opened by hovering it.
-fn tree(ui: &MainWindow, pane: usize) -> Json {
+/// ["label", text], a tick box as ["check", text, ticked]; each submenu
+/// opened by hovering it.
+pub(crate) fn tree(ui: &MainWindow, pane: usize) -> Json {
     let lines = ui.get_tag_menu_panes().row_data(pane).unwrap().lines;
     let mut out = Vec::new();
     for (i, line) in lines.iter().enumerate() {
@@ -32,6 +33,7 @@ fn tree(ui: &MainWindow, pane: usize) -> Json {
                 );
                 json!({ line.label.to_string(): tree(ui, pane + 1) })
             }
+            1 => json!(["check", line.label.to_string(), line.checked]),
             _ if !line.usable => json!(["label", line.label.to_string()]),
             _ => json!(line.label.to_string()),
         });
@@ -40,7 +42,7 @@ fn tree(ui: &MainWindow, pane: usize) -> Json {
 }
 
 /// Chooses the entry at `path` in the open tag menu.
-fn choose(ui: &MainWindow, path: &[Json]) {
+pub(crate) fn choose(ui: &MainWindow, path: &[Json]) {
     for (pane, label) in path.iter().enumerate() {
         let lines = ui.get_tag_menu_panes().row_data(pane).unwrap().lines;
         let line = lines

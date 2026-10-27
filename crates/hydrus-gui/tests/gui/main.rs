@@ -134,6 +134,7 @@ mod search_log;
 mod search_page;
 mod selected_deletion_records;
 mod selected_viewing_stats;
+mod selection_tags_box;
 mod session;
 mod session_autosave;
 mod session_backup_menu;

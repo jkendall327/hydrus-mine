@@ -165,7 +165,7 @@ fn context(page: &SearchPage) -> Context {
         hydrus_search::Clock::system().today(),
     )
 }
-fn permits_input(window: &MainWindow) -> bool {
+pub(crate) fn permits_input(window: &MainWindow) -> bool {
     window.window().is_visible()
         && window.get_question().is_empty()
         && !window.get_search_or_open()

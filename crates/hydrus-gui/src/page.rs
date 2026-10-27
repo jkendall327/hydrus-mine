@@ -75,6 +75,8 @@ pub struct SearchPage {
     tags: Vec<(String, String)>,
     /// Display mode captured when this tag list opens.
     tag_display_type: hydrus_core::tag_presentation::TagDisplayType,
+    /// The tag list's selection, its clicks and keys (`ListBoxTagsMediaSidebar`).
+    tag_selection: hydrus_gui_model::selection_tags::SelectionTags,
     /// The limit actually applied to the latest no-selection tag computation.
     tag_computation_limit: Option<u32>,
     error: Option<String>,
@@ -271,6 +273,7 @@ impl SearchPage {
             selection: Selection::default(),
             tags: Vec::new(),
             tag_display_type: presentation.sidebar_display_type,
+            tag_selection: hydrus_gui_model::selection_tags::SelectionTags::default(),
             tag_computation_limit: None,
             error: None,
             editor_wanted: None,
@@ -2958,6 +2961,111 @@ impl SearchPage {
             .collect()
     }
 
+    /// The tag list's rows, (tag, text drawn).
+    pub fn tag_list(&self) -> &[(String, String)] {
+        &self.tags
+    }
+
+    /// The tag list's selection.
+    pub fn tag_selection(&self) -> &hydrus_gui_model::selection_tags::SelectionTags {
+        &self.tag_selection
+    }
+
+    pub fn tag_selection_mut(&mut self) -> &mut hydrus_gui_model::selection_tags::SelectionTags {
+        &mut self.tag_selection
+    }
+
+    /// Count the tag list again (after its tag display rules changed).
+    pub fn recount_tags(&mut self) {
+        self.count_tags();
+    }
+
+    /// Whether the page shows a search (its sidebar's search box), which its
+    /// tag list can add to (`ListBoxTagsMediaSidebar`'s `tag_autocomplete`).
+    pub fn has_search(&self) -> bool {
+        self.note.is_none()
+            && self.importer.is_none()
+            && self.gallery().is_none()
+            && self.watchers().is_none()
+    }
+
+    /// Enter predicates from the tag list into the search, each as the
+    /// reference's `_EnterPredicates` takes it, and search again if that
+    /// changed it.
+    pub fn enter_from_tag_list(
+        &mut self,
+        entered: &[hydrus_gui_model::selection_tags::Entered],
+    ) -> bool {
+        if !self.has_search() {
+            return false;
+        }
+        self.change_active_predicates(|predicates, text| {
+            let before = predicates.clone();
+            for e in entered {
+                hydrus_gui_model::selection_tags::enter(predicates, e, text);
+            }
+            *predicates != before
+        })
+    }
+
+    /// The page's files that have all (or any) of `tags`, current or pending,
+    /// as its tag list shows them (`FILE_FILTER_TAGS`).
+    pub fn files_with_tags(&self, tags: &[String], all: bool) -> Vec<HashId> {
+        let snapshot = self.store.snapshot();
+        let service = snapshot
+            .services
+            .by_key(&self.context.tags.display_service)
+            .ok()
+            .filter(|s| s.service_type() != hydrus_core::ServiceType::CombinedTag)
+            .map(|s| s.id);
+        let Ok(ids) = self.store.read(|conn| {
+            let mut ids = Vec::new();
+            for tag in tags {
+                if let Some(tag) = hydrus_core::Tag::new(tag)
+                    && let Some(id) = hydrus_store::master::tag_id(conn, &tag)?
+                {
+                    ids.push(id);
+                }
+            }
+            Ok(ids)
+        }) else {
+            return Vec::new();
+        };
+        if ids.len() < tags.len() && all {
+            return Vec::new();
+        }
+        self.files()
+            .into_iter()
+            .filter(|&file| {
+                let counts = self.store.read(|conn| {
+                    hydrus_store::media::tag_counts_for_display(
+                        conn,
+                        &snapshot.services,
+                        &snapshot.display,
+                        service,
+                        &[file],
+                        &hydrus_store::tag_display::TagHider::default(),
+                        false,
+                    )
+                });
+                let Ok(counts) = counts else { return false };
+                let has = |id| counts.current.contains_key(id) || counts.pending.contains_key(id);
+                if all {
+                    ids.iter().all(has)
+                } else {
+                    ids.iter().any(has)
+                }
+            })
+            .collect()
+    }
+
+    /// Show the tag list's tags as another display type does (its menu's
+    /// "tag display (experimental)", `SetTagDisplayType`).
+    pub fn set_tag_display_type(&mut self, display: hydrus_core::tag_presentation::TagDisplayType) {
+        self.tag_display_type = display;
+        self.count_tags();
+    }
+
     /// A tag in the list was activated: search for it too.
     pub fn activate_tag(&mut self, index: usize) -> bool {
         match self.tags.get(index) {
@@ -3006,10 +3114,13 @@ impl SearchPage {
             TagList::Selection,
             self.tag_display_type,
         );
+        self.tag_selection.set_rows(&self.tags);
     }
 
     fn search(&mut self) {
         self.error = None;
+        // (the reference's list empties with the page, losing its selection)
+        self.tag_selection.set_rows(&[]);
         self.selection.clear();
         self.results.clear();
         self.came.clear();

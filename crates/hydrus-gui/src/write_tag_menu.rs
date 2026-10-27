@@ -268,7 +268,7 @@ impl TagMenu {
                     (self.error)(&format!("could not complete tag action: {e}"));
                 }
             }
-            Action::Owner(id) => {
+            Action::Owner(id) | Action::Asked { id, .. } => {
                 let owner = self.owner.borrow().clone();
                 if let Some(owner) = owner {
                     owner(id);

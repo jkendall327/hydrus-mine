@@ -1183,7 +1183,18 @@ selected, of every file on the page) with how many have each (`tag (3)
 (+1)` for pending, `(-1)` petitioned), display tags in the page's tag
 domain less those your tag display filters hide from it, sorted by your
 search page tag sort and namespace order (checked against the reference's
-`SortTags`); double-clicking a tag searches for it too. Tags here, in the
+`SortTags`). The box works as hydrus's list does: any press (left, right
+or middle) selects first, a click selecting the tag alone (unless it is
+already selected), ctrl+click adding or taking it away, shift+click a run
+from where the last run started (ctrl+shift+click taking the run away),
+and a click below the tags selecting nothing; the arrows (wrapping), home,
+end, page up and down, ctrl+n and ctrl+p move the selection, escape clears
+it, ctrl+a selects every tag and ctrl+c copies the selected tags (or all).
+A double-click or enter puts the selected tags in the search (taking out
+those already in it), inverted with ctrl and as one OR with shift; a new
+search empties the box's selection, as hydrus's does. A middle-click opens
+a new search page for the selected tags (their OR with shift), named as
+hydrus names it, in the page's file domain. Tags here, in the
 autocomplete and in the search's predicates are shown as your options
 have them (namespaces shown or hidden, the namespace connector,
 underscores and emojis replaced; checked against `RenderTag`), each in its
