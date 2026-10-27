@@ -25325,6 +25325,227 @@
     "by": "blind Sonnet agent, #97 phase 1",
     "note": "GUI test replays url_domain_preview.json preview_steps and extra_previews (status and the five outputs, including retained referral/next after an invalid example) in the real class editor; model test replays domain_errors. No tag. Tests: crates/hydrus-gui/tests/gui/downloader_definitions.rs:582 domain_mask_modes_tester_and_selectable_previews_apply_cancel_and_reopen (preview_steps/extra_previews at :744-:795); crates/hydrus-gui-model/tests/model/downloader_definitions.rs:543, :617"
    }
+  },
+  {
+   "id": "selection-tags-click-select",
+   "label": "Click, ctrl+click and shift+click select tags (any button, a click on nothing deselects)",
+   "path": "Search page > sidebar > selection tags box",
+   "workstream": "search-pages",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/lists/ClientGUIListBoxes.py:2097",
+   "native": "crates/hydrus-gui/ui/main.slint",
+   "notes": [
+    "ListBox._HandleClick/_Hit on every mouse press (left, right or middle): a plain click selects only the row unless it is already selected, ctrl toggles, shift selects a range from where the last range started (ctrl+shift deselects it), a click below the rows deselects all. Found by the owner (#286): the box took only double-clicks."
+   ]
+  },
+  {
+   "id": "selection-tags-double-click",
+   "label": "Double-click adds the selected tags to the search (ctrl: inverted, shift: as one OR)",
+   "path": "Search page > sidebar > selection tags box",
+   "workstream": "search-pages",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/pages/ClientGUISidebarCore.py:42",
+   "native": "crates/hydrus-gui/ui/main.slint",
+   "notes": [
+    "ListBoxTagsMediaSidebar._Activate: enters the selected tags' predicates into the page's search, inverted with ctrl, merged into an OR with shift when there are several; a ctrl double-click reselects a row the first click deselected."
+   ]
+  },
+  {
+   "id": "selection-tags-middle-click",
+   "label": "Middle-click opens a new search page for the selected tags (shift: one OR page)",
+   "path": "Search page > sidebar > selection tags box",
+   "workstream": "search-pages",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/lists/ClientGUIListBoxes.py:3455",
+   "native": "crates/hydrus-gui/ui/main.slint",
+   "notes": [
+    "ListBoxTags.eventFilter: a middle press hits the row, then opens one new search page (in the page's location, named by the predicates) for the selected predicates, or for their OR with shift."
+   ]
+  },
+  {
+   "id": "selection-tags-keyboard",
+   "label": "Keyboard: arrows, home/end, page up/down, ctrl+n/p, escape, ctrl+a, ctrl+c, enter",
+   "path": "Search page > sidebar > selection tags box",
+   "workstream": "search-pages",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/lists/ClientGUIListBoxes.py:2711",
+   "native": "crates/hydrus-gui/ui/main.slint",
+   "notes": [
+    "ListBox.keyPressEvent: arrows wrap, shift and ctrl as for clicks, escape deselects, ctrl+a selects all, ctrl+c copies the selected tags (or all; ctrl+shift+c with parents), enter activates as a double-click does."
+   ]
+  },
+  {
+   "id": "selection-tags-menu-copy",
+   "label": "Right-click menu: copy (tags, subtags, with counts, all)",
+   "path": "Search page > sidebar > selection tags box",
+   "workstream": "search-pages",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/lists/ClientGUIListBoxes.py:3526",
+   "native": "crates/hydrus-gui/ui/main.slint",
+   "notes": [
+    "ShowMenuFromSignal's copy submenu for the selection list (which has counts): the selection, its subtags and subtags with underscores, each with counts, and all tags/subtags with and without counts; what each copies."
+   ]
+  },
+  {
+   "id": "selection-tags-menu-siblings-parents",
+   "label": "Right-click menu: siblings and parents (lists and the manage dialogs)",
+   "path": "Search page > sidebar > selection tags box",
+   "workstream": "search-pages",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/lists/ClientGUIListBoxes.py:3707",
+   "native": "crates/hydrus-gui/ui/main.slint",
+   "notes": [
+    "One selected tag: the siblings and parents submenus list its siblings, ideal, parents and children per service; any selection: 'add siblings/parents to ...' opens the manage tag siblings/parents dialog with the tags."
+   ]
+  },
+  {
+   "id": "selection-tags-menu-open",
+   "label": "Right-click menu: open new search pages (selection, OR, each, duplicate filter)",
+   "path": "Search page > sidebar > selection tags box",
+   "workstream": "search-pages",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/lists/ClientGUIListBoxes.py:3957",
+   "native": "crates/hydrus-gui/ui/main.slint",
+   "notes": [
+    "The open submenu: a new search page for the selection, its OR, one page each, and a new duplicate filter page, each in the page's location and named as the reference names it."
+   ]
+  },
+  {
+   "id": "selection-tags-menu-search",
+   "label": "Right-click menu: search (add, remove, invert, OR, namespace to the current search)",
+   "path": "Search page > sidebar > selection tags box",
+   "workstream": "search-pages",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/pages/ClientGUISidebarCore.py:112",
+   "native": "crates/hydrus-gui/ui/main.slint",
+   "notes": [
+    "The search submenu (search pages only): add/remove the selection to/from the current search, invert, add an OR or replace with it, start an OR predicate, add or exclude the namespace; each command's effect on the page's search."
+   ]
+  },
+  {
+   "id": "selection-tags-menu-select",
+   "label": "Right-click menu: select files with the tags (all of, any of)",
+   "path": "Search page > sidebar > selection tags box",
+   "workstream": "search-pages",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/lists/ClientGUIListBoxes.py:4092",
+   "native": "crates/hydrus-gui/ui/main.slint",
+   "notes": [
+    "The select submenu: selects the page's files with all of (AND) or any of (OR) the selected tags (select_files_with_tags)."
+   ]
+  },
+  {
+   "id": "selection-tags-menu-hide",
+   "label": "Right-click menu: hide tags or namespaces from the selection list",
+   "path": "Search page > sidebar > selection tags box",
+   "workstream": "search-pages",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/lists/ClientGUIListBoxes.py:4173",
+   "native": "crates/hydrus-gui/ui/main.slint",
+   "notes": [
+    "The hide submenu: asks, then adds the tags or the namespaces to the selection list's hidden tags (tag display rules for the combined service)."
+   ]
+  },
+  {
+   "id": "selection-tags-menu-favourites-maintenance",
+   "label": "Right-click menu: favourites and regenerate tag display",
+   "path": "Search page > sidebar > selection tags box",
+   "workstream": "search-pages",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/lists/ClientGUIListBoxes.py:50",
+   "native": "crates/hydrus-gui/ui/main.slint",
+   "notes": [
+    "One selected tag: add/remove it to/from favourites and each service's most used; any selection: maintenance > regenerate tag display (asked first)."
+   ]
+  },
+  {
+   "id": "selection-tags-menu-tag-display",
+   "label": "Right-click menu (advanced mode): tag display (experimental) switch",
+   "path": "Search page > sidebar > selection tags box",
+   "workstream": "search-pages",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/lists/ClientGUIListBoxes.py:5116",
+   "native": "crates/hydrus-gui/ui/main.slint",
+   "notes": [
+    "ListBoxTagsMedia.AddAdditionalMenuItems: in advanced mode, switch the list between the selection list, single media, display and storage tags."
+   ]
+  },
+  {
+   "id": "viewer-tags-hover-click-select",
+   "label": "Viewer tags hover: click, ctrl+click and shift+click select tags",
+   "path": "Media viewer > tags hover window",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/lists/ClientGUIListBoxes.py:2097",
+   "native": "crates/hydrus-gui/ui/viewer_tags_hover.slint",
+   "notes": [
+    "The hover frame is a ListBoxTagsMediaHoverFrame: the same ListBox hit rules as the selection tags box."
+   ]
+  },
+  {
+   "id": "viewer-tags-hover-double-click",
+   "label": "Viewer tags hover: double-click opens manage tags",
+   "path": "Media viewer > tags hover window",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/lists/ClientGUIListBoxes.py:5454",
+   "native": "crates/hydrus-gui/ui/viewer_tags_hover.slint",
+   "notes": [
+    "ListBoxTagsMediaHoverFrame._Activate publishes canvas_manage_tags: the viewer's manage tags dialog for the file."
+   ]
+  },
+  {
+   "id": "viewer-tags-hover-middle-click",
+   "label": "Viewer tags hover: middle-click opens a new search page for the selected tags (shift: OR)",
+   "path": "Media viewer > tags hover window",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/lists/ClientGUIListBoxes.py:3455",
+   "native": "crates/hydrus-gui/ui/viewer_tags_hover.slint",
+   "notes": [
+    "As the selection box's, in the viewer's location context."
+   ]
+  },
+  {
+   "id": "viewer-tags-hover-menu",
+   "label": "Viewer tags hover: right-click tag menu",
+   "path": "Media viewer > tags hover window",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/lists/ClientGUIListBoxes.py:3526",
+   "native": "crates/hydrus-gui/ui/viewer_tags_hover.slint",
+   "notes": [
+    "ShowMenuFromSignal for a list without counts, a page key or a search: copy, siblings, parents, open, hide (single media), favourites, maintenance."
+   ]
+  },
+  {
+   "id": "viewer-tags-hover-keyboard",
+   "label": "Viewer tags hover: keyboard selection and copy",
+   "path": "Media viewer > tags hover window",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/lists/ClientGUIListBoxes.py:2711",
+   "native": "crates/hydrus-gui/ui/viewer_tags_hover.slint",
+   "notes": [
+    "ListBox.keyPressEvent while the hover list has focus."
+   ]
   }
  ]
 }
