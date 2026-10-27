@@ -228,6 +228,14 @@ modules in a gitignored `crates/hydrus-gui/tests/lane_<name>.rs` (with
 - **Key handling**: the main window's shortcuts are a `capture-key-pressed` on
   the outermost `FocusScope`, so they work whatever has focus; a widget's own
   keys go in its own `FocusScope`.
+- **Real input in GUI tests**: `ui.invoke_*` calls a callback directly, so it
+  never shows that a click reaches anything (a missing `TouchArea`, or one
+  covered by another element, passes). A test that proves a mouse or keyboard
+  behaviour sends real events with `tests/gui/common/widgets.rs` (clicks of
+  any button, modifiers, wheel, drag, keys; its module doc lists them). Call
+  `widgets::lay_out` first: a headless window is 0-sized until laid out. Give
+  an unlabelled `.slint` element an `accessible-label` rather than computing
+  positions in the test.
 - **Timers in GUI tests**: state updated by a Slint `Timer` is not there until
   the timer runs; spin the event loop until it is, rather than asserting at
   once.

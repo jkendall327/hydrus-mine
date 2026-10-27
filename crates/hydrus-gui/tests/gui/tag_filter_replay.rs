@@ -204,7 +204,7 @@ fn click_tick(w: &TagFilterWindow, list: i32, global: bool, index: usize) -> boo
     };
     let label = model.row_data(index).unwrap().label.to_string();
     let enabled = widgets::enabled(w.window(), &label);
-    widgets::click(w.window(), &label);
+    widgets::click_nth(w.window(), &label, 0);
     enabled
 }
 
