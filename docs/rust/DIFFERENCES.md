@@ -3019,8 +3019,8 @@ windows, media/external-file drags, or dropping into an empty
 notebook's content body. Hovering a file drag over a tab to switch to it
 (`interaction-tab-drag`'s second half) needs the pointer's place during an
 external drag, which winit 0.30 does not report (its `HoveredFile` has no
-position), and thumbnails cannot be dragged at all yet, so that leaf stays
-untagged. Consequently the two hover-navigation preference leaves
+position), and thumbnails cannot be dragged at all yet; the owner deferred it
+(DECISIONS.md, 2026-10-27), and the leaf is out of scope for now. Consequently the two hover-navigation preference leaves
 remain Partial: their page-tab consumer works, but Qt also consumes them for
 media/external drags. The broader navigation/drag/drop families remain Partial.
 The Qt recorder supplies the source TabBar on synthetic drop events and
