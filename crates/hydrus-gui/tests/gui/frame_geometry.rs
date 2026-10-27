@@ -53,7 +53,7 @@ impl Drop for FromViewer {
 
 pub(crate) struct Client {
     store: Arc<Store>,
-    ui: MainWindow,
+    pub(crate) ui: MainWindow,
     bound: Bound,
     /// A folder of one file to import.
     work: tempfile::TempDir,

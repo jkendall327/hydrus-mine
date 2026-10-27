@@ -11,6 +11,7 @@ use i_slint_core::items::AccessibleRole;
 use i_slint_core::window::WindowInner;
 
 use hydrus_gui::headless;
+use slint::ComponentHandle as _;
 
 use crate::frame_geometry::{Client, windows};
 
@@ -25,7 +26,13 @@ fn too_tall(window: &slint::Window) -> Vec<String> {
         let role = item.accessible_role();
         let measured = match role {
             AccessibleRole::Button | AccessibleRole::Combobox => Some(item.clone()),
-            AccessibleRole::TextInput => item.parent_item(ParentItemTraversalMode::StopAtPopups),
+            AccessibleRole::TextInput
+                if item
+                    .downcast::<i_slint_core::items::TextInput>()
+                    .is_some_and(|input| input.as_pin_ref().single_line()) =>
+            {
+                item.parent_item(ParentItemTraversalMode::StopAtPopups)
+            }
             _ => None,
         };
         if let Some(measured) = measured {
