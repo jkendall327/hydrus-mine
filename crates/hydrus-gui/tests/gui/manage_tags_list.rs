@@ -23,6 +23,8 @@ const DOWN: &str = "\u{F701}";
 const UP: &str = "\u{F700}";
 const HOME: &str = "\u{F729}";
 const END: &str = "\u{F72B}";
+const PAGE_UP: &str = "\u{F72C}";
+const PAGE_DOWN: &str = "\u{F72D}";
 const ESCAPE: &str = "\u{1b}";
 const RETURN: &str = "\n";
 const DELETE: &str = "\u{7f}";
@@ -175,11 +177,7 @@ impl Dialog {
     /// What a fresh dialog model of the same files asks or shows when
     /// `entered` (the reference's) are entered, or (`remove`) removed.
     fn expected(&self, recorded: &Json, remove: bool) -> Json {
-        let mut fresh = hydrus_gui_model::manage_tags::ManageTags::new(
-            self.h.store.clone(),
-            self.files.clone(),
-        )
-        .unwrap();
+        let mut fresh = self.fresh();
         let mut question = String::new();
         for tags in recorded.as_array().unwrap() {
             let tags = strings(tags);
@@ -197,6 +195,47 @@ impl Dialog {
         }
         json!({
             "question": question,
+            "rows": fresh.display_rows().into_iter().map(|r| r.label).collect::<Vec<_>>(),
+        })
+    }
+
+    fn fresh(&self) -> hydrus_gui_model::manage_tags::ManageTags {
+        hydrus_gui_model::manage_tags::ManageTags::new(self.h.store.clone(), self.files.clone())
+            .unwrap()
+    }
+
+    /// What the window asks once tags were entered, and the rows it stages
+    /// once `yes` (its first choice) or no is answered.
+    fn answered(&self, yes: bool) -> Json {
+        let asked = json!({
+            "question": self.window.get_tag_menu_question().to_string(),
+            "yes": self.window.get_tag_menu_yes_label().to_string(),
+            "no": self.window.get_tag_menu_no_label().to_string(),
+        });
+        self.window.invoke_tag_menu_answered(yes);
+        widgets::settle();
+        json!({ "asked": asked, "rows": self.rows() })
+    }
+
+    /// The same of a fresh dialog model given the tags the reference was
+    /// given (`entered`), answered the same way.
+    fn expected_answered(&self, entered: &Json, yes: bool) -> Json {
+        let mut fresh = self.fresh();
+        let mut asked = json!({ "question": "", "yes": "yes", "no": "no" });
+        for tags in entered.as_array().unwrap() {
+            if let Ok(hydrus_gui_model::manage_tags::Entered::Ask(prompt)) =
+                fresh.enter_tags(&strings(tags), false, false)
+            {
+                asked = json!({
+                    "question": prompt.message,
+                    "yes": prompt.choices[0],
+                    "no": prompt.choices[1],
+                });
+                fresh.answer_prompt(&prompt, Some(usize::from(!yes)));
+            }
+        }
+        json!({
+            "asked": asked,
             "rows": fresh.display_rows().into_iter().map(|r| r.label).collect::<Vec<_>>(),
         })
     }
@@ -303,13 +342,10 @@ fn the_dialogs_list_selects_enters_and_removes_as_the_references_does() {
     // a double-click enters the selection
     d.select(&["plain tag", "box:anchor"]);
     input::double_click(d.window.window(), d.at(Some("box:anchor")), NONE);
-    let name = "double click with two selected";
-    d.step(name);
-    d.h.differ(
-        name,
-        &d.outcome(),
-        &d.expected(&d.recorded(name)["entered"], false),
-    );
+    // (what it entered: the_dialogs_list_enters_the_tags_the_reference_does)
+    d.step("double click with two selected");
+    d.window.invoke_tag_menu_dismissed();
+    widgets::settle();
     d.click(None, NONE);
     input::double_click(d.window.window(), d.at(None), NONE);
     let name = "double click below the rows";
@@ -349,12 +385,9 @@ fn the_dialogs_list_selects_enters_and_removes_as_the_references_does() {
         d.h.differ(name, &copies(n), &d.recorded(name)["copied"]);
     }
     d.key(RETURN, NONE);
-    let name = "return enters the selection";
-    d.h.differ(
-        name,
-        &d.outcome(),
-        &d.expected(&d.recorded(name)["entered"], false),
-    );
+    d.step("return enters the selection");
+    d.window.invoke_tag_menu_dismissed();
+    widgets::settle();
     d.key(DELETE, NONE);
     let name = "delete removes the selection";
     d.h.differ(
@@ -362,7 +395,63 @@ fn the_dialogs_list_selects_enters_and_removes_as_the_references_does() {
         &d.outcome(),
         &d.expected(&d.recorded(name)["deleted"], true),
     );
+    // page keys, the list showing as many rows as the reference's did
+    d.click(Some("plain tag"), NONE);
+    d.step("click plain tag before the page keys");
+    let wanted = d.fixture["rows_per_page"].as_i64().unwrap();
+    for _ in 0..4 {
+        let rows = i64::from(d.window.get_tag_page_rows());
+        if rows == wanted {
+            break;
+        }
+        let size = d.window.window().size().to_logical(d.window.window().scale_factor());
+        #[allow(clippy::cast_precision_loss)]
+        d.window.window().set_size(slint::LogicalSize::new(
+            size.width,
+            size.height + (wanted - rows) as f32 * 20.0,
+        ));
+        widgets::settle();
+    }
+    assert_eq!(i64::from(d.window.get_tag_page_rows()), wanted);
+    for (text, mods, name) in [
+        (PAGE_DOWN, NONE, "page down"),
+        (PAGE_DOWN, NONE, "page down again"),
+        (PAGE_UP, NONE, "page up"),
+        (PAGE_DOWN, SHIFT, "shift page down"),
+    ] {
+        d.key(text, mods);
+        d.step(name);
+    }
     d.h.finish();
+}
+
+// leaf: interaction-manage-tags-list-menu-keys
+#[test]
+fn the_dialogs_list_enters_the_tags_the_reference_does() {
+    // (each answer to the question, in a dialog of its own: an answer
+    // stages changes the next steps would see)
+    for yes in [true, false] {
+        let d = Dialog::new();
+        d.select(&["plain tag", "box:anchor"]);
+        input::double_click(d.window.window(), d.at(Some("box:anchor")), NONE);
+        let name = "double click with two selected";
+        d.h.differ(
+            &format!("{name}, answered {yes}"),
+            &d.answered(yes),
+            &d.expected_answered(&d.recorded(name)["entered"], yes),
+        );
+        d.h.finish();
+        let d = Dialog::new();
+        d.select(&["alpha:first", "safe"]);
+        d.key(RETURN, NONE);
+        let name = "return enters the selection";
+        d.h.differ(
+            &format!("{name}, answered {yes}"),
+            &d.answered(yes),
+            &d.expected_answered(&d.recorded(name)["entered"], yes),
+        );
+        d.h.finish();
+    }
 }
 
 // leaf: interaction-manage-tags-list-menu-keys
@@ -386,8 +475,7 @@ fn the_dialogs_list_middle_clicks_open_search_pages_as_the_references_does() {
                     "topic": l["topic"],
                     "predicates": l["predicates"],
                     "page_name": l["page_name"],
-                    // (the harness names the page's own location "my files")
-                    "location": if l["location"] == "combined local file domains" { "elsewhere" } else { "my files" },
+                    "location": l["location"],
                 })
             })
             .collect();
@@ -403,7 +491,7 @@ fn the_dialogs_list_middle_clicks_open_search_pages_as_the_references_does() {
     middle(
         Some("plain tag"),
         SHIFT,
-        "shift middle click with two selected",
+        "shift middle click on plain tag ranges from box:anchor",
     );
     d.h.finish();
 }
@@ -439,7 +527,7 @@ fn the_dialogs_list_menu_and_its_entries_are_the_references() {
             d.open_menu(&tags);
             let before = d.h.bound.pages.borrow().page_count();
             d.choose(&["open", label]);
-            let sort = |pages: Json, ours: bool| {
+            let sort = |pages: Json| {
                 let mut pages: Vec<Json> = pages
                     .as_array()
                     .unwrap()
@@ -449,7 +537,7 @@ fn the_dialogs_list_menu_and_its_entries_are_the_references() {
                             "topic": l["topic"],
                             "predicates": l["predicates"],
                             "page_name": l["page_name"],
-                            "location": if ours { l["location"].clone() } else if l["location"] == "combined local file domains" { json!("elsewhere") } else { json!("my files") },
+                            "location": l["location"],
                         })
                     })
                     .collect();
@@ -458,8 +546,8 @@ fn the_dialogs_list_menu_and_its_entries_are_the_references() {
             };
             d.h.differ(
                 &format!("{name} {label}"),
-                &sort(d.h.launched(before), true),
-                &sort(launch["launched"].clone(), false),
+                &sort(d.h.launched(before)),
+                &sort(launch["launched"].clone()),
             );
         }
     }

@@ -290,7 +290,7 @@ impl Harness {
                 "topic": topic,
                 "predicates": predicates,
                 "page_name": name,
-                "location": if location == my_files() { "my files" } else { "elsewhere" },
+                "location": location_name(&location),
             }));
             self.ui.invoke_close_page();
             widgets::settle();
@@ -316,9 +316,17 @@ impl Harness {
     }
 }
 
-/// The page's location (the recorder's "my files").
-fn my_files() -> LocationContext {
-    LocationContext::single(hydrus_core::ServiceKey::new(b"local files".to_vec()))
+/// A launched page's location as the recorders name it.
+fn location_name(location: &LocationContext) -> String {
+    use hydrus_core::service::builtin_keys::{COMBINED_LOCAL_FILE_DOMAINS, MY_FILES};
+    let single = |key: &[u8]| LocationContext::single(hydrus_core::ServiceKey::new(key.to_vec()));
+    if *location == single(MY_FILES) {
+        "my files".to_owned()
+    } else if *location == single(COMBINED_LOCAL_FILE_DOMAINS) {
+        "combined local file domains".to_owned()
+    } else {
+        format!("{location:?}")
+    }
 }
 
 pub(crate) fn strings(v: &Json) -> Vec<String> {

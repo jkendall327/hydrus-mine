@@ -401,7 +401,7 @@ def record( session ):
             click( 'series:spaced name', button = QC.Qt.MouseButton.MiddleButton ); step( 'middle click series:spaced name', launched = launched[ n: ] )
             select( 'plain tag', 'box:anchor' )
             n = len( launched )
-            click( 'plain tag', button = QC.Qt.MouseButton.MiddleButton, mods = SHIFT ); step( 'shift middle click with two selected', launched = launched[ n: ] )
+            click( 'plain tag', button = QC.Qt.MouseButton.MiddleButton, mods = SHIFT ); step( 'shift middle click on plain tag ranges from box:anchor', launched = launched[ n: ] )
 
             # double clicks enter the selected tags (the panel's own entering
             # is recorded elsewhere)
@@ -443,6 +443,20 @@ def record( session ):
             key( QC.Qt.Key.Key_Return ); step( 'return enters the selection', entered = entered[ n: ] )
             n = len( deleted )
             key( QC.Qt.Key.Key_Delete ); step( 'delete removes the selection', deleted = deleted[ n: ] )
+
+            # page keys move a page of rows (the list made five rows high)
+
+            box.setFixedHeight( 5 * h + box.height() - box.viewport().height() )
+            settle( .2 )
+            out[ 'rows_per_page' ] = box._num_rows_per_page
+            click( 'plain tag' ); step( 'click plain tag before the page keys' )
+            key( QC.Qt.Key.Key_PageDown ); step( 'page down' )
+            key( QC.Qt.Key.Key_PageDown ); step( 'page down again' )
+            key( QC.Qt.Key.Key_PageUp ); step( 'page up' )
+            key( QC.Qt.Key.Key_PageDown, SHIFT ); step( 'shift page down' )
+            box.setMinimumHeight( 0 )
+            box.setMaximumHeight( 16777215 )
+            settle( .2 )
 
             out[ 'steps' ] = steps
 

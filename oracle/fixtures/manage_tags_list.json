@@ -48,6 +48,7 @@
   "zeta:last (1)",
   "キャラクター:初音ミク (1)"
  ],
+ "rows_per_page": 5,
  "steps": [
   {
    "step": "initial",
@@ -136,7 +137,7 @@
    ]
   },
   {
-   "step": "shift middle click with two selected",
+   "step": "shift middle click on plain tag ranges from box:anchor",
    "selected": [
     "plain tag",
     "safe",
@@ -288,6 +289,40 @@
      "alpha:first",
      "safe"
     ]
+   ]
+  },
+  {
+   "step": "click plain tag before the page keys",
+   "selected": [
+    "plain tag"
+   ]
+  },
+  {
+   "step": "page down",
+   "selected": [
+    "alpha:first"
+   ]
+  },
+  {
+   "step": "page down again",
+   "selected": [
+    "page:3"
+   ]
+  },
+  {
+   "step": "page up",
+   "selected": [
+    "alpha:first"
+   ]
+  },
+  {
+   "step": "shift page down",
+   "selected": [
+    "alpha:first",
+    "alpha:second",
+    "box:anchor",
+    "old:sibling",
+    "page:3"
    ]
   }
  ],

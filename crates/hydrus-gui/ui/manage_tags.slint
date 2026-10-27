@@ -46,6 +46,8 @@ export component ManageTagsWindow inherits Window {
     in-out property <int> service-index;
     in property <[ListText]> tags;
     in property <[bool]> tag-selected;
+    // (the rows a page up or down moves: as many as the list shows whole)
+    out property <int> tag-page-rows: max(1, floor(tag-list.visible-height / 20px));
     in property <string> remove-button-text: "remove all/selected tags";
     in property <string> notice;
     callback tag-clicked(int,bool,bool);
@@ -216,7 +218,7 @@ export component ManageTagsWindow inherits Window {
                         key-pressed(event) => {
                             if event.text == Key.Delete { root.delete-pressed(); return accept; }
                             if event.text == Key.Return { root.activate-selected(); return accept; }
-                            if root.tag-key(event.text, event.modifiers.control, event.modifiers.shift, max(1, floor(tag-list.visible-height / 20px))) { return accept; }
+                            if root.tag-key(event.text, event.modifiers.control, event.modifiers.shift, root.tag-page-rows) { return accept; }
                             reject
                         }
                         tag-list := ListView {
