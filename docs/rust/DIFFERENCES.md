@@ -627,6 +627,23 @@ order from the reference (which keeps the order it was given them). The
 thumbnail rearrange recording (`thumbnail_rearrange.json`) therefore sorts its
 page by file size, which no two files of the fixture share.
 
+### The selection tags box
+
+The box's clicks, keys, middle-clicks, double-clicks and right-click menu
+replay the reference's `ListBoxTagsMediaSidebar`
+(`oracle/record_selection_tags_box.py`). Not ported: dragging over the tags
+to select a run (the reference's `mouseMoveEvent`); scrolling a tag the
+keys move to into view (`ensureVisible`); the keyboard going back to the
+box when its menu closes (it stays with the window, so escape and the
+arrows need a click on the box first); and the menu's "admin:" entries for
+tag repository moderators (repositories are out of scope).
+
+The media viewer's tags hover (`ListBoxTagsMediaHoverFrame`,
+`oracle/record_viewer_tags_hover.py`) works as the box does, without drag
+selection or scrolling a key-moved tag into view. As the reference's, it
+stays up while its menu is open, and gives the keyboard back to the viewer
+when it lowers.
+
 ## The media viewer (`hydrus-gui`)
 
 - **Random and undo random are shortcut commands, as in the reference.**

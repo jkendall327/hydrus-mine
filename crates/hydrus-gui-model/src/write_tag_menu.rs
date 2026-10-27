@@ -85,16 +85,21 @@ pub enum Action {
     /// One of the menu's own entries for the list that opened it (by its
     /// id there), done by that list.
     Owner(i32),
+    /// As [`Self::Owner`], once `question` is answered yes.
+    Asked {
+        id: i32,
+        question: String,
+    },
 }
 impl Action {
     pub fn question(&self) -> Option<&str> {
         if matches!(self, Self::Regenerate { .. }) {
             return Some(REGENERATE_QUESTION);
         }
-        if let Self::Favourite { question, .. } = self {
-            question.as_deref()
-        } else {
-            None
+        match self {
+            Self::Favourite { question, .. } => question.as_deref(),
+            Self::Asked { question, .. } => Some(question),
+            _ => None,
         }
     }
     /// Re-read inside the write and publish it: other windows' favourites must survive

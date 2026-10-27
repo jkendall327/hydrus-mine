@@ -134,6 +134,7 @@ mod search_log;
 mod search_page;
 mod selected_deletion_records;
 mod selected_viewing_stats;
+mod selection_tags_box;
 mod session;
 mod session_autosave;
 mod session_backup_menu;
@@ -315,6 +316,7 @@ mod viewer_drag;
 mod window_rescue;
 
 mod viewer_tag_wheel;
+mod viewer_tags_hover;
 
 mod idle_timeout_options;
 

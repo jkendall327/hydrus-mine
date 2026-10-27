@@ -97,6 +97,7 @@ pub mod scanbar;
 pub mod search_log;
 pub mod selected_deletion_records;
 pub mod selection;
+pub mod selection_tags;
 pub mod services_editor;
 pub mod services_review;
 pub mod session_lifecycle;

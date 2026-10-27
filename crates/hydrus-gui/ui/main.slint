@@ -8,6 +8,8 @@ export { MenuChoicePolicy } from "menu_choice_wheel.slint";
 import { PageSplitter } from "page_splitter.slint";
 export { SearchOrWindow } from "search_or.slint";
 import { ActivePredicates, ActivePredicateAction } from "active_predicates.slint";
+import { TagList, SelectionTagsBox } from "selection_tags.slint";
+export { SelectionTagsBox } from "selection_tags.slint";
 export { ActivePredicateAction } from "active_predicates.slint";
 import { Button, CheckBox, ComboBox, LineEdit, ListView, ProgressIndicator, ScrollView, VerticalBox } from "std-widgets.slint";
 import { ListText, Theme } from "theme.slint";
@@ -50,33 +52,6 @@ export { SubscriptionGalleryWindow, SubscriptionsWindow, Tick } from "subscripti
 
 import { ThumbnailCellPaint, ThumbnailPaint, Thumbnail } from "thumbnail_paint.slint";
 export { ThumbIcon, ThumbRating, ThumbBox, Thumbnail, ThumbnailPaint } from "thumbnail_paint.slint";
-
-// the tags of the selected files (or of the page's), with their counts, as
-// the reference's "selection tags" box; double-clicking one searches for it
-component TagList inherits Rectangle {
-    in property <[ListText]> tags;
-    callback activated(int);
-    border-width: 1px;
-    border-color: Theme.border;
-    background: Theme.tags-background;
-    ListView {
-        for tag[i] in root.tags: Rectangle {
-            height: 20px;
-            background: pick.has-hover ? Theme.hover : transparent;
-            Text {
-                x: 4px;
-                text: tag.text;
-                color: tag.colour;
-                vertical-alignment: center;
-                overflow: elide;
-                width: parent.width - 8px;
-            }
-            pick := TouchArea {
-                double-clicked => { root.activated(i); }
-            }
-        }
-    }
-}
 
 // a page chooser button: `label` empty hides it
 component ChooserButton inherits Rectangle {
@@ -547,6 +522,8 @@ export component MainWindow inherits Window {
     // Direct bindings include the first layout; floating popup construction
     // must not depend on a deferred changed handler copying initial geometry.
     out property <length> search-tags-y: search-tags.absolute-position.y;
+    // the selection tags box's rows per page (page up and down), read by tests
+    out property <int> selection-tags-page-rows: search-tags.page-rows;
     out property <length> active-predicate-list-height: active-predicate-list.height;
     out property <length> active-predicate-content-height: active-predicates.content-height;
     out property <length> active-predicate-view-height: active-predicates.view-height;
@@ -832,7 +809,6 @@ export component MainWindow inherits Window {
     callback active-predicate-menu-opened(int);
     callback active-predicate-menu-chosen(int);
     callback active-predicate-menu-requested(int, length, length);
-    callback tag-activated(int);
     callback launch-filter();
     // the page chooser: its buttons' labels by number - 1 (as on a number
     // pad, 7 at the top left), none while it is closed
@@ -942,7 +918,8 @@ export component MainWindow inherits Window {
                 return accept;
             }
             if root.shortcut-key(event.text,(event.modifiers.control?1:0)+(event.modifiers.alt?2:0)+(event.modifiers.shift?4:0)+(event.modifiers.meta?32:0)) { return accept; }
-            if (event.modifiers.control && (event.text == "p" || event.text == "P")) { root.command-palette-requested(); return accept; }
+            // (the selection tags box, as the reference's list, takes ctrl+p itself)
+            if (event.modifiers.control && (event.text == "p" || event.text == "P") && !SelectionTagsBox.focused) { root.command-palette-requested(); return accept; }
             if (event.text == Key.F9 || (event.modifiers.control && (event.text == "t" || event.text == "T"))) {
                 root.new-page();
                 return accept;
@@ -1111,7 +1088,6 @@ export component MainWindow inherits Window {
                     }
                     TagList {
                         tags: root.tags;
-                        activated(i) => { root.tag-activated(i); }
                     }
                 }
                 if root.watcher-page: VerticalBox {
@@ -1157,7 +1133,6 @@ export component MainWindow inherits Window {
                     }
                     TagList {
                         tags: root.tags;
-                        activated(i) => { root.tag-activated(i); }
                     }
                 }
                 if root.importing && root.local-import: VerticalBox {
@@ -1178,7 +1153,6 @@ export component MainWindow inherits Window {
                     }
                     TagList {
                         tags: root.tags;
-                        activated(i) => { root.tag-activated(i); }
                     }
                 }
                 if root.importing && root.simple-downloader: VerticalBox {
@@ -1237,7 +1211,6 @@ export component MainWindow inherits Window {
                     }
                     TagList {
                         tags: root.tags;
-                        activated(i) => { root.tag-activated(i); }
                     }
                 }
                 if root.importing && !root.local-import && !root.simple-downloader && !root.gallery-page && !root.watcher-page: url-sidebar := VerticalBox {
@@ -1300,7 +1273,6 @@ export component MainWindow inherits Window {
                     }
                     TagList {
                         tags: root.tags;
-                        activated(i) => { root.tag-activated(i); }
                     }
                 }
                 if root.note != "" && !root.importing && !root.gallery-page && !root.watcher-page: VerticalBox {
@@ -1328,7 +1300,6 @@ export component MainWindow inherits Window {
                     }
                     TagList {
                         tags: root.tags;
-                        activated(i) => { root.tag-activated(i); }
                     }
                 }
                 // Keep IDs in component scope so geometry is a live binding.
@@ -1582,7 +1553,6 @@ export component MainWindow inherits Window {
                     Text { text: root.selection-tags-title; color: Theme.text; wrap: word-wrap; }
                     search-tags := TagList {
                         tags: root.tags;
-                        activated(i) => { root.tag-activated(i); }
                     }
                 }
                     }

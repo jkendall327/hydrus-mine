@@ -26,6 +26,7 @@ mod archive_delete_window;
 pub mod archive_repair_window;
 mod auto_resolution_preview_window;
 mod auto_resolution_review_window;
+mod selection_tags;
 #[doc(hidden)]
 pub use animation::{decoders_running, frames_decoded};
 pub use auto_resolution_review_window::set_popup_delay;
@@ -489,6 +490,8 @@ pub struct Bound {
     _autocomplete_tabs: Rc<slint::Timer>,
     /// The siblings or parents editor the main window's tag menus open.
     pub tag_menu_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
+    /// The siblings and parents dialog the viewer's tags hover menu opened.
+    pub viewer_tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
     /// Files dropped on the main window: the "review files to import"
     /// window with them (they join its list if it is open).
     pub drop_files: Rc<dyn Fn(Vec<String>)>,
@@ -1043,26 +1046,22 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             if !window.window().is_visible() {
                 return;
             }
-            // OR groups keep their structure in the search. Visit their tags
-            // only to name the new page, just as for top-level AND predicates.
-            let mut pending = predicates.iter().collect::<Vec<_>>();
-            let mut names = Vec::new();
-            while let Some(predicate) = pending.pop() {
-                match predicate {
-                    hydrus_core::search::predicate::Predicate::Tag { tag, .. } => {
-                        names.push(tag.as_str().to_owned());
-                    }
-                    hydrus_core::search::predicate::Predicate::Or(children) => {
-                        pending.extend(children);
-                    }
-                    _ => (),
-                }
-            }
-            if names.is_empty() {
+            if predicates.is_empty() {
                 return;
             }
-            names.sort();
-            let name = names.join(", ");
+            // as `_NewSearchPages` names it: each predicate written out
+            // (an OR as "a OR b"), sorted and joined
+            let viewing: hydrus_store::settings::FileViewingStatistics = pages
+                .borrow()
+                .store()
+                .read(hydrus_store::settings::get)
+                .unwrap_or_default();
+            let text = hydrus_search::TextContext::from_store(
+                &pages.borrow().store().snapshot().services,
+                &viewing,
+            );
+            let name =
+                hydrus_gui_model::active_predicates::routes::page_name(&predicates, &text, false);
             let previous = pages.borrow().shown().key;
             scrolls
                 .borrow_mut()
@@ -1105,6 +1104,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     write_tag_menu::install_search_launcher(tag_search_launcher.clone());
+    // the dialog the viewer's tags hover menu opens (siblings, parents)
+    let viewer_tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>> = Rc::default();
     let viewer_tag_search: viewer_tag_search::Launch = Rc::new({
         let weak = window.as_weak();
         let active = binding_active.clone();
@@ -1282,7 +1283,20 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let live = predicate_editor_live.clone();
             move || active.get() && live()
         }),
+        active_search_launcher.clone(),
+    );
+    selection_tags::bind(
+        window,
+        page.clone(),
+        shown.clone(),
+        active_menu.clone(),
         active_search_launcher,
+        &search_or,
+        &(Rc::new({
+            let active = binding_active.clone();
+            let live = predicate_editor_live.clone();
+            move || active.get() && live()
+        }) as Rc<dyn Fn() -> bool>),
     );
 
     let review_files: Rc<dyn Fn(Vec<String>)> = Rc::new({
@@ -1757,16 +1771,6 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 .choose(usize::try_from(index).unwrap_or(usize::MAX));
             shown(true);
             open_editor(page());
-        }
-    });
-    window.on_tag_activated({
-        let page = page.clone();
-        let shown = shown.clone();
-        move |index| {
-            page()
-                .borrow_mut()
-                .activate_tag(usize::try_from(index).unwrap_or(usize::MAX));
-            shown(true);
         }
     });
     window.on_remove_predicate({
@@ -4499,6 +4503,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     *duplicates.open_viewer.borrow_mut() = Some(Rc::new({
         let image_cache = image_cache.handle();
         let tag_search = viewer_tag_search.clone();
+        let viewer_tag_relationships = viewer_tag_relationships.clone();
         let weak_main = window.as_weak();
         let reveal_viewer_exit = reveal_viewer_exit.clone();
         let page = page.clone();
@@ -4527,6 +4532,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             *viewing.borrow_mut() = Some((hydrus_core::pages::PageKey::random().0, None));
             let hooks = ViewerHooks {
                 tag_search: tag_search.clone(),
+                tag_relationships: viewer_tag_relationships.clone(),
                 deletion: viewer_deletion.clone(),
                 closing_owner: viewer_closing::Owner::new(
                     None,
@@ -4566,6 +4572,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     window.on_thumbnail_activated({
         let image_cache = image_cache.handle();
         let tag_search = viewer_tag_search.clone();
+        let viewer_tag_relationships = viewer_tag_relationships.clone();
         let weak_main = window.as_weak();
         let origin_pages = pages.clone();
         let reveal_viewer_exit = reveal_viewer_exit.clone();
@@ -4612,6 +4619,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             *viewing.borrow_mut() = Some((hydrus_core::pages::PageKey::random().0, None));
             let hooks = ViewerHooks {
                 tag_search: tag_search.clone(),
+                tag_relationships: viewer_tag_relationships.clone(),
                 deletion: viewer_deletion.clone(),
                 closing_owner,
                 viewing: viewing.clone(),
@@ -5656,6 +5664,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         favourites: favourite_dialogs,
         _autocomplete_tabs: autocomplete_tabs,
         tag_menu_relationships: tag_menu.relationships.clone(),
+        viewer_tag_relationships,
         predicate_editor,
         _predicate_editor_owner: predicate_editor_owner,
         search_or,
@@ -6652,6 +6661,8 @@ type OpenOnFiles = Rc<dyn Fn(Arc<hydrus_store::Store>, Vec<HashId>, Rc<dyn Fn()>
 /// notes.
 struct ViewerHooks {
     tag_search: viewer_tag_search::Launch,
+    /// Where the tags hover's menu opens its siblings and parents dialog.
+    tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
     deletion: delete_files_window::Slot,
     closing_owner: Rc<viewer_closing::Owner>,
     /// The viewer and the file it shows, for the Client API.
@@ -6709,6 +6720,7 @@ fn open_viewer(
 
     let ViewerHooks {
         tag_search,
+        tag_relationships,
         deletion: viewer_delete,
         closing_owner,
         viewing,
@@ -6784,11 +6796,12 @@ fn open_viewer(
     );
     viewer_tag_search::bind(
         &window,
-        model.clone(),
-        viewing_stats.clone(),
-        owner_valid.clone(),
+        &model,
+        &viewing_stats,
+        &owner_valid,
         viewer_delete.clone(),
         tag_search,
+        tag_relationships,
     );
     gui_colours::bind(
         window.global::<Theme<'_>>(),
@@ -8769,7 +8782,16 @@ fn refresh(window: &MainWindow, page: &SearchPage) {
         .zip(page.tag_colours(&colours))
         .map(|(text, rgb)| list_text(text, rgb))
         .collect();
-    window.set_tags(ModelRc::new(VecModel::from(tags)));
+    // (the same rows keep their model: a new one would make the rows anew,
+    // and the row under the pointer would lose a double-click's first click)
+    let same = |a: &ListText, b: &ListText| {
+        a.text == b.text && a.colour == b.colour && a.parts.iter().eq(b.parts.iter())
+    };
+    let shown = window.get_tags();
+    if shown.row_count() != tags.len() || !shown.iter().zip(&tags).all(|(a, b)| same(&a, b)) {
+        window.set_tags(ModelRc::new(VecModel::from(tags)));
+    }
+    selection_tags::show(window, page);
     window.set_selection_tags_title(page.tag_list_title().into());
     window.set_error(page.error().unwrap_or_default().into());
     window.set_status(page.status().into());

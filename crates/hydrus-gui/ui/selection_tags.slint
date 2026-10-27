@@ -1,0 +1,80 @@
+import { ListView } from "std-widgets.slint";
+import { ListText, Theme } from "theme.slint";
+
+// What the main window's "selection tags" box shows and where its clicks and
+// keys go (one box is shown at a time, whichever page is current). Rust
+// owns the selection (the reference's `ListBox` hit rules).
+export global SelectionTagsBox {
+    // whether each row is selected
+    in property <[bool]> selected;
+    // whether a box has the keyboard (its keys, such as ctrl+p, are then
+    // its own rather than the window's)
+    in-out property <bool> focused;
+    // a press of a button (0 left, 1 right, 2 middle) on row i (-1 for none,
+    // below the rows), with ctrl and shift, at x, y in the window
+    callback pressed(int, int, bool, bool, length, length);
+    // a left double-click on row i, with ctrl and shift
+    callback double-clicked(int, bool, bool);
+    // a key, with ctrl and shift, and how many rows a page holds; whether
+    // the list took it
+    callback key(string, bool, bool, int) -> bool;
+}
+
+// The tags of the selected files (or of the page's), with their counts, as
+// the reference's "selection tags" box (`ListBoxTagsMediaSidebar`): any
+// press selects as its hit rules say, a right press opens the tag menu, a
+// middle press opens a search page, a double-click adds to the search.
+export component TagList inherits Rectangle {
+    in property <[ListText]> tags;
+    // rows a page up or down moves
+    out property <int> page-rows: max(1, floor(list.visible-height / 20px));
+    property <bool> ctrl;
+    property <bool> shift;
+    border-width: 1px;
+    border-color: Theme.border;
+    background: Theme.tags-background;
+    forward-focus: keys;
+    keys := FocusScope {
+        changed has-focus => { SelectionTagsBox.focused = self.has-focus; }
+        key-pressed(event) => {
+            if SelectionTagsBox.key(event.text, event.modifiers.control, event.modifiers.shift, root.page-rows) { return accept; }
+            reject
+        }
+        list := ListView {
+            for tag[i] in root.tags: Rectangle {
+                height: 20px;
+                background: SelectionTagsBox.selected[i] ? Theme.accent : pick.has-hover ? Theme.hover : transparent;
+                Text {
+                    x: 4px;
+                    text: tag.text;
+                    color: tag.colour;
+                    vertical-alignment: center;
+                    overflow: elide;
+                    width: parent.width - 8px;
+                }
+                pick := TouchArea {
+                    pointer-event(event) => {
+                        if event.kind == PointerEventKind.down {
+                            keys.focus();
+                            root.ctrl = event.modifiers.control;
+                            root.shift = event.modifiers.shift;
+                            SelectionTagsBox.pressed(i, event.button == PointerEventButton.right ? 1 : event.button == PointerEventButton.middle ? 2 : 0, root.ctrl, root.shift, self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y);
+                        }
+                    }
+                    double-clicked => { SelectionTagsBox.double-clicked(i, root.ctrl, root.shift); }
+                }
+            }
+        }
+        // the space below the rows
+        below := TouchArea {
+            y: clamp(root.tags.length * 20px + list.content-y, 0px, root.height);
+            height: root.height - self.y;
+            pointer-event(event) => {
+                if event.kind == PointerEventKind.down {
+                    keys.focus();
+                    SelectionTagsBox.pressed(-1, event.button == PointerEventButton.right ? 1 : event.button == PointerEventButton.middle ? 2 : 0, event.modifiers.control, event.modifiers.shift, self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y);
+                }
+            }
+        }
+    }
+}
