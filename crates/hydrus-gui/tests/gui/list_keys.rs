@@ -5,9 +5,6 @@
 //! for the keys that move and select, drag-selecting and Qt's own Ctrl+C;
 //! the file log (the one list with both an activation and a copy-rows
 //! callable) for Enter, Ctrl+C, double-click and the rows menu.
-//!
-//! (The pointer and key helpers here are local: the shared ones of #292
-//! had not merged.)
 
 use std::cell::RefCell;
 use std::path::Path;
@@ -19,7 +16,7 @@ use i_slint_core::item_tree::ItemRc;
 use i_slint_core::items::Flickable;
 use i_slint_core::window::WindowInner;
 use serde_json::Value;
-use slint::platform::{Key, PointerEventButton, WindowEvent};
+use slint::platform::{Key, PointerEventButton};
 use slint::{ComponentHandle as _, LogicalPosition, Model as _, SharedString};
 
 use hydrus_gui::{
@@ -28,86 +25,25 @@ use hydrus_gui::{
 use hydrus_store::Store;
 use hydrus_store::queues::{self, FileSeedMeta, NewFileSeed, SeedStatus, SeedType};
 
-use crate::common::widgets;
+use crate::common::widgets::{self, Mods};
 
-// --- real events -----------------------------------------------------
+// --- real events (the shared helpers, `common/widgets.rs`) --------------
 
-fn modifiers(ctrl: bool, shift: bool) -> Vec<SharedString> {
-    let mut held = Vec::new();
-    if ctrl {
-        held.push(Key::Control.into());
-    }
-    if shift {
-        held.push(Key::Shift.into());
-    }
-    held
-}
-
-/// Do `then` with ctrl and shift held down (Slint takes the modifiers
-/// from the key events).
-fn holding(win: &slint::Window, ctrl: bool, shift: bool, then: impl FnOnce()) {
-    let held = modifiers(ctrl, shift);
-    for text in &held {
-        win.dispatch_event(WindowEvent::KeyPressed { text: text.clone() });
-    }
-    then();
-    for text in held.into_iter().rev() {
-        win.dispatch_event(WindowEvent::KeyReleased { text });
+fn mods(ctrl: bool, shift: bool) -> Mods {
+    Mods {
+        ctrl,
+        shift,
+        ..Mods::NONE
     }
 }
 
 fn key(win: &slint::Window, text: SharedString, ctrl: bool, shift: bool) {
-    holding(win, ctrl, shift, || widgets::key(win, text));
+    widgets::key_with(win, text, mods(ctrl, shift));
     widgets::settle();
-}
-
-fn press(win: &slint::Window, at: LogicalPosition, button: PointerEventButton) {
-    win.dispatch_event(WindowEvent::PointerMoved { position: at });
-    win.dispatch_event(WindowEvent::PointerPressed {
-        position: at,
-        button,
-    });
-    win.dispatch_event(WindowEvent::PointerReleased {
-        position: at,
-        button,
-    });
 }
 
 fn click(win: &slint::Window, at: LogicalPosition, ctrl: bool, shift: bool) {
-    holding(win, ctrl, shift, || {
-        press(win, at, PointerEventButton::Left);
-    });
-    widgets::settle();
-}
-
-fn double_click(win: &slint::Window, at: LogicalPosition) {
-    press(win, at, PointerEventButton::Left);
-    press(win, at, PointerEventButton::Left);
-    widgets::settle();
-}
-
-fn right_click(win: &slint::Window, at: LogicalPosition) {
-    press(win, at, PointerEventButton::Right);
-    widgets::settle();
-}
-
-/// Press on one place, move across `through` with the button held, and
-/// release on the last.
-fn drag(win: &slint::Window, through: &[LogicalPosition]) {
-    let (first, last) = (through[0], through[through.len() - 1]);
-    win.dispatch_event(WindowEvent::PointerMoved { position: first });
-    win.dispatch_event(WindowEvent::PointerPressed {
-        position: first,
-        button: PointerEventButton::Left,
-    });
-    for &position in &through[1..] {
-        win.dispatch_event(WindowEvent::PointerMoved { position });
-    }
-    win.dispatch_event(WindowEvent::PointerReleased {
-        position: last,
-        button: PointerEventButton::Left,
-    });
-    widgets::settle();
+    widgets::click_at_with(win, at, PointerEventButton::Left, mods(ctrl, shift));
 }
 
 /// A key the recording names, as Slint's text.
@@ -312,14 +248,15 @@ fn the_keys_move_and_select_as_the_reference_s_list() {
             match step["kind"].as_str().unwrap() {
                 "click" => click(win, row_at(step["what"].as_u64().unwrap()), ctrl, shift),
                 "drag" => {
+                    // (the recorded drags hold no modifier)
+                    assert!(!ctrl && !shift, "{context}");
                     let ends = numbers(&step["what"]);
-                    let rows: Vec<u64> = if ends[0] <= ends[1] {
-                        (ends[0]..=ends[1]).collect()
-                    } else {
-                        (ends[1]..=ends[0]).rev().collect()
-                    };
-                    let through: Vec<LogicalPosition> = rows.into_iter().map(row_at).collect();
-                    holding(win, ctrl, shift, || drag(win, &through));
+                    widgets::drag(
+                        win,
+                        row_at(ends[0]),
+                        row_at(ends[1]),
+                        PointerEventButton::Left,
+                    );
                 }
                 "key" => key(win, key_text(step["what"].as_str().unwrap()), ctrl, shift),
                 other => panic!("{other}"),
@@ -545,8 +482,18 @@ fn enter_activates_and_ctrl_c_copies_the_file_log_s_selection_as_the_reference()
             let pages_before = bound.pages.borrow().open_pages().len();
             match step["kind"].as_str().unwrap() {
                 "click" => click(win, row_at(step["what"].as_u64().unwrap()), ctrl, shift),
-                "double" => double_click(win, row_at(step["what"].as_u64().unwrap())),
-                "right" => right_click(win, row_at(step["what"].as_u64().unwrap())),
+                "double" => widgets::double_click_at(
+                    win,
+                    row_at(step["what"].as_u64().unwrap()),
+                    PointerEventButton::Left,
+                    mods(ctrl, shift),
+                ),
+                "right" => widgets::click_at_with(
+                    win,
+                    row_at(step["what"].as_u64().unwrap()),
+                    PointerEventButton::Right,
+                    mods(ctrl, shift),
+                ),
                 "key" => key(win, key_text(step["what"].as_str().unwrap()), ctrl, shift),
                 other => panic!("{other}"),
             }

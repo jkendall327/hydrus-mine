@@ -7,20 +7,19 @@
 //! nothing on empty space) and right presses (the menu, after selecting the
 //! thumbnail pressed, or nothing changed on empty space). The page holds the
 //! recording's files in its order, as the recorder's page did.
-//!
-//! (The pointer helpers here are local: the shared ones of #292 had not
-//! merged.)
 
 use std::sync::Arc;
 
 use i_slint_core::window::WindowInner;
-use slint::platform::{Key, PointerEventButton, WindowEvent};
-use slint::{ComponentHandle as _, LogicalPosition, SharedString};
+use slint::platform::PointerEventButton;
+use slint::{ComponentHandle as _, LogicalPosition};
 
 use hydrus_core::HashId;
 use hydrus_gui::{MainWindow, Pages, SearchPage, bind, headless};
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
+
+use crate::common::widgets::{self, Mods};
 
 // leaf: interaction-thumbnail-middle-click
 // leaf: interaction-thumbnail-click-select
@@ -125,28 +124,6 @@ fn presses_on_the_grid_select_open_and_show_the_menu_as_the_reference_s() {
             None => LogicalPosition::new(x0 + 156.0 + 1.0, y0 + 63.0),
         }
     };
-    let holding = |ctrl: bool, shift: bool, then: &dyn Fn()| {
-        let mut held: Vec<SharedString> = Vec::new();
-        if ctrl {
-            held.push(Key::Control.into());
-        }
-        if shift {
-            held.push(Key::Shift.into());
-        }
-        for text in &held {
-            win.dispatch_event(WindowEvent::KeyPressed { text: text.clone() });
-        }
-        then();
-        for text in held.into_iter().rev() {
-            win.dispatch_event(WindowEvent::KeyReleased { text });
-        }
-    };
-    let press = |position: LogicalPosition, button: PointerEventButton| {
-        win.dispatch_event(WindowEvent::PointerMoved { position });
-        win.dispatch_event(WindowEvent::PointerPressed { position, button });
-        win.dispatch_event(WindowEvent::PointerReleased { position, button });
-    };
-
     for (i, step) in recorded["steps"].as_array().unwrap().iter().enumerate() {
         let context = format!("step {i}: {step}");
         let position = at(ours(&step["file"]));
@@ -156,17 +133,16 @@ fn presses_on_the_grid_select_open_and_show_the_menu_as_the_reference_s() {
             "right" => PointerEventButton::Right,
             other => panic!("{other}"),
         };
-        holding(
-            step["ctrl"].as_bool().unwrap(),
-            step["shift"].as_bool().unwrap(),
-            &|| {
-                press(position, button);
-                if step["double"].as_bool().unwrap() {
-                    press(position, button);
-                }
-            },
-        );
-        super::common::widgets::settle();
+        let mods = Mods {
+            ctrl: step["ctrl"].as_bool().unwrap(),
+            shift: step["shift"].as_bool().unwrap(),
+            ..Mods::NONE
+        };
+        if step["double"].as_bool().unwrap() {
+            widgets::double_click_at(win, position, button, mods);
+        } else {
+            widgets::click_at_with(win, position, button, mods);
+        }
 
         let mut want: Vec<HashId> = step["selected"]
             .as_array()
@@ -199,7 +175,7 @@ fn presses_on_the_grid_select_open_and_show_the_menu_as_the_reference_s() {
                     "{context}: the viewer's file"
                 );
                 viewer.invoke_close_requested();
-                super::common::widgets::settle();
+                widgets::settle();
                 assert!(bound.viewer.borrow().is_none());
             }
             None => assert!(viewer.is_none(), "{context}: no viewer"),
