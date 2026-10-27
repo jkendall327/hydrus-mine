@@ -6982,6 +6982,8 @@ fn open_viewer(
         }
     });
     // the file's info line and buttons, in the top hover frame, and its
+    // (the top hover's zoom switch command, frozen as its button's is)
+    let zoom_switch_command = viewer_top_hover::zoom_switch_command(model.borrow().store());
     // notes; the names of those whose text is folded (the reference keeps
     // a fold while the next file has a note of that name)
     let folded_notes: Rc<RefCell<std::collections::BTreeSet<String>>> = Rc::default();
@@ -7011,7 +7013,7 @@ fn open_viewer(
             window.set_file_trashed(shown.trashed);
             window.set_file_local(shown.local);
             window.set_file_undeletable(shown.undeletable);
-            viewer_top_hover::refresh(&window, model.store(), model.current());
+            viewer_top_hover::refresh(&window, model.store(), model.current(), zoom_switch_command);
             let mut folded = folded_notes.borrow_mut();
             folded.retain(|name| shown.notes.iter().any(|(n, _)| n == name));
             let notes: Vec<NoteRow> = shown

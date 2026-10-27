@@ -664,8 +664,13 @@ page by file size, which no two files of the fixture share.
   pair) and the archive/delete filter's (back, skip) top hover frames, and
   their shared middle and right rows, are recorded
   (`oracle/fixtures/viewer_top_hover.json`) but not ported: those windows
-  show their index and info line only. Their windows are compiled in group
-  crates, which cannot hold the menu buttons' `ContextMenuArea`s.
+  show their index and info line only. Leaving them was a choice of scope
+  and build memory, not a limit: only four of the row's buttons (slideshow,
+  zoom options, shortcuts, view options) are menus whose `ContextMenuArea`
+  a group crate cannot hold; the rest are plain buttons that could live
+  there, and AGENTS.md's remedy for the menus is to keep such windows in
+  `main.slint`, at the cost of a bigger core crate. Followed up in
+  jkendall327/hydrus-mine#301.
 - **The animation buffer is sized at the file's own resolution.** The
   client's own player (ugoiras, animated WebP) keeps frames as the
   reference's `RasterContainerVideo` does, sized from "Memory for video

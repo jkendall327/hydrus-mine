@@ -37,13 +37,19 @@ const RECENTER: i32 = 0;
 const ZOOM_TYPE: i32 = 10;
 const RECENTER_ON_RESIZE: i32 = 20;
 
-/// The tooltips for the file shown: the buttons' shortcuts, as the
-/// shortcut sets now have them, and what its embedded metadata holds.
-pub(crate) fn refresh(window: &MediaViewerWindow, store: &Store, file: HashId) {
-    let shortcuts: hydrus_core::shortcuts::Settings = store.read(settings::get).unwrap_or_default();
+/// The zoom switch button's command (`zoom_switch_command`), read once when
+/// the viewer is made, as the reference's top hover reads it.
+pub(crate) fn zoom_switch_command(store: &Store) -> i32 {
     let playback: ViewerPlaybackSettings = store.read(settings::get).unwrap_or_default();
-    let command = ZOOM_SWITCH_COMMANDS[playback.zoom_switch.min(3)];
-    let tips = model::tips(&shortcuts, command);
+    ZOOM_SWITCH_COMMANDS[playback.zoom_switch.min(3)]
+}
+
+/// The tooltips for the file shown: the buttons' shortcuts, as the
+/// shortcut sets now have them (the zoom switch's for the viewer's
+/// frozen command), and what its embedded metadata holds.
+pub(crate) fn refresh(window: &MediaViewerWindow, store: &Store, file: HashId, zoom_switch: i32) {
+    let shortcuts: hydrus_core::shortcuts::Settings = store.read(settings::get).unwrap_or_default();
+    let tips = model::tips(&shortcuts, zoom_switch);
     let info = store
         .read(|conn| hydrus_store::media::load_basic(conn, &[file]))
         .ok()

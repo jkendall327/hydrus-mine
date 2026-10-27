@@ -338,6 +338,31 @@ fn state(viewer: &hydrus_gui::MediaViewerWindow) -> (String, String, bool) {
     )
 }
 
+/// The recorded menu of a press.
+fn menu_json(did: &[Value]) -> &Value {
+    did.iter().find_map(|d| d.get("menu")).unwrap()
+}
+
+fn menu_items(menu: &Value) -> Vec<&Value> {
+    menu.as_array().unwrap().iter().collect()
+}
+
+/// A recorded menu's entries, as (label, checked), without separators,
+/// submenus, and the labels that are not items.
+fn checks(items: Vec<&Value>) -> Vec<(String, bool)> {
+    items
+        .into_iter()
+        .filter(|i| i["separator"].is_null() && i["submenu"].is_null())
+        .filter(|i| i["text"] != "MAY BE BUGGY/CRASHY ON LINUX")
+        .map(|i| {
+            (
+                i["text"].as_str().unwrap().to_owned(),
+                i["checked"].as_bool().unwrap_or(false),
+            )
+        })
+        .collect()
+}
+
 fn menu_texts(menu: &Value) -> Vec<String> {
     menu.as_array()
         .unwrap()
@@ -454,16 +479,30 @@ fn the_top_hover_s_buttons_do_what_the_reference_s_do() {
             let texts = menu_texts(menu);
             match icon {
                 "slideshow" => {
-                    viewer.invoke_context_menu_requested();
-                    let rows: Vec<String> = group_rows(&viewer.get_context_menu().slideshow)
+                    // (the menu the click asked for, with its checks)
+                    let menu = viewer.get_context_menu().slideshow;
+                    let rows: Vec<(String, bool)> = [&menu.g1, &menu.g2, &menu.g3, &menu.g4]
                         .into_iter()
-                        .map(|r| r.0)
+                        .flat_map(|g| {
+                            g.iter()
+                                .map(|r| (r.label.to_string(), r.checked))
+                                .collect::<Vec<_>>()
+                        })
                         .collect();
-                    assert_eq!(rows, texts, "{what}: the slideshow menu");
+                    assert_eq!(
+                        rows,
+                        checks(menu_items(menu_json(did))),
+                        "{what}: the slideshow menu"
+                    );
                 }
                 "keyboard" => {
                     assert_eq!(texts, ["edit shortcuts"], "{what}");
+                    // (no custom sets, so its only entry)
                     assert_eq!(viewer.get_shortcut_names().row_count(), 0, "{what}");
+                    assert!(
+                        widgets::shows(viewer.window(), "edit shortcuts"),
+                        "{what}: shown"
+                    );
                 }
                 "zoom_cog" => {
                     let rows: Vec<(String, bool)> = [
@@ -489,10 +528,39 @@ fn the_top_hover_s_buttons_do_what_the_reference_s_do() {
                         .collect();
                     assert_eq!(rows, expected, "{what}: recenter and the zoom types");
                 }
-                "eye" => assert!(
-                    viewer.get_eye_menu().window.g1.row_count() > 0,
-                    "{what}: the view options menu"
-                ),
+                "eye" => {
+                    // the submenus' entries and checks, but the three the
+                    // browser viewer does not have (DIFFERENCES.md) and the
+                    // Linux warning label
+                    let eye = viewer.get_eye_menu();
+                    let mut rows: Vec<(String, bool)> = Vec::new();
+                    for group in [&eye.window, &eye.hovers, &eye.rendering] {
+                        for g in [&group.g1, &group.g2] {
+                            rows.extend(g.iter().map(|r| (r.label.to_string(), r.checked)));
+                        }
+                    }
+                    let mut expected = Vec::new();
+                    for submenu in menu.as_array().unwrap() {
+                        assert!(
+                            ["window", "hovers", "rendering"]
+                                .contains(&submenu["text"].as_str().unwrap()),
+                            "{what}"
+                        );
+                        expected.extend(
+                            checks(submenu["submenu"].as_array().unwrap().iter().collect())
+                                .into_iter()
+                                .filter(|(label, _)| {
+                                    ![
+                                        "apply image ICC Profile colour adjustments",
+                                        "draw transparency as checkerboard in media viewer (duplicate filter)",
+                                        "pin the duplicates hover window so it is always visible",
+                                    ]
+                                    .contains(&label.as_str())
+                                }),
+                        );
+                    }
+                    assert_eq!(rows, expected, "{what}: the view options menu");
+                }
                 // (the move button's right-click resize menu is not ported:
                 // DIFFERENCES.md)
                 "move" => {}
@@ -503,6 +571,10 @@ fn the_top_hover_s_buttons_do_what_the_reference_s_do() {
                 "{what}: a menu opened"
             );
             widgets::close_popups(viewer.window());
+        } else {
+            // (no menu where the reference opens none: a right click on a
+            // menu button among them)
+            assert!(!widgets::popup_open(viewer.window()), "{what}: no menu");
         }
         // the trash and delete buttons ask as the delete key does; undelete
         // asks, and returns the file
@@ -658,4 +730,56 @@ fn over_the_volume_control_the_viewer_s_mute_shows_and_mutes() {
     );
     assert_eq!(after.global_mute, before.global_mute, "not the global one");
     assert_eq!(viewer.get_viewer_muted(), after.viewer_mute, "its icon");
+    // the slider under it, 100px tall from 22px under the mute's centre:
+    // pressed halfway, then dragged near the top, the hover staying raised
+    // over the info line it hangs across
+    let track = on.y + 22.0;
+    let (half, high) = (
+        slint::LogicalPosition::new(on.x, track + 50.0),
+        slint::LogicalPosition::new(on.x, track + 10.0),
+    );
+    let volume = || {
+        fixture
+            .store
+            .read(hydrus_store::settings::get::<hydrus_core::media_viewer::AudioSettings>)
+            .unwrap_or_default()
+            .current_viewer_volume()
+    };
+    viewer
+        .window()
+        .dispatch_event(WindowEvent::PointerMoved { position: half });
+    widgets::settle();
+    assert!(
+        viewer.get_info_showing(),
+        "the hover stays raised over the slider"
+    );
+    viewer.window().dispatch_event(WindowEvent::PointerPressed {
+        position: half,
+        button: PointerEventButton::Left,
+    });
+    widgets::settle();
+    // (within a few points: the track's place is taken from the mute's)
+    let pressed = volume();
+    assert!(
+        pressed.abs_diff(50) <= 5,
+        "pressed halfway down the track: {pressed}"
+    );
+    viewer
+        .window()
+        .dispatch_event(WindowEvent::PointerMoved { position: high });
+    viewer
+        .window()
+        .dispatch_event(WindowEvent::PointerReleased {
+            position: high,
+            button: PointerEventButton::Left,
+        });
+    widgets::settle();
+    let dragged = volume();
+    assert!(dragged.abs_diff(90) <= 5, "dragged up the track: {dragged}");
+    assert_eq!(dragged - pressed, 40, "by the 40px dragged");
+    assert!(viewer.get_info_showing(), "still raised");
+    assert!(
+        widgets::shows(viewer.window(), mute),
+        "the popup still open"
+    );
 }

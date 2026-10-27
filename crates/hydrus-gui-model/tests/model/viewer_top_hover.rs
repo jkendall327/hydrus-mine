@@ -16,7 +16,7 @@ fn the_metadata_button_names_what_the_file_has() {
         }),
         "show detailed file metadata, including extra info"
     );
-    // (over 80 characters, broken at a word as `WrapToolTip` breaks it)
+    // (several, joined with "and")
     assert_eq!(
         embedded_metadata(Embedded {
             jpeg: true,
@@ -35,6 +35,7 @@ fn the_metadata_button_names_what_the_file_has() {
             human_readable: true,
             software: true,
         }),
+        // (over 80 characters, broken at a word as `WrapToolTip` breaks it)
         "show detailed file metadata, including exif and xmp and iptc and human-readable\nmetadata and software/source metadata and extra info"
     );
 }
