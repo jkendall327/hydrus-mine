@@ -61,7 +61,7 @@ fn overlapping(window: &slint::Window) -> Vec<String> {
             AccessibleRole::Button | AccessibleRole::Combobox
         ) && item.is_visible()
         {
-            let at = item.map_to_window(Default::default());
+            let at = item.map_to_window(i_slint_core::lengths::LogicalPoint::zero());
             let size = item.geometry().size;
             let label = item
                 .accessible_string_property(

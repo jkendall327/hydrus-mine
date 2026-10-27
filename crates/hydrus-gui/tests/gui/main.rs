@@ -278,9 +278,9 @@ mod system_or_activation;
 mod manage_tag_counts;
 
 mod frame_geometry;
-mod layout_fixed_height;
 mod frame_locations;
 mod incremental_tagging;
+mod layout_fixed_height;
 
 mod notebook_tree;
 mod tab_drag;
