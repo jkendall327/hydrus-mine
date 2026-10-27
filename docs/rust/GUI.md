@@ -1051,8 +1051,10 @@ first. Collecting selects nothing first, as the reference does; sorting
 leaves the collections as they were. A new page collects by your default
 collect; a session's page as it was (collected and sorted on opening, as
 the reference's page does); a page opened from the selection as its page
-did. Not yet: the ⚙'s tag service (collecting goes by all known tags,
-the reference's default), and middle-clicking the control to clear it.
+did. A middle click on the control stops collecting (files matching
+none stay as they were set; `oracle/record_collect_middle_click.py`). Not
+yet: the ⚙'s tag service (collecting goes by all known tags, the
+reference's default).
 With nothing typed, the search
 box offers `system:everything`, `system:inbox` and `system:archive` with how
 many files each finds in the page's file domains, counted as the reference's
@@ -1583,13 +1585,18 @@ modified, if far from its import; archived) joined with ` | `, as your
 file info line options say (now migrated); archiving or returning the
 file to the inbox, or deleting it, updates it. Its notes show on the right, under the
 ratings, each name bold over its text, while the pointer is over them, as
-the reference's notes hover frame does. With the pointer near the window's top right, the file's ratings show
+the reference's notes hover frame does: a left click opens Manage Notes on
+that note, a middle click copies it, and a right click folds or unfolds its
+text (a fold stays while the next file has a note of that name), as its
+tooltip says (`oracle/record_viewer_hover_clicks.py`). With the pointer near the window's top right, the file's ratings show
 there, as in the reference's top-right hover frame: each like/dislike
 service, then each numerical, then each inc/dec, in its service's shape
 (a named SVG is drawn from the SVG, or as the fat star when there is none of that name) and colours, at your viewer rating
 sizes. A left click likes (again, unrates), a right click dislikes; on
 stars, a left click (or drag) sets the stars there and a right click
-unrates; on an inc/dec, left adds one and right takes one away.
+unrates; on an inc/dec, left adds one and right takes one away. Under the
+ratings, the inbox and trash icons (a left click on the inbox archives the
+file) and the file's locations, as the reference's frame has them.
 Under a file mpv plays, the reference's scanbar shows how far through it
 is (by frame for an animation of several, with `13/240 - 0.480/9.600` as
 text), a thin line until the pointer comes near the file's bottom, then

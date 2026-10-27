@@ -1,0 +1,286 @@
+{
+ "files": [
+  {
+   "name": "jpeg_04.jpg",
+   "hash": "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c"
+  },
+  {
+   "name": "jpeg_05.jpg",
+   "hash": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457"
+  }
+ ],
+ "order": [
+  "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+  "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c"
+ ],
+ "steps": [
+  {
+   "do": "open",
+   "file": "jpeg_04.jpg",
+   "notes": [
+    {
+     "name": "alpha",
+     "text_shown": true,
+     "text": "the alpha note of jpeg_04.jpg",
+     "tooltip": "Left-click to edit, Middle-click to copy, Right-click to hide/show."
+    },
+    {
+     "name": "beta",
+     "text_shown": true,
+     "text": "the beta note of jpeg_04.jpg",
+     "tooltip": "Left-click to edit, Middle-click to copy, Right-click to hide/show."
+    }
+   ],
+   "top_right": {
+    "inbox_icon": true,
+    "trash_icon": false,
+    "icons": true,
+    "locations": "my files",
+    "inbox": true
+   }
+  },
+  {
+   "do": "press",
+   "note": "alpha",
+   "part": "name",
+   "button": "left",
+   "did": [
+    {
+     "edit notes": "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+     "start on": "alpha"
+    }
+   ],
+   "notes": [
+    {
+     "name": "alpha",
+     "text_shown": true,
+     "text": "the alpha note of jpeg_04.jpg",
+     "tooltip": "Left-click to edit, Middle-click to copy, Right-click to hide/show."
+    },
+    {
+     "name": "beta",
+     "text_shown": true,
+     "text": "the beta note of jpeg_04.jpg",
+     "tooltip": "Left-click to edit, Middle-click to copy, Right-click to hide/show."
+    }
+   ]
+  },
+  {
+   "do": "press",
+   "note": "beta",
+   "part": "text",
+   "button": "left",
+   "did": [
+    {
+     "edit notes": "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+     "start on": "beta"
+    }
+   ],
+   "notes": [
+    {
+     "name": "alpha",
+     "text_shown": true,
+     "text": "the alpha note of jpeg_04.jpg",
+     "tooltip": "Left-click to edit, Middle-click to copy, Right-click to hide/show."
+    },
+    {
+     "name": "beta",
+     "text_shown": true,
+     "text": "the beta note of jpeg_04.jpg",
+     "tooltip": "Left-click to edit, Middle-click to copy, Right-click to hide/show."
+    }
+   ]
+  },
+  {
+   "do": "press",
+   "note": "beta",
+   "part": "text",
+   "button": "right",
+   "did": [],
+   "notes": [
+    {
+     "name": "alpha",
+     "text_shown": true,
+     "text": "the alpha note of jpeg_04.jpg",
+     "tooltip": "Left-click to edit, Middle-click to copy, Right-click to hide/show."
+    },
+    {
+     "name": "beta",
+     "text_shown": false,
+     "text": "the beta note of jpeg_04.jpg",
+     "tooltip": "Left-click to edit, Middle-click to copy, Right-click to hide/show."
+    }
+   ]
+  },
+  {
+   "do": "press",
+   "note": "beta",
+   "part": "name",
+   "button": "right",
+   "did": [],
+   "notes": [
+    {
+     "name": "alpha",
+     "text_shown": true,
+     "text": "the alpha note of jpeg_04.jpg",
+     "tooltip": "Left-click to edit, Middle-click to copy, Right-click to hide/show."
+    },
+    {
+     "name": "beta",
+     "text_shown": true,
+     "text": "the beta note of jpeg_04.jpg",
+     "tooltip": "Left-click to edit, Middle-click to copy, Right-click to hide/show."
+    }
+   ]
+  },
+  {
+   "do": "press",
+   "note": "beta",
+   "part": "name",
+   "button": "right",
+   "did": [],
+   "notes": [
+    {
+     "name": "alpha",
+     "text_shown": true,
+     "text": "the alpha note of jpeg_04.jpg",
+     "tooltip": "Left-click to edit, Middle-click to copy, Right-click to hide/show."
+    },
+    {
+     "name": "beta",
+     "text_shown": false,
+     "text": "the beta note of jpeg_04.jpg",
+     "tooltip": "Left-click to edit, Middle-click to copy, Right-click to hide/show."
+    }
+   ]
+  },
+  {
+   "do": "press",
+   "note": "alpha",
+   "part": "text",
+   "button": "middle",
+   "did": [
+    {
+     "clipboard": [
+      "text",
+      "alpha\n\nthe alpha note of jpeg_04.jpg"
+     ]
+    }
+   ],
+   "notes": [
+    {
+     "name": "alpha",
+     "text_shown": true,
+     "text": "the alpha note of jpeg_04.jpg",
+     "tooltip": "Left-click to edit, Middle-click to copy, Right-click to hide/show."
+    },
+    {
+     "name": "beta",
+     "text_shown": false,
+     "text": "the beta note of jpeg_04.jpg",
+     "tooltip": "Left-click to edit, Middle-click to copy, Right-click to hide/show."
+    }
+   ]
+  },
+  {
+   "do": "press",
+   "note": "alpha",
+   "part": "name",
+   "button": "middle",
+   "did": [
+    {
+     "clipboard": [
+      "text",
+      "alpha\n\nthe alpha note of jpeg_04.jpg"
+     ]
+    }
+   ],
+   "notes": [
+    {
+     "name": "alpha",
+     "text_shown": true,
+     "text": "the alpha note of jpeg_04.jpg",
+     "tooltip": "Left-click to edit, Middle-click to copy, Right-click to hide/show."
+    },
+    {
+     "name": "beta",
+     "text_shown": false,
+     "text": "the beta note of jpeg_04.jpg",
+     "tooltip": "Left-click to edit, Middle-click to copy, Right-click to hide/show."
+    }
+   ]
+  },
+  {
+   "do": "show",
+   "file": "jpeg_05.jpg",
+   "notes": [
+    {
+     "name": "alpha",
+     "text_shown": true,
+     "text": "the alpha note of jpeg_05.jpg",
+     "tooltip": "Left-click to edit, Middle-click to copy, Right-click to hide/show."
+    }
+   ],
+   "top_right": {
+    "inbox_icon": true,
+    "trash_icon": false,
+    "icons": true,
+    "locations": "my files",
+    "inbox": true
+   }
+  },
+  {
+   "do": "show",
+   "file": "jpeg_04.jpg",
+   "notes": [
+    {
+     "name": "alpha",
+     "text_shown": true,
+     "text": "the alpha note of jpeg_04.jpg",
+     "tooltip": "Left-click to edit, Middle-click to copy, Right-click to hide/show."
+    },
+    {
+     "name": "beta",
+     "text_shown": true,
+     "text": "the beta note of jpeg_04.jpg",
+     "tooltip": "Left-click to edit, Middle-click to copy, Right-click to hide/show."
+    }
+   ],
+   "top_right": {
+    "inbox_icon": true,
+    "trash_icon": false,
+    "icons": true,
+    "locations": "my files",
+    "inbox": true
+   }
+  },
+  {
+   "do": "inbox icon",
+   "button": "right",
+   "did": [],
+   "top_right": {
+    "inbox_icon": true,
+    "trash_icon": false,
+    "icons": true,
+    "locations": "my files",
+    "inbox": true
+   }
+  },
+  {
+   "do": "inbox icon",
+   "button": "left",
+   "did": [
+    {
+     "command": "SIMPLE_ARCHIVE_FILE"
+    }
+   ],
+   "top_right": {
+    "inbox_icon": true,
+    "trash_icon": false,
+    "icons": false,
+    "locations": "my files",
+    "inbox": false
+   }
+  }
+ ]
+}

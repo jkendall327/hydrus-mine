@@ -1,19 +1,35 @@
-// Interactive viewer note hover. Copy is a middle-button press, as Qt's event
-// filter on either its name or text. The containing viewer owns the clipboard.
+// One note in the viewer's notes hover (the reference's `NotePanel`): its
+// name over its text. As the reference's event filter on either has it, a
+// left press edits the note, a middle press copies it (the containing
+// viewer owns the clipboard), and a right press folds or unfolds its text.
 export component NoteHoverCopy inherits Rectangle {
     in property <string> name;
     in property <string> text;
+    in property <bool> text-shown: true;
     callback copied();
+    callback edit();
+    callback toggled();
+    accessible-role: button;
+    accessible-label: root.name;
+    accessible-description: "Left-click to edit, Middle-click to copy, Right-click to hide/show.";
     preferred-height: layout.preferred-height;
+    Tooltip { text: @markdown("Left\\-click to edit, Middle\\-click to copy, Right\\-click to hide/show\\."); }
     layout := VerticalLayout {
         spacing: 2px;
-        Text { text: root.name; color: #f0f0f0; font-weight: 700; horizontal-alignment: center; wrap: word-wrap; }
-        Text { text: root.text; color: #e0e0e0; wrap: word-wrap; }
+        // (the panel speaks for its texts)
+        Text { accessible-role: none; text: root.name; color: #f0f0f0; font-weight: 700; horizontal-alignment: center; wrap: word-wrap; }
+        if root.text-shown: Text { accessible-role: none; text: root.text; color: #e0e0e0; wrap: word-wrap; }
     }
     TouchArea {
         pointer-event(event) => {
-            if event.kind == PointerEventKind.down && event.button == PointerEventButton.middle {
-                root.copied();
+            if event.kind == PointerEventKind.down {
+                if event.button == PointerEventButton.left {
+                    root.edit();
+                } else if event.button == PointerEventButton.middle {
+                    root.copied();
+                } else if event.button == PointerEventButton.right {
+                    root.toggled();
+                }
             }
         }
     }

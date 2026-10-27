@@ -193,3 +193,15 @@ pub fn close_popups(window: &slint::Window) {
     WindowInner::from_pub(window).close_all_popups();
     settle();
 }
+
+/// The descriptions of every visible widget labelled `label`, in the order
+/// `position` numbers them.
+pub fn descriptions(window: &slint::Window, label: &str) -> Vec<Option<String>> {
+    labelled(window, label)
+        .iter()
+        .map(|(item, _)| {
+            item.accessible_string_property(AccessibleStringProperty::Description)
+                .map(|s| s.to_string())
+        })
+        .collect()
+}

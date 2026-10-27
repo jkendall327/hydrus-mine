@@ -354,6 +354,7 @@ mod radio_return;
 
 mod active_predicate_menu;
 mod active_predicate_selection;
+mod collect_middle_click;
 mod database_backup_menu;
 mod database_file_maintenance_new;
 mod database_locations_menu;
@@ -421,6 +422,7 @@ mod tag_filter_removal;
 mod tag_filter_replay;
 mod video_buffer;
 mod viewer_audio;
+mod viewer_hover_clicks;
 mod viewer_playback;
 mod viewer_prefetch;
 mod viewer_top_hover;

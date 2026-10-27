@@ -1859,6 +1859,21 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    // a middle press on the collect control: no collecting, unmatched files
+    // as they were (`MediaCollect( collect_unmatched = ... )`)
+    window.on_collect_cleared({
+        let page = page.clone();
+        let shown = shown.clone();
+        move || {
+            let page = page();
+            let collect = hydrus_core::pages::PageCollect {
+                collect_unmatched: page.borrow().collect().collect_unmatched,
+                ..hydrus_core::pages::PageCollect::default()
+            };
+            page.borrow_mut().set_collect(collect);
+            shown(true);
+        }
+    });
     window.on_collect_unmatched_chosen({
         let page = page.clone();
         let shown = shown.clone();
@@ -2118,12 +2133,21 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let manage_notes: Rc<RefCell<Option<ManageNotesWindow>>> = Rc::default();
     let open_manage_notes: OpenManageNotes = Rc::new({
         let manage_notes = manage_notes.clone();
-        move |store: Arc<hydrus_store::Store>, file: HashId, applied: Rc<dyn Fn()>| {
+        move |store: Arc<hydrus_store::Store>,
+              file: HashId,
+              applied: Rc<dyn Fn()>,
+              start_on: Option<String>| {
             if let Some(existing) = manage_notes.borrow().as_ref() {
                 existing.invoke_focus_note();
                 return;
             }
-            match manage_notes_window::open(&store, file, &manage_notes, applied) {
+            match manage_notes_window::open(
+                &store,
+                file,
+                &manage_notes,
+                applied,
+                start_on.as_deref(),
+            ) {
                 Ok(window) => *manage_notes.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open manage notes: {e}"),
             }
@@ -5187,7 +5211,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     let page = page.borrow();
                     if let Some(i) = page.focused() {
                         let file = page.results()[i];
-                        open_manage_notes(page.store().clone(), file, files_changed.clone());
+                        open_manage_notes(page.store().clone(), file, files_changed.clone(), None);
                     }
                 }
                 Action::ManageUrls => {
@@ -6623,7 +6647,7 @@ type OpenManageTags = Rc<
 >;
 
 /// Opens manage notes on a file, calling the hook given once applied.
-type OpenManageNotes = Rc<dyn Fn(Arc<hydrus_store::Store>, HashId, Rc<dyn Fn()>)>;
+type OpenManageNotes = Rc<dyn Fn(Arc<hydrus_store::Store>, HashId, Rc<dyn Fn()>, Option<String>)>;
 
 /// Opens a manage dialog (urls, ratings) on some files, calling the hook
 /// given once applied.
@@ -6958,8 +6982,11 @@ fn open_viewer(
         }
     });
     // the file's info line and buttons, in the top hover frame, and its
-    // notes
+    // notes; the names of those whose text is folded (the reference keeps
+    // a fold while the next file has a note of that name)
+    let folded_notes: Rc<RefCell<std::collections::BTreeSet<String>>> = Rc::default();
     let show_info = {
+        let folded_notes = folded_notes.clone();
         let model = model.clone();
         let weak = window.as_weak();
         let show_url_links = show_url_links.clone();
@@ -6985,10 +7012,13 @@ fn open_viewer(
             window.set_file_local(shown.local);
             window.set_file_undeletable(shown.undeletable);
             viewer_top_hover::refresh(&window, model.store(), model.current());
+            let mut folded = folded_notes.borrow_mut();
+            folded.retain(|name| shown.notes.iter().any(|(n, _)| n == name));
             let notes: Vec<NoteRow> = shown
                 .notes
                 .into_iter()
                 .map(|(name, text)| NoteRow {
+                    shown: !folded.contains(&name),
                     name: name.into(),
                     text: text.into(),
                 })
@@ -6996,6 +7026,52 @@ fn open_viewer(
             window.set_notes(ModelRc::new(VecModel::from(notes)));
         }
     };
+    // a note's left click: Manage Notes, on that note
+    window.on_note_edit_requested({
+        let weak = window.as_weak();
+        let model = model.clone();
+        let manage_notes = manage_notes.clone();
+        let show_info = show_info.clone();
+        move |index| {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let Some(note) = usize::try_from(index)
+                .ok()
+                .and_then(|i| window.get_notes().row_data(i))
+            else {
+                return;
+            };
+            let (store, file) = {
+                let model = model.borrow();
+                (model.store().clone(), model.current())
+            };
+            let show_info = show_info.clone();
+            manage_notes(store, file, Rc::new(show_info), Some(note.name.to_string()));
+        }
+    });
+    // a note's right click folds or unfolds its text
+    window.on_note_toggle_requested({
+        let weak = window.as_weak();
+        let folded_notes = folded_notes.clone();
+        move |index| {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let notes = window.get_notes();
+            let Some(mut note) = usize::try_from(index).ok().and_then(|i| notes.row_data(i)) else {
+                return;
+            };
+            note.shown = !note.shown;
+            let mut folded = folded_notes.borrow_mut();
+            if note.shown {
+                folded.remove(note.name.as_str());
+            } else {
+                folded.insert(note.name.to_string());
+            }
+            notes.set_row_data(usize::try_from(index).unwrap_or_default(), note);
+        }
+    });
     // the file's ratings, in the top-right hover frame
     window.set_rating_size(settings.rating_icon_size as f32);
     window.set_incdec_height(settings.rating_incdec_height as f32);
@@ -7873,7 +7949,7 @@ fn open_viewer(
                 Action::ManageTags => manage_tags_of(file),
                 Action::ManageNotes => {
                     let store = model.borrow().store().clone();
-                    manage_notes(store, file, Rc::new(show.clone()));
+                    manage_notes(store, file, Rc::new(show.clone()), None);
                 }
                 Action::ManageUrls => {
                     let store = model.borrow().store().clone();

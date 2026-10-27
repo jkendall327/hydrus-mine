@@ -5322,7 +5322,9 @@ Differences:
   decision is made, but nothing observes the pause without mpv).
 - A kind whose preview starts behind an embed button (`preview_start_with_embed`)
   plays nothing, since hydrus-rs has no embed button yet; the reference plays
-  it after a click.
+  it after a click. The media viewer's "start with embed button"
+  (`media_start_with_embed`) is not ported either: the file plays at once.
+  (`interaction-embed-button`, #290.)
 - The reference's preview control is a pop-up window that appears when the
   pointer is on the global mute button; here it is drawn in the pane, at the
   bottom right of the media, and opens in the same way. Its look (icons are

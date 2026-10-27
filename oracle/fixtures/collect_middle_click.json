@@ -1,0 +1,112 @@
+{
+ "files": 30,
+ "cases": [
+  {
+   "button": "middle",
+   "before": {
+    "collect": {
+     "namespaces": [
+      "series"
+     ],
+     "ratings": [],
+     "unmatched": false,
+     "tag_context": {
+      "service": "616c6c206b6e6f776e2074616773",
+      "include_current": false,
+      "include_pending": false
+     }
+    },
+    "label": "collect by series",
+    "description": "collect by series",
+    "media": 22
+   },
+   "after": {
+    "collect": {
+     "namespaces": [],
+     "ratings": [],
+     "unmatched": false,
+     "tag_context": {
+      "service": "616c6c206b6e6f776e2074616773",
+      "include_current": true,
+      "include_pending": true
+     }
+    },
+    "label": "no collections",
+    "description": "no collections",
+    "media": 30
+   }
+  },
+  {
+   "button": "middle",
+   "before": {
+    "collect": {
+     "namespaces": [
+      "series"
+     ],
+     "ratings": [],
+     "unmatched": true,
+     "tag_context": {
+      "service": "616c6c206b6e6f776e2074616773",
+      "include_current": false,
+      "include_pending": false
+     }
+    },
+    "label": "collect by series",
+    "description": "collect by series",
+    "media": 4
+   },
+   "after": {
+    "collect": {
+     "namespaces": [],
+     "ratings": [],
+     "unmatched": true,
+     "tag_context": {
+      "service": "616c6c206b6e6f776e2074616773",
+      "include_current": true,
+      "include_pending": true
+     }
+    },
+    "label": "no collections",
+    "description": "no collections",
+    "media": 30
+   }
+  },
+  {
+   "button": "left",
+   "before": {
+    "collect": {
+     "namespaces": [
+      "series"
+     ],
+     "ratings": [],
+     "unmatched": false,
+     "tag_context": {
+      "service": "616c6c206b6e6f776e2074616773",
+      "include_current": false,
+      "include_pending": false
+     }
+    },
+    "label": "collect by series",
+    "description": "collect by series",
+    "media": 22
+   },
+   "after": {
+    "collect": {
+     "namespaces": [
+      "series"
+     ],
+     "ratings": [],
+     "unmatched": false,
+     "tag_context": {
+      "service": "616c6c206b6e6f776e2074616773",
+      "include_current": false,
+      "include_pending": false
+     }
+    },
+    "label": "collect by series",
+    "description": "collect by series",
+    "media": 22
+   }
+  }
+ ]
+}

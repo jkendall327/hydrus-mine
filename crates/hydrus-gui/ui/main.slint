@@ -715,6 +715,7 @@ export component MainWindow inherits Window {
     in-out property <bool> collect-unmatched;
     in-out property <bool> collect-separate;
     callback collect-toggled(int, bool);
+    callback collect-cleared();
     callback collect-unmatched-chosen(bool);
 
     // a notebook's (level's) tab was chosen
@@ -1356,11 +1357,23 @@ export component MainWindow inherits Window {
                     // reference's
                     HorizontalLayout {
                         spacing: 4px;
-                        Button {
+                        Rectangle {
                             horizontal-stretch: 1;
-                            text: root.collect-label;
-                            checkable: true;
-                            checked <=> root.collect-open;
+                            Button {
+                                text: root.collect-label;
+                                checkable: true;
+                                checked <=> root.collect-open;
+                            }
+                            // (a middle press clears collecting, as the
+                            // reference's event filter on the control does)
+                            TouchArea {
+                                clicked => { root.collect-open = !root.collect-open; }
+                                pointer-event(event) => {
+                                    if (event.kind == PointerEventKind.down && event.button == PointerEventButton.middle) {
+                                        root.collect-cleared();
+                                    }
+                                }
+                            }
                         }
                         SortCollectCog {
                             collect: true;

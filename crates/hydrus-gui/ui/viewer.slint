@@ -41,6 +41,8 @@ export struct RatingShape {
 export struct NoteRow {
     name: string,
     text: string,
+    // its text unfolded (a right click folds it)
+    shown: bool,
 }
 
 // a rating service's control for the file shown
@@ -195,6 +197,9 @@ export component MediaViewerWindow inherits Window {
     // while the pointer is over it
     in property <[NoteRow]> notes;
     callback note-copy-requested(int);
+    // a note's left click (Manage Notes on it) and right click (fold it)
+    callback note-edit-requested(int);
+    callback note-toggle-requested(int);
     out property <length> notes-hover-y: notes-box.y;
     out property <length> notes-hover-height: notes-box.height;
     out property <bool> notes-showing: (root.hover-focus-good || (!root.another-window-active && root.notes-raised)) && root.hover-notes-enabled && root.notes.length > 0 && (notes-box.has-hover || (pointer.has-hover
@@ -243,7 +248,7 @@ export component MediaViewerWindow inherits Window {
     in property <length> rating-size: 12px;
     in property <length> incdec-height: 12px;
     in property <length> rating-outline: 1px;
-    out property <bool> ratings-showing: (root.hover-focus-good || (!root.another-window-active && root.ratings-raised)) && root.hover-ratings-enabled && (root.ratings.length > 0 || root.url-links.length > 0) && (ratings-frame.has-hover
+    out property <bool> ratings-showing: (root.hover-focus-good || (!root.another-window-active && root.ratings-raised)) && root.hover-ratings-enabled && (root.ratings.length > 0 || root.url-links.length > 0 || root.file-inbox || root.file-trashed || root.location-strings.length > 0) && (ratings-frame.has-hover
         || (pointer.has-hover && pointer.mouse-x >= root.width - ratings-box.preferred-width - 20px
             && pointer.mouse-y <= ratings-box.preferred-height + 20px));
     out property <bool> tags-showing: (root.hover-focus-good || (!root.another-window-active && root.tags-raised)) && root.hover-tags-enabled && (tags-hover.has-hover || (pointer.has-hover && pointer.mouse-x < root.width * 0.2)) && root.tags.length > 0;
@@ -944,8 +949,8 @@ export component MediaViewerWindow inherits Window {
                 }
                 if root.file-inbox || root.file-trashed: HorizontalLayout {
                     alignment: end;
-                    if root.file-trashed: Image { width: 16px; height: 16px; source: @image-url("../../../static/trash.png"); }
                     if root.file-inbox: Image { width: 16px; height: 16px; source: @image-url("../../../static/inbox.png"); }
+                    if root.file-trashed: Image { width: 16px; height: 16px; source: @image-url("../../../static/trash.png"); }
                 }
                 for location in root.location-strings: Text { text: location; color: Theme.colour(11, #f0f0f0); horizontal-alignment: right; }
                 for link in root.url-links: Text { text: link.label; color: Theme.colour(11, #f0f0f0); horizontal-alignment: right; overflow: elide; }
@@ -1359,7 +1364,10 @@ export component MediaViewerWindow inherits Window {
                 for note[i] in root.notes: NoteHoverCopy {
                     name: note.name;
                     text: note.text;
+                    text-shown: note.shown;
                     copied => { root.note-copy-requested(i); }
+                    edit => { root.note-edit-requested(i); }
+                    toggled => { root.note-toggle-requested(i); }
                 }
             }
             }
@@ -1406,6 +1414,26 @@ export component MediaViewerWindow inherits Window {
                             }
                         }
                     }
+                    // the inbox and trash icons (a left press on the inbox
+                    // archives the file), and where the file is
+                    if root.file-inbox || root.file-trashed: HorizontalLayout {
+                        alignment: end;
+                        if root.file-inbox: Image {
+                            width: 16px; height: 16px;
+                            source: @image-url("../../../static/inbox.png");
+                            accessible-role: button;
+                            accessible-label: "inbox";
+                            TouchArea {
+                                pointer-event(event) => {
+                                    if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                                        root.archive();
+                                    }
+                                }
+                            }
+                        }
+                        if root.file-trashed: Image { width: 16px; height: 16px; source: @image-url("../../../static/trash.png"); }
+                    }
+                    for location in root.location-strings: Text { text: location; color: #f0f0f0; horizontal-alignment: right; }
                     for link[i] in root.url-links: Rectangle {
                         width: min(root.width * 0.35, 280px);
                         height: 22px;
