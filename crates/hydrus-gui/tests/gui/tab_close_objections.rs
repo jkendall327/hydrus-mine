@@ -128,9 +128,15 @@ fn right_click_tab(ui: &MainWindow, index: usize) {
     for _ in 0..10 {
         widgets::settle();
     }
-    // (the tab strip is above the page, so its tab is the first with the name)
-    assert!(widgets::position(ui.window(), &name, 0).y < 80.0);
-    widgets::right_click(ui.window(), &name);
+    // (a tab's name can label other widgets too, such as a page's: the tab
+    // strip is above the page, so its tab is the first)
+    widgets::click_nth_with(
+        ui.window(),
+        &name,
+        0,
+        slint::platform::PointerEventButton::Right,
+        widgets::Mods::NONE,
+    );
 }
 
 /// The notebook as the recorder built it: a, imp1 (3 URLs), b, imp2 (2), c.

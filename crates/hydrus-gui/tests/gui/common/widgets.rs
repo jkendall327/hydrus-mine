@@ -6,7 +6,7 @@
 //!
 //! Everything here goes through `window.dispatch_event`, as a user's devices
 //! do: left, right and middle clicks, double clicks, modifiers held (`Mods`),
-//! the wheel, hovering and keys. A test that tags a mouse or keyboard
+//! the wheel, dragging, hovering and keys. A test that tags a mouse or keyboard
 //! behaviour should use these, not `ui.invoke_*`, which skips the question
 //! of whether the click reaches the element at all (a missing `TouchArea`,
 //! or one covered by another element, passes every `invoke_*` test).
@@ -14,7 +14,12 @@
 //! The widget is found by its accessible label: a button's or check box's
 //! text, a `Text` element's text, or an explicit `accessible-label`. For
 //! one with none (or several alike), give a place, from an exported
-//! geometry property: `click_at`, `scroll_at` and the rest take a
+//! geometry property, or pick one of several by `click_nth` and its kin:
+//! the label helpers (`click`, `right_click`, ...) panic if more than one
+//! visible widget has the label, rather than take the first. Two clicks at
+//! one place within half a second count as a double click (Slint's clock);
+//! `double_click_at` lets earlier clicks go by first (which also runs
+//! timers falling due in that time), the single clicks do not. `click_at`, `scroll_at` and the rest take a
 //! `LogicalPosition`. Lay the window out first (`lay_out`): a headless
 //! window is 0-sized until then. Widgets whose places are reported back on
 //! timers (the notebook tabs) also need the window shown and `settle` run a
@@ -92,15 +97,28 @@ fn labelled(window: &slint::Window, label: &str) -> Vec<(ItemRc, LogicalPosition
     found
 }
 
+/// Where the one visible widget labelled `label` is; more than one is an
+/// error (say which with `position`/`click_nth`).
+fn only(window: &slint::Window, label: &str) -> LogicalPosition {
+    settle();
+    let n = labelled(window, label).len();
+    assert!(
+        n <= 1,
+        "{n} visible widgets are labelled {label:?}; pick one with click_nth"
+    );
+    position(window, label, 0)
+}
+
 /// Whether a visible widget is labelled `label`.
 pub fn shows(window: &slint::Window, label: &str) -> bool {
     !labelled(window, label).is_empty()
 }
 
 /// Where the `n`th visible widget labelled `label` is. Matches come in tree
-/// order, popups first: for a label that more than one widget has, `n` picks
-/// one (the last in tree order is the one drawn on top, as a menu is over
-/// the window), and `count` says how many there are.
+/// order, the open popups' trees first, then the window's. Within one tree
+/// the last match is drawn on top (a menu over the window's page); a real
+/// `PopupWindow` is listed first but is on top of the window. `count` says
+/// how many there are.
 pub fn position(window: &slint::Window, label: &str, n: usize) -> LogicalPosition {
     settle();
     let found = labelled(window, label);
@@ -288,9 +306,10 @@ pub fn toggle(window: &slint::Window, label: &str) {
     settle();
 }
 
-/// Click (left) the visible widget labelled `label`; there must be one.
+/// Click (left) the visible widget labelled `label`; there must be exactly
+/// one.
 pub fn click(window: &slint::Window, label: &str) {
-    click_nth(window, label, 0);
+    click_at(window, only(window, label), PointerEventButton::Left);
 }
 
 /// Click (left) the `n`th visible widget labelled `label`.
@@ -313,36 +332,36 @@ pub fn click_nth_with(
 
 /// Click (left) the first visible widget labelled `label`, holding `mods`.
 pub fn click_with(window: &slint::Window, label: &str, mods: Mods) {
-    click_nth_with(window, label, 0, PointerEventButton::Left, mods);
+    click_at_with(window, only(window, label), PointerEventButton::Left, mods);
 }
 
 /// Right-click the first visible widget labelled `label`.
 pub fn right_click(window: &slint::Window, label: &str) {
-    click_nth_with(window, label, 0, PointerEventButton::Right, Mods::NONE);
+    click_at(window, only(window, label), PointerEventButton::Right);
 }
 
 /// Middle-click the first visible widget labelled `label`.
 pub fn middle_click(window: &slint::Window, label: &str) {
-    click_nth_with(window, label, 0, PointerEventButton::Middle, Mods::NONE);
+    click_at(window, only(window, label), PointerEventButton::Middle);
 }
 
 /// Double-click (left) the first visible widget labelled `label`.
 pub fn double_click(window: &slint::Window, label: &str) {
-    let at = position(window, label, 0);
+    let at = only(window, label);
     double_click_at(window, at, PointerEventButton::Left, Mods::NONE);
 }
 
 /// Point at (hover) the first visible widget labelled `label`. (Unproven:
 /// no test calls it yet; `hover_at` is used by the menu helpers.)
 pub fn hover(window: &slint::Window, label: &str) {
-    let at = position(window, label, 0);
+    let at = only(window, label);
     hover_at(window, at);
 }
 
 /// Turn the wheel over the first visible widget labelled `label`. (Unproven:
 /// `scroll_at` is used by a test, this label-finding form is not.)
 pub fn scroll(window: &slint::Window, label: &str, delta_x: f32, delta_y: f32) {
-    let at = position(window, label, 0);
+    let at = only(window, label);
     scroll_at(window, at, delta_x, delta_y, Mods::NONE);
 }
 
@@ -359,7 +378,7 @@ pub fn ctrl_key(window: &slint::Window, text: impl Into<SharedString>) {
 }
 
 /// Press a key with `mods` held. (Ctrl is used by tests; Shift and Alt are
-/// unproven.)
+/// unproven, as are `Mods::SHIFT` and `Mods::ALT` for the pointer.)
 pub fn key_with(window: &slint::Window, text: impl Into<SharedString>, mods: Mods) {
     let text = text.into();
     holding(window, mods, || key(window, text));

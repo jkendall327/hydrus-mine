@@ -957,11 +957,13 @@ fn numerical_examples_drag_and_fraction_text_use_the_whole_widget_hit_area() {
         edit.set_example_expanded(true);
         headless::render(&window, 640, 1000);
         // (collapsing let the scroll position fall back to the top)
-        edit.window().dispatch_event(WindowEvent::PointerScrolled {
-            position: slint::LogicalPosition::new(24.0, 500.0),
-            delta_x: 0.0,
-            delta_y: -10000.0,
-        });
+        crate::common::widgets::scroll_at(
+            edit.window(),
+            slint::LogicalPosition::new(24.0, 500.0),
+            0.0,
+            -10000.0,
+            crate::common::widgets::Mods::NONE,
+        );
         for _ in 0..3 {
             headless::render(&window, 640, 1000);
         }
