@@ -235,6 +235,7 @@ pub mod viewer_menu;
 mod viewer_presentation;
 mod viewer_tag_search;
 mod viewer_tag_wheel;
+mod viewer_top_hover;
 pub mod viewing_maintenance_window;
 mod viewing_tracking;
 mod watcher;
@@ -6989,6 +6990,8 @@ fn open_viewer(
             }
         }
     });
+    // (the top hover's zoom switch command, frozen as its button's is)
+    let zoom_switch_command = viewer_top_hover::zoom_switch_command(model.borrow().store());
     // the file's info line and buttons, in the top hover frame, and its
     // notes
     let show_info = {
@@ -7016,6 +7019,7 @@ fn open_viewer(
             window.set_file_trashed(shown.trashed);
             window.set_file_local(shown.local);
             window.set_file_undeletable(shown.undeletable);
+            viewer_top_hover::refresh(&window, model.store(), model.current(), zoom_switch_command);
             let notes: Vec<NoteRow> = shown
                 .notes
                 .into_iter()
@@ -7206,6 +7210,27 @@ fn open_viewer(
     });
     bind_zoom!(window, zoomed);
     viewer_drag::bind(&window, &viewing_stats, model.borrow().store());
+    viewer_top_hover::bind(
+        &window,
+        viewer_top_hover::Hooks {
+            store: model.borrow().store().clone(),
+            current: Rc::new({
+                let model = model.clone();
+                move || model.borrow().current()
+            }),
+            zoomed: zoomed.clone(),
+            embedded_metadata: Rc::new({
+                let embedded_metadata = embedded_metadata.clone();
+                let store = model.borrow().store().clone();
+                move |file| embedded_metadata(store.clone(), vec![file], Rc::new(|| {}))
+            }),
+            focus_media: Rc::new({
+                let closing_owner = closing_owner.clone();
+                let store = model.borrow().store().clone();
+                move |file| closing_owner.focus(&store, file)
+            }),
+        },
+    );
     window.on_zoom_switch_requested({
         let zoomed = zoomed.clone();
         // The reference captures this command when the top hover is built.
