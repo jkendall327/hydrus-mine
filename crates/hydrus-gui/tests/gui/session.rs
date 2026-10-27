@@ -1464,9 +1464,9 @@ fn a_double_click_on_a_tab_rows_empty_space_chooses_a_page_for_it() {
     assert_eq!(row(0), expected);
     assert_eq!(bound.pages.borrow().shown().name, "files");
 
-    // a middle double click on the inner row's space: a page in it
+    // a middle click on the inner row's space: a page in it (one is
+    // enough, as `tab_strip_interactions.json` recorded)
     ui.invoke_tab_chosen(0, 1);
-    ui.invoke_tab_space_pressed(1, true);
     ui.invoke_tab_space_pressed(1, true);
     assert!(chooser_open());
     ui.invoke_chooser_enter();
@@ -1474,9 +1474,8 @@ fn a_double_click_on_a_tab_rows_empty_space_chooses_a_page_for_it() {
     let mut expected = inner.clone();
     expected.push("files".into());
     assert_eq!(row(1), expected);
-    // (a press of each button doesn't make a double click)
+    // (one left press is still nothing)
     ui.invoke_tab_space_pressed(1, false);
-    ui.invoke_tab_space_pressed(1, true);
     assert!(!chooser_open());
 
     // a chooser dismissed leaves new pages where they go by default

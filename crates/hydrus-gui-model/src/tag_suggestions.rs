@@ -49,6 +49,11 @@ impl List {
     }
     /// A click on a drawn row.
     pub fn click(&mut self, row: usize, ctrl: bool, shift: bool) {
+        // (the shared list's Ctrl+A and ctrl+arrows: a tag list has keys
+        // of its own, #286)
+        if row >= crate::list_selection::MOVE_ANCHOR {
+            return;
+        }
         self.list.click(Some(row), ctrl, shift);
     }
     pub fn selected(&self) -> Vec<String> {

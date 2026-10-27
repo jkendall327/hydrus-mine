@@ -302,3 +302,73 @@ fn closing_an_older_viewer_releases_its_canvas_without_closing_its_successor() {
     assert!(!successor.window().is_visible());
     assert!(bound.viewer.borrow().is_none());
 }
+
+/// A viewer whose frame says maximised opens maximised even when the
+/// windowing system's first events say it isn't. On X11 the window manager
+/// maximises a moment after the window maps, and Slint takes the state from
+/// those first events, so it would take the maximise back (found by the
+/// owner on a release build: the viewer opened windowed). For half a second
+/// the viewer asks again; after that, and once the user switches with F, a
+/// change is the user's own and stays.
+#[test]
+fn a_maximised_viewer_stays_maximised_through_the_windowing_system_s_first_events() {
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    // (the owner's frame: maximised, not fullscreen)
+    let maximised = WindowSettings {
+        media_viewer: FrameLocation {
+            maximised: true,
+            fullscreen: false,
+            ..FrameLocation::media_viewer()
+        },
+        ..WindowSettings::default()
+    };
+    store
+        .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &maximised))
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let spin = |time: std::time::Duration| {
+        let started = std::time::Instant::now();
+        while started.elapsed() < time {
+            slint::platform::update_timers_and_animations();
+            std::thread::sleep(std::time::Duration::from_millis(5));
+        }
+    };
+    ui.invoke_thumbnail_activated(0);
+    let shown = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    assert!(shown.window().is_maximized());
+    // the window manager's first event, before it has maximised the window
+    shown.window().set_maximized(false);
+    spin(std::time::Duration::from_millis(200));
+    assert!(shown.window().is_maximized(), "asked for again");
+    // past the half second, the user restoring it is theirs
+    spin(std::time::Duration::from_millis(500));
+    shown.window().set_maximized(false);
+    spin(std::time::Duration::from_millis(200));
+    assert!(!shown.window().is_maximized(), "the user's restore stays");
+    shown.invoke_close_requested();
+
+    // and F straight after opening is the user's too
+    ui.invoke_thumbnail_activated(0);
+    let shown = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    shown.invoke_toggle_fullscreen();
+    let fullscreens = !cfg!(target_os = "macos");
+    shown.invoke_toggle_fullscreen();
+    shown.window().set_maximized(false);
+    spin(std::time::Duration::from_millis(200));
+    assert!(
+        !shown.window().is_maximized() || !fullscreens,
+        "held no longer once the user switched"
+    );
+    shown.invoke_close_requested();
+}

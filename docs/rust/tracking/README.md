@@ -35,6 +35,14 @@ master. The tracker counts tags; CI runs every test on every push, so a tag on
 green master is a passing test. `scripts/track.py check` (run in CI) rejects
 tags naming unknown IDs.
 
+A leaf that names a mouse or keyboard behaviour (a click, right-click,
+middle-click, double-click, drag, wheel, shortcut or key in a widget) is
+proved by a test that sends real events at the element's laid-out position
+(`tests/gui/common/widgets.rs`, see `AGENTS.md`), not by calling the Slint
+callback with `invoke_*`: a callback call cannot show that the click reaches
+anything. A test that calls the callback may still prove what the callback
+does, but not the input leaf.
+
 Leaves signed off under the retired per-leaf ledger (378 still untagged,
 state `carried`) count as done without a tag, but nobody has checked them
 against this standard; #97 does. Tag their tests when you touch them.

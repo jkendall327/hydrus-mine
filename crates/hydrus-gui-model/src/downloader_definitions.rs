@@ -1051,12 +1051,10 @@ impl DefinitionEditor {
     }
     pub fn domain_click(&mut self, regex: bool, row: usize, ctrl: bool, shift: bool) {
         let order = (0..self.domain_values(regex).len()).collect::<Vec<_>>();
-        if row < order.len() {
-            if regex {
-                self.domain_regex_selection.click(&order, row, ctrl, shift);
-            } else {
-                self.domain_raw_selection.click(&order, row, ctrl, shift);
-            }
+        if regex {
+            self.domain_regex_selection.click(&order, row, ctrl, shift);
+        } else {
+            self.domain_raw_selection.click(&order, row, ctrl, shift);
         }
     }
     /// Empty accepted values are cancellation, while malformed regexes are advisory.

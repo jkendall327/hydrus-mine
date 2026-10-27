@@ -207,6 +207,15 @@ modules in a gitignored `crates/hydrus-gui/tests/lane_<name>.rs` (with
   `ListTable`. Standard widgets such as `Button` cannot have children
   (a `Timer` inside a `Button` fails to compile). Row kinds in
   `options.slint` are bare integers: check the existing ones before adding.
+- **Fixed-height controls must not stretch.** A `Button`, `ComboBox` or
+  `CheckBox` in a layout with spare height takes it (a manage tags input once
+  showed buttons hundreds of pixels tall). `Btn`, `TipButton`, `TipComboBox`,
+  `TipCheckBox` and `WheelMenuChoice` cap their height; a raw widget needs
+  `max-height: self.preferred-height`, and a layout with nothing stretchable
+  wants `alignment: start`. A std `ComboBox` is at least 160px wide, so a row
+  of two overflows a narrow sidebar unless the box may shrink (`shrinkable`
+  on `WheelMenuChoice`). `tests/gui/layout_fixed_height.rs` checks heights
+  and overlaps in the frame tests' windows and the sidebar.
 - **Slint compile memory**: one crate of the generated UI peaks at ~4.4 GB
   (the core; the whole UI in one crate peaked near 13.7 GB, close to the cap of
   14.3 GB of a cloud session, which is why it is split). A written-out `Button { }` costs ~4 KB of
@@ -228,6 +237,14 @@ modules in a gitignored `crates/hydrus-gui/tests/lane_<name>.rs` (with
 - **Key handling**: the main window's shortcuts are a `capture-key-pressed` on
   the outermost `FocusScope`, so they work whatever has focus; a widget's own
   keys go in its own `FocusScope`.
+- **Real input in GUI tests**: `ui.invoke_*` calls a callback directly, so it
+  never shows that a click reaches anything (a missing `TouchArea`, or one
+  covered by another element, passes). A test that proves a mouse or keyboard
+  behaviour sends real events with `tests/gui/common/widgets.rs` (clicks of
+  any button, modifiers, wheel, drag, keys; its module doc lists them). Call
+  `widgets::lay_out` first: a headless window is 0-sized until laid out. Give
+  an unlabelled `.slint` element an `accessible-label` rather than computing
+  positions in the test.
 - **Timers in GUI tests**: state updated by a Slint `Timer` is not there until
   the timer runs; spin the event loop until it is, rather than asserting at
   once.

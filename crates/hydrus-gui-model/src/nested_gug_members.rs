@@ -113,9 +113,7 @@ impl DefinitionEditor {
     /// A row clicked.
     pub fn member_click(&mut self, row: usize, ctrl: bool, shift: bool) {
         let order: Vec<usize> = (0..self.member_rows().len()).collect();
-        if row < order.len() {
-            self.member_selection.click(&order, row, ctrl, shift);
-        }
+        self.member_selection.click(&order, row, ctrl, shift);
     }
 
     /// A heading clicked: sort by it, ascending unless it sorted so.

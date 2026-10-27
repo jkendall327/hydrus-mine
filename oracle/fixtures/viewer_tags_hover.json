@@ -1,0 +1,878 @@
+{
+ "file": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+ "files": [
+  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+  "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b"
+ ],
+ "location": "my files",
+ "display_type": 2,
+ "tags": [
+  "series:spaced name",
+  "plain tag",
+  "safe",
+  "alpha:first",
+  "box:anchor",
+  "filename:apng_animated",
+  "group:alpha",
+  "source:fixture"
+ ],
+ "drawn": [
+  "series:spaced name",
+  "plain tag",
+  "safe",
+  "alpha:first",
+  "box:anchor",
+  "filename:apng_animated",
+  "group:alpha",
+  "source:fixture"
+ ],
+ "steps": [
+  {
+   "step": "initial",
+   "selected": []
+  },
+  {
+   "step": "click series:spaced name",
+   "selected": [
+    "series:spaced name"
+   ]
+  },
+  {
+   "step": "ctrl click plain tag adds it",
+   "selected": [
+    "series:spaced name",
+    "plain tag"
+   ]
+  },
+  {
+   "step": "shift click box:anchor",
+   "selected": [
+    "series:spaced name",
+    "plain tag",
+    "safe",
+    "alpha:first",
+    "box:anchor"
+   ]
+  },
+  {
+   "step": "ctrl click series:spaced name takes it away",
+   "selected": [
+    "plain tag",
+    "safe",
+    "alpha:first",
+    "box:anchor"
+   ]
+  },
+  {
+   "step": "plain click on a selected row keeps the selection",
+   "selected": [
+    "plain tag",
+    "safe",
+    "alpha:first",
+    "box:anchor"
+   ]
+  },
+  {
+   "step": "right press on a selected row keeps the selection",
+   "selected": [
+    "plain tag",
+    "safe",
+    "alpha:first",
+    "box:anchor"
+   ]
+  },
+  {
+   "step": "click below the rows",
+   "selected": []
+  },
+  {
+   "step": "middle click series:spaced name",
+   "selected": [
+    "series:spaced name"
+   ],
+   "launched": [
+    {
+     "topic": "new_page_query",
+     "location": "my files",
+     "predicates": [
+      "series:spaced name"
+     ],
+     "page_name": "series:spaced name"
+    }
+   ]
+  },
+  {
+   "step": "shift middle click with two selected",
+   "selected": [
+    "plain tag",
+    "safe",
+    "alpha:first",
+    "box:anchor"
+   ],
+   "launched": [
+    {
+     "topic": "new_page_query",
+     "location": "my files",
+     "predicates": [
+      "alpha:first OR box:anchor OR plain tag OR safe"
+     ],
+     "page_name": "alpha:first OR box:anchor OR plain tag OR safe"
+    }
+   ]
+  },
+  {
+   "step": "double click alpha:first",
+   "selected": [
+    "plain tag",
+    "safe",
+    "alpha:first",
+    "box:anchor"
+   ],
+   "managed": [
+    true
+   ]
+  },
+  {
+   "step": "double click below the rows",
+   "selected": [],
+   "managed": [
+    true
+   ]
+  },
+  {
+   "step": "click plain tag",
+   "selected": [
+    "plain tag"
+   ]
+  },
+  {
+   "step": "down",
+   "selected": [
+    "safe"
+   ]
+  },
+  {
+   "step": "shift down",
+   "selected": [
+    "safe",
+    "alpha:first"
+   ]
+  },
+  {
+   "step": "home",
+   "selected": [
+    "series:spaced name"
+   ]
+  },
+  {
+   "step": "up wraps to the end",
+   "selected": [
+    "source:fixture"
+   ]
+  },
+  {
+   "step": "end",
+   "selected": [
+    "source:fixture"
+   ]
+  },
+  {
+   "step": "ctrl a",
+   "selected": [
+    "series:spaced name",
+    "plain tag",
+    "safe",
+    "alpha:first",
+    "box:anchor",
+    "filename:apng_animated",
+    "group:alpha",
+    "source:fixture"
+   ]
+  },
+  {
+   "step": "escape",
+   "selected": []
+  },
+  {
+   "step": "ctrl c with none selected copies all",
+   "selected": [],
+   "copied": [
+    "series:spaced name\nplain tag\nsafe\nalpha:first\nbox:anchor\nfilename:apng_animated\ngroup:alpha\nsource:fixture"
+   ]
+  },
+  {
+   "step": "ctrl c copies the selection",
+   "selected": [
+    "safe"
+   ],
+   "copied": [
+    "safe"
+   ]
+  },
+  {
+   "step": "return",
+   "selected": [
+    "safe"
+   ],
+   "managed": [
+    true
+   ]
+  }
+ ],
+ "menus": [
+  {
+   "case": "one",
+   "selected": [
+    "series:spaced name"
+   ],
+   "menu": [
+    {
+     "copy": [
+      "series:spaced name",
+      "spaced name",
+      "spaced_name",
+      "---",
+      "all tags",
+      "all subtags"
+     ]
+    },
+    {
+     "no siblings": [
+      "add siblings to series:spaced name"
+     ]
+    },
+    {
+     "no parents": [
+      "add parents to series:spaced name"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for series:spaced name",
+      "---",
+      "open a new duplicate filter page for series:spaced name"
+     ]
+    },
+    "---",
+    {
+     "hide": [
+      "\"series\" tags from here",
+      "\"series:spaced name\" from here"
+     ]
+    },
+    {
+     "favourites": [
+      "add \"series:spaced name\" to favourites",
+      "---",
+      "add \"series:spaced name\" to most used for \"downloader tags\"",
+      "add \"series:spaced name\" to most used for \"my tags\"",
+      "add \"series:spaced name\" to most used for \"second tags\""
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "copies": [
+    {
+     "label": "series:spaced name",
+     "payload": [
+      "series:spaced name"
+     ]
+    },
+    {
+     "label": "spaced name",
+     "payload": [
+      "spaced name"
+     ]
+    },
+    {
+     "label": "spaced_name",
+     "payload": [
+      "spaced_name"
+     ]
+    },
+    {
+     "label": "all tags",
+     "payload": [
+      "series:spaced name\nplain tag\nsafe\nalpha:first\nbox:anchor\nfilename:apng_animated\ngroup:alpha\nsource:fixture"
+     ]
+    },
+    {
+     "label": "all subtags",
+     "payload": [
+      "spaced name\nplain tag\nsafe\nfirst\nanchor\napng_animated\nalpha\nfixture"
+     ]
+    }
+   ],
+   "launches": [
+    {
+     "label": "open a new search page for series:spaced name",
+     "launched": [
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "series:spaced name"
+       ],
+       "page_name": "series:spaced name"
+      }
+     ]
+    },
+    {
+     "label": "open a new duplicate filter page for series:spaced name",
+     "launched": [
+      {
+       "topic": "new_page_duplicates",
+       "location": "my files",
+       "predicates": [
+        "series:spaced name"
+       ],
+       "page_name": "duplicates: series:spaced name"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case": "one unnamespaced",
+   "selected": [
+    "plain tag"
+   ],
+   "menu": [
+    {
+     "copy": [
+      "plain tag",
+      "plain_tag",
+      "---",
+      "all tags",
+      "all subtags"
+     ]
+    },
+    {
+     "no siblings": [
+      "add siblings to plain tag"
+     ]
+    },
+    {
+     "no parents": [
+      "add parents to plain tag"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for plain tag",
+      "---",
+      "open a new duplicate filter page for plain tag"
+     ]
+    },
+    "---",
+    {
+     "hide": [
+      "\"unnamespaced\" tags from here",
+      "\"plain tag\" from here"
+     ]
+    },
+    {
+     "favourites": [
+      "add \"plain tag\" to favourites",
+      "---",
+      "add \"plain tag\" to most used for \"downloader tags\"",
+      "add \"plain tag\" to most used for \"my tags\"",
+      "add \"plain tag\" to most used for \"second tags\""
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "copies": [
+    {
+     "label": "plain tag",
+     "payload": [
+      "plain tag"
+     ]
+    },
+    {
+     "label": "plain_tag",
+     "payload": [
+      "plain_tag"
+     ]
+    },
+    {
+     "label": "all tags",
+     "payload": [
+      "series:spaced name\nplain tag\nsafe\nalpha:first\nbox:anchor\nfilename:apng_animated\ngroup:alpha\nsource:fixture"
+     ]
+    },
+    {
+     "label": "all subtags",
+     "payload": [
+      "spaced name\nplain tag\nsafe\nfirst\nanchor\napng_animated\nalpha\nfixture"
+     ]
+    }
+   ],
+   "launches": [
+    {
+     "label": "open a new search page for plain tag",
+     "launched": [
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "plain tag"
+       ],
+       "page_name": "plain tag"
+      }
+     ]
+    },
+    {
+     "label": "open a new duplicate filter page for plain tag",
+     "launched": [
+      {
+       "topic": "new_page_duplicates",
+       "location": "my files",
+       "predicates": [
+        "plain tag"
+       ],
+       "page_name": "duplicates: plain tag"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case": "two",
+   "selected": [
+    "alpha:first",
+    "box:anchor"
+   ],
+   "menu": [
+    {
+     "copy": [
+      "2 selected",
+      "2 selected subtags",
+      "---",
+      "all tags",
+      "all subtags"
+     ]
+    },
+    {
+     "siblings": [
+      "add siblings to selection"
+     ]
+    },
+    {
+     "parents": [
+      "add parents to selection"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for 2 selected",
+      "open a new OR search page for 2 selected",
+      "open new search pages for each in selection",
+      "---",
+      "open a new duplicate filter page for 2 selected"
+     ]
+    },
+    "---",
+    {
+     "hide": [
+      "2 selected namespaces from here",
+      "2 selected tags from here"
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "copies": [
+    {
+     "label": "2 selected",
+     "payload": [
+      "alpha:first\nbox:anchor"
+     ]
+    },
+    {
+     "label": "2 selected subtags",
+     "payload": [
+      "first\nanchor"
+     ]
+    },
+    {
+     "label": "all tags",
+     "payload": [
+      "series:spaced name\nplain tag\nsafe\nalpha:first\nbox:anchor\nfilename:apng_animated\ngroup:alpha\nsource:fixture"
+     ]
+    },
+    {
+     "label": "all subtags",
+     "payload": [
+      "spaced name\nplain tag\nsafe\nfirst\nanchor\napng_animated\nalpha\nfixture"
+     ]
+    }
+   ],
+   "launches": [
+    {
+     "label": "open a new search page for 2 selected",
+     "launched": [
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "alpha:first",
+        "box:anchor"
+       ],
+       "page_name": "alpha:first, box:anchor"
+      }
+     ]
+    },
+    {
+     "label": "open a new OR search page for 2 selected",
+     "launched": [
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "alpha:first OR box:anchor"
+       ],
+       "page_name": "alpha:first OR box:anchor"
+      }
+     ]
+    },
+    {
+     "label": "open new search pages for each in selection",
+     "launched": [
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "box:anchor"
+       ],
+       "page_name": "box:anchor"
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "alpha:first"
+       ],
+       "page_name": "alpha:first"
+      }
+     ]
+    },
+    {
+     "label": "open a new duplicate filter page for 2 selected",
+     "launched": [
+      {
+       "topic": "new_page_duplicates",
+       "location": "my files",
+       "predicates": [
+        "alpha:first",
+        "box:anchor"
+       ],
+       "page_name": "duplicates: alpha:first, box:anchor"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case": "none",
+   "selected": [],
+   "menu": [
+    {
+     "copy": [
+      "all tags",
+      "all subtags"
+     ]
+    }
+   ],
+   "copies": [
+    {
+     "label": "all tags",
+     "payload": [
+      "series:spaced name\nplain tag\nsafe\nalpha:first\nbox:anchor\nfilename:apng_animated\ngroup:alpha\nsource:fixture"
+     ]
+    },
+    {
+     "label": "all subtags",
+     "payload": [
+      "spaced name\nplain tag\nsafe\nfirst\nanchor\napng_animated\nalpha\nfixture"
+     ]
+    }
+   ],
+   "launches": []
+  }
+ ],
+ "triggers": [
+  {
+   "selected": [
+    "alpha:first"
+   ],
+   "path": [
+    "1 parents, 0 children",
+    "add parents to alpha:first"
+   ],
+   "found": true,
+   "questions": [],
+   "dialogs": [
+    {
+     "title": "manage tag parents",
+     "tags": [
+      "alpha:first"
+     ]
+    }
+   ],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "alpha:first"
+   ],
+   "path": [
+    "no siblings",
+    "add siblings to alpha:first"
+   ],
+   "found": true,
+   "questions": [],
+   "dialogs": [
+    {
+     "title": "manage tag siblings",
+     "tags": [
+      "alpha:first"
+     ]
+    }
+   ],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "plain tag",
+    "box:anchor"
+   ],
+   "path": [
+    "parents",
+    "add parents to selection"
+   ],
+   "found": true,
+   "questions": [],
+   "dialogs": [
+    {
+     "title": "manage tag parents",
+     "tags": [
+      "box:anchor",
+      "plain tag"
+     ]
+    }
+   ],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "plain tag",
+    "box:anchor"
+   ],
+   "path": [
+    "siblings",
+    "add siblings to selection"
+   ],
+   "found": true,
+   "questions": [],
+   "dialogs": [
+    {
+     "title": "manage tag siblings",
+     "tags": [
+      "box:anchor",
+      "plain tag"
+     ]
+    }
+   ],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "alpha:first"
+   ],
+   "path": [
+    "1 parents, 0 children",
+    "parent: group:alpha"
+   ],
+   "found": true,
+   "questions": [],
+   "dialogs": [],
+   "writes": [],
+   "copied": [
+    "group:alpha"
+   ],
+   "favourite_tags": [],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "plain tag"
+   ],
+   "path": [
+    "favourites",
+    "add \"plain tag\" to favourites"
+   ],
+   "found": true,
+   "questions": [],
+   "dialogs": [],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [
+    "plain tag"
+   ],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "plain tag"
+   ],
+   "path": [
+    "favourites",
+    "remove \"plain tag\" from favourites"
+   ],
+   "found": true,
+   "questions": [
+    {
+     "message": "Remove \"plain tag\" from the favourites list?",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "dialogs": [],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "plain tag"
+   ],
+   "path": [
+    "favourites",
+    "add \"plain tag\" to most used for \"my tags\""
+   ],
+   "found": true,
+   "questions": [],
+   "dialogs": [],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": [
+    "plain tag"
+   ]
+  },
+  {
+   "selected": [
+    "plain tag"
+   ],
+   "path": [
+    "favourites",
+    "remove \"plain tag\" from most used for \"my tags\""
+   ],
+   "found": true,
+   "questions": [
+    {
+     "message": "Remove \"plain tag\" from the most used list for \"my tags\"?",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "dialogs": [],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "plain tag",
+    "box:anchor"
+   ],
+   "path": [
+    "maintenance",
+    "regenerate tag display"
+   ],
+   "found": true,
+   "questions": [
+    {
+     "message": "!!WARNING EXPERIMENTAL!!\n\nThis will delete and then regenerate all the display calculations for the selected tags and their siblings and parents, with the intention of fixing bad autocomplete counts or sibling/parent presentation. It is functionally similar to the 'tag storage mappings cache' regeneration job, but just for these tags.\n\nIt might take a while to run, perhaps many minutes for a heavily-siblinged/-parented/-mapped tag, during which the database will be locked. Doing it on a thousand tags is going to completely gonk you. Also, any sibling or parent rules will be reset, and they will have to be recalculated, which will probably occur in a few seconds in the background after the regeneration job completes.",
+     "title": "Regen tags?",
+     "yes": "let's go",
+     "no": "forget it"
+    }
+   ],
+   "dialogs": [],
+   "writes": [
+    {
+     "action": "regenerate_tag_mappings_tags",
+     "tags": [
+      "box:anchor",
+      "plain tag"
+     ]
+    }
+   ],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": []
+  }
+ ],
+ "hide": {
+  "selected": [
+   "plain tag"
+  ],
+  "path": [
+   "hide",
+   "\"plain tag\" from here"
+  ],
+  "questions": [
+   {
+    "message": "Hide \"plain tag\" from here?",
+    "title": "Are you sure?",
+    "yes": "yes",
+    "no": "no"
+   }
+  ],
+  "tags_after": [
+   "series:spaced name",
+   "safe",
+   "alpha:first",
+   "box:anchor",
+   "filename:apng_animated",
+   "group:alpha",
+   "source:fixture"
+  ]
+ }
+}

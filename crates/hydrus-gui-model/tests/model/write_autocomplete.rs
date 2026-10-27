@@ -629,6 +629,7 @@ fn tag_menu_copy_decorations_favourites_and_launch_replay_real_qt_actions() {
             | Action::Cog(..)
             | Action::MigrateTags
             | Action::Owner(..)
+            | Action::Asked { .. }
             | Action::ListDecorate { .. } => {
                 panic!("unexpected domain action in tag menu replay");
             }

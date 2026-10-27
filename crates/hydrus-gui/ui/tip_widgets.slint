@@ -11,6 +11,7 @@ export component TipButton inherits HorizontalLayout {
     in property <bool> primary: false;
     callback clicked();
     Button {
+        max-height: self.preferred-height;
         text: root.text;
         enabled: root.enabled;
         primary: root.primary;
@@ -25,6 +26,7 @@ export component TipComboBox inherits HorizontalLayout {
     in property <string> tip;
     callback selected(int);
     ComboBox {
+        max-height: self.preferred-height;
         model: root.model;
         current-index: root.current-index;
         selected(_) => { root.selected(self.current-index); }
@@ -40,6 +42,7 @@ export component TipCheckBox inherits HorizontalLayout {
     in property <bool> enabled: true;
     in-out property <bool> checked;
     CheckBox {
+        max-height: self.preferred-height;
         text: root.text;
         enabled: root.enabled;
         checked <=> root.checked;
