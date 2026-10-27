@@ -167,8 +167,16 @@ export component ManageTagsWindow inherits Window {
                     if (event.text == Key.DownArrow) { root.service-chosen(mod(root.service-index + 1, root.service-names.length)); return accept; }
                 }
             }
-            if (event.text == Key.Escape) {
+            // (the focused tag list clears its selection first)
+            if (event.text == Key.Escape && !(list-focus.has-focus && root.tag-menu-panes.length == 0 && root.tag-menu-question == "")) {
                 if root.tag-menu-panes.length > 0 || root.tag-menu-question != "" { root.tag-menu-dismissed(); } else if !input.escape-results() { root.cancel(); }
+                return accept;
+            }
+            reject
+        }
+        key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                if !input.escape-results() { root.cancel(); }
                 return accept;
             }
             reject

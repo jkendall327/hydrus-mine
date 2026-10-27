@@ -3,7 +3,7 @@
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 
-use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
+use slint::{ComponentHandle as _, Model as _, ModelRc, SharedString, VecModel};
 
 use crate::manage_tags::ManageTags;
 use crate::{ListText, ManageTagsWindow};
@@ -174,7 +174,11 @@ pub(crate) fn open(
                     crate::styled_list_text(&row.label, colours.tag(&row.colour_tag), &row.parts)
                 })
                 .collect();
-            window.set_tags(ModelRc::new(VecModel::from(tags)));
+            // (kept when unchanged: new rows would lose a double-click's first click)
+            let shown = window.get_tags();
+            if shown.row_count() != tags.len() || shown.iter().zip(&tags).any(|(a, b)| a != *b) {
+                window.set_tags(ModelRc::new(VecModel::from(tags)));
+            }
             window.set_tag_selected(ModelRc::new(VecModel::from(model.tag_selection_mask())));
             window.set_notice("".into());
             window

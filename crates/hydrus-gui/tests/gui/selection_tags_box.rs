@@ -258,7 +258,6 @@ impl Harness {
     /// The pages opened since there were `before`, as the recorder writes
     /// them, closed again.
     pub fn launched(&self, before: usize) -> Json {
-        let original = self.page();
         let original_name = "files";
         let mut out = Vec::new();
         while self.bound.pages.borrow().page_count() > before {
@@ -290,7 +289,7 @@ impl Harness {
                 "topic": topic,
                 "predicates": predicates,
                 "page_name": name,
-                "location": if location == original.borrow().location().clone() { "my files" } else { "elsewhere" },
+                "location": if location == my_files() { "my files" } else { "elsewhere" },
             }));
             self.ui.invoke_close_page();
             widgets::settle();
@@ -314,6 +313,11 @@ impl Harness {
             differences.join("\n\n")
         );
     }
+}
+
+/// The page's location (the recorder's "my files").
+fn my_files() -> LocationContext {
+    LocationContext::single(hydrus_core::ServiceKey::new(b"local files".to_vec()))
 }
 
 pub(crate) fn strings(v: &Json) -> Vec<String> {
