@@ -145,24 +145,25 @@ opt-level = 0
 debug = false
 incremental = false
 
+
 # SPIKE-BEGIN
 [profile.release.package.hydrus-gui-ui-core]
-opt-level = "s"
+opt-level = "z"
 
 [profile.release.package.hydrus-gui-ui-options]
-opt-level = "s"
+opt-level = "z"
 
 [profile.release.package.hydrus-gui-ui-dialogs-1]
-opt-level = "s"
+opt-level = "z"
 
 [profile.release.package.hydrus-gui-ui-dialogs-2]
-opt-level = "s"
+opt-level = "z"
 
 [profile.release.package.hydrus-gui-ui-dialogs-3]
-opt-level = "s"
+opt-level = "z"
 
 [profile.release.package.hydrus-gui-ui-dialogs-4]
-opt-level = "s"
+opt-level = "z"
 
 # SPIKE-END
 
