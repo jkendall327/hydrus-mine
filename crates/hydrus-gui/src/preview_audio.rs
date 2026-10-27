@@ -60,8 +60,7 @@ pub(crate) fn playable(
     let (mime, _) = crate::viewer::shape(store, file)?;
     let settings: MediaViewerSettings = store.read(hydrus_store::settings::get).ok()?;
     let view = settings.view(mime);
-    if view.preview_show_action != ShowAction::Mpv || (view.preview_start_with_embed && !released)
-    {
+    if view.preview_show_action != ShowAction::Mpv || (view.preview_start_with_embed && !released) {
         return None;
     }
     Some((
@@ -114,7 +113,8 @@ impl PreviewAudio {
 
     /// Whether `file` waits behind its embed button.
     pub fn embedded(&self, file: HashId) -> bool {
-        self.released.get() != Some(file) && crate::viewer::starts_with_embed(&self.store, file, true)
+        self.released.get() != Some(file)
+            && crate::viewer::starts_with_embed(&self.store, file, true)
     }
 
     pub fn sync(&self, window: &MainWindow, file: Option<HashId>) {

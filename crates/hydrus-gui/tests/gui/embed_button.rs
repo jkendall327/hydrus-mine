@@ -236,7 +236,11 @@ fn a_file_that_starts_with_the_embed_button_waits_behind_it_in_the_preview() {
         }
         let embed = step["embed"].as_bool().unwrap();
         refresh_until(&|| ui.get_preview_embed() == embed);
-        assert_eq!(widgets::bounds(ui.window(), LABEL).is_some(), embed, "{what}");
+        assert_eq!(
+            widgets::bounds(ui.window(), LABEL).is_some(),
+            embed,
+            "{what}"
+        );
         if embed {
             // (in the place the file takes: the reference's button fills its
             // media container)

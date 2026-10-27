@@ -339,7 +339,11 @@ impl State {
                     .then(|| crate::viewer::embed_thumbnail(&self.store, file));
                 *self.embed.borrow_mut() = Some((file, image));
             }
-            let embed = self.embed.borrow().as_ref().and_then(|(_, image)| image.clone());
+            let embed = self
+                .embed
+                .borrow()
+                .as_ref()
+                .and_then(|(_, image)| image.clone());
             window.set_preview_embed(embed.is_some());
             if let Some(image) = embed {
                 window.set_preview_embed_thumbnail(image);
