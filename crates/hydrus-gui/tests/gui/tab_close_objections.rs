@@ -107,17 +107,35 @@ fn labels(ui: &MainWindow, pane: usize) -> Vec<String> {
         .collect()
 }
 
+/// Click the line `label` of the open menu's `pane`, where it is drawn.
 fn choose(ui: &MainWindow, pane: usize, label: &str) {
-    let at = labels(ui, pane)
-        .iter()
-        .position(|l| l == label)
-        .unwrap_or_else(|| panic!("{label:?} in {:?}", labels(ui, pane)));
-    ui.invoke_menu_line_clicked(
-        i32::try_from(pane).unwrap(),
-        i32::try_from(at).unwrap(),
-        200.0,
-        100.0,
-        10.0,
+    assert!(
+        labels(ui, pane).iter().any(|l| l == label),
+        "{label:?} in {:?}",
+        labels(ui, pane)
+    );
+    let window = ui.window();
+    // (the open menus are drawn over everything: the last match)
+    widgets::click_nth(window, label, widgets::count(window, label) - 1);
+}
+
+/// Right-click the tab at `index` of the top row, as a user opens its menu.
+fn right_click_tab(ui: &MainWindow, index: usize) {
+    let name = names(ui)[index].clone();
+    ui.show().unwrap();
+    widgets::lay_out(ui.window(), 1100.0, 700.0);
+    // (the tabs are fitted to the width, and their places reported, on timers)
+    for _ in 0..10 {
+        widgets::settle();
+    }
+    // (a tab's name can label other widgets too, such as a page's: the tab
+    // strip is above the page, so its tab is the first)
+    widgets::click_nth_with(
+        ui.window(),
+        &name,
+        0,
+        slint::platform::PointerEventButton::Right,
+        widgets::Mods::NONE,
     );
 }
 
@@ -195,7 +213,7 @@ fn closing_pages_with_importers_asks_as_the_reference_does() {
         // (the dialog's yes waits; the check that it does is below, with
         // a long wait; here it is short so that the answer can be given)
         reasons_dialog::set_yes_delay(Some(Duration::ZERO));
-        ui.invoke_tab_menu_requested(0, index, 30.0, 55.0);
+        right_click_tab(&ui, usize::try_from(index).unwrap());
         choose(&ui, 0, entry);
         if let Some(sub) = sub.first() {
             choose(&ui, 1, sub);
@@ -309,7 +327,7 @@ fn the_dialogs_yes_waits_before_it_can_be_pressed() {
     let (ui, _bound) = open(&store);
     // a minute: the check cannot be late
     reasons_dialog::set_yes_delay(Some(Duration::from_secs(60)));
-    ui.invoke_tab_menu_requested(0, 0, 30.0, 55.0);
+    right_click_tab(&ui, 0);
     choose(&ui, 0, "close other pages");
     let dialog = reasons_dialog::dialog().unwrap();
     widgets::lay_out(dialog.window(), 480.0, 300.0);
@@ -329,7 +347,7 @@ fn the_dialogs_yes_waits_before_it_can_be_pressed() {
     // after a short wait it can be pressed (a wait only bounds from one side)
     dialog.hide().unwrap();
     reasons_dialog::set_yes_delay(Some(Duration::from_millis(30)));
-    ui.invoke_tab_menu_requested(0, 0, 30.0, 55.0);
+    right_click_tab(&ui, 0);
     choose(&ui, 0, "close other pages");
     let dialog = reasons_dialog::dialog().unwrap();
     widgets::lay_out(dialog.window(), 480.0, 300.0);
@@ -342,4 +360,28 @@ fn the_dialogs_yes_waits_before_it_can_be_pressed() {
         widgets::settle();
     }
     reasons_dialog::set_yes_delay(None);
+}
+
+// A middle click on a tab closes it, as the reference's does: the
+// middle-click helper reaches the tab through the notebook's pointer overlay.
+#[test]
+fn middle_click_closes_a_page_without_objections() {
+    let _windows = headless::init();
+    let (_dirs, store) = store();
+    let (ui, _bound) = open(&store);
+    let before = names(&ui);
+    assert_eq!(before, ["a", "imp1", "b", "imp2", "c"]);
+    ui.show().unwrap();
+    widgets::lay_out(ui.window(), 1100.0, 700.0);
+    for _ in 0..10 {
+        widgets::settle();
+    }
+    widgets::click_nth_with(
+        ui.window(),
+        "b",
+        0,
+        slint::platform::PointerEventButton::Middle,
+        widgets::Mods::NONE,
+    );
+    assert_eq!(names(&ui), ["a", "imp1", "imp2", "c"]);
 }

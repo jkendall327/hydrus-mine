@@ -9,22 +9,20 @@ use slint::{ComponentHandle as _, Model as _};
 
 #[test]
 fn dialogs_stage_cancel_apply_questions_and_update_display() {
-    // Open through the tags menu, using its public click callbacks.
+    // Open through the tags menu, clicked as a user does.
     fn open(
         ui: &MainWindow,
         bound: &hydrus_gui::Bound,
         name: &str,
     ) -> hydrus_gui::TagRelationshipsWindow {
-        let top = (0..ui.get_menu_titles().row_count())
-            .find(|&i| ui.get_menu_titles().row_data(i).unwrap().label == "tags")
-            .unwrap();
-        ui.invoke_menu_title_pressed(i32::try_from(top).unwrap(), 0.0, 22.0);
-        let panes = ui.get_menu_panes();
-        let pane = panes.row_data(0).unwrap();
-        let at = (0..pane.lines.row_count())
-            .find(|&i| pane.lines.row_data(i).unwrap().label.starts_with(name))
-            .unwrap();
-        ui.invoke_menu_line_clicked(0, i32::try_from(at).unwrap(), 0.0, 0.0, 0.0);
+        let lines = crate::common::main_menu::open(ui, &["tags"]);
+        let label = lines
+            .iter()
+            .find(|l| l.0.starts_with(name))
+            .unwrap()
+            .0
+            .clone();
+        crate::common::main_menu::choose(ui, &["tags"], &label);
         bound
             .tag_relationships
             .borrow()
@@ -294,21 +292,14 @@ fn reason_questions_offer_recent_then_fixed_reasons_and_the_option_caps_the_rece
                 )
             })
             .unwrap();
-        let top = (0..ui.get_menu_titles().row_count())
-            .find(|&i| ui.get_menu_titles().row_data(i).unwrap().label == "tags")
-            .unwrap();
-        ui.invoke_menu_title_pressed(i32::try_from(top).unwrap(), 0.0, 22.0);
-        let pane = ui.get_menu_panes().row_data(0).unwrap();
-        let line = (0..pane.lines.row_count())
-            .find(|&i| {
-                pane.lines
-                    .row_data(i)
-                    .unwrap()
-                    .label
-                    .starts_with(run["kind"].as_str().unwrap())
-            })
-            .unwrap();
-        ui.invoke_menu_line_clicked(0, i32::try_from(line).unwrap(), 0.0, 0.0, 0.0);
+        let lines = crate::common::main_menu::open(ui, &["tags"]);
+        let label = lines
+            .iter()
+            .find(|l| l.0.starts_with(run["kind"].as_str().unwrap()))
+            .unwrap()
+            .0
+            .clone();
+        crate::common::main_menu::choose(ui, &["tags"], &label);
         let w = client
             .bound
             .tag_relationships

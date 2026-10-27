@@ -23,7 +23,7 @@ use slint::Model as _;
 
 use crate::common::main_menu;
 
-trait Shown {
+pub(crate) trait Shown {
     fn win(&self) -> &slint::Window;
 }
 
@@ -51,9 +51,9 @@ impl Drop for FromViewer {
     }
 }
 
-struct Client {
+pub(crate) struct Client {
     store: Arc<Store>,
-    ui: MainWindow,
+    pub(crate) ui: MainWindow,
     bound: Bound,
     /// A folder of one file to import.
     work: tempfile::TempDir,
@@ -61,7 +61,7 @@ struct Client {
 }
 
 impl Client {
-    fn new() -> Self {
+    pub(crate) fn new() -> Self {
         let (dirs, store) = crate::subscriptions::store();
         let ui = MainWindow::new().unwrap();
         ui.show().unwrap();
@@ -138,9 +138,9 @@ fn opened<T: ComponentHandle + 'static>(
     )
 }
 
-type Open = fn(&Client) -> Box<dyn Shown>;
+pub(crate) type Open = fn(&Client) -> Box<dyn Shown>;
 /// How a dialog is accepted (a frame has none: it is kept as it closes).
-type Accept = Option<fn(&Client)>;
+pub(crate) type Accept = Option<fn(&Client)>;
 
 fn apply<T: ComponentHandle + 'static>(
     slot: &std::rc::Rc<std::cell::RefCell<Option<T>>>,
@@ -151,7 +151,7 @@ fn apply<T: ComponentHandle + 'static>(
 }
 
 /// Each frame key, how a user opens its window, and (a dialog) accepts it.
-fn windows() -> Vec<(&'static str, Open, Accept)> {
+pub(crate) fn windows() -> Vec<(&'static str, Open, Accept)> {
     vec![
         (
             "review_services",

@@ -10,6 +10,8 @@ export component Btn inherits HorizontalLayout {
     in property <bool> primary: false;
     callback clicked();
     Button {
+        // Spare height in a layout must not stretch a button.
+        max-height: self.preferred-height;
         text: root.text;
         enabled: root.enabled;
         primary: root.primary;

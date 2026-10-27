@@ -153,6 +153,86 @@ pub fn place(window: &slint::Window, frame: &FrameLocation) {
     place_as(window, frame, false);
 }
 
+/// After `window` (placed by `frame`) is shown, keep asking for its
+/// maximised state until the native window reports it (two seconds at
+/// most), or until the user switches it themselves (F). Slint takes the
+/// state from the first events of a new native window, and an X11 window
+/// manager maximises a moment after the window maps, so those events can
+/// say "not maximised" and Slint then takes the maximise back. (Fullscreen
+/// is held the same way, though winit keeps that state itself, so it isn't
+/// known to be taken back.) With no native window (the headless tests) the
+/// state is held for half a second.
+pub fn hold_state_after_show<C: slint::ComponentHandle + 'static>(
+    component: &C,
+    frame: &FrameLocation,
+) {
+    let fullscreen = frame.fullscreen && !cfg!(target_os = "macos");
+    let maximised = frame.maximised && !fullscreen;
+    if !fullscreen && !maximised {
+        return;
+    }
+    let weak = component.as_weak();
+    let timer = std::rc::Rc::new(slint::Timer::default());
+    let kept = std::rc::Rc::downgrade(&timer);
+    let started = std::time::Instant::now();
+    timer.start(
+        slint::TimerMode::Repeated,
+        std::time::Duration::from_millis(50),
+        move || {
+            let stop = || {
+                if let Some(timer) = kept.upgrade() {
+                    timer.stop();
+                }
+            };
+            let Some(component) = weak.upgrade() else {
+                stop();
+                return;
+            };
+            let window = component.window();
+            // (what the windowing system itself says, where there is one)
+            let native = window.with_winit_window(|w| {
+                if fullscreen {
+                    w.fullscreen().is_some()
+                } else {
+                    w.is_maximized()
+                }
+            });
+            let reached = if fullscreen {
+                window.is_fullscreen()
+            } else {
+                window.is_maximized()
+            };
+            // (asked again whenever it doesn't hold, so an early event
+            // taking it back is undone)
+            if !reached {
+                if fullscreen {
+                    window.set_fullscreen(true);
+                } else {
+                    window.set_maximized(true);
+                }
+            }
+            // done once the windowing system has it: later changes are the
+            // user's own
+            let cap = if native.is_some() {
+                std::time::Duration::from_secs(2)
+            } else {
+                std::time::Duration::from_millis(500)
+            };
+            if (native == Some(true) && reached) || started.elapsed() > cap {
+                stop();
+            }
+        },
+    );
+    // (kept with the placements waiting for their windows: placing the
+    // window anew drops it)
+    let key = window_key(component.window());
+    PENDING.with(|pending| {
+        let mut pending = pending.borrow_mut();
+        pending.retain(|(_, timer)| timer.running());
+        pending.push((key, timer));
+    });
+}
+
 /// A window, told from the others for as long as it lives.
 fn window_key(window: &slint::Window) -> usize {
     std::ptr::from_ref(window) as usize
@@ -617,6 +697,8 @@ pub fn state(window: &slint::Window) -> WindowState {
 /// into it, remembering whether it was maximised. Not on macOS, as the
 /// reference.
 pub fn switch_fullscreen(window: &slint::Window, maximised_before: &std::cell::Cell<bool>) {
+    // (the user's own switch: the state it opened in is held no longer)
+    cancel_pending(window);
     if window.is_fullscreen() {
         window.set_fullscreen(false);
         window.set_maximized(maximised_before.get());
