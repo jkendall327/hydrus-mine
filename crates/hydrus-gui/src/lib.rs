@@ -8268,6 +8268,7 @@ fn open_viewer(
         shortcuts.observer(),
     );
     window.show()?;
+    windows::hold_state_after_show(&window, &settings_frame);
     window.set_shortcut_native_pointer(window.window().has_winit_window());
     native_focus.watch_native();
     native_cursor.watch_native();
