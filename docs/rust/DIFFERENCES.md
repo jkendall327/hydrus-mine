@@ -5355,9 +5355,15 @@ Differences:
   sound actually comes out, that video frames replace the still in the pane,
   and that a file starting paused (`preview_start_paused`) is paused (the
   decision is made, but nothing observes the pause without mpv).
+- The collect control's button does not light up under the pointer or when
+  pressed: a touch area laid over it takes the clicks (so that a middle
+  click can clear collecting, which a std button does not report), and the
+  button only draws whether its choices are open.
 - A kind whose preview starts behind an embed button (`preview_start_with_embed`)
   plays nothing, since hydrus-rs has no embed button yet; the reference plays
-  it after a click.
+  it after a click. The media viewer's "start with embed button"
+  (`media_start_with_embed`) is not ported either: the file plays at once.
+  (`interaction-embed-button`, #290.)
 - The reference's preview control is a pop-up window that appears when the
   pointer is on the global mute button; here it is drawn in the pane, at the
   bottom right of the media, and opens in the same way. Its look (icons are

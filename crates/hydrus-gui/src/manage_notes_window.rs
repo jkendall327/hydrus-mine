@@ -117,6 +117,7 @@ pub(crate) fn open(
     file: HashId,
     slot: &Rc<RefCell<Option<ManageNotesWindow>>>,
     applied: Rc<dyn Fn()>,
+    start_on: Option<&str>,
 ) -> Result<ManageNotesWindow, String> {
     let notes = store
         .read(|c| hydrus_store::media::notes(c, file))
@@ -127,7 +128,7 @@ pub(crate) fn open(
     let preferences: hydrus_store::settings::NotePreferences = store
         .read(hydrus_store::settings::get)
         .map_err(|error| error.to_string())?;
-    let editor = NotesEditor::new(&notes, None);
+    let editor = NotesEditor::new(&notes, start_on);
     let selections = editor
         .tabs
         .iter()
