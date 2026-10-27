@@ -16,6 +16,13 @@ fn forget<T: slint::ComponentHandle>(slot: &std::cell::RefCell<Option<T>>) {
 
 impl Drop for crate::Bound {
     fn drop(&mut self) {
+        // (the predicate editor is not here: its owner retires it, with its
+        // cleanup notice, when the final clone goes)
+        // (Bound is cloned; only the final clone's drop tears down, as the
+        // predicate editor's owner, held by Bound clones alone, shows)
+        if std::rc::Rc::strong_count(&self._predicate_editor_owner) > 1 {
+            return;
+        }
         forget(&self.viewer);
         forget(&self.manage_tags);
         forget(&self.tag_relationships);
@@ -43,7 +50,6 @@ impl Drop for crate::Bound {
         forget(&self.filter);
         forget(&self.filename_tagging);
         forget(&self.locations);
-        forget(&self.predicate_editor);
         forget(&self.tag_menu_relationships);
     }
 }
