@@ -4,8 +4,11 @@
 // shift+click, and dragging across rows, which selects from the row
 // pressed to the row under the pointer, as a shift+click there would),
 // each drawn selected as the selection has it.
+//
+// Its keys are `ListKeys`'s.
 
 import { ScrollView } from "std-widgets.slint";
+
 import { Theme } from "theme.slint";
 
 // a column: its title, width, and whether it takes the room left
@@ -29,6 +32,145 @@ component Cell inherits Rectangle {
     horizontal-stretch: root.column.stretch ? 1 : 0;
 }
 
+// A list's keys (the reference's lists are Qt item views in extended
+// selection, `ClientGUIListCtrl.py:904-938`; `oracle/fixtures/
+// list_keys.json`): the arrows, Home/End and PageUp/PageDown move the
+// current row and select it alone (with shift: from the anchor to it; with
+// ctrl: only the current row moves, and is the anchor now), Space selects
+// the current row and Ctrl+Space toggles it, Ctrl+A selects all, Enter
+// activates, Ctrl+C (or Ctrl+Insert) copies, Delete deletes. They reach
+// the window through `row-clicked`, as clicks do; two rows past any list's
+// end stand for what no click does (hydrus-gui-model's
+// `list_selection::SELECT_ALL` and `MOVE_ANCHOR`, which
+// `ListSelection::click` reads). Focus it when a row is pressed.
+export component ListKeys inherits FocusScope {
+    // how many rows, how high each is, and how high the list's viewport is
+    // (PageUp and PageDown go to the row a viewport above or below the
+    // current row's top, as Qt's tree view does)
+    in property <int> count;
+    in property <length> row-height: 22px;
+    in property <length> visible-height;
+    // the current row, which the keys move from: a press makes the row
+    // pressed current (set it then); before any, the first row is, as Qt
+    // makes it when the list takes the focus
+    in-out property <int> current-row: -1;
+    out property <int> current: root.count == 0 ? -1 : max(0, min(root.count - 1, root.current-row));
+    // whether the current row is selected, and its first cell's text
+    in property <bool> current-selected;
+    in property <string> current-text;
+    // Enter activates the current row even when it is not selected (a Qt
+    // table view's `activated`, as the duplicates pair lists use); a tree
+    // view's activation (the rest) acts on the selection
+    in property <bool> activate-current: false;
+    // (the row shown, ctrl held, shift held)
+    callback row-clicked(int, bool, bool);
+    callback row-activated(int);
+    callback delete-pressed();
+    // (Ctrl+C or Ctrl+Insert: the window copies its selected rows, as the
+    // reference's lists with a copy-rows callable do, and says it did;
+    // otherwise, as Qt's own item views, the current row's first cell is
+    // copied)
+    callback copy-pressed() -> bool;
+    // (bring this row into view)
+    callback reveal(int);
+    // (row-clicked's rows for the keys no click is: select all, and move
+    // the anchor to the row this far past it; `list_selection.rs` has the
+    // same)
+    property <int> select-all-row: 2147483647;
+    property <int> move-anchor-row: 1073741824;
+    width: 0px;
+    height: 0px;
+
+    // the current row moved to `to` by a key: selected alone, or from the
+    // anchor (shift), or not at all (ctrl: it is the anchor now)
+    function move-to(to: int, ctrl: bool, shift: bool) {
+        if (to < 0 || to == root.current) {
+            return;
+        }
+        root.current-row = to;
+        root.reveal(to);
+        if (ctrl) {
+            root.row-clicked(root.move-anchor-row + to, false, false);
+        } else {
+            root.row-clicked(to, false, shift);
+        }
+    }
+
+    key-pressed(event) => {
+        let ctrl = event.modifiers.control;
+        let shift = event.modifiers.shift;
+        let last = root.count - 1;
+        if (event.text == Key.Delete) {
+            root.delete-pressed();
+            return accept;
+        }
+        if (root.current < 0) {
+            return reject;
+        }
+        if (event.text == Key.DownArrow) {
+            root.move-to(min(last, root.current + 1), ctrl, shift);
+            return accept;
+        }
+        if (event.text == Key.UpArrow) {
+            root.move-to(max(0, root.current - 1), ctrl, shift);
+            return accept;
+        }
+        if (event.text == Key.Home) {
+            root.move-to(0, ctrl, shift);
+            return accept;
+        }
+        if (event.text == Key.End) {
+            root.move-to(last, ctrl, shift);
+            return accept;
+        }
+        if (event.text == Key.PageDown) {
+            root.move-to(min(last, floor((root.current * root.row-height + root.visible-height) / root.row-height)), ctrl, shift);
+            return accept;
+        }
+        if (event.text == Key.PageUp) {
+            root.move-to(max(0, floor((root.current * root.row-height - root.visible-height) / root.row-height)), ctrl, shift);
+            return accept;
+        }
+        if (event.text == " ") {
+            // ctrl toggles it; otherwise it is selected (if it isn't)
+            if (ctrl || !root.current-selected) {
+                root.current-row = root.current;
+                root.row-clicked(root.current, true, false);
+            }
+            return accept;
+        }
+        if (ctrl && !shift && (event.text == "a" || event.text == "A")) {
+            root.row-clicked(root.select-all-row, false, false);
+            return accept;
+        }
+        if (event.text == Key.Return) {
+            // (the selection activated: through the current row, if it is
+            // selected)
+            if (root.current-selected || root.activate-current) {
+                root.row-activated(root.current);
+            }
+            return accept;
+        }
+        if (ctrl && (event.text == "c" || event.text == "C" || event.text == Key.Insert)) {
+            if (!root.copy-pressed()) {
+                copier.text = root.current-text;
+                copier.select-all();
+                copier.copy();
+            }
+            return accept;
+        }
+        reject
+    }
+
+    // (what Ctrl+C copies when the window copies nothing itself)
+    copier := TextInput {
+        width: 0px;
+        height: 0px;
+        visible: false;
+        read-only: true;
+    }
+}
+
 export component ListTable inherits Rectangle {
     in property <[TableColumn]> columns;
     in property <[TableRow]> rows;
@@ -48,6 +190,16 @@ export component ListTable inherits Rectangle {
     callback row-menu(int, length, length);
     // (the delete key, the list having the keyboard)
     callback delete-pressed();
+    // (Ctrl+C or Ctrl+Insert: the window copies its selected rows, as the
+    // reference's lists with a copy-rows callable do, and says it did;
+    // otherwise, as Qt's own tree view, the current row's first cell is
+    // copied)
+    callback copy-pressed() -> bool;
+    // the current row, which the keys move from (see `ListKeys`)
+    in-out property <int> current-row <=> keys.current-row;
+    // whether the list takes the keys at all (not where a click is no
+    // selection, such as a list whose click toggles the row)
+    in property <bool> keys-enabled: true;
     // (a middle press on a row: the row, ctrl held, shift held)
     callback row-middle(int, bool, bool);
     // presses below the rows count too, as on a row past the last (the
@@ -57,17 +209,29 @@ export component ListTable inherits Rectangle {
     border-color: Theme.border;
     background: Theme.panel;
 
-    // (the keyboard, once a row is clicked)
-    keys := FocusScope {
-        width: 0px;
-        height: 0px;
-        key-pressed(event) => {
-            if (event.text == Key.Delete) {
-                root.delete-pressed();
-                return accept;
-            }
-            reject
+    // bring row `r` into view
+    function reveal(r: int) {
+        let top = r * root.row-height;
+        if (top < -scroll.content-y) {
+            scroll.content-y = -top;
+        } else if (top + root.row-height > -scroll.content-y + scroll.visible-height) {
+            scroll.content-y = -(top + root.row-height - scroll.visible-height);
         }
+    }
+
+    // (the keyboard, once a row is clicked)
+    keys := ListKeys {
+        enabled: root.keys-enabled;
+        count: root.rows.length;
+        row-height: root.row-height;
+        visible-height: scroll.visible-height;
+        current-selected: root.rows[self.current].selected;
+        current-text: root.rows[self.current].cells[0];
+        row-clicked(r, ctrl, shift) => { root.row-clicked(r, ctrl, shift); }
+        row-activated(r) => { root.row-activated(r); }
+        delete-pressed => { root.delete-pressed(); }
+        copy-pressed => { root.copy-pressed() }
+        reveal(r) => { root.reveal(r); }
     }
     VerticalLayout {
         padding: 1px;
@@ -128,6 +292,9 @@ export component ListTable inherits Rectangle {
                         y: 0;
                         pointer-event(event) => {
                             let at = floor(self.mouse-y / root.row-height);
+                            if (event.kind == PointerEventKind.down && at < root.rows.length) {
+                                keys.current-row = at;
+                            }
                             if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
                                 keys.focus();
                                 root.drag-row = at;
@@ -153,6 +320,7 @@ export component ListTable inherits Rectangle {
                                 let over = max(0, min(root.rows.length - 1, floor(self.mouse-y / root.row-height)));
                                 if (over != root.drag-row) {
                                     root.drag-row = over;
+                                    keys.current-row = over;
                                     root.row-clicked(over, false, true);
                                 }
                             }

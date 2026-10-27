@@ -8,7 +8,7 @@ import { Btn } from "@hydrus_ui_core";
 
 import { Button, CheckBox, ScrollView, SpinBox } from "std-widgets.slint";
 import { Theme } from "@hydrus_ui_core";
-import { Asking } from "@hydrus_ui_core";
+import { Asking, ListKeys } from "@hydrus_ui_core";
 
 // a pair: its two files' thumbnails and the third column's text
 export struct PairRow {
@@ -50,7 +50,8 @@ component Thumb inherits Rectangle {
 }
 
 // the reference's `ThumbnailPairList`: rows a thumbnail high, selected
-// as its lists select (click, ctrl+click, shift+click)
+// as its lists select (click, ctrl+click, shift+click, and the keys of
+// `ListKeys`, a Qt table view's: Enter activates the current row)
 export component PairList inherits Rectangle {
     in property <[string]> columns;
     in property <[PairRow]> rows;
@@ -60,9 +61,29 @@ export component PairList inherits Rectangle {
     // selected row in a new page"); none while it is empty
     in property <string> menu-label;
     callback show-in-page();
+    in property <length> row-height: 90px;
     border-width: 1px;
     border-color: Theme.border;
     background: Theme.panel;
+    keys := ListKeys {
+        count: root.rows.length;
+        row-height: root.row-height;
+        visible-height: scroll.visible-height;
+        current-selected: root.rows[self.current].selected;
+        activate-current: true;
+        row-clicked(r, ctrl, shift) => { root.row-clicked(r, ctrl, shift); }
+        row-activated(r) => { root.row-activated(r); }
+        // (the current cell is a thumbnail: Qt copies no text for it)
+        copy-pressed => { true }
+        reveal(r) => {
+            let top = r * root.row-height;
+            if (top < -scroll.content-y) {
+                scroll.content-y = -top;
+            } else if (top + root.row-height > -scroll.content-y + scroll.visible-height) {
+                scroll.content-y = -(top + root.row-height - scroll.visible-height);
+            }
+        }
+    }
     VerticalLayout {
         padding: 1px;
         HorizontalLayout {
@@ -87,11 +108,11 @@ export component PairList inherits Rectangle {
                     activated => { root.show-in-page(); }
                 }
             }
-            ScrollView {
+            scroll := ScrollView {
                 VerticalLayout {
                     alignment: start;
                     for row[r] in root.rows: Rectangle {
-                        height: 90px;
+                        height: root.row-height;
                         background: row.selected ? Theme.highlight : touch.has-hover ? Theme.hover : transparent;
                         HorizontalLayout {
                             Thumb { source: row.a; }
@@ -106,6 +127,10 @@ export component PairList inherits Rectangle {
                         }
                         touch := TouchArea {
                             pointer-event(event) => {
+                                if (event.kind == PointerEventKind.down) {
+                                    keys.current-row = r;
+                                    keys.focus();
+                                }
                                 if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
                                     root.row-clicked(r, event.modifiers.control, event.modifiers.shift);
                                 }

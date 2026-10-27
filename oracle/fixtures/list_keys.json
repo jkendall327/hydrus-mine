@@ -1,0 +1,2398 @@
+{
+ "files": [
+  "00_bmp_24.bmp",
+  "01_apng_rgba.png",
+  "02_gif_static.gif",
+  "03_png_rgba.png",
+  "04_bmp_8bit.bmp",
+  "05_bmp_gray.bmp",
+  "06_bmp_24.bmp",
+  "07_apng_rgba.png",
+  "08_gif_static.gif",
+  "09_png_rgba.png",
+  "10_bmp_8bit.bmp",
+  "11_bmp_gray.bmp",
+  "12_bmp_24.bmp",
+  "13_apng_rgba.png",
+  "14_gif_static.gif",
+  "15_png_rgba.png",
+  "16_bmp_8bit.bmp",
+  "17_bmp_gray.bmp",
+  "18_bmp_24.bmp",
+  "19_apng_rgba.png",
+  "20_gif_static.gif",
+  "21_png_rgba.png",
+  "22_bmp_8bit.bmp",
+  "23_bmp_gray.bmp",
+  "24_bmp_24.bmp",
+  "25_apng_rgba.png",
+  "26_gif_static.gif",
+  "27_png_rgba.png",
+  "28_bmp_8bit.bmp",
+  "29_bmp_gray.bmp"
+ ],
+ "page": {
+  "viewport_height": 403,
+  "row_height": 15,
+  "rows": 30,
+  "start": {
+   "selected": [],
+   "order": [],
+   "current": 0
+  }
+ },
+ "sequences": [
+  {
+   "name": "down with nothing current",
+   "steps": [
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      1
+     ],
+     "order": [
+      1
+     ],
+     "current": 1
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      2
+     ],
+     "order": [
+      2
+     ],
+     "current": 2
+    }
+   ]
+  },
+  {
+   "name": "up with nothing current",
+   "steps": [
+    {
+     "kind": "key",
+     "what": "up",
+     "ctrl": false,
+     "shift": false,
+     "selected": [],
+     "order": [],
+     "current": 0
+    }
+   ]
+  },
+  {
+   "name": "end with nothing current",
+   "steps": [
+    {
+     "kind": "key",
+     "what": "end",
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      29
+     ],
+     "order": [
+      29
+     ],
+     "current": 29
+    }
+   ]
+  },
+  {
+   "name": "arrows move the selection",
+   "steps": [
+    {
+     "kind": "click",
+     "what": 3,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      3
+     ],
+     "order": [
+      3
+     ],
+     "current": 3
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      4
+     ],
+     "order": [
+      4
+     ],
+     "current": 4
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      5
+     ],
+     "order": [
+      5
+     ],
+     "current": 5
+    },
+    {
+     "kind": "key",
+     "what": "up",
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      4
+     ],
+     "order": [
+      4
+     ],
+     "current": 4
+    }
+   ]
+  },
+  {
+   "name": "up at the top, down at the bottom",
+   "steps": [
+    {
+     "kind": "click",
+     "what": 0,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      0
+     ],
+     "order": [
+      0
+     ],
+     "current": 0
+    },
+    {
+     "kind": "key",
+     "what": "up",
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      0
+     ],
+     "order": [
+      0
+     ],
+     "current": 0
+    },
+    {
+     "kind": "click",
+     "what": 29,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      29
+     ],
+     "order": [
+      29
+     ],
+     "current": 29
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      29
+     ],
+     "order": [
+      29
+     ],
+     "current": 29
+    }
+   ]
+  },
+  {
+   "name": "shift extends from the click",
+   "steps": [
+    {
+     "kind": "click",
+     "what": 5,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      5
+     ],
+     "order": [
+      5
+     ],
+     "current": 5
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      5,
+      6
+     ],
+     "order": [
+      5,
+      6
+     ],
+     "current": 6
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      5,
+      6,
+      7
+     ],
+     "order": [
+      5,
+      6,
+      7
+     ],
+     "current": 7
+    },
+    {
+     "kind": "key",
+     "what": "up",
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      5,
+      6
+     ],
+     "order": [
+      5,
+      6
+     ],
+     "current": 6
+    },
+    {
+     "kind": "key",
+     "what": "up",
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      5
+     ],
+     "order": [
+      5
+     ],
+     "current": 5
+    },
+    {
+     "kind": "key",
+     "what": "up",
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      4,
+      5
+     ],
+     "order": [
+      4,
+      5
+     ],
+     "current": 4
+    }
+   ]
+  },
+  {
+   "name": "shift after a shift-click",
+   "steps": [
+    {
+     "kind": "click",
+     "what": 2,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      2
+     ],
+     "order": [
+      2
+     ],
+     "current": 2
+    },
+    {
+     "kind": "click",
+     "what": 5,
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      2,
+      3,
+      4,
+      5
+     ],
+     "order": [
+      2,
+      3,
+      4,
+      5
+     ],
+     "current": 5
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "order": [
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "current": 6
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      7
+     ],
+     "order": [
+      7
+     ],
+     "current": 7
+    }
+   ]
+  },
+  {
+   "name": "ctrl moves only the current row",
+   "steps": [
+    {
+     "kind": "click",
+     "what": 2,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      2
+     ],
+     "order": [
+      2
+     ],
+     "current": 2
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      2
+     ],
+     "order": [
+      2
+     ],
+     "current": 3
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      2
+     ],
+     "order": [
+      2
+     ],
+     "current": 4
+    },
+    {
+     "kind": "key",
+     "what": "space",
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      2,
+      4
+     ],
+     "order": [
+      2,
+      4
+     ],
+     "current": 4
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      2,
+      4,
+      5
+     ],
+     "order": [
+      2,
+      4,
+      5
+     ],
+     "current": 5
+    }
+   ]
+  },
+  {
+   "name": "ctrl-space toggles the current row",
+   "steps": [
+    {
+     "kind": "click",
+     "what": 4,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      4
+     ],
+     "order": [
+      4
+     ],
+     "current": 4
+    },
+    {
+     "kind": "key",
+     "what": "space",
+     "ctrl": true,
+     "shift": false,
+     "selected": [],
+     "order": [],
+     "current": 4
+    },
+    {
+     "kind": "key",
+     "what": "space",
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      4
+     ],
+     "order": [
+      4
+     ],
+     "current": 4
+    }
+   ]
+  },
+  {
+   "name": "ctrl+shift arrows",
+   "steps": [
+    {
+     "kind": "click",
+     "what": 1,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      1
+     ],
+     "order": [
+      1
+     ],
+     "current": 1
+    },
+    {
+     "kind": "click",
+     "what": 6,
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      1,
+      6
+     ],
+     "order": [
+      1,
+      6
+     ],
+     "current": 6
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": true,
+     "shift": true,
+     "selected": [
+      1,
+      6
+     ],
+     "order": [
+      1,
+      6
+     ],
+     "current": 7
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": true,
+     "shift": true,
+     "selected": [
+      1,
+      6
+     ],
+     "order": [
+      1,
+      6
+     ],
+     "current": 8
+    }
+   ]
+  },
+  {
+   "name": "ctrl-click then shift arrow",
+   "steps": [
+    {
+     "kind": "click",
+     "what": 1,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      1
+     ],
+     "order": [
+      1
+     ],
+     "current": 1
+    },
+    {
+     "kind": "click",
+     "what": 6,
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      1,
+      6
+     ],
+     "order": [
+      1,
+      6
+     ],
+     "current": 6
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      1,
+      6,
+      7
+     ],
+     "order": [
+      1,
+      6,
+      7
+     ],
+     "current": 7
+    }
+   ]
+  },
+  {
+   "name": "home and end",
+   "steps": [
+    {
+     "kind": "click",
+     "what": 10,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      10
+     ],
+     "order": [
+      10
+     ],
+     "current": 10
+    },
+    {
+     "kind": "key",
+     "what": "home",
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      0
+     ],
+     "order": [
+      0
+     ],
+     "current": 0
+    },
+    {
+     "kind": "key",
+     "what": "end",
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      29
+     ],
+     "order": [
+      29
+     ],
+     "current": 29
+    },
+    {
+     "kind": "key",
+     "what": "home",
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+     ],
+     "order": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+     ],
+     "current": 0
+    }
+   ]
+  },
+  {
+   "name": "shift end",
+   "steps": [
+    {
+     "kind": "click",
+     "what": 25,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      25
+     ],
+     "order": [
+      25
+     ],
+     "current": 25
+    },
+    {
+     "kind": "key",
+     "what": "end",
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      25,
+      26,
+      27,
+      28,
+      29
+     ],
+     "order": [
+      25,
+      26,
+      27,
+      28,
+      29
+     ],
+     "current": 29
+    }
+   ]
+  },
+  {
+   "name": "page down and up",
+   "steps": [
+    {
+     "kind": "click",
+     "what": 0,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      0
+     ],
+     "order": [
+      0
+     ],
+     "current": 0
+    },
+    {
+     "kind": "key",
+     "what": "pagedown",
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      26
+     ],
+     "order": [
+      26
+     ],
+     "current": 26
+    },
+    {
+     "kind": "key",
+     "what": "pagedown",
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      29
+     ],
+     "order": [
+      29
+     ],
+     "current": 29
+    },
+    {
+     "kind": "key",
+     "what": "pagedown",
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      29
+     ],
+     "order": [
+      29
+     ],
+     "current": 29
+    },
+    {
+     "kind": "key",
+     "what": "pageup",
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      2
+     ],
+     "order": [
+      2
+     ],
+     "current": 2
+    }
+   ]
+  },
+  {
+   "name": "shift page down",
+   "steps": [
+    {
+     "kind": "click",
+     "what": 2,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      2
+     ],
+     "order": [
+      2
+     ],
+     "current": 2
+    },
+    {
+     "kind": "key",
+     "what": "pagedown",
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28
+     ],
+     "order": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28
+     ],
+     "current": 28
+    }
+   ]
+  },
+  {
+   "name": "ctrl+a",
+   "steps": [
+    {
+     "kind": "click",
+     "what": 4,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      4
+     ],
+     "order": [
+      4
+     ],
+     "current": 4
+    },
+    {
+     "kind": "key",
+     "what": "a",
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+     ],
+     "order": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+     ],
+     "current": 4
+    }
+   ]
+  },
+  {
+   "name": "ctrl+a with nothing current",
+   "steps": [
+    {
+     "kind": "key",
+     "what": "a",
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+     ],
+     "order": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+     ],
+     "current": 0
+    }
+   ]
+  },
+  {
+   "name": "ctrl+a then shift arrow",
+   "steps": [
+    {
+     "kind": "click",
+     "what": 4,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      4
+     ],
+     "order": [
+      4
+     ],
+     "current": 4
+    },
+    {
+     "kind": "key",
+     "what": "a",
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+     ],
+     "order": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+     ],
+     "current": 4
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      4,
+      5
+     ],
+     "order": [
+      4,
+      5
+     ],
+     "current": 5
+    }
+   ]
+  },
+  {
+   "name": "ctrl+a then shift click",
+   "steps": [
+    {
+     "kind": "click",
+     "what": 4,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      4
+     ],
+     "order": [
+      4
+     ],
+     "current": 4
+    },
+    {
+     "kind": "key",
+     "what": "a",
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+     ],
+     "order": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+     ],
+     "current": 4
+    },
+    {
+     "kind": "click",
+     "what": 8,
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      4,
+      5,
+      6,
+      7,
+      8
+     ],
+     "order": [
+      4,
+      5,
+      6,
+      7,
+      8
+     ],
+     "current": 8
+    }
+   ]
+  },
+  {
+   "name": "ctrl+a then arrow",
+   "steps": [
+    {
+     "kind": "click",
+     "what": 4,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      4
+     ],
+     "order": [
+      4
+     ],
+     "current": 4
+    },
+    {
+     "kind": "key",
+     "what": "a",
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+     ],
+     "order": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+     ],
+     "current": 4
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      5
+     ],
+     "order": [
+      5
+     ],
+     "current": 5
+    }
+   ]
+  },
+  {
+   "name": "ctrl move then shift arrow",
+   "steps": [
+    {
+     "kind": "click",
+     "what": 2,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      2
+     ],
+     "order": [
+      2
+     ],
+     "current": 2
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      2
+     ],
+     "order": [
+      2
+     ],
+     "current": 3
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      2
+     ],
+     "order": [
+      2
+     ],
+     "current": 4
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      4,
+      5
+     ],
+     "order": [
+      4,
+      5
+     ],
+     "current": 5
+    }
+   ]
+  },
+  {
+   "name": "ctrl move then shift click",
+   "steps": [
+    {
+     "kind": "click",
+     "what": 2,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      2
+     ],
+     "order": [
+      2
+     ],
+     "current": 2
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      2
+     ],
+     "order": [
+      2
+     ],
+     "current": 3
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      2
+     ],
+     "order": [
+      2
+     ],
+     "current": 4
+    },
+    {
+     "kind": "click",
+     "what": 7,
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      4,
+      5,
+      6,
+      7
+     ],
+     "order": [
+      4,
+      5,
+      6,
+      7
+     ],
+     "current": 7
+    }
+   ]
+  },
+  {
+   "name": "space selects the current row",
+   "steps": [
+    {
+     "kind": "click",
+     "what": 2,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      2
+     ],
+     "order": [
+      2
+     ],
+     "current": 2
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      2
+     ],
+     "order": [
+      2
+     ],
+     "current": 3
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      2
+     ],
+     "order": [
+      2
+     ],
+     "current": 4
+    },
+    {
+     "kind": "key",
+     "what": "space",
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      2,
+      4
+     ],
+     "order": [
+      2,
+      4
+     ],
+     "current": 4
+    },
+    {
+     "kind": "key",
+     "what": "space",
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      2,
+      4
+     ],
+     "order": [
+      2,
+      4
+     ],
+     "current": 4
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      2,
+      4,
+      5
+     ],
+     "order": [
+      2,
+      4,
+      5
+     ],
+     "current": 5
+    }
+   ]
+  },
+  {
+   "name": "shift space",
+   "steps": [
+    {
+     "kind": "click",
+     "what": 2,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      2
+     ],
+     "order": [
+      2
+     ],
+     "current": 2
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      2
+     ],
+     "order": [
+      2
+     ],
+     "current": 3
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": true,
+     "shift": false,
+     "selected": [
+      2
+     ],
+     "order": [
+      2
+     ],
+     "current": 4
+    },
+    {
+     "kind": "key",
+     "what": "space",
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      2,
+      4
+     ],
+     "order": [
+      2,
+      4
+     ],
+     "current": 4
+    }
+   ]
+  },
+  {
+   "name": "drag down",
+   "steps": [
+    {
+     "kind": "drag",
+     "what": [
+      1,
+      4
+     ],
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      1,
+      2,
+      3,
+      4
+     ],
+     "order": [
+      1,
+      2,
+      3,
+      4
+     ],
+     "current": 4
+    }
+   ]
+  },
+  {
+   "name": "drag up",
+   "steps": [
+    {
+     "kind": "drag",
+     "what": [
+      6,
+      3
+     ],
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      3,
+      4,
+      5,
+      6
+     ],
+     "order": [
+      3,
+      4,
+      5,
+      6
+     ],
+     "current": 3
+    }
+   ]
+  },
+  {
+   "name": "drag then shift arrow",
+   "steps": [
+    {
+     "kind": "drag",
+     "what": [
+      1,
+      4
+     ],
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      1,
+      2,
+      3,
+      4
+     ],
+     "order": [
+      1,
+      2,
+      3,
+      4
+     ],
+     "current": 4
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": false,
+     "shift": true,
+     "selected": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "order": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "current": 5
+    }
+   ]
+  },
+  {
+   "name": "arrow after ctrl-click off",
+   "steps": [
+    {
+     "kind": "click",
+     "what": 4,
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      4
+     ],
+     "order": [
+      4
+     ],
+     "current": 4
+    },
+    {
+     "kind": "click",
+     "what": 4,
+     "ctrl": true,
+     "shift": false,
+     "selected": [],
+     "order": [],
+     "current": 4
+    },
+    {
+     "kind": "key",
+     "what": "down",
+     "ctrl": false,
+     "shift": false,
+     "selected": [
+      5
+     ],
+     "order": [
+      5
+     ],
+     "current": 5
+    }
+   ]
+  }
+ ],
+ "no_copy_callable": {
+  "selected": [
+   3,
+   4,
+   5
+  ],
+  "current": 5,
+  "current_cells": [
+   "6",
+   "/tmp/tmpbkf78kcg/05_bmp_gray.bmp",
+   "bitmap",
+   "4.57 KB"
+  ],
+  "clipboard": "6"
+ },
+ "log": {
+  "seeds": [
+   {
+    "url": "https://example.com/post/1",
+    "hash": "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b"
+   },
+   {
+    "url": "https://example.com/post/2",
+    "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+   },
+   {
+    "url": "https://example.com/post/3",
+    "hash": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c"
+   },
+   {
+    "url": "https://example.com/post/4",
+    "hash": null
+   },
+   {
+    "url": "https://example.com/post/5",
+    "hash": null
+   }
+  ],
+  "sequences": [
+   {
+    "name": "enter on a range",
+    "steps": [
+     {
+      "kind": "click",
+      "what": 0,
+      "ctrl": false,
+      "shift": false,
+      "selected": [
+       0
+      ],
+      "order": [
+       0
+      ],
+      "current": 0,
+      "pubs": [],
+      "menus": [],
+      "clipboard": "before"
+     },
+     {
+      "kind": "key",
+      "what": "down",
+      "ctrl": false,
+      "shift": true,
+      "selected": [
+       0,
+       1
+      ],
+      "order": [
+       0,
+       1
+      ],
+      "current": 1,
+      "pubs": [],
+      "menus": [],
+      "clipboard": "before"
+     },
+     {
+      "kind": "key",
+      "what": "enter",
+      "ctrl": false,
+      "shift": false,
+      "selected": [
+       0,
+       1
+      ],
+      "order": [
+       0,
+       1
+      ],
+      "current": 1,
+      "pubs": [
+       {
+        "topic": "new_page_query",
+        "hashes": [
+         "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+         "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+        ]
+       }
+      ],
+      "menus": [],
+      "clipboard": "before"
+     }
+    ]
+   },
+   {
+    "name": "keypad enter",
+    "steps": [
+     {
+      "kind": "click",
+      "what": 1,
+      "ctrl": false,
+      "shift": false,
+      "selected": [
+       1
+      ],
+      "order": [
+       1
+      ],
+      "current": 1,
+      "pubs": [],
+      "menus": [],
+      "clipboard": "before"
+     },
+     {
+      "kind": "key",
+      "what": "keypad enter",
+      "ctrl": false,
+      "shift": false,
+      "selected": [
+       1
+      ],
+      "order": [
+       1
+      ],
+      "current": 1,
+      "pubs": [
+       {
+        "topic": "new_page_query",
+        "hashes": [
+         "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+        ]
+       }
+      ],
+      "menus": [],
+      "clipboard": "before"
+     }
+    ]
+   },
+   {
+    "name": "enter with nothing selected",
+    "steps": [
+     {
+      "kind": "click",
+      "what": 1,
+      "ctrl": false,
+      "shift": false,
+      "selected": [
+       1
+      ],
+      "order": [
+       1
+      ],
+      "current": 1,
+      "pubs": [],
+      "menus": [],
+      "clipboard": "before"
+     },
+     {
+      "kind": "click",
+      "what": 1,
+      "ctrl": true,
+      "shift": false,
+      "selected": [],
+      "order": [],
+      "current": 1,
+      "pubs": [],
+      "menus": [],
+      "clipboard": "before"
+     },
+     {
+      "kind": "key",
+      "what": "enter",
+      "ctrl": false,
+      "shift": false,
+      "selected": [],
+      "order": [],
+      "current": 1,
+      "pubs": [],
+      "menus": [],
+      "clipboard": "before"
+     }
+    ]
+   },
+   {
+    "name": "enter on rows with no file",
+    "steps": [
+     {
+      "kind": "click",
+      "what": 3,
+      "ctrl": false,
+      "shift": false,
+      "selected": [
+       3
+      ],
+      "order": [
+       3
+      ],
+      "current": 3,
+      "pubs": [],
+      "menus": [],
+      "clipboard": "before"
+     },
+     {
+      "kind": "key",
+      "what": "down",
+      "ctrl": false,
+      "shift": true,
+      "selected": [
+       3,
+       4
+      ],
+      "order": [
+       3,
+       4
+      ],
+      "current": 4,
+      "pubs": [],
+      "menus": [],
+      "clipboard": "before"
+     },
+     {
+      "kind": "key",
+      "what": "enter",
+      "ctrl": false,
+      "shift": false,
+      "selected": [
+       3,
+       4
+      ],
+      "order": [
+       3,
+       4
+      ],
+      "current": 4,
+      "pubs": [],
+      "menus": [],
+      "clipboard": "before"
+     }
+    ]
+   },
+   {
+    "name": "ctrl+c",
+    "steps": [
+     {
+      "kind": "click",
+      "what": 1,
+      "ctrl": false,
+      "shift": false,
+      "selected": [
+       1
+      ],
+      "order": [
+       1
+      ],
+      "current": 1,
+      "pubs": [],
+      "menus": [],
+      "clipboard": "before"
+     },
+     {
+      "kind": "click",
+      "what": 3,
+      "ctrl": true,
+      "shift": false,
+      "selected": [
+       1,
+       3
+      ],
+      "order": [
+       1,
+       3
+      ],
+      "current": 3,
+      "pubs": [],
+      "menus": [],
+      "clipboard": "before"
+     },
+     {
+      "kind": "key",
+      "what": "c",
+      "ctrl": true,
+      "shift": false,
+      "selected": [
+       1,
+       3
+      ],
+      "order": [
+       1,
+       3
+      ],
+      "current": 3,
+      "pubs": [
+       {
+        "topic": "clipboard",
+        "args": [
+         "text",
+         "https://example.com/post/2\nhttps://example.com/post/4"
+        ]
+       }
+      ],
+      "menus": [],
+      "clipboard": "before"
+     }
+    ]
+   },
+   {
+    "name": "ctrl+insert",
+    "steps": [
+     {
+      "kind": "click",
+      "what": 2,
+      "ctrl": false,
+      "shift": false,
+      "selected": [
+       2
+      ],
+      "order": [
+       2
+      ],
+      "current": 2,
+      "pubs": [],
+      "menus": [],
+      "clipboard": "before"
+     },
+     {
+      "kind": "key",
+      "what": "down",
+      "ctrl": false,
+      "shift": true,
+      "selected": [
+       2,
+       3
+      ],
+      "order": [
+       2,
+       3
+      ],
+      "current": 3,
+      "pubs": [],
+      "menus": [],
+      "clipboard": "before"
+     },
+     {
+      "kind": "key",
+      "what": "insert",
+      "ctrl": true,
+      "shift": false,
+      "selected": [
+       2,
+       3
+      ],
+      "order": [
+       2,
+       3
+      ],
+      "current": 3,
+      "pubs": [
+       {
+        "topic": "clipboard",
+        "args": [
+         "text",
+         "https://example.com/post/3\nhttps://example.com/post/4"
+        ]
+       }
+      ],
+      "menus": [],
+      "clipboard": "before"
+     }
+    ]
+   },
+   {
+    "name": "ctrl+c with nothing selected",
+    "steps": [
+     {
+      "kind": "click",
+      "what": 1,
+      "ctrl": false,
+      "shift": false,
+      "selected": [
+       1
+      ],
+      "order": [
+       1
+      ],
+      "current": 1,
+      "pubs": [],
+      "menus": [],
+      "clipboard": "before"
+     },
+     {
+      "kind": "click",
+      "what": 1,
+      "ctrl": true,
+      "shift": false,
+      "selected": [],
+      "order": [],
+      "current": 1,
+      "pubs": [],
+      "menus": [],
+      "clipboard": "before"
+     },
+     {
+      "kind": "key",
+      "what": "c",
+      "ctrl": true,
+      "shift": false,
+      "selected": [],
+      "order": [],
+      "current": 1,
+      "pubs": [],
+      "menus": [],
+      "clipboard": "1"
+     }
+    ]
+   },
+   {
+    "name": "double-click",
+    "steps": [
+     {
+      "kind": "click",
+      "what": 0,
+      "ctrl": false,
+      "shift": false,
+      "selected": [
+       0
+      ],
+      "order": [
+       0
+      ],
+      "current": 0,
+      "pubs": [],
+      "menus": [],
+      "clipboard": "before"
+     },
+     {
+      "kind": "click",
+      "what": 2,
+      "ctrl": false,
+      "shift": true,
+      "selected": [
+       0,
+       1,
+       2
+      ],
+      "order": [
+       0,
+       1,
+       2
+      ],
+      "current": 2,
+      "pubs": [],
+      "menus": [],
+      "clipboard": "before"
+     },
+     {
+      "kind": "double",
+      "what": 1,
+      "ctrl": false,
+      "shift": false,
+      "selected": [
+       1
+      ],
+      "order": [
+       1
+      ],
+      "current": 1,
+      "pubs": [
+       {
+        "topic": "new_page_query",
+        "hashes": [
+         "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+        ]
+       }
+      ],
+      "menus": [],
+      "clipboard": "before"
+     }
+    ]
+   },
+   {
+    "name": "right-click a row",
+    "steps": [
+     {
+      "kind": "click",
+      "what": 0,
+      "ctrl": false,
+      "shift": false,
+      "selected": [
+       0
+      ],
+      "order": [
+       0
+      ],
+      "current": 0,
+      "pubs": [],
+      "menus": [],
+      "clipboard": "before"
+     },
+     {
+      "kind": "click",
+      "what": 2,
+      "ctrl": false,
+      "shift": true,
+      "selected": [
+       0,
+       1,
+       2
+      ],
+      "order": [
+       0,
+       1,
+       2
+      ],
+      "current": 2,
+      "pubs": [],
+      "menus": [],
+      "clipboard": "before"
+     },
+     {
+      "kind": "right",
+      "what": 1,
+      "ctrl": false,
+      "shift": false,
+      "selected": [
+       0,
+       1,
+       2
+      ],
+      "order": [
+       0,
+       1,
+       2
+      ],
+      "current": 1,
+      "pubs": [],
+      "menus": [
+       [
+        "open selected files in a new page",
+        "copy urls",
+        "copy notes"
+       ]
+      ],
+      "clipboard": "before"
+     },
+     {
+      "kind": "right",
+      "what": 4,
+      "ctrl": false,
+      "shift": false,
+      "selected": [
+       4
+      ],
+      "order": [
+       4
+      ],
+      "current": 4,
+      "pubs": [],
+      "menus": [
+       [
+        "copy urls",
+        "copy notes",
+        "open URLs"
+       ]
+      ],
+      "clipboard": "before"
+     }
+    ]
+   }
+  ]
+ }
+}

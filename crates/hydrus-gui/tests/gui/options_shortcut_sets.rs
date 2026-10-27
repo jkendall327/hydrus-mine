@@ -6,7 +6,7 @@ use hydrus_gui::{MainWindow, OptionsWindow, Pages, SearchPage, bind, headless};
 use hydrus_gui_model::shortcut_sets as sets;
 use slint::{ComponentHandle as _, Model as _};
 
-fn options(ui: &MainWindow, bound: &hydrus_gui::Bound) -> OptionsWindow {
+pub(crate) fn options(ui: &MainWindow, bound: &hydrus_gui::Bound) -> OptionsWindow {
     ui.invoke_menu_title_pressed(0, 20.0, 22.0);
     let lines = ui.get_menu_panes().row_data(0).unwrap().lines;
     let index = lines
@@ -51,7 +51,7 @@ fn pair(name: &str, count: &str) -> (String, String) {
 }
 
 /// Add a captured key to the open set editor.
-fn add_key(sets_window: &hydrus_gui::ShortcutSetWindow, key: &str) {
+pub(crate) fn add_key(sets_window: &hydrus_gui::ShortcutSetWindow, key: &str) {
     sets_window.invoke_action("add".into());
     let command = hydrus_gui::shortcut_windows::last_command().unwrap();
     command.invoke_key_capture(key.into(), 0);

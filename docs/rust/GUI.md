@@ -6079,3 +6079,29 @@ enabled state.
   RESULTS BREAK ***".
 - After "fetch example data" the page URL box keeps what you typed; the parse
   context uses the encoded URL.
+
+## List keys and the thumbnail grid's pointer
+
+Every list built on the shared list (`ui/list_table.slint`, about fifty
+dialogs and panels, now including "review files to import" and "edit
+favourite searches") takes the keys of the reference's lists once a row is
+clicked: the arrows, Home/End and PageUp/PageDown move the current row and
+select it alone (with Shift, from the anchor to it; with Ctrl, only the
+current row moves, and a later Shift range starts there), Space selects the
+current row and Ctrl+Space toggles it, Ctrl+A selects all, Enter does what a
+double-click does, Ctrl+C (or Ctrl+Insert) copies, and Delete deletes. A
+page is the row a list's height below (or above), and the row moved to is
+scrolled into view. Ctrl+C in the file and search logs copies the selected
+rows' sources or URLs, as their "copy" entries do; in other lists, or with
+nothing selected, it copies the current row's first cell, as Qt's own lists
+do. The duplicates auto-resolution review's pair lists take the same keys
+(Enter opens the current pair). Recorded on the reference's real lists
+(`oracle/record_list_keys.py`) and replayed with real key and pointer
+events (`tests/gui/list_keys.rs`), with clicks, ctrl/shift clicks,
+drag-selecting, double-clicks and the file log's row menu.
+
+On the thumbnail grid, a middle press on a thumbnail opens the media viewer
+on it without changing the selection, and a middle press between
+thumbnails does nothing, as the reference's default grid does; clicks,
+double-clicks and right presses are replayed against the same recording
+(`oracle/record_thumbnail_pointer.py`, `tests/gui/thumbnail_pointer.rs`).

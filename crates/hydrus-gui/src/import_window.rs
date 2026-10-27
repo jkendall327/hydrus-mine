@@ -11,8 +11,8 @@ use std::time::Duration;
 use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
 
 use crate::list_selection::ListSelection;
-use crate::local_import::{Parse, Review};
-use crate::{ImportRow, ReviewImportsWindow};
+use crate::local_import::Review;
+use crate::{ReviewImportsWindow, TableRow};
 
 /// What "import now" hands on: the good files, each with its modified time
 /// (seconds), tags for some, the sidecar routers to read each one's
@@ -73,7 +73,7 @@ pub(crate) fn open(
             let review = review.borrow();
             let selected = selection.borrow();
             let formatting = hydrus_gui_model::gui_format::preferences(&store);
-            let rows: Vec<ImportRow> = review
+            let rows: Vec<TableRow> = review
                 .parsed()
                 .iter()
                 .enumerate()
@@ -83,10 +83,9 @@ pub(crate) fn open(
                         .iter()
                         .map(|c| c.as_str().into())
                         .collect();
-                    ImportRow {
+                    TableRow {
                         cells: ModelRc::new(VecModel::from(cells)),
                         selected: selected.is_selected(i),
-                        problem: !matches!(parsed.result, Parse::Good(_) | Parse::Sidecar),
                     }
                 })
                 .collect();

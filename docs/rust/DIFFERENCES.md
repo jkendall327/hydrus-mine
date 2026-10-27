@@ -5726,3 +5726,43 @@ off:
   reference never records them here); GIF and BMP follow the same rules.
 - Only the first frame of a GIF follows the setting; frames of an animation
   decode as before.
+
+## Lists' keys and pointer (`ListTable`, `ListKeys`)
+
+Checked by `tests/gui/list_keys.rs` against `oracle/fixtures/list_keys.json`.
+
+- **Enter activates through the current row.** The reference's activation
+  acts on the selection whatever the current row is; hydrus-rs's lists
+  activate through the current row, and only when it is selected. After
+  ctrl+arrows have moved the current row off the selection, Enter does
+  nothing here, where the reference would act on the rows still selected
+  (so too when the window selected rows itself and the first row, current
+  as in Qt, is not one of them). And many windows answer an activation by
+  selecting the row given first (their `row-activated` clicks it, as a
+  double-click's first press would; `client_api_admin.slint` for one), so
+  Enter on a multi-selection there acts on the current row alone, where
+  the reference acts on the whole selection. The pair lists of the
+  duplicates auto-resolution review activate the current row, as their Qt
+  table views do.
+- **Qt's Ctrl+C copies the current cell; hydrus-rs copies its row's first
+  cell.** Qt copies the cell of the column last clicked; hydrus-rs does
+  not track a current column.
+- **After a list is re-sorted, the current row is the same place, not the
+  same item** (Qt's current index follows its item); a selected row is
+  still selected, and the next arrow moves from where the current row now
+  is.
+- **The keys reach a window through the list's click callback.** Ctrl+A and
+  ctrl+arrows (which move only the anchor) are clicks on two rows past any
+  list's end (`list_selection::SELECT_ALL`, `MOVE_ANCHOR`), which
+  `ListSelection::click` reads, so every list that selects through
+  `ListSelection` takes them without wiring of its own. Lists that keep one
+  row (the shortcut set editor, the tag display sources, the login
+  script's test results, the database locations, the parser editors'
+  content parsers) and the manage-tags suggestion lists ignore them, so
+  Ctrl+A does nothing there; in the reference, Ctrl+A on a single-selection
+  list does nothing too. The "select the defaults to add" list, whose click
+  toggles a row, takes no keys at all (the reference's is a check list,
+  where arrows move and Space toggles).
+- **Lists not on the shared list.** The tag lists (#286) and the
+  queue-style lists (`AddEditDeleteListBox`, `BetterQListWidget`) keep
+  their own keys, covered by their dialogs.

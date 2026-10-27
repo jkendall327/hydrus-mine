@@ -45,7 +45,7 @@ export { WriteTagsWindow } from "write_autocomplete.slint";
 export { TagTextHistory, TagTextHistoryState, TagTextEdit, TagTextState } from "write_tag_line_edit.slint";
 export { ExternalProgramEntryWindow } from "external_program_entry.slint";
 export { TableColumn, TableRow }
-export { FavouriteEditWindow, FavouriteListRow, FavouritesWindow } from "favourites.slint";
+export { FavouriteEditWindow, FavouritesWindow } from "favourites.slint";
 export { SubscriptionGalleryWindow, SubscriptionsWindow, Tick } from "subscriptions.slint";
 
 import { ThumbnailCellPaint, ThumbnailPaint, Thumbnail } from "thumbnail_paint.slint";
@@ -201,6 +201,15 @@ component ThumbnailGrid inherits ListView {
                         let column = root.thumbnail-at(row.thumbnails.length, self.mouse-x, self.mouse-y);
                         root.menu-requested(column >= 0 ? row.first + column : -1,
                             self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y);
+                    }
+                    // a middle press opens the viewer on the thumbnail, the
+                    // selection untouched (the reference's default grid,
+                    // `oracle/fixtures/thumbnail_pointer.json`)
+                    if (event.button == PointerEventButton.middle) {
+                        let column = root.thumbnail-at(row.thumbnails.length, self.mouse-x, self.mouse-y);
+                        if (column >= 0) {
+                            root.activated(row.first + column);
+                        }
                     }
                 }
             }
@@ -2485,7 +2494,7 @@ export { ViewerEyeMenu } from "viewer_eye_menu.slint";
 export { Btn } from "btn.slint";
 export { TagTextRun } from "theme.slint";
 export { Question } from "favourites.slint";
-export { ListTable } from "list_table.slint";
+export { ListKeys, ListTable } from "list_table.slint";
 export { MenuChoiceFrame, WheelMenuChoice } from "menu_choice_wheel.slint";
 export { SortCollectCog } from "sort_collect_cog.slint";
 export { Asking } from "subscriptions.slint";

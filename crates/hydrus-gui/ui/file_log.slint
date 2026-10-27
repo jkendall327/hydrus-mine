@@ -41,6 +41,9 @@ export component FileLogWindow inherits Window {
     // the whole log's menu, from its button
     callback log-menu(length, length);
     callback delete-pressed();
+    // Ctrl+C on the list: the selected rows' sources copied (and whether
+    // any were; if not, the list copies its current cell, as Qt's does)
+    callback copy-pressed() -> bool;
     callback menu-line-hovered(int, int, length, length, length);
     callback menu-line-clicked(int, int, length, length, length);
     callback menu-placed(int, length, length, length);
@@ -92,6 +95,7 @@ export component FileLogWindow inherits Window {
                 row-activated(row) => { root.row-activated(row); }
                 row-menu(row, x, y) => { if !root.asking && !root.busy { root.row-menu(row, x, y); } }
                 delete-pressed => { root.delete-pressed(); }
+                copy-pressed => { root.copy-pressed() }
             }
             if root.asking: Asking {
                 title: root.asking-title;

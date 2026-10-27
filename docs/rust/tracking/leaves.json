@@ -25333,11 +25333,12 @@
    "workstream": "search-pages",
    "state": "missing",
    "priority": "normal",
-   "reference": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:177, hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:1022",
+   "reference": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:4099-4137",
    "native": "crates/hydrus-gui/ui/main.slint:190-215",
    "notes": [
     "Reference: MediaResultsPanelThumbnails registers EVT_MIDDLE_DOWN -> EventMouseFullScreen (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:177, :1022), the same handler as the left double-click (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:176): on a local file it opens the viewer; on a file that is not local but is current on a remote file service it downloads it (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:1036-1040). Middle on empty space does nothing (_GetThumbnailUnderMouse is None). The press also reaches _InnerWidget.mousePressEvent (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:2016), which selects the thumbnail as a click would.",
-    "Native: ThumbnailGrid's TouchArea (ui/main.slint:190-215) handles click, right press and double-click only; no middle press. The remote-download branch needs remote file services, which are out of scope (DECISIONS 2026-09-29), so only the viewer part applies. Found by the interaction audit (scripts/interaction_audit.py)."
+    "Native: ThumbnailGrid's TouchArea (ui/main.slint:190-215) handles click, right press and double-click only; no middle press. The remote-download branch needs remote file services, which are out of scope (DECISIONS 2026-09-29), so only the viewer part applies. Found by the interaction audit (scripts/interaction_audit.py).",
+    "Correction (#288): v688's default grid is MediaResultsPanelThumbnailsGraphicsViewTest (the option test_thumbnails_graphics_view is on in a new client, hydrus/client/ClientOptions.py:371), not the older MediaResultsPanelThumbnails the audit read; the recording (oracle/record_thumbnail_pointer.py) drives the default. Its mousePressEvent opens the viewer on a middle press on a thumbnail (ShowMediaFullScreen) without selecting it, with or without ctrl/shift, and does nothing on a middle press on empty space. Native: ui/main.slint ThumbnailGrid's pointer-event, a middle press on a thumbnail -> activated."
    ]
   },
   {
@@ -25347,11 +25348,12 @@
    "workstream": "search-pages",
    "state": "implemented",
    "priority": "normal",
-   "reference": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:2016-2028, hydrus/client/gui/pages/ClientGUIMediaResultsPanel.py:721",
+   "reference": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:4099-4137, hydrus/client/gui/pages/ClientGUIMediaResultsPanel.py:721",
    "native": "crates/hydrus-gui/ui/main.slint:190-215, :2170-2210",
    "notes": [
     "Reference: _InnerWidget.mousePressEvent (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:2016-2028) calls _HitMedia(thumbnail under the mouse, ctrl, shift) for every button except a right press on empty space, which is skipped so the selection stays; a press on empty space with no thumbnail clears the selection (_HitMedia with None). Ctrl toggles, shift extends from the last click (MediaResultsPanel._HitMedia, ClientGUIMediaResultsPanel.py:721).",
-    "Native: ui/main.slint ThumbnailGrid clicked / thumbnail-clicked with ctrl and shift, and the empty-space TouchArea; tests call the callbacks, not pointer events. (The reference's MediaResultsPanelThumbnailsGraphicsViewTest class is an experimental unused port and is not the source.)"
+    "Native: ui/main.slint ThumbnailGrid clicked / thumbnail-clicked with ctrl and shift, and the empty-space TouchArea; tests call the callbacks, not pointer events. (The reference's MediaResultsPanelThumbnailsGraphicsViewTest class is an experimental unused port and is not the source.)",
+    "Correction (#288): v688's default grid is MediaResultsPanelThumbnailsGraphicsViewTest (the option test_thumbnails_graphics_view is on in a new client, hydrus/client/ClientOptions.py:371), not the older MediaResultsPanelThumbnails the audit read; the recording (oracle/record_thumbnail_pointer.py) drives the default. Its mousePressEvent _HitMedia's the thumbnail pressed (left or right, with ctrl/shift) and clears on a left press on empty space; a right press on empty space changes nothing."
    ]
   },
   {
@@ -25361,11 +25363,12 @@
    "workstream": "search-pages",
    "state": "implemented",
    "priority": "normal",
-   "reference": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:176, hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:1022",
+   "reference": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:4023",
    "native": "crates/hydrus-gui/ui/main.slint:212",
    "notes": [
     "Reference: EVT_LEFT_DCLICK -> EventMouseFullScreen (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:176, :1022): on a local thumbnail it opens the viewer on it; on a remote-only file it downloads it (remote services out of scope).",
-    "Native: ui/main.slint:212 double-clicked => activated. Tests invoke the callback; none sends a real double-click."
+    "Native: ui/main.slint:212 double-clicked => activated. Tests invoke the callback; none sends a real double-click.",
+    "Correction (#288): v688's default grid is MediaResultsPanelThumbnailsGraphicsViewTest (the option test_thumbnails_graphics_view is on in a new client, hydrus/client/ClientOptions.py:371), not the older MediaResultsPanelThumbnails the audit read; the recording (oracle/record_thumbnail_pointer.py) drives the default. mouseDoubleClickEvent opens the viewer on the thumbnail (ShowMediaFullScreen)."
    ]
   },
   {
@@ -25375,11 +25378,12 @@
    "workstream": "search-pages",
    "state": "implemented",
    "priority": "normal",
-   "reference": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:195, hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:1871",
+   "reference": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:3360",
    "native": "crates/hydrus-gui/ui/main.slint:197-205, :2201",
    "notes": [
     "Reference: customContextMenuRequested -> ShowMenuFromSignal (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:195, :1871); the press that precedes it selects the thumbnail (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:2016-2028) except on empty space, where the empty-space menu shows and the selection is untouched.",
-    "Native: ui/main.slint menu-requested; GUI.md says the menu is recorded (record_thumbnail_menu.py). The pointer path to it is untested."
+    "Native: ui/main.slint menu-requested; GUI.md says the menu is recorded (record_thumbnail_menu.py). The pointer path to it is untested.",
+    "Correction (#288): v688's default grid is MediaResultsPanelThumbnailsGraphicsViewTest (the option test_thumbnails_graphics_view is on in a new client, hydrus/client/ClientOptions.py:371), not the older MediaResultsPanelThumbnails the audit read; the recording (oracle/record_thumbnail_pointer.py) drives the default. contextMenuEvent shows the menu (ShowMenu) after the press has selected the thumbnail, or on empty space with the selection untouched."
    ]
   },
   {
@@ -25436,7 +25440,8 @@
    "notes": [
     "Reference: BetterListCtrlTreeView: left double-click activates (hydrus/client/gui/lists/ClientGUIListCtrl.py:1075 mouseDoubleClickEvent), right-click on rows shows the rows menu (hydrus/client/gui/lists/ClientGUIListCtrl.py:881; the header's column menu is :621, a separate behaviour), selection by click/ctrl/shift/drag is QTreeView's.",
     "Native: ui/list_table.slint touch area (down/up/moved/double-clicked, row-menu, row-middle) provides all of it for lists built on ListTable. Dialog tests mostly invoke row-activated/row-menu directly.",
-    "Partial because hand-rolled lists outside ListTable have none of it: auto_resolution_review.slint:107-113 and favourites.slint:130-136 (plain rows with a TouchArea, no shift/ctrl, double-click or menu), and the manage-tags list (see interaction-manage-tags-list-menu-keys). The header column menu (:621) has no native counterpart anywhere."
+    "Partial because hand-rolled lists outside ListTable have none of it: auto_resolution_review.slint:107-113 and favourites.slint:130-136 (plain rows with a TouchArea, no shift/ctrl, double-click or menu), and the manage-tags list (see interaction-manage-tags-list-menu-keys). The header column menu (:621) has no native counterpart anywhere.",
+    "#288: the hand-rolled lists the audit names already had ctrl/shift clicks and double-click (and the review's pair list a menu); \"review files to import\" (ui/import_files.slint, which had a hand-rolled list too) and \"edit favourite searches\" are now ListTables, and the review's pair lists take ListKeys. Replayed with real pointer events in tests/gui/list_keys.rs."
    ]
   },
   {

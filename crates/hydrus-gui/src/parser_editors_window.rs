@@ -907,9 +907,8 @@ fn open_editor(
             }
             if let Ok(index) = usize::try_from(row) {
                 let mut e = state.borrow_mut();
-                if let Value::Page(page) = &e.value
-                    && index < page.subsidiary.len()
-                {
+                // (past the end: one of the list's keys, which `click` reads)
+                if let Value::Page(page) = &e.value {
                     let order = (0..page.subsidiary.len()).collect::<Vec<_>>();
                     e.subsidiary_selection.click(&order, index, ctrl, shift);
                     e.subsidiary_selected = e.subsidiary_selection.one();
@@ -1362,9 +1361,7 @@ pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserList
                 return;
             }
             let mut s = state.borrow_mut();
-            if let Ok(r) = usize::try_from(r)
-                && r < s.order.len()
-            {
+            if let Ok(r) = usize::try_from(r) {
                 let order = s.order.clone();
                 s.selection.click(&order, r, c, h);
             }
