@@ -5,6 +5,7 @@
 use std::time::Instant;
 
 use slint::ComponentHandle as _;
+use slint::platform::WindowAdapter as _;
 
 use hydrus_gui::{MainWindow, Pages, bind, headless};
 
