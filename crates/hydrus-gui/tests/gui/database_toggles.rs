@@ -45,15 +45,7 @@ fn flags(store: &Store) -> [bool; 4] {
 fn shown(ui: &MainWindow) -> [bool; 4] {
     let mut out = [false; 4];
     for (i, (submenu, label)) in LABELS.iter().enumerate() {
-        let database = ui
-            .get_menu_titles()
-            .iter()
-            .position(|t| t.label == "database")
-            .unwrap();
-        ui.invoke_menu_title_pressed(i32::try_from(database).unwrap(), 20.0, 22.0);
-        let pane = ui.get_menu_panes().row_data(0).unwrap();
-        let at = pane.lines.iter().position(|l| l.label == *submenu).unwrap();
-        ui.invoke_menu_line_clicked(0, i32::try_from(at).unwrap(), 0.0, 0.0, 0.0);
+        crate::common::main_menu::open(ui, &["database", submenu]);
         let line = ui
             .get_menu_panes()
             .row_data(1)
@@ -65,7 +57,13 @@ fn shown(ui: &MainWindow) -> [bool; 4] {
         assert_eq!(line.kind, 1, "{label} is a check item");
         assert!(line.usable);
         out[i] = line.checked;
-        ui.invoke_menu_dismissed();
+        // (a press anywhere else closes the menus)
+        crate::common::widgets::click_at(
+            ui.window(),
+            slint::LogicalPosition::new(1050.0, 650.0),
+            slint::platform::PointerEventButton::Left,
+        );
+        assert_eq!(ui.get_menu_open(), -1, "a click elsewhere closes the menu");
     }
     out
 }

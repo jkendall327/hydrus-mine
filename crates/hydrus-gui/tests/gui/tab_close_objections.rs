@@ -107,18 +107,22 @@ fn labels(ui: &MainWindow, pane: usize) -> Vec<String> {
         .collect()
 }
 
+/// Click the line `label` of the open menu's `pane`, where it is drawn.
 fn choose(ui: &MainWindow, pane: usize, label: &str) {
-    let at = labels(ui, pane)
-        .iter()
-        .position(|l| l == label)
-        .unwrap_or_else(|| panic!("{label:?} in {:?}", labels(ui, pane)));
-    ui.invoke_menu_line_clicked(
-        i32::try_from(pane).unwrap(),
-        i32::try_from(at).unwrap(),
-        200.0,
-        100.0,
-        10.0,
+    assert!(
+        labels(ui, pane).iter().any(|l| l == label),
+        "{label:?} in {:?}",
+        labels(ui, pane)
     );
+    let window = ui.window();
+    // (the open menus are drawn over everything: the last match)
+    widgets::click_nth(window, label, widgets::count(window, label) - 1);
+}
+
+/// Right-click the tab at `index` of the top row, as a user opens its menu.
+fn right_click_tab(ui: &MainWindow, index: usize) {
+    widgets::lay_out(ui.window(), 1100.0, 700.0);
+    widgets::right_click(ui.window(), &names(ui)[index]);
 }
 
 /// The notebook as the recorder built it: a, imp1 (3 URLs), b, imp2 (2), c.
@@ -195,7 +199,7 @@ fn closing_pages_with_importers_asks_as_the_reference_does() {
         // (the dialog's yes waits; the check that it does is below, with
         // a long wait; here it is short so that the answer can be given)
         reasons_dialog::set_yes_delay(Some(Duration::ZERO));
-        ui.invoke_tab_menu_requested(0, index, 30.0, 55.0);
+        right_click_tab(&ui, usize::try_from(index).unwrap());
         choose(&ui, 0, entry);
         if let Some(sub) = sub.first() {
             choose(&ui, 1, sub);
@@ -309,7 +313,7 @@ fn the_dialogs_yes_waits_before_it_can_be_pressed() {
     let (ui, _bound) = open(&store);
     // a minute: the check cannot be late
     reasons_dialog::set_yes_delay(Some(Duration::from_secs(60)));
-    ui.invoke_tab_menu_requested(0, 0, 30.0, 55.0);
+    right_click_tab(&ui, 0);
     choose(&ui, 0, "close other pages");
     let dialog = reasons_dialog::dialog().unwrap();
     widgets::lay_out(dialog.window(), 480.0, 300.0);
@@ -329,7 +333,7 @@ fn the_dialogs_yes_waits_before_it_can_be_pressed() {
     // after a short wait it can be pressed (a wait only bounds from one side)
     dialog.hide().unwrap();
     reasons_dialog::set_yes_delay(Some(Duration::from_millis(30)));
-    ui.invoke_tab_menu_requested(0, 0, 30.0, 55.0);
+    right_click_tab(&ui, 0);
     choose(&ui, 0, "close other pages");
     let dialog = reasons_dialog::dialog().unwrap();
     widgets::lay_out(dialog.window(), 480.0, 300.0);

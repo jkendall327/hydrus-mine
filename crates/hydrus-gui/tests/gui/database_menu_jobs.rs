@@ -40,16 +40,10 @@ pub fn choose(ui: &MainWindow, pane: i32, label: &str) {
 
 /// database > each of `submenus` in turn > `label`
 pub fn from_menu_path(ui: &MainWindow, submenus: &[&str], label: &str) {
-    let database = ui
-        .get_menu_titles()
-        .iter()
-        .position(|title| title.label == "database")
-        .unwrap();
-    ui.invoke_menu_title_pressed(i32::try_from(database).unwrap(), 20.0, 22.0);
-    for (pane, submenu) in submenus.iter().enumerate() {
-        choose(ui, i32::try_from(pane).unwrap(), submenu);
-    }
-    choose(ui, i32::try_from(submenus.len()).unwrap(), label);
+    // (clicks and hovers at the entries' laid-out places)
+    let mut path = vec!["database"];
+    path.extend_from_slice(submenus);
+    crate::common::main_menu::choose(ui, &path, label);
 }
 
 /// database > `submenu` > `label…`
