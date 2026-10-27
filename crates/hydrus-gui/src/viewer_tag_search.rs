@@ -188,6 +188,7 @@ pub(crate) fn bind(
                         search: None,
                         select: false,
                         display: model.tag_display_type(),
+                        decorators: false,
                         advanced,
                         location: model.location().clone(),
                         tags: hydrus_search::TagContext::new(defaults.tag_service, true, true),

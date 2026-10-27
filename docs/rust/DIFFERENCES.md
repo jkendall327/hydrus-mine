@@ -5299,9 +5299,12 @@ Differences:
   choices as its buttons (the reference's local services never offer more); the
   per-choice tooltips are computed (and tested) but not yet shown (Slint 1.18's
   `Tooltip` could carry them).
-- Clicking an expanded parent row selects that row, but remove and copy use only
-  the selected tag rows, not the parent rows; activating a parent row enters its
-  originating tag, as the reference does.
+- The tag list's menu (`oracle/record_manage_tags_list.py`) has no "tag display"
+  switch in advanced mode: the reference's offers to show the list's display
+  tags instead of the stored ones, which the dialog's list does not draw. The
+  list also lacks what the selection tags box lacks: dragging over tags to
+  select a run, scrolling a key-moved tag into view, and the keyboard going
+  back to the list when its menu closes.
 - The viewer's Manage tags is its own window, not a frame belonging to the viewer;
   it is closed when its own "close" is pressed rather than with the viewer. If a
   Manage tags window opened from a page is already open, F3 in the viewer shows that

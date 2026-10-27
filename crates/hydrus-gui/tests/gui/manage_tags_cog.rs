@@ -529,7 +529,9 @@ fn typing_a_tag_or_activating_a_row_toggles_it_as_the_reference_does() {
         let m = &o.manage;
         let before = current_tags(&o.store, &o.files);
         if activated {
-            m.invoke_tag_activated(row_of(m, tags[0]));
+            // (a double-click: its first click selects the row)
+            m.invoke_tag_clicked(row_of(m, tags[0]), false, false);
+            m.invoke_tag_activated(row_of(m, tags[0]), false, false);
         } else {
             m.set_text(tags[0].into());
             m.invoke_text_edited(tags[0].into());

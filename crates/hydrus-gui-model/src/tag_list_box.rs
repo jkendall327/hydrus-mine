@@ -189,6 +189,18 @@ impl TagListBox {
             .collect()
     }
 
+    /// Whether the tag at `logical` (not the drawn row) is selected.
+    pub fn is_selected(&self, logical: usize) -> bool {
+        self.selected.contains(&logical)
+    }
+
+    /// Select just the rows of `tags`.
+    pub fn select_tags(&mut self, tags: &[String]) {
+        self.selected = (0..self.rows.len())
+            .filter(|&i| tags.contains(&self.rows[i].tag))
+            .collect();
+    }
+
     /// Forget the selection (as when activated tags leave the list).
     pub fn deselect_all(&mut self) {
         self.selected.clear();

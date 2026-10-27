@@ -12,7 +12,7 @@
 //! mode, the tag display switch. Those are the list's own entries
 //! ([`Command`], as [`Action::Owner`] ids), done by the window that holds it.
 use crate::tag_list_box::{Decorators, Key, Outcome, Row, TagListBox};
-use crate::write_tag_menu::{Action, Entry, favourite_entries, relationship_entries};
+use crate::write_tag_menu::{Action, Decoration, Entry, favourite_entries, relationship_entries};
 use hydrus_core::numbers::human_int;
 use hydrus_core::search::context::{LocationContext, TagContext};
 use hydrus_core::search::predicate::Predicate;
@@ -55,9 +55,17 @@ pub enum Command {
     HideNamespaces,
     /// "tag display (experimental) > switch to ...".
     Display(TagDisplayType),
+    /// A stored tags list's sibling and parent decorators turned on or off
+    /// (its own, not saved).
+    Decorate(Decoration, bool),
 }
 
 impl Command {
+    const DECORATIONS: [Decoration; 3] = [
+        Decoration::Parents,
+        Decoration::Expanded,
+        Decoration::Siblings,
+    ];
     const PLAIN: [Self; 13] = [
         Self::Add,
         Self::Remove,
@@ -78,6 +86,14 @@ impl Command {
     pub fn id(self) -> i32 {
         match self {
             Self::Display(t) => 100 + i32::try_from(t.code()).unwrap_or(0),
+            Self::Decorate(kind, value) => {
+                200 + 2 * Self::DECORATIONS
+                    .iter()
+                    .position(|k| *k == kind)
+                    .and_then(|i| i32::try_from(i).ok())
+                    .unwrap_or(0)
+                    + i32::from(value)
+            }
             _ => Self::PLAIN
                 .iter()
                 .position(|c| *c == self)
@@ -88,6 +104,12 @@ impl Command {
 
     /// The command with this menu id.
     pub fn from_id(id: i32) -> Option<Self> {
+        if id >= 200 {
+            let i = usize::try_from((id - 200) / 2).ok()?;
+            return Self::DECORATIONS
+                .get(i)
+                .map(|kind| Self::Decorate(*kind, (id - 200) % 2 == 1));
+        }
         if id >= 100 {
             return TagDisplayType::from_code(i64::from(id - 100)).map(Self::Display);
         }
@@ -120,6 +142,9 @@ pub struct Place<'a> {
     pub select: bool,
     /// The tags it shows.
     pub display: TagDisplayType,
+    /// Its rows show siblings and parents (a stored tags list's), which its
+    /// menu turns on and off.
+    pub decorators: bool,
     /// Advanced mode (the tag display switch).
     pub advanced: bool,
     /// Where pages it opens search.
@@ -148,18 +173,54 @@ impl Default for SelectionTags {
 }
 
 impl SelectionTags {
+    /// A list whose rows show siblings and parents as `decorators` say (a
+    /// stored tags list's).
+    pub fn decorated(decorators: Decorators) -> Self {
+        Self {
+            list: TagListBox::new(decorators),
+            texts: Vec::new(),
+        }
+    }
+
     /// New rows, (tag, text drawn): the tags still listed stay selected
     /// (`_UpdateTerms`).
     pub fn set_rows(&mut self, rows: &[(String, String)]) {
-        self.list.replace_rows(
+        self.set_decorated_rows(
             rows.iter()
-                .map(|(tag, _)| Row {
-                    tag: tag.clone(),
-                    ..Row::default()
+                .map(|(tag, text)| {
+                    (
+                        Row {
+                            tag: tag.clone(),
+                            ..Row::default()
+                        },
+                        text.clone(),
+                    )
                 })
                 .collect(),
         );
+    }
+
+    /// New rows with what their tag service's siblings and parents say of
+    /// them, each with the text drawn for it (its count).
+    pub fn set_decorated_rows(&mut self, rows: Vec<(Row, String)>) {
         self.texts = rows.iter().map(|(_, text)| text.clone()).collect();
+        self.list
+            .replace_rows(rows.into_iter().map(|(row, _)| row).collect());
+    }
+
+    /// The decorators the rows are drawn with.
+    pub fn decorators(&self) -> Decorators {
+        self.list.decorators
+    }
+
+    /// A decorator turned on or off (the stored tags list's menu).
+    pub fn decorate(&mut self, kind: Decoration, value: bool) {
+        self.list.decorate(kind, value);
+    }
+
+    /// Select just `tags` (the rows of those still listed).
+    pub fn select_tags(&mut self, tags: &[String]) {
+        self.list.select_tags(tags);
     }
 
     pub fn tags(&self) -> Vec<String> {
@@ -233,6 +294,73 @@ impl SelectionTags {
         }
     }
 
+    /// The selected tags, each followed by its parents, deduplicated
+    /// (`_GetCopyableTagStrings` with `include_parents`).
+    fn with_parents(&self) -> Vec<String> {
+        let mut out: Vec<String> = Vec::new();
+        for (i, row) in self.list.rows().iter().enumerate() {
+            if !self.list.is_selected(i) {
+                continue;
+            }
+            for text in std::iter::once(&row.tag).chain(&row.parents) {
+                if !out.contains(text) {
+                    out.push(text.clone());
+                }
+            }
+        }
+        out
+    }
+
+    /// The decorator entries a stored tags list's menu starts with.
+    fn decorator_entries(&self) -> Vec<Entry> {
+        let d = self.list.decorators;
+        let decorate = |label: &str, kind, value| {
+            Entry::Item(
+                label.into(),
+                Action::Owner(Command::Decorate(kind, value).id()),
+            )
+        };
+        let mut out = Vec::new();
+        if d.show_parents {
+            if d.expand_parents {
+                if self.list.drawn("").len() != self.list.rows().len() {
+                    out.push(decorate(
+                        "collapse parent rows",
+                        Decoration::Expanded,
+                        false,
+                    ));
+                }
+            } else {
+                out.push(decorate("expand parent rows", Decoration::Expanded, true));
+            }
+            out.push(decorate(
+                "hide parent decorators",
+                Decoration::Parents,
+                false,
+            ));
+        } else {
+            out.push(decorate(
+                "show parent decorators",
+                Decoration::Parents,
+                true,
+            ));
+        }
+        if d.show_siblings {
+            out.push(decorate(
+                "hide sibling decorators",
+                Decoration::Siblings,
+                false,
+            ));
+        } else {
+            out.push(decorate(
+                "show sibling decorators",
+                Decoration::Siblings,
+                true,
+            ));
+        }
+        out
+    }
+
     /// The copyable strings (`_GetCopyableTagStrings`) of the selection
     /// (or of all) in `form`.
     fn strings(&self, selected: bool, form: Form) -> Vec<String> {
@@ -243,11 +371,10 @@ impl SelectionTags {
             Form::TagsWithCounts => (true, false, false),
             Form::SubtagsWithCounts => (true, true, false),
         };
-        let mask = self.list.mask();
         let tags = self.list.tags();
         let mut out: Vec<String> = Vec::new();
         for (i, tag) in tags.iter().enumerate() {
-            if selected && !mask[i] {
+            if selected && !self.list.is_selected(i) {
                 continue;
             }
             let text = if counts { &self.texts[i] } else { tag };
@@ -277,6 +404,10 @@ impl SelectionTags {
         let mut entries = Vec::new();
         if self.list.rows().is_empty() {
             return entries;
+        }
+        if place.decorators {
+            entries.extend(self.decorator_entries());
+            separator(&mut entries);
         }
         let selected = self.selected_tags();
         let mut copy = Vec::new();
@@ -328,6 +459,18 @@ impl SelectionTags {
                         Action::Copy(self.strings(true, Form::SubtagsWithCounts).join("\n")),
                     ));
                 }
+            }
+            let with_parents = self.with_parents();
+            let parents = with_parents.len() - tags.len();
+            if parents > 0 {
+                separator(&mut copy);
+                // (the reference adds this to the selection's label, which
+                // its open entries then say too)
+                selection = format!("{selection} and {} parents", human_int(parents as u64));
+                copy.push(Entry::Item(
+                    selection.clone(),
+                    Action::Copy(with_parents.join("\n")),
+                ));
             }
         }
         if self.list.rows().len() > selected.len() {

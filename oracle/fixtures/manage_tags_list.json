@@ -1,0 +1,1591 @@
+{
+ "options": {
+  "show_parent_decorators": true,
+  "show_sibling_decorators": true,
+  "expand_parents": true
+ },
+ "file": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+ "files": [
+  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+  "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b"
+ ],
+ "location": "my files",
+ "tags": [
+  "creator:anonymous artist",
+  "series:spaced name",
+  "blue eyes",
+  "plain tag",
+  "safe",
+  "solo",
+  "meta:lowres",
+  "alpha:first",
+  "alpha:second",
+  "box:anchor",
+  "old:sibling",
+  "page:3",
+  "page:10",
+  "volume:3",
+  "zeta:last",
+  "キャラクター:初音ミク"
+ ],
+ "drawn": [
+  "creator:anonymous artist (1)",
+  "series:spaced name (2)",
+  "blue eyes (1)",
+  "plain tag (1)",
+  "safe (2)",
+  "solo (2)",
+  "meta:lowres (1) → meta:low resolution",
+  "alpha:first (2)",
+  "    group:alpha",
+  "alpha:second (1)",
+  "box:anchor (3)",
+  "old:sibling (1) → new:sibling",
+  "page:3 (1)",
+  "page:10 (1)",
+  "volume:3 (1)",
+  "zeta:last (1)",
+  "キャラクター:初音ミク (1)"
+ ],
+ "rows_per_page": 5,
+ "steps": [
+  {
+   "step": "initial",
+   "selected": []
+  },
+  {
+   "step": "click series:spaced name",
+   "selected": [
+    "series:spaced name"
+   ]
+  },
+  {
+   "step": "ctrl click plain tag adds it",
+   "selected": [
+    "series:spaced name",
+    "plain tag"
+   ]
+  },
+  {
+   "step": "shift click box:anchor",
+   "selected": [
+    "series:spaced name",
+    "plain tag",
+    "safe",
+    "solo",
+    "meta:lowres",
+    "alpha:first",
+    "alpha:second",
+    "box:anchor"
+   ]
+  },
+  {
+   "step": "ctrl click series:spaced name takes it away",
+   "selected": [
+    "plain tag",
+    "safe",
+    "solo",
+    "meta:lowres",
+    "alpha:first",
+    "alpha:second",
+    "box:anchor"
+   ]
+  },
+  {
+   "step": "plain click on a selected row keeps the selection",
+   "selected": [
+    "plain tag",
+    "safe",
+    "solo",
+    "meta:lowres",
+    "alpha:first",
+    "alpha:second",
+    "box:anchor"
+   ]
+  },
+  {
+   "step": "right press on a selected row keeps the selection",
+   "selected": [
+    "plain tag",
+    "safe",
+    "solo",
+    "meta:lowres",
+    "alpha:first",
+    "alpha:second",
+    "box:anchor"
+   ]
+  },
+  {
+   "step": "click below the rows",
+   "selected": []
+  },
+  {
+   "step": "middle click series:spaced name",
+   "selected": [
+    "series:spaced name"
+   ],
+   "launched": [
+    {
+     "topic": "new_page_query",
+     "location": "combined local file domains",
+     "predicates": [
+      "series:spaced name"
+     ],
+     "page_name": "series:spaced name"
+    }
+   ]
+  },
+  {
+   "step": "shift middle click on plain tag ranges from box:anchor",
+   "selected": [
+    "plain tag",
+    "safe",
+    "solo",
+    "meta:lowres",
+    "alpha:first",
+    "alpha:second",
+    "box:anchor"
+   ],
+   "launched": [
+    {
+     "topic": "new_page_query",
+     "location": "combined local file domains",
+     "predicates": [
+      "alpha:first OR alpha:second OR box:anchor OR meta:lowres OR plain tag OR safe OR solo"
+     ],
+     "page_name": "alpha:first OR alpha:second OR box:anchor OR meta:lowres OR plain tag OR safe OR solo"
+    }
+   ]
+  },
+  {
+   "step": "double click with two selected",
+   "selected": [
+    "plain tag",
+    "box:anchor"
+   ],
+   "entered": [
+    [
+     "box:anchor",
+     "plain tag"
+    ]
+   ]
+  },
+  {
+   "step": "double click below the rows",
+   "selected": [],
+   "entered": []
+  },
+  {
+   "step": "click plain tag",
+   "selected": [
+    "plain tag"
+   ]
+  },
+  {
+   "step": "down",
+   "selected": [
+    "safe"
+   ]
+  },
+  {
+   "step": "shift down",
+   "selected": [
+    "safe",
+    "solo"
+   ]
+  },
+  {
+   "step": "home",
+   "selected": [
+    "creator:anonymous artist"
+   ]
+  },
+  {
+   "step": "up wraps to the end",
+   "selected": [
+    "キャラクター:初音ミク"
+   ]
+  },
+  {
+   "step": "end",
+   "selected": [
+    "キャラクター:初音ミク"
+   ]
+  },
+  {
+   "step": "ctrl a",
+   "selected": [
+    "creator:anonymous artist",
+    "series:spaced name",
+    "blue eyes",
+    "plain tag",
+    "safe",
+    "solo",
+    "meta:lowres",
+    "alpha:first",
+    "alpha:second",
+    "box:anchor",
+    "old:sibling",
+    "page:3",
+    "page:10",
+    "volume:3",
+    "zeta:last",
+    "キャラクター:初音ミク"
+   ]
+  },
+  {
+   "step": "escape",
+   "selected": []
+  },
+  {
+   "step": "ctrl c with none selected copies all",
+   "selected": [],
+   "copied": [
+    "creator:anonymous artist\nseries:spaced name\nblue eyes\nplain tag\nsafe\nsolo\nmeta:lowres\nalpha:first\nalpha:second\nbox:anchor\nold:sibling\npage:3\npage:10\nvolume:3\nzeta:last\nキャラクター:初音ミク"
+   ]
+  },
+  {
+   "step": "ctrl c copies the selection",
+   "selected": [
+    "safe",
+    "alpha:first"
+   ],
+   "copied": [
+    "safe\nalpha:first"
+   ]
+  },
+  {
+   "step": "ctrl shift c copies the selection with parents",
+   "selected": [
+    "safe",
+    "alpha:first"
+   ],
+   "copied": [
+    "safe\nalpha:first\ngroup:alpha"
+   ]
+  },
+  {
+   "step": "return enters the selection",
+   "selected": [
+    "safe",
+    "alpha:first"
+   ],
+   "entered": [
+    [
+     "alpha:first",
+     "safe"
+    ]
+   ]
+  },
+  {
+   "step": "delete removes the selection",
+   "selected": [
+    "safe",
+    "alpha:first"
+   ],
+   "deleted": [
+    [
+     "alpha:first",
+     "safe"
+    ]
+   ]
+  },
+  {
+   "step": "click plain tag before the page keys",
+   "selected": [
+    "plain tag"
+   ]
+  },
+  {
+   "step": "page down",
+   "selected": [
+    "alpha:first"
+   ]
+  },
+  {
+   "step": "page down again",
+   "selected": [
+    "page:3"
+   ]
+  },
+  {
+   "step": "page up",
+   "selected": [
+    "alpha:first"
+   ]
+  },
+  {
+   "step": "shift page down",
+   "selected": [
+    "alpha:first",
+    "alpha:second",
+    "box:anchor",
+    "old:sibling",
+    "page:3"
+   ]
+  }
+ ],
+ "menus": [
+  {
+   "case": "one",
+   "selected": [
+    "series:spaced name"
+   ],
+   "menu": [
+    "collapse parent rows",
+    "hide parent decorators",
+    "hide sibling decorators",
+    "---",
+    {
+     "copy": [
+      "series:spaced name",
+      "spaced name",
+      "spaced_name",
+      "---",
+      "series:spaced name with counts",
+      "spaced name with counts",
+      "---",
+      "all tags",
+      "all subtags",
+      "all tags with counts",
+      "all subtags with counts"
+     ]
+    },
+    {
+     "no siblings": [
+      "add siblings to series:spaced name"
+     ]
+    },
+    {
+     "no parents": [
+      "add parents to series:spaced name"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for series:spaced name",
+      "---",
+      "open a new duplicate filter page for series:spaced name"
+     ]
+    },
+    {
+     "favourites": [
+      "add \"series:spaced name\" to favourites",
+      "---",
+      "add \"series:spaced name\" to most used for \"downloader tags\"",
+      "add \"series:spaced name\" to most used for \"my tags\"",
+      "add \"series:spaced name\" to most used for \"second tags\""
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "copies": [
+    {
+     "label": "series:spaced name",
+     "payload": [
+      "series:spaced name"
+     ]
+    },
+    {
+     "label": "spaced name",
+     "payload": [
+      "spaced name"
+     ]
+    },
+    {
+     "label": "spaced_name",
+     "payload": [
+      "spaced_name"
+     ]
+    },
+    {
+     "label": "series:spaced name with counts",
+     "payload": [
+      "series:spaced name (2)"
+     ]
+    },
+    {
+     "label": "spaced name with counts",
+     "payload": [
+      "spaced name (2)"
+     ]
+    },
+    {
+     "label": "all tags",
+     "payload": [
+      "creator:anonymous artist\nseries:spaced name\nblue eyes\nplain tag\nsafe\nsolo\nmeta:lowres\nalpha:first\nalpha:second\nbox:anchor\nold:sibling\npage:3\npage:10\nvolume:3\nzeta:last\nキャラクター:初音ミク"
+     ]
+    },
+    {
+     "label": "all subtags",
+     "payload": [
+      "anonymous artist\nspaced name\nblue eyes\nplain tag\nsafe\nsolo\nlowres\nfirst\nsecond\nanchor\nsibling\n3\n10\nlast\n初音ミク"
+     ]
+    },
+    {
+     "label": "all tags with counts",
+     "payload": [
+      "creator:anonymous artist (1)\nseries:spaced name (2)\nblue eyes (1)\nplain tag (1)\nsafe (2)\nsolo (2)\nmeta:lowres (1)\nalpha:first (2)\nalpha:second (1)\nbox:anchor (3)\nold:sibling (1)\npage:3 (1)\npage:10 (1)\nvolume:3 (1)\nzeta:last (1)\nキャラクター:初音ミク (1)"
+     ]
+    },
+    {
+     "label": "all subtags with counts",
+     "payload": [
+      "anonymous artist (1)\nspaced name (2)\nblue eyes (1)\nplain tag (1)\nsafe (2)\nsolo (2)\nlowres (1)\nfirst (2)\nsecond (1)\nanchor (3)\nsibling (1)\n3 (1)\n10 (1)\n3 (1)\nlast (1)\n初音ミク (1)"
+     ]
+    }
+   ],
+   "launches": [
+    {
+     "label": "open a new search page for series:spaced name",
+     "launched": [
+      {
+       "topic": "new_page_query",
+       "location": "combined local file domains",
+       "predicates": [
+        "series:spaced name"
+       ],
+       "page_name": "series:spaced name"
+      }
+     ]
+    },
+    {
+     "label": "open a new duplicate filter page for series:spaced name",
+     "launched": [
+      {
+       "topic": "new_page_duplicates",
+       "location": "combined local file domains",
+       "predicates": [
+        "series:spaced name"
+       ],
+       "page_name": "duplicates: series:spaced name"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case": "one unnamespaced",
+   "selected": [
+    "plain tag"
+   ],
+   "menu": [
+    "collapse parent rows",
+    "hide parent decorators",
+    "hide sibling decorators",
+    "---",
+    {
+     "copy": [
+      "plain tag",
+      "plain_tag",
+      "---",
+      "plain tag with counts",
+      "---",
+      "all tags",
+      "all subtags",
+      "all tags with counts",
+      "all subtags with counts"
+     ]
+    },
+    {
+     "no siblings": [
+      "add siblings to plain tag"
+     ]
+    },
+    {
+     "no parents": [
+      "add parents to plain tag"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for plain tag",
+      "---",
+      "open a new duplicate filter page for plain tag"
+     ]
+    },
+    {
+     "favourites": [
+      "add \"plain tag\" to favourites",
+      "---",
+      "add \"plain tag\" to most used for \"downloader tags\"",
+      "add \"plain tag\" to most used for \"my tags\"",
+      "add \"plain tag\" to most used for \"second tags\""
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "copies": [
+    {
+     "label": "plain tag",
+     "payload": [
+      "plain tag"
+     ]
+    },
+    {
+     "label": "plain_tag",
+     "payload": [
+      "plain_tag"
+     ]
+    },
+    {
+     "label": "plain tag with counts",
+     "payload": [
+      "plain tag (1)"
+     ]
+    },
+    {
+     "label": "all tags",
+     "payload": [
+      "creator:anonymous artist\nseries:spaced name\nblue eyes\nplain tag\nsafe\nsolo\nmeta:lowres\nalpha:first\nalpha:second\nbox:anchor\nold:sibling\npage:3\npage:10\nvolume:3\nzeta:last\nキャラクター:初音ミク"
+     ]
+    },
+    {
+     "label": "all subtags",
+     "payload": [
+      "anonymous artist\nspaced name\nblue eyes\nplain tag\nsafe\nsolo\nlowres\nfirst\nsecond\nanchor\nsibling\n3\n10\nlast\n初音ミク"
+     ]
+    },
+    {
+     "label": "all tags with counts",
+     "payload": [
+      "creator:anonymous artist (1)\nseries:spaced name (2)\nblue eyes (1)\nplain tag (1)\nsafe (2)\nsolo (2)\nmeta:lowres (1)\nalpha:first (2)\nalpha:second (1)\nbox:anchor (3)\nold:sibling (1)\npage:3 (1)\npage:10 (1)\nvolume:3 (1)\nzeta:last (1)\nキャラクター:初音ミク (1)"
+     ]
+    },
+    {
+     "label": "all subtags with counts",
+     "payload": [
+      "anonymous artist (1)\nspaced name (2)\nblue eyes (1)\nplain tag (1)\nsafe (2)\nsolo (2)\nlowres (1)\nfirst (2)\nsecond (1)\nanchor (3)\nsibling (1)\n3 (1)\n10 (1)\n3 (1)\nlast (1)\n初音ミク (1)"
+     ]
+    }
+   ],
+   "launches": [
+    {
+     "label": "open a new search page for plain tag",
+     "launched": [
+      {
+       "topic": "new_page_query",
+       "location": "combined local file domains",
+       "predicates": [
+        "plain tag"
+       ],
+       "page_name": "plain tag"
+      }
+     ]
+    },
+    {
+     "label": "open a new duplicate filter page for plain tag",
+     "launched": [
+      {
+       "topic": "new_page_duplicates",
+       "location": "combined local file domains",
+       "predicates": [
+        "plain tag"
+       ],
+       "page_name": "duplicates: plain tag"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case": "two",
+   "selected": [
+    "alpha:first",
+    "box:anchor"
+   ],
+   "menu": [
+    "collapse parent rows",
+    "hide parent decorators",
+    "hide sibling decorators",
+    "---",
+    {
+     "copy": [
+      "2 selected",
+      "2 selected subtags",
+      "---",
+      "2 selected with counts",
+      "2 selected subtags with counts",
+      "---",
+      "2 selected and 1 parents",
+      "---",
+      "all tags",
+      "all subtags",
+      "all tags with counts",
+      "all subtags with counts"
+     ]
+    },
+    {
+     "siblings": [
+      "add siblings to selection"
+     ]
+    },
+    {
+     "parents": [
+      "add parents to selection"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for 2 selected and 1 parents",
+      "open a new OR search page for 2 selected and 1 parents",
+      "open new search pages for each in selection",
+      "---",
+      "open a new duplicate filter page for 2 selected and 1 parents"
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "copies": [
+    {
+     "label": "2 selected",
+     "payload": [
+      "alpha:first\nbox:anchor"
+     ]
+    },
+    {
+     "label": "2 selected subtags",
+     "payload": [
+      "first\nanchor"
+     ]
+    },
+    {
+     "label": "2 selected with counts",
+     "payload": [
+      "alpha:first (2)\nbox:anchor (3)"
+     ]
+    },
+    {
+     "label": "2 selected subtags with counts",
+     "payload": [
+      "first (2)\nanchor (3)"
+     ]
+    },
+    {
+     "label": "2 selected and 1 parents",
+     "payload": [
+      "alpha:first\ngroup:alpha\nbox:anchor"
+     ]
+    },
+    {
+     "label": "all tags",
+     "payload": [
+      "creator:anonymous artist\nseries:spaced name\nblue eyes\nplain tag\nsafe\nsolo\nmeta:lowres\nalpha:first\nalpha:second\nbox:anchor\nold:sibling\npage:3\npage:10\nvolume:3\nzeta:last\nキャラクター:初音ミク"
+     ]
+    },
+    {
+     "label": "all subtags",
+     "payload": [
+      "anonymous artist\nspaced name\nblue eyes\nplain tag\nsafe\nsolo\nlowres\nfirst\nsecond\nanchor\nsibling\n3\n10\nlast\n初音ミク"
+     ]
+    },
+    {
+     "label": "all tags with counts",
+     "payload": [
+      "creator:anonymous artist (1)\nseries:spaced name (2)\nblue eyes (1)\nplain tag (1)\nsafe (2)\nsolo (2)\nmeta:lowres (1)\nalpha:first (2)\nalpha:second (1)\nbox:anchor (3)\nold:sibling (1)\npage:3 (1)\npage:10 (1)\nvolume:3 (1)\nzeta:last (1)\nキャラクター:初音ミク (1)"
+     ]
+    },
+    {
+     "label": "all subtags with counts",
+     "payload": [
+      "anonymous artist (1)\nspaced name (2)\nblue eyes (1)\nplain tag (1)\nsafe (2)\nsolo (2)\nlowres (1)\nfirst (2)\nsecond (1)\nanchor (3)\nsibling (1)\n3 (1)\n10 (1)\n3 (1)\nlast (1)\n初音ミク (1)"
+     ]
+    }
+   ],
+   "launches": [
+    {
+     "label": "open a new search page for 2 selected and 1 parents",
+     "launched": [
+      {
+       "topic": "new_page_query",
+       "location": "combined local file domains",
+       "predicates": [
+        "alpha:first",
+        "box:anchor"
+       ],
+       "page_name": "alpha:first, box:anchor"
+      }
+     ]
+    },
+    {
+     "label": "open a new OR search page for 2 selected and 1 parents",
+     "launched": [
+      {
+       "topic": "new_page_query",
+       "location": "combined local file domains",
+       "predicates": [
+        "alpha:first OR box:anchor"
+       ],
+       "page_name": "alpha:first OR box:anchor"
+      }
+     ]
+    },
+    {
+     "label": "open new search pages for each in selection",
+     "launched": [
+      {
+       "topic": "new_page_query",
+       "location": "combined local file domains",
+       "predicates": [
+        "alpha:first"
+       ],
+       "page_name": "alpha:first"
+      },
+      {
+       "topic": "new_page_query",
+       "location": "combined local file domains",
+       "predicates": [
+        "box:anchor"
+       ],
+       "page_name": "box:anchor"
+      }
+     ]
+    },
+    {
+     "label": "open a new duplicate filter page for 2 selected and 1 parents",
+     "launched": [
+      {
+       "topic": "new_page_duplicates",
+       "location": "combined local file domains",
+       "predicates": [
+        "alpha:first",
+        "box:anchor"
+       ],
+       "page_name": "duplicates: alpha:first, box:anchor"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case": "a tag with a parent",
+   "selected": [
+    "alpha:first"
+   ],
+   "menu": [
+    "collapse parent rows",
+    "hide parent decorators",
+    "hide sibling decorators",
+    "---",
+    {
+     "copy": [
+      "alpha:first",
+      "first",
+      "---",
+      "alpha:first with counts",
+      "first with counts",
+      "---",
+      "alpha:first and 1 parents",
+      "---",
+      "all tags",
+      "all subtags",
+      "all tags with counts",
+      "all subtags with counts"
+     ]
+    },
+    {
+     "no siblings": [
+      "add siblings to alpha:first"
+     ]
+    },
+    {
+     "1 parents, 0 children": [
+      "add parents to alpha:first",
+      "---",
+      "--downloader tags, my tags--",
+      "parent: group:alpha"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for alpha:first and 1 parents",
+      "---",
+      "open a new duplicate filter page for alpha:first and 1 parents"
+     ]
+    },
+    {
+     "favourites": [
+      "add \"alpha:first\" to favourites",
+      "---",
+      "add \"alpha:first\" to most used for \"downloader tags\"",
+      "add \"alpha:first\" to most used for \"my tags\"",
+      "add \"alpha:first\" to most used for \"second tags\""
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "copies": [
+    {
+     "label": "alpha:first",
+     "payload": [
+      "alpha:first"
+     ]
+    },
+    {
+     "label": "first",
+     "payload": [
+      "first"
+     ]
+    },
+    {
+     "label": "alpha:first with counts",
+     "payload": [
+      "alpha:first (2)"
+     ]
+    },
+    {
+     "label": "first with counts",
+     "payload": [
+      "first (2)"
+     ]
+    },
+    {
+     "label": "alpha:first and 1 parents",
+     "payload": [
+      "alpha:first\ngroup:alpha"
+     ]
+    },
+    {
+     "label": "all tags",
+     "payload": [
+      "creator:anonymous artist\nseries:spaced name\nblue eyes\nplain tag\nsafe\nsolo\nmeta:lowres\nalpha:first\nalpha:second\nbox:anchor\nold:sibling\npage:3\npage:10\nvolume:3\nzeta:last\nキャラクター:初音ミク"
+     ]
+    },
+    {
+     "label": "all subtags",
+     "payload": [
+      "anonymous artist\nspaced name\nblue eyes\nplain tag\nsafe\nsolo\nlowres\nfirst\nsecond\nanchor\nsibling\n3\n10\nlast\n初音ミク"
+     ]
+    },
+    {
+     "label": "all tags with counts",
+     "payload": [
+      "creator:anonymous artist (1)\nseries:spaced name (2)\nblue eyes (1)\nplain tag (1)\nsafe (2)\nsolo (2)\nmeta:lowres (1)\nalpha:first (2)\nalpha:second (1)\nbox:anchor (3)\nold:sibling (1)\npage:3 (1)\npage:10 (1)\nvolume:3 (1)\nzeta:last (1)\nキャラクター:初音ミク (1)"
+     ]
+    },
+    {
+     "label": "all subtags with counts",
+     "payload": [
+      "anonymous artist (1)\nspaced name (2)\nblue eyes (1)\nplain tag (1)\nsafe (2)\nsolo (2)\nlowres (1)\nfirst (2)\nsecond (1)\nanchor (3)\nsibling (1)\n3 (1)\n10 (1)\n3 (1)\nlast (1)\n初音ミク (1)"
+     ]
+    }
+   ],
+   "launches": [
+    {
+     "label": "open a new search page for alpha:first and 1 parents",
+     "launched": [
+      {
+       "topic": "new_page_query",
+       "location": "combined local file domains",
+       "predicates": [
+        "alpha:first"
+       ],
+       "page_name": "alpha:first"
+      }
+     ]
+    },
+    {
+     "label": "open a new duplicate filter page for alpha:first and 1 parents",
+     "launched": [
+      {
+       "topic": "new_page_duplicates",
+       "location": "combined local file domains",
+       "predicates": [
+        "alpha:first"
+       ],
+       "page_name": "duplicates: alpha:first"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case": "a sibling",
+   "selected": [
+    "old:sibling"
+   ],
+   "menu": [
+    "collapse parent rows",
+    "hide parent decorators",
+    "hide sibling decorators",
+    "---",
+    {
+     "copy": [
+      "old:sibling",
+      "sibling",
+      "---",
+      "old:sibling with counts",
+      "sibling with counts",
+      "---",
+      "all tags",
+      "all subtags",
+      "all tags with counts",
+      "all subtags with counts"
+     ]
+    },
+    {
+     "1 siblings": [
+      "add siblings to old:sibling",
+      "---",
+      "ideal is \"new:sibling\" on: downloader tags, my tags"
+     ]
+    },
+    {
+     "no parents": [
+      "add parents to old:sibling"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for old:sibling",
+      "---",
+      "open a new duplicate filter page for old:sibling"
+     ]
+    },
+    {
+     "favourites": [
+      "add \"old:sibling\" to favourites",
+      "---",
+      "add \"old:sibling\" to most used for \"downloader tags\"",
+      "add \"old:sibling\" to most used for \"my tags\"",
+      "add \"old:sibling\" to most used for \"second tags\""
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ],
+   "copies": [
+    {
+     "label": "old:sibling",
+     "payload": [
+      "old:sibling"
+     ]
+    },
+    {
+     "label": "sibling",
+     "payload": [
+      "sibling"
+     ]
+    },
+    {
+     "label": "old:sibling with counts",
+     "payload": [
+      "old:sibling (1)"
+     ]
+    },
+    {
+     "label": "sibling with counts",
+     "payload": [
+      "sibling (1)"
+     ]
+    },
+    {
+     "label": "all tags",
+     "payload": [
+      "creator:anonymous artist\nseries:spaced name\nblue eyes\nplain tag\nsafe\nsolo\nmeta:lowres\nalpha:first\nalpha:second\nbox:anchor\nold:sibling\npage:3\npage:10\nvolume:3\nzeta:last\nキャラクター:初音ミク"
+     ]
+    },
+    {
+     "label": "all subtags",
+     "payload": [
+      "anonymous artist\nspaced name\nblue eyes\nplain tag\nsafe\nsolo\nlowres\nfirst\nsecond\nanchor\nsibling\n3\n10\nlast\n初音ミク"
+     ]
+    },
+    {
+     "label": "all tags with counts",
+     "payload": [
+      "creator:anonymous artist (1)\nseries:spaced name (2)\nblue eyes (1)\nplain tag (1)\nsafe (2)\nsolo (2)\nmeta:lowres (1)\nalpha:first (2)\nalpha:second (1)\nbox:anchor (3)\nold:sibling (1)\npage:3 (1)\npage:10 (1)\nvolume:3 (1)\nzeta:last (1)\nキャラクター:初音ミク (1)"
+     ]
+    },
+    {
+     "label": "all subtags with counts",
+     "payload": [
+      "anonymous artist (1)\nspaced name (2)\nblue eyes (1)\nplain tag (1)\nsafe (2)\nsolo (2)\nlowres (1)\nfirst (2)\nsecond (1)\nanchor (3)\nsibling (1)\n3 (1)\n10 (1)\n3 (1)\nlast (1)\n初音ミク (1)"
+     ]
+    }
+   ],
+   "launches": [
+    {
+     "label": "open a new search page for old:sibling",
+     "launched": [
+      {
+       "topic": "new_page_query",
+       "location": "combined local file domains",
+       "predicates": [
+        "old:sibling"
+       ],
+       "page_name": "old:sibling"
+      }
+     ]
+    },
+    {
+     "label": "open a new duplicate filter page for old:sibling",
+     "launched": [
+      {
+       "topic": "new_page_duplicates",
+       "location": "combined local file domains",
+       "predicates": [
+        "old:sibling"
+       ],
+       "page_name": "duplicates: old:sibling"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case": "none",
+   "selected": [],
+   "menu": [
+    "collapse parent rows",
+    "hide parent decorators",
+    "hide sibling decorators",
+    "---",
+    {
+     "copy": [
+      "all tags",
+      "all subtags",
+      "all tags with counts",
+      "all subtags with counts"
+     ]
+    }
+   ],
+   "copies": [
+    {
+     "label": "all tags",
+     "payload": [
+      "creator:anonymous artist\nseries:spaced name\nblue eyes\nplain tag\nsafe\nsolo\nmeta:lowres\nalpha:first\nalpha:second\nbox:anchor\nold:sibling\npage:3\npage:10\nvolume:3\nzeta:last\nキャラクター:初音ミク"
+     ]
+    },
+    {
+     "label": "all subtags",
+     "payload": [
+      "anonymous artist\nspaced name\nblue eyes\nplain tag\nsafe\nsolo\nlowres\nfirst\nsecond\nanchor\nsibling\n3\n10\nlast\n初音ミク"
+     ]
+    },
+    {
+     "label": "all tags with counts",
+     "payload": [
+      "creator:anonymous artist (1)\nseries:spaced name (2)\nblue eyes (1)\nplain tag (1)\nsafe (2)\nsolo (2)\nmeta:lowres (1)\nalpha:first (2)\nalpha:second (1)\nbox:anchor (3)\nold:sibling (1)\npage:3 (1)\npage:10 (1)\nvolume:3 (1)\nzeta:last (1)\nキャラクター:初音ミク (1)"
+     ]
+    },
+    {
+     "label": "all subtags with counts",
+     "payload": [
+      "anonymous artist (1)\nspaced name (2)\nblue eyes (1)\nplain tag (1)\nsafe (2)\nsolo (2)\nlowres (1)\nfirst (2)\nsecond (1)\nanchor (3)\nsibling (1)\n3 (1)\n10 (1)\n3 (1)\nlast (1)\n初音ミク (1)"
+     ]
+    }
+   ],
+   "launches": []
+  }
+ ],
+ "decorators": [
+  {
+   "label": "collapse parent rows",
+   "offered": [
+    "collapse parent rows",
+    "hide parent decorators",
+    "hide sibling decorators"
+   ],
+   "chosen": true,
+   "drawn": [
+    "creator:anonymous artist (1)",
+    "series:spaced name (2)",
+    "blue eyes (1)",
+    "plain tag (1)",
+    "safe (2)",
+    "solo (2)",
+    "meta:lowres (1) → meta:low resolution",
+    "alpha:first (2) (1 parents)",
+    "alpha:second (1)",
+    "box:anchor (3)",
+    "old:sibling (1) → new:sibling",
+    "page:3 (1)",
+    "page:10 (1)",
+    "volume:3 (1)",
+    "zeta:last (1)",
+    "キャラクター:初音ミク (1)"
+   ]
+  },
+  {
+   "label": "expand parent rows",
+   "offered": [
+    "expand parent rows",
+    "hide parent decorators",
+    "hide sibling decorators"
+   ],
+   "chosen": true,
+   "drawn": [
+    "creator:anonymous artist (1)",
+    "series:spaced name (2)",
+    "blue eyes (1)",
+    "plain tag (1)",
+    "safe (2)",
+    "solo (2)",
+    "meta:lowres (1) → meta:low resolution",
+    "alpha:first (2)",
+    "    group:alpha",
+    "alpha:second (1)",
+    "box:anchor (3)",
+    "old:sibling (1) → new:sibling",
+    "page:3 (1)",
+    "page:10 (1)",
+    "volume:3 (1)",
+    "zeta:last (1)",
+    "キャラクター:初音ミク (1)"
+   ]
+  },
+  {
+   "label": "hide parent decorators",
+   "offered": [
+    "collapse parent rows",
+    "hide parent decorators",
+    "hide sibling decorators"
+   ],
+   "chosen": true,
+   "drawn": [
+    "creator:anonymous artist (1)",
+    "series:spaced name (2)",
+    "blue eyes (1)",
+    "plain tag (1)",
+    "safe (2)",
+    "solo (2)",
+    "meta:lowres (1) → meta:low resolution",
+    "alpha:first (2)",
+    "alpha:second (1)",
+    "box:anchor (3)",
+    "old:sibling (1) → new:sibling",
+    "page:3 (1)",
+    "page:10 (1)",
+    "volume:3 (1)",
+    "zeta:last (1)",
+    "キャラクター:初音ミク (1)"
+   ]
+  },
+  {
+   "label": "show parent decorators",
+   "offered": [
+    "show parent decorators",
+    "hide sibling decorators",
+    "copy"
+   ],
+   "chosen": true,
+   "drawn": [
+    "creator:anonymous artist (1)",
+    "series:spaced name (2)",
+    "blue eyes (1)",
+    "plain tag (1)",
+    "safe (2)",
+    "solo (2)",
+    "meta:lowres (1) → meta:low resolution",
+    "alpha:first (2)",
+    "    group:alpha",
+    "alpha:second (1)",
+    "box:anchor (3)",
+    "old:sibling (1) → new:sibling",
+    "page:3 (1)",
+    "page:10 (1)",
+    "volume:3 (1)",
+    "zeta:last (1)",
+    "キャラクター:初音ミク (1)"
+   ]
+  },
+  {
+   "label": "hide sibling decorators",
+   "offered": [
+    "collapse parent rows",
+    "hide parent decorators",
+    "hide sibling decorators"
+   ],
+   "chosen": true,
+   "drawn": [
+    "creator:anonymous artist (1)",
+    "series:spaced name (2)",
+    "blue eyes (1)",
+    "plain tag (1)",
+    "safe (2)",
+    "solo (2)",
+    "meta:lowres (1)",
+    "alpha:first (2)",
+    "    group:alpha",
+    "alpha:second (1)",
+    "box:anchor (3)",
+    "old:sibling (1)",
+    "page:3 (1)",
+    "page:10 (1)",
+    "volume:3 (1)",
+    "zeta:last (1)",
+    "キャラクター:初音ミク (1)"
+   ]
+  },
+  {
+   "label": "show sibling decorators",
+   "offered": [
+    "collapse parent rows",
+    "hide parent decorators",
+    "show sibling decorators"
+   ],
+   "chosen": true,
+   "drawn": [
+    "creator:anonymous artist (1)",
+    "series:spaced name (2)",
+    "blue eyes (1)",
+    "plain tag (1)",
+    "safe (2)",
+    "solo (2)",
+    "meta:lowres (1) → meta:low resolution",
+    "alpha:first (2)",
+    "    group:alpha",
+    "alpha:second (1)",
+    "box:anchor (3)",
+    "old:sibling (1) → new:sibling",
+    "page:3 (1)",
+    "page:10 (1)",
+    "volume:3 (1)",
+    "zeta:last (1)",
+    "キャラクター:初音ミク (1)"
+   ]
+  }
+ ],
+ "advanced": {
+  "selected": [
+   "plain tag"
+  ],
+  "menu": [
+   "collapse parent rows",
+   "hide parent decorators",
+   "hide sibling decorators",
+   "---",
+   {
+    "copy": [
+     "plain tag",
+     "plain_tag",
+     "---",
+     "plain tag with counts",
+     "---",
+     "all tags",
+     "all subtags",
+     "all tags with counts",
+     "all subtags with counts"
+    ]
+   },
+   {
+    "no siblings": [
+     "add siblings to plain tag"
+    ]
+   },
+   {
+    "no parents": [
+     "add parents to plain tag"
+    ]
+   },
+   "---",
+   {
+    "open": [
+     "open a new search page for plain tag",
+     "---",
+     "open a new duplicate filter page for plain tag"
+    ]
+   },
+   {
+    "favourites": [
+     "add \"plain tag\" to favourites",
+     "---",
+     "add \"plain tag\" to most used for \"downloader tags\"",
+     "add \"plain tag\" to most used for \"my tags\"",
+     "add \"plain tag\" to most used for \"second tags\""
+    ]
+   },
+   {
+    "tag display (experimental)": [
+     [
+      "check",
+      "switch to \"multiple media view tags\"",
+      false
+     ],
+     [
+      "check",
+      "switch to \"single media view tags\"",
+      false
+     ],
+     [
+      "check",
+      "switch to \"display tags\"",
+      false
+     ],
+     [
+      "check",
+      "switch to \"stored tags\"",
+      true
+     ]
+    ]
+   },
+   "---",
+   {
+    "maintenance": [
+     "regenerate tag display"
+    ]
+   }
+  ]
+ },
+ "triggers": [
+  {
+   "selected": [
+    "alpha:first"
+   ],
+   "path": [
+    "1 parents, 0 children",
+    "add parents to alpha:first"
+   ],
+   "found": true,
+   "questions": [],
+   "dialogs": [
+    {
+     "title": "manage tag parents",
+     "tags": [
+      "alpha:first"
+     ]
+    }
+   ],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "alpha:first"
+   ],
+   "path": [
+    "no siblings",
+    "add siblings to alpha:first"
+   ],
+   "found": true,
+   "questions": [],
+   "dialogs": [
+    {
+     "title": "manage tag siblings",
+     "tags": [
+      "alpha:first"
+     ]
+    }
+   ],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "plain tag",
+    "box:anchor"
+   ],
+   "path": [
+    "parents",
+    "add parents to selection"
+   ],
+   "found": true,
+   "questions": [],
+   "dialogs": [
+    {
+     "title": "manage tag parents",
+     "tags": [
+      "box:anchor",
+      "plain tag"
+     ]
+    }
+   ],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "plain tag",
+    "box:anchor"
+   ],
+   "path": [
+    "siblings",
+    "add siblings to selection"
+   ],
+   "found": true,
+   "questions": [],
+   "dialogs": [
+    {
+     "title": "manage tag siblings",
+     "tags": [
+      "box:anchor",
+      "plain tag"
+     ]
+    }
+   ],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "alpha:first"
+   ],
+   "path": [
+    "1 parents, 0 children",
+    "parent: group:alpha"
+   ],
+   "found": true,
+   "questions": [],
+   "dialogs": [],
+   "writes": [],
+   "copied": [
+    "group:alpha"
+   ],
+   "favourite_tags": [],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "plain tag"
+   ],
+   "path": [
+    "favourites",
+    "add \"plain tag\" to favourites"
+   ],
+   "found": true,
+   "questions": [],
+   "dialogs": [],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [
+    "plain tag"
+   ],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "plain tag"
+   ],
+   "path": [
+    "favourites",
+    "remove \"plain tag\" from favourites"
+   ],
+   "found": true,
+   "questions": [
+    {
+     "message": "Remove \"plain tag\" from the favourites list?",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "dialogs": [],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "plain tag"
+   ],
+   "path": [
+    "favourites",
+    "add \"plain tag\" to most used for \"my tags\""
+   ],
+   "found": true,
+   "questions": [],
+   "dialogs": [],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": [
+    "plain tag"
+   ]
+  },
+  {
+   "selected": [
+    "plain tag"
+   ],
+   "path": [
+    "favourites",
+    "remove \"plain tag\" from most used for \"my tags\""
+   ],
+   "found": true,
+   "questions": [
+    {
+     "message": "Remove \"plain tag\" from the most used list for \"my tags\"?",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "dialogs": [],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "plain tag",
+    "box:anchor"
+   ],
+   "path": [
+    "maintenance",
+    "regenerate tag display"
+   ],
+   "found": true,
+   "questions": [
+    {
+     "message": "!!WARNING EXPERIMENTAL!!\n\nThis will delete and then regenerate all the display calculations for the selected tags and their siblings and parents, with the intention of fixing bad autocomplete counts or sibling/parent presentation. It is functionally similar to the 'tag storage mappings cache' regeneration job, but just for these tags.\n\nIt might take a while to run, perhaps many minutes for a heavily-siblinged/-parented/-mapped tag, during which the database will be locked. Doing it on a thousand tags is going to completely gonk you. Also, any sibling or parent rules will be reset, and they will have to be recalculated, which will probably occur in a few seconds in the background after the regeneration job completes.",
+     "title": "Regen tags?",
+     "yes": "let's go",
+     "no": "forget it"
+    }
+   ],
+   "dialogs": [],
+   "writes": [
+    {
+     "action": "regenerate_tag_mappings_tags",
+     "tags": [
+      "box:anchor",
+      "plain tag"
+     ]
+    }
+   ],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": []
+  }
+ ]
+}

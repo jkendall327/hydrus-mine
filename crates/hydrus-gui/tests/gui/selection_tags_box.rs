@@ -258,7 +258,6 @@ impl Harness {
     /// The pages opened since there were `before`, as the recorder writes
     /// them, closed again.
     pub fn launched(&self, before: usize) -> Json {
-        let original = self.page();
         let original_name = "files";
         let mut out = Vec::new();
         while self.bound.pages.borrow().page_count() > before {
@@ -267,18 +266,19 @@ impl Harness {
                 let page = page.borrow();
                 let text = self.text();
                 // (a duplicates page searches its first file search)
-                let searched = page.duplicates().map_or_else(
-                    || page.active_predicates().to_vec(),
-                    |d| d.search.search_1.predicates.clone(),
+                let (searched, location) = page.duplicates().map_or_else(
+                    || (page.active_predicates().to_vec(), page.location().clone()),
+                    |d| {
+                        (
+                            d.search.search_1.predicates.clone(),
+                            d.search.search_1.location.clone(),
+                        )
+                    },
                 );
                 let mut predicates: Vec<String> =
                     searched.iter().map(|p| predicate_text(p, &text)).collect();
                 predicates.sort();
-                (
-                    predicates,
-                    page.location().clone(),
-                    page.duplicates().is_some(),
-                )
+                (predicates, location, page.duplicates().is_some())
             };
             let name = self.bound.pages.borrow().shown().name.clone();
             let topic = if duplicates {
@@ -290,7 +290,7 @@ impl Harness {
                 "topic": topic,
                 "predicates": predicates,
                 "page_name": name,
-                "location": if location == original.borrow().location().clone() { "my files" } else { "elsewhere" },
+                "location": location_name(&location),
             }));
             self.ui.invoke_close_page();
             widgets::settle();
@@ -313,6 +313,19 @@ impl Harness {
             differences.len(),
             differences.join("\n\n")
         );
+    }
+}
+
+/// A launched page's location as the recorders name it.
+fn location_name(location: &LocationContext) -> String {
+    use hydrus_core::service::builtin_keys::{COMBINED_LOCAL_FILE_DOMAINS, MY_FILES};
+    let single = |key: &[u8]| LocationContext::single(hydrus_core::ServiceKey::new(key.to_vec()));
+    if *location == single(MY_FILES) {
+        "my files".to_owned()
+    } else if *location == single(COMBINED_LOCAL_FILE_DOMAINS) {
+        "combined local file domains".to_owned()
+    } else {
+        format!("{location:?}")
     }
 }
 

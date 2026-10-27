@@ -357,6 +357,9 @@ pub struct Bound {
     pub viewer_deletion: delete_files_window::Slot,
     /// The manage tags window while one is open.
     pub manage_tags: Rc<RefCell<Option<ManageTagsWindow>>>,
+    /// The siblings and parents dialog the manage tags window's tag list
+    /// menu opened.
+    pub manage_tags_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
     pub incremental_tags: incremental_tagging_window::Slot,
     /// Siblings or parents while the corresponding editor is open.
     pub tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
@@ -652,6 +655,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
     let vacuum_review = vacuum_review_window::Slot::default();
     let manage_tags: Rc<RefCell<Option<ManageTagsWindow>>> = Rc::default();
+    let manage_tags_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>> = Rc::default();
     let predicate_editor: Rc<RefCell<Option<PredicateEditorWindow>>> = Rc::default();
     let predicate_editor_owner = Rc::new(predicate_editor_window::Owner::new(
         window,
@@ -2080,6 +2084,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     let open_manage_tags = {
         let manage_tags = manage_tags.clone();
+        let relationships = manage_tags_relationships.clone();
         let incremental_tags = incremental_tags.clone();
         let page = page.clone();
         let binding_active = binding_active.clone();
@@ -2103,7 +2108,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 return;
             };
             model.set_location(page().borrow().location().clone());
-            match manage_tags_window::open(model, &manage_tags, &incremental_tags, applied, link) {
+            match manage_tags_window::open(
+                model,
+                &manage_tags,
+                &relationships,
+                &incremental_tags,
+                applied,
+                link,
+            ) {
                 Ok(window) => *manage_tags.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open manage tags: {e}"),
             }
@@ -5605,6 +5617,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         viewer,
         viewer_deletion,
         manage_tags,
+        manage_tags_relationships,
         incremental_tags,
         tag_relationships,
         tag_display,
@@ -8487,6 +8500,15 @@ pub(crate) fn list_text(text: &str, [r, g, b]: [u8; 3]) -> ListText {
     }
 }
 
+/// Whether `shown` draws `rows` already (their part models compared by
+/// content, not by identity).
+pub(crate) fn same_list_texts(shown: &ModelRc<ListText>, rows: &[ListText]) -> bool {
+    shown.row_count() == rows.len()
+        && shown.iter().zip(rows).all(|(a, b)| {
+            a.text == b.text && a.colour == b.colour && a.parts.iter().eq(b.parts.iter())
+        })
+}
+
 pub(crate) fn styled_list_text(
     text: &str,
     colour: [u8; 3],
@@ -8872,11 +8894,8 @@ fn refresh(window: &MainWindow, page: &SearchPage) {
         .collect();
     // (the same rows keep their model: a new one would make the rows anew,
     // and the row under the pointer would lose a double-click's first click)
-    let same = |a: &ListText, b: &ListText| {
-        a.text == b.text && a.colour == b.colour && a.parts.iter().eq(b.parts.iter())
-    };
     let shown = window.get_tags();
-    if shown.row_count() != tags.len() || !shown.iter().zip(&tags).all(|(a, b)| same(&a, b)) {
+    if !same_list_texts(&shown, &tags) {
         window.set_tags(ModelRc::new(VecModel::from(tags)));
     }
     selection_tags::show(window, page);
