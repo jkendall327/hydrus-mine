@@ -47,22 +47,42 @@ struct Dialog {
     files: Vec<HashId>,
 }
 
+/// The dialog opened on the page's selected files, laid out.
+fn open(h: &Harness) -> ManageTagsWindow {
+    h.ui.invoke_manage_tags_selected();
+    let window = h
+        .bound
+        .manage_tags
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    widgets::lay_out(window.window(), 900.0, 1100.0);
+    widgets::settle();
+    window
+}
+
 impl Dialog {
+    /// Cancel the dialog (it stages nothing until applied) and open it
+    /// again.
+    fn reopen(&mut self) {
+        self.window.invoke_cancel();
+        widgets::settle();
+        assert!(self.h.bound.manage_tags.borrow().is_none(), "closed");
+        self.window = open(&self.h);
+        assert_eq!(
+            self.rows(),
+            strings(&self.fixture["drawn"]),
+            "the rows again"
+        );
+    }
+
     fn new() -> Self {
         let h = Harness::new(1600.0);
         let fixture = hydrus_testkit::fixture_json("manage_tags_list.json");
         h.page().borrow_mut().select_all();
         let files = h.page().borrow().selected_files();
-        h.ui.invoke_manage_tags_selected();
-        let window = h
-            .bound
-            .manage_tags
-            .borrow()
-            .as_ref()
-            .unwrap()
-            .clone_strong();
-        widgets::lay_out(window.window(), 900.0, 1100.0);
-        widgets::settle();
+        let window = open(&h);
         let dialog = Self {
             h,
             fixture,
@@ -432,10 +452,10 @@ fn the_dialogs_list_selects_enters_and_removes_as_the_references_does() {
 // leaf: interaction-manage-tags-list-menu-keys
 #[test]
 fn the_dialogs_list_enters_the_tags_the_reference_does() {
-    // (each answer to the question, in a dialog of its own: an answer
+    // (each answer to the question in a dialog opened anew: an answer
     // stages changes the next steps would see)
+    let mut d = Dialog::new();
     for yes in [true, false] {
-        let d = Dialog::new();
         d.select(&["plain tag", "box:anchor"]);
         input::double_click(d.window.window(), d.at(Some("box:anchor")), NONE);
         let name = "double click with two selected";
@@ -444,8 +464,7 @@ fn the_dialogs_list_enters_the_tags_the_reference_does() {
             &d.answered(yes),
             &d.expected_answered(&d.recorded(name)["entered"], yes),
         );
-        d.h.finish();
-        let d = Dialog::new();
+        d.reopen();
         d.select(&["alpha:first", "safe"]);
         d.key(RETURN, NONE);
         let name = "return enters the selection";
@@ -454,8 +473,9 @@ fn the_dialogs_list_enters_the_tags_the_reference_does() {
             &d.answered(yes),
             &d.expected_answered(&d.recorded(name)["entered"], yes),
         );
-        d.h.finish();
+        d.reopen();
     }
+    d.h.finish();
 }
 
 // leaf: interaction-manage-tags-list-menu-keys
