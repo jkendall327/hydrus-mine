@@ -6,7 +6,7 @@
 //! the edit dialog's question before overwriting another, and what it
 //! gives back.
 
-use slint::Model as _;
+use slint::{ComponentHandle as _, Model as _};
 
 use hydrus_gui::{MainWindow, Pages, SearchPage, bind, headless};
 use hydrus_store::Store;
@@ -906,7 +906,33 @@ fn the_dialogs_save_edit_and_delete_searches() {
     assert_eq!(names(&manage), ["new favourite search", "inbox filter"]);
 
     // deleting asks first; "no" keeps it, "yes" doesn't
-    manage.invoke_row_clicked(1, false, false);
+    // (rows are clicked where they are drawn; ctrl adds the other to the
+    // selection, as a ctrl+click does in the reference's list)
+    crate::common::widgets::lay_out(manage.window(), 900.0, 600.0);
+    crate::common::widgets::click(manage.window(), " inbox filter");
+    assert_eq!(
+        manage
+            .get_rows()
+            .iter()
+            .map(|r| r.selected)
+            .collect::<Vec<_>>(),
+        [false, true]
+    );
+    crate::common::widgets::click_with(
+        manage.window(),
+        " new favourite search",
+        crate::common::widgets::Mods::CTRL,
+    );
+    assert_eq!(
+        manage
+            .get_rows()
+            .iter()
+            .map(|r| r.selected)
+            .collect::<Vec<_>>(),
+        [true, true],
+        "ctrl+click adds a row"
+    );
+    crate::common::widgets::click(manage.window(), " inbox filter");
     manage.invoke_delete();
     assert_eq!(manage.get_question(), "Remove all selected?");
     manage.invoke_answered(false);
@@ -923,6 +949,9 @@ fn the_dialogs_save_edit_and_delete_searches() {
     ui.invoke_favourites_menu_requested(10.0, 100.0);
     ui.invoke_menu_line_clicked(0, 0, 0.0, 0.0, 0.0);
     let manage = list();
+    // (the row's double click opens its editor, but a real double click on
+    // these hand-rolled rows does nothing yet, so the callback is invoked:
+    // issue #295)
     manage.invoke_row_activated(1);
     let window = edit();
     assert_eq!(window.get_name(), "new favourite search");

@@ -97,7 +97,10 @@ pub fn shows(window: &slint::Window, label: &str) -> bool {
     !labelled(window, label).is_empty()
 }
 
-/// Where the `n`th visible widget labelled `label` is.
+/// Where the `n`th visible widget labelled `label` is. Matches come in tree
+/// order, popups first: for a label that more than one widget has, `n` picks
+/// one (the last in tree order is the one drawn on top, as a menu is over
+/// the window), and `count` says how many there are.
 pub fn position(window: &slint::Window, label: &str, n: usize) -> LogicalPosition {
     settle();
     let found = labelled(window, label);
@@ -203,6 +206,10 @@ pub fn double_click_at(
     button: PointerEventButton,
     mods: Mods,
 ) {
+    // (Slint counts clicks within half a second of each other at the same
+    // place as one run, and fires double-clicked on the even ones: let any
+    // click before this one go by first)
+    hydrus_gui::headless::advance_time(std::time::Duration::from_millis(600));
     holding(window, mods, || {
         window.dispatch_event(WindowEvent::PointerMoved { position });
         for _ in 0..2 {
@@ -256,8 +263,11 @@ pub fn drag(
         button,
     });
     let middle = LogicalPosition::new(f32::midpoint(from.x, to.x), f32::midpoint(from.y, to.y));
+    settle();
     window.dispatch_event(WindowEvent::PointerMoved { position: middle });
+    settle();
     window.dispatch_event(WindowEvent::PointerMoved { position: to });
+    settle();
     window.dispatch_event(WindowEvent::PointerReleased {
         position: to,
         button,
@@ -322,13 +332,15 @@ pub fn double_click(window: &slint::Window, label: &str) {
     double_click_at(window, at, PointerEventButton::Left, Mods::NONE);
 }
 
-/// Point at (hover) the first visible widget labelled `label`.
+/// Point at (hover) the first visible widget labelled `label`. (Unproven:
+/// no test calls it yet; `hover_at` is used by the menu helpers.)
 pub fn hover(window: &slint::Window, label: &str) {
     let at = position(window, label, 0);
     hover_at(window, at);
 }
 
-/// Turn the wheel over the first visible widget labelled `label`.
+/// Turn the wheel over the first visible widget labelled `label`. (Unproven:
+/// `scroll_at` is used by a test, this label-finding form is not.)
 pub fn scroll(window: &slint::Window, label: &str, delta_x: f32, delta_y: f32) {
     let at = position(window, label, 0);
     scroll_at(window, at, delta_x, delta_y, Mods::NONE);
@@ -346,7 +358,8 @@ pub fn ctrl_key(window: &slint::Window, text: impl Into<SharedString>) {
     key_with(window, text, Mods::CTRL);
 }
 
-/// Press a key with `mods` held.
+/// Press a key with `mods` held. (Ctrl is used by tests; Shift and Alt are
+/// unproven.)
 pub fn key_with(window: &slint::Window, text: impl Into<SharedString>, mods: Mods) {
     let text = text.into();
     holding(window, mods, || key(window, text));

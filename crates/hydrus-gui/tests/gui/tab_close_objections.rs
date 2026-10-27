@@ -128,6 +128,8 @@ fn right_click_tab(ui: &MainWindow, index: usize) {
     for _ in 0..10 {
         widgets::settle();
     }
+    // (the tab strip is above the page, so its tab is the first with the name)
+    assert!(widgets::position(ui.window(), &name, 0).y < 80.0);
     widgets::right_click(ui.window(), &name);
 }
 

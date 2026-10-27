@@ -37,7 +37,12 @@ pub fn open(ui: &MainWindow, path: &[&str]) -> Vec<(String, i32, bool)> {
         .position(|i| titles.row_data(i).unwrap().label == path[0])
         .unwrap_or_else(|| panic!("no menu titled {:?}", path[0]));
     if ui.get_menu_open() != i32::try_from(top).unwrap() {
-        // (the first match: the bar is above everything else)
+        assert_eq!(
+            widgets::count(window, path[0]),
+            1,
+            "{:?} is unique",
+            path[0]
+        );
         widgets::click(window, path[0]);
     }
     for (depth, label) in path[1..].iter().enumerate() {

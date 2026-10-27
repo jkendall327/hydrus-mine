@@ -58,9 +58,10 @@ fn shown(ui: &MainWindow) -> [bool; 4] {
         assert!(line.usable);
         out[i] = line.checked;
         // (a press anywhere else closes the menus)
+        let size = ui.window().size().to_logical(ui.window().scale_factor());
         crate::common::widgets::click_at(
             ui.window(),
-            slint::LogicalPosition::new(1050.0, 650.0),
+            slint::LogicalPosition::new(size.width - 50.0, size.height - 50.0),
             slint::platform::PointerEventButton::Left,
         );
         assert_eq!(ui.get_menu_open(), -1, "a click elsewhere closes the menu");

@@ -231,15 +231,9 @@ modules in a gitignored `crates/hydrus-gui/tests/lane_<name>.rs` (with
 - **Real input in GUI tests**: `ui.invoke_*` calls a callback directly, so it
   never shows that a click reaches anything (a missing `TouchArea`, or one
   covered by another element, passes). A test that proves a mouse or keyboard
-  behaviour drives `tests/gui/common/widgets.rs` instead: `click`, `right_click`,
-  `middle_click`, `double_click`, `click_with(.., Mods::CTRL)`, `hover`,
-  `scroll`, `drag` and `key_with` send pointer and key events through
-  `window().dispatch_event`. A widget is found by its accessible label (a
-  button's or `Text`'s text, or an `accessible-label` you add), and is clicked
-  at its laid-out centre; for one with no label use `click_at` and friends with
-  a `LogicalPosition` built from an exported geometry property. Call
-  `widgets::lay_out(window, w, h)` first: a headless window is 0-sized until
-  laid out. `common/main_menu.rs` opens and chooses menu entries this way. Give
+  behaviour sends real events with `tests/gui/common/widgets.rs` (clicks of
+  any button, modifiers, wheel, drag, keys; its module doc lists them). Call
+  `widgets::lay_out` first: a headless window is 0-sized until laid out. Give
   an unlabelled `.slint` element an `accessible-label` rather than computing
   positions in the test.
 - **Timers in GUI tests**: state updated by a Slint `Timer` is not there until
