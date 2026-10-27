@@ -3,6 +3,20 @@
 //! and clicked where it is laid out, as a pointer press and release at its
 //! centre, so the click goes through the `.slint` file's own touch areas
 //! and handlers rather than a callback invoked from the test.
+//!
+//! Everything here goes through `window.dispatch_event`, as a user's devices
+//! do: left, right and middle clicks, double clicks, modifiers held (`Mods`),
+//! the wheel, hovering and keys. A test that tags a mouse or keyboard
+//! behaviour should use these, not `ui.invoke_*`, which skips the question
+//! of whether the click reaches the element at all (a missing `TouchArea`,
+//! or one covered by another element, passes every `invoke_*` test).
+//!
+//! The widget is found by its accessible label: a button's or check box's
+//! text, a `Text` element's text, or an explicit `accessible-label`. For
+//! one with none (or several alike), give a place, from an exported
+//! geometry property: `click_at`, `scroll_at` and the rest take a
+//! `LogicalPosition`. Lay the window out first (`lay_out`): a headless
+//! window is 0-sized until then.
 
 #![allow(dead_code)]
 
@@ -105,11 +119,147 @@ pub fn settle() {
     }
 }
 
+/// Keyboard modifiers held while an event is sent.
+#[derive(Clone, Copy, Default, PartialEq, Eq, Debug)]
+pub struct Mods {
+    pub ctrl: bool,
+    pub shift: bool,
+    pub alt: bool,
+}
+
+impl Mods {
+    pub const NONE: Mods = Mods {
+        ctrl: false,
+        shift: false,
+        alt: false,
+    };
+    pub const CTRL: Mods = Mods {
+        ctrl: true,
+        ..Mods::NONE
+    };
+    pub const SHIFT: Mods = Mods {
+        shift: true,
+        ..Mods::NONE
+    };
+    pub const ALT: Mods = Mods {
+        alt: true,
+        ..Mods::NONE
+    };
+
+    fn keys(self) -> Vec<SharedString> {
+        let mut keys = Vec::new();
+        if self.ctrl {
+            keys.push(Key::Control.into());
+        }
+        if self.shift {
+            keys.push(Key::Shift.into());
+        }
+        if self.alt {
+            keys.push(Key::Alt.into());
+        }
+        keys
+    }
+}
+
+/// Run `events` with `mods` held down, releasing them after.
+fn holding(window: &slint::Window, mods: Mods, events: impl FnOnce()) {
+    let keys = mods.keys();
+    for text in &keys {
+        window.dispatch_event(WindowEvent::KeyPressed { text: text.clone() });
+    }
+    events();
+    for text in keys.into_iter().rev() {
+        window.dispatch_event(WindowEvent::KeyReleased { text });
+    }
+}
+
 /// Press and release a pointer button at a place in the window.
 pub fn click_at(window: &slint::Window, position: LogicalPosition, button: PointerEventButton) {
+    click_at_with(window, position, button, Mods::NONE);
+}
+
+/// [`click_at`], with modifiers held.
+pub fn click_at_with(
+    window: &slint::Window,
+    position: LogicalPosition,
+    button: PointerEventButton,
+    mods: Mods,
+) {
+    holding(window, mods, || {
+        window.dispatch_event(WindowEvent::PointerMoved { position });
+        window.dispatch_event(WindowEvent::PointerPressed { position, button });
+        window.dispatch_event(WindowEvent::PointerReleased { position, button });
+    });
+    window.dispatch_event(WindowEvent::PointerExited);
+    settle();
+}
+
+/// Two quick clicks of a button at a place: a double click.
+pub fn double_click_at(
+    window: &slint::Window,
+    position: LogicalPosition,
+    button: PointerEventButton,
+    mods: Mods,
+) {
+    holding(window, mods, || {
+        window.dispatch_event(WindowEvent::PointerMoved { position });
+        for _ in 0..2 {
+            window.dispatch_event(WindowEvent::PointerPressed { position, button });
+            window.dispatch_event(WindowEvent::PointerReleased { position, button });
+        }
+    });
+    window.dispatch_event(WindowEvent::PointerExited);
+    settle();
+}
+
+/// Move the pointer to a place and leave it there (hover; a menu's
+/// submenu opens this way).
+pub fn hover_at(window: &slint::Window, position: LogicalPosition) {
     window.dispatch_event(WindowEvent::PointerMoved { position });
-    window.dispatch_event(WindowEvent::PointerPressed { position, button });
-    window.dispatch_event(WindowEvent::PointerReleased { position, button });
+    settle();
+}
+
+/// Turn the wheel at a place, by `delta_x` and `delta_y` logical pixels
+/// (positive y is up, as Slint has it), with modifiers held.
+pub fn scroll_at(
+    window: &slint::Window,
+    position: LogicalPosition,
+    delta_x: f32,
+    delta_y: f32,
+    mods: Mods,
+) {
+    holding(window, mods, || {
+        window.dispatch_event(WindowEvent::PointerMoved { position });
+        window.dispatch_event(WindowEvent::PointerScrolled {
+            position,
+            delta_x,
+            delta_y,
+        });
+    });
+    window.dispatch_event(WindowEvent::PointerExited);
+    settle();
+}
+
+/// Press a pointer button at one place, move to another and release it
+/// there: a drag (moved in between too, as a device does).
+pub fn drag(
+    window: &slint::Window,
+    from: LogicalPosition,
+    to: LogicalPosition,
+    button: PointerEventButton,
+) {
+    window.dispatch_event(WindowEvent::PointerMoved { position: from });
+    window.dispatch_event(WindowEvent::PointerPressed {
+        position: from,
+        button,
+    });
+    let middle = LogicalPosition::new((from.x + to.x) / 2.0, (from.y + to.y) / 2.0);
+    window.dispatch_event(WindowEvent::PointerMoved { position: middle });
+    window.dispatch_event(WindowEvent::PointerMoved { position: to });
+    window.dispatch_event(WindowEvent::PointerReleased {
+        position: to,
+        button,
+    });
     window.dispatch_event(WindowEvent::PointerExited);
     settle();
 }
@@ -133,8 +283,53 @@ pub fn click(window: &slint::Window, label: &str) {
 
 /// Click (left) the `n`th visible widget labelled `label`.
 pub fn click_nth(window: &slint::Window, label: &str, n: usize) {
+    click_nth_with(window, label, n, PointerEventButton::Left, Mods::NONE);
+}
+
+/// Click the `n`th visible widget labelled `label` with `button`, holding
+/// `mods`.
+pub fn click_nth_with(
+    window: &slint::Window,
+    label: &str,
+    n: usize,
+    button: PointerEventButton,
+    mods: Mods,
+) {
     let at = position(window, label, n);
-    click_at(window, at, PointerEventButton::Left);
+    click_at_with(window, at, button, mods);
+}
+
+/// Click (left) the first visible widget labelled `label`, holding `mods`.
+pub fn click_with(window: &slint::Window, label: &str, mods: Mods) {
+    click_nth_with(window, label, 0, PointerEventButton::Left, mods);
+}
+
+/// Right-click the first visible widget labelled `label`.
+pub fn right_click(window: &slint::Window, label: &str) {
+    click_nth_with(window, label, 0, PointerEventButton::Right, Mods::NONE);
+}
+
+/// Middle-click the first visible widget labelled `label`.
+pub fn middle_click(window: &slint::Window, label: &str) {
+    click_nth_with(window, label, 0, PointerEventButton::Middle, Mods::NONE);
+}
+
+/// Double-click (left) the first visible widget labelled `label`.
+pub fn double_click(window: &slint::Window, label: &str) {
+    let at = position(window, label, 0);
+    double_click_at(window, at, PointerEventButton::Left, Mods::NONE);
+}
+
+/// Point at (hover) the first visible widget labelled `label`.
+pub fn hover(window: &slint::Window, label: &str) {
+    let at = position(window, label, 0);
+    hover_at(window, at);
+}
+
+/// Turn the wheel over the first visible widget labelled `label`.
+pub fn scroll(window: &slint::Window, label: &str, delta_x: f32, delta_y: f32) {
+    let at = position(window, label, 0);
+    scroll_at(window, at, delta_x, delta_y, Mods::NONE);
 }
 
 /// Press and release a key (text, or a `slint::platform::Key`).
@@ -146,10 +341,13 @@ pub fn key(window: &slint::Window, text: impl Into<SharedString>) {
 
 /// Press a key with Ctrl held.
 pub fn ctrl_key(window: &slint::Window, text: impl Into<SharedString>) {
-    let ctrl: SharedString = Key::Control.into();
-    window.dispatch_event(WindowEvent::KeyPressed { text: ctrl.clone() });
-    key(window, text);
-    window.dispatch_event(WindowEvent::KeyReleased { text: ctrl });
+    key_with(window, text, Mods::CTRL);
+}
+
+/// Press a key with `mods` held.
+pub fn key_with(window: &slint::Window, text: impl Into<SharedString>, mods: Mods) {
+    let text = text.into();
+    holding(window, mods, || key(window, text));
 }
 
 /// An accessible property of the first visible widget labelled `label`.
