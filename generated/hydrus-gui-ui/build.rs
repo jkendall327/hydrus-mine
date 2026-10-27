@@ -66,6 +66,18 @@ fn cached(ui: &std::path::Path, entry: &std::path::Path, out: &std::path::Path) 
         writeln!(table, "    ({file:?}, include_str!({file:?})),").unwrap();
     }
     table.push_str("];\n");
+    // each window's own file, so a thread compiles only what it opens
+    table.push_str("pub(crate) static WINDOW_FILES: &[(&str, &str)] = &[\n");
+    for file in &files {
+        for line in std::fs::read_to_string(file).unwrap().lines() {
+            if let Some(rest) = line.strip_prefix("export component ") {
+                if let Some((name, _)) = rest.split_once(" inherits Window") {
+                    writeln!(table, "    ({name:?}, {:?}),", file.display().to_string()).unwrap();
+                }
+            }
+        }
+    }
+    table.push_str("];\n");
     std::fs::write(out.join("interp_sources.rs"), table).unwrap();
 
     let generated = out.join("all.rs");
@@ -81,20 +93,20 @@ fn rewrite(code: &str) -> String {
     // instantiation of <Name>.
     let mut result = String::with_capacity(code.len());
     let mut rest = code;
-    let start_pat = "let mut compiler = sp::live_preview::Compiler::default();";
-    let call_pat = "sp::live_preview::LiveReloadingComponent::new(";
+    let start_pat = "let mut compiler = sp :: live_preview :: Compiler :: default () ;";
+    let call_pat = "sp :: live_preview :: LiveReloadingComponent :: new (";
     while let Some(start) = rest.find(start_pat) {
         result.push_str(&rest[..start]);
         let after = &rest[start..];
         let call = after.find(call_pat).expect("each compiler is used in a new()");
         let args = &after[call + call_pat.len()..];
-        let name_at = args.find("Some(\"").unwrap() + "Some(\"".len();
+        let name_at = args.find("Some (\"").unwrap() + "Some (\"".len();
         let name_end = name_at + args[name_at..].find('"').unwrap();
         let name = &args[name_at..name_end];
-        let close = args.find(")?;").unwrap() + 3;
+        let close = args.find(") ? ;").unwrap() + ") ? ;".len();
         write!(result, "let instance = crate::interp::Component::new({name:?})?;").unwrap();
         rest = &args[close..];
     }
     result.push_str(rest);
-    result.replace("sp::live_preview::LiveReloadingComponent", "crate::interp::Component")
+    result.replace("sp :: live_preview :: LiveReloadingComponent", "crate::interp::Component")
 }

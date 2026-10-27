@@ -6,7 +6,7 @@
 //! `LiveReloadingComponent`: same methods, no compiling per `new()`, no file
 //! watching.
 
-use std::cell::{OnceCell, RefCell};
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
@@ -17,23 +17,38 @@ use slint_interpreter::{CompilationResult, Compiler, ComponentDefinition, Compon
 include!(concat!(env!("OUT_DIR"), "/interp_sources.rs"));
 
 thread_local! {
-    static UI: OnceCell<CompilationResult> = const { OnceCell::new() };
+    /// By entry file: a window's own file, or the whole UI.
+    static UI: RefCell<HashMap<&'static str, Rc<CompilationResult>>> = RefCell::default();
 }
 
-fn compile() -> CompilationResult {
+fn sources() -> &'static HashMap<&'static Path, &'static str> {
+    static SOURCE_MAP: std::sync::OnceLock<HashMap<&'static Path, &'static str>> = std::sync::OnceLock::new();
+    SOURCE_MAP.get_or_init(|| SOURCES.iter().map(|(path, text)| (Path::new(*path), *text)).collect())
+}
+
+/// The file to compile for `name`: its own, unless HYDRUS_INTERP_WHOLE asks
+/// for the whole UI at once.
+fn entry_for(name: &str) -> &'static str {
+    static WHOLE: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    if *WHOLE.get_or_init(|| std::env::var_os("HYDRUS_INTERP_WHOLE").is_some()) {
+        return ENTRY_PATH;
+    }
+    WINDOW_FILES.iter().find(|(window, _)| *window == name).map_or(ENTRY_PATH, |(_, file)| file)
+}
+
+fn compile(entry: &'static str) -> CompilationResult {
     let started = std::time::Instant::now();
     let mut compiler = Compiler::default();
     compiler.set_library_paths(HashMap::from([(
         "hydrus_ui_core".to_owned(),
         PathBuf::from(LIBRARY_MAIN),
     )]));
-    let sources: HashMap<&'static Path, &'static str> =
-        SOURCES.iter().map(|(path, text)| (Path::new(*path), *text)).collect();
     compiler.set_file_loader(move |path| {
-        let found = sources.get(path).map(|text| Ok((*text).to_owned()));
+        let found = sources().get(path).map(|text| Ok((*text).to_owned()));
         Box::pin(std::future::ready(found))
     });
-    let future = compiler.build_from_source(ENTRY_SOURCE.to_owned(), PathBuf::from(ENTRY_PATH));
+    let source = if entry == ENTRY_PATH { ENTRY_SOURCE } else { sources()[Path::new(entry)] };
+    let future = compiler.build_from_source(source.to_owned(), PathBuf::from(entry));
     let mut future = std::pin::pin!(future);
     let mut cx = std::task::Context::from_waker(std::task::Waker::noop());
     let std::task::Poll::Ready(result) = std::future::Future::poll(future.as_mut(), &mut cx) else {
@@ -42,24 +57,22 @@ fn compile() -> CompilationResult {
     result.print_diagnostics();
     assert!(!result.has_errors(), "the embedded UI compiles");
     if std::env::var_os("HYDRUS_INTERP_TIMING").is_some() {
-        eprintln!("hydrus-gui-ui: compiled the UI in {:?}", started.elapsed());
+        eprintln!("hydrus-gui-ui: compiled {entry} in {:?}", started.elapsed());
     }
     result
 }
 
 fn definition(name: &str) -> Result<ComponentDefinition, PlatformError> {
-    UI.with(|ui| {
-        ui.get_or_init(compile)
-            .component(name)
-            .ok_or_else(|| PlatformError::from(format!("no component {name} in the UI")))
-    })
-}
-
-/// Compile the UI on this thread now, rather than at the first `new()`.
-pub fn warm_up() {
-    UI.with(|ui| {
-        ui.get_or_init(compile);
+    let entry = entry_for(name);
+    let compiled = UI.with(|ui| ui.borrow().get(entry).cloned());
+    let compiled = compiled.unwrap_or_else(|| {
+        let compiled = Rc::new(compile(entry));
+        UI.with(|ui| ui.borrow_mut().insert(entry, compiled.clone()));
+        compiled
     });
+    compiled
+        .component(name)
+        .ok_or_else(|| PlatformError::from(format!("no component {name} in {entry}")))
 }
 
 /// An instance of one of the UI's exported components.
