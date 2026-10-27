@@ -155,7 +155,10 @@ component TopVolume inherits Tipped {
     callback flip-global-mute();
     callback flip-viewer-mute();
     callback volume-changed(int);
+    // the popup opening and shutting
+    callback opened(bool);
     property <bool> open: touch.has-hover || popup-touch.has-hover || popup-touch.pressed;
+    changed open => { root.opened(self.open); }
     property <length> track: 100px;
     border-radius: 3px;
     background: touch.pressed ? #ffffff40 : touch.has-hover ? #ffffff24 : transparent;
@@ -247,6 +250,8 @@ export component ViewerTopHoverRow inherits HorizontalLayout {
     in property <ViewerEyeMenu> eye-menu;
     // the tooltips as Slint's Markdown takes them
     in property <TopHoverTips> tips-markdown;
+    // the volume control's popup is open (it hangs below the row)
+    out property <bool> volume-open;
 
     callback first();
     callback previous();
@@ -434,6 +439,7 @@ export component ViewerTopHoverRow inherits HorizontalLayout {
             flip-global-mute => { root.flip-global-mute(); }
             flip-viewer-mute => { root.flip-viewer-mute(); }
             volume-changed(v) => { root.volume-changed(v); }
+            opened(open) => { root.volume-open = open; }
         }
         Tipped {
             label: "shortcuts";

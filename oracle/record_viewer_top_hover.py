@@ -4,7 +4,7 @@ subclasses) on the three canvases that make one, and what its buttons do.
 
 - the browser (`CanvasMediaListBrowser`, `CanvasHoverFrameTopNavigableList`)
   on the basic fixture: a JPEG in the inbox, one archived, one with a note,
-  an audio file, a video with sound, and one in the trash;
+  an audio file, and one in the trash;
 - the archive/delete filter (`CanvasMediaListFilterArchiveDelete`,
   `CanvasHoverFrameTopArchiveDeleteFilter`) on the basic fixture's JPEGs;
 - the duplicate filter (`CanvasFilterDuplicates`,

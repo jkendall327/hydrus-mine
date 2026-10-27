@@ -204,7 +204,7 @@ export component MediaViewerWindow inherits Window {
     // pointer over it or near it, in the window's middle three fifths
     in property <string> info-line;
     in property <string> tag-banner;
-    out property <bool> info-showing: (root.hover-focus-good || (!root.another-window-active && root.info-raised)) && (top-frame.has-hover || (pointer.has-hover
+    out property <bool> info-showing: (root.hover-focus-good || (!root.another-window-active && root.info-raised)) && (top-frame.has-hover || top-row.volume-open || (pointer.has-hover
         && pointer.mouse-y <= top-box.preferred-height + 20px
         && pointer.mouse-x >= root.width * 0.2 && pointer.mouse-x <= root.width * 0.8));
     // the file's state, for the frame's buttons: in the inbox (archive,
@@ -1266,66 +1266,21 @@ export component MediaViewerWindow inherits Window {
             x: root.width * 0.2;
             y: 0;
             width: root.width * 0.6;
-            height: top-box.preferred-height;
+            // (taller while the volume control's popup hangs below it, so
+            // the pointer on the popup keeps the frame raised)
+            height: top-box.height + (top-row.volume-open ? 150px : 0px);
             visible: root.info-showing;
             top-box := Rectangle {
+                x: 0;
+                y: 0;
+                height: top-layout.preferred-height;
                 background: #202020e8;
-                VerticalLayout {
+                top-layout := VerticalLayout {
                     padding: 4px;
                     spacing: 2px;
-                    ViewerTopHoverRow {
-                        index-text: root.caption;
-                        zoom-text: root.zoom-text;
-                        tips: root.top-tips;
-                        tips-markdown: root.top-tips-markdown;
-                        file-inbox: root.file-inbox;
-                        file-trashed: root.file-trashed;
-                        file-local: root.file-local;
-                        file-undeletable: root.file-undeletable;
-                        volume-available: root.volume-available;
-                        global-muted: root.global-muted;
-                        viewer-muted: root.viewer-muted;
-                        volume: root.volume;
-                        slideshow-menu: root.context-menu.slideshow;
-                        zoom-menu: root.top-zoom-menu;
-                        resize-menu: root.top-resize-menu;
-                        shortcut-names: root.shortcut-names;
-                        shortcut-current: root.shortcut-current;
-                        shortcut-defaults: root.shortcut-defaults;
-                        eye-menu: root.eye-menu;
-                        first => { root.first(); }
-                        previous => { root.previous(); }
-                        next => { root.next(); }
-                        last => { root.last(); }
-                        random => { root.random(); }
-                        undo-random => { root.undo-random(); }
-                        slideshow-requested => { root.context-menu-requested(); }
-                        slideshow-chosen(id) => { root.menu-chosen(id); }
-                        archive => { root.archive(); }
-                        inbox => { root.inbox(); }
-                        delete => { root.delete(); }
-                        undelete => { root.undelete(); }
-                        show-metadata => { root.show-metadata(); }
-                        zoom(direction) => { root.zoom(direction, false, 0, 0); }
-                        zoom-switch(x, y) => { root.zoom-switch-requested(x, y); }
-                        zoom-menu-requested => { root.top-zoom-menu-requested(); }
-                        zoom-menu-chosen(id) => { root.top-zoom-menu-chosen(id); }
-                        flip-global-mute => { root.flip-global-mute(); }
-                        flip-viewer-mute => { root.flip-viewer-mute(); }
-                        volume-changed(v) => { root.volume-changed(v); }
-                        shortcut-menu-requested => { root.shortcut-menu-requested(); }
-                        shortcut-menu-chosen(kind, i) => { root.shortcut-menu-chosen(kind, i); }
-                        eye-menu-requested => { root.eye-menu-requested(); }
-                        eye-menu-chosen(id) => { root.eye-menu-chosen(id); }
-                        move-window => { root.move-window(); }
-                        resize-menu-requested => { root.top-resize-menu-requested(); }
-                        resize-chosen(id) => { root.top-resize-chosen(id); }
-                        fullscreen => { root.toggle-fullscreen(); }
-                        open-externally => { root.open-externally(); }
-                        drag-out => { root.show-in-file-browser(); }
-                        focus-media => { root.focus-media(); }
-                        close => { root.close-requested(); }
-                    }
+                    // (the row's place: the row itself is drawn after the
+                    // texts, so that the volume popup hangs over them)
+                    Rectangle { height: top-row.preferred-height; }
                     if root.tag-banner != "": Text {
                         text: root.tag-banner;
                         color: #f0f0f0;
@@ -1339,6 +1294,63 @@ export component MediaViewerWindow inherits Window {
                         overflow: elide;
                     }
                 }
+            }
+            top-row := ViewerTopHoverRow {
+                x: 4px;
+                y: 4px;
+                width: top-frame.width - 8px;
+                height: self.preferred-height;
+                    index-text: root.caption;
+                    zoom-text: root.zoom-text;
+                    tips: root.top-tips;
+                    tips-markdown: root.top-tips-markdown;
+                    file-inbox: root.file-inbox;
+                    file-trashed: root.file-trashed;
+                    file-local: root.file-local;
+                    file-undeletable: root.file-undeletable;
+                    volume-available: root.volume-available;
+                    global-muted: root.global-muted;
+                    viewer-muted: root.viewer-muted;
+                    volume: root.volume;
+                    slideshow-menu: root.context-menu.slideshow;
+                    zoom-menu: root.top-zoom-menu;
+                    resize-menu: root.top-resize-menu;
+                    shortcut-names: root.shortcut-names;
+                    shortcut-current: root.shortcut-current;
+                    shortcut-defaults: root.shortcut-defaults;
+                    eye-menu: root.eye-menu;
+                    first => { root.first(); }
+                    previous => { root.previous(); }
+                    next => { root.next(); }
+                    last => { root.last(); }
+                    random => { root.random(); }
+                    undo-random => { root.undo-random(); }
+                    slideshow-requested => { root.context-menu-requested(); }
+                    slideshow-chosen(id) => { root.menu-chosen(id); }
+                    archive => { root.archive(); }
+                    inbox => { root.inbox(); }
+                    delete => { root.delete(); }
+                    undelete => { root.undelete(); }
+                    show-metadata => { root.show-metadata(); }
+                    zoom(direction) => { root.zoom(direction, false, 0, 0); }
+                    zoom-switch(x, y) => { root.zoom-switch-requested(x, y); }
+                    zoom-menu-requested => { root.top-zoom-menu-requested(); }
+                    zoom-menu-chosen(id) => { root.top-zoom-menu-chosen(id); }
+                    flip-global-mute => { root.flip-global-mute(); }
+                    flip-viewer-mute => { root.flip-viewer-mute(); }
+                    volume-changed(v) => { root.volume-changed(v); }
+                    shortcut-menu-requested => { root.shortcut-menu-requested(); }
+                    shortcut-menu-chosen(kind, i) => { root.shortcut-menu-chosen(kind, i); }
+                    eye-menu-requested => { root.eye-menu-requested(); }
+                    eye-menu-chosen(id) => { root.eye-menu-chosen(id); }
+                    move-window => { root.move-window(); }
+                    resize-menu-requested => { root.top-resize-menu-requested(); }
+                    resize-chosen(id) => { root.top-resize-chosen(id); }
+                    fullscreen => { root.toggle-fullscreen(); }
+                    open-externally => { root.open-externally(); }
+                    drag-out => { root.show-in-file-browser(); }
+                    focus-media => { root.focus-media(); }
+                    close => { root.close-requested(); }
             }
         }
         // The note text keeps the hover alive and middle-clicks copy that note.
