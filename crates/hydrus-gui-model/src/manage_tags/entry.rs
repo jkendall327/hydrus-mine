@@ -233,7 +233,8 @@ impl ManageTags {
             staged.clear();
         }
         let decorators = self.tag_selection.borrow().decorators();
-        *self.tag_selection.borrow_mut() = crate::selection_tags::SelectionTags::decorated(decorators);
+        *self.tag_selection.borrow_mut() =
+            crate::selection_tags::SelectionTags::decorated(decorators);
         self.refresh_stored();
         self.input.set_context_tags(self.tags().into_keys());
     }

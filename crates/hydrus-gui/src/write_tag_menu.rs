@@ -19,7 +19,11 @@ pub fn install_search_launcher(launcher: SearchLauncher) {
 }
 /// Open a search page through the main window's launcher, if one is live
 /// (a tag list's middle-click).
-pub(crate) fn launch_search(location: LocationContext, context: TagContext, predicates: Vec<Predicate>) {
+pub(crate) fn launch_search(
+    location: LocationContext,
+    context: TagContext,
+    predicates: Vec<Predicate>,
+) {
     let launcher = SEARCH_LAUNCHER.with(|slot| slot.borrow().clone());
     if let Some(launcher) = launcher {
         launcher(location, context, predicates, false);

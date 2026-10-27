@@ -12,9 +12,7 @@
 //! mode, the tag display switch. Those are the list's own entries
 //! ([`Command`], as [`Action::Owner`] ids), done by the window that holds it.
 use crate::tag_list_box::{Decorators, Key, Outcome, Row, TagListBox};
-use crate::write_tag_menu::{
-    Action, Decoration, Entry, favourite_entries, relationship_entries,
-};
+use crate::write_tag_menu::{Action, Decoration, Entry, favourite_entries, relationship_entries};
 use hydrus_core::numbers::human_int;
 use hydrus_core::search::context::{LocationContext, TagContext};
 use hydrus_core::search::predicate::Predicate;
@@ -326,19 +324,39 @@ impl SelectionTags {
         if d.show_parents {
             if d.expand_parents {
                 if self.list.drawn("").len() != self.list.rows().len() {
-                    out.push(decorate("collapse parent rows", Decoration::Expanded, false));
+                    out.push(decorate(
+                        "collapse parent rows",
+                        Decoration::Expanded,
+                        false,
+                    ));
                 }
             } else {
                 out.push(decorate("expand parent rows", Decoration::Expanded, true));
             }
-            out.push(decorate("hide parent decorators", Decoration::Parents, false));
+            out.push(decorate(
+                "hide parent decorators",
+                Decoration::Parents,
+                false,
+            ));
         } else {
-            out.push(decorate("show parent decorators", Decoration::Parents, true));
+            out.push(decorate(
+                "show parent decorators",
+                Decoration::Parents,
+                true,
+            ));
         }
         if d.show_siblings {
-            out.push(decorate("hide sibling decorators", Decoration::Siblings, false));
+            out.push(decorate(
+                "hide sibling decorators",
+                Decoration::Siblings,
+                false,
+            ));
         } else {
-            out.push(decorate("show sibling decorators", Decoration::Siblings, true));
+            out.push(decorate(
+                "show sibling decorators",
+                Decoration::Siblings,
+                true,
+            ));
         }
         out
     }

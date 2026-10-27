@@ -1372,7 +1372,8 @@ pub(crate) fn open(
                 let place = list_place(&store);
                 let viewing: hydrus_store::settings::FileViewingStatistics =
                     store.read(hydrus_store::settings::get).unwrap_or_default();
-                let text = hydrus_search::TextContext::from_store(&store.snapshot().services, &viewing);
+                let text =
+                    hydrus_search::TextContext::from_store(&store.snapshot().services, &viewing);
                 model.tag_list().menu(&store, &place, &text)
             };
             let model = model.clone();
@@ -1421,12 +1422,11 @@ pub(crate) fn open(
             let Some(key) = hydrus_gui_model::tag_list_box::Key::from_text(&text) else {
                 return false;
             };
-            let outcome = model.borrow().tag_list().key(
-                key,
-                ctrl,
-                shift,
-                usize::try_from(rows).unwrap_or(1),
-            );
+            let outcome =
+                model
+                    .borrow()
+                    .tag_list()
+                    .key(key, ctrl, shift, usize::try_from(rows).unwrap_or(1));
             match outcome {
                 hydrus_gui_model::tag_list_box::Outcome::Ignored => return false,
                 hydrus_gui_model::tag_list_box::Outcome::Copy(text) => {

@@ -52,7 +52,13 @@ impl Dialog {
         h.page().borrow_mut().select_all();
         let files = h.page().borrow().selected_files();
         h.ui.invoke_manage_tags_selected();
-        let window = h.bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+        let window = h
+            .bound
+            .manage_tags
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
         widgets::lay_out(window.window(), 900.0, 1100.0);
         widgets::settle();
         let dialog = Self {
@@ -150,8 +156,11 @@ impl Dialog {
     }
 
     fn step(&self, name: &str) {
-        self.h
-            .differ(name, &json!(self.selected()), &self.recorded(name)["selected"]);
+        self.h.differ(
+            name,
+            &json!(self.selected()),
+            &self.recorded(name)["selected"],
+        );
     }
 
     /// What the window asks or shows once something was entered (or a
@@ -169,9 +178,11 @@ impl Dialog {
     /// What a fresh dialog model of the same files asks or shows when
     /// `entered` (the reference's) are entered, or (`remove`) removed.
     fn expected(&self, recorded: &Json, remove: bool) -> Json {
-        let mut fresh =
-            hydrus_gui_model::manage_tags::ManageTags::new(self.h.store.clone(), self.files.clone())
-                .unwrap();
+        let mut fresh = hydrus_gui_model::manage_tags::ManageTags::new(
+            self.h.store.clone(),
+            self.files.clone(),
+        )
+        .unwrap();
         let mut question = String::new();
         for tags in recorded.as_array().unwrap() {
             let tags = strings(tags);
@@ -194,7 +205,12 @@ impl Dialog {
     }
 
     fn tree(&self, pane: usize) -> Json {
-        let lines = self.window.get_tag_menu_panes().row_data(pane).unwrap().lines;
+        let lines = self
+            .window
+            .get_tag_menu_panes()
+            .row_data(pane)
+            .unwrap()
+            .lines;
         let mut out = Vec::new();
         for (i, line) in lines.iter().enumerate() {
             out.push(match line.kind {
@@ -219,7 +235,12 @@ impl Dialog {
 
     fn choose(&self, path: &[&str]) {
         for (pane, label) in path.iter().enumerate() {
-            let lines = self.window.get_tag_menu_panes().row_data(pane).unwrap().lines;
+            let lines = self
+                .window
+                .get_tag_menu_panes()
+                .row_data(pane)
+                .unwrap()
+                .lines;
             let line = lines
                 .iter()
                 .position(|row| row.label == *label)
@@ -287,11 +308,19 @@ fn the_dialogs_list_selects_enters_and_removes_as_the_references_does() {
     input::double_click(d.window.window(), d.at(Some("box:anchor")), NONE);
     let name = "double click with two selected";
     d.step(name);
-    d.h.differ(name, &d.outcome(), &d.expected(&d.recorded(name)["entered"], false));
+    d.h.differ(
+        name,
+        &d.outcome(),
+        &d.expected(&d.recorded(name)["entered"], false),
+    );
     d.click(None, NONE);
     input::double_click(d.window.window(), d.at(None), NONE);
     let name = "double click below the rows";
-    d.h.differ(name, &d.outcome(), &d.expected(&d.recorded(name)["entered"], false));
+    d.h.differ(
+        name,
+        &d.outcome(),
+        &d.expected(&d.recorded(name)["entered"], false),
+    );
     // keys
     d.click(Some("plain tag"), NONE);
     d.step("click plain tag");
@@ -324,10 +353,18 @@ fn the_dialogs_list_selects_enters_and_removes_as_the_references_does() {
     }
     d.key(RETURN, NONE);
     let name = "return enters the selection";
-    d.h.differ(name, &d.outcome(), &d.expected(&d.recorded(name)["entered"], false));
+    d.h.differ(
+        name,
+        &d.outcome(),
+        &d.expected(&d.recorded(name)["entered"], false),
+    );
     d.key(DELETE, NONE);
     let name = "delete removes the selection";
-    d.h.differ(name, &d.outcome(), &d.expected(&d.recorded(name)["deleted"], true));
+    d.h.differ(
+        name,
+        &d.outcome(),
+        &d.expected(&d.recorded(name)["deleted"], true),
+    );
     d.h.finish();
 }
 
@@ -360,9 +397,17 @@ fn the_dialogs_list_middle_clicks_open_search_pages_as_the_references_does() {
         d.h.differ(name, &d.h.launched(before), &json!(recorded));
         d.step(name);
     };
-    middle(Some("series:spaced name"), NONE, "middle click series:spaced name");
+    middle(
+        Some("series:spaced name"),
+        NONE,
+        "middle click series:spaced name",
+    );
     d.select(&["plain tag", "box:anchor"]);
-    middle(Some("plain tag"), SHIFT, "shift middle click with two selected");
+    middle(
+        Some("plain tag"),
+        SHIFT,
+        "shift middle click with two selected",
+    );
     d.h.finish();
 }
 
@@ -374,7 +419,11 @@ fn the_dialogs_list_menu_and_its_entries_are_the_references() {
         let name = case["case"].as_str().unwrap();
         let tags = strings(&case["selected"]);
         d.open_menu(&tags);
-        d.h.differ(&format!("{name} selected"), &json!(d.selected()), &case["selected"]);
+        d.h.differ(
+            &format!("{name} selected"),
+            &json!(d.selected()),
+            &case["selected"],
+        );
         d.h.differ(&format!("{name} menu"), &d.tree(0), &case["menu"]);
         d.window.invoke_tag_menu_dismissed();
         for copy in case["copies"].as_array().unwrap() {
@@ -437,9 +486,17 @@ fn the_dialogs_list_menu_and_its_entries_are_the_references() {
                 other => other.to_string(),
             })
             .collect();
-        d.h.differ(&format!("{label} offered"), &json!(offered), &decorator["offered"]);
+        d.h.differ(
+            &format!("{label} offered"),
+            &json!(offered),
+            &decorator["offered"],
+        );
         d.choose(&[label]);
-        d.h.differ(&format!("{label} drawn"), &json!(d.rows()), &decorator["drawn"]);
+        d.h.differ(
+            &format!("{label} drawn"),
+            &json!(d.rows()),
+            &decorator["drawn"],
+        );
     }
     // the entries it shares with the other tag lists
     replay_shared_entries(

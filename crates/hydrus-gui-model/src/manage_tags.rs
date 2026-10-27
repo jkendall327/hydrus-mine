@@ -172,9 +172,11 @@ impl ManageTags {
             stored,
             deleted,
             input,
-            tag_selection: std::cell::RefCell::new(crate::selection_tags::SelectionTags::decorated(
-                crate::tag_list_box::Decorators::from_settings(&preference),
-            )),
+            tag_selection: std::cell::RefCell::new(
+                crate::selection_tags::SelectionTags::decorated(
+                    crate::tag_list_box::Decorators::from_settings(&preference),
+                ),
+            ),
             immediate: false,
             committed: false,
             last_error: None,
@@ -622,8 +624,7 @@ impl ManageTags {
                 label.push_str(&presentation.sibling_connector);
                 label.push_str(ideal);
             }
-            if decorators.show_parents && !decorators.expand_parents && !parents.is_empty()
-            {
+            if decorators.show_parents && !decorators.expand_parents && !parents.is_empty() {
                 label.push_str(&format!(
                     " ({} parents)",
                     hydrus_core::numbers::human_int(parents.len() as u64)
