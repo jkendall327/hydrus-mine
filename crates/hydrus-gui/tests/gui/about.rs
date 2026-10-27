@@ -24,17 +24,7 @@ fn help_about_opens_the_about_window() {
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
-    let titles = ui.get_menu_titles();
-    let help = (0..titles.row_count())
-        .position(|i| titles.row_data(i).unwrap().label == "help")
-        .unwrap();
-    ui.invoke_menu_title_pressed(i32::try_from(help).unwrap(), 10.0, 22.0);
-    let lines = ui.get_menu_panes().row_data(0).unwrap().lines;
-    let about = (0..lines.row_count())
-        .position(|i| lines.row_data(i).unwrap().label == "about")
-        .unwrap();
-    assert!(lines.row_data(about).unwrap().usable);
-    ui.invoke_menu_line_clicked(0, i32::try_from(about).unwrap(), 0.0, 0.0, 0.0);
+    crate::common::main_menu::choose(&ui, &["help"], "about");
     let window = bound.about.borrow().as_ref().unwrap().clone_strong();
     assert_eq!(window.get_window_title(), "about hydrus");
     assert_eq!(window.get_name(), "hydrus-rs");
