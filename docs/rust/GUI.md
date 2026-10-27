@@ -5844,12 +5844,23 @@ typing with the first switch on, or by double-clicking it in the list) asks
 files` and `delete "x" for 2 files` (several tags: `add 2 tags`, `delete 2 tags`);
 closing the question does nothing.
 
-Clicking a listed tag selects it (ctrl and shift extend the selection). "remove all/selected
+The list of the files' tags works as the reference's: a click (of any button)
+selects a tag, a click on a selected tag keeps the selection and a click below
+the tags clears it, ctrl and shift add, take away and range; the arrows move
+(wrapping round), as do home, end and page up/down; escape clears the
+selection, ctrl+a selects all, ctrl+c copies the selection (or every tag) and
+ctrl+shift+c adds their parents. A double-click or enter enters the selected
+tags, delete removes them. A middle-click opens a search page for the
+selection in all your local files (with shift, their OR). Its right-click menu
+turns the parent rows and the sibling and parent decorators on and off for the
+list, and has the reference's copy (with counts), siblings, parents, open,
+favourites and maintenance entries. Proven by `manage_tags_list.rs` against
+`oracle/record_manage_tags_list.py`. "remove all/selected
 tags" removes the selected tags, or every tag if none is selected, and, unless the
 confirmation is off, first asks "Are you sure you want to remove these tags:" with
 the tags (up to nine, each cut at 64 characters) or "Are you sure you want to
 remove these 12 tags?". Delete on the focused list does the same for the selected
-tags; Enter on it enters them again. "copy" puts the selected tags (or all) on the
+tags; Enter on it enters them. "copy" puts the selected tags (or all) on the
 clipboard, one per line in natural order, and says "Copied 3 tags!" under the buttons.
 The recent-tags panel has the reference's "clear" button ("Clear recent tags?").
 Activating a suggested tag only ever adds it, whatever the cog says.

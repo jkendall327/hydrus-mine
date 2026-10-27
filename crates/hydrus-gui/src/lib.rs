@@ -356,6 +356,9 @@ pub struct Bound {
     pub viewer_deletion: delete_files_window::Slot,
     /// The manage tags window while one is open.
     pub manage_tags: Rc<RefCell<Option<ManageTagsWindow>>>,
+    /// The siblings and parents dialog the manage tags window's tag list
+    /// menu opened.
+    pub manage_tags_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
     pub incremental_tags: incremental_tagging_window::Slot,
     /// Siblings or parents while the corresponding editor is open.
     pub tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
@@ -655,6 +658,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
     let vacuum_review = vacuum_review_window::Slot::default();
     let manage_tags: Rc<RefCell<Option<ManageTagsWindow>>> = Rc::default();
+    let manage_tags_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>> = Rc::default();
     let predicate_editor: Rc<RefCell<Option<PredicateEditorWindow>>> = Rc::default();
     let predicate_editor_owner = Rc::new(predicate_editor_window::Owner::new(
         window,
@@ -2078,6 +2082,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     let open_manage_tags = {
         let manage_tags = manage_tags.clone();
+        let relationships = manage_tags_relationships.clone();
         let incremental_tags = incremental_tags.clone();
         let page = page.clone();
         let binding_active = binding_active.clone();
@@ -2101,7 +2106,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 return;
             };
             model.set_location(page().borrow().location().clone());
-            match manage_tags_window::open(model, &manage_tags, &incremental_tags, applied, link) {
+            match manage_tags_window::open(
+                model,
+                &manage_tags,
+                &relationships,
+                &incremental_tags,
+                applied,
+                link,
+            ) {
                 Ok(window) => *manage_tags.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open manage tags: {e}"),
             }
@@ -5594,6 +5606,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         viewer,
         viewer_deletion,
         manage_tags,
+        manage_tags_relationships,
         incremental_tags,
         tag_relationships,
         tag_display,

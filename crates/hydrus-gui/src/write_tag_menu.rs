@@ -17,6 +17,14 @@ thread_local! { static SEARCH_LAUNCHER: RefCell<Option<SearchLauncher>>=const {R
 pub fn install_search_launcher(launcher: SearchLauncher) {
     SEARCH_LAUNCHER.with(|slot| *slot.borrow_mut() = Some(launcher));
 }
+/// Open a search page through the main window's launcher, if one is live
+/// (a tag list's middle-click).
+pub(crate) fn launch_search(location: LocationContext, context: TagContext, predicates: Vec<Predicate>) {
+    let launcher = SEARCH_LAUNCHER.with(|slot| slot.borrow().clone());
+    if let Some(launcher) = launcher {
+        launcher(location, context, predicates, false);
+    }
+}
 /// Clear a closed main window's launcher.
 pub fn clear_search_launcher() {
     SEARCH_LAUNCHER.with(|slot| slot.borrow_mut().take());

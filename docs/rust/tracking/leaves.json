@@ -25568,7 +25568,8 @@
    "native": "crates/hydrus-gui/ui/manage_tags.slint:190-207",
    "notes": [
     "Tracked with #286 (the selection-tags box), which shares ListBoxTagsMedia: the reference's manage-tags lists inherit the tag menu (customContextMenuRequested, :3220), middle-click opening a search page (shift: OR, :3455), the ListBox keyboard (arrows, Home/End, PageUp/PageDown with ctrl/shift, Enter, Escape, :2711), wheel and drag-select from ListBoxTags/ListBox.",
-    "Native: the manage-tags list handles a left press with ctrl/shift, a double-click, Delete and Return (ui/manage_tags.slint:190-207); no menu, no middle-click, no navigation keys. Found by the interaction audit's subclass expansion; the same inheritance is why the viewer's tag hover (ListBoxTagsMediaHoverFrame) and the page's selection tags (ListBoxTagsMediaSidebar) share the gap."
+    "Native: the manage-tags list handles a left press with ctrl/shift, a double-click, Delete and Return (ui/manage_tags.slint:190-207); no menu, no middle-click, no navigation keys. Found by the interaction audit's subclass expansion; the same inheritance is why the viewer's tag hover (ListBoxTagsMediaHoverFrame) and the page's selection tags (ListBoxTagsMediaSidebar) share the gap.",
+    "#286: the list is the shared SelectionTags model (the selection tags box's), with the dialog's own menu (decorators, counts, no search/select/hide). Replayed with real pointer and key events in tests/gui/manage_tags_list.rs against oracle/fixtures/manage_tags_list.json; the advanced-mode tag display switch and drag selection are left out (DIFFERENCES.md)."
    ]
   },
   {

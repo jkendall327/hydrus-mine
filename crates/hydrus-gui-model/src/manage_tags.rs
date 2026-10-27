@@ -41,8 +41,10 @@ pub struct ManageTags {
     /// to the files lacking it, or removed from them all.
     staged: Vec<BTreeMap<String, BTreeMap<HashId, bool>>>,
     input: WriteAutocomplete,
-    /// The listed rows selected (by row), for removing and copying.
-    tag_selection: crate::list_selection::ListSelection<usize>,
+    /// The tag list's selection, clicks, keys and decorators, as the
+    /// reference's `ListBoxTagsMediaTagsDialog` (kept apart: the rows it
+    /// holds are refreshed whenever they are read).
+    tag_selection: std::cell::RefCell<crate::selection_tags::SelectionTags>,
     /// Launched from the media viewer (the reference's `immediate_commit`):
     /// every change is written as it is made, and the dialog follows the
     /// file the viewer shows.
@@ -170,7 +172,9 @@ impl ManageTags {
             stored,
             deleted,
             input,
-            tag_selection: crate::list_selection::ListSelection::default(),
+            tag_selection: std::cell::RefCell::new(crate::selection_tags::SelectionTags::decorated(
+                crate::tag_list_box::Decorators::from_settings(&preference),
+            )),
             immediate: false,
             committed: false,
             last_error: None,
@@ -461,7 +465,7 @@ impl ManageTags {
         let rows: Vec<(String, usize)> = tags.into_iter().collect();
         let sort = self.sort_control().value;
         let mut best: BTreeMap<String, String> =
-            if sort.use_siblings && self.dialog_preferences.tag_list_show_siblings {
+            if sort.use_siblings && self.tag_selection.borrow().decorators().show_siblings {
                 let snapshot = self.store.snapshot();
                 let graph = snapshot.display.get(self.services[self.service].0);
                 self.store
@@ -527,19 +531,47 @@ impl ManageTags {
             .map(|row| (row.tag, row.label))
             .collect()
     }
-    pub fn display_rows(&self) -> Vec<TagRow> {
+    /// Each listed tag with what the service's siblings and parents say of
+    /// it, and its text (with its count), for the list's selection.
+    fn logical_rows(&self) -> Vec<(crate::tag_list_box::Row, String)> {
         let rows = self.plain_rows();
-        let presentation: hydrus_core::tag_presentation::TagPresentation = self
-            .store
-            .read(hydrus_store::settings::get)
-            .unwrap_or_default();
+        let details = self.details(&rows);
+        rows.into_iter()
+            .map(|(tag, label)| {
+                let (ideal, parents) = details.get(&tag).cloned().unwrap_or_default();
+                (
+                    crate::tag_list_box::Row {
+                        tag,
+                        ideal,
+                        parents,
+                    },
+                    label,
+                )
+            })
+            .collect()
+    }
+
+    /// The list's selection, its rows refreshed.
+    pub(crate) fn synced_selection(
+        &self,
+    ) -> std::cell::RefMut<'_, crate::selection_tags::SelectionTags> {
+        let rows = self.logical_rows();
+        let mut selection = self.tag_selection.borrow_mut();
+        selection.set_decorated_rows(rows);
+        selection
+    }
+
+    #[allow(clippy::type_complexity)] // (each tag's ideal and parents)
+    fn details(
+        &self,
+        rows: &[(String, String)],
+    ) -> BTreeMap<String, (Option<String>, Vec<String>)> {
         let snapshot = self.store.snapshot();
         let graph = snapshot.display.get(self.services[self.service].0);
-        let details = self
-            .store
+        self.store
             .read(|conn| {
                 let mut details = BTreeMap::new();
-                for (tag, _) in &rows {
+                for (tag, _) in rows {
                     let Some(cleaned) = Tag::new(tag) else {
                         continue;
                     };
@@ -561,7 +593,16 @@ impl ManageTags {
                 }
                 Ok(details)
             })
+            .unwrap_or_default()
+    }
+
+    pub fn display_rows(&self) -> Vec<TagRow> {
+        let rows = self.plain_rows();
+        let presentation: hydrus_core::tag_presentation::TagPresentation = self
+            .store
+            .read(hydrus_store::settings::get)
             .unwrap_or_default();
+        let details = self.details(&rows);
         let colours: hydrus_core::tag_presentation::NamespaceColours = self
             .store
             .read(hydrus_store::settings::get)
@@ -570,19 +611,18 @@ impl ManageTags {
             .store
             .read(hydrus_store::settings::get)
             .unwrap_or_default();
-        let preferences = &self.dialog_preferences;
+        // (the list's own decorators: the dialog preferences', then its menu's)
+        let decorators = self.tag_selection.borrow().decorators();
         let mut out = Vec::new();
         for (tag, mut label) in rows {
             let (ideal, parents) = details.get(&tag).cloned().unwrap_or_default();
             let prefix = label.clone();
-            let shown_ideal = ideal.filter(|_| preferences.tag_list_show_siblings);
+            let shown_ideal = ideal.filter(|_| decorators.show_siblings);
             if let Some(ideal) = &shown_ideal {
                 label.push_str(&presentation.sibling_connector);
                 label.push_str(ideal);
             }
-            if preferences.tag_list_show_parents
-                && !preferences.tag_list_expand_parents
-                && !parents.is_empty()
+            if decorators.show_parents && !decorators.expand_parents && !parents.is_empty()
             {
                 label.push_str(&format!(
                     " ({} parents)",
@@ -616,7 +656,7 @@ impl ManageTags {
                 parts,
                 parent_row: false,
             });
-            if preferences.tag_list_show_parents && preferences.tag_list_expand_parents {
+            if decorators.show_parents && decorators.expand_parents {
                 for parent in parents {
                     out.push(TagRow {
                         tag: tag.clone(),
@@ -762,15 +802,6 @@ impl ManageTags {
         }
         self.input.set_context_tags(self.tags().into_keys());
         Ok(())
-    }
-
-    /// A listed tag double-clicked: entered again, which may remove it (or
-    /// ask, if only some of the files have it).
-    pub fn activate_row(&mut self, index: usize) -> Result<Entered, String> {
-        let Some(row) = self.display_rows().get(index).cloned() else {
-            return Ok(Entered::Done);
-        };
-        self.enter_tags(&[row.tag], false, false)
     }
 
     pub fn has_changes(&self) -> bool {

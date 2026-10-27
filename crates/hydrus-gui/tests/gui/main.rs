@@ -76,6 +76,7 @@ mod manage_notes;
 mod manage_ratings;
 mod manage_tags;
 mod manage_tags_cog;
+mod manage_tags_list;
 mod manage_tags_sort;
 mod manage_tags_viewer;
 mod manage_times;

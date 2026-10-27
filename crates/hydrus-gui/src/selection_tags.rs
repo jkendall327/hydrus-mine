@@ -214,6 +214,7 @@ pub(crate) fn bind(
                             search: page.has_search().then(|| page.active_predicates()),
                             select: true,
                             display: page.tag_display_type(),
+                            decorators: false,
                             advanced,
                             location: page.location().clone(),
                             tags: hydrus_search::TagContext::new(defaults.tag_service, true, true),
