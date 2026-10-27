@@ -3050,6 +3050,221 @@ impl Pages {
             None
         }
     }
+    /// The way from the top to the notebook `notebook` (`None`: the top
+    /// one, the empty way), if it is one.
+    fn notebook_path(&self, notebook: Option<PageKey>) -> Option<Vec<usize>> {
+        let Some(key) = notebook else {
+            return Some(Vec::new());
+        };
+        let path = page_path(&self.session.pages, key)?;
+        self.children(Some(key)).is_some().then_some(path)
+    }
+
+    /// Run `f` on these pages with the notebook `notebook` on the way to
+    /// the page shown, given the depth of its tab row: for a notebook that
+    /// is not, as if the page it shows were shown, the page shown and the
+    /// other notebooks' choices put back after (the notebook keeping
+    /// whatever `f` chose in it). So the tab menu's actions, which address
+    /// a notebook by depth, reach a notebook the pages tree's menu is for
+    /// without showing it, as the reference's do. `None` if `notebook` is
+    /// none.
+    pub fn within<R>(
+        &mut self,
+        notebook: Option<PageKey>,
+        f: impl FnOnce(&mut Self, usize) -> R,
+    ) -> Option<R> {
+        let way = self.notebook_path(notebook)?;
+        let depth = way.len();
+        let Some(key) = notebook.filter(|_| !self.path.starts_with(&way)) else {
+            return Some(f(self, depth));
+        };
+        let shown = self.shown().key;
+        let saved = self.remembered.clone();
+        self.show(&key);
+        let result = f(self, depth);
+        // what the notebook and the notebooks inside it show now; the
+        // others as they were
+        let chosen = self
+            .notebook_path(notebook)
+            .filter(|way| self.path.starts_with(way))
+            .and_then(|way| self.path.get(way.len()).copied());
+        let inside = |pages: &Self, at: &PageKey| {
+            page_path(&pages.session.pages, *at).is_some_and(|path| path.starts_with(&way))
+        };
+        let mut remembered: HashMap<PageKey, usize> = saved
+            .into_iter()
+            .filter(|(at, _)| !inside(self, at))
+            .collect();
+        remembered.extend(
+            self.remembered
+                .iter()
+                .filter(|(at, _)| inside(self, at) && **at != key)
+                .map(|(at, index)| (*at, *index)),
+        );
+        if let Some(index) = chosen {
+            remembered.insert(key, index);
+        }
+        self.remembered = remembered;
+        self.show(&shown);
+        Some(result)
+    }
+
+    /// Run `f` on the tab of the page `key` (its tab row's depth and its
+    /// index there), wherever it is ([`Pages::within`] its notebook);
+    /// `None` if there is no such page.
+    pub fn with_tab<R>(
+        &mut self,
+        key: PageKey,
+        f: impl FnOnce(&mut Self, usize, usize) -> R,
+    ) -> Option<R> {
+        let parent = self.tab_parent(key)?;
+        let index = self
+            .children(parent)?
+            .iter()
+            .position(|page| page.key == key)?;
+        self.within(parent, |pages, depth| f(pages, depth, index))
+    }
+
+    /// Close the page `key` wherever it is, as [`Pages::close`] closes a
+    /// tab (a page not shown, in a notebook not shown, closing without
+    /// changing the page shown).
+    pub fn close_key(&mut self, key: PageKey) -> Result<(), String> {
+        self.with_tab(key, Self::close).unwrap_or(Ok(()))
+    }
+
+    /// The tab menu for the page `key`, wherever it is, as the reference's
+    /// pages tree shows it on a right-click (`ShowMenuForPageKey` on the
+    /// page's notebook): its notebook's tab menu for that tab, which acts on
+    /// that notebook without showing it.
+    pub fn tree_menu(&mut self, key: PageKey) -> Vec<crate::main_menu::Entry> {
+        let Some(parent) = self.tab_parent(key) else {
+            return Vec::new();
+        };
+        let Some(index) = self
+            .children(parent)
+            .and_then(|pages| pages.iter().position(|page| page.key == key))
+        else {
+            return Vec::new();
+        };
+        let entries = self
+            .within(parent, |pages, depth| pages.tab_menu(depth, index))
+            .unwrap_or_default();
+        match parent {
+            Some(notebook) => crate::tab_context::in_notebook(entries, notebook),
+            None => entries,
+        }
+    }
+
+    /// The page each notebook shows (shows when it is shown), by notebook
+    /// (`None`: the top one); empty notebooks have none.
+    fn notebook_currents(&self) -> HashMap<Option<PageKey>, PageKey> {
+        let mut currents = HashMap::new();
+        if let Some(&index) = self.path.first() {
+            currents.insert(None, self.session.pages[index].key);
+        }
+        for page in self.session.all_pages() {
+            if let PageContent::Pages(children) = &page.content
+                && !children.is_empty()
+            {
+                let at = self
+                    .remembered
+                    .get(&page.key)
+                    .map_or(0, |&i| i.min(children.len() - 1));
+                currents.insert(Some(page.key), children[at].key);
+            }
+        }
+        currents
+    }
+
+    /// Move the page `source` into the notebook `parent` (`None`: the top
+    /// one) at `row` among its pages (`None`: the end), as the reference's
+    /// pages tree drops a dragged row (its model's `dropMimeData`): the
+    /// page leaves its notebook as a tab removed (that notebook showing the
+    /// page to its right, else its left, if it showed it) and goes in as a
+    /// tab inserted (shown only in a notebook that was empty); every other
+    /// notebook keeps showing what it showed. Whether it moved.
+    pub fn tree_move(
+        &mut self,
+        source: PageKey,
+        parent: Option<PageKey>,
+        row: Option<usize>,
+    ) -> bool {
+        let Some(source_parent) = self.tab_parent(source) else {
+            return false;
+        };
+        if let Some(parent) = parent {
+            let (Some(parent_path), Some(source_path)) = (
+                page_path(&self.session.pages, parent),
+                page_path(&self.session.pages, source),
+            ) else {
+                return false;
+            };
+            if parent_path.starts_with(&source_path) {
+                return false;
+            }
+        }
+        let Some(count) = self.children(parent).map(<[Page]>::len) else {
+            return false;
+        };
+        let Some(source_index) = self
+            .children(source_parent)
+            .and_then(|pages| pages.iter().position(|page| page.key == source))
+        else {
+            return false;
+        };
+        self.remember();
+        let mut currents = self.notebook_currents();
+        let siblings = children_mut(&mut self.session.pages, source_parent).expect("validated");
+        let moving = siblings.remove(source_index);
+        if currents.get(&source_parent) == Some(&source) {
+            match siblings.get(source_index).or_else(|| siblings.last()) {
+                Some(page) => currents.insert(source_parent, page.key),
+                None => currents.remove(&source_parent),
+            };
+        }
+        let mut row = row.unwrap_or(count);
+        if source_parent == parent && row > source_index {
+            row -= 1;
+        }
+        let destination = children_mut(&mut self.session.pages, parent).expect("validated");
+        if destination.is_empty() {
+            currents.insert(parent, moving.key);
+        }
+        destination.insert(row.min(destination.len()), moving);
+        // each notebook showing what it showed, the top one first
+        self.remembered.clear();
+        let mut path = Vec::new();
+        for page in self.session.all_pages() {
+            if let PageContent::Pages(children) = &page.content
+                && let Some(current) = currents.get(&Some(page.key))
+                && let Some(at) = children.iter().position(|child| child.key == *current)
+            {
+                self.remembered.insert(page.key, at);
+            }
+        }
+        let mut pages = self.session.pages.as_slice();
+        let mut notebook = None;
+        loop {
+            let at = match notebook {
+                None => currents
+                    .get(&None)
+                    .and_then(|current| pages.iter().position(|page| page.key == *current))
+                    .unwrap_or(0),
+                Some(key) => self.remembered.get(&key).copied().unwrap_or(0),
+            };
+            path.push(at);
+            match &pages[at].content {
+                PageContent::Pages(children) if !children.is_empty() => {
+                    notebook = Some(pages[at].key);
+                    pages = children;
+                }
+                _ => break,
+            }
+        }
+        self.path = path;
+        true
+    }
+
     /// Move the original page object between notebooks; queues/media keep keys.
     pub fn drop_tab(
         &mut self,

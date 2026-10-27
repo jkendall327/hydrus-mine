@@ -116,14 +116,18 @@ fn rects(ui: &MainWindow) -> Rects {
 }
 
 /// Draw a few frames, so the tabs' timers report where they now are.
-fn settle(native: &MinimalSoftwareWindow) {
+pub(crate) fn settle(native: &MinimalSoftwareWindow) {
     for _ in 0..12 {
         headless::render(native, 900, 600);
         std::thread::sleep(std::time::Duration::from_millis(2));
     }
 }
 
-fn press(native: &MinimalSoftwareWindow, at: LogicalPosition, button: PointerEventButton) {
+pub(crate) fn press(
+    native: &MinimalSoftwareWindow,
+    at: LogicalPosition,
+    button: PointerEventButton,
+) {
     native.dispatch_event(WindowEvent::PointerMoved { position: at });
     native.dispatch_event(WindowEvent::PointerPressed {
         position: at,
@@ -131,35 +135,47 @@ fn press(native: &MinimalSoftwareWindow, at: LogicalPosition, button: PointerEve
     });
 }
 
-fn release(native: &MinimalSoftwareWindow, at: LogicalPosition, button: PointerEventButton) {
+pub(crate) fn release(
+    native: &MinimalSoftwareWindow,
+    at: LogicalPosition,
+    button: PointerEventButton,
+) {
     native.dispatch_event(WindowEvent::PointerReleased {
         position: at,
         button,
     });
 }
 
-fn click(native: &MinimalSoftwareWindow, at: LogicalPosition, button: PointerEventButton) {
+pub(crate) fn click(
+    native: &MinimalSoftwareWindow,
+    at: LogicalPosition,
+    button: PointerEventButton,
+) {
     press(native, at, button);
     release(native, at, button);
 }
 
 /// Two clicks in quick succession, the window drawn once between them (well
 /// inside the double-click interval).
-fn double_click(native: &MinimalSoftwareWindow, at: LogicalPosition, button: PointerEventButton) {
+pub(crate) fn double_click(
+    native: &MinimalSoftwareWindow,
+    at: LogicalPosition,
+    button: PointerEventButton,
+) {
     click(native, at, button);
     headless::render(native, 900, 600);
     click(native, at, button);
 }
 
-struct Strip {
-    ui: MainWindow,
-    native: Rc<MinimalSoftwareWindow>,
-    bound: hydrus_gui::Bound,
+pub(crate) struct Strip {
+    pub(crate) ui: MainWindow,
+    pub(crate) native: Rc<MinimalSoftwareWindow>,
+    pub(crate) bound: hydrus_gui::Bound,
     rects: Rects,
 }
 
 impl Strip {
-    fn open(store: &Arc<Store>) -> Self {
+    pub(crate) fn open(store: &Arc<Store>) -> Self {
         let windows = headless::init();
         let ui = MainWindow::new().unwrap();
         let bound = bind(&ui, Pages::open(store.clone()).unwrap());
@@ -176,7 +192,7 @@ impl Strip {
         }
     }
 
-    fn key(&self, name: &str) -> PageKey {
+    pub(crate) fn key(&self, name: &str) -> PageKey {
         self.bound
             .pages
             .borrow()
@@ -203,14 +219,14 @@ impl Strip {
         LogicalPosition::new(row.x + row.w - 60.0, row.y + row.h / 2.0)
     }
 
-    fn state(&self) -> Json {
+    pub(crate) fn state(&self) -> Json {
         let pages = self.bound.pages.borrow();
         json!({ "pages": tree(&pages.session().pages), "shown": pages.shown().name })
     }
 
     /// The open popup menu as the recorder writes it, each submenu opened by
     /// pointing at it.
-    fn menu(&self, pane: usize) -> Json {
+    pub(crate) fn menu(&self, pane: usize) -> Json {
         let lines = self.ui.get_menu_panes().row_data(pane).unwrap().lines;
         let window = self.ui.window();
         let mut out = Vec::new();
@@ -234,7 +250,7 @@ impl Strip {
     }
 
     /// Close the open menu as a user does: a click away from it.
-    fn dismiss(&self) {
+    pub(crate) fn dismiss(&self) {
         if self.ui.get_menu_panes().row_count() > 0 {
             click(
                 &self.native,
@@ -248,7 +264,7 @@ impl Strip {
 
     /// The rename window's question, answered with `answer` (typed and
     /// applied) or cancelled.
-    fn rename(&self, answer: Option<&str>) -> Json {
+    pub(crate) fn rename(&self, answer: Option<&str>) -> Json {
         let Some(dialog) = self
             .bound
             .tab_name_dialog

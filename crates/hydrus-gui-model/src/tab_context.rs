@@ -365,3 +365,48 @@ pub fn session_entries(
     }
     entries
 }
+
+/// A tab menu made for the notebook `notebook` (addressed by its depth as
+/// if it were on the way to the page shown), its tab actions wrapped to
+/// reach that notebook wherever it is: the pages tree's menu for a row.
+/// Actions that name their pages by key already are left as they are.
+pub fn in_notebook(entries: Vec<Entry>, notebook: hydrus_core::pages::PageKey) -> Vec<Entry> {
+    entries
+        .into_iter()
+        .map(|entry| match entry {
+            Entry::Item {
+                label,
+                enabled,
+                command: Some(command),
+            } => Entry::Item {
+                label,
+                enabled,
+                command: Some(match command {
+                    Command::CloseTab { .. }
+                    | Command::CloseTabs { .. }
+                    | Command::NavigateTabs { .. }
+                    | Command::MoveTab { .. }
+                    | Command::RenameTab { .. }
+                    | Command::DuplicateTab { .. }
+                    | Command::SortTabs { .. }
+                    | Command::CollapseTabs { .. }
+                    | Command::SendTabs { .. } => Command::InNotebook {
+                        notebook,
+                        command: Box::new(command),
+                    },
+                    other => other,
+                }),
+            },
+            Entry::Menu {
+                label,
+                entries,
+                enabled,
+            } => Entry::Menu {
+                label,
+                entries: in_notebook(entries, notebook),
+                enabled,
+            },
+            other => other,
+        })
+        .collect()
+}

@@ -98,3 +98,60 @@ fn stable_keys_survive_reorder_rename_and_closed_cursor_without_stale_activation
     assert_eq!(tree.current(), Some(support::key(&session, "alpha")));
 }
 use hydrus_core::pages::PageKey;
+
+/// Where a drop lands among the rows, with Qt's margin for 26-high rows
+/// (five pixels at either edge), and where that puts the dragged page.
+#[test]
+fn drops_land_above_on_or_below_rows_as_qts_tree_view_places_them() {
+    use hydrus_gui_model::page_tree::{Drop, drop_at};
+    let session = support::source();
+    let key = |name| support::key(&session, name);
+    let mut tree = Tree::default();
+    tree.sync(&session.pages, key("gamma"));
+    tree.navigate(8);
+    let visible = tree.visible();
+    // rows: alpha, one, inner, beta, gamma, omega
+    assert_eq!(drop_at(&visible, 0.0, 26.0), Drop::Above(key("alpha")));
+    assert_eq!(drop_at(&visible, 4.9, 26.0), Drop::Above(key("alpha")));
+    assert_eq!(drop_at(&visible, 5.0, 26.0), Drop::On(key("alpha")));
+    assert_eq!(drop_at(&visible, 20.0, 26.0), Drop::On(key("alpha")));
+    assert_eq!(drop_at(&visible, 21.0, 26.0), Drop::Below(key("alpha")));
+    assert_eq!(
+        drop_at(&visible, 26.0 * 2.0 + 13.0, 26.0),
+        Drop::On(key("inner"))
+    );
+    assert_eq!(drop_at(&visible, 26.0 * 6.0, 26.0), Drop::Space);
+    assert_eq!(drop_at(&visible, -1.0, 26.0), Drop::Space);
+    let omega = key("omega");
+    // above or below a row: among its siblings; on a notebook: its end; on a
+    // page: its notebook's end; past the rows: the top notebook's end
+    assert_eq!(
+        tree.drop_destination(omega, Drop::Above(key("inner"))),
+        Some((Some(key("alpha")), Some(1)))
+    );
+    assert_eq!(
+        tree.drop_destination(omega, Drop::Below(key("gamma"))),
+        Some((Some(key("inner")), Some(2)))
+    );
+    assert_eq!(
+        tree.drop_destination(omega, Drop::On(key("inner"))),
+        Some((Some(key("inner")), None))
+    );
+    assert_eq!(
+        tree.drop_destination(omega, Drop::On(key("one"))),
+        Some((Some(key("alpha")), None))
+    );
+    assert_eq!(
+        tree.drop_destination(key("beta"), Drop::Space),
+        Some((None, None))
+    );
+    // not on itself or inside itself
+    assert_eq!(
+        tree.drop_destination(key("alpha"), Drop::On(key("beta"))),
+        None
+    );
+    assert_eq!(
+        tree.drop_destination(key("inner"), Drop::Above(key("inner"))),
+        None
+    );
+}

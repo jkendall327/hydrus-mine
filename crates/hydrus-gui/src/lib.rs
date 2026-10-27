@@ -1180,7 +1180,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     tab_drag::bind(window, &pages, Rc::new(change_pages.clone()));
-    tab_presentation::bind_tree(window, &pages);
+    tab_presentation::bind_tree(window, &pages, Rc::new(change_pages.clone()));
     // the page chooser, while open
     let chooser: Rc<RefCell<Option<page_chooser::PageChooser>>> = Rc::default();
     let show_chooser = {
@@ -2475,8 +2475,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     shown(false);
                     return;
                 }
-                if let Asked::ClosePage(depth, index, _) = asked {
-                    change_pages(&|pages| pages.close(depth, index));
+                if let Asked::ClosePage(key, _) = asked {
+                    change_pages(&|pages| pages.close_key(key));
                     return;
                 }
                 if let Asked::RemoveQueries(queues, _) = asked {
@@ -2499,13 +2499,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let pages = pages.clone();
         let change_pages = change_pages.clone();
         let ask = ask.clone();
-        move |depth: usize, index: usize| {
+        move |key: hydrus_core::pages::PageKey| {
             // a page of pages with objecting pages inside: the longer dialog
-            let plan = pages.borrow_mut().close_notebook_plan(depth, index);
+            let plan = pages
+                .borrow_mut()
+                .with_tab(key, Pages::close_notebook_plan)
+                .flatten();
             if let Some((question, objections)) = plan {
                 let yes: Rc<dyn Fn()> = Rc::new({
                     let change_pages = change_pages.clone();
-                    move || change_pages(&|pages| pages.close(depth, index))
+                    move || change_pages(&|pages| pages.close_key(key))
                 });
                 let show: Rc<dyn Fn(hydrus_core::pages::PageKey)> = Rc::new({
                     let change_pages = change_pages.clone();
@@ -2527,10 +2530,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 }
                 return;
             }
-            let question = pages.borrow_mut().close_question(depth, index);
+            let question = pages
+                .borrow_mut()
+                .with_tab(key, Pages::close_question)
+                .flatten();
             match question {
-                Some(question) => ask(Asked::ClosePage(depth, index, question)),
-                None => change_pages(&|pages| pages.close(depth, index)),
+                Some(question) => ask(Asked::ClosePage(key, question)),
+                None => change_pages(&|pages| pages.close_key(key)),
             }
         }
     };
@@ -2538,15 +2544,27 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let pages = pages.clone();
         let close = close.clone();
         move || {
-            let shown = pages.borrow().shown_position();
-            close(shown.0, shown.1);
+            let shown = pages.borrow().shown().key;
+            close(shown);
         }
     });
     window.on_close_tab({
+        let pages = pages.clone();
         let close = close.clone();
         move |level, index| {
             if let (Ok(level), Ok(index)) = (usize::try_from(level), usize::try_from(index)) {
-                close(level, index);
+                let identity = pages.borrow().tab_identity(level, index);
+                if let Some((key, _)) = identity {
+                    close(key);
+                }
+            }
+        }
+    });
+    window.on_close_page_key({
+        let close = close.clone();
+        move |text| {
+            if let Some(key) = hydrus_core::pages::PageKey::from_hex(&text) {
+                close(key);
             }
         }
     });
@@ -6540,7 +6558,7 @@ enum Asked {
     /// Opening these URLs in the web browser.
     OpenUrls(Vec<String>, open_externally_launch::Launcher),
     /// Closing the page at this depth and index, asking this.
-    ClosePage(usize, usize, String),
+    ClosePage(hydrus_core::pages::PageKey, String),
     /// Removing a downloader page's searches or watchers, asking this.
     RemoveQueries(Vec<i64>, String),
     /// Asking this, then doing that (the menu bar's questions).
@@ -6564,7 +6582,7 @@ impl Asked {
             Self::Inbox(files) => format!("Send {} files to inbox?", count(files)),
             Self::Delete(files, deletion, _) => deletion.question(files.len()),
             Self::LockSearch(question) => (*question).to_owned(),
-            Self::ClosePage(_, _, question)
+            Self::ClosePage(_, question)
             | Self::RemoveQueries(_, question)
             | Self::Then(question, _) => question.clone(),
             Self::OpenUrls(urls, _) => {

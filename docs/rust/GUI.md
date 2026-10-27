@@ -3729,8 +3729,18 @@ small scrolling arrows without reducing the label height.
 The experimental hide flag takes effect only while the tree is enabled, matching
 Qt's gate. Its supporting native hierarchy selector lists every existing page on
 the chosen left/right side and selects by stable page key, including remembered
-children of notebooks. The collapsible tree behavior is described below; broader
-Qt tree drag/drop and context-menu behavior remain unported. Actual Qt choices,
+children of notebooks. The collapsible tree behavior is described below. A
+right-click on a row shows that page's notebook's tab menu for it, whose actions
+act on that notebook without showing it (a notebook not on the way to the page
+shown keeps the choice its menu made, as the reference's does); a row dragged
+past Qt's start distance and let go near another row's top edge goes above it,
+near its bottom edge below it, on a page of pages into the end of it, on a page
+to the end of that page's notebook, and below the rows to the end of the top
+notebook, a line or box showing where. A notebook that showed the moved page
+shows the page to its right (else its left); every other notebook keeps showing
+what it showed. A row can't be dropped on itself or inside itself, as in Qt.
+`tests/gui/tree_menu_drag.rs` replays `oracle/record_tab_strip_interactions.py`'s
+tree steps with pointer events. Actual Qt choices,
 bar positions, hidden states, selected indices and fitted strings are recorded in
 `tab_presentation.json`, alongside Qt orientation PNGs. Native consumer replays
 capture each side, hidden navigation and overflowing labels for hosted review.

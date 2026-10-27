@@ -473,6 +473,8 @@ export component MainWindow inherits Window {
     callback page-tree-selected(string);
     callback page-tree-toggled(string);
     callback page-tree-navigate(int);
+    callback page-tree-menu-requested(string, length, length);
+    callback page-tree-dropped(string, length, bool);
     public function focus-page-tree() { page-tree-widget.focus-tree(); }
     out property <bool> page-tree-focused: page-tree-widget.tree-focused;
     out property <length> page-tree-x: page-tree-widget.absolute-position.x;
@@ -724,6 +726,10 @@ export component MainWindow inherits Window {
     callback notebook-rename-requested(string);
     // a notebook's tab was middle-clicked
     callback close-tab(int, int);
+    // the same, for the page with this key wherever it is (the pages tree's
+    // menu, for a notebook not shown)
+    callback page-rename-requested(string);
+    callback close-page-key(string);
     // the reference's main window shortcuts: ctrl+t and F9 open a page,
     // ctrl+w closes the page shown
     callback command-palette-requested();
@@ -1002,6 +1008,8 @@ export component MainWindow inherits Window {
                     selected(key) => { root.page-tree-selected(key); }
                     toggled(key) => { root.page-tree-toggled(key); }
                     navigate(action) => { root.page-tree-navigate(action); }
+                    context-menu(key,x,y) => { root.page-tree-menu-requested(key,x,y); }
+                    dropped(key,y,over) => { root.page-tree-dropped(key,y,over); }
                 }
                 tab-navigation := NotebookNavigation {
                     visible: !root.navigation-tabs-hidden;
