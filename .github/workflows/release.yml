@@ -35,6 +35,13 @@ jobs:
             exe: .exe
     runs-on: ${{ matrix.os }}
     timeout-minutes: 120
+    env:
+      # Linux keeps line tables through the build so the step "split debug info"
+      # can move them into a separate .debug file; the shipped binaries are
+      # stripped (hydrus-gui is ~210 MB instead of ~900 MB). Windows ships the
+      # profile's own settings (no debug info).
+      CARGO_PROFILE_RELEASE_DEBUG: ${{ runner.os == 'Linux' && 'line-tables-only' || 'false' }}
+      CARGO_PROFILE_RELEASE_STRIP: ${{ runner.os == 'Linux' && 'none' || 'debuginfo' }}
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@master
@@ -57,6 +64,18 @@ jobs:
           cargo build --release -p hydrus-gui-ui --locked
       - name: build
         run: cargo build --release --locked -p hydrus-cli -p hydrus-gui
+      - name: split debug info (Linux)
+        if: runner.os == 'Linux'
+        # A panic backtrace needs file:line; std finds the .debug file through
+        # the .gnu_debuglink next to the binary. Ship both in the debug archive.
+        run: |
+          mkdir debug
+          for exe in hydrus hydrus-gui; do
+            objcopy --only-keep-debug "target/release/$exe" "debug/$exe.debug"
+            strip --strip-debug "target/release/$exe"
+            (cd target/release && objcopy --add-gnu-debuglink="../../debug/$exe.debug" "$exe")
+          done
+          ls -l target/release/hydrus target/release/hydrus-gui debug
       - name: package
         shell: bash
         run: |
@@ -72,11 +91,18 @@ jobs:
           else
             tar czf "$dir.tar.gz" "$dir"
             echo "ARCHIVE=$dir.tar.gz" >> "$GITHUB_ENV"
+            # Line tables for backtraces: unpack next to the binaries.
+            mkdir "$dir-debug"
+            cp debug/*.debug "$dir-debug/"
+            tar czf "$dir-debug.tar.gz" "$dir-debug"
+            echo "DEBUG_ARCHIVE=$dir-debug.tar.gz" >> "$GITHUB_ENV"
           fi
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.name }}
-          path: ${{ env.ARCHIVE }}
+          path: |
+            ${{ env.ARCHIVE }}
+            ${{ env.DEBUG_ARCHIVE }}
           retention-days: 30
 
   release:
