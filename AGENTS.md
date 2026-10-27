@@ -207,6 +207,15 @@ modules in a gitignored `crates/hydrus-gui/tests/lane_<name>.rs` (with
   `ListTable`. Standard widgets such as `Button` cannot have children
   (a `Timer` inside a `Button` fails to compile). Row kinds in
   `options.slint` are bare integers: check the existing ones before adding.
+- **Fixed-height controls must not stretch.** A `Button`, `ComboBox` or
+  `CheckBox` in a layout with spare height takes it (a manage tags input once
+  showed buttons hundreds of pixels tall). `Btn`, `TipButton`, `TipComboBox`,
+  `TipCheckBox` and `WheelMenuChoice` cap their height; a raw widget needs
+  `max-height: self.preferred-height`, and a layout with nothing stretchable
+  wants `alignment: start`. A std `ComboBox` is at least 160px wide, so a row
+  of two overflows a narrow sidebar unless the box may shrink (`shrinkable`
+  on `WheelMenuChoice`). `tests/gui/layout_fixed_height.rs` checks heights
+  and overlaps in the frame tests' windows and the sidebar.
 - **Slint compile memory**: one crate of the generated UI peaks at ~4.4 GB
   (the core; the whole UI in one crate peaked near 13.7 GB, close to the cap of
   14.3 GB of a cloud session, which is why it is split). A written-out `Button { }` costs ~4 KB of
