@@ -89,6 +89,8 @@ fn cached(ui: &std::path::Path, entry: &std::path::Path, out: &std::path::Path) 
             }
         }
     }
+    // (and the std-widgets global main.slint re-exports)
+    globals.push_str("export { Palette } from \"std-widgets.slint\";\n");
     writeln!(table, "pub(crate) const GLOBAL_EXPORTS: &str = {globals:?};").unwrap();
     std::fs::write(out.join("interp_sources.rs"), table).unwrap();
 
@@ -120,5 +122,12 @@ fn rewrite(code: &str) -> String {
         rest = &args[close..];
     }
     result.push_str(rest);
-    result.replace("sp :: live_preview :: LiveReloadingComponent", "crate::interp::Component")
+    let result = result.replace("sp :: live_preview :: LiveReloadingComponent", "crate::interp::Component");
+    // The handle is the interpreter's instance itself, not an Rc of it (see
+    // interp::Component), so weak handles live as long as the instance.
+    result
+        .replace("sp :: Rc < :: core :: cell :: RefCell < crate::interp::Component >>", "crate::interp::Component")
+        .replace("sp :: Weak < :: core :: cell :: RefCell < crate::interp::Component >>", "crate::interp::WeakComponent")
+        .replace("sp :: Rc :: downgrade (& self . 0)", "crate::interp::Component::downgrade (& self . 0)")
+        .replace("sp :: Rc :: clone (& component . 0)", "crate::interp::Component::clone (& component . 0)")
 }

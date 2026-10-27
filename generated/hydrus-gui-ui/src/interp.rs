@@ -87,15 +87,43 @@ fn definition(name: &str) -> Result<ComponentDefinition, PlatformError> {
         .ok_or_else(|| PlatformError::from(format!("no component {name} in {entry}")))
 }
 
-/// An instance of one of the UI's exported components.
+/// An instance of one of the UI's exported components: a strong handle to
+/// the interpreter's instance, so that (as with compiled code) a weak
+/// handle upgrades for as long as Slint keeps the instance, a shown window
+/// included, not only while Rust holds a strong one.
 pub struct Component {
     instance: ComponentInstance,
 }
 
+impl Clone for Component {
+    fn clone(&self) -> Self {
+        Self { instance: slint::ComponentHandle::clone_strong(&self.instance) }
+    }
+}
+
+/// A weak [`Component`].
+#[derive(Clone, Default)]
+pub struct WeakComponent(slint::Weak<ComponentInstance>);
+
+impl WeakComponent {
+    pub fn upgrade(&self) -> Option<Component> {
+        self.0.upgrade().map(|instance| Component { instance })
+    }
+}
+
 impl Component {
-    pub fn new(name: &str) -> Result<Rc<RefCell<Self>>, PlatformError> {
+    pub fn new(name: &str) -> Result<Self, PlatformError> {
         let instance = definition(name)?.create()?;
-        Ok(Rc::new(RefCell::new(Self { instance })))
+        Ok(Self { instance })
+    }
+
+    pub fn downgrade(this: &Self) -> WeakComponent {
+        WeakComponent(slint::ComponentHandle::as_weak(&this.instance))
+    }
+
+    /// (the generated code borrows a `RefCell`; this is the same call)
+    pub fn borrow(&self) -> &Self {
+        self
     }
 
     pub fn instance(&self) -> &ComponentInstance {
