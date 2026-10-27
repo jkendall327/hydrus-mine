@@ -7,6 +7,8 @@
 //! items (`widgets::position` finds one by the text a user reads there), so
 //! Slint picks the receiver as it would for a user. Modifiers are held as a
 //! user holds them: their keys go down before the press and up after it.
+//! Unlike `widgets::click_at_with`, these leave the pointer where it
+//! pressed (a hover that shows while the pointer is over it stays up).
 //! Two presses of one button within 10 pixels and the platform's click
 //! interval make a double-click, so `press` and `double_click` first wait
 //! the interval out when the last press was of the same button there.
@@ -16,32 +18,24 @@
 use slint::LogicalPosition;
 use slint::platform::{Key, PointerEventButton, WindowEvent};
 
-/// The modifier keys held for a press.
-#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
-pub struct Mods {
-    pub ctrl: bool,
-    pub shift: bool,
-}
+/// The modifier keys held for a press (`widgets`' own).
+pub use super::widgets::Mods;
 
-pub const NONE: Mods = Mods {
-    ctrl: false,
-    shift: false,
-};
-pub const CTRL: Mods = Mods {
-    ctrl: true,
-    shift: false,
-};
-pub const SHIFT: Mods = Mods {
-    ctrl: false,
-    shift: true,
-};
+pub const NONE: Mods = Mods::NONE;
+pub const CTRL: Mods = Mods::CTRL;
+pub const SHIFT: Mods = Mods::SHIFT;
 pub const CTRL_SHIFT: Mods = Mods {
     ctrl: true,
     shift: true,
+    alt: false,
 };
 
 fn hold(window: &slint::Window, mods: Mods, down: bool) {
-    for (held, key) in [(mods.ctrl, Key::Control), (mods.shift, Key::Shift)] {
+    for (held, key) in [
+        (mods.ctrl, Key::Control),
+        (mods.shift, Key::Shift),
+        (mods.alt, Key::Alt),
+    ] {
         if held {
             let text: slint::SharedString = key.into();
             window.dispatch_event(if down {
@@ -110,10 +104,6 @@ pub fn double_click(window: &slint::Window, at: LogicalPosition, mods: Mods) {
 
 /// Press and release a key (its text, or a `Key`'s) with `mods` held.
 pub fn key(window: &slint::Window, text: impl Into<slint::SharedString>, mods: Mods) {
-    let text = text.into();
-    hold(window, mods, true);
-    window.dispatch_event(WindowEvent::KeyPressed { text: text.clone() });
-    window.dispatch_event(WindowEvent::KeyReleased { text });
-    hold(window, mods, false);
+    super::widgets::key_with(window, text, mods);
     super::widgets::settle();
 }
