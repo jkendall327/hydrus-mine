@@ -78,6 +78,18 @@ fn cached(ui: &std::path::Path, entry: &std::path::Path, out: &std::path::Path) 
         }
     }
     table.push_str("];\n");
+    // (the interpreter keeps a global's properties and callbacks only when
+    // the entry file exports it, so every window's entry exports them all)
+    let mut globals = String::new();
+    for file in &files {
+        for line in std::fs::read_to_string(file).unwrap().lines() {
+            if let Some(rest) = line.strip_prefix("export global ") {
+                let name = rest.split_whitespace().next().unwrap();
+                writeln!(globals, "export {{ {name} }} from {:?};", file.display().to_string()).unwrap();
+            }
+        }
+    }
+    writeln!(table, "pub(crate) const GLOBAL_EXPORTS: &str = {globals:?};").unwrap();
     std::fs::write(out.join("interp_sources.rs"), table).unwrap();
 
     let generated = out.join("all.rs");

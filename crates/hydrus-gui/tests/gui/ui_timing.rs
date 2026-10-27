@@ -56,3 +56,62 @@ fn ui_timing_main_window_and_dialogs() {
     });
     drop((options, tags, export, about, bound, ui));
 }
+
+/// (spike) What repeated compiles leave behind, with the interpreter.
+#[cfg(feature = "interpreter-cached-ui")]
+#[test]
+fn ui_timing_compile_leak() {
+    let rss = || {
+        std::fs::read_to_string("/proc/self/status")
+            .unwrap()
+            .lines()
+            .find(|l| l.starts_with("VmRSS"))
+            .unwrap()
+            .to_owned()
+    };
+    for i in 0..8 {
+        hydrus_gui::interp_compile_and_drop("ManageTagsWindow");
+        eprintln!("ui_timing leak: after compile {i}: {}", rss());
+    }
+    let windows = headless::init();
+    for i in 0..8 {
+        let w = hydrus_gui::ManageTagsWindow::new().unwrap();
+        drop(w);
+        hydrus_gui::interp_clear_cache();
+        eprintln!("ui_timing leak: after instance+clear {i}: {}", rss());
+    }
+    drop(windows);
+}
+
+/// (spike) Whether a thread's compiled definitions are freed when it ends.
+#[cfg(feature = "interpreter-cached-ui")]
+#[test]
+fn ui_timing_thread_leak() {
+    let rss = || {
+        std::fs::read_to_string("/proc/self/status")
+            .unwrap()
+            .lines()
+            .find(|l| l.starts_with("VmRSS"))
+            .unwrap()
+            .to_owned()
+    };
+    for (i, mode) in ["compile only", "compile only", "compile only", "instance", "instance", "instance", "instance+clear", "instance+clear", "instance+clear"].iter().enumerate() {
+        let mode = *mode;
+        std::thread::spawn(move || {
+            if mode == "compile only" {
+                hydrus_gui::interp_compile_and_drop("ManageTagsWindow");
+                return;
+            }
+            let windows = headless::init();
+            let w = hydrus_gui::ManageTagsWindow::new().unwrap();
+            drop(w);
+            if mode == "instance+clear" {
+                hydrus_gui::interp_clear_cache();
+            }
+            drop(windows);
+        })
+        .join()
+        .unwrap();
+        eprintln!("ui_timing thread: after thread {i} ({mode}): {}", rss());
+    }
+}

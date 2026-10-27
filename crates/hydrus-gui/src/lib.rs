@@ -19,6 +19,10 @@ mod ui {
 
 pub use ui::*;
 
+/// (spike) see hydrus_gui_ui::interp
+#[cfg(feature = "interpreter-cached-ui")]
+pub use hydrus_gui_ui::interp::{clear_cache as interp_clear_cache, compile_and_drop as interp_compile_and_drop};
+
 pub mod about_window;
 mod active_predicates;
 mod animation;

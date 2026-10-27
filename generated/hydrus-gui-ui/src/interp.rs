@@ -47,8 +47,16 @@ fn compile(entry: &'static str) -> CompilationResult {
         let found = sources().get(path).map(|text| Ok((*text).to_owned()));
         Box::pin(std::future::ready(found))
     });
-    let source = if entry == ENTRY_PATH { ENTRY_SOURCE } else { sources()[Path::new(entry)] };
-    let future = compiler.build_from_source(source.to_owned(), PathBuf::from(entry));
+    let (source, path) = if entry == ENTRY_PATH {
+        (ENTRY_SOURCE.to_owned(), PathBuf::from(ENTRY_PATH))
+    } else {
+        // the file's windows, and every global (see build.rs)
+        let windows: Vec<&str> =
+            WINDOW_FILES.iter().filter(|(_, file)| *file == entry).map(|(window, _)| *window).collect();
+        let source = format!("export {{ {} }} from {entry:?};\n{GLOBAL_EXPORTS}", windows.join(", "));
+        (source, PathBuf::from(format!("{entry}.entry.slint")))
+    };
+    let future = compiler.build_from_source(source, path);
     let mut future = std::pin::pin!(future);
     let mut cx = std::task::Context::from_waker(std::task::Waker::noop());
     let std::task::Poll::Ready(result) = std::future::Future::poll(future.as_mut(), &mut cx) else {
@@ -57,7 +65,11 @@ fn compile(entry: &'static str) -> CompilationResult {
     result.print_diagnostics();
     assert!(!result.has_errors(), "the embedded UI compiles");
     if std::env::var_os("HYDRUS_INTERP_TIMING").is_some() {
-        eprintln!("hydrus-gui-ui: compiled {entry} in {:?}", started.elapsed());
+        let rss = std::fs::read_to_string("/proc/self/status")
+            .ok()
+            .and_then(|s| s.lines().find(|l| l.starts_with("VmRSS")).map(str::to_owned))
+            .unwrap_or_default();
+        eprintln!("hydrus-gui-ui: compiled {entry} in {:?} ({rss})", started.elapsed());
     }
     result
 }
@@ -131,4 +143,15 @@ impl Component {
             .set_global_callback(global, name, move |args| callback(args))
             .unwrap_or_else(|e| panic!("Cannot set callback {global}::{name}: {e}"));
     }
+}
+
+/// (spike) Compile `name`'s entry and drop the result, without caching: for
+/// measuring what a compile leaves behind.
+pub fn compile_and_drop(name: &str) {
+    drop(compile(entry_for(name)));
+}
+
+/// (spike) Forget this thread's compiled definitions.
+pub fn clear_cache() {
+    UI.with(|ui| ui.borrow_mut().clear());
 }
