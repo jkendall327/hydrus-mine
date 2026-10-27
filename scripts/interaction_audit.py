@@ -13,8 +13,12 @@ drag and drop) were easy to miss. This walks hydrus/client/gui with `ast` and
 lists, per class, each Qt event handler it overrides, the mouse buttons, keys
 and modifiers it names in that handler (static reading only), signals it
 connects that carry interaction (customContextMenuRequested, doubleClicked,
-...), and where the class is instantiated elsewhere in the GUI.
-Triage against hydrus-rs is done by hand (docs/rust/tracking/interactions.md).
+...), where the class is instantiated elsewhere in the GUI, and the handlers a
+subclass inherits from a reference-side base class (a hover or dialog list
+that only subclasses ListBoxTags still shows ListBoxTags' middle-click).
+ShortcutsHandler( and QShortcut( attachments are listed in a second table.
+What it cannot see is in docs/rust/tracking/interaction-audit.md.
+Triage against hydrus-rs is done by hand (docs/rust/tracking/interaction-audit.md).
 """
 
 import argparse
@@ -66,6 +70,11 @@ def walk_own(cls):
         todo.extend(ast.iter_child_nodes(n))
 
 
+def call_name(node):
+    f = node.func
+    return f.attr if isinstance(f, ast.Attribute) else getattr(f, "id", "")
+
+
 def scan_class(path, src, cls):
     """Yield one record per interaction-bearing method or connect in `cls`."""
     for node in walk_own(cls):
@@ -88,6 +97,11 @@ def scan_class(path, src, cls):
             yield {"kind": "signal:" + node.attr, "line": node.lineno,
                    "buttons": [], "keys": [], "modifiers": [], "events": [],
                    "via_shortcuts": False}
+        elif isinstance(node, ast.Call) and call_name(node) in ("ShortcutsHandler", "QShortcut"):
+            args = ", ".join(segment(src, a) for a in node.args[:3])
+            yield {"kind": "shortcuts:" + call_name(node), "line": node.lineno,
+                   "buttons": [], "keys": [], "modifiers": [], "events": [],
+                   "via_shortcuts": True, "args": args[:80]}
         elif (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
                 and node.func.attr.startswith("EVT_")):
             # QtPorting.WidgetEventFilter: self._filter.EVT_RIGHT_DOWN(self.callback)
@@ -104,7 +118,8 @@ def base_names(cls):
 
 
 def collect():
-    classes = {}
+    classes = {}   # name -> [def] for classes with their own interactions
+    table = defaultdict(list)   # every class: name -> [{file, line, bases}]
     sources = {}
     for path in py_files():
         src = path.read_text(encoding="utf-8", errors="replace")
@@ -113,53 +128,91 @@ def collect():
             tree = ast.parse(src)
         except SyntaxError:
             continue
+        rel = str(path.relative_to(ROOT))
         for cls in [n for n in ast.walk(tree) if isinstance(n, ast.ClassDef)]:
-            recs = list(scan_class(path, src, cls))
+            recs = sorted(scan_class(path, src, cls), key=lambda r: r["line"])
+            d = {"file": rel, "line": cls.lineno, "bases": base_names(cls), "interactions": recs}
+            table[cls.name].append(d)
             if recs:
-                rel = str(path.relative_to(ROOT))
-                classes.setdefault(cls.name, []).append(
-                    {"file": rel, "line": cls.lineno, "bases": base_names(cls),
-                     "interactions": sorted(recs, key=lambda r: r["line"])})
-    # Where is each class used? Count constructions/references in other lines.
+                classes.setdefault(cls.name, []).append(d)
+    # Where is each class used? Any mention outside class/import lines.
     uses = defaultdict(list)
-    names = set(classes)
-    pat = re.compile(r"\b(" + "|".join(map(re.escape, sorted(names))) + r")\b")
+    word = re.compile(r"\b\w+\b")
     for path, src in sources.items():
         rel = str(path.relative_to(ROOT))
         for i, line in enumerate(src.splitlines(), 1):
             if line.lstrip().startswith(("class ", "import ", "from ", "#")):
                 continue
-            for m in pat.finditer(line):
-                uses[m.group(1)].append(f"{rel}:{i}")
+            for w in set(word.findall(line)):
+                if w in table:
+                    uses[w].append(f"{rel}:{i}")
+
+    def used_in(name, own_file):
+        others = [u for u in uses[name] if not u.startswith(own_file + ":")]
+        return sorted({u.split(":")[0] for u in others})
+
     for name, defs in classes.items():
         for d in defs:
-            own = d["file"]
-            others = [u for u in uses[name] if not u.startswith(own + ":")]
-            d["used_in"] = sorted({u.split(":")[0] for u in others})
-            d["use_count"] = len(uses[name])
+            d["used_in"] = used_in(name, d["file"])
+            d["inherited"] = False
+
+    # Subclasses: inherit every handler kind they do not override themselves.
+    def ancestors(name, seen):
+        for d in table.get(name, []):
+            for b in d["bases"]:
+                if b not in seen:
+                    seen.add(b)
+                    yield b
+                    yield from ancestors(b, seen)
+
+    for name, defs in table.items():
+        for d in defs:
+            own_kinds = {r["kind"] for r in d["interactions"]}
+            inherited = []
+            for anc in ancestors(name, set()):
+                for ad in classes.get(anc, []):
+                    for r in ad["interactions"]:
+                        if r["kind"] not in own_kinds and not r["kind"].startswith(("shortcuts:", "filter:")):
+                            inherited.append(dict(r, inherited_from=f"{anc} ({ad['file'].removeprefix('hydrus/client/gui/')}:{r['line']})"))
+                            own_kinds.add(r["kind"])
+            if inherited and used_in(name, d["file"]):
+                entry = {"file": d["file"], "line": d["line"], "bases": d["bases"],
+                         "interactions": inherited, "used_in": used_in(name, d["file"]),
+                         "inherited": True}
+                classes.setdefault(name, []).append(entry)
     return classes
 
 
 def render_md(classes, only):
     lines = ["| Class | Where | Handler | Buttons | Keys | Modifiers | Used in |",
              "|---|---|---|---|---|---|---|"]
+    shortcuts = ["| Class | Where | Attached | Arguments |", "|---|---|---|---|"]
     n = 0
     for name in sorted(classes):
         if only and only.lower() not in name.lower():
             continue
         for d in classes[name]:
+            where = d["file"].removeprefix("hydrus/client/gui/")
+            used = ", ".join(Path(u).name for u in d["used_in"][:4])
+            if len(d["used_in"]) > 4:
+                used += f" +{len(d['used_in']) - 4}"
             for r in d["interactions"]:
+                if r["kind"].startswith("shortcuts:"):
+                    shortcuts.append("| {} | {}:{} | {} | {} |".format(
+                        name, where, r["line"], r["kind"].split(":")[1], r.get("args", "")))
+                    continue
                 n += 1
                 kind = r["kind"] + (" (" + ",".join(r["events"]) + ")" if r["events"] else "")
-                used = ", ".join(Path(u).name for u in d["used_in"][:4])
-                if len(d["used_in"]) > 4:
-                    used += f" +{len(d['used_in']) - 4}"
+                if r.get("inherited_from"):
+                    kind += " [inherited from " + r["inherited_from"] + "]"
                 lines.append("| {} | {}:{} | {} | {} | {} | {} | {} |".format(
-                    name, d["file"].removeprefix("hydrus/client/gui/"), r["line"], kind,
+                    name, where, d["line"] if d["inherited"] else r["line"], kind,
                     ", ".join(r["buttons"]),
                     ", ".join(r["keys"]) + (" +shortcuts" if r["via_shortcuts"] else ""),
                     ", ".join(r["modifiers"]), used))
-    lines.append(f"\n{n} handlers in {len(classes)} classes.")
+    lines.append(f"\n{n} handlers (own and inherited) in {len(classes)} classes.")
+    lines.append("\n### Shortcut attachments (ShortcutsHandler, QShortcut)\n")
+    lines.extend(shortcuts)
     return "\n".join(lines)
 
 
@@ -189,7 +242,8 @@ def unrecorded_windows():
     """Slint windows with no recording-backed GUI test of their own name.
 
     For each `export component X inherits Window` in crates/hydrus-gui/ui, find
-    the GUI tests named after its file (tests/gui/<stem>*.rs) and say whether
+    the GUI tests named after its file (tests/gui/<stem>*.rs) or mentioning its
+    window type, and say whether
     any of them loads a recording (`fixture_json(` / `oracle/fixtures/`), plus
     the leaves they tag. A window with no such test is a candidate for 'no
     test compares its control list, order and visibility with the reference';
@@ -203,6 +257,7 @@ def unrecorded_windows():
     for leaf, files in leaf_files.items():
         for f in files:
             by_file[f].add(leaf)
+    texts = {t: t.read_text(encoding="utf-8", errors="replace") for t in tests}
     rows = []
     for f in sorted(ui.glob("*.slint")):
         text = f.read_text(encoding="utf-8", errors="replace")
@@ -210,8 +265,11 @@ def unrecorded_windows():
         if not wins:
             continue
         stem = f.stem
-        mine = [t for t in tests if t.stem == stem or t.stem.startswith(stem + "_")]
-        rec = [t for t in mine if RECORDING.search(t.read_text(encoding="utf-8", errors="replace"))]
+        names = [re.compile(r"\b" + re.escape(w) + r"\b") for w in wins]
+        mine = [t for t in tests
+                if t.stem == stem or t.stem.startswith(stem + "_")
+                or any(n.search(texts[t]) for n in names)]
+        rec = [t for t in mine if RECORDING.search(texts[t])]
         if rec:
             continue
         leaves = sorted({l for t in mine for l in by_file.get(t, ())})
