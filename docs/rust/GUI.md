@@ -56,9 +56,9 @@ search changes (and then only if it is synchronised). The pages we don't
 open yet show their files, and say what they are; URL, gallery and watcher
 downloader pages are live (below).
 Changing a page's sort sorts the files it shows rather than searching
-again, as the reference does. Ctrl+T or F9 (or, as in the reference, a double click,
-left or middle, on a tab row's empty space, the new page then going in
-that row's notebook) opens the reference's page
+again, as the reference does. Ctrl+T or F9 (or, as in the reference, a left
+double click or a middle click on a tab row's empty space, the new page then
+going in that row's notebook) opens the reference's page
 chooser, nine buttons laid out as a number pad (the digits, arrows and
 enter press them): file search, then a file domain, opens a search page
 on it; special opens a page of pages or a duplicates page; download, then
@@ -2510,7 +2510,15 @@ from the selected tab, with the reference's descent and recent-move rules.
 model and GUI regressions replay quiet confirmation, cancellation, reverse
 closing, nested undo, navigation and left/right focus preferences.
 
-Tab rename asks "Enter the new name." with the current name. Its frozen page key
+Tab rename (double-click a tab, or "rename page" in its menu) asks "Enter the
+new name." with the current name; the double-click's first click shows the tab,
+as the reference's tab bar does. The tab menu opens when the right button is let
+go, over a tab or over a row's empty space; on empty space it holds that
+notebook's pages, its "select" moves, "new page" and the sessions to append, and
+over a tab its entries are in the reference's order. `oracle/record_tab_strip_interactions.py`
+drove the reference's tab bar with Qt mouse events, and
+`tests/gui/tab_strip_clicks.rs` replays it with pointer events on the window.
+Its frozen page key
 keeps the target correct while selecting another tab. Send-down moves this page,
 this page and its right siblings, or only right siblings into a new notebook;
 groups ask first. The rename-on-send preference optionally prompts after moving,

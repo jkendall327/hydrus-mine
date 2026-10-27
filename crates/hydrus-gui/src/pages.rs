@@ -1037,6 +1037,19 @@ impl Pages {
         self.new_page_target = None;
     }
 
+    /// The notebook the next new page goes in (`None`: the top one), as the
+    /// page chooser open now would put it.
+    pub fn new_page_notebook(&self) -> Option<PageKey> {
+        match self.new_page_target {
+            Some((parent, _)) => parent,
+            None => self.notebook_key(
+                self.new_page_depth
+                    .filter(|&d| d <= self.current_depth())
+                    .unwrap_or_else(|| self.current_depth()),
+            ),
+        }
+    }
+
     /// Freeze the popup row and insertion anchor through the modal chooser.
     pub fn new_page_at(
         &mut self,
@@ -2324,47 +2337,33 @@ impl Pages {
         let Some(page) = self.notebook_at(depth).and_then(|pages| pages.get(index)) else {
             return Vec::new();
         };
-        let mut entries = crate::tab_context::menu(
+        let tab = crate::tab_context::menu(
             depth,
             index,
             self.notebook_at(depth).map_or(0, <[Page]>::len),
             self.path.get(depth).copied().unwrap_or(0),
         );
+        // in the reference's order: closing, the notebook's pages and
+        // selection, new pages, then the clicked tab's own actions
+        let (head, rest): (Vec<_>, Vec<_>) = tab.into_iter().partition(|entry| {
+            matches!(
+                entry.label(),
+                "close page" | "close other page" | "close other pages" | "close" | "select"
+            )
+        });
+        let (close, select): (Vec<_>, Vec<_>) = head
+            .into_iter()
+            .partition(|entry| entry.label() != "select");
         // the media pages in the clicked notebook (or this tab's notebook),
         // to show one (`selectable_media_pages`)
         let notebook = match &page.content {
             PageContent::Pages(_) => Some(page.key),
             _ => self.notebook_key(depth),
         };
-        // (a key that isn't a page's gives the top notebook's pages)
-        let leaves = self.pages_under(&notebook.unwrap_or(PageKey([0; 32])));
-        let all = self.session.all_pages();
-        let selectable: Vec<crate::main_menu::Entry> = leaves
-            .iter()
-            .filter_map(|key| all.iter().find(|p| p.key == *key))
-            .map(|p| {
-                let (files, progress) = self.file_summary(p);
-                crate::main_menu::Entry::Item {
-                    label: hydrus_core::pages::name_for_menu(&p.name, files, progress, true),
-                    enabled: true,
-                    command: Some(crate::main_menu::Command::ShowPage(p.key)),
-                }
-            })
-            .collect();
-        if !selectable.is_empty() {
-            let at = entries
-                .iter()
-                .position(|e| *e == crate::main_menu::Entry::Separator)
-                .map_or(entries.len().min(1), |i| i + 1);
-            entries.insert(
-                at,
-                crate::main_menu::Entry::Menu {
-                    label: "pages".into(),
-                    entries: selectable,
-                    enabled: true,
-                },
-            );
-        }
+        let mut entries = close;
+        entries.push(crate::main_menu::Entry::Separator);
+        entries.extend(self.selectable_pages_menu(notebook));
+        entries.extend(select);
         entries.push(crate::main_menu::Entry::Separator);
         for (label, before) in [("new page", None), ("new page here", Some(page.key))] {
             entries.push(crate::main_menu::Entry::Item {
@@ -2375,6 +2374,15 @@ impl Pages {
                     before,
                 }),
             });
+        }
+        entries.push(crate::main_menu::Entry::Separator);
+        entries.extend(rest);
+        // (no separator twice, or at either end, as Qt's menus show them)
+        entries.dedup_by(|a, b| {
+            *a == crate::main_menu::Entry::Separator && *b == crate::main_menu::Entry::Separator
+        });
+        while entries.last() == Some(&crate::main_menu::Entry::Separator) {
+            entries.pop();
         }
         let advanced: hydrus_store::settings::AdvancedMode = self
             .store
@@ -2448,19 +2456,65 @@ impl Pages {
             .map(|page| self.weight_for_pages(vec![page.clone()]))
     }
 
-    /// Popup on the unused part of a tab row: choose in that row's notebook.
+    /// The "pages" submenu: the media pages under a notebook (the top one
+    /// for `None`), to show one; none when it holds none.
+    fn selectable_pages_menu(&self, notebook: Option<PageKey>) -> Option<crate::main_menu::Entry> {
+        // (a key that isn't a page's gives the top notebook's pages)
+        let leaves = self.pages_under(&notebook.unwrap_or(PageKey([0; 32])));
+        let all = self.session.all_pages();
+        let selectable: Vec<crate::main_menu::Entry> = leaves
+            .iter()
+            .filter_map(|key| all.iter().find(|p| p.key == *key))
+            .map(|p| {
+                let (files, progress) = self.file_summary(p);
+                crate::main_menu::Entry::Item {
+                    label: hydrus_core::pages::name_for_menu(&p.name, files, progress, true),
+                    enabled: true,
+                    command: Some(crate::main_menu::Command::ShowPage(p.key)),
+                }
+            })
+            .collect();
+        (!selectable.is_empty()).then(|| crate::main_menu::Entry::Menu {
+            label: "pages".into(),
+            entries: selectable,
+            enabled: true,
+        })
+    }
+
+    /// Popup on the unused part of a tab row, as the reference's tab menu
+    /// with no tab under the pointer: that row's notebook's media pages,
+    /// its selection's moves, a new page in it, and sessions to append.
     pub fn tab_space_menu(&self, depth: usize) -> Vec<crate::main_menu::Entry> {
         if depth > self.current_depth() {
             return Vec::new();
         }
-        vec![crate::main_menu::Entry::Item {
+        let notebook = self.notebook_key(depth);
+        let count = self.notebook_at(depth).map_or(0, <[Page]>::len);
+        let mut entries: Vec<_> = self.selectable_pages_menu(notebook).into_iter().collect();
+        if count > 1 {
+            let selected = self.path.get(depth).copied().unwrap_or(0);
+            entries.push(crate::tab_context::select_menu(depth, count, selected));
+        }
+        if !entries.is_empty() {
+            entries.push(crate::main_menu::Entry::Separator);
+        }
+        entries.push(crate::main_menu::Entry::Item {
             label: "new page".into(),
             enabled: true,
             command: Some(crate::main_menu::Command::ChooseNotebookPage {
-                parent: self.notebook_key(depth),
+                parent: notebook,
                 before: None,
             }),
-        }]
+        });
+        let names: Vec<_> = self
+            .store
+            .read(sessions::names)
+            .unwrap_or_default()
+            .into_iter()
+            .map(|(name, _)| name)
+            .collect();
+        entries.extend(crate::tab_context::session_entries(notebook, None, &names));
+        entries
     }
 
     /// Navigate at a tab row's notebook, descending into its selected

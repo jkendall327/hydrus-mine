@@ -284,6 +284,7 @@ mod incremental_tagging;
 mod notebook_tree;
 mod tab_drag;
 mod tab_presentation;
+mod tab_strip_clicks;
 
 mod archive_repair;
 

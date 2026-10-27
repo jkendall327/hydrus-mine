@@ -49,6 +49,9 @@ struct State {
     tabs: HashMap<PageKey, Rect>,
     spaces: HashMap<i32, Rect>,
     pointer: Pointer,
+    /// The tab last pressed with the left button, and when: a second press
+    /// on it soon after is a double-click, which renames the page.
+    last_press: Option<(PageKey, Instant)>,
 }
 impl State {
     fn hit(&mut self, window: &MainWindow, x: f32, y: f32) -> Option<Rect> {
@@ -131,26 +134,29 @@ pub(crate) fn bind(window: &MainWindow, pages: &Rc<RefCell<Pages>>, change: Chan
                         && let Some(rect) = hit.clone()
                     {
                         if let Some(key) = rect.key {
-                            if !prefs.disabled {
+                            let now = Instant::now();
+                            let double =
                                 state
                                     .borrow_mut()
-                                    .pointer
-                                    .start(key, rect.parent, Instant::now());
+                                    .last_press
+                                    .take()
+                                    .is_some_and(|(last, at)| {
+                                        last == key && now.duration_since(at) < crate::DOUBLE_CLICK
+                                    });
+                            if double {
+                                // (the reference's tab bar takes a
+                                // double-click as a rename, with no drag)
+                                window.invoke_tab_rename_requested(rect.depth, rect.index);
+                                return;
+                            }
+                            state.borrow_mut().last_press = Some((key, now));
+                            if !prefs.disabled {
+                                state.borrow_mut().pointer.start(key, rect.parent, now);
                             }
                             window.invoke_tab_chosen(rect.depth, rect.index);
                         } else {
                             window.invoke_tab_space_pressed(rect.depth, false);
                         }
-                    } else if button == 1
-                        && let Some(rect) = hit.clone()
-                        && rect.key.is_none()
-                    {
-                        window.invoke_tab_menu_requested(rect.depth, rect.index, x, y);
-                    } else if button == 2
-                        && let Some(rect) = hit
-                        && rect.key.is_none()
-                    {
-                        window.invoke_tab_space_pressed(rect.depth, true);
                     }
                 }
                 1 => {
@@ -185,14 +191,21 @@ pub(crate) fn bind(window: &MainWindow, pages: &Rc<RefCell<Pages>>, change: Chan
                         });
                     } else if button == 1
                         && let Some(rect) = hit.as_ref()
-                        && rect.key.is_some()
                     {
-                        window.invoke_tab_menu_requested(rect.depth, rect.index, x, y);
+                        // (the reference's notebook shows its menu when the
+                        // right button is let go, over a tab or not)
+                        let index = if rect.key.is_some() { rect.index } else { -1 };
+                        window.invoke_tab_menu_requested(rect.depth, index, x, y);
                     } else if button == 2
                         && let Some(rect) = hit
-                        && rect.key.is_some()
                     {
-                        window.invoke_close_tab(rect.depth, rect.index);
+                        if rect.key.is_some() {
+                            window.invoke_close_tab(rect.depth, rect.index);
+                        } else {
+                            // (a middle click on empty space chooses a new
+                            // page, as the notebook's event filter does)
+                            window.invoke_tab_space_pressed(rect.depth, true);
+                        }
                     }
                 }
                 2 => {

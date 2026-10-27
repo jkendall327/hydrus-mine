@@ -1421,8 +1421,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             show_chooser();
         }
     });
-    // a double click (left or middle) on a tab row's empty space: the
-    // page chooser, for that row's notebook
+    // a left double click, or a middle click, on a tab row's empty space:
+    // the page chooser, for that row's notebook
     window.on_tab_space_pressed({
         let chooser = chooser.clone();
         let pages = pages.clone();
@@ -1433,7 +1433,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let double = last.get().is_some_and(|(l, m, at)| {
                 l == level && m == middle && now.duration_since(at) < DOUBLE_CLICK
             });
-            if !double {
+            // (a middle click needs no second one: the reference's notebook
+            // chooses on its release)
+            if !double && !middle {
                 last.set(Some((level, middle, now)));
                 return;
             }

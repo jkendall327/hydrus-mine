@@ -1,0 +1,1990 @@
+{
+  "geometry": {
+    "bar": [
+      194,
+      27
+    ],
+    "tabs": [
+      [
+        0,
+        0,
+        55,
+        27
+      ],
+      [
+        55,
+        0,
+        76,
+        27
+      ],
+      [
+        131,
+        0,
+        63,
+        27
+      ]
+    ],
+    "space_widget": "PagesNotebook"
+  },
+  "tabs": [
+    {
+      "action": "left double-click tab alpha, rename",
+      "menus": [],
+      "texts": [
+        {
+          "message": "Enter the new name.",
+          "default": "alpha",
+          "answer": "renamed alpha"
+        }
+      ],
+      "chosen": [],
+      "pages": [
+        {
+          "name": "renamed alpha"
+        },
+        {
+          "name": "nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "inner two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "renamed alpha"
+    },
+    {
+      "action": "left double-click tab omega, cancel",
+      "menus": [],
+      "texts": [
+        {
+          "message": "Enter the new name.",
+          "default": "omega",
+          "answer": null
+        }
+      ],
+      "chosen": [],
+      "pages": [
+        {
+          "name": "renamed alpha"
+        },
+        {
+          "name": "nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "inner two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "omega"
+    },
+    {
+      "action": "left double-click tab nested (a page of pages)",
+      "menus": [],
+      "texts": [
+        {
+          "message": "Enter the new name.",
+          "default": "nested",
+          "answer": "renamed nested"
+        }
+      ],
+      "chosen": [],
+      "pages": [
+        {
+          "name": "renamed alpha"
+        },
+        {
+          "name": "renamed nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "inner two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "inner one"
+    },
+    {
+      "action": "left double-click inner tab inner two",
+      "menus": [],
+      "texts": [
+        {
+          "message": "Enter the new name.",
+          "default": "inner two",
+          "answer": "renamed two"
+        }
+      ],
+      "chosen": [],
+      "pages": [
+        {
+          "name": "renamed alpha"
+        },
+        {
+          "name": "renamed nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "renamed two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "renamed two"
+    },
+    {
+      "action": "left click tab omega",
+      "menus": [],
+      "texts": [],
+      "chosen": [],
+      "pages": [
+        {
+          "name": "renamed alpha"
+        },
+        {
+          "name": "renamed nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "renamed two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "omega"
+    },
+    {
+      "action": "left click empty space",
+      "menus": [],
+      "texts": [],
+      "chosen": [],
+      "pages": [
+        {
+          "name": "renamed alpha"
+        },
+        {
+          "name": "renamed nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "renamed two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "omega"
+    },
+    {
+      "action": "left double-click empty space",
+      "menus": [],
+      "texts": [],
+      "chosen": [
+        {
+          "notebook": "top page notebook",
+          "insertion_index": null
+        }
+      ],
+      "pages": [
+        {
+          "name": "renamed alpha"
+        },
+        {
+          "name": "renamed nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "renamed two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "omega"
+    },
+    {
+      "action": "middle click empty space",
+      "menus": [],
+      "texts": [],
+      "chosen": [
+        {
+          "notebook": "top page notebook",
+          "insertion_index": null
+        }
+      ],
+      "pages": [
+        {
+          "name": "renamed alpha"
+        },
+        {
+          "name": "renamed nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "renamed two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "omega"
+    },
+    {
+      "action": "middle double-click empty space",
+      "menus": [],
+      "texts": [],
+      "chosen": [
+        {
+          "notebook": "top page notebook",
+          "insertion_index": null
+        }
+      ],
+      "pages": [
+        {
+          "name": "renamed alpha"
+        },
+        {
+          "name": "renamed nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "renamed two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "omega"
+    },
+    {
+      "action": "right press tab alpha (no release)",
+      "menus": [],
+      "texts": [],
+      "chosen": [],
+      "pages": [
+        {
+          "name": "renamed alpha"
+        },
+        {
+          "name": "renamed nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "renamed two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "omega"
+    },
+    {
+      "action": "right release tab alpha",
+      "menus": [
+        {
+          "window": "PagesNotebook",
+          "notebook": "top page notebook",
+          "entries": [
+            "close page",
+            "close other pages",
+            "---",
+            {
+              "menu": "pages",
+              "entries": [
+                "renamed alpha",
+                "inner one",
+                "renamed two",
+                "omega"
+              ]
+            },
+            {
+              "menu": "select",
+              "entries": [
+                "first page",
+                "page to the left"
+              ]
+            },
+            "---",
+            "new page",
+            "new page here",
+            "---",
+            {
+              "menu": "move page",
+              "entries": [
+                "right",
+                "to right end"
+              ]
+            },
+            "rename page",
+            "duplicate page",
+            "---",
+            {
+              "menu": "sort pages",
+              "entries": [
+                "by most files first",
+                "by fewest files first",
+                "by largest total file size first",
+                "by smallest total file size first",
+                "by name a-z",
+                "by name z-a"
+              ]
+            },
+            "---",
+            {
+              "menu": "collapse to a single page",
+              "entries": [
+                "this page",
+                "pages from here to the right",
+                "pages to the right"
+              ]
+            },
+            {
+              "menu": "send down to a new page of pages",
+              "entries": [
+                "this page",
+                "pages from here to the right",
+                "pages to the right"
+              ]
+            },
+            "---",
+            "refresh this page",
+            "---",
+            {
+              "menu": "append session",
+              "entries": [
+                "exit session",
+                "last session"
+              ]
+            }
+          ]
+        }
+      ],
+      "texts": [],
+      "chosen": [],
+      "pages": [
+        {
+          "name": "renamed alpha"
+        },
+        {
+          "name": "renamed nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "renamed two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "omega"
+    },
+    {
+      "action": "right click tab nested",
+      "menus": [
+        {
+          "window": "PagesNotebook",
+          "notebook": "top page notebook",
+          "entries": [
+            "close page",
+            {
+              "menu": "close",
+              "entries": [
+                "other pages",
+                "pages to the left",
+                "pages to the right"
+              ]
+            },
+            "---",
+            {
+              "menu": "pages",
+              "entries": [
+                "inner one",
+                "renamed two"
+              ]
+            },
+            {
+              "menu": "select",
+              "entries": [
+                "first page",
+                "page to the left"
+              ]
+            },
+            "---",
+            "new page",
+            "new page here",
+            "---",
+            {
+              "menu": "move page",
+              "entries": [
+                "left",
+                "right"
+              ]
+            },
+            "rename page",
+            "duplicate page",
+            "---",
+            {
+              "menu": "sort pages",
+              "entries": [
+                "by most files first",
+                "by fewest files first",
+                "by largest total file size first",
+                "by smallest total file size first",
+                "by name a-z",
+                "by name z-a"
+              ]
+            },
+            "---",
+            {
+              "menu": "collapse to a single page",
+              "entries": [
+                "this page",
+                "pages from here to the right",
+                "pages to the right"
+              ]
+            },
+            {
+              "menu": "send down to a new page of pages",
+              "entries": [
+                "this page",
+                "pages from here to the right",
+                "pages to the right"
+              ]
+            },
+            "---",
+            "refresh all this page's pages",
+            "---",
+            {
+              "menu": "append session",
+              "entries": [
+                "exit session",
+                "last session"
+              ]
+            },
+            {
+              "menu": "save this page of pages to a session",
+              "entries": [
+                "create a new session"
+              ]
+            }
+          ]
+        }
+      ],
+      "texts": [],
+      "chosen": [],
+      "pages": [
+        {
+          "name": "renamed alpha"
+        },
+        {
+          "name": "renamed nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "renamed two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "omega"
+    },
+    {
+      "action": "right click empty space",
+      "menus": [
+        {
+          "window": "PagesNotebook",
+          "notebook": "top page notebook",
+          "entries": [
+            {
+              "menu": "pages",
+              "entries": [
+                "renamed alpha",
+                "inner one",
+                "renamed two",
+                "omega"
+              ]
+            },
+            {
+              "menu": "select",
+              "entries": [
+                "first page",
+                "page to the left"
+              ]
+            },
+            "---",
+            "new page",
+            "---",
+            {
+              "menu": "append session",
+              "entries": [
+                "exit session",
+                "last session"
+              ]
+            }
+          ]
+        }
+      ],
+      "texts": [],
+      "chosen": [],
+      "pages": [
+        {
+          "name": "renamed alpha"
+        },
+        {
+          "name": "renamed nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "renamed two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "omega"
+    },
+    {
+      "action": "right click inner tab inner one",
+      "menus": [
+        {
+          "window": "PagesNotebook",
+          "notebook": "renamed nested",
+          "entries": [
+            "close page",
+            "close other page",
+            "---",
+            {
+              "menu": "pages",
+              "entries": [
+                "inner one",
+                "renamed two"
+              ]
+            },
+            {
+              "menu": "select",
+              "entries": [
+                "page to the left"
+              ]
+            },
+            "---",
+            "new page",
+            "new page here",
+            "---",
+            {
+              "menu": "move page",
+              "entries": [
+                "right"
+              ]
+            },
+            "rename page",
+            "duplicate page",
+            "---",
+            {
+              "menu": "sort pages",
+              "entries": [
+                "by most files first",
+                "by fewest files first",
+                "by largest total file size first",
+                "by smallest total file size first",
+                "by name a-z",
+                "by name z-a"
+              ]
+            },
+            "---",
+            {
+              "menu": "collapse to a single page",
+              "entries": [
+                "this page",
+                "pages from here to the right",
+                "pages to the right"
+              ]
+            },
+            {
+              "menu": "send down to a new page of pages",
+              "entries": [
+                "this page",
+                "pages from here to the right",
+                "pages to the right"
+              ]
+            },
+            "---",
+            "refresh this page",
+            "---",
+            {
+              "menu": "append session",
+              "entries": [
+                "exit session",
+                "last session"
+              ]
+            }
+          ]
+        }
+      ],
+      "texts": [],
+      "chosen": [],
+      "pages": [
+        {
+          "name": "renamed alpha"
+        },
+        {
+          "name": "renamed nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "renamed two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "renamed two"
+    },
+    {
+      "action": "right click inner empty space",
+      "menus": [
+        {
+          "window": "PagesNotebook",
+          "notebook": "renamed nested",
+          "entries": [
+            {
+              "menu": "pages",
+              "entries": [
+                "inner one",
+                "renamed two"
+              ]
+            },
+            {
+              "menu": "select",
+              "entries": [
+                "page to the left"
+              ]
+            },
+            "---",
+            "new page",
+            "---",
+            {
+              "menu": "append session",
+              "entries": [
+                "exit session",
+                "last session"
+              ]
+            }
+          ]
+        }
+      ],
+      "texts": [],
+      "chosen": [],
+      "pages": [
+        {
+          "name": "renamed alpha"
+        },
+        {
+          "name": "renamed nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "renamed two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "renamed two"
+    },
+    {
+      "action": "left double-click inner empty space",
+      "menus": [],
+      "texts": [],
+      "chosen": [
+        {
+          "notebook": "renamed nested",
+          "insertion_index": null
+        }
+      ],
+      "pages": [
+        {
+          "name": "renamed alpha"
+        },
+        {
+          "name": "renamed nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "renamed two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "renamed two"
+    },
+    {
+      "action": "middle double-click tab omega",
+      "menus": [],
+      "texts": [],
+      "chosen": [
+        {
+          "notebook": "top page notebook",
+          "insertion_index": null
+        }
+      ],
+      "pages": [
+        {
+          "name": "renamed alpha"
+        },
+        {
+          "name": "renamed nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "renamed two"
+            }
+          ]
+        }
+      ],
+      "shown": "renamed two"
+    }
+  ],
+  "tree": [
+    {
+      "action": "initial",
+      "menus": [],
+      "pages": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "inner two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "inner one",
+      "rows": [
+        "alpha",
+        "nested",
+        "inner one",
+        "inner two",
+        "omega"
+      ],
+      "current": "nested"
+    },
+    {
+      "action": "right click tree row alpha",
+      "menus": [
+        {
+          "window": "PagesNotebook",
+          "notebook": "top page notebook",
+          "entries": [
+            "close page",
+            "close other pages",
+            "---",
+            {
+              "menu": "pages",
+              "entries": [
+                "alpha",
+                "inner one",
+                "inner two",
+                "omega"
+              ]
+            },
+            {
+              "menu": "select",
+              "entries": [
+                "page to the left",
+                "page to the right"
+              ]
+            },
+            "---",
+            "new page",
+            "new page here",
+            "---",
+            {
+              "menu": "move page",
+              "entries": [
+                "right",
+                "to right end"
+              ]
+            },
+            "rename page",
+            "duplicate page",
+            "---",
+            {
+              "menu": "sort pages",
+              "entries": [
+                "by most files first",
+                "by fewest files first",
+                "by largest total file size first",
+                "by smallest total file size first",
+                "by name a-z",
+                "by name z-a"
+              ]
+            },
+            "---",
+            {
+              "menu": "collapse to a single page",
+              "entries": [
+                "this page",
+                "pages from here to the right",
+                "pages to the right"
+              ]
+            },
+            {
+              "menu": "send down to a new page of pages",
+              "entries": [
+                "this page",
+                "pages from here to the right",
+                "pages to the right"
+              ]
+            },
+            "---",
+            "refresh this page",
+            "---",
+            {
+              "menu": "append session",
+              "entries": [
+                "exit session",
+                "last session"
+              ]
+            }
+          ]
+        }
+      ],
+      "pages": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "inner two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "inner one",
+      "rows": [
+        "alpha",
+        "nested",
+        "inner one",
+        "inner two",
+        "omega"
+      ],
+      "current": "alpha"
+    },
+    {
+      "action": "right click tree row nested",
+      "menus": [
+        {
+          "window": "PagesNotebook",
+          "notebook": "top page notebook",
+          "entries": [
+            "close page",
+            {
+              "menu": "close",
+              "entries": [
+                "other pages",
+                "pages to the left",
+                "pages to the right"
+              ]
+            },
+            "---",
+            {
+              "menu": "pages",
+              "entries": [
+                "inner one",
+                "inner two"
+              ]
+            },
+            {
+              "menu": "select",
+              "entries": [
+                "page to the left",
+                "page to the right"
+              ]
+            },
+            "---",
+            "new page",
+            "new page here",
+            "---",
+            {
+              "menu": "move page",
+              "entries": [
+                "left",
+                "right"
+              ]
+            },
+            "rename page",
+            "duplicate page",
+            "---",
+            {
+              "menu": "sort pages",
+              "entries": [
+                "by most files first",
+                "by fewest files first",
+                "by largest total file size first",
+                "by smallest total file size first",
+                "by name a-z",
+                "by name z-a"
+              ]
+            },
+            "---",
+            {
+              "menu": "collapse to a single page",
+              "entries": [
+                "this page",
+                "pages from here to the right",
+                "pages to the right"
+              ]
+            },
+            {
+              "menu": "send down to a new page of pages",
+              "entries": [
+                "this page",
+                "pages from here to the right",
+                "pages to the right"
+              ]
+            },
+            "---",
+            "refresh all this page's pages",
+            "---",
+            {
+              "menu": "append session",
+              "entries": [
+                "exit session",
+                "last session"
+              ]
+            },
+            {
+              "menu": "save this page of pages to a session",
+              "entries": [
+                "create a new session"
+              ]
+            }
+          ]
+        }
+      ],
+      "pages": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "inner two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "inner one",
+      "rows": [
+        "alpha",
+        "nested",
+        "inner one",
+        "inner two",
+        "omega"
+      ],
+      "current": "nested"
+    },
+    {
+      "action": "right click tree row inner one",
+      "menus": [
+        {
+          "window": "PagesNotebook",
+          "notebook": "nested",
+          "entries": [
+            "close page",
+            "close other page",
+            "---",
+            {
+              "menu": "pages",
+              "entries": [
+                "inner one",
+                "inner two"
+              ]
+            },
+            {
+              "menu": "select",
+              "entries": [
+                "page to the right"
+              ]
+            },
+            "---",
+            "new page",
+            "new page here",
+            "---",
+            {
+              "menu": "move page",
+              "entries": [
+                "right"
+              ]
+            },
+            "rename page",
+            "duplicate page",
+            "---",
+            {
+              "menu": "sort pages",
+              "entries": [
+                "by most files first",
+                "by fewest files first",
+                "by largest total file size first",
+                "by smallest total file size first",
+                "by name a-z",
+                "by name z-a"
+              ]
+            },
+            "---",
+            {
+              "menu": "collapse to a single page",
+              "entries": [
+                "this page",
+                "pages from here to the right",
+                "pages to the right"
+              ]
+            },
+            {
+              "menu": "send down to a new page of pages",
+              "entries": [
+                "this page",
+                "pages from here to the right",
+                "pages to the right"
+              ]
+            },
+            "---",
+            "refresh this page",
+            "---",
+            {
+              "menu": "append session",
+              "entries": [
+                "exit session",
+                "last session"
+              ]
+            }
+          ]
+        }
+      ],
+      "pages": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "inner two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "inner one",
+      "rows": [
+        "alpha",
+        "nested",
+        "inner one",
+        "inner two",
+        "omega"
+      ],
+      "current": "inner one"
+    },
+    {
+      "action": "right click tree empty space",
+      "menus": [],
+      "pages": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "inner two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "inner one",
+      "rows": [
+        "alpha",
+        "nested",
+        "inner one",
+        "inner two",
+        "omega"
+      ],
+      "current": "inner one"
+    },
+    {
+      "action": "right click tree row inner two, alpha shown",
+      "menus": [
+        {
+          "window": "PagesNotebook",
+          "notebook": "nested",
+          "entries": [
+            "close page",
+            "close other page",
+            "---",
+            {
+              "menu": "pages",
+              "entries": [
+                "inner one",
+                "inner two"
+              ]
+            },
+            {
+              "menu": "select",
+              "entries": [
+                "page to the right"
+              ]
+            },
+            "---",
+            "new page",
+            "new page here",
+            "---",
+            {
+              "menu": "move page",
+              "entries": [
+                "left"
+              ]
+            },
+            "rename page",
+            "duplicate page",
+            "---",
+            {
+              "menu": "sort pages",
+              "entries": [
+                "by most files first",
+                "by fewest files first",
+                "by largest total file size first",
+                "by smallest total file size first",
+                "by name a-z",
+                "by name z-a"
+              ]
+            },
+            "---",
+            {
+              "menu": "collapse to a single page",
+              "entries": [
+                "this page"
+              ]
+            },
+            {
+              "menu": "send down to a new page of pages",
+              "entries": [
+                "this page"
+              ]
+            },
+            "---",
+            "refresh this page",
+            "---",
+            {
+              "menu": "append session",
+              "entries": [
+                "exit session",
+                "last session"
+              ]
+            }
+          ]
+        }
+      ],
+      "pages": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "inner two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "alpha",
+      "rows": [
+        "alpha",
+        "nested",
+        "inner one",
+        "inner two",
+        "omega"
+      ],
+      "current": "inner two"
+    },
+    {
+      "action": "its select > page to the right",
+      "menus": [],
+      "pages": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "inner two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "alpha",
+      "rows": [
+        "alpha",
+        "nested",
+        "inner one",
+        "inner two",
+        "omega"
+      ],
+      "current": "inner two"
+    },
+    {
+      "action": "right click tree row inner two again",
+      "menus": [
+        {
+          "window": "PagesNotebook",
+          "notebook": "nested",
+          "entries": [
+            "close page",
+            "close other page",
+            "---",
+            {
+              "menu": "pages",
+              "entries": [
+                "inner one",
+                "inner two"
+              ]
+            },
+            {
+              "menu": "select",
+              "entries": [
+                "page to the left"
+              ]
+            },
+            "---",
+            "new page",
+            "new page here",
+            "---",
+            {
+              "menu": "move page",
+              "entries": [
+                "left"
+              ]
+            },
+            "rename page",
+            "duplicate page",
+            "---",
+            {
+              "menu": "sort pages",
+              "entries": [
+                "by most files first",
+                "by fewest files first",
+                "by largest total file size first",
+                "by smallest total file size first",
+                "by name a-z",
+                "by name z-a"
+              ]
+            },
+            "---",
+            {
+              "menu": "collapse to a single page",
+              "entries": [
+                "this page"
+              ]
+            },
+            {
+              "menu": "send down to a new page of pages",
+              "entries": [
+                "this page"
+              ]
+            },
+            "---",
+            "refresh this page",
+            "---",
+            {
+              "menu": "append session",
+              "entries": [
+                "exit session",
+                "last session"
+              ]
+            }
+          ]
+        }
+      ],
+      "pages": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "inner two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "alpha",
+      "rows": [
+        "alpha",
+        "nested",
+        "inner one",
+        "inner two",
+        "omega"
+      ],
+      "current": "inner two"
+    },
+    {
+      "action": "its move page > left",
+      "menus": [],
+      "pages": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "nested",
+          "children": [
+            {
+              "name": "inner two"
+            },
+            {
+              "name": "inner one"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "alpha",
+      "rows": [
+        "alpha",
+        "nested",
+        "inner two",
+        "inner one",
+        "omega"
+      ],
+      "current": "inner two"
+    },
+    {
+      "action": "right click tree row inner one, alpha shown",
+      "menus": [
+        {
+          "window": "PagesNotebook",
+          "notebook": "nested",
+          "entries": [
+            "close page",
+            "close other page",
+            "---",
+            {
+              "menu": "pages",
+              "entries": [
+                "inner two",
+                "inner one"
+              ]
+            },
+            {
+              "menu": "select",
+              "entries": [
+                "page to the right"
+              ]
+            },
+            "---",
+            "new page",
+            "new page here",
+            "---",
+            {
+              "menu": "move page",
+              "entries": [
+                "left"
+              ]
+            },
+            "rename page",
+            "duplicate page",
+            "---",
+            {
+              "menu": "sort pages",
+              "entries": [
+                "by most files first",
+                "by fewest files first",
+                "by largest total file size first",
+                "by smallest total file size first",
+                "by name a-z",
+                "by name z-a"
+              ]
+            },
+            "---",
+            {
+              "menu": "collapse to a single page",
+              "entries": [
+                "this page"
+              ]
+            },
+            {
+              "menu": "send down to a new page of pages",
+              "entries": [
+                "this page"
+              ]
+            },
+            "---",
+            "refresh this page",
+            "---",
+            {
+              "menu": "append session",
+              "entries": [
+                "exit session",
+                "last session"
+              ]
+            }
+          ]
+        }
+      ],
+      "pages": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "nested",
+          "children": [
+            {
+              "name": "inner two"
+            },
+            {
+              "name": "inner one"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "alpha",
+      "rows": [
+        "alpha",
+        "nested",
+        "inner two",
+        "inner one",
+        "omega"
+      ],
+      "current": "inner one"
+    },
+    {
+      "action": "its close page",
+      "menus": [],
+      "pages": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "nested",
+          "children": [
+            {
+              "name": "inner two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "alpha",
+      "rows": [
+        "alpha",
+        "nested",
+        "inner two",
+        "omega"
+      ],
+      "current": null
+    },
+    {
+      "action": "fresh pages for the drags",
+      "menus": [],
+      "pages": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "inner two"
+            }
+          ]
+        },
+        {
+          "name": "omega"
+        }
+      ],
+      "shown": "inner one",
+      "rows": [
+        "alpha",
+        "nested",
+        "inner one",
+        "inner two",
+        "omega"
+      ],
+      "current": "nested"
+    },
+    {
+      "action": "drag omega above alpha",
+      "menus": [],
+      "pages": [
+        {
+          "name": "omega"
+        },
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "inner two"
+            }
+          ]
+        }
+      ],
+      "shown": "inner one",
+      "rows": [
+        "omega",
+        "alpha",
+        "nested",
+        "inner one",
+        "inner two"
+      ],
+      "current": "omega",
+      "indicator": "AboveItem",
+      "accepted": true,
+      "point": [
+        134,
+        1
+      ]
+    },
+    {
+      "action": "drag omega onto nested",
+      "menus": [],
+      "pages": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "nested",
+          "children": [
+            {
+              "name": "inner one"
+            },
+            {
+              "name": "inner two"
+            },
+            {
+              "name": "omega"
+            }
+          ]
+        }
+      ],
+      "shown": "inner one",
+      "rows": [
+        "alpha",
+        "nested",
+        "inner one",
+        "inner two",
+        "omega"
+      ],
+      "current": "nested",
+      "indicator": "OnItem",
+      "accepted": true,
+      "point": [
+        134,
+        49
+      ]
+    },
+    {
+      "action": "drag inner one below alpha",
+      "menus": [],
+      "pages": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "inner one"
+        },
+        {
+          "name": "nested",
+          "children": [
+            {
+              "name": "inner two"
+            },
+            {
+              "name": "omega"
+            }
+          ]
+        }
+      ],
+      "shown": "inner two",
+      "rows": [
+        "alpha",
+        "inner one",
+        "nested",
+        "inner two",
+        "omega"
+      ],
+      "current": "inner two",
+      "indicator": "BelowItem",
+      "accepted": true,
+      "point": [
+        134,
+        18
+      ]
+    },
+    {
+      "action": "drag alpha onto inner two (a page)",
+      "menus": [],
+      "pages": [
+        {
+          "name": "inner one"
+        },
+        {
+          "name": "nested",
+          "children": [
+            {
+              "name": "inner two"
+            },
+            {
+              "name": "omega"
+            },
+            {
+              "name": "alpha"
+            }
+          ]
+        }
+      ],
+      "shown": "inner two",
+      "rows": [
+        "inner one",
+        "nested",
+        "inner two",
+        "omega",
+        "alpha"
+      ],
+      "current": "nested",
+      "indicator": "OnItem",
+      "accepted": true,
+      "point": [
+        144,
+        69
+      ]
+    },
+    {
+      "action": "drag inner two above inner one",
+      "menus": [],
+      "pages": [
+        {
+          "name": "inner two"
+        },
+        {
+          "name": "inner one"
+        },
+        {
+          "name": "nested",
+          "children": [
+            {
+              "name": "omega"
+            },
+            {
+              "name": "alpha"
+            }
+          ]
+        }
+      ],
+      "shown": "omega",
+      "rows": [
+        "inner two",
+        "inner one",
+        "nested",
+        "omega",
+        "alpha"
+      ],
+      "current": "omega",
+      "indicator": "AboveItem",
+      "accepted": true,
+      "point": [
+        134,
+        1
+      ]
+    },
+    {
+      "action": "drag omega below the last row",
+      "menus": [],
+      "pages": [
+        {
+          "name": "inner two"
+        },
+        {
+          "name": "inner one"
+        },
+        {
+          "name": "omega"
+        },
+        {
+          "name": "nested",
+          "children": [
+            {
+              "name": "alpha"
+            }
+          ]
+        }
+      ],
+      "shown": "alpha",
+      "rows": [
+        "inner two",
+        "inner one",
+        "omega",
+        "nested",
+        "alpha"
+      ],
+      "current": "alpha",
+      "indicator": "BelowItem",
+      "accepted": true,
+      "point": [
+        134,
+        38
+      ]
+    },
+    {
+      "action": "drag inner one to empty space",
+      "menus": [],
+      "pages": [
+        {
+          "name": "inner two"
+        },
+        {
+          "name": "omega"
+        },
+        {
+          "name": "nested",
+          "children": [
+            {
+              "name": "alpha"
+            }
+          ]
+        },
+        {
+          "name": "inner one"
+        }
+      ],
+      "shown": "alpha",
+      "rows": [
+        "inner two",
+        "omega",
+        "nested",
+        "alpha",
+        "inner one"
+      ],
+      "current": "nested",
+      "indicator": "OnViewport",
+      "accepted": true,
+      "point": [
+        20,
+        716
+      ]
+    },
+    {
+      "action": "double-click tree empty space",
+      "menus": [],
+      "pages": [
+        {
+          "name": "inner two"
+        },
+        {
+          "name": "omega"
+        },
+        {
+          "name": "nested",
+          "children": [
+            {
+              "name": "alpha"
+            }
+          ]
+        },
+        {
+          "name": "inner one"
+        }
+      ],
+      "shown": "alpha",
+      "rows": [
+        "inner two",
+        "omega",
+        "nested",
+        "alpha",
+        "inner one"
+      ],
+      "current": "nested"
+    }
+  ],
+  "tree_rows": {
+    "alpha": [
+      20,
+      0,
+      230,
+      20
+    ],
+    "nested": [
+      20,
+      20,
+      230,
+      20
+    ],
+    "inner one": [
+      40,
+      40,
+      210,
+      20
+    ],
+    "inner two": [
+      40,
+      60,
+      210,
+      20
+    ],
+    "omega": [
+      20,
+      80,
+      230,
+      20
+    ]
+  },
+  "limits": [
+    "the page chooser and the text entry are scripted; the tab menu is captured rather than shown",
+    "tree drops are delivered as drag enter, move and drop events in DragDrop mode (offscreen Qt has no drag loop); a drop onto the dragged row or its descendants, which InternalMove refuses, is not driven"
+  ]
+}
