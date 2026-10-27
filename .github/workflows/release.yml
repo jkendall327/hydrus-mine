@@ -39,9 +39,10 @@ jobs:
       # Linux keeps line tables through the build so the step "split debug info"
       # can move them into a separate .debug file; the shipped binaries are
       # stripped (hydrus-gui is ~210 MB instead of ~900 MB). Windows ships the
-      # profile's own settings (no debug info).
-      CARGO_PROFILE_RELEASE_DEBUG: ${{ runner.os == 'Linux' && 'line-tables-only' || 'false' }}
-      CARGO_PROFILE_RELEASE_STRIP: ${{ runner.os == 'Linux' && 'none' || 'debuginfo' }}
+      # profile's own settings (no debug info). (The `runner` context is not
+      # available in a job's env, so this tests matrix.os.)
+      CARGO_PROFILE_RELEASE_DEBUG: ${{ startsWith(matrix.os, 'ubuntu') && 'line-tables-only' || 'false' }}
+      CARGO_PROFILE_RELEASE_STRIP: ${{ startsWith(matrix.os, 'ubuntu') && 'none' || 'debuginfo' }}
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@master
