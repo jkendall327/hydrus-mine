@@ -404,7 +404,11 @@ fn the_dialogs_list_selects_enters_and_removes_as_the_references_does() {
         if rows == wanted {
             break;
         }
-        let size = d.window.window().size().to_logical(d.window.window().scale_factor());
+        let size = d
+            .window
+            .window()
+            .size()
+            .to_logical(d.window.window().scale_factor());
         #[allow(clippy::cast_precision_loss)]
         d.window.window().set_size(slint::LogicalSize::new(
             size.width,
