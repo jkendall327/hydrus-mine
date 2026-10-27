@@ -638,6 +638,10 @@ box when its menu closes (it stays with the window, so escape and the
 arrows need a click on the box first); and the menu's "admin:" entries for
 tag repository moderators (repositories are out of scope).
 
+The media viewer's tags hover (`ListBoxTagsMediaHoverFrame`,
+`oracle/record_viewer_tags_hover.py`) works as the box does, with the
+same gaps.
+
 ## The media viewer (`hydrus-gui`)
 
 - **Random and undo random are shortcut commands, as in the reference.**

@@ -312,6 +312,7 @@ mod viewer_drag;
 mod window_rescue;
 
 mod viewer_tag_wheel;
+mod viewer_tags_hover;
 
 mod idle_timeout_options;
 

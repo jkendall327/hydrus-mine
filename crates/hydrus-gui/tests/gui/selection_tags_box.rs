@@ -42,7 +42,7 @@ pub(crate) struct Harness {
     pub copies: Rc<RefCell<Vec<String>>>,
     pub differences: RefCell<Vec<String>>,
     _dirs: [tempfile::TempDir; 2],
-    _windows: headless::Windows,
+    pub windows: headless::Windows,
 }
 
 impl Harness {
@@ -96,7 +96,7 @@ impl Harness {
             copies,
             differences: RefCell::default(),
             _dirs: dirs,
-            _windows: windows,
+            windows,
         };
         harness.wait_for_rows("the rows as the reference draws them");
         harness

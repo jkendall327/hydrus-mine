@@ -27,6 +27,8 @@ import { ViewerShortcutButton } from "viewer_shortcut_menu.slint";
 // slideshow submenu may ask for a period to type.
 
 import { ViewerTagsHover } from "viewer_tags_hover.slint";
+import { TagMenuOverlay } from "write_autocomplete.slint";
+import { MenuPane } from "main_menu.slint";
 import { LineEdit } from "std-widgets.slint";
 import { ListText } from "theme.slint";
 import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
@@ -218,6 +220,23 @@ export component MediaViewerWindow inherits Window {
     in property <[string]> tag-identities;
     in property <string> tag-file;
     callback tag-search-requested(string,string);
+    // the tags hover's selection, presses, double-clicks and keys (as in
+    // `ViewerTagsHover`)
+    in property <[bool]> tag-selected;
+    callback tag-pressed(string,int,int,bool,bool,length,length);
+    callback tag-double-clicked(string,int,bool,bool);
+    callback tag-key(string,bool,bool) -> bool;
+    // the hover's tag menu, as the main window's
+    in property <[MenuPane]> tag-menu-panes;
+    in property <string> tag-menu-question;
+    in property <string> tag-menu-question-title;
+    in property <string> tag-menu-yes-label: "yes";
+    in property <string> tag-menu-no-label: "no";
+    callback tag-menu-hovered(int,int,length,length,length);
+    callback tag-menu-clicked(int,int,length,length,length);
+    callback tag-menu-placed(int,length,length,length);
+    callback tag-menu-dismissed();
+    callback tag-menu-answered(bool);
     // the file's notes, for the right hover frame under the ratings, shown
     // while the pointer is over it
     in property <[NoteRow]> notes;
@@ -401,6 +420,10 @@ export component MediaViewerWindow inherits Window {
     forward-focus: keys;
     keys := FocusScope {
         key-pressed(event) => {
+            if root.tag-menu-question != "" || root.tag-menu-panes.length > 0 {
+                if event.text == Key.Escape { root.tag-menu-dismissed(); }
+                return accept;
+            }
             if (root.warning != "") {
                 if (event.text == Key.Return || event.text == Key.Escape) {
                     root.warning = "";
@@ -1466,9 +1489,22 @@ export component MediaViewerWindow inherits Window {
             tags: root.tags;
             identities: root.tag-identities;
             file: root.tag-file;
-            search(file,tag) => { root.tag-search-requested(file,tag); }
+            selected: root.tag-selected;
+            pressed(file,row,button,ctrl,shift,x,y) => { root.tag-pressed(file,row,button,ctrl,shift,x,y); }
+            double-clicked(file,row,ctrl,shift) => { root.tag-double-clicked(file,row,ctrl,shift); }
+            key(text,ctrl,shift) => { return root.tag-key(text,ctrl,shift); }
             offset <=> root.tag-scroll-offset;
             wheel(delta,control,x,y) => { root.tag-wheel(delta,control,x,y); }
+        }
+        if root.tag-menu-panes.length > 0 || root.tag-menu-question != "": TagMenuOverlay {
+            width: root.width; height: root.height;
+            panes: root.tag-menu-panes; question: root.tag-menu-question;
+            question-title: root.tag-menu-question-title; yes-label: root.tag-menu-yes-label; no-label: root.tag-menu-no-label;
+            hovered(p,l,r,t,x) => { root.tag-menu-hovered(p,l,r,t,x); }
+            clicked(p,l,r,t,x) => { root.tag-menu-clicked(p,l,r,t,x); }
+            placed(p,x,y,w) => { root.tag-menu-placed(p,x,y,w); }
+            dismissed => { root.tag-menu-dismissed(); }
+            answered(yes) => { root.tag-menu-answered(yes); }
         }
     }
 }

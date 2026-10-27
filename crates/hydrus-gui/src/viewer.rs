@@ -51,6 +51,8 @@ pub struct MediaViewer {
     random_history: Vec<usize>,
     /// Display mode captured when this viewer's tag list opens.
     tag_display_type: hydrus_core::tag_presentation::TagDisplayType,
+    /// The tags hover's selection (`ListBoxTagsMediaHoverFrame`).
+    tag_selection: std::cell::RefCell<hydrus_gui_model::selection_tags::SelectionTags>,
 }
 
 impl std::fmt::Debug for MediaViewer {
@@ -78,6 +80,7 @@ impl MediaViewer {
             )),
             random_history: Vec::new(),
             tag_display_type: presentation.viewer_display_type,
+            tag_selection: std::cell::RefCell::default(),
         })
     }
 
@@ -242,6 +245,20 @@ impl MediaViewer {
     }
 
     /// The tag display mode captured when this viewer's list opened.
+    /// The tags hover's selection (kept apart, as the window shows it while
+    /// the viewer is borrowed).
+    pub fn tag_selection(
+        &self,
+    ) -> &std::cell::RefCell<hydrus_gui_model::selection_tags::SelectionTags> {
+        &self.tag_selection
+    }
+
+    /// Show the tags hover's tags as another display type does (its menu's
+    /// "tag display (experimental)").
+    pub fn set_tag_display_type(&mut self, display: hydrus_core::tag_presentation::TagDisplayType) {
+        self.tag_display_type = display;
+    }
+
     pub fn tag_display_type(&self) -> hydrus_core::tag_presentation::TagDisplayType {
         self.tag_display_type
     }

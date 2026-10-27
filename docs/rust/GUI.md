@@ -1669,7 +1669,12 @@ media viewer shortcuts have it. With the pointer
 over the window's left fifth, the file's tags show there, as the
 reference's tags hover frame does: its display tags less those your single
 media filters hide, in your media viewer tag sort and namespace colours,
-pending ones marked `(+)` (it doesn't scroll yet); near its top, the
+pending ones marked `(+)`. Its tags are selected, searched and copied as
+in the search page's selection tags box (clicks, ctrl and shift, the keys,
+middle-click for a new search page in the viewer's file domain, and
+hydrus's right-click tag menu without counts, search or select); a
+double-click or enter opens manage tags for the file, as the reference's
+hover does. Near its top, the
 file's info line, as in the media viewer. Images are shown
 whole. Ugoiras and animated WebP play with the client's own player, as
 the reference's defaults have it: frames are decoded on a thread of their

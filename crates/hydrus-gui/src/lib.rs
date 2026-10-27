@@ -6764,9 +6764,9 @@ fn open_viewer(
     );
     viewer_tag_search::bind(
         &window,
-        model.clone(),
-        viewing_stats.clone(),
-        owner_valid.clone(),
+        &model,
+        &viewing_stats,
+        &owner_valid,
         viewer_delete.clone(),
         tag_search,
     );
