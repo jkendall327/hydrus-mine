@@ -376,6 +376,12 @@ fn middle_click_closes_a_page_without_objections() {
     for _ in 0..10 {
         widgets::settle();
     }
-    widgets::middle_click(ui.window(), "b");
+    widgets::click_nth_with(
+        ui.window(),
+        "b",
+        0,
+        slint::platform::PointerEventButton::Middle,
+        widgets::Mods::NONE,
+    );
     assert_eq!(names(&ui), ["a", "imp1", "imp2", "c"]);
 }
