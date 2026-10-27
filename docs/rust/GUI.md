@@ -1194,7 +1194,16 @@ A double-click or enter puts the selected tags in the search (taking out
 those already in it), inverted with ctrl and as one OR with shift; a new
 search empties the box's selection, as hydrus's does. A middle-click opens
 a new search page for the selected tags (their OR with shift), named as
-hydrus names it, in the page's file domain. Tags here, in the
+hydrus names it, in the page's file domain. A right-click opens hydrus's
+tag menu for the selection: copy (the tags, their subtags, with
+underscores, with counts, and all the box's tags), the siblings and
+parents of one tag (or "add siblings/parents to selection", opening the
+manage dialog), open (a new search page, an OR page, a page each, a
+duplicate filter page), search (add, remove, invert, an OR, start an OR
+predicate in the OR editor, the namespace), select (the page's files with
+all or any of the tags), hide (the tags or their namespaces from the box,
+asking first), favourites and most used, maintenance's "regenerate tag
+display", and in advanced mode the tag display switch. Tags here, in the
 autocomplete and in the search's predicates are shown as your options
 have them (namespaces shown or hidden, the namespace connector,
 underscores and emojis replaced; checked against `RenderTag`), each in its

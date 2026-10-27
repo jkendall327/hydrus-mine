@@ -688,6 +688,22 @@ def record( session ):
         c.new_options.SetBoolean( 'advanced_mode', True )
         menu = show( [ 'plain tag' ] )
         out[ 'advanced' ] = { 'selected' : selected(), 'menu' : tree( menu ) }
+
+        # what each switch shows (then back to the selection list's tags)
+        switches = []
+
+        for label in [ 'switch to "single media view tags"', 'switch to "display tags"', 'switch to "stored tags"', 'switch to "multiple media view tags"' ]:
+
+            menu = show( [ 'plain tag' ] )
+
+            find( menu, [ 'tag display (experimental)', label ] ).trigger()
+
+            settle( .3 )
+
+            switches.append( { 'label' : label, 'drawn' : drawn() } )
+
+
+        out[ 'advanced' ][ 'switches' ] = switches
         c.new_options.SetBoolean( 'advanced_mode', False )
 
         # the search entries, each from a fresh menu, the search put back after

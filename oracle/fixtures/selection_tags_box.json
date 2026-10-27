@@ -1596,18 +1596,18 @@
        "topic": "new_page_query",
        "location": "my files",
        "predicates": [
-        "alpha:first"
+        "alpha:second"
        ],
-       "page_name": "alpha:first",
+       "page_name": "alpha:second",
        "activate_window": false
       },
       {
        "topic": "new_page_query",
        "location": "my files",
        "predicates": [
-        "alpha:second"
+        "alpha:first"
        ],
-       "page_name": "alpha:second",
+       "page_name": "alpha:first",
        "activate_window": false
       }
      ]
@@ -1793,18 +1793,18 @@
        "topic": "new_page_query",
        "location": "my files",
        "predicates": [
-        "alpha:first"
+        "series:spaced name"
        ],
-       "page_name": "alpha:first",
+       "page_name": "series:spaced name",
        "activate_window": false
       },
       {
        "topic": "new_page_query",
        "location": "my files",
        "predicates": [
-        "series:spaced name"
+        "alpha:first"
        ],
-       "page_name": "series:spaced name",
+       "page_name": "alpha:first",
        "activate_window": false
       }
      ]
@@ -1979,18 +1979,18 @@
        "topic": "new_page_query",
        "location": "my files",
        "predicates": [
-        "solo"
+        "plain tag"
        ],
-       "page_name": "solo",
+       "page_name": "plain tag",
        "activate_window": false
       },
       {
        "topic": "new_page_query",
        "location": "my files",
        "predicates": [
-        "plain tag"
+        "solo"
        ],
-       "page_name": "plain tag",
+       "page_name": "solo",
        "activate_window": false
       }
      ]
@@ -2170,18 +2170,18 @@
        "topic": "new_page_query",
        "location": "my files",
        "predicates": [
-        "box:anchor"
+        "solo"
        ],
-       "page_name": "box:anchor",
+       "page_name": "solo",
        "activate_window": false
       },
       {
        "topic": "new_page_query",
        "location": "my files",
        "predicates": [
-        "solo"
+        "box:anchor"
        ],
-       "page_name": "solo",
+       "page_name": "box:anchor",
        "activate_window": false
       }
      ]
@@ -2375,162 +2375,9 @@
        "topic": "new_page_query",
        "location": "my files",
        "predicates": [
-        "creator:anonymous artist"
-       ],
-       "page_name": "creator:anonymous artist",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "alpha:second"
-       ],
-       "page_name": "alpha:second",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "キャラクター:初音ミク"
-       ],
-       "page_name": "キャラクター:初音ミク",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "solo"
-       ],
-       "page_name": "solo",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "page:3"
-       ],
-       "page_name": "page:3",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
         "plain tag"
        ],
        "page_name": "plain tag",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "safe"
-       ],
-       "page_name": "safe",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "group:alpha"
-       ],
-       "page_name": "group:alpha",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "meta:low resolution"
-       ],
-       "page_name": "meta:low resolution",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "box:anchor"
-       ],
-       "page_name": "box:anchor",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "source:fixture"
-       ],
-       "page_name": "source:fixture",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "series:spaced name"
-       ],
-       "page_name": "series:spaced name",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "page:10"
-       ],
-       "page_name": "page:10",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "new:sibling"
-       ],
-       "page_name": "new:sibling",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "volume:3"
-       ],
-       "page_name": "volume:3",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "zeta:last"
-       ],
-       "page_name": "zeta:last",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "blue eyes"
-       ],
-       "page_name": "blue eyes",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "filename:audio"
-       ],
-       "page_name": "filename:audio",
        "activate_window": false
       },
       {
@@ -2549,6 +2396,159 @@
         "filename:apng_animated"
        ],
        "page_name": "filename:apng_animated",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "blue eyes"
+       ],
+       "page_name": "blue eyes",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "zeta:last"
+       ],
+       "page_name": "zeta:last",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "series:spaced name"
+       ],
+       "page_name": "series:spaced name",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "meta:low resolution"
+       ],
+       "page_name": "meta:low resolution",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "volume:3"
+       ],
+       "page_name": "volume:3",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "page:3"
+       ],
+       "page_name": "page:3",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "box:anchor"
+       ],
+       "page_name": "box:anchor",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "filename:audio"
+       ],
+       "page_name": "filename:audio",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "safe"
+       ],
+       "page_name": "safe",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "solo"
+       ],
+       "page_name": "solo",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "alpha:second"
+       ],
+       "page_name": "alpha:second",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "group:alpha"
+       ],
+       "page_name": "group:alpha",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "source:fixture"
+       ],
+       "page_name": "source:fixture",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "creator:anonymous artist"
+       ],
+       "page_name": "creator:anonymous artist",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "new:sibling"
+       ],
+       "page_name": "new:sibling",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "キャラクター:初音ミク"
+       ],
+       "page_name": "キャラクター:初音ミク",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "page:10"
+       ],
+       "page_name": "page:10",
        "activate_window": false
       }
      ]
@@ -2726,6 +2726,107 @@
    {
     "maintenance": [
      "regenerate tag display"
+    ]
+   }
+  ],
+  "switches": [
+   {
+    "label": "switch to \"single media view tags\"",
+    "drawn": [
+     "creator:anonymous artist (1)",
+     "series:spaced name (2)",
+     "blue eyes (1)",
+     "plain tag (1)",
+     "safe (2)",
+     "solo (2)",
+     "meta:low resolution (1)",
+     "alpha:first (2)",
+     "alpha:second (1)",
+     "box:anchor (3)",
+     "filename:apng_animated (1)",
+     "filename:audio (1)",
+     "group:alpha (2)",
+     "new:sibling (1)",
+     "page:3 (1)",
+     "page:10 (1)",
+     "source:fixture (2)",
+     "volume:3 (1)",
+     "zeta:last (1)",
+     "キャラクター:初音ミク (1)"
+    ]
+   },
+   {
+    "label": "switch to \"display tags\"",
+    "drawn": [
+     "creator:anonymous artist (1)",
+     "series:spaced name (2)",
+     "blue eyes (1)",
+     "plain tag (1)",
+     "safe (2)",
+     "solo (2)",
+     "meta:low resolution (1)",
+     "alpha:first (2)",
+     "alpha:second (1)",
+     "box:anchor (3)",
+     "filename:apng_animated (1)",
+     "filename:audio (1)",
+     "group:alpha (2)",
+     "new:sibling (1)",
+     "page:3 (1)",
+     "page:10 (1)",
+     "source:fixture (2)",
+     "volume:3 (1)",
+     "zeta:last (1)",
+     "キャラクター:初音ミク (1)"
+    ]
+   },
+   {
+    "label": "switch to \"stored tags\"",
+    "drawn": [
+     "creator:anonymous artist (1)",
+     "series:spaced name (2)",
+     "blue eyes (1)",
+     "plain tag (1)",
+     "safe (2)",
+     "solo (2)",
+     "meta:lowres (1)",
+     "alpha:first (2)",
+     "alpha:second (1)",
+     "box:anchor (3)",
+     "filename:apng_animated (1)",
+     "filename:audio (1)",
+     "old:sibling (1)",
+     "page:3 (1)",
+     "page:10 (1)",
+     "source:fixture (2)",
+     "volume:3 (1)",
+     "zeta:last (1)",
+     "キャラクター:初音ミク (1)"
+    ]
+   },
+   {
+    "label": "switch to \"multiple media view tags\"",
+    "drawn": [
+     "creator:anonymous artist (1)",
+     "series:spaced name (2)",
+     "blue eyes (1)",
+     "plain tag (1)",
+     "safe (2)",
+     "solo (2)",
+     "meta:low resolution (1)",
+     "alpha:first (2)",
+     "alpha:second (1)",
+     "box:anchor (3)",
+     "filename:apng_animated (1)",
+     "filename:audio (1)",
+     "group:alpha (2)",
+     "new:sibling (1)",
+     "page:3 (1)",
+     "page:10 (1)",
+     "source:fixture (2)",
+     "volume:3 (1)",
+     "zeta:last (1)",
+     "キャラクター:初音ミク (1)"
     ]
    }
   ]

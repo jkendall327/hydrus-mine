@@ -629,11 +629,14 @@ page by file size, which no two files of the fixture share.
 
 ### The selection tags box
 
-The box's clicks, keys, middle-clicks and double-clicks replay the
-reference's `ListBoxTagsMediaSidebar` (`oracle/record_selection_tags_box.py`).
-Not ported: dragging over the tags to select a run (the reference's
-`mouseMoveEvent`), and scrolling a tag the keys move to into view
-(`ensureVisible`).
+The box's clicks, keys, middle-clicks, double-clicks and right-click menu
+replay the reference's `ListBoxTagsMediaSidebar`
+(`oracle/record_selection_tags_box.py`). Not ported: dragging over the tags
+to select a run (the reference's `mouseMoveEvent`); scrolling a tag the
+keys move to into view (`ensureVisible`); the keyboard going back to the
+box when its menu closes (it stays with the window, so escape and the
+arrows need a click on the box first); and the menu's "admin:" entries for
+tag repository moderators (repositories are out of scope).
 
 ## The media viewer (`hydrus-gui`)
 

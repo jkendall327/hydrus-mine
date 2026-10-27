@@ -175,8 +175,20 @@ impl Harness {
         input::key(self.window(), text, mods);
     }
 
-    /// Escape, then ctrl+click each of `tags`, as the recorder selects.
+    /// Select just `tags`: a click below the rows (which selects nothing),
+    /// then ctrl+click each. (The recorder presses escape instead of the
+    /// first click: the same, but escape needs the list to have the
+    /// keyboard, which the tag menu keeps once it has closed.)
     pub fn select(&self, tags: &[&str]) {
+        self.click(None, NONE);
+        for tag in tags {
+            self.click(Some(tag), CTRL);
+        }
+    }
+
+    /// Escape, then ctrl+click each of `tags`, as the recorder selects (with
+    /// the list holding the keyboard).
+    pub fn select_after_escape(&self, tags: &[&str]) {
         self.key(ESCAPE, NONE);
         for tag in tags {
             self.click(Some(tag), CTRL);
@@ -254,11 +266,13 @@ impl Harness {
             let (predicates, location, duplicates) = {
                 let page = page.borrow();
                 let text = self.text();
-                let mut predicates: Vec<String> = page
-                    .active_predicates()
-                    .iter()
-                    .map(|p| predicate_text(p, &text))
-                    .collect();
+                // (a duplicates page searches its first file search)
+                let searched = page.duplicates().map_or_else(
+                    || page.active_predicates().to_vec(),
+                    |d| d.search.search_1.predicates.clone(),
+                );
+                let mut predicates: Vec<String> =
+                    searched.iter().map(|p| predicate_text(p, &text)).collect();
                 predicates.sort();
                 (
                     predicates,
@@ -415,7 +429,7 @@ fn keys_select_copy_and_activate_as_the_references_do() {
     h.differ(name, &copied(&h, n), &h.recorded(name)["copied"]);
     h.key("a", CTRL);
     h.step("ctrl a");
-    h.select(&["alpha:first", "plain tag"]);
+    h.select_after_escape(&["alpha:first", "plain tag"]);
     for (mods, name) in [
         (CTRL, "ctrl c copies the selection"),
         (CTRL_SHIFT, "ctrl shift c"),
@@ -441,7 +455,7 @@ fn keys_select_copy_and_activate_as_the_references_do() {
             "ctrl return with two selected",
         ),
     ] {
-        h.select(tags);
+        h.select_after_escape(tags);
         h.key(RETURN, mods);
         h.differ(name, &h.searched(), &h.recorded(name)["searched"]);
         // (a new search empties the list, and its selection with it)
@@ -518,5 +532,435 @@ fn double_clicks_put_the_selection_in_the_search_as_the_references_do() {
     double("solo", SHIFT, "shift double click with two selected");
     h.select(&["box:anchor"]);
     double("box:anchor", NONE, "double click on the searched tag");
+    h.finish();
+}
+
+/// The recorded menu cases: their names and the tags they select (none for
+/// "all", selected by ctrl+a).
+fn cases(h: &Harness) -> Vec<(String, Option<Vec<String>>)> {
+    h.fixture["menus"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|m| {
+            let name = m["case"].as_str().unwrap().to_owned();
+            let tags = (name != "all").then(|| strings(&m["selected"]));
+            (name, tags)
+        })
+        .collect()
+}
+
+impl Harness {
+    /// Select `tags` (all, for none) and right-press the last of them (or
+    /// below the rows, for no tags), as the recorder does; the menu opens.
+    pub fn open_menu(&self, tags: Option<&[String]>) {
+        match tags {
+            None => {
+                self.click(Some("box:anchor"), NONE);
+                self.key("a", CTRL);
+                self.press(Some("zeta:last"), RIGHT, NONE);
+            }
+            Some(tags) => {
+                let tags: Vec<&str> = tags.iter().map(String::as_str).collect();
+                // (the recorder ctrl+clicks them in the list's order)
+                self.select(&tags);
+                let mut wanted: Vec<String> = tags.iter().map(|t| (*t).to_owned()).collect();
+                let mut shown = self.selected();
+                wanted.sort();
+                shown.sort();
+                assert_eq!(shown, wanted, "selecting for the menu");
+                self.press(tags.last().copied(), RIGHT, NONE);
+            }
+        }
+        assert!(
+            self.ui.get_tag_menu_panes().row_count() > 0,
+            "no menu for {tags:?}"
+        );
+    }
+
+    pub fn menu(&self) -> Json {
+        super::active_predicate_menu::tree(&self.ui, 0)
+    }
+
+    pub fn choose(&self, path: &[&str]) {
+        for (pane, label) in path.iter().enumerate() {
+            let panes = self.ui.get_tag_menu_panes();
+            let lines = panes.row_data(pane).map(|p| p.lines);
+            let line = lines
+                .as_ref()
+                .and_then(|lines| lines.iter().position(|row| row.label == *label));
+            let Some(line) = line else {
+                let shown: Vec<Vec<String>> = panes
+                    .iter()
+                    .map(|p| p.lines.iter().map(|l| l.label.to_string()).collect())
+                    .collect();
+                panic!("no {label} in pane {pane} of {path:?}: {shown:?}");
+            };
+            self.ui.invoke_tag_menu_clicked(
+                i32::try_from(pane).unwrap(),
+                i32::try_from(line).unwrap(),
+                300.0,
+                20.0,
+                10.0,
+            );
+        }
+        widgets::settle();
+    }
+
+    pub fn close_menu(&self) {
+        self.ui.invoke_tag_menu_dismissed();
+    }
+
+    /// The submenu titled `title` in a recorded or shown menu.
+    pub fn submenu(menu: &Json, title: &str) -> Json {
+        menu.as_array()
+            .unwrap()
+            .iter()
+            .find_map(|e| e.get(title).cloned())
+            .unwrap_or(Json::Null)
+    }
+
+    /// The question the tag menu asks, as the recorder writes it, answered
+    /// yes.
+    pub fn answer(&self) -> Json {
+        if self.ui.get_tag_menu_question().is_empty() {
+            return json!([]);
+        }
+        let asked = json!([{
+            "message": self.ui.get_tag_menu_question().to_string(),
+            "title": if self.ui.get_tag_menu_question_title().is_empty() {
+                "Are you sure?".to_owned()
+            } else {
+                self.ui.get_tag_menu_question_title().to_string()
+            },
+            "yes": self.ui.get_tag_menu_yes_label().to_string(),
+            "no": self.ui.get_tag_menu_no_label().to_string(),
+        }]);
+        self.ui.invoke_tag_menu_answered(true);
+        widgets::settle();
+        asked
+    }
+
+    pub fn tags(&self) -> Vec<String> {
+        self.page()
+            .borrow()
+            .tag_list()
+            .iter()
+            .map(|(t, _)| t.clone())
+            .collect()
+    }
+}
+
+// leaf: selection-tags-menu-copy
+#[test]
+fn the_menu_and_its_copy_entries_are_the_references() {
+    let h = Harness::new(1600.0);
+    for (case, tags) in cases(&h) {
+        let recorded = h.fixture["menus"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|m| m["case"] == case.as_str())
+            .unwrap()
+            .clone();
+        h.open_menu(tags.as_deref());
+        h.differ(
+            &format!("{case} selected"),
+            &json!(h.selected()),
+            &recorded["selected"],
+        );
+        // (the whole menu, every group in its place)
+        h.differ(&format!("{case} menu"), &h.menu(), &recorded["menu"]);
+        h.close_menu();
+        for copy in recorded["copies"].as_array().unwrap() {
+            let label = copy["label"].as_str().unwrap();
+            h.open_menu(tags.as_deref());
+            let n = h.copies.borrow().len();
+            h.choose(&["copy", label]);
+            h.differ(
+                &format!("{case} copy {label}"),
+                &json!(h.copies.borrow()[n..].to_vec()),
+                &copy["payload"],
+            );
+        }
+    }
+    h.finish();
+}
+
+// leaf: selection-tags-menu-open
+#[test]
+fn the_menus_open_entries_open_the_references_pages() {
+    let h = Harness::new(1600.0);
+    for (case, tags) in cases(&h) {
+        let recorded = h.fixture["menus"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|m| m["case"] == case.as_str())
+            .unwrap()
+            .clone();
+        for launch in recorded["launches"].as_array().unwrap() {
+            let label = launch["label"].as_str().unwrap();
+            h.open_menu(tags.as_deref());
+            let before = h.bound.pages.borrow().page_count();
+            h.choose(&["open", label]);
+            // (one page each opens in set order in the reference)
+            let sort = |pages: Json| {
+                let mut pages = pages.as_array().unwrap().clone();
+                pages.sort_by_key(|p| p["page_name"].to_string());
+                json!(pages)
+            };
+            h.differ(
+                &format!("{case} {label}"),
+                &sort(h.launched(before)),
+                &sort(launches(&launch["launched"])),
+            );
+        }
+    }
+    h.finish();
+}
+
+// leaf: selection-tags-menu-search
+#[test]
+fn the_menus_search_entries_change_the_search_as_the_references_do() {
+    let h = Harness::new(1600.0);
+    for search in h.fixture["searches"].as_array().unwrap() {
+        let tags = strings(&search["selected"]);
+        let label = search["label"].as_str().unwrap();
+        let what = format!("{} {label}", search["case"]);
+        h.open_menu(Some(&tags));
+        h.choose(&["search", label]);
+        widgets::settle();
+        // "start an OR predicate" opens the OR editor with the selection,
+        // applied as it opened
+        let editor = h
+            .bound
+            .search_or
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong);
+        let or_editor = match editor {
+            Some(or) => {
+                let mut terms: Vec<String> =
+                    or.get_predicates().iter().map(|p| p.to_string()).collect();
+                terms.sort();
+                or.invoke_apply();
+                widgets::settle();
+                json!([[terms.join(" OR ")]])
+            }
+            None => json!([]),
+        };
+        h.differ(&what, &or_editor, &search["or_editor"]);
+        h.differ(&what, &h.searched(), &search["searched"]);
+        h.restore();
+    }
+    h.finish();
+}
+
+// leaf: selection-tags-menu-select
+#[test]
+fn the_menus_select_entries_select_the_references_files() {
+    let h = Harness::new(1600.0);
+    for select in h.fixture["selects"].as_array().unwrap() {
+        let tags = strings(&select["selected"]);
+        let label = select["label"].as_str().unwrap();
+        h.open_menu(Some(&tags));
+        h.choose(&["select", label]);
+        let files = h.page().borrow().selected_files();
+        let mut hashes: Vec<String> = h
+            .store
+            .read(|conn| hydrus_store::master::hashes(conn, &files))
+            .unwrap()
+            .values()
+            .map(ToString::to_string)
+            .collect();
+        hashes.sort();
+        h.differ(label, &json!(hashes), &select["files"]);
+        // (the box now lists the selected files' tags)
+        h.differ(label, &json!(h.tags()), &select["tags_after"]);
+        h.restore();
+    }
+    h.finish();
+}
+
+// leaf: selection-tags-menu-siblings-parents
+// leaf: selection-tags-menu-favourites-maintenance
+#[test]
+fn the_menus_shared_tag_entries_act_as_the_references_do() {
+    let h = Harness::new(1600.0);
+    let favourites = || -> Json {
+        json!(
+            h.store
+                .read(hydrus_store::settings::get::<hydrus_store::settings::FavouriteTags>)
+                .unwrap()
+                .0
+        )
+    };
+    // a tag's stored count in all files, and setting it wrong, to see which
+    // tags "regenerate tag display" repairs
+    let snapshot = h.store.snapshot();
+    let my_tags = snapshot.services.by_name("my tags").unwrap().id;
+    let all_files = snapshot
+        .services
+        .of_type(hydrus_core::ServiceType::CombinedFile)
+        .next()
+        .unwrap()
+        .id;
+    let tag_id = |tag: &str| {
+        let tag = hydrus_core::Tag::new(tag).unwrap();
+        h.store
+            .read(move |conn| hydrus_store::master::tag_id(conn, &tag))
+            .unwrap()
+            .unwrap()
+    };
+    let count = |tag: &str| {
+        let id = tag_id(tag);
+        h.store
+            .read(move |conn| hydrus_store::counts::count(conn, my_tags, all_files, id, false))
+            .unwrap()
+            .current
+    };
+    let corrupt = |tag: &str| {
+        let id = tag_id(tag);
+        h.store
+            .write(move |ctx| {
+                let tables = hydrus_store::schema::MappingTables::new(my_tags);
+                for table in [tables.counts, tables.display_counts] {
+                    ctx.conn().execute(
+                        &format!("UPDATE {table} SET current=77 WHERE tag_id=?1 AND domain_id=?2"),
+                        rusqlite::params![id, all_files],
+                    )?;
+                }
+                Ok(())
+            })
+            .unwrap();
+    };
+    for trigger in h.fixture["triggers"].as_array().unwrap() {
+        let tags = strings(&trigger["selected"]);
+        let path = strings(&trigger["path"]);
+        let path: Vec<&str> = path.iter().map(String::as_str).collect();
+        let what = format!("{tags:?} {path:?}");
+        let regenerated: Vec<(String, u64)> = trigger["writes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .flat_map(|w| strings(&w["tags"]))
+            .map(|tag| {
+                let real = count(&tag);
+                (tag, real)
+            })
+            .collect();
+        let untouched = "zeta:last";
+        if !regenerated.is_empty() {
+            corrupt(untouched);
+            for (tag, _) in &regenerated {
+                corrupt(tag);
+            }
+        }
+        let n = h.copies.borrow().len();
+        h.open_menu(Some(&tags));
+        h.choose(&path);
+        h.differ(
+            &format!("{what} questions"),
+            &h.answer(),
+            &trigger["questions"],
+        );
+        for (tag, real) in &regenerated {
+            assert_eq!(count(tag), *real, "{what}: {tag} not regenerated");
+        }
+        if !regenerated.is_empty() {
+            assert_eq!(count(untouched), 77, "{what}: {untouched} regenerated");
+        }
+        let dialog = h
+            .bound
+            .tag_menu_relationships
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong);
+        let dialogs = match &dialog {
+            Some(child) => {
+                let title = child.get_composed_title();
+                let title = title
+                    .strip_suffix(child.get_title_suffix().as_str())
+                    .unwrap_or(&title)
+                    .to_owned();
+                let mut given: Vec<String> = child
+                    .get_left_tags()
+                    .iter()
+                    .map(|r| r.text.to_string())
+                    .collect();
+                given.sort();
+                json!([{ "title": title, "tags": given }])
+            }
+            None => json!([]),
+        };
+        h.differ(&format!("{what} dialogs"), &dialogs, &trigger["dialogs"]);
+        if let Some(child) = dialog {
+            child.invoke_cancel();
+        }
+        h.differ(
+            &format!("{what} copied"),
+            &json!(h.copies.borrow()[n..].to_vec()),
+            &trigger["copied"],
+        );
+        h.differ(
+            &format!("{what} favourites"),
+            &favourites(),
+            &trigger["favourite_tags"],
+        );
+    }
+    h.finish();
+}
+
+// leaf: selection-tags-menu-hide
+#[test]
+fn the_menus_hide_entries_ask_then_hide_as_the_references_do() {
+    let h = Harness::new(1600.0);
+    for hide in h.fixture["hides"].as_array().unwrap() {
+        let tags = strings(&hide["selected"]);
+        let path = strings(&hide["path"]);
+        let path: Vec<&str> = path.iter().map(String::as_str).collect();
+        h.open_menu(Some(&tags));
+        h.differ(
+            &format!("{path:?} menu"),
+            &Harness::submenu(&h.menu(), "hide"),
+            &hide["menu"],
+        );
+        h.choose(&path);
+        h.differ(
+            &format!("{path:?} question"),
+            &h.answer(),
+            &hide["questions"],
+        );
+        h.differ(
+            &format!("{path:?} tags"),
+            &json!(h.tags()),
+            &hide["tags_after"],
+        );
+    }
+    h.finish();
+}
+
+// leaf: selection-tags-menu-tag-display
+#[test]
+fn the_advanced_menus_tag_display_switch_shows_the_references_tags() {
+    let h = Harness::new(1600.0);
+    h.store
+        .write(|ctx| {
+            hydrus_store::settings::set(ctx.conn(), &hydrus_store::settings::AdvancedMode(true))
+        })
+        .unwrap();
+    let advanced = &h.fixture["advanced"];
+    let tags = strings(&advanced["selected"]);
+    h.open_menu(Some(&tags));
+    h.differ("advanced menu", &h.menu(), &advanced["menu"]);
+    h.close_menu();
+    for switch in advanced["switches"].as_array().unwrap() {
+        let label = switch["label"].as_str().unwrap();
+        h.open_menu(Some(&tags));
+        h.choose(&["tag display (experimental)", label]);
+        widgets::settle();
+        h.differ(label, &json!(h.rows()), &switch["drawn"]);
+    }
     h.finish();
 }
