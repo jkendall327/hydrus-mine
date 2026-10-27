@@ -16,9 +16,45 @@ use slint_interpreter::{CompilationResult, Compiler, ComponentDefinition, Compon
 
 include!(concat!(env!("OUT_DIR"), "/interp_sources.rs"));
 
+/// (spike) compile results not yet dropped, in every thread
+static LIVE_COMPILES: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+
+struct Compiled(CompilationResult);
+impl Drop for Compiled {
+    fn drop(&mut self) {
+        LIVE_COMPILES.fetch_sub(1, std::sync::atomic::Ordering::Relaxed);
+    }
+}
+impl std::ops::Deref for Compiled {
+    type Target = CompilationResult;
+    fn deref(&self) -> &CompilationResult {
+        &self.0
+    }
+}
+
+/// (spike, HYDRUS_INTERP_LEAKS) instances made on this thread, reported at
+/// thread exit if they are still alive
+struct Made(RefCell<Vec<(String, slint::Weak<ComponentInstance>)>>);
+impl Drop for Made {
+    fn drop(&mut self) {
+        let alive: Vec<String> = self
+            .0
+            .borrow()
+            .iter()
+            .filter(|(_, weak)| weak.upgrade().is_some())
+            .map(|(name, _)| name.clone())
+            .collect();
+        if !alive.is_empty() {
+            let thread = std::thread::current();
+            eprintln!("hydrus-gui-ui leak: {} alive at exit of {:?}: {alive:?}", alive.len(), thread.name());
+        }
+    }
+}
+
 thread_local! {
+    static MADE: Made = Made(RefCell::default());
     /// By entry file: a window's own file, or the whole UI.
-    static UI: RefCell<HashMap<&'static str, Rc<CompilationResult>>> = RefCell::default();
+    static UI: RefCell<HashMap<&'static str, Rc<Compiled>>> = RefCell::default();
 }
 
 fn sources() -> &'static HashMap<&'static Path, &'static str> {
@@ -69,7 +105,11 @@ fn compile(entry: &'static str) -> CompilationResult {
             .ok()
             .and_then(|s| s.lines().find(|l| l.starts_with("VmRSS")).map(str::to_owned))
             .unwrap_or_default();
-        eprintln!("hydrus-gui-ui: compiled {entry} in {:?} ({rss})", started.elapsed());
+        eprintln!(
+            "hydrus-gui-ui: compiled {entry} in {:?} ({rss}; live before this {})",
+            started.elapsed(),
+            LIVE_COMPILES.load(std::sync::atomic::Ordering::Relaxed)
+        );
     }
     result
 }
@@ -78,7 +118,8 @@ fn definition(name: &str) -> Result<ComponentDefinition, PlatformError> {
     let entry = entry_for(name);
     let compiled = UI.with(|ui| ui.borrow().get(entry).cloned());
     let compiled = compiled.unwrap_or_else(|| {
-        let compiled = Rc::new(compile(entry));
+        let compiled = Rc::new(Compiled(compile(entry)));
+        LIVE_COMPILES.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
         UI.with(|ui| ui.borrow_mut().insert(entry, compiled.clone()));
         compiled
     });
@@ -114,6 +155,10 @@ impl WeakComponent {
 impl Component {
     pub fn new(name: &str) -> Result<Self, PlatformError> {
         let instance = definition(name)?.create()?;
+        static TRACK: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+        if *TRACK.get_or_init(|| std::env::var_os("HYDRUS_INTERP_LEAKS").is_some()) {
+            MADE.with(|made| made.0.borrow_mut().push((name.to_owned(), slint::ComponentHandle::as_weak(&instance))));
+        }
         Ok(Self { instance })
     }
 

@@ -115,3 +115,38 @@ fn ui_timing_thread_leak() {
         eprintln!("ui_timing thread: after thread {i} ({mode}): {}", rss());
     }
 }
+
+/// (spike) Whether a typical test's main window (bound, shown) is freed
+/// with its thread.
+#[test]
+fn ui_timing_bound_main_window_leak() {
+    let rss = || {
+        std::fs::read_to_string("/proc/self/status")
+            .unwrap()
+            .lines()
+            .find(|l| l.starts_with("VmRSS"))
+            .unwrap()
+            .to_owned()
+    };
+    for i in 0..6 {
+        let freed = std::thread::spawn(move || {
+            let (_dirs, store) = store();
+            let windows = headless::init();
+            let ui = MainWindow::new().unwrap();
+            let weak = ui.as_weak();
+            let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+            if i % 2 == 1 {
+                ui.show().unwrap();
+                draw(&windows);
+            }
+            drop(bound);
+            drop(ui);
+            drop(store);
+            drop(windows);
+            weak.upgrade().is_none()
+        })
+        .join()
+        .unwrap();
+        eprintln!("ui_timing bound: thread {i} (shown: {}): freed {freed}, {}", i % 2 == 1, rss());
+    }
+}

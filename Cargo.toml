@@ -212,3 +212,8 @@ strip = false
 # Likewise our own pixel work: visual-duplicates tests filter 2048x2048
 # float images, which takes minutes unoptimised.
 opt-level = 2
+
+[patch.crates-io]
+# (spike) slint-interpreter with HYDRUS_INTERP_LEAN: no debug info or type
+# loaders kept by compiled definitions (see vendor/slint-interpreter/component.rs)
+slint-interpreter = { path = "vendor/slint-interpreter" }
