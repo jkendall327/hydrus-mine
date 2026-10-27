@@ -25436,7 +25436,8 @@
    "notes": [
     "Reference: BetterListCtrlTreeView: left double-click activates (hydrus/client/gui/lists/ClientGUIListCtrl.py:1075 mouseDoubleClickEvent), right-click on rows shows the rows menu (hydrus/client/gui/lists/ClientGUIListCtrl.py:881; the header's column menu is :621, a separate behaviour), selection by click/ctrl/shift/drag is QTreeView's.",
     "Native: ui/list_table.slint touch area (down/up/moved/double-clicked, row-menu, row-middle) provides all of it for lists built on ListTable. Dialog tests mostly invoke row-activated/row-menu directly.",
-    "Partial because hand-rolled lists outside ListTable have none of it: auto_resolution_review.slint:107-113 and favourites.slint:130-136 (plain rows with a TouchArea, no shift/ctrl, double-click or menu), and the manage-tags list (see interaction-manage-tags-list-menu-keys). The header column menu (:621) has no native counterpart anywhere."
+    "Partial because hand-rolled lists outside ListTable have none of it: auto_resolution_review.slint:107-113 and favourites.slint:130-136 (plain rows with a TouchArea, no shift/ctrl, double-click or menu), and the manage-tags list (see interaction-manage-tags-list-menu-keys). The header column menu (:621) has no native counterpart anywhere.",
+    "#288: the hand-rolled lists the audit names already had ctrl/shift clicks and double-click (and the review's pair list a menu); \"review files to import\" (ui/import_files.slint, which had a hand-rolled list too) and \"edit favourite searches\" are now ListTables, and the review's pair lists take ListKeys. Replayed with real pointer events in tests/gui/list_keys.rs."
    ]
   },
   {

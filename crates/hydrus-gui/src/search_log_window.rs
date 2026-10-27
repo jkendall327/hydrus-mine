@@ -515,6 +515,20 @@ pub(crate) fn open(
     });
     // (the reference's search log has no delete key)
     window.on_delete_pressed(|| {});
+    // Ctrl+C: the selected rows' URLs, as the reference's copy-rows
+    // callable (`_GetCopyableRows`) gives them; with none, the list copies
+    window.on_copy_pressed({
+        let state = state.clone();
+        move || {
+            let state = state.borrow();
+            let urls: Vec<&str> = state.selected().iter().map(|s| s.url.as_str()).collect();
+            if urls.is_empty() {
+                return false;
+            }
+            crate::copy_to_clipboard(&urls.join("\n"));
+            true
+        }
+    });
     window.on_chosen({
         let alive = alive.clone();
         let state = state.clone();

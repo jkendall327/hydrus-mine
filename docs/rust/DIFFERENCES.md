@@ -5716,3 +5716,35 @@ off:
   reference never records them here); GIF and BMP follow the same rules.
 - Only the first frame of a GIF follows the setting; frames of an animation
   decode as before.
+
+## Lists' keys and pointer (`ListTable`, `ListKeys`)
+
+Checked by `tests/gui/list_keys.rs` against `oracle/fixtures/list_keys.json`.
+
+- **Enter activates through the current row.** The reference's activation
+  acts on the selection whatever the current row is; hydrus-rs's lists
+  activate through the current row, and only when it is selected (most
+  native dialogs act on the row they are given). After ctrl+arrows have
+  moved the current row off the selection, Enter does nothing here, where
+  the reference would act on the rows still selected (so too when the
+  window selected rows itself and the first row, current as in Qt, is not
+  one of them). The pair lists of the
+  duplicates auto-resolution review activate the current row, as their Qt
+  table views do.
+- **Qt's Ctrl+C copies the current cell; hydrus-rs copies its row's first
+  cell.** Qt copies the cell of the column last clicked; hydrus-rs does
+  not track a current column.
+- **After a list is re-sorted, the current row is the same place, not the
+  same item** (Qt's current index follows its item); a selected row is
+  still selected, and the next arrow moves from where the current row now
+  is.
+- **The keys reach a window through the list's click callback.** Ctrl+A and
+  ctrl+arrows (which move only the anchor) are clicks on two rows past any
+  list's end (`list_selection::SELECT_ALL`, `MOVE_ANCHOR`), which
+  `ListSelection::click` reads, so every list that selects through
+  `ListSelection` takes them without wiring of its own. Lists with their own
+  selection (a single-selection list such as the parser editors' content
+  parsers) ignore them.
+- **Lists not on the shared list.** The tag lists (#286) and the
+  queue-style lists (`AddEditDeleteListBox`, `BetterQListWidget`) keep
+  their own keys, covered by their dialogs.

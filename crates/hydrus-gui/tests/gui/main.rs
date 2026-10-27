@@ -376,6 +376,7 @@ mod import_options_consumers;
 mod import_options_fields;
 mod import_options_paste;
 mod import_options_recorded;
+mod list_keys;
 mod media_file_actions;
 mod media_ratings_counter;
 mod media_selection_menu;
