@@ -111,18 +111,15 @@ impl Dialog {
     fn at(&self, tag: Option<&str>) -> slint::LogicalPosition {
         let rows = self.rows();
         let row_tags = self.row_tags();
-        match tag {
-            Some(tag) => {
-                let i = row_tags
-                    .iter()
-                    .position(|t| t == tag)
-                    .unwrap_or_else(|| panic!("{tag} is not listed"));
-                widgets::position(self.window.window(), &rows[i], 0)
-            }
-            None => {
-                let last = widgets::position(self.window.window(), rows.last().unwrap(), 0);
-                slint::LogicalPosition::new(last.x, last.y + 40.0)
-            }
+        if let Some(tag) = tag {
+            let i = row_tags
+                .iter()
+                .position(|t| t == tag)
+                .unwrap_or_else(|| panic!("{tag} is not listed"));
+            widgets::position(self.window.window(), &rows[i], 0)
+        } else {
+            let last = widgets::position(self.window.window(), rows.last().unwrap(), 0);
+            slint::LogicalPosition::new(last.x, last.y + 40.0)
         }
     }
 
