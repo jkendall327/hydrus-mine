@@ -16,7 +16,9 @@
 //! one with none (or several alike), give a place, from an exported
 //! geometry property: `click_at`, `scroll_at` and the rest take a
 //! `LogicalPosition`. Lay the window out first (`lay_out`): a headless
-//! window is 0-sized until then.
+//! window is 0-sized until then. Widgets whose places are reported back on
+//! timers (the notebook tabs) also need the window shown and `settle` run a
+//! few times before they take a click.
 
 #![allow(dead_code)]
 
@@ -253,7 +255,7 @@ pub fn drag(
         position: from,
         button,
     });
-    let middle = LogicalPosition::new((from.x + to.x) / 2.0, (from.y + to.y) / 2.0);
+    let middle = LogicalPosition::new(f32::midpoint(from.x, to.x), f32::midpoint(from.y, to.y));
     window.dispatch_event(WindowEvent::PointerMoved { position: middle });
     window.dispatch_event(WindowEvent::PointerMoved { position: to });
     window.dispatch_event(WindowEvent::PointerReleased {

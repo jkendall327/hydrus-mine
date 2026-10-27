@@ -121,8 +121,14 @@ fn choose(ui: &MainWindow, pane: usize, label: &str) {
 
 /// Right-click the tab at `index` of the top row, as a user opens its menu.
 fn right_click_tab(ui: &MainWindow, index: usize) {
+    let name = names(ui)[index].clone();
+    ui.show().unwrap();
     widgets::lay_out(ui.window(), 1100.0, 700.0);
-    widgets::right_click(ui.window(), &names(ui)[index]);
+    // (the tabs are fitted to the width, and their places reported, on timers)
+    for _ in 0..10 {
+        widgets::settle();
+    }
+    widgets::right_click(ui.window(), &name);
 }
 
 /// The notebook as the recorder built it: a, imp1 (3 URLs), b, imp2 (2), c.
@@ -346,4 +352,22 @@ fn the_dialogs_yes_waits_before_it_can_be_pressed() {
         widgets::settle();
     }
     reasons_dialog::set_yes_delay(None);
+}
+
+// A middle click on a tab closes it, as the reference's does: the
+// middle-click helper reaches the tab through the notebook's pointer overlay.
+#[test]
+fn middle_click_closes_a_page_without_objections() {
+    let _windows = headless::init();
+    let (_dirs, store) = store();
+    let (ui, _bound) = open(&store);
+    let before = names(&ui);
+    assert_eq!(before, ["a", "imp1", "b", "imp2", "c"]);
+    ui.show().unwrap();
+    widgets::lay_out(ui.window(), 1100.0, 700.0);
+    for _ in 0..10 {
+        widgets::settle();
+    }
+    widgets::middle_click(ui.window(), "b");
+    assert_eq!(names(&ui), ["a", "imp1", "imp2", "c"]);
 }

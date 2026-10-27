@@ -4,7 +4,7 @@
 
 #![allow(dead_code)]
 
-use slint::Model as _;
+use slint::{ComponentHandle as _, Model as _};
 
 use hydrus_gui::MainWindow;
 

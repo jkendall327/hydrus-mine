@@ -24,20 +24,6 @@ pub fn pump(for_: Duration) {
     }
 }
 
-pub fn choose(ui: &MainWindow, pane: i32, label: &str) {
-    let lines = ui
-        .get_menu_panes()
-        .row_data(usize::try_from(pane).unwrap())
-        .unwrap()
-        .lines;
-    let index = lines
-        .iter()
-        .position(|row| row.label == label)
-        .unwrap_or_else(|| panic!("the menu offers {label:?}"));
-    assert!(lines.row_data(index).unwrap().usable, "{label:?} is usable");
-    ui.invoke_menu_line_clicked(pane, i32::try_from(index).unwrap(), 0.0, 0.0, 0.0);
-}
-
 /// database > each of `submenus` in turn > `label`
 pub fn from_menu_path(ui: &MainWindow, submenus: &[&str], label: &str) {
     // (clicks and hovers at the entries' laid-out places)
