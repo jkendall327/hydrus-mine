@@ -175,6 +175,14 @@ impl Client {
         hydrus_gui::windows::place_named_geometry(window.window(), &store, "main_gui");
         // (or hidden in the system tray, as the options say)
         bound.tray.start(&window)?;
+        // (shown, its maximised state held against the windowing system's
+        // first events, which the autosave would otherwise keep)
+        if window.window().is_visible() {
+            hydrus_gui::windows::hold_state_after_show(
+                &window,
+                &hydrus_gui::windows::settings(&store).main_gui,
+            );
+        }
         Ok(Self {
             _window: window,
             bound,

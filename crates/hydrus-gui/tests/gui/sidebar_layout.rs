@@ -78,19 +78,13 @@ fn gesture(
     dx: f32,
     dy: f32,
 ) {
-    use slint::platform::{PointerEventButton as B, WindowEvent as E};
-    let start = slint::LogicalPosition::new(x, y);
-    let end = slint::LogicalPosition::new(x + dx, y + dy);
-    native.dispatch_event(E::PointerMoved { position: start });
-    native.dispatch_event(E::PointerPressed {
-        position: start,
-        button: B::Left,
-    });
-    native.dispatch_event(E::PointerMoved { position: end });
-    native.dispatch_event(E::PointerReleased {
-        position: end,
-        button: B::Left,
-    });
+    use slint::platform::WindowAdapter as _;
+    crate::common::widgets::drag(
+        native.window(),
+        slint::LogicalPosition::new(x, y),
+        slint::LogicalPosition::new(x + dx, y + dy),
+        slint::platform::PointerEventButton::Left,
+    );
 }
 // leaf: audit-options-gui-pages-preview-window-hide-the-bottom-left-preview-window
 // leaf: audit-options-menu-menu-pages-save-current-page-s-sidebar-preview-size-now

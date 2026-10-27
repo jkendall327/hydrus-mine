@@ -593,7 +593,7 @@ fn manage_times_replays_the_references_dialog_through_the_window() {
                         ] {
                             assert!(widgets::shows(win, entry), "{entry} in the copy menu");
                         }
-                        widgets::click(win, label);
+                        widgets::click_nth(win, label, 0);
                     } else {
                         assert!(widgets::count(win, "copy") > 0);
                     }

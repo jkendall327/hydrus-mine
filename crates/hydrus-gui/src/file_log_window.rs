@@ -778,6 +778,21 @@ fn open_source(
             refresh(true);
         }
     });
+    // Ctrl+C: the selected rows' sources, as the reference's copy-rows
+    // callable (`_GetCopyableRows`) gives them; with none, the list copies
+    // its current cell (`oracle/fixtures/list_keys.json`)
+    window.on_copy_pressed({
+        let state = state.clone();
+        move || {
+            let state = state.borrow();
+            let sources: Vec<&str> = state.selected().iter().map(|s| s.data.as_str()).collect();
+            if sources.is_empty() {
+                return false;
+            }
+            crate::copy_to_clipboard(&sources.join("\n"));
+            true
+        }
+    });
     window.on_delete_pressed({
         let state = state.clone();
         let store = store.clone();

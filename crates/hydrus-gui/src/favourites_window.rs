@@ -7,7 +7,6 @@
 //! reads them.
 
 use std::cell::{Cell, RefCell};
-use std::collections::BTreeSet;
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -19,7 +18,8 @@ use hydrus_store::Store;
 use hydrus_store::settings::FavouriteSearches;
 
 use crate::favourites::{self, Describe, Edit, Manager};
-use crate::{FavouriteEditWindow, FavouriteListRow, FavouritesWindow};
+use crate::list_selection::ListSelection;
+use crate::{FavouriteEditWindow, FavouritesWindow, TableColumn, TableRow};
 
 /// The dialogs while they are open.
 #[derive(Default, Clone)]
@@ -54,9 +54,9 @@ struct List {
     sort: (usize, bool),
     /// The searches in the order shown.
     order: Vec<usize>,
-    /// The searches selected, and the one a shift-click selects from.
-    selected: BTreeSet<usize>,
-    anchor: Option<usize>,
+    /// The searches selected (by their place in the manager's rows), as
+    /// the reference's list selects.
+    selection: ListSelection<usize>,
     /// Deleting the searches selected, once asked.
     deleting: bool,
 }
@@ -145,15 +145,20 @@ fn open_list(slots: &Slots, store: Arc<Store>) -> Result<(), String> {
         manager: Manager::new(rows),
         sort: (0, true),
         order: Vec::new(),
-        selected: BTreeSet::new(),
-        anchor: None,
+        selection: ListSelection::default(),
         deleting: false,
     }));
     *slots.open.borrow_mut() = Some((list.clone(), words.clone()));
     window.set_columns(ModelRc::new(VecModel::from(
         favourites::COLUMNS
             .iter()
-            .map(|c| SharedString::from(*c))
+            .zip([140.0, 140.0, 360.0, 190.0, 120.0])
+            .enumerate()
+            .map(|(i, (c, width))| TableColumn {
+                title: SharedString::from(*c),
+                width,
+                stretch: i + 1 == favourites::COLUMNS.len(),
+            })
             .collect::<Vec<_>>(),
     )));
     let show = shower(&window, &list, &words);
@@ -185,34 +190,8 @@ fn open_list(slots: &Slots, store: Arc<Store>) -> Result<(), String> {
             };
             {
                 let mut list = list.borrow_mut();
-                let Some(&index) = list.order.get(shown) else {
-                    return;
-                };
-                match (ctrl, shift, list.anchor) {
-                    (_, true, Some(anchor)) => {
-                        let from = list
-                            .order
-                            .iter()
-                            .position(|&i| i == anchor)
-                            .unwrap_or(shown);
-                        let (a, b) = (from.min(shown), from.max(shown));
-                        let range: Vec<usize> = list.order[a..=b].to_vec();
-                        if !ctrl {
-                            list.selected.clear();
-                        }
-                        list.selected.extend(range);
-                    }
-                    (true, _, _) => {
-                        if !list.selected.remove(&index) {
-                            list.selected.insert(index);
-                        }
-                        list.anchor = Some(index);
-                    }
-                    _ => {
-                        list.selected = BTreeSet::from([index]);
-                        list.anchor = Some(index);
-                    }
-                }
+                let order = list.order.clone();
+                list.selection.click(&order, shown, ctrl, shift);
             }
             show();
         }
@@ -224,8 +203,8 @@ fn open_list(slots: &Slots, store: Arc<Store>) -> Result<(), String> {
         move || {
             let chosen = {
                 let list = list.borrow();
-                match list.selected.iter().collect::<Vec<_>>()[..] {
-                    [&index] => list
+                match list.selection.one() {
+                    Some(index) => list
                         .manager
                         .rows
                         .get(index)
@@ -250,11 +229,7 @@ fn open_list(slots: &Slots, store: Arc<Store>) -> Result<(), String> {
                 .ok()
                 .and_then(|s| list.borrow().order.get(s).copied());
             if let Some(index) = index {
-                {
-                    let mut list = list.borrow_mut();
-                    list.selected = BTreeSet::from([index]);
-                    list.anchor = Some(index);
-                }
+                list.borrow_mut().selection.select_only(Some(index));
                 show();
                 edit_selected();
             }
@@ -281,7 +256,7 @@ fn open_list(slots: &Slots, store: Arc<Store>) -> Result<(), String> {
         let list = list.clone();
         let weak = window.as_weak();
         move || {
-            if list.borrow().selected.is_empty() {
+            if list.borrow().selection.is_empty() {
                 return;
             }
             list.borrow_mut().deleting = true;
@@ -298,10 +273,10 @@ fn open_list(slots: &Slots, store: Arc<Store>) -> Result<(), String> {
             {
                 let mut list = list.borrow_mut();
                 if std::mem::take(&mut list.deleting) && yes {
-                    let selected: Vec<usize> = list.selected.iter().copied().collect();
+                    let all: Vec<usize> = (0..list.manager.rows.len()).collect();
+                    let selected = list.selection.in_order(&all);
                     list.manager.delete(&selected);
-                    list.selected.clear();
-                    list.anchor = None;
+                    list.selection = ListSelection::default();
                 }
             }
             if let Some(window) = weak.upgrade() {
@@ -370,24 +345,24 @@ fn shower(window: &FavouritesWindow, list: &Rc<RefCell<List>>, words: &Rc<Words>
         let rows = words.rows(&list.manager);
         let (column, ascending) = list.sort;
         list.order = favourites::list_order(&rows, column, ascending);
-        let shown: Vec<FavouriteListRow> = list
+        let shown: Vec<TableRow> = list
             .order
             .iter()
-            .map(|&i| FavouriteListRow {
+            .map(|&i| TableRow {
                 cells: ModelRc::new(VecModel::from(
                     rows[i]
                         .iter()
                         .map(|c| SharedString::from(c.as_str()))
                         .collect::<Vec<_>>(),
                 )),
-                selected: list.selected.contains(&i),
+                selected: list.selection.is_selected(i),
             })
             .collect();
         window.set_rows(ModelRc::new(VecModel::from(shown)));
         window.set_sort_column(i32::try_from(column).unwrap_or(0));
         window.set_ascending(ascending);
-        window.set_can_edit(list.selected.len() == 1);
-        window.set_can_delete(!list.selected.is_empty());
+        window.set_can_edit(list.selection.one().is_some());
+        window.set_can_delete(!list.selection.is_empty());
     })
 }
 
@@ -1372,8 +1347,7 @@ fn open_edit(
                     Target::Existing(index) => list.manager.edited(index, value.clone()),
                 }
                 let index = list.manager.rows.len() - 1;
-                list.selected = BTreeSet::from([index]);
-                list.anchor = Some(index);
+                list.selection.select_only(Some(index));
             }
             close();
             if let Some(window) = list_window.borrow().as_ref() {

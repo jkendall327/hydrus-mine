@@ -118,9 +118,8 @@ struct Rows(hydrus_gui_model::list_selection::ListSelection<usize>);
 
 impl Rows {
     fn click(&mut self, len: usize, row: i32, ctrl: bool, shift: bool) {
-        if let Ok(row) = usize::try_from(row)
-            && row < len
-        {
+        // (past the end: one of the list's keys, which `click` reads)
+        if let Ok(row) = usize::try_from(row) {
             let order: Vec<usize> = (0..len).collect();
             self.0.click(&order, row, ctrl, shift);
         }

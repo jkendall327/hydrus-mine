@@ -4,7 +4,18 @@ export component ViewerTagsHover inherits Rectangle {
     in property <[ListText]> tags;
     in property <[string]> identities;
     in property <string> file;
-    callback search(string,string);
+    // whether each row is selected
+    in property <[bool]> selected;
+    // a press of a button (0 left, 1 right, 2 middle) on row i (-1 below
+    // the rows) of the file's list, with ctrl and shift, at x, y in the window
+    callback pressed(string,int,int,bool,bool,length,length);
+    // a left double-click on row i, with ctrl and shift
+    callback double-clicked(string,int,bool,bool);
+    // a key, with ctrl and shift; whether the list took it
+    callback key(string,bool,bool) -> bool;
+    property <int> pressed-row: -1;
+    property <bool> ctrl;
+    property <bool> shift;
     in-out property <length> offset;
     out property <length> row-height: probe.preferred-height + 2px;
     out property <length> maximum: max(0px, self.tags.length * self.row-height + 12px - self.height);
@@ -14,6 +25,14 @@ export component ViewerTagsHover inherits Rectangle {
     background: Theme.colour(12,#202020e8);
     clip: true;
     probe := Text { visible: false; text: "Ag"; font-size: 14px; }
+    for tag[i] in root.tags: Rectangle {
+        visible: root.selected[i];
+        x: 2px;
+        y: 6px + i * root.row-height - min(root.offset,root.maximum);
+        width: root.width - 4px - (root.maximum > 0px ? 12px : 0px);
+        height: root.row-height;
+        background: Theme.accent;
+    }
     for tag[i] in root.tags: Text {
         x: 6px;
         y: 6px + i * root.row-height - min(root.offset,root.maximum);
@@ -24,15 +43,24 @@ export component ViewerTagsHover inherits Rectangle {
         font-size: 14px;
         overflow: elide;
     }
+    keys := FocusScope {
+        key-pressed(event) => {
+            if root.key(event.text, event.modifiers.control, event.modifiers.shift) { return accept; }
+            reject
+        }
+    }
     touch := TouchArea {
         pointer-event(event) => {
-            if event.button == PointerEventButton.middle && event.kind == PointerEventKind.down {
+            if event.kind == PointerEventKind.down {
                 let index = floor((self.mouse-y - 6px + min(root.offset,root.maximum)) / root.row-height);
-                if index >= 0 && index < root.identities.length {
-                    root.search(root.file,root.identities[index]);
-                }
+                root.pressed-row = index >= 0 && index < root.identities.length ? index : -1;
+                root.ctrl = event.modifiers.control;
+                root.shift = event.modifiers.shift;
+                keys.focus();
+                root.pressed(root.file, root.pressed-row, event.button == PointerEventButton.right ? 1 : event.button == PointerEventButton.middle ? 2 : 0, root.ctrl, root.shift, self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y);
             }
         }
+        double-clicked => { root.double-clicked(root.file, root.pressed-row, root.ctrl, root.shift); }
         scroll-event(event) => { root.wheel(event.delta-y / 1px,event.modifiers.control,self.mouse-x,self.mouse-y); accept }
     }
     // The scrollbar is part of the live hover, so long tag lists remain usable.

@@ -1,63 +1,12 @@
-import { Btn } from "@hydrus_ui_core";
+import { Btn, ListTable, TableColumn, TableRow } from "@hydrus_ui_core";
 // The "review files to import" window (file > import files, or files
 // dropped on the main window; `src/local_import.rs`), as the reference's
 // `ReviewLocalFileImports`: the paths given, each parsed (#, path,
 // filetype, size), a box to add more, the parsing's progress with its pause
 // and stop buttons, whether to delete the originals, and "import now".
 
-import { Button, CheckBox, LineEdit, ListView, ProgressIndicator } from "std-widgets.slint";
+import { Button, CheckBox, LineEdit, ProgressIndicator } from "std-widgets.slint";
 import { Theme } from "@hydrus_ui_core";
-
-// a row of the list: its cells (#, path, filetype, size), whether it is
-// selected, and whether parsing found a problem with it
-export struct ImportRow {
-    cells: [string],
-    selected: bool,
-    problem: bool,
-}
-
-// the list's column widths, as the reference's (#, then the path taking
-// the rest, then filetype and size)
-component Cells inherits HorizontalLayout {
-    in property <[string]> cells;
-    in property <bool> bold;
-    in property <color> colour: Theme.text;
-    spacing: 6px;
-    padding-left: 4px;
-    padding-right: 4px;
-    Text {
-        width: 40px;
-        text: root.cells[0];
-        font-weight: root.bold ? 700 : 400;
-        color: root.colour;
-        horizontal-alignment: right;
-        vertical-alignment: center;
-    }
-    Text {
-        horizontal-stretch: 1;
-        text: root.cells[1];
-        font-weight: root.bold ? 700 : 400;
-        color: root.colour;
-        overflow: elide;
-        vertical-alignment: center;
-    }
-    Text {
-        width: 190px;
-        text: root.cells[2];
-        font-weight: root.bold ? 700 : 400;
-        color: root.colour;
-        overflow: elide;
-        vertical-alignment: center;
-    }
-    Text {
-        width: 70px;
-        text: root.cells[3];
-        font-weight: root.bold ? 700 : 400;
-        color: root.colour;
-        horizontal-alignment: right;
-        vertical-alignment: center;
-    }
-}
 
 export component ReviewImportsWindow inherits Window {
     in property <string> title-suffix: "";
@@ -68,7 +17,8 @@ export component ReviewImportsWindow inherits Window {
     preferred-height: 560px;
     background: Theme.window;
 
-    in property <[ImportRow]> rows;
+    // the list's rows: #, path, filetype, size
+    in property <[TableRow]> rows;
     in property <string> progress;
     in property <float> fraction;
     // parsing left to do (the pause and stop buttons), and paused
@@ -113,39 +63,20 @@ export component ReviewImportsWindow inherits Window {
         VerticalLayout {
             padding: 8px;
             spacing: 6px;
-            Rectangle {
+            // (the reference's list, keys and all: Delete asks to remove)
+            ListTable {
                 vertical-stretch: 1;
-                border-width: 1px;
-                border-color: Theme.border;
-                background: Theme.panel;
-                VerticalLayout {
-                    padding: 1px;
-                    Rectangle {
-                        height: 24px;
-                        background: Theme.window;
-                        Cells {
-                            cells: ["#", "path", "filetype", "size"];
-                            bold: true;
-                        }
-                    }
-                    ListView {
-                        vertical-stretch: 1;
-                        for row[i] in root.rows: Rectangle {
-                            height: 22px;
-                            background: row.selected ? Theme.highlight : transparent;
-                            Cells {
-                                cells: row.cells;
-                                colour: row.selected ? Theme.highlight-text : Theme.text;
-                            }
-                            TouchArea {
-                                pointer-event(event) => {
-                                    if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
-                                        keys.focus();
-                                        root.row-clicked(i, event.modifiers.control, event.modifiers.shift);
-                                    }
-                                }
-                            }
-                        }
+                columns: [
+                    { title: "#", width: 40px },
+                    { title: "path", width: 300px, stretch: true },
+                    { title: "filetype", width: 190px },
+                    { title: "size", width: 70px },
+                ];
+                rows: root.rows;
+                row-clicked(i, ctrl, shift) => { root.row-clicked(i, ctrl, shift); }
+                delete-pressed => {
+                    if (root.any-selected) {
+                        root.asking-remove = true;
                     }
                 }
             }
