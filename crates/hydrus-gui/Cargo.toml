@@ -10,11 +10,19 @@ license.workspace = true
 name = "hydrus-gui"
 path = "src/main.rs"
 
+[features]
+default = ["compiled-ui"]
+# the UI as compiled Rust (generated/hydrus-gui-ui-*)
+compiled-ui = ["hydrus-gui-ui/compiled"]
+# (spike) the same UI API run by Slint's interpreter
+interpreter-ui = ["hydrus-gui-ui/interpreter"]
+interpreter-cached-ui = ["hydrus-gui-ui/interpreter-cached"]
+
 [dependencies]
 jiff.workspace = true
 hydrus-core.workspace = true
 hydrus-gui-model.workspace = true
-hydrus-gui-ui.workspace = true
+hydrus-gui-ui = { workspace = true, default-features = false }
 hydrus-store.workspace = true
 hydrus-parse.workspace = true
 hydrus-net.workspace = true

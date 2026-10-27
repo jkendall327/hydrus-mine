@@ -14,13 +14,28 @@ test = false
 bench = false
 doctest = false
 
+[features]
+default = ["compiled"]
+# the UI compiled to Rust by slint-build, in the six crates this one re-exports
+compiled = ["dep:hydrus-gui-ui-core", "dep:hydrus-gui-ui-options", "dep:hydrus-gui-ui-dialogs-1", "dep:hydrus-gui-ui-dialogs-2", "dep:hydrus-gui-ui-dialogs-3", "dep:hydrus-gui-ui-dialogs-4"]
+# (spike) the same typed API, run by Slint's interpreter: slint-build's
+# live-preview generator, one crate, no generated UI code
+interpreter = ["slint/live-preview"]
+# (spike) the interpreter with embedded sources compiled once per thread and
+# cached (src/interp.rs), in place of compiling per `new()` and watching files
+interpreter-cached = ["interpreter", "dep:slint-interpreter"]
+
 [dependencies]
 # keep in step with the workspace's slint pin and features
 slint = { version = "=1.18.1", default-features = false, features = ["std", "compat-1-2", "backend-winit", "renderer-software", "unstable-winit-030", "system-tray"] }
-hydrus-gui-ui-core = { path = "../hydrus-gui-ui-core" }
-hydrus-gui-ui-options = { path = "../hydrus-gui-ui-options" }
-hydrus-gui-ui-dialogs-1 = { path = "../hydrus-gui-ui-dialogs-1" }
-hydrus-gui-ui-dialogs-2 = { path = "../hydrus-gui-ui-dialogs-2" }
-hydrus-gui-ui-dialogs-3 = { path = "../hydrus-gui-ui-dialogs-3" }
-hydrus-gui-ui-dialogs-4 = { path = "../hydrus-gui-ui-dialogs-4" }
+hydrus-gui-ui-core = { path = "../hydrus-gui-ui-core", optional = true }
+hydrus-gui-ui-options = { path = "../hydrus-gui-ui-options", optional = true }
+hydrus-gui-ui-dialogs-1 = { path = "../hydrus-gui-ui-dialogs-1", optional = true }
+hydrus-gui-ui-dialogs-2 = { path = "../hydrus-gui-ui-dialogs-2", optional = true }
+hydrus-gui-ui-dialogs-3 = { path = "../hydrus-gui-ui-dialogs-3", optional = true }
+hydrus-gui-ui-dialogs-4 = { path = "../hydrus-gui-ui-dialogs-4", optional = true }
+slint-interpreter = { version = "=1.18.1", optional = true, default-features = false, features = ["compat-1-2", "internal", "display-diagnostics"] }
 hydrus-workspace-hack = { version = "0.1", path = "../../crates/hydrus-workspace-hack" }
+
+[build-dependencies]
+slint-build = { version = "=1.18.1" }

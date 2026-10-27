@@ -6,6 +6,7 @@ mod common;
 mod headless_lifetime;
 
 mod about;
+mod ui_timing;
 mod active_predicates;
 mod animation;
 mod animation_start;
