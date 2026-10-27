@@ -25,6 +25,7 @@ pub use hydrus_gui_ui::interp::{clear_cache as interp_clear_cache, compile_and_d
 
 pub mod about_window;
 mod active_predicates;
+mod bound_teardown;
 mod animation;
 mod archive_delete_window;
 pub mod archive_repair_window;

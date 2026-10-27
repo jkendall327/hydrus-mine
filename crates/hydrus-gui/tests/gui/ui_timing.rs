@@ -150,3 +150,43 @@ fn ui_timing_bound_main_window_leak() {
         eprintln!("ui_timing bound: thread {i} (shown: {}): freed {freed}, {}", i % 2 == 1, rss());
     }
 }
+
+/// (spike) Whether a manage tags dialog and a media viewer the user closes
+/// are freed while the main window stays open, as in the app.
+#[test]
+fn ui_timing_closed_dialogs_are_freed() {
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.invoke_search_accepted();
+    ui.invoke_select_all();
+    ui.invoke_manage_tags_selected();
+    let manage = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    let weak_manage = manage.as_weak();
+    manage.invoke_cancel();
+    drop(manage);
+    for _ in 0..10 {
+        slint::platform::update_timers_and_animations();
+    }
+    eprintln!(
+        "ui_timing closed: manage tags slot empty {}, freed after cancel {}",
+        bound.manage_tags.borrow().is_none(),
+        weak_manage.upgrade().is_none()
+    );
+    ui.invoke_thumbnail_activated(0);
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let weak_viewer = viewer.as_weak();
+    viewer.invoke_close_requested();
+    drop(viewer);
+    for _ in 0..10 {
+        slint::platform::update_timers_and_animations();
+    }
+    eprintln!(
+        "ui_timing closed: viewer slot empty {}, freed after close {}",
+        bound.viewer.borrow().is_none(),
+        weak_viewer.upgrade().is_none()
+    );
+    drop((bound, ui, windows));
+}
