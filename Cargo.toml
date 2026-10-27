@@ -134,8 +134,8 @@ lto = "thin"
 codegen-units = 4
 # Line tables alone made DWARF ~700 MB of the 916 MB binary; symbol names stay
 # for backtraces (see docs/rust/history/2026-10-27-release-size-spike.md).
-debug = "line-tables-only"
-strip = "none"
+debug = false
+strip = "debuginfo"
 
 [profile.release.package.hydrus-gui-ui]
 # The generated Slint UI (see profile.dev below) can't be optimised within a
@@ -144,6 +144,27 @@ strip = "none"
 opt-level = 0
 debug = false
 incremental = false
+
+# SPIKE-BEGIN
+[profile.release.package.hydrus-gui-ui-core]
+opt-level = "s"
+
+[profile.release.package.hydrus-gui-ui-options]
+opt-level = "s"
+
+[profile.release.package.hydrus-gui-ui-dialogs-1]
+opt-level = "s"
+
+[profile.release.package.hydrus-gui-ui-dialogs-2]
+opt-level = "s"
+
+[profile.release.package.hydrus-gui-ui-dialogs-3]
+opt-level = "s"
+
+[profile.release.package.hydrus-gui-ui-dialogs-4]
+opt-level = "s"
+
+# SPIKE-END
 
 [profile.dev]
 # Full debug info makes target/ many gigabytes; line tables keep backtraces.
