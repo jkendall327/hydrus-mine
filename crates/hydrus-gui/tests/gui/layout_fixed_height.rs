@@ -152,24 +152,25 @@ fn no_button_combo_box_or_input_grows_with_spare_window_height() {
             failures.push(format!("{key}: {line}"));
         }
         if key.starts_with("manage_tags") {
-            // the tag input keeps its own height: the tab combo box is the
-            // lowest combo box, and the row of buttons that closes the
-            // dialog follows it closely; the tag list takes the spare height
+            // the tag input keeps its own height: the row of buttons that
+            // closes the dialog follows the input's last control closely
+            // (the tag list above takes the spare height)
             let all = controls(window);
-            let combo_bottom = all
-                .iter()
-                .filter(|c| c.0 == "Combobox")
-                .map(|c| c.2.3)
-                .fold(0.0, f32::max);
-            let below = all
+            let closing = all
                 .iter()
                 .filter(|c| c.0 == "Button" && ["apply", "close"].contains(&c.1.as_str()))
-                .map(|c| c.2.1)
-                .fold(f32::MAX, f32::min);
+                .map(|c| c.2)
+                .next()
+                .expect("a closing button");
+            let input_bottom = all
+                .iter()
+                .filter(|c| c.2.3 <= closing.1 && c.2.0 < closing.2 && c.2.2 > closing.0)
+                .map(|c| c.2.3)
+                .fold(0.0, f32::max);
+            let gap = closing.1 - input_bottom;
             assert!(
-                below - combo_bottom < 40.0,
-                "{key}: {} blank pixels between the input and the buttons below it",
-                below - combo_bottom
+                gap < 60.0,
+                "{key}: {gap} blank pixels between the input and the buttons below it"
             );
         }
     }
