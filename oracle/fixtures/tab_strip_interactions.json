@@ -1843,7 +1843,7 @@
       ]
     },
     {
-      "action": "drag omega below the last row",
+      "action": "drag omega below inner one",
       "menus": [],
       "pages": [
         {
@@ -1985,6 +1985,7 @@
   },
   "limits": [
     "the page chooser and the text entry are scripted; the tab menu is captured rather than shown",
-    "tree drops are delivered as drag enter, move and drop events in DragDrop mode (offscreen Qt has no drag loop); a drop onto the dragged row or its descendants, which InternalMove refuses, is not driven"
+    "tree drops are delivered as drag enter, move and drop events in DragDrop mode (offscreen Qt has no drag loop); a drop onto the dragged row or its descendants, which InternalMove refuses, is not driven",
+    "a QTest right-click gives the offscreen tree no customContextMenuRequested, so the tree menu is reached by a synthetic QContextMenuEvent at the click (Qt on Linux sends it on the press)"
   ]
 }

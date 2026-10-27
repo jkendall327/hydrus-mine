@@ -130,19 +130,17 @@ pub(crate) fn bind(window: &MainWindow, pages: &Rc<RefCell<Pages>>, change: Chan
                 0 => {
                     state.borrow_mut().pointer.cancel();
                     window.set_tab_drag_active(false);
+                    // (only a left press on the same tab right after makes a
+                    // double-click; any other press forgets the last)
+                    let last_press = state.borrow_mut().last_press.take();
                     if button == 0
                         && let Some(rect) = hit.clone()
                     {
                         if let Some(key) = rect.key {
                             let now = Instant::now();
-                            let double =
-                                state
-                                    .borrow_mut()
-                                    .last_press
-                                    .take()
-                                    .is_some_and(|(last, at)| {
-                                        last == key && now.duration_since(at) < crate::DOUBLE_CLICK
-                                    });
+                            let double = last_press.is_some_and(|(last, at)| {
+                                last == key && now.duration_since(at) < crate::DOUBLE_CLICK
+                            });
                             if double {
                                 // (the reference's tab bar takes a
                                 // double-click as a rename, with no drag)

@@ -191,8 +191,9 @@ def record(session):
                                'rows': [name(i) for i in walk()], 'current': name(tree.currentIndex())})
 
         def right_click(point):
-            # a right-click: Qt's platform turns the press into a context
-            # menu event for the viewport
+            # a right-click; offscreen, QTest's click brings no context menu
+            # request, so the context menu event that Qt on Linux sends on
+            # the press is sent by hand (see the limits)
             QtTest.QTest.mouseClick(tree.viewport(), right, pos=point)
             if not menus:
                 event = QG.QContextMenuEvent(QG.QContextMenuEvent.Reason.Mouse, point, tree.viewport().mapToGlobal(point))
@@ -281,12 +282,13 @@ def record(session):
         drag('drag inner one below alpha', 'inner one', lambda: below('alpha'))
         drag('drag alpha onto inner two (a page)', 'alpha', lambda: row_point('inner two'))
         drag('drag inner two above inner one', 'inner two', lambda: above('inner one'))
-        drag('drag omega below the last row', 'omega', lambda: below('inner one'))
+        drag('drag omega below inner one', 'omega', lambda: below('inner one'))
         drag('drag inner one to empty space', 'inner one', lambda: bottom)
         tree_step('double-click tree empty space', lambda: QtTest.QTest.mouseDClick(tree.viewport(), left, pos=bottom))
         return {'geometry': geometry, 'tabs': steps, 'tree': tree_steps, 'tree_rows': rows,
                 'limits': ['the page chooser and the text entry are scripted; the tab menu is captured rather than shown',
-                           'tree drops are delivered as drag enter, move and drop events in DragDrop mode (offscreen Qt has no drag loop); a drop onto the dragged row or its descendants, which InternalMove refuses, is not driven']}
+                           'tree drops are delivered as drag enter, move and drop events in DragDrop mode (offscreen Qt has no drag loop); a drop onto the dragged row or its descendants, which InternalMove refuses, is not driven',
+                           'a QTest right-click gives the offscreen tree no customContextMenuRequested, so the tree menu is reached by a synthetic QContextMenuEvent at the click (Qt on Linux sends it on the press)']}
 
     try:
         return c.CallBlockingToQt(gui, drive)

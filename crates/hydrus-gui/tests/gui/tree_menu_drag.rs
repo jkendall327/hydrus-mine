@@ -121,9 +121,22 @@ fn compare(strip: &Strip, recorded: &Json, action: &str, keep_open: bool) {
     );
 }
 
-/// A right-click on a row: the button pressed and let go there.
-fn right_click(strip: &Strip, at: LogicalPosition) {
-    click(&strip.native, at, PointerEventButton::Right);
+/// A right-click on a row: the button pressed and let go there. The menu
+/// opens on the press, as Qt's custom context menu does on Linux; whether
+/// one is open is checked against the recorded step before the release.
+fn right_click(strip: &Strip, recorded: &Json, action: &str, at: LogicalPosition) {
+    press(&strip.native, at, PointerEventButton::Right);
+    settle(&strip.native);
+    let recorded_menu = !step(recorded, action)["menus"]
+        .as_array()
+        .unwrap()
+        .is_empty();
+    assert_eq!(
+        strip.ui.get_menu_panes().row_count() > 0,
+        recorded_menu,
+        "{action}: on the press"
+    );
+    release(&strip.native, at, PointerEventButton::Right);
 }
 
 // leaf: interaction-pages-tree-menu-drag
@@ -137,11 +150,12 @@ fn the_trees_right_click_menu_acts_on_a_rows_notebook_as_the_references_does() {
         ("right click tree row nested", "nested"),
         ("right click tree row inner one", "inner one"),
     ] {
-        right_click(&strip, row(&strip, name));
+        right_click(&strip, &recorded, action, row(&strip, name));
         compare(&strip, &recorded, action, false);
     }
-    right_click(&strip, below_rows(&strip));
-    compare(&strip, &recorded, "right click tree empty space", false);
+    let action = "right click tree empty space";
+    right_click(&strip, &recorded, action, below_rows(&strip));
+    compare(&strip, &recorded, action, false);
 
     // alpha shown: the nested notebook is no longer on the way to it, and
     // its menu's actions act on it without showing it
@@ -153,26 +167,18 @@ fn the_trees_right_click_menu_acts_on_a_rows_notebook_as_the_references_does() {
     settle(&strip.native);
     assert_eq!(strip.state()["shown"], "alpha");
     let action = "right click tree row inner two, alpha shown";
-    right_click(&strip, row(&strip, "inner two"));
+    right_click(&strip, &recorded, action, row(&strip, "inner two"));
     compare(&strip, &recorded, action, true);
     choose(&strip, &["select", "page to the right"]);
     compare(&strip, &recorded, "its select > page to the right", false);
-    right_click(&strip, row(&strip, "inner two"));
-    compare(
-        &strip,
-        &recorded,
-        "right click tree row inner two again",
-        true,
-    );
+    let action = "right click tree row inner two again";
+    right_click(&strip, &recorded, action, row(&strip, "inner two"));
+    compare(&strip, &recorded, action, true);
     choose(&strip, &["move page", "left"]);
     compare(&strip, &recorded, "its move page > left", false);
-    right_click(&strip, row(&strip, "inner one"));
-    compare(
-        &strip,
-        &recorded,
-        "right click tree row inner one, alpha shown",
-        true,
-    );
+    let action = "right click tree row inner one, alpha shown";
+    right_click(&strip, &recorded, action, row(&strip, "inner one"));
+    compare(&strip, &recorded, action, true);
     choose(&strip, &["close page"]);
     compare(&strip, &recorded, "its close page", false);
     // (the notebook kept what its menu chose: shown, it shows inner two)
@@ -194,7 +200,10 @@ fn the_trees_rename_from_its_menu_renames_a_page_in_a_notebook_not_shown() {
         row(&strip, "alpha"),
         PointerEventButton::Left,
     );
-    right_click(&strip, row(&strip, "inner two"));
+    // (the same press as the recorded "inner two, alpha shown" step)
+    let recorded = hydrus_testkit::fixture_json("tab_strip_interactions.json");
+    let action = "right click tree row inner two, alpha shown";
+    right_click(&strip, &recorded, action, row(&strip, "inner two"));
     choose(&strip, &["rename page"]);
     let asked = strip.rename(Some("renamed two"));
     assert_eq!(asked[0]["message"], "Enter the new name.");
@@ -297,7 +306,7 @@ fn dragging_tree_rows_moves_pages_where_the_references_tree_drops_them() {
             "AboveItem",
         ),
         (
-            "drag omega below the last row",
+            "drag omega below inner one",
             "omega",
             Place::Below("inner one"),
             "BelowItem",

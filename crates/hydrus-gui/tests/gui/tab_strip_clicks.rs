@@ -219,6 +219,15 @@ impl Strip {
         LogicalPosition::new(row.x + row.w - 60.0, row.y + row.h / 2.0)
     }
 
+    /// Empty space in the last 40 pixels of the tab row `depth` (where the
+    /// row's scroll arrows go when its tabs overflow, and the row's own
+    /// touch area takes the pointer).
+    fn row_end(&self, depth: usize) -> LogicalPosition {
+        settle(&self.native);
+        let row = self.rects.borrow()[&format!("row {depth}")];
+        LogicalPosition::new(row.x + row.w - 20.0, row.y + row.h / 2.0)
+    }
+
     pub(crate) fn state(&self) -> Json {
         let pages = self.bound.pages.borrow();
         json!({ "pages": tree(&pages.session().pages), "shown": pages.shown().name })
@@ -411,10 +420,20 @@ fn tab_strip_clicks_replay_the_references_notebook_with_real_pointer_events() {
     click(&native, strip.tab("omega"), Left);
     compare(&strip, &recorded, action, None, None);
     assert!(strip.bound.tab_name_dialog.borrow().is_none());
+    // a press elsewhere between two clicks on a tab: no double-click
+    let omega = strip.tab("omega");
+    let top = strip.space(0);
+    click(&native, omega, Left);
+    headless::render(&native, 900, 600);
+    click(&native, top, Left);
+    headless::render(&native, 900, 600);
+    click(&native, omega, Left);
+    settle(&native);
+    assert!(strip.bound.tab_name_dialog.borrow().is_none());
+    compare(&strip, &recorded, action, None, None);
 
     // empty space: one left click does nothing, a double-click or a single
     // middle click opens the chooser
-    let top = strip.space(0);
     click(&native, top, Left);
     compare(
         &strip,
@@ -436,6 +455,16 @@ fn tab_strip_clicks_replay_the_references_notebook_with_real_pointer_events() {
         &strip,
         &recorded,
         "middle click empty space",
+        None,
+        strip.chooser().as_deref(),
+    );
+    // (a middle double-click: the first opens the chooser, which the second
+    // lands on)
+    double_click(&native, top, Middle);
+    compare(
+        &strip,
+        &recorded,
+        "middle double-click empty space",
         None,
         strip.chooser().as_deref(),
     );
@@ -468,6 +497,39 @@ fn tab_strip_clicks_replay_the_references_notebook_with_real_pointer_events() {
         "right click empty space",
         menu(&strip).as_ref(),
         None,
+    );
+    // the same at the row's end, where the row's own touch area is: nothing
+    // on the press, the menu or the chooser when let go
+    let end = strip.row_end(0);
+    press(&native, end, Right);
+    settle(&native);
+    assert_eq!(
+        strip.ui.get_menu_panes().row_count(),
+        0,
+        "no menu on a press"
+    );
+    release(&native, end, Right);
+    compare(
+        &strip,
+        &recorded,
+        "right click empty space",
+        menu(&strip).as_ref(),
+        None,
+    );
+    press(&native, end, Middle);
+    settle(&native);
+    assert_eq!(
+        strip.ui.get_chooser_labels().row_count(),
+        0,
+        "no chooser on a press"
+    );
+    release(&native, end, Middle);
+    compare(
+        &strip,
+        &recorded,
+        "middle click empty space",
+        None,
+        strip.chooser().as_deref(),
     );
 
     // the nested notebook's row: its own menus and chooser

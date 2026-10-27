@@ -3730,7 +3730,8 @@ The experimental hide flag takes effect only while the tree is enabled, matching
 Qt's gate. Its supporting native hierarchy selector lists every existing page on
 the chosen left/right side and selects by stable page key, including remembered
 children of notebooks. The collapsible tree behavior is described below. A
-right-click on a row shows that page's notebook's tab menu for it, whose actions
+right-click on a row (on the press, as Qt's tree on Linux) shows that page's
+notebook's tab menu for it, whose actions
 act on that notebook without showing it (a notebook not on the way to the page
 shown keeps the choice its menu made, as the reference's does); a row dragged
 past Qt's start distance and let go near another row's top edge goes above it,

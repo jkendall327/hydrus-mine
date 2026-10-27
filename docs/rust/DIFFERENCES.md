@@ -2959,7 +2959,8 @@ follow the reference (GUI.md), with these differences: after a drop the tree's
 keyboard cursor goes to the page shown, where Qt's resets its model and restores
 the row it had saved (`tab_strip_interactions.json` records Qt's cursor landing
 on the drop target or a neighbour); the drop indicator is a plain line or box;
-and the drag shows no pixmap, as a Qt drag does. Filters, depth controls, tree
+the drag shows no pixmap, as a Qt drag does; and a drag held near the tree's top
+or bottom edge does not scroll it, as Qt's auto-scroll does. Filters, depth controls, tree
 history, cog options, empty-space page creation and optional
 collapse-all-descendants behavior remain unported. The native sidebar uses a fixed
 190px width, text toolbar buttons and 26px rows rather than Qt's splitter and

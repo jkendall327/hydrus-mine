@@ -173,8 +173,11 @@ component NotebookStrip inherits Rectangle {
                 horizontal-stretch: 1; min-width: 40px;
                 scroll-event(event) => { if event.delta-y != 0px { root.scroll-wheel(event.delta-y > 0px ? -1 : 1); } return accept; }
                 pointer-event(event) => {
-                    if event.kind == PointerEventKind.down && event.button == PointerEventButton.right { root.context-menu(-1,self.absolute-position.x+self.mouse-x,self.absolute-position.y+self.mouse-y); }
-                    if event.kind == PointerEventKind.down && (event.button == PointerEventButton.left || event.button == PointerEventButton.middle) { root.space-pressed(event.button == PointerEventButton.middle); }
+                    // (as the reference's notebook: the menu, and a middle
+                    // click's chooser, when the button is let go)
+                    if event.kind == PointerEventKind.up && event.button == PointerEventButton.right { root.context-menu(-1,self.absolute-position.x+self.mouse-x,self.absolute-position.y+self.mouse-y); }
+                    if event.kind == PointerEventKind.down && event.button == PointerEventButton.left { root.space-pressed(false); }
+                    if event.kind == PointerEventKind.up && event.button == PointerEventButton.middle { root.space-pressed(true); }
                 }
             }
         }
@@ -204,8 +207,11 @@ component NotebookStrip inherits Rectangle {
                 vertical-stretch: 1; min-height: 40px;
                 scroll-event(event) => { if event.delta-y != 0px { root.scroll-wheel(event.delta-y > 0px ? -1 : 1); } return accept; }
                 pointer-event(event) => {
-                    if event.kind == PointerEventKind.down && event.button == PointerEventButton.right { root.context-menu(-1,self.absolute-position.x+self.mouse-x,self.absolute-position.y+self.mouse-y); }
-                    if event.kind == PointerEventKind.down && (event.button == PointerEventButton.left || event.button == PointerEventButton.middle) { root.space-pressed(event.button == PointerEventButton.middle); }
+                    // (as the reference's notebook: the menu, and a middle
+                    // click's chooser, when the button is let go)
+                    if event.kind == PointerEventKind.up && event.button == PointerEventButton.right { root.context-menu(-1,self.absolute-position.x+self.mouse-x,self.absolute-position.y+self.mouse-y); }
+                    if event.kind == PointerEventKind.down && event.button == PointerEventButton.left { root.space-pressed(false); }
+                    if event.kind == PointerEventKind.up && event.button == PointerEventButton.middle { root.space-pressed(true); }
                 }
             }
         }
@@ -305,7 +311,7 @@ export component NotebookTree inherits Rectangle {
     callback selected(string);
     callback toggled(string);
     callback navigate(int);
-    // a row's right-click (the button let go there): its page's menu
+    // a row's right-click (on the press, as Qt's on Linux): its page's menu
     callback context-menu(string,length,length);
     // a dragged row let go: its key, how far down the rows (from the first
     // row's top) and whether over the rows' area at all
@@ -366,8 +372,9 @@ export component NotebookTree inherits Rectangle {
                     clicked => { keys.focus(); root.selected(row.key); }
                     double-clicked => { keys.focus(); root.selected(row.key); if row.branch { root.toggled(row.key); } root.chosen(row.key); }
                     pointer-event(event) => {
-                        if event.button == PointerEventButton.right && event.kind == PointerEventKind.down { keys.focus(); root.selected(row.key); }
-                        if event.button == PointerEventButton.right && event.kind == PointerEventKind.up {
+                        // (Qt's custom context menu on Linux: on the press)
+                        if event.button == PointerEventButton.right && event.kind == PointerEventKind.down {
+                            keys.focus(); root.selected(row.key);
                             root.context-menu(row.key,self.absolute-position.x + self.mouse-x,self.absolute-position.y + self.mouse-y);
                         }
                         if event.button == PointerEventButton.left && event.kind == PointerEventKind.down {
