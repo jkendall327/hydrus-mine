@@ -139,7 +139,7 @@ export component ListKeys inherits FocusScope {
             }
             return accept;
         }
-        if (ctrl && (event.text == "a" || event.text == "A")) {
+        if (ctrl && !shift && (event.text == "a" || event.text == "A")) {
             root.row-clicked(root.select-all-row, false, false);
             return accept;
         }
@@ -197,6 +197,9 @@ export component ListTable inherits Rectangle {
     callback copy-pressed() -> bool;
     // the current row, which the keys move from (see `ListKeys`)
     in-out property <int> current-row <=> keys.current-row;
+    // whether the list takes the keys at all (not where a click is no
+    // selection, such as a list whose click toggles the row)
+    in property <bool> keys-enabled: true;
     // (a middle press on a row: the row, ctrl held, shift held)
     callback row-middle(int, bool, bool);
     // presses below the rows count too, as on a row past the last (the
@@ -218,6 +221,7 @@ export component ListTable inherits Rectangle {
 
     // (the keyboard, once a row is clicked)
     keys := ListKeys {
+        enabled: root.keys-enabled;
         count: root.rows.length;
         row-height: root.row-height;
         visible-height: scroll.visible-height;

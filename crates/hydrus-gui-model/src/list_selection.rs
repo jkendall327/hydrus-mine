@@ -15,12 +15,31 @@
 /// A "row" the shared list (`ui/list_table.slint`) clicks for Ctrl+A: the
 /// whole list selected, the anchor kept (as Qt's `selectAll`, recorded in
 /// `oracle/fixtures/list_keys.json`). No list is this long.
+///
+/// The shared list sends this, and [`MOVE_ANCHOR`]'s rows, to every
+/// window's `row-clicked` handler. A handler must select through
+/// [`ListSelection::click`] (which reads them), or ignore them with
+/// [`is_key`]. Those that ignore them: the shortcut sets list, the tag
+/// display sources, the login script's test results, the manage-tags
+/// suggestion lists (`tag_suggestions::TagSuggestions::click`), and the
+/// single-selection database locations; a handler that only bounds-checks
+/// the row (`row < len`) ignores them too. The "select the defaults to add"
+/// list, whose click toggles a row, has no keys (`keys-enabled: false`).
 pub const SELECT_ALL: usize = 2_147_483_647;
 
 /// Rows from here are the shared list's ctrl+arrow keys: the anchor moved
 /// to the row `row - MOVE_ANCHOR`, nothing selected or unselected (Qt moves
-/// its current row there, and a shift range then starts from it).
+/// its current row there, and a shift range then starts from it). See
+/// [`SELECT_ALL`] for who must read them.
 pub const MOVE_ANCHOR: usize = 1_073_741_824;
+
+/// Whether a row the shared list sent is one of its keys ([`SELECT_ALL`],
+/// [`MOVE_ANCHOR`] and up) rather than a row: what a `row-clicked` handler
+/// that does not select through [`ListSelection::click`] ignores.
+#[must_use]
+pub fn is_key(row: i32) -> bool {
+    usize::try_from(row).is_ok_and(|row| row >= MOVE_ANCHOR)
+}
 
 /// The items selected, and the anchor.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -259,6 +278,11 @@ mod tests {
         s.click(&ORDER, 4, false, true);
         assert_eq!(s.in_order(&ORDER), [40, 50]);
         // (past the end of the list: nothing)
+        assert!(
+            is_key(i32::try_from(SELECT_ALL).unwrap())
+                && is_key(i32::try_from(MOVE_ANCHOR).unwrap())
+        );
+        assert!(!is_key(4) && !is_key(-1));
         s.click(&ORDER, MOVE_ANCHOR + 9, false, false);
         s.click(&ORDER, 2, false, true);
         assert_eq!(s.in_order(&ORDER), [30, 40]);

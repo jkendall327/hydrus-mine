@@ -556,3 +556,42 @@ fn enter_activates_and_ctrl_c_copies_the_file_log_s_selection_as_the_reference()
         widgets::settle();
     }
 }
+
+// --- lists that do not select through `ListSelection` ------------------
+
+#[test]
+fn ctrl_a_and_ctrl_arrows_leave_a_one_row_list_alone() {
+    // the shortcut set editor keeps the one row clicked (as the window's
+    // own index, not a `ListSelection`): the shared list's Ctrl+A and
+    // ctrl+arrows are not rows to it, and OK still applies the set
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(hydrus_gui::SearchPage::new(store)));
+    let parent = crate::options_shortcut_sets::options(&ui, &bound);
+    parent.invoke_shortcut_set_action("add".into());
+    let set = hydrus_gui::shortcut_windows::last_set().unwrap();
+    crate::options_shortcut_sets::add_key(&set, "q");
+    crate::options_shortcut_sets::add_key(&set, "w");
+    let win = set.window();
+    win.set_size(slint::LogicalSize::new(900.0, 600.0));
+    widgets::settle();
+    let first = set
+        .get_rows()
+        .row_data(0)
+        .unwrap()
+        .cells
+        .row_data(0)
+        .unwrap();
+    click(win, widgets::position(win, &first, 0), false, false);
+    assert_eq!(set.get_selected(), 0);
+    key(win, "a".into(), true, false);
+    key(win, Key::DownArrow.into(), true, false);
+    assert_eq!(set.get_selected(), 0, "Ctrl+A and Ctrl+Down are not rows");
+    // (Ctrl+Down made the second row current; Space selects it)
+    key(win, " ".into(), false, false);
+    assert_eq!(set.get_selected(), 1);
+    widgets::click(win, "ok");
+    assert_eq!(parent.get_shortcut_custom_rows().row_count(), 1);
+}

@@ -271,6 +271,11 @@ pub(crate) fn open(
     window.on_clicked({
         let (state, refresh) = (state.clone(), refresh.clone());
         move |row, control, shift| {
+            // (one at a time: the shared list's Ctrl+A and ctrl+arrows mean
+            // nothing here)
+            if crate::list_selection::is_key(row) {
+                return;
+            }
             if let Ok(row) = usize::try_from(row) {
                 let mut s = state.borrow_mut();
                 let order = s.order();

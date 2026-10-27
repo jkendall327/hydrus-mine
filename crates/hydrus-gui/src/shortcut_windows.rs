@@ -488,7 +488,11 @@ fn open_set(
         let parent_live = parent_live.clone();
         let slots = slots.clone();
         move |row| {
-            if !live.get() || !parent_live.get() || slots.command.borrow().is_some() {
+            if !live.get()
+                || !parent_live.get()
+                || slots.command.borrow().is_some()
+                || crate::list_selection::is_key(row)
+            {
                 return;
             }
             if let Some(window) = weak.upgrade() {

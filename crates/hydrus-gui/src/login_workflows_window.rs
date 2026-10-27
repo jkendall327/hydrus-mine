@@ -521,7 +521,10 @@ pub fn open_script(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if window.get_child_open() || !window.get_question().is_empty() {
+            if window.get_child_open()
+                || !window.get_question().is_empty()
+                || crate::list_selection::is_key(index)
+            {
                 return;
             }
             let index = usize::try_from(index)

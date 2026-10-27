@@ -218,5 +218,5 @@ export component ExternalDefaultsWindow inherits Window {
     in property <[TableRow]> rows;
     callback toggled(int);
     callback apply();callback cancel();
-    VerticalLayout {padding:12px;spacing:8px;ListTable{rows:root.rows;columns:[{title:"defaults",width:500px,stretch:true}];row-clicked(i,c,s)=>{root.toggled(i);}row-activated(i)=>{root.toggled(i);}}HorizontalLayout{alignment:end;Button{text:"apply";clicked=>{root.apply();}}Button{text:"cancel";clicked=>{root.cancel();}}}}
+    VerticalLayout {padding:12px;spacing:8px;ListTable{rows:root.rows;columns:[{title:"defaults",width:500px,stretch:true}];keys-enabled:false;row-clicked(i,c,s)=>{root.toggled(i);}row-activated(i)=>{root.toggled(i);}}HorizontalLayout{alignment:end;Button{text:"apply";clicked=>{root.apply();}}Button{text:"cancel";clicked=>{root.cancel();}}}}
 }

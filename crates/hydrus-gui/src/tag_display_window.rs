@@ -370,7 +370,7 @@ pub(crate) fn open(
         let selected = selected.clone();
         let refresh = refresh.clone();
         move |parents, i| {
-            if !can_edit() {
+            if !can_edit() || crate::list_selection::is_key(i) {
                 return;
             }
             selected[usize::from(parents)].set(usize::try_from(i).unwrap_or(usize::MAX));

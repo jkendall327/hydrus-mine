@@ -909,7 +909,7 @@ fn the_dialogs_save_edit_and_delete_searches() {
     // (rows are clicked where they are drawn; ctrl adds the other to the
     // selection, as a ctrl+click does in the reference's list)
     crate::common::widgets::lay_out(manage.window(), 900.0, 600.0);
-    crate::common::widgets::click(manage.window(), " inbox filter");
+    crate::common::widgets::click(manage.window(), "inbox filter");
     assert_eq!(
         manage
             .get_rows()
@@ -920,7 +920,7 @@ fn the_dialogs_save_edit_and_delete_searches() {
     );
     crate::common::widgets::click_with(
         manage.window(),
-        " new favourite search",
+        "new favourite search",
         crate::common::widgets::Mods::CTRL,
     );
     assert_eq!(
@@ -932,7 +932,7 @@ fn the_dialogs_save_edit_and_delete_searches() {
         [true, true],
         "ctrl+click adds a row"
     );
-    crate::common::widgets::click(manage.window(), " inbox filter");
+    crate::common::widgets::click(manage.window(), "inbox filter");
     manage.invoke_delete();
     assert_eq!(manage.get_question(), "Remove all selected?");
     manage.invoke_answered(false);
@@ -949,10 +949,9 @@ fn the_dialogs_save_edit_and_delete_searches() {
     ui.invoke_favourites_menu_requested(10.0, 100.0);
     ui.invoke_menu_line_clicked(0, 0, 0.0, 0.0, 0.0);
     let manage = list();
-    // (the row's double click opens its editor, but a real double click on
-    // these hand-rolled rows does nothing yet, so the callback is invoked:
-    // issue #295)
-    manage.invoke_row_activated(1);
+    // (a row's double click opens its editor)
+    crate::common::widgets::lay_out(manage.window(), 900.0, 600.0);
+    crate::common::widgets::double_click(manage.window(), "new favourite search");
     let window = edit();
     assert_eq!(window.get_name(), "new favourite search");
     window.set_folder("example search".into());
