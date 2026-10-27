@@ -103,6 +103,7 @@ def record( session ):
 
 
     c.new_options.SetStringList( 'favourite_tags', [] )
+    c.new_options.SetSuggestedTagsMostUsed( service, [] )
     c.new_options.SetBoolean( 'advanced_mode', False )
 
     location = ClientLocation.LocationContext.STATICCreateSimple( CC.LOCAL_FILE_SERVICE_KEY )
@@ -539,7 +540,7 @@ def record( session ):
         click( 'series:spaced name', mods = CTRL ); step( 'ctrl click series:spaced name takes it away' )
         click( 'zeta:last', mods = SHIFT ); step( 'shift click zeta:last' )
         click( 'alpha:first', mods = CTRL | SHIFT ); step( 'ctrl shift click alpha:first' )
-        click( 'zeta:last' ); step( 'plain click on a selected row keeps the selection' )
+        click( 'zeta:last' ); step( 'plain click on zeta:last, not selected, selects only it' )
         click( 'plain tag' ); step( 'plain click on an unselected row selects only it' )
         click( 'box:anchor', button = QC.Qt.MouseButton.RightButton ); step( 'right press on an unselected row selects only it' )
         click( 'plain tag', mods = CTRL ); click( 'plain tag', button = QC.Qt.MouseButton.RightButton ); step( 'right press on a selected row keeps the selection' )
@@ -786,6 +787,8 @@ def record( session ):
             ( [ 'new:sibling' ], [ '1 siblings', 'old:sibling' ] ),
             ( [ 'plain tag' ], [ 'favourites', 'add "plain tag" to favourites' ] ),
             ( [ 'plain tag' ], [ 'favourites', 'remove "plain tag" from favourites' ] ),
+            ( [ 'plain tag' ], [ 'favourites', 'add "plain tag" to most used for "my tags"' ] ),
+            ( [ 'plain tag' ], [ 'favourites', 'remove "plain tag" from most used for "my tags"' ] ),
             ( [ 'plain tag', 'solo' ], [ 'maintenance', 'regenerate tag display' ] )
         ]:
 
@@ -814,7 +817,8 @@ def record( session ):
                 'dialogs' : list( dialogs ),
                 'writes' : list( writes ),
                 'copied' : copied[ n: ],
-                'favourite_tags' : list( c.new_options.GetStringList( 'favourite_tags' ) )
+                'favourite_tags' : list( c.new_options.GetStringList( 'favourite_tags' ) ),
+                'most_used' : list( c.new_options.GetSuggestedTagsMostUsed( service ) )
             } )
 
 

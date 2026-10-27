@@ -58,6 +58,7 @@ pub(crate) fn bind(
     owner: &Rc<dyn Fn() -> bool>,
     deletion: crate::delete_files_window::Slot,
     launch: Launch,
+    relationships: Rc<RefCell<Option<crate::TagRelationshipsWindow>>>,
 ) {
     // whether the hover may act: the viewer live and nothing it owns asking
     let valid: Rc<dyn Fn(&MediaViewerWindow) -> bool> = Rc::new({
@@ -70,6 +71,9 @@ pub(crate) fn bind(
                 && window.get_question().is_empty()
                 && window.get_warning().is_empty()
                 && !window.get_period_asked()
+                // (with its tag menu or question open, keys go to them)
+                && window.get_tag_menu_panes().row_count() == 0
+                && window.get_tag_menu_question().is_empty()
         }
     });
     // a press on the file the hover shows (not one gone since)
@@ -82,7 +86,7 @@ pub(crate) fn bind(
         }
     });
     // the hover's own tag menu, as the main window's
-    let menu = crate::write_tag_menu::TagMenu::new(
+    let menu = crate::write_tag_menu::TagMenu::new_in(
         model.borrow().store().clone(),
         Rc::new({
             let tracker = tracker.clone();
@@ -107,6 +111,7 @@ pub(crate) fn bind(
             }
         }),
         Rc::new(|error: &str| eprintln!("{error}")),
+        relationships,
     );
     crate::write_tag_menu::bind!(window, menu);
     // what the list's own menu entries do, for the tags selected as it opened

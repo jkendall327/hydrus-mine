@@ -358,7 +358,7 @@ fn clicks_select_rows_as_the_references_hit_rules_do() {
     h.click(Some("alpha:first"), CTRL_SHIFT);
     h.step("ctrl shift click alpha:first");
     h.click(Some("zeta:last"), NONE);
-    h.step("plain click on a selected row keeps the selection");
+    h.step("plain click on zeta:last, not selected, selects only it");
     h.click(Some("plain tag"), NONE);
     h.step("plain click on an unselected row selects only it");
     h.press(Some("box:anchor"), RIGHT, NONE);
@@ -783,11 +783,20 @@ fn the_menus_select_entries_select_the_references_files() {
     h.finish();
 }
 
-// leaf: selection-tags-menu-siblings-parents
-// leaf: selection-tags-menu-favourites-maintenance
-#[test]
-fn the_menus_shared_tag_entries_act_as_the_references_do() {
-    let h = Harness::new(1600.0);
+/// How a test reaches a tag list's menu: open it for tags, choose an entry,
+/// answer its question (as the recorder writes it), and the siblings or
+/// parents dialog it opened.
+pub(crate) struct MenuDriver<'a> {
+    pub open: &'a dyn Fn(&[String]),
+    pub choose: &'a dyn Fn(&[&str]),
+    pub answer: &'a dyn Fn() -> Json,
+    pub dialog: &'a dyn Fn() -> Option<hydrus_gui::TagRelationshipsWindow>,
+}
+
+/// Choose each recorded entry the tag lists share (siblings and parents,
+/// favourites and most used, regenerate tag display) and compare what it
+/// did with the recording.
+pub(crate) fn replay_shared_entries(h: &Harness, triggers: &Json, menu: &MenuDriver<'_>) {
     let favourites = || -> Json {
         json!(
             h.store
@@ -796,10 +805,21 @@ fn the_menus_shared_tag_entries_act_as_the_references_do() {
                 .0
         )
     };
+    let snapshot = h.store.snapshot();
+    let my_tags = snapshot.services.by_name("my tags").unwrap();
+    let most_used = || -> Json {
+        let tabs: hydrus_store::settings::TagAutocompleteTabs =
+            h.store.read(hydrus_store::settings::get).unwrap();
+        json!(
+            tabs.most_used
+                .get(&my_tags.key.to_hex())
+                .cloned()
+                .unwrap_or_default()
+        )
+    };
     // a tag's stored count in all files, and setting it wrong, to see which
     // tags "regenerate tag display" repairs
-    let snapshot = h.store.snapshot();
-    let my_tags = snapshot.services.by_name("my tags").unwrap().id;
+    let my_tags = my_tags.id;
     let all_files = snapshot
         .services
         .of_type(hydrus_core::ServiceType::CombinedFile)
@@ -835,7 +855,7 @@ fn the_menus_shared_tag_entries_act_as_the_references_do() {
             })
             .unwrap();
     };
-    for trigger in h.fixture["triggers"].as_array().unwrap() {
+    for trigger in triggers.as_array().unwrap() {
         let tags = strings(&trigger["selected"]);
         let path = strings(&trigger["path"]);
         let path: Vec<&str> = path.iter().map(String::as_str).collect();
@@ -858,11 +878,11 @@ fn the_menus_shared_tag_entries_act_as_the_references_do() {
             }
         }
         let n = h.copies.borrow().len();
-        h.open_menu(Some(&tags));
-        h.choose(&path);
+        (menu.open)(&tags);
+        (menu.choose)(&path);
         h.differ(
             &format!("{what} questions"),
-            &h.answer(),
+            &(menu.answer)(),
             &trigger["questions"],
         );
         for (tag, real) in &regenerated {
@@ -871,12 +891,7 @@ fn the_menus_shared_tag_entries_act_as_the_references_do() {
         if !regenerated.is_empty() {
             assert_eq!(count(untouched), 77, "{what}: {untouched} regenerated");
         }
-        let dialog = h
-            .bound
-            .tag_menu_relationships
-            .borrow()
-            .as_ref()
-            .map(slint::ComponentHandle::clone_strong);
+        let dialog = (menu.dialog)();
         let dialogs = match &dialog {
             Some(child) => {
                 let title = child.get_composed_title();
@@ -908,7 +923,35 @@ fn the_menus_shared_tag_entries_act_as_the_references_do() {
             &favourites(),
             &trigger["favourite_tags"],
         );
+        h.differ(
+            &format!("{what} most used"),
+            &most_used(),
+            &trigger["most_used"],
+        );
     }
+}
+
+// leaf: selection-tags-menu-siblings-parents
+// leaf: selection-tags-menu-favourites-maintenance
+#[test]
+fn the_menus_shared_tag_entries_act_as_the_references_do() {
+    let h = Harness::new(1600.0);
+    replay_shared_entries(
+        &h,
+        &h.fixture["triggers"],
+        &MenuDriver {
+            open: &|tags| h.open_menu(Some(tags)),
+            choose: &|path| h.choose(path),
+            answer: &|| h.answer(),
+            dialog: &|| {
+                h.bound
+                    .tag_menu_relationships
+                    .borrow()
+                    .as_ref()
+                    .map(slint::ComponentHandle::clone_strong)
+            },
+        },
+    );
     h.finish();
 }
 

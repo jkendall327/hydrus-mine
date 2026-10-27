@@ -244,7 +244,6 @@ impl MediaViewer {
         still(&self.store, self.current())
     }
 
-    /// The tag display mode captured when this viewer's list opened.
     /// The tags hover's selection (kept apart, as the window shows it while
     /// the viewer is borrowed).
     pub fn tag_selection(
@@ -259,6 +258,7 @@ impl MediaViewer {
         self.tag_display_type = display;
     }
 
+    /// The tag display mode captured when this viewer's list opened.
     pub fn tag_display_type(&self) -> hydrus_core::tag_presentation::TagDisplayType {
         self.tag_display_type
     }

@@ -490,6 +490,8 @@ pub struct Bound {
     _autocomplete_tabs: Rc<slint::Timer>,
     /// The siblings or parents editor the main window's tag menus open.
     pub tag_menu_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
+    /// The siblings and parents dialog the viewer's tags hover menu opened.
+    pub viewer_tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
     /// Files dropped on the main window: the "review files to import"
     /// window with them (they join its list if it is open).
     pub drop_files: Rc<dyn Fn(Vec<String>)>,
@@ -1102,6 +1104,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     write_tag_menu::install_search_launcher(tag_search_launcher.clone());
+    // the dialog the viewer's tags hover menu opens (siblings, parents)
+    let viewer_tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>> = Rc::default();
     let viewer_tag_search: viewer_tag_search::Launch = Rc::new({
         let weak = window.as_weak();
         let active = binding_active.clone();
@@ -4479,6 +4483,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     *duplicates.open_viewer.borrow_mut() = Some(Rc::new({
         let image_cache = image_cache.handle();
         let tag_search = viewer_tag_search.clone();
+        let viewer_tag_relationships = viewer_tag_relationships.clone();
         let weak_main = window.as_weak();
         let reveal_viewer_exit = reveal_viewer_exit.clone();
         let page = page.clone();
@@ -4507,6 +4512,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             *viewing.borrow_mut() = Some((hydrus_core::pages::PageKey::random().0, None));
             let hooks = ViewerHooks {
                 tag_search: tag_search.clone(),
+                tag_relationships: viewer_tag_relationships.clone(),
                 deletion: viewer_deletion.clone(),
                 closing_owner: viewer_closing::Owner::new(
                     None,
@@ -4546,6 +4552,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     window.on_thumbnail_activated({
         let image_cache = image_cache.handle();
         let tag_search = viewer_tag_search.clone();
+        let viewer_tag_relationships = viewer_tag_relationships.clone();
         let weak_main = window.as_weak();
         let origin_pages = pages.clone();
         let reveal_viewer_exit = reveal_viewer_exit.clone();
@@ -4592,6 +4599,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             *viewing.borrow_mut() = Some((hydrus_core::pages::PageKey::random().0, None));
             let hooks = ViewerHooks {
                 tag_search: tag_search.clone(),
+                tag_relationships: viewer_tag_relationships.clone(),
                 deletion: viewer_deletion.clone(),
                 closing_owner,
                 viewing: viewing.clone(),
@@ -5636,6 +5644,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         favourites: favourite_dialogs,
         _autocomplete_tabs: autocomplete_tabs,
         tag_menu_relationships: tag_menu.relationships.clone(),
+        viewer_tag_relationships,
         predicate_editor,
         _predicate_editor_owner: predicate_editor_owner,
         search_or,
@@ -6632,6 +6641,8 @@ type OpenOnFiles = Rc<dyn Fn(Arc<hydrus_store::Store>, Vec<HashId>, Rc<dyn Fn()>
 /// notes.
 struct ViewerHooks {
     tag_search: viewer_tag_search::Launch,
+    /// Where the tags hover's menu opens its siblings and parents dialog.
+    tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
     deletion: delete_files_window::Slot,
     closing_owner: Rc<viewer_closing::Owner>,
     /// The viewer and the file it shows, for the Client API.
@@ -6689,6 +6700,7 @@ fn open_viewer(
 
     let ViewerHooks {
         tag_search,
+        tag_relationships,
         deletion: viewer_delete,
         closing_owner,
         viewing,
@@ -6769,6 +6781,7 @@ fn open_viewer(
         &owner_valid,
         viewer_delete.clone(),
         tag_search,
+        tag_relationships,
     );
     gui_colours::bind(
         window.global::<Theme<'_>>(),

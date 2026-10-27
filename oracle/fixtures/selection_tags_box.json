@@ -176,7 +176,7 @@
    ]
   },
   {
-   "step": "plain click on a selected row keeps the selection",
+   "step": "plain click on zeta:last, not selected, selects only it",
    "selected": [
     "zeta:last"
    ]
@@ -1596,18 +1596,18 @@
        "topic": "new_page_query",
        "location": "my files",
        "predicates": [
-        "alpha:second"
+        "alpha:first"
        ],
-       "page_name": "alpha:second",
+       "page_name": "alpha:first",
        "activate_window": false
       },
       {
        "topic": "new_page_query",
        "location": "my files",
        "predicates": [
-        "alpha:first"
+        "alpha:second"
        ],
-       "page_name": "alpha:first",
+       "page_name": "alpha:second",
        "activate_window": false
       }
      ]
@@ -1793,18 +1793,18 @@
        "topic": "new_page_query",
        "location": "my files",
        "predicates": [
-        "series:spaced name"
+        "alpha:first"
        ],
-       "page_name": "series:spaced name",
+       "page_name": "alpha:first",
        "activate_window": false
       },
       {
        "topic": "new_page_query",
        "location": "my files",
        "predicates": [
-        "alpha:first"
+        "series:spaced name"
        ],
-       "page_name": "alpha:first",
+       "page_name": "series:spaced name",
        "activate_window": false
       }
      ]
@@ -2375,18 +2375,27 @@
        "topic": "new_page_query",
        "location": "my files",
        "predicates": [
-        "plain tag"
+        "safe"
        ],
-       "page_name": "plain tag",
+       "page_name": "safe",
        "activate_window": false
       },
       {
        "topic": "new_page_query",
        "location": "my files",
        "predicates": [
-        "alpha:first"
+        "page:3"
        ],
-       "page_name": "alpha:first",
+       "page_name": "page:3",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "group:alpha"
+       ],
+       "page_name": "group:alpha",
        "activate_window": false
       },
       {
@@ -2402,6 +2411,24 @@
        "topic": "new_page_query",
        "location": "my files",
        "predicates": [
+        "filename:audio"
+       ],
+       "page_name": "filename:audio",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "page:10"
+       ],
+       "page_name": "page:10",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
         "blue eyes"
        ],
        "page_name": "blue eyes",
@@ -2411,9 +2438,45 @@
        "topic": "new_page_query",
        "location": "my files",
        "predicates": [
-        "zeta:last"
+        "alpha:second"
        ],
-       "page_name": "zeta:last",
+       "page_name": "alpha:second",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "volume:3"
+       ],
+       "page_name": "volume:3",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "source:fixture"
+       ],
+       "page_name": "source:fixture",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "box:anchor"
+       ],
+       "page_name": "box:anchor",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "alpha:first"
+       ],
+       "page_name": "alpha:first",
        "activate_window": false
       },
       {
@@ -2438,99 +2501,18 @@
        "topic": "new_page_query",
        "location": "my files",
        "predicates": [
-        "volume:3"
-       ],
-       "page_name": "volume:3",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "page:3"
-       ],
-       "page_name": "page:3",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "box:anchor"
-       ],
-       "page_name": "box:anchor",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "filename:audio"
-       ],
-       "page_name": "filename:audio",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "safe"
-       ],
-       "page_name": "safe",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "solo"
-       ],
-       "page_name": "solo",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "alpha:second"
-       ],
-       "page_name": "alpha:second",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "group:alpha"
-       ],
-       "page_name": "group:alpha",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "source:fixture"
-       ],
-       "page_name": "source:fixture",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
-        "creator:anonymous artist"
-       ],
-       "page_name": "creator:anonymous artist",
-       "activate_window": false
-      },
-      {
-       "topic": "new_page_query",
-       "location": "my files",
-       "predicates": [
         "new:sibling"
        ],
        "page_name": "new:sibling",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "plain tag"
+       ],
+       "page_name": "plain tag",
        "activate_window": false
       },
       {
@@ -2546,9 +2528,27 @@
        "topic": "new_page_query",
        "location": "my files",
        "predicates": [
-        "page:10"
+        "creator:anonymous artist"
        ],
-       "page_name": "page:10",
+       "page_name": "creator:anonymous artist",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "solo"
+       ],
+       "page_name": "solo",
+       "activate_window": false
+      },
+      {
+       "topic": "new_page_query",
+       "location": "my files",
+       "predicates": [
+        "zeta:last"
+       ],
+       "page_name": "zeta:last",
        "activate_window": false
       }
      ]
@@ -3963,7 +3963,8 @@
    ],
    "writes": [],
    "copied": [],
-   "favourite_tags": []
+   "favourite_tags": [],
+   "most_used": []
   },
   {
    "selected": [
@@ -3985,7 +3986,8 @@
    ],
    "writes": [],
    "copied": [],
-   "favourite_tags": []
+   "favourite_tags": [],
+   "most_used": []
   },
   {
    "selected": [
@@ -4009,7 +4011,8 @@
    ],
    "writes": [],
    "copied": [],
-   "favourite_tags": []
+   "favourite_tags": [],
+   "most_used": []
   },
   {
    "selected": [
@@ -4033,7 +4036,8 @@
    ],
    "writes": [],
    "copied": [],
-   "favourite_tags": []
+   "favourite_tags": [],
+   "most_used": []
   },
   {
    "selected": [
@@ -4050,7 +4054,8 @@
    "copied": [
     "old:sibling"
    ],
-   "favourite_tags": []
+   "favourite_tags": [],
+   "most_used": []
   },
   {
    "selected": [
@@ -4067,7 +4072,8 @@
    "copied": [],
    "favourite_tags": [
     "plain tag"
-   ]
+   ],
+   "most_used": []
   },
   {
    "selected": [
@@ -4089,7 +4095,49 @@
    "dialogs": [],
    "writes": [],
    "copied": [],
-   "favourite_tags": []
+   "favourite_tags": [],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "plain tag"
+   ],
+   "path": [
+    "favourites",
+    "add \"plain tag\" to most used for \"my tags\""
+   ],
+   "found": true,
+   "questions": [],
+   "dialogs": [],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": [
+    "plain tag"
+   ]
+  },
+  {
+   "selected": [
+    "plain tag"
+   ],
+   "path": [
+    "favourites",
+    "remove \"plain tag\" from most used for \"my tags\""
+   ],
+   "found": true,
+   "questions": [
+    {
+     "message": "Remove \"plain tag\" from the most used list for \"my tags\"?",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "dialogs": [],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": []
   },
   {
    "selected": [
@@ -4120,7 +4168,8 @@
     }
    ],
    "copied": [],
-   "favourite_tags": []
+   "favourite_tags": [],
+   "most_used": []
   }
  ],
  "hides": [

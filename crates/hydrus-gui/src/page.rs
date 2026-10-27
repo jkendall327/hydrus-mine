@@ -3018,27 +3018,24 @@ impl SearchPage {
             .ok()
             .filter(|s| s.service_type() != hydrus_core::ServiceType::CombinedTag)
             .map(|s| s.id);
-        let Ok(ids) = self.store.read(|conn| {
-            let mut ids = Vec::new();
-            for tag in tags {
-                if let Some(tag) = hydrus_core::Tag::new(tag)
-                    && let Some(id) = hydrus_store::master::tag_id(conn, &tag)?
-                {
-                    ids.push(id);
+        let files = self.files();
+        // (one read for every file: a file's tags as its list counts them)
+        self.store
+            .read(|conn| {
+                let mut ids = Vec::new();
+                for tag in tags {
+                    if let Some(tag) = hydrus_core::Tag::new(tag)
+                        && let Some(id) = hydrus_store::master::tag_id(conn, &tag)?
+                    {
+                        ids.push(id);
+                    }
                 }
-            }
-            Ok(ids)
-        }) else {
-            return Vec::new();
-        };
-        if ids.len() < tags.len() && all {
-            return Vec::new();
-        }
-        self.files()
-            .into_iter()
-            .filter(|&file| {
-                let counts = self.store.read(|conn| {
-                    hydrus_store::media::tag_counts_for_display(
+                if ids.is_empty() || (all && ids.len() < tags.len()) {
+                    return Ok(Vec::new());
+                }
+                let mut with = Vec::new();
+                for &file in &files {
+                    let counts = hydrus_store::media::tag_counts_for_display(
                         conn,
                         &snapshot.services,
                         &snapshot.display,
@@ -3046,17 +3043,16 @@ impl SearchPage {
                         &[file],
                         &hydrus_store::tag_display::TagHider::default(),
                         false,
-                    )
-                });
-                let Ok(counts) = counts else { return false };
-                let has = |id| counts.current.contains_key(id) || counts.pending.contains_key(id);
-                if all {
-                    ids.iter().all(has)
-                } else {
-                    ids.iter().any(has)
+                    )?;
+                    let has =
+                        |id| counts.current.contains_key(id) || counts.pending.contains_key(id);
+                    if (all && ids.iter().all(has)) || (!all && ids.iter().any(has)) {
+                        with.push(file);
+                    }
                 }
+                Ok(with)
             })
-            .collect()
+            .unwrap_or_default()
     }
 
     /// Show the tag list's tags as another display type does (its menu's
@@ -3064,17 +3060,6 @@ impl SearchPage {
     pub fn set_tag_display_type(&mut self, display: hydrus_core::tag_presentation::TagDisplayType) {
         self.tag_display_type = display;
         self.count_tags();
-    }
-
-    /// A tag in the list was activated: search for it too.
-    pub fn activate_tag(&mut self, index: usize) -> bool {
-        match self.tags.get(index) {
-            Some((tag, _)) => {
-                let tag = tag.clone();
-                self.add_predicate(&tag)
-            }
-            None => false,
-        }
     }
 
     /// Count the tags for the list, as the reference's selection tags box

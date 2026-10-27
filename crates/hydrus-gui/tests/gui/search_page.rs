@@ -78,7 +78,7 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     assert!(selected.iter().all(|r| r.ends_with(" (1)")), "{selected:?}");
     // double-clicking a tag searches for it, in place of system:everything
     // (which goes as anything else comes, as the reference's does)
-    assert!(page.activate_tag(0));
+    assert!(double_click_tag(&mut page, 0));
     assert_eq!(page.predicates().len(), 1);
     assert!(page.results().len() < everything);
     page.remove_predicate(0);
@@ -592,12 +592,24 @@ fn tags_are_shown_as_the_user_has_them_shown() {
     assert_eq!(hidden.len(), rows.len() - characters);
     // a tag in the list still searches as itself
     let index = hidden.iter().position(|r| r == series).unwrap();
-    assert!(page.activate_tag(index));
+    assert!(double_click_tag(&mut page, index));
     assert_eq!(
         page.predicates(),
         [series.rsplit_once(" (").unwrap().0],
         "shown without its namespace"
     );
+}
+
+/// What a double-click on the tag list's row `index` does to the page (the
+/// box's own presses are tested through the window in `selection_tags_box`).
+fn double_click_tag(page: &mut SearchPage, index: usize) -> bool {
+    page.tag_selection_mut().press(Some(index), false, false);
+    let predicates = page.tag_selection().activation(false, false);
+    page.enter_from_tag_list(&[hydrus_gui_model::selection_tags::Entered {
+        predicates,
+        add: true,
+        remove: true,
+    }])
 }
 
 #[test]

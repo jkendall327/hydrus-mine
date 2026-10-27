@@ -74,7 +74,7 @@
    ]
   },
   {
-   "step": "right press on an unselected row selects only it",
+   "step": "right press on a selected row keeps the selection",
    "selected": [
     "plain tag",
     "safe",
@@ -617,6 +617,236 @@
     }
    ],
    "launches": []
+  }
+ ],
+ "triggers": [
+  {
+   "selected": [
+    "alpha:first"
+   ],
+   "path": [
+    "1 parents, 0 children",
+    "add parents to alpha:first"
+   ],
+   "found": true,
+   "questions": [],
+   "dialogs": [
+    {
+     "title": "manage tag parents",
+     "tags": [
+      "alpha:first"
+     ]
+    }
+   ],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "alpha:first"
+   ],
+   "path": [
+    "no siblings",
+    "add siblings to alpha:first"
+   ],
+   "found": true,
+   "questions": [],
+   "dialogs": [
+    {
+     "title": "manage tag siblings",
+     "tags": [
+      "alpha:first"
+     ]
+    }
+   ],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "plain tag",
+    "box:anchor"
+   ],
+   "path": [
+    "parents",
+    "add parents to selection"
+   ],
+   "found": true,
+   "questions": [],
+   "dialogs": [
+    {
+     "title": "manage tag parents",
+     "tags": [
+      "box:anchor",
+      "plain tag"
+     ]
+    }
+   ],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "plain tag",
+    "box:anchor"
+   ],
+   "path": [
+    "siblings",
+    "add siblings to selection"
+   ],
+   "found": true,
+   "questions": [],
+   "dialogs": [
+    {
+     "title": "manage tag siblings",
+     "tags": [
+      "box:anchor",
+      "plain tag"
+     ]
+    }
+   ],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "alpha:first"
+   ],
+   "path": [
+    "1 parents, 0 children",
+    "parent: group:alpha"
+   ],
+   "found": true,
+   "questions": [],
+   "dialogs": [],
+   "writes": [],
+   "copied": [
+    "group:alpha"
+   ],
+   "favourite_tags": [],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "plain tag"
+   ],
+   "path": [
+    "favourites",
+    "add \"plain tag\" to favourites"
+   ],
+   "found": true,
+   "questions": [],
+   "dialogs": [],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [
+    "plain tag"
+   ],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "plain tag"
+   ],
+   "path": [
+    "favourites",
+    "remove \"plain tag\" from favourites"
+   ],
+   "found": true,
+   "questions": [
+    {
+     "message": "Remove \"plain tag\" from the favourites list?",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "dialogs": [],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "plain tag"
+   ],
+   "path": [
+    "favourites",
+    "add \"plain tag\" to most used for \"my tags\""
+   ],
+   "found": true,
+   "questions": [],
+   "dialogs": [],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": [
+    "plain tag"
+   ]
+  },
+  {
+   "selected": [
+    "plain tag"
+   ],
+   "path": [
+    "favourites",
+    "remove \"plain tag\" from most used for \"my tags\""
+   ],
+   "found": true,
+   "questions": [
+    {
+     "message": "Remove \"plain tag\" from the most used list for \"my tags\"?",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "dialogs": [],
+   "writes": [],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": []
+  },
+  {
+   "selected": [
+    "plain tag",
+    "box:anchor"
+   ],
+   "path": [
+    "maintenance",
+    "regenerate tag display"
+   ],
+   "found": true,
+   "questions": [
+    {
+     "message": "!!WARNING EXPERIMENTAL!!\n\nThis will delete and then regenerate all the display calculations for the selected tags and their siblings and parents, with the intention of fixing bad autocomplete counts or sibling/parent presentation. It is functionally similar to the 'tag storage mappings cache' regeneration job, but just for these tags.\n\nIt might take a while to run, perhaps many minutes for a heavily-siblinged/-parented/-mapped tag, during which the database will be locked. Doing it on a thousand tags is going to completely gonk you. Also, any sibling or parent rules will be reset, and they will have to be recalculated, which will probably occur in a few seconds in the background after the regeneration job completes.",
+     "title": "Regen tags?",
+     "yes": "let's go",
+     "no": "forget it"
+    }
+   ],
+   "dialogs": [],
+   "writes": [
+    {
+     "action": "regenerate_tag_mappings_tags",
+     "tags": [
+      "box:anchor",
+      "plain tag"
+     ]
+    }
+   ],
+   "copied": [],
+   "favourite_tags": [],
+   "most_used": []
   }
  ],
  "hide": {

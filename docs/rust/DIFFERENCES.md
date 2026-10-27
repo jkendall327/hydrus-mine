@@ -639,8 +639,10 @@ arrows need a click on the box first); and the menu's "admin:" entries for
 tag repository moderators (repositories are out of scope).
 
 The media viewer's tags hover (`ListBoxTagsMediaHoverFrame`,
-`oracle/record_viewer_tags_hover.py`) works as the box does, with the
-same gaps.
+`oracle/record_viewer_tags_hover.py`) works as the box does, without drag
+selection or scrolling a key-moved tag into view. As the reference's, it
+stays up while its menu is open, and gives the keyboard back to the viewer
+when it lowers.
 
 ## The media viewer (`hydrus-gui`)
 

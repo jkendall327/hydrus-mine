@@ -45,6 +45,8 @@ def record( session ):
     from hydrus.client.gui import ClientGUIAsync
     from hydrus.client.gui import ClientGUICore as Core
     from hydrus.client.gui import ClientGUIDialogsQuick
+    from hydrus.client.gui import ClientGUITopLevelWindowsPanels
+    from hydrus.client.gui.metadata import ClientGUIManageTagParents, ClientGUIManageTagSiblings
     from hydrus.client.gui.canvas import ClientGUICanvas, ClientGUICanvasFrame
     from hydrus.client.metadata import ClientContentUpdates as U
     from hydrus.core import HydrusConstants as HC
@@ -73,6 +75,7 @@ def record( session ):
 
 
     c.new_options.SetStringList( 'favourite_tags', [] )
+    c.new_options.SetSuggestedTagsMostUsed( service, [] )
     c.new_options.SetBoolean( 'advanced_mode', False )
 
     location = ClientLocation.LocationContext.STATICCreateSimple( CC.LOCAL_FILE_SERVICE_KEY )
@@ -143,6 +146,62 @@ def record( session ):
         c.pub = pub
 
         ClientGUIAsync.AsyncQtJob.start = lambda job: job._publish_callable( job._work_callable() )
+
+        dialogs = []
+        writes = []
+
+        old_manage, old_siblings, old_parents, old_write = ClientGUITopLevelWindowsPanels.DialogManage, ClientGUIManageTagSiblings.ManageTagSiblings, ClientGUIManageTagParents.ManageTagParents, c.Write
+
+        class Manage( QW.QDialog ):
+
+            def __init__( self, parent, title, *args, **kwargs ):
+
+                super().__init__( parent )
+
+                self._title = title
+
+
+            def __enter__( self ):
+
+                return self
+
+
+            def __exit__( self, *args ):
+
+                self.deleteLater()
+
+                return False
+
+
+            def SetPanel( self, panel ):
+
+                dialogs.append( { 'title' : self._title, 'tags' : sorted( panel ) } )
+
+
+            def exec( self ):
+
+                return QW.QDialog.DialogCode.Rejected
+
+
+
+        ClientGUITopLevelWindowsPanels.DialogManage = Manage
+        # (the panels are stood in for by the tags they are given)
+        ClientGUIManageTagSiblings.ManageTagSiblings = lambda dlg, tags: list( tags )
+        ClientGUIManageTagParents.ManageTagParents = lambda dlg, tags: list( tags )
+
+        def write( action, *args, **kwargs ):
+
+            if action == 'regenerate_tag_mappings_tags':
+
+                writes.append( { 'action' : action, 'tags' : sorted( args[ 0 ] ) } )
+
+                return
+
+
+            return old_write( action, *args, **kwargs )
+
+
+        c.Write = write
 
         def settle( seconds = .05 ):
 
@@ -320,7 +379,7 @@ def record( session ):
             click( 'box:anchor', mods = SHIFT ); step( 'shift click box:anchor' )
             click( 'series:spaced name', mods = CTRL ); step( 'ctrl click series:spaced name takes it away' )
             click( 'plain tag' ); step( 'plain click on a selected row keeps the selection' )
-            click( 'alpha:first', button = QC.Qt.MouseButton.RightButton ); step( 'right press on an unselected row selects only it' )
+            click( 'alpha:first', button = QC.Qt.MouseButton.RightButton ); step( 'right press on a selected row keeps the selection' )
             click( None ); step( 'click below the rows' )
 
             # middle clicks
@@ -407,6 +466,55 @@ def record( session ):
 
             out[ 'menus' ] = menus_out
 
+            # the entries it shares with the other tag lists
+
+            triggers = []
+
+            for ( wanted, path ) in [
+                ( [ 'alpha:first' ], [ '1 parents, 0 children', 'add parents to alpha:first' ] ),
+                ( [ 'alpha:first' ], [ 'no siblings', 'add siblings to alpha:first' ] ),
+                ( [ 'plain tag', 'box:anchor' ], [ 'parents', 'add parents to selection' ] ),
+                ( [ 'plain tag', 'box:anchor' ], [ 'siblings', 'add siblings to selection' ] ),
+                ( [ 'alpha:first' ], [ '1 parents, 0 children', 'parent: group:alpha' ] ),
+                ( [ 'plain tag' ], [ 'favourites', 'add "plain tag" to favourites' ] ),
+                ( [ 'plain tag' ], [ 'favourites', 'remove "plain tag" from favourites' ] ),
+                ( [ 'plain tag' ], [ 'favourites', 'add "plain tag" to most used for "my tags"' ] ),
+                ( [ 'plain tag' ], [ 'favourites', 'remove "plain tag" from most used for "my tags"' ] ),
+                ( [ 'plain tag', 'box:anchor' ], [ 'maintenance', 'regenerate tag display' ] )
+            ]:
+
+                menu = show( wanted )
+
+                del questions[:]
+                del dialogs[:]
+                del writes[:]
+
+                n = len( copied )
+
+                action = find( menu, path )
+
+                if action is not None:
+
+                    action.trigger()
+
+
+                settle()
+
+                triggers.append( {
+                    'selected' : wanted,
+                    'path' : path,
+                    'found' : action is not None,
+                    'questions' : list( questions ),
+                    'dialogs' : list( dialogs ),
+                    'writes' : list( writes ),
+                    'copied' : copied[ n: ],
+                    'favourite_tags' : list( c.new_options.GetStringList( 'favourite_tags' ) ),
+                    'most_used' : list( c.new_options.GetSuggestedTagsMostUsed( service ) )
+                } )
+
+
+            out[ 'triggers' ] = triggers
+
             # hiding a tag from the hover's view of the file's tags
 
             menu = show( [ 'plain tag' ] )
@@ -424,6 +532,7 @@ def record( session ):
         finally:
 
             Core.core().PopupMenu, ClientGUIDialogsQuick.GetYesNo, c.pub = old_popup, old_yes_no, old_pub
+            ClientGUITopLevelWindowsPanels.DialogManage, ClientGUIManageTagSiblings.ManageTagSiblings, ClientGUIManageTagParents.ManageTagParents, c.Write = old_manage, old_siblings, old_parents, old_write
             ClientGUIAsync.AsyncQtJob.start = old_start
 
             frame.hide()

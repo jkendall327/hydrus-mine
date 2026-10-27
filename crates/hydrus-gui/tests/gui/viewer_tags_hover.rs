@@ -7,7 +7,7 @@ use serde_json::{Value as Json, json};
 use slint::platform::PointerEventButton;
 use slint::{ComponentHandle as _, Model as _};
 
-use super::selection_tags_box::{Harness, strings};
+use super::selection_tags_box::{Harness, MenuDriver, replay_shared_entries, strings};
 use crate::common::input::{self, CTRL, Mods, NONE, SHIFT};
 use crate::common::widgets;
 use hydrus_gui::{MediaViewerWindow, headless};
@@ -214,6 +214,23 @@ impl Hover {
         widgets::settle();
     }
 
+    /// The question the hover's tag menu asks, as the recorder writes it,
+    /// answered yes.
+    fn answer(&self) -> Json {
+        if self.viewer.get_tag_menu_question().is_empty() {
+            return json!([]);
+        }
+        let asked = json!([{
+            "message": self.viewer.get_tag_menu_question().to_string(),
+            "title": self.viewer.get_tag_menu_question_title().to_string(),
+            "yes": self.viewer.get_tag_menu_yes_label().to_string(),
+            "no": self.viewer.get_tag_menu_no_label().to_string(),
+        }]);
+        self.viewer.invoke_tag_menu_answered(true);
+        widgets::settle();
+        asked
+    }
+
     fn open_menu(&self, tags: &[String]) {
         let tags: Vec<&str> = tags.iter().map(String::as_str).collect();
         self.select(&tags);
@@ -242,7 +259,7 @@ fn hover_clicks_select_rows_as_the_references_do() {
     v.step("plain click on a selected row keeps the selection");
     v.press(Some("alpha:first"), RIGHT, NONE);
     v.viewer.invoke_tag_menu_dismissed();
-    v.step("right press on an unselected row selects only it");
+    v.step("right press on a selected row keeps the selection");
     v.click(None, NONE);
     v.step("click below the rows");
     v.h.finish();
@@ -407,26 +424,82 @@ fn the_hovers_menu_and_its_entries_are_the_references() {
             );
         }
     }
+    // the entries it shares with the other tag lists, from its own menu
+    replay_shared_entries(
+        &v.h,
+        &v.fixture["triggers"],
+        &MenuDriver {
+            open: &|tags| v.open_menu(tags),
+            choose: &|path| v.choose(path),
+            answer: &|| v.answer(),
+            dialog: &|| {
+                v.h.bound
+                    .viewer_tag_relationships
+                    .borrow()
+                    .as_ref()
+                    .map(slint::ComponentHandle::clone_strong)
+            },
+        },
+    );
     // hiding a tag from the hover's view of the file's tags
     let hide = &v.fixture["hide"];
     v.open_menu(&strings(&hide["selected"]));
     let path = strings(&hide["path"]);
     let path: Vec<&str> = path.iter().map(String::as_str).collect();
     v.choose(&path);
-    let question = if v.viewer.get_tag_menu_question().is_empty() {
-        json!([])
-    } else {
-        let asked = json!([{
-            "message": v.viewer.get_tag_menu_question().to_string(),
-            "title": "Are you sure?",
-            "yes": v.viewer.get_tag_menu_yes_label().to_string(),
-            "no": v.viewer.get_tag_menu_no_label().to_string(),
-        }]);
-        v.viewer.invoke_tag_menu_answered(true);
-        widgets::settle();
-        asked
-    };
-    v.h.differ("hide question", &question, &hide["questions"]);
+    v.h.differ("hide question", &v.answer(), &hide["questions"]);
     v.h.differ("hide tags", &json!(v.tags()), &hide["tags_after"]);
     v.h.finish();
+}
+
+// (#297 review: a hover that took the keyboard and then lowered kept it
+// from the viewer's keys)
+#[test]
+fn the_viewers_keys_work_after_a_tag_was_clicked_and_the_hover_lowered() {
+    let v = Hover::new();
+    v.click(Some("plain tag"), NONE);
+    // the pointer onto the canvas: the hover lowers
+    let canvas = slint::LogicalPosition::new(600.0, 300.0);
+    v.viewer
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::PointerMoved { position: canvas });
+    headless::render(&v.drawn, 1000, 650);
+    assert!(!v.viewer.get_tags_showing(), "the hover lowered");
+    let before = v.viewer.get_caption();
+    input::key(v.viewer.window(), "\u{F703}", NONE);
+    headless::render(&v.drawn, 1000, 650);
+    assert_ne!(
+        v.viewer.get_caption(),
+        before,
+        "right arrow shows the next file"
+    );
+}
+
+// (#297 review: escape with the hover's menu open closes the menu, as the
+// reference's menu takes it, and leaves the selection as it was)
+#[test]
+fn escape_closes_the_hovers_menu_and_keeps_its_selection() {
+    let v = Hover::new();
+    v.open_menu(&["plain tag".to_owned(), "box:anchor".to_owned()]);
+    let selected = v.selected();
+    input::key(v.viewer.window(), ESCAPE, NONE);
+    headless::render(&v.drawn, 1000, 650);
+    assert_eq!(
+        v.viewer.get_tag_menu_panes().row_count(),
+        0,
+        "the menu closed"
+    );
+    assert_eq!(v.selected(), selected, "the selection kept");
+    // and the hover had stayed up while its menu was open, as the reference's
+    v.open_menu(&["plain tag".to_owned()]);
+    let away = slint::LogicalPosition::new(600.0, 300.0);
+    v.viewer
+        .window()
+        .dispatch_event(slint::platform::WindowEvent::PointerMoved { position: away });
+    headless::render(&v.drawn, 1000, 650);
+    assert!(
+        v.viewer.get_tags_showing(),
+        "the hover stays up under its menu"
+    );
+    v.viewer.invoke_tag_menu_dismissed();
 }
