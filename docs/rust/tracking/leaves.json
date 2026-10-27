@@ -25325,6 +25325,188 @@
     "by": "blind Sonnet agent, #97 phase 1",
     "note": "GUI test replays url_domain_preview.json preview_steps and extra_previews (status and the five outputs, including retained referral/next after an invalid example) in the real class editor; model test replays domain_errors. No tag. Tests: crates/hydrus-gui/tests/gui/downloader_definitions.rs:582 domain_mask_modes_tester_and_selectable_previews_apply_cancel_and_reopen (preview_steps/extra_previews at :744-:795); crates/hydrus-gui-model/tests/model/downloader_definitions.rs:543, :617"
    }
+  },
+  {
+   "id": "audit-media-viewer-top-hover-layout",
+   "label": "Browser top hover: its widgets in the reference's order and rows, with the reference's icons",
+   "path": "Media files, metadata and viewing > Media Viewer > Top hover",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py",
+   "native": null,
+   "notes": [
+    "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). CanvasHoverFrameTopNavigableList: left row first, previous, index, next, last, random, slideshow; middle archive/inbox, trash, delete completely, undelete, embedded metadata; right zoom %, zoom in, zoom out, zoom switch, zoom options, volume control, shortcuts, view options, move window, fullscreen, open externally, drag, close. Recorded in oracle/fixtures/viewer_top_hover.json."
+   ]
+  },
+  {
+   "id": "audit-media-viewer-top-hover-visibility",
+   "label": "Browser top hover: which buttons show for which file",
+   "path": "Media files, metadata and viewing > Media Viewer > Top hover",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py",
+   "native": null,
+   "notes": [
+    "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). Archive or return-to-inbox icon by inbox state; send to trash for a local file, delete completely for a trashed one; undelete when deleted from a local file domain; the volume control only where mpv is available (the reference hides it otherwise, for every file)."
+   ]
+  },
+  {
+   "id": "audit-media-viewer-top-hover-tooltips",
+   "label": "Browser top hover: button tooltips, with their shortcuts",
+   "path": "Media files, metadata and viewing > Media Viewer > Top hover",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py",
+   "native": null,
+   "notes": [
+    "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). SetToolTipWithShortcuts: the tooltip, a rule, and each shortcut set's shortcuts for the command (\"no shortcuts set\" otherwise); fixed tooltips for the others; the embedded metadata button names what the file has."
+   ]
+  },
+  {
+   "id": "audit-media-viewer-top-hover-navigation-buttons",
+   "label": "Browser top hover: first, previous, next and last buttons",
+   "path": "Media files, metadata and viewing > Media Viewer > Top hover",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py",
+   "native": null,
+   "notes": [
+    "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). Each sends SIMPLE_VIEW_FIRST/PREVIOUS/NEXT/LAST; the index label updates."
+   ]
+  },
+  {
+   "id": "audit-media-viewer-top-hover-random-slideshow-buttons",
+   "label": "Browser top hover: random button (right-click undoes) and slideshow menu button",
+   "path": "Media files, metadata and viewing > Media Viewer > Top hover",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py",
+   "native": null,
+   "notes": [
+    "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). Random: left click SIMPLE_VIEW_RANDOM, right click SIMPLE_UNDO_RANDOM. Slideshow: the slideshow menu (AppendSlideshowMenu, not a submenu)."
+   ]
+  },
+  {
+   "id": "audit-media-viewer-top-hover-file-buttons",
+   "label": "Top hover: archive/inbox, send to trash, delete completely, undelete and embedded metadata buttons",
+   "path": "Media files, metadata and viewing > Media Viewer > Top hover",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py",
+   "native": null,
+   "notes": [
+    "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). Archive flips inbox (SIMPLE_ARCHIVE_FILE / SIMPLE_INBOX_FILE); trash and delete publish canvas_delete, undelete canvas_undelete (the canvas then asks as the delete key does); the page button shows the file's embedded metadata."
+   ]
+  },
+  {
+   "id": "audit-media-viewer-top-hover-zoom-buttons",
+   "label": "Top hover: zoom label, zoom in, zoom out and zoom switch buttons",
+   "path": "Media files, metadata and viewing > Media Viewer > Top hover",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py",
+   "native": null,
+   "notes": [
+    "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). Zoom in/out send SIMPLE_ZOOM_IN/OUT_VIEWER_CENTER; zoom switch sends the zoom_switch_command option; the label shows the zoom as a percentage."
+   ]
+  },
+  {
+   "id": "audit-media-viewer-top-hover-zoom-options",
+   "label": "Top hover: zoom options (cog) menu",
+   "path": "Media files, metadata and viewing > Media Viewer > Top hover",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py",
+   "native": null,
+   "notes": [
+    "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). _ShowZoomOptionsMenu: recenter media, the six zoom types checked by the current one, the size/zoom type/pan locks, set default zoom type from this menu, recenter media on window resize."
+   ]
+  },
+  {
+   "id": "audit-media-viewer-top-hover-volume",
+   "label": "Top hover: volume control (global mute button, with the viewer mute and volume on mouseover)",
+   "path": "Media files, metadata and viewing > Media Viewer > Top hover",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py",
+   "native": null,
+   "notes": [
+    "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). VolumeControl in the top hover: a click flips the global mute and its icon (sound/mute); hovering shows the viewer mute and the volume slider."
+   ]
+  },
+  {
+   "id": "audit-media-viewer-top-hover-window-buttons",
+   "label": "Top hover: shortcuts, view options, fullscreen, open externally and close buttons",
+   "path": "Media files, metadata and viewing > Media Viewer > Top hover",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py",
+   "native": null,
+   "notes": [
+    "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). Shortcuts and view options open their menus; fullscreen publishes canvas_fullscreen_switch; open externally sends SIMPLE_OPEN_FILE_IN_EXTERNAL_PROGRAM; close publishes canvas_close."
+   ]
+  },
+  {
+   "id": "audit-media-viewer-top-hover-move-button",
+   "label": "Top hover: move window button (drag to move the window; right-click resize menu)",
+   "path": "Media files, metadata and viewing > Media Viewer > Top hover",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py",
+   "native": null,
+   "notes": [
+    "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). WindowDragButton: a left press starts a system move of the viewer window; a right click shows the resize-to-fit / resize to 50-200% menu."
+   ]
+  },
+  {
+   "id": "audit-media-viewer-top-hover-drag-button",
+   "label": "Top hover: drag button (drag the file out; right-click focuses the page and file)",
+   "path": "Media files, metadata and viewing > Media Viewer > Top hover",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py",
+   "native": null,
+   "notes": [
+    "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). IconButtonMultiClickable: left drag exports the file (DoFileExportDragDrop; deferred with audit-media-viewer-drag); right click sends SIMPLE_FOCUS_TAB_AND_MEDIA."
+   ]
+  },
+  {
+   "id": "audit-media-duplicate-filter-top-hover",
+   "label": "Duplicate filter top hover: its widgets, order and buttons",
+   "path": "Media files, metadata and viewing > Media Viewer > Top hover",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py",
+   "native": null,
+   "notes": [
+    "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). CanvasHoverFrameTopDuplicatesFilter: go back a pair, previous, index, next, show a different pair, then the shared middle and right rows, and a zoom options menu of its own (recenter, zoom types, \"media size and pan are locked\")."
+   ]
+  },
+  {
+   "id": "audit-media-archive-delete-top-hover",
+   "label": "Archive/delete filter top hover: its widgets, order and buttons",
+   "path": "Media files, metadata and viewing > Media Viewer > Top hover",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py",
+   "native": null,
+   "notes": [
+    "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). CanvasHoverFrameTopArchiveDeleteFilter: back, index, skip, then the shared middle and right rows; its archive button always shows archive and sends SIMPLE_ARCHIVE_FILE (keep)."
+   ]
   }
  ]
 }

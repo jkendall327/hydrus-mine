@@ -1,0 +1,4880 @@
+{
+ "browser": {
+  "mpv_available": true,
+  "random_draw": 1,
+  "files": [
+   {
+    "name": "jpeg_00.jpg",
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "state": "inbox",
+    "widgets": [
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "position_first",
+      "tooltip": "first\n\n----------\n\nhome\n(media viewers - 'normal' browser->media navigation: first)"
+     },
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "position_previous",
+      "tooltip": "previous\n\n----------\n\nleft, page up, scroll up, up\n(media viewers - 'normal' browser->media navigation: previous)"
+     },
+     {
+      "group": "left",
+      "class": "BetterStaticText",
+      "shown": true,
+      "label": "index",
+      "text": "1/5",
+      "tooltip": ""
+     },
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "position_next",
+      "tooltip": "next\n\n----------\n\ndown, page down, right, scroll down\n(media viewers - 'normal' browser->media navigation: next)"
+     },
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "position_last",
+      "tooltip": "last\n\n----------\n\nend\n(media viewers - 'normal' browser->media navigation: last)"
+     },
+     {
+      "group": "left",
+      "class": "IconButtonMultiClickable",
+      "shown": true,
+      "icon": "position_random",
+      "tooltip": "random - right-click to undo showing random media"
+     },
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "slideshow",
+      "tooltip": "slideshow"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "archive",
+      "tooltip": "archive"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "delete",
+      "tooltip": "send to trash"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": false,
+      "icon": "trash_delete",
+      "tooltip": "delete completely"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": false,
+      "icon": "undelete",
+      "tooltip": "undelete"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "page_with_text",
+      "tooltip": "show detailed file metadata, including extra info"
+     },
+     {
+      "group": "right",
+      "class": "BetterStaticText",
+      "shown": true,
+      "label": "zoom",
+      "text": "1562.50%",
+      "tooltip": ""
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "zoom_in",
+      "tooltip": "zoom in\n\n----------\n\n+, ctrl+scroll up\n(media viewers - all->zoom: in)"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "zoom_out",
+      "tooltip": "zoom out\n\n----------\n\n-, ctrl+scroll down\n(media viewers - all->zoom: out)"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "zoom_switch",
+      "tooltip": "zoom switch\n\n----------\n\nz\n(media viewers - all->zoom: switch between 100% and canvas fit)"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "zoom_cog",
+      "tooltip": "advanced zoom"
+     },
+     {
+      "group": "right",
+      "class": "VolumeControl",
+      "shown": true,
+      "icon": "sound",
+      "tooltip": "Global mute/unmute",
+      "popup": {
+       "mute_icon": "sound",
+       "mute_tooltip": "Mute/unmute: media viewer"
+      }
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "keyboard",
+      "tooltip": "shortcuts"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "eye",
+      "tooltip": "view options"
+     },
+     {
+      "group": "right",
+      "class": "WindowDragButton",
+      "shown": true,
+      "icon": "move",
+      "tooltip": "click and drag from here to move the window"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "fullscreen_switch",
+      "tooltip": "fullscreen switch"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "open_externally",
+      "tooltip": "open externally\n\n----------\n\nctrl+e\n(media actions, either thumbnails or the viewer->open file in external program)"
+     },
+     {
+      "group": "right",
+      "class": "IconButtonMultiClickable",
+      "shown": true,
+      "icon": "drag",
+      "tooltip": "drag from here to export file"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "stop",
+      "tooltip": "close"
+     }
+    ],
+    "now": {
+     "index": "1/5",
+     "zoom": "1562.50%",
+     "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "name": "jpeg_01.jpg",
+    "hash": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "state": "archived",
+    "widgets": [
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "position_first",
+      "tooltip": "first\n\n----------\n\nhome\n(media viewers - 'normal' browser->media navigation: first)"
+     },
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "position_previous",
+      "tooltip": "previous\n\n----------\n\nleft, page up, scroll up, up\n(media viewers - 'normal' browser->media navigation: previous)"
+     },
+     {
+      "group": "left",
+      "class": "BetterStaticText",
+      "shown": true,
+      "label": "index",
+      "text": "3/5",
+      "tooltip": ""
+     },
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "position_next",
+      "tooltip": "next\n\n----------\n\ndown, page down, right, scroll down\n(media viewers - 'normal' browser->media navigation: next)"
+     },
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "position_last",
+      "tooltip": "last\n\n----------\n\nend\n(media viewers - 'normal' browser->media navigation: last)"
+     },
+     {
+      "group": "left",
+      "class": "IconButtonMultiClickable",
+      "shown": true,
+      "icon": "position_random",
+      "tooltip": "random - right-click to undo showing random media"
+     },
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "slideshow",
+      "tooltip": "slideshow"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "to_inbox",
+      "tooltip": "return to inbox"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "delete",
+      "tooltip": "send to trash"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": false,
+      "icon": "trash_delete",
+      "tooltip": "delete completely"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": false,
+      "icon": "undelete",
+      "tooltip": "undelete"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "page_with_text",
+      "tooltip": "show detailed file metadata, including extra info"
+     },
+     {
+      "group": "right",
+      "class": "BetterStaticText",
+      "shown": true,
+      "label": "zoom",
+      "text": "312.50%",
+      "tooltip": ""
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "zoom_in",
+      "tooltip": "zoom in\n\n----------\n\n+, ctrl+scroll up\n(media viewers - all->zoom: in)"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "zoom_out",
+      "tooltip": "zoom out\n\n----------\n\n-, ctrl+scroll down\n(media viewers - all->zoom: out)"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "zoom_switch",
+      "tooltip": "zoom switch\n\n----------\n\nz\n(media viewers - all->zoom: switch between 100% and canvas fit)"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "zoom_cog",
+      "tooltip": "advanced zoom"
+     },
+     {
+      "group": "right",
+      "class": "VolumeControl",
+      "shown": true,
+      "icon": "sound",
+      "tooltip": "Global mute/unmute",
+      "popup": {
+       "mute_icon": "sound",
+       "mute_tooltip": "Mute/unmute: media viewer"
+      }
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "keyboard",
+      "tooltip": "shortcuts"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "eye",
+      "tooltip": "view options"
+     },
+     {
+      "group": "right",
+      "class": "WindowDragButton",
+      "shown": true,
+      "icon": "move",
+      "tooltip": "click and drag from here to move the window"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "fullscreen_switch",
+      "tooltip": "fullscreen switch"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "open_externally",
+      "tooltip": "open externally\n\n----------\n\nctrl+e\n(media actions, either thumbnails or the viewer->open file in external program)"
+     },
+     {
+      "group": "right",
+      "class": "IconButtonMultiClickable",
+      "shown": true,
+      "icon": "drag",
+      "tooltip": "drag from here to export file"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "stop",
+      "tooltip": "close"
+     }
+    ],
+    "now": {
+     "index": "3/5",
+     "zoom": "312.50%",
+     "shown": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "name": "jpeg_02.jpg",
+    "hash": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "state": "note",
+    "widgets": [
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "position_first",
+      "tooltip": "first\n\n----------\n\nhome\n(media viewers - 'normal' browser->media navigation: first)"
+     },
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "position_previous",
+      "tooltip": "previous\n\n----------\n\nleft, page up, scroll up, up\n(media viewers - 'normal' browser->media navigation: previous)"
+     },
+     {
+      "group": "left",
+      "class": "BetterStaticText",
+      "shown": true,
+      "label": "index",
+      "text": "4/5",
+      "tooltip": ""
+     },
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "position_next",
+      "tooltip": "next\n\n----------\n\ndown, page down, right, scroll down\n(media viewers - 'normal' browser->media navigation: next)"
+     },
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "position_last",
+      "tooltip": "last\n\n----------\n\nend\n(media viewers - 'normal' browser->media navigation: last)"
+     },
+     {
+      "group": "left",
+      "class": "IconButtonMultiClickable",
+      "shown": true,
+      "icon": "position_random",
+      "tooltip": "random - right-click to undo showing random media"
+     },
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "slideshow",
+      "tooltip": "slideshow"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "archive",
+      "tooltip": "archive"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "delete",
+      "tooltip": "send to trash"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": false,
+      "icon": "trash_delete",
+      "tooltip": "delete completely"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": false,
+      "icon": "undelete",
+      "tooltip": "undelete"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "page_with_text",
+      "tooltip": "show detailed file metadata, including extra info"
+     },
+     {
+      "group": "right",
+      "class": "BetterStaticText",
+      "shown": true,
+      "label": "zoom",
+      "text": "156.25%",
+      "tooltip": ""
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "zoom_in",
+      "tooltip": "zoom in\n\n----------\n\n+, ctrl+scroll up\n(media viewers - all->zoom: in)"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "zoom_out",
+      "tooltip": "zoom out\n\n----------\n\n-, ctrl+scroll down\n(media viewers - all->zoom: out)"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "zoom_switch",
+      "tooltip": "zoom switch\n\n----------\n\nz\n(media viewers - all->zoom: switch between 100% and canvas fit)"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "zoom_cog",
+      "tooltip": "advanced zoom"
+     },
+     {
+      "group": "right",
+      "class": "VolumeControl",
+      "shown": true,
+      "icon": "sound",
+      "tooltip": "Global mute/unmute",
+      "popup": {
+       "mute_icon": "sound",
+       "mute_tooltip": "Mute/unmute: media viewer"
+      }
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "keyboard",
+      "tooltip": "shortcuts"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "eye",
+      "tooltip": "view options"
+     },
+     {
+      "group": "right",
+      "class": "WindowDragButton",
+      "shown": true,
+      "icon": "move",
+      "tooltip": "click and drag from here to move the window"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "fullscreen_switch",
+      "tooltip": "fullscreen switch"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "open_externally",
+      "tooltip": "open externally\n\n----------\n\nctrl+e\n(media actions, either thumbnails or the viewer->open file in external program)"
+     },
+     {
+      "group": "right",
+      "class": "IconButtonMultiClickable",
+      "shown": true,
+      "icon": "drag",
+      "tooltip": "drag from here to export file"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "stop",
+      "tooltip": "close"
+     }
+    ],
+    "now": {
+     "index": "4/5",
+     "zoom": "156.25%",
+     "shown": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "name": "audio.flac",
+    "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "state": "inbox",
+    "widgets": [
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "position_first",
+      "tooltip": "first\n\n----------\n\nhome\n(media viewers - 'normal' browser->media navigation: first)"
+     },
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "position_previous",
+      "tooltip": "previous\n\n----------\n\nleft, page up, scroll up, up\n(media viewers - 'normal' browser->media navigation: previous)"
+     },
+     {
+      "group": "left",
+      "class": "BetterStaticText",
+      "shown": true,
+      "label": "index",
+      "text": "2/5",
+      "tooltip": ""
+     },
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "position_next",
+      "tooltip": "next\n\n----------\n\ndown, page down, right, scroll down\n(media viewers - 'normal' browser->media navigation: next)"
+     },
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "position_last",
+      "tooltip": "last\n\n----------\n\nend\n(media viewers - 'normal' browser->media navigation: last)"
+     },
+     {
+      "group": "left",
+      "class": "IconButtonMultiClickable",
+      "shown": true,
+      "icon": "position_random",
+      "tooltip": "random - right-click to undo showing random media"
+     },
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "slideshow",
+      "tooltip": "slideshow"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "archive",
+      "tooltip": "archive"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "delete",
+      "tooltip": "send to trash"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": false,
+      "icon": "trash_delete",
+      "tooltip": "delete completely"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": false,
+      "icon": "undelete",
+      "tooltip": "undelete"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "page_with_text",
+      "tooltip": "show detailed file metadata"
+     },
+     {
+      "group": "right",
+      "class": "BetterStaticText",
+      "shown": true,
+      "label": "zoom",
+      "text": "100%",
+      "tooltip": ""
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "zoom_in",
+      "tooltip": "zoom in\n\n----------\n\n+, ctrl+scroll up\n(media viewers - all->zoom: in)"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "zoom_out",
+      "tooltip": "zoom out\n\n----------\n\n-, ctrl+scroll down\n(media viewers - all->zoom: out)"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "zoom_switch",
+      "tooltip": "zoom switch\n\n----------\n\nz\n(media viewers - all->zoom: switch between 100% and canvas fit)"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "zoom_cog",
+      "tooltip": "advanced zoom"
+     },
+     {
+      "group": "right",
+      "class": "VolumeControl",
+      "shown": true,
+      "icon": "sound",
+      "tooltip": "Global mute/unmute",
+      "popup": {
+       "mute_icon": "sound",
+       "mute_tooltip": "Mute/unmute: media viewer"
+      }
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "keyboard",
+      "tooltip": "shortcuts"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "eye",
+      "tooltip": "view options"
+     },
+     {
+      "group": "right",
+      "class": "WindowDragButton",
+      "shown": true,
+      "icon": "move",
+      "tooltip": "click and drag from here to move the window"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "fullscreen_switch",
+      "tooltip": "fullscreen switch"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "open_externally",
+      "tooltip": "open externally\n\n----------\n\nctrl+e\n(media actions, either thumbnails or the viewer->open file in external program)"
+     },
+     {
+      "group": "right",
+      "class": "IconButtonMultiClickable",
+      "shown": true,
+      "icon": "drag",
+      "tooltip": "drag from here to export file"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "stop",
+      "tooltip": "close"
+     }
+    ],
+    "now": {
+     "index": "2/5",
+     "zoom": "100%",
+     "shown": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "name": "jpeg_03.jpg",
+    "hash": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "state": "trashed",
+    "widgets": [
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "position_first",
+      "tooltip": "first\n\n----------\n\nhome\n(media viewers - 'normal' browser->media navigation: first)"
+     },
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "position_previous",
+      "tooltip": "previous\n\n----------\n\nleft, page up, scroll up, up\n(media viewers - 'normal' browser->media navigation: previous)"
+     },
+     {
+      "group": "left",
+      "class": "BetterStaticText",
+      "shown": true,
+      "label": "index",
+      "text": "5/5",
+      "tooltip": ""
+     },
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "position_next",
+      "tooltip": "next\n\n----------\n\ndown, page down, right, scroll down\n(media viewers - 'normal' browser->media navigation: next)"
+     },
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "position_last",
+      "tooltip": "last\n\n----------\n\nend\n(media viewers - 'normal' browser->media navigation: last)"
+     },
+     {
+      "group": "left",
+      "class": "IconButtonMultiClickable",
+      "shown": true,
+      "icon": "position_random",
+      "tooltip": "random - right-click to undo showing random media"
+     },
+     {
+      "group": "left",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "slideshow",
+      "tooltip": "slideshow"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "archive",
+      "tooltip": "archive"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": false,
+      "icon": "delete",
+      "tooltip": "send to trash"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "trash_delete",
+      "tooltip": "delete completely"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "undelete",
+      "tooltip": "undelete"
+     },
+     {
+      "group": "center",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "page_with_text",
+      "tooltip": "show detailed file metadata, including extra info"
+     },
+     {
+      "group": "right",
+      "class": "BetterStaticText",
+      "shown": true,
+      "label": "zoom",
+      "text": "117.19%",
+      "tooltip": ""
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "zoom_in",
+      "tooltip": "zoom in\n\n----------\n\n+, ctrl+scroll up\n(media viewers - all->zoom: in)"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "zoom_out",
+      "tooltip": "zoom out\n\n----------\n\n-, ctrl+scroll down\n(media viewers - all->zoom: out)"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "zoom_switch",
+      "tooltip": "zoom switch\n\n----------\n\nz\n(media viewers - all->zoom: switch between 100% and canvas fit)"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "zoom_cog",
+      "tooltip": "advanced zoom"
+     },
+     {
+      "group": "right",
+      "class": "VolumeControl",
+      "shown": true,
+      "icon": "sound",
+      "tooltip": "Global mute/unmute",
+      "popup": {
+       "mute_icon": "sound",
+       "mute_tooltip": "Mute/unmute: media viewer"
+      }
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "keyboard",
+      "tooltip": "shortcuts"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "eye",
+      "tooltip": "view options"
+     },
+     {
+      "group": "right",
+      "class": "WindowDragButton",
+      "shown": true,
+      "icon": "move",
+      "tooltip": "click and drag from here to move the window"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "fullscreen_switch",
+      "tooltip": "fullscreen switch"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "open_externally",
+      "tooltip": "open externally\n\n----------\n\nctrl+e\n(media actions, either thumbnails or the viewer->open file in external program)"
+     },
+     {
+      "group": "right",
+      "class": "IconButtonMultiClickable",
+      "shown": true,
+      "icon": "drag",
+      "tooltip": "drag from here to export file"
+     },
+     {
+      "group": "right",
+      "class": "IconButton",
+      "shown": true,
+      "icon": "stop",
+      "tooltip": "close"
+     }
+    ],
+    "now": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   }
+  ],
+  "order": [
+   "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+   "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+   "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+   "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+   "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c"
+  ],
+  "presses": [
+   {
+    "icon": "position_first",
+    "button": "left",
+    "did": [
+     {
+      "command": "SIMPLE_VIEW_FIRST"
+     }
+    ],
+    "before": {
+     "index": "1/5",
+     "zoom": "1562.50%",
+     "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "1/5",
+     "zoom": "1562.50%",
+     "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "position_first",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "1/5",
+     "zoom": "1562.50%",
+     "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "1/5",
+     "zoom": "1562.50%",
+     "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "position_previous",
+    "button": "left",
+    "did": [
+     {
+      "pub": "canvas_new_display_media"
+     },
+     {
+      "pub": "canvas_new_index_string"
+     },
+     {
+      "command": "SIMPLE_VIEW_PREVIOUS"
+     }
+    ],
+    "before": {
+     "index": "1/5",
+     "zoom": "1562.50%",
+     "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "position_previous",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "position_next",
+    "button": "left",
+    "did": [
+     {
+      "pub": "canvas_new_display_media"
+     },
+     {
+      "pub": "canvas_new_index_string"
+     },
+     {
+      "command": "SIMPLE_VIEW_NEXT"
+     }
+    ],
+    "before": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "1/5",
+     "zoom": "1562.50%",
+     "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "position_next",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "1/5",
+     "zoom": "1562.50%",
+     "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "1/5",
+     "zoom": "1562.50%",
+     "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "position_last",
+    "button": "left",
+    "did": [
+     {
+      "pub": "canvas_new_display_media"
+     },
+     {
+      "pub": "canvas_new_index_string"
+     },
+     {
+      "command": "SIMPLE_VIEW_LAST"
+     }
+    ],
+    "before": {
+     "index": "1/5",
+     "zoom": "1562.50%",
+     "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "position_last",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "position_random",
+    "button": "left",
+    "did": [
+     {
+      "pub": "canvas_new_display_media"
+     },
+     {
+      "pub": "canvas_new_index_string"
+     },
+     {
+      "command": "SIMPLE_VIEW_RANDOM"
+     }
+    ],
+    "before": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "2/5",
+     "zoom": "100%",
+     "shown": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "position_random",
+    "button": "right",
+    "did": [
+     {
+      "pub": "canvas_new_display_media"
+     },
+     {
+      "pub": "canvas_new_index_string"
+     },
+     {
+      "command": "SIMPLE_UNDO_RANDOM"
+     }
+    ],
+    "before": {
+     "index": "2/5",
+     "zoom": "100%",
+     "shown": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "slideshow",
+    "button": "left",
+    "did": [
+     {
+      "menu": [
+       {
+        "text": "1 second"
+       },
+       {
+        "text": "5 seconds"
+       },
+       {
+        "text": "10 seconds"
+       },
+       {
+        "text": "30 seconds"
+       },
+       {
+        "text": "1 minute"
+       },
+       {
+        "text": "very fast"
+       },
+       {
+        "text": "custom interval"
+       },
+       {
+        "separator": true
+       },
+       {
+        "text": "shuffle this slideshow",
+        "checked": false
+       },
+       {
+        "text": "all slideshows shuffle",
+        "checked": false
+       },
+       {
+        "separator": true
+       },
+       {
+        "text": "this slideshow plays media once through",
+        "checked": false
+       },
+       {
+        "text": "always play media once through",
+        "checked": false
+       }
+      ]
+     }
+    ],
+    "before": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "slideshow",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "archive",
+    "button": "left",
+    "did": [
+     {
+      "command": "SIMPLE_ARCHIVE_FILE"
+     },
+     {
+      "pub": "canvas_new_index_string"
+     }
+    ],
+    "before": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "archive",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "delete",
+    "button": "left",
+    "did": [
+     {
+      "pub": "canvas_delete"
+     }
+    ],
+    "before": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "delete",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "page_with_text",
+    "button": "left",
+    "did": [
+     {
+      "dialog": "embedded metadata",
+      "file": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c"
+     }
+    ],
+    "before": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "page_with_text",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "zoom_in",
+    "button": "left",
+    "did": [
+     {
+      "command": "SIMPLE_ZOOM_IN_VIEWER_CENTER"
+     }
+    ],
+    "before": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "120%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "zoom_in",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "5/5",
+     "zoom": "120%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "120%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "zoom_out",
+    "button": "left",
+    "did": [
+     {
+      "command": "SIMPLE_ZOOM_OUT_VIEWER_CENTER"
+     }
+    ],
+    "before": {
+     "index": "5/5",
+     "zoom": "120%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "zoom_out",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "zoom_switch",
+    "button": "left",
+    "did": [
+     {
+      "command": "SIMPLE_SWITCH_BETWEEN_100_PERCENT_AND_CANVAS_ZOOM"
+     }
+    ],
+    "before": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "zoom_switch",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "zoom_cog",
+    "button": "left",
+    "did": [
+     {
+      "menu": [
+       {
+        "text": "recenter media"
+       },
+       {
+        "separator": true
+       },
+       {
+        "text": "default for filetype",
+        "checked": false
+       },
+       {
+        "text": "100% zoom",
+        "checked": true
+       },
+       {
+        "text": "canvas fit",
+        "checked": false
+       },
+       {
+        "text": "fill horizontally",
+        "checked": false
+       },
+       {
+        "text": "fill vertically",
+        "checked": false
+       },
+       {
+        "text": "canvas fill",
+        "checked": false
+       },
+       {
+        "separator": true
+       },
+       {
+        "text": "try to lock current size",
+        "checked": false
+       },
+       {
+        "text": "lock current zoom type",
+        "checked": false
+       },
+       {
+        "text": "lock current pan",
+        "checked": false
+       },
+       {
+        "separator": true
+       },
+       {
+        "text": "set default zoom type from this menu",
+        "checked": false
+       },
+       {
+        "text": "recenter media on window resize",
+        "checked": true
+       }
+      ]
+     }
+    ],
+    "before": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "zoom_cog",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "sound",
+    "button": "left",
+    "did": [],
+    "before": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "global_mute": true,
+    "icon_after": "mute"
+   },
+   {
+    "icon": "sound",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "keyboard",
+    "button": "left",
+    "did": [
+     {
+      "menu": [
+       {
+        "text": "edit shortcuts"
+       }
+      ]
+     }
+    ],
+    "before": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "keyboard",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "eye",
+    "button": "left",
+    "did": [
+     {
+      "menu": [
+       {
+        "text": "window",
+        "submenu": [
+         {
+          "text": "MAY BE BUGGY/CRASHY ON LINUX"
+         },
+         {
+          "text": "always on top",
+          "checked": false
+         },
+         {
+          "text": "always on top (while playing)",
+          "checked": false
+         },
+         {
+          "text": "remove titlebar/frame",
+          "checked": false
+         },
+         {
+          "separator": true
+         },
+         {
+          "text": "always start new media viewers always on top",
+          "checked": false
+         },
+         {
+          "text": "always start new media viewers on top while playing",
+          "checked": false
+         },
+         {
+          "text": "always start new media viewers without titlebar/frame",
+          "checked": false
+         }
+        ]
+       },
+       {
+        "text": "hovers",
+        "submenu": [
+         {
+          "text": "draw tags (left) in the background",
+          "checked": true
+         },
+         {
+          "text": "draw file information (top) in the background",
+          "checked": true
+         },
+         {
+          "text": "draw ratings and locations (top-right) in the background",
+          "checked": true
+         },
+         {
+          "text": "draw notes (right) in the background",
+          "checked": true
+         },
+         {
+          "text": "draw index text (bottom-right) in the background",
+          "checked": true
+         },
+         {
+          "separator": true
+         },
+         {
+          "text": "hover window pop-in requires window focus",
+          "checked": true
+         },
+         {
+          "text": "pop-in tags hover window on mouseover",
+          "checked": true
+         },
+         {
+          "text": "pop-in ratings and locations hover window on mouseover",
+          "checked": true
+         },
+         {
+          "text": "pop-in notes hover window on mouseover",
+          "checked": true
+         },
+         {
+          "text": "pin the duplicates hover window so it is always visible",
+          "checked": true
+         }
+        ]
+       },
+       {
+        "text": "rendering",
+        "submenu": [
+         {
+          "text": "apply image ICC Profile colour adjustments",
+          "checked": true
+         },
+         {
+          "text": "draw transparency as checkerboard in media viewer",
+          "checked": false
+         },
+         {
+          "text": "draw transparency as checkerboard in media viewer (duplicate filter)",
+          "checked": true
+         },
+         {
+          "text": "instead of checkerboard, use a bright greenscreen",
+          "checked": false
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "before": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "eye",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "move",
+    "button": "left",
+    "did": [],
+    "before": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "move",
+    "button": "right",
+    "did": [
+     {
+      "menu": [
+       {
+        "text": "resize to fit"
+       },
+       {
+        "separator": true
+       },
+       {
+        "text": "resize to 50%"
+       },
+       {
+        "text": "resize to 75%"
+       },
+       {
+        "text": "resize to 100%"
+       },
+       {
+        "text": "resize to 150%"
+       },
+       {
+        "text": "resize to 200%"
+       },
+       {
+        "separator": true
+       },
+       {
+        "text": "Right click any of the above to skip centering the media in the viewer window before zooming and/or resizing."
+       }
+      ]
+     }
+    ],
+    "before": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "fullscreen_switch",
+    "button": "left",
+    "did": [
+     {
+      "pub": "canvas_fullscreen_switch"
+     }
+    ],
+    "before": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "fullscreen_switch",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "open_externally",
+    "button": "left",
+    "did": [
+     {
+      "open externally": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c"
+     },
+     {
+      "command": "SIMPLE_OPEN_FILE_IN_EXTERNAL_PROGRAM"
+     }
+    ],
+    "before": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "open_externally",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "drag",
+    "button": "left",
+    "did": [
+     {
+      "drag": [
+       "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c"
+      ]
+     }
+    ],
+    "before": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "drag",
+    "button": "right",
+    "did": [
+     {
+      "command": "SIMPLE_FOCUS_TAB_AND_MEDIA"
+     }
+    ],
+    "before": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "stop",
+    "button": "left",
+    "did": [
+     {
+      "pub": "canvas_close"
+     }
+    ],
+    "before": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "stop",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "100%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "file": "jpeg_01.jpg",
+    "icon": "to_inbox",
+    "button": "left",
+    "did": [
+     {
+      "command": "SIMPLE_INBOX_FILE"
+     },
+     {
+      "pub": "canvas_new_index_string"
+     }
+    ],
+    "before": {
+     "index": "3/5",
+     "zoom": "312.50%",
+     "shown": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "3/5",
+     "zoom": "312.50%",
+     "shown": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "file": "jpeg_01.jpg",
+    "icon": "delete",
+    "button": "left",
+    "did": [
+     {
+      "pub": "canvas_delete"
+     }
+    ],
+    "before": {
+     "index": "3/5",
+     "zoom": "312.50%",
+     "shown": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/5",
+     "zoom": "312.50%",
+     "shown": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "file": "jpeg_01.jpg",
+    "icon": "page_with_text",
+    "button": "left",
+    "did": [
+     {
+      "dialog": "embedded metadata",
+      "file": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+     }
+    ],
+    "before": {
+     "index": "3/5",
+     "zoom": "312.50%",
+     "shown": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/5",
+     "zoom": "312.50%",
+     "shown": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "file": "jpeg_03.jpg",
+    "icon": "to_inbox",
+    "button": "left",
+    "did": [
+     {
+      "command": "SIMPLE_INBOX_FILE"
+     },
+     {
+      "pub": "canvas_new_index_string"
+     }
+    ],
+    "before": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "file": "jpeg_03.jpg",
+    "icon": "trash_delete",
+    "button": "left",
+    "did": [
+     {
+      "pub": "canvas_delete"
+     }
+    ],
+    "before": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "file": "jpeg_03.jpg",
+    "icon": "undelete",
+    "button": "left",
+    "did": [
+     {
+      "pub": "canvas_undelete"
+     }
+    ],
+    "before": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "file": "jpeg_03.jpg",
+    "icon": "page_with_text",
+    "button": "left",
+    "did": [
+     {
+      "dialog": "embedded metadata",
+      "file": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c"
+     }
+    ],
+    "before": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "5/5",
+     "zoom": "117.19%",
+     "shown": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   }
+  ]
+ },
+ "archive_delete": {
+  "order": [
+   "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+   "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+   "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+   "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc"
+  ],
+  "widgets": [
+   {
+    "group": "left",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "position_previous",
+    "tooltip": "back\n\n----------\n\nbackspace, middle-click\n(media viewers - archive/delete filter->archive/delete filter: back)"
+   },
+   {
+    "group": "left",
+    "class": "BetterStaticText",
+    "shown": true,
+    "label": "index",
+    "text": "1/4",
+    "tooltip": ""
+   },
+   {
+    "group": "left",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "position_next",
+    "tooltip": "skip\n\n----------\n\nup\n(media viewers - archive/delete filter->archive/delete filter: skip)"
+   },
+   {
+    "group": "center",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "archive",
+    "tooltip": "archive"
+   },
+   {
+    "group": "center",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "delete",
+    "tooltip": "send to trash"
+   },
+   {
+    "group": "center",
+    "class": "IconButton",
+    "shown": false,
+    "icon": "trash_delete",
+    "tooltip": "delete completely"
+   },
+   {
+    "group": "center",
+    "class": "IconButton",
+    "shown": false,
+    "icon": "undelete",
+    "tooltip": "undelete"
+   },
+   {
+    "group": "center",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "page_with_text",
+    "tooltip": "show detailed file metadata, including extra info"
+   },
+   {
+    "group": "right",
+    "class": "BetterStaticText",
+    "shown": true,
+    "label": "zoom",
+    "text": "100%",
+    "tooltip": ""
+   },
+   {
+    "group": "right",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "zoom_in",
+    "tooltip": "zoom in\n\n----------\n\n+, ctrl+scroll up\n(media viewers - all->zoom: in)"
+   },
+   {
+    "group": "right",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "zoom_out",
+    "tooltip": "zoom out\n\n----------\n\n-, ctrl+scroll down\n(media viewers - all->zoom: out)"
+   },
+   {
+    "group": "right",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "zoom_switch",
+    "tooltip": "zoom switch\n\n----------\n\nz\n(media viewers - all->zoom: switch between 100% and canvas fit)"
+   },
+   {
+    "group": "right",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "zoom_cog",
+    "tooltip": "advanced zoom"
+   },
+   {
+    "group": "right",
+    "class": "VolumeControl",
+    "shown": true,
+    "icon": "sound",
+    "tooltip": "Global mute/unmute",
+    "popup": {
+     "mute_icon": "sound",
+     "mute_tooltip": "Mute/unmute: media viewer"
+    }
+   },
+   {
+    "group": "right",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "keyboard",
+    "tooltip": "shortcuts"
+   },
+   {
+    "group": "right",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "eye",
+    "tooltip": "view options"
+   },
+   {
+    "group": "right",
+    "class": "WindowDragButton",
+    "shown": true,
+    "icon": "move",
+    "tooltip": "click and drag from here to move the window"
+   },
+   {
+    "group": "right",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "fullscreen_switch",
+    "tooltip": "fullscreen switch"
+   },
+   {
+    "group": "right",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "open_externally",
+    "tooltip": "open externally\n\n----------\n\nctrl+e\n(media actions, either thumbnails or the viewer->open file in external program)"
+   },
+   {
+    "group": "right",
+    "class": "IconButtonMultiClickable",
+    "shown": true,
+    "icon": "drag",
+    "tooltip": "drag from here to export file"
+   },
+   {
+    "group": "right",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "stop",
+    "tooltip": "close"
+   }
+  ],
+  "now": {
+   "index": "1/4",
+   "zoom": "100%",
+   "shown": "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+   "inbox": true,
+   "archive_icon": "archive",
+   "archive_tooltip": "archive"
+  },
+  "presses": [
+   {
+    "icon": "position_previous",
+    "button": "left",
+    "did": [
+     {
+      "command": "SIMPLE_ARCHIVE_DELETE_FILTER_BACK"
+     }
+    ],
+    "before": {
+     "index": "1/4",
+     "zoom": "100%",
+     "shown": "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "1/4",
+     "zoom": "100%",
+     "shown": "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "position_previous",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "1/4",
+     "zoom": "100%",
+     "shown": "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "1/4",
+     "zoom": "100%",
+     "shown": "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "position_next",
+    "button": "left",
+    "did": [
+     {
+      "pub": "canvas_new_display_media"
+     },
+     {
+      "pub": "canvas_new_index_string"
+     },
+     {
+      "command": "SIMPLE_ARCHIVE_DELETE_FILTER_SKIP"
+     }
+    ],
+    "before": {
+     "index": "1/4",
+     "zoom": "100%",
+     "shown": "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "2/4",
+     "zoom": "75%",
+     "shown": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "position_next",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "2/4",
+     "zoom": "75%",
+     "shown": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "2/4",
+     "zoom": "75%",
+     "shown": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "archive",
+    "button": "left",
+    "did": [
+     {
+      "pub": "canvas_new_display_media"
+     },
+     {
+      "pub": "canvas_new_index_string"
+     },
+     {
+      "command": "SIMPLE_ARCHIVE_FILE"
+     }
+    ],
+    "before": {
+     "index": "2/4",
+     "zoom": "75%",
+     "shown": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "93.75%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "archive",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "3/4",
+     "zoom": "93.75%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "93.75%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "delete",
+    "button": "left",
+    "did": [
+     {
+      "pub": "canvas_delete"
+     }
+    ],
+    "before": {
+     "index": "3/4",
+     "zoom": "93.75%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "93.75%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "delete",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "3/4",
+     "zoom": "93.75%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "93.75%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "page_with_text",
+    "button": "left",
+    "did": [
+     {
+      "dialog": "embedded metadata",
+      "file": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c"
+     }
+    ],
+    "before": {
+     "index": "3/4",
+     "zoom": "93.75%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "93.75%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "page_with_text",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "3/4",
+     "zoom": "93.75%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "93.75%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "zoom_in",
+    "button": "left",
+    "did": [
+     {
+      "command": "SIMPLE_ZOOM_IN_VIEWER_CENTER"
+     }
+    ],
+    "before": {
+     "index": "3/4",
+     "zoom": "93.75%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "zoom_in",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "zoom_out",
+    "button": "left",
+    "did": [
+     {
+      "command": "SIMPLE_ZOOM_OUT_VIEWER_CENTER"
+     }
+    ],
+    "before": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "93.75%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "zoom_out",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "3/4",
+     "zoom": "93.75%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "93.75%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "zoom_switch",
+    "button": "left",
+    "did": [
+     {
+      "command": "SIMPLE_SWITCH_BETWEEN_100_PERCENT_AND_CANVAS_ZOOM"
+     }
+    ],
+    "before": {
+     "index": "3/4",
+     "zoom": "93.75%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "zoom_switch",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "zoom_cog",
+    "button": "left",
+    "did": [
+     {
+      "menu": [
+       {
+        "text": "recenter media"
+       },
+       {
+        "separator": true
+       },
+       {
+        "text": "default for filetype",
+        "checked": false
+       },
+       {
+        "text": "100% zoom",
+        "checked": true
+       },
+       {
+        "text": "canvas fit",
+        "checked": false
+       },
+       {
+        "text": "fill horizontally",
+        "checked": false
+       },
+       {
+        "text": "fill vertically",
+        "checked": false
+       },
+       {
+        "text": "canvas fill",
+        "checked": false
+       },
+       {
+        "separator": true
+       },
+       {
+        "text": "try to lock current size",
+        "checked": false
+       },
+       {
+        "text": "lock current zoom type",
+        "checked": false
+       },
+       {
+        "text": "lock current pan",
+        "checked": false
+       },
+       {
+        "separator": true
+       },
+       {
+        "text": "set default zoom type from this menu",
+        "checked": false
+       },
+       {
+        "text": "recenter media on window resize",
+        "checked": true
+       }
+      ]
+     }
+    ],
+    "before": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "zoom_cog",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "sound",
+    "button": "left",
+    "did": [],
+    "before": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "global_mute": true,
+    "icon_after": "mute"
+   },
+   {
+    "icon": "sound",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "keyboard",
+    "button": "left",
+    "did": [
+     {
+      "menu": [
+       {
+        "text": "edit shortcuts"
+       }
+      ]
+     }
+    ],
+    "before": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "keyboard",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "eye",
+    "button": "left",
+    "did": [
+     {
+      "menu": [
+       {
+        "text": "window",
+        "submenu": [
+         {
+          "text": "MAY BE BUGGY/CRASHY ON LINUX"
+         },
+         {
+          "text": "always on top",
+          "checked": false
+         },
+         {
+          "text": "always on top (while playing)",
+          "checked": false
+         },
+         {
+          "text": "remove titlebar/frame",
+          "checked": false
+         },
+         {
+          "separator": true
+         },
+         {
+          "text": "always start new media viewers always on top",
+          "checked": false
+         },
+         {
+          "text": "always start new media viewers on top while playing",
+          "checked": false
+         },
+         {
+          "text": "always start new media viewers without titlebar/frame",
+          "checked": false
+         }
+        ]
+       },
+       {
+        "text": "hovers",
+        "submenu": [
+         {
+          "text": "draw tags (left) in the background",
+          "checked": true
+         },
+         {
+          "text": "draw file information (top) in the background",
+          "checked": true
+         },
+         {
+          "text": "draw ratings and locations (top-right) in the background",
+          "checked": true
+         },
+         {
+          "text": "draw notes (right) in the background",
+          "checked": true
+         },
+         {
+          "text": "draw index text (bottom-right) in the background",
+          "checked": true
+         },
+         {
+          "separator": true
+         },
+         {
+          "text": "hover window pop-in requires window focus",
+          "checked": true
+         },
+         {
+          "text": "pop-in tags hover window on mouseover",
+          "checked": true
+         },
+         {
+          "text": "pop-in ratings and locations hover window on mouseover",
+          "checked": true
+         },
+         {
+          "text": "pop-in notes hover window on mouseover",
+          "checked": true
+         },
+         {
+          "text": "pin the duplicates hover window so it is always visible",
+          "checked": true
+         }
+        ]
+       },
+       {
+        "text": "rendering",
+        "submenu": [
+         {
+          "text": "apply image ICC Profile colour adjustments",
+          "checked": true
+         },
+         {
+          "text": "draw transparency as checkerboard in media viewer",
+          "checked": false
+         },
+         {
+          "text": "draw transparency as checkerboard in media viewer (duplicate filter)",
+          "checked": true
+         },
+         {
+          "text": "instead of checkerboard, use a bright greenscreen",
+          "checked": false
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "before": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "eye",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "move",
+    "button": "left",
+    "did": [],
+    "before": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "move",
+    "button": "right",
+    "did": [
+     {
+      "menu": [
+       {
+        "text": "resize to fit"
+       },
+       {
+        "separator": true
+       },
+       {
+        "text": "resize to 50%"
+       },
+       {
+        "text": "resize to 75%"
+       },
+       {
+        "text": "resize to 100%"
+       },
+       {
+        "text": "resize to 150%"
+       },
+       {
+        "text": "resize to 200%"
+       },
+       {
+        "separator": true
+       },
+       {
+        "text": "Right click any of the above to skip centering the media in the viewer window before zooming and/or resizing."
+       }
+      ]
+     }
+    ],
+    "before": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "fullscreen_switch",
+    "button": "left",
+    "did": [
+     {
+      "pub": "canvas_fullscreen_switch"
+     }
+    ],
+    "before": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "fullscreen_switch",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "open_externally",
+    "button": "left",
+    "did": [
+     {
+      "open externally": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c"
+     },
+     {
+      "command": "SIMPLE_OPEN_FILE_IN_EXTERNAL_PROGRAM"
+     }
+    ],
+    "before": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "open_externally",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "drag",
+    "button": "left",
+    "did": [
+     {
+      "drag": [
+       "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c"
+      ]
+     }
+    ],
+    "before": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "drag",
+    "button": "right",
+    "did": [
+     {
+      "command": "SIMPLE_FOCUS_TAB_AND_MEDIA"
+     }
+    ],
+    "before": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "stop",
+    "button": "left",
+    "did": [
+     {
+      "pub": "canvas_close"
+     }
+    ],
+    "before": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "stop",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "3/4",
+     "zoom": "100%",
+     "shown": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   }
+  ],
+  "after": {
+   "kept": 1,
+   "deleted": 0,
+   "skipped": 1
+  }
+ },
+ "duplicates": {
+  "widgets": [
+   {
+    "group": "left",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "position_first",
+    "tooltip": "go back a pair\n\n----------\n\nmiddle-click\n(media viewers - duplicate filter->duplicate filter: back)"
+   },
+   {
+    "group": "left",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "position_previous",
+    "tooltip": "previous\n\n----------\n\nleft, page up, scroll up, up\n(media viewers - 'normal' browser->media navigation: previous)"
+   },
+   {
+    "group": "left",
+    "class": "BetterStaticText",
+    "shown": true,
+    "label": "index",
+    "text": "File One - 1/6 - no decisions yet",
+    "tooltip": ""
+   },
+   {
+    "group": "left",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "position_next",
+    "tooltip": "next\n\n----------\n\ndown, page down, right, scroll down\n(media viewers - 'normal' browser->media navigation: next)"
+   },
+   {
+    "group": "left",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "position_last",
+    "tooltip": "show a different pair\n\n----------\n\nup\n(media viewers - duplicate filter->duplicate filter: skip)"
+   },
+   {
+    "group": "center",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "archive",
+    "tooltip": "archive"
+   },
+   {
+    "group": "center",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "delete",
+    "tooltip": "send to trash"
+   },
+   {
+    "group": "center",
+    "class": "IconButton",
+    "shown": false,
+    "icon": "trash_delete",
+    "tooltip": "delete completely"
+   },
+   {
+    "group": "center",
+    "class": "IconButton",
+    "shown": false,
+    "icon": "undelete",
+    "tooltip": "undelete"
+   },
+   {
+    "group": "center",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "page_with_text",
+    "tooltip": "show detailed file metadata"
+   },
+   {
+    "group": "right",
+    "class": "BetterStaticText",
+    "shown": true,
+    "label": "zoom",
+    "text": "468.75%",
+    "tooltip": ""
+   },
+   {
+    "group": "right",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "zoom_in",
+    "tooltip": "zoom in\n\n----------\n\n+, ctrl+scroll up\n(media viewers - all->zoom: in)"
+   },
+   {
+    "group": "right",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "zoom_out",
+    "tooltip": "zoom out\n\n----------\n\n-, ctrl+scroll down\n(media viewers - all->zoom: out)"
+   },
+   {
+    "group": "right",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "zoom_switch",
+    "tooltip": "zoom switch\n\n----------\n\nz\n(media viewers - all->zoom: switch between 100% and canvas fit)"
+   },
+   {
+    "group": "right",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "zoom_cog",
+    "tooltip": "advanced zoom"
+   },
+   {
+    "group": "right",
+    "class": "VolumeControl",
+    "shown": true,
+    "icon": "sound",
+    "tooltip": "Global mute/unmute",
+    "popup": {
+     "mute_icon": "sound",
+     "mute_tooltip": "Mute/unmute: media viewer"
+    }
+   },
+   {
+    "group": "right",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "keyboard",
+    "tooltip": "shortcuts"
+   },
+   {
+    "group": "right",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "eye",
+    "tooltip": "view options"
+   },
+   {
+    "group": "right",
+    "class": "WindowDragButton",
+    "shown": true,
+    "icon": "move",
+    "tooltip": "click and drag from here to move the window"
+   },
+   {
+    "group": "right",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "fullscreen_switch",
+    "tooltip": "fullscreen switch"
+   },
+   {
+    "group": "right",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "open_externally",
+    "tooltip": "open externally\n\n----------\n\nctrl+e\n(media actions, either thumbnails or the viewer->open file in external program)"
+   },
+   {
+    "group": "right",
+    "class": "IconButtonMultiClickable",
+    "shown": true,
+    "icon": "drag",
+    "tooltip": "drag from here to export file"
+   },
+   {
+    "group": "right",
+    "class": "IconButton",
+    "shown": true,
+    "icon": "stop",
+    "tooltip": "close"
+   }
+  ],
+  "now": {
+   "index": "File One - 1/6 - no decisions yet",
+   "zoom": "468.75%",
+   "shown": "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5",
+   "inbox": true,
+   "archive_icon": "archive",
+   "archive_tooltip": "archive"
+  },
+  "presses": [
+   {
+    "icon": "position_first",
+    "button": "left",
+    "did": [
+     {
+      "command": "SIMPLE_DUPLICATE_FILTER_BACK"
+     }
+    ],
+    "before": {
+     "index": "File One - 1/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "File One - 1/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "position_first",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "File One - 1/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "File One - 1/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "position_previous",
+    "button": "left",
+    "did": [
+     {
+      "pub": "canvas_new_display_media"
+     },
+     {
+      "pub": "canvas_new_index_string"
+     },
+     {
+      "pub": "canvas_new_duplicate_pair"
+     },
+     {
+      "command": "SIMPLE_VIEW_PREVIOUS"
+     }
+    ],
+    "before": {
+     "index": "File One - 1/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "File Two - 1/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "position_previous",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "File Two - 1/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "File Two - 1/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "position_next",
+    "button": "left",
+    "did": [
+     {
+      "pub": "canvas_new_display_media"
+     },
+     {
+      "pub": "canvas_new_index_string"
+     },
+     {
+      "pub": "canvas_new_duplicate_pair"
+     },
+     {
+      "command": "SIMPLE_VIEW_NEXT"
+     }
+    ],
+    "before": {
+     "index": "File Two - 1/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "a8b66799eb4f40c0113cc10a43722b41c04e61ca1b0acb264c1b2e0a22c97cbb",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "File One - 1/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "position_next",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "File One - 1/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "File One - 1/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "position_last",
+    "button": "left",
+    "did": [
+     {
+      "pub": "canvas_new_display_media"
+     },
+     {
+      "pub": "canvas_new_index_string"
+     },
+     {
+      "pub": "canvas_new_display_media"
+     },
+     {
+      "pub": "canvas_new_index_string"
+     },
+     {
+      "pub": "canvas_new_duplicate_pair"
+     },
+     {
+      "command": "SIMPLE_DUPLICATE_FILTER_SKIP"
+     }
+    ],
+    "before": {
+     "index": "File One - 1/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "2c8f109c62f467ae9bc57b2a58ca8f46e290148869d435c7a5f0ee5b2437a4d5",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "position_last",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    }
+   },
+   {
+    "icon": "archive",
+    "button": "left",
+    "did": [
+     {
+      "command": "SIMPLE_ARCHIVE_FILE"
+     }
+    ],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": true,
+     "archive_icon": "archive",
+     "archive_tooltip": "archive"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "archive",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "delete",
+    "button": "left",
+    "did": [
+     {
+      "pub": "canvas_delete"
+     }
+    ],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "delete",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "page_with_text",
+    "button": "left",
+    "did": [
+     {
+      "dialog": "embedded metadata",
+      "file": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819"
+     }
+    ],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "page_with_text",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "zoom_in",
+    "button": "left",
+    "did": [
+     {
+      "command": "SIMPLE_ZOOM_IN_VIEWER_CENTER"
+     }
+    ],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "500%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "zoom_in",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "500%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "500%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "zoom_out",
+    "button": "left",
+    "did": [
+     {
+      "command": "SIMPLE_ZOOM_OUT_VIEWER_CENTER"
+     }
+    ],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "500%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "zoom_out",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "zoom_switch",
+    "button": "left",
+    "did": [
+     {
+      "command": "SIMPLE_SWITCH_BETWEEN_100_PERCENT_AND_CANVAS_ZOOM"
+     }
+    ],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "468.75%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "zoom_switch",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "zoom_cog",
+    "button": "left",
+    "did": [
+     {
+      "menu": [
+       {
+        "text": "recenter media"
+       },
+       {
+        "separator": true
+       },
+       {
+        "text": "default for filetype",
+        "checked": false
+       },
+       {
+        "text": "100% zoom",
+        "checked": true
+       },
+       {
+        "text": "canvas fit",
+        "checked": false
+       },
+       {
+        "text": "fill horizontally",
+        "checked": false
+       },
+       {
+        "text": "fill vertically",
+        "checked": false
+       },
+       {
+        "text": "canvas fill",
+        "checked": false
+       },
+       {
+        "separator": true
+       },
+       {
+        "text": "media size and pan are locked"
+       }
+      ]
+     }
+    ],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "zoom_cog",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "sound",
+    "button": "left",
+    "did": [],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "global_mute": true,
+    "icon_after": "mute"
+   },
+   {
+    "icon": "sound",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "keyboard",
+    "button": "left",
+    "did": [
+     {
+      "menu": [
+       {
+        "text": "edit shortcuts"
+       }
+      ]
+     }
+    ],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "keyboard",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "eye",
+    "button": "left",
+    "did": [
+     {
+      "menu": [
+       {
+        "text": "window",
+        "submenu": [
+         {
+          "text": "MAY BE BUGGY/CRASHY ON LINUX"
+         },
+         {
+          "text": "always on top",
+          "checked": false
+         },
+         {
+          "text": "always on top (while playing)",
+          "checked": false
+         },
+         {
+          "text": "remove titlebar/frame",
+          "checked": false
+         },
+         {
+          "separator": true
+         },
+         {
+          "text": "always start new media viewers always on top",
+          "checked": false
+         },
+         {
+          "text": "always start new media viewers on top while playing",
+          "checked": false
+         },
+         {
+          "text": "always start new media viewers without titlebar/frame",
+          "checked": false
+         }
+        ]
+       },
+       {
+        "text": "hovers",
+        "submenu": [
+         {
+          "text": "draw tags (left) in the background",
+          "checked": true
+         },
+         {
+          "text": "draw file information (top) in the background",
+          "checked": true
+         },
+         {
+          "text": "draw ratings and locations (top-right) in the background",
+          "checked": true
+         },
+         {
+          "text": "draw notes (right) in the background",
+          "checked": true
+         },
+         {
+          "text": "draw index text (bottom-right) in the background",
+          "checked": true
+         },
+         {
+          "separator": true
+         },
+         {
+          "text": "hover window pop-in requires window focus",
+          "checked": true
+         },
+         {
+          "text": "pop-in tags hover window on mouseover",
+          "checked": true
+         },
+         {
+          "text": "pop-in ratings and locations hover window on mouseover",
+          "checked": true
+         },
+         {
+          "text": "pop-in notes hover window on mouseover",
+          "checked": true
+         },
+         {
+          "text": "pin the duplicates hover window so it is always visible",
+          "checked": true
+         }
+        ]
+       },
+       {
+        "text": "rendering",
+        "submenu": [
+         {
+          "text": "apply image ICC Profile colour adjustments",
+          "checked": true
+         },
+         {
+          "text": "draw transparency as checkerboard in media viewer",
+          "checked": false
+         },
+         {
+          "text": "draw transparency as checkerboard in media viewer (duplicate filter)",
+          "checked": true
+         },
+         {
+          "text": "instead of checkerboard, use a bright greenscreen",
+          "checked": false
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "eye",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "move",
+    "button": "left",
+    "did": [],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "move",
+    "button": "right",
+    "did": [
+     {
+      "menu": [
+       {
+        "text": "resize to fit"
+       },
+       {
+        "separator": true
+       },
+       {
+        "text": "resize to 50%"
+       },
+       {
+        "text": "resize to 75%"
+       },
+       {
+        "text": "resize to 100%"
+       },
+       {
+        "text": "resize to 150%"
+       },
+       {
+        "text": "resize to 200%"
+       },
+       {
+        "separator": true
+       },
+       {
+        "text": "Right click any of the above to skip centering the media in the viewer window before zooming and/or resizing."
+       }
+      ]
+     }
+    ],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "fullscreen_switch",
+    "button": "left",
+    "did": [
+     {
+      "pub": "canvas_fullscreen_switch"
+     }
+    ],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "fullscreen_switch",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "open_externally",
+    "button": "left",
+    "did": [
+     {
+      "open externally": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819"
+     },
+     {
+      "command": "SIMPLE_OPEN_FILE_IN_EXTERNAL_PROGRAM"
+     }
+    ],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "open_externally",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "drag",
+    "button": "left",
+    "did": [
+     {
+      "drag": [
+       "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819"
+      ]
+     }
+    ],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "drag",
+    "button": "right",
+    "did": [
+     {
+      "command": "SIMPLE_FOCUS_TAB_AND_MEDIA"
+     }
+    ],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "stop",
+    "button": "left",
+    "did": [
+     {
+      "pub": "canvas_close"
+     }
+    ],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   },
+   {
+    "icon": "stop",
+    "button": "right",
+    "did": [],
+    "before": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    },
+    "after": {
+     "index": "File One - 2/6 - no decisions yet",
+     "zoom": "100%",
+     "shown": "37285b729ffed3927a05feb112ee63dd912a8065a8f34ae1715ed3b156dfe819",
+     "inbox": false,
+     "archive_icon": "to_inbox",
+     "archive_tooltip": "return to inbox"
+    }
+   }
+  ]
+ }
+}
