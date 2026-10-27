@@ -25327,6 +25327,245 @@
    }
   },
   {
+   "id": "interaction-thumbnail-middle-click",
+   "label": "Middle-click a thumbnail opens the media viewer on it (or downloads a remote file)",
+   "path": "Interactions > Search page > Thumbnail grid",
+   "workstream": "search-pages",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:177, hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:1022",
+   "native": "crates/hydrus-gui/ui/main.slint:190-215",
+   "notes": [
+    "Reference: MediaResultsPanelThumbnails registers EVT_MIDDLE_DOWN -> EventMouseFullScreen (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:177, :1022), the same handler as the left double-click (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:176): on a local file it opens the viewer; on a file that is not local but is current on a remote file service it downloads it (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:1036-1040). Middle on empty space does nothing (_GetThumbnailUnderMouse is None). The press also reaches _InnerWidget.mousePressEvent (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:2016), which selects the thumbnail as a click would.",
+    "Native: ThumbnailGrid's TouchArea (ui/main.slint:190-215) handles click, right press and double-click only; no middle press. The remote-download branch needs remote file services, which are out of scope (DECISIONS 2026-09-29), so only the viewer part applies. Found by the interaction audit (scripts/interaction_audit.py)."
+   ]
+  },
+  {
+   "id": "interaction-thumbnail-click-select",
+   "label": "Click, ctrl-click, shift-click and empty-space click select thumbnails",
+   "path": "Interactions > Search page > Thumbnail grid",
+   "workstream": "search-pages",
+   "state": "implemented",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:2016-2028, hydrus/client/gui/pages/ClientGUIMediaResultsPanel.py:721",
+   "native": "crates/hydrus-gui/ui/main.slint:190-215, :2170-2210",
+   "notes": [
+    "Reference: _InnerWidget.mousePressEvent (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:2016-2028) calls _HitMedia(thumbnail under the mouse, ctrl, shift) for every button except a right press on empty space, which is skipped so the selection stays; a press on empty space with no thumbnail clears the selection (_HitMedia with None). Ctrl toggles, shift extends from the last click (MediaResultsPanel._HitMedia, ClientGUIMediaResultsPanel.py:721).",
+    "Native: ui/main.slint ThumbnailGrid clicked / thumbnail-clicked with ctrl and shift, and the empty-space TouchArea; tests call the callbacks, not pointer events. (The reference's MediaResultsPanelThumbnailsGraphicsViewTest class is an experimental unused port and is not the source.)"
+   ]
+  },
+  {
+   "id": "interaction-thumbnail-double-click-open",
+   "label": "Double-click a thumbnail opens the media viewer on it",
+   "path": "Interactions > Search page > Thumbnail grid",
+   "workstream": "search-pages",
+   "state": "implemented",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:176, hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:1022",
+   "native": "crates/hydrus-gui/ui/main.slint:212",
+   "notes": [
+    "Reference: EVT_LEFT_DCLICK -> EventMouseFullScreen (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:176, :1022): on a local thumbnail it opens the viewer on it; on a remote-only file it downloads it (remote services out of scope).",
+    "Native: ui/main.slint:212 double-clicked => activated. Tests invoke the callback; none sends a real double-click."
+   ]
+  },
+  {
+   "id": "interaction-thumbnail-context-menu",
+   "label": "Right-click a thumbnail opens the thumbnail menu",
+   "path": "Interactions > Search page > Thumbnail grid",
+   "workstream": "search-pages",
+   "state": "implemented",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:195, hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:1871",
+   "native": "crates/hydrus-gui/ui/main.slint:197-205, :2201",
+   "notes": [
+    "Reference: customContextMenuRequested -> ShowMenuFromSignal (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:195, :1871); the press that precedes it selects the thumbnail (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:2016-2028) except on empty space, where the empty-space menu shows and the selection is untouched.",
+    "Native: ui/main.slint menu-requested; GUI.md says the menu is recorded (record_thumbnail_menu.py). The pointer path to it is untested."
+   ]
+  },
+  {
+   "id": "interaction-thumbnail-drag-out",
+   "label": "Drag selected thumbnails out to other programs (alt-drag for paths)",
+   "path": "Interactions > Search page > Thumbnail grid",
+   "workstream": "search-pages",
+   "state": "missing",
+   "priority": "low",
+   "reference": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:956 (DoMouseMoveEvent)",
+   "native": null,
+   "notes": [
+    "Deferred, low priority (DECISIONS.md 2026-10-08; #26, #94): Slint cannot start a drag out of its window. Reference: MediaResultsPanelThumbnails.DoMouseMoveEvent starts a QDrag after a clean drag ramp; alt exports paths rather than files.",
+    "Listed so the thumbnail interactions are complete; not counted while low."
+   ]
+  },
+  {
+   "id": "interaction-list-keys-navigate",
+   "label": "List controls: arrow, Home/End, PageUp/PageDown keys move the selection; Ctrl+A selects all",
+   "path": "Interactions > Shared lists > List control keyboard",
+   "workstream": "editors",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/lists/ClientGUIListCtrl.py:904-926",
+   "native": "crates/hydrus-gui/ui/list_table.slint:61-71",
+   "notes": [
+    "Reference: BetterListCtrlTreeView is a QTreeView, so the arrow, Home, End, PageUp and PageDown keys move and extend the selection (with shift/ctrl), and hydrus/client/gui/lists/ClientGUIListCtrl.py:922 handles Ctrl+A to select all. It is the list in about forty dialogs and panels.",
+    "Native: the shared ListTable (ui/list_table.slint:61-71) handles only the Delete key; clicks select, nothing moves the selection from the keyboard. Found by the interaction audit."
+   ]
+  },
+  {
+   "id": "interaction-list-keys-activate-copy",
+   "label": "List controls: Enter activates the selected rows; Ctrl+C copies the rows' text",
+   "path": "Interactions > Shared lists > List control keyboard",
+   "workstream": "editors",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/lists/ClientGUIListCtrl.py:916-938",
+   "native": "crates/hydrus-gui/ui/list_table.slint:61-71, :148",
+   "notes": [
+    "Reference: hydrus/client/gui/lists/ClientGUIListCtrl.py:916 Enter/Return runs the list's activate action (the same as a double-click, edit in most dialogs); hydrus/client/gui/lists/ClientGUIListCtrl.py:928 Ctrl+C copies the rows via the list's copy-rows callable (where the dialog supplies one) joined by newlines.",
+    "Native: ui/list_table.slint has row-activated for double-click only and no copy. Some lists have their own copy menus (those leaves exist); the keys are not wired anywhere."
+   ]
+  },
+  {
+   "id": "interaction-list-pointer",
+   "label": "List controls: click, ctrl/shift-click, drag-select, double-click to activate, right-click row menu (ListTable)",
+   "path": "Interactions > Shared lists > List control pointer",
+   "workstream": "editors",
+   "state": "partial",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/lists/ClientGUIListCtrl.py:1075, hydrus/client/gui/lists/ClientGUIListCtrl.py:881",
+   "native": "crates/hydrus-gui/ui/list_table.slint:125-160",
+   "notes": [
+    "Reference: BetterListCtrlTreeView: left double-click activates (hydrus/client/gui/lists/ClientGUIListCtrl.py:1075 mouseDoubleClickEvent), right-click on rows shows the rows menu (hydrus/client/gui/lists/ClientGUIListCtrl.py:881; the header's column menu is :621, a separate behaviour), selection by click/ctrl/shift/drag is QTreeView's.",
+    "Native: ui/list_table.slint touch area (down/up/moved/double-clicked, row-menu, row-middle) provides all of it for lists built on ListTable. Dialog tests mostly invoke row-activated/row-menu directly.",
+    "Partial because hand-rolled lists outside ListTable have none of it: auto_resolution_review.slint:107-113 and favourites.slint:130-136 (plain rows with a TouchArea, no shift/ctrl, double-click or menu), and the manage-tags list (see interaction-manage-tags-list-menu-keys). The header column menu (:621) has no native counterpart anywhere."
+   ]
+  },
+  {
+   "id": "interaction-tab-double-click-rename",
+   "label": "Double-click a page tab to rename the page",
+   "path": "Interactions > Pages > Page tabs",
+   "workstream": "shell",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/pages/ClientGUIPagesTreeView.py:99-111, hydrus/client/gui/pages/ClientGUIPages.py:1205",
+   "native": "crates/hydrus-gui/ui/notebook_tabs.slint",
+   "notes": [
+    "Reference: hydrus/client/gui/pages/ClientGUIPagesTreeView.py:99-111 mouseDoubleClickEvent on a tab emits tabDoubleLeftClicked, connected to _RenamePage (hydrus/client/gui/pages/ClientGUIPages.py:1205); the rename dialog is 'Enter the new name.'",
+    "Native: rename is only in the tab menu (GUI.md 'Tab rename'); ui/notebook_tabs.slint has no double-click on a tab. Found by the interaction audit."
+   ]
+  },
+  {
+   "id": "interaction-tab-strip-clicks",
+   "label": "Page tabs: double-click empty tab space opens the page chooser; right-click a tab or empty space shows the tab menu",
+   "path": "Interactions > Pages > Page tabs",
+   "workstream": "shell",
+   "state": "implemented",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/pages/ClientGUIPages.py:2640-2712, hydrus/client/gui/pages/ClientGUIPagesTreeView.py:99-127",
+   "native": "crates/hydrus-gui/ui/notebook_tabs.slint:96-99, :176-177, :207-208",
+   "notes": [
+    "Reference: PagesNotebook.eventFilter (hydrus/client/gui/pages/ClientGUIPages.py:2640-2712): a double-click, left or middle, on empty tab space chooses a new page there; a right-button release on a tab or empty space shows the tab menu. (Middle-click on a tab closing it is tracked by audit-options-tabs-close.)",
+    "Native: ui/notebook_tabs.slint, docs/rust/GUI.md 'a double click, left or middle, on a tab row's empty space'. Written before the interaction audit; never listed as a leaf."
+   ]
+  },
+  {
+   "id": "interaction-tab-drag",
+   "label": "Drag page tabs to reorder; shift/normal hover-switching while dragging files over tabs",
+   "path": "Interactions > Pages > Page tabs",
+   "workstream": "shell",
+   "state": "implemented",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/pages/ClientGUIPagesTreeView.py:339-498, hydrus/client/gui/pages/ClientGUIPagesTreeView.py:133-181",
+   "native": "crates/hydrus-gui/ui/notebook_tabs.slint:285",
+   "notes": [
+    "Reference: hydrus/client/gui/pages/ClientGUIPagesTreeView.py:339-498 TabWidgetWithDnD (mouseMove starts a tab drag after a threshold, drop reorders or moves into a notebook with shift variants), hydrus/client/gui/pages/ClientGUIPagesTreeView.py:133-181 TabBar drag-enter/move/drop (hovering a drag over a tab switches to it per page_drag_change_tab_with_shift / _normally).",
+    "Native: GUI.md 'owned drag after the reference's 100ms threshold' (ui/notebook_tabs.slint pointer callbacks). Dropping files or other tabs into a notebook is untracked."
+   ]
+  },
+  {
+   "id": "interaction-pages-tree-menu-drag",
+   "label": "Pages tree view: right-click page menu and drag-and-drop of pages",
+   "path": "Interactions > Pages > Pages tree view",
+   "workstream": "shell",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/pages/ClientGUIPagesTreeView.py:689-724, hydrus/client/gui/pages/ClientGUIPagesTreeView.py:1005",
+   "native": "crates/hydrus-gui/ui/notebook_tabs.slint:343",
+   "notes": [
+    "Reference: TreeViewWithDnD (hydrus/client/gui/pages/ClientGUIPagesTreeView.py:689) shows the page menu on right-click (hydrus/client/gui/pages/ClientGUIPagesTreeView.py:712 customContextMenuRequested, _ShowContextMenu at :1005) and moves pages by drag and drop (InternalMove, :720-:724).",
+    "Native: GUI.md says 'broader Qt tree drag/drop and context-menu behavior remain unported'; the tree supports click, keys and double-click only (ui/notebook_tabs.slint:343)."
+   ]
+  },
+  {
+   "id": "interaction-collect-control-middle-click",
+   "label": "Middle-click the collect control to clear collecting",
+   "path": "Interactions > Search page > Sort and collect controls",
+   "workstream": "search-pages",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/pages/ClientGUIMediaResultsPanelSortCollect.py:463-480",
+   "native": null,
+   "notes": [
+    "Reference: hydrus/client/gui/pages/ClientGUIMediaResultsPanelSortCollect.py:463-480 eventFilter: a middle press on the collect combo sets an empty MediaCollect (keeping collect_unmatched).",
+    "Native: GUI.md says 'Not yet: ... middle-clicking the control to clear it'."
+   ]
+  },
+  {
+   "id": "interaction-embed-button",
+   "label": "Embed button: click to start a preview or viewer file that waits behind it",
+   "path": "Interactions > Media viewer > Media container",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/canvas/ClientGUICanvasMedia.py:1471-1473",
+   "native": null,
+   "notes": [
+    "Reference: hydrus/client/gui/canvas/ClientGUICanvasMedia.py:1471-1473 EmbedButton, left press runs EventEmbedButton, used when a media kind's 'start with embed button' view option is set.",
+    "Native: DIFFERENCES.md says hydrus-rs has no embed button; such kinds play nothing (preview_start_with_embed)."
+   ]
+  },
+  {
+   "id": "interaction-viewer-note-hover-clicks",
+   "label": "Viewer note hover: left-click edits the note, right-click folds or unfolds its text",
+   "path": "Interactions > Media viewer > Notes hover",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py:2111-2135",
+   "native": "crates/hydrus-gui/ui/note_hover_copy.slint",
+   "notes": [
+    "Reference: hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py:2111-2135 NotePanel eventFilter: left press emits editNote(name) (opens Manage Notes on that note), middle copies (tracked), right toggles the note text's visibility.",
+    "Native: ui/note_hover_copy.slint handles the middle press only."
+   ]
+  },
+  {
+   "id": "interaction-viewer-inbox-icon-click",
+   "label": "Viewer ratings hover: click the inbox icon to archive the file",
+   "path": "Interactions > Media viewer > Top-right hover",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py:1663-1719",
+   "native": "crates/hydrus-gui/ui/viewer.slint:958-962",
+   "notes": [
+    "Reference: hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py:1663-1719 InboxIconClickFilter: a left press on the inbox icon runs _Archive.",
+    "Native: the icon is painted (ui/viewer.slint:958-962 and the ratings frame) and takes no clicks; archiving is by the top strip's button or shortcut."
+   ]
+  },
+  {
+   "id": "interaction-manage-tags-list-menu-keys",
+   "label": "Manage tags list: right-click tag menu, middle-click search, keyboard navigation and Ctrl+C",
+   "path": "Interactions > Manage tags for selected files > Tag lists",
+   "workstream": "media",
+   "state": "missing",
+   "priority": "normal",
+   "reference": "hydrus/client/gui/lists/ClientGUIListBoxes.py:4883 (ListBoxTagsMedia), hydrus/client/gui/lists/ClientGUIListBoxes.py:5467 (ListBoxTagsMediaTagsDialog), hydrus/client/gui/lists/ClientGUIListBoxes.py:3220, hydrus/client/gui/lists/ClientGUIListBoxes.py:3455, hydrus/client/gui/lists/ClientGUIListBoxes.py:2711",
+   "native": "crates/hydrus-gui/ui/manage_tags.slint:190-207",
+   "notes": [
+    "Tracked with #286 (the selection-tags box), which shares ListBoxTagsMedia: the reference's manage-tags lists inherit the tag menu (customContextMenuRequested, :3220), middle-click opening a search page (shift: OR, :3455), the ListBox keyboard (arrows, Home/End, PageUp/PageDown with ctrl/shift, Enter, Escape, :2711), wheel and drag-select from ListBoxTags/ListBox.",
+    "Native: the manage-tags list handles a left press with ctrl/shift, a double-click, Delete and Return (ui/manage_tags.slint:190-207); no menu, no middle-click, no navigation keys. Found by the interaction audit's subclass expansion; the same inheritance is why the viewer's tag hover (ListBoxTagsMediaHoverFrame) and the page's selection tags (ListBoxTagsMediaSidebar) share the gap."
+   ]
+  },
+  {
    "id": "audit-media-viewer-top-hover-layout",
    "label": "Browser top hover: its widgets in the reference's order and rows",
    "path": "Media files, metadata and viewing > Media Viewer > Top hover",
