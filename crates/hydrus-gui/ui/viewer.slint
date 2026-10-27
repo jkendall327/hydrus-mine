@@ -225,6 +225,10 @@ export component MediaViewerWindow inherits Window {
     // a note's left click (Manage Notes on it) and right click (fold it)
     callback note-edit-requested(int);
     callback note-toggle-requested(int);
+    // the top-right frame has something to show (ratings, the inbox or
+    // trash icon, where the file is, its URLs), and how tall it is
+    property <bool> top-right-content: root.ratings.length > 0 || root.url-links.length > 0 || root.file-inbox || root.file-trashed || root.location-strings.length > 0;
+    out property <length> top-right-hover-height: ratings-box.preferred-height;
     out property <length> notes-hover-y: notes-box.y;
     out property <length> notes-hover-height: notes-box.height;
     out property <bool> notes-showing: (root.hover-focus-good || (!root.another-window-active && root.notes-raised)) && root.hover-notes-enabled && root.notes.length > 0 && (notes-box.has-hover || (pointer.has-hover
@@ -273,7 +277,7 @@ export component MediaViewerWindow inherits Window {
     in property <length> rating-size: 12px;
     in property <length> incdec-height: 12px;
     in property <length> rating-outline: 1px;
-    out property <bool> ratings-showing: (root.hover-focus-good || (!root.another-window-active && root.ratings-raised)) && root.hover-ratings-enabled && (root.ratings.length > 0 || root.url-links.length > 0 || root.file-inbox || root.file-trashed || root.location-strings.length > 0) && (ratings-frame.has-hover
+    out property <bool> ratings-showing: (root.hover-focus-good || (!root.another-window-active && root.ratings-raised)) && root.hover-ratings-enabled && root.top-right-content && (ratings-frame.has-hover
         || (pointer.has-hover && pointer.mouse-x >= root.width - ratings-box.preferred-width - 20px
             && pointer.mouse-y <= ratings-box.preferred-height + 20px));
     // (it stays up while its own tag menu or question is open, as the
@@ -1392,7 +1396,9 @@ export component MediaViewerWindow inherits Window {
         // The note text keeps the hover alive and middle-clicks copy that note.
         notes-box := TouchArea {
             x: root.width * 0.8;
-            y: root.ratings.length > 0 || root.url-links.length > 0 ? ratings-box.preferred-height + 4px : 0;
+            // (under the top-right frame whenever it has anything to show,
+            // as the reference places it under that frame)
+            y: root.top-right-content ? ratings-box.preferred-height + 4px : 0;
             width: root.width * 0.2;
             height: min(notes-layout.preferred-height, root.height - self.y);
             visible: root.notes-showing;

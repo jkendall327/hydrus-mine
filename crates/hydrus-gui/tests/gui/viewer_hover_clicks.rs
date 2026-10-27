@@ -167,6 +167,8 @@ fn press(viewer: &hydrus_gui::MediaViewerWindow, at: LogicalPosition, button: &s
     let button = match button {
         "left" => PointerEventButton::Left,
         "right" => PointerEventButton::Right,
+        "back" => PointerEventButton::Back,
+        "forward" => PointerEventButton::Forward,
         _ => PointerEventButton::Middle,
     };
     widgets::click_at(viewer.window(), at, button);
@@ -303,4 +305,68 @@ fn a_left_press_on_the_inbox_icon_archives_the_file() {
         .read(move |c| hydrus_store::media::inboxed(c, &[pressed]))
         .unwrap();
     assert!(inboxed.is_empty(), "archived");
+}
+
+// The notes hover sits under the top-right frame, as the reference places it
+// (`CanvasHoverFrameRightNotes._GetIdealSizeAndPosition`: the top-right
+// frame's height and a gap down), whatever the frame shows: here with no
+// rating rows, the frame holding the inbox icon and where the file is. A
+// press on a note's far right edits the note, and archives nothing.
+#[test]
+fn the_notes_hover_sits_under_the_top_right_frame() {
+    let recorded = hydrus_testkit::fixture_json("viewer_hover_clicks.json");
+    let (fixture, viewer) = open(&recorded);
+    go_to(&viewer, &recorded, "jpeg_04.jpg");
+    // (as with no rating services)
+    viewer.set_ratings(slint::ModelRc::default());
+    widgets::settle();
+    assert!(viewer.get_file_inbox());
+    raise_notes(&viewer);
+    let frame = viewer.get_top_right_hover_height();
+    assert!(
+        frame > 0.0,
+        "the frame shows the inbox icon and the locations"
+    );
+    assert!(
+        viewer.get_notes_hover_y() >= frame,
+        "the notes ({}) under the frame ({frame})",
+        viewer.get_notes_hover_y()
+    );
+    let note = "alpha";
+    let panel = widgets::descriptions(viewer.window(), note)
+        .iter()
+        .position(Option::is_some)
+        .expect("the note's panel");
+    let at = widgets::position(viewer.window(), note, panel);
+    // (the panel's right edge, inside the hover's 6px padding, is where
+    // the top-right frame would have covered it)
+    let far_right = LogicalPosition::new(990.0, at.y);
+    assert!(at.x < far_right.x);
+    press(&viewer, far_right, "left");
+    let window = fixture.bound.manage_notes.borrow().as_ref().map_or_else(
+        || panic!("Manage Notes opens"),
+        slint::ComponentHandle::clone_strong,
+    );
+    window.invoke_cancel();
+    widgets::settle();
+    assert!(viewer.get_file_inbox(), "the file is not archived");
+    // the back and forward buttons fold and unfold a note, as the reference's
+    // event filter folds on any button but left and middle
+    let shown = |viewer: &hydrus_gui::MediaViewerWindow| {
+        notes(viewer)
+            .into_iter()
+            .find(|(name, _, _)| name == note)
+            .unwrap()
+            .2
+    };
+    assert!(shown(&viewer));
+    for (button, after) in [("back", false), ("forward", true)] {
+        raise_notes(&viewer);
+        press(
+            &viewer,
+            widgets::position(viewer.window(), note, panel),
+            button,
+        );
+        assert_eq!(shown(&viewer), after, "after {button}");
+    }
 }

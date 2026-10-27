@@ -1354,7 +1354,11 @@ export component MainWindow inherits Window {
                         spacing: 4px;
                         Rectangle {
                             horizontal-stretch: 1;
-                            Button {
+                            min-height: collect-button.min-height;
+                            preferred-height: collect-button.preferred-height;
+                            collect-button := Button {
+                                width: parent.width;
+                                height: parent.height;
                                 text: root.collect-label;
                                 checkable: true;
                                 checked <=> root.collect-open;

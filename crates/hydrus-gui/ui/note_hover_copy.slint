@@ -1,7 +1,7 @@
 // One note in the viewer's notes hover (the reference's `NotePanel`): its
 // name over its text. As the reference's event filter on either has it, a
 // left press edits the note, a middle press copies it (the containing
-// viewer owns the clipboard), and a right press folds or unfolds its text.
+// viewer owns the clipboard), and any other press folds or unfolds its text.
 export component NoteHoverCopy inherits Rectangle {
     in property <string> name;
     in property <string> text;
@@ -27,7 +27,8 @@ export component NoteHoverCopy inherits Rectangle {
                     root.edit();
                 } else if event.button == PointerEventButton.middle {
                     root.copied();
-                } else if event.button == PointerEventButton.right {
+                } else {
+                    // (any other button folds it: right, back, forward)
                     root.toggled();
                 }
             }

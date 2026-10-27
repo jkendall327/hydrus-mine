@@ -24,6 +24,18 @@ fn a_middle_press_on_the_collect_control_stops_collecting() {
     );
     let ui = &fixture.ui;
     widgets::lay_out(ui.window(), 1200.0, 800.0);
+    // (for review: the sort and collect controls, collecting by series)
+    let render = |name: &str| {
+        let window = fixture.windows_.get(0).unwrap();
+        let pixels = hydrus_gui::headless::render_snapshot(&window, 1200, 800);
+        hydrus_gui::headless::save_png(
+            &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join(name),
+            &pixels,
+            1200,
+            800,
+        )
+        .unwrap();
+    };
     let series = {
         let rows = ui.get_collect_choices();
         (0..rows.row_count())
@@ -52,6 +64,7 @@ fn a_middle_press_on_the_collect_control_stops_collecting() {
             before["media"].as_u64().unwrap(),
             "{what}: collected"
         );
+        render("collect_middle_click.png");
         let at = widgets::position(ui.window(), before["label"].as_str().unwrap(), 0);
         let button = match case["button"].as_str().unwrap() {
             "middle" => PointerEventButton::Middle,
@@ -87,7 +100,9 @@ fn a_middle_press_on_the_collect_control_stops_collecting() {
         );
         if case["button"] == "middle" {
             // (the tag context back to the default: all known tags, current
-            // and pending)
+            // and pending. The page's context is already the default, as the
+            // test cannot give the collect another first, so this only checks
+            // it is not changed to something else.)
             let context = &after["collect"]["tag_context"];
             assert_eq!(
                 collect.tag_context,
