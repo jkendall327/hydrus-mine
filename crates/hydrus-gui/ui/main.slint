@@ -1334,13 +1334,18 @@ export component MainWindow inherits Window {
                     HorizontalLayout {
                         spacing: 4px;
                         type-choice := WheelMenuChoice {
+                            // a long sort name elides rather than pushing
+                            // the order choice and the cog over each other
+                            min-width: 60px;
                             model: root.sort-names;
                             current-index: root.sort-index;
                             wheel-count: root.sort-wheel-count;
                             selected(index) => { root.sort-chosen(index); }
                         }
                         order-choice := WheelMenuChoice {
-                            width: 130px;
+                            min-width: 60px;
+                            max-width: 130px;
+                            horizontal-stretch: 0;
                             model: root.order-names;
                             current-index: root.order-index;
                             selected(index) => { root.order-chosen(index); }
