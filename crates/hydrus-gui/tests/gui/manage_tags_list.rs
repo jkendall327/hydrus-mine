@@ -424,8 +424,13 @@ fn the_dialogs_list_menu_and_its_entries_are_the_references() {
             continue;
         }
         d.open_menu(&["alpha:first".to_owned()]);
-        let offered: Vec<String> = d.tree(0).as_array().unwrap()[..3]
+        let offered: Vec<String> = d
+            .tree(0)
+            .as_array()
+            .unwrap()
             .iter()
+            .filter(|e| *e != "---")
+            .take(3)
             .map(|e| match e {
                 Json::String(s) => s.clone(),
                 Json::Object(o) => o.keys().next().unwrap().clone(),

@@ -8412,6 +8412,15 @@ pub(crate) fn list_text(text: &str, [r, g, b]: [u8; 3]) -> ListText {
     }
 }
 
+/// Whether `shown` draws `rows` already (their part models compared by
+/// content, not by identity).
+pub(crate) fn same_list_texts(shown: &ModelRc<ListText>, rows: &[ListText]) -> bool {
+    shown.row_count() == rows.len()
+        && shown.iter().zip(rows).all(|(a, b)| {
+            a.text == b.text && a.colour == b.colour && a.parts.iter().eq(b.parts.iter())
+        })
+}
+
 pub(crate) fn styled_list_text(
     text: &str,
     colour: [u8; 3],
@@ -8797,11 +8806,8 @@ fn refresh(window: &MainWindow, page: &SearchPage) {
         .collect();
     // (the same rows keep their model: a new one would make the rows anew,
     // and the row under the pointer would lose a double-click's first click)
-    let same = |a: &ListText, b: &ListText| {
-        a.text == b.text && a.colour == b.colour && a.parts.iter().eq(b.parts.iter())
-    };
     let shown = window.get_tags();
-    if shown.row_count() != tags.len() || !shown.iter().zip(&tags).all(|(a, b)| same(&a, b)) {
+    if !same_list_texts(&shown, &tags) {
         window.set_tags(ModelRc::new(VecModel::from(tags)));
     }
     selection_tags::show(window, page);

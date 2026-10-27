@@ -266,18 +266,19 @@ impl Harness {
                 let page = page.borrow();
                 let text = self.text();
                 // (a duplicates page searches its first file search)
-                let searched = page.duplicates().map_or_else(
-                    || page.active_predicates().to_vec(),
-                    |d| d.search.search_1.predicates.clone(),
+                let (searched, location) = page.duplicates().map_or_else(
+                    || (page.active_predicates().to_vec(), page.location().clone()),
+                    |d| {
+                        (
+                            d.search.search_1.predicates.clone(),
+                            d.search.search_1.location.clone(),
+                        )
+                    },
                 );
                 let mut predicates: Vec<String> =
                     searched.iter().map(|p| predicate_text(p, &text)).collect();
                 predicates.sort();
-                (
-                    predicates,
-                    page.location().clone(),
-                    page.duplicates().is_some(),
-                )
+                (predicates, location, page.duplicates().is_some())
             };
             let name = self.bound.pages.borrow().shown().name.clone();
             let topic = if duplicates {
