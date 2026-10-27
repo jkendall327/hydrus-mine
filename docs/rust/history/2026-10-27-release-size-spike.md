@@ -48,6 +48,7 @@ core row of a from-scratch build includes dependencies, so compare the
 | 2 | line tables kept, split with `objcopy` (see below) | 211 MB + 747 MB `.debug` | 61 MB + 188 MB | 6.6 GB | 6.8 GB | 973 s |
 | 3 | 1 + UI crates at `opt-level = "s"` | 188 MB | 61 MB | 5.5 GB | 3.5 GB | 797 s |
 | 4 | 1 + UI crates at `opt-level = "z"` | 189 MB | 61 MB | 5.5 GB | 3.5 GB | 673 s |
+| 5 | **chosen**: 3 + line tables kept and split as `release.yml` does | 185 MB + 583 MB `.debug` | 61 MB + 188 MB | 6.1 GB | 5.4 GB | 850 s |
 
 Per-crate peaks and times for the UI crates, experiment 3 vs baseline:
 
@@ -71,14 +72,13 @@ Findings:
   every crate (~45 minutes here from scratch). Stripping the finished binary
   with `strip` gives the same size without a rebuild.
 - `opt-level = "s"` on the UI crates saves a further ~25 MB (12%). `"z"` is no
-  smaller, so use `"s"`. Release code that the user runs is mostly the Slint
-  runtime (`i_slint_core`, not affected), not the generated bindings.
+  smaller, so use `"s"`. Runtime speed of the generated UI at `"s"` was not measured.
 - Keeping symbol names (`strip = "debuginfo"` or `strip --strip-debug`) costs
   ~45 MB over a full `strip` and keeps function names in backtraces.
 - Not tried: `lto = "fat"`, `codegen-units = 1`, and `opt-level = "s"` for the
-  whole workspace. Per-package `lto` is not settable in Cargo; the UI crates
-  are compiled for linker-plugin LTO and the final crate's settings decide the
-  link, so their `codegen-units` is not the lever.
+  whole workspace. Cargo cannot set `lto` per package; the UI crates are built
+  for linker-plugin LTO (their rustc line shows it), so the final link does the
+  heavy optimisation. Lowering `codegen-units` for them was not tried either.
 
 ## Backtraces keep line numbers
 
@@ -101,7 +101,9 @@ Checked on a real panic in the experiment-2 `hydrus-gui` (this container lacks
 | zlib-compressed `.debug` next to the binary | the same, with `file:line` |
 
 Sizes of the `.debug` file: 747 MB for `hydrus-gui` (150 MB as `.tgz`), 188 MB for
-`hydrus` (45 MB). `split-debuginfo = "packed"` was not tried: on Linux it
+`hydrus` (45 MB) in experiment 2; 583 MB for `hydrus-gui` with the chosen
+config (both files together: 164 MB as `.tgz`). The chosen config's binary
+shows `x11.rs:59:28` in the same backtrace, and `hydrus --help` runs. `split-debuginfo = "packed"` was not tried: on Linux it
 produces `.dwp` files, which std's backtrace does not read.
 
 ## What changed
