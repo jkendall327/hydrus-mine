@@ -6957,9 +6957,9 @@ fn open_viewer(
             }
         }
     });
-    // the file's info line and buttons, in the top hover frame, and its
     // (the top hover's zoom switch command, frozen as its button's is)
     let zoom_switch_command = viewer_top_hover::zoom_switch_command(model.borrow().store());
+    // the file's info line and buttons, in the top hover frame, and its
     // notes
     let show_info = {
         let model = model.clone();
