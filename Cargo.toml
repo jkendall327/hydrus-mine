@@ -132,7 +132,10 @@ struct_excessive_bools = "allow"
 [profile.release]
 lto = "thin"
 codegen-units = 4
-debug = "line-tables-only"
+# Line tables alone made DWARF ~700 MB of the 916 MB binary; symbol names stay
+# for backtraces (see docs/rust/history/2026-10-27-release-size-spike.md).
+debug = false
+strip = "debuginfo"
 
 [profile.release.package.hydrus-gui-ui]
 # The generated Slint UI (see profile.dev below) can't be optimised within a
