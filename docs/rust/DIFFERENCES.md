@@ -2853,8 +2853,8 @@ manager limits remain; no broader menu or action completion is claimed.
 Notebook alignment, gated tab hiding and middle elision have native consumers;
 the broader GUI Pages/navigation/tab families remain partial. The dependency
 hierarchy selector uses a fixed 190-pixel column of indented page rows. Its basic
-collapse and keyboard behavior is described below; full tree drag/drop, context
-menus and broader navigation remain unported. Tab thickness is 28 pixels;
+collapse and keyboard behavior, right-click menu and row drag and drop are
+described below; broader navigation remains unported. Tab thickness is 28 pixels;
 native font metrics and equal overflow budgets differ from Qt's tab allocation,
 so the exact retained substring at a given pixel width can differ. Middle fitting
 preserves Unicode scalar boundaries, but does not yet preserve combining-grapheme
@@ -2954,8 +2954,14 @@ The native notebook tree implements single selection, disclosure, collapse/expan
 all and basic Qt cursor/activation keys. Its cursor and expansion state belong to
 the live page owner and survive hierarchy edits; they are not a new persisted
 session payload. It currently follows the reference's default of retaining child
-expansion when a parent collapses. Tree drag/drop, context menus, filters, depth
-controls, tree history, cog options, empty-space page creation and optional
+expansion when a parent collapses. Its right-click menu and row drag and drop
+follow the reference (GUI.md), with these differences: after a drop the tree's
+keyboard cursor goes to the page shown, where Qt's resets its model and restores
+the row it had saved (`tab_strip_interactions.json` records Qt's cursor landing
+on the drop target or a neighbour); the drop indicator is a plain line or box;
+the drag shows no pixmap, as a Qt drag does; and a drag held near the tree's top
+or bottom edge does not scroll it, as Qt's auto-scroll does. Filters, depth controls, tree
+history, cog options, empty-space page creation and optional
 collapse-all-descendants behavior remain unported. The native sidebar uses a fixed
 190px width, text toolbar buttons and 26px rows rather than Qt's splitter and
 configurable tree geometry. Broader navigation/tree families remain Partial;
@@ -3010,8 +3016,12 @@ real-pointer fixture replay also checks live row geometry and pressed identity
 after repeated reorders; hosted CI validation remains required.
 
 This consumer does not implement an OS QDrag loop, drag pixmaps/cursors, crossing
-windows, tree drag/drop, media/external-file drags, or dropping into an empty
-notebook's content body. Consequently the two hover-navigation preference leaves
+windows, media/external-file drags, or dropping into an empty
+notebook's content body. Hovering a file drag over a tab to switch to it
+(`interaction-tab-drag`'s second half) needs the pointer's place during an
+external drag, which winit 0.30 does not report (its `HoveredFile` has no
+position), and thumbnails cannot be dragged at all yet; the owner deferred it
+(DECISIONS.md, 2026-10-27), and the leaf is out of scope for now. Consequently the two hover-navigation preference leaves
 remain Partial: their page-tab consumer works, but Qt also consumes them for
 media/external drags. The broader navigation/drag/drop families remain Partial.
 The Qt recorder supplies the source TabBar on synthetic drop events and

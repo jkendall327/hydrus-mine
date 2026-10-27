@@ -56,9 +56,9 @@ search changes (and then only if it is synchronised). The pages we don't
 open yet show their files, and say what they are; URL, gallery and watcher
 downloader pages are live (below).
 Changing a page's sort sorts the files it shows rather than searching
-again, as the reference does. Ctrl+T or F9 (or, as in the reference, a double click,
-left or middle, on a tab row's empty space, the new page then going in
-that row's notebook) opens the reference's page
+again, as the reference does. Ctrl+T or F9 (or, as in the reference, a left
+double click or a middle click on a tab row's empty space, the new page then
+going in that row's notebook) opens the reference's page
 chooser, nine buttons laid out as a number pad (the digits, arrows and
 enter press them): file search, then a file domain, opens a search page
 on it; special opens a page of pages or a duplicates page; download, then
@@ -2510,7 +2510,15 @@ from the selected tab, with the reference's descent and recent-move rules.
 model and GUI regressions replay quiet confirmation, cancellation, reverse
 closing, nested undo, navigation and left/right focus preferences.
 
-Tab rename asks "Enter the new name." with the current name. Its frozen page key
+Tab rename (double-click a tab, or "rename page" in its menu) asks "Enter the
+new name." with the current name; the double-click's first click shows the tab,
+as the reference's tab bar does. The tab menu opens when the right button is let
+go, over a tab or over a row's empty space; on empty space it holds that
+notebook's pages, its "select" moves, "new page" and the sessions to append, and
+over a tab its entries are in the reference's order. `oracle/record_tab_strip_interactions.py`
+drove the reference's tab bar with Qt mouse events, and
+`tests/gui/tab_strip_clicks.rs` replays it with pointer events on the window.
+Its frozen page key
 keeps the target correct while selecting another tab. Send-down moves this page,
 this page and its right siblings, or only right siblings into a new notebook;
 groups ask first. The rename-on-send preference optionally prompts after moving,
@@ -3721,8 +3729,19 @@ small scrolling arrows without reducing the label height.
 The experimental hide flag takes effect only while the tree is enabled, matching
 Qt's gate. Its supporting native hierarchy selector lists every existing page on
 the chosen left/right side and selects by stable page key, including remembered
-children of notebooks. The collapsible tree behavior is described below; broader
-Qt tree drag/drop and context-menu behavior remain unported. Actual Qt choices,
+children of notebooks. The collapsible tree behavior is described below. A
+right-click on a row (on the press, as Qt's tree on Linux) shows that page's
+notebook's tab menu for it, whose actions
+act on that notebook without showing it (a notebook not on the way to the page
+shown keeps the choice its menu made, as the reference's does); a row dragged
+past Qt's start distance and let go near another row's top edge goes above it,
+near its bottom edge below it, on a page of pages into the end of it, on a page
+to the end of that page's notebook, and below the rows to the end of the top
+notebook, a line or box showing where. A notebook that showed the moved page
+shows the page to its right (else its left); every other notebook keeps showing
+what it showed. A row can't be dropped on itself or inside itself, as in Qt.
+`tests/gui/tree_menu_drag.rs` replays `oracle/record_tab_strip_interactions.py`'s
+tree steps with pointer events. Actual Qt choices,
 bar positions, hidden states, selected indices and fitted strings are recorded in
 `tab_presentation.json`, alongside Qt orientation PNGs. Native consumer replays
 capture each side, hidden navigation and overflowing labels for hosted review.

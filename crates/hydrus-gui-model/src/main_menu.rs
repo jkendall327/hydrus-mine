@@ -206,6 +206,14 @@ pub enum Command {
         index: usize,
         movement: crate::tab_context::Move,
     },
+    /// A tab menu action (one of those above, addressed by depth) for the
+    /// notebook `notebook`, which need not be on the way to the page shown:
+    /// the pages tree's menu, which acts on a row's notebook without
+    /// showing it, as the reference's does. The depth is that notebook's.
+    InNotebook {
+        notebook: PageKey,
+        command: Box<Command>,
+    },
     /// Switch a pause on or off.
     Pause(Pause),
     NetworkBootPause,

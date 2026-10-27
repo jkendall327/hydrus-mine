@@ -24,6 +24,27 @@ pub(crate) fn bind(window: &MainWindow, pages: &Rc<RefCell<Pages>>, change: Chan
             open(&slot, "Enter the new name.", &name, key, change.clone());
         }
     });
+    // (the pages tree's menu, for a page in a notebook not shown)
+    window.on_page_rename_requested({
+        let pages = Rc::clone(pages);
+        let change = change.clone();
+        let slot = slot.clone();
+        move |text| {
+            let Some(key) = hydrus_core::pages::PageKey::from_hex(&text) else {
+                return;
+            };
+            let name = pages
+                .borrow()
+                .session()
+                .all_pages()
+                .into_iter()
+                .find(|page| page.key == key)
+                .map(|page| page.name.clone());
+            if let Some(name) = name {
+                open(&slot, "Enter the new name.", &name, key, change.clone());
+            }
+        }
+    });
     window.on_notebook_rename_requested({
         let slot = slot.clone();
         move |key| {

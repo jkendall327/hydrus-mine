@@ -25473,10 +25473,11 @@
    "path": "Interactions > Pages > Page tabs",
    "workstream": "shell",
    "state": "implemented",
-   "priority": "normal",
+   "priority": "out-of-scope",
    "reference": "hydrus/client/gui/pages/ClientGUIPagesTreeView.py:339-498, hydrus/client/gui/pages/ClientGUIPagesTreeView.py:133-181",
    "native": "crates/hydrus-gui/ui/notebook_tabs.slint:285",
    "notes": [
+    "Out of scope (owner, 2026-10-27): tab reorder is proven by audit-options-tabs-drag; switching tabs while a file drag hovers is deferred by the owner (winit 0.30 gives no pointer position for a file drag, and thumbnails cannot be dragged). DECISIONS.md 2026-10-27.",
     "Reference: hydrus/client/gui/pages/ClientGUIPagesTreeView.py:339-498 TabWidgetWithDnD (mouseMove starts a tab drag after a threshold, drop reorders or moves into a notebook with shift variants), hydrus/client/gui/pages/ClientGUIPagesTreeView.py:133-181 TabBar drag-enter/move/drop (hovering a drag over a tab switches to it per page_drag_change_tab_with_shift / _normally).",
     "Native: GUI.md 'owned drag after the reference's 100ms threshold' (ui/notebook_tabs.slint pointer callbacks). Dropping files or other tabs into a notebook is untracked."
    ]

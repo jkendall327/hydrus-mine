@@ -9,6 +9,8 @@ pub struct Node {
     pub name: String,
     pub depth: i32,
     pub branch: bool,
+    /// A page of pages (with pages or not), which a drop onto takes.
+    pub notebook: bool,
 }
 #[derive(Debug, Default)]
 pub struct Tree {
@@ -30,6 +32,7 @@ fn flatten(pages: &[Page], parent: Option<PageKey>, depth: i32, nodes: &mut Vec<
             name: page.name.clone(),
             depth,
             branch: !children.is_empty(),
+            notebook: matches!(page.content, PageContent::Pages(_)),
         });
         flatten(children, Some(page.key), depth + 1, nodes);
     }
@@ -158,5 +161,83 @@ impl Tree {
             _ => {}
         }
         None
+    }
+}
+
+/// Where a page dragged in the tree is let go, as Qt's tree view decides
+/// (`QAbstractItemViewPrivate::position`): near a row's top edge it goes
+/// above that row, near its bottom edge below it, elsewhere on it; past the
+/// last row, on the empty space.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Drop {
+    Above(PageKey),
+    On(PageKey),
+    Below(PageKey),
+    Space,
+}
+
+/// Where a drop `y` down the tree's rows (from the first row's top, each
+/// `row_height` high) lands among the `visible` rows.
+pub fn drop_at(visible: &[&Node], y: f32, row_height: f32) -> Drop {
+    if y < 0.0 {
+        return Drop::Space;
+    }
+    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
+    let row = (y / row_height).floor() as usize;
+    let Some(node) = visible.get(row) else {
+        return Drop::Space;
+    };
+    // (Qt's margin: a fifth and a bit of the row, 2 to 12 pixels; its
+    // rectangles end a pixel short of the next row)
+    let margin = (row_height / 5.5).round().clamp(2.0, 12.0);
+    #[allow(clippy::cast_precision_loss)]
+    let offset = y - row as f32 * row_height;
+    if offset < margin {
+        Drop::Above(node.key)
+    } else if row_height - 1.0 - offset < margin {
+        Drop::Below(node.key)
+    } else {
+        Drop::On(node.key)
+    }
+}
+
+impl Tree {
+    /// Where a drop puts the page `source`: the notebook it goes into
+    /// (`None`: the top one) and the place among that notebook's pages
+    /// (`None`: at the end), as the reference's tree model's `dropMimeData`
+    /// puts it; `None` when Qt refuses the drop, it being on the dragged
+    /// row or one inside it.
+    pub fn drop_destination(
+        &self,
+        source: PageKey,
+        drop: Drop,
+    ) -> Option<(Option<PageKey>, Option<usize>)> {
+        let node = |key: PageKey| self.nodes.iter().find(|node| node.key == key);
+        let target = match drop {
+            Drop::Above(key) | Drop::On(key) | Drop::Below(key) => key,
+            Drop::Space => return Some((None, None)),
+        };
+        // (Qt's `droppingOnItself`: the row under the pointer, or one it is
+        // inside, being dragged)
+        let mut inside = Some(target);
+        while let Some(key) = inside {
+            if key == source {
+                return None;
+            }
+            inside = node(key)?.parent;
+        }
+        let target = node(target)?;
+        let siblings = || {
+            self.nodes
+                .iter()
+                .filter(|node| node.parent == target.parent)
+                .position(|node| node.key == target.key)
+        };
+        Some(match drop {
+            Drop::Above(_) => (target.parent, Some(siblings()?)),
+            Drop::Below(_) => (target.parent, Some(siblings()? + 1)),
+            Drop::On(_) if target.notebook => (Some(target.key), None),
+            _ => (target.parent, None),
+        })
     }
 }

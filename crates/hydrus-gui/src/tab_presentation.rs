@@ -1,8 +1,8 @@
 //! Native notebook settings, independent measured tab fits and hierarchy rows.
-use crate::{MainWindow, PageTreeRow, Pages, TabFit, TabNames};
+use crate::{ChangePages, MainWindow, PageTreeRow, Pages, TabFit, TabNames};
 use hydrus_core::pages::PageKey;
 use hydrus_store::settings::{self, TabPresentationSettings};
-use slint::{ComponentHandle as _, ModelRc, VecModel};
+use slint::{ComponentHandle as _, Model as _, ModelRc, VecModel};
 use std::{cell::RefCell, rc::Rc};
 
 fn begin(text: &str) -> TabFit {
@@ -118,11 +118,23 @@ pub(crate) fn show(window: &MainWindow, pages: &Pages) {
         .position(|row| row.selected)
         .and_then(|index| i32::try_from(index).ok())
         .unwrap_or(-1);
-    window.set_page_tree(ModelRc::new(VecModel::from(rows)));
+    // (the same rows changed in place, so a row clicked keeps its touch
+    // area: a double-click's first click selects it)
+    let model = window.get_page_tree();
+    match model.as_any().downcast_ref::<VecModel<PageTreeRow>>() {
+        Some(existing) if existing.row_count() == rows.len() => {
+            for (index, row) in rows.into_iter().enumerate() {
+                if existing.row_data(index).as_ref() != Some(&row) {
+                    existing.set_row_data(index, row);
+                }
+            }
+        }
+        _ => window.set_page_tree(ModelRc::new(VecModel::from(rows))),
+    }
     window.set_page_tree_current_index(current);
 }
 
-pub(crate) fn bind_tree(window: &MainWindow, pages: &Rc<RefCell<Pages>>) {
+pub(crate) fn bind_tree(window: &MainWindow, pages: &Rc<RefCell<Pages>>, change: ChangePages) {
     window.on_page_tree_selected({
         let pages = pages.clone();
         let weak = window.as_weak();
@@ -159,6 +171,31 @@ pub(crate) fn bind_tree(window: &MainWindow, pages: &Rc<RefCell<Pages>>) {
                 if let Some(key) = activated {
                     window.invoke_page_tree_chosen(key.to_hex().into());
                 }
+            }
+        }
+    });
+    // a row dragged and let go over the rows: the page moved where the
+    // reference's tree drops it
+    window.on_page_tree_dropped({
+        let pages = pages.clone();
+        move |text, y, over| {
+            let Some(source) = PageKey::from_hex(&text) else {
+                return;
+            };
+            if !over {
+                return;
+            }
+            let destination = {
+                let pages = pages.borrow();
+                let tree = pages.page_tree.borrow();
+                let drop = hydrus_gui_model::page_tree::drop_at(&tree.visible(), y, 26.0);
+                tree.drop_destination(source, drop)
+            };
+            if let Some((parent, row)) = destination {
+                change(&|pages| {
+                    pages.tree_move(source, parent, row);
+                    Ok(())
+                });
             }
         }
     });

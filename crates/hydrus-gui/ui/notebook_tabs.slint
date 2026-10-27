@@ -173,8 +173,11 @@ component NotebookStrip inherits Rectangle {
                 horizontal-stretch: 1; min-width: 40px;
                 scroll-event(event) => { if event.delta-y != 0px { root.scroll-wheel(event.delta-y > 0px ? -1 : 1); } return accept; }
                 pointer-event(event) => {
-                    if event.kind == PointerEventKind.down && event.button == PointerEventButton.right { root.context-menu(-1,self.absolute-position.x+self.mouse-x,self.absolute-position.y+self.mouse-y); }
-                    if event.kind == PointerEventKind.down && (event.button == PointerEventButton.left || event.button == PointerEventButton.middle) { root.space-pressed(event.button == PointerEventButton.middle); }
+                    // (as the reference's notebook: the menu, and a middle
+                    // click's chooser, when the button is let go)
+                    if event.kind == PointerEventKind.up && event.button == PointerEventButton.right { root.context-menu(-1,self.absolute-position.x+self.mouse-x,self.absolute-position.y+self.mouse-y); }
+                    if event.kind == PointerEventKind.down && event.button == PointerEventButton.left { root.space-pressed(false); }
+                    if event.kind == PointerEventKind.up && event.button == PointerEventButton.middle { root.space-pressed(true); }
                 }
             }
         }
@@ -204,8 +207,11 @@ component NotebookStrip inherits Rectangle {
                 vertical-stretch: 1; min-height: 40px;
                 scroll-event(event) => { if event.delta-y != 0px { root.scroll-wheel(event.delta-y > 0px ? -1 : 1); } return accept; }
                 pointer-event(event) => {
-                    if event.kind == PointerEventKind.down && event.button == PointerEventButton.right { root.context-menu(-1,self.absolute-position.x+self.mouse-x,self.absolute-position.y+self.mouse-y); }
-                    if event.kind == PointerEventKind.down && (event.button == PointerEventButton.left || event.button == PointerEventButton.middle) { root.space-pressed(event.button == PointerEventButton.middle); }
+                    // (as the reference's notebook: the menu, and a middle
+                    // click's chooser, when the button is let go)
+                    if event.kind == PointerEventKind.up && event.button == PointerEventButton.right { root.context-menu(-1,self.absolute-position.x+self.mouse-x,self.absolute-position.y+self.mouse-y); }
+                    if event.kind == PointerEventKind.down && event.button == PointerEventButton.left { root.space-pressed(false); }
+                    if event.kind == PointerEventKind.up && event.button == PointerEventButton.middle { root.space-pressed(true); }
                 }
             }
         }
@@ -305,6 +311,30 @@ export component NotebookTree inherits Rectangle {
     callback selected(string);
     callback toggled(string);
     callback navigate(int);
+    // a row's right-click (on the press, as Qt's on Linux): its page's menu
+    callback context-menu(string,length,length);
+    // a dragged row let go: its key, how far down the rows (from the first
+    // row's top) and whether over the rows' area at all
+    callback dropped(string,length,bool);
+    // the row pressed with the left button, and whether it has moved far
+    // enough (Qt's start-drag distance) to be dragged
+    property <string> drag-key;
+    property <bool> dragging;
+    property <length> press-x;
+    property <length> press-y;
+    // how far down the rows the dragged row is, and where the rows' top is
+    // in the tree (for the drop indicator)
+    property <length> drag-y;
+    property <length> drag-origin;
+    property <int> drag-row: floor(root.drag-y / 26px);
+    property <length> drag-offset: root.drag-y - root.drag-row * 26px;
+    // above (0), on (1) or below (2) the row under the pointer, or past the
+    // rows (3), with Qt's margin
+    property <int> drag-place: root.drag-row >= root.rows.length ? 3 : root.drag-offset < 5px ? 0 : 25px - root.drag-offset < 5px ? 2 : 1;
+    function over-rows(x: length, y: length) -> bool {
+        return x >= list.absolute-position.x && x < list.absolute-position.x + list.width
+            && y >= list.absolute-position.y && y < list.absolute-position.y + list.height;
+    }
     public function focus-tree() { keys.focus(); }
     out property <bool> tree-focused: keys.has-focus;
     background: Theme.panel;
@@ -330,7 +360,7 @@ export component NotebookTree inherits Rectangle {
         }
         list := ListView {
             y: 28px; height: max(0px,parent.height - 28px);
-            for row in root.rows: Rectangle {
+            for row[index] in root.rows: Rectangle {
                 height: 26px;
                 background: row.selected ? Theme.highlight : touch.has-hover ? Theme.hover : Theme.panel;
                 accessible-role: list-item;
@@ -341,9 +371,43 @@ export component NotebookTree inherits Rectangle {
                 touch := TouchArea {
                     clicked => { keys.focus(); root.selected(row.key); }
                     double-clicked => { keys.focus(); root.selected(row.key); if row.branch { root.toggled(row.key); } root.chosen(row.key); }
+                    pointer-event(event) => {
+                        // (Qt's custom context menu on Linux: on the press)
+                        if event.button == PointerEventButton.right && event.kind == PointerEventKind.down {
+                            keys.focus(); root.selected(row.key);
+                            root.context-menu(row.key,self.absolute-position.x + self.mouse-x,self.absolute-position.y + self.mouse-y);
+                        }
+                        if event.button == PointerEventButton.left && event.kind == PointerEventKind.down {
+                            root.drag-key = row.key; root.dragging = false; root.press-x = self.mouse-x; root.press-y = self.mouse-y;
+                        }
+                        if event.button == PointerEventButton.left && event.kind == PointerEventKind.up && root.dragging {
+                            root.dragging = false;
+                            root.dropped(root.drag-key,index * 26px + self.mouse-y,root.over-rows(self.absolute-position.x + self.mouse-x,self.absolute-position.y + self.mouse-y));
+                        }
+                    }
+                    moved => {
+                        if self.pressed && root.drag-key == row.key && !root.dragging && abs(self.mouse-x - root.press-x) + abs(self.mouse-y - root.press-y) >= 10px { root.dragging = true; }
+                        if root.dragging {
+                            root.drag-y = index * 26px + self.mouse-y;
+                            root.drag-origin = self.absolute-position.y - root.absolute-position.y - index * 26px;
+                        }
+                    }
                 }
                 Text { x: row.depth * 16px + 4px; width: 20px; height: parent.height; text: row.branch ? row.expanded ? "▾" : "▸" : ""; color: Theme.text; vertical-alignment: center; }
                 TouchArea { x: row.depth * 16px + 4px; width: 20px; enabled: row.branch; clicked => { keys.focus(); root.toggled(row.key); } }
+            }
+        }
+        // where a dragged row would go: a line above or below a row, a box
+        // round a row, or round the whole list past the rows
+        if root.dragging: Rectangle {
+            y: list.y; height: list.height;
+            clip: true;
+            Rectangle {
+                y: root.drag-place == 3 ? 0px : root.drag-origin - list.y + root.drag-row * 26px + (root.drag-place == 2 ? 25px : 0px);
+                height: root.drag-place == 3 ? parent.height : root.drag-place == 1 ? 26px : 2px;
+                background: root.drag-place == 0 || root.drag-place == 2 ? Theme.text : transparent;
+                border-width: root.drag-place == 1 || root.drag-place == 3 ? 1px : 0px;
+                border-color: Theme.text;
             }
         }
     }
