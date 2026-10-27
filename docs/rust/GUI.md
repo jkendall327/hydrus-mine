@@ -6061,7 +6061,7 @@ enabled state.
 - After "fetch example data" the page URL box keeps what you typed; the parse
   context uses the encoded URL.
 
-## List keys
+## List keys and the thumbnail grid's pointer
 
 Every list built on the shared list (`ui/list_table.slint`, about fifty
 dialogs and panels, now including "review files to import" and "edit
@@ -6080,3 +6080,9 @@ do. The duplicates auto-resolution review's pair lists take the same keys
 (`oracle/record_list_keys.py`) and replayed with real key and pointer
 events (`tests/gui/list_keys.rs`), with clicks, ctrl/shift clicks,
 drag-selecting, double-clicks and the file log's row menu.
+
+On the thumbnail grid, a middle press on a thumbnail opens the media viewer
+on it without changing the selection, and a middle press between
+thumbnails does nothing, as the reference's default grid does; clicks,
+double-clicks and right presses are replayed against the same recording
+(`oracle/record_thumbnail_pointer.py`, `tests/gui/thumbnail_pointer.rs`).

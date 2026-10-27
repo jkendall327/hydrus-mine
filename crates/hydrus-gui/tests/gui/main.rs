@@ -172,6 +172,7 @@ mod thumbnail_grid_geometry;
 mod thumbnail_icons;
 mod thumbnail_menu;
 mod thumbnail_navigation;
+mod thumbnail_pointer;
 mod thumbnail_preview_selection;
 mod thumbnail_ratings;
 mod thumbnail_selection;

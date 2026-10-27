@@ -202,6 +202,15 @@ component ThumbnailGrid inherits ListView {
                         root.menu-requested(column >= 0 ? row.first + column : -1,
                             self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y);
                     }
+                    // a middle press opens the viewer on the thumbnail, the
+                    // selection untouched (the reference's default grid,
+                    // `oracle/fixtures/thumbnail_pointer.json`)
+                    if (event.button == PointerEventButton.middle) {
+                        let column = root.thumbnail-at(row.thumbnails.length, self.mouse-x, self.mouse-y);
+                        if (column >= 0) {
+                            root.activated(row.first + column);
+                        }
+                    }
                 }
             }
             // (a gap between thumbnails is a click on no file)
