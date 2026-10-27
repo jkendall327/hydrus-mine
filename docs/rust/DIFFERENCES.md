@@ -648,6 +648,24 @@ page by file size, which no two files of the fixture share.
   menu offers "in file browser" only in advanced mode, as the reference's
   does (`oracle/record_open_menu_actions.py`). Dragging out for real is
   jkendall327/hydrus-mine#26.
+- **The top hover frame's zoom options and move buttons are part-ported.**
+  The zoom options (cog) menu has the reference's "recenter media", its
+  six zoom types (the current one checked) and "recenter media on window
+  resize", but not "try to lock current size", "lock current zoom type",
+  "lock current pan" or "set default zoom type from this menu": hydrus-rs
+  has no zoom or pan locks yet. The move button moves the window when
+  dragged, through the platform's own window move (untestable headless),
+  but its right-click menu (resize the window to fit the file, or to 50% to
+  200%) is not ported. The volume control's popup (the viewer's mute and
+  the volume) shows while the pointer is over the button or the popup
+  inside the hover; the reference's is a separate window under it.
+- **Only the media viewer's top hover frame is the reference's.** The
+  duplicate filter's (go back a pair, previous, next, show a different
+  pair) and the archive/delete filter's (back, skip) top hover frames, and
+  their shared middle and right rows, are recorded
+  (`oracle/fixtures/viewer_top_hover.json`) but not ported: those windows
+  show their index and info line only. Their windows are compiled in group
+  crates, which cannot hold the menu buttons' `ContextMenuArea`s.
 - **The animation buffer is sized at the file's own resolution.** The
   client's own player (ugoiras, animated WebP) keeps frames as the
   reference's `RasterContainerVideo` does, sized from "Memory for video

@@ -138,6 +138,7 @@ pub mod vacuum_review;
 pub mod video_buffer;
 pub mod viewer_prefetch;
 pub mod viewer_shortcut_menu;
+pub mod viewer_top_hover;
 
 pub mod tag_relationships;
 

@@ -281,7 +281,9 @@ def browser(session):
 
     def drive():
         watcher = Watcher(controller)
-        results = controller.Read('media_results', hashes)
+        # (in file size order, smallest first, as hydrus-rs's page sorts them
+        # by default: the canvas keeps the order it is given)
+        results = sorted(controller.Read('media_results', hashes), key=lambda r: r.GetFileInfoManager().size)
         location = ClientLocation.LocationContext.STATICCreateSimple(CC.COMBINED_LOCAL_FILE_DOMAINS_SERVICE_KEY)
         frame = ClientGUICanvasFrame.CanvasFrame(gui)
         canvas = ClientGUICanvas.CanvasMediaListBrowser(frame, os.urandom(32), location, results, hashes[0])

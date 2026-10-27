@@ -1,6 +1,6 @@
 import { Theme } from "theme.slint";
-import { ViewerEyeMenu, ViewerEyeButton } from "viewer_eye_menu.slint";
-import { ViewerShortcutButton } from "viewer_shortcut_menu.slint";
+import { ViewerEyeMenu } from "viewer_eye_menu.slint";
+import { ViewerTopHoverRow, TopHoverTips } from "viewer_top_hover.slint";
 // The media viewer's window: one file, at its default zoom (fitted to the
 // window, by default). Right and left (or down and up, page down and up,
 // or the mouse wheel) move through the page's files, home and end to the
@@ -19,11 +19,8 @@ import { ViewerShortcutButton } from "viewer_shortcut_menu.slint";
 // first: enter or escape answers) and shift+delete undeletes it. With the
 // pointer over the window's left fifth, the file's tags show there, as the
 // reference's tags hover frame does; with it near the top middle, the
-// reference's top hover frame: the file's place in the list, buttons to
-// archive, delete and undelete it, its zoom and buttons to zoom, to switch
-// fullscreen, to open it externally or show it in the file browser (where
-// the reference has a button to drag it out), and to close the viewer; and
-// the file's info line. A right-click opens the viewer's menu, whose
+// reference's top hover frame: its row of buttons, in the reference's order
+// (viewer_top_hover.slint), and the file's info line. A right-click opens the viewer's menu, whose
 // slideshow submenu may ask for a period to type.
 
 import { ViewerTagsHover } from "viewer_tags_hover.slint";
@@ -112,30 +109,6 @@ export component RatingGraphic inherits Rectangle {
             height: root.icon-size;
             source: picture;
             image-fit: contain;
-        }
-    }
-}
-
-// a button of the top hover frame: the reference's icon for it
-component HoverButton inherits Rectangle {
-    in property <image> icon;
-    callback clicked();
-    callback pointed-click(length, length);
-    width: 24px;
-    height: 24px;
-    border-radius: 3px;
-    background: touch.pressed ? #ffffff40 : touch.has-hover ? #ffffff24 : transparent;
-    Image {
-        x: (parent.width - self.width) / 2;
-        y: (parent.height - self.height) / 2;
-        width: 16px;
-        height: 16px;
-        source: root.icon;
-    }
-    touch := TouchArea {
-        clicked => {
-            root.clicked();
-            root.pointed-click(root.absolute-position.x + self.mouse-x, root.absolute-position.y + self.mouse-y);
         }
     }
 }
@@ -248,6 +221,20 @@ export component MediaViewerWindow inherits Window {
     // the zoom as its second part (`_GetInfoString`)
     in property <string> background-info-line;
     callback show-in-file-browser();
+    // the top hover frame's tooltips (and as Markdown), its zoom options
+    // and window resize menus, and its other buttons' callbacks
+    in property <TopHoverTips> top-tips;
+    in property <TopHoverTips> top-tips-markdown;
+    in property <bool> volume-available;
+    in property <MenuGroups> top-zoom-menu;
+    in property <MenuGroups> top-resize-menu;
+    callback show-metadata();
+    callback top-zoom-menu-requested();
+    callback top-zoom-menu-chosen(int);
+    callback move-window();
+    callback top-resize-menu-requested();
+    callback top-resize-chosen(int);
+    callback focus-media();
     // the file's ratings, for the top-right hover frame, as the reference
     // draws them
     in property <[RatingRow]> ratings;
@@ -1286,87 +1273,58 @@ export component MediaViewerWindow inherits Window {
                 VerticalLayout {
                     padding: 4px;
                     spacing: 2px;
-                    HorizontalLayout {
-                        spacing: 2px;
-                        Text {
-                            horizontal-stretch: 1;
-                            text: root.caption;
-                            color: #f0f0f0;
-                            vertical-alignment: center;
-                            overflow: elide;
-                        }
-                        HoverButton {
-                            icon: root.file-inbox ? @image-url("../../../static/archive.png") : @image-url("../../../static/to_inbox.png");
-                            clicked => {
-                                if (root.file-inbox) {
-                                    root.archive();
-                                } else {
-                                    root.inbox();
-                                }
-                            }
-                        }
-                        // (send to trash, or from the trash delete completely)
-                        if root.file-trashed || root.file-local: HoverButton {
-                            icon: root.file-trashed ? @image-url("../../../static/delete.png") : @image-url("../../../static/trash.png");
-                            clicked => { root.delete(); }
-                        }
-                        if root.file-undeletable: HoverButton {
-                            icon: @image-url("../../../static/undelete.png");
-                            clicked => { root.undelete(); }
-                        }
-                        HorizontalLayout {
-                            horizontal-stretch: 1;
-                            alignment: end;
-                            spacing: 2px;
-                            Text {
-                                text: root.zoom-text;
-                                color: #f0f0f0;
-                                vertical-alignment: center;
-                            }
-                            HoverButton {
-                                icon: @image-url("../../../static/zoom_in.png");
-                                clicked => { root.zoom(1, false, 0, 0); }
-                            }
-                            HoverButton {
-                                icon: @image-url("../../../static/zoom_out.png");
-                                clicked => { root.zoom(-1, false, 0, 0); }
-                            }
-                            HoverButton {
-                                icon: @image-url("../../../static/zoom_switch.png");
-                                pointed-click(x, y) => { root.zoom-switch-requested(x, y); }
-                            }
-                            HoverButton {
-                                icon: @image-url("../../../static/fullscreen_switch.svg");
-                                clicked => { root.toggle-fullscreen(); }
-                            }
-                            HoverButton {
-                                icon: @image-url("../../../static/open_externally.png");
-                                clicked => { root.open-externally(); }
-                            }
-                            // (in the place of the reference's button to drag
-                            // the file out, which Slint can't do)
-                            HoverButton {
-                                icon: @image-url("../../../static/drag.png");
-                                clicked => { root.show-in-file-browser(); }
-                            }
-                            ViewerShortcutButton {
-                                icon: @image-url("../../../static/keyboard.png");
-                                names: root.shortcut-names;
-                                current: root.shortcut-current;
-                                defaults: root.shortcut-defaults;
-                                requested => { root.shortcut-menu-requested(); }
-                                chosen(kind, i) => { root.shortcut-menu-chosen(kind, i); }
-                            }
-                            ViewerEyeButton {
-                                menu: root.eye-menu;
-                                requested => { root.eye-menu-requested(); }
-                                chosen(id) => { root.eye-menu-chosen(id); }
-                            }
-                            HoverButton {
-                                icon: @image-url("../../../static/stop.png");
-                                clicked => { root.close-requested(); }
-                            }
-                        }
+                    ViewerTopHoverRow {
+                        index-text: root.caption;
+                        zoom-text: root.zoom-text;
+                        tips: root.top-tips;
+                        tips-markdown: root.top-tips-markdown;
+                        file-inbox: root.file-inbox;
+                        file-trashed: root.file-trashed;
+                        file-local: root.file-local;
+                        file-undeletable: root.file-undeletable;
+                        volume-available: root.volume-available;
+                        global-muted: root.global-muted;
+                        viewer-muted: root.viewer-muted;
+                        volume: root.volume;
+                        slideshow-menu: root.context-menu.slideshow;
+                        zoom-menu: root.top-zoom-menu;
+                        resize-menu: root.top-resize-menu;
+                        shortcut-names: root.shortcut-names;
+                        shortcut-current: root.shortcut-current;
+                        shortcut-defaults: root.shortcut-defaults;
+                        eye-menu: root.eye-menu;
+                        first => { root.first(); }
+                        previous => { root.previous(); }
+                        next => { root.next(); }
+                        last => { root.last(); }
+                        random => { root.random(); }
+                        undo-random => { root.undo-random(); }
+                        slideshow-requested => { root.context-menu-requested(); }
+                        slideshow-chosen(id) => { root.menu-chosen(id); }
+                        archive => { root.archive(); }
+                        inbox => { root.inbox(); }
+                        delete => { root.delete(); }
+                        undelete => { root.undelete(); }
+                        show-metadata => { root.show-metadata(); }
+                        zoom(direction) => { root.zoom(direction, false, 0, 0); }
+                        zoom-switch(x, y) => { root.zoom-switch-requested(x, y); }
+                        zoom-menu-requested => { root.top-zoom-menu-requested(); }
+                        zoom-menu-chosen(id) => { root.top-zoom-menu-chosen(id); }
+                        flip-global-mute => { root.flip-global-mute(); }
+                        flip-viewer-mute => { root.flip-viewer-mute(); }
+                        volume-changed(v) => { root.volume-changed(v); }
+                        shortcut-menu-requested => { root.shortcut-menu-requested(); }
+                        shortcut-menu-chosen(kind, i) => { root.shortcut-menu-chosen(kind, i); }
+                        eye-menu-requested => { root.eye-menu-requested(); }
+                        eye-menu-chosen(id) => { root.eye-menu-chosen(id); }
+                        move-window => { root.move-window(); }
+                        resize-menu-requested => { root.top-resize-menu-requested(); }
+                        resize-chosen(id) => { root.top-resize-chosen(id); }
+                        fullscreen => { root.toggle-fullscreen(); }
+                        open-externally => { root.open-externally(); }
+                        drag-out => { root.show-in-file-browser(); }
+                        focus-media => { root.focus-media(); }
+                        close => { root.close-requested(); }
                     }
                     if root.tag-banner != "": Text {
                         text: root.tag-banner;

@@ -176,3 +176,20 @@ pub fn checked(window: &slint::Window, label: &str) -> bool {
 pub fn count(window: &slint::Window, label: &str) -> usize {
     labelled(window, label).len()
 }
+
+/// The description (a tooltip) of the first visible widget labelled
+/// `label`, as it tells assistive technology.
+pub fn description(window: &slint::Window, label: &str) -> Option<String> {
+    property(window, label, AccessibleStringProperty::Description)
+}
+
+/// Whether a popup (a menu) is open over the window.
+pub fn popup_open(window: &slint::Window) -> bool {
+    !WindowInner::from_pub(window).active_popups().is_empty()
+}
+
+/// Close the window's open popups, as a click elsewhere would.
+pub fn close_popups(window: &slint::Window) {
+    WindowInner::from_pub(window).close_all_popups();
+    settle();
+}

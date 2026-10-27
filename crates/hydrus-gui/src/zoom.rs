@@ -452,6 +452,30 @@ impl Zoom {
         }
     }
 
+    /// The zoom type it is at (`_current_zoom_type`), as the top hover's
+    /// zoom options menu checks it.
+    pub fn zoom_type(&self) -> ZoomType {
+        self.current_type
+    }
+
+    /// To a zoom type, about the viewer's centre (`ZoomCanvas`,
+    /// `ZoomCanvasFillX` and the rest, with the viewer-centre override).
+    pub fn zoom_to_type(&mut self, zoom_type: ZoomType) {
+        if !self.zoomable() {
+            return;
+        }
+        self.current_type = zoom_type;
+        let centre = self.settings.zoom_centre;
+        self.settings.zoom_centre = ZoomCentre::ViewerCentre;
+        self.change_zoom(self.zoom_of(zoom_type), None);
+        self.settings.zoom_centre = centre;
+    }
+
+    /// Back in the middle of the canvas (`ResetCenterPosition`).
+    pub fn recenter(&mut self) {
+        self.recentre();
+    }
+
     /// Pan by steps (`DoManualPan`): each a twelfth of the smaller of the
     /// file and the canvas.
     pub fn pan(&mut self, x_steps: i32, y_steps: i32) {
@@ -862,6 +886,20 @@ impl Zoomed {
     /// To the largest zoom.
     pub fn zoom_max(&self) {
         self.change(Zoom::zoom_max);
+    }
+
+    pub fn zoom_to_type(&self, zoom_type: ZoomType) {
+        self.change(|zoom| zoom.zoom_to_type(zoom_type));
+    }
+
+    pub fn recenter(&self) {
+        self.change(Zoom::recenter);
+    }
+
+    /// The zoom type, if the file zooms.
+    pub fn zoom_type(&self) -> Option<ZoomType> {
+        let zoom = self.zoom.borrow();
+        zoom.as_ref().filter(|z| z.zoomable()).map(Zoom::zoom_type)
     }
 
     /// The zoom now, the zoom fitting the canvas, and whether it is as big

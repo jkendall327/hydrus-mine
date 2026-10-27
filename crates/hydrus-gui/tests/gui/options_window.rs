@@ -6054,11 +6054,10 @@ fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewe
         assert!(viewer.get_info_showing(), "the actual top hover is visible");
         let inner = slint::private_unstable_api::re_exports::WindowInner::from_pub(viewer.window());
         assert!(inner.active_popups().is_empty());
-        // viewer.slint places the 24px eye immediately before the 24px close
-        // button: .8 * 1000 - 4px padding - 24px close - 2px gap - 12px.
-        // The pointer route must also refresh stale eye flags below; merely
+        // (the eye button where it is laid out in the hover's row). The
+        // pointer route must also refresh stale eye flags below; merely
         // opening the adjacent keyboard menu cannot satisfy those assertions.
-        let position = slint::LogicalPosition::new(758.0, 16.0);
+        let position = super::common::widgets::position(viewer.window(), "view options", 0);
         viewer
             .window()
             .dispatch_event(WindowEvent::PointerMoved { position });

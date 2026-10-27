@@ -59,15 +59,35 @@ impl Owner {
     }
 
     pub(crate) fn closed(&self, store: &hydrus_store::Store, exit: Option<HashId>) {
-        let Some(main) = self.main.upgrade() else {
-            return;
-        };
         let policy: ViewerClosingSettings = store.read(settings::get).unwrap_or_default();
         let original = self
             .original
             .as_ref()
+            .is_some_and(|(_, page)| page.upgrade().is_some());
+        self.act(actions(&policy, original && exit.is_some()), exit);
+    }
+
+    /// The top hover drag button's right click (`SIMPLE_FOCUS_TAB_AND_MEDIA`):
+    /// the page the viewer came from shown and `file` selected in it,
+    /// whatever the closing options, and the main window activated if
+    /// `activate_main_gui_on_focusing_viewer_close` says so.
+    pub(crate) fn focus(&self, store: &hydrus_store::Store, file: HashId) {
+        let policy: ViewerClosingSettings = store.read(settings::get).unwrap_or_default();
+        let mut requested = vec![Action::ReselectPage, Action::SelectExitMedia];
+        if policy.activate_focusing {
+            requested.push(Action::ActivateFocusing);
+        }
+        self.act(requested, Some(file));
+    }
+
+    fn act(&self, requested: Vec<Action>, exit: Option<HashId>) {
+        let Some(main) = self.main.upgrade() else {
+            return;
+        };
+        let original = self
+            .original
+            .as_ref()
             .and_then(|(key, page)| page.upgrade().map(|page| (*key, page)));
-        let requested = actions(&policy, original.is_some() && exit.is_some());
         if let Some((key, page)) = original
             && let Some(exit) = exit
             && requested

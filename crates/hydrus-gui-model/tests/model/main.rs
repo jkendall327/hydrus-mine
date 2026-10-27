@@ -200,6 +200,7 @@ mod popup_width;
 mod preview_default_zoom;
 mod viewer_shortcut_menu;
 mod viewer_tag_wheel;
+mod viewer_top_hover;
 
 mod idle_timeout_options;
 mod legacy_seed_caches;

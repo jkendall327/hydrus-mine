@@ -1,0 +1,510 @@
+// The media viewer's top hover frame's row of buttons (the reference's
+// `CanvasHoverFrameTop` and, for the browser, its
+// `CanvasHoverFrameTopNavigableList`): on the left, first, previous, the
+// file's place in the list, next, last, random and slideshow; in the middle
+// the file's archive, trash, delete, undelete and metadata buttons; on the
+// right the zoom, zoom buttons, the zoom options, the volume control, the
+// shortcuts and view options menus, moving the window, fullscreen, opening
+// the file externally, dragging it out and closing the viewer. Each button
+// says what it is, and shows its tooltip, as the reference's does.
+
+import { MenuGroups } from "menus.slint";
+import { ViewerEyeMenu, ViewerEyeButton } from "viewer_eye_menu.slint";
+import { ViewerShortcutButton } from "viewer_shortcut_menu.slint";
+
+// the tooltips that name their shortcuts, and the metadata button's
+export struct TopHoverTips {
+    first: string,
+    previous: string,
+    next: string,
+    last: string,
+    zoom-in: string,
+    zoom-out: string,
+    zoom-switch: string,
+    open-externally: string,
+    metadata: string,
+}
+
+// a button's tooltip, as the reference's, for its user and assistive
+// technology: `label` names it, `tip` is the whole tooltip
+component Tipped inherits Rectangle {
+    in property <string> label;
+    in property <string> tip;
+    // (the tooltip as Slint's Markdown takes it)
+    in property <string> tip-markdown;
+    accessible-role: button;
+    accessible-label: root.label;
+    accessible-description: root.tip;
+    width: 22px;
+    height: 22px;
+    Tooltip { text: @markdown("\{root.tip-markdown}"); }
+    @children
+}
+
+// a button of the top hover frame: the reference's icon for it; a right
+// click is its own callback (random's undo, the drag button's focus)
+export component HoverButton inherits Tipped {
+    in property <image> icon;
+    callback clicked();
+    callback right-clicked();
+    callback pointed-click(length, length);
+    callback left-pressed();
+    border-radius: 3px;
+    background: touch.pressed ? #ffffff40 : touch.has-hover ? #ffffff24 : transparent;
+    Image {
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
+        width: 16px;
+        height: 16px;
+        source: root.icon;
+    }
+    touch := TouchArea {
+        clicked => {
+            root.clicked();
+            root.pointed-click(root.absolute-position.x + self.mouse-x, root.absolute-position.y + self.mouse-y);
+        }
+        pointer-event(event) => {
+            if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                root.left-pressed();
+            }
+            if (event.kind == PointerEventKind.up && event.button == PointerEventButton.right) {
+                root.right-clicked();
+            }
+        }
+    }
+}
+
+// a button that opens a menu of groups (separated) of rows; a row with a
+// negative id is a label, not chosen; with `right-menu`, only a right click
+// opens it, and a left press is `left-pressed`
+export component HoverMenuButton inherits ContextMenuArea {
+    in property <image> icon;
+    in property <MenuGroups> menu;
+    in property <bool> right-menu;
+    in property <string> label;
+    in property <string> tip;
+    in property <string> tip-markdown;
+    callback requested();
+    callback chosen(int);
+    callback left-pressed();
+    width: 22px;
+    height: 22px;
+    Menu {
+        for row in root.menu.g1: MenuItem {
+            title: row.label; enabled: row.id >= 0; checkable: row.checkable; checked: row.checked;
+            activated => { root.chosen(row.id); }
+        }
+        if root.menu.g2.length > 0: MenuSeparator { }
+        for row in root.menu.g2: MenuItem {
+            title: row.label; enabled: row.id >= 0; checkable: row.checkable; checked: row.checked;
+            activated => { root.chosen(row.id); }
+        }
+        if root.menu.g3.length > 0: MenuSeparator { }
+        for row in root.menu.g3: MenuItem {
+            title: row.label; enabled: row.id >= 0; checkable: row.checkable; checked: row.checked;
+            activated => { root.chosen(row.id); }
+        }
+        if root.menu.g4.length > 0: MenuSeparator { }
+        for row in root.menu.g4: MenuItem {
+            title: row.label; enabled: row.id >= 0; checkable: row.checkable; checked: row.checked;
+            activated => { root.chosen(row.id); }
+        }
+        if root.menu.g5.length > 0: MenuSeparator { }
+        for row in root.menu.g5: MenuItem {
+            title: row.label; enabled: row.id >= 0; checkable: row.checkable; checked: row.checked;
+            activated => { root.chosen(row.id); }
+        }
+    }
+    Tipped {
+        label: root.label;
+        tip: root.tip;
+        tip-markdown: root.tip-markdown;
+        border-radius: 3px;
+        background: touch.pressed ? #ffffff40 : touch.has-hover ? #ffffff24 : transparent;
+        Image {
+            x: (parent.width - self.width) / 2;
+            y: (parent.height - self.height) / 2;
+            width: 16px;
+            height: 16px;
+            source: root.icon;
+        }
+        touch := TouchArea {
+            pointer-event(event) => {
+                if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left && root.right-menu) {
+                    root.left-pressed();
+                }
+                if (event.kind == PointerEventKind.up
+                    && ((event.button == PointerEventButton.left && !root.right-menu)
+                        || (event.button == PointerEventButton.right && root.right-menu))) {
+                    root.requested();
+                    if (root.menu.g1.length + root.menu.g2.length > 0) {
+                        root.show({ x: 0px, y: root.height });
+                    }
+                }
+            }
+        }
+    }
+}
+
+// the reference's `VolumeControl`: the global mute; with the pointer on it,
+// below it the viewer's own mute and the volume (`_PopupWindow`)
+component TopVolume inherits Tipped {
+    in property <bool> global-muted;
+    in property <bool> viewer-muted;
+    in property <int> volume;
+    callback flip-global-mute();
+    callback flip-viewer-mute();
+    callback volume-changed(int);
+    property <bool> open: touch.has-hover || popup-touch.has-hover || popup-touch.pressed;
+    property <length> track: 100px;
+    border-radius: 3px;
+    background: touch.pressed ? #ffffff40 : touch.has-hover ? #ffffff24 : transparent;
+    Image {
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
+        width: 16px;
+        height: 16px;
+        source: root.global-muted ? @image-url("../../../static/mute.png") : @image-url("../../../static/sound.png");
+    }
+    touch := TouchArea {
+        clicked => { root.flip-global-mute(); }
+    }
+    popup-touch := TouchArea {
+        x: 0;
+        y: root.height;
+        width: root.width;
+        height: root.open ? root.track + 24px + 20px : 0;
+        if root.open: Rectangle {
+            background: #303030;
+            border-width: 1px;
+            border-color: #606060;
+            Rectangle {
+                x: (parent.width - 16px) / 2;
+                y: 4px;
+                width: 16px;
+                height: 16px;
+                accessible-role: button;
+                accessible-label: "Mute/unmute: media viewer";
+                accessible-description: "Mute/unmute: media viewer";
+                Image {
+                    width: 16px;
+                    height: 16px;
+                    source: root.viewer-muted ? @image-url("../../../static/mute.png") : @image-url("../../../static/sound.png");
+                }
+            }
+            Rectangle {
+                x: (parent.width - self.width) / 2;
+                y: 34px;
+                width: 4px;
+                height: root.track;
+                background: #606060;
+            }
+            Rectangle {
+                x: 4px;
+                y: 34px + root.track * (1 - root.volume / 100) - 3px;
+                width: parent.width - 8px;
+                height: 6px;
+                background: #b0b0b0;
+            }
+        }
+        pointer-event(event) => {
+            if (event.button == PointerEventButton.left && event.kind == PointerEventKind.down) {
+                if (self.mouse-y < 24px) {
+                    root.flip-viewer-mute();
+                } else {
+                    root.volume-changed(max(0, min(100, round((34px + root.track - self.mouse-y) / root.track * 100))));
+                }
+            }
+        }
+        moved => {
+            if (self.pressed && self.pressed-y >= 24px) {
+                root.volume-changed(max(0, min(100, round((34px + root.track - self.mouse-y) / root.track * 100))));
+            }
+        }
+    }
+}
+
+export component ViewerTopHoverRow inherits HorizontalLayout {
+    // the file's place in the list ("3/14") and its zoom ("100%")
+    in property <string> index-text;
+    in property <string> zoom-text;
+    in property <TopHoverTips> tips;
+    in property <bool> file-inbox;
+    in property <bool> file-trashed;
+    in property <bool> file-local;
+    in property <bool> file-undeletable;
+    // the volume control shows where mpv is available
+    in property <bool> volume-available;
+    in property <bool> global-muted;
+    in property <bool> viewer-muted;
+    in property <int> volume;
+    in property <MenuGroups> slideshow-menu;
+    in property <MenuGroups> zoom-menu;
+    in property <MenuGroups> resize-menu;
+    in property <[string]> shortcut-names;
+    in property <[bool]> shortcut-current;
+    in property <[bool]> shortcut-defaults;
+    in property <ViewerEyeMenu> eye-menu;
+    // the tooltips as Slint's Markdown takes them
+    in property <TopHoverTips> tips-markdown;
+
+    callback first();
+    callback previous();
+    callback next();
+    callback last();
+    callback random();
+    callback undo-random();
+    callback slideshow-requested();
+    callback slideshow-chosen(int);
+    callback archive();
+    callback inbox();
+    callback delete();
+    callback undelete();
+    callback show-metadata();
+    callback zoom(int);
+    callback zoom-switch(length, length);
+    callback zoom-menu-requested();
+    callback zoom-menu-chosen(int);
+    callback flip-global-mute();
+    callback flip-viewer-mute();
+    callback volume-changed(int);
+    callback shortcut-menu-requested();
+    callback shortcut-menu-chosen(int, int);
+    callback eye-menu-requested();
+    callback eye-menu-chosen(int);
+    callback move-window();
+    callback resize-menu-requested();
+    callback resize-chosen(int);
+    callback fullscreen();
+    callback open-externally();
+    callback drag-out();
+    callback focus-media();
+    callback close();
+
+    spacing: 0px;
+    // the left row (`_PopulateLeftButtons`)
+    HorizontalLayout {
+        horizontal-stretch: 1;
+        alignment: start;
+        spacing: 0px;
+        HoverButton {
+            label: "first";
+            tip: root.tips.first;
+            tip-markdown: root.tips-markdown.first;
+            icon: @image-url("../../../static/position_first.svg");
+            clicked => { root.first(); }
+        }
+        HoverButton {
+            label: "previous";
+            tip: root.tips.previous;
+            tip-markdown: root.tips-markdown.previous;
+            icon: @image-url("../../../static/position_previous.svg");
+            clicked => { root.previous(); }
+        }
+        Text {
+            text: root.index-text;
+            color: #f0f0f0;
+            vertical-alignment: center;
+        }
+        HoverButton {
+            label: "next";
+            tip: root.tips.next;
+            tip-markdown: root.tips-markdown.next;
+            icon: @image-url("../../../static/position_next.svg");
+            clicked => { root.next(); }
+        }
+        HoverButton {
+            label: "last";
+            tip: root.tips.last;
+            tip-markdown: root.tips-markdown.last;
+            icon: @image-url("../../../static/position_last.svg");
+            clicked => { root.last(); }
+        }
+        HoverButton {
+            label: "random";
+            tip: "random - right-click to undo showing random media";
+            tip-markdown: "random \\- right\\-click to undo showing random media";
+            icon: @image-url("../../../static/position_random.svg");
+            clicked => { root.random(); }
+            right-clicked => { root.undo-random(); }
+        }
+        HoverMenuButton {
+            label: "slideshow";
+            tip: "slideshow";
+            tip-markdown: "slideshow";
+            icon: @image-url("../../../static/slideshow.svg");
+            menu: root.slideshow-menu;
+            requested => { root.slideshow-requested(); }
+            chosen(id) => { root.slideshow-chosen(id); }
+        }
+    }
+    // the middle row (`_PopulateCenterButtons`)
+    HorizontalLayout {
+        spacing: 0px;
+        HoverButton {
+            label: root.file-inbox ? "archive" : "return to inbox";
+            tip: self.label;
+            tip-markdown: self.label;
+            icon: root.file-inbox ? @image-url("../../../static/archive.png") : @image-url("../../../static/to_inbox.png");
+            clicked => {
+                if (root.file-inbox) {
+                    root.archive();
+                } else {
+                    root.inbox();
+                }
+            }
+        }
+        // (send to trash for a local file, or from the trash delete completely)
+        if !root.file-trashed && root.file-local: HoverButton {
+            label: "send to trash";
+            tip: self.label;
+            tip-markdown: self.label;
+            icon: @image-url("../../../static/trash.png");
+            clicked => { root.delete(); }
+        }
+        if root.file-trashed: HoverButton {
+            label: "delete completely";
+            tip: self.label;
+            tip-markdown: self.label;
+            icon: @image-url("../../../static/delete.png");
+            clicked => { root.delete(); }
+        }
+        if root.file-undeletable: HoverButton {
+            label: "undelete";
+            tip: self.label;
+            tip-markdown: self.label;
+            icon: @image-url("../../../static/undelete.png");
+            clicked => { root.undelete(); }
+        }
+        HoverButton {
+            label: "show detailed file metadata";
+            tip: root.tips.metadata;
+            tip-markdown: root.tips-markdown.metadata;
+            icon: @image-url("../../../static/page_with_text.png");
+            clicked => { root.show-metadata(); }
+        }
+    }
+    // the right row (`_PopulateRightButtons`)
+    HorizontalLayout {
+        horizontal-stretch: 1;
+        alignment: end;
+        spacing: 0px;
+        Text {
+            text: root.zoom-text;
+            color: #f0f0f0;
+            vertical-alignment: center;
+        }
+        HoverButton {
+            label: "zoom in";
+            tip: root.tips.zoom-in;
+            tip-markdown: root.tips-markdown.zoom-in;
+            icon: @image-url("../../../static/zoom_in.png");
+            clicked => { root.zoom(1); }
+        }
+        HoverButton {
+            label: "zoom out";
+            tip: root.tips.zoom-out;
+            tip-markdown: root.tips-markdown.zoom-out;
+            icon: @image-url("../../../static/zoom_out.png");
+            clicked => { root.zoom(-1); }
+        }
+        HoverButton {
+            label: "zoom switch";
+            tip: root.tips.zoom-switch;
+            tip-markdown: root.tips-markdown.zoom-switch;
+            icon: @image-url("../../../static/zoom_switch.png");
+            pointed-click(x, y) => { root.zoom-switch(x, y); }
+        }
+        HoverMenuButton {
+            label: "advanced zoom";
+            tip: "advanced zoom";
+            tip-markdown: "advanced zoom";
+            icon: @image-url("../../../static/zoom_cog.png");
+            menu: root.zoom-menu;
+            requested => { root.zoom-menu-requested(); }
+            chosen(id) => { root.zoom-menu-chosen(id); }
+        }
+        if root.volume-available: TopVolume {
+            label: "Global mute/unmute";
+            tip: "Global mute/unmute";
+            tip-markdown: "Global mute/unmute";
+            global-muted: root.global-muted;
+            viewer-muted: root.viewer-muted;
+            volume: root.volume;
+            flip-global-mute => { root.flip-global-mute(); }
+            flip-viewer-mute => { root.flip-viewer-mute(); }
+            volume-changed(v) => { root.volume-changed(v); }
+        }
+        Tipped {
+            label: "shortcuts";
+            tip: "shortcuts";
+            tip-markdown: "shortcuts";
+            ViewerShortcutButton {
+                width: 22px;
+                height: 22px;
+                icon: @image-url("../../../static/keyboard.png");
+                names: root.shortcut-names;
+                current: root.shortcut-current;
+                defaults: root.shortcut-defaults;
+                requested => { root.shortcut-menu-requested(); }
+                chosen(kind, i) => { root.shortcut-menu-chosen(kind, i); }
+            }
+        }
+        Tipped {
+            label: "view options";
+            tip: "view options";
+            tip-markdown: "view options";
+            ViewerEyeButton {
+                width: 22px;
+                height: 22px;
+                menu: root.eye-menu;
+                requested => { root.eye-menu-requested(); }
+                chosen(id) => { root.eye-menu-chosen(id); }
+            }
+        }
+        // (a left press moves the window; a right click offers resizes)
+        HoverMenuButton {
+            label: "click and drag from here to move the window";
+            tip: self.label;
+            tip-markdown: "click and drag from here to move the window";
+            icon: @image-url("../../../static/move.png");
+            right-menu: true;
+            menu: root.resize-menu;
+            left-pressed => { root.move-window(); }
+            requested => { root.resize-menu-requested(); }
+            chosen(id) => { root.resize-chosen(id); }
+        }
+        HoverButton {
+            label: "fullscreen switch";
+            tip: self.label;
+            tip-markdown: self.label;
+            icon: @image-url("../../../static/fullscreen_switch.svg");
+            clicked => { root.fullscreen(); }
+        }
+        HoverButton {
+            label: "open externally";
+            tip: root.tips.open-externally;
+            tip-markdown: root.tips-markdown.open-externally;
+            icon: @image-url("../../../static/open_externally.png");
+            clicked => { root.open-externally(); }
+        }
+        // (the reference drags the file out from here, which Slint can't:
+        // a click shows it in the file browser; a right click focuses the
+        // page and the file)
+        HoverButton {
+            label: "drag from here to export file";
+            tip: self.label;
+            tip-markdown: self.label;
+            icon: @image-url("../../../static/drag.png");
+            clicked => { root.drag-out(); }
+            right-clicked => { root.focus-media(); }
+        }
+        HoverButton {
+            label: "close";
+            tip: self.label;
+            tip-markdown: self.label;
+            icon: @image-url("../../../static/stop.png");
+            clicked => { root.close(); }
+        }
+    }
+}

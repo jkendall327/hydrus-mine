@@ -1558,15 +1558,24 @@ arrow keys pan a twelfth of the way, and dragging moves the file; a file
 zoomed wholly off the window is brought back, and resizing the window fits
 it again. Video renders at the size it's shown, up to twice the window's.
 With the pointer near the top of the window's middle three fifths, the
-reference's top hover frame shows there: the file's place in the list
-("3/30"); buttons, with the reference's icons, to archive it or return it
-to the inbox, to send it to the trash (or, from the trash, delete it
-completely), and to undelete it (one deleted from any of your local file
-domains), each shown as the reference shows it; the zoom ("266.67%") and
-buttons to zoom in, out and switch, to switch fullscreen, to open the file
-externally, to show it, selected, in your file browser (in the place of
-the reference's button to drag the file out to other programs, which
-Slint can't do), and to close the viewer. Under them, the file's info line,
+reference's top hover frame shows there, its buttons in the reference's
+order with its icons and tooltips (those for a command name its shortcuts,
+set by set, as the reference's do; `oracle/record_viewer_top_hover.py`).
+On the left: first, previous, the file's place in the list ("3/30"), next,
+last, random (a right click undoes it) and the slideshow menu. In the
+middle: archive it or return it to the inbox, send it to the trash (or,
+from the trash, delete it completely), undelete it (one deleted from any of
+your local file domains), each shown as the reference shows it, and show
+its embedded metadata (the tooltip says what it has). On the right: the
+zoom ("266.67%"), zoom in, out and switch, the zoom options menu (recenter,
+the zoom types, the current one checked, and recentering on window
+resize), the volume control (where libmpv is available: a click mutes and
+unmutes everything; over it, the viewer's own mute and the volume), the
+shortcuts and view options menus, a button to drag the window by, fullscreen,
+open externally, a button showing the file, selected, in your file browser
+(in the place of the reference's button to drag the file out to other
+programs, which Slint can't do; a right click shows the page the viewer
+came from with the file selected), and close. Under them, the file's info line,
 as the reference's has it: its "interesting" info lines
 (`hydrus-gui-model/src/info_lines.rs`, `GetPrettyMediaResultInfoLines`: size, type,
 resolution, duration and frames, audio; imported, deleted or in the trash;

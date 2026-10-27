@@ -14450,10 +14450,10 @@
     "This leaf covers the top-hover button configuration. It does not claim zoom menu expansion, backend-specific scaling options or preview zoom defaults. The command is frozen at viewer construction, as in the reference; changing the option affects newly opened viewers."
    ],
    "recheck": {
-    "date": "2026-10-08",
+    "date": "2026-10-27",
     "class": "sound",
-    "by": "blind Sonnet agent, #97 phase 1",
-    "note": "All four choices applied through the real Options row (labels from the recording), then the real viewer zoom-switch request is compared with recorded rects per choice for a large jpeg; Cancel leaves the saved choice. Only one file/centre case of the recording is replayed. Tests: crates/hydrus-gui/tests/gui/options_window.rs:4140 zoom switch/loop test; crates/hydrus-gui-model/tests/model/options_dialog.rs:2003"
+    "by": "Claude (#287)",
+    "note": "Before #287 this was over-claimed: the tagged test (options_window.rs hover_zoom_and_loop_options_reach_owned_viewers_and_survive_cancel_and_reopen) invokes the viewer's zoom-switch callback rather than pressing the button, and the button sat out of the reference's order. tests/gui/viewer_top_hover.rs now clicks the zoom switch button with real pointer events at its laid-out place in the reference's order (oracle/fixtures/viewer_top_hover.json), with the tooltip naming the configured command's shortcuts, and the zoom after it equals the recorded one for the default choice; the options test still covers the four choices through the same callback the click reaches. The earlier phase-1 note: all four choices applied through the real Options row (labels from the recording), the viewer's switch compared with recorded rects per choice for a large jpeg; Cancel leaves the saved choice."
    }
   },
   {
@@ -25328,7 +25328,7 @@
   },
   {
    "id": "audit-media-viewer-top-hover-layout",
-   "label": "Browser top hover: its widgets in the reference's order and rows, with the reference's icons",
+   "label": "Browser top hover: its widgets in the reference's order and rows",
    "path": "Media files, metadata and viewing > Media Viewer > Top hover",
    "workstream": "media",
    "state": "missing",
@@ -25336,7 +25336,8 @@
    "reference": "hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py",
    "native": null,
    "notes": [
-    "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). CanvasHoverFrameTopNavigableList: left row first, previous, index, next, last, random, slideshow; middle archive/inbox, trash, delete completely, undelete, embedded metadata; right zoom %, zoom in, zoom out, zoom switch, zoom options, volume control, shortcuts, view options, move window, fullscreen, open externally, drag, close. Recorded in oracle/fixtures/viewer_top_hover.json."
+    "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). CanvasHoverFrameTopNavigableList: left row first, previous, index, next, last, random, slideshow; middle archive/inbox, trash, delete completely, undelete, embedded metadata; right zoom %, zoom in, zoom out, zoom switch, zoom options, volume control, shortcuts, view options, move window, fullscreen, open externally, drag, close. Recorded in oracle/fixtures/viewer_top_hover.json.",
+    "The icons are the reference's own files (static/), bound per button in viewer_top_hover.slint; the test finds each button by its label and does not read its image."
    ]
   },
   {

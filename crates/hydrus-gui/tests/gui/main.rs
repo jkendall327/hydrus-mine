@@ -423,3 +423,4 @@ mod video_buffer;
 mod viewer_audio;
 mod viewer_playback;
 mod viewer_prefetch;
+mod viewer_top_hover;
