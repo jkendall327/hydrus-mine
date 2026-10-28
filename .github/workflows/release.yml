@@ -101,9 +101,15 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.name }}
-          path: |
-            ${{ env.ARCHIVE }}
-            ${{ env.DEBUG_ARCHIVE }}
+          path: ${{ env.ARCHIVE }}
+          retention-days: 30
+      - name: upload the debug archive (Linux)
+        # Its own artifact, so the normal download is just the program.
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }}-debug
+          path: ${{ env.DEBUG_ARCHIVE }}
           retention-days: 30
 
   release:
