@@ -9,14 +9,23 @@
 //! event loop has returned.
 //!
 //! Not covered yet (nested slot types, each with its own children): the
-//! formula, png export, interchange, comparator and conditional-search slots
-//! inside the parser, formula and auto-resolution editors; the sidecar,
-//! export files, external call, open externally, suggested tags, network
-//! data, services, downloader definitions, login, network sessions, merge
-//! options and search OR slots; the database maintenance slot.
+//! formula, png export, interchange and child-page slots inside the parser
+//! editors; the formula, png export and interchange slots inside the simple
+//! formulae editor; the comparator, conditional-search, merge options and png
+//! slots inside the auto-resolution editor; the top-level subscription
+//! interchange; the sidecar, export files, external call, open externally,
+//! suggested tags, network data, services, downloader definitions, login,
+//! network sessions and search OR slots. Several of those (the interchange,
+//! png export, network data and network sessions slots) already close their
+//! windows on a `Drop` guarded by `Rc::strong_count(..) == 1`, which a slot
+//! clone held by the window's own callbacks defeats. (The database
+//! maintenance window is not missing: its owner, a field of the binding,
+//! hides it when the last clone goes.)
 
 use std::cell::RefCell;
 use std::rc::Rc;
+
+use slint::ComponentHandle as _;
 
 /// What the last clone of a binding hides and forgets, as its own field of
 /// [`Bound`](crate::Bound) so that it drops only with the last clone.
@@ -30,14 +39,18 @@ impl std::fmt::Debug for Teardown {
 }
 
 impl Teardown {
+    fn push(&self, forget: impl Fn() + 'static) {
+        self.0.borrow_mut().push(Box::new(forget));
+    }
+
     fn add<T: slint::ComponentHandle + 'static>(&self, slot: &Rc<RefCell<Option<T>>>) {
         let slot = slot.clone();
-        self.0.borrow_mut().push(Box::new(move || {
+        self.push(move || {
             let window = slot.borrow_mut().take();
             if let Some(window) = window {
                 let _ = window.hide();
             }
-        }));
+        });
     }
 }
 
@@ -119,4 +132,18 @@ pub(crate) fn watch(bound: &crate::Bound) {
     t.add(&rules.locations);
     t.add(&rules.preview_filter);
     t.add(&bound.simple_formulae.list);
+    let reviews = bound.auto_resolution_reviews.clone();
+    t.push(move || {
+        let windows: Vec<_> = reviews.borrow_mut().drain(..).collect();
+        for (_, window) in windows {
+            let _ = window.hide();
+        }
+    });
+    let imports = bound.review_imports.clone();
+    t.push(move || {
+        let review = imports.borrow_mut().take();
+        if let Some((window, _)) = review {
+            let _ = window.hide();
+        }
+    });
 }
