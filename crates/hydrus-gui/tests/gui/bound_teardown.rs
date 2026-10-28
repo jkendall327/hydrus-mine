@@ -68,9 +68,14 @@ fn a_binding_dropped_as_its_thread_ends_does_not_abort() {
         let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
         crate::common::main_menu::choose(&ui, &["help"], "about");
         assert!(bound.about.borrow().is_some());
+        let about = bound.about.borrow().as_ref().unwrap().clone_strong();
         STASH.with(|stash| *stash.borrow_mut() = Some(bound));
         drop(ui);
         drop(windows);
+        // (shown again after the collector hid it, so the teardown would
+        // have a visible window to hide)
+        about.show().unwrap();
+        drop(about);
     })
     .join();
     assert!(ended.is_ok());
