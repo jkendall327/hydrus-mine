@@ -44,7 +44,7 @@ jobs:
       CARGO_PROFILE_RELEASE_DEBUG: ${{ startsWith(matrix.os, 'ubuntu') && 'line-tables-only' || 'false' }}
       CARGO_PROFILE_RELEASE_STRIP: ${{ startsWith(matrix.os, 'ubuntu') && 'none' || 'debuginfo' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: '1.94'
@@ -98,7 +98,7 @@ jobs:
             tar czf "$dir-debug.tar.gz" "$dir-debug"
             echo "DEBUG_ARCHIVE=$dir-debug.tar.gz" >> "$GITHUB_ENV"
           fi
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.name }}
           path: ${{ env.ARCHIVE }}
@@ -106,7 +106,7 @@ jobs:
       - name: upload the debug archive (Linux)
         # Its own artifact, so the normal download is just the program.
         if: runner.os == 'Linux'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.name }}-debug
           path: ${{ env.DEBUG_ARCHIVE }}
@@ -119,11 +119,11 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           path: dist
           merge-multiple: true
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           files: dist/*
           generate_release_notes: true
