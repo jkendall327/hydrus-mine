@@ -18,7 +18,10 @@ use hydrus_store::{
 };
 use slint::Model as _;
 use std::io::{Read, Write};
-use std::sync::{Arc, atomic::AtomicBool, atomic::Ordering};
+use std::sync::{
+    Arc,
+    atomic::{AtomicBool, AtomicUsize, Ordering},
+};
 
 fn until(what: &str, mut condition: impl FnMut() -> bool) {
     let start = std::time::Instant::now();
@@ -108,10 +111,14 @@ fn positions(
         .collect();
     let stop = Arc::new(AtomicBool::new(false));
     let all_ready = Arc::new(AtomicBool::new(false));
+    // (how many times the engine has published its jobs since every job
+    // reached its wait: the window reads what was published)
+    let published = Arc::new(AtomicUsize::new(0));
     let worker = std::thread::spawn({
         let engine = engine.clone();
         let stop = stop.clone();
         let all_ready = all_ready.clone();
+        let published = published.clone();
         move || {
             let runtime = tokio::runtime::Runtime::new().unwrap();
             runtime.block_on(async move {
@@ -137,9 +144,10 @@ fn positions(
                     }
                     running.push((handle, fetch));
                 }
-                all_ready.store(true, Ordering::Relaxed);
+                all_ready.store(true, Ordering::SeqCst);
                 while !stop.load(Ordering::Relaxed) {
                     engine.publish_runtime().unwrap();
+                    published.fetch_add(1, Ordering::SeqCst);
                     tokio::time::sleep(std::time::Duration::from_millis(25)).await;
                 }
                 for (job, fetch) in running {
@@ -161,16 +169,22 @@ fn positions(
             })
             .collect()
     };
-    until("the jobs to settle and be listed", || {
-        window.invoke_refresh();
-        all_ready.load(Ordering::Relaxed)
-            && watched
-                .iter()
-                .all(|url| rows().iter().any(|(_, u, _)| u == url))
+    // every job at its wait, and that published (the publish counted only
+    // once it is written), then the window refreshed from it
+    until("the jobs to settle and be published", || {
+        published.load(Ordering::SeqCst) > 0
     });
-    // (one more heartbeat after every job settled)
-    std::thread::sleep(std::time::Duration::from_millis(100));
+    // a refresh asked for now shows a review loaded after that publish
+    let shown = window.get_rows();
     window.invoke_refresh();
+    until("the refresh to be shown", || shown != window.get_rows());
+    assert!(
+        watched
+            .iter()
+            .all(|url| rows().iter().any(|(_, u, _)| u == url)),
+        "every job listed: {:?}",
+        rows()
+    );
     let listed = rows()
         .into_iter()
         .filter(|(_, url, _)| watched.contains(url))
