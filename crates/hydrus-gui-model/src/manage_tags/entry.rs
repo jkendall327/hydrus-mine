@@ -232,7 +232,9 @@ impl ManageTags {
         for staged in &mut self.staged {
             staged.clear();
         }
-        self.tag_selection = crate::list_selection::ListSelection::default();
+        let decorators = self.tag_selection.borrow().decorators();
+        *self.tag_selection.borrow_mut() =
+            crate::selection_tags::SelectionTags::decorated(decorators);
         self.refresh_stored();
         self.input.set_context_tags(self.tags().into_keys());
     }
@@ -364,42 +366,38 @@ impl ManageTags {
             .map_err(|e| e.to_string())
     }
 
-    /// The tags selected in the list.
+    /// The tags selected in the list, sorted.
     pub fn selected_tags(&self) -> Vec<String> {
-        let rows = self.display_rows();
-        self.tag_selection
-            .selected_order()
-            .iter()
-            .filter_map(|&i| rows.get(i))
-            .filter(|row| !row.parent_row)
-            .map(|row| row.tag.clone())
+        self.synced_selection()
+            .selected_tags()
+            .into_iter()
             .collect::<BTreeSet<_>>()
             .into_iter()
             .collect()
     }
 
-    /// Which listed rows are selected.
+    /// Which drawn rows are selected (a selected tag's parent rows too).
     pub fn tag_selection_mask(&self) -> Vec<bool> {
-        let rows = self.display_rows();
-        (0..rows.len())
-            .map(|i| self.tag_selection.is_selected(i))
-            .collect()
+        self.synced_selection().mask()
+    }
+
+    /// A press of any button on a drawn row, or on nothing (`None`), with
+    /// ctrl and shift (`_HandleClick`).
+    pub fn press_tag(&mut self, row: Option<usize>, ctrl: bool, shift: bool) {
+        self.synced_selection().press(row, ctrl, shift);
     }
 
     /// A listed tag clicked (ctrl and shift extend the selection).
     pub fn click_tag(&mut self, row: usize, ctrl: bool, shift: bool) {
-        let order: Vec<usize> = (0..self.display_rows().len()).collect();
-        self.tag_selection.click(&order, row, ctrl, shift);
+        self.press_tag(Some(row), ctrl, shift);
+    }
+
+    /// The list's selection, for its keys, menu and middle-click.
+    pub fn tag_list(&self) -> std::cell::RefMut<'_, crate::selection_tags::SelectionTags> {
+        self.synced_selection()
     }
 
     fn select_tags(&mut self, tags: &[String]) {
-        let rows: Vec<usize> = self
-            .display_rows()
-            .iter()
-            .enumerate()
-            .filter(|(_, row)| !row.parent_row && tags.contains(&row.tag))
-            .map(|(i, _)| i)
-            .collect();
-        self.tag_selection.select_many(&rows);
+        self.synced_selection().select_tags(tags);
     }
 }

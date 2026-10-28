@@ -51,6 +51,8 @@ pub struct MediaViewer {
     random_history: Vec<usize>,
     /// Display mode captured when this viewer's tag list opens.
     tag_display_type: hydrus_core::tag_presentation::TagDisplayType,
+    /// The tags hover's selection (`ListBoxTagsMediaHoverFrame`).
+    tag_selection: std::cell::RefCell<hydrus_gui_model::selection_tags::SelectionTags>,
 }
 
 impl std::fmt::Debug for MediaViewer {
@@ -78,6 +80,7 @@ impl MediaViewer {
             )),
             random_history: Vec::new(),
             tag_display_type: presentation.viewer_display_type,
+            tag_selection: std::cell::RefCell::default(),
         })
     }
 
@@ -239,6 +242,20 @@ impl MediaViewer {
     /// its thumbnail.
     pub fn media(&self) -> Option<hydrus_media::Raster> {
         still(&self.store, self.current())
+    }
+
+    /// The tags hover's selection (kept apart, as the window shows it while
+    /// the viewer is borrowed).
+    pub fn tag_selection(
+        &self,
+    ) -> &std::cell::RefCell<hydrus_gui_model::selection_tags::SelectionTags> {
+        &self.tag_selection
+    }
+
+    /// Show the tags hover's tags as another display type does (its menu's
+    /// "tag display (experimental)").
+    pub fn set_tag_display_type(&mut self, display: hydrus_core::tag_presentation::TagDisplayType) {
+        self.tag_display_type = display;
     }
 
     /// The tag display mode captured when this viewer's list opened.
@@ -590,4 +607,33 @@ pub(crate) fn refresh_background_info_line(window: &crate::MediaViewerWindow) {
     window.set_background_info_line(
         background_info_line(&window.get_info_line(), &window.get_zoom_text()).into(),
     );
+}
+
+/// Whether `file` waits behind the embed button, in the media viewer or (with
+/// `preview`) the preview: its kind's "start with embed button" view option
+/// (`GetShowAction`).
+pub(crate) fn starts_with_embed(store: &Store, file: HashId, preview: bool) -> bool {
+    let Some((mime, _)) = shape(store, file) else {
+        return false;
+    };
+    let settings: hydrus_core::media_viewer::MediaViewerSettings =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    let view = settings.view(mime);
+    if preview {
+        view.preview_start_with_embed
+    } else {
+        view.media_start_with_embed
+    }
+}
+
+/// The picture on the embed button: the file's thumbnail, if it has one
+/// (`EmbedButton.SetMedia`).
+pub(crate) fn embed_thumbnail(store: &Store, file: HashId) -> slint::Image {
+    store
+        .read(|conn| hydrus_store::media::load_basic(conn, &[file]))
+        .ok()
+        .and_then(|results| results.into_iter().next())
+        .and_then(|result| thumbnail_still_with_icc(store, &result, false))
+        .map(|raster| crate::image(&raster))
+        .unwrap_or_default()
 }

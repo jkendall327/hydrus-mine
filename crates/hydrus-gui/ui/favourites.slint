@@ -8,12 +8,7 @@ import { Button, CheckBox, ComboBox, LineEdit, ScrollView } from "std-widgets.sl
 import { Theme } from "theme.slint";
 import { Tick } from "subscriptions.slint";
 import { MenuPane, MenuPanes } from "main_menu.slint";
-
-// A row of the list: its folder, name, search, sort and collect.
-export struct FavouriteListRow {
-    cells: [string],
-    selected: bool,
-}
+import { ListTable, TableColumn, TableRow } from "list_table.slint";
 
 // A yes/no question asked in the window, with its answers.
 export component Question {
@@ -47,9 +42,10 @@ export component FavouritesWindow inherits Window {
     preferred-width: 980px;
     preferred-height: 420px;
     background: Theme.window;
-    in property <[string]> columns;
-    in property <[length]> widths: [140px, 140px, 360px, 190px, 120px];
-    in property <[FavouriteListRow]> rows;
+    // the list's columns, and its rows (folder, name, search, sort and
+    // collect)
+    in property <[TableColumn]> columns;
+    in property <[TableRow]> rows;
     // the column sorted on, and whether ascending
     in property <int> sort-column;
     in property <bool> ascending: true;
@@ -84,59 +80,18 @@ export component FavouritesWindow inherits Window {
         VerticalLayout {
             padding: 8px;
             spacing: 6px;
-            Rectangle {
-                border-width: 1px;
-                border-color: Theme.border;
-                background: Theme.panel;
-                VerticalLayout {
-                    padding: 1px;
-                    HorizontalLayout {
-                        height: 24px;
-                        for column[c] in root.columns: Rectangle {
-                            width: root.widths[c];
-                            background: header-touch.has-hover ? Theme.hover : transparent;
-                            Text {
-                                x: 4px;
-                                width: parent.width - 8px;
-                                vertical-alignment: center;
-                                text: column + (c == root.sort-column ? (root.ascending ? " ▲" : " ▼") : "");
-                                overflow: elide;
-                                color: Theme.text;
-                                font-weight: 700;
-                            }
-                            header-touch := TouchArea {
-                                clicked => { root.header-clicked(c); }
-                            }
-                        }
-                        Rectangle { horizontal-stretch: 1; }
-                    }
-                    ScrollView {
-                        min-height: 12 * 22px;
-                        VerticalLayout {
-                            alignment: start;
-                            for row[r] in root.rows: Rectangle {
-                                height: 22px;
-                                background: row.selected ? Theme.highlight : row-touch.has-hover ? Theme.hover : transparent;
-                                HorizontalLayout {
-                                    for cell[c] in row.cells: Text {
-                                        width: root.widths[c];
-                                        vertical-alignment: center;
-                                        text: " " + cell;
-                                        overflow: elide;
-                                        color: row.selected ? Theme.highlight-text : Theme.text;
-                                    }
-                                    Rectangle { horizontal-stretch: 1; }
-                                }
-                                row-touch := TouchArea {
-                                    pointer-event(event) => {
-                                        if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
-                                            root.row-clicked(r, event.modifiers.control, event.modifiers.shift);
-                                        }
-                                    }
-                                    double-clicked => { root.row-activated(r); }
-                                }
-                            }
-                        }
+            ListTable {
+                min-height: 24px + 12 * 22px + 4px;
+                columns: root.columns;
+                rows: root.rows;
+                sort-column: root.sort-column;
+                ascending: root.ascending;
+                sort(c, ascending) => { root.header-clicked(c); }
+                row-clicked(r, ctrl, shift) => { root.row-clicked(r, ctrl, shift); }
+                row-activated(r) => { root.row-activated(r); }
+                delete-pressed => {
+                    if (root.can-delete) {
+                        root.delete();
                     }
                 }
             }

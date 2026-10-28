@@ -103,7 +103,7 @@ pub fn description(name: &str) -> Option<&'static str> {
     })
 }
 
-fn simple_names() -> &'static BTreeMap<String, String> {
+pub(crate) fn simple_names() -> &'static BTreeMap<String, String> {
     static NAMES: std::sync::OnceLock<BTreeMap<String, String>> = std::sync::OnceLock::new();
     NAMES.get_or_init(|| {
         serde_json::from_str(include_str!("simple_command_names.json"))

@@ -328,6 +328,22 @@ pub(crate) fn bind(
             }
         }
     });
+    // the pages tree's right-click: the row's notebook's tab menu for it
+    window.on_page_tree_menu_requested({
+        let open = open.clone();
+        let hooks = hooks.clone();
+        let show = show.clone();
+        move |text, x, y| {
+            let Some(key) = PageKey::from_hex(&text) else {
+                return;
+            };
+            let entries = hooks.pages.borrow_mut().tree_menu(key);
+            if !entries.is_empty() {
+                open.borrow_mut().open_popup(entries, x, y);
+                show();
+            }
+        }
+    });
     // a search page's domain buttons: their menus, below them
     window.on_domain_menu_requested({
         let open = open.clone();
@@ -523,126 +539,18 @@ fn run_command(window: &MainWindow, hooks: &Hooks, command: Command) {
     let change_pages = &hooks.change_pages;
     match command {
         Command::Sidebar(action) => (hooks.sidebar_layout)(action),
-        Command::DuplicateTab { depth, index } => {
-            change_pages(&|pages| pages.duplicate_tab(depth, index));
+        Command::InNotebook { notebook, command } => {
+            run_tab_command(window, hooks, &command, Some(notebook));
         }
-        Command::CollapseTabs {
-            depth,
-            index,
-            scope,
-        } => {
-            let harvest = hooks
-                .pages
-                .borrow_mut()
-                .collapse_tabs_question(depth, index, scope);
-            match harvest {
-                Ok(Some((keys, files, question))) => {
-                    let change = hooks.change_pages.clone();
-                    (hooks.ask)(
-                        question,
-                        Rc::new(move || {
-                            change(&|pages| pages.collapse_tab_keys(&keys, &files));
-                        }),
-                    );
-                }
-                Ok(None) => {}
-                Err(error) => eprintln!("could not harvest pages: {error}"),
-            }
-        }
-        Command::RenameTab { depth, index } => {
-            if let (Ok(depth), Ok(index)) = (i32::try_from(depth), i32::try_from(index)) {
-                window.invoke_tab_rename_requested(depth, index);
-            }
-        }
-        Command::SendTabs {
-            depth,
-            index,
-            scope,
-        } => {
-            let keys = hooks.pages.borrow().send_tab_targets(depth, index, scope);
-            if keys.is_empty() {
-                return;
-            }
-            let change = hooks.change_pages.clone();
-            let weak = window.as_weak();
-            let store = store.clone();
-            let send: Rc<dyn Fn()> = Rc::new(move || {
-                let created = std::cell::Cell::new(None);
-                change(&|pages| {
-                    created
-                        .set(pages.send_tab_keys(&keys, scope == crate::tab_context::Send::This));
-                    Ok(())
-                });
-                let settings: hydrus_store::sessions::NotebookSettings =
-                    store.read(hydrus_store::settings::get).unwrap_or_default();
-                if settings.rename_sent_notebooks
-                    && let (Some(key), Some(window)) = (created.get(), weak.upgrade())
-                {
-                    window.invoke_notebook_rename_requested(key.to_hex().into());
-                }
-            });
-            if scope == crate::tab_context::Send::This {
-                send();
-            } else {
-                (hooks.ask)(
-                    "Send all pages to the right to a new page of pages?".into(),
-                    send,
-                );
-            }
-        }
-        Command::CloseTab { depth, index } => {
-            if let (Ok(depth), Ok(index)) = (i32::try_from(depth), i32::try_from(index)) {
-                window.invoke_close_tab(depth, index);
-            }
-        }
-        Command::CloseTabs { depth, index, side } => {
-            let prepared = hooks.pages.borrow_mut().close_tabs_plan(depth, index, side);
-            if let Some(plan) = prepared {
-                let change_pages = hooks.change_pages.clone();
-                let keys = plan.keys;
-                let close: Rc<dyn Fn()> =
-                    Rc::new(move || change_pages(&|pages| pages.close_tab_keys(&keys)));
-                if plan.objections.is_empty() {
-                    (hooks.ask)(plan.question, close);
-                } else {
-                    // some page objects: the longer question, with a way to
-                    // look at the pages that do
-                    let change_pages = hooks.change_pages.clone();
-                    let show: Rc<dyn Fn(PageKey)> = Rc::new(move |key| {
-                        change_pages(&|pages| {
-                            pages.show(&key);
-                            Ok(())
-                        });
-                    });
-                    if let Err(error) = crate::reasons_dialog::open(
-                        &plan.question,
-                        plan.objections,
-                        crate::reasons_dialog::yes_delay(),
-                        close,
-                        show,
-                    ) {
-                        eprintln!("could not ask about closing the pages: {error}");
-                    }
-                }
-            }
-        }
-        Command::NavigateTabs { depth, movement } => change_pages(&|pages| {
-            pages.navigate_tabs(depth, movement, std::time::Instant::now());
-            Ok(())
-        }),
-        Command::SortTabs {
-            depth,
-            by,
-            ascending,
-        } => change_pages(&|pages| pages.sort_tabs(depth, by, ascending)),
-        Command::MoveTab {
-            depth,
-            index,
-            movement,
-        } => change_pages(&|pages| {
-            pages.move_tab(depth, index, movement);
-            Ok(())
-        }),
+        command @ (Command::DuplicateTab { .. }
+        | Command::CollapseTabs { .. }
+        | Command::RenameTab { .. }
+        | Command::SendTabs { .. }
+        | Command::CloseTab { .. }
+        | Command::CloseTabs { .. }
+        | Command::NavigateTabs { .. }
+        | Command::SortTabs { .. }
+        | Command::MoveTab { .. }) => run_tab_command(window, hooks, &command, None),
         Command::Copy(text) => crate::copy_to_clipboard(&text),
         Command::NetworkBootPause => {
             let done = store.write(|ctx| {
@@ -1021,5 +929,206 @@ fn say(store: &hydrus_store::Store, text: Option<&'static str>) {
     let popup = hydrus_store::popups::Job::text(text, now as f64);
     if let Err(e) = store.write(move |ctx| hydrus_store::popups::add(ctx.conn(), &popup, now)) {
         eprintln!("could not say so: {e}");
+    }
+}
+
+/// Run `f` on the pages, with the notebook `notebook` taken as on the way to
+/// the page shown if one is named ([`Pages::within`]); `None` if it is gone.
+fn focused<R>(
+    pages: &mut Pages,
+    notebook: Option<PageKey>,
+    f: impl FnOnce(&mut Pages) -> R,
+) -> Option<R> {
+    match notebook {
+        None => Some(f(pages)),
+        Some(key) => pages.within(Some(key), |pages, _| f(pages)),
+    }
+}
+
+/// A tab menu action. `notebook` names the notebook it is for when that
+/// need not be on the way to the page shown (the pages tree's menu, which
+/// acts on a row's notebook without showing it); its depth is that
+/// notebook's.
+fn run_tab_command(
+    window: &MainWindow,
+    hooks: &Hooks,
+    command: &Command,
+    notebook: Option<PageKey>,
+) {
+    let store = hooks.pages.borrow().store().clone();
+    let change_pages = &hooks.change_pages;
+    // the key of the tab at `depth`'s `index`, for an action by key
+    let identity = |depth: usize, index: usize| {
+        focused(&mut hooks.pages.borrow_mut(), notebook, |pages| {
+            pages.tab_identity(depth, index)
+        })
+        .flatten()
+        .map(|(key, _)| key)
+    };
+    match *command {
+        Command::DuplicateTab { depth, index } => {
+            change_pages(&|pages| {
+                focused(pages, notebook, |pages| pages.duplicate_tab(depth, index))
+                    .unwrap_or(Ok(()))
+            });
+        }
+        Command::CollapseTabs {
+            depth,
+            index,
+            scope,
+        } => {
+            let harvest = focused(&mut hooks.pages.borrow_mut(), notebook, |pages| {
+                pages.collapse_tabs_question(depth, index, scope)
+            });
+            match harvest {
+                Some(Ok(Some((keys, files, question)))) => {
+                    let change = hooks.change_pages.clone();
+                    (hooks.ask)(
+                        question,
+                        Rc::new(move || {
+                            change(&|pages| {
+                                focused(pages, notebook, |pages| {
+                                    pages.collapse_tab_keys(&keys, &files)
+                                })
+                                .unwrap_or(Ok(()))
+                            });
+                        }),
+                    );
+                }
+                Some(Ok(None)) | None => {}
+                Some(Err(error)) => eprintln!("could not harvest pages: {error}"),
+            }
+        }
+        Command::RenameTab { depth, index } => match notebook {
+            None => {
+                if let (Ok(depth), Ok(index)) = (i32::try_from(depth), i32::try_from(index)) {
+                    window.invoke_tab_rename_requested(depth, index);
+                }
+            }
+            Some(_) => {
+                if let Some(key) = identity(depth, index) {
+                    window.invoke_page_rename_requested(key.to_hex().into());
+                }
+            }
+        },
+        Command::SendTabs {
+            depth,
+            index,
+            scope,
+        } => {
+            let keys = focused(&mut hooks.pages.borrow_mut(), notebook, |pages| {
+                pages.send_tab_targets(depth, index, scope)
+            })
+            .unwrap_or_default();
+            if keys.is_empty() {
+                return;
+            }
+            let change = hooks.change_pages.clone();
+            let weak = window.as_weak();
+            let store = store.clone();
+            let send: Rc<dyn Fn()> = Rc::new(move || {
+                let created = std::cell::Cell::new(None);
+                change(&|pages| {
+                    let single = scope == crate::tab_context::Send::This;
+                    created.set(
+                        focused(pages, notebook, |pages| pages.send_tab_keys(&keys, single))
+                            .flatten(),
+                    );
+                    Ok(())
+                });
+                let settings: hydrus_store::sessions::NotebookSettings =
+                    store.read(hydrus_store::settings::get).unwrap_or_default();
+                if settings.rename_sent_notebooks
+                    && let (Some(key), Some(window)) = (created.get(), weak.upgrade())
+                {
+                    window.invoke_notebook_rename_requested(key.to_hex().into());
+                }
+            });
+            if scope == crate::tab_context::Send::This {
+                send();
+            } else {
+                (hooks.ask)(
+                    "Send all pages to the right to a new page of pages?".into(),
+                    send,
+                );
+            }
+        }
+        Command::CloseTab { depth, index } => match notebook {
+            None => {
+                if let (Ok(depth), Ok(index)) = (i32::try_from(depth), i32::try_from(index)) {
+                    window.invoke_close_tab(depth, index);
+                }
+            }
+            Some(_) => {
+                if let Some(key) = identity(depth, index) {
+                    window.invoke_close_page_key(key.to_hex().into());
+                }
+            }
+        },
+        Command::CloseTabs { depth, index, side } => {
+            let prepared = focused(&mut hooks.pages.borrow_mut(), notebook, |pages| {
+                pages.close_tabs_plan(depth, index, side)
+            })
+            .flatten();
+            if let Some(plan) = prepared {
+                let change_pages = hooks.change_pages.clone();
+                let keys = plan.keys;
+                let close: Rc<dyn Fn()> = Rc::new(move || {
+                    change_pages(&|pages| {
+                        focused(pages, notebook, |pages| pages.close_tab_keys(&keys))
+                            .unwrap_or(Ok(()))
+                    });
+                });
+                if plan.objections.is_empty() {
+                    (hooks.ask)(plan.question, close);
+                } else {
+                    // some page objects: the longer question, with a way to
+                    // look at the pages that do
+                    let change_pages = hooks.change_pages.clone();
+                    let show: Rc<dyn Fn(PageKey)> = Rc::new(move |key| {
+                        change_pages(&|pages| {
+                            pages.show(&key);
+                            Ok(())
+                        });
+                    });
+                    if let Err(error) = crate::reasons_dialog::open(
+                        &plan.question,
+                        plan.objections,
+                        crate::reasons_dialog::yes_delay(),
+                        close,
+                        show,
+                    ) {
+                        eprintln!("could not ask about closing the pages: {error}");
+                    }
+                }
+            }
+        }
+        Command::NavigateTabs { depth, movement } => change_pages(&|pages| {
+            focused(pages, notebook, |pages| {
+                pages.navigate_tabs(depth, movement, std::time::Instant::now());
+            });
+            Ok(())
+        }),
+        Command::SortTabs {
+            depth,
+            by,
+            ascending,
+        } => change_pages(&|pages| {
+            focused(pages, notebook, |pages| {
+                pages.sort_tabs(depth, by, ascending)
+            })
+            .unwrap_or(Ok(()))
+        }),
+        Command::MoveTab {
+            depth,
+            index,
+            movement,
+        } => change_pages(&|pages| {
+            focused(pages, notebook, |pages| {
+                pages.move_tab(depth, index, movement);
+            });
+            Ok(())
+        }),
+        _ => {}
     }
 }

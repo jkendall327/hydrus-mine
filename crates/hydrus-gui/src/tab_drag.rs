@@ -129,28 +129,15 @@ pub(crate) fn bind(window: &MainWindow, pages: &Rc<RefCell<Pages>>, change: Chan
                     window.set_tab_drag_active(false);
                     if button == 0
                         && let Some(rect) = hit.clone()
+                        && let Some(key) = rect.key
                     {
-                        if let Some(key) = rect.key {
-                            if !prefs.disabled {
-                                state
-                                    .borrow_mut()
-                                    .pointer
-                                    .start(key, rect.parent, Instant::now());
-                            }
-                            window.invoke_tab_chosen(rect.depth, rect.index);
-                        } else {
-                            window.invoke_tab_space_pressed(rect.depth, false);
+                        if !prefs.disabled {
+                            state
+                                .borrow_mut()
+                                .pointer
+                                .start(key, rect.parent, Instant::now());
                         }
-                    } else if button == 1
-                        && let Some(rect) = hit.clone()
-                        && rect.key.is_none()
-                    {
-                        window.invoke_tab_menu_requested(rect.depth, rect.index, x, y);
-                    } else if button == 2
-                        && let Some(rect) = hit
-                        && rect.key.is_none()
-                    {
-                        window.invoke_tab_space_pressed(rect.depth, true);
+                        window.invoke_tab_chosen(rect.depth, rect.index);
                     }
                 }
                 1 => {
@@ -185,14 +172,21 @@ pub(crate) fn bind(window: &MainWindow, pages: &Rc<RefCell<Pages>>, change: Chan
                         });
                     } else if button == 1
                         && let Some(rect) = hit.as_ref()
-                        && rect.key.is_some()
                     {
-                        window.invoke_tab_menu_requested(rect.depth, rect.index, x, y);
+                        // (the reference's notebook shows its menu when the
+                        // right button is let go, over a tab or not)
+                        let index = if rect.key.is_some() { rect.index } else { -1 };
+                        window.invoke_tab_menu_requested(rect.depth, index, x, y);
                     } else if button == 2
                         && let Some(rect) = hit
-                        && rect.key.is_some()
                     {
-                        window.invoke_close_tab(rect.depth, rect.index);
+                        if rect.key.is_some() {
+                            window.invoke_close_tab(rect.depth, rect.index);
+                        } else {
+                            // (a middle click on empty space chooses a new
+                            // page, as the notebook's event filter does)
+                            window.invoke_tab_space_pressed(rect.depth, true);
+                        }
                     }
                 }
                 2 => {
@@ -227,6 +221,18 @@ pub(crate) fn bind(window: &MainWindow, pages: &Rc<RefCell<Pages>>, change: Chan
                         window.invoke_tab_drag_hovered(name.into(), rect.x, rect.y + rect.h, true);
                     } else {
                         window.invoke_tab_drag_hovered("".into(), x, y, false);
+                    }
+                }
+                5 => {
+                    // a left double-click (Slint's own count, so its clock):
+                    // on a tab its page is renamed, as the reference's tab
+                    // bar does; on empty space a page is chosen
+                    if let Some(rect) = hit {
+                        if rect.key.is_some() {
+                            window.invoke_tab_rename_requested(rect.depth, rect.index);
+                        } else {
+                            window.invoke_tab_space_pressed(rect.depth, false);
+                        }
                     }
                 }
                 4 => {

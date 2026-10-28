@@ -56,9 +56,9 @@ search changes (and then only if it is synchronised). The pages we don't
 open yet show their files, and say what they are; URL, gallery and watcher
 downloader pages are live (below).
 Changing a page's sort sorts the files it shows rather than searching
-again, as the reference does. Ctrl+T or F9 (or, as in the reference, a double click,
-left or middle, on a tab row's empty space, the new page then going in
-that row's notebook) opens the reference's page
+again, as the reference does. Ctrl+T or F9 (or, as in the reference, a left
+double click or a middle click on a tab row's empty space, the new page then
+going in that row's notebook) opens the reference's page
 chooser, nine buttons laid out as a number pad (the digits, arrows and
 enter press them): file search, then a file domain, opens a search page
 on it; special opens a page of pages or a duplicates page; download, then
@@ -1051,8 +1051,10 @@ first. Collecting selects nothing first, as the reference does; sorting
 leaves the collections as they were. A new page collects by your default
 collect; a session's page as it was (collected and sorted on opening, as
 the reference's page does); a page opened from the selection as its page
-did. Not yet: the ⚙'s tag service (collecting goes by all known tags,
-the reference's default), and middle-clicking the control to clear it.
+did. A middle click on the control stops collecting (files matching
+none stay as they were set; `oracle/record_collect_middle_click.py`). Not
+yet: the ⚙'s tag service (collecting goes by all known tags, the
+reference's default).
 With nothing typed, the search
 box offers `system:everything`, `system:inbox` and `system:archive` with how
 many files each finds in the page's file domains, counted as the reference's
@@ -1183,7 +1185,27 @@ selected, of every file on the page) with how many have each (`tag (3)
 (+1)` for pending, `(-1)` petitioned), display tags in the page's tag
 domain less those your tag display filters hide from it, sorted by your
 search page tag sort and namespace order (checked against the reference's
-`SortTags`); double-clicking a tag searches for it too. Tags here, in the
+`SortTags`). The box works as hydrus's list does: any press (left, right
+or middle) selects first, a click selecting the tag alone (unless it is
+already selected), ctrl+click adding or taking it away, shift+click a run
+from where the last run started (ctrl+shift+click taking the run away),
+and a click below the tags selecting nothing; the arrows (wrapping), home,
+end, page up and down, ctrl+n and ctrl+p move the selection, escape clears
+it, ctrl+a selects every tag and ctrl+c copies the selected tags (or all).
+A double-click or enter puts the selected tags in the search (taking out
+those already in it), inverted with ctrl and as one OR with shift; a new
+search empties the box's selection, as hydrus's does. A middle-click opens
+a new search page for the selected tags (their OR with shift), named as
+hydrus names it, in the page's file domain. A right-click opens hydrus's
+tag menu for the selection: copy (the tags, their subtags, with
+underscores, with counts, and all the box's tags), the siblings and
+parents of one tag (or "add siblings/parents to selection", opening the
+manage dialog), open (a new search page, an OR page, a page each, a
+duplicate filter page), search (add, remove, invert, an OR, start an OR
+predicate in the OR editor, the namespace), select (the page's files with
+all or any of the tags), hide (the tags or their namespaces from the box,
+asking first), favourites and most used, maintenance's "regenerate tag
+display", and in advanced mode the tag display switch. Tags here, in the
 autocomplete and in the search's predicates are shown as your options
 have them (namespaces shown or hidden, the namespace connector,
 underscores and emojis replaced; checked against `RenderTag`), each in its
@@ -1558,15 +1580,24 @@ arrow keys pan a twelfth of the way, and dragging moves the file; a file
 zoomed wholly off the window is brought back, and resizing the window fits
 it again. Video renders at the size it's shown, up to twice the window's.
 With the pointer near the top of the window's middle three fifths, the
-reference's top hover frame shows there: the file's place in the list
-("3/30"); buttons, with the reference's icons, to archive it or return it
-to the inbox, to send it to the trash (or, from the trash, delete it
-completely), and to undelete it (one deleted from any of your local file
-domains), each shown as the reference shows it; the zoom ("266.67%") and
-buttons to zoom in, out and switch, to switch fullscreen, to open the file
-externally, to show it, selected, in your file browser (in the place of
-the reference's button to drag the file out to other programs, which
-Slint can't do), and to close the viewer. Under them, the file's info line,
+reference's top hover frame shows there, its buttons in the reference's
+order with its icons and tooltips (those for a command name its shortcuts,
+set by set, as the reference's do; `oracle/record_viewer_top_hover.py`).
+On the left: first, previous, the file's place in the list ("3/30"), next,
+last, random (a right click undoes it) and the slideshow menu. In the
+middle: archive it or return it to the inbox, send it to the trash (or,
+from the trash, delete it completely), undelete it (one deleted from any of
+your local file domains), each shown as the reference shows it, and show
+its embedded metadata (the tooltip says what it has). On the right: the
+zoom ("266.67%"), zoom in, out and switch, the zoom options menu (recenter,
+the zoom types, the current one checked, and recentering on window
+resize), the volume control (where libmpv is available: a click mutes and
+unmutes everything; over it, the viewer's own mute and the volume), the
+shortcuts and view options menus, a button to drag the window by, fullscreen,
+open externally, a button showing the file, selected, in your file browser
+(in the place of the reference's button to drag the file out to other
+programs, which Slint can't do; a right click shows the page the viewer
+came from with the file selected), and close. Under them, the file's info line,
 as the reference's has it: its "interesting" info lines
 (`hydrus-gui-model/src/info_lines.rs`, `GetPrettyMediaResultInfoLines`: size, type,
 resolution, duration and frames, audio; imported, deleted or in the trash;
@@ -1574,13 +1605,18 @@ modified, if far from its import; archived) joined with ` | `, as your
 file info line options say (now migrated); archiving or returning the
 file to the inbox, or deleting it, updates it. Its notes show on the right, under the
 ratings, each name bold over its text, while the pointer is over them, as
-the reference's notes hover frame does. With the pointer near the window's top right, the file's ratings show
+the reference's notes hover frame does: a left click opens Manage Notes on
+that note, a middle click copies it, and a right click folds or unfolds its
+text (a fold stays while the next file has a note of that name), as its
+tooltip says (`oracle/record_viewer_hover_clicks.py`). With the pointer near the window's top right, the file's ratings show
 there, as in the reference's top-right hover frame: each like/dislike
 service, then each numerical, then each inc/dec, in its service's shape
 (a named SVG is drawn from the SVG, or as the fat star when there is none of that name) and colours, at your viewer rating
 sizes. A left click likes (again, unrates), a right click dislikes; on
 stars, a left click (or drag) sets the stars there and a right click
-unrates; on an inc/dec, left adds one and right takes one away.
+unrates; on an inc/dec, left adds one and right takes one away. Under the
+ratings, the inbox and trash icons (a left click on the inbox archives the
+file) and the file's locations, as the reference's frame has them.
 Under a file mpv plays, the reference's scanbar shows how far through it
 is (by frame for an animation of several, with `13/240 - 0.480/9.600` as
 text), a thin line until the pointer comes near the file's bottom, then
@@ -1649,7 +1685,12 @@ media viewer shortcuts have it. With the pointer
 over the window's left fifth, the file's tags show there, as the
 reference's tags hover frame does: its display tags less those your single
 media filters hide, in your media viewer tag sort and namespace colours,
-pending ones marked `(+)` (it doesn't scroll yet); near its top, the
+pending ones marked `(+)`. Its tags are selected, searched and copied as
+in the search page's selection tags box (clicks, ctrl and shift, the keys,
+middle-click for a new search page in the viewer's file domain, and
+hydrus's right-click tag menu without counts, search or select); a
+double-click or enter opens manage tags for the file, as the reference's
+hover does. Near its top, the
 file's info line, as in the media viewer. Images are shown
 whole. Ugoiras and animated WebP play with the client's own player, as
 the reference's defaults have it: frames are decoded on a thread of their
@@ -2510,7 +2551,15 @@ from the selected tab, with the reference's descent and recent-move rules.
 model and GUI regressions replay quiet confirmation, cancellation, reverse
 closing, nested undo, navigation and left/right focus preferences.
 
-Tab rename asks "Enter the new name." with the current name. Its frozen page key
+Tab rename (double-click a tab, or "rename page" in its menu) asks "Enter the
+new name." with the current name; the double-click's first click shows the tab,
+as the reference's tab bar does. The tab menu opens when the right button is let
+go, over a tab or over a row's empty space; on empty space it holds that
+notebook's pages, its "select" moves, "new page" and the sessions to append, and
+over a tab its entries are in the reference's order. `oracle/record_tab_strip_interactions.py`
+drove the reference's tab bar with Qt mouse events, and
+`tests/gui/tab_strip_clicks.rs` replays it with pointer events on the window.
+Its frozen page key
 keeps the target correct while selecting another tab. Send-down moves this page,
 this page and its right siblings, or only right siblings into a new notebook;
 groups ask first. The rename-on-send preference optionally prompts after moving,
@@ -3721,8 +3770,19 @@ small scrolling arrows without reducing the label height.
 The experimental hide flag takes effect only while the tree is enabled, matching
 Qt's gate. Its supporting native hierarchy selector lists every existing page on
 the chosen left/right side and selects by stable page key, including remembered
-children of notebooks. The collapsible tree behavior is described below; broader
-Qt tree drag/drop and context-menu behavior remain unported. Actual Qt choices,
+children of notebooks. The collapsible tree behavior is described below. A
+right-click on a row (on the press, as Qt's tree on Linux) shows that page's
+notebook's tab menu for it, whose actions
+act on that notebook without showing it (a notebook not on the way to the page
+shown keeps the choice its menu made, as the reference's does); a row dragged
+past Qt's start distance and let go near another row's top edge goes above it,
+near its bottom edge below it, on a page of pages into the end of it, on a page
+to the end of that page's notebook, and below the rows to the end of the top
+notebook, a line or box showing where. A notebook that showed the moved page
+shows the page to its right (else its left); every other notebook keeps showing
+what it showed. A row can't be dropped on itself or inside itself, as in Qt.
+`tests/gui/tree_menu_drag.rs` replays `oracle/record_tab_strip_interactions.py`'s
+tree steps with pointer events. Actual Qt choices,
 bar positions, hidden states, selected indices and fitted strings are recorded in
 `tab_presentation.json`, alongside Qt orientation PNGs. Native consumer replays
 capture each side, hidden navigation and overflowing labels for hosted review.
@@ -5800,12 +5860,23 @@ typing with the first switch on, or by double-clicking it in the list) asks
 files` and `delete "x" for 2 files` (several tags: `add 2 tags`, `delete 2 tags`);
 closing the question does nothing.
 
-Clicking a listed tag selects it (ctrl and shift extend the selection). "remove all/selected
+The list of the files' tags works as the reference's: a click (of any button)
+selects a tag, a click on a selected tag keeps the selection and a click below
+the tags clears it, ctrl and shift add, take away and range; the arrows move
+(wrapping round), as do home, end and page up/down; escape clears the
+selection, ctrl+a selects all, ctrl+c copies the selection (or every tag) and
+ctrl+shift+c adds their parents. A double-click or enter enters the selected
+tags, delete removes them. A middle-click opens a search page for the
+selection in all your local files (with shift, their OR). Its right-click menu
+turns the parent rows and the sibling and parent decorators on and off for the
+list, and has the reference's copy (with counts), siblings, parents, open,
+favourites and maintenance entries. Proven by `manage_tags_list.rs` against
+`oracle/record_manage_tags_list.py`. "remove all/selected
 tags" removes the selected tags, or every tag if none is selected, and, unless the
 confirmation is off, first asks "Are you sure you want to remove these tags:" with
 the tags (up to nine, each cut at 64 characters) or "Are you sure you want to
 remove these 12 tags?". Delete on the focused list does the same for the selected
-tags; Enter on it enters them again. "copy" puts the selected tags (or all) on the
+tags; Enter on it enters them. "copy" puts the selected tags (or all) on the
 clipboard, one per line in natural order, and says "Copied 3 tags!" under the buttons.
 The recent-tags panel has the reference's "clear" button ("Clear recent tags?").
 Activating a suggested tag only ever adds it, whatever the cog says.
@@ -5853,6 +5924,14 @@ install with `preview_audio_mute`) if **File > Options > audio > The preview
 window has its own volume** is on (it is, by default), else the global
 volume; it is muted if either its own mute or the global mute is on. ctrl+g,
 the Options window and the control all take effect on the playing file.
+
+A kind set to start "with embed button" (**File > Options > media playback**,
+for the media viewer and the preview apart) waits behind it, as in the
+reference: the file's thumbnail, scaled to the button's width, with a play
+circle in the middle, in the place the file takes. A left press on it starts
+the file, drawn or played; in the media viewer a right press opens the
+viewer's menu as anywhere else, and the file still waits. Coming back to the
+file shows the button again (`oracle/record_embed_button.py`).
 
 A file with sound has the reference's volume control at the bottom right of
 the preview: the global mute button, and with the pointer on it the volume
@@ -6060,3 +6139,29 @@ enabled state.
   RESULTS BREAK ***".
 - After "fetch example data" the page URL box keeps what you typed; the parse
   context uses the encoded URL.
+
+## List keys and the thumbnail grid's pointer
+
+Every list built on the shared list (`ui/list_table.slint`, about fifty
+dialogs and panels, now including "review files to import" and "edit
+favourite searches") takes the keys of the reference's lists once a row is
+clicked: the arrows, Home/End and PageUp/PageDown move the current row and
+select it alone (with Shift, from the anchor to it; with Ctrl, only the
+current row moves, and a later Shift range starts there), Space selects the
+current row and Ctrl+Space toggles it, Ctrl+A selects all, Enter does what a
+double-click does, Ctrl+C (or Ctrl+Insert) copies, and Delete deletes. A
+page is the row a list's height below (or above), and the row moved to is
+scrolled into view. Ctrl+C in the file and search logs copies the selected
+rows' sources or URLs, as their "copy" entries do; in other lists, or with
+nothing selected, it copies the current row's first cell, as Qt's own lists
+do. The duplicates auto-resolution review's pair lists take the same keys
+(Enter opens the current pair). Recorded on the reference's real lists
+(`oracle/record_list_keys.py`) and replayed with real key and pointer
+events (`tests/gui/list_keys.rs`), with clicks, ctrl/shift clicks,
+drag-selecting, double-clicks and the file log's row menu.
+
+On the thumbnail grid, a middle press on a thumbnail opens the media viewer
+on it without changing the selection, and a middle press between
+thumbnails does nothing, as the reference's default grid does; clicks,
+double-clicks and right presses are replayed against the same recording
+(`oracle/record_thumbnail_pointer.py`, `tests/gui/thumbnail_pointer.rs`).

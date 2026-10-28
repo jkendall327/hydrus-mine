@@ -1,6 +1,6 @@
 import { Theme } from "theme.slint";
-import { ViewerEyeMenu, ViewerEyeButton } from "viewer_eye_menu.slint";
-import { ViewerShortcutButton } from "viewer_shortcut_menu.slint";
+import { ViewerEyeMenu } from "viewer_eye_menu.slint";
+import { ViewerTopHoverRow, TopHoverTips } from "viewer_top_hover.slint";
 // The media viewer's window: one file, at its default zoom (fitted to the
 // window, by default). Right and left (or down and up, page down and up,
 // or the mouse wheel) move through the page's files, home and end to the
@@ -19,18 +19,18 @@ import { ViewerShortcutButton } from "viewer_shortcut_menu.slint";
 // first: enter or escape answers) and shift+delete undeletes it. With the
 // pointer over the window's left fifth, the file's tags show there, as the
 // reference's tags hover frame does; with it near the top middle, the
-// reference's top hover frame: the file's place in the list, buttons to
-// archive, delete and undelete it, its zoom and buttons to zoom, to switch
-// fullscreen, to open it externally or show it in the file browser (where
-// the reference has a button to drag it out), and to close the viewer; and
-// the file's info line. A right-click opens the viewer's menu, whose
+// reference's top hover frame: its row of buttons, in the reference's order
+// (viewer_top_hover.slint), and the file's info line. A right-click opens the viewer's menu, whose
 // slideshow submenu may ask for a period to type.
 
 import { ViewerTagsHover } from "viewer_tags_hover.slint";
+import { TagMenuOverlay } from "write_autocomplete.slint";
+import { MenuPane } from "main_menu.slint";
 import { LineEdit } from "std-widgets.slint";
 import { ListText } from "theme.slint";
 import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
 import { NoteHoverCopy } from "note_hover_copy.slint";
+import { EmbedButton } from "embed_button.slint";
 
 export struct ViewerUrlRow { label: string, url: string }
 
@@ -44,6 +44,8 @@ export struct RatingShape {
 export struct NoteRow {
     name: string,
     text: string,
+    // its text unfolded (a right click folds it)
+    shown: bool,
 }
 
 // a rating service's control for the file shown
@@ -116,30 +118,6 @@ export component RatingGraphic inherits Rectangle {
     }
 }
 
-// a button of the top hover frame: the reference's icon for it
-component HoverButton inherits Rectangle {
-    in property <image> icon;
-    callback clicked();
-    callback pointed-click(length, length);
-    width: 24px;
-    height: 24px;
-    border-radius: 3px;
-    background: touch.pressed ? #ffffff40 : touch.has-hover ? #ffffff24 : transparent;
-    Image {
-        x: (parent.width - self.width) / 2;
-        y: (parent.height - self.height) / 2;
-        width: 16px;
-        height: 16px;
-        source: root.icon;
-    }
-    touch := TouchArea {
-        clicked => {
-            root.clicked();
-            root.pointed-click(root.absolute-position.x + self.mouse-x, root.absolute-position.y + self.mouse-y);
-        }
-    }
-}
-
 import { TransparencyBackdrop } from "transparency_backdrop.slint";
 
 export component MediaViewerWindow inherits Window {
@@ -183,7 +161,13 @@ export component MediaViewerWindow inherits Window {
     property <bool> ratings-raised;
     property <bool> notes-raised;
     changed info-showing => { root.info-raised = root.info-showing; }
-    changed tags-showing => { root.tags-raised = root.tags-showing; }
+    // (a hover that lowers gives the keyboard back to the viewer, as the
+    // reference's `_LowerHover` does: a hidden list would keep it from the
+    // viewer's keys)
+    changed tags-showing => {
+        root.tags-raised = root.tags-showing;
+        if !root.tags-showing { keys.focus(); }
+    }
     changed ratings-showing => { root.ratings-raised = root.ratings-showing; }
     changed notes-showing => { root.notes-raised = root.notes-showing; }
     in property <bool> seek-requires-focus: true;
@@ -218,10 +202,39 @@ export component MediaViewerWindow inherits Window {
     in property <[string]> tag-identities;
     in property <string> tag-file;
     callback tag-search-requested(string,string);
+    // the tags hover's selection, presses, double-clicks and keys (as in
+    // `ViewerTagsHover`)
+    in property <[bool]> tag-selected;
+    callback tag-pressed(string,int,int,bool,bool,length,length);
+    callback tag-double-clicked(string,int,bool,bool);
+    callback tag-key(string,bool,bool) -> bool;
+    // the hover's tag menu, as the main window's
+    in property <[MenuPane]> tag-menu-panes;
+    in property <string> tag-menu-question;
+    in property <string> tag-menu-question-title;
+    in property <string> tag-menu-yes-label: "yes";
+    in property <string> tag-menu-no-label: "no";
+    callback tag-menu-hovered(int,int,length,length,length);
+    callback tag-menu-clicked(int,int,length,length,length);
+    callback tag-menu-placed(int,length,length,length);
+    callback tag-menu-dismissed();
+    callback tag-menu-answered(bool);
     // the file's notes, for the right hover frame under the ratings, shown
     // while the pointer is over it
     in property <[NoteRow]> notes;
     callback note-copy-requested(int);
+    // the file waits behind the embed button, with its thumbnail on it; a
+    // left press on it starts the file
+    in property <bool> embed-shown;
+    in property <image> embed-thumbnail;
+    callback embed-clicked();
+    // a note's left click (Manage Notes on it) and right click (fold it)
+    callback note-edit-requested(int);
+    callback note-toggle-requested(int);
+    // the top-right frame has something to show (ratings, the inbox or
+    // trash icon, where the file is, its URLs), and how tall it is
+    property <bool> top-right-content: root.ratings.length > 0 || root.url-links.length > 0 || root.file-inbox || root.file-trashed || root.location-strings.length > 0;
+    out property <length> top-right-hover-height: ratings-box.preferred-height;
     out property <length> notes-hover-y: notes-box.y;
     out property <length> notes-hover-height: notes-box.height;
     out property <bool> notes-showing: (root.hover-focus-good || (!root.another-window-active && root.notes-raised)) && root.hover-notes-enabled && root.notes.length > 0 && (notes-box.has-hover || (pointer.has-hover
@@ -231,7 +244,7 @@ export component MediaViewerWindow inherits Window {
     // pointer over it or near it, in the window's middle three fifths
     in property <string> info-line;
     in property <string> tag-banner;
-    out property <bool> info-showing: (root.hover-focus-good || (!root.another-window-active && root.info-raised)) && (top-frame.has-hover || (pointer.has-hover
+    out property <bool> info-showing: (root.hover-focus-good || (!root.another-window-active && root.info-raised)) && (top-frame.has-hover || top-row.volume-open || (pointer.has-hover
         && pointer.mouse-y <= top-box.preferred-height + 20px
         && pointer.mouse-x >= root.width * 0.2 && pointer.mouse-x <= root.width * 0.8));
     // the file's state, for the frame's buttons: in the inbox (archive,
@@ -248,6 +261,20 @@ export component MediaViewerWindow inherits Window {
     // the zoom as its second part (`_GetInfoString`)
     in property <string> background-info-line;
     callback show-in-file-browser();
+    // the top hover frame's tooltips (and as Markdown), its zoom options
+    // and window resize menus, and its other buttons' callbacks
+    in property <TopHoverTips> top-tips;
+    in property <TopHoverTips> top-tips-markdown;
+    in property <bool> volume-available;
+    in property <MenuGroups> top-zoom-menu;
+    in property <MenuGroups> top-resize-menu;
+    callback show-metadata();
+    callback top-zoom-menu-requested();
+    callback top-zoom-menu-chosen(int);
+    callback move-window();
+    callback top-resize-menu-requested();
+    callback top-resize-chosen(int);
+    callback focus-media();
     // the file's ratings, for the top-right hover frame, as the reference
     // draws them
     in property <[RatingRow]> ratings;
@@ -256,10 +283,12 @@ export component MediaViewerWindow inherits Window {
     in property <length> rating-size: 12px;
     in property <length> incdec-height: 12px;
     in property <length> rating-outline: 1px;
-    out property <bool> ratings-showing: (root.hover-focus-good || (!root.another-window-active && root.ratings-raised)) && root.hover-ratings-enabled && (root.ratings.length > 0 || root.url-links.length > 0) && (ratings-frame.has-hover
+    out property <bool> ratings-showing: (root.hover-focus-good || (!root.another-window-active && root.ratings-raised)) && root.hover-ratings-enabled && root.top-right-content && (ratings-frame.has-hover
         || (pointer.has-hover && pointer.mouse-x >= root.width - ratings-box.preferred-width - 20px
             && pointer.mouse-y <= ratings-box.preferred-height + 20px));
-    out property <bool> tags-showing: (root.hover-focus-good || (!root.another-window-active && root.tags-raised)) && root.hover-tags-enabled && (tags-hover.has-hover || (pointer.has-hover && pointer.mouse-x < root.width * 0.2)) && root.tags.length > 0;
+    // (it stays up while its own tag menu or question is open, as the
+    // reference's does)
+    out property <bool> tags-showing: (((root.hover-focus-good || (!root.another-window-active && root.tags-raised)) && root.hover-tags-enabled && (tags-hover.has-hover || (pointer.has-hover && pointer.mouse-x < root.width * 0.2))) || root.tag-menu-panes.length > 0 || root.tag-menu-question != "") && root.tags.length > 0;
 
     // a question to answer (a deletion): enter is yes, escape no
     in property <string> question;
@@ -401,6 +430,10 @@ export component MediaViewerWindow inherits Window {
     forward-focus: keys;
     keys := FocusScope {
         key-pressed(event) => {
+            if root.tag-menu-question != "" || root.tag-menu-panes.length > 0 {
+                if event.text == Key.Escape { root.tag-menu-dismissed(); }
+                return accept;
+            }
             if (root.warning != "") {
                 if (event.text == Key.Return || event.text == Key.Escape) {
                     root.warning = "";
@@ -957,8 +990,8 @@ export component MediaViewerWindow inherits Window {
                 }
                 if root.file-inbox || root.file-trashed: HorizontalLayout {
                     alignment: end;
-                    if root.file-trashed: Image { width: 16px; height: 16px; source: @image-url("../../../static/trash.png"); }
                     if root.file-inbox: Image { width: 16px; height: 16px; source: @image-url("../../../static/inbox.png"); }
+                    if root.file-trashed: Image { width: 16px; height: 16px; source: @image-url("../../../static/trash.png"); }
                 }
                 for location in root.location-strings: Text { text: location; color: Theme.colour(11, #f0f0f0); horizontal-alignment: right; }
                 for link in root.url-links: Text { text: link.label; color: Theme.colour(11, #f0f0f0); horizontal-alignment: right; overflow: elide; }
@@ -1013,11 +1046,29 @@ export component MediaViewerWindow inherits Window {
             source: root.sharp;
             image-fit: fill;
         }
+        // a file that starts behind the embed button: the button in its
+        // place (its left press is the pointer area's, below)
+        if root.embed-shown: EmbedButton {
+            x: root.media-x;
+            y: root.media-y;
+            width: root.media-width;
+            height: root.media-height;
+            thumbnail: root.embed-thumbnail;
+            takes-clicks: false;
+        }
         pointer := TouchArea {
             mouse-cursor: root.drag-cursor-hidden || root.cursor-idle-hidden ? MouseCursor.none : MouseCursor.default;
             changed mouse-x => { if (!self.pressed) { root.drag-cursor-hidden = false; } }
             changed mouse-y => { if (!self.pressed) { root.drag-cursor-hidden = false; } }
             pointer-event(event) => {
+                // (a left press on the embed button starts the file, and
+                // nothing else; the other buttons do as they do anywhere)
+                if root.embed-shown && event.kind == PointerEventKind.down && event.button == PointerEventButton.left
+                    && self.mouse-x >= root.media-x && self.mouse-x < root.media-x + root.media-width
+                    && self.mouse-y >= root.media-y && self.mouse-y < root.media-y + root.media-height {
+                    root.embed-clicked();
+                    return;
+                }
                 root.shortcut-mouse-bits=(event.modifiers.control?1:0)+(event.modifiers.alt?2:0)+(event.modifiers.shift?4:0)+(event.modifiers.meta?32:0);
                 if event.kind==PointerEventKind.down {root.shortcut-double-consumed=false;}
                 if (event.kind==PointerEventKind.down || event.kind==PointerEventKind.up) && root.shortcut-mouse(event.button==PointerEventButton.left?0:event.button==PointerEventButton.right?1:event.button==PointerEventButton.middle?2:event.button==PointerEventButton.back?7:event.button==PointerEventButton.forward?8:9,event.kind==PointerEventKind.down?0:1,root.shortcut-mouse-bits) {return;}
@@ -1279,95 +1330,21 @@ export component MediaViewerWindow inherits Window {
             x: root.width * 0.2;
             y: 0;
             width: root.width * 0.6;
-            height: top-box.preferred-height;
+            // (taller while the volume control's popup hangs below it, so
+            // the pointer on the popup keeps the frame raised)
+            height: top-box.height + (top-row.volume-open ? 150px : 0px);
             visible: root.info-showing;
             top-box := Rectangle {
+                x: 0;
+                y: 0;
+                height: top-layout.preferred-height;
                 background: #202020e8;
-                VerticalLayout {
+                top-layout := VerticalLayout {
                     padding: 4px;
                     spacing: 2px;
-                    HorizontalLayout {
-                        spacing: 2px;
-                        Text {
-                            horizontal-stretch: 1;
-                            text: root.caption;
-                            color: #f0f0f0;
-                            vertical-alignment: center;
-                            overflow: elide;
-                        }
-                        HoverButton {
-                            icon: root.file-inbox ? @image-url("../../../static/archive.png") : @image-url("../../../static/to_inbox.png");
-                            clicked => {
-                                if (root.file-inbox) {
-                                    root.archive();
-                                } else {
-                                    root.inbox();
-                                }
-                            }
-                        }
-                        // (send to trash, or from the trash delete completely)
-                        if root.file-trashed || root.file-local: HoverButton {
-                            icon: root.file-trashed ? @image-url("../../../static/delete.png") : @image-url("../../../static/trash.png");
-                            clicked => { root.delete(); }
-                        }
-                        if root.file-undeletable: HoverButton {
-                            icon: @image-url("../../../static/undelete.png");
-                            clicked => { root.undelete(); }
-                        }
-                        HorizontalLayout {
-                            horizontal-stretch: 1;
-                            alignment: end;
-                            spacing: 2px;
-                            Text {
-                                text: root.zoom-text;
-                                color: #f0f0f0;
-                                vertical-alignment: center;
-                            }
-                            HoverButton {
-                                icon: @image-url("../../../static/zoom_in.png");
-                                clicked => { root.zoom(1, false, 0, 0); }
-                            }
-                            HoverButton {
-                                icon: @image-url("../../../static/zoom_out.png");
-                                clicked => { root.zoom(-1, false, 0, 0); }
-                            }
-                            HoverButton {
-                                icon: @image-url("../../../static/zoom_switch.png");
-                                pointed-click(x, y) => { root.zoom-switch-requested(x, y); }
-                            }
-                            HoverButton {
-                                icon: @image-url("../../../static/fullscreen_switch.svg");
-                                clicked => { root.toggle-fullscreen(); }
-                            }
-                            HoverButton {
-                                icon: @image-url("../../../static/open_externally.png");
-                                clicked => { root.open-externally(); }
-                            }
-                            // (in the place of the reference's button to drag
-                            // the file out, which Slint can't do)
-                            HoverButton {
-                                icon: @image-url("../../../static/drag.png");
-                                clicked => { root.show-in-file-browser(); }
-                            }
-                            ViewerShortcutButton {
-                                icon: @image-url("../../../static/keyboard.png");
-                                names: root.shortcut-names;
-                                current: root.shortcut-current;
-                                defaults: root.shortcut-defaults;
-                                requested => { root.shortcut-menu-requested(); }
-                                chosen(kind, i) => { root.shortcut-menu-chosen(kind, i); }
-                            }
-                            ViewerEyeButton {
-                                menu: root.eye-menu;
-                                requested => { root.eye-menu-requested(); }
-                                chosen(id) => { root.eye-menu-chosen(id); }
-                            }
-                            HoverButton {
-                                icon: @image-url("../../../static/stop.png");
-                                clicked => { root.close-requested(); }
-                            }
-                        }
-                    }
+                    // (the row's place: the row itself is drawn after the
+                    // texts, so that the volume popup hangs over them)
+                    Rectangle { height: top-row.preferred-height; }
                     if root.tag-banner != "": Text {
                         text: root.tag-banner;
                         color: #f0f0f0;
@@ -1382,11 +1359,70 @@ export component MediaViewerWindow inherits Window {
                     }
                 }
             }
+            top-row := ViewerTopHoverRow {
+                x: 4px;
+                y: 4px;
+                width: top-frame.width - 8px;
+                height: self.preferred-height;
+                    index-text: root.caption;
+                    zoom-text: root.zoom-text;
+                    tips: root.top-tips;
+                    tips-markdown: root.top-tips-markdown;
+                    file-inbox: root.file-inbox;
+                    file-trashed: root.file-trashed;
+                    file-local: root.file-local;
+                    file-undeletable: root.file-undeletable;
+                    volume-available: root.volume-available;
+                    global-muted: root.global-muted;
+                    viewer-muted: root.viewer-muted;
+                    volume: root.volume;
+                    slideshow-menu: root.context-menu.slideshow;
+                    zoom-menu: root.top-zoom-menu;
+                    resize-menu: root.top-resize-menu;
+                    shortcut-names: root.shortcut-names;
+                    shortcut-current: root.shortcut-current;
+                    shortcut-defaults: root.shortcut-defaults;
+                    eye-menu: root.eye-menu;
+                    first => { root.first(); }
+                    previous => { root.previous(); }
+                    next => { root.next(); }
+                    last => { root.last(); }
+                    random => { root.random(); }
+                    undo-random => { root.undo-random(); }
+                    slideshow-requested => { root.context-menu-requested(); }
+                    slideshow-chosen(id) => { root.menu-chosen(id); }
+                    archive => { root.archive(); }
+                    inbox => { root.inbox(); }
+                    delete => { root.delete(); }
+                    undelete => { root.undelete(); }
+                    show-metadata => { root.show-metadata(); }
+                    zoom(direction) => { root.zoom(direction, false, 0, 0); }
+                    zoom-switch(x, y) => { root.zoom-switch-requested(x, y); }
+                    zoom-menu-requested => { root.top-zoom-menu-requested(); }
+                    zoom-menu-chosen(id) => { root.top-zoom-menu-chosen(id); }
+                    flip-global-mute => { root.flip-global-mute(); }
+                    flip-viewer-mute => { root.flip-viewer-mute(); }
+                    volume-changed(v) => { root.volume-changed(v); }
+                    shortcut-menu-requested => { root.shortcut-menu-requested(); }
+                    shortcut-menu-chosen(kind, i) => { root.shortcut-menu-chosen(kind, i); }
+                    eye-menu-requested => { root.eye-menu-requested(); }
+                    eye-menu-chosen(id) => { root.eye-menu-chosen(id); }
+                    move-window => { root.move-window(); }
+                    resize-menu-requested => { root.top-resize-menu-requested(); }
+                    resize-chosen(id) => { root.top-resize-chosen(id); }
+                    fullscreen => { root.toggle-fullscreen(); }
+                    open-externally => { root.open-externally(); }
+                    drag-out => { root.show-in-file-browser(); }
+                    focus-media => { root.focus-media(); }
+                    close => { root.close-requested(); }
+            }
         }
         // The note text keeps the hover alive and middle-clicks copy that note.
         notes-box := TouchArea {
             x: root.width * 0.8;
-            y: root.ratings.length > 0 || root.url-links.length > 0 ? ratings-box.preferred-height + 4px : 0;
+            // (under the top-right frame whenever it has anything to show,
+            // as the reference places it under that frame)
+            y: root.top-right-content ? ratings-box.preferred-height + 4px : 0;
             width: root.width * 0.2;
             height: min(notes-layout.preferred-height, root.height - self.y);
             visible: root.notes-showing;
@@ -1401,7 +1437,10 @@ export component MediaViewerWindow inherits Window {
                 for note[i] in root.notes: NoteHoverCopy {
                     name: note.name;
                     text: note.text;
+                    text-shown: note.shown;
                     copied => { root.note-copy-requested(i); }
+                    edit => { root.note-edit-requested(i); }
+                    toggled => { root.note-toggle-requested(i); }
                 }
             }
             }
@@ -1448,6 +1487,26 @@ export component MediaViewerWindow inherits Window {
                             }
                         }
                     }
+                    // the inbox and trash icons (a left press on the inbox
+                    // archives the file), and where the file is
+                    if root.file-inbox || root.file-trashed: HorizontalLayout {
+                        alignment: end;
+                        if root.file-inbox: Image {
+                            width: 16px; height: 16px;
+                            source: @image-url("../../../static/inbox.png");
+                            accessible-role: button;
+                            accessible-label: "inbox";
+                            TouchArea {
+                                pointer-event(event) => {
+                                    if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                                        root.archive();
+                                    }
+                                }
+                            }
+                        }
+                        if root.file-trashed: Image { width: 16px; height: 16px; source: @image-url("../../../static/trash.png"); }
+                    }
+                    for location in root.location-strings: Text { text: location; color: #f0f0f0; horizontal-alignment: right; }
                     for link[i] in root.url-links: Rectangle {
                         width: min(root.width * 0.35, 280px);
                         height: 22px;
@@ -1466,9 +1525,22 @@ export component MediaViewerWindow inherits Window {
             tags: root.tags;
             identities: root.tag-identities;
             file: root.tag-file;
-            search(file,tag) => { root.tag-search-requested(file,tag); }
+            selected: root.tag-selected;
+            pressed(file,row,button,ctrl,shift,x,y) => { root.tag-pressed(file,row,button,ctrl,shift,x,y); }
+            double-clicked(file,row,ctrl,shift) => { root.tag-double-clicked(file,row,ctrl,shift); }
+            key(text,ctrl,shift) => { return root.tag-key(text,ctrl,shift); }
             offset <=> root.tag-scroll-offset;
             wheel(delta,control,x,y) => { root.tag-wheel(delta,control,x,y); }
+        }
+        if root.tag-menu-panes.length > 0 || root.tag-menu-question != "": TagMenuOverlay {
+            width: root.width; height: root.height;
+            panes: root.tag-menu-panes; question: root.tag-menu-question;
+            question-title: root.tag-menu-question-title; yes-label: root.tag-menu-yes-label; no-label: root.tag-menu-no-label;
+            hovered(p,l,r,t,x) => { root.tag-menu-hovered(p,l,r,t,x); }
+            clicked(p,l,r,t,x) => { root.tag-menu-clicked(p,l,r,t,x); }
+            placed(p,x,y,w) => { root.tag-menu-placed(p,x,y,w); }
+            dismissed => { root.tag-menu-dismissed(); }
+            answered(yes) => { root.tag-menu-answered(yes); }
         }
     }
 }

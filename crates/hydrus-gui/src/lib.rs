@@ -26,6 +26,7 @@ mod archive_delete_window;
 pub mod archive_repair_window;
 mod auto_resolution_preview_window;
 mod auto_resolution_review_window;
+mod selection_tags;
 #[doc(hidden)]
 pub use animation::{decoders_running, frames_decoded};
 pub use auto_resolution_review_window::set_popup_delay;
@@ -234,6 +235,7 @@ pub mod viewer_menu;
 mod viewer_presentation;
 mod viewer_tag_search;
 mod viewer_tag_wheel;
+mod viewer_top_hover;
 pub mod viewing_maintenance_window;
 mod viewing_tracking;
 mod watcher;
@@ -331,6 +333,7 @@ pub use hydrus_gui_model::{
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
 pub use playback::live_property as live_mpv_property;
+pub use playback::live_targets as live_playback_targets;
 pub use unlock::{finish_locked, unlock_window};
 pub use viewer::MediaViewer;
 
@@ -355,6 +358,9 @@ pub struct Bound {
     pub viewer_deletion: delete_files_window::Slot,
     /// The manage tags window while one is open.
     pub manage_tags: Rc<RefCell<Option<ManageTagsWindow>>>,
+    /// The siblings and parents dialog the manage tags window's tag list
+    /// menu opened.
+    pub manage_tags_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
     pub incremental_tags: incremental_tagging_window::Slot,
     /// Siblings or parents while the corresponding editor is open.
     pub tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
@@ -489,6 +495,8 @@ pub struct Bound {
     _autocomplete_tabs: Rc<slint::Timer>,
     /// The siblings or parents editor the main window's tag menus open.
     pub tag_menu_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
+    /// The siblings and parents dialog the viewer's tags hover menu opened.
+    pub viewer_tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
     /// Files dropped on the main window: the "review files to import"
     /// window with them (they join its list if it is open).
     pub drop_files: Rc<dyn Fn(Vec<String>)>,
@@ -532,10 +540,6 @@ impl std::fmt::Debug for Bound {
 
 /// The "review files to import" window while it is open, and its list.
 pub type ReviewSlot = Rc<RefCell<Option<(ReviewImportsWindow, Rc<RefCell<local_import::Review>>)>>>;
-
-/// Two presses this close together are a double click (where Slint's own
-/// double click can't be had: list rows, and middle clicks).
-const DOUBLE_CLICK: std::time::Duration = std::time::Duration::from_millis(400);
 
 /// A decoded image as Slint shows it.
 pub fn image(raster: &hydrus_media::Raster) -> slint::Image {
@@ -652,6 +656,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
     let vacuum_review = vacuum_review_window::Slot::default();
     let manage_tags: Rc<RefCell<Option<ManageTagsWindow>>> = Rc::default();
+    let manage_tags_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>> = Rc::default();
     let predicate_editor: Rc<RefCell<Option<PredicateEditorWindow>>> = Rc::default();
     let predicate_editor_owner = Rc::new(predicate_editor_window::Owner::new(
         window,
@@ -1043,26 +1048,22 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             if !window.window().is_visible() {
                 return;
             }
-            // OR groups keep their structure in the search. Visit their tags
-            // only to name the new page, just as for top-level AND predicates.
-            let mut pending = predicates.iter().collect::<Vec<_>>();
-            let mut names = Vec::new();
-            while let Some(predicate) = pending.pop() {
-                match predicate {
-                    hydrus_core::search::predicate::Predicate::Tag { tag, .. } => {
-                        names.push(tag.as_str().to_owned());
-                    }
-                    hydrus_core::search::predicate::Predicate::Or(children) => {
-                        pending.extend(children);
-                    }
-                    _ => (),
-                }
-            }
-            if names.is_empty() {
+            if predicates.is_empty() {
                 return;
             }
-            names.sort();
-            let name = names.join(", ");
+            // as `_NewSearchPages` names it: each predicate written out
+            // (an OR as "a OR b"), sorted and joined
+            let viewing: hydrus_store::settings::FileViewingStatistics = pages
+                .borrow()
+                .store()
+                .read(hydrus_store::settings::get)
+                .unwrap_or_default();
+            let text = hydrus_search::TextContext::from_store(
+                &pages.borrow().store().snapshot().services,
+                &viewing,
+            );
+            let name =
+                hydrus_gui_model::active_predicates::routes::page_name(&predicates, &text, false);
             let previous = pages.borrow().shown().key;
             scrolls
                 .borrow_mut()
@@ -1105,6 +1106,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     write_tag_menu::install_search_launcher(tag_search_launcher.clone());
+    // the dialog the viewer's tags hover menu opens (siblings, parents)
+    let viewer_tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>> = Rc::default();
     let viewer_tag_search: viewer_tag_search::Launch = Rc::new({
         let weak = window.as_weak();
         let active = binding_active.clone();
@@ -1180,7 +1183,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     tab_drag::bind(window, &pages, Rc::new(change_pages.clone()));
-    tab_presentation::bind_tree(window, &pages);
+    tab_presentation::bind_tree(window, &pages, Rc::new(change_pages.clone()));
     // the page chooser, while open
     let chooser: Rc<RefCell<Option<page_chooser::PageChooser>>> = Rc::default();
     let show_chooser = {
@@ -1282,7 +1285,20 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let live = predicate_editor_live.clone();
             move || active.get() && live()
         }),
+        active_search_launcher.clone(),
+    );
+    selection_tags::bind(
+        window,
+        page.clone(),
+        shown.clone(),
+        active_menu.clone(),
         active_search_launcher,
+        &search_or,
+        &(Rc::new({
+            let active = binding_active.clone();
+            let live = predicate_editor_live.clone();
+            move || active.get() && live()
+        }) as Rc<dyn Fn() -> bool>),
     );
 
     let review_files: Rc<dyn Fn(Vec<String>)> = Rc::new({
@@ -1421,23 +1437,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             show_chooser();
         }
     });
-    // a double click (left or middle) on a tab row's empty space: the
-    // page chooser, for that row's notebook
+    // a left double click, or a middle click, on a tab row's empty space:
+    // the page chooser, for that row's notebook
     window.on_tab_space_pressed({
         let chooser = chooser.clone();
         let pages = pages.clone();
         let show_chooser = show_chooser.clone();
-        let last: Rc<Cell<Option<(i32, bool, std::time::Instant)>>> = Rc::default();
-        move |level, middle| {
-            let now = std::time::Instant::now();
-            let double = last.get().is_some_and(|(l, m, at)| {
-                l == level && m == middle && now.duration_since(at) < DOUBLE_CLICK
-            });
-            if !double {
-                last.set(Some((level, middle, now)));
-                return;
-            }
-            last.set(None);
+        // (called for a left double-click or a middle click, which the
+        // tab rows tell apart)
+        move |level, _middle| {
             let store = {
                 let mut pages = pages.borrow_mut();
                 pages.new_page_in(usize::try_from(level).ok());
@@ -1757,16 +1765,6 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             open_editor(page());
         }
     });
-    window.on_tag_activated({
-        let page = page.clone();
-        let shown = shown.clone();
-        move |index| {
-            page()
-                .borrow_mut()
-                .activate_tag(usize::try_from(index).unwrap_or(usize::MAX));
-            shown(true);
-        }
-    });
     window.on_remove_predicate({
         let page = page.clone();
         let shown = shown.clone();
@@ -1856,6 +1854,21 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 page.borrow_mut().set_collect(collect);
                 shown(true);
             }
+        }
+    });
+    // a middle press on the collect control: no collecting, unmatched files
+    // as they were (`MediaCollect( collect_unmatched = ... )`)
+    window.on_collect_cleared({
+        let page = page.clone();
+        let shown = shown.clone();
+        move || {
+            let page = page();
+            let collect = hydrus_core::pages::PageCollect {
+                collect_unmatched: page.borrow().collect().collect_unmatched,
+                ..hydrus_core::pages::PageCollect::default()
+            };
+            page.borrow_mut().set_collect(collect);
+            shown(true);
         }
     });
     window.on_collect_unmatched_chosen({
@@ -2072,6 +2085,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     let open_manage_tags = {
         let manage_tags = manage_tags.clone();
+        let relationships = manage_tags_relationships.clone();
         let incremental_tags = incremental_tags.clone();
         let page = page.clone();
         let binding_active = binding_active.clone();
@@ -2095,7 +2109,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 return;
             };
             model.set_location(page().borrow().location().clone());
-            match manage_tags_window::open(model, &manage_tags, &incremental_tags, applied, link) {
+            match manage_tags_window::open(
+                model,
+                &manage_tags,
+                &relationships,
+                &incremental_tags,
+                applied,
+                link,
+            ) {
                 Ok(window) => *manage_tags.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open manage tags: {e}"),
             }
@@ -2117,12 +2138,21 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let manage_notes: Rc<RefCell<Option<ManageNotesWindow>>> = Rc::default();
     let open_manage_notes: OpenManageNotes = Rc::new({
         let manage_notes = manage_notes.clone();
-        move |store: Arc<hydrus_store::Store>, file: HashId, applied: Rc<dyn Fn()>| {
+        move |store: Arc<hydrus_store::Store>,
+              file: HashId,
+              applied: Rc<dyn Fn()>,
+              start_on: Option<String>| {
             if let Some(existing) = manage_notes.borrow().as_ref() {
                 existing.invoke_focus_note();
                 return;
             }
-            match manage_notes_window::open(&store, file, &manage_notes, applied) {
+            match manage_notes_window::open(
+                &store,
+                file,
+                &manage_notes,
+                applied,
+                start_on.as_deref(),
+            ) {
                 Ok(window) => *manage_notes.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open manage notes: {e}"),
             }
@@ -2473,8 +2503,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     shown(false);
                     return;
                 }
-                if let Asked::ClosePage(depth, index, _) = asked {
-                    change_pages(&|pages| pages.close(depth, index));
+                if let Asked::ClosePage(key, _) = asked {
+                    change_pages(&|pages| pages.close_key(key));
                     return;
                 }
                 if let Asked::RemoveQueries(queues, _) = asked {
@@ -2497,13 +2527,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let pages = pages.clone();
         let change_pages = change_pages.clone();
         let ask = ask.clone();
-        move |depth: usize, index: usize| {
+        move |key: hydrus_core::pages::PageKey| {
             // a page of pages with objecting pages inside: the longer dialog
-            let plan = pages.borrow_mut().close_notebook_plan(depth, index);
+            let plan = pages
+                .borrow_mut()
+                .with_tab(key, Pages::close_notebook_plan)
+                .flatten();
             if let Some((question, objections)) = plan {
                 let yes: Rc<dyn Fn()> = Rc::new({
                     let change_pages = change_pages.clone();
-                    move || change_pages(&|pages| pages.close(depth, index))
+                    move || change_pages(&|pages| pages.close_key(key))
                 });
                 let show: Rc<dyn Fn(hydrus_core::pages::PageKey)> = Rc::new({
                     let change_pages = change_pages.clone();
@@ -2525,10 +2558,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 }
                 return;
             }
-            let question = pages.borrow_mut().close_question(depth, index);
+            let question = pages
+                .borrow_mut()
+                .with_tab(key, Pages::close_question)
+                .flatten();
             match question {
-                Some(question) => ask(Asked::ClosePage(depth, index, question)),
-                None => change_pages(&|pages| pages.close(depth, index)),
+                Some(question) => ask(Asked::ClosePage(key, question)),
+                None => change_pages(&|pages| pages.close_key(key)),
             }
         }
     };
@@ -2536,15 +2572,27 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let pages = pages.clone();
         let close = close.clone();
         move || {
-            let shown = pages.borrow().shown_position();
-            close(shown.0, shown.1);
+            let shown = pages.borrow().shown().key;
+            close(shown);
         }
     });
     window.on_close_tab({
+        let pages = pages.clone();
         let close = close.clone();
         move |level, index| {
             if let (Ok(level), Ok(index)) = (usize::try_from(level), usize::try_from(index)) {
-                close(level, index);
+                let identity = pages.borrow().tab_identity(level, index);
+                if let Some((key, _)) = identity {
+                    close(key);
+                }
+            }
+        }
+    });
+    window.on_close_page_key({
+        let close = close.clone();
+        move |text| {
+            if let Some(key) = hydrus_core::pages::PageKey::from_hex(&text) {
+                close(key);
             }
         }
     });
@@ -4479,6 +4527,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     *duplicates.open_viewer.borrow_mut() = Some(Rc::new({
         let image_cache = image_cache.handle();
         let tag_search = viewer_tag_search.clone();
+        let viewer_tag_relationships = viewer_tag_relationships.clone();
         let weak_main = window.as_weak();
         let reveal_viewer_exit = reveal_viewer_exit.clone();
         let page = page.clone();
@@ -4507,6 +4556,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             *viewing.borrow_mut() = Some((hydrus_core::pages::PageKey::random().0, None));
             let hooks = ViewerHooks {
                 tag_search: tag_search.clone(),
+                tag_relationships: viewer_tag_relationships.clone(),
                 deletion: viewer_deletion.clone(),
                 closing_owner: viewer_closing::Owner::new(
                     None,
@@ -4546,6 +4596,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     window.on_thumbnail_activated({
         let image_cache = image_cache.handle();
         let tag_search = viewer_tag_search.clone();
+        let viewer_tag_relationships = viewer_tag_relationships.clone();
         let weak_main = window.as_weak();
         let origin_pages = pages.clone();
         let reveal_viewer_exit = reveal_viewer_exit.clone();
@@ -4592,6 +4643,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             *viewing.borrow_mut() = Some((hydrus_core::pages::PageKey::random().0, None));
             let hooks = ViewerHooks {
                 tag_search: tag_search.clone(),
+                tag_relationships: viewer_tag_relationships.clone(),
                 deletion: viewer_deletion.clone(),
                 closing_owner,
                 viewing: viewing.clone(),
@@ -5186,7 +5238,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     let page = page.borrow();
                     if let Some(i) = page.focused() {
                         let file = page.results()[i];
-                        open_manage_notes(page.store().clone(), file, files_changed.clone());
+                        open_manage_notes(page.store().clone(), file, files_changed.clone(), None);
                     }
                 }
                 Action::ManageUrls => {
@@ -5566,6 +5618,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         viewer,
         viewer_deletion,
         manage_tags,
+        manage_tags_relationships,
         incremental_tags,
         tag_relationships,
         tag_display,
@@ -5636,6 +5689,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         favourites: favourite_dialogs,
         _autocomplete_tabs: autocomplete_tabs,
         tag_menu_relationships: tag_menu.relationships.clone(),
+        viewer_tag_relationships,
         predicate_editor,
         _predicate_editor_owner: predicate_editor_owner,
         search_or,
@@ -6538,7 +6592,7 @@ enum Asked {
     /// Opening these URLs in the web browser.
     OpenUrls(Vec<String>, open_externally_launch::Launcher),
     /// Closing the page at this depth and index, asking this.
-    ClosePage(usize, usize, String),
+    ClosePage(hydrus_core::pages::PageKey, String),
     /// Removing a downloader page's searches or watchers, asking this.
     RemoveQueries(Vec<i64>, String),
     /// Asking this, then doing that (the menu bar's questions).
@@ -6562,7 +6616,7 @@ impl Asked {
             Self::Inbox(files) => format!("Send {} files to inbox?", count(files)),
             Self::Delete(files, deletion, _) => deletion.question(files.len()),
             Self::LockSearch(question) => (*question).to_owned(),
-            Self::ClosePage(_, _, question)
+            Self::ClosePage(_, question)
             | Self::RemoveQueries(_, question)
             | Self::Then(question, _) => question.clone(),
             Self::OpenUrls(urls, _) => {
@@ -6622,7 +6676,7 @@ type OpenManageTags = Rc<
 >;
 
 /// Opens manage notes on a file, calling the hook given once applied.
-type OpenManageNotes = Rc<dyn Fn(Arc<hydrus_store::Store>, HashId, Rc<dyn Fn()>)>;
+type OpenManageNotes = Rc<dyn Fn(Arc<hydrus_store::Store>, HashId, Rc<dyn Fn()>, Option<String>)>;
 
 /// Opens a manage dialog (urls, ratings) on some files, calling the hook
 /// given once applied.
@@ -6632,6 +6686,8 @@ type OpenOnFiles = Rc<dyn Fn(Arc<hydrus_store::Store>, Vec<HashId>, Rc<dyn Fn()>
 /// notes.
 struct ViewerHooks {
     tag_search: viewer_tag_search::Launch,
+    /// Where the tags hover's menu opens its siblings and parents dialog.
+    tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
     deletion: delete_files_window::Slot,
     closing_owner: Rc<viewer_closing::Owner>,
     /// The viewer and the file it shows, for the Client API.
@@ -6689,6 +6745,7 @@ fn open_viewer(
 
     let ViewerHooks {
         tag_search,
+        tag_relationships,
         deletion: viewer_delete,
         closing_owner,
         viewing,
@@ -6764,11 +6821,12 @@ fn open_viewer(
     );
     viewer_tag_search::bind(
         &window,
-        model.clone(),
-        viewing_stats.clone(),
-        owner_valid.clone(),
+        &model,
+        &viewing_stats,
+        &owner_valid,
         viewer_delete.clone(),
         tag_search,
+        tag_relationships,
     );
     gui_colours::bind(
         window.global::<Theme<'_>>(),
@@ -6956,9 +7014,15 @@ fn open_viewer(
             }
         }
     });
+    // (the top hover's zoom switch command, frozen as its button's is)
+    let zoom_switch_command = viewer_top_hover::zoom_switch_command(model.borrow().store());
+    // the names of the notes whose text is folded (the reference keeps a
+    // fold while the next file has a note of that name)
+    let folded_notes: Rc<RefCell<std::collections::BTreeSet<String>>> = Rc::default();
     // the file's info line and buttons, in the top hover frame, and its
     // notes
     let show_info = {
+        let folded_notes = folded_notes.clone();
         let model = model.clone();
         let weak = window.as_weak();
         let show_url_links = show_url_links.clone();
@@ -6983,10 +7047,14 @@ fn open_viewer(
             window.set_file_trashed(shown.trashed);
             window.set_file_local(shown.local);
             window.set_file_undeletable(shown.undeletable);
+            viewer_top_hover::refresh(&window, model.store(), model.current(), zoom_switch_command);
+            let mut folded = folded_notes.borrow_mut();
+            folded.retain(|name| shown.notes.iter().any(|(n, _)| n == name));
             let notes: Vec<NoteRow> = shown
                 .notes
                 .into_iter()
                 .map(|(name, text)| NoteRow {
+                    shown: !folded.contains(&name),
                     name: name.into(),
                     text: text.into(),
                 })
@@ -6994,6 +7062,52 @@ fn open_viewer(
             window.set_notes(ModelRc::new(VecModel::from(notes)));
         }
     };
+    // a note's left click: Manage Notes, on that note
+    window.on_note_edit_requested({
+        let weak = window.as_weak();
+        let model = model.clone();
+        let manage_notes = manage_notes.clone();
+        let show_info = show_info.clone();
+        move |index| {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let Some(note) = usize::try_from(index)
+                .ok()
+                .and_then(|i| window.get_notes().row_data(i))
+            else {
+                return;
+            };
+            let (store, file) = {
+                let model = model.borrow();
+                (model.store().clone(), model.current())
+            };
+            let show_info = show_info.clone();
+            manage_notes(store, file, Rc::new(show_info), Some(note.name.to_string()));
+        }
+    });
+    // a note's right click folds or unfolds its text
+    window.on_note_toggle_requested({
+        let weak = window.as_weak();
+        let folded_notes = folded_notes.clone();
+        move |index| {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let notes = window.get_notes();
+            let Some(mut note) = usize::try_from(index).ok().and_then(|i| notes.row_data(i)) else {
+                return;
+            };
+            note.shown = !note.shown;
+            let mut folded = folded_notes.borrow_mut();
+            if note.shown {
+                folded.remove(note.name.as_str());
+            } else {
+                folded.insert(note.name.to_string());
+            }
+            notes.set_row_data(usize::try_from(index).unwrap_or_default(), note);
+        }
+    });
     // the file's ratings, in the top-right hover frame
     window.set_rating_size(settings.rating_icon_size as f32);
     window.set_incdec_height(settings.rating_incdec_height as f32);
@@ -7022,47 +7136,41 @@ fn open_viewer(
     let last_tag_file = Rc::new(std::cell::Cell::new(None));
     // the Manage Tags window opened from here follows the file shown
     let tags_follow: manage_tags_window::Follow = Rc::default();
-    let show = {
-        let tags_follow = tags_follow.clone();
-        let warm = warm.clone();
-        let warm_valid = warm_valid.clone();
-        let last_tag_file = last_tag_file.clone();
-        let viewing_stats = viewing_stats.clone();
+    // the file's media: drawn, played, its scanbar and volume control; or,
+    // for a kind that starts with the embed button, the button in its place
+    // until a left press on it (`MediaContainer.SetMedia`, `EventEmbedButton`)
+    let embed_released: Rc<Cell<Option<HashId>>> = Rc::default();
+    let start_media: Rc<dyn Fn()> = Rc::new({
         let model = model.clone();
         let weak = window.as_weak();
         let playback = playback.clone();
         let animator = animator.clone();
         let zoomed = zoomed.clone();
         let presenting = presenting.clone();
-        let viewing = viewing.clone();
         let scanbar = scanbar.clone();
         let show_scanbar = show_scanbar.clone();
-        let show_ratings = show_ratings.clone();
-        let show_info = show_info.clone();
+        let embed_released = embed_released.clone();
         move || {
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if !viewing_stats.active() {
-                return;
-            }
             let model = model.borrow();
-            viewing_stats.show(Some(model.current()));
-            if let Some((_, file)) = viewing.borrow_mut().as_mut() {
-                *file = Some(model.current());
-            }
-            window.set_caption(model.caption().into());
-            if last_tag_file.replace(Some(model.current())) != Some(model.current()) {
-                window.invoke_tag_media_changed();
-                let follower = tags_follow.borrow().clone();
-                if let Some(follower) = follower {
-                    follower(model.current());
-                }
-            }
-            viewer_tag_search::refresh(&window, &model);
+            let file = model.current();
+            let embed = embed_released.get() != Some(file)
+                && viewer::starts_with_embed(model.store(), file, false);
+            window.set_embed_shown(embed);
+            window.set_embed_thumbnail(if embed {
+                viewer::embed_thumbnail(model.store(), file)
+            } else {
+                slint::Image::default()
+            });
             // (for a file that plays, its thumbnail until the first frame)
-            let (shape, media) = (model.shape(), model.shared_media());
-            let (playable, animation) = (model.playable(), model.animation());
+            let shape = model.shape();
+            let (media, playable, animation) = if embed {
+                (None, None, None)
+            } else {
+                (model.shared_media(), model.playable(), model.animation())
+            };
             let (duration_ms, num_frames) = viewer::timing(model.store(), model.current());
             window.set_media(media.as_deref().map(image).unwrap_or_default());
             let still = playable.is_none() && animation.is_none();
@@ -7115,7 +7223,50 @@ fn open_viewer(
             // (a control made afresh starts closed)
             window.set_volume_open(false);
             show_scanbar(0.0);
+        }
+    });
+    let show = {
+        let tags_follow = tags_follow.clone();
+        let warm = warm.clone();
+        let warm_valid = warm_valid.clone();
+        let last_tag_file = last_tag_file.clone();
+        let viewing_stats = viewing_stats.clone();
+        let model = model.clone();
+        let weak = window.as_weak();
+        let viewing = viewing.clone();
+        let show_ratings = show_ratings.clone();
+        let show_info = show_info.clone();
+        let embed_released = embed_released.clone();
+        let start_media = start_media.clone();
+        move || {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if !viewing_stats.active() {
+                return;
+            }
+            let model = model.borrow();
+            viewing_stats.show(Some(model.current()));
+            if let Some((_, file)) = viewing.borrow_mut().as_mut() {
+                *file = Some(model.current());
+            }
+            window.set_caption(model.caption().into());
+            if last_tag_file.replace(Some(model.current())) != Some(model.current()) {
+                window.invoke_tag_media_changed();
+                let follower = tags_follow.borrow().clone();
+                if let Some(follower) = follower {
+                    follower(model.current());
+                }
+            }
+            viewer_tag_search::refresh(&window, &model);
+            // (a file newly shown waits behind its embed button again; the
+            // same file shown afresh, after an edit, keeps playing, as the
+            // reference sets media only when it differs)
+            if embed_released.get() != Some(model.current()) {
+                embed_released.set(None);
+            }
             drop(model);
+            start_media();
             show_ratings();
             if warm_valid() {
                 warm.refresh();
@@ -7124,6 +7275,16 @@ fn open_viewer(
         }
     };
     show();
+    // a left press on the embed button: the file starts
+    window.on_embed_clicked({
+        let model = model.clone();
+        let embed_released = embed_released.clone();
+        let start_media = start_media.clone();
+        move || {
+            embed_released.set(Some(model.borrow().current()));
+            start_media();
+        }
+    });
     let recolour: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let owner_valid = owner_valid.clone();
@@ -7138,7 +7299,8 @@ fn open_viewer(
             };
             let model = model.borrow();
             let shape = model.shape();
-            if model.playable().is_some()
+            if window.get_embed_shown()
+                || model.playable().is_some()
                 || shape.is_some_and(|shape| hydrus_media::animation::Frames::plays(shape.0))
             {
                 return;
@@ -7173,6 +7335,27 @@ fn open_viewer(
     });
     bind_zoom!(window, zoomed);
     viewer_drag::bind(&window, &viewing_stats, model.borrow().store());
+    viewer_top_hover::bind(
+        &window,
+        viewer_top_hover::Hooks {
+            store: model.borrow().store().clone(),
+            current: Rc::new({
+                let model = model.clone();
+                move || model.borrow().current()
+            }),
+            zoomed: zoomed.clone(),
+            embedded_metadata: Rc::new({
+                let embedded_metadata = embedded_metadata.clone();
+                let store = model.borrow().store().clone();
+                move |file| embedded_metadata(store.clone(), vec![file], Rc::new(|| {}))
+            }),
+            focus_media: Rc::new({
+                let closing_owner = closing_owner.clone();
+                let store = model.borrow().store().clone();
+                move |file| closing_owner.focus(&store, file)
+            }),
+        },
+    );
     window.on_zoom_switch_requested({
         let zoomed = zoomed.clone();
         // The reference captures this command when the top hover is built.
@@ -7850,7 +8033,7 @@ fn open_viewer(
                 Action::ManageTags => manage_tags_of(file),
                 Action::ManageNotes => {
                     let store = model.borrow().store().clone();
-                    manage_notes(store, file, Rc::new(show.clone()));
+                    manage_notes(store, file, Rc::new(show.clone()), None);
                 }
                 Action::ManageUrls => {
                     let store = model.borrow().store().clone();
@@ -8268,6 +8451,7 @@ fn open_viewer(
         shortcuts.observer(),
     );
     window.show()?;
+    windows::hold_state_after_show(&window, &settings_frame);
     window.set_shortcut_native_pointer(window.window().has_winit_window());
     native_focus.watch_native();
     native_cursor.watch_native();
@@ -8363,6 +8547,15 @@ pub(crate) fn list_text(text: &str, [r, g, b]: [u8; 3]) -> ListText {
         colour: slint::Color::from_rgb_u8(r, g, b),
         parts: ModelRc::default(),
     }
+}
+
+/// Whether `shown` draws `rows` already (their part models compared by
+/// content, not by identity).
+pub(crate) fn same_list_texts(shown: &ModelRc<ListText>, rows: &[ListText]) -> bool {
+    shown.row_count() == rows.len()
+        && shown.iter().zip(rows).all(|(a, b)| {
+            a.text == b.text && a.colour == b.colour && a.parts.iter().eq(b.parts.iter())
+        })
 }
 
 pub(crate) fn styled_list_text(
@@ -8748,7 +8941,13 @@ fn refresh(window: &MainWindow, page: &SearchPage) {
         .zip(page.tag_colours(&colours))
         .map(|(text, rgb)| list_text(text, rgb))
         .collect();
-    window.set_tags(ModelRc::new(VecModel::from(tags)));
+    // (the same rows keep their model: a new one would make the rows anew,
+    // and the row under the pointer would lose a double-click's first click)
+    let shown = window.get_tags();
+    if !same_list_texts(&shown, &tags) {
+        window.set_tags(ModelRc::new(VecModel::from(tags)));
+    }
+    selection_tags::show(window, page);
     window.set_selection_tags_title(page.tag_list_title().into());
     window.set_error(page.error().unwrap_or_default().into());
     window.set_status(page.status().into());

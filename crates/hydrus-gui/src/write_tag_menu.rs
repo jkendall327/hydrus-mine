@@ -17,6 +17,18 @@ thread_local! { static SEARCH_LAUNCHER: RefCell<Option<SearchLauncher>>=const {R
 pub fn install_search_launcher(launcher: SearchLauncher) {
     SEARCH_LAUNCHER.with(|slot| *slot.borrow_mut() = Some(launcher));
 }
+/// Open a search page through the main window's launcher, if one is live
+/// (a tag list's middle-click).
+pub(crate) fn launch_search(
+    location: LocationContext,
+    context: TagContext,
+    predicates: Vec<Predicate>,
+) {
+    let launcher = SEARCH_LAUNCHER.with(|slot| slot.borrow().clone());
+    if let Some(launcher) = launcher {
+        launcher(location, context, predicates, false);
+    }
+}
 /// Clear a closed main window's launcher.
 pub fn clear_search_launcher() {
     SEARCH_LAUNCHER.with(|slot| slot.borrow_mut().take());
@@ -70,10 +82,31 @@ impl TagMenu {
         question: Rc<dyn Fn(&str)>,
         error: Rc<dyn Fn(&str)>,
     ) -> Rc<Self> {
+        Self::new_in(
+            store,
+            editable,
+            decorate,
+            refresh,
+            question,
+            error,
+            Rc::default(),
+        )
+    }
+    /// As [`Self::new`], opening its siblings and parents dialog in
+    /// `relationships` (a slot its owner keeps).
+    pub fn new_in(
+        store: Arc<Store>,
+        editable: Rc<dyn Fn() -> bool>,
+        decorate: Rc<dyn Fn(Action)>,
+        refresh: Rc<dyn Fn()>,
+        question: Rc<dyn Fn(&str)>,
+        error: Rc<dyn Fn(&str)>,
+        relationships: Rc<RefCell<Option<crate::TagRelationshipsWindow>>>,
+    ) -> Rc<Self> {
         Rc::new(Self {
             popup: Popup::new(),
             pending: RefCell::default(),
-            relationships: Rc::default(),
+            relationships,
             locations: Rc::default(),
             store,
             editable,
@@ -268,7 +301,7 @@ impl TagMenu {
                     (self.error)(&format!("could not complete tag action: {e}"));
                 }
             }
-            Action::Owner(id) => {
+            Action::Owner(id) | Action::Asked { id, .. } => {
                 let owner = self.owner.borrow().clone();
                 if let Some(owner) = owner {
                     owner(id);
@@ -304,7 +337,13 @@ macro_rules! bind {
                 );
                 if let Some(window) = weak.upgrade() {
                     window.set_tag_menu_question_title(
-                        if regeneration { "Regen tags?" } else { "" }.into(),
+                        // (`GetYesNo`'s default title)
+                        if regeneration {
+                            "Regen tags?"
+                        } else {
+                            "Are you sure?"
+                        }
+                        .into(),
                     );
                     window.set_tag_menu_yes_label(
                         if regeneration { "let's go" } else { "yes" }.into(),

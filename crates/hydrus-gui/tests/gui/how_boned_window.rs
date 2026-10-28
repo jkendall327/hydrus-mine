@@ -85,17 +85,8 @@ fn how_boned_opens_from_the_database_menu_and_shows_the_reference_s_statistics()
     ui.show().unwrap();
     let _bound = bind(&ui, Pages::open(store.clone()).unwrap());
 
-    // database > how boned am I?
-    let titles = ui.get_menu_titles();
-    let database = (0..titles.row_count())
-        .position(|i| titles.row_data(i).unwrap().label == "database")
-        .unwrap();
-    ui.invoke_menu_title_pressed(i32::try_from(database).unwrap(), 10.0, 22.0);
-    let pane = ui.get_menu_panes().row_data(0).unwrap();
-    let line = (0..pane.lines.row_count())
-        .position(|i| pane.lines.row_data(i).unwrap().label == "how boned am I?")
-        .expect("the database menu offers how boned am I?");
-    ui.invoke_menu_line_clicked(0, i32::try_from(line).unwrap(), 0.0, 0.0, 0.0);
+    // database > how boned am I?, clicked in the menu bar
+    crate::common::main_menu::choose(&ui, &["database"], "how boned am I?");
 
     let window = how_boned_window::opened().expect("the window opened");
     assert!(window.window().is_visible());

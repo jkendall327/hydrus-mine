@@ -70,6 +70,7 @@ fn removal(
 pub(crate) fn open(
     model: ManageTags,
     slot: &Rc<RefCell<Option<ManageTagsWindow>>>,
+    relationships: &Rc<RefCell<Option<crate::TagRelationshipsWindow>>>,
     incremental_slot: &crate::incremental_tagging_window::Slot,
     applied: Rc<dyn Fn()>,
     link: Option<ViewerLink>,
@@ -173,7 +174,10 @@ pub(crate) fn open(
                     crate::styled_list_text(&row.label, colours.tag(&row.colour_tag), &row.parts)
                 })
                 .collect();
-            window.set_tags(ModelRc::new(VecModel::from(tags)));
+            // (kept when unchanged: new rows would lose a double-click's first click)
+            if !crate::same_list_texts(&window.get_tags(), &tags) {
+                window.set_tags(ModelRc::new(VecModel::from(tags)));
+            }
             window.set_tag_selected(ModelRc::new(VecModel::from(model.tag_selection_mask())));
             window.set_notice("".into());
             window
@@ -466,7 +470,7 @@ pub(crate) fn open(
         },
     );
     let pending_paste: Rc<RefCell<Option<Pending>>> = Rc::default();
-    let tag_menu = crate::write_tag_menu::TagMenu::new(
+    let tag_menu = crate::write_tag_menu::TagMenu::new_in(
         model.borrow().store().clone(),
         Rc::new({
             let active = active.clone();
@@ -530,6 +534,7 @@ pub(crate) fn open(
                 }
             }
         }),
+        relationships.clone(),
     );
     crate::menu_choice_wheel::bind(
         window.global::<crate::MenuChoicePolicy<'_>>(),
@@ -1310,7 +1315,10 @@ pub(crate) fn open(
         let incremental_open = incremental_open.clone();
         let pending = pending_paste.clone();
         let tag_menu = tag_menu.clone();
-        move |i| {
+        // a double-click enters the selected tags, as Return does
+        // (`ListBoxTagsMediaTagsDialog._Activate`); a ctrl double-click
+        // selects again the row its first click took away
+        move |i, ctrl, _| {
             if !active.get()
                 || incremental_open.get()
                 || pending.borrow().is_some()
@@ -1318,13 +1326,118 @@ pub(crate) fn open(
             {
                 return;
             }
-            let entered = model
-                .borrow_mut()
-                .activate_row(usize::try_from(i).unwrap_or(usize::MAX));
+            let entered = {
+                let mut model = model.borrow_mut();
+                if ctrl && let Ok(i) = usize::try_from(i) {
+                    model.tag_list().reselect_for_double_click(i);
+                }
+                let tags = model.selected_tags();
+                if tags.is_empty() {
+                    return;
+                }
+                model.enter_tags(&tags, false, false)
+            };
             if let (Some(w), Ok(entered)) = (weak.upgrade(), entered) {
                 ask(&w, &pending, entered);
             }
             refresh();
+        }
+    });
+    let list_usable: Rc<dyn Fn() -> bool> = Rc::new({
+        let active = active.clone();
+        let incremental_open = incremental_open.clone();
+        let pending = pending_paste.clone();
+        let tag_menu = tag_menu.clone();
+        move || {
+            active.get()
+                && !incremental_open.get()
+                && pending.borrow().is_none()
+                && !tag_menu.busy()
+        }
+    });
+    // the list's menu (`ShowMenuFromSignal`), its own entries (the
+    // decorators) done here
+    window.on_tag_menu_requested({
+        let model = model.clone();
+        let refresh = refresh.clone();
+        let usable = list_usable.clone();
+        let tag_menu = tag_menu.clone();
+        move |x, y| {
+            if !usable() {
+                return;
+            }
+            let entries = {
+                let model = model.borrow();
+                let store = model.store().clone();
+                let place = list_place(&store);
+                let viewing: hydrus_store::settings::FileViewingStatistics =
+                    store.read(hydrus_store::settings::get).unwrap_or_default();
+                let text =
+                    hydrus_search::TextContext::from_store(&store.snapshot().services, &viewing);
+                model.tag_list().menu(&store, &place, &text)
+            };
+            let model = model.clone();
+            let refresh = refresh.clone();
+            tag_menu.open_owned(
+                &entries,
+                x,
+                y,
+                Rc::new(move |id| {
+                    if let Some(hydrus_gui_model::selection_tags::Command::Decorate(kind, value)) =
+                        hydrus_gui_model::selection_tags::Command::from_id(id)
+                    {
+                        model.borrow().tag_list().decorate(kind, value);
+                        refresh();
+                    }
+                }),
+            );
+        }
+    });
+    // a middle press: a new search page for the selection (shift: its OR)
+    window.on_tag_middle_pressed({
+        let model = model.clone();
+        let usable = list_usable.clone();
+        move |shift| {
+            if !usable() {
+                return;
+            }
+            let (predicates, place) = {
+                let model = model.borrow();
+                let predicates = model.tag_list().middle_click(shift);
+                (predicates, list_place(model.store()))
+            };
+            if !predicates.is_empty() {
+                crate::write_tag_menu::launch_search(place.location, place.tags, predicates);
+            }
+        }
+    });
+    window.on_tag_key({
+        let model = model.clone();
+        let refresh = refresh.clone();
+        let usable = list_usable.clone();
+        move |text, ctrl, shift, rows| {
+            if !usable() {
+                return false;
+            }
+            let Some(key) = hydrus_gui_model::tag_list_box::Key::from_text(&text) else {
+                return false;
+            };
+            let outcome =
+                model
+                    .borrow()
+                    .tag_list()
+                    .key(key, ctrl, shift, usize::try_from(rows).unwrap_or(1));
+            match outcome {
+                hydrus_gui_model::tag_list_box::Outcome::Ignored => return false,
+                hydrus_gui_model::tag_list_box::Outcome::Copy(text) => {
+                    if !text.is_empty() {
+                        crate::copy_to_clipboard(&text);
+                    }
+                }
+                _ => {}
+            }
+            refresh();
+            true
         }
     });
     window.on_suggestion_chosen({
@@ -1447,9 +1560,10 @@ pub(crate) fn open(
             {
                 return;
             }
+            // (-1: a press below the rows)
             model
                 .borrow_mut()
-                .click_tag(usize::try_from(i).unwrap_or(usize::MAX), ctrl, shift);
+                .press_tag(usize::try_from(i).ok(), ctrl, shift);
             refresh();
         }
     });
@@ -1776,4 +1890,25 @@ fn related_status(report: &hydrus_store::related_tags::Report, seconds: f64) -> 
         "{done}{}.",
         hydrus_core::time::pretty_time_delta_f64(seconds)
     )
+}
+
+/// Where the dialog's tag list is, for its menu and middle-click: a stored
+/// tags list with counts and decorators, its pages searching all local files
+/// (`ListBoxTags`' default location) and the default tag service. (The
+/// advanced tag display switch is not offered: DIFFERENCES.md.)
+fn list_place(store: &hydrus_store::Store) -> hydrus_gui_model::selection_tags::Place<'static> {
+    let defaults: hydrus_store::settings::SearchDefaults =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    hydrus_gui_model::selection_tags::Place {
+        counts: true,
+        search: None,
+        select: false,
+        display: hydrus_core::tag_presentation::TagDisplayType::Storage,
+        decorators: true,
+        advanced: false,
+        location: hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+            hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
+        )),
+        tags: hydrus_search::TagContext::new(defaults.tag_service, true, true),
+    }
 }

@@ -40,6 +40,7 @@ mod duplicates_page;
 mod duplicates_quick_processing;
 mod duplicates_search_settings;
 mod edit_subscription;
+mod embed_button;
 mod embedded_metadata;
 mod emoji_fonts;
 mod existing_tags_filter;
@@ -76,6 +77,7 @@ mod manage_notes;
 mod manage_ratings;
 mod manage_tags;
 mod manage_tags_cog;
+mod manage_tags_list;
 mod manage_tags_sort;
 mod manage_tags_viewer;
 mod manage_times;
@@ -134,6 +136,7 @@ mod search_log;
 mod search_page;
 mod selected_deletion_records;
 mod selected_viewing_stats;
+mod selection_tags_box;
 mod session;
 mod session_autosave;
 mod session_backup_menu;
@@ -172,6 +175,7 @@ mod thumbnail_grid_geometry;
 mod thumbnail_icons;
 mod thumbnail_menu;
 mod thumbnail_navigation;
+mod thumbnail_pointer;
 mod thumbnail_preview_selection;
 mod thumbnail_ratings;
 mod thumbnail_selection;
@@ -280,10 +284,13 @@ mod manage_tag_counts;
 mod frame_geometry;
 mod frame_locations;
 mod incremental_tagging;
+mod layout_fixed_height;
 
 mod notebook_tree;
 mod tab_drag;
 mod tab_presentation;
+mod tab_strip_clicks;
+mod tree_menu_drag;
 
 mod archive_repair;
 
@@ -311,6 +318,7 @@ mod viewer_drag;
 mod window_rescue;
 
 mod viewer_tag_wheel;
+mod viewer_tags_hover;
 
 mod idle_timeout_options;
 
@@ -354,6 +362,7 @@ mod radio_return;
 
 mod active_predicate_menu;
 mod active_predicate_selection;
+mod collect_middle_click;
 mod database_backup_menu;
 mod database_file_maintenance_new;
 mod database_locations_menu;
@@ -376,6 +385,7 @@ mod import_options_consumers;
 mod import_options_fields;
 mod import_options_paste;
 mod import_options_recorded;
+mod list_keys;
 mod media_file_actions;
 mod media_ratings_counter;
 mod media_selection_menu;
@@ -421,5 +431,7 @@ mod tag_filter_removal;
 mod tag_filter_replay;
 mod video_buffer;
 mod viewer_audio;
+mod viewer_hover_clicks;
 mod viewer_playback;
 mod viewer_prefetch;
+mod viewer_top_hover;

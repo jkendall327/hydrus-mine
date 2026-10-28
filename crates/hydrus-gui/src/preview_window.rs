@@ -268,6 +268,8 @@ struct State {
     workers: RefCell<Option<Workers>>,
     alive: Cell<bool>,
     timer: Timer,
+    /// The embed button's thumbnail, and whose it is.
+    embed_thumbnail: RefCell<Option<(HashId, slint::Image)>>,
 }
 impl State {
     fn time(&self) -> i64 {
@@ -278,6 +280,7 @@ impl State {
         window.set_preview_lines(slint::ModelRc::default());
         window.set_preview_inbox(false);
         window.set_preview_trashed(false);
+        window.set_preview_embed(false);
         window.set_preview_media(slint::Image::default());
         window.set_preview_has_media(false);
         window.set_preview_loading(false);
@@ -321,7 +324,24 @@ impl State {
             let touched = self.touch.get().wrapping_add(1);
             self.touch.set(touched);
             frame.touched = touched;
-            if !self.audio.showing_frames() {
+            // (a file that starts with the embed button waits behind it,
+            // as decided when it was shown)
+            let embed = canvas
+                .accepted
+                .get()
+                .filter(|&file| self.audio.embedded(file));
+            window.set_preview_embed(embed.is_some());
+            if let Some(file) = embed {
+                let cached = self.embed_thumbnail.borrow().as_ref().map(|(f, _)| *f);
+                if cached != Some(file) {
+                    let image = crate::viewer::embed_thumbnail(&self.store, file);
+                    *self.embed_thumbnail.borrow_mut() = Some((file, image));
+                }
+                if let Some((_, image)) = self.embed_thumbnail.borrow().as_ref() {
+                    window.set_preview_embed_thumbnail(image.clone());
+                }
+                window.set_preview_media(slint::Image::default());
+            } else if !self.audio.showing_frames() {
                 window.set_preview_media(frame.image.clone());
             }
             window.set_preview_has_media(true);
@@ -371,6 +391,7 @@ impl State {
                 window.set_preview_media_height(height as f32);
             }
         } else {
+            window.set_preview_embed(false);
             window.set_preview_media(slint::Image::default());
             window.set_preview_has_media(false);
             window.set_preview_media_width(0.0);
@@ -899,6 +920,7 @@ impl Monitor {
             workers: RefCell::new(None),
             alive: Cell::new(true),
             timer: Timer::default(),
+            embed_thumbnail: RefCell::new(None),
         });
         window.on_preview_retired({
             let state = Rc::downgrade(&state);
@@ -950,6 +972,23 @@ impl Monitor {
                     state.audio.changed(&window, |store| {
                         audio::flip_preview_mute(store);
                     });
+                }
+            }
+        });
+        window.on_preview_embed_clicked({
+            let state = Rc::downgrade(&state);
+            move || {
+                if let Some(state) = state.upgrade() {
+                    let shown = state
+                        .current
+                        .borrow()
+                        .as_ref()
+                        .and_then(|canvas| canvas.accepted.get());
+                    if let Some(file) = shown {
+                        state.audio.release(file);
+                        state.force_overlay.set(true);
+                        state.refresh();
+                    }
                 }
             }
         });

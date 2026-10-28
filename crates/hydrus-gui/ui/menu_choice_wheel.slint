@@ -13,6 +13,8 @@ export component WheelMenuChoice inherits TouchArea {
     in property <[string]> model <=> choice.model;
     in property <int> current-index;
     in property <int> wheel-count: root.model.length;
+    // A narrow row lets the box shrink below the style's 160px minimum.
+    in property <bool> shrinkable: false;
     out property <string> current-value: choice.current-value;
     out property <bool> popup-open: choice.accessible-expanded;
     callback selected(int);
@@ -29,12 +31,15 @@ export component WheelMenuChoice inherits TouchArea {
     }
     min-width: layout.min-width;
     min-height: layout.min-height;
+    max-height: layout.preferred-height;
     horizontal-stretch: 1;
     vertical-stretch: 0;
     forward-focus: choice;
     changed current-index => { choice.current-index = root.current-index; }
     layout := VerticalLayout {
         choice := ComboBox {
+            min-width: root.shrinkable ? 40px : 160px;
+            max-height: self.preferred-height;
             enabled:root.enabled && !root.pass-wheel;
             current-index:root.current-index;
             selected => { if MenuChoicePolicy.owner-valid() { root.selected(self.current-index); } }

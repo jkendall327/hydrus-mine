@@ -162,18 +162,16 @@ fn urls_are_added_removed_and_edited_as_the_reference_does() {
     assert!(shown.contains(&"not a url (2)".to_owned()));
     // selected and deleted: from both
     let row = shown.iter().position(|r| r == "not a url (2)").unwrap();
-    dialog.invoke_row_clicked(i32::try_from(row).unwrap(), false, false);
+    crate::common::widgets::lay_out(dialog.window(), 700.0, 500.0);
+    crate::common::widgets::click(dialog.window(), "not a url (2)");
     assert!(selected(&dialog)[row]);
     dialog.invoke_copy();
     assert_eq!(copied.borrow().last().unwrap(), "not a url");
     dialog.invoke_delete_pressed();
     assert!(!rows(&dialog).contains(&"not a url (2)".to_owned()));
     // double-clicked: out of the list, into the box
-    let row = rows(&dialog)
-        .iter()
-        .position(|r| r == "https://z.example/x (2)")
-        .unwrap();
-    dialog.invoke_row_activated(i32::try_from(row).unwrap());
+    assert!(rows(&dialog).contains(&"https://z.example/x (2)".to_owned()));
+    crate::common::widgets::double_click(dialog.window(), "https://z.example/x (2)");
     assert_eq!(dialog.get_input(), "https://z.example/x");
     assert!(!rows(&dialog).iter().any(|r| r.contains("z.example")));
     // applying with text in the box asks; "no" keeps the dialog
@@ -185,11 +183,11 @@ fn urls_are_added_removed_and_edited_as_the_reference_does() {
     dialog.invoke_chosen(1);
     assert!(bound.manage_urls.borrow().is_some());
     // the original's first removed too, then applied
-    let row = rows(&dialog)
-        .iter()
-        .position(|r| r.starts_with(&format!("{first} (")))
+    let label = rows(&dialog)
+        .into_iter()
+        .find(|r| r.starts_with(&format!("{first} (")))
         .unwrap();
-    dialog.invoke_row_clicked(i32::try_from(row).unwrap(), false, false);
+    crate::common::widgets::click(dialog.window(), &label);
     dialog.invoke_delete_pressed();
     dialog.invoke_apply();
     dialog.invoke_chosen(0);

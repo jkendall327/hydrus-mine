@@ -120,7 +120,11 @@ fn clicking_a_tab_and_ctrl_page_keys_select_pages_and_restore_their_state() {
                 widgets::click_nth(ui.window(), name, 0);
             }
             "click inner" => {
-                widgets::click(ui.window(), ["b", "c"][do_[1].as_u64().unwrap() as usize]);
+                widgets::click_nth(
+                    ui.window(),
+                    ["b", "c"][do_[1].as_u64().unwrap() as usize],
+                    0,
+                );
             }
             "key" => match do_[1].as_str().unwrap() {
                 "ctrl+page down" => tap(Key::PageDown, true),

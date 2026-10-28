@@ -162,21 +162,7 @@ pub fn menu(depth: usize, index: usize, count: usize, selected: usize) -> Vec<En
             Move::Right => at + 1 < count,
             Move::Last => at + 2 < count,
         };
-        let navigation = [
-            ("first page", Move::First),
-            ("page to the left", Move::Left),
-            ("page to the right", Move::Right),
-            ("last page", Move::Last),
-        ]
-        .into_iter()
-        .filter(|&(_, movement)| possible(selected, movement))
-        .map(|(label, movement)| item(label, Command::NavigateTabs { depth, movement }))
-        .collect();
-        entries.push(Entry::Menu {
-            label: "select".into(),
-            entries: navigation,
-            enabled: true,
-        });
+        entries.push(select_menu(depth, count, selected));
         let moves = [
             ("to left end", Move::First),
             ("left", Move::Left),
@@ -215,6 +201,35 @@ pub fn menu(depth: usize, index: usize, count: usize, selected: usize) -> Vec<En
     entries.push(scope_menu(depth, index, count, true));
     entries.push(scope_menu(depth, index, count, false));
     entries
+}
+
+/// The "select" submenu: the moves the notebook's selected tab can make.
+pub fn select_menu(depth: usize, count: usize, selected: usize) -> Entry {
+    let possible = |movement| match movement {
+        Move::First => selected > 1,
+        Move::Left => selected > 0,
+        Move::Right => selected + 1 < count,
+        Move::Last => selected + 2 < count,
+    };
+    let navigation = [
+        ("first page", Move::First),
+        ("page to the left", Move::Left),
+        ("page to the right", Move::Right),
+        ("last page", Move::Last),
+    ]
+    .into_iter()
+    .filter(|&(_, movement)| possible(movement))
+    .map(|(label, movement)| Entry::Item {
+        label: label.into(),
+        enabled: true,
+        command: Some(Command::NavigateTabs { depth, movement }),
+    })
+    .collect();
+    Entry::Menu {
+        label: "select".into(),
+        entries: navigation,
+        enabled: true,
+    }
 }
 
 fn sort_menu(depth: usize) -> Entry {
@@ -349,4 +364,49 @@ pub fn session_entries(
         });
     }
     entries
+}
+
+/// A tab menu made for the notebook `notebook` (addressed by its depth as
+/// if it were on the way to the page shown), its tab actions wrapped to
+/// reach that notebook wherever it is: the pages tree's menu for a row.
+/// Actions that name their pages by key already are left as they are.
+pub fn in_notebook(entries: Vec<Entry>, notebook: hydrus_core::pages::PageKey) -> Vec<Entry> {
+    entries
+        .into_iter()
+        .map(|entry| match entry {
+            Entry::Item {
+                label,
+                enabled,
+                command: Some(command),
+            } => Entry::Item {
+                label,
+                enabled,
+                command: Some(match command {
+                    Command::CloseTab { .. }
+                    | Command::CloseTabs { .. }
+                    | Command::NavigateTabs { .. }
+                    | Command::MoveTab { .. }
+                    | Command::RenameTab { .. }
+                    | Command::DuplicateTab { .. }
+                    | Command::SortTabs { .. }
+                    | Command::CollapseTabs { .. }
+                    | Command::SendTabs { .. } => Command::InNotebook {
+                        notebook,
+                        command: Box::new(command),
+                    },
+                    other => other,
+                }),
+            },
+            Entry::Menu {
+                label,
+                entries,
+                enabled,
+            } => Entry::Menu {
+                label,
+                entries: in_notebook(entries, notebook),
+                enabled,
+            },
+            other => other,
+        })
+        .collect()
 }

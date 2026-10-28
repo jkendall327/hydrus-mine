@@ -156,7 +156,7 @@ fn pages_close_by_middle_click_and_ctrl_w_asking_as_the_reference_does() {
         headless::render(&windows.get(0).unwrap(), 1100, 700);
         let answer = match action[0].as_str().unwrap() {
             "select" => {
-                widgets::click(win, action[1].as_str().unwrap());
+                widgets::click_nth(win, action[1].as_str().unwrap(), 0);
                 None
             }
             "play" => {
@@ -467,7 +467,7 @@ fn closing_each_kind_of_importer_page_asks_as_recorded_with_the_option_on_and_no
             "{name}: the reference asks nothing with the option off"
         );
         headless::render(&windows.get(0).unwrap(), 1100, 700);
-        widgets::click(win, name);
+        widgets::click_nth(win, name, 0);
         close_current(None, true, name);
         assert!(!tab_names().contains(&(*name).to_owned()), "{name}: closed");
     }

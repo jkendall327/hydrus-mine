@@ -46,6 +46,8 @@ export component ManageTagsWindow inherits Window {
     in-out property <int> service-index;
     in property <[ListText]> tags;
     in property <[bool]> tag-selected;
+    // (the rows a page up or down moves: as many as the list shows whole)
+    out property <int> tag-page-rows: max(1, floor(tag-list.visible-height / 20px));
     in property <string> remove-button-text: "remove all/selected tags";
     in property <string> notice;
     callback tag-clicked(int,bool,bool);
@@ -110,7 +112,14 @@ export component ManageTagsWindow inherits Window {
     callback move-highlight(int);
     callback navigate(int,bool,bool);
     callback results-action(int) -> bool;
-    callback tag-activated(int);
+    // a left double-click on row i, with ctrl and shift
+    callback tag-activated(int,bool,bool);
+    // the tag list's menu wanted at x, y (after the right press selected),
+    // a middle press (with shift), and a key, with ctrl and shift, and the
+    // rows a page holds: whether the list took it
+    callback tag-menu-requested(length,length);
+    callback tag-middle-pressed(bool);
+    callback tag-key(string,bool,bool,int) -> bool;
     in property <bool> incremental-available;
     in property <bool> incremental-open;
     callback incremental-tags();
@@ -160,8 +169,16 @@ export component ManageTagsWindow inherits Window {
                     if (event.text == Key.DownArrow) { root.service-chosen(mod(root.service-index + 1, root.service-names.length)); return accept; }
                 }
             }
-            if (event.text == Key.Escape) {
+            // (the focused tag list clears its selection first)
+            if (event.text == Key.Escape && !(list-focus.has-focus && root.tag-menu-panes.length == 0 && root.tag-menu-question == "")) {
                 if root.tag-menu-panes.length > 0 || root.tag-menu-question != "" { root.tag-menu-dismissed(); } else if !input.escape-results() { root.cancel(); }
+                return accept;
+            }
+            reject
+        }
+        key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                if !input.escape-results() { root.cancel(); }
                 return accept;
             }
             reject
@@ -187,24 +204,47 @@ export component ManageTagsWindow inherits Window {
                     background: Theme.tags-background;
                     vertical-stretch: 1;
                     list-focus := FocusScope {
+                        property <bool> ctrl;
+                        property <bool> shift;
+                        // (as the reference's ListBox: any press selects first)
+                        function pressed(row: int, event: PointerEvent, x: length, y: length) {
+                            list-focus.focus();
+                            self.ctrl = event.modifiers.control;
+                            self.shift = event.modifiers.shift;
+                            root.tag-clicked(row, self.ctrl, self.shift);
+                            if event.button == PointerEventButton.right { root.tag-menu-requested(x, y); }
+                            if event.button == PointerEventButton.middle { root.tag-middle-pressed(self.shift); }
+                        }
                         key-pressed(event) => {
                             if event.text == Key.Delete { root.delete-pressed(); return accept; }
                             if event.text == Key.Return { root.activate-selected(); return accept; }
+                            if root.tag-key(event.text, event.modifiers.control, event.modifiers.shift, root.tag-page-rows) { return accept; }
                             reject
                         }
-                        ListView {
+                        tag-list := ListView {
                             for tag[i] in root.tags: Rectangle {
                                 height: 20px;
+                                accessible-role: list-item;
+                                accessible-label: tag.text;
                                 background: (i < root.tag-selected.length && root.tag-selected[i]) ? Theme.highlight : (pick.has-hover ? Theme.hover : transparent);
                                 PaintedTagText { x:4px;item:tag;width:parent.width - 8px;height:parent.height; }
                                 pick := TouchArea {
                                     pointer-event(event) => {
-                                        if event.button == PointerEventButton.left && event.kind == PointerEventKind.down {
-                                            list-focus.focus();
-                                            root.tag-clicked(i, event.modifiers.control, event.modifiers.shift);
+                                        if event.kind == PointerEventKind.down {
+                                            list-focus.pressed(i, event, self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y);
                                         }
                                     }
-                                    double-clicked => { root.tag-activated(i); }
+                                    double-clicked => { root.tag-activated(i, list-focus.ctrl, list-focus.shift); }
+                                }
+                            }
+                        }
+                        // the space below the rows
+                        TouchArea {
+                            y: clamp(root.tags.length * 20px + tag-list.content-y, 0px, parent.height);
+                            height: parent.height - self.y;
+                            pointer-event(event) => {
+                                if event.kind == PointerEventKind.down {
+                                    list-focus.pressed(-1, event, self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y);
                                 }
                             }
                         }

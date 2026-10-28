@@ -8,6 +8,8 @@ export { MenuChoicePolicy } from "menu_choice_wheel.slint";
 import { PageSplitter } from "page_splitter.slint";
 export { SearchOrWindow } from "search_or.slint";
 import { ActivePredicates, ActivePredicateAction } from "active_predicates.slint";
+import { TagList, SelectionTagsBox } from "selection_tags.slint";
+export { SelectionTagsBox } from "selection_tags.slint";
 export { ActivePredicateAction } from "active_predicates.slint";
 import { Button, CheckBox, ComboBox, LineEdit, ListView, ProgressIndicator, ScrollView, VerticalBox } from "std-widgets.slint";
 import { ListText, Theme } from "theme.slint";
@@ -33,6 +35,7 @@ export { PreviewRatingRow }
 export { DownloadLine, GalleryData, WatcherData, JobCogMenu }
 export { NetworkErrorWindow } from "importing.slint";
 export { MenuLine, MenuPane, MenuTitle, PopupData }
+import { EmbedButton } from "embed_button.slint";
 export { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
 export { ListText, Theme }
 
@@ -45,38 +48,11 @@ export { WriteTagsWindow } from "write_autocomplete.slint";
 export { TagTextHistory, TagTextHistoryState, TagTextEdit, TagTextState } from "write_tag_line_edit.slint";
 export { ExternalProgramEntryWindow } from "external_program_entry.slint";
 export { TableColumn, TableRow }
-export { FavouriteEditWindow, FavouriteListRow, FavouritesWindow } from "favourites.slint";
+export { FavouriteEditWindow, FavouritesWindow } from "favourites.slint";
 export { SubscriptionGalleryWindow, SubscriptionsWindow, Tick } from "subscriptions.slint";
 
 import { ThumbnailCellPaint, ThumbnailPaint, Thumbnail } from "thumbnail_paint.slint";
 export { ThumbIcon, ThumbRating, ThumbBox, Thumbnail, ThumbnailPaint } from "thumbnail_paint.slint";
-
-// the tags of the selected files (or of the page's), with their counts, as
-// the reference's "selection tags" box; double-clicking one searches for it
-component TagList inherits Rectangle {
-    in property <[ListText]> tags;
-    callback activated(int);
-    border-width: 1px;
-    border-color: Theme.border;
-    background: Theme.tags-background;
-    ListView {
-        for tag[i] in root.tags: Rectangle {
-            height: 20px;
-            background: pick.has-hover ? Theme.hover : transparent;
-            Text {
-                x: 4px;
-                text: tag.text;
-                color: tag.colour;
-                vertical-alignment: center;
-                overflow: elide;
-                width: parent.width - 8px;
-            }
-            pick := TouchArea {
-                double-clicked => { root.activated(i); }
-            }
-        }
-    }
-}
 
 // a page chooser button: `label` empty hides it
 component ChooserButton inherits Rectangle {
@@ -201,6 +177,15 @@ component ThumbnailGrid inherits ListView {
                         let column = root.thumbnail-at(row.thumbnails.length, self.mouse-x, self.mouse-y);
                         root.menu-requested(column >= 0 ? row.first + column : -1,
                             self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y);
+                    }
+                    // a middle press opens the viewer on the thumbnail, the
+                    // selection untouched (the reference's default grid,
+                    // `oracle/fixtures/thumbnail_pointer.json`)
+                    if (event.button == PointerEventButton.middle) {
+                        let column = root.thumbnail-at(row.thumbnails.length, self.mouse-x, self.mouse-y);
+                        if (column >= 0) {
+                            root.activated(row.first + column);
+                        }
                     }
                 }
             }
@@ -343,6 +328,10 @@ export component MainWindow inherits Window {
     changed layout-available-width => {root.sidebar-measured();}
     changed layout-available-height => {root.sidebar-measured();}
     in property <image> preview-media;
+    // the previewed file waits behind the embed button, with its thumbnail
+    in property <bool> preview-embed;
+    in property <image> preview-embed-thumbnail;
+    callback preview-embed-clicked();
     in property <length> preview-media-x;
     in property <length> preview-media-y;
     in property <length> preview-media-width;
@@ -473,6 +462,8 @@ export component MainWindow inherits Window {
     callback page-tree-selected(string);
     callback page-tree-toggled(string);
     callback page-tree-navigate(int);
+    callback page-tree-menu-requested(string, length, length);
+    callback page-tree-dropped(string, length, bool);
     public function focus-page-tree() { page-tree-widget.focus-tree(); }
     out property <bool> page-tree-focused: page-tree-widget.tree-focused;
     out property <length> page-tree-x: page-tree-widget.absolute-position.x;
@@ -536,6 +527,8 @@ export component MainWindow inherits Window {
     // Direct bindings include the first layout; floating popup construction
     // must not depend on a deferred changed handler copying initial geometry.
     out property <length> search-tags-y: search-tags.absolute-position.y;
+    // the selection tags box's rows per page (page up and down), read by tests
+    out property <int> selection-tags-page-rows: search-tags.page-rows;
     out property <length> active-predicate-list-height: active-predicate-list.height;
     out property <length> active-predicate-content-height: active-predicates.content-height;
     out property <length> active-predicate-view-height: active-predicates.view-height;
@@ -715,6 +708,7 @@ export component MainWindow inherits Window {
     in-out property <bool> collect-unmatched;
     in-out property <bool> collect-separate;
     callback collect-toggled(int, bool);
+    callback collect-cleared();
     callback collect-unmatched-chosen(bool);
 
     // a notebook's (level's) tab was chosen
@@ -724,6 +718,10 @@ export component MainWindow inherits Window {
     callback notebook-rename-requested(string);
     // a notebook's tab was middle-clicked
     callback close-tab(int, int);
+    // the same, for the page with this key wherever it is (the pages tree's
+    // menu, for a notebook not shown)
+    callback page-rename-requested(string);
+    callback close-page-key(string);
     // the reference's main window shortcuts: ctrl+t and F9 open a page,
     // ctrl+w closes the page shown
     callback command-palette-requested();
@@ -817,7 +815,6 @@ export component MainWindow inherits Window {
     callback active-predicate-menu-opened(int);
     callback active-predicate-menu-chosen(int);
     callback active-predicate-menu-requested(int, length, length);
-    callback tag-activated(int);
     callback launch-filter();
     // the page chooser: its buttons' labels by number - 1 (as on a number
     // pad, 7 at the top left), none while it is closed
@@ -927,7 +924,8 @@ export component MainWindow inherits Window {
                 return accept;
             }
             if root.shortcut-key(event.text,(event.modifiers.control?1:0)+(event.modifiers.alt?2:0)+(event.modifiers.shift?4:0)+(event.modifiers.meta?32:0)) { return accept; }
-            if (event.modifiers.control && (event.text == "p" || event.text == "P")) { root.command-palette-requested(); return accept; }
+            // (the selection tags box, as the reference's list, takes ctrl+p itself)
+            if (event.modifiers.control && (event.text == "p" || event.text == "P") && !SelectionTagsBox.focused) { root.command-palette-requested(); return accept; }
             if (event.text == Key.F9 || (event.modifiers.control && (event.text == "t" || event.text == "T"))) {
                 root.new-page();
                 return accept;
@@ -1002,6 +1000,8 @@ export component MainWindow inherits Window {
                     selected(key) => { root.page-tree-selected(key); }
                     toggled(key) => { root.page-tree-toggled(key); }
                     navigate(action) => { root.page-tree-navigate(action); }
+                    context-menu(key,x,y) => { root.page-tree-menu-requested(key,x,y); }
+                    dropped(key,y,over) => { root.page-tree-dropped(key,y,over); }
                 }
                 tab-navigation := NotebookNavigation {
                     visible: !root.navigation-tabs-hidden;
@@ -1094,7 +1094,6 @@ export component MainWindow inherits Window {
                     }
                     TagList {
                         tags: root.tags;
-                        activated(i) => { root.tag-activated(i); }
                     }
                 }
                 if root.watcher-page: VerticalBox {
@@ -1140,7 +1139,6 @@ export component MainWindow inherits Window {
                     }
                     TagList {
                         tags: root.tags;
-                        activated(i) => { root.tag-activated(i); }
                     }
                 }
                 if root.importing && root.local-import: VerticalBox {
@@ -1161,7 +1159,6 @@ export component MainWindow inherits Window {
                     }
                     TagList {
                         tags: root.tags;
-                        activated(i) => { root.tag-activated(i); }
                     }
                 }
                 if root.importing && root.simple-downloader: VerticalBox {
@@ -1220,7 +1217,6 @@ export component MainWindow inherits Window {
                     }
                     TagList {
                         tags: root.tags;
-                        activated(i) => { root.tag-activated(i); }
                     }
                 }
                 if root.importing && !root.local-import && !root.simple-downloader && !root.gallery-page && !root.watcher-page: url-sidebar := VerticalBox {
@@ -1283,7 +1279,6 @@ export component MainWindow inherits Window {
                     }
                     TagList {
                         tags: root.tags;
-                        activated(i) => { root.tag-activated(i); }
                     }
                 }
                 if root.note != "" && !root.importing && !root.gallery-page && !root.watcher-page: VerticalBox {
@@ -1311,7 +1306,6 @@ export component MainWindow inherits Window {
                     }
                     TagList {
                         tags: root.tags;
-                        activated(i) => { root.tag-activated(i); }
                     }
                 }
                 // Keep IDs in component scope so geometry is a live binding.
@@ -1334,13 +1328,20 @@ export component MainWindow inherits Window {
                     HorizontalLayout {
                         spacing: 4px;
                         type-choice := WheelMenuChoice {
+                            // a long sort name elides rather than pushing
+                            // the order choice and the cog over each other
+                            shrinkable: true;
+                            min-width: 60px;
                             model: root.sort-names;
                             current-index: root.sort-index;
                             wheel-count: root.sort-wheel-count;
                             selected(index) => { root.sort-chosen(index); }
                         }
                         order-choice := WheelMenuChoice {
-                            width: 130px;
+                            shrinkable: true;
+                            min-width: 60px;
+                            max-width: 130px;
+                            horizontal-stretch: 0;
                             model: root.order-names;
                             current-index: root.order-index;
                             selected(index) => { root.order-chosen(index); }
@@ -1356,11 +1357,27 @@ export component MainWindow inherits Window {
                     // reference's
                     HorizontalLayout {
                         spacing: 4px;
-                        Button {
+                        Rectangle {
                             horizontal-stretch: 1;
-                            text: root.collect-label;
-                            checkable: true;
-                            checked <=> root.collect-open;
+                            min-height: collect-button.min-height;
+                            preferred-height: collect-button.preferred-height;
+                            collect-button := Button {
+                                width: parent.width;
+                                height: parent.height;
+                                text: root.collect-label;
+                                checkable: true;
+                                checked <=> root.collect-open;
+                            }
+                            // (a middle press clears collecting, as the
+                            // reference's event filter on the control does)
+                            TouchArea {
+                                clicked => { root.collect-open = !root.collect-open; }
+                                pointer-event(event) => {
+                                    if (event.kind == PointerEventKind.down && event.button == PointerEventButton.middle) {
+                                        root.collect-cleared();
+                                    }
+                                }
+                            }
                         }
                         SortCollectCog {
                             collect: true;
@@ -1489,7 +1506,6 @@ export component MainWindow inherits Window {
                             // as the reference's star button: load or save a
                             // favourite search
                             if root.can-favourite: Btn {
-                                width: 30px;
                                 text: "★";
                                 clicked => { root.favourites-menu-requested(self.absolute-position.x, self.absolute-position.y + self.height); }
                             }
@@ -1559,7 +1575,6 @@ export component MainWindow inherits Window {
                     Text { text: root.selection-tags-title; color: Theme.text; wrap: word-wrap; }
                     search-tags := TagList {
                         tags: root.tags;
-                        activated(i) => { root.tag-activated(i); }
                     }
                 }
                     }
@@ -1577,7 +1592,8 @@ export component MainWindow inherits Window {
                         background: Theme.colour(10,Theme.window);
                         border-width: 1px; border-color: Theme.border;
                         clip: true;
-                        Image { x:root.preview-media-x;y:root.preview-media-y;width:root.preview-media-width;height:root.preview-media-height;source:root.preview-media;image-fit:fill; }
+                        Image { x:root.preview-media-x;y:root.preview-media-y;width:root.preview-media-width;height:root.preview-media-height;source:root.preview-media;image-fit:fill;accessible-label:"preview media"; }
+                        if root.preview-embed && root.preview-has-media: EmbedButton { x:root.preview-media-x;y:root.preview-media-y;width:root.preview-media-width;height:root.preview-media-height;thumbnail:root.preview-embed-thumbnail;clicked=>{root.preview-embed-clicked();} }
                         if !root.preview-has-media: Text { text: root.preview-loading ? "loading preview" : "no preview available"; color: Theme.text; horizontal-alignment: center; vertical-alignment: center; }
                         preview-top-right := PreviewTopRight {
                             x: parent.width - self.width;
@@ -2462,6 +2478,7 @@ export { ImportFavouriteRow, ImportFavouritePromptWindow } from "import_options_
 
 
 export { ViewerEyeMenu } from "viewer_eye_menu.slint";
+export { TopHoverTips } from "viewer_top_hover.slint";
 
 
 
@@ -2471,7 +2488,7 @@ export { ViewerEyeMenu } from "viewer_eye_menu.slint";
 export { Btn } from "btn.slint";
 export { TagTextRun } from "theme.slint";
 export { Question } from "favourites.slint";
-export { ListTable } from "list_table.slint";
+export { ListKeys, ListTable } from "list_table.slint";
 export { MenuChoiceFrame, WheelMenuChoice } from "menu_choice_wheel.slint";
 export { SortCollectCog } from "sort_collect_cog.slint";
 export { Asking } from "subscriptions.slint";

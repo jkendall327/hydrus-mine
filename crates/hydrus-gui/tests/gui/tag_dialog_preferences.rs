@@ -249,7 +249,9 @@ fn expanded_parent_rows_keep_colour_and_activate_their_originating_tag() {
         tags.row_data(child + 2).unwrap().colour,
         slint::Color::from_rgb_u8(11, 13, 17)
     );
-    manage.invoke_tag_activated(i32::try_from(child + 1).unwrap());
+    // (a double-click on the parent row: its first click selects the tag)
+    manage.invoke_tag_clicked(i32::try_from(child + 1).unwrap(), false, false);
+    manage.invoke_tag_activated(i32::try_from(child + 1).unwrap(), false, false);
     choose_add(
         &manage,
         &recorded["cases"][15]["parent_activation"]["asked"][0],
@@ -266,7 +268,9 @@ fn expanded_parent_rows_keep_colour_and_activate_their_originating_tag() {
         .iter()
         .position(|row| row.text.starts_with("parity:amber old ("))
         .unwrap();
-    reopened.invoke_tag_activated(i32::try_from(child + 1).unwrap());
+    // (a double-click on the parent row: its first click selects the tag)
+    reopened.invoke_tag_clicked(i32::try_from(child + 1).unwrap(), false, false);
+    reopened.invoke_tag_activated(i32::try_from(child + 1).unwrap(), false, false);
     choose_add(
         &reopened,
         &recorded["cases"][15]["parent_activation"]["asked"][0],
@@ -289,7 +293,9 @@ fn expanded_parent_rows_keep_colour_and_activate_their_originating_tag() {
     );
     persisted.invoke_cancel();
     // A callback retained after close cannot stage or commit any new mapping.
-    persisted.invoke_tag_activated(i32::try_from(child + 1).unwrap());
+    // (a double-click on the parent row: its first click selects the tag)
+    persisted.invoke_tag_clicked(i32::try_from(child + 1).unwrap(), false, false);
+    persisted.invoke_tag_activated(i32::try_from(child + 1).unwrap(), false, false);
     persisted.invoke_apply();
     assert!(bound.manage_tags.borrow().is_none());
 }

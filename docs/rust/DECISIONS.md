@@ -227,6 +227,14 @@ in-scope leaves done on 2026-10-14):
   options search bar's placement, tab alignment, thumbnail borders. Users
   see no change.
 
+## Decided (2026-10-27)
+
+- **Switching tabs while a file drag hovers them is deferred.**
+  `interaction-tab-drag` is `out-of-scope`: its tab-reorder half is proven
+  by `audit-options-tabs-drag`, and hovering a file drag over a tab needs
+  the pointer's place during an external drag (winit 0.30 gives none) or
+  thumbnail drags, which hydrus-rs does not have yet. To come back to.
+
 ## Roadmap that follows
 
 1. **Client API parity**, with Hydrus Companion's request patterns checked
