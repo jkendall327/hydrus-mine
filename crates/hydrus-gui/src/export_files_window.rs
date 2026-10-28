@@ -372,7 +372,11 @@ pub fn open(
     });
     let close = Rc::new({
         let weak = window.as_weak();
-        let slots = slots.clone();
+        // (the progress timer's own callback holds this, so a strong timer
+        // here would keep the timer, and all this captures, alive for good)
+        let timer = Rc::downgrade(&slots.timer);
+        let sidecars = slots.sidecars.clone();
+        let window_slot = slots.window.clone();
         let state = state.clone();
         let active = active.clone();
         let tag_menu = tag_menu.clone();
@@ -381,13 +385,15 @@ pub fn open(
             active.set(false);
             tag_menu.close();
             state.borrow().cancel.store(true, Ordering::Release);
-            slots.timer.stop();
-            slots.sidecars.cancel();
+            if let Some(timer) = timer.upgrade() {
+                timer.stop();
+            }
+            sidecars.cancel();
             if let Some(w) = weak.upgrade() {
                 crate::windows::save_named(w.window(), &store, "export_files_frame");
                 let _ = w.hide();
             }
-            slots.window.borrow_mut().take();
+            window_slot.borrow_mut().take();
         }
     });
     window.on_dismissed({

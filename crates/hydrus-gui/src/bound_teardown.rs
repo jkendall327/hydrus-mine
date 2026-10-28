@@ -13,7 +13,7 @@
 //! editors; the formula, png export and interchange slots inside the simple
 //! formulae editor; the comparator, conditional-search, merge options and png
 //! slots inside the auto-resolution editor; the top-level subscription
-//! interchange; the sidecar, export files, external call, open externally,
+//! interchange; the sidecar (the export files dialog's included), external call, open externally,
 //! suggested tags, network data, services, downloader definitions, login,
 //! network sessions and search OR slots. Several of those (the interchange,
 //! png export, network data and network sessions slots) already close their
@@ -132,6 +132,7 @@ pub(crate) fn watch(bound: &crate::Bound) {
     t.add(&rules.locations);
     t.add(&rules.preview_filter);
     t.add(&bound.simple_formulae.list);
+    t.add(&bound.export_files.window);
     let reviews = bound.auto_resolution_reviews.clone();
     t.push(move || {
         let windows: Vec<_> = reviews.borrow_mut().drain(..).collect();
