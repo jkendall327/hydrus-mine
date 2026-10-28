@@ -82,12 +82,13 @@ fn bound_window() -> (
     Arc<Store>,
     MainWindow,
     hydrus_gui::Bound,
+    headless::Windows,
 ) {
     let (dirs, store) = store();
-    let _windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
-    (dirs, store, ui, bound)
+    (dirs, store, ui, bound, windows)
 }
 
 // leaf: audit-options-menu-menu-help-site
@@ -101,7 +102,7 @@ fn bound_window() -> (
 // leaf: audit-options-menu-menu-help-patreon
 #[test]
 fn every_help_link_opens_the_references_url() {
-    let (_dirs, _store, ui, _bound) = bound_window();
+    let (_dirs, _store, ui, _bound, _windows) = bound_window();
     open_help(&ui);
     // the reference's order inside help > links
     hover(&ui, 0, "links");
@@ -155,7 +156,7 @@ fn every_help_link_opens_the_references_url() {
 // leaf: audit-options-menu-menu-help-changelog
 #[test]
 fn open_help_and_changelog_launch_their_pages() {
-    let (_dirs, _store, ui, _bound) = bound_window();
+    let (_dirs, _store, ui, _bound, _windows) = bound_window();
     for (label, page) in [
         ("open help", "index.html"),
         ("changelog", "changelog.html#version_688"),
@@ -167,7 +168,7 @@ fn open_help_and_changelog_launch_their_pages() {
 // leaf: audit-options-menu-menu-help-advanced-mode
 #[test]
 fn advanced_mode_toggles_persists_and_ticks() {
-    let (_dirs, store, ui, _bound) = bound_window();
+    let (_dirs, store, ui, _bound, _windows) = bound_window();
     let read = || {
         let mode: hydrus_store::settings::AdvancedMode =
             store.read(hydrus_store::settings::get).unwrap();
@@ -195,7 +196,7 @@ fn advanced_mode_toggles_persists_and_ticks() {
 #[test]
 fn about_window_header_credits_and_license_match_the_recording() {
     use slint::ComponentHandle as _;
-    let (_dirs, _store, ui, bound) = bound_window();
+    let (_dirs, _store, ui, bound, _windows) = bound_window();
     let recorded = hydrus_testkit::fixture_json("about_window.json");
     let launched: Rc<RefCell<Vec<String>>> = Rc::default();
     hydrus_gui::set_launcher({

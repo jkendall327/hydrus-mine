@@ -2,6 +2,7 @@
 //! as one test binary (each was its own, every one hundreds of megabytes
 //! and linked separately).
 
+mod bound_teardown;
 mod common;
 mod headless_lifetime;
 
