@@ -268,9 +268,8 @@ struct State {
     workers: RefCell<Option<Workers>>,
     alive: Cell<bool>,
     timer: Timer,
-    /// The file last shown, with its embed button's thumbnail while it waits
-    /// behind one.
-    embed: RefCell<Option<(HashId, Option<slint::Image>)>>,
+    /// The embed button's thumbnail, and whose it is.
+    embed_thumbnail: RefCell<Option<(HashId, slint::Image)>>,
 }
 impl State {
     fn time(&self) -> i64 {
@@ -325,28 +324,22 @@ impl State {
             let touched = self.touch.get().wrapping_add(1);
             self.touch.set(touched);
             frame.touched = touched;
-            // (a file that starts with the embed button waits behind it; as
-            // the reference decides that when the file is set, it is decided
-            // once for each file shown)
-            let accepted = canvas.accepted.get();
-            let decided = self.embed.borrow().as_ref().map(|(file, _)| *file);
-            if let Some(file) = accepted
-                && decided != accepted
-            {
-                let image = self
-                    .audio
-                    .embedded(file)
-                    .then(|| crate::viewer::embed_thumbnail(&self.store, file));
-                *self.embed.borrow_mut() = Some((file, image));
-            }
-            let embed = self
-                .embed
-                .borrow()
-                .as_ref()
-                .and_then(|(_, image)| image.clone());
+            // (a file that starts with the embed button waits behind it,
+            // as decided when it was shown)
+            let embed = canvas
+                .accepted
+                .get()
+                .filter(|&file| self.audio.embedded(file));
             window.set_preview_embed(embed.is_some());
-            if let Some(image) = embed {
-                window.set_preview_embed_thumbnail(image);
+            if let Some(file) = embed {
+                let cached = self.embed_thumbnail.borrow().as_ref().map(|(f, _)| *f);
+                if cached != Some(file) {
+                    let image = crate::viewer::embed_thumbnail(&self.store, file);
+                    *self.embed_thumbnail.borrow_mut() = Some((file, image));
+                }
+                if let Some((_, image)) = self.embed_thumbnail.borrow().as_ref() {
+                    window.set_preview_embed_thumbnail(image.clone());
+                }
                 window.set_preview_media(slint::Image::default());
             } else if !self.audio.showing_frames() {
                 window.set_preview_media(frame.image.clone());
@@ -927,7 +920,7 @@ impl Monitor {
             workers: RefCell::new(None),
             alive: Cell::new(true),
             timer: Timer::default(),
-            embed: RefCell::new(None),
+            embed_thumbnail: RefCell::new(None),
         });
         window.on_preview_retired({
             let state = Rc::downgrade(&state);
@@ -993,7 +986,6 @@ impl Monitor {
                         .and_then(|canvas| canvas.accepted.get());
                     if let Some(file) = shown {
                         state.audio.release(file);
-                        *state.embed.borrow_mut() = Some((file, None));
                         state.force_overlay.set(true);
                         state.refresh();
                     }

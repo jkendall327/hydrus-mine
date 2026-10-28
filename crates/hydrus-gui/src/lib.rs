@@ -333,6 +333,7 @@ pub use hydrus_gui_model::{
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
 pub use playback::live_property as live_mpv_property;
+pub use playback::live_targets as live_playback_targets;
 pub use unlock::{finish_locked, unlock_window};
 pub use viewer::MediaViewer;
 
@@ -7245,9 +7246,13 @@ fn open_viewer(
                 }
             }
             viewer_tag_search::refresh(&window, &model);
+            // (a file newly shown waits behind its embed button again; the
+            // same file shown afresh, after an edit, keeps playing, as the
+            // reference sets media only when it differs)
+            if embed_released.get() != Some(model.current()) {
+                embed_released.set(None);
+            }
             drop(model);
-            // (a file newly shown waits behind its embed button again)
-            embed_released.set(None);
             start_media();
             show_ratings();
             if warm_valid() {

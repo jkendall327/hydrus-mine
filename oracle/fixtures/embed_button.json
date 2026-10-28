@@ -221,8 +221,31 @@
   },
   {
    "do": "press",
+   "button": "right",
+   "file": "jpeg_00.jpg",
+   "menu": [],
+   "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+   "embed": true,
+   "embed_rect": [
+    0,
+    0,
+    315,
+    236
+   ],
+   "container": [
+    40,
+    0,
+    315,
+    236
+   ],
+   "media_window": null,
+   "media_window_shown": false
+  },
+  {
+   "do": "press",
    "button": "left",
    "file": "jpeg_00.jpg",
+   "menu": [],
    "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
    "embed": false,
    "embed_rect": null,
@@ -257,8 +280,31 @@
   },
   {
    "do": "press",
+   "button": "right",
+   "file": "gif_animated.gif",
+   "menu": [],
+   "shown": "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+   "embed": true,
+   "embed_rect": [
+    0,
+    0,
+    315,
+    236
+   ],
+   "container": [
+    40,
+    0,
+    315,
+    236
+   ],
+   "media_window": null,
+   "media_window_shown": false
+  },
+  {
+   "do": "press",
    "button": "left",
    "file": "gif_animated.gif",
+   "menu": [],
    "shown": "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
    "embed": false,
    "embed_rect": null,
@@ -285,6 +331,26 @@
    ],
    "media_window": "StaticImage",
    "media_window_shown": true
+  },
+  {
+   "do": "show again",
+   "file": "jpeg_00.jpg",
+   "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+   "embed": true,
+   "embed_rect": [
+    0,
+    0,
+    315,
+    236
+   ],
+   "container": [
+    40,
+    0,
+    315,
+    236
+   ],
+   "media_window": null,
+   "media_window_shown": false
   }
  ]
 }

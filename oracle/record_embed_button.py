@@ -11,7 +11,8 @@ it waits). Then real presses (`QTest.mousePress`) on the embed button: a
 right press (does the viewer's menu open, and does the button stay?) and a
 left press (the button goes and the file's media window is made). Showing
 another file and coming back shows the button again. Then the same in a real
-search page's preview canvas, its thumbnail clicked.
+search page's preview canvas, each file set on it as a selection sets it
+(`SetMedia`).
 
 Usage: QT_QPA_PLATFORM=offscreen ~/pyenv/bin/python oracle/record_embed_button.py
 (writes fixtures/embed_button.json)
@@ -137,9 +138,16 @@ def record(session):
             embed = preview._media_container._embed_button
             if embed.isHidden():
                 continue
-            press(embed, 'left')
-            settle()
-            preview_steps.append(dict(do='press', button='left', file=name, **container_state(preview)))
+            for button in ('right', 'left'):
+                menus.clear()
+                press(embed, button)
+                settle()
+                preview_steps.append(dict(do='press', button=button, file=name, menu=list(menus), **container_state(preview)))
+        # back to the first: it waits again
+        media = [m for m in panel.GetFlatMedia() if m.GetHash() == by_name[FILES[0]]][0]
+        preview.SetMedia(media)
+        settle()
+        preview_steps.append(dict(do='show again', file=FILES[0], **container_state(preview)))
         out['preview'] = preview_steps
         gui._notebook.CloseCurrentPage(polite=False)
         settle()

@@ -1,7 +1,10 @@
+import { Palette } from "std-widgets.slint";
 // The embed button (the reference's `EmbedButton`): a file whose kind starts
 // "with embed button" waits behind it, in the place the file takes, until a
 // left press starts it. It draws the file's thumbnail scaled to its width,
-// a circle with a play triangle in the middle, and a border. In the media
+// a circle with a play triangle in the middle, and a border, in the
+// palette's colours as the reference's (its button and window roles; the
+// outline black, as Qt's shadow role is in both light and dark). In the media
 // viewer the viewer's own pointer area takes the press (so that its other
 // buttons keep doing what they do there); in the preview, the button does.
 export component EmbedButton inherits Rectangle {
@@ -28,7 +31,7 @@ export component EmbedButton inherits Rectangle {
         width: root.radius * 2;
         height: root.radius * 2;
         border-radius: root.radius;
-        background: #e0e0e0;
+        background: Palette.control-background;
         border-width: 1px;
         border-color: #000000;
     }
@@ -41,7 +44,7 @@ export component EmbedButton inherits Rectangle {
         viewbox-width: 1;
         viewbox-height: 1;
         commands: "M 0 0 L 1 0.5 L 0 1 Z";
-        fill: #f6f6f6;
+        fill: Palette.background;
         stroke: #000000;
         stroke-width: 1px;
     }

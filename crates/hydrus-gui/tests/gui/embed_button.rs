@@ -170,21 +170,121 @@ fn a_file_that_starts_with_the_embed_button_waits_behind_it_in_the_viewer() {
         // the media window: none while it waits, a still drawn or a file
         // played when it starts
         let media = viewer.get_media();
+        let played = viewer_plays(&fixture, name);
         match step["media_window"].as_str() {
             None => {
                 assert_eq!(media.size().width, 0, "{what}: nothing drawn");
-                assert!(!viewer.get_scanbar_shown(), "{what}: nothing played");
+                assert!(!played, "{what}: nothing played");
             }
             Some("StaticImage") => {
                 assert!(media.size().width > 0, "{what}: drawn");
-                assert!(!viewer.get_scanbar_shown(), "{what}");
+                assert!(!played, "{what}");
             }
-            Some("MPVWidget") => {
-                assert!(viewer.get_scanbar_shown(), "{what}: played");
-            }
+            Some("MPVWidget") => assert!(played, "{what}: played"),
             Some(other) => panic!("{other}"),
         }
     }
+}
+
+/// Whether the media viewer's player was asked to play the file `name` (with
+/// or without libmpv): one of the players playing it that is not the
+/// preview's.
+fn viewer_plays(fixture: &Fixture, name: &str) -> bool {
+    let hash = hash_of(name).to_string();
+    let of = |path: &std::path::Path| path.to_string_lossy().contains(&hash);
+    let all = hydrus_gui::live_playback_targets()
+        .iter()
+        .filter(|p| of(p))
+        .count();
+    let preview = usize::from(fixture.bound.preview.playing().0.is_some_and(|p| of(&p)));
+    all > preview
+}
+
+/// A file started from its embed button keeps playing when it is shown
+/// afresh after an edit (here a tag shortcut): the reference sets the media
+/// again only when it differs (`Canvas.SetMedia`), so the button does not
+/// come back.
+// leaf: interaction-embed-button
+#[test]
+fn a_started_file_keeps_playing_after_an_edit() {
+    use hydrus_core::shortcuts::{Binding, ContentCommand, Gesture, Settings};
+    let recorded = hydrus_testkit::fixture_json("embed_button.json");
+    let fixture = start();
+    start_with_embed(&fixture.store);
+    let key = fixture
+        .store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .key
+        .clone();
+    // ("v" in the media set adds a tag)
+    fixture
+        .store
+        .write(move |ctx| {
+            let mut settings: Settings = hydrus_store::settings::get(ctx.conn())?;
+            settings.sets.get_mut("media").unwrap().push(Binding {
+                gesture: Gesture::new(0, 118, 0, 0),
+                action: 0,
+                text: None,
+                content: Some(ContentCommand::Tag {
+                    service: key,
+                    tag: "embed edit".into(),
+                    flip: false,
+                }),
+            });
+            hydrus_store::settings::set(ctx.conn(), &settings)
+        })
+        .unwrap();
+    let order = search(&fixture, &recorded);
+    let gif = id_of(&fixture.store, hash_of("gif_animated.gif"));
+    let index = order.iter().position(|&f| f == gif).unwrap();
+    fixture
+        .ui
+        .invoke_thumbnail_activated(i32::try_from(index).unwrap());
+    let viewer = fixture
+        .bound
+        .viewer
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong)
+        .expect("the viewer opens");
+    viewer
+        .window()
+        .set_size(slint::LogicalSize::new(1000.0, 750.0));
+    widgets::settle();
+    assert!(viewer.get_embed_shown());
+    assert!(!viewer_plays(&fixture, "gif_animated.gif"));
+    let at = widgets::position(viewer.window(), LABEL, 0);
+    widgets::click_at(viewer.window(), at, PointerEventButton::Left);
+    widgets::settle();
+    assert!(!viewer.get_embed_shown(), "started");
+    assert!(viewer_plays(&fixture, "gif_animated.gif"), "played");
+    widgets::key(viewer.window(), "v");
+    widgets::settle();
+    let service = fixture.store.snapshot().services.by_name("my tags").unwrap().id;
+    let table = hydrus_store::schema::MappingTables::new(service).current;
+    let tagged: Vec<hydrus_core::TagId> = fixture
+        .store
+        .read(move |conn| {
+            conn.prepare(&format!("SELECT tag_id FROM {table} WHERE hash_id = ?1"))?
+                .query_map([gif], |r| r.get(0))?
+                .collect::<rusqlite::Result<_>>()
+        })
+        .unwrap();
+    let tagged = fixture
+        .store
+        .read(move |conn| hydrus_store::master::tags(conn, &tagged))
+        .unwrap()
+        .values()
+        .any(|t| t.as_str() == "embed edit");
+    assert!(tagged, "the shortcut tagged the file");
+    assert!(!viewer.get_embed_shown(), "the button stays gone");
+    assert!(
+        viewer_plays(&fixture, "gif_animated.gif"),
+        "the file keeps playing"
+    );
 }
 
 /// The preview of a page over the recording's files.
@@ -221,16 +321,25 @@ fn a_file_that_starts_with_the_embed_button_waits_behind_it_in_the_preview() {
         let name = step["file"].as_str().unwrap();
         let file = id_of(&fixture.store, hash_of(name));
         match step["do"].as_str().unwrap() {
-            "show" => {
+            "show" | "show again" => {
                 let index = order.iter().position(|&f| f == file).unwrap();
                 ui.invoke_thumbnail_clicked(i32::try_from(index).unwrap(), false, false);
                 refresh_until(&|| fixture.bound.preview.displayed_file() == Some(file));
             }
             "press" => {
-                assert_eq!(step["button"], "left");
                 let at = widgets::position(ui.window(), LABEL, 0);
-                widgets::click_at(ui.window(), at, PointerEventButton::Left);
-                refresh_until(&|| !ui.get_preview_embed());
+                if step["button"] == "right" {
+                    // (the preview's button opens no menu, and the file
+                    // still waits)
+                    widgets::click_at(ui.window(), at, PointerEventButton::Right);
+                    widgets::settle();
+                    fixture.bound.preview.refresh();
+                    assert!(step["menu"].as_array().unwrap().is_empty());
+                    assert!(!widgets::popup_open(ui.window()), "{what}: no menu");
+                } else {
+                    widgets::click_at(ui.window(), at, PointerEventButton::Left);
+                    refresh_until(&|| !ui.get_preview_embed());
+                }
             }
             other => panic!("{other}"),
         }
@@ -247,10 +356,6 @@ fn a_file_that_starts_with_the_embed_button_waits_behind_it_in_the_preview() {
             let (x, y, w, h) = widgets::bounds(ui.window(), LABEL).unwrap();
             let media = widgets::bounds(ui.window(), "preview media").unwrap();
             assert_eq!((x, y, w, h), media, "{what}");
-            let container = step["container"].as_array().unwrap();
-            let rect = step["embed_rect"].as_array().unwrap();
-            assert_eq!(rect[2], container[2], "{what}");
-            assert_eq!(rect[3], container[3], "{what}");
         }
         match step["media_window"].as_str() {
             None => {
@@ -267,4 +372,59 @@ fn a_file_that_starts_with_the_embed_button_waits_behind_it_in_the_preview() {
             Some(other) => panic!("{other}"),
         }
     }
+}
+
+/// Whether a file waits is decided when it is shown, as the reference's
+/// `SetMedia` decides it: changing the option while the preview shows a file
+/// neither starts one that waits behind its button nor stops one that plays.
+// leaf: interaction-embed-button
+#[test]
+fn the_preview_keeps_its_decision_when_the_option_changes() {
+    let (fixture, order) = preview_page();
+    let ui = &fixture.ui;
+    let refresh_until = |done: &dyn Fn() -> bool| {
+        until(|| {
+            fixture.bound.preview.refresh();
+            done()
+        });
+    };
+    // (long enough for the player's own periodic check of what plays)
+    let wait = || {
+        let started = Instant::now();
+        while started.elapsed() < Duration::from_millis(600) {
+            fixture.bound.preview.refresh();
+            slint::platform::update_timers_and_animations();
+            std::thread::sleep(Duration::from_millis(20));
+        }
+    };
+    let set_embed = |on: bool| {
+        fixture
+            .store
+            .write_and_refresh(move |ctx| {
+                let mut settings: MediaViewerSettings = hydrus_store::settings::get(ctx.conn())?;
+                let mut view = settings.view(Mime::AnimationGif);
+                view.preview_start_with_embed = on;
+                settings.media_view.insert(Mime::AnimationGif.code(), view);
+                hydrus_store::settings::set(ctx.conn(), &settings)
+            })
+            .unwrap();
+    };
+    let gif = id_of(&fixture.store, hash_of("gif_animated.gif"));
+    let index = order.iter().position(|&f| f == gif).unwrap();
+    ui.invoke_thumbnail_clicked(i32::try_from(index).unwrap(), false, false);
+    refresh_until(&|| fixture.bound.preview.displayed_file() == Some(gif));
+    refresh_until(&|| ui.get_preview_embed());
+    // turned off while it waits: it still waits, and nothing plays
+    set_embed(false);
+    wait();
+    assert!(ui.get_preview_embed(), "still waits");
+    assert_eq!(fixture.bound.preview.playing().0, None, "nothing played");
+    // started, then turned on while it plays: it keeps playing
+    let at = widgets::position(ui.window(), LABEL, 0);
+    widgets::click_at(ui.window(), at, PointerEventButton::Left);
+    refresh_until(&|| fixture.bound.preview.playing().0.is_some());
+    set_embed(true);
+    wait();
+    assert!(!ui.get_preview_embed(), "no button");
+    assert!(fixture.bound.preview.playing().0.is_some(), "still plays");
 }

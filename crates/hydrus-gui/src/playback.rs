@@ -67,6 +67,19 @@ pub fn live_property(name: &str) -> Vec<(u64, Option<String>)> {
     })
 }
 
+/// The file each player made for a store on this thread was last asked to
+/// play (with or without libmpv): what tests see of what windows play.
+#[doc(hidden)]
+pub fn live_targets() -> Vec<PathBuf> {
+    LIVE.with(|live| {
+        live.borrow()
+            .iter()
+            .filter_map(std::rc::Weak::upgrade)
+            .filter_map(|playback| playback.target())
+            .collect()
+    })
+}
+
 /// Pause every player on this thread that is playing a file: the reference's
 /// `pub( 'pause_all_media' )`, which each canvas media container answers by
 /// pausing its player if it is presenting media with a duration.
