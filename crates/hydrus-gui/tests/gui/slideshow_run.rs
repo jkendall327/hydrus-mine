@@ -46,6 +46,8 @@ struct Opened {
     store: std::sync::Arc<Store>,
     ui: MainWindow,
     bound: Bound,
+    /// (held to the end, so the windows are hidden and released then)
+    _windows: headless::Windows,
 }
 
 impl Opened {
@@ -58,7 +60,7 @@ impl Opened {
         )
         .unwrap();
         let store = Store::open(dir.path()).unwrap();
-        let _windows = headless::init();
+        let windows = headless::init();
         let ui = MainWindow::new().unwrap();
         let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
         Self {
@@ -66,6 +68,7 @@ impl Opened {
             store,
             ui,
             bound,
+            _windows: windows,
         }
     }
 

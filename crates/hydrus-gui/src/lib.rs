@@ -26,6 +26,7 @@ mod archive_delete_window;
 pub mod archive_repair_window;
 mod auto_resolution_preview_window;
 mod auto_resolution_review_window;
+mod bound_teardown;
 mod selection_tags;
 #[doc(hidden)]
 pub use animation::{decoders_running, frames_decoded};
@@ -526,6 +527,8 @@ pub struct Bound {
     pub maintenance: maintenance_runtime::Control,
     _maintenance_owner: Rc<maintenance_runtime::Owner>,
     _header_approval: network_header_approval::Monitor,
+    /// Hides and forgets the dialogs still open when the last clone goes.
+    teardown: Rc<bound_teardown::Teardown>,
 }
 
 impl std::fmt::Debug for Bound {
@@ -5596,7 +5599,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let debug_session_reload_owner = Rc::new(debug_session_reload.owner());
     let debug_long_popup_owner = Rc::new(debug_long_popup.owner());
     let force_idle_owner = Rc::new(force_idle.owner());
-    Bound {
+    let bound = Bound {
         tray,
         _vacuum_review_owner: Rc::new(vacuum_review_window::Owner::new(&vacuum_review)),
         _file_maintenance_owner: file_maintenance
@@ -5703,7 +5706,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         _geometry_autosave: geometry_autosave,
         clipboard_monitor,
         _header_approval: header_approval,
-    }
+        teardown: Rc::default(),
+    };
+    bound_teardown::watch(&bound);
+    bound
 }
 
 /// The files a menu acts on: the selection (in order) and the focused

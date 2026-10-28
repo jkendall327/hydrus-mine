@@ -15,6 +15,8 @@ struct Opened {
     _ui: MainWindow,
     _bound: hydrus_gui::Bound,
     manage: ManageTagsWindow,
+    /// (held to the end, so the windows are hidden and released then)
+    _windows: headless::Windows,
 }
 
 /// Every file of the fixture has `cog:all`; the first alone has `cog:some`.
@@ -24,7 +26,7 @@ fn open() -> Opened {
 
 fn open_with(before: impl FnOnce(&hydrus_store::Store)) -> Opened {
     let (dirs, store) = crate::subscriptions::store();
-    let _windows = headless::init();
+    let windows = headless::init();
     let mut page = hydrus_gui::SearchPage::new(store.clone());
     page.enter();
     let files = page.results().to_vec();
@@ -61,6 +63,7 @@ fn open_with(before: impl FnOnce(&hydrus_store::Store)) -> Opened {
         _ui: ui,
         _bound: bound,
         manage,
+        _windows: windows,
     }
 }
 
