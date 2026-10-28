@@ -30,6 +30,7 @@ import { LineEdit } from "std-widgets.slint";
 import { ListText } from "theme.slint";
 import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
 import { NoteHoverCopy } from "note_hover_copy.slint";
+import { EmbedButton } from "embed_button.slint";
 
 export struct ViewerUrlRow { label: string, url: string }
 
@@ -222,6 +223,11 @@ export component MediaViewerWindow inherits Window {
     // while the pointer is over it
     in property <[NoteRow]> notes;
     callback note-copy-requested(int);
+    // the file waits behind the embed button, with its thumbnail on it; a
+    // left press on it starts the file
+    in property <bool> embed-shown;
+    in property <image> embed-thumbnail;
+    callback embed-clicked();
     // a note's left click (Manage Notes on it) and right click (fold it)
     callback note-edit-requested(int);
     callback note-toggle-requested(int);
@@ -1040,11 +1046,29 @@ export component MediaViewerWindow inherits Window {
             source: root.sharp;
             image-fit: fill;
         }
+        // a file that starts behind the embed button: the button in its
+        // place (its left press is the pointer area's, below)
+        if root.embed-shown: EmbedButton {
+            x: root.media-x;
+            y: root.media-y;
+            width: root.media-width;
+            height: root.media-height;
+            thumbnail: root.embed-thumbnail;
+            takes-clicks: false;
+        }
         pointer := TouchArea {
             mouse-cursor: root.drag-cursor-hidden || root.cursor-idle-hidden ? MouseCursor.none : MouseCursor.default;
             changed mouse-x => { if (!self.pressed) { root.drag-cursor-hidden = false; } }
             changed mouse-y => { if (!self.pressed) { root.drag-cursor-hidden = false; } }
             pointer-event(event) => {
+                // (a left press on the embed button starts the file, and
+                // nothing else; the other buttons do as they do anywhere)
+                if root.embed-shown && event.kind == PointerEventKind.down && event.button == PointerEventButton.left
+                    && self.mouse-x >= root.media-x && self.mouse-x < root.media-x + root.media-width
+                    && self.mouse-y >= root.media-y && self.mouse-y < root.media-y + root.media-height {
+                    root.embed-clicked();
+                    return;
+                }
                 root.shortcut-mouse-bits=(event.modifiers.control?1:0)+(event.modifiers.alt?2:0)+(event.modifiers.shift?4:0)+(event.modifiers.meta?32:0);
                 if event.kind==PointerEventKind.down {root.shortcut-double-consumed=false;}
                 if (event.kind==PointerEventKind.down || event.kind==PointerEventKind.up) && root.shortcut-mouse(event.button==PointerEventButton.left?0:event.button==PointerEventButton.right?1:event.button==PointerEventButton.middle?2:event.button==PointerEventButton.back?7:event.button==PointerEventButton.forward?8:9,event.kind==PointerEventKind.down?0:1,root.shortcut-mouse-bits) {return;}

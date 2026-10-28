@@ -40,6 +40,7 @@ mod duplicates_page;
 mod duplicates_quick_processing;
 mod duplicates_search_settings;
 mod edit_subscription;
+mod embed_button;
 mod embedded_metadata;
 mod emoji_fonts;
 mod existing_tags_filter;

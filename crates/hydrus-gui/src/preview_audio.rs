@@ -44,15 +44,23 @@ pub(crate) struct PreviewAudio {
     /// Whether a frame of the video has come to replace the still.
     has_frame: Rc<Cell<bool>>,
     checked: Cell<Option<Instant>>,
+    /// The file last shown, and whether it waits behind its embed button
+    /// (until that is pressed).
+    embed: Cell<Option<(HashId, bool)>>,
 }
 
-/// Whether the preview plays `file`: its kind is shown in mpv and not
-/// behind an embed button; with where it is.
-pub(crate) fn playable(store: &Store, file: HashId) -> Option<(std::path::PathBuf, bool)> {
+/// Whether the preview plays `file`: its kind is shown in mpv and it does
+/// not wait behind its embed button (`waits`, decided when it was shown);
+/// with where it is.
+pub(crate) fn playable(
+    store: &Store,
+    file: HashId,
+    waits: bool,
+) -> Option<(std::path::PathBuf, bool)> {
     let (mime, _) = crate::viewer::shape(store, file)?;
     let settings: MediaViewerSettings = store.read(hydrus_store::settings::get).ok()?;
     let view = settings.view(mime);
-    if view.preview_show_action != ShowAction::Mpv || view.preview_start_with_embed {
+    if view.preview_show_action != ShowAction::Mpv || waits {
         return None;
     }
     Some((
@@ -79,6 +87,7 @@ impl PreviewAudio {
             started: RefCell::new(None),
             has_frame: Rc::default(),
             checked: Cell::new(None),
+            embed: Cell::new(None),
         }
     }
 
@@ -89,6 +98,27 @@ impl PreviewAudio {
     /// Whether video frames, not the still, are what the pane shows.
     pub fn showing_frames(&self) -> bool {
         self.has_frame.get()
+    }
+
+    /// The embed button over `file` was pressed: it plays from the next
+    /// `sync`.
+    pub fn release(&self, file: HashId) {
+        self.embed.set(Some((file, false)));
+        self.checked.set(None);
+    }
+
+    /// Whether `file` waits behind its embed button. As the reference
+    /// decides that when the file is set (`SetMedia`), it is decided once
+    /// for each file shown, and a later change to the option leaves it.
+    pub fn embedded(&self, file: HashId) -> bool {
+        match self.embed.get() {
+            Some((decided, waits)) if decided == file => waits,
+            _ => {
+                let waits = crate::viewer::starts_with_embed(&self.store, file, true);
+                self.embed.set(Some((file, waits)));
+                waits
+            }
+        }
     }
 
     /// Play `file` (the preview's accepted file), or stop on `None`. What
@@ -103,7 +133,7 @@ impl PreviewAudio {
             .is_none_or(|at| now.duration_since(at) >= AUDIO_CHECK);
         let changed = self.seen.replace(file) != file;
         if changed || due {
-            let wanted = file.and_then(|file| playable(&self.store, file));
+            let wanted = file.and_then(|file| playable(&self.store, file, self.embedded(file)));
             if changed || *self.started.borrow() != wanted {
                 self.playing.set(file.filter(|_| wanted.is_some()));
                 self.has_frame.set(false);

@@ -35,6 +35,7 @@ export { PreviewRatingRow }
 export { DownloadLine, GalleryData, WatcherData, JobCogMenu }
 export { NetworkErrorWindow } from "importing.slint";
 export { MenuLine, MenuPane, MenuTitle, PopupData }
+import { EmbedButton } from "embed_button.slint";
 export { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
 export { ListText, Theme }
 
@@ -327,6 +328,10 @@ export component MainWindow inherits Window {
     changed layout-available-width => {root.sidebar-measured();}
     changed layout-available-height => {root.sidebar-measured();}
     in property <image> preview-media;
+    // the previewed file waits behind the embed button, with its thumbnail
+    in property <bool> preview-embed;
+    in property <image> preview-embed-thumbnail;
+    callback preview-embed-clicked();
     in property <length> preview-media-x;
     in property <length> preview-media-y;
     in property <length> preview-media-width;
@@ -1587,7 +1592,8 @@ export component MainWindow inherits Window {
                         background: Theme.colour(10,Theme.window);
                         border-width: 1px; border-color: Theme.border;
                         clip: true;
-                        Image { x:root.preview-media-x;y:root.preview-media-y;width:root.preview-media-width;height:root.preview-media-height;source:root.preview-media;image-fit:fill; }
+                        Image { x:root.preview-media-x;y:root.preview-media-y;width:root.preview-media-width;height:root.preview-media-height;source:root.preview-media;image-fit:fill;accessible-label:"preview media"; }
+                        if root.preview-embed && root.preview-has-media: EmbedButton { x:root.preview-media-x;y:root.preview-media-y;width:root.preview-media-width;height:root.preview-media-height;thumbnail:root.preview-embed-thumbnail;clicked=>{root.preview-embed-clicked();} }
                         if !root.preview-has-media: Text { text: root.preview-loading ? "loading preview" : "no preview available"; color: Theme.text; horizontal-alignment: center; vertical-alignment: center; }
                         preview-top-right := PreviewTopRight {
                             x: parent.width - self.width;

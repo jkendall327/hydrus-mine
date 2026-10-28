@@ -437,3 +437,25 @@ pub fn descriptions(window: &slint::Window, label: &str) -> Vec<Option<String>> 
         })
         .collect()
 }
+
+/// Where the first visible widget labelled `label` is laid out in the
+/// window (ignoring popups): its left, top, width and height.
+pub fn bounds(window: &slint::Window, label: &str) -> Option<(f32, f32, f32, f32)> {
+    settle();
+    let inner = WindowInner::from_pub(window);
+    let mut found = None;
+    ItemRc::new_root(inner.component()).visit_descendants(|item| {
+        if item
+            .accessible_string_property(AccessibleStringProperty::Label)
+            .is_some_and(|l| l == label)
+            && item.is_visible()
+        {
+            let size = item.geometry().size;
+            let origin = item.map_to_window(LogicalPoint::new(0.0, 0.0));
+            found = Some((origin.x, origin.y, size.width, size.height));
+            return ControlFlow::Break(());
+        }
+        ControlFlow::Continue(())
+    });
+    found
+}

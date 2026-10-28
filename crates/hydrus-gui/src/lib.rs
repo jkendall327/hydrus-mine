@@ -333,6 +333,7 @@ pub use hydrus_gui_model::{
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
 pub use playback::live_property as live_mpv_property;
+pub use playback::live_targets as live_playback_targets;
 pub use unlock::{finish_locked, unlock_window};
 pub use viewer::MediaViewer;
 
@@ -7135,47 +7136,41 @@ fn open_viewer(
     let last_tag_file = Rc::new(std::cell::Cell::new(None));
     // the Manage Tags window opened from here follows the file shown
     let tags_follow: manage_tags_window::Follow = Rc::default();
-    let show = {
-        let tags_follow = tags_follow.clone();
-        let warm = warm.clone();
-        let warm_valid = warm_valid.clone();
-        let last_tag_file = last_tag_file.clone();
-        let viewing_stats = viewing_stats.clone();
+    // the file's media: drawn, played, its scanbar and volume control; or,
+    // for a kind that starts with the embed button, the button in its place
+    // until a left press on it (`MediaContainer.SetMedia`, `EventEmbedButton`)
+    let embed_released: Rc<Cell<Option<HashId>>> = Rc::default();
+    let start_media: Rc<dyn Fn()> = Rc::new({
         let model = model.clone();
         let weak = window.as_weak();
         let playback = playback.clone();
         let animator = animator.clone();
         let zoomed = zoomed.clone();
         let presenting = presenting.clone();
-        let viewing = viewing.clone();
         let scanbar = scanbar.clone();
         let show_scanbar = show_scanbar.clone();
-        let show_ratings = show_ratings.clone();
-        let show_info = show_info.clone();
+        let embed_released = embed_released.clone();
         move || {
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if !viewing_stats.active() {
-                return;
-            }
             let model = model.borrow();
-            viewing_stats.show(Some(model.current()));
-            if let Some((_, file)) = viewing.borrow_mut().as_mut() {
-                *file = Some(model.current());
-            }
-            window.set_caption(model.caption().into());
-            if last_tag_file.replace(Some(model.current())) != Some(model.current()) {
-                window.invoke_tag_media_changed();
-                let follower = tags_follow.borrow().clone();
-                if let Some(follower) = follower {
-                    follower(model.current());
-                }
-            }
-            viewer_tag_search::refresh(&window, &model);
+            let file = model.current();
+            let embed = embed_released.get() != Some(file)
+                && viewer::starts_with_embed(model.store(), file, false);
+            window.set_embed_shown(embed);
+            window.set_embed_thumbnail(if embed {
+                viewer::embed_thumbnail(model.store(), file)
+            } else {
+                slint::Image::default()
+            });
             // (for a file that plays, its thumbnail until the first frame)
-            let (shape, media) = (model.shape(), model.shared_media());
-            let (playable, animation) = (model.playable(), model.animation());
+            let shape = model.shape();
+            let (media, playable, animation) = if embed {
+                (None, None, None)
+            } else {
+                (model.shared_media(), model.playable(), model.animation())
+            };
             let (duration_ms, num_frames) = viewer::timing(model.store(), model.current());
             window.set_media(media.as_deref().map(image).unwrap_or_default());
             let still = playable.is_none() && animation.is_none();
@@ -7228,7 +7223,50 @@ fn open_viewer(
             // (a control made afresh starts closed)
             window.set_volume_open(false);
             show_scanbar(0.0);
+        }
+    });
+    let show = {
+        let tags_follow = tags_follow.clone();
+        let warm = warm.clone();
+        let warm_valid = warm_valid.clone();
+        let last_tag_file = last_tag_file.clone();
+        let viewing_stats = viewing_stats.clone();
+        let model = model.clone();
+        let weak = window.as_weak();
+        let viewing = viewing.clone();
+        let show_ratings = show_ratings.clone();
+        let show_info = show_info.clone();
+        let embed_released = embed_released.clone();
+        let start_media = start_media.clone();
+        move || {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if !viewing_stats.active() {
+                return;
+            }
+            let model = model.borrow();
+            viewing_stats.show(Some(model.current()));
+            if let Some((_, file)) = viewing.borrow_mut().as_mut() {
+                *file = Some(model.current());
+            }
+            window.set_caption(model.caption().into());
+            if last_tag_file.replace(Some(model.current())) != Some(model.current()) {
+                window.invoke_tag_media_changed();
+                let follower = tags_follow.borrow().clone();
+                if let Some(follower) = follower {
+                    follower(model.current());
+                }
+            }
+            viewer_tag_search::refresh(&window, &model);
+            // (a file newly shown waits behind its embed button again; the
+            // same file shown afresh, after an edit, keeps playing, as the
+            // reference sets media only when it differs)
+            if embed_released.get() != Some(model.current()) {
+                embed_released.set(None);
+            }
             drop(model);
+            start_media();
             show_ratings();
             if warm_valid() {
                 warm.refresh();
@@ -7237,6 +7275,16 @@ fn open_viewer(
         }
     };
     show();
+    // a left press on the embed button: the file starts
+    window.on_embed_clicked({
+        let model = model.clone();
+        let embed_released = embed_released.clone();
+        let start_media = start_media.clone();
+        move || {
+            embed_released.set(Some(model.borrow().current()));
+            start_media();
+        }
+    });
     let recolour: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
         let owner_valid = owner_valid.clone();
@@ -7251,7 +7299,8 @@ fn open_viewer(
             };
             let model = model.borrow();
             let shape = model.shape();
-            if model.playable().is_some()
+            if window.get_embed_shown()
+                || model.playable().is_some()
                 || shape.is_some_and(|shape| hydrus_media::animation::Frames::plays(shape.0))
             {
                 return;

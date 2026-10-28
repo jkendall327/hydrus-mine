@@ -1,0 +1,356 @@
+{
+ "files": {
+  "jpeg_00.jpg": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+  "gif_animated.gif": "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+  "png_00.png": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a"
+ },
+ "order": [
+  "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+  "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+  "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726"
+ ],
+ "viewer": [
+  {
+   "do": "show",
+   "file": "jpeg_00.jpg",
+   "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+   "embed": true,
+   "embed_rect": [
+    0,
+    0,
+    1000,
+    750
+   ],
+   "container": [
+    0,
+    0,
+    1000,
+    750
+   ],
+   "media_window": null,
+   "media_window_shown": false
+  },
+  {
+   "do": "press",
+   "button": "right",
+   "file": "jpeg_00.jpg",
+   "menu": [
+    [
+     "1 jpeg, 1.7 KB",
+     "zoom: 1562.50%",
+     "go fullscreen",
+     "start slideshow",
+     "volume",
+     "remove from view",
+     "archive",
+     "delete from my files",
+     "manage",
+     "locations",
+     "urls",
+     "open",
+     "share",
+     "player"
+    ]
+   ],
+   "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+   "embed": true,
+   "embed_rect": [
+    0,
+    0,
+    1000,
+    750
+   ],
+   "container": [
+    0,
+    0,
+    1000,
+    750
+   ],
+   "media_window": null,
+   "media_window_shown": false
+  },
+  {
+   "do": "press",
+   "button": "left",
+   "file": "jpeg_00.jpg",
+   "menu": [],
+   "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+   "embed": false,
+   "embed_rect": null,
+   "container": [
+    0,
+    0,
+    1000,
+    750
+   ],
+   "media_window": "StaticImage",
+   "media_window_shown": true
+  },
+  {
+   "do": "show",
+   "file": "gif_animated.gif",
+   "shown": "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+   "embed": true,
+   "embed_rect": [
+    0,
+    0,
+    1000,
+    750
+   ],
+   "container": [
+    0,
+    0,
+    1000,
+    750
+   ],
+   "media_window": null,
+   "media_window_shown": false
+  },
+  {
+   "do": "press",
+   "button": "right",
+   "file": "gif_animated.gif",
+   "menu": [
+    [
+     "1 animated gif, 19.3 KB",
+     "zoom: 833.33%",
+     "go fullscreen",
+     "start slideshow",
+     "volume",
+     "remove from view",
+     "archive",
+     "delete from my files",
+     "manage",
+     "locations",
+     "urls",
+     "open",
+     "share",
+     "player"
+    ]
+   ],
+   "shown": "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+   "embed": true,
+   "embed_rect": [
+    0,
+    0,
+    1000,
+    750
+   ],
+   "container": [
+    0,
+    0,
+    1000,
+    750
+   ],
+   "media_window": null,
+   "media_window_shown": false
+  },
+  {
+   "do": "press",
+   "button": "left",
+   "file": "gif_animated.gif",
+   "menu": [],
+   "shown": "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+   "embed": false,
+   "embed_rect": null,
+   "container": [
+    0,
+    0,
+    1000,
+    750
+   ],
+   "media_window": "MPVWidget",
+   "media_window_shown": true
+  },
+  {
+   "do": "show",
+   "file": "png_00.png",
+   "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+   "embed": false,
+   "embed_rect": null,
+   "container": [
+    0,
+    0,
+    1000,
+    750
+   ],
+   "media_window": "StaticImage",
+   "media_window_shown": true
+  },
+  {
+   "do": "show again",
+   "file": "jpeg_00.jpg",
+   "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+   "embed": true,
+   "embed_rect": [
+    0,
+    0,
+    1000,
+    750
+   ],
+   "container": [
+    0,
+    0,
+    1000,
+    750
+   ],
+   "media_window": null,
+   "media_window_shown": false
+  }
+ ],
+ "preview": [
+  {
+   "do": "show",
+   "file": "jpeg_00.jpg",
+   "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+   "embed": true,
+   "embed_rect": [
+    0,
+    0,
+    315,
+    236
+   ],
+   "container": [
+    40,
+    0,
+    315,
+    236
+   ],
+   "media_window": null,
+   "media_window_shown": false
+  },
+  {
+   "do": "press",
+   "button": "right",
+   "file": "jpeg_00.jpg",
+   "menu": [],
+   "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+   "embed": true,
+   "embed_rect": [
+    0,
+    0,
+    315,
+    236
+   ],
+   "container": [
+    40,
+    0,
+    315,
+    236
+   ],
+   "media_window": null,
+   "media_window_shown": false
+  },
+  {
+   "do": "press",
+   "button": "left",
+   "file": "jpeg_00.jpg",
+   "menu": [],
+   "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+   "embed": false,
+   "embed_rect": null,
+   "container": [
+    40,
+    0,
+    315,
+    236
+   ],
+   "media_window": "StaticImage",
+   "media_window_shown": true
+  },
+  {
+   "do": "show",
+   "file": "gif_animated.gif",
+   "shown": "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+   "embed": true,
+   "embed_rect": [
+    0,
+    0,
+    315,
+    236
+   ],
+   "container": [
+    40,
+    0,
+    315,
+    236
+   ],
+   "media_window": null,
+   "media_window_shown": false
+  },
+  {
+   "do": "press",
+   "button": "right",
+   "file": "gif_animated.gif",
+   "menu": [],
+   "shown": "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+   "embed": true,
+   "embed_rect": [
+    0,
+    0,
+    315,
+    236
+   ],
+   "container": [
+    40,
+    0,
+    315,
+    236
+   ],
+   "media_window": null,
+   "media_window_shown": false
+  },
+  {
+   "do": "press",
+   "button": "left",
+   "file": "gif_animated.gif",
+   "menu": [],
+   "shown": "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+   "embed": false,
+   "embed_rect": null,
+   "container": [
+    40,
+    0,
+    315,
+    236
+   ],
+   "media_window": "MPVWidget",
+   "media_window_shown": true
+  },
+  {
+   "do": "show",
+   "file": "png_00.png",
+   "shown": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+   "embed": false,
+   "embed_rect": null,
+   "container": [
+    40,
+    0,
+    315,
+    236
+   ],
+   "media_window": "StaticImage",
+   "media_window_shown": true
+  },
+  {
+   "do": "show again",
+   "file": "jpeg_00.jpg",
+   "shown": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+   "embed": true,
+   "embed_rect": [
+    0,
+    0,
+    315,
+    236
+   ],
+   "container": [
+    40,
+    0,
+    315,
+    236
+   ],
+   "media_window": null,
+   "media_window_shown": false
+  }
+ ]
+}
