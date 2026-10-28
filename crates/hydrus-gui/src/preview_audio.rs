@@ -133,8 +133,7 @@ impl PreviewAudio {
             .is_none_or(|at| now.duration_since(at) >= AUDIO_CHECK);
         let changed = self.seen.replace(file) != file;
         if changed || due {
-            let wanted =
-                file.and_then(|file| playable(&self.store, file, self.embedded(file)));
+            let wanted = file.and_then(|file| playable(&self.store, file, self.embedded(file)));
             if changed || *self.started.borrow() != wanted {
                 self.playing.set(file.filter(|_| wanted.is_some()));
                 self.has_frame.set(false);

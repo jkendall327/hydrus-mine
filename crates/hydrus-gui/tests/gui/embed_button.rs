@@ -263,14 +263,21 @@ fn a_started_file_keeps_playing_after_an_edit() {
     assert!(viewer_plays(&fixture, "gif_animated.gif"), "played");
     widgets::key(viewer.window(), "v");
     widgets::settle();
-    let service = fixture.store.snapshot().services.by_name("my tags").unwrap().id;
+    let service = fixture
+        .store
+        .snapshot()
+        .services
+        .by_name("my tags")
+        .unwrap()
+        .id;
     let table = hydrus_store::schema::MappingTables::new(service).current;
     let tagged: Vec<hydrus_core::TagId> = fixture
         .store
         .read(move |conn| {
-            conn.prepare(&format!("SELECT tag_id FROM {table} WHERE hash_id = ?1"))?
+            Ok(conn
+                .prepare(&format!("SELECT tag_id FROM {table} WHERE hash_id = ?1"))?
                 .query_map([gif], |r| r.get(0))?
-                .collect::<rusqlite::Result<_>>()
+                .collect::<rusqlite::Result<_>>()?)
         })
         .unwrap();
     let tagged = fixture
