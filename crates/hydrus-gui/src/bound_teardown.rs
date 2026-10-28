@@ -27,6 +27,17 @@ use std::rc::Rc;
 
 use slint::ComponentHandle as _;
 
+/// Alive until this thread's thread-locals are being destroyed. It is first
+/// touched by [`watch`], after Slint's own thread-locals, so it is destroyed
+/// before them (thread-locals go in the reverse order they were made).
+struct Alive;
+impl Drop for Alive {
+    fn drop(&mut self) {}
+}
+thread_local! {
+    static ALIVE: Alive = const { Alive };
+}
+
 /// What the last clone of a binding hides and forgets, as its own field of
 /// [`Bound`](crate::Bound) so that it drops only with the last clone.
 #[derive(Default)]
@@ -56,14 +67,22 @@ impl Teardown {
 
 impl Drop for Teardown {
     fn drop(&mut self) {
+        // A binding dropped while the thread's thread-locals are destroyed
+        // (one kept by something a thread-local owns) leaves its windows as
+        // they are: Slint's state may be gone, and a panic in a thread-local
+        // destructor aborts the process. Nor may a panic here escape.
+        if ALIVE.try_with(|_| ()).is_err() {
+            return;
+        }
         for forget in self.0.get_mut().drain(..) {
-            forget();
+            let _ = std::panic::catch_unwind(std::panic::AssertUnwindSafe(forget));
         }
     }
 }
 
 /// Registers `bound`'s dialog slots with its teardown.
 pub(crate) fn watch(bound: &crate::Bound) {
+    ALIVE.with(|_| ());
     let t = &bound.teardown;
     // (the predicate editors are not here: their owners retire them, with
     // their cleanup notices, when the last clone goes)

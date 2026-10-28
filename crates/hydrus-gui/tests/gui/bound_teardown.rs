@@ -3,9 +3,15 @@
 //! dialog frees it already; this is for those left open, at a test's end or
 //! the client's exit.)
 
+use std::cell::RefCell;
+
 use slint::ComponentHandle as _;
 
-use hydrus_gui::{MainWindow, Pages, bind, headless};
+use hydrus_gui::{Bound, MainWindow, Pages, SearchPage, bind, headless};
+
+thread_local! {
+    static STASH: RefCell<Option<Bound>> = const { RefCell::new(None) };
+}
 
 #[test]
 fn the_last_binding_frees_the_dialogs_left_open() {
@@ -44,4 +50,28 @@ fn the_last_binding_frees_the_dialogs_left_open() {
     );
     drop(ui);
     drop(windows);
+}
+
+/// A binding kept by something a thread-local owns is dropped while the
+/// thread's thread-locals are destroyed, after Slint's own: its teardown
+/// must leave the windows rather than call into Slint (a panic in a
+/// thread-local destructor aborts the whole test binary).
+#[test]
+fn a_binding_dropped_as_its_thread_ends_does_not_abort() {
+    let ended = std::thread::spawn(|| {
+        // (made before Slint's thread-locals, so destroyed after them)
+        STASH.with(|_| ());
+        let (_dirs, store) = crate::subscriptions::store();
+        let windows = headless::init();
+        let ui = MainWindow::new().unwrap();
+        ui.show().unwrap();
+        let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+        crate::common::main_menu::choose(&ui, &["help"], "about");
+        assert!(bound.about.borrow().is_some());
+        STASH.with(|stash| *stash.borrow_mut() = Some(bound));
+        drop(ui);
+        drop(windows);
+    })
+    .join();
+    assert!(ended.is_ok());
 }
