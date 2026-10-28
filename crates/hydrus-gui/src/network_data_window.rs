@@ -24,7 +24,8 @@ use std::{
 
 enum Operation {
     Preferences(model::BandwidthReviewPreferences),
-    Refresh,
+    /// Load the review again; the number of the request it answers.
+    Refresh(u64),
     Save(RulesDraft, bool),
     DeleteHistory(Vec<NetworkContext>),
     Reset,
@@ -32,7 +33,9 @@ enum Operation {
     Stop,
 }
 enum Event {
-    Review(Result<Box<Review>, String>),
+    /// A review loaded after the refresh request with this number (and
+    /// every one before it) was taken.
+    Review(u64, Result<Box<Review>, String>),
     Written(Result<(), String>),
 }
 struct Worker {
@@ -45,6 +48,7 @@ impl Worker {
         let (events, receive) = crossbeam_channel::unbounded();
         let owner = std::thread::current().id();
         std::thread::spawn(move || {
+            let mut answered = 0;
             loop {
                 let operation = requests.recv_timeout(Duration::from_millis(500));
                 let result = match operation {
@@ -68,24 +72,27 @@ impl Worker {
                         if let Err(e) = store
                             .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &preferences))
                         {
-                            let _ = events.send(Event::Review(Err(e.to_string())));
+                            let _ = events.send(Event::Review(answered, Err(e.to_string())));
                         }
                         None
                     }
-                    Ok(Operation::Refresh) | Err(crossbeam_channel::RecvTimeoutError::Timeout) => {
+                    Ok(Operation::Refresh(request)) => {
+                        answered = answered.max(request);
                         None
                     }
+                    Err(crossbeam_channel::RecvTimeoutError::Timeout) => None,
                 };
                 if let Some(result) = result {
                     let _ = events.send(Event::Written(result));
                 }
                 // A closing view can still have an owner-release command queued.
                 let _ = events.send(Event::Review(
+                    answered,
                     Review::load(&store, now_for(owner)).map(Box::new),
                 ));
             }
         });
-        let _ = send.send(Operation::Refresh);
+        let _ = send.send(Operation::Refresh(0));
         Self { send, receive }
     }
 }
@@ -438,7 +445,7 @@ impl Bandwidth {
     fn poll(self: &Rc<Self>) {
         for event in self.worker.receive.try_iter() {
             match event {
-                Event::Review(Ok(review)) => {
+                Event::Review(_, Ok(review)) => {
                     *self.review.borrow_mut() = Some(*review);
                     self.show();
                     let requested = self.requested_edit.borrow_mut().take();
@@ -446,7 +453,7 @@ impl Bandwidth {
                         self.edit(context);
                     }
                 }
-                Event::Review(Err(error)) => self.window.set_status(error.into()),
+                Event::Review(_, Err(error)) => self.window.set_status(error.into()),
                 Event::Written(result) => {
                     self.window.set_busy(false);
                     if let Some(edit) = self.edit.borrow().as_ref() {
@@ -774,7 +781,7 @@ pub fn open_bandwidth(store: Arc<Store>, slots: &Slots) -> Result<BandwidthWindo
                         model::BandwidthReviewPreferences { history },
                     ));
                 }
-                let _ = s.worker.send.send(Operation::Refresh);
+                let _ = s.worker.send.send(Operation::Refresh(0));
             }
         }
     });
@@ -958,6 +965,8 @@ struct Jobs {
     order: RefCell<Vec<u64>>,
     selection: RefCell<ListSelection<u64>>,
     manual: Cell<bool>,
+    /// The number of the latest refresh asked for.
+    requested: Cell<u64>,
     /// The newest snapshot's epoch and time (the rows shown may be older: the
     /// reference's panel is a manual snapshot unless it is given an interval).
     latest: RefCell<network_runtime::Snapshot>,
@@ -966,6 +975,14 @@ struct Jobs {
     error: RefCell<String>,
 }
 impl Jobs {
+    /// Ask the worker for a fresh snapshot, and show the first loaded after
+    /// asking.
+    fn request_refresh(&self) {
+        let request = self.requested.get() + 1;
+        self.requested.set(request);
+        self.manual.set(true);
+        let _ = self.worker.send.send(Operation::Refresh(request));
+    }
     /// Whether the daemon is publishing now (not whether the rows shown are).
     fn fresh(&self) -> bool {
         self.latest.borrow().fresh(now())
@@ -987,8 +1004,7 @@ impl Jobs {
             Duration::from_secs_f64(seconds),
             move || {
                 if let Some(s) = state.upgrade() {
-                    s.manual.set(true);
-                    let _ = s.worker.send.send(Operation::Refresh);
+                    s.request_refresh();
                 }
             },
         );
@@ -1232,13 +1248,16 @@ impl Jobs {
     fn poll(&self) {
         for event in self.worker.receive.try_iter() {
             match event {
-                Event::Review(Ok(review)) => {
+                Event::Review(answered, Ok(review)) => {
                     *self.latest.borrow_mut() = network_runtime::Snapshot {
                         epoch: review.runtime.epoch.clone(),
                         at: review.runtime.at,
                         ..Default::default()
                     };
-                    if self.manual.replace(false) {
+                    // (only a review loaded after the latest refresh asked
+                    // for: one already loading then is older than the ask)
+                    if self.manual.get() && answered >= self.requested.get() {
+                        self.manual.set(false);
                         if self
                             .review
                             .borrow()
@@ -1251,7 +1270,7 @@ impl Jobs {
                         self.show();
                     }
                 }
-                Event::Review(Err(e)) | Event::Written(Err(e)) => {
+                Event::Review(_, Err(e)) | Event::Written(Err(e)) => {
                     self.error.borrow_mut().clone_from(&e);
                     self.window.set_status(e.into());
                 }
@@ -1339,6 +1358,7 @@ pub fn open_jobs(store: Arc<Store>, slots: &Slots) -> Result<NetworkJobsWindow, 
         order: RefCell::default(),
         selection: RefCell::default(),
         manual: Cell::new(true),
+        requested: Cell::new(0),
         latest: RefCell::default(),
         refresh_timer: Timer::default(),
         popup: crate::popup_menu::Popup::new(),
@@ -1370,8 +1390,7 @@ pub fn open_jobs(store: Arc<Store>, slots: &Slots) -> Result<NetworkJobsWindow, 
         let state = Rc::downgrade(&state);
         move || {
             if let Some(s) = state.upgrade() {
-                s.manual.set(true);
-                let _ = s.worker.send.send(Operation::Refresh);
+                s.request_refresh();
             }
         }
     });
