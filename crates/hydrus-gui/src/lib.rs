@@ -528,7 +528,7 @@ pub struct Bound {
     _maintenance_owner: Rc<maintenance_runtime::Owner>,
     _header_approval: network_header_approval::Monitor,
     /// Hides and forgets the dialogs still open when the last clone goes.
-    _teardown: Rc<bound_teardown::Teardown>,
+    teardown: Rc<bound_teardown::Teardown>,
 }
 
 impl std::fmt::Debug for Bound {
@@ -5706,7 +5706,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         _geometry_autosave: geometry_autosave,
         clipboard_monitor,
         _header_approval: header_approval,
-        _teardown: Rc::default(),
+        teardown: Rc::default(),
     };
     bound_teardown::watch(&bound);
     bound

@@ -51,7 +51,7 @@ impl Drop for Teardown {
 
 /// Registers `bound`'s dialog slots with its teardown.
 pub(crate) fn watch(bound: &crate::Bound) {
-    let t = &bound._teardown;
+    let t = &bound.teardown;
     // (the predicate editors are not here: their owners retire them, with
     // their cleanup notices, when the last clone goes)
     t.add(&bound.viewer);
