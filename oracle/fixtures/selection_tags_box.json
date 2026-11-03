@@ -4172,6 +4172,515 @@
    "most_used": []
   }
  ],
+ "more_menus": [
+  {
+   "case": "a parent with a child",
+   "view": null,
+   "selected": [
+    "group:alpha"
+   ],
+   "menu": [
+    {
+     "copy": [
+      "group:alpha",
+      "alpha",
+      "---",
+      "group:alpha with counts",
+      "alpha with counts",
+      "---",
+      "all tags",
+      "all subtags",
+      "all tags with counts",
+      "all subtags with counts"
+     ]
+    },
+    {
+     "no siblings": [
+      "add siblings to group:alpha"
+     ]
+    },
+    {
+     "0 parents, 1 children": [
+      "add parents to group:alpha",
+      "---",
+      "--downloader tags, my tags--",
+      "child: alpha:first"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for group:alpha",
+      "---",
+      "open a new duplicate filter page for group:alpha"
+     ]
+    },
+    {
+     "search": [
+      "add group:alpha to current search",
+      "invert: add -group:alpha to current search",
+      "---",
+      "start an OR predicate with group:alpha",
+      "---",
+      "add group:*anything* to current search",
+      "exclude group:*anything* from the current search"
+     ]
+    },
+    {
+     "select": [
+      "files with \"group:alpha\""
+     ]
+    },
+    "---",
+    {
+     "hide": [
+      "\"group\" tags from here",
+      "\"group:alpha\" from here"
+     ]
+    },
+    {
+     "favourites": [
+      "add \"group:alpha\" to favourites",
+      "---",
+      "add \"group:alpha\" to most used for \"downloader tags\"",
+      "add \"group:alpha\" to most used for \"my tags\"",
+      "add \"group:alpha\" to most used for \"second tags\""
+     ]
+    },
+    {
+     "tag display (experimental)": [
+      [
+       "check",
+       "switch to \"multiple media view tags\"",
+       true
+      ],
+      [
+       "check",
+       "switch to \"single media view tags\"",
+       false
+      ],
+      [
+       "check",
+       "switch to \"display tags\"",
+       false
+      ],
+      [
+       "check",
+       "switch to \"stored tags\"",
+       false
+      ]
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ]
+  },
+  {
+   "case": "a tag that is not its sibling's ideal",
+   "view": "switch to \"stored tags\"",
+   "selected": [
+    "old:sibling"
+   ],
+   "menu": [
+    {
+     "copy": [
+      "old:sibling",
+      "sibling",
+      "---",
+      "old:sibling with counts",
+      "sibling with counts",
+      "---",
+      "all tags",
+      "all subtags",
+      "all tags with counts",
+      "all subtags with counts"
+     ]
+    },
+    {
+     "1 siblings": [
+      "add siblings to old:sibling",
+      "---",
+      "ideal is \"new:sibling\" on: downloader tags, my tags"
+     ]
+    },
+    {
+     "no parents": [
+      "add parents to old:sibling"
+     ]
+    },
+    "---",
+    {
+     "open": [
+      "open a new search page for old:sibling",
+      "---",
+      "open a new duplicate filter page for old:sibling"
+     ]
+    },
+    {
+     "search": [
+      "add old:sibling to current search",
+      "invert: add -old:sibling to current search",
+      "---",
+      "start an OR predicate with old:sibling",
+      "---",
+      "add old:*anything* to current search",
+      "exclude old:*anything* from the current search"
+     ]
+    },
+    {
+     "select": [
+      "files with \"old:sibling\""
+     ]
+    },
+    {
+     "favourites": [
+      "add \"old:sibling\" to favourites",
+      "---",
+      "add \"old:sibling\" to most used for \"downloader tags\"",
+      "add \"old:sibling\" to most used for \"my tags\"",
+      "add \"old:sibling\" to most used for \"second tags\""
+     ]
+    },
+    {
+     "tag display (experimental)": [
+      [
+       "check",
+       "switch to \"multiple media view tags\"",
+       false
+      ],
+      [
+       "check",
+       "switch to \"single media view tags\"",
+       false
+      ],
+      [
+       "check",
+       "switch to \"display tags\"",
+       false
+      ],
+      [
+       "check",
+       "switch to \"stored tags\"",
+       true
+      ]
+     ]
+    },
+    "---",
+    {
+     "maintenance": [
+      "regenerate tag display"
+     ]
+    }
+   ]
+  }
+ ],
+ "more_triggers": [
+  {
+   "selected": [
+    "alpha:first"
+   ],
+   "path": [
+    "1 parents, 0 children",
+    "parent: group:alpha"
+   ],
+   "copied": [
+    "group:alpha"
+   ]
+  },
+  {
+   "selected": [
+    "group:alpha"
+   ],
+   "path": [
+    "0 parents, 1 children",
+    "child: alpha:first"
+   ],
+   "copied": [
+    "alpha:first"
+   ]
+  }
+ ],
+ "or_replace": {
+  "searched_before": [
+   "box:anchor",
+   "solo"
+  ],
+  "tags": [
+   "creator:anonymous artist",
+   "series:spaced name",
+   "blue eyes",
+   "safe",
+   "solo",
+   "meta:low resolution",
+   "alpha:first",
+   "alpha:second",
+   "box:anchor",
+   "filename:audio",
+   "group:alpha",
+   "new:sibling",
+   "page:3",
+   "page:10",
+   "source:fixture",
+   "volume:3",
+   "zeta:last",
+   "キャラクター:初音ミク"
+  ],
+  "selected": [
+   "box:anchor",
+   "solo"
+  ],
+  "search_menu": [
+   "remove selected from current search",
+   "invert selected and add to current search",
+   "---",
+   "replace selected with their OR",
+   "start an OR predicate with selected"
+  ],
+  "label": "replace selected with their OR",
+  "searched": [
+   "box:anchor OR solo"
+  ],
+  "or_editor": [],
+  "emitted": [
+   {
+    "predicates": [
+     "box:anchor",
+     "solo"
+    ],
+    "permit_add": false,
+    "permit_remove": true
+   },
+   {
+    "predicates": [
+     "box:anchor OR solo"
+    ],
+    "permit_add": true,
+    "permit_remove": false
+   }
+  ]
+ },
+ "views": {
+  "hidden": {
+   "single media view tags": [
+    "solo"
+   ],
+   "multiple media view tags": [
+    "zeta:last"
+   ]
+  },
+  "drawn": [
+   "creator:anonymous artist (1)",
+   "series:spaced name (2)",
+   "blue eyes (1)",
+   "plain tag (1)",
+   "safe (2)",
+   "solo (2)",
+   "meta:low resolution (1)",
+   "alpha:first (2)",
+   "alpha:second (1)",
+   "box:anchor (3)",
+   "filename:apng_animated (1)",
+   "filename:audio (1)",
+   "group:alpha (2)",
+   "new:sibling (1)",
+   "page:3 (1)",
+   "page:10 (1)",
+   "source:fixture (2)",
+   "volume:3 (1)",
+   "キャラクター:初音ミク (1)"
+  ],
+  "switches": [
+   {
+    "label": "switch to \"single media view tags\"",
+    "drawn": [
+     "creator:anonymous artist (1)",
+     "series:spaced name (2)",
+     "blue eyes (1)",
+     "plain tag (1)",
+     "safe (2)",
+     "meta:low resolution (1)",
+     "alpha:first (2)",
+     "alpha:second (1)",
+     "box:anchor (3)",
+     "filename:apng_animated (1)",
+     "filename:audio (1)",
+     "group:alpha (2)",
+     "new:sibling (1)",
+     "page:3 (1)",
+     "page:10 (1)",
+     "source:fixture (2)",
+     "volume:3 (1)",
+     "zeta:last (1)",
+     "キャラクター:初音ミク (1)"
+    ],
+    "menu": [
+     [
+      "check",
+      "switch to \"multiple media view tags\"",
+      false
+     ],
+     [
+      "check",
+      "switch to \"single media view tags\"",
+      true
+     ],
+     [
+      "check",
+      "switch to \"display tags\"",
+      false
+     ],
+     [
+      "check",
+      "switch to \"stored tags\"",
+      false
+     ]
+    ]
+   },
+   {
+    "label": "switch to \"display tags\"",
+    "drawn": [
+     "creator:anonymous artist (1)",
+     "series:spaced name (2)",
+     "blue eyes (1)",
+     "plain tag (1)",
+     "safe (2)",
+     "solo (2)",
+     "meta:low resolution (1)",
+     "alpha:first (2)",
+     "alpha:second (1)",
+     "box:anchor (3)",
+     "filename:apng_animated (1)",
+     "filename:audio (1)",
+     "group:alpha (2)",
+     "new:sibling (1)",
+     "page:3 (1)",
+     "page:10 (1)",
+     "source:fixture (2)",
+     "volume:3 (1)",
+     "zeta:last (1)",
+     "キャラクター:初音ミク (1)"
+    ],
+    "menu": [
+     [
+      "check",
+      "switch to \"multiple media view tags\"",
+      false
+     ],
+     [
+      "check",
+      "switch to \"single media view tags\"",
+      false
+     ],
+     [
+      "check",
+      "switch to \"display tags\"",
+      true
+     ],
+     [
+      "check",
+      "switch to \"stored tags\"",
+      false
+     ]
+    ]
+   },
+   {
+    "label": "switch to \"stored tags\"",
+    "drawn": [
+     "creator:anonymous artist (1)",
+     "series:spaced name (2)",
+     "blue eyes (1)",
+     "plain tag (1)",
+     "safe (2)",
+     "solo (2)",
+     "meta:lowres (1)",
+     "alpha:first (2)",
+     "alpha:second (1)",
+     "box:anchor (3)",
+     "filename:apng_animated (1)",
+     "filename:audio (1)",
+     "old:sibling (1)",
+     "page:3 (1)",
+     "page:10 (1)",
+     "source:fixture (2)",
+     "volume:3 (1)",
+     "zeta:last (1)",
+     "キャラクター:初音ミク (1)"
+    ],
+    "menu": [
+     [
+      "check",
+      "switch to \"multiple media view tags\"",
+      false
+     ],
+     [
+      "check",
+      "switch to \"single media view tags\"",
+      false
+     ],
+     [
+      "check",
+      "switch to \"display tags\"",
+      false
+     ],
+     [
+      "check",
+      "switch to \"stored tags\"",
+      true
+     ]
+    ]
+   },
+   {
+    "label": "switch to \"multiple media view tags\"",
+    "drawn": [
+     "creator:anonymous artist (1)",
+     "series:spaced name (2)",
+     "blue eyes (1)",
+     "plain tag (1)",
+     "safe (2)",
+     "solo (2)",
+     "meta:low resolution (1)",
+     "alpha:first (2)",
+     "alpha:second (1)",
+     "box:anchor (3)",
+     "filename:apng_animated (1)",
+     "filename:audio (1)",
+     "group:alpha (2)",
+     "new:sibling (1)",
+     "page:3 (1)",
+     "page:10 (1)",
+     "source:fixture (2)",
+     "volume:3 (1)",
+     "キャラクター:初音ミク (1)"
+    ],
+    "menu": [
+     [
+      "check",
+      "switch to \"multiple media view tags\"",
+      true
+     ],
+     [
+      "check",
+      "switch to \"single media view tags\"",
+      false
+     ],
+     [
+      "check",
+      "switch to \"display tags\"",
+      false
+     ],
+     [
+      "check",
+      "switch to \"stored tags\"",
+      false
+     ]
+    ]
+   }
+  ]
+ },
  "hides": [
   {
    "selected": [

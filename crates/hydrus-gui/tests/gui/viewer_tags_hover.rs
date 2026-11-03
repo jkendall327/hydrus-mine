@@ -503,3 +503,93 @@ fn escape_closes_the_hovers_menu_and_keeps_its_selection() {
     );
     v.viewer.invoke_tag_menu_dismissed();
 }
+
+/// The keys the first replay leaves out: page up and down (the hover holds
+/// all of the file's tags, as the reference's does at its recorded size),
+/// with shift; ctrl+arrows; ctrl+n and ctrl+p; ctrl+shift+c and
+/// ctrl+insert (`more_steps`).
+// leaf: viewer-tags-hover-keyboard
+#[test]
+fn hover_page_keys_ctrl_moves_and_other_copies_are_the_references() {
+    const PAGE_UP: &str = "\u{F72C}";
+    const PAGE_DOWN: &str = "\u{F72D}";
+    const INSERT: &str = "\u{F727}";
+    let v = Hover::new();
+    assert!(
+        v.fixture["rows_per_page"].as_u64().unwrap()
+            >= v.fixture["tags"].as_array().unwrap().len() as u64,
+        "the recorded hover holds every row"
+    );
+    let key = |text: &str, mods: Mods| {
+        input::key(v.viewer.window(), text, mods);
+        headless::render(&v.drawn, 1000, 650);
+    };
+    let copies = |n: usize| json!(v.h.copies.borrow()[n..].to_vec());
+    for step in v.fixture["more_steps"].as_array().unwrap() {
+        let name = step["step"].as_str().unwrap();
+        let n = v.h.copies.borrow().len();
+        match name {
+            "click plain tag" | "click plain tag again" => v.click(Some("plain tag"), NONE),
+            "page down" => key(PAGE_DOWN, NONE),
+            "page up" => key(PAGE_UP, NONE),
+            "shift page down" => key(PAGE_DOWN, SHIFT),
+            "shift page up" => key(PAGE_UP, SHIFT),
+            "ctrl down" => key(DOWN, CTRL),
+            "ctrl up" => key(UP, CTRL),
+            "ctrl n" => key("n", CTRL),
+            "ctrl p" => key("p", CTRL),
+            "ctrl shift c copies with parents" => {
+                v.click(Some("alpha:first"), NONE);
+                let n = v.h.copies.borrow().len();
+                key("c", input::CTRL_SHIFT);
+                v.h.differ(name, &copies(n), &step["copied"]);
+            }
+            "ctrl insert copies" => {
+                key(INSERT, CTRL);
+                v.h.differ(name, &copies(n), &step["copied"]);
+            }
+            other => panic!("no replay for {other}"),
+        }
+        v.h.differ(name, &json!(v.selected()), &step["selected"]);
+    }
+    v.h.finish();
+}
+
+/// The other hide entries, each asked then hiding for good, in turn: a
+/// namespace, two tags, two namespaces (`more_hides`).
+// leaf: viewer-tags-hover-menu
+#[test]
+fn the_hovers_other_hide_entries_ask_then_hide_as_the_references_do() {
+    let v = Hover::new();
+    // (the recorder hid "plain tag" first)
+    let hide = &v.fixture["hide"];
+    v.open_menu(&strings(&hide["selected"]));
+    v.choose(&["hide", "\"plain tag\" from here"]);
+    v.answer();
+    v.h.differ("plain tag hidden", &json!(v.tags()), &hide["tags_after"]);
+    for hide in v.fixture["more_hides"].as_array().unwrap() {
+        let path = strings(&hide["path"]);
+        let path: Vec<&str> = path.iter().map(String::as_str).collect();
+        v.open_menu(&strings(&hide["selected"]));
+        let menu = v.tree(0);
+        let hide_menu = menu
+            .as_array()
+            .unwrap()
+            .iter()
+            .find_map(|e| e.get("hide").cloned())
+            .unwrap_or(Json::Null);
+        v.h.differ(&format!("{path:?} menu"), &hide_menu, &hide["menu"]);
+        v.choose(&path);
+        v.h.differ(
+            &format!("{path:?} question"),
+            &v.answer(),
+            &hide["questions"],
+        );
+        v.h.differ(
+            &format!("{path:?} tags"),
+            &json!(v.tags()),
+            &hide["tags_after"],
+        );
+    }
+    v.h.finish();
+}
