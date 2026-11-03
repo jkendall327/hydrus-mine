@@ -408,8 +408,12 @@ impl Deferred {
         Ok(files
             .into_iter()
             .filter(|file| {
-                before.get(file).is_some_and(|domains| domains.contains(&domain))
-                    && after.get(file).is_none_or(|domains| !domains.contains(&domain))
+                before
+                    .get(file)
+                    .is_some_and(|domains| domains.contains(&domain))
+                    && after
+                        .get(file)
+                        .is_none_or(|domains| !domains.contains(&domain))
             })
             .collect())
     }

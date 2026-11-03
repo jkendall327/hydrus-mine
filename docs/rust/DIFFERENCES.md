@@ -679,14 +679,6 @@ when it lowers.
   control's popup (the viewer's mute and the volume) shows while the
   pointer is over the button or the popup inside the hover; the
   reference's is a separate window under it.
-- **The duplicate filter's top hover cannot delete yet.** Its trash
-  button (and "delete completely" and "undelete", for a file in the trash)
-  shows as the reference's, but does nothing: the reference's asks "Delete
-  just this file, or both?", runs the delete dialog and records the deletion
-  as the pair's decision, which hydrus-rs's duplicate filter (whose delete
-  key is not ported either) has no decision for. So its leaf
-  (`audit-media-duplicate-filter-top-hover`) stays open; the rest of its
-  hover is the reference's and tested (`tests/gui/filter_top_hover.rs`).
 - **The filters' view options and shortcuts menus change what the media
   viewer reads.** In the archive/delete and duplicate filters, the view
   options menu's window rows act on the filter's window (always on top,

@@ -24,8 +24,16 @@ fn shown(o: &Opened) -> Option<String> {
 }
 
 fn assert_now(o: &Opened, window: &hydrus_gui::DuplicateFilterWindow, now: &Value, what: &str) {
-    assert_eq!(window.get_index_text(), now["index"].as_str().unwrap(), "{what}: the index");
-    assert_eq!(shown(o).as_deref(), now["shown"].as_str(), "{what}: the file shown");
+    assert_eq!(
+        window.get_index_text(),
+        now["index"].as_str().unwrap(),
+        "{what}: the index"
+    );
+    assert_eq!(
+        shown(o).as_deref(),
+        now["shown"].as_str(),
+        "{what}: the file shown"
+    );
 }
 
 /// The trash button in the top hover's row, clicked.
@@ -151,10 +159,7 @@ fn the_duplicate_filter_deletes_this_file_or_both_as_the_reference_s_does() {
                 );
                 widgets::click(dialog.window(), "delete");
                 widgets::settle();
-                assert!(
-                    hydrus_gui::delete_files_window::last_opened().is_none(),
-                    "{what}: the dialog closed"
-                );
+                assert!(!dialog.window().is_visible(), "{what}: the dialog closed");
             }
             if let Some(label) = event["interstitial"].as_str() {
                 assert_eq!(window.get_question(), label, "{what}: the commit question");

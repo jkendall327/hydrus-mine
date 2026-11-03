@@ -139,9 +139,10 @@ thread_local! {
     static LAST: RefCell<Option<slint::Weak<DeleteFilesWindow>>> = const { RefCell::new(None) };
 }
 
-/// The dialog last opened, while it is open (for tests).
+/// The dialog last opened, while it is shown (for tests).
 pub fn last_opened() -> Option<DeleteFilesWindow> {
     LAST.with(|l| l.borrow().as_ref().and_then(slint::Weak::upgrade))
+        .filter(|window| window.window().is_visible())
 }
 
 fn open_accepting(
@@ -288,7 +289,7 @@ fn open_accepting(
                     then();
                 }
                 Err(error) => {
-                    window.set_error(error.to_string().into());
+                    window.set_error(error.into());
                 }
             }
         }

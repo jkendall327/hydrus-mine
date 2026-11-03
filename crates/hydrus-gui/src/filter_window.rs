@@ -819,7 +819,13 @@ pub(crate) fn open_filter_with_hooks(
             {
                 return;
             }
-            ask(&window, &mut state, Asking::Delete, DELETE_QUESTION, &DELETE_ANSWERS);
+            ask(
+                &window,
+                &mut state,
+                Asking::Delete,
+                DELETE_QUESTION,
+                &DELETE_ANSWERS,
+            );
         }
     });
     // a trashed file's undelete button (`_Undelete`)
