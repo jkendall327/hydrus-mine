@@ -2765,24 +2765,38 @@ maximised/fullscreen for the main window, media viewer and Options window. Exist
 and parent/centre positioning now reach those owners too (see "Options kept but
 not used"); pointer positioning remains incomplete; the
 broader frame/table/editor coverage remains Partial.
-`audit-options-geometry` is untagged, because the ordinary dialogs don't
-keep their geometry. What is proved: the main window, the media viewer, the
+`audit-options-geometry` is untagged until the ordinary dialogs all end
+through the shared `Dialog` helper (`crates/hydrus-gui/src/dialog.rs`), as
+the owner decided (#154). What is proved: the main window, the media viewer, the
 Options window and the fourteen windows with frame keys of their own open by
 their frames and keep them as the reference's do (`shell_geometry.rs`,
 `options_gui_frames.rs`, `frame_geometry.rs`, replaying `frame_state.json`
 and `frame_placement.json`; `tests/model/frame_save.rs` and
 `frame_placement.rs` for the arithmetic; `window_rescue.rs` for the
 off-screen rescue on open). Every other window opens by the ordinary
-dialogs' frame (`regular_dialog`), but none keeps it: the reference's
-dialogs save it when applied (`DialogThatResizes._SaveOKPosition`), which
-would take a hook in each of hydrus-rs's dialogs. It matters only once the
-frame is set to remember a size or place in Options > gui > frame locations
-(by default it remembers neither). Nor are the reference's
-`deeply_nested_dialog` and `quick_*` frames told apart from it. A window's
-place can't be seen in the headless tests (the software window has none),
-so places are proved only through the arithmetic and the rescue's recorded
-cases, and the display that bounds a gravity-grown window isn't there to
-see either.
+dialogs' frame (`regular_dialog`). Those that end through the helper keep it
+as the reference's `DialogThatResizes` and `FrameThatResizes` do
+(`regular_dialog.rs`, replaying `regular_dialog.json`): so far "choose
+distance", "edit multiple location" and "force filetypes" (dialogs: kept
+when applied) and help > about
+(a frame: kept a moment after a move or resize). The rest don't keep it yet;
+it matters only once the frame is set to remember a size or place in
+Options > gui > frame locations (by default it remembers neither). Escape
+does not cancel these dialogs, and no migrated dialog yet has an apply its
+panel can refuse (the helper leaves such a dialog open and keeps nothing, as
+the recording's vetoed apply does, but no test drives one). Nor are the
+reference's `deeply_nested_dialog` and `quick_*` frames told apart from it.
+Every `regular_dialog` window is fitted to the screens once shown
+(`GetSafePosition` on its wanted place, then the top-left slide), since winit
+knows the screens only then: for an instant it may show at its unfitted
+place. The rescue message's points are written `(x, y)` rather than as Qt's
+`QPoint` reprs. A window's place can't be seen in the headless tests (the
+software window has none), so places are proved through the arithmetic
+(`tests/model/regular_dialog.rs` replays every recorded opening, the
+off-screen main window ones included) and through where the real window was
+told to go (`windows::fitted_at`, with the recording's screens given to
+`windows::set_screens`); a headless main window can't be moved off the
+screens, so the parent-relative rescues are proved only by the arithmetic.
 A closing window saves as `SaveTLWSizeAndPosition` does (see GUI.md): the
 main window as it closes and again a quarter second to half a second after
 it moves, resizes or maximises (the reference's frames use a tenth of a
@@ -3160,7 +3174,9 @@ come from the opening Winit window; the check has owner-local state and preserve
 hidden/retired-window boundaries. Winit has no portable available-work-area origin,
 so the final fallback uses primary monitor geometry rather than Qt's taskbar/dock
 work-area origin. Mixed-DPI global coordinate conventions and compositor-enforced
-positions can also differ. Default parent/mouse positions, unkeyed windows, the
+positions can also differ. Windows opened by `regular_dialog` are now fitted once shown, default
+places included (see Frame locations); the named frames' default
+parent/mouse positions, the
 self-sizing media-viewer exception and dynamic Qt rescue after later screen/layout
 changes remain unported. These limits keep the rescue controls Partial proposals;
 exposing them does not complete the broader GUI/frame family. Deterministic

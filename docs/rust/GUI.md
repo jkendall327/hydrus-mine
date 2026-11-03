@@ -5678,6 +5678,16 @@ dialogs' frame (`regular_dialog`: the main window's top-left, its own size),
 except the choice dialogs with choices, which open by `quick_select_dialog`
 (buttons only) or `quick_yesno_dialog` (a "no" too) and keep their size when a
 choice is made, never when cancelled; a message with no choices takes neither.
+The ordinary dialogs that end through the shared dialog helper (so far
+"choose distance", "edit multiple location" and "force filetypes") keep `regular_dialog` as the
+reference's do: when applied, never when cancelled or closed by their window;
+and the ordinary frames on it (so far help > about) keep it a moment after
+each move or resize, nothing more as they close (`tests/gui/regular_dialog.rs`,
+replaying `regular_dialog.json`). Every window opened by `regular_dialog` is
+fitted to the screens once shown: a remembered place, or a default place by a
+main window that is itself off the screens, is rescued to where it can be
+seen, the user told by a popup message (not for a place by the mouse), and a
+default top-left place is slid back inside its display.
 Editing a frame's remembered size, maximised, fullscreen, gravity or default
 position in the frame locations editor reaches each of those windows the next
 time it opens, for its size and its maximised and fullscreen state (headless
