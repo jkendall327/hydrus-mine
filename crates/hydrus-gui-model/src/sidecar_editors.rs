@@ -1236,18 +1236,11 @@ pub fn test_importer_strings(
             hydrus_parse::sidecar::import_sidecar(&importer, path)
                 .unwrap_or(Ok(Vec::new()))
                 .map_err(|error| match error {
-                    hydrus_parse::sidecar::SidecarError::Read {
-                        path: sidecar,
-                        reason,
-                    } if reason.starts_with("Unable to parse") => {
-                        let sample = std::fs::read(sidecar)
-                            .ok()
-                            .and_then(|bytes| hydrus_parse::sidecar::read_text(&bytes).ok())
-                            .unwrap_or_default()
-                            .chars()
-                            .take(1024)
-                            .collect::<String>();
-                        format!("{reason} Parsing text sample: {sample}")
+                    // (a JSON parse error carries its own text sample, as the reference's)
+                    hydrus_parse::sidecar::SidecarError::Read { reason, .. }
+                        if reason.starts_with("Unable to parse") =>
+                    {
+                        reason
                     }
                     hydrus_parse::sidecar::SidecarError::Read {
                         path: sidecar,

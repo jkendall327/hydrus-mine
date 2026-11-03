@@ -1410,9 +1410,16 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 - The test panels' results read as the reference's do ("*** N RESULTS BEGIN ***",
   one sorted line per result worded by its kind, posts separated by the
   reference's break, a veto as its own line; `oracle/fixtures/parser_preview.json`).
-  Not matched: with no document the reference prints "Nothing to parse!" where hydrus-rs parses the empty text (so a static formula still shows its result); the error text of a hash that cannot be decoded (Python's words, e.g. "non-hexadecimal number found in fromhex()"), a tag that cannot be parsed ("unparsable tag, will likely be discarded"),
-  timestamps are shown in UTC (the reference's local time), and a parse error is
-  shown as its message where the reference prints an exception trace.
+  Times, hash decoding, tags that clean to nothing, nested and merged posts,
+  the subsidiary editor's panel, errors and an empty document are replayed
+  from `oracle/fixtures/parser_preview_format.json` (in a zone that is not
+  UTC). Not matched: after a parse error's message the reference prints a
+  Python traceback, which hydrus-rs leaves out; a JSON formula's error for text
+  that is not JSON gives the decoder's reason in its own words (Python's
+  `JSONDecodeError('Expecting value: line 1 column 1 (char 0)')`); and
+  Python's `int()` accepts non-ASCII digits in a time, which hydrus-rs does
+  not. The reference's "unparsable tag, will likely be discarded" cannot
+  happen for parsed text, which is always a string.
 - URL classes and single/nested gallery URL generators have native lists and
   rule editors. Their duplicate button creates new keys and unique names.
   Domain lists and regex lists use one rule per line. A nested generator's
@@ -1424,9 +1431,7 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   remain follow-up work.
 - Timestamp content editing now uses the original single source-time choice,
   including normalisation of unset/obsolete saved types and real date-converted
-  metadata reaching file seeds. Native shared parser test panels still present
-  compact raw content summaries instead of Qt's per-kind human-readable result
-  decorations; this timestamp slice does not complete those parent test panels.
+  metadata reaching file seeds.
 - Invalid example details use the native URL rules' error wording. The
   reference retains stale referral/next-page examples after a match failure;
   the native editor clears all derived output. A changed list asks before

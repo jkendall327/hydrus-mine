@@ -360,6 +360,9 @@ fn script_step_content_preview_apply_and_parent_cancel_are_owned_and_restricted(
     );
     assert!(content.get_document().is_empty());
     content.invoke_action("test".into());
+    assert_eq!(content.get_preview(), "Nothing to parse!");
+    content.set_document("<p>example</p>".into());
+    content.invoke_action("test".into());
     assert!(content.get_preview().contains("dummy-csrf"));
     content.invoke_text_edited(0, "renamed response".into());
     content.invoke_text_edited(5, "token".into());
