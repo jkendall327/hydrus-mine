@@ -627,8 +627,10 @@ export component TopHoverFrame inherits TouchArea {
     in property <[bool]> shortcut-current;
     in property <[bool]> shortcut-defaults;
     in property <ViewerEyeMenu> eye-menu;
-    // the box's height (without the volume popup's)
+    // the box's height (without the volume popup's), and the least width
+    // its row needs (the reference's frame is no narrower than its minimum)
     out property <length> box-height: top-box.height;
+    out property <length> least-width: top-row.min-width + 8px;
     out property <bool> volume-open: top-row.volume-open;
 
     callback back();
