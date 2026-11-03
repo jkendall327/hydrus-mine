@@ -156,13 +156,10 @@ pub fn open(store: &Store) -> Result<AboutWindow, slint::PlatformError> {
     window.set_texts(ModelRc::new(VecModel::from(texts)));
     let site = about.site;
     window.on_open_site(move || crate::launch(&site));
-    window.on_close_clicked({
-        let weak = window.as_weak();
-        move || {
-            if let Some(window) = weak.upgrade() {
-                let _ = window.hide();
-            }
-        }
+    // (the reference's about window is an ordinary frame)
+    let frame = crate::dialog::Dialog::frame(&window);
+    window.on_close_clicked(move || {
+        frame.close();
     });
     window.show()?;
     Ok(window)

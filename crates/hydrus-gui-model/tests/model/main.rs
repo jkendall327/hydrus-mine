@@ -73,6 +73,7 @@ mod predicate_history;
 mod rating_sizes;
 mod ratings_editor;
 mod recent_predicates;
+mod regular_dialog;
 mod search_log;
 mod selected_deletion_records;
 mod selection;
@@ -116,6 +117,7 @@ mod tag_relationships;
 mod services_editor;
 
 mod parser_editors;
+mod parser_preview_format;
 mod parser_test_data;
 mod tag_application_queues;
 mod tag_display;

@@ -220,6 +220,128 @@
    ]
   }
  ],
+ "rows_per_page": 49,
+ "more_steps": [
+  {
+   "step": "click plain tag",
+   "selected": [
+    "plain tag"
+   ]
+  },
+  {
+   "step": "page down",
+   "selected": [
+    "source:fixture"
+   ]
+  },
+  {
+   "step": "page up",
+   "selected": [
+    "series:spaced name"
+   ]
+  },
+  {
+   "step": "shift page down",
+   "selected": [
+    "series:spaced name",
+    "plain tag",
+    "safe",
+    "alpha:first",
+    "box:anchor",
+    "filename:apng_animated",
+    "group:alpha",
+    "source:fixture"
+   ]
+  },
+  {
+   "step": "shift page up",
+   "selected": [
+    "series:spaced name"
+   ]
+  },
+  {
+   "step": "click plain tag again",
+   "selected": [
+    "plain tag"
+   ]
+  },
+  {
+   "step": "ctrl down",
+   "selected": [
+    "plain tag",
+    "safe"
+   ]
+  },
+  {
+   "step": "ctrl up",
+   "selected": [
+    "safe"
+   ]
+  },
+  {
+   "step": "ctrl n",
+   "selected": [
+    "safe"
+   ]
+  },
+  {
+   "step": "ctrl p",
+   "selected": [
+    "plain tag"
+   ]
+  },
+  {
+   "step": "ctrl shift c (the terms have no parents: as ctrl c)",
+   "selected": [
+    "alpha:first"
+   ],
+   "copied": [
+    "alpha:first"
+   ]
+  },
+  {
+   "step": "ctrl insert copies",
+   "selected": [
+    "alpha:first"
+   ],
+   "copied": [
+    "alpha:first"
+   ]
+  }
+ ],
+ "more_middle": [
+  {
+   "step": "middle click with two selected",
+   "selected_before": [
+    "plain tag",
+    "box:anchor"
+   ],
+   "selected": [
+    "plain tag",
+    "box:anchor"
+   ],
+   "launched": [
+    {
+     "topic": "new_page_query",
+     "location": "my files",
+     "predicates": [
+      "box:anchor",
+      "plain tag"
+     ],
+     "page_name": "box:anchor, plain tag"
+    }
+   ]
+  },
+  {
+   "step": "middle click below the rows",
+   "selected_before": [
+    "plain tag",
+    "box:anchor"
+   ],
+   "selected": [],
+   "launched": []
+  }
+ ],
  "menus": [
   {
    "case": "one",
@@ -874,5 +996,90 @@
    "group:alpha",
    "source:fixture"
   ]
- }
+ },
+ "more_hides": [
+  {
+   "selected": [
+    "series:spaced name"
+   ],
+   "menu": [
+    "\"series\" tags from here",
+    "\"series:spaced name\" from here"
+   ],
+   "path": [
+    "hide",
+    "\"series\" tags from here"
+   ],
+   "questions": [
+    {
+     "message": "Hide \"series\" tags from here?",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "tags_after": [
+    "safe",
+    "alpha:first",
+    "box:anchor",
+    "filename:apng_animated",
+    "group:alpha",
+    "source:fixture"
+   ]
+  },
+  {
+   "selected": [
+    "safe",
+    "source:fixture"
+   ],
+   "menu": [
+    "2 selected namespaces from here",
+    "2 selected tags from here"
+   ],
+   "path": [
+    "hide",
+    "2 selected tags from here"
+   ],
+   "questions": [
+    {
+     "message": "Hide\n\nsafe\nsource:fixture\n\nfrom here?",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "tags_after": [
+    "alpha:first",
+    "box:anchor",
+    "filename:apng_animated",
+    "group:alpha"
+   ]
+  },
+  {
+   "selected": [
+    "alpha:first",
+    "box:anchor"
+   ],
+   "menu": [
+    "2 selected namespaces from here",
+    "2 selected tags from here"
+   ],
+   "path": [
+    "hide",
+    "2 selected namespaces from here"
+   ],
+   "questions": [
+    {
+     "message": "Hide\n\nalpha\nbox\n\ntags from here?",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "no": "no"
+    }
+   ],
+   "tags_after": [
+    "filename:apng_animated",
+    "group:alpha"
+   ]
+  }
+ ]
 }

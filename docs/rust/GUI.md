@@ -899,7 +899,9 @@ parse, then resumed; stopped with paths still to parse, which are dropped while
 the parsed rows stay: `oracle/fixtures/local_import_pause.json`). "remove files" takes
 the selected rows out (asking first), and "delete original files after
 successful import" says, in the reference's red, that they will be
-deleted. "import now" opens an "import" page of the good files, in the
+deleted. Its "import options" button ("import options (all default)", or
+the kinds set) opens the import options editor on a local import's
+defaults, and what it sets goes with the import. "import now" opens an "import" page of the good files, in the
 list's order, which deletes each original once it is in the database (new or
 already there) if the box was ticked (`oracle/fixtures/local_import_queue.json`).
 Paths also go in through a box over the list (enter adds one, a file or
@@ -5705,6 +5707,16 @@ dialogs' frame (`regular_dialog`: the main window's top-left, its own size),
 except the choice dialogs with choices, which open by `quick_select_dialog`
 (buttons only) or `quick_yesno_dialog` (a "no" too) and keep their size when a
 choice is made, never when cancelled; a message with no choices takes neither.
+The ordinary dialogs that end through the shared dialog helper (so far
+"choose distance", "edit multiple location" and "force filetypes") keep `regular_dialog` as the
+reference's do: when applied, never when cancelled or closed by their window;
+and the ordinary frames on it (so far help > about) keep it a moment after
+each move or resize, nothing more as they close (`tests/gui/regular_dialog.rs`,
+replaying `regular_dialog.json`). Those windows are
+fitted to the screens once shown: a remembered place, or a default place by a
+main window that is itself off the screens, is rescued to where it can be
+seen, the user told by a popup message (not for a place by the mouse), and a
+default top-left place is slid back inside its display.
 Editing a frame's remembered size, maximised, fullscreen, gravity or default
 position in the frame locations editor reaches each of those windows the next
 time it opens, for its size and its maximised and fullscreen state (headless
@@ -6164,6 +6176,13 @@ enabled state.
   (priority 50): ...", 'note "name":', "sha256 hash: ...", "source/post time:
   ...", "veto: ..."), sorted, with posts separated by "*** SEPARATE FILE
   RESULTS BREAK ***".
+- Times are shown in local time; a hash that does not decode, a time that is
+  not a number or not a date, and a tag that cleans to nothing say so in the
+  reference's words. A page's own content goes into each of its subsidiaries'
+  posts, subsidiaries run in name order (nested ones too), and a vetoed post is
+  left out. The subsidiary page parser editor's panel prints its posts the same
+  way. A parse error prints "Exception:" and the error, naming each parser it
+  passed through; an empty document prints "Nothing to parse!" (issue #221).
 - After "fetch example data" the page URL box keeps what you typed; the parse
   context uses the encoded URL.
 

@@ -1420,9 +1420,19 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 - The test panels' results read as the reference's do ("*** N RESULTS BEGIN ***",
   one sorted line per result worded by its kind, posts separated by the
   reference's break, a veto as its own line; `oracle/fixtures/parser_preview.json`).
-  Not matched: with no document the reference prints "Nothing to parse!" where hydrus-rs parses the empty text (so a static formula still shows its result); the error text of a hash that cannot be decoded (Python's words, e.g. "non-hexadecimal number found in fromhex()"), a tag that cannot be parsed ("unparsable tag, will likely be discarded"),
-  timestamps are shown in UTC (the reference's local time), and a parse error is
-  shown as its message where the reference prints an exception trace.
+  Times, hash decoding, tags that clean to nothing, nested and merged posts,
+  the subsidiary editor's panel, errors and an empty document are replayed
+  from `oracle/fixtures/parser_preview_format.json` (in a zone that is not
+  UTC). Not matched: after a parse error's message the reference prints a
+  Python traceback, which hydrus-rs leaves out; a JSON formula's error for text
+  that is not JSON gives the decoder's reason in its own words (Python's
+  `JSONDecodeError('Expecting value: line 1 column 1 (char 0)')`); and a time
+  in the last day or so of year 9999 (past what the date library holds) reads
+  "unparseable time" where the reference may still show it. The reference's
+  "unparsable tag, will likely be discarded" cannot happen for parsed text,
+  which is always a string. The panels, downloads and string converters share
+  one reading of Python's `int()`, `bytes.fromhex` and Python 3.13's
+  `base64.b64decode`.
 - URL classes and single/nested gallery URL generators have native lists and
   rule editors. Their duplicate button creates new keys and unique names.
   Domain lists and regex lists use one rule per line. A nested generator's
@@ -1434,9 +1444,7 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   remain follow-up work.
 - Timestamp content editing now uses the original single source-time choice,
   including normalisation of unset/obsolete saved types and real date-converted
-  metadata reaching file seeds. Native shared parser test panels still present
-  compact raw content summaries instead of Qt's per-kind human-readable result
-  decorations; this timestamp slice does not complete those parent test panels.
+  metadata reaching file seeds.
 - Invalid example details use the native URL rules' error wording. The
   reference retains stale referral/next-page examples after a match failure;
   the native editor clears all derived output. A changed list asks before
@@ -2775,24 +2783,48 @@ maximised/fullscreen for the main window, media viewer and Options window. Exist
 and parent/centre positioning now reach those owners too (see "Options kept but
 not used"); pointer positioning remains incomplete; the
 broader frame/table/editor coverage remains Partial.
-`audit-options-geometry` is untagged, because the ordinary dialogs don't
-keep their geometry. What is proved: the main window, the media viewer, the
+`audit-options-geometry` is untagged until the ordinary dialogs all end
+through the shared `Dialog` helper (`crates/hydrus-gui/src/dialog.rs`), as
+the owner decided (#154). What is proved: the main window, the media viewer, the
 Options window and the fourteen windows with frame keys of their own open by
 their frames and keep them as the reference's do (`shell_geometry.rs`,
 `options_gui_frames.rs`, `frame_geometry.rs`, replaying `frame_state.json`
 and `frame_placement.json`; `tests/model/frame_save.rs` and
 `frame_placement.rs` for the arithmetic; `window_rescue.rs` for the
 off-screen rescue on open). Every other window opens by the ordinary
-dialogs' frame (`regular_dialog`), but none keeps it: the reference's
-dialogs save it when applied (`DialogThatResizes._SaveOKPosition`), which
-would take a hook in each of hydrus-rs's dialogs. It matters only once the
-frame is set to remember a size or place in Options > gui > frame locations
-(by default it remembers neither). Nor are the reference's
-`deeply_nested_dialog` and `quick_*` frames told apart from it. A window's
-place can't be seen in the headless tests (the software window has none),
-so places are proved only through the arithmetic and the rescue's recorded
-cases, and the display that bounds a gravity-grown window isn't there to
-see either.
+dialogs' frame (`regular_dialog`). Those that end through the helper keep it
+as the reference's `DialogThatResizes` and `FrameThatResizes` do
+(`regular_dialog.rs`, replaying `regular_dialog.json`): so far "choose
+distance", "edit multiple location" and "force filetypes" (dialogs: kept
+when applied) and help > about
+(a frame: kept a moment after a move or resize). The rest don't keep it yet;
+it matters only once the frame is set to remember a size or place in
+Options > gui > frame locations (by default it remembers neither). Escape
+does not cancel these dialogs yet. No migrated dialog yet has an apply or a
+cancel its panel can refuse (the helper leaves such a dialog open and keeps
+nothing, as the recording's vetoed apply does; a unit test drives a refused
+cancel, no window does). Named dialogs keep their frames by their own
+mechanism (`windows::DialogFrame`) until they too end through the helper. Nor are the
+reference's `deeply_nested_dialog` and `quick_*` frames told apart from it.
+The windows that end through the helper are fitted to the screens once
+shown (`GetSafePosition` on their wanted place, then the top-left slide),
+since winit knows the screens only then: for an instant one may show at its
+unfitted place. A window that places itself (the command palette) is not
+fitted. The slide keeps a window inside its display's whole geometry, where
+the reference keeps it inside the display's work area (`availableGeometry`,
+less panels and docks), which winit doesn't give. A maximised or fullscreen
+dialog isn't moved by its fit (the reference moves it before maximising; a
+move after can take the maximise back on X11), so its restored place is the
+unfitted one. A window kept hidden for over a minute after it is made is
+never fitted. The recording has one screen, so fitting across several
+screens is worked from the reference's code, not recorded. The rescue message's points are written `(x, y)` rather than as Qt's
+`QPoint` reprs. A window's place can't be seen in the headless tests (the
+software window has none), so places are proved through the arithmetic
+(`tests/model/regular_dialog.rs` replays every recorded opening, the
+off-screen main window ones included) and through where the real window was
+told to go (`windows::fitted_at`, with the recording's screens given to
+`windows::set_screens`); a headless main window can't be moved off the
+screens, so the parent-relative rescues are proved only by the arithmetic.
 A closing window saves as `SaveTLWSizeAndPosition` does (see GUI.md): the
 main window as it closes and again a quarter second to half a second after
 it moves, resizes or maximises (the reference's frames use a tenth of a
@@ -3170,7 +3202,9 @@ come from the opening Winit window; the check has owner-local state and preserve
 hidden/retired-window boundaries. Winit has no portable available-work-area origin,
 so the final fallback uses primary monitor geometry rather than Qt's taskbar/dock
 work-area origin. Mixed-DPI global coordinate conventions and compositor-enforced
-positions can also differ. Default parent/mouse positions, unkeyed windows, the
+positions can also differ. Windows opened by `regular_dialog` are now fitted once shown, default
+places included (see Frame locations); the named frames' default
+parent/mouse positions, the
 self-sizing media-viewer exception and dynamic Qt rescue after later screen/layout
 changes remain unported. These limits keep the rescue controls Partial proposals;
 exposing them does not complete the broader GUI/frame family. Deterministic
@@ -4667,6 +4701,13 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
   made elsewhere (write-tag menus, filename tagging, migration) are not yet.
   A content package listing several actions or services names them sorted,
   where the reference's set order varies.
+- **Manage Tags' changes can be undone; the reference's cannot.** The
+  reference's dialog commits with `WriteSynchronous`, which goes past its
+  undo manager (only `Write( 'content_updates', … )` reaches it), so after
+  tagging its undo menu offers nothing, or the action before. The manage
+  tags flow (`oracle/fixtures/flow_manage_tags.json`) shows it, and
+  `tests/gui/manage_tags_undo.rs` checks what hydrus-rs's undo and redo
+  do to the tags; whether to keep this is the owner's call.
 
 ## Per-filetype media handling
 
@@ -5315,6 +5356,12 @@ Differences:
   list also lacks what the selection tags box lacks: dragging over tags to
   select a run, scrolling a key-moved tag into view, and the keyboard going
   back to the list when its menu closes.
+- **Tags with the same ideal sort by their own text.** Sorted with siblings
+  (the default), `kitty → cat` and `cat` tie; the reference keeps them in the
+  order they joined the list (the files' existing tags first, then those just
+  entered), hydrus-rs puts the one whose own text sorts first first. A tag's
+  parent rows under it follow the reference's set, so their order varies from
+  run to run there; the manage tags flow compares them sorted.
 - The viewer's Manage tags is its own window, not a frame belonging to the viewer;
   it is closed when its own "close" is pressed rather than with the viewer. If a
   Manage tags window opened from a page is already open, F3 in the viewer shows that
@@ -5830,3 +5877,21 @@ Checked by `tests/gui/list_keys.rs` against `oracle/fixtures/list_keys.json`.
 - **Lists not on the shared list.** The tag lists (#286) and the
   queue-style lists (`AddEditDeleteListBox`, `BetterQListWidget`) keep
   their own keys, covered by their dialogs.
+
+## Recheck: leaves untagged (#97, 2026-11-03)
+
+The last pass of the recheck took the tags off the leaves that could not be
+proved sound; their tests stay and still run.
+
+- **Get tables using definitions** lists hydrus-rs's own schema; the
+  reference's lists its own, so there is nothing to compare (above, Database).
+- **The command palette's media-menu rows** lack "copy bitmap" and "copy
+  thumbnail bitmap" (the clipboard-bitmap exchange is deferred).
+- **Eliding tab names** is drawn with hydrus-rs's own font metrics and tab
+  sizes, so where a name is cut can't be compared with Qt's.
+- **A modal popup** doesn't block the main window, and the variant that also
+  hides the main window isn't there (above, Popups).
+- **Closing pages**: closing the last page opens a new one where the
+  reference leaves an empty notebook (above, Pages; #183).
+- **The manage tags dialog's list** has no "tag display" switch in advanced
+  mode (above, Manage tags).

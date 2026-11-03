@@ -294,11 +294,14 @@ fn json_texts(
 ) -> Result<Vec<String>, ParseError> {
     let root = PyJson::parse(text)
         .map_err(|e| {
-            ParseError(if looks_like_html(text) {
+            let reason = if looks_like_html(text) {
                 "Unable to parse: Appeared to receive HTML instead of JSON.".to_owned()
             } else {
                 format!("Unable to parse that JSON: {e}.")
-            })
+            };
+            // the reference adds the text's first 1,024 characters
+            let sample: String = text.chars().take(1024).collect();
+            ParseError(format!("{reason} Parsing text sample: {sample}"))
         })?
         .with_python_dict_semantics();
 

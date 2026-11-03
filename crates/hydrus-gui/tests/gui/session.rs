@@ -252,7 +252,7 @@ fn the_last_session_opens_as_it_was_left() {
 /// New pages go at the far right of the current notebook and are shown;
 /// closing a page shows the one to its right (or left, if it was last);
 /// downloader pages stay; the top notebook always has a page.
-// leaf: audit-options-tabs-close
+// (not tagged: audit-options-tabs-close; closing the last page opens a new one, #183)
 #[test]
 fn pages_open_and_close_as_the_reference_does() {
     let (_dirs, store) = store();
@@ -638,7 +638,7 @@ fn the_pages_are_kept_for_the_client_api_and_do_what_it_asks() {
 /// here by writing to the queue as it would): made from the page chooser,
 /// handing typed URLs over, showing the queue's status and the files it
 /// brings as they come, pausing, and closing as the reference asks.
-// leaf: audit-options-tabs-close
+// (not tagged: audit-options-tabs-close; closing the last page opens a new one, #183)
 #[test]
 fn a_url_downloader_page_shows_and_controls_its_queue() {
     use hydrus_store::live::{self, JobKind, JobLive, QueueLive};
@@ -1552,6 +1552,7 @@ fn a_local_import_page_shows_and_controls_its_import() {
         tags,
         routers: Vec::new(),
         delete_after_success: true,
+        options: Box::default(),
     });
     assert_eq!(bound.pages.borrow().shown().name, "import");
     assert!(ui.get_importing() && ui.get_local_import());

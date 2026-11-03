@@ -24,9 +24,10 @@ pub fn editor() -> Option<EditValueWindow> {
     })
 }
 
+/// Cancel the dialog open now, if one is.
 fn close() {
     if let Some(editor) = EDITOR.with(|slot| slot.borrow_mut().take()) {
-        let _ = editor.hide();
+        editor.invoke_cancel();
     }
 }
 
@@ -46,13 +47,18 @@ pub(crate) fn open(
     window.set_maximum(99);
     window.set_step_size(2);
     window.set_value(10);
+    let dialog = crate::dialog::Dialog::new(&window);
+    dialog.on_closed(|| {
+        EDITOR.with(|slot| slot.borrow_mut().take());
+    });
     window.on_apply({
         let weak = window.as_weak();
+        let dialog = dialog.clone();
         move || {
             let distance = weak
                 .upgrade()
                 .map_or(0, |w| u64::try_from(w.get_value()).unwrap_or(0));
-            close();
+            dialog.accept();
             if let Some(search) = thumbnail_menu::similar_search(&store, &selected, distance) {
                 change_pages(&|pages| {
                     pages.open_search(location.clone(), vec![search.clone()], "files");
@@ -61,7 +67,9 @@ pub(crate) fn open(
             }
         }
     });
-    window.on_cancel(close);
+    window.on_cancel(move || {
+        dialog.cancel();
+    });
     if window.show().is_ok() {
         EDITOR.with(|slot| *slot.borrow_mut() = Some(window));
     }

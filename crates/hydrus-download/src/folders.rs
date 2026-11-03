@@ -6,7 +6,7 @@ use std::collections::{BTreeSet, HashMap};
 
 use hydrus_core::content::{ContentStatus, TimestampType};
 use hydrus_core::import_options::{CallerType, FullImportOptions, NoteImportOptions};
-use hydrus_core::numbers::{human_int, value_range};
+use hydrus_core::numbers::{human_int, py_int, value_range};
 use hydrus_core::{CanvasType, HashId, ServiceKey, ServiceType, Sha256, Tag};
 use hydrus_import::paths;
 use hydrus_parse::folders::FolderAction;
@@ -127,26 +127,6 @@ impl StoreMedia<'_> {
         hydrus_core::sort::human_sort(&mut tags);
         Ok(tags)
     }
-}
-
-/// Python's `int(text)` for decimal text.
-fn py_int(text: &str) -> Option<i64> {
-    let t = text.trim();
-    let (negative, digits) = match t.as_bytes().first() {
-        Some(b'-') => (true, &t[1..]),
-        Some(b'+') => (false, &t[1..]),
-        _ => (false, t),
-    };
-    if digits.is_empty()
-        || digits.starts_with('_')
-        || digits.ends_with('_')
-        || digits.contains("__")
-        || !digits.chars().all(|c| c.is_ascii_digit() || c == '_')
-    {
-        return None;
-    }
-    let value: i64 = digits.replace('_', "").parse().ok()?;
-    Some(if negative { -value } else { value })
 }
 
 impl MediaMetadata for StoreMedia<'_> {

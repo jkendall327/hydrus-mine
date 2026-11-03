@@ -8,6 +8,7 @@ use std::collections::HashSet;
 use std::rc::Rc;
 use std::time::Duration;
 
+use hydrus_core::import_options::{CallerType, ImportOptionsSlice};
 use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
 
 use crate::list_selection::ListSelection;
@@ -16,13 +17,15 @@ use crate::{ReviewImportsWindow, TableRow};
 
 /// What "import now" hands on: the good files, each with its modified time
 /// (seconds), tags for some, the sidecar routers to read each one's
-/// metadata with, and whether to delete them once imported.
+/// metadata with, whether to delete them once imported, and the import's
+/// own options.
 pub type ImportNow = Rc<
     dyn Fn(
         Vec<(String, Option<i64>)>,
         hydrus_store::queues::PathTags,
         Vec<hydrus_parse::sidecar::Router>,
         bool,
+        ImportOptionsSlice,
     ),
 >;
 
@@ -53,6 +56,7 @@ pub(crate) fn open(
     tag_services: Vec<(String, String)>,
     tagging: &Rc<RefCell<Option<crate::FilenameTaggingWindow>>>,
     sidecars: &crate::filename_tagging_window::Sidecars,
+    options_slot: &Rc<RefCell<Option<crate::ImportOptionsWindow>>>,
     import_now: &ImportNow,
 ) -> Result<ReviewImportsWindow, String> {
     let window =
@@ -116,12 +120,59 @@ pub(crate) fn open(
             }
         }
     });
+    // the import's own options, as its import options button edits them
+    // (the reference's `SpecificImportOptionsContainerButton`, on the local
+    // import's defaults)
+    let options = Rc::new(RefCell::new(ImportOptionsSlice::default()));
+    window.set_import_options_label(
+        hydrus_gui_model::edit_subscription::import_options_label(&options.borrow()).into(),
+    );
+    window.on_import_options({
+        let options = options.clone();
+        let options_slot = options_slot.clone();
+        let store = sidecars.store.clone();
+        let weak = window.as_weak();
+        move || {
+            if options_slot.borrow().is_some() {
+                return;
+            }
+            let done: Rc<dyn Fn(ImportOptionsSlice)> = {
+                let options = options.clone();
+                let weak = weak.clone();
+                Rc::new(move |edited| {
+                    if let Some(window) = weak.upgrade() {
+                        window.set_import_options_label(
+                            hydrus_gui_model::edit_subscription::import_options_label(&edited)
+                                .into(),
+                        );
+                    }
+                    *options.borrow_mut() = edited;
+                })
+            };
+            let own = options.borrow().clone();
+            match crate::import_options_window::open(
+                &store,
+                CallerType::LocalImport,
+                &own,
+                &options_slot,
+                done,
+            ) {
+                Ok(editor) => *options_slot.borrow_mut() = Some(editor),
+                Err(e) => eprintln!("could not open the import options: {e}"),
+            }
+        }
+    });
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
         let timer = timer.clone();
+        let options_slot = options_slot.clone();
         move || {
             timer.stop();
+            // (the editor is the window's child, and goes with it)
+            if let Some(editor) = options_slot.borrow_mut().take() {
+                let _ = editor.hide();
+            }
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
@@ -212,6 +263,7 @@ pub(crate) fn open(
         let review = review.clone();
         let close = close.clone();
         let import_now = import_now.clone();
+        let options = options.clone();
         move || {
             let (paths, delete) = {
                 let review = review.borrow();
@@ -234,6 +286,7 @@ pub(crate) fn open(
                 hydrus_store::queues::PathTags::new(),
                 Vec::new(),
                 delete,
+                options.borrow().clone(),
             );
         }
     });
@@ -245,6 +298,7 @@ pub(crate) fn open(
         let tagging = tagging.clone();
         let sidecars = sidecars.clone();
         let import_now = import_now.clone();
+        let options = options.clone();
         move || {
             if tagging.borrow().is_some() {
                 return;
@@ -268,9 +322,11 @@ pub(crate) fn open(
             let done: crate::filename_tagging_window::Done = {
                 let close = close.clone();
                 let import_now = import_now.clone();
+                let options = options.clone();
                 Rc::new(move |tags, routers| {
+                    let options = options.borrow().clone();
                     close();
-                    import_now(paths.clone(), tags, routers, delete);
+                    import_now(paths.clone(), tags, routers, delete, options);
                 })
             };
             match crate::filename_tagging_window::open(

@@ -550,17 +550,9 @@ fn decode(encoding: Encoding, s: &str) -> Result<String, String> {
         Encoding::UrlPercent => return Ok(unquote(s)),
         Encoding::UnicodeEscape => return unicode_escape_decode(s.as_bytes()),
         Encoding::HtmlEntities => return Ok(crate::pyhtml::unescape(s)),
-        Encoding::HexUtf8 => fromhex(s).ok_or_else(|| {
-            // (where Python's `bytes.fromhex` stops: the first character
-            // that isn't a hex digit or space, else the odd one at the end)
-            let position = s
-                .chars()
-                .position(|c| !c.is_ascii_hexdigit() && c != ' ')
-                .unwrap_or_else(|| s.chars().count());
-            format!("non-hexadecimal number found in fromhex() arg at position {position}")
-        })?,
-        Encoding::Base64Utf8 => b64decode(&padded()).ok_or("Incorrect padding")?,
-        Encoding::Base64UrlUtf8 => urlsafe_b64decode(&padded()).ok_or("Incorrect padding")?,
+        Encoding::HexUtf8 => fromhex(s)?,
+        Encoding::Base64Utf8 => b64decode(&padded())?,
+        Encoding::Base64UrlUtf8 => urlsafe_b64decode(&padded())?,
     };
     Ok(String::from_utf8_lossy(&bytes).into_owned())
 }

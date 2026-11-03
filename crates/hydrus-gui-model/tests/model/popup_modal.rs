@@ -107,7 +107,7 @@ fn check_add(cases: &[Value], label: &str, around: Conditions, facts: &JobFacts)
     );
 }
 
-// leaf: audit-options-popups-modal
+// (not tagged: audit-options-popups-modal; the dialog does not block the main window)
 #[test]
 fn a_modal_job_is_thrown_up_or_waits_or_goes_to_the_popups_as_the_reference_does() {
     let recorded = hydrus_testkit::fixture_json("popup_modal.json");
@@ -210,7 +210,7 @@ fn a_modal_job_is_thrown_up_or_waits_or_goes_to_the_popups_as_the_reference_does
     assert_eq!(modals.add(&second, &ACTIVE).len(), 2);
 }
 
-// leaf: audit-options-popups-modal
+// (not tagged: audit-options-popups-modal; the dialog does not block the main window)
 #[test]
 fn closing_a_modal_dialog_asks_warns_or_releases_and_the_dialog_closes_itself_as_the_reference_does()
  {

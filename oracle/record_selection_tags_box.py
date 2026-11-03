@@ -824,6 +824,157 @@ def record( session ):
 
         out[ 'triggers' ] = triggers
 
+        # more menus: a parent with a child, and (in the stored tags view) a
+        # tag that is not its sibling's ideal; then the parent line chosen
+        more = []
+
+        c.new_options.SetBoolean( 'advanced_mode', True )
+
+        def switch( label ):
+
+            menu = show( [ 'box:anchor' ] )
+
+            find( menu, [ 'tag display (experimental)', label ] ).trigger()
+
+            settle( .3 )
+
+
+        for ( name, view, wanted ) in [
+            ( 'a parent with a child', None, [ 'group:alpha' ] ),
+            ( 'a tag that is not its sibling\'s ideal', 'switch to "stored tags"', [ 'old:sibling' ] )
+        ]:
+
+            if view is not None:
+
+                switch( view )
+
+
+            menu = show( wanted )
+
+            more.append( { 'case' : name, 'view' : view, 'selected' : selected(), 'menu' : tree( menu ) } )
+
+            if view is not None:
+
+                switch( 'switch to "multiple media view tags"' )
+
+
+
+        c.new_options.SetBoolean( 'advanced_mode', False )
+
+        menu = show( [ 'alpha:first' ] )
+
+        n = len( copied )
+
+        find( menu, [ '1 parents, 0 children', 'parent: group:alpha' ] ).trigger()
+
+        settle()
+
+        more_triggers = [ { 'selected' : [ 'alpha:first' ], 'path' : [ '1 parents, 0 children', 'parent: group:alpha' ], 'copied' : copied[ n: ] } ]
+
+        menu = show( [ 'group:alpha' ] )
+
+        children = next( k for k in ( list( e.keys() )[ 0 ] for e in tree( menu ) if isinstance( e, dict ) ) if 'children' in k )
+
+        child_line = next( e for e in next( e for e in tree( menu ) if isinstance( e, dict ) and children in e )[ children ] if isinstance( e, str ) and e.startswith( 'child' ) )
+
+        n = len( copied )
+
+        find( menu, [ children, child_line ] ).trigger()
+
+        settle()
+
+        more_triggers.append( { 'selected' : [ 'group:alpha' ], 'path' : [ children, child_line ], 'copied' : copied[ n: ] } )
+
+        out[ 'more_menus' ] = more
+        out[ 'more_triggers' ] = more_triggers
+
+        # the search's two tags replaced with their OR
+
+        ac._predicates_listbox.EnterPredicates( [ P.Predicate( P.PREDICATE_TYPE_TAG, 'solo' ) ], permit_remove = False )
+
+        wait_for( lambda: searched() == [ 'box:anchor', 'solo' ] and tags() != original_tags )
+
+        settle( .3 )
+
+        two_tags = tags()
+
+        menu = show( [ 'box:anchor', 'solo' ] )
+
+        search = find( menu, [ 'search' ] )
+
+        labels = [ a.text().replace( '&&', '&' ) for a in search.menu().actions() if not a.isSeparator() ]
+
+        replace = next( label for label in labels if label.startswith( 'replace' ) )
+
+        n = len( or_edits )
+        e = len( emitted )
+
+        find( menu, [ 'search', replace ] ).trigger()
+
+        settle( .3 )
+
+        out[ 'or_replace' ] = {
+            'searched_before' : [ 'box:anchor', 'solo' ],
+            'tags' : two_tags,
+            'selected' : [ 'box:anchor', 'solo' ],
+            'search_menu' : tree( search.menu() ),
+            'label' : replace,
+            'searched' : searched(),
+            'or_editor' : or_edits[ n: ],
+            'emitted' : emitted[ e: ]
+        }
+
+        restore()
+
+        # the tag display switch with rules that differ by view: single media
+        # hides solo, the selection list (multiple media) hides zeta:last; the
+        # menu's ticks after each switch
+
+        from hydrus.client.metadata import ClientTags
+
+        tdm = c.tag_display_manager
+        filters = tdm._tag_display_types_to_service_keys_to_tag_filters
+        kept = { t : filters[ t ][ CC.COMBINED_TAG_SERVICE_KEY ].Duplicate() for t in ( ClientTags.TAG_DISPLAY_SINGLE_MEDIA, ClientTags.TAG_DISPLAY_SELECTION_LIST ) }
+
+        tdm.HideTags( ClientTags.TAG_DISPLAY_SINGLE_MEDIA, CC.COMBINED_TAG_SERVICE_KEY, [ 'solo' ] )
+        tdm.HideTags( ClientTags.TAG_DISPLAY_SELECTION_LIST, CC.COMBINED_TAG_SERVICE_KEY, [ 'zeta:last' ] )
+
+        old[ 'pub' ]( 'notify_new_tag_display_rules' )
+
+        wait_for( lambda: 'zeta:last' not in tags() )
+
+        settle( .3 )
+
+        c.new_options.SetBoolean( 'advanced_mode', True )
+
+        views = { 'hidden' : { 'single media view tags' : [ 'solo' ], 'multiple media view tags' : [ 'zeta:last' ] }, 'drawn' : drawn(), 'switches' : [] }
+
+        for label in [ 'switch to "single media view tags"', 'switch to "display tags"', 'switch to "stored tags"', 'switch to "multiple media view tags"' ]:
+
+            switch( label )
+
+            menu = show( [ 'box:anchor' ] )
+
+            views[ 'switches' ].append( { 'label' : label, 'drawn' : drawn(), 'menu' : next( e for e in tree( menu ) if isinstance( e, dict ) and 'tag display (experimental)' in e )[ 'tag display (experimental)' ] } )
+
+            key( QC.Qt.Key.Key_Escape )
+
+
+        c.new_options.SetBoolean( 'advanced_mode', False )
+
+        for ( t, f ) in kept.items():
+
+            filters[ t ][ CC.COMBINED_TAG_SERVICE_KEY ] = f
+
+
+        old[ 'pub' ]( 'notify_new_tag_display_rules' )
+
+        wait_for( lambda: tags() == original_tags )
+
+        settle( .3 )
+
+        out[ 'views' ] = views
+
         # last, hiding (which changes the tag display rules for good)
 
         hides = []

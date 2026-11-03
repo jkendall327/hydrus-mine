@@ -4,49 +4,59 @@
 //! what they accept (and where they stop) is visible behaviour.
 
 /// Python's `bytes.fromhex`: pairs of hex digits, with ASCII whitespace
-/// (including vertical tab) allowed between pairs but not inside one.
-pub fn fromhex(text: &str) -> Option<Vec<u8>> {
+/// (including vertical tab) allowed before a pair but not inside one. The
+/// error is Python's, naming the first bad position in characters.
+pub fn fromhex(text: &str) -> Result<Vec<u8>, String> {
+    let chars: Vec<char> = text.chars().collect();
+    let bad = |at: usize| format!("non-hexadecimal number found in fromhex() arg at position {at}");
+    let digit = |at: usize| chars.get(at).and_then(|c| c.to_digit(16));
     let mut out = Vec::new();
-    let mut chars = text.chars().peekable();
-    loop {
-        while chars.peek().is_some_and(|&c| is_py_ascii_space(c)) {
-            chars.next();
+    let mut at = 0;
+    while at < chars.len() {
+        if is_py_ascii_space(chars[at]) {
+            while at < chars.len() && is_py_ascii_space(chars[at]) {
+                at += 1;
+            }
+            if at >= chars.len() {
+                break;
+            }
         }
-        let Some(high) = chars.next() else { break };
-        let low = chars.next()?;
-        out.push(u8::try_from(high.to_digit(16)? * 16 + low.to_digit(16)?).ok()?);
+        let high = digit(at).ok_or_else(|| bad(at))?;
+        let low = digit(at + 1).ok_or_else(|| bad(at + 1))?;
+        out.push(u8::try_from(high * 16 + low).unwrap_or(0));
+        at += 2;
     }
-    Some(out)
+    Ok(out)
 }
 
 fn is_py_ascii_space(c: char) -> bool {
     matches!(c, ' ' | '\t' | '\n' | '\x0b' | '\x0c' | '\r')
 }
 
-/// Python's `base64.b64decode` without `validate`: text must be ASCII;
-/// characters outside the alphabet are skipped; a pad sequence that
-/// completes a quad ends the data (anything after it is ignored); stray pads
-/// are skipped; leftover characters are an error.
-pub fn b64decode(text: &str) -> Option<Vec<u8>> {
+/// Python 3.13's `base64.b64decode` without `validate`: text must be ASCII;
+/// characters outside the alphabet are skipped; padding does not end the
+/// data, but a partial last group is accepted only when padding completes it;
+/// stray pads are skipped. The errors are `binascii`'s.
+pub fn b64decode(text: &str) -> Result<Vec<u8>, String> {
     if !text.is_ascii() {
-        return None;
+        return Err("string argument should contain only ASCII characters".into());
     }
     let mut out = Vec::with_capacity(text.len() / 4 * 3);
     let mut quad_pos = 0u8;
     let mut pads = 0u8;
     let mut left = 0u8;
+    let mut padded = false;
     for b in text.bytes() {
         if b == b'=' {
             if quad_pos >= 2 {
                 pads += 1;
-                if quad_pos + pads >= 4 {
-                    return Some(out);
-                }
+                padded |= quad_pos + pads >= 4;
             }
             continue;
         }
         let Some(value) = sextet(b) else { continue };
         pads = 0;
+        padded = false;
         match quad_pos {
             0 => {
                 left = value;
@@ -68,11 +78,19 @@ pub fn b64decode(text: &str) -> Option<Vec<u8>> {
             }
         }
     }
-    (quad_pos == 0).then_some(out)
+    match quad_pos {
+        _ if padded => Ok(out),
+        0 => Ok(out),
+        1 => Err(format!(
+            "Invalid base64-encoded string: number of data characters ({}) cannot be 1 more than a multiple of 4",
+            out.len() / 3 * 4 + 1
+        )),
+        _ => Err("Incorrect padding".into()),
+    }
 }
 
 /// Python's `base64.urlsafe_b64decode`: `-` and `_` stand for `+` and `/`.
-pub fn urlsafe_b64decode(text: &str) -> Option<Vec<u8>> {
+pub fn urlsafe_b64decode(text: &str) -> Result<Vec<u8>, String> {
     let translated: String = text
         .chars()
         .map(|c| match c {
@@ -82,6 +100,16 @@ pub fn urlsafe_b64decode(text: &str) -> Option<Vec<u8>> {
         })
         .collect();
     b64decode(&translated)
+}
+
+/// The reference's `GetHashFromParsedText`: hex falls back to base64, and
+/// the first decoding's error is the one given.
+pub fn hash_from_parsed_text(encoding: &str, text: &str) -> Result<Vec<u8>, String> {
+    match encoding {
+        "hex" => fromhex(text).or_else(|error| b64decode(text).map_err(|_| error)),
+        "base64" => b64decode(text),
+        _ => Err("None".into()),
+    }
 }
 
 fn sextet(b: u8) -> Option<u8> {
@@ -99,40 +127,65 @@ fn sextet(b: u8) -> Option<u8> {
 mod tests {
     use super::*;
 
+    // (what Python 3.13 gives; the error words where it raises)
     #[test]
     fn hex_like_python() {
-        assert_eq!(
-            fromhex("de ad\x0bbe\tef"),
-            Some(vec![0xde, 0xad, 0xbe, 0xef])
-        );
-        assert_eq!(fromhex(""), Some(vec![]));
-        assert_eq!(fromhex("d e"), None);
-        assert_eq!(fromhex("abc"), None);
-        assert_eq!(fromhex("zz"), None);
+        assert_eq!(fromhex("de ad\x0bbe\tef"), Ok(vec![0xde, 0xad, 0xbe, 0xef]));
+        assert_eq!(fromhex(""), Ok(vec![]));
+        let bad = |at: usize| {
+            Err(format!(
+                "non-hexadecimal number found in fromhex() arg at position {at}"
+            ))
+        };
+        assert_eq!(fromhex("d e"), bad(1));
+        assert_eq!(fromhex("abc"), bad(3));
+        assert_eq!(fromhex("zz"), bad(0));
+        assert_eq!(fromhex("ab\u{3000}cd"), bad(2));
+        assert_eq!(fromhex("abé1"), bad(2));
     }
 
     #[test]
     fn base64_like_python() {
-        assert_eq!(b64decode("aGk="), Some(b"hi".to_vec()));
+        let padding = || Err("Incorrect padding".to_owned());
+        assert_eq!(b64decode("aGk="), Ok(b"hi".to_vec()));
         // junk is skipped
-        assert_eq!(b64decode("a!G k=").as_deref(), Some(&b"hi"[..]));
-        // a completing pad ends the data
-        assert_eq!(b64decode("aGk=garbage").as_deref(), Some(&b"hi"[..]));
-        assert_eq!(b64decode("aG==Zm9v").as_deref(), Some(&b"h"[..]));
+        assert_eq!(b64decode("a!G k="), Ok(b"hi".to_vec()));
+        // padding does not end the data
+        assert_eq!(b64decode("aGk=garbage"), padding());
+        assert_eq!(b64decode("aG==Zm9v"), padding());
+        assert_eq!(b64decode("QQ==QQ=="), Ok(vec![0x41, 0x04, 0x10]));
+        assert_eq!(b64decode("QQ=a=b=="), Ok(vec![0x41, 0x06, 0x9b]));
         // stray pads are skipped; one pad at quad position two is not enough
         assert_eq!(
-            b64decode("=aG=Zm9vYQ==").as_deref(),
-            Some(&[0x68, 0x66, 0x66, 0xf6, 0xf6, 0x10][..])
+            b64decode("=aG=Zm9vYQ=="),
+            Ok(vec![0x68, 0x66, 0x66, 0xf6, 0xf6, 0x10])
         );
         // leftovers are an error
-        assert_eq!(b64decode("aGk"), None);
-        assert_eq!(b64decode("a"), None);
-        assert_eq!(b64decode("é"), None);
-        // `sectionh` + `ref=`: the pad in the markup ends it
+        assert_eq!(b64decode("aGk"), padding());
         assert_eq!(
-            b64decode("<section href=\"page.html\" id=\"\"></section>").map(|b| b.len()),
-            Some(8)
+            b64decode("a"),
+            Err("Invalid base64-encoded string: number of data characters (1) cannot be 1 more than a multiple of 4".into())
         );
-        assert_eq!(urlsafe_b64decode("-_8="), Some(vec![0xfb, 0xff]));
+        assert_eq!(
+            b64decode("é"),
+            Err("string argument should contain only ASCII characters".into())
+        );
+        assert_eq!(
+            b64decode("<section href=\"page.html\" id=\"\"></section>"),
+            Err("Invalid base64-encoded string: number of data characters (29) cannot be 1 more than a multiple of 4".into())
+        );
+        assert_eq!(urlsafe_b64decode("-_8="), Ok(vec![0xfb, 0xff]));
+    }
+
+    #[test]
+    fn hashes_fall_back_from_hex_to_base64() {
+        assert_eq!(
+            hash_from_parsed_text("hex", "aGVsbG8="),
+            Ok(b"hello".to_vec())
+        );
+        assert_eq!(
+            hash_from_parsed_text("hex", "zz"),
+            Err("non-hexadecimal number found in fromhex() arg at position 0".into())
+        );
     }
 }

@@ -26,6 +26,34 @@ pub struct SlotsOwner {
     pub browser: Rc<RefCell<Option<NetworkDataWindow>>>,
     pub cookies: Rc<RefCell<Option<NetworkDataWindow>>>,
     pub headers: Rc<RefCell<Option<NetworkDataWindow>>>,
+    /// The child editors' slots (each parent window has its own), so a
+    /// binding's teardown can hide a child left open.
+    edits: RefCell<Vec<std::rc::Weak<RefCell<Option<EditNetworkValueWindow>>>>>,
+    imports: RefCell<Vec<std::rc::Weak<RefCell<Option<CookieImportWindow>>>>>,
+}
+impl SlotsOwner {
+    /// Hide and forget every window the owner holds, the child editors
+    /// first (a child left shown outlives its parent).
+    pub(crate) fn retire(&self) {
+        let Self {
+            browser,
+            cookies,
+            headers,
+            edits,
+            imports,
+        } = self;
+        let edits: Vec<_> = edits.borrow_mut().drain(..).collect();
+        for slot in edits.iter().filter_map(std::rc::Weak::upgrade) {
+            crate::bound_teardown::forget(&slot);
+        }
+        let imports: Vec<_> = imports.borrow_mut().drain(..).collect();
+        for slot in imports.iter().filter_map(std::rc::Weak::upgrade) {
+            crate::bound_teardown::forget(&slot);
+        }
+        crate::bound_teardown::forget(browser);
+        crate::bound_teardown::forget(cookies);
+        crate::bound_teardown::forget(headers);
+    }
 }
 impl std::ops::Deref for Slots {
     type Target = SlotsOwner;
@@ -260,6 +288,14 @@ fn open_data(
     let active = Rc::new(Cell::new(true));
     let child: Rc<RefCell<Option<EditNetworkValueWindow>>> = Rc::default();
     let import_child: Rc<RefCell<Option<CookieImportWindow>>> = Rc::default();
+    {
+        let mut edits = slots.owner.edits.borrow_mut();
+        edits.retain(|slot| slot.strong_count() > 0);
+        edits.push(Rc::downgrade(&child));
+        let mut imports = slots.owner.imports.borrow_mut();
+        imports.retain(|slot| slot.strong_count() > 0);
+        imports.push(Rc::downgrade(&import_child));
+    }
     let close = Rc::new({
         let weak = window.as_weak();
         let child = child.clone();
@@ -719,7 +755,9 @@ fn show_cookie_import(
         let weak = window.as_weak();
         let parent = parent.as_weak();
         let active = active.clone();
-        let child = child.clone();
+        // (weak: the slot holds this window, whose callbacks hold this, so
+        // a strong slot here would keep both alive for good)
+        let child = Rc::downgrade(child);
         move || {
             if !active.replace(false) {
                 return;
@@ -730,7 +768,9 @@ fn show_cookie_import(
             if let Some(p) = parent.upgrade() {
                 p.set_editing(false);
             }
-            child.borrow_mut().take();
+            if let Some(child) = child.upgrade() {
+                child.borrow_mut().take();
+            }
         }
     });
     window.window().on_close_requested({
@@ -916,7 +956,9 @@ fn edit_value(
         let weak = window.as_weak();
         let parent = parent.as_weak();
         let active = active.clone();
-        let child = child.clone();
+        // (weak: the slot holds this window, whose callbacks hold this, so
+        // a strong slot here would keep both alive for good)
+        let child = Rc::downgrade(child);
         move || {
             if !active.replace(false) {
                 return;
@@ -927,7 +969,9 @@ fn edit_value(
             if let Some(p) = parent.upgrade() {
                 p.set_editing(false);
             }
-            child.borrow_mut().take();
+            if let Some(child) = child.upgrade() {
+                child.borrow_mut().take();
+            }
         }
     });
     window.on_cancel_clicked({

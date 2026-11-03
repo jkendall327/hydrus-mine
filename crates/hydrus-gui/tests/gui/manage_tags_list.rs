@@ -338,7 +338,7 @@ impl Dialog {
     }
 }
 
-// leaf: interaction-manage-tags-list-menu-keys
+// (not tagged: interaction-manage-tags-list-menu-keys; the advanced tag display switch is missing)
 #[test]
 fn the_dialogs_list_selects_enters_and_removes_as_the_references_does() {
     let d = Dialog::new();
@@ -449,7 +449,7 @@ fn the_dialogs_list_selects_enters_and_removes_as_the_references_does() {
     d.h.finish();
 }
 
-// leaf: interaction-manage-tags-list-menu-keys
+// (not tagged: interaction-manage-tags-list-menu-keys; the advanced tag display switch is missing)
 #[test]
 fn the_dialogs_list_enters_the_tags_the_reference_does() {
     // (each answer to the question in a dialog opened anew: an answer
@@ -478,7 +478,7 @@ fn the_dialogs_list_enters_the_tags_the_reference_does() {
     d.h.finish();
 }
 
-// leaf: interaction-manage-tags-list-menu-keys
+// (not tagged: interaction-manage-tags-list-menu-keys; the advanced tag display switch is missing)
 #[test]
 fn the_dialogs_list_middle_clicks_open_search_pages_as_the_references_does() {
     let d = Dialog::new();
@@ -520,7 +520,7 @@ fn the_dialogs_list_middle_clicks_open_search_pages_as_the_references_does() {
     d.h.finish();
 }
 
-// leaf: interaction-manage-tags-list-menu-keys
+// (not tagged: interaction-manage-tags-list-menu-keys; the advanced tag display switch is missing)
 #[test]
 fn the_dialogs_list_menu_and_its_entries_are_the_references() {
     let d = Dialog::new();

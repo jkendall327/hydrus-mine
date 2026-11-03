@@ -45,6 +45,31 @@ pub struct Slots {
     pub favourites: crate::regex_favourites_window::Slot,
     preference_store: Rc<RefCell<Option<Arc<Store>>>>,
 }
+impl Slots {
+    /// Hide and forget every window held, as a binding's last clone goes.
+    pub(crate) fn retire(&self) {
+        use crate::bound_teardown::forget;
+        let Self {
+            processor,
+            step,
+            tag_filter,
+            converter,
+            conversion,
+            exchange,
+            png,
+            favourites,
+            preference_store: _,
+        } = self;
+        forget(processor);
+        forget(step);
+        forget(tag_filter);
+        forget(converter);
+        forget(conversion);
+        crate::bound_teardown::retire_exchange(exchange);
+        crate::bound_teardown::retire_png(png);
+        forget(favourites);
+    }
+}
 
 impl std::fmt::Debug for Slots {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {

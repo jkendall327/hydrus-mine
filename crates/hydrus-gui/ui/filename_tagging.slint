@@ -68,6 +68,8 @@ export component FilenameTaggingWindow inherits Window {
     in-out property <string> example;
     in property <string> example-tags;
     in property <[string]> services;
+    // the first tab's label, before the services'
+    out property <string> sidecars-tab-label: "sidecars";
     in property <int> service-index;
     // the "sidecars" tab (not in options mode): whether it is the one
     // shown, its rows, and its routers button
@@ -149,7 +151,7 @@ export component FilenameTaggingWindow inherits Window {
             spacing: 0px;
             alignment: start;
             Tab {
-                text: "sidecars";
+                text: root.sidecars-tab-label;
                 current: root.on-sidecars;
                 clicked => { root.sidecars-chosen(); }
             }
