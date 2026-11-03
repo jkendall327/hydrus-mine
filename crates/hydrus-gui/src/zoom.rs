@@ -21,6 +21,37 @@ use hydrus_core::media_viewer::{
 /// A logical pixel position or size.
 pub type Point = (i32, i32);
 
+/// What the viewer's options say a file's zoom keeps as the window resizes
+/// and as another file is shown: recentering on resize, and the top hover's
+/// zoom locks (`media_viewer_lock_current_zoom`, `..._zoom_type`,
+/// `..._pan`), read as it happens, as the reference reads them.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ZoomPolicy {
+    pub recenter_on_resize: bool,
+    /// "try to lock current size": the next file at the zoom that keeps
+    /// its size (`ZoomMaintainingZoom`)
+    pub lock_size: bool,
+    /// "lock current zoom type": the next file at the same zoom type
+    pub lock_zoom_type: bool,
+    /// "lock current pan": the next file where this one is
+    pub lock_pan: bool,
+    /// The default zoom type now, if it may change while a window is open
+    /// (`media_viewer_default_zoom_type_override`, set from the zoom menu).
+    pub default_zoom_type: Option<ZoomType>,
+}
+
+impl Default for ZoomPolicy {
+    fn default() -> Self {
+        Self {
+            recenter_on_resize: true,
+            lock_size: false,
+            lock_zoom_type: false,
+            lock_pan: false,
+            default_zoom_type: None,
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct Zoom {
     settings: MediaViewerSettings,
@@ -122,8 +153,8 @@ impl Zoom {
         )
     }
 
-    /// The default zoom, centred (`ZoomReinit`, `ResetCenterPosition`).
-    fn reinit(&mut self) {
+    /// The zoom types' zooms in this canvas (`CalculateCanvasZooms`).
+    fn calculate_zooms(&mut self) {
         self.zooms = canvas_zooms(
             &self.settings,
             self.mime,
@@ -134,6 +165,11 @@ impl Zoom {
             ),
             self.ratio,
         );
+    }
+
+    /// The default zoom, centred (`ZoomReinit`, `ResetCenterPosition`).
+    fn reinit(&mut self) {
+        self.calculate_zooms();
         self.current_type = self.settings.default_zoom_type;
         self.current = self.zooms[&self.current_type];
         self.recentre();
@@ -232,21 +268,91 @@ impl Zoom {
     /// The canvas changed size: the default zoom again, centred, as the
     /// reference's defaults have it.
     pub fn resize(&mut self, canvas: Point, ratio: f64) {
-        self.resize_with_policy(canvas, ratio, true);
+        self.resize_with_policy(canvas, ratio, ZoomPolicy::default());
     }
 
-    /// Resize without losing a detail zoom/pan when recentering is disabled.
-    pub fn resize_with_policy(&mut self, canvas: Point, ratio: f64, recenter: bool) {
-        if canvas != self.canvas || (ratio - self.ratio).abs() > f64::EPSILON {
-            let (current, position) = (self.current, self.position);
-            self.canvas = canvas;
-            self.ratio = ratio;
+    /// The canvas changed size (the canvas's `resizeEvent`): without
+    /// recentering, the zoom and position kept; with it, nothing changes if
+    /// the canvas is now the file's size (the window was sized to it), and
+    /// otherwise the zoom type's zoom again (its type locked), the zoom
+    /// kept (its size locked) or the default zoom, centred.
+    pub fn resize_with_policy(&mut self, canvas: Point, ratio: f64, policy: ZoomPolicy) {
+        if canvas == self.canvas && (ratio - self.ratio).abs() <= f64::EPSILON {
+            return;
+        }
+        if let Some(default) = policy.default_zoom_type {
+            self.settings.default_zoom_type = default;
+        }
+        let (current, position) = (self.current, self.position);
+        let size = self.size();
+        self.canvas = canvas;
+        self.ratio = ratio;
+        if !policy.recenter_on_resize {
+            self.calculate_zooms();
+            self.current = current;
+            self.position = position;
+            return;
+        }
+        if self.zoomable() && size == canvas {
+            self.calculate_zooms();
+            return;
+        }
+        if !self.zoomable() {
             self.reinit();
-            if !recenter {
-                self.current = current;
-                self.position = position;
+        } else if policy.lock_zoom_type {
+            self.calculate_zooms();
+            self.current = self.zooms[&self.current_type];
+        } else if policy.lock_size {
+            let (mime, resolution) = (self.mime, self.resolution);
+            self.switch_to(mime, resolution);
+        } else {
+            self.reinit();
+        }
+        self.recentre();
+    }
+
+    /// Show another file (the canvas's `SetMedia`): at the zoom that keeps
+    /// the size (its size locked), or at the same zoom type (that locked),
+    /// or at its default zoom; where the last one was (the pan locked) or
+    /// centred.
+    pub fn next_file(&mut self, mime: Mime, resolution: Option<(u32, u32)>, policy: ZoomPolicy) {
+        if let Some(default) = policy.default_zoom_type {
+            self.settings.default_zoom_type = default;
+        }
+        let position = self.position;
+        if policy.lock_size {
+            self.switch_to(mime, resolution);
+        } else {
+            let zoom_type = self.current_type;
+            self.mime = mime;
+            self.resolution = resolution;
+            self.show = self.settings.view(mime).media_show_action;
+            self.reinit();
+            if policy.lock_zoom_type {
+                self.current_type = zoom_type;
+                self.current = self.zooms[&zoom_type];
             }
         }
+        if policy.lock_pan {
+            self.position = position;
+        } else {
+            self.recentre();
+        }
+    }
+
+    /// To a zoom (`ZoomToZoomPercent`): about the viewer's centre, or
+    /// about the pointer as the zoom centre option says; the zoom type
+    /// kept.
+    pub fn zoom_to(&mut self, zoom: f64, viewer_centre: bool, pointer: Option<Point>) {
+        if !self.zoomable() {
+            return;
+        }
+        let centre = self.settings.zoom_centre;
+        if viewer_centre {
+            self.settings.zoom_centre = ZoomCentre::ViewerCentre;
+        }
+        self.change_zoom(zoom, pointer);
+        self.settings.zoom_centre = centre;
     }
 
     /// Zoom in a step, about `pointer` if the zoom centres on it and it is
@@ -524,7 +630,7 @@ struct Sharp {
 
 /// What a window is told of its file's zoom (none, if it doesn't zoom).
 type Watch = Rc<dyn Fn(Option<f64>)>;
-type ResizePolicy = Rc<dyn Fn() -> bool>;
+type Policy = Rc<dyn Fn() -> ZoomPolicy>;
 
 /// A window's zoomed file, kept as the file, the window and the user
 /// change it, and drawn by the window's own setters: the file's box, and
@@ -532,7 +638,13 @@ type ResizePolicy = Rc<dyn Fn() -> bool>;
 #[derive(Clone)]
 pub(crate) struct Zoomed {
     settings: MediaViewerSettings,
-    resize_policy: Rc<RefCell<ResizePolicy>>,
+    policy: Rc<RefCell<Policy>>,
+    /// Whether the policy's locks apply to the next file too, or only as
+    /// the window resizes.
+    locks_on_next: Rc<Cell<bool>>,
+    /// Recentre once the canvas is this size (a window resized to its
+    /// file, whose platform applies the size later).
+    recentre_at: Rc<Cell<Option<Point>>>,
     origin: Rc<dyn Fn() -> Option<Point>>,
     last_origin: Rc<Cell<Option<Point>>>,
     zoom: Rc<RefCell<Option<Zoom>>>,
@@ -571,7 +683,9 @@ impl Zoomed {
         );
         Self {
             settings,
-            resize_policy: Rc::new(RefCell::new(Rc::new(|| true))),
+            policy: Rc::new(RefCell::new(Rc::new(ZoomPolicy::default))),
+            locks_on_next: Rc::new(Cell::new(true)),
+            recentre_at: Rc::default(),
             origin: Rc::new(move || {
                 let window = positioned.upgrade()?;
                 let origin = window
@@ -602,9 +716,32 @@ impl Zoomed {
         }
     }
 
-    /// Read resize policy live; other canvases keep the default recentering.
-    pub fn set_resize_policy(&self, policy: impl Fn() -> bool + 'static) {
-        *self.resize_policy.borrow_mut() = Rc::new(policy);
+    /// Read the zoom policy (recentering on resize, the zoom locks) live;
+    /// without one, a window recenters and locks nothing.
+    pub fn set_policy(&self, policy: impl Fn() -> ZoomPolicy + 'static) {
+        *self.policy.borrow_mut() = Rc::new(policy);
+    }
+
+    /// As [`Zoomed::set_policy`], but the locks only as the window
+    /// resizes (the duplicate filter, whose own rules keep a pair's zoom).
+    pub fn set_resize_policy(&self, policy: impl Fn() -> ZoomPolicy + 'static) {
+        self.set_policy(policy);
+        self.locks_on_next.set(false);
+    }
+
+    fn policy(&self) -> ZoomPolicy {
+        (self.policy.borrow())()
+    }
+
+    /// Recentre the file once the canvas is `canvas` (now, if it is): the
+    /// window was asked to be that size, which X11 applies only later.
+    pub fn recentre_when_canvas(&self, canvas: Point) {
+        if (self.canvas)().is_some_and(|(now, _)| now == canvas) {
+            self.recentre_at.set(None);
+            self.recenter();
+        } else {
+            self.recentre_at.set(Some(canvas));
+        }
     }
 
     /// Tell `watch` the zoom (none, for a file that doesn't zoom) each time
@@ -648,16 +785,37 @@ impl Zoomed {
         (self.overlay)(None);
     }
 
-    /// Show a file of this type and resolution (none: of unknown type) at
-    /// its default zoom.
+    /// Show a file of this type and resolution (none: of unknown type): at
+    /// its default zoom, centred, or, after another file, as the zoom locks
+    /// say (see [`Zoom::next_file`]).
     pub fn show(&self, shape: Option<(Mime, Option<(u32, u32)>)>) {
         self.last_origin.set((self.origin)());
         let Some((canvas, ratio)) = (self.canvas)() else {
             return;
         };
-        *self.zoom.borrow_mut() = shape.map(|(mime, resolution)| {
-            Zoom::new(self.settings.clone(), mime, resolution, canvas, ratio)
-        });
+        let mut policy = self.policy();
+        if !self.locks_on_next.get() {
+            policy.lock_size = false;
+            policy.lock_zoom_type = false;
+            policy.lock_pan = false;
+        }
+        let mut zoom = self.zoom.borrow_mut();
+        *zoom = match (zoom.take(), shape) {
+            (Some(mut zoom), Some((mime, resolution)))
+                if zoom.canvas == canvas && (zoom.ratio - ratio).abs() <= f64::EPSILON =>
+            {
+                zoom.next_file(mime, resolution, policy);
+                Some(zoom)
+            }
+            (_, shape) => shape.map(|(mime, resolution)| {
+                let mut settings = self.settings.clone();
+                if let Some(default) = policy.default_zoom_type {
+                    settings.default_zoom_type = default;
+                }
+                Zoom::new(settings, mime, resolution, canvas, ratio)
+            }),
+        };
+        drop(zoom);
         self.draw();
     }
 
@@ -846,7 +1004,8 @@ impl Zoomed {
     /// The window changed size.
     pub fn resized(&self) {
         if let Some((canvas, ratio)) = (self.canvas)() {
-            let recenter = (self.resize_policy.borrow())();
+            let policy = self.policy();
+            let recenter = policy.recenter_on_resize;
             let origin = (self.origin)();
             let previous = self.last_origin.replace(origin);
             let delta = match (previous, origin) {
@@ -854,11 +1013,15 @@ impl Zoomed {
                 _ => (0, 0),
             };
             self.change(|zoom| {
-                zoom.resize_with_policy(canvas, ratio, recenter);
+                zoom.resize_with_policy(canvas, ratio, policy);
                 if !recenter {
                     zoom.drag(delta);
                 }
             });
+            if self.recentre_at.get() == Some(canvas) {
+                self.recentre_at.set(None);
+                self.recenter();
+            }
         }
     }
 
@@ -894,6 +1057,18 @@ impl Zoomed {
 
     pub fn recenter(&self) {
         self.change(Zoom::recenter);
+    }
+
+    /// To a zoom, about the viewer's centre or as the zoom centre option
+    /// says (`ZoomToZoomPercent`).
+    pub fn zoom_to(&self, zoom: f64, viewer_centre: bool) {
+        self.change(|z| z.zoom_to(zoom, viewer_centre, None));
+    }
+
+    /// Where the file is drawn now, if it zooms: (x, y, width, height).
+    pub fn rect(&self) -> Option<Rect> {
+        let zoom = self.zoom.borrow();
+        zoom.as_ref().filter(|z| z.zoomable()).map(Zoom::rect)
     }
 
     /// The zoom type, if the file zooms.

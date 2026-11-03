@@ -26,8 +26,16 @@ fn timer_interval(remaining: Duration) -> Duration {
     )
 }
 
+/// What the filter's top hover frame reaches beyond the filter: the main
+/// window's openers, and the page the filter came from.
+pub(crate) struct TopHover {
+    pub hooks: crate::filter_top_hover::FilterHooksCell,
+    pub focus: Rc<dyn Fn(hydrus_core::HashId)>,
+}
+
 /// Open the filter's window; it forgets itself from `slot` when closed,
 /// and tells `removed` of files committing deleted out of the page.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn open(
     model: ArchiveDeleteFilter,
     location: hydrus_search::LocationContext,
@@ -36,6 +44,7 @@ pub(crate) fn open(
     guard: Rc<dyn Fn() -> bool>,
     return_to: Rc<dyn Fn(hydrus_core::HashId)>,
     image_cache: crate::image_cache::Handle,
+    top_hover: TopHover,
 ) -> Result<ArchiveDeleteWindow, slint::PlatformError> {
     let window = crate::app_title::new::<crate::ArchiveDeleteWindow>()?;
     let parent_guard = guard.clone();
@@ -107,6 +116,35 @@ pub(crate) fn open(
         .read(hydrus_store::settings::get)
         .unwrap_or_default();
     let zoomed = crate::zoom_window!(window, settings);
+    // (the zoom locks, as in the media viewer)
+    zoomed.set_policy(crate::viewer_top_hover::zoom_policy(
+        model.borrow().store().clone(),
+    ));
+    let zoom_switch = crate::filter_top_hover::bind_filter_top_hover!(
+        window,
+        model.borrow().store(),
+        zoomed,
+        crate::viewer_top_hover::Canvas::Viewer,
+        Rc::new({
+            let model = Rc::downgrade(&model);
+            move || model.upgrade()?.borrow().current()
+        }),
+        {
+            let weak = window.as_weak();
+            let slot = Rc::downgrade(slot);
+            move || {
+                let window = weak.upgrade()?;
+                let slot = slot.upgrade()?;
+                let owned = slot
+                    .borrow()
+                    .as_ref()
+                    .is_some_and(|current| std::ptr::eq(current.window(), window.window()));
+                owned.then_some(window)
+            }
+        },
+        top_hover.hooks,
+        Some(top_hover.focus)
+    );
     crate::archive_delete_playback::seek_options(&window, model.borrow().store());
     let controls = crate::archive_delete_playback::Controls::new(
         &window,
@@ -292,7 +330,13 @@ pub(crate) fn open(
             let still = playable.is_none() && animation.is_none();
             zoomed.set_still(crate::viewer::still_of(media, shape, still));
             zoomed.show(shape);
-            window.set_info_line(crate::viewer::shown(store, file).line.into());
+            crate::filter_top_hover::refresh_filter_top_hover!(
+                window,
+                store,
+                file,
+                zoom_switch,
+                crate::viewer_top_hover::Canvas::Viewer
+            );
             let (duration_ms, num_frames) = crate::viewer::timing(store, file);
             controls.file_shown(
                 playable.is_some(),
@@ -435,6 +479,31 @@ pub(crate) fn open(
             }
             model.borrow_mut().back();
             show();
+        }
+    });
+    // a trashed file's undelete button: asked, as the reference's
+    // `UndeleteMedia` asks, then shown again
+    window.on_undelete({
+        let model = model.clone();
+        let viewing_stats = viewing_stats.clone();
+        let guard = guard.clone();
+        let show = show.clone();
+        move || {
+            if !viewing_stats.active() || !guard() {
+                return;
+            }
+            let (store, file) = {
+                let model = model.borrow();
+                (model.store().clone(), model.current())
+            };
+            let Some(file) = file else { return };
+            let show = show.clone();
+            crate::undelete::undelete(
+                &store,
+                &[file],
+                &|question, then| crate::undelete::ask_yes_no(&question, then),
+                Rc::new(show),
+            );
         }
     });
     window.on_close_requested({

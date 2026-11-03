@@ -665,29 +665,39 @@ when it lowers.
   menu offers "in file browser" only in advanced mode, as the reference's
   does (`oracle/record_open_menu_actions.py`). Dragging out for real is
   jkendall327/hydrus-mine#26.
-- **The top hover frame's zoom options and move buttons are part-ported.**
-  The zoom options (cog) menu has the reference's "recenter media", its
-  six zoom types (the current one checked) and "recenter media on window
-  resize", but not "try to lock current size", "lock current zoom type",
-  "lock current pan" or "set default zoom type from this menu": hydrus-rs
-  has no zoom or pan locks yet. The move button moves the window when
-  dragged, through the platform's own window move (untestable headless),
-  but its right-click menu (resize the window to fit the file, or to 50% to
-  200%) is not ported. The volume control's popup (the viewer's mute and
-  the volume) shows while the pointer is over the button or the popup
-  inside the hover; the reference's is a separate window under it.
-- **Only the media viewer's top hover frame is the reference's.** The
-  duplicate filter's (go back a pair, previous, next, show a different
-  pair) and the archive/delete filter's (back, skip) top hover frames, and
-  their shared middle and right rows, are recorded
-  (`oracle/fixtures/viewer_top_hover.json`) but not ported: those windows
-  show their index and info line only. Leaving them was a choice of scope
-  and build memory, not a limit: only four of the row's buttons (slideshow,
-  zoom options, shortcuts, view options) are menus whose `ContextMenuArea`
-  a group crate cannot hold; the rest are plain buttons that could live
-  there, and AGENTS.md's remedy for the menus is to keep such windows in
-  `main.slint`, at the cost of a bigger core crate. Followed up in
-  jkendall327/hydrus-mine#301.
+- **The top hover frame's resize menu is drawn by hydrus-rs, and the
+  window it resizes is not checked for the screen.** The move button's
+  right-click menu (resize to fit, or to 50% to 200%) can be chosen with
+  either button, as the reference's remembers, so it is hydrus-rs's own
+  popup rather than a native menu, and sits right-aligned to the button.
+  Moving the window to where the file was uses the window rescue rules
+  (`window_rescue.rs`) over the monitors winit reports; the headless tests
+  have no monitors, so the rescue of a window sized past the screen
+  (the reference's "resize to fit" of a zoomed-in file) is untested. The
+  move button's left press starts the platform's own window move
+  (untestable headless; the tests see it asked for). The volume
+  control's popup (the viewer's mute and the volume) shows while the
+  pointer is over the button or the popup inside the hover; the
+  reference's is a separate window under it.
+- **The duplicate filter's top hover cannot delete yet.** Its trash
+  button (and "delete completely" and "undelete", for a file in the trash)
+  shows as the reference's, but does nothing: the reference's asks "Delete
+  just this file, or both?", runs the delete dialog and records the deletion
+  as the pair's decision, which hydrus-rs's duplicate filter (whose delete
+  key is not ported either) has no decision for. So its leaf
+  (`audit-media-duplicate-filter-top-hover`) stays open; the rest of its
+  hover is the reference's and tested (`tests/gui/filter_top_hover.rs`).
+- **The filters' view options and shortcuts menus change what the media
+  viewer reads.** In the archive/delete and duplicate filters, the view
+  options menu's window rows act on the filter's window (always on top,
+  without its frame; "always on top (while playing)" does not follow the
+  filter's playing), and its hover, background and rendering rows change
+  the options as they do from the viewer, but the filters do not draw
+  hover text in the background or honour the hover pop-in options. The
+  shortcuts menu's "set current shortcuts" ticks a set for the filter
+  window, whose keys are its own and take no custom sets. Opening a file
+  externally from a filter's hover does not pause it, where the
+  reference's does.
 - **The animation buffer is sized at the file's own resolution.** The
   client's own player (ugoiras, animated WebP) keeps frames as the
   reference's `RasterContainerVideo` does, sized from "Memory for video

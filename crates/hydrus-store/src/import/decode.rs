@@ -1379,6 +1379,19 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
                 "draw_transparency_checkerboard_as_greenscreen",
                 &mut viewer_canvas.transparency_greenscreen,
             ),
+            (
+                "media_viewer_lock_current_zoom",
+                &mut viewer_canvas.lock_size,
+            ),
+            (
+                "media_viewer_lock_current_zoom_type",
+                &mut viewer_canvas.lock_zoom_type,
+            ),
+            ("media_viewer_lock_current_pan", &mut viewer_canvas.lock_pan),
+            (
+                "media_viewer_set_default_viewer_zoom_type_from_menu",
+                &mut viewer_canvas.default_zoom_type_from_menu,
+            ),
         ] {
             if let Some(value) = options.booleans.get(key) {
                 *field = *value;
@@ -4476,6 +4489,18 @@ mod tests {
                     r#"[[0, "draw_transparency_checkerboard_as_greenscreen"], [0, true]]"#,
                 ),
                 (
+                    r#"[[0, "media_viewer_lock_current_zoom"], [0, false]]"#,
+                    r#"[[0, "media_viewer_lock_current_zoom"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "media_viewer_lock_current_pan"], [0, false]]"#,
+                    r#"[[0, "media_viewer_lock_current_pan"], [0, true]]"#,
+                ),
+                (
+                    r#"[[0, "media_viewer_set_default_viewer_zoom_type_from_menu"], [0, false]]"#,
+                    r#"[[0, "media_viewer_set_default_viewer_zoom_type_from_menu"], [0, true]]"#,
+                ),
+                (
                     r#"[[0, "animated_scanbar_height"], [0, 20]]"#,
                     r#"[[0, "animated_scanbar_height"], [0, 37]]"#,
                 ),
@@ -4497,7 +4522,11 @@ mod tests {
                 transparency_greenscreen: true,
                 seek_height: 37,
                 seek_hidden_height: None,
-                seek_nub_width: 19
+                seek_nub_width: 19,
+                lock_size: true,
+                lock_zoom_type: false,
+                lock_pan: true,
+                default_zoom_type_from_menu: true,
             }
         );
     }

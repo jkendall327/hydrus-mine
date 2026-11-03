@@ -1,4 +1,4 @@
-import { Btn } from "@hydrus_ui_core";
+import { Btn } from "btn.slint";
 // The archive/delete filter's window: a page's files one at a time, at
 // their default zoom. As the reference's defaults have it, a left click or
 // F7 keeps the file, a right click or delete deletes it, a middle click or
@@ -8,10 +8,14 @@ import { Btn } from "@hydrus_ui_core";
 // viewer, z switches between 100% and fitting the window, + and - (or ctrl
 // and the mouse wheel) zoom, and shift and the arrow keys pan. With the
 // pointer over the window's left fifth, the file's tags show there; near
-// its top, the file's info line.
+// its top, the reference's top hover frame: back, its place, skip; the
+// file's buttons; the zoom and the window's; and the file's info line.
 
 import { Button } from "std-widgets.slint";
-import { ListText, Theme } from "@hydrus_ui_core";
+import { ListText, Theme } from "theme.slint";
+import { MenuGroups } from "menus.slint";
+import { ViewerEyeMenu } from "viewer_eye_menu.slint";
+import { TopHoverFrame, TopHoverTips } from "viewer_top_hover.slint";
 
 export component ArchiveDeleteWindow inherits Window {
     in property <string> title-suffix: "";
@@ -22,6 +26,17 @@ export component ArchiveDeleteWindow inherits Window {
     preferred-height: 750px;
     background: Theme.colour(10,#202020);
 
+    // the eye menu's window rows: always on top (or while playing) and
+    // without the frame
+    in-out property <bool> viewer-window-top;
+    in-out property <bool> viewer-top-while-playing;
+    in-out property <bool> viewer-window-frameless;
+    in property <bool> media-playing;
+    always-on-top: root.viewer-window-top;
+    changed media-playing => {
+        if root.viewer-top-while-playing { root.viewer-window-top = root.media-playing; }
+    }
+    no-frame: root.viewer-window-frameless;
     in property <image> media;
     in property <string> caption;
     // the file's tags, for the hover frame
@@ -45,11 +60,43 @@ export component ArchiveDeleteWindow inherits Window {
     in property <length> sharp-y;
     in property <length> sharp-width;
     in property <length> sharp-height;
-    // the file's info line, for the top hover frame
+    // the file's info line, for the top hover frame, which shows with the
+    // pointer over it or near it, in the window's middle three fifths
     in property <string> info-line;
-    out property <bool> info-showing: root.info-line != "" && pointer.has-hover
-        && pointer.mouse-y <= info-box.preferred-height + 20px
-        && pointer.mouse-x >= root.width * 0.2 && pointer.mouse-x <= root.width * 0.8;
+    out property <bool> info-showing: root.question == "" && (top-frame.has-hover || top-frame.volume-open || (pointer.has-hover
+        && pointer.mouse-y <= top-frame.box-height + 20px
+        && pointer.mouse-x >= root.width * 0.2 && pointer.mouse-x <= root.width * 0.8));
+    // the top hover frame's: the zoom ("100%"), the tooltips that name
+    // shortcuts, the file's state, the menus' entries
+    in property <string> zoom-text;
+    in property <TopHoverTips> top-tips;
+    in property <TopHoverTips> top-tips-markdown;
+    in property <bool> file-inbox;
+    in property <bool> file-trashed;
+    in property <bool> file-local: true;
+    in property <bool> file-undeletable;
+    in property <bool> volume-available;
+    in property <MenuGroups> top-zoom-menu;
+    in property <[string]> shortcut-names;
+    in property <[bool]> shortcut-current;
+    in property <[bool]> shortcut-defaults;
+    in property <ViewerEyeMenu> eye-menu;
+    // a trashed file's undelete button (`Canvas._Undelete`)
+    callback undelete();
+    callback show-metadata();
+    callback zoom-switch-requested(length, length);
+    callback top-zoom-menu-requested();
+    callback top-zoom-menu-chosen(int);
+    callback shortcut-menu-requested();
+    callback shortcut-menu-chosen(int, int);
+    callback eye-menu-requested();
+    callback eye-menu-chosen(int);
+    callback move-window();
+    callback top-resize-chosen(int, bool);
+    callback toggle-fullscreen();
+    callback open-externally();
+    callback show-in-file-browser();
+    callback focus-media();
     out property <bool> tags-showing: pointer.has-hover && pointer.mouse-x < root.width * 0.2 && root.tags.length > 0;
 
     // the scanbar under a file mpv or the animator plays, and the volume
@@ -353,23 +400,56 @@ export component ArchiveDeleteWindow inherits Window {
                 }
             }
         }
-        // (nothing in it takes the pointer, so the area below keeps it)
-        info-box := Rectangle {
-            x: (root.width - self.width) / 2;
+        top-frame := TopHoverFrame {
+            // (in the middle three fifths, wider if its row needs, and kept
+            // inside the window)
+            x: max(0px, min(root.width * 0.2, root.width - self.width));
             y: 0;
-            width: min(root.width * 0.6, info-text.preferred-width + 24px);
-            height: info-text.preferred-height + 12px;
-            background: #202020e8;
-            visible: root.info-showing && root.question == "";
-            info-text := Text {
-                x: 12px;
-                width: parent.width - 24px;
-                text: root.info-line;
-                color: Theme.colour(11,#f0f0f0);
-                horizontal-alignment: center;
-                vertical-alignment: center;
-                overflow: elide;
-            }
+            width: min(root.width, max(root.width * 0.6, self.least-width));
+            visible: root.info-showing;
+            kind: 1;
+            info-line: root.info-line;
+            index-text: root.caption;
+            zoom-text: root.zoom-text;
+            tips: root.top-tips;
+            tips-markdown: root.top-tips-markdown;
+            file-inbox: root.file-inbox;
+            file-trashed: root.file-trashed;
+            file-local: root.file-local;
+            file-undeletable: root.file-undeletable;
+            volume-available: root.volume-available;
+            global-muted: root.global-muted;
+            viewer-muted: root.viewer-muted;
+            volume: root.volume;
+            zoom-menu: root.top-zoom-menu;
+            shortcut-names: root.shortcut-names;
+            shortcut-current: root.shortcut-current;
+            shortcut-defaults: root.shortcut-defaults;
+            eye-menu: root.eye-menu;
+            back => { root.back(); }
+            skip => { root.skip(); }
+            archive => { root.keep(); }
+            delete => { root.delete(); }
+            undelete => { root.undelete(); }
+            show-metadata => { root.show-metadata(); }
+            zoom(direction) => { root.zoom(direction, false, 0, 0); }
+            zoom-switch(x, y) => { root.zoom-switch-requested(x, y); }
+            zoom-menu-requested => { root.top-zoom-menu-requested(); }
+            zoom-menu-chosen(id) => { root.top-zoom-menu-chosen(id); }
+            flip-global-mute => { root.flip-global-mute(); }
+            flip-viewer-mute => { root.flip-viewer-mute(); }
+            volume-changed(v) => { root.volume-changed(v); }
+            shortcut-menu-requested => { root.shortcut-menu-requested(); }
+            shortcut-menu-chosen(kind, i) => { root.shortcut-menu-chosen(kind, i); }
+            eye-menu-requested => { root.eye-menu-requested(); }
+            eye-menu-chosen(id) => { root.eye-menu-chosen(id); }
+            move-window => { root.move-window(); }
+            resize-chosen(id, right) => { root.top-resize-chosen(id, right); }
+            fullscreen => { root.toggle-fullscreen(); }
+            open-externally => { root.open-externally(); }
+            drag-out => { root.show-in-file-browser(); }
+            focus-media => { root.focus-media(); }
+            close => { root.close-requested(); }
         }
         // (nothing in it takes the pointer, so the area above keeps it)
         if root.tags-showing: Rectangle {
