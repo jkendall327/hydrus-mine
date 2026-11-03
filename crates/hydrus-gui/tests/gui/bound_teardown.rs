@@ -199,9 +199,9 @@ fn the_last_binding_frees_the_recursive_dialogs_left_open() {
             alive
         }),
     ];
+    let _windows = headless::init();
     for (name, open) in cases {
         let (_dir, store, _) = crate::parser_editors::setup();
-        let _windows = headless::init();
         let ui = MainWindow::new().unwrap();
         ui.show().unwrap();
         let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
