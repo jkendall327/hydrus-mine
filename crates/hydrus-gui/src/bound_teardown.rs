@@ -8,19 +8,11 @@
 //! when the binding goes: at a test's end, or at the client's exit, after the
 //! event loop has returned.
 //!
-//! Not covered yet (nested slot types, each with its own children): the
-//! formula, png export, interchange and child-page slots inside the parser
-//! editors; the formula, png export and interchange slots inside the simple
-//! formulae editor; the comparator, conditional-search, merge options and png
-//! slots inside the auto-resolution editor; the top-level subscription
-//! interchange; the sidecar (the export files dialog's included), external call, open externally,
-//! suggested tags, network data, services, downloader definitions, login,
-//! network sessions and search OR slots. Several of those (the interchange,
-//! png export, network data and network sessions slots) already close their
-//! windows on a `Drop` guarded by `Rc::strong_count(..) == 1`, which a slot
-//! clone held by the window's own callbacks defeats. (The database
-//! maintenance window is not missing: its owner, a field of the binding,
-//! hides it when the last clone goes.)
+//! The nested slot types (a dialog's children, and theirs) are walked by the
+//! `retire_*` functions below, which take each window out of its slot and
+//! hide it, as `add` does for a top-level one. (The database maintenance
+//! window is not a slot: its owner, a field of the binding, hides it when
+//! the last clone goes.)
 
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -78,6 +70,151 @@ impl Drop for Teardown {
             let _ = std::panic::catch_unwind(std::panic::AssertUnwindSafe(forget));
         }
     }
+}
+
+/// Take the window out of `slot` and hide it.
+fn forget<T: slint::ComponentHandle>(slot: &Rc<RefCell<Option<T>>>) {
+    let window = slot.borrow_mut().take();
+    if let Some(window) = window {
+        let _ = window.hide();
+    }
+}
+
+fn retire_png(s: &crate::png_export_window::Slots) {
+    forget(&s.0);
+}
+
+fn retire_exchange(s: &crate::downloader_interchange_window::Slots) {
+    forget(&s.0);
+    retire_png(&s.1);
+}
+
+fn retire_strings(s: &crate::string_processor_window::Slots) {
+    forget(&s.processor);
+    forget(&s.step);
+    forget(&s.tag_filter);
+    forget(&s.converter);
+    forget(&s.conversion);
+    retire_exchange(&s.exchange);
+    retire_png(&s.png);
+    forget(&s.favourites);
+}
+
+fn retire_formula(s: &crate::formula_window::Slots) {
+    retire_exchange(&s.exchange);
+    forget(&s.formula);
+    forget(&s.rule);
+    let child = s.child.borrow_mut().take();
+    if let Some(child) = child {
+        retire_formula(&child);
+    }
+    retire_strings(&s.strings);
+    retire_png(&s.png);
+}
+
+fn retire_parsers(s: &crate::parser_editors_window::Slots) {
+    retire_exchange(&s.exchange);
+    forget(&s.list);
+    forget(&s.links);
+    forget(&s.picker);
+    forget(&s.page);
+    forget(&s.content);
+    retire_formula(&s.formula);
+    let child = s.child.borrow_mut().take();
+    if let Some(child) = child {
+        retire_parsers(&child);
+    }
+}
+
+fn retire_sidecars(s: &crate::sidecars_window::Slots) {
+    forget(&s.routers);
+    retire_exchange(&s.exchange);
+    forget(&s.router);
+    forget(&s.node);
+    forget(&s.object_name);
+    retire_strings(&s.strings);
+    retire_formula(&s.formula);
+}
+
+fn retire_cookies(s: &crate::login_cookies_window::Slots) {
+    forget(&s.window);
+    retire_strings(&s.strings);
+}
+
+fn retire_login_step(s: &crate::login_step_window::Slots) {
+    forget(&s.step);
+    retire_parsers(&s.parsers);
+    retire_exchange(&s.exchange);
+    retire_cookies(&s.cookies);
+    forget(&s.argument);
+}
+
+fn retire_login_domains(s: &crate::login_domains_window::Slots) {
+    forget(&s.domains);
+    forget(&s.credentials);
+    forget(&s.entry.window);
+    forget(&s.entry.credentials);
+}
+
+fn retire_login(s: &crate::login_workflows_window::Slots) {
+    forget(&s.scripts);
+    retire_login_domains(&s.domains);
+    forget(&s.script);
+    retire_login_step(&s.step);
+    s.test_control.borrow_mut().take();
+    forget(&s.result);
+    forget(&s.test_domain);
+    retire_cookies(&s.cookies);
+    forget(&s.example);
+    forget(&s.definition);
+    forget(&s.credentials);
+    retire_strings(&s.strings);
+    retire_exchange(&s.exchange);
+}
+
+fn retire_downloader_definitions(s: &crate::downloader_definitions_window::Slots) {
+    retire_exchange(&s.class_exchange);
+    retire_exchange(&s.gug_exchange);
+    forget(&s.classes);
+    forget(&s.gugs);
+    forget(&s.class_edit);
+    forget(&s.gug_edit);
+    forget(&s.rule);
+    retire_strings(&s.strings);
+    forget(&s.domains.entry);
+    forget(&s.domains.favourites);
+}
+
+fn retire_simple_formulae(s: &crate::simple_formulae_window::Slots) {
+    retire_exchange(&s.exchange);
+    forget(&s.list);
+    retire_formula(&s.formula);
+    retire_png(&s.png);
+    forget(&s.pngs.0);
+}
+
+fn retire_auto_resolution(s: &crate::auto_resolution_rules_window::Slots) {
+    forget(&s.list);
+    forget(&s.rule);
+    let comparators: Vec<_> = s.comparators.borrow_mut().drain(..).collect();
+    for (_, window) in comparators {
+        let _ = window.hide();
+    }
+    forget(&s.conditional.predicate_editor);
+    s.conditional.search_or.retire();
+    forget(&s.merge_options);
+    forget(&s.locations);
+    forget(&s.preview_filter);
+    retire_png(&s.png);
+}
+
+fn retire_external_call(s: &crate::external_call_window::Slots) {
+    forget(&s.defaults);
+    forget(&s.editor);
+    forget(&s.command);
+    forget(&s.question);
+    retire_strings(&s.strings);
+    retire_exchange(&s.exchange);
 }
 
 /// Registers `bound`'s dialog slots with its teardown.
@@ -152,6 +289,38 @@ pub(crate) fn watch(bound: &crate::Bound) {
     t.add(&rules.preview_filter);
     t.add(&bound.simple_formulae.list);
     t.add(&bound.export_files.window);
+    // the nested slot types: every descendant of a dialog
+    fn nested<S: Clone + 'static>(t: &Teardown, slots: &S, retire: fn(&S)) {
+        let slots = slots.clone();
+        t.push(move || retire(&slots));
+    }
+    nested(t, &bound.export_files.sidecars, retire_sidecars);
+    nested(t, &bound.filename_tagging_sidecars, retire_sidecars);
+    nested(t, &folders.sidecars, retire_sidecars);
+    nested(t, &bound.subscription_exchange, retire_exchange);
+    nested(t, &bound.parser_editors, retire_parsers);
+    nested(t, &bound.login_workflows, retire_login);
+    nested(t, &bound.downloader_definitions, retire_downloader_definitions);
+    nested(t, &bound.simple_formulae, retire_simple_formulae);
+    nested(t, &bound.auto_resolution, retire_auto_resolution);
+    nested(t, &bound.options_external_calls, retire_external_call);
+    t.add(&bound.options_open_externally.files);
+    t.add(&bound.options_open_externally.choice);
+    t.add(&bound.options_open_externally.question);
+    t.add(&bound.options_suggested_tags_slot.editor);
+    t.add(&bound.options_suggested_tags_slot.tags);
+    t.add(&bound.options_suggested_tags_slot.weights);
+    t.add(&bound.services_editor.manage);
+    t.add(&bound.services_editor.edit);
+    t.add(&bound.network_sessions.browser);
+    t.add(&bound.network_sessions.cookies);
+    t.add(&bound.network_sessions.headers);
+    let network = bound.network_data.clone();
+    t.push(move || network.close());
+    let search_or = bound.search_or.clone();
+    t.push(move || search_or.retire());
+    let favourite_or = bound.favourites.search_or.clone();
+    t.push(move || favourite_or.retire());
     let reviews = bound.auto_resolution_reviews.clone();
     t.push(move || {
         let windows: Vec<_> = reviews.borrow_mut().drain(..).collect();
