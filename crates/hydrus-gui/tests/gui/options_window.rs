@@ -3682,15 +3682,23 @@ fn closing_preferences_reach_frozen_page_selection_and_native_main_activation() 
     }
     set_activation_observer(None);
     bound.pages.borrow_mut().save(1_700_000_000).unwrap();
-    let mut reopened = Pages::open(store).unwrap();
     assert_eq!(
+        store
+            .read(|conn| hydrus_store::sessions::page_selected(conn, &original_key))
+            .unwrap(),
+        [ids[1]],
+        "the exit selection is kept for the Client API while the client is open"
+    );
+    // (but not when it opens again: the reference's session keeps no
+    // selection)
+    let mut reopened = Pages::open(store).unwrap();
+    assert!(
         reopened
             .page(&original_key)
             .unwrap()
             .borrow()
-            .selected_files(),
-        [ids[1]],
-        "exit selection persists in the last session"
+            .selected_files()
+            .is_empty()
     );
 }
 

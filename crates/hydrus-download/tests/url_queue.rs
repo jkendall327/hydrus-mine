@@ -1293,3 +1293,166 @@ async fn running_gallery_searches_pick_up_capacity_growth_and_release_on_error()
     s.runner
         .cancel(successor, hydrus_store::live::JobKind::Gallery);
 }
+
+/// A stored last session of these URL downloader pages (name, queue), the
+/// first shown; their keys.
+fn open_url_pages(store: &Store, pages: &[(&str, i64)]) -> Vec<hydrus_core::pages::PageKey> {
+    use hydrus_core::pages::{DownloaderKind, Page, PageContent, PageKey, Session};
+    use hydrus_store::sessions;
+    let pages: Vec<Page> = pages
+        .iter()
+        .map(|&(name, queue)| Page {
+            key: PageKey::random(),
+            name: name.into(),
+            content: PageContent::Downloader {
+                kind: DownloaderKind::Urls,
+                queues: vec![queue],
+                sort: None,
+                page: None,
+            },
+        })
+        .collect();
+    let keys = pages.iter().map(|p| p.key).collect();
+    let session = Session {
+        name: sessions::LAST_SESSION.into(),
+        pages,
+    };
+    store
+        .write(move |ctx| {
+            for page in &session.pages {
+                if let PageContent::Downloader { queues: ids, .. } = &page.content {
+                    queues::take_up_url_queue(ctx.conn(), ids[0], &page.key.0)?;
+                }
+            }
+            sessions::save(ctx.conn(), &session, 1)
+        })
+        .unwrap();
+    keys
+}
+
+/// A URL page's queue, as a GUI page makes it (its page key set when the
+/// session is stored).
+fn page_queue(store: &Store, name: &str) -> i64 {
+    let name = name.to_owned();
+    store
+        .write(move |ctx| {
+            queues::create_queue(
+                ctx.conn(),
+                queues::QueueKind::Urls,
+                &name,
+                None,
+                &hydrus_core::import_options::ImportOptionsSlice::default(),
+                1,
+            )
+        })
+        .unwrap()
+}
+
+/// `GetOrMakeURLImportPage` matches the open pages by their own names: a
+/// renamed page takes its new name's URLs, and its queue's old name finds
+/// nothing (a new page is made for it).
+#[tokio::test(flavor = "multi_thread")]
+async fn a_renamed_url_page_is_found_by_its_page_name_not_its_queues() {
+    let s = setup().await;
+    let renamed = page_queue(&s.store, "url import");
+    let keys = open_url_pages(&s.store, &[("my downloads", renamed)]);
+    let (queue, page) = s
+        .runner
+        .url_page_for(Some("my downloads"), None, None, false)
+        .unwrap();
+    assert_eq!((queue.id, page), (renamed, Some(keys[0])));
+    let (other, page) = s
+        .runner
+        .url_page_for(Some("url import"), None, None, false)
+        .unwrap();
+    assert_ne!(other.id, renamed);
+    assert_eq!(page, None, "a new page, for the client to make");
+    assert!(queues::waits_for_url_page(&other));
+}
+
+/// A closed page is not open: its queue (waiting for the page to be
+/// reopened) is not used; a new page is made, as the reference makes one.
+#[tokio::test(flavor = "multi_thread")]
+async fn a_closed_url_pages_queue_is_not_used() {
+    let s = setup().await;
+    let closed = page_queue(&s.store, "my downloads");
+    open_url_pages(&s.store, &[("my downloads", closed)]);
+    // (closed: out of the session, its queue marked)
+    s.store
+        .write(move |ctx| {
+            queues::set_page_closed(ctx.conn(), closed, true)?;
+            hydrus_store::sessions::save(
+                ctx.conn(),
+                &hydrus_core::pages::Session {
+                    name: hydrus_store::sessions::LAST_SESSION.into(),
+                    pages: Vec::new(),
+                },
+                2,
+            )
+        })
+        .unwrap();
+    let (queue, page) = s
+        .runner
+        .url_page_for(Some("my downloads"), None, None, false)
+        .unwrap();
+    assert_ne!(queue.id, closed);
+    assert_eq!(page, None);
+    assert!(queues::waits_for_url_page(&queue));
+}
+
+/// A page key no open page has falls back to the name, then (with no name)
+/// any URL page; a new page made for it gets no key of the caller's, so the
+/// client takes it up.
+#[tokio::test(flavor = "multi_thread")]
+async fn an_unknown_page_key_falls_back_to_the_name_then_any_page() {
+    let s = setup().await;
+    let first = page_queue(&s.store, "url import");
+    let second = page_queue(&s.store, "url import");
+    let keys = open_url_pages(&s.store, &[("first", first), ("second", second)]);
+    let unknown = [9u8; 32];
+    let found = |name: Option<&str>| {
+        let (queue, page) = s
+            .runner
+            .url_page_for(name, Some(&unknown), None, false)
+            .unwrap();
+        (queue, page)
+    };
+    let (queue, page) = found(Some("second"));
+    assert_eq!((queue.id, page), (second, Some(keys[1])));
+    // (any: the page shown, or the first; none is stored as shown)
+    let (queue, page) = found(None);
+    assert_eq!((queue.id, page), (first, Some(keys[0])));
+    let (queue, page) = found(Some("nowhere"));
+    assert!(queue.id != first && queue.id != second);
+    assert_eq!((page, queue.page_key), (None, None));
+    assert_eq!(queue.name, "nowhere");
+    // (the known key still wins over the name)
+    let (queue, _) = s
+        .runner
+        .url_page_for(Some("first"), Some(&keys[1].0), None, false)
+        .unwrap();
+    assert_eq!(queue.id, second);
+}
+
+/// A second call for a page name not open yet goes to the queue the first
+/// made, before the client has taken it up as a page: one page, not two.
+#[tokio::test(flavor = "multi_thread")]
+async fn a_second_url_to_a_new_page_name_reuses_its_queue() {
+    let s = setup().await;
+    let (first, _) = s
+        .runner
+        .url_page_for(Some("api downloads"), None, None, true)
+        .unwrap();
+    let (second, _) = s
+        .runner
+        .url_page_for(Some("api downloads"), None, None, false)
+        .unwrap();
+    assert_eq!(first.id, second.id);
+    let waiting = s.store.read(queues::waiting_url_queues).unwrap();
+    assert_eq!(waiting.len(), 1);
+    assert_eq!(waiting[0].0.name, "api downloads");
+    assert!(
+        waiting[0].1,
+        "the first call asked for its page to be shown"
+    );
+}

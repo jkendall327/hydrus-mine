@@ -52,10 +52,6 @@ fn copied(store: &hydrus_store::Store, mut pages: Vec<Page>) -> hydrus_store::Re
             if !files.is_empty() {
                 sessions::set_page_files(ctx.conn(), new, &files)?;
             }
-            let selected = sessions::page_selected(ctx.conn(), old)?;
-            if !selected.is_empty() {
-                sessions::set_page_selected(ctx.conn(), new, &selected)?;
-            }
         }
         Ok(())
     })?;
@@ -290,10 +286,12 @@ impl Pages {
             kept_counts: HashMap::new(),
         };
         // (pages closed when the client last closed, or crashed, go with
-        // their downloads)
-        pages
-            .store
-            .write(|ctx| hydrus_store::queues::delete_closed_queues(ctx.conn()))?;
+        // their downloads; no page's selection is kept, as the reference
+        // keeps none)
+        pages.store.write(|ctx| {
+            hydrus_store::queues::delete_closed_queues(ctx.conn())?;
+            sessions::clear_selections(ctx.conn())
+        })?;
         (pages.naming, pages.downloader_options, pages.kept_counts) = pages.store.read(|conn| {
             Ok((
                 hydrus_store::settings::get(conn)?,
@@ -947,13 +945,13 @@ impl Pages {
         self.sync(now)
     }
 
-    /// Take up, as pages, the URL queues the Client API made for a page name
-    /// while no page had it (`/add_urls/add_url` with
-    /// `destination_page_name`): each a URL downloader page of its queue's
-    /// name, at the end of the top notebook and not shown, as the
-    /// reference's `GetOrMakeURLImportPage` makes one. A queue made without
-    /// a page key that no page or closed page holds; it gets the new page's
-    /// key, so the API finds the page by it after. Whether any was taken up.
+    /// Take up, as pages, the URL queues the Client API made for a page
+    /// that was not open (`/add_urls/add_url`: see
+    /// `hydrus_download::Downloads::url_page_for`): each a URL downloader
+    /// page of its queue's name, where a new page goes (the notebook shown,
+    /// by "default_new_page_goes") and shown if the call asked for it, as
+    /// the reference's `GetOrMakeURLImportPage` makes one. The queue gets
+    /// the page's key. Whether any was taken up.
     pub fn adopt_api_queues(&mut self) -> Result<bool, String> {
         fn held(pages: &[Page], out: &mut std::collections::HashSet<i64>) {
             for page in pages {
@@ -964,31 +962,29 @@ impl Pages {
                 }
             }
         }
-        let all = self
+        let waiting = self
             .store
-            .read(|conn| {
-                hydrus_store::queues::queues(conn, Some(hydrus_store::queues::QueueKind::Urls))
-            })
+            .read(hydrus_store::queues::waiting_url_queues)
             .map_err(|e| e.to_string())?;
+        if waiting.is_empty() {
+            return Ok(false);
+        }
         let mut used = std::collections::HashSet::new();
         held(&self.session.pages, &mut used);
         for closed in &self.closed {
             held(std::slice::from_ref(&closed.page), &mut used);
         }
-        let orphans: Vec<_> = all
-            .into_iter()
-            .filter(|q| q.page_key.is_none() && !q.page_closed && !used.contains(&q.id))
-            .collect();
-        if orphans.is_empty() {
-            return Ok(false);
-        }
-        for queue in orphans {
+        let mut adopted = false;
+        for (queue, show) in waiting {
+            if used.contains(&queue.id) {
+                continue;
+            }
             let key = PageKey::random();
             let id = queue.id;
             self.store
-                .write(move |ctx| hydrus_store::queues::set_page_key(ctx.conn(), id, &key.0))
+                .write(move |ctx| hydrus_store::queues::take_up_url_queue(ctx.conn(), id, &key.0))
                 .map_err(|e| e.to_string())?;
-            self.session.pages.push(Page {
+            let page = Page {
                 key,
                 name: queue.name.clone(),
                 content: PageContent::Downloader {
@@ -997,9 +993,20 @@ impl Pages {
                     sort: None,
                     page: None,
                 },
-            });
+            };
+            // (not where a chooser the user has open would put its page)
+            let target = self.new_page_target.take();
+            let depth = self.new_page_depth.take();
+            if show {
+                self.add(page);
+            } else {
+                self.insert_unshown(page);
+            }
+            self.new_page_target = target;
+            self.new_page_depth = depth;
+            adopted = true;
         }
-        Ok(true)
+        Ok(adopted)
     }
 
     /// Keep the last session up to date in the store, as [`Pages::save`]
@@ -1617,26 +1624,33 @@ impl Pages {
         if select {
             self.add(page);
         } else {
-            let depth = self.current_depth();
-            let previous = self.shown().key;
-            let current = self.path.get(depth).copied();
-            let policy: hydrus_store::settings::PageInsertion = self
-                .store
-                .read(hydrus_store::settings::get)
-                .unwrap_or_default();
-            let notebook = self.notebook_mut(depth);
-            let was_empty = notebook.is_empty();
-            let index = policy.index(current, notebook.len());
-            notebook.insert(index, page);
-            if was_empty {
-                // Qt selects the first tab in a formerly empty notebook, even
-                // when an automatic import does not request selecting a page.
-                self.select(depth, 0);
-            } else {
-                self.show(&previous);
-            }
+            self.insert_unshown(page);
         }
         Ok(())
+    }
+
+    /// Add `page` where a new page goes (the notebook shown, by
+    /// "default_new_page_goes") without showing it, as the reference's
+    /// `NewPage` with `select_page` false does.
+    fn insert_unshown(&mut self, page: Page) {
+        let depth = self.current_depth();
+        let previous = self.shown().key;
+        let current = self.path.get(depth).copied();
+        let policy: hydrus_store::settings::PageInsertion = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        let notebook = self.notebook_mut(depth);
+        let was_empty = notebook.is_empty();
+        let index = policy.index(current, notebook.len());
+        notebook.insert(index, page);
+        if was_empty {
+            // Qt selects the first tab in a formerly empty notebook, even
+            // when an automatic import does not request selecting a page.
+            self.select(depth, 0);
+        } else {
+            self.show(&previous);
+        }
     }
 
     /// Add a recognised clipboard URL to the current compatible importer, or the
@@ -1708,18 +1722,6 @@ impl Pages {
         name: &str,
         options: Option<hydrus_core::import_options::ImportOptionsSlice>,
     ) -> Result<(), String> {
-        fn matching(pages: &[Page], out: &mut Vec<PageKey>, named: Option<&str>) {
-            for page in pages {
-                match &page.content {
-                    PageContent::Downloader {
-                        kind: DownloaderKind::Urls,
-                        ..
-                    } if named.is_none_or(|name| page.name == name) => out.push(page.key),
-                    PageContent::Pages(children) => matching(children, out, named),
-                    _ => {}
-                }
-            }
-        }
         let name_owned = name.to_owned();
         let name = name_owned.as_str();
         if urls.is_empty() {
@@ -1743,16 +1745,26 @@ impl Pages {
             // a URL its class cannot parse is queued and fails when it is fetched)
             normalised.push(url);
         }
-        let mut candidates = Vec::new();
-        matching(&self.session.pages, &mut candidates, Some(name));
         let shown = self.shown().key;
-        let (key, created) = if candidates.contains(&shown) {
-            (shown, false)
-        } else if let Some(key) = candidates.first() {
-            (*key, false)
+        let open = hydrus_core::pages::url_pages(&self.session.pages);
+        let choices: Vec<_> = open
+            .iter()
+            .map(|page| hydrus_core::pages::UrlPageChoice {
+                key: Some(page.key),
+                name: &page.name,
+                current: page.key == shown,
+                fits: true,
+            })
+            .collect();
+        let chosen =
+            hydrus_core::pages::choose_url_page(&choices, Some(name), None).map(|i| open[i].key);
+        let (key, created) = if let Some(key) = chosen {
+            (key, false)
         } else {
-            let mut existing = Vec::new();
-            matching(&self.session.pages, &mut existing, None);
+            let existing: Vec<PageKey> = hydrus_core::pages::url_pages(&self.session.pages)
+                .iter()
+                .map(|page| page.key)
+                .collect();
             let target = self.new_page_target.take();
             let depth = self.new_page_depth.take();
             let result = self.new_page_selected(&NewPage::Urls, false);

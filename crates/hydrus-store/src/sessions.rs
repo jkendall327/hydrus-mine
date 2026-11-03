@@ -173,6 +173,14 @@ pub fn set_page_selected(conn: &Connection, page: &PageKey, files: &[HashId]) ->
     Ok(())
 }
 
+/// Forget every page's selection, as the client opens: the reference's
+/// sessions keep a page's files but not which were selected
+/// (`ClientGUISession.py`), so it opens with none.
+pub fn clear_selections(conn: &Connection) -> Result<()> {
+    conn.execute("UPDATE page_files SET selected = X''", [])?;
+    Ok(())
+}
+
 /// The files selected on a page, in the page's order.
 pub fn page_selected(conn: &Connection, page: &PageKey) -> Result<Vec<HashId>> {
     let packed: Option<Vec<u8>> = conn

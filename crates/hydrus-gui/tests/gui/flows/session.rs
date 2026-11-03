@@ -25,12 +25,6 @@ const KNOWN: &[Known] = &[
         path: "(restored)/shown",
         why: "The client and the daemon: the client opens on the page it showed last",
     },
-    // hydrus-rs keeps a page's selection with the session; the reference
-    // opens with nothing selected
-    Known {
-        path: "(restored)/pages/1/selected",
-        why: "The client and the daemon: a page's selected files come back",
-    },
 ];
 
 const THREAD: u32 = 100;
@@ -104,21 +98,25 @@ fn describe(bound: &Bound, state: &State<'_>, page: &Page) -> Json {
     }
 }
 
-/// The tree, the shown page's names from the top, and the site's requests.
-fn tree(step: &str, bound: &Bound, state: &State<'_>, site: &Site) -> Json {
+/// The tree, the shown page's names from the top (as the window's tabs
+/// show them), and the site's requests.
+fn tree(step: &str, ui: &MainWindow, bound: &Bound, state: &State<'_>, site: &Site) -> Json {
     (bound.sync)();
+    widgets::settle();
     let session = bound.pages.borrow().session().clone();
+    let tabs = super::tab_strip(ui);
+    // (the window shows the top notebook's tabs, and each notebook's on the
+    // way to the page shown: the rest of the tree is the session's)
+    let top: Vec<String> = session.pages.iter().map(|p| p.name.clone()).collect();
+    assert_eq!(tabs[0].0, top, "the top notebook's tabs");
     let pages: Vec<Json> = session
         .pages
         .iter()
         .map(|p| describe(bound, state, p))
         .collect();
-    let shown: Vec<String> = bound
-        .pages
-        .borrow()
-        .tabs()
+    let shown: Vec<String> = tabs
         .iter()
-        .map(|t| t.names[t.selected].clone())
+        .map(|(names, selected)| names[*selected].clone())
         .collect();
     json!({"step": step, "pages": pages, "shown": shown, "hits": site.take_hits()})
 }
@@ -212,7 +210,7 @@ fn pages_left_open_come_back_as_the_reference_brings_them_back() {
         ui.invoke_watcher_urls(format!("{}/thread/{THREAD}", site.base).into());
         site.wait_for_a_request(20, "the downloader pages");
         super::wait_until_idle(&daemon, || importers_done(&bound, &store));
-        steps.push(tree("build", &bound, &state, &site));
+        steps.push(tree("build", &ui, &bound, &state, &site));
         // closed: the pages saved as the client saves them on exit
         bound.pages.borrow_mut().save(0).unwrap();
         drop(daemon);
@@ -224,7 +222,8 @@ fn pages_left_open_come_back_as_the_reference_brings_them_back() {
         let ui = MainWindow::new().unwrap();
         ui.show().unwrap();
         let bound = bind(&ui, Pages::open(store.clone()).unwrap());
-        let daemon = Daemon::start(&store);
+        let mut daemon = Daemon::start(&store);
+        daemon.serve_api(super::api_port("flow_session.json"));
         let state = State {
             store: &store,
             ui: &ui,
@@ -232,7 +231,24 @@ fn pages_left_open_come_back_as_the_reference_brings_them_back() {
             n: &n,
         };
         super::wait_until_idle(&daemon, || importers_done(&bound, &store));
-        steps.push(tree("restored", &bound, &state, &site));
+        steps.push(tree("restored", &ui, &bound, &state, &site));
+        // the Client API lists no selection either, as the reference keeps
+        // none with its session
+        // (the search page for safe, second in the top notebook)
+        let search = bound.pages.borrow().session().pages[1].key;
+        let (status, info) = daemon.api(
+            "GET",
+            &format!(
+                "/manage_pages/get_page_info?page_key={}&simple=false",
+                search.to_hex()
+            ),
+            None,
+        );
+        assert_eq!(status, 200, "{info}");
+        let media = &info["page_info"]["media"];
+        assert!(media["num_files"].as_u64().unwrap() > 0, "{info}");
+        assert_eq!(media["num_files_selected"], json!(0), "{info}");
+        assert_eq!(media["hashes_selected"], json!([]), "{info}");
     }
 
     compare(&steps, &recording, KNOWN);

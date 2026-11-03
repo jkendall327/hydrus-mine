@@ -118,7 +118,8 @@ fn the_client_api_drives_a_download_then_tags_it_as_the_reference_does() {
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
-    let daemon = Daemon::start(&store);
+    let mut daemon = Daemon::start(&store);
+    daemon.serve_api(super::api_port("flow_client_api.json"));
     let state = State {
         store: &store,
         ui: &ui,
@@ -131,13 +132,15 @@ fn the_client_api_drives_a_download_then_tags_it_as_the_reference_does() {
     };
     let step = |name: &str, calls: Vec<Json>| -> Json {
         let files = api_queue(&bound).map_or(json!([]), |q| state.file_log(q));
-        let session = bound.pages.borrow().session().clone();
-        let mut pages = Vec::new();
-        media_pages(&session.pages, &mut pages);
+        crate::common::widgets::settle();
+        // (the flow's pages are all in the top notebook, whose tabs the
+        // window shows)
+        let tabs = super::tab_strip(&ui);
+        assert_eq!(tabs.len(), 1, "no page of pages in the flow");
         json!({
             "step": name,
             "calls": calls,
-            "gui pages": pages.iter().map(|p| p.name.clone()).collect::<Vec<_>>(),
+            "gui pages": tabs[0].0,
             "page": files,
             "files": state.files(hashes_in_log(&files)),
             "hits": site.take_hits(),

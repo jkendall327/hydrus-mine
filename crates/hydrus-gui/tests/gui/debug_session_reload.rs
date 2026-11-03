@@ -58,7 +58,11 @@ fn files(store: &Store, row: &serde_json::Value) -> Vec<HashId> {
         })
         .collect()
 }
-fn seed(store: &Store) -> Vec<PageKey> {
+/// The fixture's session stored as the last one; its pages' keys, and the
+/// files selected on the page it shows (the client opens with none
+/// selected, as the reference's session keeps none: the live client the
+/// fixture was taken from had them selected).
+fn seed(store: &Store) -> (Vec<PageKey>, Vec<HashId>) {
     fn pages(
         store: &Store,
         rows: &[serde_json::Value],
@@ -96,7 +100,7 @@ fn seed(store: &Store) -> Vec<PageKey> {
     let fixture = hydrus_testkit::fixture_json("debug_session_reload.json");
     let mut media = Vec::new();
     let tree = pages(store, fixture["before"].as_array().unwrap(), &mut media);
-    let last = media.last().unwrap().0;
+    let (last, _, shown_selected) = media.last().unwrap().clone();
     let session = Session {
         name: sessions::LAST_SESSION.into(),
         pages: tree,
@@ -113,7 +117,7 @@ fn seed(store: &Store) -> Vec<PageKey> {
             Ok(())
         })
         .unwrap();
-    keys
+    (keys, shown_selected)
 }
 fn assert_tree(bound: &Bound, store: &Store) {
     fn compare(pages: &mut Pages, tree: &[Page], rows: &[serde_json::Value], store: &Store) {
@@ -167,12 +171,14 @@ fn actual_menu_snapshot_restores_order_resets_selection_and_keeps_closed_origina
         2
     );
     let (_dirs, store) = super::subscriptions::store();
-    let keys = seed(&store);
+    let (keys, selected) = seed(&store);
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     ui.show().unwrap();
     let bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let old = bound.current.borrow().clone();
+    assert!(old.borrow().selected_files().is_empty());
+    old.borrow_mut().select_files(&selected);
     assert_eq!(old.borrow().selected_files().len(), 2);
     let old_files = old.borrow().files();
     launch(&ui);
@@ -303,7 +309,7 @@ fn importer_logs_restore_with_new_queue_identity_and_paused_closed_owner() {
 #[test]
 fn hidden_new_launch_cancelled_exit_rebind_and_shared_final_drop_ownership() {
     let (_dirs, store) = super::subscriptions::store();
-    seed(&store);
+    let _ = seed(&store);
     store
         .write(|ctx| {
             let mut gui: hydrus_store::settings::GuiSettings =

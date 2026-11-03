@@ -196,10 +196,11 @@ search.
 - **The client opens on the page it showed last**, or the one
   `focus_page` asked for while it was closed. The reference opens each
   notebook on its first page.
-- **A page's selected files come back when the client opens again.** The
-  reference's session keeps a page's files but not which were selected:
-  it opens with none selected (the session flow,
-  `oracle/fixtures/flow_session.json`, shows both).
+- **`/add_urls/add_url` can answer up to about half a second before
+  `/manage_pages` shows a new page for it.** The daemon makes the page's
+  queue and starts on the URL at once; the open client takes the queue up
+  as a page on its next pass (twice a second), as the reference's call
+  makes the page before it answers.
 - **A page's selected files are listed in the page's order**
   (`hash_ids_selected`); the reference's order is its selection set's.
 - **A page's state is always "normal"** (`page_state` 0): our searches

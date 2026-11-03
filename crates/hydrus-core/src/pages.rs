@@ -587,8 +587,139 @@ impl<'de> serde::Deserialize<'de> for PageKey {
     }
 }
 
+/// An open URL downloader page (or a queue waiting to become one), as the
+/// reference's `GetOrMakeURLImportPage` looks among them: see
+/// [`choose_url_page`].
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct UrlPageChoice<'a> {
+    /// The page's key (none for a queue no page has taken up yet).
+    pub key: Option<PageKey>,
+    /// The page's name, as its tab shows it.
+    pub name: &'a str,
+    /// Whether it is the page shown (`GetCurrentMediaPage`).
+    pub current: bool,
+    /// Whether its import options are the ones asked for (true when none
+    /// were).
+    pub fits: bool,
+}
+
+/// Which of the open URL downloader pages a URL goes to, as the reference's
+/// `GetOrMakeURLImportPage` chooses (`ClientGUIPages.py`): the one with
+/// `key` if there is one; else, given a `name`, those of that name; else
+/// any; of those, ones whose import options fit; the page shown if it is
+/// one of them, else the first. `None`: a new page is to be made.
+pub fn choose_url_page(
+    pages: &[UrlPageChoice<'_>],
+    name: Option<&str>,
+    key: Option<&PageKey>,
+) -> Option<usize> {
+    let keyed = key.filter(|k| pages.iter().any(|p| p.key.as_ref() == Some(*k)));
+    let candidates: Vec<usize> = (0..pages.len())
+        .filter(|&i| {
+            let page = &pages[i];
+            match (keyed, name) {
+                (Some(k), _) => page.key.as_ref() == Some(k),
+                (None, Some(name)) => page.name == name,
+                (None, None) => true,
+            }
+        })
+        .filter(|&i| pages[i].fits)
+        .collect();
+    candidates
+        .iter()
+        .copied()
+        .find(|&i| pages[i].current)
+        .or_else(|| candidates.first().copied())
+}
+
+/// The open URL downloader pages, depth first, in tab order.
+pub fn url_pages(pages: &[Page]) -> Vec<&Page> {
+    fn walk<'a>(pages: &'a [Page], out: &mut Vec<&'a Page>) {
+        for page in pages {
+            match &page.content {
+                PageContent::Pages(children) => walk(children, out),
+                PageContent::Downloader {
+                    kind: DownloaderKind::Urls,
+                    ..
+                } => out.push(page),
+                _ => {}
+            }
+        }
+    }
+    let mut out = Vec::new();
+    walk(pages, &mut out);
+    out
+}
+
+/// The page a session shows, as its stored `shown` key says (the deepest
+/// on the way to it; `None`: each notebook's first): a notebook shown goes
+/// on to its first page.
+pub fn current_page(pages: &[Page], shown: Option<&PageKey>) -> Option<PageKey> {
+    fn find<'a>(pages: &'a [Page], key: &PageKey) -> Option<&'a Page> {
+        pages.iter().find_map(|page| {
+            if page.key == *key {
+                return Some(page);
+            }
+            match &page.content {
+                PageContent::Pages(children) => find(children, key),
+                _ => None,
+            }
+        })
+    }
+    let mut page = shown
+        .and_then(|key| find(pages, key))
+        .or_else(|| pages.first())?;
+    while let PageContent::Pages(children) = &page.content {
+        match children.first() {
+            Some(child) => page = child,
+            None => break,
+        }
+    }
+    Some(page.key)
+}
+
 #[cfg(test)]
 mod tests {
+    fn choice(name: &str, key: u8, current: bool) -> UrlPageChoice<'_> {
+        UrlPageChoice {
+            key: Some(PageKey([key; 32])),
+            name,
+            current,
+            fits: true,
+        }
+    }
+
+    /// As `GetOrMakeURLImportPage` chooses: by key, else by name, else any;
+    /// the page shown first; an unknown key falls back to the name.
+    #[test]
+    fn url_pages_are_chosen_as_the_reference_chooses_them() {
+        let pages = [
+            choice("url import", 1, false),
+            choice("mine", 2, false),
+            choice("mine", 3, true),
+        ];
+        assert_eq!(
+            choose_url_page(&pages, None, Some(&PageKey([2; 32]))),
+            Some(1)
+        );
+        assert_eq!(choose_url_page(&pages, Some("mine"), None), Some(2));
+        assert_eq!(choose_url_page(&pages, Some("url import"), None), Some(0));
+        assert_eq!(choose_url_page(&pages, Some("other"), None), None);
+        assert_eq!(choose_url_page(&pages, None, None), Some(2));
+        assert_eq!(
+            choose_url_page(&pages, Some("url import"), Some(&PageKey([9; 32]))),
+            Some(0)
+        );
+        assert_eq!(
+            choose_url_page(&pages, None, Some(&PageKey([9; 32]))),
+            Some(2)
+        );
+        let mut unfit = pages;
+        unfit[2].fits = false;
+        assert_eq!(choose_url_page(&unfit, Some("mine"), None), Some(1));
+        assert_eq!(choose_url_page(&[], None, None), None);
+    }
+
     /// As the reference's `GetNameForMenu` and `ElideText` write them.
     #[test]
     fn names_for_menus_have_their_counts_and_elide_in_the_middle() {

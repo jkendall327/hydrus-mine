@@ -26,11 +26,17 @@ error: a media location missing, say) with a button to start it again; if
 the daemon runs but its Client API couldn't start (its port in use), the
 line says that, as hydrus's popup does ("Could not start "client api":
 ...").
-A URL the Client API sends to a page name no page has
-(`/add_urls/add_url`'s `destination_page_name`) opens a URL downloader page
-of that name at the end of the top notebook, not shown, as the reference
-opens one; its files and log show there as the daemon gets them (the client
-takes such downloads up when it opens, too).
+A URL the Client API sends (`/add_urls/add_url`) goes to a URL downloader
+page as the reference chooses one: the page with `destination_page_key`,
+else those named `destination_page_name` (a page's own name, whatever its
+queue was first called), else any; the page shown if it is one of them,
+else the first. Closed pages are not among them. With none, a new URL
+downloader page of that name opens where a new page goes (the notebook
+shown, by "default_new_page_goes"), shown only if `show_destination_page`
+says so (which also shows a page it found); its files and log show there
+as the daemon gets them (the client takes such downloads up when it opens,
+too). A page's selection is not kept when the client closes, as the
+reference keeps none: it opens with nothing selected.
 The client keeps its pages in the store as they change (within half a
 second: the session, the page shown, each page's files and selection, and
 the media viewer and its file), so the Client API's `/manage_pages`

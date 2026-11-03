@@ -370,48 +370,88 @@ impl QueueRunner {
         out
     }
 
-    /// The URL queue a URL should go to (`GetOrMakeURLImportPage`): the one
-    /// with this page key, else those with this name, else any, preferring
-    /// ones with the same import options; a new one if none fits.
+    /// The URL queue a URL should go to: [`Self::url_page_for`]'s.
     pub fn url_queue_for(
         &self,
         name: Option<&str>,
         page_key: Option<&[u8]>,
         options: Option<&ImportOptionsSlice>,
     ) -> Result<Queue, StoreError> {
+        self.url_page_for(name, page_key, options, false)
+            .map(|(queue, _)| queue)
+    }
+
+    /// The URL queue a URL should go to, and the open page that shows it
+    /// (`GetOrMakeURLImportPage`): among the open session's URL downloader
+    /// pages (closed pages are not open) and the queues made here that no
+    /// page has taken up yet, the one [`hydrus_core::pages::choose_url_page`]
+    /// chooses (by page key, else page name, else any; the page shown
+    /// first). If none, a new queue named `name` (or "url import") that the
+    /// open client takes up as a page ([`queues::waiting_url_queues`]),
+    /// shown if `show`; like the reference's new page, it has a new key,
+    /// not `page_key`.
+    pub fn url_page_for(
+        &self,
+        name: Option<&str>,
+        page_key: Option<&[u8]>,
+        options: Option<&ImportOptionsSlice>,
+        show: bool,
+    ) -> Result<(Queue, Option<hydrus_core::pages::PageKey>), StoreError> {
+        use hydrus_core::pages::{self as pages, PageContent, PageKey, UrlPageChoice};
+        use hydrus_store::sessions;
         let store = &self.downloader.store;
-        let all = store.read(|conn| queues::queues(conn, Some(QueueKind::Urls)))?;
-        let mut candidates: Vec<Queue> = if let Some(key) =
-            page_key.filter(|k| all.iter().any(|q| q.page_key.as_deref() == Some(*k)))
-        {
-            all.into_iter()
-                .filter(|q| q.page_key.as_deref() == Some(key))
-                .collect()
-        } else if let Some(name) = name {
-            all.into_iter().filter(|q| q.name == name).collect()
-        } else {
-            all
-        };
-        if let Some(options) = options {
-            candidates.retain(|q| q.options == *options);
+        let (session, shown, all) = store.read(|conn| {
+            Ok((
+                sessions::load(conn, sessions::LAST_SESSION)?,
+                sessions::shown(conn, sessions::LAST_SESSION)?,
+                queues::queues(conn, Some(QueueKind::Urls))?,
+            ))
+        })?;
+        let open = session
+            .as_ref()
+            .map(|s| s.pages.as_slice())
+            .unwrap_or_default();
+        let current = pages::current_page(open, shown.as_ref());
+        let by_id: HashMap<i64, &Queue> = all.iter().map(|q| (q.id, q)).collect();
+        // (each open page's first queue, then the queues waiting for a page)
+        let mut targets: Vec<(Option<PageKey>, &str, &Queue)> = Vec::new();
+        for page in pages::url_pages(open) {
+            if let PageContent::Downloader { queues, .. } = &page.content
+                && let Some(queue) = queues.first().and_then(|id| by_id.get(id))
+            {
+                targets.push((Some(page.key), page.name.as_str(), queue));
+            }
         }
-        if let Some(queue) = candidates.into_iter().next() {
-            return Ok(queue);
+        let held: std::collections::HashSet<i64> = targets.iter().map(|t| t.2.id).collect();
+        for queue in all
+            .iter()
+            .filter(|q| queues::waits_for_url_page(q) && !held.contains(&q.id))
+        {
+            targets.push((None, queue.name.as_str(), queue));
+        }
+        let choices: Vec<UrlPageChoice<'_>> = targets
+            .iter()
+            .map(|&(key, name, queue)| UrlPageChoice {
+                key,
+                name,
+                current: key.is_some() && key == current,
+                fits: options.is_none_or(|o| queue.options == *o),
+            })
+            .collect();
+        let key = page_key.and_then(|k| <[u8; 32]>::try_from(k).ok().map(PageKey));
+        if let Some(i) = pages::choose_url_page(&choices, name, key.as_ref()) {
+            let (key, _, queue) = targets[i];
+            return Ok((queue.clone(), key));
         }
         let name = name.unwrap_or(DEFAULT_URL_QUEUE_NAME).to_owned();
         let options = options.cloned().unwrap_or_default();
-        let key = page_key.map(<[u8]>::to_vec);
-        store.write(move |ctx| {
-            let id = queues::create_queue(
-                ctx.conn(),
-                QueueKind::Urls,
-                &name,
-                key.as_deref(),
-                &options,
-                now(),
-            )?;
-            queues::queue(ctx.conn(), id).map(|q| q.expect("just made"))
-        })
+        store
+            .write(move |ctx| {
+                let id =
+                    queues::create_waiting_url_queue(ctx.conn(), &name, &options, show, now())?;
+                queues::queue(ctx.conn(), id).map(|q| q.expect("just made"))
+            })
+            .map(|queue| (queue, None))
     }
 
     /// Add URLs to a URL queue (`URLsImport.PendURLs`): post, file and
