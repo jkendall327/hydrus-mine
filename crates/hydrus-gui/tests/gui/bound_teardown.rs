@@ -81,6 +81,12 @@ fn a_binding_dropped_as_its_thread_ends_does_not_abort() {
     assert!(ended.is_ok());
 }
 
+/// Remember how to tell whether `w` is still alive.
+fn track<T: slint::ComponentHandle + 'static>(alive: &mut Vec<Box<dyn Fn() -> bool>>, w: &T) {
+    let weak = w.as_weak();
+    alive.push(Box::new(move || weak.upgrade().is_some()));
+}
+
 /// The children of a dialog (and theirs) left open when the last binding
 /// goes are freed too: the services editor and its service editor, the
 /// network session browser and its editor, the downloader definitions list
@@ -101,10 +107,6 @@ fn the_last_binding_frees_the_nested_dialogs_left_open() {
     browser.invoke_add_clicked();
     let edit = sessions::last_edit_opened().unwrap();
     let mut alive: Vec<Box<dyn Fn() -> bool>> = Vec::new();
-    fn track<T: slint::ComponentHandle + 'static>(alive: &mut Vec<Box<dyn Fn() -> bool>>, w: &T) {
-        let weak = w.as_weak();
-        alive.push(Box::new(move || weak.upgrade().is_some()));
-    }
     track(&mut alive, &browser);
     track(&mut alive, &edit);
     drop((browser, edit));
