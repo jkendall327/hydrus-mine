@@ -460,6 +460,19 @@ def record( session ):
 
             out[ 'more_steps' ] = more
 
+            # more middle clicks: a plain one with two selected, one below
+            # the rows
+            more_middle = []
+            select( 'plain tag', 'box:anchor' )
+            n = len( launched )
+            click( 'plain tag', button = QC.Qt.MouseButton.MiddleButton ); settle()
+            more_middle.append( { 'step' : 'middle click with two selected', 'selected_before' : [ 'plain tag', 'box:anchor' ], 'selected' : selected(), 'launched' : launched[ n: ] } )
+            n = len( launched )
+            before = selected()
+            click( None, button = QC.Qt.MouseButton.MiddleButton ); settle()
+            more_middle.append( { 'step' : 'middle click below the rows', 'selected_before' : before, 'selected' : selected(), 'launched' : launched[ n: ] } )
+            out[ 'more_middle' ] = more_middle
+
             # the menus
 
             menus_out = []
