@@ -412,7 +412,6 @@ mod options_gui_support;
 mod options_gui_tags;
 mod options_media_hovers;
 mod options_media_mpv;
-mod options_media_playback;
 mod options_media_slideshow;
 mod options_media_support;
 mod options_media_thumbnails;
