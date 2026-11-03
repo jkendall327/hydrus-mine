@@ -29,7 +29,7 @@ const KNOWN: &[Known] = &[Known {
 }];
 
 /// tags > siblings or parents, opened through the menu.
-fn open(ui: &MainWindow, bound: &Bound, kind: &str) -> TagRelationshipsWindow {
+pub(super) fn open(ui: &MainWindow, bound: &Bound, kind: &str) -> TagRelationshipsWindow {
     let lines = main_menu::open(ui, &["tags"]);
     let label = lines
         .iter()

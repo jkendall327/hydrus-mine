@@ -19,6 +19,7 @@ mod duplicates;
 mod export;
 mod gallery;
 mod import_folder;
+mod manage_tags;
 mod manual_import;
 mod subscription;
 mod tag_relationships;

@@ -4655,6 +4655,12 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
 - Only archive/inbox (thumbnail, viewer and filter actions through
   `media_actions`) and Manage Tags' applied changes are recorded; tag changes
   made elsewhere (write-tag menus, filename tagging, migration) are not yet.
+- **Manage Tags' changes can be undone; the reference's cannot.** The
+  reference's dialog commits with `WriteSynchronous`, which goes past its
+  undo manager (only `Write( 'content_updates', … )` reaches it), so after
+  tagging its undo menu offers nothing, or the action before. The manage
+  tags flow (`oracle/fixtures/flow_manage_tags.json`) shows it; whether to
+  keep this is the owner's call.
   A content package listing several actions or services names them sorted,
   where the reference's set order varies.
 
@@ -5305,6 +5311,12 @@ Differences:
   list also lacks what the selection tags box lacks: dragging over tags to
   select a run, scrolling a key-moved tag into view, and the keyboard going
   back to the list when its menu closes.
+- **Tags with the same ideal sort by their own text.** Sorted with siblings
+  (the default), `kitty → cat` and `cat` tie; the reference keeps them in the
+  order they joined the list (the files' existing tags first, then those just
+  entered), hydrus-rs puts the one whose own text sorts first first. A tag's
+  parent rows under it follow the reference's set, so their order varies from
+  run to run there; the manage tags flow compares them sorted.
 - The viewer's Manage tags is its own window, not a frame belonging to the viewer;
   it is closed when its own "close" is pressed rather than with the viewer. If a
   Manage tags window opened from a page is already open, F3 in the viewer shows that
