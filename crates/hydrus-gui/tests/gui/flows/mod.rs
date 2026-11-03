@@ -22,6 +22,7 @@ mod import_folder;
 mod manage_tags;
 mod manual_import;
 mod ratings_filter;
+mod session;
 mod subscription;
 mod tag_relationships;
 mod watcher;
@@ -106,6 +107,7 @@ pub const PORTS: &[(&str, u16)] = &[
     ("flow_duplicates.json", 46015),
     ("flow_import_folder.json", 46013),
     ("flow_watcher.json", 46031),
+    ("flow_session.json", 46016),
 ];
 
 /// Whether a request to `http://127.0.0.1` goes straight there, whatever
