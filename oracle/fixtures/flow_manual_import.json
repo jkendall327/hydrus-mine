@@ -1,0 +1,204 @@
+{
+ "files": [
+  [
+   "a_first.jpg",
+   "jpeg_420.jpg"
+  ],
+  [
+   "b_second.png",
+   "apng_rgba.png"
+  ],
+  [
+   "c_copy.jpg",
+   "jpeg_420.jpg"
+  ],
+  [
+   "d_readme.md",
+   null
+  ],
+  [
+   "sub/e_third.jpg",
+   "jpeg_gray.jpg"
+  ]
+ ],
+ "steps": [
+  {
+   "dialog": {
+    "delete": true,
+    "delete warning": "YOUR ORIGINAL FILES WILL BE DELETED",
+    "import options": "import options (all default)",
+    "progress": "5 files parsed - 4 good | 1 bad: 1 had unsupported file types.",
+    "rows": [
+     [
+      "1",
+      "WORK/a_first.jpg",
+      "jpeg",
+      "11.7 KB"
+     ],
+     [
+      "2",
+      "WORK/b_second.png",
+      "apng",
+      "92.8 KB"
+     ],
+     [
+      "3",
+      "WORK/c_copy.jpg",
+      "jpeg",
+      "11.7 KB"
+     ],
+     [
+      "4",
+      "WORK/d_readme.md",
+      "PROBLEM: filetype unsupported",
+      "16B"
+     ],
+     [
+      "5",
+      "WORK/sub/e_third.jpg",
+      "jpeg",
+      "8.07 KB"
+     ]
+    ],
+    "title": "review files to import"
+   },
+   "step": "review"
+  },
+  {
+   "dialog": {
+    "after": [
+     "default file filtering (global)",
+     "> locations: imports to my files, automatically archives",
+     "default external programs (global)",
+     "default presentation (global)"
+    ],
+    "before": [
+     "default file filtering (global)",
+     "default locations (global)",
+     "default external programs (global)",
+     "default presentation (global)"
+    ],
+    "button": "import options (locations set)",
+    "title": "edit import options"
+   },
+   "step": "options"
+  },
+  {
+   "dialog": {
+    "rows": [
+     [
+      "1",
+      "WORK/a_first.jpg",
+      "imported, title:a_first"
+     ],
+     [
+      "2",
+      "WORK/b_second.png",
+      "imported, only second, title:b_second"
+     ],
+     [
+      "3",
+      "WORK/c_copy.jpg",
+      "imported, title:c_copy"
+     ],
+     [
+      "4",
+      "WORK/sub/e_third.jpg",
+      "imported, title:e_third"
+     ]
+    ],
+    "tabs": [
+     "sidecars",
+     "downloader tags",
+     "my tags",
+     "second tags"
+    ],
+    "title": "filename tagging"
+   },
+   "files": {
+    "95702ba0537e3cbc72e4d062a2d28c415e6d62bb930bd5d6edca4ec4844395d1": {
+     "in": [
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "my tags": [
+       "imported",
+       "title:e_third"
+      ]
+     },
+     "urls": []
+    },
+    "b30594dd430e55eaef736604fe6bb913048f619d9ec9ebb1bb71a5a69417a43a": {
+     "in": [
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "my tags": [
+       "imported",
+       "only second",
+       "title:b_second"
+      ]
+     },
+     "urls": []
+    },
+    "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3": {
+     "in": [
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "my tags": [
+       "imported",
+       "title:a_first",
+       "title:c_copy"
+      ]
+     },
+     "urls": []
+    }
+   },
+   "left": {
+    "d_readme.md": 16
+   },
+   "page": {
+    "files": [
+     {
+      "data": "WORK/a_first.jpg",
+      "note": "",
+      "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+      "status": 1,
+      "tags": []
+     },
+     {
+      "data": "WORK/b_second.png",
+      "note": "",
+      "sha256": "b30594dd430e55eaef736604fe6bb913048f619d9ec9ebb1bb71a5a69417a43a",
+      "status": 1,
+      "tags": []
+     },
+     {
+      "data": "WORK/c_copy.jpg",
+      "note": "file recognised: Imported at TIME, which was DELTA before this check.",
+      "sha256": "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3",
+      "status": 2,
+      "tags": []
+     },
+     {
+      "data": "WORK/sub/e_third.jpg",
+      "note": "",
+      "sha256": "95702ba0537e3cbc72e4d062a2d28c415e6d62bb930bd5d6edca4ec4844395d1",
+      "status": 1,
+      "tags": []
+     }
+    ],
+    "import options": "import options (locations set)",
+    "name": "import",
+    "thumbnails": 3
+   },
+   "popups": [],
+   "review open": false,
+   "step": "import"
+  }
+ ]
+}

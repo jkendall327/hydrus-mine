@@ -31,7 +31,7 @@ fn download_a_url_then_tag_archive_and_delete_it_as_the_reference_does() {
     let state = State {
         store: &store,
         ui: &ui,
-        site: &site,
+        site: Some(&site),
         n: &n,
     };
 

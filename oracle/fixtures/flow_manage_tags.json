@@ -1,0 +1,1483 @@
+{
+ "files": [
+  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+  "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+  "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a"
+ ],
+ "steps": [
+  {
+   "dialog": {
+    "parents": {
+     "rows": [
+      [
+       "(+) ",
+       "cat",
+       "animal",
+       "Reason: added by user"
+      ]
+     ]
+    },
+    "siblings": {
+     "rows": [
+      [
+       "(+) ",
+       "kitty",
+       "cat",
+       "Reason: added by user"
+      ]
+     ]
+    }
+   },
+   "files": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "displayed": [
+      "safe"
+     ],
+     "stored": [
+      "safe"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "displayed": [
+      "creator:anonymous artist",
+      "meta:low resolution",
+      "page:3"
+     ],
+     "stored": [
+      "creator:anonymous artist",
+      "meta:lowres",
+      "page:3"
+     ]
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "displayed": [
+      "blue eyes",
+      "character:samus aran",
+      "safe",
+      "series:metroid",
+      "smile",
+      "studio:nintendo",
+      "éclair"
+     ],
+     "stored": [
+      "blue_eyes",
+      "safe",
+      "samus",
+      "smile",
+      "éclair"
+     ]
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "displayed": [
+      "blue eyes",
+      "page:10",
+      "safe",
+      "volume:3",
+      "キャラクター:初音ミク"
+     ],
+     "stored": [
+      "blue eyes",
+      "page:10",
+      "safe",
+      "volume:3",
+      "キャラクター:初音ミク"
+     ]
+    }
+   },
+   "state": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:apng_animated",
+       "source:fixture"
+      ],
+      "my tags": [
+       "safe"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1000",
+      "https://example.com/post/0",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2000"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:audio",
+       "source:fixture"
+      ],
+      "my tags": [
+       "creator:anonymous artist",
+       "meta:lowres",
+       "page:3"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1002",
+      "https://example.com/post/2"
+     ]
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:bitmap",
+       "source:fixture"
+      ],
+      "my tags": [
+       "blue_eyes",
+       "safe",
+       "samus",
+       "smile",
+       "éclair"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1004",
+      "https://example.com/post/4"
+     ]
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "my tags": [
+       "blue eyes",
+       "page:10",
+       "safe",
+       "volume:3",
+       "キャラクター:初音ミク"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1003",
+      "https://example.com/post/3",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2003"
+     ]
+    }
+   },
+   "step": "relationships"
+  },
+  {
+   "dialog": {
+    "A B C": {
+     "rows": [
+      "creator:anonymous artist (1)",
+      "blue eyes (1)",
+      "safe (2)",
+      "meta:lowres (1) → meta:low resolution",
+      "page:3 (1)",
+      "page:10 (1)",
+      "volume:3 (1)",
+      "キャラクター:初音ミク (1)"
+     ],
+     "rows after": [
+      "creator:anonymous artist (1)",
+      "blue eyes (1)",
+      "cat (3)",
+      "    animal",
+      "fluffy (3)",
+      "safe (2)",
+      "meta:lowres (1) → meta:low resolution",
+      "page:3 (1)",
+      "page:10 (1)",
+      "volume:3 (1)",
+      "キャラクター:初音ミク (1)"
+     ],
+     "title": "manage tags for 3 files"
+    },
+    "D": {
+     "rows": [
+      "samus (1) → character:samus aran",
+      "    series:metroid",
+      "    studio:nintendo",
+      "blue_eyes (1) → blue eyes",
+      "safe (1)",
+      "smile (1)",
+      "éclair (1)"
+     ],
+     "rows after": [
+      "samus (1) → character:samus aran",
+      "    series:metroid",
+      "    studio:nintendo",
+      "blue_eyes (1) → blue eyes",
+      "kitty (1) → cat",
+      "    animal",
+      "safe (1)",
+      "smile (1)",
+      "éclair (1)"
+     ],
+     "title": "manage tags for 1 files"
+    }
+   },
+   "files": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "displayed": [
+      "animal",
+      "cat",
+      "fluffy",
+      "safe"
+     ],
+     "stored": [
+      "cat",
+      "fluffy",
+      "safe"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "displayed": [
+      "animal",
+      "cat",
+      "creator:anonymous artist",
+      "fluffy",
+      "meta:low resolution",
+      "page:3"
+     ],
+     "stored": [
+      "cat",
+      "creator:anonymous artist",
+      "fluffy",
+      "meta:lowres",
+      "page:3"
+     ]
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "displayed": [
+      "animal",
+      "blue eyes",
+      "cat",
+      "character:samus aran",
+      "safe",
+      "series:metroid",
+      "smile",
+      "studio:nintendo",
+      "éclair"
+     ],
+     "stored": [
+      "blue_eyes",
+      "kitty",
+      "safe",
+      "samus",
+      "smile",
+      "éclair"
+     ]
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "displayed": [
+      "animal",
+      "blue eyes",
+      "cat",
+      "fluffy",
+      "page:10",
+      "safe",
+      "volume:3",
+      "キャラクター:初音ミク"
+     ],
+     "stored": [
+      "blue eyes",
+      "cat",
+      "fluffy",
+      "page:10",
+      "safe",
+      "volume:3",
+      "キャラクター:初音ミク"
+     ]
+    }
+   },
+   "state": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:apng_animated",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "fluffy",
+       "safe"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1000",
+      "https://example.com/post/0",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2000"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:audio",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "creator:anonymous artist",
+       "fluffy",
+       "meta:lowres",
+       "page:3"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1002",
+      "https://example.com/post/2"
+     ]
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:bitmap",
+       "source:fixture"
+      ],
+      "my tags": [
+       "blue_eyes",
+       "kitty",
+       "safe",
+       "samus",
+       "smile",
+       "éclair"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1004",
+      "https://example.com/post/4"
+     ]
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "my tags": [
+       "blue eyes",
+       "cat",
+       "fluffy",
+       "page:10",
+       "safe",
+       "volume:3",
+       "キャラクター:初音ミク"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1003",
+      "https://example.com/post/3",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2003"
+     ]
+    }
+   },
+   "step": "add"
+  },
+  {
+   "dialog": {
+    "asked": [
+     {
+      "choices": [
+       "add \"fluffy\" for 1 files",
+       "delete \"fluffy\" for 3 files"
+      ],
+      "message": "Of the 4 files being managed, some have that tag, but not all of them do, so there are different things you can do.",
+      "title": "What would you like to do?"
+     }
+    ],
+    "rows": [
+     "creator:anonymous artist (1)",
+     "samus (1) → character:samus aran",
+     "    series:metroid",
+     "    studio:nintendo",
+     "blue eyes (1)",
+     "blue_eyes (1) → blue eyes",
+     "cat (3)",
+     "    animal",
+     "kitty (1) → cat",
+     "    animal",
+     "fluffy (3)",
+     "safe (3)",
+     "smile (1)",
+     "éclair (1)",
+     "meta:lowres (1) → meta:low resolution",
+     "page:3 (1)",
+     "page:10 (1)",
+     "volume:3 (1)",
+     "キャラクター:初音ミク (1)"
+    ],
+    "rows after": [
+     "creator:anonymous artist (1)",
+     "samus (1) → character:samus aran",
+     "    series:metroid",
+     "    studio:nintendo",
+     "blue eyes (1)",
+     "blue_eyes (1) → blue eyes",
+     "cat (3)",
+     "    animal",
+     "kitty (1) → cat",
+     "    animal",
+     "safe (3)",
+     "smile (1)",
+     "striped (4)",
+     "éclair (1)",
+     "meta:lowres (1) → meta:low resolution",
+     "page:3 (1)",
+     "page:10 (1)",
+     "volume:3 (1)",
+     "キャラクター:初音ミク (1)"
+    ],
+    "title": "manage tags for 4 files"
+   },
+   "files": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "displayed": [
+      "animal",
+      "cat",
+      "safe",
+      "striped"
+     ],
+     "stored": [
+      "cat",
+      "safe",
+      "striped"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "displayed": [
+      "animal",
+      "cat",
+      "creator:anonymous artist",
+      "meta:low resolution",
+      "page:3",
+      "striped"
+     ],
+     "stored": [
+      "cat",
+      "creator:anonymous artist",
+      "meta:lowres",
+      "page:3",
+      "striped"
+     ]
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "displayed": [
+      "animal",
+      "blue eyes",
+      "cat",
+      "character:samus aran",
+      "safe",
+      "series:metroid",
+      "smile",
+      "striped",
+      "studio:nintendo",
+      "éclair"
+     ],
+     "stored": [
+      "blue_eyes",
+      "kitty",
+      "safe",
+      "samus",
+      "smile",
+      "striped",
+      "éclair"
+     ]
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "displayed": [
+      "animal",
+      "blue eyes",
+      "cat",
+      "page:10",
+      "safe",
+      "striped",
+      "volume:3",
+      "キャラクター:初音ミク"
+     ],
+     "stored": [
+      "blue eyes",
+      "cat",
+      "page:10",
+      "safe",
+      "striped",
+      "volume:3",
+      "キャラクター:初音ミク"
+     ]
+    }
+   },
+   "state": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:apng_animated",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "safe",
+       "striped"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1000",
+      "https://example.com/post/0",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2000"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:audio",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "creator:anonymous artist",
+       "meta:lowres",
+       "page:3",
+       "striped"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1002",
+      "https://example.com/post/2"
+     ]
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:bitmap",
+       "source:fixture"
+      ],
+      "my tags": [
+       "blue_eyes",
+       "kitty",
+       "safe",
+       "samus",
+       "smile",
+       "striped",
+       "éclair"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1004",
+      "https://example.com/post/4"
+     ]
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "my tags": [
+       "blue eyes",
+       "cat",
+       "page:10",
+       "safe",
+       "striped",
+       "volume:3",
+       "キャラクター:初音ミク"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1003",
+      "https://example.com/post/3",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2003"
+     ]
+    }
+   },
+   "step": "mixed"
+  },
+  {
+   "dialog": {
+    "asked": [
+     {
+      "choices": [
+       "yes",
+       "no"
+      ],
+      "message": "Are you sure you want to remove these tags:\n\nstriped",
+      "title": "Are you sure?"
+     }
+    ],
+    "rows": [
+     "cat (1)",
+     "    animal",
+     "safe (1)",
+     "striped (1)"
+    ],
+    "rows after": [
+     "cat (1)",
+     "    animal",
+     "safe (1)"
+    ],
+    "title": "manage tags for 1 files"
+   },
+   "files": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "displayed": [
+      "animal",
+      "cat",
+      "safe"
+     ],
+     "stored": [
+      "cat",
+      "safe"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "displayed": [
+      "animal",
+      "cat",
+      "creator:anonymous artist",
+      "meta:low resolution",
+      "page:3",
+      "striped"
+     ],
+     "stored": [
+      "cat",
+      "creator:anonymous artist",
+      "meta:lowres",
+      "page:3",
+      "striped"
+     ]
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "displayed": [
+      "animal",
+      "blue eyes",
+      "cat",
+      "character:samus aran",
+      "safe",
+      "series:metroid",
+      "smile",
+      "striped",
+      "studio:nintendo",
+      "éclair"
+     ],
+     "stored": [
+      "blue_eyes",
+      "kitty",
+      "safe",
+      "samus",
+      "smile",
+      "striped",
+      "éclair"
+     ]
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "displayed": [
+      "animal",
+      "blue eyes",
+      "cat",
+      "page:10",
+      "safe",
+      "striped",
+      "volume:3",
+      "キャラクター:初音ミク"
+     ],
+     "stored": [
+      "blue eyes",
+      "cat",
+      "page:10",
+      "safe",
+      "striped",
+      "volume:3",
+      "キャラクター:初音ミク"
+     ]
+    }
+   },
+   "state": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:apng_animated",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "safe"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1000",
+      "https://example.com/post/0",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2000"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:audio",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "creator:anonymous artist",
+       "meta:lowres",
+       "page:3",
+       "striped"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1002",
+      "https://example.com/post/2"
+     ]
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:bitmap",
+       "source:fixture"
+      ],
+      "my tags": [
+       "blue_eyes",
+       "kitty",
+       "safe",
+       "samus",
+       "smile",
+       "striped",
+       "éclair"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1004",
+      "https://example.com/post/4"
+     ]
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "my tags": [
+       "blue eyes",
+       "cat",
+       "page:10",
+       "safe",
+       "striped",
+       "volume:3",
+       "キャラクター:初音ミク"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1003",
+      "https://example.com/post/3",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2003"
+     ]
+    }
+   },
+   "step": "remove"
+  },
+  {
+   "dialog": {
+    "A": {
+     "copied": "cat\nsafe",
+     "rows": [
+      "cat (1)",
+      "    animal",
+      "safe (1)"
+     ],
+     "rows after": [
+      "cat (1)",
+      "    animal",
+      "safe (1)"
+     ],
+     "title": "manage tags for 1 files"
+    },
+    "B": {
+     "rows": [
+      "creator:anonymous artist (1)",
+      "cat (1)",
+      "    animal",
+      "striped (1)",
+      "meta:lowres (1) → meta:low resolution",
+      "page:3 (1)"
+     ],
+     "rows after": [
+      "creator:anonymous artist (1)",
+      "cat (1)",
+      "    animal",
+      "safe (1)",
+      "striped (1)",
+      "meta:lowres (1) → meta:low resolution",
+      "page:3 (1)"
+     ],
+     "title": "manage tags for 1 files"
+    },
+    "asked": []
+   },
+   "files": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "displayed": [
+      "animal",
+      "cat",
+      "safe"
+     ],
+     "stored": [
+      "cat",
+      "safe"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "displayed": [
+      "animal",
+      "cat",
+      "creator:anonymous artist",
+      "meta:low resolution",
+      "page:3",
+      "safe",
+      "striped"
+     ],
+     "stored": [
+      "cat",
+      "creator:anonymous artist",
+      "meta:lowres",
+      "page:3",
+      "safe",
+      "striped"
+     ]
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "displayed": [
+      "animal",
+      "blue eyes",
+      "cat",
+      "character:samus aran",
+      "safe",
+      "series:metroid",
+      "smile",
+      "striped",
+      "studio:nintendo",
+      "éclair"
+     ],
+     "stored": [
+      "blue_eyes",
+      "kitty",
+      "safe",
+      "samus",
+      "smile",
+      "striped",
+      "éclair"
+     ]
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "displayed": [
+      "animal",
+      "blue eyes",
+      "cat",
+      "page:10",
+      "safe",
+      "striped",
+      "volume:3",
+      "キャラクター:初音ミク"
+     ],
+     "stored": [
+      "blue eyes",
+      "cat",
+      "page:10",
+      "safe",
+      "striped",
+      "volume:3",
+      "キャラクター:初音ミク"
+     ]
+    }
+   },
+   "state": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:apng_animated",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "safe"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1000",
+      "https://example.com/post/0",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2000"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:audio",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "creator:anonymous artist",
+       "meta:lowres",
+       "page:3",
+       "safe",
+       "striped"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1002",
+      "https://example.com/post/2"
+     ]
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:bitmap",
+       "source:fixture"
+      ],
+      "my tags": [
+       "blue_eyes",
+       "kitty",
+       "safe",
+       "samus",
+       "smile",
+       "striped",
+       "éclair"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1004",
+      "https://example.com/post/4"
+     ]
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "my tags": [
+       "blue eyes",
+       "cat",
+       "page:10",
+       "safe",
+       "striped",
+       "volume:3",
+       "キャラクター:初音ミク"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1003",
+      "https://example.com/post/3",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2003"
+     ]
+    }
+   },
+   "step": "copy"
+  },
+  {
+   "dialog": {
+    "after inbox": [
+     "undo inbox 2 files",
+     null
+    ],
+    "after redo": [
+     "undo inbox 2 files",
+     null
+    ],
+    "after tagging": [
+     null,
+     null
+    ],
+    "after undo": [
+     null,
+     "redo inbox 2 files"
+    ],
+    "asked": [
+     {
+      "choices": [
+       "yes",
+       "no"
+      ],
+      "message": "Send 2 files to inbox?",
+      "title": "Are you sure?"
+     }
+    ],
+    "inboxed": {
+     "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": true,
+     "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": true,
+     "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": false,
+     "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": true
+    },
+    "redone": {
+     "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": true,
+     "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": true,
+     "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": false,
+     "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": true
+    },
+    "undone": {
+     "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": false,
+     "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": false,
+     "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": false,
+     "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": true
+    }
+   },
+   "files": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "displayed": [
+      "animal",
+      "cat",
+      "safe"
+     ],
+     "stored": [
+      "cat",
+      "safe"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "displayed": [
+      "animal",
+      "cat",
+      "creator:anonymous artist",
+      "meta:low resolution",
+      "page:3",
+      "safe",
+      "striped"
+     ],
+     "stored": [
+      "cat",
+      "creator:anonymous artist",
+      "meta:lowres",
+      "page:3",
+      "safe",
+      "striped"
+     ]
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "displayed": [
+      "animal",
+      "blue eyes",
+      "cat",
+      "character:samus aran",
+      "safe",
+      "series:metroid",
+      "smile",
+      "striped",
+      "studio:nintendo",
+      "éclair"
+     ],
+     "stored": [
+      "blue_eyes",
+      "kitty",
+      "safe",
+      "samus",
+      "smile",
+      "striped",
+      "éclair"
+     ]
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "displayed": [
+      "animal",
+      "blue eyes",
+      "cat",
+      "page:10",
+      "safe",
+      "striped",
+      "volume:3",
+      "キャラクター:初音ミク"
+     ],
+     "stored": [
+      "blue eyes",
+      "cat",
+      "page:10",
+      "safe",
+      "striped",
+      "volume:3",
+      "キャラクター:初音ミク"
+     ]
+    }
+   },
+   "state": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "filename:apng_animated",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "safe"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1000",
+      "https://example.com/post/0",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2000"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "filename:audio",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "creator:anonymous artist",
+       "meta:lowres",
+       "page:3",
+       "safe",
+       "striped"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1002",
+      "https://example.com/post/2"
+     ]
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:bitmap",
+       "source:fixture"
+      ],
+      "my tags": [
+       "blue_eyes",
+       "kitty",
+       "safe",
+       "samus",
+       "smile",
+       "striped",
+       "éclair"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1004",
+      "https://example.com/post/4"
+     ]
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "my tags": [
+       "blue eyes",
+       "cat",
+       "page:10",
+       "safe",
+       "striped",
+       "volume:3",
+       "キャラクター:初音ミク"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1003",
+      "https://example.com/post/3",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2003"
+     ]
+    }
+   },
+   "step": "undo"
+  },
+  {
+   "dialog": {},
+   "files": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "displayed": [
+      "animal",
+      "cat",
+      "safe"
+     ],
+     "stored": [
+      "cat",
+      "safe"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "displayed": [
+      "animal",
+      "cat",
+      "creator:anonymous artist",
+      "meta:low resolution",
+      "page:3",
+      "safe",
+      "striped"
+     ],
+     "stored": [
+      "cat",
+      "creator:anonymous artist",
+      "meta:lowres",
+      "page:3",
+      "safe",
+      "striped"
+     ]
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "displayed": [
+      "animal",
+      "blue eyes",
+      "cat",
+      "character:samus aran",
+      "safe",
+      "series:metroid",
+      "smile",
+      "striped",
+      "studio:nintendo",
+      "éclair"
+     ],
+     "stored": [
+      "blue_eyes",
+      "kitty",
+      "safe",
+      "samus",
+      "smile",
+      "striped",
+      "éclair"
+     ]
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "displayed": [
+      "animal",
+      "blue eyes",
+      "cat",
+      "page:10",
+      "safe",
+      "striped",
+      "volume:3",
+      "キャラクター:初音ミク"
+     ],
+     "stored": [
+      "blue eyes",
+      "cat",
+      "page:10",
+      "safe",
+      "striped",
+      "volume:3",
+      "キャラクター:初音ミク"
+     ]
+    }
+   },
+   "searches": {
+    "-fluffy": [
+     "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+     "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+     "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b"
+    ],
+    "animal": [
+     "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+     "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+     "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b"
+    ],
+    "cat": [
+     "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+     "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+     "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b"
+    ],
+    "fluffy": [],
+    "kitty": [
+     "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+     "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+     "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b"
+    ],
+    "striped": [
+     "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+     "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+     "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b"
+    ]
+   },
+   "state": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "filename:apng_animated",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "safe"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1000",
+      "https://example.com/post/0",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2000"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "filename:audio",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "creator:anonymous artist",
+       "meta:lowres",
+       "page:3",
+       "safe",
+       "striped"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1002",
+      "https://example.com/post/2"
+     ]
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:bitmap",
+       "source:fixture"
+      ],
+      "my tags": [
+       "blue_eyes",
+       "kitty",
+       "safe",
+       "samus",
+       "smile",
+       "striped",
+       "éclair"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1004",
+      "https://example.com/post/4"
+     ]
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "my tags": [
+       "blue eyes",
+       "cat",
+       "page:10",
+       "safe",
+       "striped",
+       "volume:3",
+       "キャラクター:初音ミク"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1003",
+      "https://example.com/post/3",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2003"
+     ]
+    }
+   },
+   "step": "search"
+  }
+ ]
+}

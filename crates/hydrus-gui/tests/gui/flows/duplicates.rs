@@ -130,7 +130,7 @@ fn pairs_are_decided_in_the_duplicate_filter_and_committed_as_the_reference_does
     let state = State {
         store: &o.store,
         ui: &o.ui,
-        site: &site,
+        site: Some(&site),
         n: &n,
     };
     let files: Vec<String> = recording["files"]
