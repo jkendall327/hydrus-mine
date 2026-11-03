@@ -7,10 +7,16 @@
 
 use std::fs::File;
 use std::path::{Path, PathBuf};
-use std::time::SystemTime;
+use std::time::{Duration, SystemTime};
 
 use crate::settings::{self, FolderSettings};
 use crate::{Result, Store};
+
+/// How long a lock found held is waited for before it counts as held: long
+/// enough for a forked child that has a copy of the lock's file to exec (see
+/// [`crate::store::lock_within`]), short enough that a manager really open
+/// costs a worker or a probe no more than this once.
+const LINGER: Duration = Duration::from_millis(250);
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Kind {
@@ -58,7 +64,7 @@ impl Kind {
 /// Whether an editor holds a pause request. Stale files after a crash are inert:
 /// the OS lock, rather than the existence or contents of the file, is the marker.
 pub fn edit_requested(dir: &Path, kind: Kind) -> std::io::Result<bool> {
-    Ok(crate::store::lock(dir, kind.request_file())?.is_none())
+    Ok(crate::store::lock_within(dir, kind.request_file(), LINGER)?.is_none())
 }
 
 /// Acquisition and release timestamp, for schedulers waiting between runs.
@@ -103,7 +109,7 @@ impl Activity {
         if edit_requested(dir, kind)? {
             return Ok(None);
         }
-        let Some(lock) = crate::store::lock(dir, kind.activity_file())? else {
+        let Some(lock) = crate::store::lock_within(dir, kind.activity_file(), LINGER)? else {
             return Ok(None);
         };
         // Close the race with a manager requesting a pause during acquisition.
@@ -126,7 +132,7 @@ pub struct Edit {
 
 impl Edit {
     pub fn request(dir: &Path, kind: Kind) -> std::io::Result<Option<Self>> {
-        let Some(request) = crate::store::lock(dir, kind.request_file())? else {
+        let Some(request) = crate::store::lock_within(dir, kind.request_file(), LINGER)? else {
             return Ok(None);
         };
         request.set_modified(SystemTime::now())?;
@@ -174,6 +180,37 @@ impl Drop for Edit {
 #[cfg(test)]
 mod tests {
     use super::{Activity, Edit, Kind, edit_requested};
+
+    /// A lock held for a moment longer than its release (by a forked child
+    /// about to exec) is taken; one really held is still refused.
+    #[test]
+    fn a_lock_released_within_the_linger_is_taken_and_one_held_is_refused() {
+        use crate::store::{lock, lock_within};
+        use std::time::{Duration, Instant};
+
+        let dir = tempfile::tempdir().unwrap();
+        let held = lock(dir.path(), "x.lock").unwrap().unwrap();
+        assert!(lock(dir.path(), "x.lock").unwrap().is_none());
+        // still held after the bound: refused, after waiting about that long
+        let start = Instant::now();
+        assert!(
+            lock_within(dir.path(), "x.lock", Duration::from_millis(30))
+                .unwrap()
+                .is_none()
+        );
+        assert!(start.elapsed() >= Duration::from_millis(30));
+        // released while it waits: taken
+        let release = std::thread::spawn(move || {
+            std::thread::sleep(Duration::from_millis(50));
+            drop(held);
+        });
+        assert!(
+            lock_within(dir.path(), "x.lock", Duration::from_secs(5))
+                .unwrap()
+                .is_some()
+        );
+        release.join().unwrap();
+    }
 
     #[test]
     fn request_interrupts_work_waits_for_release_and_rejects_new_work() {
