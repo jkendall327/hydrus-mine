@@ -209,7 +209,8 @@ fn orphan_tables_from_the_database_menu() {
     drive(Job::OrphanTables);
 }
 
-// leaf: audit-media-menu-database-get-tables-using-definitions
+// (not tagged: audit-media-menu-database-get-tables-using-definitions lists
+// hydrus-rs's own schema, which nothing recorded can be compared with)
 #[test]
 fn tables_using_definitions_from_the_database_menu() {
     drive(Job::TablesUsingDefinitions);

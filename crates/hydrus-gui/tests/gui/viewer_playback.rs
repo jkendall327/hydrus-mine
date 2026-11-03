@@ -570,7 +570,7 @@ fn volume_and_mute_reach_the_playing_audio_as_the_reference_s_viewer_sets_them()
     viewer.invoke_close_requested();
 }
 
-// leaf: audit-options-popups-modal
+// (not tagged: audit-options-popups-modal; the dialog does not block the main window)
 #[test]
 fn a_modal_popup_pauses_the_playing_media_as_it_opens() {
     if mpv::skip_without_libmpv() {

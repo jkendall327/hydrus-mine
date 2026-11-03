@@ -5820,3 +5820,19 @@ Checked by `tests/gui/list_keys.rs` against `oracle/fixtures/list_keys.json`.
 - **Lists not on the shared list.** The tag lists (#286) and the
   queue-style lists (`AddEditDeleteListBox`, `BetterQListWidget`) keep
   their own keys, covered by their dialogs.
+
+## Recheck: leaves untagged (#97, 2026-11-03)
+
+The last pass of the recheck took the tags off five leaves that could not be
+proved sound; their tests stay and still run.
+
+- **Get tables using definitions** lists hydrus-rs's own schema; the
+  reference's lists its own, so there is nothing to compare (above, Database).
+- **The command palette's media-menu rows** lack "copy bitmap" and "copy
+  thumbnail bitmap" (the clipboard-bitmap exchange is deferred).
+- **Eliding tab names** is drawn with hydrus-rs's own font metrics and tab
+  sizes, so where a name is cut can't be compared with Qt's.
+- **A modal popup** doesn't block the main window, and the variant that also
+  hides the main window isn't there (above, Popups).
+- **Closing pages**: closing the last page opens a new one where the
+  reference leaves an empty notebook (above, Pages; #183).
