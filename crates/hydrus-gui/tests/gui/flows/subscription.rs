@@ -47,7 +47,7 @@ fn add_a_subscription_run_it_and_run_it_again_as_the_reference_does() {
     let state = State {
         store: &store,
         ui: &ui,
-        site: &site,
+        site: Some(&site),
         n: &n,
     };
     let mut steps = Vec::new();

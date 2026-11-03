@@ -25,6 +25,31 @@ use crate::filename_tagging::{
 use crate::list_selection::ListSelection;
 use crate::{FilenameTaggingWindow, MiscRow, TableRow};
 
+/// The real tag services, as (key hex, name), in the reference's order
+/// (`GetServices( REAL_TAG_SERVICES )`): local tag services, then tag
+/// repositories, each by its name in lower case.
+pub(crate) fn tag_services(store: &hydrus_store::Store) -> Vec<(String, String)> {
+    let mut services: Vec<(bool, String, String, String)> = store
+        .snapshot()
+        .services
+        .all()
+        .filter(|s| s.service_type().is_real_tag_service())
+        .map(|s| {
+            (
+                s.service_type() != hydrus_core::service::ServiceType::LocalTag,
+                s.name.to_lowercase(),
+                s.key.to_hex(),
+                s.name.clone(),
+            )
+        })
+        .collect();
+    services.sort();
+    services
+        .into_iter()
+        .map(|(_, _, key, name)| (key, name))
+        .collect()
+}
+
 struct State {
     rules: Vec<RuleEditor>,
     regex: Option<crate::filename_regex_menu::Controls>,

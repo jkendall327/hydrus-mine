@@ -668,15 +668,9 @@ fn read_import_fields(window: &ImportFolderWindow, folder: &mut ImportFolderEdit
     }
 }
 
-/// The real tag services: (key hex, name).
+/// The real tag services: (key hex, name), in the reference's order.
 fn tag_services(store: &Store) -> Vec<(String, String)> {
-    store
-        .snapshot()
-        .services
-        .all()
-        .filter(|s| s.service_type().is_real_tag_service())
-        .map(|s| (s.key.to_hex(), s.name.clone()))
-        .collect()
+    crate::filename_tagging_window::tag_services(store)
 }
 
 /// The folder's filename tagging list (its services' names), and the

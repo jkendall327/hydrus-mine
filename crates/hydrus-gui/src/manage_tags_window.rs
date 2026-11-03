@@ -54,7 +54,8 @@ fn removal(
 ) {
     match removal {
         Ok(hydrus_gui_model::manage_tags::Removal::Confirm { message, tags }) => {
-            window.set_tag_menu_question_title("".into());
+            // (as the reference's `GetYesNo` titles it)
+            window.set_tag_menu_question_title("Are you sure?".into());
             window.set_tag_menu_question(message.into());
             window.set_tag_menu_yes_label("yes".into());
             window.set_tag_menu_no_label("no".into());

@@ -66,6 +66,8 @@ pub enum NewPage {
         /// "sidecars" tab).
         routers: Vec<hydrus_parse::sidecar::Router>,
         delete_after_success: bool,
+        /// The import's own options (from its import options button).
+        options: Box<hydrus_core::import_options::ImportOptionsSlice>,
     },
 }
 
