@@ -1310,6 +1310,26 @@ fn gui_identity_and_exit_confirmation_reach_the_main_window() {
     ui.show().unwrap();
     let mut bound = bind(&ui, Pages::open(store.clone()).unwrap());
     let recorded = hydrus_testkit::fixture_json("gui_settings.json");
+    // what Linux shows for each name (oracle/record_window_titles.py, the
+    // reference on X11), with hydrus-rs's version for the reference's
+    let titles = hydrus_testkit::fixture_json("window_titles.json");
+    let shown = |name: &serde_json::Value, window: &str| -> String {
+        let version = titles["version"].to_string();
+        let shown = titles["names"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|t| t["saved"] == name["saved"])
+            .unwrap()[window]["shown"]
+            .as_str()
+            .unwrap()
+            .to_owned();
+        format!(
+            "{}{}",
+            shown.strip_suffix(version.as_str()).unwrap(),
+            env!("CARGO_PKG_VERSION")
+        )
+    };
     let close = || {
         ui.window()
             .dispatch_event_with_result(slint::platform::WindowEvent::CloseRequested)
@@ -1322,34 +1342,19 @@ fn gui_identity_and_exit_confirmation_reach_the_main_window() {
         let (row_index, _) = row(&window, "Application display name: ");
         window.invoke_text_edited(row_index, name["typed"].as_str().unwrap().into());
         window.invoke_apply();
-        assert_eq!(
-            ui.get_window_title(),
-            format!(
-                "{} {}",
-                name["saved"].as_str().unwrap(),
-                env!("CARGO_PKG_VERSION")
-            )
-        );
+        assert_eq!(ui.get_window_title(), shown(name, "main"));
         // and every window ends its title with the name, as Qt shows it: the
         // one applied above is retitled, the one opened next is made with it
-        let wanted = format!(
-            " - {} {}",
-            name["saved"].as_str().unwrap(),
-            env!("CARGO_PKG_VERSION")
-        );
+        let wanted = shown(name, "opened_after")
+            .strip_prefix("manage options")
+            .unwrap()
+            .to_owned();
         assert_eq!(window.get_title_suffix(), wanted);
         open(&ui);
         let next = bound.options.borrow().as_ref().unwrap().clone_strong();
         assert_eq!(next.get_title_suffix(), wanted);
         // (composed: the window's own title, then the name)
-        assert_eq!(
-            next.get_composed_title(),
-            format!(
-                "manage options - {} {}",
-                name["saved"].as_str().unwrap(),
-                env!("CARGO_PKG_VERSION")
-            )
-        );
+        assert_eq!(next.get_composed_title(), shown(name, "opened_after"));
         next.invoke_cancel();
     }
     // A canceled switch leaves the live exit consumer unchanged.

@@ -519,8 +519,8 @@ search.
   waits after errors) shows its fields in place. Its search suggests only
   the options it has, their boxes, auxiliary labels and initial dropdown values;
   broader explanatory text on absent pages is unavailable. Application naming
-  reaches the main-window title; secondary window titles still use their existing
-  captions. Regex favourites open in a child list editor rather than embedding
+  reaches every window's title (below, "Application display name on every
+  window"). Regex favourites open in a child list editor rather than embedding
   that list on the options page; their changes still wait for the parent Apply.
   Exit confirmation honors the switch and auto-accept timeout (see Shutdown
   maintenance for the exit questions). Search position and
@@ -3780,7 +3780,7 @@ The recording covers deterministic embedded PNG/JPEG/WebP, PNG gamma and combine
 embedded-plus-gamma fallbacks, ordinary PNG/JPEG/GIF, composed animated WebP frames
 and profile-free thumbnail bytes. Existing format/plugin and mpv limitations
 remain: this control does not establish universal image-format/renderer parity.
-The browser eye menu still lacks its separate ICC action. Broader media rendering
+The browser eye menu's ICC action (since 2026-11-03) flips the same switch. Broader media rendering
 and playback parents remain Partial. Native regression/render source is authored
 for hosted validation; local checks used the actual Qt recorder, Python/source
 invariants, direct rustfmt and diff inspection only.
@@ -5486,14 +5486,16 @@ Differences:
   window system answers only once the window is shown; opened before that
   the screen-size entries are left out.
 - **Application display name on every window
-  (`audit-options-gui-main-window-application-display-name`).** Every
-  secondary window's title ends " - {name} {version}", as Qt appends the
-  display name (and its version, here hydrus-rs's) to each window title, and
-  changing the name in Options retitles the windows already open
-  (`UpdateAppDisplayName`). A window whose title is empty would show only the
-  name in Qt; here it shows " - {name} {version}". Qt composes the title in
-  the platform plugin, so the " - " form cannot be recorded offscreen; the
-  tests read the composed title of several windows of different files.
+  (`audit-options-gui-main-window-application-display-name`).** Qt's Linux
+  plugins append the display name to every window title after an em dash
+  ("manage options — hydrus client 688"; the main window is titled "main", so
+  "main — hydrus client 688"), recorded under Xvfb by
+  `oracle/record_window_titles.py` (offscreen Qt composes nothing). hydrus-rs
+  titles its windows the same way, with its own version for the reference's,
+  and a hyphen (" - ") on Windows, where Qt uses one. Changing the name
+  retitles the windows already open (`UpdateAppDisplayName`). A window whose
+  own title is empty would show only the name in Qt; every hydrus-rs window
+  has a title, so the case does not arise.
 - **Status bar activity (`audit-options-status-activity`).** Idle and CPU
   busy have the reference's tooltips. The **application-busy** field uses the
   reference's wording and thresholds ("working" above 3 jobs, "busy" above 8,
@@ -5838,3 +5840,12 @@ proved sound; their tests stay and still run.
   reference leaves an empty notebook (above, Pages; #183).
 - **The manage tags dialog's list** has no "tag display" switch in advanced
   mode (above, Manage tags).
+- **The top hover's volume control**: its global and viewer mutes are
+  compared with the recording, but what a press or drag on its slider sets is
+  hydrus-rs's own geometry, not compared with the reference's slider.
+- **Enter in a list** activates only when the current row is selected; the
+  reference's tree lists act on the selection whichever row is current (with
+  rows selected and the current one ctrl-deselected, the reference opens and
+  hydrus-rs does nothing). Many lists' handlers act on the row they are given,
+  so changing the shared `ListKeys` is a change to each of them. The search
+  log's Ctrl+C is wired but not compared with a recording.

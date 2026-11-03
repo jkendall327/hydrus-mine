@@ -329,6 +329,27 @@ fn the_top_hover_s_widgets_are_the_reference_s_in_its_order() {
     }
 }
 
+/// The open deletion dialog (its title, actions and the one chosen, reasons
+/// and the one chosen), cancelled.
+fn deletion_dialog(fixture: &Fixture) -> Option<(String, Vec<String>, i32, Vec<String>, i32)> {
+    let dialog = fixture
+        .bound
+        .viewer_deletion
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong)?;
+    let asked = (
+        dialog.get_composed_title().to_string(),
+        dialog.get_actions().iter().map(|a| a.to_string()).collect(),
+        dialog.get_selected_action(),
+        dialog.get_reasons().iter().map(|r| r.to_string()).collect(),
+        dialog.get_selected_reason(),
+    );
+    dialog.invoke_cancel();
+    widgets::settle();
+    Some(asked)
+}
+
 /// What the file shown is, as the reference's state after a press reads.
 fn state(viewer: &hydrus_gui::MediaViewerWindow) -> (String, String, bool) {
     (
@@ -529,9 +550,8 @@ fn the_top_hover_s_buttons_do_what_the_reference_s_do() {
                     assert_eq!(rows, expected, "{what}: recenter and the zoom types");
                 }
                 "eye" => {
-                    // the submenus' entries and checks, but the three the
-                    // browser viewer does not have (DIFFERENCES.md) and the
-                    // Linux warning label
+                    // the submenus' entries and checks, the Linux warning
+                    // label among them (as an entry that is not checked)
                     let eye = viewer.get_eye_menu();
                     let mut rows: Vec<(String, bool)> = Vec::new();
                     for group in [&eye.window, &eye.hovers, &eye.rendering] {
@@ -547,15 +567,16 @@ fn the_top_hover_s_buttons_do_what_the_reference_s_do() {
                             "{what}"
                         );
                         expected.extend(
-                            checks(submenu["submenu"].as_array().unwrap().iter().collect())
-                                .into_iter()
-                                .filter(|(label, _)| {
-                                    ![
-                                        "apply image ICC Profile colour adjustments",
-                                        "draw transparency as checkerboard in media viewer (duplicate filter)",
-                                        "pin the duplicates hover window so it is always visible",
-                                    ]
-                                    .contains(&label.as_str())
+                            submenu["submenu"]
+                                .as_array()
+                                .unwrap()
+                                .iter()
+                                .filter(|i| i["separator"].is_null())
+                                .map(|i| {
+                                    (
+                                        i["text"].as_str().unwrap().to_owned(),
+                                        i["checked"].as_bool().unwrap_or(false),
+                                    )
                                 }),
                         );
                     }
@@ -579,31 +600,49 @@ fn the_top_hover_s_buttons_do_what_the_reference_s_do() {
         // the trash and delete buttons ask as the delete key does; undelete
         // asks, and returns the file
         if did.iter().any(|d| d["pub"] == "canvas_delete") {
-            let dialog = fixture.bound.viewer_deletion.borrow().as_ref().map_or_else(
-                || panic!("{what}: asks to delete"),
-                slint::ComponentHandle::clone_strong,
+            // (the reference's buttons publish canvas_delete, which runs the
+            // canvas's _Delete, as the delete key does: the same dialog)
+            let asked = deletion_dialog(&fixture)
+                .unwrap_or_else(|| panic!("{what}: asks to delete"));
+            assert!(asked.0.starts_with("Delete files?"), "{what}");
+            super::common::input::key(viewer.window(), "\u{7f}", super::common::input::NONE);
+            widgets::settle();
+            assert_eq!(
+                deletion_dialog(&fixture),
+                Some(asked),
+                "{what}: the delete key's dialog"
             );
-            assert!(
-                dialog.get_composed_title().starts_with("Delete files?"),
-                "{what}"
-            );
-            dialog.invoke_cancel();
         }
         if did.iter().any(|d| d["pub"] == "canvas_undelete") {
-            assert!(
-                !viewer.get_question().is_empty(),
+            let undelete = &recorded["undelete"];
+            assert_eq!(before["shown"], undelete["file"], "{what}");
+            assert_eq!(
+                viewer.get_question(),
+                undelete["questions"][0].as_str().unwrap(),
                 "{what}: asks to undelete"
             );
             viewer.invoke_answer(true);
             widgets::settle();
             assert!(!viewer.get_file_trashed(), "{what}: undeleted");
         }
-        if did.iter().any(|d| !d["dialog"].is_null()) {
-            let shown = fixture.bound.embedded_metadata.borrow().is_some();
-            assert!(shown, "{what}: the embedded metadata window");
-            if let Some(window) = fixture.bound.embedded_metadata.borrow_mut().take() {
-                let _ = window.hide();
-            }
+        if let Some(opened) = did.iter().find(|d| !d["dialog"].is_null()) {
+            let window = fixture
+                .bound
+                .embedded_metadata
+                .borrow_mut()
+                .take()
+                .unwrap_or_else(|| panic!("{what}: the embedded metadata window"));
+            // the window is the recorded file's: as one opened on it directly
+            let file = id_of(
+                &fixture,
+                opened["file"].as_str().unwrap().parse().unwrap(),
+            );
+            let slot = Rc::default();
+            let direct =
+                hydrus_gui::embedded_metadata_window::open(&fixture.store, file, &slot).unwrap();
+            assert_eq!(window.get_basics(), direct.get_basics(), "{what}: its file");
+            let _ = direct.hide();
+            let _ = window.hide();
         }
         if has("open externally") {
             assert_eq!(
@@ -666,7 +705,7 @@ fn global_mute(fixture: &Fixture) -> bool {
     audio.global_mute
 }
 
-// leaf: audit-media-viewer-top-hover-volume
+// (not tagged: audit-media-viewer-top-hover-volume; the slider is not compared with the reference's)
 #[test]
 fn over_the_volume_control_the_viewer_s_mute_shows_and_mutes() {
     let recorded = hydrus_testkit::fixture_json("viewer_top_hover.json");
@@ -782,4 +821,204 @@ fn over_the_volume_control_the_viewer_s_mute_shows_and_mutes() {
         widgets::shows(viewer.window(), mute),
         "the popup still open"
     );
+}
+
+/// With a custom shortcut set, the shortcuts button's menu lists it under
+/// "set current shortcuts" and "set default shortcuts", and choosing those
+/// turns it on for this viewer and by default, as the reference's does
+/// (`custom_shortcuts`).
+// leaf: audit-media-viewer-top-hover-window-buttons
+#[test]
+fn the_shortcuts_button_turns_a_custom_set_on_now_and_by_default() {
+    let recorded = hydrus_testkit::fixture_json("viewer_top_hover.json");
+    let recorded = &recorded["browser"];
+    let custom = &recorded["custom_shortcuts"];
+    let name = custom["name"].as_str().unwrap().to_owned();
+    let (fixture, viewer) = open(recorded);
+    fixture
+        .store
+        .write({
+            let name = name.clone();
+            move |ctx| {
+                let mut shortcuts: hydrus_core::shortcuts::Settings =
+                    hydrus_store::settings::get(ctx.conn())?;
+                shortcuts.sets.insert(name, Vec::new());
+                hydrus_store::settings::set(ctx.conn(), &shortcuts)
+            }
+        })
+        .unwrap();
+    // the menu as drawn from the button's state, as the recorder writes it
+    let menu = |viewer: &hydrus_gui::MediaViewerWindow| -> Value {
+        let names: Vec<String> = viewer.get_shortcut_names().iter().map(|n| n.to_string()).collect();
+        let checks = |values: slint::ModelRc<bool>| -> Value {
+            Value::Array(
+                names
+                    .iter()
+                    .zip(values.iter())
+                    .map(|(n, c)| serde_json::json!({ "text": n, "checked": c }))
+                    .collect(),
+            )
+        };
+        serde_json::json!([
+            { "text": "edit shortcuts" },
+            { "text": "set current shortcuts", "submenu": checks(viewer.get_shortcut_current()) },
+            { "text": "set default shortcuts", "submenu": checks(viewer.get_shortcut_defaults()) },
+        ])
+    };
+    let defaults = || -> Vec<String> {
+        fixture
+            .store
+            .read(hydrus_store::settings::get::<hydrus_store::reference_options::ReferenceOptions>)
+            .unwrap()
+            .string_list(hydrus_gui_model::viewer_shortcut_menu::DEFAULTS_OPTION)
+    };
+    for step in custom["steps"].as_array().unwrap() {
+        let what = format!("{}", step["choose"]);
+        raise(&viewer);
+        widgets::click_at(viewer.window(), in_row(&viewer, "shortcuts"), PointerEventButton::Left);
+        widgets::settle();
+        assert!(widgets::popup_open(viewer.window()), "{what}: the menu opens");
+        assert_eq!(menu(&viewer), step["menu"], "{what}: the menu");
+        widgets::close_popups(viewer.window());
+        let Some(choose) = step["choose"].as_array() else {
+            continue;
+        };
+        let kind = match choose[0].as_str().unwrap() {
+            "set current shortcuts" => 1,
+            _ => 2,
+        };
+        let index = viewer
+            .get_shortcut_names()
+            .iter()
+            .position(|n| n == choose[1].as_str().unwrap())
+            .unwrap();
+        viewer.invoke_shortcut_menu_chosen(kind, i32::try_from(index).unwrap());
+        widgets::settle();
+        let current: Vec<String> = viewer
+            .get_shortcut_names()
+            .iter()
+            .zip(viewer.get_shortcut_current().iter())
+            .filter(|(_, on)| *on)
+            .map(|(n, _)| n.to_string())
+            .collect();
+        assert_eq!(serde_json::json!(current), step["active"], "{what}: on for this viewer");
+        assert_eq!(serde_json::json!(defaults()), step["defaults"], "{what}: on by default");
+    }
+}
+
+/// A command with no shortcuts says so in its button's tooltip, and the
+/// metadata button names what the file's embedded metadata holds, as the
+/// reference's do (`no_shortcuts`, `metadata_tooltips`).
+// leaf: audit-media-viewer-top-hover-tooltips
+#[test]
+fn the_top_hover_s_tooltips_say_no_shortcuts_and_what_metadata_a_file_has() {
+    let recorded = hydrus_testkit::fixture_json("viewer_top_hover.json");
+    let recorded = &recorded["browser"];
+    let (fixture, viewer) = open(recorded);
+    // "first"'s shortcuts taken out of every set, then a new viewer
+    let first = hydrus_gui_model::shortcut_sets::simple_names()
+        .iter()
+        .find(|(_, name)| name.as_str() == "media navigation: first")
+        .map(|(id, _)| id.parse::<i32>().unwrap())
+        .unwrap();
+    let removed = fixture
+        .store
+        .write(move |ctx| {
+            let mut shortcuts: hydrus_core::shortcuts::Settings =
+                hydrus_store::settings::get(ctx.conn())?;
+            let mut removed = 0;
+            for bindings in shortcuts.sets.values_mut() {
+                let before = bindings.len();
+                bindings.retain(|b| b.content.is_some() || b.action != first);
+                removed += before - bindings.len();
+            }
+            hydrus_store::settings::set(ctx.conn(), &shortcuts)?;
+            Ok(removed)
+        })
+        .unwrap();
+    assert_eq!(
+        removed,
+        recorded["no_shortcuts"]["removed"].as_array().unwrap().len(),
+        "as many shortcuts taken out as the recorder took"
+    );
+    viewer.invoke_close_requested();
+    widgets::settle();
+    fixture.ui.invoke_thumbnail_activated(0);
+    let viewer = fixture
+        .bound
+        .viewer
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong)
+        .expect("the viewer opens again");
+    viewer
+        .window()
+        .set_size(slint::LogicalSize::new(1000.0, 750.0));
+    widgets::settle();
+    let file = &recorded["files"][0];
+    show(&viewer, recorded, file["hash"].as_str().unwrap());
+    raise(&viewer);
+    for widget in recorded["no_shortcuts"]["widgets"].as_array().unwrap() {
+        if !widget["shown"].as_bool().unwrap()
+            || !widget["label"].is_null()
+            || (widget["class"] == "VolumeControl" && !viewer.get_volume_available())
+        {
+            continue;
+        }
+        let label = label(widget);
+        assert_eq!(
+            widgets::description(viewer.window(), &label).as_deref(),
+            widget["tooltip"].as_str(),
+            "{label}'s tooltip with no shortcuts for first"
+        );
+    }
+    // the metadata button, for each set of flags the recorder gave the file
+    let flag_bits = |flags: &Value| -> u32 {
+        use hydrus_store::media::FileFlags as F;
+        flags
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|f| match f.as_str().unwrap() {
+                "has_exif" => F::EXIF,
+                "has_xmp" => F::XMP,
+                "has_iptc" => F::IPTC,
+                "has_human_readable_embedded_metadata" => F::HUMAN_READABLE_METADATA,
+                "has_software_source" => F::SOFTWARE_SOURCE,
+                other => panic!("{other}"),
+            })
+            .fold(0, |a, b| a | b)
+    };
+    for tip in recorded["metadata_tooltips"].as_array().unwrap() {
+        let name = tip["file"].as_str().unwrap();
+        let hash = hash_of(name);
+        let id = id_of(&fixture, hash);
+        let bits = flag_bits(&tip["flags"]);
+        fixture
+            .store
+            .write_and_refresh(move |ctx| {
+                ctx.conn().execute(
+                    "UPDATE files SET flags = ?1 WHERE hash_id = ?2",
+                    rusqlite::params![bits, id],
+                )?;
+                Ok(())
+            })
+            .unwrap();
+        // (to another file and back, so the hover reads it anew)
+        let other = recorded["order"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|h| h.as_str().unwrap() != hash.to_hex())
+            .unwrap();
+        show(&viewer, recorded, other.as_str().unwrap());
+        show(&viewer, recorded, &hash.to_hex());
+        raise(&viewer);
+        assert_eq!(
+            widgets::description(viewer.window(), "show detailed file metadata").as_deref(),
+            tip["tooltip"].as_str(),
+            "{name} with {}",
+            tip["flags"]
+        );
+    }
 }

@@ -4,14 +4,19 @@ use std::{cell::RefCell, rc::Rc, sync::Arc};
 use hydrus_core::HashId;
 use hydrus_store::{
     Store,
+    reference_options::ReferenceOptions,
     settings::{
-        self, ViewerBackgroundSettings, ViewerCanvasSettings, ViewerEyeMenuSettings,
-        ViewerFocusSettings, ViewerHoverSettings,
+        self, DuplicateColourSettings, ViewerBackgroundSettings, ViewerCanvasSettings,
+        ViewerEyeMenuSettings, ViewerFocusSettings, ViewerHoverSettings,
     },
 };
 use slint::{ComponentHandle as _, ModelRc, VecModel};
 
 use crate::{MediaViewerWindow, MenuGroups, MenuRow, ViewerEyeMenu};
+
+/// The reference's option the duplicates hover pin sets
+/// (`hover_window_duplicates_always_on_top`).
+const PIN_DUPLICATES_HOVER: &str = "hover_window_duplicates_always_on_top";
 
 fn rows(values: &[(&str, i32, bool)]) -> ModelRc<MenuRow> {
     ModelRc::new(VecModel::from(
@@ -27,18 +32,43 @@ fn rows(values: &[(&str, i32, bool)]) -> ModelRc<MenuRow> {
     ))
 }
 
+/// On Linux the window entries come after a label, as the reference's do.
+fn with_linux_warning(rows: &ModelRc<MenuRow>) -> ModelRc<MenuRow> {
+    use slint::Model as _;
+    let mut out = Vec::new();
+    if cfg!(target_os = "linux") {
+        out.push(MenuRow {
+            label: "MAY BE BUGGY/CRASHY ON LINUX".into(),
+            id: -1,
+            checkable: false,
+            checked: false,
+        });
+    }
+    out.extend(rows.iter());
+    ModelRc::new(VecModel::from(out))
+}
+
 fn menu(window: &MediaViewerWindow, store: &Store) -> ViewerEyeMenu {
     let eye: ViewerEyeMenuSettings = store.read(settings::get).unwrap_or_default();
     let background: ViewerBackgroundSettings = store.read(settings::get).unwrap_or_default();
     let hovers: ViewerHoverSettings = store.read(settings::get).unwrap_or_default();
     let focus: ViewerFocusSettings = store.read(settings::get).unwrap_or_default();
     let canvas: ViewerCanvasSettings = store.read(settings::get).unwrap_or_default();
+    let duplicates: DuplicateColourSettings = store.read(settings::get).unwrap_or_default();
+    let icc = store
+        .read(hydrus_store::image_colour::load)
+        .unwrap_or_default()
+        .normalise_icc;
+    let pinned = store
+        .read(settings::get::<ReferenceOptions>)
+        .unwrap_or_default()
+        .boolean(PIN_DUPLICATES_HOVER);
     ViewerEyeMenu {
         collapse_window: eye.collapse_window,
         collapse_hovers: eye.collapse_hovers,
         collapse_rendering: eye.collapse_rendering,
         window: MenuGroups {
-            g1: rows(&[
+            g1: with_linux_warning(&rows(&[
                 ("always on top", 0, window.get_viewer_window_top()),
                 (
                     "always on top (while playing)",
@@ -50,7 +80,7 @@ fn menu(window: &MediaViewerWindow, store: &Store) -> ViewerEyeMenu {
                     2,
                     window.get_viewer_window_frameless(),
                 ),
-            ]),
+            ])),
             g2: rows(&[
                 (
                     "always start new media viewers always on top",
@@ -103,15 +133,26 @@ fn menu(window: &MediaViewerWindow, store: &Store) -> ViewerEyeMenu {
                     hovers.ratings,
                 ),
                 ("pop-in notes hover window on mouseover", 14, hovers.notes),
+                (
+                    "pin the duplicates hover window so it is always visible",
+                    17,
+                    pinned,
+                ),
             ]),
             ..MenuGroups::default()
         },
         rendering: MenuGroups {
             g1: rows(&[
+                ("apply image ICC Profile colour adjustments", 18, icc),
                 (
                     "draw transparency as checkerboard in media viewer",
                     15,
                     canvas.transparency_checkerboard,
+                ),
+                (
+                    "draw transparency as checkerboard in media viewer (duplicate filter)",
+                    19,
+                    duplicates.checkerboard,
                 ),
                 (
                     "instead of checkerboard, use a bright greenscreen",
@@ -218,6 +259,20 @@ pub(crate) fn bind(
                 }),
                 16 => change::<ViewerCanvasSettings>(&store, |s| {
                     s.transparency_greenscreen = !s.transparency_greenscreen;
+                }),
+                17 => change::<ReferenceOptions>(&store, |s| {
+                    let pinned = s.boolean(PIN_DUPLICATES_HOVER);
+                    s.set_boolean(PIN_DUPLICATES_HOVER, !pinned);
+                }),
+                18 => store
+                    .write(|ctx| {
+                        let mut colour = hydrus_store::image_colour::load(ctx.conn())?;
+                        colour.normalise_icc = !colour.normalise_icc;
+                        settings::set(ctx.conn(), &colour)
+                    })
+                    .map_err(|error| error.to_string()),
+                19 => change::<DuplicateColourSettings>(&store, |s| {
+                    s.checkerboard = !s.checkerboard;
                 }),
                 _ => return,
             };

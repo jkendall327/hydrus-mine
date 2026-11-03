@@ -2431,6 +2431,418 @@
      "archive_tooltip": "return to inbox"
     }
    }
+  ],
+  "undelete": {
+   "file": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+   "questions": [
+    "Undelete this file back to my files?"
+   ]
+  },
+  "no_shortcuts": {
+   "command": "SIMPLE_VIEW_FIRST",
+   "removed": [
+    [
+     "media_viewer_browser",
+     "home"
+    ]
+   ],
+   "widgets": [
+    {
+     "group": "left",
+     "class": "IconButton",
+     "shown": true,
+     "icon": "position_first",
+     "tooltip": "first\n\n----------\n\nno shortcuts set\n(media navigation: first)"
+    },
+    {
+     "group": "left",
+     "class": "IconButton",
+     "shown": true,
+     "icon": "position_previous",
+     "tooltip": "previous\n\n----------\n\nleft, page up, scroll up, up\n(media viewers - 'normal' browser->media navigation: previous)"
+    },
+    {
+     "group": "left",
+     "class": "BetterStaticText",
+     "shown": true,
+     "label": "index",
+     "text": "1/5",
+     "tooltip": ""
+    },
+    {
+     "group": "left",
+     "class": "IconButton",
+     "shown": true,
+     "icon": "position_next",
+     "tooltip": "next\n\n----------\n\ndown, page down, right, scroll down\n(media viewers - 'normal' browser->media navigation: next)"
+    },
+    {
+     "group": "left",
+     "class": "IconButton",
+     "shown": true,
+     "icon": "position_last",
+     "tooltip": "last\n\n----------\n\nend\n(media viewers - 'normal' browser->media navigation: last)"
+    },
+    {
+     "group": "left",
+     "class": "IconButtonMultiClickable",
+     "shown": true,
+     "icon": "position_random",
+     "tooltip": "random - right-click to undo showing random media"
+    },
+    {
+     "group": "left",
+     "class": "IconButton",
+     "shown": true,
+     "icon": "slideshow",
+     "tooltip": "slideshow"
+    },
+    {
+     "group": "center",
+     "class": "IconButton",
+     "shown": true,
+     "icon": "archive",
+     "tooltip": "archive"
+    },
+    {
+     "group": "center",
+     "class": "IconButton",
+     "shown": true,
+     "icon": "delete",
+     "tooltip": "send to trash"
+    },
+    {
+     "group": "center",
+     "class": "IconButton",
+     "shown": false,
+     "icon": "trash_delete",
+     "tooltip": "delete completely"
+    },
+    {
+     "group": "center",
+     "class": "IconButton",
+     "shown": false,
+     "icon": "undelete",
+     "tooltip": "undelete"
+    },
+    {
+     "group": "center",
+     "class": "IconButton",
+     "shown": true,
+     "icon": "page_with_text",
+     "tooltip": "show detailed file metadata, including extra info"
+    },
+    {
+     "group": "right",
+     "class": "BetterStaticText",
+     "shown": true,
+     "label": "zoom",
+     "text": "1562.50%",
+     "tooltip": ""
+    },
+    {
+     "group": "right",
+     "class": "IconButton",
+     "shown": true,
+     "icon": "zoom_in",
+     "tooltip": "zoom in\n\n----------\n\n+, ctrl+scroll up\n(media viewers - all->zoom: in)"
+    },
+    {
+     "group": "right",
+     "class": "IconButton",
+     "shown": true,
+     "icon": "zoom_out",
+     "tooltip": "zoom out\n\n----------\n\n-, ctrl+scroll down\n(media viewers - all->zoom: out)"
+    },
+    {
+     "group": "right",
+     "class": "IconButton",
+     "shown": true,
+     "icon": "zoom_switch",
+     "tooltip": "zoom switch\n\n----------\n\nz\n(media viewers - all->zoom: switch between 100% and canvas fit)"
+    },
+    {
+     "group": "right",
+     "class": "IconButton",
+     "shown": true,
+     "icon": "zoom_cog",
+     "tooltip": "advanced zoom"
+    },
+    {
+     "group": "right",
+     "class": "VolumeControl",
+     "shown": true,
+     "icon": "mute",
+     "tooltip": "Global mute/unmute",
+     "popup": {
+      "mute_icon": "sound",
+      "mute_tooltip": "Mute/unmute: media viewer"
+     }
+    },
+    {
+     "group": "right",
+     "class": "IconButton",
+     "shown": true,
+     "icon": "keyboard",
+     "tooltip": "shortcuts"
+    },
+    {
+     "group": "right",
+     "class": "IconButton",
+     "shown": true,
+     "icon": "eye",
+     "tooltip": "view options"
+    },
+    {
+     "group": "right",
+     "class": "WindowDragButton",
+     "shown": true,
+     "icon": "move",
+     "tooltip": "click and drag from here to move the window"
+    },
+    {
+     "group": "right",
+     "class": "IconButton",
+     "shown": true,
+     "icon": "fullscreen_switch",
+     "tooltip": "fullscreen switch"
+    },
+    {
+     "group": "right",
+     "class": "IconButton",
+     "shown": true,
+     "icon": "open_externally",
+     "tooltip": "open externally\n\n----------\n\nctrl+e\n(media actions, either thumbnails or the viewer->open file in external program)"
+    },
+    {
+     "group": "right",
+     "class": "IconButtonMultiClickable",
+     "shown": true,
+     "icon": "drag",
+     "tooltip": "drag from here to export file"
+    },
+    {
+     "group": "right",
+     "class": "IconButton",
+     "shown": true,
+     "icon": "stop",
+     "tooltip": "close"
+    }
+   ]
+  },
+  "custom_shortcuts": {
+   "name": "my set",
+   "steps": [
+    {
+     "choose": null,
+     "menu": [
+      {
+       "text": "edit shortcuts"
+      },
+      {
+       "text": "set current shortcuts",
+       "submenu": [
+        {
+         "text": "my set",
+         "checked": false
+        }
+       ]
+      },
+      {
+       "text": "set default shortcuts",
+       "submenu": [
+        {
+         "text": "my set",
+         "checked": false
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "choose": [
+      "set current shortcuts",
+      "my set"
+     ],
+     "menu": [
+      {
+       "text": "edit shortcuts"
+      },
+      {
+       "text": "set current shortcuts",
+       "submenu": [
+        {
+         "text": "my set",
+         "checked": false
+        }
+       ]
+      },
+      {
+       "text": "set default shortcuts",
+       "submenu": [
+        {
+         "text": "my set",
+         "checked": false
+        }
+       ]
+      }
+     ],
+     "active": [
+      "my set"
+     ],
+     "defaults": []
+    },
+    {
+     "choose": [
+      "set default shortcuts",
+      "my set"
+     ],
+     "menu": [
+      {
+       "text": "edit shortcuts"
+      },
+      {
+       "text": "set current shortcuts",
+       "submenu": [
+        {
+         "text": "my set",
+         "checked": true
+        }
+       ]
+      },
+      {
+       "text": "set default shortcuts",
+       "submenu": [
+        {
+         "text": "my set",
+         "checked": false
+        }
+       ]
+      }
+     ],
+     "active": [
+      "my set"
+     ],
+     "defaults": [
+      "my set"
+     ]
+    },
+    {
+     "choose": [
+      "set current shortcuts",
+      "my set"
+     ],
+     "menu": [
+      {
+       "text": "edit shortcuts"
+      },
+      {
+       "text": "set current shortcuts",
+       "submenu": [
+        {
+         "text": "my set",
+         "checked": true
+        }
+       ]
+      },
+      {
+       "text": "set default shortcuts",
+       "submenu": [
+        {
+         "text": "my set",
+         "checked": true
+        }
+       ]
+      }
+     ],
+     "active": [],
+     "defaults": [
+      "my set"
+     ]
+    }
+   ]
+  },
+  "metadata_tooltips": [
+   {
+    "file": "jpeg_00.jpg",
+    "flags": [
+     "has_exif"
+    ],
+    "tooltip": "show detailed file metadata, including exif and extra info"
+   },
+   {
+    "file": "jpeg_00.jpg",
+    "flags": [
+     "has_xmp",
+     "has_iptc"
+    ],
+    "tooltip": "show detailed file metadata, including xmp and iptc and extra info"
+   },
+   {
+    "file": "jpeg_00.jpg",
+    "flags": [
+     "has_human_readable_embedded_metadata"
+    ],
+    "tooltip": "show detailed file metadata, including human-readable metadata and extra info"
+   },
+   {
+    "file": "jpeg_00.jpg",
+    "flags": [
+     "has_software_source"
+    ],
+    "tooltip": "show detailed file metadata, including software/source metadata and extra info"
+   },
+   {
+    "file": "jpeg_00.jpg",
+    "flags": [
+     "has_exif",
+     "has_xmp",
+     "has_iptc",
+     "has_human_readable_embedded_metadata",
+     "has_software_source"
+    ],
+    "tooltip": "show detailed file metadata, including exif and xmp and iptc and human-readable\nmetadata and software/source metadata and extra info"
+   },
+   {
+    "file": "audio.flac",
+    "flags": [
+     "has_exif"
+    ],
+    "tooltip": "show detailed file metadata, including exif"
+   },
+   {
+    "file": "audio.flac",
+    "flags": [
+     "has_xmp",
+     "has_iptc"
+    ],
+    "tooltip": "show detailed file metadata, including xmp and iptc"
+   },
+   {
+    "file": "audio.flac",
+    "flags": [
+     "has_human_readable_embedded_metadata"
+    ],
+    "tooltip": "show detailed file metadata, including human-readable metadata"
+   },
+   {
+    "file": "audio.flac",
+    "flags": [
+     "has_software_source"
+    ],
+    "tooltip": "show detailed file metadata, including software/source metadata"
+   },
+   {
+    "file": "audio.flac",
+    "flags": [
+     "has_exif",
+     "has_xmp",
+     "has_iptc",
+     "has_human_readable_embedded_metadata",
+     "has_software_source"
+    ],
+    "tooltip": "show detailed file metadata, including exif and xmp and iptc and human-readable\nmetadata and software/source metadata"
+   }
   ]
  },
  "archive_delete": {
