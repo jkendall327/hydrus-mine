@@ -312,6 +312,9 @@ pub(crate) fn watch(bound: &crate::Bound) {
     t.add(&bound.options_suggested_tags_slot.weights);
     t.add(&bound.services_editor.manage);
     t.add(&bound.services_editor.edit);
+    // (the child editors first: a child left shown outlives its parent)
+    let sessions = bound.network_sessions.clone();
+    t.push(move || sessions.retire_children());
     t.add(&bound.network_sessions.browser);
     t.add(&bound.network_sessions.cookies);
     t.add(&bound.network_sessions.headers);

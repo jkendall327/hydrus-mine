@@ -26,6 +26,29 @@ pub struct SlotsOwner {
     pub browser: Rc<RefCell<Option<NetworkDataWindow>>>,
     pub cookies: Rc<RefCell<Option<NetworkDataWindow>>>,
     pub headers: Rc<RefCell<Option<NetworkDataWindow>>>,
+    /// The child editors' slots (each parent window has its own), so a
+    /// binding's teardown can hide a child left open.
+    edits: RefCell<Vec<std::rc::Weak<RefCell<Option<EditNetworkValueWindow>>>>>,
+    imports: RefCell<Vec<std::rc::Weak<RefCell<Option<CookieImportWindow>>>>>,
+}
+impl SlotsOwner {
+    /// Hide and forget the child editors still open.
+    pub(crate) fn retire_children(&self) {
+        let edits: Vec<_> = self.edits.borrow_mut().drain(..).collect();
+        for slot in edits.iter().filter_map(std::rc::Weak::upgrade) {
+            let window = slot.borrow_mut().take();
+            if let Some(window) = window {
+                let _ = window.hide();
+            }
+        }
+        let imports: Vec<_> = self.imports.borrow_mut().drain(..).collect();
+        for slot in imports.iter().filter_map(std::rc::Weak::upgrade) {
+            let window = slot.borrow_mut().take();
+            if let Some(window) = window {
+                let _ = window.hide();
+            }
+        }
+    }
 }
 impl std::ops::Deref for Slots {
     type Target = SlotsOwner;
@@ -260,6 +283,14 @@ fn open_data(
     let active = Rc::new(Cell::new(true));
     let child: Rc<RefCell<Option<EditNetworkValueWindow>>> = Rc::default();
     let import_child: Rc<RefCell<Option<CookieImportWindow>>> = Rc::default();
+    {
+        let mut edits = slots.owner.edits.borrow_mut();
+        edits.retain(|slot| slot.strong_count() > 0);
+        edits.push(Rc::downgrade(&child));
+        let mut imports = slots.owner.imports.borrow_mut();
+        imports.retain(|slot| slot.strong_count() > 0);
+        imports.push(Rc::downgrade(&import_child));
+    }
     let close = Rc::new({
         let weak = window.as_weak();
         let child = child.clone();
