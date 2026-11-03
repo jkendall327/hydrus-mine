@@ -73,6 +73,97 @@
      }
     }
    },
+   "state": {
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "my tags": [
+       "format:jpeg",
+       "meta:lowres",
+       "page:3"
+      ]
+     },
+     "urls": []
+    },
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "filename:jpeg_03",
+       "source:fixture"
+      ],
+      "my tags": [
+       "creator:anonymous artist",
+       "explicit",
+       "format:jpeg",
+       "meta:lowres",
+       "page:3",
+       "series:metroid"
+      ]
+     },
+     "urls": []
+    },
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "filename:jpeg_01",
+       "source:fixture"
+      ],
+      "my tags": [
+       "blue eyes",
+       "format:jpeg",
+       "safe",
+       "volume:3",
+       "キャラクター:初音ミク"
+      ]
+     },
+     "urls": []
+    },
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "my tags": [
+       "creator:someone else",
+       "format:jpeg",
+       "safe"
+      ]
+     },
+     "urls": []
+    },
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "my tags": [
+       "blue_eyes",
+       "format:jpeg",
+       "safe",
+       "samus",
+       "smile"
+      ],
+      "second tags": [
+       "blue eyes",
+       "second:tag"
+      ]
+     },
+     "urls": []
+    }
+   },
    "step": "rate"
   },
   {
@@ -146,6 +237,97 @@
       "favourites": 0,
       "stars": 0.2
      }
+    }
+   },
+   "state": {
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea": {
+     "in": [
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "my tags": [
+       "format:jpeg",
+       "meta:lowres",
+       "page:3"
+      ]
+     },
+     "urls": []
+    },
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c": {
+     "in": [
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:jpeg_03",
+       "source:fixture"
+      ],
+      "my tags": [
+       "creator:anonymous artist",
+       "explicit",
+       "format:jpeg",
+       "meta:lowres",
+       "page:3",
+       "series:metroid"
+      ]
+     },
+     "urls": []
+    },
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5": {
+     "in": [
+      "trash"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "filename:jpeg_01",
+       "source:fixture"
+      ],
+      "my tags": [
+       "blue eyes",
+       "format:jpeg",
+       "safe",
+       "volume:3",
+       "キャラクター:初音ミク"
+      ]
+     },
+     "urls": []
+    },
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c": {
+     "in": [
+      "trash"
+     ],
+     "inbox": true,
+     "tags": {
+      "my tags": [
+       "creator:someone else",
+       "format:jpeg",
+       "safe"
+      ]
+     },
+     "urls": []
+    },
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "my tags": [
+       "blue_eyes",
+       "format:jpeg",
+       "safe",
+       "samus",
+       "smile"
+      ],
+      "second tags": [
+       "blue eyes",
+       "second:tag"
+      ]
+     },
+     "urls": []
     }
    },
    "step": "filter"
@@ -246,6 +428,97 @@
       1
      ],
      "predicate": "system:rating for stars more than 3/5"
+    }
+   },
+   "state": {
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea": {
+     "in": [
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "my tags": [
+       "format:jpeg",
+       "meta:lowres",
+       "page:3"
+      ]
+     },
+     "urls": []
+    },
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c": {
+     "in": [
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:jpeg_03",
+       "source:fixture"
+      ],
+      "my tags": [
+       "creator:anonymous artist",
+       "explicit",
+       "format:jpeg",
+       "meta:lowres",
+       "page:3",
+       "series:metroid"
+      ]
+     },
+     "urls": []
+    },
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5": {
+     "in": [
+      "trash"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "filename:jpeg_01",
+       "source:fixture"
+      ],
+      "my tags": [
+       "blue eyes",
+       "format:jpeg",
+       "safe",
+       "volume:3",
+       "キャラクター:初音ミク"
+      ]
+     },
+     "urls": []
+    },
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c": {
+     "in": [
+      "trash"
+     ],
+     "inbox": true,
+     "tags": {
+      "my tags": [
+       "creator:someone else",
+       "format:jpeg",
+       "safe"
+      ]
+     },
+     "urls": []
+    },
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf": {
+     "in": [
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "my tags": [
+       "blue_eyes",
+       "format:jpeg",
+       "safe",
+       "samus",
+       "smile"
+      ],
+      "second tags": [
+       "blue eyes",
+       "second:tag"
+      ]
+     },
+     "urls": []
     }
    },
    "step": "search"

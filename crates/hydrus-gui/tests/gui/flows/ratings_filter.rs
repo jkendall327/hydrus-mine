@@ -153,8 +153,16 @@ fn files_rated_filtered_and_searched_as_the_reference_does() {
         }
         Json::Object(out)
     };
-    let step =
-        |name: &str, dialog: Json| json!({"step": name, "dialog": dialog, "files": file_states()});
+    // (and everything else each file shows: every local tag service's tags,
+    // URLs, inbox and domains, so a stray write shows)
+    let step = |name: &str, dialog: Json| {
+        json!({
+            "step": name,
+            "dialog": dialog,
+            "files": file_states(),
+            "state": state.files(files.iter().cloned().collect()),
+        })
+    };
 
     // (the five sent to the inbox, so the filter has something to archive)
     let all: Vec<&String> = files.iter().collect();
@@ -226,23 +234,44 @@ fn files_rated_filtered_and_searched_as_the_reference_does() {
         .as_ref()
         .map(slint::ComponentHandle::clone_strong)
         .expect("the filter");
-    // (the filter shows them in the page's order)
-    let order: Vec<usize> = {
-        let ids: Vec<_> = files.iter().map(|h| hash_id(h)).collect();
-        let page = bound.current.borrow();
-        let page = page.borrow();
-        page.results()
-            .iter()
-            .filter_map(|r| ids.iter().position(|i| i == r))
-            .map(|i| i + 1)
-            .collect()
-    };
-    for (i, f) in order.iter().enumerate() {
+    // (which of the five the filter shows, read from the window: its info
+    // line's first part, each file's size, type and resolution, told apart)
+    let first_part = |line: &str| line.split(" | ").next().unwrap_or_default().to_owned();
+    let parts: Vec<String> = files
+        .iter()
+        .map(|h| {
+            let id = hash_id(h);
+            let media = store
+                .read(|c| hydrus_store::media::load(c, &services, None, &[id]))
+                .unwrap()
+                .results
+                .remove(0);
+            first_part(&hydrus_gui::info_lines::top_line_with_format(
+                &media,
+                &services,
+                &hydrus_core::media_viewer::InfoLineSettings::default(),
+                0,
+                &hydrus_gui_model::gui_format::preferences(&store),
+            ))
+        })
+        .collect();
+    assert_eq!(
+        parts.iter().collect::<BTreeSet<_>>().len(),
+        files.len(),
+        "the five are told apart by their info lines: {parts:?}"
+    );
+    let mut order = Vec::new();
+    for i in 0..files.len() {
         assert_eq!(
             window.get_caption().as_str(),
-            format!("{}/{}", i + 1, order.len()),
-            "the filter on F{f}"
+            format!("{}/{}", i + 1, files.len()),
         );
+        let shown = first_part(window.get_info_line().as_str());
+        let f = 1 + parts
+            .iter()
+            .position(|p| *p == shown)
+            .unwrap_or_else(|| panic!("the filter shows one of the five: {shown}"));
+        order.push(f);
         match f {
             1 | 4 => window.invoke_keep(),
             2 | 5 => window.invoke_delete(),
@@ -262,11 +291,19 @@ fn files_rated_filtered_and_searched_as_the_reference_does() {
         .filter(|h| !h.is_empty())
         .chain(commits.iter().cloned())
         .collect();
+    // (the question and its buttons as the window shows them: each commit
+    // choice's "commit" button; "forget" and "back to filtering" are always
+    // there)
+    widgets::lay_out(window.window(), 800.0, 600.0);
+    widgets::settle();
+    assert!(widgets::shows(window.window(), &labels[0]), "{labels:?}");
+    let buttons = widgets::count(window.window(), "commit");
+    assert_eq!(buttons, commits.len(), "a commit button for each choice");
     let question = json!({
         "question": labels[0],
-        "commit buttons": vec!["commit"; commits.len()],
+        "commit buttons": vec!["commit"; buttons],
     });
-    window.invoke_commit();
+    widgets::click_nth(window.window(), "commit", 0);
     widgets::settle();
     assert!(bound.archive_delete.borrow().is_none(), "the filter closed");
     steps.push(step(

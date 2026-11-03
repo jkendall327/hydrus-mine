@@ -22,7 +22,8 @@ of every file, with five still images F1-F5 (the fixture's first five
 After each step: what the windows showed (the ratings dialog's title, the
 filter's order and its question with its labels and buttons; the ratings
 dialog's controls are the leaf tests' business) and each of the five
-files: its ratings, inbox and domains.
+files: its ratings, inbox and domains, and everything else it shows (every
+local tag service's tags and its URLs, `flows.files_state`).
 
 Usage: QT_QPA_PLATFORM=offscreen ~/pyenv/bin/python oracle/record_flow_ratings_filter.py
        (writes oracle/fixtures/flow_ratings_filter.json)
@@ -191,6 +192,9 @@ def record( session ):
             'step' : name,
             'dialog' : seen,
             'files' : { h : file_state( h ) for h in files },
+            # (and everything else each file shows: every local tag
+            # service's tags, URLs, inbox and domains, so a stray write shows)
+            'state' : flows.files_state( session, files, lambda t: t ),
             **( extra or {} ),
         } )
 

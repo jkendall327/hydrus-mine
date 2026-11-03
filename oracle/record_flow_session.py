@@ -346,11 +346,17 @@ def restore( session, site ):
 
 
 def avoid_shutdown_deadlock( controller ):
-    """The reference's exit can deadlock: a thumbnail cache's loop, ending,
-    clears itself and asks the Qt thread for `image.svg`'s size
-    (`GetSVGResolution`) while holding its lock, as the Qt thread, closing
-    the pages, waits on that lock. The size is fetched once here, on the Qt
-    thread, and kept, so the cache never waits on Qt."""
+    """Make the reference's exit deadlock less often. A thumbnail cache,
+    clearing itself as its loop ends, makes its `image.svg` placeholder
+    while holding its lock (`ClientCaches.py`, the special thumbnails), and
+    both steps of that wait on the Qt thread (`ClientSVGHandling.py`):
+    `GetSVGResolution` asks Qt for the SVG's size, and
+    `GenerateThumbnailNumPyFromSVGPath` renders it there
+    (`CallBlockingToQtTLW`). The Qt thread, closing the pages, waits on the
+    same lock. The size is fetched once here, on the Qt thread, and kept, so
+    that step no longer waits; the render still does, so the exit can still
+    deadlock, and `run_child` then kills the client (the fixture's
+    `killed` says whether it had to)."""
 
     from hydrus.client import ClientSVGHandling
     from hydrus.core import HydrusStaticDir
@@ -405,8 +411,15 @@ def child( which, db_dir, out ):
 
 
 def run_child( which, db_dir, out ):
-    """The child, killed if it has written its result but does not close
-    within a minute (see `child`)."""
+    """Run the client for `which` in a child process: whether it had to be
+    killed.
+
+    The child writes its result before the client closes (see `child`). If
+    it has written it but has not closed a minute later, the reference's
+    exit has deadlocked (see `avoid_shutdown_deadlock`), and it is killed:
+    what was recorded, the saved session included, is in the database by
+    then, so the next run and the fixture are as they would be. A child
+    that ends without writing its result fails the recording."""
 
     import subprocess
 
@@ -416,6 +429,7 @@ def run_child( which, db_dir, out ):
     process = subprocess.Popen( [ sys.executable, os.path.abspath( __file__ ), '--child', which, db_dir, out ], env = env, cwd = os.path.dirname( HERE ) )
 
     written_at = None
+    killed = False
 
     while process.poll() is None:
 
@@ -429,6 +443,8 @@ def run_child( which, db_dir, out ):
             process.kill()
             process.wait()
 
+            killed = True
+
             break
 
 
@@ -438,6 +454,9 @@ def run_child( which, db_dir, out ):
     if not os.path.exists( out ):
 
         raise Exception( f'the {which} run failed' )
+
+
+    return killed
 
 
 
@@ -459,8 +478,10 @@ def main():
         built = os.path.join( work, 'build.json' )
         restored = os.path.join( work, 'restore.json' )
 
-        run_child( 'build', db_dir, built )
-        run_child( 'restore', db_dir, restored )
+        killed = {
+            'build' : run_child( 'build', db_dir, built ),
+            'restore' : run_child( 'restore', db_dir, restored ),
+        }
 
         first = json.load( open( built ) )
         second = json.load( open( restored ) )
@@ -470,6 +491,9 @@ def main():
         'domain_manager' : first[ 'domain_manager' ],
         'site' : first[ 'site' ],
         'steps' : [ first[ 'step' ], second[ 'step' ] ],
+        # (whether each run's client was killed, its exit deadlocked: see
+        # `run_child`)
+        'killed' : killed,
     } )
 
 
