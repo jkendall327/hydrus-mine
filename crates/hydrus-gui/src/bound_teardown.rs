@@ -300,7 +300,11 @@ pub(crate) fn watch(bound: &crate::Bound) {
     nested(t, &bound.subscription_exchange, retire_exchange);
     nested(t, &bound.parser_editors, retire_parsers);
     nested(t, &bound.login_workflows, retire_login);
-    nested(t, &bound.downloader_definitions, retire_downloader_definitions);
+    nested(
+        t,
+        &bound.downloader_definitions,
+        retire_downloader_definitions,
+    );
     nested(t, &bound.simple_formulae, retire_simple_formulae);
     nested(t, &bound.auto_resolution, retire_auto_resolution);
     nested(t, &bound.options_external_calls, retire_external_call);
