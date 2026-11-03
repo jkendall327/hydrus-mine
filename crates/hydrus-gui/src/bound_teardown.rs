@@ -439,7 +439,11 @@ pub(crate) fn watch(bound: &crate::Bound) {
     );
     nested(t, &bound.simple_formulae, retire_simple_formulae);
     nested(t, &bound.auto_resolution, retire_auto_resolution);
-    nested(t, &bound.options_external_calls, |s| s.retire());
+    nested(
+        t,
+        &bound.options_external_calls,
+        crate::external_call_window::Slots::retire,
+    );
     nested(t, &bound.options_open_externally, retire_open_externally);
     nested(t, &bound.options_suggested_tags_slot, retire_suggested_tags);
     nested(t, &bound.services_editor, retire_services_editor);

@@ -29,6 +29,7 @@ pub struct Slots {
 impl Slots {
     /// Hide and forget every window held, as a binding's last clone goes.
     pub(crate) fn retire(&self) {
+        use crate::bound_teardown::forget;
         let Self {
             worker_running: _,
             defaults,
@@ -38,7 +39,6 @@ impl Slots {
             strings,
             exchange,
         } = self;
-        use crate::bound_teardown::forget;
         forget(defaults);
         forget(editor);
         forget(command);
