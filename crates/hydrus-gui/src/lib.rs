@@ -5570,6 +5570,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let now = std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
                 .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX));
+            // (URLs the Client API sent to a page name no page had)
+            if let Err(e) = pages.borrow_mut().adopt_api_queues() {
+                eprintln!("could not open the Client API's pages: {e}");
+            }
             if let Err(e) = pages.borrow_mut().sync(now) {
                 eprintln!("could not keep the pages: {e}");
             }

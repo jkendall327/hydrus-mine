@@ -1031,8 +1031,9 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   every minute and on stopping).
 - **Watchers are grouped by page name only.** A watchable URL sent by
   `/add_urls/add_url` starts a watcher on the named watcher "page" (by
-  default "watcher") as the reference's does, but there are no pages to
-  show yet, and a check that errors pauses the watcher without the
+  default "watcher") as the reference's does, but the open client does not
+  show it as a page yet (a post or gallery URL's named page it does show:
+  see GUI.md), and a check that errors pauses the watcher without the
   reference's five-second status display.
 - **A pause switched from the command line takes up to half a minute** to
   reach a running `hydrus serve` (it looks again that often while paused);

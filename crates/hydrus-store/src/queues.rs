@@ -748,6 +748,16 @@ pub fn set_page_closed(conn: &Connection, id: i64, closed: bool) -> Result<()> {
     nudge(conn, id)
 }
 
+/// Give a queue its page's key (a page taking up a queue made without one,
+/// as the Client API makes them for a page name).
+pub fn set_page_key(conn: &Connection, id: i64, page_key: &[u8]) -> Result<()> {
+    conn.execute(
+        "UPDATE import_queues SET page_key = ? WHERE queue_id = ?",
+        params![page_key, id],
+    )?;
+    Ok(())
+}
+
 /// Delete the queues of pages closed and not reopened (as the reference's
 /// closed pages go once the client closes): how many there were.
 pub fn delete_closed_queues(conn: &Connection) -> Result<usize> {

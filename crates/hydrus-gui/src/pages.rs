@@ -947,6 +947,61 @@ impl Pages {
         self.sync(now)
     }
 
+    /// Take up, as pages, the URL queues the Client API made for a page name
+    /// while no page had it (`/add_urls/add_url` with
+    /// `destination_page_name`): each a URL downloader page of its queue's
+    /// name, at the end of the top notebook and not shown, as the
+    /// reference's `GetOrMakeURLImportPage` makes one. A queue made without
+    /// a page key that no page or closed page holds; it gets the new page's
+    /// key, so the API finds the page by it after. Whether any was taken up.
+    pub fn adopt_api_queues(&mut self) -> Result<bool, String> {
+        fn held(pages: &[Page], out: &mut std::collections::HashSet<i64>) {
+            for page in pages {
+                match &page.content {
+                    PageContent::Pages(children) => held(children, out),
+                    PageContent::Downloader { queues, .. } => out.extend(queues.iter().copied()),
+                    _ => {}
+                }
+            }
+        }
+        let all = self
+            .store
+            .read(|conn| {
+                hydrus_store::queues::queues(conn, Some(hydrus_store::queues::QueueKind::Urls))
+            })
+            .map_err(|e| e.to_string())?;
+        let mut used = std::collections::HashSet::new();
+        held(&self.session.pages, &mut used);
+        for closed in &self.closed {
+            held(std::slice::from_ref(&closed.page), &mut used);
+        }
+        let orphans: Vec<_> = all
+            .into_iter()
+            .filter(|q| q.page_key.is_none() && !q.page_closed && !used.contains(&q.id))
+            .collect();
+        if orphans.is_empty() {
+            return Ok(false);
+        }
+        for queue in orphans {
+            let key = PageKey::random();
+            let id = queue.id;
+            self.store
+                .write(move |ctx| hydrus_store::queues::set_page_key(ctx.conn(), id, &key.0))
+                .map_err(|e| e.to_string())?;
+            self.session.pages.push(Page {
+                key,
+                name: queue.name.clone(),
+                content: PageContent::Downloader {
+                    kind: DownloaderKind::Urls,
+                    queues: vec![id],
+                    sort: None,
+                    page: None,
+                },
+            });
+        }
+        Ok(true)
+    }
+
     /// Keep the last session up to date in the store, as [`Pages::save`]
     /// does, writing only what changed since last time: the Client API's
     /// `/manage_pages` answers from it.

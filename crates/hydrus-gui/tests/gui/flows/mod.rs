@@ -14,6 +14,7 @@
 //! with the `DIFFERENCES.md` entry that explains it; one that no longer
 //! differs fails the flow too, so the list stays true.
 
+mod client_api;
 mod download;
 mod duplicates;
 mod export;
@@ -108,6 +109,7 @@ pub const PORTS: &[(&str, u16)] = &[
     ("flow_import_folder.json", 46013),
     ("flow_watcher.json", 46031),
     ("flow_session.json", 46016),
+    ("flow_client_api.json", 46017),
 ];
 
 /// Whether a request to `http://127.0.0.1` goes straight there, whatever
@@ -361,6 +363,40 @@ impl Daemon {
             failed,
             folders_working,
         }
+    }
+
+    /// A Client API call, as `serve`'s listener would take it (the oracle's
+    /// full access key): its status and its answer (JSON, or the body as
+    /// text when it is not).
+    pub fn api(&self, method: &str, path: &str, body: Option<&Json>) -> (u16, Json) {
+        use tower::ServiceExt as _;
+        let mut request = axum::http::Request::builder()
+            .method(method)
+            .uri(path)
+            .header(
+                "Hydrus-Client-API-Access-Key",
+                "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+            );
+        if body.is_some() {
+            request = request.header("Content-Type", "application/json");
+        }
+        let request = request
+            .body(axum::body::Body::from(
+                body.map(Json::to_string).unwrap_or_default(),
+            ))
+            .unwrap();
+        let router = hydrus_api::router(Arc::clone(&self.state));
+        let runtime = self.runtime.as_ref().unwrap();
+        runtime.block_on(async move {
+            let response = router.oneshot(request).await.unwrap();
+            let status = response.status().as_u16();
+            let bytes = axum::body::to_bytes(response.into_body(), usize::MAX)
+                .await
+                .unwrap();
+            let answer = serde_json::from_slice(&bytes)
+                .unwrap_or_else(|_| Json::String(String::from_utf8_lossy(&bytes).into_owned()));
+            (status, answer)
+        })
     }
 
     /// Fail the flow if the daemon's own tasks failed.
