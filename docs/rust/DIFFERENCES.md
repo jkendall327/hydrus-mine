@@ -4655,14 +4655,15 @@ winit to hand over the dropped text, or an XDND handler of hydrus-rs's own.
 - Only archive/inbox (thumbnail, viewer and filter actions through
   `media_actions`) and Manage Tags' applied changes are recorded; tag changes
   made elsewhere (write-tag menus, filename tagging, migration) are not yet.
+  A content package listing several actions or services names them sorted,
+  where the reference's set order varies.
 - **Manage Tags' changes can be undone; the reference's cannot.** The
   reference's dialog commits with `WriteSynchronous`, which goes past its
   undo manager (only `Write( 'content_updates', … )` reaches it), so after
   tagging its undo menu offers nothing, or the action before. The manage
-  tags flow (`oracle/fixtures/flow_manage_tags.json`) shows it; whether to
-  keep this is the owner's call.
-  A content package listing several actions or services names them sorted,
-  where the reference's set order varies.
+  tags flow (`oracle/fixtures/flow_manage_tags.json`) shows it, and
+  `tests/gui/manage_tags_undo.rs` checks what hydrus-rs's undo and redo
+  do to the tags; whether to keep this is the owner's call.
 
 ## Per-filetype media handling
 

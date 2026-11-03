@@ -152,11 +152,7 @@ fn files_imported_by_hand_with_tags_options_and_deletion_as_the_reference_does()
             "rows": table(&window.get_rows(), &n),
             "progress": n.text(&window.get_progress()),
             "delete": window.get_delete_after_success(),
-            "delete warning": if window.get_delete_after_success() {
-                "YOUR ORIGINAL FILES WILL BE DELETED"
-            } else {
-                ""
-            },
+            "delete warning": window.get_delete_warning().as_str(),
             "import options": window.get_import_options_label().as_str(),
         },
     }));
@@ -222,7 +218,9 @@ fn files_imported_by_hand_with_tags_options_and_deletion_as_the_reference_does()
     tagging.invoke_changed();
     let seen = json!({
         "title": bare(&tagging.get_composed_title()),
-        "tabs": std::iter::once("sidecars".to_owned()).chain(services).collect::<Vec<_>>(),
+        "tabs": std::iter::once(tagging.get_sidecars_tab_label().to_string())
+            .chain(services)
+            .collect::<Vec<_>>(),
         "rows": table(&tagging.get_rows(), &n),
     });
     tagging.invoke_apply();
@@ -251,6 +249,7 @@ fn files_imported_by_hand_with_tags_options_and_deletion_as_the_reference_does()
         "dialog": seen,
         "page": {
             "name": bound.pages.borrow().shown().name.clone(),
+            "import options": ui.get_import_options_label().as_str(),
             "files": files,
             "thumbnails": bound.current.borrow().borrow().files().len(),
         },

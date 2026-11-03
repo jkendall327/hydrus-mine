@@ -28,6 +28,9 @@ export component ReviewImportsWindow inherits Window {
     in property <bool> any-selected;
     in-out property <bool> search-subdirectories: true;
     in-out property <bool> delete-after-success;
+    // the warning beside the box, while it is ticked (as the reference's
+    // `_delete_after_success_st` says it)
+    out property <string> delete-warning: root.delete-after-success ? "YOUR ORIGINAL FILES WILL BE DELETED" : "";
     // the import options button's label ("import options", or what the
     // custom options are), as the reference's button labels itself
     in property <string> import-options-label: "import options (all default)";
@@ -162,7 +165,7 @@ export component ReviewImportsWindow inherits Window {
                 alignment: end;
                 // (the reference's warning, in its warning colour)
                 if root.delete-after-success: Text {
-                    text: "YOUR ORIGINAL FILES WILL BE DELETED";
+                    text: root.delete-warning;
                     color: #c00000;
                     font-weight: 700;
                     vertical-alignment: center;

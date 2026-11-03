@@ -1334,30 +1334,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     });
                 }
             });
-            // (the filename tagging dialog's tabs, in the reference's order:
-            // `GetServices( REAL_TAG_SERVICES )`, local tag services then
-            // tag repositories, each by name)
-            let mut tag_services: Vec<(bool, String, String, String)> = pages
-                .borrow()
-                .store()
-                .snapshot()
-                .services
-                .all()
-                .filter(|s| s.service_type().is_real_tag_service())
-                .map(|s| {
-                    (
-                        s.service_type() != hydrus_core::service::ServiceType::LocalTag,
-                        s.name.to_lowercase(),
-                        s.key.to_hex(),
-                        s.name.clone(),
-                    )
-                })
-                .collect();
-            tag_services.sort();
-            let tag_services: Vec<(String, String)> = tag_services
-                .into_iter()
-                .map(|(_, _, key, name)| (key, name))
-                .collect();
+            let tag_services = filename_tagging_window::tag_services(pages.borrow().store());
             let sidecars = filename_tagging_window::Sidecars {
                 store: pages.borrow().store().clone(),
                 slots: tagging_sidecars.clone(),
@@ -2446,6 +2423,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             if let Some(window) = weak.upgrade() {
                 let question = asked.question();
                 window.set_question(question.into());
+                window.set_question_title(asked.title().into());
                 *pending.borrow_mut() = Some((asked, removed));
             }
         }
@@ -6659,6 +6637,16 @@ impl Asked {
                 }
                 question
             }
+        }
+    }
+
+    /// The question's title, where the reference gives it one: archiving
+    /// and sending to the inbox ask through `GetYesNo`, titled "Are you
+    /// sure?" (the others keep the panel's own).
+    fn title(&self) -> &'static str {
+        match self {
+            Self::Archive(_) | Self::Inbox(_) => "Are you sure?",
+            _ => "",
         }
     }
 
