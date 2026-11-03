@@ -1233,6 +1233,14 @@ fn an_export_folders_sidecar_overwrite_options_decide_what_its_worker_writes_as_
             }
             let result = hydrus_download::export::work_on_export_folder(&store, "regular").unwrap();
             assert_eq!(result.error, None, "{name}, run {n}");
+            // (a run skipped for a manager's lease, or stopped part way by a
+            // pause, ends without an error and leaves the sidecars as they were)
+            assert!(result.ran, "{name}, run {n}: the folder did not run");
+            assert_eq!(
+                result.exported,
+                names.len(),
+                "{name}, run {n}: files exported ({result:?})"
+            );
             let theirs: std::collections::BTreeMap<String, String> = run["sidecars"]
                 .as_object()
                 .unwrap()
