@@ -1020,3 +1020,170 @@ fn the_advanced_menus_tag_display_switch_shows_the_references_tags() {
     }
     h.finish();
 }
+
+impl Harness {
+    /// Wait until the list holds `wanted` (the tags, not the rows drawn).
+    fn wait_for_tags(&self, what: &str, wanted: &[String]) {
+        let started = std::time::Instant::now();
+        while self.tags() != wanted {
+            assert!(
+                started.elapsed() < std::time::Duration::from_secs(10),
+                "{what}: {:?}",
+                self.tags()
+            );
+            widgets::settle();
+        }
+    }
+
+    fn advanced(&self, on: bool) {
+        self.store
+            .write(move |ctx| {
+                hydrus_store::settings::set(ctx.conn(), &hydrus_store::settings::AdvancedMode(on))
+            })
+            .unwrap();
+    }
+
+    /// Switch the list's tag display through its menu, as the recorder does.
+    fn switch_view(&self, label: &str) {
+        self.open_menu(Some(&["box:anchor".to_owned()]));
+        self.choose(&["tag display (experimental)", label]);
+        widgets::settle();
+    }
+}
+
+/// With two tags of the list in the search, both selected, the search menu
+/// offers to replace them with their OR, and doing so leaves the search
+/// one OR predicate, as the reference's does (`or_replace`).
+// leaf: selection-tags-menu-search
+#[test]
+fn the_menus_replace_with_their_or_entry_replaces_the_searched_tags() {
+    let h = Harness::new(1600.0);
+    let recorded = &h.fixture["or_replace"];
+    let page = h.page();
+    let current = page.borrow().active_predicates().to_vec();
+    let wanted = hydrus_search::parse_api_search(&recorded["searched_before"]).unwrap();
+    page.borrow_mut().edit_active_predicates(&current, &wanted);
+    h.ui.invoke_refresh_page();
+    h.wait_for_tags(
+        "the list of the two tags' files",
+        &strings(&recorded["tags"]),
+    );
+    h.differ(
+        "searched before",
+        &h.searched(),
+        &recorded["searched_before"],
+    );
+    h.open_menu(Some(&strings(&recorded["selected"])));
+    h.differ(
+        "the search menu",
+        &Harness::submenu(&h.menu(), "search"),
+        &recorded["search_menu"],
+    );
+    let label = recorded["label"].as_str().unwrap();
+    h.choose(&["search", label]);
+    widgets::settle();
+    assert!(
+        h.bound.search_or.borrow().is_none(),
+        "no OR editor opens (the recorder's: {})",
+        recorded["or_editor"]
+    );
+    h.differ(label, &h.searched(), &recorded["searched"]);
+    h.restore();
+    h.finish();
+}
+
+/// A parent's menu lists its child, a tag that is not its sibling's ideal
+/// lists the ideal (in the stored tags view, where it is shown), and the
+/// parent and child lines copy their tag, as the reference's do
+/// (`more_menus`, `more_triggers`).
+// leaf: selection-tags-menu-siblings-parents
+#[test]
+fn the_menus_children_ideal_and_relation_lines_are_the_references() {
+    let h = Harness::new(1600.0);
+    // (recorded in advanced mode, so the menus have the tag display switch)
+    h.advanced(true);
+    for case in h.fixture["more_menus"].as_array().unwrap() {
+        let what = case["case"].as_str().unwrap();
+        if let Some(view) = case["view"].as_str() {
+            h.switch_view(view);
+        }
+        h.open_menu(Some(&strings(&case["selected"])));
+        h.differ(what, &h.menu(), &case["menu"]);
+        h.close_menu();
+        if case["view"].is_string() {
+            h.switch_view("switch to \"multiple media view tags\"");
+            h.wait_for_rows(&format!("{what}: back to the selection list's tags"));
+        }
+    }
+    h.advanced(false);
+    for trigger in h.fixture["more_triggers"].as_array().unwrap() {
+        let path = strings(&trigger["path"]);
+        let path: Vec<&str> = path.iter().map(String::as_str).collect();
+        h.open_menu(Some(&strings(&trigger["selected"])));
+        let before = h.copies.borrow().len();
+        h.choose(&path);
+        let copied: Vec<String> = h.copies.borrow()[before..].to_vec();
+        h.differ(
+            &format!("{path:?} copied"),
+            &json!(copied),
+            &trigger["copied"],
+        );
+        h.close_menu();
+    }
+    h.finish();
+}
+
+/// With rules that differ by view (single media hides "solo", the
+/// selection list "zeta:last"), each switch of the tag display shows that
+/// view's tags, and the menu ticks the view chosen, as the reference's
+/// does (`views`).
+// leaf: selection-tags-menu-tag-display
+#[test]
+fn the_tag_display_switch_shows_each_views_rules_and_ticks_it() {
+    use hydrus_core::tag_filter::{FilterRule, TagFilter};
+    use hydrus_store::tag_display::{TagDisplayFilters, TagView};
+    let h = Harness::new(1600.0);
+    let views = &h.fixture["views"];
+    let combined =
+        hydrus_core::ServiceKey::new(hydrus_core::service::builtin_keys::COMBINED_TAG.to_vec())
+            .to_hex();
+    let mut filters = TagDisplayFilters::default();
+    for (view, label) in [
+        (TagView::SingleMedia, "single media view tags"),
+        (TagView::SelectionList, "multiple media view tags"),
+    ] {
+        let mut filter = TagFilter::default();
+        for tag in strings(&views["hidden"][label]) {
+            filter.set_rule(tag, FilterRule::Blacklist);
+        }
+        filters.for_view_mut(view).insert(combined.clone(), filter);
+    }
+    h.store
+        .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &filters))
+        .unwrap();
+    h.ui.invoke_refresh_page();
+    let wanted = strings(&views["drawn"]);
+    let started = std::time::Instant::now();
+    while h.rows() != wanted {
+        assert!(
+            started.elapsed() < std::time::Duration::from_secs(10),
+            "the selection list's rule: {:?}",
+            h.rows()
+        );
+        widgets::settle();
+    }
+    h.advanced(true);
+    for switch in views["switches"].as_array().unwrap() {
+        let label = switch["label"].as_str().unwrap();
+        h.switch_view(label);
+        h.differ(label, &json!(h.rows()), &switch["drawn"]);
+        h.open_menu(Some(&["box:anchor".to_owned()]));
+        h.differ(
+            &format!("{label}: the ticks"),
+            &Harness::submenu(&h.menu(), "tag display (experimental)"),
+            &switch["menu"],
+        );
+        h.close_menu();
+    }
+    h.finish();
+}

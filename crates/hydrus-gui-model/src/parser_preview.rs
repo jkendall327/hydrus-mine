@@ -5,6 +5,10 @@
 //! of a post sorted, posts separated by a break, and a veto as its own line.
 use hydrus_core::tag::{clean_tag, combine_tag, split_tag};
 use hydrus_parse::content::{ContentKind, ParseFailure, ParsedContent, ParsedPost};
+use jiff::tz::Offset;
+
+/// What the test panels show when there is no document (`TestPanel.TestParse`).
+pub const NOTHING_TO_PARSE: &str = "Nothing to parse!";
 
 /// Whole numbers with thousands separators, as the reference's `ToHumanInt`.
 fn human_int(n: usize) -> String {
@@ -30,63 +34,37 @@ fn url_wording(url_type: i64) -> &'static str {
     }
 }
 
-/// A standard-alphabet base64 decode that, like Python's `b64decode`, ignores
-/// characters outside the alphabet and needs correct padding.
-fn base64_decode(text: &str) -> Option<Vec<u8>> {
-    let mut bits = 0u32;
-    let mut count = 0;
-    let mut out = Vec::new();
-    let mut padding = 0;
-    for c in text.bytes() {
-        let value = match c {
-            b'A'..=b'Z' => c - b'A',
-            b'a'..=b'z' => c - b'a' + 26,
-            b'0'..=b'9' => c - b'0' + 52,
-            b'+' => 62,
-            b'/' => 63,
-            b'=' => {
-                padding += 1;
-                continue;
-            }
-            _ => continue,
-        };
-        bits = bits << 6 | u32::from(value);
-        count += 1;
-        if count == 4 {
-            out.extend([(bits >> 16) as u8, (bits >> 8) as u8, bits as u8]);
-            bits = 0;
-            count = 0;
-        }
-    }
-    match (count, padding) {
-        (0, _) => Some(out),
-        (2, 2) => {
-            out.push((bits >> 4) as u8);
-            Some(out)
-        }
-        (3, 1) => {
-            out.extend([(bits >> 10) as u8, (bits >> 2) as u8]);
-            Some(out)
-        }
-        _ => None,
+/// The hash line's text: the hash in hex, or the reference's words for why
+/// it does not decode (`GetHashFromParsedText`, shared with downloads).
+fn hash_text(encoding: &str, text: &str) -> String {
+    match hydrus_core::pybytes::hash_from_parsed_text(encoding, text) {
+        Ok(bytes) => hex::encode(bytes),
+        Err(error) => format!(
+            "Could not decode a hash from {text}: Exception('Could not decode hash: {error}')"
+        ),
     }
 }
 
-fn hash_text(encoding: &str, text: &str) -> String {
-    let by_hex = || hex::decode(text).ok();
-    let decoded = match encoding {
-        "hex" => by_hex().or_else(|| base64_decode(text)),
-        "base64" => base64_decode(text),
-        _ => None,
+/// A source time's text (`HydrusTime.TimestampToPrettyTime`): local time at the
+/// machine's current offset, or the reference's words when it is no date.
+fn timestamp_text(text: &str, offset: Offset) -> String {
+    let Some(number) = hydrus_core::numbers::py_int_text(text) else {
+        return "could not convert to integer".into();
     };
-    match decoded {
-        Some(bytes) => hex::encode(bytes),
-        None => format!("Could not decode a hash from {text}: Exception('Could not decode hash')"),
+    match number.parse::<i64>() {
+        Ok(seconds) => hydrus_core::time::timestamp_to_iso_with_offset(Some(seconds), offset),
+        Err(_) => format!("unparseable time {number}"),
     }
+}
+
+/// The machine's offset from UTC now, which the reference applies to every
+/// time it shows (`HC.TIMEZONE_LOCAL`).
+pub fn local_offset() -> Offset {
+    jiff::Zoned::now().offset()
 }
 
 /// One parsed content's line (`ParsedContent.ToString`).
-pub fn content_line(content: &ParsedContent) -> String {
+pub fn content_line(content: &ParsedContent, offset: Offset) -> String {
     let text = &content.text;
     match &content.kind {
         ContentKind::Url { url_type, priority } => {
@@ -109,15 +87,9 @@ pub fn content_line(content: &ParsedContent) -> String {
             hash_type,
             encoding,
         } => format!("{hash_type} hash: {}", hash_text(encoding, text)),
-        ContentKind::Timestamp { .. } => match text.parse::<i64>() {
-            Ok(seconds) => format!(
-                "source/post time: {}",
-                hydrus_import::status::pretty_time(hydrus_core::time::TimestampMs(
-                    seconds.saturating_mul(1000)
-                ))
-            ),
-            Err(_) => "source/post time: could not convert to integer".into(),
-        },
+        ContentKind::Timestamp { .. } => {
+            format!("source/post time: {}", timestamp_text(text, offset))
+        }
         ContentKind::Title { priority } => {
             format!("watcher page title (priority {priority}): {text}")
         }
@@ -127,19 +99,35 @@ pub fn content_line(content: &ParsedContent) -> String {
     }
 }
 
-fn sorted_lines(post: &ParsedPost) -> Vec<String> {
-    let mut lines: Vec<String> = post.contents.iter().map(content_line).collect();
+fn sorted_lines(post: &ParsedPost, offset: Offset) -> Vec<String> {
+    let mut lines: Vec<String> = post
+        .contents
+        .iter()
+        .map(|content| content_line(content, offset))
+        .collect();
     lines.sort();
     lines
 }
 
-/// The content parser panel's results (`ContentParser.ParsePretty`); a parse
-/// error other than a veto is its own message.
-pub fn content_preview(result: Result<ParsedPost, ParseFailure>) -> String {
+/// The panel's text for a parse error. The reference follows it with Python's
+/// traceback, which hydrus-rs has no equivalent of.
+fn exception(message: &str) -> String {
+    format!("Exception:\nParseException: {message}")
+}
+
+/// The content parser panel's results (`ContentParser.ParsePretty`) for the
+/// parser named `name`; a parse error is named twice, as the reference's is.
+pub fn content_preview(
+    name: &str,
+    result: Result<ParsedPost, ParseFailure>,
+    offset: Offset,
+) -> String {
     let lines = match result {
-        Ok(post) => sorted_lines(&post),
+        Ok(post) => sorted_lines(&post, offset),
         Err(ParseFailure::Veto(name)) => vec![format!("veto: veto: {name}")],
-        Err(error) => return error.to_string(),
+        Err(ParseFailure::Error(error)) => {
+            return exception(&format!("Content Parser {name}: {error}"));
+        }
     };
     let mut out = vec![format!("*** {} RESULTS BEGIN ***", human_int(lines.len()))];
     out.extend(lines);
@@ -148,18 +136,18 @@ pub fn content_preview(result: Result<ParsedPost, ParseFailure>) -> String {
 }
 
 /// The page parser panel's results (`PageParser.ParsePretty`).
-pub fn page_preview(result: Result<Vec<ParsedPost>, ParseFailure>) -> String {
+pub fn page_preview(result: Result<Vec<ParsedPost>, ParseFailure>, offset: Offset) -> String {
     let (count, text) = match result {
         Ok(posts) => (
             posts.len(),
             posts
                 .iter()
-                .map(|post| sorted_lines(post).join("\n"))
+                .map(|post| sorted_lines(post, offset).join("\n"))
                 .collect::<Vec<_>>()
                 .join("\n\n*** SEPARATE FILE RESULTS BREAK ***\n\n"),
         ),
         Err(ParseFailure::Veto(name)) => (1, format!("veto: veto: {name}")),
-        Err(error) => return error.to_string(),
+        Err(ParseFailure::Error(error)) => return exception(&error.to_string()),
     };
     format!(
         "*** {} RESULTS BEGIN ***\n\n{text}\n\n*** RESULTS END ***",

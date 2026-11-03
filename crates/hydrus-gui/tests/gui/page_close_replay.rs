@@ -64,7 +64,7 @@ fn hold(conn: &rusqlite::Connection, queue: i64, urls: &Value) -> hydrus_store::
     queues::set_paused(conn, queue, Some(true), Some(true))
 }
 
-// leaf: audit-options-tabs-close
+// (not tagged: audit-options-tabs-close; closing the last page opens a new one, #183)
 #[test]
 fn pages_close_by_middle_click_and_ctrl_w_asking_as_the_reference_does() {
     let recorded = hydrus_testkit::fixture_json("page_close.json");

@@ -34,6 +34,22 @@ impl std::ops::Deref for Slot {
     }
 }
 impl Slot {
+    /// Hide and forget this owner's windows and its recursive children, as a
+    /// binding's last clone goes.
+    pub(crate) fn retire(&self) {
+        let window = self.window.borrow_mut().take();
+        if let Some(window) = window {
+            let _ = window.hide();
+        }
+        let system = self.system.borrow_mut().take();
+        if let Some(system) = system {
+            let _ = system.hide();
+        }
+        let nested = self.nested.borrow_mut().take();
+        if let Some(nested) = nested {
+            nested.retire();
+        }
+    }
     /// The currently open recursive child of this owner, if any.
     pub fn child(&self) -> Option<Self> {
         self.nested

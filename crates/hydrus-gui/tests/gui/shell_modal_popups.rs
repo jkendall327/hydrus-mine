@@ -101,7 +101,7 @@ impl Modal {
     }
 }
 
-// leaf: audit-options-popups-modal
+// (not tagged: audit-options-popups-modal; the dialog does not block the main window)
 #[test]
 fn a_modal_job_has_a_dialog_asks_before_cancelling_and_is_released_to_the_popups() {
     let m = start();
@@ -163,7 +163,7 @@ fn a_modal_job_has_a_dialog_asks_before_cancelling_and_is_released_to_the_popups
     pump_until("the stack has it", || m.ui.get_popups().row_count() == 1);
 }
 
-// leaf: audit-options-popups-modal
+// (not tagged: audit-options-popups-modal; the dialog does not block the main window)
 #[test]
 fn a_modal_job_that_cannot_be_cancelled_warns_and_the_dialog_closes_itself_when_it_finishes() {
     let m = start();
@@ -196,7 +196,7 @@ fn a_modal_job_that_cannot_be_cancelled_warns_and_the_dialog_closes_itself_when_
     assert_eq!(m.stacked(), [key]);
 }
 
-// leaf: audit-options-popups-modal
+// (not tagged: audit-options-popups-modal; the dialog does not block the main window)
 #[test]
 fn a_modal_job_waits_while_the_main_window_is_minimised_or_inactive_or_a_dialog_is_up() {
     let m = start();
@@ -259,7 +259,7 @@ fn a_modal_job_waits_while_the_main_window_is_minimised_or_inactive_or_a_dialog_
     assert_eq!(controller.pending(), 0);
 }
 
-// leaf: audit-options-popups-modal
+// (not tagged: audit-options-popups-modal; the dialog does not block the main window)
 #[test]
 fn a_modal_dialog_hides_the_other_windows_while_it_is_up_and_not_the_main_one() {
     let m = start();

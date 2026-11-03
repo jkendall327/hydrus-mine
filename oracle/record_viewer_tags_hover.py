@@ -427,6 +427,52 @@ def record( session ):
 
             out[ 'steps' ] = steps
 
+            # more keys: the page keys, ctrl moves, ctrl+n/p, the copies
+            # with parents and ctrl+insert
+            out[ 'rows_per_page' ] = box._num_rows_per_page
+
+            more = []
+
+            def more_step( name, **extra ):
+
+                settle()
+
+                more.append( dict( step = name, selected = selected(), **extra ) )
+
+
+            CTRL_SHIFT = CTRL | SHIFT
+
+            click( 'plain tag' ); more_step( 'click plain tag' )
+            key( QC.Qt.Key.Key_PageDown ); more_step( 'page down' )
+            key( QC.Qt.Key.Key_PageUp ); more_step( 'page up' )
+            key( QC.Qt.Key.Key_PageDown, SHIFT ); more_step( 'shift page down' )
+            key( QC.Qt.Key.Key_PageUp, SHIFT ); more_step( 'shift page up' )
+            click( 'plain tag' ); more_step( 'click plain tag again' )
+            key( QC.Qt.Key.Key_Down, CTRL ); more_step( 'ctrl down' )
+            key( QC.Qt.Key.Key_Up, CTRL ); more_step( 'ctrl up' )
+            key( QC.Qt.Key.Key_N, CTRL ); more_step( 'ctrl n' )
+            key( QC.Qt.Key.Key_P, CTRL ); more_step( 'ctrl p' )
+            click( 'alpha:first' )
+            n = len( copied )
+            key( QC.Qt.Key.Key_C, CTRL_SHIFT ); more_step( 'ctrl shift c (the terms have no parents: as ctrl c)', copied = copied[ n: ] )
+            n = len( copied )
+            key( QC.Qt.Key.Key_Insert, CTRL ); more_step( 'ctrl insert copies', copied = copied[ n: ] )
+
+            out[ 'more_steps' ] = more
+
+            # more middle clicks: a plain one with two selected, one below
+            # the rows
+            more_middle = []
+            select( 'plain tag', 'box:anchor' )
+            n = len( launched )
+            click( 'plain tag', button = QC.Qt.MouseButton.MiddleButton ); settle()
+            more_middle.append( { 'step' : 'middle click with two selected', 'selected_before' : [ 'plain tag', 'box:anchor' ], 'selected' : selected(), 'launched' : launched[ n: ] } )
+            n = len( launched )
+            before = selected()
+            click( None, button = QC.Qt.MouseButton.MiddleButton ); settle()
+            more_middle.append( { 'step' : 'middle click below the rows', 'selected_before' : before, 'selected' : selected(), 'launched' : launched[ n: ] } )
+            out[ 'more_middle' ] = more_middle
+
             # the menus
 
             menus_out = []
@@ -528,6 +574,33 @@ def record( session ):
             settle( .3 )
 
             out[ 'hide' ] = { 'selected' : [ 'plain tag' ], 'path' : [ 'hide', '"plain tag" from here' ], 'questions' : list( questions ), 'tags_after' : tags() }
+
+            # and the other hides, in turn (each hides for good)
+
+            more_hides = []
+
+            for ( wanted, path ) in [
+                ( [ 'series:spaced name' ], [ 'hide', '"series" tags from here' ] ),
+                ( [ 'safe', 'source:fixture' ], [ 'hide', '2 selected tags from here' ] ),
+                ( [ 'alpha:first', 'box:anchor' ], [ 'hide', '2 selected namespaces from here' ] )
+            ]:
+
+                menu = show( wanted )
+
+                hide_menu = tree( find( menu, [ 'hide' ] ).menu() )
+
+                del questions[:]
+
+                find( menu, path ).trigger()
+
+                canvas.SetMedia( canvas._current_media )
+
+                settle( .3 )
+
+                more_hides.append( { 'selected' : wanted, 'menu' : hide_menu, 'path' : path, 'questions' : list( questions ), 'tags_after' : tags() } )
+
+
+            out[ 'more_hides' ] = more_hides
 
         finally:
 

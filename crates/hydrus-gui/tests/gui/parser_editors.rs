@@ -540,6 +540,8 @@ fn reusable_content_kinds_remap_restricted_choices_and_preserve_login_context() 
             .collect::<Vec<_>>(),
         ["temporary variable", "veto"]
     );
+    // (an empty document is "Nothing to parse!", as the reference's)
+    editor.set_document("<p>example</p>".into());
     editor.invoke_action("test".into());
     assert!(editor.get_preview().contains("synthetic login token"));
     editor.invoke_choice_edited(1, 1);
@@ -589,6 +591,8 @@ fn native_page_content_apply_roundtrip_preserves_subsidiary_and_formula() {
     page.invoke_action("apply".into());
     content.invoke_choice_edited(1, 2);
     content.invoke_text_edited(5, "".into());
+    // (an empty document is "Nothing to parse!", as the reference's)
+    content.set_document("<p>example</p>".into());
     content.invoke_action("test".into());
     assert!(content.get_preview().contains("first\n\nsecond"));
     content.invoke_text_edited(0, "note parser".into());
@@ -911,6 +915,8 @@ fn recursive_formula_edits_reach_saved_page_parser_and_consumer() {
     rule.invoke_apply();
     second.invoke_apply();
     formula.invoke_apply();
+    // (an empty document is "Nothing to parse!", as the reference's)
+    content.set_document("<p>example</p>".into());
     content.invoke_action("test".into());
     assert!(
         content.get_preview().contains("tag: series:edited tag"),

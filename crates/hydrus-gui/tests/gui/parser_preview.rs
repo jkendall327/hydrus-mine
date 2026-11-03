@@ -17,19 +17,14 @@ fn recorded() -> serde_json::Value {
     hydrus_testkit::fixture_json("parser_preview.json")
 }
 
-/// Python words an undecodable hash's error its own way; everything else is compared whole.
+/// This recording was made at UTC; the reference shows the local time, so its
+/// timestamp case applies only where the machine is at UTC
+/// (`parser_preview_format.rs` replays local times in another zone).
 fn same(shown: &str, recorded: &str, name: &str) {
-    if name == "hash that is not one" {
-        let head = "*** 1 RESULTS BEGIN ***\nsha256 hash: Could not decode a hash from zz: ";
-        assert!(shown.starts_with(head), "{name}: {shown:?}");
-        assert!(recorded.starts_with(head), "{name}: {recorded:?}");
-        assert!(
-            shown.ends_with("\n*** RESULTS END ***"),
-            "{name}: {shown:?}"
-        );
-    } else {
-        assert_eq!(shown, recorded, "{name}");
+    if name == "timestamp" && hydrus_gui_model::parser_preview::local_offset().seconds() != 0 {
+        return;
     }
+    assert_eq!(shown, recorded, "{name}");
 }
 
 // leaf: parser-context

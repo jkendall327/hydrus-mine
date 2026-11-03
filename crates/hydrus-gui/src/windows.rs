@@ -4,7 +4,7 @@
 
 use hydrus_core::windows::{FrameLocation, WindowSettings, WindowState};
 use hydrus_gui_model::frame_placement::{
-    self, Parent, Placement, Rect as PlacementRect, Surroundings,
+    self, Opening, Parent, Placement, Rect as PlacementRect, Surroundings,
 };
 use hydrus_gui_model::window_rescue::{self, Point, Rect, Screen};
 use hydrus_store::{Store, settings::WindowRescueSettings};
@@ -28,12 +28,76 @@ thread_local! {
     static POINTER: std::cell::Cell<Option<(i32, i32)>> = const { std::cell::Cell::new(None) };
     static MAIN: std::cell::RefCell<Option<slint::Weak<crate::MainWindow>>> =
         const { std::cell::RefCell::new(None) };
-    /// Placements waiting for their windows to be laid out, by window.
-    static PENDING: std::cell::RefCell<Vec<(usize, std::rc::Rc<slint::Timer>)>> =
+    /// Placements waiting for their windows to be laid out or shown, by
+    /// window.
+    static PENDING: std::cell::RefCell<Vec<(usize, std::rc::Rc<slint::Timer>, Pending)>> =
         const { std::cell::RefCell::new(Vec::new()) };
+    /// Where each window waiting to be fitted to the screens wants to open,
+    /// by window, kept as it is placed again.
+    static OPENINGS: std::cell::RefCell<Vec<(usize, std::rc::Weak<WantedCell>)>> =
+        const { std::cell::RefCell::new(Vec::new()) };
+    /// Where each window was put as it was fitted to the screens, by window,
+    /// while the window lives.
+    static FITTED: std::cell::RefCell<Vec<Fitted>> =
+        const { std::cell::RefCell::new(Vec::new()) };
+    /// The screens, where a test says what they are.
+    static SCREENS: std::cell::RefCell<Option<Vec<Screen>>> =
+        const { std::cell::RefCell::new(None) };
     /// The store the main window shows.
     static STORE: std::cell::RefCell<Option<std::sync::Weak<Store>>> =
         const { std::cell::RefCell::new(None) };
+}
+
+/// What a placement waiting on its window waits for.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Pending {
+    /// To be laid out, and placed again by its size.
+    Layout,
+    /// The windowing system to hold its maximised or fullscreen state.
+    State,
+    /// To be shown on the screens, and fitted to them.
+    Fit,
+}
+
+/// Where a window was fitted to: the window, whether it still lives, and
+/// the place.
+type Fitted = (usize, Box<dyn Fn() -> bool>, (i32, i32));
+
+/// Where a window waiting to be fitted wants to open, as it is placed.
+type WantedCell = std::cell::Cell<Option<Wanted>>;
+
+/// Where a window wants to open, and at what size.
+#[derive(Clone, Copy)]
+struct Wanted {
+    opening: Opening,
+    size: (i32, i32),
+}
+
+/// The store the main window shows, where the client is running.
+pub(crate) fn store() -> Option<std::sync::Arc<Store>> {
+    STORE.with(|kept| kept.borrow().as_ref().and_then(std::sync::Weak::upgrade))
+}
+
+/// Say what the screens are, for a test (headless windows have none): every
+/// window then opens, is fitted and saves against these.
+#[doc(hidden)]
+pub fn set_screens(screens: Option<Vec<Screen>>) {
+    SCREENS.with(|kept| *kept.borrow_mut() = screens);
+}
+
+/// Where `window` was put as it was fitted to the screens after it was
+/// shown (`GetSafePosition`), if it has been: what a test can see of its
+/// place, as a headless window has none.
+#[doc(hidden)]
+pub fn fitted_at(window: &slint::Window) -> Option<(i32, i32)> {
+    let key = window_key(window);
+    FITTED.with(|fitted| {
+        fitted
+            .borrow()
+            .iter()
+            .find(|(at, alive, _)| *at == key && alive())
+            .map(|(_, _, position)| *position)
+    })
 }
 
 /// Note the main window, the parent that child windows open relative to,
@@ -48,9 +112,12 @@ pub(crate) fn register_main(window: &crate::MainWindow, store: &std::sync::Arc<S
 /// dialogs (`regular_dialog`: by default at the main window's top-left,
 /// its own size), as every dialog without a frame of its own opens. A
 /// window with a frame of its own is placed again by it as it opens.
+/// The windows the reference itself opens by `regular_dialog` are also
+/// fitted to the screens once shown, by the dialog helper (`Dialog`, as
+/// [`fit_after_show`]); a window that places itself (the command palette)
+/// is not.
 pub(crate) fn place_regular<C: slint::ComponentHandle + 'static>(component: &C) {
-    let store = STORE.with(|kept| kept.borrow().as_ref().and_then(std::sync::Weak::upgrade));
-    if let Some(store) = store {
+    if let Some(store) = store() {
         place_frame_as(component, &store, "regular_dialog", false);
     }
 }
@@ -58,8 +125,7 @@ pub(crate) fn place_regular<C: slint::ComponentHandle + 'static>(component: &C) 
 /// The frame of a dialog the reference opens by a frame key of its own
 /// (`quick_select_dialog` and the like), where the client is running.
 pub(crate) fn dialog_frame(name: &'static str) -> Option<DialogFrame> {
-    let store = STORE.with(|kept| kept.borrow().as_ref().and_then(std::sync::Weak::upgrade))?;
-    Some(DialogFrame::new(&store, name))
+    Some(DialogFrame::new(&store()?, name))
 }
 
 /// What a window opening now can see of the main window and its display.
@@ -225,12 +291,28 @@ pub fn hold_state_after_show<C: slint::ComponentHandle + 'static>(
     );
     // (kept with the placements waiting for their windows: placing the
     // window anew drops it)
-    let key = window_key(component.window());
+    wait(component.window(), timer, Pending::State);
+}
+
+/// Keep `timer` with the placements waiting on `window`.
+fn wait(window: &slint::Window, timer: std::rc::Rc<slint::Timer>, kind: Pending) {
+    let key = window_key(window);
     PENDING.with(|pending| {
         let mut pending = pending.borrow_mut();
-        pending.retain(|(_, timer)| timer.running());
-        pending.push((key, timer));
+        pending.retain(|(_, timer, _)| timer.running());
+        pending.push((key, timer, kind));
     });
+}
+
+/// Whether a placement waits for `window` to be laid out.
+fn awaiting_layout(window: &slint::Window) -> bool {
+    let key = window_key(window);
+    PENDING.with(|pending| {
+        pending
+            .borrow()
+            .iter()
+            .any(|(at, timer, kind)| *at == key && *kind == Pending::Layout && timer.running())
+    })
 }
 
 /// A window, told from the others for as long as it lives.
@@ -243,7 +325,7 @@ fn window_key(window: &slint::Window) -> usize {
 fn cancel_pending(window: &slint::Window) {
     let key = window_key(window);
     PENDING.with(|pending| {
-        pending.borrow_mut().retain(|(at, timer)| {
+        pending.borrow_mut().retain(|(at, timer, _)| {
             if *at == key {
                 timer.stop();
             }
@@ -327,6 +409,7 @@ fn place_frame_as<C: slint::ComponentHandle + 'static>(
                 let window = component.window();
                 if laid_out(window) {
                     let target = placement(window, &frame, is_main);
+                    note_opening(window, &frame, is_main, target.size);
                     apply(window, target);
                     stop();
                 } else if started.elapsed() > std::time::Duration::from_secs(5) {
@@ -335,12 +418,151 @@ fn place_frame_as<C: slint::ComponentHandle + 'static>(
             }
         },
     );
-    let key = window_key(component.window());
-    PENDING.with(|pending| {
-        let mut pending = pending.borrow_mut();
-        pending.retain(|(_, timer)| timer.running());
-        pending.push((key, timer));
+    wait(component.window(), timer, Pending::Layout);
+}
+
+/// Once `component` (placed by the frame `name`) is shown and laid out, fit
+/// it to the screens it is on, as `SetInitialTLWSizeAndPosition` does with
+/// `GetSafePosition`: a remembered place, or a default one by a main window
+/// that is itself off the screens, is rescued to where it can be seen (the
+/// user told of it, by a popup message, unless it opened by the mouse), and
+/// a default top-left place is then slid back inside its display. Native
+/// windows know their screens only once shown, so this waits for that (a
+/// window that is never shown, at most a minute). Placing the window by
+/// another frame drops it.
+pub(crate) fn fit_after_show<C: slint::ComponentHandle + 'static>(
+    component: &C,
+    store: &std::sync::Arc<Store>,
+    name: &'static str,
+) {
+    let window = component.window();
+    let key = window_key(window);
+    let wanted = std::rc::Rc::new(std::cell::Cell::new(None));
+    OPENINGS.with(|openings| {
+        let mut openings = openings.borrow_mut();
+        openings.retain(|(at, kept)| *at != key && kept.strong_count() > 0);
+        openings.push((key, std::rc::Rc::downgrade(&wanted)));
     });
+    FITTED.with(|fitted| {
+        fitted
+            .borrow_mut()
+            .retain(|(at, alive, _)| *at != key && alive());
+    });
+    if let Some(frame) = settings(store).frame(name).cloned() {
+        let target = placement(window, &frame, false);
+        note_opening(window, &frame, false, target.size);
+    }
+    let weak = component.as_weak();
+    let store = std::sync::Arc::downgrade(store);
+    let timer = std::rc::Rc::new(slint::Timer::default());
+    let started = std::time::Instant::now();
+    let shown = std::cell::Cell::new(None::<std::time::Instant>);
+    timer.start(
+        slint::TimerMode::Repeated,
+        std::time::Duration::from_millis(20),
+        {
+            let kept = std::rc::Rc::downgrade(&timer);
+            move || {
+                let stop = || {
+                    if let Some(timer) = kept.upgrade() {
+                        timer.stop();
+                    }
+                };
+                let (Some(component), Some(store)) = (weak.upgrade(), store.upgrade()) else {
+                    return stop();
+                };
+                let window = component.window();
+                if !window.is_visible() {
+                    if started.elapsed() > std::time::Duration::from_secs(60) {
+                        stop();
+                    }
+                    return;
+                }
+                let since = *shown.get().get_or_insert_with(std::time::Instant::now);
+                shown.set(Some(since));
+                let screens = native_screens(window).unwrap_or_default();
+                let size = native_size(window)
+                    .and_then(|(w, h)| Some((i32::try_from(w).ok()?, i32::try_from(h).ok()?)))
+                    .unwrap_or(state(window).size);
+                if awaiting_layout(window) || screens.is_empty() || size.0 <= 0 || size.1 <= 0 {
+                    // (a desktop that never says what its screens are: as
+                    // the toolkit placed it)
+                    if since.elapsed() > std::time::Duration::from_secs(2) {
+                        stop();
+                    }
+                    return;
+                }
+                stop();
+                let Some(wanted) = wanted.get() else {
+                    return;
+                };
+                let size = if wanted.size.0 > 0 && wanted.size.1 > 0 {
+                    wanted.size
+                } else {
+                    size
+                };
+                let rescue = store
+                    .read(hydrus_store::settings::get::<WindowRescueSettings>)
+                    .unwrap_or_default();
+                let Some((position, message)) =
+                    frame_placement::fitted(wanted.opening, size, &rescue, &screens, name)
+                else {
+                    return;
+                };
+                let key = window_key(window);
+                let alive = {
+                    let weak = weak.clone();
+                    Box::new(move || weak.upgrade().is_some())
+                };
+                FITTED.with(|fitted| {
+                    let mut fitted = fitted.borrow_mut();
+                    fitted.retain(|(at, alive, _)| *at != key && alive());
+                    fitted.push((key, alive, position));
+                });
+                // (a maximised or fullscreen window was placed before it was
+                // maximised, as the reference moves it and then shows it
+                // maximised: moving it now can take that back on X11)
+                if !window.is_maximized() && !window.is_fullscreen() {
+                    #[allow(clippy::cast_precision_loss)]
+                    window.set_position(slint::LogicalPosition::new(
+                        position.0 as f32,
+                        position.1 as f32,
+                    ));
+                }
+                if let Some(message) = message {
+                    tell(&store, message);
+                }
+            }
+        },
+    );
+    wait(window, timer, Pending::Fit);
+}
+
+/// Where `window`, about to open by `frame` at `size`, wants to be, for its
+/// fit to the screens once shown (if it waits for one).
+fn note_opening(window: &slint::Window, frame: &FrameLocation, is_main: bool, size: (i32, i32)) {
+    let key = window_key(window);
+    let cell = OPENINGS.with(|openings| {
+        openings
+            .borrow()
+            .iter()
+            .find(|(at, _)| *at == key)
+            .and_then(|(_, kept)| kept.upgrade())
+    });
+    if let Some(cell) = cell {
+        let opening = frame_placement::opening(frame, size, &surroundings(is_main));
+        cell.set(opening.map(|opening| Wanted { opening, size }));
+    }
+}
+
+/// A popup message (`HydrusData.ShowText`).
+fn tell(store: &Store, message: String) {
+    let now = hydrus_core::TimestampMs::now().millis() / 1000;
+    #[allow(clippy::cast_precision_loss)]
+    let job = hydrus_store::popups::Job::text(message, now as f64);
+    if let Err(error) = store.write(move |ctx| hydrus_store::popups::add(ctx.conn(), &job, now)) {
+        eprintln!("could not show a message: {error}");
+    }
 }
 
 /// A dialog's frame, kept as the reference's `DialogThatResizes` keeps it:
@@ -559,6 +781,9 @@ fn native_size(window: &slint::Window) -> Option<(i64, i64)> {
 /// fallback difference explicit rather than inventing taskbar/dock geometry.
 #[allow(clippy::cast_possible_truncation)]
 fn native_screens(window: &slint::Window) -> Option<Vec<Screen>> {
+    if let Some(screens) = SCREENS.with(|kept| kept.borrow().clone()) {
+        return Some(screens);
+    }
     window.with_winit_window(|native| {
         let scale = f64::from(window.scale_factor());
         let primary = native.primary_monitor();
