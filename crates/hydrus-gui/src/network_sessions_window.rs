@@ -719,7 +719,9 @@ fn show_cookie_import(
         let weak = window.as_weak();
         let parent = parent.as_weak();
         let active = active.clone();
-        let child = child.clone();
+        // (weak: the slot holds this window, whose callbacks hold this, so
+        // a strong slot here would keep both alive for good)
+        let child = Rc::downgrade(child);
         move || {
             if !active.replace(false) {
                 return;
@@ -730,7 +732,9 @@ fn show_cookie_import(
             if let Some(p) = parent.upgrade() {
                 p.set_editing(false);
             }
-            child.borrow_mut().take();
+            if let Some(child) = child.upgrade() {
+                child.borrow_mut().take();
+            }
         }
     });
     window.window().on_close_requested({
@@ -916,7 +920,9 @@ fn edit_value(
         let weak = window.as_weak();
         let parent = parent.as_weak();
         let active = active.clone();
-        let child = child.clone();
+        // (weak: the slot holds this window, whose callbacks hold this, so
+        // a strong slot here would keep both alive for good)
+        let child = Rc::downgrade(child);
         move || {
             if !active.replace(false) {
                 return;
@@ -927,7 +933,9 @@ fn edit_value(
             if let Some(p) = parent.upgrade() {
                 p.set_editing(false);
             }
-            child.borrow_mut().take();
+            if let Some(child) = child.upgrade() {
+                child.borrow_mut().take();
+            }
         }
     });
     window.on_cancel_clicked({
