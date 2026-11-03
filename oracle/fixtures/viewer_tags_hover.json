@@ -291,7 +291,7 @@
    ]
   },
   {
-   "step": "ctrl shift c copies with parents",
+   "step": "ctrl shift c (the terms have no parents: as ctrl c)",
    "selected": [
     "alpha:first"
    ],
