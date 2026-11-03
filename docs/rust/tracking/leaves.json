@@ -25944,7 +25944,7 @@
     "date": "2026-11-03",
     "class": "weak",
     "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
-    "note": "tests/gui/viewer_tags_hover.rs hover_middle_clicks_open_search_pages_as_the_references_do sends real middle presses (plain and with shift) on the real viewer's hover and compares the pages that open (topic, predicates, name, location) and the selection after with oracle/fixtures/viewer_tags_hover.json (oracle/record_viewer_tags_hover.py, real middle-clicks, new_page_query captured): an unselected row selects it and opens its search; shift+middle with several selected opens one OR page. Weak (coordinator's review, 2026-11-03): a plain middle-click with several selected (the reference opens a page for each, as the sidebar's recording shows) is neither recorded nor replayed for the hover, nor is a middle-click below the rows."
+    "note": "tests/gui/viewer_tags_hover.rs hover_middle_clicks_open_search_pages_as_the_references_do sends real middle presses (plain and with shift) on the real viewer's hover and compares the pages that open (topic, predicates, name, location) and the selection after with oracle/fixtures/viewer_tags_hover.json (oracle/record_viewer_tags_hover.py, real middle-clicks, new_page_query captured): an unselected row selects it and opens its search; shift+middle with several selected opens one OR page. Weak (coordinator's review, 2026-11-03): a plain middle-click with several selected (recorded for the sidebar, not for the hover) is neither recorded nor replayed for the hover, nor is a middle-click below the rows."
    }
   },
   {
