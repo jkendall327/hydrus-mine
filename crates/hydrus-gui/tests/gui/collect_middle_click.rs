@@ -137,6 +137,19 @@ fn a_middle_press_on_the_collect_control_stops_collecting() {
             assert!(!ui.get_collect_open(), "{what}: the choices stay shut");
         } else {
             assert!(ui.get_collect_open(), "{what}: the choices open");
+            // (and the tag context left as it was, as recorded)
+            let context = &after["collect"]["tag_context"];
+            assert_eq!(
+                (
+                    collect.tag_context.include_current,
+                    collect.tag_context.include_pending
+                ),
+                (
+                    context["include_current"].as_bool().unwrap(),
+                    context["include_pending"].as_bool().unwrap()
+                ),
+                "{what}: the tag context kept"
+            );
         }
     }
 }
