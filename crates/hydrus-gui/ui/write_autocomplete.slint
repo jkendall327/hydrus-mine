@@ -37,7 +37,20 @@ export component WriteTagInput inherits FocusScope {
     out property <length> results-height: result-keys.height;
     // the height the rows take as laid out (less the list's padding), read by tests
     out property <length> rows-height: rows-layout.preferred-height - 4px;
-    public function escape-results() -> bool { root.enabled && result-keys.has-focus && root.results-action(3) }
+    // Escape in the input or its results: the results' own Escape (their
+    // selection cleared) first, then typed text cleared (the reference's
+    // `_HandleEscape`); false when neither takes it, for the dialog to have
+    public function escape-results() -> bool {
+        if root.enabled && result-keys.has-focus && root.results-action(3) {
+            return true;
+        }
+        if root.enabled && root.text != "" && (input.has-focus || result-keys.has-focus) {
+            root.text = "";
+            root.edited("");
+            return true;
+        }
+        false
+    }
     public function focus-results() { result-keys.focus(); }
     public function focus-input() { input.focus(); }
     out property <bool> editor-focused: input.has-focus;

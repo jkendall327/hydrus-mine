@@ -23,6 +23,8 @@ export component ManageUrlsWindow inherits Window {
     background: Theme.window;
     // the warning over the list when editing several files
     in property <string> warning;
+    // why the last apply didn't take (a write that failed)
+    in property <string> notice;
     in property <[TableRow]> rows;
     in-out property <string> input;
     // a question asked (a URL that doesn't parse, text left in the box)
@@ -88,6 +90,11 @@ export component ManageUrlsWindow inherits Window {
                     enabled: !root.asking;
                     clicked => { root.paste(); }
                 }
+            }
+            if root.notice != "": Text {
+                text: root.notice;
+                wrap: word-wrap;
+                color: Theme.text;
             }
             if root.asking: Asking {
                 title: root.asking-title;

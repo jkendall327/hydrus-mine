@@ -81,6 +81,8 @@ struct Inner<C: ComponentHandle + 'static> {
     closed: RefCell<Vec<Box<dyn FnOnce()>>>,
     /// Whether it may be cancelled or closed now (`UserIsOKToCancel`).
     may_cancel: RefCell<Option<Box<dyn Fn() -> bool>>>,
+    /// Whether Escape reaches it now (not while a modal child has it).
+    may_escape: RefCell<Option<Box<dyn Fn() -> bool>>>,
     /// A frame's keeping of its geometry as it moves.
     autosave: RefCell<Option<Rc<slint::Timer>>>,
     /// The store its frame is kept in.
@@ -188,6 +190,7 @@ impl<C: Escapes + 'static> Dialog<C> {
                 open: Cell::new(true),
                 closed: RefCell::default(),
                 may_cancel: RefCell::default(),
+                may_escape: RefCell::default(),
                 autosave: RefCell::default(),
                 store,
                 save_on_close: Cell::new(false),
@@ -210,7 +213,10 @@ impl<C: Escapes + 'static> Dialog<C> {
             let dialog = Rc::downgrade(&dialog.inner);
             move || {
                 if let Some(inner) = dialog.upgrade() {
-                    Self { inner }.cancel();
+                    let reaches = inner.may_escape.borrow().as_ref().is_none_or(|may| may());
+                    if reaches {
+                        Self { inner }.cancel();
+                    }
                 }
             }
         });
@@ -227,6 +233,12 @@ impl<C: Escapes + 'static> Dialog<C> {
     /// whether to discard its changes).
     pub(crate) fn refuse_cancel(&self, may: impl Fn() -> bool + 'static) {
         *self.inner.may_cancel.borrow_mut() = Some(Box::new(may));
+    }
+
+    /// Ask `may` before Escape cancels or closes it: while it says no, Escape
+    /// does nothing (a child the reference opens modally has it).
+    pub(crate) fn refuse_escape(&self, may: impl Fn() -> bool + 'static) {
+        *self.inner.may_escape.borrow_mut() = Some(Box::new(may));
     }
 
     /// Whether it has not been ended yet.

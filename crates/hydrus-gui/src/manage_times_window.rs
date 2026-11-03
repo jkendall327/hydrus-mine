@@ -794,6 +794,7 @@ pub(crate) fn open(
     });
     let write = {
         let state = state.clone();
+        let refresh = refresh.clone();
         let store = store.clone();
         let dialog = dialog.clone();
         let active = active.clone();
@@ -803,9 +804,9 @@ pub(crate) fn open(
             if !active.get() || editing.borrow().is_some() {
                 return;
             }
-            // (`DialogManage`: its frame kept, then its changes committed)
+            // (`DialogManage`: written, then its frame kept; a write that
+            // fails leaves it open, saying so)
             dialog.apply(
-                || true,
                 || {
                     let (updates, modified) = {
                         let state = state.borrow();
@@ -831,8 +832,9 @@ pub(crate) fn open(
                             Ok(())
                         });
                         if let Err(e) = written {
-                            eprintln!("could not write the times: {e}");
-                            return;
+                            state.borrow_mut().notice = format!("could not write the times: {e}");
+                            refresh();
+                            return false;
                         }
                         // (and the files' modified times on disk)
                         if let Some((files, ms, step)) = modified {
@@ -861,7 +863,9 @@ pub(crate) fn open(
                         }
                         applied();
                     }
+                    true
                 },
+                || {},
             );
         })
     };
@@ -945,6 +949,12 @@ pub(crate) fn open(
             state.borrow_mut().asking = None;
             tell(Vec::new());
         }
+    });
+    // (its date-time editor is modal in the reference: while it is open,
+    // Escape doesn't cancel the dialog under it)
+    dialog.refuse_escape({
+        let editing = editing.clone();
+        move || editing.borrow().is_none()
     });
     window.on_cancel(move || {
         dialog.cancel();

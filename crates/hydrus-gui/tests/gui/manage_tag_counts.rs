@@ -123,8 +123,14 @@ fn thumbnail_dialog_replays_deleted_counts_and_retained_callbacks_cannot_mutate_
         ),
         committed
     );
+    // (changes staged: it asks first, as the reference's UserIsOKToCancel)
     window.invoke_cancel();
+    assert!(!window.get_tag_menu_question().is_empty());
+    window.invoke_tag_menu_answered(true);
     other.invoke_cancel();
+    if !other.get_tag_menu_question().is_empty() {
+        other.invoke_tag_menu_answered(true);
+    }
     ui.invoke_manage_tags_selected();
     let reopened = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
     assert_eq!(snapshot(&reopened), states[4]["state"]);

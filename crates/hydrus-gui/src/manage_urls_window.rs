@@ -31,6 +31,8 @@ struct State {
     editor: UrlsEditor,
     selection: ListSelection<usize>,
     asking: Option<(Question, String)>,
+    /// Why the last apply didn't take.
+    notice: String,
 }
 
 fn strings(items: impl IntoIterator<Item = String>) -> ModelRc<SharedString> {
@@ -39,6 +41,7 @@ fn strings(items: impl IntoIterator<Item = String>) -> ModelRc<SharedString> {
 }
 
 fn show(window: &ManageUrlsWindow, state: &State) {
+    window.set_notice(state.notice.as_str().into());
     let editor = &state.editor;
     window.set_warning(if editor.warning() {
         MULTIPLE_FILES_WARNING.into()
@@ -143,6 +146,7 @@ pub(crate) fn open(
         editor: UrlsEditor::new(file_urls),
         selection: ListSelection::default(),
         asking: None,
+        notice: String::new(),
     }));
     let normalise: Rc<Normalise> = Rc::new(normaliser(store));
     let refresh = {
@@ -174,6 +178,7 @@ pub(crate) fn open(
     };
     let apply = {
         let state = state.clone();
+        let refresh = refresh.clone();
         let store = store.clone();
         let dialog = dialog.clone();
         Rc::new(move || {
@@ -193,13 +198,21 @@ pub(crate) fn open(
                     Ok(())
                 })
             };
-            // (`DialogManage`: its frame kept, then its changes committed)
+            // (`DialogManage`: written, then its frame kept; a write that
+            // fails leaves it open, saying so)
             dialog.apply(
-                || true,
                 || match write() {
-                    Ok(()) => applied(),
-                    Err(e) => eprintln!("could not write the urls: {e}"),
+                    Ok(()) => {
+                        applied();
+                        true
+                    }
+                    Err(e) => {
+                        state.borrow_mut().notice = format!("could not write the urls: {e}");
+                        refresh();
+                        false
+                    }
                 },
+                || {},
             );
         })
     };

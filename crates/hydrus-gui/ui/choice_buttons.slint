@@ -25,7 +25,9 @@ export component ChoiceButtonsWindow inherits Window {
     // (Escape: the dialog helper's cancel, or for a plain message, closed)
     callback escape();
 
-    FocusScope {
+    // (the keys, the window's to start with, so Escape reaches them)
+    forward-focus: keys;
+    keys := FocusScope {
         key-pressed(event) => {
             if event.text == Key.Escape { root.escape(); return accept; }
             reject

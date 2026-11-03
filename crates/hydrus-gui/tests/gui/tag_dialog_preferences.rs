@@ -257,6 +257,10 @@ fn expanded_parent_rows_keep_colour_and_activate_their_originating_tag() {
         &recorded["cases"][15]["parent_activation"]["asked"][0],
     );
     manage.invoke_cancel();
+    // (changes staged: it asks first, as the reference's UserIsOKToCancel)
+    if !manage.get_tag_menu_question().is_empty() {
+        manage.invoke_tag_menu_answered(true);
+    }
     ui.invoke_manage_tags_selected();
     let reopened = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
     assert_eq!(

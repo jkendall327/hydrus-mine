@@ -647,3 +647,178 @@ fn escape_cancels_a_named_dialog_and_keeps_nothing() {
     notes.invoke_chosen(0);
     assert!(!window.is_visible(), "yes: closed");
 }
+
+/// Make the store refuse writes to `table` from now on.
+fn refuse_writes(store: &Store, trigger: &'static str) {
+    store
+        .write(move |ctx| {
+            ctx.conn().execute_batch(trigger)?;
+            Ok(())
+        })
+        .unwrap();
+}
+
+/// A dialog whose changes can't be written stays open and says so, keeping
+/// nothing of its frame: its write is its apply's check.
+#[test]
+fn a_dialog_whose_write_fails_stays_open_and_says_why() {
+    let _windows = headless::init();
+    let opener = |key: &str| {
+        crate::frame_geometry::windows()
+            .into_iter()
+            .find(|(k, _, _)| *k == key)
+            .unwrap()
+            .1
+    };
+    // manage notes
+    let client = crate::frame_geometry::Client::new();
+    let before = client.frame("manage_notes_dialog");
+    drop(opener("manage_notes_dialog")(&client));
+    let notes = client
+        .bound
+        .manage_notes
+        .borrow()
+        .as_ref()
+        .map(ComponentHandle::clone_strong)
+        .unwrap();
+    if notes.get_asking() {
+        notes.set_asking_text("a note".into());
+        notes.invoke_chosen(0);
+    }
+    notes.set_text("written".into());
+    notes.invoke_text_edited();
+    refuse_writes(
+        &client.store,
+        "CREATE TRIGGER refuse_notes BEFORE INSERT ON file_notes BEGIN SELECT RAISE(ABORT, 'injected notes failure'); END;",
+    );
+    notes.invoke_apply();
+    assert!(notes.window().is_visible(), "notes: still open");
+    assert!(
+        notes.get_notice().contains("could not write the notes")
+            && notes.get_notice().contains("injected notes failure"),
+        "notes: {}",
+        notes.get_notice()
+    );
+    assert_eq!(
+        client.frame("manage_notes_dialog"),
+        before,
+        "notes: nothing kept"
+    );
+
+    // manage urls
+    let client = crate::frame_geometry::Client::new();
+    drop(opener("manage_urls_dialog")(&client));
+    let urls = client
+        .bound
+        .manage_urls
+        .borrow()
+        .as_ref()
+        .map(ComponentHandle::clone_strong)
+        .unwrap();
+    urls.set_input("https://example.com/injected".into());
+    urls.invoke_entered();
+    refuse_writes(
+        &client.store,
+        "CREATE TRIGGER refuse_urls BEFORE INSERT ON file_urls BEGIN SELECT RAISE(ABORT, 'injected urls failure'); END;",
+    );
+    urls.invoke_apply();
+    assert!(urls.window().is_visible(), "urls: still open");
+    assert!(
+        urls.get_notice().contains("injected urls failure"),
+        "urls: {}",
+        urls.get_notice()
+    );
+
+    // manage times: the file's modified time
+    let client = crate::frame_geometry::Client::new();
+    drop(opener("manage_times_dialog")(&client));
+    let times = client
+        .bound
+        .manage_times
+        .borrow()
+        .as_ref()
+        .map(ComponentHandle::clone_strong)
+        .unwrap();
+    times.invoke_time_clicked(0);
+    let edit = client
+        .bound
+        .datetime_editor
+        .borrow()
+        .as_ref()
+        .map(ComponentHandle::clone_strong)
+        .expect("the date-time editor opens");
+    // (while it is open, Escape doesn't cancel the dialog under it)
+    crate::common::widgets::key(times.window(), slint::platform::Key::Escape);
+    assert!(
+        times.window().is_visible(),
+        "times: not cancelled under its editor"
+    );
+    edit.set_date("2020-01-02".into());
+    edit.invoke_edited();
+    edit.invoke_apply();
+    refuse_writes(
+        &client.store,
+        "CREATE TRIGGER refuse_times BEFORE UPDATE ON files BEGIN SELECT RAISE(ABORT, 'injected times failure'); END;",
+    );
+    times.invoke_apply();
+    assert!(times.window().is_visible(), "times: still open");
+    assert!(
+        times.get_notice().contains("injected times failure"),
+        "times: {}",
+        times.get_notice()
+    );
+}
+
+/// Escape in manage tags never drops staged changes unasked, as the
+/// reference's: typed text is cleared first (`_HandleEscape`), the paste
+/// question takes it next, and with changes staged the dialog asks
+/// (`UserIsOKToCancel`) before closing.
+#[test]
+fn escape_in_manage_tags_clears_typing_answers_questions_and_asks_before_discarding() {
+    let fixture = hydrus_testkit::fixture_json("write_tag_autocomplete.json");
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let pasted = fixture["paste"][0]["text"].as_str().unwrap().to_owned();
+    hydrus_gui::set_paster(move || pasted.clone());
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    ui.invoke_select_all();
+    ui.invoke_manage_tags_selected();
+    let tags = bound.manage_tags.borrow().as_ref().unwrap().clone_strong();
+    let window = tags.window();
+    let escape = || crate::common::widgets::key(window, slint::platform::Key::Escape);
+    // typed text: cleared, the dialog stays
+    tags.set_text("half typed".into());
+    tags.invoke_text_edited("half typed".into());
+    escape();
+    assert!(window.is_visible(), "typing cleared, not cancelled");
+    assert_eq!(tags.get_text(), "");
+    // the paste question: answered "no" by Escape
+    assert!(tags.invoke_paste_requested(false));
+    assert!(tags.get_question() != "");
+    escape();
+    assert_eq!(tags.get_question(), "", "the question dismissed");
+    assert!(window.is_visible());
+    // a tag staged: Escape asks first
+    tags.set_text("escape kept me".into());
+    tags.invoke_text_edited("escape kept me".into());
+    tags.invoke_entered();
+    escape();
+    assert!(window.is_visible(), "changes staged: not closed unasked");
+    assert_eq!(
+        tags.get_tag_menu_question(),
+        "Are you sure you want to cancel? You have uncommitted changes that will be lost."
+    );
+    escape();
+    assert_eq!(tags.get_tag_menu_question(), "", "the question dismissed");
+    assert!(window.is_visible());
+    // cancel asks the same; yes discards
+    tags.invoke_cancel();
+    assert!(tags.get_tag_menu_question() != "");
+    tags.invoke_tag_menu_answered(true);
+    assert!(!window.is_visible(), "yes: closed");
+    assert!(bound.manage_tags.borrow().is_none());
+}

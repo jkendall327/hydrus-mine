@@ -2791,7 +2791,13 @@ with changes until the user says to discard them), and so does the viewer's
 manage tags frame, which keeps its frame as it closes, as the other frames
 with keys of their own do. Manage tags' apply stays open, saying so, when
 its changes can't be written (the reference's `DialogManage` shows the error
-and closes). No migrated dialog yet has a panel check that refuses an apply
+and closes); so do manage notes, URLs and times. Manage tags with changes
+staged asks before a cancel, Escape or its window's close discards them, as
+the reference's `UserIsOKToCancel`, on its own overlay rather than a
+separate yes/no dialog (which takes the place of a question already up).
+While manage times' date-time editor is open, Escape doesn't cancel the
+dialog under it (the reference's editor is modal; its cancel button still
+closes both). No migrated dialog yet has a panel check that refuses an apply
 (the helper leaves such a dialog open and keeps nothing, as the recording's
 vetoed apply does). Nor are the
 reference's `deeply_nested_dialog` and `quick_*` frames told apart from it.

@@ -29,7 +29,13 @@ enum Pending {
     Choose(hydrus_gui_model::manage_tags::Prompt),
     /// "Are you sure you want to remove these tags?"
     Remove(Vec<String>),
+    /// "Are you sure you want to cancel?" (changes not yet applied).
+    Cancel,
 }
+
+/// `UserIsOKToCancel`'s question, with changes not yet applied.
+const CANCEL_QUESTION: &str =
+    "Are you sure you want to cancel? You have uncommitted changes that will be lost.";
 
 /// Show a prompt on the overlay: the choices as its two buttons.
 fn ask(
@@ -1679,6 +1685,7 @@ pub(crate) fn open(
     // (the overlay carries the prompts of entry and removal too)
     window.on_tag_menu_answered({
         let weak = window.as_weak();
+        let ended = ended.clone();
         let model = model.clone();
         let refresh = refresh.clone();
         let active = active.clone();
@@ -1689,7 +1696,12 @@ pub(crate) fn open(
                 let mut waiting = pending.borrow_mut();
                 if matches!(
                     waiting.as_ref(),
-                    Some(Pending::Choose(_) | Pending::Remove(_) | Pending::ClearRecent)
+                    Some(
+                        Pending::Choose(_)
+                            | Pending::Remove(_)
+                            | Pending::ClearRecent
+                            | Pending::Cancel
+                    )
                 ) {
                     waiting.take()
                 } else {
@@ -1718,6 +1730,10 @@ pub(crate) fn open(
                 }
                 Pending::Remove(tags) if yes => model.borrow_mut().confirm_removal(&tags),
                 Pending::ClearRecent if yes => model.borrow().clear_recent_tags(),
+                Pending::Cancel if yes => {
+                    ended.cancel_confirmed();
+                    return;
+                }
                 _ => Ok(()),
             };
             if let (Some(w), Err(e)) = (weak.upgrade(), result) {
@@ -1735,7 +1751,12 @@ pub(crate) fn open(
                 let mut waiting = pending.borrow_mut();
                 if matches!(
                     waiting.as_ref(),
-                    Some(Pending::Choose(_) | Pending::Remove(_) | Pending::ClearRecent)
+                    Some(
+                        Pending::Choose(_)
+                            | Pending::Remove(_)
+                            | Pending::ClearRecent
+                            | Pending::Cancel
+                    )
                 ) {
                     waiting.take()
                 } else {
@@ -1835,6 +1856,33 @@ pub(crate) fn open(
         }
     });
     window.on_apply(apply);
+    // (`UserIsOKToCancel`: with changes not yet applied, it asks first,
+    // and stays open)
+    ended.refuse_cancel({
+        let weak = window.as_weak();
+        let model = model.clone();
+        let pending = pending_paste.clone();
+        move || {
+            let changed = {
+                let model = model.borrow();
+                !model.is_immediate() && model.has_changes()
+            };
+            if !changed {
+                return true;
+            }
+            // (a question already asked gives way to this one, as the old
+            // cancel dropped it: its late answer is ignored)
+            if let Some(w) = weak.upgrade() {
+                w.set_question("".into());
+                w.set_tag_menu_question_title("".into());
+                w.set_tag_menu_question(CANCEL_QUESTION.into());
+                w.set_tag_menu_yes_label("yes".into());
+                w.set_tag_menu_no_label("no".into());
+                *pending.borrow_mut() = Some(Pending::Cancel);
+            }
+            false
+        }
+    });
     window.on_cancel(close);
     refresh();
     window.show()?;

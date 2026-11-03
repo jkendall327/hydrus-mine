@@ -344,6 +344,12 @@ fn switching_from_empty_service_restores_the_only_suggestion_page() {
             .all(|file| !tags_of(&store, *file, "my tags").contains(&staged))
     );
     manage.invoke_cancel();
+    // (changes staged: it asks first, as the reference's UserIsOKToCancel)
+    assert_eq!(
+        manage.get_tag_menu_question(),
+        "Are you sure you want to cancel? You have uncommitted changes that will be lost."
+    );
+    manage.invoke_tag_menu_answered(true);
     assert!(bound.manage_tags.borrow().is_none());
     assert!(
         files
@@ -531,6 +537,12 @@ fn tags_are_added_and_removed_as_the_reference_does() {
     let pixels = headless::render(&drawn, 420, 560);
     headless::save_png(&shots.join("manage_tags.png"), &pixels, 420, 560).unwrap();
     window.invoke_cancel();
+    // (changes staged: it asks first, as the reference's UserIsOKToCancel)
+    assert_eq!(
+        window.get_tag_menu_question(),
+        "Are you sure you want to cancel? You have uncommitted changes that will be lost."
+    );
+    window.invoke_tag_menu_answered(true);
     assert!(bound.manage_tags.borrow().is_none());
     assert!(!tags_of(&store, tagged, "my tags").contains("forgotten"));
 }

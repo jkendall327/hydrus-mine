@@ -458,6 +458,7 @@ pub(crate) fn open(
     window.on_apply({
         let active = active.clone();
         let state = state.clone();
+        let refresh = refresh.clone();
         let store = store.clone();
         let dialog = dialog.clone();
         move || {
@@ -479,13 +480,21 @@ pub(crate) fn open(
                     Ok(())
                 })
             };
-            // (`DialogManage`: its frame kept, then its changes committed)
+            // (`DialogManage`: written, then its frame kept; a write that
+            // fails leaves it open, saying so)
             dialog.apply(
-                || true,
                 || match write() {
-                    Ok(()) => applied(),
-                    Err(e) => eprintln!("could not write the notes: {e}"),
+                    Ok(()) => {
+                        applied();
+                        true
+                    }
+                    Err(e) => {
+                        state.borrow_mut().notice = format!("could not write the notes: {e}");
+                        refresh();
+                        false
+                    }
                 },
+                || {},
             );
         }
     });

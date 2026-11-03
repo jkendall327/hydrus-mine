@@ -173,6 +173,8 @@ export component ManageTagsWindow inherits Window {
                 }
             }
             // (the focused tag list clears its selection first)
+            // (the paste question takes it first, as its own dialog would)
+            if (event.text == Key.Escape && root.question != "") { root.paste-answered(false); return accept; }
             if (event.text == Key.Escape && !(list-focus.has-focus && root.tag-menu-panes.length == 0 && root.tag-menu-question == "")) {
                 if root.tag-menu-panes.length > 0 || root.tag-menu-question != "" { root.tag-menu-dismissed(); } else if !input.escape-results() { root.escape(); }
                 return accept;
