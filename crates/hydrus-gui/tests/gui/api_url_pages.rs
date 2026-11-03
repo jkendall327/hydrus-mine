@@ -80,6 +80,13 @@ fn a_queue_the_api_made_becomes_a_page_where_new_pages_go() {
     let row = store.read(|c| queues::queue(c, queue)).unwrap().unwrap();
     assert_eq!(row.page_key.as_deref(), Some(&key.0[..]));
     assert!(!queues::waits_for_url_page(&row));
+    // (the stored session has the page as soon as its queue has the key, in
+    // the same write, before any sync: the Client API finds it there)
+    let stored = store
+        .read(|c| sessions::load(c, sessions::LAST_SESSION))
+        .unwrap()
+        .unwrap();
+    assert!(stored.all_pages().iter().any(|p| p.key == key));
     // (taken up once)
     assert!(!pages.adopt_api_queues().unwrap());
 
@@ -167,4 +174,72 @@ fn the_open_window_shows_an_api_page_it_was_asked_to_show() {
         &bound.current.borrow(),
         &bound.pages.borrow_mut().current()
     ));
+}
+
+/// The GUI's named URL import skips a page of the name whose import
+/// options differ from those asked for, as the reference's forced URL
+/// downloader does, and makes one with them.
+#[test]
+fn a_named_page_with_other_import_options_is_not_used() {
+    let (_dirs, store) = store();
+    let mut pages = Pages::open(store.clone()).unwrap();
+    pages.new_page(&NewPage::Urls).unwrap();
+    let plain = pages.shown().key;
+    pages.rename_shown("my downloads");
+    let options = ImportOptionsSlice {
+        locations: Some(hydrus_core::import_options::LocationOptions::default()),
+        ..ImportOptionsSlice::default()
+    };
+    pages
+        .import_urls_to_named_page(
+            &["https://example.com/a.png".into()],
+            "my downloads",
+            Some(options.clone()),
+        )
+        .unwrap();
+    let named: Vec<PageKey> = pages
+        .session()
+        .all_pages()
+        .into_iter()
+        .filter(|p| p.name == "my downloads")
+        .map(|p| p.key)
+        .collect();
+    assert_eq!(named.len(), 2, "a new page for the other options");
+    let made = *named.iter().find(|k| **k != plain).unwrap();
+    // (a second import with the same options goes to that one)
+    pages
+        .import_urls_to_named_page(
+            &["https://example.com/b.png".into()],
+            "my downloads",
+            Some(options),
+        )
+        .unwrap();
+    let count = pages
+        .session()
+        .all_pages()
+        .into_iter()
+        .filter(|p| p.name == "my downloads")
+        .count();
+    assert_eq!(count, 2);
+    let queue = page_queue(&pages, made);
+    let made = store
+        .read(move |c| queues::queue(c, queue))
+        .unwrap()
+        .unwrap();
+    assert!(
+        made.options.locations.is_some(),
+        "made with the options asked for"
+    );
+}
+
+fn page_queue(pages: &Pages, key: PageKey) -> i64 {
+    pages
+        .session()
+        .all_pages()
+        .into_iter()
+        .find_map(|p| match &p.content {
+            PageContent::Downloader { queues, .. } if p.key == key => Some(queues[0]),
+            _ => None,
+        })
+        .unwrap()
 }

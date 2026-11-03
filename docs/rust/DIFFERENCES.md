@@ -201,6 +201,11 @@ search.
   queue and starts on the URL at once; the open client takes the queue up
   as a page on its next pass (twice a second), as the reference's call
   makes the page before it answers.
+- **URL queues an older hydrus-rs made for `/add_urls/add_url` with the
+  caller's `destination_page_key`, before any page had that key, are left
+  alone.** They had no page then and no page takes them up now (the store
+  cannot tell them from a saved session's queues), so they go on downloading
+  but show nowhere; later calls go to a page as the reference chooses one.
 - **A page's selected files are listed in the page's order**
   (`hash_ids_selected`); the reference's order is its selection set's.
 - **A page's state is always "normal"** (`page_state` 0): our searches

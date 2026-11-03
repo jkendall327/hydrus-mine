@@ -234,8 +234,21 @@ fn pages_left_open_come_back_as_the_reference_brings_them_back() {
         steps.push(tree("restored", &ui, &bound, &state, &site));
         // the Client API lists no selection either, as the reference keeps
         // none with its session
-        // (the search page for safe, second in the top notebook)
-        let search = bound.pages.borrow().session().pages[1].key;
+        // (the search page for safe, as the recording names it)
+        let tops = bound.pages.borrow().session().pages.clone();
+        let search = tops
+            .iter()
+            .find(|p| {
+                matches!(p.content, PageContent::Search { .. })
+                    && p.name == "files"
+                    && bound
+                        .pages
+                        .borrow_mut()
+                        .page(&p.key)
+                        .is_some_and(|o| o.borrow().predicates() == ["safe"])
+            })
+            .expect("the search page for safe")
+            .key;
         let (status, info) = daemon.api(
             "GET",
             &format!(

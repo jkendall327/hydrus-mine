@@ -773,6 +773,14 @@ pub fn create_waiting_url_queue(
     Ok(id)
 }
 
+/// Have a waiting URL queue's page shown when the client takes it up (a
+/// later call asked to show the page a first one made).
+pub fn show_waiting_url_queue(conn: &Connection, id: i64) -> Result<()> {
+    let extra =
+        serde_json::to_value(WaitingUrlQueue { show: true }).expect("plain data serialises");
+    set_queue_extra(conn, id, &extra)
+}
+
 /// Whether a queue is a URL queue waiting for the client to make its page:
 /// no page key, and not a closed page's.
 pub fn waits_for_url_page(queue: &Queue) -> bool {

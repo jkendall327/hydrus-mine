@@ -1456,3 +1456,121 @@ async fn a_second_url_to_a_new_page_name_reuses_its_queue() {
         "the first call asked for its page to be shown"
     );
 }
+
+/// Calls side by side for a page name not open yet (the API answers them
+/// on threads of its own; the reference one at a time on its Qt thread)
+/// find one queue between them, not one each.
+#[tokio::test(flavor = "multi_thread")]
+async fn calls_side_by_side_for_a_new_page_name_make_one_queue() {
+    let s = setup().await;
+    for round in 0..10 {
+        let name = format!("racing {round}");
+        let barrier = Arc::new(std::sync::Barrier::new(4));
+        let threads: Vec<_> = (0..4)
+            .map(|_| {
+                let runner = Arc::clone(&s.runner);
+                let barrier = Arc::clone(&barrier);
+                let name = name.clone();
+                std::thread::spawn(move || {
+                    barrier.wait();
+                    runner
+                        .url_page_for(Some(&name), None, None, false)
+                        .unwrap()
+                        .0
+                        .id
+                })
+            })
+            .collect();
+        let ids: BTreeSet<i64> = threads.into_iter().map(|t| t.join().unwrap()).collect();
+        assert_eq!(ids.len(), 1, "{name}: {ids:?}");
+    }
+    let waiting = s.store.read(queues::waiting_url_queues).unwrap();
+    assert_eq!(waiting.len(), 10);
+}
+
+/// A later call that asks for the page to be shown has the waiting page
+/// shown when the client takes it up, though the first did not ask.
+#[tokio::test(flavor = "multi_thread")]
+async fn a_later_call_asking_to_show_a_waiting_page_shows_it() {
+    let s = setup().await;
+    let (first, _) = s
+        .runner
+        .url_page_for(Some("api downloads"), None, None, false)
+        .unwrap();
+    let waiting = s.store.read(queues::waiting_url_queues).unwrap();
+    assert!(!waiting[0].1);
+    let (again, _) = s
+        .runner
+        .url_page_for(Some("api downloads"), None, None, true)
+        .unwrap();
+    assert_eq!(first.id, again.id);
+    let waiting = s.store.read(queues::waiting_url_queues).unwrap();
+    assert_eq!(waiting.len(), 1);
+    assert!(waiting[0].1, "shown when taken up");
+}
+
+/// A key naming an open page that is not a URL downloader is no URL page's:
+/// the name decides, as for an unknown key.
+#[tokio::test(flavor = "multi_thread")]
+async fn a_key_of_a_page_that_is_not_a_url_page_falls_back_to_the_name() {
+    use hydrus_core::pages::{Page, PageContent, PageKey};
+    let s = setup().await;
+    let queue = page_queue(&s.store, "url import");
+    let keys = open_url_pages(&s.store, &[("mine", queue)]);
+    let other = PageKey::random();
+    let mut session = s
+        .store
+        .read(|c| hydrus_store::sessions::load(c, hydrus_store::sessions::LAST_SESSION))
+        .unwrap()
+        .unwrap();
+    session.pages.push(Page {
+        key: other,
+        name: "mine".into(),
+        content: PageContent::Pages(Vec::new()),
+    });
+    s.store
+        .write(move |ctx| hydrus_store::sessions::save(ctx.conn(), &session, 2))
+        .unwrap();
+    let (found, page) = s
+        .runner
+        .url_page_for(Some("mine"), Some(&other.0), None, false)
+        .unwrap();
+    assert_eq!((found.id, page), (queue, Some(keys[0])));
+}
+
+/// Of several open pages of the name, the one shown is chosen
+/// (`GetCurrentMediaPage`), else the first.
+#[tokio::test(flavor = "multi_thread")]
+async fn of_pages_of_one_name_the_shown_one_is_chosen() {
+    let s = setup().await;
+    let first = page_queue(&s.store, "url import");
+    let second = page_queue(&s.store, "url import");
+    let keys = open_url_pages(&s.store, &[("mine", first), ("mine", second)]);
+    let found = || {
+        s.runner
+            .url_page_for(Some("mine"), None, None, false)
+            .unwrap()
+    };
+    assert_eq!(
+        found(),
+        (
+            s.store
+                .read(move |c| queues::queue(c, first))
+                .unwrap()
+                .unwrap(),
+            Some(keys[0])
+        )
+    );
+    let shown = keys[1];
+    s.store
+        .write(move |ctx| {
+            hydrus_store::sessions::set_shown(
+                ctx.conn(),
+                hydrus_store::sessions::LAST_SESSION,
+                Some(&shown),
+            )
+        })
+        .unwrap();
+    let (queue, page) = found();
+    assert_eq!((queue.id, page), (second, Some(keys[1])));
+}

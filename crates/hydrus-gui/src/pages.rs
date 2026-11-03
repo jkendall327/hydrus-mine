@@ -974,22 +974,20 @@ impl Pages {
         for closed in &self.closed {
             held(std::slice::from_ref(&closed.page), &mut used);
         }
-        let mut adopted = false;
+        let (session_before, path_before) = (self.session.clone(), self.path.clone());
+        let mut taken = Vec::new();
         for (queue, show) in waiting {
             if used.contains(&queue.id) {
                 continue;
             }
             let key = PageKey::random();
-            let id = queue.id;
-            self.store
-                .write(move |ctx| hydrus_store::queues::take_up_url_queue(ctx.conn(), id, &key.0))
-                .map_err(|e| e.to_string())?;
+            taken.push((queue.id, key));
             let page = Page {
                 key,
                 name: queue.name.clone(),
                 content: PageContent::Downloader {
                     kind: DownloaderKind::Urls,
-                    queues: vec![id],
+                    queues: vec![queue.id],
                     sort: None,
                     page: None,
                 },
@@ -1004,9 +1002,36 @@ impl Pages {
             }
             self.new_page_target = target;
             self.new_page_depth = depth;
-            adopted = true;
         }
-        Ok(adopted)
+        if taken.is_empty() {
+            return Ok(false);
+        }
+        // (each queue's page key and the session holding its page in one
+        // write: the Client API never sees a queue taken up by a page the
+        // session lacks, and a crash leaves it waiting, not orphaned)
+        let session = self.session.clone();
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX));
+        let written = self.store.write(move |ctx| {
+            let conn = ctx.conn();
+            for (id, key) in &taken {
+                hydrus_store::queues::take_up_url_queue(conn, *id, &key.0)?;
+            }
+            sessions::save(conn, &session, now)?;
+            Ok(session)
+        });
+        match written {
+            Ok(session) => {
+                self.synced.pages = Some(session.pages);
+                Ok(true)
+            }
+            Err(e) => {
+                self.session = session_before;
+                self.path = path_before;
+                Err(e.to_string())
+            }
+        }
     }
 
     /// Keep the last session up to date in the store, as [`Pages::save`]
@@ -1746,6 +1771,24 @@ impl Pages {
             normalised.push(url);
         }
         let shown = self.shown().key;
+        // (pages whose import options differ from those asked for do not
+        // fit, as the reference's forced URL downloader checks)
+        let queue_options: HashMap<i64, hydrus_core::import_options::ImportOptionsSlice> =
+            if options.is_some() {
+                self.store
+                    .read(|conn| {
+                        hydrus_store::queues::queues(
+                            conn,
+                            Some(hydrus_store::queues::QueueKind::Urls),
+                        )
+                    })
+                    .map_err(|e| e.to_string())?
+                    .into_iter()
+                    .map(|q| (q.id, q.options))
+                    .collect()
+            } else {
+                HashMap::new()
+            };
         let open = hydrus_core::pages::url_pages(&self.session.pages);
         let choices: Vec<_> = open
             .iter()
@@ -1753,7 +1796,13 @@ impl Pages {
                 key: Some(page.key),
                 name: &page.name,
                 current: page.key == shown,
-                fits: true,
+                fits: options.as_ref().is_none_or(|wanted| match &page.content {
+                    PageContent::Downloader { queues, .. } => queues
+                        .first()
+                        .and_then(|id| queue_options.get(id))
+                        .is_some_and(|have| have == wanted),
+                    _ => false,
+                }),
             })
             .collect();
         let chosen =
