@@ -4,7 +4,7 @@
 //! reference's `_ClearSurplusServices` does, and "apply" searching what is
 //! ticked.
 
-use std::cell::{Cell, RefCell};
+use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -143,47 +143,30 @@ pub(crate) fn open_with_flags(
             show();
         }
     });
-    let active = Rc::new(Cell::new(true));
-    let close = {
-        let active = active.clone();
+    let dialog = crate::dialog::Dialog::new(&window);
+    dialog.on_closed({
         let weak = window.as_weak();
         let slot = slot.clone();
         move || {
-            if !active.replace(false) {
-                return;
-            }
-            let window = weak.upgrade();
-            if let Some(window) = &window {
-                let _ = window.hide();
-            }
             slot.borrow_mut().take();
-            if let Some(window) = window {
+            if let Some(window) = weak.upgrade() {
                 window.invoke_closed();
             }
         }
-    };
+    });
     window.on_apply({
-        let active = active.clone();
-        let close = close.clone();
+        let dialog = dialog.clone();
         move || {
-            if !active.get() {
+            if !dialog.is_open() {
                 return;
             }
             let chosen_location = location();
-            close();
+            dialog.accept();
             chosen(chosen_location);
         }
     });
-    window.on_cancel({
-        let close = close.clone();
-        move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
+    window.on_cancel(move || {
+        dialog.cancel();
     });
     window.show().map_err(|e| e.to_string())?;
     LAST.with(|last| *last.borrow_mut() = Some(window.as_weak()));

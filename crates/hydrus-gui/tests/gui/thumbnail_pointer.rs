@@ -12,7 +12,7 @@ use std::sync::Arc;
 
 use i_slint_core::window::WindowInner;
 use slint::platform::PointerEventButton;
-use slint::{ComponentHandle as _, LogicalPosition};
+use slint::{ComponentHandle as _, LogicalPosition, Model as _};
 
 use hydrus_core::HashId;
 use hydrus_gui::{MainWindow, Pages, SearchPage, bind, headless};
@@ -189,6 +189,38 @@ fn presses_on_the_grid_select_open_and_show_the_menu_as_the_reference_s() {
             !step["menus"].as_array().unwrap().is_empty(),
             "{context}: menu"
         );
+        // and it is the thumbnail menu for the files pressed on: its first
+        // entries (the selection's info, then the head) are the recorded
+        // ones, each drawn in the open menu
+        if let Some(recorded_menu) = step["menus"].as_array().unwrap().last() {
+            let menu = ui.get_thumbnail_menu();
+            let mut entries: Vec<String> = vec![menu.info_title.to_string()];
+            // (a submenu of info holds the views; a label alone has them after it)
+            if !menu.info_is_menu {
+                entries.extend(
+                    (0..menu.views.row_count())
+                        .map(|i| menu.views.row_data(i).unwrap().label.to_string()),
+                );
+            }
+            entries.extend(
+                (0..menu.head.row_count())
+                    .map(|i| menu.head.row_data(i).unwrap().label.to_string()),
+            );
+            if menu.has_select {
+                entries.push("select".into());
+            }
+            entries.truncate(3);
+            let wanted: Vec<String> = recorded_menu
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|label| label.as_str().unwrap().to_owned())
+                .collect();
+            assert_eq!(entries, wanted, "{context}: the menu's first entries");
+            for label in &wanted {
+                assert!(widgets::count(win, label) > 0, "{context}: {label} drawn");
+            }
+        }
         inner.close_all_popups();
     }
 }

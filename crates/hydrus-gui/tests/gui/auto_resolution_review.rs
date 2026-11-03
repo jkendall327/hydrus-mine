@@ -429,6 +429,79 @@ fn a_pending_pair_is_approved_in_the_duplicate_filter() {
     assert_eq!(shown, pair);
 }
 
+#[test]
+fn a_real_double_click_on_a_pair_row_activates_it_as_the_reference_does() {
+    use crate::common::widgets;
+    use slint::platform::PointerEventButton;
+
+    let recorded = hydrus_testkit::fixture_json("auto_resolution_review.json");
+    let _windows = headless::init();
+    let Opened {
+        _legacy,
+        _dir,
+        store,
+        ui,
+        bound,
+        ..
+    } = opened();
+    let rules = store.read(auto::rules).unwrap();
+    let reviewed = recorded["reviewed"].as_str().unwrap();
+    assert!(rules.iter().any(|(_, r)| r.name == reviewed));
+    let window = review(&ui, &bound, reviewed);
+    window.show().unwrap();
+    widgets::lay_out(window.window(), 760.0, 640.0);
+
+    // the pending tab: a double click on a row (the press selects it, which
+    // fetches the rows again) opens the duplicate filter on the pending pairs
+    let at = |window: &AutoResolutionReviewWindow, row: usize| {
+        let text = texts(window)[row].clone();
+        widgets::position(window.window(), &text, 0)
+    };
+    assert!(bound.auto_resolution_review_filter.borrow().is_none());
+    widgets::double_click_at(
+        window.window(),
+        at(&window, 0),
+        PointerEventButton::Left,
+        widgets::Mods::NONE,
+    );
+    assert!(
+        bound.auto_resolution_review_filter.borrow().is_some(),
+        "the filter opened on a real double click"
+    );
+    let filter = bound
+        .auto_resolution_review_filter
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    filter.hide().unwrap();
+    for _ in 0..5 {
+        if bound.auto_resolution_review_filter.borrow().is_none() {
+            break;
+        }
+        if filter.get_question().is_empty() {
+            filter.invoke_close_requested();
+        } else {
+            filter.invoke_answer(0);
+        }
+    }
+
+    // an actioned tab: the media viewer on its files
+    window.invoke_tab_chosen(1);
+    widgets::settle();
+    assert!(bound.viewer.borrow().is_none());
+    widgets::double_click_at(
+        window.window(),
+        at(&window, 0),
+        PointerEventButton::Left,
+        widgets::Mods::NONE,
+    );
+    assert!(
+        bound.viewer.borrow().is_some(),
+        "the viewer opened on a real double click"
+    );
+}
+
 /// Let an approval or denial at work finish and reach the window.
 pub(crate) fn settle(window: &hydrus_gui::AutoResolutionReviewWindow) {
     let deadline = std::time::Instant::now() + std::time::Duration::from_secs(20);
