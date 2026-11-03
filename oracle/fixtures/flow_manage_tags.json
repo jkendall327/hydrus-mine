@@ -85,6 +85,96 @@
      ]
     }
    },
+   "state": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:apng_animated",
+       "source:fixture"
+      ],
+      "my tags": [
+       "safe"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1000",
+      "https://example.com/post/0",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2000"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:audio",
+       "source:fixture"
+      ],
+      "my tags": [
+       "creator:anonymous artist",
+       "meta:lowres",
+       "page:3"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1002",
+      "https://example.com/post/2"
+     ]
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:bitmap",
+       "source:fixture"
+      ],
+      "my tags": [
+       "blue_eyes",
+       "safe",
+       "samus",
+       "smile",
+       "éclair"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1004",
+      "https://example.com/post/4"
+     ]
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "my tags": [
+       "blue eyes",
+       "page:10",
+       "safe",
+       "volume:3",
+       "キャラクター:初音ミク"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1003",
+      "https://example.com/post/3",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2003"
+     ]
+    }
+   },
    "step": "relationships"
   },
   {
@@ -210,6 +300,103 @@
       "safe",
       "volume:3",
       "キャラクター:初音ミク"
+     ]
+    }
+   },
+   "state": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:apng_animated",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "fluffy",
+       "safe"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1000",
+      "https://example.com/post/0",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2000"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:audio",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "creator:anonymous artist",
+       "fluffy",
+       "meta:lowres",
+       "page:3"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1002",
+      "https://example.com/post/2"
+     ]
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:bitmap",
+       "source:fixture"
+      ],
+      "my tags": [
+       "blue_eyes",
+       "kitty",
+       "safe",
+       "samus",
+       "smile",
+       "éclair"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1004",
+      "https://example.com/post/4"
+     ]
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "my tags": [
+       "blue eyes",
+       "cat",
+       "fluffy",
+       "page:10",
+       "safe",
+       "volume:3",
+       "キャラクター:初音ミク"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1003",
+      "https://example.com/post/3",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2003"
      ]
     }
    },
@@ -347,14 +534,116 @@
      ]
     }
    },
+   "state": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:apng_animated",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "safe",
+       "striped"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1000",
+      "https://example.com/post/0",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2000"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:audio",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "creator:anonymous artist",
+       "meta:lowres",
+       "page:3",
+       "striped"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1002",
+      "https://example.com/post/2"
+     ]
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:bitmap",
+       "source:fixture"
+      ],
+      "my tags": [
+       "blue_eyes",
+       "kitty",
+       "safe",
+       "samus",
+       "smile",
+       "striped",
+       "éclair"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1004",
+      "https://example.com/post/4"
+     ]
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "my tags": [
+       "blue eyes",
+       "cat",
+       "page:10",
+       "safe",
+       "striped",
+       "volume:3",
+       "キャラクター:初音ミク"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1003",
+      "https://example.com/post/3",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2003"
+     ]
+    }
+   },
    "step": "mixed"
   },
   {
    "dialog": {
     "asked": [
      {
+      "choices": [
+       "yes",
+       "no"
+      ],
       "message": "Are you sure you want to remove these tags:\n\nstriped",
-      "title": "yes/no"
+      "title": "Are you sure?"
      }
     ],
     "rows": [
@@ -441,6 +730,103 @@
       "striped",
       "volume:3",
       "キャラクター:初音ミク"
+     ]
+    }
+   },
+   "state": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:apng_animated",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "safe"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1000",
+      "https://example.com/post/0",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2000"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:audio",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "creator:anonymous artist",
+       "meta:lowres",
+       "page:3",
+       "striped"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1002",
+      "https://example.com/post/2"
+     ]
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:bitmap",
+       "source:fixture"
+      ],
+      "my tags": [
+       "blue_eyes",
+       "kitty",
+       "safe",
+       "samus",
+       "smile",
+       "striped",
+       "éclair"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1004",
+      "https://example.com/post/4"
+     ]
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "my tags": [
+       "blue eyes",
+       "cat",
+       "page:10",
+       "safe",
+       "striped",
+       "volume:3",
+       "キャラクター:初音ミク"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1003",
+      "https://example.com/post/3",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2003"
      ]
     }
    },
@@ -560,6 +946,104 @@
      ]
     }
    },
+   "state": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:apng_animated",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "safe"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1000",
+      "https://example.com/post/0",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2000"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:audio",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "creator:anonymous artist",
+       "meta:lowres",
+       "page:3",
+       "safe",
+       "striped"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1002",
+      "https://example.com/post/2"
+     ]
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:bitmap",
+       "source:fixture"
+      ],
+      "my tags": [
+       "blue_eyes",
+       "kitty",
+       "safe",
+       "samus",
+       "smile",
+       "striped",
+       "éclair"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1004",
+      "https://example.com/post/4"
+     ]
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "my tags": [
+       "blue eyes",
+       "cat",
+       "page:10",
+       "safe",
+       "striped",
+       "volume:3",
+       "キャラクター:初音ミク"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1003",
+      "https://example.com/post/3",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2003"
+     ]
+    }
+   },
    "step": "copy"
   },
   {
@@ -582,8 +1066,12 @@
     ],
     "asked": [
      {
+      "choices": [
+       "yes",
+       "no"
+      ],
       "message": "Send 2 files to inbox?",
-      "title": "yes/no"
+      "title": "Are you sure?"
      }
     ],
     "inboxed": {
@@ -678,6 +1166,104 @@
       "striped",
       "volume:3",
       "キャラクター:初音ミク"
+     ]
+    }
+   },
+   "state": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "filename:apng_animated",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "safe"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1000",
+      "https://example.com/post/0",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2000"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "filename:audio",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "creator:anonymous artist",
+       "meta:lowres",
+       "page:3",
+       "safe",
+       "striped"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1002",
+      "https://example.com/post/2"
+     ]
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:bitmap",
+       "source:fixture"
+      ],
+      "my tags": [
+       "blue_eyes",
+       "kitty",
+       "safe",
+       "samus",
+       "smile",
+       "striped",
+       "éclair"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1004",
+      "https://example.com/post/4"
+     ]
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "my tags": [
+       "blue eyes",
+       "cat",
+       "page:10",
+       "safe",
+       "striped",
+       "volume:3",
+       "キャラクター:初音ミク"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1003",
+      "https://example.com/post/3",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2003"
      ]
     }
    },
@@ -792,6 +1378,104 @@
      "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
      "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b"
     ]
+   },
+   "state": {
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "filename:apng_animated",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "safe"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1000",
+      "https://example.com/post/0",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2000"
+     ]
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "downloader tags": [
+       "filename:audio",
+       "source:fixture"
+      ],
+      "my tags": [
+       "cat",
+       "creator:anonymous artist",
+       "meta:lowres",
+       "page:3",
+       "safe",
+       "striped"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1002",
+      "https://example.com/post/2"
+     ]
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": false,
+     "tags": {
+      "downloader tags": [
+       "filename:bitmap",
+       "source:fixture"
+      ],
+      "my tags": [
+       "blue_eyes",
+       "kitty",
+       "safe",
+       "samus",
+       "smile",
+       "striped",
+       "éclair"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1004",
+      "https://example.com/post/4"
+     ]
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "in": [
+      "art",
+      "my files"
+     ],
+     "inbox": true,
+     "tags": {
+      "my tags": [
+       "blue eyes",
+       "cat",
+       "page:10",
+       "safe",
+       "striped",
+       "volume:3",
+       "キャラクター:初音ミク"
+      ]
+     },
+     "urls": [
+      "https://danbooru.donmai.us/posts/1003",
+      "https://example.com/post/3",
+      "https://gelbooru.com/index.php?page=post&s=view&id=2003"
+     ]
+    }
    },
    "step": "search"
   }

@@ -113,9 +113,9 @@ def record( session ):
     ClientGUIDialogsQuick.SelectFromListButtons = select_from_list_buttons
 
     # its yes/no questions (removing tags asks first), answered yes
-    def get_yes_no( win, message, *args, **kwargs ):
+    def get_yes_no( win, message, title = 'Are you sure?', yes_label = 'yes', no_label = 'no', **kwargs ):
 
-        asked.append( { 'title' : 'yes/no', 'message' : message } )
+        asked.append( { 'title' : title, 'message' : message, 'choices' : [ yes_label, no_label ] } )
 
         return QW.QDialog.DialogCode.Accepted
 
@@ -233,6 +233,9 @@ def record( session ):
             'step' : name,
             'dialog' : seen,
             'files' : { h : tags_of( h ) for h in files },
+            # (everything else each file shows: every local tag service's
+            # tags, URLs, inbox and domains, so a stray write shows)
+            'state' : flows.files_state( session, files, lambda t: t ),
             **( extra or {} ),
         } )
 

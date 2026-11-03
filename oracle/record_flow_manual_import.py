@@ -292,6 +292,7 @@ def record( session ):
         'dialog' : seen,
         'page' : {
             'name' : qt( lambda: page.GetName() ),
+            'import options' : qt( lambda: page.GetSidebar()._import_options_container_button.text() ),
             'files' : files,
             'thumbnails' : qt( lambda: len( page.GetMediaResultsPanel().GetSortedMedia() ) ),
         },

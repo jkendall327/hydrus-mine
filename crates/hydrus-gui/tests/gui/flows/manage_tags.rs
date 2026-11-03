@@ -209,8 +209,16 @@ fn tags_managed_across_many_files_reach_search_as_the_reference_does() {
             .collect::<serde_json::Map<_, _>>()
             .into()
     };
-    let step =
-        |name: &str, dialog: Json| json!({"step": name, "dialog": dialog, "files": all_tags()});
+    // (and everything else each file shows: every local tag service's tags,
+    // URLs, inbox and domains, so a stray write shows)
+    let step = |name: &str, dialog: Json| {
+        json!({
+            "step": name,
+            "dialog": dialog,
+            "files": all_tags(),
+            "state": state.files(files.iter().cloned().collect()),
+        })
+    };
     // manage tags on `hashes`, on my tags: `script` acts on it, then apply
     // (or cancel); what it showed
     let manage = |hashes: &[&String],
@@ -330,7 +338,11 @@ fn tags_managed_across_many_files_reach_search_as_the_reference_does() {
         widgets::settle();
         seen.insert(
             "asked".into(),
-            json!([{"title": "yes/no", "message": m.get_tag_menu_question().as_str()}]),
+            json!([{
+                "title": m.get_tag_menu_question_title().as_str(),
+                "message": m.get_tag_menu_question().as_str(),
+                "choices": [m.get_tag_menu_yes_label().as_str(), m.get_tag_menu_no_label().as_str()],
+            }]),
         );
         m.invoke_tag_menu_answered(true);
         widgets::settle();
@@ -340,18 +352,35 @@ fn tags_managed_across_many_files_reach_search_as_the_reference_does() {
 
     // 5. copy: all of A's tags copied (nothing selected), cancel; pasted
     // onto B with the paste button
+    // (any question either asks, as the window shows it)
+    let asked = RefCell::new(Vec::new());
+    let note_asked = |m: &ManageTagsWindow| {
+        for (title, message) in [
+            (m.get_tag_menu_question_title(), m.get_tag_menu_question()),
+            ("".into(), m.get_question()),
+        ] {
+            if !message.is_empty() {
+                asked
+                    .borrow_mut()
+                    .push(json!({"title": title.as_str(), "message": message.as_str()}));
+            }
+        }
+    };
     let copy = |m: &ManageTagsWindow, seen: &mut serde_json::Map<String, Json>| {
         m.invoke_copy_pressed();
+        widgets::settle();
+        note_asked(m);
         seen.insert("copied".into(), json!(clipboard.borrow().clone()));
     };
     let paste = |m: &ManageTagsWindow, _: &mut serde_json::Map<String, Json>| {
         m.invoke_paste_requested(true);
         widgets::settle();
+        note_asked(m);
     };
     let seen = json!({
         "A": manage(&[file_a], &copy, false),
         "B": manage(&[file_b], &paste, true),
-        "asked": [],
+        "asked": asked.borrow().clone(),
     });
     steps.push(step("copy", seen));
 
@@ -361,13 +390,14 @@ fn tags_managed_across_many_files_reach_search_as_the_reference_does() {
     seen.insert("after tagging".into(), undo_strings(&ui));
     select(&[file_a, file_b]);
     ui.invoke_inbox_selected();
-    let question = ui.get_question().to_string();
+    let asked_inbox = json!([{
+        "title": ui.get_question_title().as_str(),
+        "message": ui.get_question().as_str(),
+        "choices": [ui.get_question_yes_label().as_str(), ui.get_question_no_label().as_str()],
+    }]);
     ui.invoke_answer(true);
     widgets::settle();
-    seen.insert(
-        "asked".into(),
-        json!([{"title": "yes/no", "message": question}]),
-    );
+    seen.insert("asked".into(), asked_inbox);
     seen.insert("inboxed".into(), inbox());
     let undo = undo_strings(&ui);
     seen.insert("after inbox".into(), undo.clone());
