@@ -25,12 +25,15 @@ export component LocationsWindow inherits Window {
     callback apply();
     callback cancel();
     callback closed();
+    // (Escape, which the dialog helper takes: cancelled, as the reference's
+    // `keyPressEvent`)
+    callback escape();
 
     forward-focus: keys;
     keys := FocusScope {
         key-pressed(event) => {
             if (event.text == Key.Escape) {
-                root.cancel();
+                root.escape();
                 return accept;
             }
             reject

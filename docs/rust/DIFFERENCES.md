@@ -2781,12 +2781,15 @@ distance", "edit multiple location" and "force filetypes" (dialogs: kept
 when applied) and help > about
 (a frame: kept a moment after a move or resize). The rest don't keep it yet;
 it matters only once the frame is set to remember a size or place in
-Options > gui > frame locations (by default it remembers neither). Escape
-does not cancel these dialogs yet. No migrated dialog yet has an apply or a
-cancel its panel can refuse (the helper leaves such a dialog open and keeps
-nothing, as the recording's vetoed apply does; a unit test drives a refused
-cancel, no window does). Named dialogs keep their frames by their own
-mechanism (`windows::DialogFrame`) until they too end through the helper. Nor are the
+Options > gui > frame locations (by default it remembers neither). Escape,
+which the helper owns, cancels these dialogs and closes the frames; manage
+URLs and manage notes, which have frames of their own, also end through it
+(manage notes refusing a cancel with changes until the user says to
+discard them). No migrated dialog yet has an apply its panel can refuse (the
+helper leaves such a dialog open and keeps nothing, as the recording's
+vetoed apply does). The other dialogs with frames of their own keep them by
+their own mechanism (`windows::DialogFrame`) until they too end through the
+helper. Nor are the
 reference's `deeply_nested_dialog` and `quick_*` frames told apart from it.
 The windows that end through the helper are fitted to the screens once
 shown (`GetSafePosition` on their wanted place, then the top-left slide),

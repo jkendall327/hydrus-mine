@@ -2,7 +2,8 @@
 //! the reference's do, replayed from `oracle/record_regular_dialog.py`: a
 //! dialog (`DialogEdit`: "choose distance", "edit multiple location",
 //! "force filetypes") keeps its
-//! size and place when applied and nothing when cancelled or closed by its
+//! size and place when applied and nothing when cancelled (its cancel or
+//! Escape) or closed by its
 //! window; a frame (`FrameThatTakesScrollablePanel`: help > about) keeps
 //! them a moment after it is resized, and nothing more as it closes; and a
 //! window whose remembered place is off the screens is fitted back onto
@@ -261,10 +262,11 @@ fn ordinary_dialogs_keep_their_frame_when_applied_and_not_when_cancelled() {
         .iter()
         .filter(|c| {
             c["kind"] == "edit"
-                && ["apply", "cancel", "window_close"].contains(&c["action"].as_str().unwrap())
+                && ["apply", "cancel", "escape", "window_close"]
+                    .contains(&c["action"].as_str().unwrap())
         })
         .collect();
-    assert_eq!(cases.len(), 3);
+    assert_eq!(cases.len(), 4);
     let _windows = headless::init();
     let client = client();
     for dialog in ordinary() {
@@ -287,6 +289,8 @@ fn ordinary_dialogs_keep_their_frame_when_applied_and_not_when_cancelled() {
             match action {
                 "apply" => shown.apply(),
                 "cancel" => shown.cancel(),
+                // (a real key press, to the widget that has the keyboard)
+                "escape" => crate::common::widgets::key(window, slint::platform::Key::Escape),
                 _ => window.dispatch_event(slint::platform::WindowEvent::CloseRequested),
             }
             assert_eq!(
@@ -362,6 +366,20 @@ fn an_ordinary_frame_keeps_its_frame_as_it_is_resized_and_nothing_as_it_closes()
             _ => window.dispatch_event(slint::platform::WindowEvent::CloseRequested),
         }
         assert!(!window.is_visible(), "{action}: closed");
+        drop(about);
+        // (and Escape closes it as its close button does, as
+        // `FrameThatTakesScrollablePanel.keyPressEvent`: not recorded)
+        crate::common::main_menu::choose(&client.ui, &["help"], "about");
+        let about = client
+            .bound
+            .about
+            .borrow()
+            .as_ref()
+            .map(ComponentHandle::clone_strong)
+            .expect("about opens again");
+        assert!(about.window().is_visible());
+        crate::common::widgets::key(about.window(), slint::platform::Key::Escape);
+        assert!(!about.window().is_visible(), "{action}: Escape closes it");
         spin(Duration::from_millis(700));
         assert_eq!(
             client.frame(),
@@ -522,4 +540,69 @@ fn the_command_palette_is_not_fitted_as_an_ordinary_dialog() {
     }
     assert!(windows::fitted_at(shown.win()).is_some());
     shown.cancel();
+}
+
+/// Escape cancels the dialogs with frames of their own that end through the
+/// helper, as the reference's `keyPressEvent`: closed, their frame not kept
+/// (as the recording's escaped `DialogEdit`).
+#[test]
+fn escape_cancels_a_named_dialog_and_keeps_nothing() {
+    let _windows = headless::init();
+    for (key, open, _) in crate::frame_geometry::windows()
+        .into_iter()
+        .filter(|(key, _, _)| ["manage_urls_dialog", "manage_notes_dialog"].contains(key))
+    {
+        let client = crate::frame_geometry::Client::new();
+        let frame = |c: &crate::frame_geometry::Client| {
+            c.store
+                .read(hydrus_store::settings::get::<WindowSettings>)
+                .unwrap()
+                .frame(key)
+                .unwrap()
+                .clone()
+        };
+        let before = frame(&client);
+        let shown = open(&client);
+        let window = shown.win();
+        assert!(window.is_visible(), "{key}: opened");
+        window.set_size(slint::LogicalSize::new(612.0, 478.0));
+        crate::common::widgets::key(window, slint::platform::Key::Escape);
+        assert!(!window.is_visible(), "{key}: Escape closes it");
+        assert_eq!(frame(&client), before, "{key}: nothing kept");
+    }
+    // with a note changed, Escape asks first (`UserIsOKToCancel`) and the
+    // dialog stays open; Escape again dismisses the question; yes closes it
+    let (_, open, _) = crate::frame_geometry::windows()
+        .into_iter()
+        .find(|(key, _, _)| *key == "manage_notes_dialog")
+        .unwrap();
+    let client = crate::frame_geometry::Client::new();
+    drop(open(&client));
+    let notes = client
+        .bound
+        .manage_notes
+        .borrow()
+        .as_ref()
+        .map(ComponentHandle::clone_strong)
+        .expect("manage notes opens");
+    if notes.get_asking() {
+        // (a file with no notes asks for the first note's name)
+        notes.set_asking_text("a note".into());
+        notes.invoke_chosen(0);
+    }
+    notes.set_text("changed".into());
+    notes.invoke_text_edited();
+    let window = notes.window();
+    crate::common::widgets::key(window, slint::platform::Key::Escape);
+    assert!(window.is_visible(), "a changed dialog stays open");
+    assert!(notes.get_asking(), "and asks");
+    assert_eq!(notes.get_asking_title(), "Are you sure?");
+    crate::common::widgets::key(window, slint::platform::Key::Escape);
+    assert!(
+        !notes.get_asking() && window.is_visible(),
+        "the question dismissed"
+    );
+    crate::common::widgets::key(window, slint::platform::Key::Escape);
+    notes.invoke_chosen(0);
+    assert!(!window.is_visible(), "yes: closed");
 }
