@@ -27,6 +27,25 @@ pub struct Slots {
     pub exchange: crate::downloader_interchange_window::Slots,
 }
 impl Slots {
+    /// Hide and forget every window held, as a binding's last clone goes.
+    pub(crate) fn retire(&self) {
+        let Self {
+            worker_running: _,
+            defaults,
+            editor,
+            command,
+            question,
+            strings,
+            exchange,
+        } = self;
+        use crate::bound_teardown::forget;
+        forget(defaults);
+        forget(editor);
+        forget(command);
+        forget(question);
+        strings.retire();
+        crate::bound_teardown::retire_exchange(exchange);
+    }
     /// Whether a descendant currently blocks its parent's acceptance.
     pub fn has_open(&self) -> bool {
         self.defaults.borrow().is_some()

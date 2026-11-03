@@ -4,10 +4,12 @@
 //! the client's exit.)
 
 use std::cell::RefCell;
+use std::sync::Arc;
 
 use slint::{ComponentHandle as _, Model as _};
 
 use hydrus_gui::{Bound, MainWindow, Pages, SearchPage, bind, headless};
+use hydrus_store::Store;
 
 thread_local! {
     static STASH: RefCell<Option<Bound>> = const { RefCell::new(None) };
@@ -81,16 +83,18 @@ fn a_binding_dropped_as_its_thread_ends_does_not_abort() {
     assert!(ended.is_ok());
 }
 
+type Alive = Box<dyn Fn() -> bool>;
+
 /// Remember how to tell whether `w` is still alive.
-fn track<T: slint::ComponentHandle + 'static>(alive: &mut Vec<Box<dyn Fn() -> bool>>, w: &T) {
+fn track<T: slint::ComponentHandle + 'static>(alive: &mut Vec<Alive>, w: &T) {
     let weak = w.as_weak();
     alive.push(Box::new(move || weak.upgrade().is_some()));
 }
 
 /// The children of a dialog (and theirs) left open when the last binding
 /// goes are freed too: the services editor and its service editor, the
-/// network session browser and its editor, the downloader definitions list
-/// with a definition editor and the string converter opened from it.
+/// network session browser and its editor, and the downloader definitions
+/// list with a definition editor.
 #[test]
 fn the_last_binding_frees_the_nested_dialogs_left_open() {
     use hydrus_gui::downloader_definitions_window as definitions;
@@ -111,14 +115,19 @@ fn the_last_binding_frees_the_nested_dialogs_left_open() {
     track(&mut alive, &edit);
     drop((browser, edit));
 
-    // downloader definitions: the list and, if the store has a class, its
-    // editor and a string converter below that
+    // downloader definitions: the list and a definition editor
     let list = definitions::open(&store, &bound.downloader_definitions, true).unwrap();
     track(&mut alive, &list);
     list.invoke_action("add".into());
-    if let Some(edit) = bound.downloader_definitions.class_edit.borrow().as_ref() {
-        track(&mut alive, edit);
-    }
+    track(
+        &mut alive,
+        bound
+            .downloader_definitions
+            .class_edit
+            .borrow()
+            .as_ref()
+            .unwrap(),
+    );
     drop(list);
 
     // the services editor
@@ -140,5 +149,67 @@ fn the_last_binding_frees_the_nested_dialogs_left_open() {
     drop(bound);
     for (n, a) in alive.iter().enumerate() {
         assert!(!a(), "nested dialog {n} is freed");
+    }
+}
+
+/// The recursive slot types, each opened from the top and one child down:
+/// the parser editors (list, page, a subsidiary page, its content parser,
+/// and a formula below that) and the search OR editor.
+#[test]
+fn the_last_binding_frees_the_recursive_dialogs_left_open() {
+    use hydrus_gui::parser_editors_window as parsers;
+
+    type Case = (
+        &'static str,
+        fn(&MainWindow, &Bound, &Arc<Store>) -> Vec<Alive>,
+    );
+    let cases: [Case; 2] = [
+        ("parser editors", |_, bound, store| {
+            let mut alive = Vec::new();
+            let list = parsers::open(store, &bound.parser_editors, false).unwrap();
+            list.invoke_row_clicked(0, false, false);
+            list.invoke_action("edit".into());
+            let slots = &bound.parser_editors;
+            let page = crate::parser_editors::child(&slots.page);
+            page.invoke_action("add-subsidiary".into());
+            let owned = (**slots.child.borrow().as_ref().unwrap()).clone();
+            let subsidiary = crate::parser_editors::child(&owned.page);
+            subsidiary.invoke_action("add-content".into());
+            let content = crate::parser_editors::child(&owned.content);
+            content.invoke_action("formula".into());
+            let formula = owned
+                .formula
+                .formula
+                .borrow()
+                .as_ref()
+                .unwrap()
+                .clone_strong();
+            track(&mut alive, &list);
+            track(&mut alive, &page);
+            track(&mut alive, &subsidiary);
+            track(&mut alive, &content);
+            track(&mut alive, &formula);
+            alive
+        }),
+        ("search OR", |ui, bound, _| {
+            let mut alive = Vec::new();
+            ui.invoke_search_or_action(3);
+            assert!(ui.get_search_or_open());
+            track(&mut alive, bound.search_or.borrow().as_ref().unwrap());
+            alive
+        }),
+    ];
+    for (name, open) in cases {
+        let (_dir, store, _) = crate::parser_editors::setup();
+        let _windows = headless::init();
+        let ui = MainWindow::new().unwrap();
+        ui.show().unwrap();
+        let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+        let alive = open(&ui, &bound, &store);
+        assert!(alive.iter().all(|a| a()), "{name}: opened");
+        drop(bound);
+        for (n, a) in alive.iter().enumerate() {
+            assert!(!a(), "{name}: dialog {n} is freed");
+        }
     }
 }

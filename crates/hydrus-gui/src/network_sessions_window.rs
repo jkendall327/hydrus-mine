@@ -32,22 +32,27 @@ pub struct SlotsOwner {
     imports: RefCell<Vec<std::rc::Weak<RefCell<Option<CookieImportWindow>>>>>,
 }
 impl SlotsOwner {
-    /// Hide and forget the child editors still open.
-    pub(crate) fn retire_children(&self) {
-        let edits: Vec<_> = self.edits.borrow_mut().drain(..).collect();
+    /// Hide and forget every window the owner holds, the child editors
+    /// first (a child left shown outlives its parent).
+    pub(crate) fn retire(&self) {
+        let Self {
+            browser,
+            cookies,
+            headers,
+            edits,
+            imports,
+        } = self;
+        let edits: Vec<_> = edits.borrow_mut().drain(..).collect();
         for slot in edits.iter().filter_map(std::rc::Weak::upgrade) {
-            let window = slot.borrow_mut().take();
-            if let Some(window) = window {
-                let _ = window.hide();
-            }
+            crate::bound_teardown::forget(&slot);
         }
-        let imports: Vec<_> = self.imports.borrow_mut().drain(..).collect();
+        let imports: Vec<_> = imports.borrow_mut().drain(..).collect();
         for slot in imports.iter().filter_map(std::rc::Weak::upgrade) {
-            let window = slot.borrow_mut().take();
-            if let Some(window) = window {
-                let _ = window.hide();
-            }
+            crate::bound_teardown::forget(&slot);
         }
+        crate::bound_teardown::forget(browser);
+        crate::bound_teardown::forget(cookies);
+        crate::bound_teardown::forget(headers);
     }
 }
 impl std::ops::Deref for Slots {
