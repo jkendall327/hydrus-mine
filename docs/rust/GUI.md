@@ -5683,7 +5683,7 @@ The ordinary dialogs that end through the shared dialog helper (so far
 reference's do: when applied, never when cancelled or closed by their window;
 and the ordinary frames on it (so far help > about) keep it a moment after
 each move or resize, nothing more as they close (`tests/gui/regular_dialog.rs`,
-replaying `regular_dialog.json`). Every window opened by `regular_dialog` is
+replaying `regular_dialog.json`). Those windows are
 fitted to the screens once shown: a remembered place, or a default place by a
 main window that is itself off the screens, is rescued to where it can be
 seen, the user told by a popup message (not for a place by the mouse), and a

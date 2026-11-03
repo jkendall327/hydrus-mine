@@ -14,8 +14,18 @@
 //! closes (recorded in `oracle/fixtures/regular_dialog.json`).
 //!
 //! Where it opens is decided as it is made (`app_title::new` places every
-//! window by `regular_dialog`, fitted to the screens once shown), so the
-//! helper only ends it.
+//! window by `regular_dialog`); the helper also has it fitted to the screens
+//! once shown (`windows::fit_after_show`), as only the windows the reference
+//! opens by that frame are.
+//!
+//! The helper owns the window's close request (`on_close_requested`): a
+//! window that ends through it must not set its own afterwards, which would
+//! silently replace the helper's (Slint keeps one); what it needs done as it
+//! closes goes in [`Dialog::on_closed`], and a reason to stay open in
+//! [`Dialog::refuse_cancel`].
+//!
+//! Named dialogs (a frame key of their own) still keep their frames by
+//! `windows::DialogFrame`, until they too end through the helper.
 
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
@@ -36,6 +46,8 @@ struct Inner<C: ComponentHandle + 'static> {
     open: Cell<bool>,
     /// What runs once it has closed, however it was ended.
     closed: RefCell<Vec<Box<dyn FnOnce()>>>,
+    /// Whether it may be cancelled or closed now (`UserIsOKToCancel`).
+    may_cancel: RefCell<Option<Box<dyn Fn() -> bool>>>,
     /// A frame's keeping of its geometry as it moves.
     autosave: RefCell<Option<Rc<slint::Timer>>>,
 }
@@ -61,12 +73,6 @@ impl<C: ComponentHandle + 'static> Dialog<C> {
         Self::make(component, "regular_dialog", Kind::Dialog)
     }
 
-    /// A dialog the reference opens by a frame of its own.
-    #[allow(dead_code)]
-    pub(crate) fn named(component: &C, name: &'static str) -> Self {
-        Self::make(component, name, Kind::Dialog)
-    }
-
     /// An ordinary frame (`FrameThatTakesScrollablePanel`): kept by
     /// `regular_dialog` a moment after each move and resize while open.
     /// Its window's own close closes it.
@@ -90,6 +96,7 @@ impl<C: ComponentHandle + 'static> Dialog<C> {
                 kind,
                 open: Cell::new(true),
                 closed: RefCell::default(),
+                may_cancel: RefCell::default(),
                 autosave: RefCell::default(),
             }),
         };
@@ -98,16 +105,32 @@ impl<C: ComponentHandle + 'static> Dialog<C> {
         component.window().on_close_requested({
             let dialog = dialog.clone();
             move || {
-                dialog.end();
-                slint::CloseRequestResponse::HideWindow
+                if dialog.cancel() {
+                    slint::CloseRequestResponse::HideWindow
+                } else {
+                    slint::CloseRequestResponse::KeepWindowShown
+                }
             }
         });
+        if let Some(store) = crate::windows::store() {
+            crate::windows::fit_after_show(component, &store, name);
+        }
         dialog
     }
 
     /// Run `then` once it has closed, however it was ended.
     pub(crate) fn on_closed(&self, then: impl FnOnce() + 'static) {
         self.inner.closed.borrow_mut().push(Box::new(then));
+    }
+
+    /// Ask `may` before it is cancelled or closed (`UserIsOKToCancel`): if
+    /// it says no, it stays open (the dialog says why itself, as by asking
+    /// whether to discard its changes).
+    // (no migrated dialog asks yet; the next ones to move onto the helper
+    // do)
+    #[cfg_attr(not(test), allow(dead_code))]
+    pub(crate) fn refuse_cancel(&self, may: impl Fn() -> bool + 'static) {
+        *self.inner.may_cancel.borrow_mut() = Some(Box::new(may));
     }
 
     /// Whether it has not been ended yet.
@@ -142,14 +165,29 @@ impl<C: ComponentHandle + 'static> Dialog<C> {
         self.apply(|| true, || {});
     }
 
-    /// Its cancel, or its window's own close: closed, nothing kept.
-    pub(crate) fn cancel(&self) {
-        self.end();
+    /// Its cancel, or its window's own close: closed, nothing kept, unless
+    /// [`Dialog::refuse_cancel`] says it stays. Whether it closed (or was
+    /// already closed).
+    pub(crate) fn cancel(&self) -> bool {
+        if !self.is_open() {
+            return true;
+        }
+        let may = self
+            .inner
+            .may_cancel
+            .borrow()
+            .as_ref()
+            .is_none_or(|may| may());
+        if may {
+            self.end();
+        }
+        may
     }
 
-    /// A frame's close button: closed (what it kept as it moved stays).
-    pub(crate) fn close(&self) {
-        self.end();
+    /// A frame's close button: closed (what it kept as it moved stays),
+    /// unless [`Dialog::refuse_cancel`] says it stays.
+    pub(crate) fn close(&self) -> bool {
+        self.cancel()
     }
 
     fn end(&self) {
@@ -166,5 +204,44 @@ impl<C: ComponentHandle + 'static> Dialog<C> {
         for then in closed {
             then();
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// A dialog that may not be cancelled yet (`UserIsOKToCancel` saying
+    /// no) stays open through its cancel and its window's close, and closes
+    /// once it may.
+    #[test]
+    fn a_refused_cancel_or_close_leaves_the_dialog_open() {
+        let _windows = crate::headless::init();
+        let window = crate::AboutWindow::new().unwrap();
+        window.show().unwrap();
+        let dialog = Dialog::new(&window);
+        let may = Rc::new(Cell::new(false));
+        dialog.refuse_cancel({
+            let may = may.clone();
+            move || may.get()
+        });
+        let closed = Rc::new(Cell::new(0));
+        dialog.on_closed({
+            let closed = closed.clone();
+            move || closed.set(closed.get() + 1)
+        });
+        assert!(!dialog.cancel());
+        window
+            .window()
+            .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+        assert!(window.window().is_visible() && dialog.is_open());
+        assert_eq!(closed.get(), 0);
+        may.set(true);
+        window
+            .window()
+            .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+        assert!(!window.window().is_visible() && !dialog.is_open());
+        assert!(dialog.cancel(), "already closed");
+        assert_eq!(closed.get(), 1, "its closing ran once");
     }
 }

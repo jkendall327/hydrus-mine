@@ -67,7 +67,9 @@ pub(crate) fn open(
             }
         }
     });
-    window.on_cancel(move || dialog.cancel());
+    window.on_cancel(move || {
+        dialog.cancel();
+    });
     if window.show().is_ok() {
         EDITOR.with(|slot| *slot.borrow_mut() = Some(window));
     }

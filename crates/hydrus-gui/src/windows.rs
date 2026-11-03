@@ -36,8 +36,9 @@ thread_local! {
     /// by window, kept as it is placed again.
     static OPENINGS: std::cell::RefCell<Vec<(usize, std::rc::Weak<WantedCell>)>> =
         const { std::cell::RefCell::new(Vec::new()) };
-    /// Where each window was put as it was fitted to the screens, by window.
-    static FITTED: std::cell::RefCell<Vec<(usize, (i32, i32))>> =
+    /// Where each window was put as it was fitted to the screens, by window,
+    /// while the window lives.
+    static FITTED: std::cell::RefCell<Vec<Fitted>> =
         const { std::cell::RefCell::new(Vec::new()) };
     /// The screens, where a test says what they are.
     static SCREENS: std::cell::RefCell<Option<Vec<Screen>>> =
@@ -57,6 +58,10 @@ enum Pending {
     /// To be shown on the screens, and fitted to them.
     Fit,
 }
+
+/// Where a window was fitted to: the window, whether it still lives, and
+/// the place.
+type Fitted = (usize, Box<dyn Fn() -> bool>, (i32, i32));
 
 /// Where a window waiting to be fitted wants to open, as it is placed.
 type WantedCell = std::cell::Cell<Option<Wanted>>;
@@ -90,8 +95,8 @@ pub fn fitted_at(window: &slint::Window) -> Option<(i32, i32)> {
         fitted
             .borrow()
             .iter()
-            .find(|(at, _)| *at == key)
-            .map(|(_, position)| *position)
+            .find(|(at, alive, _)| *at == key && alive())
+            .map(|(_, _, position)| *position)
     })
 }
 
@@ -107,12 +112,13 @@ pub(crate) fn register_main(window: &crate::MainWindow, store: &std::sync::Arc<S
 /// dialogs (`regular_dialog`: by default at the main window's top-left,
 /// its own size), as every dialog without a frame of its own opens. A
 /// window with a frame of its own is placed again by it as it opens.
-/// Once it is shown on the screens, it is fitted to them (as
-/// [`fit_after_show`]).
+/// The windows the reference itself opens by `regular_dialog` are also
+/// fitted to the screens once shown, by the dialog helper (`Dialog`, as
+/// [`fit_after_show`]); a window that places itself (the command palette)
+/// is not.
 pub(crate) fn place_regular<C: slint::ComponentHandle + 'static>(component: &C) {
     if let Some(store) = store() {
         place_frame_as(component, &store, "regular_dialog", false);
-        fit_after_show(component, &store, "regular_dialog");
     }
 }
 
@@ -437,7 +443,11 @@ pub(crate) fn fit_after_show<C: slint::ComponentHandle + 'static>(
         openings.retain(|(at, kept)| *at != key && kept.strong_count() > 0);
         openings.push((key, std::rc::Rc::downgrade(&wanted)));
     });
-    FITTED.with(|fitted| fitted.borrow_mut().retain(|(at, _)| *at != key));
+    FITTED.with(|fitted| {
+        fitted
+            .borrow_mut()
+            .retain(|(at, alive, _)| *at != key && alive());
+    });
     if let Some(frame) = settings(store).frame(name).cloned() {
         let target = placement(window, &frame, false);
         note_opening(window, &frame, false, target.size);
@@ -500,16 +510,25 @@ pub(crate) fn fit_after_show<C: slint::ComponentHandle + 'static>(
                     return;
                 };
                 let key = window_key(window);
+                let alive = {
+                    let weak = weak.clone();
+                    Box::new(move || weak.upgrade().is_some())
+                };
                 FITTED.with(|fitted| {
                     let mut fitted = fitted.borrow_mut();
-                    fitted.retain(|(at, _)| *at != key);
-                    fitted.push((key, position));
+                    fitted.retain(|(at, alive, _)| *at != key && alive());
+                    fitted.push((key, alive, position));
                 });
-                #[allow(clippy::cast_precision_loss)]
-                window.set_position(slint::LogicalPosition::new(
-                    position.0 as f32,
-                    position.1 as f32,
-                ));
+                // (a maximised or fullscreen window was placed before it was
+                // maximised, as the reference moves it and then shows it
+                // maximised: moving it now can take that back on X11)
+                if !window.is_maximized() && !window.is_fullscreen() {
+                    #[allow(clippy::cast_precision_loss)]
+                    window.set_position(slint::LogicalPosition::new(
+                        position.0 as f32,
+                        position.1 as f32,
+                    ));
+                }
                 if let Some(message) = message {
                     tell(&store, message);
                 }

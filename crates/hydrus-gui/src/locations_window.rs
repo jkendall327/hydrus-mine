@@ -165,7 +165,9 @@ pub(crate) fn open_with_flags(
             chosen(chosen_location);
         }
     });
-    window.on_cancel(move || dialog.cancel());
+    window.on_cancel(move || {
+        dialog.cancel();
+    });
     window.show().map_err(|e| e.to_string())?;
     LAST.with(|last| *last.borrow_mut() = Some(window.as_weak()));
     *slot.borrow_mut() = Some(window);

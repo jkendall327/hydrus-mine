@@ -2782,14 +2782,24 @@ when applied) and help > about
 (a frame: kept a moment after a move or resize). The rest don't keep it yet;
 it matters only once the frame is set to remember a size or place in
 Options > gui > frame locations (by default it remembers neither). Escape
-does not cancel these dialogs, and no migrated dialog yet has an apply its
-panel can refuse (the helper leaves such a dialog open and keeps nothing, as
-the recording's vetoed apply does, but no test drives one). Nor are the
+does not cancel these dialogs yet. No migrated dialog yet has an apply or a
+cancel its panel can refuse (the helper leaves such a dialog open and keeps
+nothing, as the recording's vetoed apply does; a unit test drives a refused
+cancel, no window does). Named dialogs keep their frames by their own
+mechanism (`windows::DialogFrame`) until they too end through the helper. Nor are the
 reference's `deeply_nested_dialog` and `quick_*` frames told apart from it.
-Every `regular_dialog` window is fitted to the screens once shown
-(`GetSafePosition` on its wanted place, then the top-left slide), since winit
-knows the screens only then: for an instant it may show at its unfitted
-place. The rescue message's points are written `(x, y)` rather than as Qt's
+The windows that end through the helper are fitted to the screens once
+shown (`GetSafePosition` on their wanted place, then the top-left slide),
+since winit knows the screens only then: for an instant one may show at its
+unfitted place. A window that places itself (the command palette) is not
+fitted. The slide keeps a window inside its display's whole geometry, where
+the reference keeps it inside the display's work area (`availableGeometry`,
+less panels and docks), which winit doesn't give. A maximised or fullscreen
+dialog isn't moved by its fit (the reference moves it before maximising; a
+move after can take the maximise back on X11), so its restored place is the
+unfitted one. A window kept hidden for over a minute after it is made is
+never fitted. The recording has one screen, so fitting across several
+screens is worked from the reference's code, not recorded. The rescue message's points are written `(x, y)` rather than as Qt's
 `QPoint` reprs. A window's place can't be seen in the headless tests (the
 software window has none), so places are proved through the arithmetic
 (`tests/model/regular_dialog.rs` replays every recorded opening, the

@@ -158,7 +158,9 @@ pub fn open(store: &Store) -> Result<AboutWindow, slint::PlatformError> {
     window.on_open_site(move || crate::launch(&site));
     // (the reference's about window is an ordinary frame)
     let frame = crate::dialog::Dialog::frame(&window);
-    window.on_close_clicked(move || frame.close());
+    window.on_close_clicked(move || {
+        frame.close();
+    });
     window.show()?;
     Ok(window)
 }

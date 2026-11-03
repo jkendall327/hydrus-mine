@@ -7,7 +7,9 @@ of its own opens and keeps `regular_dialog`: `NewDialog._TryEndModal` saves it
 dialog is accepted (apply, its close button) and its panel is valid, before
 the panel commits, and never when it is cancelled (cancel, escape, the
 window's own close). A `FrameThatTakesScrollablePanel` on the same frame saves
-as it closes, however it is closed.
+a moment after each move or resize while it is open (`FrameThatResizes`'
+timers), and nothing as it closes: the save it starts as it closes finds the
+window already hidden (`SaveTLWSizeAndPosition` keeps nothing then).
 
 Two parts, in the running client on the `basic` fixture:
 

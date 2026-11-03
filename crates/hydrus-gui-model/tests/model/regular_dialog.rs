@@ -117,8 +117,10 @@ fn stale_and_off_screen_places_are_fitted_to_the_screens_as_the_reference_fits_t
     }
 }
 
+// (worked from `SetInitialTLWSizeAndPosition` and `GetSafePosition`: the
+// recording has no mouse places)
 #[test]
-fn the_user_is_not_told_of_a_rescue_from_the_mouse_or_with_no_main_window() {
+fn a_place_by_the_mouse_or_with_no_main_window_is_fitted_as_the_reference_s_code_has_it() {
     let screens = [Screen {
         geometry: window_rescue::Rect {
             x: 0,
@@ -139,17 +141,26 @@ fn the_user_is_not_told_of_a_rescue_from_the_mouse_or_with_no_main_window() {
         fullscreen: false,
     };
     let rescue = WindowRescueSettings::default();
-    // the mouse off every screen: rescued, said nothing of
+    // by the mouse, on a screen but the window off it: rescued, said
+    // nothing of
+    let around = Surroundings {
+        mouse: Some((790, 790)),
+        ..Surroundings::default()
+    };
+    let wanted = opening(&frame("mouse"), (2000, 2000), &around).unwrap();
+    assert_eq!(wanted.desired, (790 - 999, 790 - 999));
+    assert!(!wanted.report);
+    let (_, told) = fitted(wanted, (2000, 2000), &rescue, &screens, "regular_dialog").unwrap();
+    assert_eq!(told, None);
+    // the mouse off every screen (`GetMouseScreen` none): the padding place
     let around = Surroundings {
         mouse: Some((5000, 5000)),
         ..Surroundings::default()
     };
     let wanted = opening(&frame("mouse"), (200, 100), &around).unwrap();
-    assert_eq!(wanted.desired, (5000 - 99, 5000 - 49));
-    assert!(!wanted.report);
     assert_eq!(
         fitted(wanted, (200, 100), &rescue, &screens, "regular_dialog"),
-        Some(((40, 40), None))
+        Some(((24, 24), None))
     );
     // no main window: the display's top-left, said nothing of
     let around = Surroundings {

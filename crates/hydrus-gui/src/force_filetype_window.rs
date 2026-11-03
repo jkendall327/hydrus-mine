@@ -90,20 +90,20 @@ pub(crate) fn open(
                 })
                 .collect();
             let request = hydrus_store::metadata_jobs::Request::Force { files, mime };
-            // (a job that cannot start leaves the dialog open, kept nothing)
+            // (valid: a filetype was chosen, above)
             ended.apply(
-                || match jobs.start(store.clone(), request, applied.clone()) {
-                    Ok(()) => true,
-                    Err(error) => {
+                || true,
+                || {
+                    if let Err(error) = jobs.start(store.clone(), request, applied.clone()) {
                         eprintln!("{error}");
-                        false
                     }
                 },
-                || {},
             );
         }
     });
-    window.on_cancel(move || ended.cancel());
+    window.on_cancel(move || {
+        ended.cancel();
+    });
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }

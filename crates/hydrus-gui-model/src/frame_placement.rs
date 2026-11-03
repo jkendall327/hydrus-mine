@@ -153,6 +153,10 @@ pub struct Opening {
     /// (`we_care_about_off_screen_messages`): not for a place by the mouse,
     /// nor a default place with no main window to be relative to.
     pub report: bool,
+    /// For a place by the mouse, where the mouse is: off every screen
+    /// (`GetMouseScreen` none), the window keeps the padding place instead,
+    /// and the user is told of its rescue as for any other.
+    pub mouse: Option<(i32, i32)>,
 }
 
 /// Where a window of `size` wants to open by its frame, before it is fitted
@@ -164,6 +168,7 @@ pub fn opening(frame: &FrameLocation, size: (i32, i32), around: &Surroundings) -
         desired: padding,
         slide: false,
         report: true,
+        mouse: None,
     };
     if let Some(last) = frame.last_position.filter(|_| frame.remember_position) {
         opening.desired = last;
@@ -211,6 +216,7 @@ pub fn opening(frame: &FrameLocation, size: (i32, i32), around: &Surroundings) -
                 let (mx, my) = me.center();
                 opening.desired = (x - mx, y - my);
                 opening.report = false;
+                opening.mouse = Some((x, y));
             }
         }
         _ => {}
@@ -230,6 +236,15 @@ pub fn fitted(
     screens: &[crate::window_rescue::Screen],
     frame_key: &str,
 ) -> Option<((i32, i32), Option<String>)> {
+    let mut opening = opening;
+    if let Some((x, y)) = opening.mouse
+        && !screens
+            .iter()
+            .any(|screen| screen.geometry.contains((i64::from(x), i64::from(y))))
+    {
+        opening.desired = (CHILD_POSITION_PADDING, CHILD_POSITION_PADDING);
+        opening.report = true;
+    }
     let desired = (i64::from(opening.desired.0), i64::from(opening.desired.1));
     let safe = crate::window_rescue::safe_position(
         desired,
@@ -241,10 +256,21 @@ pub fn fitted(
     let message = (opening.report && safe != desired)
         .then(|| rescue_message(frame_key, opening.desired, position));
     if opening.slide {
-        // (the display the window is on: the one its top-left is on)
+        // (the display the window is on, `tlw.screen()`: the one its centre
+        // is on; its whole geometry, where the reference takes its work
+        // area, which winit doesn't give)
+        let centre = Rect {
+            x: position.0,
+            y: position.1,
+            width: size.0,
+            height: size.1,
+        }
+        .center();
+        let centre = (i64::from(centre.0), i64::from(centre.1));
         let display = screens
             .iter()
-            .find(|screen| screen.geometry.contains(safe))
+            .find(|screen| screen.geometry.contains(centre))
+            .or_else(|| screens.iter().find(|screen| screen.geometry.contains(safe)))
             .or(screens.first())
             .and_then(|screen| {
                 Some(Rect {

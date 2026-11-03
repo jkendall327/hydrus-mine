@@ -461,3 +461,65 @@ fn a_remembered_place_off_the_screens_is_fitted_back_onto_them_as_the_dialog_ope
         shown.cancel();
     }
 }
+
+/// The command palette places itself, centred on the main window (the
+/// reference's is a `QLocatorWidget`, not a `regular_dialog` window): it is
+/// not fitted to the screens afterward, which would move it to the ordinary
+/// dialogs' top-left.
+#[test]
+fn the_command_palette_is_not_fitted_as_an_ordinary_dialog() {
+    use slint::platform::{Key, PointerEventButton, WindowEvent};
+    let recorded = hydrus_testkit::fixture_json("regular_dialog.json");
+    let windows_open = headless::init();
+    let client = client();
+    windows::set_screens(Some(screens(&recorded)));
+    let _screens = Screens;
+    let _image = headless::render(&windows_open.get(0).unwrap(), 1000, 700);
+    // (the search input given the keyboard by a click, then ctrl+p)
+    let position = slint::LogicalPosition::new(
+        client.ui.get_autocomplete_anchor_x() + 24.0,
+        client.ui.get_autocomplete_anchor_y() - 12.0,
+    );
+    let window = client.ui.window();
+    window.dispatch_event(WindowEvent::PointerMoved { position });
+    window.dispatch_event(WindowEvent::PointerPressed {
+        position,
+        button: PointerEventButton::Left,
+    });
+    window.dispatch_event(WindowEvent::PointerReleased {
+        position,
+        button: PointerEventButton::Left,
+    });
+    window.dispatch_event(WindowEvent::KeyPressed {
+        text: Key::Control.into(),
+    });
+    window.dispatch_event(WindowEvent::KeyPressed { text: "p".into() });
+    window.dispatch_event(WindowEvent::KeyReleased { text: "p".into() });
+    window.dispatch_event(WindowEvent::KeyReleased {
+        text: Key::Control.into(),
+    });
+    let palette = client
+        .bound
+        .command_palette
+        .borrow()
+        .as_ref()
+        .map(ComponentHandle::clone_strong)
+        .expect("ctrl+p opens the palette");
+    assert!(palette.window().is_visible());
+    spin(Duration::from_millis(400));
+    assert_eq!(
+        windows::fitted_at(palette.window()),
+        None,
+        "left where it put itself"
+    );
+    // while an ordinary dialog opened the same way is fitted
+    let shown = (ordinary()[0].open)(&client);
+    // (laid out, as a native window is as it is shown)
+    shown.win().set_size(slint::LogicalSize::new(300.0, 200.0));
+    let started = Instant::now();
+    while windows::fitted_at(shown.win()).is_none() && started.elapsed() < Duration::from_secs(3) {
+        spin(Duration::from_millis(20));
+    }
+    assert!(windows::fitted_at(shown.win()).is_some());
+    shown.cancel();
+}
