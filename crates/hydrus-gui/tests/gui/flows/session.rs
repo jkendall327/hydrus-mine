@@ -19,12 +19,27 @@ use crate::common::widgets;
 
 /// What this flow shows that the reference does not, each explained in
 /// `docs/rust/DIFFERENCES.md`.
-const KNOWN: &[Known] = &[];
+const KNOWN: &[Known] = &[
+    // hydrus-rs opens on the page it showed last; the reference on the first
+    Known {
+        path: "(restored)/shown",
+        why: "The client and the daemon: the client opens on the page it showed last",
+    },
+    // hydrus-rs keeps a page's selection with the session; the reference
+    // opens with nothing selected
+    Known {
+        path: "(restored)/pages/1/selected",
+        why: "The client and the daemon: a page's selected files come back",
+    },
+];
 
 const THREAD: u32 = 100;
 
+/// The post the URL page downloads (none of the thread's files).
+const POST: u32 = 4;
+
 /// A page as the recorder describes it.
-fn describe(bound: &Bound, state: &State, page: &Page) -> Json {
+fn describe(bound: &Bound, state: &State<'_>, page: &Page) -> Json {
     match &page.content {
         PageContent::Pages(children) => json!({
             "name": page.name,
@@ -90,7 +105,7 @@ fn describe(bound: &Bound, state: &State, page: &Page) -> Json {
 }
 
 /// The tree, the shown page's names from the top, and the site's requests.
-fn tree(step: &str, bound: &Bound, state: &State, site: &Site) -> Json {
+fn tree(step: &str, bound: &Bound, state: &State<'_>, site: &Site) -> Json {
     (bound.sync)();
     let session = bound.pages.borrow().session().clone();
     let pages: Vec<Json> = session
@@ -192,7 +207,7 @@ fn pages_left_open_come_back_as_the_reference_brings_them_back() {
         // a page of pages: a URL downloader and a watcher in it
         (bound.open_page)(&NewPage::Pages);
         (bound.open_page)(&NewPage::Urls);
-        ui.invoke_url_entered(format!("{}/post/1", site.base).into());
+        ui.invoke_url_entered(format!("{}/post/{POST}", site.base).into());
         (bound.open_page)(&NewPage::Watcher);
         ui.invoke_watcher_urls(format!("{}/thread/{THREAD}", site.base).into());
         site.wait_for_a_request(20, "the downloader pages");

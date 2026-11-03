@@ -7,7 +7,7 @@ and their downloaders installed, two runs of the client on one database:
 1. "build" (the first run): a search page for `safe` with two of its files
    selected (the first two it shows); a page of pages (with the blank
    search page it starts with) holding a URL downloader page that has
-   downloaded a post, and a watcher page that has checked a thread (three
+   downloaded a post (not one of the thread's files), and a watcher page that has checked a thread (three
    files); the watcher page left shown. Wait until all is idle, then the
    session saved as the client saves it on exit (`SaveAndHide`: "last
    session" and "exit session").
@@ -42,10 +42,14 @@ SITE_PORT = 46016
 
 THREAD = 100
 
+POST = 4
+
 
 def phases():
 
-    booru = flows.booru_phase( { 'blue_eyes' : [ 1 ] } )
+    # (post 4: a file the thread does not have, so neither importer finds
+    # the other's file already there, whichever runs first)
+    booru = flows.booru_phase( { 'blue_eyes' : [ POST ] } )
     thread = flows.thread_phase( { THREAD : ( 'Blue sky thread', [ ( 1, 'anon' ), ( 2, 'sky' ), ( 3, 'anon' ) ] ) } )
 
     return [ { 'pages' : { **booru[ 'pages' ], **thread[ 'pages' ] }, 'files' : { **booru[ 'files' ], **thread[ 'files' ] } } ]
@@ -253,7 +257,7 @@ def build( session, site ):
 
         sidebar = urls.GetSidebar()
 
-        sidebar._url_input.SetValue( site.base + '/post/1' )
+        sidebar._url_input.SetValue( site.base + f'/post/{POST}' )
         sidebar._url_input.EnterText()
 
 
@@ -341,6 +345,36 @@ def restore( session, site ):
     return { 'step' : { 'step' : 'restored', **tree, 'hits' : site.take_hits() } }
 
 
+def avoid_shutdown_deadlock( controller ):
+    """The reference's exit can deadlock: a thumbnail cache's loop, ending,
+    clears itself and asks the Qt thread for `image.svg`'s size
+    (`GetSVGResolution`) while holding its lock, as the Qt thread, closing
+    the pages, waits on that lock. The size is fetched once here, on the Qt
+    thread, and kept, so the cache never waits on Qt."""
+
+    from hydrus.client import ClientSVGHandling
+    from hydrus.core import HydrusStaticDir
+
+    original = ClientSVGHandling.GetSVGResolution
+    known = {}
+
+    def remembered( path ):
+
+        if path not in known:
+
+            known[ path ] = original( path )
+
+
+        return known[ path ]
+
+
+    path = HydrusStaticDir.GetStaticPath( 'image.svg' )
+
+    known[ path ] = original( path )
+
+    ClientSVGHandling.GetSVGResolution = remembered
+
+
 def child( which, db_dir, out ):
 
     import hydrus_driver
@@ -349,14 +383,61 @@ def child( which, db_dir, out ):
 
         hook = build if which == 'build' else restore
 
-        result = hydrus_driver.run_client( db_dir, lambda session: hook( session, site ), network = True )
+        def run( session ):
+
+            avoid_shutdown_deadlock( session.controller )
+
+            result = hook( session, site )
+
+            result[ 'site' ] = site.describe()
+
+            # (written before the client closes: the reference's shutdown can
+            # deadlock, a thumbnail cache thread waiting on the Qt thread
+            # while that waits on the cache, and is then killed; what is
+            # recorded, the session included, is in the database by now)
+            with open( out, 'w' ) as f:
+
+                json.dump( result, f )
 
 
-    result[ 'site' ] = site.describe()
+        hydrus_driver.run_client( db_dir, run, network = True )
 
-    with open( out, 'w' ) as f:
 
-        json.dump( result, f )
+
+def run_child( which, db_dir, out ):
+    """The child, killed if it has written its result but does not close
+    within a minute (see `child`)."""
+
+    import subprocess
+
+    env = dict( os.environ )
+    env.setdefault( 'QT_QPA_PLATFORM', 'offscreen' )
+
+    process = subprocess.Popen( [ sys.executable, os.path.abspath( __file__ ), '--child', which, db_dir, out ], env = env, cwd = os.path.dirname( HERE ) )
+
+    written_at = None
+
+    while process.poll() is None:
+
+        if written_at is None and os.path.exists( out ):
+
+            written_at = time.time()
+
+
+        if written_at is not None and time.time() - written_at > 60:
+
+            process.kill()
+            process.wait()
+
+            break
+
+
+        time.sleep( 0.5 )
+
+
+    if not os.path.exists( out ):
+
+        raise Exception( f'the {which} run failed' )
 
 
 
@@ -369,7 +450,6 @@ def main():
         return
 
 
-    import hydrus_driver
     import record_api
 
     db_dir = record_api.unpack_fixture( 'basic' )
@@ -379,8 +459,8 @@ def main():
         built = os.path.join( work, 'build.json' )
         restored = os.path.join( work, 'restore.json' )
 
-        hydrus_driver.run_in_subprocess( os.path.abspath( __file__ ), '--child', 'build', db_dir, built )
-        hydrus_driver.run_in_subprocess( os.path.abspath( __file__ ), '--child', 'restore', db_dir, restored )
+        run_child( 'build', db_dir, built )
+        run_child( 'restore', db_dir, restored )
 
         first = json.load( open( built ) )
         second = json.load( open( restored ) )
