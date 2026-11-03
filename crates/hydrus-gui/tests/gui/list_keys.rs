@@ -434,7 +434,8 @@ fn menu_firsts(log: &FileLogWindow) -> Vec<String> {
         .collect()
 }
 
-// leaf: interaction-list-keys-activate-copy, interaction-list-pointer
+// (not tagged: interaction-list-keys-activate-copy; Enter needs the current row selected)
+// leaf: interaction-list-pointer
 #[test]
 fn enter_activates_and_ctrl_c_copies_the_file_log_s_selection_as_the_reference() {
     // Enter (and the keypad's) opens a page of the selected rows' files,

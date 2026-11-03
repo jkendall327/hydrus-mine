@@ -237,7 +237,7 @@ macro_rules! bind_filter_top_hover {
                 let owned = owned.clone();
                 move || owned()
             },
-            |_: &_, result: Result<(), String>| {
+            |_: &_, _: i32, result: Result<(), String>| {
                 if let Err(e) = result {
                     eprintln!("could not save the view options: {e}");
                 }

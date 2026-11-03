@@ -167,7 +167,11 @@ fn bind_list(window: &EmbeddedMetadataWindow, list: &Rc<RefCell<ExifList>>) {
 }
 
 /// Open one file's metadata and clear its owning slot when the window closes.
-pub(crate) fn open(
+///
+/// # Errors
+/// If the file or its information is not in the store, or the window
+/// cannot be made.
+pub fn open(
     store: &Arc<Store>,
     file: HashId,
     slot: &Rc<RefCell<Option<EmbeddedMetadataWindow>>>,

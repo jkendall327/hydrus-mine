@@ -4,14 +4,19 @@ use std::{cell::RefCell, rc::Rc, sync::Arc};
 use hydrus_core::HashId;
 use hydrus_store::{
     Store,
+    reference_options::ReferenceOptions,
     settings::{
-        self, ViewerBackgroundSettings, ViewerCanvasSettings, ViewerEyeMenuSettings,
-        ViewerFocusSettings, ViewerHoverSettings,
+        self, DuplicateColourSettings, ViewerBackgroundSettings, ViewerCanvasSettings,
+        ViewerEyeMenuSettings, ViewerFocusSettings, ViewerHoverSettings,
     },
 };
 use slint::{ComponentHandle as _, ModelRc, VecModel};
 
 use crate::{MediaViewerWindow, MenuGroups, MenuRow, ViewerEyeMenu};
+
+/// The reference's option the duplicates hover pin sets
+/// (`hover_window_duplicates_always_on_top`).
+const PIN_DUPLICATES_HOVER: &str = "hover_window_duplicates_always_on_top";
 
 fn rows(values: &[(&str, i32, bool)]) -> ModelRc<MenuRow> {
     ModelRc::new(VecModel::from(
@@ -27,6 +32,26 @@ fn rows(values: &[(&str, i32, bool)]) -> ModelRc<MenuRow> {
     ))
 }
 
+/// The label the window entries come after on Linux.
+const LINUX_WARNING: &str = "MAY BE BUGGY/CRASHY ON LINUX";
+
+/// On Linux the window entries come after a label, as the reference's do;
+/// choosing it copies its text, as the reference's menu labels do.
+fn with_linux_warning(rows: &ModelRc<MenuRow>) -> ModelRc<MenuRow> {
+    use slint::Model as _;
+    let mut out = Vec::new();
+    if cfg!(target_os = "linux") {
+        out.push(MenuRow {
+            label: LINUX_WARNING.into(),
+            id: 20,
+            checkable: false,
+            checked: false,
+        });
+    }
+    out.extend(rows.iter());
+    ModelRc::new(VecModel::from(out))
+}
+
 /// The menu, for a window always on top (`top`), tied to its playing
 /// (`while_playing`) and without its frame (`frameless`), as it is now.
 pub(crate) fn menu(
@@ -40,16 +65,25 @@ pub(crate) fn menu(
     let hovers: ViewerHoverSettings = store.read(settings::get).unwrap_or_default();
     let focus: ViewerFocusSettings = store.read(settings::get).unwrap_or_default();
     let canvas: ViewerCanvasSettings = store.read(settings::get).unwrap_or_default();
+    let duplicates: DuplicateColourSettings = store.read(settings::get).unwrap_or_default();
+    let icc = store
+        .read(hydrus_store::image_colour::load)
+        .unwrap_or_default()
+        .normalise_icc;
+    let pinned = store
+        .read(settings::get::<ReferenceOptions>)
+        .unwrap_or_default()
+        .boolean(PIN_DUPLICATES_HOVER);
     ViewerEyeMenu {
         collapse_window: eye.collapse_window,
         collapse_hovers: eye.collapse_hovers,
         collapse_rendering: eye.collapse_rendering,
         window: MenuGroups {
-            g1: rows(&[
+            g1: with_linux_warning(&rows(&[
                 ("always on top", 0, top),
                 ("always on top (while playing)", 1, while_playing),
                 ("remove titlebar/frame", 2, frameless),
-            ]),
+            ])),
             g2: rows(&[
                 (
                     "always start new media viewers always on top",
@@ -102,15 +136,26 @@ pub(crate) fn menu(
                     hovers.ratings,
                 ),
                 ("pop-in notes hover window on mouseover", 14, hovers.notes),
+                (
+                    "pin the duplicates hover window so it is always visible",
+                    17,
+                    pinned,
+                ),
             ]),
             ..MenuGroups::default()
         },
         rendering: MenuGroups {
             g1: rows(&[
+                ("apply image ICC Profile colour adjustments", 18, icc),
                 (
                     "draw transparency as checkerboard in media viewer",
                     15,
                     canvas.transparency_checkerboard,
+                ),
+                (
+                    "draw transparency as checkerboard in media viewer (duplicate filter)",
+                    19,
+                    duplicates.checkerboard,
                 ),
                 (
                     "instead of checkerboard, use a bright greenscreen",
@@ -136,8 +181,9 @@ fn change<T: settings::Setting>(
         .map_err(|error| error.to_string())
 }
 
-/// An entry of the menu chosen: the store's options changed (the window's
-/// own rows are the window's, and not here: `None`).
+/// An entry of the menu chosen: the store's options changed, or the
+/// Linux warning label copied (the window's own rows are the window's, and
+/// not here: `None`).
 pub(crate) fn chosen(store: &Store, id: i32) -> Option<Result<(), String>> {
     Some(match id {
         3 => change::<ViewerEyeMenuSettings>(store, |s| s.start_on_top = !s.start_on_top),
@@ -166,15 +212,36 @@ pub(crate) fn chosen(store: &Store, id: i32) -> Option<Result<(), String>> {
         16 => change::<ViewerCanvasSettings>(store, |s| {
             s.transparency_greenscreen = !s.transparency_greenscreen;
         }),
+        17 => change::<ReferenceOptions>(store, |s| {
+            let pinned = s.boolean(PIN_DUPLICATES_HOVER);
+            s.set_boolean(PIN_DUPLICATES_HOVER, !pinned);
+        }),
+        18 => store
+            .write(|ctx| {
+                let mut colour = hydrus_store::image_colour::load(ctx.conn())?;
+                colour.normalise_icc = !colour.normalise_icc;
+                settings::set(ctx.conn(), &colour)
+            })
+            .map_err(|error| error.to_string()),
+        19 => change::<DuplicateColourSettings>(store, |s| {
+            s.checkerboard = !s.checkerboard;
+        }),
+        20 => {
+            crate::to_clipboard(&crate::Clip::Text(LINUX_WARNING.into()));
+            Ok(())
+        }
         _ => return None,
     })
 }
+
+/// The menu's entry that changes how images decode (ICC profiles).
+pub(crate) const ICC: i32 = 18;
 
 /// Wire a window's eye menu (`eye-menu`, `eye-menu-requested`,
 /// `eye-menu-chosen`) and its window rows (`viewer-window-top`,
 /// `viewer-top-while-playing`, `viewer-window-frameless`, read with
 /// `media-playing`) to `store`, while `$owned()` gives the window; after a
-/// change, `$changed(&window, result)`.
+/// change, `$changed(&window, id, result)`.
 macro_rules! bind_eye_menu {
     ($window:expr, $store:expr, $owned:expr, $changed:expr) => {{
         let window = &$window;
@@ -231,7 +298,7 @@ macro_rules! bind_eye_menu {
                         None => return,
                     },
                 };
-                changed(&window, result);
+                changed(&window, id, result);
                 window.set_eye_menu($crate::viewer_eye_menu::menu(
                     &store,
                     window.get_viewer_window_top(),
@@ -266,11 +333,16 @@ pub(crate) fn bind(
         window,
         store,
         owned,
-        move |window: &MediaViewerWindow, result: Result<(), String>| {
+        move |window: &MediaViewerWindow, id: i32, result: Result<(), String>| {
             if let Err(error) = result {
                 window.set_warning(error.into());
             }
             crate::viewer_presentation::refresh(window, &refresh_store, current_file());
+            if id == ICC {
+                // (the image decoded anew under the profile policy, as an
+                // Options Apply reloads it)
+                window.invoke_presentation_settings_changed();
+            }
         }
     );
 }

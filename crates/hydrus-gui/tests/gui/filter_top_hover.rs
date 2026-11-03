@@ -344,20 +344,21 @@ fn replay_presses(
                     for group in [&eye.window, &eye.hovers, &eye.rendering] {
                         rows.extend(group_rows(&[&group.g1, &group.g2]));
                     }
-                    // (but the three hydrus-rs's viewers do not have:
-                    // DIFFERENCES.md)
+                    // (every recorded entry, the Linux warning label among
+                    // them, as an entry that is not checked)
                     let mut expected = Vec::new();
                     for submenu in items {
                         expected.extend(
-                            checks(submenu["submenu"].as_array().unwrap())
-                                .into_iter()
-                                .filter(|(label, _)| {
-                                    ![
-                                        "apply image ICC Profile colour adjustments",
-                                        "draw transparency as checkerboard in media viewer (duplicate filter)",
-                                        "pin the duplicates hover window so it is always visible",
-                                    ]
-                                    .contains(&label.as_str())
+                            submenu["submenu"]
+                                .as_array()
+                                .unwrap()
+                                .iter()
+                                .filter(|i| i["separator"].is_null())
+                                .map(|i| {
+                                    (
+                                        i["text"].as_str().unwrap().to_owned(),
+                                        i["checked"].as_bool().unwrap_or(false),
+                                    )
                                 }),
                         );
                     }

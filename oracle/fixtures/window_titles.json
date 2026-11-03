@@ -1,0 +1,69 @@
+{
+ "platform": "xcb",
+ "version": 688,
+ "names": [
+  {
+   "typed": "night library",
+   "saved": "night library",
+   "application_display_name": "night library 688",
+   "main": {
+    "title": "main",
+    "shown": "main — night library 688"
+   },
+   "opened_before": {
+    "title": "review services",
+    "shown": "review services — night library 688"
+   },
+   "opened_after": {
+    "title": "manage options",
+    "shown": "manage options — night library 688"
+   },
+   "untitled": {
+    "title": "",
+    "shown": "night library 688"
+   }
+  },
+  {
+   "typed": "",
+   "saved": "hydrus client",
+   "application_display_name": "hydrus client 688",
+   "main": {
+    "title": "main",
+    "shown": "main — hydrus client 688"
+   },
+   "opened_before": {
+    "title": "review services",
+    "shown": "review services — hydrus client 688"
+   },
+   "opened_after": {
+    "title": "manage options",
+    "shown": "manage options — hydrus client 688"
+   },
+   "untitled": {
+    "title": "",
+    "shown": "hydrus client 688"
+   }
+  },
+  {
+   "typed": "  ",
+   "saved": "  ",
+   "application_display_name": "   688",
+   "main": {
+    "title": "main",
+    "shown": "main —    688"
+   },
+   "opened_before": {
+    "title": "review services",
+    "shown": "review services —    688"
+   },
+   "opened_after": {
+    "title": "manage options",
+    "shown": "manage options —    688"
+   },
+   "untitled": {
+    "title": "",
+    "shown": "   688"
+   }
+  }
+ ]
+}

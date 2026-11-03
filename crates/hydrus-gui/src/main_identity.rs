@@ -20,12 +20,7 @@ pub(crate) fn bind(window: &MainWindow, store: Arc<Store>, active: Rc<Cell<bool>
         // (windows opened from now on end their titles with it too)
         crate::app_title::set_display_name(&settings.application_display_name);
         window.set_window_title(
-            format!(
-                "{} {}",
-                settings.application_display_name,
-                env!("CARGO_PKG_VERSION")
-            )
-            .into(),
+            crate::app_title::main_title(&settings.application_display_name).into(),
         );
     });
 }

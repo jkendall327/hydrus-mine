@@ -9641,10 +9641,10 @@
     "Native title suffix uses the Rust package version rather than the reference 688 version."
    ],
    "recheck": {
-    "date": "2026-10-13",
-    "class": "source-restated",
-    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
-    "note": "Unchanged: the names are applied as recorded (gui_settings.json) and the composed ' - name version' titles are checked, but the composition is done by the windowing system, which offscreen Qt does not do, so it cannot be recorded; it is from Qt's documented behaviour. Tests: crates/hydrus-gui/tests/gui/options_window.rs gui_identity_and_exit_confirmation_reach_the_main_window; window_titles.rs."
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "Since 2026-11-03 recorded on X11: oracle/record_window_titles.py runs the reference under Xvfb with Qt's xcb plugin and reads the _NET_WM_NAME the window manager is given, for each name the Options panel saves (typed 'night library', empty -> 'hydrus client', two spaces): the main window 'main — name 688', a frame open before the change retitled, one opened after, an untitled one. tests/gui/options_window.rs gui_identity_and_exit_confirmation_reach_the_main_window types each recorded name into the real Options row, applies, and compares the main window's title and the next Options window's composed title and suffix with the recording (hydrus-rs's version for 688); tests/gui/window_titles.rs secondary_windows_compose_their_titles_with_the_display_name checks windows open before the change are retitled and new ones made with it, against the same recording. The recording found the native titles wrong on Linux (' - ' and no 'main'); fixed. Not covered: a window with an empty own title (no hydrus-rs window has one; DIFFERENCES.md)."
    }
   },
   {
@@ -25449,7 +25449,7 @@
    "label": "List controls: Enter activates the selected rows; Ctrl+C copies the rows' text",
    "path": "Interactions > Shared lists > List control keyboard",
    "workstream": "editors",
-   "state": "missing",
+   "state": "partial",
    "priority": "normal",
    "reference": "hydrus/client/gui/lists/ClientGUIListCtrl.py:916-938",
    "native": "crates/hydrus-gui/ui/list_table.slint:61-71, :148",
@@ -25461,7 +25461,7 @@
     "date": "2026-11-03",
     "class": "wrong",
     "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
-    "note": "tests/gui/list_keys.rs enter_activates_and_ctrl_c_copies_the_file_log_s_selection_as_the_reference sends real keys and clicks to the real file log window and replays oracle/fixtures/list_keys.json (oracle/record_list_keys.py, the reference's EditFileSeedCachePanel list): Enter and keypad Enter on a range open a page of the recorded files; Enter with nothing selected or on rows with no file opens nothing; Ctrl+C and Ctrl+Insert give the recorded clipboard text; Ctrl+C with nothing selected falls back to Qt's copy of the current cell. Not covered: the gallery (search) log's Ctrl+C, wired natively but untested. Wrong: native ListKeys activates on Enter only when the current row is selected, while the reference calls ProcessActivateAction on the selection whichever row is current (ClientGUIListCtrl.py:916-918); with rows selected and the current one ctrl-deselected the reference opens and hydrus-rs does nothing (unrecorded)."
+    "note": "Untagged 2026-11-03 (#97 finish). tests/gui/list_keys.rs enter_activates_and_ctrl_c_copies_the_file_log_s_selection_as_the_reference replays list_keys.json on the real file log (Enter and keypad Enter on a range open a page of the recorded files; nothing on empty selections; Ctrl+C and Ctrl+Insert give the recorded text; Ctrl+C with nothing selected copies the current cell); the test stays, tagged for interaction-list-pointer only. Wrong: hydrus-rs's ListKeys activates on Enter only when the current row is selected, while the reference's tree lists act on the selection whichever row is current; many lists' handlers act on the row they are given, so the shared change is a change to each. The search log's Ctrl+C is not compared with a recording (DIFFERENCES.md)."
    }
   },
   {
@@ -26038,9 +26038,9 @@
    ],
    "recheck": {
     "date": "2026-11-03",
-    "class": "weak",
+    "class": "sound",
     "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
-    "note": "tests/gui/viewer_top_hover.rs the_top_hover_s_widgets_are_the_reference_s_in_its_order compares each shown button's accessible-description with the tooltip in oracle/fixtures/viewer_top_hover.json (oracle/record_viewer_top_hover.py, real widget.toolTip()) for all five files: the SetToolTipWithShortcuts text for the default shortcut sets, the fixed tooltips, and the metadata button's 'including extra info' for a JPEG against the plain text for the FLAC. Not covered: the 'no shortcuts set' branch the leaf's notes name; the exif/xmp/iptc/human-readable/software variants are checked only against literals in crates/hydrus-gui-model/tests/model/viewer_top_hover.rs; the shown tip-markdown text is checked against a restated literal. Fix: record a command with its shortcuts removed and a file with EXIF, and compare the shown tooltip."
+    "note": "tests/gui/viewer_top_hover.rs the_top_hover_s_widgets_are_the_reference_s_in_its_order compares each shown widget's tooltip text (its accessible description, which the shown tooltip is made from) with oracle/fixtures/viewer_top_hover.json (oracle/record_viewer_top_hover.py, real widget.toolTip()) for all five files: SetToolTipWithShortcuts for the default sets, the fixed tooltips, the metadata button's 'extra info' for a JPEG. Since 2026-11-03 the_top_hover_s_tooltips_say_no_shortcuts_and_what_metadata_a_file_has replays no_shortcuts (first's shortcut taken out of every set, as the recorder took it: every tooltip, 'first' saying 'no shortcuts set (media navigation: first)') and metadata_tooltips (the file's exif, xmp, iptc, human-readable and software flags set alone and together, on a JPEG and the FLAC: the wrapped 'including ...' text). The tooltip's markdown escaping is checked by the model's tests only."
    }
   },
   {
@@ -26095,9 +26095,9 @@
    ],
    "recheck": {
     "date": "2026-11-03",
-    "class": "weak",
+    "class": "sound",
     "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
-    "note": "tests/gui/viewer_top_hover.rs the_top_hover_s_buttons_do_what_the_reference_s_do opens the real viewer and replays the presses of oracle/fixtures/viewer_top_hover.json (oracle/record_viewer_top_hover.py: a real CanvasMediaListBrowser and CanvasHoverFrameTopNavigableList clicked with QTest) with real pointer events. Archive and return-to-inbox, left and right, compare the inbox state, index and zoom with the recording (sound). The rest checks presence: trash and delete completely only that a dialog titled 'Delete files?...' opens (not told apart, not compared with the reference's); undelete only that some question is asked (then the file is untrashed); the embedded metadata button only that a window opens, not for which file. Fix: compare the metadata window's file with the recorded hash and the delete/undelete questions with a recording."
+    "note": "tests/gui/viewer_top_hover.rs the_top_hover_s_buttons_do_what_the_reference_s_do replays the presses of oracle/fixtures/viewer_top_hover.json (oracle/record_viewer_top_hover.py: the real CanvasMediaListBrowser and its top hover, clicked with QTest) with real pointer events. Archive and return to inbox, left and right: inbox state, index and zoom after, as recorded. Trash and delete completely: the reference's publish canvas_delete, which runs the canvas's _Delete as the delete key does, so the dialog the button opens (title, actions and the one chosen, reasons and the one chosen) is compared with the one the real delete key opens on the same file. Undelete: the question equals the recorded one (since 2026-11-03 'undelete', from the canvas's _Undelete: 'Undelete this file back to my files?'), answered yes the file is back. The metadata button opens the window on the recorded file (its basics equal a window opened on that file directly). Right clicks open nothing, as recorded."
    }
   },
   {
@@ -26137,7 +26137,7 @@
    "label": "Top hover: volume control (global mute button, with the viewer mute and volume on mouseover)",
    "path": "Media files, metadata and viewing > Media Viewer > Top hover",
    "workstream": "media",
-   "state": "missing",
+   "state": "partial",
    "priority": "normal",
    "reference": "hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py",
    "native": null,
@@ -26148,7 +26148,7 @@
     "date": "2026-11-03",
     "class": "weak",
     "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
-    "note": "tests/gui/viewer_top_hover.rs over_the_volume_control_the_viewer_s_mute_shows_and_mutes raises the hover, moves the real pointer over the global mute button and checks the viewer-mute popup appears with the tooltip recorded in oracle/fixtures/viewer_top_hover.json (oracle/record_viewer_top_hover.py), clicks it (viewer_mute flips, global_mute does not) and presses and drags the slider. Gaps: the slider's expected volumes come from the native geometry, not a recording; the popup's recorded mute_icon is not compared; the global mute click is checked only in the_top_hover_s_buttons_do_what_the_reference_s_do, which is not tagged for this leaf. Fix: record the popup's toggle and slider values and compare them."
+    "note": "Untagged 2026-11-03 (#97 finish). tests/gui/viewer_top_hover.rs over_the_volume_control_the_viewer_s_mute_shows_and_mutes raises the hover, points at the global mute and checks the viewer-mute popup with its recorded tooltip, clicks it (the viewer mute flips, the global one does not) and presses and drags the slider; the_top_hover_s_buttons_do_what_the_reference_s_do checks the global mute click and icon against the recording. Not sound: the volumes a press and a drag on the slider set come from hydrus-rs's own slider geometry, not from the reference's slider, which is not recorded. The tests stay, untagged (DIFFERENCES.md, Recheck: leaves untagged)."
    }
   },
   {
@@ -26165,9 +26165,9 @@
    ],
    "recheck": {
     "date": "2026-11-03",
-    "class": "weak",
+    "class": "sound",
     "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
-    "note": "tests/gui/viewer_top_hover.rs the_top_hover_s_buttons_do_what_the_reference_s_do clicks each button with real pointer events and replays oracle/fixtures/viewer_top_hover.json (oracle/record_viewer_top_hover.py): shortcuts opens a popup with only 'edit shortcuts', fullscreen flips the window, open externally hands the shown file's path to the launcher (the recorded hash), close closes the viewer, right clicks open nothing. Gap: the view options menu is compared only after removing three recorded entries the native menu lacks ('apply image ICC Profile colour adjustments', the duplicate-filter checkerboard, 'pin the duplicates hover window') and the Linux warning label; the shortcuts menu only with no custom sets."
+    "note": "tests/gui/viewer_top_hover.rs the_top_hover_s_buttons_do_what_the_reference_s_do clicks each button with real pointer events and replays oracle/fixtures/viewer_top_hover.json (oracle/record_viewer_top_hover.py): shortcuts opens 'edit shortcuts' alone with no custom sets; view options' window, hovers and rendering submenus equal the recorded entries and checks in full (since 2026-11-03 with the reference's 'MAY BE BUGGY/CRASHY ON LINUX' label, 'pin the duplicates hover window', 'apply image ICC Profile colour adjustments' and the duplicate filter's checkerboard, ported onto their existing settings); fullscreen flips the window; open externally hands over the shown file (the recorded hash); close closes the viewer; right clicks open nothing. the_shortcuts_button_turns_a_custom_set_on_now_and_by_default replays custom_shortcuts: with a custom set, the button's menu (set current / set default shortcuts and their checks) before each choice and what each choice turns on, for the viewer and by default. The ported entries are chosen and their consumers checked: image_colour.rs the_viewers_eye_menu_icc_entry_flips_the_switch_and_repaints (the viewer's image repainted under each policy) and duplicate_hover_pin.rs the_viewers_eye_menu_pins_the_duplicates_hover_the_filter_shows (unpinned, a duplicate filter opened after shows its hover only on mouseover; the duplicate checkerboard switch stored, which duplicate_colours.rs shows the filter reads; the Linux label copies its text, as AppendMenuLabel's do)."
    }
   },
   {
