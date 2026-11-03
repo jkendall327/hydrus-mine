@@ -1,6 +1,8 @@
 //! The application display name on every window's title, as Qt does for the
-//! reference (`setApplicationDisplayName`): a window titled "edit rules" is
-//! shown as "edit rules - hydrus client 688".
+//! reference (`setApplicationDisplayName`): on Linux a window titled "edit
+//! rules" is shown as "edit rules — hydrus client 688"
+//! (`oracle/record_window_titles.py`). Qt's macOS plugin adds nothing, and
+//! neither does hydrus-rs there.
 //!
 //! Each secondary window has a `title-suffix` property its title ends with.
 //! [`new`] makes a window with the current suffix and remembers it, so
@@ -84,6 +86,9 @@ pub const SEPARATOR: &str = if cfg!(target_os = "windows") {
 /// The title suffix for the display name `name`, with the version, as the
 /// reference's `setApplicationDisplayName` gives it.
 pub fn suffix_for(name: &str) -> String {
+    if cfg!(target_os = "macos") {
+        return String::new();
+    }
     format!("{SEPARATOR}{name} {}", env!("CARGO_PKG_VERSION"))
 }
 

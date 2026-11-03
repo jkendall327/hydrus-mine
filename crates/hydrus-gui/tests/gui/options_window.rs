@@ -6021,8 +6021,13 @@ fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewe
             &menu.rendering.g2,
         ] {
             for item in rows.iter() {
-                assert!(item.checkable, "the supported eye actions are checkable");
-                checks.push(json!({"check": item.label.as_str(), "checked": item.checked}));
+                // (a label, such as the Linux warning, is no action: as the
+                // reference's AppendMenuLabel it is written as its text)
+                if item.checkable {
+                    checks.push(json!({"check": item.label.as_str(), "checked": item.checked}));
+                } else {
+                    checks.push(json!(item.label.as_str()));
+                }
             }
         }
         json!(checks)
@@ -6032,16 +6037,10 @@ fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewe
         for entry in entries {
             if let Some(children) = entry["entries"].as_array() {
                 checks.extend(reference_checks(children));
-            } else if let Some(label) = entry["check"].as_str()
-                && !matches!(
-                    label,
-                    "apply image ICC Profile colour adjustments"
-                        | "draw transparency as checkerboard in media viewer (duplicate filter)"
-                        | "pin the duplicates hover window so it is always visible"
-                )
+            } else if entry["check"].is_string()
+                || entry.as_str().is_some_and(|label| label != "---")
             {
-                // Omit only the explicitly unsupported browser actions. Compare
-                // every remaining recorded label/check, not a native-selected subset.
+                // every recorded check and label, separators aside
                 checks.push(entry.clone());
             }
         }
@@ -6393,7 +6392,13 @@ fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewe
                 .map_or(reference, |entry| entry["entries"].as_array().unwrap());
             let expected: Vec<_> = entries
                 .iter()
-                .filter_map(|entry| entry["check"].as_str())
+                .filter_map(|entry| {
+                    entry["check"]
+                        .as_str()
+                        .or_else(|| entry.as_str().filter(|label| *label != "---"))
+                })
+                // (where the submenus are not collapsed the reference's root
+                // holds every group; the whole menu is compared above)
                 .filter(|label| native.iter().any(|native| native == label))
                 .collect();
             assert_eq!(native, expected, "{name} {event}");

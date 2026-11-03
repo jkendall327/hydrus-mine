@@ -32,14 +32,18 @@ fn rows(values: &[(&str, i32, bool)]) -> ModelRc<MenuRow> {
     ))
 }
 
-/// On Linux the window entries come after a label, as the reference's do.
+/// The label the window entries come after on Linux.
+const LINUX_WARNING: &str = "MAY BE BUGGY/CRASHY ON LINUX";
+
+/// On Linux the window entries come after a label, as the reference's do;
+/// choosing it copies its text, as the reference's menu labels do.
 fn with_linux_warning(rows: &ModelRc<MenuRow>) -> ModelRc<MenuRow> {
     use slint::Model as _;
     let mut out = Vec::new();
     if cfg!(target_os = "linux") {
         out.push(MenuRow {
-            label: "MAY BE BUGGY/CRASHY ON LINUX".into(),
-            id: -1,
+            label: LINUX_WARNING.into(),
+            id: 20,
             checkable: false,
             checked: false,
         });
@@ -274,12 +278,21 @@ pub(crate) fn bind(
                 19 => change::<DuplicateColourSettings>(&store, |s| {
                     s.checkerboard = !s.checkerboard;
                 }),
+                20 => {
+                    crate::to_clipboard(&crate::Clip::Text(LINUX_WARNING.into()));
+                    Ok(())
+                }
                 _ => return,
             };
             if let Err(error) = result {
                 window.set_warning(error.into());
             }
             crate::viewer_presentation::refresh(&window, &store, current_file());
+            if id == 18 {
+                // (the image decoded anew under the profile policy, as an
+                // Options Apply reloads it)
+                window.invoke_presentation_settings_changed();
+            }
             window.set_eye_menu(menu(&window, &store));
         }
     });
