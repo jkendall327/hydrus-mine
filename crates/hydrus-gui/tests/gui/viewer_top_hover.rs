@@ -329,9 +329,12 @@ fn the_top_hover_s_widgets_are_the_reference_s_in_its_order() {
     }
 }
 
-/// The open deletion dialog (its title, actions and the one chosen, reasons
-/// and the one chosen), cancelled.
-fn deletion_dialog(fixture: &Fixture) -> Option<(String, Vec<String>, i32, Vec<String>, i32)> {
+/// A deletion dialog as asked: title, actions, the one chosen, reasons, the
+/// one chosen.
+type Asked = (String, Vec<String>, i32, Vec<String>, i32);
+
+/// The open deletion dialog, as asked, cancelled.
+fn deletion_dialog(fixture: &Fixture) -> Option<Asked> {
     let dialog = fixture
         .bound
         .viewer_deletion
@@ -602,8 +605,8 @@ fn the_top_hover_s_buttons_do_what_the_reference_s_do() {
         if did.iter().any(|d| d["pub"] == "canvas_delete") {
             // (the reference's buttons publish canvas_delete, which runs the
             // canvas's _Delete, as the delete key does: the same dialog)
-            let asked = deletion_dialog(&fixture)
-                .unwrap_or_else(|| panic!("{what}: asks to delete"));
+            let asked =
+                deletion_dialog(&fixture).unwrap_or_else(|| panic!("{what}: asks to delete"));
             assert!(asked.0.starts_with("Delete files?"), "{what}");
             super::common::input::key(viewer.window(), "\u{7f}", super::common::input::NONE);
             widgets::settle();
@@ -633,10 +636,7 @@ fn the_top_hover_s_buttons_do_what_the_reference_s_do() {
                 .take()
                 .unwrap_or_else(|| panic!("{what}: the embedded metadata window"));
             // the window is the recorded file's: as one opened on it directly
-            let file = id_of(
-                &fixture,
-                opened["file"].as_str().unwrap().parse().unwrap(),
-            );
+            let file = id_of(&fixture, opened["file"].as_str().unwrap().parse().unwrap());
             let slot = Rc::default();
             let direct =
                 hydrus_gui::embedded_metadata_window::open(&fixture.store, file, &slot).unwrap();
@@ -849,7 +849,11 @@ fn the_shortcuts_button_turns_a_custom_set_on_now_and_by_default() {
         .unwrap();
     // the menu as drawn from the button's state, as the recorder writes it
     let menu = |viewer: &hydrus_gui::MediaViewerWindow| -> Value {
-        let names: Vec<String> = viewer.get_shortcut_names().iter().map(|n| n.to_string()).collect();
+        let names: Vec<String> = viewer
+            .get_shortcut_names()
+            .iter()
+            .map(|n| n.to_string())
+            .collect();
         let checks = |values: slint::ModelRc<bool>| -> Value {
             Value::Array(
                 names
@@ -875,9 +879,16 @@ fn the_shortcuts_button_turns_a_custom_set_on_now_and_by_default() {
     for step in custom["steps"].as_array().unwrap() {
         let what = format!("{}", step["choose"]);
         raise(&viewer);
-        widgets::click_at(viewer.window(), in_row(&viewer, "shortcuts"), PointerEventButton::Left);
+        widgets::click_at(
+            viewer.window(),
+            in_row(&viewer, "shortcuts"),
+            PointerEventButton::Left,
+        );
         widgets::settle();
-        assert!(widgets::popup_open(viewer.window()), "{what}: the menu opens");
+        assert!(
+            widgets::popup_open(viewer.window()),
+            "{what}: the menu opens"
+        );
         assert_eq!(menu(&viewer), step["menu"], "{what}: the menu");
         widgets::close_popups(viewer.window());
         let Some(choose) = step["choose"].as_array() else {
@@ -901,8 +912,16 @@ fn the_shortcuts_button_turns_a_custom_set_on_now_and_by_default() {
             .filter(|(_, on)| *on)
             .map(|(n, _)| n.to_string())
             .collect();
-        assert_eq!(serde_json::json!(current), step["active"], "{what}: on for this viewer");
-        assert_eq!(serde_json::json!(defaults()), step["defaults"], "{what}: on by default");
+        assert_eq!(
+            serde_json::json!(current),
+            step["active"],
+            "{what}: on for this viewer"
+        );
+        assert_eq!(
+            serde_json::json!(defaults()),
+            step["defaults"],
+            "{what}: on by default"
+        );
     }
 }
 
@@ -938,7 +957,10 @@ fn the_top_hover_s_tooltips_say_no_shortcuts_and_what_metadata_a_file_has() {
         .unwrap();
     assert_eq!(
         removed,
-        recorded["no_shortcuts"]["removed"].as_array().unwrap().len(),
+        recorded["no_shortcuts"]["removed"]
+            .as_array()
+            .unwrap()
+            .len(),
         "as many shortcuts taken out as the recorder took"
     );
     viewer.invoke_close_requested();
