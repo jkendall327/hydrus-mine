@@ -69,6 +69,38 @@ pub(crate) fn lock(dir: &Path, name: &str) -> std::io::Result<Option<std::fs::Fi
     }
 }
 
+/// [`lock`], but a lock found held is tried again for up to `wait` before
+/// giving up. A lock is an `flock` on the open file, so a process forked by
+/// any thread at the moment the file is closed (to start ffmpeg, say) holds
+/// a copy of it until it execs, and the lock outlives its release by that
+/// long, longer under load. Waiting a moment takes a lock held only by such
+/// a child; one really held (by another process, or a manager window)
+/// is still `None` once `wait` has passed.
+pub(crate) fn lock_within(
+    dir: &Path,
+    name: &str,
+    wait: std::time::Duration,
+) -> std::io::Result<Option<std::fs::File>> {
+    let file = std::fs::OpenOptions::new()
+        .create(true)
+        .truncate(false)
+        .write(true)
+        .open(dir.join(name))?;
+    let end = std::time::Instant::now() + wait;
+    loop {
+        match file.try_lock() {
+            Ok(()) => return Ok(Some(file)),
+            Err(std::fs::TryLockError::WouldBlock) => {
+                if std::time::Instant::now() >= end {
+                    return Ok(None);
+                }
+                std::thread::sleep(std::time::Duration::from_millis(2));
+            }
+            Err(std::fs::TryLockError::Error(e)) => return Err(e),
+        }
+    }
+}
+
 /// Take the lock `hydrus serve` holds while it runs on the store in `dir`
 /// (see [`lock`]).
 pub fn lock_serving(dir: &Path) -> std::io::Result<Option<std::fs::File>> {

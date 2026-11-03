@@ -177,3 +177,106 @@ fn the_duplicates_hover_is_pinned_or_pops_in_as_the_reference_does() {
     }
     assert!(compared >= 80, "{compared}");
 }
+
+/// The browser viewer's view options > hovers > "pin the duplicates hover
+/// window" sets the same option the duplicate filter reads, and its
+/// rendering entry the duplicate filter's checkerboard; its Linux label
+/// copies its text, as the reference's menu labels do.
+// leaf: audit-media-viewer-top-hover-window-buttons
+#[test]
+fn the_viewers_eye_menu_pins_the_duplicates_hover_the_filter_shows() {
+    let windows = headless::init();
+    let (_dir, store) = super::duplicate_filter::store_with_pairs();
+    let copied = std::rc::Rc::new(std::cell::RefCell::new(Vec::<String>::new()));
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| {
+            if let hydrus_gui::Clip::Text(text) = clip {
+                copied.borrow_mut().push(text.clone());
+            }
+        }
+    });
+    // a browser viewer on a file of the store
+    let browser = MainWindow::new().unwrap();
+    browser.show().unwrap();
+    let browsing = bind(
+        &browser,
+        Pages::single(crate::common::all_local_page(store.clone())),
+    );
+    browser.invoke_search_edited("system:everything".into());
+    browser.invoke_search_accepted();
+    browser.invoke_thumbnail_activated(0);
+    let viewer = browsing.viewer.borrow().as_ref().unwrap().clone_strong();
+    let entry = |label: &str| {
+        viewer.invoke_eye_menu_requested();
+        let menu = viewer.get_eye_menu();
+        [&menu.window, &menu.hovers, &menu.rendering]
+            .into_iter()
+            .flat_map(|g| g.g1.iter().chain(g.g2.iter()).collect::<Vec<_>>())
+            .find(|r| r.label == label)
+            .unwrap_or_else(|| panic!("no {label} in the view options"))
+    };
+    let pin = entry("pin the duplicates hover window so it is always visible");
+    assert!(pin.checked, "pinned by default");
+    viewer.invoke_eye_menu_chosen(pin.id);
+    assert!(!entry(&pin.label).checked, "unpinned");
+    let checker = entry("draw transparency as checkerboard in media viewer (duplicate filter)");
+    assert!(checker.checked, "on by default");
+    viewer.invoke_eye_menu_chosen(checker.id);
+    let colours: hydrus_store::settings::DuplicateColourSettings =
+        store.read(hydrus_store::settings::get).unwrap();
+    assert!(
+        !colours.checkerboard,
+        "the duplicate filter's checkerboard off"
+    );
+    assert!(!entry(&checker.label).checked);
+    if cfg!(target_os = "linux") {
+        let label = entry("MAY BE BUGGY/CRASHY ON LINUX");
+        assert!(!label.checkable);
+        viewer.invoke_eye_menu_chosen(label.id);
+        assert_eq!(*copied.borrow(), ["MAY BE BUGGY/CRASHY ON LINUX"]);
+    }
+    viewer.invoke_close_requested();
+
+    // the duplicate filter, opened after, shows its hover only on mouseover
+    let (_, key) = super::duplicate_filter::my_files(&store);
+    let search = FileSearchContext {
+        location: LocationContext::single(key),
+        ..FileSearchContext::default()
+    };
+    let duplicates = DuplicatesPage::new(DuplicatesSearch {
+        search_1: search.clone(),
+        search_2: search,
+        kind: PairSearchKind::OneFileMatchesOneSearch,
+        pixel_duplicates: PixelDuplicates::Allowed,
+        max_hamming_distance: 4,
+    });
+    let session = Session {
+        name: LAST_SESSION.into(),
+        pages: vec![Page {
+            key: PageKey::random(),
+            name: "duplicates".into(),
+            content: PageContent::Duplicates {
+                duplicates,
+                sort: None,
+            },
+        }],
+    };
+    store
+        .write(move |ctx| sessions::save(ctx.conn(), &session, 0))
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(Arc::clone(&store)).unwrap());
+    ui.invoke_launch_filter();
+    let filter = bound.filter.borrow().as_ref().unwrap().clone_strong();
+    let native = windows
+        .get(windows.count() - 1)
+        .expect("the filter's window");
+    headless::render(&native, 1200, 800);
+    settle(&filter);
+    headless::render(&native, 1200, 800);
+    assert!(
+        !filter.get_hover_pinned(),
+        "the filter reads the unpinned option"
+    );
+}

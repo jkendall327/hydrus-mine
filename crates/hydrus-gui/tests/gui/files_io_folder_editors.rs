@@ -323,6 +323,33 @@ fn exported(dir: &std::path::Path) -> Vec<String> {
     names
 }
 
+/// Wait until nothing holds the export folders' manager or worker locks.
+///
+/// The manager's lease is an `flock`, released when its file is closed, but a
+/// process forked at that moment (by any thread: other tests start ffmpeg and
+/// the like) holds a copy of the open file until it execs, so the lock can
+/// outlive the close by a few milliseconds, longer under load. A worker run
+/// started in that window is skipped (no error, nothing exported). The real
+/// signal that the run can go ahead is the worker being able to take the lock.
+fn wait_for_export_lease_release(store: &Store) {
+    use hydrus_store::folder_activity::{Activity, Kind};
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(20);
+    loop {
+        if Activity::acquire(store.dir(), Kind::Export)
+            .unwrap()
+            .is_some()
+            && !hydrus_store::folder_activity::paused(store, Kind::Export).unwrap()
+        {
+            return;
+        }
+        assert!(
+            std::time::Instant::now() < deadline,
+            "the export folders' lock was never released"
+        );
+        std::thread::sleep(std::time::Duration::from_millis(5));
+    }
+}
+
 fn stored_export(store: &Store, name: &str) -> hydrus_parse::folders::ExportFolder {
     let folders: hydrus_store::settings::ExportFolders =
         store.read(hydrus_store::settings::get).unwrap();
@@ -1231,8 +1258,17 @@ fn an_export_folders_sidecar_overwrite_options_decide_what_its_worker_writes_as_
                     })
                     .unwrap();
             }
+            wait_for_export_lease_release(&store);
             let result = hydrus_download::export::work_on_export_folder(&store, "regular").unwrap();
             assert_eq!(result.error, None, "{name}, run {n}");
+            // (a run skipped for a manager's lease, or stopped part way by a
+            // pause, ends without an error and leaves the sidecars as they were)
+            assert!(result.ran, "{name}, run {n}: the folder did not run");
+            assert_eq!(
+                result.exported,
+                names.len(),
+                "{name}, run {n}: files exported ({result:?})"
+            );
             let theirs: std::collections::BTreeMap<String, String> = run["sidecars"]
                 .as_object()
                 .unwrap()

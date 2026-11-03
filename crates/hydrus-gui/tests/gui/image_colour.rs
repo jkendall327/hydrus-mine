@@ -614,3 +614,46 @@ fn paused_animation_keeps_accepted_frame_index_and_pixels_on_icc_notification() 
     );
     viewer.invoke_close_requested();
 }
+
+/// The browser viewer's view options > rendering > "apply image ICC Profile
+/// colour adjustments" flips the same saved switch, and the viewer
+/// repaints its image under the new policy, as the reference's does.
+// leaf: audit-media-viewer-top-hover-window-buttons
+#[test]
+fn the_viewers_eye_menu_icc_entry_flips_the_switch_and_repaints() {
+    let (_dirs, store, file) = setup();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    settle_viewport(&ui, &bound, &windows);
+    let index = query_select(&ui, &bound, file);
+    ui.invoke_thumbnail_activated(index);
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let native = windows.get(windows.count() - 1).unwrap();
+    headless::render(&native, 800, 600);
+    wait(|| rgb(&viewer.get_media()) == expected(true));
+    let icc = "apply image ICC Profile colour adjustments";
+    let row = |viewer: &MediaViewerWindow| {
+        viewer.invoke_eye_menu_requested();
+        viewer
+            .get_eye_menu()
+            .rendering
+            .g1
+            .iter()
+            .find(|r| r.label == icc)
+            .expect("the rendering submenu has the ICC entry")
+    };
+    let entry = row(&viewer);
+    assert!(entry.checkable && entry.checked, "on, as saved");
+    viewer.invoke_eye_menu_chosen(entry.id);
+    assert!(!store.read(image_colour::load).unwrap().normalise_icc);
+    wait(|| rgb(&viewer.get_media()) == expected(false));
+    assert!(!row(&viewer).checked, "off now");
+    viewer.invoke_eye_menu_chosen(entry.id);
+    assert!(store.read(image_colour::load).unwrap().normalise_icc);
+    wait(|| rgb(&viewer.get_media()) == expected(true));
+}

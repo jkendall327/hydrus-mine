@@ -71,7 +71,7 @@ mod dialog;
 pub mod duplicates_filtering_sidebar;
 mod duplicates_sidebar;
 mod edit_subscription_window;
-mod embedded_metadata_window;
+pub mod embedded_metadata_window;
 pub mod export_files_window;
 pub mod external_call_window;
 pub mod favourites_window;
