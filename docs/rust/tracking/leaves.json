@@ -25646,7 +25646,7 @@
    "label": "Manage tags list: right-click tag menu, middle-click search, keyboard navigation and Ctrl+C",
    "path": "Interactions > Manage tags for selected files > Tag lists",
    "workstream": "media",
-   "state": "missing",
+   "state": "partial",
    "priority": "normal",
    "reference": "hydrus/client/gui/lists/ClientGUIListBoxes.py:4883 (ListBoxTagsMedia), hydrus/client/gui/lists/ClientGUIListBoxes.py:5467 (ListBoxTagsMediaTagsDialog), hydrus/client/gui/lists/ClientGUIListBoxes.py:3220, hydrus/client/gui/lists/ClientGUIListBoxes.py:3455, hydrus/client/gui/lists/ClientGUIListBoxes.py:2711",
    "native": "crates/hydrus-gui/ui/manage_tags.slint:190-207",
@@ -25659,7 +25659,7 @@
     "date": "2026-11-03",
     "class": "weak",
     "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
-    "note": "tests/gui/manage_tags_list.rs has four tagged tests driving the real manage tags dialog from the main window with real pointer and key events, replaying oracle/fixtures/manage_tags_list.json (oracle/record_manage_tags_list.py, the reference's ListBoxTagsMediaTagsDialog under real Qt events): clicks with ctrl and shift, double-click, arrows, Home/End, Ctrl+A, Escape, Ctrl+C variants, Return, Delete, PageUp/PageDown at the recorded page size; middle and shift+middle clicks; the menu tree for six cases, copy and open entries, decorator toggles, and the shared entries. Weak: for enter and delete the expected question and rows come from a fresh native ManageTags given the recorded tags (circular); the advanced 'tag display (experimental)' submenu is recorded but not ported or replayed (DIFFERENCES.md); Ctrl+P/Ctrl+N and ctrl-only arrows untested."
+    "note": "Untagged 2026-11-03 (#97 finish). tests/gui/manage_tags_list.rs drives the real manage tags dialog's list with real pointer and key events against oracle/fixtures/manage_tags_list.json (oracle/record_manage_tags_list.py): clicks, keys and page keys at the recorded page size, Ctrl+C variants, Return and Delete, middle clicks, the menu tree for six cases with its copy, open, decorator and shared entries; those tests stay, untagged. Not sound: in advanced mode the reference's menu has 'tag display (experimental)' (recorded, fixture 'advanced'), which the dialog's list does not offer; switching it would need the dialog to draw display, single and multiple media views of its staged tags (DIFFERENCES.md). Ctrl+P/Ctrl+N and ctrl-only arrows are also untested here."
    }
   },
   {
@@ -25771,9 +25771,9 @@
    ],
    "recheck": {
     "date": "2026-11-03",
-    "class": "weak",
+    "class": "sound",
     "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
-    "note": "tests/gui/selection_tags_box.rs the_menus_shared_tag_entries_act_as_the_references_do replays the recorded triggers of oracle/fixtures/selection_tags_box.json (oracle/record_selection_tags_box.py, the reference's real menu with DialogManage stood in to capture title and tags): 'add parents/siblings to alpha:first' and '... to selection' open the native manage parents/siblings window (title and tags compared), and choosing the listed sibling copies it. The submenu listings are compared only in the copy test's whole-menu comparison. Not covered: no recorded case lists children (group:alpha is never selected) or an 'ideal' line (only the ideal new:sibling is selected), though the leaf names both; choosing a listed parent line is never triggered. Fix: record menus for group:alpha and for a non-ideal tag (stored tags view)."
+    "note": "tests/gui/selection_tags_box.rs the_menus_shared_tag_entries_act_as_the_references_do replays the recorded triggers of oracle/fixtures/selection_tags_box.json (oracle/record_selection_tags_box.py, DialogManage stood in): 'add parents/siblings to alpha:first' and '... to selection' open the native manage parents/siblings window (title and tags compared) and choosing the listed sibling copies it. Since 2026-11-03 the_menus_children_ideal_and_relation_lines_are_the_references compares the whole menu (more_menus) for a parent with a child (group:alpha: '0 parents, 1 children', 'child: alpha:first') and, in the stored tags view switched to through the menu, for a tag that is not its sibling's ideal (old:sibling: '1 siblings' with 'ideal is \"new:sibling\" on: downloader tags, my tags'), and chooses the parent and child lines, comparing what they copy (more_triggers). The one-parent listing is in the copy test's menus. Entries are chosen with invoke_tag_menu_clicked."
    }
   },
   {
@@ -25809,9 +25809,9 @@
    ],
    "recheck": {
     "date": "2026-11-03",
-    "class": "weak",
+    "class": "sound",
     "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
-    "note": "tests/gui/selection_tags_box.rs the_menus_search_entries_change_the_search_as_the_references_do replays all 46 recorded search-submenu choices in oracle/fixtures/selection_tags_box.json (oracle/record_selection_tags_box.py, the reference's real _ProcessMenuPredicateEvent, EditPredicates scripted to accept): it opens the real menu by right press, chooses the entry, accepts the OR editor when one opens, and compares the editor's terms and the page's resulting search (add, remove, invert, add an OR, start an OR predicate, add/exclude the namespace). Not covered: 'replace <selection> with their OR', which the reference shows when several selected tags are all in the search; the recorder's search has one tag, so the entry never appears. Fix: record a case whose search holds two listed tags."
+    "note": "tests/gui/selection_tags_box.rs the_menus_search_entries_change_the_search_as_the_references_do replays all 46 recorded search-submenu choices of oracle/fixtures/selection_tags_box.json (oracle/record_selection_tags_box.py, the reference's real _ProcessMenuPredicateEvent, EditPredicates scripted to accept): the real menu opened by right press, the entry chosen, the OR editor accepted when one opens, the editor's terms and the page's resulting search compared (add, remove, invert, add an OR, start an OR predicate, add/exclude the namespace). Since 2026-11-03 the_menus_replace_with_their_or_entry_replaces_the_searched_tags covers 'replace selected with their OR' (or_replace: the search holding box:anchor and solo, both selected): the search submenu as recorded, no OR editor, and the search left one OR predicate. Entries are chosen with invoke_tag_menu_clicked after a real right press."
    }
   },
   {
@@ -25885,9 +25885,9 @@
    ],
    "recheck": {
     "date": "2026-11-03",
-    "class": "weak",
+    "class": "sound",
     "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
-    "note": "tests/gui/selection_tags_box.rs the_advanced_menus_tag_display_switch_shows_the_references_tags turns on advanced mode, opens the real menu by right press, compares the whole advanced menu with oracle/fixtures/selection_tags_box.json's (oracle/record_selection_tags_box.py, the reference's real AddAdditionalMenuItems), including the four 'tag display (experimental)' entries, then chooses each switch and compares the drawn rows. Weak: no tag display rules differ between views in the recording, so single media view, display tags and multiple media view draw identical rows (only stored tags differs); a port ignoring three switches would pass. The tick moving to the chosen view is not checked. Fix: record with differing per-view rules and compare the ticks after each switch."
+    "note": "tests/gui/selection_tags_box.rs the_advanced_menus_tag_display_switch_shows_the_references_tags compares the whole advanced menu (the four 'tag display (experimental)' entries, multiple media view ticked) with oracle/fixtures/selection_tags_box.json (oracle/record_selection_tags_box.py, the reference's AddAdditionalMenuItems) and each switch's rows. Since 2026-11-03 the_tag_display_switch_shows_each_views_rules_and_ticks_it gives both clients rules that differ by view ('views': single media hides solo, the selection list zeta:last) and, for each switch chosen through the real menu, compares the rows drawn (four different lists: no zeta:last, no solo, both, the stored tags with old:sibling) and the submenu's ticks afterwards (the chosen view ticked). Entries are chosen with invoke_tag_menu_clicked after a real right press."
    }
   },
   {
@@ -25942,9 +25942,9 @@
    ],
    "recheck": {
     "date": "2026-11-03",
-    "class": "weak",
+    "class": "sound",
     "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
-    "note": "tests/gui/viewer_tags_hover.rs hover_middle_clicks_open_search_pages_as_the_references_do sends real middle presses (plain and with shift) on the real viewer's hover and compares the pages that open (topic, predicates, name, location) and the selection after with oracle/fixtures/viewer_tags_hover.json (oracle/record_viewer_tags_hover.py, real middle-clicks, new_page_query captured): an unselected row selects it and opens its search; shift+middle with several selected opens one OR page. Weak (coordinator's review, 2026-11-03): a plain middle-click with several selected (recorded for the sidebar, not for the hover) is neither recorded nor replayed for the hover, nor is a middle-click below the rows."
+    "note": "tests/gui/viewer_tags_hover.rs hover_middle_clicks_open_search_pages_as_the_references_do sends real middle presses (plain and with shift) on the real viewer's hover and compares the pages that open (topic, predicates, name, location) and the selection after with oracle/fixtures/viewer_tags_hover.json (oracle/record_viewer_tags_hover.py, real middle-clicks, new_page_query captured): an unselected row selects it and opens its search; shift+middle with several selected opens one OR page. Since 2026-11-03 hover_plain_middle_clicks_with_several_selected_and_below_the_rows replays more_middle: a plain middle-click with two selected opens one page searching both (as the sidebar's does), and one below the rows opens nothing and clears the selection."
    }
   },
   {
@@ -25961,9 +25961,9 @@
    ],
    "recheck": {
     "date": "2026-11-03",
-    "class": "weak",
+    "class": "sound",
     "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
-    "note": "tests/gui/viewer_tags_hover.rs the_hovers_menu_and_its_entries_are_the_references opens the menu with a real right press for four selections and compares the whole menu tree, every copy entry's payload and every open entry's pages with oracle/fixtures/viewer_tags_hover.json (oracle/record_viewer_tags_hover.py, the reference's real ShowMenuFromSignal); replay_shared_entries compares the sibling/parent dialogs, copying a parent, favourites/most-used and regenerate tag display. Not covered: of the hide entries only '\"plain tag\" from here' is acted on; the namespace and multi-selection hides are in the tree but neither recorded nor replayed."
+    "note": "tests/gui/viewer_tags_hover.rs the_hovers_menu_and_its_entries_are_the_references opens the menu with a real right press for four selections and compares the whole menu tree, every copy entry's payload and every open entry's pages with oracle/fixtures/viewer_tags_hover.json (oracle/record_viewer_tags_hover.py, the reference's ShowMenuFromSignal), and replays the shared entries (sibling/parent dialogs, copying a parent, favourites and most used, regenerate tag display) and the '\"plain tag\" from here' hide. Since 2026-11-03 the_hovers_other_hide_entries_ask_then_hide_as_the_references_do replays more_hides in turn: '\"series\" tags from here', '2 selected tags from here' and '2 selected namespaces from here', comparing each hide submenu, the question's words and the file's tags afterwards. Entries are chosen with invoke_tag_menu_clicked after a real right press."
    }
   },
   {
@@ -25980,9 +25980,9 @@
    ],
    "recheck": {
     "date": "2026-11-03",
-    "class": "weak",
+    "class": "sound",
     "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
-    "note": "tests/gui/viewer_tags_hover.rs hover_keys_select_copy_and_manage_as_the_references_do sends real keys to the real viewer after a real click on the hover and replays oracle/fixtures/viewer_tags_hover.json (oracle/record_viewer_tags_hover.py, QTest.keyClick on the reference list): Down, shift+Down, Home, Up wrapping, End, Ctrl+A, Escape (selection compared), Ctrl+C with nothing and with a selection (clipboard compared), Return opening manage tags. Not covered, though the reference's keyPressEvent has them: PageUp/PageDown (the native page size comes from the viewer's height, not the hover's rows), Ctrl+P/Ctrl+N, ctrl+arrows, Ctrl+Shift+C, Ctrl+Insert."
+    "note": "tests/gui/viewer_tags_hover.rs hover_keys_select_copy_and_manage_as_the_references_do sends real keys to the real viewer after a real click on the hover and replays oracle/fixtures/viewer_tags_hover.json (oracle/record_viewer_tags_hover.py, QTest.keyClick on the reference list): Down, shift+Down, Home, Up wrapping, End, Ctrl+A, Escape, Ctrl+C with nothing and with a selection (clipboard compared), Return opening manage tags. Since 2026-11-03 hover_page_keys_ctrl_moves_and_other_copies_are_the_references replays more_steps: page down and up, with shift, ctrl+down and ctrl+up, ctrl+n and ctrl+p, ctrl+shift+c and ctrl+insert (selection and clipboard compared; the hover's terms carry no parents, so ctrl+shift+c's with-parents copy is not told from a plain one here). The recorded hover holds all of the file's rows (rows_per_page 49 for 8 tags), so a page key reaches the end on both; a page size smaller than the list is not exercised."
    }
   },
   {

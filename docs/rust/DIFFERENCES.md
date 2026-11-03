@@ -5849,7 +5849,7 @@ Checked by `tests/gui/list_keys.rs` against `oracle/fixtures/list_keys.json`.
 
 ## Recheck: leaves untagged (#97, 2026-11-03)
 
-The last pass of the recheck took the tags off five leaves that could not be
+The last pass of the recheck took the tags off the leaves that could not be
 proved sound; their tests stay and still run.
 
 - **Get tables using definitions** lists hydrus-rs's own schema; the
@@ -5862,3 +5862,5 @@ proved sound; their tests stay and still run.
   hides the main window isn't there (above, Popups).
 - **Closing pages**: closing the last page opens a new one where the
   reference leaves an empty notebook (above, Pages; #183).
+- **The manage tags dialog's list** has no "tag display" switch in advanced
+  mode (above, Manage tags).
