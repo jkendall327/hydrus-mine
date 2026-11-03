@@ -217,6 +217,12 @@ fn retire_external_call(s: &crate::external_call_window::Slots) {
     retire_exchange(&s.exchange);
 }
 
+/// Retire a nested slot type's windows with `retire` when the last clone goes.
+fn nested<S: Clone + 'static>(t: &Teardown, slots: &S, retire: fn(&S)) {
+    let slots = slots.clone();
+    t.push(move || retire(&slots));
+}
+
 /// Registers `bound`'s dialog slots with its teardown.
 pub(crate) fn watch(bound: &crate::Bound) {
     ALIVE.with(|_| ());
@@ -290,10 +296,6 @@ pub(crate) fn watch(bound: &crate::Bound) {
     t.add(&bound.simple_formulae.list);
     t.add(&bound.export_files.window);
     // the nested slot types: every descendant of a dialog
-    fn nested<S: Clone + 'static>(t: &Teardown, slots: &S, retire: fn(&S)) {
-        let slots = slots.clone();
-        t.push(move || retire(&slots));
-    }
     nested(t, &bound.export_files.sidecars, retire_sidecars);
     nested(t, &bound.filename_tagging_sidecars, retire_sidecars);
     nested(t, &folders.sidecars, retire_sidecars);
