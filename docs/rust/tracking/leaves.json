@@ -21013,7 +21013,7 @@
     "date": "2026-11-03",
     "class": "weak",
     "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
-    "note": "Untagged 2026-11-03 (#97 finish). tests/gui/page_close_replay.rs replays page_close.json through real middle-clicks and Ctrl+W (questions for importers, Undo > closed pages, the page shown next), and session.rs drives the open/close order; those tests stay, untagged. Not sound: closing the last page leaves the reference's notebook empty while hydrus-rs opens a new search page, which the replay pins rather than compares. Making 'no page' a real state is the owner's separate refactor (#183, closed by a PR keyword but not ported). DIFFERENCES.md (Pages)."
+    "note": "Untagged 2026-11-03 (#97 finish). tests/gui/page_close_replay.rs replays page_close.json through real middle-clicks and Ctrl+W (questions for importers, Undo > closed pages, the page shown next), and session.rs drives the open/close order; those tests stay, untagged. Not sound: closing the last page leaves the reference's notebook empty while hydrus-rs opens a new search page, which the replay pins rather than compares. Making 'no page' a real state is the owner's separate refactor (#183, open). DIFFERENCES.md (Pages)."
    }
   },
   {
@@ -25459,9 +25459,9 @@
    ],
    "recheck": {
     "date": "2026-11-03",
-    "class": "weak",
+    "class": "wrong",
     "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
-    "note": "Untagged 2026-11-03 (#97 finish). tests/gui/list_keys.rs enter_activates_and_ctrl_c_copies_the_file_log_s_selection_as_the_reference replays list_keys.json on the real file log (Enter and keypad Enter on a range open a page of the recorded files; nothing on empty selections; Ctrl+C and Ctrl+Insert give the recorded text; Ctrl+C with nothing selected copies the current cell); the test stays, tagged for interaction-list-pointer only. Not sound: hydrus-rs's ListKeys activates on Enter only when the current row is selected, while the reference's tree lists act on the selection whichever row is current; many lists' handlers act on the row they are given, so the shared change is a change to each. The search log's Ctrl+C is not compared with a recording (DIFFERENCES.md)."
+    "note": "Untagged 2026-11-03 (#97 finish). tests/gui/list_keys.rs enter_activates_and_ctrl_c_copies_the_file_log_s_selection_as_the_reference replays list_keys.json on the real file log (Enter and keypad Enter on a range open a page of the recorded files; nothing on empty selections; Ctrl+C and Ctrl+Insert give the recorded text; Ctrl+C with nothing selected copies the current cell); the test stays, tagged for interaction-list-pointer only. Wrong: hydrus-rs's ListKeys activates on Enter only when the current row is selected, while the reference's tree lists act on the selection whichever row is current; many lists' handlers act on the row they are given, so the shared change is a change to each. The search log's Ctrl+C is not compared with a recording (DIFFERENCES.md)."
    }
   },
   {
@@ -25578,7 +25578,7 @@
     "date": "2026-11-03",
     "class": "sound",
     "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
-    "note": "tests/gui/collect_middle_click.rs a_middle_press_on_the_collect_control_stops_collecting gives the page the recording's collect (by series, unmatched files as recorded, and since 2026-11-03 its tag context with current and pending tags left out), then sends a real middle press (and, as a control, a real left press) at the collect button found by its label and replays oracle/fixtures/collect_middle_click.json (oracle/record_collect_middle_click.py, a real MediaCollectControl pressed with QTest): namespaces cleared, ratings empty, collect_unmatched kept, the tag context reset to the recorded default (all known tags, current and pending), the label 'no collections', the number of media before and after, and that a left press only opens the choices. The setup uses invoke_* calls; the press is real. The tracker note ('GUI.md says Not yet: ... middle-clicking') is stale."
+    "note": "tests/gui/collect_middle_click.rs a_middle_press_on_the_collect_control_stops_collecting gives the page the recording's collect (by series, unmatched files as recorded, and since 2026-11-03 its tag context with current and pending tags left out), then sends a real middle press (and, as a control, a real left press) at the collect button found by its label and replays oracle/fixtures/collect_middle_click.json (oracle/record_collect_middle_click.py, a real MediaCollectControl pressed with QTest): namespaces cleared, ratings empty, collect_unmatched kept, the tag context reset to the recorded default (all known tags, current and pending), the label 'no collections', the number of media before and after, and that a left press only opens the choices, leaving the tag context as recorded. The setup uses invoke_* calls; the press is real. The tracker note ('GUI.md says Not yet: ... middle-clicking') is stale."
    }
   },
   {
@@ -25618,7 +25618,7 @@
     "date": "2026-11-03",
     "class": "sound",
     "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
-    "note": "tests/gui/viewer_hover_clicks.rs a_note_s_clicks_edit_fold_and_copy_it_as_the_reference_s_do replays every step of oracle/fixtures/viewer_hover_clicks.json (oracle/record_viewer_hover_clicks.py: real QTest presses on the reference's NotePanels over two files with notes) with real left, right and middle presses on the note's panel: a left press opens Manage Notes on the recorded note; right presses fold and unfold (each note's name, text and shown state compared after every press, and after moving to the other file and back); a middle press copies the recorded name-and-text string; the panel's tooltip is compared. Small gaps: the recording presses a note's name and text separately, the test the panel's centre; the file Manage Notes opens on is not compared with the hash. The tracker's native note is stale."
+    "note": "tests/gui/viewer_hover_clicks.rs a_note_s_clicks_edit_fold_and_copy_it_as_the_reference_s_do replays every step of oracle/fixtures/viewer_hover_clicks.json (oracle/record_viewer_hover_clicks.py: real QTest presses on the reference's NotePanels over two files with notes) with real left, right and middle presses on the note's panel: a left press opens Manage Notes on the recorded note; right presses fold and unfold (each note's name, text and shown state compared after every press, and after moving to the other file and back); a middle press copies the recorded name-and-text string; the panel's tooltip is compared. Small gaps: the recording presses a note's name and text separately, the test the panel's centre; Manage Notes is checked to open on the recorded file (its notes and the note shown equal the store's for the recorded hash). The tracker's native note is stale."
    }
   },
   {
@@ -25735,7 +25735,7 @@
     "date": "2026-11-03",
     "class": "sound",
     "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
-    "note": "tests/gui/selection_tags_box.rs keys_select_copy_and_activate_as_the_references_do sends real key presses to the focused list, first sizing the window until the list holds the recorded rows_per_page (15), and replays oracle/fixtures/selection_tags_box.json's key steps (oracle/record_selection_tags_box.py, real QTest.keyClick on the reference list): the selection after down, shift down, ctrl down, up, home, the wraps both ways, end, ctrl+n, ctrl+p, page up, page down and escape; the clipboard for ctrl+c with nothing selected, with a selection, and ctrl+shift+c; delete leaving the search unchanged; and the search and selection after return and ctrl+return with two selected. The sidebar's terms carry no parents, so ctrl+shift+c copies what ctrl+c does in both. Shift+return (the same activation path) is not replayed."
+    "note": "tests/gui/selection_tags_box.rs keys_select_copy_and_activate_as_the_references_do sends real key presses to the focused list, first sizing the window until the list holds the recorded rows_per_page (15), and replays oracle/fixtures/selection_tags_box.json's key steps (oracle/record_selection_tags_box.py, real QTest.keyClick on the reference list): the selection after down, shift down, ctrl down, up, home, the wraps both ways, end, ctrl+n, ctrl+p, page up, page down, ctrl+a and escape; the clipboard for ctrl+c with nothing selected, with a selection, and ctrl+shift+c; delete leaving the search unchanged; and the search and selection after return and ctrl+return with two selected. The sidebar's terms carry no parents, so ctrl+shift+c copies what ctrl+c does in both. Shift+return (the same activation path) is not replayed."
    }
   },
   {
@@ -25944,7 +25944,7 @@
     "date": "2026-11-03",
     "class": "sound",
     "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
-    "note": "tests/gui/viewer_tags_hover.rs hover_middle_clicks_open_search_pages_as_the_references_do sends real middle presses (plain and with shift) on the real viewer's hover and compares the pages that open (topic, predicates, name, location, the viewer's location context) and the selection after with oracle/fixtures/viewer_tags_hover.json (oracle/record_viewer_tags_hover.py, real middle-clicks, new_page_query captured): an unselected row selects it and opens its search; shift+middle with several selected opens one OR page. Not covered (minor): below the rows, and a plain middle-click with several selected."
+    "note": "tests/gui/viewer_tags_hover.rs hover_middle_clicks_open_search_pages_as_the_references_do sends real middle presses (plain and with shift) on the real viewer's hover and compares the pages that open (topic, predicates, name, location) and the selection after with oracle/fixtures/viewer_tags_hover.json (oracle/record_viewer_tags_hover.py, real middle-clicks, new_page_query captured): an unselected row selects it and opens its search; shift+middle with several selected opens one OR page. Since 2026-11-03 hover_plain_middle_clicks_with_several_selected_and_below_the_rows replays more_middle: a plain middle-click with two selected opens one page searching both (as the sidebar's does), and one below the rows opens nothing and clears the selection."
    }
   },
   {

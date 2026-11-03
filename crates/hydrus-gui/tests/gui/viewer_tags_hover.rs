@@ -593,3 +593,52 @@ fn the_hovers_other_hide_entries_ask_then_hide_as_the_references_do() {
     }
     v.h.finish();
 }
+
+/// A plain middle-click on a row with two selected opens one page of both,
+/// and one below the rows opens nothing and clears the selection, as the
+/// reference's do (`more_middle`).
+// leaf: viewer-tags-hover-middle-click
+#[test]
+fn hover_plain_middle_clicks_with_several_selected_and_below_the_rows() {
+    let v = Hover::new();
+    let pages = |launched: &Json| -> Json {
+        Json::Array(
+            launched
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|l| {
+                    json!({
+                        "topic": l["topic"],
+                        "predicates": l["predicates"],
+                        "page_name": l["page_name"],
+                        "location": l["location"],
+                    })
+                })
+                .collect(),
+        )
+    };
+    for step in v.fixture["more_middle"].as_array().unwrap() {
+        let name = step["step"].as_str().unwrap();
+        let wanted = strings(&step["selected_before"]);
+        if v.selected() != wanted {
+            let wanted: Vec<&str> = wanted.iter().map(String::as_str).collect();
+            v.select(&wanted);
+        }
+        v.h.differ(
+            &format!("{name}: before"),
+            &json!(v.selected()),
+            &step["selected_before"],
+        );
+        let before = v.h.bound.pages.borrow().page_count();
+        let tag = (name == "middle click with two selected").then_some("plain tag");
+        v.press(tag, MIDDLE, NONE);
+        v.h.differ(name, &v.h.launched(before), &pages(&step["launched"]));
+        v.h.differ(
+            &format!("{name}: after"),
+            &json!(v.selected()),
+            &step["selected"],
+        );
+    }
+    v.h.finish();
+}

@@ -309,6 +309,39 @@
    ]
   }
  ],
+ "more_middle": [
+  {
+   "step": "middle click with two selected",
+   "selected_before": [
+    "plain tag",
+    "box:anchor"
+   ],
+   "selected": [
+    "plain tag",
+    "box:anchor"
+   ],
+   "launched": [
+    {
+     "topic": "new_page_query",
+     "location": "my files",
+     "predicates": [
+      "box:anchor",
+      "plain tag"
+     ],
+     "page_name": "box:anchor, plain tag"
+    }
+   ]
+  },
+  {
+   "step": "middle click below the rows",
+   "selected_before": [
+    "plain tag",
+    "box:anchor"
+   ],
+   "selected": [],
+   "launched": []
+  }
+ ],
  "menus": [
   {
    "case": "one",

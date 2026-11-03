@@ -224,6 +224,27 @@ fn a_note_s_clicks_edit_fold_and_copy_it_as_the_reference_s_do() {
                         window.get_names().iter().map(|n| n.to_string()).collect();
                     let current = usize::try_from(window.get_current()).unwrap();
                     assert_eq!(names[current], edit["start on"].as_str().unwrap(), "{what}");
+                    // on the recorded file: its notes, as the store has them
+                    let file = id_of(
+                        &fixture,
+                        edit["edit notes"].as_str().unwrap().parse().unwrap(),
+                    );
+                    let stored = fixture
+                        .store
+                        .read(move |c| hydrus_store::media::notes(c, file))
+                        .unwrap();
+                    let mut shown = names.clone();
+                    shown.sort();
+                    assert_eq!(
+                        shown,
+                        stored.keys().cloned().collect::<Vec<_>>(),
+                        "{what}: the recorded file's notes"
+                    );
+                    assert_eq!(
+                        window.get_text().as_str(),
+                        stored[&names[current]],
+                        "{what}: the note shown"
+                    );
                     window.invoke_cancel();
                     widgets::settle();
                     assert!(fixture.bound.manage_notes.borrow().is_none(), "{what}");
