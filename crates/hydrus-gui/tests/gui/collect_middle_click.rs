@@ -53,6 +53,18 @@ fn a_middle_press_on_the_collect_control_stops_collecting() {
         }
         ui.invoke_collect_unmatched_chosen(before["collect"]["unmatched"].as_bool().unwrap());
         ui.invoke_collect_toggled(series, true);
+        // and the recorded tag context, not the default one (current and
+        // pending tags left out), so the press is seen to reset it
+        let context = &before["collect"]["tag_context"];
+        let mut collect = page.borrow().collect().clone();
+        collect.tag_context.include_current = context["include_current"].as_bool().unwrap();
+        collect.tag_context.include_pending = context["include_pending"].as_bool().unwrap();
+        assert_ne!(
+            collect.tag_context,
+            hydrus_core::search::context::TagContext::default(),
+            "{what}: the recorded context is not the default"
+        );
+        page.borrow_mut().set_collect(collect);
         ui.set_collect_open(false);
         assert_eq!(
             ui.get_collect_label(),
@@ -99,18 +111,29 @@ fn a_middle_press_on_the_collect_control_stops_collecting() {
             "{what}: shown"
         );
         if case["button"] == "middle" {
-            // (the tag context back to the default: all known tags, current
-            // and pending. The page's context is already the default, as the
-            // test cannot give the collect another first, so this only checks
-            // it is not changed to something else.)
+            // the tag context back to the recorded one, the default (all
+            // known tags, current and pending)
             let context = &after["collect"]["tag_context"];
             assert_eq!(
                 collect.tag_context,
                 hydrus_core::search::context::TagContext::default(),
                 "{what}"
             );
-            assert!(context["include_current"].as_bool().unwrap());
-            assert!(context["include_pending"].as_bool().unwrap());
+            assert_eq!(
+                collect.tag_context.include_current,
+                context["include_current"].as_bool().unwrap(),
+                "{what}"
+            );
+            assert_eq!(
+                collect.tag_context.include_pending,
+                context["include_pending"].as_bool().unwrap(),
+                "{what}"
+            );
+            assert_eq!(
+                collect.tag_context.service.to_hex(),
+                context["service"].as_str().unwrap(),
+                "{what}: all known tags"
+            );
             assert!(!ui.get_collect_open(), "{what}: the choices stay shut");
         } else {
             assert!(ui.get_collect_open(), "{what}: the choices open");

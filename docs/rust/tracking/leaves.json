@@ -25339,7 +25339,13 @@
     "Reference: MediaResultsPanelThumbnails registers EVT_MIDDLE_DOWN -> EventMouseFullScreen (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:177, :1022), the same handler as the left double-click (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:176): on a local file it opens the viewer; on a file that is not local but is current on a remote file service it downloads it (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:1036-1040). Middle on empty space does nothing (_GetThumbnailUnderMouse is None). The press also reaches _InnerWidget.mousePressEvent (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:2016), which selects the thumbnail as a click would.",
     "Native: ThumbnailGrid's TouchArea (ui/main.slint:190-215) handles click, right press and double-click only; no middle press. The remote-download branch needs remote file services, which are out of scope (DECISIONS 2026-09-29), so only the viewer part applies. Found by the interaction audit (scripts/interaction_audit.py).",
     "Correction (#288): v688's default grid is MediaResultsPanelThumbnailsGraphicsViewTest (the option test_thumbnails_graphics_view is on in a new client, hydrus/client/ClientOptions.py:371), not the older MediaResultsPanelThumbnails the audit read; the recording (oracle/record_thumbnail_pointer.py) drives the default. Its mousePressEvent opens the viewer on a middle press on a thumbnail (ShowMediaFullScreen) without selecting it, with or without ctrl/shift, and does nothing on a middle press on empty space. Native: ui/main.slint ThumbnailGrid's pointer-event, a middle press on a thumbnail -> activated."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/thumbnail_pointer.rs presses_on_the_grid_select_open_and_show_the_menu_as_the_reference_s sends real middle presses (plain, with ctrl, with shift, and on empty space) and replays oracle/fixtures/thumbnail_pointer.json (oracle/record_thumbnail_pointer.py, the reference's default grid under QTest, _LaunchMediaViewer captured): the viewer opens on the pressed file (the caption's index), the selection and focus are untouched, and nothing happens on empty space, as recorded. The remote-download branch is out of scope (remote services). The tracker's first native note ('no middle press') is stale."
+   }
   },
   {
    "id": "interaction-thumbnail-click-select",
@@ -25354,7 +25360,13 @@
     "Reference: _InnerWidget.mousePressEvent (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:2016-2028) calls _HitMedia(thumbnail under the mouse, ctrl, shift) for every button except a right press on empty space, which is skipped so the selection stays; a press on empty space with no thumbnail clears the selection (_HitMedia with None). Ctrl toggles, shift extends from the last click (MediaResultsPanel._HitMedia, ClientGUIMediaResultsPanel.py:721).",
     "Native: ui/main.slint ThumbnailGrid clicked / thumbnail-clicked with ctrl and shift, and the empty-space TouchArea; tests call the callbacks, not pointer events. (The reference's MediaResultsPanelThumbnailsGraphicsViewTest class is an experimental unused port and is not the source.)",
     "Correction (#288): v688's default grid is MediaResultsPanelThumbnailsGraphicsViewTest (the option test_thumbnails_graphics_view is on in a new client, hydrus/client/ClientOptions.py:371), not the older MediaResultsPanelThumbnails the audit read; the recording (oracle/record_thumbnail_pointer.py) drives the default. Its mousePressEvent _HitMedia's the thumbnail pressed (left or right, with ctrl/shift) and clears on a left press on empty space; a right press on empty space changes nothing."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/thumbnail_pointer.rs presses_on_the_grid_select_open_and_show_the_menu_as_the_reference_s sends real pointer events (widgets::click_at_with / double_click_at, with real ctrl/shift modifiers, at the thumbnail's middle or in the gap after the first thumbnail) to the real main window's ThumbnailGrid, on a page of the basic fixture's files in the recorded order, and replays every step of oracle/fixtures/thumbnail_pointer.json (oracle/record_thumbnail_pointer.py, QTest presses on the viewport of v688's default grid, MediaResultsPanelThumbnailsGraphicsViewTest). After each step it compares the selected set and the focused file with the recording: plain, ctrl-toggle and shift-extend clicks, a left press on empty space that clears the selection, and right presses that select or leave the selection alone. Minor gap: 'empty space' is only the gap between two thumbnails in the first row, in both the recording and the test. The tracker note ('tests call the callbacks, not pointer events') is stale."
+   }
   },
   {
    "id": "interaction-thumbnail-double-click-open",
@@ -25369,7 +25381,13 @@
     "Reference: EVT_LEFT_DCLICK -> EventMouseFullScreen (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:176, :1022): on a local thumbnail it opens the viewer on it; on a remote-only file it downloads it (remote services out of scope).",
     "Native: ui/main.slint:212 double-clicked => activated. Tests invoke the callback; none sends a real double-click.",
     "Correction (#288): v688's default grid is MediaResultsPanelThumbnailsGraphicsViewTest (the option test_thumbnails_graphics_view is on in a new client, hydrus/client/ClientOptions.py:371), not the older MediaResultsPanelThumbnails the audit read; the recording (oracle/record_thumbnail_pointer.py) drives the default. mouseDoubleClickEvent opens the viewer on the thumbnail (ShowMediaFullScreen)."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/thumbnail_pointer.rs presses_on_the_grid_select_open_and_show_the_menu_as_the_reference_s sends a real left double-click (two real press/release pairs) on a file and replays the recorded step of oracle/fixtures/thumbnail_pointer.json (oracle/record_thumbnail_pointer.py, QTest click plus mouseDClick on the reference's default grid, _LaunchMediaViewer captured): the selection, the focus, and that the native viewer opened on that file (the caption's index), then closes it; every other step asserts no viewer opens. Remote-file download is out of scope. The tracker note ('none sends a real double-click') is stale."
+   }
   },
   {
    "id": "interaction-thumbnail-context-menu",
@@ -25384,7 +25402,13 @@
     "Reference: customContextMenuRequested -> ShowMenuFromSignal (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:195, :1871); the press that precedes it selects the thumbnail (hydrus/client/gui/pages/ClientGUIMediaResultsPanelThumbnails.py:2016-2028) except on empty space, where the empty-space menu shows and the selection is untouched.",
     "Native: ui/main.slint menu-requested; GUI.md says the menu is recorded (record_thumbnail_menu.py). The pointer path to it is untested.",
     "Correction (#288): v688's default grid is MediaResultsPanelThumbnailsGraphicsViewTest (the option test_thumbnails_graphics_view is on in a new client, hydrus/client/ClientOptions.py:371), not the older MediaResultsPanelThumbnails the audit read; the recording (oracle/record_thumbnail_pointer.py) drives the default. contextMenuEvent shows the menu (ShowMenu) after the press has selected the thumbnail, or on empty space with the selection untouched."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/thumbnail_pointer.rs presses_on_the_grid_select_open_and_show_the_menu_as_the_reference_s sends real right presses (on a thumbnail, on empty space, on a thumbnail already in a ctrl-built multi-selection) to the real main window's grid and replays oracle/fixtures/thumbnail_pointer.json (oracle/record_thumbnail_pointer.py, the reference's default grid under QTest, PopupMenu captured): the selection and focus before the menu, that a menu opens where the reference's does, and (since 2026-11-03) that it is the thumbnail menu for the files pressed on: its first entries ('1 zip, 134B'/'refresh'/'select', '1 flac, 20.6 KB', '2 files, 32.6 KB', the empty-space press keeping the zip's) equal the recorded ones and are drawn in the open menu. The menu's other entries are other leaves (thumbnail_menu.rs). The tracker note ('the pointer path to it is untested') is stale."
+   }
   },
   {
    "id": "interaction-thumbnail-drag-out",
@@ -25412,7 +25436,13 @@
    "notes": [
     "Reference: BetterListCtrlTreeView is a QTreeView, so the arrow, Home, End, PageUp and PageDown keys move and extend the selection (with shift/ctrl), and hydrus/client/gui/lists/ClientGUIListCtrl.py:922 handles Ctrl+A to select all. It is the list in about forty dialogs and panels.",
     "Native: the shared ListTable (ui/list_table.slint:61-71) handles only the Delete key; clicks select, nothing moves the selection from the keyboard. Found by the interaction audit."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/list_keys.rs the_keys_move_and_select_as_the_reference_s_list opens the real 'review files to import' window through file > import files, tabs to the list and replays all 28 recorded sequences of oracle/fixtures/list_keys.json (oracle/record_list_keys.py, QTest key and mouse events on the reference's BetterListCtrlTreeView) as real key, click and drag events, comparing each step's selected rows: Up/Down, Home/End, PageUp/PageDown, plain, shift, ctrl and ctrl+shift; Space, Ctrl+Space, shift+Space; Ctrl+A with and without a current row; keys with nothing current. Page keys run with the viewport at the reference's 26 rows and the current row is checked in view. The behaviour is the shared ListKeys in ListTable, shown on one list. The tracker note ('only the Delete key') is stale."
+   }
   },
   {
    "id": "interaction-list-keys-activate-copy",
@@ -25426,7 +25456,13 @@
    "notes": [
     "Reference: hydrus/client/gui/lists/ClientGUIListCtrl.py:916 Enter/Return runs the list's activate action (the same as a double-click, edit in most dialogs); hydrus/client/gui/lists/ClientGUIListCtrl.py:928 Ctrl+C copies the rows via the list's copy-rows callable (where the dialog supplies one) joined by newlines.",
     "Native: ui/list_table.slint has row-activated for double-click only and no copy. Some lists have their own copy menus (those leaves exist); the keys are not wired anywhere."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "weak",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/list_keys.rs enter_activates_and_ctrl_c_copies_the_file_log_s_selection_as_the_reference sends real keys and clicks to the real file log window and replays oracle/fixtures/list_keys.json (oracle/record_list_keys.py, the reference's EditFileSeedCachePanel list): Enter and keypad Enter on a range open a page of the recorded files; Enter with nothing selected or on rows with no file opens nothing; Ctrl+C and Ctrl+Insert give the recorded clipboard text; Ctrl+C with nothing selected falls back to Qt's copy of the current cell. Not covered: the gallery (search) log's Ctrl+C, wired natively but untested. Divergence: native activates on Enter only when the current row is selected, the reference acts on the selection regardless (unrecorded case)."
+   }
   },
   {
    "id": "interaction-list-pointer",
@@ -25442,7 +25478,13 @@
     "Native: ui/list_table.slint touch area (down/up/moved/double-clicked, row-menu, row-middle) provides all of it for lists built on ListTable. Dialog tests mostly invoke row-activated/row-menu directly.",
     "Partial because hand-rolled lists outside ListTable have none of it: auto_resolution_review.slint:107-113 and favourites.slint:130-136 (plain rows with a TouchArea, no shift/ctrl, double-click or menu), and the manage-tags list (see interaction-manage-tags-list-menu-keys). The header column menu (:621) has no native counterpart anywhere.",
     "#288: the hand-rolled lists the audit names already had ctrl/shift clicks and double-click (and the review's pair list a menu); \"review files to import\" (ui/import_files.slint, which had a hand-rolled list too) and \"edit favourite searches\" are now ListTables, and the review's pair lists take ListKeys. Replayed with real pointer events in tests/gui/list_keys.rs."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/list_keys.rs, three tagged tests with real pointer events: clicks_with_ctrl_and_shift_and_qt_s_copy_on_the_import_list replays oracle/fixtures/list_selection.json (oracle/record_list_selection.py, the reference's extended-selection clicks on the same import list) step by step; the_keys_move_and_select_as_the_reference_s_list replays the recorded drag-down, drag-up and drag-then-shift-arrow sequences of list_keys.json; enter_activates_and_ctrl_c_copies_the_file_log_s_selection_as_the_reference replays the file log's double-click (a page of the row's file) and right-clicks (selection kept on a selected row, replaced on an unselected one; the menu's first three entries compared). Not covered: drags with ctrl or shift (not recorded). The tracker's 'Partial because' note predates #288."
+   }
   },
   {
    "id": "interaction-tab-double-click-rename",
@@ -25456,7 +25498,13 @@
    "notes": [
     "Reference: hydrus/client/gui/pages/ClientGUIPagesTreeView.py:99-111 mouseDoubleClickEvent on a tab emits tabDoubleLeftClicked, connected to _RenamePage (hydrus/client/gui/pages/ClientGUIPages.py:1205); the rename dialog is 'Enter the new name.'",
     "Native: rename is only in the tab menu (GUI.md 'Tab rename'); ui/notebook_tabs.slint has no double-click on a tab. Found by the interaction audit."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/tab_strip_clicks.rs tab_strip_clicks_replay_the_references_notebook_with_real_pointer_events sends real left double-clicks to tabs of the real main window (a top-level page, a page of pages, a tab in a nested notebook's row) and replays oracle/fixtures/tab_strip_interactions.json (oracle/record_tab_strip_interactions.py, QTest press/release/dclick on the real PagesNotebook tab bar, EnterText scripted): the question ('Enter the new name.', the page's name as the default), the answer applied or cancelled, the resulting page tree and the page shown; a single click asks nothing and clicks split by a press elsewhere do not rename. The new name is set in the dialog before a real click on apply rather than typed (the dialog's concern). The tracker note ('no double-click on a tab') is stale."
+   }
   },
   {
    "id": "interaction-tab-strip-clicks",
@@ -25470,7 +25518,13 @@
    "notes": [
     "Reference: PagesNotebook.eventFilter (hydrus/client/gui/pages/ClientGUIPages.py:2640-2712): a double-click, left or middle, on empty tab space chooses a new page there; a right-button release on a tab or empty space shows the tab menu. (Middle-click on a tab closing it is tracked by audit-options-tabs-close.)",
     "Native: ui/notebook_tabs.slint, docs/rust/GUI.md 'a double click, left or middle, on a tab row's empty space'. Written before the interaction audit; never listed as a leaf."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/tab_strip_clicks.rs tab_strip_clicks_replay_the_references_notebook_with_real_pointer_events sends real pointer events and replays the 'tabs' steps of oracle/fixtures/tab_strip_interactions.json (oracle/record_tab_strip_interactions.py, QTest events on the real tab bar and notebook, the tab menu and _ChooseNewPage captured): left and middle double-clicks and a middle click on a row's empty space (top row and the nested row), a right press with no release, right releases on tabs and empty space, and a middle double-click on a tab. It compares which notebook's page chooser opens (none on a single left click), that no menu shows on the right press and the full tab menu tree after the release (tab, page of pages, empty space, the nested notebook's tab and space), and the page tree and page shown, and checks the row-end touch area. Minor: the chooser's insertion index is not compared."
+   }
   },
   {
    "id": "interaction-tab-drag",
@@ -25499,7 +25553,13 @@
    "notes": [
     "Reference: TreeViewWithDnD (hydrus/client/gui/pages/ClientGUIPagesTreeView.py:689) shows the page menu on right-click (hydrus/client/gui/pages/ClientGUIPagesTreeView.py:712 customContextMenuRequested, _ShowContextMenu at :1005) and moves pages by drag and drop (InternalMove, :720-:724).",
     "Native: GUI.md says 'broader Qt tree drag/drop and context-menu behavior remain unported'; the tree supports click, keys and double-click only (ui/notebook_tabs.slint:343)."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/tree_menu_drag.rs sends real pointer events to the real main window's pages tree (tree on the left, tabs hidden). the_trees_right_click_menu_acts_on_a_rows_notebook_as_the_references_does sends right presses and releases on rows and empty space; dragging_tree_rows_moves_pages_where_the_references_tree_drops_them presses, moves past the drag distance and releases above, on or below rows or below them. Both replay the 'tree' steps of oracle/fixtures/tab_strip_interactions.json (oracle/record_tab_strip_interactions.py, the reference's real tree view: a QContextMenuEvent at the click, and drops as real drag enter/move/drop events through the real model's dropMimeData): the whole menu tree (submenus opened by hovering), menu actions chosen by real clicks (select > page to the right, move page > left, close page) acting on a notebook that is not shown, and the page tree and page shown after each of seven cumulative drags. Small gaps: the droppingOnItself refusal could not be recorded (its untagged test has none), and the recorded tree 'current' row is not compared. The tracker's native note ('click, keys and double-click only') is stale."
+   }
   },
   {
    "id": "interaction-collect-control-middle-click",
@@ -25513,7 +25573,13 @@
    "notes": [
     "Reference: hydrus/client/gui/pages/ClientGUIMediaResultsPanelSortCollect.py:463-480 eventFilter: a middle press on the collect combo sets an empty MediaCollect (keeping collect_unmatched).",
     "Native: GUI.md says 'Not yet: ... middle-clicking the control to clear it'."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/collect_middle_click.rs a_middle_press_on_the_collect_control_stops_collecting gives the page the recording's collect (by series, unmatched files as recorded, and since 2026-11-03 its tag context with current and pending tags left out), then sends a real middle press (and, as a control, a real left press) at the collect button found by its label and replays oracle/fixtures/collect_middle_click.json (oracle/record_collect_middle_click.py, a real MediaCollectControl pressed with QTest): namespaces cleared, ratings empty, collect_unmatched kept, the tag context reset to the recorded default (all known tags, current and pending), the label 'no collections', the number of media before and after, and that a left press only opens the choices. The setup uses invoke_* calls; the press is real. The tracker note ('GUI.md says Not yet: ... middle-clicking') is stale."
+   }
   },
   {
    "id": "interaction-embed-button",
@@ -25527,7 +25593,13 @@
    "notes": [
     "Reference: hydrus/client/gui/canvas/ClientGUICanvasMedia.py:1471-1473 EmbedButton, left press runs EventEmbedButton, used when a media kind's 'start with embed button' view option is set.",
     "Native: EmbedButton (ui/embed_button.slint) in the media viewer and the preview, recorded by oracle/record_embed_button.py."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/embed_button.rs: a_file_that_starts_with_the_embed_button_waits_behind_it_in_the_viewer and ..._in_the_preview replay oracle/fixtures/embed_button.json (oracle/record_embed_button.py: a real CanvasMediaListBrowser and a real page's preview, QTest presses on the real EmbedButton, JPEG and GIF set to start with it): at each step (show, a right press, a left press, real pointer events) whether the button shows, whether a menu opens (in the viewer its first entry is the recorded info line; the preview opens none), and whether the media is drawn, played or neither; the PNG shows at once and coming back shows the button again; in the viewer the button's rect equals the recorded one. a_started_file_keeps_playing_after_an_edit and the_preview_keeps_its_decision_when_the_option_changes cover the decide-once behaviour. Minor: the preview's button rect is compared with the native media bounds."
+   }
   },
   {
    "id": "interaction-viewer-note-hover-clicks",
@@ -25541,7 +25613,13 @@
    "notes": [
     "Reference: hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py:2111-2135 NotePanel eventFilter: left press emits editNote(name) (opens Manage Notes on that note), middle copies (tracked), right toggles the note text's visibility.",
     "Native: ui/note_hover_copy.slint handles the middle press only."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/viewer_hover_clicks.rs a_note_s_clicks_edit_fold_and_copy_it_as_the_reference_s_do replays every step of oracle/fixtures/viewer_hover_clicks.json (oracle/record_viewer_hover_clicks.py: real QTest presses on the reference's NotePanels over two files with notes) with real left, right and middle presses on the note's panel: a left press opens Manage Notes on the recorded note; right presses fold and unfold (each note's name, text and shown state compared after every press, and after moving to the other file and back); a middle press copies the recorded name-and-text string; the panel's tooltip is compared. Small gaps: the recording presses a note's name and text separately, the test the panel's centre; the file Manage Notes opens on is not compared with the hash. The tracker's native note is stale."
+   }
   },
   {
    "id": "interaction-viewer-inbox-icon-click",
@@ -25555,7 +25633,13 @@
    "notes": [
     "Reference: hydrus/client/gui/canvas/ClientGUICanvasHoverFrames.py:1663-1719 InboxIconClickFilter: a left press on the inbox icon runs _Archive.",
     "Native: the icon is painted (ui/viewer.slint:958-962 and the ratings frame) and takes no clicks; archiving is by the top strip's button or shortcut."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/viewer_hover_clicks.rs a_left_press_on_the_inbox_icon_archives_the_file opens the real viewer on the recorded file, raises the top-right hover with a real pointer move, checks the inbox icon and the recorded location text show, and replays the recorded right and left presses of oracle/fixtures/viewer_hover_clicks.json (oracle/record_viewer_hover_clicks.py, real QTest presses on the reference's _inbox_icon) as real pointer events: after the right press the file stays in the inbox, after the left it is archived and the icon gone, and the store confirms it. The tracker's native note ('takes no clicks') is stale."
+   }
   },
   {
    "id": "interaction-manage-tags-list-menu-keys",
@@ -25570,7 +25654,13 @@
     "Tracked with #286 (the selection-tags box), which shares ListBoxTagsMedia: the reference's manage-tags lists inherit the tag menu (customContextMenuRequested, :3220), middle-click opening a search page (shift: OR, :3455), the ListBox keyboard (arrows, Home/End, PageUp/PageDown with ctrl/shift, Enter, Escape, :2711), wheel and drag-select from ListBoxTags/ListBox.",
     "Native: the manage-tags list handles a left press with ctrl/shift, a double-click, Delete and Return (ui/manage_tags.slint:190-207); no menu, no middle-click, no navigation keys. Found by the interaction audit's subclass expansion; the same inheritance is why the viewer's tag hover (ListBoxTagsMediaHoverFrame) and the page's selection tags (ListBoxTagsMediaSidebar) share the gap.",
     "#286: the list is the shared SelectionTags model (the selection tags box's), with the dialog's own menu (decorators, counts, no search/select/hide). Replayed with real pointer and key events in tests/gui/manage_tags_list.rs against oracle/fixtures/manage_tags_list.json; the advanced-mode tag display switch and drag selection are left out (DIFFERENCES.md)."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "weak",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/manage_tags_list.rs has four tagged tests driving the real manage tags dialog from the main window with real pointer and key events, replaying oracle/fixtures/manage_tags_list.json (oracle/record_manage_tags_list.py, the reference's ListBoxTagsMediaTagsDialog under real Qt events): clicks with ctrl and shift, double-click, arrows, Home/End, Ctrl+A, Escape, Ctrl+C variants, Return, Delete, PageUp/PageDown at the recorded page size; middle and shift+middle clicks; the menu tree for six cases, copy and open entries, decorator toggles, and the shared entries. Weak: for enter and delete the expected question and rows come from a fresh native ManageTags given the recorded tags (circular); the advanced 'tag display (experimental)' submenu is recorded but not ported or replayed (DIFFERENCES.md); Ctrl+P/Ctrl+N and ctrl-only arrows untested."
+   }
   },
   {
    "id": "selection-tags-click-select",
@@ -25583,7 +25673,13 @@
    "native": "crates/hydrus-gui/ui/main.slint",
    "notes": [
     "ListBox._HandleClick/_Hit on every mouse press (left, right or middle): a plain click selects only the row unless it is already selected, ctrl toggles, shift selects a range from where the last range started (ctrl+shift deselects it), a click below the rows deselects all. Found by the owner (#286): the box took only double-clicks."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/selection_tags_box.rs clicks_select_rows_as_the_references_hit_rules_do drives the real main window's sidebar list with real pointer presses (common/input.rs press, modifiers held as key events) and replays the 13 click steps of oracle/fixtures/selection_tags_box.json (oracle/record_selection_tags_box.py, real QTest clicks on the reference's ListBoxTagsMediaSidebar), comparing the selected tags after each: plain, ctrl, shift and ctrl+shift clicks, a plain click on an unselected row, right presses on selected and unselected rows, a click below the rows, a shift click with no anchor and one below the rows. (The menu a right press opens is closed with invoke_tag_menu_dismissed, incidental.)"
+   }
   },
   {
    "id": "selection-tags-double-click",
@@ -25596,7 +25692,13 @@
    "native": "crates/hydrus-gui/ui/main.slint",
    "notes": [
     "ListBoxTagsMediaSidebar._Activate: enters the selected tags' predicates into the page's search, inverted with ctrl, merged into an OR with shift when there are several; a ctrl double-click reselects a row the first click deselected."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/selection_tags_box.rs double_clicks_put_the_selection_in_the_search_as_the_references_do sends real double-clicks (two press/release pairs, modifiers held) to the sidebar rows and replays the five recorded double-click steps of oracle/fixtures/selection_tags_box.json (oracle/record_selection_tags_box.py, real press/release/DblClick events on the reference's widget): plain; ctrl (inverted); ctrl on a selected row; shift with two selected (one OR); and on the already searched tag (removes it). It compares the page's resulting search, written as the reference's ToString, and the selection afterwards, putting the search back between cases."
+   }
   },
   {
    "id": "selection-tags-middle-click",
@@ -25609,7 +25711,13 @@
    "native": "crates/hydrus-gui/ui/main.slint",
    "notes": [
     "ListBoxTags.eventFilter: a middle press hits the row, then opens one new search page (in the page's location, named by the predicates) for the selected predicates, or for their OR with shift."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/selection_tags_box.rs middle_clicks_open_search_pages_as_the_references_do sends real middle presses (shift held where recorded) to the sidebar rows and replays the five recorded middle-click steps of oracle/fixtures/selection_tags_box.json (oracle/record_selection_tags_box.py, real QTest middle clicks on the reference list, new_page_query captured): one row, a selected row with two selected, shift-middle with two selected (one OR page), shift-middle with one selected, and below the rows (nothing opens). It compares the pages the native window really opened (kind, predicates, name, location) and the selection after. activate_window is not compared (false in every recording)."
+   }
   },
   {
    "id": "selection-tags-keyboard",
@@ -25622,7 +25730,13 @@
    "native": "crates/hydrus-gui/ui/main.slint",
    "notes": [
     "ListBox.keyPressEvent: arrows wrap, shift and ctrl as for clicks, escape deselects, ctrl+a selects all, ctrl+c copies the selected tags (or all; ctrl+shift+c with parents), enter activates as a double-click does."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/selection_tags_box.rs keys_select_copy_and_activate_as_the_references_do sends real key presses to the focused list, first sizing the window until the list holds the recorded rows_per_page (15), and replays oracle/fixtures/selection_tags_box.json's key steps (oracle/record_selection_tags_box.py, real QTest.keyClick on the reference list): the selection after down, shift down, ctrl down, up, home, the wraps both ways, end, ctrl+n, ctrl+p, page up, page down and escape; the clipboard for ctrl+c with nothing selected, with a selection, and ctrl+shift+c; delete leaving the search unchanged; and the search and selection after return and ctrl+return with two selected. The sidebar's terms carry no parents, so ctrl+shift+c copies what ctrl+c does in both. Shift+return (the same activation path) is not replayed."
+   }
   },
   {
    "id": "selection-tags-menu-copy",
@@ -25635,7 +25749,13 @@
    "native": "crates/hydrus-gui/ui/main.slint",
    "notes": [
     "ShowMenuFromSignal's copy submenu for the selection list (which has counts): the selection, its subtags and subtags with underscores, each with counts, and all tags/subtags with and without counts; what each copies."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/selection_tags_box.rs the_menu_and_its_copy_entries_are_the_references opens the menu with a real right press for each of the 11 recorded cases in oracle/fixtures/selection_tags_box.json (oracle/record_selection_tags_box.py, the reference's real ShowMenuFromSignal menu with its sibling/parent lookup run inline): one namespaced, one unnamespaced, searched, with parent, sibling, two of a namespace, two namespaces, two unnamespaced, searched plus another, all, none. For each it compares the whole menu tree, then chooses every recorded copy entry and compares the clipboard payload (selection, subtags, subtags with underscores, each with counts, and all tags/subtags with and without counts). Entries are chosen with invoke_tag_menu_clicked after finding the line by label, not a click on the overlay; the menu is opened by real input."
+   }
   },
   {
    "id": "selection-tags-menu-siblings-parents",
@@ -25648,7 +25768,13 @@
    "native": "crates/hydrus-gui/ui/main.slint",
    "notes": [
     "One selected tag: the siblings and parents submenus list its siblings, ideal, parents and children per service; any selection: 'add siblings/parents to ...' opens the manage tag siblings/parents dialog with the tags."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "weak",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/selection_tags_box.rs the_menus_shared_tag_entries_act_as_the_references_do replays the recorded triggers of oracle/fixtures/selection_tags_box.json (oracle/record_selection_tags_box.py, the reference's real menu with DialogManage stood in to capture title and tags): 'add parents/siblings to alpha:first' and '... to selection' open the native manage parents/siblings window (title and tags compared), and choosing the listed sibling copies it. The submenu listings are compared only in the copy test's whole-menu comparison. Not covered: no recorded case lists children (group:alpha is never selected) or an 'ideal' line (only the ideal new:sibling is selected), though the leaf names both; choosing a listed parent line is never triggered. Fix: record menus for group:alpha and for a non-ideal tag (stored tags view)."
+   }
   },
   {
    "id": "selection-tags-menu-open",
@@ -25661,7 +25787,13 @@
    "native": "crates/hydrus-gui/ui/main.slint",
    "notes": [
     "The open submenu: a new search page for the selection, its OR, one page each, and a new duplicate filter page, each in the page's location and named as the reference names it."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/selection_tags_box.rs the_menus_open_entries_open_the_references_pages chooses every recorded open entry for every recorded menu case in oracle/fixtures/selection_tags_box.json (oracle/record_selection_tags_box.py, the reference's real open entries with the new_page_query/new_page_duplicates publishes captured): a new search page for the selection, a new OR search page, one page each, and a new duplicate filter page. It inspects the pages the native window really opened and compares each page's kind, predicates, name and location (my files). activate_window is not compared (false in every recording). Entries chosen with invoke_tag_menu_clicked after a real right press."
+   }
   },
   {
    "id": "selection-tags-menu-search",
@@ -25674,7 +25806,13 @@
    "native": "crates/hydrus-gui/ui/main.slint",
    "notes": [
     "The search submenu (search pages only): add/remove the selection to/from the current search, invert, add an OR or replace with it, start an OR predicate, add or exclude the namespace; each command's effect on the page's search."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "weak",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/selection_tags_box.rs the_menus_search_entries_change_the_search_as_the_references_do replays all 46 recorded search-submenu choices in oracle/fixtures/selection_tags_box.json (oracle/record_selection_tags_box.py, the reference's real _ProcessMenuPredicateEvent, EditPredicates scripted to accept): it opens the real menu by right press, chooses the entry, accepts the OR editor when one opens, and compares the editor's terms and the page's resulting search (add, remove, invert, add an OR, start an OR predicate, add/exclude the namespace). Not covered: 'replace <selection> with their OR', which the reference shows when several selected tags are all in the search; the recorder's search has one tag, so the entry never appears. Fix: record a case whose search holds two listed tags."
+   }
   },
   {
    "id": "selection-tags-menu-select",
@@ -25687,7 +25825,13 @@
    "native": "crates/hydrus-gui/ui/main.slint",
    "notes": [
     "The select submenu: selects the page's files with all of (AND) or any of (OR) the selected tags (select_files_with_tags)."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/selection_tags_box.rs the_menus_select_entries_select_the_references_files opens the real menu by right press and chooses the three recorded select entries in oracle/fixtures/selection_tags_box.json (oracle/record_selection_tags_box.py, the reference's real select submenu acting on its media panel): 'files with \"alpha:first\"', 'files with all of ...' and 'files with any of ...'. It compares the page's selected files by hash, and the selection box's tags afterwards (listed from the newly selected files), putting the selection back after each. Entries chosen with invoke_tag_menu_clicked."
+   }
   },
   {
    "id": "selection-tags-menu-hide",
@@ -25700,7 +25844,13 @@
    "native": "crates/hydrus-gui/ui/main.slint",
    "notes": [
     "The hide submenu: asks, then adds the tags or the namespaces to the selection list's hidden tags (tag display rules for the combined service)."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/selection_tags_box.rs the_menus_hide_entries_ask_then_hide_as_the_references_do opens the real menu by right press for each of the three recorded hide cases in oracle/fixtures/selection_tags_box.json (oracle/record_selection_tags_box.py, the reference's real hide entries, GetYesNo scripted to yes): '\"plain tag\" from here', '2 selected namespaces from here' and '\"series\" tags from here', comparing the hide submenu, the question's exact wording and the list's tags afterwards (the consumer: the list really hides them), cumulatively as recorded. Not covered: '2 selected tags from here' is shown but not triggered (the same summary as the namespace case), and answering no. Entries chosen with invoke_tag_menu_clicked."
+   }
   },
   {
    "id": "selection-tags-menu-favourites-maintenance",
@@ -25713,7 +25863,13 @@
    "native": "crates/hydrus-gui/ui/main.slint",
    "notes": [
     "One selected tag: add/remove it to/from favourites and each service's most used; any selection: maintenance > regenerate tag display (asked first)."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/selection_tags_box.rs the_menus_shared_tag_entries_act_as_the_references_do (replay_shared_entries) opens the real menu by right press and chooses each recorded entry from oracle/fixtures/selection_tags_box.json's triggers (oracle/record_selection_tags_box.py, the reference's real menu actions, GetYesNo scripted to yes, Write intercepted): add/remove 'plain tag' to/from favourites and most used for 'my tags', comparing the question (wording, title, yes/no labels) and the stored favourites and most-used lists after; and maintenance > regenerate tag display, comparing the 'Regen tags?' question and proving the effect by corrupting the selected tags' stored counts and an untouched tag's and asserting only the selected ones are repaired, as the recorded write's tag set. The labels for all three services are in the whole-menu comparison. Not covered: answering no. Entries chosen with invoke_tag_menu_clicked."
+   }
   },
   {
    "id": "selection-tags-menu-tag-display",
@@ -25726,7 +25882,13 @@
    "native": "crates/hydrus-gui/ui/main.slint",
    "notes": [
     "ListBoxTagsMedia.AddAdditionalMenuItems: in advanced mode, switch the list between the selection list, single media, display and storage tags."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "weak",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/selection_tags_box.rs the_advanced_menus_tag_display_switch_shows_the_references_tags turns on advanced mode, opens the real menu by right press, compares the whole advanced menu with oracle/fixtures/selection_tags_box.json's (oracle/record_selection_tags_box.py, the reference's real AddAdditionalMenuItems), including the four 'tag display (experimental)' entries, then chooses each switch and compares the drawn rows. Weak: no tag display rules differ between views in the recording, so single media view, display tags and multiple media view draw identical rows (only stored tags differs); a port ignoring three switches would pass. The tick moving to the chosen view is not checked. Fix: record with differing per-view rules and compare the ticks after each switch."
+   }
   },
   {
    "id": "viewer-tags-hover-click-select",
@@ -25739,7 +25901,13 @@
    "native": "crates/hydrus-gui/ui/viewer_tags_hover.slint",
    "notes": [
     "The hover frame is a ListBoxTagsMediaHoverFrame: the same ListBox hit rules as the selection tags box."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/viewer_tags_hover.rs hover_clicks_select_rows_as_the_references_do opens the real viewer from the main window and sends real pointer moves and presses (modifiers held) at the hover's rows, replaying oracle/fixtures/viewer_tags_hover.json (oracle/record_viewer_tags_hover.py, the reference's real ListBoxTagsMediaHoverFrame under QTest): the selected tags after a plain click, ctrl-click to add, shift-click range, ctrl-click to remove, a plain click on a selected row, a right press, and a click below the rows; the drawn rows when it opens. Not covered: ctrl+shift click; drag selection is not ported (DIFFERENCES.md, not named by the leaf)."
+   }
   },
   {
    "id": "viewer-tags-hover-double-click",
@@ -25752,7 +25920,13 @@
    "native": "crates/hydrus-gui/ui/viewer_tags_hover.slint",
    "notes": [
     "ListBoxTagsMediaHoverFrame._Activate publishes canvas_manage_tags: the viewer's manage tags dialog for the file."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/viewer_tags_hover.rs hover_double_clicks_manage_the_files_tags_as_the_references_do sends a real double-click on a row, and one below the rows, of the real viewer's tags hover and compares whether manage tags opened and the selection after with oracle/fixtures/viewer_tags_hover.json (oracle/record_viewer_tags_hover.py, the reference's canvas_manage_tags publish from real double-click events); the native opens the viewer's manage tags. Minor: which file it opens on is not compared (the recording holds only that it opened)."
+   }
   },
   {
    "id": "viewer-tags-hover-middle-click",
@@ -25765,7 +25939,13 @@
    "native": "crates/hydrus-gui/ui/viewer_tags_hover.slint",
    "notes": [
     "As the selection box's, in the viewer's location context."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/viewer_tags_hover.rs hover_middle_clicks_open_search_pages_as_the_references_do sends real middle presses (plain and with shift) on the real viewer's hover and compares the pages that open (topic, predicates, name, location, the viewer's location context) and the selection after with oracle/fixtures/viewer_tags_hover.json (oracle/record_viewer_tags_hover.py, real middle-clicks, new_page_query captured): an unselected row selects it and opens its search; shift+middle with several selected opens one OR page. Not covered (minor): below the rows, and a plain middle-click with several selected."
+   }
   },
   {
    "id": "viewer-tags-hover-menu",
@@ -25778,7 +25958,13 @@
    "native": "crates/hydrus-gui/ui/viewer_tags_hover.slint",
    "notes": [
     "ShowMenuFromSignal for a list without counts, a page key or a search: copy, siblings, parents, open, hide (single media), favourites, maintenance."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "weak",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/viewer_tags_hover.rs the_hovers_menu_and_its_entries_are_the_references opens the menu with a real right press for four selections and compares the whole menu tree, every copy entry's payload and every open entry's pages with oracle/fixtures/viewer_tags_hover.json (oracle/record_viewer_tags_hover.py, the reference's real ShowMenuFromSignal); replay_shared_entries compares the sibling/parent dialogs, copying a parent, favourites/most-used and regenerate tag display. Not covered: of the hide entries only '\"plain tag\" from here' is acted on; the namespace and multi-selection hides are in the tree but neither recorded nor replayed."
+   }
   },
   {
    "id": "viewer-tags-hover-keyboard",
@@ -25791,7 +25977,13 @@
    "native": "crates/hydrus-gui/ui/viewer_tags_hover.slint",
    "notes": [
     "ListBox.keyPressEvent while the hover list has focus."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "weak",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/viewer_tags_hover.rs hover_keys_select_copy_and_manage_as_the_references_do sends real keys to the real viewer after a real click on the hover and replays oracle/fixtures/viewer_tags_hover.json (oracle/record_viewer_tags_hover.py, QTest.keyClick on the reference list): Down, shift+Down, Home, Up wrapping, End, Ctrl+A, Escape (selection compared), Ctrl+C with nothing and with a selection (clipboard compared), Return opening manage tags. Not covered, though the reference's keyPressEvent has them: PageUp/PageDown (the native page size comes from the viewer's height, not the hover's rows), Ctrl+P/Ctrl+N, ctrl+arrows, Ctrl+Shift+C, Ctrl+Insert."
+   }
   },
   {
    "id": "audit-media-viewer-top-hover-layout",
@@ -25805,7 +25997,13 @@
    "notes": [
     "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). CanvasHoverFrameTopNavigableList: left row first, previous, index, next, last, random, slideshow; middle archive/inbox, trash, delete completely, undelete, embedded metadata; right zoom %, zoom in, zoom out, zoom switch, zoom options, volume control, shortcuts, view options, move window, fullscreen, open externally, drag, close. Recorded in oracle/fixtures/viewer_top_hover.json.",
     "The icons are the reference's own files (static/), bound per button in viewer_top_hover.slint; the test finds each button by its label and does not read its image."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/viewer_top_hover.rs the_top_hover_s_widgets_are_the_reference_s_in_its_order opens the real viewer over the recorded five files (inbox, archived, with a note, audio, trashed), raises the hover with a real pointer move and replays oracle/fixtures/viewer_top_hover.json (oracle/record_viewer_top_hover.py, which walks the real hover's three hboxes): for each file every shown widget is found by its label in the top row, each to the right of the one before it in the recorded left, center and right order; the index and zoom texts are compared by content. Gaps: the index and zoom labels' positions are not ordered, and icons are matched through a test-side map from reference icon to native label (the leaf's notes say so)."
+   }
   },
   {
    "id": "audit-media-viewer-top-hover-visibility",
@@ -25818,7 +26016,13 @@
    "native": null,
    "notes": [
     "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). Archive or return-to-inbox icon by inbox state; send to trash for a local file, delete completely for a trashed one; undelete when deleted from a local file domain; the volume control only where mpv is available (the reference hides it otherwise, for every file)."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/viewer_top_hover.rs the_top_hover_s_widgets_are_the_reference_s_in_its_order shows each recorded file (inbox, archived, with a note, audio, trashed) in the real viewer and checks each widget's shown flag against oracle/fixtures/viewer_top_hover.json (oracle/record_viewer_top_hover.py, the real _ResetButtons isHidden state): shown widgets are visible in the top row, hidden ones have no visible element with their label. That covers archive against return to inbox, trash against delete completely, and undelete on the trashed file. Small gap: the volume control's hiding without mpv is not exercised (the recording has mpv)."
+   }
   },
   {
    "id": "audit-media-viewer-top-hover-tooltips",
@@ -25831,7 +26035,13 @@
    "native": null,
    "notes": [
     "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). SetToolTipWithShortcuts: the tooltip, a rule, and each shortcut set's shortcuts for the command (\"no shortcuts set\" otherwise); fixed tooltips for the others; the embedded metadata button names what the file has."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "weak",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/viewer_top_hover.rs the_top_hover_s_widgets_are_the_reference_s_in_its_order compares each shown button's accessible-description with the tooltip in oracle/fixtures/viewer_top_hover.json (oracle/record_viewer_top_hover.py, real widget.toolTip()) for all five files: the SetToolTipWithShortcuts text for the default shortcut sets, the fixed tooltips, and the metadata button's 'including extra info' for a JPEG against the plain text for the FLAC. Not covered: the 'no shortcuts set' branch the leaf's notes name; the exif/xmp/iptc/human-readable/software variants are checked only against literals in crates/hydrus-gui-model/tests/model/viewer_top_hover.rs; the shown tip-markdown text is checked against a restated literal. Fix: record a command with its shortcuts removed and a file with EXIF, and compare the shown tooltip."
+   }
   },
   {
    "id": "audit-media-viewer-top-hover-navigation-buttons",
@@ -25844,7 +26054,13 @@
    "native": null,
    "notes": [
     "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). Each sends SIMPLE_VIEW_FIRST/PREVIOUS/NEXT/LAST; the index label updates."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/viewer_top_hover.rs the_top_hover_s_buttons_do_what_the_reference_s_do replays oracle/fixtures/viewer_top_hover.json (oracle/record_viewer_top_hover.py: real QTest clicks on the reference's first, previous, next and last buttons) with a real left and then right click at each button's laid-out place, comparing after each the index label (wrap-around included), the zoom text and the inbox state with the recording, and for a right click that no menu opens."
+   }
   },
   {
    "id": "audit-media-viewer-top-hover-random-slideshow-buttons",
@@ -25857,7 +26073,13 @@
    "native": null,
    "notes": [
     "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). Random: left click SIMPLE_VIEW_RANDOM, right click SIMPLE_UNDO_RANDOM. Slideshow: the slideshow menu (AppendSlideshowMenu, not a submenu)."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/viewer_top_hover.rs the_top_hover_s_buttons_do_what_the_reference_s_do replays oracle/fixtures/viewer_top_hover.json (oracle/record_viewer_top_hover.py, random.randrange scripted to the recorded draw; the native draw held to the same with hold_viewer_random) with real clicks: a left click on random lands on the recorded file (index, zoom, inbox state) and a right click undoes it; a left click on slideshow opens a popup whose entries and checks match the recorded AppendSlideshowMenu items; a right click on slideshow opens nothing. What a slideshow entry does is another leaf."
+   }
   },
   {
    "id": "audit-media-viewer-top-hover-file-buttons",
@@ -25870,7 +26092,13 @@
    "native": null,
    "notes": [
     "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). Archive flips inbox (SIMPLE_ARCHIVE_FILE / SIMPLE_INBOX_FILE); trash and delete publish canvas_delete, undelete canvas_undelete (the canvas then asks as the delete key does); the page button shows the file's embedded metadata."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "weak",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/viewer_top_hover.rs the_top_hover_s_buttons_do_what_the_reference_s_do opens the real viewer and replays the presses of oracle/fixtures/viewer_top_hover.json (oracle/record_viewer_top_hover.py: a real CanvasMediaListBrowser and CanvasHoverFrameTopNavigableList clicked with QTest) with real pointer events. Archive and return-to-inbox, left and right, compare the inbox state, index and zoom with the recording (sound). The rest checks presence: trash and delete completely only that a dialog titled 'Delete files?...' opens (not told apart, not compared with the reference's); undelete only that some question is asked (then the file is untrashed); the embedded metadata button only that a window opens, not for which file. Fix: compare the metadata window's file with the recorded hash and the delete/undelete questions with a recording."
+   }
   },
   {
    "id": "audit-media-viewer-top-hover-zoom-buttons",
@@ -25883,7 +26111,13 @@
    "native": null,
    "notes": [
     "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). Zoom in/out send SIMPLE_ZOOM_IN/OUT_VIEWER_CENTER; zoom switch sends the zoom_switch_command option; the label shows the zoom as a percentage."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "sound",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/viewer_top_hover.rs the_top_hover_s_buttons_do_what_the_reference_s_do clicks zoom in, zoom out and zoom switch with real left and right pointer events on the real viewer and replays oracle/fixtures/viewer_top_hover.json (oracle/record_viewer_top_hover.py, real clicks sending the zoom commands): zoom_text after every press equals the recorded percentage and before every press the recorded zoom; right clicks change nothing and open no menu. Only the default zoom_switch_command is exercised (the option's other values are its own leaf)."
+   }
   },
   {
    "id": "audit-media-viewer-top-hover-zoom-options",
@@ -25909,7 +26143,13 @@
    "native": null,
    "notes": [
     "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). VolumeControl in the top hover: a click flips the global mute and its icon (sound/mute); hovering shows the viewer mute and the volume slider."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "weak",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/viewer_top_hover.rs over_the_volume_control_the_viewer_s_mute_shows_and_mutes raises the hover, moves the real pointer over the global mute button and checks the viewer-mute popup appears with the tooltip recorded in oracle/fixtures/viewer_top_hover.json (oracle/record_viewer_top_hover.py), clicks it (viewer_mute flips, global_mute does not) and presses and drags the slider. Gaps: the slider's expected volumes come from the native geometry, not a recording; the popup's recorded mute_icon is not compared; the global mute click is checked only in the_top_hover_s_buttons_do_what_the_reference_s_do, which is not tagged for this leaf. Fix: record the popup's toggle and slider values and compare them."
+   }
   },
   {
    "id": "audit-media-viewer-top-hover-window-buttons",
@@ -25922,7 +26162,13 @@
    "native": null,
    "notes": [
     "Added 2026-10-27 for #287 (the owner found the top hover's buttons missing and out of order). Shortcuts and view options open their menus; fullscreen publishes canvas_fullscreen_switch; open externally sends SIMPLE_OPEN_FILE_IN_EXTERNAL_PROGRAM; close publishes canvas_close."
-   ]
+   ],
+   "recheck": {
+    "date": "2026-11-03",
+    "class": "weak",
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "tests/gui/viewer_top_hover.rs the_top_hover_s_buttons_do_what_the_reference_s_do clicks each button with real pointer events and replays oracle/fixtures/viewer_top_hover.json (oracle/record_viewer_top_hover.py): shortcuts opens a popup with only 'edit shortcuts', fullscreen flips the window, open externally hands the shown file's path to the launcher (the recorded hash), close closes the viewer, right clicks open nothing. Gap: the view options menu is compared only after removing three recorded entries the native menu lacks ('apply image ICC Profile colour adjustments', the duplicate-filter checkerboard, 'pin the duplicates hover window') and the Linux warning label; the shortcuts menu only with no custom sets."
+   }
   },
   {
    "id": "audit-media-viewer-top-hover-move-button",
