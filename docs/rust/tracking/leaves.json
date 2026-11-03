@@ -1365,7 +1365,7 @@
    "label": "get tables using definitions…",
    "path": "Database > db maintenance",
    "workstream": "database",
-   "state": "missing",
+   "state": "partial",
    "priority": "normal",
    "reference": null,
    "native": null,
@@ -1374,10 +1374,10 @@
     "The native menu presents this reference branch through todo()/no command; no native dialog/action is reachable here. Backend maintenance or CLI facilities do not establish GUI coverage."
    ],
    "recheck": {
-    "date": "2026-10-14",
+    "date": "2026-11-03",
     "class": "weak",
-    "by": "phase 2 session (recheck-w4-r1)",
-    "note": "The question and choices are checked against the recording, and the native job lists its own tables. The reference's list is its own schema's tables and columns (and its accepted run hit a DBException in the recording), so there is no output hydrus-rs could be compared with: it cannot be made sound. Left as it is."
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "Untagged 2026-11-03 (#97 finish): it cannot be made sound. tests/gui/database_menu_jobs.rs tables_using_definitions_from_the_database_menu checks the question and choices against the recording and runs the native job, but the native job lists hydrus-rs's own schema and the reference's lists its own (its accepted run raised in the recording), so there is no output to compare. The test stays, untagged; DIFFERENCES.md (Recheck: leaves untagged) says why."
    }
   },
   {
@@ -6471,7 +6471,7 @@
    "label": "ADVANCED: Search media menu:",
    "path": "File > Options window > command palette > command palette",
    "workstream": "options-gui",
-   "state": "carried",
+   "state": "partial",
    "priority": "normal",
    "reference": null,
    "native": null,
@@ -6480,10 +6480,10 @@
     "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
    ],
    "recheck": {
-    "date": "2026-10-13",
+    "date": "2026-11-03",
     "class": "weak",
-    "by": "Claude, #97 phase 2 (recheck-w4-r3)",
-    "note": "Rows for a page with no files, with one and with three files selected (nine queries each) and the effect of activating a row on the selection are replayed through the real palette against command_palette.json and palette_media_rows.json (recorded from the reference's real MediaMenuSearchProvider); they match except the two single-file rows 'copy bitmap' and 'copy thumbnail bitmap' (bitmap exchange not ported, DIFFERENCES.md), which the test filters. Stays weak for that reason. Setting off gives no rows (command_palette.rs). Tests: crates/hydrus-gui/tests/gui/palette_media.rs; command_palette.rs media_menu_results_follow_the_setting_and_the_page_shown_as_the_reference_did. Re-read 2026-10-14 (W5-12): unchanged; 'copy bitmap' and 'copy thumbnail bitmap' need the bitmap exchange, a large separate port, so the leaf stays weak."
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "Untagged 2026-11-03 (#97 finish; it was carried, now partial). tests/gui/palette_media.rs replays palette_media_rows.json and command_palette.json through the real palette (rows for no, one and three selected files, nine queries each, and the effect of activating a row), but filters the single-file rows 'copy bitmap' and 'copy thumbnail bitmap': the clipboard-bitmap exchange is deferred (DECISIONS.md 2026-10-08). Done when those two thumbnail-menu entries exist and the filter is removed."
    }
   },
   {
@@ -10449,7 +10449,7 @@
    "label": "When there are too many tabs to fit, '...' elide their names so they fit:",
    "path": "File > Options window > gui pages > page tab names",
    "workstream": "options-gui",
-   "state": "carried",
+   "state": "partial",
    "priority": "normal",
    "reference": null,
    "native": null,
@@ -10462,10 +10462,10 @@
     "The separate notebook-tab-alignment original leaf is not in the 301-completion ledger and remains Missing in the reference inventory. Four-side captures/source are supporting evidence only, with no alignment completion credit. Broader GUI Pages/navigation/tab parents and unrelated drag/context actions remain Partial."
    ],
    "recheck": {
-    "date": "2026-10-14",
+    "date": "2026-11-03",
     "class": "weak",
-    "by": "Claude (recheck w4-r3b, #97 phase 2)",
-    "note": "Unchanged, not fixable here: the setting round-trips and the native strip paints differently with it on and off, but the elided text and the width at which Qt elides depend on Qt's font metrics and per-tab sizing (recorded tab widths 179/49/192 are not proportional), which the native strip does not share, so no recorded cut can be replayed. Documented in DIFFERENCES.md."
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "Untagged 2026-11-03 (#97 finish; it was carried, now partial). The setting round-trips and the native strip paints differently with it on and off, but where Qt elides and what text it keeps depend on Qt's font metrics and per-tab sizing (recorded tab widths 179/49/192 are not proportional to the names), which the native strip does not share, so no recorded cut can be replayed. Done only if the strip adopts Qt's sizing rules; DIFFERENCES.md (Recheck: leaves untagged)."
    }
   },
   {
@@ -16967,7 +16967,7 @@
    "label": "Modal progress/cancel dialog lifecycle",
    "path": "Popup message manager",
    "workstream": "shell",
-   "state": "missing",
+   "state": "partial",
    "priority": "normal",
    "reference": null,
    "native": null,
@@ -16976,10 +16976,10 @@
     "No native action/editor path for this reference workflow."
    ],
    "recheck": {
-    "date": "2026-10-14",
+    "date": "2026-11-03",
     "class": "weak",
-    "by": "Claude session (wave 5, W5-11)",
-    "note": "Lifecycle (dialog, title, close button, ask/warn, waiting while minimised/inactive/another dialog, self-close, release) is driven through the window and the model replays popup_modal.json; since 2026-10-14 the dialog also pauses playing media as it opens (viewer_playback.rs a_modal_popup_pauses_the_playing_media_as_it_opens, a real mpv player) and hides the other windows while it is up, restoring them on release (shell_modal_popups.rs, the recorded 'other windows hidden, main kept' case). Still weak: the dialog does not block the main window, and the recorded 'main window hidden too' case (a panel made with hide_main_gui, used only by the reference's file migration dialogs) is replayed by no test (DIFFERENCES.md)."
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "Untagged 2026-11-03 (#97 finish). The lifecycle (dialog, title, close button, ask/warn, waiting while minimised/inactive/another dialog, self-close, release) is driven through the window (tests/gui/shell_modal_popups.rs), the model replays popup_modal.json, the dialog pauses playing media (viewer_playback.rs) and hides the other windows; those tests stay, untagged. Not sound: the dialog does not block the main window as the reference's modal does, and the recorded 'main window hidden too' case (hide_main_gui, the file migration dialogs) is replayed by no test. DIFFERENCES.md (Popups; Recheck: leaves untagged)."
    }
   },
   {
@@ -21002,7 +21002,7 @@
    "label": "Middle-click or Ctrl+W close with importer veto",
    "path": "Notebook tabs and page lifecycle",
    "workstream": "shell",
-   "state": "implemented",
+   "state": "partial",
    "priority": "normal",
    "reference": null,
    "native": null,
@@ -21010,10 +21010,10 @@
     "Close asks before stopping an active/pending importer; accepted close preserves the page for Undo > closed pages, pauses its queue and displays the next available page."
    ],
    "recheck": {
-    "date": "2026-10-13",
+    "date": "2026-11-03",
     "class": "weak",
-    "by": "Claude session (#165 triage)",
-    "note": "crates/hydrus-gui/tests/gui/page_close_replay.rs replays page_close.json through real middle-clicks and Ctrl+W. Still weak: closing the last page leaves the reference's notebook empty, while hydrus-rs opens a new search page; too large for the #165 triage (Pages assumes a shown page), tracked in #183, pinned by the test and in DIFFERENCES.md."
+    "by": "Claude, #97 finish (claude/issue-97-recheck-finish)",
+    "note": "Untagged 2026-11-03 (#97 finish). tests/gui/page_close_replay.rs replays page_close.json through real middle-clicks and Ctrl+W (questions for importers, Undo > closed pages, the page shown next), and session.rs drives the open/close order; those tests stay, untagged. Not sound: closing the last page leaves the reference's notebook empty while hydrus-rs opens a new search page, which the replay pins rather than compares. Making 'no page' a real state is the owner's separate refactor (#183, closed by a PR keyword but not ported). DIFFERENCES.md (Pages)."
    }
   },
   {
