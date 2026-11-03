@@ -6147,6 +6147,13 @@ enabled state.
   (priority 50): ...", 'note "name":', "sha256 hash: ...", "source/post time:
   ...", "veto: ..."), sorted, with posts separated by "*** SEPARATE FILE
   RESULTS BREAK ***".
+- Times are shown in local time; a hash that does not decode, a time that is
+  not a number or not a date, and a tag that cleans to nothing say so in the
+  reference's words. A page's own content goes into each of its subsidiaries'
+  posts, subsidiaries run in name order (nested ones too), and a vetoed post is
+  left out. The subsidiary page parser editor's panel prints its posts the same
+  way. A parse error prints "Exception:" and the error, naming each parser it
+  passed through; an empty document prints "Nothing to parse!" (issue #221).
 - After "fetch example data" the page URL box keeps what you typed; the parse
   context uses the encoded URL.
 

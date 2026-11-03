@@ -156,28 +156,9 @@ pub fn clipboard_error(content: &str, error: &str) -> String {
     )
 }
 
-/// `bytes.fromhex`, with Python's error.
+/// `bytes.fromhex`, with Python's error as the reference shows it.
 fn from_hex(text: &str) -> Result<Vec<u8>, String> {
-    let error = |at: usize| {
-        format!("ValueError('non-hexadecimal number found in fromhex() arg at position {at}')")
-    };
-    let chars: Vec<char> = text.chars().collect();
-    let mut out = Vec::new();
-    let mut i = 0;
-    while i < chars.len() {
-        if chars[i] == ' ' {
-            i += 1;
-            continue;
-        }
-        let high = chars[i].to_digit(16).ok_or_else(|| error(i))?;
-        let low = chars
-            .get(i + 1)
-            .and_then(|c| c.to_digit(16))
-            .ok_or_else(|| error(i + 1))?;
-        out.push(u8::try_from(high * 16 + low).unwrap_or(0));
-        i += 2;
-    }
-    Ok(out)
+    hydrus_core::pybytes::fromhex(text).map_err(|error| format!("ValueError('{error}')"))
 }
 
 /// The pasted pairs: each service key's hex and its rating.
