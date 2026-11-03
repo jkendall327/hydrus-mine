@@ -34,7 +34,7 @@ fn search_a_gallery_with_a_file_limit_as_the_reference_does() {
     let state = State {
         store: &store,
         ui: &ui,
-        site: &site,
+        site: Some(&site),
         n: &n,
     };
 

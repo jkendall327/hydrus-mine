@@ -28,6 +28,9 @@ export component ReviewImportsWindow inherits Window {
     in property <bool> any-selected;
     in-out property <bool> search-subdirectories: true;
     in-out property <bool> delete-after-success;
+    // the import options button's label ("import options", or what the
+    // custom options are), as the reference's button labels itself
+    in property <string> import-options-label: "import options (all default)";
     // "Remove all selected?", while asked
     in-out property <bool> asking-remove;
 
@@ -45,6 +48,8 @@ export component ReviewImportsWindow inherits Window {
     callback subdirectories-toggled(bool);
     callback delete-toggled(bool);
     callback add-tags();
+    // the import options editor, on this import's own options
+    callback import-options();
     callback import-now();
     callback cancel();
 
@@ -166,6 +171,13 @@ export component ReviewImportsWindow inherits Window {
                     text: "delete original files after successful import";
                     checked <=> root.delete-after-success;
                     toggled => { root.delete-toggled(self.checked); }
+                }
+            }
+            HorizontalLayout {
+                alignment: end;
+                Btn {
+                    text: root.import-options-label;
+                    clicked => { root.import-options(); }
                 }
             }
             HorizontalLayout {

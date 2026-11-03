@@ -899,7 +899,9 @@ parse, then resumed; stopped with paths still to parse, which are dropped while
 the parsed rows stay: `oracle/fixtures/local_import_pause.json`). "remove files" takes
 the selected rows out (asking first), and "delete original files after
 successful import" says, in the reference's red, that they will be
-deleted. "import now" opens an "import" page of the good files, in the
+deleted. Its "import options" button ("import options (all default)", or
+the kinds set) opens the import options editor on a local import's
+defaults, and what it sets goes with the import. "import now" opens an "import" page of the good files, in the
 list's order, which deletes each original once it is in the database (new or
 already there) if the box was ticked (`oracle/fixtures/local_import_queue.json`).
 Paths also go in through a box over the list (enter adds one, a file or

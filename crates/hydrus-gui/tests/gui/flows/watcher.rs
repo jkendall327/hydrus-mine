@@ -34,7 +34,7 @@ fn watch_a_thread_then_check_it_again_as_the_reference_does() {
     let state = State {
         store: &store,
         ui: &ui,
-        site: &site,
+        site: Some(&site),
         n: &n,
     };
 

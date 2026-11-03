@@ -238,7 +238,7 @@ fn an_import_folder_with_sidecars_is_set_up_run_and_checked_again_as_the_referen
     let state = State {
         store: &store,
         ui: &ui,
-        site: &site,
+        site: Some(&site),
         n: &n,
     };
     let folder_id = || {

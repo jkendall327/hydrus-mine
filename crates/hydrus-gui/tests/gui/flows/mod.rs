@@ -19,6 +19,7 @@ mod duplicates;
 mod export;
 mod gallery;
 mod import_folder;
+mod manual_import;
 mod subscription;
 mod tag_relationships;
 mod watcher;
@@ -474,12 +475,25 @@ pub struct Normaliser {
     date_time: regex::Regex,
     delta: regex::Regex,
     just_now: regex::Regex,
+    /// "file recognised: … which was 1 second ago before this check", as
+    /// `DELTA` whatever the time (a flow that asks for it).
+    check_delta: Option<regex::Regex>,
 }
 
 impl Normaliser {
     pub fn new(site: &Site) -> Self {
+        Self::with_base(site.base.clone())
+    }
+
+    /// For a flow all local, with no site.
+    pub fn local() -> Self {
+        // (no text holds a NUL)
+        Self::with_base("\0".to_owned())
+    }
+
+    fn with_base(base: String) -> Self {
         Self {
-            base: site.base.clone(),
+            base,
             places: Vec::new(),
             date_time: regex::Regex::new(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}").unwrap(),
             delta: regex::Regex::new(
@@ -488,7 +502,15 @@ impl Normaliser {
             .unwrap(),
             // (only a whole text: "now" in a note stays)
             just_now: regex::Regex::new(r"^(just now|now)$").unwrap(),
+            check_delta: None,
         }
+    }
+
+    /// Also mask how long before a check a recognised file was imported
+    /// ("which was now before this check", a moment apart).
+    pub fn check_delta(mut self) -> Self {
+        self.check_delta = Some(regex::Regex::new(r"which was .* before this check").unwrap());
+        self
     }
 
     /// A directory the flow made, named `name` in the recording.
@@ -508,7 +530,13 @@ impl Normaliser {
         let text = text.replace(&self.base, "BASE");
         let text = self.date_time.replace_all(&text, "TIME");
         let text = self.delta.replace_all(&text, "DELTA");
-        self.just_now.replace(&text, "DELTA").into_owned()
+        let text = self.just_now.replace(&text, "DELTA");
+        match &self.check_delta {
+            Some(r) => r
+                .replace_all(&text, "which was DELTA before this check")
+                .into_owned(),
+            None => text.into_owned(),
+        }
     }
 }
 
@@ -516,7 +544,8 @@ impl Normaliser {
 pub struct State<'a> {
     pub store: &'a Store,
     pub ui: &'a MainWindow,
-    pub site: &'a Site,
+    /// The flow's site, if it has one (a flow all local has none).
+    pub site: Option<&'a Site>,
     pub n: &'a Normaliser,
 }
 
@@ -673,7 +702,7 @@ impl State<'_> {
             "files": self.files(hashes),
             "subscriptions": subscriptions,
             "popups": self.popups(),
-            "hits": self.site.take_hits(),
+            "hits": self.site.map(Site::take_hits).unwrap_or_default(),
         })
     }
 }

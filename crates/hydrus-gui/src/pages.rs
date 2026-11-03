@@ -1424,12 +1424,14 @@ impl Pages {
                 tags,
                 routers,
                 delete_after_success,
+                options,
             } => {
-                let (paths, tags, routers, delete_after_success) = (
+                let (paths, tags, routers, delete_after_success, options) = (
                     paths.clone(),
                     tags.clone(),
                     routers.clone(),
                     *delete_after_success,
+                    (**options).clone(),
                 );
                 let key = PageKey::random();
                 let now = std::time::SystemTime::now()
@@ -1442,7 +1444,7 @@ impl Pages {
                         let queue = hydrus_store::queues::create_local_import(
                             conn,
                             Some(&key.0),
-                            &hydrus_core::import_options::ImportOptionsSlice::default(),
+                            &options,
                             &paths,
                             &tags,
                             hydrus_store::queues::LocalImport {

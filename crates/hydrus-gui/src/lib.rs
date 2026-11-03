@@ -481,6 +481,8 @@ pub struct Bound {
     pub local_transfer: local_transfer_window::Slot,
     /// The "review files to import" window while it is open, and its list.
     pub review_imports: ReviewSlot,
+    /// Its import options editor.
+    pub review_import_options: Rc<RefCell<Option<crate::ImportOptionsWindow>>>,
     /// Its "filename tagging" dialog.
     pub filename_tagging: Rc<RefCell<Option<FilenameTaggingWindow>>>,
     /// That dialog's sidecar editors, from its "sidecars" tab.
@@ -1223,6 +1225,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // the "review files to import" window, with paths (from file > import
     // files, or dropped on the window); "import now" opens an import page
     let review_imports: ReviewSlot = Rc::default();
+    let review_import_options: Rc<RefCell<Option<crate::ImportOptionsWindow>>> = Rc::default();
     let filename_tagging: Rc<RefCell<Option<FilenameTaggingWindow>>> = Rc::default();
     let filename_tagging_sidecars = sidecars_window::Slots::default();
     // the "multiple/deleted locations" list, from the file domain button
@@ -1306,6 +1309,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
 
     let review_files: Rc<dyn Fn(Vec<String>)> = Rc::new({
         let slot = review_imports.clone();
+        let options_slot = review_import_options.clone();
         let tagging = filename_tagging.clone();
         let tagging_sidecars = filename_tagging_sidecars.clone();
         let open_page = open_page.clone();
@@ -1320,31 +1324,53 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
             let import_now: import_window::ImportNow = Rc::new({
                 let open_page = open_page.clone();
-                move |paths, tags, routers, delete_after_success| {
+                move |paths, tags, routers, delete_after_success, options| {
                     open_page(&page_chooser::NewPage::LocalImport {
                         paths,
                         tags,
                         routers,
                         delete_after_success,
+                        options: Box::new(options),
                     });
                 }
             });
-            let tag_services: Vec<(String, String)> = pages
+            // (the filename tagging dialog's tabs, in the reference's order:
+            // `GetServices( REAL_TAG_SERVICES )`, local tag services then
+            // tag repositories, each by name)
+            let mut tag_services: Vec<(bool, String, String, String)> = pages
                 .borrow()
                 .store()
                 .snapshot()
                 .services
                 .all()
                 .filter(|s| s.service_type().is_real_tag_service())
-                .map(|s| (s.key.to_hex(), s.name.clone()))
+                .map(|s| {
+                    (
+                        s.service_type() != hydrus_core::service::ServiceType::LocalTag,
+                        s.name.to_lowercase(),
+                        s.key.to_hex(),
+                        s.name.clone(),
+                    )
+                })
+                .collect();
+            tag_services.sort();
+            let tag_services: Vec<(String, String)> = tag_services
+                .into_iter()
+                .map(|(_, _, key, name)| (key, name))
                 .collect();
             let sidecars = filename_tagging_window::Sidecars {
                 store: pages.borrow().store().clone(),
                 slots: tagging_sidecars.clone(),
             };
-            if let Err(e) =
-                import_window::open(&slot, paths, tag_services, &tagging, &sidecars, &import_now)
-            {
+            if let Err(e) = import_window::open(
+                &slot,
+                paths,
+                tag_services,
+                &tagging,
+                &sidecars,
+                &options_slot,
+                &import_now,
+            ) {
                 eprintln!("could not open the import window: {e}");
             }
         }
@@ -5683,6 +5709,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         filter,
         open_page,
         review_imports,
+        review_import_options,
         filename_tagging,
         filename_tagging_sidecars,
         auto_resolution: duplicates.rules_editor.clone(),
