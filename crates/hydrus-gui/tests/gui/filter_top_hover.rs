@@ -663,3 +663,136 @@ fn the_duplicate_filter_s_top_hover_is_the_reference_s() {
     widgets::settle();
     assert!(o.bound.filter.borrow().is_none(), "the filter closed");
 }
+
+// leaf: audit-media-archive-delete-top-hover
+#[test]
+fn the_archive_delete_filter_s_undelete_button_undeletes_and_its_frame_stays_in_a_narrow_window() {
+    let fixture = super::media_support::start_local();
+    let store = fixture.store.clone();
+    let id = id_in(&store, hash_of("jpeg_04.jpg"));
+    // (deleted from my files, still in the second local domain: the filter
+    // takes it, and its undelete button shows)
+    store
+        .write_content(move |w| {
+            let art = w.snapshot().services.by_name("art").unwrap().id;
+            let my_files = w
+                .snapshot()
+                .services
+                .builtin(hydrus_core::service::builtin_keys::MY_FILES)
+                .unwrap()
+                .id;
+            w.add_files(art, &[(id, Some(1_234_567_890_000))])?;
+            w.delete_files(my_files, &[id], None)
+        })
+        .unwrap();
+    fixture
+        .ui
+        .invoke_search_edited(format!("system:hash = {}", hash_of("jpeg_04.jpg").to_hex()).into());
+    fixture.ui.invoke_search_accepted();
+    fixture.ui.invoke_archive_delete_filter();
+    let window = fixture
+        .bound
+        .archive_delete
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong)
+        .expect("the filter opens");
+    window
+        .window()
+        .set_size(slint::LogicalSize::new(1000.0, 750.0));
+    widgets::settle();
+    raise(&window);
+    assert!(window.get_file_undeletable(), "undeletable");
+    widgets::click_at(
+        window.window(),
+        in_row(&window, "undelete"),
+        PointerEventButton::Left,
+    );
+    widgets::settle();
+    // (asked, as the reference's `UndeleteMedia` asks, while trashing
+    // asks to confirm)
+    if let Some(chooser) = hydrus_gui::undelete::last_chooser() {
+        widgets::lay_out(chooser.window(), 400.0, 200.0);
+        widgets::settle();
+        widgets::click(chooser.window(), "yes");
+        widgets::settle();
+    }
+    let my_files = store
+        .snapshot()
+        .services
+        .builtin(hydrus_core::service::builtin_keys::MY_FILES)
+        .unwrap()
+        .id;
+    let in_my_files = store
+        .read(move |c| {
+            Ok(c.query_row(
+                "SELECT COUNT(*) FROM file_domain_current WHERE service_id = ?1 AND hash_id = ?2",
+                (my_files, id),
+                |r| r.get::<_, i64>(0),
+            )?)
+        })
+        .unwrap();
+    assert_eq!(in_my_files, 1, "back in my files");
+    raise(&window);
+    assert!(!window.get_file_undeletable(), "its button gone");
+    // a narrow window: the frame, as wide as its row needs, stays inside it
+    window
+        .window()
+        .set_size(slint::LogicalSize::new(420.0, 400.0));
+    widgets::settle();
+    window.window().dispatch_event(WindowEvent::PointerMoved {
+        position: LogicalPosition::new(210.0, 4.0),
+    });
+    widgets::settle();
+    let (x, _, width, _) = widgets::bounds(window.window(), "close").expect("close shows");
+    assert!(
+        x + width <= 420.0,
+        "close ({x} + {width}) inside the window"
+    );
+    let (x, _, _, _) = widgets::bounds(window.window(), "back").expect("back shows");
+    assert!(x >= 0.0, "back ({x}) inside the window");
+}
+
+// (the duplicate filter's resize policy: recentering on resize, as the
+// reference's duplicate canvas honours it)
+#[test]
+fn the_duplicate_filter_keeps_its_zoom_as_it_resizes_unless_recentering() {
+    let _windows = hydrus_gui::headless::init();
+    let o = crate::auto_resolution_review::opened();
+    let window = open_duplicates(&o);
+    let rect = |w: &hydrus_gui::DuplicateFilterWindow| {
+        (
+            w.get_media_x(),
+            w.get_media_y(),
+            w.get_media_width(),
+            w.get_media_height(),
+        )
+    };
+    for recenter in [false, true] {
+        o.store
+            .write(move |ctx| {
+                let mut canvas: hydrus_store::settings::ViewerCanvasSettings =
+                    hydrus_store::settings::get(ctx.conn())?;
+                canvas.recenter_on_resize = recenter;
+                hydrus_store::settings::set(ctx.conn(), &canvas)
+            })
+            .unwrap();
+        window
+            .window()
+            .set_size(slint::LogicalSize::new(1000.0, 750.0));
+        widgets::settle();
+        window.invoke_zoom(1, false, 0.0, 0.0);
+        window.invoke_pan(1, 0);
+        widgets::settle();
+        let before = rect(&window);
+        window
+            .window()
+            .set_size(slint::LogicalSize::new(900.0, 700.0));
+        widgets::settle();
+        if recenter {
+            assert_ne!(rect(&window), before, "recentred at its default zoom");
+        } else {
+            assert_eq!(rect(&window), before, "kept where it was");
+        }
+    }
+}

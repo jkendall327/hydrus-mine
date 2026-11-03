@@ -294,6 +294,18 @@ thread_local! {
     static WINDOW_MOVES: std::cell::RefCell<Option<MoveWatch>> = std::cell::RefCell::new(None);
 }
 
+type Resizer = Rc<dyn Fn(&slint::Window, slint::LogicalSize)>;
+
+thread_local! {
+    static WINDOW_RESIZER: std::cell::RefCell<Option<Resizer>> = std::cell::RefCell::new(None);
+}
+
+/// Resize the windows the resize menu sizes with `resize` (for tests: a
+/// platform such as X11 applies the size only on a later event).
+pub fn set_window_resizer(resize: impl Fn(&slint::Window, slint::LogicalSize) + 'static) {
+    WINDOW_RESIZER.with(|r| *r.borrow_mut() = Some(Rc::new(resize)));
+}
+
 /// Have `watch` told of each window move the top hover asks for.
 pub fn watch_window_moves(watch: impl Fn(WindowMove) + 'static) {
     WINDOW_MOVES.with(|w| *w.borrow_mut() = Some(Rc::new(watch)));
@@ -363,11 +375,18 @@ pub(crate) fn resize_chosen(
         i32::try_from(place.0).unwrap_or(0),
         i32::try_from(place.1).unwrap_or(0),
     );
-    window.set_size(slint::LogicalSize::new(size.0 as f32, size.1 as f32));
+    let resizer = WINDOW_RESIZER.with(|r| r.borrow().clone());
+    let wanted_size = slint::LogicalSize::new(size.0 as f32, size.1 as f32);
+    match resizer {
+        Some(resize) => resize(window, wanted_size),
+        None => window.set_size(wanted_size),
+    }
     window.set_position(slint::LogicalPosition::new(place.0 as f32, place.1 as f32));
     moved(WindowMove::To(place.0, place.1));
+    // (the size may arrive later, as on X11: the file is recentred when
+    // the canvas is that size)
     zoomed.resized();
-    zoomed.recenter();
+    zoomed.recentre_when_canvas(size);
 }
 
 /// Wire a window's top hover zoom options menu (its `top-zoom-menu`

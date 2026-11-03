@@ -81,6 +81,8 @@ export component ArchiveDeleteWindow inherits Window {
     in property <[bool]> shortcut-current;
     in property <[bool]> shortcut-defaults;
     in property <ViewerEyeMenu> eye-menu;
+    // a trashed file's undelete button (`Canvas._Undelete`)
+    callback undelete();
     callback show-metadata();
     callback zoom-switch-requested(length, length);
     callback top-zoom-menu-requested();
@@ -399,9 +401,11 @@ export component ArchiveDeleteWindow inherits Window {
             }
         }
         top-frame := TopHoverFrame {
-            x: root.width * 0.2;
+            // (in the middle three fifths, wider if its row needs, and kept
+            // inside the window)
+            x: max(0px, min(root.width * 0.2, root.width - self.width));
             y: 0;
-            width: max(root.width * 0.6, self.least-width);
+            width: min(root.width, max(root.width * 0.6, self.least-width));
             visible: root.info-showing;
             kind: 1;
             info-line: root.info-line;
@@ -426,6 +430,7 @@ export component ArchiveDeleteWindow inherits Window {
             skip => { root.skip(); }
             archive => { root.keep(); }
             delete => { root.delete(); }
+            undelete => { root.undelete(); }
             show-metadata => { root.show-metadata(); }
             zoom(direction) => { root.zoom(direction, false, 0, 0); }
             zoom-switch(x, y) => { root.zoom-switch-requested(x, y); }

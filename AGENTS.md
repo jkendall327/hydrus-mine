@@ -139,7 +139,10 @@ The GUI compiles locally; use it. Measured on a 4-core, 16 GB machine:
   (the block at its end), and so must any struct a library component's property
   uses. A component containing a `ContextMenuArea` (such as `WriteTagLineEdit`)
   cannot be exported as a library root: keep windows that use one in
-  `main.slint`. A **new group** is a copy of a `generated/hydrus-gui-ui-dialogs-N`
+  `main.slint`. The archive/delete and duplicate filter windows
+  (`archive_delete.slint`, `duplicate_filter.slint`) are there for that
+  reason, so editing them rebuilds the core crate and every group after it
+  (~6 minutes, not ~1.5). A **new group** is a copy of a `generated/hydrus-gui-ui-dialogs-N`
   crate plus its `[profile.dev.package.*]` entry in the root `Cargo.toml` and a
   line in the facade; `dev.sh ui` finds it by name.
 - `dev.sh` builds those crates on their own first, one at a time, core first,

@@ -587,3 +587,48 @@ fn the_move_button_moves_the_window_and_its_right_click_resizes_it_as_the_refere
         }
     }
 }
+
+// leaf: audit-media-viewer-top-hover-move-button
+#[test]
+fn a_resize_the_platform_applies_later_still_leaves_the_file_in_the_window() {
+    // (X11 applies a requested size only on a later event: the file is
+    // recentred once the window is that size)
+    let recorded = recording();
+    let (fixture, viewer) = open(&recorded);
+    let requested: Rc<RefCell<Option<slint::LogicalSize>>> = Rc::default();
+    hydrus_gui::set_window_resizer({
+        let requested = requested.clone();
+        move |_, size| *requested.borrow_mut() = Some(size)
+    });
+    let choice = recorded["resize_menu"]["choices"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["chose"] == "resize to 200%" && c["button"] == "left")
+        .unwrap();
+    worked(&fixture, &viewer);
+    raise(&viewer);
+    widgets::click_at(
+        viewer.window(),
+        in_row(&viewer, "click and drag from here to move the window"),
+        PointerEventButton::Right,
+    );
+    widgets::settle();
+    widgets::click(viewer.window(), "resize to 200%");
+    widgets::settle();
+    let size = requested.borrow_mut().take().expect("a size asked for");
+    assert_eq!(
+        (size.width, size.height),
+        (400.0, 300.0),
+        "the size asked for"
+    );
+    // the size arrives
+    viewer.window().set_size(size);
+    widgets::settle();
+    assert_state(
+        &fixture,
+        &viewer,
+        &choice["state"],
+        "the size applied later",
+    );
+}

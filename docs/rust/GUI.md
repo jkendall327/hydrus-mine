@@ -1702,7 +1702,9 @@ double-click or enter opens manage tags for the file, as the reference's
 hover does. Near its top, the reference's top hover frame
 (`oracle/record_viewer_top_hover.py`): back, the file's place ("2/4") and
 skip; archive (which keeps the file, as F7 does), send to trash (which
-deletes it, as the delete key does) and the file's embedded metadata; and
+deletes it, as the delete key does), undelete (a file deleted from one of
+your local file domains and still in another: asked, as the media viewer
+asks) and the file's embedded metadata; and
 on the right the media viewer's zoom, zoom buttons, zoom options (its
 locks too), volume control, shortcuts and view options menus, move button
 and resize menu, fullscreen, open externally, show in the file browser (a
@@ -1745,7 +1747,9 @@ the place ("File One - 1/6 - no decisions yet"), next and show a different
 pair, then the file's archive and metadata buttons and the media viewer's
 zoom and window buttons as in the archive/delete filter, its zoom options
 menu saying that the media size and pan are locked, and the file's info
-line; `oracle/record_viewer_top_hover.py`) beside the
+line; `oracle/record_viewer_top_hover.py`; as the window resizes, the
+file's zoom follows "recenter media on window resize" and the zoom locks,
+as in the media viewer) beside the
 reference's comparison statements and score (`hydrus-duplicates`'s port,
 the slow ones, jpeg quality and visual duplicates, made off the UI thread)
 and the decisions: this is better (deleting the other or not), same

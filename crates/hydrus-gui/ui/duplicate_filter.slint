@@ -385,9 +385,11 @@ export component DuplicateFilterWindow inherits Window {
         }
 
         top-frame := TopHoverFrame {
-            x: root.width * 0.2;
+            // (in the middle three fifths, wider if its row needs, and kept
+            // inside the window)
+            x: max(0px, min(root.width * 0.2, root.width - self.width));
             y: 0;
-            width: max(root.width * 0.6, self.least-width);
+            width: min(root.width, max(root.width * 0.6, self.least-width));
             visible: root.info-showing;
             kind: 2;
             info-line: root.info-line;

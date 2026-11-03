@@ -490,6 +490,10 @@ pub(crate) fn open_filter_with_hooks(
         )
     });
     crate::bind_zoom!(window, zoomed);
+    // (recentering on resize and the locks as the window resizes, as the
+    // reference's duplicate canvas honours them; its pairs keep their own
+    // zoom rules going between files)
+    zoomed.set_resize_policy(crate::viewer_top_hover::zoom_policy(model.store().clone()));
     // (the current file, once the state holding the model is made)
     let current_cell: Rc<RefCell<std::rc::Weak<RefCell<State>>>> = Rc::default();
     let zoom_switch = crate::filter_top_hover::bind_filter_top_hover!(

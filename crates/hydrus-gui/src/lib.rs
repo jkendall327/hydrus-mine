@@ -238,7 +238,7 @@ mod viewer_presentation;
 mod viewer_tag_search;
 mod viewer_tag_wheel;
 mod viewer_top_hover;
-pub use viewer_top_hover::{WindowMove, watch_window_moves};
+pub use viewer_top_hover::{WindowMove, set_window_resizer, watch_window_moves};
 pub mod viewing_maintenance_window;
 mod viewing_tracking;
 mod watcher;

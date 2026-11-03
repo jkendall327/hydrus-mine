@@ -639,6 +639,12 @@ type Policy = Rc<dyn Fn() -> ZoomPolicy>;
 pub(crate) struct Zoomed {
     settings: MediaViewerSettings,
     policy: Rc<RefCell<Policy>>,
+    /// Whether the policy's locks apply to the next file too, or only as
+    /// the window resizes.
+    locks_on_next: Rc<Cell<bool>>,
+    /// Recentre once the canvas is this size (a window resized to its
+    /// file, whose platform applies the size later).
+    recentre_at: Rc<Cell<Option<Point>>>,
     origin: Rc<dyn Fn() -> Option<Point>>,
     last_origin: Rc<Cell<Option<Point>>>,
     zoom: Rc<RefCell<Option<Zoom>>>,
@@ -678,6 +684,8 @@ impl Zoomed {
         Self {
             settings,
             policy: Rc::new(RefCell::new(Rc::new(ZoomPolicy::default))),
+            locks_on_next: Rc::new(Cell::new(true)),
+            recentre_at: Rc::default(),
             origin: Rc::new(move || {
                 let window = positioned.upgrade()?;
                 let origin = window
@@ -714,8 +722,26 @@ impl Zoomed {
         *self.policy.borrow_mut() = Rc::new(policy);
     }
 
+    /// As [`Zoomed::set_policy`], but the locks only as the window
+    /// resizes (the duplicate filter, whose own rules keep a pair's zoom).
+    pub fn set_resize_policy(&self, policy: impl Fn() -> ZoomPolicy + 'static) {
+        self.set_policy(policy);
+        self.locks_on_next.set(false);
+    }
+
     fn policy(&self) -> ZoomPolicy {
         (self.policy.borrow())()
+    }
+
+    /// Recentre the file once the canvas is `canvas` (now, if it is): the
+    /// window was asked to be that size, which X11 applies only later.
+    pub fn recentre_when_canvas(&self, canvas: Point) {
+        if (self.canvas)().is_some_and(|(now, _)| now == canvas) {
+            self.recentre_at.set(None);
+            self.recenter();
+        } else {
+            self.recentre_at.set(Some(canvas));
+        }
     }
 
     /// Tell `watch` the zoom (none, for a file that doesn't zoom) each time
@@ -767,7 +793,12 @@ impl Zoomed {
         let Some((canvas, ratio)) = (self.canvas)() else {
             return;
         };
-        let policy = self.policy();
+        let mut policy = self.policy();
+        if !self.locks_on_next.get() {
+            policy.lock_size = false;
+            policy.lock_zoom_type = false;
+            policy.lock_pan = false;
+        }
         let mut zoom = self.zoom.borrow_mut();
         *zoom = match (zoom.take(), shape) {
             (Some(mut zoom), Some((mime, resolution)))
@@ -987,6 +1018,10 @@ impl Zoomed {
                     zoom.drag(delta);
                 }
             });
+            if self.recentre_at.get() == Some(canvas) {
+                self.recentre_at.set(None);
+                self.recenter();
+            }
         }
     }
 

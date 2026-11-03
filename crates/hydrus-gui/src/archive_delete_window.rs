@@ -481,6 +481,31 @@ pub(crate) fn open(
             show();
         }
     });
+    // a trashed file's undelete button: asked, as the reference's
+    // `UndeleteMedia` asks, then shown again
+    window.on_undelete({
+        let model = model.clone();
+        let viewing_stats = viewing_stats.clone();
+        let guard = guard.clone();
+        let show = show.clone();
+        move || {
+            if !viewing_stats.active() || !guard() {
+                return;
+            }
+            let (store, file) = {
+                let model = model.borrow();
+                (model.store().clone(), model.current())
+            };
+            let Some(file) = file else { return };
+            let show = show.clone();
+            crate::undelete::undelete(
+                &store,
+                &[file],
+                &|question, then| crate::undelete::ask_yes_no(&question, then),
+                Rc::new(show),
+            );
+        }
+    });
     window.on_close_requested({
         let viewing_stats = viewing_stats.clone();
         let model = model.clone();
