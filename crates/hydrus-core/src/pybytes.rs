@@ -132,7 +132,11 @@ mod tests {
     fn hex_like_python() {
         assert_eq!(fromhex("de ad\x0bbe\tef"), Ok(vec![0xde, 0xad, 0xbe, 0xef]));
         assert_eq!(fromhex(""), Ok(vec![]));
-        let bad = |at: usize| Err(format!("non-hexadecimal number found in fromhex() arg at position {at}"));
+        let bad = |at: usize| {
+            Err(format!(
+                "non-hexadecimal number found in fromhex() arg at position {at}"
+            ))
+        };
         assert_eq!(fromhex("d e"), bad(1));
         assert_eq!(fromhex("abc"), bad(3));
         assert_eq!(fromhex("zz"), bad(0));
@@ -175,7 +179,10 @@ mod tests {
 
     #[test]
     fn hashes_fall_back_from_hex_to_base64() {
-        assert_eq!(hash_from_parsed_text("hex", "aGVsbG8="), Ok(b"hello".to_vec()));
+        assert_eq!(
+            hash_from_parsed_text("hex", "aGVsbG8="),
+            Ok(b"hello".to_vec())
+        );
         assert_eq!(
             hash_from_parsed_text("hex", "zz"),
             Err("non-hexadecimal number found in fromhex() arg at position 0".into())
