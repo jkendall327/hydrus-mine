@@ -6028,10 +6028,11 @@ written in (`oracle/record_status_db.py`).
 The options search finds the reference's help paragraphs, byte units and
 machine-dependent labels ("(you appear to have 4 cores)", "(about 36 frames
 of 720p video)") as well as control labels, and a paragraph is a row of text
-on its page that is highlighted when chosen. Every secondary window's title
-ends with " - {application display name} {version}" (File > Options >
-gui > Application display name); changing the name retitles the windows that
-are open.
+on its page that is highlighted when chosen. Every window's title
+ends with " — {application display name} {version}" (File > Options >
+gui > Application display name), the main window's being "main — ..." as the
+reference's is on Linux; changing the name retitles the windows that are
+open.
 
 ### Status bar: application busy
 

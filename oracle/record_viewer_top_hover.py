@@ -315,6 +315,83 @@ def browser(session):
                     click(entry['_widget'], 'left')
                     settle(1.0)
                     out['presses'].append({'file': name, 'icon': entry.get('icon'), 'button': 'left', 'did': watcher.take(), 'before': before, 'after': state(canvas, hover)})
+        # what canvas_undelete asks on the trashed file (the canvas's
+        # _Undelete), answered no
+        from qtpy import QtWidgets as QW
+        from hydrus.client import ClientApplicationCommand as CAC
+        from hydrus.client.gui import ClientGUIDialogsQuick, ClientGUIShortcuts
+        asked = []
+        old_yes_no = ClientGUIDialogsQuick.GetYesNo
+
+        def yes_no(win, message, *args, **kwargs):
+            asked.append(message)
+            return QW.QDialog.DialogCode.Rejected
+        ClientGUIDialogsQuick.GetYesNo = yes_no
+        canvas.SetMedia(media_of(canvas, by_name['jpeg_03.jpg']))
+        settle(0.5)
+        canvas._Undelete()
+        settle(0.3)
+        ClientGUIDialogsQuick.GetYesNo = old_yes_no
+        out['undelete'] = {'file': by_name['jpeg_03.jpg'].hex(), 'questions': asked}
+        # a command with no shortcuts: "first"'s taken out of every set, the
+        # tooltips then
+        manager = ClientGUIShortcuts.shortcuts_manager()
+        kept = manager.GetShortcutSets()
+        sets = [s.Duplicate() for s in kept]
+        removed = []
+        for s in sets:
+            for shortcut in list(s.GetShortcuts(CAC.SIMPLE_VIEW_FIRST)):
+                s.DeleteShortcut(shortcut)
+                removed.append([s.GetName(), shortcut.ToString()])
+        manager.SetShortcutSets(sets)
+        canvas.SetMedia(media_of(canvas, hashes[0]))
+        settle(0.5)
+        out['no_shortcuts'] = {'command': 'SIMPLE_VIEW_FIRST', 'removed': removed, 'widgets': public(describe(hover))}
+        manager.SetShortcutSets(kept)
+        settle(0.3)
+        # a custom shortcut set: the shortcuts button's menu, and what its
+        # entries turn on and off
+        custom = ClientGUIShortcuts.ShortcutSet('my set')
+        controller.WriteSynchronous('serialisable', custom)
+        keyboard = next(e for e in describe(hover) if e.get('icon') == 'keyboard')['_widget']
+        custom_out = {'name': 'my set', 'steps': []}
+        for choose in (None, ['set current shortcuts', 'my set'], ['set default shortcuts', 'my set'], ['set current shortcuts', 'my set']):
+            watcher.take()
+            click(keyboard, 'left')
+            settle(0.5)
+            menu = [d['menu'] for d in watcher.take() if 'menu' in d][-1]
+            step = {'choose': choose, 'menu': menu}
+            if choose is not None:
+                # (the menu as built, its entry chosen: the hover's own
+                # handlers, as a click on it runs them)
+                if choose[0] == 'set current shortcuts':
+                    canvas.FlipActiveCustomShortcutName(choose[1])
+                else:
+                    hover._FlipActiveDefaultCustomShortcut(choose[1])
+                settle(0.3)
+                step['active'] = sorted(canvas.GetActiveCustomShortcutNames())
+                step['defaults'] = list(controller.new_options.GetStringList('default_media_viewer_custom_shortcuts'))
+            custom_out['steps'].append(step)
+        out['custom_shortcuts'] = custom_out
+        # the metadata button's tooltip for what a file has: its file info's
+        # flags set (as file maintenance sets them), then the buttons reset
+        flag_names = ['has_exif', 'has_xmp', 'has_iptc', 'has_human_readable_embedded_metadata', 'has_software_source']
+        tips = []
+        for name in ('jpeg_00.jpg', 'audio.flac'):
+            media = media_of(canvas, by_name[name])
+            canvas.SetMedia(media)
+            settle(0.5)
+            fim = media.GetMediaResult().GetFileInfoManager()
+            kept_flags = {f: getattr(fim, f) for f in flag_names}
+            for flags in (['has_exif'], ['has_xmp', 'has_iptc'], ['has_human_readable_embedded_metadata'], ['has_software_source'], flag_names):
+                for f in flag_names:
+                    setattr(fim, f, f in flags)
+                hover._ResetButtons()
+                tips.append({'file': name, 'flags': flags, 'tooltip': hover._show_embedded_metadata_button.toolTip()})
+            for (f, v) in kept_flags.items():
+                setattr(fim, f, v)
+            hover._ResetButtons()
+        out['metadata_tooltips'] = tips
         frame.hide()
         return out
     return controller.CallBlockingToQt(gui, drive)

@@ -183,7 +183,7 @@ fn siblings_and_parents_reach_tags_and_search_as_the_reference_does() {
             .collect();
         let seen = json!({
             // (without the application's name, which Qt adds to the window)
-            "title": w.get_composed_title().split(" - ").next().unwrap(),
+            "title": w.get_composed_title().split(hydrus_gui::app_title::SEPARATOR).next().unwrap(),
             "services": seen_services,
             "sync status": sync_status,
             "rows": rows,

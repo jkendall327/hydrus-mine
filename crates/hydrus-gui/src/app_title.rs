@@ -1,6 +1,8 @@
 //! The application display name on every window's title, as Qt does for the
-//! reference (`setApplicationDisplayName`): a window titled "edit rules" is
-//! shown as "edit rules - hydrus client 688".
+//! reference (`setApplicationDisplayName`): on Linux a window titled "edit
+//! rules" is shown as "edit rules — hydrus client 688"
+//! (`oracle/record_window_titles.py`). Qt's macOS plugin adds nothing, and
+//! neither does hydrus-rs there.
 //!
 //! Each secondary window has a `title-suffix` property its title ends with.
 //! [`new`] makes a window with the current suffix and remembers it, so
@@ -72,10 +74,28 @@ pub fn hide_others(keep: &slint::Window) -> Hidden {
     Hidden(hidden)
 }
 
-/// The title suffix for the display name `name` (with the version, as the
-/// main window's own title has it).
+/// What Qt puts between a window's title and the display name: an em dash
+/// on Linux (the xcb and Wayland plugins), a hyphen on Windows
+/// (`oracle/record_window_titles.py` records Linux's).
+pub const SEPARATOR: &str = if cfg!(target_os = "windows") {
+    " - "
+} else {
+    " \u{2014} "
+};
+
+/// The title suffix for the display name `name`, with the version, as the
+/// reference's `setApplicationDisplayName` gives it.
 pub fn suffix_for(name: &str) -> String {
-    format!(" - {name} {}", env!("CARGO_PKG_VERSION"))
+    if cfg!(target_os = "macos") {
+        return String::new();
+    }
+    format!("{SEPARATOR}{name} {}", env!("CARGO_PKG_VERSION"))
+}
+
+/// The main window's title for the display name `name`: the reference's
+/// main window is titled "main", and Qt adds the name to it.
+pub fn main_title(name: &str) -> String {
+    format!("main{}", suffix_for(name))
 }
 
 /// Make windows opened from now on end their titles with the display name.

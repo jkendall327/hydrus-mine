@@ -30,7 +30,8 @@ fn click(ui: &MainWindow, label: &str) {
     ui.invoke_menu_line_clicked(1, i32::try_from(at).unwrap(), 0.0, 0.0, 0.0);
 }
 
-// leaf: audit-media-menu-tags-sync-tag-display-during-idle-time, audit-media-menu-tags-sync-tag-display-during-normal-time, audit-media-menu-tags-sync-now, audit-media-menu-tags-review-current-sibling-parent-sync
+// (not tagged: the sync tag display during idle/normal time checkboxes are out of scope, with nothing reading them)
+// leaf: audit-media-menu-tags-sync-now, audit-media-menu-tags-review-current-sibling-parent-sync
 #[test]
 fn the_sync_submenu_has_the_reference_entries_and_they_act() {
     let windows = headless::init();

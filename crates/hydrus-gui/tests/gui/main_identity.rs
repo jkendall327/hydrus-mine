@@ -374,7 +374,7 @@ fn raw_name_apply_cancel_and_title_refresh_are_scoped_to_the_current_main_bindin
     draft.invoke_apply();
     assert_eq!(
         ui.get_window_title(),
-        format!("hydrus client {}", env!("CARGO_PKG_VERSION"))
+        hydrus_gui::app_title::main_title("hydrus client")
     );
     let draft = options(&ui, &old);
     draft.invoke_text_edited(
@@ -398,7 +398,7 @@ fn raw_name_apply_cancel_and_title_refresh_are_scoped_to_the_current_main_bindin
     ui.invoke_refresh_application_title();
     assert_eq!(
         ui.get_window_title(),
-        format!("successor name {}", env!("CARGO_PKG_VERSION"))
+        hydrus_gui::app_title::main_title("successor name")
     );
     // Isolate title-consumer retirement from shutdown-maintenance admission.
     other
@@ -429,7 +429,7 @@ fn raw_name_apply_cancel_and_title_refresh_are_scoped_to_the_current_main_bindin
     ui.invoke_refresh_application_title();
     assert_eq!(
         ui.get_window_title(),
-        format!("successor name {}", env!("CARGO_PKG_VERSION")),
+        hydrus_gui::app_title::main_title("successor name"),
         "re-show does not resurrect the retired title consumer"
     );
 }
