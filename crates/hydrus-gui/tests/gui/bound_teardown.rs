@@ -5,7 +5,7 @@
 
 use std::cell::RefCell;
 
-use slint::ComponentHandle as _;
+use slint::{ComponentHandle as _, Model as _};
 
 use hydrus_gui::{Bound, MainWindow, Pages, SearchPage, bind, headless};
 
@@ -79,4 +79,63 @@ fn a_binding_dropped_as_its_thread_ends_does_not_abort() {
     })
     .join();
     assert!(ended.is_ok());
+}
+
+/// The children of a dialog (and theirs) left open when the last binding
+/// goes are freed too: the services editor and its service editor, the
+/// network session browser and its editor, the downloader definitions list
+/// with a definition editor and the string converter opened from it.
+#[test]
+fn the_last_binding_frees_the_nested_dialogs_left_open() {
+    use hydrus_gui::downloader_definitions_window as definitions;
+    use hydrus_gui::network_sessions_window as sessions;
+
+    let (_dirs, store) = crate::subscriptions::store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    ui.show().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+
+    // network sessions: the browser and an editor child
+    let browser = sessions::open(&store, &bound.network_sessions, false).unwrap();
+    browser.invoke_add_clicked();
+    let edit = sessions::last_edit_opened().unwrap();
+    let mut weak = vec![browser.as_weak(), edit.as_weak()];
+    drop((browser, edit));
+
+    // downloader definitions: the list and, if the store has a class, its
+    // editor and a string converter below that
+    let list = definitions::open(&store, &bound.downloader_definitions, true).unwrap();
+    weak.push(list.as_weak());
+    list.invoke_action("add".into());
+    if let Some(edit) = bound.downloader_definitions.class_edit.borrow().as_ref() {
+        weak.push(edit.as_weak());
+    }
+    drop(list);
+
+    // the services editor
+    let titles = ui.get_menu_titles();
+    let index = titles.iter().position(|t| t.label == "services").unwrap();
+    ui.invoke_menu_title_pressed(i32::try_from(index).unwrap(), 10.0, 22.0);
+    let lines = ui.get_menu_panes().row_data(0).unwrap().lines;
+    let index = lines
+        .iter()
+        .position(|l| l.label.starts_with("edit"))
+        .unwrap();
+    ui.invoke_menu_line_clicked(0, i32::try_from(index).unwrap(), 0.0, 0.0, 0.0);
+    weak.push(
+        bound
+            .services_editor
+            .manage
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .as_weak(),
+    );
+
+    assert!(weak.iter().all(|w| w.upgrade().is_some()));
+    drop(bound);
+    for (n, w) in weak.iter().enumerate() {
+        assert!(w.upgrade().is_none(), "nested dialog {n} is freed");
+    }
 }
