@@ -100,16 +100,22 @@ fn the_last_binding_frees_the_nested_dialogs_left_open() {
     let browser = sessions::open(&store, &bound.network_sessions, false).unwrap();
     browser.invoke_add_clicked();
     let edit = sessions::last_edit_opened().unwrap();
-    let mut weak = vec![browser.as_weak(), edit.as_weak()];
+    let mut alive: Vec<Box<dyn Fn() -> bool>> = Vec::new();
+    fn track<T: slint::ComponentHandle + 'static>(alive: &mut Vec<Box<dyn Fn() -> bool>>, w: &T) {
+        let weak = w.as_weak();
+        alive.push(Box::new(move || weak.upgrade().is_some()));
+    }
+    track(&mut alive, &browser);
+    track(&mut alive, &edit);
     drop((browser, edit));
 
     // downloader definitions: the list and, if the store has a class, its
     // editor and a string converter below that
     let list = definitions::open(&store, &bound.downloader_definitions, true).unwrap();
-    weak.push(list.as_weak());
+    track(&mut alive, &list);
     list.invoke_action("add".into());
     if let Some(edit) = bound.downloader_definitions.class_edit.borrow().as_ref() {
-        weak.push(edit.as_weak());
+        track(&mut alive, edit);
     }
     drop(list);
 
@@ -123,19 +129,14 @@ fn the_last_binding_frees_the_nested_dialogs_left_open() {
         .position(|l| l.label.starts_with("edit"))
         .unwrap();
     ui.invoke_menu_line_clicked(0, i32::try_from(index).unwrap(), 0.0, 0.0, 0.0);
-    weak.push(
-        bound
-            .services_editor
-            .manage
-            .borrow()
-            .as_ref()
-            .unwrap()
-            .as_weak(),
+    track(
+        &mut alive,
+        bound.services_editor.manage.borrow().as_ref().unwrap(),
     );
 
-    assert!(weak.iter().all(|w| w.upgrade().is_some()));
+    assert!(alive.iter().all(|a| a()));
     drop(bound);
-    for (n, w) in weak.iter().enumerate() {
-        assert!(w.upgrade().is_none(), "nested dialog {n} is freed");
+    for (n, a) in alive.iter().enumerate() {
+        assert!(!a(), "nested dialog {n} is freed");
     }
 }
