@@ -225,6 +225,9 @@ export component SubscriptionsWindow inherits Window {
     callback ticked(int, bool);
     callback apply();
     callback cancel();
+    // (Escape, once nothing within it takes it, goes to the dialog helper:
+    // cancelled, as the reference's `keyPressEvent`)
+    callback escape();
 
     forward-focus: keys;
     Timer {
@@ -242,7 +245,7 @@ export component SubscriptionsWindow inherits Window {
                 if (root.asking) {
                     root.cancelled();
                 } else {
-                    root.cancel();
+                    root.escape();
                 }
                 return accept;
             }

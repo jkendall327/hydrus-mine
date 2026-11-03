@@ -599,7 +599,7 @@ pub(crate) fn open_options(
     slot: &Rc<RefCell<Option<FilenameTaggingWindow>>>,
     done: Rc<dyn Fn(hydrus_parse::folders::FilenameTagging)>,
 ) -> Result<FilenameTaggingWindow, String> {
-    let (window, state) = build(
+    let (window, state, ended) = build(
         store,
         vec![service],
         Vec::new(),
@@ -638,18 +638,13 @@ pub(crate) fn open_options(
     }
     window.on_apply({
         let state = state.clone();
-        let slot = slot.clone();
-        let weak = window.as_weak();
         move || {
             if !state.borrow().can_edit() {
                 return;
             }
             let options = state.borrow().tab().options.clone();
-            if let Some(window) = weak.upgrade() {
-                let _ = window.hide();
-            }
-            state.borrow_mut().closed = true;
-            slot.borrow_mut().take();
+            // (`DialogEdit`: kept, closed, then its options handed back)
+            ended.accept();
             done(options);
         }
     });
@@ -669,8 +664,7 @@ pub(crate) fn open(
     done: Done,
 ) -> Result<FilenameTaggingWindow, String> {
     let store = sidecars.store.clone();
-    let (window, _) = build(&store, services, paths, slot, Some(sidecars), done)?;
-    crate::windows::place_frame(&window, &store, FRAME);
+    let (window, _, _) = build(&store, services, paths, slot, Some(sidecars), done)?;
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }
@@ -678,6 +672,13 @@ pub(crate) fn open(
 /// The import's dialog's size and place, as the reference keeps them (the
 /// options' dialog alone is a regular one).
 const FRAME: &str = "local_import_filename_tagging";
+
+/// The dialog, bound but not shown, its state, and how it ends.
+type Built = (
+    FilenameTaggingWindow,
+    Rc<RefCell<State>>,
+    crate::dialog::Dialog<FilenameTaggingWindow>,
+);
 
 /// The dialog, bound but not shown, and its state.
 fn build(
@@ -687,12 +688,15 @@ fn build(
     slot: &Rc<RefCell<Option<FilenameTaggingWindow>>>,
     sidecars: Option<Sidecars>,
     done: Done,
-) -> Result<(FilenameTaggingWindow, Rc<RefCell<State>>), String> {
+) -> Result<Built, String> {
     let window =
         crate::app_title::new::<crate::FilenameTaggingWindow>().map_err(|e| e.to_string())?;
-    let frame = sidecars
-        .as_ref()
-        .map(|sidecars| crate::windows::DialogFrame::new(&sidecars.store, FRAME));
+    // (the import's dialog placed by its own frame and kept by it when
+    // applied; the options' an ordinary dialog)
+    let ended = match sidecars.as_ref() {
+        Some(sidecars) => crate::dialog::Dialog::named(&window, &sidecars.store, FRAME),
+        None => crate::dialog::Dialog::new(&window),
+    };
     // (the reference's defaults: the filename's namespace "filename")
     let misc: [(bool, String); 7] = std::array::from_fn(|i| {
         (
@@ -728,15 +732,10 @@ fn build(
     if state.borrow().services.is_empty() {
         return Err("there are no tag services".into());
     }
-    let close = {
-        let weak = window.as_weak();
+    ended.on_closed({
         let slot = slot.clone();
         let state = state.clone();
-        let frame = frame.clone();
         move || {
-            if state.borrow().closed {
-                return;
-            }
             state.borrow_mut().closed = true;
             let tags = state
                 .borrow()
@@ -755,13 +754,13 @@ fn build(
             if let Some(sidecars) = sidecars {
                 sidecars.slots.cancel();
             }
-            if let Some(window) = weak.upgrade() {
-                if let Some(frame) = &frame {
-                    frame.closing(window.window());
-                }
-                let _ = window.hide();
-            }
             slot.borrow_mut().take();
+        }
+    });
+    let close = {
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
         }
     };
     window.on_service_chosen({
@@ -942,8 +941,7 @@ fn build(
     });
     window.on_apply({
         let state = state.clone();
-        let close = close.clone();
-        let frame = frame.clone();
+        let ended = ended.clone();
         move || {
             if !state.borrow().can_edit() {
                 return;
@@ -969,23 +967,14 @@ fn build(
                     })
                     .collect()
             };
-            if let Some(frame) = &frame {
-                frame.accept();
-            }
-            close();
+            // (`DialogEdit`: kept, closed, then its tags handed back)
+            ended.accept();
             done(tags, routers);
         }
     });
     window.on_cancel({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
     });
     let alive: Rc<dyn Fn() -> bool> = Rc::new({
         let state = Rc::downgrade(&state);
@@ -1009,5 +998,5 @@ fn build(
     bind_tags(&window, &state, store);
     bind_rules(&window, &state);
     show(&window, &mut state.borrow_mut());
-    Ok((window, state))
+    Ok((window, state, ended))
 }

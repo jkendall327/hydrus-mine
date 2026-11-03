@@ -85,7 +85,7 @@ impl Client {
         }
     }
 
-    fn frame(&self, key: &str) -> FrameLocation {
+    pub(crate) fn frame(&self, key: &str) -> FrameLocation {
         self.store
             .read(hydrus_store::settings::get::<WindowSettings>)
             .unwrap()
@@ -94,7 +94,7 @@ impl Client {
             .clone()
     }
 
-    fn keep(&self, key: &'static str, frame: FrameLocation) {
+    pub(crate) fn keep(&self, key: &'static str, frame: FrameLocation) {
         self.store
             .write(move |ctx| {
                 let mut settings: WindowSettings = hydrus_store::settings::get(ctx.conn())?;

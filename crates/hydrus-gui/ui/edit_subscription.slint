@@ -143,6 +143,9 @@ export component EditSubscriptionWindow inherits Window {
     callback query-cancel();
     callback apply();
     callback cancel();
+    // (Escape, once nothing within it takes it, goes to the dialog helper:
+    // cancelled, as the reference's `keyPressEvent`)
+    callback escape();
 
     forward-focus: keys;
     keys := FocusScope {
@@ -155,7 +158,7 @@ export component EditSubscriptionWindow inherits Window {
                 } else if (root.editing-query) {
                     root.query-cancel();
                 } else {
-                    root.cancel();
+                    root.escape();
                 }
                 return accept;
             }

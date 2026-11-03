@@ -52,11 +52,17 @@ macro_rules! escapes {
 
 escapes!(
     AboutWindow,
+    ChoiceButtonsWindow,
+    EditSubscriptionWindow,
     EditValueWindow,
+    FilenameTaggingWindow,
     ForceFiletypeWindow,
     LocationsWindow,
     ManageNotesWindow,
+    ManageTagsWindow,
+    ManageTimesWindow,
     ManageUrlsWindow,
+    SubscriptionsWindow,
 );
 
 /// Whether it is a dialog (kept when applied) or a frame (kept as it moves).
@@ -79,6 +85,8 @@ struct Inner<C: ComponentHandle + 'static> {
     autosave: RefCell<Option<Rc<slint::Timer>>>,
     /// The store its frame is kept in.
     store: Option<std::sync::Arc<hydrus_store::Store>>,
+    /// A frame with a frame key of its own, kept as it closes.
+    save_on_close: Cell<bool>,
 }
 
 /// An ordinary dialog or frame, until it is ended. Clones are the same one.
@@ -119,6 +127,21 @@ impl<C: Escapes + 'static> Dialog<C> {
         name: &'static str,
     ) -> Self {
         let dialog = Self::make(component, name, Kind::Dialog, Some(store.clone()));
+        crate::windows::place_frame(component, store, name);
+        dialog
+    }
+
+    /// A frame the reference opens by a frame key of its own (the viewer's
+    /// `manage_tags_frame`), kept in `store`: placed by that frame now, and
+    /// kept by it as it closes, however it is closed (as the other windows
+    /// with frames of their own are, `frame_state.json`).
+    pub(crate) fn named_frame(
+        component: &C,
+        store: &std::sync::Arc<hydrus_store::Store>,
+        name: &'static str,
+    ) -> Self {
+        let dialog = Self::make(component, name, Kind::Frame, Some(store.clone()));
+        dialog.inner.save_on_close.set(true);
         crate::windows::place_frame(component, store, name);
         dialog
     }
@@ -167,6 +190,7 @@ impl<C: Escapes + 'static> Dialog<C> {
                 may_cancel: RefCell::default(),
                 autosave: RefCell::default(),
                 store,
+                save_on_close: Cell::new(false),
             }),
         };
         // (the window holds it for as long as the window lives; it holds
@@ -276,6 +300,11 @@ impl<C: Escapes + 'static> Dialog<C> {
             timer.stop();
         }
         if let Some(component) = self.inner.window.upgrade() {
+            if self.inner.save_on_close.get()
+                && let Some(store) = &self.inner.store
+            {
+                crate::windows::save_named(component.window(), store, self.inner.name);
+            }
             let _ = component.hide();
         }
         let closed = std::mem::take(&mut *self.inner.closed.borrow_mut());

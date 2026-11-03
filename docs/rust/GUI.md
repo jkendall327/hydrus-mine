@@ -5684,9 +5684,11 @@ reference's do: when applied, never when cancelled (cancel, Escape) or
 closed by their window; and the ordinary frames on it (so far help > about)
 keep it a moment after each move or resize, nothing more as they close, and
 close on Escape (`tests/gui/regular_dialog.rs`, replaying
-`regular_dialog.json`). Manage URLs and manage notes end the same way by
-their own frames; manage notes with a changed note asks before Escape or
-cancel discards it. Those windows are
+`regular_dialog.json`). The dialogs with frames of their own (manage
+subscriptions, edit subscription, manage tags, URLs, times and notes, the
+import's filename tagging, the choice dialogs) end the same way by their own
+frames, Escape cancelling them; manage notes with a changed note asks before
+Escape or cancel discards it. Those windows are
 fitted to the screens once shown: a remembered place, or a default place by a
 main window that is itself off the screens, is rescued to where it can be
 seen, the user told by a popup message (not for a place by the mouse), and a

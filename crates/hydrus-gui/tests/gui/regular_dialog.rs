@@ -542,15 +542,26 @@ fn the_command_palette_is_not_fitted_as_an_ordinary_dialog() {
     shown.cancel();
 }
 
-/// Escape cancels the dialogs with frames of their own that end through the
-/// helper, as the reference's `keyPressEvent`: closed, their frame not kept
-/// (as the recording's escaped `DialogEdit`).
+/// Escape cancels the dialogs with frames of their own (all of which end
+/// through the helper), as the reference's `keyPressEvent`: closed, their
+/// frame not kept (as the recording's escaped `DialogEdit`).
 #[test]
 fn escape_cancels_a_named_dialog_and_keeps_nothing() {
     let _windows = headless::init();
     for (key, open, _) in crate::frame_geometry::windows()
         .into_iter()
-        .filter(|(key, _, _)| ["manage_urls_dialog", "manage_notes_dialog"].contains(key))
+        .filter(|(key, _, _)| {
+            [
+                "manage_subscriptions_dialog",
+                "edit_subscription_dialog",
+                "manage_tags_dialog",
+                "manage_urls_dialog",
+                "manage_times_dialog",
+                "manage_notes_dialog",
+                "local_import_filename_tagging",
+            ]
+            .contains(key)
+        })
     {
         let client = crate::frame_geometry::Client::new();
         let frame = |c: &crate::frame_geometry::Client| {
@@ -570,6 +581,36 @@ fn escape_cancels_a_named_dialog_and_keeps_nothing() {
         assert!(!window.is_visible(), "{key}: Escape closes it");
         assert_eq!(frame(&client), before, "{key}: nothing kept");
     }
+    // the viewer's manage tags, a frame of its own: Escape closes it, and it
+    // is kept as it closes (as `frame_geometry.rs` has it)
+    let (_, open, _) = crate::frame_geometry::windows()
+        .into_iter()
+        .find(|(key, _, _)| *key == "manage_tags_frame")
+        .unwrap();
+    let client = crate::frame_geometry::Client::new();
+    client.keep(
+        "manage_tags_frame",
+        FrameLocation {
+            remember_size: true,
+            maximised: false,
+            fullscreen: false,
+            ..client.frame("manage_tags_frame")
+        },
+    );
+    let shown = open(&client);
+    let window = shown.win();
+    window.set_size(slint::LogicalSize::new(612.0, 478.0));
+    crate::common::widgets::key(window, slint::platform::Key::Escape);
+    assert!(
+        !window.is_visible(),
+        "the viewer's manage tags: Escape closes it"
+    );
+    drop(shown);
+    assert_eq!(
+        client.frame("manage_tags_frame").last_size,
+        Some((612, 478)),
+        "kept as it closed"
+    );
     // with a note changed, Escape asks first (`UserIsOKToCancel`) and the
     // dialog stays open; Escape again dismisses the question; yes closes it
     let (_, open, _) = crate::frame_geometry::windows()

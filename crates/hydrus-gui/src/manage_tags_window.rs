@@ -841,14 +841,13 @@ pub(crate) fn open(
         "manage_tags_dialog"
     };
     let frame_store = model.borrow().store().clone();
-    let dialog_frame = link
-        .is_none()
-        .then(|| crate::windows::DialogFrame::new(&frame_store, "manage_tags_dialog"));
-    let close = {
-        let frame_store = frame_store.clone();
-        let dialog_frame = dialog_frame.clone();
+    let ended = if link.is_some() {
+        crate::dialog::Dialog::named_frame(&window, &frame_store, frame)
+    } else {
+        crate::dialog::Dialog::named(&window, &frame_store, frame)
+    };
+    ended.on_closed({
         let incremental_slot = incremental_slot.clone();
-        let weak = window.as_weak();
         let slot = slot.clone();
         let active = active.clone();
         let incremental_open = incremental_open.clone();
@@ -860,9 +859,7 @@ pub(crate) fn open(
         let related_worker = related_worker.clone();
         let link = link.clone();
         move || {
-            if !active.replace(false) {
-                return;
-            }
+            active.set(false);
             if let Some(link) = &link {
                 link.follow.borrow_mut().take();
             }
@@ -874,16 +871,15 @@ pub(crate) fn open(
             if let Some(worker) = &related_worker {
                 worker.close();
             }
-            if let Some(window) = weak.upgrade() {
-                match &dialog_frame {
-                    Some(dialog) => dialog.closing(window.window()),
-                    None => crate::windows::save_named(window.window(), &frame_store, frame),
-                }
-                let _ = window.hide();
-            }
             tag_menu.close();
             pending_paste.borrow_mut().take();
             slot.borrow_mut().take();
+        }
+    });
+    let close = {
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
         }
     };
     window.on_incremental_tags({
@@ -989,19 +985,11 @@ pub(crate) fn open(
     let apply = {
         let model = model.clone();
         let weak = window.as_weak();
-        let close = close.clone();
         let active = active.clone();
         let incremental_open = incremental_open.clone();
         let pending = pending_paste.clone();
         let tag_menu = tag_menu.clone();
-        let accept = {
-            let dialog_frame = dialog_frame.clone();
-            move || {
-                if let Some(dialog) = &dialog_frame {
-                    dialog.accept();
-                }
-            }
-        };
+        let ended = ended.clone();
         move || {
             if !active.get()
                 || incremental_open.get()
@@ -1012,19 +1000,22 @@ pub(crate) fn open(
             }
             // (the viewer's dialog has written every change already)
             if model.borrow().is_immediate() {
-                accept();
-                close();
+                ended.accept();
                 return;
             }
-            if let Err(e) = model.borrow().apply() {
-                if let Some(window) = weak.upgrade() {
-                    window.set_error(format!("could not apply the changes: {e}").into());
-                }
-                return;
-            }
-            applied();
-            accept();
-            close();
+            // (a change that can't be written leaves it open, saying so)
+            ended.apply(
+                || match model.borrow().apply() {
+                    Ok(()) => true,
+                    Err(e) => {
+                        if let Some(window) = weak.upgrade() {
+                            window.set_error(format!("could not apply the changes: {e}").into());
+                        }
+                        false
+                    }
+                },
+                || applied(),
+            );
         }
     };
     window.on_flip_show_deleted({
@@ -1844,13 +1835,8 @@ pub(crate) fn open(
         }
     });
     window.on_apply(apply);
-    window.on_cancel(close.clone());
-    window.window().on_close_requested(move || {
-        close();
-        slint::CloseRequestResponse::HideWindow
-    });
+    window.on_cancel(close);
     refresh();
-    crate::windows::place_frame(&window, &frame_store, frame);
     window.show()?;
     Ok(window)
 }

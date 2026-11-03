@@ -22,10 +22,12 @@ export component ChoiceButtonsWindow inherits Window {
     in property <[bool]> choices-enabled;
     callback chosen(int);
     callback cancelled();
+    // (Escape: the dialog helper's cancel, or for a plain message, closed)
+    callback escape();
 
     FocusScope {
         key-pressed(event) => {
-            if event.text == Key.Escape { root.cancelled(); return accept; }
+            if event.text == Key.Escape { root.escape(); return accept; }
             reject
         }
         VerticalLayout {
