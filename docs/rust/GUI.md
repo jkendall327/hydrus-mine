@@ -5709,10 +5709,17 @@ except the choice dialogs with choices, which open by `quick_select_dialog`
 choice is made, never when cancelled; a message with no choices takes neither.
 The ordinary dialogs that end through the shared dialog helper (so far
 "choose distance", "edit multiple location" and "force filetypes") keep `regular_dialog` as the
-reference's do: when applied, never when cancelled or closed by their window;
-and the ordinary frames on it (so far help > about) keep it a moment after
-each move or resize, nothing more as they close (`tests/gui/regular_dialog.rs`,
-replaying `regular_dialog.json`). Those windows are
+reference's do: when applied, never when cancelled (cancel, Escape) or
+closed by their window; and the ordinary frames on it (so far help > about)
+keep it a moment after each move or resize, nothing more as they close, and
+close on Escape (`tests/gui/regular_dialog.rs`, replaying
+`regular_dialog.json`). The dialogs with frames of their own (manage
+subscriptions, edit subscription, manage tags, URLs, times and notes, the
+import's filename tagging, the choice dialogs) end the same way by their own
+frames, Escape cancelling them; manage notes and manage tags with changes
+ask before Escape or cancel discards them, and a write that fails leaves the
+dialog open, saying why. In a tag input, Escape first clears the results'
+selection, then any typed text, before it reaches the dialog. Those windows are
 fitted to the screens once shown: a remembered place, or a default place by a
 main window that is itself off the screens, is rescued to where it can be
 seen, the user told by a popup message (not for a place by the mouse), and a

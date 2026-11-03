@@ -328,21 +328,16 @@ pub(crate) fn open(
             }
         }),
     );
-    let frame = crate::windows::DialogFrame::new(store, "edit_subscription_dialog");
-    let close = {
+    // (placed by its own frame, and kept by it when applied)
+    let ended = crate::dialog::Dialog::named(&window, store, "edit_subscription_dialog");
+    ended.on_closed({
         let quality = quality.clone();
-        let weak = window.as_weak();
         let slot = slots.edit.clone();
-        let frame = frame.clone();
         move || {
             quality.cancel();
-            if let Some(window) = weak.upgrade() {
-                frame.closing(window.window());
-                let _ = window.hide();
-            }
             slot.borrow_mut().take();
         }
-    };
+    });
     // (each change shown again)
     let change: Change = {
         let weak = window.as_weak();
@@ -736,37 +731,28 @@ pub(crate) fn open(
     window.on_apply({
         let state = state.clone();
         let weak = window.as_weak();
-        let close = close.clone();
-        let frame = frame.clone();
+        let ended = ended.clone();
         move || {
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if window.get_quality_working() {
-                return;
-            }
-            let mut open = state.borrow_mut();
-            read_fields(&window, &mut open.dialog);
-            let dialog = open.dialog.clone();
-            drop(open);
-            done(dialog);
-            frame.accept();
-            close();
+            // (`DialogEdit`: kept, then the subscription handed back)
+            ended.apply(
+                || !window.get_quality_working(),
+                || {
+                    let mut open = state.borrow_mut();
+                    read_fields(&window, &mut open.dialog);
+                    let dialog = open.dialog.clone();
+                    drop(open);
+                    done(dialog);
+                },
+            );
         }
     });
-    window.on_cancel({
-        let close = close.clone();
-        move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
+    window.on_cancel(move || {
+        ended.cancel();
     });
     show(&window, &state.borrow());
-    frame.place(&window);
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }

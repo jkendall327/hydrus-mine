@@ -291,6 +291,8 @@ fn manage_tags_tabs_count_tags_mark_changes_keep_staging_and_follow_the_viewer()
         "{rows:?}"
     );
     w.invoke_cancel();
+    // (changes staged: it asks first, as the reference's UserIsOKToCancel)
+    w.invoke_tag_menu_answered(true);
     // from the viewer (changes written at once), moving on to other files
     let viewer_case = &recording["manage_tags_viewer"];
     let results = client.bound.current.borrow().borrow().results().to_vec();

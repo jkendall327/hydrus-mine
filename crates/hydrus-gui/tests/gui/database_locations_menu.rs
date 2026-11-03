@@ -1295,6 +1295,16 @@ fn this_client_s_granularity_is_changed_after_the_last_check_and_reported() {
     pump(Duration::from_millis(300));
     assert!(from.join(file).is_file());
     assert_eq!(g.get_client_label(), granularity::granularity_label(2));
+    // (and Escape, a real key press, is that "no" too)
+    g.invoke_action("2to3".into());
+    let question = hydrus_gui::granularity_window::question().expect("asked again");
+    crate::common::widgets::key(question.window(), slint::platform::Key::Escape);
+    assert!(
+        !question.window().is_visible(),
+        "Escape closes the question"
+    );
+    pump(Duration::from_millis(300));
+    assert!(from.join(file).is_file());
 
     // "yes" moves the files, says how it went, and the windows follow
     g.invoke_action("2to3".into());

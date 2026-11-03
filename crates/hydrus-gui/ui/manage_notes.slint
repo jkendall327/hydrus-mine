@@ -80,102 +80,116 @@ export component ManageNotesWindow inherits Window {
     callback apply();
     callback cancel();
 
-    VerticalLayout {
-        padding: 10px;
-        spacing: 6px;
-        HorizontalLayout {
-            spacing: 0px;
-            alignment: start;
-            for name[i] in root.names: Tab {
-                text: name;
-                current: i == root.current;
-                clicked => { root.tab-chosen(i); }
-                double-clicked => { root.tab-renamed(i); }
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                if root.asking { root.cancelled(); return accept; }
+                root.escape();
+                return accept;
             }
+            reject
         }
-        note-editor := NoteTextEdit {
-            vertical-stretch: 1;
-            enabled: root.current >= 0 && !root.asking;
-            text <=> root.text;
-            edited => { root.text-edited(); }
-        }
-        HorizontalLayout {
-            alignment: end;
+        VerticalLayout {
+            padding: 10px;
             spacing: 6px;
-            if root.notice != "": Text {
-                text: root.notice;
-                vertical-alignment: center;
-                color: Theme.text;
+            HorizontalLayout {
+                spacing: 0px;
+                alignment: start;
+                for name[i] in root.names: Tab {
+                    text: name;
+                    current: i == root.current;
+                    clicked => { root.tab-chosen(i); }
+                    double-clicked => { root.tab-renamed(i); }
+                }
             }
-            Btn {
-                text: "add";
-                enabled: !root.asking;
-                clicked => { root.add(); }
+            note-editor := NoteTextEdit {
+                vertical-stretch: 1;
+                enabled: root.current >= 0 && !root.asking;
+                text <=> root.text;
+                edited => { root.text-edited(); }
             }
-            Btn {
-                text: "edit current name";
-                enabled: root.can-edit && !root.asking;
-                clicked => { root.rename(); }
-            }
-            Btn {
-                text: "delete current note";
-                enabled: root.can-edit && !root.asking;
-                clicked => { root.delete(); }
-            }
-            Btn {
-                text: "copy";
-                enabled: !root.asking;
-                clicked => { root.copy(); }
-            }
-            Btn {
-                text: "paste";
-                enabled: !root.asking;
-                clicked => { root.paste(); }
-            }
-            Btn {
-                text: "copy URLs";
-                enabled: !root.asking;
-                clicked => { root.copy-urls(); }
-            }
-            cog := ContextMenuArea {
-                width: 32px; height: 28px;
-                // Qt's CogIconButton opens through its normal button activation.
-                // Disable automatic right-click/Menu-key opening, which bypasses
-                // the live preference refresh below. Explicit show remains enabled.
-                enabled: false;
-                Menu {
-                    MenuItem { title: "copy all notes"; checkable: true; checked: root.cog-checks[0]; activated => { root.cog-chosen(0); } }
-                    MenuItem { title: "copy as JSON"; checkable: true; checked: root.cog-checks[1]; activated => { root.cog-chosen(1); } }
-                    MenuSeparator {}
-                    MenuItem { title: "start editing with text cursor at the end"; checkable: true; checked: root.cog-checks[2]; activated => { root.cog-chosen(2); } }
-                    MenuItem { title: "on middle-click note hover copy, only copy text"; checkable: true; checked: root.cog-checks[3]; activated => { root.cog-chosen(3); } }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                if root.notice != "": Text {
+                    text: root.notice;
+                    vertical-alignment: center;
+                    color: Theme.text;
                 }
                 Btn {
-                    text: "⚙"; enabled: !root.asking;
-                    clicked => { root.cog-opened(); cog.show({x: 0px, y: self.height}); }
+                    text: "add";
+                    enabled: !root.asking;
+                    clicked => { root.add(); }
+                }
+                Btn {
+                    text: "edit current name";
+                    enabled: root.can-edit && !root.asking;
+                    clicked => { root.rename(); }
+                }
+                Btn {
+                    text: "delete current note";
+                    enabled: root.can-edit && !root.asking;
+                    clicked => { root.delete(); }
+                }
+                Btn {
+                    text: "copy";
+                    enabled: !root.asking;
+                    clicked => { root.copy(); }
+                }
+                Btn {
+                    text: "paste";
+                    enabled: !root.asking;
+                    clicked => { root.paste(); }
+                }
+                Btn {
+                    text: "copy URLs";
+                    enabled: !root.asking;
+                    clicked => { root.copy-urls(); }
+                }
+                cog := ContextMenuArea {
+                    width: 32px; height: 28px;
+                    // Qt's CogIconButton opens through its normal button activation.
+                    // Disable automatic right-click/Menu-key opening, which bypasses
+                    // the live preference refresh below. Explicit show remains enabled.
+                    enabled: false;
+                    Menu {
+                        MenuItem { title: "copy all notes"; checkable: true; checked: root.cog-checks[0]; activated => { root.cog-chosen(0); } }
+                        MenuItem { title: "copy as JSON"; checkable: true; checked: root.cog-checks[1]; activated => { root.cog-chosen(1); } }
+                        MenuSeparator {}
+                        MenuItem { title: "start editing with text cursor at the end"; checkable: true; checked: root.cog-checks[2]; activated => { root.cog-chosen(2); } }
+                        MenuItem { title: "on middle-click note hover copy, only copy text"; checkable: true; checked: root.cog-checks[3]; activated => { root.cog-chosen(3); } }
+                    }
+                    Btn {
+                        text: "⚙"; enabled: !root.asking;
+                        clicked => { root.cog-opened(); cog.show({x: 0px, y: self.height}); }
+                    }
                 }
             }
-        }
-        if root.asking: Asking {
-            title: root.asking-title;
-            message: root.asking-message;
-            choices: root.asking-choices;
-            wants-text: root.asking-wants-text;
-            text <=> root.asking-text;
-            chosen(index) => { root.chosen(index); }
-            cancelled => { root.cancelled(); }
-        }
-        HorizontalLayout {
-            alignment: end;
-            spacing: 6px;
-            Btn {
-                text: "apply";
-                enabled: !root.asking;
-                clicked => { root.apply(); }
+            if root.asking: Asking {
+                title: root.asking-title;
+                message: root.asking-message;
+                choices: root.asking-choices;
+                wants-text: root.asking-wants-text;
+                text <=> root.asking-text;
+                chosen(index) => { root.chosen(index); }
+                cancelled => { root.cancelled(); }
             }
-            Btn {
-                text: "cancel";
-                clicked => { root.cancel(); }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Btn {
+                    text: "apply";
+                    enabled: !root.asking;
+                    clicked => { root.apply(); }
+                }
+                Btn {
+                    text: "cancel";
+                    clicked => { root.cancel(); }
+                }
             }
         }
     }

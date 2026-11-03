@@ -31,6 +31,8 @@ struct State {
     editor: UrlsEditor,
     selection: ListSelection<usize>,
     asking: Option<(Question, String)>,
+    /// Why the last apply didn't take.
+    notice: String,
 }
 
 fn strings(items: impl IntoIterator<Item = String>) -> ModelRc<SharedString> {
@@ -39,6 +41,7 @@ fn strings(items: impl IntoIterator<Item = String>) -> ModelRc<SharedString> {
 }
 
 fn show(window: &ManageUrlsWindow, state: &State) {
+    window.set_notice(state.notice.as_str().into());
     let editor = &state.editor;
     window.set_warning(if editor.warning() {
         MULTIPLE_FILES_WARNING.into()
@@ -143,6 +146,7 @@ pub(crate) fn open(
         editor: UrlsEditor::new(file_urls),
         selection: ListSelection::default(),
         asking: None,
+        notice: String::new(),
     }));
     let normalise: Rc<Normalise> = Rc::new(normaliser(store));
     let refresh = {
@@ -154,19 +158,14 @@ pub(crate) fn open(
             }
         })
     };
-    let frame = crate::windows::DialogFrame::new(store, FRAME);
-    let close = {
+    // (placed by its own frame, and kept by it when applied)
+    let dialog = crate::dialog::Dialog::named(&window, store, FRAME);
+    dialog.on_closed({
         let slot = slot.clone();
-        let weak = window.as_weak();
-        let frame = frame.clone();
-        Rc::new(move || {
-            if let Some(window) = weak.upgrade() {
-                frame.closing(window.window());
-                let _ = window.hide();
-            }
+        move || {
             slot.borrow_mut().take();
-        })
-    };
+        }
+    });
     // the box's text into the editor, as typed
     let typed = {
         let state = state.clone();
@@ -179,32 +178,42 @@ pub(crate) fn open(
     };
     let apply = {
         let state = state.clone();
+        let refresh = refresh.clone();
         let store = store.clone();
-        let close = close.clone();
-        let frame = frame.clone();
+        let dialog = dialog.clone();
         Rc::new(move || {
             let updates = state.borrow().editor.updates().to_vec();
             let files = files.clone();
-            let written = store.write_content(move |w| {
-                for update in &updates {
-                    let hashes: Vec<HashId> = update.files.iter().map(|&i| files[i]).collect();
-                    let url = [update.url.clone()];
-                    if update.add {
-                        w.add_urls(&hashes, &url)?;
-                    } else {
-                        w.delete_urls(&hashes, &url)?;
+            let write = || {
+                store.write_content(move |w| {
+                    for update in &updates {
+                        let hashes: Vec<HashId> = update.files.iter().map(|&i| files[i]).collect();
+                        let url = [update.url.clone()];
+                        if update.add {
+                            w.add_urls(&hashes, &url)?;
+                        } else {
+                            w.delete_urls(&hashes, &url)?;
+                        }
                     }
-                }
-                Ok(())
-            });
-            match written {
-                Ok(()) => {
-                    applied();
-                    frame.accept();
-                    close();
-                }
-                Err(e) => eprintln!("could not write the urls: {e}"),
-            }
+                    Ok(())
+                })
+            };
+            // (`DialogManage`: written, then its frame kept; a write that
+            // fails leaves it open, saying so)
+            dialog.apply(
+                || match write() {
+                    Ok(()) => {
+                        applied();
+                        true
+                    }
+                    Err(e) => {
+                        state.borrow_mut().notice = format!("could not write the urls: {e}");
+                        refresh();
+                        false
+                    }
+                },
+                || {},
+            );
         })
     };
     // "apply", asking first with text left in the box
@@ -347,16 +356,10 @@ pub(crate) fn open(
         }
     });
     window.on_apply(move || ok());
-    window.on_cancel(move || close());
-    window.window().on_close_requested({
-        let slot = slot.clone();
-        move || {
-            slot.borrow_mut().take();
-            slint::CloseRequestResponse::HideWindow
-        }
+    window.on_cancel(move || {
+        dialog.cancel();
     });
     show(&window, &state.borrow());
-    frame.place(&window);
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }

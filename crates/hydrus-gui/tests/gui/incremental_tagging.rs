@@ -163,6 +163,10 @@ fn real_incremental_child_replays_cancel_apply_memory_and_blocks_parent_mutation
             parent.invoke_apply();
         } else {
             parent.invoke_cancel();
+            // (changes staged: it asks first, as the reference's UserIsOKToCancel)
+            if !parent.get_tag_menu_question().is_empty() {
+                parent.invoke_tag_menu_answered(true);
+            }
         }
         assert!(bound.manage_tags.borrow().is_none());
         let memory: hydrus_store::tag_editing::ManageTagsSettings =

@@ -2799,12 +2799,25 @@ distance", "edit multiple location" and "force filetypes" (dialogs: kept
 when applied) and help > about
 (a frame: kept a moment after a move or resize). The rest don't keep it yet;
 it matters only once the frame is set to remember a size or place in
-Options > gui > frame locations (by default it remembers neither). Escape
-does not cancel these dialogs yet. No migrated dialog yet has an apply or a
-cancel its panel can refuse (the helper leaves such a dialog open and keeps
-nothing, as the recording's vetoed apply does; a unit test drives a refused
-cancel, no window does). Named dialogs keep their frames by their own
-mechanism (`windows::DialogFrame`) until they too end through the helper. Nor are the
+Options > gui > frame locations (by default it remembers neither). Escape,
+which the helper owns, cancels these dialogs and closes the frames. Every
+window with a frame of its own that is a dialog (manage subscriptions, edit
+subscription, manage tags, URLs, times and notes, the import's filename
+tagging, and the choice dialogs' `quick_select_dialog` and
+`quick_yesno_dialog`) also ends through it (manage notes refusing a cancel
+with changes until the user says to discard them), and so does the viewer's
+manage tags frame, which keeps its frame as it closes, as the other frames
+with keys of their own do. Manage tags' apply stays open, saying so, when
+its changes can't be written (the reference's `DialogManage` shows the error
+and closes); so do manage notes, URLs and times. Manage tags with changes
+staged asks before a cancel, Escape or its window's close discards them, as
+the reference's `UserIsOKToCancel`, on its own overlay rather than a
+separate yes/no dialog (which takes the place of a question already up).
+While manage times' date-time editor is open, Escape doesn't cancel the
+dialog under it (the reference's editor is modal; its cancel button still
+closes both). No migrated dialog yet has a panel check that refuses an apply
+(the helper leaves such a dialog open and keeps nothing, as the recording's
+vetoed apply does). Nor are the
 reference's `deeply_nested_dialog` and `quick_*` frames told apart from it.
 The windows that end through the helper are fitted to the screens once
 shown (`GetSafePosition` on their wanted place, then the top-left slide),

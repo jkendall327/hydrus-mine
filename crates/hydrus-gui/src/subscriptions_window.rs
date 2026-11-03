@@ -938,28 +938,21 @@ pub(crate) fn open(
         .read(hydrus_store::settings::get::<hydrus_store::settings::Pauses>)
         .is_ok_and(|p| p.subscriptions);
     window.set_globally_paused(paused);
-    let frame = crate::windows::DialogFrame::new(store, "manage_subscriptions_dialog");
-    let close = {
+    // (placed by its own frame, and kept by it when applied)
+    let ended = crate::dialog::Dialog::named(&window, store, "manage_subscriptions_dialog");
+    ended.on_closed({
         let active = active.clone();
-        let weak = window.as_weak();
         let slot = slot.clone();
         let edit = edit_slots.edit.clone();
         let gallery = gallery_slot.clone();
         let state = state.clone();
         let exchange = exchange.clone();
-        let frame = frame.clone();
         move || {
-            if !active.replace(false) {
-                return;
-            }
+            active.set(false);
             exchange.cancel();
             let favourites = state.borrow().favourites.clone();
             if let Some(favourites) = favourites {
                 favourites.close();
-            }
-            if let Some(window) = weak.upgrade() {
-                frame.closing(window.window());
-                let _ = window.hide();
             }
             slot.borrow_mut().take();
             let chooser = gallery
@@ -973,6 +966,12 @@ pub(crate) fn open(
             if let Some(window) = edit.borrow_mut().take() {
                 let _ = window.hide();
             }
+        }
+    });
+    let close = {
+        let ended = ended.clone();
+        move || {
+            ended.cancel();
         }
     };
     // (each change shown again)
@@ -1811,12 +1810,11 @@ pub(crate) fn open(
         }
     });
     window.on_apply({
-        let frame = frame.clone();
+        let ended = ended.clone();
         let exchange = exchange.clone();
         let active = active.clone();
         let state = state.clone();
         let store = store.clone();
-        let close = close.clone();
         move || {
             if !active.get()
                 || state
@@ -1830,24 +1828,21 @@ pub(crate) fn open(
             if exchange.has_open() || state.borrow().asking.is_some() {
                 return;
             }
-            let writes = changes(&state.borrow());
-            if let Err(e) = write(&store, writes) {
-                eprintln!("could not save the subscriptions: {e}");
-            }
-            frame.accept();
-            close();
+            // (`DialogManage`: its frame kept, then its changes committed)
+            ended.apply(
+                || true,
+                || {
+                    let writes = changes(&state.borrow());
+                    if let Err(e) = write(&store, writes) {
+                        eprintln!("could not save the subscriptions: {e}");
+                    }
+                },
+            );
         }
     });
     window.on_cancel({
         let close = close.clone();
         move || close()
-    });
-    window.window().on_close_requested({
-        let close = close.clone();
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
     });
     // queries the reference would find missing their history ask first
     let missing: Vec<i64> = store
@@ -1866,7 +1861,6 @@ pub(crate) fn open(
         state.borrow_mut().asking = Some(Asking::MissingLogs(missing));
     }
     show(&window, &state.borrow());
-    frame.place(&window);
     // (files dropped on the list ask first, as the reference's list does;
     // the filter composes with the frame's)
     crate::windows::watch_named_events(

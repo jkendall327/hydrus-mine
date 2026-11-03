@@ -59,6 +59,9 @@ fn remembered_tag_service_survives_native_cancel_without_saving_staged_tags() {
     );
     w.window()
         .dispatch_event(slint::platform::WindowEvent::CloseRequested);
+    // (changes staged: it asks first, as the reference's UserIsOKToCancel)
+    assert!(w.get_tag_menu_question() != "");
+    w.invoke_tag_menu_answered(true);
     assert!(bound.manage_tags.borrow().is_none());
     let stale = w;
     ui.invoke_manage_tags_selected();

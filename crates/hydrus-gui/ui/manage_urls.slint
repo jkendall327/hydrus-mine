@@ -23,6 +23,8 @@ export component ManageUrlsWindow inherits Window {
     background: Theme.window;
     // the warning over the list when editing several files
     in property <string> warning;
+    // why the last apply didn't take (a write that failed)
+    in property <string> notice;
     in property <[TableRow]> rows;
     in-out property <string> input;
     // a question asked (a URL that doesn't parse, text left in the box)
@@ -41,60 +43,79 @@ export component ManageUrlsWindow inherits Window {
     callback apply();
     callback cancel();
 
-    VerticalLayout {
-        padding: 10px;
-        spacing: 6px;
-        if root.warning != "": Text {
-            text: root.warning;
-            wrap: word-wrap;
-            color: Theme.text;
+    // (Escape, which the dialog helper takes: a dialog cancelled, a frame
+    // closed, as the reference's `keyPressEvent`)
+    callback escape();
+    forward-focus: escape-keys;
+    escape-keys := FocusScope {
+        key-pressed(event) => {
+            if event.text == Key.Escape {
+                if root.asking { root.cancelled(); return accept; }
+                root.escape();
+                return accept;
+            }
+            reject
         }
-        ListTable {
-            vertical-stretch: 1;
-            columns: [{ title: "url", width: 200px, stretch: true }];
-            rows: root.rows;
-            row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
-            row-activated(row) => { root.row-activated(row); }
-            delete-pressed => { root.delete-pressed(); }
-        }
-        CappedLineEdit {
-            enabled: !root.asking;
-            text <=> root.input;
-            accepted => { root.entered(); }
-        }
-        HorizontalLayout {
-            alignment: end;
+        VerticalLayout {
+            padding: 10px;
             spacing: 6px;
-            Btn {
-                text: "copy";
-                enabled: !root.asking;
-                clicked => { root.copy(); }
+            if root.warning != "": Text {
+                text: root.warning;
+                wrap: word-wrap;
+                color: Theme.text;
             }
-            Btn {
-                text: "paste";
-                enabled: !root.asking;
-                clicked => { root.paste(); }
+            ListTable {
+                vertical-stretch: 1;
+                columns: [{ title: "url", width: 200px, stretch: true }];
+                rows: root.rows;
+                row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
+                row-activated(row) => { root.row-activated(row); }
+                delete-pressed => { root.delete-pressed(); }
             }
-        }
-        if root.asking: Asking {
-            title: root.asking-title;
-            message: root.asking-message;
-            choices: root.asking-choices;
-            wants-text: false;
-            chosen(index) => { root.chosen(index); }
-            cancelled => { root.cancelled(); }
-        }
-        HorizontalLayout {
-            alignment: end;
-            spacing: 6px;
-            Btn {
-                text: "apply";
+            CappedLineEdit {
                 enabled: !root.asking;
-                clicked => { root.apply(); }
+                text <=> root.input;
+                accepted => { root.entered(); }
             }
-            Btn {
-                text: "cancel";
-                clicked => { root.cancel(); }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Btn {
+                    text: "copy";
+                    enabled: !root.asking;
+                    clicked => { root.copy(); }
+                }
+                Btn {
+                    text: "paste";
+                    enabled: !root.asking;
+                    clicked => { root.paste(); }
+                }
+            }
+            if root.notice != "": Text {
+                text: root.notice;
+                wrap: word-wrap;
+                color: Theme.text;
+            }
+            if root.asking: Asking {
+                title: root.asking-title;
+                message: root.asking-message;
+                choices: root.asking-choices;
+                wants-text: false;
+                chosen(index) => { root.chosen(index); }
+                cancelled => { root.cancelled(); }
+            }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Btn {
+                    text: "apply";
+                    enabled: !root.asking;
+                    clicked => { root.apply(); }
+                }
+                Btn {
+                    text: "cancel";
+                    clicked => { root.cancel(); }
+                }
             }
         }
     }

@@ -240,6 +240,10 @@ fn options_cog_cursor_copy_and_live_hover_replay_with_owned_cancel_and_reopen() 
                 inner.active_popups().is_empty(),
                 "Escape closes the cog popup"
             );
+            assert!(
+                dialog.window().is_visible(),
+                "the popup takes that Escape, not the dialog"
+            );
         }
         assert_eq!(
             values(&store.read(settings::get::<NotePreferences>).unwrap()),

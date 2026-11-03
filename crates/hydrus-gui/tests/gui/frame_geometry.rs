@@ -52,9 +52,9 @@ impl Drop for FromViewer {
 }
 
 pub(crate) struct Client {
-    store: Arc<Store>,
+    pub(crate) store: Arc<Store>,
     pub(crate) ui: MainWindow,
-    bound: Bound,
+    pub(crate) bound: Bound,
     /// A folder of one file to import.
     work: tempfile::TempDir,
     _dirs: [tempfile::TempDir; 2],
@@ -85,7 +85,7 @@ impl Client {
         }
     }
 
-    fn frame(&self, key: &str) -> FrameLocation {
+    pub(crate) fn frame(&self, key: &str) -> FrameLocation {
         self.store
             .read(hydrus_store::settings::get::<WindowSettings>)
             .unwrap()
@@ -94,7 +94,7 @@ impl Client {
             .clone()
     }
 
-    fn keep(&self, key: &'static str, frame: FrameLocation) {
+    pub(crate) fn keep(&self, key: &'static str, frame: FrameLocation) {
         self.store
             .write(move |ctx| {
                 let mut settings: WindowSettings = hydrus_store::settings::get(ctx.conn())?;

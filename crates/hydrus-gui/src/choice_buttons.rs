@@ -49,41 +49,74 @@ pub fn open(
     // dialog does when accepted.)
     let frame = match (ask.choices.is_empty(), ask.no_label.is_empty()) {
         (true, _) => None,
-        (false, true) => crate::windows::dialog_frame("quick_select_dialog"),
-        (false, false) => crate::windows::dialog_frame("quick_yesno_dialog"),
+        (false, true) => Some("quick_select_dialog"),
+        (false, false) => Some("quick_yesno_dialog"),
     };
-    if let Some(frame) = &frame {
-        frame.place(&window);
-    }
     let answer: Rc<RefCell<Option<Answer>>> = Rc::new(RefCell::new(Some(Box::new(answer))));
-    let finish = Rc::new({
-        let weak = window.as_weak();
+    // (the answer, once: whatever ends the dialog first gives it)
+    let give = Rc::new({
+        let answer = answer.clone();
         move |choice: Option<usize>| {
-            if let Some(window) = weak.upgrade() {
-                if let (Some(frame), Some(_)) = (&frame, choice) {
-                    frame.accept();
-                    frame.closing(window.window());
-                }
-                let _ = window.hide();
-            }
             let taken = answer.borrow_mut().take();
             if let Some(answer) = taken {
                 answer(choice);
             }
         }
     });
-    window.on_chosen({
-        let finish = finish.clone();
-        move |i| finish(usize::try_from(i).ok())
-    });
-    window.on_cancelled({
-        let finish = finish.clone();
-        move || finish(None)
-    });
-    window.window().on_close_requested(move || {
-        finish(None);
-        slint::CloseRequestResponse::HideWindow
-    });
+    if let Some((name, store)) = frame.zip(crate::windows::store()) {
+        // (an ordinary dialog by its frame: a choice is its apply)
+        let ended = crate::dialog::Dialog::named(&window, &store, name);
+        ended.on_closed({
+            let give = give.clone();
+            move || give(None)
+        });
+        window.on_chosen({
+            let ended = ended.clone();
+            move |i| {
+                let Ok(choice) = usize::try_from(i) else {
+                    ended.cancel();
+                    return;
+                };
+                // (taken before it closes, which would answer "none"; then
+                // closed, then given, as `exec` returns)
+                let taken = answer.borrow_mut().take();
+                ended.accept();
+                if let Some(answer) = taken {
+                    answer(Some(choice));
+                }
+            }
+        });
+        window.on_cancelled(move || {
+            ended.cancel();
+        });
+    } else {
+        // (a message, or no client running: closed by any of its ends)
+        let finish = Rc::new({
+            let weak = window.as_weak();
+            move |choice: Option<usize>| {
+                if let Some(window) = weak.upgrade() {
+                    let _ = window.hide();
+                }
+                give(choice);
+            }
+        });
+        window.on_chosen({
+            let finish = finish.clone();
+            move |i| finish(usize::try_from(i).ok())
+        });
+        window.on_cancelled({
+            let finish = finish.clone();
+            move || finish(None)
+        });
+        window.on_escape({
+            let finish = finish.clone();
+            move || finish(None)
+        });
+        window.window().on_close_requested(move || {
+            finish(None);
+            slint::CloseRequestResponse::HideWindow
+        });
+    }
     window.show().map_err(|e| e.to_string())?;
     Ok(Some(window))
 }

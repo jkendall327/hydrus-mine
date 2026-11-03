@@ -67,6 +67,11 @@ impl Dialog {
     /// again.
     fn reopen(&mut self) {
         self.window.invoke_cancel();
+        // (with changes staged it asks first, as the reference's
+        // UserIsOKToCancel: discarded)
+        if !self.window.get_tag_menu_question().is_empty() {
+            self.window.invoke_tag_menu_answered(true);
+        }
         widgets::settle();
         assert!(self.h.bound.manage_tags.borrow().is_none(), "closed");
         self.window = open(&self.h);

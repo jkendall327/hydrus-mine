@@ -8,9 +8,9 @@
 //! `NewDialog._TryEndModal`: an apply whose dialog is not valid leaves it
 //! open; a valid one keeps its frame (`SaveTLWSizeAndPosition` on its frame
 //! key, `regular_dialog` unless it has one of its own), then commits, then
-//! closes; a cancel or the window's close keeps nothing. A [`Dialog::frame`]
-//! (a window with only a close button) keeps its frame a moment after each
-//! move or resize instead, as `FrameThatResizes` does, and nothing as it
+//! closes; a cancel, Escape or the window's close keeps nothing. A [`Dialog::frame`]
+//! (a window with only a close button, which Escape also closes) keeps its
+//! frame a moment after each move or resize instead, as `FrameThatResizes` does, and nothing as it
 //! closes (recorded in `oracle/fixtures/regular_dialog.json`).
 //!
 //! Where it opens is decided as it is made (`app_title::new` places every
@@ -24,13 +24,46 @@
 //! closes goes in [`Dialog::on_closed`], and a reason to stay open in
 //! [`Dialog::refuse_cancel`].
 //!
-//! Named dialogs (a frame key of their own) still keep their frames by
-//! `windows::DialogFrame`, until they too end through the helper.
+//! A dialog with a frame key of its own ([`Dialog::named`]) is placed by
+//! that frame, with its own off-screen rescue as it opens, rather than
+//! fitted after.
 
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 
 use slint::ComponentHandle;
+
+/// A window the helper can end by Escape: its `.slint` has a `callback
+/// escape()` its key handler calls (the reference's `keyPressEvent` on
+/// Escape, from a widget within it that did not take the key).
+pub(crate) trait Escapes: ComponentHandle {
+    fn on_escape(&self, then: impl Fn() + 'static);
+}
+
+macro_rules! escapes {
+    ($($window:ident),* $(,)?) => {
+        $(impl Escapes for crate::$window {
+            fn on_escape(&self, then: impl Fn() + 'static) {
+                crate::$window::on_escape(self, then);
+            }
+        })*
+    };
+}
+
+escapes!(
+    AboutWindow,
+    ChoiceButtonsWindow,
+    EditSubscriptionWindow,
+    EditValueWindow,
+    FilenameTaggingWindow,
+    ForceFiletypeWindow,
+    LocationsWindow,
+    ManageNotesWindow,
+    ManageTagsWindow,
+    ManageTimesWindow,
+    ManageUrlsWindow,
+    SubscriptionsWindow,
+);
 
 /// Whether it is a dialog (kept when applied) or a frame (kept as it moves).
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -48,8 +81,14 @@ struct Inner<C: ComponentHandle + 'static> {
     closed: RefCell<Vec<Box<dyn FnOnce()>>>,
     /// Whether it may be cancelled or closed now (`UserIsOKToCancel`).
     may_cancel: RefCell<Option<Box<dyn Fn() -> bool>>>,
+    /// Whether Escape reaches it now (not while a modal child has it).
+    may_escape: RefCell<Option<Box<dyn Fn() -> bool>>>,
     /// A frame's keeping of its geometry as it moves.
     autosave: RefCell<Option<Rc<slint::Timer>>>,
+    /// The store its frame is kept in.
+    store: Option<std::sync::Arc<hydrus_store::Store>>,
+    /// A frame with a frame key of its own, kept as it closes.
+    save_on_close: Cell<bool>,
 }
 
 /// An ordinary dialog or frame, until it is ended. Clones are the same one.
@@ -65,20 +104,62 @@ impl<C: ComponentHandle + 'static> Clone for Dialog<C> {
     }
 }
 
-impl<C: ComponentHandle + 'static> Dialog<C> {
+impl<C: Escapes + 'static> Dialog<C> {
     /// An ordinary dialog (`DialogEdit`, `DialogManage`,
     /// `DialogNullipotent`): kept by `regular_dialog` when applied. Its
     /// window's own close cancels it.
     pub(crate) fn new(component: &C) -> Self {
-        Self::make(component, "regular_dialog", Kind::Dialog)
+        let dialog = Self::make(
+            component,
+            "regular_dialog",
+            Kind::Dialog,
+            crate::windows::store(),
+        );
+        dialog.fit(component);
+        dialog
+    }
+
+    /// A dialog the reference opens by a frame of its own
+    /// (`manage_urls_dialog` and the like), kept in `store`: placed by that
+    /// frame now (`windows::place_frame`, with its own off-screen rescue as
+    /// it opens), and kept by it when applied.
+    pub(crate) fn named(
+        component: &C,
+        store: &std::sync::Arc<hydrus_store::Store>,
+        name: &'static str,
+    ) -> Self {
+        let dialog = Self::make(component, name, Kind::Dialog, Some(store.clone()));
+        crate::windows::place_frame(component, store, name);
+        dialog
+    }
+
+    /// A frame the reference opens by a frame key of its own (the viewer's
+    /// `manage_tags_frame`), kept in `store`: placed by that frame now, and
+    /// kept by it as it closes, however it is closed (as the other windows
+    /// with frames of their own are, `frame_state.json`).
+    pub(crate) fn named_frame(
+        component: &C,
+        store: &std::sync::Arc<hydrus_store::Store>,
+        name: &'static str,
+    ) -> Self {
+        let dialog = Self::make(component, name, Kind::Frame, Some(store.clone()));
+        dialog.inner.save_on_close.set(true);
+        crate::windows::place_frame(component, store, name);
+        dialog
     }
 
     /// An ordinary frame (`FrameThatTakesScrollablePanel`): kept by
     /// `regular_dialog` a moment after each move and resize while open.
     /// Its window's own close closes it.
     pub(crate) fn frame(component: &C) -> Self {
-        let dialog = Self::make(component, "regular_dialog", Kind::Frame);
-        if let Some(store) = crate::windows::store() {
+        let dialog = Self::make(
+            component,
+            "regular_dialog",
+            Kind::Frame,
+            crate::windows::store(),
+        );
+        dialog.fit(component);
+        if let Some(store) = dialog.inner.store.clone() {
             *dialog.inner.autosave.borrow_mut() = Some(crate::windows::autosave(
                 component.as_weak(),
                 store,
@@ -88,7 +169,19 @@ impl<C: ComponentHandle + 'static> Dialog<C> {
         dialog
     }
 
-    fn make(component: &C, name: &'static str, kind: Kind) -> Self {
+    /// Fitted to the screens once shown (`windows::fit_after_show`).
+    fn fit(&self, component: &C) {
+        if let Some(store) = &self.inner.store {
+            crate::windows::fit_after_show(component, store, self.inner.name);
+        }
+    }
+
+    fn make(
+        component: &C,
+        name: &'static str,
+        kind: Kind,
+        store: Option<std::sync::Arc<hydrus_store::Store>>,
+    ) -> Self {
         let dialog = Self {
             inner: Rc::new(Inner {
                 window: component.as_weak(),
@@ -97,7 +190,10 @@ impl<C: ComponentHandle + 'static> Dialog<C> {
                 open: Cell::new(true),
                 closed: RefCell::default(),
                 may_cancel: RefCell::default(),
+                may_escape: RefCell::default(),
                 autosave: RefCell::default(),
+                store,
+                save_on_close: Cell::new(false),
             }),
         };
         // (the window holds it for as long as the window lives; it holds
@@ -112,9 +208,18 @@ impl<C: ComponentHandle + 'static> Dialog<C> {
                 }
             }
         });
-        if let Some(store) = crate::windows::store() {
-            crate::windows::fit_after_show(component, &store, name);
-        }
+        // (Escape cancels a dialog and closes a frame, both refusable)
+        component.on_escape({
+            let dialog = Rc::downgrade(&dialog.inner);
+            move || {
+                if let Some(inner) = dialog.upgrade() {
+                    let reaches = inner.may_escape.borrow().as_ref().is_none_or(|may| may());
+                    if reaches {
+                        Self { inner }.cancel();
+                    }
+                }
+            }
+        });
         dialog
     }
 
@@ -126,11 +231,14 @@ impl<C: ComponentHandle + 'static> Dialog<C> {
     /// Ask `may` before it is cancelled or closed (`UserIsOKToCancel`): if
     /// it says no, it stays open (the dialog says why itself, as by asking
     /// whether to discard its changes).
-    // (no migrated dialog asks yet; the next ones to move onto the helper
-    // do)
-    #[cfg_attr(not(test), allow(dead_code))]
     pub(crate) fn refuse_cancel(&self, may: impl Fn() -> bool + 'static) {
         *self.inner.may_cancel.borrow_mut() = Some(Box::new(may));
+    }
+
+    /// Ask `may` before Escape cancels or closes it: while it says no, Escape
+    /// does nothing (a child the reference opens modally has it).
+    pub(crate) fn refuse_escape(&self, may: impl Fn() -> bool + 'static) {
+        *self.inner.may_escape.borrow_mut() = Some(Box::new(may));
     }
 
     /// Whether it has not been ended yet.
@@ -149,10 +257,9 @@ impl<C: ComponentHandle + 'static> Dialog<C> {
             if !valid() {
                 return;
             }
-            if let (Some(component), Some(store)) =
-                (self.inner.window.upgrade(), crate::windows::store())
+            if let (Some(component), Some(store)) = (self.inner.window.upgrade(), &self.inner.store)
             {
-                crate::windows::save_named(component.window(), &store, self.inner.name);
+                crate::windows::save_named(component.window(), store, self.inner.name);
             }
         }
         commit();
@@ -184,6 +291,13 @@ impl<C: ComponentHandle + 'static> Dialog<C> {
         may
     }
 
+    /// Cancelled once the user has said yes to what
+    /// [`Dialog::refuse_cancel`] asked (discard the changes): closed,
+    /// nothing kept, without asking again.
+    pub(crate) fn cancel_confirmed(&self) {
+        self.end();
+    }
+
     /// A frame's close button: closed (what it kept as it moved stays),
     /// unless [`Dialog::refuse_cancel`] says it stays.
     pub(crate) fn close(&self) -> bool {
@@ -198,6 +312,11 @@ impl<C: ComponentHandle + 'static> Dialog<C> {
             timer.stop();
         }
         if let Some(component) = self.inner.window.upgrade() {
+            if self.inner.save_on_close.get()
+                && let Some(store) = &self.inner.store
+            {
+                crate::windows::save_named(component.window(), store, self.inner.name);
+            }
             let _ = component.hide();
         }
         let closed = std::mem::take(&mut *self.inner.closed.borrow_mut());
