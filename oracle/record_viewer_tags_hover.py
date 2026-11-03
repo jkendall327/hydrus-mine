@@ -454,7 +454,7 @@ def record( session ):
             key( QC.Qt.Key.Key_P, CTRL ); more_step( 'ctrl p' )
             click( 'alpha:first' )
             n = len( copied )
-            key( QC.Qt.Key.Key_C, CTRL_SHIFT ); more_step( 'ctrl shift c copies with parents', copied = copied[ n: ] )
+            key( QC.Qt.Key.Key_C, CTRL_SHIFT ); more_step( 'ctrl shift c (the terms have no parents: as ctrl c)', copied = copied[ n: ] )
             n = len( copied )
             key( QC.Qt.Key.Key_Insert, CTRL ); more_step( 'ctrl insert copies', copied = copied[ n: ] )
 

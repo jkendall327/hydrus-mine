@@ -538,7 +538,7 @@ fn hover_page_keys_ctrl_moves_and_other_copies_are_the_references() {
             "ctrl up" => key(UP, CTRL),
             "ctrl n" => key("n", CTRL),
             "ctrl p" => key("p", CTRL),
-            "ctrl shift c copies with parents" => {
+            "ctrl shift c (the terms have no parents: as ctrl c)" => {
                 v.click(Some("alpha:first"), NONE);
                 let n = v.h.copies.borrow().len();
                 key("c", input::CTRL_SHIFT);
