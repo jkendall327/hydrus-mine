@@ -11,7 +11,7 @@ use std::collections::{BTreeSet, HashMap};
 use std::rc::Rc;
 use std::sync::Arc;
 
-use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
+use slint::{ComponentHandle as _, Model as _, ModelRc, SharedString, VecModel};
 
 use hydrus_core::{DuplicateType, HashId};
 use hydrus_store::Store;
@@ -312,7 +312,20 @@ fn show(window: &AutoResolutionReviewWindow, state: &mut State) {
             }
         })
         .collect();
-    window.set_rows(ModelRc::new(VecModel::from(rows)));
+    // (rows are updated in place when only their contents changed: a press
+    // that replaced the model would destroy the row's `TouchArea` holding it,
+    // and a real double click would never reach `double-clicked`)
+    let model = window.get_rows();
+    match model.as_any().downcast_ref::<VecModel<PairRow>>() {
+        Some(existing) if existing.row_count() == rows.len() => {
+            for (r, row) in rows.into_iter().enumerate() {
+                if existing.row_data(r).as_ref() != Some(&row) {
+                    existing.set_row_data(r, row);
+                }
+            }
+        }
+        _ => window.set_rows(ModelRc::new(VecModel::from(rows))),
+    }
     let limit = state.limits[tab];
     window.set_fetch_all(limit.is_none());
     if let Some(limit) = limit {

@@ -5,7 +5,7 @@
 //! to its new extension, as the reference's `SetFilesForcedFiletypes`
 //! does.
 
-use std::cell::{Cell, RefCell};
+use std::cell::RefCell;
 use std::collections::BTreeMap;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -31,7 +31,6 @@ pub(crate) fn open(
     if let Some(previous) = previous {
         previous.invoke_cancel();
     }
-    let active = Rc::new(Cell::new(true));
     let services = store.snapshot().services.clone();
     let results = store
         .read(|c| hydrus_store::media::load(c, &services, None, files))
@@ -54,28 +53,20 @@ pub(crate) fn open(
     let labels: Vec<SharedString> = dialog.choices.iter().map(|(l, _)| l.into()).collect();
     window.set_choices(ModelRc::new(VecModel::from(labels)));
     window.set_chosen(0);
-    let close = {
+    let ended = crate::dialog::Dialog::new(&window);
+    ended.on_closed({
         let slot = slot.clone();
-        let weak = window.as_weak();
-        let active = active.clone();
-        Rc::new(move || {
-            if !active.replace(false) {
-                return;
-            }
-            if let Some(window) = weak.upgrade() {
-                let _ = window.hide();
-            }
+        move || {
             slot.borrow_mut().take();
-        })
-    };
+        }
+    });
     window.on_apply({
         let store = store.clone();
         let jobs = jobs.clone();
-        let active = active.clone();
-        let close = close.clone();
+        let ended = ended.clone();
         let weak = window.as_weak();
         move || {
-            if !active.get() {
+            if !ended.is_open() {
                 return;
             }
             let chosen = weak
@@ -99,22 +90,19 @@ pub(crate) fn open(
                 })
                 .collect();
             let request = hydrus_store::metadata_jobs::Request::Force { files, mime };
-            if let Err(error) = jobs.start(store.clone(), request, applied.clone()) {
-                eprintln!("{error}");
-                return;
-            }
-            close();
+            // (valid: a filetype was chosen, above)
+            ended.apply(
+                || true,
+                || {
+                    if let Err(error) = jobs.start(store.clone(), request, applied.clone()) {
+                        eprintln!("{error}");
+                    }
+                },
+            );
         }
     });
-    window.on_cancel({
-        let close = close.clone();
-        move || close()
-    });
-    window.window().on_close_requested({
-        move || {
-            close();
-            slint::CloseRequestResponse::HideWindow
-        }
+    window.on_cancel(move || {
+        ended.cancel();
     });
     window.show().map_err(|e| e.to_string())?;
     Ok(window)

@@ -9421,9 +9421,9 @@
    "native": null,
    "notes": [
     "Untagged until the ordinary dialogs share one Dialog helper that owns apply and cancel and saves regular_dialog on apply (owner, 2026-10-14, #154); window positions also can't be observed in the headless tests. See DECISIONS.md and DIFFERENCES.md.",
-    "WindowSettings restores remembered dimensions/position, maximised/fullscreen flags; main close captures current WindowState and persists it. It does not fit stale geometry to the current screen or implement reference parent-relative default placement.",
-    "No screen fitting or default gravity/position placement.",
-    "No GUI frame-location editor (listed under options > gui)."
+    "WindowSettings restores remembered dimensions/position, maximised/fullscreen flags; main close captures current WindowState and persists it. Default gravity and parent-relative positions are placed (frame_placement); regular_dialog windows are fitted to the screens once shown (GetSafePosition and the top-left slide, tests/model/regular_dialog.rs and tests/gui/regular_dialog.rs replaying regular_dialog.json).",
+    "The shared Dialog helper (crates/hydrus-gui/src/dialog.rs) keeps regular_dialog on apply, and for frames as they move; only some ordinary dialogs end through it so far (see DIFFERENCES.md, Frame locations).",
+    "The frame-location editor is under options > gui (its own leaves)."
    ]
   },
   {
@@ -13753,7 +13753,7 @@
     "date": "2026-10-09",
     "class": "sound",
     "by": "Claude (recheck bin C)",
-    "note": "The GUI test checks the dropdown's choices and default against oracle/fixtures/transparency_strictness.json (record_transparency_strictness.py: each level chosen in the reference's real MediaPlaybackPanel, UpdateOptions and ReinitGlobalSettings as OK does, then the real FileImportJob.GeneratePreImportHashAndStatus/GenerateInfo on five PNGs: no alpha, opaque, clear, three faint pixels, a clear half). For each level, on a fresh client, an importer made before the change (as the daemon's) imports the same five files after the level is chosen and applied in the real Options window, and each file's stored transparency flag equals the reference's HasTransparency(). Fixed here: an importer now takes changed file handling settings at its next import (before, only when made). Tests: crates/hydrus-gui/tests/gui/options_media_playback.rs the_transparency_strictness_is_what_the_importer_judges_images_by The importer now re-reads the file handling settings on each import (before, only when made)."
+    "note": "The GUI test checks the dropdown's choices and default against oracle/fixtures/transparency_strictness.json (record_transparency_strictness.py: each level chosen in the reference's real MediaPlaybackPanel, UpdateOptions and ReinitGlobalSettings as OK does, then the real FileImportJob.GeneratePreImportHashAndStatus/GenerateInfo on five PNGs: no alpha, opaque, clear, three faint pixels, a clear half). For each level, on a fresh client, an importer made before the change (as the daemon's) imports the same five files after the level is chosen and applied in the real Options window, and each file's stored transparency flag equals the reference's HasTransparency(). Fixed here: an importer now takes changed file handling settings at its next import (before, only when made). Tests: crates/hydrus-gui/tests/transparency_strictness.rs the_transparency_strictness_is_what_the_importer_judges_images_by The importer now re-reads the file handling settings on each import (before, only when made)."
    }
   },
   {

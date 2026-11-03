@@ -1,6 +1,16 @@
-//! The media playback page against its consumers: each option is changed in
-//! the real options window, applied, and what reads the saved value acts on
-//! it.
+//! The transparency strictness option against its consumer: the importer.
+//! Alone in a test binary of its own: what counts as transparency is one
+//! process-wide switch (`hydrus_media::set_transparency_strictness`, as in
+//! the reference) that every `FileImporter::new`, and every import after an
+//! options change, writes from the store's saved level, so any other test
+//! that makes an importer in the same process changes it under this one.
+
+#![allow(dead_code)]
+
+#[path = "gui/options_gui_support.rs"]
+mod options_gui_support;
+#[path = "gui/options_media_support.rs"]
+mod options_media_support;
 
 use slint::ComponentHandle as _;
 
@@ -16,10 +26,6 @@ fn the_transparency_strictness_is_what_the_importer_judges_images_by() {
     const LABEL: &str = "Consider a file as \"having transparency\" when:";
     // the reference's import job at each level (record_transparency_strictness.py)
     let recording = hydrus_testkit::fixture_json("transparency_strictness.json");
-    // (what counts as transparency is the process's, as in the reference)
-    let _global = crate::options_system_consumers::FILE_HANDLING
-        .lock()
-        .unwrap_or_else(std::sync::PoisonError::into_inner);
     let client = Media::basic();
 
     let options = client.open_options();

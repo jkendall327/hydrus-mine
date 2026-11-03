@@ -73,6 +73,7 @@ mod predicate_history;
 mod rating_sizes;
 mod ratings_editor;
 mod recent_predicates;
+mod regular_dialog;
 mod search_log;
 mod selected_deletion_records;
 mod selection;
