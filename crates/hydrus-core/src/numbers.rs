@@ -105,25 +105,57 @@ pub fn resolution_text(width: u64, height: u64) -> String {
     nice.to_owned()
 }
 
-/// Python's `int(text)` for an `i64`: surrounding whitespace allowed, a
-/// sign, digits with single underscores between them.
+/// Python's `int(text)` for an `i64` (see [`py_int_text`]).
 pub fn py_int(text: &str) -> Option<i64> {
-    let t = text.trim_matches(|c: char| c.is_whitespace() || matches!(c, '\u{1c}'..='\u{1f}'));
-    let (negative, digits) = match t.as_bytes().first() {
-        Some(b'-') => (true, &t[1..]),
-        Some(b'+') => (false, &t[1..]),
+    py_int_text(text)?.parse().ok()
+}
+
+/// Python's `int(text)`, as the number's decimal text (Python's `str` of it:
+/// no `+`, no leading zeros, `0` for minus zero), of any size: surrounding
+/// whitespace (Unicode `White_Space`, which, unlike `str.strip`, leaves the
+/// separators `\x1c` to `\x1f`), a sign, and decimal digits of any script
+/// with single underscores between them.
+pub fn py_int_text(text: &str) -> Option<String> {
+    let t = text.trim_matches(char::is_whitespace);
+    let (negative, digits) = match t.chars().next()? {
+        '-' => (true, &t[1..]),
+        '+' => (false, &t[1..]),
         _ => (false, t),
     };
-    if digits.is_empty()
-        || digits.starts_with('_')
-        || digits.ends_with('_')
-        || digits.contains("__")
-        || !digits.chars().all(|c| c.is_ascii_digit() || c == '_')
-    {
+    let mut ascii = String::with_capacity(digits.len());
+    let mut previous_was_digit = false;
+    let mut chars = digits.chars().peekable();
+    while let Some(c) = chars.next() {
+        if c == '_' {
+            let next_is_digit = chars.peek().is_some_and(|n| decimal_digit(*n).is_some());
+            if !previous_was_digit || !next_is_digit {
+                return None;
+            }
+            previous_was_digit = false;
+            continue;
+        }
+        ascii.push(decimal_digit(c)?);
+        previous_was_digit = true;
+    }
+    if ascii.is_empty() {
         return None;
     }
-    let value: i64 = digits.replace('_', "").parse().ok()?;
-    Some(if negative { -value } else { value })
+    let ascii = ascii.trim_start_matches('0');
+    Some(match (ascii.is_empty(), negative) {
+        (true, _) => "0".into(),
+        (false, true) => format!("-{ascii}"),
+        (false, false) => ascii.into(),
+    })
+}
+
+/// A decimal digit of any script (Unicode `Nd` in [`DECIMAL_ZEROS`]) as its
+/// ASCII digit.
+fn decimal_digit(c: char) -> Option<char> {
+    let code = c as u32;
+    DECIMAL_ZEROS
+        .iter()
+        .find(|zero| (**zero..**zero + 10).contains(&code))
+        .map(|zero| char::from(b'0' + u8::try_from(code - zero).unwrap_or(0)))
 }
 
 /// The first code point of each run of ten decimal digits (Unicode `Nd`)
@@ -139,7 +171,8 @@ const DECIMAL_ZEROS: &[u32] = &[
 /// digits of any script, single underscores between digits, an exponent,
 /// and `inf`, `infinity` and `nan` in any case.
 pub fn py_float(text: &str) -> Option<f64> {
-    let t = text.trim_matches(|c: char| c.is_whitespace() || matches!(c, '\u{1c}'..='\u{1f}'));
+    // (Unicode White_Space, as Python's float() strips; not \x1c to \x1f)
+    let t = text.trim_matches(char::is_whitespace);
     let mut ascii = String::with_capacity(t.len());
     for c in t.chars() {
         let code = c as u32;
@@ -170,6 +203,38 @@ pub fn py_float(text: &str) -> Option<f64> {
 
 #[cfg(test)]
 mod tests {
+
+    /// What Python 3.13's `int()` gives (`None` where it raises).
+    #[test]
+    fn python_ints_are_read_as_python_reads_them() {
+        use super::{py_int, py_int_text};
+        for (text, want) in [
+            (" 5 ", Some("5")),
+            ("\u{85}5", Some("5")),
+            ("\u{2028}5", Some("5")),
+            ("\u{3000}5", Some("5")),
+            ("\u{1c}5", None),
+            ("5\u{1f}", None),
+            ("\u{200e}5", None),
+            ("\u{665}", Some("5")),
+            ("\u{ff15}", Some("5")),
+            ("-\u{661}\u{662}", Some("-12")),
+            ("1_0", Some("10")),
+            ("1__0", None),
+            ("_1", None),
+            ("1_", None),
+            ("+0042", Some("42")),
+            ("-000", Some("0")),
+            ("1.5", None),
+            ("", None),
+            ("-", None),
+            ("123456789012345678901234567890", Some("123456789012345678901234567890")),
+        ] {
+            assert_eq!(py_int_text(text).as_deref(), want, "{text:?}");
+        }
+        assert_eq!(py_int("123456789012345678901234567890"), None);
+        assert_eq!(py_int("-12"), Some(-12));
+    }
 
     #[test]
     fn python_floats_are_read_as_python_reads_them() {

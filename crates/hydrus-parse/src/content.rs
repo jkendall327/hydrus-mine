@@ -15,7 +15,7 @@ use std::sync::LazyLock;
 use serde::{Deserialize, Serialize};
 
 use hydrus_core::numbers::py_int;
-use hydrus_core::pybytes::{b64decode, fromhex};
+use hydrus_core::pybytes::hash_from_parsed_text;
 use hydrus_core::tag::Tag;
 use hydrus_core::url::functions::{check_full_url, ensure_url_is_encoded};
 use hydrus_core::url::pyurl::urljoin;
@@ -267,11 +267,7 @@ impl ParsedPost {
                     hash_type,
                     encoding,
                 } => {
-                    let bytes = match encoding.as_str() {
-                        "hex" => fromhex(&c.text).or_else(|| b64decode(&c.text)),
-                        "base64" => b64decode(&c.text),
-                        _ => None,
-                    }?;
+                    let bytes = hash_from_parsed_text(encoding, &c.text).ok()?;
                     Some((hash_type.clone(), bytes))
                 }
                 _ => None,

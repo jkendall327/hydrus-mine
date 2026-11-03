@@ -1416,10 +1416,13 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   UTC). Not matched: after a parse error's message the reference prints a
   Python traceback, which hydrus-rs leaves out; a JSON formula's error for text
   that is not JSON gives the decoder's reason in its own words (Python's
-  `JSONDecodeError('Expecting value: line 1 column 1 (char 0)')`); and
-  Python's `int()` accepts non-ASCII digits in a time, which hydrus-rs does
-  not. The reference's "unparsable tag, will likely be discarded" cannot
-  happen for parsed text, which is always a string.
+  `JSONDecodeError('Expecting value: line 1 column 1 (char 0)')`); and a time
+  in the last day or so of year 9999 (past what the date library holds) reads
+  "unparseable time" where the reference may still show it. The reference's
+  "unparsable tag, will likely be discarded" cannot happen for parsed text,
+  which is always a string. The panels, downloads and string converters share
+  one reading of Python's `int()`, `bytes.fromhex` and Python 3.13's
+  `base64.b64decode`.
 - URL classes and single/nested gallery URL generators have native lists and
   rule editors. Their duplicate button creates new keys and unique names.
   Domain lists and regex lists use one rule per line. A nested generator's

@@ -7,7 +7,8 @@
 //! The reference shows times in the machine's local time, and the recording
 //! was made in Asia/Kolkata (no summer time, so its offset holds whenever this
 //! runs). `TZ` is read when a process starts, so the windows are driven in a
-//! child run of this test binary with `TZ` set to the recorded zone.
+//! child run of this test binary with `TZ` set to that zone in its POSIX form
+//! (`IST-5:30`, which needs no time zone database).
 use hydrus_gui::{
     ParserEditWindow, headless,
     parser_editors_window::{self as windows, Slots},
@@ -21,6 +22,8 @@ use std::process::Command;
 use std::rc::Rc;
 
 const CHILD_VAR: &str = "HYDRUS_PARSER_PREVIEW_FORMAT_CHILD";
+/// Asia/Kolkata, the recorded zone, as a POSIX `TZ`.
+const POSIX_ZONE: &str = "IST-5:30";
 
 fn recorded() -> serde_json::Value {
     hydrus_testkit::fixture_json("parser_preview_format.json")
@@ -67,7 +70,13 @@ fn child_replays_the_recorded_test_panels_in_the_recorded_zone() {
         return; // an ordinary run; the parent test drives this one
     };
     let recorded = recorded();
-    assert_eq!(recorded["zone"], zone.as_str());
+    assert_eq!(zone, POSIX_ZONE);
+    assert_eq!(recorded["zone"], "Asia/Kolkata");
+    assert_eq!(
+        i64::from(hydrus_gui_model::parser_preview::local_offset().seconds()),
+        recorded["offset_seconds"].as_i64().unwrap(),
+        "the child runs at the recorded offset"
+    );
     let _windows = headless::init();
     let mut compared = 0;
     for case in recorded["content"].as_array().unwrap() {
@@ -134,7 +143,7 @@ fn the_test_panels_word_and_lay_out_results_as_the_reference_does_in_local_time(
         return;
     }
     let recorded = recorded();
-    let zone = recorded["zone"].as_str().unwrap();
+    let zone = POSIX_ZONE;
     let out = Command::new(std::env::current_exe().unwrap())
         .env("TZ", zone)
         .env(CHILD_VAR, zone)
