@@ -665,17 +665,20 @@ when it lowers.
   menu offers "in file browser" only in advanced mode, as the reference's
   does (`oracle/record_open_menu_actions.py`). Dragging out for real is
   jkendall327/hydrus-mine#26.
-- **The top hover frame's zoom options and move buttons are part-ported.**
-  The zoom options (cog) menu has the reference's "recenter media", its
-  six zoom types (the current one checked) and "recenter media on window
-  resize", but not "try to lock current size", "lock current zoom type",
-  "lock current pan" or "set default zoom type from this menu": hydrus-rs
-  has no zoom or pan locks yet. The move button moves the window when
-  dragged, through the platform's own window move (untestable headless),
-  but its right-click menu (resize the window to fit the file, or to 50% to
-  200%) is not ported. The volume control's popup (the viewer's mute and
-  the volume) shows while the pointer is over the button or the popup
-  inside the hover; the reference's is a separate window under it.
+- **The top hover frame's resize menu is drawn by hydrus-rs, and the
+  window it resizes is not checked for the screen.** The move button's
+  right-click menu (resize to fit, or to 50% to 200%) can be chosen with
+  either button, as the reference's remembers, so it is hydrus-rs's own
+  popup rather than a native menu, and sits right-aligned to the button.
+  Moving the window to where the file was uses the window rescue rules
+  (`window_rescue.rs`) over the monitors winit reports; the headless tests
+  have no monitors, so the rescue of a window sized past the screen
+  (the reference's "resize to fit" of a zoomed-in file) is untested. The
+  move button's left press starts the platform's own window move
+  (untestable headless; the tests see it asked for). The volume
+  control's popup (the viewer's mute and the volume) shows while the
+  pointer is over the button or the popup inside the hover; the
+  reference's is a separate window under it.
 - **Only the media viewer's top hover frame is the reference's.** The
   duplicate filter's (go back a pair, previous, next, show a different
   pair) and the archive/delete filter's (back, skip) top hover frames, and

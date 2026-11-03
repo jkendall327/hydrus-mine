@@ -561,13 +561,17 @@ fn the_top_hover_s_buttons_do_what_the_reference_s_do() {
                     }
                     assert_eq!(rows, expected, "{what}: the view options menu");
                 }
-                // (the move button's right-click resize menu is not ported:
-                // DIFFERENCES.md)
-                "move" => {}
+                // (the move button's right-click resize menu: its entries;
+                // what they do is viewer_zoom_locks.rs's)
+                "move" => {
+                    for text in texts.iter().filter(|t| !t.is_empty()) {
+                        assert!(widgets::shows(viewer.window(), text), "{what}: {text}");
+                    }
+                }
                 other => panic!("{other}'s menu"),
             }
             assert!(
-                widgets::popup_open(viewer.window()) || icon == "move",
+                widgets::popup_open(viewer.window()),
                 "{what}: a menu opened"
             );
             widgets::close_popups(viewer.window());

@@ -18,6 +18,10 @@ export struct TopHoverTips {
     previous: string,
     next: string,
     last: string,
+    // the filters' back and skip (the archive/delete filter's, or the
+    // duplicate filter's go back a pair and show a different pair)
+    back: string,
+    skip: string,
     zoom-in: string,
     zoom-out: string,
     zoom-switch: string,
@@ -227,7 +231,67 @@ component TopVolume inherits Tipped {
     }
 }
 
+// the move button's resize menu (`_ShowWindowResizeOptionsMenu`): drawn
+// here rather than as a native menu, since an entry may be chosen with
+// either button, and the reference remembers which
+component ResizeMenu inherits PopupWindow {
+    callback chosen(int, bool);
+    close-policy: close-on-click-outside;
+    property <[string]> entries: ["resize to fit", "-", "resize to 50%", "resize to 75%", "resize to 100%",
+        "resize to 150%", "resize to 200%", "-",
+        "Right click any of the above to skip centering the media in the viewer window before zooming and/or resizing."];
+    // (each entry's place among the choices, past the separators)
+    property <[int]> choices: [0, -1, 1, 2, 3, 4, 5, -1, 6];
+    Rectangle {
+        background: #2b2b2b;
+        border-width: 1px;
+        border-color: #606060;
+        VerticalLayout {
+            padding: 3px;
+            for entry[i] in root.entries: VerticalLayout {
+                if entry == "-": Rectangle {
+                    height: 7px;
+                    Rectangle {
+                        y: 3px;
+                        height: 1px;
+                        background: #606060;
+                    }
+                }
+                // (found by its text; the note wraps)
+                if entry != "-": Rectangle {
+                    min-height: 22px;
+                    background: touch.has-hover ? #ffffff24 : transparent;
+                    HorizontalLayout {
+                        padding-left: 8px;
+                        padding-right: 8px;
+                        padding-top: 3px;
+                        padding-bottom: 3px;
+                        Text {
+                            text: entry;
+                            color: #f0f0f0;
+                            vertical-alignment: center;
+                            wrap: word-wrap;
+                        }
+                    }
+                    touch := TouchArea {
+                        pointer-event(event) => {
+                            if (event.kind == PointerEventKind.up
+                                && (event.button == PointerEventButton.left || event.button == PointerEventButton.right)) {
+                                root.chosen(root.choices[i], event.button == PointerEventButton.right);
+                                root.close();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 export component ViewerTopHoverRow inherits HorizontalLayout {
+    // whose row it is: the media viewer's (0), the archive/delete
+    // filter's (1) or the duplicate filter's (2), which differ on the left
+    in property <int> kind;
     // the file's place in the list ("3/14") and its zoom ("100%")
     in property <string> index-text;
     in property <string> zoom-text;
@@ -243,7 +307,6 @@ export component ViewerTopHoverRow inherits HorizontalLayout {
     in property <int> volume;
     in property <MenuGroups> slideshow-menu;
     in property <MenuGroups> zoom-menu;
-    in property <MenuGroups> resize-menu;
     in property <[string]> shortcut-names;
     in property <[bool]> shortcut-current;
     in property <[bool]> shortcut-defaults;
@@ -277,9 +340,11 @@ export component ViewerTopHoverRow inherits HorizontalLayout {
     callback shortcut-menu-chosen(int, int);
     callback eye-menu-requested();
     callback eye-menu-chosen(int);
+    callback back();
+    callback skip();
     callback move-window();
-    callback resize-menu-requested();
-    callback resize-chosen(int);
+    // an entry of the resize menu, and whether the right button chose it
+    callback resize-chosen(int, bool);
     callback fullscreen();
     callback open-externally();
     callback drag-out();
@@ -287,19 +352,29 @@ export component ViewerTopHoverRow inherits HorizontalLayout {
     callback close();
 
     spacing: 0px;
-    // the left row (`_PopulateLeftButtons`)
+    // the left row (`_PopulateLeftButtons`): the viewer's first, previous,
+    // index, next, last, random and slideshow; the archive/delete filter's
+    // back, index and skip; the duplicate filter's go back a pair,
+    // previous, index, next and show a different pair
     HorizontalLayout {
         horizontal-stretch: 1;
         alignment: start;
         spacing: 0px;
-        HoverButton {
+        if root.kind != 0: HoverButton {
+            label: root.kind == 1 ? "back" : "go back a pair";
+            tip: root.tips.back;
+            tip-markdown: root.tips-markdown.back;
+            icon: root.kind == 1 ? @image-url("../../../static/position_previous.svg") : @image-url("../../../static/position_first.svg");
+            clicked => { root.back(); }
+        }
+        if root.kind == 0: HoverButton {
             label: "first";
             tip: root.tips.first;
             tip-markdown: root.tips-markdown.first;
             icon: @image-url("../../../static/position_first.svg");
             clicked => { root.first(); }
         }
-        HoverButton {
+        if root.kind != 1: HoverButton {
             label: "previous";
             tip: root.tips.previous;
             tip-markdown: root.tips-markdown.previous;
@@ -311,21 +386,28 @@ export component ViewerTopHoverRow inherits HorizontalLayout {
             color: #f0f0f0;
             vertical-alignment: center;
         }
-        HoverButton {
+        if root.kind != 1: HoverButton {
             label: "next";
             tip: root.tips.next;
             tip-markdown: root.tips-markdown.next;
             icon: @image-url("../../../static/position_next.svg");
             clicked => { root.next(); }
         }
-        HoverButton {
+        if root.kind == 0: HoverButton {
             label: "last";
             tip: root.tips.last;
             tip-markdown: root.tips-markdown.last;
             icon: @image-url("../../../static/position_last.svg");
             clicked => { root.last(); }
         }
-        HoverButton {
+        if root.kind != 0: HoverButton {
+            label: root.kind == 1 ? "skip" : "show a different pair";
+            tip: root.tips.skip;
+            tip-markdown: root.tips-markdown.skip;
+            icon: root.kind == 1 ? @image-url("../../../static/position_next.svg") : @image-url("../../../static/position_last.svg");
+            clicked => { root.skip(); }
+        }
+        if root.kind == 0: HoverButton {
             label: "random";
             tip: "random - right-click to undo showing random media";
             tip-markdown: "random \\- right\\-click to undo showing random media";
@@ -333,7 +415,7 @@ export component ViewerTopHoverRow inherits HorizontalLayout {
             clicked => { root.random(); }
             right-clicked => { root.undo-random(); }
         }
-        HoverMenuButton {
+        if root.kind == 0: HoverMenuButton {
             label: "slideshow";
             tip: "slideshow";
             tip-markdown: "slideshow";
@@ -346,13 +428,14 @@ export component ViewerTopHoverRow inherits HorizontalLayout {
     // the middle row (`_PopulateCenterButtons`)
     HorizontalLayout {
         spacing: 0px;
+        // (the archive/delete filter's always archives: keeps)
         HoverButton {
-            label: root.file-inbox ? "archive" : "return to inbox";
+            label: root.file-inbox || root.kind == 1 ? "archive" : "return to inbox";
             tip: self.label;
             tip-markdown: self.label;
-            icon: root.file-inbox ? @image-url("../../../static/archive.png") : @image-url("../../../static/to_inbox.png");
+            icon: root.file-inbox || root.kind == 1 ? @image-url("../../../static/archive.png") : @image-url("../../../static/to_inbox.png");
             clicked => {
-                if (root.file-inbox) {
+                if (root.file-inbox || root.kind == 1) {
                     root.archive();
                 } else {
                     root.inbox();
@@ -469,16 +552,21 @@ export component ViewerTopHoverRow inherits HorizontalLayout {
             }
         }
         // (a left press moves the window; a right click offers resizes)
-        HoverMenuButton {
+        HoverButton {
             label: "click and drag from here to move the window";
             tip: self.label;
-            tip-markdown: "click and drag from here to move the window";
+            tip-markdown: self.label;
             icon: @image-url("../../../static/move.png");
-            right-menu: true;
-            menu: root.resize-menu;
             left-pressed => { root.move-window(); }
-            requested => { root.resize-menu-requested(); }
-            chosen(id) => { root.resize-chosen(id); }
+            right-clicked => { resize-menu.show(); }
+            // (its right edge at the button's, so it stays in the window,
+            // as a menu is moved to stay on the screen)
+            resize-menu := ResizeMenu {
+                x: parent.width - 320px;
+                width: 320px;
+                y: parent.height;
+                chosen(choice, right) => { root.resize-chosen(choice, right); }
+            }
         }
         HoverButton {
             label: "fullscreen switch";
@@ -512,5 +600,134 @@ export component ViewerTopHoverRow inherits HorizontalLayout {
             icon: @image-url("../../../static/stop.png");
             clicked => { root.close(); }
         }
+    }
+}
+
+// The filters' top hover frame (`CanvasHoverFrameTopArchiveDeleteFilter`,
+// `CanvasHoverFrameTopDuplicatesFilter`): the row of buttons and, under it,
+// the file's info line. It takes the pointer, so a click on it is not the
+// canvas's; it is taller while the volume control's popup hangs below it.
+export component TopHoverFrame inherits TouchArea {
+    in property <int> kind;
+    in property <string> info-line;
+    in property <string> index-text;
+    in property <string> zoom-text;
+    in property <TopHoverTips> tips;
+    in property <TopHoverTips> tips-markdown;
+    in property <bool> file-inbox;
+    in property <bool> file-trashed;
+    in property <bool> file-local;
+    in property <bool> file-undeletable;
+    in property <bool> volume-available;
+    in property <bool> global-muted;
+    in property <bool> viewer-muted;
+    in property <int> volume;
+    in property <MenuGroups> zoom-menu;
+    in property <[string]> shortcut-names;
+    in property <[bool]> shortcut-current;
+    in property <[bool]> shortcut-defaults;
+    in property <ViewerEyeMenu> eye-menu;
+    // the box's height (without the volume popup's)
+    out property <length> box-height: top-box.height;
+    out property <bool> volume-open: top-row.volume-open;
+
+    callback back();
+    callback previous();
+    callback next();
+    callback skip();
+    callback archive();
+    callback inbox();
+    callback delete();
+    callback undelete();
+    callback show-metadata();
+    callback zoom(int);
+    callback zoom-switch(length, length);
+    callback zoom-menu-requested();
+    callback zoom-menu-chosen(int);
+    callback flip-global-mute();
+    callback flip-viewer-mute();
+    callback volume-changed(int);
+    callback shortcut-menu-requested();
+    callback shortcut-menu-chosen(int, int);
+    callback eye-menu-requested();
+    callback eye-menu-chosen(int);
+    callback move-window();
+    callback resize-chosen(int, bool);
+    callback fullscreen();
+    callback open-externally();
+    callback drag-out();
+    callback focus-media();
+    callback close();
+
+    height: top-box.height + (top-row.volume-open ? 150px : 0px);
+    top-box := Rectangle {
+        x: 0;
+        y: 0;
+        height: top-layout.preferred-height;
+        background: #202020e8;
+        top-layout := VerticalLayout {
+            padding: 4px;
+            spacing: 2px;
+            // (the row's place: the row is drawn after the text, so that
+            // the volume popup hangs over it)
+            Rectangle { height: top-row.preferred-height; }
+            if root.info-line != "": Text {
+                text: root.info-line;
+                color: #f0f0f0;
+                horizontal-alignment: center;
+                overflow: elide;
+            }
+        }
+    }
+    top-row := ViewerTopHoverRow {
+        x: 4px;
+        y: 4px;
+        width: root.width - 8px;
+        height: self.preferred-height;
+        kind: root.kind;
+        index-text: root.index-text;
+        zoom-text: root.zoom-text;
+        tips: root.tips;
+        tips-markdown: root.tips-markdown;
+        file-inbox: root.file-inbox;
+        file-trashed: root.file-trashed;
+        file-local: root.file-local;
+        file-undeletable: root.file-undeletable;
+        volume-available: root.volume-available;
+        global-muted: root.global-muted;
+        viewer-muted: root.viewer-muted;
+        volume: root.volume;
+        zoom-menu: root.zoom-menu;
+        shortcut-names: root.shortcut-names;
+        shortcut-current: root.shortcut-current;
+        shortcut-defaults: root.shortcut-defaults;
+        eye-menu: root.eye-menu;
+        back => { root.back(); }
+        previous => { root.previous(); }
+        next => { root.next(); }
+        skip => { root.skip(); }
+        archive => { root.archive(); }
+        inbox => { root.inbox(); }
+        delete => { root.delete(); }
+        undelete => { root.undelete(); }
+        show-metadata => { root.show-metadata(); }
+        zoom(direction) => { root.zoom(direction); }
+        zoom-switch(x, y) => { root.zoom-switch(x, y); }
+        zoom-menu-requested => { root.zoom-menu-requested(); }
+        zoom-menu-chosen(id) => { root.zoom-menu-chosen(id); }
+        flip-global-mute => { root.flip-global-mute(); }
+        flip-viewer-mute => { root.flip-viewer-mute(); }
+        volume-changed(v) => { root.volume-changed(v); }
+        shortcut-menu-requested => { root.shortcut-menu-requested(); }
+        shortcut-menu-chosen(kind, i) => { root.shortcut-menu-chosen(kind, i); }
+        eye-menu-requested => { root.eye-menu-requested(); }
+        eye-menu-chosen(id) => { root.eye-menu-chosen(id); }
+        move-window => { root.move-window(); }
+        resize-chosen(id, right) => { root.resize-chosen(id, right); }
+        fullscreen => { root.fullscreen(); }
+        open-externally => { root.open-externally(); }
+        drag-out => { root.drag-out(); }
+        focus-media => { root.focus-media(); }
+        close => { root.close(); }
     }
 }

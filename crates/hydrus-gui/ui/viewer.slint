@@ -267,13 +267,11 @@ export component MediaViewerWindow inherits Window {
     in property <TopHoverTips> top-tips-markdown;
     in property <bool> volume-available;
     in property <MenuGroups> top-zoom-menu;
-    in property <MenuGroups> top-resize-menu;
     callback show-metadata();
     callback top-zoom-menu-requested();
     callback top-zoom-menu-chosen(int);
     callback move-window();
-    callback top-resize-menu-requested();
-    callback top-resize-chosen(int);
+    callback top-resize-chosen(int, bool);
     callback focus-media();
     // the file's ratings, for the top-right hover frame, as the reference
     // draws them
@@ -1378,7 +1376,6 @@ export component MediaViewerWindow inherits Window {
                     volume: root.volume;
                     slideshow-menu: root.context-menu.slideshow;
                     zoom-menu: root.top-zoom-menu;
-                    resize-menu: root.top-resize-menu;
                     shortcut-names: root.shortcut-names;
                     shortcut-current: root.shortcut-current;
                     shortcut-defaults: root.shortcut-defaults;
@@ -1408,8 +1405,7 @@ export component MediaViewerWindow inherits Window {
                     eye-menu-requested => { root.eye-menu-requested(); }
                     eye-menu-chosen(id) => { root.eye-menu-chosen(id); }
                     move-window => { root.move-window(); }
-                    resize-menu-requested => { root.top-resize-menu-requested(); }
-                    resize-chosen(id) => { root.top-resize-chosen(id); }
+                    resize-chosen(id, right) => { root.top-resize-chosen(id, right); }
                     fullscreen => { root.toggle-fullscreen(); }
                     open-externally => { root.open-externally(); }
                     drag-out => { root.show-in-file-browser(); }

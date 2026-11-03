@@ -1,4 +1,4 @@
-import { Btn } from "@hydrus_ui_core";
+import { Btn } from "btn.slint";
 // The duplicate filter's window: the file shown of a pair, and beside it
 // how it compares with the other (the reference's comparison statements)
 // and the decisions. As in the reference: a left click on the file says it
@@ -11,8 +11,11 @@ import { Btn } from "@hydrus_ui_core";
 // keys pan, and escape or enter closes it.
 
 import { Button } from "std-widgets.slint";
-import { Theme } from "@hydrus_ui_core";
-import { TransparencyBackdrop } from "@hydrus_ui_core";
+import { Theme } from "theme.slint";
+import { TransparencyBackdrop } from "transparency_backdrop.slint";
+import { MenuGroups } from "menus.slint";
+import { ViewerEyeMenu } from "viewer_eye_menu.slint";
+import { TopHoverFrame, TopHoverTips } from "viewer_top_hover.slint";
 
 export struct Statement {
     text: string,
@@ -130,6 +133,17 @@ export component DuplicateFilterWindow inherits Window {
     out property <length> hover-width: popped-touch.width;
     out property <length> hover-height: popped-touch.height;
 
+    // the eye menu's window rows: always on top (or while playing) and
+    // without the frame
+    in-out property <bool> viewer-window-top;
+    in-out property <bool> viewer-top-while-playing;
+    in-out property <bool> viewer-window-frameless;
+    in property <bool> media-playing;
+    always-on-top: root.viewer-window-top;
+    changed media-playing => {
+        if root.viewer-top-while-playing { root.viewer-window-top = root.media-playing; }
+    }
+    no-frame: root.viewer-window-frameless;
     in property <image> media;
     // e.g. "File One - 3/100 - 2 decisions"
     in property <string> index-text;
@@ -168,6 +182,51 @@ export component DuplicateFilterWindow inherits Window {
     // "skip", "back"
     callback decide(string);
     callback switch-media();
+    // the top hover frame (`CanvasHoverFrameTopDuplicatesFilter`), which
+    // shows with the pointer over it or near it, in the window's middle
+    // three fifths: the file's info line, the zoom ("100%"), the tooltips
+    // that name shortcuts, the file's state, the menus' entries
+    in property <string> info-line;
+    out property <bool> info-showing: root.question == "" && (top-frame.has-hover || top-frame.volume-open || (pointer.has-hover
+        && pointer.mouse-y <= top-frame.box-height + 20px
+        && pointer.mouse-x >= root.width * 0.2 && pointer.mouse-x <= root.width * 0.8));
+    in property <string> zoom-text;
+    in property <TopHoverTips> top-tips;
+    in property <TopHoverTips> top-tips-markdown;
+    in property <bool> file-inbox;
+    in property <bool> file-trashed;
+    in property <bool> file-local: true;
+    in property <bool> file-undeletable;
+    in property <bool> volume-available;
+    in property <bool> global-muted;
+    in property <bool> viewer-muted;
+    in property <int> volume;
+    in property <MenuGroups> top-zoom-menu;
+    in property <[string]> shortcut-names;
+    in property <[bool]> shortcut-current;
+    in property <[bool]> shortcut-defaults;
+    in property <ViewerEyeMenu> eye-menu;
+    callback archive();
+    callback inbox();
+    callback delete();
+    callback undelete();
+    callback show-metadata();
+    callback zoom-switch-requested(length, length);
+    callback top-zoom-menu-requested();
+    callback top-zoom-menu-chosen(int);
+    callback flip-global-mute();
+    callback flip-viewer-mute();
+    callback volume-changed(int);
+    callback shortcut-menu-requested();
+    callback shortcut-menu-chosen(int, int);
+    callback eye-menu-requested();
+    callback eye-menu-chosen(int);
+    callback move-window();
+    callback top-resize-chosen(int, bool);
+    callback toggle-fullscreen();
+    callback open-externally();
+    callback show-in-file-browser();
+    callback focus-media();
     callback toggle-pause();
     callback answer(int);
     callback close-requested();
@@ -323,6 +382,59 @@ export component DuplicateFilterWindow inherits Window {
                 reviewing: root.reviewing;
                 decide(choice) => { root.decide(choice); }
             }
+        }
+
+        top-frame := TopHoverFrame {
+            x: root.width * 0.2;
+            y: 0;
+            width: root.width * 0.6;
+            visible: root.info-showing;
+            kind: 2;
+            info-line: root.info-line;
+            index-text: root.index-text;
+            zoom-text: root.zoom-text;
+            tips: root.top-tips;
+            tips-markdown: root.top-tips-markdown;
+            file-inbox: root.file-inbox;
+            file-trashed: root.file-trashed;
+            file-local: root.file-local;
+            file-undeletable: root.file-undeletable;
+            volume-available: root.volume-available;
+            global-muted: root.global-muted;
+            viewer-muted: root.viewer-muted;
+            volume: root.volume;
+            zoom-menu: root.top-zoom-menu;
+            shortcut-names: root.shortcut-names;
+            shortcut-current: root.shortcut-current;
+            shortcut-defaults: root.shortcut-defaults;
+            eye-menu: root.eye-menu;
+            back => { root.decide("back"); }
+            previous => { root.switch-media(); }
+            next => { root.switch-media(); }
+            skip => { root.decide("skip"); }
+            archive => { root.archive(); }
+            inbox => { root.inbox(); }
+            delete => { root.delete(); }
+            undelete => { root.undelete(); }
+            show-metadata => { root.show-metadata(); }
+            zoom(direction) => { root.zoom(direction, false, 0, 0); }
+            zoom-switch(x, y) => { root.zoom-switch-requested(x, y); }
+            zoom-menu-requested => { root.top-zoom-menu-requested(); }
+            zoom-menu-chosen(id) => { root.top-zoom-menu-chosen(id); }
+            flip-global-mute => { root.flip-global-mute(); }
+            flip-viewer-mute => { root.flip-viewer-mute(); }
+            volume-changed(v) => { root.volume-changed(v); }
+            shortcut-menu-requested => { root.shortcut-menu-requested(); }
+            shortcut-menu-chosen(kind, i) => { root.shortcut-menu-chosen(kind, i); }
+            eye-menu-requested => { root.eye-menu-requested(); }
+            eye-menu-chosen(id) => { root.eye-menu-chosen(id); }
+            move-window => { root.move-window(); }
+            resize-chosen(id, right) => { root.top-resize-chosen(id, right); }
+            fullscreen => { root.toggle-fullscreen(); }
+            open-externally => { root.open-externally(); }
+            drag-out => { root.show-in-file-browser(); }
+            focus-media => { root.focus-media(); }
+            close => { root.close-requested(); }
         }
 
         if root.question != "": Rectangle {

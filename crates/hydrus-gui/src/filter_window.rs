@@ -145,6 +145,8 @@ struct State {
     custom: Option<Custom>,
     /// Its merge options' editor, while open.
     merge_options: crate::merge_options_window::Slot,
+    /// The top hover's zoom switch command, read as the window opened.
+    zoom_switch: i32,
 }
 
 impl Drop for State {
@@ -238,6 +240,13 @@ fn show(window: &DuplicateFilterWindow, state: &mut State) {
         window.set_score_text(SharedString::new());
         return;
     };
+    crate::filter_top_hover::refresh_filter_top_hover!(
+        window,
+        state.model.store(),
+        shown,
+        state.zoom_switch,
+        crate::viewer_top_hover::Canvas::Duplicates
+    );
     let newly_shown = state.shown != Some((shown, other));
     state.images.retain(|id, _| *id == shown);
     let (image, raster) = state
@@ -451,6 +460,17 @@ pub(crate) fn open_filter_with_cache(
     exited_after_work: Option<Rc<dyn Fn()>>,
     cache: Option<crate::image_cache::Handle>,
 ) -> Result<DuplicateFilterWindow, slint::PlatformError> {
+    open_filter_with_hooks(model, step, slot, exited_after_work, cache, Rc::default())
+}
+/// As [`open_filter_with_cache`], with the openers its top hover reaches.
+pub(crate) fn open_filter_with_hooks(
+    model: DuplicateFilter,
+    step: anyhow::Result<Step>,
+    slot: &Rc<RefCell<Option<DuplicateFilterWindow>>>,
+    exited_after_work: Option<Rc<dyn Fn()>>,
+    cache: Option<crate::image_cache::Handle>,
+    hooks: crate::filter_top_hover::FilterHooksCell,
+) -> Result<DuplicateFilterWindow, slint::PlatformError> {
     let window = crate::app_title::new::<crate::DuplicateFilterWindow>()?;
     window.set_reviewing(model.reviewing());
     window.set_hover_pinned(hover_pinned(model.store()));
@@ -470,6 +490,37 @@ pub(crate) fn open_filter_with_cache(
         )
     });
     crate::bind_zoom!(window, zoomed);
+    // (the current file, once the state holding the model is made)
+    let current_cell: Rc<RefCell<std::rc::Weak<RefCell<State>>>> = Rc::default();
+    let zoom_switch = crate::filter_top_hover::bind_filter_top_hover!(
+        window,
+        model.store(),
+        zoomed,
+        crate::viewer_top_hover::Canvas::Duplicates,
+        Rc::new({
+            let cell = current_cell.clone();
+            move || {
+                let state = cell.borrow().upgrade()?;
+                let state = state.try_borrow().ok()?;
+                state.model.current().map(|(shown, _)| shown)
+            }
+        }),
+        {
+            let weak = window.as_weak();
+            let slot = Rc::downgrade(slot);
+            move || {
+                let window = weak.upgrade()?;
+                let slot = slot.upgrade()?;
+                let owned = slot
+                    .borrow()
+                    .as_ref()
+                    .is_some_and(|current| std::ptr::eq(current.window(), window.window()));
+                owned.then_some(window)
+            }
+        },
+        hooks,
+        None
+    );
     let normalise_icc = model
         .store()
         .read(hydrus_store::image_colour::load)
@@ -494,7 +545,9 @@ pub(crate) fn open_filter_with_cache(
         zoomed,
         custom: None,
         merge_options: Rc::default(),
+        zoom_switch,
     }));
+    *current_cell.borrow_mut() = Rc::downgrade(&state);
     {
         let state = state.borrow();
         crate::gui_colours::bind(
@@ -711,6 +764,73 @@ pub(crate) fn open_filter_with_cache(
             let state = state.borrow();
             state.playback.toggle_pause();
             state.animator.toggle_pause();
+        }
+    });
+    // the top hover's archive button: archive the file shown, or return it
+    // to the inbox (`_Archive`, `_Inbox`)
+    let inboxed = {
+        let update = update.clone();
+        move |inbox: bool| {
+            update(&|state| {
+                if let Some((shown, _)) = state.model.current() {
+                    let done = state.model.store().write_content(move |w| {
+                        if inbox {
+                            w.inbox(&[shown])
+                        } else {
+                            w.archive(&[shown])
+                        }
+                    });
+                    if let Err(e) = done {
+                        eprintln!("could not archive the file: {e}");
+                    }
+                }
+                None
+            });
+        }
+    };
+    window.on_archive({
+        let inboxed = inboxed.clone();
+        move || inboxed(false)
+    });
+    window.on_inbox(move || inboxed(true));
+    // its volume control, as the media viewer's
+    let show_audio = {
+        let weak = window.as_weak();
+        let state = state.clone();
+        move || {
+            let state = state.borrow();
+            let settings = crate::audio::settings(state.model.store());
+            state
+                .playback
+                .set_audio(settings.current_viewer_volume(), settings.viewer_muted());
+            if let Some(window) = weak.upgrade() {
+                window.set_global_muted(settings.global_mute);
+                window.set_viewer_muted(settings.viewer_mute);
+                window.set_volume(i32::from(settings.current_viewer_volume()));
+            }
+        }
+    };
+    show_audio();
+    let store = state.borrow().model.store().clone();
+    window.on_flip_global_mute({
+        let (store, show_audio) = (store.clone(), show_audio.clone());
+        move || {
+            crate::audio::flip_global_mute(&store);
+            show_audio();
+        }
+    });
+    window.on_flip_viewer_mute({
+        let (store, show_audio) = (store.clone(), show_audio.clone());
+        move || {
+            crate::audio::change(&store, |a| a.viewer_mute = !a.viewer_mute);
+            show_audio();
+        }
+    });
+    window.on_volume_changed(move |volume| {
+        let volume = u8::try_from(volume.clamp(0, 100)).unwrap_or(0);
+        if crate::audio::settings(&store).current_viewer_volume() != volume {
+            crate::audio::change(&store, |a| a.set_viewer_volume(volume));
+            show_audio();
         }
     });
     window.on_switch_media({

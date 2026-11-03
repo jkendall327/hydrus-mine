@@ -226,6 +226,7 @@ mod unlock;
 mod viewer;
 pub use viewer::hold_random as hold_viewer_random;
 pub use viewer::hold_time as hold_viewer_time;
+mod filter_top_hover;
 pub mod system_idle;
 pub mod viewer_closing;
 pub mod viewer_cursor;
@@ -237,6 +238,7 @@ mod viewer_presentation;
 mod viewer_tag_search;
 mod viewer_tag_wheel;
 mod viewer_top_hover;
+pub use viewer_top_hover::{WindowMove, watch_window_moves};
 pub mod viewing_maintenance_window;
 mod viewing_tracking;
 mod watcher;
@@ -1979,10 +1981,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    // (the filters' top hovers reach openers made further down)
+    let filter_hooks: filter_top_hover::FilterHooksCell = Rc::default();
     window.on_launch_filter({
         let image_cache = image_cache.handle();
         let page = page.clone();
         let filter = filter.clone();
+        let filter_hooks = filter_hooks.clone();
         let weak = window.as_weak();
         move || {
             let page = page();
@@ -1994,12 +1999,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 duplicate_filter::DuplicateFilter::for_page(page.store().clone(), duplicates)
                     .and_then(|mut model| {
                         let step = model.load_batch();
-                        filter_window::open_filter_with_cache(
+                        filter_window::open_filter_with_hooks(
                             model,
                             step,
                             &filter,
                             None,
                             Some(image_cache.clone()),
+                            filter_hooks.clone(),
                         )
                         .map_err(|e| anyhow::anyhow!("{e}"))
                     });
@@ -2786,6 +2792,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         })
     };
+    *filter_hooks.borrow_mut() = Some(Rc::new(filter_top_hover::FilterHooks {
+        embedded_metadata: Rc::new({
+            let open_embedded_metadata = open_embedded_metadata.clone();
+            move |store, file| open_embedded_metadata(store, vec![file], Rc::new(|| {}))
+        }),
+        edit_shortcuts: open_options.clone(),
+    }));
     let menu_titles_shown = menu_bar::bind(
         window,
         menu_bar::Hooks {
@@ -4430,6 +4443,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     window.on_archive_delete_filter({
         let image_cache = image_cache.handle();
+        let filter_hooks = filter_hooks.clone();
+        let change_pages: ChangePages = Rc::new(change_pages.clone());
+        let reveal_viewer_exit = reveal_viewer_exit.clone();
         let weak_main = window.as_weak();
         let page = page.clone();
         let archive_delete = archive_delete.clone();
@@ -4510,6 +4526,18 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             ) else {
                 return;
             };
+            // (the top hover's drag button's right click: the page and the
+            // file, as the viewer's)
+            let closing_owner = viewer_closing::Owner::new(
+                Some((pages.borrow().shown().key, Rc::downgrade(&owner))),
+                weak_main.clone(),
+                change_pages.clone(),
+                reveal_viewer_exit.clone(),
+            );
+            let focus: Rc<dyn Fn(HashId)> = Rc::new({
+                let store = page.store().clone();
+                move |file| closing_owner.focus(&store, file)
+            });
             match archive_delete_window::open(
                 model,
                 page.location().clone(),
@@ -4518,6 +4546,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 guard,
                 return_to,
                 image_cache.clone(),
+                archive_delete_window::TopHover {
+                    hooks: filter_hooks.clone(),
+                    focus,
+                },
             ) {
                 Ok(window) => *archive_delete.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open the archive/delete filter: {e}"),
@@ -6243,7 +6275,7 @@ pub fn set_file_browser(browser: impl Fn(&str) + 'static) {
 /// Finder's `open -R`; elsewhere the file manager's own
 /// org.freedesktop.FileManager1 ShowItems, as the show-in-file-manager
 /// package the reference uses there does, else its folder opened.
-fn show_in_file_browser(path: &str) {
+pub(crate) fn show_in_file_browser(path: &str) {
     use std::process::Command;
     if let Some(browser) = FILE_BROWSER.with(|b| b.borrow().clone()) {
         browser(path);
@@ -6858,15 +6890,9 @@ fn open_viewer(
         .read(hydrus_store::settings::get)
         .unwrap_or_default();
     let zoomed = zoom_window!(window, settings.clone());
-    zoomed.set_resize_policy({
-        let store = model.borrow().store().clone();
-        move || {
-            store
-                .read(hydrus_store::settings::get::<hydrus_store::settings::ViewerCanvasSettings>)
-                .unwrap_or_default()
-                .recenter_on_resize
-        }
-    });
+    zoomed.set_policy(viewer_top_hover::zoom_policy(
+        model.borrow().store().clone(),
+    ));
     let native_cursor = viewer_cursor::NativeCursor::new(&window, model.borrow().store().clone());
     window.on_cursor_menu_starting({
         let native_cursor = native_cursor.clone();

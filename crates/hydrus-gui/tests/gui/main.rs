@@ -436,3 +436,4 @@ mod viewer_hover_clicks;
 mod viewer_playback;
 mod viewer_prefetch;
 mod viewer_top_hover;
+mod viewer_zoom_locks;

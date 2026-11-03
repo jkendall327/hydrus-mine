@@ -1590,10 +1590,19 @@ from the trash, delete it completely), undelete it (one deleted from any of
 your local file domains), each shown as the reference shows it, and show
 its embedded metadata (the tooltip says what it has). On the right: the
 zoom ("266.67%"), zoom in, out and switch, the zoom options menu (recenter,
-the zoom types, the current one checked, and recentering on window
-resize), the volume control (where libmpv is available: a click mutes and
+the zoom types, the current one checked; "try to lock current size", "lock
+current zoom type" (the two exclusive) and "lock current pan", which keep
+the zoom, the zoom type or the place going to another file, and the size
+and zoom type as the window resizes; "set default zoom type from this
+menu", which makes a zoom type chosen there every viewer's default; and
+recentering on window resize; `oracle/record_viewer_zoom_locks.py`), the
+volume control (where libmpv is available: a click mutes and
 unmutes everything; over it, the viewer's own mute and the volume), the
-shortcuts and view options menus, a button to drag the window by, fullscreen,
+shortcuts and view options menus, a button to drag the window by (a right
+click offers to resize the window to fit the file, or to zoom it to 50% to
+200% and fit the window to it, moving the window to where the file was;
+with the left button the file is zoomed about the window's middle, with the
+right as your zoom centre option says), fullscreen,
 open externally, a button showing the file, selected, in your file browser
 (in the place of the reference's button to drag the file out to other
 programs, which Slint can't do; a right click shows the page the viewer

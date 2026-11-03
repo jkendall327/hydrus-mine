@@ -558,7 +558,7 @@ fn native_size(window: &slint::Window) -> Option<(i64, i64)> {
 /// Winit has monitor bounds, but no portable work-area origin. Keep that native
 /// fallback difference explicit rather than inventing taskbar/dock geometry.
 #[allow(clippy::cast_possible_truncation)]
-fn native_screens(window: &slint::Window) -> Option<Vec<Screen>> {
+pub(crate) fn native_screens(window: &slint::Window) -> Option<Vec<Screen>> {
     window.with_winit_window(|native| {
         let scale = f64::from(window.scale_factor());
         let primary = native.primary_monitor();
