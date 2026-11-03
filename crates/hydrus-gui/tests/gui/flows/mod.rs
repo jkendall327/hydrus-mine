@@ -21,6 +21,7 @@ mod gallery;
 mod import_folder;
 mod manage_tags;
 mod manual_import;
+mod ratings_filter;
 mod subscription;
 mod tag_relationships;
 mod watcher;
